@@ -40,6 +40,15 @@ class HrectBound {
       }
     }
 
+    void RandomPointInside(arma::vec *random_point_out) const {
+
+      random_point_out->set_size(dim_);
+      for(int i = 0; i < dim_; i++) {
+        (*random_point_out)[i] = core::math::Random(
+                                   bounds_[i].lo, bounds_[i].hi);
+      }
+    }
+
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.

@@ -18,6 +18,17 @@ endforeach()
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
+add_executable(distributed_tree-test
+               EXCLUDE_FROM_ALL
+               distributed_tree.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(distributed_tree-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
+
+# test executable
 add_executable(tree-test
                EXCLUDE_FROM_ALL
                tree.test.cc

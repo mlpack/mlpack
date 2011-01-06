@@ -145,7 +145,7 @@ class DistributedTable: public boost::noncopyable {
 
     boost::interprocess::offset_ptr<TableType> global_table_;
 
-    int table_outbox_group_comm_size_;
+    int world_size_;
 
   private:
 
@@ -155,7 +155,7 @@ class DistributedTable: public boost::noncopyable {
       arma::vec tmp_point_alias;
       tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
       core::table::DensePointToArmaVec(tmp_point, &tmp_point_alias);
-      int num_additional = table_outbox_group_comm_size_ -
+      int num_additional = world_size_ -
                            top_leaf_nodes.size();
       int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
 
@@ -180,12 +180,12 @@ class DistributedTable: public boost::noncopyable {
     }
 
     void ReadjustCentroids_(
-      boost::mpi::communicator &table_outbox_group_comm,
+      boost::mpi::communicator &world,
       const core::metric_kernels::AbstractMetric &metric,
       const std::vector<TreeType *> &top_leaf_nodes,
       int leaf_node_assignment_index) {
 
-      const int neighbor_radius = table_outbox_group_comm.size();
+      const int neighbor_radius = world.size();
       const int num_iterations = 10;
 
       // Readjust the centroid.
@@ -193,7 +193,7 @@ class DistributedTable: public boost::noncopyable {
       int total_num_points_owned;
       core::tree::DistributedLocalKMeans local_kmeans;
       local_kmeans.Compute(
-        table_outbox_group_comm, metric, *owned_table_,
+        world, metric, *owned_table_,
         neighbor_radius, num_iterations,
         top_leaf_nodes[leaf_node_assignment_index]->bound().center(),
         &total_num_points_owned, &point_assignments);
@@ -204,7 +204,7 @@ class DistributedTable: public boost::noncopyable {
         core::table::global_m_file_->Construct<TableType>() : new TableType();
       new_local_table->Init(
         owned_table_->n_attributes(), total_num_points_owned,
-        table_outbox_group_comm.rank());
+        world.rank());
 
       // Left contributions.
       std::vector < core::table::OffsetDenseMatrix > left_contributions;
@@ -212,30 +212,30 @@ class DistributedTable: public boost::noncopyable {
       std::vector< boost::mpi::request > left_send_requests;
       std::vector< boost::mpi::request > right_send_requests;
       left_contributions.resize(
-        std::min(table_outbox_group_comm.rank(), neighbor_radius));
+        std::min(world.rank(), neighbor_radius));
       left_send_requests.resize(left_contributions.size());
       right_contributions.resize(
         std::min(
-          table_outbox_group_comm.size() -
-          table_outbox_group_comm.rank() - 1, neighbor_radius));
+          world.size() -
+          world.rank() - 1, neighbor_radius));
       right_send_requests.resize(right_contributions.size());
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         left_contributions[i - 1].Init(
-          table_outbox_group_comm.rank(),
+          world.rank(),
           owned_table_->data(), owned_table_->old_from_new(), point_assignments,
-          table_outbox_group_comm.rank() - i);
+          world.rank() - i);
         left_send_requests[i - 1] =
-          table_outbox_group_comm.isend(
-            table_outbox_group_comm.rank() - i, i, left_contributions[i - 1]);
+          world.isend(
+            world.rank() - i, i, left_contributions[i - 1]);
       }
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         right_contributions[i - 1].Init(
-          table_outbox_group_comm.rank(),
+          world.rank(),
           owned_table_->data(), owned_table_->old_from_new(), point_assignments,
-          table_outbox_group_comm.rank() + i);
+          world.rank() + i);
         right_send_requests[i - 1] =
-          table_outbox_group_comm.isend(
-            table_outbox_group_comm.rank() + i, neighbor_radius + i,
+          world.isend(
+            world.rank() + i, neighbor_radius + i,
             right_contributions[i - 1]);
       }
 
@@ -248,11 +248,11 @@ class DistributedTable: public boost::noncopyable {
         new_local_table->old_from_new();
       for(unsigned int i = 1; i <= left_contributions.size(); i++) {
         tmp_offset.Init(
-          table_outbox_group_comm.rank(),
+          world.rank(),
           new_table_ptr, new_table_old_from_new_ptr,
           new_local_table->n_attributes());
-        table_outbox_group_comm.recv(
-          table_outbox_group_comm.rank() - i, neighbor_radius + i, tmp_offset);
+        world.recv(
+          world.rank() - i, neighbor_radius + i, tmp_offset);
 
         // Increment the table pointer based on the number of doubles
         // received.
@@ -260,19 +260,19 @@ class DistributedTable: public boost::noncopyable {
         new_table_old_from_new_ptr += tmp_offset.n_entries();
       }
       tmp_offset.Init(
-        table_outbox_group_comm.rank(),
+        world.rank(),
         owned_table_->data(), new_table_old_from_new_ptr, point_assignments,
-        table_outbox_group_comm.rank());
+        world.rank());
       tmp_offset.Extract(new_table_ptr, new_table_old_from_new_ptr);
       new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
       new_table_old_from_new_ptr += tmp_offset.n_entries();
       for(unsigned int i = 1; i <= right_contributions.size(); i++) {
         tmp_offset.Init(
-          table_outbox_group_comm.rank(),
+          world.rank(),
           new_table_ptr, new_table_old_from_new_ptr,
           new_local_table->n_attributes());
-        table_outbox_group_comm.recv(
-          table_outbox_group_comm.rank() + i, i, tmp_offset);
+        world.recv(
+          world.rank() + i, i, tmp_offset);
 
         // Increment the table pointer based on the number of doubles
         // received.
@@ -285,7 +285,7 @@ class DistributedTable: public boost::noncopyable {
         left_send_requests.begin(), left_send_requests.end());
       boost::mpi::wait_all(
         right_send_requests.begin(), right_send_requests.end());
-      table_outbox_group_comm.barrier();
+      world.barrier();
 
       // Destory the old table and take the new table to be the owned
       // table.
@@ -299,14 +299,14 @@ class DistributedTable: public boost::noncopyable {
     }
 
     int TakeLeafNodeOwnerShip_(
-      boost::mpi::communicator &table_outbox_group_comm,
+      boost::mpi::communicator &world,
       const std::vector<double> &num_points_assigned_to_leaf_nodes) {
 
-      if(table_outbox_group_comm.size() > 1) {
+      if(world.size() > 1) {
         core::parallel::DistributedAuction auction;
         return auction.Assign(
-                 table_outbox_group_comm, num_points_assigned_to_leaf_nodes,
-                 1.0 / static_cast<double>(table_outbox_group_comm.size()));
+                 world, num_points_assigned_to_leaf_nodes,
+                 1.0 / static_cast<double>(world.size()));
       }
       else {
         return 0;
@@ -385,7 +385,7 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = NULL;
       local_n_entries_ = NULL;
       global_table_ = NULL;
-      table_outbox_group_comm_size_ = -1;
+      world_size_ = -1;
     }
 
     ~DistributedTable() {
@@ -438,10 +438,10 @@ class DistributedTable: public boost::noncopyable {
     }
 
     int local_n_entries(int rank_in) const {
-      if(rank_in >= table_outbox_group_comm_size_) {
+      if(rank_in >= world_size_) {
         printf(
           "Invalid rank specified: %d. %d is the limit.\n",
-          rank_in, table_outbox_group_comm_size_);
+          rank_in, world_size_);
         return -1;
       }
       return local_n_entries_[rank_in];
@@ -453,7 +453,7 @@ class DistributedTable: public boost::noncopyable {
 
     void Init(
       const std::string & file_name,
-      boost::mpi::communicator &table_outbox_group_communicator_in) {
+      boost::mpi::communicator &world) {
 
       boost::mpi::timer distributed_table_init_timer;
 
@@ -461,21 +461,21 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = (core::table::global_m_file_) ?
                      core::table::global_m_file_->Construct<TableType>() :
                      new TableType();
-      owned_table_->Init(file_name, table_outbox_group_communicator_in.rank());
+      owned_table_->Init(file_name, world.rank());
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to
       // find out all the sizes.
-      table_outbox_group_comm_size_ = table_outbox_group_communicator_in.size();
+      world_size_ = world.size();
       local_n_entries_ = (core::table::global_m_file_) ?
                          (int *) global_m_file_->ConstructArray<int>(
-                           table_outbox_group_communicator_in.size()) :
-                         new int[ table_outbox_group_communicator_in.size()];
+                           world.size()) :
+                         new int[ world.size()];
       boost::mpi::all_gather(
-        table_outbox_group_communicator_in, owned_table_->n_entries(),
+        world, owned_table_->n_entries(),
         local_n_entries_.get());
 
-      if(table_outbox_group_communicator_in.rank() == 0) {
+      if(world.rank() == 0) {
         printf(
           "Took %g seconds to read in the distributed tables.\n",
           distributed_table_init_timer.elapsed());
@@ -492,7 +492,7 @@ class DistributedTable: public boost::noncopyable {
 
     void IndexData(
       const core::metric_kernels::AbstractMetric & metric_in,
-      boost::mpi::communicator &table_outbox_group_comm,
+      boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
       boost::mpi::timer distributed_table_index_timer;
@@ -508,12 +508,12 @@ class DistributedTable: public boost::noncopyable {
       // of space to receive all the points.
       int total_num_samples = 0;
       double *tmp_buffer = NULL;
-      int *counts = new int[ table_outbox_group_comm.size()];
+      int *counts = new int[ world.size()];
       int local_sampled_indices_size = static_cast<int>(
                                          sampled_indices.size());
       boost::mpi::gather(
-        table_outbox_group_comm, local_sampled_indices_size, counts, 0);
-      for(int i = 0; i < table_outbox_group_comm.size(); i++) {
+        world, local_sampled_indices_size, counts, 0);
+      for(int i = 0; i < world.size(); i++) {
         total_num_samples += counts[i];
       }
 
@@ -521,28 +521,28 @@ class DistributedTable: public boost::noncopyable {
       // buffer.
       CopyPointsIntoTemporaryBuffer_(sampled_indices, &tmp_buffer);
 
-      if(table_outbox_group_comm.rank() == 0) {
+      if(world.rank() == 0) {
         sampled_table.Init(this->n_attributes(), total_num_samples);
         memcpy(
           sampled_table.data().ptr(), tmp_buffer,
           sizeof(double) * this->n_attributes() * sampled_indices.size());
 
         int offset = this->n_attributes() * sampled_indices.size();
-        for(int i = 1; i < table_outbox_group_comm.size(); i++) {
+        for(int i = 1; i < world.size(); i++) {
           int num_elements_to_receive = this->n_attributes() * counts[i];
-          table_outbox_group_comm.recv(
+          world.recv(
             i, boost::mpi::any_tag,
             sampled_table.data().ptr() + offset, num_elements_to_receive);
           offset += num_elements_to_receive;
         }
       }
       else {
-        table_outbox_group_comm.send(
-          0, table_outbox_group_comm.rank(), tmp_buffer,
+        world.send(
+          0, world.rank(), tmp_buffer,
           this->n_attributes() * sampled_indices.size());
       }
 
-      table_outbox_group_comm.barrier();
+      world.barrier();
 
       // After sending, free the temporary buffer.
       delete[] tmp_buffer;
@@ -551,18 +551,18 @@ class DistributedTable: public boost::noncopyable {
       // The master builds the top tree, and sends the leaf nodes to
       // the rest.
       std::vector<TreeType *> top_leaf_nodes;
-      if(table_outbox_group_comm.rank() == 0) {
+      if(world.rank() == 0) {
         sampled_table.IndexData(
-          metric_in, 1, table_outbox_group_comm.size());
+          metric_in, 1, world.size());
 
         // Broadcast the leaf nodes.
         sampled_table.get_leaf_nodes(
           sampled_table.get_tree(), &top_leaf_nodes);
       }
-      boost::mpi::broadcast(table_outbox_group_comm, top_leaf_nodes, 0);
+      boost::mpi::broadcast(world, top_leaf_nodes, 0);
       // Broadcast the leaf nodes.
       if(top_leaf_nodes.size() < static_cast<unsigned int>(
-            table_outbox_group_comm.size())) {
+            world.size())) {
         ReplenishNodes_(top_leaf_nodes);
       }
 
@@ -575,13 +575,13 @@ class DistributedTable: public boost::noncopyable {
       // Each process takes a node in a greedy fashion to minimize the
       // data movement.
       int leaf_node_assignment_index = TakeLeafNodeOwnerShip_(
-                                         table_outbox_group_comm,
+                                         world,
                                          num_points_assigned_to_leaf_nodes);
 
       // Each process decides to test against the assigned leaf and
       // its immediate DFS neighbors.
       ReadjustCentroids_(
-        table_outbox_group_comm, metric_in, top_leaf_nodes,
+        world, metric_in, top_leaf_nodes,
         leaf_node_assignment_index);
 
       // Index the local tree.
@@ -589,7 +589,7 @@ class DistributedTable: public boost::noncopyable {
 
       // Now assemble the top tree. At this point, we can free the
       // leaf nodes for the non-master.
-      if(table_outbox_group_comm.rank() != 0) {
+      if(world.rank() != 0) {
         for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
           delete top_leaf_nodes[i];
         }
@@ -602,19 +602,19 @@ class DistributedTable: public boost::noncopyable {
         core::table::global_m_file_->Construct<TableType>() :
         new TableType();
       global_table_->Init(
-        owned_table_->n_attributes(), table_outbox_group_comm.size());
+        owned_table_->n_attributes(), world.size());
       boost::mpi::all_gather(
-        table_outbox_group_comm,
+        world,
         owned_table_->get_tree()->bound().center().ptr(),
         owned_table_->n_attributes(), global_table_->data().ptr());
       global_table_->IndexData(metric_in, 1);
 
       // Very important: need to re-update the counts.
       boost::mpi::all_gather(
-        table_outbox_group_comm, owned_table_->n_entries(),
+        world, owned_table_->n_entries(),
         local_n_entries_.get());
 
-      if(table_outbox_group_comm.rank() == 0) {
+      if(world.rank() == 0) {
         printf("Finished building the distributed tree.\n");
         printf(
           "Took %g seconds to read in the distributed tree.\n",

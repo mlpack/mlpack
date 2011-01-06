@@ -8,7 +8,8 @@
 #ifndef CORE_TREE_BALL_BOUND_H
 #define CORE_TREE_BALL_BOUND_H
 
-#include "boost/serialization/string.hpp"
+#include <gsl/gsl_sf_gamma.h>
+#include <boost/serialization/string.hpp>
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
 #include "core/metric_kernels/abstract_metric.h"
@@ -36,6 +37,33 @@ class BallBound {
     void serialize(Archive &ar, const unsigned int version) {
       ar & radius_;
       ar & center_;
+    }
+
+    void RandomPointInside(arma::vec *random_point_out) const {
+
+      // First, generate $D$-dimensional Gaussian vector.
+      random_point_out->set_size(center_.length());
+      for(int i = 0; i < center_.length(); i++) {
+        (*random_point_out)[i] = core::math::RandGaussian(1.0);
+      }
+
+      // Scale it by an appropriate factor involving the incomplete
+      // Gamma function.
+      double squared_length = arma::norm(*random_point_out, "fro");
+      double first_number = squared_length * 0.5;
+      double second_number = center_.length() * 0.5;
+      double factor =
+        pow(
+          gsl_sf_gamma_inc_P(first_number, second_number),
+          1.0 / static_cast<double>(center_.length())) / sqrt(squared_length);
+      (*random_point_out) = (*random_point_out) * factor;
+
+      // Scale the resulting vector by the radius and offset by the
+      // center coordinate.
+      arma::vec center_alias;
+      core::table::DensePointToArmaVec(center_, &center_alias);
+      (*random_point_out) = (*random_point_out) * radius_;
+      (*random_point_out) += center_alias;
     }
 
     void Init(int dimension) {

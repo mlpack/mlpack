@@ -82,14 +82,11 @@ class TestTree {
 
     bool StressTest(int num_dimensions, int num_points) {
 
-      std::vector< std::string > args;
-
       std::cout << "Number of dimensions: " << num_dimensions << "\n";
       std::cout << "Number of points: " << num_points << "\n";
 
       // Push in the reference dataset name.
       std::string references_in("random.csv");
-      args.push_back(std::string("--references_in=") + references_in);
 
       // Generate the random dataset and save it.
       TableType random_table;
