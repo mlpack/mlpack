@@ -11,6 +11,80 @@
 
 namespace core {
 namespace table {
+class SampleDenseMatrix {
+  private:
+    friend class boost::serialization::access;
+
+  private:
+
+    /** @brief The pointer to the dense matrix to be
+     *         serialized/unserialized.
+     */
+    core::table::DenseMatrix *matrix_;
+
+    /** @brief The indices to be serialized.
+     */
+    const std::vector<int> *indices_to_be_serialized_;
+
+    /** @brief The starting column id of the matrix.
+     */
+    int starting_column_index_;
+
+    /** @brief The number of points to load.
+     */
+    int num_entries_to_load_;
+
+  public:
+
+    SampleDenseMatrix() {
+      matrix_ = NULL;
+      indices_to_be_serialized_ = NULL;
+      starting_column_index_ = 0;
+      num_entries_to_load_ = 0;
+    }
+
+    void Init(
+      core::table::DenseMatrix &matrix_in,
+      const std::vector<int> &indices_to_be_serialized_in) {
+      matrix_ = &matrix_in;
+      indices_to_be_serialized_ = &indices_to_be_serialized_in;
+    }
+
+    void Init(
+      core::table::DenseMatrix &matrix_in,
+      int starting_column_index_in,
+      int num_entries_to_load_in) {
+      matrix_ = &matrix_in;
+      indices_to_be_serialized_ = NULL;
+      starting_column_index_ = starting_column_index_in;
+      num_entries_to_load_ = num_entries_to_load_in;
+    }
+
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+      for(unsigned int i = 0; i < indices_to_be_serialized_->size(); i++) {
+        core::table::DensePoint point;
+        matrix_->MakeColumnVector((*indices_to_be_serialized_)[i], &point);
+        for(int j = 0; j < point.length(); j++) {
+          ar & point[j];
+        }
+      }
+    }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      double *ptr = matrix_->ptr() + matrix_->n_rows() *
+                    starting_column_index_;
+      for(int i = 0; i < num_entries_to_load_; i++) {
+        for(int j = 0; j < matrix_->n_rows(); j++) {
+          ar & ptr[j];
+        }
+        ptr += matrix_->n_rows();
+      }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
+};
+
 class OffsetDenseMatrix {
   private:
     friend class boost::serialization::access;
