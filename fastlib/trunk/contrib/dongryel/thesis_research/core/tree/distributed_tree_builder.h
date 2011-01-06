@@ -11,6 +11,7 @@
 #include <algorithm>
 #include <boost/mpi.hpp>
 #include "core/parallel/parallel_sample_sort.h"
+#include "core/table/offset_dense_matrix.h"
 
 namespace core {
 namespace tree {
@@ -28,15 +29,16 @@ class DistributedTreeBuilder {
 
     void SetupGatherPointers_(
       TableType &sampled_table, const std::vector<int> &counts,
-      std::vector<double *> *gather_pointers_out) {
+      std::vector<core::table::SampleDenseMatrix> *gather_pointers_out) {
 
       // Have the pointers point to the right position based on the
       // prefix sum position.
       gather_pointers_out->resize(counts.size());
-      double *pointer = sampled_table.data().ptr();
+      int starting_column_index = 0;
       for(unsigned int i = 0; i < counts.size(); i++) {
-        (*gather_pointers_out)[i] = pointer;
-        pointer += sampled_table.n_attributes() * counts[i];
+        (*gather_pointers_out)[i].Init(
+          sampled_table.data(), starting_column_index, counts[i]);
+        starting_column_index += counts[i];
       }
     }
 
@@ -54,21 +56,22 @@ class DistributedTreeBuilder {
       std::vector<int> counts;
       int local_sampled_indices_size = static_cast<int>(
                                          sampled_indices.size());
-      boost::mpi::gather(
-        table_outbox_group_comm, local_sampled_indices_size, counts, 0);
+      boost::mpi::gather(world, local_sampled_indices_size, counts, 0);
 
       // The master process allocates the sample table and gathers the
       // chosen samples from each process.
+      core::table::SampleDenseMatrix local_pointer;
+      local_pointer.Init(
+        distributed_table_->local_table()->data(), sampled_indices);
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
         sampled_table.Init(
           distributed_table_->n_attributes(), total_num_samples);
-        std::vector<double *> gather_pointers;
+        std::vector<core::table::SampleDenseMatrix> gather_pointers;
         SetupGatherPointers_(sampled_table, counts, gather_pointers);
-
-
       }
+      boost::mpi::gather(world, local_pointer, gather_pointers, 0);
     }
 
     void SelectSubset_(
