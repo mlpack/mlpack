@@ -11,6 +11,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/math/special_functions/binomial.hpp>
+#include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 
 namespace core {
@@ -41,6 +42,10 @@ class RandomNumberInit {
     template<typename T>
     T Random() {
       return gsl_rng_uniform(global_generator_);
+    }
+
+    double RandGaussian(double sigma) {
+      return gsl_ran_gaussian(global_generator_, sigma);
     }
 
     /** @brief Returns a random integer from 0 to n - 1 inclusive.
@@ -118,6 +123,11 @@ inline double Random() {
 template<typename T>
 inline double Random(T lo, T hi) {
   return core::math::Random<T>() * (hi - lo) + lo;
+}
+
+template<typename T>
+inline double RandGaussian(T sigma) {
+  return global_random_number_state_.RandGaussian(sigma);
 }
 
 /**

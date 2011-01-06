@@ -9,7 +9,9 @@
 #define CORE_TREE_DISTRIBUTED_TREE_BUILDER_H
 
 #include <algorithm>
+#include <numeric>
 #include <boost/mpi.hpp>
+#include "core/metric_kernels/abstract_metric.h"
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
 
@@ -20,12 +22,47 @@ class DistributedTreeBuilder {
   public:
     typedef typename DistributedTableType::TableType TableType;
 
+    typedef typename DistributedTableType::TreeType TreeType;
+
   private:
     DistributedTableType *distributed_table_;
 
     double sampling_rate_;
 
   private:
+
+    void AugmentNodes_(
+      boost::mpi::communicator &world,
+      const typename TreeType::BoundType &root_bound,
+      std::vector<TreeType *> &top_leaf_nodes) {
+
+      core::table::DensePoint tmp_point;
+      arma::vec tmp_point_alias;
+      tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
+      core::table::DensePointToArmaVec(tmp_point, &tmp_point_alias);
+      int num_additional = world.size() - top_leaf_nodes.size();
+      int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
+
+      // Randomly add new dummy nodes with randomly chosen centroids
+      // averaged.
+      for(int j = 0; j < num_additional; j++) {
+        tmp_point_alias.zeros();
+        for(int i = 0; i < num_samples; i++) {
+          arma::vec random_node_center;
+          core::table::DensePointToArmaVec(
+            top_leaf_nodes[
+              core::math::RandInt(top_leaf_nodes.size())]->bound().center(),
+            &random_node_center);
+          tmp_point_alias += random_node_center;
+        }
+        tmp_point_alias = (1.0 / static_cast<double>(num_samples)) *
+                          tmp_point_alias;
+        tmp_point_alias = 0.5 * (tmp_point_alias + random_point_on_surface);
+        top_leaf_nodes.push_back(new TreeType());
+        top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
+          tmp_point);
+      }
+    }
 
     void SetupGatherPointers_(
       TableType &sampled_table, const std::vector<int> &counts,
@@ -42,7 +79,10 @@ class DistributedTreeBuilder {
       }
     }
 
-    void BuildSampleTree_(boost::mpi::communicator &world) {
+    void BuildSampleTree_(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      boost::mpi::communicator &world,
+      std::vector<TreeType *> *top_leaf_nodes_out) {
 
       // Each process generates a random subset of the data points to
       // send to the master. This is a MPI gather operation.
@@ -63,27 +103,45 @@ class DistributedTreeBuilder {
       core::table::SampleDenseMatrix local_pointer;
       local_pointer.Init(
         distributed_table_->local_table()->data(), sampled_indices);
+      std::vector<core::table::SampleDenseMatrix> gather_pointers;
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
         sampled_table.Init(
           distributed_table_->n_attributes(), total_num_samples);
-        std::vector<core::table::SampleDenseMatrix> gather_pointers;
-        SetupGatherPointers_(sampled_table, counts, gather_pointers);
+        SetupGatherPointers_(sampled_table, counts, &gather_pointers);
       }
       boost::mpi::gather(world, local_pointer, gather_pointers, 0);
+
+      // Index the tree up so that the number of leaf nodes matches
+      // the number of processes. If missing some nodes, then sample a
+      // region and try to make up a node.
+      if(world.rank() == 0) {
+        sampled_table.IndexData(metric_in, 1, world.size());
+        sampled_table.get_leaf_nodes(
+          sampled_table.get_tree(), top_leaf_nodes_out);
+        if(top_leaf_nodes_out->size() <
+            static_cast<unsigned int>(world.size())) {
+          AugmentNodes_(world, top_leaf_nodes_out);
+        }
+      }
+      boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
     }
 
     void SelectSubset_(
       std::vector<int> *sampled_indices_out) {
 
-      std::vector<int> indices(owned_table_->n_entries(), 0);
+      std::vector<int> indices(
+        distributed_table_->local_table()->n_entries(), 0);
       for(unsigned int i = 0; i < indices.size(); i++) {
         indices[i] = i;
       }
       int num_elements =
         std::max(
-          (int) floor(sampling_rate_ * owned_table_->n_entries()), 1);
+          (int)
+          floor(
+            sampling_rate_ *
+            distributed_table_->local_table()->n_entries()), 1);
       std::random_shuffle(indices.begin(), indices.end());
 
       for(int i = 0; i < num_elements; i++) {
@@ -98,7 +156,14 @@ class DistributedTreeBuilder {
       sampling_rate_ = sampling_rate_in;
     }
 
-    void BuildTree(boost::mpi::communicator &world) {
+    void BuildTree(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      boost::mpi::communicator &world) {
+
+      // Build the initial sample tree.
+      std::vector<TreeType *> top_leaf_nodes;
+      BuildSampleTree_(metric_in, world, &top_leaf_nodes);
+
     }
 };
 };
