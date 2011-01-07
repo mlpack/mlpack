@@ -92,17 +92,27 @@ class TestDistributedTree {
 };
 };
 
-BOOST_AUTO_TEST_SUITE(TestSuiteDistributedTree)
-BOOST_AUTO_TEST_CASE(TestCaseDistributedTree) {
+int main(int argc, char *argv[]) {
+
+  // Initialize boost MPI.
+  boost::mpi::environment env(argc, argv);
+  boost::mpi::communicator world;
 
   // Tree type: hard-coded for a metric tree.
-  typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+  typedef core::tree::GenMetricTree<core::tree::AbstractStatistic> TreeSpecType;
+  typedef core::table::Table <TreeSpecType> TableType;
+  typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
+
+  DistributedTableType distributed_table;
+  core::tree::DistributedTreeBuilder<DistributedTableType> builder;
+  builder.Init(distributed_table, 0.2);
+  core::metric_kernels::LMetric<2> l2_metric;
+  builder.Build(l2_metric, world);
 
   // Call the tests.
   core::tree::TestDistributedTree<TableType> tree_test;
   tree_test.StressTestMain();
 
   std::cout << "All tests passed!\n";
+  return 0;
 }
-BOOST_AUTO_TEST_SUITE_END()
