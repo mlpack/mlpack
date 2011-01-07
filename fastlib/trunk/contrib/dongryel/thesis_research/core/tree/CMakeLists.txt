@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
   ball_bound.h
-  distributed_tree_builder.h
   general_spacetree.h
   gen_kdtree.h
   gen_metric_tree.h
@@ -16,17 +15,6 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# test executable
-add_executable(distributed_tree-test
-               EXCLUDE_FROM_ALL
-               distributed_tree.test.cc
-              )
-# link dependencies of test executable
-target_link_libraries(distributed_tree-test
-                      core
-                      ${Boost_LIBRARIES}
-                     )
 
 # test executable
 add_executable(tree-test

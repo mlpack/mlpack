@@ -5,8 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_TREE_DISTRIBUTED_TREE_BUILDER_H
-#define CORE_TREE_DISTRIBUTED_TREE_BUILDER_H
+#ifndef CORE_PARALLEL_DISTRIBUTED_TREE_BUILDER_H
+#define CORE_PARALLEL_DISTRIBUTED_TREE_BUILDER_H
 
 #include <algorithm>
 #include <numeric>
@@ -14,15 +14,27 @@
 #include "core/metric_kernels/abstract_metric.h"
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
-namespace tree {
+namespace table {
+extern core::table::MemoryMappedFile *global_m_file_;
+};
+};
+
+namespace core {
+namespace parallel {
 template<typename DistributedTableType>
 class DistributedTreeBuilder {
   public:
     typedef typename DistributedTableType::TableType TableType;
 
     typedef typename DistributedTableType::TreeType TreeType;
+
+    typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
+
+    typedef core::table::SampleDenseMatrix<OldFromNewIndexType>
+    SampleDenseMatrixType;
 
   private:
     DistributedTableType *distributed_table_;
@@ -71,7 +83,7 @@ class DistributedTreeBuilder {
 
     void SetupGatherPointers_(
       TableType &sampled_table, const std::vector<int> &counts,
-      std::vector<core::table::SampleDenseMatrix> *gather_pointers_out) {
+      std::vector< core::table::SampleDenseMatrixType > *gather_pointers_out) {
 
       // Have the pointers point to the right position based on the
       // prefix sum position.
@@ -79,9 +91,95 @@ class DistributedTreeBuilder {
       int starting_column_index = 0;
       for(unsigned int i = 0; i < counts.size(); i++) {
         (*gather_pointers_out)[i].Init(
-          sampled_table.data(), starting_column_index, counts[i]);
+          sampled_table.data(), sampled_table.old_from_new(),
+          starting_column_index, counts[i]);
         starting_column_index += counts[i];
       }
+    }
+
+    void GetLeafNodeMembershipCounts_(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const std::vector<TreeType *> &top_leaf_nodes,
+      std::vector< std::vector<int> > *assigned_point_indices,
+      std::vector<int> *membership_counts_per_node) {
+
+      assigned_point_indices->resize(0);
+      assigned_point_indices->resize(top_leaf_nodes.size());
+      membership_counts_per_node->resize(top_leaf_nodes.size());
+      std::fill(
+        membership_counts_per_node->begin(),
+        membership_counts_per_node->end(), 0.0);
+
+      // Loop through each point and find the closest leaf node.
+      for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
+        core::table::DensePoint point;
+        owned_table_->get(i, &point);
+
+        // Loop through each leaf node.
+        double min_squared_mid_distance = std::numeric_limits<double>::max();
+        int min_index = -1;
+        for(unsigned int j = 0; j < top_leaf_nodes.size(); j++) {
+          const typename TreeType::BoundType &leaf_node_bound =
+            top_leaf_nodes[j]->bound();
+
+          // Compute the squared mid-distance.
+          double squared_mid_distance = leaf_node_bound.MidDistanceSq(
+                                          metric_in, point);
+          if(squared_mid_distance < min_squared_mid_distance) {
+            min_squared_mid_distance = squared_mid_distance;
+            min_index = j;
+          }
+        }
+
+        // Output the assignments.
+        (*assigned_point_indices)[min_index].push_back(i);
+        (*membership_counts_per_node)[min_index]++;
+      }
+    }
+
+    void ReshufflePoints_(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      boost::mpi::communicator &world,
+      const std::vector<TreeType *> &top_leaf_nodes) {
+
+      // Determine the membership counts.
+      std::vector< std::vector<int> > assigned_point_indices;
+      std::vector<int> membership_counts_per_node;
+      GetLeafNodeMembershipCounts_(
+        metric_in, top_leaf_nodes,
+        &assigned_point_indices, &membership_counts_per_node);
+
+      // Do an all-to-all to figure out the new table sizes for each
+      // process.
+      std::vector<int> reshuffled_contributions;
+      boost::mpi::all_to_all(
+        world, membership_counts_per_node, reshuffled_contributions);
+      int total_num_points_owned =
+        std::accumulate(
+          reshuffled_contributions.begin(), reshuffled_contributions.end(), 0);
+
+      // Allocate a new table.
+      TableType *new_local_table =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() : new TableType();
+      new_local_table->Init(
+        distributed_table_->n_attributes(), total_num_points_owned,
+        world.rank());
+
+      // Setup points so that they will be reshuffled.
+      std::vector<core::table::SampleDenseMatrixType> points_to_be_distributed;
+      points_to_be_distributed.resize(world.size());
+      for(unsigned int i = 0; i < points_to_be_distributed.size(); i++) {
+        points_to_be_distributed[i].Init(
+          distributed_table_->local_table()->data(),
+          distributed_table_->local_table()->old_from_new(),
+          assigned_point_indices[i]);
+      }
+      std::vector<core::table::SampleDenseMatrixType> reshuffled_points;
+      SetupGatherPointers_(
+        *new_local_table, reshuffled_contributions, &reshuffled_points);
+      boost::mpi::all_to_all(
+        world, points_to_be_distributed, reshuffled_points);
     }
 
     void BuildSampleTree_(
@@ -105,10 +203,10 @@ class DistributedTreeBuilder {
 
       // The master process allocates the sample table and gathers the
       // chosen samples from each process.
-      core::table::SampleDenseMatrix local_pointer;
+      core::table::SampleDenseMatrixType local_pointer;
       local_pointer.Init(
         distributed_table_->local_table()->data(), sampled_indices);
-      std::vector<core::table::SampleDenseMatrix> gather_pointers;
+      std::vector<core::table::SampleDenseMatrixType> gather_pointers;
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
@@ -178,7 +276,7 @@ class DistributedTreeBuilder {
       // For each process, determine the membership of each points to
       // each of the top leaf nodes and do an all-to-all to do the
       // reshuffle.
-
+      ReshufflePoints_(metric_in, world, top_leaf_nodes);
 
       // Compute two prefix sums to do a re-distribution. This works
       // assuming that the centroids are roughly in Morton order.
