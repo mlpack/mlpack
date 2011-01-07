@@ -31,6 +31,12 @@ class DistributedTreeBuilder {
 
   private:
 
+    static bool MortonOrderNodes_(TreeType *first_node, TreeType *second_node) {
+      return
+        core::math::MortonOrderPoints(
+          first_node->bound().center(), second_node->bound().center());
+    }
+
     void AugmentNodes_(
       boost::mpi::communicator &world,
       const typename TreeType::BoundType &root_bound,
@@ -57,7 +63,6 @@ class DistributedTreeBuilder {
         }
         tmp_point_alias = (1.0 / static_cast<double>(num_samples)) *
                           tmp_point_alias;
-        tmp_point_alias = 0.5 * (tmp_point_alias + random_point_on_surface);
         top_leaf_nodes.push_back(new TreeType());
         top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
           tmp_point);
@@ -88,7 +93,7 @@ class DistributedTreeBuilder {
       // send to the master. This is a MPI gather operation.
       TableType sampled_table;
       std::vector<int> sampled_indices;
-      SelectSubset_(sampling_rate_, &sampled_indices);
+      SelectSubset_(&sampled_indices);
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
@@ -123,8 +128,13 @@ class DistributedTreeBuilder {
         if(top_leaf_nodes_out->size() <
             static_cast<unsigned int>(world.size())) {
           AugmentNodes_(
-            world, sampled_table.get_tree()->bound(), top_leaf_nodes_out);
+            world, sampled_table.get_tree()->bound(), *top_leaf_nodes_out);
         }
+
+        // Sort the nodes by Z-ordering their centroids.
+        std::sort(
+          top_leaf_nodes_out->begin(), top_leaf_nodes_out->end(),
+          MortonOrderNodes_);
       }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
     }
@@ -157,15 +167,13 @@ class DistributedTreeBuilder {
       sampling_rate_ = sampling_rate_in;
     }
 
-    void BuildTree(
+    void Build(
       const core::metric_kernels::AbstractMetric &metric_in,
       boost::mpi::communicator &world) {
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
       BuildSampleTree_(metric_in, world, &top_leaf_nodes);
-
-      // Sort the top leaf nodes by their Z-ordering.
 
     }
 };

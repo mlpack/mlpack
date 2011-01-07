@@ -202,25 +202,40 @@ void RandomCombination(
   }
 }
 
+/** @brief Implements Algorithm 1 in "Fast Construction of $k$-Nearest
+ *         Neighbor Graphs for Point Clouds" by Connor and Kumar, TVCG
+ *         2009.
+ */
 template<typename T>
 int XorMsb(T a, T b) {
 
-  union {
+  typedef union {
     T float_rep_;
     int int_rep_;
   } float_helper;
 
-  // The number of Mantissa bits.
-  int num_mantissa_bits = std::numeric_limits<T>::digits();
   int a_exp, b_exp;
-  union float_helper a_mantissa, b_mantissa;
+  float_helper a_mantissa, b_mantissa;
   a_mantissa.float_rep_ = frexp(a, &a_exp);
   b_mantissa.float_rep_ = frexp(b, &b_exp);
-  if(false) {
-    a_exp -= 0;
-    return a_exp;
+  if(a_exp == b_exp) {
+
+    // Take the XOR of the two Mantissa bit representations and find
+    // the most significant bit.
+    int a_mantissa_xor_b_mantissa = a_mantissa.int_rep_ ^ b_mantissa.int_rep_;
+    int most_significant_bit = 0;
+    int shift_bit = 1;
+    int num_bits_in_int = std::numeric_limits<int>::digits;
+    for(int i = 0; i <= num_bits_in_int; i++) {
+      if((shift_bit & a_mantissa_xor_b_mantissa) != 0) {
+        most_significant_bit = shift_bit;
+      }
+      shift_bit = shift_bit << 1;
+    }
+    return a_exp - shift_bit;
   }
-  if(false) {
+  if(b_exp < a_exp) {
+    return a_exp;
   }
   else {
     return b_exp;
@@ -235,7 +250,7 @@ inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
   int selected_dim = 0;
 
   for(int d = 0; d < a.length(); d++) {
-    int y = XorMsb(a[d], b[d]);
+    long int y = XorMsb(a[d], b[d]);
     if(x < y) {
       x = y;
       selected_dim = d;
