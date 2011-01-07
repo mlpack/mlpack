@@ -226,7 +226,7 @@ int XorMsb(T a, T b) {
     int most_significant_bit = 0;
     int shift_bit = 1;
     int num_bits_in_int = std::numeric_limits<int>::digits;
-    for(int i = 0; i <= num_bits_in_int; i++) {
+    for(int i = 0; i < num_bits_in_int; i++) {
       if((shift_bit & a_mantissa_xor_b_mantissa) != 0) {
         most_significant_bit = shift_bit;
       }
