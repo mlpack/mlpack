@@ -9,20 +9,20 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
+void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid) {
   SVEC *exp_sum;
   double eta; // learning rate
   if (l1.reg == 2) {
-    eta= 1.0 / (l1.reg_factor * t);
+    eta= 1.0 / (l1.reg_factor * tin);
   }
   else {
-    eta = 1.0 / sqrt(t);
+    eta = 1.0 / sqrt(tin);
   }
   exp_sum = CreateEmptySvector();
   
   if (global.comm_method == 1) {
-    for (size_t t=0; t<global.num_threads; t++) {
-      SparseAddOverwrite(exp_sum, l1.msg_pool[t]);
+    for (size_t h=0; h<global.num_threads; h++) {
+      SparseAddOverwrite(exp_sum, l1.msg_pool[h]);
     }
     SparseScaleOverwrite(exp_sum, eta/global.num_threads);
   }
@@ -38,6 +38,8 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
     }
     bias = bias + eta * update;
   }
+  //cout << tid << ", bias: " << bias << endl;
+  //cout << tin << endl;
 
   //print_svec(wvec);
   //print_svec(exp_sum);
@@ -48,7 +50,7 @@ void OgdUpdate(SVEC *wvec, double &t, double &bias, double update, size_t tid) {
   // dummy updating time
   //boost::this_thread::sleep(boost::posix_time::microseconds(1));
 
-  t += 1.0;
+  tin += 1.0;
 }
 
 void *OgdThread(void *in_par) {
@@ -99,12 +101,12 @@ void *OgdThread(void *in_par) {
 
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
-
+      /*
       if (l1.reg == 2) {
 	// [-2 \lambda \eta w_i^t]
-	SparseAddExpertOverwrite(l1.msg_pool[tid], -(l1.reg_factor/l1.t_pool[tid]), l1.w_vec_pool[tid]);
+	SparseAddExpertOverwrite(l1.msg_pool[tid], -l1.reg_factor, l1.w_vec_pool[tid]);
       }
-
+      */
       // wait till all threads send their messages
       pthread_barrier_wait(&barrier_msg_all_sent);
       

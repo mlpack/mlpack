@@ -52,7 +52,6 @@ size_t epoch_ct; // counter of epoches used.
 size_t iter_res_ct; // counter of residual number of iterations.
 size_t parsed_ct; // How many examples been parsed.
 size_t used_ct; // How many examples used, Can be larger than parsed_index.
-int left_ct;
 //size_t *thread_using_index; // The index of the example currently using by thread i. starts from 0.
 
 size_t ring_size;

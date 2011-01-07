@@ -15,6 +15,7 @@ void SparseScaleOverwrite(SVEC *v, double scale) {
   size_t i;
   if (scale == 0.0) {
     EmptyFeatures(v);
+    return;
   }
   else if (scale == 1.0) {
     return;
@@ -23,6 +24,7 @@ void SparseScaleOverwrite(SVEC *v, double scale) {
     for (i=0; i<v->num_nz_feats; i++) {
       v->feats[i].wval = -(v->feats[i].wval);
     }
+    return;
   }
   else {
     for (i=0; i<v->num_nz_feats; i++) {
@@ -43,12 +45,14 @@ void SparseScale(SVEC *dest, double scale, EXAMPLE *x) {
 	dest->feats[i].widx = x->feats[i].widx;
 	dest->feats[i].wval = x->feats[i].wval;
       }
+      return;
     }
     else if (scale == -1.0) {
       for (i=0; i<nz_x; i++) {
 	dest->feats[i].widx = x->feats[i].widx;
 	dest->feats[i].wval = -(x->feats[i].wval);
       }
+      return;
     }
     else {
       for (i=0; i<nz_x; i++) {

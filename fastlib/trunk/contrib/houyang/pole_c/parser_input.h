@@ -271,7 +271,7 @@ void ParallelRead(size_t num_threads) {
 }
 
 void ReadData(boost_po::variables_map &vm) {
-  size_t i, j;
+  size_t i, j, left_ct;
   if ( vm.count("par_read") ) {
     ParallelRead(global.num_threads);
     //ring_size = 1 << 11; // 2048
@@ -300,6 +300,8 @@ void ReadData(boost_po::variables_map &vm) {
       global.num_epoches = global.num_epoches + (size_t)(global.num_iter_res / parsed_ct);
       global.num_iter_res = global.num_iter_res % parsed_ct;
     }
+    left_ct = global.num_threads*global.mb_size - (global.num_epoches * parsed_ct + global.num_iter_res) % (global.num_threads*global.mb_size);
+    global.num_iter_res = global.num_iter_res + left_ct;
     cout << "n_epo= " <<global.num_epoches << ", n_iter_res= " << global.num_iter_res << endl;
 
     if (vm.count("C")) {
@@ -328,8 +330,6 @@ void ReadData(boost_po::variables_map &vm) {
   //for (i = 0; i < ring_size; i++) {
   //  delay_ring[i] = NULL;
   //}
-
-  left_ct = global.num_threads - (global.num_epoches * parsed_ct + global.num_iter_res) % global.num_threads;
 }
 
 void FinishData() {
@@ -374,16 +374,8 @@ int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
     return 1;
   }
   else {
-    left_ct --;
-    if (left_ct >= 0) {
-      (*x_p) = train_exps + old_from_new[tid % parsed_ct];
-      pthread_mutex_unlock(&examples_lock);
-      return -1;
-    }
-    else {
-      pthread_mutex_unlock(&examples_lock);
-      return 0;
-    }
+    pthread_mutex_unlock(&examples_lock);
+    return 0;
   }
 }
 
