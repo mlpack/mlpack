@@ -175,6 +175,16 @@ class DistributedTreeBuilder {
       std::vector<TreeType *> top_leaf_nodes;
       BuildSampleTree_(metric_in, world, &top_leaf_nodes);
 
+      // For each process, determine the membership of each points to
+      // each of the top leaf nodes and do an all-to-all to do the
+      // reshuffle.
+
+
+      // Compute two prefix sums to do a re-distribution. This works
+      // assuming that the centroids are roughly in Morton order.
+
+      // Recompute the centroids and repeat.
+
     }
 };
 };
