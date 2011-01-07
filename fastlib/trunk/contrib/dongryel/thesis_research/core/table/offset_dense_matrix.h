@@ -11,6 +11,7 @@
 
 namespace core {
 namespace table {
+template<typename OldFromNewIndexType>
 class SampleDenseMatrix {
   private:
     friend class boost::serialization::access;
@@ -21,6 +22,10 @@ class SampleDenseMatrix {
      *         serialized/unserialized.
      */
     core::table::DenseMatrix *matrix_;
+
+    /** @brief The associated old from new mapping.
+     */
+    OldFromNewIndexType *old_from_new_;
 
     /** @brief The indices to be serialized.
      */
@@ -38,6 +43,7 @@ class SampleDenseMatrix {
 
     SampleDenseMatrix() {
       matrix_ = NULL;
+      old_from_new_ = NULL;
       indices_to_be_serialized_ = NULL;
       starting_column_index_ = 0;
       num_entries_to_load_ = 0;
@@ -45,16 +51,20 @@ class SampleDenseMatrix {
 
     void Init(
       core::table::DenseMatrix &matrix_in,
+      OldFromNewIndexType *old_from_new_in,
       const std::vector<int> &indices_to_be_serialized_in) {
       matrix_ = &matrix_in;
+      old_from_new_ = old_from_new_in;
       indices_to_be_serialized_ = &indices_to_be_serialized_in;
     }
 
     void Init(
       core::table::DenseMatrix &matrix_in,
+      OldFromNewIndexType *old_from_new_in,
       int starting_column_index_in,
       int num_entries_to_load_in) {
       matrix_ = &matrix_in;
+      old_from_new_ = old_from_new_in;
       indices_to_be_serialized_ = NULL;
       starting_column_index_ = starting_column_index_in;
       num_entries_to_load_ = num_entries_to_load_in;
@@ -63,11 +73,14 @@ class SampleDenseMatrix {
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       for(unsigned int i = 0; i < indices_to_be_serialized_->size(); i++) {
+        int point_index = (*indices_to_be_serialized_)[i];
         core::table::DensePoint point;
-        matrix_->MakeColumnVector((*indices_to_be_serialized_)[i], &point);
+        matrix_->MakeColumnVector(point_index, &point);
         for(int j = 0; j < point.length(); j++) {
           ar & point[j];
         }
+        ar & old_from_new_[point_index].first;
+        ar & old_from_new_[point_index].second.first;
       }
     }
 
@@ -75,11 +88,17 @@ class SampleDenseMatrix {
     void load(Archive &ar, const unsigned int version) {
       double *ptr = matrix_->ptr() + matrix_->n_rows() *
                     starting_column_index_;
+      OldFromNewIndexType *old_from_new_ptr =
+        old_from_new_ + starting_column_index_;
       for(int i = 0; i < num_entries_to_load_; i++) {
         for(int j = 0; j < matrix_->n_rows(); j++) {
           ar & ptr[j];
         }
         ptr += matrix_->n_rows();
+
+        ar & old_from_new_ptr->first;
+        ar & old_from_new_ptr->second.first;
+        old_from_new_ptr++;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()

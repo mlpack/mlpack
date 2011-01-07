@@ -11,7 +11,7 @@
 #include "boost/test/unit_test.hpp"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
-#include "core/tree/distributed_tree_builder.h"
+#include "core/parallel/distributed_tree_builder.h"
 #include "core/math/math_lib.h"
 #include <time.h>
 
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
   typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
 
   DistributedTableType distributed_table;
-  core::tree::DistributedTreeBuilder<DistributedTableType> builder;
+  core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
   builder.Init(distributed_table, 0.2);
   core::metric_kernels::LMetric<2> l2_metric;
   builder.Build(l2_metric, world);
