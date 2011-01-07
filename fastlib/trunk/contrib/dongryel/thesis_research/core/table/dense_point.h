@@ -180,11 +180,8 @@ class DensePoint {
 template<typename DensePointType>
 static void DensePointToArmaVec(
   const DensePointType &point_in, arma::vec *vec_out) {
-  const_cast<arma::u32 &>(vec_out->n_rows) = point_in.length();
-  const_cast<arma::u32 &>(vec_out->n_cols) = 1;
-  const_cast<arma::u32 &>(vec_out->n_elem) = point_in.length();
-  const_cast<bool &>(vec_out->use_aux_mem) = true;
-  const_cast<double *&>(vec_out->mem) = const_cast<double *>(point_in.ptr());
+  arma::mat point_tmp(point_in.ptr(), point_in.length(), 1);
+  *vec_out = point_tmp.unsafe_col(0);
 }
 };
 };

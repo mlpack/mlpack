@@ -175,23 +175,14 @@ class DenseMatrix {
         ptr_.get() + i * n_rows_, n_rows_);
     }
 
-    void MakeColumnVector(
-      int i, arma::vec *vec_out) const {
-      const_cast<arma::u32 &>(vec_out->n_rows) = n_rows_;
-      const_cast<arma::u32 &>(vec_out->n_cols) = 1;
-      const_cast<arma::u32 &>(vec_out->n_elem) = n_rows_;
-      const_cast<bool &>(vec_out->use_aux_mem) = true;
-      const_cast<double *&>(vec_out->mem) =
-        const_cast<double *>(ptr_.get() + i * n_rows_);
+    void MakeColumnVector(int i, arma::vec *vec_out) const {
+      arma::mat matrix_alias(ptr_.get(), n_rows_, n_cols_);
+      *vec_out = matrix_alias.unsafe_col(i);
     }
 
     void MakeColumnVector(int i, arma::vec *vec_out) {
-      const_cast<arma::u32 &>(vec_out->n_rows) = n_rows_;
-      const_cast<arma::u32 &>(vec_out->n_cols) = 1;
-      const_cast<arma::u32 &>(vec_out->n_elem) = n_rows_;
-      const_cast<bool &>(vec_out->use_aux_mem) = true;
-      const_cast<double *&>(vec_out->mem) =
-        const_cast<double *>(ptr_.get() + i * n_rows_);
+      arma::mat matrix_alias(ptr_.get(), n_rows_, n_cols_, false);
+      *vec_out = matrix_alias.unsafe_col(i);
     }
 
     void Alias(const double *ptr_in, int n_rows_in, int n_cols_in) {

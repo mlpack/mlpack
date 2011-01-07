@@ -49,6 +49,10 @@ set(CMAKE_EXE_LINKER_FLAGS_DEBUG "-lefence")
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
+# for a local installation of armadillo
+include_directories($ENV{HOME}/local/armadillo-1.0.0/include)
+link_directories($ENV{HOME}/local/armadillo-1.0.0/lib)
+
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
 
