@@ -46,7 +46,7 @@ class DistributedTreeBuilder {
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
       for(int j = 0; j < num_additional; j++) {
-        tmp_point_alias.zeros();
+        root_bound.RandomPointInside(&tmp_point_alias);
         for(int i = 0; i < num_samples; i++) {
           arma::vec random_node_center;
           core::table::DensePointToArmaVec(
@@ -122,7 +122,8 @@ class DistributedTreeBuilder {
           sampled_table.get_tree(), top_leaf_nodes_out);
         if(top_leaf_nodes_out->size() <
             static_cast<unsigned int>(world.size())) {
-          AugmentNodes_(world, top_leaf_nodes_out);
+          AugmentNodes_(
+            world, sampled_table.get_tree()->bound(), top_leaf_nodes_out);
         }
       }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
@@ -163,6 +164,8 @@ class DistributedTreeBuilder {
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
       BuildSampleTree_(metric_in, world, &top_leaf_nodes);
+
+      // Sort the top leaf nodes by their Z-ordering.
 
     }
 };

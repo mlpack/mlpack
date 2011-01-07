@@ -201,6 +201,48 @@ void RandomCombination(
     }
   }
 }
+
+template<typename T>
+int XorMsb(T a, T b) {
+
+  union {
+    T float_rep_;
+    int int_rep_;
+  } float_helper;
+
+  // The number of Mantissa bits.
+  int num_mantissa_bits = std::numeric_limits<T>::digits();
+  int a_exp, b_exp;
+  union float_helper a_mantissa, b_mantissa;
+  a_mantissa.float_rep_ = frexp(a, &a_exp);
+  b_mantissa.float_rep_ = frexp(b, &b_exp);
+  if(false) {
+    a_exp -= 0;
+    return a_exp;
+  }
+  if(false) {
+  }
+  else {
+    return b_exp;
+  }
+}
+
+/** @brief Compares two vectors based on their Morton order.
+ */
+template<typename PointType>
+inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
+  int x = 0;
+  int selected_dim = 0;
+
+  for(int d = 0; d < a.length(); d++) {
+    int y = XorMsb(a[d], b[d]);
+    if(x < y) {
+      x = y;
+      selected_dim = d;
+    }
+  }
+  return a[selected_dim] < b[selected_dim];
+}
 };
 };
 
