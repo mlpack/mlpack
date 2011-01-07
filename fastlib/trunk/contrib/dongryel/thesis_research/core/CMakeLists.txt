@@ -20,6 +20,7 @@ target_link_libraries(core
   lapack
   blas
   gsl
+  gslcblas
   pthread
   rt
   ${TRILINOS_LIBS}
