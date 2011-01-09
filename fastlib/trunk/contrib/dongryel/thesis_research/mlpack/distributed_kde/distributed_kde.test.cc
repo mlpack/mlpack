@@ -230,7 +230,7 @@ class TestDistributed_Kde {
       args.push_back(random_generate_n_entries_sstr.str());
 
       // Push in the reference dataset name.
-      std::string references_in("random.csv");
+      std::string references_in("random_dataset.csv");
       args.push_back(std::string("--references_in=") + references_in);
 
       // Push in the densities output file name.
@@ -263,7 +263,7 @@ class TestDistributed_Kde {
       }
 
       // Push in the leaf size.
-      int leaf_size = 20;
+      int leaf_size = core::math::RandInt(20, 30);
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());

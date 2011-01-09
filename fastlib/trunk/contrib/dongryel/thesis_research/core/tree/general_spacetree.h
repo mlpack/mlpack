@@ -345,6 +345,7 @@ class GeneralBinarySpaceTree {
         printf("leaf node: %d to %d: %d points total\n",
                begin_, begin_ + count_ - 1, count_);
       }
+      bound_.Print();
 
       if(!is_leaf()) {
         left_->Print();
@@ -440,7 +441,7 @@ class GeneralBinarySpaceTree {
       node->Init(0, matrix.n_cols());
       node->bound().Init(matrix.n_rows());
       TreeSpecType::FindBoundFromMatrix(
-        matrix, 0, matrix.n_cols(), &node->bound());
+        metric_in, matrix, 0, matrix.n_cols(), &node->bound());
 
       int current_num_leaf_nodes = 1;
       SplitTree(

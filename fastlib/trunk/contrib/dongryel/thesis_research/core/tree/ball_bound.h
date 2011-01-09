@@ -33,6 +33,14 @@ class BallBound {
 
   public:
 
+    void Print() const {
+      printf("Hypersphere of radius %g centered at: \n", radius_);
+      for(int i = 0; i < center_.length(); i++) {
+        printf("%g ", center_[i]);
+      }
+      printf("\n");
+    }
+
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & radius_;
