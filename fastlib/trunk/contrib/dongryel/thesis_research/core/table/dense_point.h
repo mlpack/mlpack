@@ -177,11 +177,26 @@ class DensePoint {
     }
 };
 
+static void DoublePtrToArmaVec(
+  const double *point_in, int length, arma::vec *vec_out) {
+
+  // This constructor uses the const_cast for a hack. For some reason,
+  // Armadillo library does not allow creation of aliases for const
+  // double pointers, so I used const_cast here.
+  const_cast<arma::u32 &>(vec_out->n_rows) = length;
+  const_cast<arma::u32 &>(vec_out->n_cols) = 1;
+  const_cast<arma::u32 &>(vec_out->n_elem) = length;
+  const_cast<arma::u16 &>(vec_out->vec_state) = 1;
+  const_cast<arma::u16 &>(vec_out->mem_state) = 2;
+  const_cast<double *&>(vec_out->mem) = const_cast<double *>(point_in);
+}
+
 template<typename DensePointType>
 static void DensePointToArmaVec(
   const DensePointType &point_in, arma::vec *vec_out) {
-  arma::mat point_tmp(point_in.ptr(), point_in.length(), 1);
-  *vec_out = point_tmp.unsafe_col(0);
+
+  core::table::DoublePtrToArmaVec(
+    point_in.ptr(), point_in.length(), vec_out);
 }
 };
 };

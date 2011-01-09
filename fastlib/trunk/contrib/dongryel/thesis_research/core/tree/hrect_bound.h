@@ -26,6 +26,14 @@ class HrectBound {
 
   public:
 
+    void Print() const {
+      printf("Hyperrectangle of dimension: %d\n", dim_);
+      for(int i = 0; i < dim_; i++) {
+        printf("(%g, %g) ", bounds_[i].lo, bounds_[i].hi);
+      }
+      printf("\n");
+    }
+
     HrectBound() {
       dim_ = -1;
       bounds_ = NULL;

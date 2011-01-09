@@ -15,3 +15,14 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(armadillo_wrapper-test
+               EXCLUDE_FROM_ALL
+               armadillo_wrapper.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(armadillo_wrapper-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )

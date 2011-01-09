@@ -55,10 +55,11 @@ class GenMetricTree {
   public:
 
     static void FindBoundFromMatrix(
+      const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int count, BoundType *bounds) {
 
-
+      MakeLeafNode(metric_in, matrix, first, count, bounds);
     }
 
     static void MakeLeafNode(

@@ -34,6 +34,7 @@ class GenKdTree {
     typedef IncomingStatisticType StatisticType;
 
     static void FindBoundFromMatrix(
+      const core::metric_kernels::AbstractMetric &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int count, BoundType *bounds) {
 

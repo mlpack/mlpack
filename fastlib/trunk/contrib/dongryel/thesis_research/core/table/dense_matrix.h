@@ -176,13 +176,13 @@ class DenseMatrix {
     }
 
     void MakeColumnVector(int i, arma::vec *vec_out) const {
-      arma::mat matrix_alias(ptr_.get(), n_rows_, n_cols_);
-      *vec_out = matrix_alias.unsafe_col(i);
+      core::table::DoublePtrToArmaVec(
+        ptr_.get() + i * n_rows_, n_rows_, vec_out);
     }
 
     void MakeColumnVector(int i, arma::vec *vec_out) {
-      arma::mat matrix_alias(ptr_.get(), n_rows_, n_cols_, false);
-      *vec_out = matrix_alias.unsafe_col(i);
+      core::table::DoublePtrToArmaVec(
+        ptr_.get() + i * n_rows_, n_rows_, vec_out);
     }
 
     void Alias(const double *ptr_in, int n_rows_in, int n_cols_in) {
