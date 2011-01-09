@@ -117,19 +117,6 @@ class DensePoint {
       is_alias_ = false;
     }
 
-    void Init(const std::vector<double> &vector_in) {
-      ptr_ =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->ConstructArray<double>(
-          vector_in.size()) :
-        new double[vector_in.size()];
-      n_rows_ = vector_in.size();
-      for(unsigned int i = 0; i < vector_in.size(); i++) {
-        ptr_[i] = vector_in[i];
-      }
-      is_alias_ = false;
-    }
-
     void CopyValues(const DensePoint &point_in) {
       memcpy(
         ptr_.get(), point_in.ptr(), sizeof(double) * point_in.length());

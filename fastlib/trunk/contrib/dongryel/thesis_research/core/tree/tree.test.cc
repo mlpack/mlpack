@@ -113,6 +113,19 @@ class TestTree {
         }
       }
 
+      // Take the root bounding primitive, and generate points within
+      // it and test whether it actually contains the randomly
+      // generated points.
+      const int num_random_points_within_bound = 1000;
+      for(int k = 0; k < num_random_points_within_bound; k++) {
+        core::table::DensePoint random_point;
+        reordered_table.get_tree()->bound().RandomPointInside(&random_point);
+        if(! reordered_table.get_tree()->bound().Contains(
+              l2_metric, random_point)) {
+          return false;
+        }
+      }
+
       // Now test the node iterator at each level of the tree.
       return TestTreeIterator_(
                reordered_table.get_tree(), reordered_table);
