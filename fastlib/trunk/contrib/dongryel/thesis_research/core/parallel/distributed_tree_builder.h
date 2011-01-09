@@ -83,7 +83,7 @@ class DistributedTreeBuilder {
 
     void SetupGatherPointers_(
       TableType &sampled_table, const std::vector<int> &counts,
-      std::vector< core::table::SampleDenseMatrixType > *gather_pointers_out) {
+      std::vector< SampleDenseMatrixType > *gather_pointers_out) {
 
       // Have the pointers point to the right position based on the
       // prefix sum position.
@@ -113,7 +113,7 @@ class DistributedTreeBuilder {
       // Loop through each point and find the closest leaf node.
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         core::table::DensePoint point;
-        owned_table_->get(i, &point);
+        distributed_table_->local_table()->get(i, &point);
 
         // Loop through each leaf node.
         double min_squared_mid_distance = std::numeric_limits<double>::max();
@@ -167,7 +167,7 @@ class DistributedTreeBuilder {
         world.rank());
 
       // Setup points so that they will be reshuffled.
-      std::vector<core::table::SampleDenseMatrixType> points_to_be_distributed;
+      std::vector<SampleDenseMatrixType> points_to_be_distributed;
       points_to_be_distributed.resize(world.size());
       for(unsigned int i = 0; i < points_to_be_distributed.size(); i++) {
         points_to_be_distributed[i].Init(
@@ -175,7 +175,7 @@ class DistributedTreeBuilder {
           distributed_table_->local_table()->old_from_new(),
           assigned_point_indices[i]);
       }
-      std::vector<core::table::SampleDenseMatrixType> reshuffled_points;
+      std::vector<SampleDenseMatrixType> reshuffled_points;
       SetupGatherPointers_(
         *new_local_table, reshuffled_contributions, &reshuffled_points);
       boost::mpi::all_to_all(
@@ -203,10 +203,12 @@ class DistributedTreeBuilder {
 
       // The master process allocates the sample table and gathers the
       // chosen samples from each process.
-      core::table::SampleDenseMatrixType local_pointer;
+      SampleDenseMatrixType local_pointer;
       local_pointer.Init(
-        distributed_table_->local_table()->data(), sampled_indices);
-      std::vector<core::table::SampleDenseMatrixType> gather_pointers;
+        distributed_table_->local_table()->data(),
+        distributed_table_->local_table()->old_from_new(),
+        sampled_indices);
+      std::vector<SampleDenseMatrixType> gather_pointers;
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
