@@ -49,12 +49,17 @@ class HrectBound {
     }
 
     void RandomPointInside(arma::vec *random_point_out) const {
-
       random_point_out->set_size(dim_);
       for(int i = 0; i < dim_; i++) {
         (*random_point_out)[i] = core::math::Random(
                                    bounds_[i].lo, bounds_[i].hi);
       }
+    }
+
+    void RandomPointInside(core::table::DensePoint *random_point_out) const {
+      random_point_out->Init(dim_);
+      arma::vec random_point_out_alias(random_point_out->ptr(), dim_, false);
+      this->RandomPointInside(&random_point_out_alias);
     }
 
     /**
@@ -83,7 +88,9 @@ class HrectBound {
     /**
      * Determines if a point is within this bound.
      */
-    bool Contains(const core::table::DensePoint &point) const {
+    bool Contains(
+      const core::metric_kernels::AbstractMetric &metric_in,
+      const core::table::DensePoint &point) const {
       for(int i = 0; i < point.length(); i++) {
         if(!bounds_[i].Contains(point[i])) {
           return false;

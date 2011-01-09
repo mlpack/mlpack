@@ -22,12 +22,10 @@ namespace tree {
  * Ball bound that works in arbitrary metric spaces.
  */
 class BallBound {
-  public:
-    typedef core::table::DensePoint TPoint;
 
   private:
     double radius_;
-    TPoint center_;
+    core::table::DensePoint center_;
 
     friend class boost::serialization::access;
 
@@ -74,6 +72,13 @@ class BallBound {
       (*random_point_out) += center_alias;
     }
 
+    void RandomPointInside(core::table::DensePoint *random_point_out) const {
+      random_point_out->Init(center_.length());
+      arma::vec random_point_out_alias(
+        random_point_out->ptr(), center_.length(), false);
+      this->RandomPointInside(&random_point_out_alias);
+    }
+
     void Init(int dimension) {
       radius_ = 0.0;
       center_.Init(dimension);
@@ -91,11 +96,11 @@ class BallBound {
       radius_ = d;
     }
 
-    const TPoint& center() const {
+    const core::table::DensePoint& center() const {
       return center_;
     }
 
-    TPoint& center() {
+    core::table::DensePoint& center() {
       return center_;
     }
 
