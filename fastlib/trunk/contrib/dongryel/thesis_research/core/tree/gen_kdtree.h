@@ -51,7 +51,7 @@ class GenKdTree {
       const core::table::DenseMatrix& matrix,
       int begin, int count, BoundType *bounds) {
 
-      FindBoundFromMatrix(matrix, begin, count, bounds);
+      FindBoundFromMatrix(metric_in, matrix, begin, count, bounds);
     }
 
     template<typename TreeType>
