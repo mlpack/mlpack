@@ -263,7 +263,7 @@ class DistributedTreeBuilder {
       // Pairs of point id and its squared distance from the centroid.
       std::vector< std::pair<int, double> > point_id_distance_pairs;
       point_id_distance_pairs.resize(
-        distributed_table_->local_table()->n_enries());
+        distributed_table_->local_table()->n_entries());
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         arma::vec point;
         distributed_table_->local_table()->get(i, &point);
