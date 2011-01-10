@@ -65,8 +65,9 @@ class TestNbodySimulator {
       }
     }
 
+    template<typename MetricType>
     void UltraNaive_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       TableType &table,
       const physpack::nbody_simulator::AxilrodTeller &potential,
       std::vector<double> &ultra_naive_query_results) {
