@@ -173,7 +173,7 @@ class LengthTrait {
 template<>
 class LengthTrait<arma::vec> {
   public:
-    static int Length(const arma::vec &p) {
+    static int length(const arma::vec &p) {
       return p.n_elem;
     }
 };
