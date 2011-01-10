@@ -63,6 +63,7 @@ class DistributedTreeBuilder {
 
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
+      printf("Augmenting %d nodes.\n", num_additional);
       for(int j = 0; j < num_additional; j++) {
         root_bound.RandomPointInside(&tmp_point_alias);
         for(int i = 0; i < num_samples; i++) {
@@ -140,8 +141,8 @@ class DistributedTreeBuilder {
 
     template<typename MetricType>
     void ReshufflePoints_(
-      const MetricType &metric_in,
       boost::mpi::communicator &world,
+      const MetricType &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes) {
 
       // Determine the membership counts.
@@ -189,8 +190,8 @@ class DistributedTreeBuilder {
 
     template<typename MetricType>
     void BuildSampleTree_(
-      const MetricType &metric_in,
       boost::mpi::communicator &world,
+      const MetricType &metric_in,
       std::vector<TreeType *> *top_leaf_nodes_out) {
 
       // Each process generates a random subset of the data points to
@@ -243,6 +244,47 @@ class DistributedTreeBuilder {
           MortonOrderNodes_);
       }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
+    }
+
+    template<typename MetricType>
+    void Redistribute_(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
+      const std::vector<int> &sorted_indices_increasing) {
+
+      // Do a scan.
+      int cumulative_sum;
+      boost::mpi::scan(
+        world, distributed_table_->local_table()->n_entries(),
+        cumulative_sum, std::plus<int>());
+      std::vector<int> cumulative_distribution;
+      boost::mpi::all_gather(world, cumulative_sum, cumulative_distribution);
+
+      // Distribute the points roughly equally across all processes.
+      int total_num_points = cumulative_distribution.back();
+      int points_per_process = total_num_points / world.size();
+      int remainder = total_num_points - points_per_process * world.size();
+      std::vector<int> desired_cumulative_distribution(world.size(), 0);
+      desired_cumulative_distribution[0] =
+        (remainder > 0) ? (points_per_process + 1) : points_per_process;
+      for(int i = 1; i < world.size(); i++) {
+        desired_cumulative_distribution[i] =
+          desired_cumulative_distribution[i - 1] + points_per_process;
+        if(i < remainder) {
+          desired_cumulative_distribution[i]++;
+        }
+      }
+
+      // Each process needs to figure out how many points to
+      // send/receive from the next process in index.
+      for(unsigned int i = 0; i < cumulative_distribution.size(); i++) {
+        printf("%d ", cumulative_distribution[i]);
+      }
+      printf("\n");
+      for(unsigned int i = 0; i < desired_cumulative_distribution.size(); i++) {
+        printf("%d ", desired_cumulative_distribution[i]);
+      }
+      printf("\n");
     }
 
     template<typename MetricType>
@@ -310,26 +352,29 @@ class DistributedTreeBuilder {
 
     template<typename MetricType>
     void Build(
-      const MetricType &metric_in,
-      boost::mpi::communicator &world) {
+      boost::mpi::communicator &world, const MetricType &metric_in) {
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
-      BuildSampleTree_(metric_in, world, &top_leaf_nodes);
+      BuildSampleTree_(world, metric_in, &top_leaf_nodes);
 
       // For each process, determine the membership of each points to
       // each of the top leaf nodes and do an all-to-all to do the
       // reshuffle.
-      ReshufflePoints_(metric_in, world, top_leaf_nodes);
+      ReshufflePoints_(world, metric_in, top_leaf_nodes);
 
       // Recompute the centroids of each process and sort each point
       // according to its distance from its centroid.
       std::vector<int> sorted_indices_increasing;
       RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
 
+      // Do a re-distribution of points.
+      Redistribute_(world, metric_in, sorted_indices_increasing);
+
       // Compute two prefix sums to do a re-distribution so that each
       // process has a equal number of points. This works assuming
       // that the centroids are roughly in Morton order.
+
 
       // Recompute the centroids and repeat.
 
