@@ -7,7 +7,6 @@
 #define PHYSPACK_NBODY_SIMULATOR_NBODY_SIMULATOR_ARGUMENTS_H
 
 #include "core/table/table.h"
-#include "core/metric_kernels/abstract_metric.h"
 
 namespace physpack {
 namespace nbody_simulator {
@@ -25,7 +24,7 @@ class NbodySimulatorArguments {
 
     double probability_;
 
-    core::metric_kernels::AbstractMetric *metric_;
+    core::metric_kernels::LMetric<2> *metric_;
 
     double summary_compute_quantile_;
 

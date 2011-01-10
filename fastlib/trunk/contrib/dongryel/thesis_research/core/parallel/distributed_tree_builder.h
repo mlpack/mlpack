@@ -11,7 +11,6 @@
 #include <algorithm>
 #include <numeric>
 #include <boost/mpi.hpp>
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -97,8 +96,9 @@ class DistributedTreeBuilder {
       }
     }
 
+    template<typename MetricType>
     void GetLeafNodeMembershipCounts_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes,
       std::vector< std::vector<int> > *assigned_point_indices,
       std::vector<int> *membership_counts_per_node) {
@@ -137,8 +137,9 @@ class DistributedTreeBuilder {
       }
     }
 
+    template<typename MetricType>
     void ReshufflePoints_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       boost::mpi::communicator &world,
       const std::vector<TreeType *> &top_leaf_nodes) {
 
@@ -185,8 +186,9 @@ class DistributedTreeBuilder {
       distributed_table_->set_local_table(new_local_table);
     }
 
+    template<typename MetricType>
     void BuildSampleTree_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       boost::mpi::communicator &world,
       std::vector<TreeType *> *top_leaf_nodes_out) {
 
@@ -242,6 +244,35 @@ class DistributedTreeBuilder {
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
     }
 
+    template<typename MetricType>
+    void RankPointsFromItsCentroid_(
+      const MetricType &metric_in,
+      std::vector<int> *sorted_indices_increasing) {
+
+      // First compute the centroid.
+      arma::vec centroid;
+      centroid.zeros(distributed_table_->n_attributes());
+      for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
+        arma::vec point;
+        distributed_table_->local_table()->get(i, &point);
+        centroid += point;
+      }
+      centroid /=
+        static_cast<double>(distributed_table_->local_table()->n_entries());
+
+      // Pairs of point id and its squared distance from the centroid.
+      std::vector< std::pair<int, double> > point_id_distance_pairs;
+      point_id_distance_pairs.resize(
+        distributed_table_->local_table()->n_enries());
+      for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
+        arma::vec point;
+        distributed_table_->local_table()->get(i, &point);
+        point_id_distance_pairs[i].first = i;
+        point_id_distance_pairs[i].second =
+          metric_in.DistanceSq(point, centroid);
+      }
+    }
+
     void SelectSubset_(
       std::vector<int> *sampled_indices_out) {
 
@@ -270,8 +301,9 @@ class DistributedTreeBuilder {
       sampling_rate_ = sampling_rate_in;
     }
 
+    template<typename MetricType>
     void Build(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       boost::mpi::communicator &world) {
 
       // Build the initial sample tree.
@@ -283,11 +315,14 @@ class DistributedTreeBuilder {
       // reshuffle.
       ReshufflePoints_(metric_in, world, top_leaf_nodes);
 
-      // Recompute the centroids of each machine.
+      // Recompute the centroids of each process and sort each point
+      // according to its distance from its centroid.
+      std::vector<int> sorted_indices_increasing;
+      RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
 
-
-      // Compute two prefix sums to do a re-distribution. This works
-      // assuming that the centroids are roughly in Morton order.
+      // Compute two prefix sums to do a re-distribution so that each
+      // process has a equal number of points. This works assuming
+      // that the centroids are roughly in Morton order.
 
       // Recompute the centroids and repeat.
 

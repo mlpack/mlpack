@@ -179,9 +179,10 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
+    template<typename MetricType>
     void ReadjustCentroids_(
       boost::mpi::communicator &world,
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const std::vector<TreeType *> &top_leaf_nodes,
       int leaf_node_assignment_index) {
 
@@ -313,8 +314,9 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
+    template<typename MetricType>
     void GetLeafNodeMembershipCounts_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const std::vector<TreeType *> &top_leaf_nodes,
       std::vector<double> &points_assigned_to_node) {
 
@@ -506,8 +508,9 @@ class DistributedTable: public boost::noncopyable {
       return global_table_->get_tree() != NULL;
     }
 
+    template<typename MetricType>
     void IndexData(
-      const core::metric_kernels::AbstractMetric & metric_in,
+      const MetricType & metric_in,
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 

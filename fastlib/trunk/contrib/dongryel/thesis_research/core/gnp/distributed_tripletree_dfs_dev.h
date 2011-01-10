@@ -25,8 +25,9 @@ extern core::table::MemoryMappedFile *global_m_file_;
 };
 
 template<typename DistributedProblemType>
+template<typename MetricType>
 void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::ReduceScatter_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
   // The typedef of a sub table in use and its list.
@@ -180,8 +181,9 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Init(
 }
 
 template<typename DistributedProblemType>
+template<typename MetricType>
 void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Compute(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
   // Allocate space for storing the final results.

@@ -8,7 +8,6 @@
 
 #include <boost/interprocess/offset_ptr.hpp>
 #include "core/table/table.h"
-#include "core/metric_kernels/abstract_metric.h"
 
 namespace core {
 namespace table {
@@ -40,7 +39,7 @@ class DistributedKdeArguments {
 
     std::string kernel_;
 
-    core::metric_kernels::AbstractMetric *metric_;
+    core::metric_kernels::LMetric<2> *metric_;
 
   public:
     DistributedKdeArguments() {

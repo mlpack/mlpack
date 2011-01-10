@@ -7,7 +7,6 @@
 #define CORE_GNP_TRIPLE_DISTANCE_SQ_H
 
 #include <armadillo>
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/table/table.h"
 #include "core/table/dense_point.h"
 
@@ -52,8 +51,9 @@ class TripleDistanceSq {
       return distance_sq_.at(first_pos, second_pos);
     }
 
+    template<typename MetricType>
     void ReplaceOnePoint(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DensePoint &new_point_in,
       int new_point_index_in,
       int point_pos_in) {

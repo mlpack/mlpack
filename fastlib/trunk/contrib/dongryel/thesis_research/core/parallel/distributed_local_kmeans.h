@@ -194,10 +194,10 @@ class DistributedLocalKMeans {
 
   public:
 
-    template<typename TableType>
+    template<typename MetricType, typename TableType>
     void Compute(
       boost::mpi::communicator &comm,
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TableType &local_table_in,
       int neighbor_radius, int num_outer_loop_iterations,
       core::table::DensePoint &starting_centroid,

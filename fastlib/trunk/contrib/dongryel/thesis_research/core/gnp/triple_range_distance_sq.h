@@ -8,7 +8,6 @@
 
 #include <armadillo>
 #include "core/math/math_lib.h"
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/table/table.h"
 
 namespace core {
@@ -128,8 +127,9 @@ class TripleRangeDistanceSq {
       nodes_ = ranges_in.nodes();
     }
 
+    template<typename MetricType>
     void ReplaceOneNodeBackward(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const TableType &table_in,
       TreeType *new_node_in,
       int node_index_in) {
@@ -152,8 +152,9 @@ class TripleRangeDistanceSq {
       ComputeNumTuples_(table_in);
     }
 
+    template<typename MetricType>
     void ReplaceOneNodeForward(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const TableType &table_in,
       TreeType *new_node_in,
       int node_index_in) {
@@ -176,8 +177,9 @@ class TripleRangeDistanceSq {
       ComputeNumTuples_(table_in);
     }
 
+    template<typename MetricType>
     void Init(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const TableType &table,
       const std::vector< TreeType * > &nodes_in) {
       for(unsigned int j = 0; j < nodes_.size(); j++) {

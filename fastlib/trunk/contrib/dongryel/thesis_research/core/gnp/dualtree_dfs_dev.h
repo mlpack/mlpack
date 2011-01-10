@@ -96,8 +96,9 @@ void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void DualtreeDfs<ProblemType>::Compute(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::ResultType *query_results,
   bool do_initializations) {
 
@@ -180,8 +181,9 @@ void DualtreeDfs<ProblemType>::PreProcess_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void DualtreeDfs<ProblemType>::DualtreeBase_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
   typename ProblemType::ResultType *query_results) {
@@ -246,8 +248,9 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
   double failure_probability,
@@ -303,8 +306,9 @@ void DualtreeDfs<ProblemType>::Summarize_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void DualtreeDfs<ProblemType>::Heuristic_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *node,
   typename ProblemType::TableType *node_table,
   typename ProblemType::TableType::TreeType *first_candidate,
@@ -338,8 +342,9 @@ void DualtreeDfs<ProblemType>::Heuristic_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
   double failure_probability,
@@ -519,8 +524,9 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void DualtreeDfs<ProblemType>::PostProcess_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results) {
 

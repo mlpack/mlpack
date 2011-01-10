@@ -11,7 +11,6 @@
 #include "core/tree/general_spacetree.h"
 #include "core/tree/hrect_bound.h"
 
-
 namespace core {
 namespace tree {
 
@@ -33,8 +32,9 @@ class GenKdTree {
 
     typedef IncomingStatisticType StatisticType;
 
+    template<typename MetricType>
     static void FindBoundFromMatrix(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int count, BoundType *bounds) {
 
@@ -46,24 +46,26 @@ class GenKdTree {
       }
     }
 
+    template<typename MetricType>
     static void MakeLeafNode(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix& matrix,
       int begin, int count, BoundType *bounds) {
 
       FindBoundFromMatrix(metric_in, matrix, begin, count, bounds);
     }
 
-    template<typename TreeType>
+    template<typename MetricType, typename TreeType>
     static void CombineBounds(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix &matrix,
       TreeType *node, TreeType *left, TreeType *right) {
 
     }
 
+    template<typename MetricType>
     static void ComputeMemberships(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int end,
       BoundType &left_bound, BoundType &right_bound,
@@ -96,9 +98,9 @@ class GenKdTree {
       }
     }
 
-    template<typename TreeType, typename IndexType>
+    template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
       TreeType **right, int leaf_size,
       IndexType *old_from_new,
@@ -148,7 +150,6 @@ class GenKdTree {
           (*right)->Init(
             node->begin() + left_count, node->count() - left_count);
         }
-
         return true;
       }
       return false;

@@ -157,8 +157,9 @@ class TestDistributed_Kde {
       return achieved_error <= relative_error;
     }
 
+    template<typename MetricType>
     void UltraNaive_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       TableType &query_table, TableType &reference_table,
       const core::metric_kernels::AbstractKernel &kernel,
       std::vector<double> &ultra_naive_query_results) {

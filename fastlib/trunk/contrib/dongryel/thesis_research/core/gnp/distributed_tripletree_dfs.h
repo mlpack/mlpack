@@ -10,7 +10,6 @@
 #define CORE_GNP_DISTRIBUTED_TRIPLETREE_DFS_H
 
 #include <boost/mpi/communicator.hpp>
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/math/range.h"
 
 namespace core {
@@ -41,8 +40,9 @@ class DistributedTripletreeDfs {
 
   private:
 
+    template<typename MetricType>
     void ReduceScatter_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results);
 
     void ResetStatisticRecursion_(
@@ -54,8 +54,9 @@ class DistributedTripletreeDfs {
     template<typename TemplateTreeType>
     void PreProcess_(TemplateTreeType *qnode);
 
+    template<typename MetricType>
     void PostProcess_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
 
   public:
@@ -71,8 +72,9 @@ class DistributedTripletreeDfs {
     void Init(
       boost::mpi::communicator *world, DistributedProblemType &problem_in);
 
+    template<typename MetricType>
     void Compute(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results);
 };
 };
