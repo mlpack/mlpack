@@ -10,6 +10,7 @@
 
 #include <algorithm>
 #include <numeric>
+#include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
@@ -260,7 +261,8 @@ class DistributedTreeBuilder {
       centroid /=
         static_cast<double>(distributed_table_->local_table()->n_entries());
 
-      // Pairs of point id and its squared distance from the centroid.
+      // Pairs of point id and its squared distance from the centroid
+      // and sort them.
       std::vector< std::pair<int, double> > point_id_distance_pairs;
       point_id_distance_pairs.resize(
         distributed_table_->local_table()->n_entries());
@@ -271,6 +273,11 @@ class DistributedTreeBuilder {
         point_id_distance_pairs[i].second =
           metric_in.DistanceSq(point, centroid);
       }
+      std::sort(
+        point_id_distance_pairs.begin(),
+        point_id_distance_pairs.end(),
+        boost::bind(&std::pair<int, double>::second, _1) <
+        boost::bind(&std::pair<int, double>::second, _2));
     }
 
     void SelectSubset_(
