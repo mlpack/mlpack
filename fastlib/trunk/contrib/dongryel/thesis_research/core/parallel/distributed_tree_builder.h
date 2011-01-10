@@ -200,6 +200,11 @@ class DistributedTreeBuilder {
       std::vector<int> sampled_indices;
       SelectSubset_(&sampled_indices);
 
+      distributed_table_->local_table()->data().Print();
+      for(unsigned int i = 0; i < sampled_indices.size(); i++) {
+        printf("Process %d selects %d\n", world.rank(), sampled_indices[i]);
+      }
+
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
       // of space to receive all the points.
@@ -222,6 +227,14 @@ class DistributedTreeBuilder {
         sampled_table.Init(
           distributed_table_->n_attributes(), total_num_samples);
         SetupGatherPointers_(sampled_table, counts, &gather_pointers);
+
+        // The master process actually needs to setup its own portion
+        // manually since MPI gather does not call
+        // serialize/unserialize on the self.
+        local_pointer.Export(
+          gather_pointers[0].matrix(),
+          gather_pointers[0].old_from_new(),
+          gather_pointers[0].starting_column_index());
       }
       boost::mpi::gather(world, local_pointer, gather_pointers, 0);
 
@@ -229,6 +242,10 @@ class DistributedTreeBuilder {
       // the number of processes. If missing some nodes, then sample a
       // region and try to make up a node.
       if(world.rank() == 0) {
+
+        sampled_table.data().Print();
+
+        top_leaf_nodes_out->resize(0);
         sampled_table.IndexData(metric_in, 1, world.size());
         sampled_table.get_leaf_nodes(
           sampled_table.get_tree(), top_leaf_nodes_out);
@@ -243,7 +260,17 @@ class DistributedTreeBuilder {
           top_leaf_nodes_out->begin(), top_leaf_nodes_out->end(),
           MortonOrderNodes_);
       }
+      else {
+        top_leaf_nodes_out->resize(world.size());
+        std::fill(
+          top_leaf_nodes_out->begin(), top_leaf_nodes_out->end(),
+          new TreeType());
+      }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
+
+      for(unsigned int i = 0; i < top_leaf_nodes_out->size(); i++) {
+        (*top_leaf_nodes_out)[i]->bound().center().Print();
+      }
     }
 
     template<typename MetricType>

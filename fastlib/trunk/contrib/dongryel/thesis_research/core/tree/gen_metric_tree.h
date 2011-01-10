@@ -25,6 +25,10 @@ class GenMetricTree {
     typedef IncomingStatisticType StatisticType;
 
   private:
+
+    /** @brief Computes the furthest point from the given pivot and
+     *         finds out the index.
+     */
     template<typename MetricType>
     static int FurthestColumnIndex_(
       const MetricType &metric_in,
@@ -48,7 +52,6 @@ class GenMetricTree {
           furthest_index = i;
         }
       }
-
       return furthest_index;
     }
 
@@ -72,14 +75,12 @@ class GenMetricTree {
       bounds->center().SetZero();
 
       int end = begin + count;
-      core::table::DensePoint col_point;
       arma::vec bound_ref;
       core::table::DensePointToArmaVec(bounds->center(), &bound_ref);
       for(int i = begin; i < end; i++) {
+        arma::vec col_point;
         matrix.MakeColumnVector(i, &col_point);
-        arma::vec col_point_ref;
-        core::table::DensePointToArmaVec(col_point, &col_point_ref);
-        bound_ref += col_point_ref;
+        bound_ref += col_point;
       }
       bound_ref = (1.0 / static_cast<double>(count)) * bound_ref;
 

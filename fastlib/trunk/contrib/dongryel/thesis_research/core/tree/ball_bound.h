@@ -23,9 +23,16 @@ namespace tree {
 class BallBound {
 
   private:
+
+    /** @brief The radius of the ball bound.
+     */
     double radius_;
+
+    /** @brief The center of the ball bound.
+     */
     core::table::DensePoint center_;
 
+    // For boost serialization.
     friend class boost::serialization::access;
 
   public:

@@ -142,20 +142,22 @@ class GeneralBinarySpaceTree {
 
   public:
 
+    /** @brief A method for serializing a node. This method does not
+     *         save the children.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-
-      // This does not save the children.
       ar & bound_;
       ar & begin_;
       ar & count_;
       ar & stat_;
     }
 
+    /** @brief A method for unserializing a node. This does not
+     *         recover its children though.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-
-      // This does not get the children.
       ar & bound_;
       ar & begin_;
       ar & count_;
