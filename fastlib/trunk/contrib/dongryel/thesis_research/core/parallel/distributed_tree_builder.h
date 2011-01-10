@@ -63,7 +63,6 @@ class DistributedTreeBuilder {
 
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
-      printf("Augmenting %d nodes.\n", num_additional);
       for(int j = 0; j < num_additional; j++) {
         root_bound.RandomPointInside(&tmp_point_alias);
         for(int i = 0; i < num_samples; i++) {
@@ -148,6 +147,10 @@ class DistributedTreeBuilder {
       // Determine the membership counts.
       std::vector< std::vector<int> > assigned_point_indices;
       std::vector<int> membership_counts_per_node;
+      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+        top_leaf_nodes[i]->bound().center().Print();
+      }
+
       GetLeafNodeMembershipCounts_(
         metric_in, top_leaf_nodes,
         &assigned_point_indices, &membership_counts_per_node);
@@ -192,18 +195,13 @@ class DistributedTreeBuilder {
     void BuildSampleTree_(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
+      TableType *sampled_table_out,
       std::vector<TreeType *> *top_leaf_nodes_out) {
 
       // Each process generates a random subset of the data points to
       // send to the master. This is a MPI gather operation.
-      TableType sampled_table;
       std::vector<int> sampled_indices;
       SelectSubset_(&sampled_indices);
-
-      distributed_table_->local_table()->data().Print();
-      for(unsigned int i = 0; i < sampled_indices.size(); i++) {
-        printf("Process %d selects %d\n", world.rank(), sampled_indices[i]);
-      }
 
       // Send the number of points chosen in this process to the
       // master so that the master can allocate the appropriate amount
@@ -224,9 +222,9 @@ class DistributedTreeBuilder {
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
-        sampled_table.Init(
+        sampled_table_out->Init(
           distributed_table_->n_attributes(), total_num_samples);
-        SetupGatherPointers_(sampled_table, counts, &gather_pointers);
+        SetupGatherPointers_(*sampled_table_out, counts, &gather_pointers);
 
         // The master process actually needs to setup its own portion
         // manually since MPI gather does not call
@@ -243,28 +241,22 @@ class DistributedTreeBuilder {
       // region and try to make up a node.
       if(world.rank() == 0) {
 
-        sampled_table.data().Print();
+        sampled_table_out->data().Print();
 
         top_leaf_nodes_out->resize(0);
-        sampled_table.IndexData(metric_in, 1, world.size());
-        sampled_table.get_leaf_nodes(
-          sampled_table.get_tree(), top_leaf_nodes_out);
+        sampled_table_out->IndexData(metric_in, 1, world.size());
+        sampled_table_out->get_leaf_nodes(
+          sampled_table_out->get_tree(), top_leaf_nodes_out);
         if(top_leaf_nodes_out->size() <
             static_cast<unsigned int>(world.size())) {
           AugmentNodes_(
-            world, sampled_table.get_tree()->bound(), *top_leaf_nodes_out);
+            world, sampled_table_out->get_tree()->bound(), *top_leaf_nodes_out);
         }
 
         // Sort the nodes by Z-ordering their centroids.
         std::sort(
           top_leaf_nodes_out->begin(), top_leaf_nodes_out->end(),
           MortonOrderNodes_);
-      }
-      else {
-        top_leaf_nodes_out->resize(world.size());
-        std::fill(
-          top_leaf_nodes_out->begin(), top_leaf_nodes_out->end(),
-          new TreeType());
       }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
 
@@ -383,7 +375,8 @@ class DistributedTreeBuilder {
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
-      BuildSampleTree_(world, metric_in, &top_leaf_nodes);
+      TableType sampled_table;
+      BuildSampleTree_(world, metric_in, &sampled_table, &top_leaf_nodes);
 
       // For each process, determine the membership of each points to
       // each of the top leaf nodes and do an all-to-all to do the
@@ -405,6 +398,12 @@ class DistributedTreeBuilder {
 
       // Recompute the centroids and repeat.
 
+      // Destroy the top leaf nodes, if not the master process.
+      if(world.rank() != 0) {
+        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+          delete top_leaf_nodes[i];
+        }
+      }
     }
 };
 };
