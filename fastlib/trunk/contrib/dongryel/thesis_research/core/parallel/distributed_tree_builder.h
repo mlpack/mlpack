@@ -158,7 +158,7 @@ class DistributedTreeBuilder {
         std::accumulate(
           reshuffled_contributions.begin(), reshuffled_contributions.end(), 0);
 
-      // Allocate a new table.
+      // Allocate a new table to get all the points.
       TableType *new_local_table =
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
@@ -180,6 +180,9 @@ class DistributedTreeBuilder {
         *new_local_table, reshuffled_contributions, &reshuffled_points);
       boost::mpi::all_to_all(
         world, points_to_be_distributed, reshuffled_points);
+
+      // Set it to the newly shuffled table.
+      distributed_table_->set_local_table(new_local_table);
     }
 
     void BuildSampleTree_(
@@ -279,6 +282,9 @@ class DistributedTreeBuilder {
       // each of the top leaf nodes and do an all-to-all to do the
       // reshuffle.
       ReshufflePoints_(metric_in, world, top_leaf_nodes);
+
+      // Recompute the centroids of each machine.
+
 
       // Compute two prefix sums to do a re-distribution. This works
       // assuming that the centroids are roughly in Morton order.
