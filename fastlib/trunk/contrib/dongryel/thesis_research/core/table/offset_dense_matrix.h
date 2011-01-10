@@ -46,6 +46,18 @@ class SampleDenseMatrix {
 
   public:
 
+    core::table::DenseMatrix *matrix() {
+      return matrix_;
+    }
+
+    OldFromNewIndexType *old_from_new() {
+      return old_from_new_;
+    }
+
+    int starting_column_index() const {
+      return starting_column_index_;
+    }
+
     /** @brief The default constructor that initializes every member
      *         to its default value.
      */
@@ -83,6 +95,31 @@ class SampleDenseMatrix {
       indices_to_be_serialized_ = NULL;
       starting_column_index_ = starting_column_index_in;
       num_entries_to_load_ = num_entries_to_load_in;
+    }
+
+    /** @brief Extract a given list of indices of points along with
+     *         its old_from_new mappings onto new destinations.
+     */
+    void Export(
+      core::table::DenseMatrix *matrix_out,
+      OldFromNewIndexType *old_from_new_out,
+      int starting_column_index_in) const {
+
+      int destination_column_index = starting_column_index_in;
+      for(unsigned int i = 0; i < indices_to_be_serialized_->size();
+          i++, destination_column_index++) {
+        int source_point_index = (*indices_to_be_serialized_)[i];
+        core::table::DensePoint source_point;
+        matrix_->MakeColumnVector(source_point_index, &source_point);
+        core::table::DensePoint destination_point;
+        matrix_out->MakeColumnVector(
+          destination_column_index, &destination_point);
+        for(int j = 0; j < source_point.length(); j++) {
+          destination_point[j] = source_point[j];
+        }
+        old_from_new_out[destination_column_index] =
+          old_from_new_[source_point_index];
+      }
     }
 
     /** @brief Serialize a given list of indices of points along with
