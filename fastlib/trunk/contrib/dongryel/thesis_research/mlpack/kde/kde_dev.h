@@ -51,7 +51,8 @@ void Kde<TableType>::Compute(
     printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
   }
   else {
-    typename core::gnp::DualtreeDfs<ProblemType>::iterator kde_it =
+    typename core::gnp::DualtreeDfs <
+    ProblemType >::template iterator<core::metric_kernels::LMetric<2> > kde_it =
       dualtree_dfs.get_iterator(*arguments_in.metric_, result_out);
     for(int i = 0; i < arguments_in.num_iterations_in_; i++) {
       ++kde_it;
