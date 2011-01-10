@@ -8,6 +8,7 @@
 #ifndef CORE_METRIC_KERNELS_LMETRIC_H
 #define CORE_METRIC_KERNELS_LMETRIC_H
 
+#include "core/table/dense_point.h"
 #include "core/math/math_lib.h"
 
 namespace core {
