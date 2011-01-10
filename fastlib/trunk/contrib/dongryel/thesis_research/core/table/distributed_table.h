@@ -425,6 +425,22 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
+    /** @brief Destroys a pre-existing locally owned table and sets it
+     *         to a new one.
+     */
+    void set_local_table(TableType *new_local_table_in) {
+
+      if(owned_table_.get() != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(owned_table_.get());
+        }
+        else {
+          delete owned_table_.get();
+        }
+      }
+      owned_table_ = new_local_table_in;
+    }
+
     TableType *local_table() {
       return owned_table_.get();
     }

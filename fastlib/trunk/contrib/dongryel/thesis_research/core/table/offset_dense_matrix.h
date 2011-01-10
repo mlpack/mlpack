@@ -11,6 +11,11 @@
 
 namespace core {
 namespace table {
+
+/** @brief A helper class for serializing/unserializing a selected
+ *         subset of dense matrix and its associated old_from_new
+ *         mapping (see core/tree/general_spacetree.h for details).
+ */
 template<typename OldFromNewIndexType>
 class SampleDenseMatrix {
   private:
@@ -41,6 +46,9 @@ class SampleDenseMatrix {
 
   public:
 
+    /** @brief The default constructor that initializes every member
+     *         to its default value.
+     */
     SampleDenseMatrix() {
       matrix_ = NULL;
       old_from_new_ = NULL;
@@ -49,15 +57,22 @@ class SampleDenseMatrix {
       num_entries_to_load_ = 0;
     }
 
+    /** @brief Call this function before seriaizing (before save
+     *         function is called).
+     */
     void Init(
       core::table::DenseMatrix &matrix_in,
       OldFromNewIndexType *old_from_new_in,
       const std::vector<int> &indices_to_be_serialized_in) {
+
       matrix_ = &matrix_in;
       old_from_new_ = old_from_new_in;
       indices_to_be_serialized_ = &indices_to_be_serialized_in;
     }
 
+    /** @brief Call this function before unserializing (before load
+     *         function is called).
+     */
     void Init(
       core::table::DenseMatrix &matrix_in,
       OldFromNewIndexType *old_from_new_in,
@@ -70,6 +85,9 @@ class SampleDenseMatrix {
       num_entries_to_load_ = num_entries_to_load_in;
     }
 
+    /** @brief Serialize a given list of indices of points along with
+     *         its old_from_new mappings.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       for(unsigned int i = 0; i < indices_to_be_serialized_->size(); i++) {
@@ -84,10 +102,13 @@ class SampleDenseMatrix {
       }
     }
 
+    /** @brief Load a pre-specified number of points along with its
+     *         old_from_new_mappings, offsetted by a prespecified
+     *         position.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-      double *ptr = matrix_->ptr() + matrix_->n_rows() *
-                    starting_column_index_;
+      double *ptr = matrix_->GetColumnPtr(starting_column_index_);
       OldFromNewIndexType *old_from_new_ptr =
         old_from_new_ + starting_column_index_;
       for(int i = 0; i < num_entries_to_load_; i++) {
