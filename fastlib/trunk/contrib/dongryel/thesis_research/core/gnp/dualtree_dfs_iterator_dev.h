@@ -6,12 +6,14 @@
 #ifndef CORE_GNP_DUALTREE_DFS_ITERATOR_DEV_H
 #define CORE_GNP_DUALTREE_DFS_ITERATOR_DEV_H
 
-#include "dualtree_dfs.h"
+#include "core/gnp/dualtree_dfs.h"
 
 namespace core {
 namespace gnp {
 template<typename ProblemType>
-DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType() {
+template<typename IteratorMetricType>
+DualtreeDfs<ProblemType>::iterator <
+IteratorMetricType >::IteratorArgType::IteratorArgType() {
 
   // Initialize the members.
   qnode_ = NULL;
@@ -22,7 +24,8 @@ DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType() {
 }
 
 template<typename ProblemType>
-DualtreeDfs<ProblemType>::iterator::
+template<typename IteratorMetricType>
+DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::
 IteratorArgType::IteratorArgType(const IteratorArgType &arg_in) {
 
   // Initialize the members.
@@ -34,38 +37,46 @@ IteratorArgType::IteratorArgType(const IteratorArgType &arg_in) {
 }
 
 template<typename ProblemType>
-typename ProblemType::TableType::TreeType *DualtreeDfs<ProblemType>::iterator
-::IteratorArgType::qnode() {
+template<typename IteratorMetricType>
+typename ProblemType::TableType::TreeType *DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::IteratorArgType::qnode() {
   return qnode_;
 }
 
 template<typename ProblemType>
-typename ProblemType::TableType::TreeType *DualtreeDfs<ProblemType>::iterator
-::IteratorArgType::qnode() const {
+template<typename IteratorMetricType>
+typename ProblemType::TableType::TreeType *DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::IteratorArgType::qnode() const {
   return qnode_;
 }
 
 template<typename ProblemType>
-typename ProblemType::TableType::TreeType *DualtreeDfs<ProblemType>::iterator
-::IteratorArgType::rnode() {
+template<typename IteratorMetricType>
+typename ProblemType::TableType::TreeType *DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::IteratorArgType::rnode() {
   return rnode_;
 }
 
 template<typename ProblemType>
-typename ProblemType::TableType::TreeType *DualtreeDfs<ProblemType>::iterator
-::IteratorArgType::rnode() const {
+template<typename IteratorMetricType>
+typename ProblemType::TableType::TreeType *DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::IteratorArgType::rnode() const {
   return rnode_;
 }
 
 template<typename ProblemType>
-const core::math::Range &DualtreeDfs<ProblemType>::iterator
+template<typename IteratorMetricType>
+const core::math::Range &DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>
 ::IteratorArgType::squared_distance_range() const {
   return squared_distance_range_;
 }
 
 template<typename ProblemType>
-DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType(
-  const core::metric_kernels::AbstractMetric &metric_in,
+template<typename IteratorMetricType>
+DualtreeDfs<ProblemType>::iterator <
+IteratorMetricType >::IteratorArgType::IteratorArgType(
+  const IteratorMetricType &metric_in,
   typename DualtreeDfs<ProblemType>::TableType *query_table_in,
   typename DualtreeDfs<ProblemType>::TableType::TreeType *qnode_in,
   typename DualtreeDfs<ProblemType>::TableType *reference_table_in,
@@ -79,8 +90,10 @@ DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType(
 }
 
 template<typename ProblemType>
-DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType(
-  const core::metric_kernels::AbstractMetric &metric_in,
+template<typename IteratorMetricType>
+DualtreeDfs<ProblemType>::iterator <
+IteratorMetricType >::IteratorArgType::IteratorArgType(
+  const IteratorMetricType &metric_in,
   typename DualtreeDfs<ProblemType>::TableType *query_table_in,
   typename DualtreeDfs<ProblemType>::TableType::TreeType *qnode_in,
   typename DualtreeDfs<ProblemType>::TableType *reference_table_in,
@@ -94,8 +107,9 @@ DualtreeDfs<ProblemType>::iterator::IteratorArgType::IteratorArgType(
 }
 
 template<typename ProblemType>
-DualtreeDfs<ProblemType>::iterator::iterator(
-  const core::metric_kernels::AbstractMetric &metric_in,
+template<typename IteratorMetricType>
+DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::iterator(
+  const IteratorMetricType &metric_in,
   DualtreeDfs<ProblemType> &engine_in,
   typename ProblemType::ResultType *query_results_in): metric_(metric_in) {
 
@@ -115,7 +129,8 @@ DualtreeDfs<ProblemType>::iterator::iterator(
 }
 
 template<typename ProblemType>
-void DualtreeDfs<ProblemType>::iterator::operator++() {
+template<typename IteratorMetricType>
+void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
 
   // Push a blank argument to the trace for making the exit phase.
   trace_.push_front(IteratorArgType());
@@ -248,33 +263,38 @@ void DualtreeDfs<ProblemType>::iterator::operator++() {
 }
 
 template<typename ProblemType>
-void DualtreeDfs<ProblemType>::iterator::Finalize() {
+template<typename IteratorMetricType>
+void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::Finalize() {
   return engine_->PostProcess_(
            metric_, query_table_->get_tree(), query_results_);
 }
 
 template<typename ProblemType>
-typename ProblemType::ResultType &DualtreeDfs<ProblemType>::iterator
-::operator*() {
+template<typename IteratorMetricType>
+typename ProblemType::ResultType &DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::operator*() {
   return *query_results_;
 }
 
 template<typename ProblemType>
-const typename ProblemType::ResultType &DualtreeDfs<ProblemType>::iterator
-::operator*() const {
+template<typename IteratorMetricType>
+const typename ProblemType::ResultType &DualtreeDfs <
+ProblemType >::iterator<IteratorMetricType>::operator*() const {
   return *query_results_;
 }
 
 template<typename ProblemType>
-typename DualtreeDfs<ProblemType>::iterator
+template<typename IteratorMetricType>
+typename DualtreeDfs<ProblemType>::template iterator<IteratorMetricType>
 DualtreeDfs<ProblemType>::get_iterator(
-  const core::metric_kernels::AbstractMetric &metric_in,
+  const IteratorMetricType &metric_in,
   typename ProblemType::ResultType *query_results_in) {
 
   // Allocate space for storing the final results.
   query_results_in->Init(query_table_->n_entries());
 
-  return typename DualtreeDfs<ProblemType>::iterator(
+  return typename DualtreeDfs<ProblemType>::template
+         iterator<IteratorMetricType>(
            metric_in, *this, query_results_in);
 }
 };

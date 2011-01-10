@@ -13,7 +13,6 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/tree/general_spacetree.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/tree/statistic.h"
@@ -376,8 +375,9 @@ class Table {
       fclose(foutput);
     }
 
+    template<typename MetricType>
     void IndexData(
-      const core::metric_kernels::AbstractMetric &metric_in, int leaf_size,
+      const MetricType &metric_in, int leaf_size,
       int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
       tree_ = TreeType::MakeTree(

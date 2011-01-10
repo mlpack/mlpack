@@ -11,7 +11,6 @@
 #include <vector>
 #include "ball_bound.h"
 #include "general_spacetree.h"
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 
@@ -26,8 +25,9 @@ class GenMetricTree {
     typedef IncomingStatisticType StatisticType;
 
   private:
+    template<typename MetricType>
     static int FurthestColumnIndex_(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DensePoint &pivot,
       const core::table::DenseMatrix &matrix,
       int begin, int count,
@@ -54,16 +54,18 @@ class GenMetricTree {
 
   public:
 
+    template<typename MetricType>
     static void FindBoundFromMatrix(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int count, BoundType *bounds) {
 
       MakeLeafNode(metric_in, matrix, first, count, bounds);
     }
 
+    template<typename MetricType>
     static void MakeLeafNode(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix& matrix,
       int begin, int count, BoundType *bounds) {
 
@@ -87,9 +89,9 @@ class GenMetricTree {
       bounds->set_radius(furthest_distance);
     }
 
-    template<typename TreeType>
+    template<typename MetricType, typename TreeType>
     static void CombineBounds(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix &matrix,
       TreeType *node, TreeType *left, TreeType *right) {
 
@@ -116,8 +118,9 @@ class GenMetricTree {
       node->bound().set_radius(std::max(left_max_dist, right_max_dist));
     }
 
+    template<typename MetricType>
     static void ComputeMemberships(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DenseMatrix &matrix,
       int first, int end,
       BoundType &left_bound, BoundType &right_bound,
@@ -146,9 +149,9 @@ class GenMetricTree {
       }
     }
 
-    template<typename TreeType, typename IndexType>
+    template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
       TreeType **right, int leaf_size, IndexType *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {

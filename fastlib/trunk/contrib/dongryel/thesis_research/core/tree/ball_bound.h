@@ -12,7 +12,6 @@
 #include <boost/serialization/string.hpp>
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/table/dense_point.h"
 
 namespace core {
@@ -107,8 +106,9 @@ class BallBound {
     /**
      * Determines if a point is within this bound.
      */
+    template<typename MetricType>
     bool Contains(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       return MidDistance(metric, point) <= radius_;
     }
@@ -116,15 +116,17 @@ class BallBound {
     /**
      * Calculates minimum bound-to-point squared distance.
      */
+    template<typename MetricType>
     double MinDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
 
       return std::max(MidDistance(metric, point) - radius_, 0.0);
     }
 
+    template<typename MetricType>
     double MinDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
 
       return core::math::Pow<2, 1>(MinDistance(metric, point));
@@ -133,16 +135,18 @@ class BallBound {
     /**
      * Calculates minimum bound-to-bound squared distance.
      */
+    template<typename MetricType>
     double MinDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       double delta =
         MidDistance(metric, other.center_) - radius_ - other.radius_;
       return std::max(delta, 0.0);
     }
 
+    template<typename MetricType>
     double MinDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return core::math::Pow<2, 1>(MinDistance(metric, other));
     }
@@ -150,14 +154,16 @@ class BallBound {
     /**
      * Computes maximum distance.
      */
+    template<typename MetricType>
     double MaxDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       return MidDistance(metric, point) + radius_;
     }
 
+    template<typename MetricType>
     double MaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       return core::math::Pow<2, 1>(MaxDistance(metric, point));
     }
@@ -165,14 +171,16 @@ class BallBound {
     /**
      * Computes maximum distance.
      */
+    template<typename MetricType>
     double MaxDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return MidDistance(metric, other.center_) + radius_ + other.radius_;
     }
 
+    template<typename MetricType>
     double MaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return core::math::Pow<2, 1>(MaxDistance(metric, other));
     }
@@ -182,8 +190,9 @@ class BallBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
+    template<typename MetricType>
     core::math::Range RangeDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
 
       double delta = MidDistance(metric, other.center_);
@@ -193,8 +202,9 @@ class BallBound {
                delta + sumradius);
     }
 
+    template<typename MetricType>
     core::math::Range RangeDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
 
       double delta = MidDistance(metric, other.center_);
@@ -215,15 +225,17 @@ class BallBound {
      * return MinDistanceSqToPoint(other_midpoint)
      * </code>
      */
+    template<typename MetricType>
     double MinToMid(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       double delta = MidDistance(metric, other.center_) - radius_;
       return std::max(delta, 0.0);
     }
 
+    template<typename MetricType>
     double MinToMidSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return core::math::Pow<2, 1>(MinToMid(metric, other));
     }
@@ -231,16 +243,18 @@ class BallBound {
     /**
      * Computes minimax distance, where the other node is trying to avoid me.
      */
+    template<typename MetricType>
     double MinimaxDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       double delta =
         MidDistance(metric, other.center_) + other.radius_ - radius_;
       return std::max(delta, 0.0);
     }
 
+    template<typename MetricType>
     double MinimaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return core::math::Pow<2, 1>(MinimaxDistance(metric, other));
     }
@@ -248,26 +262,30 @@ class BallBound {
     /**
      * Calculates midpoint-to-midpoint bounding box distance.
      */
+    template<typename MetricType>
     double MidDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return MidDistance(metric, other.center_);
     }
 
+    template<typename MetricType>
     double MidDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const BallBound& other) const {
       return core::math::Pow<2, 1>(MidDistance(metric, other));
     }
 
+    template<typename MetricType>
     double MidDistance(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       return metric.Distance(center_, point);
     }
 
+    template<typename MetricType>
     double MidDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       return metric.DistanceSq(center_, point);
     }

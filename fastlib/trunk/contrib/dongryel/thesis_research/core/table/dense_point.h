@@ -164,6 +164,28 @@ class DensePoint {
     }
 };
 
+template<typename PointType>
+class LengthTrait {
+  public:
+    static int length(const PointType &p);
+};
+
+template<>
+class LengthTrait<arma::vec> {
+  public:
+    static int Length(const arma::vec &p) {
+      return p.n_elem;
+    }
+};
+
+template<>
+class LengthTrait<core::table::DensePoint> {
+  public:
+    static int length(const core::table::DensePoint &p) {
+      return p.length();
+    }
+};
+
 static void DoublePtrToArmaVec(
   const double *point_in, int length, arma::vec *vec_out) {
 

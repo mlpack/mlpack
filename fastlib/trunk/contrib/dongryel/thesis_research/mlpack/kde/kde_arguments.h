@@ -7,7 +7,7 @@
 #define MLPACK_KDE_KDE_ARGUMENTS_H
 
 #include "core/table/table.h"
-#include "core/metric_kernels/abstract_metric.h"
+#include "core/metric_kernels/lmetric.h"
 
 namespace mlpack {
 namespace kde {
@@ -33,7 +33,7 @@ class KdeArguments {
 
     std::string kernel_;
 
-    core::metric_kernels::AbstractMetric *metric_;
+    core::metric_kernels::LMetric<2> *metric_;
 
     bool tables_are_aliased_;
 

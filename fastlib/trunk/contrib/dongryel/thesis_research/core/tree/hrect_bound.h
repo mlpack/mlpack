@@ -88,8 +88,9 @@ class HrectBound {
     /**
      * Determines if a point is within this bound.
      */
+    template<typename MetricType>
     bool Contains(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const core::table::DensePoint &point) const {
       for(int i = 0; i < point.length(); i++) {
         if(!bounds_[i].Contains(point[i])) {
@@ -119,8 +120,9 @@ class HrectBound {
     /**
      * Calculates minimum bound-to-point squared distance.
      */
+    template<typename MetricType>
     double MinDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
 
       double sum = 0;
@@ -144,8 +146,9 @@ class HrectBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
+    template<typename MetricType>
     double MinDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound& other) const {
 
       double sum = 0;
@@ -170,8 +173,9 @@ class HrectBound {
     /**
      * Calculates maximum bound-to-point squared distance.
      */
+    template<typename MetricType>
     double MaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
       double sum = 0;
 
@@ -186,8 +190,9 @@ class HrectBound {
     /**
      * Computes maximum distance.
      */
+    template<typename MetricType>
     double MaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound& other) const {
       double sum = 0;
       const core::math::Range *a = this->bounds_;
@@ -204,8 +209,9 @@ class HrectBound {
     /**
      * Calculates minimum and maximum bound-to-bound squared distance.
      */
+    template<typename MetricType>
     core::math::Range RangeDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound &other) const {
       double sum_lo = 0;
       double sum_hi = 0;
@@ -233,8 +239,9 @@ class HrectBound {
     /**
      * Calculates minimum and maximum bound-to-point squared distance.
      */
+    template<typename MetricType>
     core::math::Range RangeDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const core::table::DensePoint& point) const {
 
       double sum_lo = 0;
@@ -266,8 +273,9 @@ class HrectBound {
      * return MinDistanceSqToPoint(other_midpoint)
      * </code>
      */
+    template<typename MetricType>
     double MinToMidSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound &other) const {
 
       double sum = 0;
@@ -293,8 +301,9 @@ class HrectBound {
     /**
      * Computes minimax distance, where the other node is trying to avoid me.
      */
+    template<typename MetricType>
     double MinimaxDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound &other) const {
 
       double sum = 0;
@@ -315,8 +324,9 @@ class HrectBound {
     /**
      * Calculates midpoint-to-midpoint bounding box distance.
      */
+    template<typename MetricType>
     double MidDistanceSq(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const HrectBound &other) const {
       double sum = 0;
       const core::math::Range *a = this->bounds_;

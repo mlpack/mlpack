@@ -78,10 +78,10 @@ class KdePostponed {
     /** @brief Called from an exact pairwise evaluation method
      *         (i.e. the base case) which incurs no error.
      */
-    template<typename GlobalType, typename PointType>
+    template<typename GlobalType, typename MetricType, typename PointType>
     void ApplyContribution(
       const GlobalType &global,
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const PointType &query_point, const PointType &reference_point) {
 
       double distsq = metric.DistanceSq(query_point, reference_point);
@@ -300,9 +300,9 @@ class KdeResult {
       }
     }
 
-    template<typename GlobalType>
+    template<typename MetricType, typename GlobalType>
     void PostProcess(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       int q_index, const GlobalType &global,
       const bool is_monochromatic) {
 
@@ -409,9 +409,9 @@ class KdeDelta {
       mean_variance_pair_ = NULL;
     }
 
-    template<typename GlobalType, typename TreeType>
+    template<typename MetricType, typename GlobalType, typename TreeType>
     void DeterministicCompute(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
@@ -464,10 +464,10 @@ class KdeSummary {
       used_error_u_ = summary_in.used_error_u_;
     }
 
-    template < typename GlobalType, typename DeltaType,
+    template < typename MetricType, typename GlobalType, typename DeltaType,
              typename TreeType, typename ResultType >
     bool CanProbabilisticSummarize(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       GlobalType &global, DeltaType &delta, TreeType *qnode, TreeType *rnode,
       double failure_probability, ResultType *query_results) const {
 

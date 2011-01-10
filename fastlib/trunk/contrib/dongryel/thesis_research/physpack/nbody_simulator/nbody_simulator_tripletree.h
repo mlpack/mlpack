@@ -132,9 +132,9 @@ class NbodySimulatorDelta {
       mean_variance_pair_ = NULL;
     }
 
-    template<typename GlobalType>
+    template<typename MetricType, typename GlobalType>
     void DeterministicCompute(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       const GlobalType &global,
       const core::gnp::TripleRangeDistanceSq <
       typename GlobalType::TableType > &triple_range_distance_sq) {
@@ -172,9 +172,9 @@ class NbodySimulatorResult {
     int num_deterministic_prunes_;
     int num_monte_carlo_prunes_;
 
-    template<typename GlobalType>
+    template<typename MetricType, typename GlobalType>
     void PostProcess(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       int q_index, const GlobalType &global) {
       potential_e_[q_index] = (
                                 negative_potential_[q_index].mid() +
@@ -410,10 +410,10 @@ class NbodySimulatorSummary {
       used_error_ = 0;
     }
 
-    template<typename TableType>
+    template<typename TableType, typename MetricType>
     void ReplacePoints_(
       const TableType &table,
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       const std::vector<int> &random_combination,
       int node_index_fix,
       core::gnp::TripleDistanceSq *distance_sq_out) const {
@@ -544,9 +544,10 @@ class NbodySimulatorSummary {
       used_error_ = summary_in.used_error_;
     }
 
-    template < typename GlobalType, typename DeltaType, typename ResultType >
+    template < typename MetricType, typename GlobalType,
+             typename DeltaType, typename ResultType >
     bool CanProbabilisticSummarize(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       GlobalType &global, DeltaType &delta,
       const core::gnp::TripleRangeDistanceSq <
       typename GlobalType::TableType > &range_sq_in,

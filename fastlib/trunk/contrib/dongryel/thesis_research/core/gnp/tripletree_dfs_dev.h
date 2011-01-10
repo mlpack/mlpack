@@ -52,8 +52,9 @@ void TripletreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::NaiveCompute(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::ResultType *naive_query_results) {
 
   // Preprocess the tree.
@@ -72,8 +73,9 @@ void TripletreeDfs<ProblemType>::NaiveCompute(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::Compute(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::ResultType *query_results) {
 
   // Preprocess the tree.
@@ -155,8 +157,9 @@ TripletreeDfs<ProblemType>::GetNextNodeIterator_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::TripletreeBase_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   const TripleRangeDistanceSq<TableType> &range_sq_in,
   typename ProblemType::ResultType *query_results) {
 
@@ -267,8 +270,9 @@ void TripletreeDfs<ProblemType>::TripletreeBase_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   const TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
   int node_start_index,
@@ -350,8 +354,9 @@ bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::ProbabilisticSummarize_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   GlobalType &global,
   const TripleRangeDistanceSq<TableType> &range_in,
   const std::vector<double> &failure_probabilities,
@@ -472,8 +477,9 @@ bool TripletreeDfs<ProblemType>::NodeIsAgreeable_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::RecursionHelper_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
@@ -642,8 +648,9 @@ void TripletreeDfs<ProblemType>::RecursionHelper_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 bool TripletreeDfs<ProblemType>::TripletreeCanonical_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   TripleRangeDistanceSq<TableType> &triple_range_distance_sq,
   double relative_error,
   const std::vector<double> &failure_probabilities,
@@ -695,8 +702,9 @@ bool TripletreeDfs<ProblemType>::TripletreeCanonical_(
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void TripletreeDfs<ProblemType>::PostProcess_(
-  const core::metric_kernels::AbstractMetric &metric,
+  const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::ResultType *query_results,
   bool do_query_results_postprocess) {

@@ -353,9 +353,9 @@ class GeneralBinarySpaceTree {
       }
     }
 
-    template<typename IndexType>
+    template<typename MetricType, typename IndexType>
     static void SplitTree(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix& matrix,
       TreeType *node,
       int leaf_size,
@@ -420,9 +420,9 @@ class GeneralBinarySpaceTree {
      *        original indexes to new indices
      * @param num_nodes the number of nodes constructed in total.
      */
-    template<typename IndexType>
+    template<typename MetricType, typename IndexType>
     static TreeType *MakeTree(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix& matrix, int leaf_size,
       IndexType *old_from_new,
       int *new_from_old,
@@ -458,9 +458,9 @@ class GeneralBinarySpaceTree {
       return node;
     }
 
-    template<typename IndexType>
+    template<typename MetricType, typename IndexType>
     static int MatrixPartition(
-      const core::metric_kernels::AbstractMetric &metric_in,
+      const MetricType &metric_in,
       core::table::DenseMatrix& matrix, int first, int count,
       BoundType &left_bound, BoundType &right_bound,
       IndexType *old_from_new) {

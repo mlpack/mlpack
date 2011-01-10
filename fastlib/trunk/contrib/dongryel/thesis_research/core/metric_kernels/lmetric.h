@@ -9,75 +9,74 @@
 #define CORE_METRIC_KERNELS_LMETRIC_H
 
 #include "core/math/math_lib.h"
-#include "core/metric_kernels/abstract_metric.h"
 
 namespace core {
 namespace metric_kernels {
 
+/** @brief A trait class for computing a squared distance.
+ */
 template<int t_pow>
 class LMetricDistanceSqTrait {
   public:
+    template<typename LMetricType, typename PointType>
     static double Compute(
-      const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) {
-
+      const LMetricType &metric_in,
+      const PointType &a, const PointType &b) {
       return core::math::Pow<2, t_pow>(metric_in.DistanceIneq(a, b));
     }
 };
 
+/** @brief Template specialization for computing a squared distance
+ *         under L2 metric, which avoids a square root operation.
+ */
 template<>
 class LMetricDistanceSqTrait<2> {
   public:
+    template<typename LMetricType, typename PointType>
     static double Compute(
-      const core::metric_kernels::AbstractMetric &metric_in,
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) {
-
+      const LMetricType &metric_in,
+      const PointType &a, const PointType &b) {
       return metric_in.DistanceIneq(a, b);
     }
 };
 
-/**
- * An L_p metric for vector spaces.
+/** @brief An L_p metric for vector spaces.
  *
  * A generic Metric class should simply compute the distance between
  * two points.  An LMetric operates for integer powers on arma::vec spaces.
  */
 template<int t_pow>
-class LMetric: public core::metric_kernels::AbstractMetric {
+class LMetric {
   public:
 
-    /**
-     * Computes the distance metric between two points.
+    /** @brief Computes the distance metric between two points.
      */
+    template<typename PointType>
     double Distance(
-      const core::table::DensePoint& a,
-      const core::table::DensePoint& b) const {
+      const PointType &a, const PointType &b) const {
       return core::math::Pow<1, t_pow>(DistanceIneq(a, b));
     }
 
+    template<typename PointType>
     double DistanceIneq(
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) const {
-
+      const PointType &a, const PointType &b) const {
       double distance_ineq = 0;
-      for(int i = 0; i < a.length(); i++) {
+      int length = core::table::LengthTrait<PointType>::length(a);
+      for(int i = 0; i < length; i++) {
         distance_ineq += core::math::Pow<t_pow, 1>(a[i] - b[i]);
       }
       return distance_ineq;
     }
 
-    /**
-     * Computes the distance metric between two points, raised to a
-     * particular power.
+    /** @brief Computes the distance metric between two points, raised
+     *         to a particular power.
      *
      * This might be faster so that you could get, for instance, squared
      * L2 distance.
      */
+    template<typename PointType>
     double DistanceSq(
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) const {
+      const PointType &a, const PointType &b) const {
 
       return core::metric_kernels::LMetricDistanceSqTrait<t_pow>::Compute(
                *this, a, b);

@@ -7,7 +7,6 @@
 #define CORE_GNP_DUALTREE_DFS_H
 
 #include <map>
-#include "core/metric_kernels/abstract_metric.h"
 #include "core/math/range.h"
 #include "core/gnp/dualtree_trace.h"
 
@@ -24,6 +23,7 @@ class DualtreeDfs {
     typedef typename ProblemType::ResultType ResultType;
 
   public:
+    template<typename IteratorMetricType>
     class iterator {
       private:
         class IteratorArgType {
@@ -43,13 +43,13 @@ class DualtreeDfs {
             IteratorArgType(const IteratorArgType &arg_in);
 
             IteratorArgType(
-              const core::metric_kernels::AbstractMetric &metric_in,
+              const IteratorMetricType &metric_in,
               TableType *query_table_in, TreeType *qnode_in,
               TableType *reference_table_in,
               TreeType *rnode_in);
 
             IteratorArgType(
-              const core::metric_kernels::AbstractMetric &metric_in,
+              const IteratorMetricType &metric_in,
               TableType *query_table_in, TreeType *qnode_in,
               TableType *reference_table_in,
               TreeType *rnode_in,
@@ -74,16 +74,15 @@ class DualtreeDfs {
 
         DualtreeDfs<ProblemType> *engine_;
 
-        const core::metric_kernels::AbstractMetric &metric_;
+        const IteratorMetricType &metric_;
 
         ResultType *query_results_;
 
         core::gnp::DualtreeTrace<IteratorArgType> trace_;
 
       public:
-
         iterator(
-          const core::metric_kernels::AbstractMetric &metric_in,
+          const IteratorMetricType &metric_in,
           DualtreeDfs<ProblemType> &engine_in,
           ResultType *query_results_in);
 
@@ -125,8 +124,9 @@ class DualtreeDfs {
 
     void PreProcess_(TreeType *qnode);
 
+    template<typename MetricType>
     void DualtreeBase_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *qnode,
       TreeType *rnode,
       ResultType *result);
@@ -142,8 +142,9 @@ class DualtreeDfs {
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
+    template<typename MetricType>
     bool CanProbabilisticSummarize_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *qnode,
       TreeType *rnode,
       double failure_probability,
@@ -157,8 +158,9 @@ class DualtreeDfs {
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
+    template<typename MetricType>
     void Heuristic_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *node,
       TableType *node_table,
       TreeType *first_candidate,
@@ -169,16 +171,18 @@ class DualtreeDfs {
       TreeType **second_partner,
       core::math::Range &second_squared_distance_range);
 
+    template<typename MetricType>
     bool DualtreeCanonical_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *qnode,
       TreeType *rnode,
       double failure_probability,
       const core::math::Range &squared_distance_range,
       ResultType *query_results);
 
+    template<typename MetricType>
     void PostProcess_(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
 
   public:
@@ -205,16 +209,19 @@ class DualtreeDfs {
 
     TableType *reference_table();
 
-    typename DualtreeDfs<ProblemType>::iterator get_iterator(
-      const core::metric_kernels::AbstractMetric &metric_in,
+    template<typename MetricType>
+    typename DualtreeDfs<ProblemType>::template
+    iterator<MetricType> get_iterator(
+      const MetricType &metric_in,
       ResultType *query_results_in);
 
     void ResetStatistic();
 
     void Init(ProblemType &problem_in);
 
+    template<typename MetricType>
     void Compute(
-      const core::metric_kernels::AbstractMetric &metric,
+      const MetricType &metric,
       typename ProblemType::ResultType *query_results,
       bool do_initializations = true);
 };
