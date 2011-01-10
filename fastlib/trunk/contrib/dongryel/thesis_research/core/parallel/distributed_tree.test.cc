@@ -5,21 +5,21 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-// for BOOST testing
-#define BOOST_TEST_MAIN
-
-#include "boost/test/unit_test.hpp"
+#include <boost/mpi.hpp>
+#include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
 #include "core/parallel/distributed_tree_builder.h"
 #include "core/math/math_lib.h"
-#include <time.h>
 
 namespace core {
 namespace tree {
 
-template<typename TableType>
+template<typename DistributedTableType>
 class TestDistributedTree {
+  public:
+    typedef typename DistributedTableType::TableType TableType;
+
   private:
     void GenerateRandomDataset_(
       int num_dimensions,
@@ -39,11 +39,17 @@ class TestDistributedTree {
 
   public:
 
-    int StressTestMain() {
+    int StressTestMain(boost::mpi::communicator &world) {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(3000, 5001);
-        if(StressTest(num_dimensions, num_points) == false) {
+
+        // Only the master broadcasts the dimension;
+        int num_dimensions;
+        if(world.rank() == 0) {
+          num_dimensions = core::math::RandInt(3, 20);
+        }
+        boost::mpi::broadcast(world, num_dimensions, 0);
+        int num_points = core::math::RandInt(300, 501);
+        if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
         }
@@ -51,16 +57,16 @@ class TestDistributedTree {
       return 0;
     }
 
-    bool StressTest(int num_dimensions, int num_points) {
-
-      std::vector< std::string > args;
+    bool StressTest(
+      boost::mpi::communicator &world, int num_dimensions, int num_points) {
 
       std::cout << "Number of dimensions: " << num_dimensions << "\n";
       std::cout << "Number of points: " << num_points << "\n";
 
       // Push in the reference dataset name.
-      std::string references_in("random.csv");
-      args.push_back(std::string("--references_in=") + references_in);
+      std::stringstream reference_file_name_sstr;
+      reference_file_name_sstr << "random_dataset.csv" << world.rank();
+      std::string references_in = reference_file_name_sstr.str();
 
       // Generate the random dataset and save it.
       TableType random_table;
@@ -68,24 +74,13 @@ class TestDistributedTree {
         num_dimensions, num_points, &random_table);
       random_table.Save(references_in);
 
-      // Reload the table twice and build the tree on one of them.
-      TableType reordered_table;
-      reordered_table.Init(references_in);
-      TableType original_table;
-      original_table.Init(references_in);
+      DistributedTableType distributed_table;
+      distributed_table.Init(references_in, world);
+      core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
+      builder.Init(distributed_table, 0.2);
       core::metric_kernels::LMetric<2> l2_metric;
-      reordered_table.IndexData(l2_metric, 20);
-      for(int i = 0; i < reordered_table.n_entries(); i++) {
-        core::table::DensePoint reordered_point;
-        core::table::DensePoint original_point;
-        reordered_table.get(i, &reordered_point);
-        original_table.get(i, &original_point);
-        for(int j = 0; j < reordered_table.n_attributes(); j++) {
-          if(reordered_point[j] != original_point[j]) {
-            return false;
-          }
-        }
-      }
+      builder.Build(world, l2_metric);
+
       return true;
     }
 };
@@ -103,15 +98,9 @@ int main(int argc, char *argv[]) {
   typedef core::table::Table <TreeSpecType> TableType;
   typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
 
-  DistributedTableType distributed_table;
-  core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
-  builder.Init(distributed_table, 0.2);
-  core::metric_kernels::LMetric<2> l2_metric;
-  builder.Build(l2_metric, world);
-
   // Call the tests.
-  core::tree::TestDistributedTree<TableType> tree_test;
-  tree_test.StressTestMain();
+  core::tree::TestDistributedTree<DistributedTableType> tree_test;
+  tree_test.StressTestMain(world);
 
   std::cout << "All tests passed!\n";
   return 0;
