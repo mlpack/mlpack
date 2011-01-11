@@ -49,6 +49,18 @@ class DistributedTreeBuilder {
           first_node->bound().center(), second_node->bound().center());
     }
 
+    int Locate_(
+      int global_order,
+      const std::vector<int> &desired_cumulative_distribution) const {
+
+      int start_index = 0;
+      for(; start_index <
+          static_cast<int>(desired_cumulative_distribution.size()) &&
+          global_order >= desired_cumulative_distribution[start_index];
+          start_index++);
+      return start_index - 1;
+    }
+
     void AugmentNodes_(
       boost::mpi::communicator &world,
       const typename TreeType::BoundType &root_bound,
@@ -293,19 +305,27 @@ class DistributedTreeBuilder {
           desired_cumulative_distribution[i]++;
         }
       }
+      cumulative_distribution.pop_back();
+      desired_cumulative_distribution.pop_back();
+      cumulative_distribution.insert(cumulative_distribution.begin(), 0);
+      desired_cumulative_distribution.insert(
+        desired_cumulative_distribution.begin(), 0);
 
-      // Each process needs to figure out how many points to
-      // send/receive from the next process in index.
-      for(unsigned int i = 0; i < cumulative_distribution.size(); i++) {
-        printf("%d ", cumulative_distribution[i]);
+      // Label each point's destination.
+      std::vector<int> destination_ids(
+        distributed_table_->local_table()->n_entries(), 0);
+      for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
+        int global_order = i + cumulative_distribution[world.rank()];
+        int new_destination =
+          Locate_(global_order, desired_cumulative_distribution);
+        destination_ids[i] = new_destination;
       }
-      printf("\n");
-      for(unsigned int i = 0; i < desired_cumulative_distribution.size(); i++) {
-        printf("%d ", desired_cumulative_distribution[i]);
-      }
-      printf("\n");
     }
 
+    /** @brief Compute the centroid of the points owned by the current
+     *         process and sort them in increasing order of distance
+     *         to the centroid.
+     */
     template<typename MetricType>
     void RankPointsFromItsCentroid_(
       const MetricType &metric_in,
@@ -341,6 +361,8 @@ class DistributedTreeBuilder {
         boost::bind(&std::pair<int, double>::second, _2));
     }
 
+    /** @brief Subsample a list of indices from the locally owned table.
+     */
     void SelectSubset_(
       std::vector<int> *sampled_indices_out) {
 
@@ -390,11 +412,6 @@ class DistributedTreeBuilder {
 
       // Do a re-distribution of points.
       Redistribute_(world, metric_in, sorted_indices_increasing);
-
-      // Compute two prefix sums to do a re-distribution so that each
-      // process has a equal number of points. This works assuming
-      // that the centroids are roughly in Morton order.
-
 
       // Recompute the centroids and repeat.
 
