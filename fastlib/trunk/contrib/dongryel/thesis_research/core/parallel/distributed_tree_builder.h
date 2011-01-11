@@ -26,6 +26,7 @@ namespace core {
 namespace parallel {
 template<typename DistributedTableType>
 class DistributedTreeBuilder {
+
   public:
     typedef typename DistributedTableType::TableType TableType;
 
@@ -49,11 +50,22 @@ class DistributedTreeBuilder {
           first_node->bound().center(), second_node->bound().center());
     }
 
+    /** @brief Given the global order in the sorted list, find out
+     *         which bin it falls into for a given cumulative
+     *         distribution.
+     *
+     *  @param global_order The global order in the sorted list.
+     *  @param start_index The index in the cumulative distribution to
+     *  start looking for.
+     *  @param desired_cumulative_distribution The cumulative distribution.
+     *
+     *  @return The bin number the global order belongs to.
+     */
     int Locate_(
       int global_order,
+      int start_index,
       const std::vector<int> &desired_cumulative_distribution) const {
 
-      int start_index = 0;
       for(; start_index <
           static_cast<int>(desired_cumulative_distribution.size()) &&
           global_order >= desired_cumulative_distribution[start_index];
@@ -61,9 +73,19 @@ class DistributedTreeBuilder {
       return start_index - 1;
     }
 
+    /** @brief Augment the list of nodes so that it matches the number
+     *         of processes for convenience.
+     *
+     *  @param world The communicator.
+     *  @param global_root_bound The global bound of all the points across all
+     *         processes.
+     *  @param top_leaf_nodes The current list of sample tree leaf nodes.
+     *         It will be augmented an additional number of nodes to match
+     *         the number of processes.
+     */
     void AugmentNodes_(
       boost::mpi::communicator &world,
-      const typename TreeType::BoundType &root_bound,
+      const typename TreeType::BoundType &global_root_bound,
       std::vector<TreeType *> &top_leaf_nodes) {
 
       core::table::DensePoint tmp_point;
@@ -76,7 +98,7 @@ class DistributedTreeBuilder {
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
       for(int j = 0; j < num_additional; j++) {
-        root_bound.RandomPointInside(&tmp_point_alias);
+        global_root_bound.RandomPointInside(&tmp_point_alias);
         for(int i = 0; i < num_samples; i++) {
           arma::vec random_node_center;
           core::table::DensePointToArmaVec(
@@ -343,10 +365,14 @@ class DistributedTreeBuilder {
       std::vector< std::vector<int> > assigned_point_indices;
       std::vector<int> membership_counts_per_node(world.size(), 0);
       assigned_point_indices.resize(world.size());
+      int previous_destination = 0;
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         int global_order = i + cumulative_distribution[world.rank()];
         int new_destination =
-          Locate_(global_order, desired_cumulative_distribution);
+          Locate_(
+            global_order, previous_destination,
+            desired_cumulative_distribution);
+        previous_destination = new_destination;
         assigned_point_indices[new_destination].push_back(i);
         membership_counts_per_node[new_destination]++;
       }
@@ -434,6 +460,13 @@ class DistributedTreeBuilder {
     template<typename MetricType>
     void Build(
       boost::mpi::communicator &world, const MetricType &metric_in) {
+
+      // Do a reduction to find the rough global bound of all the
+      // points across all processes.
+      typename TreeType::BoundType global_root_bound;
+      typename TreeType::BoundType local_bound;
+      local_bound.Init(distributed_table_->n_attributes());
+
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;

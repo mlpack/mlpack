@@ -1,8 +1,8 @@
 /** @file tree/ball_bound.h
  *
- *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *  A declaration of a ball bound.
  *
- *  Bounds that are useful for binary space partitioning trees.
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
 #ifndef CORE_TREE_BALL_BOUND_H
@@ -17,8 +17,7 @@
 namespace core {
 namespace tree {
 
-/**
- * Ball bound that works in arbitrary metric spaces.
+/** @brief Ball bound that works in arbitrary metric spaces.
  */
 class BallBound {
 
@@ -37,6 +36,16 @@ class BallBound {
 
   public:
 
+    /** @brief Resets the bound to an empty sphere centered at the
+     *  origin.
+     */
+    void Reset() {
+      radius_ = 0;
+      center_.SetZero();
+    }
+
+    /** @brief Prints out the ball bound.
+     */
     void Print() const {
       printf("Hypersphere of radius %g centered at: \n", radius_);
       for(int i = 0; i < center_.length(); i++) {
@@ -45,12 +54,27 @@ class BallBound {
       printf("\n");
     }
 
+    /** @brief Serialize/unserialize the radius with its center.
+     */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & radius_;
       ar & center_;
     }
 
+    /** @brief Computes the furthest point inside the ball bound from
+     *         the given point.
+     */
+    template<typename PointType>
+    void FurthestPoint(
+      const PointType &avoid_point, arma::vec *furthest_point_out) const {
+
+
+    }
+
+    /** @brief Generate a random point within the ball bound with
+     *         uniform probability.
+     */
     void RandomPointInside(arma::vec *random_point_out) const {
 
       // First, generate $D$-dimensional Gaussian vector.
@@ -78,6 +102,9 @@ class BallBound {
       (*random_point_out) += center_alias;
     }
 
+    /** @brief Generate a random point within the ball bound with
+     *         uniform probability.
+     */
     void RandomPointInside(core::table::DensePoint *random_point_out) const {
       random_point_out->Init(center_.length());
       arma::vec random_point_out_alias(
@@ -85,19 +112,22 @@ class BallBound {
       this->RandomPointInside(&random_point_out_alias);
     }
 
+    /** @brief Initializes a ball bound with the given dimensionality.
+     */
     void Init(int dimension) {
       radius_ = 0.0;
       center_.Init(dimension);
+      Reset();
     }
 
+    /** @brief Returns the radius.
+     */
     double radius() const {
       return radius_;
     }
 
-    double &radius() {
-      return radius_;
-    }
-
+    /** @brief Sets the radius.
+     */
     void set_radius(double d) {
       radius_ = d;
     }
@@ -110,8 +140,7 @@ class BallBound {
       return center_;
     }
 
-    /**
-     * Determines if a point is within this bound.
+    /** @brief Determines if a point is within this bound.
      */
     template<typename MetricType>
     bool Contains(
@@ -120,8 +149,7 @@ class BallBound {
       return MidDistance(metric, point) <= radius_;
     }
 
-    /**
-     * Calculates minimum bound-to-point squared distance.
+    /** @brief Calculates minimum bound-to-point squared distance.
      */
     template<typename MetricType>
     double MinDistance(
@@ -139,8 +167,7 @@ class BallBound {
       return core::math::Pow<2, 1>(MinDistance(metric, point));
     }
 
-    /**
-     * Calculates minimum bound-to-bound squared distance.
+    /** @brief Calculates minimum bound-to-bound squared distance.
      */
     template<typename MetricType>
     double MinDistance(
@@ -158,8 +185,7 @@ class BallBound {
       return core::math::Pow<2, 1>(MinDistance(metric, other));
     }
 
-    /**
-     * Computes maximum distance.
+    /** @brief Computes maximum distance.
      */
     template<typename MetricType>
     double MaxDistance(
@@ -175,8 +201,7 @@ class BallBound {
       return core::math::Pow<2, 1>(MaxDistance(metric, point));
     }
 
-    /**
-     * Computes maximum distance.
+    /** @brief Computes maximum distance.
      */
     template<typename MetricType>
     double MaxDistance(
@@ -192,8 +217,8 @@ class BallBound {
       return core::math::Pow<2, 1>(MaxDistance(metric, other));
     }
 
-    /**
-     * Calculates minimum and maximum bound-to-bound squared distance.
+    /** @brief Calculates minimum and maximum bound-to-bound squared
+     *  distance.
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
@@ -221,10 +246,9 @@ class BallBound {
                core::math::Pow<2, 1>(delta + sumradius));
     }
 
-    /**
-     * Calculates closest-to-their-midpoint bounding box distance,
-     * i.e. calculates their midpoint and finds the minimum box-to-point
-     * distance.
+    /** @brief Calculates closest-to-their-midpoint bounding box
+     * distance, i.e. calculates their midpoint and finds the minimum
+     * box-to-point distance.
      *
      * Equivalent to:
      * <code>
@@ -247,8 +271,8 @@ class BallBound {
       return core::math::Pow<2, 1>(MinToMid(metric, other));
     }
 
-    /**
-     * Computes minimax distance, where the other node is trying to avoid me.
+    /** @brief Computes minimax distance, where the other node is
+     *         trying to avoid me.
      */
     template<typename MetricType>
     double MinimaxDistance(
@@ -295,6 +319,31 @@ class BallBound {
       const MetricType &metric,
       const core::table::DensePoint& point) const {
       return metric.DistanceSq(center_, point);
+    }
+
+    /** @brief Expands this region to include a new point.
+     */
+    template<typename MetricType>
+    BallBound& Expand(
+      const MetricType &metric, const core::table::DensePoint &vector) {
+
+      // If the point is already inside the sphere, then no expansion
+      // is necessary.
+      if(! this->Contains(metric, vector)) {
+
+        // Compute the furthest point.
+      }
+      return *this;
+    }
+
+    /** @brief Expands this region to encompass another bound.
+     */
+    template<typename MetricType>
+    BallBound& Expand(
+      const MetricType &metric, const BallBound &other) {
+
+      // Implement me.
+      return *this;
     }
 };
 };

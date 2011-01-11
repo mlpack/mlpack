@@ -1,27 +1,46 @@
+/** @file range.h
+ *
+ *  Defines a simple class maintaining an interval.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
 #ifndef CORE_MATH_RANGE_H
 #define CORE_MATH_RANGE_H
 
+#include <boost/serialization/serialization.hpp>
 #include <limits>
 
 namespace core {
 namespace math {
 
-/**
- * Simple real-valued range.
- *
+/** @brief Simple real-valued range.
  */
-struct Range {
+class Range {
+  private:
+
+    // For boost serialization.
+    friend class boost::serialization::access;
+
   public:
-    /**
-     * The lower bound.
+
+    /** @brief The lower bound.
      */
     double lo;
-    /**
-     * The upper bound.
+
+    /** @brief The upper bound.
      */
     double hi;
 
   public:
+
+    /** @brief Serialize/unserialize the range.
+     */
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & lo;
+      ar & hi;
+    }
 
     Range() {
       InitEmptySet();
