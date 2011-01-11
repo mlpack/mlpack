@@ -150,22 +150,23 @@ class DistributedTreeBuilder {
       }
     }
 
-    template<typename MetricType>
+    /** @brief Reshuffle points across each process.
+     *
+     *  @param world The communicator.
+     *
+     *  @param assigned_point_indices The list of assigned point
+     *         indices. The $i$-th position denotes the list of points
+     *         that should be transferred to the $i$-th process.
+     *
+     *  @param membership_counts_per_node The list of sizes of
+     *         assigned point indices. The $i$-th position denotes the
+     *         number of points assigned to the $i$-th process
+     *         originating from the current process.
+     */
     void ReshufflePoints_(
       boost::mpi::communicator &world,
-      const MetricType &metric_in,
-      const std::vector<TreeType *> &top_leaf_nodes) {
-
-      // Determine the membership counts.
-      std::vector< std::vector<int> > assigned_point_indices;
-      std::vector<int> membership_counts_per_node;
-      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-        top_leaf_nodes[i]->bound().center().Print();
-      }
-
-      GetLeafNodeMembershipCounts_(
-        metric_in, top_leaf_nodes,
-        &assigned_point_indices, &membership_counts_per_node);
+      const std::vector< std::vector<int> > &assigned_point_indices,
+      const std::vector<int> &membership_counts_per_node) {
 
       // Do an all-to-all to figure out the new table sizes for each
       // process.
@@ -201,6 +202,30 @@ class DistributedTreeBuilder {
 
       // Set it to the newly shuffled table.
       distributed_table_->set_local_table(new_local_table);
+    }
+
+    /** @brief Greedily assign each point on the current process to
+     *         the closest node among the list and re-distribute.
+     */
+    template<typename MetricType>
+    void GreedyAssign_(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
+      const std::vector<TreeType *> &top_leaf_nodes) {
+
+      // Determine the membership counts.
+      std::vector< std::vector<int> > assigned_point_indices;
+      std::vector<int> membership_counts_per_node;
+      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+        top_leaf_nodes[i]->bound().center().Print();
+      }
+
+      GetLeafNodeMembershipCounts_(
+        metric_in, top_leaf_nodes,
+        &assigned_point_indices, &membership_counts_per_node);
+
+      ReshufflePoints_(
+        world, assigned_point_indices, membership_counts_per_node);
     }
 
     template<typename MetricType>
@@ -277,8 +302,11 @@ class DistributedTreeBuilder {
       }
     }
 
+    /** @brief Do a re-distribution preserving the order such that
+     *         each process has roughly the same number of points.
+     */
     template<typename MetricType>
-    void Redistribute_(
+    void RedistributeEqually_(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       const std::vector<int> &sorted_indices_increasing) {
@@ -312,14 +340,18 @@ class DistributedTreeBuilder {
         desired_cumulative_distribution.begin(), 0);
 
       // Label each point's destination.
-      std::vector<int> destination_ids(
-        distributed_table_->local_table()->n_entries(), 0);
+      std::vector< std::vector<int> > assigned_point_indices;
+      std::vector<int> membership_counts_per_node(world.size(), 0);
+      assigned_point_indices.resize(world.size());
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         int global_order = i + cumulative_distribution[world.rank()];
         int new_destination =
           Locate_(global_order, desired_cumulative_distribution);
-        destination_ids[i] = new_destination;
+        assigned_point_indices[new_destination].push_back(i);
+        membership_counts_per_node[new_destination]++;
       }
+      ReshufflePoints_(
+        world, assigned_point_indices, membership_counts_per_node);
     }
 
     /** @brief Compute the centroid of the points owned by the current
@@ -385,6 +417,14 @@ class DistributedTreeBuilder {
     }
 
   public:
+
+    /** @brief Initialize with a given distributed table with the
+     *         given sampling rate for building the top tree.
+     *
+     *  @param distributed_table_in The distributed table.
+     *  @param sampling_rate_in The sampling rate used for building a top
+     *         sample tree.
+     */
     void Init(
       DistributedTableType &distributed_table_in, double sampling_rate_in) {
       distributed_table_ = &distributed_table_in;
@@ -403,7 +443,7 @@ class DistributedTreeBuilder {
       // For each process, determine the membership of each points to
       // each of the top leaf nodes and do an all-to-all to do the
       // reshuffle.
-      ReshufflePoints_(world, metric_in, top_leaf_nodes);
+      GreedyAssign_(world, metric_in, top_leaf_nodes);
 
       // Recompute the centroids of each process and sort each point
       // according to its distance from its centroid.
@@ -411,7 +451,7 @@ class DistributedTreeBuilder {
       RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
 
       // Do a re-distribution of points.
-      Redistribute_(world, metric_in, sorted_indices_increasing);
+      RedistributeEqually_(world, metric_in, sorted_indices_increasing);
 
       // Recompute the centroids and repeat.
 
