@@ -42,6 +42,8 @@ class Range {
       ar & hi;
     }
 
+    /** @brief The default constructor.
+     */
     Range() {
       InitEmptySet();
     }
@@ -68,8 +70,7 @@ class Range {
       hi = hi_in;
     }
 
-    /**
-     * Resets to a range of values.
+    /** @brief Resets to a range of values.
      *
      * Since there is no dynamic memory this is the same as Init, but calling
      * Reset instead of Init probably looks more similar to surrounding code.
@@ -79,29 +80,25 @@ class Range {
       hi = hi_in;
     }
 
-    /**
-     * Gets the span of the range, hi - lo.
+    /** @brief Gets the span of the range, hi - lo.
      */
     double width() const {
       return hi - lo;
     }
 
-    /**
-     * Gets the midpoint of this range.
+    /** @brief Gets the midpoint of this range.
      */
     double mid() const {
       return (hi + lo) / 2;
     }
 
-    /**
-     * Interpolates (factor) * hi + (1 - factor) * lo.
+    /** @brief Interpolates (factor) * hi + (1 - factor) * lo.
      */
     double interpolate(double factor) const {
       return factor * width() + lo;
     }
 
-    /**
-     * Simulate an union by growing the range if necessary.
+    /** @brief Simulate an union by growing the range if necessary.
      */
     const Range& operator |= (double d) {
       if(d < lo) {
@@ -113,9 +110,9 @@ class Range {
       return *this;
     }
 
-    /**
-     * Sets this range to include only the specified value, or
-     * becomes an empty set if the range does not contain the number.
+    /** @brief Sets this range to include only the specified value, or
+     *         becomes an empty set if the range does not contain the
+     *         number.
      */
     const Range& operator &= (double d) {
       if(d > lo) {
@@ -127,8 +124,7 @@ class Range {
       return *this;
     }
 
-    /**
-     * Expands range to include the other range.
+    /** @brief Expands range to include the other range.
      */
     const Range& operator |= (const Range& other) {
       if(other.lo < lo) {
@@ -140,9 +136,8 @@ class Range {
       return *this;
     }
 
-    /**
-     * Shrinks range to be the overlap with another range, becoming an empty
-     * set if there is no overlap.
+    /** @brief Shrinks range to be the overlap with another range,
+     *         becoming an empty set if there is no overlap.
      */
     const Range& operator &= (const Range& other) {
       if(other.lo > lo) {
@@ -154,38 +149,43 @@ class Range {
       return *this;
     }
 
-    /** Scales upper and lower bounds. */
+    /** @brief Scales upper and lower bounds.
+     */
     friend Range operator - (const Range& r) {
       return Range(-r.hi, -r.lo);
     }
 
-    /** Scales upper and lower bounds. */
+    /** @brief Scales upper and lower bounds.
+     */
     const Range& operator *= (double d) {
       lo *= d;
       hi *= d;
       return *this;
     }
 
-    /** Scales upper and lower bounds. */
+    /** @brief Scales upper and lower bounds.
+     */
     friend Range operator *(const Range& r, double d) {
       return Range(r.lo * d, r.hi * d);
     }
 
-    /** Scales upper and lower bounds. */
+    /** @brief Scales upper and lower bounds.
+     */
     friend Range operator *(double d, const Range& r) {
       return Range(r.lo * d, r.hi * d);
     }
 
-    /** Sums the upper and lower independently. */
+    /** @brief Sums the upper and lower independently.
+     */
     const Range& operator += (const Range& other) {
       lo += other.lo;
       hi += other.hi;
       return *this;
     }
 
-    /** Subtracts from the upper and lower.
-     * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
-     * This is NOT an undo of the + operator.
+    /** @brief Subtracts from the upper and lower. THIS SWAPS THE
+     *         ORDER OF HI AND LO, assuming a worst case result.  This
+     *         is NOT an undo of the + operator.
      */
     const Range& operator -= (const Range& other) {
       lo -= other.hi;
@@ -193,14 +193,16 @@ class Range {
       return *this;
     }
 
-    /** Adds to the upper and lower independently. */
+    /** @brief Adds to the upper and lower independently.
+     */
     const Range& operator += (double d) {
       lo += d;
       hi += d;
       return *this;
     }
 
-    /** Subtracts from the upper and lower independently. */
+    /** @brief Subtracts from the upper and lower independently.
+     */
     const Range& operator -= (double d) {
       lo -= d;
       hi -= d;
@@ -271,8 +273,8 @@ class Range {
       }
     }
 
-    /**
-     * Takes the minimum of upper and lower bounds independently.
+    /** @brief Takes the minimum of upper and lower bounds
+     *         independently.
      */
     void MinWith(double v) {
       if(v < hi) {
@@ -283,11 +285,17 @@ class Range {
       }
     }
 
-    /**
-     * Determines if a point is contained within the range.
+    /** @brief Determines if a point is contained within the range.
      */
     bool Contains(double d) const {
       return d >= lo || d <= hi;
+    }
+
+    /** @brief Determines if another Range object is contained within
+     *         the range.
+     */
+    bool Contains(const Range &r) const {
+      return lo <= r.lo && r.hi <= hi;
     }
 };
 };

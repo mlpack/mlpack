@@ -155,7 +155,20 @@ class HrectBound {
           return false;
         }
       }
+      return true;
+    }
 
+    /** @brief Determines if another hrect is within this bound.
+     */
+    template<typename MetricType>
+    bool Contains(
+      const MetricType &metric_in,
+      const core::tree::HrectBound &new_bound) const {
+      for(int i = 0; i < dim_; i++) {
+        if(! bounds_[i].Contains(new_bound.get(i))) {
+          return false;
+        }
+      }
       return true;
     }
 
@@ -409,6 +422,22 @@ class HrectBound {
         bounds_[i] |= other.bounds_[i];
       }
       return *this;
+    }
+
+    /** @brief Expands this region to include a new point.
+     */
+    template<typename MetricType>
+    HrectBound& Expand(
+      const MetricType &metric, const core::table::DensePoint& vector) {
+      return this->operator |= (vector);
+    }
+
+    /** @brief Expands this region to encompass another bound.
+     */
+    template<typename MetricType>
+    HrectBound& Expand(
+      const MetricType &metric, const HrectBound &other) {
+      return this->operator |= (other);
     }
 };
 };

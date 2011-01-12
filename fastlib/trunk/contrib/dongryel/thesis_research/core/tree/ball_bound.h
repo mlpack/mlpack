@@ -63,13 +63,19 @@ class BallBound {
     }
 
     /** @brief Computes the furthest point inside the ball bound from
-     *         the given point.
+     *         the given point. This point is on the surface of the
+     *         sphere.
      */
     template<typename PointType>
     void FurthestPoint(
       const PointType &avoid_point, arma::vec *furthest_point_out) const {
 
-
+      // The vector pointing from the avoid_point to the center.
+      arma::vec direction = center_ - avoid_point;
+      double direction_norm = arma::norm(direction, 2);
+      direction = direction / direction_norm;
+      double factor = direction_norm + radius_;
+      (*furthest_point_out) = avoid_point + factor * direction;
     }
 
     /** @brief Generate a random point within the ball bound with
@@ -132,10 +138,14 @@ class BallBound {
       radius_ = d;
     }
 
+    /** @brief Returns the centroid.
+     */
     const core::table::DensePoint& center() const {
       return center_;
     }
 
+    /** @brief Returns the centroid.
+     */
     core::table::DensePoint& center() {
       return center_;
     }
@@ -147,6 +157,16 @@ class BallBound {
       const MetricType &metric,
       const core::table::DensePoint& point) const {
       return MidDistance(metric, point) <= radius_;
+    }
+
+    /** @brief Determines whether another ball bound is entirely
+     *         within this bound.
+     */
+    template<typename MetricType>
+    bool Contains(
+      const MetricType &metric,
+      const core::tree::BallBound &bound_in) const {
+      return MaxDistance(metric, bound_in) <= radius_;
     }
 
     /** @brief Calculates minimum bound-to-point squared distance.
@@ -331,7 +351,18 @@ class BallBound {
       // is necessary.
       if(! this->Contains(metric, vector)) {
 
-        // Compute the furthest point.
+        // Compute the furthest point from the new point.
+        arma::vec furthest_point;
+        this->FurthestPoint(vector, &furthest_point);
+
+        // The center is the mid way between the new point and the
+        // furthest point.
+        arma::vec center_alias;
+        core::table::DensePointToArmaVec(center_, &center_alias);
+        arma::vec vector_alias;
+        core::table::DensePointToArmaVec(vector, &vector_alias);
+        center_alias = 0.5 * (vector_alias + furthest_point);
+        radius_ = metric.Distance(center_, vector);
       }
       return *this;
     }
@@ -342,7 +373,23 @@ class BallBound {
     BallBound& Expand(
       const MetricType &metric, const BallBound &other) {
 
-      // Implement me.
+      // If the given ball bound is already contained, then no need to
+      // expand.
+      if(! this->Contains(metric, other)) {
+
+        // Compute the furthest point from each center.
+        arma::vec furthest_point_on_self;
+        arma::vec furthest_point_on_new_bound;
+        this->FurthestPoint(other.center(), &furthest_point_on_self);
+        other.FurthestPoint(center_, &furthest_point_on_new_bound);
+
+        // The center is the midway between two furthest points.
+        arma::vec center_alias;
+        core::table::DensePointToArmaVec(center_, &center_alias);
+        center_alias = 0.5 * (
+                         furthest_point_on_self + furthest_point_on_new_bound);
+        radius_ = metric.Distance(center_, furthest_point_on_self);
+      }
       return *this;
     }
 };
