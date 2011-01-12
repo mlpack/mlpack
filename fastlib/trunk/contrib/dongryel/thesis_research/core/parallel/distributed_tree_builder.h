@@ -466,7 +466,11 @@ class DistributedTreeBuilder {
       typename TreeType::BoundType global_root_bound;
       typename TreeType::BoundType local_bound;
       local_bound.Init(distributed_table_->n_attributes());
+      for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
+        arma::vec point;
+        distributed_table_->local_table()->get(i, &point);
 
+      }
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
