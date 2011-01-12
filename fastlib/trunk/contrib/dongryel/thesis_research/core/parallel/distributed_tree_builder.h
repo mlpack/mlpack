@@ -10,17 +10,47 @@
 
 #include <algorithm>
 #include <numeric>
+#include <boost/scoped_array.hpp>
 #include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
+#include "core/tree/hrect_bound.h"
+
+namespace core {
+namespace parallel {
+class RangeCombine:
+  public std::binary_function <
+    core::math::Range, core::math::Range, core::math::Range > {
+  public:
+    const core::math::Range operator()(
+      const core::math::Range &a, const core::math::Range &b) const {
+      core::math::Range return_range;
+      return_range |= a;
+      return_range |= b;
+      return return_range;
+    }
+};
+}
+}
+
+namespace boost {
+namespace mpi {
+template<>
+class is_commutative <
+  core::parallel::RangeCombine, core::math::Range > :
+  public boost::mpl::true_ {
+
+};
+}
+}
 
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
 
 namespace core {
 namespace parallel {
@@ -85,7 +115,7 @@ class DistributedTreeBuilder {
      */
     void AugmentNodes_(
       boost::mpi::communicator &world,
-      const typename TreeType::BoundType &global_root_bound,
+      const core::tree::HrectBound &global_root_bound,
       std::vector<TreeType *> &top_leaf_nodes) {
 
       core::table::DensePoint tmp_point;
@@ -254,6 +284,7 @@ class DistributedTreeBuilder {
     void BuildSampleTree_(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
+      const core::tree::HrectBound &global_root_bound,
       TableType *sampled_table_out,
       std::vector<TreeType *> *top_leaf_nodes_out) {
 
@@ -309,7 +340,7 @@ class DistributedTreeBuilder {
         if(top_leaf_nodes_out->size() <
             static_cast<unsigned int>(world.size())) {
           AugmentNodes_(
-            world, sampled_table_out->get_tree()->bound(), *top_leaf_nodes_out);
+            world, global_root_bound, *top_leaf_nodes_out);
         }
 
         // Sort the nodes by Z-ordering their centroids.
@@ -463,19 +494,31 @@ class DistributedTreeBuilder {
 
       // Do a reduction to find the rough global bound of all the
       // points across all processes.
-      typename TreeType::BoundType global_root_bound;
-      typename TreeType::BoundType local_bound;
-      local_bound.Init(distributed_table_->n_attributes());
+      boost::scoped_array<core::math::Range> global_root_bound_vector(
+        new core::math::Range[distributed_table_->n_attributes()]);
+      boost::scoped_array<core::math::Range> local_bound(
+        new core::math::Range[distributed_table_->n_attributes()]);
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
-        arma::vec point;
+        core::table::DensePoint point;
         distributed_table_->local_table()->get(i, &point);
-
+        for(int d = 0; d < distributed_table_->n_attributes(); d++) {
+          local_bound[d] |= point[d];
+        }
+      }
+      boost::mpi::all_reduce(
+        world, local_bound.get(), distributed_table_->n_attributes(),
+        global_root_bound_vector.get(), core::parallel::RangeCombine());
+      core::tree::HrectBound global_root_bound;
+      global_root_bound.Init(distributed_table_->n_attributes());
+      for(int i = 0; i < distributed_table_->n_attributes(); i++) {
+        global_root_bound.get(i) = global_root_bound_vector[i];
       }
 
       // Build the initial sample tree.
       std::vector<TreeType *> top_leaf_nodes;
       TableType sampled_table;
-      BuildSampleTree_(world, metric_in, &sampled_table, &top_leaf_nodes);
+      BuildSampleTree_(
+        world, metric_in, global_root_bound, &sampled_table, &top_leaf_nodes);
 
       // For each process, determine the membership of each points to
       // each of the top leaf nodes and do an all-to-all to do the
@@ -500,7 +543,7 @@ class DistributedTreeBuilder {
       }
     }
 };
-};
-};
+}
+}
 
 #endif
