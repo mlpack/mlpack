@@ -62,6 +62,13 @@ class BallBound {
       ar & center_;
     }
 
+    /** @brief Copy the given ball bound.
+     */
+    void Copy(const BallBound &other_bound) {
+      radius_ = other_bound.radius();
+      center_.Copy(other_bound.center());
+    }
+
     /** @brief Computes the furthest point inside the ball bound from
      *         the given point. This point is on the surface of the
      *         sphere.
@@ -393,7 +400,7 @@ class BallBound {
       return *this;
     }
 };
-};
-};
+}
+}
 
 #endif

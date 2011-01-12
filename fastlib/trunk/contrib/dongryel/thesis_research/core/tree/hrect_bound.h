@@ -136,6 +136,15 @@ class HrectBound {
       Reset();
     }
 
+    /** @brief Copy a given hrect bound.
+     */
+    void Copy(const HrectBound &other_bound) {
+      this->Init(other_bound.dim());
+      for(int i = 0; i < dim_; i++) {
+        bounds_[i] = other_bound.get(i);
+      }
+    }
+
     /** @brief Resets all dimensions to the empty set.
      */
     void Reset() {
@@ -440,7 +449,7 @@ class HrectBound {
       return this->operator |= (other);
     }
 };
-};
-};
+}
+}
 
 #endif
