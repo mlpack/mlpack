@@ -459,7 +459,7 @@ class Table {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

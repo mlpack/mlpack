@@ -41,9 +41,14 @@ class KdePostponed {
     }
 
     KdePostponed() {
+      SetZero();
     }
 
-    ~KdePostponed() {
+    void Copy(const KdePostponed &postponed_in) {
+      densities_l_ = postponed_in.densities_l_;
+      densities_u_ = postponed_in.densities_u_;
+      pruned_ = postponed_in.pruned_;
+      used_error_ = postponed_in.used_error_;
     }
 
     void Init() {
@@ -450,11 +455,15 @@ class KdeSummary {
       ar & used_error_u_;
     }
 
-    KdeSummary() {
-      SetZero();
+    void Copy(const KdeSummary &summary_in) {
+      densities_l_ = summary_in.densities_l_;
+      densities_u_ = summary_in.densities_u_;
+      pruned_l_ = summary_in.pruned_l_;
+      used_error_u_ = summary_in.used_error_u_;
     }
 
-    ~KdeSummary() {
+    KdeSummary() {
+      SetZero();
     }
 
     KdeSummary(const KdeSummary &summary_in) {
@@ -667,10 +676,15 @@ class KdeStatistic {
       ar & summary_;
     }
 
-    KdeStatistic() {
+    /** @brief Copies another abstract statistics (does not do anything).
+     */
+    void Copy(const KdeStatistic &stat_in) {
+      postponed_.Copy(stat_in.postponed_);
+      summary_.Copy(stat_in.summary_);
     }
 
-    ~KdeStatistic() {
+    KdeStatistic() {
+      SetZero();
     }
 
     void SetZero() {
@@ -699,7 +713,7 @@ class KdeStatistic {
       SetZero();
     }
 };
-};
-};
+}
+}
 
 #endif

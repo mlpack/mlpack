@@ -22,9 +22,9 @@ BOOST_AUTO_TEST_CASE(TestCaseArmadilloWrapper) {
   arma::vec vec_alias;
   core::table::DensePointToArmaVec(vec, &vec_alias);
   printf(
-    "Pointer address of the original: %x\n", (unsigned int) vec.ptr());
+    "Pointer address of the original: %p\n", vec.ptr());
   printf(
-    "Pointer address of the alias: %x\n", (unsigned int) vec_alias.memptr());
+    "Pointer address of the alias: %p\n", vec_alias.memptr());
   BOOST_ASSERT(vec.ptr() == vec_alias.memptr());
 }
 BOOST_AUTO_TEST_SUITE_END()
