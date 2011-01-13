@@ -1,5 +1,7 @@
 /** @file distributed_table.h
  *
+ *  An abstract class for maintaining a distributed set of points.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -13,13 +15,12 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/utility.hpp>
-#include "core/table/table.h"
-#include "core/table/memory_mapped_file.h"
-#include "core/tree/gen_metric_tree.h"
-#include "core/parallel/distributed_auction.h"
-#include "core/table/offset_dense_matrix.h"
-#include "core/parallel/distributed_local_kmeans.h"
+#include "core/parallel/distributed_tree_builder.h"
 #include "core/table/index_util.h"
+#include "core/table/memory_mapped_file.h"
+#include "core/table/offset_dense_matrix.h"
+#include "core/table/table.h"
+#include "core/tree/gen_metric_tree.h"
 
 namespace core {
 namespace table {
@@ -31,14 +32,27 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
+    /** @brief The type of the tree used to index data.
+     */
     typedef core::tree::GeneralBinarySpaceTree <TreeSpecType> TreeType;
 
+    /** @brief Defines the type of the local table owned by the
+     *         distributed table.
+     */
     typedef core::table::Table <
     TreeSpecType, std::pair<int, std::pair< int, int> > > TableType;
 
+    /** @brief Defines the type of the distributed table.
+     */
     typedef DistributedTable<TreeSpecType> DistributedTableType;
 
+    /** @brief The index type for each point is a pair of a machine ID
+     *         and a point ID.
+     */
     typedef std::pair<int, int> IndexType;
+
+    // For giving private access to the distributed tree builder class.
+    friend class core::parallel::DistributedTreeBuilder<DistributedTableType>;
 
   public:
     class TreeIterator {
@@ -139,246 +153,50 @@ class DistributedTable: public boost::noncopyable {
 
   private:
 
+    /** @brief The pointer to the local set of data owned by the
+     *         process.
+     */
     boost::interprocess::offset_ptr<TableType> owned_table_;
 
+    /** @brief The global view of the number of points across all MPI
+     *         processes.
+     */
     boost::interprocess::offset_ptr<int> local_n_entries_;
 
+    /** @brief The indexing of the top tree.
+     */
     boost::interprocess::offset_ptr<TableType> global_table_;
 
+    /** @brief The number of MPI processes present.
+     */
     int world_size_;
 
   private:
 
-    void ReplenishNodes_(std::vector<TreeType *> &top_leaf_nodes) {
-
-      core::table::DensePoint tmp_point;
-      arma::vec tmp_point_alias;
-      tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
-      core::table::DensePointToArmaVec(tmp_point, &tmp_point_alias);
-      int num_additional = world_size_ -
-                           top_leaf_nodes.size();
-      int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
-
-      // Randomly add new dummy nodes with randomly chosen centroids
-      // averaged.
-      for(int j = 0; j < num_additional; j++) {
-        tmp_point_alias.zeros();
-        for(int i = 0; i < num_samples; i++) {
-          arma::vec random_node_center;
-          core::table::DensePointToArmaVec(
-            top_leaf_nodes[
-              core::math::RandInt(top_leaf_nodes.size())]->bound().center(),
-            &random_node_center);
-          tmp_point_alias += random_node_center;
-        }
-        tmp_point_alias = (1.0 / static_cast<double>(num_samples)) *
-                          tmp_point_alias;
-        top_leaf_nodes.push_back(new TreeType());
-        top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
-          tmp_point);
-      }
+    /** @brief Refresh the number of points from all of the active MPI
+     *         processes.
+     */
+    void RefreshCounts_(boost::mpi::communicator &world) {
+      boost::mpi::all_gather(
+        world, owned_table_->n_entries(), local_n_entries_.get());
     }
 
     template<typename MetricType>
-    void ReadjustCentroids_(
-      boost::mpi::communicator &world,
-      const MetricType &metric,
-      const std::vector<TreeType *> &top_leaf_nodes,
-      int leaf_node_assignment_index) {
+    void BuildGlobalTree_(
+      boost::mpi::communicator &world, const MetricType &metric_in) {
 
-      const int neighbor_radius = world.size();
-      const int num_iterations = 10;
-
-      // Readjust the centroid.
-      std::vector<int> point_assignments;
-      int total_num_points_owned;
-      core::tree::DistributedLocalKMeans local_kmeans;
-      local_kmeans.Compute(
-        world, metric, *owned_table_,
-        neighbor_radius, num_iterations,
-        top_leaf_nodes[leaf_node_assignment_index]->bound().center(),
-        &total_num_points_owned, &point_assignments);
-
-      // Move the data across processes to get a new local table.
-      TableType *new_local_table =
+      // Every process gathers the adjusted leaf centroids and build
+      // the top tree individually.
+      global_table_ =
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
-      new_local_table->Init(
-        owned_table_->n_attributes(), total_num_points_owned,
-        world.rank());
-
-      // Left contributions.
-      std::vector < core::table::OffsetDenseMatrix > left_contributions;
-      std::vector < core::table::OffsetDenseMatrix > right_contributions;
-      std::vector< boost::mpi::request > left_send_requests;
-      std::vector< boost::mpi::request > right_send_requests;
-      left_contributions.resize(
-        std::min(world.rank(), neighbor_radius));
-      left_send_requests.resize(left_contributions.size());
-      right_contributions.resize(
-        std::min(
-          world.size() -
-          world.rank() - 1, neighbor_radius));
-      right_send_requests.resize(right_contributions.size());
-      for(unsigned int i = 1; i <= left_contributions.size(); i++) {
-        left_contributions[i - 1].Init(
-          world.rank(),
-          owned_table_->data(), owned_table_->old_from_new(), point_assignments,
-          world.rank() - i);
-        left_send_requests[i - 1] =
-          world.isend(
-            world.rank() - i, i, left_contributions[i - 1]);
-      }
-      for(unsigned int i = 1; i <= right_contributions.size(); i++) {
-        right_contributions[i - 1].Init(
-          world.rank(),
-          owned_table_->data(), owned_table_->old_from_new(), point_assignments,
-          world.rank() + i);
-        right_send_requests[i - 1] =
-          world.isend(
-            world.rank() + i, neighbor_radius + i,
-            right_contributions[i - 1]);
-      }
-
-      // Receive the points needed by this process from other
-      // processes. For the points owned by the process itself, just
-      // copy over.
-      core::table::OffsetDenseMatrix tmp_offset;
-      double *new_table_ptr = new_local_table->data().ptr();
-      std::pair<int, std::pair<int, int> > *new_table_old_from_new_ptr =
-        new_local_table->old_from_new();
-      for(unsigned int i = 1; i <= left_contributions.size(); i++) {
-        tmp_offset.Init(
-          world.rank(),
-          new_table_ptr, new_table_old_from_new_ptr,
-          new_local_table->n_attributes());
-        world.recv(
-          world.rank() - i, neighbor_radius + i, tmp_offset);
-
-        // Increment the table pointer based on the number of doubles
-        // received.
-        new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
-        new_table_old_from_new_ptr += tmp_offset.n_entries();
-      }
-      tmp_offset.Init(
-        world.rank(),
-        owned_table_->data(), new_table_old_from_new_ptr, point_assignments,
-        world.rank());
-      tmp_offset.Extract(new_table_ptr, new_table_old_from_new_ptr);
-      new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
-      new_table_old_from_new_ptr += tmp_offset.n_entries();
-      for(unsigned int i = 1; i <= right_contributions.size(); i++) {
-        tmp_offset.Init(
-          world.rank(),
-          new_table_ptr, new_table_old_from_new_ptr,
-          new_local_table->n_attributes());
-        world.recv(
-          world.rank() + i, i, tmp_offset);
-
-        // Increment the table pointer based on the number of doubles
-        // received.
-        new_table_ptr += tmp_offset.n_entries() * tmp_offset.n_attributes();
-        new_table_old_from_new_ptr += tmp_offset.n_entries();
-      }
-
-      // Wait for all send/receive requests to be completed.
-      boost::mpi::wait_all(
-        left_send_requests.begin(), left_send_requests.end());
-      boost::mpi::wait_all(
-        right_send_requests.begin(), right_send_requests.end());
-      world.barrier();
-
-      // Destory the old table and take the new table to be the owned
-      // table.
-      if(core::table::global_m_file_) {
-        core::table::global_m_file_->DestroyPtr(owned_table_.get());
-      }
-      else {
-        delete owned_table_.get();
-      }
-      owned_table_ = new_local_table;
-    }
-
-    int TakeLeafNodeOwnerShip_(
-      boost::mpi::communicator &world,
-      const std::vector<double> &num_points_assigned_to_leaf_nodes) {
-
-      if(world.size() > 1) {
-        core::parallel::DistributedAuction auction;
-        return auction.Assign(
-                 world, num_points_assigned_to_leaf_nodes,
-                 1.0 / static_cast<double>(world.size()));
-      }
-      else {
-        return 0;
-      }
-    }
-
-    template<typename MetricType>
-    void GetLeafNodeMembershipCounts_(
-      const MetricType &metric_in,
-      const std::vector<TreeType *> &top_leaf_nodes,
-      std::vector<double> &points_assigned_to_node) {
-
-      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-        points_assigned_to_node[i] = 0;
-      }
-
-      // Loop through each point and find the closest leaf node.
-      for(int i = 0; i < owned_table_->n_entries(); i++) {
-        core::table::DensePoint point;
-        owned_table_->get(i, &point);
-
-        // Loop through each leaf node.
-        double min_squared_mid_distance = std::numeric_limits<double>::max();
-        int min_index = -1;
-        for(unsigned int j = 0; j < top_leaf_nodes.size(); j++) {
-          const typename TreeType::BoundType &leaf_node_bound =
-            top_leaf_nodes[j]->bound();
-
-          // Compute the squared mid-distance.
-          double squared_mid_distance = leaf_node_bound.MidDistanceSq(
-                                          metric_in, point);
-          if(squared_mid_distance < min_squared_mid_distance) {
-            min_squared_mid_distance = squared_mid_distance;
-            min_index = j;
-          }
-        }
-
-        // Output the assignments.
-        points_assigned_to_node[min_index] += 1.0;
-      }
-    }
-
-    void SelectSubset_(
-      double sample_probability_in, std::vector<int> *sampled_indices_out) {
-
-      std::vector<int> indices(owned_table_->n_entries(), 0);
-      for(unsigned int i = 0; i < indices.size(); i++) {
-        indices[i] = i;
-      }
-      int num_elements =
-        std::max(
-          (int) floor(sample_probability_in * owned_table_->n_entries()), 1);
-      for(int i = 0; i < num_elements; i++) {
-        int random_index = core::math::RandInt(i, (int) indices.size());
-        std::swap(indices[i], indices[ random_index ]);
-      }
-
-      for(int i = 0; i < num_elements; i++) {
-        sampled_indices_out->push_back(indices[i]);
-      }
-    }
-
-    void CopyPointsIntoTemporaryBuffer_(
-      const std::vector<int> &sampled_indices, double **tmp_buffer) {
-
-      *tmp_buffer = new double[ sampled_indices.size() * this->n_attributes()];
-
-      for(unsigned int i = 0; i < sampled_indices.size(); i++) {
-        owned_table_->get(
-          sampled_indices[i], (*tmp_buffer) + i * this->n_attributes());
-      }
+      global_table_->Init(
+        owned_table_->n_attributes(), world.size());
+      boost::mpi::all_gather(
+        world,
+        owned_table_->get_tree()->bound().center().ptr(),
+        owned_table_->n_attributes(), global_table_->data().ptr());
+      global_table_->IndexData(metric_in, 1);
     }
 
   public:
@@ -526,131 +344,9 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
-      boost::mpi::timer distributed_table_index_timer;
-
-      // Each process generates a random subset of the data points to
-      // send to the master. This is a MPI gather operation.
-      TableType sampled_table;
-      std::vector<int> sampled_indices;
-      SelectSubset_(sample_probability_in, &sampled_indices);
-
-      // Send the number of points chosen in this process to the
-      // master so that the master can allocate the appropriate amount
-      // of space to receive all the points.
-      int total_num_samples = 0;
-      double *tmp_buffer = NULL;
-      int *counts = new int[ world.size()];
-      int local_sampled_indices_size = static_cast<int>(
-                                         sampled_indices.size());
-      boost::mpi::gather(
-        world, local_sampled_indices_size, counts, 0);
-      for(int i = 0; i < world.size(); i++) {
-        total_num_samples += counts[i];
-      }
-
-      // Each process copies the subset of points into the temporary
-      // buffer.
-      CopyPointsIntoTemporaryBuffer_(sampled_indices, &tmp_buffer);
-
-      if(world.rank() == 0) {
-        sampled_table.Init(this->n_attributes(), total_num_samples);
-        memcpy(
-          sampled_table.data().ptr(), tmp_buffer,
-          sizeof(double) * this->n_attributes() * sampled_indices.size());
-
-        int offset = this->n_attributes() * sampled_indices.size();
-        for(int i = 1; i < world.size(); i++) {
-          int num_elements_to_receive = this->n_attributes() * counts[i];
-          world.recv(
-            i, boost::mpi::any_tag,
-            sampled_table.data().ptr() + offset, num_elements_to_receive);
-          offset += num_elements_to_receive;
-        }
-      }
-      else {
-        world.send(
-          0, world.rank(), tmp_buffer,
-          this->n_attributes() * sampled_indices.size());
-      }
-
-      world.barrier();
-
-      // After sending, free the temporary buffer.
-      delete[] tmp_buffer;
-      delete[] counts;
-
-      // The master builds the top tree, and sends the leaf nodes to
-      // the rest.
-      std::vector<TreeType *> top_leaf_nodes;
-      if(world.rank() == 0) {
-        sampled_table.IndexData(
-          metric_in, 1, world.size());
-
-        // Broadcast the leaf nodes.
-        sampled_table.get_leaf_nodes(
-          sampled_table.get_tree(), &top_leaf_nodes);
-      }
-      boost::mpi::broadcast(world, top_leaf_nodes, 0);
-      // Broadcast the leaf nodes.
-      if(top_leaf_nodes.size() < static_cast<unsigned int>(
-            world.size())) {
-        ReplenishNodes_(top_leaf_nodes);
-      }
-
-      // Assign each point to one of the leaf nodes.
-      std::vector<double> num_points_assigned_to_leaf_nodes(
-        top_leaf_nodes.size(), 0);
-      GetLeafNodeMembershipCounts_(
-        metric_in, top_leaf_nodes, num_points_assigned_to_leaf_nodes);
-
-      // Each process takes a node in a greedy fashion to minimize the
-      // data movement.
-      int leaf_node_assignment_index = TakeLeafNodeOwnerShip_(
-                                         world,
-                                         num_points_assigned_to_leaf_nodes);
-
-      // Each process decides to test against the assigned leaf and
-      // its immediate DFS neighbors.
-      ReadjustCentroids_(
-        world, metric_in, top_leaf_nodes,
-        leaf_node_assignment_index);
-
-      // Index the local tree.
-      owned_table_->IndexData(metric_in, leaf_size);
-
-      // Now assemble the top tree. At this point, we can free the
-      // leaf nodes for the non-master.
-      if(world.rank() != 0) {
-        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-          delete top_leaf_nodes[i];
-        }
-      }
-
-      // Every process gathers the adjusted leaf centroids and build
-      // the top tree individually.
-      global_table_ =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->Construct<TableType>() :
-        new TableType();
-      global_table_->Init(
-        owned_table_->n_attributes(), world.size());
-      boost::mpi::all_gather(
-        world,
-        owned_table_->get_tree()->bound().center().ptr(),
-        owned_table_->n_attributes(), global_table_->data().ptr());
-      global_table_->IndexData(metric_in, 1);
-
-      // Very important: need to re-update the counts.
-      boost::mpi::all_gather(
-        world, owned_table_->n_entries(),
-        local_n_entries_.get());
-
-      if(world.rank() == 0) {
-        printf("Finished building the distributed tree.\n");
-        printf(
-          "Took %g seconds to read in the distributed tree.\n",
-          distributed_table_index_timer.elapsed());
-      }
+      core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
+      builder.Init(*this, sample_probability_in);
+      builder.Build(world, metric_in, leaf_size);
     }
 
     TreeIterator get_node_iterator(TreeType *node) {
@@ -717,7 +413,7 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

@@ -13,6 +13,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/bind.hpp>
 #include <boost/mpi.hpp>
+#include <boost/mpi/timer.hpp>
 #include "core/parallel/parallel_sample_sort.h"
 #include "core/table/offset_dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -89,11 +90,6 @@ class DistributedTreeBuilder {
       return
         core::math::MortonOrderPoints(
           first_node->bound().center(), second_node->bound().center());
-    }
-
-    static bool SortPairsBySecond_(
-      const std::pair<int, double> &a, const std::pair<int, double> &b) {
-      return a.second < b.second;
     }
 
     /** @brief Given the global order in the sorted list, find out
@@ -458,7 +454,8 @@ class DistributedTreeBuilder {
       }
       std::sort(
         point_id_distance_pairs.begin(), point_id_distance_pairs.end(),
-        SortPairsBySecond_);
+        boost::bind(&std::pair<int, double>::second, _1) <
+        boost::bind(&std::pair<int, double>::second, _2));
     }
 
     /** @brief Subsample a list of indices from the locally owned table.
@@ -516,7 +513,11 @@ class DistributedTreeBuilder {
      */
     template<typename MetricType>
     void Build(
-      boost::mpi::communicator &world, const MetricType &metric_in) {
+      boost::mpi::communicator &world,
+      const MetricType &metric_in, int leaf_size) {
+
+      // Timer for the tree building.
+      boost::mpi::timer distributed_table_index_timer;
 
       // Do a reduction to find the rough global bound of all the
       // points across all processes.
@@ -568,8 +569,28 @@ class DistributedTreeBuilder {
           }
         }
 
-        // Refresh the number of entries.
+        // Barrier.
         world.barrier();
+
+      } // end of the iterative process of reshuffling.
+
+      // Refresh the final count on each distributed table on each
+      // process.
+      distributed_table_->RefreshCounts_(world);
+
+      // Index the local tree on each process.
+      distributed_table_->local_table()->IndexData(metric_in, leaf_size);
+
+      // Build the top tree from the collected root nodes from all
+      // processes.
+      distributed_table_->BuildGlobalTree_(world, metric_in);
+
+      // Report timing for the master process.
+      if(world.rank() == 0) {
+        printf("Finished building the distributed tree.\n");
+        printf(
+          "Took %g seconds to read in the distributed tree.\n",
+          distributed_table_index_timer.elapsed());
       }
     }
 };

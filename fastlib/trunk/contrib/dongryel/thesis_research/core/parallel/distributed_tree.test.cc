@@ -48,7 +48,7 @@ class TestDistributedTree {
           num_dimensions = core::math::RandInt(3, 8);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        int num_points = core::math::RandInt(300, 800);
+        int num_points = core::math::RandInt(3, 8);
         if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -79,13 +79,14 @@ class TestDistributedTree {
       core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
       builder.Init(distributed_table, 0.2);
       core::metric_kernels::LMetric<2> l2_metric;
-      builder.Build(world, l2_metric);
+      int leaf_size = core::math::RandInt(20, 40);
+      builder.Build(world, l2_metric, leaf_size);
 
       return true;
     }
 };
-};
-};
+}
+}
 
 int main(int argc, char *argv[]) {
 
