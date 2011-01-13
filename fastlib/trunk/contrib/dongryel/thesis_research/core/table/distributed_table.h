@@ -301,6 +301,10 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_->n_entries();
     }
 
+    /** @brief Initializes a distributed table, reading in the local
+     *         set of the data owned by the process. This is
+     *         coordinated across all MPI processes.
+     */
     void Init(
       const std::string & file_name,
       boost::mpi::communicator &world) {
@@ -338,6 +342,8 @@ class DistributedTable: public boost::noncopyable {
       return global_table_->get_tree() != NULL;
     }
 
+    /** @brief Builds a distributed tree.
+     */
     template<typename MetricType>
     void IndexData(
       const MetricType & metric_in,

@@ -9,10 +9,10 @@
 #define CORE_TABLE_DENSE_POINT_H
 
 #include <armadillo>
-#include <vector>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <vector>
 #include "memory_mapped_file.h"
 
 namespace core {
@@ -207,7 +207,7 @@ static void DensePointToArmaVec(
   core::table::DoublePtrToArmaVec(
     point_in.ptr(), point_in.length(), vec_out);
 }
-};
-};
+}
+}
 
 #endif
