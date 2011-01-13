@@ -18,6 +18,12 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
   else {
     eta = 1.0 / sqrt(tin);
   }
+  
+  if (l1.reg == 2) {
+    // [-2 \lambda \eta w_i^t]
+    SparseScaleOverwrite(wvec, 1.0-eta * l1.reg_factor);
+  }
+  
   exp_sum = CreateEmptySvector();
   
   if (global.comm_method == 1) {
@@ -101,12 +107,9 @@ void *OgdThread(void *in_par) {
 
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
-      /*
-      if (l1.reg == 2) {
-	// [-2 \lambda \eta w_i^t]
-	SparseAddExpertOverwrite(l1.msg_pool[tid], -l1.reg_factor, l1.w_vec_pool[tid]);
-      }
-      */
+      // dummy gradient calc time
+      boost::this_thread::sleep(boost::posix_time::microseconds(1));
+
       // wait till all threads send their messages
       pthread_barrier_wait(&barrier_msg_all_sent);
       
