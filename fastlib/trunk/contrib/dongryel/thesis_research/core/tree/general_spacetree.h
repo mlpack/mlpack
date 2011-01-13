@@ -142,6 +142,21 @@ class GeneralBinarySpaceTree {
 
   public:
 
+    /** @brief A method for copying a node without its children.
+     */
+    void CopyWithoutChildren(const GeneralBinarySpaceTree &node) {
+      bound_.Copy(node.bound());
+      begin_ = node.begin();
+      count_ = node.count();
+      stat_.Copy(node.stat());
+      left_ = NULL;
+      right_ = NULL;
+    }
+
+    void operator=(const GeneralBinarySpaceTree &node) {
+      CopyWithoutChildren(node);
+    }
+
     /** @brief A method for serializing a node. This method does not
      *         save the children.
      */

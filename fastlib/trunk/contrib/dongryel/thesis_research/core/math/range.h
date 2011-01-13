@@ -42,6 +42,16 @@ class Range {
       ar & hi;
     }
 
+    Range(const Range &range_in) {
+      lo = range_in.lo;
+      hi = range_in.hi;
+    }
+
+    void operator=(const Range &range_in) {
+      lo = range_in.lo;
+      hi = range_in.hi;
+    }
+
     /** @brief The default constructor.
      */
     Range() {

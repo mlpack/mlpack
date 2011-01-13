@@ -80,6 +80,11 @@ class DistributedTreeBuilder {
           first_node->bound().center(), second_node->bound().center());
     }
 
+    static bool SortPairsBySecond_(
+      const std::pair<int, double> &a, const std::pair<int, double> &b) {
+      return a.second < b.second;
+    }
+
     /** @brief Given the global order in the sorted list, find out
      *         which bin it falls into for a given cumulative
      *         distribution.
@@ -249,6 +254,13 @@ class DistributedTreeBuilder {
       std::vector<SampleDenseMatrixType> reshuffled_points;
       SetupGatherPointers_(
         *new_local_table, reshuffled_contributions, &reshuffled_points);
+
+      // Important that each process takes care of the exporting of
+      // its own part.
+      points_to_be_distributed[world.rank()].Export(
+        reshuffled_points[world.rank()].matrix(),
+        reshuffled_points[world.rank()].old_from_new(),
+        reshuffled_points[world.rank()].starting_column_index());
       boost::mpi::all_to_all(
         world, points_to_be_distributed, reshuffled_points);
 
@@ -268,9 +280,6 @@ class DistributedTreeBuilder {
       // Determine the membership counts.
       std::vector< std::vector<int> > assigned_point_indices;
       std::vector<int> membership_counts_per_node;
-      for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-        top_leaf_nodes[i]->bound().center().Print();
-      }
 
       GetLeafNodeMembershipCounts_(
         metric_in, top_leaf_nodes,
@@ -330,9 +339,6 @@ class DistributedTreeBuilder {
       // the number of processes. If missing some nodes, then sample a
       // region and try to make up a node.
       if(world.rank() == 0) {
-
-        sampled_table_out->data().Print();
-
         top_leaf_nodes_out->resize(0);
         sampled_table_out->IndexData(metric_in, 1, world.size());
         sampled_table_out->get_leaf_nodes(
@@ -349,10 +355,6 @@ class DistributedTreeBuilder {
           MortonOrderNodes_);
       }
       boost::mpi::broadcast(world, *top_leaf_nodes_out, 0);
-
-      for(unsigned int i = 0; i < top_leaf_nodes_out->size(); i++) {
-        (*top_leaf_nodes_out)[i]->bound().center().Print();
-      }
     }
 
     /** @brief Do a re-distribution preserving the order such that
@@ -444,10 +446,8 @@ class DistributedTreeBuilder {
           metric_in.DistanceSq(point, centroid);
       }
       std::sort(
-        point_id_distance_pairs.begin(),
-        point_id_distance_pairs.end(),
-        boost::bind(&std::pair<int, double>::second, _1) <
-        boost::bind(&std::pair<int, double>::second, _2));
+        point_id_distance_pairs.begin(), point_id_distance_pairs.end(),
+        SortPairsBySecond_);
     }
 
     /** @brief Subsample a list of indices from the locally owned table.
@@ -533,14 +533,15 @@ class DistributedTreeBuilder {
       // Do a re-distribution of points.
       RedistributeEqually_(world, metric_in, sorted_indices_increasing);
 
-      // Recompute the centroids and repeat.
-
       // Destroy the top leaf nodes, if not the master process.
       if(world.rank() != 0) {
         for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
           delete top_leaf_nodes[i];
         }
       }
+
+      // Refresh the number of entries.
+
     }
 };
 }

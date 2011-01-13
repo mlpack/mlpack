@@ -54,7 +54,7 @@ mark_as_advanced(TRILINOS_INCLUDE_DIR trilinos_lib)
 
 find_path(MPI_INCLUDE_DIR mpi.h
     PATHS
-    /opt/openmpi/include
+    $ENV{HOME}/local/openmpi-1.4.3/include
     PATH_SUFFIXES
     mpi
     openmpi
