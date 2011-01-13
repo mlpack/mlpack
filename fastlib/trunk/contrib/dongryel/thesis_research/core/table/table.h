@@ -316,25 +316,24 @@ class Table {
 
     void Init(
       int num_dimensions_in, int num_points_in, int rank_in = 0) {
+      rank_ = rank_in;
       if(num_dimensions_in > 0 && num_points_in > 0) {
         data_.Init(num_dimensions_in, num_points_in);
+        if(core::table::global_m_file_) {
+          old_from_new_ = core::table::global_m_file_->ConstructArray <
+                          OldFromNewIndexType > (
+                            data_.n_cols());
+          new_from_old_ = core::table::global_m_file_->ConstructArray <
+                          int > (
+                            data_.n_cols());
+        }
+        else {
+          old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
+          new_from_old_ = new int[data_.n_cols()];
+        }
+        core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
+          data_, rank_in, old_from_new_.get());
       }
-      rank_ = rank_in;
-
-      if(core::table::global_m_file_) {
-        old_from_new_ = core::table::global_m_file_->ConstructArray <
-                        OldFromNewIndexType > (
-                          data_.n_cols());
-        new_from_old_ = core::table::global_m_file_->ConstructArray <
-                        int > (
-                          data_.n_cols());
-      }
-      else {
-        old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
-        new_from_old_ = new int[data_.n_cols()];
-      }
-      core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
-        data_, rank_in, old_from_new_.get());
     }
 
     void Init(const std::string &file_name, int rank_in = 0) {

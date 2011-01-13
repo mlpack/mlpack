@@ -68,8 +68,19 @@ class DistributedTreeBuilder {
     SampleDenseMatrixType;
 
   private:
+
+    /** @brief The pointer to the distributed table. The data will be
+     *         reshuffled and exchanged among the MPI processes.
+     */
     DistributedTableType *distributed_table_;
 
+    /** @brief The dimensionality.
+     */
+    int n_attributes_;
+
+    /** @brief The sampling rate at which to send to the master for
+     *         building a top tree.
+     */
     double sampling_rate_;
 
   private:
@@ -239,7 +250,7 @@ class DistributedTreeBuilder {
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
       new_local_table->Init(
-        distributed_table_->n_attributes(), total_num_points_owned,
+        n_attributes_, total_num_points_owned,
         world.rank());
 
       // Setup points so that they will be reshuffled.
@@ -322,7 +333,7 @@ class DistributedTreeBuilder {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
         sampled_table_out->Init(
-          distributed_table_->n_attributes(), total_num_samples);
+          n_attributes_, total_num_samples);
         SetupGatherPointers_(*sampled_table_out, counts, &gather_pointers);
 
         // The master process actually needs to setup its own portion
@@ -424,7 +435,7 @@ class DistributedTreeBuilder {
 
       // First compute the centroid.
       arma::vec centroid;
-      centroid.zeros(distributed_table_->n_attributes());
+      centroid.zeros(n_attributes_);
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         arma::vec point;
         distributed_table_->local_table()->get(i, &point);
@@ -475,6 +486,14 @@ class DistributedTreeBuilder {
 
   public:
 
+    /** @brief The default constructor.
+     */
+    DistributedTreeBuilder() {
+      distributed_table_ = NULL;
+      n_attributes_ = 0;
+      sampling_rate_ = 0;
+    }
+
     /** @brief Initialize with a given distributed table with the
      *         given sampling rate for building the top tree.
      *
@@ -484,10 +503,17 @@ class DistributedTreeBuilder {
      */
     void Init(
       DistributedTableType &distributed_table_in, double sampling_rate_in) {
+
+      // This assumes that each distributed table knows the
+      // dimensionality of the problem.
       distributed_table_ = &distributed_table_in;
+      n_attributes_ = distributed_table_in.n_attributes();
       sampling_rate_ = sampling_rate_in;
     }
 
+    /** @brief Reshuffles the data and builds the global top tree with
+     *         the local trees.
+     */
     template<typename MetricType>
     void Build(
       boost::mpi::communicator &world, const MetricType &metric_in) {
@@ -495,53 +521,56 @@ class DistributedTreeBuilder {
       // Do a reduction to find the rough global bound of all the
       // points across all processes.
       boost::scoped_array<core::math::Range> global_root_bound_vector(
-        new core::math::Range[distributed_table_->n_attributes()]);
+        new core::math::Range[n_attributes_]);
       boost::scoped_array<core::math::Range> local_bound(
-        new core::math::Range[distributed_table_->n_attributes()]);
+        new core::math::Range[n_attributes_]);
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
         core::table::DensePoint point;
         distributed_table_->local_table()->get(i, &point);
-        for(int d = 0; d < distributed_table_->n_attributes(); d++) {
+        for(int d = 0; d < n_attributes_; d++) {
           local_bound[d] |= point[d];
         }
       }
       boost::mpi::all_reduce(
-        world, local_bound.get(), distributed_table_->n_attributes(),
+        world, local_bound.get(), n_attributes_,
         global_root_bound_vector.get(), core::parallel::RangeCombine());
       core::tree::HrectBound global_root_bound;
-      global_root_bound.Init(distributed_table_->n_attributes());
-      for(int i = 0; i < distributed_table_->n_attributes(); i++) {
+      global_root_bound.Init(n_attributes_);
+      for(int i = 0; i < n_attributes_; i++) {
         global_root_bound.get(i) = global_root_bound_vector[i];
       }
 
-      // Build the initial sample tree.
-      std::vector<TreeType *> top_leaf_nodes;
-      TableType sampled_table;
-      BuildSampleTree_(
-        world, metric_in, global_root_bound, &sampled_table, &top_leaf_nodes);
+      for(int num_outer_it = 0; num_outer_it < 3; num_outer_it++) {
 
-      // For each process, determine the membership of each points to
-      // each of the top leaf nodes and do an all-to-all to do the
-      // reshuffle.
-      GreedyAssign_(world, metric_in, top_leaf_nodes);
+        // Build the initial sample tree.
+        std::vector<TreeType *> top_leaf_nodes;
+        TableType sampled_table;
+        BuildSampleTree_(
+          world, metric_in, global_root_bound, &sampled_table, &top_leaf_nodes);
 
-      // Recompute the centroids of each process and sort each point
-      // according to its distance from its centroid.
-      std::vector<int> sorted_indices_increasing;
-      RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
+        // For each process, determine the membership of each points to
+        // each of the top leaf nodes and do an all-to-all to do the
+        // reshuffle.
+        GreedyAssign_(world, metric_in, top_leaf_nodes);
 
-      // Do a re-distribution of points.
-      RedistributeEqually_(world, metric_in, sorted_indices_increasing);
+        // Recompute the centroids of each process and sort each point
+        // according to its distance from its centroid.
+        std::vector<int> sorted_indices_increasing;
+        RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
 
-      // Destroy the top leaf nodes, if not the master process.
-      if(world.rank() != 0) {
-        for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
-          delete top_leaf_nodes[i];
+        // Do a re-distribution of points.
+        RedistributeEqually_(world, metric_in, sorted_indices_increasing);
+
+        // Destroy the top leaf nodes, if not the master process.
+        if(world.rank() != 0) {
+          for(unsigned int i = 0; i < top_leaf_nodes.size(); i++) {
+            delete top_leaf_nodes[i];
+          }
         }
+
+        // Refresh the number of entries.
+        world.barrier();
       }
-
-      // Refresh the number of entries.
-
     }
 };
 }
