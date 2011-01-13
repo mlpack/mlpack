@@ -45,10 +45,10 @@ class TestDistributedTree {
         // Only the master broadcasts the dimension;
         int num_dimensions;
         if(world.rank() == 0) {
-          num_dimensions = core::math::RandInt(3, 4);
+          num_dimensions = core::math::RandInt(3, 8);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        int num_points = core::math::RandInt(3, 8);
+        int num_points = core::math::RandInt(300, 800);
         if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);

@@ -383,6 +383,8 @@ class DistributedTable: public boost::noncopyable {
 
   public:
 
+    /** @brief The default constructor.
+     */
     DistributedTable() {
       owned_table_ = NULL;
       local_n_entries_ = NULL;
@@ -390,6 +392,8 @@ class DistributedTable: public boost::noncopyable {
       world_size_ = -1;
     }
 
+    /** @brief Destructor.
+     */
     ~DistributedTable() {
 
       // Delete the list of number of entries for each table in the
@@ -431,7 +435,6 @@ class DistributedTable: public boost::noncopyable {
      *         to a new one.
      */
     void set_local_table(TableType *new_local_table_in) {
-
       if(owned_table_.get() != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(owned_table_.get());
@@ -443,18 +446,27 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = new_local_table_in;
     }
 
+    /** @brief Retrieves the local table owned by the distributed
+     *         table object.
+     */
     TableType *local_table() {
       return owned_table_.get();
     }
 
+    /** @brief Retrieves the global tree.
+     */
     TreeType *get_tree() {
       return global_table_->get_tree();
     }
 
+    /** @brief Retrieves the dimensionality of the table.
+     */
     int n_attributes() const {
       return owned_table_->n_attributes();
     }
 
+    /** @brief Looks up points owned by any MPI process.
+     */
     int local_n_entries(int rank_in) const {
       if(rank_in >= world_size_) {
         printf(
@@ -465,6 +477,8 @@ class DistributedTable: public boost::noncopyable {
       return local_n_entries_[rank_in];
     }
 
+    /** @brief Retrieves the number of points owned locally.
+     */
     int n_entries() const {
       return owned_table_->n_entries();
     }
@@ -500,10 +514,8 @@ class DistributedTable: public boost::noncopyable {
       }
     }
 
-    void Save(const std::string & file_name) const {
-
-    }
-
+    /** @brief Returns whether the global tree has been built already.
+     */
     bool IsIndexed() const {
       return global_table_->get_tree() != NULL;
     }

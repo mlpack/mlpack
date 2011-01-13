@@ -19,6 +19,8 @@ namespace table {
 template<typename OldFromNewIndexType>
 class SampleDenseMatrix {
   private:
+
+    // For boost serialization.
     friend class boost::serialization::access;
 
   private:
@@ -46,6 +48,8 @@ class SampleDenseMatrix {
 
   public:
 
+    /** @brief
+     */
     core::table::DenseMatrix *matrix() {
       return matrix_;
     }
