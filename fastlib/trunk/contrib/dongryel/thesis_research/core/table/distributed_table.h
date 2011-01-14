@@ -18,7 +18,6 @@
 #include "core/parallel/distributed_tree_builder.h"
 #include "core/table/index_util.h"
 #include "core/table/memory_mapped_file.h"
-#include "core/table/offset_dense_matrix.h"
 #include "core/table/table.h"
 #include "core/tree/gen_metric_tree.h"
 
