@@ -1,5 +1,7 @@
 /** @file trust_region_dev.h
  *
+ *  The implementation of the trust region optimizer.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -179,7 +181,7 @@ void TrustRegionUtil::ComputeDoglegDirection(
   if(! hessian_is_positive_definite) {
 
     std::cerr << "The Hessian matrix is not positive-definite, so we "
-              "have to use the Cauchy Point method..." << endl;
+              "have to use the Cauchy Point method..." << std::endl;
 
     ComputeCauchyPoint(radius, gradient, hessian, p);
   } // end of the Cauchy Point case.
@@ -253,12 +255,15 @@ void TrustRegionUtil::TrustRadiusUpdate(
   double rho, double p_norm, double max_radius, double *current_radius) {
 
   if(rho < 0.25) {
-    std::cerr << "Shrinking trust region radius..." << endl;
+    std::cerr << "Shrinking trust region radius..." << std::endl;
     (*current_radius) = p_norm / 4.0;
   }
   else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
-    std::cerr << "Expanding trust region radius..." << endl;
+    std::cerr << "Expanding trust region radius..." << std::endl;
     (*current_radius) = std::min(2.0 * (*current_radius), max_radius);
+  }
+  else {
+    std::cerr << "Keeping the same trust region radius...\n";
   }
 }
 
@@ -268,6 +273,7 @@ void TrustRegionUtil::ObtainStepDirection(
   const arma::vec &gradient, const arma::mat &hessian,
   arma::vec *step_direction, double *step_direction_norm) {
 
+  // Computes the step direction from one of three methods.
   switch(search_method_in) {
     case core::optimization::TrustRegionSearchMethod::CAUCHY:
       ComputeCauchyPoint(
@@ -287,6 +293,8 @@ void TrustRegionUtil::ObtainStepDirection(
 
 template<typename FunctionType>
 TrustRegion<FunctionType>::TrustRegion() {
+
+  // By default, the trust region search method is Cauchy Point.
   max_radius_ = 10.0;
   function_ = NULL;
   search_method_ = core::optimization::TrustRegionSearchMethod::CAUCHY;
@@ -295,7 +303,7 @@ TrustRegion<FunctionType>::TrustRegion() {
 template<typename FunctionType>
 bool TrustRegion<FunctionType>::GradientNormTooSmall_(
   const arma::vec &gradient) const {
-  return false;
+  return arma::norm(gradient, 2) <= 1e-3;
 }
 
 template<typename FunctionType>
@@ -307,6 +315,8 @@ template<typename FunctionType>
 void TrustRegion<FunctionType>::Init(
   FunctionType &function_in,
   core::optimization::TrustRegionSearchMethod::SearchType search_method_in) {
+
+  // Initialize function and search method.
   function_ = &function_in;
   search_method_ = search_method_in;
 }
@@ -338,7 +348,7 @@ void TrustRegion<FunctionType>::Optimize(
   arma::vec gradient;
   arma::mat hessian;
   function_->Gradient(*iterate, &gradient);
-  function_->Hessian(*iterate, &hessian);
+  // function_->Hessian(*iterate, &hessian);
 
   // The main optimization loop.
   for(
@@ -364,6 +374,7 @@ void TrustRegion<FunctionType>::Optimize(
         p, iterate_function_value, next_iterate_function_value,
         gradient, hessian);
 
+    // Update the trust region radius.
     core::optimization::TrustRegionUtil::TrustRadiusUpdate(
       rho, p_norm, max_radius_, &current_radius);
 
@@ -371,10 +382,12 @@ void TrustRegion<FunctionType>::Optimize(
     // accept the step. Otherwise, don't move.
     if(rho > eta) {
       (*iterate) = next_iterate;
+      function_->Gradient(*iterate, &gradient);
+      // function_->Hessian(*iterate, &hessian);
     }
-  }
+  } // end of the main optimization loop...
 }
-};
-};
+}
+}
 
 #endif
