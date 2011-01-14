@@ -8,7 +8,7 @@ set(SOURCES
   global.cc
   index_util.h
   memory_mapped_file.h
-  offset_dense_matrix.h
+  sample_dense_matrix.h
   sub_dense_matrix.h
   sub_table.h
   sub_table_list.h

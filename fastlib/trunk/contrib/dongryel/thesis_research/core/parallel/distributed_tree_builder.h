@@ -15,8 +15,8 @@
 #include <boost/mpi.hpp>
 #include <boost/mpi/timer.hpp>
 #include "core/parallel/parallel_sample_sort.h"
-#include "core/table/offset_dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
+#include "core/table/sample_dense_matrix.h"
 #include "core/tree/hrect_bound.h"
 
 namespace core {
