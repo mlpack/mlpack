@@ -1,20 +1,19 @@
-/** @author Dongryeol Lee (dongryel@cc.gatech.edu)
+/** @file optimization.test.cc
  *
- *  @brief The test driver for the L-BFGS optimizer on some popular
- *  test functions.
+ *  @brief The test driver for the L-BFGS optimizer and the trust
+ *         region optimizer on some popular test functions.
  *
- *  @file lbfgs_opt_test.cc
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
-
-// for BOOST testing
 
 #include "core/math/math_lib.h"
 #include "core/optimization/lbfgs_dev.h"
+#include "core/optimization/trust_region_dev.h"
 #include <stdexcept>
 
 namespace core {
 namespace optimization {
-namespace lbfgs_test {
+namespace optimization_test {
 
 class ExtendedRosenbrockFunction {
 
@@ -63,7 +62,6 @@ class ExtendedRosenbrockFunction {
         }
       }
     }
-
 };
 
 class WoodFunction {
@@ -98,28 +96,71 @@ class WoodFunction {
       (*iterate)[0] = (*iterate)[2] = -3;
       (*iterate)[1] = (*iterate)[3] = -1;
     }
-
 };
 
-class LbfgsTest {
+template< template<typename> class OptimizerType>
+class OptimizerInitTrait {
+  public:
+    template<typename FunctionType>
+    static void Init(
+      OptimizerType<FunctionType> &optimizer_in,
+      FunctionType &function_in,
+      int num_lbfgs_basis,
+      core::optimization::TrustRegionSearchMethod::SearchType
+      trust_region_search_method_in);
+};
+
+template<>
+class OptimizerInitTrait< core::optimization::Lbfgs > {
+  public:
+    template<typename FunctionType>
+    static void Init(
+      core::optimization::Lbfgs<FunctionType> &optimizer_in,
+      FunctionType &function_in,
+      int num_lbfgs_basis,
+      core::optimization::TrustRegionSearchMethod::SearchType
+      trust_region_search_method_in) {
+      optimizer_in.Init(function_in, num_lbfgs_basis);
+    }
+};
+
+template<>
+class OptimizerInitTrait< core::optimization::TrustRegion > {
+  public:
+    template<typename FunctionType>
+    static void Init(
+      core::optimization::TrustRegion<FunctionType> &optimizer_in,
+      FunctionType &function_in,
+      int num_lbfgs_basis,
+      core::optimization::TrustRegionSearchMethod::SearchType
+      trust_region_search_method_in) {
+      optimizer_in.Init(function_in, trust_region_search_method_in);
+    }
+};
+
+template< template<typename> class OptimizerType >
+class OptimizationTest {
   public:
 
     void TestExtendedRosenbrockFunction() {
 
       std::cout << "Testing extended Rosenbrock function: optimal value: 0.\n";
       for(int i = 0; i < 10; i++) {
-        core::optimization::lbfgs_test::ExtendedRosenbrockFunction
+        core::optimization::optimization_test::ExtendedRosenbrockFunction
         extended_rosenbrock_function;
-        core::optimization::Lbfgs <
-        core::optimization::lbfgs_test::ExtendedRosenbrockFunction >
-        extended_rosenbrock_function_lbfgs;
+        OptimizerType <
+        core::optimization::optimization_test::ExtendedRosenbrockFunction >
+        extended_rosenbrock_function_optimizer;
         arma::vec extended_rosenbrock_function_optimized;
         extended_rosenbrock_function.InitStartingIterate(
           &extended_rosenbrock_function_optimized);
-        extended_rosenbrock_function_lbfgs.Init(
+        core::optimization::optimization_test::
+        OptimizerInitTrait<OptimizerType>::Init(
+          extended_rosenbrock_function_optimizer,
           extended_rosenbrock_function,
-          std::min(extended_rosenbrock_function.num_dimensions() / 2, 20));
-        extended_rosenbrock_function_lbfgs.Optimize(
+          std::min(extended_rosenbrock_function.num_dimensions() / 2, 20),
+          core::optimization::TrustRegionSearchMethod::CAUCHY);
+        extended_rosenbrock_function_optimizer.Optimize(
           -1, &extended_rosenbrock_function_optimized);
 
         // Test whether the evaluation is close to the zero.
@@ -146,13 +187,19 @@ class LbfgsTest {
 
     void TestWoodFunction() {
       printf("Testing wood function: optimal value: 0.\n");
-      core::optimization::lbfgs_test::WoodFunction wood_function;
+      core::optimization::optimization_test::WoodFunction wood_function;
       arma::vec wood_function_optimized;
-      core::optimization::Lbfgs <
-      core::optimization::lbfgs_test::WoodFunction > wood_function_lbfgs;
+      OptimizerType <
+      core::optimization::optimization_test::WoodFunction > wood_function_optimizer;
       wood_function.InitStartingIterate(&wood_function_optimized);
-      wood_function_lbfgs.Init(wood_function, 3);
-      wood_function_lbfgs.Optimize(-1, &wood_function_optimized);
+
+      core::optimization::optimization_test::
+      OptimizerInitTrait <
+      OptimizerType >::Init(
+        wood_function_optimizer,
+        wood_function, 3,
+        core::optimization::TrustRegionSearchMethod::CAUCHY);
+      wood_function_optimizer.Optimize(-1, &wood_function_optimized);
 
       // It should converge to something close to (1, 1, 1, 1)^T
       for(unsigned int i = 0; i < wood_function_optimized.n_elem; i++) {
@@ -163,14 +210,20 @@ class LbfgsTest {
       }
     }
 };
-};
-};
-};
+}
+}
+}
 
 int main(int argc, char *argv[]) {
   printf("Starting L-BFGS tests.\n");
-  core::optimization::lbfgs_test::LbfgsTest test;
-  test.TestExtendedRosenbrockFunction();
-  test.TestWoodFunction();
+  core::optimization::optimization_test::OptimizationTest <
+  core::optimization::Lbfgs > lbfgs_test;
+  lbfgs_test.TestExtendedRosenbrockFunction();
+  lbfgs_test.TestWoodFunction();
+  printf("Starting trust region tests.\n");
+  core::optimization::optimization_test::OptimizationTest <
+  core::optimization::TrustRegion > trust_region_test;
+  trust_region_test.TestExtendedRosenbrockFunction();
+  trust_region_test.TestWoodFunction();
   printf("All tests passed!");
 }

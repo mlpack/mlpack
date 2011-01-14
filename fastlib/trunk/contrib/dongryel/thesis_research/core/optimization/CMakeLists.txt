@@ -15,12 +15,12 @@ endforeach()
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
-add_executable(lbfgs_opt-test
+add_executable(optimization-test
                EXCLUDE_FROM_ALL
-               lbfgs_opt.test.cc
+               optmization.test.cc
               )
 # link dependencies of test executable
-target_link_libraries(lbfgs_opt-test
+target_link_libraries(optimization-test
                       core
                       ${Boost_LIBRARIES}
                      )
