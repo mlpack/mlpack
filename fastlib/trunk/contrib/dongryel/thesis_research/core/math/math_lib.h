@@ -1,7 +1,9 @@
-/**
- * @file math_lib.h
+/** @file math_lib.h
  *
- * Includes all basic FASTlib non-vector math utilities.
+ *  Includes additional math utilities not provided by the Boost
+ *  library.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
 #ifndef CORE_MATH_MATH_LIB_H
@@ -13,6 +15,7 @@
 #include <boost/math/special_functions/binomial.hpp>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
+#include "core/table/dense_point.h"
 
 namespace core {
 namespace math {
@@ -161,7 +164,8 @@ namespace math {
  */
 template<int t_numerator, int t_denominator>
 inline double Pow(double d) {
-  return core::math__private::ZPowImpl<t_numerator, t_denominator>::Calculate(d);
+  return
+    core::math__private::ZPowImpl<t_numerator, t_denominator>::Calculate(d);
 }
 
 /**
@@ -207,7 +211,7 @@ void RandomCombination(
  *         2009.
  */
 template<typename T>
-int XorMsb(T a, T b) {
+static int XorMsb(T a, T b) {
 
   typedef union {
     T float_rep_;
@@ -249,7 +253,7 @@ inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
   int x = 0;
   int selected_dim = 0;
 
-  for(int d = 0; d < a.length(); d++) {
+  for(int d = 0; d < core::table::LengthTrait<PointType>::length(a); d++) {
     long int y = XorMsb(a[d], b[d]);
     if(x < y) {
       x = y;
@@ -258,7 +262,7 @@ inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
   }
   return a[selected_dim] < b[selected_dim];
 }
-};
-};
+}
+}
 
 #endif

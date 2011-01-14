@@ -103,6 +103,19 @@ int main(int argc, char *argv[]) {
   core::tree::TestDistributedTree<DistributedTableType> tree_test;
   tree_test.StressTestMain(world);
 
+
+  arma::vec first_point;
+  arma::vec second_point;
+  first_point.zeros(5);
+  second_point.zeros(5);
+  for(int i = 0; i < 5; i++) {
+    first_point[i] = 0.1;
+    second_point[i] = 0.7;
+  }
+  first_point.print();
+  second_point.print();
+  printf("Hey: %d\n", core::math::MortonOrderPoints(first_point, second_point));
+
   std::cout << "All tests passed!\n";
   return 0;
 }
