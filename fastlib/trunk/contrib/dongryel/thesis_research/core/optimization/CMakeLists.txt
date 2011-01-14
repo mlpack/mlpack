@@ -17,7 +17,7 @@ set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # test executable
 add_executable(optimization-test
                EXCLUDE_FROM_ALL
-               optmization.test.cc
+               optimization.test.cc
               )
 # link dependencies of test executable
 target_link_libraries(optimization-test

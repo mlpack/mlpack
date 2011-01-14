@@ -31,8 +31,7 @@ class ExtendedRosenbrockFunction {
       return fval;
     }
 
-    void Gradient(const arma::vec &x,
-                  arma::vec *gradient) {
+    void Gradient(const arma::vec &x, arma::vec *gradient) {
 
       gradient->zeros();
       for(int k = 0; k < num_dimensions() - 1; k++) {
@@ -44,6 +43,10 @@ class ExtendedRosenbrockFunction {
       (*gradient)[num_dimensions() - 1] =
         200 * (x[num_dimensions() - 1] -
                core::math::Sqr(x[num_dimensions() - 2]));
+    }
+
+    void Hessian(const arma::vec &x, arma::mat *hessian) {
+      hessian->zeros(num_dimensions_, num_dimensions_);
     }
 
     int num_dimensions() const {
@@ -76,14 +79,17 @@ class WoodFunction {
              19.8 * (1 - x[1]) * (1 - x[3]);
     }
 
-    void Gradient(const arma::vec &x,
-                  arma::vec *gradient) {
+    void Gradient(const arma::vec &x, arma::vec *gradient) {
       (*gradient)[0] = 400 * x[0] * (x[0] * x[0] - x[1]) + 2 * (x[0] - 1);
       (*gradient)[1] = 200 * (x[1] - x[0] * x[0]) + 20.2 * (x[1] - 1) +
                        19.8 * (x[3] - 1);
       (*gradient)[2] = 360 * x[2] * (x[2] * x[2] - x[3]) + 2 * (x[2] - 1);
       (*gradient)[3] = 180 * (x[3] - x[2] * x[2]) + 20.2 * (x[3] - 1) +
                        19.8 * (x[1] - 1);
+    }
+
+    void Hessian(const arma::vec &x, arma::mat *hessian) {
+      hessian->zeros(this->num_dimensions(), this->num_dimensions());
     }
 
     int num_dimensions() const {
