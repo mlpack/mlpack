@@ -348,7 +348,7 @@ void TrustRegion<FunctionType>::Optimize(
   arma::vec gradient;
   arma::mat hessian;
   function_->Gradient(*iterate, &gradient);
-  // function_->Hessian(*iterate, &hessian);
+  function_->Hessian(*iterate, &hessian);
 
   // The main optimization loop.
   for(
@@ -383,7 +383,7 @@ void TrustRegion<FunctionType>::Optimize(
     if(rho > eta) {
       (*iterate) = next_iterate;
       function_->Gradient(*iterate, &gradient);
-      // function_->Hessian(*iterate, &hessian);
+      function_->Hessian(*iterate, &hessian);
     }
   } // end of the main optimization loop...
 }
