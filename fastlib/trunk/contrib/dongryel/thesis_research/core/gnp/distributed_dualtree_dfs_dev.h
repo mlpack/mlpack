@@ -9,7 +9,6 @@
 #ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
-#include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
@@ -126,8 +125,15 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
           for(typename std::map<int, int>::const_iterator it =
                 sub_engine.unpruned_reference_nodes().begin();
               it != sub_engine.unpruned_reference_nodes().end(); it++) {
-            receive_requests[i].push_back(
-              std::pair<int, int>(it->first, it->second));
+
+            // This operation might be less than ideal, so change it
+            // later.
+            std::pair<int, int> new_pair(it->first, it->second);
+            if(std::find(
+                  receive_requests[i].begin(), receive_requests[i].end(),
+                  new_pair) == receive_requests[i].end()) {
+              receive_requests[i].push_back(new_pair);
+            }
           }
           new_computation_frontier[i].insert(
             new_computation_frontier[i].end(),

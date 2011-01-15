@@ -284,4 +284,5 @@ int main(int argc, char *argv[]) {
     core::optimization::TrustRegionSearchMethod::STEIHAUG);
 
   printf("All tests passed!");
+  return 0;
 }
