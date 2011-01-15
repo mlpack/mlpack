@@ -1,5 +1,7 @@
 /** @file dualtree_dfs_dev.h
  *
+ *  An implementation of the template generator for dualtree problems.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -577,7 +579,7 @@ void DualtreeDfs<ProblemType>::PostProcess_(
       qnode_right_stat.postponed_);
   }
 }
-};
-};
+}
+}
 
 #endif

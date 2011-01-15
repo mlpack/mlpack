@@ -1,5 +1,7 @@
 /** @file distributed_dualtree_dfs.h
  *
+ *  The prototype header for performing a distributed pairwise GNPs.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -18,7 +20,8 @@ class DistributedDualtreeDfs {
 
     typedef typename DistributedProblemType::TableType TableType;
     typedef typename DistributedProblemType::ProblemType ProblemType;
-    typedef typename DistributedProblemType::DistributedTableType DistributedTableType;
+    typedef typename DistributedProblemType::DistributedTableType
+    DistributedTableType;
     typedef typename TableType::TreeType TreeType;
     typedef typename DistributedTableType::TreeType DistributedTreeType;
     typedef typename DistributedProblemType::GlobalType GlobalType;
@@ -74,7 +77,7 @@ class DistributedDualtreeDfs {
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results);
 };
-};
-};
+}
+}
 
 #endif
