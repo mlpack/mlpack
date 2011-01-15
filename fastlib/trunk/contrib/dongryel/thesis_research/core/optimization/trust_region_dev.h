@@ -255,15 +255,10 @@ void TrustRegionUtil::TrustRadiusUpdate(
   double rho, double p_norm, double max_radius, double *current_radius) {
 
   if(rho < 0.25) {
-    std::cerr << "Shrinking trust region radius..." << std::endl;
     (*current_radius) = p_norm / 4.0;
   }
   else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
-    std::cerr << "Expanding trust region radius..." << std::endl;
     (*current_radius) = std::min(2.0 * (*current_radius), max_radius);
-  }
-  else {
-    std::cerr << "Keeping the same trust region radius...\n";
   }
 }
 
