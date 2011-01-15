@@ -179,10 +179,6 @@ void TrustRegionUtil::ComputeDoglegDirection(
   // If the Hessian matrix is not positive-definite (up to small
   // epsilon tolerance), we have to use the Cauchy Point method.
   if(! hessian_is_positive_definite) {
-
-    std::cerr << "The Hessian matrix is not positive-definite, so we "
-              "have to use the Cauchy Point method..." << std::endl;
-
     ComputeCauchyPoint(radius, gradient, hessian, p);
   } // end of the Cauchy Point case.
   else {
