@@ -591,6 +591,14 @@ class DistributedTreeBuilder {
         printf(
           "Took %g seconds to read in the distributed tree.\n",
           distributed_table_index_timer.elapsed());
+        printf(
+          "The following is the distribution of points among all MPI "
+          "processes.\n");
+        for(int i = 0; i < world.size(); i++) {
+          printf(
+            "Process %d has %d points.\n", i,
+            distributed_table_->local_n_entries(i));
+        }
       }
     }
 };

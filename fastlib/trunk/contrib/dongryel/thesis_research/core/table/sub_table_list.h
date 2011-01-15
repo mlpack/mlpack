@@ -1,5 +1,8 @@
 /** @file sub_table_list.h
  *
+ *  An abstract class to maintain a list of subtables to aid in the
+ *  all-to-all exchange.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -11,6 +14,9 @@
 
 namespace core {
 namespace table {
+
+/** @brief An abstract class for a list of subtables.
+ */
 template<typename IncomingSubTableType>
 class SubTableList {
   public:
@@ -21,20 +27,36 @@ class SubTableList {
     typedef IncomingSubTableType SubTableType;
 
   private:
+
+    // For boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The list of subtables.
+     */
     std::vector<SubTableType> list_;
 
   public:
 
+    /** @brief Resets the subtable list to be an empty list.
+     */
+    void Reset() {
+      list_.resize(0);
+    }
+
+    /** @brief Returns the subtable at a given position.
+     */
     SubTableType &operator[](int pos) {
       return list_[pos];
     }
 
+    /** @brief The size of the subtable list.
+     */
     unsigned int size() const {
       return list_.size();
     }
 
+    /** @brief Serializes each element of the subtable list.
+     */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       for(unsigned int i = 0; i < list_.size(); i++) {
@@ -42,6 +64,8 @@ class SubTableList {
       }
     }
 
+    /** @brief Pushes back a subtable for loading.
+     */
     template<typename OldFromNewIndexType>
     void push_back(
       int rank_in, core::table::DenseMatrix &data_alias_in,
@@ -54,6 +78,9 @@ class SubTableList {
         max_num_levels_to_serialize_in);
     }
 
+    /** @brief Pushes back a starting node and the number of levels to
+     *         serialize under.
+     */
     template<typename TableType, typename TreeType>
     void push_back(
       TableType *table_in, TreeType *start_node_in,
@@ -63,7 +90,7 @@ class SubTableList {
         table_in, start_node_in, max_num_levels_to_serialize_in);
     }
 };
-};
-};
+}
+}
 
 #endif

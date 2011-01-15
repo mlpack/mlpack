@@ -16,8 +16,8 @@
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
 
 namespace core {
 namespace parallel {
@@ -38,7 +38,7 @@ class TableExchange {
 
     std::vector<int *> new_from_old_cache_;
 
-    std::vector< SubTableListType > received_subtables;
+    std::vector< SubTableListType > received_subtables_;
 
   public:
 
@@ -60,18 +60,18 @@ class TableExchange {
     SubTableType &FindSubTable(int process_id, int begin, int count) {
 
       // Naive search, but probably should use a STL map here...
-      for(unsigned int i = 0; i < received_subtables[process_id].size(); i++) {
+      for(unsigned int i = 0; i < received_subtables_[process_id].size(); i++) {
         if(
-          received_subtables[
+          received_subtables_[
             process_id][i].table()->get_tree()->begin() == begin &&
-          received_subtables[
+          received_subtables_[
             process_id][i].table()->get_tree()->count() == count) {
-          return received_subtables[process_id][i];
+          return received_subtables_[process_id][i];
         }
       }
 
       // The code should not get to this point.
-      return received_subtables[process_id][0];
+      return received_subtables_[process_id][0];
     }
 
     void Init(
@@ -150,16 +150,16 @@ class TableExchange {
       }
 
       // Clear the received subtables and resize.
-      received_subtables.resize(0);
-      received_subtables.resize(world.size());
+      received_subtables_.resize(0);
+      received_subtables_.resize(world.size());
       for(unsigned int j = 0; j < receive_requests.size(); j++) {
         for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
-          received_subtables[j].push_back(
+          received_subtables_[j].push_back(
             j, point_cache_[j], old_from_new_cache_[j], new_from_old_cache_[j],
             max_num_levels_to_serialize);
         }
       }
-      boost::mpi::all_to_all(world, send_subtables, received_subtables);
+      boost::mpi::all_to_all(world, send_subtables, received_subtables_);
 
       // Clear the receive requests so that it can be used in the next
       // iteration.
@@ -169,7 +169,7 @@ class TableExchange {
       return false;
     }
 };
-};
-};
+}
+}
 
 #endif

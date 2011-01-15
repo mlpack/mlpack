@@ -360,7 +360,7 @@ class SubTable {
       tree_ = table_in->get_tree_offset_ptr();
     }
 };
-};
-};
+}
+}
 
 #endif
