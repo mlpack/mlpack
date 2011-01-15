@@ -336,7 +336,6 @@ void TrustRegion<FunctionType>::Optimize(
   // Whether to optimize until convergence.
   bool optimize_until_convergence = (num_iterations <= 0);
 
-  double rho = 0;
   double p_norm = 0;
   double current_radius = 0.1;
   int it_num;
@@ -347,6 +346,8 @@ void TrustRegion<FunctionType>::Optimize(
   // The current gradient and the Hessian.
   arma::vec gradient;
   arma::mat hessian;
+  gradient.set_size(function_->num_dimensions());
+  hessian.set_size(function_->num_dimensions(), function_->num_dimensions());
   function_->Gradient(*iterate, &gradient);
   function_->Hessian(*iterate, &hessian);
 

@@ -47,6 +47,31 @@ class ExtendedRosenbrockFunction {
 
     void Hessian(const arma::vec &x, arma::mat *hessian) {
       hessian->zeros(num_dimensions_, num_dimensions_);
+
+      // First, fill out the zero-th column of the Hessian.
+      hessian->at(0, 0) =
+        400 * (x[0] * x[0] - x[1]) + 400 * x[0] * (2 * x[0]) + 2;
+      hessian->at(1, 0) = -400 * x[0];
+      hessian->at(0, 1) = hessian->at(1, 0);
+
+      // Then, the first to $D - 2$ columns of the Hessian.
+      for(int k = 1; k <= this->num_dimensions() - 2; k++) {
+        hessian->at(k - 1, k) = -400 * x[k - 1];
+        hessian->at(k, k) =
+          400 * (x[k] * x[k] - x[k + 1]) + 400 * x[k] * (2 * x[k]) + 202;
+        hessian->at(k + 1, k) = -400 * x[k];
+        hessian->at(k, k - 1) = hessian->at(k - 1, k);
+        hessian->at(k, k + 1) = hessian->at(k + 1, k);
+      }
+
+      // Then the last column of the Hessian.
+      hessian->at(
+        this->num_dimensions() - 2, this->num_dimensions() - 1) =
+          -400 * x[this->num_dimensions() - 2];
+      hessian->at(
+        this->num_dimensions() - 1, this->num_dimensions() - 1) = 200;
+      hessian->at(this->num_dimensions() - 1, this->num_dimensions() - 2) =
+        hessian->at(this->num_dimensions() - 2, this->num_dimensions() - 1);
     }
 
     int num_dimensions() const {
@@ -90,6 +115,16 @@ class WoodFunction {
 
     void Hessian(const arma::vec &x, arma::mat *hessian) {
       hessian->zeros(this->num_dimensions(), this->num_dimensions());
+      hessian->at(0, 0) = 400 * (x[0] * x[0] - x[1]) + 800 * x[0] * x[0] + 2;
+      hessian->at(1, 0) = -400 * x[0];
+      hessian->at(0, 1) = -400 * x[0];
+      hessian->at(1, 1) = 220.2;
+      hessian->at(3, 1) = 19.8;
+      hessian->at(2, 2) = 1080 * x[2] * x[2] * x[2] + 2;
+      hessian->at(3, 2) = -360 * x[2];
+      hessian->at(1, 3) = 19.8;
+      hessian->at(2, 3) = -360 * x[2];
+      hessian->at(3, 3) = 200.2;
     }
 
     int num_dimensions() const {
