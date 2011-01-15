@@ -1,5 +1,8 @@
 /** @file tripletree_dfs.h
  *
+ *  A template generator for three-tree problems in depth first search
+ *  mode.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -140,7 +143,7 @@ class TripletreeDfs {
       const MetricType &metric,
       typename ProblemType::ResultType *query_results);
 };
-};
-};
+}
+}
 
 #endif

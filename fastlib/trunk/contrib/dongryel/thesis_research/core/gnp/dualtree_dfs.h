@@ -1,5 +1,8 @@
 /** @file dualtree_dfs.h
  *
+ *  A template generator for performing a depth first search dual-tree
+ *  algorithm.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -225,7 +228,7 @@ class DualtreeDfs {
       typename ProblemType::ResultType *query_results,
       bool do_initializations = true);
 };
-};
-};
+}
+}
 
 #endif

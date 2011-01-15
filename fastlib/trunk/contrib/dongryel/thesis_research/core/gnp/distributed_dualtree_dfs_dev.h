@@ -21,12 +21,15 @@
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
+
+namespace core {
+namespace gnp {
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
+void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
@@ -35,7 +38,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   // Start the computation with the self interaction.
-  core::gnp::DualtreeDfs<ProblemType> self_engine;
+  DualtreeDfs<ProblemType> self_engine;
   ProblemType self_problem;
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
@@ -102,7 +105,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
-          core::gnp::DualtreeDfs<ProblemType> sub_engine;
+          DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
           SubTableType &frontier_reference_subtable =
@@ -142,31 +145,31 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
 }
 
 template<typename DistributedProblemType>
-DistributedProblemType *core::gnp::DistributedDualtreeDfs <
+DistributedProblemType *DistributedDualtreeDfs <
 DistributedProblemType >::problem() {
   return problem_;
 }
 
 template<typename DistributedProblemType>
 typename DistributedProblemType::DistributedTableType *
-core::gnp::DistributedDualtreeDfs<DistributedProblemType>::query_table() {
+DistributedDualtreeDfs<DistributedProblemType>::query_table() {
   return query_table_;
 }
 
 template<typename DistributedProblemType>
 typename DistributedProblemType::DistributedTableType *
-core::gnp::DistributedDualtreeDfs<DistributedProblemType>::reference_table() {
+DistributedDualtreeDfs<DistributedProblemType>::reference_table() {
   return reference_table_;
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs <
+void DistributedDualtreeDfs <
 DistributedProblemType >::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Init(
+void DistributedDualtreeDfs<DistributedProblemType>::Init(
   boost::mpi::communicator *world_in,
   DistributedProblemType &problem_in) {
   world_ = world_in;
@@ -182,7 +185,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Init(
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
+void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
@@ -212,7 +215,7 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::Compute(
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedDualtreeDfs <
+void DistributedDualtreeDfs <
 DistributedProblemType >::ResetStatisticRecursion_(
   typename DistributedProblemType::DistributedTableType::TreeType *node,
   typename DistributedProblemType::DistributedTableType * table) {
@@ -225,7 +228,7 @@ DistributedProblemType >::ResetStatisticRecursion_(
 
 template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedDualtreeDfs <
+void DistributedDualtreeDfs <
 DistributedProblemType >::PreProcessReferenceTree_(
   TemplateTreeType *rnode) {
 
@@ -258,7 +261,7 @@ DistributedProblemType >::PreProcessReferenceTree_(
 
 template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::PreProcess_(
+void DistributedDualtreeDfs<DistributedProblemType>::PreProcess_(
   TemplateTreeType *qnode) {
 
   typename DistributedProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -268,6 +271,8 @@ void core::gnp::DistributedDualtreeDfs<DistributedProblemType>::PreProcess_(
     PreProcess_(qnode->left());
     PreProcess_(qnode->right());
   }
+}
+}
 }
 
 #endif

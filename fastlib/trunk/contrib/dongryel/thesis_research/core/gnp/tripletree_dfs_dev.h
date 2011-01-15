@@ -1,5 +1,8 @@
 /** @file tripletree_dfs_dev.h
  *
+ *  An implementation of triple tree algorithms in depth first search
+ *  mode.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -7,10 +10,10 @@
 #define CORE_GNP_TRIPLETREE_DFS_DEV_H
 
 #include <armadillo>
-#include "tripletree_dfs.h"
-#include "core/table/table.h"
+#include "core/gnp/tripletree_dfs.h"
 #include "core/gnp/triple_distance_sq.h"
 #include "core/math/math_lib.h"
+#include "core/table/table.h"
 
 namespace core {
 namespace gnp {
@@ -766,7 +769,7 @@ void TripletreeDfs<ProblemType>::PostProcess_(
       qnode_right_stat.postponed_);
   }
 }
-};
-};
+}
+}
 
 #endif
