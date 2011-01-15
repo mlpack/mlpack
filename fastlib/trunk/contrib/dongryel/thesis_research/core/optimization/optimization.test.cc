@@ -183,7 +183,10 @@ template< template<typename> class OptimizerType >
 class OptimizationTest {
   public:
 
-    void TestExtendedRosenbrockFunction() {
+    void TestExtendedRosenbrockFunction(
+      core::optimization::TrustRegionSearchMethod::SearchType
+      trust_region_search_method =
+        core::optimization::TrustRegionSearchMethod::CAUCHY) {
 
       std::cout << "Testing extended Rosenbrock function: optimal value: 0.\n";
       for(int i = 0; i < 10; i++) {
@@ -200,7 +203,7 @@ class OptimizationTest {
           extended_rosenbrock_function_optimizer,
           extended_rosenbrock_function,
           std::min(extended_rosenbrock_function.num_dimensions() / 2, 20),
-          core::optimization::TrustRegionSearchMethod::CAUCHY);
+          trust_region_search_method);
         extended_rosenbrock_function_optimizer.Optimize(
           -1, &extended_rosenbrock_function_optimized);
 
@@ -226,7 +229,10 @@ class OptimizationTest {
       }
     }
 
-    void TestWoodFunction() {
+    void TestWoodFunction(
+      core::optimization::TrustRegionSearchMethod::SearchType
+      trust_region_search_method =
+        core::optimization::TrustRegionSearchMethod::CAUCHY) {
       printf("Testing wood function: optimal value: 0.\n");
       core::optimization::optimization_test::WoodFunction wood_function;
       arma::vec wood_function_optimized;
@@ -237,9 +243,7 @@ class OptimizationTest {
       core::optimization::optimization_test::
       OptimizerInitTrait <
       OptimizerType >::Init(
-        wood_function_optimizer,
-        wood_function, 3,
-        core::optimization::TrustRegionSearchMethod::CAUCHY);
+        wood_function_optimizer, wood_function, 3, trust_region_search_method);
       wood_function_optimizer.Optimize(-1, &wood_function_optimized);
 
       // It should converge to something close to (1, 1, 1, 1)^T
@@ -261,10 +265,23 @@ int main(int argc, char *argv[]) {
   core::optimization::Lbfgs > lbfgs_test;
   lbfgs_test.TestExtendedRosenbrockFunction();
   lbfgs_test.TestWoodFunction();
-  printf("Starting trust region tests.\n");
+  printf("Starting trust region tests (Cauchy Point).\n");
   core::optimization::optimization_test::OptimizationTest <
   core::optimization::TrustRegion > trust_region_test;
-  trust_region_test.TestExtendedRosenbrockFunction();
-  trust_region_test.TestWoodFunction();
+  trust_region_test.TestExtendedRosenbrockFunction(
+    core::optimization::TrustRegionSearchMethod::CAUCHY);
+  trust_region_test.TestWoodFunction(
+    core::optimization::TrustRegionSearchMethod::CAUCHY);
+  printf("Starting trust region tests (Dogleg).\n");
+  trust_region_test.TestExtendedRosenbrockFunction(
+    core::optimization::TrustRegionSearchMethod::DOGLEG);
+  trust_region_test.TestWoodFunction(
+    core::optimization::TrustRegionSearchMethod::DOGLEG);
+  printf("Starting trust region tests (Steihaug).\n");
+  trust_region_test.TestExtendedRosenbrockFunction(
+    core::optimization::TrustRegionSearchMethod::STEIHAUG);
+  trust_region_test.TestWoodFunction(
+    core::optimization::TrustRegionSearchMethod::STEIHAUG);
+
   printf("All tests passed!");
 }
