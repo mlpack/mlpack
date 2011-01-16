@@ -306,14 +306,27 @@ class TestDistributed_Kde {
       distributed_kde_instance.Compute(
         distributed_kde_arguments, &distributed_kde_result);
 
+      // For each process, check whether all the othe reference points
+      // have been encountered.
+      DistributedTableType *distributed_reference_table =
+        distributed_kde_arguments.reference_table_;
+      int total_num_points = -1;
+      for(int i = 0; i < world.size(); i++) {
+        total_num_points += distributed_reference_table->local_n_entries(i);
+      }
+      for(unsigned int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
+        if(distributed_kde_result.pruned_[i] != total_num_points) {
+          std::cerr << "Not all reference point have been accounted for.\n";
+          exit(-1);
+        }
+      }
+
       // Call the ultra-naive.
       std::vector<double> ultra_naive_distributed_kde_result;
 
       // The master collects all the distributed tables and collects a
       // mega-table for which can be used to compute the naive
       // results.
-      DistributedTableType *distributed_reference_table =
-        distributed_kde_arguments.reference_table_;
       TableType combined_reference_table;
       int *total_distribution;
       CombineTables_(
