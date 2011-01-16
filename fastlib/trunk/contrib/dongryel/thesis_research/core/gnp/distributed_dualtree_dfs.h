@@ -41,7 +41,7 @@ class DistributedDualtreeDfs {
   private:
 
     template<typename MetricType>
-    void ReduceScatter_(
+    void AllToAllReduce_(
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results);
 

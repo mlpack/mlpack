@@ -9,13 +9,14 @@
 #ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
+#include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/sub_table_list.h"
 #include "core/table/memory_mapped_file.h"
-#include "core/parallel/table_exchange.h"
 
 namespace core {
 namespace table {
@@ -28,7 +29,7 @@ namespace gnp {
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
+void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
@@ -69,8 +70,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
   // An outstanding frontier of query-reference pairs to be computed.
   std::vector <
   std::vector <
-  std::pair<TreeType *, std::pair<int, int> > > > computation_frontier;
-  computation_frontier.resize(world_->size());
+  std::pair<TreeType *, std::pair<int, int> > > > computation_frontier(
+    world_->size());
+  std::vector< std::vector< std::pair<int, double> > >
+  computation_frontier_priorities(
+    world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
       int reference_begin = 0;
@@ -80,6 +84,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
         TreeType *, std::pair<int, int> > (
           query_table_->local_table()->get_tree(),
           std::pair<int, int>(reference_begin, reference_count)));
+      computation_frontier_priorities[i].push_back(
+        std::pair<int, double>(0, 0.0));
     }
   }
 
@@ -98,19 +104,23 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
     // algorithms. Further parallelism can be exploited here.
     std::vector <
     std::vector <
-    std::pair<TreeType *, std::pair<int, int> > > > new_computation_frontier;
-    new_computation_frontier.resize(world_->size());
+    std::pair<TreeType *, std::pair<int, int> > > > new_computation_frontier(
+      world_->size());
+    std::vector< std::vector< std::pair<int, double> > >
+    new_computation_frontier_priorities(
+      world_->size());
 
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
+          int sorted_index = computation_frontier_priorities[i][j].first;
           DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
           SubTableType &frontier_reference_subtable =
             table_exchange.FindSubTable(
-              i, computation_frontier[i][j].second.first,
-              computation_frontier[i][j].second.second);
+              i, computation_frontier[i][sorted_index].second.first,
+              computation_frontier[i][sorted_index].second.second);
           sub_argument.Init(
             frontier_reference_subtable.table(),
             query_table_->local_table(), problem_->global());
@@ -118,7 +128,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
           sub_engine.Init(sub_problem);
           sub_engine.set_base_case_flags(
             frontier_reference_subtable.serialize_points_per_terminal_node());
-          sub_engine.set_query_start_node(computation_frontier[i][j].first);
+          sub_engine.set_query_start_node(
+            computation_frontier[i][sorted_index].first);
           sub_engine.Compute(metric, query_results, false);
 
           // Collect the list of unpruned reference nodes.
@@ -139,13 +150,29 @@ void DistributedDualtreeDfs<DistributedProblemType>::ReduceScatter_(
             new_computation_frontier[i].end(),
             sub_engine.unpruned_query_reference_pairs().begin(),
             sub_engine.unpruned_query_reference_pairs().end());
+
+          // Insert the priorities for the new computation.
+          new_computation_frontier_priorities[i].insert(
+            new_computation_frontier_priorities[i].end(),
+            sub_engine.unpruned_query_reference_pair_priorities().begin(),
+            sub_engine.unpruned_query_reference_pair_priorities().end());
+
         } // Looping over each of the outstanding work from the $i$-th
         // process.
-      }
+
+        // Once the new computation priorities are formed for the
+        // $i$-process, sort the new frontier.
+        std::sort(
+          new_computation_frontier_priorities[i].begin(),
+          new_computation_frontier_priorities[i].end(),
+          boost::bind(&std::pair<int, double>::second, _1) <
+          boost::bind(&std::pair<int, double>::second, _2));
+      } // end of the if-case.
     } // end of taking care of the computation frontier.
 
     // Now copy over and make the new computation frontier.
     computation_frontier = new_computation_frontier;
+    computation_frontier_priorities = new_computation_frontier_priorities;
   }
   while(true);
 }
@@ -213,7 +240,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // done using a naive approach where the global goal is to complete
   // a 2D matrix workspace. This is currently doing an all-reduce type
   // of exchange.
-  ReduceScatter_(metric, query_results);
+  AllToAllReduce_(metric, query_results);
   world_->barrier();
 
   // Postprocess.
