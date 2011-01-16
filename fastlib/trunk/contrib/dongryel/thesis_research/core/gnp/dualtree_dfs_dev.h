@@ -29,6 +29,12 @@ ProblemType >::unpruned_query_reference_pairs() const {
 }
 
 template<typename ProblemType>
+const std::vector < std::pair<int, double >  > &DualtreeDfs <
+ProblemType >::unpruned_query_reference_pair_priorities() const {
+  return unpruned_query_reference_pair_priorities_;
+}
+
+template<typename ProblemType>
 const std::map <
 int, int > &DualtreeDfs<ProblemType>::unpruned_reference_nodes() const {
   return unpruned_reference_nodes_;
@@ -312,10 +318,8 @@ template<typename MetricType>
 void DualtreeDfs<ProblemType>::Heuristic_(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *node,
-  typename ProblemType::TableType *node_table,
   typename ProblemType::TableType::TreeType *first_candidate,
   typename ProblemType::TableType::TreeType *second_candidate,
-  typename ProblemType::TableType *candidate_table,
   typename ProblemType::TableType::TreeType **first_partner,
   core::math::Range &first_squared_distance_range,
   typename ProblemType::TableType::TreeType **second_partner,
@@ -397,6 +401,10 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
           std::pair <
           TreeType *, std::pair<int, int> > (
             qnode, std::pair<int, int>(rnode->begin(), rnode->count())));
+        unpruned_query_reference_pair_priorities_.push_back(
+          std::pair<int, double>(
+            unpruned_query_reference_pair_priorities_.size(),
+            squared_distance_range.lo));
         unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
 
@@ -407,8 +415,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
            squared_distance_range_second;
       typename ProblemType::TableType::TreeType *rnode_second;
       Heuristic_(
-        metric, qnode, query_table_, rnode->left(), rnode->right(),
-        reference_table_, &rnode_first, squared_distance_range_first,
+        metric, qnode, rnode->left(), rnode->right(),
+        &rnode_first, squared_distance_range_first,
         &rnode_second, squared_distance_range_second);
 
       // Recurse.
@@ -450,8 +458,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     squared_distance_range_first, squared_distance_range_second;
     typename ProblemType::TableType::TreeType *qnode_second;
     Heuristic_(
-      metric, rnode, reference_table_, qnode_left, qnode_right,
-      query_table_, &qnode_first, squared_distance_range_first,
+      metric, rnode, qnode_left, qnode_right,
+      &qnode_first, squared_distance_range_first,
       &qnode_second, squared_distance_range_second);
 
     // Recurse.
@@ -472,9 +480,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     squared_distance_range_first, squared_distance_range_second;
     typename ProblemType::TableType::TreeType *rnode_second;
     Heuristic_(
-      metric, qnode_left, query_table_,
-      rnode->left(), rnode->right(),
-      reference_table_, &rnode_first, squared_distance_range_first,
+      metric, qnode_left, rnode->left(), rnode->right(),
+      &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);
 
     // Recurse.
@@ -490,9 +497,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
         squared_distance_range_second, query_results);
 
     Heuristic_(
-      metric, qnode_right, query_table_,
-      rnode->left(), rnode->right(),
-      reference_table_, &rnode_first, squared_distance_range_first,
+      metric, qnode_right, rnode->left(), rnode->right(),
+      &rnode_first, squared_distance_range_first,
       &rnode_second, squared_distance_range_second);
 
     // Recurse.
