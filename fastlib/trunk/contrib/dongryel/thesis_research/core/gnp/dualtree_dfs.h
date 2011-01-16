@@ -9,12 +9,16 @@
 #ifndef CORE_GNP_DUALTREE_DFS_H
 #define CORE_GNP_DUALTREE_DFS_H
 
+#include <boost/tuple/tuple.hpp>
 #include <map>
 #include "core/math/range.h"
 #include "core/gnp/dualtree_trace.h"
 
 namespace core {
 namespace gnp {
+
+/** @brief The dualtree algorithm template generator.
+ */
 template<typename ProblemType>
 class DualtreeDfs {
 
@@ -43,20 +47,35 @@ class DualtreeDfs {
     template<typename IteratorMetricType>
     class iterator {
       private:
+
+        /** @brief The type of iterator argument type for pushing onto
+        	 *         the computation stack.
+        	 */
         class IteratorArgType {
 
           private:
 
+            /** @brief The query node.
+             */
             TreeType *qnode_;
 
+            /** @brief The reference node.
+             */
             TreeType *rnode_;
 
+            /** @brief The squared distance range associated with the
+             *         query/reference pair.
+             */
             core::math::Range squared_distance_range_;
 
           public:
 
+            /** @brief The default constructor.
+             */
             IteratorArgType();
 
+            /** @brief The copy constructor.
+             */
             IteratorArgType(const IteratorArgType &arg_in);
 
             IteratorArgType(
@@ -85,16 +104,29 @@ class DualtreeDfs {
 
       private:
 
+        /** @brief The query table.
+         */
         TableType *query_table_;
 
+        /** @brief The reference table.
+         */
         TableType *reference_table_;
 
+        /** @brief The associated dualtree engine.
+         */
         DualtreeDfs<ProblemType> *engine_;
 
+        /** @brief The associated metric.
+         */
         const IteratorMetricType &metric_;
 
+        /** @brief The result associated with the iterator.
+         */
         ResultType *query_results_;
 
+        /** @brief The computation stack trace for the iterative
+         *         computation.
+         */
         core::gnp::DualtreeTrace<IteratorArgType> trace_;
 
       public:
@@ -134,16 +166,21 @@ class DualtreeDfs {
      */
     TableType *reference_table_;
 
+    /** @brief The flag whether to do a selective base case for the
+     *         case when the reference tree is not assumed to be
+     *         complete.
+     */
     bool do_selective_base_case_;
 
     std::map<int, int> serialize_points_per_terminal_node_;
 
-    std::vector< std::pair<TreeType *, std::pair<int, int> > >
+    std::vector <
+    boost::tuple< TreeType *, std::pair<int, int>, double> >
     unpruned_query_reference_pairs_;
 
-    std::vector< std::pair<int, double> >
-    unpruned_query_reference_pair_priorities_;
-
+    /** @brief The list of unpruned reference nodes (the beginning
+     *         index and the count pair).
+     */
     std::map<int, int> unpruned_reference_nodes_;
 
   private:
@@ -234,13 +271,8 @@ class DualtreeDfs {
     /** @brief Returns the list of unpruned query/reference pairs.
      */
     const std::vector <
-    std::pair<TreeType *, std::pair<int, int > > > &
+    boost::tuple<TreeType *, std::pair<int, int >, double > > &
     unpruned_query_reference_pairs() const;
-
-    /** @brief Returns the list of unpruned query/reference priorites.
-     */
-    const std::vector < std::pair<int, double > > &
-    unpruned_query_reference_pair_priorities() const;
 
     /** @brief Returns the list of reference nodes by its beginning
      *         DFS index and the count.

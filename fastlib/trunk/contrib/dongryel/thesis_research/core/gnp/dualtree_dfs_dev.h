@@ -22,16 +22,10 @@ void DualtreeDfs<ProblemType>::set_query_start_node(
 }
 
 template<typename ProblemType>
-const std::vector < std::pair < typename DualtreeDfs <
-ProblemType >::TreeType *, std::pair<int, int > > > &DualtreeDfs <
+const std::vector < boost::tuple < typename DualtreeDfs <
+ProblemType >::TreeType *, std::pair<int, int >, double > > &DualtreeDfs <
 ProblemType >::unpruned_query_reference_pairs() const {
   return unpruned_query_reference_pairs_;
-}
-
-template<typename ProblemType>
-const std::vector < std::pair<int, double >  > &DualtreeDfs <
-ProblemType >::unpruned_query_reference_pair_priorities() const {
-  return unpruned_query_reference_pair_priorities_;
 }
 
 template<typename ProblemType>
@@ -398,13 +392,9 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
         // be dealt later. These list will be used in the distributed
         // dualtree computation.
         unpruned_query_reference_pairs_.push_back(
-          std::pair <
-          TreeType *, std::pair<int, int> > (
-            qnode, std::pair<int, int>(rnode->begin(), rnode->count())));
-        unpruned_query_reference_pair_priorities_.push_back(
-          std::pair<int, double>(
-            unpruned_query_reference_pairs_.size() - 1,
-            squared_distance_range.lo));
+          boost::make_tuple(
+            qnode, std::pair<int, int>(
+              rnode->begin(), rnode->count()), squared_distance_range.lo));
         unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
 

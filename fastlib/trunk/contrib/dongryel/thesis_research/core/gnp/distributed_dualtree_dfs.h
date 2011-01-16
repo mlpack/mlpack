@@ -59,6 +59,12 @@ class DistributedDualtreeDfs {
       const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
 
+    static bool SortByPriority_(
+      const boost::tuple <
+      TreeType *, std::pair<int, int>, double > &a,
+      const boost::tuple <
+      TreeType *, std::pair<int, int>, double > &b);
+
   public:
 
     DistributedProblemType *problem();
