@@ -114,7 +114,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       if(i != world_->rank()) {
         for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
           int sorted_index = computation_frontier_priorities[i][j].first;
-          DualtreeDfs<ProblemType> sub_engine;
+          core::gnp::DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
           SubTableType &frontier_reference_subtable =
@@ -152,10 +152,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             sub_engine.unpruned_query_reference_pairs().end());
 
           // Insert the priorities for the new computation.
-          new_computation_frontier_priorities[i].insert(
-            new_computation_frontier_priorities[i].end(),
-            sub_engine.unpruned_query_reference_pair_priorities().begin(),
-            sub_engine.unpruned_query_reference_pair_priorities().end());
+          int initial_new_computation_frontier_priorities_size =
+            new_computation_frontier_priorities[i].size();
+          for(unsigned int k = 0;
+              k < sub_engine.unpruned_query_reference_pair_priorities().size();
+              k++) {
+            new_computation_frontier_priorities[i].push_back(
+              sub_engine.unpruned_query_reference_pair_priorities()[k]);
+            new_computation_frontier_priorities[i].back().first +=
+              initial_new_computation_frontier_priorities_size;
+          }
 
         } // Looping over each of the outstanding work from the $i$-th
         // process.

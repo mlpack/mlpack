@@ -403,7 +403,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
             qnode, std::pair<int, int>(rnode->begin(), rnode->count())));
         unpruned_query_reference_pair_priorities_.push_back(
           std::pair<int, double>(
-            unpruned_query_reference_pair_priorities_.size(),
+            unpruned_query_reference_pairs_.size() - 1,
             squared_distance_range.lo));
         unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
