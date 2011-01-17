@@ -17,6 +17,46 @@ namespace mlpack {
 namespace series_expansion {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+core::table::DensePoint &CartesianFarField<ExpansionType>::get_center() {
+  return center_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const core::table::DensePoint &CartesianFarField <
+ExpansionType >::get_center() const {
+  return center_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const core::table::DensePoint &CartesianFarField <
+ExpansionType >::get_coeffs() const {
+  return coeffs_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+short int CartesianFarField<ExpansionType>::get_order() const {
+  return order_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+double CartesianFarField<ExpansionType>::get_weight_sum() const {
+  return coeffs_[0];
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianFarField<ExpansionType>::set_order(short int new_order) {
+  order_ = new_order;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianFarField<ExpansionType>::set_center(
+  const core::table::DensePoint &center) {
+  for(int i = 0; i < center.length(); i++) {
+    center_[i] = center[i];
+  }
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
 void CartesianFarField<ExpansionType>::Accumulate(
   const KernelAuxType &kernel_aux_in,
@@ -26,14 +66,13 @@ void CartesianFarField<ExpansionType>::Accumulate(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   core::table::DensePoint tmp;
   int r, i, j, k, t, tail;
-  Gencore::table::DensePoint<short int> heads;
+  std::vector<short int> heads(dim + 1, 0);
   core::table::DensePoint x_r;
   double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_->bandwidth_sq());
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // initialize temporary variables
   tmp.Init(total_num_coeffs);
-  heads.Init(dim + 1);
   x_r.Init(dim);
   core::table::DensePoint pos_coeffs;
   core::table::DensePoint neg_coeffs;
@@ -55,7 +94,6 @@ void CartesianFarField<ExpansionType>::Accumulate(
   }
 
   // initialize heads
-  heads.SetZero();
   heads[dim] = std::numeric_limits<short int>::max();
 
   tmp[0] = 1.0;
@@ -103,14 +141,13 @@ void CartesianFarField<ExpansionType>::AccumulateCoeffs(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   core::table::DensePoint tmp;
   int r, i, j, k, t, tail;
-  Gencore::table::DensePoint<short int> heads;
+  std::vector<short int> heads(dim + 1, 0);
   core::table::DensePoint x_r;
   double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_->bandwidth_sq());
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // initialize temporary variables
   tmp.Init(total_num_coeffs);
-  heads.Init(dim + 1);
   x_r.Init(dim);
   core::table::DensePoint pos_coeffs;
   core::table::DensePoint neg_coeffs;
@@ -135,7 +172,6 @@ void CartesianFarField<ExpansionType>::AccumulateCoeffs(
     }
 
     // initialize heads
-    heads.SetZero();
     heads[dim] = std::numeric_limits<short int>::max();
 
     tmp[0] = 1.0;
@@ -192,7 +228,7 @@ void CartesianFarField<ExpansionType>::RefineCoeffs(
   int r, i, j;
   core::table::DensePoint x_r;
   double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_->bandwidth_sq());
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // initialize temporary variables
   x_r.Init(dim);
@@ -272,7 +308,7 @@ double CartesianFarField<ExpansionType>::EvaluateField(
 
   // square root times bandwidth
   double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_->bandwidth_sq());
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // the evaluated sum
   double pos_multipole_sum = 0;
@@ -292,7 +328,7 @@ double CartesianFarField<ExpansionType>::EvaluateField(
   x_q_minus_x_R.Init(dim);
 
   // compute (x_q - x_R) / (sqrt(2h^2))
-  for(index_t d = 0; d < dim; d++) {
+  for(int d = 0; d < dim; d++) {
     x_q_minus_x_R[d] = (x_q[d] - center_[d]) / bandwidth_factor;
   }
 
@@ -301,7 +337,7 @@ double CartesianFarField<ExpansionType>::EvaluateField(
     x_q_minus_x_R, &derivative_map, order);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
     const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(j);
     double arrtmp =
       kernel_aux_in.ComputePartialDerivative(derivative_map, mapping);
@@ -391,31 +427,32 @@ void CartesianFarField<ExpansionType>::Print(
   fprintf(stream, "Far field expansion\n");
   fprintf(stream, "Center: ");
 
-  for(index_t i = 0; i < center_.length(); i++) {
+  for(int i = 0; i < center_.length(); i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
 
   fprintf(stream, "f(");
-  for(index_t d = 0; d < dim; d++) {
+  for(int d = 0; d < dim; d++) {
     fprintf(stream, "x_q%d", d);
     if(d < dim - 1)
       fprintf(stream, ",");
   }
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
 
-  for(index_t i = 0; i < total_num_coeffs; i++) {
-    const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(i);
+  for(int i = 0; i < total_num_coeffs; i++) {
+    const std::vector<short int> &mapping =
+      kernel_aux_in.global().get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
 
     fprintf(stream, "(-1)^(");
-    for(index_t d = 0; d < dim; d++) {
+    for(int d = 0; d < dim; d++) {
       fprintf(stream, "%d", mapping[d]);
       if(d < dim - 1)
         fprintf(stream, " + ");
     }
     fprintf(stream, ") D^((");
-    for(index_t d = 0; d < dim; d++) {
+    for(int d = 0; d < dim; d++) {
       fprintf(stream, "%d", mapping[d]);
 
       if(d < dim - 1)
@@ -429,9 +466,10 @@ void CartesianFarField<ExpansionType>::Print(
   fprintf(stream, "\n");
 }
 
-template<typename TKernelAux>
-void CartesianFarField::TranslateFromFarField(
-  const CartesianFarField &se) {
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<typename KernelAuxType>
+void CartesianFarField<ExpansionType>::TranslateFromFarField(
+  const KernelAuxType &kernel_aux_in, const CartesianFarField &se) {
 
   double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
   int dim = kernel_aux_in.global().get_dimension();
@@ -439,12 +477,12 @@ void CartesianFarField::TranslateFromFarField(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   core::table::DensePoint prev_coeffs;
   core::table::DensePoint prev_center;
-  const ArrayList <short int> *multiindex_mapping =
+  const std::vector <short int> *multiindex_mapping =
     kernel_aux_in.global().get_multiindex_mapping();
-  const ArrayList <short int> *lower_mapping_index =
+  const std::vector <short int> *lower_mapping_index =
     kernel_aux_in.global().get_lower_mapping_index();
 
-  ArrayList <short int> tmp_storage;
+  std::vector <short int> tmp_storage;
   core::table::DensePoint center_diff;
   core::table::DensePoint inv_multiindex_factorials;
 
@@ -453,7 +491,7 @@ void CartesianFarField::TranslateFromFarField(
   // retrieve coefficients to be translated and helper mappings
   prev_coeffs.Alias(se.get_coeffs());
   prev_center.Alias(*(se.get_center()));
-  tmp_storage.Init(kernel_aux_in.global().get_dimension());
+  tmp_storage.resize(kernel_aux_in.global().get_dimension());
   inv_multiindex_factorials.Alias(
     kernel_aux_in.global().get_inv_multiindex_factorials());
 
@@ -464,28 +502,28 @@ void CartesianFarField::TranslateFromFarField(
     order_ = order;
 
   // compute center difference
-  for(index_t j = 0; j < dim; j++) {
+  for(int j = 0; j < dim; j++) {
     center_diff[j] = prev_center[j] - center_[j];
   }
 
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList <short int> &gamma_mapping = multiindex_mapping[j];
-    const ArrayList <short int> &lower_mappings_for_gamma =
+    const std::vector <short int> &gamma_mapping = multiindex_mapping[j];
+    const std::vector <short int> &lower_mappings_for_gamma =
       lower_mapping_index[j];
     double pos_coeff = 0;
     double neg_coeff = 0;
 
-    for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
+    for(int k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
-      const ArrayList <short int> &inner_mapping =
+      const std::vector <short int> &inner_mapping =
         multiindex_mapping[lower_mappings_for_gamma[k]];
 
       int flag = 0;
       double diff1;
 
       // compute gamma minus alpha
-      for(index_t l = 0; l < dim; l++) {
+      for(int l = 0; l < dim; l++) {
         tmp_storage[l] = gamma_mapping[l] - inner_mapping[l];
 
         if(tmp_storage[l] < 0) {
@@ -500,7 +538,7 @@ void CartesianFarField::TranslateFromFarField(
 
       diff1 = 1.0;
 
-      for(index_t l = 0; l < dim; l++) {
+      for(int l = 0; l < dim; l++) {
         diff1 *= pow(center_diff[l] / bandwidth_factor, tmp_storage[l]);
       }
 
@@ -523,9 +561,11 @@ void CartesianFarField::TranslateFromFarField(
   } // end of j-loop
 }
 
-template<typename TKernelAux>
-void CartesianFarField::TranslateToLocal(
-  CartesianLocal &se, int truncation_order) {
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<typename KernelAuxType>
+void CartesianFarField<ExpansionType>::TranslateToLocal(
+  const KernelAuxType &kernel_aux_in, int truncation_order,
+  CartesianLocal<ExpansionType> &se) {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;
@@ -557,7 +597,7 @@ void CartesianFarField::TranslateToLocal(
   neg_arrtmp.Init(total_num_coeffs);
 
   // Compute center difference divided by the bandwidth factor.
-  for(index_t j = 0; j < dimension; j++) {
+  for(int j = 0; j < dimension; j++) {
     cent_diff[j] = (local_center[j] - center_[j]) / bandwidth_factor;
   }
 
@@ -567,17 +607,17 @@ void CartesianFarField::TranslateToLocal(
   std::vector<short int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
 
     const std::vector<short int> &beta_mapping =
       kernel_aux_in.global().get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
-    for(index_t k = 0; k < total_num_coeffs; k++) {
+    for(int k = 0; k < total_num_coeffs; k++) {
 
       const std::vector<short int> &alpha_mapping =
         kernel_aux_in.global().get_multiindex(k);
-      for(index_t d = 0; d < dimension; d++) {
+      for(int d = 0; d < dimension; d++) {
         beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
@@ -596,7 +636,7 @@ void CartesianFarField::TranslateToLocal(
 
   core::table::DensePoint C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
     local_coeffs[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }
 }

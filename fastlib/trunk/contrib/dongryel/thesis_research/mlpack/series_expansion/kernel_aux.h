@@ -43,6 +43,10 @@ class GaussianKernelMultAux {
 
   public:
 
+    const KernelType &kernel() const {
+      return kernel_;
+    }
+
     const ExpansionGlobalType &global() const {
       return global_;
     }
@@ -306,6 +310,10 @@ class GaussianKernelAux {
     ExpansionGlobalType global_;
 
   public:
+
+    const KernelType &kernel() const {
+      return kernel_;
+    }
 
     const ExpansionGlobalType &global() const {
       return global_;
@@ -604,6 +612,10 @@ class EpanKernelAux {
     InversePowDistKernelAux squared_component_;
 
   public:
+
+    const KernelType &kernel() const {
+      return kernel_;
+    }
 
     const ExpansionGlobalType &global() const {
       return global_;

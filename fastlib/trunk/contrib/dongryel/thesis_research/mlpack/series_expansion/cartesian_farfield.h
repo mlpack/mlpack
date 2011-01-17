@@ -50,44 +50,32 @@ class CartesianFarField {
      *
      *  @return The center of expansion for the current far-field expansion.
      */
-    core::table::DensePoint* get_center() {
-      return &center_;
-    }
+    core::table::DensePoint &get_center();
 
-    const core::table::DensePoint* get_center() const {
-      return &center_;
-    }
+    const core::table::DensePoint &get_center() const;
 
     /** @brief Gets the set of far-field coefficients.
      *
      *  @return The const reference to the vector containing the
      *          far-field coefficients.
      */
-    const core::table::DensePoint& get_coeffs() const {
-      return coeffs_;
-    }
+    const core::table::DensePoint& get_coeffs() const;
 
     /** @brief Gets the approximation order.
      *
      *  @return The integer representing the current approximation order.
      */
-    short int get_order() const {
-      return order_;
-    }
+    short int get_order() const;
 
     /** @brief Gets the weight sum.
      */
-    double get_weight_sum() const {
-      return coeffs_[0];
-    }
+    double get_weight_sum() const;
 
     /** @brief Sets the approximation order of the far-field expansion.
      *
      *  @param new_order The desired new order of the approximation.
      */
-    void set_order(short int new_order) {
-      order_ = new_order;
-    }
+    void set_order(short int new_order);
 
     /** @brief Set the center of the expansion - assumes that the center
      *         has been initialized before...
@@ -96,11 +84,7 @@ class CartesianFarField {
      *                will be copied to the center of the given far-field
      *                expansion object.
      */
-    void set_center(const core::table::DensePoint &center) {
-      for(index_t i = 0; i < center.length(); i++) {
-        center_[i] = center[i];
-      }
-    }
+    void set_center(const core::table::DensePoint &center);
 
     ////////// User-level Functions //////////
 
@@ -124,8 +108,11 @@ class CartesianFarField {
      *  @param order The order up to which the far-field moments should be
      *               accumulated up to.
      */
+    template<typename KernelAuxType>
     void Accumulate(
-      const core::table::DensePoint &reference_point, double weight, int order);
+      const KernelAuxType &kernel_aux_in,
+      const core::table::DensePoint &reference_point,
+      double weight, int order);
 
     /** @brief Accumulates the far field moment represented by the given
      *         reference data into the coefficients.
@@ -152,7 +139,9 @@ class CartesianFarField {
      *  @param order The order up to which the far-field moments should be
      *               accumulated up to.
      */
+    template<typename KernelAuxType>
     void AccumulateCoeffs(
+      const KernelAuxType &kernel_aux_in,
       const core::table::DenseMatrix &data,
       const core::table::DensePoint &weights,
       int begin, int end, int order);
@@ -160,17 +149,23 @@ class CartesianFarField {
     /** @brief Refine the far field moment that has been computed before
      *         up to a new order.
      */
+    template<typename KernelAuxType>
     void RefineCoeffs(
+      const KernelAuxType &kernel_aux_in,
       const core::table::DenseMatrix &data,
       const core::table::DensePoint &weights,
       int begin, int end, int order);
 
     /** @brief Evaluates the far-field coefficients at the given point.
      */
+    template<typename KernelAuxType>
     double EvaluateField(
+      const KernelAuxType &kernel_aux_in,
       const core::table::DenseMatrix &data, int row_num, int order) const;
 
-    double EvaluateField(const double *x_q, int order) const;
+    template<typename KernelAuxType>
+    double EvaluateField(
+      const KernelAuxType &kernel_aux_in, const double *x_q, int order) const;
 
     /** @brief Initializes the current far field expansion object with
      *         the given center.
@@ -185,8 +180,9 @@ class CartesianFarField {
      *         expansion for any query point within the specified region
      *         for a given bound.
      */
-    template<typename BoundType>
+    template<typename KernelAuxType, typename BoundType>
     int OrderForEvaluating(
+      const KernelAuxType &kernel_aux_in,
       const BoundType &far_field_region,
       const BoundType &local_field_region,
       double min_dist_sqd_regions,
@@ -202,8 +198,9 @@ class CartesianFarField {
      *  @return the minimum approximation order required for the error,
      *          -1 if approximation up to the maximum order is not possible.
      */
-    template<typename BoundType>
+    template<typename KernelAuxType, typename BoundType>
     int OrderForConvertingToLocal(
+      const KernelAuxType &kernel_aux_in,
       const BoundType &far_field_region,
       const BoundType &local_field_region,
       double min_dist_sqd_regions,
@@ -213,19 +210,27 @@ class CartesianFarField {
 
     /** @brief Prints out the series expansion represented by this object.
      */
-    void Print(const char *name = "", FILE *stream = stderr) const;
+    template<typename KernelAuxType>
+    void Print(
+      const KernelAuxType &kernel_aux_in,
+      const char *name = "", FILE *stream = stderr) const;
 
     /** @brief Translate from a far field expansion to the expansion
      *         here. The translated coefficients are added up to the
      *         ones here.
      */
-    void TranslateFromFarField(const CartesianFarField<ExpansionType> &se);
+    template<typename KernelAuxType>
+    void TranslateFromFarField(
+      const KernelAuxType &kernel_aux_in,
+      const CartesianFarField<ExpansionType> &se);
 
     /** @brief Translate to the given local expansion. The translated
      *         coefficients are added up to the passed-in local
      *         expansion coefficients.
      */
+    template<typename KernelAuxType>
     void TranslateToLocal(
+      const KernelAuxType &kernel_aux_in,
       int truncation_order, CartesianLocal<ExpansionType> *se) const;
 };
 }
