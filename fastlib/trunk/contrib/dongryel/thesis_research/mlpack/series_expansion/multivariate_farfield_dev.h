@@ -17,46 +17,6 @@
 namespace mlpack {
 namespace series_expansion {
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-core::table::DensePoint &CartesianFarField<ExpansionType>::get_center() {
-  return center_;
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint &CartesianFarField <
-ExpansionType >::get_center() const {
-  return center_;
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint &CartesianFarField <
-ExpansionType >::get_coeffs() const {
-  return coeffs_;
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-short int CartesianFarField<ExpansionType>::get_order() const {
-  return order_;
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-double CartesianFarField<ExpansionType>::get_weight_sum() const {
-  return coeffs_[0];
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianFarField<ExpansionType>::set_order(short int new_order) {
-  order_ = new_order;
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianFarField<ExpansionType>::set_center(
-  const core::table::DensePoint &center) {
-  for(int i = 0; i < center.length(); i++) {
-    center_[i] = center[i];
-  }
-}
-
 template<>
 template<typename KernelAuxType>
 void CartesianFarField <
@@ -146,7 +106,7 @@ void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::RefineCoeffs(
   int begin, int end, int order) {
 
   if(order_ < 0) {
-    AccumulateCoeffs(data, weights, begin, end, order);
+    AccumulateCoeffs(kernel_aux_in, data, weights, begin, end, order);
     return;
   }
 
@@ -217,14 +177,6 @@ void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::RefineCoeffs(
   }
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType>
-double CartesianFarField<ExpansionType>::EvaluateField(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data, int row_num, int order) const {
-  return EvaluateField(kernel_aux_in, data.GetColumnPtr(row_num), order);
-}
-
 template<>
 template<typename KernelAuxType>
 double CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
@@ -286,66 +238,6 @@ double CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
   return multipole_sum;
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::Init(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& center) {
-
-  // Copy the center.
-  center_.Copy(center);
-  order_ = -1;
-
-  // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType>
-template<typename TKernelAux>
-void CartesianFarField<ExpansionType>::Init(const TKernelAux &kernel_aux_in) {
-
-  // Set the center to be a zero vector.
-  order_ = -1;
-  center_.Init(kernel_aux_in.global().get_dimension());
-  center_.SetZero();
-
-  // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType, typename BoundType>
-int CartesianFarField<ExpansionType>::OrderForEvaluating(
-  const KernelAuxType &kernel_aux_in,
-  const BoundType &far_field_region,
-  const BoundType &local_field_region, double min_dist_sqd_regions,
-  double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return kernel_aux_in.OrderForEvaluatingFarField(
-           far_field_region,
-           local_field_region,
-           min_dist_sqd_regions,
-           max_dist_sqd_regions, max_error,
-           actual_error);
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType, typename BoundType>
-int CartesianFarField<ExpansionType>::OrderForConvertingToLocal(
-  const KernelAuxType &kernel_aux_in,
-  const BoundType &far_field_region, const BoundType &local_field_region,
-  double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
-  double *actual_error) const {
-
-  return kernel_aux_in.OrderForConvertingFromFarFieldToLocal(
-           far_field_region,
-           local_field_region,
-           min_dist_sqd_regions,
-           max_dist_sqd_regions,
-           max_error, actual_error);
-}
-
 template<>
 template<typename KernelAuxType>
 void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::Print(
@@ -403,7 +295,8 @@ void CartesianFarField <
 mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   const KernelAuxType &kernel_aux_in, const CartesianFarField &se) {
 
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
   int dim = kernel_aux_in.global().get_dimension();
   int order = se.get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
@@ -422,7 +315,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
 
   // retrieve coefficients to be translated and helper mappings
   prev_coeffs.Alias(se.get_coeffs());
-  prev_center.Alias(*(se.get_center()));
+  prev_center.Alias(se.get_center());
   tmp_storage.resize(kernel_aux_in.global().get_dimension());
   inv_multiindex_factorials.Alias(
     kernel_aux_in.global().get_inv_multiindex_factorials());
@@ -516,7 +409,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // get center and coefficients for local expansion
-  local_center.Alias(*(se->get_center()));
+  local_center.Alias(se->get_center());
   local_coeffs.Alias(se->get_coeffs());
   cent_diff.Init(dimension);
 
