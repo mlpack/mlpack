@@ -163,6 +163,17 @@ class TestNbodySimulator {
       nbody_simulator_instance.Compute(
         nbody_simulator_arguments, &nbody_simulator_result);
 
+      // First check whether the number of tuples encountered for each
+      // point is correct.
+      for(unsigned int i = 0; i < nbody_simulator_result.pruned_.size(); i++) {
+        if(nbody_simulator_result.pruned_[i] !=
+            nbody_simulator_instance.global().total_num_tuples()) {
+          std::cerr << "The number of tuples for " << i << "-th point is " <<
+                    nbody_simulator_result.pruned_[i] << " but it should be " <<
+                    nbody_simulator_instance.global().total_num_tuples();
+        }
+      }
+
       // Call the ultra-naive.
       std::vector<double> ultra_naive_nbody_simulator_result(
         nbody_simulator_arguments.table_->n_entries(), 0.0);
