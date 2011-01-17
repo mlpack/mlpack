@@ -31,16 +31,34 @@ class CartesianExpansionGlobal {
      */
     int max_order_;
 
+    /** @brief The list of precomputed factorial values.
+     */
     core::table::DensePoint factorials_;
 
+    /** @brief The list of precomputed total number of coefficients
+     *         per each order.
+     */
     std::vector<int> list_total_num_coeffs_;
 
+    /** @brief The list of precomputed inverse multiindex factorial
+     *         values.
+     */
     core::table::DensePoint inv_multiindex_factorials_;
 
+    /** @brief The list of precomputed inverse multiindex factorial
+     *         values with the parity equal to the multiindex
+     *         sum. $(-1)^{\alpha} / \alpha !$.
+     */
     core::table::DensePoint neg_inv_multiindex_factorials_;
 
+    /** @brief The list of precomputed multiindex combination $\alpha
+     *         choose \beta$'s.
+     */
     core::table::DenseMatrix multiindex_combination_;
 
+    /** @brief The list of multiindices per each position in the
+     *         coefficient layout.
+    */
     std::vector< std::vector<short int> > multiindex_mapping_;
 
     /** @brief For each i-th multiindex m_i, store the positions of
@@ -67,15 +85,24 @@ class CartesianExpansionGlobal {
      */
     std::vector< std::vector<short int> > traversal_mapping_;
 
+  private:
+
+    /** @brief Compute the list of factorials.
+     */
+    void ComputeFactorials_();
+
+    void ComputeLowerMappingIndex_();
+
+    void ComputeMultiindexCombination_();
+
+    void ComputeUpperMappingIndex_();
+
+    /** @brief Computes the traversal mapping. This is only for
+     *         $O(p^D)$ expansions.
+     */
+    void ComputeTraversalMapping_();
+
   public:
-
-    void ComputeFactorials();
-
-    void ComputeLowerMappingIndex();
-
-    void ComputeMultiindexCombination();
-
-    void ComputeUpperMappingIndex();
 
     double factorial(int k) const;
 
@@ -132,11 +159,6 @@ class CartesianExpansionGlobal {
     /** @brief Print useful information about this object.
      */
     void Print(const char *name = "", FILE *stream = stderr) const;
-
-    /** @brief Computes the traversal mapping. This is only for
-     *         $O(p^D)$ expansions.
-     */
-    void ComputeTraversalMapping();
 };
 }
 }

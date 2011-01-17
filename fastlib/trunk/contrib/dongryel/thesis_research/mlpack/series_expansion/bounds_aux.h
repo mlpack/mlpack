@@ -1,79 +1,106 @@
-#ifndef BOUNDS_AUX_H
-#define BOUNDS_AUX_H
+/** @file bounds_aux.h
+ *
+ *  A collection of methods that provide additional methods for
+ *  computing bound-related quantities.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *  @bug No known bugs.
+ */
 
-#include "fastlib/fastlib.h"
+#ifndef MLPACK_SERIES_EXPANSION_BOUNDS_AUX_H
+#define MLPACK_SERIES_EXPANSION_BOUNDS_AUX_H
 
-class bounds_aux {
+#include <armadillo>
+#include "core/math/range.h"
+#include "core/metric_kernels/lmetric.h"
+#include "core/table/dense_matrix.h"
+#include "core/table/dense_point.h"
+#include "core/tree/ball_bound.h"
+#include "core/tree/hrect_bound.h"
+
+namespace mlpack {
+namespace series_expansion {
+
+class BoundsAux {
 
   public:
-    template<int t_pow>
-    static void MaxDistanceSq(const DHrectBound<t_pow> &bound1,
-                              const DHrectBound<t_pow> &bound2,
-                              Vector &furthest_point_in_bound1,
-                              double &furthest_dsqd) {
 
+    /** @brief We assume always L2 metric. I have not seen series
+     *         expansion being applied under a metric other than L_2
+     *         metric in the Cartesian setting.
+     */
+    static const int t_pow = 2;
+
+  public:
+    static void MaxDistanceSq(
+      const core::tree::HrectBound &bound1,
+      const core::tree::HrectBound &bound2,
+      arma::vec *furthest_point_in_bound1,
+      double *furthest_dsqd) {
+
+      furthest_point_in_bound1->set_zeros(bound1.dim());
       int dim = furthest_point_in_bound1.length();
-      furthest_dsqd = 0;
+      *furthest_dsqd = 0;
 
-      for(index_t d = 0; d < dim; d++) {
+      for(int d = 0; d < dim; d++) {
 
-        const DRange &bound1_range = bound1.get(d);
-        const DRange &bound2_range = bound2.get(d);
+        const core::math::Range &bound1_range = bound1.get(d);
+        const core::math::Range &bound2_range = bound2.get(d);
 
         double v1 = bound2_range.hi - bound1_range.lo;
         double v2 = bound1_range.hi - bound2_range.lo;
         double v;
 
         if(v1 > v2) {
-          furthest_point_in_bound1[d] = bound1_range.lo;
+          (*furthest_point_in_bound1)[d] = bound1_range.lo;
           v = v1;
         }
         else {
-          furthest_point_in_bound1[d] = bound1_range.hi;
+          (*furthest_point_in_bound1)[d] = bound1_range.hi;
           v = v2;
         }
-        furthest_dsqd += math::PowAbs<t_pow, 1>(v); // v is non-negative
+        (*furthest_dsqd) += math::PowAbs<t_pow, 1>(v); // v is non-negative
       }
-      furthest_dsqd = math::Pow<2, t_pow>(furthest_dsqd);
+      (*furthest_dsqd) = math::Pow<2, t_pow>(*furthest_dsqd);
     }
 
-    template<int t_pow>
-    static void MaxDistanceSq(const DHrectBound<t_pow> &bound1,
-                              Vector &bound2_centroid,
-                              Vector &furthest_point_in_bound1,
-                              double &furthest_dsqd) {
+    static void MaxDistanceSq(
+      const core::tree::HrectBound &bound1,
+      const core::table::DensePoint &bound2_centroid,
+      arma::vec *furthest_point_in_bound1,
+      double *furthest_dsqd) {
 
-      int dim = furthest_point_in_bound1.length();
-      furthest_dsqd = 0;
+      furthest_point_in_bound1->set_zeros(bound1.center().length());
+      int dim = furthest_point_in_bound1->n_elem;
+      *furthest_dsqd = 0;
 
-      for(index_t d = 0; d < dim; d++) {
+      for(int d = 0; d < dim; d++) {
 
-        const DRange &bound1_range = bound1.get(d);
-
+        const core::math::Range &bound1_range = bound1.get(d);
         double v1 = bound2_centroid[d] - bound1_range.lo;
         double v2 = bound1_range.hi - bound2_centroid[d];
         double v;
 
         if(v1 > v2) {
-          furthest_point_in_bound1[d] = bound1_range.lo;
+          (*furthest_point_in_bound1)[d] = bound1_range.lo;
           v = v1;
         }
         else {
-          furthest_point_in_bound1[d] = bound1_range.hi;
+          (*furthest_point_in_bound1)[d] = bound1_range.hi;
           v = v2;
         }
-        furthest_dsqd += math::PowAbs<t_pow, 1>(v); // v is non-negative
+        (*furthest_dsqd) += math::PowAbs<t_pow, 1>(v); // v is non-negative
       }
-      furthest_dsqd = math::Pow<2, t_pow>(furthest_dsqd);
+      (*furthest_dsqd) = math::Pow<2, t_pow>(*furthest_dsqd);
     }
 
-    template<int t_pow, typename TVector>
-    static void MaxDistanceSq(const DBallBound < LMetric<t_pow>, TVector > &bound1,
-                              Vector &bound2_centroid,
-                              Vector &furthest_point_in_bound1,
-                              double &furthest_dsqd) {
+    static void MaxDistanceSq(
+      const core::tree::BallBound &bound1,
+      const core::table::DensePoint &bound2_centroid,
+      arma::vec *furthest_point_in_bound1,
+      double *furthest_dsqd) {
 
-      furthest_dsqd = 0;
+      *furthest_dsqd = 0;
 
       // First compute the distance between the centroid of the bounding
       // ball and the given point.
@@ -83,26 +110,28 @@ class bounds_aux {
       // Compute the unit vector that has the same direction as the
       // vector pointing from the given point to the bounding ball
       // center.
-      Vector unit_vector;
-      la::SubInit(bound2_centroid, bound1.center(), &unit_vector);
-      la::Scale(1.0 / distance, &unit_vector);
+      arma::vec bound1_center_alias;
+      arma::vec bound2_centroid_alias;
+      core::table::DensePointToArmaVec(bound1.center(), &bound1_center_alias);
+      core::table::DensePointToArmaVec(bound2_centroid, &bound2_centroid_alias);
+      arma::vec unit_vector = bound1_center_alias - bound2_centroid_alias;
+      unit_vector *= 1.0 / distance;
+      (*furthest_point_in_bound1) = bound1_center_alias;
+      (*furthest_point_in_bound1) += bound1.radius() * unit_vector;
 
-      furthest_point_in_bound1.CopyValues(bound1.center());
-      la::AddExpert(bound1.radius(), unit_vector, &furthest_point_in_bound1);
-
-      furthest_dsqd = math::Pow<2, t_pow>
-                      (la::RawLMetric<t_pow>(bound2_centroid.length(),
-                                             furthest_point_in_bound1.ptr(),
-                                             bound2_centroid.ptr()));
+      // Temporary LMetric object. Eliminate when there is an issue
+      // later.
+      core::metric_kernels::LMetric<2> l2_metric;
+      (*furthest_dsqd) = l2_metric.DistanceSq(
+                           bound2_centroid, *furthest_point_in_bound1);
     }
 
     /** @brief Returns the maximum side length of the bounding box that
      *         encloses the given ball bound. That is, twice the radius
      *         of the given ball bound.
      */
-    template<int t_pow, typename TVector>
-    static double MaxSideLengthOfBoundingBox
-    (const DBallBound < LMetric<t_pow>, TVector > &ball_bound) {
+    static double MaxSideLengthOfBoundingBox(
+      const core::tree::BallBound &ball_bound) {
       return ball_bound.radius() * 2;
     }
 
@@ -110,13 +139,12 @@ class bounds_aux {
      *         encloses the given bounding box. That is, its maximum
      *         side length.
      */
-    template<int t_pow>
-    static double MaxSideLengthOfBoundingBox(const DHrectBound<t_pow> &bound) {
+    static double MaxSideLengthOfBoundingBox(
+      const core::tree::HrectBound &bound) {
 
       double max_length = 0;
-
-      for(index_t d = 0; d < bound.dim(); d++) {
-        const DRange &range = bound.get(d);
+      for(int d = 0; d < bound.dim(); d++) {
+        const core::math::Range &range = bound.get(d);
         max_length = std::max(max_length, range.width());
       }
       return max_length;
@@ -125,17 +153,16 @@ class bounds_aux {
     /** @brief Returns the maximum distance between two bound types in
      *         L1 sense.
      */
-    template<int t_pow, typename TVector>
-    static double MaxL1Distance
-    (const DBallBound < LMetric<t_pow>, TVector > &ball_bound1,
-     const DBallBound < LMetric<t_pow>, TVector > &ball_bound2,
-     int *dimension) {
+    static double MaxL1Distance(
+      const core::tree::BallBound &ball_bound1,
+      const core::tree::BallBound &ball_bound2,
+      int *dimension) {
 
-      const Vector &center1 = ball_bound1.center();
-      const Vector &center2 = ball_bound2.center();
+      const core::table::DensePoint &center1 = ball_bound1.center();
+      const core::table::DensePoint &center2 = ball_bound2.center();
       int dim = ball_bound1.center().length();
       double l1_distance = 0;
-      for(index_t d = 0; d < dim; d++) {
+      for(int d = 0; d < dim; d++) {
         l1_distance += fabs(center1[d] - center2[d]);
       }
       l1_distance += ball_bound1.radius() + ball_bound2.radius();
@@ -146,16 +173,16 @@ class bounds_aux {
     /** @brief Returns the maximum distance between two bound types in
      *         L1 sense.
      */
-    template<int t_pow>
-    static double MaxL1Distance(const DHrectBound<t_pow> &bound1,
-                                const DHrectBound<t_pow> &bound2, int *dimension) {
+    static double MaxL1Distance(
+      const core::tree::HrectBound &bound1,
+      const core::tree::HrectBound &bound2,
+      int *dimension) {
 
       double farthest_distance_manhattan = 0;
-      for(index_t d = 0; d < bound1.dim(); d++) {
-        const DRange &range1 = bound1.get(d);
-        const DRange &range2 = bound2.get(d);
+      for(int d = 0; d < bound1.dim(); d++) {
+        const core::math::Range &range1 = bound1.get(d);
+        const core::math::Range &range2 = bound2.get(d);
         double bound1_centroid_coord = range1.lo + range1.width() / 2;
-
         farthest_distance_manhattan =
           max(farthest_distance_manhattan,
               max(fabs(bound1_centroid_coord - range2.lo),
@@ -165,5 +192,7 @@ class bounds_aux {
       return farthest_distance_manhattan;
     }
 };
+}
+}
 
 #endif

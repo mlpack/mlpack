@@ -149,8 +149,7 @@ double CartesianExpansionGlobal <ExpansionType >::factorial(int k) const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianExpansionGlobal <ExpansionType >::
-ComputeUpperMappingIndex() {
+void CartesianExpansionGlobal <ExpansionType >::ComputeUpperMappingIndex_() {
 
   int limit = 2 * max_order_;
   std::vector<int> diff(dim_);
@@ -182,7 +181,7 @@ ComputeUpperMappingIndex() {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianExpansionGlobal <ExpansionType>::ComputeFactorials() {
+void CartesianExpansionGlobal <ExpansionType>::ComputeFactorials_() {
   factorials_.Init(2 * max_order_ + 1);
   factorials_[0] = 1;
   for(int t = 1; t < factorials_.length(); t++) {
@@ -191,7 +190,7 @@ void CartesianExpansionGlobal <ExpansionType>::ComputeFactorials() {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianExpansionGlobal <ExpansionType>::ComputeLowerMappingIndex() {
+void CartesianExpansionGlobal <ExpansionType>::ComputeLowerMappingIndex_() {
 
   std::vector<int> diff(dim_);
   int limit = 2 * max_order_;
@@ -222,7 +221,7 @@ void CartesianExpansionGlobal <ExpansionType>::ComputeLowerMappingIndex() {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination() {
+void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination_() {
 
   int limit = 2 * max_order_;
   multiindex_combination_.Init(
@@ -327,7 +326,8 @@ ExpansionType >::ComputeMultiindexPosition(
   const std::vector<short int> &multiindex) const {
 
   return mlpack::series_expansion::
-         ComputeMultiindexPositionTrait<ExpansionType>::Compute(*this, multiindex);
+         ComputeMultiindexPositionTrait <
+         ExpansionType >::Compute(*this, multiindex);
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -372,20 +372,22 @@ ExpansionType >::Init(int max_order, int dim) {
   std::vector<int> heads;
   std::vector<int> cinds;
 
-  // initialize max order and dimension
+  // Initialize max order and dimension.
   dim_ = dim;
   max_order_ = max_order;
 
-  // compute the list of total number of coefficients for p-th order expansion
+  // Compute the list of total number of coefficients for p-th order expansion.
   int limit = 2 * max_order + 1;
   list_total_num_coeffs_.resize(limit);
   for(p = 0; p < limit; p++) {
     list_total_num_coeffs_[p] =
-      core::math::BinomialCoefficient<int>(p + dim, dim);
+      (ExpansionType == mlpack::series_expansion::D_TO_THE_P) ?
+      core::math::BinomialCoefficient<int>(p + dim, dim) :
+      static_cast<int>(pow(p + 1, dim));
   }
 
-  // compute factorials
-  ComputeFactorials();
+  // Compute factorials.
+  ComputeFactorials_();
 
   // allocate space for inverse factorial and
   // negative inverse factorials and multiindex mapping and n_choose_k
@@ -482,15 +484,15 @@ ExpansionType >::Init(int max_order, int dim) {
   }
 
   // Initialize multiindex_combination matrix beta choose alpha.
-  ComputeMultiindexCombination();
+  ComputeMultiindexCombination_();
 
   // Compute the lower_mapping_index_ and the upper_mapping_index_.
-  ComputeLowerMappingIndex();
-  ComputeUpperMappingIndex();
+  ComputeLowerMappingIndex_();
+  ComputeUpperMappingIndex_();
 
   // Compute traversal mapping.
   if(ExpansionType == mlpack::series_expansion::P_TO_THE_D) {
-    ComputeTraversalMapping();
+    ComputeTraversalMapping_();
   }
 }
 
@@ -502,7 +504,7 @@ ExpansionType >::Print(const char *name, FILE *stream) const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-void CartesianExpansionGlobal <ExpansionType >::ComputeTraversalMapping() {
+void CartesianExpansionGlobal <ExpansionType >::ComputeTraversalMapping_() {
 
   // Initialize the index.
   int limit = 2 * max_order_;

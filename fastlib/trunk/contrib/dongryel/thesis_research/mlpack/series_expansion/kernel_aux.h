@@ -1,52 +1,46 @@
-/**
- * @file kernel_aux.h
+/** @file kernel_aux.h
  *
- * The header file for the class for computing auxiliary stuffs for the kernel
- * functions (derivative, truncation error bound)
+ *  The header file for the class for computing auxiliary stuffs for
+ *  the kernel functions (derivative, truncation error bound)
  *
- * @author Dongryeol Lee (dongryel@cc.gatech.edu)
- * @bug No known bugs.
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *  @bug No known bugs.
  */
 
-#ifndef KERNEL_AUX
-#define KERNEL_AUX
+#ifndef MLPACK_SERIES_EXPANSION_KERNEL_AUX_H
+#define MLPACK_SERIES_EXPANSION_KERNEL_AUX_H
 
-#include "fastlib/fastlib.h"
+#include "core/metric_kernels/kernel.h"
+#include "core/table/dense_matrix.h"
+#include "core/table/dense_point.h"
 
-#include "bounds_aux.h"
-#include "farfield_expansion.h"
-#include "local_expansion.h"
-#include "inverse_pow_dist_kernel_aux.h"
-#include "mult_farfield_expansion.h"
-#include "mult_local_expansion.h"
+namespace mlpack {
+namespace series_expansion {
 
-
-/**
- * Auxiliary class for multiplicative p^D expansion for Gaussian
- * kernel.
+/** @brief Auxiliary class for multiplicative p^D expansion for
+ *         Gaussian kernel.
  */
 class GaussianKernelMultAux {
 
   public:
 
-    typedef GaussianKernel TKernel;
+    typedef GaussianKernel KernelType;
 
-    typedef MultSeriesExpansionAux TSeriesExpansionAux;
+    typedef MultSeriesExpansionAux ExpansionGlobalType;
 
     typedef MultFarFieldExpansion<GaussianKernelMultAux> TFarFieldExpansion;
 
     typedef MultLocalExpansion<GaussianKernelMultAux> TLocalExpansion;
 
-    /** pointer to the Gaussian kernel */
-    TKernel kernel_;
+  private:
 
-    /** pointer to the series expansion auxiliary object */
-    TSeriesExpansionAux sea_;
+    /** @brief The Gaussian kernel object.
+     */
+    KernelType kernel_;
 
-    OT_DEF_BASIC(GaussianKernelMultAux) {
-      OT_MY_OBJECT(kernel_);
-      OT_MY_OBJECT(sea_);
-    }
+    /** @ The series expansion global object.
+     */
+    ExpansionGlobalType sea_;
 
   public:
 
@@ -59,17 +53,19 @@ class GaussianKernelMultAux {
       return sqrt(2 * bandwidth_sq);
     }
 
-    void AllocateDerivativeMap(int dim, int order,
-                               Matrix *derivative_map) const {
+    void AllocateDerivativeMap(
+      int dim, int order, core::table::DenseMatrix *derivative_map) const {
       derivative_map->Init(dim, order + 1);
     }
 
-    void ComputeDirectionalDerivatives(const Vector &x,
-                                       Matrix *derivative_map, int order) const {
+    void ComputeDirectionalDerivatives(
+      const core::table::DensePoint &x,
+      core::table::DenseMatrix *derivative_map, int order) const {
 
       int dim = x.length();
 
-      // precompute necessary Hermite polynomials based on coordinate difference
+      // Precompute necessary Hermite polynomials based on coordinate
+      // difference.
       for(index_t d = 0; d < dim; d++) {
 
         double coord_div_band = x[d];
@@ -93,8 +89,9 @@ class GaussianKernelMultAux {
       } // end of looping over each dimension
     }
 
-    double ComputePartialDerivative(const Matrix &derivative_map,
-                                    const ArrayList<short int> &mapping) const {
+    double ComputePartialDerivative(
+      const core::table::DenseMatrix &derivative_map,
+      const ArrayList<short int> &mapping) const {
 
       double partial_derivative = 1.0;
 
@@ -104,11 +101,11 @@ class GaussianKernelMultAux {
       return partial_derivative;
     }
 
-    template<typename TBound>
-    int OrderForEvaluatingFarField
-    (const TBound &far_field_region, const TBound &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions,
-     double max_error, double *actual_error) const {
+    template<typename BoundType>
+    int OrderForEvaluatingFarField(
+      const BoundType &far_field_region, const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
       // Find out the maximum side length of the bounding box of the
       // far-field region.
@@ -160,12 +157,12 @@ class GaussianKernelMultAux {
       return p_alpha;
     }
 
-    template<typename TBound>
-    int OrderForConvertingFromFarFieldToLocal
-    (const TBound &far_field_region,
-     const TBound &local_field_region, double min_dist_sqd_regions,
-     double max_dist_sqd_regions, double max_error,
-     double *actual_error) const {
+    template<typename BoundType>
+    int OrderForConvertingFromFarFieldToLocal(
+      const BoundType &far_field_region,
+      const BoundType &local_field_region, double min_dist_sqd_regions,
+      double max_dist_sqd_regions, double max_error,
+      double *actual_error) const {
 
       // Find out the maximum side length of the bounding box of the
       // far-field region and the local-field regions.
@@ -225,12 +222,13 @@ class GaussianKernelMultAux {
       return p_alpha;
     }
 
-    template<typename TBound>
-    int OrderForEvaluatingLocal(const TBound &far_field_region,
-                                const TBound &local_field_region,
-                                double min_dist_sqd_regions,
-                                double max_dist_sqd_regions, double max_error,
-                                double *actual_error) const {
+    template<typename BoundType>
+    int OrderForEvaluatingLocal(
+      const BoundType &far_field_region,
+      const BoundType &local_field_region,
+      double min_dist_sqd_regions,
+      double max_dist_sqd_regions, double max_error,
+      double *actual_error) const {
 
       // Find out the maximum side length of the local field region.
       double max_local_field_length =
@@ -282,30 +280,25 @@ class GaussianKernelMultAux {
     }
 };
 
-/** @brief Auxiliary class for Gaussian kernel
+/** @brief Auxiliary class for Gaussian kernel.
  */
 class GaussianKernelAux {
 
   public:
 
-    typedef GaussianKernel TKernel;
+    typedef GaussianKernel KernelType;
 
-    typedef SeriesExpansionAux TSeriesExpansionAux;
+    typedef SeriesExpansionAux ExpansionGlobalType;
 
     typedef FarFieldExpansion<GaussianKernelAux> TFarFieldExpansion;
 
     typedef LocalExpansion<GaussianKernelAux> TLocalExpansion;
 
     /** pointer to the Gaussian kernel */
-    TKernel kernel_;
+    KernelType kernel_;
 
     /** pointer to the series expansion auxiliary object */
-    TSeriesExpansionAux sea_;
-
-    OT_DEF_BASIC(GaussianKernelAux) {
-      OT_MY_OBJECT(kernel_);
-      OT_MY_OBJECT(sea_);
-    }
+    ExpansionGlobalType sea_;
 
   public:
 
@@ -319,12 +312,13 @@ class GaussianKernelAux {
     }
 
     void AllocateDerivativeMap(int dim, int order,
-                               Matrix *derivative_map) const {
+                               core::table::DenseMatrix *derivative_map) const {
       derivative_map->Init(dim, order + 1);
     }
 
-    void ComputeDirectionalDerivatives(const Vector &x,
-                                       Matrix *derivative_map, int order) const {
+    void ComputeDirectionalDerivatives(
+      const core::table::DensePoint &x,
+      core::table::DenseMatrix *derivative_map, int order) const {
 
       int dim = x.length();
 
@@ -352,7 +346,7 @@ class GaussianKernelAux {
       } // end of looping over each dimension
     }
 
-    double ComputePartialDerivative(const Matrix &derivative_map,
+    double ComputePartialDerivative(const core::table::DenseMatrix &derivative_map,
                                     const ArrayList<short int> &mapping) const {
 
       double partial_derivative = 1.0;
@@ -363,11 +357,11 @@ class GaussianKernelAux {
       return partial_derivative;
     }
 
-    template<typename TBound>
-    int OrderForConvolvingFarField(const TBound &far_field_region,
-                                   const Vector &far_field_region_centroid,
-                                   const TBound &local_field_region,
-                                   const Vector &local_field_region_centroid,
+    template<typename BoundType>
+    int OrderForConvolvingFarField(const BoundType &far_field_region,
+                                   const core::table::DensePoint &far_field_region_centroid,
+                                   const BoundType &local_field_region,
+                                   const core::table::DensePoint &local_field_region_centroid,
                                    double min_dist_sqd_regions,
                                    double max_dist_sqd_regions,
                                    double max_error,
@@ -421,9 +415,9 @@ class GaussianKernelAux {
       return p_alpha;
     }
 
-    template<typename TBound>
-    int OrderForEvaluatingFarField(const TBound &far_field_region,
-                                   const TBound &local_field_region,
+    template<typename BoundType>
+    int OrderForEvaluatingFarField(const BoundType &far_field_region,
+                                   const BoundType &local_field_region,
                                    double min_dist_sqd_regions,
                                    double max_dist_sqd_regions,
                                    double max_error,
@@ -469,9 +463,9 @@ class GaussianKernelAux {
       return p_alpha;
     }
 
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForConvertingFromFarFieldToLocal
-    (const TBound &far_field_region, const TBound &local_field_region,
+    (const BoundType &far_field_region, const BoundType &local_field_region,
      double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
      double *actual_error) const {
 
@@ -515,8 +509,9 @@ class GaussianKernelAux {
                 r_Q_raised_to_p_cumulative +
                 1.0 / sqrt(first_factorial) * r_Q_raised_to_p);
 
-        r_Q_raised_to_p_cumulative += r_Q_raised_to_p /
-                                      ((p_alpha > 0) ? (first_factorial / (p_alpha + 1)) : first_factorial);
+        r_Q_raised_to_p_cumulative +=
+          r_Q_raised_to_p /
+          ((p_alpha > 0) ? (first_factorial / (p_alpha + 1)) : first_factorial);
 
       }
       while(ret2 >= max_error);
@@ -525,9 +520,9 @@ class GaussianKernelAux {
       return p_alpha;
     }
 
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForEvaluatingLocal
-    (const TBound &far_field_region, const TBound &local_field_region,
+    (const BoundType &far_field_region, const BoundType &local_field_region,
      double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
      double *actual_error) const {
 
@@ -579,17 +574,17 @@ class EpanKernelAux {
 
   public:
 
-    typedef EpanKernel TKernel;
+    typedef EpanKernel KernelType;
 
-    typedef SeriesExpansionAux TSeriesExpansionAux;
+    typedef SeriesExpansionAux ExpansionGlobalType;
 
     typedef FarFieldExpansion<EpanKernelAux> TFarFieldExpansion;
 
     typedef LocalExpansion<EpanKernelAux> TLocalExpansion;
 
-    TKernel kernel_;
+    KernelType kernel_;
 
-    TSeriesExpansionAux sea_;
+    ExpansionGlobalType sea_;
 
     InversePowDistKernelAux squared_component_;
 
@@ -613,32 +608,35 @@ class EpanKernelAux {
       return sqrt(bandwidth_sq);
     }
 
-    void AllocateDerivativeMap(int dim, int order,
-                               Matrix *derivative_map) const {
+    void AllocateDerivativeMap(
+      int dim, int order, core::table::DenseMatrix *derivative_map) const {
       derivative_map->Init(sea_.get_total_num_coeffs(order), 1);
     }
 
-    void ComputeDirectionalDerivatives(const Vector &x,
-                                       Matrix *derivative_map, int order) const {
+    void ComputeDirectionalDerivatives(
+      const core::table::DensePoint &x,
+      core::table::DenseMatrix *derivative_map, int order) const {
 
       // Compute the derivatives for $||x||^2$ and negate it. Then, add
       // $(1, 0, 0, ... 0)$ to it.
-      squared_component_.ComputeDirectionalDerivatives(x, derivative_map, order);
+      squared_component_.ComputeDirectionalDerivatives(
+        x, derivative_map, order);
 
       la::Scale(derivative_map->n_rows(), -1, derivative_map->GetColumnPtr(0));
 
       (derivative_map->GetColumnPtr(0))[0] += 1.0;
     }
 
-    double ComputePartialDerivative(const Matrix &derivative_map,
-                                    const ArrayList<short int> &mapping) const {
+    double ComputePartialDerivative(
+      const core::table::DenseMatrix &derivative_map,
+      const ArrayList<short int> &mapping) const {
 
       return derivative_map.get(sea_.ComputeMultiindexPosition(mapping), 0);
     }
 
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForEvaluatingFarField
-    (const TBound &far_field_region, const TBound &local_field_region,
+    (const BoundType &far_field_region, const BoundType &local_field_region,
      double min_dist_sqd_regions, double max_dist_sqd_regions,
      double max_error, double *actual_error) const {
 
@@ -684,9 +682,9 @@ class EpanKernelAux {
       return 2;
     }
 
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForConvertingFromFarFieldToLocal
-    (const TBound &far_field_region, const TBound &local_field_region,
+    (const BoundType &far_field_region, const BoundType &local_field_region,
      double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
      double *actual_error) const {
 
@@ -702,12 +700,12 @@ class EpanKernelAux {
       }
     }
 
-    template<typename TBound>
-    int OrderForEvaluatingLocal
-    (const TBound &far_field_region,
-     const TBound &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions,
-     double max_error, double *actual_error) const {
+    template<typename BoundType>
+    int OrderForEvaluatingLocal(
+      const BoundType &far_field_region,
+      const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
       // first check that the maximum distances between the two regions are
       // within the bandwidth, otherwise the expansion is not valid
@@ -751,5 +749,7 @@ class EpanKernelAux {
       return 2;
     }
 };
+}
+}
 
 #endif

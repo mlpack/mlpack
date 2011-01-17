@@ -307,18 +307,15 @@ double CartesianFarField::EvaluateField(
 }
 
 template<typename TKernelAux>
-void CartesianFarField::Init(const core::table::DensePoint& center,
-                             const TKernelAux &ka) {
+void CartesianFarField::Init(
+  const core::table::DensePoint& center, const TKernelAux &ka) {
 
-  // copy kernel type, center, and bandwidth squared
-  kernel_ = &(ka.kernel_);
+  // Copy the center.
   center_.Copy(center);
   order_ = -1;
-  sea_ = &(ka.sea_);
-  ka_ = &ka;
 
-  // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  // Initialize coefficient array.
+  coeffs_.Init(ka.sea().get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
@@ -339,11 +336,11 @@ void CartesianFarField::Init(const TKernelAux &ka) {
 }
 
 template<typename TKernelAux>
-template<typename TBound>
-int CartesianFarField::OrderForEvaluating
-(const TBound &far_field_region,
- const TBound &local_field_region, double min_dist_sqd_regions,
- double max_dist_sqd_regions, double max_error, double *actual_error) const {
+template<typename BoundType>
+int CartesianFarField::OrderForEvaluating(
+  const BoundType &far_field_region,
+  const BoundType &local_field_region, double min_dist_sqd_regions,
+  double max_dist_sqd_regions, double max_error, double *actual_error) const {
 
   return ka_->OrderForEvaluatingFarField(far_field_region,
                                          local_field_region,
@@ -353,14 +350,11 @@ int CartesianFarField::OrderForEvaluating
 }
 
 template<typename TKernelAux>
-template<typename TBound>
-int CartesianFarField::
-OrderForConvertingToLocal(const TBound &far_field_region,
-                          const TBound &local_field_region,
-                          double min_dist_sqd_regions,
-                          double max_dist_sqd_regions,
-                          double max_error,
-                          double *actual_error) const {
+template<typename BoundType>
+int CartesianFarField::OrderForConvertingToLocal(
+  const BoundType &far_field_region, const BoundType &local_field_region,
+  double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
+  double *actual_error) const {
 
   return ka_->OrderForConvertingFromFarFieldToLocal(far_field_region,
          local_field_region,
