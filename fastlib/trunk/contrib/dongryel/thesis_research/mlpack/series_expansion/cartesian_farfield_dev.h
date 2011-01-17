@@ -10,12 +10,14 @@
 #ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_DEV_H
 #define MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_DEV_H
 
+#include "mlpack/series_expansion/cartesian_expansion_global.h"
 #include "mlpack/series_expansion/cartesian_farfield.h"
 
 namespace mlpack {
 namespace series_expansion {
-template<TKernelAux>
-void CartesianFarField<TKernelAux>::Accumulate(
+
+void CartesianFarField::Accumulate(
+  const CartesianExpansionGlobal &sea,
   const core::table::DensePoint &v, double weight, int order) {
 
   int dim = v.length();
@@ -87,7 +89,7 @@ void CartesianFarField<TKernelAux>::Accumulate(
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::AccumulateCoeffs(
+void CartesianFarField::AccumulateCoeffs(
   const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights,
   int begin, int end, int order) {
@@ -166,7 +168,7 @@ void CartesianFarField<TKernelAux>::AccumulateCoeffs(
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::RefineCoeffs(
+void CartesianFarField::RefineCoeffs(
   const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights,
   int begin, int end, int order) {
@@ -243,13 +245,13 @@ void CartesianFarField<TKernelAux>::RefineCoeffs(
 }
 
 template<typename TKernelAux>
-double CartesianFarField<TKernelAux>::EvaluateField(
+double CartesianFarField::EvaluateField(
   const core::table::DenseMatrix& data, int row_num, int order) const {
   return EvaluateField(data.GetColumnPtr(row_num), order);
 }
 
 template<typename TKernelAux>
-double CartesianFarField<TKernelAux>::EvaluateField(
+double CartesianFarField::EvaluateField(
   const double *x_q, int order) const {
 
   // dimension
@@ -305,8 +307,8 @@ double CartesianFarField<TKernelAux>::EvaluateField(
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::Init(const core::table::DensePoint& center,
-    const TKernelAux &ka) {
+void CartesianFarField::Init(const core::table::DensePoint& center,
+                             const TKernelAux &ka) {
 
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
@@ -321,7 +323,7 @@ void CartesianFarField<TKernelAux>::Init(const core::table::DensePoint& center,
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::Init(const TKernelAux &ka) {
+void CartesianFarField::Init(const TKernelAux &ka) {
 
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
@@ -338,7 +340,7 @@ void CartesianFarField<TKernelAux>::Init(const TKernelAux &ka) {
 
 template<typename TKernelAux>
 template<typename TBound>
-int CartesianFarField<TKernelAux>::OrderForEvaluating
+int CartesianFarField::OrderForEvaluating
 (const TBound &far_field_region,
  const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error) const {
@@ -352,7 +354,7 @@ int CartesianFarField<TKernelAux>::OrderForEvaluating
 
 template<typename TKernelAux>
 template<typename TBound>
-int CartesianFarField<TKernelAux>::
+int CartesianFarField::
 OrderForConvertingToLocal(const TBound &far_field_region,
                           const TBound &local_field_region,
                           double min_dist_sqd_regions,
@@ -368,7 +370,7 @@ OrderForConvertingToLocal(const TBound &far_field_region,
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::Print(
+void CartesianFarField::Print(
   const char *name, FILE *stream) const {
 
   int dim = sea_->get_dimension();
@@ -417,7 +419,7 @@ void CartesianFarField<TKernelAux>::Print(
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::TranslateFromFarField(
+void CartesianFarField::TranslateFromFarField(
   const CartesianFarField &se) {
 
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
@@ -509,8 +511,8 @@ void CartesianFarField<TKernelAux>::TranslateFromFarField(
 }
 
 template<typename TKernelAux>
-void CartesianFarField<TKernelAux>::TranslateToLocal(
-  CartesianLocal<TKernelAux> &se, int truncation_order) {
+void CartesianFarField::TranslateToLocal(
+  CartesianLocal &se, int truncation_order) {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;

@@ -9,7 +9,7 @@ project(FASTLIB C CXX Fortran)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 # find LAPACK
-find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
+# find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 
 # find pthreads
 find_package(Pthreads REQUIRED)

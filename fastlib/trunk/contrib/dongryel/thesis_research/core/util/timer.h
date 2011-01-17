@@ -52,7 +52,7 @@ class Timer {
     double GetElapsedTime(int checkpoint_id) {
       timeval result;
       timersub(&checkpoints_[checkpoint_id], &start_, &result);
-      return (result.tv_sec + static_cast<double>(result.tv_usec) / 1000000.0);
+      return (result.tv_sec + (double)(result.tv_usec) / 1000000.0);
     }
 
   private:

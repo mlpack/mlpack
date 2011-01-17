@@ -4,8 +4,7 @@
 # It sets TRILINOS_INCLUDE_DIR and TRILINOS_LIBS and also finds MPI_INCLUDE_DIR
 
 ## Location of trilinos
-set(TRILINOS_LIB_DIR /usr/local/lib CACHE PATH
-  "Directory where trilinos is installed.")
+set(TRILINOS_LIB_DIR $ENV{HOME}/local/trilinos-10.6.2/lib)
 
 ## library 
 if(NOT "${TRILINOS_REQUIRED_LIBS}")  # some defaults
@@ -35,17 +34,16 @@ foreach(lib ${TRILINOS_REQUIRED_LIBS})
 endforeach()
 
 ## include dirs
+message(STATUS "Finding ${TRILINOS_LIB_DIR}/../include")
 find_path(TRILINOS_INCLUDE_DIR Trilinos_version.h 
     PATHS
-    ${TRILINOS_LIB_DIR}/../include 
-    /opt/trilinos/include
-    PATH_SUFFIXES
-    trilinos
+    ${TRILINOS_LIB_DIR}/../include
+    CMAKE_FIND_ROOT_PATH_BOTH
 )
 
 if(TRILINOS_INCLUDE_DIR AND TRILINOS_LIBS)
     set(TRILINOS_FOUND "YES")
-    message(STATUS "Found trilinos libraries.")
+    message(STATUS "Found trilinos libraries in ${TRILINOS_LIBS}.")
     message(STATUS "Found trilinos headers in ${TRILINOS_INCLUDE_DIR}")
 else()
     message(FATAL_ERROR "Couldn't find trilinos.")
@@ -55,9 +53,7 @@ mark_as_advanced(TRILINOS_INCLUDE_DIR trilinos_lib)
 find_path(MPI_INCLUDE_DIR mpi.h
     PATHS
     $ENV{HOME}/local/openmpi-1.4.3/include
-    PATH_SUFFIXES
-    mpi
-    openmpi
+    CMAKE_FIND_ROOT_PATH_BOTH
 )
 if(MPI_INCLUDE_DIR)
     set(MPI_FOUND "YES")

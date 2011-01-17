@@ -182,10 +182,10 @@ class CartesianFarField {
      *         expansion for any query point within the specified region
      *         for a given bound.
      */
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForEvaluating(
-      const TBound &far_field_region,
-      const TBound &local_field_region,
+      const BoundType &far_field_region,
+      const BoundType &local_field_region,
       double min_dist_sqd_regions,
       double max_dist_sqd_regions,
       double max_error, double *actual_error) const;
@@ -199,10 +199,10 @@ class CartesianFarField {
      *  @return the minimum approximation order required for the error,
      *          -1 if approximation up to the maximum order is not possible.
      */
-    template<typename TBound>
+    template<typename BoundType>
     int OrderForConvertingToLocal(
-      const TBound &far_field_region,
-      const TBound &local_field_region,
+      const BoundType &far_field_region,
+      const BoundType &local_field_region,
       double min_dist_sqd_regions,
       double max_dist_sqd_regions,
       double required_bound,
@@ -222,7 +222,7 @@ class CartesianFarField {
      *         coefficients are added up to the passed-in local
      *         expansion coefficients.
      */
-    void TranslateToLocal(LocalExpansion<TKernelAux> &se, int truncation_order);
+    void TranslateToLocal(int truncation_order, LocalExpansion<TKernelAux> *se);
 };
 }
 }

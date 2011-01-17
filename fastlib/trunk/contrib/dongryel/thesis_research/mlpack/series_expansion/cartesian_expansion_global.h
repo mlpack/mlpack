@@ -1,15 +1,24 @@
-/** @file series_expansion_aux.h
+/** @file cartesian_expansion_global.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef SERIES_EXPANSION_AUX
-#define SERIES_EXPANSION_AUX
+#ifndef MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_H
+#define MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_H
 
-#include "fastlib/fastlib.h"
+#include "core/table/dense_matrix.h"
+#include "core/table/dense_point.h"
+#include "mlpack/series_expansion/cartesian_expansion_type.h"
 
-/**
- * Series expansion class.
+namespace mlpack {
+namespace series_expansion {
+
+/** @brief The set of global mappings and constants necessary for
+ *         performing a Cartesian series expansion of a pairwise
+ *         kernel.
  */
-class SeriesExpansionAux {
+template<enum mlpack::series_expansion::CartesianExpansionType::Type>
+class CartesianExpansionGlobal {
 
   private:
 
@@ -17,15 +26,15 @@ class SeriesExpansionAux {
 
     int max_order_;
 
-    Vector factorials_;
+    core::table::DensePoint factorials_;
 
     ArrayList<int> list_total_num_coeffs_;
 
-    Vector inv_multiindex_factorials_;
+    core::table::DensePoint inv_multiindex_factorials_;
 
-    Vector neg_inv_multiindex_factorials_;
+    core::table::DensePoint neg_inv_multiindex_factorials_;
 
-    Matrix multiindex_combination_;
+    core::table::DenseMatrix multiindex_combination_;
 
     ArrayList< ArrayList<short int> > multiindex_mapping_;
 
@@ -44,21 +53,7 @@ class SeriesExpansionAux {
     ArrayList< ArrayList<short int> > upper_mapping_index_;
 
     /** row index is for n, column index is for k */
-    Matrix n_choose_k_;
-
-    OT_DEF_BASIC(SeriesExpansionAux) {
-      OT_MY_OBJECT(dim_);
-      OT_MY_OBJECT(max_order_);
-      OT_MY_OBJECT(factorials_);
-      OT_MY_OBJECT(list_total_num_coeffs_);
-      OT_MY_OBJECT(inv_multiindex_factorials_);
-      OT_MY_OBJECT(neg_inv_multiindex_factorials_);
-      OT_MY_OBJECT(multiindex_combination_);
-      OT_MY_OBJECT(multiindex_mapping_);
-      OT_MY_OBJECT(lower_mapping_index_);
-      OT_MY_OBJECT(upper_mapping_index_);
-      OT_MY_OBJECT(n_choose_k_);
-    }
+    core::table::DenseMatrix n_choose_k_;
 
   public:
 
@@ -169,7 +164,6 @@ class SeriesExpansionAux {
       } // end of i-loop
     }
 
-    // getters and setters
     double factorial(int k) const {
       return factorials_[k];
     }
@@ -182,7 +176,7 @@ class SeriesExpansionAux {
 
     int get_max_total_num_coeffs() const;
 
-    const Vector& get_inv_multiindex_factorials() const;
+    const core::table::DensePoint& get_inv_multiindex_factorials() const;
 
     const ArrayList< short int > * get_lower_mapping_index() const;
 
@@ -192,7 +186,7 @@ class SeriesExpansionAux {
 
     const ArrayList< short int > * get_multiindex_mapping() const;
 
-    const Vector& get_neg_inv_multiindex_factorials() const;
+    const core::table::DensePoint& get_neg_inv_multiindex_factorials() const;
 
     double get_n_choose_k(int n, int k) const;
 
@@ -231,8 +225,9 @@ class SeriesExpansionAux {
     /**
      * Print useful information about this object
      */
-    void PrintDebug(const char *name = "", FILE *stream = stderr) const;
-
+    void Print(const char *name = "", FILE *stream = stderr) const;
 };
+}
+}
 
 #endif
