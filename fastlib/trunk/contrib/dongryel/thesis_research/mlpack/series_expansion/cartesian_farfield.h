@@ -18,9 +18,6 @@
 namespace mlpack {
 namespace series_expansion {
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-class CartesianLocal;
-
 /** @brief Far field expansion class in \f$O(D^p)\f$ expansion.
  *
  *  \f$O(D^p)\f$ expansion for a kernel is a traditional expansion
@@ -202,10 +199,10 @@ class CartesianFarField {
      *         coefficients are added up to the passed-in local
      *         expansion coefficients.
      */
-    template<typename KernelAuxType>
+    template<typename KernelAuxType, typename CartesianLocalType>
     void TranslateToLocal(
       const KernelAuxType &kernel_aux_in,
-      int truncation_order, CartesianLocal<ExpansionType> *se) const;
+      int truncation_order, CartesianLocalType *se) const;
 };
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
