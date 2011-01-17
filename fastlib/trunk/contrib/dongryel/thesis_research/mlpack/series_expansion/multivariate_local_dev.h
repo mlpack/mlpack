@@ -1,41 +1,50 @@
-#ifndef INSIDE_LOCAL_EXPANSION_H
-#error "This is not a public header file!"
-#endif
+/** @file multivariate_local_dev.h
+ *
+ *  A template instantiation of Cartesian local expansion in $O(D^p)$
+ *  expansion.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
 
-#ifndef LOCAL_EXPANSION_IMPL_H
-#define LOCAL_EXPANSION_IMPL_H
+#ifndef MLPACK_SERIES_EXPANSION_MULTIVARIATE_LOCAL_DEV_H
+#define MLPACK_SERIES_EXPANSION_MULTIVARIATE_LOCAL_DEV_H
 
+#include "mlpack/series_expansion/cartesian_local.h"
 
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
-    const Vector& weights,
-    int begin, int end,
-    int order) {
+namespace mlpack {
+namespace series_expansion {
+
+template<>
+template<typename KernelAuxType>
+void CartesianLocal <
+mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
+  const core::table::DenseMatrix& data,
+  const core::table::DensePoint& weights, int begin, int end, int order) {
 
   if(order > order_) {
     order_ = order;
   }
 
-  int dim = sea_->get_dimension();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+  int dim = kernel_aux_in.global().get_dimension();
+  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
 
-  // get inverse factorials (precomputed)
-  Vector neg_inv_multiindex_factorials;
+  // Get inverse factorials (precomputed).
+  core::table::DensePoint neg_inv_multiindex_factorials;
   neg_inv_multiindex_factorials.Alias
-  (sea_->get_neg_inv_multiindex_factorials());
+  (kernel_aux_in.global().get_neg_inv_multiindex_factorials());
 
-  // declare deritave mapping
-  Matrix derivative_map;
-  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
+  // Declare deritave mapping.
+  core::table::DenseMatrix derivative_map;
+  kernel_aux_in.AllocateDerivativeMap(dim, order, &derivative_map);
 
-  // some temporary variables
-  Vector arrtmp;
+  // Some temporary variables.
+  core::table::DensePoint arrtmp;
   arrtmp.Init(total_num_coeffs);
-  Vector x_r_minus_x_Q;
+  core::table::DensePoint x_r_minus_x_Q;
   x_r_minus_x_Q.Init(dim);
 
   // The bandwidth factor to be divided along each dimension.
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
+  double bandwidth_factor = kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // for each data point,
   for(index_t r = begin; r < end; r++) {
@@ -47,12 +56,12 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     }
 
     // precompute necessary partial derivatives based on coordinate difference
-    ka_->ComputeDirectionalDerivatives(x_r_minus_x_Q, &derivative_map, order);
+    kernel_aux_in.ComputeDirectionalDerivatives(x_r_minus_x_Q, &derivative_map, order);
 
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      const ArrayList<short int> &mapping = sea_->get_multiindex(j);
-      arrtmp[j] = ka_->ComputePartialDerivative(derivative_map, mapping);
+      const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(j);
+      arrtmp[j] = kernel_aux_in.ComputePartialDerivative(derivative_map, mapping);
     }
 
     for(index_t j = 0; j < total_num_coeffs; j++) {
@@ -62,12 +71,13 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   } // End of looping through each reference point.
 }
 
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
+template<>
+template<typename KernelAuxType>
+void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::PrintDebug(const char *name,
     FILE *stream) const {
 
-  int dim = sea_->get_dimension();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  int dim = kernel_aux_in.global().get_dimension();
+  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
 
   fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
   fprintf(stream, "Local expansion\n");
@@ -87,7 +97,7 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
 
   for(index_t i = 0; i < total_num_coeffs; i++) {
-    const ArrayList<short int> &mapping = sea_->get_multiindex(i);
+    const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
 
     for(index_t d = 0; d < dim; d++) {
@@ -101,14 +111,16 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, "\n");
 }
 
-template<typename TKernelAux>
-double LocalExpansion<TKernelAux>::EvaluateField(const Matrix& data,
+template<>
+template<typename KernelAuxType>
+double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(const core::table::DenseMatrix& data,
     int row_num) const {
   return EvaluateField(data.GetColumnPtr(row_num));
 }
 
-template<typename TKernelAux>
-double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
+template<>
+template<typename KernelAuxType>
+double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(const double *x_q) const {
 
   // if there are no local expansion here, then return 0
   if(order_ < 0) {
@@ -118,23 +130,23 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   index_t k, t, tail;
 
   // total number of coefficient
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
 
   // number of dimensions
-  int dim = sea_->get_dimension();
+  int dim = kernel_aux_in.global().get_dimension();
 
   // evaluated sum to be returned
   double sum = 0;
 
   // sqrt two bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
+  double bandwidth_factor = kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // temporary variable
-  Vector x_Q_to_x_q;
+  core::table::DensePoint x_Q_to_x_q;
   x_Q_to_x_q.Init(dim);
-  Vector tmp;
+  core::table::DensePoint tmp;
   tmp.Init(total_num_coeffs);
-  ArrayList<short int> heads;
+  std::vector<short int> heads;
   heads.Init(dim + 1);
 
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -168,66 +180,22 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   return sum;
 }
 
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::Init(const Vector& center,
-                                      const TKernelAux &ka) {
+template<typename KernelAuxType>
+void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateFromFarField
+(const FarFieldExpansion<KernelAuxType> &se) {
 
-  // copy kernel type, center, and bandwidth squared
-  kernel_ = &(ka.kernel_);
-  center_.Copy(center);
-  order_ = -1;
-  sea_ = &(ka.sea_);
-  ka_ = &ka;
-
-  // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
-}
-
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
-
-  // copy kernel type, center, and bandwidth squared
-  kernel_ = &(ka.kernel_);
-  order_ = -1;
-  sea_ = &(ka.sea_);
-  center_.Init(sea_->get_dimension());
-  ka_ = &ka;
-
-  // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
-}
-
-template<typename TKernelAux>
-template<typename TBound>
-int LocalExpansion<TKernelAux>::OrderForEvaluating
-(const TBound &far_field_region,
- const TBound &local_field_region, double min_dist_sqd_regions,
- double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return ka_->OrderForEvaluatingLocal(far_field_region, local_field_region,
-                                      min_dist_sqd_regions,
-                                      max_dist_sqd_regions, max_error,
-                                      actual_error);
-}
-
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::TranslateFromFarField
-(const FarFieldExpansion<TKernelAux> &se) {
-
-  Vector pos_arrtmp, neg_arrtmp;
-  Matrix derivative_map;
-  Vector far_center;
-  Vector cent_diff;
-  Vector far_coeffs;
-  int dimension = sea_->get_dimension();
-  ka_->AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
+  core::table::DensePoint pos_arrtmp, neg_arrtmp;
+  core::table::DenseMatrix derivative_map;
+  core::table::DensePoint far_center;
+  core::table::DensePoint cent_diff;
+  core::table::DensePoint far_coeffs;
+  int dimension = kernel_aux_in.global().get_dimension();
+  kernel_aux_in.AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
 
   int far_order = se.get_order();
-  int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
+  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(far_order);
   int limit;
-  double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
   far_center.Alias(*(se.get_center()));
@@ -250,23 +218,23 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   }
 
   // compute required partial derivatives
-  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
-  ArrayList<short int> beta_plus_alpha;
+  kernel_aux_in.ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
+  std::vector<short int> beta_plus_alpha;
   beta_plus_alpha.Init(dimension);
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList<short int> &beta_mapping = sea_->get_multiindex(j);
+    const std::vector<short int> &beta_mapping = kernel_aux_in.global().get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(k);
+      const std::vector<short int> &alpha_mapping = kernel_aux_in.global().get_multiindex(k);
       for(index_t d = 0; d < dimension; d++) {
         beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
-        ka_->ComputePartialDerivative(derivative_map, beta_plus_alpha);
+        kernel_aux_in.ComputePartialDerivative(derivative_map, beta_plus_alpha);
 
       double prod = far_coeffs[k] * derivative_factor;
 
@@ -279,14 +247,15 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
     } // end of k-loop
   } // end of j-loop
 
-  Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
+  const core::table::DensePoint &C_k_neg =
+    kernel_aux_in.global().get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
     coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }
 }
 
-template<typename TKernelAux>
-void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
+template<typename KernelAuxType>
+void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(LocalExpansion &se) {
 
   // if there are no local coefficients to translate, return
   if(order_ < 0) {
@@ -296,27 +265,28 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   // get the center and the order and the total number of coefficients of
   // the expansion we are translating from. Also get coefficients we
   // are translating
-  Vector new_center;
+  core::table::DensePoint new_center;
   new_center.Alias(*(se.get_center()));
   int prev_order = se.get_order();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
-  const ArrayList<short int> *upper_mapping_index =
-    sea_->get_upper_mapping_index();
-  Vector new_coeffs;
+  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
+  const std::vector<short int> *upper_mapping_index =
+    kernel_aux_in.global().get_upper_mapping_index();
+  core::table::DensePoint new_coeffs;
   new_coeffs.Alias(se.get_coeffs());
 
   // dimension
-  int dim = sea_->get_dimension();
+  int dim = kernel_aux_in.global().get_dimension();
 
   // temporary variable
-  ArrayList<short int> tmp_storage;
+  std::vector<short int> tmp_storage;
   tmp_storage.Init(dim);
 
   // sqrt two times bandwidth
-  double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // center difference between the old center and the new one
-  Vector center_diff;
+  core::table::DensePoint center_diff;
   center_diff.Init(dim);
   for(index_t d = 0; d < dim; d++) {
     center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
@@ -329,14 +299,15 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   }
 
   // inverse multiindex factorials
-  Vector C_k;
-  C_k.Alias(sea_->get_inv_multiindex_factorials());
+  core::table::DensePoint C_k;
+  C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
 
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(j);
-    const ArrayList<short int> &upper_mappings_for_alpha =
+    const std::vector<short int> &alpha_mapping =
+      kernel_aux_in.global().get_multiindex(j);
+    const std::vector<short int> &upper_mappings_for_alpha =
       upper_mapping_index[j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
@@ -347,8 +318,8 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
         break;
       }
 
-      const ArrayList<short int> &beta_mapping =
-        sea_->get_multiindex(upper_mappings_for_alpha[k]);
+      const std::vector<short int> &beta_mapping =
+        kernel_aux_in.global().get_multiindex(upper_mappings_for_alpha[k]);
       int flag = 0;
       double diff1 = 1.0;
 
@@ -368,8 +339,10 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
         diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
 
-      double prod =  coeffs_[upper_mappings_for_alpha[k]] * diff1 *
-                     sea_->get_n_multichoose_k_by_pos(upper_mappings_for_alpha[k], j);
+      double prod =
+        coeffs_[upper_mappings_for_alpha[k]] * diff1 *
+        kernel_aux_in.global().get_n_multichoose_k_by_pos(
+          upper_mappings_for_alpha[k], j);
 
       if(prod > 0) {
         pos_coeffs += prod;
@@ -382,6 +355,8 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
 
     new_coeffs[j] += pos_coeffs + neg_coeffs;
   } // end of j loop
+}
+}
 }
 
 #endif
