@@ -3,14 +3,140 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_DEV_H
-#define MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_DEV_H
+#ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_EXPANSION_GLOBAL_DEV_H
+#define MLPACK_SERIES_EXPANSION_CARTESIAN_EXPANSION_GLOBAL_DEV_H
 
 #include <assert.h>
 #include "mlpack/series_expansion/cartesian_expansion_global.h"
 
 namespace mlpack {
 namespace series_expansion {
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+class PrintTrait {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static void Compute(
+      const CartesianExpansionGlobalType &global,
+      const char *name = "", FILE *stream = stderr);
+};
+
+template<>
+class PrintTrait<D_TO_THE_P> {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static void Compute(
+      const CartesianExpansionGlobalType &global,
+      const char *name = "", FILE *stream = stderr) {
+
+      fprintf(stream, "----- CARTESIAN EXPANSION GLOBAL %s ------\n", name);
+      fprintf(stream, "Max order: %d, dimension: %d\n", global.max_order(),
+              global.get_dimension());
+
+      fprintf(stream, "Multiindex mapping: ");
+      for(int i = 0; i < global.multiindex_mapping().size(); i++) {
+
+        assert(
+          ComputeMultiindexPosition(global.multiindex_mapping(i)) == i);
+        fprintf(stream, "( ");
+        for(int j = 0; j < global.get_dimension(); j++) {
+          fprintf(stream, "%d ", global.multiindex_mapping(i)[j]);
+        }
+        fprintf(stream, "): %g %g ", global.inv_multiindex_factorials(i),
+                global.neg_inv_multiindex_factorials(i));
+      }
+      fprintf(stream, "\n");
+    }
+};
+
+template<>
+class PrintTrait<P_TO_THE_D> {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static void Compute(
+      const CartesianExpansionGlobalType &global,
+      const char *name = "", FILE *stream = stderr) {
+      fprintf(stream, "----- SERIESEXPANSIONAUX %s ------\n", name);
+      fprintf(stream, "Max order: %d, dimension: %d\n",
+              global.max_order(), global.dim());
+
+      fprintf(stream, "Multiindex mapping: ");
+      for(int i = 0; i < global.multiindex_mapping().size(); i++) {
+
+        assert(
+          global.ComputeMultiindexPosition(global.multiindex_mapping(i)) == i);
+        fprintf(stream, "( ");
+        for(int j = 0; j < global.get_dimension(); j++) {
+          fprintf(stream, "%d ", global.multiindex_mapping(i)[j]);
+        }
+        fprintf(stream, "): %g %g ", global.inv_multiindex_factorials(i),
+                global.neg_inv_multiindex_factorials(i));
+      }
+      fprintf(stream, "\n");
+    }
+};
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+class ComputeMultiindexPositionTrait {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static int Compute(
+      const CartesianExpansionGlobalType &global,
+      const std::vector<short int> &multiindex);
+};
+
+template<>
+class ComputeMultiindexPositionTrait<D_TO_THE_P> {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static int Compute(
+      const CartesianExpansionGlobalType &global,
+      const std::vector<short int> &multiindex) {
+      int dim = multiindex.size();
+      int mapping_sum = 0;
+      int index = 0;
+
+      for(int j = 0; j < dim; j++) {
+
+        // If any of the index is negative, then it does not exist!
+        if(multiindex[j] < 0) {
+          index = -1;
+          break;
+        }
+
+        mapping_sum += multiindex[j];
+      }
+      if(index >= 0) {
+        for(int j = 0; j < dim; j++) {
+          index +=
+            static_cast<int>(
+              global.get_n_choose_k(mapping_sum + dim - j - 1, dim - j));
+          mapping_sum -= multiindex[j];
+        }
+      }
+
+      return index;
+    }
+};
+
+template<>
+class ComputeMultiindexPositionTrait<P_TO_THE_D> {
+  public:
+    template<typename CartesianExpansionGlobalType>
+    static int Compute(
+      const CartesianExpansionGlobalType &global,
+      const std::vector<short int> &multiindex) {
+      int index = 0;
+
+      // Using Horner's rule:
+      for(int i = 0; i < global.get_dimension(); i++) {
+        index *= (2 * global.get_max_order() + 1);
+        index += multiindex[i];
+      }
+      return index;
+    }
+};
+
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 int CartesianExpansionGlobal <ExpansionType >::get_dimension() const {
@@ -27,8 +153,7 @@ void CartesianExpansionGlobal <ExpansionType >::
 ComputeUpperMappingIndex() {
 
   int limit = 2 * max_order_;
-  std::vector<int> diff;
-  diff.resize(dim_);
+  std::vector<int> diff(dim_);
 
   // initialize the index
   upper_mapping_index_.resize(list_total_num_coeffs_[limit]);
@@ -59,7 +184,6 @@ ComputeUpperMappingIndex() {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <ExpansionType>::ComputeFactorials() {
   factorials_.Init(2 * max_order_ + 1);
-
   factorials_[0] = 1;
   for(int t = 1; t < factorials_.length(); t++) {
     factorials_[t] = t * factorials_[t - 1];
@@ -101,8 +225,8 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination() {
 
   int limit = 2 * max_order_;
-  multiindex_combination_.Init(list_total_num_coeffs_[limit],
-                               list_total_num_coeffs_[limit]);
+  multiindex_combination_.Init(
+    list_total_num_coeffs_[limit], list_total_num_coeffs_[limit]);
 
   for(int j = 0; j < list_total_num_coeffs_[limit]; j++) {
 
@@ -202,47 +326,42 @@ int CartesianExpansionGlobal <
 ExpansionType >::ComputeMultiindexPosition(
   const std::vector<short int> &multiindex) const {
 
-  int dim = multiindex.size();
-  int mapping_sum = 0;
-  int index = 0;
-
-  for(int j = 0; j < dim; j++) {
-
-    // If any of the index is negative, then it does not exist!
-    if(multiindex[j] < 0) {
-      index = -1;
-      break;
-    }
-
-    mapping_sum += multiindex[j];
-  }
-  if(index >= 0) {
-    for(int j = 0; j < dim; j++) {
-      index += (int) get_n_choose_k(mapping_sum + dim - j - 1, dim - j);
-      mapping_sum -= multiindex[j];
-    }
-  }
-
-  return index;
+  return mlpack::series_expansion::
+         ComputeMultiindexPositionTrait<ExpansionType>::Compute(*this, multiindex);
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::FarFieldEvaluationCost(
   int order) const {
-  return pow(dim_, order + 1);
+  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+    return pow(dim_, order + 1);
+  }
+  else {
+    return pow(order + 1, dim_);
+  }
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::FarFieldToLocalTranslationCost(int order) const {
-  return pow(dim_, 2 * order + 1);
+  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+    return pow(dim_, 2 * order + 1);
+  }
+  else {
+    return pow(order + 1, 2 * dim_);
+  }
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::DirectLocalAccumulationCost(int order) const {
-  return pow(dim_, order + 1);
+  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+    return pow(dim_, order + 1);
+  }
+  else {
+    return pow(order + 1, dim_);
+  }
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -278,77 +397,134 @@ ExpansionType >::Init(int max_order, int dim) {
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
-  n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
+  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+    n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
+  }
+  else {
+    n_choose_k_.Init(dim *(limit + 1), dim *(limit + 1));
+  }
   n_choose_k_.SetZero();
 
-  // initialization of temporary variables for computation...
-  heads.resize(dim + 1);
-  cinds.resize(list_total_num_coeffs_[limit - 1]);
+  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
 
-  for(i = 0; i < dim; i++) {
-    heads[i] = 0;
-  }
-  heads[dim] = INT_MAX;
-  cinds[0] = 0;
+    // initialization of temporary variables for computation...
+    heads.resize(dim + 1);
+    cinds.resize(list_total_num_coeffs_[limit - 1]);
 
-  // compute inverse factorial and negative inverse factorials and
-  // multiindex mappings...
-  inv_multiindex_factorials_[0] = 1.0;
-  neg_inv_multiindex_factorials_[0] = 1.0;
-  for(k = 1, t = 1, tail = 1; k <= 2 * max_order_; k++, tail = t) {
     for(i = 0; i < dim; i++) {
-      int head = heads[i];
-      heads[i] = t;
-      for(j = head; j < tail; j++, t++) {
-        cinds[t] = (j < heads[i + 1]) ? cinds[j] + 1 : 1;
-        inv_multiindex_factorials_[t] =
-          inv_multiindex_factorials_[j] / cinds[t];
-        neg_inv_multiindex_factorials_[t] =
-          -neg_inv_multiindex_factorials_[j] / cinds[t];
+      heads[i] = 0;
+    }
+    heads[dim] = std::numeric_limits<int>::max();
+    cinds[0] = 0;
 
-        // Copy using the STL vector copy operator.
-        multiindex_mapping_[t] = multiindex_mapping_[j];
-        (multiindex_mapping_[t])[i] = (multiindex_mapping_[t])[i] + 1;
+    // compute inverse factorial and negative inverse factorials and
+    // multiindex mappings...
+    inv_multiindex_factorials_[0] = 1.0;
+    neg_inv_multiindex_factorials_[0] = 1.0;
+    for(k = 1, t = 1, tail = 1; k <= 2 * max_order_; k++, tail = t) {
+      for(i = 0; i < dim; i++) {
+        int head = heads[i];
+        heads[i] = t;
+        for(j = head; j < tail; j++, t++) {
+          cinds[t] = (j < heads[i + 1]) ? cinds[j] + 1 : 1;
+          inv_multiindex_factorials_[t] =
+            inv_multiindex_factorials_[j] / cinds[t];
+          neg_inv_multiindex_factorials_[t] =
+            -neg_inv_multiindex_factorials_[j] / cinds[t];
+
+          // Copy using the STL vector copy operator.
+          multiindex_mapping_[t] = multiindex_mapping_[j];
+          (multiindex_mapping_[t])[i] = (multiindex_mapping_[t])[i] + 1;
+        }
+      }
+    }
+  }
+  else {
+    inv_multiindex_factorials_[0] = 1.0;
+    neg_inv_multiindex_factorials_[0] = 1.0;
+    if(max_order > 0) {
+      int boundary, i, k, step;
+
+      for(boundary = list_total_num_coeffs_[limit], k = 0,
+          step = list_total_num_coeffs_[limit] / (limit + 1);
+          step >= 1; step /= (limit + 1),
+          boundary /= (limit + 1), k++) {
+
+        for(i = 0; i < list_total_num_coeffs_[limit];) {
+          int inner_limit = i + boundary;
+          int div = 1;
+
+          i += step;
+
+          for(; i < inner_limit; i += step) {
+
+            inv_multiindex_factorials_[i] =
+              inv_multiindex_factorials_[i - step] / div;
+            neg_inv_multiindex_factorials_[i] =
+              -neg_inv_multiindex_factorials_[i - step] / div;
+            div++;
+
+            // Copy multiindex from old to the new position using STL
+            // vector copy constructor.
+            multiindex_mapping_[i] = multiindex_mapping_[i - step];
+            (multiindex_mapping_[i])[k] = (multiindex_mapping_[i])[k] + 1;
+          }
+        }
       }
     }
   }
 
-  // compute n choose k's
-  for(j = 0; j <= 2 * max_order + dim; j++) {
-    for(k = 0; k <= 2 * max_order + dim; k++) {
+  // Compute n choose k's.
+  for(j = 0; j < n_choose_k_.n_rows(); j++) {
+    for(k = 0; k < n_choose_k_.n_cols(); k++) {
       n_choose_k_.set(j, k, core::math::BinomialCoefficient<double>(j, k));
     }
   }
 
-  // initialize multiindex_combination matrix beta choose alpha
+  // Initialize multiindex_combination matrix beta choose alpha.
   ComputeMultiindexCombination();
 
-  // compute the lower_mapping_index_ and the upper_mapping_index_
-  // (see series_expansion_aux.h for explanation)
+  // Compute the lower_mapping_index_ and the upper_mapping_index_.
   ComputeLowerMappingIndex();
   ComputeUpperMappingIndex();
+
+  // Compute traversal mapping.
+  if(ExpansionType == mlpack::series_expansion::P_TO_THE_D) {
+    ComputeTraversalMapping();
+  }
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <
 ExpansionType >::Print(const char *name, FILE *stream) const {
 
-  fprintf(stream, "----- CARTESIAN EXPANSION GLOBAL %s ------\n", name);
-  fprintf(stream, "Max order: %d, dimension: %d\n", max_order_, dim_);
+  mlpack::series_expansion::PrintTrait<ExpansionType>(*this, name, stream);
+}
 
-  fprintf(stream, "Multiindex mapping: ");
-  for(int i = 0; i < multiindex_mapping_.size(); i++) {
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianExpansionGlobal <ExpansionType >::ComputeTraversalMapping() {
 
-    assert(
-      ComputeMultiindexPosition(multiindex_mapping_[i]) == i);
-    fprintf(stream, "( ");
-    for(int j = 0; j < dim_; j++) {
-      fprintf(stream, "%d ", multiindex_mapping_[i][j]);
-    }
-    fprintf(stream, "): %g %g ", inv_multiindex_factorials_[i],
-            neg_inv_multiindex_factorials_[i]);
-  }
-  fprintf(stream, "\n");
+  // Initialize the index.
+  int limit = 2 * max_order_;
+  traversal_mapping_.resize(limit + 1);
+
+  for(int i = 0; i <= max_order_; i++) {
+    for(int j = 0; j < list_total_num_coeffs_[limit]; j++) {
+
+      const std::vector<short int> &mapping = multiindex_mapping_[j];
+      int flag = 0;
+
+      for(int d = 0; d < dim_; d++) {
+        if(mapping[d] > i) {
+          flag = 1;
+          break;
+        }
+      }
+      if(flag == 0) {
+        (traversal_mapping_[i]).push_back(j);
+      }
+    } // end of j-loop
+  } // end of i-loop
 }
 }
 }
