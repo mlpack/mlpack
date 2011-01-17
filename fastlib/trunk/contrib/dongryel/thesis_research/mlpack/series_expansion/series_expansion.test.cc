@@ -1,134 +1,115 @@
-#include "fastlib/fastlib.h"
-#include "fastlib/base/test.h"
-#include "fourier_expansion.h"
-#include "fourier_series_expansion_aux.h"
-#include "complex_matrix.h"
-#include "fourier_kernel_aux.h"
+/** @file series_expansion.test.cc
+ *
+ *  The test driver for series expansion library.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
 
-class SeriesExpansionTest {
+// for BOOST testing
+#define BOOST_TEST_MAIN
+
+#include <boost/test/unit_test.hpp>
+#include <time.h>
+#include "core/metric_kernels/lmetric.h"
+#include "core/table/table.h"
+#include "core/math/math_lib.h"
+#include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
+
+namespace core {
+namespace tree {
+
+template<typename TableType>
+class TestTree {
 
   private:
 
-    template<typename TKernelAux>
-    double BaseCase_(const Vector &query_point, const Matrix &reference_set,
-                     const Vector &reference_weights,
-                     const TKernelAux &kernel_aux) {
+    bool TestTreeIterator_(
+      typename TableType::TreeType *node,
+      TableType &table) {
 
-      double sum = 0.0;
+      typename TableType::TreeIterator node_it =
+        table.get_node_iterator(node);
+      do {
+        core::table::DensePoint point;
+        int point_id;
+        node_it.Next(&point, &point_id);
+        core::table::DensePoint compare_point;
+        table.get(point_id, &compare_point);
 
-      for(index_t i = 0; i < reference_set.n_cols(); i++) {
-        double squared_distance =
-          la::DistanceSqEuclidean(reference_set.n_rows(), query_point.ptr(),
-                                  reference_set.GetColumnPtr(i));
-        printf("Got distance: %g\n", squared_distance);
-        sum += kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
+        for(int i = 0; i < point.length(); i++) {
+          if(point[i] != compare_point[i]) {
+            return false;
+          }
+        }
       }
-      return sum;
+      while(node_it.HasNext());
+
+      if(node->is_leaf() == false) {
+        return TestTreeIterator_(node->left(), table) &&
+               TestTreeIterator_(node->right(), table);
+      }
+      return true;
+    }
+
+    void GenerateRandomDataset_(
+      int num_dimensions,
+      int num_points,
+      TableType *random_dataset) {
+
+      random_dataset->Init(num_dimensions, num_points);
+
+      for(int j = 0; j < num_points; j++) {
+        core::table::DensePoint point;
+        random_dataset->get(j, &point);
+        for(int i = 0; i < num_dimensions; i++) {
+          point[i] = core::math::Random(0.1, 1.0);
+        }
+      }
     }
 
   public:
 
-    void Init(fx_module *module_in) {
-      module_ = module_in;
-    }
-
-    void TestFourierExpansion() {
-
-      NOTIFY("[*] TestFourierExpansion");
-      GaussianKernelFourierAux<double> kernel_aux;
-      int order = 3;
-      int dim = 3;
-      double bandwidth = 30;
-      kernel_aux.Init(bandwidth, order, dim);
-
-      // Set the integral truncation limit manually.
-      kernel_aux.sea_.set_integral_truncation_limit(bandwidth * 3.0);
-
-      // Create an expansion from a random synthetic dataset.
-      Matrix random_dataset;
-      Vector weights;
-      random_dataset.Init(3, 20);
-      Vector center;
-      center.Init(3);
-      center.SetZero();
-      weights.Init(20);
-      for(index_t j = 0; j < 20; j++) {
-        for(index_t i = 0; i < 3; i++) {
-          random_dataset.set(i, j, math::Random(0, i));
+    int StressTestMain() {
+      for(int i = 0; i < 10; i++) {
+        int num_dimensions = core::math::RandInt(3, 20);
+        int num_points = core::math::RandInt(3000, 5001);
+        if(StressTest(num_dimensions, num_points) == false) {
+          printf("Failed!\n");
+          exit(0);
         }
       }
-      for(index_t i = 0; i < 20; i++) {
-        la::AddTo(center.length(), random_dataset.GetColumnPtr(i), center.ptr());
-      }
-      la::Scale(center.length(), 1.0 / ((double) 20), center.ptr());
-
-      center.PrintDebug();
-      weights.SetAll(1.0);
-      FourierExpansion<GaussianKernelFourierAux<double> > expansion;
-      expansion.Init(center, kernel_aux);
-
-      expansion.AccumulateCoeffs(random_dataset, weights, 0, 20, 3);
-
-      // Retrieve the coefficients and print them out.
-      const ComplexVector<double> &coeffs = expansion.get_coeffs();
-      coeffs.PrintDebug();
-
-      // Evaluate the expansion, and compare against the naive.
-      Vector evaluation_point;
-      evaluation_point.Init(3);
-      evaluation_point.SetAll(2.0);
-      NOTIFY("Expansion evaluated to be: %g",
-             expansion.EvaluateField(evaluation_point.ptr(), 3));
-      NOTIFY("Naive sum: %g", BaseCase_(evaluation_point, random_dataset,
-                                        weights, kernel_aux));
+      return 0;
     }
 
-    void TestFourierExpansionMapping() {
+    bool StressTest(int num_dimensions, int num_points) {
 
-      NOTIFY("[*] TestFourierExpansionMapping");
-      FourierSeriesExpansionAux<double> series_aux;
-      int order = 2;
-      int dim = 3;
-      series_aux.Init(order, dim);
-      series_aux.PrintDebug();
+      std::cout << "Number of dimensions: " << num_dimensions << "\n";
+      std::cout << "Number of points: " << num_points << "\n";
 
-      // Verify that the shifting of each multiindex by the max order
-      // roughly corresponds to the base ((2 * order) + 1) number.
-      int total_num_mapping = (int) pow(2 * order + 1, dim);
-      for(index_t i = 0; i < total_num_mapping; i++) {
-        const ArrayList<short int> &mapping = series_aux.get_multiindex(i);
+      // Generate a random table.
+      TableType random_table;
+      GenerateRandomDataset_(
+        num_dimensions, num_points, &random_table);
+      core::metric_kernels::LMetric<2> l2_metric;
+      random_table.IndexData(l2_metric, 20);
 
-        int number = 0;
-        printf("The mapping: ");
-        for(index_t j = 0; j < dim; j++) {
-          number = (2 * order + 1) * number + (mapping[j] + order);
-          printf("%d ", mapping[j]);
-        }
-        printf("maps to %d\n", number);
-
-        if(number != i) {
-          FATAL("The mapping at the position %d is computed incorrectly!", i);
-        }
-      }
+      return true;
     }
-
-    void TestAll() {
-      TestFourierExpansionMapping();
-      TestFourierExpansion();
-      NOTIFY("[*] All tests passed !!");
-    }
-
-  private:
-
-    fx_module *module_;
-
+};
+};
 };
 
-int main(int argc, char *argv[]) {
-  fx_module *module = fx_init(argc, argv, NULL);
-  SeriesExpansionTest test;
-  test.Init(module);
-  test.TestAll();
-  fx_done(module);
-  return 0;
+BOOST_AUTO_TEST_SUITE(TestSuiteKde)
+BOOST_AUTO_TEST_CASE(TestCaseKde) {
+
+  // Tree type: hard-coded for a metric tree.
+  typedef core::table::Table <
+  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+
+  // Call the tests.
+  core::tree::TestTree<TableType> tree_test;
+  tree_test.StressTestMain();
+
+  std::cout << "All tests passed!\n";
 }
+BOOST_AUTO_TEST_SUITE_END()

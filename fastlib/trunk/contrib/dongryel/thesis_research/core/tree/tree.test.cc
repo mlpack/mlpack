@@ -8,7 +8,7 @@
 // for BOOST testing
 #define BOOST_TEST_MAIN
 
-#include "boost/test/unit_test.hpp"
+#include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
 #include "core/math/math_lib.h"

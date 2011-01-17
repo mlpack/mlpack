@@ -62,7 +62,7 @@ extern core::math::RandomNumberInit global_random_number_state_;
 
 template<typename T>
 T BinomialCoefficient(unsigned n, unsigned k) {
-  return (n < k) ? 0 : boost::math::binomial_coefficient<double>(n, k);
+  return (n < k) ? 0 : boost::math::binomial_coefficient<T>(n, k);
 }
 
 /** Squares a number. */
