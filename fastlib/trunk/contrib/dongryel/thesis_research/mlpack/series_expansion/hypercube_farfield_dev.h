@@ -353,11 +353,10 @@ mlpack::series_expansion::HYPERCUBE >::TranslateFromFarField(
 }
 
 template<>
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename CartesianLocalType>
 void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
   const KernelAuxType &kernel_aux_in,
-  int truncation_order,
-  CartesianLocal<mlpack::series_expansion::HYPERCUBE> *se) const {
+  int truncation_order, CartesianLocalType *se) const {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;

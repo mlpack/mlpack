@@ -387,11 +387,11 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
 }
 
 template<>
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename CartesianLocalType>
 void CartesianFarField <
 mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
   const KernelAuxType &kernel_aux_in, int truncation_order,
-  CartesianLocal<mlpack::series_expansion::MULTIVARIATE> *se) const {
+  CartesianLocalType *se) const {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;
