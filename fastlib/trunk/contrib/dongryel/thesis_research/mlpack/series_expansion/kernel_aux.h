@@ -4,7 +4,6 @@
  *  the kernel functions (derivative, truncation error bound)
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
- *  @bug No known bugs.
  */
 
 #ifndef MLPACK_SERIES_EXPANSION_KERNEL_AUX_H
@@ -40,13 +39,17 @@ class GaussianKernelMultAux {
 
     /** @ The series expansion global object.
      */
-    ExpansionGlobalType sea_;
+    ExpansionGlobalType global_;
 
   public:
 
+    const ExpansionGlobalType &global() const {
+      return global_;
+    }
+
     void Init(double bandwidth, int max_order, int dim) {
       kernel_.Init(bandwidth);
-      sea_.Init(max_order, dim);
+      global_.Init(max_order, dim);
     }
 
     double BandwidthFactor(double bandwidth_sq) const {
@@ -115,7 +118,7 @@ class GaussianKernelMultAux {
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r = max_far_field_length / two_times_bandwidth;
 
-      int dim = sea_.get_dimension();
+      int dim = global_.get_dimension();
       double r_raised_to_p_alpha = 1.0;
       double ret, ret2;
       int p_alpha = 0;
@@ -133,7 +136,7 @@ class GaussianKernelMultAux {
       do {
         factorialvalue *= (p_alpha + 1);
 
-        if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
+        if(factorialvalue < 0.0 || p_alpha > global_.get_max_order()) {
           return -1;
         }
 
@@ -175,7 +178,7 @@ class GaussianKernelMultAux {
       double r = max_far_field_length / two_times_bandwidth;
       double r2 = max_local_field_length / two_times_bandwidth;
 
-      int dim = sea_.get_dimension();
+      int dim = global_.get_dimension();
       double r_raised_to_p_alpha = 1.0;
       double ret, ret2;
       int p_alpha = 0;
@@ -196,7 +199,7 @@ class GaussianKernelMultAux {
       do {
         factorialvalue *= (p_alpha + 1);
 
-        if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
+        if(factorialvalue < 0.0 || p_alpha > global_.get_max_order()) {
           return -1;
         }
 
@@ -237,7 +240,7 @@ class GaussianKernelMultAux {
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r = max_local_field_length / two_times_bandwidth;
 
-      int dim = sea_.get_dimension();
+      int dim = global_.get_dimension();
       double r_raised_to_p_alpha = 1.0;
       double ret, ret2;
       int p_alpha = 0;
@@ -255,7 +258,7 @@ class GaussianKernelMultAux {
       do {
         factorialvalue *= (p_alpha + 1);
 
-        if(factorialvalue < 0.0 || p_alpha > sea_.get_max_order()) {
+        if(factorialvalue < 0.0 || p_alpha > global_.get_max_order()) {
           return -1;
         }
 
@@ -294,17 +297,23 @@ class GaussianKernelAux {
 
     typedef LocalExpansion<GaussianKernelAux> TLocalExpansion;
 
+  private:
+
     /** pointer to the Gaussian kernel */
     KernelType kernel_;
 
     /** pointer to the series expansion auxiliary object */
-    ExpansionGlobalType sea_;
+    ExpansionGlobalType global_;
 
   public:
 
+    const ExpansionGlobalType &global() const {
+      return global_;
+    }
+
     void Init(double bandwidth, int max_order, int dim) {
       kernel_.Init(bandwidth);
-      sea_.Init(max_order, dim);
+      global_.Init(max_order, dim);
     }
 
     double BandwidthFactor(double bandwidth_sq) const {
@@ -322,7 +331,8 @@ class GaussianKernelAux {
 
       int dim = x.length();
 
-      // precompute necessary Hermite polynomials based on coordinate difference
+      // Precompute necessary Hermite polynomials based on coordinate
+      // difference.
       for(index_t d = 0; d < dim; d++) {
 
         double coord_div_band = x[d];
@@ -338,16 +348,18 @@ class GaussianKernelAux {
           if(order > 1) {
             for(index_t k = 1; k < order; k++) {
               int k2 = k * 2;
-              derivative_map->set(d, k + 1, d2 * derivative_map->get(d, k) -
-                                  k2 * derivative_map->get(d, k - 1));
+              derivative_map->set(
+                d, k + 1, d2 * derivative_map->get(d, k) -
+                k2 * derivative_map->get(d, k - 1));
             }
           }
         }
       } // end of looping over each dimension
     }
 
-    double ComputePartialDerivative(const core::table::DenseMatrix &derivative_map,
-                                    const ArrayList<short int> &mapping) const {
+    double ComputePartialDerivative(
+      const core::table::DenseMatrix &derivative_map,
+      const ArrayList<short int> &mapping) const {
 
       double partial_derivative = 1.0;
 
@@ -358,14 +370,15 @@ class GaussianKernelAux {
     }
 
     template<typename BoundType>
-    int OrderForConvolvingFarField(const BoundType &far_field_region,
-                                   const core::table::DensePoint &far_field_region_centroid,
-                                   const BoundType &local_field_region,
-                                   const core::table::DensePoint &local_field_region_centroid,
-                                   double min_dist_sqd_regions,
-                                   double max_dist_sqd_regions,
-                                   double max_error,
-                                   double *actual_error) const {
+    int OrderForConvolvingFarField(
+      const BoundType &far_field_region,
+      const core::table::DensePoint &far_field_region_centroid,
+      const BoundType &local_field_region,
+      const core::table::DensePoint &local_field_region_centroid,
+      double min_dist_sqd_regions,
+      double max_dist_sqd_regions,
+      double max_error,
+      double *actual_error) const {
 
       double squared_distance_between_two_centroids =
         la::DistanceSqEuclidean(far_field_region_centroid.length(),
@@ -374,7 +387,7 @@ class GaussianKernelAux {
       double frontfactor =
         exp(-squared_distance_between_two_centroids /
             (4 * kernel_.bandwidth_sq()));
-      int max_order = sea_.get_max_order();
+      int max_order = global_.get_max_order();
 
       // Find out the widest dimension of the far-field region and its
       // length.
@@ -416,16 +429,17 @@ class GaussianKernelAux {
     }
 
     template<typename BoundType>
-    int OrderForEvaluatingFarField(const BoundType &far_field_region,
-                                   const BoundType &local_field_region,
-                                   double min_dist_sqd_regions,
-                                   double max_dist_sqd_regions,
-                                   double max_error,
-                                   double *actual_error) const {
+    int OrderForEvaluatingFarField(
+      const BoundType &far_field_region,
+      const BoundType &local_field_region,
+      double min_dist_sqd_regions,
+      double max_dist_sqd_regions,
+      double max_error,
+      double *actual_error) const {
 
       double frontfactor =
         exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-      int max_order = sea_.get_max_order();
+      int max_order = global_.get_max_order();
 
       // Find out the widest dimension of the far-field region and its
       // length.
@@ -464,10 +478,10 @@ class GaussianKernelAux {
     }
 
     template<typename BoundType>
-    int OrderForConvertingFromFarFieldToLocal
-    (const BoundType &far_field_region, const BoundType &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
-     double *actual_error) const {
+    int OrderForConvertingFromFarFieldToLocal(
+      const BoundType &far_field_region, const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
       // Find out the maximum side length of the reference and the query
       // regions.
@@ -493,7 +507,7 @@ class GaussianKernelAux {
       do {
         p_alpha++;
 
-        if(p_alpha > sea_.get_max_order() - 1) {
+        if(p_alpha > global_.get_max_order() - 1) {
           return -1;
         }
 
@@ -521,14 +535,14 @@ class GaussianKernelAux {
     }
 
     template<typename BoundType>
-    int OrderForEvaluatingLocal
-    (const BoundType &far_field_region, const BoundType &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
-     double *actual_error) const {
+    int OrderForEvaluatingLocal(
+      const BoundType &far_field_region, const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
       double frontfactor =
         exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-      int max_order = sea_.get_max_order();
+      int max_order = global_.get_max_order();
 
       // Find out the widest dimension of the local field region and its
       // length.
@@ -567,8 +581,7 @@ class GaussianKernelAux {
     }
 };
 
-/**
- * Auxilairy computer class for Epanechnikov kernel
+/** @brief Auxilairy computer class for Epanechnikov kernel.
  */
 class EpanKernelAux {
 
@@ -582,23 +595,23 @@ class EpanKernelAux {
 
     typedef LocalExpansion<EpanKernelAux> TLocalExpansion;
 
+  private:
+
     KernelType kernel_;
 
-    ExpansionGlobalType sea_;
+    ExpansionGlobalType global_;
 
     InversePowDistKernelAux squared_component_;
 
-    OT_DEF_BASIC(EpanKernelAux) {
-      OT_MY_OBJECT(kernel_);
-      OT_MY_OBJECT(sea_);
-      OT_MY_OBJECT(squared_component_);
-    }
-
   public:
+
+    const ExpansionGlobalType &global() const {
+      return global_;
+    }
 
     void Init(double bandwidth, int max_order, int dim) {
       kernel_.Init(bandwidth);
-      sea_.Init(max_order, dim);
+      global_.Init(max_order, dim);
 
       // This is for doing an expansion on $||x||^2$ part.
       squared_component_.Init(-2, max_order, dim);
@@ -610,7 +623,7 @@ class EpanKernelAux {
 
     void AllocateDerivativeMap(
       int dim, int order, core::table::DenseMatrix *derivative_map) const {
-      derivative_map->Init(sea_.get_total_num_coeffs(order), 1);
+      derivative_map->Init(global_.get_total_num_coeffs(order), 1);
     }
 
     void ComputeDirectionalDerivatives(
@@ -631,17 +644,17 @@ class EpanKernelAux {
       const core::table::DenseMatrix &derivative_map,
       const ArrayList<short int> &mapping) const {
 
-      return derivative_map.get(sea_.ComputeMultiindexPosition(mapping), 0);
+      return derivative_map.get(global_.ComputeMultiindexPosition(mapping), 0);
     }
 
     template<typename BoundType>
-    int OrderForEvaluatingFarField
-    (const BoundType &far_field_region, const BoundType &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions,
-     double max_error, double *actual_error) const {
+    int OrderForEvaluatingFarField(
+      const BoundType &far_field_region, const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
-      // first check that the maximum distances between the two regions are
-      // within the bandwidth, otherwise the expansion is not valid
+      // First check that the maximum distances between the two regions are
+      // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
         return -1;
       }
@@ -652,44 +665,44 @@ class EpanKernelAux {
         bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
 
       // Find out the max distance between query and reference region in L1
-      // sense
+      // sense.
       int dim;
       double farthest_distance_manhattan =
         bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
 
-      // divide by the two times the bandwidth to find out how wide it is
-      // in terms of the bandwidth
+      // Divide by the two times the bandwidth to find out how wide it is
+      // in terms of the bandwidth.
       double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
       double r = widest_width / two_bandwidth;
       farthest_distance_manhattan /= sqrt(kernel_.bandwidth_sq());
 
-      // try the 0-th order approximation first
+      // Try the 0-th order approximation first.
       double error = 2 * dim * farthest_distance_manhattan * r;
       if(error < max_error) {
         *actual_error = error;
         return 0;
       }
 
-      // try the 1st order approximation later
+      // Try the 1st order approximation later.
       error = dim * r * r;
       if(error < max_error) {
         *actual_error = error;
         return 1;
       }
 
-      // failing all above, take up to 2nd terms
+      // Failing all above, take up to 2nd terms.
       *actual_error = 0;
       return 2;
     }
 
     template<typename BoundType>
-    int OrderForConvertingFromFarFieldToLocal
-    (const BoundType &far_field_region, const BoundType &local_field_region,
-     double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
-     double *actual_error) const {
+    int OrderForConvertingFromFarFieldToLocal(
+      const BoundType &far_field_region, const BoundType &local_field_region,
+      double min_dist_sqd_regions, double max_dist_sqd_regions,
+      double max_error, double *actual_error) const {
 
-      // first check that the maximum distances between the two regions are
-      // within the bandwidth, otherwise the expansion is not valid
+      // First check that the maximum distances between the two regions are
+      // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq() ||
           min_dist_sqd_regions == 0) {
         return -1;
@@ -707,8 +720,8 @@ class EpanKernelAux {
       double min_dist_sqd_regions, double max_dist_sqd_regions,
       double max_error, double *actual_error) const {
 
-      // first check that the maximum distances between the two regions are
-      // within the bandwidth, otherwise the expansion is not valid
+      // First check that the maximum distances between the two regions are
+      // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
         return -1;
       }
