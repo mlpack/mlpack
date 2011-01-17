@@ -222,7 +222,8 @@ void CartesianFarField<ExpansionType>::RefineCoeffs(
   }
 
   int dim = data.n_rows();
-  int old_total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
+  int old_total_num_coeffs =
+    kernel_aux_in.global().get_total_num_coeffs(order_);
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   double tmp;
   int r, i, j;
@@ -338,7 +339,8 @@ double CartesianFarField<ExpansionType>::EvaluateField(
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(int j = 0; j < total_num_coeffs; j++) {
-    const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(j);
+    const std::vector<short int> &mapping =
+      kernel_aux_in.global().get_multiindex(j);
     double arrtmp =
       kernel_aux_in.ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[j] * arrtmp;
