@@ -3,8 +3,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_H
-#define MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_H
+#ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_EXPANSION_GLOBAL_H
+#define MLPACK_SERIES_EXPANSION_CARTESIAN_EXPANSION_GLOBAL_H
 
 #include <vector>
 #include "core/table/dense_matrix.h"
@@ -59,6 +59,13 @@ class CartesianExpansionGlobal {
      *         column index is for k.
      */
     core::table::DenseMatrix n_choose_k_;
+
+    /** @brief For each i-th multiindex m_i, store the positions of
+     *         the j-th multiindex mapping such that m_i - m_j <= 0
+     *         (the difference in all coordinates is
+     *         nonpositive). This is only for $O(p^D)$ expansion.
+     */
+    std::vector< std::vector<short int> > traversal_mapping_;
 
   public:
 
@@ -125,6 +132,11 @@ class CartesianExpansionGlobal {
     /** @brief Print useful information about this object.
      */
     void Print(const char *name = "", FILE *stream = stderr) const;
+
+    /** @brief Computes the traversal mapping. This is only for
+     *         $O(p^D)$ expansions.
+     */
+    void ComputeTraversalMapping();
 };
 }
 }
