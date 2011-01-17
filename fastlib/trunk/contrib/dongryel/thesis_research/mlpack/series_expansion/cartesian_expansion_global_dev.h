@@ -1,4 +1,15 @@
-#include "series_expansion_aux.h"
+/** @file cartesian_expansion_global.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_DEV_H
+#define MLPACK_SERIES_EXPANSION_SERIES_EXPANSION_GLOBAL_DEV_H
+
+#include "mlpack/series_expansion/cartesian_expansion_global.h"
+
+namespace mlpack {
+namespace series_expansion {
 
 const Vector& SeriesExpansionAux::get_inv_multiindex_factorials() const {
   return inv_multiindex_factorials_;
@@ -188,3 +199,7 @@ void SeriesExpansionAux::PrintDebug(const char *name, FILE *stream) const {
   }
   fprintf(stream, "\n");
 }
+}
+}
+
+#endif
