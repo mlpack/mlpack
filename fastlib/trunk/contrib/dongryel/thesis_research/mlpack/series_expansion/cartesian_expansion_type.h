@@ -10,7 +10,7 @@
 
 namespace mlpack {
 namespace series_expansion {
-enum CartesianExpansionType { P_TO_THE_D, D_TO_THE_P };
+enum CartesianExpansionType { HYPERCUBE, MULTIVARIATE };
 }
 }
 

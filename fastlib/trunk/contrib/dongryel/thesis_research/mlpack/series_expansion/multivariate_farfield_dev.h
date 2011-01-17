@@ -1,14 +1,15 @@
-/** @file cartesian_farfield_dev.h
+/** @file multivariate_farfield_dev.h
  *
  *  This file contains an implementation of $O(D^p)$ expansion for
  *  computing the coefficients for a far-field expansion for an
- *  arbitrary kernel function
+ *  arbitrary kernel function. This is a template specialization of
+ *  CartesianFarField class.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_DEV_H
-#define MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_DEV_H
+#ifndef MLPACK_SERIES_EXPANSION_MULTIVARIATE_FARFIELD_DEV_H
+#define MLPACK_SERIES_EXPANSION_MULTIVARIATE_FARFIELD_DEV_H
 
 #include "mlpack/series_expansion/cartesian_expansion_global.h"
 #include "mlpack/series_expansion/cartesian_farfield.h"
@@ -56,82 +57,10 @@ void CartesianFarField<ExpansionType>::set_center(
   }
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::Accumulate(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &v, double weight, int order) {
-
-  int dim = v.length();
-  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
-  core::table::DensePoint tmp;
-  int r, i, j, k, t, tail;
-  std::vector<short int> heads(dim + 1, 0);
-  core::table::DensePoint x_r;
-  double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
-
-  // initialize temporary variables
-  tmp.Init(total_num_coeffs);
-  x_r.Init(dim);
-  core::table::DensePoint pos_coeffs;
-  core::table::DensePoint neg_coeffs;
-  pos_coeffs.Init(total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(total_num_coeffs);
-  neg_coeffs.SetZero();
-
-  // set to new order if greater
-  if(order_ < order) {
-    order_ = order;
-  }
-  core::table::DensePoint C_k;
-
-  // Calculate the coordinate difference between the ref point and the
-  // centroid.
-  for(i = 0; i < dim; i++) {
-    x_r[i] = (v[i] - center_[i]) / bandwidth_factor;
-  }
-
-  // initialize heads
-  heads[dim] = std::numeric_limits<short int>::max();
-
-  tmp[0] = 1.0;
-
-  for(k = 1, t = 1, tail = 1; k <= order; k++, tail = t) {
-    for(i = 0; i < dim; i++) {
-      int head = heads[i];
-      heads[i] = t;
-
-      for(j = head; j < tail; j++, t++) {
-        tmp[t] = tmp[j] * x_r[i];
-      }
-    }
-  }
-
-  // Tally up the result in A_k.
-  for(i = 0; i < total_num_coeffs; i++) {
-    double prod = weight * tmp[i];
-
-    if(prod > 0) {
-      pos_coeffs[i] += prod;
-    }
-    else {
-      neg_coeffs[i] += prod;
-    }
-  }
-
-  // get multiindex factors
-  C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
-
-  for(r = 0; r < total_num_coeffs; r++) {
-    coeffs_[r] += (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
-  }
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::AccumulateCoeffs(
+void CartesianFarField <
+mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
   const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights,
@@ -208,9 +137,9 @@ void CartesianFarField<ExpansionType>::AccumulateCoeffs(
   }
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::RefineCoeffs(
+void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::RefineCoeffs(
   const KernelAuxType &kernel_aux_in,
   const core::table::DenseMatrix &data,
   const core::table::DensePoint &weights,
@@ -296,9 +225,9 @@ double CartesianFarField<ExpansionType>::EvaluateField(
   return EvaluateField(kernel_aux_in, data.GetColumnPtr(row_num), order);
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-double CartesianFarField<ExpansionType>::EvaluateField(
+double CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
   const KernelAuxType &kernel_aux_in, const double *x_q, int order) const {
 
   // dimension
@@ -371,7 +300,7 @@ void CartesianFarField<ExpansionType>::Init(
   coeffs_.SetZero();
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<enum mlpack::series_expansion::CartesianExpansionType>
 template<typename TKernelAux>
 void CartesianFarField<ExpansionType>::Init(const TKernelAux &kernel_aux_in) {
 
@@ -417,9 +346,9 @@ int CartesianFarField<ExpansionType>::OrderForConvertingToLocal(
            max_error, actual_error);
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::Print(
+void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::Print(
   const KernelAuxType &kernel_aux_in, const char *name, FILE *stream) const {
 
   int dim = kernel_aux_in.global().get_dimension();
@@ -468,9 +397,10 @@ void CartesianFarField<ExpansionType>::Print(
   fprintf(stream, "\n");
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::TranslateFromFarField(
+void CartesianFarField <
+mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   const KernelAuxType &kernel_aux_in, const CartesianFarField &se) {
 
   double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
@@ -563,11 +493,12 @@ void CartesianFarField<ExpansionType>::TranslateFromFarField(
   } // end of j-loop
 }
 
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<>
 template<typename KernelAuxType>
-void CartesianFarField<ExpansionType>::TranslateToLocal(
+void CartesianFarField <
+mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
   const KernelAuxType &kernel_aux_in, int truncation_order,
-  CartesianLocal<ExpansionType> *se) const {
+  CartesianLocal<mlpack::series_expansion::MULTIVARIATE> *se) const {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;

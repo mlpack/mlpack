@@ -88,32 +88,6 @@ class CartesianFarField {
 
     ////////// User-level Functions //////////
 
-    /** @brief Accumulates the contribution of a single reference point as a
-     *         far-field moment.
-     *
-     *  For the reference point $r$ and the current expansion centroid
-     *  in the reference node \f$R\f$ as \f$R.c\f$, this function
-     *  computes \f$\left( \frac{r - R.c}{kh} \right)^{\alpha}\f$ for
-     *  \f$0 \leq \alpha \leq p\f$ where \f$\alpha\f$ is a
-     *  \f$D\f$-dimensional multi-index and adds to the currently
-     *  accumulated far-field moments: \f$ F(R) \leftarrow F(R) + w [
-     *  \left( \frac{r - R.c}{kh} \right)^{\alpha}]_{0 \leq p \leq
-     *  \alpha}\f$ where \f$F(R)\f$ is the current set of far-field
-     *  moments for the reference node \f$R\f$. \f$k\f$ is an
-     *  appropriate factor to multiply the bandwidth \f$h\f$ by; for the
-     *  Gaussian kernel expansion, it is \f$\sqrt{2}\f$.
-     *
-     *  @param reference_point The coordinates of the reference point.
-     *  @param weight The weight of the reference point v.
-     *  @param order The order up to which the far-field moments should be
-     *               accumulated up to.
-     */
-    template<typename KernelAuxType>
-    void Accumulate(
-      const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &reference_point,
-      double weight, int order);
-
     /** @brief Accumulates the far field moment represented by the given
      *         reference data into the coefficients.
      *

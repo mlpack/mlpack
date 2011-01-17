@@ -22,7 +22,7 @@ class PrintTrait {
 };
 
 template<>
-class PrintTrait<D_TO_THE_P> {
+class PrintTrait<MULTIVARIATE> {
   public:
     template<typename CartesianExpansionGlobalType>
     static void Compute(
@@ -50,7 +50,7 @@ class PrintTrait<D_TO_THE_P> {
 };
 
 template<>
-class PrintTrait<P_TO_THE_D> {
+class PrintTrait<HYPERCUBE> {
   public:
     template<typename CartesianExpansionGlobalType>
     static void Compute(
@@ -86,7 +86,7 @@ class ComputeMultiindexPositionTrait {
 };
 
 template<>
-class ComputeMultiindexPositionTrait<D_TO_THE_P> {
+class ComputeMultiindexPositionTrait<MULTIVARIATE> {
   public:
     template<typename CartesianExpansionGlobalType>
     static int Compute(
@@ -120,7 +120,7 @@ class ComputeMultiindexPositionTrait<D_TO_THE_P> {
 };
 
 template<>
-class ComputeMultiindexPositionTrait<P_TO_THE_D> {
+class ComputeMultiindexPositionTrait<HYPERCUBE> {
   public:
     template<typename CartesianExpansionGlobalType>
     static int Compute(
@@ -334,7 +334,7 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::FarFieldEvaluationCost(
   int order) const {
-  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
     return pow(dim_, order + 1);
   }
   else {
@@ -345,7 +345,7 @@ ExpansionType >::FarFieldEvaluationCost(
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::FarFieldToLocalTranslationCost(int order) const {
-  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
     return pow(dim_, 2 * order + 1);
   }
   else {
@@ -356,7 +356,7 @@ ExpansionType >::FarFieldToLocalTranslationCost(int order) const {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::DirectLocalAccumulationCost(int order) const {
-  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
     return pow(dim_, order + 1);
   }
   else {
@@ -381,7 +381,7 @@ ExpansionType >::Init(int max_order, int dim) {
   list_total_num_coeffs_.resize(limit);
   for(p = 0; p < limit; p++) {
     list_total_num_coeffs_[p] =
-      (ExpansionType == mlpack::series_expansion::D_TO_THE_P) ?
+      (ExpansionType == mlpack::series_expansion::MULTIVARIATE) ?
       core::math::BinomialCoefficient<int>(p + dim, dim) :
       static_cast<int>(pow(p + 1, dim));
   }
@@ -399,7 +399,7 @@ ExpansionType >::Init(int max_order, int dim) {
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
-  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
     n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
   }
   else {
@@ -407,7 +407,7 @@ ExpansionType >::Init(int max_order, int dim) {
   }
   n_choose_k_.SetZero();
 
-  if(ExpansionType == mlpack::series_expansion::D_TO_THE_P) {
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
 
     // initialization of temporary variables for computation...
     heads.resize(dim + 1);
@@ -491,7 +491,7 @@ ExpansionType >::Init(int max_order, int dim) {
   ComputeUpperMappingIndex_();
 
   // Compute traversal mapping.
-  if(ExpansionType == mlpack::series_expansion::P_TO_THE_D) {
+  if(ExpansionType == mlpack::series_expansion::HYPERCUBE) {
     ComputeTraversalMapping_();
   }
 }
