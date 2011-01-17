@@ -1,9 +1,18 @@
-#ifndef INSIDE_MULT_LOCAL_EXPANSION_H
-#error "This is not a public header file!"
-#endif
+/** @file multivariate_local_dev.h
+ *
+ *  A template instantiation of Cartesian local expansion in $O(p^D)$
+ *  expansion.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
 
-#ifndef MULT_LOCAL_EXPANSION_IMPL_H
-#define MULT_LOCAL_EXPANSION_IMPL_H
+#ifndef MLPACK_SERIES_EXPANSION_HYPERCUBE_LOCAL_DEV_H
+#define MLPACK_SERIES_EXPANSION_HYPERCUBE_LOCAL_DEV_H
+
+#include "mlpack/series_expansion/cartesian_local.h"
+
+namespace mlpack {
+namespace series_expansion {
 
 template<typename TKernelAux>
 void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
@@ -474,6 +483,8 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
 
     new_coeffs[index_j] += pos_coeffs + neg_coeffs;
   } // end of j loop
+}
+}
 }
 
 #endif
