@@ -565,7 +565,7 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
 void CartesianFarField<ExpansionType>::TranslateToLocal(
   const KernelAuxType &kernel_aux_in, int truncation_order,
-  CartesianLocal<ExpansionType> &se) {
+  CartesianLocal<ExpansionType> *se) const {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;
@@ -575,21 +575,22 @@ void CartesianFarField<ExpansionType>::TranslateToLocal(
   core::table::DensePoint local_center;
   core::table::DensePoint cent_diff;
   core::table::DensePoint local_coeffs;
-  int local_order = se.get_order();
+  int local_order = se->get_order();
   int dimension = kernel_aux_in.global().get_dimension();
   int total_num_coeffs =
     kernel_aux_in.global().get_total_num_coeffs(truncation_order);
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // get center and coefficients for local expansion
-  local_center.Alias(*(se.get_center()));
-  local_coeffs.Alias(se.get_coeffs());
+  local_center.Alias(*(se->get_center()));
+  local_coeffs.Alias(se->get_coeffs());
   cent_diff.Init(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
   if(local_order < truncation_order) {
-    se.set_order(truncation_order);
+    se->set_order(truncation_order);
   }
 
   // Compute derivatives.
@@ -605,7 +606,7 @@ void CartesianFarField<ExpansionType>::TranslateToLocal(
   kernel_aux_in.ComputeDirectionalDerivatives(cent_diff, &derivative_map,
       2 * truncation_order);
   std::vector<short int> beta_plus_alpha;
-  beta_plus_alpha.Init(dimension);
+  beta_plus_alpha.resize(dimension);
 
   for(int j = 0; j < total_num_coeffs; j++) {
 
