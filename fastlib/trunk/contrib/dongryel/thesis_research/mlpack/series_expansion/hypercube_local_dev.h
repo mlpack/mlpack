@@ -42,11 +42,12 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   x_r_minus_x_Q.Init(dim);
 
   // sqrt two times bandwidth
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[order];
+    kernel_aux_in.global().traversal_mapping(order);
 
   // for each data point,
   for(int r = begin; r < end; r++) {
