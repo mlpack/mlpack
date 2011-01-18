@@ -4,7 +4,6 @@
  *  computing bound-related quantities.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
- *  @bug No known bugs.
  */
 
 #ifndef MLPACK_SERIES_EXPANSION_BOUNDS_AUX_H
@@ -38,8 +37,8 @@ class BoundsAux {
       arma::vec *furthest_point_in_bound1,
       double *furthest_dsqd) {
 
-      furthest_point_in_bound1->set_zeros(bound1.dim());
-      int dim = furthest_point_in_bound1.length();
+      furthest_point_in_bound1->zeros(bound1.dim());
+      int dim = furthest_point_in_bound1->n_elem;
       *furthest_dsqd = 0;
 
       for(int d = 0; d < dim; d++) {
@@ -59,9 +58,9 @@ class BoundsAux {
           (*furthest_point_in_bound1)[d] = bound1_range.hi;
           v = v2;
         }
-        (*furthest_dsqd) += math::PowAbs<t_pow, 1>(v); // v is non-negative
+        (*furthest_dsqd) += core::math::PowAbs<t_pow, 1>(v);
       }
-      (*furthest_dsqd) = math::Pow<2, t_pow>(*furthest_dsqd);
+      (*furthest_dsqd) = core::math::Pow<2, t_pow>(*furthest_dsqd);
     }
 
     static void MaxDistanceSq(
@@ -70,7 +69,7 @@ class BoundsAux {
       arma::vec *furthest_point_in_bound1,
       double *furthest_dsqd) {
 
-      furthest_point_in_bound1->set_zeros(bound1.center().length());
+      furthest_point_in_bound1->zeros(bound1.dim());
       int dim = furthest_point_in_bound1->n_elem;
       *furthest_dsqd = 0;
 
@@ -89,9 +88,9 @@ class BoundsAux {
           (*furthest_point_in_bound1)[d] = bound1_range.hi;
           v = v2;
         }
-        (*furthest_dsqd) += math::PowAbs<t_pow, 1>(v); // v is non-negative
+        (*furthest_dsqd) += core::math::PowAbs<t_pow, 1>(v);
       }
-      (*furthest_dsqd) = math::Pow<2, t_pow>(*furthest_dsqd);
+      (*furthest_dsqd) = core::math::Pow<2, t_pow>(*furthest_dsqd);
     }
 
     static void MaxDistanceSq(
@@ -104,8 +103,8 @@ class BoundsAux {
 
       // First compute the distance between the centroid of the bounding
       // ball and the given point.
-      double distance =
-        LMetric<t_pow>::Distance(bound1.center(), bound2_centroid);
+      core::metric_kernels::LMetric<2> l2_metric;
+      double distance = l2_metric.Distance(bound1.center(), bound2_centroid);
 
       // Compute the unit vector that has the same direction as the
       // vector pointing from the given point to the bounding ball
@@ -121,9 +120,8 @@ class BoundsAux {
 
       // Temporary LMetric object. Eliminate when there is an issue
       // later.
-      core::metric_kernels::LMetric<2> l2_metric;
       (*furthest_dsqd) = l2_metric.DistanceSq(
-                           bound2_centroid, *furthest_point_in_bound1);
+                           bound2_centroid_alias, *furthest_point_in_bound1);
     }
 
     /** @brief Returns the maximum side length of the bounding box that

@@ -9,9 +9,17 @@
 #ifndef MLPACK_SERIES_EXPANSION_KERNEL_AUX_H
 #define MLPACK_SERIES_EXPANSION_KERNEL_AUX_H
 
+#include <vector>
 #include "core/metric_kernels/kernel.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
+#include "mlpack/series_expansion/bounds_aux.h"
+#include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
+#include "mlpack/series_expansion/cartesian_expansion_type.h"
+#include "mlpack/series_expansion/hypercube_farfield_dev.h"
+#include "mlpack/series_expansion/hypercube_local_dev.h"
+#include "mlpack/series_expansion/multivariate_farfield_dev.h"
+#include "mlpack/series_expansion/multivariate_local_dev.h"
 
 namespace mlpack {
 namespace series_expansion {
@@ -23,13 +31,19 @@ class GaussianKernelMultAux {
 
   public:
 
-    typedef GaussianKernel KernelType;
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      mlpack::series_expansion::HYPERCUBE;
 
-    typedef MultSeriesExpansionAux ExpansionGlobalType;
+    typedef core::metric_kernels::GaussianKernel KernelType;
 
-    typedef MultFarFieldExpansion<GaussianKernelMultAux> TFarFieldExpansion;
+    typedef mlpack::series_expansion::CartesianExpansionGlobal<ExpansionType>
+    ExpansionGlobalType;
 
-    typedef MultLocalExpansion<GaussianKernelMultAux> TLocalExpansion;
+    typedef mlpack::series_expansion::CartesianFarField <
+    ExpansionType > FarFieldType;
+
+    typedef mlpack::series_expansion::CartesianLocal<ExpansionType> LocalType;
 
   private:
 
@@ -73,7 +87,7 @@ class GaussianKernelMultAux {
 
       // Precompute necessary Hermite polynomials based on coordinate
       // difference.
-      for(index_t d = 0; d < dim; d++) {
+      for(int d = 0; d < dim; d++) {
 
         double coord_div_band = x[d];
         double d2 = 2 * coord_div_band;
@@ -86,7 +100,7 @@ class GaussianKernelMultAux {
           derivative_map->set(d, 1, d2 * facj);
 
           if(order > 1) {
-            for(index_t k = 1; k < order; k++) {
+            for(int k = 1; k < order; k++) {
               int k2 = k * 2;
               derivative_map->set(d, k + 1, d2 * derivative_map->get(d, k) -
                                   k2 * derivative_map->get(d, k - 1));
@@ -98,11 +112,10 @@ class GaussianKernelMultAux {
 
     double ComputePartialDerivative(
       const core::table::DenseMatrix &derivative_map,
-      const ArrayList<short int> &mapping) const {
+      const std::vector<short int> &mapping) const {
 
       double partial_derivative = 1.0;
-
-      for(index_t d = 0; d < mapping.size(); d++) {
+      for(unsigned int d = 0; d < mapping.size(); d++) {
         partial_derivative *= derivative_map.get(d, mapping[d]);
       }
       return partial_derivative;
@@ -117,7 +130,8 @@ class GaussianKernelMultAux {
       // Find out the maximum side length of the bounding box of the
       // far-field region.
       double max_far_field_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
 
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r = max_far_field_length / two_times_bandwidth;
@@ -174,9 +188,11 @@ class GaussianKernelMultAux {
       // Find out the maximum side length of the bounding box of the
       // far-field region and the local-field regions.
       double max_far_field_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
       double max_local_field_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r = max_far_field_length / two_times_bandwidth;
@@ -239,7 +255,8 @@ class GaussianKernelMultAux {
 
       // Find out the maximum side length of the local field region.
       double max_local_field_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r = max_local_field_length / two_times_bandwidth;
@@ -287,19 +304,26 @@ class GaussianKernelMultAux {
     }
 };
 
-/** @brief Auxiliary class for Gaussian kernel.
+/** @brief Auxiliary class for Gaussian kernel for performing an
+ *         $O(D^p)$ expansion.
  */
 class GaussianKernelAux {
 
   public:
 
-    typedef GaussianKernel KernelType;
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      mlpack::series_expansion::MULTIVARIATE;
 
-    typedef SeriesExpansionAux ExpansionGlobalType;
+    typedef core::metric_kernels::GaussianKernel KernelType;
 
-    typedef FarFieldExpansion<GaussianKernelAux> TFarFieldExpansion;
+    typedef mlpack::series_expansion::CartesianExpansionGlobal<ExpansionType>
+    ExpansionGlobalType;
 
-    typedef LocalExpansion<GaussianKernelAux> TLocalExpansion;
+    typedef mlpack::series_expansion::CartesianFarField<ExpansionType>
+    FarFieldType;
+
+    typedef mlpack::series_expansion::CartesianLocal<ExpansionType> LocalType;
 
   private:
 
@@ -341,7 +365,7 @@ class GaussianKernelAux {
 
       // Precompute necessary Hermite polynomials based on coordinate
       // difference.
-      for(index_t d = 0; d < dim; d++) {
+      for(int d = 0; d < dim; d++) {
 
         double coord_div_band = x[d];
         double d2 = 2 * coord_div_band;
@@ -354,7 +378,7 @@ class GaussianKernelAux {
           derivative_map->set(d, 1, d2 * facj);
 
           if(order > 1) {
-            for(index_t k = 1; k < order; k++) {
+            for(int k = 1; k < order; k++) {
               int k2 = k * 2;
               derivative_map->set(
                 d, k + 1, d2 * derivative_map->get(d, k) -
@@ -367,11 +391,11 @@ class GaussianKernelAux {
 
     double ComputePartialDerivative(
       const core::table::DenseMatrix &derivative_map,
-      const ArrayList<short int> &mapping) const {
+      const std::vector<short int> &mapping) const {
 
       double partial_derivative = 1.0;
 
-      for(index_t d = 0; d < mapping.size(); d++) {
+      for(int d = 0; d < mapping.size(); d++) {
         partial_derivative *= derivative_map.get(d, mapping[d]);
       }
       return partial_derivative;
@@ -388,10 +412,10 @@ class GaussianKernelAux {
       double max_error,
       double *actual_error) const {
 
+      core::metric_kernels::LMetric<2> l2_metric;
       double squared_distance_between_two_centroids =
-        la::DistanceSqEuclidean(far_field_region_centroid.length(),
-                                far_field_region_centroid.ptr(),
-                                local_field_region_centroid.ptr());
+        l2_metric.DistanceSq(
+          far_field_region_centroid, local_field_region_centroid);
       double frontfactor =
         exp(-squared_distance_between_two_centroids /
             (4 * kernel_.bandwidth_sq()));
@@ -400,9 +424,11 @@ class GaussianKernelAux {
       // Find out the widest dimension of the far-field region and its
       // length.
       double far_field_widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
       double local_field_widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
       double r = (far_field_widest_width + local_field_widest_width) /
@@ -452,7 +478,8 @@ class GaussianKernelAux {
       // Find out the widest dimension of the far-field region and its
       // length.
       double widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
 
       double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
       double r = widest_width / two_bandwidth;
@@ -494,9 +521,11 @@ class GaussianKernelAux {
       // Find out the maximum side length of the reference and the query
       // regions.
       double max_ref_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
       double max_query_length =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
       double r_R = max_ref_length / two_times_bandwidth;
@@ -555,7 +584,8 @@ class GaussianKernelAux {
       // Find out the widest dimension of the local field region and its
       // length.
       double widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
       double r = widest_width / two_bandwidth;
@@ -595,13 +625,19 @@ class EpanKernelAux {
 
   public:
 
-    typedef EpanKernel KernelType;
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      mlpack::series_expansion::MULTIVARIATE;
 
-    typedef SeriesExpansionAux ExpansionGlobalType;
+    typedef core::metric_kernels::EpanKernel KernelType;
 
-    typedef FarFieldExpansion<EpanKernelAux> TFarFieldExpansion;
+    typedef mlpack::series_expansion::CartesianExpansionGlobal<ExpansionType>
+    ExpansionGlobalType;
 
-    typedef LocalExpansion<EpanKernelAux> TLocalExpansion;
+    typedef mlpack::series_expansion::CartesianFarField<ExpansionType>
+    FarFieldType;
+
+    typedef mlpack::series_expansion::CartesianLocal<ExpansionType> LocalType;
 
   private:
 
@@ -654,7 +690,7 @@ class EpanKernelAux {
 
     double ComputePartialDerivative(
       const core::table::DenseMatrix &derivative_map,
-      const ArrayList<short int> &mapping) const {
+      const std::vector<short int> &mapping) const {
 
       return derivative_map.get(global_.ComputeMultiindexPosition(mapping), 0);
     }
@@ -674,13 +710,15 @@ class EpanKernelAux {
       // Find out the widest dimension and its length of the far-field
       // region.
       double widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(far_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          far_field_region);
 
       // Find out the max distance between query and reference region in L1
       // sense.
       int dim;
       double farthest_distance_manhattan =
-        bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
+        mlpack::series_expansion::BoundsAux::MaxL1Distance(
+          far_field_region, local_field_region, &dim);
 
       // Divide by the two times the bandwidth to find out how wide it is
       // in terms of the bandwidth.
@@ -741,13 +779,15 @@ class EpanKernelAux {
       // Find out the widest dimension and its length of the local
       // region.
       double widest_width =
-        bounds_aux::MaxSideLengthOfBoundingBox(local_field_region);
+        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
+          local_field_region);
 
       // Find out the max distance between query and reference region in L1
       // sense
       int dim;
       double farthest_distance_manhattan =
-        bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
+        mlpack::series_expansion::BoundsAux::MaxL1Distance(
+          far_field_region, local_field_region, &dim);
 
       // divide by the two times the bandwidth to find out how wide it is
       // in terms of the bandwidth

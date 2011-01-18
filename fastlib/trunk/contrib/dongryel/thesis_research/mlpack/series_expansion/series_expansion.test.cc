@@ -13,7 +13,7 @@
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
 #include "core/math/math_lib.h"
-#include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
+#include "mlpack/series_expansion/kernel_aux.h"
 #include "mlpack/series_expansion/hypercube_farfield_dev.h"
 #include "mlpack/series_expansion/hypercube_local_dev.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
@@ -70,9 +70,9 @@ class SeriesExpansionTest {
         num_dimensions, num_points, &random_table);
 
       // Form a Cartesian expansion global object.
-      mlpack::series_expansion::CartesianExpansionGlobal<ExpansionType> global;
-      global.Init(max_order, random_table.n_attributes());
-      global.Print();
+      mlpack::series_expansion::GaussianKernelAux kernel_aux;
+      kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
+      kernel_aux.global().Print();
 
       // Form a far-field expansion and evaluate.
       mlpack::series_expansion::CartesianFarField<ExpansionType> farfield;
