@@ -104,6 +104,8 @@ class CartesianExpansionGlobal {
 
   public:
 
+    const std::vector<short int> &traversal_mapping(int pos) const;
+
     double factorial(int k) const;
 
     int get_dimension() const;

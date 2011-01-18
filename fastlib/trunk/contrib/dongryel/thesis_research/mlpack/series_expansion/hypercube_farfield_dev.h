@@ -47,7 +47,7 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[order_];
+    kernel_aux_in.global().traversal_mapping(order_);
 
   // Repeat for each reference point in this reference node.
   for(int r = begin; r < end; r++) {
@@ -65,7 +65,7 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
       int index = traversal_order[i];
       const std::vector<short int> &lower_mappings =
-        kernel_aux_in.global().lower_mapping_index_[index];
+        kernel_aux_in.global().get_lower_mapping_index()[index];
 
       // from the direct descendant, recursively compute the multipole moments
       int direct_ancestor_mapping_pos =
@@ -73,9 +73,10 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
       int position = 0;
       const std::vector<short int> &mapping =
-        kernel_aux_in.global().multiindex_mapping_[index];
+        kernel_aux_in.global().get_multiindex_mapping()[index];
       const std::vector<short int> &direct_ancestor_mapping =
-        kernel_aux_in.global().multiindex_mapping_[direct_ancestor_mapping_pos];
+        kernel_aux_in.global().get_multiindex_mapping()[
+          direct_ancestor_mapping_pos];
       for(int i = 0; i < dim; i++) {
         if(mapping[i] != direct_ancestor_mapping[i]) {
           position = i;
@@ -105,7 +106,8 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   for(int r = 0; r < total_num_coeffs; r++) {
     int index = traversal_order[r];
     coeffs_[index] += (pos_coeffs[index] + neg_coeffs[index]) *
-                      kernel_aux_in.global().inv_multiindex_factorials_[index];
+                      kernel_aux_in.global().
+                      get_inv_multiindex_factorials()[index];
   }
 }
 
