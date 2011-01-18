@@ -185,7 +185,7 @@ class DistributedTreeBuilder {
       membership_counts_per_node->resize(top_leaf_nodes.size());
       std::fill(
         membership_counts_per_node->begin(),
-        membership_counts_per_node->end(), 0.0);
+        membership_counts_per_node->end(), 0);
 
       // Loop through each point and find the closest leaf node.
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
