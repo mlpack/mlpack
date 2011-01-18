@@ -22,9 +22,7 @@
 namespace mlpack {
 namespace series_expansion {
 
-template <
-typename TableType,
-         enum mlpack::series_expansion::CartesianExpansionType ExpansionType >
+template <typename TableType, typename KernelAuxType >
 class SeriesExpansionTest {
 
   private:
@@ -70,14 +68,15 @@ class SeriesExpansionTest {
         num_dimensions, num_points, &random_table);
 
       // Form a Cartesian expansion global object.
-      mlpack::series_expansion::GaussianKernelAux kernel_aux;
+      KernelAuxType kernel_aux;
       double bandwidth = core::math::Random(
                            0.05 * num_dimensions, 0.3 * num_dimensions);
       kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
       kernel_aux.global().Print();
 
       // Form a far-field expansion and evaluate.
-      mlpack::series_expansion::CartesianFarField<ExpansionType> farfield;
+      mlpack::series_expansion::CartesianFarField <
+      KernelAuxType::ExpansionType > farfield;
       return true;
     }
 };
@@ -93,11 +92,20 @@ BOOST_AUTO_TEST_CASE(TestCaseSeriesExpansion) {
 
   // Call the tests.
   mlpack::series_expansion::SeriesExpansionTest <
-  TableType, mlpack::series_expansion::MULTIVARIATE > multivariate_test;
-  multivariate_test.StressTestMain();
+  TableType, mlpack::series_expansion::GaussianKernelAux > gaussian_kernel_test;
+  gaussian_kernel_test.StressTestMain();
+  std::cout << "Passed the Gaussian kernel $O(D^p)$ test.\n";
+
   mlpack::series_expansion::SeriesExpansionTest <
-  TableType, mlpack::series_expansion::HYPERCUBE > hypercube_test;
-  hypercube_test.StressTestMain();
+  TableType, mlpack::series_expansion::GaussianKernelMultAux >
+  gaussian_mult_kernel_test;
+  gaussian_mult_kernel_test.StressTestMain();
+  std::cout << "Passed the Gaussian kernel $O(p^D)$ test.\n";
+
+  mlpack::series_expansion::SeriesExpansionTest <
+  TableType, mlpack::series_expansion::EpanKernelAux > epan_kernel_test;
+  epan_kernel_test.StressTestMain();
+  std::cout << "Passed the Epanechnikov kernel $O(D^p)$ test.\n";
 
   std::cout << "All tests passed!\n";
 }
