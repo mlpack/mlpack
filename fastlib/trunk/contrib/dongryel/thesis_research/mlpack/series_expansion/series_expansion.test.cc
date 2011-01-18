@@ -47,7 +47,7 @@ class SeriesExpansionTest {
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(3, 5);
-        int num_points = core::math::RandInt(30, 100);
+        int num_points = core::math::RandInt(10, 20);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -85,6 +85,12 @@ class SeriesExpansionTest {
         weights[i] = core::math::Random(0.25, 1.25);
       }
       farfield.Init(kernel_aux, random_table.get_tree()->bound().center());
+
+      // Determine the truncation order and form the farfield
+      // expansion up to that order. Compare the evaluation using the
+      // naive method.
+      // double farfield_evaluation_max_error =
+      // core::math::Random(0.001, 0.1);
       farfield.AccumulateCoeffs(
         kernel_aux, random_table.data(),
         weights, 0, random_table.n_entries(), max_order / 2);

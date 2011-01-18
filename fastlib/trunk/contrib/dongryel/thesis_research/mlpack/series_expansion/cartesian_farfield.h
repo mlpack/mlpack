@@ -140,38 +140,6 @@ class CartesianFarField {
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);
 
-    /** @brief Computes the required order for evaluating the far field
-     *         expansion for any query point within the specified region
-     *         for a given bound.
-     */
-    template<typename KernelAuxType, typename BoundType>
-    int OrderForEvaluating(
-      const KernelAuxType &kernel_aux_in,
-      const BoundType &far_field_region,
-      const BoundType &local_field_region,
-      double min_dist_sqd_regions,
-      double max_dist_sqd_regions,
-      double max_error, double *actual_error) const;
-
-    /** @brief Computes the required order for converting to the local
-     *         expansion inside another region, so that the total error
-     *         (truncation error of the far field expansion plus the
-     *         conversion error) is bounded above by the given user
-     *         bound.
-     *
-     *  @return the minimum approximation order required for the error,
-     *          -1 if approximation up to the maximum order is not possible.
-     */
-    template<typename KernelAuxType, typename BoundType>
-    int OrderForConvertingToLocal(
-      const KernelAuxType &kernel_aux_in,
-      const BoundType &far_field_region,
-      const BoundType &local_field_region,
-      double min_dist_sqd_regions,
-      double max_dist_sqd_regions,
-      double required_bound,
-      double *actual_error) const;
-
     /** @brief Prints out the series expansion represented by this object.
      */
     template<typename KernelAuxType>
@@ -264,38 +232,6 @@ void CartesianFarField<ExpansionType>::Init(const TKernelAux &kernel_aux_in) {
   // Initialize coefficient array.
   coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
   coeffs_.SetZero();
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType, typename BoundType>
-int CartesianFarField<ExpansionType>::OrderForEvaluating(
-  const KernelAuxType &kernel_aux_in,
-  const BoundType &far_field_region,
-  const BoundType &local_field_region, double min_dist_sqd_regions,
-  double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return kernel_aux_in.OrderForEvaluatingFarField(
-           far_field_region,
-           local_field_region,
-           min_dist_sqd_regions,
-           max_dist_sqd_regions, max_error,
-           actual_error);
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType, typename BoundType>
-int CartesianFarField<ExpansionType>::OrderForConvertingToLocal(
-  const KernelAuxType &kernel_aux_in,
-  const BoundType &far_field_region, const BoundType &local_field_region,
-  double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
-  double *actual_error) const {
-
-  return kernel_aux_in.OrderForConvertingFromFarFieldToLocal(
-           far_field_region,
-           local_field_region,
-           min_dist_sqd_regions,
-           max_dist_sqd_regions,
-           max_error, actual_error);
 }
 }
 }

@@ -402,67 +402,6 @@ class GaussianKernelAux {
     }
 
     template<typename BoundType>
-    int OrderForConvolvingFarField(
-      const BoundType &far_field_region,
-      const core::table::DensePoint &far_field_region_centroid,
-      const BoundType &local_field_region,
-      const core::table::DensePoint &local_field_region_centroid,
-      double min_dist_sqd_regions,
-      double max_dist_sqd_regions,
-      double max_error,
-      double *actual_error) const {
-
-      core::metric_kernels::LMetric<2> l2_metric;
-      double squared_distance_between_two_centroids =
-        l2_metric.DistanceSq(
-          far_field_region_centroid, local_field_region_centroid);
-      double frontfactor =
-        exp(-squared_distance_between_two_centroids /
-            (4 * kernel_.bandwidth_sq()));
-      int max_order = global_.get_max_order();
-
-      // Find out the widest dimension of the far-field region and its
-      // length.
-      double far_field_widest_width =
-        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
-          far_field_region);
-      double local_field_widest_width =
-        mlpack::series_expansion::BoundsAux::MaxSideLengthOfBoundingBox(
-          local_field_region);
-
-      double two_bandwidth = 2 * sqrt(kernel_.bandwidth_sq());
-      double r = (far_field_widest_width + local_field_widest_width) /
-                 two_bandwidth;
-
-      double r_raised_to_p_alpha = 1.0;
-      double ret;
-      int p_alpha = 0;
-
-      do {
-
-        if(p_alpha > max_order - 1) {
-          return -1;
-        }
-
-        r_raised_to_p_alpha *= r;
-        frontfactor /= sqrt(p_alpha + 1);
-
-        ret = frontfactor * r_raised_to_p_alpha;
-
-        if(ret > max_error) {
-          p_alpha++;
-        }
-        else {
-          break;
-        }
-      }
-      while(1);
-
-      *actual_error = ret;
-      return p_alpha;
-    }
-
-    template<typename BoundType>
     int OrderForEvaluatingFarField(
       const BoundType &far_field_region,
       const BoundType &local_field_region,
