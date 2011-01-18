@@ -47,7 +47,7 @@ class SeriesExpansionTest {
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(3, 5);
-        int num_points = core::math::RandInt(10, 20);
+        int num_points = core::math::RandInt(200, 300);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -64,10 +64,22 @@ class SeriesExpansionTest {
       // Generate a random table.
       int max_order = 6 - num_dimensions;
       TableType random_table;
+      int leaf_size = core::math::RandInt(10, 20);
       core::metric_kernels::LMetric<2> l2_metric;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
-      random_table.IndexData(l2_metric, 20);
+      random_table.IndexData(l2_metric, leaf_size);
+      std::vector<typename TableType::TreeType *> leaf_nodes;
+      random_table.get_leaf_nodes(random_table.get_tree(), &leaf_nodes);
+
+      // Randomly select a reference region and a query region.
+      typename TableType::TreeType *reference_node =
+        leaf_nodes[core::math::RandInt(leaf_nodes.size())];
+      typename TableType::TreeType *query_node =
+        leaf_nodes[core::math::RandInt(leaf_nodes.size())];
+      core::math::Range squared_distance_range =
+        reference_node->bound().RangeDistanceSq(
+          l2_metric, query_node->bound());
 
       // Form a Cartesian expansion global object.
       KernelAuxType kernel_aux;
@@ -84,16 +96,24 @@ class SeriesExpansionTest {
       for(int i = 0; i < weights.length(); i++) {
         weights[i] = core::math::Random(0.25, 1.25);
       }
-      farfield.Init(kernel_aux, random_table.get_tree()->bound().center());
+      farfield.Init(kernel_aux, reference_node->bound().center());
 
       // Determine the truncation order and form the farfield
       // expansion up to that order. Compare the evaluation using the
       // naive method.
-      // double farfield_evaluation_max_error =
-      // core::math::Random(0.001, 0.1);
-      farfield.AccumulateCoeffs(
-        kernel_aux, random_table.data(),
-        weights, 0, random_table.n_entries(), max_order / 2);
+      double farfield_evaluation_max_error =
+        core::math::Random(0.001, 0.1);
+      double actual_error = 0;
+      int truncation_order =
+        kernel_aux.OrderForEvaluatingFarField(
+          reference_node->bound(), query_node->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          farfield_evaluation_max_error, &actual_error);
+      if(truncation_order >= 0) {
+        farfield.AccumulateCoeffs(
+          kernel_aux, random_table.data(),
+          weights, 0, random_table.n_entries(), truncation_order);
+      }
       return true;
     }
 };
