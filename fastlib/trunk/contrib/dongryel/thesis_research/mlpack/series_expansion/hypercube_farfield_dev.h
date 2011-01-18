@@ -225,7 +225,8 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::Print(
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
 
   for(int i = 0; i < total_num_coeffs; i++) {
-    const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(i);
+    const std::vector<short int> &mapping =
+      kernel_aux_in.global().get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
 
     fprintf(stream, "(-1)^(");

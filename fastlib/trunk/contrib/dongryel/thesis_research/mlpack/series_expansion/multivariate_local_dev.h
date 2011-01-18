@@ -18,6 +18,7 @@ template<>
 template<typename KernelAuxType>
 void CartesianLocal <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
+  const KernelAuxType &kernel_aux_in,
   const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights, int begin, int end, int order) {
 
@@ -44,27 +45,31 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   x_r_minus_x_Q.Init(dim);
 
   // The bandwidth factor to be divided along each dimension.
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // for each data point,
-  for(index_t r = begin; r < end; r++) {
+  for(int r = begin; r < end; r++) {
 
     // calculate x_r - x_Q
-    for(index_t d = 0; d < dim; d++) {
+    for(int d = 0; d < dim; d++) {
       x_r_minus_x_Q[d] = (center_[d] - data.get(d, r)) /
                          bandwidth_factor;
     }
 
     // precompute necessary partial derivatives based on coordinate difference
-    kernel_aux_in.ComputeDirectionalDerivatives(x_r_minus_x_Q, &derivative_map, order);
+    kernel_aux_in.ComputeDirectionalDerivatives(
+      x_r_minus_x_Q, &derivative_map, order);
 
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
-    for(index_t j = 0; j < total_num_coeffs; j++) {
-      const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(j);
-      arrtmp[j] = kernel_aux_in.ComputePartialDerivative(derivative_map, mapping);
+    for(int j = 0; j < total_num_coeffs; j++) {
+      const std::vector<short int> &mapping =
+        kernel_aux_in.global().get_multiindex(j);
+      arrtmp[j] = kernel_aux_in.ComputePartialDerivative(
+                    derivative_map, mapping);
     }
 
-    for(index_t j = 0; j < total_num_coeffs; j++) {
+    for(int j = 0; j < total_num_coeffs; j++) {
       coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] *
                     arrtmp[j];
     }
@@ -73,8 +78,8 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
 
 template<>
 template<typename KernelAuxType>
-void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::PrintDebug(const char *name,
-    FILE *stream) const {
+void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::Print(
+  const KernelAuxType &kernel_aux_in, const char *name, FILE *stream) const {
 
   int dim = kernel_aux_in.global().get_dimension();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
@@ -83,24 +88,25 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::PrintDebug(const ch
   fprintf(stream, "Local expansion\n");
   fprintf(stream, "Center: ");
 
-  for(index_t i = 0; i < center_.length(); i++) {
+  for(int i = 0; i < center_.length(); i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
 
   fprintf(stream, "f(");
-  for(index_t d = 0; d < dim; d++) {
+  for(int d = 0; d < dim; d++) {
     fprintf(stream, "x_q%d", d);
     if(d < dim - 1)
       fprintf(stream, ",");
   }
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
 
-  for(index_t i = 0; i < total_num_coeffs; i++) {
-    const std::vector<short int> &mapping = kernel_aux_in.global().get_multiindex(i);
+  for(int i = 0; i < total_num_coeffs; i++) {
+    const std::vector<short int> &mapping =
+      kernel_aux_in.global().get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
 
-    for(index_t d = 0; d < dim; d++) {
+    for(int d = 0; d < dim; d++) {
       fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
     }
 
@@ -113,21 +119,15 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::PrintDebug(const ch
 
 template<>
 template<typename KernelAuxType>
-double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(const core::table::DenseMatrix& data,
-    int row_num) const {
-  return EvaluateField(data.GetColumnPtr(row_num));
-}
-
-template<>
-template<typename KernelAuxType>
-double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(const double *x_q) const {
+double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
+  const KernelAuxType &kernel_aux_in, const double *x_q) const {
 
   // if there are no local expansion here, then return 0
   if(order_ < 0) {
     return 0;
   }
 
-  index_t k, t, tail;
+  int k, t, tail;
 
   // total number of coefficient
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
@@ -139,50 +139,48 @@ double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(con
   double sum = 0;
 
   // sqrt two bandwidth
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // temporary variable
   core::table::DensePoint x_Q_to_x_q;
   x_Q_to_x_q.Init(dim);
   core::table::DensePoint tmp;
   tmp.Init(total_num_coeffs);
-  std::vector<short int> heads;
-  heads.Init(dim + 1);
+  std::vector<short int> heads(dim + 1, 0);
 
   // compute (x_q - x_Q) / (sqrt(2h^2))
-  for(index_t i = 0; i < dim; i++) {
+  for(int i = 0; i < dim; i++) {
     x_Q_to_x_q[i] = (x_q[i] - center_[i]) / bandwidth_factor;
   }
-
-  for(index_t i = 0; i < dim; i++) {
-    heads[i] = 0;
-  }
-  heads[dim] = SHRT_MAX;
+  heads[dim] = std::numeric_limits<short int>::max();
 
   tmp[0] = 1.0;
 
   for(k = 1, t = 1, tail = 1; k <= order_; k++, tail = t) {
 
-    for(index_t i = 0; i < dim; i++) {
+    for(int i = 0; i < dim; i++) {
       int head = heads[i];
       heads[i] = t;
 
-      for(index_t j = head; j < tail; j++, t++) {
+      for(int j = head; j < tail; j++, t++) {
         tmp[t] = tmp[j] * x_Q_to_x_q[i];
       }
     }
   }
 
-  for(index_t i = 0; i < total_num_coeffs; i++) {
+  for(int i = 0; i < total_num_coeffs; i++) {
     sum += coeffs_[i] * tmp[i];
   }
-
   return sum;
 }
 
-template<typename KernelAuxType>
-void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateFromFarField
-(const FarFieldExpansion<KernelAuxType> &se) {
+template<>
+template<typename KernelAuxType, typename CartesianFarFieldType>
+void CartesianLocal <
+mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
+  const KernelAuxType &kernel_aux_in,
+  const CartesianFarFieldType &se) {
 
   core::table::DensePoint pos_arrtmp, neg_arrtmp;
   core::table::DenseMatrix derivative_map;
@@ -213,24 +211,26 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateFromFarFie
   neg_arrtmp.Init(total_num_coeffs);
 
   // compute center difference divided by bw_times_sqrt_two;
-  for(index_t j = 0; j < dimension; j++) {
+  for(int j = 0; j < dimension; j++) {
     cent_diff[j] = (center_[j] - far_center[j]) / bandwidth_factor;
   }
 
   // compute required partial derivatives
-  kernel_aux_in.ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
-  std::vector<short int> beta_plus_alpha;
-  beta_plus_alpha.Init(dimension);
+  kernel_aux_in.ComputeDirectionalDerivatives(
+    cent_diff, &derivative_map, 2 * order_);
+  std::vector<short int> beta_plus_alpha(dimension);
 
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
 
-    const std::vector<short int> &beta_mapping = kernel_aux_in.global().get_multiindex(j);
+    const std::vector<short int> &beta_mapping =
+      kernel_aux_in.global().get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
-    for(index_t k = 0; k < total_num_coeffs; k++) {
+    for(int k = 0; k < total_num_coeffs; k++) {
 
-      const std::vector<short int> &alpha_mapping = kernel_aux_in.global().get_multiindex(k);
-      for(index_t d = 0; d < dimension; d++) {
+      const std::vector<short int> &alpha_mapping =
+        kernel_aux_in.global().get_multiindex(k);
+      for(int d = 0; d < dimension; d++) {
         beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
@@ -249,13 +249,17 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateFromFarFie
 
   const core::table::DensePoint &C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
     coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }
 }
 
+template<>
 template<typename KernelAuxType>
-void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(LocalExpansion &se) {
+void CartesianLocal <
+mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
+  const KernelAuxType &kernel_aux_in,
+  CartesianLocal<mlpack::series_expansion::MULTIVARIATE> *se) const {
 
   // if there are no local coefficients to translate, return
   if(order_ < 0) {
@@ -266,20 +270,19 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
   // the expansion we are translating from. Also get coefficients we
   // are translating
   core::table::DensePoint new_center;
-  new_center.Alias(*(se.get_center()));
-  int prev_order = se.get_order();
+  new_center.Alias(se->get_center());
+  int prev_order = se->get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
   const std::vector<short int> *upper_mapping_index =
     kernel_aux_in.global().get_upper_mapping_index();
   core::table::DensePoint new_coeffs;
-  new_coeffs.Alias(se.get_coeffs());
+  new_coeffs.Alias(se->get_coeffs());
 
   // dimension
   int dim = kernel_aux_in.global().get_dimension();
 
   // temporary variable
-  std::vector<short int> tmp_storage;
-  tmp_storage.Init(dim);
+  std::vector<short int> tmp_storage(dim);
 
   // sqrt two times bandwidth
   double bandwidth_factor =
@@ -288,14 +291,14 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
   // center difference between the old center and the new one
   core::table::DensePoint center_diff;
   center_diff.Init(dim);
-  for(index_t d = 0; d < dim; d++) {
+  for(int d = 0; d < dim; d++) {
     center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
   }
 
   // set to the new order if the order of the expansion we are translating
   // from is higher
   if(prev_order < order_) {
-    se.set_order(order_);
+    se->set_order(order_);
   }
 
   // inverse multiindex factorials
@@ -303,7 +306,7 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
   C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
 
   // do the actual translation
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(int j = 0; j < total_num_coeffs; j++) {
 
     const std::vector<short int> &alpha_mapping =
       kernel_aux_in.global().get_multiindex(j);
@@ -312,7 +315,7 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
-    for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
+    for(int k = 0; k < upper_mappings_for_alpha.size(); k++) {
 
       if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
         break;
@@ -323,7 +326,7 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
       int flag = 0;
       double diff1 = 1.0;
 
-      for(index_t l = 0; l < dim; l++) {
+      for(int l = 0; l < dim; l++) {
         tmp_storage[l] = beta_mapping[l] - alpha_mapping[l];
 
         if(tmp_storage[l] < 0) {
@@ -335,7 +338,7 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::TranslateToLocal(Lo
       if(flag)
         continue;
 
-      for(index_t l = 0; l < dim; l++) {
+      for(int l = 0; l < dim; l++) {
         diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
 

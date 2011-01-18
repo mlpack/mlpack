@@ -1,8 +1,8 @@
 /** @file cartesian_local.h
  *
- *  This file contains a templatized class implementing $O(D^p)$
- *  expansion for computing the coefficients for a local expansion for
- *  an arbitrary kernel function.
+ *  This file contains a templatized class implementing $O(D^p)$ or
+ *  $O(p^D)$ expansion for computing the coefficients for a local
+ *  expansion for an arbitrary kernel function.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -36,34 +36,19 @@ class CartesianLocal {
   public:
 
     /** @brief Get the center of expansion. */
-    core::table::DensePoint* get_center() {
-      return &center_;
-    }
+    core::table::DensePoint &get_center();
 
     /** @brief Get the center of expansion. */
-    const core::table::DensePoint* get_center() const {
-      return &center_;
-    }
+    const core::table::DensePoint &get_center() const;
 
     /** @brief Get the coefficients. */
-    const core::table::DensePoint& get_coeffs() const {
-      return coeffs_;
-    }
+    const core::table::DensePoint& get_coeffs() const;
 
     /** @brief Get the approximation order. */
-    int get_order() const {
-      return order_;
-    }
-
-    /** @brief Get the maximum possible approximation order. */
-    int get_max_order() const {
-      return sea_->get_max_order();
-    }
+    int get_order() const;
 
     /** @brief Set the approximation order. */
-    void set_order(int new_order) {
-      order_ = new_order;
-    }
+    void set_order(int new_order);
 
     /** @brief Accumulates the local moment represented by the given
      *         reference data into the coefficients.
@@ -89,8 +74,13 @@ class CartesianLocal {
     /** @brief Initializes the current local expansion object with the
      *         given center.
      */
-    void Init(const core::table::DensePoint& center, const TKernelAux &ka);
-    void Init(const TKernelAux &ka);
+    template<typename KernelAuxType>
+    void Init(
+      const KernelAuxType &kernel_aux_in,
+      const core::table::DensePoint& center);
+
+    template<typename KernelAuxType>
+    void Init(const KernelAuxType &ka);
 
     /** @brief Computes the required order for evaluating the local
      *         expansion for any query point within the specified
@@ -127,8 +117,36 @@ class CartesianLocal {
      */
     template<typename KernelAuxType>
     void TranslateToLocal(
-      const KernelAuxType &kernel_aux_in, CartesianLocal<ExpansionType> *se);
+      const KernelAuxType &kernel_aux_in,
+      CartesianLocal<ExpansionType> *se) const;
 };
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+core::table::DensePoint &CartesianLocal<ExpansionType>::get_center() {
+  return center_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const core::table::DensePoint &CartesianLocal <
+ExpansionType >::get_center() const {
+  return center_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const core::table::DensePoint& CartesianLocal <
+ExpansionType >::get_coeffs() const {
+  return coeffs_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+int CartesianLocal<ExpansionType>::get_order() const {
+  return order_;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianLocal<ExpansionType>::set_order(int new_order) {
+  order_ = new_order;
+}
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
@@ -146,29 +164,37 @@ void CartesianLocal<ExpansionType>::Init(
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
-void CartesianLocal<ExpansionType>::Init(const KernelAuxType &ka) {
+void CartesianLocal<ExpansionType>::Init(const KernelAuxType &kernel_aux_in) {
 
   // Initialize the center to be zero.
   order_ = -1;
-  center_.Init(sea_->get_dimension());
+  center_.Init(kernel_aux_in.global().get_dimension());
   center_.SetZero();
 
   // Initialize coefficient array.
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
+  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType, typename BoundType>
 int CartesianLocal<ExpansionType>::OrderForEvaluating(
+  const KernelAuxType &kernel_aux_in,
   const BoundType &far_field_region,
   const BoundType &local_field_region, double min_dist_sqd_regions,
   double max_dist_sqd_regions, double max_error, double *actual_error) const {
 
-  return ka_->OrderForEvaluatingLocal(far_field_region, local_field_region,
-                                      min_dist_sqd_regions,
-                                      max_dist_sqd_regions, max_error,
-                                      actual_error);
+  return kernel_aux_in.OrderForEvaluatingLocal(
+           far_field_region, local_field_region, min_dist_sqd_regions,
+           max_dist_sqd_regions, max_error, actual_error);
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+template<typename KernelAuxType>
+double CartesianLocal<ExpansionType>::EvaluateField(
+  const KernelAuxType &kernel_aux_in,
+  const core::table::DenseMatrix& data, int row_num) const {
+  return EvaluateField(kernel_aux_in, data.GetColumnPtr(row_num));
 }
 }
 }

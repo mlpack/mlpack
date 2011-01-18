@@ -14,8 +14,10 @@
 #include "core/table/table.h"
 #include "core/math/math_lib.h"
 #include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
-#include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/hypercube_farfield_dev.h"
+#include "mlpack/series_expansion/hypercube_local_dev.h"
+#include "mlpack/series_expansion/multivariate_farfield_dev.h"
+#include "mlpack/series_expansion/multivariate_local_dev.h"
 
 namespace core {
 namespace tree {
