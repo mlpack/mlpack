@@ -10,6 +10,7 @@
 #ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_LOCAL_H
 #define MLPACK_SERIES_EXPANSION_CARTESIAN_LOCAL_H
 
+#include <boost/serialization/serialization.hpp>
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
 #include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
@@ -24,6 +25,9 @@ class CartesianLocal {
 
   private:
 
+    // For Boost serialization.
+    friend class boost::serialization::access;
+
     /** @brief The center of the expansion. */
     core::table::DensePoint center_;
 
@@ -34,6 +38,15 @@ class CartesianLocal {
     int order_;
 
   public:
+
+    /** @brief Serializes the far field object.
+     */
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & center_;
+      ar & coeffs_;
+      ar & order_;
+    }
 
     /** @brief Get the center of expansion. */
     core::table::DensePoint &get_center();

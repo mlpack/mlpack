@@ -10,6 +10,7 @@
 #ifndef MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_H
 #define MLPACK_SERIES_EXPANSION_CARTESIAN_FARFIELD_H
 
+#include <boost/serialization/serialization.hpp>
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
 #include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
@@ -25,6 +26,9 @@ class CartesianFarField {
 
   private:
 
+    // For Boost serialization.
+    friend class boost::serialization::access;
+
     ////////// Private Member Variables //////////
 
     /** @brief The center of the expansion. */
@@ -37,6 +41,15 @@ class CartesianFarField {
     short int order_;
 
   public:
+
+    /** @brief Serializes the far field object.
+     */
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & center_;
+      ar & coeffs_;
+      ar & order_;
+    }
 
     ////////// Getters/Setters //////////
 

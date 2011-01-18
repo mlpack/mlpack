@@ -46,7 +46,7 @@ class SeriesExpansionTest {
 
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 5);
+        int num_dimensions = core::math::RandInt(2, 5);
         int num_points = core::math::RandInt(2000, 3000);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
@@ -104,20 +104,40 @@ class SeriesExpansionTest {
       // Determine the truncation order and form the farfield
       // expansion up to that order. Compare the evaluation using the
       // naive method.
-      double farfield_evaluation_max_error =
-        core::math::Random(0.05, 0.1) * reference_node->count();
-      double actual_error = 0;
-      int truncation_order =
+      double evaluation_max_error =
+        core::math::Random(0.025, 0.003) * reference_node->count();
+      double farfield_actual_error = 0;
+      int farfield_truncation_order =
         kernel_aux.OrderForEvaluatingFarField(
           reference_node->bound(), query_node->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
-          farfield_evaluation_max_error, &actual_error);
-      printf("Truncation order: %d\n", truncation_order);
-      if(truncation_order >= 0) {
+          evaluation_max_error, &farfield_actual_error);
+      printf("Far field truncation order: %d\n", farfield_truncation_order);
+      if(farfield_truncation_order >= 0) {
         farfield.AccumulateCoeffs(
           kernel_aux, random_table.data(),
-          weights, 0, random_table.n_entries(), truncation_order);
+          weights, 0, random_table.n_entries(), farfield_truncation_order);
       }
+
+      // Now form a local expansion of the reference node onto the
+      // query node.
+      mlpack::series_expansion::CartesianLocal <
+      KernelAuxType::ExpansionType > local;
+      local.Init(kernel_aux, query_node->bound().center());
+      double local_actual_error = 0;
+      int local_truncation_order =
+        kernel_aux.OrderForEvaluatingLocal(
+          reference_node->bound(), query_node->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          evaluation_max_error, &local_actual_error);
+      printf("Local expansion truncation order: %d\n", local_truncation_order);
+      if(local_truncation_order >= 0) {
+        local.AccumulateCoeffs(
+          kernel_aux, random_table.data(),
+          weights, 0, random_table.n_entries(), local_truncation_order);
+      }
+      printf("\n");
+
       return true;
     }
 };

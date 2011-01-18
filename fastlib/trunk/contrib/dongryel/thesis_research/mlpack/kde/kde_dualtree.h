@@ -1,5 +1,8 @@
 /** @file kde_dualtree.h
  *
+ *  The template stub filled out for computing the kernel density
+ *  estimate using a dual-tree algorithm.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -16,22 +19,36 @@
 
 namespace mlpack {
 namespace kde {
+
+/** @brief The postponed quantities for KDE.
+ */
 class KdePostponed {
 
   private:
 
+    // For boost serialization.
     friend class boost::serialization::access;
 
   public:
 
+    /** @brief The lower bound on the postponed quantities.
+     */
     double densities_l_;
 
+    /** @brief The upper bound on the postponed quantities.
+     */
     double densities_u_;
 
+    /** @brief The amount of pruned quantities.
+     */
     double pruned_;
 
+    /** @brief The upper bound on the used error.
+     */
     double used_error_;
 
+    /** @brief Serialize the postponed quantities.
+     */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & densities_l_;
@@ -40,10 +57,14 @@ class KdePostponed {
       ar & used_error_;
     }
 
+    /** @brief The default constructor.
+     */
     KdePostponed() {
       SetZero();
     }
 
+    /** @brief Copies another postponed object.
+     */
     void Copy(const KdePostponed &postponed_in) {
       densities_l_ = postponed_in.densities_l_;
       densities_u_ = postponed_in.densities_u_;
@@ -51,10 +72,15 @@ class KdePostponed {
       used_error_ = postponed_in.used_error_;
     }
 
+    /** @brief Initializes the postponed quantities.
+     */
     void Init() {
       SetZero();
     }
 
+    /** @brief Initializes the postponed quantities given a global
+     *         object and a query reference pair.
+     */
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
       densities_l_ = densities_u_ = 0;
@@ -95,6 +121,8 @@ class KdePostponed {
       densities_u_ = densities_u_ + density_incoming;
     }
 
+    /** @brief Sets everything to zero.
+     */
     void SetZero() {
       densities_l_ = 0;
       densities_u_ = 0;
