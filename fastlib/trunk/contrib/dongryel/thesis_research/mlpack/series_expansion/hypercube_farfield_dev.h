@@ -83,7 +83,6 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
           break;
         }
       }
-
       tmp[index] = tmp[direct_ancestor_mapping_pos] * x_r[position];
     }
 
