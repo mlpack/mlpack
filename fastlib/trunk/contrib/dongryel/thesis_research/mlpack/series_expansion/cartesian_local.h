@@ -78,19 +78,6 @@ class CartesianLocal {
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);
 
-    /** @brief Computes the required order for evaluating the local
-     *         expansion for any query point within the specified
-     *         region for a given bound.
-     */
-    template<typename KernelAuxType, typename BoundType>
-    int OrderForEvaluating(
-      const KernelAuxType &kernel_aux_in,
-      const BoundType &far_field_region,
-      const BoundType &local_field_region,
-      double min_dist_sqd_regions,
-      double max_dist_sqd_regions,
-      double max_error, double *actual_error) const;
-
     /** @brief Prints out the series expansion represented by this
      *         object.
      */
@@ -170,19 +157,6 @@ void CartesianLocal<ExpansionType>::Init(const KernelAuxType &kernel_aux_in) {
   // Initialize coefficient array.
   coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
   coeffs_.SetZero();
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType, typename BoundType>
-int CartesianLocal<ExpansionType>::OrderForEvaluating(
-  const KernelAuxType &kernel_aux_in,
-  const BoundType &far_field_region,
-  const BoundType &local_field_region, double min_dist_sqd_regions,
-  double max_dist_sqd_regions, double max_error, double *actual_error) const {
-
-  return kernel_aux_in.OrderForEvaluatingLocal(
-           far_field_region, local_field_region, min_dist_sqd_regions,
-           max_dist_sqd_regions, max_error, actual_error);
 }
 }
 }
