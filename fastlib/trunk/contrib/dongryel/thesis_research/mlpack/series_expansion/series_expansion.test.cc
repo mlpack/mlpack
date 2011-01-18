@@ -19,42 +19,15 @@
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
 
-namespace core {
-namespace tree {
+namespace mlpack {
+namespace series_expansion {
 
-template<typename TableType>
-class TestTree {
+template <
+typename TableType,
+         enum mlpack::series_expansion::CartesianExpansionType ExpansionType >
+class SeriesExpansionTest {
 
   private:
-
-    bool TestTreeIterator_(
-      typename TableType::TreeType *node,
-      TableType &table) {
-
-      typename TableType::TreeIterator node_it =
-        table.get_node_iterator(node);
-      do {
-        core::table::DensePoint point;
-        int point_id;
-        node_it.Next(&point, &point_id);
-        core::table::DensePoint compare_point;
-        table.get(point_id, &compare_point);
-
-        for(int i = 0; i < point.length(); i++) {
-          if(point[i] != compare_point[i]) {
-            return false;
-          }
-        }
-      }
-      while(node_it.HasNext());
-
-      if(node->is_leaf() == false) {
-        return TestTreeIterator_(node->left(), table) &&
-               TestTreeIterator_(node->right(), table);
-      }
-      return true;
-    }
-
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
@@ -75,8 +48,8 @@ class TestTree {
 
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(3000, 5001);
+        int num_dimensions = core::math::RandInt(3, 7);
+        int num_points = core::math::RandInt(30, 100);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -91,28 +64,38 @@ class TestTree {
       std::cout << "Number of points: " << num_points << "\n";
 
       // Generate a random table.
+      int max_order = core::math::RandInt(3, 10);
       TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
-      core::metric_kernels::LMetric<2> l2_metric;
-      random_table.IndexData(l2_metric, 20);
 
+      // Form a Cartesian expansion global object.
+      mlpack::series_expansion::CartesianExpansionGlobal<ExpansionType> global;
+      global.Init(max_order, random_table.n_attributes());
+      global.Print();
+
+      // Form a far-field expansion and evaluate.
+      mlpack::series_expansion::CartesianFarField<ExpansionType> farfield;
       return true;
     }
 };
-};
-};
+}
+}
 
-BOOST_AUTO_TEST_SUITE(TestSuiteKde)
-BOOST_AUTO_TEST_CASE(TestCaseKde) {
+BOOST_AUTO_TEST_SUITE(TestSuiteSeriesExpansion)
+BOOST_AUTO_TEST_CASE(TestCaseSeriesExpansion) {
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
   core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
 
   // Call the tests.
-  core::tree::TestTree<TableType> tree_test;
-  tree_test.StressTestMain();
+  mlpack::series_expansion::SeriesExpansionTest <
+  TableType, mlpack::series_expansion::MULTIVARIATE > multivariate_test;
+  multivariate_test.StressTestMain();
+  mlpack::series_expansion::SeriesExpansionTest <
+  TableType, mlpack::series_expansion::HYPERCUBE > hypercube_test;
+  hypercube_test.StressTestMain();
 
   std::cout << "All tests passed!\n";
 }

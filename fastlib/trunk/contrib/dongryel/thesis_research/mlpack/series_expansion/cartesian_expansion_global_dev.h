@@ -13,70 +13,6 @@ namespace mlpack {
 namespace series_expansion {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-class PrintTrait {
-  public:
-    template<typename CartesianExpansionGlobalType>
-    static void Compute(
-      const CartesianExpansionGlobalType &global,
-      const char *name = "", FILE *stream = stderr);
-};
-
-template<>
-class PrintTrait<MULTIVARIATE> {
-  public:
-    template<typename CartesianExpansionGlobalType>
-    static void Compute(
-      const CartesianExpansionGlobalType &global,
-      const char *name = "", FILE *stream = stderr) {
-
-      fprintf(stream, "----- CARTESIAN EXPANSION GLOBAL %s ------\n", name);
-      fprintf(stream, "Max order: %d, dimension: %d\n", global.max_order(),
-              global.get_dimension());
-
-      fprintf(stream, "Multiindex mapping: ");
-      for(int i = 0; i < global.multiindex_mapping().size(); i++) {
-
-        assert(
-          ComputeMultiindexPosition(global.multiindex_mapping(i)) == i);
-        fprintf(stream, "( ");
-        for(int j = 0; j < global.get_dimension(); j++) {
-          fprintf(stream, "%d ", global.multiindex_mapping(i)[j]);
-        }
-        fprintf(stream, "): %g %g ", global.inv_multiindex_factorials(i),
-                global.neg_inv_multiindex_factorials(i));
-      }
-      fprintf(stream, "\n");
-    }
-};
-
-template<>
-class PrintTrait<HYPERCUBE> {
-  public:
-    template<typename CartesianExpansionGlobalType>
-    static void Compute(
-      const CartesianExpansionGlobalType &global,
-      const char *name = "", FILE *stream = stderr) {
-      fprintf(stream, "----- SERIESEXPANSIONAUX %s ------\n", name);
-      fprintf(stream, "Max order: %d, dimension: %d\n",
-              global.max_order(), global.dim());
-
-      fprintf(stream, "Multiindex mapping: ");
-      for(int i = 0; i < global.multiindex_mapping().size(); i++) {
-
-        assert(
-          global.ComputeMultiindexPosition(global.multiindex_mapping(i)) == i);
-        fprintf(stream, "( ");
-        for(int j = 0; j < global.get_dimension(); j++) {
-          fprintf(stream, "%d ", global.multiindex_mapping(i)[j]);
-        }
-        fprintf(stream, "): %g %g ", global.inv_multiindex_factorials(i),
-                global.neg_inv_multiindex_factorials(i));
-      }
-      fprintf(stream, "\n");
-    }
-};
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 class ComputeMultiindexPositionTrait {
   public:
     template<typename CartesianExpansionGlobalType>
@@ -264,10 +200,10 @@ int CartesianExpansionGlobal <ExpansionType>::get_max_total_num_coeffs() const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const std::vector < short int > *CartesianExpansionGlobal <ExpansionType>::
-get_lower_mapping_index()
-const {
-  return lower_mapping_index_.begin();
+const std::vector <
+std::vector < short int > > &CartesianExpansionGlobal <ExpansionType>::
+get_lower_mapping_index() const {
+  return lower_mapping_index_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -283,9 +219,10 @@ const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const std::vector < short int > *CartesianExpansionGlobal <
+const std::vector <
+std::vector < short int > > &CartesianExpansionGlobal <
 ExpansionType >::get_multiindex_mapping() const {
-  return multiindex_mapping_.begin();
+  return multiindex_mapping_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -314,10 +251,11 @@ ExpansionType >::get_total_num_coeffs(int order) const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const std::vector < short int > *CartesianExpansionGlobal <
+const std::vector <
+std::vector < short int > > &CartesianExpansionGlobal <
 ExpansionType >::get_upper_mapping_index() const {
 
-  return upper_mapping_index_.begin();
+  return upper_mapping_index_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -382,7 +320,8 @@ ExpansionType >::Init(int max_order, int dim) {
   for(p = 0; p < limit; p++) {
     list_total_num_coeffs_[p] =
       (ExpansionType == mlpack::series_expansion::MULTIVARIATE) ?
-      core::math::BinomialCoefficient<int>(p + dim, dim) :
+      static_cast<int>(
+        core::math::BinomialCoefficient<double>(p + dim, dim)) :
       static_cast<int>(pow(p + 1, dim));
   }
 
@@ -500,7 +439,38 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <
 ExpansionType >::Print(const char *name, FILE *stream) const {
 
-  mlpack::series_expansion::PrintTrait<ExpansionType>(*this, name, stream);
+  if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
+    fprintf(
+      stream,
+      "----- MULTIVARIATE CARTESIAN EXPANSION GLOBAL %s ------\n", name);
+  }
+  else {
+    fprintf(
+      stream,
+      "----- HYPERCUBE CARTESIAN EXPANSION GLOBAL %s ------\n", name);
+  }
+  fprintf(
+    stream, "Max order: %d, dimension: %d\n", max_order_, dim_);
+
+  fprintf(stream, "Multiindex mapping: ");
+  for(int i = 0;
+      i < static_cast<int>(multiindex_mapping_.size()); i++) {
+
+    if(
+      ComputeMultiindexPosition(multiindex_mapping_[i]) != i) {
+      fprintf(stream, "There is a problem with the multiindex mapping!\n");
+      exit(0);
+    }
+
+    fprintf(stream, "( ");
+    for(int j = 0; j < dim_; j++) {
+      fprintf(stream, "%d ", multiindex_mapping_[i][j]);
+    }
+    fprintf(
+      stream, "): %g %g ", inv_multiindex_factorials_[i],
+      neg_inv_multiindex_factorials_[i]);
+  }
+  fprintf(stream, "\n");
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>

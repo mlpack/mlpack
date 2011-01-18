@@ -114,13 +114,15 @@ class CartesianExpansionGlobal {
 
     const core::table::DensePoint& get_inv_multiindex_factorials() const;
 
-    const std::vector< short int > * get_lower_mapping_index() const;
+    const std::vector <
+    std::vector< short int > > &get_lower_mapping_index() const;
 
     int get_max_order() const;
 
     const std::vector< short int > & get_multiindex(int pos) const;
 
-    const std::vector< short int > * get_multiindex_mapping() const;
+    const std::vector <
+    std::vector< short int > > &get_multiindex_mapping() const;
 
     const core::table::DensePoint& get_neg_inv_multiindex_factorials() const;
 
@@ -128,7 +130,8 @@ class CartesianExpansionGlobal {
 
     double get_n_multichoose_k_by_pos(int n, int k) const;
 
-    const std::vector< short int > * get_upper_mapping_index() const;
+    const std::vector <
+    std::vector< short int > > &get_upper_mapping_index() const;
 
     /** @brief Computes the position of the given multiindex.
      */
