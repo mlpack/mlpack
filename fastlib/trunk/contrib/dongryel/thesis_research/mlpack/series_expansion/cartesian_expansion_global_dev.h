@@ -342,7 +342,7 @@ ExpansionType >::Init(int max_order, int dim) {
     n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
   }
   else {
-    n_choose_k_.Init(dim *(limit + 1), dim *(limit + 1));
+    n_choose_k_.Init(dim * limit, dim * limit);
   }
   n_choose_k_.SetZero();
 
@@ -386,12 +386,12 @@ ExpansionType >::Init(int max_order, int dim) {
     if(max_order > 0) {
       int boundary, i, k, step;
 
-      for(boundary = list_total_num_coeffs_[limit], k = 0,
-          step = list_total_num_coeffs_[limit] / (limit + 1);
-          step >= 1; step /= (limit + 1),
-          boundary /= (limit + 1), k++) {
+      for(boundary = list_total_num_coeffs_[limit - 1], k = 0,
+          step = list_total_num_coeffs_[limit - 1] / limit;
+          step >= 1; step /= limit,
+          boundary /= limit, k++) {
 
-        for(i = 0; i < list_total_num_coeffs_[limit];) {
+        for(i = 0; i < list_total_num_coeffs_[limit - 1];) {
           int inner_limit = i + boundary;
           int div = 1;
 

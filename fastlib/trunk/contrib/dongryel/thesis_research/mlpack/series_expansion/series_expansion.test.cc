@@ -48,7 +48,7 @@ class SeriesExpansionTest {
 
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 7);
+        int num_dimensions = core::math::RandInt(3, 5);
         int num_points = core::math::RandInt(30, 100);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
@@ -64,7 +64,7 @@ class SeriesExpansionTest {
       std::cout << "Number of points: " << num_points << "\n";
 
       // Generate a random table.
-      int max_order = core::math::RandInt(3, 10);
+      int max_order = 6 - num_dimensions;
       TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
