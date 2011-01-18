@@ -65,11 +65,7 @@ class CartesianLocal {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix& data, int row_num) const;
-
-    template<typename KernelAuxType>
-    double EvaluateField(
-      const KernelAuxType &kernel_aux_in, const double *x_q) const;
+      const core::table::DensePoint &x_q) const;
 
     /** @brief Initializes the current local expansion object with the
      *         given center.
@@ -187,14 +183,6 @@ int CartesianLocal<ExpansionType>::OrderForEvaluating(
   return kernel_aux_in.OrderForEvaluatingLocal(
            far_field_region, local_field_region, min_dist_sqd_regions,
            max_dist_sqd_regions, max_error, actual_error);
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType>
-double CartesianLocal<ExpansionType>::EvaluateField(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data, int row_num) const {
-  return EvaluateField(kernel_aux_in, data.GetColumnPtr(row_num));
 }
 }
 }

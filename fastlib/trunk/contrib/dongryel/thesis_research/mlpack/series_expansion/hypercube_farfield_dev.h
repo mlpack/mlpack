@@ -135,7 +135,8 @@ mlpack::series_expansion::HYPERCUBE >::RefineCoeffs(
 template<>
 template<typename KernelAuxType>
 double CartesianFarField<mlpack::series_expansion::HYPERCUBE>::EvaluateField(
-  const KernelAuxType &kernel_aux_in, const double *x_q, int order) const {
+  const KernelAuxType &kernel_aux_in,
+  const core::table::DensePoint &x_q, int order) const {
 
   // dimension
   int dim = kernel_aux_in.global().get_dimension();

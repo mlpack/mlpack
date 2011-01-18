@@ -129,11 +129,7 @@ class CartesianFarField {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &data, int row_num, int order) const;
-
-    template<typename KernelAuxType>
-    double EvaluateField(
-      const KernelAuxType &kernel_aux_in, const double *x_q, int order) const;
+      const core::table::DensePoint &point, int order) const;
 
     /** @brief Initializes the current far field expansion object with
      *         the given center.
@@ -240,14 +236,6 @@ void CartesianFarField<ExpansionType>::set_center(
   for(int i = 0; i < center.length(); i++) {
     center_[i] = center[i];
   }
-}
-
-template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-template<typename KernelAuxType>
-double CartesianFarField<ExpansionType>::EvaluateField(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data, int row_num, int order) const {
-  return EvaluateField(kernel_aux_in, data.GetColumnPtr(row_num), order);
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>

@@ -120,7 +120,8 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::Print(
 template<>
 template<typename KernelAuxType>
 double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
-  const KernelAuxType &kernel_aux_in, const double *x_q) const {
+  const KernelAuxType &kernel_aux_in,
+  const core::table::DensePoint &x_q) const {
 
   // if there are no local expansion here, then return 0
   if(order_ < 0) {
