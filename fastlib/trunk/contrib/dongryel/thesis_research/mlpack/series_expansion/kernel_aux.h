@@ -18,6 +18,7 @@
 #include "mlpack/series_expansion/cartesian_expansion_type.h"
 #include "mlpack/series_expansion/hypercube_farfield_dev.h"
 #include "mlpack/series_expansion/hypercube_local_dev.h"
+#include "mlpack/series_expansion/inverse_pow_dist_kernel_aux.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
 
@@ -394,8 +395,7 @@ class GaussianKernelAux {
       const std::vector<short int> &mapping) const {
 
       double partial_derivative = 1.0;
-
-      for(int d = 0; d < mapping.size(); d++) {
+      for(int d = 0; d < static_cast<int>(mapping.size()); d++) {
         partial_derivative *= derivative_map.get(d, mapping[d]);
       }
       return partial_derivative;
@@ -645,7 +645,7 @@ class EpanKernelAux {
 
     ExpansionGlobalType global_;
 
-    InversePowDistKernelAux squared_component_;
+    mlpack::series_expansion::InversePowDistKernelAux squared_component_;
 
   public:
 
@@ -683,8 +683,10 @@ class EpanKernelAux {
       squared_component_.ComputeDirectionalDerivatives(
         x, derivative_map, order);
 
-      la::Scale(derivative_map->n_rows(), -1, derivative_map->GetColumnPtr(0));
-
+      double *derivative_map_zeroth_column = derivative_map->GetColumnPtr(0);
+      for(int i = 0; i < derivative_map->n_rows(); i++) {
+        derivative_map_zeroth_column[i] = - derivative_map_zeroth_column[i];
+      }
       (derivative_map->GetColumnPtr(0))[0] += 1.0;
     }
 
@@ -803,7 +805,7 @@ class EpanKernelAux {
       }
 
       // try the 1st order approximation later
-      error = dim * math::Sqr(farthest_distance_manhattan);
+      error = dim * core::math::Sqr(farthest_distance_manhattan);
       if(error < max_error) {
         *actual_error = error;
         return 1;

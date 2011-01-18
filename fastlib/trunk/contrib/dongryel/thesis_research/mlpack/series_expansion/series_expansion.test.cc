@@ -71,6 +71,8 @@ class SeriesExpansionTest {
 
       // Form a Cartesian expansion global object.
       mlpack::series_expansion::GaussianKernelAux kernel_aux;
+      double bandwidth = core::math::Random(
+                           0.05 * num_dimensions, 0.3 * num_dimensions);
       kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
       kernel_aux.global().Print();
 
