@@ -47,7 +47,7 @@ class SeriesExpansionTest {
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(3, 5);
-        int num_points = core::math::RandInt(200, 300);
+        int num_points = core::math::RandInt(2000, 3000);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -84,13 +84,16 @@ class SeriesExpansionTest {
       // Form a Cartesian expansion global object.
       KernelAuxType kernel_aux;
       double bandwidth = core::math::Random(
-                           0.05 * num_dimensions, 0.3 * num_dimensions);
+                           0.13 * num_dimensions, 0.2 * num_dimensions);
       kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
-      kernel_aux.global().Print();
+      kernel_aux.global().CheckIntegrity();
 
       // Form a far-field expansion and evaluate.
       mlpack::series_expansion::CartesianFarField <
       KernelAuxType::ExpansionType > farfield;
+
+      // It is important that the weight vector matches the number of
+      // points in the reference set.
       core::table::DensePoint weights;
       weights.Init(random_table.n_entries());
       for(int i = 0; i < weights.length(); i++) {
@@ -102,13 +105,14 @@ class SeriesExpansionTest {
       // expansion up to that order. Compare the evaluation using the
       // naive method.
       double farfield_evaluation_max_error =
-        core::math::Random(0.001, 0.1);
+        core::math::Random(0.05, 0.1) * reference_node->count();
       double actual_error = 0;
       int truncation_order =
         kernel_aux.OrderForEvaluatingFarField(
           reference_node->bound(), query_node->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           farfield_evaluation_max_error, &actual_error);
+      printf("Truncation order: %d\n", truncation_order);
       if(truncation_order >= 0) {
         farfield.AccumulateCoeffs(
           kernel_aux, random_table.data(),

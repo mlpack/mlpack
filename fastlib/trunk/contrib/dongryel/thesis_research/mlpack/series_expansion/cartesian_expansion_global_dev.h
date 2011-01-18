@@ -201,7 +201,7 @@ get_inv_multiindex_factorials() const {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 int CartesianExpansionGlobal <ExpansionType>::get_max_total_num_coeffs() const {
-  return list_total_num_coeffs_[max_order_];
+  return list_total_num_coeffs_.back();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -479,6 +479,20 @@ ExpansionType >::Print(const char *name, FILE *stream) const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianExpansionGlobal <
+ExpansionType >::CheckIntegrity() const {
+
+  for(int i = 0;
+      i < static_cast<int>(multiindex_mapping_.size()); i++) {
+    if(
+      ComputeMultiindexPosition(multiindex_mapping_[i]) != i) {
+      fprintf(stderr, "There is a problem with the multiindex mapping!\n");
+      exit(0);
+    }
+  }
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <ExpansionType >::ComputeTraversalMapping_() {
 
   // Initialize the index.
@@ -491,6 +505,8 @@ void CartesianExpansionGlobal <ExpansionType >::ComputeTraversalMapping_() {
       const std::vector<short int> &mapping = multiindex_mapping_[j];
       int flag = 0;
 
+      // Look for multiindices that belong to the $i$-th truncation
+      // order.
       for(int d = 0; d < dim_; d++) {
         if(mapping[d] > i) {
           flag = 1;

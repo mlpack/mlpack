@@ -164,6 +164,11 @@ class CartesianExpansionGlobal {
     /** @brief Print useful information about this object.
      */
     void Print(const char *name = "", FILE *stream = stderr) const;
+
+    /** @brief Checks the integrity of the series expansion global
+     *         object.
+     */
+    void CheckIntegrity() const;
 };
 }
 }
