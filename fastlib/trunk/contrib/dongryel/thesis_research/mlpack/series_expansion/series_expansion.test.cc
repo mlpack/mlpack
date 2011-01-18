@@ -64,8 +64,10 @@ class SeriesExpansionTest {
       // Generate a random table.
       int max_order = 6 - num_dimensions;
       TableType random_table;
+      core::metric_kernels::LMetric<2> l2_metric;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
+      random_table.IndexData(l2_metric, 20);
 
       // Form a Cartesian expansion global object.
       KernelAuxType kernel_aux;
@@ -77,6 +79,15 @@ class SeriesExpansionTest {
       // Form a far-field expansion and evaluate.
       mlpack::series_expansion::CartesianFarField <
       KernelAuxType::ExpansionType > farfield;
+      core::table::DensePoint weights;
+      weights.Init(random_table.n_entries());
+      for(int i = 0; i < weights.length(); i++) {
+        weights[i] = core::math::Random(0.25, 1.25);
+      }
+      farfield.Init(kernel_aux, random_table.get_tree()->bound().center());
+      farfield.AccumulateCoeffs(
+        kernel_aux, random_table.data(),
+        weights, 0, random_table.n_entries(), max_order / 2);
       return true;
     }
 };

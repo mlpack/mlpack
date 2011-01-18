@@ -73,6 +73,11 @@ class ComputeMultiindexPositionTrait<HYPERCUBE> {
     }
 };
 
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const std::vector<short int> &CartesianExpansionGlobal <
+ExpansionType >::traversal_mapping(int pos) const {
+  return traversal_mapping_[pos];
+}
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 int CartesianExpansionGlobal <ExpansionType >::get_dimension() const {
