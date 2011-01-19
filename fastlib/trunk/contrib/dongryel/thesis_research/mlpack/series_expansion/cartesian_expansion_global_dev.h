@@ -330,7 +330,7 @@ ExpansionType >::Init(int max_order, int dim) {
       (ExpansionType == mlpack::series_expansion::MULTIVARIATE) ?
       static_cast<int>(
         core::math::BinomialCoefficient<double>(p + dim, dim)) :
-      static_cast<int>(pow(p + 1, dim));
+      static_cast<int>(pow(static_cast<double>(p + 1), static_cast<int>(dim)));
   }
 
   // Compute factorials.
