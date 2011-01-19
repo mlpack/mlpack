@@ -306,7 +306,7 @@ ExpansionType >::DirectLocalAccumulationCost(int order) const {
     return pow(static_cast<double>(dim_), static_cast<int>(order + 1));
   }
   else {
-    return pow(static_cast<double>(order + 1), static_casts<int>(dim_));
+    return pow(static_cast<double>(order + 1), static_cast<int>(dim_));
   }
 }
 
