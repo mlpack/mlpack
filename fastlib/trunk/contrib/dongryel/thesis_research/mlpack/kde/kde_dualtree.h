@@ -156,6 +156,10 @@ class KdeGlobal {
      */
     bool normalize_densities_;
 
+    /** @brief The absolute error approximation level.
+     */
+    double absolute_error_;
+
     /** @brief The relative error approximation level.
      */
     double relative_error_;
@@ -289,6 +293,12 @@ class KdeGlobal {
      */
     const TableType *reference_table() const {
       return reference_table_;
+    }
+
+    /** @brief Returns the absolute error.
+     */
+    double absolute_error() const {
+      return absolute_error_;
     }
 
     /** @brief Returns the relative error.

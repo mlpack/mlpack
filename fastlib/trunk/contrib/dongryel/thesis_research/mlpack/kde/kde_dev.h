@@ -133,6 +133,10 @@ bool Kde<TableType>::ConstructBoostVariableMap_(
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of KDE."
   )(
+    "absolute_error",
+    boost::program_options::value<double>()->default_value(0.0),
+    "Absolute error for the approximation of KDE per each query point."
+  )(
     "relative_error",
     boost::program_options::value<double>()->default_value(0.01),
     "Relative error for the approximation of KDE."
@@ -260,9 +264,17 @@ bool Kde<TableType>::ParseArguments(
   arguments_out->bandwidth_ = vm["bandwidth"].as<double>();
   std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
 
+  // Parse the absolute error.
+  arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
+
   // Parse the relative error.
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
-  std::cout << "Relative error of " << arguments_out->relative_error_ << "\n";
+  std::cout << "For each query point $q in mathcal{Q}$, " <<
+            "we will guarantee: " <<
+            "| widetilde{G}(q) - G(q) | leq "
+            << arguments_out->relative_error_ <<
+            " G(q) + " << arguments_out->absolute_error_ <<
+            " | mathcal{R} | \n";
 
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
