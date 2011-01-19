@@ -271,10 +271,10 @@ bool Kde<TableType>::ParseArguments(
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
   std::cout << "For each query point $q in \\mathcal{Q}$, " <<
             "we will guarantee: " <<
-            "| widetilde{G}(q) - G(q) | \\leq "
+            "$| widetilde{G}(q) - G(q) | \\leq "
             << arguments_out->relative_error_ <<
             " \\cdot G(q) + " << arguments_out->absolute_error_ <<
-            " | \\mathcal{R} | \n";
+            " | \\mathcal{R} |$ \n";
 
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
