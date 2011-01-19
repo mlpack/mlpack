@@ -701,8 +701,9 @@ class KdeSummary {
         double left_hand_side = correction.width() * 0.5;
         double right_hand_side =
           rnode->count() *
-          global.relative_error() * modified_densities_l /
-          static_cast<double>(global.reference_table()->n_entries());
+          (global.relative_error() * modified_densities_l /
+           static_cast<double>(global.reference_table()->n_entries()) +
+           global.absolute_error());
 
         prunable = (left_hand_side <= right_hand_side);
 
@@ -721,10 +722,11 @@ class KdeSummary {
       double left_hand_side = delta.used_error_;
       double right_hand_side =
         rnode->count() * (
-          (global.relative_error() * densities_l_ - used_error_u_) /
+          (global.relative_error() * densities_l_ +
+           global.effective_num_reference_points() * global.absolute_error() -
+           used_error_u_) /
           static_cast<double>(
-            global.effective_num_reference_points() - pruned_l_) +
-          global.absolute_error());
+            global.effective_num_reference_points() - pruned_l_));
 
       return left_hand_side <= right_hand_side;
     }
