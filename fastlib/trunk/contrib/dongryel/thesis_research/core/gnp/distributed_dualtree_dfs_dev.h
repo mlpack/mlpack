@@ -75,7 +75,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   std::vector <
   std::priority_queue < FrontierObjectType,
       std::vector<FrontierObjectType>,
-      DistributedDualtreeDfs <
+      typename DistributedDualtreeDfs <
       DistributedProblemType >::PrioritizeTasks_ > > computation_frontier(
         world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
