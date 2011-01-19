@@ -139,6 +139,9 @@ class KdePostponed {
     }
 };
 
+/** @brief The global constant struct passed around for KDE
+ *         computation.
+ */
 template<typename IncomingTableType>
 class KdeGlobal {
 
@@ -186,24 +189,38 @@ class KdeGlobal {
      */
     bool is_monochromatic_;
 
+    /** @brief The normal distribution object.
+     */
     boost::math::normal normal_dist_;
 
+    /** @brief The scratch space for doing a Monte Carlo sum.
+     */
     std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
 
   public:
 
+    /** @brief Returns whether the computation is monochromatic or
+     *         not.
+     */
     bool is_monochromatic() const {
       return is_monochromatic_;
     }
 
+    /** @brief Returns whether we should normalize the sum at the end.
+     */
     bool normalize_densities() const {
       return normalize_densities_;
     }
 
+    /** @brief Returns the effective number of reference points.
+     */
     double effective_num_reference_points() const {
       return effective_num_reference_points_;
     }
 
+    /** @brief Sets the effective number of reference points given a
+     *         pair of distributed table of points.
+     */
     template<typename DistributedTableType>
     void set_effective_num_reference_points(
       boost::mpi::communicator &comm,
@@ -223,15 +240,23 @@ class KdeGlobal {
                      ((double) effective_num_reference_points_));
     }
 
+    /** @brief The destructor.
+     */
     ~KdeGlobal() {
       delete kernel_;
       kernel_ = NULL;
     }
 
+    /** @brief Returns the mean variance pair object.
+     */
     std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
       return &mean_variance_pair_;
     }
 
+    /** @brief Returns the standard score corresponding to the
+     *         cumulative distribution of the unit variance normal
+     *         distribution with the given tail mass.
+     */
     double compute_quantile(double tail_mass) const {
       double mass = 1 - 0.5 * tail_mass;
       if(mass > 0.999) {
@@ -242,42 +267,62 @@ class KdeGlobal {
       }
     }
 
+    /** @brief Returns the query table.
+     */
     TableType *query_table() {
       return query_table_;
     }
 
+    /** @brief Returns the query table.
+     */
     const TableType *query_table() const {
       return query_table_;
     }
 
+    /** @brief Returns the reference table.
+     */
     TableType *reference_table() {
       return reference_table_;
     }
 
+    /** @brief Returns the reference table.
+     */
     const TableType *reference_table() const {
       return reference_table_;
     }
 
+    /** @brief Returns the relative error.
+     */
     double relative_error() const {
       return relative_error_;
     }
 
+    /** @brief Returns the probability.
+     */
     double probability() const {
       return probability_;
     }
 
+    /** @brief Returns the bandwidth value being used.
+     */
     double bandwidth() const {
       return sqrt(kernel_->bandwidth_sq());
     }
 
+    /** @brief Sets the bandwidth.
+     */
     void set_bandwidth(double bandwidth_in) {
       kernel_->Init(bandwidth_in);
     }
 
+    /** @brief Returns the kernel.
+     */
     const KernelType &kernel() const {
       return *kernel_;
     }
 
+    /** @brief Initializes the KDE global object.
+     */
     void Init(
       TableType *reference_table_in,
       TableType *query_table_in,
@@ -318,24 +363,46 @@ class KdeGlobal {
       is_monochromatic_ = is_monochromatic;
     }
 
+    /** @brief Gets the multiplicative normalization constant.
+     */
     double get_mult_const() const {
       return mult_const_;
     }
 };
 
+/** @brief Represents the storage of KDE computation results.
+ */
 template<typename ContainerType>
 class KdeResult {
   private:
 
+    // For BOOST serialization.
     friend class boost::serialization::access;
 
   public:
+
+    /** @brief The lower bound on the density sum.
+     */
     ContainerType densities_l_;
+
+    /** @brief The approximate density sum per query.
+     */
     ContainerType densities_;
+
+    /** @brief The upper bound on the density sum.
+     */
     ContainerType densities_u_;
+
+    /** @brief The number of points pruned per each query.
+     */
     ContainerType pruned_;
+
+    /** @brief The amount of maximum error incurred per each query.
+     */
     ContainerType used_error_;
 
+    /** @brief Serialize the KDE result object.
+     */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & densities_l_;
@@ -345,12 +412,14 @@ class KdeResult {
       ar & used_error_;
     }
 
+    /** @brief The default constructor.
+     */
     KdeResult() {
+      SetZero();
     }
 
-    ~KdeResult() {
-    }
-
+    /** @brief Normalizes the density of each query.
+     */
     template<typename GlobalType>
     void Normalize(const GlobalType &global) {
       for(unsigned int q_index = 0; q_index < densities_l_.size(); q_index++) {
@@ -755,8 +824,7 @@ class KdeStatistic {
       SetZero();
     }
 
-    /**
-     * Initializes by combining statistics of two partitions.
+    /** @brief Initializes by combining statistics of two partitions.
      *
      * This lets you build fast bottom-up statistics when building trees.
      */
