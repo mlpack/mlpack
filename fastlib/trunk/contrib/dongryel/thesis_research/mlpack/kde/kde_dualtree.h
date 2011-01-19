@@ -92,6 +92,10 @@ class KdePostponed {
       used_error_ = 0;
     }
 
+    /** @brief Applies the incoming delta contribution to the
+     *         postponed quantities, optionally to the query results
+     *         as well.
+     */
     template<typename KdeDelta, typename ResultType>
     void ApplyDelta(
       const KdeDelta &delta_in, ResultType *query_results) {
@@ -101,6 +105,8 @@ class KdePostponed {
       used_error_ = used_error_ + delta_in.used_error_;
     }
 
+    /** @brief Applies the incoming postponed contribution.
+     */
     void ApplyPostponed(const KdePostponed &other_postponed) {
       densities_l_ = densities_l_ + other_postponed.densities_l_;
       densities_u_ = densities_u_ + other_postponed.densities_u_;
@@ -143,22 +149,41 @@ class KdeGlobal {
 
   private:
 
+    /** @brief Whether to normalize the kernel sums at the end or not.
+     */
     bool normalize_densities_;
 
+    /** @brief The relative error approximation level.
+     */
     double relative_error_;
 
+    /** @brief For the probabilistic approximation.
+     */
     double probability_;
 
+    /** @brief The kernel type.
+     */
     KernelType *kernel_;
 
+    /** @brief The effective number of reference points used for
+     *         normalization.
+     */
     double effective_num_reference_points_;
 
+    /** @brief The normalization constant.
+     */
     double mult_const_;
 
+    /** @brief The query table.
+     */
     TableType *query_table_;
 
+    /** @brief The reference table.
+     */
     TableType *reference_table_;
 
+    /** @brief Whether the computation is monochromatic or not.
+     */
     bool is_monochromatic_;
 
     boost::math::normal normal_dist_;
