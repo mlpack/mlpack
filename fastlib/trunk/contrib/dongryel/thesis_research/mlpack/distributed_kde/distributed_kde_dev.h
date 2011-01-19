@@ -14,8 +14,8 @@
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
 
 namespace mlpack {
 namespace distributed_kde {
@@ -148,6 +148,10 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of KDE."
   )(
+    "absolute_error",
+    boost::program_options::value<double>()->default_value(0.0),
+    "Absolute error for the approximation of KDE per each query point."
+  )(
     "relative_error",
     boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
@@ -158,7 +162,8 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
   )(
     "top_tree_sample_probability",
     boost::program_options::value<double>()->default_value(0.2),
-    "The portion of points sampled on each MPI process for building the top tree."
+    "The portion of points sampled on each MPI process for building the "
+    "top tree."
   )(
     "use_memory_mapped_file",
     "Use memory mapped file for out-of-core computations."
@@ -395,9 +400,15 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   }
 
   // Parse the relative error.
+  arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
   if(world.rank() == 0) {
-    std::cout << "Relative error of " << arguments_out->relative_error_ << "\n";
+    std::cout << "For each query point $q \\in \\mathcal{Q}$, " <<
+              "we will guarantee: " <<
+              "| \\widetilde{G}(q) - G(q) | \\leq "
+              << arguments_out->relative_error_ <<
+              " \\cdot G(q) + " << arguments_out->absolute_error_ <<
+              " | \\mathcal{R} | \n";
   }
 
   // Parse the probability.
@@ -426,7 +437,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   ParseArguments(world, args, arguments_out);
 }
-};
-};
+}
+}
 
 #endif
