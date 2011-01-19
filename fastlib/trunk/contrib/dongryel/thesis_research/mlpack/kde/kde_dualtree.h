@@ -720,10 +720,11 @@ class KdeSummary {
 
       double left_hand_side = delta.used_error_;
       double right_hand_side =
-        rnode->count() *
-        (global.relative_error() * densities_l_ - used_error_u_) /
-        static_cast<double>(
-          global.effective_num_reference_points() - pruned_l_);
+        rnode->count() * (
+          (global.relative_error() * densities_l_ - used_error_u_) /
+          static_cast<double>(
+            global.effective_num_reference_points() - pruned_l_) +
+          global.absolute_error());
 
       return left_hand_side <= right_hand_side;
     }
