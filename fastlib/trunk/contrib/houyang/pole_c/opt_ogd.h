@@ -108,7 +108,7 @@ void *OgdThread(void *in_par) {
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
       // dummy gradient calc time
-      boost::this_thread::sleep(boost::posix_time::microseconds(1));
+      //boost::this_thread::sleep(boost::posix_time::microseconds(1));
 
       // wait till all threads send their messages
       pthread_barrier_wait(&barrier_msg_all_sent);
