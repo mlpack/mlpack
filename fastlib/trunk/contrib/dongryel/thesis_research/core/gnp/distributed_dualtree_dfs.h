@@ -9,6 +9,7 @@
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_H
 
 #include <boost/mpi/communicator.hpp>
+#include <boost/tuple/tuple.hpp>
 #include "core/math/range.h"
 
 namespace core {
@@ -27,6 +28,9 @@ class DistributedDualtreeDfs {
     typedef typename DistributedProblemType::GlobalType GlobalType;
     typedef typename DistributedProblemType::ResultType ResultType;
     typedef typename DistributedProblemType::ArgumentType ArgumentType;
+
+    typedef boost::tuple <
+    TreeType *, std::pair<int, int>, double > FrontierObjectType;
 
   private:
 
@@ -59,11 +63,15 @@ class DistributedDualtreeDfs {
       const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
 
-    static bool SortByPriority_(
-      const boost::tuple <
-      TreeType *, std::pair<int, int>, double > &a,
-      const boost::tuple <
-      TreeType *, std::pair<int, int>, double > &b);
+    class PrioritizeTasks_:
+      public std::binary_function <
+        FrontierObjectType &, FrontierObjectType &, bool > {
+      public:
+        bool operator()(
+          const FrontierObjectType &a, const FrontierObjectType &b) const {
+          return a.get<2>() > b.get<2>();
+        }
+    };
 
   public:
 
