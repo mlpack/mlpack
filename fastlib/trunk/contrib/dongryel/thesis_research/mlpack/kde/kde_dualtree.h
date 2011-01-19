@@ -16,6 +16,8 @@
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
 #include "core/table/table.h"
+#include "mlpack/series_expansion/multivariate_farfield_dev.h"
+#include "mlpack/series_expansion/multivariate_local_dev.h"
 
 namespace mlpack {
 namespace kde {
