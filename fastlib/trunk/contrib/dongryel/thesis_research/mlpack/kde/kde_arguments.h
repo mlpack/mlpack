@@ -27,6 +27,8 @@ class KdeArguments {
 
     double bandwidth_;
 
+    double absolute_error_;
+
     double relative_error_;
 
     double probability_;
@@ -52,6 +54,7 @@ class KdeArguments {
       effective_num_reference_points_ =
         global_in.effective_num_reference_points();
       bandwidth_ = global_in.bandwidth();
+      absolute_error_ = global_in.absolute_error();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
@@ -68,6 +71,7 @@ class KdeArguments {
       effective_num_reference_points_ =
         global_in.effective_num_reference_points();
       bandwidth_ = global_in.bandwidth();
+      absolute_error_ = global_in.absolute_error();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
@@ -81,6 +85,7 @@ class KdeArguments {
       query_table_ = NULL;
       effective_num_reference_points_ = 0.0;
       bandwidth_ = 0.0;
+      absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 0.0;
       kernel_ = "";
