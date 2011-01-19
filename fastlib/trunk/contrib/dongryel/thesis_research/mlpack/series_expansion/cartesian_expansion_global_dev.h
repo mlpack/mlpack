@@ -1,4 +1,7 @@
-/** @file cartesian_expansion_global.h
+/** @file cartesian_expansion_global_dev.h
+ *
+ *  The implementation of Cartesian expansion global constant
+ *  structure.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -278,10 +281,10 @@ double CartesianExpansionGlobal <
 ExpansionType >::FarFieldEvaluationCost(
   int order) const {
   if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
-    return pow(dim_, order + 1);
+    return pow(static_cast<double>(dim_), static_cast<int>(order + 1));
   }
   else {
-    return pow(order + 1, dim_);
+    return pow(static_cast<double>(order + 1), static_cast<int>(dim_));
   }
 }
 
@@ -289,10 +292,10 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::FarFieldToLocalTranslationCost(int order) const {
   if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
-    return pow(dim_, 2 * order + 1);
+    return pow(static_cast<double>(dim_), static_cast<int>(2 * order + 1));
   }
   else {
-    return pow(order + 1, 2 * dim_);
+    return pow(static_cast<double>(order + 1), static_cast<int>(2 * dim_));
   }
 }
 
@@ -300,10 +303,10 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::DirectLocalAccumulationCost(int order) const {
   if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
-    return pow(dim_, order + 1);
+    return pow(static_cast<double>(dim_), static_cast<int>(order + 1));
   }
   else {
-    return pow(order + 1, dim_);
+    return pow(static_cast<double>(order + 1), static_casts<int>(dim_));
   }
 }
 
