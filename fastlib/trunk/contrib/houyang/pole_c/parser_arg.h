@@ -18,6 +18,8 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("reg,r", boost_po::value<int>(&learner.reg)->default_value(2), "Which regularization term to use. Default: 2(squared l2 norm)")
     ("lambda", boost_po::value<double>(&learner.reg_factor)->default_value(1.0), "Regularization factor ('lambda' in avg_loss + lambda * regularization). Default: 1.0")
     ("C,c", boost_po::value<double>(&learner.C)->default_value(1.0), "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0")
+    ("type", boost_po::value<string>()->default_value("classification"), 
+                       "Type of learning: classification or regression or others. Default: classification.")
     ("loss_function,l", boost_po::value<string>()->default_value("hinge"), 
                        "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
     ("bias", "Add a bias term to examples")
@@ -137,6 +139,12 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     }
   }
 
+  if (vm.count("type")) {
+    learner.type = vm["type"].as<string>();
+  }
+  else {
+    learner.type = "classification";
+  }
   learner.loss_func = getLossFunction(loss_func_str, 0.1);
   learner.loss_name = learner.loss_func->getName();
   learner.num_threads = global.num_threads;

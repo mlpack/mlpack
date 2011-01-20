@@ -37,6 +37,10 @@ int main(int argc, char *argv[]) {
     cout << "Using Online subGradient Descent (OGD)..." << endl;
     Ogd(l1);
   }
+  else if (global.opt_method == "oeg") {
+    cout << "Using Online Exponentiated Descent (OEG)..." << endl;
+    Oeg(l1);
+  }
   else if (global.opt_method == "d_sgd") {
     cout << "Using Delayed Stochastic subGradient Descent ..." << endl;
     //train_delayed_sgd(l1);

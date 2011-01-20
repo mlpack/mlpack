@@ -176,6 +176,10 @@ int ReadFeatures(char *line, FEATURE *feat, T_LBL *label, size_t &num_feats, siz
       }
       (feat[wpos]).widx = (T_IDX)w_idx; // feature index starts from 1
       (feat[wpos]).wval = (T_VAL)w_val; 
+
+      if (w_idx > global.max_feature_idx)
+	global.max_feature_idx = w_idx;
+
       wpos++;
     }
     else {
@@ -272,6 +276,7 @@ void ParallelRead(size_t num_threads) {
 
 void ReadData(boost_po::variables_map &vm) {
   size_t i, j, left_ct;
+  global.max_feature_idx = 0;
   if ( vm.count("par_read") ) {
     ParallelRead(global.num_threads);
     //ring_size = 1 << 11; // 2048
@@ -315,11 +320,16 @@ void ReadData(boost_po::variables_map &vm) {
     }
     else if (vm.count("lambda")) {
       l1.reg_factor = vm["lambda"].as<double>();
-      if (l1.reg_factor <= 0.0) {
-	cout << "Parameter lambda should be positive!" << endl;
+      if (l1.reg_factor < 0.0) {
+	cout << "Parameter lambda should be non-negative!" << endl;
 	exit(1);
       }
-      l1.C = 1.0 / (l1.reg_factor * num_train_exps);
+      else if (l1.reg_factor == 0) {
+	cout << "Regularization factor == 0. No regularization imposed!" << endl;
+      }
+      else {
+	l1.C = 1.0 / (l1.reg_factor * num_train_exps);
+      }
       //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
     }
   }

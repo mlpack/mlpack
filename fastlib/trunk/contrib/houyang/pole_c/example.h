@@ -40,8 +40,8 @@ typedef struct example {
 } EXAMPLE;
 
 
-// create an empty dense vector
-SVEC *CreateEmptyDvector(size_t fnum) {
+// create a dense vector with constant initial values
+SVEC *CreateConstDvector(size_t fnum, T_VAL c) {
   SVEC *vec;
   vec = (SVEC *)my_malloc(sizeof(SVEC));
   vec->feats = (FEATURE *)my_malloc(sizeof(FEATURE)*(fnum));
