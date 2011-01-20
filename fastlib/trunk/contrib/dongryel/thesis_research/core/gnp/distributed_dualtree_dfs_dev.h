@@ -53,7 +53,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   // For now, the number of levels of the reference tree grabbed from
   // each process is fixed.
   const int max_num_levels_to_serialize = 15;
-  const int max_num_work_to_dequeue_per_stage = 10;
+  int max_num_work_to_dequeue_per_stage = 5;
 
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
@@ -97,7 +97,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       table_exchange.AllToAll(
         *world_, max_num_levels_to_serialize,
         *(reference_table_->local_table()), receive_requests)) {
-      break;
+
+      // At this point, try to empty the priority queue.
+      max_num_work_to_dequeue_per_stage = std::numeric_limits<int>::max();
+      bool all_done = true;
+      for(unsigned int i = 0; i < world_->size() && all_done; i++) {
+        all_done = (computation_frontier[i].size() == 0);
+      }
+      if(all_done) {
+        break;
+      }
     }
 
     // Each process calls the independent sets of serial dual-tree dfs
@@ -105,9 +114,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
         for(int j = 0;
-            j < std::min(
-              max_num_work_to_dequeue_per_stage,
-              static_cast<int>(computation_frontier[i].size())); j++) {
+            j < max_num_work_to_dequeue_per_stage &&
+            computation_frontier[i].size() > 0; j++) {
 
           // Examine the top object in the frontier.
           const FrontierObjectType &top_frontier =

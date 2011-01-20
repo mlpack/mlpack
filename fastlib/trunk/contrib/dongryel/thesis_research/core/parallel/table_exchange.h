@@ -82,6 +82,7 @@ class TableExchange {
       point_cache_.resize(world.size());
       old_from_new_cache_.resize(world.size());
       new_from_old_cache_.resize(world.size());
+      received_subtables_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
         if(i != world.rank()) {
           point_cache_[i].Init(
@@ -149,17 +150,23 @@ class TableExchange {
         }
       }
 
-      // Clear the received subtables and resize.
-      received_subtables_.resize(0);
-      received_subtables_.resize(world.size());
+      // Push in the received subtables.
+      std::vector< SubTableListType > received_subtables_in_this_round;
+      received_subtables_in_this_round.resize(world.size());
       for(unsigned int j = 0; j < receive_requests.size(); j++) {
         for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
-          received_subtables_[j].push_back(
+          received_subtables_in_this_round[j].push_back(
             j, point_cache_[j], old_from_new_cache_[j], new_from_old_cache_[j],
             max_num_levels_to_serialize);
         }
       }
-      boost::mpi::all_to_all(world, send_subtables, received_subtables_);
+      boost::mpi::all_to_all(
+        world, send_subtables, received_subtables_in_this_round);
+
+      // Combine.
+      for(unsigned int j = 0; j < receive_requests.size(); j++) {
+        received_subtables_[j].push_back(received_subtables_in_this_round[j]);
+      }
 
       // Clear the receive requests so that it can be used in the next
       // iteration.
