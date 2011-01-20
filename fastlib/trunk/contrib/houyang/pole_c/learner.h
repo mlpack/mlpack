@@ -17,6 +17,7 @@ struct learner {
   double C; // cost factor C (regularization + C * sum_loss)
   size_t num_threads;
   size_t num_epoches;
+  string type; // classification, or regression, or others
   string loss_name;
   double* total_loss_pool; // a pool of total loss for each thread;
   size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;

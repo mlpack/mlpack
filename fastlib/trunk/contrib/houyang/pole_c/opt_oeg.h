@@ -1,7 +1,7 @@
-// Online subGradient Descent
+// Online Exponentiated Descent
 
-#ifndef OGD_H
-#define OGD_H
+#ifndef OEG_H
+#define OEG_H
 
 #include "parallel.h"
 #include "sparsela.h"
@@ -9,7 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid) {
+void OegUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid) {
   SVEC *exp_sum;
   double eta; // learning rate
   if (l1.reg == 2) {
@@ -17,11 +17,6 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
   }
   else {
     eta = 1.0 / sqrt(tin);
-  }
-  
-  if (l1.reg == 2) {
-    // [-2 \lambda \eta w_i^t]
-    SparseScaleOverwrite(wvec, 1.0-eta * l1.reg_factor);
   }
   
   exp_sum = CreateEmptySvector();
@@ -39,17 +34,14 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
 
   // update bias
   if (global.use_bias) {
-    if (l1.reg == 2) {
-      bias = bias - eta * l1.reg_factor * bias;
-    }
-    bias = bias + eta * update;
+    bias = bias * exp(-eta * update);
   }
   //cout << tid << ", bias: " << bias << endl;
   //cout << tin << endl;
 
   //print_svec(wvec);
   //print_svec(exp_sum);
-  SparseAddOverwrite(wvec, exp_sum);
+  SparseExpMultiplyOverwrite(wvec, exp_sum);
   //print_svec(wvec);
   //cout << endl << endl; 
   DestroySvec(exp_sum);
@@ -59,7 +51,7 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
   tin += 1.0;
 }
 
-void *OgdThread(void *in_par) {
+void *OegThread(void *in_par) {
   thread_param* par = (thread_param*) in_par;
   size_t tid = par->thread_id;
   EXAMPLE **exs;
@@ -112,7 +104,7 @@ void *OgdThread(void *in_par) {
 	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
 	// update message: [y_t x_t]^+_i
 	//SparseScale(l1.msg_pool[tid], update, ex);
-	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
+	SparseAddExpertOverwrite(l1.msg_pool[tid], -update, exs[b]);
 
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
@@ -126,7 +118,7 @@ void *OgdThread(void *in_par) {
       break;
     case 2:
       // update using messages
-      OgdUpdate(l1.w_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], update, tid);
+      OegUpdate(l1.w_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], update, tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&barrier_msg_all_used);
       // communication done
@@ -141,7 +133,7 @@ void *OgdThread(void *in_par) {
 }
 
 
-void Ogd(learner &l) {
+void Oeg(learner &l) {
   size_t n_threads = l.num_threads;
   size_t t;
 
@@ -162,7 +154,7 @@ void Ogd(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights and messages
-    l1.w_vec_pool[t] = CreateEmptySvector();
+    l1.w_vec_pool[t] = CreateConstDvector(global.max_feature_idx, 1.0);
     l1.bias_pool[t] = 0.0;
     l1.msg_pool[t] = CreateEmptySvector();
     
@@ -172,7 +164,7 @@ void Ogd(learner &l) {
     l1.total_loss_pool[t] = 0.0;
     l1.total_misp_pool[t] = 0;
     // begin learning iterations
-    pthread_create(&threads[t], NULL, OgdThread, (void*)t_par[t]);
+    pthread_create(&threads[t], NULL, OegThread, (void*)t_par[t]);
   }
 
   FinishThreads(n_threads);

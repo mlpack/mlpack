@@ -14,6 +14,7 @@
 #include "parser_input.h"
 #include "learner.h"
 #include "opt_ogd.h"
+#include "opt_oeg.h"
 
 
 

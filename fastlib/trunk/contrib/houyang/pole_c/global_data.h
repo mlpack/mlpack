@@ -11,6 +11,8 @@ typedef float T_LBL; // type for labels
 struct global_data{
   bool quiet; //Should I keep quiet.
 
+  T_IDX max_feature_idx; // maximum number of features in a dataset
+
   bool calc_loss; // calculate total loss.
 
   bool random_input; // randomly permute input examples.
