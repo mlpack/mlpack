@@ -101,7 +101,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       // At this point, try to empty the priority queue.
       max_num_work_to_dequeue_per_stage = std::numeric_limits<int>::max();
       bool all_done = true;
-      for(unsigned int i = 0; i < world_->size() && all_done; i++) {
+      for(int i = 0; i < world_->size() && all_done; i++) {
         all_done = (computation_frontier[i].size() == 0);
       }
       if(all_done) {
