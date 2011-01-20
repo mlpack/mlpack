@@ -4,20 +4,20 @@
 #include <fastlib/base/arma_compat.h>
 
 void FindIndexWithPrefix(Dataset &dataset, char *prefix,
-			 ArrayList<int> &remove_indices, 
+			 std::vector<int> &remove_indices, 
 			 bool keep_going_after_first_match) {
 
   // Get the dataset information containing the feature types and
   // names.
   DatasetInfo &info = dataset.info();
-  ArrayList<DatasetFeature> &features = info.features();
+  std::vector<DatasetFeature> &features = info.features();
 
   for(index_t i = 0; i < features.size(); i++) {
 
     // If a feature name with the desired prefix has been found, then
     // make sure it hasn't been selected before. If so, then add to
     // the remove indices.
-    const String &feature_name = features[i].name();
+    const std::string &feature_name = features[i].name();
 
     if(!strncmp(prefix, feature_name.c_str(), strlen(prefix) - 1)) {
       
@@ -30,7 +30,7 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
       }
       if(does_not_exist_yet) {
 	printf("Found: %s at position %d.\n", feature_name.c_str(), i);
-	remove_indices.PushBackCopy(i);
+	remove_indices.push_back(i);
 	
 	if(!keep_going_after_first_match) {
 	  break;
@@ -52,8 +52,7 @@ int main(int argc, char *argv[]) {
 
   // Now examine each feature name of the dataset, and construct the
   // indices.
-  ArrayList<int> remove_indices;
-  remove_indices.Init();
+  std::vector<int> remove_indices;
   char buffer[1000];
   do {
     printf("Input the prefix of the feature that you want to remove ");
@@ -66,8 +65,7 @@ int main(int argc, char *argv[]) {
     FindIndexWithPrefix(initial_dataset, buffer, remove_indices, false);
   } while(true);
 
-  ArrayList<int> prune_indices;
-  prune_indices.Init();
+  std::vector<int> prune_indices;
   do {
     printf("Input the prefix of the feature that you want to consider for pruning ");
     printf("(just press enter if you are done): ");

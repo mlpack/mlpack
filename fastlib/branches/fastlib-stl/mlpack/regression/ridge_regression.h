@@ -11,11 +11,11 @@ class RidgeRegression {
   RidgeRegression() {
   }
 
-  void Init(fx_module *module, const Matrix &predictors, 
-	    const Matrix &predictions, 
+  void Init(fx_module *module, const arma::mat &predictors, 
+	    const arma::mat &predictions, 
 	    bool use_normal_equation_method = true);
 
-  void Init(fx_module *module, const Matrix &input_data, index_t selector,
+  void Init(fx_module *module, const arma::mat &input_data, index_t selector,
 	    bool use_normal_equation_method = true);
 
   /** @brief From a column-oriented dataset, initialize the design
@@ -36,49 +36,49 @@ class RidgeRegression {
    *  should be used as the predictions (training target).
    */
   void Init(fx_module *module, 
-            const Matrix &input_data, 
-            const GenVector<index_t> &predictor_indices,
+            const arma::mat &input_data, 
+            const arma::Col<index_t> &predictor_indices,
             index_t &prediction_index, bool use_normal_equation_method = true);
 
   void Init(fx_module *module, 
-            const Matrix &input_data, 
-            const GenVector<index_t> &predictor_indices,
-            const Matrix &prediction, bool use_normal_equation_method = true);
+            const arma::mat &input_data, 
+            const arma::Col<index_t> &predictor_indices,
+            const arma::mat &prediction, bool use_normal_equation_method = true);
 
-  void ReInitTargetValues(const Matrix &input_data, 
+  void ReInitTargetValues(const arma::mat &input_data, 
 			  index_t target_value_index);
 
-  void ReInitTargetValues(const Matrix &target_values_in);
+  void ReInitTargetValues(const arma::mat &target_values_in);
 
   void Destruct();
 
   void SVDRegress(double lambda,
-		  const GenVector<index_t> *predictor_indices = NULL);
+		  const arma::Col<index_t> *predictor_indices = NULL);
 
   void QRRegress(double lambda,
-		 const GenVector<index_t> *predictor_indices = NULL);
+		 const arma::Col<index_t> *predictor_indices = NULL);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
 				index_t num);
 
   void FeatureSelectedRegression
-  (const GenVector<index_t> &predictor_indices, 
-   const GenVector<index_t> &prune_predictor_indices, 
-   const Matrix &original_target_training_values,
-   GenVector<index_t> *output_predictor_indices);
+  (const arma::Col<index_t> &predictor_indices, 
+   const arma::Col<index_t> &prune_predictor_indices, 
+   const arma::mat &original_target_training_values,
+   arma::Col<index_t> *output_predictor_indices);
 
   double ComputeSquareError();
 
   /** @brief Predict on another dataset given the trained linear
    *         model.
    */
-  void Predict(const Matrix &dataset, Vector *new_predictions);
+  void Predict(const arma::mat &dataset, arma::vec *new_predictions);
 
-  void Predict(const Matrix &dataset, 
-	       const GenVector<index_t> &predictor_indices,
-	       Vector *new_predictions);
+  void Predict(const arma::mat &dataset, 
+	       const arma::Col<index_t> &predictor_indices,
+	       arma::vec *new_predictions);
 
-  void factors(Matrix *factors);
+  void factors(arma::mat *factors);
 
  private:
 
@@ -86,46 +86,46 @@ class RidgeRegression {
 
   /** @brief The design matrix.
    */
-  Matrix predictors_;
+  arma::mat const* predictors_;
 
   /** @brief The training target values for each instance. This is
    *         generalizable to multi-target case by using a matrix.
    */
-  Matrix predictions_;
+  arma::mat predictions_;
 
   /** @brief The covariance matrix: roughly A A^T, modulo the
    *         mandatory 1 vector added to the features for the
    *         intercept.
    */
-  Matrix covariance_;
+  arma::mat covariance_;
 
   /** @brief The trained linear regression model output.
    */
-  Matrix factors_;
+  arma::mat factors_;
 
-  void ComputeLinearModel_(double lambda_sq, const Vector &singular_values, 
-			   const Matrix &u, const Matrix &v_t,
+  void ComputeLinearModel_(double lambda_sq, const arma::vec &singular_values, 
+			   const arma::mat &u, const arma::mat &v_t,
 			   int num_features);
   
   void BuildDesignMatrixFromIndexSet_
-  (const Matrix &input_data, const double *predictions,
-   const GenVector<index_t> *predictor_indices);
+  (const arma::mat &input_data, const arma::mat& predictions,
+   const arma::Col<index_t> *predictor_indices);
   
-  void BuildCovariance_(const Matrix &input_data, 
-			const GenVector<index_t> *predictor_indices,
-			const double *predictions_in);
+  void BuildCovariance_(const arma::mat &input_data, 
+			const arma::Col<index_t> *predictor_indices,
+			const arma::mat& predictions_in);
 
   void ExtractCovarianceSubset_
-  (const Matrix &precomputed_covariance,
-   const GenVector<index_t> *loo_current_predictor_indices,
-   Matrix *precomputed_covariance_subset);
+  (const arma::mat &precomputed_covariance,
+   const arma::Col<index_t> *loo_current_predictor_indices,
+   arma::mat *precomputed_covariance_subset);
 
   void ExtractDesignMatrixSubset_
-  (const GenVector<index_t> *loo_current_predictor_indices,
-   Matrix *extracted_design_matrix_subset);
+  (const arma::Col<index_t> *loo_current_predictor_indices,
+   arma::mat *extracted_design_matrix_subset);
 
-  void ExtractSubspace_(Matrix *u, Vector *singular_values, Matrix *v_t,
-			const GenVector<index_t> *predictor_indices);
+  void ExtractSubspace_(arma::mat &u, arma::vec &singular_values, arma::mat &v_t,
+			const arma::Col<index_t> *predictor_indices);
 };
 
 #include "ridge_regression_impl.h"
