@@ -45,6 +45,12 @@ class SubTableList {
 
     /** @brief Returns the subtable at a given position.
      */
+    const SubTableType &operator[](int pos) const {
+      return list_[pos];
+    }
+
+    /** @brief Returns the subtable at a given position.
+     */
     SubTableType &operator[](int pos) {
       return list_[pos];
     }
@@ -61,6 +67,15 @@ class SubTableList {
     void serialize(Archive &ar, const unsigned int version) {
       for(unsigned int i = 0; i < list_.size(); i++) {
         ar & list_[i];
+      }
+    }
+
+    /** @brief Appends a subtable list.
+     */
+    template<typename SubTableListType>
+    void push_back(const SubTableListType &list_in) {
+      for(unsigned int i = 0; i < list_in.size(); i++) {
+        list_.push_back(list_in[i]);
       }
     }
 

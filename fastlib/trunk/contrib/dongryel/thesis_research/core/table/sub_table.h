@@ -96,7 +96,8 @@ class SubTable {
     void FillTreeNodes_(
       TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
       int *num_nodes,
-      std::vector<PointSerializeFlagType> *serialize_points_per_terminal_node_in,
+      std::vector <
+      PointSerializeFlagType > *serialize_points_per_terminal_node_in,
       int level) const {
 
       if(node != NULL && level <= max_num_levels_to_serialize_) {
