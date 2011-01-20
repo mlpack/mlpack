@@ -9,6 +9,7 @@
 #ifndef MLPACK_SERIES_EXPANSION_KERNEL_INDEPENDENT_FARFIELD_DEV_H
 #define MLPACK_SERIES_EXPANSION_KERNEL_INDEPENDENT_FARFIELD_DEV_H
 
+#include <armadillo>
 #include "mlpack/series_expansion/kernel_independent_farfield.h"
 
 namespace mlpack {
@@ -92,9 +93,33 @@ void KernelIndependentFarField::RefineCoeffs(
 template<typename KernelAuxType>
 double KernelIndependentFarField::EvaluateField(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &x_q, int order) const {
+  const core::table::DensePoint &x_q) const {
 
+  // Get the already-generated grid points. We need to map this to the
+  // upward equivalent surface.
+  const core::table::DenseMatrix &uniform_grid_points =
+    kernel_aux_in.uniform_grid_points();
+
+  // Take the weighted sum.
   double multipole_sum = 0.0;
+  arma::vec grid_point;
+  arma::vec lower_bound_upward_equivalent_alias;
+  core::table::DensePointToArmaVec(
+    lower_bound_upward_equivalent_, &lower_bound_upward_evauilent_alias);
+  for(int i = 0; i < pseudocharges_.size(); i++) {
+    arma::vec grid_point_alias;
+    uniform_grid_points.MakeColumnVector(i, &grid_point_alias);
+    grid_point = grid_point_alias;
+
+    // Scale by the upward equivalent surface of the node.
+
+    // Translate it by the lower bound.
+    grid_point += lower_bound_upward_equivalent_alias;
+
+    double kernel_value = kernel_aux_in.kernel().EvalUnnormOnSq(
+                            x_q, grid_point);
+    multipole_sum += pseudocharges_[i] * kernel_value;
+  }
   return multipole_sum;
 }
 

@@ -27,9 +27,9 @@ class KernelIndependentFarField {
     // For Boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief The center of expansion.
+    /** @brief The lower bound on the upward equivalent surface.
      */
-    core::table::DensePoint center_;
+    core::table::DensePoint lower_bound_upward_equivalent_;
 
     /** @brief The list of pseudocharges that comprise the upward
      *         equivalent density.
@@ -79,15 +79,6 @@ class KernelIndependentFarField {
      */
     void set_order(short int new_order);
 
-    /** @brief Set the center of the expansion - assumes that the center
-     *         has been initialized before...
-     *
-     *  @param center The center of expansion whose coordinate values
-     *                will be copied to the center of the given far-field
-     *                expansion object.
-     */
-    void set_center(const core::table::DensePoint &center);
-
     ////////// User-level Functions //////////
 
     /** @brief Accumulates the far field moment represented by the given
@@ -115,7 +106,7 @@ class KernelIndependentFarField {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point, int order) const;
+      const core::table::DensePoint &point) const;
 
     /** @brief Initializes the current far field expansion object with
      *         the given center.
