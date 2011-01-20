@@ -28,12 +28,15 @@ class RidgeRegressionTest {
   void Init(fx_module *module) {
     module_ = module;
     arma::mat tmp;
-    data::Load("predictors.csv", tmp);
-    arma_compat::armaToMatrix(tmp, predictors_);
-    data::Load("predictions.csv", tmp);
-    arma_compat::armaToMatrix(tmp, predictions_);
-    data::Load("true_factors.csv", tmp);
-    arma_compat::armaToMatrix(tmp, true_factors_);
+    data::Load("predictors.csv", predictors_);
+    data::Load("predictions.csv", predictions_);
+    data::Load("true_factors.csv", true_factors_);
+//    predictions_ = trans(predictions_);
+    //predictors_ = trans(predictors_);
+//    true_factors_ = trans(true_factors_);
+    std::cout << predictors_ << '\n' <<
+      predictions_ << '\n' <<
+      true_factors_ << std::endl;
   }
 
   void TestSVDNormalEquationRegressVersusSVDRegress() {
@@ -45,15 +48,16 @@ class RidgeRegressionTest {
     engine_->SVDRegress(0);
     RidgeRegression svd_engine;
     svd_engine.Init(module_, predictors_, predictions_, false);
+    std::cout<< "wut" << std::endl;
     svd_engine.SVDRegress(0);
-    Matrix factors, svd_factors;
+    arma::mat factors, svd_factors;
     engine_->factors(&factors);
     svd_engine.factors(&svd_factors);
     
-    for(index_t i=0; i<factors.n_rows(); i++) {
-      NOTIFY("Normal Equation: %g, SVD: %g\n", factors.get(i, 0),
-	     svd_factors.get(i, 0));
-      TEST_DOUBLE_APPROX(factors.get(i, 0), svd_factors.get(i, 0), 1e-3);
+    for(index_t i=0; i<factors.n_rows; i++) {
+      NOTIFY("Normal Equation: %g, SVD: %g\n", factors(i, 0),
+	     svd_factors(i, 0));
+      TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
     }
     
     Destruct();
@@ -67,26 +71,26 @@ class RidgeRegressionTest {
 
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
-    Matrix synthetic_data;
-    Matrix synthetic_data_target_training_values;
-    synthetic_data.Init(4, 5);
-    synthetic_data_target_training_values.Init(1, 5);
+    arma::mat synthetic_data;
+    arma::mat synthetic_data_target_training_values;
+    synthetic_data.zeros(4, 5);
+    synthetic_data_target_training_values.zeros(1, 5);
     for(index_t i = 0; i < 5; i++) {
-      synthetic_data.set(0, i, i);
-      synthetic_data.set(1, i, 3 * i + 1);
-      synthetic_data.set(2, i, 4);
-      synthetic_data.set(3, i, 5);
-      synthetic_data_target_training_values.set(0, i, i);
+      synthetic_data(0, i) = i;
+      synthetic_data(1, i) = 3 * i + 1;
+      synthetic_data(2, i) = 4;
+      synthetic_data(3, i) = 5;
+      synthetic_data_target_training_values(0, i) = i;
     }
-    GenVector<index_t> predictor_indices;
-    GenVector<index_t> prune_predictor_indices;
-    GenVector<index_t> output_predictor_indices;
-    predictor_indices.Init(4);
+    arma::Col<index_t> predictor_indices;
+    arma::Col<index_t> prune_predictor_indices;
+    arma::Col<index_t> output_predictor_indices;
+    predictor_indices.zeros(4);
     predictor_indices[0] = 0;
     predictor_indices[1] = 1;
     predictor_indices[2] = 2;
     predictor_indices[3] = 3;
-    prune_predictor_indices.Copy(predictor_indices);
+    prune_predictor_indices = predictor_indices;
 
     engine_ = new RidgeRegression();
     engine_->Init(module_, synthetic_data, predictor_indices,
@@ -97,7 +101,7 @@ class RidgeRegressionTest {
 				       &output_predictor_indices);
 
     printf("Output indices: ");
-    for(index_t i = 0; i < output_predictor_indices.length(); i++) {
+    for(index_t i = 0; i < output_predictor_indices.n_elem; i++) {
       printf(" %d ", output_predictor_indices[i]);
     }
     printf("\n");
@@ -117,9 +121,9 @@ class RidgeRegressionTest {
  private:
   fx_module *module_;
   RidgeRegression *engine_;
-  Matrix predictors_;
-  Matrix predictions_;
-  Matrix true_factors_;
+  arma::mat predictors_;
+  arma::mat predictions_;
+  arma::mat true_factors_;
 };
 
 int main(int argc, char *argv[]) {

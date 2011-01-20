@@ -82,18 +82,15 @@ considered for pruning for the input dataset.\n"},
   std::string predictors_file = fx_param_str_req(module, "predictors"); 
   std::string predictions_file = fx_param_str_req(module, "predictions");
 
-  Matrix predictors;
-  arma::mat tmp;
-  if (data::Load(predictors_file.c_str(), tmp) == SUCCESS_FAIL) {
+  arma::mat predictors;
+  if (data::Load(predictors_file.c_str(), predictors) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictors_file.c_str());
   }
-  arma_compat::armaToMatrix(tmp, predictors);
 
-  Matrix predictions;
-  if (data::Load(predictions_file.c_str(), tmp) == SUCCESS_FAIL) {
+  arma::mat predictions;
+  if (data::Load(predictions_file.c_str(), predictions) == SUCCESS_FAIL) {
     FATAL("Unable to open file %s", predictions_file.c_str());
   }
-  arma_compat::armaToMatrix(tmp, predictions);
 
   RidgeRegression engine;
   NOTIFY("Computing Regression...");
@@ -115,42 +112,42 @@ considered for pruning for the input dataset.\n"},
 
     NOTIFY("Feature selection based regression.\n");
 
-    Matrix predictor_indices_intermediate;
-    Matrix prune_predictor_indices_intermediate;
+    arma::mat predictor_indices_intermediate;
+    arma::mat prune_predictor_indices_intermediate;
     std::string predictor_indices_file = fx_param_str_req(module, 
 							  "predictor_indices");
     std::string prune_predictor_indices_file = 
       fx_param_str_req(module, "prune_predictor_indices");
-    if(data::Load(predictor_indices_file.c_str(), tmp) == SUCCESS_FAIL) {
+    if(data::Load(predictor_indices_file.c_str(), 
+	  predictor_indices_intermediate) == SUCCESS_FAIL) {
       FATAL("Unable to open file %s", predictor_indices_file.c_str());
     }
-    arma_compat::armaToMatrix(tmp, predictor_indices_intermediate);
-    if(data::Load(prune_predictor_indices_file.c_str(), tmp) == SUCCESS_FAIL) {
+    if(data::Load(prune_predictor_indices_file.c_str(),
+	  prune_predictor_indices_intermediate) == SUCCESS_FAIL) {
       FATAL("Unable to open file %s", prune_predictor_indices_file.c_str());
     }
-    arma_compat::armaToMatrix(tmp, prune_predictor_indices_intermediate);
 
-    GenVector<index_t> predictor_indices;
-    GenVector<index_t> prune_predictor_indices;
-    predictor_indices.Init(predictor_indices_intermediate.n_cols());
-    prune_predictor_indices.Init
-      (prune_predictor_indices_intermediate.n_cols());
+    arma::Col<index_t> predictor_indices;
+    arma::Col<index_t> prune_predictor_indices;
+    predictor_indices.zeros(predictor_indices_intermediate.n_cols);
+    prune_predictor_indices.zeros
+      (prune_predictor_indices_intermediate.n_cols);
     
     // This is a pretty retarded way of copying from a double-matrix
     // to an int vector. This can be simplified only if there were a
     // way to read integer-based dataset directly without typecasting.
-    for(index_t i = 0; i < predictor_indices_intermediate.n_cols(); i++) {
+    for(index_t i = 0; i < predictor_indices_intermediate.n_cols; i++) {
       predictor_indices[i] =
-	(index_t) predictor_indices_intermediate.get(0, i);
+	(index_t) predictor_indices_intermediate(0, i);
     }
-    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols();
+    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols;
 	i++) {
       prune_predictor_indices[i] = (index_t)
-	prune_predictor_indices_intermediate.get(0, i);
+	prune_predictor_indices_intermediate(0, i);
     }
     
     // Run the feature selection.
-    GenVector<index_t> output_predictor_indices;
+    arma::Col<index_t> output_predictor_indices;
     engine.Init(module, predictors, predictor_indices, predictions,
 		!strcmp(fx_param_str(fx_root, "inversion_method", 
 				     "normalsvd"), "normalsvd"));
@@ -164,12 +161,11 @@ considered for pruning for the input dataset.\n"},
   double square_error = engine.ComputeSquareError();
   NOTIFY("Square Error:%g", square_error);
   fx_result_double(module, "square error", square_error);
-  Matrix factors;
+  arma::mat factors;
   engine.factors(&factors);
   std::string factors_file = fx_param_str(module, "factors", "factors.csv");
   NOTIFY("Saving factors...");
-  arma_compat::matrixToArma(factors, tmp);
-  data::Save(factors_file.c_str(), tmp);
+  data::Save(factors_file.c_str(), factors);
 
   fx_done(module);
   return 0;
