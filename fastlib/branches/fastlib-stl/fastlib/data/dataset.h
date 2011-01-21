@@ -436,6 +436,8 @@ namespace data {
    * @param matrix a pointer to an uninitialized matrix to load
    */
   success_t Save(const char *fname, const arma::mat& matrix);
+  success_t Save(const char *fname, const arma::Col<index_t>& index_vector,
+      const arma::vec& data_vector);
 };
 
 #endif
