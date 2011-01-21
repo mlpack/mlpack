@@ -9,6 +9,7 @@
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_H
 
 #include <boost/mpi/communicator.hpp>
+#include <boost/thread.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "core/math/range.h"
 
@@ -34,13 +35,29 @@ class DistributedDualtreeDfs {
 
   private:
 
+    /** @brief The pointer to the boost communicator.
+     */
     boost::mpi::communicator *world_;
 
+    /** @brief The problem definition for the distributed computation.
+     */
     DistributedProblemType *problem_;
 
+    /** @brief The distributed query table.
+     */
     DistributedTableType *query_table_;
 
+    /** @brief The distributed reference table.
+     */
     DistributedTableType *reference_table_;
+
+    /** @brief The worker pool.
+     */
+    boost::thread_group worker_pool_;
+
+    /** @brief The work queue from which the workers work.
+     */
+    std::multimap<TreeType *, TreeType *> work_queue_;
 
   private:
 
@@ -63,6 +80,11 @@ class DistributedDualtreeDfs {
       const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
 
+    static void DoIt_();
+
+    /** @brief The class used for prioritizing a computation object
+     *         (query, reference pair).
+     */
     class PrioritizeTasks_:
       public std::binary_function <
         FrontierObjectType &, FrontierObjectType &, bool > {
