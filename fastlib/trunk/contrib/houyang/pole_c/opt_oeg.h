@@ -95,6 +95,7 @@ void *OegThread(void *in_par) {
 	  // Calculate loss
 	  else {
 	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
+	    //cout << "pred: " << pred << ", label: " << (double)exs[b]->label << ", loss: " << l1.loss_func->getLoss(pred, (double)exs[b]->label) << endl;
 	    if (l1.reg == 2 && l1.reg_factor != 0) {
 	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
 	    }
@@ -155,7 +156,7 @@ void Oeg(learner &l) {
     t_par[t]->thread_state = 0;
     // init thread weights and messages
     l1.w_vec_pool[t] = CreateConstDvector(global.max_feature_idx, 1.0);
-    l1.bias_pool[t] = 0.0;
+    l1.bias_pool[t] = 1.0;
     l1.msg_pool[t] = CreateEmptySvector();
     
     l1.t_pool[t] = t_init;

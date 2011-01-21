@@ -47,7 +47,7 @@ SVEC *CreateConstDvector(size_t fnum, T_VAL c) {
   vec->feats = (FEATURE *)my_malloc(sizeof(FEATURE)*(fnum));
   for(size_t i=0; i<fnum; i++) { 
     vec->feats[i].widx = i + 1; // feature index starts from 1
-    vec->feats[i].wval = 0.0;
+    vec->feats[i].wval = c;
   }
   vec->num_nz_feats = fnum;
   vec->userdefined = NULL;
