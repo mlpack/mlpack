@@ -274,3 +274,29 @@ success_t data::Save(const char *fname, const arma::mat& matrix) {
   info.WriteMatrix(matrix, ",\t", writer);
   return writer.Close();
 }
+
+success_t data::Save(const char *fname, const arma::Col<index_t>& index_vector,
+                     const arma::vec& data_vector) {
+  // we need to reimplement dataset.WriteCsv with our own modifications
+  // this whole thing needs to be re-done at some point to make more sense in
+  // terms of the API sensibility, but this is a last-minute thing before
+  // release
+
+  // in fact, I'm not even doing this anywhere near similarly to the other way
+
+  // ensure our vectors are the same size
+  DEBUG_ASSERT(index_vector.n_elem == data_vector.n_elem);
+
+  // open our output file
+  std::ofstream out;
+  out.open(fname);
+  if(!out.is_open())
+    return SUCCESS_FAIL;
+
+  for(index_t i = 0; i < index_vector.n_elem; i++)
+    out << index_vector[i] << ", " << data_vector[i] << std::endl;
+
+  out.close();
+
+  return SUCCESS_PASS;
+}
