@@ -285,8 +285,14 @@ void AllNN::Init(arma::mat* queries_in, arma::mat* references_in,
   /* Build the trees */
   query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_,
       leaf_size_, old_from_new_queries_);
-  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
-      leaf_size_, old_from_new_references_);
+
+  if(queries_in == references_in) {
+    reference_tree_ = query_tree_; // use the same tree
+    old_from_new_references_ = old_from_new_queries_;
+  } else {
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
+        leaf_size_, old_from_new_references_);
+  }
 
   // While we don't make use of this here, it is possible to start
   // timers after stopping them.  They continue where they left off.
@@ -346,8 +352,13 @@ void AllNN::InitNaive(arma::mat* queries_in, arma::mat* references_in,
   /* Build the (single node) trees */
   query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_,
       leaf_size_, old_from_new_queries_);
-  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
-      leaf_size_, old_from_new_references_);
+  if(queries_in == references_in) {
+    reference_tree_ = query_tree_; // use same tree (from same input)
+    old_from_new_references_ = old_from_new_queries_;
+  } else {
+    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
+        leaf_size_, old_from_new_references_);
+  }
 
   /* Ready the list of nearest neighbor candidates to be filled. */
   neighbor_indices_.set_size(queries_->n_cols);
@@ -425,7 +436,7 @@ void AllNN::ComputeNaive(arma::vec& distances, arma::Col<index_t>& results) {
 /**
  * Initialize and fill an arma::vec of results.
  */
-void AllNN::EmitResults(arma::vec& distances, arma::Col<index_t> results) {
+void AllNN::EmitResults(arma::vec& distances, arma::Col<index_t>& results) {
 
   DEBUG_ASSERT(initialized_ == true);
 
