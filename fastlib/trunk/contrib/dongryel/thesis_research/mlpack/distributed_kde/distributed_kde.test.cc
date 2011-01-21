@@ -217,7 +217,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(50, 60);
+      int num_points = core::math::RandInt(100, 301);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -264,7 +264,7 @@ class TestDistributed_Kde {
       }
 
       // Push in the leaf size.
-      int leaf_size = core::math::RandInt(2, 3);
+      int leaf_size = core::math::RandInt(2, 10);
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
