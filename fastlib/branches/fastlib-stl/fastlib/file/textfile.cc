@@ -156,6 +156,19 @@ char *TextLineReader::ReadLine_() {
       return NULL;
     }
     len += strlen(buf + len);
+    if (buf[len - 1] == '\r') { // is there a following \n we didn't pick up?
+      // we'll peek at the next character and keep it if it's \n, but move the
+      // pointer back a position if it isn't
+      char tmp = fgetc(f_);
+      if(tmp == '\n') { // append to end
+        size++;
+        mem::Realloc(buf, size);
+        buf[len] = tmp;
+      } else {
+        // go back a character
+        fseek(f_, -1, SEEK_CUR);
+      }
+    }
     
     if (len < size - 1 || buf[len - 1] == '\r' || buf[len - 1] == '\n') {
       while (len && (buf[len-1] == '\r' || buf[len-1] == '\n')) {
