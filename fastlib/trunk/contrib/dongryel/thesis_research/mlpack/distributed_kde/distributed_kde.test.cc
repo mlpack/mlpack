@@ -217,7 +217,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(100, 301);
+      int num_points = core::math::RandInt(1000, 1501);
       std::vector< std::string > args;
 
       // Push in the random generate command.
