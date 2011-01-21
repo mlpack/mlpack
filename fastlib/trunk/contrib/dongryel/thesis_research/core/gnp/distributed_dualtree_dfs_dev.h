@@ -13,6 +13,7 @@
 #include <boost/mpi.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <list>
+#include <map>
 #include <queue>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
@@ -29,6 +30,13 @@ extern core::table::MemoryMappedFile *global_m_file_;
 
 namespace core {
 namespace gnp {
+
+template<typename DistributedProblemType>
+void DistributedDualtreeDfs<DistributedProblemType>::DoIt_() {
+
+  // Dequeue a work.
+
+}
 
 template<typename DistributedProblemType>
 template<typename MetricType>
@@ -214,6 +222,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::Init(
   if(query_table_ != reference_table_) {
     ResetStatisticRecursion_(reference_table_->get_tree(), reference_table_);
   }
+
+  // Start the thread worker pool.
+  //const int num_worker_threads = 8;
+  //for(int i = 0; i < num_worker_threads; i++) {
+  //worker_pool_.create_thread(
+  //  DistributedDualtreeDfs < DistributedProblemType >::DoIt_);
+  //}
 }
 
 template<typename DistributedProblemType>
@@ -236,11 +251,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   PreProcessReferenceTree_(reference_table_->get_tree());
   PreProcessReferenceTree_(reference_table_->local_table()->get_tree());
 
-  // Figure out each process's work using the global tree. This is
-  // done using a naive approach where the global goal is to complete
-  // a 2D matrix workspace. This is currently doing an all-reduce type
-  // of exchange.
+  // Figure out each process's work using the global tree. a 2D matrix
+  // workspace. This is currently doing an all-reduce type of
+  // exchange.
   AllToAllReduce_(metric, query_results);
+  worker_pool_.join_all();
   world_->barrier();
 
   // Postprocess.
