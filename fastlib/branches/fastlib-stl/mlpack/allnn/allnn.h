@@ -241,7 +241,7 @@ class AllNN {
   /**
    * Initialize and fill an arma::vec of results.
    */
-  void EmitResults(arma::vec& distances, arma::Col<index_t> results);
+  void EmitResults(arma::vec& distances, arma::Col<index_t>& results);
 
 }; /* class AllNN */
 
