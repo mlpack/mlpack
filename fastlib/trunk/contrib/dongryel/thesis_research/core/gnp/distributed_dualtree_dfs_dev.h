@@ -32,13 +32,6 @@ namespace core {
 namespace gnp {
 
 template<typename DistributedProblemType>
-void DistributedDualtreeDfs<DistributedProblemType>::DoIt_() {
-
-  // Dequeue a work.
-
-}
-
-template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
@@ -222,13 +215,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::Init(
   if(query_table_ != reference_table_) {
     ResetStatisticRecursion_(reference_table_->get_tree(), reference_table_);
   }
-
-  // Start the thread worker pool.
-  //const int num_worker_threads = 8;
-  //for(int i = 0; i < num_worker_threads; i++) {
-  //worker_pool_.create_thread(
-  //  DistributedDualtreeDfs < DistributedProblemType >::DoIt_);
-  //}
 }
 
 template<typename DistributedProblemType>
@@ -255,7 +241,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // workspace. This is currently doing an all-reduce type of
   // exchange.
   AllToAllReduce_(metric, query_results);
-  worker_pool_.join_all();
   world_->barrier();
 
   // Postprocess.
