@@ -28,6 +28,9 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack;
+using namespace mlpack::allnn;
+
 class TestAllNN {
  public:
   TestAllNN(fx_module *module) {
