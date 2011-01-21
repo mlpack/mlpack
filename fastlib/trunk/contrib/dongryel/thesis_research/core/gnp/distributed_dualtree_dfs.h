@@ -50,6 +50,16 @@ class DistributedDualtreeDfs {
      */
     DistributedTableType *reference_table_;
 
+    /** @brief The maximum number of tree levels to serialize at a
+     *         time.
+     */
+    int max_num_levels_to_serialize_;
+
+    /** @brief The maximum number of work items to dequeue per
+     *         process.
+     */
+    int max_num_work_to_dequeue_per_stage_;
+
   private:
 
     template<typename MetricType>
@@ -85,6 +95,12 @@ class DistributedDualtreeDfs {
     };
 
   public:
+
+    void set_work_params(
+      int max_num_levels_to_serialize_in,
+      int max_num_work_to_dequeue_per_stage_in);
+
+    DistributedDualtreeDfs();
 
     DistributedProblemType *problem();
 

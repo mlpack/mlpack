@@ -42,39 +42,35 @@ class DistributedKde {
 
   public:
 
+    /** @brief The default constructor.
+     */
     DistributedKde() {
       world_ = NULL;
     }
 
-    /**
-     * @brief sets the bandwidth
+    /** @brief sets the bandwidth
      */
     void set_bandwidth(double bandwidth_in);
 
-    /**
-     * @brief returns a pointer to the query table
+    /** @brief returns a pointer to the query table
      */
     DistributedTableType *query_table();
 
-    /**
-     * @brief returns a pointer to the reference table
+    /** @brief returns a pointer to the reference table
      */
     DistributedTableType *reference_table();
 
-    /**
-     * @brief returns a GlobalType structure that has the
-     *        normalization statistics
+    /** @brief returns a GlobalType structure that has the
+     *         normalization statistics
      */
     GlobalType &global();
 
-    /**
-     * @brief When the reference table and the query table are the same then
-     *        the Kde is called monochromatic
+    /** @brief When the reference table and the query table are the
+     *         same then the Kde is called monochromatic
      */
     bool is_monochromatic() const;
 
-    /**
-     * @brief Initialize a Kde engine with the arguments.
+    /** @brief Initialize a Kde engine with the arguments.
      */
     void Init(
       boost::mpi::communicator &world_in,
@@ -132,7 +128,7 @@ class DistributedKde {
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 };
-};
-};
+}
+}
 
 #endif

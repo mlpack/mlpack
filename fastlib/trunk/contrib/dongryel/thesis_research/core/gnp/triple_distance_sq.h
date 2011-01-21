@@ -76,7 +76,7 @@ class TripleDistanceSq {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

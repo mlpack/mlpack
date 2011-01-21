@@ -217,7 +217,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(500, 1001);
+      int num_points = core::math::RandInt(50, 60);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -264,7 +264,7 @@ class TestDistributed_Kde {
       }
 
       // Push in the leaf size.
-      int leaf_size = core::math::RandInt(20, 30);
+      int leaf_size = core::math::RandInt(2, 3);
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
@@ -282,6 +282,25 @@ class TestDistributed_Kde {
       std::stringstream bandwidth_sstr;
       bandwidth_sstr << "--bandwidth=" << bandwidth;
       args.push_back(bandwidth_sstr.str());
+
+      // Push in the randomly generate work parameters.
+      double max_num_levels_to_serialize;
+      double max_num_work_to_dequeue_per_stage;
+      if(world.rank() == 0) {
+        max_num_levels_to_serialize = core::math::RandInt(2, 6);
+        max_num_work_to_dequeue_per_stage = core::math::RandInt(1, 10);
+      }
+      boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
+      boost::mpi::broadcast(world, max_num_work_to_dequeue_per_stage, 0);
+      std::stringstream max_num_levels_to_serialize_sstr;
+      std::stringstream max_num_work_to_dequeue_per_stage_sstr;
+      max_num_levels_to_serialize_sstr
+          << "--max_num_levels_to_serialize_in=" << max_num_levels_to_serialize;
+      max_num_work_to_dequeue_per_stage_sstr
+          << "--max_num_work_to_dequeue_per_stage_in=" <<
+          max_num_work_to_dequeue_per_stage;
+      args.push_back(max_num_levels_to_serialize_sstr.str());
+      args.push_back(max_num_work_to_dequeue_per_stage_sstr.str());
 
       // Parse the distributed KDE arguments.
       mlpack::distributed_kde::DistributedKdeArguments <
@@ -317,6 +336,8 @@ class TestDistributed_Kde {
       for(unsigned int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
         if(distributed_kde_result.pruned_[i] != total_num_points) {
           std::cerr << "Not all reference point have been accounted for.\n";
+          std::cerr << "Got " << distributed_kde_result.pruned_[i] <<
+                    " instead of " << total_num_points << "\n";
           exit(-1);
         }
       }

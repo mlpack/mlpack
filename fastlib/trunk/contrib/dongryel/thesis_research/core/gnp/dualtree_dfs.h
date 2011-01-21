@@ -158,6 +158,8 @@ class DualtreeDfs {
      */
     TableType *query_table_;
 
+    int query_rank_;
+
     /** @brief Starting query node.
      */
     TreeType *query_start_node_;
@@ -165,6 +167,8 @@ class DualtreeDfs {
     /** @brief The reference table.
      */
     TableType *reference_table_;
+
+    int reference_rank_;
 
     /** @brief The flag whether to do a selective base case for the
      *         case when the reference tree is not assumed to be
@@ -283,6 +287,9 @@ class DualtreeDfs {
      *         computation.
      */
     void set_query_start_node(TreeType *query_start_node_in);
+
+    void set_query_reference_process_ranks(
+      int query_process_id, int reference_process_id);
 
     /** @brief Sets the flag for each reference leaf node whether to
      *         compute the base case or not.
