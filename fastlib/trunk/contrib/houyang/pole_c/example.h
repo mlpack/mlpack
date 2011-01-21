@@ -133,6 +133,16 @@ void InsertOne(SVEC *v, FEATURE *f, size_t pos) {
   v->feats[pos].wval = f->wval;
 }
 
+// remove a feature at a given position (pos) in a sparse vector (v)
+void RemoveOne(SVEC *v, size_t pos) {
+  size_t v_nz = v->num_nz_feats;
+  // move 2nd part
+  memmove(v->feats+pos, v->feats+pos+1, (v_nz-pos-1)*sizeof(FEATURE));
+  // decrease capacity
+  v->feats = (FEATURE *)realloc(v->feats, (v_nz-1)*sizeof(FEATURE));
+  v->num_nz_feats = v->num_nz_feats - 1;
+}
+
 void DestroySvec(SVEC *v) {
   if (v) {
     if (v->feats) {

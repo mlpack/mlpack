@@ -6,7 +6,9 @@
 
 struct learner {
   SVEC** w_vec_pool; // a pool that contains weight vectors for each thread
+  SVEC** w_n_vec_pool; // a pool that contains weight_negative vectors for each thread; used for EG only.
   double* bias_pool; // a pool for bias term
+  double* bias_n_pool; // a pool for bias_negative term; used for EG only.
   SVEC** msg_pool; // a pool of messages. each thread put its message in and read other's from
   double* t_pool; // time t for SGD
   double* scale_pool; // scales for SGD
@@ -36,8 +38,20 @@ T_LBL LinearPredictLabel(SVEC *wvec, EXAMPLE *ex) {
 }
 
 double LinearPredictBias(SVEC *wvec, EXAMPLE *ex, double bias) {
+  //print_svec(wvec);
+  //print_ex(ex);
+  //cout << bias << endl;
   return SparseDot(wvec, ex) + bias;
 }
+
+/*
+double LinearPredictBiasEG(SVEC *wvec_p, SVEC *wvec_n, EXAMPLE *ex, double bias_p, double bias_n) {
+  SVEC *w;
+  w = CreateEmptySvector();
+  SparseMinus(w, wvec_p, wvec_n);
+  return SparseDot(w, ex) + bias_p - bias_n;
+}
+*/
 
 T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
   double sum = SparseDot(wvec, ex) + bias;
@@ -51,6 +65,20 @@ T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
     return (T_LBL)-1;
 }
 
+/*
+T_LBL LinearPredictBiasLabelEG(SVEC *wvec_p, SVEC *wvec_n, EXAMPLE *ex, double bias_p, double bias_n) {
+  double sum;
+  SVEC *w;
+  w = CreateEmptySvector();
+  SparseMinus(w, wvec_p, wvec_n);
+  sum = SparseDot(w, ex) + bias_p - bias_n;
+  if (sum > 0.0)
+    return (T_LBL)1;
+  else
+    return (T_LBL)-1;
+}
+*/
+
 void FinishLearner(learner &l, size_t ts) {
   if(l.w_vec_pool) {
     for (size_t t=0; t<ts; t++) {
@@ -58,6 +86,13 @@ void FinishLearner(learner &l, size_t ts) {
       DestroySvec(l.w_vec_pool[t]);
     }
     free(l.w_vec_pool);
+  }
+  if(l.w_n_vec_pool) {
+    for (size_t t=0; t<ts; t++) {
+      //print_svec(l.w_vec_pool[t]);
+      DestroySvec(l.w_n_vec_pool[t]);
+    }
+    free(l.w_n_vec_pool);
   }
   if(l.msg_pool) {
     for (size_t t=0; t<ts; t++) {
@@ -68,6 +103,7 @@ void FinishLearner(learner &l, size_t ts) {
   free(l.t_pool);
   free(l.scale_pool);
   free(l.bias_pool);
+  free(l.bias_n_pool);
   free(l.num_used_exp);
   free(l.total_loss_pool);
   free(l.total_misp_pool);

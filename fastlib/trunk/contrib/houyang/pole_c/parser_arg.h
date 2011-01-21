@@ -16,7 +16,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("epoches,e", boost_po::value<size_t>(&global.num_epoches)->default_value(0), "Number of training epoches. Default: 0 epoch")
     ("iterations,i", boost_po::value<size_t>(&global.num_iter_res)->default_value(0), "Number of training iterations besides epoches. Default: 0")
     ("reg,r", boost_po::value<int>(&learner.reg)->default_value(2), "Which regularization term to use. Default: 2(squared l2 norm)")
-    ("lambda", boost_po::value<double>(&learner.reg_factor)->default_value(1.0), "Regularization factor ('lambda' in avg_loss + lambda * regularization). Default: 1.0")
+    ("lambda", boost_po::value<double>(&learner.reg_factor), "Regularization factor ('lambda' in avg_loss + lambda * regularization). No default value.")
     ("C,c", boost_po::value<double>(&learner.C)->default_value(1.0), "Cost factor C ('C' in regularization + C*avg_loss). Default: 1.0")
     ("type", boost_po::value<string>()->default_value("classification"), 
                        "Type of learning: classification or regression or others. Default: classification.")
@@ -152,11 +152,13 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
 
   // initialize weight vectors and messages carried by each thread
   learner.w_vec_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
+  learner.w_n_vec_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
   learner.msg_pool = (SVEC**)malloc(learner.num_threads * sizeof(SVEC*));
   learner.total_loss_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.total_misp_pool = (size_t*)malloc(learner.num_threads * sizeof(size_t));
   // for OGD
   learner.bias_pool = (double*)malloc(learner.num_threads * sizeof(double));
+  learner.bias_n_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.t_pool = (double*)malloc(learner.num_threads * sizeof(double));
   learner.scale_pool = (double*)malloc(learner.num_threads * sizeof(double));
 
