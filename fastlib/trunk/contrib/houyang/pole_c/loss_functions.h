@@ -62,6 +62,27 @@ class hingeloss : public loss_function {
   }
 };
 
+class squaredhingeloss : public loss_function {
+ public:
+  squaredhingeloss() {
+    // construction
+  }
+  
+  double getLoss(double prediction, double label) {
+    double e = 1 - label*prediction;
+    return (e > 0) ? 0.5*e*e : 0;
+  }
+  
+  double getUpdate(double prediction, double label) {
+    double e = 1 - label*prediction;
+    return (e > 0) ? e : 0;
+  }
+
+  string getName() const {
+    return "squaredhinge";
+  }
+};
+
 class logloss : public loss_function {
  public:
   logloss() {
@@ -122,6 +143,9 @@ loss_function* getLossFunction(string funcName, double funcPara) {
   }
   else if(funcName.compare("hinge") == 0) {
     return new hingeloss();
+  }
+  else if(funcName.compare("squaredhinge") == 0) {
+    return new squaredhingeloss();
   }
   else if(funcName.compare("logistic") == 0) {
     return new logloss();

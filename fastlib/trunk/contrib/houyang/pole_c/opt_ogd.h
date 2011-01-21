@@ -111,7 +111,6 @@ void *OgdThread(void *in_par) {
 
 	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
 	// update message: [y_t x_t]^+_i
-	//SparseScale(l1.msg_pool[tid], update, ex);
 	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
 
       }
@@ -163,7 +162,9 @@ void Ogd(learner &l) {
     t_par[t]->thread_state = 0;
     // init thread weights and messages
     l1.w_vec_pool[t] = CreateEmptySvector();
+    l1.w_n_vec_pool[t] = CreateEmptySvector(); // not used; only for EG.
     l1.bias_pool[t] = 0.0;
+    l1.bias_n_pool[t] = 0.0; // not used; only for EG.
     l1.msg_pool[t] = CreateEmptySvector();
     
     l1.t_pool[t] = t_init;

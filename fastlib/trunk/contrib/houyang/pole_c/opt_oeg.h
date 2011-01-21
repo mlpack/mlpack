@@ -9,7 +9,7 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 
 
-void OegUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid) {
+void OegUpdate(SVEC *w_p, SVEC *w_n, double &tin, double &bias_p, double &bias_n, double update, size_t tid) {
   SVEC *exp_sum;
   double eta; // learning rate
   if (l1.reg == 2) {
@@ -34,16 +34,31 @@ void OegUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
 
   // update bias
   if (global.use_bias) {
-    bias = bias * exp(-eta * update);
+    bias_p = bias_p * exp(eta * update);
+    bias_n = bias_n * exp(-eta * update);
   }
   //cout << tid << ", bias: " << bias << endl;
   //cout << tin << endl;
 
   //print_svec(wvec);
   //print_svec(exp_sum);
-  SparseExpMultiplyOverwrite(wvec, exp_sum);
-  //print_svec(wvec);
-  //cout << endl << endl; 
+  SparseExpMultiplyOverwrite(w_p, exp_sum);
+  SparseNegExpMultiplyOverwrite(w_n, exp_sum);
+
+  // calc sum_i(w_p_i+w_n_i)
+  double w_sum = 0.0;
+  for (size_t i=0; i<w_p->num_nz_feats; i++) {
+    w_sum += w_p->feats[i].wval;
+  }
+  for (size_t i=0; i<w_n->num_nz_feats; i++) {
+    w_sum += w_n->feats[i].wval;
+  }
+  if (w_sum > l1.C) {
+    // printf("epo:%d,iter:%d, w_sum=%f\n", epo, ct, w_sum);
+    SparseScaleOverwrite(w_p, l1.C/w_sum);
+    SparseScaleOverwrite(w_n, l1.C/w_sum);
+  }
+
   DestroySvec(exp_sum);
   // dummy updating time
   //boost::this_thread::sleep(boost::posix_time::microseconds(1));
@@ -77,35 +92,33 @@ void *OegThread(void *in_par) {
     case 1:
       EmptyFeatures(l1.msg_pool[tid]);
       for (b = 0; b<global.mb_size; b++) {
-	pred = LinearPredictBias(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
+	double bias = l1.bias_pool[tid]- l1.bias_n_pool[tid];
+	SVEC *w;
+	w = CreateEmptySvector();
+	SparseMinus(w, l1.w_vec_pool[tid], l1.w_n_vec_pool[tid]);
+	pred = LinearPredictBias(w, exs[b], bias);
 
 	if (global.calc_loss) {
 	  // Calculate loss and number of misclassifications
 	  if (l1.type == "classification") {
-	    T_LBL pred_lbl = LinearPredictBiasLabel(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
-	    //cout << exs[b]->label << " : " << pred_lbl << ", "<< l1.loss_func->getLoss(pred, (double)exs[b]->label) << endl;
+	    T_LBL pred_lbl = LinearPredictBiasLabel(w, exs[b], bias);
+	    //cout << "pred: " << pred << ", label: " << (double)exs[b]->label << ", loss: " << l1.loss_func->getLoss(pred, (double)exs[b]->label) << ", update: "<< l1.loss_func->getUpdate(pred,(double)exs[b]->label) << endl;
 	    if (pred_lbl != exs[b]->label) {
 	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
-	      if (l1.reg == 2 && l1.reg_factor != 0) {
-		l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
-	      }
 	    }
 	  }
 	  // Calculate loss
 	  else {
 	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
-	    //cout << "pred: " << pred << ", label: " << (double)exs[b]->label << ", loss: " << l1.loss_func->getLoss(pred, (double)exs[b]->label) << endl;
-	    if (l1.reg == 2 && l1.reg_factor != 0) {
-	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
-	    }
+	    //cout << "pred: " << pred << ", label: " << (double)exs[b]->label << ", loss: " << l1.loss_func->getLoss(pred, (double)exs[b]->label) << ", update: "<< l1.loss_func->getUpdate(pred,(double)exs[b]->label) << endl;
 	  }
 	}
 
 	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
 	// update message: [y_t x_t]^+_i
 	//SparseScale(l1.msg_pool[tid], update, ex);
-	SparseAddExpertOverwrite(l1.msg_pool[tid], -update, exs[b]);
+	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
 
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
@@ -119,7 +132,7 @@ void *OegThread(void *in_par) {
       break;
     case 2:
       // update using messages
-      OegUpdate(l1.w_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], update, tid);
+      OegUpdate(l1.w_vec_pool[tid], l1.w_n_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], l1.bias_n_pool[tid], update, tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&barrier_msg_all_used);
       // communication done
@@ -155,8 +168,12 @@ void Oeg(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights and messages
-    l1.w_vec_pool[t] = CreateConstDvector(global.max_feature_idx, 1.0);
-    l1.bias_pool[t] = 1.0;
+    // w_positive
+    l1.w_vec_pool[t] = CreateConstDvector(global.max_feature_idx, 0.5*l1.C/(global.max_feature_idx+1));
+    // w_negative
+    l1.w_n_vec_pool[t] = CreateConstDvector(global.max_feature_idx, 0.5*l1.C/(global.max_feature_idx+1));
+    l1.bias_pool[t] = 0.5*l1.C/(global.max_feature_idx+1);
+    l1.bias_n_pool[t] = 0.5*l1.C/(global.max_feature_idx+1);
     l1.msg_pool[t] = CreateEmptySvector();
     
     l1.t_pool[t] = t_init;

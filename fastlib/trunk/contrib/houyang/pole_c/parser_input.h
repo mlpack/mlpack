@@ -316,9 +316,8 @@ void ReadData(boost_po::variables_map &vm) {
 	exit(1);
       }
       l1.reg_factor = 1.0 / (l1.C * num_train_exps);
-      //cout << "C= " << l1.C << ", lambda= " << l1.reg_factor << endl << endl;
     }
-    else if (vm.count("lambda")) {
+    if (vm.count("lambda")) {
       l1.reg_factor = vm["lambda"].as<double>();
       if (l1.reg_factor < 0.0) {
 	cout << "Parameter lambda should be non-negative!" << endl;
@@ -330,8 +329,8 @@ void ReadData(boost_po::variables_map &vm) {
       else {
 	l1.C = 1.0 / (l1.reg_factor * num_train_exps);
       }
-      //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
     }
+    //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;
   }
 
   //delay_indicies = (size_t*) calloc(l1.num_threads, sizeof(size_t));
