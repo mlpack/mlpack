@@ -51,11 +51,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
-  // For now, the number of levels of the reference tree grabbed from
-  // each process is fixed.
-  const int max_num_levels_to_serialize = 15;
-  int max_num_work_to_dequeue_per_stage = 5;
-
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
@@ -96,16 +91,19 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // loop.
     if(
       table_exchange.AllToAll(
-        *world_, max_num_levels_to_serialize,
+        *world_, max_num_levels_to_serialize_,
         *(reference_table_->local_table()), receive_requests)) {
 
       // At this point, try to empty the priority queue.
-      max_num_work_to_dequeue_per_stage = std::numeric_limits<int>::max();
+      max_num_work_to_dequeue_per_stage_ = std::numeric_limits<int>::max();
       bool all_done = true;
       for(int i = 0; i < world_->size() && all_done; i++) {
         all_done = (computation_frontier[i].size() == 0);
       }
-      if(all_done) {
+      bool global_all_done = true;
+      boost::mpi::all_reduce(
+        *world_, all_done, global_all_done, std::logical_and<bool>());
+      if(global_all_done) {
         break;
       }
     }
@@ -114,9 +112,15 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // algorithms. Further parallelism can be exploited here.
     for(int i = 0; i < world_->size(); i++) {
       if(i != world_->rank()) {
+        int frontier_size_before_loop =
+          static_cast<int>(computation_frontier[i].size());
+
+        std::vector < FrontierObjectType > new_computation_frontier;
+
         for(int j = 0;
-            j < max_num_work_to_dequeue_per_stage &&
-            computation_frontier[i].size() > 0; j++) {
+            j < std::min(
+              max_num_work_to_dequeue_per_stage_, frontier_size_before_loop);
+            j++) {
 
           // Examine the top object in the frontier.
           const FrontierObjectType &top_frontier =
@@ -136,6 +140,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           sub_engine.Init(sub_problem);
           sub_engine.set_base_case_flags(
             frontier_reference_subtable.serialize_points_per_terminal_node());
+          sub_engine.set_query_reference_process_ranks(world_->rank(), i);
           sub_engine.set_query_start_node(
             top_frontier.get<0>());
           sub_engine.Compute(metric, query_results, false);
@@ -166,11 +171,17 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             sub_engine.unpruned_query_reference_pairs();
           for(unsigned int k = 0;
               k < unpruned_query_reference_pairs.size(); k++) {
-            computation_frontier[i].push(unpruned_query_reference_pairs[k]);
+            new_computation_frontier.push_back(
+              unpruned_query_reference_pairs[k]);
           }
 
         } // Looping over each of the outstanding work from the $i$-th
         // process.
+
+        // Appending should be done after finishing the $i$-th process.
+        for(unsigned int j = 0; j < new_computation_frontier.size(); j++) {
+          computation_frontier[i].push(new_computation_frontier[j]);
+        }
 
       } // end of the if-case.
     } // end of taking care of the computation frontier.
@@ -200,6 +211,21 @@ template<typename DistributedProblemType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
+}
+
+template<typename DistributedProblemType>
+DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
+  max_num_levels_to_serialize_ = 15;
+  max_num_work_to_dequeue_per_stage_ = 5;
+}
+
+template<typename DistributedProblemType>
+void DistributedDualtreeDfs<DistributedProblemType>::set_work_params(
+  int max_num_levels_to_serialize_in,
+  int max_num_work_to_dequeue_per_stage_in) {
+
+  max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
+  max_num_work_to_dequeue_per_stage_ = max_num_work_to_dequeue_per_stage_in;
 }
 
 template<typename DistributedProblemType>

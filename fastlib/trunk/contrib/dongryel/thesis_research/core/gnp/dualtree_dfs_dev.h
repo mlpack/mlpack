@@ -16,6 +16,14 @@ namespace core {
 namespace gnp {
 
 template<typename ProblemType>
+void DualtreeDfs<ProblemType>::set_query_reference_process_ranks(
+  int query_process_id, int reference_process_id) {
+
+  query_rank_ = query_process_id;
+  reference_rank_ = reference_process_id;
+}
+
+template<typename ProblemType>
 void DualtreeDfs<ProblemType>::set_query_start_node(
   TreeType *query_start_node_in) {
   query_start_node_ = query_start_node_in;
@@ -52,6 +60,8 @@ template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
   do_selective_base_case_ = false;
   query_start_node_ = NULL;
+  query_rank_ = 0;
+  reference_rank_ = 0;
 }
 
 template<typename ProblemType>

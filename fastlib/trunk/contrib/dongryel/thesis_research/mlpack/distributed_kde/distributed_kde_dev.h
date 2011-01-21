@@ -57,6 +57,9 @@ void DistributedKde<DistributedTableType>::Compute(
   mlpack::distributed_kde::DistributedKde<DistributedTableType> >
   distributed_dualtree_dfs;
   distributed_dualtree_dfs.Init(world_, *this);
+  distributed_dualtree_dfs.set_work_params(
+    arguments_in.max_num_levels_to_serialize_,
+    arguments_in.max_num_work_to_dequeue_per_stage_);
 
   // Compute the result and do post-normalize.
   distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
@@ -171,6 +174,14 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "memory_mapped_file_size",
     boost::program_options::value<unsigned int>(),
     "The size of the memory mapped file."
+  )(
+    "max_num_levels_to_serialize_in",
+    boost::program_options::value<int>()->default_value(15),
+    "The number of levels of subtrees to serialize at a given moment."
+  )(
+    "max_num_work_to_dequeue_per_stage_in",
+    boost::program_options::value<int>()->default_value(5),
+    "The number of work items to dequeue per process."
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -250,6 +261,16 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
   }
   if((*vm)["leaf_size"].as<int>() <= 0) {
     std::cerr << "The --leaf_size needs to be a positive integer.\n";
+    exit(0);
+  }
+  if((*vm)["max_num_levels_to_serialize_in"].as<int>() <= 1) {
+    std::cerr << "The --max_num_levels_to_serialize_in needs to be " <<
+              "a positive integer greater than 1.\n";
+    exit(0);
+  }
+  if((*vm)["max_num_work_to_dequeue_per_stage_in"].as<int>() <= 0) {
+    std::cerr << "The --max_num_work_to_dequeue_per_stage_in needs to be " <<
+              "a positive integer.\n";
     exit(0);
   }
 
@@ -399,7 +420,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
     std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
   }
 
-  // Parse the relative error.
+  // Parse the relative error and the absolute error.
   arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
   if(world.rank() == 0) {
@@ -421,6 +442,19 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   if(world.rank() == 0) {
     std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+  }
+
+  // Parse the work parameters for the distributed engine.
+  arguments_out->max_num_levels_to_serialize_ =
+    vm["max_num_levels_to_serialize_in"].as<int>();
+  arguments_out->max_num_work_to_dequeue_per_stage_ =
+    vm["max_num_work_to_dequeue_per_stage_in"].as<int>();
+  if(world.rank() == 0) {
+    std::cout << "Serializing " << arguments_out->max_num_levels_to_serialize_
+              << " levels of the tree at a time.\n";
+    std::cout << "Dequeuing " <<
+              arguments_out->max_num_work_to_dequeue_per_stage_ <<
+              " items at a time from each process.\n";
   }
 }
 

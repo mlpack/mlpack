@@ -295,7 +295,7 @@ DualtreeDfs<ProblemType>::get_iterator(
          iterator<IteratorMetricType>(
            metric_in, *this, query_results_in);
 }
-};
-};
+}
+}
 
 #endif

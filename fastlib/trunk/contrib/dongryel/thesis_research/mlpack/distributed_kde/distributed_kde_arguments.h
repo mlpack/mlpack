@@ -67,6 +67,10 @@ class DistributedKdeArguments {
      */
     core::metric_kernels::LMetric<2> *metric_;
 
+    int max_num_levels_to_serialize_;
+
+    int max_num_work_to_dequeue_per_stage_;
+
   public:
 
     /** @brief The default constructor.
@@ -82,6 +86,8 @@ class DistributedKdeArguments {
       probability_ = 0.0;
       kernel_ = "";
       metric_ = NULL;
+      max_num_levels_to_serialize_ = 0;
+      max_num_work_to_dequeue_per_stage_ = 0;
     }
 
     /** @brief The destructor.

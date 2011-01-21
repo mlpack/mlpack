@@ -206,7 +206,7 @@ class TripleRangeDistanceSq {
                max_distance_sq_.at(first_index, second_index));
     }
 };
-};
-};
+}
+}
 
 #endif
