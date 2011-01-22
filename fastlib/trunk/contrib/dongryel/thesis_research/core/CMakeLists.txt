@@ -23,6 +23,7 @@ target_link_libraries(core
   ${TRILINOS_LIBS}
   $ENV{HOME}/local/lapack-3.3.0/lib/liblapack.a
   $ENV{HOME}/local/lapack-3.3.0/lib/libblas.a
+  gfortran
 )
 
 # move include files to correct directory for mlpack compilation
