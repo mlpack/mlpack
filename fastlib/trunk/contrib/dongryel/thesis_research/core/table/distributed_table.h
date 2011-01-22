@@ -26,10 +26,14 @@ namespace table {
 
 extern MemoryMappedFile *global_m_file_;
 
-template<typename TreeSpecType>
+template<typename IncomingTreeSpecType>
 class DistributedTable: public boost::noncopyable {
 
   public:
+
+    /** @brief The type of the specification used to index the data.
+     */
+    typedef IncomingTreeSpecType TreeSpecType;
 
     /** @brief The type of the tree used to index data.
      */
