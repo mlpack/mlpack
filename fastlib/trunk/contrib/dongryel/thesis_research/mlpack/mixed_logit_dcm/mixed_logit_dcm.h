@@ -1,5 +1,7 @@
 /** @file mixed_logit_dcm.h
  *
+ *  The simulation-based mixed logit discrete choice model class.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -7,7 +9,7 @@
 #define MLPACK_MIXED_LOGIT_MIXED_LOGIT_DCM_H
 
 #include <vector>
-#include "boost/program_options.hpp"
+#include <boost/program_options.hpp>
 #include "core/table/table.h"
 #include "mlpack/mixed_logit_dcm/dcm_table.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_arguments.h"
@@ -15,6 +17,10 @@
 
 namespace mlpack {
 namespace mixed_logit_dcm {
+
+/** @brief The definition of mixed logit discrete choice model using
+ *         simulation-based approach.
+ */
 template<typename IncomingTableType>
 class MixedLogitDCM {
   public:
@@ -22,7 +28,8 @@ class MixedLogitDCM {
 
     typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
 
-    typedef mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> SamplingType;
+    typedef
+    mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> SamplingType;
 
   private:
 
@@ -37,6 +44,10 @@ class MixedLogitDCM {
     double SimulationError_(
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
+
+    /** @brief Computes the gradient error (Section 3.3).
+     */
+    double GradientError_(const SamplingType &sample) const;
 
   public:
 
@@ -64,6 +75,9 @@ class MixedLogitDCM {
 
   private:
 
+    /** @brief The table that holds the discrete choice model
+     *         information.
+     */
     DCMTableType table_;
 
   private:
@@ -72,7 +86,7 @@ class MixedLogitDCM {
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 };
-};
-};
+}
+}
 
 #endif
