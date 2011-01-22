@@ -44,14 +44,9 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
     }
     bias = bias + eta * update;
   }
-  //cout << tid << ", bias: " << bias << endl;
-  //cout << tin << endl;
 
-  //print_svec(wvec);
-  //print_svec(exp_sum);
   SparseAddOverwrite(wvec, exp_sum);
-  //print_svec(wvec);
-  //cout << endl << endl; 
+
   DestroySvec(exp_sum);
   // dummy updating time
   //boost::this_thread::sleep(boost::posix_time::microseconds(1));

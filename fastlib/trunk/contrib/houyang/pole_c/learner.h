@@ -44,15 +44,6 @@ double LinearPredictBias(SVEC *wvec, EXAMPLE *ex, double bias) {
   return SparseDot(wvec, ex) + bias;
 }
 
-/*
-double LinearPredictBiasEG(SVEC *wvec_p, SVEC *wvec_n, EXAMPLE *ex, double bias_p, double bias_n) {
-  SVEC *w;
-  w = CreateEmptySvector();
-  SparseMinus(w, wvec_p, wvec_n);
-  return SparseDot(w, ex) + bias_p - bias_n;
-}
-*/
-
 T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
   double sum = SparseDot(wvec, ex) + bias;
   /*print_svec(wvec);
@@ -64,20 +55,6 @@ T_LBL LinearPredictBiasLabel(SVEC *wvec, EXAMPLE *ex, double bias) {
   else
     return (T_LBL)-1;
 }
-
-/*
-T_LBL LinearPredictBiasLabelEG(SVEC *wvec_p, SVEC *wvec_n, EXAMPLE *ex, double bias_p, double bias_n) {
-  double sum;
-  SVEC *w;
-  w = CreateEmptySvector();
-  SparseMinus(w, wvec_p, wvec_n);
-  sum = SparseDot(w, ex) + bias_p - bias_n;
-  if (sum > 0.0)
-    return (T_LBL)1;
-  else
-    return (T_LBL)-1;
-}
-*/
 
 void FinishLearner(learner &l, size_t ts) {
   if(l.w_vec_pool) {
