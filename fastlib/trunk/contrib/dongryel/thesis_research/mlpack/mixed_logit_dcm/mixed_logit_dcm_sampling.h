@@ -209,7 +209,7 @@ class MixedLogitDCMSampling {
      */
     void simulated_choice_probability_gradient(
       int person_index, arma::vec *gradient_out) const {
-      simulated_choice_probability_gradient_[
+      simulated_choice_probability_gradients_[
         person_index].sample_means(gradient_out);
     }
 

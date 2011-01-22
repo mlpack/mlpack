@@ -30,11 +30,13 @@ double MixedLogitDCM<TableType>::GradientError_(
 
     // Get the simulated choice probability gradient for the given
     // person.
-
+    arma::vec simulated_choice_probability_gradient;
+    table_->simulated_choice_probability_gradient(
+      person_index, &simulated_choice_probability_gradient);
 
     // First form the $\Delta h_ii vector.
     arma::vec delta_hii;
-    delta_hii.set_size();
+    delta_hii.set_size(simulated_choice_probability_gradient.n_elem);
 
     // Loop through each sample.
     const std::vector< arma::vec > &integration_samples =
