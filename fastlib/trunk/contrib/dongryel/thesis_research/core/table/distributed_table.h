@@ -15,7 +15,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/utility.hpp>
-#include "core/parallel/distributed_tree_builder.h"
+#include "core/parallel/sample_distributed_tree_builder.h"
 #include "core/table/index_util.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/table.h"
@@ -51,7 +51,7 @@ class DistributedTable: public boost::noncopyable {
     typedef std::pair<int, int> IndexType;
 
     // For giving private access to the distributed tree builder class.
-    friend class core::parallel::DistributedTreeBuilder<DistributedTableType>;
+    friend class core::parallel::SampleDistributedTreeBuilder<DistributedTableType>;
 
   public:
     class TreeIterator {
@@ -349,7 +349,8 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
-      core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
+      core::parallel::SampleDistributedTreeBuilder <
+      DistributedTableType > builder;
       builder.Init(*this, sample_probability_in);
       builder.Build(world, metric_in, leaf_size);
     }
