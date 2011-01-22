@@ -18,6 +18,13 @@ template<typename TableType>
 double MixedLogitDCM<TableType>::GradientError_(
   const SamplingType &sample) const {
 
+  // The temporary vector for extracting choice probability and its
+  // gradient. Careful aliasing is done here.
+  arma::vec tmp_vector;
+  tmp_vector.set_size(table_->num_parameters() + 1);
+  arma::vec tmp_choice_probability_gradient(
+    tmp_vector.memptr() + 1, table_->num_parameters(), false);
+
   // The gradient error to be computed.
   double gradient_error = 0;
 
@@ -28,22 +35,39 @@ double MixedLogitDCM<TableType>::GradientError_(
     // Get the person index.
     int person_index = table_->shuffled_indices_for_person(i);
 
-    // Get the simulated choice probability gradient for the given
-    // person.
+    // Get the simulated choice probability and the simulated choice
+    // probability gradient for the given/ person.
+    double simulated_choice_probability =
+      table_->simulated_choice_probability(person_index);
     arma::vec simulated_choice_probability_gradient;
     table_->simulated_choice_probability_gradient(
       person_index, &simulated_choice_probability_gradient);
 
     // First form the $\Delta h_ii vector.
     arma::vec delta_hii;
-    delta_hii.set_size(simulated_choice_probability_gradient.n_elem);
+    delta_hii.set_size(simulated_choice_probability_gradient.n_elem + 1);
+    delta_hii[0] = -2.0 / core::math::Pow<3, 1>(simulated_choice_probability) *
+                   arma::dot(
+                     simulated_choice_probability_gradient,
+                     simulated_choice_probability_gradient);
+    delta_hii.submat(1, delta_hii.n_elem - 1, 0, 0) =
+      2.0 / core::math::Sqr(simulated_choice_probability) *
+      simulated_choice_probability_gradient;
 
-    // Loop through each sample.
+    // The integration samples for the given person.
     const std::vector< arma::vec > &integration_samples =
       table_->integration_samples(person_index);
+    double normalization_factor =
+      1.0 / static_cast<double>(
+        integration_samples.size() * (integration_samples.size() - 1));
+
+    // Loop through each integration sample.
     for(unsigned int j = 0; j < integration_samples.size(); j++) {
       const arma::vec &integration_sample = integration_samples[j];
-
+      double choice_probability =
+        table_->choice_probability(person_index, integration_sample);
+      table_->choice_probability_gradient(
+        person_index, &tmp_choice_probability_gradient);
     }
   }
 

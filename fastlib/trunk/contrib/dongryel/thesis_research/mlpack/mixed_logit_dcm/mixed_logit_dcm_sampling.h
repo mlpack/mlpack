@@ -12,6 +12,9 @@
 
 namespace mlpack {
 namespace mixed_logit_dcm {
+
+/** @brief The sampling class for mixed logit discrete choice model.
+ */
 template<typename DCMTableType>
 class MixedLogitDCMSampling {
   private:
@@ -77,7 +80,7 @@ class MixedLogitDCMSampling {
      *         choices given the vector $\beta$. This is $P_{i,j}$ in
      *         a long vector form.
      */
-    void ComputeChoiceProbabilities_(
+    void choice_probabilities_(
       int person_index, const arma::vec &beta_vector,
       arma::vec *choice_probabilities) {
 
@@ -124,7 +127,7 @@ class MixedLogitDCMSampling {
 
       // Given the parameter vector, compute the choice probabilities.
       arma::vec choice_probabilities;
-      ComputeChoiceProbabilities_(
+      this->choice_probabilities_(
         person_index, beta_vector, &choice_probabilities);
 
       // Given the beta vector, compute the products between the
@@ -165,6 +168,9 @@ class MixedLogitDCMSampling {
         hessian_second_part);
     }
 
+    /** @brief Draw an additional number of necessary samples so that
+     *         each person has samples up to its quota.
+     */
     void BuildSamples_() {
 
       // The drawn beta for building the samples.
@@ -188,6 +194,30 @@ class MixedLogitDCMSampling {
     }
 
   public:
+
+    /** @brief Computes the choice probability gradient for the given
+     *         person for his/her discrete choice for a given
+     *         realization of $\beta$.
+     */
+    void choice_probability_gradient(
+      int person_index, const arma::vec &beta_vector,
+      arma::vec *choice_probability_gradient) const {
+
+
+    }
+
+    /** @brief Computes the choice probability for the given person
+     *         for his/her discrete choice for a given realization of
+     *         $\beta$.
+     */
+    double choice_probability(
+      int person_index, const arma::vec &beta_vector) const {
+      arma::vec choice_probabilities;
+      this->choice_probabilities_(
+        person_index, beta_vector, &choice_probabilities);
+      return choice_probabilities[
+               dcm_table_->get_discrete_choice_index(person_index)];
+    }
 
     /** @brief Returns the set of integration samples for a given
      *         person.
@@ -326,6 +356,10 @@ class MixedLogitDCMSampling {
       return current_simulated_log_likelihood;
     }
 
+    /** @brief Initializes a sampling object with an initial number of
+     *         people, each with a pre-specified number of initial
+     *         samples.
+     */
     void Init(
       DCMTableType *dcm_table_in,
       int num_active_people_in,
@@ -387,6 +421,10 @@ class MixedLogitDCMSampling {
       BuildSamples_();
     }
 
+    /** @brief Add an additional number of people to the outer term,
+     *         each starting with an initial number of integral
+     *         samples.
+     */
     void AddActivePeople(
       int num_additional_people, int initial_num_integration_samples_in) {
 
