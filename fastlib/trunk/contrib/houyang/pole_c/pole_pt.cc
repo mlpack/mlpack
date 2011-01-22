@@ -43,6 +43,10 @@ int main(int argc, char *argv[]) {
     cout << "Using Online Exponentiated Descent (OEG)..." << endl;
     Oeg(l1);
   }
+  else if (global.opt_method == "wm") {
+    cout << "Using Online Weighted Majority (WM)..." << endl;
+    Wm(l1);
+  }
   else if (global.opt_method == "d_sgd") {
     cout << "Using Delayed Stochastic subGradient Descent ..." << endl;
     //train_delayed_sgd(l1);

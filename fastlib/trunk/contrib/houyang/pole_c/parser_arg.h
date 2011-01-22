@@ -23,15 +23,17 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("loss_function,l", boost_po::value<string>()->default_value("hinge"), 
                        "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
     ("bias", "Add a bias term to examples")
+    ("experts,p", boost_po::value<size_t>(&learner.num_experts)->default_value(1), "Number of experts. Default: 1")
     ("comm", boost_po::value<int>(&global.comm_method)->default_value(1), "How agents communicate with each other. Default: 1(full connected)")
     ("mini_batch,b", boost_po::value<int>(&global.mb_size)->default_value(1), "Size of a mini-batch. Default: 1")
     ("num_port_sources", boost_po::value<size_t>(), "Number of sources for daemon socket input")
-    ("predictions,p", boost_po::value<string>(), "File to output predictions")
     ("port", boost_po::value<size_t>(),"Port to listen on")
     ("par_read", "Read data parallelly with training")
     ("calc_loss", "Calculate total loss")
     ("random", "Randomly permute the input examples")
     ("quiet,q", "Don't output diagnostics");
+
+  //("predictions,p", boost_po::value<string>(), "File to output predictions")
 
   global.final_prediction_sink = -1;
   global.raw_prediction = -1;
@@ -120,12 +122,19 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     global.comm_method = vm["comm"].as<int>();
   }
 
+  if (vm.count("experts")) {
+    learner.num_experts = vm["experts"].as<size_t>();
+  }
+  if (learner.num_experts <= 0)
+    learner.num_experts = 1;
+
   if (vm.count("mini_batch")) {
     global.mb_size = vm["mini_batch"].as<int>();
   }
   if (global.mb_size <= 0)
     global.mb_size = 1;
 
+  /*
   if (vm.count("predictions")) {
     if (!global.quiet)
       cerr << "predictions = " <<  vm["predictions"].as<string>() << endl;
@@ -138,6 +147,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
 	cerr << "Error opening the predictions file: " << fstr << endl;
     }
   }
+  */
 
   if (vm.count("type")) {
     learner.type = vm["type"].as<string>();

@@ -3,10 +3,7 @@
 #ifndef SPARSELA_H
 #define SPARSELA_H
 
-//#include <cmath>
 #include "example.h"
-
-//using namespace std;
 
 /**
  * Sparse vector scaling: v <= scale * v
