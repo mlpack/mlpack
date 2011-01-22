@@ -131,11 +131,11 @@ class TestTree {
                reordered_table.get_tree(), reordered_table);
     }
 };
-};
-};
+}
+}
 
-BOOST_AUTO_TEST_SUITE(TestSuiteKde)
-BOOST_AUTO_TEST_CASE(TestCaseKde) {
+BOOST_AUTO_TEST_SUITE(TestSuiteTree)
+BOOST_AUTO_TEST_CASE(TestCaseTree) {
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
