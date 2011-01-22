@@ -43,6 +43,17 @@ class HrectBound {
 
   public:
 
+    /** @brief The assignment operator that copies.
+     */
+    void operator=(const HrectBound &bound_in) {
+      bounds_ = new core::math::Range[bound_in.dim()];
+      dim_ = bound_in.dim();
+      for(int i = 0; i < dim_; i++) {
+        bounds_[i].lo = bound_in.get(i).lo;
+        bounds_[i].hi = bound_in.get(i).hi;
+      }
+    }
+
     /** @brief Serialize the bounding box.
      */
     template<class Archive>

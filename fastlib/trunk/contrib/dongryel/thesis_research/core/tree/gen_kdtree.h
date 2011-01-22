@@ -8,8 +8,38 @@
 #ifndef CORE_TREE_GEN_KDTREE_H
 #define CORE_TREE_GEN_KDTREE_H
 
+#include <boost/mpi.hpp>
 #include "core/tree/general_spacetree.h"
 #include "core/tree/hrect_bound.h"
+
+namespace core {
+namespace parallel {
+class HrectBoundCombine:
+  public std::binary_function <
+    core::tree::HrectBound, core::tree::HrectBound, core::tree::HrectBound > {
+  public:
+    const core::tree::HrectBound operator()(
+      const core::tree::HrectBound &a, const core::tree::HrectBound &b) const {
+      core::tree::HrectBound combined_box;
+      combined_box.Init(a.dim());
+      combined_box |= a;
+      combined_box |= b;
+      return combined_box;
+    }
+};
+}
+}
+
+namespace boost {
+namespace mpi {
+template<>
+class is_commutative <
+  core::parallel::HrectBoundCombine, core::tree::HrectBound > :
+  public boost::mpl::true_ {
+
+};
+}
+}
 
 namespace core {
 namespace tree {
@@ -48,6 +78,27 @@ class GenKdTree {
         matrix.MakeColumnVector(i, &col);
         *bounds |= col;
       }
+    }
+
+    /** @brief The parallel MPI version of finding the bound for which
+     *         the reduction is done over a MPI communicator.
+     */
+    template<typename MetricType>
+    static void FindBoundFromMatrix(
+      boost::mpi::communicator &comm,
+      const MetricType &metric_in,
+      const core::table::DenseMatrix &matrix,
+      BoundType *combined_bound) {
+
+      // Each MPI process finds a local bound.
+      BoundType local_bound;
+      FindBoundFromMatrix(
+        metric_in, matrix, 0, matrix.n_cols(), &local_bound);
+
+      // Call reduction.
+      boost::mpi::all_reduce(
+        comm, local_bound, *combined_bound,
+        core::parallel::HrectBoundCombine());
     }
 
     template<typename MetricType>

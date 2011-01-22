@@ -69,6 +69,8 @@ class GenMetricTree {
       MakeLeafNode(metric_in, matrix, first, count, bounds);
     }
 
+    /** @brief Makes a leaf node in the metric tree.
+     */
     template<typename MetricType>
     static void MakeLeafNode(
       const MetricType &metric_in,
