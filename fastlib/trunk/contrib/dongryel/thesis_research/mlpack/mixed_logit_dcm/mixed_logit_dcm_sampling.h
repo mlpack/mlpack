@@ -26,11 +26,12 @@ class MixedLogitDCMSampling {
     std::vector< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
 
-    /** @brief The gradient of the simulated log likelihood per person.
+    /** @brief The gradient of the simulated choice probability per
+     *         person.
      */
     std::vector <
     core::monte_carlo::MeanVariancePairVector >
-    simulated_loglikelihood_gradients_;
+    simulated_choice_probability_gradients_;
 
     /** @brief The Hessian of the simulated log likelihood per
      *         person. Each is composed of a pair, the first of which
@@ -148,7 +149,7 @@ class MixedLogitDCMSampling {
       // choice probabilty scaled gradient product.
       beta_gradient_product = choice_probabilities[discrete_choice_index] *
                               beta_gradient_product;
-      simulated_loglikelihood_gradients_[person_index].push_back(
+      simulated_choice_probability_gradients_[person_index].push_back(
         beta_gradient_product);
 
       // Update the Hessian of the simulated loglikelihood for the
@@ -201,6 +202,15 @@ class MixedLogitDCMSampling {
      */
     double simulated_choice_probability(int person_index) const {
       return simulated_choice_probabilities_[person_index].sample_mean();
+    }
+
+    /** @brief Returns the gradient of the simulated choice
+     *         probability for the given person.
+     */
+    void simulated_choice_probability_gradient(
+      int person_index, arma::vec *gradient_out) const {
+      simulated_choice_probability_gradient_[
+        person_index].sample_means(gradient_out);
     }
 
     /** @brief Returns the Hessian of the current simulated log
@@ -277,10 +287,9 @@ class MixedLogitDCMSampling {
           1.0 / simulated_choice_probability;
 
         // Get the gradient for the person.
-        const core::monte_carlo::MeanVariancePairVector &gradient =
-          this->simulated_loglikelihood_gradient(person_index);
         arma::vec gradient_vector;
-        gradient.sample_means(&gradient_vector);
+        this->simulated_choice_probability_gradient(
+          person_index, &gradient_vector);
 
         // Add the inverse probability weighted gradient vector for
         // the current person to the total tally.
@@ -338,17 +347,17 @@ class MixedLogitDCMSampling {
       // probabilities per person.
       simulated_choice_probabilities_.resize(dcm_table_->num_people());
 
-      // This vector maintains the gradients of the simulated
-      // loglikelihood per person per discrete choice.
-      simulated_loglikelihood_gradients_.resize(dcm_table_->num_people());
-      for(unsigned int i = 0; i < simulated_loglikelihood_gradients_.size();
-          i++) {
-        simulated_loglikelihood_gradients_[i].Init(
+      // This vector maintains the gradients of the simulated choice
+      // probability per person.
+      simulated_choice_probability_gradients_.resize(dcm_table_->num_people());
+      for(unsigned int i = 0;
+          i < simulated_choice_probability_gradients_.size(); i++) {
+        simulated_choice_probability_gradients_[i].Init(
           dcm_table_->num_parameters());
       }
 
       // This vector maintains the Hessians of the simulated
-      // loglikelihood per person per discrete choice.
+      // loglikelihood per person.
       simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
       for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
           i++) {

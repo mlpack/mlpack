@@ -26,11 +26,23 @@ double MixedLogitDCM<TableType>::GradientError_(
   for(int i = 0; i < table_->num_people(); i++) {
 
     // Get the person index.
-    int person_index = table_.shuffled_indices_for_person(i);
+    int person_index = table_->shuffled_indices_for_person(i);
+
+    // Get the simulated choice probability gradient for the given
+    // person.
+
+
+    // First form the $\Delta h_ii vector.
+    arma::vec delta_hii;
+    delta_hii.set_size();
 
     // Loop through each sample.
     const std::vector< arma::vec > &integration_samples =
       table_->integration_samples(person_index);
+    for(unsigned int j = 0; j < integration_samples.size(); j++) {
+      const arma::vec &integration_sample = integration_samples[j];
+
+    }
   }
 
   // Compute the second part of the gradient error.

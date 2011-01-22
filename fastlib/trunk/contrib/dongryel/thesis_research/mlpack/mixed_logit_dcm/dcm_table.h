@@ -17,13 +17,17 @@
 
 namespace mlpack {
 namespace mixed_logit_dcm {
+
+/** @brief A table that basically maintains the discrete choice for
+ *         each person.
+ */
 template<typename TableType>
 class DCMTable {
   public:
 
     typedef DCMTable<TableType> DCMTableType;
 
-    typedef  mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
+    typedef mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
     DCMTableType > DistributionType;
 
   private:
@@ -56,10 +60,16 @@ class DCMTable {
 
   public:
 
+    /** @brief Returns the distribution from which each $\beta$ is
+     *         sampled.
+     */
     const DistributionType *distribution() const {
       return distribution_;
     }
 
+    /** @brief Returns the real person index for the $pos$-th person
+     *         in the shuffled list.
+     */
     int shuffled_indices_for_person(int pos) const {
       return shuffled_indices_for_person_[pos];
     }
@@ -86,15 +96,21 @@ class DCMTable {
                discrete_choice_set_info_->data().get(1, person_index));
     }
 
+    /** @brief Returns the discrete choice index for the given person.
+     */
     int get_discrete_choice_index(int person_index) const {
       return static_cast<int>(
                discrete_choice_set_info_->data().get(0, person_index));
     }
 
+    /** @brief Returns the total number of people.
+     */
     int num_people() const {
       return static_cast<int>(cumulative_num_discrete_choices_.size());
     }
 
+    /** @brief Initializes the discrete choice model table.
+     */
     template<typename ArgumentType>
     void Init(ArgumentType &argument_in) {
 
@@ -159,7 +175,7 @@ class DCMTable {
       attribute_table_->get(index, attribute_for_discrete_choice_out);
     }
 };
-};
-};
+}
+}
 
 #endif
