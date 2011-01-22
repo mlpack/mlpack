@@ -1,5 +1,7 @@
 /** @file mean_variance_pair_matrix.h
  *
+ *  A mean variance pair class for matrix and vector quanitites.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -12,8 +14,8 @@
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
 
 namespace core {
 namespace monte_carlo {
@@ -152,7 +154,7 @@ class MeanVariancePairMatrix {
       return ptr_[col * n_rows_ + row];
     }
 };
-};
-};
+}
+}
 
 #endif

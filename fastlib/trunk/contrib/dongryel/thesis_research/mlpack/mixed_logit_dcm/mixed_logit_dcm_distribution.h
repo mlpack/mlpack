@@ -231,7 +231,7 @@ class MixedLogitDCMDistribution {
       }
     }
 };
-};
-};
+}
+}
 
 #endif
