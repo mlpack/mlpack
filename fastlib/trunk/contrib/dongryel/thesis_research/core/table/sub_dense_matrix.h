@@ -93,7 +93,7 @@ class SubDenseMatrix {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 };
-};
-};
+}
+}
 
 #endif

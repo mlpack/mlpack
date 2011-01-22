@@ -193,8 +193,8 @@ class TestNbodySimulator {
       return 0;
     };
 };
-};
-};
+}
+}
 
 BOOST_AUTO_TEST_SUITE(TestSuiteNbodySimulator)
 BOOST_AUTO_TEST_CASE(TestCaseNbodySimulator) {

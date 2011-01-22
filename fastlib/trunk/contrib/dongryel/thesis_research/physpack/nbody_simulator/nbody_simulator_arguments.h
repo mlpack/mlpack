@@ -52,7 +52,7 @@ class NbodySimulatorArguments {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

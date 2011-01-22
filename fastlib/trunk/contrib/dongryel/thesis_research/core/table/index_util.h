@@ -1,5 +1,8 @@
 /** @file index_util.h
  *
+ *  A set of utilities for serializing/unserializing indices for
+ *  maintaining the mapping order in shuffled points in a table.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -97,7 +100,7 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

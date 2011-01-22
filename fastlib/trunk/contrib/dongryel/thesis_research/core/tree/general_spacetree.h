@@ -26,6 +26,8 @@ extern core::table::MemoryMappedFile *global_m_file_;
 namespace core {
 namespace tree {
 
+/** @brief The utility to initialize old_from_new indices.
+ */
 template<typename IndexType>
 class IndexInitializer {
   public:
@@ -43,6 +45,9 @@ class IndexInitializer {
       int *new_from_old_out);
 };
 
+/** @brief The template specialization of IndexInitializer for the
+ *         distributed table setting.
+ */
 template<>
 class IndexInitializer< std::pair<int, std::pair<int, int> > > {
   public:
@@ -73,6 +78,9 @@ class IndexInitializer< std::pair<int, std::pair<int, int> > > {
     }
 };
 
+/** @brief The template specialization of IndexInitializer for the
+ *         ordinary table setting.
+ */
 template<>
 class IndexInitializer< int > {
   public:
@@ -524,8 +532,6 @@ class GeneralBinarySpaceTree {
         }
 
         if(left > right) {
-
-          // left == right + 1
           break;
         }
 

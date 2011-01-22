@@ -870,7 +870,7 @@ class NbodySimulatorStatistic: public boost::noncopyable {
       SetZero();
     }
 };
-};
-};
+}
+}
 
 #endif

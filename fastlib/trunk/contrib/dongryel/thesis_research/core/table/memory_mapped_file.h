@@ -1,5 +1,7 @@
 /** @file memory_mapped_file.h
  *
+ *  A declaration of memory mapped file object class.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -84,7 +86,7 @@ class MemoryMappedFile {
                boost::interprocess::anonymous_instance)[num_elements_in]();
     }
 };
-};
-};
+}
+}
 
 #endif

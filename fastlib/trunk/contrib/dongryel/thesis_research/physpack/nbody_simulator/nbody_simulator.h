@@ -81,7 +81,7 @@ class NbodySimulator {
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 };
-};
-};
+}
+}
 
 #endif
