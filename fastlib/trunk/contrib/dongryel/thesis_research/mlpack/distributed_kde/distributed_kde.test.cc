@@ -217,7 +217,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(1000, 1501);
+      int num_points = core::math::RandInt(1000, 2000);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -264,7 +264,7 @@ class TestDistributed_Kde {
       }
 
       // Push in the leaf size.
-      int leaf_size = core::math::RandInt(2, 10);
+      int leaf_size = 27;
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
@@ -287,7 +287,7 @@ class TestDistributed_Kde {
       double max_num_levels_to_serialize;
       double max_num_work_to_dequeue_per_stage;
       if(world.rank() == 0) {
-        max_num_levels_to_serialize = core::math::RandInt(2, 6);
+        max_num_levels_to_serialize = core::math::RandInt(2, 10);
         max_num_work_to_dequeue_per_stage = core::math::RandInt(1, 10);
       }
       boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);

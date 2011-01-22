@@ -130,16 +130,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           core::gnp::DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
-          SubTableType &frontier_reference_subtable =
+          SubTableType *frontier_reference_subtable =
             table_exchange.FindSubTable(
               i, top_frontier.get<1>().first, top_frontier.get<1>().second);
           sub_argument.Init(
-            frontier_reference_subtable.table(),
+            frontier_reference_subtable->table(),
             query_table_->local_table(), problem_->global());
           sub_problem.Init(sub_argument);
           sub_engine.Init(sub_problem);
           sub_engine.set_base_case_flags(
-            frontier_reference_subtable.serialize_points_per_terminal_node());
+            frontier_reference_subtable->serialize_points_per_terminal_node());
           sub_engine.set_query_reference_process_ranks(world_->rank(), i);
           sub_engine.set_query_start_node(
             top_frontier.get<0>());
@@ -155,7 +155,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             std::pair<int, int> new_pair(it->first, it->second);
             if(std::find(
                   receive_requests[i].begin(), receive_requests[i].end(),
-                  new_pair) == receive_requests[i].end()) {
+                  new_pair) == receive_requests[i].end() &&
+                table_exchange.FindSubTable(i, it->first, it->second) == NULL) {
               receive_requests[i].push_back(new_pair);
             }
           }
@@ -185,6 +186,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
       } // end of the if-case.
     } // end of taking care of the computation frontier.
+
   }
   while(true);
 }

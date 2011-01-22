@@ -57,21 +57,22 @@ class TableExchange {
       }
     }
 
-    SubTableType &FindSubTable(int process_id, int begin, int count) {
+    SubTableType *FindSubTable(int process_id, int begin, int count) {
 
       // Naive search, but probably should use a STL map here...
-      for(unsigned int i = 0; i < received_subtables_[process_id].size(); i++) {
+      for(int i = static_cast<int>(received_subtables_[process_id].size()) - 1;
+          i >= 0; i--) {
         if(
           received_subtables_[
             process_id][i].table()->get_tree()->begin() == begin &&
           received_subtables_[
             process_id][i].table()->get_tree()->count() == count) {
-          return received_subtables_[process_id][i];
+          return &(received_subtables_[process_id][i]);
         }
       }
 
       // The code should not get to this point.
-      return received_subtables_[process_id][0];
+      return NULL;
     }
 
     void Init(
