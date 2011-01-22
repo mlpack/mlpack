@@ -16,6 +16,10 @@ template<typename DCMTableType>
 class MixedLogitDCMSampling {
   private:
 
+    /** @brief The storing of each $\beta$ for each person.
+     */
+    std::vector< std::vector<arma::vec> > integration_samples_;
+
     /** @brief The simulated choice probabilities (sample mean
      *         and sample variance information).
      */
@@ -59,6 +63,10 @@ class MixedLogitDCMSampling {
      */
     arma::ivec num_integration_samples_;
 
+    /** @brief The parameters that parametrize the distribution from
+     *         which each $\beta$ vector is drawn from. This is
+     *         $\theta$.
+     */
     arma::vec parameters_;
 
   private:
@@ -109,6 +117,9 @@ class MixedLogitDCMSampling {
      */
     void AddIntegrationSample_(
       int person_index, const arma::vec &beta_vector) {
+
+      // Add the beta vector to the pool.
+      integration_samples_[person_index].push_back(beta_vector);
 
       // Given the parameter vector, compute the choice probabilities.
       arma::vec choice_probabilities;
@@ -166,14 +177,24 @@ class MixedLogitDCMSampling {
         for(int j = simulated_choice_probabilities_[j].num_samples();
             j < num_integration_samples_[person_index]; j++) {
 
-          // Draw a beta from the parameter theta.
+          // Draw a beta from the parameter theta and add it to the
+          // sample pool.
           dcm_table_->distribution()->DrawBeta(parameters_, &random_beta);
           this->AddIntegrationSample_(person_index, random_beta);
+
         } // end of looping each new beta sample.
       } // end of looping over each active person.
     }
 
   public:
+
+    /** @brief Returns the set of integration samples for a given
+     *         person.
+     */
+    const std::vector <
+    arma::vec > &integration_samples(int person_index) const {
+      return integration_samples_[person_index];
+    }
 
     /** @brief Returns the simulated choice probability for the given
      *         person.
@@ -310,6 +331,9 @@ class MixedLogitDCMSampling {
           initial_num_integration_samples_in;
       }
 
+      // This vector maintains each integration sample per person.
+      integration_samples_.resize(dcm_table_->num_people());
+
       // This vector maintains the running simulated choice
       // probabilities per person.
       simulated_choice_probabilities_.resize(dcm_table_->num_people());
@@ -368,26 +392,8 @@ class MixedLogitDCMSampling {
       // Build up additional samples for the new people.
       BuildSamples_();
     }
-
-    const std::vector <
-    core::monte_carlo::MeanVariancePair > &simulated_choice_probabilities() {
-      return simulated_choice_probabilities_;
-    }
-
-    const std::vector <
-    core::monte_carlo::MeanVariancePairVector > &
-    simulated_loglikelihood_gradients() {
-      return simulated_loglikelihood_gradients_;
-    }
-
-    const std::vector <
-    std::pair < core::monte_carlo::MeanVariancePairMatrix,
-        core::monte_carlo::MeanVariancePairVector > > &
-    simulated_loglikelihood_hessians() {
-      return simulated_loglikelihood_hessians_;
-    }
 };
-};
-};
+}
+}
 
 #endif

@@ -1,5 +1,7 @@
 /** @file mixed_logit_dcm_dev.h
  *
+ *  The implementation of mixed logit discrete choice model.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -11,6 +13,44 @@
 
 namespace mlpack {
 namespace mixed_logit_dcm {
+
+template<typename TableType>
+double MixedLogitDCM<TableType>::GradientError_(
+  const SamplingType &sample) const {
+
+  // The gradient error to be computed.
+  double gradient_error = 0;
+
+  // Compute the first part of the gradient error.
+  double first_part = 0;
+  for(int i = 0; i < table_->num_people(); i++) {
+
+    // Get the person index.
+    int person_index = table_.shuffled_indices_for_person(i);
+
+    // Loop through each sample.
+    const std::vector< arma::vec > &integration_samples =
+      table_->integration_samples(person_index);
+  }
+
+  // Compute the second part of the gradient error.
+  double second_part = 0;
+  for(int i = 0; i < table_->num_people(); i++) {
+    for(int k = i + 1; k < table_->num_people(); k++) {
+
+    }
+  }
+  second_part *= 4.0;
+
+  // Add the two errors.
+  gradient_error = first_part + second_part;
+
+  // Divide by the normalization term, which is the total number of
+  // people in the dataset raised to the 4-th power.
+  gradient_error /=
+    static_cast<double>(core::math::Pow<4, 1>(table_->num_people()));
+  return gradient_error;
+}
 
 template<typename TableType>
 double MixedLogitDCM<TableType>::SimulationError_(
@@ -250,7 +290,7 @@ void MixedLogitDCM<TableType>::ParseArguments(
 
   ParseArguments(args, arguments_out);
 }
-};
-};
+}
+}
 
 #endif
