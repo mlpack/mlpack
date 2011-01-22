@@ -367,7 +367,7 @@ int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
     }
     train_exps[old_from_new[ring_index]].in_use = true;
     used_ct ++;
-    l.num_used_exp[tid] ++;
+    l.num_used_exp[tid]  = l.num_used_exp[tid] + 1;
     (*x_p) = train_exps + old_from_new[ring_index];
     pthread_mutex_unlock(&examples_lock);
     return 1;
@@ -376,7 +376,7 @@ int GetImmedExample(EXAMPLE** x_p, size_t tid, learner &l) {
     size_t ring_index = used_ct % parsed_ct;
     train_exps[old_from_new[ring_index]].in_use = true;
     used_ct ++;
-    l.num_used_exp[tid] ++;
+    l.num_used_exp[tid] = l.num_used_exp[tid] + 1;
     (*x_p) = train_exps + old_from_new[ring_index];
     iter_res_ct ++;
     pthread_mutex_unlock(&examples_lock);

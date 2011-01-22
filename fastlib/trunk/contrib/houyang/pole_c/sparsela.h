@@ -28,7 +28,8 @@ void SparseScaleOverwrite(SVEC *v, double scale) {
   }
   else {
     for (i=0; i<v->num_nz_feats; i++) {
-      v->feats[i].wval = v->feats[i].wval * scale;
+      if (v->feats[i].wval != 0.0)
+	v->feats[i].wval = v->feats[i].wval * scale;
     }
   }
 }
@@ -316,9 +317,9 @@ void SparseAddOverwrite(SVEC *w, SVEC *x) {
 }
 
 /**
- * Sparse vector add: w<= p - n
+ * Sparse vector subtraction: w<= p - n
  */
-void SparseMinus(SVEC *w, SVEC *p, SVEC *n) {
+void SparseSubtract(SVEC *w, SVEC *p, SVEC *n) {
   size_t nz_w = 0;
   size_t nz_p = p->num_nz_feats;
   size_t nz_n = n->num_nz_feats;
@@ -419,7 +420,7 @@ void SparseExpMultiplyOverwrite(SVEC *w, SVEC *x) {
       }
       else { // neither w nor x reaches end
 	if (w->feats[ct_w].widx == x->feats[ct_x].widx) {
-	  if (x->feats[ct_x].wval != 0)
+	  if (w->feats[ct_w].wval != 0 && x->feats[ct_x].wval != 0)
 	    w->feats[ct_w].wval = w->feats[ct_w].wval * exp(x->feats[ct_x].wval);
 	  ++ct_w;
 	  ++ct_x;
@@ -463,7 +464,7 @@ void SparseNegExpMultiplyOverwrite(SVEC *w, SVEC *x) {
       }
       else { // neither w nor x reaches end
 	if (w->feats[ct_w].widx == x->feats[ct_x].widx) {
-	  if (x->feats[ct_x].wval != 0)
+	  if (w->feats[ct_w].wval != 0 && x->feats[ct_x].wval != 0)
 	    w->feats[ct_w].wval = w->feats[ct_w].wval / exp(x->feats[ct_x].wval);
 	  ++ct_w;
 	  ++ct_x;

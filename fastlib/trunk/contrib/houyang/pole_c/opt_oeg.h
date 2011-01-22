@@ -12,12 +12,17 @@
 void OegUpdate(SVEC *w_p, SVEC *w_n, double &tin, double &bias_p, double &bias_n, double update, size_t tid) {
   SVEC *exp_sum;
   double eta; // learning rate
+
+  /*
   if (l1.reg == 2) {
     eta= 1.0 / (l1.reg_factor * tin);
   }
   else {
     eta = 1.0 / sqrt(tin);
   }
+  */
+
+  eta = 1.0 / tin;
   
   exp_sum = CreateEmptySvector();
   
@@ -37,26 +42,25 @@ void OegUpdate(SVEC *w_p, SVEC *w_n, double &tin, double &bias_p, double &bias_n
     bias_p = bias_p * exp(eta * update);
     bias_n = bias_n * exp(-eta * update);
   }
-  //cout << tid << ", bias: " << bias << endl;
-  //cout << tin << endl;
 
-  //print_svec(wvec);
-  //print_svec(exp_sum);
   SparseExpMultiplyOverwrite(w_p, exp_sum);
   SparseNegExpMultiplyOverwrite(w_n, exp_sum);
 
   // calc sum_i(w_p_i+w_n_i)
   double w_sum = 0.0;
   for (size_t i=0; i<w_p->num_nz_feats; i++) {
-    w_sum += w_p->feats[i].wval;
+    w_sum = w_sum + w_p->feats[i].wval;
   }
   for (size_t i=0; i<w_n->num_nz_feats; i++) {
-    w_sum += w_n->feats[i].wval;
+    w_sum = w_sum + w_n->feats[i].wval;
   }
+  w_sum = w_sum + bias_p + bias_n;
   if (w_sum > l1.C) {
     // printf("epo:%d,iter:%d, w_sum=%f\n", epo, ct, w_sum);
     SparseScaleOverwrite(w_p, l1.C/w_sum);
     SparseScaleOverwrite(w_n, l1.C/w_sum);
+    bias_p = bias_p * l1.C / w_sum;
+    bias_n = bias_n * l1.C / w_sum;
   }
 
   DestroySvec(exp_sum);
@@ -95,7 +99,7 @@ void *OegThread(void *in_par) {
 	double bias = l1.bias_pool[tid]- l1.bias_n_pool[tid];
 	SVEC *w;
 	w = CreateEmptySvector();
-	SparseMinus(w, l1.w_vec_pool[tid], l1.w_n_vec_pool[tid]);
+	SparseSubtract(w, l1.w_vec_pool[tid], l1.w_n_vec_pool[tid]);
 	pred = LinearPredictBias(w, exs[b], bias);
 
 	if (global.calc_loss) {
@@ -103,6 +107,7 @@ void *OegThread(void *in_par) {
 	  if (l1.type == "classification") {
 	    T_LBL pred_lbl = LinearPredictBiasLabel(w, exs[b], bias);
 	    //cout << "pred: " << pred << ", label: " << (double)exs[b]->label << ", loss: " << l1.loss_func->getLoss(pred, (double)exs[b]->label) << ", update: "<< l1.loss_func->getUpdate(pred,(double)exs[b]->label) << endl;
+	    //print_svec(w);
 	    if (pred_lbl != exs[b]->label) {
 	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
@@ -117,11 +122,11 @@ void *OegThread(void *in_par) {
 
 	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
 	// update message: [y_t x_t]^+_i
-	//SparseScale(l1.msg_pool[tid], update, ex);
 	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
-
+	DestroySvec(w);
       }
       SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
+
       // dummy gradient calc time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
 

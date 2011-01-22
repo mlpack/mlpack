@@ -4,10 +4,11 @@
  * Build: g++ -lboost_program_options -pthread pole_pt.cc -o pole_pt
  * Build: g++ -I/scratch/app/boost/ -L/scratch/app/boost/lib -lboost_program_options -pthread pole_pt.cc -o pole_pt
  * Usage: ./pole_pt -d ../heart_scale -m ogd --random -calc_loss --bias --reg_factor 0.01 -e 30 -t 8
- *        ./pole_pt -d ../ijcnn1 --random -m ogd --calc_loss --bias --comm 1 -c 1 -e 1 -t 1
- *        ./pole_pt -d ../svmguide1 -m ogd --calc_loss --comm 1 -c 1 -t 1 -b 1 --bias -e 3000
  *        ./pole_pt -d ../ijcnn1 -m ogd --calc_loss --comm 1 -c 1 --bias -r 2 --random -e 10 -t 100 -b 1
- *        ./pole_pt -d ../rcv1_train --random -m ogd --type classification -l hinge --calc_loss --bias --comm 1 -c 4 -e 2 -t 1 -b 1
+ *        ./pole_pt -d ../svmguide1 -m ogd --calc_loss --comm 1 -c 0.1 -t 1 -b 1 --bias -e 3000
+ *        ./pole_pt -d ../svmguide1 --random -m oeg --type classification -l hinge --calc_loss --bias --comm 1 -c 1000 -i 5000000 -t 1 -b 1
+ *        ./pole_pt -d ../rcv1_train --random -m ogd --type classification -l hinge --calc_loss --comm 1 -c 1 -e 2 -t 1 -b 1
+ *        ./pole_pt -d ../rcv1_train --random -m oeg --type classification -l hinge --calc_loss --comm 1 -c 100 -i 5000 -t 1 -b 1
  *
  */
 
