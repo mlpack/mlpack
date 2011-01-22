@@ -161,7 +161,7 @@ class AxilrodTeller {
       return numerator / denominator / normalizing_constant_;
     }
 };
-};
-};
+}
+}
 
 #endif

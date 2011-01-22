@@ -47,7 +47,7 @@ class Standardize {
       }
     }
 };
-};
-};
+}
+}
 
 #endif
