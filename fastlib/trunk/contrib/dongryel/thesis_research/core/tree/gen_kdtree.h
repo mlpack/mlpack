@@ -14,6 +14,8 @@
 namespace core {
 namespace tree {
 
+/** @brief The generic midpoint splitting specification for kd-tree.
+ */
 class GenKdTreeMidpointSplitter {
   public:
     template<typename TKdTree>
@@ -24,6 +26,8 @@ class GenKdTreeMidpointSplitter {
     }
 };
 
+/** @brief The specification of the kd-tree.
+ */
 template< typename IncomingStatisticType >
 class GenKdTree {
   public:
@@ -155,7 +159,7 @@ class GenKdTree {
       return false;
     }
 };
-};
-};
+}
+}
 
 #endif

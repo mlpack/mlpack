@@ -20,8 +20,8 @@
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
 
 namespace core {
 namespace tree {
@@ -101,17 +101,27 @@ class IndexInitializer< int > {
     }
 };
 
+/** @brief The general binary space partioning tree.
+ */
 template < class TreeSpecType >
 class GeneralBinarySpaceTree {
   private:
 
+    // For BOOST serialization.
     friend class boost::serialization::access;
 
   public:
+
+    /** @brief The bound type used in the tree.
+     */
     typedef typename TreeSpecType::BoundType BoundType;
 
+    /** @brief The tree type.
+     */
     typedef core::tree::GeneralBinarySpaceTree<TreeSpecType> TreeType;
 
+    /** @brief The statistics type stored in the node.
+     */
     typedef typename TreeSpecType::StatisticType StatisticType;
 
   private:
@@ -153,6 +163,9 @@ class GeneralBinarySpaceTree {
       right_ = NULL;
     }
 
+    /** @brief The assignment oeprator that copies a node without its
+     *         children.
+     */
     void operator=(const GeneralBinarySpaceTree &node) {
       CopyWithoutChildren(node);
     }
@@ -182,6 +195,8 @@ class GeneralBinarySpaceTree {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief The destructor.
+     */
     ~GeneralBinarySpaceTree() {
       if(left_.get() != NULL) {
         if(core::table::global_m_file_) {
@@ -203,6 +218,8 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief The default constructor.
+     */
     GeneralBinarySpaceTree() {
       left_ = NULL;
       right_ = NULL;
@@ -210,13 +227,15 @@ class GeneralBinarySpaceTree {
       count_ = -1;
     }
 
+    /** @brief Initializes the node with the beginning index and the
+     *         count of the points inside.
+     */
     void Init(int begin_in, int count_in) {
       begin_ = begin_in;
       count_ = count_in;
     }
 
-    /**
-     * Find a node in this tree by its begin and count.
+    /** @brief Find a node in this tree by its begin and count.
      *
      * Every node is uniquely identified by these two numbers.
      * This is useful for communicating position over the network,
@@ -243,8 +262,7 @@ class GeneralBinarySpaceTree {
       }
     }
 
-    /**
-     * Find a node in this tree by its begin and count (const).
+    /** @brief Find a node in this tree by its begin and count.
      *
      * Every node is uniquely identified by these two numbers.
      * This is useful for communicating position over the network,
@@ -271,8 +289,8 @@ class GeneralBinarySpaceTree {
       }
     }
 
-    /**
-     * Used only when constructing the tree.
+    /** @brief Sets the child nodes of the node with the given
+     *         children.
      */
     void set_children(
       const core::table::DenseMatrix& data, GeneralBinarySpaceTree *left_in,
@@ -282,77 +300,80 @@ class GeneralBinarySpaceTree {
       right_ = right_in;
     }
 
+    /** @brief Gets the bound.
+     */
     const BoundType &bound() const {
       return bound_;
     }
 
+    /** @brief Gets the bound.
+     */
     BoundType &bound() {
       return bound_;
     }
 
+    /** @brief Returns the statistics.
+     */
     const StatisticType &stat() const {
       return stat_;
     }
 
+    /** @brief Returns the statistics.
+     */
     StatisticType &stat() {
       return stat_;
     }
 
+    /** @brief Returns whether the node is leaf or not.
+     */
     bool is_leaf() const {
       return !left_;
     }
 
-    /**
-     * Gets the left branch of the tree.
+    /** @brief Gets the left branch of the tree.
      */
     const GeneralBinarySpaceTree *left() const {
       return left_.get();
     }
 
+    /** @brief Gets the left branch.
+     */
     GeneralBinarySpaceTree *left() {
       return left_.get();
     }
 
-    /**
-     * Gets the right branch.
+    /** @brief Gets the right branch.
      */
     const GeneralBinarySpaceTree *right() const {
       return right_.get();
     }
 
+    /** @brief Gets the right branch.
+     */
     GeneralBinarySpaceTree *right() {
       return right_.get();
     }
 
-    /**
-     * Gets the index of the begin point of this subset.
+    /** @brief Gets the index of the begin point of this subset.
      */
     int begin() const {
       return begin_;
     }
 
-    int &begin() {
-      return begin_;
-    }
-
-    /**
-     * Gets the index one beyond the last index in the series.
+    /** @brief Gets the index one beyond the last index in the series.
      */
     int end() const {
       return begin_ + count_;
     }
 
-    /**
-     * Gets the number of points in this subset.
+    /** @brief Gets the number of points in this subset.
      */
     int count() const {
       return count_;
     }
 
-    int &count() {
-      return count_;
-    }
-
+    /** @brief Recursively prints the tree underneath.
+     */
     void Print() const {
       if(!is_leaf()) {
         printf("internal node: %d to %d: %d points total\n",
@@ -370,6 +391,8 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief Recursively splits a given node creating its children.
+     */
     template<typename MetricType, typename IndexType>
     static void SplitTree(
       const MetricType &metric_in,
@@ -419,23 +442,11 @@ class GeneralBinarySpaceTree {
       node->set_children(matrix, left, right);
     }
 
-    /**
-     * Creates a tree from data.
+    /** @brief Creates a tree from data.
      *
      * This requires you to pass in two unitialized ArrayLists which
      * will contain index mappings so you can account for the
      * re-ordering of the matrix.
-     *
-     * @param metric_in the metric to be used.
-     * @param matrix data where each column is a point, WHICH WILL BE RE-ORDERED
-     * @param leaf_size the maximum points in a leaf
-     * @param max_num_leaf_nodes the number of maximum leaf nodes this tree
-     *        should have.
-     * @param old_from_new pointer to an unitialized vector; it will map
-     *        new indices to original
-     * @param new_from_old pointer to an unitialized vector; it will map
-     *        original indexes to new indices
-     * @param num_nodes the number of nodes constructed in total.
      */
     template<typename MetricType, typename IndexType>
     static TreeType *MakeTree(
@@ -475,6 +486,11 @@ class GeneralBinarySpaceTree {
       return node;
     }
 
+    /** @brief Reshuffles the matrix such that the left points occupy
+     *         the left contiguous blocks of the matrix and right
+     *         points occupy the right contiguous blocks of the
+     *         matrix.
+     */
     template<typename MetricType, typename IndexType>
     static int MatrixPartition(
       const MetricType &metric_in,
@@ -527,7 +543,7 @@ class GeneralBinarySpaceTree {
       return left_count;
     }
 };
-};
-};
+}
+}
 
 #endif

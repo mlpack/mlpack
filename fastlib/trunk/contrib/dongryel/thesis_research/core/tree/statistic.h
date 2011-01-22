@@ -60,7 +60,7 @@ class AbstractStatistic {
       const core::tree::AbstractStatistic *right_stat) {
     }
 };
-};
-};
+}
+}
 
 #endif

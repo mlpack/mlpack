@@ -9,13 +9,16 @@
 #define CORE_TREE_GEN_METRIC_TREE_H
 
 #include <vector>
-#include "ball_bound.h"
-#include "general_spacetree.h"
+#include "core/tree/ball_bound.h"
+#include "core/tree/general_spacetree.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 
 namespace core {
 namespace tree {
+
+/** @brief The general metric tree specification.
+ */
 template<typename IncomingStatisticType>
 class GenMetricTree {
   public:
@@ -210,7 +213,7 @@ class GenMetricTree {
       return true;
     }
 };
-};
-};
+}
+}
 
 #endif
