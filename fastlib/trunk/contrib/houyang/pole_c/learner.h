@@ -23,6 +23,7 @@ struct learner {
   string loss_name;
   double* total_loss_pool; // a pool of total loss for each thread;
   size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;
+  size_t num_experts; // number of experts for ensemble methods (WM)
 };
 
 double LinearPredict(SVEC *wvec, EXAMPLE *ex) {
