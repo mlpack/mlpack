@@ -137,6 +137,8 @@ class TestDistributed_Kde {
       // Compute the collective L1 norm of the products.
       double achieved_error = 0;
       for(unsigned int j = 0; j < query_results.size(); j++) {
+        int process_index = 0;
+        int point_index = 0;
         FindOriginalIndices_(
           old_from_new, n_entries, j, &process_index, &point_index);
         int naive_index = cumulative_distribution[process_index] + point_index;
