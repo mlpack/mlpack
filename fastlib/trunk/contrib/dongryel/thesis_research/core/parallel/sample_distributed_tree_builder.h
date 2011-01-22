@@ -1,12 +1,13 @@
-/** @file distributed_tree_builder.h
+/** @file sample_distributed_tree_builder.h
  *
- *  The generic template for building a distributed tree.
+ *  The generic template for building a distributed tree using a
+ *  sampling approach.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_PARALLEL_DISTRIBUTED_TREE_BUILDER_H
-#define CORE_PARALLEL_DISTRIBUTED_TREE_BUILDER_H
+#ifndef CORE_PARALLEL_SAMPLE_DISTRIBUTED_TREE_BUILDER_H
+#define CORE_PARALLEL_SAMPLE_DISTRIBUTED_TREE_BUILDER_H
 
 #include <algorithm>
 #include <numeric>
@@ -56,7 +57,7 @@ extern core::table::MemoryMappedFile *global_m_file_;
 namespace core {
 namespace parallel {
 template<typename DistributedTableType>
-class DistributedTreeBuilder {
+class SampleDistributedTreeBuilder {
 
   public:
     typedef typename DistributedTableType::TableType TableType;
@@ -485,7 +486,7 @@ class DistributedTreeBuilder {
 
     /** @brief The default constructor.
      */
-    DistributedTreeBuilder() {
+    SampleDistributedTreeBuilder() {
       distributed_table_ = NULL;
       n_attributes_ = 0;
       sampling_rate_ = 0;
@@ -541,6 +542,8 @@ class DistributedTreeBuilder {
         global_root_bound.get(i) = global_root_bound_vector[i];
       }
 
+      // To-do: to detect convergence without the number of
+      // iterations.
       for(int num_outer_it = 0; num_outer_it < 30; num_outer_it++) {
 
         // Build the initial sample tree.

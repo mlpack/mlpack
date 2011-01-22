@@ -1,8 +1,8 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  distributed_tree_builder.h
   parallel_sample_sort.h
+  sample_distributed_tree_builder.h
   table_exchange.h
 )
 
