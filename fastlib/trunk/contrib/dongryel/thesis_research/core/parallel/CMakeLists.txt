@@ -4,6 +4,7 @@ set(SOURCES
   parallel_sample_sort.h
   sample_distributed_tree_builder.h
   table_exchange.h
+  vanilla_distributed_tree_builder.h
 )
 
 set(DIR_SRCS)
