@@ -15,20 +15,72 @@ namespace mlpack {
 namespace mixed_logit_dcm {
 
 template<typename TableType>
-double MixedLogitDCM<TableType>::GradientError_(
+double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
+  const SamplingType &sample) const {
+
+  // The temporary vector for extracting choice probability and its
+  // gradient for the second error component. Again, careful aliasing
+  // is done here.
+  arma::vec second_tmp_vector;
+  second_tmp_vector.set_size(2 *(table_->num_parameters() + 1));
+  arma::vec second_tmp_choice_probability_gradient_outer(
+    second_tmp_vector.memptr() + 1, table_->num_parameters(), false);
+  arma::vec second_tmp_choice_probability_gradient_inner(
+    second_tmp_vector.memptr() + table_->num_parameters() + 2,
+    table_->num_parameters(), false);
+
+  double second_part = 0;
+  for(int i = 0; i < table_->num_people(); i++) {
+
+    // Get the person index.
+    int person_index = table_->shuffled_indices_for_person(i);
+
+    // Get the simulated choice probability and the simulated choice
+    // probability gradient for the given/ person.
+    double simulated_choice_probability =
+      sample.simulated_choice_probability(person_index);
+    arma::vec simulated_choice_probability_gradient;
+    sample.simulated_choice_probability_gradient(
+      person_index, &simulated_choice_probability_gradient);
+
+    // The integration samples for the given person.
+    const std::vector< arma::vec > &integration_samples =
+      table_->integration_samples(person_index);
+    double normalization_factor =
+      1.0 / static_cast<double>(
+        integration_samples.size() * (integration_samples.size() - 1));
+
+    // Loop through each integration sample.
+    for(unsigned int j = 0; j < integration_samples.size(); j++) {
+      const arma::vec &integration_sample = integration_samples[j];
+      double choice_probability =
+        table_->choice_probability(person_index, integration_sample);
+      table_->choice_probability_gradient(
+        person_index, &first_tmp_choice_probability_gradient);
+
+      // Take the dot product between the two vectors and square it.
+      first_part +=
+        normalization_factor *
+        core::math::Sqr(arma::dot(delta_hii, first_temp_vector));
+    }
+  }
+
+  // Multiply the second part by 4.
+  second_part *= 4.0;
+  return second_part;
+}
+
+template<typename TableType>
+double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
   const SamplingType &sample) const {
 
   // The temporary vector for extracting choice probability and its
   // gradient. Careful aliasing is done here.
-  arma::vec tmp_vector;
-  tmp_vector.set_size(table_->num_parameters() + 1);
-  arma::vec tmp_choice_probability_gradient(
-    tmp_vector.memptr() + 1, table_->num_parameters(), false);
+  arma::vec first_tmp_vector;
+  first_tmp_vector.set_size(table_->num_parameters() + 1);
+  arma::vec first_tmp_choice_probability_gradient(
+    first_tmp_vector.memptr() + 1, table_->num_parameters(), false);
 
-  // The gradient error to be computed.
-  double gradient_error = 0;
-
-  // Compute the first part of the gradient error.
   double first_part = 0;
   for(int i = 0; i < table_->num_people(); i++) {
 
@@ -38,9 +90,9 @@ double MixedLogitDCM<TableType>::GradientError_(
     // Get the simulated choice probability and the simulated choice
     // probability gradient for the given/ person.
     double simulated_choice_probability =
-      table_->simulated_choice_probability(person_index);
+      sample.simulated_choice_probability(person_index);
     arma::vec simulated_choice_probability_gradient;
-    table_->simulated_choice_probability_gradient(
+    sample.simulated_choice_probability_gradient(
       person_index, &simulated_choice_probability_gradient);
 
     // First form the $\Delta h_ii vector.
@@ -67,18 +119,24 @@ double MixedLogitDCM<TableType>::GradientError_(
       double choice_probability =
         table_->choice_probability(person_index, integration_sample);
       table_->choice_probability_gradient(
-        person_index, &tmp_choice_probability_gradient);
+        person_index, &first_tmp_choice_probability_gradient);
+
+      // Take the dot product between the two vectors and square it.
+      first_part +=
+        normalization_factor *
+        core::math::Sqr(arma::dot(delta_hii, first_temp_vector));
     }
   }
+  return first_part;
+}
 
-  // Compute the second part of the gradient error.
-  double second_part = 0;
-  for(int i = 0; i < table_->num_people(); i++) {
-    for(int k = i + 1; k < table_->num_people(); k++) {
+template<typename TableType>
+double MixedLogitDCM<TableType>::GradientError_(
+  const SamplingType &sample) const {
 
-    }
-  }
-  second_part *= 4.0;
+  // Compute the first part of the gradient error.
+  double first_part = GradientErrorFirstPart_(sample);
+  double second_part = GradientErrorSecondPart_(sample);
 
   // Add the two errors.
   gradient_error = first_part + second_part;
