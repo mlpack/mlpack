@@ -11,6 +11,7 @@
 #include <boost/mpi/communicator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "core/math/range.h"
+#include "core/table/sub_table_list.h"
 
 namespace core {
 namespace gnp {
@@ -19,18 +20,52 @@ class DistributedDualtreeDfs {
 
   public:
 
+    /** @brief The table type.
+     */
     typedef typename DistributedProblemType::TableType TableType;
+
+    /** @brief The distributed computation problem.
+     */
     typedef typename DistributedProblemType::ProblemType ProblemType;
+
+    /** @brief The distributed table type.
+     */
     typedef typename DistributedProblemType::DistributedTableType
     DistributedTableType;
+
+    /** @brief The local tree type.
+     */
     typedef typename TableType::TreeType TreeType;
+
+    /** @brief The distributed tree type.
+     */
     typedef typename DistributedTableType::TreeType DistributedTreeType;
+
+    /** @brief The global constant type for the problem.
+     */
     typedef typename DistributedProblemType::GlobalType GlobalType;
+
+    /** @brief The type of the result being outputted.
+     */
     typedef typename DistributedProblemType::ResultType ResultType;
+
+    /** @brief The argument type of the computation.
+     */
     typedef typename DistributedProblemType::ArgumentType ArgumentType;
 
+    /** @brief The type of the object used for prioritizing the
+     *         computation.
+     */
     typedef boost::tuple <
     TreeType *, std::pair<int, int>, double > FrontierObjectType;
+
+    /** @brief The type of the subtable in use.
+     */
+    typedef typename core::table::SubTable<TableType> SubTableType;
+
+    /** @brief The type of the list of subtables in use.
+     */
+    typedef typename core::table::SubTableList<SubTableType> SubTableListType;
 
   private:
 
@@ -62,6 +97,9 @@ class DistributedDualtreeDfs {
 
   private:
 
+    /** @brief The collaborative way of exchanging items among all MPI
+     *         processes for a distributed computation.
+     */
     template<typename MetricType>
     void AllToAllReduce_(
       const MetricType &metric,
@@ -96,23 +134,41 @@ class DistributedDualtreeDfs {
 
   public:
 
+    /** @brief Sets the tweak parameters for the maximum number of
+     *         levels of trees to grab at a time and the maximum
+     *         number of work per stage to dequeue.
+     */
     void set_work_params(
       int max_num_levels_to_serialize_in,
       int max_num_work_to_dequeue_per_stage_in);
 
+    /** @brief The default constructor.
+     */
     DistributedDualtreeDfs();
 
+    /** @brief Returns the associated problem.
+     */
     DistributedProblemType *problem();
 
+    /** @brief Returns the distributed query table.
+     */
     DistributedTableType *query_table();
 
+    /** @brief Returns the distributed reference table.
+     */
     DistributedTableType *reference_table();
 
+    /** @brief Resets the statistics of the query tree.
+     */
     void ResetStatistic();
 
+    /** @brief Initializes the distributed dualtree engine.
+     */
     void Init(
       boost::mpi::communicator *world, DistributedProblemType &problem_in);
 
+    /** @brief Initiates the distributed computation.
+     */
     template<typename MetricType>
     void Compute(
       const MetricType &metric,

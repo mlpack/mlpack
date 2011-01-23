@@ -12,14 +12,12 @@
 #include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <list>
 #include <map>
 #include <queue>
 #include "core/gnp/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
-#include "core/table/sub_table_list.h"
 #include "core/table/memory_mapped_file.h"
 
 namespace core {
@@ -36,10 +34,6 @@ template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
-
-  // The typedef of a sub table in use and its list.
-  typedef core::table::SubTable<TableType> SubTableType;
-  typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   // Start the computation with the self interaction.
   DualtreeDfs<ProblemType> self_engine;
