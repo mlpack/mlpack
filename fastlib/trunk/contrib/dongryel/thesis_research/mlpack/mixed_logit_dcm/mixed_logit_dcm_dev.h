@@ -30,38 +30,86 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
     table_->num_parameters(), false);
 
   double second_part = 0;
+
+  // The outer sum loop.
   for(int i = 0; i < table_->num_people(); i++) {
 
-    // Get the person index.
-    int person_index = table_->shuffled_indices_for_person(i);
+    // Get the outer person index.
+    int outer_person_index = table_->shuffled_indices_for_person(i);
 
     // Get the simulated choice probability and the simulated choice
-    // probability gradient for the given/ person.
-    double simulated_choice_probability =
-      sample.simulated_choice_probability(person_index);
-    arma::vec simulated_choice_probability_gradient;
+    // probability gradient for the given outer person.
+    double outer_simulated_choice_probability =
+      sample.simulated_choice_probability(outer_person_index);
+    arma::vec outer_simulated_choice_probability_gradient;
     sample.simulated_choice_probability_gradient(
-      person_index, &simulated_choice_probability_gradient);
+      outer_person_index, &outer_simulated_choice_probability_gradient);
 
-    // The integration samples for the given person.
+    // The integration samples for the given outer person.
     const std::vector< arma::vec > &integration_samples =
-      table_->integration_samples(person_index);
+      table_->integration_samples(outer_person_index);
     double normalization_factor =
       1.0 / static_cast<double>(
         integration_samples.size() * (integration_samples.size() - 1));
 
-    // Loop through each integration sample.
-    for(unsigned int j = 0; j < integration_samples.size(); j++) {
-      const arma::vec &integration_sample = integration_samples[j];
-      double choice_probability =
-        table_->choice_probability(person_index, integration_sample);
-      table_->choice_probability_gradient(
-        person_index, &first_tmp_choice_probability_gradient);
+    // The inner sum loop.
+    for(unsigned int k = i + 1; k < table_->num_people(); k++) {
 
-      // Take the dot product between the two vectors and square it.
-      first_part +=
-        normalization_factor *
-        core::math::Sqr(arma::dot(delta_hii, first_temp_vector));
+      // Get the inner person index.
+      int inner_person_index = table_->shuffled_indices_for_person(k);
+
+      // Get the simulated choice probability and the simulated choice
+      // probability gradient for the given inner person.
+      double inner_simulated_choice_probability =
+        sample.simulated_choice_probability(inner_person_index);
+      arma::vec inner_simulated_choice_probability_gradient;
+      sample.simulated_choice_probability_gradient(
+        inner_person_index, &inner_simulated_choice_probability_gradient);
+
+      // Compute delta_hik (Equation 2.3).
+      arma::vec delta_hik;
+      delta_hik.set_size(2 *(table_->num_parameters() + 1));
+      double first_factor =
+        -1.0 / (
+          core::math::Sqr(outer_simulated_choice_probability) *
+          inner_simulated_choice_probability);
+      double second_factor =
+        1.0 / (
+          outer_simulated_choice_probability *
+          inner_simulated_choice_probability);
+      double third_factor =
+        -1.0 / (
+          core::math::Sqr(inner_simulated_choice_probability) *
+          outer_simulated_choice_probability);
+      double dot_product =
+        arma::dot(
+          outer_simulated_choice_probability_gradient,
+          inner_simulated_choice_probability_gradient);
+      delta_hik[0] = first_factor * dot_product;
+      delta_hik.submat(1, table_->num_parameters(), 0, 0) =
+        second_factor * outer_simulated_choice_probability_gradient;
+      delta_hik[table_->num_parameters() + 1] = third_factor * dot_product;
+      delta_hik.submat(
+        table_->num_parameters() + 2, table_->num_parameters(), 0, 0) =
+          second_factor * inner_simulated_choice_probability_gradient;
+
+      // Loop through each integration sample.
+      for(unsigned int j = 0; j < integration_samples.size(); j++) {
+        const arma::vec &integration_sample = integration_samples[j];
+        second_tmp_vector[0] =
+          table_->choice_probability(outer_person_index, integration_sample);
+        table_->choice_probability_gradient(
+          outer_person_index, &second_tmp_choice_probability_gradient_outer);
+        second_tmp_vector[ table_->num_parameters() + 1] =
+          table_->choice_probability(inner_person_index, integration_sample);
+        table_->choice_probability_gradient(
+          inner_person_index, &second_tmp_choice_probability_gradient_inner);
+
+        // Take the dot product between the two vectors and square it.
+        second_part +=
+          normalization_factor *
+          core::math::Sqr(arma::dot(delta_hik, second_tmp_vector));
+      }
     }
   }
 
@@ -116,7 +164,7 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
     // Loop through each integration sample.
     for(unsigned int j = 0; j < integration_samples.size(); j++) {
       const arma::vec &integration_sample = integration_samples[j];
-      double choice_probability =
+      first_tmp_vector[0] =
         table_->choice_probability(person_index, integration_sample);
       table_->choice_probability_gradient(
         person_index, &first_tmp_choice_probability_gradient);
@@ -124,7 +172,7 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
       // Take the dot product between the two vectors and square it.
       first_part +=
         normalization_factor *
-        core::math::Sqr(arma::dot(delta_hii, first_temp_vector));
+        core::math::Sqr(arma::dot(delta_hii, first_tmp_vector));
     }
   }
   return first_part;
@@ -139,7 +187,7 @@ double MixedLogitDCM<TableType>::GradientError_(
   double second_part = GradientErrorSecondPart_(sample);
 
   // Add the two errors.
-  gradient_error = first_part + second_part;
+  double gradient_error = first_part + second_part;
 
   // Divide by the normalization term, which is the total number of
   // people in the dataset raised to the 4-th power.
