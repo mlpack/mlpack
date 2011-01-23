@@ -23,7 +23,9 @@
 #include <iomanip>
 #include <fstream>
 #include <boost/program_options.hpp>
+#include <boost/date_time/posix_time/posix_time.hpp>
 using namespace std;
+using namespace boost::posix_time;
 
 boost::program_options::options_description desc("Allowed options");
 boost::program_options::variables_map vm;
@@ -70,15 +72,21 @@ void readObjectFile(const string& filename)
   cout << "length = " << length << " "
        << "total = " << length / sizeof(ObjectRecord) << "\n";
 
-  const int BUF_SIZE = 40000;
+  const long BUF_SIZE = 200*(1 << 10);
   ObjectRecord obj[BUF_SIZE];
   long long total = 0;
+
+  ptime time_start(microsec_clock::local_time());
   while (ifs.good())
   {
     ifs.read((char*) &obj, sizeof(obj));
     long long count = ifs.gcount() / sizeof(ObjectRecord);
     total += count;
-    cout << count << " " << total << "\n";
+
+    ptime time_end(microsec_clock::local_time());
+    time_duration duration(time_end - time_start);
+    cout << count << " " << total
+         << " average = " <<  duration * (1<<20) / total << "\n";
 //    for (int i = 0; i < count; i++)
 //      cout << setw(12) << obj[i].id
 //           << setw(20) << obj[i].ra
