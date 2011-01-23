@@ -11,6 +11,7 @@
 #include <boost/mpi/communicator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "core/math/range.h"
+#include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
 
 namespace core {
@@ -61,11 +62,11 @@ class DistributedDualtreeDfs {
 
     /** @brief The type of the subtable in use.
      */
-    typedef typename core::table::SubTable<TableType> SubTableType;
+    typedef core::table::SubTable<TableType> SubTableType;
 
     /** @brief The type of the list of subtables in use.
      */
-    typedef typename core::table::SubTableList<SubTableType> SubTableListType;
+    typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   private:
 

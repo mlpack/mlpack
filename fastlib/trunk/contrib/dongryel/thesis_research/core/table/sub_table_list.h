@@ -11,6 +11,7 @@
 
 #include <boost/serialization/serialization.hpp>
 #include <vector>
+#include "core/table/dense_matrix.h"
 
 namespace core {
 namespace table {
