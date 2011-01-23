@@ -24,10 +24,17 @@ namespace mixed_logit_dcm {
 template<typename IncomingTableType>
 class MixedLogitDCM {
   public:
+
+    /** @brief The table type being used in the algorithm.
+     */
     typedef IncomingTableType TableType;
 
+    /** @brief The discrete choice model table type.
+     */
     typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
 
+    /** @brief The sample type.
+     */
     typedef
     mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> SamplingType;
 
@@ -49,24 +56,46 @@ class MixedLogitDCM {
      */
     double GradientError_(const SamplingType &sample) const;
 
+    /** @brief Computes the first part of the gradient error (Section
+     *         3.3).
+     */
+    double GradientErrorFirstPart_(const SamplingType &sample) const;
+
+    /** @brief Computes the second part of the gradient error (Section
+     *         3.3).
+     */
+    double GradientErrorSecondPart_(const SamplingType &sample) const;
+
   public:
 
+    /** @brief Returns the table holding the discrete choice model
+     *         information.
+     */
     TableType *attribute_table();
 
+    /** @brief Initializes the mixed logit discrete choice model
+     *         object with a set of arguments.
+     */
     void Init(
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
       TableType > &arguments_in);
 
+    /** @brief Computes the result.
+     */
     void Compute(
       const mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
       TableType > &arguments_in,
       mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out);
 
+    /** @brief Parse the arguments.
+     */
     static void ParseArguments(
       const std::vector<std::string> &args,
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
       TableType > *arguments_out);
 
+    /** @brief Parse the arguments.
+     */
     static void ParseArguments(
       int argc,
       char *argv[],
@@ -82,6 +111,8 @@ class MixedLogitDCM {
 
   private:
 
+    /** @brief Construct variable map for the algorithm.
+     */
     static bool ConstructBoostVariableMap_(
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
