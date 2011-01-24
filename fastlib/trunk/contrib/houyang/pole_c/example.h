@@ -31,9 +31,9 @@ typedef struct svec {
 typedef struct example {
   // for a general sparse vector
   FEATURE *feats;
-  T_LBL label;
   char *userdefined;
   size_t num_nz_feats; // Number of nonzero features.
+  T_LBL label;
   // for parallel computing
   bool in_use;
   //size_t threads_to_finish;

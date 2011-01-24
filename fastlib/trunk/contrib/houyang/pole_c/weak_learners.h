@@ -1,0 +1,130 @@
+#ifndef WEAKLEARNERS_H_
+#define WEAKLEARNERS_H_
+
+class WeakLearners {
+
+public:
+  // train a weak classifier
+  virtual void WeakTrain(EXAMPLE *exs, size_t n_exs, double *weights) {
+    return;
+  };
+  
+  // prediction using weak learner
+  virtual T_LBL WeakPredictLabel(EXAMPLE *ex) = 0;
+
+  // Returns the name of weak learner
+  virtual string GetName() const {
+    return "";
+  }
+  
+  virtual ~WeakLearners() {};
+};
+
+
+class decisionstump : public WeakLearners {
+ private:
+  size_t n_iter;
+  size_t sd; // splitting dimension
+  float thd; // threshold for decision
+  T_LBL gl; // label for > thd
+ public:
+  decisionstump(size_t split_dim, size_t num_iter) {  
+    sd = split_dim;
+    n_iter = num_iter;
+  }
+  
+  void WeakTrain(EXAMPLE *exs, size_t n_exs, double *weights) {
+    vector<float> dval (n_exs, 0.0);
+    float max_dval, min_dval, intv, thd_test;
+    size_t ct_g_pos, ct_g_neg, ct_l_pos, ct_l_neg;
+    size_t ct_err, ct_err_new;
+    T_LBL gl_new;
+    EXAMPLE *ex = exs;
+    for (size_t x=0; x<n_exs; x++) {
+      ex = exs + x;
+      for (size_t f=0; f<ex->num_nz_feats; f++) {
+	if (ex->feats[f].widx == sd) {
+	  dval[x] = ex->feats[f].wval;
+	  break;
+	}
+	//else if (ex->feats[f].widx > sd)
+	//  break;
+      }
+    }
+    max_dval = *max_element(dval.begin(), dval.end());
+    min_dval = *min_element(dval.begin(), dval.end());
+    //cout << "sd: " << sd << "; max: " << max_dval << ", min: " << min_dval << endl;
+    intv = (max_dval - min_dval) / n_iter;
+    thd_test = min_dval;
+    thd = min_dval;
+    gl = 1;
+    ct_err = n_exs;
+    for (size_t i=0; i<n_iter; i++) {
+      thd_test += intv;
+      ct_g_pos = 0; ct_g_neg = 0; ct_l_pos = 0; ct_l_neg = 0;
+      for (size_t x=0; x<n_exs; x++) {
+	ex = exs + x;
+	if (dval[x] > thd) {
+	  if (ex->label==1)
+	    ct_g_pos ++;
+	  else
+	    ct_g_neg ++;
+	}
+	else{
+	  if (ex->label==1)
+	    ct_l_pos ++;
+	  else
+	    ct_l_neg ++;
+	}
+      }
+      if ( (ct_g_pos + ct_l_neg) > (ct_l_pos + ct_g_neg) ) {
+	ct_err_new = ct_l_pos + ct_g_neg;
+	gl_new = 1;
+      }
+      else {
+	ct_err_new = ct_g_pos + ct_l_neg;
+	gl_new = -1;
+      }
+      // better threshold found
+      if (ct_err_new < ct_err) {
+	thd = thd_test;
+	gl = gl_new;
+	ct_err = ct_err_new;
+      }
+    }
+    //cout << "thd: " << thd << ", gl: " << gl << ", ct_err:" << ct_err << endl;
+    return;
+  }
+  
+  T_LBL WeakPredictLabel(EXAMPLE *ex) {
+    double val = 0.0;
+    for (size_t f=0; f<ex->num_nz_feats; f++) {
+      if (ex->feats[f].widx == sd) {
+	val = ex->feats[f].wval;
+	break;
+      }
+    }
+    if (val >= thd)
+      return (T_LBL)gl;
+    else
+      return (T_LBL)-gl;
+  }
+
+  string GetName() const {
+    return "stump";
+  }
+};
+
+
+WeakLearners* GetWeakLearner(string weak_learner_name, size_t split_dim, size_t num_iter) {
+  if(weak_learner_name.compare("stump") == 0) {
+    return new decisionstump(split_dim, num_iter);
+  }
+  else {
+    cout << "Invalid weak learner name: " << weak_learner_name << ". Bailing!" << endl;
+    exit(1);
+  }
+}
+
+#endif
+

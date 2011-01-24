@@ -1,7 +1,7 @@
 #ifndef LOSSFUNCTIONS_H_
 #define LOSSFUNCTIONS_H_
 
-class loss_function {
+class LossFunctions {
 
 public:
   // Returns the loss value
@@ -15,11 +15,11 @@ public:
     return "";
   }
   
-  virtual ~loss_function() {};
+  virtual ~LossFunctions() {};
 };
 
 
-class squaredloss : public loss_function {
+class squaredloss : public LossFunctions {
  public:
   squaredloss() {  
     // construction
@@ -39,7 +39,7 @@ class squaredloss : public loss_function {
   }
 };
 
-class hingeloss : public loss_function {
+class hingeloss : public LossFunctions {
  public:
   hingeloss() {
     // construction
@@ -62,7 +62,7 @@ class hingeloss : public loss_function {
   }
 };
 
-class squaredhingeloss : public loss_function {
+class squaredhingeloss : public LossFunctions {
  public:
   squaredhingeloss() {
     // construction
@@ -83,7 +83,7 @@ class squaredhingeloss : public loss_function {
   }
 };
 
-class logloss : public loss_function {
+class logloss : public LossFunctions {
  public:
   logloss() {
     // construction
@@ -103,7 +103,7 @@ class logloss : public loss_function {
   }
 };
 
-class quantileloss : public loss_function {
+class quantileloss : public LossFunctions {
  public:
   quantileloss(double &tau_) : tau(tau_) {
     // construction
@@ -137,7 +137,7 @@ class quantileloss : public loss_function {
 };
 
 
-loss_function* getLossFunction(string funcName, double funcPara) {
+LossFunctions* getLossFunction(string funcName, double funcPara) {
   if(funcName.compare("squared") == 0) {
     return new squaredloss();
   }
@@ -157,7 +157,6 @@ loss_function* getLossFunction(string funcName, double funcPara) {
     cout << "Invalid loss function name: " << funcName << ". Bailing!" << endl;
     exit(1);
   }
-  cout << "end getLossFunction" << endl;
 }
 
 #endif
