@@ -137,9 +137,9 @@ success_t viterbi_gaussian() {
   }
 
   for (int i = 0; i < seqs.size(); i++) {
-    Vector states;
+    arma::vec states;
     char s[100];
-    hmm.ComputeViterbiStateSequence(seqs[i], &states);
+    hmm.ComputeViterbiStateSequence(seqs[i], states);
     
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
