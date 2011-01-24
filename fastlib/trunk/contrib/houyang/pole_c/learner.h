@@ -2,6 +2,7 @@
 #define LEARNER_H
 
 #include "loss_functions.h"
+#include "weak_learners.h"
 #include "sparsela.h"
 
 struct learner {
@@ -13,7 +14,6 @@ struct learner {
   double* t_pool; // time t for SGD
   double* scale_pool; // scales for SGD
   size_t* num_used_exp; // count the number of examples used by a thread
-  loss_function *loss_func;
   int reg; // Which regularization term to use; 1:L1, 2:squared L2(default), -1: no regularization
   double reg_factor; // regularization weight ('lambda' in avg_loss + lambda * regularization)
   double C; // cost factor C (regularization + C * sum_loss)
@@ -23,7 +23,11 @@ struct learner {
   string loss_name;
   double* total_loss_pool; // a pool of total loss for each thread;
   size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;
+  LossFunctions *loss_func;
+
   size_t num_experts; // number of experts for ensemble methods (WM)
+  WeakLearners **weak_learners; // basis learners
+  string wl_name;
 };
 
 double LinearPredict(SVEC *wvec, EXAMPLE *ex) {

@@ -139,7 +139,33 @@ void Wm(learner &l) {
   size_t n_threads = l.num_threads;
   size_t t;
 
-  // train experts
+  // Train experts
+  if (l.num_experts <= 0) {
+    cout << "Number of experts not specified for WM! Bailing!" << endl;
+    exit(1);
+  }
+  // Set parameters for weak learners
+  if (l.wl_name == "stump") {
+    // choose splitting dimensions
+    if (l.num_experts > global.max_feature_idx) {
+      cout << "Number of experts: " <<l.num_experts << " larger than number of feature dimension: "<< global.max_feature_idx <<" ! Bailing!" << endl;
+      exit(1);
+    }
+    vector<size_t> dims;
+    for (size_t d=1; d<=global.max_feature_idx; d++)
+      dims.push_back(d);
+    random_shuffle ( dims.begin(), dims.end() );
+
+    for (size_t k=0; k< l.num_experts; k++) {
+      l.weak_learners[k] = GetWeakLearner(l.wl_name, dims[k], 200);
+      l.weak_learners[k]->WeakTrain(train_exps, num_train_exps, NULL);
+    }
+  }
+  else {
+    for (size_t k=0; k< l.num_experts; k++) {
+      l.weak_learners[k] = GetWeakLearner(l.wl_name, 0, 0);
+    }
+  }
 
   threads = (pthread_t*)calloc(n_threads, sizeof(pthread_t));
   t_par = (thread_param**)calloc(n_threads, sizeof(thread_param*));

@@ -23,7 +23,8 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("loss_function,l", boost_po::value<string>()->default_value("hinge"), 
                        "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
     ("bias", "Add a bias term to examples")
-    ("experts,p", boost_po::value<size_t>(&learner.num_experts)->default_value(1), "Number of experts. Default: 1")
+    ("experts,p", boost_po::value<size_t>(&learner.num_experts)->default_value(0), "Number of experts. Default: 0")
+    ("weak_learner", boost_po::value<string>()->default_value("stump"), "Name of weak learner. Default: decision stump")
     ("comm", boost_po::value<int>(&global.comm_method)->default_value(1), "How agents communicate with each other. Default: 1(full connected)")
     ("mini_batch,b", boost_po::value<int>(&global.mb_size)->default_value(1), "Size of a mini-batch. Default: 1")
     ("num_port_sources", boost_po::value<size_t>(), "Number of sources for daemon socket input")
@@ -103,12 +104,11 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     global.num_threads = vm["threads"].as<size_t>();
   }
 
-  string loss_func_str;
   if(vm.count("loss_function")) {
-    loss_func_str = vm["loss_function"].as<string>();
+    learner.loss_name = vm["loss_function"].as<string>();
   }
   else {
-    loss_func_str = "squaredloss";
+    learner.loss_name = "squaredloss";
   }
 
   if (vm.count("bias")) {
@@ -122,32 +122,29 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     global.comm_method = vm["comm"].as<int>();
   }
 
-  if (vm.count("experts")) {
-    learner.num_experts = vm["experts"].as<size_t>();
-  }
-  if (learner.num_experts <= 0)
-    learner.num_experts = 1;
-
   if (vm.count("mini_batch")) {
     global.mb_size = vm["mini_batch"].as<int>();
   }
   if (global.mb_size <= 0)
     global.mb_size = 1;
 
-  /*
-  if (vm.count("predictions")) {
-    if (!global.quiet)
-      cerr << "predictions = " <<  vm["predictions"].as<string>() << endl;
-    if ( strcmp(vm["predictions"].as<string>().c_str(), "stdout") == 0 )
-      global.final_prediction_sink = 1;//stdout
-    else {
-      const char* fstr = (vm["predictions"].as< string >().c_str());
-      global.final_prediction_sink = fileno(fopen(fstr,"w"));
-      if (global.final_prediction_sink < 0)
-	cerr << "Error opening the predictions file: " << fstr << endl;
-    }
+  if(vm.count("weak_learner")) {
+    learner.wl_name = vm["weak_learner"].as<string>();
   }
-  */
+  else {
+    learner.wl_name = "stump";
+  }
+
+  if (vm.count("experts")) {
+    learner.num_experts = vm["experts"].as<size_t>();
+  }
+  if (learner.num_experts <= 0) {
+    learner.num_experts = 0;
+  }
+  else {
+    learner.weak_learners = (WeakLearners**)malloc(learner.num_experts * sizeof(WeakLearners*));
+  }
+
 
   if (vm.count("type")) {
     learner.type = vm["type"].as<string>();
@@ -155,8 +152,9 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   else {
     learner.type = "classification";
   }
-  learner.loss_func = getLossFunction(loss_func_str, 0.1);
-  learner.loss_name = learner.loss_func->getName();
+
+  learner.loss_func = getLossFunction(learner.loss_name, 0.1);
+
   learner.num_threads = global.num_threads;
   learner.num_epoches = global.num_epoches;
 
@@ -173,6 +171,22 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   learner.scale_pool = (double*)malloc(learner.num_threads * sizeof(double));
 
   learner.num_used_exp = (size_t*)malloc(learner.num_threads * sizeof(size_t));
+
+
+  /*
+  if (vm.count("predictions")) {
+    if (!global.quiet)
+      cerr << "predictions = " <<  vm["predictions"].as<string>() << endl;
+    if ( strcmp(vm["predictions"].as<string>().c_str(), "stdout") == 0 )
+      global.final_prediction_sink = 1;//stdout
+    else {
+      const char* fstr = (vm["predictions"].as< string >().c_str());
+      global.final_prediction_sink = fileno(fopen(fstr,"w"));
+      if (global.final_prediction_sink < 0)
+	cerr << "Error opening the predictions file: " << fstr << endl;
+    }
+  }
+  */
   
   return vm;
 }
