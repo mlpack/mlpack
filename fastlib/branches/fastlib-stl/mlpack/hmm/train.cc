@@ -11,7 +11,7 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -72,17 +72,17 @@ int main(int argc, char* argv[]) {
   success_t s = SUCCESS_PASS;
   if (fx_param_exists(NULL,"type")) {
     const char* algorithm = fx_param_str(NULL, "algorithm", "baumwelch");
-    if (strcmp(algorithm,"baumwelch")==0)
+    if (strcmp(algorithm,"baumwelch") == 0)
       s = train_baumwelch();
-    else if (strcmp(algorithm,"viterbi")==0)
+    else if (strcmp(algorithm,"viterbi") == 0)
       s = train_viterbi();
     else {
-      printf("Unrecognized algorithm: must be baumwelch or viterbi !!!\n");
+      printf("Unrecognized algorithm: must be baumwelch or viterbi!\n");
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
@@ -102,7 +102,7 @@ success_t train_baumwelch() {
   else if (strcmp(type, "mixture")==0)
     return train_baumwelch_mixture();
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+    printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
     return SUCCESS_FAIL;
   }
 }
@@ -132,12 +132,12 @@ success_t train_baumwelch_mixture() {
   }
 
   MixtureofGaussianHMM hmm;
-  ArrayList<Matrix> seqs;
+  std::vector<arma::mat> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.mix.out");
 
-  load_matrix_list(seqin, &seqs);
+  load_matrix_list(seqin, seqs);
 
   if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
     const char* guess = fx_param_str_req(NULL, "guess");
@@ -166,12 +166,12 @@ success_t train_baumwelch_gaussian() {
     return SUCCESS_FAIL;
   }
   GaussianHMM hmm;
-  ArrayList<Matrix> seqs;
+  std::vector<arma::mat> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.gauss.out");
 
-  load_matrix_list(seqin, &seqs);
+  load_matrix_list(seqin, seqs);
 
   if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
     const char* guess = fx_param_str_req(NULL, "guess");
@@ -206,8 +206,8 @@ success_t train_baumwelch_discrete() {
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.dis.out");
 
-  ArrayList<Vector> seqs;
-  load_vector_list(seqin, &seqs);
+  std::vector<arma::vec> seqs;
+  load_vector_list(seqin, seqs);
 
   DiscreteHMM hmm;
 
@@ -239,19 +239,18 @@ success_t train_viterbi_mixture() {
   }
   
   MixtureofGaussianHMM hmm;
-  ArrayList<Matrix> seqs;
+  std::vector<arma::mat> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.mix.out");
 
-  load_matrix_list(seqin, &seqs);
+  load_matrix_list(seqin, seqs);
 
   if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
     const char* guess = fx_param_str_req(NULL, "guess");
     printf("Load parameters from file %s\n", guess);
     hmm.InitFromFile(guess);
-  }
-  else {
+  } else {
     hmm.Init();
     printf("Automatic initialization not supported !!!");
     return SUCCESS_FAIL;
@@ -274,12 +273,12 @@ success_t train_viterbi_gaussian() {
   }
   
   GaussianHMM hmm;
-  ArrayList<Matrix> seqs;
+  std::vector<arma::mat> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.gauss.viterbi.out");
 
-  load_matrix_list(seqin, &seqs);
+  load_matrix_list(seqin, seqs);
 
   if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
     const char* guess = fx_param_str_req(NULL, "guess");
@@ -309,15 +308,15 @@ success_t train_viterbi_discrete() {
   }
 
   DiscreteHMM hmm;
-  ArrayList<Vector> seqs;
+  std::vector<arma::vec> seqs;
 
   const char* seqin = fx_param_str_req(NULL, "seqfile");
   const char* proout = fx_param_str(NULL, "profile", "pro.dis.viterbi.out");
 
-  load_vector_list(seqin, &seqs);
+  load_vector_list(seqin, seqs);
 
   if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    ArrayList<Matrix> matlst;
+    std::vector<arma::mat> matlst;
     const char* guess = fx_param_str_req(NULL, "guess");
     printf("Load parameters from file %s\n", guess);
     hmm.InitFromFile(guess);
