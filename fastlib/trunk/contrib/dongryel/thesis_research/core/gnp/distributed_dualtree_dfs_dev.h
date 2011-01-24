@@ -79,25 +79,28 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     }
   }
 
+  // The computation loop.
+  bool exchange_done = false;
   do  {
 
     // Try to exchange the subtables. If we are done, then we exit the
     // loop.
     if(
+      exchange_done == false &&
       table_exchange.AllToAll(
         *world_, max_num_levels_to_serialize_,
         *(reference_table_->local_table()), receive_requests)) {
 
       // At this point, try to empty the priority queue.
+      exchange_done = true;
       max_num_work_to_dequeue_per_stage_ = std::numeric_limits<int>::max();
+    }
+    if(exchange_done) {
       bool all_done = true;
       for(int i = 0; i < world_->size() && all_done; i++) {
         all_done = (computation_frontier[i].size() == 0);
       }
-      bool global_all_done = true;
-      boost::mpi::all_reduce(
-        *world_, all_done, global_all_done, std::logical_and<bool>());
-      if(global_all_done) {
+      if(all_done) {
         break;
       }
     }

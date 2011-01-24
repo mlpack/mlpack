@@ -72,6 +72,10 @@ class TableExchange {
       }
 
       // The code should not get to this point.
+      fprintf(stderr, "There is something wrong. "
+              "The subtable ID (%d, %d %d) could not be found.\n",
+              process_id, begin, count);
+      exit(0);
       return NULL;
     }
 
