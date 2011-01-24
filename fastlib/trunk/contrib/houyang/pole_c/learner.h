@@ -20,6 +20,7 @@ struct learner {
   size_t num_threads;
   size_t num_epoches;
   string type; // classification, or regression, or others
+  string opt_method;
   string loss_name;
   double* total_loss_pool; // a pool of total loss for each thread;
   size_t* total_misp_pool; // a pool of total number of mispredictions for each thread;
@@ -28,6 +29,7 @@ struct learner {
   size_t num_experts; // number of experts for ensemble methods (WM)
   WeakLearners **weak_learners; // basis learners
   string wl_name;
+  double alpha; // the multiplication factor in WM
 };
 
 double LinearPredict(SVEC *wvec, EXAMPLE *ex) {
@@ -69,12 +71,14 @@ void FinishLearner(learner &l, size_t ts) {
     }
     free(l.w_vec_pool);
   }
-  if(l.w_n_vec_pool) {
-    for (size_t t=0; t<ts; t++) {
-      //print_svec(l.w_vec_pool[t]);
-      DestroySvec(l.w_n_vec_pool[t]);
+  if (l.opt_method == "oeg") {
+    if(l.w_n_vec_pool) {
+      for (size_t t=0; t<ts; t++) {
+	//print_svec(l.w_vec_pool[t]);
+	DestroySvec(l.w_n_vec_pool[t]);
+      }
+      free(l.w_n_vec_pool);
     }
-    free(l.w_n_vec_pool);
   }
   if(l.msg_pool) {
     for (size_t t=0; t<ts; t++) {

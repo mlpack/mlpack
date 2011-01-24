@@ -103,12 +103,33 @@ void CopyFromExample(SVEC *v, EXAMPLE *x) {
   v->num_nz_feats = nz_x;
 }
 
+// copy x to v
+void CopyFromSvec(SVEC *v, SVEC *x) {
+  size_t nz_x = x->num_nz_feats;
+  v->feats = (FEATURE *)realloc(v->feats, nz_x*sizeof(FEATURE));
+  for (size_t i=0; i<nz_x; i++) {
+    v->feats[i].widx = x->feats[i].widx;
+    v->feats[i].wval = x->feats[i].wval;
+  }
+  v->num_nz_feats = nz_x;
+}
+
 void EmptyFeatures(SVEC *v) {
   if (v->feats) {
     free(v->feats);
   }
   v->feats = NULL;
   v->num_nz_feats = 0;
+}
+
+// set a constant vector of a given length
+void SetAllConstant(SVEC *v, T_VAL c, size_t length) {
+  v->feats = (FEATURE *)realloc(v->feats, length*sizeof(FEATURE));
+  for (size_t i=0; i<length; i++) {
+    v->feats[i].widx = i+1; // feature index starts from 1
+    v->feats[i].wval = c;
+  }
+  v->num_nz_feats = length;
 }
 
 // add a copy of feature (f) at the back of sparse vecotr (v)

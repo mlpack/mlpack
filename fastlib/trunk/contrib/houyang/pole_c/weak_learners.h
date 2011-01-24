@@ -38,10 +38,16 @@ class decisionstump : public WeakLearners {
     float max_dval, min_dval, intv, thd_test;
     size_t ct_g_pos, ct_g_neg, ct_l_pos, ct_l_neg;
     size_t ct_err, ct_err_new;
+    size_t n_exs_pos, n_exs_neg;
     T_LBL gl_new;
     EXAMPLE *ex = exs;
+    n_exs_pos = 0; n_exs_neg = 0;
     for (size_t x=0; x<n_exs; x++) {
       ex = exs + x;
+      if (ex->label == 1)
+	n_exs_pos ++;
+      else
+	n_exs_neg ++;
       for (size_t f=0; f<ex->num_nz_feats; f++) {
 	if (ex->feats[f].widx == sd) {
 	  dval[x] = ex->feats[f].wval;
@@ -54,45 +60,58 @@ class decisionstump : public WeakLearners {
     max_dval = *max_element(dval.begin(), dval.end());
     min_dval = *min_element(dval.begin(), dval.end());
     //cout << "sd: " << sd << "; max: " << max_dval << ", min: " << min_dval << endl;
-    intv = (max_dval - min_dval) / n_iter;
-    thd_test = min_dval;
+
     thd = min_dval;
-    gl = 1;
-    ct_err = n_exs;
-    for (size_t i=0; i<n_iter; i++) {
-      thd_test += intv;
-      ct_g_pos = 0; ct_g_neg = 0; ct_l_pos = 0; ct_l_neg = 0;
-      for (size_t x=0; x<n_exs; x++) {
-	ex = exs + x;
-	if (dval[x] > thd) {
-	  if (ex->label==1)
-	    ct_g_pos ++;
-	  else
-	    ct_g_neg ++;
-	}
-	else{
-	  if (ex->label==1)
-	    ct_l_pos ++;
-	  else
-	    ct_l_neg ++;
-	}
-      }
-      if ( (ct_g_pos + ct_l_neg) > (ct_l_pos + ct_g_neg) ) {
-	ct_err_new = ct_l_pos + ct_g_neg;
-	gl_new = 1;
-      }
-      else {
-	ct_err_new = ct_g_pos + ct_l_neg;
-	gl_new = -1;
-      }
-      // better threshold found
-      if (ct_err_new < ct_err) {
-	thd = thd_test;
-	gl = gl_new;
-	ct_err = ct_err_new;
-      }
+    if (n_exs_pos > n_exs_neg) {
+      gl = 1;
+      ct_err = n_exs_neg;
     }
-    //cout << "thd: " << thd << ", gl: " << gl << ", ct_err:" << ct_err << endl;
+    else {
+      gl = -1;
+      ct_err = n_exs_pos;
+    }
+    if (max_dval == min_dval) {
+      cout << "Warning! Decision stump with splitting dimension " << sd << " is of constant values " << max_dval << " !" << endl;
+    }
+    else {
+      intv = (max_dval - min_dval) / n_iter;
+      thd_test = min_dval;
+      for (size_t i=0; i<n_iter; i++) {
+	thd_test += intv;
+	ct_g_pos = 0; ct_g_neg = 0; ct_l_pos = 0; ct_l_neg = 0;
+	for (size_t x=0; x<n_exs; x++) {
+	  ex = exs + x;
+	  if (dval[x] > thd_test) {
+	    if (ex->label==1)
+	      ct_g_pos ++;
+	    else
+	      ct_g_neg ++;
+	  }
+	  else{
+	    if (ex->label==1)
+	      ct_l_pos ++;
+	    else
+	      ct_l_neg ++;
+	  }
+	}
+	if ( (ct_g_pos + ct_l_neg) > (ct_l_pos + ct_g_neg) ) {
+	  gl_new = 1;
+	  ct_err_new = ct_l_pos + ct_g_neg;
+	}
+	else {
+	  gl_new = -1;
+	  ct_err_new = ct_g_pos + ct_l_neg;
+	}
+	//cout << "thd_test: " << thd_test << ", gl_new: " << gl_new << ", err_new: " << ct_err_new << endl;
+	// better threshold found
+	if (ct_err_new < ct_err) {
+	  thd = thd_test;
+	  gl = gl_new;
+	  ct_err = ct_err_new;
+	}
+      }
+      //cout << "thd: " << thd << ", gl: " << gl << ", ct_err:" << ct_err << endl;
+    }
     return;
   }
   
@@ -104,7 +123,7 @@ class decisionstump : public WeakLearners {
 	break;
       }
     }
-    if (val >= thd)
+    if (val > thd)
       return (T_LBL)gl;
     else
       return (T_LBL)-gl;
