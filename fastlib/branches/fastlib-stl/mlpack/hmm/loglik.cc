@@ -9,7 +9,7 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -92,8 +92,8 @@ success_t loglik_mixture() {
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
 
-  ArrayList<Matrix> seqs;
-  load_matrix_list(seqin, &seqs);
+  std::vector<arma::mat> seqs;
+  load_matrix_list(seqin, seqs);
 
   TextWriter w_log;
   if (!PASSED(w_log.Open(logout))) {
@@ -101,8 +101,8 @@ success_t loglik_mixture() {
     return SUCCESS_FAIL;
   }
 
-  ArrayList<double> list_loglik;
-  hmm.ComputeLogLikelihood(seqs, &list_loglik);
+  std::vector<double> list_loglik;
+  hmm.ComputeLogLikelihood(seqs, list_loglik);
 
   for (int i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
@@ -122,8 +122,8 @@ success_t loglik_gaussian() {
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
 
-  ArrayList<Matrix> seqs;
-  load_matrix_list(seqin, &seqs);
+  std::vector<arma::mat> seqs;
+  load_matrix_list(seqin, seqs);
 
   TextWriter w_log;
   if (!PASSED(w_log.Open(logout))) {
@@ -131,8 +131,8 @@ success_t loglik_gaussian() {
     return SUCCESS_FAIL;
   }
 
-  ArrayList<double> list_loglik;
-  hmm.ComputeLogLikelihood(seqs, &list_loglik);
+  std::vector<double> list_loglik;
+  hmm.ComputeLogLikelihood(seqs, list_loglik);
 
   for (int i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
@@ -152,8 +152,8 @@ success_t loglik_discrete() {
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);
 
-  ArrayList<Vector> seqs;
-  load_vector_list(seqin, &seqs);
+  std::vector<arma::vec> seqs;
+  load_vector_list(seqin, seqs);
 
   TextWriter w_log;
   if (!PASSED(w_log.Open(logout))) {
@@ -161,11 +161,11 @@ success_t loglik_discrete() {
     return SUCCESS_FAIL;
   }
 
-  ArrayList<double> list_loglik;
-  hmm.ComputeLogLikelihood(seqs, &list_loglik);
+  std::vector<double> list_loglik;
+  hmm.ComputeLogLikelihood(seqs, list_loglik);
 
   for (int i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
+
   return SUCCESS_PASS;
 }
-

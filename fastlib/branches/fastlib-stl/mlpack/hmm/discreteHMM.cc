@@ -4,61 +4,68 @@
  * This file contains the implementation of functions in discreteHMM.h
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
-#include <algorithm>
 
 using namespace hmm_support;
 
-void DiscreteHMM::setModel(const Matrix& transmission, const Matrix& emission) {
-  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
-  DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
-  transmission_.Destruct();
-  emission_.Destruct();
-  transmission_.Copy(transmission);
-  emission_.Copy(emission);
+void DiscreteHMM::setModel(const arma::mat& transmission, const arma::mat& emission) {
+  DEBUG_ASSERT(transmission.n_rows == transmission.n_cols);
+  DEBUG_ASSERT(transmission.n_rows == emission.n_rows);
+  
+  transmission_ = transmission;
+  emission_ = emission;
 }
 
-void DiscreteHMM::Init(const Matrix& transmission, const Matrix& emission) {
-  transmission_.Copy(transmission);
-  emission_.Copy(emission);
-  DEBUG_ASSERT(transmission.n_rows() == transmission.n_cols());
-  DEBUG_ASSERT(transmission.n_rows() == emission.n_rows());
+void DiscreteHMM::Init(const arma::mat& transmission, const arma::mat& emission) {
+  transmission_ = transmission;
+  emission_ = emission;
+
+  DEBUG_ASSERT(transmission.n_rows == transmission.n_cols);
+  DEBUG_ASSERT(transmission.n_rows == emission.n_rows);
 }
 
 void DiscreteHMM::InitFromFile(const char* profile) {
-  std::vector<Matrix> list_mat;
-  load_matrix_list(profile, &list_mat);
+  std::vector<arma::mat> list_mat;
+  load_matrix_list(profile, list_mat);
   if (list_mat.size() < 2)
     FATAL("Number of matrices in the file should be at least 2.");
   else if (list_mat.size() > 2)
-    NONFATAL("Number of matrices in the file should be 2.");
-  transmission_.Copy(list_mat[0]);
-  emission_.Copy(list_mat[1]);
-  DEBUG_ASSERT(transmission_.n_rows() == transmission_.n_cols());
-  DEBUG_ASSERT(transmission_.n_rows() == emission_.n_rows());
+    NONFATAL("Number of matrices in the file should be 2 (any after the second are ignored.");
+
+  transmission_ = list_mat[0];
+  emission_ = list_mat[1];
+
+  DEBUG_ASSERT(transmission_.n_rows == transmission_.n_cols);
+  DEBUG_ASSERT(transmission_.n_rows == emission_.n_rows);
 }
 
-void DiscreteHMM::InitFromData(const std::vector<Vector>& list_data_seq, int numstate) {
+void DiscreteHMM::InitFromData(const std::vector<arma::vec>& list_data_seq, int numstate) {
   int numsymbol = 0;
-  std::vector<Vector>::const_iterator maxseq = list_data_seq.begin();
-  for( std::vector<Vector>::const_iterator i = list_data_seq.begin();
-      i < list_data_seq.end(); ++i )
-    maxseq = (maxseq->length() < i->length())?i:maxseq;
-  for (int i = 0; i < maxseq->length(); i++)
-    if ((*maxseq)[i] > numsymbol) numsymbol = (int) (*maxseq)[i];
+  int maxseq = 0;
+
+  for (int i = 0; i < list_data_seq.size(); i++) {
+    if (list_data_seq[i].n_elem > list_data_seq[maxseq].n_elem)
+      maxseq = i;
+  }
+
+  for (int i = 0; i < list_data_seq[maxseq].n_elem; i++) {
+    if (list_data_seq[maxseq][i] > numsymbol)
+      numsymbol = (int) list_data_seq[maxseq][i];
+  }
   numsymbol++;
-  Vector states;
-  int L = maxseq->length();
-  states.Init(L);
-  for (int i = 0; i < L; i++) states[i] = rand() % numstate;
-  DiscreteHMM::EstimateInit(numsymbol, numstate, *maxseq, states, &transmission_, &emission_);  
+
+  arma::vec states;
+  int L = list_data_seq[maxseq].n_elem;
+  states.set_size(L);
+  for (int i = 0; i < L; i++)
+    states[i] = rand() % numstate;
+
+  DiscreteHMM::EstimateInit(numsymbol, numstate, list_data_seq[maxseq], states, transmission_, emission_);
 }
 
 void DiscreteHMM::LoadProfile(const char* profile) {
-  transmission_.Destruct();
-  emission_.Destruct();
   InitFromFile(profile);
 }
 
@@ -69,107 +76,115 @@ void DiscreteHMM::SaveProfile(const char* profile) const {
     return;
   }
 
-  print_matrix(w_pro, transmission_, "%% transmision", "%f,");
+  print_matrix(w_pro, transmission_, "%% transmission", "%f,");
   print_matrix(w_pro, emission_, "%% emission", "%f,");
 }
 
-void DiscreteHMM::GenerateSequence(int length, Vector* data_seq, Vector* state_seq) const {
+void DiscreteHMM::GenerateSequence(int length, arma::vec& data_seq, arma::vec& state_seq) const {
   DiscreteHMM::GenerateInit(length, transmission_, emission_, data_seq, state_seq);
 }
 
-void DiscreteHMM::EstimateModel(const Vector& data_seq, const Vector& state_seq) {
-  transmission_.Destruct();
-  emission_.Destruct();
-  DiscreteHMM::EstimateInit(data_seq, state_seq, &transmission_, &emission_);
+void DiscreteHMM::EstimateModel(const arma::vec& data_seq, const arma::vec& state_seq) {
+  DiscreteHMM::EstimateInit(data_seq, state_seq, transmission_, emission_);
 }
 
-void DiscreteHMM::EstimateModel(int numstate, int numsymbol, const Vector& data_seq, const Vector& state_seq) {
-  transmission_.Destruct();
-  emission_.Destruct();
-  DiscreteHMM::EstimateInit(numsymbol, numstate, data_seq, state_seq, &transmission_, &emission_);
+void DiscreteHMM::EstimateModel(int numstate, int numsymbol, const arma::vec& data_seq, const arma::vec& state_seq) {
+  DiscreteHMM::EstimateInit(numsymbol, numstate, data_seq, state_seq, transmission_, emission_);
 }
 
-void DiscreteHMM::DecodeOverwrite(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
+void DiscreteHMM::DecodeOverwrite(const arma::vec& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, arma::mat& backward_prob_mat, arma::vec& scale_vec) const {
   DiscreteHMM::Decode(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
 }
 
-void DiscreteHMM::DecodeInit(const Vector& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, Matrix* backward_prob_mat, Vector* scale_vec) const {
-  int M = transmission_.n_rows();
-  int L = data_seq.length();
-  state_prob_mat->Init(M, L);
-  forward_prob_mat->Init(M, L);
-  backward_prob_mat->Init(M, L);
-  scale_vec->Init(L);
+void DiscreteHMM::DecodeInit(const arma::vec& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, arma::mat& backward_prob_mat, arma::vec& scale_vec) const {
+  int M = transmission_.n_rows;
+  int L = data_seq.n_elem;
+
+  state_prob_mat.set_size(M, L);
+  forward_prob_mat.set_size(M, L);
+  backward_prob_mat.set_size(M, L);
+  scale_vec.set_size(L);
+
   DiscreteHMM::Decode(data_seq, transmission_, emission_, state_prob_mat, forward_prob_mat, backward_prob_mat, scale_vec);
 }
 
-void forward_procedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs);
+void forward_procedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& scales, arma::mat& fs);
 
-double DiscreteHMM::ComputeLogLikelihood(const Vector& data_seq) const {
-  int L = data_seq.length();
-  int M = transmission_.n_rows();
-  Matrix fs(M, L);
-  Vector sc;
-  sc.Init(L);
-  DiscreteHMM::ForwardProcedure(data_seq, transmission_, emission_, &sc, &fs);
+double DiscreteHMM::ComputeLogLikelihood(const arma::vec& data_seq) const {
+  int L = data_seq.n_elem;
+  int M = transmission_.n_rows;
+
+  arma::mat fs(M, L);
+  arma::vec sc(L);
+  
+  DiscreteHMM::ForwardProcedure(data_seq, transmission_, emission_, sc, fs);
+
   double loglik = 0;
   for (int t = 0; t < L; t++)
     loglik += log(sc[t]);
   return loglik;
 }
 
-void DiscreteHMM::ComputeLogLikelihood(const std::vector<Vector>& list_data_seq, std::vector<double>* list_likelihood) const {
+void DiscreteHMM::ComputeLogLikelihood(const std::vector<arma::vec>& list_data_seq, std::vector<double>& list_likelihood) const {
   int L = 0;
-  for (int i = 0; i < list_data_seq.size(); i++)
-    if (list_data_seq[i].length() > L) L = list_data_seq[i].length();
-  int M = transmission_.n_rows();
-  Matrix fs(M, L);
-  Vector sc;
-  sc.Init(L);
   for (int i = 0; i < list_data_seq.size(); i++) {
-    DiscreteHMM::ForwardProcedure(list_data_seq[i], transmission_, emission_, &sc, &fs);
-    int L = list_data_seq[i].length();
+    if (list_data_seq[i].n_elem > L)
+      L = list_data_seq[i].n_elem;
+  }
+
+  int M = transmission_.n_rows;
+
+  arma::mat fs(M, L);
+  arma::vec sc(L);
+  
+  for (int i = 0; i < list_data_seq.size(); i++) {
+    DiscreteHMM::ForwardProcedure(list_data_seq[i], transmission_, emission_, sc, fs);
+
+    int L = list_data_seq[i].n_elem;
     double loglik = 0;
     for (int t = 0; t < L; t++)
       loglik += log(sc[t]);
-    list_likelihood->push_back(loglik);
+
+    list_likelihood.push_back(loglik);
   }
 }
 
-void DiscreteHMM::ComputeViterbiStateSequence(const Vector& data_seq, Vector* state_seq) const {
+void DiscreteHMM::ComputeViterbiStateSequence(const arma::vec& data_seq, arma::vec& state_seq) const {
   DiscreteHMM::ViterbiInit(data_seq, transmission_, emission_, state_seq);
 }
 
-void DiscreteHMM::TrainBaumWelch(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance) {
-  DiscreteHMM::Train(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+void DiscreteHMM::TrainBaumWelch(const std::vector<arma::vec>& list_data_seq, int max_iteration, double tolerance) {
+  DiscreteHMM::Train(list_data_seq, transmission_, emission_, max_iteration, tolerance);
 }
 
-void DiscreteHMM::TrainViterbi(const std::vector<Vector>& list_data_seq, int max_iteration, double tolerance) {
-  DiscreteHMM::TrainViterbi(list_data_seq, &transmission_, &emission_, max_iteration, tolerance);
+void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& list_data_seq, int max_iteration, double tolerance) {
+  DiscreteHMM::TrainViterbi(list_data_seq, transmission_, emission_, max_iteration, tolerance);
 }
 
-void DiscreteHMM::GenerateInit(int L, const Matrix& trans, const Matrix& emis, Vector* seq, Vector* states) {
-  DEBUG_ASSERT_MSG((trans.n_rows()==trans.n_cols() && trans.n_rows()==emis.n_rows()), "hmm_generateD_init: matrices sizes do not match");
-  Matrix trsum, esum;
-  Vector &seq_ = *seq, &states_ = *states;
+void DiscreteHMM::GenerateInit(int L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states) {
+  DEBUG_ASSERT_MSG((trans.n_rows == trans.n_cols && trans.n_rows == emis.n_rows),
+    "DiscreteHMM::GenerateInit(): matrix sizes do not match");
+
+  arma::mat trsum, esum;
+  
   int M, N;
   int cur_state;
 
-  M = trans.n_rows();
-  N = emis.n_cols();
+  M = trans.n_rows;
+  N = emis.n_cols;
 
-  trsum.Copy(trans);
-  esum.Copy(emis);
+  trsum = trans;
+  esum = emis;
 
   for (int i = 0; i < M; i++) {
     for (int j = 1; j < M; j++)
-      trsum.set(i, j, trsum.get(i, j) + trsum.get(i, j-1));
+      trsum(i, j) += trsum(i, j - 1);
     for (int j = 1; j < N; j++) 
-      esum.set(i, j, esum.get(i, j) + esum.get(i, j-1));
+      esum(i, j) += esum(i, j - 1);
   }
 
-  seq_.Init(L);
-  states_.Init(L);
+  seq.set_size(L);
+  states.set_size(L);
 
   cur_state = 0; // starting state is 0
   
@@ -178,279 +193,298 @@ void DiscreteHMM::GenerateInit(int L, const Matrix& trans, const Matrix& emis, V
     double r;
 
     // next state
-    r = RAND_UNIFORM_01();
-    for (j = 0; j < M; j++)
-      if (r <= trsum.get(cur_state, j)) break;
+    r = (double) rand() / (double) RAND_MAX;
+    for (j = 0; j < M; j++) {
+      if (r <= trsum(cur_state, j))
+        break;
+    }
     cur_state = j;
 	
     // emission
-    r = RAND_UNIFORM_01();
-    for (j = 0; j < N; j++)
-      if (r <= esum.get(cur_state, j)) break;
-    seq_[i] = j;
-    states_[i] = cur_state;
+    r = (double) rand() / (double) RAND_MAX;
+    for (j = 0; j < N; j++) {
+      if (r <= esum(cur_state, j))
+        break;
+    }
+
+    seq[i] = j;
+    states[i] = cur_state;
   }
 }
 
-void DiscreteHMM::EstimateInit(const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis) {
-  DEBUG_ASSERT_MSG((seq.length()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
-  int M = 0, N=0;
-  for (int i = 0; i < seq.length(); i++) {
-    if (seq[i] > N) N = (int) seq[i];
-    if (states[i] > M) M = (int) states[i];
+void DiscreteHMM::EstimateInit(const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis) {
+  DEBUG_ASSERT_MSG((seq.n_elem == states.n_elem),
+      "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
+
+  int M = 0;
+  int N = 0;
+
+  for (int i = 0; i < seq.n_elem; i++) {
+    if (seq[i] > N)
+      N = (int) seq[i];
+    if (states[i] > M)
+      M = (int) states[i];
   }
+
   M++;
   N++;
+
   DiscreteHMM::EstimateInit(N, M, seq, states, trans, emis);
 }
 
-void DiscreteHMM::EstimateInit(int numSymbols, int numStates, const Vector& seq, const Vector& states, Matrix* trans, Matrix* emis){
-  DEBUG_ASSERT_MSG((seq.length()==states.length()), "hmm_estimateD_init: sequence and states length must be the same");
+void DiscreteHMM::EstimateInit(int numSymbols, int numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis){
+  DEBUG_ASSERT_MSG((seq.n_elem == states.n_elem),
+    "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
+
   int N = numSymbols;
   int M = numStates;
-  int L = seq.length();
+  int L = seq.n_elem;
   
-  Matrix &trans_ = *trans;
-  Matrix &emis_ = *emis;
-  Vector stateSum;
+  arma::vec stateSum;
 
-  trans_.Init(M, M);
-  emis_.Init(M, N);
-  stateSum.Init(M);
+  trans.zeros(M, M);
+  emis.zeros(M, N);
+  stateSum.zeros(M);
 
-  trans_.SetZero();
-  emis_.SetZero();
-
-  stateSum.SetZero();
-  for (int i = 0; i < L-1; i++) {
+  for (int i = 0; i < L - 1; i++) {
     int state = (int) states[i];
-    int next_state = (int) states[i+1];
+    int next_state = (int) states[i + 1];
     stateSum[state]++;
-    trans_.ref(state, next_state)++;
-  }
-  for (int i = 0; i < M; i++) {
-    if (stateSum[i] == 0) stateSum[i] = -INFINITY;
-    for (int j = 0; j < M; j++)
-      trans_.ref(i, j) /= stateSum[i];
+    trans(state, next_state)++;
   }
 
-  stateSum.SetZero();
+  for (int i = 0; i < M; i++) {
+    if (stateSum[i] == 0)
+      stateSum[i] = -INFINITY;
+
+    for (int j = 0; j < M; j++)
+      trans(i, j) /= stateSum[i];
+  }
+
+  stateSum.zeros();
+
   for (int i = 0; i < L; i++) {
     int state = (int) states[i];
     int emission = (int) seq[i];
     stateSum[state]++;
-    emis_.ref(state, emission)++;
+    emis(state, emission)++;
   }
+
   for (int i = 0; i < M; i++) {
-    if (stateSum[i] == 0) stateSum[i] = -INFINITY;
+    if (stateSum[i] == 0)
+      stateSum[i] = -INFINITY;
     for (int j = 0; j < N; j++)
-      emis_.ref(i, j) /= stateSum[i];
+      emis(i, j) /= stateSum[i];
   }
 }
 
-void DiscreteHMM::ForwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector *scales, Matrix* fs) {
-  int L = seq.length();
-  int M = trans.n_rows();
+void DiscreteHMM::ForwardProcedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& scales, arma::mat& fs) {
+  int L = seq.n_elem;
+  int M = trans.n_rows;
 
-  Matrix& fs_ = *fs;
-  Vector& s_ = *scales;
+  fs.zeros();
+  scales.zeros();
 
-  fs_.SetZero();
-  s_.SetZero();
   // NOTE: start state is 0
   // time t = 0
   int e = (int) seq[0];
   for (int i = 0; i < M; i++) {
-    fs_.ref(i, 0) = trans.get(0, i) * emis.get(i, e);
-    s_[0] += fs_.get(i, 0);
+    fs(i, 0) = trans(0, i) * emis(i, e);
+    scales[0] += fs(i, 0);
   }
   for (int i = 0; i < M; i++)
-    fs_.ref(i, 0) /= s_[0];
+    fs(i, 0) /= scales[0];
 
   // time t = 1 -> L-1
   for (int t = 1; t < L; t++) {
     e = (int) seq[t];
     for (int j = 0; j < M; j++) {
       for (int i = 0; i < M; i++)
-	fs_.ref(j, t) += fs_.get(i, t-1)*trans.get(i, j);
-      fs_.ref(j, t) *= emis.get(j, e);
-      s_[t] += fs_.get(j, t);
+	fs(j, t) += fs(i, t - 1) * trans(i, j);
+      fs(j, t) *= emis(j, e);
+      scales[t] += fs(j, t);
     }
     for (int j = 0; j < M; j++)
-      fs_.ref(j, t) /= s_[t];
+      fs(j, t) /= scales[t];
   }
 }
 
-void DiscreteHMM::BackwardProcedure(const Vector& seq, const Matrix& trans, const Matrix& emis, const Vector& scales, Matrix* bs) {
-  int L = seq.length();
-  int M = trans.n_rows();
+void DiscreteHMM::BackwardProcedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, const arma::vec& scales, arma::mat& bs) {
+  int L = seq.n_elem;
+  int M = trans.n_rows;
 
-  Matrix& bs_ = *bs;
-  bs_.SetZero();
+  bs.zeros();
+
   for (int i = 0; i < M; i++)
-    bs_.ref(i, L-1) = 1.0;
+    bs(i, L - 1) = 1.0;
 
-  for (int t = L-2; t >= 0; t--) {
-    int e = (int) seq[t+1];
+  for (int t = L - 2; t >= 0; t--) {
+    int e = (int) seq[t + 1];
     for (int i = 0; i < M; i++) {
       for (int j = 0; j < M; j++)
-	bs_.ref(i, t) += trans.get(i, j) * bs_.ref(j, t+1) * emis.get(j, e);
-      bs_.ref(i, t) /= scales[t+1];
+	bs(i, t) += trans(i, j) * bs(j, t + 1) * emis(j, e);
+      bs(i, t) /= scales[t + 1];
     }
   }
 }
 
-double DiscreteHMM::Decode(const Vector& seq, const Matrix& trans, const Matrix& emis, Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales) {
-  int L = seq.length();
-  int M = trans.n_rows();
+double DiscreteHMM::Decode(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales) {
+  int L = seq.n_elem;
+  int M = trans.n_rows;
 
-  DEBUG_ASSERT_MSG((L==pstates->n_cols() && L==fs->n_cols() && L == bs->n_cols() && 
-		    M==trans.n_cols() && M==emis.n_rows()),"hmm_decodeD: sizes do not match");
+  DEBUG_ASSERT_MSG((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols && 
+		    M == trans.n_cols    && M == emis.n_rows),
+                    "DiscreteHMM::Decode(): sizes do not match");
   
-  Matrix& ps_ = *pstates;
-  Vector& s_ = *scales;
+  DiscreteHMM::ForwardProcedure(seq, trans, emis, scales, fs);
+  DiscreteHMM::BackwardProcedure(seq, trans, emis, scales, bs);
 
-  DiscreteHMM::ForwardProcedure(seq, trans, emis, &s_, fs);
-  DiscreteHMM::BackwardProcedure(seq, trans, emis, s_, bs);
-
-  for (int i = 0; i < M; i++)
+  for (int i = 0; i < M; i++) {
     for (int t = 0; t < L; t++)
-      ps_.ref(i, t) = fs->get(i,t) * bs->get(i,t);
+      pstates(i, t) = fs(i,t) * bs(i,t);
+  }
 
   double logpseq = 0;
   for (int t = 0; t < L; t++) 
-    logpseq += log(s_[t]);
+    logpseq += log(scales[t]);
 
   return logpseq;
 }
 
-double DiscreteHMM::ViterbiInit(const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
-  int L = seq.length();
+double DiscreteHMM::ViterbiInit(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states) {
+  int L = seq.n_elem;
+
   return DiscreteHMM::ViterbiInit(L, seq, trans, emis, states);
 }
 
-double DiscreteHMM::ViterbiInit(int L, const Vector& seq, const Matrix& trans, const Matrix& emis, Vector* states) {
-  int M = trans.n_rows();
-  int N = emis.n_cols();
-  DEBUG_ASSERT_MSG((M==trans.n_cols() && M==emis.n_rows()),"hmm_viterbiD: sizes do not match");
+double DiscreteHMM::ViterbiInit(int L, const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states) {
+  int M = trans.n_rows;
+  int N = emis.n_cols;
+
+  DEBUG_ASSERT_MSG((M == trans.n_cols && M == emis.n_rows),
+      "DiscreteHMM::ViterbiInit(): sizes do not match");
   
-  Vector& s_ = *states;
-  s_.Init(L);
+  states.set_size(L);
   
-  Vector v, vOld;
-  v.Init(M);
-  v.SetAll(-INFINITY);
+  arma::vec v(M);
+  v.fill(-INFINITY);
   v[0] = 0;
-  vOld.Copy(v);
+  
+  arma::vec v_old = v;
 
-  Matrix w;
-  w.Init(M, L);
+  arma::mat w(M, L);
 
-  Matrix logtrans, logemis;
-  logtrans.Init(M, M);
-  logemis.Init(M, N);
+  arma::mat logtrans(M, M), logemis(M, N);
 
   for (int i = 0; i < M; i++) {
-    for (int j = 0; j < M; j++) logtrans.ref(i, j) = log(trans.get(i, j));
-    for (int j = 0; j < N; j++) logemis.ref(i, j) = log(emis.get(i, j));
+    for (int j = 0; j < M; j++)
+      logtrans(i, j) = log(trans(i, j));
+
+    for (int j = 0; j < N; j++)
+      logemis(i, j) = log(emis(i, j));
   }
 
   for (int t = 0; t < L; t++) {
     int e = (int) seq[t];
+
     for (int j = 0; j < M; j++) {
       double bestVal = -INFINITY;
-      double bestPtr = -1;      
+      double bestPtr = -1;
+
       for (int i = 0; i < M; i++) {
-	double val = vOld[i] + logtrans.get(i, j);
+	double val = v_old[i] + logtrans(i, j);
 	if (val > bestVal) {
 	  bestVal = val;
 	  bestPtr = i;
 	}
       }
-      v[j] = bestVal + logemis.get(j, e);
-      w.ref(j, t) = bestPtr;
+      v[j] = bestVal + logemis(j, e);
+      w(j, t) = bestPtr;
     }
-    vOld.CopyValues(v);
+    v_old = v;
   }
 
   double bestVal = -INFINITY;
   double bestPtr = -1;
+
   for (int i = 0; i < M; i++)
     if (v[i] > bestVal) {
       bestVal = v[i];
       bestPtr = i;
     }
   
-  s_[L-1] = bestPtr;
-  for (int t = L-2; t >= 0; t--) {
-    s_[t] = w.get((int)s_[t+1], t+1);
-  }
+  states[L - 1] = bestPtr;
+  for (int t = L - 2; t >= 0; t--)
+    states[t] = w((int) states[t + 1], t + 1);
 
   return bestVal;
 }
 
-void DiscreteHMM::Train(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, int max_iter, double tol) {
   int L = -1;
-  int M = guessTR->n_rows();
-  int N = guessEM->n_cols();
-  DEBUG_ASSERT_MSG((M==guessTR->n_cols() && M==guessEM->n_rows()),"hmm_trainD: sizes do not match");
+  int M = guessTR.n_rows;
+  int N = guessEM.n_cols;
+
+  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessEM.n_rows),
+      "DiscreteHMM::Train(): sizes do not match");
   
-  for (int i = 0; i < seqs.size(); i++)
-    if (seqs[i].length() > L) L = seqs[i].length();
+  for (int i = 0; i < seqs.size(); i++) {
+    if (seqs[i].n_elem > L)
+      L = seqs[i].n_elem;
+  }
 
-  Matrix &gTR = *guessTR, &gEM = *guessEM;
-  Matrix TR, EM; // guess transition and emission matrix
-  TR.Init(M, M);
-  EM.Init(M, N);
+  arma::mat TR(M, M), EM(M, N); // guess transition and emission matrix
 
-  Matrix ps, fs, bs;
-  Vector s;
-
-  ps.Init(M, L);
-  fs.Init(M, L);
-  bs.Init(M, L);
-  s.Init(L);
-
+  arma::mat ps(M, L), fs(M, L), bs(M, L);
+  arma::vec s(L);
+  
   double loglik = 0, oldlog;
+
   for (int iter = 0; iter < max_iter; iter++) {
     oldlog = loglik;
     loglik = 0;
 
-    TR.SetZero();
-    EM.SetZero();
+    TR.zeros();
+    EM.zeros();
     for (int idx = 0; idx < seqs.size(); idx++) {
-      L = seqs[idx].length();
-      loglik += DiscreteHMM::Decode(seqs[idx], gTR, gEM, &ps, &fs, &bs, &s);
+      L = seqs[idx].n_elem;
+      loglik += DiscreteHMM::Decode(seqs[idx], guessTR, guessEM, ps, fs, bs, s);
       
-      for (int t = 0; t < L-1; t++) {
-	int e = (int) seqs[idx][t+1];
-	for (int i = 0; i < M; i++)
+      for (int t = 0; t < L - 1; t++) {
+	int e = (int) seqs[idx][t + 1];
+	for (int i = 0; i < M; i++) {
 	  for (int j = 0; j < M; j++)
-	    TR.ref(i, j) += fs.get(i, t) * gTR.get(i, j) * gEM.get(j, e) * bs.get(j, t+1) / s[t+1];
+	    TR(i, j) += fs(i, t) * guessTR(i, j) * guessEM(j, e) * bs(j, t + 1) / s[t + 1];
+        }
       }
       
       for (int t = 0; t < L; t++) {
 	int e = (int) seqs[idx][t];
 	for (int i = 0; i < M; i++)
-	  EM.ref(i, e) += ps.get(i, t);
+	  EM(i, e) += ps(i, t);
       }
     }
 
     double s;
     for (int i = 0; i < M; i++) {
       s = 0;
-      for (int j = 0; j < M; j++) s += TR.get(i, j);
+      for (int j = 0; j < M; j++)
+        s += TR(i, j);
       if (s == 0) {
-	for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
-	gTR.ref(i, i) = 1;
+	for (int j = 0; j < M; j++)
+          guessTR(i, j) = 0;
+	guessTR(i, i) = 1;
       }
       else {
-	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
+	for (int j = 0; j < M; j++)
+          guessTR(i, j) = TR(i, j) / s;
       }
       
       s = 0;
-      for (int j = 0; j < N; j++) s += EM.get(i, j);
-      for (int j = 0; j < N; j++) gEM.ref(i, j) = EM.get(i, j) / s;
+      for (int j = 0; j < N; j++)
+        s += EM(i, j);
+      for (int j = 0; j < N; j++)
+        guessEM(i, j) = EM(i, j) / s;
     }
 
     printf("Iter = %d Loglik = %8.4f\n", iter, loglik);
@@ -462,42 +496,43 @@ void DiscreteHMM::Train(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix
   }
 }
 
-void DiscreteHMM::TrainViterbi(const std::vector<Vector>& seqs, Matrix* guessTR, Matrix* guessEM, int max_iter, double tol) {
+void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, int max_iter, double tol) {
   int L = -1;
-  int M = guessTR->n_rows();
-  int N = guessEM->n_cols();
-  DEBUG_ASSERT_MSG((M==guessTR->n_cols() && M==guessEM->n_rows()),"hmm_trainD: sizes do not match");
-  
-  for (int i = 0; i < seqs.size(); i++)
-    if (seqs[i].length() > L) L = seqs[i].length();
+  int M = guessTR.n_rows;
+  int N = guessEM.n_cols;
 
-  Matrix &gTR = *guessTR, &gEM = *guessEM;
-  Matrix TR, EM; // guess transition and emission matrix
-  TR.Init(M, M);
-  EM.Init(M, N);
+  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessEM.n_rows),
+      "DiscreteHMM::TrainViterbi(): sizes do not match");
+  
+  for (int i = 0; i < seqs.size(); i++) {
+    if (seqs[i].n_elem > L)
+      L = seqs[i].n_elem;
+  }
+
+  arma::mat TR(M, M), EM(M, N); // guess transition and emission matrix
 
   double loglik = 0, oldlog;
   for (int iter = 0; iter < max_iter; iter++) {
     oldlog = loglik;
     loglik = 0;
 
-    TR.SetAll(1e-4);
-    EM.SetAll(1e-4);
+    TR.fill(1e-4);
+    EM.fill(1e-4);
     for (int idx = 0; idx < seqs.size(); idx++) {
-      Vector states;
-      L = seqs[idx].length();
-      loglik += DiscreteHMM::ViterbiInit(L, seqs[idx], gTR, gEM, &states);
+      arma::vec states;
+      L = seqs[idx].n_elem;
+      loglik += DiscreteHMM::ViterbiInit(L, seqs[idx], guessTR, guessEM, states);
       
       for (int t = 0; t < L-1; t++) {
 	int i = (int) states[t];
-	int j = (int) states[t+1];
-	TR.ref(i, j) ++;
+	int j = (int) states[t + 1];
+	TR(i, j)++;
       }
       
       for (int t = 0; t < L; t++) {
 	int e = (int) seqs[idx][t];
 	int i = (int) states[t];
-	EM.ref(i, e) ++;
+	EM(i, e)++;
       }
     }
 
@@ -505,18 +540,23 @@ void DiscreteHMM::TrainViterbi(const std::vector<Vector>& seqs, Matrix* guessTR,
     print_matrix(TR, "TR");
     for (int i = 0; i < M; i++) {
       s = 0;
-      for (int j = 0; j < M; j++) s += TR.get(i, j);
+      for (int j = 0; j < M; j++)
+        s += TR(i, j);
+
       if (s == 0) {
-	for (int j = 0; j < M; j++) gTR.ref(i, j) = 0;
-	gTR.ref(i, i) = 1;
-      }
-      else {
-	for (int j = 0; j < M; j++) gTR.ref(i, j) = TR.get(i, j) / s;
+	for (int j = 0; j < M; j++)
+          guessTR(i, j) = 0;
+	guessTR(i, i) = 1;
+      } else {
+	for (int j = 0; j < M; j++)
+          guessTR(i, j) = TR(i, j) / s;
       }
       
       s = 0;
-      for (int j = 0; j < N; j++) s += EM.get(i, j);
-      for (int j = 0; j < N; j++) gEM.ref(i, j) = EM.get(i, j) / s;
+      for (int j = 0; j < N; j++)
+        s += EM(i, j);
+      for (int j = 0; j < N; j++)
+        guessEM(i, j) = EM(i, j) / s;
     }
 
     printf("Iter = %d Loglik = %8.4f\n", iter, loglik);

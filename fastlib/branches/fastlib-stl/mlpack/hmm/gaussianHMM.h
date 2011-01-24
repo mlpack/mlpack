@@ -10,7 +10,8 @@
 #ifndef FASTLIB_GAUSSIAN_HMM_H
 #define FASTLIB_GAUSSIAN_HMM_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
 
 /**
  * A wrapper class for HMM functionals in single Gaussian case
@@ -23,51 +24,44 @@ class GaussianHMM {
   //////////// Member variables ////////////////////////////////////////////////
  private:
   /** Transmission probabilities matrix between states */
-  Matrix transmission_;
+  arma::mat transmission_;
 
   /** List of mean vectors */
-  std::vector<Vector> list_mean_vec_;
+  std::vector<arma::vec> list_mean_vec_;
 
   /** List of covariance matrices */
-  std::vector<Matrix> list_covariance_mat_;
+  std::vector<arma::mat> list_covariance_mat_;
   
   /** List of inverse of the covariances */
-  std::vector<Matrix> list_inverse_cov_mat_;
+  std::vector<arma::mat> list_inverse_cov_mat_;
 
   /** Vector of constant in the gaussian density fomular */
-  Vector gauss_const_vec_;
-
-  OT_DEF(GaussianHMM) {
-    OT_MY_OBJECT(transmission_);
-    OT_MY_OBJECT(list_mean_vec_);
-    OT_MY_OBJECT(list_covariance_mat_);
-    OT_MY_OBJECT(list_inverse_cov_mat_);
-  }
+  arma::vec gauss_const_vec_;
 
   /** Calculate the inverse covariance and the constant in gaussian fomular */
   void CalculateInverse();
  public:
   /** Getters */
-  const Matrix& transmission() const { return transmission_; }
-  const std::vector<Vector>& list_mean_vec() const { return list_mean_vec_; }
-  const std::vector<Matrix>& list_covariance_mat() const { return list_covariance_mat_; }
+  const arma::mat& transmission() const { return transmission_; }
+  const std::vector<arma::vec>& list_mean_vec() const { return list_mean_vec_; }
+  const std::vector<arma::mat>& list_covariance_mat() const { return list_covariance_mat_; }
 
   /** Setter used when already initialized */
-  void setModel(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,
-		const std::vector<Matrix>& list_covariance_mat);
+  void setModel(const arma::mat& transmission,  const std::vector<arma::vec>& list_mean_vec,
+		const std::vector<arma::mat>& list_covariance_mat);
 
   /** Initializes from computed transmission and Gaussian parameters */
-  void Init(const Matrix& transmission,  const std::vector<Vector>& list_mean_vec,
-	    const std::vector<Matrix>& list_covariance_mat);
+  void Init(const arma::mat& transmission,  const std::vector<arma::vec>& list_mean_vec,
+	    const std::vector<arma::mat>& list_covariance_mat);
   
   /** Initializes by loading from a file */
   void InitFromFile(const char* profile);
 
   /** Initializes using K-means algorithm using data as a guide */
-  void InitFromData(const std::vector<Matrix>& list_data_seq, int numstate);
+  void InitFromData(const std::vector<arma::mat>& list_data_seq, int numstate);
 
   /** Initializes using data and state sequence as a guide */  
-  void InitFromData(const Matrix& data_seq, const Vector& state_seq);
+  void InitFromData(const arma::mat& data_seq, const arma::vec& state_seq);
 
   /** Load from file, used when already initialized */
   void LoadProfile(const char* profile);
@@ -76,61 +70,61 @@ class GaussianHMM {
   void SaveProfile(const char* profile) const;
 
   /** Generate a random data sequence of a given length */
-  void GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) const;
+  void GenerateSequence(int L, arma::mat& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Estimate the matrices by a data sequence and a state sequence 
    * Must be already initialized
    */
 
-  void EstimateModel(const Matrix& data_seq, const Vector& state_seq);
+  void EstimateModel(const arma::mat& data_seq, const arma::vec& state_seq);
   void EstimateModel(int numstate, 
-		     const Matrix& data_seq, const Vector& state_seq);
+		     const arma::mat& data_seq, const arma::vec& state_seq);
 
   /** 
    * Decode a sequence into probabilities of each state at each time step
    * using scaled forward-backward algorithm.
    * Also return forward, backward probabilities and scale factors
    */
-  void DecodeOverwrite(const Matrix& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, 
-		       Matrix* backward_prob_mat, Vector* scale_vec) const;
+  void DecodeOverwrite(const arma::mat& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, 
+		       arma::mat& backward_prob_mat, arma::vec& scale_vec) const;
 
   /** A decode version that initialized the output matrices */
-  void DecodeInit(const Matrix& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, 
-		  Matrix* backward_prob_mat, Vector* scale_vec) const;
+  void DecodeInit(const arma::mat& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, 
+		  arma::mat& backward_prob_mat, arma::vec& scale_vec) const;
 
   /** Compute the log-likelihood of a sequence */
-  double ComputeLogLikelihood(const Matrix& data_seq) const;
+  double ComputeLogLikelihood(const arma::mat& data_seq) const;
 
   /** Compute the log-likelihood of a list of sequences */
-  void ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, 
-			    std::vector<double>* list_likelihood) const;
+  void ComputeLogLikelihood(const std::vector<arma::mat>& list_data_seq, 
+			    std::vector<double>& list_likelihood) const;
   
   /** Compute the most probable sequence (Viterbi) */
-  void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const;
+  void ComputeViterbiStateSequence(const arma::mat& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const std::vector<Matrix>& list_data_seq, 
+  void TrainBaumWelch(const std::vector<arma::mat>& list_data_seq, 
 		      int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const std::vector<Matrix>& list_data_seq, 
+  void TrainViterbi(const std::vector<arma::mat>& list_data_seq, 
 		    int max_iteration, double tolerance);
 
 
   ////////// Static helper functions ///////////////////////////////////////
 
-  static success_t LoadProfile(const char* profile, Matrix* trans, 
-			       std::vector<Vector>* means, std::vector<Matrix>* covs);
-  static success_t SaveProfile(const char* profile, const Matrix& trans, 
-			       const std::vector<Vector>& means, 
-			       const std::vector<Matrix>& covs);
+  static success_t LoadProfile(const char* profile, arma::mat& trans, 
+			       std::vector<arma::vec>& means, std::vector<arma::mat>& covs);
+  static success_t SaveProfile(const char* profile, const arma::mat& trans, 
+			       const std::vector<arma::vec>& means, 
+			       const std::vector<arma::mat>& covs);
   /**
    * Generating a sequence and states using transition and emission probabilities.
    * L: sequence length
@@ -140,15 +134,15 @@ class GaussianHMM {
    * seq: generated sequence, uninitialized matrix, will have size N x L
    * states: generated states, uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const Matrix& trans, const std::vector<Vector>& means, 
-			   const std::vector<Matrix>& covs, Matrix* seq, Vector* states);
+  static void GenerateInit(int L, const arma::mat& trans, const std::vector<arma::vec>& means, 
+			   const std::vector<arma::mat>& covs, arma::mat& seq, arma::vec& states);
 
   /** Estimate transition and emission distribution from sequence and states */
-  static void EstimateInit(const Matrix& seq, const Vector& states, Matrix* trans, 
-			   std::vector<Vector>* means, std::vector<Matrix>* covs);
-  static void EstimateInit(int numStates, const Matrix& seq, const Vector& states, 
-			   Matrix* trans, std::vector<Vector>* means, 
-			   std::vector<Matrix>* covs);
+  static void EstimateInit(const arma::mat& seq, const arma::vec& states, arma::mat& trans, 
+			   std::vector<arma::vec>& means, std::vector<arma::mat>& covs);
+  static void EstimateInit(int numStates, const arma::mat& seq, const arma::vec& states,
+			   arma::mat& trans, std::vector<arma::vec>& means, 
+			   std::vector<arma::mat>& covs);
 
   /** 
    * Calculate posteriori probabilities of states at each steps
@@ -162,17 +156,17 @@ class GaussianHMM {
    * scales: scale factors, length L
    * RETURN: log probabilities of sequence
    */
-  static void ForwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
-			       Vector *scales, Matrix* fs);
-  static void BackwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
-				const Vector& scales, Matrix* bs);
-  static double Decode(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, 
-		       Matrix* fs, Matrix* bs, Vector* scales);
-  static double Decode(int L, const Matrix& trans, const Matrix& emis_prob, 
-		       Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
-  static void CalculateEmissionProb(const Matrix& seq, const std::vector<Vector>& means, 
-				    const std::vector<Matrix>& inv_covs, const Vector& det,
-				    Matrix* emis_prob);
+  static void ForwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+			       arma::vec& scales, arma::mat& fs);
+  static void BackwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+				const arma::vec& scales, arma::mat& bs);
+  static double Decode(const arma::mat& trans, const arma::mat& emis_prob, arma::mat& pstates, 
+		       arma::mat& fs, arma::mat& bs, arma::vec& scales);
+  static double Decode(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+		       arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales);
+  static void CalculateEmissionProb(const arma::mat& seq, const std::vector<arma::vec>& means, 
+				    const std::vector<arma::mat>& inv_covs, const arma::vec& det,
+				    arma::mat& emis_prob);
 
   /** 
    * Calculate the most probable states for a sequence
@@ -182,22 +176,23 @@ class GaussianHMM {
    * states: Unitialized, will have length L
    * RETURN: log probability of the most probable sequence
    */
-  static double ViterbiInit(const Matrix& trans, const Matrix& emis_prob, Vector* states);
-  static double ViterbiInit(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states);
+  static double ViterbiInit(const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
+  static double ViterbiInit(int L, const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
 
   /** 
    * Baum-Welch and Viterbi estimation of transition and emission 
    * distribution (Gaussian)
    */
-  static void InitGaussParameter(int M, const std::vector<Matrix>& seqs, 
-				 Matrix* guessTR, std::vector<Vector>* guessME, std::vector<Matrix>* guessCO);
+  static void InitGaussParameter(int M, const std::vector<arma::mat>& seqs, 
+				 arma::mat& guessTR, std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO);
 
-  static void Train(const std::vector<Matrix>& seqs, Matrix* guessTR, 
-		    std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, 
+  static void Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
+		    std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO, 
 		    int max_iter, double tol);
 
-  static void TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, 
-			   std::vector<Vector>* guessME, std::vector<Matrix>* guessCO, 
+  static void TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
+			   std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO, 
 			   int max_iter, double tol);
 };
+
 #endif

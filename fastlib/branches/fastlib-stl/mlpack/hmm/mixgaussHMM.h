@@ -1,5 +1,5 @@
 /**
- * @file mixaussHMM.h
+ * @file mixgaussHMM.h
  *
  * This file contains functions of a Mixture of Gaussians Hidden Markov Models. 
  * It implements log-likelihood computation, viterbi algorithm for the most 
@@ -10,7 +10,8 @@
 #ifndef FASTLIB_MIXGAUSS_HMM_H
 #define FASTLIB_MIXGAUSS_HMM_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
 #include "mixtureDST.h"
 
 /**
@@ -23,33 +24,29 @@ class MixtureofGaussianHMM {
   /////////////// Member variables /////////////////////////////////////////////////
  private:
   /** Transmission probabilities matrix between states */
-  Matrix transmission_;
+  arma::mat transmission_;
 
   /** List of Mixture of Gaussian objects corresponding to each state */
   std::vector<MixtureGauss> list_mixture_gauss_;
 
-  OT_DEF(MixtureofGaussianHMM) {
-    OT_MY_OBJECT(transmission_);
-    OT_MY_OBJECT(list_mixture_gauss_);
-  }
  public:
   /** Getters */
-  const Matrix& transmission() const { return transmission_; }
+  const arma::mat& transmission() const { return transmission_; }
   const std::vector<MixtureGauss>& list_mixture_gauss() const { return list_mixture_gauss_; }
 
   /** Setter used when already initialized */
-  void setModel(const Matrix& transmission,
+  void setModel(const arma::mat& transmission,
 		const std::vector<MixtureGauss>& list_mixture_gauss);
 
   /** Initializes from computed transmission and Mixture of Gaussian parameters */
-  void Init(const Matrix& transmission, const std::vector<MixtureGauss>& list_mixture_gauss);
+  void Init(const arma::mat& transmission, const std::vector<MixtureGauss>& list_mixture_gauss);
 
   /** Initializes by loading from a file */
   void InitFromFile(const char* profile);
 
   /** Initializes empty object */
   void Init() {
-    transmission_.Init(0, 0);
+    transmission_.set_size(0, 0);
   }
 
   /** Load from file, used when already initialized */
@@ -59,54 +56,54 @@ class MixtureofGaussianHMM {
   void SaveProfile(const char* profile) const;
 
   /** Generate a random data sequence of a given length */
-  void GenerateSequence(int L, Matrix* data_seq, Vector* state_seq) const;
+  void GenerateSequence(int L, arma::mat& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Estimate the matrices by a data sequence and a state sequence 
    * Must be already initialized
    */
 
-  void EstimateModel(int numcluster, const Matrix& data_seq, const Vector& state_seq);
+  void EstimateModel(int numcluster, const arma::mat& data_seq, const arma::vec& state_seq);
   void EstimateModel(int numstate, int numcluster, 
-		     const Matrix& data_seq, const Vector& state_seq);
+		     const arma::mat& data_seq, const arma::vec& state_seq);
 
   /** 
    * Decode a sequence into probabilities of each state at each time step
    * using scaled forward-backward algorithm.
    * Also return forward, backward probabilities and scale factors
    */
-  void DecodeOverwrite(const Matrix& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, 
-		       Matrix* backward_prob_mat, Vector* scale_vec) const;
+  void DecodeOverwrite(const arma::mat& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, 
+		       arma::mat& backward_prob_mat, arma::vec& scale_vec) const;
 
   /** A decode version that initialized the output matrices */
-  void DecodeInit(const Matrix& data_seq, Matrix* state_prob_mat, Matrix* forward_prob_mat, 
-		  Matrix* backward_prob_mat, Vector* scale_vec) const;
+  void DecodeInit(const arma::mat& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, 
+		  arma::mat& backward_prob_mat, arma::vec& scale_vec) const;
 
   /** Compute the log-likelihood of a sequence */
-  double ComputeLogLikelihood(const Matrix& data_seq) const;
+  double ComputeLogLikelihood(const arma::mat& data_seq) const;
 
   /** Compute the log-likelihood of a list of sequences */
-  void ComputeLogLikelihood(const std::vector<Matrix>& list_data_seq, std::vector<double>* list_likelihood) const;
+  void ComputeLogLikelihood(const std::vector<arma::mat>& list_data_seq, std::vector<double>& list_likelihood) const;
 
   /** Compute the most probable sequence (Viterbi) */
-  void ComputeViterbiStateSequence(const Matrix& data_seq, Vector* state_seq) const;
+  void ComputeViterbiStateSequence(const arma::mat& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance);
+  void TrainBaumWelch(const std::vector<arma::mat>& list_data_seq, int max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const std::vector<Matrix>& list_data_seq, int max_iteration, double tolerance);
+  void TrainViterbi(const std::vector<arma::mat>& list_data_seq, int max_iteration, double tolerance);
 
 
   ////////// Static helper functions ///////////////////////////////////////
-  static success_t LoadProfile(const char* profile, Matrix* trans, std::vector<MixtureGauss>* mixs);
-  static success_t SaveProfile(const char* profile, const Matrix& trans, const std::vector<MixtureGauss>& mixs);
+  static success_t LoadProfile(const char* profile, arma::mat& trans, std::vector<MixtureGauss>& mixs);
+  static success_t SaveProfile(const char* profile, const arma::mat& trans, const std::vector<MixtureGauss>& mixs);
 
   /**
    * Generating a sequence and states using transition and emission probabilities.
@@ -117,13 +114,13 @@ class MixtureofGaussianHMM {
    * seq: generated sequence, uninitialized matrix, will have size N x L
    * states: generated states, uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const Matrix& trans, const std::vector<MixtureGauss>& mixs, Matrix* seq, Vector* states);
+  static void GenerateInit(int L, const arma::mat& trans, const std::vector<MixtureGauss>& mixs, arma::mat& seq, arma::vec& states);
 
   /** Estimate transition and emission distribution from sequence and states */
-  static void EstimateInit(int NumClusters, const Matrix& seq, const Vector& states, 
-			   Matrix* trans, std::vector<MixtureGauss>* mixs);
-  static void EstimateInit(int numStates, int NumClusters, const Matrix& seq, 
-			   const Vector& states, Matrix* trans, std::vector<MixtureGauss>* mixs);
+  static void EstimateInit(int NumClusters, const arma::mat& seq, const arma::vec& states, 
+			   arma::mat& trans, std::vector<MixtureGauss>& mixs);
+  static void EstimateInit(int numStates, int NumClusters, const arma::mat& seq, 
+			   const arma::vec& states, arma::mat& trans, std::vector<MixtureGauss>& mixs);
 
   /** 
    * Calculate posteriori probabilities of states at each steps
@@ -137,16 +134,16 @@ class MixtureofGaussianHMM {
    * scales: scale factors, length L
    * RETURN: log probabilities of sequence
    */
-  static void ForwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
-			       Vector *scales, Matrix* fs);
-  static void BackwardProcedure(int L, const Matrix& trans, const Matrix& emis_prob, 
-				const Vector& scales, Matrix* bs);
-  static double Decode(const Matrix& trans, const Matrix& emis_prob, Matrix* pstates, 
-		       Matrix* fs, Matrix* bs, Vector* scales);
-  static double Decode(int L, const Matrix& trans, const Matrix& emis_prob, 
-		       Matrix* pstates, Matrix* fs, Matrix* bs, Vector* scales);
+  static void ForwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob,
+			       arma::vec& scales, arma::mat& fs);
+  static void BackwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+				const arma::vec& scales, arma::mat& bs);
+  static double Decode(const arma::mat& trans, const arma::mat& emis_prob, arma::mat& pstates, 
+		       arma::mat& fs, arma::mat& bs, arma::vec& scales);
+  static double Decode(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+		       arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales);
 
-  static void CalculateEmissionProb(const Matrix& seq, const std::vector<MixtureGauss>& mixs, Matrix* emis_prob);
+  static void CalculateEmissionProb(const arma::mat& seq, const std::vector<MixtureGauss>& mixs, arma::mat& emis_prob);
 
   /** 
    * Calculate the most probable states for a sequence
@@ -156,16 +153,17 @@ class MixtureofGaussianHMM {
    * states: Unitialized, will have length L
    * RETURN: log probability of the most probable sequence
    */
-  static double ViterbiInit(const Matrix& trans, const Matrix& emis_prob, Vector* states);
-  static double ViterbiInit(int L, const Matrix& trans, const Matrix& emis_prob, Vector* states);
+  static double ViterbiInit(const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
+  static double ViterbiInit(int L, const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
 
   /** 
    * Baum-Welch and Viterbi estimation of transition and emission 
    * distribution (Gaussian)
    */
-  static void Train(const std::vector<Matrix>& seqs, Matrix* guessTR, 
-		    std::vector<MixtureGauss>* guessMG, int max_iter, double tol);
-  static void TrainViterbi(const std::vector<Matrix>& seqs, Matrix* guessTR, 
-			   std::vector<MixtureGauss>* guessMG, int max_iter, double tol);
+  static void Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
+		    std::vector<MixtureGauss>& guessMG, int max_iter, double tol);
+  static void TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
+			   std::vector<MixtureGauss>& guessMG, int max_iter, double tol);
 };
+
 #endif

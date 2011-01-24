@@ -9,7 +9,7 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -102,7 +102,7 @@ success_t generate_mixture() {
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax-seqlen) / numseq;
+  double step = (double) (seqlmax - seqlen) / numseq;
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -119,12 +119,12 @@ success_t generate_mixture() {
   }
 
   double L = seqlen;
-  for (int i = 0; i < numseq; i++, L+=step) {
-    Matrix seq;
-    Vector states;
+  for (int i = 0; i < numseq; i++, L += step) {
+    arma::mat seq;
+    arma::vec states;
     char s[100];
 
-    hmm.GenerateSequence((int)L, &seq, &states);
+    hmm.GenerateSequence((int)L, seq, states);
     
     sprintf(s, "%% sequence %d", i);
     print_matrix(w_seq, seq, s, "%E,");    
@@ -151,7 +151,7 @@ success_t generate_gaussian() {
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax-seqlen) / numseq;
+  double step = (double) (seqlmax - seqlen) / numseq;
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -169,11 +169,11 @@ success_t generate_gaussian() {
 
   double L = seqlen;
   for (int i = 0; i < numseq; i++, L+=step) {
-    Matrix seq;
-    Vector states;
+    arma::mat seq;
+    arma::vec states;
     char s[100];
 
-    hmm.GenerateSequence((int)L, &seq, &states);
+    hmm.GenerateSequence((int) L, seq, states);
     
     sprintf(s, "%% sequence %d", i);
     print_matrix(w_seq, seq, s, "%E,");    
@@ -198,7 +198,7 @@ success_t generate_discrete() {
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
 
-  double step = (double) (seqlmax-seqlen) / numseq;
+  double step = (double) (seqlmax - seqlen) / numseq;
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);
@@ -216,10 +216,10 @@ success_t generate_discrete() {
 
   double L = seqlen;
   for (int i = 0; i < numseq; i++, L+=step) {
-    Vector seq, states;
+    arma::vec seq, states;
     char s[100];
 
-    hmm.GenerateSequence((int)L, &seq, &states);
+    hmm.GenerateSequence((int) L, seq, states);
     
     sprintf(s, "%% sequence %d", i);
     print_vector(w_seq, seq, s, "%.0f,");    

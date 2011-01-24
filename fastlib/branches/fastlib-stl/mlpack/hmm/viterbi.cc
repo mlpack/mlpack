@@ -10,7 +10,7 @@
  * See the usage() function for complete option list
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -51,19 +51,19 @@ int main(int argc, char* argv[]) {
   success_t s = SUCCESS_PASS;
   if (fx_param_exists(NULL,"type")) {
     const char* type = fx_param_str_req(NULL, "type");
-    if (strcmp(type, "discrete")==0)
+    if (strcmp(type, "discrete") == 0)
       s = viterbi_discrete();
-    else if (strcmp(type, "gaussian")==0)
+    else if (strcmp(type, "gaussian") == 0)
       s = viterbi_gaussian();
-    else if (strcmp(type, "mixture")==0)
+    else if (strcmp(type, "mixture") == 0)
       s = viterbi_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+      printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
@@ -93,8 +93,8 @@ success_t viterbi_mixture() {
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
 
-  ArrayList<Matrix> seqs;
-  load_matrix_list(seqin, &seqs);
+  std::vector<arma::mat> seqs;
+  load_matrix_list(seqin, seqs);
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
@@ -103,14 +103,15 @@ success_t viterbi_mixture() {
   }
 
   for (int i = 0; i < seqs.size(); i++) {
-    Vector states;
+    arma::vec states;
     char s[100];
 
-    hmm.ComputeViterbiStateSequence(seqs[i], &states);
+    hmm.ComputeViterbiStateSequence(seqs[i], states);
     
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+
   return SUCCESS_PASS;
 }
 
@@ -122,11 +123,12 @@ success_t viterbi_gaussian() {
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
   const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.gauss.out");
+
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
 
-  ArrayList<Matrix> seqs;
-  load_matrix_list(seqin, &seqs);
+  std::vector<arma::mat> seqs;
+  load_matrix_list(seqin, seqs);
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
@@ -142,6 +144,7 @@ success_t viterbi_gaussian() {
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+
   return SUCCESS_PASS;
 }
 
@@ -158,8 +161,8 @@ success_t viterbi_discrete() {
 
   hmm.InitFromFile(profile);
 
-  ArrayList<Vector> seqs;
-  load_vector_list(seqin, &seqs);
+  std::vector<arma::vec> seqs;
+  load_vector_list(seqin, seqs);
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
@@ -168,13 +171,14 @@ success_t viterbi_discrete() {
   }
 
   for (int i = 0; i < seqs.size(); i++) {
-    Vector states;
+    arma::vec states;
     char s[100];
     
-    hmm.ComputeViterbiStateSequence(seqs[i], &states);
+    hmm.ComputeViterbiStateSequence(seqs[i], states);
     
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
+
   return SUCCESS_PASS;
 }

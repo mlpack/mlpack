@@ -1,17 +1,28 @@
 #ifndef FASTLIB_DISCRETE_DISTRIBUTION_H
 #define FASTLIB_DISCRETE_DISTRIBUTION_H
-#include "fastlib/fastlib.h"
-class DiscreteDST {
-  Vector p;
-  Vector ACC_p;
- public:
-  void Init(int N = 2);
-  void generate(int* v);
-  double get(int i) { return p[i]; }
-  void set(const Vector& p_) { p.CopyValues(p_); }
 
-  void start_accumulate() { ACC_p.SetZero(); }
-  void accumulate(int i, double v) { ACC_p[i]+=v; }
+#include <fastlib/fastlib.h>
+#include <armadillo>
+
+class DiscreteDST {
+ private:
+  arma::vec p;
+  arma::vec acc_p;
+
+ public:
+  void Init(int n = 2);
+
+  void generate(int* v);
+
+  double get(int i) { return p[i]; }
+
+  void set(const arma::vec& p_) { p = p; }
+
+  void start_accumulate() { acc_p.zeros(); }
+
+  void accumulate(int i, double v) { acc_p[i] += v; }
+
   void end_accumulate();
 };
+
 #endif
