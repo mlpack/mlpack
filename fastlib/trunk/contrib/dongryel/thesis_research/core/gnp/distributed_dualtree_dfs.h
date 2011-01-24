@@ -10,6 +10,7 @@
 
 #include <boost/mpi/communicator.hpp>
 #include <boost/tuple/tuple.hpp>
+#include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
 #include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
@@ -57,8 +58,8 @@ class DistributedDualtreeDfs {
     /** @brief The type of the object used for prioritizing the
      *         computation.
      */
-    typedef boost::tuple <
-    TreeType *, std::pair<int, int>, double > FrontierObjectType;
+    typedef typename core::gnp::DualtreeDfs<ProblemType>::FrontierObjectType
+    FrontierObjectType;
 
     /** @brief The type of the subtable in use.
      */

@@ -30,8 +30,9 @@ void DualtreeDfs<ProblemType>::set_query_start_node(
 }
 
 template<typename ProblemType>
-const std::vector < boost::tuple < typename DualtreeDfs <
-ProblemType >::TreeType *, std::pair<int, int >, double > > &DualtreeDfs <
+const std::vector <
+typename core::gnp::DualtreeDfs<ProblemType>::FrontierObjectType >
+&DualtreeDfs <
 ProblemType >::unpruned_query_reference_pairs() const {
   return unpruned_query_reference_pairs_;
 }
@@ -405,8 +406,9 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
                           static_cast<double>(qnode->count() * rnode->count());
         unpruned_query_reference_pairs_.push_back(
           boost::make_tuple(
-            qnode, std::pair<int, int>(
-              rnode->begin(), rnode->count()), priority));
+            qnode,
+            boost::make_tuple<int, int, int>(
+              reference_rank_, rnode->begin(), rnode->count()), priority));
         unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
 

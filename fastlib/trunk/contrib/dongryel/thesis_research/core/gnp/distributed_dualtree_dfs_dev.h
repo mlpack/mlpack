@@ -35,6 +35,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  // The priority queue type.
+  typedef std::priority_queue <
+  FrontierObjectType,
+  std::vector<FrontierObjectType>,
+  typename DistributedDualtreeDfs <
+  DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
+
   // Start the computation with the self interaction.
   DualtreeDfs<ProblemType> self_engine;
   ProblemType self_problem;
@@ -50,24 +57,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   DistributedTableType, SubTableListType > table_exchange;
   table_exchange.Init(*world_, *reference_table_);
 
-  // A frontier of reference nodes to be explored for the current
-  // process.
-  std::vector< std::vector< std::pair<int, int> > > receive_requests;
-  receive_requests.resize(world_->size());
-  for(unsigned int i = 0; i < receive_requests.size(); i++) {
-    if(i != static_cast<unsigned int>(world_->rank())) {
-      receive_requests[i].push_back(
-        std::pair<int, int>(0, reference_table_->local_n_entries(i)));
-    }
-  }
-
   // An outstanding frontier of query-reference pairs to be computed.
-  std::vector <
-  std::priority_queue < FrontierObjectType,
-      std::vector<FrontierObjectType>,
-      typename DistributedDualtreeDfs <
-      DistributedProblemType >::PrioritizeTasks_ > > computation_frontier(
-        world_->size());
+  std::vector < PriorityQueueType > computation_frontier(
+    world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
       int reference_begin = 0;
@@ -75,13 +67,35 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       computation_frontier[i].push(
         boost::make_tuple(
           query_table_->local_table()->get_tree(),
-          std::pair<int, int>(reference_begin, reference_count), 0.0));
+          boost::make_tuple<int, int, int>(
+            i, reference_begin, reference_count), 0.0));
     }
   }
 
   // The computation loop.
   bool exchange_done = false;
   do  {
+
+    // Fill out the tasks that need to be completed in this iteration.
+    std::vector< std::vector< std::pair<int, int> > > receive_requests(
+      world_->size());
+    PriorityQueueType prioritized_tasks;
+    for(int i = 0; i < world_->size(); i++) {
+      for(int j = 0; computation_frontier[i].size() > 0 &&
+          j < max_num_work_to_dequeue_per_stage_; j++) {
+
+        // Examine the top object in the frontier and sort it in the
+        // priorities, while forming the request lists.
+        const FrontierObjectType &top_object = computation_frontier[i].top();
+        receive_requests[i].push_back(
+          std::pair<int, int>(
+            top_object.get<1>().get<1>(), top_object.get<1>().get<2>()));
+        prioritized_tasks.push(top_object);
+
+        // Pop the top object.
+        computation_frontier[i].pop();
+      }
+    }
 
     // Try to exchange the subtables. If we are done, then we exit the
     // loop.
@@ -95,95 +109,56 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       exchange_done = true;
       max_num_work_to_dequeue_per_stage_ = std::numeric_limits<int>::max();
     }
-    if(exchange_done) {
-      bool all_done = true;
-      for(int i = 0; i < world_->size() && all_done; i++) {
-        all_done = (computation_frontier[i].size() == 0);
-      }
-      if(all_done) {
-        break;
-      }
+    if(exchange_done && prioritized_tasks.size() == 0) {
+      break;
     }
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
-    for(int i = 0; i < world_->size(); i++) {
-      if(i != world_->rank()) {
-        int frontier_size_before_loop =
-          static_cast<int>(computation_frontier[i].size());
+    while(! prioritized_tasks.empty()) {
 
-        std::vector < FrontierObjectType > new_computation_frontier;
+      // Examine the top object in the frontier.
+      const FrontierObjectType &top_frontier = prioritized_tasks.top();
 
-        for(int j = 0;
-            j < std::min(
-              max_num_work_to_dequeue_per_stage_, frontier_size_before_loop);
-            j++) {
+      // Run a sub-dualtree algorithm on the computation object.
+      core::gnp::DualtreeDfs<ProblemType> sub_engine;
+      ProblemType sub_problem;
+      ArgumentType sub_argument;
+      int reference_process_id = top_frontier.get<1>().get<0>();
+      SubTableType *frontier_reference_subtable =
+        table_exchange.FindSubTable(
+          reference_process_id,
+          top_frontier.get<1>().get<1>(),
+          top_frontier.get<1>().get<2>());
+      sub_argument.Init(
+        frontier_reference_subtable->table(),
+        query_table_->local_table(), problem_->global());
+      sub_problem.Init(sub_argument);
+      sub_engine.Init(sub_problem);
 
-          // Examine the top object in the frontier.
-          const FrontierObjectType &top_frontier =
-            computation_frontier[i].top();
+      // Set the right flags and fire away the computation.
+      sub_engine.set_base_case_flags(
+        frontier_reference_subtable->serialize_points_per_terminal_node());
+      sub_engine.set_query_reference_process_ranks(
+        world_->rank(), reference_process_id);
+      sub_engine.set_query_start_node(
+        top_frontier.get<0>());
+      sub_engine.Compute(metric, query_results, false);
 
-          // Run a sub-dualtree algorithm on the computation object.
-          core::gnp::DualtreeDfs<ProblemType> sub_engine;
-          ProblemType sub_problem;
-          ArgumentType sub_argument;
-          SubTableType *frontier_reference_subtable =
-            table_exchange.FindSubTable(
-              i, top_frontier.get<1>().first, top_frontier.get<1>().second);
-          sub_argument.Init(
-            frontier_reference_subtable->table(),
-            query_table_->local_table(), problem_->global());
-          sub_problem.Init(sub_argument);
-          sub_engine.Init(sub_problem);
-          sub_engine.set_base_case_flags(
-            frontier_reference_subtable->serialize_points_per_terminal_node());
-          sub_engine.set_query_reference_process_ranks(world_->rank(), i);
-          sub_engine.set_query_start_node(
-            top_frontier.get<0>());
-          sub_engine.Compute(metric, query_results, false);
+      // For each unpruned query reference pair, push into the
+      // priority queue.
+      const std::vector < FrontierObjectType > &unpruned_query_reference_pairs =
+        sub_engine.unpruned_query_reference_pairs();
+      for(unsigned int k = 0;
+          k < unpruned_query_reference_pairs.size(); k++) {
+        computation_frontier[reference_process_id].push(
+          unpruned_query_reference_pairs[k]);
+      }
 
-          // Collect the list of unpruned reference nodes.
-          for(typename std::map<int, int>::const_iterator it =
-                sub_engine.unpruned_reference_nodes().begin();
-              it != sub_engine.unpruned_reference_nodes().end(); it++) {
-
-            // This operation might be less than ideal, so change it
-            // later.
-            std::pair<int, int> new_pair(it->first, it->second);
-            if(std::find(
-                  receive_requests[i].begin(), receive_requests[i].end(),
-                  new_pair) == receive_requests[i].end() &&
-                table_exchange.FindSubTable(i, it->first, it->second) == NULL) {
-              receive_requests[i].push_back(new_pair);
-            }
-          }
-
-          // Pop the top frontier object that was just explored.
-          computation_frontier[i].pop();
-
-          // For each unpruned query reference pair, push into the
-          // priority queue.
-          const std::vector <
-          boost::tuple< TreeType *, std::pair<int, int>, double> >
-          &unpruned_query_reference_pairs =
-            sub_engine.unpruned_query_reference_pairs();
-          for(unsigned int k = 0;
-              k < unpruned_query_reference_pairs.size(); k++) {
-            new_computation_frontier.push_back(
-              unpruned_query_reference_pairs[k]);
-          }
-
-        } // Looping over each of the outstanding work from the $i$-th
-        // process.
-
-        // Appending should be done after finishing the $i$-th process.
-        for(unsigned int j = 0; j < new_computation_frontier.size(); j++) {
-          computation_frontier[i].push(new_computation_frontier[j]);
-        }
-
-      } // end of the if-case.
-    } // end of taking care of the computation frontier.
-
+      // Pop the top frontier object that was just explored.
+      prioritized_tasks.pop();
+    } // end of taking care of the computation tasks for the current
+    // iteration.
   }
   while(true);
 }
