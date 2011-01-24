@@ -40,6 +40,12 @@ class DualtreeDfs {
      */
     typedef typename ProblemType::ResultType ResultType;
 
+    /** @brief The type of the object used for prioritizing the
+     *         computation.
+     */
+    typedef boost::tuple <
+    TreeType *, boost::tuple<int, int, int>, double > FrontierObjectType;
+
   public:
 
     /** @brief An iterator object for iterative dual-tree computation.
@@ -178,9 +184,7 @@ class DualtreeDfs {
 
     std::map<int, int> serialize_points_per_terminal_node_;
 
-    std::vector <
-    boost::tuple< TreeType *, std::pair<int, int>, double> >
-    unpruned_query_reference_pairs_;
+    std::vector < FrontierObjectType > unpruned_query_reference_pairs_;
 
     /** @brief The list of unpruned reference nodes (the beginning
      *         index and the count pair).
@@ -274,8 +278,7 @@ class DualtreeDfs {
 
     /** @brief Returns the list of unpruned query/reference pairs.
      */
-    const std::vector <
-    boost::tuple<TreeType *, std::pair<int, int >, double > > &
+    const std::vector < FrontierObjectType > &
     unpruned_query_reference_pairs() const;
 
     /** @brief Returns the list of reference nodes by its beginning
