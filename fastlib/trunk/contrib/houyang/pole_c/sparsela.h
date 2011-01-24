@@ -486,4 +486,72 @@ void SparseNegExpMultiplyOverwrite(SVEC *w, SVEC *x) {
   }
 }
 
+/**
+ * Sparse multiply: w <- w .* x
+ */
+void SparseMultiplyOverwrite(SVEC *w, SVEC *x) {
+  size_t nz_w = w->num_nz_feats;
+  size_t nz_x = x->num_nz_feats;
+  size_t ct_w = 0, ct_x = 0;
+  if (nz_w == 0) {
+    return;
+  }
+  else if (nz_x == 0) {
+    EmptyFeatures(w);
+  }
+  else {
+    while (ct_w<nz_w && ct_x<nz_x) {
+      if (w->feats[ct_w].widx == x->feats[ct_x].widx) {
+	w->feats[ct_w].wval = w->feats[ct_w].wval * x->feats[ct_x].wval;
+	++ct_w;
+	++ct_x;
+      }
+      else {
+	if (w->feats[ct_w].widx > x->feats[ct_x].widx) {
+	  ++ct_x;
+	}
+	else {
+	  w->feats[ct_w].wval = 0.0;
+	  ++ct_w;
+	}
+      }
+    }
+  }
+}
+
+/**
+ * Sparse power: v <= v.^p
+ */
+void SparsePowerOverwrite(SVEC *v, double p) {
+  size_t i;
+  size_t nz_v = v->num_nz_feats;
+  if (p == 0.0) {
+    SetAllConstant(v, 1.0, nz_v);
+    return;
+  }
+  else if (p == 1.0) {
+    return;
+  }
+  else if (p == -1.0) {
+    for (i=0; i<nz_v; i++) {
+      if (v->feats[i].wval != 1.0)
+	v->feats[i].wval = 1.0 / v->feats[i].wval;
+    }
+    return;
+  }
+  else if (p == 0.5) {
+    for (i=0; i<nz_v; i++) {
+      if (v->feats[i].wval != 1.0)
+	v->feats[i].wval = sqrt(v->feats[i].wval);
+    }
+    return;
+  }
+  else {
+    for (i=0; i<v->num_nz_feats; i++) {
+      if (v->feats[i].wval != 1.0)
+	v->feats[i].wval = pow(v->feats[i].wval, p);
+    }
+  }
+}
+
 #endif

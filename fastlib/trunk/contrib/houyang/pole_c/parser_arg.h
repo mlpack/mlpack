@@ -12,7 +12,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("help,h","Produce help message")
     ("threads,t", boost_po::value<size_t>(&global.num_threads)->default_value(1), "Number of threads. Default: 1 thread.")
     ("data_train,d", boost_po::value<string>()->default_value(""), "File name of training example set")
-    ("opt_method,m", boost_po::value<string>()->default_value("d_sgd"), "Optimization method")
+    ("opt_method,m", boost_po::value<string>()->default_value("ogd"), "Optimization method")
     ("epoches,e", boost_po::value<size_t>(&global.num_epoches)->default_value(0), "Number of training epoches. Default: 0 epoch")
     ("iterations,i", boost_po::value<size_t>(&global.num_iter_res)->default_value(0), "Number of training iterations besides epoches. Default: 0")
     ("reg,r", boost_po::value<int>(&learner.reg)->default_value(2), "Which regularization term to use. Default: 2(squared l2 norm)")
@@ -25,6 +25,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("bias", "Add a bias term to examples")
     ("experts,p", boost_po::value<size_t>(&learner.num_experts)->default_value(0), "Number of experts. Default: 0")
     ("weak_learner", boost_po::value<string>()->default_value("stump"), "Name of weak learner. Default: decision stump")
+    ("alpha,a", boost_po::value<double>(&learner.alpha)->default_value(0.5), "Multiplication factor in Weighte Majority. Default: 0.5")
     ("comm", boost_po::value<int>(&global.comm_method)->default_value(1), "How agents communicate with each other. Default: 1(full connected)")
     ("mini_batch,b", boost_po::value<int>(&global.mb_size)->default_value(1), "Size of a mini-batch. Default: 1")
     ("num_port_sources", boost_po::value<size_t>(), "Number of sources for daemon socket input")
@@ -98,6 +99,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
 
   if (vm.count("opt_method")) {
     global.opt_method = vm["opt_method"].as<string>();
+    learner.opt_method = global.opt_method;
   }
 
   if (vm.count("threads")) {
@@ -133,6 +135,17 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
   }
   else {
     learner.wl_name = "stump";
+  }
+
+  if (vm.count("alpha")) {
+    learner.alpha = vm["alpha"].as<double>();
+    if (learner.alpha <=0 || learner.alpha >= 1) {
+      cout << "In WM, alpha should be within (0,1) !" << endl;
+      exit(1);
+    }
+  }
+  else {
+    learner.alpha = 0.5;
   }
 
   if (vm.count("experts")) {
