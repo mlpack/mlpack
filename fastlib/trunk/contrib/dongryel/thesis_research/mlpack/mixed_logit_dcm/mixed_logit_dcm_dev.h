@@ -287,6 +287,8 @@ void MixedLogitDCM<TableType>::Compute(
   theta.zeros(table_.num_parameters());
   theta_sampling.Init(
     theta, &table_, num_data_samples, num_integration_samples);
+  theta_sampling.SimulatedLoglikelihoodGradient(&theta_gradient);
+  theta_sampling.SimulatedLoglikelihoodHessian(&theta_hessian);
 
   // Enter the trust region loop.
   do {
