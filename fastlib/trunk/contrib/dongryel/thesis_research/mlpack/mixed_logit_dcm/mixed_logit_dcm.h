@@ -40,6 +40,12 @@ class MixedLogitDCM {
 
   private:
 
+    /** @brief Implements the stopping condition.
+     */
+    bool TerminationConditionReached_(
+      const SamplingType &first_sample, const arma::vec &gradient,
+      double model_reduction_ratio) const;
+
     /** @brief Computes the sample data error (Section 3.1).
      */
     double SampleDataError_(
