@@ -38,12 +38,6 @@ ProblemType >::unpruned_query_reference_pairs() const {
 }
 
 template<typename ProblemType>
-const std::map <
-int, int > &DualtreeDfs<ProblemType>::unpruned_reference_nodes() const {
-  return unpruned_reference_nodes_;
-}
-
-template<typename ProblemType>
 template<typename PointSerializeFlagType>
 void DualtreeDfs<ProblemType>::set_base_case_flags(
   const std::vector<PointSerializeFlagType> &flags_in) {
@@ -409,7 +403,6 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
             qnode,
             boost::make_tuple<int, int, int>(
               reference_rank_, rnode->begin(), rnode->count()), priority));
-        unpruned_reference_nodes_[rnode->begin()] = rnode->count();
       }
 
     } // qnode is leaf, rnode is leaf.

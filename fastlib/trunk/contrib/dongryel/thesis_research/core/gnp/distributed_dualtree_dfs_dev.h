@@ -73,7 +73,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   }
 
   // The computation loop.
-  bool exchange_done = false;
   do  {
 
     // Fill out the tasks that need to be completed in this iteration.
@@ -81,36 +80,47 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       world_->size());
     PriorityQueueType prioritized_tasks;
     for(int i = 0; i < world_->size(); i++) {
-      for(int j = 0; computation_frontier[i].size() > 0 &&
-          j < max_num_work_to_dequeue_per_stage_; j++) {
+      if(i != world_->rank()) {
+        for(int j = 0; computation_frontier[i].size() > 0 &&
+            j < max_num_work_to_dequeue_per_stage_; j++) {
 
-        // Examine the top object in the frontier and sort it in the
-        // priorities, while forming the request lists.
-        const FrontierObjectType &top_object = computation_frontier[i].top();
-        receive_requests[i].push_back(
-          std::pair<int, int>(
-            top_object.get<1>().get<1>(), top_object.get<1>().get<2>()));
-        prioritized_tasks.push(top_object);
+          // Examine the top object in the frontier and sort it in the
+          // priorities, while forming the request lists.
+          const FrontierObjectType &top_object = computation_frontier[i].top();
+          std::pair<int, int> reference_node_id(
+            top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
+          if(table_exchange.FindSubTable(
+                i, reference_node_id.first,
+                reference_node_id.second) == NULL &&
+              std::find(
+                receive_requests[i].begin(), receive_requests[i].end(),
+                reference_node_id) == receive_requests[i].end()) {
+            receive_requests[i].push_back(reference_node_id);
+          }
+          prioritized_tasks.push(top_object);
 
-        // Pop the top object.
-        computation_frontier[i].pop();
+          // Pop the top object.
+          computation_frontier[i].pop();
+        }
       }
     }
 
-    // Try to exchange the subtables. If we are done, then we exit the
-    // loop.
+    // Try to exchange the subtables.
     if(
-      exchange_done == false &&
       table_exchange.AllToAll(
         *world_, max_num_levels_to_serialize_,
         *(reference_table_->local_table()), receive_requests)) {
 
-      // At this point, try to empty the priority queue.
-      exchange_done = true;
-      max_num_work_to_dequeue_per_stage_ = std::numeric_limits<int>::max();
-    }
-    if(exchange_done && prioritized_tasks.size() == 0) {
-      break;
+      // Check whether all of the processes are done. Otherwise, we
+      // have to be in the loop in case some processes request
+      // information from me.
+      bool local_done = (prioritized_tasks.size() == 0);
+      bool global_done = true;
+      boost::mpi::all_reduce(
+        *world_, local_done, global_done, std::logical_and<bool>());
+      if(global_done) {
+        break;
+      }
     }
 
     // Each process calls the independent sets of serial dual-tree dfs

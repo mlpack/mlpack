@@ -186,11 +186,6 @@ class DualtreeDfs {
 
     std::vector < FrontierObjectType > unpruned_query_reference_pairs_;
 
-    /** @brief The list of unpruned reference nodes (the beginning
-     *         index and the count pair).
-     */
-    std::map<int, int> unpruned_reference_nodes_;
-
   private:
 
     void ResetStatisticRecursion_(TreeType *node, TableType * table);
@@ -280,11 +275,6 @@ class DualtreeDfs {
      */
     const std::vector < FrontierObjectType > &
     unpruned_query_reference_pairs() const;
-
-    /** @brief Returns the list of reference nodes by its beginning
-     *         DFS index and the count.
-     */
-    const std::map< int, int > &unpruned_reference_nodes() const;
 
     /** @brief Sets the starting query node for the dual-tree
      *         computation.
