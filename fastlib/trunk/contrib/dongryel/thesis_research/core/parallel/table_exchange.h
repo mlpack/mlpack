@@ -71,11 +71,7 @@ class TableExchange {
         }
       }
 
-      // The code should not get to this point.
-      fprintf(stderr, "There is something wrong. "
-              "The subtable ID (%d, %d %d) could not be found.\n",
-              process_id, begin, count);
-      exit(0);
+      // Returns a NULL pointer for the non-existing table request.
       return NULL;
     }
 
@@ -117,7 +113,7 @@ class TableExchange {
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
       TableType &local_table,
-      std::vector <
+      const std::vector <
       std::vector< std::pair<int, int> > > &receive_requests) {
 
       // The gathered request lists to send to each process.
@@ -169,15 +165,9 @@ class TableExchange {
         world, send_subtables, received_subtables_in_this_round);
 
       // Combine.
-      for(unsigned int j = 0; j < receive_requests.size(); j++) {
+      for(int j = 0; j < world.size(); j++) {
         received_subtables_[j].push_back(received_subtables_in_this_round[j]);
       }
-
-      // Clear the receive requests so that it can be used in the next
-      // iteration.
-      receive_requests.resize(0);
-      receive_requests.resize(world.size());
-
       return false;
     }
 };
