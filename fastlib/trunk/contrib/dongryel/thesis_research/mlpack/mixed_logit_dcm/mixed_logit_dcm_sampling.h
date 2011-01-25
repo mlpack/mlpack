@@ -203,7 +203,7 @@ class MixedLogitDCMSampling {
 
         // Get the simulated choice probability for the given person.
         int discrete_choice_index =
-          this->get_discrete_choice_index(person_index);
+          dcm_table_->get_discrete_choice_index(person_index);
         double simulated_choice_probability =
           this->simulated_choice_probability(person_index);
         double inverse_simulated_choice_probability =
