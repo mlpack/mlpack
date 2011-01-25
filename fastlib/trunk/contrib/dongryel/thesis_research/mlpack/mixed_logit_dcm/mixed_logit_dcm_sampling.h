@@ -159,6 +159,18 @@ class MixedLogitDCMSampling {
 
   public:
 
+    /** @brief Returns the parameters associated with the sampling.
+     */
+    const arma::vec &parameters() const {
+      return parameters_;
+    }
+
+    /** @brief Returns the number of active people in the sampling.
+     */
+    int num_active_people() const {
+      return num_active_people_;
+    }
+
     /** @brief Returns the set of integration samples for a given
      *         person.
      */

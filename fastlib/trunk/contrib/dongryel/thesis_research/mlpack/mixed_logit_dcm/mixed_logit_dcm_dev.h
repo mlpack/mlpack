@@ -263,7 +263,7 @@ void MixedLogitDCM<TableType>::Compute(
   TableType > &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
-  static const double C = 1.04;
+  static const double c_factor = 1.04;
 
   // The maximum average integration sample size.
   static const int R_MAX = 1000;
@@ -280,22 +280,53 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
-  arma::vec theta;
-  arma::vec theta_gradient;
-  arma::mat theta_hessian;
-  SamplingType theta_sampling;
-  theta.zeros(table_.num_parameters());
-  theta_sampling.Init(
-    theta, &table_, num_data_samples, num_integration_samples);
-  theta_sampling.SimulatedLoglikelihoodGradient(&theta_gradient);
-  theta_sampling.SimulatedLoglikelihoodHessian(&theta_hessian);
+  arma::vec parameters;
+  arma::vec gradient;
+  arma::mat hessian;
+  SamplingType sampling;
+  parameters.zeros(table_.num_parameters());
+  sampling.Init(
+    parameters, &table_, num_data_samples, num_integration_samples);
+  sampling.SimulatedLoglikelihoodGradient(&gradient);
+  sampling.SimulatedLoglikelihoodHessian(&hessian);
 
   // Enter the trust region loop.
   do {
 
+    // Do a trust region step and find the model reduction ratio.
+    double model_reduction_ratio = 0.0;
 
+    // Determine whether the termination condition has been reached.
+    if(TerminationConditionReached_(theta_sampling, gradient)) {
+      break;
+    }
   }
   while(true);
+}
+
+template<typename TableType>
+bool MixedLogitDCM<TableType>::TerminationConditionReached_(
+  const SamplingType &sampling, const arma::vec &gradient,
+  double model_reduction_ratio) const {
+
+  // Termination condition is only considered when we use all the
+  // people in the sampling (outer term consists of all people).
+  if(sampling.num_active_people() == table_.num_people()) {
+
+    // If the predictived improvement in the objective value is less
+    // than the integration sample error and the integration sample
+    // error is small,
+    if(model_reduction_ratio < c_factor *) {
+
+      // Compute the gradient error.
+      double gradient_error = this->GradientError_(sampling);
+
+      if() {
+        return true;
+      }
+    }
+  }
+  return false;
 }
 
 template<typename TableType>
