@@ -60,6 +60,59 @@ class DCMTable {
 
   public:
 
+    /** @brief Computes the choice probability vector for the
+     *         person_index-th person for each of his/her potential
+     *         choices given the vector $\beta$. This is $P_{i,j}$ in
+     *         a long vector form.
+     */
+    void choice_probabilities(
+      int person_index, const arma::vec &beta_vector,
+      arma::vec *choice_probabilities) {
+
+      int num_discrete_choices = this->num_discrete_choices(person_index);
+      choice_probabilities->set_size(num_discrete_choices);
+
+      // First compute the normalizing sum.
+      double normalizing_sum = 0.0;
+      for(int discrete_choice_index = 0;
+          discrete_choice_index < num_discrete_choices;
+          discrete_choice_index++) {
+
+        // Grab each attribute vector and take a dot product between
+        // it and the beta vector.
+        arma::vec attribute_for_discrete_choice;
+        this->get_attribute_vector(
+          person_index, discrete_choice_index, &attribute_for_discrete_choice);
+        double dot_product =
+          arma::dot(
+            beta_vector, attribute_for_discrete_choice);
+        double unnormalized_probability = exp(dot_product);
+        normalizing_sum += unnormalized_probability;
+        (*choice_probabilities)[discrete_choice_index] =
+          unnormalized_probability;
+      }
+
+      // Then, normalize.
+      for(int discrete_choice_index = 0;
+          discrete_choice_index < num_discrete_choices;
+          discrete_choice_index++) {
+        (*choice_probabilities)[discrete_choice_index] /= normalizing_sum;
+      }
+    }
+
+    /** @brief Computes the choice probability for the given person
+     *         for his/her discrete choice for a given realization of
+     *         $\beta$.
+     */
+    double choice_probability(
+      int person_index, const arma::vec &beta_vector) const {
+      arma::vec choice_probabilities;
+      this->choice_probabilities(
+        person_index, beta_vector, &choice_probabilities);
+      return choice_probabilities[
+               this->get_discrete_choice_index(person_index)];
+    }
+
     /** @brief Returns the distribution from which each $\beta$ is
      *         sampled.
      */

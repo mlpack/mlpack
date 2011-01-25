@@ -278,23 +278,22 @@ void MixedLogitDCM<TableType>::Compute(
       static_cast<int>(arguments_in.initial_integration_sample_rate_ * R_MAX),
       36);
 
-  // Compute the initial simulated log-likelihood, the gradient, and
-  // the Hessian.
-  double current_simulated_log_likelihood = 0;//table_.SimulatedLogLikelihood();
-  arma::vec current_gradient;
-  arma::mat current_hessian;
-  //table_.SimulatedLoglikelihoodGradient(&current_gradient);
-  //table_.SimulatedLoglikelihoodHessian(&current_hessian);
-
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
-  typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
-  mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType>
-  iterate_sampling;
-  iterate_sampling.Init(
-    &table_, num_data_samples, num_integration_samples);
+  arma::vec theta;
+  arma::vec theta_gradient;
+  arma::mat theta_hessian;
+  SamplingType theta_sampling;
+  theta.zeros(table_.num_parameters());
+  theta_sampling.Init(
+    theta, &table_, num_data_samples, num_integration_samples);
+
+  // Enter the trust region loop.
+  do {
 
 
+  }
+  while(true);
 }
 
 template<typename TableType>
