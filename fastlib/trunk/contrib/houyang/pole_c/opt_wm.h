@@ -8,7 +8,7 @@
 #include <boost/thread/thread.hpp>
 #include <boost/date_time/posix_time/posix_time.hpp>
 
-void WmUpdate(SVEC *wvec, size_t tid) {
+void WmUpdate(size_t tid) {
   SVEC *temp_v = NULL;
   if (global.comm_method == 1) {
     if (l1.opt_method == "dwm_i") {
@@ -73,6 +73,9 @@ void *WmThread(void *in_par) {
 	sum_weight_pos = 0.0; sum_weight_neg = 0.0;
 	for (size_t p=0; p<l1.num_experts; p++) {
 	  exp_pred[p] = l1.weak_learners[p]->WeakPredictLabel(exs[b]);
+	  if (exp_pred[p] != exs[b]->label) {
+	    l1.expert_misp[p][tid] = l1.expert_misp[p][tid] + 1;
+	  }
 	  if (exp_pred[p] ==  1) {
 	    sum_weight_pos = sum_weight_pos + l1.w_vec_pool[tid]->feats[p].wval;
 	  }
@@ -116,7 +119,7 @@ void *WmThread(void *in_par) {
       break;
     case 2:
       // update using messages
-      WmUpdate(l1.w_vec_pool[tid], tid);
+      WmUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&barrier_msg_all_used);
       // communication done
@@ -133,8 +136,16 @@ void *WmThread(void *in_par) {
 
 void Wm(learner &l) {
   size_t n_threads = l.num_threads;
-  size_t t;
+  size_t t, k;
 
+  l.expert_misp = (size_t**)malloc(l.num_experts * sizeof(size_t*));
+  for (k=0; k< l.num_experts; k++) {
+    l.expert_misp[k] = (size_t*)malloc(n_threads * sizeof(size_t));
+  }
+  for (k=0; k<l.num_experts; k++)
+    for (t=0; t<n_threads; t++)
+      l.expert_misp[k][t] = 0;
+  
   if (l.num_experts <= 0) {
     cout << "Number of experts not specified for WM! Bailing!" << endl;
     exit(1);
@@ -153,13 +164,13 @@ void Wm(learner &l) {
     random_shuffle ( dims.begin(), dims.end() );
 
     // Train experts
-    for (size_t k=0; k< l.num_experts; k++) {
+    for (k=0; k< l.num_experts; k++) {
       l.weak_learners[k] = GetWeakLearner( l.wl_name, dims[k], max(200, (int)ceil(num_train_exps/50)) );
       l.weak_learners[k]->WeakTrain(train_exps, num_train_exps, NULL);
     }
   }
   else {
-    for (size_t k=0; k< l.num_experts; k++) {
+    for (k=0; k< l.num_experts; k++) {
       l.weak_learners[k] = GetWeakLearner(l.wl_name, 0, 0);
     }
   }
@@ -178,11 +189,11 @@ void Wm(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights
-    l1.w_vec_pool[t] = CreateConstDvector(l.num_experts, num_train_exps);
-    l1.msg_pool[t] = CreateEmptySvector();
-    l1.num_used_exp[t] = 0;
+    l.w_vec_pool[t] = CreateConstDvector(l.num_experts, num_train_exps);
+    l.msg_pool[t] = CreateEmptySvector();
+    l.num_used_exp[t] = 0;
 
-    l1.total_misp_pool[t] = 0;
+    l.total_misp_pool[t] = 0;
     // begin learning iterations
     pthread_create(&threads[t], NULL, WmThread, (void*)t_par[t]);
   }
@@ -190,17 +201,27 @@ void Wm(learner &l) {
   FinishThreads(n_threads);
 
   // prediction accuracy for classifications
-  if (l1.type == "classification") {
+  if (l.type == "classification") {
     size_t t_m = 0, t_s = 0;
     for (t = 0; t < n_threads; t++) {
-      t_m += l1.total_misp_pool[t];
-      t_s += l1.num_used_exp[t];
-      cout << "t"<< t << ": " << l1.num_used_exp[t] << " samples processed. Misprediction: " << l1.total_misp_pool[t]<< ", accuracy: "<< 1.0-(double)l1.total_misp_pool[t]/(double)l1.num_used_exp[t] << endl;
+      t_m += l.total_misp_pool[t];
+      t_s += l.num_used_exp[t];
+      cout << "t"<< t << ": " << l.num_used_exp[t] << " samples processed. Misprediction: " << l.total_misp_pool[t]<< ", accuracy: "<< 1.0-(double)l.total_misp_pool[t]/(double)l.num_used_exp[t] << endl;
+      if (!global.quiet) {
+	for (k=0; k<l.num_experts; k++) {
+	  cout << "Expert " << k << " made " << l1.expert_misp[k][t] << " mispredictions over agent " << t << ". Weight: " << l1.w_vec_pool[t]->feats[k].wval << "." << endl;
+	}
+      }
     }
-    cout << "------ Total mispredictions: " << t_m << ", accuracy: " << 1.0-(double)t_m/(double)t_s<< endl;
+    cout << "--------------------- Total mispredictions: " << t_m << ", accuracy: " << 1.0-(double)t_m/(double)t_s<< endl;
+    /*
+    for (k=0; k<l.num_experts; k++) {
+      cout <<"Expert " << k << " made " << l.expert_misp[k] << " mispredictions over all " << n_threads << " agents." << endl;
+    }
+    */
   }
 
-  FinishLearner(l1, n_threads);
+  FinishLearner(l, n_threads);
   FinishData();
 }
 

@@ -27,6 +27,7 @@ struct learner {
   LossFunctions *loss_func;
 
   size_t num_experts; // number of experts for ensemble methods (WM)
+  size_t **expert_misp; // number of mispredictions for each expert, over each agent
   WeakLearners **weak_learners; // basis learners
   string wl_name;
   double alpha; // the multiplication factor in WM
