@@ -7,6 +7,7 @@ set(SOURCES
   gen_metric_tree.h
   hrect_bound.h
   statistic.h
+  subspace_stat.h
 )
 
 set(DIR_SRCS)

@@ -52,10 +52,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
-  // An abstract way of collaborative subtable exchanges.
+  // An abstract way of collaborative subtable exchanges. The table
+  // cache size is twice the amount of dequeue per stage.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
-  table_exchange.Init(*world_, *reference_table_);
+  table_exchange.Init(
+    *world_, *reference_table_, 2 * max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
   std::vector < PriorityQueueType > computation_frontier(

@@ -8,6 +8,7 @@
 #ifndef CORE_PARALLEL_TABLE_EXCHANGE_H
 #define CORE_PARALLEL_TABLE_EXCHANGE_H
 
+#include <boost/circular_buffer.hpp>
 #include <boost/mpi.hpp>
 #include "core/table/memory_mapped_file.h"
 #include "core/table/dense_matrix.h"
@@ -38,7 +39,7 @@ class TableExchange {
 
     std::vector<int *> new_from_old_cache_;
 
-    std::vector< SubTableListType > received_subtables_;
+    std::vector< boost::circular_buffer<SubTableType> > received_subtables_;
 
   public:
 
@@ -77,13 +78,18 @@ class TableExchange {
 
     void Init(
       boost::mpi::communicator &world,
-      const DistributedTableType &distributed_table) {
+      const DistributedTableType &distributed_table,
+      int subtable_cache_size_per_process) {
 
       // Preallocate the point cache.
       point_cache_.resize(world.size());
       old_from_new_cache_.resize(world.size());
       new_from_old_cache_.resize(world.size());
       received_subtables_.resize(world.size());
+      for(int i = 0; i < world.size(); i++) {
+        received_subtables_[i].set_capacity(subtable_cache_size_per_process);
+      }
+
       for(int i = 0; i < world.size(); i++) {
         if(i != world.rank()) {
           point_cache_[i].Init(
@@ -166,7 +172,11 @@ class TableExchange {
 
       // Combine.
       for(int j = 0; j < world.size(); j++) {
-        received_subtables_[j].push_back(received_subtables_in_this_round[j]);
+        for(unsigned int i = 0; i < received_subtables_in_this_round[j].size();
+            i++) {
+          received_subtables_[j].push_back(
+            received_subtables_in_this_round[j][i]);
+        }
       }
       return false;
     }
