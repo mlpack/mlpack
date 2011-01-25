@@ -1,5 +1,8 @@
 /** @file mixed_logit_dcm_distribution.h
  *
+ *  A virtual class that defines the specification for which the mixed
+ *  logit discrete choice model distribution should satisfy.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -25,20 +28,21 @@ class MixedLogitDCMDistribution {
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
      */
     virtual double AttributeGradientWithRespectToParameter(
-      int row_index, int col_index) const = 0;
+      const arma::vec &parameters, int row_index, int col_index) const = 0;
 
     /** @brief Returns $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$.
      */
     void AttributeGradientWithRespectToParameter(
-      int num_attributes,
-      arma::mat *gradient_out) const {
+      const arma::vec &parameters,
+      int num_attributes, arma::mat *gradient_out) const {
 
       gradient_out->set_size(this->num_parameters(), num_attributes);
 
       for(int j = 0; j < num_attributes; j++) {
         for(int i = 0; i < this->num_parameters(); i++) {
           gradient_out->at(
-            i, j) = this->AttributeGradientWithRespectToParameter(i, j);
+            i, j) =
+              this->AttributeGradientWithRespectToParameter(parameters, i, j);
         }
       }
     }
@@ -140,6 +144,7 @@ class MixedLogitDCMDistribution {
      *         person.
      */
     void HessianProducts(
+      const arma::vec &parameters_in,
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
       const arma::vec &choice_probabilities,
@@ -154,7 +159,7 @@ class MixedLogitDCMDistribution {
       arma::mat first;
       arma::mat second;
       this->AttributeGradientWithRespectToParameter(
-        dcm_table_in->num_attributes(), &first);
+        parameters_in, dcm_table_in->num_attributes(), &first);
       this->ChoiceProbabilityHessianWithRespectToAttribute(
         dcm_table_in, person_index, discrete_choice_index,
         choice_probabilities, choice_prob_weighted_attribute_vector, &second);
@@ -198,7 +203,8 @@ class MixedLogitDCMDistribution {
      *         \beta^{\nu}(\theta))$ for a realization of $\beta$ for
      *         a given person.
      */
-    void ProductAttributeGradientWithRespectToParameter(
+    void ChoiceProbabilityGradientWithRespectToParameter(
+      const arma::vec &parameters_in,
       DCMTableType *dcm_table_in,
       int person_index, int discrete_choice_index,
       const arma::vec &choice_probabilities,
@@ -224,8 +230,10 @@ class MixedLogitDCMDistribution {
         // For each column index of the gradient,
         double dot_product = 0;
         for(unsigned int j = 0; j < attribute_vector.n_elem; j++) {
-          dot_product += attribute_vec_sub_choice_prob_weighted_vec[j] *
-                         this->AttributeGradientWithRespectToParameter(k, j);
+          dot_product +=
+            attribute_vec_sub_choice_prob_weighted_vec[j] *
+            this->AttributeGradientWithRespectToParameter(
+              parameters_in, k, j);
         }
         (*product_out)[k] = dot_product;
       }

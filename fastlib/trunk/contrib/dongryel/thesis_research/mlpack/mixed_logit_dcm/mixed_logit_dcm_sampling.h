@@ -1,5 +1,8 @@
 /** @file mixed_logit_dcm_sampling.h
  *
+ *  The Monte Carlo samples generated for a given fixed parameter
+ *  $\theta$ for mixed logit discrete choice model.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -75,46 +78,6 @@ class MixedLogitDCMSampling {
 
   private:
 
-    /** @brief Computes the choice probability vector for the
-     *         person_index-th person for each of his/her potential
-     *         choices given the vector $\beta$. This is $P_{i,j}$ in
-     *         a long vector form.
-     */
-    void choice_probabilities_(
-      int person_index, const arma::vec &beta_vector,
-      arma::vec *choice_probabilities) {
-
-      int num_discrete_choices = dcm_table_->num_discrete_choices(person_index);
-      choice_probabilities->set_size(num_discrete_choices);
-
-      // First compute the normalizing sum.
-      double normalizing_sum = 0.0;
-      for(int discrete_choice_index = 0;
-          discrete_choice_index < num_discrete_choices;
-          discrete_choice_index++) {
-
-        // Grab each attribute vector and take a dot product between
-        // it and the beta vector.
-        arma::vec attribute_for_discrete_choice;
-        dcm_table_->get_attribute_vector(
-          person_index, discrete_choice_index, &attribute_for_discrete_choice);
-        double dot_product =
-          arma::dot(
-            beta_vector, attribute_for_discrete_choice);
-        double unnormalized_probability = exp(dot_product);
-        normalizing_sum += unnormalized_probability;
-        (*choice_probabilities)[discrete_choice_index] =
-          unnormalized_probability;
-      }
-
-      // Then, normalize.
-      for(int discrete_choice_index = 0;
-          discrete_choice_index < num_discrete_choices;
-          discrete_choice_index++) {
-        (*choice_probabilities)[discrete_choice_index] /= normalizing_sum;
-      }
-    }
-
     /** @brief Adds an integration sample to the person_index-th
      *         person so that the person's running simulated choice
      *         probabilities can be updated.
@@ -127,7 +90,7 @@ class MixedLogitDCMSampling {
 
       // Given the parameter vector, compute the choice probabilities.
       arma::vec choice_probabilities;
-      this->choice_probabilities_(
+      dcm_table_->choice_probabilities(
         person_index, beta_vector, &choice_probabilities);
 
       // Given the beta vector, compute the products between the
@@ -139,9 +102,9 @@ class MixedLogitDCMSampling {
       int discrete_choice_index =
         dcm_table_->get_discrete_choice_index(person_index);
       dcm_table_->distribution()->
-      ProductAttributeGradientWithRespectToParameter(
-        dcm_table_, person_index, discrete_choice_index, beta_vector,
-        choice_probabilities, &beta_gradient_product);
+      ChoiceProbabilityGradientWithRespectToParameter(
+        parameters_, dcm_table_, person_index, discrete_choice_index,
+        beta_vector, choice_probabilities, &beta_gradient_product);
 
       // Update the simulated choice probabilities
       // and the simulated log-likelihood gradients.
@@ -160,7 +123,8 @@ class MixedLogitDCMSampling {
       arma::mat hessian_first_part;
       arma::vec hessian_second_part;
       dcm_table_->distribution()->HessianProducts(
-        dcm_table_, person_index, discrete_choice_index, beta_vector,
+        parameters_, dcm_table_, person_index,
+        discrete_choice_index, beta_vector,
         choice_probabilities, &hessian_first_part, &hessian_second_part);
       simulated_loglikelihood_hessians_[person_index].first.push_back(
         hessian_first_part);
@@ -194,30 +158,6 @@ class MixedLogitDCMSampling {
     }
 
   public:
-
-    /** @brief Computes the choice probability gradient for the given
-     *         person for his/her discrete choice for a given
-     *         realization of $\beta$.
-     */
-    void choice_probability_gradient(
-      int person_index, const arma::vec &beta_vector,
-      arma::vec *choice_probability_gradient) const {
-
-
-    }
-
-    /** @brief Computes the choice probability for the given person
-     *         for his/her discrete choice for a given realization of
-     *         $\beta$.
-     */
-    double choice_probability(
-      int person_index, const arma::vec &beta_vector) const {
-      arma::vec choice_probabilities;
-      this->choice_probabilities_(
-        person_index, beta_vector, &choice_probabilities);
-      return choice_probabilities[
-               dcm_table_->get_discrete_choice_index(person_index)];
-    }
 
     /** @brief Returns the set of integration samples for a given
      *         person.
@@ -361,12 +301,16 @@ class MixedLogitDCMSampling {
      *         samples.
      */
     void Init(
+      const arma::vec &parameters_in,
       DCMTableType *dcm_table_in,
       int num_active_people_in,
       int initial_num_integration_samples_in) {
 
       dcm_table_ = dcm_table_in;
       num_active_people_ = num_active_people_in;
+
+      // This maintains the number of integration samples collected
+      // for each person.
       num_integration_samples_.zeros(dcm_table_->num_people());
       for(int i = 0; i < num_active_people_; i++) {
         int person_index = dcm_table_->shuffled_indices_for_person(i);
@@ -390,8 +334,8 @@ class MixedLogitDCMSampling {
           dcm_table_->num_parameters());
       }
 
-      // This vector maintains the Hessians of the simulated
-      // loglikelihood per person.
+      // This vector maintains the components necessary to regenerate
+      // the Hessians of the simulated loglikelihood per person.
       simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
       for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
           i++) {
@@ -402,10 +346,10 @@ class MixedLogitDCMSampling {
       }
 
       // Initialize the starting parameters.
-      parameters_.set_size(dcm_table_->num_parameters());
-      parameters_.zeros();
+      parameters_ = parameters_in;
 
-      // Build up the samples.
+      // Build up the samples so that it matches the initial number of
+      // integration samples.
       BuildSamples_();
     }
 
