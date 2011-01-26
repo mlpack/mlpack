@@ -90,6 +90,7 @@ void *WmThread(void *in_par) {
 	  pred_lbl = (T_LBL)-1;
 	}
 
+	// ------------for log-------------------
 	if (global.calc_loss) {
 	  // Calculate number of misclassifications
 	  if (l1.type == "classification") {
@@ -97,8 +98,17 @@ void *WmThread(void *in_par) {
 	    if (pred_lbl != exs[b]->label) {
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
 	    }
+	    if (l1.num_log > 0) {
+	      l1.t_ct[tid]  = l1.t_ct[tid] + 1;
+	      if (l1.t_ct[tid] == l1.t_int && l1.lp_ct[tid] < l1.num_log) {
+		l1.log_err[tid][l1.lp_ct[tid]] = l1.total_misp_pool[tid];
+		l1.t_ct[tid] = 0;
+		l1.lp_ct[tid] = l1.lp_ct[tid] + 1;
+	      }
+	    }
 	  }
 	}
+	//----------- log end-------------
 
 	// local update
 	for (size_t p=0; p<l1.num_experts; p++) {
@@ -138,6 +148,22 @@ void Wm(learner &l) {
   size_t n_threads = l.num_threads;
   size_t t, k;
 
+  //// for log
+  if (l.num_log > 0) {
+    l.t_int = (size_t)floor( (global.num_epoches*num_train_exps+global.num_iter_res)/(n_threads * l.num_log) );
+    l.t_ct = (size_t*)malloc(n_threads * sizeof(size_t));
+    l.lp_ct = (size_t*)malloc(n_threads * sizeof(size_t));
+    l.log_err = (size_t**)malloc(n_threads * sizeof(size_t*));
+    for (t=0; t<n_threads; t++) {
+      l.log_err[t] = (size_t*)malloc(l.num_log * sizeof(size_t));
+      l.t_ct[t] = 0;
+      l.lp_ct[t] = 0;
+    }
+    for (t=0; t<n_threads; t++)
+      for (k=0; k<l.num_log; k++) {
+	l.log_err[t][k] = 0;
+      }
+  }
   l.expert_misp = (size_t**)malloc(l.num_experts * sizeof(size_t*));
   for (k=0; k< l.num_experts; k++) {
     l.expert_misp[k] = (size_t*)malloc(n_threads * sizeof(size_t));
@@ -145,12 +171,13 @@ void Wm(learner &l) {
   for (k=0; k<l.num_experts; k++)
     for (t=0; t<n_threads; t++)
       l.expert_misp[k][t] = 0;
+  //// log end
   
   if (l.num_experts <= 0) {
     cout << "Number of experts not specified for WM! Bailing!" << endl;
     exit(1);
   }
-  // Set parameters for weak learners
+  //// For weak learners
   if (l.wl_name == "stump") {
     // choose splitting dimensions
     if (l.num_experts > global.max_feature_idx) {
@@ -162,12 +189,19 @@ void Wm(learner &l) {
     for (size_t d=1; d<=global.max_feature_idx; d++)
       dims.push_back(d);
     random_shuffle ( dims.begin(), dims.end() );
-
     // Train experts
+    size_t n_it;
+    if (num_train_exps > 10000)
+      n_it = min(200, (int)ceil(num_train_exps/50));
+    else
+      n_it = max(200, (int)ceil(num_train_exps/50));
+    cout << "Training experts...Number of iterations for each expert is "<<n_it<<endl;
     for (k=0; k< l.num_experts; k++) {
-      l.weak_learners[k] = GetWeakLearner( l.wl_name, dims[k], max(200, (int)ceil(num_train_exps/50)) );
+      l.weak_learners[k] = GetWeakLearner( l.wl_name, dims[k], n_it);
       l.weak_learners[k]->WeakTrain(train_exps, num_train_exps, NULL);
+      cout << k << ".";
     }
+    cout << " Done!" << endl;
   }
   else {
     for (k=0; k< l.num_experts; k++) {
@@ -177,7 +211,7 @@ void Wm(learner &l) {
 
   threads = (pthread_t*)calloc(n_threads, sizeof(pthread_t));
   t_par = (thread_param**)calloc(n_threads, sizeof(thread_param*));
-  
+
   pthread_barrier_init(&barrier_msg_all_sent, NULL, n_threads);
   pthread_barrier_init(&barrier_msg_all_used, NULL, n_threads);
 
@@ -189,7 +223,7 @@ void Wm(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights
-    l.w_vec_pool[t] = CreateConstDvector(l.num_experts, num_train_exps);
+    l.w_vec_pool[t] = CreateConstDvector(l.num_experts, num_train_exps*global.num_epoches + global.num_iter_res);
     l.msg_pool[t] = CreateEmptySvector();
     l.num_used_exp[t] = 0;
 
@@ -199,6 +233,29 @@ void Wm(learner &l) {
   }
 
   FinishThreads(n_threads);
+
+  //// save log
+  if (l.num_log > 0) {
+    FILE *fp;
+    string log_fn (global.train_data_fn);
+    log_fn += ".";
+    log_fn += l.opt_method;
+    log_fn += ".log";
+    if ((fp = fopen (log_fn.c_str(), "w")) == NULL) {
+      cerr << "Cannot save log file!"<< endl;
+      exit (1);
+    }
+    fprintf(fp, "Log intervals: %ld. Number of logs: %ld\n\n", l.t_int, l.num_log);
+    fprintf(fp, "Errors cumulated:\n");
+    for (t=0; t<n_threads; t++) {
+      for (k=0; k<l.num_log; k++) {
+	fprintf(fp, "%ld", l.log_err[t][k]);
+	fprintf(fp, " ");
+      }
+      fprintf(fp, ";\n");
+    }
+    fclose(fp);
+  }
 
   // prediction accuracy for classifications
   if (l.type == "classification") {

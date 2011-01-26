@@ -102,6 +102,7 @@ void *OegThread(void *in_par) {
 	SparseSubtract(w, l1.w_vec_pool[tid], l1.w_n_vec_pool[tid]);
 	pred = LinearPredictBias(w, exs[b], bias);
 
+	// ------------for log-------------------
 	if (global.calc_loss) {
 	  // Calculate loss and number of misclassifications
 	  if (l1.type == "classification") {
@@ -111,6 +112,15 @@ void *OegThread(void *in_par) {
 	    if (pred_lbl != exs[b]->label) {
 	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
+	    }
+	    if (l1.num_log > 0) {
+	      l1.t_ct[tid]  = l1.t_ct[tid] + 1;
+	      if (l1.t_ct[tid] == l1.t_int && l1.lp_ct[tid] < l1.num_log) {
+		l1.log_err[tid][l1.lp_ct[tid]] = l1.total_misp_pool[tid];
+		l1.log_loss[tid][l1.lp_ct[tid]] = l1.total_loss_pool[tid];
+		l1.t_ct[tid] = 0;
+		l1.lp_ct[tid] = l1.lp_ct[tid] + 1;
+	      }
 	    }
 	  }
 	  // Calculate loss
@@ -154,7 +164,28 @@ void *OegThread(void *in_par) {
 
 void Oeg(learner &l) {
   size_t n_threads = l.num_threads;
-  size_t t;
+  size_t t, k;
+
+  //// for log
+  if (l.num_log > 0) {
+    l.t_int = (size_t)floor( (global.num_epoches*num_train_exps+global.num_iter_res)/(n_threads * l.num_log) );
+    l.t_ct = (size_t*)malloc(n_threads * sizeof(size_t));
+    l.lp_ct = (size_t*)malloc(n_threads * sizeof(size_t));
+    l.log_err = (size_t**)malloc(n_threads * sizeof(size_t*));
+    l.log_loss = (double**)malloc(n_threads * sizeof(double*));
+    for (t=0; t<n_threads; t++) {
+      l.log_err[t] = (size_t*)malloc(l.num_log * sizeof(size_t));
+      l.log_loss[t] = (double*)malloc(l.num_log * sizeof(double));
+      l.t_ct[t] = 0;
+      l.lp_ct[t] = 0;
+    }
+    for (t=0; t<n_threads; t++)
+      for (k=0; k<l.num_log; k++) {
+	l.log_err[t][k] = 0;
+	l.log_loss[t][k] = 0.0;
+      }
+  }
+  //// log end
 
   threads = (pthread_t*)calloc(n_threads, sizeof(pthread_t));
   t_par = (thread_param**)calloc(n_threads, sizeof(thread_param*));
@@ -191,6 +222,37 @@ void Oeg(learner &l) {
   }
 
   FinishThreads(n_threads);
+
+  //// save log
+  if (l.num_log > 0) {
+    FILE *fp;
+    string log_fn (global.train_data_fn);
+    log_fn += ".";
+    log_fn += l.opt_method;
+    log_fn += ".log";
+    if ((fp = fopen (log_fn.c_str(), "w")) == NULL) {
+      cerr << "Cannot save log file!"<< endl;
+      exit (1);
+    }
+    fprintf(fp, "Log intervals: %ld. Number of logs: %ld\n\n", l.t_int, l.num_log);
+    fprintf(fp, "Errors cumulated:\n");
+    for (t=0; t<n_threads; t++) {
+      for (k=0; k<l.num_log; k++) {
+	fprintf(fp, "%ld", l.log_err[t][k]);
+	fprintf(fp, " ");
+      }
+      fprintf(fp, ";\n");
+    }
+    fprintf(fp, "\n\nLoss cumulated:\n");
+    for (t=0; t<n_threads; t++) {
+      for (k=0; k<l.num_log; k++) {
+	fprintf(fp, "%lf", l.log_loss[t][k]);
+	fprintf(fp, " ");
+      }
+      fprintf(fp, ";\n");
+    }
+    fclose(fp);
+  }
 
   double t_l = 0.0;
   for (t = 0; t < n_threads; t++) {

@@ -258,7 +258,7 @@ void SerialRead(string &data_fn, EXAMPLE **examples, size_t &num_examples) {
   free(line);
   free(feat_cache);
   if(!global.quiet) {
-    cout << "done. " << dnum << " examples loaded: " << dpos << " positive and " << dneg <<" negative." << endl;
+    cout << "done. " << dnum << " examples loaded: " << dpos << " positive and " << dneg <<" negative." << " Max dimension: " << global.max_feature_idx << endl;
   }
   
   num_examples = dnum;
