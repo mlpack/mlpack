@@ -38,7 +38,6 @@ class SubTable {
       public:
         int begin_;
         int count_;
-        bool points_serialized_underneath_;
 
         int end() const {
           return begin_ + count_;
@@ -48,20 +47,17 @@ class SubTable {
         void serialize(Archive &ar, const unsigned int version) {
           ar & begin_;
           ar & count_;
-          ar & points_serialized_underneath_;
         }
 
         PointSerializeFlagType() {
           begin_ = 0;
           count_ = 0;
-          points_serialized_underneath_ = false;
         }
 
         PointSerializeFlagType(
-          int begin_in, int count_in, bool points_serialized_underneath_in) {
+          int begin_in, int count_in) {
           begin_ = begin_in;
           count_ = count_in;
-          points_serialized_underneath_ = points_serialized_underneath_in;
         }
     };
 
@@ -94,8 +90,8 @@ class SubTable {
   private:
 
     void FillTreeNodes_(
-      TreeType *node, int node_index, std::vector<TreeType *> &sorted_nodes,
-      int *num_nodes,
+      TreeType *node, int node_index,
+      std::vector<TreeType *> &sorted_nodes, int *num_nodes,
       std::vector <
       PointSerializeFlagType > *serialize_points_per_terminal_node_in,
       int level) const {
@@ -105,20 +101,23 @@ class SubTable {
         sorted_nodes[node_index] = node;
 
         if(node->is_leaf() == false) {
-          FillTreeNodes_(
-            node->left(), 2 * node_index + 1, sorted_nodes, num_nodes,
-            serialize_points_per_terminal_node_in, level + 1);
-          FillTreeNodes_(
-            node->right(), 2 * node_index + 2, sorted_nodes, num_nodes,
-            serialize_points_per_terminal_node_in, level + 1);
+
+          // Recurse only if the level is still low.
+          if(level < max_num_levels_to_serialize_) {
+            FillTreeNodes_(
+              node->left(), 2 * node_index + 1, sorted_nodes, num_nodes,
+              serialize_points_per_terminal_node_in, level + 1);
+            FillTreeNodes_(
+              node->right(), 2 * node_index + 2, sorted_nodes, num_nodes,
+              serialize_points_per_terminal_node_in, level + 1);
+          }
         }
 
-        // In case it is a leaf, grab the points belonging to it as
-        // well, if there is nothing left underneath.
+        // In case it is a leaf, we are always stuck, so we grab the
+        // points belonging to it as well.
         else {
-          bool grab_points = (level <= max_num_levels_to_serialize_);
           serialize_points_per_terminal_node_in->push_back(
-            PointSerializeFlagType(node->begin(), node->count(), grab_points));
+            PointSerializeFlagType(node->begin(), node->count()));
         }
       }
     }
@@ -143,6 +142,8 @@ class SubTable {
       return is_alias_;
     }
 
+    /** @brief Steals the ownership of the incoming subtable.
+     */
     void operator=(const SubTable<TableType> &subtable_in) {
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
@@ -158,6 +159,8 @@ class SubTable {
         subtable_in.serialize_points_per_terminal_node();
     }
 
+    /** @brief Steals the ownership of the incoming subtable.
+     */
     SubTable(const SubTable<TableType> &subtable_in) {
       this->operator=(subtable_in);
     }
@@ -190,8 +193,15 @@ class SubTable {
         }
       }
 
-      // Save the boolean flags.
-      ar & serialize_points_per_terminal_node_;
+      // Save the node ids for which there are points available
+      // underneath.
+      int serialize_points_per_terminal_node_size =
+        static_cast<int>(serialize_points_per_terminal_node_.size());
+      ar & serialize_points_per_terminal_node_size;
+      for(unsigned int i = 0;
+          i < serialize_points_per_terminal_node_.size(); i++) {
+        ar & serialize_points_per_terminal_node_[i];
+      }
 
       // Save the matrix and the mappings if requested.
       {
@@ -241,8 +251,14 @@ class SubTable {
       (*tree_) = tree_nodes[0];
       start_node_ = tree_nodes[0];
 
-      // Load the boolean flags.
-      ar & serialize_points_per_terminal_node_;
+      // Load the node ids for which there are points underneath.
+      int serialize_points_per_terminal_node_size;
+      ar & serialize_points_per_terminal_node_size;
+      serialize_points_per_terminal_node_.resize(
+        serialize_points_per_terminal_node_size);
+      for(int i = 0; i < serialize_points_per_terminal_node_size; i++) {
+        ar & serialize_points_per_terminal_node_[i];
+      }
 
       // Load the data and the mappings if available.
       {

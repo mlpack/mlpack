@@ -71,11 +71,12 @@ class DensePoint {
 
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
       // Load the length of the point.
       ar & n_rows_;
 
       // Allocate the point.
-      if(ptr_ == NULL) {
+      if(ptr_.get() == NULL) {
         ptr_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->ConstructArray<double>(n_rows_) :
                new double[n_rows_];
@@ -125,11 +126,13 @@ class DensePoint {
     }
 
     void Copy(const DensePoint &point_in) {
-      ptr_ =
-        (core::table::global_m_file_) ?
-        core::table::global_m_file_->ConstructArray<double>(
-          point_in.length()) :
-        new double[point_in.length()];
+      if(ptr_.get() == NULL) {
+        ptr_ =
+          (core::table::global_m_file_) ?
+          core::table::global_m_file_->ConstructArray<double>(
+            point_in.length()) :
+          new double[point_in.length()];
+      }
       CopyValues(point_in);
     }
 

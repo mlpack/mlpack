@@ -36,6 +36,31 @@ class BallBound {
 
   public:
 
+    /** @brief Returns whether the bound has been initialized or not.
+     */
+    bool is_initialized() const {
+      return center_.length() > 0;
+    }
+
+    /** @brief The Assignment operator.
+     */
+    void operator=(const BallBound &ball_bound_in) {
+      radius_ = ball_bound_in.radius();
+      center_.Copy(ball_bound_in.center());
+    }
+
+    /** @brief The default constructor.
+     */
+    BallBound() {
+      radius_ = 0;
+    }
+
+    /** @brief The copy constructor.
+     */
+    BallBound(const BallBound &bound_in) {
+      this->operator=(bound_in);
+    }
+
     /** @brief Resets the bound to an empty sphere centered at the
      *  origin.
      */

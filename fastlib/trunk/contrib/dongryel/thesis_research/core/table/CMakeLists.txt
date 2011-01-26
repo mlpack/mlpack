@@ -22,3 +22,14 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(sub_table-test
+               EXCLUDE_FROM_ALL
+               sub_table.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(sub_table-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )

@@ -22,6 +22,10 @@ extern core::table::MemoryMappedFile *global_m_file_;
 
 namespace core {
 namespace parallel {
+
+/** @brief A class for performing an all-to-all exchange of subtrees
+ *         among MPI processes.
+ */
 template<typename DistributedTableType, typename SubTableListType>
 class TableExchange {
   public:
@@ -41,8 +45,92 @@ class TableExchange {
 
     std::vector< boost::circular_buffer<SubTableType> > received_subtables_;
 
+  private:
+
+    void PrintSubTables_(boost::mpi::communicator &world) {
+      printf("\n\nProcess %d owns the subtables:\n", world.rank());
+      for(unsigned int i = 0; i < received_subtables_.size(); i++) {
+        for(int j = 0; j < received_subtables_[i].size(); j++) {
+          printf(
+            "%d %d %d\n", i,
+            received_subtables_[i][j].table()->get_tree()->begin(),
+            received_subtables_[i][j].table()->get_tree()->count());
+        }
+      }
+    }
+
+    /** @brief Finds a table with given MPI rank and the ending index.
+     */
+    SubTableType *FindSubTableByEnd_(int process_id, int end) {
+      for(typename boost::circular_buffer<SubTableType>::iterator
+          it = received_subtables_[process_id].begin();
+          it != received_subtables_[process_id].end(); it++) {
+        if(it->table()->get_tree()->end() == end) {
+          return & (*it);
+        }
+      }
+      return NULL;
+    }
+
+    /** @brief Finds a table with given MPI rank and the beginning
+     *         index.
+     */
+    SubTableType *FindSubTableByBegin_(int process_id, int begin) {
+      for(typename boost::circular_buffer<SubTableType>::iterator
+          it = received_subtables_[process_id].begin();
+          it != received_subtables_[process_id].end(); it++) {
+        if(it->table()->get_tree()->begin() == begin) {
+          return & (*it);
+        }
+      }
+      return NULL;
+    }
+
+    typename TableType::TreeType *FindByBeginCount_(
+      int process_id, int begin, int count) {
+
+      for(typename boost::circular_buffer<SubTableType>::iterator
+          it = received_subtables_[process_id].begin();
+          it != received_subtables_[process_id].end(); it++) {
+        if(it->table()->get_tree()->begin() <= begin &&
+            begin + count <= it->table()->get_tree()->end()) {
+          return it->table()->get_tree()->FindByBeginCount(begin, count);
+        }
+      }
+      return NULL;
+    }
+
   public:
 
+    bool CheckIntegrity_(typename TableType::TreeType *node) {
+      if(node->begin() < 0 || node->count() < 0 ||
+          node->bound().is_initialized() == 0) {
+        return false;
+      }
+      return true;
+    }
+
+    void FixLeafProblems_(int rank, typename TableType::TreeType *node) {
+      if(! node->is_leaf()) {
+        if(! CheckIntegrity_(node->left())) {
+          SubTableType *fix_subtable =
+            this->FindSubTableByBegin_(rank, node->begin());
+          node->left()->CopyWithoutChildren(
+            *(fix_subtable->table()->get_tree()));
+        }
+        if(! CheckIntegrity_(node->right())) {
+          SubTableType *fix_subtable =
+            this->FindSubTableByEnd_(rank, node->begin() + node->count());
+          node->right()->CopyWithoutChildren(
+            *(fix_subtable->table()->get_tree()));
+        }
+        FixLeafProblems_(rank, node->left());
+        FixLeafProblems_(rank, node->right());
+      }
+    }
+
+    /** @brief The destructor.
+     */
     ~TableExchange() {
       for(unsigned int i = 0; i < point_cache_.size(); i++) {
         if(old_from_new_cache_[i] != NULL) {
@@ -58,17 +146,23 @@ class TableExchange {
       }
     }
 
+    /** @brief Finds a table with given MPI rank and the beginning and
+     *         the count.
+     */
     SubTableType *FindSubTable(int process_id, int begin, int count) {
-
-      // Naive search, but probably should use a STL map here...
-      for(int i = static_cast<int>(received_subtables_[process_id].size()) - 1;
-          i >= 0; i--) {
+      for(typename boost::circular_buffer<SubTableType>::iterator
+          it = received_subtables_[process_id].begin();
+          it != received_subtables_[process_id].end(); it++) {
         if(
-          received_subtables_[
-            process_id][i].table()->get_tree()->begin() == begin &&
-          received_subtables_[
-            process_id][i].table()->get_tree()->count() == count) {
-          return &(received_subtables_[process_id][i]);
+          it->table()->get_tree()->begin() == begin &&
+          it->table()->get_tree()->count() == count) {
+
+          // Put the found subtable to the end.
+          SubTableType subtable_copy = *it;
+          received_subtables_[process_id].erase(it);
+          received_subtables_[process_id].push_back(SubTableType());
+          received_subtables_[process_id].back() = subtable_copy;
+          return &(received_subtables_[process_id].back());
         }
       }
 
@@ -76,6 +170,9 @@ class TableExchange {
       return NULL;
     }
 
+    /** @brief Initialize the all-to-all exchange object with a
+     *         distributed table and the cache size.
+     */
     void Init(
       boost::mpi::communicator &world,
       const DistributedTableType &distributed_table,
@@ -167,13 +264,31 @@ class TableExchange {
             max_num_levels_to_serialize);
         }
       }
+
+      // All-to-all to exchange the subtables.
       boost::mpi::all_to_all(
         world, send_subtables, received_subtables_in_this_round);
 
-      // Combine.
+      // Add the new subtables to the existing cache.
       for(int j = 0; j < world.size(); j++) {
         for(unsigned int i = 0; i < received_subtables_in_this_round[j].size();
             i++) {
+
+          // Fix the root problem.
+          if(! CheckIntegrity_(
+                received_subtables_in_this_round[j][i].table()->get_tree())) {
+            typename TableType::TreeType *found_node =
+              FindByBeginCount_(
+                j, receive_requests[j][i].first, receive_requests[j][i].second);
+            received_subtables_in_this_round[j][i].table()->get_tree()->
+            CopyWithoutChildren(*found_node);
+          }
+
+          // Fix the leaf problem possibly.
+          FixLeafProblems_(
+            j, received_subtables_in_this_round[j][i].table()->get_tree());
+
+          // Put the fixed subtables into the list.
           received_subtables_[j].push_back(
             received_subtables_in_this_round[j][i]);
         }

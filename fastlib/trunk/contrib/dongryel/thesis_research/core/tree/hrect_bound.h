@@ -43,6 +43,12 @@ class HrectBound {
 
   public:
 
+    /** @brief Returns whether the bound has been initialized or not.
+     */
+    bool is_initialized() const {
+      return dim_ > 0;
+    }
+
     /** @brief The assignment operator that copies.
      */
     void operator=(const HrectBound &bound_in) {
@@ -138,10 +144,12 @@ class HrectBound {
      *  dimension the empty set.
      */
     void Init(int dimension) {
-      bounds_ = (core::table::global_m_file_) ?
-                core::table::global_m_file_->ConstructArray<core::math::Range>(
-                  dimension) :
-                new core::math::Range[dimension];
+      if(bounds_.get() == NULL) {
+        bounds_ = (core::table::global_m_file_) ?
+                  core::table::global_m_file_->ConstructArray<core::math::Range>(
+                    dimension) :
+                  new core::math::Range[dimension];
+      }
 
       dim_ = dimension;
       Reset();

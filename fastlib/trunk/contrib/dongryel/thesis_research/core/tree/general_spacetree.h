@@ -171,10 +171,17 @@ class GeneralBinarySpaceTree {
       right_ = NULL;
     }
 
-    /** @brief The assignment oeprator that copies a node without its
+    /** @brief The assignment operator that copies a node without its
      *         children.
      */
     void operator=(const GeneralBinarySpaceTree &node) {
+      CopyWithoutChildren(node);
+    }
+
+    /** @brief The copy constructor that copies a node without its
+     *         children.
+     */
+    GeneralBinarySpaceTree(const GeneralBinarySpaceTree &node) {
       CopyWithoutChildren(node);
     }
 
