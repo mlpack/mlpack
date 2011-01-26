@@ -10,6 +10,7 @@
 
 #include <boost/archive/text_iarchive.hpp>
 #include <boost/archive/text_oarchive.hpp>
+#include <boost/circular_buffer.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/sub_table.h"
@@ -137,8 +138,19 @@ BOOST_AUTO_TEST_CASE(TestCaseSubTable) {
   core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
 
   // Call the tests.
-  core::table::TestSubTable<TableType> sub_table_test;
-  sub_table_test.StressTestMain();
+  //core::table::TestSubTable<TableType> sub_table_test;
+  //sub_table_test.StressTestMain();
+
+  boost::circular_buffer<core::table::DensePoint> buffer(5);
+
+  for(int i = 0; i < 10; i++) {
+    core::table::DensePoint point;
+    point.Init(5);
+    for(int j = 0; j < 5; j++) {
+      point[j] = core::math::Random(-1.0, 1.0);
+    }
+    buffer.push_back(point);
+  }
 
   std::cout << "All tests passed!\n";
 }

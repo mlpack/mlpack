@@ -37,6 +37,7 @@ class TableExchange {
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
   private:
+
     std::vector< core::table::DenseMatrix > point_cache_;
 
     std::vector< typename TableType::OldFromNewIndexType *> old_from_new_cache_;
@@ -47,6 +48,25 @@ class TableExchange {
 
   private:
 
+    void push_back_(
+      boost::circular_buffer<SubTableType> &circular_buffer,
+      SubTableType &sub_table_in) {
+
+      // Check if the buffer is full. If so, we need to take out the
+      // head element (which is going to be overwritten) and destruct
+      // it manually since Boost circular buffer does not do so
+      // automatically.
+      if(circular_buffer.full()) {
+
+        // This is somewhat a hack. See the assignment operator for
+        // SubTableType in core/table/sub_table.h
+        SubTableType safe_free = circular_buffer.front();
+      }
+      circular_buffer.push_back(sub_table_in);
+    }
+
+    /** @brief Prints the existing subtables in the cache.
+     */
     void PrintSubTables_(boost::mpi::communicator &world) {
       printf("\n\nProcess %d owns the subtables:\n", world.rank());
       for(unsigned int i = 0; i < received_subtables_.size(); i++) {
@@ -59,83 +79,21 @@ class TableExchange {
       }
     }
 
-    /** @brief Finds a table with given MPI rank and the ending index.
-     */
-    SubTableType *FindSubTableByEnd_(int process_id, int end) {
-      for(typename boost::circular_buffer<SubTableType>::iterator
-          it = received_subtables_[process_id].begin();
-          it != received_subtables_[process_id].end(); it++) {
-        if(it->table()->get_tree()->end() == end) {
-          return & (*it);
-        }
-      }
-      return NULL;
-    }
+    void ExtractUnitRequests_(
+      std::vector< std::vector< std::pair<int, int> > > &send_requests,
+      std::vector< std::vector< std::pair<int, int> > > *sub_send_requests) {
 
-    /** @brief Finds a table with given MPI rank and the beginning
-     *         index.
-     */
-    SubTableType *FindSubTableByBegin_(int process_id, int begin) {
-      for(typename boost::circular_buffer<SubTableType>::iterator
-          it = received_subtables_[process_id].begin();
-          it != received_subtables_[process_id].end(); it++) {
-        if(it->table()->get_tree()->begin() == begin) {
-          return & (*it);
-        }
-      }
-      return NULL;
-    }
-
-    typename TableType::TreeType *FindByBeginCount_(
-      int process_id, int begin, int count) {
-
-      typename boost::circular_buffer<SubTableType>::iterator
-      best_it = received_subtables_[process_id].begin();
-      int smallest_gap = std::numeric_limits<int>::max();
-      for(typename boost::circular_buffer<SubTableType>::iterator
-          it = received_subtables_[process_id].begin();
-          it != received_subtables_[process_id].end(); it++) {
-        if(it->table()->get_tree()->begin() <= begin &&
-            begin + count <= it->table()->get_tree()->end()) {
-          int gap = begin - it->table()->get_tree()->begin() +
-                    it->table()->get_tree()->end() - (begin + count);
-          if(gap < smallest_gap) {
-            best_it = it;
-            smallest_gap = gap;
+      for(unsigned int i = 0; i < send_requests.size(); i++) {
+        if(send_requests[i].size() > 0) {
+          if(sub_send_requests != NULL) {
+            (*sub_send_requests)[i].push_back(send_requests[i].back());
           }
+          send_requests[i].pop_back();
         }
       }
-      return best_it->table()->get_tree()->FindByBeginCount(begin, count);
     }
 
   public:
-
-    bool CheckIntegrity_(typename TableType::TreeType *node) {
-      if(node->begin() < 0 || node->count() < 0 ||
-          node->bound().is_initialized() == 0) {
-        return false;
-      }
-      return true;
-    }
-
-    void FixLeafProblems_(int rank, typename TableType::TreeType *node) {
-      if(! node->is_leaf()) {
-        if(! CheckIntegrity_(node->left())) {
-          SubTableType *fix_subtable =
-            this->FindSubTableByBegin_(rank, node->begin());
-          node->left()->CopyWithoutChildren(
-            *(fix_subtable->table()->get_tree()));
-        }
-        if(! CheckIntegrity_(node->right())) {
-          SubTableType *fix_subtable =
-            this->FindSubTableByEnd_(rank, node->begin() + node->count());
-          node->right()->CopyWithoutChildren(
-            *(fix_subtable->table()->get_tree()));
-        }
-        FixLeafProblems_(rank, node->left());
-        FixLeafProblems_(rank, node->right());
-      }
-    }
 
     /** @brief The destructor.
      */
@@ -224,7 +182,7 @@ class TableExchange {
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
       TableType &local_table,
-      const std::vector <
+      std::vector <
       std::vector< std::pair<int, int> > > &receive_requests) {
 
       // The gathered request lists to send to each process.
@@ -248,59 +206,72 @@ class TableExchange {
       boost::mpi::all_to_all(
         world, receive_requests, send_requests);
 
-      // Prepare the list of subtables, and do another all_to_all.
-      std::vector< SubTableListType > send_subtables;
-      send_subtables.resize(send_requests.size());
-      for(unsigned int j = 0; j < send_requests.size(); j++) {
-        for(unsigned int i = 0; i < send_requests[j].size(); i++) {
-          int begin = send_requests[j][i].first;
-          int count = send_requests[j][i].second;
-          send_subtables[j].push_back(
-            &local_table,
-            local_table.get_tree()->FindByBeginCount(begin, count),
-            max_num_levels_to_serialize);
-        }
-      }
+      while(true) {
 
-      // Push in the received subtables.
-      std::vector< SubTableListType > received_subtables_in_this_round;
-      received_subtables_in_this_round.resize(world.size());
-      for(unsigned int j = 0; j < receive_requests.size(); j++) {
-        for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
-          received_subtables_in_this_round[j].push_back(
-            j, point_cache_[j], old_from_new_cache_[j], new_from_old_cache_[j],
-            max_num_levels_to_serialize);
-        }
-      }
+        // Dequeue a subtable list for each process.
+        std::vector< std::vector< std::pair<int, int> > > sub_send_requests(
+          send_requests.size());
+        ExtractUnitRequests_(send_requests, &sub_send_requests);
 
-      // All-to-all to exchange the subtables.
-      boost::mpi::all_to_all(
-        world, send_subtables, received_subtables_in_this_round);
-
-      // Add the new subtables to the existing cache.
-      for(int j = 0; j < world.size(); j++) {
-        for(unsigned int i = 0; i < received_subtables_in_this_round[j].size();
-            i++) {
-
-          // Fix the root problem.
-          if(! CheckIntegrity_(
-                received_subtables_in_this_round[j][i].table()->get_tree())) {
-            typename TableType::TreeType *found_node =
-              this->FindByBeginCount_(
-                j, receive_requests[j][i].first, receive_requests[j][i].second);
-            received_subtables_in_this_round[j][i].table()->get_tree()->
-            CopyWithoutChildren(*found_node);
+        // Prepare the list of subtables, and do another all_to_all.
+        std::vector< SubTableListType > send_subtables(
+          sub_send_requests.size());
+        for(unsigned int j = 0; j < sub_send_requests.size(); j++) {
+          for(unsigned int i = 0; i < sub_send_requests[j].size(); i++) {
+            int begin = sub_send_requests[j][i].first;
+            int count = sub_send_requests[j][i].second;
+            send_subtables[j].push_back(
+              &local_table,
+              local_table.get_tree()->FindByBeginCount(begin, count),
+              max_num_levels_to_serialize);
           }
+        }
 
-          // Fix the leaf problem possibly.
-          FixLeafProblems_(
-            j, received_subtables_in_this_round[j][i].table()->get_tree());
+        // Prepare the subtable list to be received. Right now, we
+        // just receive one subtable per process.
+        std::vector< SubTableListType > received_subtables_in_this_round;
+        received_subtables_in_this_round.resize(world.size());
+        for(unsigned int j = 0; j < receive_requests.size(); j++) {
+          if(receive_requests[j].size() > 0) {
+            received_subtables_in_this_round[j].push_back(
+              j, point_cache_[j], old_from_new_cache_[j],
+              new_from_old_cache_[j], max_num_levels_to_serialize);
+          }
+        }
 
-          // Put the fixed subtables into the list.
-          received_subtables_[j].push_back(
-            received_subtables_in_this_round[j][i]);
+        // All-to-all to exchange the subtables.
+        boost::mpi::all_to_all(
+          world, send_subtables, received_subtables_in_this_round);
+
+        // After receiving, each item in the receive request is
+        // popped.
+        ExtractUnitRequests_(
+          receive_requests,
+          (std::vector< std::vector< std::pair<int, int> > > *) NULL);
+
+        // Add the new subtables to the existing cache.
+        for(int j = 0; j < world.size(); j++) {
+          for(unsigned int i = 0;
+              i < received_subtables_in_this_round[j].size(); i++) {
+
+            // Put the fixed subtables into the list.
+            this->push_back_(
+              received_subtables_[j], received_subtables_in_this_round[j][i]);
+          }
+        }
+
+        // If the received/sent tables are none, then quit.
+        bool nothing_exchanged = true;
+        for(int i = 0; nothing_exchanged && i < world.size(); i++) {
+          nothing_exchanged =
+            (received_subtables_in_this_round[i].size() == 0 &&
+             send_subtables[i].size() == 0);
+        }
+        if(nothing_exchanged) {
+          break;
         }
       }
+
       return false;
     }
 };

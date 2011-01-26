@@ -11,6 +11,9 @@
 
 namespace mlpack {
 namespace distributed_kde {
+
+/** @brief The test driver for the distributed kde.
+ */
 class TestDistributed_Kde {
 
   private:
@@ -382,8 +385,8 @@ class TestDistributed_Kde {
       return 0;
     }
 };
-};
-};
+}
+}
 
 int main(int argc, char *argv[]) {
 
