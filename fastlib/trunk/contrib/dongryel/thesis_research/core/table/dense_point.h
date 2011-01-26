@@ -24,15 +24,26 @@ class DensePoint {
 
   private:
 
+    // For BOOST serialization.
     friend class boost::serialization::access;
 
+    /** @brief The pointer.
+     */
     boost::interprocess::offset_ptr<double> ptr_;
 
+    /** @brief The number of elements stored in the point object.
+     */
     int n_rows_;
 
+    /** @brief Whether the underlying memory is being aliased or not
+     *         as a part of another memory.
+     */
     bool is_alias_;
 
   private:
+
+    /** @brief The private destructor.
+     */
     void DestructPtr_() {
       if(ptr_ != NULL && is_alias_ == false) {
         if(core::table::global_m_file_) {
@@ -46,6 +57,34 @@ class DensePoint {
 
   public:
 
+    /** @brief Returns whether this point is an alias or not.
+     */
+    bool is_alias() const {
+      return is_alias_;
+    }
+
+    /** @brief The assignment operator that steals the pointer and
+     *         makes the other point an alias.
+     */
+    void operator=(const core::table::DensePoint &point_in) {
+
+      ptr_ = const_cast<double *>(point_in.ptr());
+      n_rows_ = point_in.length();
+      is_alias_ = point_in.is_alias();
+
+      // Steal the pointer and make the point in alias.
+      const_cast<core::table::DensePoint &>(point_in).is_alias_ = true;
+    }
+
+    /** @brief The assignment operator that steals the pointer and
+     *         makes the other point an alias.
+     */
+    DensePoint(const DensePoint &point_in) {
+      this->operator=(point_in);
+    }
+
+    /** @brief Returns the length of the point.
+     */
     int length() const {
       return n_rows_;
     }
@@ -58,6 +97,8 @@ class DensePoint {
       return ptr_.get();
     }
 
+    /** @brief Saves the point.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
@@ -69,6 +110,8 @@ class DensePoint {
       }
     }
 
+    /** @brief Loads the point.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
 
@@ -92,10 +135,14 @@ class DensePoint {
       is_alias_ = false;
     }
 
+    /** @brief The default constructor.
+     */
     DensePoint() {
       Reset();
     }
 
+    /** @brief The destructor.
+     */
     ~DensePoint() {
       DestructPtr_();
       Reset();
@@ -158,6 +205,8 @@ class DensePoint {
       is_alias_ = true;
     }
 
+    /** @brief Prints the point.
+     */
     void Print() const {
       printf("Vector of length: %d\n", n_rows_);
       for(int i = 0; i < n_rows_; i++) {
@@ -167,12 +216,19 @@ class DensePoint {
     }
 };
 
+/** @brief The trait class for determining the length of a vector-like
+ *         object. Currently supports the core::table::DensePoint and
+ *         arma::vec class objects.
+ */
 template<typename PointType>
 class LengthTrait {
   public:
     static int length(const PointType &p);
 };
 
+/** @brief The trait class instantiation for determining the length of
+ *         an arma::vec object.
+ */
 template<>
 class LengthTrait<arma::vec> {
   public:
@@ -181,6 +237,9 @@ class LengthTrait<arma::vec> {
     }
 };
 
+/** @brief The trait class instantiation for determining the length of
+ *         core::table::DensePoint object.
+ */
 template<>
 class LengthTrait<core::table::DensePoint> {
   public:
@@ -189,8 +248,12 @@ class LengthTrait<core::table::DensePoint> {
     }
 };
 
+/** @brief The function that takes a raw double pointer and creates an
+ *         alias armadillo vector.
+ */
+template<typename T>
 static void DoublePtrToArmaVec(
-  const double *point_in, int length, arma::vec *vec_out) {
+  const double *point_in, T length, arma::vec *vec_out) {
 
   // This constructor uses the const_cast for a hack. For some reason,
   // Armadillo library does not allow creation of aliases for const
@@ -203,6 +266,10 @@ static void DoublePtrToArmaVec(
   const_cast<double *&>(vec_out->mem) = const_cast<double *>(point_in);
 }
 
+/** @brief The function that takes a raw pointer out from a
+ *         pre-existing core::table::DensePoint object and creates an
+ *         alias armadillo vector.
+ */
 template<typename DensePointType>
 static void DensePointToArmaVec(
   const DensePointType &point_in, arma::vec *vec_out) {
