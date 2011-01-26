@@ -59,9 +59,12 @@ int main(int argc, char *argv[]) {
     cout << "Unknown optimiztion method. Using default: Online subGradient Descent (OGD)..." << endl;
     Ogd(l1);
   }
-  
+
   ptime time_end(microsec_clock::local_time());
   time_duration duration(time_end - time_start);
-  cout << "Duration: " << duration << endl;
-  
+  if (!global.quiet) {
+    cout << "Duration: " << duration << endl;
+    cout << "Duration in ms: " << duration.total_milliseconds() << endl;
+  }
+
 }

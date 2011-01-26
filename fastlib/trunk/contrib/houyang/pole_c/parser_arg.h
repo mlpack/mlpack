@@ -33,6 +33,7 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     ("par_read", "Read data parallelly with training")
     ("calc_loss", "Calculate total loss")
     ("random", "Randomly permute the input examples")
+    ("log", boost_po::value<size_t>(&learner.num_log)->default_value(0), "How many log points. Default: 0(no logging)")
     ("quiet,q", "Don't output diagnostics");
 
   //("predictions,p", boost_po::value<string>(), "File to output predictions")
@@ -158,14 +159,19 @@ boost_po::variables_map ParseArgs(int argc, char *argv[], learner &learner, boos
     learner.weak_learners = (WeakLearners**)malloc(learner.num_experts * sizeof(WeakLearners*));
   }
 
-
   if (vm.count("type")) {
     learner.type = vm["type"].as<string>();
   }
   else {
     learner.type = "classification";
   }
-
+  
+  if (vm.count("log")) {
+    learner.num_log = vm["log"].as<size_t>();
+  }
+  if (learner.num_log <0)
+    learner.num_log = 0;
+  
   learner.loss_func = getLossFunction(learner.loss_name, 0.1);
 
   learner.num_threads = global.num_threads;

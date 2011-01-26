@@ -5,6 +5,8 @@
 #include "weak_learners.h"
 #include "sparsela.h"
 
+// using namespace boost::posix_time;
+
 struct learner {
   SVEC** w_vec_pool; // a pool that contains weight vectors for each thread
   SVEC** w_n_vec_pool; // a pool that contains weight_negative vectors for each thread; used for EG only.
@@ -31,6 +33,18 @@ struct learner {
   WeakLearners **weak_learners; // basis learners
   string wl_name;
   double alpha; // the multiplication factor in WM
+
+  size_t num_log; // how many log points
+  size_t t_int; // intervals for log points
+  size_t *t_ct; // counters for round t
+  size_t *lp_ct; // counters for log points
+  size_t **log_err; // for logging error of each thread
+  double **log_loss; // for logging loss of each thread
+  /*
+  ptime t_start, *t_end; // for logging cpu time
+  time_duration *t_duration; // for logging cpu time
+  long *t_ms; // t_duration in ms
+  */
 };
 
 double LinearPredict(SVEC *wvec, EXAMPLE *ex) {
