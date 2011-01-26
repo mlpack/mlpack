@@ -200,8 +200,8 @@ class TestDistributed_Kde {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 1; i++) {
-        for(int k = 0; k < 1; k++) {
+      for(int i = 0; i < 10; i++) {
+        for(int k = 0; k < 2; k++) {
           StressTest(world, k);
         }
       }
