@@ -89,15 +89,23 @@ class TableExchange {
     typename TableType::TreeType *FindByBeginCount_(
       int process_id, int begin, int count) {
 
+      typename boost::circular_buffer<SubTableType>::iterator
+      best_it = received_subtables_[process_id].begin();
+      int smallest_gap = std::numeric_limits<int>::max();
       for(typename boost::circular_buffer<SubTableType>::iterator
           it = received_subtables_[process_id].begin();
           it != received_subtables_[process_id].end(); it++) {
         if(it->table()->get_tree()->begin() <= begin &&
             begin + count <= it->table()->get_tree()->end()) {
-          return it->table()->get_tree()->FindByBeginCount(begin, count);
+          int gap = begin - it->table()->get_tree()->begin() +
+                    it->table()->get_tree()->end() - (begin + count);
+          if(gap < smallest_gap) {
+            best_it = it;
+            smallest_gap = gap;
+          }
         }
       }
-      return NULL;
+      return best_it->table()->get_tree()->FindByBeginCount(begin, count);
     }
 
   public:
@@ -278,7 +286,7 @@ class TableExchange {
           if(! CheckIntegrity_(
                 received_subtables_in_this_round[j][i].table()->get_tree())) {
             typename TableType::TreeType *found_node =
-              FindByBeginCount_(
+              this->FindByBeginCount_(
                 j, receive_requests[j][i].first, receive_requests[j][i].second);
             received_subtables_in_this_round[j][i].table()->get_tree()->
             CopyWithoutChildren(*found_node);
