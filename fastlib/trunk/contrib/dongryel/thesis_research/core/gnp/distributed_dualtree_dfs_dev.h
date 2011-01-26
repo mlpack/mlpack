@@ -53,7 +53,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   world_->barrier();
 
   // An abstract way of collaborative subtable exchanges. The table
-  // cache size is twice the amount of dequeue per stage.
+  // cache size needs to be at least more than the maximum number of
+  // leaf nodes in a balanced binary tree of
+  // max_num_levels_to_serialize times the number of such subtrees
+  // dequeued per stage.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
   table_exchange.Init(
@@ -82,28 +85,26 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       world_->size());
     PriorityQueueType prioritized_tasks;
     for(int i = 0; i < world_->size(); i++) {
-      if(i != world_->rank()) {
-        for(int j = 0; computation_frontier[i].size() > 0 &&
-            j < max_num_work_to_dequeue_per_stage_; j++) {
+      for(int j = 0; computation_frontier[i].size() > 0 &&
+          j < max_num_work_to_dequeue_per_stage_; j++) {
 
-          // Examine the top object in the frontier and sort it in the
-          // priorities, while forming the request lists.
-          const FrontierObjectType &top_object = computation_frontier[i].top();
-          std::pair<int, int> reference_node_id(
-            top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
-          if(table_exchange.FindSubTable(
-                i, reference_node_id.first,
-                reference_node_id.second) == NULL &&
-              std::find(
-                receive_requests[i].begin(), receive_requests[i].end(),
-                reference_node_id) == receive_requests[i].end()) {
-            receive_requests[i].push_back(reference_node_id);
-          }
-          prioritized_tasks.push(top_object);
-
-          // Pop the top object.
-          computation_frontier[i].pop();
+        // Examine the top object in the frontier and sort it in the
+        // priorities, while forming the request lists.
+        const FrontierObjectType &top_object = computation_frontier[i].top();
+        std::pair<int, int> reference_node_id(
+          top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
+        if(table_exchange.FindSubTable(
+              i, reference_node_id.first,
+              reference_node_id.second) == NULL &&
+            std::find(
+              receive_requests[i].begin(), receive_requests[i].end(),
+              reference_node_id) == receive_requests[i].end()) {
+          receive_requests[i].push_back(reference_node_id);
         }
+        prioritized_tasks.push(top_object);
+
+        // Pop the top object.
+        computation_frontier[i].pop();
       }
     }
 

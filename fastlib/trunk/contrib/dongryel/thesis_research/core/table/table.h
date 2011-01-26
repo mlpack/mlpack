@@ -161,6 +161,10 @@ class Table {
 
   public:
 
+    bool tree_is_aliased() const {
+      return tree_is_aliased_;
+    }
+
     bool mappings_are_aliased() const {
       return mappings_are_aliased_;
     }
@@ -172,9 +176,8 @@ class Table {
       mappings_are_aliased_ = true;
     }
 
-    /** @brief Not a true operator= function. May need an additional
-     *      work if one wants to declare a STL container of Tables and
-     *      do complicated aliasing.
+    /** @brief Basically does everything necessary to steal the
+     *         ownership of the pointers of the incoming table.
      */
     void operator=(const TableType &table_in) {
       data_ = const_cast<TableType &>(table_in).data();
@@ -182,8 +185,16 @@ class Table {
       old_from_new_ = const_cast<TableType &>(table_in).old_from_new();
       new_from_old_ = const_cast<TableType &>(table_in).new_from_old();
       tree_ = const_cast<TableType &>(table_in).get_tree();
-      mappings_are_aliased_ = true;
-      tree_is_aliased_ = true;
+
+      // We steal the pointers.
+      mappings_are_aliased_ = table_in.mappings_are_aliased();
+      tree_is_aliased_ = table_in.tree_is_aliased();
+      const_cast<TableType &>(table_in).mappings_are_aliased_ = true;
+      const_cast<TableType &>(table_in).tree_is_aliased_ = true;
+    }
+
+    Table(const TableType &table_in) {
+      this->operator=(table_in);
     }
 
     template<class Archive>
