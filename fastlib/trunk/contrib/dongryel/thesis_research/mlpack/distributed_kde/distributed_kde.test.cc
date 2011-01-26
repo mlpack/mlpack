@@ -200,8 +200,8 @@ class TestDistributed_Kde {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 10; i++) {
-        for(int k = 0; k < 2; k++) {
+      for(int i = 0; i < 1; i++) {
+        for(int k = 0; k < 1; k++) {
           StressTest(world, k);
         }
       }
@@ -217,7 +217,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(10000, 20000);
+      int num_points = core::math::RandInt(3000, 5000);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -287,8 +287,8 @@ class TestDistributed_Kde {
       double max_num_levels_to_serialize;
       double max_num_work_to_dequeue_per_stage;
       if(world.rank() == 0) {
-        max_num_levels_to_serialize = core::math::RandInt(3, 4);
-        max_num_work_to_dequeue_per_stage = core::math::RandInt(3, 4);
+        max_num_levels_to_serialize = core::math::RandInt(3, 7);
+        max_num_work_to_dequeue_per_stage = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
       boost::mpi::broadcast(world, max_num_work_to_dequeue_per_stage, 0);
