@@ -197,7 +197,7 @@ double MixedLogitDCM<TableType>::GradientError_(
 }
 
 template<typename TableType>
-double MixedLogitDCM<TableType>::SimulationError_(
+double MixedLogitDCM<TableType>::IntegrationSampleError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
 
@@ -211,7 +211,7 @@ double MixedLogitDCM<TableType>::SimulationError_(
 }
 
 template<typename TableType>
-double MixedLogitDCM<TableType>::SampleDataError_(
+double MixedLogitDCM<TableType>::DataSampleError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
 
@@ -263,11 +263,6 @@ void MixedLogitDCM<TableType>::Compute(
   TableType > &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
-  static const double c_factor = 1.04;
-
-  // The maximum average integration sample size.
-  static const int R_MAX = 1000;
-
   // Here is the main entry of the algorithm.
   int num_data_samples =
     static_cast<int>(
@@ -287,8 +282,6 @@ void MixedLogitDCM<TableType>::Compute(
   iterate.Init(
     &table_, num_data_samples, num_integration_samples);
   iterate.parameters().zeros(table_.num_parameters());
-  double negative_simulated_loglikelihood =
-    iterate.NegativeSimulatedLogLikelihood();
   iterate.NegativeSimulatedLogLikelihoodGradient(&gradient);
   iterate.NegativeSimulatedLogLikelihoodHessian(&hessian);
 
@@ -305,17 +298,24 @@ void MixedLogitDCM<TableType>::Compute(
 
     // Get the reduction ratio rho (Equation 4.4)
     SamplingType next_iterate;
-
-    arma::vec next_iterate = (*iterate) + p;
-    double iterate_function_value = this->Evaluate_(*iterate);
-    double next_iterate_function_value = this->Evaluate_(next_iterate);
-    double rho =
+    next_iterate.parameters() = iterate.parameters() + p;
+    double iterate_function_value = iterate.NegativeSimulatedLogLikelihood();
+    double next_iterate_function_value =
+      next_iterate.NegativeSimulatedLogLikelihood();
+    double model_reduction_ratio =
       core::optimization::TrustRegionUtil::ReductionRatio(
         p, iterate_function_value, next_iterate_function_value,
         gradient, hessian);
 
+    // Compute the data sample error and the integration sample error.
+    double data_sample_error = this->DataSampleError_(iterate, next_iterate);
+    double integration_sample_error =
+      this->IntegrationSampleError_(iterate, next_iterate);
+
     // Determine whether the termination condition has been reached.
-    if(TerminationConditionReached_(theta_sampling, gradient)) {
+    if(TerminationConditionReached_(
+          model_reduction_ratio, data_sample_error, integration_sample_error,
+          theta_sampling, gradient)) {
       break;
     }
   }
@@ -324,8 +324,9 @@ void MixedLogitDCM<TableType>::Compute(
 
 template<typename TableType>
 bool MixedLogitDCM<TableType>::TerminationConditionReached_(
-  const SamplingType &sampling, const arma::vec &gradient,
-  double model_reduction_ratio) const {
+  double model_reduction_ratio, double data_sample_error,
+  double integration_sample_error, const SamplingType &sampling,
+  const arma::vec &gradient) const {
 
   // Termination condition is only considered when we use all the
   // people in the sampling (outer term consists of all people).
@@ -359,31 +360,40 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
     "attributes_in",
     boost::program_options::value<std::string>(),
     "REQUIRED file containing the vector of attributes."
-  )("num_discrete_choices_per_person_in",
+  )(
+    "num_discrete_choices_per_person_in",
     boost::program_options::value<std::string>(),
     "REQUIRED The number of alternatives per each person."
-   )(
-     "predictions_out",
-     boost::program_options::value<std::string>()->default_value(
-       "densities_out.csv"),
-     "OPTIONAL file to store the predicted discrete choices."
-   )("initial_dataset_sample_rate",
-     boost::program_options::value<double>()->default_value(0.1),
-     "OPTIONAL the rate at which to sample the entire dataset in the "
-     "beginning."
-    )("initial_integration_sample_rate",
-      boost::program_options::value<double>()->default_value(0.01),
-      "OPTIONAL The percentage of the maximum average integration sample "
-      "to start with."
-     )("model_out",
-       boost::program_options::value<std::string>()->default_value(
-         "model_out.csv"),
-       "file to output the computed discrete choice model."
-      )("trust_region_search_method",
-        boost::program_options::value<std::string>()->default_value("cauchy"),
-        "OPTIONAL Trust region search method.  One of:\n"
-        "  cauchy, dogleg, steihaug"
-       );
+  )(
+    "predictions_out",
+    boost::program_options::value<std::string>()->default_value(
+      "densities_out.csv"),
+    "OPTIONAL file to store the predicted discrete choices."
+  )(
+    "initial_dataset_sample_rate",
+    boost::program_options::value<double>()->default_value(0.1),
+    "OPTIONAL the rate at which to sample the entire dataset in the "
+    "beginning."
+  )(
+    "initial_integration_sample_rate",
+    boost::program_options::value<double>()->default_value(0.01),
+    "OPTIONAL The percentage of the maximum average integration sample "
+    "to start with."
+  )(
+    "max_num_integration_samples_per_person",
+    boost::program_options::value<int>()->default_value(1000),
+    "OPTIONAL The maximum number of integration samples allowed per person."
+  )(
+    "model_out",
+    boost::program_options::value<std::string>()->default_value(
+      "model_out.csv"),
+    "file to output the computed discrete choice model."
+  )(
+    "trust_region_search_method",
+    boost::program_options::value<std::string>()->default_value("cauchy"),
+    "OPTIONAL Trust region search method.  One of:\n"
+    "  cauchy, dogleg, steihaug"
+  );
 
   boost::program_options::command_line_parser clp(args);
   clp.style(boost::program_options::command_line_style::default_style
@@ -454,9 +464,13 @@ void MixedLogitDCM<TableType>::ParseArguments(
   arguments_out->initial_dataset_sample_rate_ =
     vm[ "initial_dataset_sample_rate" ].as<double>();
 
-  // Parse the initial integration sample rate;
+  // Parse the initial integration sample rate.
   arguments_out->initial_integration_sample_rate_ =
     vm[ "initial_integration_sample_rate" ].as<double>();
+
+  // Parse the maximum number of integration samples per person.
+  arguments_out->max_num_integration_samples_per_person_ =
+    vm[ "max_num_integration_samples_per_person" ].as<int>();
 
   // Parse where to output the discrete choice model predictions.
   arguments_out->predictions_out_ = vm[ "predictions_out" ].as<std::string>();

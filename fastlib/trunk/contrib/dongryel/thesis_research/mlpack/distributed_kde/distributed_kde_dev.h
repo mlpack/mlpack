@@ -337,7 +337,9 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  ConstructBoostVariableMap_(world, args, &vm);
+  if(ConstructBoostVariableMap_(world, args, &vm)) {
+    return true;
+  }
 
   // Given the constructed boost variable map, parse each argument.
 
@@ -456,6 +458,8 @@ void DistributedKde<DistributedTableType>::ParseArguments(
               arguments_out->max_num_work_to_dequeue_per_stage_ <<
               " items at a time from each process.\n";
   }
+
+  return false;
 }
 
 template<typename DistributedTableType>
@@ -469,7 +473,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);
 
-  ParseArguments(world, args, arguments_out);
+  return ParseArguments(world, args, arguments_out);
 }
 }
 }

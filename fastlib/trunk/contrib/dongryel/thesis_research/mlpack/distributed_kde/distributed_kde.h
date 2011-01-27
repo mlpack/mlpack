@@ -86,7 +86,7 @@ class DistributedKde {
       boost::mpi::communicator &world, const std::string &file_name,
       int num_dimensions, int num_points);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       boost::mpi::communicator &world,
       const std::vector<std::string> &args,
       mlpack::distributed_kde::DistributedKdeArguments <

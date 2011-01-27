@@ -35,8 +35,12 @@ int main(int argc, char *argv[]) {
   // Parse arguments for the distributed kde.
   mlpack::distributed_kde::DistributedKdeArguments<DistributedTableType>
   distributed_kde_arguments;
-  mlpack::distributed_kde::DistributedKde<DistributedTableType>::ParseArguments(
-    argc, argv, world, &distributed_kde_arguments);
+  if(
+    mlpack::distributed_kde::DistributedKde <
+    DistributedTableType >::ParseArguments(
+      argc, argv, world, &distributed_kde_arguments)) {
+    return 0;
+  }
 
   // Instantiate a distributed KDE object.
   mlpack::distributed_kde::DistributedKde<DistributedTableType>
