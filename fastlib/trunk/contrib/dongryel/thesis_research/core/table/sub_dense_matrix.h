@@ -9,34 +9,51 @@
 #ifndef CORE_TABLE_SUB_DENSE_MATRIX_H
 #define CORE_TABLE_SUB_DENSE_MATRIX_H
 
-#include "core/table/dense_matrix.h"
 #include <boost/serialization/serialization.hpp>
+#include "core/table/dense_matrix.h"
 
 namespace core {
 namespace table {
+
+/** @brief A class representing a subset of a dense matrix.
+ */
 template<typename SubTableType>
 class SubDenseMatrix {
   private:
+
+    // For boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief The pointer to the dense matrix.
+    /** @brief The pointer to the dense matrix. The loading/unloading
+     *         is done from here.
      */
     core::table::DenseMatrix *matrix_;
 
+    /** @brief The list of begin/count pairs to serialize from the
+     *         dense matrix.
+     */
     const std::vector< typename SubTableType::PointSerializeFlagType >
     *serialize_points_per_terminal_node_;
 
   public:
 
+    /** @brief Returns whether the sub dense matrix is an alias or
+     *         not.
+     */
     bool is_alias() const {
       return matrix_->is_alias();
     }
 
+    /** @brief The default constructor.
+     */
     SubDenseMatrix() {
       matrix_ = NULL;
       serialize_points_per_terminal_node_ = NULL;
     }
 
+    /** @brief Initialize a sub dense matrix class for
+     *         serialization/unserialization.
+     */
     void Init(
       core::table::DenseMatrix *matrix_in,
       const std::vector< typename SubTableType::PointSerializeFlagType >
@@ -46,6 +63,8 @@ class SubDenseMatrix {
         &serialize_points_per_terminal_node_in;
     }
 
+    /** @brief Serialize a subset of a dense matrix.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
@@ -57,7 +76,7 @@ class SubDenseMatrix {
 
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
-        for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
+        for(int i = (*serialize_points_per_terminal_node_)[j].begin();
             i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
           const double *column_ptr = matrix_->GetColumnPtr(i);
           for(int k = 0; k < matrix_->n_rows(); k++) {
@@ -67,6 +86,8 @@ class SubDenseMatrix {
       }
     }
 
+    /** @brief Unserialize a subset of a dense matrix.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
 
@@ -82,7 +103,7 @@ class SubDenseMatrix {
 
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
-        for(int i = (*serialize_points_per_terminal_node_)[j].begin_;
+        for(int i = (*serialize_points_per_terminal_node_)[j].begin();
             i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
           double *column_ptr = const_cast<double *>(matrix_->GetColumnPtr(i));
           for(int k = 0; k < matrix_->n_rows(); k++) {
