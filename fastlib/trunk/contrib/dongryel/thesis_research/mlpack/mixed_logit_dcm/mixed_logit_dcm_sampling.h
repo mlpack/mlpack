@@ -20,6 +20,12 @@ namespace mixed_logit_dcm {
  */
 template<typename DCMTableType>
 class MixedLogitDCMSampling {
+  public:
+
+    /** @brief The sampling type.
+     */
+    typedef MixedLogitDCMSampling<DCMTableType> SamplingType;
+
   private:
 
     /** @brief The storing of each $\beta$ for each person.
@@ -59,7 +65,7 @@ class MixedLogitDCMSampling {
      *         which we access the attribute information of different
      *         discrete choices.
      */
-    DCMTableType *dcm_table_;
+    const DCMTableType *dcm_table_;
 
     /** @brief The number of active outer-terms in the simulated
      *         log-likelihood score.
@@ -77,6 +83,43 @@ class MixedLogitDCMSampling {
     arma::vec parameters_;
 
   private:
+
+    /** @brief The common initialization routine that is called from
+     *         the Init functions.
+     */
+    void InitCommon_() {
+
+      // This vector maintains each integration sample per person.
+      integration_samples_.resize(dcm_table_->num_people());
+
+      // This vector maintains the running simulated choice
+      // probabilities per person.
+      simulated_choice_probabilities_.resize(dcm_table_->num_people());
+
+      // This vector maintains the gradients of the simulated choice
+      // probability per person.
+      simulated_choice_probability_gradients_.resize(dcm_table_->num_people());
+      for(unsigned int i = 0;
+          i < simulated_choice_probability_gradients_.size(); i++) {
+        simulated_choice_probability_gradients_[i].Init(
+          dcm_table_->num_parameters());
+      }
+
+      // This vector maintains the components necessary to regenerate
+      // the Hessians of the simulated loglikelihood per person.
+      simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
+      for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
+          i++) {
+        simulated_loglikelihood_hessians_[i].first.Init(
+          dcm_table_->num_parameters(), dcm_table_->num_parameters());
+        simulated_loglikelihood_hessians_[i].second.Init(
+          dcm_table_->num_parameters());
+      }
+
+      // Build up the samples so that it matches the initial number of
+      // integration samples.
+      BuildSamples_();
+    }
 
     /** @brief Adds an integration sample to the person_index-th
      *         person so that the person's running simulated choice
@@ -158,6 +201,19 @@ class MixedLogitDCMSampling {
     }
 
   public:
+
+    /** @brief Returns the number of integral samples collected for a
+     *         given person.
+     */
+    int num_integration_samples(int person_index) const {
+      return num_integration_samples_[person_index];
+    }
+
+    /** @brief Returns the associated discrete choice model table.
+     */
+    const DCMTableType *dcm_table() const {
+      return dcm_table_;
+    }
 
     /** @brief Returns the negative simulated loglikelihood.
      */
@@ -338,6 +394,29 @@ class MixedLogitDCMSampling {
       return current_simulated_log_likelihood;
     }
 
+    /** @brief Initializes a sampling object with another sampling
+     *         object. This does not copy exactly, but makes sure that
+     *         the new sample gets the right number of people, each
+     *         with the same number of integration samples.
+     */
+    void Init(const SamplingType &sampling_in) {
+
+      dcm_table_ = sampling_in.dcm_table();
+      num_active_people_ = sampling_in.num_active_people();
+
+      // This maintains the number of integration samples collected
+      // for each person.
+      num_integration_samples_.zeros(dcm_table_->num_people());
+      for(int i = 0; i < num_active_people_; i++) {
+        int person_index = dcm_table_->shuffled_indices_for_person(i);
+        num_integration_samples_[person_index] =
+          sampling_in.num_integration_samples(person_index);
+      }
+
+      // The common initialization part.
+      this->InitCommon_();
+    }
+
     /** @brief Initializes a sampling object with an initial number of
      *         people, each with a pre-specified number of initial
      *         samples.
@@ -359,36 +438,8 @@ class MixedLogitDCMSampling {
           initial_num_integration_samples_in;
       }
 
-      // This vector maintains each integration sample per person.
-      integration_samples_.resize(dcm_table_->num_people());
-
-      // This vector maintains the running simulated choice
-      // probabilities per person.
-      simulated_choice_probabilities_.resize(dcm_table_->num_people());
-
-      // This vector maintains the gradients of the simulated choice
-      // probability per person.
-      simulated_choice_probability_gradients_.resize(dcm_table_->num_people());
-      for(unsigned int i = 0;
-          i < simulated_choice_probability_gradients_.size(); i++) {
-        simulated_choice_probability_gradients_[i].Init(
-          dcm_table_->num_parameters());
-      }
-
-      // This vector maintains the components necessary to regenerate
-      // the Hessians of the simulated loglikelihood per person.
-      simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
-      for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
-          i++) {
-        simulated_loglikelihood_hessians_[i].first.Init(
-          dcm_table_->num_parameters(), dcm_table_->num_parameters());
-        simulated_loglikelihood_hessians_[i].second.Init(
-          dcm_table_->num_parameters());
-      }
-
-      // Build up the samples so that it matches the initial number of
-      // integration samples.
-      BuildSamples_();
+      // The common initialization part.
+      this->InitCommon_();
     }
 
     /** @brief Add samples to the existing set of people.
