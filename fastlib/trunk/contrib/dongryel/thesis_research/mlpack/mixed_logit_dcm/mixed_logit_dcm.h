@@ -40,21 +40,30 @@ class MixedLogitDCM {
 
   private:
 
+    /** @brief Construct variable map for the algorithm.
+     */
+    static bool ConstructBoostVariableMap_(
+      const std::vector<std::string> &args,
+      boost::program_options::variables_map *vm);
+
     /** @brief Implements the stopping condition.
      */
     bool TerminationConditionReached_(
-      const SamplingType &first_sample, const arma::vec &gradient,
-      double model_reduction_ratio) const;
+      double model_reduction_ratio,
+      double data_sample_error,
+      double integration_sample_error,
+      const SamplingType &first_sample,
+      const arma::vec &gradient) const;
 
     /** @brief Computes the sample data error (Section 3.1).
      */
-    double SampleDataError_(
+    double DataSampleError_(
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
 
     /** @brief Computes the simulation error (Section 3.2).
      */
-    double SimulationError_(
+    double IntegrationSampleError_(
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
 
@@ -115,13 +124,10 @@ class MixedLogitDCM {
      */
     DCMTableType table_;
 
-  private:
-
-    /** @brief Construct variable map for the algorithm.
+    /** @brief Used for determining the stopping condition on the
+     *         stochastically computed gradient norm.
      */
-    static bool ConstructBoostVariableMap_(
-      const std::vector<std::string> &args,
-      boost::program_options::variables_map *vm);
+    static const double c_factor_ = 1.04;
 };
 }
 }

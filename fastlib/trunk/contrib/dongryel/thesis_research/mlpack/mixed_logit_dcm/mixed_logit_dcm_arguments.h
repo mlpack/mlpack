@@ -38,6 +38,15 @@ class MixedLogitDCMArguments {
 
     std::string trust_region_search_method_;
 
+    /** @brief Used for determining the stopping condition based on
+     *         the gradient norm.
+     */
+    double c_factor_;
+
+    /** @brief The maximum average integration sample size per person.
+     */
+    int max_num_integration_samples_per_person_;
+
   public:
 
     MixedLogitDCMArguments() {
@@ -46,6 +55,8 @@ class MixedLogitDCMArguments {
       distribution_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
+      c_factor_ = 0;
+      max_num_integration_samples_per_person_ = 0;
     }
 
     ~MixedLogitDCMArguments() {
