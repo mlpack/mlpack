@@ -259,8 +259,7 @@ void MixedLogitDCM<TableType>::Init(
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::Compute(
-  const mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-  TableType > &arguments_in,
+  const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
   // Here is the main entry of the algorithm.
@@ -270,8 +269,9 @@ void MixedLogitDCM<TableType>::Compute(
       arguments_in.initial_dataset_sample_rate_);
   int num_integration_samples =
     std::max(
-      static_cast<int>(arguments_in.initial_integration_sample_rate_ * R_MAX),
-      36);
+      static_cast<int>(
+        arguments_in.initial_integration_sample_rate_ *
+        arguments.max_num_integration_samples_per_person_), 36);
 
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
@@ -314,7 +314,8 @@ void MixedLogitDCM<TableType>::Compute(
 
     // Determine whether the termination condition has been reached.
     if(TerminationConditionReached_(
-          model_reduction_ratio, data_sample_error, integration_sample_error,
+          arguments_in, model_reduction_ratio,
+          data_sample_error, integration_sample_error,
           theta_sampling, gradient)) {
       break;
     }
@@ -324,6 +325,7 @@ void MixedLogitDCM<TableType>::Compute(
 
 template<typename TableType>
 bool MixedLogitDCM<TableType>::TerminationConditionReached_(
+  const ArgumentType &arguments_in,
   double model_reduction_ratio, double data_sample_error,
   double integration_sample_error, const SamplingType &sampling,
   const arma::vec &gradient) const {
@@ -380,14 +382,19 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
     "OPTIONAL The percentage of the maximum average integration sample "
     "to start with."
   )(
+    "gradient_norm_threshold",
+    boost::program_options::value<double>()->default_value(1.04),
+    "OPTIONAL The threshold for determining the termination condition based "
+    "on the gradient norm."
+  )(
     "max_num_integration_samples_per_person",
     boost::program_options::value<int>()->default_value(1000),
     "OPTIONAL The maximum number of integration samples allowed per person."
   )(
-    "model_out",
-    boost::program_options::value<std::string>()->default_value(
-      "model_out.csv"),
-    "file to output the computed discrete choice model."
+    "integration_sample_error_threshold",
+    boost::program_options::value<double>()->default_value(0.01),
+    "OPTIONAL The threshold for determining whether the integration sample "
+    "error is small or not."
   )(
     "trust_region_search_method",
     boost::program_options::value<std::string>()->default_value("cauchy"),
@@ -468,15 +475,20 @@ void MixedLogitDCM<TableType>::ParseArguments(
   arguments_out->initial_integration_sample_rate_ =
     vm[ "initial_integration_sample_rate" ].as<double>();
 
+  // Parse the gradient norm threshold.
+  arguments_out->gradient_norm_threshold_ =
+    vm[ "gradient_norm_threshold" ].as<double>();
+
   // Parse the maximum number of integration samples per person.
   arguments_out->max_num_integration_samples_per_person_ =
     vm[ "max_num_integration_samples_per_person" ].as<int>();
 
+  // Parse the integration sample error thresold.
+  arguments_out->integration_sample_error_threshold_ =
+    vm["integration_sample_error_threshold"].as<double>();
+
   // Parse where to output the discrete choice model predictions.
   arguments_out->predictions_out_ = vm[ "predictions_out" ].as<std::string>();
-
-  // Parse the output for the mixed logit discrete choice model.
-  arguments_out->model_out_ = vm[ "model_out" ].as<std::string>();
 
   // Parse how to perform the trust region search.
   arguments_out->trust_region_search_method_ =
