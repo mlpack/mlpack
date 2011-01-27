@@ -189,6 +189,12 @@ class MixedLogitDCMSampling {
       return parameters_;
     }
 
+    /** @brief Returns the parameters associated with the sampling.
+     */
+    arma::vec &parameters() {
+      return parameters_;
+    }
+
     /** @brief Returns the number of active people in the sampling.
      */
     int num_active_people() const {
@@ -337,7 +343,6 @@ class MixedLogitDCMSampling {
      *         samples.
      */
     void Init(
-      const arma::vec &parameters_in,
       DCMTableType *dcm_table_in,
       int num_active_people_in,
       int initial_num_integration_samples_in) {
@@ -380,9 +385,6 @@ class MixedLogitDCMSampling {
         simulated_loglikelihood_hessians_[i].second.Init(
           dcm_table_->num_parameters());
       }
-
-      // Initialize the starting parameters.
-      parameters_ = parameters_in;
 
       // Build up the samples so that it matches the initial number of
       // integration samples.
