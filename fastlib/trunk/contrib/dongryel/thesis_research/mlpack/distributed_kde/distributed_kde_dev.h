@@ -326,7 +326,7 @@ void DistributedKde<DistributedTableType>::RandomGenerate(
 }
 
 template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::ParseArguments(
+bool DistributedKde<DistributedTableType>::ParseArguments(
   boost::mpi::communicator &world,
   const std::vector<std::string> &args,
   mlpack::distributed_kde::DistributedKdeArguments <
@@ -463,7 +463,7 @@ void DistributedKde<DistributedTableType>::ParseArguments(
 }
 
 template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::ParseArguments(
+bool DistributedKde<DistributedTableType>::ParseArguments(
   int argc,
   char *argv[],
   boost::mpi::communicator &world,
