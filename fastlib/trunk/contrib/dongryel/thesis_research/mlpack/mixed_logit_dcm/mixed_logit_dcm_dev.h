@@ -280,23 +280,39 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
-  arma::vec parameters;
   arma::vec gradient;
   arma::mat hessian;
-  SamplingType sampling;
-  parameters.zeros(table_.num_parameters());
-  sampling.Init(
-    parameters, &table_, num_data_samples, num_integration_samples);
+  SamplingType iterate;
+  parameters_for_init.zeros(table_.num_parameters());
+  iterate.Init(
+    &table_, num_data_samples, num_integration_samples);
+  iterate.parameters().zeros(table_.num_parameters());
   double negative_simulated_loglikelihood =
-    sampling.NegativeSimulatedLogLikelihood();
-  sampling.NegativeSimulatedLogLikelihoodGradient(&gradient);
-  sampling.NegativeSimulatedLogLikelihoodHessian(&hessian);
+    iterate.NegativeSimulatedLogLikelihood();
+  iterate.NegativeSimulatedLogLikelihoodGradient(&gradient);
+  iterate.NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+  // The step direction.
+  arma::vec p;
 
   // Enter the trust region loop.
   do {
 
-    // Do a trust region step and find the model reduction ratio.
-    double model_reduction_ratio = 0.0;
+    // Obtain the step direction by solving Equation 4.3
+    // approximately.
+    core::optimization::TrustRegionUtil::ObtainStepDirection(
+      search_method_, current_radius, gradient, hessian, &p, &p_norm);
+
+    // Get the reduction ratio rho (Equation 4.4)
+    SamplingType next_iterate;
+
+    arma::vec next_iterate = (*iterate) + p;
+    double iterate_function_value = this->Evaluate_(*iterate);
+    double next_iterate_function_value = this->Evaluate_(next_iterate);
+    double rho =
+      core::optimization::TrustRegionUtil::ReductionRatio(
+        p, iterate_function_value, next_iterate_function_value,
+        gradient, hessian);
 
     // Determine whether the termination condition has been reached.
     if(TerminationConditionReached_(theta_sampling, gradient)) {
