@@ -287,8 +287,10 @@ void MixedLogitDCM<TableType>::Compute(
   parameters.zeros(table_.num_parameters());
   sampling.Init(
     parameters, &table_, num_data_samples, num_integration_samples);
-  sampling.SimulatedLoglikelihoodGradient(&gradient);
-  sampling.SimulatedLoglikelihoodHessian(&hessian);
+  double negative_simulated_loglikelihood =
+    sampling.NegativeSimulatedLogLikelihood();
+  sampling.NegativeSimulatedLogLikelihoodGradient(&gradient);
+  sampling.NegativeSimulatedLogLikelihoodHessian(&hessian);
 
   // Enter the trust region loop.
   do {

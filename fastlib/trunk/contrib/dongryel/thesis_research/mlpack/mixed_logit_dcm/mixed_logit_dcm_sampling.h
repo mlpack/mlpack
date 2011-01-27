@@ -159,6 +159,30 @@ class MixedLogitDCMSampling {
 
   public:
 
+    /** @brief Returns the negative simulated loglikelihood.
+     */
+    double NegativeSimulatedLogLikelihood() const {
+      return - this->SimulatedLogLikelihood();
+    }
+
+    /** @brief Returns the gradient of the negative simulated
+     *         log-likelihood objective.
+     */
+    void NegativeSimulatedLogLikelihoodGradient(
+      arma::vec *negative_likelihood_gradient) const {
+      this->SimulatedLogLikelihoodGradient(negative_likelihood_gradient);
+      (*negative_likelihood_gradient) = - (*negative_likelihood_gradient);
+    }
+
+    /** @brief Returns the hessian of the negative simulated
+     *         log-likelihood objective.
+     */
+    void NegativeSimulatedLogLikelihoodHessian(
+      arma::mat *negative_likelihood_hessian) const {
+      this->SimulatedLogLikelihoodHessian(negative_likelihood_hessian);
+      (*negative_likelihood_hessian) = - (*negative_likelihood_hessian);
+    }
+
     /** @brief Returns the parameters associated with the sampling.
      */
     const arma::vec &parameters() const {
@@ -199,7 +223,7 @@ class MixedLogitDCMSampling {
      *         likelihood score objective. This completes the
      *         computation of Equation 8.14 in the paper.
      */
-    void SimulatedLoglikelihoodHessian(
+    void SimulatedLogLikelihoodHessian(
       arma::mat *likelihood_hessian) const {
 
       likelihood_hessian->set_size(
@@ -249,7 +273,7 @@ class MixedLogitDCMSampling {
      *         likelihood score objective. This computes Equation 8.7
      *         in the paper.
      */
-    void SimulatedLoglikelihoodGradient(
+    void SimulatedLogLikelihoodGradient(
       arma::vec *likelihood_gradient) const {
 
       likelihood_gradient->set_size(dcm_table_->num_parameters());
