@@ -206,6 +206,7 @@ class TableExchange {
       boost::mpi::all_to_all(
         world, receive_requests, send_requests);
 
+      // The main while loop to exchange subtables.
       while(true) {
 
         // Dequeue a subtable list for each process.
@@ -262,15 +263,19 @@ class TableExchange {
 
         // If the received/sent tables are none, then quit.
         bool nothing_exchanged = true;
+        bool global_nothing_exchanged = true;
         for(int i = 0; nothing_exchanged && i < world.size(); i++) {
           nothing_exchanged =
             (received_subtables_in_this_round[i].size() == 0 &&
              send_subtables[i].size() == 0);
         }
-        if(nothing_exchanged) {
+        boost::mpi::all_reduce(
+          world, nothing_exchanged,
+          global_nothing_exchanged, std::logical_and<bool>());
+        if(global_nothing_exchanged) {
           break;
         }
-      }
+      } // end of the loop.
 
       return false;
     }
