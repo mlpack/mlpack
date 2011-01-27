@@ -38,6 +38,11 @@ class MixedLogitDCM {
     typedef
     mlpack::mixed_logit_dcm::MixedLogitDCMSampling<DCMTableType> SamplingType;
 
+    /** @brief The argument type.
+     */
+    typedef mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
+    TableType > ArgumentType;
+
   private:
 
     /** @brief Construct variable map for the algorithm.
@@ -49,6 +54,7 @@ class MixedLogitDCM {
     /** @brief Implements the stopping condition.
      */
     bool TerminationConditionReached_(
+      const ArgumentType &arguments_in,
       double model_reduction_ratio,
       double data_sample_error,
       double integration_sample_error,
@@ -91,31 +97,26 @@ class MixedLogitDCM {
     /** @brief Initializes the mixed logit discrete choice model
      *         object with a set of arguments.
      */
-    void Init(
-      mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-      TableType > &arguments_in);
+    void Init(ArgumentType &arguments_in);
 
     /** @brief Computes the result.
      */
     void Compute(
-      const mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-      TableType > &arguments_in,
+      const ArgumentType &arguments_in,
       mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out);
 
     /** @brief Parse the arguments.
      */
     static void ParseArguments(
       const std::vector<std::string> &args,
-      mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-      TableType > *arguments_out);
+      ArgumentType *arguments_out);
 
     /** @brief Parse the arguments.
      */
     static void ParseArguments(
       int argc,
       char *argv[],
-      mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-      TableType > *arguments_out);
+      ArgumentType *arguments_out);
 
   private:
 
