@@ -92,7 +92,7 @@ class DistributedKde {
       mlpack::distributed_kde::DistributedKdeArguments <
       DistributedTableType > *arguments_out);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       int argc,
       char *argv[],
       boost::mpi::communicator &world,
