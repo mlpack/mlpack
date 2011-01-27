@@ -43,8 +43,8 @@ void DualtreeDfs<ProblemType>::set_base_case_flags(
   const std::vector<PointSerializeFlagType> &flags_in) {
 
   for(unsigned int i = 0; i < flags_in.size(); i++) {
-    serialize_points_per_terminal_node_[flags_in[i].begin_] =
-      flags_in[i].count_;
+    serialize_points_per_terminal_node_[flags_in[i].begin()] =
+      flags_in[i].count();
   }
   do_selective_base_case_ = true;
 }

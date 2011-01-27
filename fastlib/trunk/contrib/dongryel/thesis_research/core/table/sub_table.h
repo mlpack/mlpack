@@ -21,39 +21,80 @@ namespace table {
 
 extern MemoryMappedFile *global_m_file_;
 
+/** @brief A subtable class for serializing/unserializing a part of a
+ *         table object.
+ */
 template<typename TableType>
 class SubTable {
 
   public:
+
+    /** @brief The type of the tree.
+     */
     typedef typename TableType::TreeType TreeType;
 
+    /** @brief The type of the old from new indices.
+     */
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
+    /** @brief The type of the subtable.
+     */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The class for indicating the node ID for which the
+     *         points are serialized underneath.
+     */
     class PointSerializeFlagType {
       private:
+
+        // For boost serialization.
         friend class boost::serialization::access;
 
-      public:
+        /** @brief The begin index.
+         */
         int begin_;
+
+        /** @brief The count of the points.
+         */
         int count_;
 
+      public:
+
+        /** @brief Returns the beginning index of the flag.
+         */
+        int begin() const {
+          return begin_;
+        }
+
+        /** @brief Returns the count of the points.
+         */
+        int count() const {
+          return count_;
+        }
+
+        /** @brief Returns the ending index of the flag.
+         */
         int end() const {
           return begin_ + count_;
         }
 
+        /** @brief Serialize/unserialize.
+         */
         template<class Archive>
         void serialize(Archive &ar, const unsigned int version) {
           ar & begin_;
           ar & count_;
         }
 
+        /** @brief The default constructor.
+         */
         PointSerializeFlagType() {
           begin_ = 0;
           count_ = 0;
         }
 
+        /** @brief Initialize with a begin/count pair.
+         */
         PointSerializeFlagType(
           int begin_in, int count_in) {
           begin_ = begin_in;
@@ -62,6 +103,8 @@ class SubTable {
     };
 
   private:
+
+    // For boost serialization.
     friend class boost::serialization::access;
 
     TableType *table_;
@@ -138,6 +181,9 @@ class SubTable {
       return serialize_points_per_terminal_node_;
     }
 
+    /** @brief Returns whether the subtable is an alias of another
+     *         subtable.
+     */
     bool is_alias() const {
       return is_alias_;
     }
@@ -165,6 +211,8 @@ class SubTable {
       this->operator=(subtable_in);
     }
 
+    /** @brief Serialize the subtable.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
@@ -217,6 +265,8 @@ class SubTable {
       }
     }
 
+    /** @brief Unserialize the subtable.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
 
@@ -286,6 +336,8 @@ class SubTable {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief The default constructor.
+     */
     SubTable() {
       table_ = NULL;
       start_node_ = NULL;
@@ -297,6 +349,8 @@ class SubTable {
       is_alias_ = true;
     }
 
+    /** @brief The destructor.
+     */
     ~SubTable() {
       if(is_alias_ == false && table_ != NULL) {
         if(core::table::global_m_file_) {
@@ -308,14 +362,21 @@ class SubTable {
       }
     }
 
+    /** @brief Returns the underlying table object.
+     */
     TableType *table() const {
       return table_;
     }
 
+    /** @brief Returns the starting node to be serialized.
+     */
     TreeType *start_node() const {
       return start_node_;
     }
 
+    /** @brief Returns the maximum level underneath the starting node
+     *         to be serialized/unserialized.
+     */
     int max_num_levels_to_serialize() const {
       return max_num_levels_to_serialize_;
     }
