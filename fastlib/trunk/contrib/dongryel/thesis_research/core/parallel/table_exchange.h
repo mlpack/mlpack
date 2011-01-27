@@ -126,7 +126,7 @@ class TableExchange {
           // Put the found subtable to the end.
           SubTableType subtable_copy = *it;
           (*it) = received_subtables_[process_id].front();
-	  received_subtables_[process_id].pop_front();
+          received_subtables_[process_id].pop_front();
           received_subtables_[process_id].push_back(subtable_copy);
           return &(received_subtables_[process_id].back());
         }
