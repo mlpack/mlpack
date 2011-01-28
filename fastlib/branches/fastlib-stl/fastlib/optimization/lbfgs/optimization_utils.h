@@ -170,8 +170,8 @@ class OptUtils {
     ones.SetAll(1.0);
     // This part of the sparsity constraint function formula can be
     // precomputed and it is the same for every iteration
-    double precomputed_sparse_factor=-sparse_factor*(math::Pow<1,2>(dimension)-1)+
-          math::Pow<1,2>(dimension);
+    double precomputed_sparse_factor=-sparse_factor*(std::sqrt(dimension)-1)+
+          std::sqrt(dimension);
 
     for (index_t i=0; i<data->n_cols(); i++) {
       double *point=data->GetColumnPtr(i);
@@ -199,7 +199,7 @@ class OptUtils {
         double w_norm=la::LengthEuclidean(w_vector);
         double w_times_v = 2*la::Dot(v_vector, w_vector);
         double v_norm_minus_l2=la::LengthEuclidean(v_vector)-l2_norm;
-        double alpha = (-w_times_v+math::Pow<1,2>(w_times_v*w_times_v
+        double alpha = (-w_times_v+std::sqrt(w_times_v*w_times_v
             -4*w_norm*v_norm_minus_l2))/(2*w_norm);
         la::AddExpert(alpha, w_vector, &v_vector);
         bool all_positive=true;
