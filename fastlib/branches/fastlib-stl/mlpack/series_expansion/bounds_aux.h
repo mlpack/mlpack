@@ -1,7 +1,7 @@
 #ifndef BOUNDS_AUX_H
 #define BOUNDS_AUX_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 
 class bounds_aux {
   
@@ -9,10 +9,10 @@ class bounds_aux {
   template<int t_pow>
   static void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
 			    const DHrectBound<t_pow> &bound2,
-			    Vector &furthest_point_in_bound1,
-			    double &furthest_dsqd) {
+			    arma::vec& furthest_point_in_bound1,
+			    double& furthest_dsqd) {
     
-    int dim = furthest_point_in_bound1.length();
+    int dim = furthest_point_in_bound1.n_elem;
     furthest_dsqd = 0;
 
     for (index_t d = 0; d < dim; d++) {
@@ -32,18 +32,18 @@ class bounds_aux {
 	furthest_point_in_bound1[d] = bound1_range.hi;
 	v = v2;
       }
-      furthest_dsqd += std::pow(v,t_pow); // v is non-negative
+      furthest_dsqd += std::pow(std::abs(v), t_pow); // v is non-negative
     }
-    furthest_dsqd = std::pow(furthest_dsqd, 2.0/t_pow);
+    furthest_dsqd = std::pow(furthest_dsqd, 2.0 / (double) t_pow);
   }
 
   template<int t_pow>
   static void MaxDistanceSq(const DHrectBound<t_pow> &bound1, 
-			    Vector &bound2_centroid,
-			    Vector &furthest_point_in_bound1,
+			    arma::vec& bound2_centroid,
+			    arma::vec& furthest_point_in_bound1,
 			    double &furthest_dsqd) {
 		       
-    int dim = furthest_point_in_bound1.length();
+    int dim = furthest_point_in_bound1.n_elem;
     furthest_dsqd = 0;
 
     for (index_t d = 0; d < dim; d++) {
@@ -57,20 +57,19 @@ class bounds_aux {
       if(v1 > v2) {
 	furthest_point_in_bound1[d] = bound1_range.lo;
 	v = v1;
-      }
-      else {
+      } else {
 	furthest_point_in_bound1[d] = bound1_range.hi;
 	v = v2;
       }
-      furthest_dsqd += std::pow(v,t_pow); // v is non-negative
+      furthest_dsqd += std::pow(std::abs(v), t_pow); // v is non-negative
     }
-    furthest_dsqd = std::pow(furthest_dsqd, 2.0/t_pow);
+    furthest_dsqd = std::pow(furthest_dsqd, 2.0 / (double) t_pow);
   }
 
   template<int t_pow, typename TVector>
   static void MaxDistanceSq(const DBallBound < LMetric<t_pow>, TVector > &bound1, 
-			    Vector &bound2_centroid,
-			    Vector &furthest_point_in_bound1,
+			    arma::vec& bound2_centroid,
+			    arma::vec& furthest_point_in_bound1,
 			    double &furthest_dsqd) {
 		       
     furthest_dsqd = 0;
@@ -83,17 +82,14 @@ class bounds_aux {
     // Compute the unit vector that has the same direction as the
     // vector pointing from the given point to the bounding ball
     // center.
-    Vector unit_vector;
-    la::SubInit(bound2_centroid, bound1.center(), &unit_vector);
-    la::Scale(1.0 / distance, &unit_vector);
+    arma::vec unit_vector = (bound1.center() - bound2_centroid) / distance;
 
-    furthest_point_in_bound1.CopyValues(bound1.center());
-    la::AddExpert(bound1.radius(), unit_vector, &furthest_point_in_bound1);
+    furthest_point_in_bound1 = bound1.center();
+    furthest_point_in_bound1 += bound1.radius() * unit_vector;
     
-    furthest_dsqd = std::pow(
-      (la::RawLMetric<t_pow>(bound2_centroid.length(), 
-			     furthest_point_in_bound1.ptr(), 
-			     bound2_centroid.ptr())), 2.0/t_pow);
+    furthest_dsqd = std::pow(la::RawLMetric<t_pow>(bound2_centroid.n_elem,
+			     furthest_point_in_bound1.memptr(), 
+			     bound2_centroid.memptr()), 2.0 / (double) t_pow);
   }
 
   /** @brief Returns the maximum side length of the bounding box that
@@ -131,15 +127,15 @@ class bounds_aux {
    const DBallBound < LMetric<t_pow>, TVector > &ball_bound2,
    int *dimension) {
     
-    const Vector &center1 = ball_bound1.center();
-    const Vector &center2 = ball_bound2.center();
-    int dim = ball_bound1.center().length();
+    const arma::vec& center1 = ball_bound1.center();
+    const arma::vec& center2 = ball_bound2.center();
+    int dim = ball_bound1.center().n_elem;
     double l1_distance = 0;
     for(index_t d = 0; d < dim; d++) {
       l1_distance += fabs(center1[d] - center2[d]);
     }
     l1_distance += ball_bound1.radius() + ball_bound2.radius();
-    *dimension = center1.length();
+    *dimension = center1.n_elem;
     return l1_distance;
   }
 
