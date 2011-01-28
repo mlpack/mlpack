@@ -320,12 +320,12 @@ void MixedLogitDCM<TableType>::Compute(
   // associated sampling information.
   arma::vec gradient;
   arma::mat hessian;
-  SamplingType iterate;
-  iterate.Init(
+  SamplingType *iterate = new SamplingType();
+  iterate->Init(
     &table_, initial_num_data_samples, initial_num_integration_samples);
-  iterate.parameters().zeros(table_.num_parameters());
-  iterate.NegativeSimulatedLogLikelihoodGradient(&gradient);
-  iterate.NegativeSimulatedLogLikelihoodHessian(&hessian);
+  iterate->parameters().zeros(table_.num_parameters());
+  iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
+  iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
 
   // The step direction and its 2-norm.
   arma::vec p;
@@ -345,11 +345,11 @@ void MixedLogitDCM<TableType>::Compute(
       hessian, &p, &p_norm);
 
     // Get the reduction ratio rho (Equation 4.4)
-    SamplingType next_iterate;
-    next_iterate.parameters() = iterate.parameters() + p;
-    double iterate_function_value = iterate.NegativeSimulatedLogLikelihood();
+    SamplingType *next_iterate = new SamplingType();
+    next_iterate->parameters() = iterate->parameters() + p;
+    double iterate_function_value = iterate->NegativeSimulatedLogLikelihood();
     double next_iterate_function_value =
-      next_iterate.NegativeSimulatedLogLikelihood();
+      next_iterate->NegativeSimulatedLogLikelihood();
     double decrease_predicted_by_model;
     double model_reduction_ratio =
       core::optimization::TrustRegionUtil::ReductionRatio(
@@ -357,15 +357,15 @@ void MixedLogitDCM<TableType>::Compute(
         gradient, hessian, &decrease_predicted_by_model);
 
     // Compute the data sample error and the integration sample error.
-    double data_sample_error = this->DataSampleError_(iterate, next_iterate);
+    double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
     double integration_sample_error =
-      this->IntegrationSampleError_(iterate, next_iterate);
+      this->IntegrationSampleError_(*iterate, *next_iterate);
 
     // Determine whether the termination condition has been reached.
     if(TerminationConditionReached_(
           arguments_in, decrease_predicted_by_model,
           data_sample_error, integration_sample_error,
-          iterate, gradient)) {
+          *iterate, gradient)) {
       break;
     }
 
@@ -374,26 +374,29 @@ void MixedLogitDCM<TableType>::Compute(
     // the integration sample size; (3) Do a step to the new iterate.
 
     // Increase the data sample size.
-    if(iterate.num_active_people() < table_.num_people() &&
+    if(iterate->num_active_people() < table_.num_people() &&
         sqrt(data_sample_error) >= sqrt(integration_sample_error) &&
         fabs(decrease_predicted_by_model) <
         arguments_in.gradient_norm_threshold_ * sqrt(data_sample_error)) {
 
       int max_allowable_people = table_.num_people() -
-                                 iterate.num_active_people();
+                                 iterate->num_active_people();
       int predicted_increase =
         core::math::Sqr(
           arguments_in.gradient_norm_threshold_ *
           sqrt(data_sample_error) / decrease_predicted_by_model) *
-        iterate.num_active_people() - iterate.num_active_people();
+        iterate->num_active_people() - iterate->num_active_people();
       int num_additional_people =
         std::min(std::max(1, predicted_increase), max_allowable_people);
-      iterate.AddActivePeople(
+      iterate->AddActivePeople(
         num_additional_people, initial_num_integration_samples);
 
       // Update the gradient and the hessian.
-      iterate.NegativeSimulatedLogLikelihoodGradient(&gradient);
-      iterate.NegativeSimulatedLogLikelihoodHessian(&hessian);
+      iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
+      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+      // Delete the discarded iterate.
+      delete next_iterate;
       continue;
     }
 
@@ -404,13 +407,41 @@ void MixedLogitDCM<TableType>::Compute(
         sqrt(integration_sample_error)) {
 
       // Update the gradient and the hessian.
-      iterate.NegativeSimulatedLogLikelihoodGradient(&gradient);
-      iterate.NegativeSimulatedLogLikelihoodHessian(&hessian);
+      iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
+      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+      // Delete the discarded iterate.
+      delete next_iterate;
       continue;
     }
 
     // Now the third case: adjust the trust region radius and make the
     // next iterate based on the trust region optimization.
+    if(model_reduction_ratio < 0.10) {
+      current_radius = p_norm / 2.0;
+    }
+    else {
+      if(model_reduction_ratio > 0.80 &&
+          fabs(p_norm - current_radius) <= 0.001) {
+        current_radius = 2.0 * current_radius;
+      }
+    }
+    const double eta = 0.05;
+    if(model_reduction_ratio > eta) {
+
+      // Accept the next iterate.
+      delete iterate;
+      iterate = next_iterate;
+
+      // Update the gradient and the hessian.
+      iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
+      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+    }
+    else {
+
+      // Delete the discarded iterate.
+      delete next_iterate;
+    }
   }
   while(true);
 }
@@ -480,7 +511,7 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
     "to start with."
   )(
     "gradient_norm_threshold",
-    boost::program_options::value<double>()->default_value(1.04),
+    boost::program_options::value<double>()->default_value(0.5),
     "OPTIONAL The threshold for determining the termination condition based "
     "on the gradient norm."
   )(
@@ -489,7 +520,7 @@ bool MixedLogitDCM<TableType>::ConstructBoostVariableMap_(
     "OPTIONAL The maximum number of integration samples allowed per person."
   )(
     "integration_sample_error_threshold",
-    boost::program_options::value<double>()->default_value(0.01),
+    boost::program_options::value<double>()->default_value(1e-9),
     "OPTIONAL The threshold for determining whether the integration sample "
     "error is small or not."
   )(
