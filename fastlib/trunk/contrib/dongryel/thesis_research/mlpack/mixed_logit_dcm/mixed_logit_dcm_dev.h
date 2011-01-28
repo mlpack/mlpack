@@ -62,7 +62,7 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
         integration_samples.size() * (integration_samples.size() - 1));
 
     // The inner sum loop.
-    for(unsigned int k = i + 1; k < table_.num_people(); k++) {
+    for(int k = i + 1; k < table_.num_people(); k++) {
 
       // Get the inner person index and its discrete choice.
       int inner_person_index = table_.shuffled_indices_for_person(k);
