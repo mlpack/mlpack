@@ -11,31 +11,39 @@
 
 #include <boost/bind.hpp>
 #include <boost/mpi.hpp>
-#include "core/gnp/distributed_dualtree_dfs.h"
-#include "core/gnp/dualtree_dfs_dev.h"
-#include "core/table/table.h"
-#include "core/table/sub_table_list.h"
-#include "core/table/memory_mapped_file.h"
+#include <boost/tuple/tuple.hpp>
+#include <map>
+#include <queue>
+#include "core/gnp/distributed_tripletree_dfs.h"
+#include "core/gnp/tripletree_dfs_dev.h"
 #include "core/parallel/table_exchange.h"
+#include "core/table/table.h"
+#include "core/table/memory_mapped_file.h"
 
 namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
-};
-};
+}
+}
+
+namespace core {
+namespace gnp {
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::ReduceScatter_(
+void DistributedTripletreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
-  // The typedef of a sub table in use and its list.
-  typedef core::table::SubTable<TableType> SubTableType;
-  typedef core::table::SubTableList<SubTableType> SubTableListType;
+  // The priority queue type.
+  typedef std::priority_queue <
+  FrontierObjectType,
+  std::vector<FrontierObjectType>,
+  typename DistributedTripletreeDfs <
+  DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
 
   // Start the computation with the self interaction.
-  core::gnp::TripletreeDfs<ProblemType> self_engine;
+  TripletreeDfs<ProblemType> self_engine;
   ProblemType self_problem;
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
@@ -44,129 +52,171 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::ReduceScatter_
   self_engine.Compute(metric, query_results);
   world_->barrier();
 
-  // For now, the number of levels of the reference tree grabbed from
-  // each process is fixed.
-  const int max_num_levels_to_serialize = 5;
-
-  // An abstract way of collaborative subtable exchanges.
+  // An abstract way of collaborative subtable exchanges. The table
+  // cache size needs to be at least more than the maximum number of
+  // leaf nodes in a balanced binary tree of
+  // max_num_levels_to_serialize times the number of such subtrees
+  // dequeued per stage.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
-  table_exchange.Init(*world_, *reference_table_);
-
-  // A frontier of reference nodes to be explored for the current
-  // process.
-  std::vector< std::vector< std::pair<int, int> > > receive_requests;
-  receive_requests.resize(world_->size());
-  for(unsigned int i = 0; i < receive_requests.size(); i++) {
-    if(i != static_cast<unsigned int>(world_->rank())) {
-      receive_requests[i].push_back(
-        std::pair<int, int>(0, reference_table_->local_n_entries(i)));
-    }
-  }
+  table_exchange.Init(
+    *world_, *reference_table_, 2 * max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
-  std::vector <
-  std::vector <
-  std::pair<TreeType *, std::pair<int, int> > > > computation_frontier;
-  computation_frontier.resize(world_->size());
+  std::vector < PriorityQueueType > computation_frontier(
+    world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
       int reference_begin = 0;
       int reference_count = reference_table_->local_n_entries(i);
-      computation_frontier[i].push_back(
-        std::pair <
-        TreeType *, std::pair<int, int> > (
+      computation_frontier[i].push(
+        boost::make_tuple(
           query_table_->local_table()->get_tree(),
-          std::pair<int, int>(reference_begin, reference_count)));
+          boost::make_tuple<int, int, int>(
+            i, reference_begin, reference_count), 0.0));
     }
   }
 
+  // The computation loop.
   do  {
 
-    // Try to exchange the subtables. If we are done, then we exit the
-    // loop.
+    // Fill out the tasks that need to be completed in this iteration.
+    std::vector< std::vector< std::pair<int, int> > > receive_requests(
+      world_->size());
+    PriorityQueueType prioritized_tasks;
+    for(int i = 0; i < world_->size(); i++) {
+      for(int j = 0; computation_frontier[i].size() > 0 &&
+          j < max_num_work_to_dequeue_per_stage_; j++) {
+
+        // Examine the top object in the frontier and sort it in the
+        // priorities, while forming the request lists.
+        const FrontierObjectType &top_object = computation_frontier[i].top();
+        std::pair<int, int> reference_node_id(
+          top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
+        if(table_exchange.FindSubTable(
+              i, reference_node_id.first,
+              reference_node_id.second) == NULL &&
+            std::find(
+              receive_requests[i].begin(), receive_requests[i].end(),
+              reference_node_id) == receive_requests[i].end()) {
+          receive_requests[i].push_back(reference_node_id);
+        }
+        prioritized_tasks.push(top_object);
+
+        // Pop the top object.
+        computation_frontier[i].pop();
+      }
+    }
+
+    // Try to exchange the subtables.
     if(
       table_exchange.AllToAll(
-        *world_, max_num_levels_to_serialize,
+        *world_, max_num_levels_to_serialize_,
         *(reference_table_->local_table()), receive_requests)) {
-      break;
+
+      // Check whether all of the processes are done. Otherwise, we
+      // have to be in the loop in case some processes request
+      // information from me.
+      bool local_done = (prioritized_tasks.size() == 0);
+      bool global_done = true;
+      boost::mpi::all_reduce(
+        *world_, local_done, global_done, std::logical_and<bool>());
+      if(global_done) {
+        break;
+      }
     }
 
     // Each process calls the independent sets of serial dual-tree dfs
     // algorithms. Further parallelism can be exploited here.
-    std::vector <
-    std::vector <
-    std::pair<TreeType *, std::pair<int, int> > > > new_computation_frontier;
-    new_computation_frontier.resize(world_->size());
+    while(! prioritized_tasks.empty()) {
 
-    for(int i = 0; i < world_->size(); i++) {
-      if(i != world_->rank()) {
-        for(unsigned int j = 0; j < computation_frontier[i].size(); j++) {
-          core::gnp::TripletreeDfs<ProblemType> sub_engine;
-          ProblemType sub_problem;
-          ArgumentType sub_argument;
-          SubTableType &frontier_reference_subtable =
-            table_exchange.FindSubTable(
-              i, computation_frontier[i][j].second.first,
-              computation_frontier[i][j].second.second);
-          sub_argument.Init(
-            frontier_reference_subtable.table(),
-            query_table_->local_table(), problem_->global());
-          sub_problem.Init(sub_argument);
-          sub_engine.Init(sub_problem);
-          sub_engine.set_base_case_flags(
-            frontier_reference_subtable.serialize_points_per_terminal_node());
-          sub_engine.set_query_start_node(computation_frontier[i][j].first);
-          sub_engine.Compute(metric, query_results, false);
+      // Examine the top object in the frontier.
+      const FrontierObjectType &top_frontier = prioritized_tasks.top();
 
-          // Collect the list of unpruned reference nodes.
-          for(typename std::map<int, int>::const_iterator it =
-                sub_engine.unpruned_reference_nodes().begin();
-              it != sub_engine.unpruned_reference_nodes().end(); it++) {
-            receive_requests[i].push_back(
-              std::pair<int, int>(it->first, it->second));
-          }
-          new_computation_frontier[i].insert(
-            new_computation_frontier[i].end(),
-            sub_engine.unpruned_query_reference_pairs().begin(),
-            sub_engine.unpruned_query_reference_pairs().end());
-        } // Looping over each of the outstanding work from the $i$-th
-        // process.
+      // Run a sub-dualtree algorithm on the computation object.
+      core::gnp::TripletreeDfs<ProblemType> sub_engine;
+      ProblemType sub_problem;
+      ArgumentType sub_argument;
+      int reference_process_id = top_frontier.get<1>().get<0>();
+      SubTableType *frontier_reference_subtable =
+        table_exchange.FindSubTable(
+          reference_process_id,
+          top_frontier.get<1>().get<1>(),
+          top_frontier.get<1>().get<2>());
+      sub_argument.Init(
+        frontier_reference_subtable->table(),
+        query_table_->local_table(), problem_->global());
+      sub_problem.Init(sub_argument);
+      sub_engine.Init(sub_problem);
+
+      // Set the right flags and fire away the computation.
+      sub_engine.set_base_case_flags(
+        frontier_reference_subtable->serialize_points_per_terminal_node());
+      sub_engine.set_query_reference_process_ranks(
+        world_->rank(), reference_process_id);
+      sub_engine.set_query_start_node(
+        top_frontier.get<0>());
+      sub_engine.Compute(metric, query_results, false);
+
+      // For each unpruned query reference pair, push into the
+      // priority queue.
+      const std::vector < FrontierObjectType > &unpruned_query_reference_pairs =
+        sub_engine.unpruned_query_reference_pairs();
+      for(unsigned int k = 0;
+          k < unpruned_query_reference_pairs.size(); k++) {
+        computation_frontier[reference_process_id].push(
+          unpruned_query_reference_pairs[k]);
       }
-    } // end of taking care of the computation frontier.
 
-    // Now copy over and make the new computation frontier.
-    computation_frontier = new_computation_frontier;
+      // Pop the top frontier object that was just explored.
+      prioritized_tasks.pop();
+    } // end of taking care of the computation tasks for the current
+    // iteration.
   }
   while(true);
 }
 
 template<typename DistributedProblemType>
-DistributedProblemType *core::gnp::DistributedTripletreeDfs <
+DistributedProblemType *DistributedTripletreeDfs <
 DistributedProblemType >::problem() {
   return problem_;
 }
 
 template<typename DistributedProblemType>
 typename DistributedProblemType::DistributedTableType *
-core::gnp::DistributedTripletreeDfs<DistributedProblemType>::query_table() {
+DistributedTripletreeDfs<DistributedProblemType>::query_table() {
   return query_table_;
 }
 
 template<typename DistributedProblemType>
 typename DistributedProblemType::DistributedTableType *
-core::gnp::DistributedTripletreeDfs<DistributedProblemType>::reference_table() {
+DistributedTripletreeDfs<DistributedProblemType>::reference_table() {
   return reference_table_;
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedTripletreeDfs <
+void DistributedTripletreeDfs <
 DistributedProblemType >::ResetStatistic() {
   ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Init(
+DistributedTripletreeDfs<DistributedProblemType>::DistributedTripletreeDfs() {
+  max_num_levels_to_serialize_ = 15;
+  max_num_work_to_dequeue_per_stage_ = 5;
+}
+
+template<typename DistributedProblemType>
+void DistributedTripletreeDfs<DistributedProblemType>::set_work_params(
+  int max_num_levels_to_serialize_in,
+  int max_num_work_to_dequeue_per_stage_in) {
+
+  max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
+  max_num_work_to_dequeue_per_stage_ = max_num_work_to_dequeue_per_stage_in;
+}
+
+template<typename DistributedProblemType>
+void DistributedTripletreeDfs<DistributedProblemType>::Init(
   boost::mpi::communicator *world_in,
   DistributedProblemType &problem_in) {
   world_ = world_in;
@@ -182,7 +232,7 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Init(
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Compute(
+void DistributedTripletreeDfs<DistributedProblemType>::Compute(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
@@ -200,11 +250,10 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Compute(
   PreProcessReferenceTree_(reference_table_->get_tree());
   PreProcessReferenceTree_(reference_table_->local_table()->get_tree());
 
-  // Figure out each process's work using the global tree. This is
-  // done using a naive approach where the global goal is to complete
-  // a 2D matrix workspace. This is currently doing an all-reduce type
-  // of exchange.
-  ReduceScatter_(metric, query_results);
+  // Figure out each process's work using the global tree. a 2D matrix
+  // workspace. This is currently doing an all-reduce type of
+  // exchange.
+  AllToAllReduce_(metric, query_results);
   world_->barrier();
 
   // Postprocess.
@@ -212,7 +261,8 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::Compute(
 }
 
 template<typename DistributedProblemType>
-void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::ResetStatisticRecursion_(
+void DistributedTripletreeDfs <
+DistributedProblemType >::ResetStatisticRecursion_(
   typename DistributedProblemType::DistributedTableType::TreeType *node,
   typename DistributedProblemType::DistributedTableType * table) {
   node->stat().SetZero();
@@ -224,7 +274,7 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::ResetStatistic
 
 template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedTripletreeDfs <
+void DistributedTripletreeDfs <
 DistributedProblemType >::PreProcessReferenceTree_(
   TemplateTreeType *rnode) {
 
@@ -257,7 +307,7 @@ DistributedProblemType >::PreProcessReferenceTree_(
 
 template<typename DistributedProblemType>
 template<typename TemplateTreeType>
-void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::PreProcess_(
+void DistributedTripletreeDfs<DistributedProblemType>::PreProcess_(
   TemplateTreeType *qnode) {
 
   typename DistributedProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -267,6 +317,8 @@ void core::gnp::DistributedTripletreeDfs<DistributedProblemType>::PreProcess_(
     PreProcess_(qnode->left());
     PreProcess_(qnode->right());
   }
+}
+}
 }
 
 #endif

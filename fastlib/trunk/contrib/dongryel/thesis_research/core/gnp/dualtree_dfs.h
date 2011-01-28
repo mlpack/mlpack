@@ -84,12 +84,20 @@ class DualtreeDfs {
              */
             IteratorArgType(const IteratorArgType &arg_in);
 
+            /** @brief The constructor for the iterator argument that
+             *         takes the starting pairs of query and reference
+             *         nodes.
+             */
             IteratorArgType(
               const IteratorMetricType &metric_in,
               TableType *query_table_in, TreeType *qnode_in,
               TableType *reference_table_in,
               TreeType *rnode_in);
 
+            /** @brief The iterator argument constructor that takes
+             *         the query-reference pairs and the squared
+             *         distance between.
+             */
             IteratorArgType(
               const IteratorMetricType &metric_in,
               TableType *query_table_in, TreeType *qnode_in,
@@ -97,14 +105,24 @@ class DualtreeDfs {
               TreeType *rnode_in,
               const core::math::Range &squared_distance_range_in);
 
+            /** @brief Returns the query node.
+             */
             TreeType *qnode();
 
+            /** @brief Returns the query node.
+             */
             TreeType *qnode() const;
 
+            /** @brief Returns the reference node.
+             */
             TreeType *rnode();
 
+            /** @brief Returns the reference node.
+             */
             TreeType *rnode() const;
 
+            /** @brief Returns the squared distance range.
+             */
             const core::math::Range &squared_distance_range() const;
         };
 
@@ -136,17 +154,28 @@ class DualtreeDfs {
         core::gnp::DualtreeTrace<IteratorArgType> trace_;
 
       public:
+
+        /** @brief The iterator constructor.
+         */
         iterator(
           const IteratorMetricType &metric_in,
           DualtreeDfs<ProblemType> &engine_in,
           ResultType *query_results_in);
 
+        /** @brief Step forward the iterator.
+         */
         void operator++();
 
+        /** @brief Dereference the computed results.
+         */
         ResultType &operator*();
 
+        /** @brief Dereference the computed results.
+         */
         const ResultType &operator*() const;
 
+        /** @brief Finalize the iterator computation results.
+         */
         void Finalize();
     };
 
@@ -164,6 +193,8 @@ class DualtreeDfs {
      */
     TableType *query_table_;
 
+    /** @brief The rank of the query set.
+     */
     int query_rank_;
 
     /** @brief Starting query node.
@@ -174,6 +205,8 @@ class DualtreeDfs {
      */
     TableType *reference_table_;
 
+    /** @brief The rank of the reference set.
+     */
     int reference_rank_;
 
     /** @brief The flag whether to do a selective base case for the
@@ -182,8 +215,15 @@ class DualtreeDfs {
      */
     bool do_selective_base_case_;
 
+    /** @brief The list of reference nodes (IDed by the begin/count)
+     *         that have points underneath (i.e. for which the base
+     *         case computation and the Monte Carlo computation are
+     *         possible).
+     */
     std::map<int, int> serialize_points_per_terminal_node_;
 
+    /** @brief The list of unpruned query/reference pairs.
+     */
     std::vector < FrontierObjectType > unpruned_query_reference_pairs_;
 
   private:
@@ -203,12 +243,18 @@ class DualtreeDfs {
       TreeType *rnode,
       ResultType *result);
 
+    /** @brief Determines whether a pair of query/reference pair can
+     *         be pruned deterministically.
+     */
     bool CanSummarize_(
       TreeType *qnode,
       TreeType *rnode,
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
+    /** @brief Summarize a given pair of query/reference using a
+     *         deterministic approximation.
+     */
     void Summarize_(
       TreeType *qnode,
       const typename ProblemType::DeltaType &delta,
