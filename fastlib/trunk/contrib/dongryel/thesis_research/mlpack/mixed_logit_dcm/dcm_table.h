@@ -67,7 +67,7 @@ class DCMTable {
      */
     void choice_probabilities(
       int person_index, const arma::vec &beta_vector,
-      arma::vec *choice_probabilities) {
+      arma::vec *choice_probabilities) const {
 
       int num_discrete_choices = this->num_discrete_choices(person_index);
       choice_probabilities->set_size(num_discrete_choices);
@@ -221,7 +221,7 @@ class DCMTable {
      */
     void get_attribute_vector(
       int person_index, int discrete_choice_index,
-      arma::vec *attribute_for_discrete_choice_out) {
+      arma::vec *attribute_for_discrete_choice_out) const {
 
       int index = cumulative_num_discrete_choices_[person_index] +
                   discrete_choice_index;

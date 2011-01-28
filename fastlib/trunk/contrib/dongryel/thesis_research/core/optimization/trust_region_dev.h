@@ -16,7 +16,8 @@ namespace optimization {
 double TrustRegionUtil::ReductionRatio(
   const arma::vec &step,
   double iterate_function_value, double next_iterate_function_value,
-  const arma::vec &gradient, const arma::mat &hessian) {
+  const arma::vec &gradient, const arma::mat &hessian,
+  double *decrease_predicted_by_model) {
 
   // The actual function value decrease.
   double function_value_decrease =
@@ -24,10 +25,10 @@ double TrustRegionUtil::ReductionRatio(
 
   // Predicted objective value decrease by the trust region model:
   // -g'p-0.5*p'Hp
-  double decrease_predicted_by_model =
+  *decrease_predicted_by_model =
     - arma::dot(gradient, step) -
     0.5 * arma::as_scalar(arma::trans(step) * hessian * step);
-  return function_value_decrease / decrease_predicted_by_model;
+  return function_value_decrease / (* decrease_predicted_by_model);
 }
 
 void TrustRegionUtil::ComputeSteihaugDirection(
@@ -327,8 +328,9 @@ void TrustRegion<FunctionType>::Optimize(
   // Whether to optimize until convergence.
   bool optimize_until_convergence = (num_iterations <= 0);
 
+  // The initial radius is set to the 10 % of the maximum radius.
   double p_norm = 0;
-  double current_radius = 0.1;
+  double current_radius = 0.1 * max_radius_;
   int it_num;
 
   // Step direction.
@@ -361,10 +363,11 @@ void TrustRegion<FunctionType>::Optimize(
     arma::vec next_iterate = (*iterate) + p;
     double iterate_function_value = this->Evaluate_(*iterate);
     double next_iterate_function_value = this->Evaluate_(next_iterate);
+    double decrease_predicted_by_model;
     double rho =
       core::optimization::TrustRegionUtil::ReductionRatio(
         p, iterate_function_value, next_iterate_function_value,
-        gradient, hessian);
+        gradient, hessian, &decrease_predicted_by_model);
 
     // Update the trust region radius.
     core::optimization::TrustRegionUtil::TrustRadiusUpdate(

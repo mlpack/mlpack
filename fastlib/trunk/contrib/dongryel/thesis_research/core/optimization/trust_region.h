@@ -68,7 +68,8 @@ class TrustRegionUtil {
     static double ReductionRatio(
       const arma::vec &step,
       double iterate_function_value, double next_iterate_function_value,
-      const arma::vec &gradient, const arma::mat &hessian);
+      const arma::vec &gradient, const arma::mat &hessian,
+      double *decrease_predicted_by_model);
 };
 
 template<typename FunctionType>

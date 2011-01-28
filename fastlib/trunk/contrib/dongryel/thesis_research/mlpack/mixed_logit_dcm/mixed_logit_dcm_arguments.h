@@ -1,5 +1,7 @@
 /** @file mixed_logit_dcm_arguments.h
  *
+ *  The arguments used for the mixed logit discrete choice model.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -7,14 +9,20 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_ARGUMENTS_H
 
 #include "core/table/table.h"
+#include "core/optimization/trust_region.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
 
+/** @brief The discrete choice model table type.
+ */
 template<typename TableType>
 class DCMTable;
 
+/** @brief The argument list for the mixed logit discrete choice
+ *         model.
+ */
 template<typename TableType>
 class MixedLogitDCMArguments {
   public:
@@ -56,7 +64,8 @@ class MixedLogitDCMArguments {
 
     /** @brief The trust region search method to be used.
      */
-    std::string trust_region_search_method_;
+    enum core::optimization::TrustRegionSearchMethod::SearchType
+    trust_region_search_method_;
 
     /** @brief Used for determining the stopping condition based on
      *         the gradient norm.
@@ -72,8 +81,14 @@ class MixedLogitDCMArguments {
      */
     double integration_sample_error_threshold_;
 
+    /** @brief The maximum trust region radius.
+     */
+    double max_trust_region_radius_;
+
   public:
 
+    /** @brief The default constructor.
+     */
     MixedLogitDCMArguments() {
       attribute_table_ = NULL;
       num_discrete_choices_per_person_ = NULL;
@@ -83,8 +98,11 @@ class MixedLogitDCMArguments {
       gradient_norm_threshold_ = 0;
       max_num_integration_samples_per_person_ = 0;
       integration_sample_error_threshold_ = 0;
+      max_trust_region_radius_ = 0;
     }
 
+    /** @brief The destructor.
+     */
     ~MixedLogitDCMArguments() {
       delete attribute_table_;
       attribute_table_ = NULL;
@@ -94,7 +112,7 @@ class MixedLogitDCMArguments {
       distribution_ = NULL;
     }
 };
-};
-};
+}
+}
 
 #endif

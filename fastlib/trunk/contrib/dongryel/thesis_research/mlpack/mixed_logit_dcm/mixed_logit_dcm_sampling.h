@@ -146,7 +146,7 @@ class MixedLogitDCMSampling {
         dcm_table_->get_discrete_choice_index(person_index);
       dcm_table_->distribution()->
       ChoiceProbabilityGradientWithRespectToParameter(
-        parameters_, dcm_table_, person_index, discrete_choice_index,
+        parameters_, *dcm_table_, person_index,
         beta_vector, choice_probabilities, &beta_gradient_product);
 
       // Update the simulated choice probabilities
@@ -166,8 +166,7 @@ class MixedLogitDCMSampling {
       arma::mat hessian_first_part;
       arma::vec hessian_second_part;
       dcm_table_->distribution()->HessianProducts(
-        parameters_, dcm_table_, person_index,
-        discrete_choice_index, beta_vector,
+        parameters_, *dcm_table_, person_index, beta_vector,
         choice_probabilities, &hessian_first_part, &hessian_second_part);
       simulated_loglikelihood_hessians_[person_index].first.push_back(
         hessian_first_part);
@@ -188,7 +187,7 @@ class MixedLogitDCMSampling {
         // Get the index of the active person.
         int person_index = dcm_table_->shuffled_indices_for_person(i);
 
-        for(int j = simulated_choice_probabilities_[j].num_samples();
+        for(int j = simulated_choice_probabilities_[i].num_samples();
             j < num_integration_samples_[person_index]; j++) {
 
           // Draw a beta from the parameter theta and add it to the
@@ -300,8 +299,6 @@ class MixedLogitDCMSampling {
         int person_index = dcm_table_->shuffled_indices_for_person(i);
 
         // Get the simulated choice probability for the given person.
-        int discrete_choice_index =
-          dcm_table_->get_discrete_choice_index(person_index);
         double simulated_choice_probability =
           this->simulated_choice_probability(person_index);
         double inverse_simulated_choice_probability =
