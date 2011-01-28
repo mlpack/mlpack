@@ -284,7 +284,7 @@ double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
     sum += std::pow(v, t_pow); // v is non-negative
   }
 
-  return std::pow(sum, 2.0/t_pow);
+  return std::pow(sum, 2.0 / (double) t_pow);
 }
 */
 
