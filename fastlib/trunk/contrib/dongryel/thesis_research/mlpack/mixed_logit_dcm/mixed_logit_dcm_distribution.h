@@ -59,13 +59,10 @@ class MixedLogitDCMDistribution {
       const arma::vec &choice_probabilities,
       arma::vec *choice_prob_weighted_attribute_vector) const {
 
-      // Get the number of discrete choices for the given person.
-      int num_discrete_choices = dcm_table_in.num_discrete_choices(
-                                   person_index);
       choice_prob_weighted_attribute_vector->set_size(
         dcm_table_in.num_attributes());
       choice_prob_weighted_attribute_vector->zeros();
-      for(int i = 0; i < choice_probabilities.n_elem; i++) {
+      for(int i = 0; i < static_cast<int>(choice_probabilities.n_elem); i++) {
         arma::vec attribute_vector;
         dcm_table_in.get_attribute_vector(person_index, i, &attribute_vector);
         (*choice_prob_weighted_attribute_vector) +=
@@ -153,10 +150,6 @@ class MixedLogitDCMDistribution {
       const arma::vec &choice_prob_weighted_attribute_vector,
       arma::mat *hessian_first_part,
       arma::vec *hessian_second_part) const {
-
-      // Get the discrete choice index.
-      int discrete_choice_index =
-        dcm_table_in.get_discrete_choice_index(person_index);
 
       // Compute $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)
       // \frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
