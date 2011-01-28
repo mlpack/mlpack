@@ -310,7 +310,7 @@ double BigSdpNmfObjectiveMinVarIneq::ComputeLagrangian(Matrix &coordinates) {
 		if (sigma_*diff <= ineq_lagrange_mult_[i]) {
       lagrangian+=(sigma_*diff-ineq_lagrange_mult_[i])*diff;
     } else {
-      lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i])/sigma_;
+      lagrangian+=-std::pow(ineq_lagrange_mult_[i],2)/sigma_;
     }
 	}
 	return lagrangian;
@@ -529,7 +529,7 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
   	if (sigma2_*diff <= ineq_lagrange_mult_[i]) {
       lagrangian+=(sigma2_*diff/2-ineq_lagrange_mult_[i])*diff;
     } else {
-      lagrangian+=-math::Pow<2,1>(ineq_lagrange_mult_[i])/(2*sigma2_);
+      lagrangian+=-std::pow(ineq_lagrange_mult_[i],2)/(2*sigma2_);
     }
   }
   
@@ -540,8 +540,7 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
       if (sigma2_*diff < ineq_lagrange_mult1_[i*new_dim_+j]) {
         lagrangian+=(sigma2_*diff-ineq_lagrange_mult1_[i*new_dim_+j])*diff;
       } else {
-        lagrangian+=-math::Pow<2,1>(
-            ineq_lagrange_mult1_[i*new_dim_+j])/(2*sigma2_);
+        lagrangian+=-std::pow(ineq_lagrange_mult1_[i*new_dim_+j],2)/(2*sigma2_);
       }
     }
   }
@@ -807,8 +806,8 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeFeasibilityError(Matrix &coordina
 												coordinates.GetColumnPtr(h))-values_[i];
 		*error+=diff*diff;
   }
-  infeasibility1_=math::Pow<1,2>(*error/v_norm_)*100;
-  printf("dot_infeasibility:%lg%% ", math::Pow<1,2>(*error/v_norm_)*100); ;
+  infeasibility1_=std::sqrt(*error/v_norm_)*100;
+  printf("dot_infeasibility:%lg%% ", std::sqrt(*error/v_norm_)*100); ;
   // local isometry
   double error2=0;
   for(index_t i=0; i<num_of_nearest_pairs_; i++) {
@@ -824,8 +823,8 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeFeasibilityError(Matrix &coordina
                                           -nearest_distances_[i]);
 
   }
-  infeasibility2_=math::Pow<1,2>(error2/sum_all_distances_)*100;
-  printf("dist_infeasibility:%lg %%\n", math::Pow<1,2>(error2/sum_all_distances_)*100);
+  infeasibility2_=std::sqrt(error2/sum_all_distances_)*100;
+  printf("dist_infeasibility:%lg %%\n", std::sqrt(error2/sum_all_distances_)*100);
   printf("sigma_ratio:%lg\n", sigma_ratio_);
 //  sigma_ratio_=infeasibility2_/infeasibility1_;
 }
@@ -939,7 +938,7 @@ bool BigSdpNmfObjectiveMaxVarIsometric::IsOptimizationOver(
 
 bool BigSdpNmfObjectiveMaxVarIsometric::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=std::sqrt(la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -1166,7 +1165,7 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeFeasibilityError(Matrix
 												coordinates.GetColumnPtr(h))-values_[i];
 		*error+=diff*diff;
   }
-  infeasibility1_=math::Pow<1,2>(*error/v_norm_)*100;
+  infeasibility1_=std::sqrt(*error/v_norm_)*100;
   printf("dot_infeasibility:%lg%% ", infeasibility1_); ;
   // local isometry
   double error2=0;
@@ -1183,7 +1182,7 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeFeasibilityError(Matrix
                                           -nearest_distances_[i]);
 
   }
-  infeasibility2_=math::Pow<1,2>(error2/sum_all_distances_)*100;
+  infeasibility2_=std::sqrt(error2/sum_all_distances_)*100;
   printf("dist_infeasibility:%lg %%\n", infeasibility2_);
 }
 
@@ -1291,7 +1290,7 @@ bool BigSdpNmfObjectiveMaxVarIsometricRemoveMean::IsOptimizationOver(
 
 bool BigSdpNmfObjectiveMaxVarIsometricRemoveMean::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=std::sqrt(la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -1524,7 +1523,7 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
 												coordinates.GetColumnPtr(h))-values_[i];
 		*error+=diff*diff;
   }
-  infeasibility1_=math::Pow<1,2>(*error/v_norm_)*100;
+  infeasibility1_=std::sqrt(*error/v_norm_)*100;
   // local isometry
   double error2=0;
   for(index_t i=0; i<num_of_nearest_pairs_; i++) {
@@ -1540,7 +1539,7 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
                                           -nearest_distances_[i]);
 
   }
-  infeasibility2_=math::Pow<1,2>(error2/sum_all_distances_)*100;
+  infeasibility2_=std::sqrt(error2/sum_all_distances_)*100;
   NOTIFY("dot_infeasibility:%lg%% dist_infeasibility:%lg %%", 
       infeasibility1_, infeasibility2_);
   // NOTIFY("sigma_ratio:%lg\n", sigma_ratio_);
@@ -1656,7 +1655,7 @@ bool BigSdpNmfObjectiveMaxFurthestIsometric::IsOptimizationOver(
 
 bool BigSdpNmfObjectiveMaxFurthestIsometric::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=std::sqrt(la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
@@ -1856,7 +1855,7 @@ void NmfObjectiveIsometric::ComputeFeasibilityError(Matrix &coordinates,
                                           -nearest_distances_[i]);
 
   }
-  infeasibility2_=math::Pow<1,2>(*error/sum_all_distances_)*100;
+  infeasibility2_=std::sqrt(*error/sum_all_distances_)*100;
   printf("dist_infeasibility:%lg %%\n", infeasibility2_*100);
 }
 
@@ -1933,7 +1932,7 @@ bool NmfObjectiveIsometric::IsOptimizationOver(
 
 bool NmfObjectiveIsometric::IsIntermediateStepOver(
     Matrix &coordinates, Matrix &gradient, double step) {
-  double norm_gradient=math::Pow<1,2>(la::Dot(gradient.n_elements(), 
+  double norm_gradient=std::sqrt(la::Dot(gradient.n_elements(), 
                                gradient.ptr(), 
                                gradient.ptr()));
   double feasibility_error;
