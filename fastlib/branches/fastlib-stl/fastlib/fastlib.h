@@ -38,6 +38,7 @@
 #ifndef FASTLIB_FASTLIB_H
 #define FASTLIB_FASTLIB_H
 
+#include <cmath>
 #include "base/base.h"
 #include "la/la.h"
 #include "la/matrix.h"
