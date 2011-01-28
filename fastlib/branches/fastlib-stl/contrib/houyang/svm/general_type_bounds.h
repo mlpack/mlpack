@@ -128,10 +128,10 @@ class GenHrectBound {
       mbound++;
       mpoint++;
 
-      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     } while (--d);
 
-    return math::Pow<2, t_pow>(sum) / 4;
+    return std::pow(sum, 2.0/t_pow) / 4.0;
   }
 
   /**
@@ -163,10 +163,10 @@ class GenHrectBound {
       //   (x * 2)^2 / 4 = x^2
       T v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return math::Pow<2, t_pow>(sum) / 4;
+    return std::pow(sum, 2.0/t_pow) / 4.0;
   }
 
   /**
@@ -179,10 +179,10 @@ class GenHrectBound {
 
     for (index_t d = 0; d < dim_; d++) {
       T v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return math::Pow<2, t_pow>(sum);
+    return std::pow(sum, 2.0/t_pow);
   }
 
   /**
@@ -197,10 +197,10 @@ class GenHrectBound {
 
     for (index_t d = 0; d < dim_; d++) {
       T v = std::max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
-      sum += math::PowAbs<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return math::Pow<2, t_pow>(sum);
+    return std::pow(sum, 2.0/t_pow);
   }
 
   /**
@@ -224,12 +224,12 @@ class GenHrectBound {
       T v_lo = (v1 + fabs(v1)) + (v2 + fabs(v2));
       T v_hi = -std::min(v1, v2);
 
-      sum_lo += math::Pow<t_pow, 1>(v_lo); // v_lo is non-negative
-      sum_hi += math::Pow<t_pow, 1>(v_hi); // v_hi is non-negative
+      sum_lo += std::pow(v_lo, t_pow); // v_lo is non-negative
+      sum_hi += std::pow(v_hi, t_pow); // v_hi is non-negative
     }
 
-    return GenRange<double>(math::Pow<2, t_pow>(sum_lo) / 4.0,
-        math::Pow<2, t_pow>(sum_hi));
+    return GenRange<double>(std::pow(sum_lo, 2.0/t_pow) / 4.0,
+                            std::pow(sum_hi, 2.0/t_pow));
   }
 
   /**
@@ -249,15 +249,15 @@ class GenHrectBound {
       T v1 = mbound->lo - v;
       T v2 = v - mbound->hi;
 
-      sum_lo += math::Pow<t_pow, 1>((v1 + fabs(v1)) + (v2 + fabs(v2)));
-      sum_hi += math::Pow<t_pow, 1>(-std::min(v1, v2));
+      sum_lo += std::pow((v1 + fabs(v1)) + (v2 + fabs(v2)), t_pow);
+      sum_hi += std::pow(-std::min(v1, v2), t_pow);
 
       mpoint++;
       mbound++;
     } while (--d);
 
-    return GenRange<double>(math::Pow<2, t_pow>(sum_lo) / 4.0,
-			    math::Pow<2, t_pow>(sum_hi));
+    return GenRange<double>(std::pow(sum_lo, 2.0/t_pow) / 4.0,
+                            std::pow(sum_hi, 2.0/t_pow));
   }
 
   /**
@@ -288,10 +288,10 @@ class GenHrectBound {
       a++;
       b++;
 
-      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return math::Pow<2, t_pow>(sum) / 4.0;
+    return std::pow(sum, 2.0/t_pow) / 4.0;
   }
 
   /**
@@ -310,10 +310,10 @@ class GenHrectBound {
       T v2 = a[d].lo - b[d].lo;
       T v = std::max(v1, v2);
       v = (v + fabs(v)); /* truncate negatives to zero */
-      sum += math::Pow<t_pow, 1>(v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return math::Pow<2, t_pow>(sum) / 4.0;
+    return std::pow(sum, 2.0/t_pow) / 4.0;
   }
 
   /**
@@ -327,10 +327,10 @@ class GenHrectBound {
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      sum += math::PowAbs<t_pow, 1>(a[d].hi + a[d].lo - b[d].hi - b[d].lo);
+      sum += std::pow(a[d].hi + a[d].lo - b[d].hi - b[d].lo, t_pow);
     }
 
-    return math::Pow<2, t_pow>(sum) / 4.0;
+    return std::pow(sum, 2.0/t_pow) / 4.0;
   }
 
   /**

@@ -164,9 +164,9 @@ namespace prdc {
 	 v = 2*v-al;
        }
      }
-     sum += math::PowAbs<t_pow, 1>(v);
+     sum += std::pow(v,t_pow);
    }   
-   return math::Pow<2, t_pow>(sum);
+   return std::pow(sum,2.0/t_pow);
  }
 
 
@@ -187,9 +187,9 @@ namespace prdc {
      dl = dl - floor(dl / box_size[d])*box_size[d];
      v = max(min(dh,v), min(dl, v));
        
-     sum += math::PowAbs<t_pow, 1>(v);
+     sum += std::pow(v,t_pow);
    }   
-   return math::Pow<2, t_pow>(sum);
+   return std::pow(sum,2.0/t_pow);
  }
 
   */
