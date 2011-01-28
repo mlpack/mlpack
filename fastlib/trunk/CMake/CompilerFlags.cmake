@@ -1,4 +1,3 @@
-
 set(CMAKE_C_FLAGS "-Wall")
 
 set(CMAKE_CXX_FLAGS "-Wall -Woverloaded-virtual -fno-exceptions -Wparentheses")
