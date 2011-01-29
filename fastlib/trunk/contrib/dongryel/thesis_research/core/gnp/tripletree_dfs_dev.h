@@ -17,6 +17,11 @@
 
 namespace core {
 namespace gnp {
+
+template<typename ProblemType>
+TripletreeDfs<ProblemType>::TripletreeDfs() {
+}
+
 template<typename ProblemType>
 int TripletreeDfs<ProblemType>::num_deterministic_prunes() const {
   return num_deterministic_prunes_;
