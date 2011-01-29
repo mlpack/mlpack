@@ -1,0 +1,51 @@
+/** @file mixed_logit_dcm_constant_distribution.h
+ *
+ *  The constant (non-random) distribution that can be used for mixed
+ *  logit discrete choice model.
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
+#define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
+
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
+
+namespace mlpack {
+namespace mixed_logit_dcm {
+
+/** @brief The constant distribution which can be used for mixed logit
+ *         discrete choice model.
+ */
+template<typename DCMTableType>
+class MixedLogitDCMConstantDistribution:
+  public virtual MixedLogitDCMDistribution<DCMTableType> {
+  public:
+
+    /** @brief Returns the (row, col)-th entry of
+     *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
+     */
+    double AttributeGradientWithRespectToParameter(
+      const arma::vec &parameters, int row_index, int col_index) const {
+
+      // Since it is a constant distribution, the gradient is always
+      // 1 for any (row, col) entry.
+      return 1.0;
+    }
+
+    void DrawBeta(
+      const arma::vec &parameters, arma::vec *beta_out) const {
+
+      // Since it is a constant distribution, it is always equal to
+      // the parameter.
+      *beta_out = parameters;
+    }
+
+    void Init(const std::string &file_name) const {
+
+    }
+};
+}
+}
+
+#endif
