@@ -20,7 +20,18 @@ namespace mixed_logit_dcm {
 template<typename DCMTableType>
 class MixedLogitDCMGaussianDistribution:
   public virtual MixedLogitDCMDistribution<DCMTableType> {
+  private:
+    int num_parameters_;
+
   public:
+
+    MixedLogitDCMGaussianDistribution() {
+      num_parameters_ = 0;
+    }
+
+    int num_parameters() const {
+      return num_parameters_;
+    }
 
     /** @brief Returns the (row, col)-th entry of
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$

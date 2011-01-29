@@ -127,13 +127,6 @@ class DCMTable {
       return shuffled_indices_for_person_[pos];
     }
 
-    /** @brief Returns the number of parameters that generate each
-     *         attribute.
-     */
-    int num_parameters() const {
-      return distribution_->num_parameters();
-    }
-
     /** @brief Returns the number of attributes for a given discrete
      *         choice.
      */
@@ -154,6 +147,12 @@ class DCMTable {
     int get_discrete_choice_index(int person_index) const {
       return static_cast<int>(
                discrete_choice_set_info_->data().get(0, person_index));
+    }
+
+    /** @brief Returns the number of parameters.
+     */
+    int num_parameters() const {
+      return distribution_->num_parameters();
     }
 
     /** @brief Returns the total number of people.

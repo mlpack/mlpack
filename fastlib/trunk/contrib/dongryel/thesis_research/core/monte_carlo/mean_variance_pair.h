@@ -9,6 +9,9 @@
 #ifndef CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
 #define CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
 
+#include <math.h>
+#include "core/math/range.h"
+
 namespace core {
 namespace monte_carlo {
 
@@ -50,6 +53,12 @@ class MeanVariancePair {
       num_samples_ = pair_in.num_samples();
       sample_mean_ = pair_in.sample_mean();
       sample_variance_ = pair_in.sample_variance();
+    }
+
+    /** @brief The assignment operator.
+     */
+    void operator=(const MeanVariancePair &pair_in) {
+      this->CopyValues(pair_in);
     }
 
     /** @brief The number of samples gathered is returned.

@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <boost/program_options.hpp>
+#include "core/monte_carlo/mean_variance_pair.h"
 #include "core/table/table.h"
 #include "mlpack/mixed_logit_dcm/dcm_table.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_arguments.h"
@@ -51,6 +52,11 @@ class MixedLogitDCM {
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 
+    /** @brief Update the sample allocation.
+     */
+    void UpdateSampleAllocation_(
+      double integration_sample_error, SamplingType *sample) const;
+
     /** @brief Implements the stopping condition.
      */
     bool TerminationConditionReached_(
@@ -66,6 +72,12 @@ class MixedLogitDCM {
     double DataSampleError_(
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
+
+    void IntegrationSampleErrorPerPerson_(
+      int person_index,
+      const SamplingType &first_sample,
+      const SamplingType &second_sample,
+      core::monte_carlo::MeanVariancePair *integration_sample_error) const;
 
     /** @brief Computes the simulation error (Section 3.2).
      */

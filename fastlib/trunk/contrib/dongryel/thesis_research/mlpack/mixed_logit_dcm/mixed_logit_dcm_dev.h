@@ -101,7 +101,7 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
         second_factor * outer_simulated_choice_probability_gradient;
       delta_hik[table_.num_parameters() + 1] = third_factor * dot_product;
       delta_hik.submat(
-        table_.num_parameters() + 2, delta_hik.n_elems - 1, 0, 0) =
+        table_.num_parameters() + 2, delta_hik.n_elem - 1, 0, 0) =
           second_factor * inner_simulated_choice_probability_gradient;
 
       // Loop through each integration sample.
@@ -243,6 +243,43 @@ double MixedLogitDCM<TableType>::GradientError_(
 }
 
 template<typename TableType>
+void MixedLogitDCM<TableType>::IntegrationSampleErrorPerPerson_(
+  int person_index,
+  const SamplingType &first_sample,
+  const SamplingType &second_sample,
+  core::monte_carlo::MeanVariancePair *integration_sample_error) const {
+
+  // Get the integration samples for both samples.
+  const std::vector< arma::vec > &first_integration_samples =
+    first_sample.integration_samples(person_index);
+  const std::vector< arma::vec > &second_integration_samples =
+    second_sample.integration_samples(person_index);
+
+  // Get the simulated choice probabilities.
+  double first_simulated_choice_probability =
+    first_sample.simulated_choice_probability(person_index);
+  double second_simulated_choice_probability =
+    second_sample.simulated_choice_probability(person_index);
+
+  // Accumulate the difference.
+  integration_sample_error->SetZero();
+  for(unsigned j = 0; j < first_integration_samples.size(); j++) {
+    const arma::vec &first_integration_sample =
+      first_integration_samples[j];
+    const arma::vec &second_integration_sample =
+      second_integration_samples[j];
+    double first_choice_probability =
+      table_.choice_probability(person_index, first_integration_sample);
+    double second_choice_probability =
+      table_.choice_probability(person_index, second_integration_sample);
+    double difference =
+      first_choice_probability / first_simulated_choice_probability -
+      second_choice_probability / second_simulated_choice_probability;
+    integration_sample_error->push_back(difference);
+  }
+}
+
+template<typename TableType>
 double MixedLogitDCM<TableType>::IntegrationSampleError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
@@ -253,37 +290,12 @@ double MixedLogitDCM<TableType>::IntegrationSampleError_(
   // Loop over each active people.
   for(int i = 0; i < first_sample.num_active_people(); i++) {
 
-    // Get the active person index.
+    // Get the active person index and the corresponding integration
+    // sample error.
     int person_index = table_.shuffled_indices_for_person(i);
-
-    // Get the integration samples for both samples.
-    const std::vector< arma::vec > &first_integration_samples =
-      first_sample.integration_samples(person_index);
-    const std::vector< arma::vec > &second_integration_samples =
-      second_sample.integration_samples(person_index);
-
-    // Get the simulated choice probabilities.
-    double first_simulated_choice_probability =
-      first_sample.simulated_choice_probability(person_index);
-    double second_simulated_choice_probability =
-      second_sample.simulated_choice_probability(person_index);
-
-    // Accumulate the difference.
     core::monte_carlo::MeanVariancePair difference_mean_variance;
-    for(unsigned j = 0; j < first_integration_samples.size(); j++) {
-      const arma::vec &first_integration_sample =
-        first_integration_samples[j];
-      const arma::vec &second_integration_sample =
-        second_integration_samples[j];
-      double first_choice_probability =
-        table_.choice_probability(person_index, first_integration_sample);
-      double second_choice_probability =
-        table_.choice_probability(person_index, second_integration_sample);
-      double difference =
-        first_choice_probability / first_simulated_choice_probability -
-        second_choice_probability / second_simulated_choice_probability;
-      difference_mean_variance.push_back(difference);
-    }
+    IntegrationSampleErrorPerPerson_(
+      person_index, first_sample, second_sample, &difference_mean_variance);
     simulation_error += difference_mean_variance.sample_mean_variance();
   }
 
@@ -303,31 +315,31 @@ double MixedLogitDCM<TableType>::DataSampleError_(
     static_cast<double>(
       table_.num_people() - first_sample.num_active_people()) /
     static_cast<double>(table_.num_people() - 1);
-  double factor = correction_factor /
-                  static_cast<double>(
-                    first_sample.num_active_people() *
-                    (first_sample.num_active_people() - 1));
 
   // Compute the average difference of simulated log probabilities.
-  double average_difference = 0;
-  for(int i = 0; i < first_sample.num_active_people(); i++) {
-    int person_index = table_.shuffled_indices_for_person(i);
-    average_difference +=
-      (log(first_sample.simulated_choice_probability(person_index)) -
-       log(second_sample.simulated_choice_probability(person_index)));
-  }
-  average_difference /= static_cast<double>(first_sample.num_active_people());
-  double variance = 0;
-
-  // Given the average difference, compute the variance.
+  core::monte_carlo::MeanVariancePair average_difference;
   for(int i = 0; i < first_sample.num_active_people(); i++) {
     int person_index = table_.shuffled_indices_for_person(i);
     double difference =
-      log(first_sample.simulated_choice_probability(person_index)) -
-      log(second_sample.simulated_choice_probability(person_index));
-    variance += core::math::Sqr(difference - average_difference);
+      (log(first_sample.simulated_choice_probability(person_index)) -
+       log(second_sample.simulated_choice_probability(person_index)));
+    average_difference.push_back(difference);
   }
-  return factor * variance;
+  return correction_factor * average_difference.sample_mean_variance();
+}
+
+template<typename TableType>
+void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
+  double integration_sample_error, SamplingType *iterate) const {
+
+  // Loop over each active person.
+  for(int i = 0; i < iterate->num_active_people(); i++) {
+
+    // Get the active person index.
+    int active_person_index = table_.shuffled_indices_for_person(i);
+
+
+  }
 }
 
 template<typename TableType>
@@ -445,6 +457,9 @@ void MixedLogitDCM<TableType>::Compute(
         fabs(decrease_predicted_by_model) <
         arguments_in.gradient_norm_threshold_ *
         sqrt(integration_sample_error)) {
+
+      // Update the sample size for each active person.
+      UpdateSampleAllocation_(integration_sample_error, iterate);
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);

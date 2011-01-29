@@ -24,6 +24,10 @@ template<typename DCMTableType>
 class MixedLogitDCMDistribution {
   public:
 
+    /** @brief Returns the number of parameters.
+     */
+    virtual int num_parameters() const = 0;
+
     /** @brief Returns the (row, col)-th entry of
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
      */
@@ -36,10 +40,10 @@ class MixedLogitDCMDistribution {
       const arma::vec &parameters,
       int num_attributes, arma::mat *gradient_out) const {
 
-      gradient_out->set_size(this->num_parameters(), num_attributes);
+      gradient_out->set_size(parameters.n_elem, num_attributes);
 
       for(int j = 0; j < num_attributes; j++) {
-        for(int i = 0; i < this->num_parameters(); i++) {
+        for(int i = 0; i < static_cast<int>(parameters.n_elem); i++) {
           gradient_out->at(
             i, j) =
               this->AttributeGradientWithRespectToParameter(parameters, i, j);
@@ -222,7 +226,7 @@ class MixedLogitDCMDistribution {
         dcm_table_in.get_discrete_choice_index(person_index);
 
       // Initialize the product.
-      product_out->set_size(this->num_parameters());
+      product_out->set_size(parameters_in.n_elem);
 
       // Compute the gradient matrix times vector for the person's
       // discrete choice.
@@ -235,11 +239,11 @@ class MixedLogitDCMDistribution {
         attribute_vector - choice_prob_weighted_attribute_vector;
 
       // For each row index of the gradient,
-      for(int k = 0; k < this->num_parameters(); k++) {
+      for(int k = 0; k < static_cast<int>(parameters_in.n_elem); k++) {
 
         // For each column index of the gradient,
         double dot_product = 0;
-        for(unsigned int j = 0; j < attribute_vector.n_elem; j++) {
+        for(int j = 0; j < static_cast<int>(attribute_vector.n_elem); j++) {
           dot_product +=
             attribute_vec_sub_choice_prob_weighted_vec[j] *
             this->AttributeGradientWithRespectToParameter(
