@@ -43,7 +43,8 @@ class TripletreeDfs {
      *         computation.
      */
     typedef boost::tuple <
-    TreeType *, boost::tuple<int, int, int>, double > FrontierObjectType;
+    TreeType *, boost::tuple<int, int, int>, boost::tuple<int, int, int>,
+             double > FrontierObjectType;
 
   private:
 
@@ -62,6 +63,17 @@ class TripletreeDfs {
     /** @brief The number of Monte Carlo prunes.
      */
     int num_monte_carlo_prunes_;
+
+    /** @brief The list of nodes (IDed by the begin/count) that have
+     *         points underneath (i.e. for which the base case
+     *         computation and the Monte Carlo computation are
+     *         possible).
+     */
+    std::map<int, int> serialize_points_per_terminal_node_;
+
+    /** @brief The list of triples of nodes.
+     */
+    std::vector < FrontierObjectType > unpruned_triples_;
 
   private:
 
@@ -164,6 +176,14 @@ class TripletreeDfs {
       bool do_query_results_postprocess);
 
   public:
+
+    /** @brief The constructor.
+     */
+    TripletreeDfs();
+
+    /** @brief Returns the list of unpruned triples of nodes.
+     */
+    const std::vector < FrontierObjectType > &unpruned_triples() const;
 
     /** @brief Returns the number of deterministic prunes.
      */
