@@ -101,13 +101,15 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
         second_factor * outer_simulated_choice_probability_gradient;
       delta_hik[table_.num_parameters() + 1] = third_factor * dot_product;
       delta_hik.submat(
-        table_.num_parameters() + 2, table_.num_parameters(), 0, 0) =
+        table_.num_parameters() + 2, delta_hik.n_elems - 1, 0, 0) =
           second_factor * inner_simulated_choice_probability_gradient;
 
       // Loop through each integration sample.
       for(unsigned int j = 0; j < integration_samples.size(); j++) {
         const arma::vec &integration_sample = integration_samples[j];
 
+        // Fill out the upper half of the covariance expression in the
+        // right hand side of Equation 2.3
         table_.choice_probabilities(
           outer_person_index, integration_sample, &outer_choice_probabilities);
         second_tmp_vector[0] =
@@ -121,6 +123,7 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           outer_choice_prob_weighted_attribute_vector,
           &second_tmp_choice_probability_gradient_outer);
 
+        // Fill out the lower half.
         table_.choice_probabilities(
           inner_person_index, integration_sample, &inner_choice_probabilities);
         second_tmp_vector[ table_.num_parameters() + 1] =
