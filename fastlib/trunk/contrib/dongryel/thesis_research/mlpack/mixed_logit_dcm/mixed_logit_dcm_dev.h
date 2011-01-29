@@ -247,6 +247,27 @@ double MixedLogitDCM<TableType>::IntegrationSampleError_(
   // Assumption: num_active_people in both samples are equal.
   double simulation_error = 0;
 
+  // Loop over each active people.
+  for(int i = 0; i < first_sample.num_active_people(); i++) {
+
+    // Get the active person index.
+    int person_index = table_.shuffled_indices_for_person(i);
+
+    // Get the integration samples for both samples.
+    const std::vector< arma::vec > &first_integration_samples =
+      first_sample.integration_samples();
+    const std::vector< arma::vec > &second_integration_samples =
+      second_sample.integration_samples();
+
+    // First compute the average difference.
+    core::monte_carlo::MeanVariancePair difference;
+    for(unsigned j = 0; j < first_integration_samples.size(); j++) {
+      double difference = ;
+      average_difference += ;
+    }
+    simulation_error += ;
+  }
+
   // Lastly divide by squared of the number of active people.
   simulation_error /=
     core::math::Sqr(static_cast<double>(first_sample.num_active_people()));
