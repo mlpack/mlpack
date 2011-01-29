@@ -6,8 +6,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
-#define MLPACK_MIXED_LOGIT_DCM_DCM_DISTRIBUTION_H
+#ifndef MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DISTRIBUTION_H
+#define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DISTRIBUTION_H
 
 #include <armadillo>
 #include "core/table/dense_point.h"
@@ -49,8 +49,6 @@ class MixedLogitDCMDistribution {
 
     virtual void DrawBeta(
       const arma::vec &parameters, arma::vec *beta_out) const = 0;
-
-    virtual int num_parameters() const = 0;
 
     virtual void Init(const std::string &file_name) const = 0;
 
