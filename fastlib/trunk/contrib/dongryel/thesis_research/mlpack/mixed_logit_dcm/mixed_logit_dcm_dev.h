@@ -255,17 +255,33 @@ double MixedLogitDCM<TableType>::IntegrationSampleError_(
 
     // Get the integration samples for both samples.
     const std::vector< arma::vec > &first_integration_samples =
-      first_sample.integration_samples();
+      first_sample.integration_samples(person_index);
     const std::vector< arma::vec > &second_integration_samples =
-      second_sample.integration_samples();
+      second_sample.integration_samples(person_index);
 
-    // First compute the average difference.
-    core::monte_carlo::MeanVariancePair difference;
+    // Get the simulated choice probabilities.
+    double first_simulated_choice_probability =
+      first_sample.simulated_choice_probability(person_index);
+    double second_simulated_choice_probability =
+      second_sample.simulated_choice_probability(person_index);
+
+    // Accumulate the difference.
+    core::monte_carlo::MeanVariancePair difference_mean_variance;
     for(unsigned j = 0; j < first_integration_samples.size(); j++) {
-      double difference = ;
-      average_difference += ;
+      const arma::vec &first_integration_sample =
+        first_integration_samples[j];
+      const arma::vec &second_integration_sample =
+        second_integration_samples[j];
+      double first_choice_probability =
+        table_.choice_probability(person_index, first_integration_sample);
+      double second_choice_probability =
+        table_.choice_probability(person_index, second_integration_sample);
+      double difference =
+        first_choice_probability / first_simulated_choice_probability -
+        second_choice_probability / second_simulated_choice_probability;
+      difference_mean_variance.push_back(difference);
     }
-    simulation_error += ;
+    simulation_error += difference_mean_variance.sample_mean_variance();
   }
 
   // Lastly divide by squared of the number of active people.
