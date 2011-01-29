@@ -330,22 +330,50 @@ double MixedLogitDCM<TableType>::DataSampleError_(
 
 template<typename TableType>
 void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
-  double integration_sample_error, SamplingType *iterate) const {
+  const ArgumentType &arguments_in,
+  double integration_sample_error,
+  const SamplingType &second_sample,
+  SamplingType *first_sample) const {
+
+  std::vector<double> tmp_vector(first_sample->num_active_people());
+  double total_sample_variance = 0.0;
 
   // Loop over each active person.
-  for(int i = 0; i < iterate->num_active_people(); i++) {
+  for(int i = 0; i < first_sample->num_active_people(); i++) {
 
     // Get the active person index.
-    int active_person_index = table_.shuffled_indices_for_person(i);
+    int person_index = table_.shuffled_indices_for_person(i);
+    core::monte_carlo::MeanVariancePair difference_mean_variance;
+    IntegrationSampleErrorPerPerson_(
+      person_index, *first_sample, second_sample, &difference_mean_variance);
+    tmp_vector[i] = difference_mean_variance.sample_variance() /
+                    (arguments_in.gradient_norm_threshold_ *
+                     integration_sample_error *
+                     core::math::Sqr(second_sample.num_active_people()));
+    total_sample_variance += difference_mean_variance.sample_variance();
+  }
 
+  // Loop over each active person and update.
+  for(int i = 0; i < first_sample->num_active_people(); i++) {
 
+    // Get the active person index.
+    int person_index = table_.shuffled_indices_for_person(i);
+    tmp_vector[i] *= total_sample_variance;
+    int num_additional_samples =
+      std::max(
+        1,
+        static_cast<int>(
+          ceil(
+            tmp_vector[i] -
+            first_sample->num_integration_samples(person_index))));
+
+    // Add samples.
+    first_sample->AddSamples(person_index, num_additional_samples);
   }
 }
 
 template<typename TableType>
-void MixedLogitDCM<TableType>::Init(
-  mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
-  TableType > &arguments_in) {
+void MixedLogitDCM<TableType>::Init(ArgumentType &arguments_in) {
 
   // Initialize the table for storing/accessing the attribute vector
   // for each person.
@@ -459,7 +487,8 @@ void MixedLogitDCM<TableType>::Compute(
         sqrt(integration_sample_error)) {
 
       // Update the sample size for each active person.
-      UpdateSampleAllocation_(integration_sample_error, iterate);
+      UpdateSampleAllocation_(
+        arguments_in, integration_sample_error, *next_iterate, iterate);
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
