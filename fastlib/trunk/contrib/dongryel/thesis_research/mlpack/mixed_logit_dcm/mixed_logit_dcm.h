@@ -55,7 +55,10 @@ class MixedLogitDCM {
     /** @brief Update the sample allocation.
      */
     void UpdateSampleAllocation_(
-      double integration_sample_error, SamplingType *sample) const;
+      const ArgumentType &arguments_in,
+      double integration_sample_error,
+      const SamplingType &second_sample,
+      SamplingType *first_sample) const;
 
     /** @brief Implements the stopping condition.
      */
@@ -136,11 +139,6 @@ class MixedLogitDCM {
      *         information.
      */
     DCMTableType table_;
-
-    /** @brief Used for determining the stopping condition on the
-     *         stochastically computed gradient norm.
-     */
-    static const double c_factor_ = 1.04;
 };
 }
 }

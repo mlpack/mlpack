@@ -199,6 +199,25 @@ class MixedLogitDCMSampling {
       } // end of looping over each active person.
     }
 
+    /** @brief Draw an additional number of necessary samples for a
+     *         fixed person.
+     */
+    void BuildSamples_(int person_index) {
+
+      // The drawn beta for building the samples.
+      arma::vec random_beta;
+
+      for(int j = simulated_choice_probabilities_[person_index].num_samples();
+          j < num_integration_samples_[person_index]; j++) {
+
+        // Draw a beta from the parameter theta and add it to the
+        // sample pool.
+        dcm_table_->distribution()->DrawBeta(parameters_, &random_beta);
+        this->AddIntegrationSample_(person_index, random_beta);
+
+      } // end of looping each new beta sample.
+    }
+
   public:
 
     /** @brief Returns the number of integral samples collected for a
@@ -439,16 +458,13 @@ class MixedLogitDCMSampling {
       this->InitCommon_();
     }
 
-    /** @brief Add samples to the existing set of people.
+    /** @brief Add samples to a given person.
      */
-    void AddSamples(const std::vector<int> &num_additional_samples) {
-      for(int i = 0; i < num_active_people_; i++) {
-        int person_index = dcm_table_->shuffled_indices_for_person(i);
-        num_integration_samples_[person_index] += num_additional_samples[i];
-      }
+    void AddSamples(int person_index, int num_additional_samples) {
+      num_integration_samples_[person_index] += num_additional_samples;
 
       // Build up additional samples for the new people.
-      BuildSamples_();
+      BuildSamples_(person_index);
     }
 
     /** @brief Add an additional number of people to the outer term,
