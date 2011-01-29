@@ -47,11 +47,19 @@ class MixedLogitDCMDistribution {
       }
     }
 
+    /** @brief Draws a beta from the distribution with the given
+     *         parameter.
+     */
     virtual void DrawBeta(
       const arma::vec &parameters, arma::vec *beta_out) const = 0;
 
     virtual void Init(const std::string &file_name) const = 0;
 
+    /** @brief Computes $\bar{X}_i \bar{L}_i(\beta)$ for a given
+     *         person, which just turns out to be a weighted sum of
+     *         the set of attribute vectors for a given person, where
+     *         each vector is weighted by its choice probability.
+     */
     void ChoiceProbabilityWeightedAttributeVector(
       const DCMTableType &dcm_table_in, int person_index,
       const arma::vec &choice_probabilities,
@@ -69,7 +77,7 @@ class MixedLogitDCMDistribution {
     }
 
     /** @brief Returns the (row, col)-th entry of
-     *         $\frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
+     *         $\frac{\partial^2}{\partial \beta^2} L_{i j_i^*} (
      *         \beta^{\nu}(\theta))$ (Equation 8.5)
      */
     double ChoiceProbabilityHessianWithRespectToAttribute(
@@ -150,7 +158,7 @@ class MixedLogitDCMDistribution {
       arma::vec *hessian_second_part) const {
 
       // Compute $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)
-      // \frac{\partial^2}{\partial \beta^2} P_{i j_i^*} (
+      // \frac{\partial^2}{\partial \beta^2} L_{i j_i^*} (
       // \beta^{\nu}(\theta)) ( \frac{\partial}{\partial \theta}
       // \beta^{\nu}(\theta) )'$.
       arma::mat first;
@@ -163,8 +171,8 @@ class MixedLogitDCMDistribution {
       (*hessian_first_part) = first * second * arma::trans(first);
 
       // Compute $\frac{\partial}{\partial \theta}
-      // \beta^{\nu}(\theta)\frac{\partial}{\partial \beta} P_{i j_i^*} (
-      // \beta^{\nu}(\theta))$.
+      // \beta^{\nu}(\theta)\frac{\partial}{\partial \beta} L_{i
+      // j_i^*} (\beta^{\nu}(\theta))$.
       arma::vec third;
       this->ChoiceProbabilityGradientWithRespectToAttribute(
         dcm_table_in, person_index, choice_probabilities,
@@ -173,7 +181,7 @@ class MixedLogitDCMDistribution {
     }
 
     /** @brief Computes $\frac{\partial}{\partial \beta}
-     *         P_{i,j}(\beta)$ (Equation 8.2).
+     *         L_{i,j}(\beta)$ (Equation 8.2).
      */
     void ChoiceProbabilityGradientWithRespectToAttribute(
       const DCMTableType &dcm_table_in, int person_index,
@@ -198,10 +206,9 @@ class MixedLogitDCMDistribution {
         choice_probabilities[discrete_choice_index] * (*gradient_out);
     }
 
-    /** @brief Computes $\frac{\partial}{\partial \theta}
-     *         \beta^{\nu}(\theta) \bar{X}_i res_{i,j_i^*} (
-     *         \beta^{\nu}(\theta))$ for a realization of $\beta$ for
-     *         a given person.
+    /** @brief Computes the gradient of $L_{i,j_i}$ in the new
+     *         notation for a fixed value of $\beta$ with respect to
+     *         $\theta$ for a given person.
      */
     void ChoiceProbabilityGradientWithRespectToParameter(
       const arma::vec &parameters_in,
