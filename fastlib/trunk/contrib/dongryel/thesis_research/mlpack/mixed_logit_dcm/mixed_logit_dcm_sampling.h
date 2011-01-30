@@ -131,10 +131,17 @@ class MixedLogitDCMSampling {
       // Add the beta vector to the pool.
       integration_samples_[person_index].push_back(beta_vector);
 
-      // Given the parameter vector, compute the choice probabilities.
+      // Given the beta vector, compute the choice probabilities.
       arma::vec choice_probabilities;
       dcm_table_->choice_probabilities(
         person_index, beta_vector, &choice_probabilities);
+
+      // Given the choice probabilities, compute the choice
+      // probability weighted attribute vector.
+      arma::vec choice_prob_weighted_attribute_vector;
+      dcm_table_->distribution()->ChoiceProbabilityWeightedAttributeVector(
+        *dcm_table_, person_index, choice_probabilities,
+        &choice_prob_weighted_attribute_vector);
 
       // Given the beta vector, compute the products between the
       // gradient of the $\beta$ with respect to $\theta$ and
@@ -147,7 +154,8 @@ class MixedLogitDCMSampling {
       dcm_table_->distribution()->
       ChoiceProbabilityGradientWithRespectToParameter(
         parameters_, *dcm_table_, person_index,
-        beta_vector, choice_probabilities, &beta_gradient_product);
+        beta_vector, choice_probabilities,
+        choice_prob_weighted_attribute_vector, &beta_gradient_product);
 
       // Update the simulated choice probabilities
       // and the simulated log-likelihood gradients.
@@ -167,7 +175,8 @@ class MixedLogitDCMSampling {
       arma::vec hessian_second_part;
       dcm_table_->distribution()->HessianProducts(
         parameters_, *dcm_table_, person_index, beta_vector,
-        choice_probabilities, &hessian_first_part, &hessian_second_part);
+        choice_probabilities, choice_prob_weighted_attribute_vector,
+        &hessian_first_part, &hessian_second_part);
       simulated_loglikelihood_hessians_[person_index].first.push_back(
         hessian_first_part);
       simulated_loglikelihood_hessians_[person_index].second.push_back(

@@ -119,7 +119,8 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           &outer_choice_prob_weighted_attribute_vector);
         table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
           sample.parameters(), table_,
-          outer_person_index, outer_choice_probabilities,
+          outer_person_index, integration_sample,
+          outer_choice_probabilities,
           outer_choice_prob_weighted_attribute_vector,
           &second_tmp_choice_probability_gradient_outer);
 
@@ -133,7 +134,8 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           &inner_choice_prob_weighted_attribute_vector);
         table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
           sample.parameters(), table_,
-          inner_person_index, inner_choice_probabilities,
+          inner_person_index, integration_sample,
+          inner_choice_probabilities,
           inner_choice_prob_weighted_attribute_vector,
           &second_tmp_choice_probability_gradient_inner);
 
@@ -211,7 +213,7 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
         &choice_prob_weighted_attribute_vector);
       first_tmp_vector[0] = choice_probabilities[discrete_choice_index];
       table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
-        sample.parameters(), table_, person_index,
+        sample.parameters(), table_, person_index, integration_sample,
         choice_probabilities, choice_prob_weighted_attribute_vector,
         &first_tmp_choice_probability_gradient);
 
