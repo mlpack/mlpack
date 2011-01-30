@@ -257,11 +257,9 @@ class SubTable {
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), data_->n_cols(),
-          serialize_points_per_terminal_node_);
+          ar, old_from_new_->get(), serialize_points_per_terminal_node_);
         core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), data_->n_cols(),
-          serialize_points_per_terminal_node_);
+          ar, new_from_old_->get(), serialize_points_per_terminal_node_);
       }
     }
 
@@ -327,11 +325,9 @@ class SubTable {
             int > (data_->n_cols()) : new int[ data_->n_cols()] ;
         }
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), data_->n_cols(),
-          serialize_points_per_terminal_node_);
+          ar, old_from_new_->get(), serialize_points_per_terminal_node_);
         core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), data_->n_cols(),
-          serialize_points_per_terminal_node_);
+          ar, new_from_old_->get(), serialize_points_per_terminal_node_);
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()

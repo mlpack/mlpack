@@ -32,7 +32,7 @@ class IndexUtil {
      */
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
-      Archive &ar, IndexType *array, int num_elements,
+      Archive &ar, IndexType *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node);
 };
 
@@ -58,7 +58,7 @@ class IndexUtil< int > {
 
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
-      Archive &ar, int *array, int num_elements,
+      Archive &ar, int *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
       if(array == NULL) {
         return;
@@ -101,7 +101,6 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, std::pair<int, std::pair<int, int> > *array,
-      int num_elements,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
       if(array == NULL) {
         return;
