@@ -30,10 +30,17 @@ template<typename DistributedTableType, typename SubTableListType>
 class TableExchange {
   public:
 
+    /** @brief The table type used in the exchange process.
+     */
     typedef typename DistributedTableType::TableType TableType;
 
+    /** @brief The subtable type used in the exchange process.
+     */
     typedef typename SubTableListType::SubTableType SubTableType;
 
+    /** @brief The old from new index type used in the exchange
+     *         process.
+     */
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
   private:
@@ -44,10 +51,17 @@ class TableExchange {
 
     std::vector<int *> new_from_old_cache_;
 
+    /** @brief The circular buffer that acts as the cache of received
+     *         subtables.
+     */
     std::vector< boost::circular_buffer<SubTableType> > received_subtables_;
 
   private:
 
+    /** @brief Pushes a new subtable to the given circular buffer,
+     *         evicting a pre-existing subtable and destroying it
+     *         appropriately if necessary.
+     */
     void push_back_(
       boost::circular_buffer<SubTableType> &circular_buffer,
       SubTableType &sub_table_in) {
@@ -79,16 +93,18 @@ class TableExchange {
       }
     }
 
+    /** @brief Extracts one request from a set of requests.
+     */
     void ExtractUnitRequests_(
-      std::vector< std::vector< std::pair<int, int> > > &send_requests,
-      std::vector< std::vector< std::pair<int, int> > > *sub_send_requests) {
+      std::vector< std::vector< std::pair<int, int> > > &requests,
+      std::vector< std::vector< std::pair<int, int> > > *sub_requests) {
 
-      for(unsigned int i = 0; i < send_requests.size(); i++) {
-        if(send_requests[i].size() > 0) {
-          if(sub_send_requests != NULL) {
-            (*sub_send_requests)[i].push_back(send_requests[i].back());
+      for(unsigned int i = 0; i < requests.size(); i++) {
+        if(requests[i].size() > 0) {
+          if(sub_requests != NULL) {
+            (*sub_requests)[i].push_back(requests[i].back());
           }
-          send_requests[i].pop_back();
+          requests[i].pop_back();
         }
       }
     }
@@ -178,6 +194,10 @@ class TableExchange {
       }
     }
 
+    /** @brief The all-to-all exchange of subtables among all MPI
+     *         processes. Up to a given number of levels of subtrees
+     *         are exchanged per request.
+     */
     bool AllToAll(
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,

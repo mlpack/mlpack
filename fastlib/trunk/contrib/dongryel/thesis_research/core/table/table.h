@@ -41,10 +41,17 @@ class Table {
     typedef typename TreeSpecType::StatisticType StatisticType;
 
   private:
+
+    // For Boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The underlying multidimensional data owned by the
+     *         table.
+     */
     core::table::DenseMatrix data_;
 
+    /** @brief The rank of the table.
+     */
     int rank_;
 
     boost::interprocess::offset_ptr<OldFromNewIndexType> old_from_new_;
@@ -53,8 +60,13 @@ class Table {
 
     boost::interprocess::offset_ptr<TreeType> tree_;
 
+    /** @brief Whether the tree is an alias of another tree.
+     */
     bool tree_is_aliased_;
 
+    /** @brief Whether the old_from_new/new_from_old mappings are
+     *         aliased.
+     */
     bool mappings_are_aliased_;
 
   public:
@@ -193,10 +205,15 @@ class Table {
       const_cast<TableType &>(table_in).tree_is_aliased_ = true;
     }
 
+    /** @brief The copy constructor that steals the ownership of the
+     *         incoming table.
+     */
     Table(const TableType &table_in) {
       this->operator=(table_in);
     }
 
+    /** @brief Serializes the table.
+     */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       core::table::SubTable<TableType> sub_table;
@@ -206,6 +223,8 @@ class Table {
       ar & sub_table;
     }
 
+    /** @brief Unserialize the table.
+     */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
       core::table::SubTable<TableType> sub_table;
@@ -214,10 +233,14 @@ class Table {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief Returns the rank of the table.
+     */
     int rank() const {
       return rank_;
     }
 
+    /** @brief Sets the rank of the table.
+     */
     void set_rank(int rank_in) {
       rank_ = rank_in;
     }
@@ -239,14 +262,20 @@ class Table {
       return &new_from_old_;
     }
 
+    /** @brief Returns a reference to the underlying data.
+     */
     core::table::DenseMatrix &data() {
       return data_;
     }
 
+    /** @brief Returns whether the tree is indexed or not.
+     */
     bool IsIndexed() const {
       return tree_ != NULL;
     }
 
+    /** @brief The default constructor.
+     */
     Table() {
       rank_ = 0;
       tree_ = NULL;
@@ -256,6 +285,8 @@ class Table {
       tree_is_aliased_ = false;
     }
 
+    /** @brief The destructor.
+     */
     ~Table() {
       if(tree_is_aliased_ == false) {
         if(tree_.get() != NULL) {
@@ -298,6 +329,8 @@ class Table {
       return TreeIterator(*this, begin, count);
     }
 
+    /** @brief Returns the tree owned by the table.
+     */
     TreeType *get_tree() {
       return tree_.get();
     }
@@ -306,6 +339,8 @@ class Table {
       return &tree_;
     }
 
+    /** @brief Returns the leaf nodes of the tree owned by the table.
+     */
     void get_leaf_nodes(
       TreeType *node, std::vector< TreeType *> *leaf_nodes) {
       if(node->is_leaf()) {
@@ -317,10 +352,15 @@ class Table {
       }
     }
 
+    /** @brief Returns the number of attributes of the data owned by
+     *         the table.
+     */
     int n_attributes() const {
       return data_.n_rows();
     }
 
+    /** @brief Returns the number of points owned by the table.
+     */
     int n_entries() const {
       return data_.n_cols();
     }
@@ -405,6 +445,8 @@ class Table {
       direct_get_(point_id, point_out);
     }
 
+    /** @brief Prints the tree owned by the table.
+     */
     void PrintTree() const {
       tree_->Print();
     }
