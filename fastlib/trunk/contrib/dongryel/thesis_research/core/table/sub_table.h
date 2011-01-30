@@ -107,20 +107,39 @@ class SubTable {
     // For boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The table to be loaded/saved.
+     */
     TableType *table_;
 
+    /** @brief If not NULL, this points to the starting node whose
+     *         subtree must be serialized.
+     */
     TreeType *start_node_;
 
+    /** @brief The maximum number of levels of subtree to
+     *         serialize/unserialize.
+     */
     int max_num_levels_to_serialize_;
 
+    /** @brief The pointer to the underlying data.
+     */
     core::table::DenseMatrix *data_;
 
+    /** @brief The pointer to the old_from_new mapping.
+     */
     boost::interprocess::offset_ptr<OldFromNewIndexType> *old_from_new_;
 
+    /** @brief The pointer to the new_from_old mapping.
+     */
     boost::interprocess::offset_ptr<int> *new_from_old_;
 
+    /** @brief The pointer to the tree.
+     */
     boost::interprocess::offset_ptr<TreeType> *tree_;
 
+    /** @brief Whether the subtable is an alias of another subtable or
+     *         not.
+     */
     bool is_alias_;
 
     /** @brief The list each terminal node that is being
@@ -132,6 +151,10 @@ class SubTable {
 
   private:
 
+    /** @brief Collects the tree nodes in a binary heap form and marks
+     *         whether each terminal node should have its points
+     *         serialized or not.
+     */
     void FillTreeNodes_(
       TreeType *node, int node_index,
       std::vector<TreeType *> &sorted_nodes, int *num_nodes,
@@ -165,6 +188,8 @@ class SubTable {
       }
     }
 
+    /** @brief Finds the depth of the tree up to a fixed depth.
+     */
     int FindTreeDepth_(TreeType *node, int level) const {
       if(node == NULL || level > max_num_levels_to_serialize_) {
         return 0;
@@ -176,6 +201,9 @@ class SubTable {
 
   public:
 
+    /** @brief Returns the list of terminal nodes for which the points
+     *         underneath are available.
+     */
     const std::vector <
     PointSerializeFlagType > &serialize_points_per_terminal_node() const {
       return serialize_points_per_terminal_node_;
@@ -377,23 +405,33 @@ class SubTable {
       return max_num_levels_to_serialize_;
     }
 
+    /** @brief Returns the underlying multi-dimensional data.
+     */
     core::table::DenseMatrix *data() const {
       return data_;
     }
 
+    /** @brief Returns the old_from_new mapping.
+     */
     boost::interprocess::offset_ptr <
     OldFromNewIndexType > *old_from_new() const {
       return old_from_new_;
     }
 
+    /** @brief Returns the new_from_old mapping.
+     */
     boost::interprocess::offset_ptr<int> *new_from_old() const {
       return new_from_old_;
     }
 
+    /** @brief Returns the tree owned by the subtable.
+     */
     boost::interprocess::offset_ptr<TreeType> *tree() const {
       return tree_;
     }
 
+    /** @brief Initializes a subtable before loading.
+     */
     template<typename OldFromNewIndexType>
     void Init(
       int rank_in, core::table::DenseMatrix &data_alias_in,
@@ -421,6 +459,9 @@ class SubTable {
       is_alias_ = false;
     }
 
+    /** @brief Initializes a subtable from a pre-existing table before
+     *         serializing a subset of it.
+     */
     void Init(
       TableType *table_in, TreeType *start_node_in,
       int max_num_levels_to_serialize_in) {
