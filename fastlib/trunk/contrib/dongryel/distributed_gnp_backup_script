@@ -1,0 +1,2 @@
+#!/bin/bash
+tar czvf distributed_gnp.tar.gz --exclude=bin --exclude=.svn --exclude=mixed_logit_dcm thesis_research
