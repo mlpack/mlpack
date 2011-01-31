@@ -4,7 +4,8 @@
 #ifndef MULT_SERIES_EXPANSION_AUX_H
 #define MULT_SERIES_EXPANSION_AUX_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
 
 /**
  * Series expansion class for multiplicative kernel functions
@@ -18,63 +19,48 @@ class MultSeriesExpansionAux {
 
   int max_order_;
 
-  Vector factorials_;
+  arma::vec factorials_;
 
-  ArrayList<int> list_total_num_coeffs_;
+  std::vector<int> list_total_num_coeffs_;
 
-  Vector inv_multiindex_factorials_;
+  arma::vec inv_multiindex_factorials_;
 
-  Vector neg_inv_multiindex_factorials_;
+  arma::vec neg_inv_multiindex_factorials_;
 
-  Matrix multiindex_combination_;
+  arma::mat multiindex_combination_;
 
-  ArrayList< ArrayList<short int> > multiindex_mapping_;
+  std::vector< std::vector<short int> > multiindex_mapping_;
 
   /**
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j >= 0 (the difference in
    * all coordinates is nonnegative).
    */
-  ArrayList< ArrayList<short int> > lower_mapping_index_;
+  std::vector< std::vector<short int> > lower_mapping_index_;
 
   /**
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j <= 0 (the difference in
    * all coordinates is nonpositive).
    */
-  ArrayList< ArrayList<short int> > upper_mapping_index_;
+  std::vector< std::vector<short int> > upper_mapping_index_;
 
   /** row index is for n, column index is for k */
-  Matrix n_choose_k_;
+  arma::mat n_choose_k_;
 
   /**
    * For each i-th order, store the positions of the coefficient
    * array to traverse.
    */
-  ArrayList< ArrayList<short int> > traversal_mapping_;
-
-  OT_DEF_BASIC(MultSeriesExpansionAux) {
-    OT_MY_OBJECT(dim_);
-    OT_MY_OBJECT(max_order_);
-    OT_MY_OBJECT(factorials_);
-    OT_MY_OBJECT(list_total_num_coeffs_);
-    OT_MY_OBJECT(inv_multiindex_factorials_);
-    OT_MY_OBJECT(neg_inv_multiindex_factorials_);
-    OT_MY_OBJECT(multiindex_combination_);
-    OT_MY_OBJECT(multiindex_mapping_);
-    OT_MY_OBJECT(lower_mapping_index_);
-    OT_MY_OBJECT(upper_mapping_index_);
-    OT_MY_OBJECT(n_choose_k_);
-    OT_MY_OBJECT(traversal_mapping_);
-  }
+  std::vector< std::vector<short int> > traversal_mapping_;
 
  public:
 
   void ComputeFactorials() {
-    factorials_.Init(2 * max_order_ + 1);
+    factorials_.set_size(2 * max_order_ + 1);
 
     factorials_[0] = 1;
-    for(index_t t = 1; t < factorials_.length(); t++) {
+    for(index_t t = 1; t < factorials_.n_elem; t++) {
       factorials_[t] = t * factorials_[t - 1];
     }
   }
@@ -83,15 +69,15 @@ class MultSeriesExpansionAux {
 
     // initialize the index
     int limit = 2 * max_order_;
-    traversal_mapping_.Init(limit + 1);
+    traversal_mapping_.reserve(limit + 1);
 
     for(index_t i = 0; i <= max_order_; i++) {
 
-      traversal_mapping_[i].Init();
+      traversal_mapping_[i].clear();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 	
-        const ArrayList<short int> &mapping = multiindex_mapping_[j];
+        const std::vector<short int>& mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -102,7 +88,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (traversal_mapping_[i]).PushBackCopy(j);
+          (traversal_mapping_[i]).push_back(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -110,19 +96,19 @@ class MultSeriesExpansionAux {
 
   void ComputeLowerMappingIndex() {
 
-    ArrayList<short int> diff;
-    diff.Init(dim_);
+    std::vector<short int> diff;
+    diff.reserve(dim_);
 
     // initialize the index
     int limit = 2 * max_order_;
-    lower_mapping_index_.Init(list_total_num_coeffs_[limit]);
+    lower_mapping_index_.reserve(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
-      lower_mapping_index_[i].Init();
+      const std::vector<short int>& outer_mapping = multiindex_mapping_[i];
+      lower_mapping_index_[i].clear();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-        const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
+        const std::vector<short int>& inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -135,7 +121,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (lower_mapping_index_[i]).PushBackCopy(j);
+          (lower_mapping_index_[i]).push_back(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -144,28 +130,27 @@ class MultSeriesExpansionAux {
   void ComputeMultiindexCombination() {
 
     int limit = 2 * max_order_;
-    multiindex_combination_.Init(list_total_num_coeffs_[limit],
-                                 list_total_num_coeffs_[limit]);
+    multiindex_combination_.set_size(list_total_num_coeffs_[limit],
+                                     list_total_num_coeffs_[limit]);
 
     for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
 
       // beta mapping
-      const ArrayList<short int> &beta_mapping = multiindex_mapping_[j];
+      const std::vector<short int>& beta_mapping = multiindex_mapping_[j];
 
       for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 
         // alpha mapping
-        const ArrayList<short int> &alpha_mapping = multiindex_mapping_[k];
+        const std::vector<short int>& alpha_mapping = multiindex_mapping_[k];
 
         // initialize the factor to 1
-        multiindex_combination_.set(j, k, 1);
+        multiindex_combination_(j, k) = 1;
 
         for(index_t i = 0; i < dim_; i++) {
-          multiindex_combination_.set
-            (j, k, multiindex_combination_.get(j, k) *
-             n_choose_k_.get(beta_mapping[i], alpha_mapping[i]));
+          multiindex_combination_(j, k) *=
+             n_choose_k_(beta_mapping[i], alpha_mapping[i]);
 
-          if(multiindex_combination_.get(j, k) == 0)
+          if(multiindex_combination_(j, k) == 0)
             break;
         }
       }
@@ -174,19 +159,19 @@ class MultSeriesExpansionAux {
 
   void ComputeUpperMappingIndex() {
 
-    ArrayList<short int> diff;
-    diff.Init(dim_);
+    std::vector<short int> diff;
+    diff.reserve(dim_);
 
     // initialize the index
     int limit = 2 * max_order_;
-    upper_mapping_index_.Init(list_total_num_coeffs_[limit]);
+    upper_mapping_index_.reserve(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const ArrayList<short int> &outer_mapping = multiindex_mapping_[i];
-      upper_mapping_index_[i].Init();
+      const std::vector<short int>& outer_mapping = multiindex_mapping_[i];
+      upper_mapping_index_[i].clear();
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-        const ArrayList<short int> &inner_mapping = multiindex_mapping_[j];
+        const std::vector<short int>& inner_mapping = multiindex_mapping_[j];
         int flag = 0;
 
         for(index_t d = 0; d < dim_; d++) {
@@ -199,7 +184,7 @@ class MultSeriesExpansionAux {
         }
 
         if(flag == 0) {
-          (upper_mapping_index_[i]).PushBackCopy(j);
+          (upper_mapping_index_[i]).push_back(j);
         }
       } // end of j-loop
     } // end of i-loop
@@ -218,40 +203,40 @@ class MultSeriesExpansionAux {
     return list_total_num_coeffs_[max_order_]; 
   }
 
-  const Vector& get_inv_multiindex_factorials() const {
+  const arma::vec& get_inv_multiindex_factorials() const {
     return inv_multiindex_factorials_;
   }
 
-  const ArrayList<short int> * get_lower_mapping_index() const {
-    return lower_mapping_index_.begin();
+  const std::vector<std::vector<short int> >& get_lower_mapping_index() const {
+    return lower_mapping_index_;
   }
 
   int get_max_order() const {
     return max_order_;
   }
 
-  const ArrayList<short int> & get_multiindex(int pos) const {
+  const std::vector<short int>& get_multiindex(int pos) const {
     return multiindex_mapping_[pos];
   }
 
-  const ArrayList<short int> * get_multiindex_mapping() const {
-    return multiindex_mapping_.begin();
+  const std::vector<std::vector<short int> >& get_multiindex_mapping() const {
+    return multiindex_mapping_;
   }
 
-  const Vector& get_neg_inv_multiindex_factorials() const {
+  const arma::vec& get_neg_inv_multiindex_factorials() const {
     return neg_inv_multiindex_factorials_;
   }
 
   double get_n_choose_k(int n, int k) const {
-    return n_choose_k_.get(n, (int) math::ClampNonNegative(k));
+    return n_choose_k_(n, (int) math::ClampNonNegative(k));
   }
 
   double get_n_multichoose_k_by_pos(int n, int k) const {
-    return multiindex_combination_.get(n, k);
+    return multiindex_combination_(n, k);
   }
 
-  const ArrayList<short int> * get_upper_mapping_index() const {
-    return upper_mapping_index_.begin();
+  const std::vector<std::vector<short int> >& get_upper_mapping_index() const {
+    return upper_mapping_index_;
   }
 
   // interesting functions
@@ -259,7 +244,7 @@ class MultSeriesExpansionAux {
   /**
    * Computes the position of the given multiindex
    */
-  int ComputeMultiindexPosition(const ArrayList<short int> &multiindex) const {
+  int ComputeMultiindexPosition(const std::vector<short int>& multiindex) const {
     int index = 0;
     
     // using Horner's rule
@@ -304,7 +289,7 @@ class MultSeriesExpansionAux {
     // compute the list of total number of coefficients for p-th order 
     // expansion
     int limit = 2 * max_order_;
-    list_total_num_coeffs_.Init(limit + 1);
+    list_total_num_coeffs_.reserve(limit + 1);
     list_total_num_coeffs_[0] = 1;
     for(index_t p = 1; p <= limit; p++) {
       list_total_num_coeffs_[p] = (int) pow(p + 1, dim);
@@ -316,15 +301,14 @@ class MultSeriesExpansionAux {
     // allocate space for inverse factorial and 
     // negative inverse factorials and multiindex mapping and n_choose_k 
     // and multiindex_combination precomputed factors
-    inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit]);  
-    neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit]);
-    multiindex_mapping_.Init(list_total_num_coeffs_[limit]);
-    (multiindex_mapping_[0]).Init(dim_);
+    inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit]);  
+    neg_inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit]);
+    multiindex_mapping_.reserve(list_total_num_coeffs_[limit]);
+    (multiindex_mapping_[0]).reserve(dim_);
     for(index_t j = 0; j < dim; j++) {
       (multiindex_mapping_[0])[j] = 0;
     }
-    n_choose_k_.Init(dim * (limit + 1), dim * (limit + 1));
-    n_choose_k_.SetZero();
+    n_choose_k_.zeros(dim * (limit + 1), dim * (limit + 1));
 
     // compute inverse factorial and negative inverse factorials and
     // multiindex mappings...
@@ -353,7 +337,7 @@ class MultSeriesExpansionAux {
 	    div++;
 
 	    // copy multiindex from old to the new position
-	    multiindex_mapping_[i].InitCopy(multiindex_mapping_[i - step]);
+	    multiindex_mapping_[i] = multiindex_mapping_[i - step];
 	    (multiindex_mapping_[i])[k] = (multiindex_mapping_[i])[k] + 1;
 	  }
 	}
@@ -361,9 +345,9 @@ class MultSeriesExpansionAux {
     }
 
     // compute n choose k's
-    for(index_t j = 0; j < n_choose_k_.n_rows(); j++) {
-      for(index_t k = 0; k < n_choose_k_.n_cols(); k++) {
-	n_choose_k_.set(j, k, math::BinomialCoefficient(j, k));
+    for(index_t j = 0; j < n_choose_k_.n_rows; j++) {
+      for(index_t k = 0; k < n_choose_k_.n_cols; k++) {
+	n_choose_k_(j, k) = math::BinomialCoefficient(j, k);
       }
     }
 

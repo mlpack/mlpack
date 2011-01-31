@@ -12,8 +12,7 @@
 #ifndef MULT_FARFIELD_EXPANSION
 #define MULT_FARFIELD_EXPANSION
 
-
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "kernel_aux.h"
 #include "mult_series_expansion_aux.h"
 
@@ -29,10 +28,10 @@ class MultFarFieldExpansion {
  private:
 
   /** @brief The center of the expansion. */
-  Vector center_;
+  arma::vec center_;
   
   /** @brief The coefficients. */
-  Vector coeffs_;
+  arma::vec coeffs_;
 
   /** @brief The order of approximation. */
   int order_;
@@ -46,12 +45,6 @@ class MultFarFieldExpansion {
   /** pointer to the precomputed constants inside kernel auxiliary object */
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
-  OT_DEF(MultFarFieldExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-
  public:
   
   // getters and setters
@@ -60,12 +53,13 @@ class MultFarFieldExpansion {
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
-  Vector *get_center() { return &center_; }
+  arma::vec& get_center() { return center_; }
 
-  const Vector *get_center() const { return &center_; }
+  const arma::vec& get_center() const { return center_; }
 
   /** Get the coefficients */
-  const Vector& get_coeffs() const { return coeffs_; }
+  arma::vec& get_coeffs() { return coeffs_; }
+  const arma::vec& get_coeffs() const { return coeffs_; }
   
   /** Get the approximation order */
   int get_order() const { return order_; }
@@ -84,9 +78,9 @@ class MultFarFieldExpansion {
    * Set the center of the expansion - assumes that the center has been
    * initialized before...
    */
-  void set_center(const Vector &center) {
+  void set_center(const arma::vec& center) {
     
-    for(index_t i = 0; i < center.length(); i++) {
+    for(index_t i = 0; i < center.n_elem; i++) {
       center_[i] = center[i];
     }
   }
@@ -97,56 +91,56 @@ class MultFarFieldExpansion {
    * Accumulates the far field moment represented by the given reference
    * data into the coefficients
    */
-  void AccumulateCoeffs(const Matrix& data, const Vector& weights,
+  void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
 			int begin, int end, int order);
 
   /**
    * Refine the far field moment that has been computed before up to
    * a new order.
    */
-  void RefineCoeffs(const Matrix& data, const Vector& weights,
+  void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
 		    int begin, int end, int order);
   
   /**
    * Evaluates the far-field coefficients at the given point
    */
-  double EvaluateField(const Matrix& data, int row_num, int order) const;
+  double EvaluateField(const arma::mat& data, int row_num, int order) const;
   double EvaluateField(const double *x_q, int order) const;
 
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations
    * with two other far field expansions
    */
-  double MixField(const Matrix &data, int node1_begin, int node1_end, 
+  double MixField(const arma::mat& data, int node1_begin, int node1_end, 
 		  int node2_begin, int node2_end,
-		  const MultFarFieldExpansion &fe2,
-		  const MultFarFieldExpansion &fe3,
+		  const MultFarFieldExpansion& fe2,
+		  const MultFarFieldExpansion& fe3,
 		  int order2, int order3) const;
 
-  double ConvolveField(const MultFarFieldExpansion &fe, int order) const;
+  double ConvolveField(const MultFarFieldExpansion& fe, int order) const;
 
   /**
    * Evaluates the three-way convolution with two other far field
    * expansions
    */
-  double ConvolveField(const MultFarFieldExpansion &fe2,
-		       const MultFarFieldExpansion &fe3,
+  double ConvolveField(const MultFarFieldExpansion& fe2,
+		       const MultFarFieldExpansion& fe3,
 		       int order1, int order2, int order3) const;
   
   /**
    * Initializes the current far field expansion object with the given
    * center.
    */
-  void Init(const Vector& center, const TKernelAux &ka);
-  void Init(const TKernelAux &ka);
+  void Init(const arma::vec& center, const TKernelAux& ka);
+  void Init(const TKernelAux& ka);
 
   /** @brief Computes the required order for evaluating the far field
    *         expansion for any query point within the specified region
    *         for a given bound.
    */
   template<typename TBound>
-  int OrderForEvaluating(const TBound &far_field_region,
-			 const TBound &local_field_region,
+  int OrderForEvaluating(const TBound& far_field_region,
+			 const TBound& local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
 			 double max_error, double *actual_error) const;
@@ -161,8 +155,8 @@ class MultFarFieldExpansion {
    *         -1 if approximation up to the maximum order is not possible
    */
   template<typename TBound>
-  int OrderForConvertingToLocal(const TBound &far_field_region,
-				const TBound &local_field_region, 
+  int OrderForConvertingToLocal(const TBound& far_field_region,
+				const TBound& local_field_region, 
 				double min_dist_sqd_regions, 
 				double max_dist_sqd_regions,
 				double required_bound, 
@@ -177,13 +171,13 @@ class MultFarFieldExpansion {
    *         here. The translated coefficients are added up to the
    *         ones here.
    */
-  void TranslateFromFarField(const MultFarFieldExpansion &se);
+  void TranslateFromFarField(const MultFarFieldExpansion& se);
   
   /**
    * Translate to the given local expansion. The translated coefficients
    * are added up to the passed-in local expansion coefficients.
    */
-  void TranslateToLocal(MultLocalExpansion<TKernelAux> &se, 
+  void TranslateToLocal(MultLocalExpansion<TKernelAux>& se, 
 			int truncation_order);
 
 };

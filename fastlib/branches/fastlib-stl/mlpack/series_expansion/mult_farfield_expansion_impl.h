@@ -6,26 +6,24 @@
 #define MULT_FARFIELD_EXPANSION_IMPL_H
 
 template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data, 
-							 const Vector& weights,
+void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data, 
+							 const arma::vec& weights,
 							 int begin, int end, 
 							 int order) {
   
-  int dim = data.n_rows();
+  int dim = data.n_rows;
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   int max_total_num_coeffs = sea_->get_max_total_num_coeffs();
-  Vector x_r, tmp;
+  arma::vec x_r, tmp;
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // initialize temporary variables
-  x_r.Init(dim);
-  tmp.Init(max_total_num_coeffs);
-  Vector pos_coeffs;
-  Vector neg_coeffs;
-  pos_coeffs.Init(max_total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(max_total_num_coeffs);
-  neg_coeffs.SetZero();
+  x_r.set_size(dim);
+  tmp.set_size(max_total_num_coeffs);
+  arma::vec pos_coeffs;
+  arma::vec neg_coeffs;
+  pos_coeffs.zeros(max_total_num_coeffs);
+  neg_coeffs.zeros(max_total_num_coeffs);
 
   // set to new order if greater
   if(order_ < order) {
@@ -33,7 +31,7 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   }
   
   // get the order of traversal for the given order of approximation
-  const ArrayList<short int> &traversal_order = 
+  const std::vector<short int>& traversal_order = 
     sea_->traversal_mapping_[order_];
 
   // Repeat for each reference point in this reference node.
@@ -42,16 +40,16 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(index_t i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
+      x_r[i] = (data(i, r) - center_[i]) / bandwidth_factor;
     }
     
-    tmp.SetZero();
+    tmp.zeros();
     tmp[0] = 1.0;
 
     for(index_t i = 1; i < total_num_coeffs; i++) {
       
       int index = traversal_order[i];
-      const ArrayList<short int> &lower_mappings = 
+      const std::vector<short int>& lower_mappings = 
 	sea_->lower_mapping_index_[index];
 
       // from the direct descendant, recursively compute the multipole moments
@@ -59,8 +57,8 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 	lower_mappings[lower_mappings.size() - 2];
 
       int position = 0;
-      const ArrayList<short int> &mapping = sea_->multiindex_mapping_[index];
-      const ArrayList<short int> &direct_ancestor_mapping = 
+      const std::vector<short int>& mapping = sea_->multiindex_mapping_[index];
+      const std::vector<short int>& direct_ancestor_mapping = 
 	sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
       for(index_t i = 0; i < dim; i++) {
 	if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -97,20 +95,19 @@ void MultFarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 
 template<typename TKernelAux>
 double MultFarFieldExpansion<TKernelAux>::ConvolveField
-(const MultFarFieldExpansion &fe, int order) const {
+(const MultFarFieldExpansion& fe, int order) const {
   
   // The bandwidth factor and the multiindex mapping stuffs.
   double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
-  const ArrayList<short int> *multiindex_mapping = 
+  const std::vector<short int>& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList<short int> *lower_mapping_index = 
+  const std::vector<short int>& lower_mapping_index = 
     sea_->get_lower_mapping_index();
   
   // Get the total number of coefficients and the coefficient themselves.
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   int dim = sea_->get_dimension();
-  Vector coeffs2;
-  coeffs2.Alias(fe.get_coeffs());
+  arma::vec& coeffs2 = fe.get_coeffs();
 
   // Actual accumulated sum.
   double neg_sum = 0;
@@ -118,41 +115,38 @@ double MultFarFieldExpansion<TKernelAux>::ConvolveField
   double sum = 0;
 
   // The partial derivatives table.
-  Matrix derivative_map_alpha;
-  ka_->AllocateDerivativeMap(dim, order, &derivative_map_alpha);
+  arma::mat derivative_map_alpha;
+  ka_->AllocateDerivativeMap(dim, order, derivative_map_alpha);
 
   // Compute the center difference and its table of partial
   // derivatives.
-  Vector xI_xJ;
-  xI_xJ.Init(dim);
-  Vector xJ_center;
-  xJ_center.Alias(*(fe.get_center()));
+  arma::vec xI_xJ(dim);
+  arma::vec& xJ_center = fe.get_center();
 
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha, order);
 
   // The inverse factorials.
-  Vector inv_multiindex_factorials;
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // The temporary space for computing the difference of two mappings.
-  ArrayList<short int> alpha_minus_beta_mapping;
-  alpha_minus_beta_mapping.Init(dim);
+  std::vector<short int> alpha_minus_beta_mapping;
+  alpha_minus_beta_mapping.reserve(dim);
 
   // The main loop.
   for(index_t alpha = 0; alpha < total_num_coeffs; alpha++) {
 
-    const ArrayList<short int> &alpha_mapping = multiindex_mapping[alpha];
-    const ArrayList<short int> &lower_mappings_for_alpha = 
+    const std::vector<short int>& alpha_mapping = multiindex_mapping[alpha];
+    const std::vector<short int>& lower_mappings_for_alpha = 
       lower_mapping_index[alpha];
     double alpha_derivative = ka_->ComputePartialDerivative
       (derivative_map_alpha, alpha_mapping);
     
     for(index_t beta = 0; beta < lower_mappings_for_alpha.size(); beta++) {
       
-      const ArrayList<short int> &beta_mapping = 
+      const std::vector<short int>& beta_mapping = 
 	multiindex_mapping[lower_mappings_for_alpha[beta]];
       
       double n_choose_k_factor = sea_->get_n_multichoose_k_by_pos
@@ -192,8 +186,8 @@ double MultFarFieldExpansion<TKernelAux>::ConvolveField
 }
 
 template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data, 
-						     const Vector& weights, 
+void MultFarFieldExpansion<TKernelAux>::RefineCoeffs(const arma::mat& data, 
+						     const arma::vec& weights, 
 						     int begin, int end, 
 						     int order) {
 
@@ -208,16 +202,17 @@ void MultFarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
   else {
     order_ = order;
     
-    coeffs_.SetZero();
+    coeffs_.zeros();
     AccumulateCoeffs(data, weights, begin, end, order);
   }
 }
 
 template<typename TKernelAux>
-double MultFarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
+double MultFarFieldExpansion<TKernelAux>::EvaluateField(const arma::mat& data, 
 							int row_num, 
 							int order) const {
-  return EvaluateField(data.GetColumnPtr(row_num), order);
+  // TODO: use of "row" is misleading and wrong
+  return EvaluateField(data.unsafe_col(row_num).memptr(), order);
 }
 
 template<typename TKernelAux>
@@ -239,16 +234,14 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
   double multipole_sum = 0;
   
   // computed derivative map
-  Matrix derivative_map;
-  ka_->AllocateDerivativeMap(dim, order_, &derivative_map);
+  arma::mat derivative_map;
+  ka_->AllocateDerivativeMap(dim, order_, derivative_map);
 
   // temporary variable
-  Vector arrtmp;
-  arrtmp.Init(total_num_coeffs);
+  arma::vec arrtmp(total_num_coeffs);
 
   // (x_q - x_R) scaled by bandwidth
-  Vector x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
+  arma::vec x_q_minus_x_R(dim);
 
   // compute (x_q - x_R) / (sqrt(2h^2))
   for(index_t d = 0; d < dim; d++) {
@@ -256,17 +249,17 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order_);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map, order_);
   
   // get the order of traversal for the given order of approximation
-  const ArrayList<short int> &traversal_order = 
+  const std::vector<short int>& traversal_order = 
     sea_->traversal_mapping_[order_];
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
     
     int index = traversal_order[j];
-    const ArrayList<short int> &mapping = sea_->get_multiindex(index);
+    const std::vector<short int>& mapping = sea_->get_multiindex(index);
     double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[index] * arrtmp;
     
@@ -283,19 +276,18 @@ double MultFarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
 }
 
 template<typename TKernelAux>
-void MultFarFieldExpansion<TKernelAux>::Init(const Vector& center, 
+void MultFarFieldExpansion<TKernelAux>::Init(const arma::vec& center,
 					     const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  center_.Copy(center);
+  center_ = center;
   order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
   // Initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.zeros(sea_->get_max_total_num_coeffs());
 }
 
 template<typename TKernelAux>
@@ -305,13 +297,11 @@ template<typename TKernelAux>
   kernel_ = &(ka.kernel_);  
   order_ = -1;
   sea_ = &(ka.sea_);
-  center_.Init(sea_->get_dimension());
-  center_.SetZero();
+  center_.zeros(sea_->get_dimension());
   ka_ = &ka;
 
   // Initialize coefficient array.
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.zeros(sea_->get_max_total_num_coeffs());
 }
 
 
@@ -355,7 +345,7 @@ void MultFarFieldExpansion<TKernelAux>::PrintDebug
   fprintf(stream, "Far field expansion\n");
   fprintf(stream, "Center: ");
   
-  for (index_t i = 0; i < center_.length(); i++) {
+  for (index_t i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
@@ -369,7 +359,7 @@ void MultFarFieldExpansion<TKernelAux>::PrintDebug
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    const ArrayList<short int> &mapping = sea_->get_multiindex(i);
+    const std::vector<short int>& mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
     
     fprintf(stream, "(-1)^(");
@@ -401,24 +391,19 @@ void MultFarFieldExpansion<TKernelAux>::TranslateFromFarField
   int dim = sea_->get_dimension();
   int order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
-  Vector prev_coeffs;
-  Vector prev_center;
-  const ArrayList<short int> *multiindex_mapping = 
+  const std::vector<std::vector<short int> >& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList<short int> *lower_mapping_index = 
+  const std::vector<std::vector<short int> >& lower_mapping_index = 
     sea_->get_lower_mapping_index();
 
-  ArrayList<short int> tmp_storage;
-  Vector center_diff;
-  Vector inv_multiindex_factorials;
-
-  center_diff.Init(dim);
+  std::vector<short int> tmp_storage;
+  arma::vec center_diff(dim);
 
   // retrieve coefficients to be translated and helper mappings
-  prev_coeffs.Alias(se.get_coeffs());
-  prev_center.Alias(*(se.get_center()));
-  tmp_storage.Init(sea_->get_dimension());
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  const arma::vec& prev_coeffs = se.get_coeffs();
+  const arma::vec& prev_center = se.get_center();
+  tmp_storage.reserve(sea_->get_dimension());
+  const arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // no coefficients can be translated
   if(order == -1) {
@@ -434,22 +419,21 @@ void MultFarFieldExpansion<TKernelAux>::TranslateFromFarField
   }
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<short int> &traversal_order = 
+  const std::vector<short int>& traversal_order = 
     sea_->traversal_mapping_[order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
    
     int index = traversal_order[j];
-    const ArrayList<short int> &gamma_mapping = multiindex_mapping[index];
-    const ArrayList<short int> &lower_mappings_for_gamma = 
+    const std::vector<short int>& gamma_mapping = multiindex_mapping[index];
+    const std::vector<short int>& lower_mappings_for_gamma = 
       lower_mapping_index[index];
     double pos_coeff = 0;
     double neg_coeff = 0;
 
     for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
-      const ArrayList<short int> &inner_mapping = 
-	multiindex_mapping[lower_mappings_for_gamma[k]];
+      const std::vector<short int>& inner_mapping = multiindex_mapping[lower_mappings_for_gamma[k]];
 
       int flag = 0;
       double diff1;
@@ -496,22 +480,18 @@ template<typename TKernelAux>
 void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
 (MultLocalExpansion<TKernelAux> &se, int truncation_order) {
   
-  Vector pos_arrtmp, neg_arrtmp;
-  Matrix derivative_map;
-  Vector local_center;
-  Vector cent_diff;
-  Vector local_coeffs;
-  int local_order = se.get_order();
+  arma::vec pos_arrtmp, neg_arrtmp;
+  arma::mat derivative_map;
+  // get center and coefficients for local expansion
+  const arma::vec& local_center = se.get_center();
   int dimension = sea_->get_dimension();
+  arma::vec cent_diff(dimension);
+  arma::vec& local_coeffs = se.get_coeffs();
+  int local_order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
-  ka_->AllocateDerivativeMap(dimension, 2 * truncation_order, &derivative_map);
-
-  // get center and coefficients for local expansion
-  local_center.Alias(*(se.get_center()));
-  local_coeffs.Alias(se.get_coeffs());
-  cent_diff.Init(dimension);
+  ka_->AllocateDerivativeMap(dimension, 2 * truncation_order, derivative_map);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -520,8 +500,8 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute Gaussian derivative
-  pos_arrtmp.Init(sea_->get_max_total_num_coeffs());
-  neg_arrtmp.Init(sea_->get_max_total_num_coeffs());
+  pos_arrtmp.set_size(sea_->get_max_total_num_coeffs());
+  neg_arrtmp.set_size(sea_->get_max_total_num_coeffs());
 
   // compute center difference divided by bw_times_sqrt_two;
   for(index_t j = 0; j < dimension; j++) {
@@ -529,26 +509,26 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // compute required partial derivatives
-  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 
+  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map, 
 				     2 * truncation_order);
-  ArrayList<short int> beta_plus_alpha;
-  beta_plus_alpha.Init(dimension);
+  std::vector<short int> beta_plus_alpha;
+  beta_plus_alpha.reserve(dimension);
 
   // get the order of traversal for the given order of approximation
-  const ArrayList<short int> &traversal_order = 
+  const std::vector<short int> &traversal_order = 
     sea_->traversal_mapping_[truncation_order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
     int index = traversal_order[j];
-    const ArrayList<short int> &beta_mapping = sea_->get_multiindex(index);
+    const std::vector<short int> &beta_mapping = sea_->get_multiindex(index);
     pos_arrtmp[index] = neg_arrtmp[index] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
       int index_k = traversal_order[k];
 
-      const ArrayList<short int> &alpha_mapping = 
+      const std::vector<short int> &alpha_mapping = 
 	sea_->get_multiindex(index_k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
@@ -567,7 +547,7 @@ void MultFarFieldExpansion<TKernelAux>::TranslateToLocal
     } // end of k-loop
   } // end of j-loop
 
-  Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
+  arma::vec C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
     int index = traversal_order[j];
     local_coeffs[index] += (pos_arrtmp[index] + neg_arrtmp[index]) * 

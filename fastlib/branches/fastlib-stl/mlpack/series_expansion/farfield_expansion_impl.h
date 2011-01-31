@@ -6,33 +6,31 @@
 #define FARFIELD_EXPANSION_IMPL_H
 
 template<typename TKernelAux>
-void FarFieldExpansion<TKernelAux>::Accumulate(const Vector &v, double weight,
+void FarFieldExpansion<TKernelAux>::Accumulate(const arma::vec& v, double weight,
 					       int order) {
 
-  int dim = v.length();
+  int dim = v.n_elem;
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
-  Vector tmp;
+  arma::vec tmp;
   int r, i, j, k, t, tail;
-  GenVector<short int> heads;
-  Vector x_r;
+  arma::Col<short int> heads;
+  arma::vec x_r;
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // initialize temporary variables
-  tmp.Init(total_num_coeffs);
-  heads.Init(dim + 1);
-  x_r.Init(dim);
-  Vector pos_coeffs;
-  Vector neg_coeffs;
-  pos_coeffs.Init(total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(total_num_coeffs);
-  neg_coeffs.SetZero();
+  tmp.set_size(total_num_coeffs);
+  heads.set_size(dim + 1);
+  x_r.set_size(dim);
+  arma::vec pos_coeffs;
+  arma::vec neg_coeffs;
+  pos_coeffs.zeros(total_num_coeffs);
+  neg_coeffs.zeros(total_num_coeffs);
 
   // set to new order if greater
   if(order_ < order) {
     order_ = order;
   }
-  Vector C_k;
+  arma::vec& C_k;
     
   // Calculate the coordinate difference between the ref point and the 
   // centroid.
@@ -41,7 +39,7 @@ void FarFieldExpansion<TKernelAux>::Accumulate(const Vector &v, double weight,
   }
   
   // initialize heads
-  heads.SetZero();
+  heads.zeros();
   heads[dim] = SHRT_MAX;
   
   tmp[0] = 1.0;
@@ -70,7 +68,7 @@ void FarFieldExpansion<TKernelAux>::Accumulate(const Vector &v, double weight,
   }
 
   // get multiindex factors
-  C_k.Alias(sea_->get_inv_multiindex_factorials());
+  C_k = sea_->get_inv_multiindex_factorials();
   
   for(r = 0; r < total_num_coeffs; r++) {
     coeffs_[r] += (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
@@ -78,47 +76,44 @@ void FarFieldExpansion<TKernelAux>::Accumulate(const Vector &v, double weight,
 }
 
 template<typename TKernelAux>
-void FarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data, 
-						     const Vector& weights, 
+void FarFieldExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data, 
+						     const arma::vec& weights, 
 						     int begin, int end, 
 						     int order) {
   
-  int dim = data.n_rows();
+  int dim = data.n_rows;
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
-  Vector tmp;
+  arma::vec tmp;
   int r, i, j, k, t, tail;
-  GenVector<short int> heads;
-  Vector x_r;
+  arma::Col<short int> heads;
+  arma::vec x_r;
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // initialize temporary variables
-  tmp.Init(total_num_coeffs);
-  heads.Init(dim + 1);
-  x_r.Init(dim);
-  Vector pos_coeffs;
-  Vector neg_coeffs;
-  pos_coeffs.Init(total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(total_num_coeffs);
-  neg_coeffs.SetZero();
+  tmp.set_size(total_num_coeffs);
+  heads.set_size(dim + 1);
+  x_r.set_size(dim);
+  arma::vec pos_coeffs;
+  arma::vec neg_coeffs;
+  pos_coeffs.zeros(total_num_coeffs);
+  neg_coeffs.zeros(total_num_coeffs);
 
   // set to new order if greater
   if(order_ < order) {
     order_ = order;
   }
-  Vector C_k;
-    
+
   // Repeat for each reference point in this reference node.
   for(r = begin; r < end; r++) {
     
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
+      x_r[i] = (data(i, r) - center_[i]) / bandwidth_factor;
     }
 
     // initialize heads
-    heads.SetZero();
+    heads.zeros();
     heads[dim] = SHRT_MAX;
     
     tmp[0] = 1.0;
@@ -149,7 +144,7 @@ void FarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
   } // End of looping through each reference point
 
   // get multiindex factors
-  C_k.Alias(sea_->get_inv_multiindex_factorials());
+  const arma::vec& C_k = sea_->get_inv_multiindex_factorials();
 
   for(r = 0; r < total_num_coeffs; r++) {
     coeffs_[r] += (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
@@ -157,8 +152,8 @@ void FarFieldExpansion<TKernelAux>::AccumulateCoeffs(const Matrix& data,
 }
 
 template<typename TKernelAux>
-void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data, 
-						 const Vector& weights, 
+void FarFieldExpansion<TKernelAux>::RefineCoeffs(const arma::mat& data, 
+						 const arma::vec& weights, 
 						 int begin, int end, 
 						 int order) {
   
@@ -168,22 +163,19 @@ void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
     return;
   }
 
-  int dim = data.n_rows();
+  int dim = data.n_rows;
   int old_total_num_coeffs = sea_->get_total_num_coeffs(order_);
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   double tmp;
   int r, i, j;
-  Vector x_r;
+  arma::vec x_r(dim);
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
 
   // initialize temporary variables
-  x_r.Init(dim);
-  Vector pos_coeffs;
-  Vector neg_coeffs;
-  pos_coeffs.Init(total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(total_num_coeffs);
-  neg_coeffs.SetZero();
+  arma::vec pos_coeffs;
+  arma::vec neg_coeffs;
+  pos_coeffs.zeros(total_num_coeffs);
+  neg_coeffs.zeros(total_num_coeffs);
 
   // if we already have the order of approximation, then return.
   if(order_ >= order) {
@@ -193,7 +185,7 @@ void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
     order_ = order;
   }
 
-  Vector C_k;
+  const arma::vec& C_k = sea_->get_inv_multiindex_factorials();
 
   // Repeat for each reference point in this reference node.
   for(r = begin; r < end; r++) {
@@ -201,12 +193,12 @@ void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
     // Calculate the coordinate difference between the ref point and the 
     // centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
+      x_r[i] = (data(i, r) - center_[i]) / bandwidth_factor;
     }
 
     // compute in bruteforce way
     for(i = old_total_num_coeffs; i < total_num_coeffs; i++) {
-      const ArrayList<short int> &mapping = sea_->get_multiindex(i);
+      const std::vector<short int> &mapping = sea_->get_multiindex(i);
       tmp = 1;
       
       for(j = 0; j < dim; j++) {
@@ -225,19 +217,16 @@ void FarFieldExpansion<TKernelAux>::RefineCoeffs(const Matrix& data,
     
   } // End of looping through each reference point
 
-  // get multiindex factors
-  C_k.Alias(sea_->get_inv_multiindex_factorials());
-
   for(r = old_total_num_coeffs; r < total_num_coeffs; r++) {
     coeffs_[r] = (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
   }
 }
 
 template<typename TKernelAux>
-double FarFieldExpansion<TKernelAux>::EvaluateField(const Matrix& data, 
+double FarFieldExpansion<TKernelAux>::EvaluateField(const arma::mat& data, 
 						    int row_num, 
 						    int order) const {
-  return EvaluateField(data.GetColumnPtr(row_num), order);
+  return EvaluateField(data.unsafe_col(row_num).memptr(), order);
 }
 
 template<typename TKernelAux>
@@ -259,16 +248,14 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
   double multipole_sum = 0;
   
   // computed derivative map
-  Matrix derivative_map;
-  ka_->AllocateDerivativeMap(dim, order, &derivative_map);
+  arma::mat derivative_map;
+  ka_->AllocateDerivativeMap(dim, order, derivative_map);
 
   // temporary variable
-  Vector arrtmp;
-  arrtmp.Init(total_num_coeffs);
+  arma::vec arrtmp(total_num_coeffs);
 
   // (x_q - x_R) scaled by bandwidth
-  Vector x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
+  arma::vec x_q_minus_x_R(dim);
 
   // compute (x_q - x_R) / (sqrt(2h^2))
   for(index_t d = 0; d < dim; d++) {
@@ -276,11 +263,11 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
   }
 
   // compute deriative maps based on coordinate difference.
-  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, &derivative_map, order);
+  ka_->ComputeDirectionalDerivatives(x_q_minus_x_R, derivative_map, order);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    const ArrayList<short int> &mapping = sea_->get_multiindex(j);
+    const std::vector<short int> &mapping = sea_->get_multiindex(j);
     double arrtmp = ka_->ComputePartialDerivative(derivative_map, mapping);
     double prod = coeffs_[j] * arrtmp;
     
@@ -297,7 +284,7 @@ double FarFieldExpansion<TKernelAux>::EvaluateField(const double *x_q,
 }
 
 template<typename TKernelAux>
-double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data, 
+double FarFieldExpansion<TKernelAux>::MixField(const arma::mat &data, 
 					       int node1_begin, int node1_end,
 					       int node2_begin, int node2_end, 
 					       const FarFieldExpansion &fe2,
@@ -307,18 +294,17 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
   // bandwidth factor and multiindex mapping stuffs
   double result;
   double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
-  const ArrayList<short int> *multiindex_mapping = 
+  const std::vector<short int>& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList<short int> *lower_mapping_index = 
+  const std::vector<short int>& lower_mapping_index = 
     sea_->get_lower_mapping_index();
 
   // get the total number of coefficients and coefficients
   int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
   int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
   int dim = sea_->get_dimension();
-  Vector coeffs2, coeffs3;
-  coeffs2.Alias(fe2.get_coeffs());
-  coeffs3.Alias(fe3.get_coeffs());
+  arma::vec& coeffs2 = fe2.get_coeffs();
+  arma::vec& coeffs3 = fe3.get_coeffs();
 
   // actual accumulated sum
   double neg_sum = 0;
@@ -330,65 +316,58 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
   double xi_xI, xj_xJ, diff;
 
   // temporary array
-  ArrayList<short int> beta_gamma_nu_eta_mapping;
-  ArrayList<short int> beta_nu_mapping;
-  ArrayList<short int> gamma_eta_mapping;
-  beta_nu_mapping.Init(dim);
-  gamma_eta_mapping.Init(dim);
-  beta_gamma_nu_eta_mapping.Init(dim);
+  std::vector<short int> beta_gamma_nu_eta_mapping;
+  std::vector<short int> beta_nu_mapping;
+  std::vector<short int> gamma_eta_mapping;
+  beta_nu_mapping.reserve(dim);
+  gamma_eta_mapping.reserve(dim);
+  beta_gamma_nu_eta_mapping.reserve(dim);
 
   // partial derivatives table
-  Matrix derivative_map_beta;
-  ka_->AllocateDerivativeMap(dim, order2, &derivative_map_beta);
-  Matrix derivative_map_gamma;
-  ka_->AllocateDerivativeMap(dim, order3, &derivative_map_gamma);
+  arma::mat derivative_map_beta;
+  ka_->AllocateDerivativeMap(dim, order2, derivative_map_beta);
+  arma::mat derivative_map_gamma;
+  ka_->AllocateDerivativeMap(dim, order3, derivative_map_gamma);
   
   // compute center differences and complete the table of partial derivatives
-  Vector xI_xK, xJ_xK;
-  xI_xK.Init(dim);
-  xJ_xK.Init(dim);
-  Vector xJ_center, xK_center;
-  xJ_center.Alias(*(fe2.get_center()));
-  xK_center.Alias(*(fe3.get_center()));
+  arma::vec xI_xK(dim), xJ_xK(dim);
+  arma::vec& xJ_center = fe2.get_center();
+  arma::vec& xK_center = fe3.get_center();
 
   for(index_t d = 0; d < dim; d++) {
     xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
     xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xK, &derivative_map_beta, order2);
-  ka_->ComputeDirectionalDerivatives(xJ_xK, &derivative_map_gamma, order3);
+  ka_->ComputeDirectionalDerivatives(xI_xK, derivative_map_beta, order2);
+  ka_->ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma, order3);
 
   // inverse factorials
-  Vector inv_multiindex_factorials;
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // precompute pairwise kernel values between node i and node j
-  Matrix exhaustive_ij;
-  exhaustive_ij.Init(node1_end - node1_begin, node2_end - node2_begin);
+  arma::mat exhaustive_ij(node1_end - node1_begin, node2_end - node2_begin);
   for(index_t i = node1_begin; i < node1_end; i++) {
-    const double *i_col = data.GetColumnPtr(i);
+    arma::vec i_col = data.unsafe_col(i);
     for(index_t j = node2_begin; j < node2_end; j++) {
-      const double *j_col = data.GetColumnPtr(j);
+      arma::vec j_col = data.unsafe_col(j);
       
-      exhaustive_ij.set
-	(i - node1_begin, j - node2_begin, 
-	 kernel_->EvalUnnormOnSq(la::DistanceSqEuclidean(data.n_rows(), 
-							i_col, j_col)));
+      exhaustive_ij(i - node1_begin, j - node2_begin) =
+	 kernel_->EvalUnnormOnSq(la::DistanceSqEuclidean(i_col, j_col));
     }
   }
 
   // main loop
   for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
     
-    const ArrayList <short int> &beta_mapping = multiindex_mapping[beta];
-    const ArrayList <short int> &lower_mappings_for_beta = 
+    const std::vector<short int> &beta_mapping = multiindex_mapping[beta];
+    const std::vector<short int> &lower_mappings_for_beta = 
       lower_mapping_index[beta];
     double beta_derivative = ka_->ComputePartialDerivative
       (derivative_map_beta, beta_mapping);
     
     for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
       
-      const ArrayList<short int> &nu_mapping = 
+      const std::vector<short int> &nu_mapping = 
 	multiindex_mapping[lower_mappings_for_beta[nu]];
       
       // beta - nu
@@ -398,19 +377,19 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
       
       for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
 	
-	const ArrayList <short int> &gamma_mapping = multiindex_mapping[gamma];
-	const ArrayList <short int> &lower_mappings_for_gamma = 
+	const std::vector<short int> &gamma_mapping = multiindex_mapping[gamma];
+	const std::vector<short int> &lower_mappings_for_gamma = 
 	  lower_mapping_index[gamma];
 	double gamma_derivative = ka_->ComputePartialDerivative
 	  (derivative_map_gamma, gamma_mapping);
 	
 	for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); 
-	    eta++){
+	    eta++) {
 	  
 	  // add up alpha, mu, eta and beta, gamma, nu, eta
 	  int sign = 0;
 	  
-	  const ArrayList<short int> &eta_mapping =
+	  const std::vector<short int> &eta_mapping =
 	    multiindex_mapping[lower_mappings_for_gamma[eta]];
 	  
 	  for(index_t d = 0; d < dim; d++) {
@@ -439,7 +418,7 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
 	      inv_multiindex_factorials
 	      [sea_->ComputeMultiindexPosition(nu_mapping)];
 	    for(index_t d = 0; d < dim; d++) {
-	      diff = (data.get(d, i) - center_[d]) / bandwidth_factor;
+	      diff = (data(d, i) - center_[d]) / bandwidth_factor;
 	      xi_xI *= pow(diff, nu_mapping[d]);
 	    }	    
 
@@ -448,7 +427,7 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
 	      xj_xJ = inv_multiindex_factorials
 		[sea_->ComputeMultiindexPosition(eta_mapping)];
 	      for(index_t d = 0; d < dim; d++) {
-		diff = (data.get(d, j) - xJ_center[d]) / bandwidth_factor;
+		diff = (data(d, j) - xJ_center[d]) / bandwidth_factor;
 		xj_xJ *= pow(diff, eta_mapping[d]);
 	      }
 
@@ -457,8 +436,7 @@ double FarFieldExpansion<TKernelAux>::MixField(const Matrix &data,
                 (sea_->ComputeMultiindexPosition(beta_gamma_nu_eta_mapping),
                  sea_->ComputeMultiindexPosition(beta_nu_mapping)) *
 		beta_derivative * gamma_derivative * xi_xI * xj_xJ *
-		moment_k * exhaustive_ij.get
-		(i - node1_begin, j - node2_begin);
+		moment_k * exhaustive_ij(i - node1_begin, j - node2_begin);
 	      
 	      if(result > 0) {
 		pos_sum += result;
@@ -485,16 +463,15 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   
   // The bandwidth factor and the multiindex mapping stuffs.
   double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
-  const ArrayList<short int> *multiindex_mapping = 
+  const std::vector<short int>& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList<short int> *lower_mapping_index = 
+  const std::vector<short int>& lower_mapping_index = 
     sea_->get_lower_mapping_index();
   
   // Get the total number of coefficients and the coefficient themselves.
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   int dim = sea_->get_dimension();
-  Vector coeffs2;
-  coeffs2.Alias(fe.get_coeffs());
+  arma::vec& coeffs2 = fe.get_coeffs();
 
   // Actual accumulated sum.
   double neg_sum = 0;
@@ -502,41 +479,38 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   double sum = 0;
 
   // The partial derivatives table.
-  Matrix derivative_map_alpha;
-  ka_->AllocateDerivativeMap(dim, order, &derivative_map_alpha);
+  arma::mat derivative_map_alpha;
+  ka_->AllocateDerivativeMap(dim, order, derivative_map_alpha);
 
   // Compute the center difference and its table of partial
   // derivatives.
-  Vector xI_xJ;
-  xI_xJ.Init(dim);
-  Vector xJ_center;
-  xJ_center.Alias(*(fe.get_center()));
+  arma::vec xI_xJ(dim);
+  arma::vec& xJ_center = fe.get_center();
 
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha, order);
 
   // The inverse factorials.
-  Vector inv_multiindex_factorials;
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // The temporary space for computing the difference of two mappings.
-  ArrayList<short int> alpha_minus_beta_mapping;
-  alpha_minus_beta_mapping.Init(dim);
+  std::vector<short int> alpha_minus_beta_mapping;
+  alpha_minus_beta_mapping.reserve(dim);
 
   // The main loop.
   for(index_t alpha = 0; alpha < total_num_coeffs; alpha++) {
 
-    const ArrayList <short int> &alpha_mapping = multiindex_mapping[alpha];
-    const ArrayList <short int> &lower_mappings_for_alpha = 
+    const std::vector<short int> &alpha_mapping = multiindex_mapping[alpha];
+    const std::vector<short int> &lower_mappings_for_alpha = 
       lower_mapping_index[alpha];
     double alpha_derivative = ka_->ComputePartialDerivative
       (derivative_map_alpha, alpha_mapping);
     
     for(index_t beta = 0; beta < lower_mappings_for_alpha.size(); beta++) {
       
-      const ArrayList <short int> &beta_mapping = 
+      const std::vector<short int> &beta_mapping = 
 	multiindex_mapping[lower_mappings_for_alpha[beta]];
       
       double n_choose_k_factor = sea_->get_n_multichoose_k_by_pos
@@ -583,9 +557,9 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   // bandwidth factor and multiindex mapping stuffs
   double result;
   double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
-  const ArrayList<short int> *multiindex_mapping = 
+  const std::vector<short int>& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList<short int> *lower_mapping_index = 
+  const std::vector<short int>& lower_mapping_index = 
     sea_->get_lower_mapping_index();
 
   // get the total number of coefficients and coefficients
@@ -593,9 +567,8 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   int total_num_coeffs2 = sea_->get_total_num_coeffs(order2);
   int total_num_coeffs3 = sea_->get_total_num_coeffs(order3);
   int dim = sea_->get_dimension();
-  Vector coeffs2, coeffs3;
-  coeffs2.Alias(fe2.get_coeffs());
-  coeffs3.Alias(fe3.get_coeffs());
+  arma::vec& coeffs2 = fe2.get_coeffs();
+  arma::vec& coeffs3 = fe3.get_coeffs();
 
   // actual accumulated sum
   double neg_sum = 0;
@@ -606,61 +579,56 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   double moment_i, moment_j, moment_k;
 
   // temporary array
-  ArrayList<short int> mu_nu_mapping;
-  ArrayList<short int> alpha_mu_eta_mapping;
-  ArrayList<short int> beta_gamma_nu_eta_mapping;
-  ArrayList<short int> alpha_mu_mapping;
-  ArrayList<short int> beta_nu_mapping;
-  ArrayList<short int> gamma_eta_mapping;
-  alpha_mu_mapping.Init(dim);
-  beta_nu_mapping.Init(dim);
-  gamma_eta_mapping.Init(dim);
-  mu_nu_mapping.Init(dim);
-  alpha_mu_eta_mapping.Init(dim);
-  beta_gamma_nu_eta_mapping.Init(dim);
+  std::vector<short int> mu_nu_mapping;
+  std::vector<short int> alpha_mu_eta_mapping;
+  std::vector<short int> beta_gamma_nu_eta_mapping;
+  std::vector<short int> alpha_mu_mapping;
+  std::vector<short int> beta_nu_mapping;
+  std::vector<short int> gamma_eta_mapping;
+  alpha_mu_mapping.reserve(dim);
+  beta_nu_mapping.reserve(dim);
+  gamma_eta_mapping.reserve(dim);
+  mu_nu_mapping.reserve(dim);
+  alpha_mu_eta_mapping.reserve(dim);
+  beta_gamma_nu_eta_mapping.reserve(dim);
 
   // partial derivatives table
-  Matrix derivative_map_alpha;
-  ka_->AllocateDerivativeMap(dim, order1, &derivative_map_alpha);
-  Matrix derivative_map_beta;
-  ka_->AllocateDerivativeMap(dim, order2, &derivative_map_beta);
-  Matrix derivative_map_gamma;
-  ka_->AllocateDerivativeMap(dim, order3, &derivative_map_gamma);
+  arma::mat derivative_map_alpha;
+  ka_->AllocateDerivativeMap(dim, order1, derivative_map_alpha);
+  arma::mat derivative_map_beta;
+  ka_->AllocateDerivativeMap(dim, order2, derivative_map_beta);
+  arma::mat derivative_map_gamma;
+  ka_->AllocateDerivativeMap(dim, order3, derivative_map_gamma);
   
   // compute center differences and complete the table of partial derivatives
-  Vector xI_xJ, xI_xK, xJ_xK;
-  xI_xJ.Init(dim);
-  xI_xK.Init(dim);
-  xJ_xK.Init(dim);
-  Vector xJ_center, xK_center;
-  xJ_center.Alias(*(fe2.get_center()));
-  xK_center.Alias(*(fe3.get_center()));
+  arma::vec xI_xJ(dim), xI_xK(dim), xJ_xK(dim);
+  arma::vec& xJ_center = fe2.get_center();
+  arma::vec& xK_center = fe3.get_center();
 
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
     xI_xK[d] = (center_[d] - xK_center[d]) / bandwidth_factor;
     xJ_xK[d] = (xJ_center[d] - xK_center[d]) / bandwidth_factor;
   }
-  ka_->ComputeDirectionalDerivatives(xI_xJ, &derivative_map_alpha, order1);
-  ka_->ComputeDirectionalDerivatives(xI_xK, &derivative_map_beta, order2);
-  ka_->ComputeDirectionalDerivatives(xJ_xK, &derivative_map_gamma, order3);
+  ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha, order1);
+  ka_->ComputeDirectionalDerivatives(xI_xK, derivative_map_beta, order2);
+  ka_->ComputeDirectionalDerivatives(xJ_xK, derivative_map_gamma, order3);
 
   // inverse factorials
-  Vector inv_multiindex_factorials;
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // main loop
   for(index_t alpha = 0; alpha < total_num_coeffs1; alpha++) {
 
-    const ArrayList <short int> &alpha_mapping = multiindex_mapping[alpha];
-    const ArrayList <short int> &lower_mappings_for_alpha = 
+    const std::vector<short int>& alpha_mapping = multiindex_mapping[alpha];
+    const std::vector<short int>& lower_mappings_for_alpha = 
       lower_mapping_index[alpha];
     double alpha_derivative = ka_->ComputePartialDerivative
       (derivative_map_alpha, alpha_mapping);
 
     for(index_t mu = 0; mu < lower_mappings_for_alpha.size(); mu++) {
 
-      const ArrayList <short int> &mu_mapping = 
+      const std::vector<short int>& mu_mapping = 
 	multiindex_mapping[lower_mappings_for_alpha[mu]];
 
       // alpha - mu
@@ -670,15 +638,15 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
       
       for(index_t beta = 0; beta < total_num_coeffs2; beta++) {
 	
-	const ArrayList <short int> &beta_mapping = multiindex_mapping[beta];
-	const ArrayList <short int> &lower_mappings_for_beta = 
+	const std::vector<short int>& beta_mapping = multiindex_mapping[beta];
+	const std::vector<short int>& lower_mappings_for_beta = 
 	  lower_mapping_index[beta];
 	double beta_derivative = ka_->ComputePartialDerivative
 	  (derivative_map_beta, beta_mapping);
 
 	for(index_t nu = 0; nu < lower_mappings_for_beta.size(); nu++) {
 	  
-	  const ArrayList<short int> &nu_mapping = 
+	  const std::vector<short int> &nu_mapping = 
 	    multiindex_mapping[lower_mappings_for_beta[nu]];
 
 	  // mu + nu and beta - nu
@@ -689,20 +657,20 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 
 	  for(index_t gamma = 0; gamma < total_num_coeffs3; gamma++) {
 	    
-	    const ArrayList <short int> &gamma_mapping = 
+	    const std::vector<short int> &gamma_mapping = 
 	      multiindex_mapping[gamma];
-	    const ArrayList <short int> &lower_mappings_for_gamma = 
+	    const std::vector<short int> &lower_mappings_for_gamma = 
 	      lower_mapping_index[gamma];
 	    double gamma_derivative = ka_->ComputePartialDerivative
 	      (derivative_map_gamma, gamma_mapping);
 
 	    for(index_t eta = 0; eta < lower_mappings_for_gamma.size(); 
-		eta++){
+		eta++) {
 	      
 	      // add up alpha, mu, eta and beta, gamma, nu, eta
 	      int sign = 0;
 	      
-	      const ArrayList<short int> &eta_mapping =
+	      const std::vector<short int>& eta_mapping =
 		multiindex_mapping[lower_mappings_for_gamma[eta]];
 
 	      for(index_t d = 0; d < dim; d++) {
@@ -766,19 +734,18 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
 }
 
 template<typename TKernelAux>
-void FarFieldExpansion<TKernelAux>::Init(const Vector& center, 
+void FarFieldExpansion<TKernelAux>::Init(const arma::vec& center, 
 					 const TKernelAux &ka) {
   
   // copy kernel type, center, and bandwidth squared
   kernel_ = &(ka.kernel_);
-  center_.Copy(center);
+  center_ = center;
   order_ = -1;
   sea_ = &(ka.sea_);
   ka_ = &ka;
 
   // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.zeros(sea_->get_max_total_num_coeffs());
 }
 
 template<typename TKernelAux>
@@ -788,20 +755,18 @@ void FarFieldExpansion<TKernelAux>::Init(const TKernelAux &ka) {
   kernel_ = &(ka.kernel_);  
   order_ = -1;
   sea_ = &(ka.sea_);
-  center_.Init(sea_->get_dimension());
-  center_.SetZero();
+  center_.zeros(sea_->get_dimension());
   ka_ = &ka;
 
   // initialize coefficient array
-  coeffs_.Init(sea_->get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.zeros(sea_->get_max_total_num_coeffs());
 }
 
 template<typename TKernelAux>
 template<typename TBound>
 int FarFieldExpansion<TKernelAux>::OrderForConvolving
-(const TBound &far_field_region, const Vector &far_field_region_centroid,
- const TBound &local_field_region, const Vector &local_field_region_centroid,
+(const TBound &far_field_region, const arma::vec& far_field_region_centroid,
+ const TBound &local_field_region, const arma::vec& local_field_region_centroid,
  double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error,
  double *actual_error) const {
   
@@ -853,7 +818,7 @@ void FarFieldExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, "Far field expansion\n");
   fprintf(stream, "Center: ");
   
-  for (index_t i = 0; i < center_.length(); i++) {
+  for (index_t i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
@@ -867,7 +832,7 @@ void FarFieldExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    const ArrayList<short int> &mapping = sea_->get_multiindex(i);
+    const std::vector<short int> &mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g ", coeffs_[i]);
     
     fprintf(stream, "(-1)^(");
@@ -899,24 +864,20 @@ void FarFieldExpansion<TKernelAux>::TranslateFromFarField
   int dim = sea_->get_dimension();
   int order = se.get_order();
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
-  Vector prev_coeffs;
-  Vector prev_center;
-  const ArrayList <short int> *multiindex_mapping = 
+  const arma::vec& prev_coeffs = se.get_coeffs();
+  const arma::vec& prev_center = se.get_center();
+  const std::vector<std::vector<short int> >& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const ArrayList <short int> *lower_mapping_index = 
+  const std::vector<std::vector<short int> >& lower_mapping_index = 
     sea_->get_lower_mapping_index();
 
-  ArrayList <short int> tmp_storage;
-  Vector center_diff;
-  Vector inv_multiindex_factorials;
-
-  center_diff.Init(dim);
+  std::vector<short int> tmp_storage;
+  arma::vec center_diff(dim);
+  const arma::vec& inv_multiindex_factorials =
+      sea_->get_inv_multiindex_factorials();
 
   // retrieve coefficients to be translated and helper mappings
-  prev_coeffs.Alias(se.get_coeffs());
-  prev_center.Alias(*(se.get_center()));
-  tmp_storage.Init(sea_->get_dimension());
-  inv_multiindex_factorials.Alias(sea_->get_inv_multiindex_factorials());
+  tmp_storage.reserve(sea_->get_dimension());
 
   // no coefficients can be translated
   if(order == -1)
@@ -931,15 +892,15 @@ void FarFieldExpansion<TKernelAux>::TranslateFromFarField
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
     
-    const ArrayList <short int> &gamma_mapping = multiindex_mapping[j];
-    const ArrayList <short int> &lower_mappings_for_gamma = 
+    const std::vector<short int>& gamma_mapping = multiindex_mapping[j];
+    const std::vector<short int>& lower_mappings_for_gamma = 
       lower_mapping_index[j];
     double pos_coeff = 0;
     double neg_coeff = 0;
 
     for(index_t k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
-      const ArrayList <short int> &inner_mapping = 
+      const std::vector<short int>& inner_mapping = 
 	multiindex_mapping[lower_mappings_for_gamma[k]];
 
       int flag = 0;
@@ -987,22 +948,20 @@ template<typename TKernelAux>
 void FarFieldExpansion<TKernelAux>::TranslateToLocal
 (LocalExpansion<TKernelAux> &se, int truncation_order) {
   
-  Vector pos_arrtmp, neg_arrtmp;
-  Matrix derivative_map;
+  arma::vec pos_arrtmp, neg_arrtmp;
+  arma::mat derivative_map;
   ka_->AllocateDerivativeMap(sea_->get_dimension(), 2 * truncation_order,
-			     &derivative_map);
-  Vector local_center;
-  Vector cent_diff;
-  Vector local_coeffs;
+			     derivative_map);
+  const arma::vec& local_center = se.get_center();
+  arma::vec cent_diff;
+  arma::vec& local_coeffs = se.get_coeffs();
   int local_order = se.get_order();
   int dimension = sea_->get_dimension();
   int total_num_coeffs = sea_->get_total_num_coeffs(truncation_order);
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for local expansion
-  local_center.Alias(*(se.get_center()));
-  local_coeffs.Alias(se.get_coeffs());
-  cent_diff.Init(dimension);
+  cent_diff.set_size(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -1011,8 +970,8 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // Compute derivatives.
-  pos_arrtmp.Init(total_num_coeffs);
-  neg_arrtmp.Init(total_num_coeffs);
+  pos_arrtmp.set_size(total_num_coeffs);
+  neg_arrtmp.set_size(total_num_coeffs);
 
   // Compute center difference divided by the bandwidth factor.
   for(index_t j = 0; j < dimension; j++) {
@@ -1020,19 +979,19 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
   }
 
   // Compute required partial derivatives.
-  ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 
+  ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map,
 				     2 * truncation_order);
-  ArrayList<short int> beta_plus_alpha;
-  beta_plus_alpha.Init(dimension);
+  std::vector<short int> beta_plus_alpha;
+  beta_plus_alpha.reserve(dimension);
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    const ArrayList<short int> &beta_mapping = sea_->get_multiindex(j);
+    const std::vector<short int>& beta_mapping = sea_->get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      const ArrayList<short int> &alpha_mapping = sea_->get_multiindex(k);
+      const std::vector<short int>& alpha_mapping = sea_->get_multiindex(k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
@@ -1050,7 +1009,7 @@ void FarFieldExpansion<TKernelAux>::TranslateToLocal
     } // end of k-loop
   } // end of j-loop
 
-  Vector C_k_neg = sea_->get_neg_inv_multiindex_factorials();
+  arma::vec C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
     local_coeffs[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }

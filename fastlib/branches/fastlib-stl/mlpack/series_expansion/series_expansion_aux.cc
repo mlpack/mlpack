@@ -1,6 +1,6 @@
 #include "series_expansion_aux.h"
 
-const Vector& SeriesExpansionAux::get_inv_multiindex_factorials() const {
+const arma::vec& SeriesExpansionAux::get_inv_multiindex_factorials() const {
   return inv_multiindex_factorials_;
 }
 
@@ -8,9 +8,9 @@ int SeriesExpansionAux::get_max_total_num_coeffs() const {
   return list_total_num_coeffs_[max_order_];
 }
 
-const std::vector < short int > &SeriesExpansionAux::get_lower_mapping_index() 
+const std::vector < std::vector<short int> >& SeriesExpansionAux::get_lower_mapping_index() 
   const {
-  return lower_mapping_index_.front();
+  return lower_mapping_index_;
 }
 
 int SeriesExpansionAux::get_max_order() const {
@@ -22,21 +22,21 @@ const std::vector < short int > &SeriesExpansionAux::get_multiindex(int pos)
   return multiindex_mapping_[pos];
 }
 
-const std::vector < short int > &SeriesExpansionAux::get_multiindex_mapping() 
+const std::vector < std::vector<short int> >& SeriesExpansionAux::get_multiindex_mapping() 
   const {
-  return multiindex_mapping_.front();
+  return multiindex_mapping_;
 }
 
-const Vector& SeriesExpansionAux::get_neg_inv_multiindex_factorials() const {
+const arma::vec& SeriesExpansionAux::get_neg_inv_multiindex_factorials() const {
   return neg_inv_multiindex_factorials_;
 }
 
 double SeriesExpansionAux::get_n_choose_k(int n, int k) const {
-  return n_choose_k_.get(n, (int) math::ClampNonNegative(k));
+  return n_choose_k_(n, (int) math::ClampNonNegative(k));
 }
 
 double SeriesExpansionAux::get_n_multichoose_k_by_pos(int n, int k) const {
-  return multiindex_combination_.get(n, k);
+  return multiindex_combination_(n, k);
 }
 
 int SeriesExpansionAux::get_total_num_coeffs(int order) const {
@@ -44,10 +44,10 @@ int SeriesExpansionAux::get_total_num_coeffs(int order) const {
   return list_total_num_coeffs_[order];
 }
 
-const std::vector < short int > &SeriesExpansionAux::get_upper_mapping_index() 
+const std::vector < std::vector< short int > >& SeriesExpansionAux::get_upper_mapping_index() 
   const {
 
-  return upper_mapping_index_.front();
+  return upper_mapping_index_;
 }
 
 int SeriesExpansionAux::ComputeMultiindexPosition
@@ -112,15 +112,14 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // allocate space for inverse factorial and 
   // negative inverse factorials and multiindex mapping and n_choose_k 
   // and multiindex_combination precomputed factors
-  inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);  
-  neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);
+  inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);  
+  neg_inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);
   multiindex_mapping_.reserve(list_total_num_coeffs_[limit - 1]);
   (multiindex_mapping_[0]).reserve(dim_);
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
-  n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
-  n_choose_k_.SetZero();
+  n_choose_k_.zeros((limit - 1) + dim + 1, (limit - 1) + dim + 1);
 
   // initialization of temporary variables for computation...
   heads.reserve(dim + 1);
@@ -156,7 +155,7 @@ void SeriesExpansionAux::Init(int max_order, int dim) {
   // compute n choose k's
   for(j = 0; j <= 2 * max_order + dim; j++) {
     for(k = 0; k <= 2 * max_order + dim; k++) {
-      n_choose_k_.set(j, k, math::BinomialCoefficient(j, k));
+      n_choose_k_(j, k) = math::BinomialCoefficient(j, k);
     }
   }
 

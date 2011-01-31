@@ -4,7 +4,8 @@
 #ifndef SERIES_EXPANSION_AUX
 #define SERIES_EXPANSION_AUX
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
 
 /**
  * Series expansion class.
@@ -17,15 +18,15 @@ class SeriesExpansionAux {
 
   int max_order_;
 
-  Vector factorials_;
+  arma::vec factorials_;
 
   std::vector<int> list_total_num_coeffs_;
 
-  Vector inv_multiindex_factorials_;
+  arma::vec inv_multiindex_factorials_;
   
-  Vector neg_inv_multiindex_factorials_;
+  arma::vec neg_inv_multiindex_factorials_;
 
-  Matrix multiindex_combination_;
+  arma::mat multiindex_combination_;
 
   std::vector< std::vector<short int> > multiindex_mapping_;
 
@@ -44,29 +45,15 @@ class SeriesExpansionAux {
   std::vector< std::vector<short int> > upper_mapping_index_;
 
   /** row index is for n, column index is for k */
-  Matrix n_choose_k_;
-
-  OT_DEF_BASIC(SeriesExpansionAux) {
-    OT_MY_OBJECT(dim_);
-    OT_MY_OBJECT(max_order_);
-    OT_MY_OBJECT(factorials_);
-    OT_MY_OBJECT(list_total_num_coeffs_);
-    OT_MY_OBJECT(inv_multiindex_factorials_);
-    OT_MY_OBJECT(neg_inv_multiindex_factorials_);
-    OT_MY_OBJECT(multiindex_combination_);
-    OT_MY_OBJECT(multiindex_mapping_);
-    OT_MY_OBJECT(lower_mapping_index_);
-    OT_MY_OBJECT(upper_mapping_index_);
-    OT_MY_OBJECT(n_choose_k_);
-  }
+  arma::mat n_choose_k_;
 
  public:
 
   void ComputeFactorials() {
-    factorials_.Init(2 * max_order_ + 1);
+    factorials_.set_size(2 * max_order_ + 1);
 
     factorials_[0] = 1;
-    for(index_t t = 1; t < factorials_.length(); t++) {
+    for(index_t t = 1; t < factorials_.n_elem; t++) {
       factorials_[t] = t * factorials_[t - 1];
     }
   }
@@ -107,8 +94,8 @@ class SeriesExpansionAux {
   void ComputeMultiindexCombination() {
 
     int limit = 2 * max_order_;
-    multiindex_combination_.Init(list_total_num_coeffs_[limit],
-				 list_total_num_coeffs_[limit]);
+    multiindex_combination_.set_size(list_total_num_coeffs_[limit],
+                                     list_total_num_coeffs_[limit]);
 
     for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
       
@@ -121,14 +108,13 @@ class SeriesExpansionAux {
 	const std::vector<short int> &alpha_mapping = multiindex_mapping_[k];
 	
 	// initialize the factor to 1
-	multiindex_combination_.set(j, k, 1);
+	multiindex_combination_(j, k) = 1;
 	
 	for(index_t i = 0; i < dim_; i++) {
-	  multiindex_combination_.set
-	    (j, k, multiindex_combination_.get(j, k) * 
-	     n_choose_k_.get(beta_mapping[i], alpha_mapping[i]));
+	  multiindex_combination_(j, k) *= 
+	     n_choose_k_(beta_mapping[i], alpha_mapping[i]);
 	  
-	  if(multiindex_combination_.get(j, k) == 0)
+	  if(multiindex_combination_(j, k) == 0)
 	    break;
 	}
       }
@@ -176,23 +162,23 @@ class SeriesExpansionAux {
 
   int get_max_total_num_coeffs() const;
 
-  const Vector& get_inv_multiindex_factorials() const;
+  const arma::vec& get_inv_multiindex_factorials() const;
 
-  const std::vector< short int > & get_lower_mapping_index() const;
+  const std::vector< std::vector<short int> > & get_lower_mapping_index() const;
 
   int get_max_order() const;
 
   const std::vector< short int > & get_multiindex(int pos) const;
 
-  const std::vector< short int > & get_multiindex_mapping() const;
+  const std::vector< std::vector<short int> > & get_multiindex_mapping() const;
 
-  const Vector& get_neg_inv_multiindex_factorials() const;
+  const arma::vec& get_neg_inv_multiindex_factorials() const;
 
   double get_n_choose_k(int n, int k) const;
 
   double get_n_multichoose_k_by_pos(int n, int k) const;
 
-  const std::vector< short int > & get_upper_mapping_index() const;
+  const std::vector< std::vector<short int> >& get_upper_mapping_index() const;
 
   // interesting functions
 
