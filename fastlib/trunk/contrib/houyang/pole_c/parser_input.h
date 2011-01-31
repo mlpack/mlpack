@@ -309,13 +309,15 @@ void ReadData(boost_po::variables_map &vm) {
     global.num_iter_res = global.num_iter_res + left_ct;
     cout << "n_epo= " <<global.num_epoches << ", n_iter_res= " << global.num_iter_res << endl;
 
+    //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
     if (vm.count("C")) {
       l1.C = vm["C"].as<double>();
       if (l1.C <= 0.0) {
 	cout << "Parameter C should be positive!" << endl;
 	exit(1);
       }
-      l1.reg_factor = 1.0 / (l1.C * num_train_exps);
+      //l1.reg_factor = 1.0 / (l1.C * num_train_exps);
+      l1.reg_factor = 1.0 / l1.C;
     }
     if (vm.count("lambda")) {
       l1.reg_factor = vm["lambda"].as<double>();
@@ -327,7 +329,8 @@ void ReadData(boost_po::variables_map &vm) {
 	cout << "Regularization factor == 0. No regularization imposed!" << endl;
       }
       else {
-	l1.C = 1.0 / (l1.reg_factor * num_train_exps);
+	//l1.C = 1.0 / (l1.reg_factor * num_train_exps);
+	l1.C = 1.0 / l1.reg_factor;
       }
     }
     //cout << "lambda= " << l1.reg_factor << ", C= " << l1.C << endl << endl;

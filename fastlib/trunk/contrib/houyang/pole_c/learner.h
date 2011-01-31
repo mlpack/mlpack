@@ -29,7 +29,7 @@ struct learner {
   LossFunctions *loss_func;
 
   size_t num_experts; // number of experts for ensemble methods (WM)
-  size_t **expert_misp; // number of mispredictions for each expert, over each agent
+  size_t **expert_misp; // number of mispredictions for each expert, over EACH agent
   WeakLearners **weak_learners; // basis learners
   string wl_name;
   double alpha; // the multiplication factor in WM
@@ -40,6 +40,7 @@ struct learner {
   size_t *lp_ct; // counters for log points
   size_t **log_err; // for logging error of each thread
   double **log_loss; // for logging loss of each thread
+  size_t **log_err_expert; // for WM, logging error made by an expert over ALL agents
   /*
   ptime t_start, *t_end; // for logging cpu time
   time_duration *t_duration; // for logging cpu time
