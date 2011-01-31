@@ -9,6 +9,7 @@
  *        ./pole_pt -d ../svmguide1 --random -m oeg --type classification -l hinge --calc_loss --bias --comm 1 -c 1000 -i 5000000 -t 1 -b 1
  *        ./pole_pt -d ../rcv1_train --random -m ogd --type classification -l hinge --calc_loss --comm 1 -c 1 -e 2 -t 1 -b 1
  *        ./pole_pt -d ../rcv1_train --random -m oeg --type classification -l hinge --calc_loss --comm 1 -c 100 -i 5000 -t 1 -b 1
+ *        ./pole_pt -d ../cod-rna --random -m dwm_a --type classification --calc_loss --comm 1 -b 1 -t 1 -a 0.9 -p 8 -i 6000
  *
  */
 

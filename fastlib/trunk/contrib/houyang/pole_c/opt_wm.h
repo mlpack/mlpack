@@ -90,6 +90,7 @@ void *WmThread(void *in_par) {
 	  pred_lbl = (T_LBL)-1;
 	}
 
+	l1.t_ct[tid]  = l1.t_ct[tid] + 1;
 	// ------------for log-------------------
 	if (global.calc_loss) {
 	  // Calculate number of misclassifications
@@ -99,9 +100,13 @@ void *WmThread(void *in_par) {
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
 	    }
 	    if (l1.num_log > 0) {
-	      l1.t_ct[tid]  = l1.t_ct[tid] + 1;
 	      if (l1.t_ct[tid] == l1.t_int && l1.lp_ct[tid] < l1.num_log) {
 		l1.log_err[tid][l1.lp_ct[tid]] = l1.total_misp_pool[tid];
+		for (size_t p=0; p<l1.num_experts; p++) {
+		  if (exp_pred[p] != exs[b]->label) {
+		    l1.log_err_expert[p][l1.lp_ct[tid]] = l1.log_err_expert[p][l1.lp_ct[tid]] + 1;
+		  }
+		}
 		l1.t_ct[tid] = 0;
 		l1.lp_ct[tid] = l1.lp_ct[tid] + 1;
 	      }
@@ -116,7 +121,10 @@ void *WmThread(void *in_par) {
 	    l1.w_vec_pool[tid]->feats[p].wval = l1.w_vec_pool[tid]->feats[p].wval * l1.alpha;
 	  }
 	}
-
+	
+	//if (l1.t_ct[tid] % 2000 == 0)
+	//  SparseScaleOverwrite(l1.w_vec_pool[tid], pow(10,20));
+	
       }
 
       // dummy gradient calc time
@@ -148,21 +156,32 @@ void Wm(learner &l) {
   size_t n_threads = l.num_threads;
   size_t t, k;
 
+  l.t_ct = (size_t*)malloc(n_threads * sizeof(size_t));
+  for (t=0; t<n_threads; t++)
+    l.t_ct[t] = 0;
   //// for log
   if (l.num_log > 0) {
     l.t_int = (size_t)floor( (global.num_epoches*num_train_exps+global.num_iter_res)/(n_threads * l.num_log) );
-    l.t_ct = (size_t*)malloc(n_threads * sizeof(size_t));
     l.lp_ct = (size_t*)malloc(n_threads * sizeof(size_t));
     l.log_err = (size_t**)malloc(n_threads * sizeof(size_t*));
+    l.log_err_expert = (size_t**)malloc(l.num_experts * sizeof(size_t*));
     for (t=0; t<n_threads; t++) {
       l.log_err[t] = (size_t*)malloc(l.num_log * sizeof(size_t));
-      l.t_ct[t] = 0;
       l.lp_ct[t] = 0;
     }
-    for (t=0; t<n_threads; t++)
+    for (t=0; t<n_threads; t++) {
       for (k=0; k<l.num_log; k++) {
 	l.log_err[t][k] = 0;
       }
+    }
+    for (t=0; t<l.num_experts; t++) {
+      l.log_err_expert[t] = (size_t*)malloc(l.num_log * sizeof(size_t));
+    }
+    for (t=0; t<l.num_experts; t++) {
+      for (k=0; k<l.num_log; k++) {
+	l.log_err_expert[t][k] = 0;
+      }
+    }
   }
   l.expert_misp = (size_t**)malloc(l.num_experts * sizeof(size_t*));
   for (k=0; k< l.num_experts; k++) {
@@ -223,6 +242,7 @@ void Wm(learner &l) {
     t_par[t]->l = &l;
     t_par[t]->thread_state = 0;
     // init thread weights
+    //l.w_vec_pool[t] = CreateConstDvector(l.num_experts, pow(num_train_exps*global.num_epoches + global.num_iter_res, 10));
     l.w_vec_pool[t] = CreateConstDvector(l.num_experts, num_train_exps*global.num_epoches + global.num_iter_res);
     l.msg_pool[t] = CreateEmptySvector();
     l.num_used_exp[t] = 0;
@@ -250,6 +270,20 @@ void Wm(learner &l) {
     for (t=0; t<n_threads; t++) {
       for (k=0; k<l.num_log; k++) {
 	fprintf(fp, "%ld", l.log_err[t][k]);
+	fprintf(fp, " ");
+      }
+      fprintf(fp, ";\n");
+    }
+    // accumulate log_err_expert
+    for (t=0; t<l.num_experts; t++) {
+      for (k=1; k<l.num_log; k++) {
+	l.log_err_expert[t][k] = l.log_err_expert[t][k-1] + l.log_err_expert[t][k];
+      }
+    }
+    fprintf(fp, "Expert Errors:\n");
+    for (t=0; t<l.num_experts; t++) {
+      for (k=0; k<l.num_log; k++) {
+	fprintf(fp, "%ld", l.log_err_expert[t][k]);
 	fprintf(fp, " ");
       }
       fprintf(fp, ";\n");

@@ -8,7 +8,7 @@
 #endif
 
 typedef unsigned long T_IDX; // type for feature indices
-typedef float T_VAL; // type for feature values
+typedef double T_VAL; // type for feature values
 typedef float T_LBL; // type for lables
 
 // A word of a sparse vector; e.g. 1:9 10:2.3

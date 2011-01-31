@@ -20,7 +20,8 @@ void OgdUpdate(SVEC *wvec, double &tin, double &bias, double update, size_t tid)
   }
   
   if (l1.reg == 2) {
-    // [-2 \lambda \eta w_i^t]
+    // [- \lambda \eta w_i^t]
+    //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
     SparseScaleOverwrite(wvec, 1.0-eta * l1.reg_factor);
   }
   
@@ -91,9 +92,10 @@ void *OgdThread(void *in_par) {
 	    if (pred_lbl != exs[b]->label) {
 	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
 	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
-	      if (l1.reg == 2 && l1.reg_factor != 0) {
-		l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
-	      }
+	    }
+	    if (l1.reg == 2 && l1.reg_factor != 0) {
+	      //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + 0.5 * l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]);
 	    }
 	    if (l1.num_log > 0) {
 	      l1.t_ct[tid]  = l1.t_ct[tid] + 1;
@@ -109,7 +111,7 @@ void *OgdThread(void *in_par) {
 	  else {
 	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
 	    if (l1.reg == 2 && l1.reg_factor != 0) {
-	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]) / 2;
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + 0.5 * l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]);
 	    }
 	  }
 	}
