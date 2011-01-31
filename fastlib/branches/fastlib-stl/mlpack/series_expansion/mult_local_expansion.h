@@ -12,7 +12,8 @@
 #ifndef MULT_LOCAL_EXPANSION
 #define MULT_LOCAL_EXPANSION
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
 #include "kernel_aux.h"
 #include "mult_series_expansion_aux.h"
 
@@ -28,10 +29,10 @@ class MultLocalExpansion {
  private:
 
   /** The center of the expansion */
-  Vector center_;
+  arma::vec center_;
   
   /** The coefficients */
-  Vector coeffs_;
+  arma::vec coeffs_;
   
   /** order */
   int order_;
@@ -45,12 +46,6 @@ class MultLocalExpansion {
   /** pointer to the precomputed constants inside kernel auxiliary object */
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
-  OT_DEF(MultLocalExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-  
  public:
   
   // getters and setters
@@ -59,12 +54,12 @@ class MultLocalExpansion {
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
-  Vector* get_center() { return &center_; }
-
-  const Vector* get_center() const { return &center_; }
+  arma::vec& get_center() { return center_; }
+  const arma::vec& get_center() const { return center_; }
 
   /** Get the coefficients */
-  const Vector& get_coeffs() const { return coeffs_; }
+  arma::vec& get_coeffs() { return coeffs_; }
+  const arma::vec& get_coeffs() const { return coeffs_; }
   
   /** Get the approximation order */
   int get_order() const { return order_; }
@@ -81,26 +76,26 @@ class MultLocalExpansion {
    * Accumulates the local moment represented by the given reference
    * data into the coefficients
    */
-  void AccumulateCoeffs(const Matrix& data, const Vector& weights,
+  void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
 			int begin, int end, int order);
 
   /**
    * This does not apply for local coefficients.
    */
-  void RefineCoeffs(const Matrix& data, const Vector& weights,
+  void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
 		    int begin, int end, int order) { }
   
   /**
    * Evaluates the local coefficients at the given point
    */
-  double EvaluateField(const Matrix& data, int row_num) const;
-  double EvaluateField(const Vector& x_q) const;
+  double EvaluateField(const arma::mat& data, int row_num) const;
+  double EvaluateField(const arma::vec& x_q) const;
   
   /**
    * Initializes the current local expansion object with the given
    * center.
    */
-  void Init(const Vector& center, const TKernelAux &sea);
+  void Init(const arma::vec& center, const TKernelAux &sea);
   void Init(const TKernelAux &sea);
   
   /**

@@ -43,11 +43,6 @@ class GaussianKernelMultAux {
   /** pointer to the series expansion auxiliary object */
   TSeriesExpansionAux sea_;
 
-  OT_DEF_BASIC(GaussianKernelMultAux) {
-    OT_MY_OBJECT(kernel_);
-    OT_MY_OBJECT(sea_);
-  }
-
  public:
 
   void Init(double bandwidth, int max_order, int dim) {
@@ -60,14 +55,14 @@ class GaussianKernelMultAux {
   }
 
   void AllocateDerivativeMap(int dim, int order, 
-			     Matrix *derivative_map) const {
-    derivative_map->Init(dim, order + 1);
+			     arma::mat& derivative_map) const {
+    derivative_map.set_size(dim, order + 1);
   }
 
-  void ComputeDirectionalDerivatives(const Vector &x, 
-				     Matrix *derivative_map, int order) const {
+  void ComputeDirectionalDerivatives(const arma::vec &x, 
+				     arma::mat& derivative_map, int order) const {
 
-    int dim = x.length();
+    int dim = x.n_elem;
     
     // precompute necessary Hermite polynomials based on coordinate difference
     for(index_t d = 0; d < dim; d++) {
@@ -76,30 +71,30 @@ class GaussianKernelMultAux {
       double d2 = 2 * coord_div_band;
       double facj = exp(-coord_div_band * coord_div_band);
       
-      derivative_map->set(d, 0, facj);
+      derivative_map(d, 0) = facj;
       
       if(order > 0) {
 	
-	derivative_map->set(d, 1, d2 * facj);
+	derivative_map(d, 1) = d2 * facj;
 	
 	if(order > 1) {
 	  for(index_t k = 1; k < order; k++) {
 	    int k2 = k * 2;
-	    derivative_map->set(d, k + 1, d2 * derivative_map->get(d, k) -
-				k2 * derivative_map->get(d, k - 1));
+	    derivative_map(d, k + 1) = d2 * derivative_map(d, k) -
+				k2 * derivative_map(d, k - 1);
 	  }
 	}
       }
     } // end of looping over each dimension
   }
 
-  double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<short int> &mapping) const {
+  double ComputePartialDerivative(const arma::mat& derivative_map,
+				  const std::vector<short int>& mapping) const {
     
     double partial_derivative = 1.0;
     
     for(index_t d = 0; d < mapping.size(); d++) {
-      partial_derivative *= derivative_map.get(d, mapping[d]);
+      partial_derivative *= derivative_map(d, mapping[d]);
     }
     return partial_derivative;
   }
@@ -299,11 +294,6 @@ class GaussianKernelAux {
   /** pointer to the series expansion auxiliary object */
   TSeriesExpansionAux sea_;
 
-  OT_DEF_BASIC(GaussianKernelAux) {
-    OT_MY_OBJECT(kernel_);
-    OT_MY_OBJECT(sea_);
-  }
-
  public:
 
   void Init(double bandwidth, int max_order, int dim) {
@@ -316,14 +306,14 @@ class GaussianKernelAux {
   }
 
   void AllocateDerivativeMap(int dim, int order, 
-			     Matrix *derivative_map) const {
-    derivative_map->Init(dim, order + 1);
+			     arma::mat& derivative_map) const {
+    derivative_map.set_size(dim, order + 1);
   }
 
-  void ComputeDirectionalDerivatives(const Vector &x, 
-				     Matrix *derivative_map, int order) const {
+  void ComputeDirectionalDerivatives(const arma::vec& x, 
+				     arma::mat& derivative_map, int order) const {
     
-    int dim = x.length();
+    int dim = x.n_elem;
     
     // precompute necessary Hermite polynomials based on coordinate difference
     for(index_t d = 0; d < dim; d++) {
@@ -332,48 +322,47 @@ class GaussianKernelAux {
       double d2 = 2 * coord_div_band;
       double facj = exp(-coord_div_band * coord_div_band);
       
-      derivative_map->set(d, 0, facj);
+      derivative_map(d, 0) = facj;
       
       if(order > 0) {
 	
-	derivative_map->set(d, 1, d2 * facj);
+	derivative_map(d, 1) = d2 * facj;
 	
 	if(order > 1) {
 	  for(index_t k = 1; k < order; k++) {
 	    int k2 = k * 2;
-	    derivative_map->set(d, k + 1, d2 * derivative_map->get(d, k) -
-				k2 * derivative_map->get(d, k - 1));
+	    derivative_map(d, k + 1) = d2 * derivative_map(d, k) -
+				k2 * derivative_map(d, k - 1);
 	  }
 	}
       }
     } // end of looping over each dimension
   }
 
-  double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<short int> &mapping) const {
+  double ComputePartialDerivative(const arma::mat& derivative_map,
+				  const std::vector<short int>& mapping) const {
     
     double partial_derivative = 1.0;
     
     for(index_t d = 0; d < mapping.size(); d++) {
-      partial_derivative *= derivative_map.get(d, mapping[d]);
+      partial_derivative *= derivative_map(d, mapping[d]);
     }
     return partial_derivative;
   }
 
   template<typename TBound>
   int OrderForConvolvingFarField(const TBound &far_field_region, 
-				 const Vector &far_field_region_centroid,
+				 const arma::vec &far_field_region_centroid,
 				 const TBound &local_field_region, 
-				 const Vector &local_field_region_centroid,
+				 const arma::vec &local_field_region_centroid,
 				 double min_dist_sqd_regions,
 				 double max_dist_sqd_regions, 
 				 double max_error, 
 				 double *actual_error) const {
     
     double squared_distance_between_two_centroids =
-      la::DistanceSqEuclidean(far_field_region_centroid.length(),
-			      far_field_region_centroid.ptr(),
-			      local_field_region_centroid.ptr());
+      la::DistanceSqEuclidean(far_field_region_centroid,
+			      local_field_region_centroid);
     double frontfactor = 
       exp(-squared_distance_between_two_centroids / 
 	  (4 * kernel_.bandwidth_sq()));
@@ -586,12 +575,6 @@ class EpanKernelAux {
 
   InversePowDistKernelAux squared_component_;
 
-  OT_DEF_BASIC(EpanKernelAux) {
-    OT_MY_OBJECT(kernel_);
-    OT_MY_OBJECT(sea_);
-    OT_MY_OBJECT(squared_component_);
-  }
-
  public:
 
   void Init(double bandwidth, int max_order, int dim) {
@@ -607,26 +590,25 @@ class EpanKernelAux {
   }
 
   void AllocateDerivativeMap(int dim, int order, 
-			     Matrix *derivative_map) const {
-    derivative_map->Init(sea_.get_total_num_coeffs(order), 1);
+			     arma::mat& derivative_map) const {
+    derivative_map.set_size(sea_.get_total_num_coeffs(order), 1);
   }
 
-  void ComputeDirectionalDerivatives(const Vector &x, 
-				     Matrix *derivative_map, int order) const {
+  void ComputeDirectionalDerivatives(const arma::vec& x, 
+				     arma::mat& derivative_map, int order) const {
     
     // Compute the derivatives for $||x||^2$ and negate it. Then, add
     // $(1, 0, 0, ... 0)$ to it.
     squared_component_.ComputeDirectionalDerivatives(x, derivative_map, order);
     
-    la::Scale(derivative_map->n_rows(), -1, derivative_map->GetColumnPtr(0));
-
-    (derivative_map->GetColumnPtr(0))[0] += 1.0;
+    derivative_map.unsafe_col(0) *= -1;
+    derivative_map(0, 0) += 1.0;
   }
 
-  double ComputePartialDerivative(const Matrix &derivative_map,
-				  const ArrayList<short int> &mapping) const {
+  double ComputePartialDerivative(const arma::mat& derivative_map,
+				  const std::vector<short int>& mapping) const {
 
-    return derivative_map.get(sea_.ComputeMultiindexPosition(mapping), 0);
+    return derivative_map(sea_.ComputeMultiindexPosition(mapping), 0);
   }
 
   template<typename TBound>

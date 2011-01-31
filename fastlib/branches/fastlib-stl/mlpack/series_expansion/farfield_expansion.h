@@ -12,7 +12,8 @@
 #ifndef FARFIELD_EXPANSION
 #define FARFIELD_EXPANSION
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+
 #include "kernel_aux.h"
 #include "series_expansion_aux.h"
 
@@ -38,10 +39,10 @@ class FarFieldExpansion {
   ////////// Private Member Variables //////////
 
   /** @brief The center of the expansion. */
-  Vector center_;
+  arma::vec center_;
   
   /** @brief The coefficients. */
-  Vector coeffs_;
+  arma::vec coeffs_;
 
   /** @brief The order of the expansion. */
   int order_;
@@ -61,12 +62,6 @@ class FarFieldExpansion {
    */
   const typename TKernelAux::TSeriesExpansionAux *sea_;
 
-  OT_DEF(FarFieldExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-
  public:
   
   ////////// Getters/Setters //////////
@@ -82,16 +77,16 @@ class FarFieldExpansion {
    *
    *  @return The center of expansion for the current far-field expansion.
    */
-  Vector* get_center() { return &center_; }
-
-  const Vector* get_center() const { return &center_; }
+  arma::vec& get_center() { return center_; }
+  const arma::vec& get_center() const { return center_; }
 
   /** @brief Gets the set of far-field coefficients.
    *
    *  @return The const reference to the vector containing the
    *          far-field coefficients.
    */
-  const Vector& get_coeffs() const { return coeffs_; }
+  arma::vec& get_coeffs() { return coeffs_; }
+  const arma::vec& get_coeffs() const { return coeffs_; }
   
   /** @brief Gets the approximation order.
    *
@@ -122,11 +117,8 @@ class FarFieldExpansion {
    *                will be copied to the center of the given far-field 
    *                expansion object.
    */
-  void set_center(const Vector &center) {
-    
-    for(index_t i = 0; i < center.length(); i++) {
-      center_[i] = center[i];
-    }
+  void set_center(const arma::vec& center) {
+    center_ = center;
   }
 
   ////////// User-level Functions //////////
@@ -151,7 +143,7 @@ class FarFieldExpansion {
    *  @param order The order up to which the far-field moments should be 
    *               accumulated up to.
    */
-  void Accumulate(const Vector &reference_point, double weight, int order);
+  void Accumulate(const arma::vec& reference_point, double weight, int order);
 
   /** @brief Accumulates the far field moment represented by the given
    *         reference data into the coefficients.
@@ -178,24 +170,24 @@ class FarFieldExpansion {
    *  @param order The order up to which the far-field moments should be
    *               accumulated up to.
    */
-  void AccumulateCoeffs(const Matrix& data, const Vector& weights,
+  void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
 			int begin, int end, int order);
 
   /** @brief Refine the far field moment that has been computed before
    *         up to a new order.
    */
-  void RefineCoeffs(const Matrix& data, const Vector& weights,
+  void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
 		    int begin, int end, int order);
   
   /** @brief Evaluates the far-field coefficients at the given point.
    */
-  double EvaluateField(const Matrix& data, int row_num, int order) const;
+  double EvaluateField(const arma::mat& data, int row_num, int order) const;
   double EvaluateField(const double *x_q, int order) const;
 
   /** @brief Evaluates the two-way convolution mixed with exhaustive
    *         computations with two other far field expansions.
    */
-  double MixField(const Matrix &data, int node1_begin, int node1_end, 
+  double MixField(const arma::mat& data, int node1_begin, int node1_end, 
 		  int node2_begin, int node2_end, const FarFieldExpansion &fe2,
 		  const FarFieldExpansion &fe3, int order2, int order3) const;
 
@@ -214,14 +206,14 @@ class FarFieldExpansion {
   /** @brief Initializes the current far field expansion object with
    *         the given center.
    */
-  void Init(const Vector& center, const TKernelAux &ka);
+  void Init(const arma::vec& center, const TKernelAux &ka);
   void Init(const TKernelAux &ka);
 
   template<typename TBound>
   int OrderForConvolving(const TBound &far_field_region,
-			 const Vector &far_field_region_centroid,
+			 const arma::vec &far_field_region_centroid,
 			 const TBound &local_field_region,
-			 const Vector &local_field_region_centroid,
+			 const arma::vec &local_field_region_centroid,
 			 double min_dist_sqd_regions,
 			 double max_dist_dsqd_regons,
 			 double max_error, double *actual_error) const;
