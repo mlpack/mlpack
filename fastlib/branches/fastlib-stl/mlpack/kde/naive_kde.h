@@ -32,8 +32,6 @@
 template<typename TKernel>
 class NaiveKde {
   
-  FORBID_ACCIDENTAL_COPIES(NaiveKde);
-
  private:
 
   ////////// Private Member Variables //////////
@@ -42,19 +40,19 @@ class NaiveKde {
   struct datanode *module_;
 
   /** @brief The column-oriented query dataset. */
-  Matrix qset_;
+  arma::mat qset_;
   
   /** @brief The column-oriented reference dataset. */
-  Matrix rset_;
+  arma::mat rset_;
 
   /** @brief The vector containing the reference set weights. */
-  Vector rset_weights_;
+  arma::vec rset_weights_;
 
   /** @brief The kernel function. */
-  ArrayList<TKernel> kernels_;
+  std::vector<TKernel> kernels_;
 
   /** @brief The computed densities. */
-  Vector densities_;
+  arma::vec densities_;
 
   /** @brief The normalizing constant. */
   double norm_const_;
@@ -64,12 +62,10 @@ class NaiveKde {
   ////////// Constructor/Destructor //////////
 
   /** @brief Constructor - does not do anything */
-  NaiveKde() {    
-  }
+  NaiveKde() { }
 
   /** @brief Destructor - does not do anything */
-  ~NaiveKde() {
-  }
+  ~NaiveKde() { }
 
   ////////// Getters/Setters //////////
 
@@ -78,12 +74,8 @@ class NaiveKde {
    *  @param results An uninitialized vector which will be initialized
    *                 with the computed density estimates.
    */
-  void get_density_estimates(Vector *results) { 
-    results->Init(densities_.length());
-    
-    for(index_t i = 0; i < densities_.length(); i++) {
-      (*results)[i] = densities_[i];
-    }
+  void get_density_estimates(arma::vec& results) { 
+    results = densities_;
   }
 
   ////////// User-level Functions //////////
@@ -93,19 +85,19 @@ class NaiveKde {
    *  @param results An uninitialized vector which will be initialized
    *                 with the computed density estimates.
    */
-  void Compute(Vector *results) {
+  void Compute(arma::vec& results) {
 
     printf("\nStarting naive KDE...\n");
     fx_timer_start(module_, "naive_kde_compute");
 
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       
-      const double *q_col = qset_.GetColumnPtr(q);
+      arma::vec q_col = qset_.unsafe_col(q);
 
       // Compute unnormalized sum first.
-      for(index_t r = 0; r < rset_.n_cols(); r++) {
-	const double *r_col = rset_.GetColumnPtr(r);
-	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      for(index_t r = 0; r < rset_.n_cols; r++) {
+	arma::vec r_col = rset_.unsafe_col(r);
+	double dsqd = la::DistanceSqEuclidean(q_col, r_col);
 	
 	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
@@ -127,14 +119,14 @@ class NaiveKde {
     printf("\nStarting naive KDE...\n");
     fx_timer_start(module_, "naive_kde_compute");
 
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       
-      const double *q_col = qset_.GetColumnPtr(q);
+      arma::vec q_col = qset_.unsafe_col(q);
       
       // Compute unnormalized sum.
-      for(index_t r = 0; r < rset_.n_cols(); r++) {
-	const double *r_col = rset_.GetColumnPtr(r);
-	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      for(index_t r = 0; r < rset_.n_cols; r++) {
+	arma::vec r_col = rset_.unsafe_col(r);
+	double dsqd = la::DistanceSqEuclidean(q_col, r_col);
 	
 	densities_[q] += rset_weights_[r] * kernels_[r].EvalUnnormOnSq(dsqd);
       }
@@ -145,12 +137,11 @@ class NaiveKde {
     printf("\nNaive KDE completed...\n");
   }
 
-  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
 
     // Use the uniform weights for a moment.
-    Matrix uniform_weights;
-    uniform_weights.Init(1, rset.n_cols());
-    uniform_weights.SetAll(1.0);
+    arma::mat uniform_weights(1, rset.n_cols);
+    uniform_weights.fill(1.0);
 
     Init(qset, rset, uniform_weights, module_in);
   }
@@ -162,41 +153,41 @@ class NaiveKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module holding the parameters.
    */
-  void Init(Matrix &qset, Matrix &rset, Matrix &reference_weights,
+  void Init(arma::mat& qset, arma::mat& rset, arma::mat& reference_weights,
 	    struct datanode *module_in) {
 
     // Set the datanode module to be the incoming one.
     module_ = module_in;
 
     // Get datasets.
-    qset_.Copy(qset);
-    rset_.Copy(rset);
-    rset_weights_.Init(reference_weights.n_cols());
-    for(index_t i = 0; i < rset_weights_.length(); i++) {
-      rset_weights_[i] = reference_weights.get(0, i);
+    qset_ = qset;
+    rset_ = rset;
+    rset_weights_.set_size(reference_weights.n_elem);
+    for(index_t i = 0; i < rset_weights_.n_elem; i++) {
+      rset_weights_[i] = reference_weights(0, i);
     }    
 
     // Compute the normalizing constant.
     double weight_sum = 0;
-    for(index_t i = 0; i < rset_weights_.length(); i++) {
+    for(index_t i = 0; i < rset_weights_.n_elem; i++) {
       weight_sum += rset_weights_[i];
     }
     
     // Get bandwidth and compute the normalizing constant.
-    kernels_.Init(rset_.n_cols());
+    kernels_.reserve(rset_.n_cols);
     if(!strcmp(fx_param_str(module_, "mode", "variablebw"), "variablebw")) {
 
       // Initialize the kernels for each reference point.
       int knns = fx_param_int_req(module_, "knn");
       AllkNN all_knn;
-      all_knn.Init(rset_, 20, knns);
-      ArrayList<index_t> resulting_neighbors;
-      ArrayList<double> squared_distances;    
+      all_knn.Init(&rset_, 20, knns);
+      arma::Col<index_t> resulting_neighbors;
+      arma::vec squared_distances;    
       
       fx_timer_start(fx_root, "bandwidth_initialization");
-      all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+      all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
       
-      for(index_t i = 0; i < squared_distances.size(); i += knns) {
+      for(index_t i = 0; i < squared_distances.n_elem; i += knns) {
 	kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
       }
       fx_timer_stop(fx_root, "bandwidth_initialization");
@@ -204,12 +195,12 @@ class NaiveKde {
       // Renormalize the reference weights according to the bandwidths
       // that have been chosen.
       double min_norm_const = DBL_MAX;
-      for(index_t i = 0; i < rset_weights_.length(); i++) {
-	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      for(index_t i = 0; i < rset_weights_.n_elem; i++) {
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows);
 	min_norm_const = std::min(min_norm_const, norm_const);
       }
-      for(index_t i = 0; i < rset_weights_.length(); i++) {
-	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+      for(index_t i = 0; i < rset_weights_.n_elem; i++) {
+	double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows);
 	rset_weights_[i] *= (min_norm_const / norm_const);
       }
       
@@ -220,12 +211,11 @@ class NaiveKde {
       for(index_t i = 0; i < kernels_.size(); i++) {
 	kernels_[i].Init(fx_param_double_req(module_, "bandwidth"));
       }
-      norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows()) * weight_sum;
+      norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows) * weight_sum;
     }
 
     // Allocate density storage.
-    densities_.Init(qset.n_cols());
-    densities_.SetZero();
+    densities_.zeros(qset.n_cols);
   }
 
   /** @brief Output KDE results to a stream 
@@ -245,7 +235,7 @@ class NaiveKde {
 			   "naive_kde_output.txt");
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     
@@ -263,17 +253,17 @@ class NaiveKde {
    *  @param density_estimates The vector holding approximated density
    *                           estimates.
    */
-  void ComputeMaximumRelativeError(const Vector &density_estimates) {
+  void ComputeMaximumRelativeError(const arma::vec& density_estimates) {
     
     double max_rel_err = 0;
     FILE *stream = fopen("relative_error_output.txt", "w+");
     int within_limit = 0;
 
-    for(index_t q = 0; q < densities_.length(); q++) {
+    for(index_t q = 0; q < densities_.n_elem; q++) {
       double rel_err = (fabs(density_estimates[q] - densities_[q]) <
 			DBL_EPSILON) ?
 	0:fabs(density_estimates[q] - densities_[q]) / 
-	densities_[q];      
+	densities_[q];
 
       if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
 	 isnan(densities_[q]) || isinf(densities_[q])) {
