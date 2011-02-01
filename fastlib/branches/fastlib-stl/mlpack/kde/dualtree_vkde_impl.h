@@ -19,14 +19,14 @@ void DualtreeVKde<TKernel>::DualtreeVKdeBase_(Tree *qnode, Tree *rnode,
     DualtreeKdeCommon::AddPostponed(qnode, q, this);
 
     // Get the query point.
-    const double *q_col = qset_.GetColumnPtr(q);
+    arma::vec q_col = qset_.unsafe_col(q);
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      arma::vec r_col = rset_.unsafe_col(r);
       
       // pairwise distance and kernel value
-      double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      double dsqd = la::DistanceSqEuclidean(q_col, r_col);
       double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd);
       double weighted_kernel_value = rset_weights_[r] * kernel_value;
       
