@@ -60,7 +60,9 @@ set( DIRS
 )
 
 if(WITH_SPARSE)
-   set(DIRS ${DIRS} kernel_pca)
+#   Don't compile this because sparse support in this branch is not really
+#   existent
+#   set(DIRS ${DIRS} kernel_pca)
 endif()
 
 foreach(dir ${DIRS})
