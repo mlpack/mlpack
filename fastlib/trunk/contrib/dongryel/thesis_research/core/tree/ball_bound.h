@@ -121,9 +121,8 @@ class BallBound {
         (*random_point_out)[i] = core::math::RandGaussian(1.0);
       }
 
-      // Scale it by an appropriate factor involving the incomplete
-      // Gamma function.
-      double squared_length = arma::norm(*random_point_out, "fro");
+      // Scale it by an appropriate factor
+      double squared_length = arma::dot(*random_point_out, *random_point_out);
       double first_number = squared_length * 0.5;
       double second_number = center_.length() * 0.5;
       double factor =
