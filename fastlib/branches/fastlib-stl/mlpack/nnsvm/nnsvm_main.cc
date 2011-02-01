@@ -17,24 +17,21 @@
 
 #include "nnsvm.h"
 
-
-
 /**
 * Load data set from data file. 
 *
 * @param: the dataset
 * @param: name of the data file to be loaded
 */
-
-int LoadData(Dataset* dataset, String datafilename){
-    if (fx_param_exists(NULL, datafilename)) {
-      // if a data file is specified, use it.
-      if (!PASSED(dataset->InitFromFile(fx_param_str_req(NULL, datafilename)))) {
-	fprintf(stderr, "Couldn't open the data file.\n");
-	return 0;
-      }
+int LoadData(Dataset& dataset, std::string datafilename){
+  if (fx_param_exists(NULL, datafilename.c_str())) {
+    // if a data file is specified, use it.
+    if (!PASSED(dataset.InitFromFile(fx_param_str_req(NULL, datafilename.c_str())))) {
+      fprintf(stderr, "Couldn't open the data file.\n");
+      return 0;
     }
-    return 1;
+  }
+  return 1;
 }
 
 /**
@@ -47,16 +44,16 @@ int main(int argc, char *argv[]) {
 
   fx_init(argc, argv, NULL);
 
-  String mode = fx_param_str_req(NULL, "mode");
-  String kernel = fx_param_str_req(NULL, "kernel");  
+  std::string mode = fx_param_str_req(NULL, "mode");
+  std::string kernel = fx_param_str_req(NULL, "kernel");  
 
   /* Training Mode, need training data */  
-  if (mode=="train" || mode=="train_test"){
+  if (mode == "train" || mode == "train_test") {
     fprintf(stderr, "Non-Negativity Constrained SVM Training... \n");
 
     // Load training data
     Dataset trainset;
-    if (LoadData(&trainset, "train_data") == 0) // TODO:param_req
+    if (LoadData(trainset, "train_data") == 0) // TODO:param_req
       return 1;
     
     // Begin NNSVM Training 
@@ -74,19 +71,19 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "Non-Negativity SVM Classifying... \n");
 	/* Load testing data */
 	Dataset testset;
-	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
+	if (LoadData(testset, "test_data") == 0) // TODO:param_req
 	  return 1;
-	nnsvm.BatchClassify(&testset, "testlabels");
+	nnsvm.BatchClassify(testset, "testlabels");
       }
     }
   } 
   /* Testing(offline) Mode, need loading model file and testing data */
-  else if (mode=="test") {
+  else if (mode == "test") {
     fprintf(stderr, "Non-Negativity Constrained SVM Classifying... \n");
 
     /* Load testing data */
     Dataset testset;
-    if (LoadData(&testset, "test_data") == 0) // TODO:param_req
+    if (LoadData(testset, "test_data") == 0) // TODO:param_req
       return 1;
 
     /* Begin Classification */
@@ -95,11 +92,9 @@ int main(int argc, char *argv[]) {
     if (kernel == "linear") {
       NNSVM<SVMLinearKernel> nnsvm;
       nnsvm.Init(testset, 2, nnsvm_module);  
-      nnsvm.LoadModelBatchClassify(&testset, "nnsvm_model", "testlabels"); // TODO:param_req
+      nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
     }
   }
 
   fx_done(NULL);
-
 }
-
