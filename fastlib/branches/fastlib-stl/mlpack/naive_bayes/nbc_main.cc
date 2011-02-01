@@ -31,8 +31,6 @@
 #include <fastlib/data/dataset.h> 
 #include <fastlib/base/arma_compat.h>
 
-#include <iostream>
-#include <fstream>
 
 const fx_entry_doc parm_nbc_main_entries[] = {
   {"train", FX_REQUIRED, FX_STR, NULL,
@@ -95,7 +93,7 @@ int main(int argc, char* argv[]) {
   fx_timer_start(nbc_module, "testing");
 
   ////// Calling the function that classifies the test data
-  nbc.Classify(testing_data, &results);
+  nbc.Classify(testing_data, results);
 
   fx_timer_stop(nbc_module, "testing");
 
