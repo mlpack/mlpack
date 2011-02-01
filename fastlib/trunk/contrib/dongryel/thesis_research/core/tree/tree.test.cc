@@ -108,6 +108,7 @@ class TestTree {
         original_table.get(i, &original_point);
         for(int j = 0; j < reordered_table.n_attributes(); j++) {
           if(reordered_point[j] != original_point[j]) {
+            printf("Reordered points and original points do not match!\n");
             return false;
           }
         }
@@ -122,13 +123,18 @@ class TestTree {
         reordered_table.get_tree()->bound().RandomPointInside(&random_point);
         if(! reordered_table.get_tree()->bound().Contains(
               l2_metric, random_point)) {
+          printf("Random point is not within the bound!\n");
           return false;
         }
       }
 
       // Now test the node iterator at each level of the tree.
-      return TestTreeIterator_(
-               reordered_table.get_tree(), reordered_table);
+      if(TestTreeIterator_(
+            reordered_table.get_tree(), reordered_table) == false) {
+        printf("Tree iterator is broken!\n");
+        return false;
+      }
+      return true;
     }
 };
 }
