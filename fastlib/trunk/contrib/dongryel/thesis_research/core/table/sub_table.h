@@ -436,7 +436,6 @@ class SubTable {
     void Init(
       int rank_in, core::table::DenseMatrix &data_alias_in,
       OldFromNewIndexType *old_from_new_alias_in,
-      int *new_from_old_alias_in,
       int max_num_levels_to_serialize_in) {
       table_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->Construct<TableType>() :
@@ -448,7 +447,7 @@ class SubTable {
       table_->set_rank(rank_in);
 
       // Alias the incoming mappings.
-      table_->Alias(old_from_new_alias_in, new_from_old_alias_in);
+      table_->Alias(old_from_new_alias_in, (int *) NULL);
 
       // Finalize the intialization.
       this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
