@@ -23,6 +23,7 @@
 #define FFT_KDE_H
 
 #include <fastlib/fastlib.h>
+#include <armadillo>
   
 /** constant TAU */
 #define TAU 4.0
@@ -48,8 +49,6 @@
  */
 class FFTKde {
 
-  FORBID_ACCIDENTAL_COPIES(FFTKde);
-
  private:
 
   ////////// Private Class Definitions //////////
@@ -72,40 +71,40 @@ class FFTKde {
 
 
   /** query dataset */
-  Matrix qset_;
+  arma::mat qset_;
 
   /** reference dataset */
-  Matrix rset_;
+  arma::mat rset_;
 
   /** kernel */
   GaussianKernel kernel_;
 
   /** computed densities */
-  Vector densities_;
+  arma::vec densities_;
 
   /** number of grid points along each dimension */
   int m_;
 
   /** number of points along each dimension in the zero padded */
-  ArrayList<int> size_;
+  std::vector<int> size_;
   
   /** minimum coordinate along each dimension */
-  Vector mincoords_;
+  arma::vec mincoords_;
 
   /** minimum indices along each dimension */
-  ArrayList<int> minindices_;
+  std::vector<int> minindices_;
 
   /** maximum coordinate along each dimension */
-  Vector maxcoords_;
+  arma::vec maxcoords_;
   
   /** difference between min and max along each dimension */
-  Vector diffcoords_;
+  arma::vec diffcoords_;
 
   /** size of grid along each dimension */
-  Vector gridsizes_;
+  arma::vec gridsizes_;
 
   /** kernel weights along each dimension */
-  ArrayList<int>  kernelweights_dims_;
+  std::vector<int>  kernelweights_dims_;
 
   /** total number of grid points */
   int numgridpts_;
@@ -114,15 +113,15 @@ class FFTKde {
   double gridbinvolume_;
 
   /** discretized dataset storing the assigned kernel weights */
-  Vector discretized_;
+  arma::vec discretized_;
 
   int nyquistnum_;
 
-  Vector d_fnyquist_;
+  arma::vec d_fnyquist_;
   
-  Vector k_fnyquist_;
+  arma::vec k_fnyquist_;
   
-  Vector kernelweights_;
+  arma::vec kernelweights_;
   
   /**
    * Do a Fourier transform of an array of N complex numbers separated by
@@ -237,7 +236,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one(-1)
    */
-  void fftcn(double *f, int ndims, int *size, int forward) {
+  void fftcn(double *f, int ndims, std::vector<int>& size, int forward) {
 
     // These determine where to begin successive transforms and the skip 
     // between their elements (see below)
@@ -355,7 +354,7 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one (-1)
    */
-  void fftrn(double *f, double *fnyquist, int ndims, int *size, int forward) {
+  void fftrn(double *f, double *fnyquist, int ndims, std::vector<int>& size, int forward) {
 
     int i, j, b;
 
@@ -387,8 +386,8 @@ class FFTKde {
     int totalsize = 1;
 
     // Indices for looping through array
-    ArrayList<int> indices;
-    indices.Init(ndims);
+    std::vector<int> indices;
+    indices.reserve(ndims);
     
     // Set size[] to be the sizes of f viewed as a complex array
     size[ndims - 1] /= 2;
@@ -522,7 +521,7 @@ class FFTKde {
     else {
       
       // Recurse in the right direction
-      double coord = rset_.get(level, reference_pt_num);
+      double coord = rset_(level, reference_pt_num);
       double leftgridcoord = mincoords_[level] + minindices_[level] *
 	gridsizes_[level];
       double rightgridcoord = leftgridcoord + gridsizes_[level];
@@ -552,7 +551,7 @@ class FFTKde {
     else {
       
       // Recurse in the right direction
-      double coord = qset_.get(level, query_pt_num);
+      double coord = qset_(level, query_pt_num);
       double leftgridcoord = mincoords_[level] + minindices_[level] *
 	gridsizes_[level];
       double rightgridcoord = leftgridcoord + gridsizes_[level];
@@ -578,16 +577,16 @@ class FFTKde {
   void RetrieveDensities() {
 
     double normc = 
-      (kernel_.CalcNormConstant(rset_.n_rows()) * rset_.n_cols());
+      (kernel_.CalcNormConstant(rset_.n_rows) * rset_.n_cols);
 
-    for(index_t r = 0; r < qset_.n_cols(); r++) {
+    for(index_t r = 0; r < qset_.n_cols; r++) {
       densities_[r] = 0.0;
       
-      for(index_t d = 0; d < qset_.n_rows(); d++) {
-	minindices_[d] = (int) floor((qset_.get(d, r) - mincoords_[d])/
+      for(index_t d = 0; d < qset_.n_rows; d++) {
+	minindices_[d] = (int) floor((qset_(d, r) - mincoords_[d])/
 				     gridsizes_[d]);
       }
-      retrieve_weights(r, 1.0, qset_.n_rows() - 1, 0, 1, 
+      retrieve_weights(r, 1.0, qset_.n_rows - 1, 0, 1, 
 		       gridbinvolume_ * normc);
     }
   }
@@ -604,13 +603,13 @@ class FFTKde {
     
     // Find the min/max in each coordinate direction, and calculate the grid
     // size in each dimension.
-    for(index_t d = 0; d < qset_.n_rows(); d++) {
+    for(index_t d = 0; d < qset_.n_rows; d++) {
       int possiblesample;
       min = DBL_MAX;
       max = -DBL_MAX;
       
-      for(index_t r = 0; r < rset_.n_cols(); r++) {
-	double coord = rset_.get(d, r);
+      for(index_t r = 0; r < rset_.n_cols; r++) {
+	double coord = rset_(d, r);
 	if(coord > max)
 	  max = coord;
 	if(coord < min)
@@ -648,25 +647,24 @@ class FFTKde {
 
     // Allocate the memory for discretized grid count matrix and initialize 
     // it.
-    discretized_.Init(numgridpts_);
-    discretized_.SetZero();
+    discretized_.zeros(numgridpts_);
 
     double inv_gvolume = 1.0 / gridbinvolume_;
     
     // Now loop over each data and calculate the weights at each grid point.
-    for(index_t r = 0; r < rset_.n_cols(); r++) {
+    for(index_t r = 0; r < rset_.n_cols; r++) {
 
       // First locate the bin the data point falls into and identify it by
       // the lower grid coordinates.
-      for(index_t d = 0; d < rset_.n_rows(); d++) {
-	minindices_[d] = (int) floor((rset_.get(d, r) - mincoords_[d])/
+      for(index_t d = 0; d < rset_.n_rows; d++) {
+	minindices_[d] = (int) floor((rset_(d, r) - mincoords_[d])/
 				     gridsizes_[d]);
       }
 
       // Assign the weights around the neighboring grid points due to this
       // data point. This results in 2^num_dims number of recursion per data
       // point.
-      assign_weights(r, qset_.n_rows() - 1, inv_gvolume, 0, 1);
+      assign_weights(r, qset_.n_rows - 1, inv_gvolume, 0, 1);
     }
 
   }
@@ -713,12 +711,8 @@ class FFTKde {
    *  @param results An uninitialized vector which will be initialized with
    *                 the computed density estimates.
    */
-  void get_density_estimates(Vector *results) {
-    results->Init(densities_.length());
-
-    for(index_t i = 0; i < densities_.length(); i++) {
-      (*results)[i] = densities_[i];
-    }
+  void get_density_estimates(arma::vec& results) {
+    results = densities_;
   }
 
   /** @brief Initialize the FFT KDE object with the query and the
@@ -728,7 +722,7 @@ class FFTKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module containing the parameters for execution.
    */
-  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
     
     // initialize module to the incoming one
     module_ = module_in;
@@ -742,27 +736,27 @@ class FFTKde {
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
-    qset_.Copy(qset);
-    densities_.Init(qset_.n_cols());
-    rset_.Copy(rset);
+    qset_ = qset;
+    densities_.set_size(qset_.n_cols);
+    rset_ = rset;
 
     // initialize member variables.
-    size_.Init(qset_.n_rows());
-    minindices_.Init(rset_.n_rows());
-    mincoords_.Init(qset_.n_rows());
-    maxcoords_.Init(qset_.n_rows());
-    diffcoords_.Init(qset_.n_rows());
-    gridsizes_.Init(qset_.n_rows());
-    kernelweights_dims_.Init(qset_.n_rows());
+    size_.reserve(qset_.n_rows);
+    minindices_.reserve(rset_.n_rows);
+    mincoords_.set_size(qset_.n_rows);
+    maxcoords_.set_size(qset_.n_rows);
+    diffcoords_.set_size(qset_.n_rows);
+    gridsizes_.set_size(qset_.n_rows);
+    kernelweights_dims_.reserve(qset_.n_rows);
 
     // set up the discretized grid for the reference dataset
     discretize_dataset();
 
-    nyquistnum_ = 2 * numgridpts_ / size_[rset_.n_rows() - 1];
+    nyquistnum_ = 2 * numgridpts_ / size_[rset_.n_rows - 1];
 
-    d_fnyquist_.Init(nyquistnum_);
-    k_fnyquist_.Init(nyquistnum_);
-    kernelweights_.Init(numgridpts_);
+    d_fnyquist_.set_size(nyquistnum_);
+    k_fnyquist_.set_size(nyquistnum_);
+    kernelweights_.set_size(numgridpts_);
 
     fx_timer_stop(module_, "fft_kde_init");
     printf("FFT KDE initialization completed...\n");
@@ -776,20 +770,20 @@ class FFTKde {
     fx_timer_start(module_, "fft_kde");
 
     // FFT the discretized bin count matrix.
-    d_fnyquist_.SetZero();
-    k_fnyquist_.SetZero();
-    kernelweights_.SetZero();
-    fftrn(discretized_.ptr(), d_fnyquist_.ptr(), rset_.n_rows(), 
-	  size_.begin(), 1);
+    d_fnyquist_.zeros();
+    k_fnyquist_.zeros();
+    kernelweights_.zeros();
+    fftrn(discretized_.memptr(), d_fnyquist_.memptr(), rset_.n_rows, 
+	  size_, 1);
 
     // Calculate the required kernel weights at each grid point. This matrix
     // will be convolved with fourier transformed data set.
     double precalc = -0.5 / kernel_.bandwidth_sq();
-    Gaussify(0.0, precalc, rset_.n_rows() - 1, 0, 1);
+    Gaussify(0.0, precalc, rset_.n_rows - 1, 0, 1);
 
     // FFT the kernel weight matrix.
-    fftrn(kernelweights_.ptr(), k_fnyquist_.ptr(), 
-	  rset_.n_rows(), size_.begin(), 1);
+    fftrn(kernelweights_.memptr(), k_fnyquist_.memptr(),
+	  rset_.n_rows, size_, 1);
 
     // We need to invoke the convolution theorem for FFT here. Take each
     // corresponding complex number in kernelweights and discretized and do
@@ -814,8 +808,8 @@ class FFTKde {
     }
 
     // Inverse FFT the elementwise multiplied matrix.
-    fftrn(discretized_.ptr(), d_fnyquist_.ptr(), 
-	  rset_.n_rows(), size_.begin(), -1);
+    fftrn(discretized_.memptr(), d_fnyquist_.memptr(), 
+	  rset_.n_rows, size_, -1);
 
     // Retrieve the densities of each data point.
     RetrieveDensities();
@@ -839,7 +833,7 @@ class FFTKde {
     if((fname = fx_param_str(module_, "fft_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     
