@@ -12,8 +12,8 @@
 #ifndef FOURIER_FARFIELD_EXPANSION
 #define FOURIER_FARFIELD_EXPANSION
 
+#include <fastlib/fastlib.h>
 
-#include "fastlib/fastlib.h"
 #include "kernel_aux.h"
 #include "complex_matrix.h"
 #include "fourier_series_expansion_aux.h"
@@ -26,7 +26,7 @@ class FourierExpansion {
  private:
 
   /** @brief The center of the expansion. */
-  GenVector<T> center_;
+  arma::Col<T> center_;
   
   /** @brief The coefficients. */
   ComplexVector<T> coeffs_;
@@ -43,12 +43,6 @@ class FourierExpansion {
   /** pointer to the precomputed constants inside kernel auxiliary object */
   const FourierSeriesExpansionAux<double> *sea_;
 
-  OT_DEF(FourierExpansion) {
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-
  public:
 
   friend class FourierSeriesExpansionAux<T>;
@@ -62,16 +56,16 @@ class FourierExpansion {
   double bandwidth_sq() const { return kernel_->bandwidth_sq(); }
   
   /** Get the center of expansion */
-  GenVector<T> *get_center() { 
-    return &center_; 
+  arma::Col<T>& get_center() { 
+    return center_; 
   }
 
-  const GenVector<T> *get_center() const { 
-    return &center_; 
+  const arma::Col<T>& get_center() const { 
+    return center_; 
   }
 
   /** Get the coefficients */
-  const ComplexVector<T> &get_coeffs() const {
+  const ComplexVector<T>& get_coeffs() const {
     return coeffs_;
   }
   
@@ -100,11 +94,8 @@ class FourierExpansion {
    * Set the center of the expansion - assumes that the center has been
    * initialized before...
    */
-  void set_center(const GenVector<T> &center) {
-    
-    for(index_t i = 0; i < center.length(); i++) {
-      center_[i] = center[i];
-    }
+  void set_center(const arma::Col<T>& center) {
+    center_ = center;
   }
 
   ////////// User-level Functions //////////
@@ -113,7 +104,7 @@ class FourierExpansion {
    * Accumulates the far field moment represented by the given reference
    * data into the coefficients
    */
-  void AccumulateCoeffs(const GenMatrix<T> &data, const GenVector<T> &weights,
+  void AccumulateCoeffs(const arma::Mat<T>& data, const arma::Col<T>& weights,
 			int begin, int end, int order) {
     
     // Loop over each data point and accumulate its contribution.
@@ -122,12 +113,12 @@ class FourierExpansion {
     for(index_t i = begin; i < end; i++) {
 
       // The current data point.
-      const double *point = data.GetColumnPtr(i);
+      const double *point = data.colptr(i);
 
       for(index_t j = 0; j < num_coefficients; j++) {
 	
 	// Retrieve the current mapping.
-	const ArrayList<short int> &mapping = sea_->get_multiindex(j);
+	const std::vector<short int> &mapping = sea_->get_multiindex(j);
 	
 	// Dot product between the multiindex and the relative
 	// coorindate of the data point.
@@ -154,7 +145,7 @@ class FourierExpansion {
    * Refine the far field moment that has been computed before up to
    * a new order.
    */
-  void RefineCoeffs(const GenMatrix<T> &data, const GenVector<T> &weights,
+  void RefineCoeffs(const arma::Mat<T>& data, const arma::Col<T>& weights,
 		    int begin, int end, int order) {
     
     AccumulateCoeffs(data, weights, begin, end, order);
@@ -163,8 +154,8 @@ class FourierExpansion {
   /**
    * Evaluates the far-field coefficients at the given point
    */
-  T EvaluateField(const GenMatrix<T> &data, int row_num, int order) const {
-    return EvaluateField(data.GetColumnPtr(row_num), order);
+  T EvaluateField(const arma::Mat<T> &data, int row_num, int order) const {
+    return EvaluateField(data.colptr(row_num), order);
   }
   
   T EvaluateField(const T *x_q, int order) const {
@@ -175,18 +166,18 @@ class FourierExpansion {
    * Initializes the current far field expansion object with the given
    * center.
    */
-  void Init(const GenVector<T> &center, const TKernelAux &ka) {
+  void Init(const arma::Col<T>& center, const TKernelAux &ka) {
 
     // copy kernel type, center, and bandwidth squared
     kernel_ = &(ka.kernel_);
-    center_.Copy(center);
+    center_ = center;
     order_ = -1;
     sea_ = &(ka.sea_);
     ka_ = &ka;
     
     // initialize coefficient array
     coeffs_.Init(sea_->get_max_total_num_coeffs());
-    coeffs_.SetZero();
+    coeffs_.SetAll(0.0);
   }
   
   void Init(const TKernelAux &ka) {
@@ -200,8 +191,7 @@ class FourierExpansion {
     ka_ = &ka;
     
     // initialize coefficient array
-    coeffs_.Init(sea_->get_max_total_num_coeffs());
-    coeffs_.SetZero();    
+    coeffs_.zeros(sea_->get_max_total_num_coeffs());
   }
 
   /** @brief Computes the required order for evaluating the far field

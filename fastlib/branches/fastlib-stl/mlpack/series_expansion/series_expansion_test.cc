@@ -1,5 +1,5 @@
-#include "fastlib/fastlib.h"
-#include "fastlib/base/test.h"
+#include <fastlib/fastlib.h>
+#include <fastlib/base/test.h>
 #include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"
 #include "complex_matrix.h"
@@ -10,16 +10,15 @@ class SeriesExpansionTest {
  private:
 
   template<typename TKernelAux>
-  double BaseCase_(const Vector &query_point, const Matrix &reference_set,
-		   const Vector &reference_weights,
+  double BaseCase_(const arma::vec& query_point, const arma::mat& reference_set,
+		   const arma::vec& reference_weights,
 		   const TKernelAux &kernel_aux) {
 
     double sum = 0.0;
     
-    for(index_t i = 0; i < reference_set.n_cols(); i++) {
+    for(index_t i = 0; i < reference_set.n_cols; i++) {
       double squared_distance = 
-	la::DistanceSqEuclidean(reference_set.n_rows(), query_point.ptr(),
-				reference_set.GetColumnPtr(i));      
+	la::DistanceSqEuclidean(query_point, reference_set.unsafe_col(i));
       printf("Got distance: %g\n", squared_distance);
       sum += kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
     }
@@ -45,25 +44,21 @@ class SeriesExpansionTest {
     kernel_aux.sea_.set_integral_truncation_limit(bandwidth * 3.0);
 
     // Create an expansion from a random synthetic dataset.
-    Matrix random_dataset;
-    Vector weights;
-    random_dataset.Init(3, 20);
-    Vector center;
-    center.Init(3);
-    center.SetZero();
-    weights.Init(20);
+    arma::mat random_dataset(3, 20);
+    arma::vec weights(20);
+    arma::vec center(3);
+    center.zeros();
     for(index_t j = 0; j < 20; j++) {
       for(index_t i = 0; i < 3; i++) {
-	random_dataset.set(i, j, math::Random(0, i));
+	random_dataset(i, j) = math::Random(0, i);
       }
     }
     for(index_t i = 0; i < 20; i++) {
-      la::AddTo(center.length(), random_dataset.GetColumnPtr(i), center.ptr());
+      center += random_dataset.unsafe_col(i);
     }
-    la::Scale(center.length(), 1.0 / ((double) 20), center.ptr());
-    
-    center.PrintDebug();
-    weights.SetAll(1.0);
+    center /= 20.0;
+    std::cout << center;
+    weights.ones();
     FourierExpansion<GaussianKernelFourierAux<double> > expansion;
     expansion.Init(center, kernel_aux);
     
@@ -74,11 +69,10 @@ class SeriesExpansionTest {
     coeffs.PrintDebug();
 
     // Evaluate the expansion, and compare against the naive.
-    Vector evaluation_point;
-    evaluation_point.Init(3);
-    evaluation_point.SetAll(2.0);
+    arma::vec evaluation_point(3);
+    evaluation_point.fill(2.0);
     NOTIFY("Expansion evaluated to be: %g",
-	   expansion.EvaluateField(evaluation_point.ptr(), 3));
+	   expansion.EvaluateField(evaluation_point.memptr(), 3));
     NOTIFY("Naive sum: %g", BaseCase_(evaluation_point, random_dataset,
 				      weights, kernel_aux));    
   }
@@ -96,7 +90,7 @@ class SeriesExpansionTest {
     // roughly corresponds to the base ((2 * order) + 1) number.
     int total_num_mapping = (int) pow(2 * order + 1, dim);
     for(index_t i = 0; i < total_num_mapping; i++) {
-      const ArrayList<short int> &mapping = series_aux.get_multiindex(i);
+      const std::vector<short int> &mapping = series_aux.get_multiindex(i);
 
       int number = 0;
       printf("The mapping: ");
