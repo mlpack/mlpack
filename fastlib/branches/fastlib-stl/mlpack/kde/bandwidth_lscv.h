@@ -15,29 +15,28 @@ class BandwidthLSCV {
   
  private:
 
-  static double plugin_bandwidth_(const Matrix &references) {
+  static double plugin_bandwidth_(const arma::mat& references) {
     
     double avg_sdev = 0;
-    int num_dims = references.n_rows();
-    int num_data = references.n_cols();
-    Vector mean_vector;
-    mean_vector.Init(references.n_rows());
-    mean_vector.SetZero();
+    int num_dims = references.n_rows;
+    int num_data = references.n_cols;
+    arma::vec mean_vector(references.n_rows);
+    mean_vector.zeros();
     
     // First compute the mean vector.
-    for(index_t i = 0; i < references.n_cols(); i++) {
-      for(index_t j = 0; j < references.n_rows(); j++) {
-	mean_vector[j] += references.get(j, i);
+    for(index_t i = 0; i < references.n_cols; i++) {
+      for(index_t j = 0; j < references.n_rows; j++) {
+	mean_vector[j] += references(j, i);
       }
     }
-    la::Scale(1.0 / ((double) num_data), &mean_vector);
+    mean_vector /= (double) num_data;
     
     // Loop over the dataset again and compute variance along each
     // dimension.
     for(index_t j = 0; j < num_dims; j++) {
       double sdev = 0;
       for(index_t i = 0; i < num_data; i++) {
-	sdev += math::Sqr(references.get(j, i) - mean_vector[j]);
+	sdev += pow(references(j, i) - mean_vector[j], 2.0);
       }
       sdev /= ((double) num_data - 1);
       sdev = sqrt(sdev);
@@ -46,8 +45,8 @@ class BandwidthLSCV {
     avg_sdev /= ((double) num_dims);
 
     double plugin_bw = 
-      pow((4.0 / (num_dims + 2.0)), 1.0 / (num_dims + 4.0)) * avg_sdev * 
-      pow(num_data, -1.0 / (num_dims + 4.0));
+        pow((4.0 / (num_dims + 2.0)), 1.0 / (num_dims + 4.0)) * avg_sdev * 
+        pow(num_data, -1.0 / (num_dims + 4.0));
 
     return plugin_bw;
   }
@@ -55,8 +54,8 @@ class BandwidthLSCV {
  public:
 
   template<typename TKernelAux>
-  static void ComputeLSCVScore(const Matrix &references,
-			       const Matrix &reference_weights,
+  static void ComputeLSCVScore(const arma::mat& references,
+			       const arma::mat& reference_weights,
 			       double bandwidth) {
 
     // Get the parameters.
@@ -86,8 +85,8 @@ class BandwidthLSCV {
   }
 
   template<typename TKernelAux>
-  static void Optimize(const Matrix &references,
-		       const Matrix &reference_weights) {
+  static void Optimize(const arma::mat& references,
+		       const arma::mat& reference_weights) {
     
     // Get the parameters.
     struct datanode *kde_module = fx_submodule(fx_root, "kde");
