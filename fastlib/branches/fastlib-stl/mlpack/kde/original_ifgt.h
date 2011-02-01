@@ -72,7 +72,7 @@
 #ifndef ORIGINAL_IFGT_H
 #define ORIGINAL_IFGT_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 
 class OriginalIFGT {
 
@@ -90,13 +90,13 @@ class OriginalIFGT {
   int num_reference_points_;
 
   /** @brief The column-oriented query dataset. */
-  Matrix query_set_;
+  arma::mat query_set_;
 
   /** @brief The column-oriented reference dataset. */
-  Matrix reference_set_;
+  arma::mat reference_set_;
 
   /** @brief The weights associated with each reference point. */
-  Vector reference_weights_;
+  arma::vec reference_weights_;
 
   /** @brief The bandwidth */
   double bandwidth_;
@@ -122,10 +122,10 @@ class OriginalIFGT {
   int total_num_coeffs_;
   
   /** @brief The coefficients weighted by reference_weights_ */
-  Matrix weighted_coeffs_;
+  arma::mat weighted_coeffs_;
 
   /** @brief The unweighted coefficients */
-  Matrix unweighted_coeffs_;
+  arma::mat unweighted_coeffs_;
 
   /** @brief The number of clusters desired for preprocessing */
   int num_cluster_desired_;
@@ -143,36 +143,35 @@ class OriginalIFGT {
 
   /** @brief The set of cluster centers
    */
-  Matrix cluster_centers_;
+  arma::mat cluster_centers_;
 
   /** @brief The reference point index that is being used for the
    *         center of the clusters during K-center algorithm.
    */
-  ArrayList<int> index_during_clustering_;
+  std::vector<int> index_during_clustering_;
 
   /** @brief The i-th position of this vector tells the cluster number
    *         to which the i-th reference point belongs.
    */
-  ArrayList<int> cluster_index_;
+  std::vector<int> cluster_index_;
 
   /** @brief The i-th position of this vector tells the radius of the i-th
    *         cluster.
    */
-  Vector cluster_radii_;
+  arma::vec cluster_radii_;
 
   /** @brief The number of reference points owned by each cluster.
    */
-  ArrayList<int> num_reference_points_in_cluster_;
+  std::vector<int> num_reference_points_in_cluster_;
 
   /** @brief This will hold the final computed densities.
    */
-  Vector densities_;
+  arma::vec densities_;
 
   ////////// Private Member Functions //////////
   void TaylorExpansion() {
       
-    Vector tmp_coeffs;
-    tmp_coeffs.Init(total_num_coeffs_);
+    arma::vec tmp_coeffs(total_num_coeffs_);
     
     ComputeUnweightedCoeffs_(tmp_coeffs);
     
@@ -181,12 +180,12 @@ class OriginalIFGT {
     return;	
   }
 
-  void ComputeUnweightedCoeffs_(Vector &taylor_coeffs) {
+  void ComputeUnweightedCoeffs_(arma::vec& taylor_coeffs) {
 	
-    ArrayList<int> heads;
-    heads.Init(dim_ + 1);
-    ArrayList<int> cinds;
-    cinds.Init(total_num_coeffs_);
+    std::vector<int> heads;
+    heads.reserve(dim_ + 1);
+    std::vector<int> cinds;
+    cinds.reserve(total_num_coeffs_);
     
     for (int i = 0; i < dim_; i++) {
       heads[i] = 0;
@@ -207,21 +206,19 @@ class OriginalIFGT {
 	}
       }
     }
-    return;    
+    return;
   }
 
-  void ComputeWeightedCoeffs_(Vector &taylor_coeffs) {
+  void ComputeWeightedCoeffs_(arma::vec& taylor_coeffs) {
     
-    Vector dx;
-    dx.Init(dim_);
-    Vector prods;
-    prods.Init(total_num_coeffs_);
-    ArrayList<int> heads;
-    heads.Init(dim_);
+    arma::vec dx(dim_);
+    arma::vec prods(total_num_coeffs_);
+    std::vector<int> heads;
+    heads.reserve(dim_);
     
     // initialize coefficients for all clusters to be zero.
-    weighted_coeffs_.SetZero();
-    unweighted_coeffs_.SetZero();
+    weighted_coeffs_.zeros();
+    unweighted_coeffs_.zeros();
     
     for(int n = 0; n < num_reference_points_; n++) {
       
@@ -229,7 +226,7 @@ class OriginalIFGT {
       double sum = 0.0;
       
       for(int i = 0; i < dim_; i++) {
-	dx[i] = (reference_set_.get(i, n) - cluster_centers_.get(i, ix2c)) / 
+	dx[i] = (reference_set_(i, n) - cluster_centers_(i, ix2c)) / 
 	  bandwidth_factor_;
 
 	sum -= dx[i] * dx[i];
@@ -249,10 +246,8 @@ class OriginalIFGT {
       
       // compute the weighted coefficients and unweighted coefficients.
       for(int i = 0; i < total_num_coeffs_; i++) {
-	weighted_coeffs_.set(i, ix2c, weighted_coeffs_.get(i, ix2c) +
-			     reference_weights_[n] * prods[i]);
-	unweighted_coeffs_.set(i, ix2c, unweighted_coeffs_.get(i, ix2c) +
-			       prods[i]);
+	weighted_coeffs_(i, ix2c) += reference_weights_[n] * prods[i];
+	unweighted_coeffs_(i, ix2c) += prods[i];
       }
       
     }// for n
@@ -260,10 +255,8 @@ class OriginalIFGT {
     // normalize by the Taylor coefficients.
     for(int k = 0; k < num_cluster_desired_; k++) {
       for(int i = 0; i < total_num_coeffs_; i++) {
-	weighted_coeffs_.set(i, k, weighted_coeffs_.get(i, k) * 
-			     taylor_coeffs[i]);
-	unweighted_coeffs_.set(i, k, unweighted_coeffs_.get(i, k) * 
-			       taylor_coeffs[i]);
+	weighted_coeffs_(i, k) *= taylor_coeffs[i];
+	unweighted_coeffs_(i, k) *= taylor_coeffs[i];
       }
     }
     return;
@@ -279,35 +272,29 @@ class OriginalIFGT {
     max_radius_cluster_ = 0;
 
     // clear all centers.
-    cluster_centers_.SetZero();
+    cluster_centers_.zeros();
     
     // Compute the weighted centroid for each cluster.
     for(int j = 0; j < dim_; j++) {
       for(int i = 0; i < num_reference_points_; i++) {
-	
-	cluster_centers_.set(j, cluster_index_[i],
-			     cluster_centers_.get(j, cluster_index_[i]) +
-			     reference_set_.get(j, i));
+	cluster_centers_(j, cluster_index_[i]) += reference_set_(j, i);
       }
     }
     
     for(int j = 0; j < dim_; j++) {
       for(int i = 0; i < num_cluster_desired_; i++) {
-	cluster_centers_.set(j, i, cluster_centers_.get(j, i) /
-			     num_reference_points_in_cluster_[i]);
+	cluster_centers_(j, i) /= num_reference_points_in_cluster_[i];
       }
     }
     
     // Now loop through and compute the radius of each cluster.
-    cluster_radii_.SetZero();
+    cluster_radii_.zeros();
     for(int i = 0; i < num_reference_points_; i++) {
-      Vector reference_pt;
-      reference_set_.MakeColumnVector(i, &reference_pt);
+      arma::vec reference_pt = reference_set_.col(i);
 
       // the index of the cluster this reference point belongs to.
       int cluster_id = cluster_index_[i];
-      Vector center;
-      cluster_centers_.MakeColumnVector(cluster_id, &center);
+      arma::vec center = cluster_centers_.col(cluster_id);
       cluster_radii_[cluster_id] = 
 	std::max(cluster_radii_[cluster_id], 
 		 sqrt(la::DistanceSqEuclidean(reference_pt, center)));
@@ -323,27 +310,24 @@ class OriginalIFGT {
    */
   double KCenterClustering() {
     
-    Vector distances_to_center;
-    distances_to_center.Init(num_reference_points_);
+    arma::vec distances_to_center(num_reference_points_);
     
     // randomly pick one node as the first center.
-    srand( (unsigned)time( NULL ) );
+    srand((unsigned) time(NULL));
     int ind = rand() % num_reference_points_;
     
     // add the ind-th node to the first center.
     index_during_clustering_[0] = ind;
-    Vector first_center;
-    reference_set_.MakeColumnVector(ind, &first_center);
+    arma::vec first_center = reference_set_.col(ind);
     
     // compute the distances from each node to the first center and
     // initialize the index of the cluster ID to zero for all
     // reference points.
     for(int j = 0; j < num_reference_points_; j++) {
-      Vector reference_point;
-      reference_set_.MakeColumnVector(j, &reference_point);
+      arma::vec reference_point = reference_set_.col(j);
       
       distances_to_center[j] = (j == ind) ? 
-	0.0:la::DistanceSqEuclidean(reference_point, first_center);
+	0.0 : la::DistanceSqEuclidean(reference_point, first_center);
       cluster_index_[j] = 0;
     }
     
@@ -358,14 +342,12 @@ class OriginalIFGT {
       index_during_clustering_[i] = ind;
       
       // Update the distances from each point to the current center.
-      Vector center;
-      reference_set_.MakeColumnVector(ind, &center);
+      arma::vec center = reference_set_.col(ind);
       
       for (int j = 0; j < num_reference_points_; j++) {
-	Vector reference_point;
-	reference_set_.MakeColumnVector(j, &reference_point);
+	arma::vec reference_point = reference_set_.col(j);
 	double d = (j == ind)? 
-	  0.0:la::DistanceSqEuclidean(reference_point, center);
+	  0.0 : la::DistanceSqEuclidean(reference_point, center);
 	
 	if (d < distances_to_center[j]) {
 	  distances_to_center[j] = d;
@@ -394,12 +376,12 @@ class OriginalIFGT {
   /** @brief Return the index whose position in the vector contains
    *         the largest element.
    */
-  int IndexOfLargestElement(const Vector &x) {
+  int IndexOfLargestElement(const arma::vec& x) {
     
     int largest_index = 0;
     double largest_quantity = -DBL_MAX;
     
-    for(int i = 0; i < x.length(); i++) {
+    for(int i = 0; i < x.n_elem; i++) {
       if(largest_quantity < x[i]) {
 	largest_quantity = x[i];
 	largest_index = i;
@@ -414,10 +396,10 @@ class OriginalIFGT {
    */
   void NormalizeDensities() {
     double norm_const = pow(2 * math::PI * bandwidth_sq_, 
-			    query_set_.n_rows() / 2.0) *
-      reference_set_.n_cols();
+			    query_set_.n_rows / 2.0) *
+                            reference_set_.n_cols;
 
-    for(index_t q = 0; q < query_set_.n_cols(); q++) {
+    for(index_t q = 0; q < query_set_.n_cols; q++) {
       densities_[q] /= norm_const;
     }
   }
@@ -432,7 +414,7 @@ class OriginalIFGT {
     double r = min(max_diameter_of_the_datasets, 
 		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
     
-    int p_ul=300;
+    int p_ul = 300;
     
     double rx_square = rx * rx;
     
@@ -469,11 +451,11 @@ class OriginalIFGT {
 		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
     
     // Upper limit on the truncation number.
-    int p_ul=200; 
+    int p_ul = 200; 
     
     num_cluster_desired_ = 1;
     
-    double complexity_min=1e16;
+    double complexity_min = 1e16;
     double rx;
 
     for(int i = 0; i < max_num_clusters; i++){
@@ -529,35 +511,30 @@ class OriginalIFGT {
    *  @param results An uninitialized vector which will be initialized
    *                 with the computed density estimates.
    */
-  void get_density_estimates(Vector *results) {
-    results->Init(densities_.length());
-
-    for(index_t i = 0; i < densities_.length(); i++) {
-      (*results)[i] = densities_[i];
-    }
+  void get_density_estimates(arma::vec& results) {
+    results = densities_;
   }
 
   ////////// User-leverl Functions //////////
 
-  void Init(Matrix &queries, Matrix &references, struct datanode *module_in) {
+  void Init(arma::mat& queries, arma::mat& references, struct datanode *module_in) {
     
     // set module to the incoming one.
     module_ = module_in;
     
     // set dimensionality
-    dim_ = references.n_rows();
+    dim_ = references.n_rows;
         
     // set up query set and reference set.
-    query_set_.Copy(queries);
-    reference_set_.Copy(references);
-    num_reference_points_ = reference_set_.n_cols();
+    query_set_ = queries;
+    reference_set_ = references;
+    num_reference_points_ = reference_set_.n_cols;
     
     // By default, the we do uniform weights only
-    reference_weights_.Init(reference_set_.n_cols());
-    reference_weights_.SetAll(1);
+    reference_weights_.ones(reference_set_.n_cols);
 
     // initialize density estimate vector
-    densities_.Init(query_set_.n_cols());
+    densities_.set_size(query_set_.n_cols);
     
     // A "hack" such that the code uses the proper Gaussian kernel.
     bandwidth_ = fx_param_double_req(module_, "bandwidth");
@@ -580,11 +557,11 @@ class OriginalIFGT {
     VERBOSE_MSG(0,"Tentatively chose %d truncation order...\n", pterms_);
 
     // Allocate spaces for storing coefficients and clustering information.
-    cluster_centers_.Init(dim_, num_cluster_desired_);
-    index_during_clustering_.Init(num_cluster_desired_);
-    cluster_index_.Init(num_reference_points_);
-    cluster_radii_.Init(num_cluster_desired_);
-    num_reference_points_in_cluster_.Init(num_cluster_desired_);    
+    cluster_centers_.set_size(dim_, num_cluster_desired_);
+    index_during_clustering_.reserve(num_cluster_desired_);
+    cluster_index_.reserve(num_reference_points_);
+    cluster_radii_.set_size(num_cluster_desired_);
+    num_reference_points_in_cluster_.reserve(num_cluster_desired_);    
     
     VERBOSE_MSG(0,"Now clustering...\n");
 
@@ -600,8 +577,8 @@ class OriginalIFGT {
     // pd = C_dim^(dim+pterms-1)
     total_num_coeffs_ = 
       (int) math::BinomialCoefficient(pterms_ + dim_ - 1, dim_);
-    weighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
-    unweighted_coeffs_.Init(total_num_coeffs_, num_cluster_desired_);
+    weighted_coeffs_.set_size(total_num_coeffs_, num_cluster_desired_);
+    unweighted_coeffs_.set_size(total_num_coeffs_, num_cluster_desired_);
 
     VERBOSE_MSG(0,"Maximum radius generated in the cluster: %g...\n",
 		max_radius_cluster_);
@@ -622,22 +599,17 @@ class OriginalIFGT {
 
     fx_timer_start(module_, "original_ifgt_kde_compute");
 
-    Vector dy;
-    dy.Init(dim_);
+    arma::vec dy(dim_);
+    arma::vec tempy(dim_);
+    arma::vec prods(total_num_coeffs_);
     
-    Vector tempy;
-    tempy.Init(dim_);
-    
-    Vector prods;
-    prods.Init(total_num_coeffs_);
-    
-    ArrayList<int> heads;
-    heads.Init(dim_);
+    std::vector<int> heads;
+    heads.reserve(dim_);
     
     // make sure the sum for each query point starts at zero.
-    densities_.SetZero();
+    densities_.zeros();
     
-    for(int m = 0; m < query_set_.n_cols(); m++) {	
+    for(int m = 0; m < query_set_.n_cols; m++) {
       
       // loop over each cluster and evaluate Taylor expansions.
       for(int kn = 0; kn < num_cluster_desired_; kn++) {
@@ -647,8 +619,8 @@ class OriginalIFGT {
 	// compute the ratio of the squared distance between each query
 	// point and each cluster center to the bandwidth factor.
 	for (int i = 0; i < dim_; i++) {
-	  dy[i] = (query_set_.get(i, m) - cluster_centers_.get(i, kn)) / 
-	    bandwidth_factor_;
+	  dy[i] = (query_set_(i, m) - cluster_centers_(i, kn)) / 
+              bandwidth_factor_;
 	  sum2 += dy[i] * dy[i];
 	}
 	
@@ -674,7 +646,7 @@ class OriginalIFGT {
 	}// for k
 	
 	for(int i = 0; i < total_num_coeffs_; i++) {
-	  densities_[m] += weighted_coeffs_.get(i, kn) * prods[i];
+	  densities_[m] += weighted_coeffs_(i, kn) * prods[i];
 	}
 	
       } // for each cluster
@@ -696,7 +668,7 @@ class OriginalIFGT {
     if((fname = fx_param_str(module_, "ifgt_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < query_set_.n_cols(); q++) {
+    for(index_t q = 0; q < query_set_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     
