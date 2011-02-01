@@ -19,14 +19,14 @@ void DualtreeKde<TKernelAux>::DualtreeKdeBase_(Tree *qnode, Tree *rnode,
     DualtreeKdeCommon::AddPostponed(qnode, q, this);
 
     // Get the query point.
-    const double *q_col = qset_.GetColumnPtr(q);
+    arma::vec q_col = qset_.unsafe_col(q);
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      arma::vec r_col = rset_.unsafe_col(r);
       
       // pairwise distance and kernel value
-      double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
+      double dsqd = la::DistanceSqEuclidean(q_col, r_col);
       double kernel_value = ka_.kernel_.EvalUnnormOnSq(dsqd);
       double weighted_kernel_value = rset_weights_[r] * kernel_value;
       
@@ -58,7 +58,7 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
  double &n_pruned, int &order_farfield_to_local, int &order_farfield, 
  int &order_local) {
   
-  int dim = rset_.n_rows();
+  int dim = rset_.n_rows;
   
   // actual amount of error incurred per each query/ref pair
   double actual_err_farfield_to_local = 0;
@@ -213,7 +213,7 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
     return false;
   }
 
-  else if(qset_.n_rows() <= 5 &&
+  else if(qset_.n_rows <= 5 &&
 	  PrunableEnhanced_(qnode, rnode, probability, dsqd_range, 
 			    kernel_value_range, dl, du, used_error, n_pruned, 
 			    order_farfield_to_local, order_farfield, 
@@ -366,13 +366,11 @@ void DualtreeKde<TKernelAux>::PreProcess(Tree *node) {
 
   // Initialize the center of expansions and bandwidth for series
   // expansion.
-  Vector bounding_box_center;
+  arma::vec bounding_box_center;
   node->stat().Init(ka_);
   node->bound().CalculateMidpoint(&bounding_box_center);
-  (node->stat().farfield_expansion_.get_center())->CopyValues
-    (bounding_box_center);
-  (node->stat().local_expansion_.get_center())->CopyValues
-    (bounding_box_center);
+  (node->stat().farfield_expansion_.get_center()) = bounding_box_center;
+  (node->stat().local_expansion_.get_center()) = bounding_box_center;
   
   // Initialize lower bound to 0.
   node->stat().mass_l_ = 0;

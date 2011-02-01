@@ -61,7 +61,9 @@
 
 #define INSIDE_DUALTREE_KDE_CV_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
+
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
 #include "mlpack/series_expansion/mult_farfield_expansion.h"
@@ -98,13 +100,12 @@ template<typename TKernelAux>
 class DualtreeKdeCV {
 
   friend class DualtreeKdeCommon;
-  
   friend class DualtreeKdeCVCommon;
 
  public:
   
   // our tree type using the KdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeCVStat<TKernelAux> > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, arma::vec>, arma::mat, KdeCVStat<TKernelAux> > Tree;
     
  private:
 
@@ -135,7 +136,7 @@ class DualtreeKdeCV {
 
   /** @brief The reference dataset.
    */
-  Matrix rset_;
+  arma::mat rset_;
   
   /** @brief The reference tree.
    */
@@ -143,7 +144,7 @@ class DualtreeKdeCV {
 
   /** @brief The reference weights.
    */
-  Vector rset_weights_;
+  arma::vec rset_weights_;
 
   double first_sum_l_;
   
@@ -217,7 +218,7 @@ class DualtreeKdeCV {
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  ArrayList<index_t> old_from_new_references_;
+  arma::Col<index_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -284,15 +285,15 @@ class DualtreeKdeCV {
 
     // Compute normalization constant.
     first_mult_const_ = 1.0 / 
-      (pow(sqrt(2), rset_.n_rows()) * 
-       second_ka_.kernel_.CalcNormConstant(rset_.n_rows()));
+      (pow(sqrt(2), rset_.n_rows) *
+       second_ka_.kernel_.CalcNormConstant(rset_.n_rows));
     second_mult_const_ = 1.0 /
-      second_ka_.kernel_.CalcNormConstant(rset_.n_rows());
+      second_ka_.kernel_.CalcNormConstant(rset_.n_rows);
 
     // Set accuracy parameters.
     relative_error_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
-      first_ka_.kernel_.CalcNormConstant(rset_.n_rows());
+      first_ka_.kernel_.CalcNormConstant(rset_.n_rows);
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
@@ -334,12 +335,12 @@ class DualtreeKdeCV {
     double lscv_score = 
       (first_sum_e_ - 2.0 * second_sum_e_ +
        2.0 * second_ka_.kernel_.EvalUnnormOnSq(0.0) / 
-       second_ka_.kernel_.CalcNormConstant(rset_.n_rows())) /
-      ((double) rset_.n_cols());
+       second_ka_.kernel_.CalcNormConstant(rset_.n_rows)) /
+      ((double) rset_.n_cols);
     return lscv_score;
   }
 
-  void Init(const Matrix &references, const Matrix &rset_weights,
+  void Init(const arma::mat& references, const arma::mat& rset_weights,
 	    struct datanode *module_in) {
 
     // point to the incoming module
@@ -350,11 +351,11 @@ class DualtreeKdeCV {
     
     // Copy reference dataset and reference weights and compute its
     // sum.
-    rset_.Copy(references);
-    rset_weights_.Init(rset_weights.n_cols());
+    rset_ = references;
+    rset_weights_.set_size(rset_weights.n_cols);
     rset_weight_sum_ = 0;
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
-      rset_weights_[i] = rset_weights.get(0, i);
+    for(index_t i = 0; i < rset_weights.n_cols; i++) {
+      rset_weights_[i] = rset_weights(0, i);
       rset_weight_sum_ += rset_weights_[i];
     }
 
@@ -374,40 +375,41 @@ class DualtreeKdeCV {
 
     // Initialize the series expansion object. I should think about
     // whether this is true for kernels other than Gaussian.
-    if(rset_.n_rows() <= 2) {
+    if(rset_.n_rows <= 2) {
       first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 7), 
-		     rset_.n_rows());
+		     rset_.n_rows);
       second_ka_.Init(bandwidth, fx_param_int(module_, "order", 7), 
-		      rset_.n_rows());
+		      rset_.n_rows);
     }
-    else if(rset_.n_rows() <= 3) {
+    else if(rset_.n_rows <= 3) {
       first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 5), 
-		     rset_.n_rows());
+		     rset_.n_rows);
       second_ka_.Init(bandwidth, fx_param_int(module_, "order", 5), 
-		      rset_.n_rows());
+		      rset_.n_rows);
     }
-    else if(rset_.n_rows() <= 5) {
+    else if(rset_.n_rows <= 5) {
       first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 3), 
-		     rset_.n_rows());
+		     rset_.n_rows);
       second_ka_.Init(bandwidth, fx_param_int(module_, "order", 3), 
-		      rset_.n_rows());
+		      rset_.n_rows);
     }
-    else if(rset_.n_rows() <= 6) {
+    else if(rset_.n_rows <= 6) {
       first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 1), 
-		     rset_.n_rows());
+		     rset_.n_rows);
       second_ka_.Init(bandwidth, fx_param_int(module_, "order", 1), 
-		      rset_.n_rows());
+		      rset_.n_rows);
     }
     else {
       first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 0), 
-		     rset_.n_rows());
+		     rset_.n_rows);
       second_ka_.Init(bandwidth, fx_param_int(module_, "order", 0), 
-		      rset_.n_rows()); 
+		      rset_.n_rows); 
     }
   }
 };
 
 #include "dualtree_kde_cv_impl.h"
+
 #undef INSIDE_DUALTREE_KDE_CV_H
 
 #endif

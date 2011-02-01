@@ -96,14 +96,13 @@ class DualtreeKdeCommon {
    *  @param permutation The permutation.
    */
   static void ShuffleAccordingToPermutation
-  (Vector &v, const ArrayList<index_t> &permutation) {
+  (arma::vec& v, const arma::Col<index_t> &permutation) {
     
-    Vector v_tmp;
-    v_tmp.Init(v.length());
-    for(index_t i = 0; i < v_tmp.length(); i++) {
+    arma::vec v_tmp(v.n_elem);
+    for(index_t i = 0; i < v_tmp.n_elem; i++) {
       v_tmp[i] = v[permutation[i]];
     }
-    v.CopyValues(v_tmp);
+    v = v_tmp;
   }
 
   static double OuterConfidenceInterval
@@ -240,15 +239,15 @@ class DualtreeKdeCommon {
 	  
 	  // Get the pointer to the current query point.
 	  const double *query_point = 
-	    (kde_object->qset_).GetColumnPtr(random_query_point_index);
+	    (kde_object->qset_).colptr(random_query_point_index);
 	  
 	  // Get the pointer to the current reference point.
 	  const double *reference_point = 
-	    (kde_object->rset_).GetColumnPtr(random_reference_point_index);
+	    (kde_object->rset_).colptr(random_reference_point_index);
 	  
 	  // Compute the pairwise distance and kernel value.
 	  double squared_distance = la::DistanceSqEuclidean
-	    ((kde_object->rset_).n_rows(), query_point, reference_point);
+	    ((kde_object->rset_).n_rows, query_point, reference_point);
 	  
 	  double weighted_kernel_value = 
 	    kde_object->EvalUnnormOnSq_(random_reference_point_index,

@@ -6,16 +6,15 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <armadillo>
+
 #include "dataset_scaler.h"
 #include "dualtree_kde.h"
 #include "dualtree_vkde.h"
 #include "naive_kde.h"
 
-#include <armadillo>
-#include <fastlib/base/arma_compat.h>
-
-void VariableBandwidthKde(Matrix &queries, Matrix &references, 
-			  Matrix &reference_weights, 
+void VariableBandwidthKde(arma::mat& queries, arma::mat& references, 
+			  arma::mat& reference_weights, 
 			  bool queries_equal_references,
 			  struct datanode *kde_module) {
 
@@ -24,7 +23,7 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
 
   if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
     
-    Vector fast_kde_results;
+    arma::vec fast_kde_results;
     
     // for O(p^D) expansion
     if(fx_param_exists(kde_module, "multiplicative_expansion")) {
@@ -33,7 +32,7 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
       DualtreeVKde<GaussianKernel> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
+      fast_kde.Compute(fast_kde_results);
       
       if(fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
@@ -47,7 +46,7 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
       DualtreeVKde<GaussianKernel> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
+      fast_kde.Compute(fast_kde_results);
       
       if(true || fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
@@ -67,11 +66,11 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
     DualtreeVKde<EpanKernel> fast_kde;
-    Vector fast_kde_results;
+    arma::vec fast_kde_results;
 
     fast_kde.Init(queries, references, reference_weights,
 		  queries_equal_references, kde_module);
-    fast_kde.Compute(&fast_kde_results);
+    fast_kde.Compute(fast_kde_results);
     
     if(fx_param_exists(kde_module, "fast_kde_output")) {
       fast_kde.PrintDebug();
@@ -90,8 +89,8 @@ void VariableBandwidthKde(Matrix &queries, Matrix &references,
   }
 }
 
-void FixedBandwidthKde(Matrix &queries, Matrix &references, 
-		       Matrix &reference_weights, 
+void FixedBandwidthKde(arma::mat& queries, arma::mat& references, 
+		       arma::mat& reference_weights,
 		       bool queries_equal_references,
 		       struct datanode *kde_module) {
 
@@ -100,7 +99,7 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
 
   if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
     
-    Vector fast_kde_results;
+    arma::vec fast_kde_results;
     
     // for O(p^D) expansion
     if(fx_param_exists(kde_module, "multiplicative_expansion")) {
@@ -109,7 +108,7 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
       DualtreeKde<GaussianKernelMultAux> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
+      fast_kde.Compute(fast_kde_results);
       
       if(fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
@@ -123,7 +122,7 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
       DualtreeKde<GaussianKernelAux> fast_kde;
       fast_kde.Init(queries, references, reference_weights,
 		    queries_equal_references, kde_module);
-      fast_kde.Compute(&fast_kde_results);
+      fast_kde.Compute(fast_kde_results);
       
       if(true || fx_param_exists(kde_module, "fast_kde_output")) {
 	fast_kde.PrintDebug();
@@ -144,11 +143,11 @@ void FixedBandwidthKde(Matrix &queries, Matrix &references,
   }
   else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
     DualtreeKde<EpanKernelAux> fast_kde;
-    Vector fast_kde_results;
+    arma::vec fast_kde_results;
 
     fast_kde.Init(queries, references, reference_weights,
 		  queries_equal_references, kde_module);
-    fast_kde.Compute(&fast_kde_results);
+    fast_kde.Compute(fast_kde_results);
     
     if(fx_param_exists(kde_module, "fast_kde_output")) {
       fast_kde.PrintDebug();
@@ -258,35 +257,33 @@ int main(int argc, char *argv[]) {
     fx_param_str(fx_root, "query", references_file_name);
   
   // Query and reference datasets, reference weight dataset.
-  Matrix references;
-  Matrix reference_weights;
-  Matrix queries;
+  arma::mat references;
+  arma::mat reference_weights;
+  arma::mat queries;
 
   // Flag for telling whether references are equal to queries
   bool queries_equal_references = 
     !strcmp(queries_file_name, references_file_name);
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  arma::mat tmp;
-  data::Load(references_file_name, tmp);  
-  arma_compat::armaToMatrix(tmp, references);
+  data::Load(references_file_name, references);
   if(queries_equal_references) {
-    queries.Alias(references);
+    // make an alias; I don't like to do it this way, this code needs to be
+    // redesigned so that this is not a problem
+    queries = arma::mat(references.memptr(), references.n_rows, references.n_cols, false, true);
   }
   else {
-    data::Load(queries_file_name, tmp);
-    arma_compat::armaToMatrix(tmp, queries);
+    data::Load(queries_file_name, queries);
   }
 
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
   if(fx_param_exists(fx_root, "dwgts")) {
-    data::Load(fx_param_str(fx_root, "dwgts", NULL), tmp);
-    arma_compat::armaToMatrix(tmp, reference_weights);
+    data::Load(fx_param_str(fx_root, "dwgts", NULL), reference_weights);
   }
   else {
-    reference_weights.Init(1, references.n_cols());
-    reference_weights.SetAll(1);
+    reference_weights.set_size(1, references.n_cols);
+    reference_weights.fill(1.0);
   }
   
   // Confirm whether the user asked for scaling of the dataset

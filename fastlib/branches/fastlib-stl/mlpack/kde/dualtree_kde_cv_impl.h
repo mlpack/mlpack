@@ -12,14 +12,14 @@ void DualtreeKdeCV<TKernelAux>::DualtreeKdeCVBase_(Tree *qnode, Tree *rnode,
   for(index_t q = qnode->begin(); q < qnode->end(); q++) {
 
     // Get the query point.
-    const double *q_col = rset_.GetColumnPtr(q);
+    arma::vec q_col = rset_.unsafe_col(q);
     for(index_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point.
-      const double *r_col = rset_.GetColumnPtr(r);
+      arma::vec r_col = rset_.unsafe_col(r);
       
       // Pairwise distance and kernel values.
-      double dsqd = la::DistanceSqEuclidean(rset_.n_rows(), q_col, r_col);
+      double dsqd = la::DistanceSqEuclidean(q_col, r_col);
       double first_kernel_value = first_ka_.kernel_.EvalUnnormOnSq(dsqd);
       double first_weighted_kernel_value = rset_weights_[r] * 
 	first_kernel_value;
@@ -93,12 +93,12 @@ bool DualtreeKdeCV<TKernelAux>::PrunableEnhanced_
 
   // Get the order of approximations.
   first_order = query_first_farfield_expansion.OrderForConvolving
-    (rnode->bound(), *(rnode->stat().first_farfield_expansion_.get_center()),
-     qnode->bound(), *(qnode->stat().first_farfield_expansion_.get_center()),
+    (rnode->bound(), rnode->stat().first_farfield_expansion_.get_center(),
+     qnode->bound(), qnode->stat().first_farfield_expansion_.get_center(),
      dsqd_range.lo, dsqd_range.hi, first_allowed_err, &first_used_error);
   second_order = query_second_farfield_expansion.OrderForConvolving
-    (rnode->bound(), *(rnode->stat().first_farfield_expansion_.get_center()),
-     qnode->bound(), *(qnode->stat().first_farfield_expansion_.get_center()),
+    (rnode->bound(), rnode->stat().first_farfield_expansion_.get_center(),
+     qnode->bound(), qnode->stat().first_farfield_expansion_.get_center(),
      dsqd_range.lo, dsqd_range.hi, second_allowed_err, &second_used_error);
   
   // If the approximation can be done, and it is cheaper than
@@ -155,7 +155,7 @@ bool DualtreeKdeCV<TKernelAux>::DualtreeKdeCVCanonical_
     return true;
   }
 
-  else if(rset_.n_rows() <= 5 && PrunableEnhanced_
+  else if(rset_.n_rows <= 5 && PrunableEnhanced_
 	  (qnode, rnode, probability, dsqd_range, first_kernel_value_range, 
 	   second_kernel_value_range, first_dl, first_de, first_du, 
 	   first_used_error, first_order, second_dl, second_de, second_du, 
@@ -304,13 +304,11 @@ void DualtreeKdeCV<TKernelAux>::PreProcess(Tree *node) {
 
   // Initialize the center of expansions and bandwidth for series
   // expansion.
-  Vector bounding_box_center;
+  arma::vec bounding_box_center;
   node->stat().Init(first_ka_, second_ka_);
   node->bound().CalculateMidpoint(&bounding_box_center);
-  (node->stat().first_farfield_expansion_.get_center())->CopyValues
-    (bounding_box_center);
-  (node->stat().second_farfield_expansion_.get_center())->CopyValues
-    (bounding_box_center);
+  (node->stat().first_farfield_expansion_.get_center()) = bounding_box_center;
+  (node->stat().second_farfield_expansion_.get_center()) = bounding_box_center;
   
   // for non-leaf node, recurse
   if(!node->is_leaf()) {

@@ -42,15 +42,15 @@ class DualtreeKdeCVCommon {
       
       // Get the pointer to the current query point.
       const double *query_point = 
-	(kde_object->rset_).GetColumnPtr(random_query_point_index);
+	(kde_object->rset_).colptr(random_query_point_index);
       
       // Get the pointer to the current reference point.
       const double *reference_point = 
-	(kde_object->rset_).GetColumnPtr(random_reference_point_index);
+	(kde_object->rset_).colptr(random_reference_point_index);
       
       // Compute the pairwise distance and kernel value.
       double squared_distance = la::DistanceSqEuclidean
-	((kde_object->rset_).n_rows(), query_point, reference_point);
+	((kde_object->rset_).n_rows, query_point, reference_point);
       
       double first_weighted_kernel_value;
       double second_weighted_kernel_value;

@@ -64,7 +64,9 @@
 
 #define INSIDE_DUALTREE_KDE_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
+
 #include "mlpack/series_expansion/farfield_expansion.h"
 #include "mlpack/series_expansion/local_expansion.h"
 #include "mlpack/series_expansion/mult_farfield_expansion.h"
@@ -164,7 +166,7 @@ class DualtreeKde {
  public:
   
   // our tree type using the KdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, KdeStat<TKernelAux> > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, arma::vec>, arma::mat, KdeStat<TKernelAux> > Tree;
     
  private:
 
@@ -197,7 +199,7 @@ class DualtreeKde {
 
   /** @brief The query dataset.
    */
-  Matrix qset_;
+  arma::mat qset_;
 
   /** @brief The query tree.
    */
@@ -205,7 +207,7 @@ class DualtreeKde {
 
   /** @brief The reference dataset.
    */
-  Matrix rset_;
+  arma::mat rset_;
   
   /** @brief The reference tree.
    */
@@ -213,28 +215,28 @@ class DualtreeKde {
 
   /** @brief The reference weights.
    */
-  Vector rset_weights_;
+  arma::vec rset_weights_;
 
   /** @brief The running lower bound on the densities.
    */
-  Vector densities_l_;
+  arma::vec densities_l_;
 
   /** @brief The computed densities.
    */
-  Vector densities_e_;
+  arma::vec densities_e_;
 
   /** @brief The running upper bound on the densities.
    */
-  Vector densities_u_;
+  arma::vec densities_u_;
 
   /** @brief The amount of used error for each query.
    */
-  Vector used_error_;
+  arma::vec used_error_;
 
   /** @brief The number of reference points taken care of for each
    *         query.
    */
-  Vector n_pruned_;
+  arma::vec n_pruned_;
 
   /** @brief The sum of all reference weights.
    */
@@ -274,12 +276,12 @@ class DualtreeKde {
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
    */
-  ArrayList<index_t> old_from_new_queries_;
+  arma::Col<index_t> old_from_new_queries_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  ArrayList<index_t> old_from_new_references_;
+  arma::Col<index_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -352,43 +354,39 @@ class DualtreeKde {
 
   /** @brief Get the density estimate.
    */
-  void get_density_estimates(Vector *results) { 
-    results->Init(densities_e_.length());
-    
-    for(index_t i = 0; i < densities_e_.length(); i++) {
-      (*results)[i] = densities_e_[i];
-    }
+  void get_density_estimates(arma::vec& results) { 
+    results = densities_e_;
   }
 
   ////////// User Level Functions //////////
 
-  void Compute(Vector *results) {
+  void Compute(arma::vec& results) {
 
     // compute normalization constant
     if(fx_param_exists(module_, "normalizing_dimension"))  {
       NOTIFY("Using normalizing dimension of %d", 
-	     fx_param_int(module_, "normalizing_dimension", qset_.n_rows()));
+	     fx_param_int(module_, "normalizing_dimension", qset_.n_rows));
       mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant
-	(fx_param_int(module_, "normalizing_dimension", qset_.n_rows()));
+	(fx_param_int(module_, "normalizing_dimension", qset_.n_rows));
     }
     else {
-      NOTIFY("Using the default dimension of %d", qset_.n_rows());
-      mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows());
+      NOTIFY("Using the default dimension of %d", qset_.n_rows);
+      mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows);
     }
 
     // Set accuracy parameters.
     relative_error_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
-      ka_.kernel_.CalcNormConstant(qset_.n_rows());
+      ka_.kernel_.CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
-    densities_l_.SetZero();
-    densities_e_.SetZero();
-    densities_u_.SetAll(rset_weight_sum_);
+    densities_l_.zeros();
+    densities_e_.zeros();
+    densities_u_.fill(rset_weight_sum_);
 
     // Set zero for error accounting stuff.
-    used_error_.SetZero();
-    n_pruned_.SetZero();
+    used_error_.zeros();
+    n_pruned_.zeros();
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ =
@@ -422,14 +420,13 @@ class DualtreeKde {
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
-    Vector tmp_q_results;
-    tmp_q_results.Init(densities_e_.length());
+    arma::vec tmp_q_results(densities_e_.n_elem);
     
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(index_t i = 0; i < tmp_q_results.n_elem; i++) {
       tmp_q_results[old_from_new_queries_[i]] =
 	densities_e_[i];
     }
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(index_t i = 0; i < tmp_q_results.n_elem; i++) {
       densities_e_[i] = tmp_q_results[i];
     }
 
@@ -437,8 +434,8 @@ class DualtreeKde {
     get_density_estimates(results);
   }
 
-  void Init(const Matrix &queries, const Matrix &references,
-	    const Matrix &rset_weights, bool queries_equal_references, 
+  void Init(const arma::mat &queries, const arma::mat &references,
+	    const arma::mat &rset_weights, bool queries_equal_references, 
 	    struct datanode *module_in) {
 
     // point to the incoming module
@@ -446,7 +443,7 @@ class DualtreeKde {
 
     // Set the flag for whether to perform leave-one-out computation.
     leave_one_out_ = fx_param_exists(module_in, "loo") &&
-      (queries.ptr() == references.ptr());
+      (queries.memptr() == references.memptr());
 
     // Read in the number of points owned by a leaf.
     int leaflen = fx_param_int(module_in, "leaflen", 20);
@@ -454,20 +451,22 @@ class DualtreeKde {
 
     // Copy reference dataset and reference weights and compute its
     // sum.
-    rset_.Copy(references);
-    rset_weights_.Init(rset_weights.n_cols());
+    rset_ = references;
+    rset_weights_.set_size(rset_weights.n_cols);
     rset_weight_sum_ = 0;
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
-      rset_weights_[i] = rset_weights.get(0, i);
+    for(index_t i = 0; i < rset_weights.n_cols; i++) {
+      rset_weights_[i] = rset_weights(0, i);
       rset_weight_sum_ += rset_weights_[i];
     }
 
     // Copy query dataset.
     if(queries_equal_references) {
-      qset_.Alias(rset_);
+      // make alias... I do not like that I am doing this, but the code needs to
+      // compile
+      qset_ = arma::mat(rset_.memptr(), rset_.n_cols, rset_.n_rows, false, true);
     }
     else {
-      qset_.Copy(queries);
+      qset_ = queries;
     }
 
     // Construct query and reference trees. Shuffle the reference
@@ -482,7 +481,7 @@ class DualtreeKde {
 
     if(queries_equal_references) {
       qroot_ = rroot_;
-      old_from_new_queries_.InitCopy(old_from_new_references_);
+      old_from_new_queries_ = old_from_new_references_;
     }
     else {
       qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
@@ -492,32 +491,32 @@ class DualtreeKde {
     fx_timer_stop(NULL, "tree_d");
     
     // Initialize the density lists
-    densities_l_.Init(qset_.n_cols());
-    densities_e_.Init(qset_.n_cols());
-    densities_u_.Init(qset_.n_cols());
+    densities_l_.set_size(qset_.n_cols);
+    densities_e_.set_size(qset_.n_cols);
+    densities_u_.set_size(qset_.n_cols);
 
     // Initialize the error accounting stuff.
-    used_error_.Init(qset_.n_cols());
-    n_pruned_.Init(qset_.n_cols());
+    used_error_.set_size(qset_.n_cols);
+    n_pruned_.set_size(qset_.n_cols);
 
     // Initialize the kernel.
     double bandwidth = fx_param_double_req(module_, "bandwidth");
 
     // initialize the series expansion object
-    if(qset_.n_rows() <= 2) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 7), qset_.n_rows());
+    if(qset_.n_rows <= 2) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 7), qset_.n_rows);
     }
-    else if(qset_.n_rows() <= 3) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 5), qset_.n_rows());
+    else if(qset_.n_rows <= 3) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 5), qset_.n_rows);
     }
-    else if(qset_.n_rows() <= 5) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 3), qset_.n_rows());
+    else if(qset_.n_rows <= 5) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 3), qset_.n_rows);
     }
-    else if(qset_.n_rows() <= 6) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 1), qset_.n_rows());
+    else if(qset_.n_rows <= 6) {
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 1), qset_.n_rows);
     }
     else {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 0), qset_.n_rows());
+      ka_.Init(bandwidth, fx_param_int(module_, "order", 0), qset_.n_rows);
     }
   }
 
@@ -530,7 +529,7 @@ class DualtreeKde {
 			     "fast_kde_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_e_[q]);
     }
     
