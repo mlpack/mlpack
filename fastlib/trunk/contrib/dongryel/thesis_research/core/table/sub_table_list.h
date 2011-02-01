@@ -86,11 +86,10 @@ class SubTableList {
     void push_back(
       int rank_in, core::table::DenseMatrix &data_alias_in,
       OldFromNewIndexType *old_from_new_alias_in,
-      int *new_from_old_alias_in,
       int max_num_levels_to_serialize_in) {
       list_.resize(list_.size() + 1);
       list_[list_.size() - 1].Init(
-        rank_in, data_alias_in, old_from_new_alias_in, new_from_old_alias_in,
+        rank_in, data_alias_in, old_from_new_alias_in,
         max_num_levels_to_serialize_in);
     }
 

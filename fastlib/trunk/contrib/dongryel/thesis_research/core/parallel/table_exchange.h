@@ -49,8 +49,6 @@ class TableExchange {
 
     std::vector< typename TableType::OldFromNewIndexType *> old_from_new_cache_;
 
-    std::vector<int *> new_from_old_cache_;
-
     /** @brief The circular buffer that acts as the cache of received
      *         subtables.
      */
@@ -118,11 +116,9 @@ class TableExchange {
         if(old_from_new_cache_[i] != NULL) {
           if(core::table::global_m_file_) {
             core::table::global_m_file_->DestroyPtr(old_from_new_cache_[i]);
-            core::table::global_m_file_->DestroyPtr(new_from_old_cache_[i]);
           }
           else {
             delete[](old_from_new_cache_[i]);
-            delete[](new_from_old_cache_[i]);
           }
         }
       }
@@ -163,7 +159,6 @@ class TableExchange {
       // Preallocate the point cache.
       point_cache_.resize(world.size());
       old_from_new_cache_.resize(world.size());
-      new_from_old_cache_.resize(world.size());
       received_subtables_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
         received_subtables_[i].set_capacity(subtable_cache_size_per_process);
@@ -180,16 +175,9 @@ class TableExchange {
             typename TableType::OldFromNewIndexType > (
               distributed_table.local_n_entries(i)) :
             new OldFromNewIndexType[ distributed_table.local_n_entries(i)];
-          new_from_old_cache_[i] =
-            (core::table::global_m_file_) ?
-            core::table::global_m_file_->ConstructArray <
-            int > (
-              distributed_table.local_n_entries(i)) :
-            new int[ distributed_table.local_n_entries(i)];
         }
         else {
           old_from_new_cache_[i] = NULL;
-          new_from_old_cache_[i] = NULL;
         }
       }
     }
@@ -256,7 +244,7 @@ class TableExchange {
           if(receive_requests[j].size() > 0) {
             received_subtables_in_this_round[j].push_back(
               j, point_cache_[j], old_from_new_cache_[j],
-              new_from_old_cache_[j], max_num_levels_to_serialize);
+              max_num_levels_to_serialize);
           }
         }
 
