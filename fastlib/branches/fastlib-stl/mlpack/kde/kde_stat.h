@@ -133,11 +133,11 @@ class VKdeStat {
     postponed_n_pruned_ = 0;
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const arma::mat& dataset, index_t &start, index_t &count) {
     Init();
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const arma::mat& dataset, index_t &start, index_t &count,
 	    const VKdeStat& left_stat, const VKdeStat& right_stat) {
     Init();
   }
@@ -285,12 +285,12 @@ class KdeStat {
     local_expansion_.Init(ka);
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const arma::mat& dataset, index_t &start, index_t &count) {
     Init();
     //subspace_.Init(dataset, start, count);
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const arma::mat& dataset, index_t &start, index_t &count,
 	    const KdeStat& left_stat,
 	    const KdeStat& right_stat) {
     Init();
@@ -298,7 +298,7 @@ class KdeStat {
     //	   right_stat.subspace_);
   }
     
-  void Init(const Vector& center, const TKernelAux &ka) {
+  void Init(const arma::vec& center, const TKernelAux &ka) {
       
     farfield_expansion_.Init(center, ka);
     local_expansion_.Init(center, ka);
