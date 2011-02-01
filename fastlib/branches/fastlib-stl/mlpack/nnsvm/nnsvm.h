@@ -10,9 +10,9 @@
 #ifndef U_NNSVM_NNSVM_H
 #define U_NNSVM_NNSVM_H
 
-#include "nnsmo.h"
+#include <fastlib/fastlib.h>
 
-#include "fastlib/fastlib.h"
+#include "nnsmo.h"
 
 #include <typeinfo>
 
@@ -24,14 +24,16 @@
 */
 struct SVMLinearKernel {
   void Init(datanode *node) {}
+
   void Copy(const SVMLinearKernel& other) {}
+
   /* Kernel value evaluation */
-  double Eval(const Vector& a, const Vector& b) const {
-    return la::Dot(a, b);
+  double Eval(const arma::vec& a, const arma::vec& b) const {
+    return dot(a, b);
   }
   /* Kernel name */
-  void GetName(String* kname) {
-    kname->Copy("linear");
+  void GetName(std::string& kname) {
+    kname = "linear";
   }
   /* Get an type ID for kernel */
   int GetTypeId() {
@@ -47,22 +49,22 @@ struct SVMLinearKernel {
 */
 class SVMRBFKernel {
  /* Init of kernel parameters */
-  ArrayList<double> kpara_; // kernel parameters
+  std::vector<double> kpara_; // kernel parameters
   void Init(datanode *node) { //TODO: NULL->node
-    kpara_.Init(2);
+    kpara_.reserve(2);
     kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
-    kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
+    kpara_[1] = -1.0 / (2 * pow(kpara_[0], 2.0)); //gamma
   }
   /* Kernel name */
-  void GetName(String* kname) {
-    kname->Copy("gaussian");
+  void GetName(std::string& kname) {
+    kname = "gaussian";
   }
   /* Get an type ID for kernel */
   int GetTypeId() {
     return ID_GAUSSIAN;
   }
   /* Kernel value evaluation */
-  double Eval(const Vector& a, const Vector& b) const {
+  double Eval(const arma::vec& a, const arma::vec& b) const {
     double distance_squared = la::DistanceSqEuclidean(a, b);
     return exp(kpara_[1] * distance_squared);
   }
@@ -84,34 +86,34 @@ class NNSVM {
  private:
   struct NNSVM_MODELS {
     double thresh_; //negation of the intercept
-    Vector sv_coef_; // the alpha vector
-    Vector w_; // the weight vector 
+    arma::vec sv_coef_; // the alpha vector
+    arma::vec w_; // the weight vector 
     index_t num_sv_; // number of support vectors
   };
   NNSVM_MODELS model_;
 
   struct NNSVM_PARAMETERS {
     TKernel kernel_; 
-    String kernelname_; 
+    std::string kernelname_; 
     int kerneltypeid_;
     double c_; 
     int b_;
-	double eps_; //tolerance
-	int max_iter_; // maximum iterations
+    double eps_; //tolerance
+    int max_iter_; // maximum iterations
   };
   NNSVM_PARAMETERS param_; // same for every binary model
  
-  Matrix support_vectors_;
+  arma::mat support_vectors_;
   int num_features_;
   
  public:
   void Init(const Dataset& dataset, int n_classes, datanode *module);
   void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
-  void SaveModel(String modelfilename);
-  void LoadModel(Dataset* testset, String modelfilename);
-  int Classify(const Vector& vector);
-  void BatchClassify(Dataset* testset, String testlabelfilename);
-  void LoadModelBatchClassify(Dataset* testset, String modelfilename, String testlabelfilename);
+  void SaveModel(std::string modelfilename);
+  void LoadModel(Dataset& testset, std::string modelfilename);
+  int Classify(const arma::vec& vector);
+  void BatchClassify(Dataset& testset, std::string testlabelfilename);
+  void LoadModelBatchClassify(Dataset& testset, std::string modelfilename, std::string testlabelfilename);
 };
 
 /**
@@ -124,7 +126,7 @@ class NNSVM {
 template<typename TKernel>
 void NNSVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module){
   param_.kernel_.Init(fx_submodule(module, "kernel"));
-  param_.kernel_.GetName(&param_.kernelname_);
+  param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
   param_.c_ = fx_param_double(NULL, "c", 10.0); 
@@ -155,7 +157,7 @@ void NNSVM<TKernel>::InitTrain(
   
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
-  nnsmo.Init(&dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
+  nnsmo.Init(dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
   nnsmo.kernel().Copy(param_.kernel_);
 
   /* 2-classes NNSVM training using NNSMO */
@@ -164,9 +166,9 @@ void NNSVM<TKernel>::InitTrain(
   fx_timer_stop(NULL, "nnsvm_train");
   
   /* Get the trained bi-class model */
-  nnsmo.GetNNSVM(&support_vectors_, &(model_.sv_coef_), &(model_.w_));
-  DEBUG_ASSERT(model_.sv_coef_.length() != 0);  
-  model_.num_sv_ = support_vectors_.n_cols();
+  nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);
+  DEBUG_ASSERT(model_.sv_coef_.n_elem != 0);  
+  model_.num_sv_ = support_vectors_.n_cols;
   model_.thresh_ = nnsmo.threshold();
   DEBUG_ONLY(fprintf(stderr, "THRESHOLD: %f\n", model_.thresh_));
 
@@ -180,9 +182,9 @@ void NNSVM<TKernel>::InitTrain(
 * @param: name of the model file
 */
 template<typename TKernel>
-void NNSVM<TKernel>::SaveModel(String modelfilename) {
-  FILE *fp = fopen(modelfilename,"w");
-  if (fp==NULL){
+void NNSVM<TKernel>::SaveModel(std::string modelfilename) {
+  FILE *fp = fopen(modelfilename.c_str(), "w");
+  if (fp == NULL) {
     fprintf(stderr, "Cannot save trained model to file!");
     return;
   }
@@ -195,25 +197,19 @@ void NNSVM<TKernel>::SaveModel(String modelfilename) {
   fprintf(fp, "total_num_sv %d\n", model_.num_sv_);
   fprintf(fp, "threshold %g\n", model_.thresh_);
   fprintf(fp, "weights");
-  index_t len = model_.w_.length();
-  for(index_t s=0; s<len; s++)
-  {
-	fprintf(fp, " %f", model_.w_[s]);
-  }
+  index_t len = model_.w_.n_elem;
+  for(index_t s = 0; s < len; s++)
+    fprintf(fp, " %f", model_.w_[s]);
   fprintf(fp, "\nsvs\n");
-  for(index_t i=0; i<model_.num_sv_; i++)
+  for(index_t i=0; i < model_.num_sv_; i++)
   {
      fprintf(fp, "%f ", model_.sv_coef_[i]);
      for(index_t s=0; s < num_features_; s++)
-     {
-        fprintf(fp, "%f ", support_vectors_.get(s, i) );
-     }
+        fprintf(fp, "%f ", support_vectors_(s, i));
      fprintf(fp, "\n");
   }  
   fclose(fp);
 }
-
-
 
 /**
 * Load NNSVM model file
@@ -222,59 +218,57 @@ void NNSVM<TKernel>::SaveModel(String modelfilename) {
 */
 // TODO: use XML
 template<typename TKernel>
-void NNSVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
+void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
   /* Init */
   //fprintf(stderr, "modelfilename= %s\n", modelfilename.c_str()); 
-  num_features_ = testset->n_features() - 1;
+  num_features_ = testset.n_features() - 1;
 
-  model_.w_.Init(num_features_);
+  model_.w_.set_size(num_features_);
   /* load model file */
-  FILE *fp = fopen(modelfilename, "r");
+  FILE *fp = fopen(modelfilename.c_str(), "r");
   if (fp == NULL) {
     fprintf(stderr, "Cannot open NNSVM model file!");
     return;
   }
   char cmd[80]; 
-  int i, j; double temp_f;
+  int i, j;
+  double temp_f;
   while (1) {
-    fscanf(fp,"%80s",cmd);
-    if(strcmp(cmd,"svm_type")==0) {
-      fscanf(fp,"%80s",cmd);
-      if(strcmp(cmd,"svm_c")==0) {
+    fscanf(fp, "%80s", cmd);
+    if(strcmp(cmd,"svm_type") == 0) {
+      fscanf(fp, "%80s", cmd);
+      if(strcmp(cmd, "svm_c") == 0) {
 	fprintf(stderr, "SVM_C\n");
       }
     }
-    else if (strcmp(cmd, "kernel_name")==0) {
-      fscanf(fp,"%80s",param_.kernelname_.c_str());
-    }
-    else if (strcmp(cmd, "kernel_typeid")==0) {
-      fscanf(fp,"%d",&param_.kerneltypeid_);
-    }
-    else if (strcmp(cmd, "total_num_sv")==0) {
-      fscanf(fp,"%d",&model_.num_sv_);
-    }
-    else if (strcmp(cmd, "threshold")==0) {
-      fscanf(fp,"%lf",&model_.thresh_); 
-    }
+    else if (strcmp(cmd, "kernel_name") == 0)
+      fscanf(fp, "%80s", param_.kernelname_.c_str());
+    else if (strcmp(cmd, "kernel_typeid") == 0)
+      fscanf(fp, "%d", &param_.kerneltypeid_);
+    else if (strcmp(cmd, "total_num_sv") == 0)
+      fscanf(fp, "%d", &model_.num_sv_);
+    else if (strcmp(cmd, "threshold") == 0)
+      fscanf(fp, "%lf", &model_.thresh_); 
     else if (strcmp(cmd, "weights")==0) {
       for (index_t s= 0; s < num_features_; s++) {
-	fscanf(fp,"%lf",&temp_f); 
+	fscanf(fp, "%lf", &temp_f); 
 	model_.w_[s] = temp_f;
       }
       break;
     }
   }
-  support_vectors_.Init(num_features_, model_.num_sv_);
-  model_.sv_coef_.Init(model_.num_sv_);
+  support_vectors_.set_size(num_features_, model_.num_sv_);
+  model_.sv_coef_.set_size(model_.num_sv_);
+
   while (1) {
-    fscanf(fp,"%80s",cmd);
-    if (strcmp(cmd, "svs")==0) {
+    fscanf(fp, "%80s", cmd);
+    if (strcmp(cmd, "svs") == 0) {
       for (i = 0; i < model_.num_sv_; i++) {
-        fscanf(fp,"%lf",&temp_f);
+        fscanf(fp, "%lf", &temp_f);
         model_.sv_coef_[i] = temp_f;
 	for (j = 0; j < num_features_; j++) {
-	  fscanf(fp,"%lf",&temp_f);
-	  support_vectors_.set(j, i, temp_f);
+	  fscanf(fp, "%lf", &temp_f);
+	  support_vectors_(j, i) = temp_f;
 	}
       }
       break;
@@ -292,9 +286,9 @@ void NNSVM<TKernel>::LoadModel(Dataset* testset, String modelfilename) {
 */
 
 template<typename TKernel>
-int NNSVM<TKernel>::Classify(const Vector& datum) {
+int NNSVM<TKernel>::Classify(const arma::vec& datum) {
   
-  double summation = la::Dot(model_.w_, datum);
+  double summation = dot(model_.w_, datum);
   
   VERBOSE_MSG(0, "summation=%f, thresh_=%f", summation, model_.thresh_);
   
@@ -314,18 +308,17 @@ int NNSVM<TKernel>::Classify(const Vector& datum) {
 * @param: file name of the testing data
 */
 template<typename TKernel>
-void NNSVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
-  FILE *fp = fopen(testlablefilename, "w");
+void NNSVM<TKernel>::BatchClassify(Dataset& testset, std::string testlablefilename) {
+  FILE *fp = fopen(testlablefilename.c_str(), "w");
   if (fp == NULL) {
     fprintf(stderr, "Cannot save test labels to file!");
     return;
   }
-  num_features_ = testset->n_features()-1;
-  for (index_t i = 0; i < testset->n_points(); i++) {
-    Vector testvec;
-    testvec.Init(num_features_);
+  num_features_ = testset.n_features() - 1;
+  for (index_t i = 0; i < testset.n_points(); i++) {
+    arma::vec testvec(num_features_);
     for(int j = 0; j < num_features_; j++)
-      testvec[j] = testset->matrix()(j, i);
+      testvec[j] = testset.matrix()(j, i);
 
     int testlabel = Classify(testvec);
     fprintf(fp, "%d\n", testlabel);
@@ -341,10 +334,9 @@ void NNSVM<TKernel>::BatchClassify(Dataset* testset, String testlablefilename) {
 * @param: name of the file to store classified labels
 */
 template<typename TKernel>
-void NNSVM<TKernel>::LoadModelBatchClassify(Dataset* testset, String modelfilename, String testlabelfilename) {
+void NNSVM<TKernel>::LoadModelBatchClassify(Dataset& testset, std::string modelfilename, std::string testlabelfilename) {
   LoadModel(testset, modelfilename);
   BatchClassify(testset, testlabelfilename);
 }
 
 #endif
-
