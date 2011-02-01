@@ -86,39 +86,38 @@ int main(int argc, char *argv[]) {
     fx_param_str(NULL, "query", references_file_name);
 
   // query and reference datasets
-  Matrix references;
-  Matrix queries;
+  arma::mat references;
+  arma::mat* queries_ptr; // I don't like doing this like this
+  arma::mat queries;
 
   // flag for telling whether references are equal to queries
   bool queries_equal_references =
     !strcmp(queries_file_name, references_file_name);
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  arma::mat tmp;
-  data::Load(references_file_name, tmp);
-  arma_compat::armaToMatrix(tmp, references);
+  data::Load(references_file_name, references);
   if(queries_equal_references) {
-    queries.Alias(references);
+    queries_ptr = &references;
   }
   else {
-    data::Load(queries_file_name, tmp);
-    arma_compat::armaToMatrix(tmp, queries);
+    data::Load(queries_file_name, queries);
+    queries_ptr = &queries;
   }
 
   // confirm whether the user asked for scaling of the dataset
   if(!strcmp(fx_param_str(fgt_kde_module, "scaling", "none"), "range")) {
-    DatasetScaler::ScaleDataByMinMax(queries, references,
+    DatasetScaler::ScaleDataByMinMax(*queries_ptr, references,
                                      queries_equal_references);
   }
 
   // declare FGT-based KDE computation object and the vector holding
   // the final results
   FGTKde fgt_kde;
-  Vector fgt_kde_results;
+  arma::vec fgt_kde_results;
 
-  fgt_kde.Init(queries, references, fgt_kde_module);
+  fgt_kde.Init(*queries_ptr, references, fgt_kde_module);
   fgt_kde.Compute();
-  fgt_kde.get_density_estimates(&fgt_kde_results);
+  fgt_kde.get_density_estimates(fgt_kde_results);
 
   // print out the results if the user specified the flag for output
   if(fx_param_exists(fgt_kde_module, "fgt_kde_output")) {
@@ -129,7 +128,7 @@ int main(int argc, char *argv[]) {
   // user specified --do_naive flag
   if(fx_param_exists(fgt_kde_module, "do_naive")) {
     NaiveKde<GaussianKernel> naive_kde;
-    naive_kde.Init(queries, references, fgt_kde_module);
+    naive_kde.Init(*queries_ptr, references, fgt_kde_module);
     naive_kde.Compute();
     
     if(fx_param_exists(fgt_kde_module, "naive_kde_output")) {

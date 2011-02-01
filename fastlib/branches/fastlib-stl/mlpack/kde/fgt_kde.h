@@ -29,6 +29,7 @@
 #define FGT_KDE_H
 
 #include <fastlib/fastlib.h>
+#include <armadillo>
 #include "mlpack/series_expansion/mult_series_expansion_aux.h"
 
 
@@ -53,8 +54,6 @@
  */
 class FGTKde {
   
-  FORBID_ACCIDENTAL_COPIES(FGTKde);
-
  private:
 
   ////////// Private Member Variables //////////
@@ -63,16 +62,16 @@ class FGTKde {
   struct datanode *module_;
 
   /** @brief The column-oriented query dataset. */
-  Matrix qset_;
+  arma::mat qset_;
 
   /** @brief The column-oriented reference dataset. */
-  Matrix rset_;
+  arma::mat rset_;
 
   /** @brief The Gaussian kernel object. */
   GaussianKernel kernel_;
 
   /** @brief The vector holding the computed densiites. */
-  Vector densities_;
+  arma::vec densities_;
   
   /** @brief Desired absolute error level. */
   double tau_;
@@ -97,21 +96,20 @@ class FGTKde {
    *  @param nterms The multivariate order of approximation is (nterms - 1).
    */
   void FastGaussTransformPreprocess_(double *interaction_radius, 
-				     ArrayList<int> &nsides, 
-				     Vector &sidelengths, Vector &mincoords, 
+				     std::vector<int>& nsides, 
+				     arma::vec& sidelengths, arma::vec& mincoords, 
 				     int *nboxes, int *nterms) {
   
     // Compute the interaction radius.
     double bandwidth = sqrt(kernel_.bandwidth_sq());
     *interaction_radius = sqrt(-2.0 * kernel_.bandwidth_sq() * log(tau_));
 
-    int di, n, num_rows = rset_.n_cols();
-    int dim = rset_.n_rows();
+    int di, n, num_rows = rset_.n_cols;
+    int dim = rset_.n_rows;
 
     // Discretize the grid space into boxes.
-    Vector maxcoords;
-    maxcoords.Init(dim);
-    maxcoords.SetAll(-DBL_MAX);
+    arma::vec maxcoords(dim);
+    maxcoords.fill(-DBL_MAX);
     double boxside = -1.0;
     *nboxes = 1;
 
@@ -121,11 +119,11 @@ class FGTKde {
     
     for(n = 0; n < num_rows; n++) {
       for(di = 0; di < dim; di++) {
-	if(mincoords[di] > rset_.get(di, n)) {
-	  mincoords[di] = rset_.get(di, n);
+	if(mincoords[di] > rset_(di, n)) {
+	  mincoords[di] = rset_(di, n);
 	}
-	if(maxcoords[di] < rset_.get(di, n)) {
-	  maxcoords[di] = rset_.get(di, n);
+	if(maxcoords[di] < rset_(di, n)) {
+	  maxcoords[di] = rset_(di, n);
 	}
       }
     }
@@ -198,8 +196,8 @@ class FGTKde {
    *  @param n The number of boxes in each dimension. The i-th position of
    *           array tells how many boxes lie along the i-th dimension.
    */
-  int MultiDimIndexInSingleArray_(ArrayList<int> &coords, 
-				  ArrayList<int> &n) {
+  int MultiDimIndexInSingleArray_(std::vector<int>& coords, 
+				  std::vector<int>& n) {
     
     int sum = 0;
     
@@ -221,8 +219,8 @@ class FGTKde {
    *  @param index The box number.
    *  @param coords The translated box coordinates.
    */
-  void SingleDimIndexInMultiArray_(ArrayList<int> &n, int index, 
-				   ArrayList<int> &coords) {
+  void SingleDimIndexInMultiArray_(std::vector<int>& n, int index, 
+				   std::vector<int>& coords) {
 
     for(index_t i = 0; i < coords.size(); i++) {
       int this_coord = index % n[i];
@@ -242,8 +240,8 @@ class FGTKde {
    *
    *  @return 1, if the box coordinate is within the grid, 0 otherwise.
    */
-  int IsOngrid_(ArrayList<int> &old_coords, int delta, 
-		ArrayList<int> &new_coords, ArrayList<int> &nsides) {
+  int IsOngrid_(std::vector<int>& old_coords, int delta, 
+		std::vector<int>& new_coords, std::vector<int>& nsides) {
     
     int dim = old_coords.size();
     for(index_t d = 0; d < dim; d++) {
@@ -267,18 +265,18 @@ class FGTKde {
    *  @param ret The list of grid boxes that are considered neighbors for
    *             the grid box with id = ibox.
    */
-  void MakeNeighbors_(int ibox, ArrayList<int> &nsides, int kdis, 
-		      ArrayList<int> &ret) {
+  void MakeNeighbors_(int ibox, std::vector<int>& nsides, int kdis, 
+		      std::vector<int>& ret) {
 
     // Compute actual vector position of a given box.
-    ArrayList<int> coords;
-    coords.Init(nsides.size());
+    std::vector<int> coords;
+    coords.reserve(nsides.size());
     SingleDimIndexInMultiArray_(nsides, ibox, coords);
 
-    ArrayList<int> dummy_n;
-    dummy_n.Init(coords.size());
-    ArrayList<int> all_ones;
-    all_ones.Init(coords.size()); 
+    std::vector<int> dummy_n;
+    dummy_n.reserve(coords.size());
+    std::vector<int> all_ones;
+    all_ones.reserve(coords.size()); 
     for(index_t i = 0; i < coords.size(); i++) {
       dummy_n[i] = 2 * kdis + 1;
       all_ones[i] = kdis;
@@ -296,9 +294,9 @@ class FGTKde {
     // 3 cells in each. Therefore, we get coordinates in [0, 1, 2]. We achieve 
     // our goal by simply subtracting 1. We filter out values that aren't on 
     // the grid.
-    ArrayList<int> delta, new_coords;
-    delta.Init(coords.size());
-    new_coords.Init(coords.size());
+    std::vector<int> delta, new_coords;
+    delta.reserve(coords.size());
+    new_coords.reserve(coords.size());
 
     for(i = 0; i < num_neighbors; i++) {
       SingleDimIndexInMultiArray_(dummy_n, i, delta);
@@ -309,8 +307,7 @@ class FGTKde {
       int ongrid = IsOngrid_(new_coords, -kdis, new_coords, nsides);
       
       if(ongrid) {
-	*(ret.PushBackRaw()) = 
-	  MultiDimIndexInSingleArray_(new_coords, nsides);
+	ret.push_back(MultiDimIndexInSingleArray_(new_coords, nsides));
       }
       
     }
@@ -332,15 +329,15 @@ class FGTKde {
    *                             list of reference indices assigned to the
    *                             i-th grid box.
    */
-  void Assign_(int nallbx, ArrayList<int> &nsides, Vector &sidelengths, 
-	       Vector &mincoords, Matrix &center, 
-	       ArrayList<ArrayList<int> > &queries_assigned, 
-	       ArrayList<ArrayList<int> > &references_assigned) {
+  void Assign_(int nallbx, std::vector<int>& nsides, arma::vec& sidelengths, 
+	       arma::vec& mincoords, arma::mat& center, 
+	       std::vector<std::vector<int> >& queries_assigned, 
+	       std::vector<std::vector<int> >& references_assigned) {
 
     int r;
-    int num_query_rows = qset_.n_cols();
-    int num_ref_rows = rset_.n_cols();
-    int dim = qset_.n_rows();
+    int num_query_rows = qset_.n_cols;
+    int num_ref_rows = rset_.n_cols;
+    int dim = qset_.n_rows;
     int di;
   
     // Assign the reference points.
@@ -351,12 +348,12 @@ class FGTKde {
       for(di = dim - 1; di >= 0; di--) {
 	int nside = nsides[di];
 	double h = sidelengths[di];
-	int binnum = (int) floor((rset_.get(di, r) - mincoords[di]) / h);
+	int binnum = (int) floor((rset_(di, r) - mincoords[di]) / h);
       
 	binnum = max(0, min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
-      *(references_assigned[boxnum].PushBackRaw()) = r;
+      references_assigned[boxnum].push_back(r);
     }
 
     // Assign the query points
@@ -367,20 +364,19 @@ class FGTKde {
       for(di = dim - 1; di >= 0; di--) {
 	int nside = nsides[di];
 	double h = sidelengths[di];
-	int binnum = (int) floor((qset_.get(di, r) - mincoords[di]) / h);
+	int binnum = (int) floor((qset_(di, r) - mincoords[di]) / h);
       
 	binnum = max(0, min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
-      *(queries_assigned[boxnum].PushBackRaw()) = r;
+      queries_assigned[boxnum].push_back(r);
     }
   
     // Create centers for all boxes.
     for(r = 0; r < nallbx; r++) {
       int sf = nallbx;
       int ind = r, rem;
-      Vector box_center;    
-      center.MakeColumnVector(r, &box_center);
+      arma::vec box_center = center.col(r);
 
       for(di = dim - 1; di >= 0; di--) {
 	int nside = nsides[di];
@@ -413,57 +409,48 @@ class FGTKde {
    *  @param dest_hrcentroid The centroid the query box.
    */
   void TranslateMultipoleToLocal_(int ref_box_num, int query_box_num,
-				  Matrix &mcoeffsb, Matrix &lcoeffsb,
+				  arma::mat& mcoeffsb, arma::mat& lcoeffsb,
 				  int p_alpha, int totalnumcoeffs,
-				  double bwsqd_2, const double *hrcentroid,
-				  const double *dest_hrcentroid) {
+				  double bwsqd_2, arma::vec& hrcentroid,
+				  arma::vec& dest_hrcentroid) {
 
     double bandwidth = sqrt(bwsqd_2);
     int j, k, l, d, step;
 
-    int dim = qset_.n_rows();
+    int dim = qset_.n_rows;
 
-    Vector lcoeffs;
-    lcoeffsb.MakeColumnVector(query_box_num, &lcoeffs);
-    Vector mcoeffs;
-    mcoeffsb.MakeColumnVector(ref_box_num, &mcoeffs);
+    arma::vec lcoeffs = lcoeffsb.col(query_box_num);
+    arma::vec mcoeffs = mcoeffsb.col(ref_box_num);
   
     {
-      Vector dest_minus_parent;
-      dest_minus_parent.Init(dim);
-      
-      la::SubOverwrite(dim, dest_hrcentroid, hrcentroid, 
-		       dest_minus_parent.ptr());
+      arma::vec dest_minus_parent = dest_hrcentroid - hrcentroid;
 
       int limit = 2 * p_alpha - 2;
-      Matrix hermite_map;
-      hermite_map.Init(dim, limit + 1);
-      Matrix arrtmp;
-      arrtmp.Init(dim, totalnumcoeffs);
+      arma::mat hermite_map(dim, limit + 1);
+      arma::mat arrtmp(dim, totalnumcoeffs);
 
-      Vector C_k_neg;
-      C_k_neg.Alias(msea_.get_neg_inv_multiindex_factorials());
+      const arma::vec& C_k_neg = msea_.get_neg_inv_multiindex_factorials();
     
       for(j = 0; j < dim; j++) {
 	double coord_div_band = dest_minus_parent[j] / bandwidth;
 	double d2 = 2 * coord_div_band;
 	double facj = exp(-coord_div_band * coord_div_band);
       
-	hermite_map.set(j, 0, facj);
+	hermite_map(j, 0) = facj;
       
 	if(p_alpha > 1) {
-	  hermite_map.set(j, 1, d2 * facj);
+	  hermite_map(j, 1) = d2 * facj;
 	
 	  for(k = 1; k < limit; k++) {
 	    int k2 = k * 2;
-	    hermite_map.set(j, k + 1,
-			    d2 * hermite_map.get(j, k) - k2 * 
-			    hermite_map.get(j, k - 1));
+	    hermite_map(j, k + 1) =
+			    d2 * hermite_map(j, k) - k2 * 
+			    hermite_map(j, k - 1);
 	  }
 	}
 	
 	for(l = 0; l < totalnumcoeffs; l++) {
-	  arrtmp.set(j, l, 0.0);
+	  arrtmp(j, l) = 0.0;
 	}
       }
     
@@ -471,11 +458,10 @@ class FGTKde {
       d = 0;
     
       for(j = 0; j < totalnumcoeffs; j++) {
-	const ArrayList<short int> &mapping = msea_.get_multiindex(j);
+	const std::vector<short int>& mapping = msea_.get_multiindex(j);
 	
 	for(k = 0, l = j % step; k < p_alpha; k++, l += step) {
-	  arrtmp.set(d, j, arrtmp.get(d, j) + mcoeffs[l] * 
-		     hermite_map.get(d, mapping[d] + k));
+	  arrtmp(d, j) += mcoeffs[l] * hermite_map(d, mapping[d] + k);
 	}
       }
     
@@ -489,7 +475,7 @@ class FGTKde {
 	  boundary2 = 0;
 	
 	  for(j = 0; j < totalnumcoeffs; j++) {
-	    const ArrayList<short int> &mapping = msea_.get_multiindex(j);
+	    const std::vector<short int>& mapping = msea_.get_multiindex(j);
 
 	    if(j % boundary == 0) {
 	      boundary2 += boundary;
@@ -503,13 +489,11 @@ class FGTKde {
 		jump += boundary2 - boundary;
 	      }
 	    
-	      const ArrayList<short int> &mapping2 = 
+	      const std::vector<short int>& mapping2 = 
 		msea_.get_multiindex(jump);
 
-	      arrtmp.set(d, j,
-			 arrtmp.get(d, j) +
-			 arrtmp.get(d - 1, jump) * 
-			 hermite_map.get(d, mapping2[d] + mapping[d]));
+	      arrtmp(d, j) += arrtmp(d - 1, jump) * 
+			 hermite_map(d, mapping2[d] + mapping[d]);
 	    }
 	  }
 	}
@@ -518,7 +502,7 @@ class FGTKde {
       d = dim - 1;
       
       for(j = 0; j < totalnumcoeffs; j++) {
-	lcoeffs[j] = lcoeffs[j] + C_k_neg[j] * arrtmp.get(d, j);
+	lcoeffs[j] += C_k_neg[j] * arrtmp(d, j);
       }
     }
   }
@@ -536,13 +520,12 @@ class FGTKde {
    *  @param rows The ids of the reference points contained within the box.
    *  @param x_R The center of the reference box.
    */
-  void ComputeMultipoleCoeffs_(Matrix &mcoeffs, int dim,
+  void ComputeMultipoleCoeffs_(arma::mat& mcoeffs, int dim,
 			       int p_alpha, int totalnumcoeffs, 
 			       int ref_box_num, double bwsqd_two, 
-			       ArrayList<int> &rows, const double *x_R) {
+			       std::vector<int>& rows, arma::vec& x_R) {
     
-    Vector A_k;
-    mcoeffs.MakeColumnVector(ref_box_num, &A_k);
+    arma::vec A_k = mcoeffs.col(ref_box_num);
     double bw_times_sqrt_two = sqrt(bwsqd_two);
 
     // If the thing has been computed already, return. Otherwise, compute it
@@ -551,13 +534,10 @@ class FGTKde {
       return;
     }
 
-    Vector C_k;
-    C_k.Alias(msea_.get_inv_multiindex_factorials());
+    const arma::vec& C_k = msea_.get_inv_multiindex_factorials();
   
-    Vector tmp;
-    tmp.Init(totalnumcoeffs);
-    Vector x_r;
-    x_r.Init(dim);
+    arma::vec tmp(totalnumcoeffs);
+    arma::vec x_r(dim);
     int num_rows = rows.size();
     int step, boundary;
     int r, i, j;
@@ -574,7 +554,7 @@ class FGTKde {
 	int row_num = rows[r];
       
 	for(i = 0; i < dim; i++) {
-	  x_r[i] = (rset_.get(i, row_num) - x_R[i]) / bw_times_sqrt_two;
+	  x_r[i] = (rset_(i, row_num) - x_R[i]) / bw_times_sqrt_two;
 	}
       
 	tmp[0] = 1.0;
@@ -620,30 +600,24 @@ class FGTKde {
    *  @param p_alpha The approximation order.
    *  @param totalnumcoeffs The total number of coefficients.
    */
-  void DirectLocalAccumulation_(ArrayList<int> &rows, int query_box_num,
-				Matrix &locexps, double delta,
-				const double *dest_hrcentroid, int p_alpha, 
+  void DirectLocalAccumulation_(std::vector<int>& rows, int query_box_num,
+				arma::mat& locexps, double delta,
+				arma::vec& dest_hrcentroid, int p_alpha, 
 				int totalnumcoeffs) {
 
     int num_rows = rows.size();
     int r, d, boundary, step, i, j, k;
 
     // Retrieve the centroid
-    int dim = rset_.n_rows();
+    int dim = rset_.n_rows;
     int limit2 = p_alpha - 1;
-    Matrix hermite_map;
-    hermite_map.Init(dim, p_alpha);
-    Vector arrtmp;
-    arrtmp.Init(totalnumcoeffs);
-    Vector x_r_minus_x_Q;
-    x_r_minus_x_Q.Init(dim);
+    arma::mat hermite_map(dim, p_alpha);
+    arma::vec arrtmp(totalnumcoeffs);
+    arma::vec x_r_minus_x_Q(dim);
     double bandwidth = sqrt(delta);
-    Vector neg_inv_multiindex_factorials;
-    neg_inv_multiindex_factorials.Alias
-      (msea_.get_neg_inv_multiindex_factorials());
+    const arma::vec& neg_inv_multiindex_factorials = msea_.get_neg_inv_multiindex_factorials();
 
-    Vector arr;
-    locexps.MakeColumnVector(query_box_num, &arr);
+    arma::vec arr = locexps.col(query_box_num);
 
     // For each reference point.
     for(r = 0; r < num_rows; r++) {
@@ -652,7 +626,7 @@ class FGTKde {
     
       // Calculate (x_r - x_Q)
       for(d = 0; d < dim; d++) {
-	x_r_minus_x_Q[d] = dest_hrcentroid[d] - rset_.get(d, row_num);
+	x_r_minus_x_Q[d] = dest_hrcentroid[d] - rset_(d, row_num);
       }
     
       // Compute the necessary Hermite precomputed map based on the
@@ -663,16 +637,16 @@ class FGTKde {
 	double d2 = 2 * coord_div_band;
 	double facj = exp(-coord_div_band * coord_div_band);
       
-	hermite_map.set(d, 0, facj);
+	hermite_map(d, 0) = facj;
       
 	if(p_alpha > 1) {
-	  hermite_map.set(d, 1, d2 * facj);
+	  hermite_map(d, 1) = d2 * facj;
 	
 	  for(k = 1; k < limit2; k++) {
 	    int k2 = k * 2;
-	    hermite_map.set(d, k + 1,
-			    d2 * hermite_map.get(d, k) - k2 * 
-			    hermite_map.get(d, k - 1));
+	    hermite_map(d, k + 1) =
+			    d2 * hermite_map(d, k) - k2 * 
+			    hermite_map(d, k - 1);
 	  }
 	}
       }
@@ -694,16 +668,16 @@ class FGTKde {
 	    i += step;
 	  
 	    for(j = 1; i < limit; i += step, j++) {
-	      arrtmp[i] = arrtmp[first] * hermite_map.get(d, j);
+	      arrtmp[i] = arrtmp[first] * hermite_map(d, j);
 	    }
 	  
-	    arrtmp[first] *= hermite_map.get(d, 0);
+	    arrtmp[first] *= hermite_map(d, 0);
 	  }
 	}
       }
       else {
 	for(d = 0; d < dim; d++) {
-	  arrtmp[0] *= hermite_map.get(d, 0);
+	  arrtmp[0] *= hermite_map(d, 0);
 	}
       }
     
@@ -727,26 +701,22 @@ class FGTKde {
    *  @param bwsqd_times_2 The squared bandwidth times two.
    *  @param ref_hrcentroid The center of the reference box.
    */
-  void EvaluateMultipoleExpansion_(ArrayList<int> &rows, int p_alpha,
-				   int totalnumcoeffs, Matrix &mcoeffsb,
+  void EvaluateMultipoleExpansion_(std::vector<int>& rows, int p_alpha,
+				   int totalnumcoeffs, arma::mat& mcoeffsb,
 				   int ref_box_num, double bwsqd_times_2, 
-				   const double *ref_hrcentroid) {
+				   arma::vec& ref_hrcentroid) {
     
     double bandwidth = sqrt(bwsqd_times_2);
     int num_query_rows = rows.size();
     int r, d, boundary, step, i, j, k;
 
     // Retrieve the reference centroid.
-    int dim = qset_.n_rows();
-    Vector x_q_minus_x_R;
-    x_q_minus_x_R.Init(dim);
-    Matrix hermite_map;
-    hermite_map.Init(dim, p_alpha);
-    Vector arrtmp;
-    arrtmp.Init(totalnumcoeffs);
+    int dim = qset_.n_rows;
+    arma::vec x_q_minus_x_R(dim);
+    arma::mat hermite_map(dim, p_alpha);
+    arma::vec arrtmp(totalnumcoeffs);
     int limit2 = p_alpha - 1;
-    Vector mcoeffs;
-    mcoeffsb.MakeColumnVector(ref_box_num, &mcoeffs);
+    arma::vec mcoeffs = mcoeffsb.col(ref_box_num);
   
     // For each data point,
     for(r = 0; r < num_query_rows; r++) {
@@ -756,7 +726,7 @@ class FGTKde {
 
       // Calculate (x_q - x_R)
       for(d = 0; d < dim; d++) {
-	x_q_minus_x_R[d] = qset_.get(d, row_num) - ref_hrcentroid[d];
+	x_q_minus_x_R[d] = qset_(d, row_num) - ref_hrcentroid[d];
       }
       
       // Compute the necessary Hermite precomputed map based on the coordinate
@@ -766,16 +736,16 @@ class FGTKde {
 	double d2 = 2 * coord_div_band;
 	double facj = exp(-coord_div_band * coord_div_band);
       
-	hermite_map.set(d, 0, facj);
+	hermite_map(d, 0) = facj;
       
 	if(p_alpha > 1) {
-	  hermite_map.set(d, 1, d2 * facj);
+	  hermite_map(d, 1) = d2 * facj;
 	
 	  for(k = 1; k < limit2; k++) {
 	    int k2 = k * 2;
-	    hermite_map.set(d, k + 1,
-			    d2 * hermite_map.get(d, k) - k2 * 
-			    hermite_map.get(d, k - 1));
+	    hermite_map(d, k + 1) =
+			    d2 * hermite_map(d, k) - k2 * 
+			    hermite_map(d, k - 1);
 	  }
 	}
       }
@@ -796,16 +766,16 @@ class FGTKde {
 	    i += step;
 	    
 	    for(j = 1; i < limit; i += step, j++) {
-	      arrtmp[i] = arrtmp[first] * hermite_map.get(d, j);
+	      arrtmp[i] = arrtmp[first] * hermite_map(d, j);
 	    }
 	  
-	    arrtmp[first] *= hermite_map.get(d, 0);
+	    arrtmp[first] *= hermite_map(d, 0);
 	  }
 	}
       }
       else {
 	for(d = 0; d < dim; d++) {
-	  arrtmp[0] *= hermite_map.get(d, 0);
+	  arrtmp[0] *= hermite_map(d, 0);
 	}
       }
     
@@ -830,13 +800,12 @@ class FGTKde {
    *
    *  @return The evaluated local expansion value.
    */
-  double EvaluateLocalExpansion_(int row_q, Vector &x_Q, double h, 
-				 int query_box_num, Matrix &lcoeffsb, 
+  double EvaluateLocalExpansion_(int row_q, arma::vec& x_Q, double h, 
+				 int query_box_num, arma::mat& lcoeffsb, 
 				 int totalnumcoeffs, int p_alpha) {
     
-    int dim = qset_.n_rows();
-    Vector x_Q_to_x_q;
-    x_Q_to_x_q.Init(dim);
+    int dim = qset_.n_rows;
+    arma::vec x_Q_to_x_q(dim);
     int i, j, boundary, step;
     double multipolesum = 0;
 
@@ -845,16 +814,14 @@ class FGTKde {
      */
     for(i = 0; i < dim; i++) {
       double x_Q_val = x_Q[i];
-      double x_q_val = qset_.get(i, row_q);
+      double x_q_val = qset_(i, row_q);
       x_Q_to_x_q[i] = (x_q_val - x_Q_val) / h;
     }
 
     {
-      Vector lcoeffs;
-      lcoeffsb.MakeColumnVector(query_box_num, &lcoeffs);
+      arma::vec lcoeffs = lcoeffsb.col(query_box_num);
 
-      Vector tmp;
-      tmp.Init(totalnumcoeffs);
+      arma::vec tmp(totalnumcoeffs);
       tmp[0] = 1.0;
     
       if(totalnumcoeffs > 1) {
@@ -904,15 +871,15 @@ class FGTKde {
    *  @param totalnumcoeffs The total number of coefficients.
    */
   void EvaluateLocalExpansionForAllQueries_
-    (double delta, int nterms, int nallbx, ArrayList<int> &nsides, 
-     Matrix &locexp, int nlmax, ArrayList<ArrayList<int> > &queries_assigned, 
-     Matrix &center, int totalnumcoeffs) {
+    (double delta, int nterms, int nallbx, std::vector<int>& nsides, 
+     arma::mat& locexp, int nlmax, std::vector<std::vector<int> >& queries_assigned, 
+     arma::mat& center, int totalnumcoeffs) {
 
     int i, j;
     
     // GO through all query boxes.
     for(i = 0; i < nallbx; i++) {
-      ArrayList<int> &query_rows = queries_assigned[i];
+      std::vector<int>& query_rows = queries_assigned[i];
       int ninbox = query_rows.size();
       
       if(ninbox <= nlmax) {
@@ -922,8 +889,7 @@ class FGTKde {
 	
 	for(j = 0; j < ninbox; j++) {
 	  int row_q = query_rows[j];
-	  Vector x_Q;
-	  center.MakeColumnVector(i, &x_Q);
+	  arma::vec x_Q = center.col(i);
 	  
 	  double result = EvaluateLocalExpansion_(row_q, x_Q, sqrt(delta), 
 						  i, locexp, totalnumcoeffs, 
@@ -967,14 +933,14 @@ class FGTKde {
    *                 points contained within.
    */
   void FinalizeSum_(double delta, int nterms, int nallbx, 
-		    ArrayList<int> &nsides, Vector &sidelengths, 
-		    Vector &mincoords, Matrix &locexp, int nfmax, int nlmax, 
-		    int kdis, Matrix &center, 
-		    ArrayList<ArrayList<int> > &queries_assigned,
-		    ArrayList<ArrayList<int> > &references_assigned, 
-		    Matrix &mcoeffs) {
+		    std::vector<int>& nsides, arma::vec& sidelengths, 
+		    arma::vec& mincoords, arma::mat& locexp, int nfmax, int nlmax, 
+		    int kdis, arma::mat& center, 
+		    std::vector<std::vector<int> >& queries_assigned,
+		    std::vector<std::vector<int> >& references_assigned, 
+		    arma::mat& mcoeffs) {
 
-    int dim = qset_.n_rows();
+    int dim = qset_.n_rows;
 
     int totalnumcoeffs = (int) pow(nterms, dim);
 
@@ -988,7 +954,7 @@ class FGTKde {
     // Process all reference boxes
     for(i = 0; i < nallbx; i++) {
 
-      ArrayList<int> &reference_rows = references_assigned[i];
+      std::vector<int> &reference_rows = references_assigned[i];
       int ninbox = reference_rows.size();
 
       // If the box contains no reference points, skip it.
@@ -1000,8 +966,7 @@ class FGTKde {
       else if(ninbox <= nfmax) {
 
 	// Get the query boxes that are in the interaction range.
-	ArrayList <int> nbors;
-	nbors.Init();
+	std::vector<int> nbors;
 	MakeNeighbors_(i, nsides, kdis, nbors);
 	int nnbors = nbors.size();
 
@@ -1009,7 +974,7 @@ class FGTKde {
 
 	  // Number of query points in this neighboring box.
 	  int query_box_num = nbors[j];
-	  ArrayList<int> &query_rows = queries_assigned[query_box_num];
+	  std::vector<int>& query_rows = queries_assigned[query_box_num];
 	  int ninnbr = query_rows.size();
 	
 	  if(ninnbr <= nlmax) {
@@ -1018,14 +983,13 @@ class FGTKde {
 	    for(k = 0; k < ninnbr; k++) {
 	    
 	      int query_row = query_rows[k];
-	      const double *query = qset_.GetColumnPtr(query_row);
+	      const arma::vec& query = qset_.unsafe_col(query_row);
 
 	      for(l = 0; l < ninbox; l++) {
 		int reference_row = reference_rows[l];
-		const double *reference = rset_.GetColumnPtr(reference_row);
+		const arma::vec& reference = rset_.unsafe_col(reference_row);
 
-		double dsqd = 
-		  la::DistanceSqEuclidean(qset_.n_rows(), query, reference);
+		double dsqd = la::DistanceSqEuclidean(query, reference);
 
 		double pot = exp(-dsqd / delta);
 
@@ -1039,11 +1003,10 @@ class FGTKde {
 	  // In this case, take each reference point and convert into the 
 	  // Taylor series.
 	  else {
-	  
+	    arma::vec qboxcol = center.unsafe_col(query_box_num); 
 	    DirectLocalAccumulation_(reference_rows, query_box_num,
 				     locexp, delta,
-				     center.GetColumnPtr(query_box_num),
-				     nterms, totalnumcoeffs);
+				     qboxcol, nterms, totalnumcoeffs);
 	  }
 	
 	}
@@ -1051,37 +1014,37 @@ class FGTKde {
 
       // In this case, create a far field expansion.
       else {
-
-	ComputeMultipoleCoeffs_(mcoeffs ,dim, nterms,
+        arma::vec tmpcol = center.unsafe_col(i);
+	ComputeMultipoleCoeffs_(mcoeffs, dim, nterms,
 				totalnumcoeffs, i, delta, reference_rows,
-				center.GetColumnPtr(i));
+				tmpcol);
 
 	// Get the query boxes that are in the interaction range.
-	ArrayList<int> nbors;
-	nbors.Init();
+	std::vector<int> nbors;
 	MakeNeighbors_(i, nsides, kdis, nbors);
 	int nnbors = nbors.size();
 
 	for(j = 0; j < nnbors; j++) {
 	  int query_box_num = nbors[j];
-	  ArrayList<int> &query_rows = queries_assigned[query_box_num];
+	  std::vector<int>& query_rows = queries_assigned[query_box_num];
 	  int ninnbr = query_rows.size();
 
 	  // If this is true, evaluate far field expansion at each query point.
 	  if(ninnbr <= nlmax) {
+            arma::vec tmpcol = center.unsafe_col(i);
 	    EvaluateMultipoleExpansion_(query_rows, nterms,
 					totalnumcoeffs, mcoeffs,
-					i, delta, center.GetColumnPtr(i));
+					i, delta, tmpcol);
 	  }
 
 	  // In this case do far-field to local translation.
 	  else {
-	    
+	    arma::vec tmpcol1 = center.unsafe_col(i);
+            arma::vec tmpcol2 = center.unsafe_col(query_box_num);
 	    TranslateMultipoleToLocal_(i, query_box_num,
 				       mcoeffs, locexp,
 				       nterms, totalnumcoeffs, delta,
-				       center.GetColumnPtr(i),
-				       center.GetColumnPtr(query_box_num));
+				       tmpcol1, tmpcol2);
 	  
 	  }
 	}
@@ -1119,14 +1082,14 @@ class FGTKde {
    *                 reference points contained within.
    */
   void GaussTransform_(double delta, int nterms, int nallbx, 
-		       ArrayList<int> &nsides, 
-		       Vector &sidelengths, Vector &mincoords,
-		       Matrix &locexp, Matrix &center,
-		       ArrayList<ArrayList<int> > &queries_assigned, 
-		       ArrayList<ArrayList<int> > &references_assigned,
-		       Matrix &mcoeffs) {
+		       std::vector<int>& nsides, 
+		       arma::vec& sidelengths, arma::vec& mincoords,
+		       arma::mat& locexp, arma::mat& center,
+		       std::vector<std::vector<int> >& queries_assigned, 
+		       std::vector<std::vector<int> >& references_assigned,
+		       arma::mat& mcoeffs) {
 
-    int dim = qset_.n_rows();
+    int dim = qset_.n_rows;
     int kdis = (int) (sqrt(log(tau_) * -2.0) + 1);
 
     // This is a slight modification of Strain's cutoff since he never
@@ -1145,10 +1108,10 @@ class FGTKde {
    *         sums have been computed.
    */
   void NormalizeDensities_() {
-    double norm_const = kernel_.CalcNormConstant(qset_.n_rows()) *
-      rset_.n_cols();
+    double norm_const = kernel_.CalcNormConstant(qset_.n_rows) *
+      rset_.n_cols;
 
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       densities_[q] /= norm_const;
     }
   }
@@ -1170,12 +1133,8 @@ class FGTKde {
    *  @param results An uninitialized vector which will be initialized
    *                 with the computed density estimates.
    */
-  void get_density_estimates(Vector *results) {
-    results->Init(densities_.length());
-
-    for(index_t i = 0; i < densities_.length(); i++) {
-      (*results)[i] = densities_[i];
-    }
+  void get_density_estimates(arma::vec& results) {
+    results = densities_;
   }
 
   ///////// Initialization and computation //////////
@@ -1187,7 +1146,7 @@ class FGTKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module holding the parameters for execution.
    */
-  void Init(Matrix &qset, Matrix &rset, struct datanode *module_in) {
+  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
 
     // initialize with the incoming module holding the paramters
     module_ = module_in;
@@ -1197,9 +1156,9 @@ class FGTKde {
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
-    qset_.Copy(qset);
-    densities_.Init(qset_.n_cols());
-    rset_.Copy(rset);
+    qset_ = qset;
+    densities_.set_size(qset_.n_cols);
+    rset_ = rset;
 
     // set accuracy
     tau_ = fx_param_double(module_, "absolute_error", 0.1);
@@ -1210,20 +1169,20 @@ class FGTKde {
   void Compute() {
 
     double interaction_radius;
-    ArrayList<int> nsides;
-    Vector sidelengths;
-    Vector mincoords;
+    std::vector<int> nsides;
+    arma::vec sidelengths;
+    arma::vec mincoords;
     int nboxes, nterms;
-    int dim = rset_.n_rows();
+    int dim = rset_.n_rows;
     
-    nsides.Init(rset_.n_rows());
-    sidelengths.Init(rset_.n_rows());
-    mincoords.Init(rset_.n_rows());
+    nsides.reserve(rset_.n_rows);
+    sidelengths.set_size(rset_.n_rows);
+    mincoords.set_size(rset_.n_rows);
 
     printf("Computing FGT KDE...\n");
     
     // initialize densities to zero
-    densities_.SetZero();
+    densities_.zeros();
 
     fx_timer_start(module_, "fgt_kde_init");
     FastGaussTransformPreprocess_(&interaction_radius, nsides, sidelengths,
@@ -1231,37 +1190,26 @@ class FGTKde {
     fx_timer_stop(module_, "fgt_kde_init");
 
     // precompute factorials
-    msea_.Init(nterms - 1, qset_.n_rows());
+    msea_.Init(nterms - 1, qset_.n_rows);
     
     // stores the coordinate of each grid box
-    Matrix center;
-    center.Init(dim, nboxes);
+    arma::mat center(dim, nboxes);
 
     // stores the local expansion of each grid box
-    Matrix locexp;
-    locexp.Init((int) pow(nterms, dim), nboxes);
-    locexp.SetZero();
+    arma::mat locexp((int) pow(nterms, dim), nboxes);
+    locexp.zeros();
 
     // stores the ids of query points assigned to each grid box
-    ArrayList<ArrayList<int> > queries_assigned;
-    queries_assigned.Init(nboxes);
+    std::vector<std::vector<int> > queries_assigned;
+    queries_assigned.reserve(nboxes);
     
-    for(index_t i = 0; i < nboxes; i++) {
-      queries_assigned[i].Init();
-    }
-
     // stores the ids of reference points assigned to each grid box
-    ArrayList<ArrayList<int> > references_assigned;
-    references_assigned.Init(nboxes);
-
-    for(index_t i = 0; i < nboxes; i++) {
-      references_assigned[i].Init();
-    }
+    std::vector<std::vector<int> > references_assigned;
+    references_assigned.reserve(nboxes);
 
     // stores the multipole moments of the reference points in each grid box
-    Matrix mcoeffs;
-    mcoeffs.Init((int)pow(nterms, dim), nboxes);
-    mcoeffs.SetZero();
+    arma::mat mcoeffs((int) pow(nterms, dim), nboxes);
+    mcoeffs.zeros();
     
     double delta = 2 * kernel_.bandwidth_sq();
 
@@ -1291,7 +1239,7 @@ class FGTKde {
     if((fname = fx_param_str(module_, "fgt_kde_output", NULL)) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     
@@ -1299,7 +1247,6 @@ class FGTKde {
       fclose(stream);
     }
   }
-
 };
 
 #endif
