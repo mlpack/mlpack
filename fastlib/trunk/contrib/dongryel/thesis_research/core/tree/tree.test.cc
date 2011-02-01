@@ -11,6 +11,8 @@
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
+#include "core/tree/gen_metric_tree.h"
+#include "core/tree/gen_kdtree.h"
 #include "core/math/math_lib.h"
 #include <time.h>
 
@@ -82,8 +84,10 @@ class TestTree {
 
     bool StressTest(int num_dimensions, int num_points) {
 
+      int leaf_size = core::math::RandInt(15, 25);
       std::cout << "Number of dimensions: " << num_dimensions << "\n";
       std::cout << "Number of points: " << num_points << "\n";
+      std::cout << "Leaf size: " << leaf_size << "\n";
 
       // Push in the reference dataset name.
       std::string references_in("random.csv");
@@ -100,7 +104,7 @@ class TestTree {
       TableType original_table;
       original_table.Init(references_in);
       core::metric_kernels::LMetric<2> l2_metric;
-      reordered_table.IndexData(l2_metric, 20);
+      reordered_table.IndexData(l2_metric, leaf_size);
       for(int i = 0; i < reordered_table.n_entries(); i++) {
         core::table::DensePoint reordered_point;
         core::table::DensePoint original_point;
@@ -143,13 +147,22 @@ class TestTree {
 BOOST_AUTO_TEST_SUITE(TestSuiteTree)
 BOOST_AUTO_TEST_CASE(TestCaseTree) {
 
-  // Tree type: hard-coded for a metric tree.
+  // Table type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+  core::tree::GenMetricTree<core::tree::AbstractStatistic> >
+  GenMetricTreeTableType;
+
+  // Another table type coded for a kd-tree.
+  typedef core::table::Table <
+  core::tree::GenKdTree<core::tree::AbstractStatistic> > GenKdTreeTableType;
 
   // Call the tests.
-  core::tree::TestTree<TableType> tree_test;
-  tree_test.StressTestMain();
+  printf("Starting the generic metric tree test...\n");
+  core::tree::TestTree<GenMetricTreeTableType> gen_metric_tree_test;
+  gen_metric_tree_test.StressTestMain();
+  printf("Starting the generic kd tree test...\n");
+  core::tree::TestTree<GenKdTreeTableType> gen_kd_tree_test;
+  gen_kd_tree_test.StressTestMain();
 
   std::cout << "All tests passed!\n";
 }
