@@ -83,7 +83,7 @@ class SimpleNaiveBayesClassifier {
   arma::mat means_, variances_;
 
   // The variable containing the class probabilities
-  std::vector<double> class_probabilities_;
+  arma::vec class_probabilities_;
 
   // The variable keeping the information about the 
   // number of classes present
@@ -94,11 +94,6 @@ class SimpleNaiveBayesClassifier {
  public:
 
   SimpleNaiveBayesClassifier(){
-    /*
-    means_.Init(0, 0);
-    variances_.Init(0, 0);
-    class_probabilities_.Init(0);
-    */
   }
 
   ~SimpleNaiveBayesClassifier(){
@@ -116,58 +111,7 @@ class SimpleNaiveBayesClassifier {
   * nbc.InitTrain(training_data, nbc_module);
   * @endcode
   */
-  void InitTrain(const arma::mat& data, datanode* nbc_module) {
-
-    std::vector<double> feature_sum, feature_sum_squared;
-    index_t number_examples = data.n_cols;
-    index_t number_features = data.n_rows - 1;
-    nbc_module_ = nbc_module;
-
-    // updating the variables, private and local, according to
-    // the number of features and classes present in the data
-    number_of_classes_ = fx_param_int_req(nbc_module_,"classes");
-    class_probabilities_.resize(number_of_classes_,0);
-    means_.zeros(number_features,number_of_classes_);
-    variances_.zeros(number_features,number_of_classes_);
-    feature_sum.resize(number_features,0);
-    feature_sum_squared.resize(number_features,0);
-    for(index_t k = 0; k < number_features; k++) {
-      feature_sum[k] = 0;
-      feature_sum_squared[k] = 0;
-    }
-    NOTIFY("%"LI"d examples with %"LI"d features each\n",
-	   number_examples, number_features);
-    fx_result_int(nbc_module_, "features", number_features);
-    fx_result_int(nbc_module_, "examples", number_examples);
-
-    // calculating the class probabilities as well as the 
-    // sample mean and variance for each of the features
-    // with respect to each of the labels
-    for(index_t i = 0; i < number_of_classes_; i++ ) {
-      index_t number_of_occurrences = 0;
-      for (index_t j = 0; j < number_examples; j++) {
-	index_t flag = (index_t)  data(number_features, j);
-	if(i == flag) {
-	  ++number_of_occurrences;
-	  for(index_t k = 0; k < number_features; k++) {
-	    double tmp = data(k, j);
-	    feature_sum[k] += tmp;
-	    feature_sum_squared[k] += tmp*tmp;
-	  }
-	}
-      }
-      class_probabilities_[i] = (double)number_of_occurrences 
-	/ (double)number_examples ;
-      for(index_t k = 0; k < number_features; k++) {
-	means_(k, i) = (feature_sum[k] / number_of_occurrences);
-	variances_(k, i) = (feature_sum_squared[k] 
-			      - (feature_sum[k] * feature_sum[k] / number_of_occurrences))
-			     /(number_of_occurrences - 1);
-	feature_sum[k] = 0;
-	feature_sum_squared[k] = 0;
-      }
-    }
-  }
+  void InitTrain(const arma::mat& data, datanode* nbc_module); 
 
   /**
    * Given a bunch of data points, this function evaluates the class
@@ -180,50 +124,6 @@ class SimpleNaiveBayesClassifier {
    * nbc.Classify(test_data, &results);
    * @endcode
    */
-  void Classify(const arma::mat& test_data, arma::vec *results){
-
-    // Checking that the number of features in the test data is same
-    // as in the training data
-    DEBUG_ASSERT(test_data.n_rows - 1 == means_.n_rows);
-
-    arma::vec tmp_vals(number_of_classes_);
-    index_t number_features = test_data.n_rows - 1;
-			
-    arma::vec evaluated_result(test_data.n_cols);
-    
-    NOTIFY("%"LI"d test cases with %"LI"d features each\n",
-	   test_data.n_cols, number_features);
-
-    fx_result_int(nbc_module_,"tests", test_data.n_cols);
-    // Calculating the joint probability for each of the data points
-    // for each of the classes
-
-    // looping over every test case
-    for (index_t n = 0; n < test_data.n_cols; n++) {			
-      
-      //looping over every class
-      for (index_t i = 0; i < number_of_classes_; i++) {
-	// Using the log values to prevent floating point underflow
-	tmp_vals[i] = log(class_probabilities_[i]);
-	for (index_t j = 0; j < number_features; j++) {
-	  tmp_vals[i] += log(phi(test_data(j, n),
-				 means_(j, i),
-				 variances_(j, i))
-			     );	  
-	}
-      }			
-
-      // Find the index of the maximum value in tmp_vals.
-      evaluated_result[n] = 0;      
-      for (index_t k = 0; k < number_of_classes_; k++) {
-	if(tmp_vals[evaluated_result[n]] < tmp_vals[k])
-	  evaluated_result[n] = k;
-      }
-    }
-    // The result is being put in a vector
-    *results = evaluated_result;
-    
-    return;
-  }
+  void Classify(const arma::mat& test_data, arma::vec& results);
 };
 #endif
