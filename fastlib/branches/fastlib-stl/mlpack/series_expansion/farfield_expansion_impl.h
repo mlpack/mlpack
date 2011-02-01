@@ -463,15 +463,15 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   
   // The bandwidth factor and the multiindex mapping stuffs.
   double bandwidth_factor = ka_->BandwidthFactor(bandwidth_sq());
-  const std::vector<short int>& multiindex_mapping = 
+  const std::vector<std::vector<short int> >& multiindex_mapping = 
     sea_->get_multiindex_mapping();
-  const std::vector<short int>& lower_mapping_index = 
+  const std::vector<std::vector<short int> >& lower_mapping_index = 
     sea_->get_lower_mapping_index();
   
   // Get the total number of coefficients and the coefficient themselves.
   int total_num_coeffs = sea_->get_total_num_coeffs(order);
   int dim = sea_->get_dimension();
-  arma::vec& coeffs2 = fe.get_coeffs();
+  const arma::vec& coeffs2 = fe.get_coeffs();
 
   // Actual accumulated sum.
   double neg_sum = 0;
@@ -485,7 +485,7 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   // Compute the center difference and its table of partial
   // derivatives.
   arma::vec xI_xJ(dim);
-  arma::vec& xJ_center = fe.get_center();
+  const arma::vec& xJ_center = fe.get_center();
 
   for(index_t d = 0; d < dim; d++) {
     xI_xJ[d] = (center_[d] - xJ_center[d]) / bandwidth_factor;
@@ -493,7 +493,7 @@ double FarFieldExpansion<TKernelAux>::ConvolveField
   ka_->ComputeDirectionalDerivatives(xI_xJ, derivative_map_alpha, order);
 
   // The inverse factorials.
-  arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
+  const arma::vec& inv_multiindex_factorials = sea_->get_inv_multiindex_factorials();
 
   // The temporary space for computing the difference of two mappings.
   std::vector<short int> alpha_minus_beta_mapping;
