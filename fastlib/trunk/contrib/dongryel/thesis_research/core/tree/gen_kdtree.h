@@ -275,48 +275,53 @@ class GenKdTree {
       IndexType *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {
 
-      *left = NULL;
-      *right = NULL;
+      int split_dim = -1;
+      double max_width = -1;
 
-      if(node->count() > leaf_size) {
-        int split_dim = -1;
-        double max_width = -1;
+      // Find the splitting dimension.
+      core::tree::GenKdTreeMidpointSplitter::ComputeWidestDimension(
+        node->bound(), &split_dim, &max_width);
 
-        // Find the splitting dimension.
-        core::tree::GenKdTreeMidpointSplitter::ComputeWidestDimension(
-          node->bound(), &split_dim, &max_width);
+      // Choose the split value along the dimension to be splitted.
+      double split_val =
+        core::tree::GenKdTreeMidpointSplitter::ChooseKdTreeSplitValue(
+          node->bound(), split_dim);
 
-        // Choose the split value along the dimension to be splitted.
-        double split_val =
-          core::tree::GenKdTreeMidpointSplitter::ChooseKdTreeSplitValue(
-            node->bound(), split_dim);
+      // Allocate the children and its bound.
+      *left = (m_file_in) ?
+              m_file_in->Construct<TreeType>() : new TreeType();
+      *right = (m_file_in) ?
+               m_file_in->Construct<TreeType>() : new TreeType();
+      (*left)->bound().Init(matrix.n_rows());
+      (*right)->bound().Init(matrix.n_rows());
 
-        if(max_width < std::numeric_limits<double>::epsilon()) {
-          return false;
-        }
-        else {
-          *left = (m_file_in) ?
-                  m_file_in->Construct<TreeType>() : new TreeType();
-          *right = (m_file_in) ?
-                   m_file_in->Construct<TreeType>() : new TreeType();
+      int left_count = 0;
+      if(max_width < std::numeric_limits<double>::epsilon()) {
 
-          // Copy the split dimension and split value.
-          (*left)->bound().Init(matrix.n_rows());
-          (*right)->bound().Init(matrix.n_rows());
-          (*left)->bound().get(0).lo = split_dim;
-          (*left)->bound().get(0).hi = split_val;
-
-          int left_count = TreeType::MatrixPartition(
-                             metric_in, matrix, node->begin(), node->count(),
-                             (*left)->bound(), (*right)->bound(), old_from_new);
-
-          (*left)->Init(node->begin(), left_count);
-          (*right)->Init(
-            node->begin() + left_count, node->count() - left_count);
-        }
-        return true;
+        // Give the first half to the left and second half to the
+        // right.
+        left_count = node->count() / 2;
+        FindBoundFromMatrix(
+          metric_in, matrix, node->begin(), left_count, & ((*left)->bound()));
+        FindBoundFromMatrix(
+          metric_in, matrix, node->begin() + left_count,
+          node->count() - left_count, & ((*right)->bound()));
       }
-      return false;
+      else {
+
+        // Copy the split dimension and split value.
+        (*left)->bound().get(0).lo = split_dim;
+        (*left)->bound().get(0).hi = split_val;
+
+        left_count = TreeType::MatrixPartition(
+                       metric_in, matrix, node->begin(), node->count(),
+                       (*left)->bound(), (*right)->bound(), old_from_new);
+      }
+      (*left)->Init(node->begin(), left_count);
+      (*right)->Init(
+        node->begin() + left_count, node->count() - left_count);
+
+      return true;
     }
 };
 }

@@ -190,28 +190,34 @@ class GenMetricTree {
         furthest_from_furthest_random_row,
         &furthest_from_furthest_random_row_vec);
 
+      // Allocate the left and the right.
+      *left = (m_file_in) ?
+              m_file_in->Construct<TreeType>() : new TreeType();
+      *right = (m_file_in) ?
+               m_file_in->Construct<TreeType>() : new TreeType();
+      ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
+      ((*right)->bound().center()).Copy(
+        furthest_from_furthest_random_row_vec);
+      int left_count = 0;
       if(furthest_from_furthest_distance <
           std::numeric_limits<double>::epsilon()) {
-        return false;
+
+        // Give the first half to the lab, and the second half to the
+        // right.
+        left_count = node->count() / 2;
+        FindBoundFromMatrix(
+          metric_in, matrix, node->begin(), left_count, & ((*left)->bound()));
+        FindBoundFromMatrix(
+          metric_in, matrix, node->begin() + left_count,
+          node->count() - left_count, & ((*right)->bound()));
       }
       else {
-        *left = (m_file_in) ?
-                m_file_in->Construct<TreeType>() : new TreeType();
-        *right = (m_file_in) ?
-                 m_file_in->Construct<TreeType>() : new TreeType();
-
-        ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
-        ((*right)->bound().center()).Copy(
-          furthest_from_furthest_random_row_vec);
-
-        int left_count = TreeType::MatrixPartition(
-                           metric_in, matrix, node->begin(), node->count(),
-                           (*left)->bound(), (*right)->bound(), old_from_new);
-
-        (*left)->Init(node->begin(), left_count);
-        (*right)->Init(node->begin() + left_count, node->count() - left_count);
+        left_count = TreeType::MatrixPartition(
+                       metric_in, matrix, node->begin(), node->count(),
+                       (*left)->bound(), (*right)->bound(), old_from_new);
       }
-
+      (*left)->Init(node->begin(), left_count);
+      (*right)->Init(node->begin() + left_count, node->count() - left_count);
       return true;
     }
 };

@@ -45,9 +45,17 @@ class TableExchange {
 
   private:
 
+    /** @brief The cache of points received per process.
+     */
     std::vector< core::table::DenseMatrix > point_cache_;
 
+    /** @brief The cache of old from new mapping received per process.
+     */
     std::vector< typename TableType::OldFromNewIndexType *> old_from_new_cache_;
+
+    /** @brief The list of free cache blocks per process.
+     */
+    std::vector< std::vector<int> > free_cache_blocks_;
 
     /** @brief The circular buffer that acts as the cache of received
      *         subtables.
@@ -61,8 +69,10 @@ class TableExchange {
      *         appropriately if necessary.
      */
     void push_back_(
-      boost::circular_buffer<SubTableType> &circular_buffer,
-      SubTableType &sub_table_in) {
+      int process_id, SubTableType &sub_table_in) {
+
+      boost::circular_buffer<SubTableType> &circular_buffer =
+        received_subtables_[ process_id ];
 
       // Check if the buffer is full. If so, we need to take out the
       // head element (which is going to be overwritten) and destruct
@@ -265,7 +275,7 @@ class TableExchange {
 
             // Put the fixed subtables into the list.
             this->push_back_(
-              received_subtables_[j], received_subtables_in_this_round[j][i]);
+              j, received_subtables_in_this_round[j][i]);
           }
         }
 
