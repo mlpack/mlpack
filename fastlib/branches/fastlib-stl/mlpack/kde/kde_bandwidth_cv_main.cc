@@ -6,13 +6,12 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <armadillo>
+
 #include "bandwidth_lscv.h"
 #include "dataset_scaler.h"
 #include "dualtree_kde.h"
 #include "naive_kde.h"
-
-#include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 /**
  * Main function which reads parameters and determines which
@@ -100,45 +99,42 @@ int main(int argc, char *argv[]) {
     fx_param_str(fx_root, "query", references_file_name);
 
   // Query and reference datasets, reference weight dataset.
-  Matrix references;
-  Matrix reference_weights;
-  Matrix queries;
+  arma::mat references;
+  arma::mat reference_weights;
+  arma::mat* queries_ptr;
+  arma::mat queries;
 
   // Flag for telling whether references are equal to queries
   bool queries_equal_references = 
     !strcmp(queries_file_name, references_file_name);
 
   // data::Load inits a matrix with the contents of a .csv or .arff.
-  arma::mat tmp;
-  data::Load(references_file_name, tmp);
-  arma_compat::armaToMatrix(tmp, references);
+  data::Load(references_file_name, references);
   if(queries_equal_references) {
-    queries.Alias(references);
+    queries_ptr = &references;
   }
   else {
-    data::Load(queries_file_name, tmp);
-    arma_compat::armaToMatrix(tmp, queries);
+    data::Load(queries_file_name, queries);
+    queries_ptr = &queries;
   }
   
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
   if(fx_param_exists(fx_root, "dwgts")) {
-    data::Load(fx_param_str(fx_root, "dwgts", NULL), tmp);
-    arma_compat::armaToMatrix(tmp, reference_weights);
+    data::Load(fx_param_str(fx_root, "dwgts", NULL), reference_weights);
   }
   else {
-    reference_weights.Init(1, queries.n_cols());
-    reference_weights.SetAll(1);
+    reference_weights.ones(1, queries.n_cols);
   }
 
   // Confirm whether the user asked for scaling of the dataset.
   if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
-    DatasetScaler::ScaleDataByMinMax(queries, references,
+    DatasetScaler::ScaleDataByMinMax(*queries_ptr, references,
                                      queries_equal_references);
   }
   else if(!strcmp(fx_param_str(kde_module, "scaling", "none"), 
 		  "standardize")) {
-    DatasetScaler::StandardizeData(queries, references, 
+    DatasetScaler::StandardizeData(*queries_ptr, references, 
 				   queries_equal_references);
   }
 

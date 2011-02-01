@@ -60,7 +60,9 @@
 
 #define INSIDE_DUALTREE_VKDE_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <armadillo>
+
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "dualtree_kde_common.h"
 #include "kde_stat.h"
@@ -97,7 +99,7 @@ class DualtreeVKde {
  public:
   
   // our tree type using the VKdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, Vector>, Matrix, VKdeStat<TKernel> > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, arma::vec>, arma::mat, VKdeStat<TKernel> > Tree;
     
  private:
 
@@ -126,11 +128,11 @@ class DualtreeVKde {
 
   /** @brief The kernel objects, one for each reference point.
    */
-  ArrayList<TKernel> kernels_;
+  std::vector<TKernel> kernels_;
 
   /** @brief The query dataset.
    */
-  Matrix qset_;
+  arma::mat qset_;
 
   /** @brief The query tree.
    */
@@ -138,7 +140,7 @@ class DualtreeVKde {
 
   /** @brief The reference dataset.
    */
-  Matrix rset_;
+  arma::mat rset_;
   
   /** @brief The reference tree.
    */
@@ -146,28 +148,28 @@ class DualtreeVKde {
 
   /** @brief The reference weights.
    */
-  Vector rset_weights_;
+  arma::vec rset_weights_;
 
   /** @brief The running lower bound on the densities.
    */
-  Vector densities_l_;
+  arma::vec densities_l_;
 
   /** @brief The computed densities.
    */
-  Vector densities_e_;
+  arma::vec densities_e_;
 
   /** @brief The running upper bound on the densities.
    */
-  Vector densities_u_;
+  arma::vec densities_u_;
 
   /** @brief The amount of used error for each query.
    */
-  Vector used_error_;
+  arma::vec used_error_;
 
   /** @brief The number of reference points taken care of for each
    *         query.
    */
-  Vector n_pruned_;
+  arma::vec n_pruned_;
 
   /** @brief The sum of all reference weights.
    */
@@ -195,12 +197,12 @@ class DualtreeVKde {
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
    */
-  ArrayList<index_t> old_from_new_queries_;
+  arma::Col<index_t> old_from_new_queries_;
   
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  ArrayList<index_t> old_from_new_references_;
+  arma::Col<index_t> old_from_new_references_;
 
   ////////// Private Member Functions //////////
 
@@ -271,31 +273,27 @@ class DualtreeVKde {
 
   /** @brief Get the density estimate.
    */
-  void get_density_estimates(Vector *results) { 
-    results->Init(densities_e_.length());
-    
-    for(index_t i = 0; i < densities_e_.length(); i++) {
-      (*results)[i] = densities_e_[i];
-    }
+  void get_density_estimates(arma::vec& results) { 
+    results = densities_e_;
   }
 
   ////////// User Level Functions //////////
 
-  void Compute(Vector *results) {
+  void Compute(arma::vec& results) {
 
     // Set accuracy parameters.
     relative_error_ = fx_param_double(module_, "relative_error", 0.1);
     threshold_ = fx_param_double(module_, "threshold", 0) *
-      kernels_[0].CalcNormConstant(qset_.n_rows());
+      kernels_[0].CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
-    densities_l_.SetZero();
-    densities_e_.SetZero();
-    densities_u_.SetAll(rset_weight_sum_);
+    densities_l_.zeros();
+    densities_e_.zeros();
+    densities_u_.fill(rset_weight_sum_);
 
     // Set zero for error accounting stuff.
-    used_error_.SetZero();
-    n_pruned_.SetZero();
+    used_error_.zeros();
+    n_pruned_.zeros();
 
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ = 0;
@@ -325,14 +323,13 @@ class DualtreeVKde {
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
-    Vector tmp_q_results;
-    tmp_q_results.Init(densities_e_.length());
+    arma::vec tmp_q_results(densities_e_.n_elem);
     
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(index_t i = 0; i < tmp_q_results.n_elem; i++) {
       tmp_q_results[old_from_new_queries_[i]] =
 	densities_e_[i];
     }
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(index_t i = 0; i < tmp_q_results.n_elem; i++) {
       densities_e_[i] = tmp_q_results[i];
     }
 
@@ -340,8 +337,8 @@ class DualtreeVKde {
     get_density_estimates(results);
   }
 
-  void Init(const Matrix &queries, const Matrix &references,
-	    const Matrix &rset_weights, bool queries_equal_references, 
+  void Init(const arma::mat& queries, const arma::mat& references,
+	    const arma::mat& rset_weights, bool queries_equal_references, 
 	    struct datanode *module_in) {
 
     // point to the incoming module
@@ -349,7 +346,7 @@ class DualtreeVKde {
 
     // Set the flag for whether to perform leave-one-out computation.
     leave_one_out_ = fx_param_exists(module_in, "loo") &&
-      (queries.ptr() == references.ptr());
+      (queries.memptr() == references.memptr());
 
     // read in the number of points owned by a leaf
     int leaflen = fx_param_int(module_in, "leaflen", 20);
@@ -358,20 +355,23 @@ class DualtreeVKde {
     // sum. rset_weight_sum_ should be the raw sum of the reference
     // weights, ignoring the possibly different normalizing constants
     // in the case of variable-bandwidth case.
-    rset_.Copy(references);
-    rset_weights_.Init(rset_weights.n_cols());
+    rset_ = references;
+    rset_weights_.set_size(rset_weights.n_cols);
     rset_weight_sum_ = 0;
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
-      rset_weights_[i] = rset_weights.get(0, i);
+    for(index_t i = 0; i < rset_weights.n_cols; i++) {
+      rset_weights_[i] = rset_weights(0, i);
       rset_weight_sum_ += rset_weights_[i];
     }
 
     // Copy the query dataset.
     if(queries_equal_references) {
-      qset_.Alias(rset_);
+      // create an alias... I do not like that I am doing this, but the code
+      // needs to compile.  Later the code needs to be restructured so this type
+      // of thing is not necessary at all.
+      qset_ = arma::mat(rset_.memptr(), rset_.n_rows, rset_.n_cols, false, true);
     }
     else {
-      qset_.Copy(queries);
+      qset_ = queries;
     }
 
     // Construct query and reference trees. Shuffle the reference
@@ -386,7 +386,7 @@ class DualtreeVKde {
 
     if(queries_equal_references) {
       qroot_ = rroot_;
-      old_from_new_queries_.InitCopy(old_from_new_references_);
+      old_from_new_queries_ = old_from_new_references_;
     }
     else {
       qroot_ = proximity::MakeGenMetricTree<Tree>(qset_, leaflen,
@@ -396,26 +396,26 @@ class DualtreeVKde {
     fx_timer_stop(NULL, "tree_d");
     
     // Initialize the density lists
-    densities_l_.Init(qset_.n_cols());
-    densities_e_.Init(qset_.n_cols());
-    densities_u_.Init(qset_.n_cols());
+    densities_l_.set_size(qset_.n_cols);
+    densities_e_.set_size(qset_.n_cols);
+    densities_u_.set_size(qset_.n_cols);
 
     // Initialize the error accounting stuff.
-    used_error_.Init(qset_.n_cols());
-    n_pruned_.Init(qset_.n_cols());
+    used_error_.set_size(qset_.n_cols);
+    n_pruned_.set_size(qset_.n_cols);
 
     // Initialize the kernels for each reference point.
     int knns = fx_param_int_req(module_, "knn");
     AllkNN all_knn;
-    kernels_.Init(rset_.n_cols());
-    all_knn.Init(rset_, 20, knns);
-    ArrayList<index_t> resulting_neighbors;
-    ArrayList<double> squared_distances;    
+    kernels_.reserve(rset_.n_cols);
+    all_knn.Init(&rset_, 20, knns);
+    arma::Col<index_t> resulting_neighbors;
+    arma::vec squared_distances;    
 
     fx_timer_start(fx_root, "bandwidth_initialization");
-    all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
+    all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
 
-    for(index_t i = 0; i < squared_distances.size(); i += knns) {
+    for(index_t i = 0; i < squared_distances.n_elem; i += knns) {
       kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
     }
     fx_timer_stop(fx_root, "bandwidth_initialization");
@@ -423,12 +423,12 @@ class DualtreeVKde {
     // Renormalize the reference weights according to the bandwidths
     // that have been chosen.
     double min_norm_const = DBL_MAX;
-    for(index_t i = 0; i < rset_weights_.length(); i++) {
-      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+    for(index_t i = 0; i < rset_weights_.n_elem; i++) {
+      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows);
       min_norm_const = std::min(min_norm_const, norm_const);
     }
-    for(index_t i = 0; i < rset_weights_.length(); i++) {
-      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows());
+    for(index_t i = 0; i < rset_weights_.n_elem; i++) {
+      double norm_const = kernels_[i].CalcNormConstant(qset_.n_rows);
       rset_weights_[i] *= (min_norm_const / norm_const);
     }
 
@@ -445,7 +445,7 @@ class DualtreeVKde {
 			     "fast_kde_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(index_t q = 0; q < qset_.n_cols; q++) {
       fprintf(stream, "%g\n", densities_e_[q]);
     }
     

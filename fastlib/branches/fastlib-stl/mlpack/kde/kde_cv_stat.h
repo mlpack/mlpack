@@ -25,10 +25,10 @@ class VKdeCVStat {
     return weight_sum_;
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const arma::mat& dataset, index_t &start, index_t &count) {
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const arma::mat& dataset, index_t &start, index_t &count,
 	    const VKdeCVStat& left_stat, const VKdeCVStat& right_stat) {
   }
   
@@ -68,17 +68,17 @@ class KdeCVStat {
     second_farfield_expansion_.Init(second_ka);
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const arma::mat& dataset, index_t &start, index_t &count) {
     //subspace_.Init(dataset, start, count);
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const arma::mat& dataset, index_t &start, index_t &count,
 	    const KdeCVStat& left_stat, const KdeCVStat& right_stat) {
     //subspace_.Init(dataset, start, count, left_stat.subspace_,
     //	   right_stat.subspace_);
   }
     
-  void Init(const Vector& center, const TKernelAux &first_ka,
+  void Init(const arma::vec& center, const TKernelAux &first_ka,
 	    const TKernelAux &second_ka) {
     first_farfield_expansion_.Init(center, first_ka);
     second_farfield_expansion_.Init(center, second_ka);
