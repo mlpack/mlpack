@@ -24,7 +24,6 @@ set(DIRS
    niche
    nvasil
    pram
-   rcurtin
    rriegel
    soyeon
    tqlong
