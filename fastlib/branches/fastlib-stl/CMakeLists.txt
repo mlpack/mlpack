@@ -39,7 +39,10 @@ if(DEBUG)
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -pg -O0")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
   add_definitions(-DDEBUG)
+else()
+  add_definitions(-DARMA_NO_DEBUG)
 endif(DEBUG)
+
 
 # ensure we are only using one of the SCALE_x options
 if(SCALE_MASSIVE)
