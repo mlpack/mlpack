@@ -60,7 +60,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
   table_exchange.Init(
-    *world_, *reference_table_, 2 * max_num_work_to_dequeue_per_stage_);
+    *world_, *(reference_table_->local_table()), leaf_size_,
+    max_num_levels_to_serialize_, max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
   std::vector < PriorityQueueType > computation_frontier(
@@ -111,8 +112,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // Try to exchange the subtables.
     if(
       table_exchange.AllToAll(
-        *world_, max_num_levels_to_serialize_,
-        *(reference_table_->local_table()), receive_requests)) {
+        *world_, max_num_levels_to_serialize_, receive_requests)) {
 
       // Check whether all of the processes are done. Otherwise, we
       // have to be in the loop in case some processes request
@@ -202,15 +202,18 @@ DistributedProblemType >::ResetStatistic() {
 
 template<typename DistributedProblemType>
 DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
+  leaf_size_ = 0;
   max_num_levels_to_serialize_ = 15;
   max_num_work_to_dequeue_per_stage_ = 5;
 }
 
 template<typename DistributedProblemType>
 void DistributedDualtreeDfs<DistributedProblemType>::set_work_params(
+  int leaf_size_in,
   int max_num_levels_to_serialize_in,
   int max_num_work_to_dequeue_per_stage_in) {
 
+  leaf_size_ = leaf_size_in;
   max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
   max_num_work_to_dequeue_per_stage_ = max_num_work_to_dequeue_per_stage_in;
 }

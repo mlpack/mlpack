@@ -86,11 +86,13 @@ class SubTableList {
     void push_back(
       int rank_in, core::table::DenseMatrix &data_alias_in,
       OldFromNewIndexType *old_from_new_alias_in,
+      int cache_block_id_in,
+      int cache_block_size_in,
       int max_num_levels_to_serialize_in) {
       list_.resize(list_.size() + 1);
       list_[list_.size() - 1].Init(
         rank_in, data_alias_in, old_from_new_alias_in,
-        max_num_levels_to_serialize_in);
+        cache_block_id_in, cache_block_size_in, max_num_levels_to_serialize_in);
     }
 
     /** @brief Pushes back a starting node and the number of levels to

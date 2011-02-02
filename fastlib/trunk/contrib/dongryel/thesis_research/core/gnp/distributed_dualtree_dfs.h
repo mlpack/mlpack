@@ -87,6 +87,11 @@ class DistributedDualtreeDfs {
      */
     DistributedTableType *reference_table_;
 
+    /** @brief The maximum number of points a leaf node of a local
+     *         tree contains.
+     */
+    int leaf_size_;
+
     /** @brief The maximum number of tree levels to serialize at a
      *         time.
      */
@@ -141,6 +146,7 @@ class DistributedDualtreeDfs {
      *         number of work per stage to dequeue.
      */
     void set_work_params(
+      int leaf_size_in,
       int max_num_levels_to_serialize_in,
       int max_num_work_to_dequeue_per_stage_in);
 

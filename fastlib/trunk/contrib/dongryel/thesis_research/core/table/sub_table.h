@@ -107,6 +107,10 @@ class SubTable {
     // For boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The ID of the cache block the subtable is occupying.
+     */
+    int cache_block_id_;
+
     /** @brief The table to be loaded/saved.
      */
     TableType *table_;
@@ -201,6 +205,10 @@ class SubTable {
 
   public:
 
+    int cache_block_id() const {
+      return cache_block_id_;
+    }
+
     /** @brief Returns the list of terminal nodes for which the points
      *         underneath are available.
      */
@@ -219,6 +227,7 @@ class SubTable {
     /** @brief Steals the ownership of the incoming subtable.
      */
     void operator=(const SubTable<TableType> &subtable_in) {
+      cache_block_id_ = subtable_in.cache_block_id();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
       max_num_levels_to_serialize_ =
@@ -284,10 +293,14 @@ class SubTable {
         core::table::SubDenseMatrix<SubTableType> sub_data;
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
+
+        // Direct mapping saving.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), serialize_points_per_terminal_node_);
+          ar, old_from_new_->get(),
+          serialize_points_per_terminal_node_, false);
         core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), serialize_points_per_terminal_node_);
+          ar, new_from_old_->get(),
+          serialize_points_per_terminal_node_, false);
       }
     }
 
@@ -334,6 +347,12 @@ class SubTable {
         serialize_points_per_terminal_node_size);
       for(int i = 0; i < serialize_points_per_terminal_node_size; i++) {
         ar & serialize_points_per_terminal_node_[i];
+
+        // Add the list of points that are serialized to the table so
+        // that the iterators work properly.
+        table_->add_begin_count_pairs(
+          serialize_points_per_terminal_node_[i].begin(),
+          serialize_points_per_terminal_node_[i].count());
       }
 
       // Load the data and the mappings if available.
@@ -352,10 +371,15 @@ class SubTable {
             core::table::global_m_file_->ConstructArray <
             int > (data_->n_cols()) : new int[ data_->n_cols()] ;
         }
+
+        // Always serialize onto a consecutive block of memory to save
+        // space.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
-          ar, old_from_new_->get(), serialize_points_per_terminal_node_);
+          ar, old_from_new_->get(),
+          serialize_points_per_terminal_node_, true);
         core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(), serialize_points_per_terminal_node_);
+          ar, new_from_old_->get(),
+          serialize_points_per_terminal_node_, true);
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -363,6 +387,7 @@ class SubTable {
     /** @brief The default constructor.
      */
     SubTable() {
+      cache_block_id_ = 0;
       table_ = NULL;
       start_node_ = NULL;
       max_num_levels_to_serialize_ = std::numeric_limits<int>::max();
@@ -436,14 +461,21 @@ class SubTable {
     void Init(
       int rank_in, core::table::DenseMatrix &data_alias_in,
       OldFromNewIndexType *old_from_new_alias_in,
+      int cache_block_id_in,
+      int cache_block_size_in,
       int max_num_levels_to_serialize_in) {
+
+      // Set the cache block ID.
+      cache_block_id_ = cache_block_id_in;
+
+      // Allocate the table.
       table_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->Construct<TableType>() :
                new TableType();
 
       // Make the data grab the pointer.
       table_->data().Alias(
-        data_alias_in.ptr(), data_alias_in.n_rows(), data_alias_in.n_cols());
+        data_alias_in.ptr(), data_alias_in.n_rows(), cache_block_size_in);
       table_->set_rank(rank_in);
 
       // Alias the incoming mappings.

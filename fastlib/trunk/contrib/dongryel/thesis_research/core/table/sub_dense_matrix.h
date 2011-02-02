@@ -74,6 +74,8 @@ class SubDenseMatrix {
       ar & n_rows;
       ar & n_cols;
 
+      // Since we are extracting an already well-formed matrix, we use
+      // the direct mapping.
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
         for(int i = (*serialize_points_per_terminal_node_)[j].begin();
@@ -101,11 +103,14 @@ class SubDenseMatrix {
         matrix_->Init(n_rows, n_cols);
       }
 
+      // Serialize onto a consecutive block of memory.
+      int index = 0;
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node_->size(); j++) {
         for(int i = (*serialize_points_per_terminal_node_)[j].begin();
-            i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
-          double *column_ptr = const_cast<double *>(matrix_->GetColumnPtr(i));
+            i < (*serialize_points_per_terminal_node_)[j].end(); i++, index++) {
+          double *column_ptr =
+            const_cast<double *>(matrix_->GetColumnPtr(index));
           for(int k = 0; k < matrix_->n_rows(); k++) {
             ar & column_ptr[k];
           }
