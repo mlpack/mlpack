@@ -22,18 +22,13 @@ class IndexUtil {
      */
     static int Extract(IndexType *array, int position);
 
-    /** @brief Serialize a specified number of index elements from a
-     *         set of index elements.
-     */
-    template<typename Archive>
-    static void Serialize(Archive &ar, IndexType *array, int num_elements);
-
     /** @brief Serialize sets of specified index elements.
      */
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, IndexType *array,
-      const PointSerializeFlagArrayType &serialize_points_per_terminal_node);
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
+      bool serialize_consecutive_memory_block);
 };
 
 /** @brief A template specialization of the IndexUtil class for an int
@@ -46,28 +41,27 @@ class IndexUtil< int > {
       return array[position];
     }
 
-    template<typename Archive>
-    static void Serialize(Archive &ar, int *array, int num_elements) {
-      if(array == NULL) {
-        return;
-      }
-      for(int i = 0; i < num_elements; i++) {
-        ar & array[i];
-      }
-    }
-
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, int *array,
-      const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
+      bool serialize_consecutive_memory_block) {
+
+      // Return for a null array.
       if(array == NULL) {
         return;
       }
+
+      // Serialize onto a consecutive block.
+      int index = 0;
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
+        if(! serialize_consecutive_memory_block) {
+          index = serialize_points_per_terminal_node[j].begin();
+        }
         for(int i = serialize_points_per_terminal_node[j].begin();
-            i < serialize_points_per_terminal_node[j].end(); i++) {
-          ar & array[i];
+            i < serialize_points_per_terminal_node[j].end(); i++, index++) {
+          ar & array[index];
         }
       }
     }
@@ -84,34 +78,29 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
       return array[position].second.second;
     }
 
-    template<typename Archive>
-    static void Serialize(
-      Archive &ar, std::pair<int, std::pair<int, int> > *array,
-      int num_elements) {
-      if(array == NULL) {
-        return;
-      }
-      for(int i = 0; i < num_elements; i++) {
-        ar & array[i].first;
-        ar & array[i].second.first;
-        ar & array[i].second.second;
-      }
-    }
-
     template<typename Archive, typename PointSerializeFlagArrayType>
     static void Serialize(
       Archive &ar, std::pair<int, std::pair<int, int> > *array,
-      const PointSerializeFlagArrayType &serialize_points_per_terminal_node) {
+      const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
+      bool serialize_consecutive_memory_block) {
+
+      // Return for a null array.
       if(array == NULL) {
         return;
       }
+
+      // Serialize onto a consecutive block.
+      int index = 0;
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
+        if(! serialize_consecutive_memory_block) {
+          index = serialize_points_per_terminal_node[j].begin();
+        }
         for(int i = serialize_points_per_terminal_node[j].begin();
-            i < serialize_points_per_terminal_node[j].end(); i++) {
-          ar & array[i].first;
-          ar & array[i].second.first;
-          ar & array[i].second.second;
+            i < serialize_points_per_terminal_node[j].end(); i++, index++) {
+          ar & array[index].first;
+          ar & array[index].second.first;
+          ar & array[index].second.second;
         }
       }
     }

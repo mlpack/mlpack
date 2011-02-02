@@ -58,6 +58,7 @@ void DistributedKde<DistributedTableType>::Compute(
   distributed_dualtree_dfs;
   distributed_dualtree_dfs.Init(world_, *this);
   distributed_dualtree_dfs.set_work_params(
+    arguments_in.leaf_size_,
     arguments_in.max_num_levels_to_serialize_,
     arguments_in.max_num_work_to_dequeue_per_stage_);
 

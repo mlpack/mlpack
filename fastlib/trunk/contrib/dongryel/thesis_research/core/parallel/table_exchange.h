@@ -45,17 +45,35 @@ class TableExchange {
 
   private:
 
+    /** @brief The pointer to the local table that is partcipating in
+     *         the exchange.
+     */
+    TableType *local_table_;
+
     /** @brief The cache of points received per process.
      */
     std::vector< core::table::DenseMatrix > point_cache_;
 
     /** @brief The cache of old from new mapping received per process.
      */
-    std::vector< typename TableType::OldFromNewIndexType *> old_from_new_cache_;
+    std::vector< OldFromNewIndexType *> old_from_new_cache_;
 
     /** @brief The list of free cache blocks per process.
      */
     std::vector< std::vector<int> > free_cache_blocks_;
+
+    /** @brief The number of points that could fit into a cache block.
+     */
+    int cache_block_size_;
+
+    /** @brief The number of cache blocks per process.
+     */
+    int num_cache_blocks_per_process_;
+
+    /** @brief The total number of points that could fit into a
+     *         process cache.
+     */
+    int total_cache_size_per_process_;
 
     /** @brief The circular buffer that acts as the cache of received
      *         subtables.
@@ -63,6 +81,50 @@ class TableExchange {
     std::vector< boost::circular_buffer<SubTableType> > received_subtables_;
 
   private:
+
+    int get_free_cache_block_(
+      int process_id, core::table::DenseMatrix *point_cache_block_alias,
+      OldFromNewIndexType **old_from_new_cache_alias) {
+
+      boost::circular_buffer<SubTableType> &circular_buffer =
+        received_subtables_[ process_id ];
+
+      int free_cache_block_id = -1;
+      if(free_cache_blocks_[process_id].size() == 0) {
+
+        // In this case, the buffer is full. If so, we need to take
+        // out the head element (which is going to be overwritten) and
+        // destruct it manually since Boost circular buffer does not
+        // do so automatically.
+
+        // This is somewhat a hack. See the assignment operator for
+        // SubTableType in core/table/sub_table.h
+        SubTableType safe_free = circular_buffer.front();
+
+        // Push back the freed-up cache block retrieved from the
+        // subtable that is about to be evicted.
+        free_cache_blocks_[process_id].push_back(safe_free.cache_block_id());
+
+        // Evict the subtable.
+        circular_buffer.pop_front();
+      }
+
+      // Pop the list of free cache block IDs.
+      free_cache_block_id = free_cache_blocks_[process_id].back();
+      free_cache_blocks_[process_id].pop_back();
+
+      // It is important that the number of attributes is multiplied
+      // here.
+      int mapping_offset = free_cache_block_id * cache_block_size_;
+      int point_offset = mapping_offset * local_table_->n_attributes();
+      point_cache_block_alias->Alias(
+        point_cache_[process_id].ptr() + point_offset,
+        local_table_->n_attributes(), cache_block_size_);
+      *old_from_new_cache_alias = old_from_new_cache_[process_id] +
+                                  mapping_offset;
+
+      return free_cache_block_id;
+    }
 
     /** @brief Pushes a new subtable to the given circular buffer,
      *         evicting a pre-existing subtable and destroying it
@@ -83,6 +145,10 @@ class TableExchange {
         // This is somewhat a hack. See the assignment operator for
         // SubTableType in core/table/sub_table.h
         SubTableType safe_free = circular_buffer.front();
+
+        // Push back the freed-up cache block retrieved from the
+        // subtable that is about to be evicted.
+        free_cache_blocks_[process_id].push_back(safe_free.cache_block_id());
       }
       circular_buffer.push_back(sub_table_in);
     }
@@ -163,28 +229,71 @@ class TableExchange {
      */
     void Init(
       boost::mpi::communicator &world,
-      const DistributedTableType &distributed_table,
-      int subtable_cache_size_per_process) {
+      TableType &local_table_in,
+      int leaf_size_in,
+      int max_num_levels_to_serialize_in,
+      int max_num_work_to_dequeue_per_stage_in) {
+
+      // Set the local table.
+      local_table_ = &local_table_in;
+
+      // Compute the size of each cache block, which is a function of
+      // the leaf nodes owned by a subtree times each leaf node size.
+      cache_block_size_ = (1 << max_num_levels_to_serialize_in) * leaf_size_in;
+
+      // Compute the number of cache blocks allocated per process. The
+      // rule is that each process gets at least twice the number of
+      // work that is dequeued per stage so that there is some
+      // progress in the computation, but we try to limit the number
+      // of cache blocks across all processes to be 100.
+      num_cache_blocks_per_process_ =
+        std::max(
+          2 * max_num_work_to_dequeue_per_stage_in, 100 / world.size());
+
+      // Compute the total cache size.
+      total_cache_size_per_process_ = num_cache_blocks_per_process_ *
+                                      cache_block_size_;
+
+      if(world.rank() == 0) {
+        printf(
+          "Cache block size (the max number of points serialized per "
+          "sub-tree): %d\n", cache_block_size_);
+        printf(
+          "Number of cache blocks per process: %d\n",
+          num_cache_blocks_per_process_);
+        printf(
+          "Total cache size per process: %d\n", total_cache_size_per_process_);
+      }
 
       // Preallocate the point cache.
       point_cache_.resize(world.size());
       old_from_new_cache_.resize(world.size());
       received_subtables_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
-        received_subtables_[i].set_capacity(subtable_cache_size_per_process);
+        received_subtables_[i].set_capacity(num_cache_blocks_per_process_);
+      }
+
+      // Allocate the free cache block list.
+      free_cache_blocks_.resize(world.size());
+      for(int i = 0; i < world.size(); i++) {
+        if(i != world.rank()) {
+          for(int j = 0; j < num_cache_blocks_per_process_; j++) {
+            free_cache_blocks_[i].push_back(j);
+          }
+        }
       }
 
       for(int i = 0; i < world.size(); i++) {
         if(i != world.rank()) {
           point_cache_[i].Init(
-            distributed_table.n_attributes(),
-            distributed_table.local_n_entries(i));
+            local_table_->n_attributes(),
+            total_cache_size_per_process_);
           old_from_new_cache_[i] =
             (core::table::global_m_file_) ?
             core::table::global_m_file_->ConstructArray <
             typename TableType::OldFromNewIndexType > (
-              distributed_table.local_n_entries(i)) :
-            new OldFromNewIndexType[ distributed_table.local_n_entries(i)];
+              total_cache_size_per_process_) :
+            new OldFromNewIndexType[ total_cache_size_per_process_ ];
         }
         else {
           old_from_new_cache_[i] = NULL;
@@ -199,7 +308,6 @@ class TableExchange {
     bool AllToAll(
       boost::mpi::communicator &world,
       int max_num_levels_to_serialize,
-      TableType &local_table,
       std::vector <
       std::vector< std::pair<int, int> > > &receive_requests) {
 
@@ -240,8 +348,8 @@ class TableExchange {
             int begin = sub_send_requests[j][i].first;
             int count = sub_send_requests[j][i].second;
             send_subtables[j].push_back(
-              &local_table,
-              local_table.get_tree()->FindByBeginCount(begin, count),
+              local_table_,
+              local_table_->get_tree()->FindByBeginCount(begin, count),
               max_num_levels_to_serialize);
           }
         }
@@ -252,8 +360,19 @@ class TableExchange {
         received_subtables_in_this_round.resize(world.size());
         for(unsigned int j = 0; j < receive_requests.size(); j++) {
           if(receive_requests[j].size() > 0) {
+
+            // Get a free cache block.
+            core::table::DenseMatrix point_cache_alias;
+            OldFromNewIndexType *old_from_new_cache_alias = NULL;
+            int free_cache_block_id =
+              this->get_free_cache_block_(
+                j, &point_cache_alias, &old_from_new_cache_alias);
+
+            // Allocate the cache block to the subtable that is about
+            // to be received.
             received_subtables_in_this_round[j].push_back(
-              j, point_cache_[j], old_from_new_cache_[j],
+              j, point_cache_alias, old_from_new_cache_alias,
+              free_cache_block_id, cache_block_size_,
               max_num_levels_to_serialize);
           }
         }

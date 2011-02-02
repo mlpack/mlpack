@@ -11,8 +11,10 @@
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
+#include <boost/tuple/tuple.hpp>
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
+#include "core/math/math_lib.h"
 #include "core/tree/general_spacetree.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
@@ -42,6 +44,8 @@ class Table {
 
     // For Boost serialization.
     friend class boost::serialization::access;
+
+    std::vector< boost::tuple<int, int, int> > begin_count_pairs_;
 
     /** @brief The underlying multidimensional data owned by the
      *         table.
@@ -171,6 +175,25 @@ class Table {
 
   public:
 
+    void add_begin_count_pairs(int begin, int count) {
+      if(begin_count_pairs_.size() == 0) {
+        begin_count_pairs_.push_back(
+          boost::tuple<int, int, int>(begin, count, 0));
+      }
+      else {
+        int cumulative_index =
+          begin_count_pairs_.back().get<2>() +
+          begin_count_pairs_.back().get<1>();
+        begin_count_pairs_.push_back(
+          boost::tuple<int, int, int>(begin, count, cumulative_index));
+      }
+    }
+
+    const std::vector <
+    boost::tuple<int, int, int> > &begin_counts_pairs() const {
+      return begin_count_pairs_;
+    }
+
     bool tree_is_aliased() const {
       return tree_is_aliased_;
     }
@@ -190,6 +213,7 @@ class Table {
      *         ownership of the pointers of the incoming table.
      */
     void operator=(const TableType &table_in) {
+      begin_count_pairs_ = table_in.begin_count_pairs();
       data_ = const_cast<TableType &>(table_in).data();
       rank_ = table_in.rank();
       old_from_new_ = const_cast<TableType &>(table_in).old_from_new();
@@ -490,13 +514,15 @@ class Table {
     template<typename PointType>
     void iterator_get_(
       int reordered_position, PointType *entry) const {
-      data_.MakeColumnVector(reordered_position, entry);
+      data_.MakeColumnVector(
+        this->locate_reordered_position_(reordered_position), entry);
     }
 
     template<typename PointType>
     void iterator_get_(
       int reordered_position, PointType *entry) {
-      data_.MakeColumnVector(reordered_position, entry);
+      data_.MakeColumnVector(
+        this->locate_reordered_position_(reordered_position), entry);
     }
 
     int iterator_get_id_(int reordered_position) const {
@@ -505,8 +531,27 @@ class Table {
       }
       else {
         return IndexUtil<OldFromNewIndexType>::Extract(
-                 old_from_new_.get(), reordered_position);
+                 old_from_new_.get(),
+                 this->locate_reordered_position_(reordered_position));
       }
+    }
+
+    int locate_reordered_position_(int reordered_position) const {
+      if(begin_count_pairs_.size() == 0) {
+        return reordered_position;
+      }
+      int index = -1;
+      for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
+        if(begin_count_pairs_[i].get<0>() <= reordered_position &&
+            reordered_position <
+            begin_count_pairs_[i].get<0>() +
+            begin_count_pairs_[i].get<1>()) {
+          index = i;
+          break;
+        }
+      }
+      return begin_count_pairs_[index].get<2>() +
+             (reordered_position - begin_count_pairs_[index].get<0>());
     }
 };
 }
