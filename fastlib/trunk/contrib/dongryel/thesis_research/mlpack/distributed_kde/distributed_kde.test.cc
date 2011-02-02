@@ -267,7 +267,11 @@ class TestDistributed_Kde {
       }
 
       // Push in the leaf size.
-      int leaf_size = core::math::RandInt(15, 25);
+      int leaf_size = 0;
+      if(world.rank() == 0) {
+        leaf_size = core::math::RandInt(15, 25);
+      }
+      boost::mpi::broadcast(world, leaf_size, 0);
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
