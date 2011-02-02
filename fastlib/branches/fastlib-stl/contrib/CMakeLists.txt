@@ -24,6 +24,7 @@ set(DIRS
    niche
    nvasil
    pram
+   rcurtin
    rriegel
    soyeon
    tqlong
@@ -63,8 +64,9 @@ endforeach()
 #install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
 #   DESTINATION bin)
 
-install(TARGETS mlpack_contrib
+install(TARGETS mlpack_contrib 
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib
-)
+   OPTIONAL
+) # optional since we don't know if the user chose to build it
