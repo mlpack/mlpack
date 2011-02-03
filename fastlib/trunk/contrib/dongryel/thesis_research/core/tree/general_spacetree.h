@@ -111,7 +111,7 @@ class IndexInitializer< int > {
 
 /** @brief The general binary space partioning tree.
  */
-template < class TreeSpecType >
+template < class IncomingTreeSpecType >
 class GeneralBinarySpaceTree {
   private:
 
@@ -119,6 +119,10 @@ class GeneralBinarySpaceTree {
     friend class boost::serialization::access;
 
   public:
+
+    /** @brief The specification of the tree.
+     */
+    typedef IncomingTreeSpecType TreeSpecType;
 
     /** @brief The bound type used in the tree.
      */

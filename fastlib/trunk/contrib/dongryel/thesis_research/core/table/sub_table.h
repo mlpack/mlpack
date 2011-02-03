@@ -24,10 +24,14 @@ extern MemoryMappedFile *global_m_file_;
 /** @brief A subtable class for serializing/unserializing a part of a
  *         table object.
  */
-template<typename TableType>
+template<typename IncomingTableType>
 class SubTable {
 
   public:
+
+    /** @brief The type of the table.
+     */
+    typedef IncomingTableType TableType;
 
     /** @brief The type of the tree.
      */
