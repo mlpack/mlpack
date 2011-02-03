@@ -350,7 +350,7 @@ class TableExchange {
             send_subtables[j].push_back(
               local_table_,
               local_table_->get_tree()->FindByBeginCount(begin, count),
-              max_num_levels_to_serialize);
+              max_num_levels_to_serialize, false);
           }
         }
 
@@ -373,7 +373,7 @@ class TableExchange {
             received_subtables_in_this_round[j].push_back(
               j, point_cache_alias, old_from_new_cache_alias,
               free_cache_block_id, cache_block_size_,
-              max_num_levels_to_serialize);
+              max_num_levels_to_serialize, false);
           }
         }
 

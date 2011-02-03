@@ -111,6 +111,10 @@ class SubTable {
     // For boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief Whether to serialize the new from old mapping.
+     */
+    bool serialize_new_from_old_mapping_;
+
     /** @brief The ID of the cache block the subtable is occupying.
      */
     int cache_block_id_;
@@ -209,6 +213,10 @@ class SubTable {
 
   public:
 
+    bool serialize_new_from_old_mapping() const {
+      return serialize_new_from_old_mapping_;
+    }
+
     int cache_block_id() const {
       return cache_block_id_;
     }
@@ -231,6 +239,8 @@ class SubTable {
     /** @brief Steals the ownership of the incoming subtable.
      */
     void operator=(const SubTable<TableType> &subtable_in) {
+      serialize_new_from_old_mapping_ =
+        subtable_in.serialize_new_from_old_mapping();
       cache_block_id_ = subtable_in.cache_block_id();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
@@ -302,9 +312,15 @@ class SubTable {
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
           serialize_points_per_terminal_node_, false);
-        core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(),
-          serialize_points_per_terminal_node_, false);
+
+        // Save whether the new from old mapping is going to be
+        // serialized or not.
+        ar & serialize_new_from_old_mapping_;
+        if(serialize_new_from_old_mapping_) {
+          core::table::IndexUtil<int>::Serialize(
+            ar, new_from_old_->get(),
+            serialize_points_per_terminal_node_, false);
+        }
       }
     }
 
@@ -323,6 +339,7 @@ class SubTable {
       int num_nodes;
       ar & max_num_nodes;
       ar & num_nodes;
+      printf("Loading %d %d\n", max_num_nodes, num_nodes);
       std::vector< TreeType *> tree_nodes(max_num_nodes, (TreeType *) NULL);
       for(int i = 0; i < num_nodes; i++) {
         int node_index;
@@ -331,6 +348,9 @@ class SubTable {
           (core::table::global_m_file_) ?
           core::table::global_m_file_->Construct<TreeType>() : new TreeType();
         ar & (*(tree_nodes[node_index]));
+        printf("  Loading %d %d %d\n", node_index,
+               tree_nodes[node_index]->begin(),
+               tree_nodes[node_index]->count());
       }
 
       // Do the pointer corrections, and have the tree point to the
@@ -381,9 +401,19 @@ class SubTable {
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
           serialize_points_per_terminal_node_, true);
-        core::table::IndexUtil<int>::Serialize(
-          ar, new_from_old_->get(),
-          serialize_points_per_terminal_node_, true);
+
+        // Find out whether the new from old mapping was serialized or
+        // not, and load accordingly.
+        ar & serialize_new_from_old_mapping_;
+        if(serialize_new_from_old_mapping_) {
+          printf("Loading the mapping.\n\n");
+          core::table::IndexUtil<int>::Serialize(
+            ar, new_from_old_->get(),
+            serialize_points_per_terminal_node_, true);
+        }
+        else {
+          printf("Not loading...\n\n");
+        }
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -391,6 +421,7 @@ class SubTable {
     /** @brief The default constructor.
      */
     SubTable() {
+      serialize_new_from_old_mapping_ = true;
       cache_block_id_ = 0;
       table_ = NULL;
       start_node_ = NULL;
@@ -467,7 +498,8 @@ class SubTable {
       OldFromNewIndexType *old_from_new_alias_in,
       int cache_block_id_in,
       int cache_block_size_in,
-      int max_num_levels_to_serialize_in) {
+      int max_num_levels_to_serialize_in,
+      bool serialize_new_from_old_mapping_in) {
 
       // Set the cache block ID.
       cache_block_id_ = cache_block_id_in;
@@ -486,7 +518,9 @@ class SubTable {
       table_->Alias(old_from_new_alias_in, (int *) NULL);
 
       // Finalize the intialization.
-      this->Init(table_, (TreeType *) NULL, max_num_levels_to_serialize_in);
+      this->Init(
+        table_, (TreeType *) NULL, max_num_levels_to_serialize_in,
+        serialize_new_from_old_mapping_in);
 
       // Since table_ pointer is explicitly allocated, is_alias_ flag
       // is turned to false. It is important that it is here to
@@ -499,7 +533,9 @@ class SubTable {
      */
     void Init(
       TableType *table_in, TreeType *start_node_in,
-      int max_num_levels_to_serialize_in) {
+      int max_num_levels_to_serialize_in,
+      bool serialize_new_from_old_mapping_in) {
+      serialize_new_from_old_mapping_ = serialize_new_from_old_mapping_in;
       table_ = table_in;
       is_alias_ = true;
       start_node_ = start_node_in;

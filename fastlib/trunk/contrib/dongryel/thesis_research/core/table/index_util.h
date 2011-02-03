@@ -47,11 +47,6 @@ class IndexUtil< int > {
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
       bool serialize_consecutive_memory_block) {
 
-      // Return for a null array.
-      if(array == NULL) {
-        return;
-      }
-
       // Serialize onto a consecutive block.
       int index = 0;
       for(unsigned int j = 0;
@@ -83,11 +78,6 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
       Archive &ar, std::pair<int, std::pair<int, int> > *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
       bool serialize_consecutive_memory_block) {
-
-      // Return for a null array.
-      if(array == NULL) {
-        return;
-      }
 
       // Serialize onto a consecutive block.
       int index = 0;
