@@ -93,7 +93,7 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
 
   // If the allowed error is not defined (NaN), then we cannot
   // approximate.
-  if(isnan(allowed_err)) {
+  if(std::isnan(allowed_err)) {
     return false;
   }
 

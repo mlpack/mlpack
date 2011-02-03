@@ -87,7 +87,7 @@ bool DualtreeKdeCV<TKernelAux>::PrunableEnhanced_
 
   // If the allowed error is not defined (NaN), then we cannot
   // approximate.
-  if(isnan(first_allowed_err) || isnan(second_allowed_err)) {
+  if(std::isnan(first_allowed_err) || std::isnan(second_allowed_err)) {
     return false;
   }
 
