@@ -10,6 +10,7 @@
 
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
+#include <boost/serialization/tracking_enum.hpp>
 #include <deque>
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -559,6 +560,35 @@ class GeneralBinarySpaceTree {
 
       return left_count;
     }
+};
+}
+}
+
+namespace boost {
+namespace serialization {
+
+/** @brief This class is necessary to ensure that every tree node is
+ *         sent. Boost Serialization tracking feature seems to
+ *         incorrectly mark off nodes that are supposed to be sent.
+ */
+template<>
+template<typename IncomingTreeSpecType>
+struct tracking_level <
+    core::tree::GeneralBinarySpaceTree<IncomingTreeSpecType> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_< boost::serialization::track_never > type;
+  BOOST_STATIC_CONSTANT(
+    int,
+    value = tracking_level::type::value
+  );
+  /* tracking for a class  */
+  BOOST_STATIC_ASSERT((
+                        mpl::greater <
+                        /* that is a prmitive */
+                        implementation_level< core::tree::GeneralBinarySpaceTree<IncomingTreeSpecType> >,
+                        mpl::int_<primitive_type>
+                        >::value
+                      ));
 };
 }
 }

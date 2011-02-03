@@ -241,7 +241,8 @@ class Table {
       core::table::SubTable<TableType> sub_table;
       TableType *this_table = const_cast<TableType *>(this);
       sub_table.Init(
-        this_table, this_table->get_tree(), std::numeric_limits<int>::max());
+        this_table, this_table->get_tree(),
+        std::numeric_limits<int>::max(), true);
       ar & sub_table;
     }
 
@@ -250,7 +251,8 @@ class Table {
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
       core::table::SubTable<TableType> sub_table;
-      sub_table.Init(this, this->get_tree(), std::numeric_limits<int>::max());
+      sub_table.Init(
+        this, this->get_tree(), std::numeric_limits<int>::max(), true);
       ar & sub_table;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
