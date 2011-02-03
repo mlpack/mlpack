@@ -8,30 +8,98 @@
 // for BOOST testing
 #define BOOST_TEST_MAIN
 
-#include <boost/archive/text_iarchive.hpp>
-#include <boost/archive/text_oarchive.hpp>
-#include <boost/circular_buffer.hpp>
+#include <boost/mpi.hpp>
+#include <boost/serialization/serialization.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/sub_table.h"
+#include "core/table/sub_table_list.h"
+#include "core/table/distributed_table.h"
 #include "core/table/table.h"
+#include "core/tree/gen_kdtree.h"
+#include "core/tree/gen_metric_tree.h"
 #include "core/math/math_lib.h"
 #include <time.h>
 
 namespace core {
 namespace table {
 
-template<typename TableType>
+template<typename SubTableListType>
 class TestSubTable {
 
   public:
-    typedef core::table::SubTable<TableType> SubTableType;
+
+    typedef typename SubTableListType::SubTableType SubTableType;
+
+    typedef typename SubTableType::TableType TableType;
 
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
     typedef typename TableType::TreeType TreeType;
 
+    typedef core::table::DistributedTable <
+    typename TreeType::TreeSpecType > DistributedTableType;
+
   private:
+
+    class TreeNodeListType {
+      private:
+
+        // For boost serialization.
+        friend class boost::serialization::access;
+
+        std::vector<TreeType *> vector_;
+
+        bool is_alias_;
+
+      public:
+
+        int size() const {
+          return static_cast<int>(vector_.size());
+        }
+
+        void Init(const std::vector<TreeType *> &vector_in) {
+          is_alias_ = true;
+          vector_ = vector_in;
+        }
+
+        ~TreeNodeListType() {
+          if(! is_alias_) {
+            for(unsigned int i = 0; i < vector_.size(); i++) {
+              delete vector_[i];
+            }
+          }
+        }
+
+        TreeType *operator[](int index) {
+          return vector_[index];
+        }
+
+        std::vector<TreeType *> &vector() {
+          return vector_;
+        }
+
+        template<class Archive>
+        void save(Archive &ar, const unsigned int version) const {
+          int size = vector_.size();
+          ar & size;
+          for(int i = 0; i < size; i++) {
+            ar & vector_[i];
+          }
+        }
+
+        template<class Archive>
+        void load(Archive &ar, const unsigned int version) {
+          is_alias_ = false;
+          int size;
+          ar & size;
+          vector_.resize(size);
+          for(int i = 0; i < size; i++) {
+            ar & vector_[i];
+          }
+        }
+        BOOST_SERIALIZATION_SPLIT_MEMBER()
+    };
 
     void GenerateRandomDataset_(
       int num_dimensions,
@@ -63,11 +131,15 @@ class TestSubTable {
 
   public:
 
-    int StressTestMain() {
+    int StressTestMain(boost::mpi::communicator &world) {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 20);
+        int num_dimensions;
+        if(world.rank() == 0) {
+          num_dimensions = core::math::RandInt(3, 20);
+        }
+        boost::mpi::broadcast(world, num_dimensions, 0);
         int num_points = core::math::RandInt(3000, 5001);
-        if(StressTest(num_dimensions, num_points) == false) {
+        if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
         }
@@ -75,54 +147,152 @@ class TestSubTable {
       return 0;
     }
 
-    bool StressTest(int num_dimensions, int num_points) {
+    bool StressTest(
+      boost::mpi::communicator &world, int num_dimensions, int num_points) {
 
       std::cout << "Number of dimensions: " << num_dimensions << "\n";
       std::cout << "Number of points: " << num_points << "\n";
 
       // Push in the reference dataset name.
-      std::string references_in("random.csv");
+      std::stringstream reference_file_name_sstr;
+      reference_file_name_sstr << "random_dataset.csv" << world.rank();
+      std::string references_in = reference_file_name_sstr.str();
 
       // Generate the random dataset and save it.
-      TableType random_table;
-      GenerateRandomDataset_(
-        num_dimensions, num_points, &random_table);
-      random_table.Save(references_in);
+      {
+        TableType random_table;
+        GenerateRandomDataset_(
+          num_dimensions, num_points, &random_table);
+        random_table.Save(references_in);
+      }
+
+      // Generate the leaf size.
+      int leaf_size;
+      if(world.rank() == 0) {
+        leaf_size = core::math::RandInt(15, 25);
+        printf("Choosing the leaf size of %d\n", leaf_size);
+      }
+      boost::mpi::broadcast(world, leaf_size, 0);
+
+      // Generate the sample probability.
+      double sample_probability;
+      if(world.rank() == 0) {
+        sample_probability = core::math::Random(0.2, 0.5);
+        printf("Choosing the sample probability of %g\n", sample_probability);
+      }
+      boost::mpi::broadcast(world, sample_probability, 0);
+
+      // Read the distributed table.
+      DistributedTableType distributed_table;
+      distributed_table.Init(references_in, world);
       core::metric_kernels::LMetric<2> l2_metric;
-      random_table.IndexData(l2_metric, 20);
+      distributed_table.IndexData(
+        l2_metric, world, leaf_size, sample_probability);
 
-      for(int i = 0; i < 100; i++) {
+      // Get the list of all nodes.
+      TreeNodeListType local_list_of_nodes;
+      distributed_table.local_table()->get_nodes(
+        distributed_table.local_table()->get_tree(),
+        &(local_list_of_nodes.vector()));
+      std::vector< TreeNodeListType > global_lists;
 
-        int num_levels_to_serialize = core::math::RandInt(2, 10);
-        SubTableType subtable_saved;
-        SubTableType subtable_loaded;
-        core::table::DenseMatrix data_matrix;
-        data_matrix.Init(random_table.n_attributes(), random_table.n_entries());
-        OldFromNewIndexType *old_from_new =
-          new OldFromNewIndexType[ random_table.n_entries()];
-        int *new_from_old = new int[random_table.n_entries()];
-        subtable_saved.Init(
-          &random_table, random_table.get_tree(), num_levels_to_serialize);
-        subtable_loaded.Init(
-          0, data_matrix, old_from_new, new_from_old, num_levels_to_serialize);
-        {
-          std::ofstream ofs("tmp");
-          boost::archive::text_oarchive oa(ofs);
-          oa << subtable_saved;
+      // Do an all gather of all the nodes.
+      boost::mpi::all_gather(world, local_list_of_nodes, global_lists);
+
+      // Repeat the all-to-all exchange 10 times.
+      for(int i = 0; i < 10; i++) {
+
+        // The master thinks of how many levels of trees to serialize.
+        int num_levels_to_serialize;
+        if(world.rank() == 0) {
+          num_levels_to_serialize = core::math::RandInt(2, 10);
         }
-        {
-          std::ifstream ifs("tmp");
-          boost::archive::text_iarchive ia(ifs);
-          ia >> subtable_loaded;
+        boost::mpi::broadcast(world, num_levels_to_serialize, 0);
+
+        // Define cache block size naively.
+        int cache_block_size = (1 << num_levels_to_serialize) * leaf_size;
+
+        // The master thinks of how many subtables to exchange.
+        int num_subtables_to_exchange;
+        if(world.rank() == 0) {
+          num_subtables_to_exchange = core::math::RandInt(2, 10);
         }
+        boost::mpi::broadcast(world, num_subtables_to_exchange, 0);
+
+        std::vector< std::vector< core::table::DenseMatrix> > data_matrices(
+          world.size());
+        std::vector< std::vector< OldFromNewIndexType * > > old_from_news(
+          world.size());
+
+        for(int j = 0; j < world.size(); j++) {
+          if(j != world.rank()) {
+            data_matrices[j].resize(num_subtables_to_exchange);
+            old_from_news[j].resize(num_subtables_to_exchange);
+            for(int k = 0; k < num_subtables_to_exchange; k++) {
+              data_matrices[j][k].Init(
+                distributed_table.n_attributes(), cache_block_size);
+              old_from_news[j][k] =
+                new OldFromNewIndexType[ cache_block_size ];
+            }
+          }
+        }
+
+        // Prepare the list of subtables, and do another all_to_all.
+        std::vector< SubTableListType > send_subtables(world.size());
+        for(int j = 0; j < world.size(); j++) {
+          if(j != world.rank()) {
+            for(int i = 0; i < num_subtables_to_exchange; i++) {
+
+              // Pick a random node.
+              int random_node_id =
+                core::math::RandInt(0, local_list_of_nodes.size());
+              int begin = local_list_of_nodes[random_node_id]->begin();
+              int count = local_list_of_nodes[random_node_id]->count();
+              send_subtables[j].push_back(
+                distributed_table.local_table(),
+                distributed_table.local_table()->get_tree()->
+                FindByBeginCount(begin, count), num_levels_to_serialize);
+            }
+          }
+        }
+
+        // Prepare the subtable list to be received. Right now, we
+        // just receive one subtable per process.
+        std::vector< SubTableListType > received_subtables_in_this_round;
+        received_subtables_in_this_round.resize(world.size());
+        for(int j = 0; j < world.size(); j++) {
+          if(j != world.rank()) {
+            for(int i = 0; i < num_subtables_to_exchange; i++) {
+              // Allocate the cache block to the subtable that is about
+              // to be received.
+              received_subtables_in_this_round[j].push_back(
+                j, data_matrices[j][i], old_from_news[j][i],
+                0, cache_block_size, num_levels_to_serialize);
+            }
+          }
+        }
+
+        // All-to-all to exchange the subtables.
+        boost::mpi::all_to_all(
+          world, send_subtables, received_subtables_in_this_round);
 
         // Check integrity.
-        CheckIntegrity_(subtable_loaded.table()->get_tree());
+        for(unsigned int i = 0;
+            i < received_subtables_in_this_round.size(); i++) {
+          for(unsigned int j = 0;
+              j < received_subtables_in_this_round[j].size(); j++) {
+            CheckIntegrity_(
+              received_subtables_in_this_round[j][i].table()->get_tree());
+          }
+        }
 
-        // Free the memory.
-        delete[] old_from_new;
-        delete[] new_from_old;
-      }
+        // Free memory.
+        for(unsigned int i = 0; i < old_from_news.size(); i++) {
+          for(unsigned int j = 0; j < old_from_news[i].size(); j++) {
+            delete[] old_from_news[i][j];
+          }
+        }
+      } // end of the trial loop.
 
       return true;
     }
@@ -130,28 +300,25 @@ class TestSubTable {
 }
 }
 
-BOOST_AUTO_TEST_SUITE(TestSuiteSubTable)
-BOOST_AUTO_TEST_CASE(TestCaseSubTable) {
+int main(int argc, char *argv[]) {
+
+  // Initialize boost MPI.
+  boost::mpi::environment env(argc, argv);
+  boost::mpi::communicator world;
+
+  core::math::global_random_number_state_.set_seed(time(NULL) + world.rank());
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+  core::tree::GenMetricTree<core::tree::AbstractStatistic>,
+       std::pair<int, std::pair<int, int> > > TableType;
+  typedef core::table::SubTable<TableType> SubTableType;
+  typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   // Call the tests.
-  //core::table::TestSubTable<TableType> sub_table_test;
-  //sub_table_test.StressTestMain();
-
-  boost::circular_buffer<core::table::DensePoint> buffer(5);
-
-  for(int i = 0; i < 10; i++) {
-    core::table::DensePoint point;
-    point.Init(5);
-    for(int j = 0; j < 5; j++) {
-      point[j] = core::math::Random(-1.0, 1.0);
-    }
-    buffer.push_back(point);
-  }
-
+  core::table::TestSubTable<SubTableListType> sub_table_test;
+  sub_table_test.StressTestMain(world);
   std::cout << "All tests passed!\n";
+
+  return 0;
 }
-BOOST_AUTO_TEST_SUITE_END()

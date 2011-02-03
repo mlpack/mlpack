@@ -361,6 +361,18 @@ class Table {
       return &tree_;
     }
 
+    /** @brief Returns the list of all nodes owned by the tree.
+     */
+    void get_nodes(TreeType *node, std::vector<TreeType *> *nodes_out) {
+      if(node != NULL) {
+        nodes_out->push_back(node);
+      }
+      if(! node->is_leaf()) {
+        get_nodes(node->left(), nodes_out);
+        get_nodes(node->right(), nodes_out);
+      }
+    }
+
     /** @brief Returns the leaf nodes of the tree owned by the table.
      */
     void get_leaf_nodes(
