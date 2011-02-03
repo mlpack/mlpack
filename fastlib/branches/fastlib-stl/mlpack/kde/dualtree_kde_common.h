@@ -345,7 +345,7 @@ class DualtreeKdeCommon {
     
     // If the error bound is satisfied by the hard error bound, it is
     // safe to prune.
-    return (!isnan(allowed_err)) && (used_error <= allowed_err);
+    return (!std::isnan(allowed_err)) && (used_error <= allowed_err);
   }
 
 };

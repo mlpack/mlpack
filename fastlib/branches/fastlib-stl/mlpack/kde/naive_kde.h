@@ -265,8 +265,8 @@ class NaiveKde {
 	0:fabs(density_estimates[q] - densities_[q]) / 
 	densities_[q];
 
-      if(isnan(density_estimates[q]) || isinf(density_estimates[q]) || 
-	 isnan(densities_[q]) || isinf(densities_[q])) {
+      if(std::isnan(density_estimates[q]) || std::isinf(density_estimates[q]) || 
+         std::isnan(densities_[q]) || std::isinf(densities_[q])) {
 	VERBOSE_MSG(0,"Warning: Got infs or nans!\n");
       }
 

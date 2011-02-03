@@ -49,10 +49,10 @@ namespace linalg__private {
    * Auxiliary function to raise vector elements to a specific power.  The sign is
    * ignored in the power operation and then re-added.  Useful for eigenvalues.
    */
-  void VectorPower(arma::vec& vec, float power) {
+  void VectorPower(arma::vec& vec, double power) {
     for(int i = 0; i < vec.n_elem; i++) {
         if(std::abs(vec(i)) > 1e-12)
-          vec(i) = (vec(i) > 0) ? std::pow(vec(i), power) : -std::pow(-vec(i), power);
+          vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) : -std::pow(-vec(i), (double) power);
         else
           vec(i) = 0;
     }
