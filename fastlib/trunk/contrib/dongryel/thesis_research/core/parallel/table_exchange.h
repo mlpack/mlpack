@@ -167,22 +167,6 @@ class TableExchange {
       }
     }
 
-    /** @brief Extracts one request from a set of requests.
-     */
-    void ExtractUnitRequests_(
-      std::vector< std::vector< std::pair<int, int> > > &requests,
-      std::vector< std::vector< std::pair<int, int> > > *sub_requests) {
-
-      for(unsigned int i = 0; i < requests.size(); i++) {
-        if(requests[i].size() > 0) {
-          if(sub_requests != NULL) {
-            (*sub_requests)[i].push_back(requests[i].back());
-          }
-          requests[i].pop_back();
-        }
-      }
-    }
-
   public:
 
     /** @brief The destructor.
@@ -332,87 +316,57 @@ class TableExchange {
       boost::mpi::all_to_all(
         world, receive_requests, send_requests);
 
-      // The main while loop to exchange subtables.
-      while(true) {
-
-        // Dequeue a subtable list for each process.
-        std::vector< std::vector< std::pair<int, int> > > sub_send_requests(
-          send_requests.size());
-        ExtractUnitRequests_(send_requests, &sub_send_requests);
-
-        // Prepare the list of subtables, and do another all_to_all.
-        std::vector< SubTableListType > send_subtables(
-          sub_send_requests.size());
-        for(unsigned int j = 0; j < sub_send_requests.size(); j++) {
-          for(unsigned int i = 0; i < sub_send_requests[j].size(); i++) {
-            int begin = sub_send_requests[j][i].first;
-            int count = sub_send_requests[j][i].second;
-            send_subtables[j].push_back(
-              local_table_,
-              local_table_->get_tree()->FindByBeginCount(begin, count),
-              max_num_levels_to_serialize, false);
-          }
+      // Prepare the list of subtables to send.
+      std::vector< SubTableListType > send_subtables(
+        send_requests.size());
+      for(unsigned int j = 0; j < send_requests.size(); j++) {
+        for(unsigned int i = 0; i < send_requests[j].size(); i++) {
+          int begin = send_requests[j][i].first;
+          int count = send_requests[j][i].second;
+          send_subtables[j].push_back(
+            local_table_,
+            local_table_->get_tree()->FindByBeginCount(begin, count),
+            max_num_levels_to_serialize, false);
         }
+      }
 
-        // Prepare the subtable list to be received. Right now, we
-        // just receive one subtable per process.
-        std::vector< SubTableListType > received_subtables_in_this_round;
-        received_subtables_in_this_round.resize(world.size());
-        for(unsigned int j = 0; j < receive_requests.size(); j++) {
-          if(receive_requests[j].size() > 0) {
+      // Prepare the subtable list to be received. Right now, we
+      // just receive one subtable per process.
+      std::vector< SubTableListType > received_subtables_in_this_round;
+      received_subtables_in_this_round.resize(world.size());
+      for(unsigned int j = 0; j < receive_requests.size(); j++) {
+        for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
 
-            // Get a free cache block.
-            core::table::DenseMatrix point_cache_alias;
-            OldFromNewIndexType *old_from_new_cache_alias = NULL;
-            int free_cache_block_id =
-              this->get_free_cache_block_(
-                j, &point_cache_alias, &old_from_new_cache_alias);
+          // Get a free cache block.
+          core::table::DenseMatrix point_cache_alias;
+          OldFromNewIndexType *old_from_new_cache_alias = NULL;
+          int free_cache_block_id =
+            this->get_free_cache_block_(
+              j, &point_cache_alias, &old_from_new_cache_alias);
 
-            // Allocate the cache block to the subtable that is about
-            // to be received.
-            received_subtables_in_this_round[j].push_back(
-              j, point_cache_alias, old_from_new_cache_alias,
-              free_cache_block_id, cache_block_size_,
-              max_num_levels_to_serialize, false);
-          }
+          // Allocate the cache block to the subtable that is about
+          // to be received.
+          received_subtables_in_this_round[j].push_back(
+            j, point_cache_alias, old_from_new_cache_alias,
+            free_cache_block_id, cache_block_size_,
+            max_num_levels_to_serialize, false);
         }
+      }
 
-        // All-to-all to exchange the subtables.
-        boost::mpi::all_to_all(
-          world, send_subtables, received_subtables_in_this_round);
+      // All-to-all to exchange the subtables.
+      boost::mpi::all_to_all(
+        world, send_subtables, received_subtables_in_this_round);
 
-        // After receiving, each item in the receive request is
-        // popped.
-        ExtractUnitRequests_(
-          receive_requests,
-          (std::vector< std::vector< std::pair<int, int> > > *) NULL);
+      // Add the new subtables to the existing cache.
+      for(int j = 0; j < world.size(); j++) {
+        for(unsigned int i = 0;
+            i < received_subtables_in_this_round[j].size(); i++) {
 
-        // Add the new subtables to the existing cache.
-        for(int j = 0; j < world.size(); j++) {
-          for(unsigned int i = 0;
-              i < received_subtables_in_this_round[j].size(); i++) {
-
-            // Put the fixed subtables into the list.
-            this->push_back_(
-              j, received_subtables_in_this_round[j][i]);
-          }
+          // Put the fixed subtables into the list.
+          this->push_back_(
+            j, received_subtables_in_this_round[j][i]);
         }
-
-        // If the received/sent tables are none, then quit.
-        bool nothing_exchanged = true;
-        bool global_nothing_exchanged = true;
-        for(int i = 0; nothing_exchanged && i < world.size(); i++) {
-          nothing_exchanged =
-            (received_subtables_in_this_round[i].size() == 0 &&
-             send_subtables[i].size() == 0);
-        }
-        boost::mpi::all_reduce(
-          world, nothing_exchanged,
-          global_nothing_exchanged, std::logical_and<bool>());
-        if(global_nothing_exchanged) {
-          break;
-        }
-      } // end of the loop.
+      }
 
       return false;
     }
