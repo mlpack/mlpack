@@ -339,7 +339,6 @@ class SubTable {
       int num_nodes;
       ar & max_num_nodes;
       ar & num_nodes;
-      printf("Loading %d %d\n", max_num_nodes, num_nodes);
       std::vector< TreeType *> tree_nodes(max_num_nodes, (TreeType *) NULL);
       for(int i = 0; i < num_nodes; i++) {
         int node_index;
@@ -348,9 +347,6 @@ class SubTable {
           (core::table::global_m_file_) ?
           core::table::global_m_file_->Construct<TreeType>() : new TreeType();
         ar & (*(tree_nodes[node_index]));
-        printf("  Loading %d %d %d\n", node_index,
-               tree_nodes[node_index]->begin(),
-               tree_nodes[node_index]->count());
       }
 
       // Do the pointer corrections, and have the tree point to the
@@ -406,13 +402,9 @@ class SubTable {
         // not, and load accordingly.
         ar & serialize_new_from_old_mapping_;
         if(serialize_new_from_old_mapping_) {
-          printf("Loading the mapping.\n\n");
           core::table::IndexUtil<int>::Serialize(
             ar, new_from_old_->get(),
             serialize_points_per_terminal_node_, true);
-        }
-        else {
-          printf("Not loading...\n\n");
         }
       }
     }
