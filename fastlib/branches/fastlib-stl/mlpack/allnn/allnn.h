@@ -130,15 +130,16 @@ class AllNN {
   /** Module used to pass parameters into the AllNN object. */
   struct datanode* module_;
 
-  /** Copy of the query matrix given in Init. */
-  arma::mat* queries_;
-  /** Copy of the reference matrix given in Init. */
-  arma::mat* references_;
+  arma::mat references_;  /// Matrix of reference points.
+  arma::mat queries_;     /// Matrix of query points.
 
-  /** Root of a tree formed on queries_. */
-  TreeType* query_tree_;
+  bool naive_; /// Whether or not naive computation is being used.
+
   /** Root of a tree formed on references_. */
   TreeType* reference_tree_;
+  /** Root of a tree formed on queries_. */
+  TreeType* query_tree_;
+
 
   /** Maximum number of points in either tree's leaves. */
   index_t leaf_size_;
@@ -172,13 +173,58 @@ class AllNN {
 
  public:
   // Constructors
-  AllNN();
+
+  /***
+   * Read parameters, and build the trees.  We assume that the queries are the
+   * same as the references if this constructor is used.
+   * 
+   * This method will, by default, copy the input matrix to an internal matrix
+   * which will have its ordering shuffled due to the tree-building procedure.
+   * You can force AllNN to alias the input matrix, resulting in a performance
+   * gain, by setting alias_matrix = true.  <b>However</b>, the ordering of the
+   * input matrix will be changed completely after this constructor is called.
+   * You have been warned!
+   * 
+   * @param[in] references_in Input matrix; for this constructor we assume the
+   *   queries are the same as the references
+   * @param[in] module_in Datanode holding input parameters.
+   * @param[in] alias_matrix If set to true, alias the matrix instead of copying
+   *   it.
+   * @param[in] naive Use naive (non-tree-based) nearest neighbors calculation.
+   */
+  AllNN(arma::mat& references_in, struct datanode* module_in,
+      bool alias_matrix = false, bool naive = false);
+
+  /***
+   * Read parameters, and build the trees.
+   * 
+   * This method will, by default, copy the input matrix to an internal matrix
+   * which will have its ordering shuffled due to the tree-building procedure.
+   * You can force AllNN to alias the input matrix, resulting in a performance
+   * gain, by setting alias_matrix = true.  <b>However</b>, the ordering of the
+   * input matrix will be changed completely after this constructor is called.
+   * You have been warned!
+   *
+   * @param[in] queries_in Input matrix of query points
+   * @param[in] references_in Input matrix of reference points
+   * @param[in] module_in Datanode holding input parameters
+   * @param[in] alias_matrix If set to true, alias the matrix instead of copying
+   *   it.
+   * @param[in] naive Use naive (non-tree-based) nearest neighbors calculation.
+   */
+  AllNN(arma::mat& queries_in, arma::mat& references_in,
+      struct datanode* module_in, bool alias_matrix = false, bool naive = false);
+
   ~AllNN();
-
-
 
  private:
   // Helper functions
+
+  /**
+   * Internal function to build the trees for computation.  It won't build trees
+   * if naive_ = false.
+   */
+  void BuildTrees();
 
   /**
    * Computes the minimum squared distance between the bounding boxes
