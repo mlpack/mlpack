@@ -12,29 +12,91 @@
 using namespace mlpack;
 using namespace mlpack::allnn;
 
-AllNN::AllNN() {
-  queries_ = NULL;
-  references_ = NULL;
+// We are calling an advanced constructor of arma::mat which allows us to use
+// the same memory area as another matrix if desired (for aliasing).  For this
+// constructor, the queries matrix is the same as the references matrix.
+AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
+             bool alias_matrix, bool naive) :
+    module_(module_in),
+    naive_(naive),
+    references_(references_in.memptr(), references_in.n_rows,
+        references_in.n_cols, !alias_matrix),
+    queries_(references_.memptr(), references_.n_rows, references_.n_cols,
+        false),
+    number_of_prunes_(0) {
 
-  query_tree_ = NULL;
-  reference_tree_ = NULL;
+  // We can't call out to the more complex constructor, but that will change
+  // with C++0x.  Then, this constructor copypasta can be eliminated!
+  
+  /*
+   * A bit of a trick so we can still use BaseCase_: we'll expand
+   * the leaf size so that our trees only have one node.
+   */
+  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  if(naive)
+    leaf_size_ = references_.n_cols;
 
-  DEBUG_POISON_PTR(module_);
-  DEBUG_ONLY(leaf_size_ = BIG_BAD_NUMBER);
-  DEBUG_ONLY(number_of_prunes_ = BIG_BAD_NUMBER);
+  // Need to move to a new timer system
+  fx_timer_start(module_, "tree_building");
 
-  DEBUG_ONLY(initialized_ = false);
-  DEBUG_ONLY(already_used_ = false);
+  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
+      leaf_size_, old_from_new_references_);
+  query_tree_ = reference_tree_;
+  // Make another alias
+  old_from_new_queries_ = arma::Col<index_t>(old_from_new_references_.memptr(),
+      old_from_new_references_.n_elem, false, true);
+
+  fx_timer_stop(module_, "tree_building");
+  
+  /* Ready the list of nearest neighbor candidates to be filled. */
+  neighbor_indices_.set_size(queries_.n_cols);
+
+  /* Ready the vector of upper bound nn distances for use. */
+  neighbor_distances_.set_size(queries_.n_cols);
+  neighbor_distances_.fill(DBL_MAX);
+}
+
+AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
+             struct datanode* module_in, bool alias_matrix, bool naive) :
+    module_(module_in),
+    naive_(naive),
+    references_(references_in.memptr(), references_in.n_rows,
+        references_in.n_cols, !alias_matrix),
+    queries_(queries_in.memptr(), queries_in.n_rows, queries_in.n_cols,
+        !alias_matrix),
+    number_of_prunes_(0) {
+  
+  /*
+   * A bit of a trick so we can still use BaseCase_: we'll expand
+   * the leaf size so that our trees only have one node.
+   */
+  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  if(naive)
+    leaf_size_ = max(queries_.n_cols, references_.n_cols);
+  
+  // Need to move to a new timer system
+  fx_timer_start(module_, "tree_building");
+
+  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
+      leaf_size_, old_from_new_references_);
+  query_tree_ = reference_tree_;
+
+  fx_timer_stop(module_, "tree_building");
+  
+  /* Ready the list of nearest neighbor candidates to be filled. */
+  neighbor_indices_.set_size(queries_.n_cols);
+
+  /* Ready the vector of upper bound nn distances for use. */
+  neighbor_distances_.set_size(queries_.n_cols);
+  neighbor_distances_.fill(DBL_MAX);
 }
 
 // Note that we don't delete the fx module; it's managed externally.
 AllNN::~AllNN() {
-  if (query_tree_ != NULL) {
-    delete query_tree_;
-  }
-  if (reference_tree_ != query_tree_) {
+  if (reference_tree_ != query_tree_)
     delete reference_tree_;
-  }
+  if (query_tree_ != NULL)
+    delete query_tree_;
 }
 
 /**
@@ -71,7 +133,7 @@ void AllNN::GNPBaseCase_(TreeType* query_node, TreeType* reference_node) {
   for (index_t query_index = query_node->begin();
       query_index < query_node->end(); query_index++) {
 
-    arma::vec query_point = queries_->unsafe_col(query_index);
+    arma::vec query_point = queries_.unsafe_col(query_index);
     double distance_to_hrect = 
       reference_node->bound().MinDistanceSq(query_point);
 
@@ -80,7 +142,7 @@ void AllNN::GNPBaseCase_(TreeType* query_node, TreeType* reference_node) {
       for (index_t reference_index = reference_node->begin();
           reference_index < reference_node->end(); reference_index++) {
 
-        arma::vec reference_point = references_->unsafe_col(reference_index);
+        arma::vec reference_point = references_.unsafe_col(reference_index);
         if (reference_node != query_node || reference_index != query_index) {
           // BLAS can perform many vectors ops more quickly than C/C++.
           double distance = la::DistanceSqEuclidean(query_point,
@@ -247,153 +309,11 @@ void AllNN::GNPRecursion_(TreeType* query_node, TreeType* reference_node,
 ////////// Public Functions ////////////////////////////////////////
 
 /**
- * Read parameters, alias data into the class, and build the trees.
- *
- * WARNING !!!!!
- * The algorithm will rearrange m the input matrices
- * references_in, queries_in
- */
-void AllNN::Init(arma::mat* queries_in, arma::mat* references_in,
-    struct datanode* module_in) {
-  queries_ = queries_in;
-  references_ = references_in;
-
-  // It's a good idea to make sure the object isn't initialized a
-  // second time, as this is almost certainly mistaken.
-  DEBUG_ASSERT(initialized_ == false);
-  DEBUG_ONLY(initialized_ = true);
-
-  module_ = module_in;
-
-  /* The data sets need to have the same dimensionality */
-  DEBUG_SAME_SIZE(queries_->n_rows, references_->n_rows);
-
-  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
-  DEBUG_ASSERT(leaf_size_ > 0);
-
-
-  // Timers are another handy tool provided by FASTexec.  These are
-  // emitted automatically once you call fx_done.
-  fx_timer_start(module_, "tree_building");
-
-  // Input matrices are rearranged to an in-order traversal of
-  // either tree.  To help in iterpretting results, the third
-  // argument is Init'd to a mapping from rearranged indices to the
-  // original order.  The fourth argument, if provided, would
-  // initialize the reverse of said.
-
-  /* Build the trees */
-  query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_,
-      leaf_size_, old_from_new_queries_);
-
-  if(queries_in == references_in) {
-    reference_tree_ = query_tree_; // use the same tree
-    old_from_new_references_ = old_from_new_queries_;
-  } else {
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
-        leaf_size_, old_from_new_references_);
-  }
-
-  // While we don't make use of this here, it is possible to start
-  // timers after stopping them.  They continue where they left off.
-  fx_timer_stop(module_, "tree_building");
-
-  /* Ready the list of nearest neighbor candidates to be filled. */
-  neighbor_indices_.set_size(queries_->n_cols);
-
-  /* Ready the vector of upper bound nn distances for use. */
-  neighbor_distances_.set_size(queries_->n_cols);
-  neighbor_distances_.fill(DBL_MAX);
-
-  number_of_prunes_ = 0;
-
-} /* Init */
-
-void AllNN::Init(arma::mat* references_in, fx_module* module_in) {
-  Init(references_in, references_in, module_in);
-} /* Init */
-
-void AllNN::Destruct() {
-  if (query_tree_ != NULL) {
-    delete query_tree_;
-  }
-  if (reference_tree_ != query_tree_) {
-    delete reference_tree_;
-  }
-}
-
-
-/**
- * Initializes the AllNN structure for naive computation.
- *
- * We have no need to build trees for naive.
- */
-void AllNN::InitNaive(arma::mat* queries_in, arma::mat* references_in,
-    fx_module* module_in){
-
-  DEBUG_ASSERT(initialized_ == false);
-  DEBUG_ONLY(initialized_ = true);
-
-  module_ = module_in;
-
-  /* The data sets need to have the same dimensionality */
-  DEBUG_SAME_SIZE(queries_in->n_rows, references_in->n_rows);
-
-  /* Alias matrices they are too big to copy */
-  queries_ = queries_in;
-  references_ = references_in;
-
-  /*
-   * A bit of a trick so we can still use BaseCase_: we'll expand
-   * the leaf size so that our trees only have one node.
-   */
-  leaf_size_ = max(queries_->n_cols, references_->n_cols);
-
-  /* Build the (single node) trees */
-  query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*queries_,
-      leaf_size_, old_from_new_queries_);
-  if(queries_in == references_in) {
-    reference_tree_ = query_tree_; // use same tree (from same input)
-    old_from_new_references_ = old_from_new_queries_;
-  } else {
-    reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(*references_,
-        leaf_size_, old_from_new_references_);
-  }
-
-  /* Ready the list of nearest neighbor candidates to be filled. */
-  neighbor_indices_.set_size(queries_->n_cols);
-
-  /* Ready the vector of upper bound nn distances for use. */
-  neighbor_distances_.set_size(queries_->n_cols);
-  neighbor_distances_.fill(DBL_MAX);
-
-  number_of_prunes_ = 0;
-
-} /* InitNaive */
-
-/**
- * Initializes the AllNN structure for naive computation.
- *
- * We have no need to build trees for naive.
- */
-void AllNN::InitNaive(arma::mat* references_in,
-    fx_module* module_in){
-  InitNaive(references_in, references_in, module_in);
-} /* InitNaive */
-
-
-/**
  * Computes the nearest neighbors and stores them in results if
  * provided.  Overloaded version provided if you don't have any results you
  * are interested in.
  */
 void AllNN::ComputeNeighbors(arma::vec& distances) {    
-  // In addition to confirming the object's been initialized, we
-  // want to make sure we aren't asking it to compute a second time.
-  DEBUG_ASSERT(initialized_ == true);
-  DEBUG_ASSERT(already_used_ == false);
-  DEBUG_ONLY(already_used_ = true);
-
   fx_timer_start(module_, "dual_tree_computation");
 
   /* Start recursion on the roots of either tree */
@@ -415,11 +335,6 @@ void AllNN::ComputeNeighbors(arma::vec& distances, arma::Col<index_t>& results) 
  * Computes the nearest neighbors naively.
  */
 void AllNN::ComputeNaive(arma::vec& distances) {
-
-  DEBUG_ASSERT(initialized_ == true);
-  DEBUG_ASSERT(already_used_ == false);
-  DEBUG_ONLY(already_used_ = true);
-
   fx_timer_start(module_, "naive_time");
 
   /* BaseCase_ on the roots is equivalent to naive */
@@ -437,9 +352,6 @@ void AllNN::ComputeNaive(arma::vec& distances, arma::Col<index_t>& results) {
  * Initialize and fill an arma::vec of results.
  */
 void AllNN::EmitResults(arma::vec& distances, arma::Col<index_t>& results) {
-
-  DEBUG_ASSERT(initialized_ == true);
-
   results.set_size(neighbor_indices_.n_elem);
   distances.set_size(neighbor_distances_.n_elem);
 

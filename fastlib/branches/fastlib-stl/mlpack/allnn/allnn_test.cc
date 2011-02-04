@@ -37,11 +37,7 @@ class TestAllNN {
     module_ = module;
   }
   void Init() {
-    allnn_ = new AllNN();
-    naive_ = new AllNN();
-    
     data::Load("test_data_3_1000.csv", data_for_tree_);
-    data::Load("test_data_3_1000.csv", data_for_naive_);
   }
   void Destruct() {
     delete allnn_;
@@ -50,8 +46,8 @@ class TestAllNN {
 
   void TestTreeVsNaive1() {
     Init();
-    allnn_->Init(&data_for_tree_, module_);
-    naive_->InitNaive(&data_for_naive_, module_);
+    allnn_ = new AllNN(data_for_tree_, module_);
+    naive_ = new AllNN(data_for_tree_, module_);
 
     // run dual-tree allnn 
     arma::Col<index_t> resulting_neighbors_tree;
@@ -81,7 +77,6 @@ class TestAllNN {
   AllNN *naive_;
 
   arma::mat data_for_tree_;
-  arma::mat data_for_naive_;
 
   fx_module *module_;
 };
