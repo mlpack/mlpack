@@ -85,7 +85,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     std::vector< std::vector< std::pair<int, int> > > receive_requests(
       world_->size());
     PriorityQueueType prioritized_tasks;
+    int current_computation_frontier_size = 0;
     for(int i = 0; i < world_->size(); i++) {
+      current_computation_frontier_size += computation_frontier[i].size();
       for(int j = 0; computation_frontier[i].size() > 0 &&
           j < max_num_work_to_dequeue_per_stage_; j++) {
 
@@ -108,6 +110,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         computation_frontier[i].pop();
       }
     }
+
+    // Update the computation frontier size statistics.
+    max_computation_frontier_size_ =
+      std::max(
+        max_computation_frontier_size_, current_computation_frontier_size);
 
     // Try to exchange the subtables.
     if(
@@ -155,13 +162,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       sub_engine.set_query_reference_process_ranks(
         world_->rank(), reference_process_id);
       sub_engine.set_query_start_node(
-        top_frontier.get<0>());
+        top_frontier.get<0>(), max_num_levels_to_serialize_);
       sub_engine.Compute(metric, query_results, false);
 
       // For each unpruned query reference pair, push into the
       // priority queue.
       const std::vector < FrontierObjectType > &unpruned_query_reference_pairs =
         sub_engine.unpruned_query_reference_pairs();
+
       for(unsigned int k = 0;
           k < unpruned_query_reference_pairs.size(); k++) {
         computation_frontier[reference_process_id].push(
@@ -170,10 +178,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
       // Pop the top frontier object that was just explored.
       prioritized_tasks.pop();
+
     } // end of taking care of the computation tasks for the current
     // iteration.
   }
   while(true);
+
+  printf("The maximum computation frontier size during the computation: %d "
+         "for Process %d\n", max_computation_frontier_size_, world_->rank());
 }
 
 template<typename DistributedProblemType>
@@ -205,6 +217,7 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   leaf_size_ = 0;
   max_num_levels_to_serialize_ = 15;
   max_num_work_to_dequeue_per_stage_ = 5;
+  max_computation_frontier_size_ = 0;
 }
 
 template<typename DistributedProblemType>
