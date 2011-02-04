@@ -25,7 +25,7 @@ using namespace allnn;
 
 int main (int argc, char *argv[]) {
   fx_module *fx_root = fx_init(argc, argv, &allnn_doc);
-  AllNN allnn;
+
 
   arma::mat data_for_tree;
 
@@ -34,7 +34,8 @@ int main (int argc, char *argv[]) {
 
   NOTIFY("Loading file %s...", input_file.c_str());
   data::Load(input_file.c_str(), data_for_tree);
-  allnn.Init(&data_for_tree, fx_root);
+
+  AllNN allnn(data_for_tree, fx_root);
   
   arma::Col<index_t> resulting_neighbors_tree;
   arma::vec resulting_distances_tree;
