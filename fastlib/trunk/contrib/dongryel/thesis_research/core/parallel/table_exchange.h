@@ -223,16 +223,13 @@ class TableExchange {
 
       // Compute the size of each cache block, which is a function of
       // the leaf nodes owned by a subtree times each leaf node size.
-      cache_block_size_ = (1 << max_num_levels_to_serialize_in) * leaf_size_in;
+      cache_block_size_ = 2 * local_table_->n_entries();
 
       // Compute the number of cache blocks allocated per process. The
       // rule is that each process gets at least twice the number of
       // work that is dequeued per stage so that there is some
-      // progress in the computation, but we try to limit the number
-      // of cache blocks across all processes to be 100.
-      num_cache_blocks_per_process_ =
-        std::max(
-          2 * max_num_work_to_dequeue_per_stage_in, 100 / world.size());
+      // progress in the computation.
+      num_cache_blocks_per_process_ = 1;
 
       // Compute the total cache size.
       total_cache_size_per_process_ = num_cache_blocks_per_process_ *

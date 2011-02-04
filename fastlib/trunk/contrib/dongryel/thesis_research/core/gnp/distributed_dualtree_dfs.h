@@ -102,6 +102,11 @@ class DistributedDualtreeDfs {
      */
     int max_num_work_to_dequeue_per_stage_;
 
+    /** @brief Some statistics about the priority queue size during
+     *         the computation.
+     */
+    int max_computation_frontier_size_;
+
   private:
 
     /** @brief The collaborative way of exchanging items among all MPI

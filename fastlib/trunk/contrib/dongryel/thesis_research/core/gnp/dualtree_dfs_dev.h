@@ -25,8 +25,9 @@ void DualtreeDfs<ProblemType>::set_query_reference_process_ranks(
 
 template<typename ProblemType>
 void DualtreeDfs<ProblemType>::set_query_start_node(
-  TreeType *query_start_node_in) {
+  TreeType *query_start_node_in, int qnode_recursion_depth_limit_in) {
   query_start_node_ = query_start_node_in;
+  qnode_recursion_depth_limit_ = qnode_recursion_depth_limit_in;
 }
 
 template<typename ProblemType>
@@ -51,6 +52,7 @@ void DualtreeDfs<ProblemType>::set_base_case_flags(
 
 template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
+  qnode_recursion_depth_limit_ = std::numeric_limits<int>::max();
   do_selective_base_case_ = false;
   query_start_node_ = NULL;
   query_rank_ = 0;
@@ -123,7 +125,7 @@ void DualtreeDfs<ProblemType>::Compute(
   PreProcessReferenceTree_(reference_table_->get_tree());
 
   DualtreeCanonical_(
-    metric, query_start_node_, reference_table_->get_tree(),
+    metric, query_start_node_, 0, reference_table_->get_tree(),
     1.0 - problem_->global().probability(), squared_distance_range,
     query_results);
   PostProcess_(metric, query_start_node_, query_results);
@@ -349,6 +351,7 @@ template<typename MetricType>
 bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
+  int qnode_recursion_depth,
   typename ProblemType::TableType::TreeType *rnode,
   double failure_probability,
   const core::math::Range &squared_distance_range,
@@ -377,7 +380,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
   }
 
   // If it is not prunable and the query node is a leaf,
-  if(qnode->is_leaf()) {
+  if(qnode->is_leaf() ||
+      qnode_recursion_depth >= qnode_recursion_depth_limit_) {
 
     bool exact_compute = true;
     if(rnode->is_leaf()) {
@@ -417,12 +421,13 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
       // Recurse.
       bool rnode_first_exact =
         DualtreeCanonical_(
-          metric, qnode, rnode_first, failure_probability / 2.0,
+          metric, qnode, qnode_recursion_depth,
+          rnode_first, failure_probability / 2.0,
           squared_distance_range_first, query_results);
 
       bool rnode_second_exact =
         DualtreeCanonical_(
-          metric, qnode, rnode_second,
+          metric, qnode, qnode_recursion_depth, rnode_second,
           (rnode_first_exact) ? failure_probability : failure_probability / 2.0,
           squared_distance_range_second, query_results);
       exact_compute = rnode_first_exact && rnode_second_exact;
@@ -460,11 +465,13 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     // Recurse.
     bool first_qnode_exact =
       DualtreeCanonical_(
-        metric, qnode_first, rnode, failure_probability,
+        metric, qnode_first, qnode_recursion_depth + 1,
+        rnode, failure_probability,
         squared_distance_range_first, query_results);
     bool second_qnode_exact =
       DualtreeCanonical_(
-        metric, qnode_second, rnode, failure_probability,
+        metric, qnode_second, qnode_recursion_depth + 1,
+        rnode, failure_probability,
         squared_distance_range_second, query_results);
     exact_compute_nonleaf_qnode = first_qnode_exact && second_qnode_exact;
   } // qnode is not leaf, rnode is leaf.
@@ -482,11 +489,12 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     // Recurse.
     bool qnode_left_rnode_first_exact =
       DualtreeCanonical_(
-        metric, qnode_left, rnode_first, failure_probability / 2.0,
+        metric, qnode_left, qnode_recursion_depth + 1,
+        rnode_first, failure_probability / 2.0,
         squared_distance_range_first, query_results);
     bool qnode_left_rnode_second_exact =
       DualtreeCanonical_(
-        metric, qnode_left, rnode_second,
+        metric, qnode_left, qnode_recursion_depth + 1, rnode_second,
         (qnode_left_rnode_first_exact) ?
         failure_probability : failure_probability / 2.0,
         squared_distance_range_second, query_results);
@@ -499,11 +507,12 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     // Recurse.
     bool qnode_right_rnode_first_exact =
       DualtreeCanonical_(
-        metric, qnode_right, rnode_first, failure_probability / 2.0,
+        metric, qnode_right, qnode_recursion_depth + 1,
+        rnode_first, failure_probability / 2.0,
         squared_distance_range_first, query_results);
     bool qnode_right_rnode_second_exact =
       DualtreeCanonical_(
-        metric, qnode_right, rnode_second,
+        metric, qnode_right, qnode_recursion_depth + 1, rnode_second,
         (qnode_right_rnode_first_exact) ?
         failure_probability : failure_probability / 2.0,
         squared_distance_range_second, query_results);

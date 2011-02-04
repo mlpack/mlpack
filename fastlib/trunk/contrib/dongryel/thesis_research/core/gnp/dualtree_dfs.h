@@ -201,6 +201,10 @@ class DualtreeDfs {
      */
     TreeType *query_start_node_;
 
+    /** @brief The depth limit for recursing on the query side.
+     */
+    int qnode_recursion_depth_limit_;
+
     /** @brief The reference table.
      */
     TableType *reference_table_;
@@ -299,6 +303,7 @@ class DualtreeDfs {
     bool DualtreeCanonical_(
       const MetricType &metric,
       TreeType *qnode,
+      int qnode_recursion_depth,
       TreeType *rnode,
       double failure_probability,
       const core::math::Range &squared_distance_range,
@@ -325,7 +330,8 @@ class DualtreeDfs {
     /** @brief Sets the starting query node for the dual-tree
      *         computation.
      */
-    void set_query_start_node(TreeType *query_start_node_in);
+    void set_query_start_node(
+      TreeType *query_start_node_in, int qnode_recursion_depth_limit_in);
 
     void set_query_reference_process_ranks(
       int query_process_id, int reference_process_id);
