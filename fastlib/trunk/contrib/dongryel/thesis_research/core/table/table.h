@@ -27,10 +27,13 @@ namespace table {
 extern MemoryMappedFile *global_m_file_;
 
 template <
-typename TreeSpecType, typename IncomingOldFromNewIndexType = int >
+typename IncomingTreeSpecType, typename IncomingOldFromNewIndexType = int >
 class Table {
 
   public:
+
+    typedef IncomingTreeSpecType TreeSpecType;
+
     typedef IncomingOldFromNewIndexType OldFromNewIndexType;
 
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;

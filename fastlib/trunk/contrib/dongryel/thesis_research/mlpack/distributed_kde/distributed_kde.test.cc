@@ -294,8 +294,8 @@ class TestDistributed_Kde {
       double max_num_levels_to_serialize;
       double max_num_work_to_dequeue_per_stage;
       if(world.rank() == 0) {
-        max_num_levels_to_serialize = core::math::RandInt(3, 7);
-        max_num_work_to_dequeue_per_stage = core::math::RandInt(3, 10);
+        max_num_levels_to_serialize = 300;
+        max_num_work_to_dequeue_per_stage = 1;
       }
       boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
       boost::mpi::broadcast(world, max_num_work_to_dequeue_per_stage, 0);
