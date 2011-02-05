@@ -8,6 +8,7 @@
 #ifndef CORE_METRIC_KERNELS_LMETRIC_H
 #define CORE_METRIC_KERNELS_LMETRIC_H
 
+#include <boost/serialization/serialization.hpp>
 #include "core/table/dense_point.h"
 #include "core/math/math_lib.h"
 
@@ -48,7 +49,17 @@ class LMetricDistanceSqTrait<2> {
  */
 template<int t_pow>
 class LMetric {
+
+  private:
+
+    // For boost serialization.
+    friend class boost::serialization::access;
+
   public:
+
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+    }
 
     /** @brief Computes the distance metric between two points.
      */
