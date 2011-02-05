@@ -109,7 +109,7 @@ class DCMTable {
 
         double adjusted_dot_product =
           (*choice_probabilities)[discrete_choice_index] - max_dot_product + 1;
-        double unnormalized_probability = exp(dadjusted_ot_product);
+        double unnormalized_probability = exp(adjusted_dot_product);
         normalizing_sum += unnormalized_probability;
         (*choice_probabilities)[discrete_choice_index] =
           unnormalized_probability;
