@@ -296,7 +296,7 @@ double MixedLogitDCM<TableType>::IntegrationSampleError_(
     // sample error.
     int person_index = table_.shuffled_indices_for_person(i);
     core::monte_carlo::MeanVariancePair difference_mean_variance;
-    IntegrationSampleErrorPerPerson_(
+    this->IntegrationSampleErrorPerPerson_(
       person_index, first_sample, second_sample, &difference_mean_variance);
     simulation_error += difference_mean_variance.sample_mean_variance();
   }
@@ -313,6 +313,8 @@ double MixedLogitDCM<TableType>::DataSampleError_(
   const SamplingType &second_sample) const {
 
   // Assumption: num_active_people in both samples are equal.
+
+  // The following computes the CF quantity in the paper.
   double correction_factor =
     static_cast<double>(
       table_.num_people() - first_sample.num_active_people()) /
@@ -348,6 +350,9 @@ void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
     core::monte_carlo::MeanVariancePair difference_mean_variance;
     IntegrationSampleErrorPerPerson_(
       person_index, *first_sample, second_sample, &difference_mean_variance);
+
+    // Form the $S_i'$ for the current person without the
+    // multiplicative factor $\sum\limits_{i \in N} s_{i, diff}$.
     tmp_vector[i] = difference_mean_variance.sample_variance() /
                     (arguments_in.gradient_norm_threshold_ *
                      integration_sample_error *
@@ -360,6 +365,8 @@ void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
 
     // Get the active person index.
     int person_index = table_.shuffled_indices_for_person(i);
+
+    // Finalize by multiplying by the sum factor.
     tmp_vector[i] *= total_sample_variance;
     int num_additional_samples =
       std::max(
@@ -546,8 +553,9 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
     // If the predicted improvement in the objective value is less
     // than the integration sample error and the integration sample
     // error is small,
-    if(predicted_objective_value_improvement <
-        arguments_in.gradient_norm_threshold_ * sqrt(integration_sample_error) &&
+    if(fabs(predicted_objective_value_improvement)  <
+        arguments_in.gradient_norm_threshold_ *
+        sqrt(integration_sample_error) &&
         sqrt(integration_sample_error) <
         arguments_in.integration_sample_error_threshold_) {
 

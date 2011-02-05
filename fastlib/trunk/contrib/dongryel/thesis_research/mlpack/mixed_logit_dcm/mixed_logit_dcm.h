@@ -52,7 +52,11 @@ class MixedLogitDCM {
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 
-    /** @brief Update the sample allocation.
+    /** @brief Update the sample allocation using optimum allocation
+     *         of integration sample strategy. Updates the first
+     *         sample (the current iterate) based on the second sample
+     *         (the trust region stepped new iterate) and its variance
+     *         difference.
      */
     void UpdateSampleAllocation_(
       const ArgumentType &arguments_in,
@@ -76,6 +80,9 @@ class MixedLogitDCM {
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
 
+    /** @brief Computes the integration sample error contributed by
+     *         the given person.
+     */
     void IntegrationSampleErrorPerPerson_(
       int person_index,
       const SamplingType &first_sample,
