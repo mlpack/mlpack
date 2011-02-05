@@ -143,10 +143,9 @@ class MixedLogitDCMSampling {
         *dcm_table_, person_index, choice_probabilities,
         &choice_prob_weighted_attribute_vector);
 
-      // Given the beta vector, compute the products between the
-      // gradient of the $\beta$ with respect to $\theta$ and
-      // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
-      arma::vec beta_gradient_product;
+      // This is the gradient of the choice probability for a fixed
+      // realization of $\beta$.
+      arma::vec choice_probability_gradient_wrt_parameter;
 
       // j_i^* index, the person's discrete choice index.
       int discrete_choice_index =
@@ -158,19 +157,17 @@ class MixedLogitDCMSampling {
       ChoiceProbabilityGradientWithRespectToParameter(
         parameters_, *dcm_table_, person_index,
         beta_vector, choice_probabilities,
-        choice_prob_weighted_attribute_vector, &beta_gradient_product);
+        choice_prob_weighted_attribute_vector,
+        &choice_probability_gradient_wrt_parameter);
 
       // Update the simulated choice probabilities
       // and the simulated log-likelihood gradients.
       simulated_choice_probabilities_[person_index].push_back(
         choice_probabilities[discrete_choice_index]);
 
-      // Simulated log-likelihood gradient update by the simulated
-      // choice probabilty scaled gradient product.
-      beta_gradient_product = choice_probabilities[discrete_choice_index] *
-                              beta_gradient_product;
+      // Simulated log-likelihood gradient update.
       simulated_choice_probability_gradients_[person_index].push_back(
-        beta_gradient_product);
+        choice_probability_gradient_wrt_parameter);
 
       // Update the Hessian of the simulated loglikelihood for the
       // given person.
