@@ -15,6 +15,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "core/math/math_lib.h"
+#include "core/parallel/distributed_tree_util.h"
 #include "core/tree/ball_bound.h"
 #include "core/tree/general_spacetree.h"
 #include "core/table/dense_matrix.h"
@@ -457,11 +458,9 @@ class GenMetricTree {
 
       // Loop through the membership vectors and assign to the right
       // process partner.
-      int threshold = comm.size() / 2;
-      int left_destination =
-        (comm.rank() < threshold) ? comm.rank() : comm.rank() - threshold;
-      int right_destination = (comm.rank() < threshold) ?
-                              comm.rank() + threshold : comm.rank();
+      int left_destination, right_destination;
+      core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
+        comm, &left_destination, &right_destination, (bool *) NULL);
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
           (*assigned_point_indices)[left_destination].push_back(i);

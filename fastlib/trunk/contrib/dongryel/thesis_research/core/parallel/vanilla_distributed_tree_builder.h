@@ -107,7 +107,9 @@ class VanillaDistributedTreeBuilder {
             membership_counts_per_process, distributed_table_, n_attributes_);
 
           // Split the communicator into two groups here and recurse.
-          bool color = (current_comm.rank() < current_comm.size() / 2);
+          bool color;
+          core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
+            current_comm, (int *) NULL, (int *) NULL, &color);
           current_comm = current_comm.split(color);
         }
         else {
