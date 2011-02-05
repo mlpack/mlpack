@@ -187,6 +187,12 @@ class BallBound {
       return center_;
     }
 
+    /** @brief Returns the centroid.
+     */
+    void center(core::table::DensePoint *center_out) const {
+      center_out->Copy(center_);
+    }
+
     /** @brief Determines if a point is within this bound.
      */
     template<typename MetricType>
