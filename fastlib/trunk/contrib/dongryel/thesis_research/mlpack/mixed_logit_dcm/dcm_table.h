@@ -1,5 +1,8 @@
 /** @file dcm_table.h
  *
+ *  The header file that maintains the discrete choice information
+ *  with the distribution information.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -74,6 +77,10 @@ class DCMTable {
 
       // First compute the normalizing sum.
       double normalizing_sum = 0.0;
+
+      // The maximum dot product.
+      double max_dot_product = - std::numeric_limits<double>::max();
+
       for(int discrete_choice_index = 0;
           discrete_choice_index < num_discrete_choices;
           discrete_choice_index++) {
@@ -86,7 +93,23 @@ class DCMTable {
         double dot_product =
           arma::dot(
             beta_vector, attribute_for_discrete_choice);
-        double unnormalized_probability = exp(dot_product);
+
+        // We need to watch out for a potential numerical instability
+        // here. There, we just store the dot products here.
+        (*choice_probabilities)[discrete_choice_index] = dot_product;
+        max_dot_product = std::max(max_dot_product, dot_product);
+      }
+
+      // Compute the normalizing sum by looking at the distribution of
+      // the dot-products. We want to keep each dot product to be
+      // between 0 and 1 to avoid numerical overflow/underflows.
+      for(int discrete_choice_index = 0;
+          discrete_choice_index < num_discrete_choices;
+          discrete_choice_index++) {
+
+        double adjusted_dot_product =
+          (*choice_probabilities)[discrete_choice_index] - max_dot_product + 1;
+        double unnormalized_probability = exp(dadjusted_ot_product);
         normalizing_sum += unnormalized_probability;
         (*choice_probabilities)[discrete_choice_index] =
           unnormalized_probability;
