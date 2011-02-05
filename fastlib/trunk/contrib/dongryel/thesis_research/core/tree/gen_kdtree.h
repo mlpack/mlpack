@@ -125,6 +125,7 @@ class GenKdTree {
 
       // Each MPI process finds a local bound.
       BoundType local_bound;
+      local_bound.Init(matrix.n_rows());
       FindBoundFromMatrix(
         metric_in, matrix, 0, matrix.n_cols(), &local_bound);
 

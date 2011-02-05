@@ -52,7 +52,9 @@ class HrectBound {
     /** @brief The assignment operator that copies.
      */
     void operator=(const HrectBound &bound_in) {
-      bounds_ = new core::math::Range[bound_in.dim()];
+      if(! this->is_initialized()) {
+        bounds_ = new core::math::Range[bound_in.dim()];
+      }
       dim_ = bound_in.dim();
       for(int i = 0; i < dim_; i++) {
         bounds_[i].lo = bound_in.get(i).lo;
@@ -117,6 +119,15 @@ class HrectBound {
       }
       else {
         delete[] bounds_.get();
+      }
+    }
+
+    /** @brief Returns the centroid.
+     */
+    void center(core::table::DensePoint *center_out) const {
+      center_out->Init(dim_);
+      for(int i = 0; i < dim_; i++) {
+        (*center_out)[i] = bounds_[i].mid();
       }
     }
 
