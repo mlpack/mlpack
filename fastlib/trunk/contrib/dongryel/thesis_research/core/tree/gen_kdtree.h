@@ -199,12 +199,14 @@ class GenKdTree {
       }
     }
 
-    template<typename MetricType, typename DistributedTableType>
+    template<typename MetricType>
     static bool AttemptSplitting(
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
       const BoundType &bound,
-      DistributedTableType *distributed_table_in) {
+      const core::table::DenseMatrix &matrix_in,
+      std::vector< std::vector<int> > *assigned_point_indices,
+      std::vector<int> *membership_counts_per_process) {
 
       // Splitting dimension/widest dimension info.
       int split_dim = -1;
@@ -236,12 +238,13 @@ class GenKdTree {
       int left_count;
       std::deque<bool> left_membership;
       ComputeMemberships(
-        metric_in, distributed_table_in->table()->data(), 0,
-        distributed_table_in->n_entries(), left_bound, right_bound,
+        metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
         &left_count, &left_membership);
 
-      std::vector< std::vector<int> > assigned_point_indices(comm.size());
-      std::vector<int> membership_counts_per_process(comm.size(), 0);
+      // The assigned point indices per process and per-process counts
+      // will be outputted.
+      assigned_point_indices->resize(comm.size());
+      membership_counts_per_process->resize(comm.size());
 
       // Loop through the membership vectors and assign to the right
       // process partner.
@@ -252,15 +255,14 @@ class GenKdTree {
       right_destination = right_destination % comm.size();
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
-          assigned_point_indices[left_destination].push_back(i);
-          membership_counts_per_process[left_destination]++;
+          (*assigned_point_indices)[left_destination].push_back(i);
+          (*membership_counts_per_process)[left_destination]++;
         }
         else {
-          assigned_point_indices[right_destination].push_back(i);
-          membership_counts_per_process[right_destination]++;
+          (*assigned_point_indices)[right_destination].push_back(i);
+          (*membership_counts_per_process)[right_destination]++;
         }
       }
-
       return true;
     }
 
