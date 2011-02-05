@@ -9,6 +9,7 @@
 #ifndef CORE_PARALLEL_DISTRIBUTED_TREE_UTIL_H
 #define CORE_PARALLEL_DISTRIBUTED_TREE_UTIL_H
 
+#include <numeric>
 #include <boost/mpi.hpp>
 #include "core/table/sample_dense_matrix.h"
 
