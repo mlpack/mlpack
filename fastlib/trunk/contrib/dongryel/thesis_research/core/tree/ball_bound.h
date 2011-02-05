@@ -87,6 +87,12 @@ class BallBound {
       ar & center_;
     }
 
+    /** @brief Returns the dimensionality.
+     */
+    int dim() const {
+      return center_.length();
+    }
+
     /** @brief Copy the given ball bound.
      */
     void Copy(const BallBound &other_bound) {
