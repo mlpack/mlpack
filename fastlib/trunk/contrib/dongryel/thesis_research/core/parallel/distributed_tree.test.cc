@@ -47,7 +47,7 @@ class TestDistributedTree {
         // Only the master broadcasts the dimension;
         int num_dimensions;
         if(world.rank() == 0) {
-          num_dimensions = core::math::RandInt(3, 8);
+          num_dimensions = core::math::RandInt(2, 3);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
         int num_points = core::math::RandInt(3000, 8000);
@@ -55,6 +55,7 @@ class TestDistributedTree {
           printf("Failed!\n");
           exit(0);
         }
+        printf("\n");
       }
       return 0;
     }

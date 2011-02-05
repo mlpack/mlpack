@@ -65,9 +65,9 @@ void serialize(
   boost::serialization::split_free(ar, c, version);
 }
 
-template <class Archive>
+template <class Archive, typename T>
 void serialize(
-  Archive & ar, std::pair<arma::vec, double> &c, const unsigned int version) {
+  Archive & ar, std::pair<arma::vec, T> &c, const unsigned int version) {
   ar & c.first;
   ar & c.second;
 }
@@ -142,17 +142,23 @@ class ChooseMaxPoint:
  */
 class ChooseRandomPoint:
   public std::binary_function <
-    arma::vec, arma::vec, arma::vec > {
+  std::pair<arma::vec, int>, std::pair<arma::vec, int>,
+    std::pair<arma::vec, int> > {
 
   public:
-    const arma::vec operator()(
-      const arma::vec &first_point, const arma::vec &second_point) const {
-      arma::vec random_point;
-      if(core::math::Random<double>() <= 0.5) {
-        random_point = first_point;
+    const std::pair<arma::vec, int> operator()(
+      const std::pair< arma::vec, int>  &first_point,
+      const std::pair< arma::vec, int>  &second_point) const {
+      std::pair<arma::vec, int> random_point;
+      random_point.second = first_point.second + second_point.second;
+      double first_point_threshold =
+        static_cast<double>(first_point.second) /
+        static_cast<double>(random_point.second);
+      if(core::math::Random<double>() <= first_point_threshold) {
+        random_point.first = first_point.first;
       }
       else {
-        random_point = second_point;
+        random_point.first = second_point.first;
       }
       return random_point;
     }
@@ -180,7 +186,7 @@ class is_commutative <
  */
 template<>
 class is_commutative <
-  core::parallel::ChooseRandomPoint, arma::vec > :
+  core::parallel::ChooseRandomPoint, std::pair< arma::vec, int > > :
   public boost::mpl::true_ {
 
 };
@@ -379,9 +385,10 @@ class GenMetricTree {
       // Pick a random point across all processes.
       int local_random_row =
         core::math::RandInt(0, matrix_in.n_cols());
-      arma::vec local_random_row_vec;
-      arma::vec global_random_row_vec;
-      matrix_in.MakeColumnVector(local_random_row, &local_random_row_vec);
+      std::pair< arma::vec, int > local_random_row_vec;
+      std::pair< arma::vec, int > global_random_row_vec;
+      matrix_in.MakeColumnVector(local_random_row, &local_random_row_vec.first);
+      local_random_row_vec.second = matrix_in.n_cols();
 
       // Call all reduction.
       boost::mpi::all_reduce(
@@ -392,7 +399,7 @@ class GenMetricTree {
       double local_furthest_distance;
       int local_furthest_from_random_row =
         FurthestColumnIndex_(
-          metric_in, global_random_row_vec, matrix_in,
+          metric_in, global_random_row_vec.first, matrix_in,
           0, matrix_in.n_cols(), &local_furthest_distance);
       std::pair< arma::vec, double > local_furthest_from_random_row_vec;
       std::pair< arma::vec, double > global_furthest_from_random_row_vec;
@@ -450,11 +457,11 @@ class GenMetricTree {
 
       // Loop through the membership vectors and assign to the right
       // process partner.
+      int threshold = comm.size() / 2;
       int left_destination =
-        (comm.rank() % 2 == 0) ? comm.rank() : comm.rank() - 1;
-      int right_destination = (comm.rank() % 2 == 0) ?
-                              comm.rank() + 1 : comm.rank();
-      right_destination = right_destination % comm.size();
+        (comm.rank() < threshold) ? comm.rank() : comm.rank() - threshold;
+      int right_destination = (comm.rank() < threshold) ?
+                              comm.rank() + threshold : comm.rank();
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
           (*assigned_point_indices)[left_destination].push_back(i);

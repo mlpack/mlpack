@@ -217,6 +217,7 @@ class GenKdTree {
       core::tree::GenKdTreeMidpointSplitter::ComputeWidestDimension(
         bound, &split_dim, &max_width);
 
+
       // Choose the split value along the dimension to be splitted.
       double split_val =
         core::tree::GenKdTreeMidpointSplitter::ChooseKdTreeSplitValue(
@@ -249,11 +250,11 @@ class GenKdTree {
 
       // Loop through the membership vectors and assign to the right
       // process partner.
+      int threshold = comm.size() / 2;
       int left_destination =
-        (comm.rank() % 2 == 0) ? comm.rank() : comm.rank() - 1;
-      int right_destination = (comm.rank() % 2 == 0) ?
-                              comm.rank() + 1 : comm.rank();
-      right_destination = right_destination % comm.size();
+        (comm.rank() < threshold) ? comm.rank() : comm.rank() - threshold;
+      int right_destination = (comm.rank() < threshold) ?
+                              comm.rank() + threshold : comm.rank();
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
           (*assigned_point_indices)[left_destination].push_back(i);
