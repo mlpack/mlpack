@@ -75,11 +75,10 @@ class VanillaDistributedTreeBuilder {
     template<typename MetricType>
     void RecursiveReshuffle_(
       boost::mpi::communicator &world,
-      boost::mpi::communicator &comm,
       const MetricType &metric_in) {
 
       // If the communicator size is greater than one, then try to split.
-      boost::mpi::communicator current_comm = comm;
+      boost::mpi::communicator current_comm = world;
       while(current_comm.size() > 1) {
 
         // Find the bounding primitive containing all the points
@@ -108,8 +107,8 @@ class VanillaDistributedTreeBuilder {
             membership_counts_per_process, distributed_table_, n_attributes_);
 
           // Split the communicator into two groups here and recurse.
-          int color = current_comm.rank() % 2;
-          current_comm = current_comm.split(color, color);
+          bool color = (current_comm.rank() < current_comm.size() / 2);
+          current_comm = current_comm.split(color);
         }
         else {
           break;
@@ -151,7 +150,7 @@ class VanillaDistributedTreeBuilder {
       boost::mpi::timer distributed_table_index_timer;
 
       // Start reshuffling.
-      RecursiveReshuffle_(world, world, metric_in);
+      RecursiveReshuffle_(world, metric_in);
 
       // Refresh the final count on each distributed table on each
       // process.
