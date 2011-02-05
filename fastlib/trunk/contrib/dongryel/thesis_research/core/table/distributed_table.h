@@ -16,6 +16,7 @@
 #include <boost/random/variate_generator.hpp>
 #include <boost/utility.hpp>
 #include "core/parallel/sample_distributed_tree_builder.h"
+#include "core/parallel/vanilla_distributed_tree_builder.h"
 #include "core/table/index_util.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/table.h"
@@ -55,7 +56,7 @@ class DistributedTable: public boost::noncopyable {
     typedef std::pair<int, int> IndexType;
 
     // For giving private access to the distributed tree builder class.
-    friend class core::parallel::SampleDistributedTreeBuilder<DistributedTableType>;
+    friend class core::parallel::VanillaDistributedTreeBuilder<DistributedTableType>;
 
   public:
     class TreeIterator {
@@ -195,9 +196,11 @@ class DistributedTable: public boost::noncopyable {
         core::table::global_m_file_->Construct<TableType>() : new TableType();
       global_table_->Init(
         owned_table_->n_attributes(), world.size());
+      core::table::DensePoint root_bound_center;
+      owned_table_->get_tree()->bound().center(&root_bound_center);
       boost::mpi::all_gather(
         world,
-        owned_table_->get_tree()->bound().center().ptr(),
+        root_bound_center.ptr(),
         owned_table_->n_attributes(), global_table_->data().ptr());
       global_table_->IndexData(metric_in, 1);
     }
@@ -353,9 +356,9 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
-      core::parallel::SampleDistributedTreeBuilder <
+      core::parallel::VanillaDistributedTreeBuilder <
       DistributedTableType > builder;
-      builder.Init(*this, sample_probability_in);
+      builder.Init(*this);
       builder.Build(world, metric_in, leaf_size);
     }
 

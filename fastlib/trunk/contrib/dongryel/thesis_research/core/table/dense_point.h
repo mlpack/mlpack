@@ -20,6 +20,24 @@ namespace table {
 
 extern core::table::MemoryMappedFile *global_m_file_;
 
+/** @brief The trait class for determining the length of a vector-like
+ *         object. Currently supports the core::table::DensePoint and
+ *         arma::vec class objects.
+ */
+template<typename PointType>
+class LengthTrait {
+  public:
+    static int length(const PointType &p);
+};
+
+template<typename PointType>
+class PointerTrait {
+  public:
+    static const double *ptr(const PointType &p);
+};
+
+/** @brief The dense point class.
+ */
 class DensePoint {
 
   private:
@@ -165,20 +183,24 @@ class DensePoint {
       is_alias_ = false;
     }
 
-    void CopyValues(const DensePoint &point_in) {
+    template<typename PointType>
+    void CopyValues(const PointType &point_in) {
+      const double *point_in_ptr =
+        core::table::PointerTrait<PointType>::ptr(point_in);
+      n_rows_ = core::table::LengthTrait<PointType>::length(point_in);
       memcpy(
-        ptr_.get(), point_in.ptr(), sizeof(double) * point_in.length());
-      n_rows_ = point_in.length();
+        ptr_.get(), point_in_ptr, sizeof(double) * n_rows_);
       is_alias_ = false;
     }
 
-    void Copy(const DensePoint &point_in) {
+    template<typename PointType>
+    void Copy(const PointType &point_in) {
       if(ptr_.get() == NULL) {
+        int length = core::table::LengthTrait<PointType>::length(point_in);
         ptr_ =
           (core::table::global_m_file_) ?
           core::table::global_m_file_->ConstructArray<double>(
-            point_in.length()) :
-          new double[point_in.length()];
+            length) : new double[ length ];
       }
       CopyValues(point_in);
     }
@@ -216,16 +238,6 @@ class DensePoint {
     }
 };
 
-/** @brief The trait class for determining the length of a vector-like
- *         object. Currently supports the core::table::DensePoint and
- *         arma::vec class objects.
- */
-template<typename PointType>
-class LengthTrait {
-  public:
-    static int length(const PointType &p);
-};
-
 /** @brief The trait class instantiation for determining the length of
  *         an arma::vec object.
  */
@@ -245,6 +257,22 @@ class LengthTrait<core::table::DensePoint> {
   public:
     static int length(const core::table::DensePoint &p) {
       return p.length();
+    }
+};
+
+template<>
+class PointerTrait<arma::vec> {
+  public:
+    static const double *ptr(const arma::vec &p) {
+      return p.memptr();
+    }
+};
+
+template<>
+class PointerTrait<core::table::DensePoint> {
+  public:
+    static const double *ptr(const core::table::DensePoint &p) {
+      return p.ptr();
     }
 };
 

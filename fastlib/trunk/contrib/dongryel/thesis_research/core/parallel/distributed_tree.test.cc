@@ -9,6 +9,8 @@
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
+#include "core/tree/gen_kdtree.h"
+#include "core/tree/gen_metric_tree.h"
 #include "core/parallel/vanilla_distributed_tree_builder.h"
 #include "core/math/math_lib.h"
 
@@ -40,7 +42,7 @@ class TestDistributedTree {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 1; i++) {
+      for(int i = 0; i < 10; i++) {
 
         // Only the master broadcasts the dimension;
         int num_dimensions;
@@ -95,14 +97,30 @@ int main(int argc, char *argv[]) {
   boost::mpi::environment env(argc, argv);
   boost::mpi::communicator world;
 
-  // Tree type: hard-coded for a metric tree.
-  typedef core::tree::GenMetricTree<core::tree::AbstractStatistic> TreeSpecType;
-  typedef core::table::Table <TreeSpecType> TableType;
-  typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
+  // The general metric tree type.
+  typedef core::tree::GenMetricTree<core::tree::AbstractStatistic>
+  GenMetricTreeSpecType;
+  typedef core::table::Table<GenMetricTreeSpecType> GenMetricTreeTableType;
+  typedef core::table::DistributedTable<GenMetricTreeSpecType>
+  GenMetricTreeDistributedTableType;
+
+  // The general kd tree type.
+  typedef core::tree::GenKdTree<core::tree::AbstractStatistic>
+  GenKdTreeSpecType;
+  typedef core::table::Table<GenKdTreeSpecType> GenKdTreeTableType;
+  typedef core::table::DistributedTable<GenKdTreeSpecType>
+  GenKdTreeDistributedTableType;
 
   // Call the tests.
-  core::tree::TestDistributedTree<DistributedTableType> tree_test;
-  tree_test.StressTestMain(world);
+  printf("Testing the general metric trees:\n");
+  core::tree::TestDistributedTree<GenMetricTreeDistributedTableType>
+  gen_metric_tree_test;
+  gen_metric_tree_test.StressTestMain(world);
+  printf("Testing the general kd trees:\n");
+  core::tree::TestDistributedTree<GenKdTreeDistributedTableType>
+  gen_kdtree_test;
+  gen_kdtree_test.StressTestMain(world);
+
   std::cout << "All tests passed!\n";
   return 0;
 }
