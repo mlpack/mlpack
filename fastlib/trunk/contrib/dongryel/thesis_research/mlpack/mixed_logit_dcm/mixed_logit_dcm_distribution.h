@@ -72,9 +72,8 @@ class MixedLogitDCMDistribution {
       const arma::vec &choice_probabilities,
       arma::vec *choice_prob_weighted_attribute_vector) const {
 
-      choice_prob_weighted_attribute_vector->set_size(
+      choice_prob_weighted_attribute_vector->zeros(
         dcm_table_in.num_attributes());
-      choice_prob_weighted_attribute_vector->zeros();
       for(int i = 0; i < static_cast<int>(choice_probabilities.n_elem); i++) {
         arma::vec attribute_vector;
         dcm_table_in.get_attribute_vector(person_index, i, &attribute_vector);
@@ -226,31 +225,31 @@ class MixedLogitDCMDistribution {
       const arma::vec &choice_prob_weighted_attribute_vector,
       arma::vec *product_out) const {
 
-      // Find the person's discrete choice index.
-      int discrete_choice_index =
-        dcm_table_in.get_discrete_choice_index(person_index);
-
       // Initialize the product.
       product_out->set_size(parameters_in.n_elem);
 
-      // Compute the gradient matrix times vector for the person's
-      // discrete choice.
-      arma::vec attribute_vector;
-      dcm_table_in.get_attribute_vector(
-        person_index, discrete_choice_index, &attribute_vector);
-
-      // Compute $\bar{X}_i res_{i,j_i^*}(\beta)$.
-      arma::vec attribute_vec_sub_choice_prob_weighted_vec =
-        attribute_vector - choice_prob_weighted_attribute_vector;
+      // Compute the choice probability gradient with respect to
+      // attribute (this is the contribution from the logit gradient).
+      arma::vec choice_probability_gradient_with_respect_to_attribute;
+      this->ChoiceProbabilityGradientWithRespectToAttribute(
+        dcm_table_in, person_index, choice_probabilities,
+        choice_prob_weighted_attribute_vector,
+        &choice_probability_gradient_with_respect_to_attribute);
 
       // For each row index of the gradient,
       for(int k = 0; k < static_cast<int>(parameters_in.n_elem); k++) {
 
         // For each column index of the gradient,
         double dot_product = 0;
-        for(int j = 0; j < static_cast<int>(attribute_vector.n_elem); j++) {
+        for(int j = 0;
+            j < static_cast<int>(
+              choice_probability_gradient_with_respect_to_attribute.n_elem);
+            j++) {
+
+          // This basically multiplies by the $(k, j)$-th entry of the
+          // gradient of $\beta$ with respect to $\theta$.
           dot_product +=
-            attribute_vec_sub_choice_prob_weighted_vec[j] *
+            choice_probability_gradient_with_respect_to_attribute[j] *
             this->AttributeGradientWithRespectToParameter(
               parameters_in, beta_vector, k, j);
         }

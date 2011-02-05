@@ -148,9 +148,12 @@ class MixedLogitDCMSampling {
       // $\bar{X}_i res_{i,j_i^*}(\beta^v(\theta))$.
       arma::vec beta_gradient_product;
 
-      // j_i^* index.
+      // j_i^* index, the person's discrete choice index.
       int discrete_choice_index =
         dcm_table_->get_discrete_choice_index(person_index);
+
+      // The distribution knows how to compute the choice probability
+      // gradient with respect to parameter
       dcm_table_->distribution()->
       ChoiceProbabilityGradientWithRespectToParameter(
         parameters_, *dcm_table_, person_index,
@@ -195,16 +198,8 @@ class MixedLogitDCMSampling {
 
         // Get the index of the active person.
         int person_index = dcm_table_->shuffled_indices_for_person(i);
+        this->BuildSamples_(person_index);
 
-        for(int j = simulated_choice_probabilities_[i].num_samples();
-            j < num_integration_samples_[person_index]; j++) {
-
-          // Draw a beta from the parameter theta and add it to the
-          // sample pool.
-          dcm_table_->distribution()->DrawBeta(parameters_, &random_beta);
-          this->AddIntegrationSample_(person_index, random_beta);
-
-        } // end of looping each new beta sample.
       } // end of looping over each active person.
     }
 
