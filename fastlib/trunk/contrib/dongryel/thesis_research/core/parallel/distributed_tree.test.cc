@@ -9,7 +9,7 @@
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
-#include "core/parallel/distributed_tree_builder.h"
+#include "core/parallel/vanilla_distributed_tree_builder.h"
 #include "core/math/math_lib.h"
 
 namespace core {
@@ -48,7 +48,7 @@ class TestDistributedTree {
           num_dimensions = core::math::RandInt(3, 8);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        int num_points = core::math::RandInt(3, 8);
+        int num_points = core::math::RandInt(3000, 8000);
         if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -76,8 +76,9 @@ class TestDistributedTree {
 
       DistributedTableType distributed_table;
       distributed_table.Init(references_in, world);
-      core::parallel::DistributedTreeBuilder<DistributedTableType> builder;
-      builder.Init(distributed_table, 0.2);
+      core::parallel::VanillaDistributedTreeBuilder <
+      DistributedTableType > builder;
+      builder.Init(distributed_table);
       core::metric_kernels::LMetric<2> l2_metric;
       int leaf_size = core::math::RandInt(20, 40);
       builder.Build(world, l2_metric, leaf_size);
@@ -102,20 +103,6 @@ int main(int argc, char *argv[]) {
   // Call the tests.
   core::tree::TestDistributedTree<DistributedTableType> tree_test;
   tree_test.StressTestMain(world);
-
-
-  arma::vec first_point;
-  arma::vec second_point;
-  first_point.zeros(5);
-  second_point.zeros(5);
-  for(int i = 0; i < 5; i++) {
-    first_point[i] = 0.1;
-    second_point[i] = 0.7;
-  }
-  first_point.print();
-  second_point.print();
-  printf("Hey: %d\n", core::math::MortonOrderPoints(first_point, second_point));
-
   std::cout << "All tests passed!\n";
   return 0;
 }
