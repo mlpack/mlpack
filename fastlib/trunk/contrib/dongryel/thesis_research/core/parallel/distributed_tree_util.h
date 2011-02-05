@@ -14,6 +14,31 @@
 
 namespace core {
 namespace parallel {
+
+class DistributedTreeExtraUtil {
+
+  public:
+    /** @brief Returns the left and the right destinations when
+     *         shuffling the data.
+     */
+    static void left_and_right_destinations(
+      boost::mpi::communicator &comm, int *left_rank, int *right_rank,
+      bool *color) {
+      int threshold = comm.size() / 2;
+      if(left_rank != NULL) {
+        *left_rank =
+          (comm.rank() < threshold) ? comm.rank() : comm.rank() - threshold;
+      }
+      if(right_rank != NULL) {
+        *right_rank = (comm.rank() < threshold) ?
+                      comm.rank() + threshold : comm.rank();
+      }
+      if(color != NULL) {
+        *color = (comm.rank() < threshold);
+      }
+    }
+};
+
 template<typename DistributedTableType>
 class DistributedTreeUtil {
 
@@ -65,18 +90,18 @@ class DistributedTreeUtil {
   public:
 
     /** @brief Reshuffle points across each process.
-         *
-         *  @param world The communicator.
-         *
-         *  @param assigned_point_indices The list of assigned point
-         *         indices. The $i$-th position denotes the list of points
-         *         that should be transferred to the $i$-th process.
-         *
-         *  @param membership_counts_per_node The list of sizes of
-         *         assigned point indices. The $i$-th position denotes the
-         *         number of points assigned to the $i$-th process
-         *         originating from the current process.
-         */
+     *
+     *  @param world The communicator.
+     *
+     *  @param assigned_point_indices The list of assigned point
+     *         indices. The $i$-th position denotes the list of points
+     *         that should be transferred to the $i$-th process.
+     *
+     *  @param membership_counts_per_node The list of sizes of
+     *         assigned point indices. The $i$-th position denotes the
+     *         number of points assigned to the $i$-th process
+     *         originating from the current process.
+     */
     static void ReshufflePoints(
       boost::mpi::communicator &world,
       const std::vector< std::vector<int> > &assigned_point_indices,
