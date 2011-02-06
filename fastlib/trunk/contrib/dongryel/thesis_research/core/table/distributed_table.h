@@ -56,7 +56,8 @@ class DistributedTable: public boost::noncopyable {
     typedef std::pair<int, int> IndexType;
 
     // For giving private access to the distributed tree builder class.
-    friend class core::parallel::VanillaDistributedTreeBuilder<DistributedTableType>;
+    friend class core::parallel::VanillaDistributedTreeBuilder <
+        DistributedTableType >;
 
   public:
     class TreeIterator {
@@ -198,11 +199,16 @@ class DistributedTable: public boost::noncopyable {
         owned_table_->n_attributes(), world.size());
       core::table::DensePoint root_bound_center;
       owned_table_->get_tree()->bound().center(&root_bound_center);
-      boost::mpi::all_gather(
+      boost::mpi::gather(
         world,
         root_bound_center.ptr(),
-        owned_table_->n_attributes(), global_table_->data().ptr());
-      global_table_->IndexData(metric_in, 1);
+        owned_table_->n_attributes(), global_table_->data().ptr(), 0);
+
+      // The master builds the tree and broadcasts the nodes.
+      if(world.rank() == 0) {
+        global_table_->IndexData(metric_in, 1);
+      }
+      boost::mpi::broadcast(world, *global_table_, 0);
     }
 
   public:
@@ -275,6 +281,12 @@ class DistributedTable: public boost::noncopyable {
      */
     TableType *local_table() {
       return owned_table_.get();
+    }
+
+    /** @brief Retrieves the global new from old mapping.
+     */
+    int *new_from_old() {
+      return global_table_->new_from_old();
     }
 
     /** @brief Retrieves the global tree.
