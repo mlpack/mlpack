@@ -223,13 +223,14 @@ class TableExchange {
 
       // Compute the size of each cache block, which is a function of
       // the leaf nodes owned by a subtree times each leaf node size.
-      cache_block_size_ = local_table_->n_entries() * 3;
+      cache_block_size_ = (1 << max_num_levels_to_serialize_in) *
+                          leaf_size_in;
 
       // Compute the number of cache blocks allocated per process. The
       // rule is that each process gets at least twice the number of
       // work that is dequeued per stage so that there is some
       // progress in the computation.
-      num_cache_blocks_per_process_ = 1;
+      num_cache_blocks_per_process_ = 2 * max_num_work_to_dequeue_per_stage_in;
 
       // Compute the total cache size.
       total_cache_size_per_process_ = num_cache_blocks_per_process_ *
