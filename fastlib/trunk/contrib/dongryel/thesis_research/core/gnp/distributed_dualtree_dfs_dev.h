@@ -162,7 +162,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       sub_engine.set_query_reference_process_ranks(
         world_->rank(), reference_process_id);
       sub_engine.set_query_start_node(
-        top_frontier.get<0>(), std::numeric_limits<int>::max());
+        top_frontier.get<0>());
       sub_engine.Compute(metric, query_results, false);
 
       // For each unpruned query reference pair, push into the
@@ -333,6 +333,159 @@ void DistributedDualtreeDfs<DistributedProblemType>::PreProcess_(
     PreProcess_(qnode->left());
     PreProcess_(qnode->right());
   }
+}
+
+template<typename DistributedProblemType>
+template<typename MetricType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::DualtreeDfsBase_(
+  boost::mpi::communicator &world,
+  const MetricType &metric,
+  boost::mpi::communicator &query_comm,
+  TreeType *global_qnode,
+  boost::mpi::communicator &reference_comm,
+  TreeType *global_rnode,
+  typename DistributedProblemType::ResultType *query_results) {
+
+  printf("Process %d encountered the base case: %d %d %d %d\n",
+         world.rank(), query_comm.size(), reference_comm.size(),
+         global_rnode->begin(), global_rnode->end());
+}
+
+template<typename DistributedProblemType>
+template<typename MetricType>
+bool DistributedDualtreeDfs <
+DistributedProblemType >::DualtreeDfsCanonical_(
+  boost::mpi::communicator &world,
+  const MetricType &metric,
+  boost::mpi::communicator &query_comm,
+  TreeType *global_qnode,
+  boost::mpi::communicator &reference_comm,
+  TreeType *global_rnode,
+  typename DistributedProblemType::ResultType *query_results) {
+
+  if(global_qnode->is_leaf()) {
+    if(global_rnode->is_leaf()) {
+      printf("Base case\n");
+      DualtreeDfsBase_(
+        world, metric, query_comm, global_qnode, reference_comm,
+        global_rnode, query_results);
+    }
+    else {
+
+      // Split the reference communicator in half.
+      TreeType *global_rnode_left = global_rnode->left();
+      TreeType *global_rnode_right = global_rnode->right();
+      int reference_dfs_index = reference_table_->new_from_old()[world.rank()];
+      bool reference_color =
+        (
+          global_rnode_left->begin() <= reference_dfs_index &&
+          reference_dfs_index < global_rnode_left->end());
+      boost::mpi::communicator sub_reference_comm =
+        reference_comm.split(reference_color);
+      boost::mpi::communicator sub_reference_other_comm =
+        reference_comm.split(! reference_color);
+
+      printf("Splitting %d %d into %d %d\n", global_rnode->begin(),
+             global_rnode->end(), sub_reference_comm.size(),
+             sub_reference_other_comm.size());
+      if(reference_color) {
+        DualtreeDfsCanonical_(
+          world, metric, query_comm, global_qnode,
+          sub_reference_comm, global_rnode_left, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, query_comm, global_qnode,
+          sub_reference_other_comm, global_rnode_right, query_results);
+      }
+      else {
+        DualtreeDfsCanonical_(
+          world, metric, query_comm, global_qnode,
+          sub_reference_comm, global_rnode_right, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, query_comm, global_qnode,
+          sub_reference_other_comm, global_rnode_left, query_results);
+      }
+    }
+    return false;
+  }
+
+  // Split the query communicator in half.
+  TreeType *global_qnode_left = global_qnode->left();
+  TreeType *global_qnode_right = global_qnode->right();
+  int query_dfs_index = query_table_->new_from_old()[world.rank()];
+  bool query_color = (
+                       global_qnode_left->begin() <= query_dfs_index &&
+                       query_dfs_index < global_qnode_left->end());
+  boost::mpi::communicator sub_query_comm = query_comm.split(query_color);
+
+  if(global_rnode->is_leaf()) {
+    if(query_color) {
+      DualtreeDfsCanonical_(
+        world, metric, sub_query_comm, global_qnode_left,
+        reference_comm, global_rnode, query_results);
+    }
+    else {
+      DualtreeDfsCanonical_(
+        world, metric, sub_query_comm, global_qnode_right,
+        reference_comm, global_rnode, query_results);
+    }
+  }
+  else {
+
+    // Split the reference communicator in half.
+    TreeType *global_rnode_left = global_rnode->left();
+    TreeType *global_rnode_right = global_rnode->right();
+    int reference_dfs_index = reference_table_->new_from_old()[world.rank()];
+    bool reference_color =
+      (
+        global_rnode_left->begin() <= reference_dfs_index &&
+        reference_dfs_index < global_rnode_left->end());
+
+    boost::mpi::communicator sub_reference_comm =
+      reference_comm.split(reference_color);
+    boost::mpi::communicator sub_reference_other_comm =
+      reference_comm.split(! reference_color);
+    printf("Splitting %d into %d %d\n", reference_comm.size(),
+           sub_reference_comm.size(),
+           sub_reference_other_comm.size());
+    if(query_color) {
+      if(reference_color) {
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_left,
+          sub_reference_comm, global_rnode_left, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_left,
+          sub_reference_other_comm, global_rnode_right, query_results);
+      }
+      else {
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_left,
+          sub_reference_comm, global_rnode_right, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_left,
+          sub_reference_other_comm, global_rnode_left, query_results);
+      }
+    }
+    else {
+      if(reference_color) {
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_right,
+          sub_reference_comm, global_rnode_left, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_right,
+          sub_reference_other_comm, global_rnode_right, query_results);
+      }
+      else {
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_right,
+          sub_reference_comm, global_rnode_right, query_results);
+        DualtreeDfsCanonical_(
+          world, metric, sub_query_comm, global_qnode_right,
+          sub_reference_other_comm, global_rnode_left, query_results);
+      }
+    }
+  }
+  return false;
 }
 }
 }
