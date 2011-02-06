@@ -283,6 +283,12 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_.get();
     }
 
+    /** @brief Retrieves the global old from new mapping.
+     */
+    typename TableType::OldFromNewIndexType *old_from_new() {
+      return global_table_->old_from_new();
+    }
+
     /** @brief Retrieves the global new from old mapping.
      */
     int *new_from_old() {
