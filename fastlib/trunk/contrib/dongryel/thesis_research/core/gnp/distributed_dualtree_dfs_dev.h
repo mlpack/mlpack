@@ -162,7 +162,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       sub_engine.set_query_reference_process_ranks(
         world_->rank(), reference_process_id);
       sub_engine.set_query_start_node(
-        top_frontier.get<0>());
+        top_frontier.get<0>(), std::numeric_limits<int>::max());
       sub_engine.Compute(metric, query_results, false);
 
       // For each unpruned query reference pair, push into the
