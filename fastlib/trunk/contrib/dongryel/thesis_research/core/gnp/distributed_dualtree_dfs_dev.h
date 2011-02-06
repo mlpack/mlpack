@@ -86,7 +86,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       world_->size());
     PriorityQueueType prioritized_tasks;
     int current_computation_frontier_size = 0;
-    for(int i = 0; i < world_->size(); i++) {
+    bool success = false;
+    for(int i = 0; i < world_->size() && (!false); i++) {
       current_computation_frontier_size += computation_frontier[i].size();
       for(int j = 0; computation_frontier[i].size() > 0 &&
           j < max_num_work_to_dequeue_per_stage_; j++) {
@@ -108,6 +109,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
         // Pop the top object.
         computation_frontier[i].pop();
+
+        // Successfully popped an object.
+        success = true;
       }
     }
 
