@@ -223,7 +223,7 @@ class TableExchange {
 
       // Compute the size of each cache block, which is a function of
       // the leaf nodes owned by a subtree times each leaf node size.
-      cache_block_size_ = local_table_->n_entries() + 1;
+      cache_block_size_ = local_table_->n_entries() * 3;
 
       // Compute the number of cache blocks allocated per process. The
       // rule is that each process gets at least twice the number of

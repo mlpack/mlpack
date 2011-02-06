@@ -109,6 +109,26 @@ class DistributedDualtreeDfs {
 
   private:
 
+    template<typename MetricType>
+    void DualtreeDfsBase_(
+      boost::mpi::communicator &world,
+      const MetricType &metric,
+      boost::mpi::communicator &query_comm,
+      TreeType *global_qnode,
+      boost::mpi::communicator &reference_comm,
+      TreeType *global_rnode,
+      typename DistributedProblemType::ResultType *query_results);
+
+    template<typename MetricType>
+    bool DualtreeDfsCanonical_(
+      boost::mpi::communicator &world,
+      const MetricType &metric,
+      boost::mpi::communicator &query_comm,
+      TreeType *global_qnode,
+      boost::mpi::communicator &reference_comm,
+      TreeType *global_rnode,
+      typename DistributedProblemType::ResultType *query_results);
+
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation.
      */
