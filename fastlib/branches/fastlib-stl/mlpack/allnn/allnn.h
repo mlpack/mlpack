@@ -252,12 +252,6 @@ class AllNN {
   void ComputeNeighbors(arma::vec& distances, arma::Col<index_t>& results);
 
   /**
-   * Computes the nearest neighbors naively.
-   */
-  void ComputeNaive(arma::vec& distances);
-  void ComputeNaive(arma::vec& distances, arma::Col<index_t>& results);
-
-  /**
    * Initialize and fill an arma::vec of results.
    */
   void EmitResults(arma::vec& distances, arma::Col<index_t>& results);
