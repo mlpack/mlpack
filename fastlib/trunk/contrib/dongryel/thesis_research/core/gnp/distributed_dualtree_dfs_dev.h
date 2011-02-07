@@ -87,7 +87,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     PriorityQueueType prioritized_tasks;
     int current_computation_frontier_size = 0;
     bool success = false;
-    for(int i = 0; i < world_->size() && (!success); i++) {
+    for(int i = 0; (!success) && i < world_->size(); i++) {
       current_computation_frontier_size += computation_frontier[i].size();
       for(int j = 0; computation_frontier[i].size() > 0 &&
           j < max_num_work_to_dequeue_per_stage_; j++) {
