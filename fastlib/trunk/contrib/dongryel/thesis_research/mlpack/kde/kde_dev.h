@@ -83,7 +83,8 @@ void Kde<TableType>::Init(
     reference_table_, query_table_,
     arguments_in.effective_num_reference_points_,
     arguments_in.bandwidth_, is_monochromatic_,
-    arguments_in.relative_error_, arguments_in.probability_,
+    arguments_in.relative_error_, arguments_in.absolute_error_,
+    arguments_in.probability_,
     arguments_in.kernel_, arguments_in.normalize_densities_);
 }
 

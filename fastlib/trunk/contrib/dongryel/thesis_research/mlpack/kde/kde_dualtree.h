@@ -244,6 +244,21 @@ class KdeGlobal {
                      ((double) effective_num_reference_points_));
     }
 
+    /** @brief The constructor.
+     */
+    KdeGlobal() {
+      normalize_densities_ = true;
+      absolute_error_ = 0.0;
+      relative_error_ = 0.0;
+      probability_ = 1.0;
+      kernel_ = NULL;
+      effective_num_reference_points_ = 0.0;
+      mult_const_ = 0.0;
+      query_table_ = NULL;
+      reference_table_ = NULL;
+      is_monochromatic_ = true;
+    }
+
     /** @brief The destructor.
      */
     ~KdeGlobal() {
@@ -338,7 +353,7 @@ class KdeGlobal {
       TableType *query_table_in,
       double effective_num_reference_points_in,
       double bandwidth_in, const bool is_monochromatic,
-      double relative_error_in, double probability_in,
+      double relative_error_in, double absolute_error_in, double probability_in,
       const std::string &kernel_type_in,
       bool normalize_densities_in = true) {
 
@@ -358,6 +373,7 @@ class KdeGlobal {
                      ((double) effective_num_reference_points_));
 
       relative_error_ = relative_error_in;
+      absolute_error_ = absolute_error_in;
       probability_ = probability_in;
       query_table_ = query_table_in;
       reference_table_ = reference_table_in;
@@ -727,12 +743,14 @@ class KdeSummary {
            used_error_u_) /
           static_cast<double>(
             global.effective_num_reference_points() - pruned_l_));
-
       return left_hand_side <= right_hand_side;
     }
 
     void SetZero() {
-      densities_l_ = densities_u_ = pruned_l_ = used_error_u_ = 0;
+      densities_l_ = 0;
+      densities_u_ = 0;
+      pruned_l_ = 0;
+      used_error_u_ = 0;
     }
 
     void Init() {
