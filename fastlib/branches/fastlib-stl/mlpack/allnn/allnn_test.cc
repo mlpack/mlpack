@@ -57,7 +57,7 @@ class TestAllNN {
     // run naive allnn
     arma::Col<index_t> resulting_neighbors_naive;
     arma::vec resulting_distances_naive;
-    naive_->ComputeNaive(resulting_distances_naive, resulting_neighbors_naive);
+    naive_->ComputeNeighbors(resulting_distances_naive, resulting_neighbors_naive);
 
     // compare results
     for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
