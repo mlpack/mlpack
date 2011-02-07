@@ -98,8 +98,8 @@ class MeanVariancePair {
       core::math::Range *interval_out) const {
 
       // Compute the sample mean variance.
-      double sample_mean_variance = this->sample_mean_variance();
-      double error = standard_deviation_factor * sqrt(sample_mean_variance);
+      double sample_mv = this->sample_mean_variance();
+      double error = standard_deviation_factor * sqrt(sample_mv);
 
       // In case no sample has been collected, then we need to set the
       // error to zero (since the variance will be infinite).
