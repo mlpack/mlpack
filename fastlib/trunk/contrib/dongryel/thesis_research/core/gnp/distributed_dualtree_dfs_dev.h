@@ -120,9 +120,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       std::max(
         max_computation_frontier_size_, current_computation_frontier_size);
 
-    printf("Process %d taking care of %d\n", world_->rank(),
-           prioritized_tasks.size());
-
     // Try to exchange the subtables.
     if(
       table_exchange.AllToAll(
