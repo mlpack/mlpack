@@ -158,6 +158,12 @@ class TestKde {
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
 
+      // Push in the relative error argument.
+      double relative_error = 0.1;
+      std::stringstream relative_error_sstr;
+      relative_error_sstr << "--relative_error=" << relative_error;
+      args.push_back(relative_error_sstr.str());
+
       // Push in the randomly generated bandwidth.
       double bandwidth =
         core::math::Random(
