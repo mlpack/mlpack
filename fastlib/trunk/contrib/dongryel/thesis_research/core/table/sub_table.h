@@ -163,30 +163,32 @@ class SubTable {
 
   private:
 
-    /** @brief Collects the tree nodes in a binary heap form and marks
+    /** @brief Collects the tree nodes in a list form and marks
      *         whether each terminal node should have its points
      *         serialized or not.
      */
     void FillTreeNodes_(
-      TreeType *node, int node_index,
-      std::vector<TreeType *> &sorted_nodes, int *num_nodes,
+      TreeType *node, int parent_node_index,
+      std::vector< std::pair< TreeType *, int > > &sorted_nodes,
       std::vector <
       PointSerializeFlagType > *serialize_points_per_terminal_node_in,
       int level) const {
 
       if(node != NULL && level <= max_num_levels_to_serialize_) {
-        (*num_nodes)++;
-        sorted_nodes[node_index] = node;
+        sorted_nodes.push_back(
+          std::pair<TreeType *, int>(node, parent_node_index));
 
+        // If the node is not a leaf,
         if(node->is_leaf() == false) {
 
           // Recurse only if the level is still low.
           if(level < max_num_levels_to_serialize_) {
+            int parent_node_index = sorted_nodes.size() - 1;
             FillTreeNodes_(
-              node->left(), 2 * node_index + 1, sorted_nodes, num_nodes,
+              node->left(), parent_node_index, sorted_nodes,
               serialize_points_per_terminal_node_in, level + 1);
             FillTreeNodes_(
-              node->right(), 2 * node_index + 2, sorted_nodes, num_nodes,
+              node->right(), parent_node_index, sorted_nodes,
               serialize_points_per_terminal_node_in, level + 1);
           }
         }
@@ -198,17 +200,6 @@ class SubTable {
             PointSerializeFlagType(node->begin(), node->count()));
         }
       }
-    }
-
-    /** @brief Finds the depth of the tree up to a fixed depth.
-     */
-    int FindTreeDepth_(TreeType *node, int level) const {
-      if(node == NULL || level > max_num_levels_to_serialize_) {
-        return 0;
-      }
-      int left_depth = FindTreeDepth_(node->left(), level + 1);
-      int right_depth = FindTreeDepth_(node->right(), level + 1);
-      return (left_depth > right_depth) ? (left_depth + 1) : (right_depth + 1);
     }
 
   public:
@@ -273,23 +264,19 @@ class SubTable {
 
       // Save the tree.
       int num_nodes = 0;
-      int tree_depth = FindTreeDepth_(start_node_, 0);
-      int max_size = 1 << tree_depth;
-      std::vector< TreeType *> tree_nodes(max_size, (TreeType *) NULL);
+      std::vector< std::pair<TreeType *, int> > tree_nodes;
       std::vector< PointSerializeFlagType >
       &serialize_points_per_terminal_node_alias =
         const_cast< std::vector<PointSerializeFlagType> & >(
           serialize_points_per_terminal_node_);
       FillTreeNodes_(
-        start_node_, 0, tree_nodes, &num_nodes,
+        start_node_, -1, tree_nodes,
         &serialize_points_per_terminal_node_alias, 0);
-      ar & max_size;
+      num_nodes = tree_nodes.size();
       ar & num_nodes;
       for(unsigned int i = 0; i < tree_nodes.size(); i++) {
-        if(tree_nodes[i]) {
-          ar & i;
-          ar & (*(tree_nodes[i]));
-        }
+        ar & (*(tree_nodes[i].first));
+        ar & tree_nodes[i].second;
       }
 
       // Save the node ids for which there are points available
@@ -335,30 +322,33 @@ class SubTable {
       table_->set_rank(rank_in);
 
       // Load up the max number of loads to receive.
-      int max_num_nodes;
       int num_nodes;
-      ar & max_num_nodes;
       ar & num_nodes;
-      std::vector< TreeType *> tree_nodes(max_num_nodes, (TreeType *) NULL);
+      std::vector< std::pair<TreeType *, int> > tree_nodes(num_nodes);
       for(int i = 0; i < num_nodes; i++) {
-        int node_index;
-        ar & node_index;
-        tree_nodes[node_index] =
+        tree_nodes[i].first =
           (core::table::global_m_file_) ?
           core::table::global_m_file_->Construct<TreeType>() : new TreeType();
-        ar & (*(tree_nodes[node_index]));
+        ar & (*(tree_nodes[i].first));
+        ar & tree_nodes[i].second;
       }
 
       // Do the pointer corrections, and have the tree point to the
       // 0-th element.
-      for(unsigned int i = 0; i < tree_nodes.size(); i++) {
-        if(tree_nodes[i] && 2 * i + 2 < tree_nodes.size()) {
-          tree_nodes[i]->set_children(
-            (*data_), tree_nodes[2 * i + 1], tree_nodes[2 * i + 2]);
+      for(unsigned int i = 1; i < tree_nodes.size(); i++) {
+        int parent_node_index = tree_nodes[i].second;
+        if(tree_nodes[parent_node_index].first->begin() ==
+            tree_nodes[i].first->begin()) {
+          tree_nodes[parent_node_index].first->set_left_child(
+            (*data_), tree_nodes[i].first);
+        }
+        else {
+          tree_nodes[parent_node_index].first->set_right_child(
+            (*data_), tree_nodes[i].first);
         }
       }
-      (*tree_) = tree_nodes[0];
-      start_node_ = tree_nodes[0];
+      (*tree_) = tree_nodes[0].first;
+      start_node_ = tree_nodes[0].first;
 
       // Load the node ids for which there are points underneath.
       int serialize_points_per_terminal_node_size;
