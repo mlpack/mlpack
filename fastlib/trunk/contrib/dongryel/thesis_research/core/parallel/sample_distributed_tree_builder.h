@@ -219,7 +219,8 @@ class SampleDistributedTreeBuilder {
 
       core::parallel::DistributedTreeUtil <
       DistributedTableType >::ReshufflePoints(
-        world, assigned_point_indices, membership_counts_per_node);
+        world, assigned_point_indices, membership_counts_per_node,
+        distributed_table_, n_attributes_);
     }
 
     template<typename MetricType>
@@ -256,7 +257,10 @@ class SampleDistributedTreeBuilder {
                                   counts.begin(), counts.end(), 0);
         sampled_table_out->Init(
           n_attributes_, total_num_samples);
-        SetupGatherPointers_(*sampled_table_out, counts, &gather_pointers);
+
+        core::parallel::DistributedTreeUtil <
+        DistributedTableType >::SetupGatherPointers(
+          *sampled_table_out, counts, &gather_pointers);
 
         // The master process actually needs to setup its own portion
         // manually since MPI gather does not call
@@ -344,7 +348,8 @@ class SampleDistributedTreeBuilder {
       }
       core::parallel::DistributedTreeUtil <
       DistributedTableType >::ReshufflePoints(
-        world, assigned_point_indices, membership_counts_per_node);
+        world, assigned_point_indices, membership_counts_per_node,
+        distributed_table_, n_attributes_);
     }
 
     /** @brief Compute the centroid of the points owned by the current

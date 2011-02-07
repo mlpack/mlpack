@@ -70,9 +70,9 @@ class DistributedTreeUtil {
     typedef core::table::SampleDenseMatrix<OldFromNewIndexType>
     SampleDenseMatrixType;
 
-  private:
+  public:
 
-    static void SetupGatherPointers_(
+    static void SetupGatherPointers(
       TableType &sampled_table, const std::vector<int> &counts,
       std::vector< SampleDenseMatrixType > *gather_pointers_out) {
 
@@ -87,8 +87,6 @@ class DistributedTreeUtil {
         starting_column_index += counts[i];
       }
     }
-
-  public:
 
     /** @brief Reshuffle points across each process.
      *
@@ -137,7 +135,7 @@ class DistributedTreeUtil {
           assigned_point_indices[i]);
       }
       std::vector<SampleDenseMatrixType> reshuffled_points;
-      SetupGatherPointers_(
+      SetupGatherPointers(
         *new_local_table, reshuffled_contributions, &reshuffled_points);
 
       // Important that each process takes care of the exporting of

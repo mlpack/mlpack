@@ -56,7 +56,9 @@ class DistributedTable: public boost::noncopyable {
     typedef std::pair<int, int> IndexType;
 
     // For giving private access to the distributed tree builder class.
-    friend class core::parallel::VanillaDistributedTreeBuilder <
+    friend class core::parallel::SampleDistributedTreeBuilder <
+        DistributedTableType >;
+  friend class core::parallel::VanillaDistributedTreeBuilder <
         DistributedTableType >;
 
   public:
@@ -374,9 +376,9 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
-      core::parallel::VanillaDistributedTreeBuilder <
+      core::parallel::SampleDistributedTreeBuilder <
       DistributedTableType > builder;
-      builder.Init(*this);
+      builder.Init(*this, 0.2);
       builder.Build(world, metric_in, leaf_size);
     }
 
