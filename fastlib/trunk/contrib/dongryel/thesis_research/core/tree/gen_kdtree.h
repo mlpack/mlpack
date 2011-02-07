@@ -300,15 +300,7 @@ class GenKdTree {
 
       int left_count = 0;
       if(max_width < std::numeric_limits<double>::epsilon()) {
-
-        // Give the first half to the left and second half to the
-        // right.
-        left_count = node->count() / 2;
-        FindBoundFromMatrix(
-          metric_in, matrix, node->begin(), left_count, & ((*left)->bound()));
-        FindBoundFromMatrix(
-          metric_in, matrix, node->begin() + left_count,
-          node->count() - left_count, & ((*right)->bound()));
+        return false;
       }
       else {
 

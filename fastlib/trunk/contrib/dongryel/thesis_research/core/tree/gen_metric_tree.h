@@ -520,15 +520,7 @@ class GenMetricTree {
       int left_count = 0;
       if(furthest_from_furthest_distance <
           std::numeric_limits<double>::epsilon()) {
-
-        // Give the first half to the lab, and the second half to the
-        // right.
-        left_count = node->count() / 2;
-        FindBoundFromMatrix(
-          metric_in, matrix, node->begin(), left_count, & ((*left)->bound()));
-        FindBoundFromMatrix(
-          metric_in, matrix, node->begin() + left_count,
-          node->count() - left_count, & ((*right)->bound()));
+        return false;
       }
       else {
         left_count = TreeType::MatrixPartition(
