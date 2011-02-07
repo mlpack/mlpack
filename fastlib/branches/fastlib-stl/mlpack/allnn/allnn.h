@@ -221,12 +221,6 @@ class AllNN {
   // Helper functions
 
   /**
-   * Internal function to build the trees for computation.  It won't build trees
-   * if naive_ = false.
-   */
-  void BuildTrees();
-
-  /**
    * Computes the minimum squared distance between the bounding boxes
    * of two nodes.
    */
