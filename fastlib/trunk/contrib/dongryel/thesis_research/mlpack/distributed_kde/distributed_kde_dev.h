@@ -92,8 +92,8 @@ void DistributedKde<DistributedTableType>::Init(
   global_.Init(
     reference_table_, query_table_, reference_table_->n_entries(),
     arguments_in.bandwidth_, is_monochromatic_,
-    arguments_in.relative_error_, arguments_in.probability_,
-    arguments_in.kernel_, false);
+    arguments_in.relative_error_, arguments_in.absolute_error_,
+    arguments_in.probability_, arguments_in.kernel_, false);
   global_.set_effective_num_reference_points(
     world_in, reference_table_, query_table_);
 }
