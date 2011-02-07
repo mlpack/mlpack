@@ -392,7 +392,7 @@ ExpansionType >::Init(int max_order, int dim) {
     inv_multiindex_factorials_[0] = 1.0;
     neg_inv_multiindex_factorials_[0] = 1.0;
     if(max_order > 0) {
-      int boundary, i, k, step;
+      int boundary, step;
 
       for(boundary = list_total_num_coeffs_[limit - 1], k = 0,
           step = list_total_num_coeffs_[limit - 1] / limit;
