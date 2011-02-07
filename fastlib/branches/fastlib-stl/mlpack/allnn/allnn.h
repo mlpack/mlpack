@@ -250,27 +250,6 @@ class AllNN {
   // Public functions
 
   /**
-   * Read parameters, alias data into the class, and build the trees.
-   *
-   * WARNING !!!!!
-   * The algorithm will rearrange m the input matrices
-   * references_in, queries_in
-   */
-  void Init(arma::mat* queries_in, arma::mat* references_in,
-	    struct datanode* module_in);
-  void Init(arma::mat* references_in, fx_module* module_in);
-  void Destruct();
-
-  /**
-   * Initializes the AllNN structure for naive computation.
-   *
-   * We have no need to build trees for naive.
-   */
-  void InitNaive(arma::mat* queries_in, arma::mat* references_in,
-		 fx_module* module_in);
-  void InitNaive(arma::mat* references_in, fx_module* module_in);
-
-  /**
    * Computes the nearest neighbors and stores them in results if
    * provided.  Overloaded version provided if you don't have any results you
    * are interested in.
