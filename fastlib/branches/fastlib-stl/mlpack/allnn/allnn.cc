@@ -18,11 +18,11 @@ using namespace mlpack::allnn;
 AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
              bool alias_matrix, bool naive) :
     module_(module_in),
-    naive_(naive),
     references_(references_in.memptr(), references_in.n_rows,
         references_in.n_cols, !alias_matrix),
     queries_(references_.memptr(), references_.n_rows, references_.n_cols,
         false),
+    naive_(naive),
     number_of_prunes_(0) {
 
   // We can't call out to the more complex constructor, but that will change
@@ -59,11 +59,11 @@ AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
 AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
              struct datanode* module_in, bool alias_matrix, bool naive) :
     module_(module_in),
-    naive_(naive),
     references_(references_in.memptr(), references_in.n_rows,
         references_in.n_cols, !alias_matrix),
     queries_(queries_in.memptr(), queries_in.n_rows, queries_in.n_cols,
         !alias_matrix),
+    naive_(naive),
     number_of_prunes_(0) {
   
   /*
@@ -313,40 +313,32 @@ void AllNN::GNPRecursion_(TreeType* query_node, TreeType* reference_node,
  * provided.  Overloaded version provided if you don't have any results you
  * are interested in.
  */
-void AllNN::ComputeNeighbors(arma::vec& distances) {    
-  fx_timer_start(module_, "dual_tree_computation");
+void AllNN::ComputeNeighbors(arma::vec& distances) {
+  if(naive_) {
+    fx_timer_start(module_, "naive_time");
 
-  /* Start recursion on the roots of either tree */
-  GNPRecursion_(query_tree_, reference_tree_,
-      MinNodeDistSq_(query_tree_, reference_tree_));
+    /* BaseCase_ on the roots is equivalent to naive */
+    GNPBaseCase_(query_tree_, reference_tree_);
 
-  fx_timer_stop(module_, "dual_tree_computation");
+    fx_timer_stop(module_, "naive_time");
+  } else {
+    fx_timer_start(module_, "dual_tree_computation");
 
-  // Save the total number of prunes to the FASTexec module; this
-  // will printed after calling fx_done or can be read back later.
-  fx_result_int(module_, "number_of_prunes", number_of_prunes_);
+    /* Start recursion on the roots of either tree */
+    GNPRecursion_(query_tree_, reference_tree_,
+        MinNodeDistSq_(query_tree_, reference_tree_));
+
+    fx_timer_stop(module_, "dual_tree_computation");
+
+    // Save the total number of prunes to the FASTexec module; this
+    // will printed after calling fx_done or can be read back later.
+    fx_result_int(module_, "number_of_prunes", number_of_prunes_);
+  }
 }
 void AllNN::ComputeNeighbors(arma::vec& distances, arma::Col<index_t>& results) {
   ComputeNeighbors(distances);
   EmitResults(distances, results);
 } /* ComputeNeighbors */
-
-/**
- * Computes the nearest neighbors naively.
- */
-void AllNN::ComputeNaive(arma::vec& distances) {
-  fx_timer_start(module_, "naive_time");
-
-  /* BaseCase_ on the roots is equivalent to naive */
-  GNPBaseCase_(query_tree_, reference_tree_);
-
-  fx_timer_stop(module_, "naive_time");
-} /* ComputeNaive */
-
-void AllNN::ComputeNaive(arma::vec& distances, arma::Col<index_t>& results) {
-  ComputeNaive(distances);
-  EmitResults(distances, results);
-}
 
 /**
  * Initialize and fill an arma::vec of results.
