@@ -294,20 +294,16 @@ class SubTable {
 
       // Save the node ids for which there are points available
       // underneath.
-      int total_num_points_serialized = 0;
       int serialize_points_per_terminal_node_size =
         static_cast<int>(serialize_points_per_terminal_node_.size());
       ar & serialize_points_per_terminal_node_size;
       for(unsigned int i = 0;
           i < serialize_points_per_terminal_node_.size(); i++) {
         ar & serialize_points_per_terminal_node_[i];
-        total_num_points_serialized +=
-          serialize_points_per_terminal_node_[i].count();
       }
 
       // Save the matrix and the mappings if requested.
       {
-        ar & total_num_points_serialized;
         core::table::SubDenseMatrix<SubTableType> sub_data;
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
@@ -381,9 +377,6 @@ class SubTable {
 
       // Load the data and the mappings if available.
       {
-        int total_num_points_serialized;
-        ar & total_num_points_serialized;
-        data_->Init(start_node_->bound().dim(), total_num_points_serialized);
         core::table::SubDenseMatrix<SubTableType> sub_data;
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;

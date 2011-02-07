@@ -197,8 +197,10 @@ class DistributedTable: public boost::noncopyable {
       global_table_ =
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
-      global_table_->Init(
-        owned_table_->n_attributes(), world.size());
+      if(world.rank() == 0) {
+        global_table_->Init(
+          owned_table_->n_attributes(), world.size());
+      }
       core::table::DensePoint root_bound_center;
       owned_table_->get_tree()->bound().center(&root_bound_center);
       boost::mpi::gather(
