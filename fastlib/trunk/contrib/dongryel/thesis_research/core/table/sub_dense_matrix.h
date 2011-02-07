@@ -70,7 +70,10 @@ class SubDenseMatrix {
 
       // Save the dimensionality.
       int n_rows = matrix_->n_rows();
-      int n_cols = matrix_->n_cols();
+      int n_cols = 0;
+      for(int j = 0; j < serialize_points_per_terminal_node_->size(); j++) {
+        n_cols += ((*serialize_points_per_terminal_node_)[j]).count();
+      }
       ar & n_rows;
       ar & n_cols;
 
