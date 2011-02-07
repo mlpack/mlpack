@@ -311,6 +311,20 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief Sets the left child of the node with the given node.
+     */
+    void set_left_child(
+      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *left_in) {
+      left_ = left_in;
+    }
+
+    /** @brief Sets the right child of the node with the given node.
+     */
+    void set_right_child(
+      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *right_in) {
+      right_ = right_in;
+    }
+
     /** @brief Sets the child nodes of the node with the given
      *         children.
      */
