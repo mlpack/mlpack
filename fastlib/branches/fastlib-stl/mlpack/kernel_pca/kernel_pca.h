@@ -179,7 +179,7 @@ class KernelPCA {
                                  arma::vec *eigenvalues);
     
  private:
-  AllkNN allknn_;
+  mlpack::allknn::AllkNN allknn_;
   index_t knns_;
   arma::mat data_;
   SparseMatrix kernel_matrix_;  
