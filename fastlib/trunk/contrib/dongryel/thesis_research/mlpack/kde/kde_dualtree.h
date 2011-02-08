@@ -815,10 +815,8 @@ class KdeStatistic {
 
   private:
 
+    // For Boost serialization.
     friend class boost::serialization::access;
-
-    KdeStatistic(const KdeStatistic &stat_in) {
-    }
 
   public:
 
