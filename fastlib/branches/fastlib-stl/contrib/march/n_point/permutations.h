@@ -33,6 +33,9 @@ namespace npt {
     // tuple_size_!
     index_t num_perms_;
     
+    
+    //////////////// functions //////////////////
+    
     // helper function at startup, actually forms all the permutations
     void GeneratePermutations_(int k, int* perm_index,
                                arma::Col<index_t>& trial_perm);
@@ -41,6 +44,9 @@ namespace npt {
     
     
   public:
+    
+    // Dummy empty constructor
+    Permutations() {}
     
     // The constructor needs to fill in permuation_indices_
     Permutations(index_t n) {
@@ -53,10 +59,11 @@ namespace npt {
         num_perms_ = num_perms_ * i;
       } // for i
       
+      // make the trial permutation
       arma::Col<index_t> trial_perm(tuple_size_);
       trial_perm.fill(-1);
       
-      
+      // allocate the matrix
       permutation_indices_.set_size(tuple_size_, num_perms_);
       permutation_indices_.fill(-1);
       //permutation_indices_(tuple_size_, 0);
@@ -70,6 +77,10 @@ namespace npt {
       GeneratePermutations_(0, &perm_index, trial_perm);
       
     } // constructor
+    
+    int num_permutations() const {
+      return num_perms_;
+    }
     
     // just accesses elements of permutation_indices_
     index_t GetPermutation(index_t perm_index, index_t point_index) const {
