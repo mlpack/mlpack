@@ -22,7 +22,8 @@
 #include "allknn.h"
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
+
+using namespace mlpack::allknn;
 
 int main(int argc, char *argv[]) {
   fx_module *module = fx_init(argc, argv, NULL);
