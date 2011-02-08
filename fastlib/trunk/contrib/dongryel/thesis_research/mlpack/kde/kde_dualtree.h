@@ -585,6 +585,7 @@ class KdeSummary {
 
   private:
 
+    // For Boost serialization.
     friend class boost::serialization::access;
 
   public:
@@ -596,6 +597,13 @@ class KdeSummary {
     double pruned_l_;
 
     double used_error_u_;
+
+    void Print() const {
+      printf("Lower bound/upper bound on the densities: [ %g %g ], "
+             "Lower bound on the pruned components: %g, "
+             "Upper bound on the used error: %g\n",
+             densities_l_, densities_u_, pruned_l_, used_error_u_);
+    }
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
@@ -767,34 +775,27 @@ class KdeSummary {
     template<typename GlobalType, typename ResultType>
     void Accumulate(
       const GlobalType &global, const ResultType &results, int q_index) {
-      if(results.pruned_[q_index] < global.effective_num_reference_points()) {
-        densities_l_ = std::min(densities_l_, results.densities_l_[q_index]);
-        densities_u_ = std::max(densities_u_, results.densities_u_[q_index]);
-        pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
-        used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
-      }
+      densities_l_ = std::min(densities_l_, results.densities_l_[q_index]);
+      densities_u_ = std::max(densities_u_, results.densities_u_[q_index]);
+      pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
+      used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
     }
 
     template<typename GlobalType>
     void Accumulate(
       const GlobalType &global, const KdeSummary &summary_in,
       const KdePostponed &postponed_in) {
-
-      if(
-        summary_in.pruned_l_ + postponed_in.pruned_ <
-        global.effective_num_reference_points()) {
-        densities_l_ = std::min(
-                         densities_l_,
-                         summary_in.densities_l_ + postponed_in.densities_l_);
-        densities_u_ = std::max(
-                         densities_u_,
-                         summary_in.densities_u_ + postponed_in.densities_u_);
-        pruned_l_ = std::min(
-                      pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
-        used_error_u_ = std::max(
-                          used_error_u_,
-                          summary_in.used_error_u_ + postponed_in.used_error_);
-      }
+      densities_l_ = std::min(
+                       densities_l_,
+                       summary_in.densities_l_ + postponed_in.densities_l_);
+      densities_u_ = std::max(
+                       densities_u_,
+                       summary_in.densities_u_ + postponed_in.densities_u_);
+      pruned_l_ = std::min(
+                    pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
+      used_error_u_ = std::max(
+                        used_error_u_,
+                        summary_in.used_error_u_ + postponed_in.used_error_);
     }
 
     void ApplyDelta(const KdeDelta &delta_in) {

@@ -232,8 +232,6 @@ class DualtreeDfs {
 
   private:
 
-    void ResetStatisticRecursion_(TreeType *node, TableType * table);
-
     void PreProcessReferenceTree_(TreeType *rnode);
 
     void PreProcess_(TreeType *qnode);
@@ -366,10 +364,6 @@ class DualtreeDfs {
     iterator<MetricType> get_iterator(
       const MetricType &metric_in,
       ResultType *query_results_in);
-
-    /** @brief Resets the statistics.
-     */
-    void ResetStatistic();
 
     /** @brief Initializes the dual-tree engine with a problem spec.
      */
