@@ -7,6 +7,8 @@ set(SOURCES
 	n_point_main.cc
 	permutations.h
 	permutations.cc
+	single_matcher.h
+	single_matcher.cc
 )
 
 # add directory name to sources
