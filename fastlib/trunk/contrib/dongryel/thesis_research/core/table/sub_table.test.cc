@@ -151,9 +151,6 @@ class TestSubTable {
         }
         boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
 
-        // Define cache block size naively.
-        int cache_block_size = (1 << max_num_levels_to_serialize) * leaf_size;
-
         // The master thinks of how many subtables to exchange.
         int num_subtables_to_exchange;
         if(world.rank() == 0) {
@@ -161,24 +158,6 @@ class TestSubTable {
           printf("Exchanging %d subtables.\n", num_subtables_to_exchange);
         }
         boost::mpi::broadcast(world, num_subtables_to_exchange, 0);
-
-        std::vector< std::vector< core::table::DenseMatrix> > data_matrices(
-          world.size());
-        std::vector< std::vector< OldFromNewIndexType * > > old_from_news(
-          world.size());
-
-        for(int j = 0; j < world.size(); j++) {
-          if(j != world.rank()) {
-            data_matrices[j].resize(num_subtables_to_exchange);
-            old_from_news[j].resize(num_subtables_to_exchange);
-            for(int i = 0; i < num_subtables_to_exchange; i++) {
-              data_matrices[j][i].Init(
-                distributed_table.n_attributes(), cache_block_size);
-              old_from_news[j][i] =
-                new OldFromNewIndexType[ cache_block_size ];
-            }
-          }
-        }
 
         // Prepare the list of subtables.
         std::vector< SubTableListType > send_subtables(world.size());
@@ -213,8 +192,7 @@ class TestSubTable {
               // Allocate the cache block to the subtable that is about
               // to be received.
               received_subtables_in_this_round[j].push_back(
-                j, data_matrices[j][i], old_from_news[j][i],
-                0, cache_block_size, max_num_levels_to_serialize, false);
+                0, max_num_levels_to_serialize, false);
             }
           }
         }
@@ -230,13 +208,6 @@ class TestSubTable {
               j < received_subtables_in_this_round[i].size(); j++) {
             CheckIntegrity_(
               received_subtables_in_this_round[i][j].table()->get_tree());
-          }
-        }
-
-        // Free memory.
-        for(unsigned int i = 0; i < old_from_news.size(); i++) {
-          for(unsigned int j = 0; j < old_from_news[i].size(); j++) {
-            delete[] old_from_news[i][j];
           }
         }
 
