@@ -81,25 +81,20 @@ DualtreeDfs<ProblemType>::reference_table() {
 }
 
 template<typename ProblemType>
-void DualtreeDfs<ProblemType>::ResetStatistic() {
-  ResetStatisticRecursion_(query_table_->get_tree(), query_table_);
-}
-
-template<typename ProblemType>
 void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 
   // Reset prune statistics.
   num_deterministic_prunes_ = 0;
 
+  // Set the problem.
   problem_ = &problem_in;
+
+  // Set the query table and its starting node.
   query_table_ = problem_->query_table();
   query_start_node_ = query_table_->get_tree();
-  reference_table_ = problem_->reference_table();
-  ResetStatistic();
 
-  if(query_table_ != reference_table_) {
-    ResetStatisticRecursion_(reference_table_->get_tree(), reference_table_);
-  }
+  // Set the reference table.
+  reference_table_ = problem_->reference_table();
 }
 
 template<typename ProblemType>
@@ -129,17 +124,6 @@ void DualtreeDfs<ProblemType>::Compute(
     1.0 - problem_->global().probability(), squared_distance_range,
     query_results);
   PostProcess_(metric, query_start_node_, query_results);
-}
-
-template<typename ProblemType>
-void DualtreeDfs<ProblemType>::ResetStatisticRecursion_(
-  typename ProblemType::TableType::TreeType *node,
-  typename ProblemType::TableType * table) {
-  node->stat().SetZero();
-  if(node->is_leaf() == false) {
-    ResetStatisticRecursion_(node->left(), table);
-    ResetStatisticRecursion_(node->right(), table);
-  }
 }
 
 template<typename ProblemType>
