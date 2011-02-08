@@ -12,6 +12,8 @@
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
+#include "core/tree/gen_kdtree.h"
+#include "core/tree/gen_metric_tree.h"
 #include "core/math/math_lib.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 #include "mlpack/series_expansion/hypercube_farfield_dev.h"
