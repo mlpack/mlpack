@@ -177,7 +177,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "The size of the memory mapped file."
   )(
     "max_num_levels_to_serialize_in",
-    boost::program_options::value<int>()->default_value(7),
+    boost::program_options::value<int>()->default_value(20),
     "The number of levels of subtrees to serialize at a given moment."
   )(
     "max_num_work_to_dequeue_per_stage_in",
