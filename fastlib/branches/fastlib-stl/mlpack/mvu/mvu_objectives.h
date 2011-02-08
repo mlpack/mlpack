@@ -18,10 +18,11 @@
 
 #ifndef MVU_OBJECTIVES_H_
 #define MVU_OBJECTIVES_H_
-#include "fastlib/fastlib.h"
-#include "mlpack/allknn/allknn.h"
-#include "mlpack/allkfn/allkfn.h"
-#include "fastlib/optimization/lbfgs/optimization_utils.h"
+
+#include <fastlib/fastlib.h>
+#include <mlpack/allknn/allknn.h>
+#include <mlpack/allkfn/allkfn.h>
+#include <fastlib/optimization/lbfgs/optimization_utils.h>
 
 const fx_entry_doc mvu_entries[] = {
   {"new_dimension", FX_REQUIRED, FX_INT, NULL,
@@ -56,33 +57,41 @@ const fx_module_doc mvu_doc = {
 
 class MaxVariance {
  public:
-  static const index_t MAX_KNNS=30;
-  void Init(fx_module *module, Matrix &data);
-  void Init(fx_module *module);
+  static const index_t MAX_KNNS = 30;
+
+  void Init(fx_module* module, arma::mat& data);
+  void Init(fx_module* module);
+
   void Destruct();
-  void ComputeGradient(Matrix &coordinates, Matrix *gradient);
-  void ComputeObjective(Matrix &coordinates, double *objective);
-  void ComputeFeasibilityError(Matrix &coordinates, double *error);
-  double ComputeLagrangian(Matrix &coordinates);
-  void UpdateLagrangeMult(Matrix &coordinates);
-  void Project(Matrix *coordinates);
-  void set_sigma(double sigma); 
-  bool IsDiverging(double objective); 
-  bool IsOptimizationOver(Matrix &coordinates, 
-      Matrix &gradient, double step) { return false;} 
-  bool IsIntermediateStepOver(Matrix &coordinates, 
-      Matrix &gradient, double step) { return true; }
-  void GiveInitMatrix(Matrix *init_data);
- index_t num_of_points();
+
+  void ComputeGradient(const arma::mat& coordinates, arma::mat& gradient);
+  void ComputeObjective(const arma::mat& coordinates, double& objective);
+  void ComputeFeasibilityError(const arma::mat& coordinates, double& error);
+  double ComputeLagrangian(const arma::mat& coordinates);
+  void UpdateLagrangeMult(const arma::mat& coordinates);
+  void Project(arma::mat& coordinates);
+  void set_sigma(double sigma);
+  bool IsDiverging(double objective);
+
+  // what the hell is this?
+  bool IsOptimizationOver(const arma::mat& coordinates, arma::mat& gradient, double step) { return false; }
+  bool IsIntermediateStepOver(const arma::mat& coordinates, arma::mat& gradient, double step) { return true; }
+
+  void GiveInitMatrix(arma::mat& init_data);
+  index_t num_of_points();
 
  private:
   datanode *module_;
-  AllkNN allknn_;
+
+  mlpack::allknn::AllkNN allknn_;
   index_t knns_;
   index_t leaf_size_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
-  ArrayList<double> nearest_distances_;
-  Vector eq_lagrange_mult_;
+
+  std::vector<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  std::vector<double> nearest_distances_;
+
+  arma::vec eq_lagrange_mult_;
+
   index_t num_of_nearest_pairs_;
   double sigma_;
   double sum_of_furthest_distances_;
@@ -91,40 +100,50 @@ class MaxVariance {
 };
 
 class MaxFurthestNeighbors {
-public:
-  static const index_t MAX_KNNS=30;
-  void Init(fx_module *module, Matrix &data);
+ public:
+  static const index_t MAX_KNNS = 30;
+
+  void Init(fx_module *module, arma::mat& data);
   void Init(fx_module *module);
+
   void Destruct();
-  void ComputeGradient(Matrix &coordinates, Matrix *gradient);
-  void ComputeObjective(Matrix &coordinates, double *objective);
-  void ComputeFeasibilityError(Matrix &coordinates, double *error);
-  double ComputeLagrangian(Matrix &coordinates);
-  void UpdateLagrangeMult(Matrix &coordinates);
-  void Project(Matrix *coordinates);
+
+  void ComputeGradient(const arma::mat& coordinates, arma::mat& gradient);
+  void ComputeObjective(const arma::mat& coordinates, double& objective);
+  void ComputeFeasibilityError(const arma::mat& coordinates, double& error);
+  double ComputeLagrangian(const arma::mat& coordinates);
+  void UpdateLagrangeMult(const arma::mat& coordinates);
+  void Project(arma::mat& coordinates);
+
   void set_sigma(double sigma); 
   void set_lagrange_mult(double val);
-  bool IsDiverging(double objective); 
-  bool IsOptimizationOver(Matrix &coordinates, 
-      Matrix &gradient, double step) ;
-  bool IsIntermediateStepOver(Matrix &coordinates, 
-      Matrix &gradient, double step); 
-  index_t num_of_points();
-  void GiveInitMatrix(Matrix *init_data);
 
-private:
+  bool IsDiverging(double objective); 
+  bool IsOptimizationOver(arma::mat& coordinates, arma::mat& gradient, double step);
+  bool IsIntermediateStepOver(arma::mat& coordinates, arma::mat& gradient, double step);
+
+  index_t num_of_points();
+  void GiveInitMatrix(arma::mat& init_data);
+
+ private:
   datanode *module_;
-  AllkNN allknn_;
+
+  mlpack::allknn::AllkNN allknn_;
   AllkFN allkfn_;
+
   index_t knns_;
   index_t leaf_size_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
-  ArrayList<double> nearest_distances_;
-  Vector eq_lagrange_mult_;
+
+  std::vector<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  std::vector<double> nearest_distances_;
+
+  arma::vec eq_lagrange_mult_;
   index_t num_of_nearest_pairs_;
   index_t num_of_furthest_pairs_;
-  ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
-  ArrayList<double> furthest_distances_;
+
+  std::vector<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  std::vector<double> furthest_distances_;
+
   double sum_of_furthest_distances_;
   double sigma_;
   index_t num_of_points_;
@@ -139,19 +158,20 @@ private:
 
 class MaxVarianceUtils {
  public:
-  static void ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
-      ArrayList<double>  &from_tree_dist,
-      index_t num_of_neighbors,
-      index_t chosen_neighbors,
-      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
-      ArrayList<double> *distances,
-      index_t *num_of_pairs);
-  static void EstimateKnns(ArrayList<index_t> &neares_neighbors,
-                                       ArrayList<double> &nearest_distances,
-                                       index_t maximum_knns, 
-                                       index_t num_of_points,
-                                       index_t dimension,
-                                       index_t *optimum_knns); 
+  static void ConsolidateNeighbors(const arma::Col<index_t>& from_tree_ind,
+                                   const arma::vec&          from_tree_dist,
+                                   index_t num_of_neighbors,
+                                   index_t chosen_neighbors,
+                                   std::vector<std::pair<index_t, index_t> >& neighbor_pairs,
+                                   std::vector<double>& distances,
+                                   index_t& num_of_pairs);
+
+  static void EstimateKnns(const arma::Col<index_t>& nearest_neighbors,
+                           const arma::vec&          nearest_distances,
+                           index_t maximum_knns, 
+                           index_t num_of_points,
+                           index_t dimension,
+                           index_t& optimum_knns); 
 };
 
 #include "mvu_objectives_impl.h"
