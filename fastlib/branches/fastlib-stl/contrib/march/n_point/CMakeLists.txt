@@ -9,6 +9,8 @@ set(SOURCES
 	permutations.cc
 	single_matcher.h
 	single_matcher.cc
+	single_bandwidth_alg.h
+	single_bandwidth_alg.cc
 )
 
 # add directory name to sources

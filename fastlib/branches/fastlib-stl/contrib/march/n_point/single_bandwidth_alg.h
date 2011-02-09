@@ -29,6 +29,7 @@ namespace npt {
     // input params
     index_t num_points_;
     index_t tuple_size_;
+    index_t leaf_size_;
     
     // the matcher
     SingleMatcher matcher_;
@@ -41,10 +42,78 @@ namespace npt {
     // the number of times we pruned a tuple
     int num_prunes_;
     
-    NPointNode* tree_;
+    // define the tree
+    typedef BinarySpaceTree<DHrectBound<2>, arma::mat> SingleNode; 
+    
+    arma::Col<index_t> old_from_new_index_;
+    
+    SingleNode* tree_;
+    
+    
+    ////////////////////// functions /////////////////////////
+    
+    bool CheckNodeList_(std::vector<SingleNode*>& nodes);
+    
+    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<bool>& permutation_ok,
+                         std::vector<index_t>& points_in_tuple,
+                         int k);
+    
+    void BaseCase_(std::vector<SingleNode*>& nodes);
+    
+    void DepthFirstRecursion_(std::vector<SingleNode*>& nodes);
+    
     
   public:
     
+    /**
+     * Requires the matcher bounds, data, parameters
+     */
+    SingleBandwidthAlg(arma::mat& data, arma::colvec weights, index_t n,
+                       index_t leaf_size,
+                       arma::mat& lower_bds, arma::mat& upper_bds) : 
+                       matcher_(n, lower_bds, upper_bds)
+    {
+      
+      data_points_ = data;
+      data_weights_ = weights;
+      num_points_ = data_points_.n_cols;
+      tuple_size_ = n;
+      leaf_size_ = leaf_size;
+      
+      num_tuples_ = 0;
+      weighted_num_tuples_ = 0.0;
+      num_prunes_ = 0;
+      
+      tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
+                                                           leaf_size_, 
+                                                           old_from_new_index_);
+        
+      // IMPORTANT: need to permute the weights here
+      
+      
+      
+    } // constructor
+    
+    int num_tuples() {
+      return num_tuples_;
+    } 
+    
+    double weighted_num_tuples() {
+      return weighted_num_tuples_;
+    }
+    
+    
+    /**
+     * Actually run the algorithm.
+     */
+    void ComputeCounts() {
+            
+      std::vector<SingleNode*> node_list(tuple_size_, tree_);
+      
+      DepthFirstRecursion_(node_list);
+      
+    } // ComputeCounts()
     
     
     
