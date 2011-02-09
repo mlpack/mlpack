@@ -75,6 +75,10 @@ namespace npt {
                        index_t tuple_ind_1, index_t tuple_ind_2,
                        std::vector<bool>& permutation_ok);
     
+    index_t num_permutations() {
+      return num_permutations_;
+    }
+    
     
   }; // class
 

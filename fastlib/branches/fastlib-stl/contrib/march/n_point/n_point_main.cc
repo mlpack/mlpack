@@ -7,8 +7,7 @@
  *
  */
 
-// take this out later, just debugging with it
-#include "single_matcher.h"
+#include "single_bandwidth_alg.h"
 
 using namespace npt;
 
@@ -37,12 +36,27 @@ int main(int argc, char* argv[]) {
   
   upper_bds.load("test_upper_bds.csv");
   
+  arma::mat data;
+  data.load("test_data.csv");
+  
+  arma::colvec weights(data.n_cols);
+  weights.fill(1.0);
+  
+  index_t leaf_size = 1;
+  
+  SingleBandwidthAlg alg(data, weights, data.n_cols, leaf_size, lower_bds, 
+                         upper_bds);
+  
+  std::cout << "Num tuples: " << alg.num_tuples() << "\n";
+  
+  /*
   SingleMatcher matcher(3, lower_bds, upper_bds);
   
   std::vector<bool> perm_ok1(6, true);
   std::cout << "Testing points: " << matcher.TestPointPair(0.5, 0, 1, perm_ok1)
   << "\n";
-
+  */
+  
   //std::vector<bool> perm_ok2(6, true);
   //std::cout << "Testing boxes: " << TestHrectPair(5.0, );
   
