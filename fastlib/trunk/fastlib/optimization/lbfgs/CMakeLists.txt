@@ -17,3 +17,11 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at
 # the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+add_executable(lbfgs_test
+  test_lbfgs.cc
+)
+target_link_libraries(lbfgs_test
+  fastlib
+  mlpack
+)
