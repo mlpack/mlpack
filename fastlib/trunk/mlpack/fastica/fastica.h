@@ -354,30 +354,18 @@ class FastICA {
    */
   void DeflationLogCoshUpdate_(index_t n, Matrix X, Vector* w) {
     Vector hyp_tan, temp1;
-   
-//    printf("-------- w --------\n");
-//    w->PrintDebug();
-//    printf("-------- X --------\n");
-//    X.PrintDebug();
-//    printf("-------- hyp_tan --------\n");
 
     MulInit(w, &X, &hyp_tan);
-//    hyp_tan.PrintDebug();
     MapOverwrite(&TanhArg,
 		 a1(),
 		 &hyp_tan);
 
        
-//    printf("-------- hyp_tan now --------\n");
-//    hyp_tan.PrintDebug();
- 
     Scale(1 / (double) n,
 	  AddTo(MulInit(&X, &hyp_tan, &temp1),
 		Scale(a1() * (VectorMapSum(&Square, 0, &hyp_tan) - n),
 		      w)));
 
-//    printf("-------- w now ----------\n");
-//    w->PrintDebug();
   }
 
 
@@ -393,10 +381,8 @@ class FastICA {
     
     MulInit(&X, &hyp_tan, &X_hyp_tan);
     double Beta = la::Dot(X_hyp_tan, *w);
-    printf("beta is %lf\n", Beta);
     
     double scale = 1 / (a1() * (VectorMapSum(&Square, 0, &hyp_tan) - n) + Beta);
-    printf("scale is %lf\n", scale);
 
     AddExpert(mu(),
 	      Scale(scale,
@@ -1045,7 +1031,6 @@ class FastICA {
 	  la::AddExpert(-la::Dot(b_j, w), b_j, &w);
 	}
 	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
-        printf("--------- beginning of iteration %d, w ------------\n", i);
         w.PrintDebug();
 
 	if(not_fine) {
@@ -1154,7 +1139,6 @@ class FastICA {
 
 	w_old2.CopyValues(w_old);
 	w_old.CopyValues(w);
-	printf("Using nonlinearity %d\n", used_nonlinearity);
 	switch(used_nonlinearity) {
 
 	case LOGCOSH: {
@@ -1260,8 +1244,6 @@ class FastICA {
 	}
 	
 	la::Scale(1/sqrt(la::Dot(w, w)), &w); // normalize
-//        printf("-------- scaled w ----------\n");
-//        w.PrintDebug();
 	i++;
       }
       round++;
@@ -1389,20 +1371,8 @@ class FastICA {
 
     Matrix X_centered, X_whitened, whitening_matrix;
 
-//    puts("---------- X ------------");
-//    X_.PrintDebug();
-
     Center(X(), &X_centered);
-
-//    puts("---------- X_centered ----------");
-//    X_centered.PrintDebug();
-
     WhitenUsingEig(X_centered, &X_whitened, &whitening_matrix);
-
-//    puts("---------- X_whitened ----------");
-//    X_whitened.PrintDebug();
-//    puts("---------- whitening_matrix ----------");
-//    whitening_matrix.PrintDebug();
   
     int ret_val =
       FixedPointICA(X_whitened, whitening_matrix, W);
