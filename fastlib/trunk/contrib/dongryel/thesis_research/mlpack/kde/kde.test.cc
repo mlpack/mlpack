@@ -166,6 +166,13 @@ class TestKde {
         std::cout << "Gaussian kernel, \n";
         args.push_back(std::string("--kernel=gaussian"));
       }
+      if(dummy_kernel_aux.series_expansion_type() == "hypercube") {
+        args.push_back(std::string("--series_expansion_type=hypercube"));
+      }
+      else if(dummy_kernel_aux.series_expansion_type() ==
+              "multivariate") {
+        args.push_back(std::string("--series_expansion_type=multivariate"));
+      }
 
       // Push in the leaf size.
       int leaf_size = 20;
@@ -227,8 +234,8 @@ class TestKde {
       return 0;
     };
 };
-};
-};
+}
+}
 
 BOOST_AUTO_TEST_SUITE(TestSuiteKde)
 BOOST_AUTO_TEST_CASE(TestCaseKde) {
