@@ -124,6 +124,9 @@ void DualtreeDfs<ProblemType>::Compute(
     1.0 - problem_->global().probability(), squared_distance_range,
     query_results);
   PostProcess_(metric, query_start_node_, query_results);
+
+  printf("For reference process %d, query process %d pruned %d times.\n",
+         reference_rank_, query_rank_, num_deterministic_prunes_);
 }
 
 template<typename ProblemType>
