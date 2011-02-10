@@ -8,6 +8,7 @@
  */
 
 #include "single_bandwidth_alg.h"
+#include "naive_alg.h"
 
 using namespace npt;
 
@@ -44,10 +45,18 @@ int main(int argc, char* argv[]) {
   
   index_t leaf_size = 1;
   
-  SingleBandwidthAlg alg(data, weights, data.n_cols, leaf_size, lower_bds, 
-                         upper_bds);
+  SingleBandwidthAlg single_alg(data, weights, leaf_size, 
+                                lower_bds, upper_bds);
   
-  std::cout << "Num tuples: " << alg.num_tuples() << "\n";
+  single_alg.ComputeCounts();
+  
+  std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n";
+  
+  NaiveAlg naive_alg(data, weights, lower_bds, upper_bds);
+
+  naive_alg.ComputeCounts();
+  
+  std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n";
   
   /*
   SingleMatcher matcher(3, lower_bds, upper_bds);

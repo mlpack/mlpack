@@ -69,16 +69,16 @@ namespace npt {
     /**
      * Requires the matcher bounds, data, parameters
      */
-    SingleBandwidthAlg(arma::mat& data, arma::colvec weights, index_t n,
+    SingleBandwidthAlg(arma::mat& data, arma::colvec weights,
                        index_t leaf_size,
                        arma::mat& lower_bds, arma::mat& upper_bds) : 
-                       matcher_(n, lower_bds, upper_bds)
+                       matcher_(lower_bds, upper_bds)
     {
       
       data_points_ = data;
       data_weights_ = weights;
       num_points_ = data_points_.n_cols;
-      tuple_size_ = n;
+      tuple_size_ = lower_bds.n_cols;
       leaf_size_ = leaf_size;
       
       num_tuples_ = 0;
@@ -112,6 +112,8 @@ namespace npt {
       std::vector<SingleNode*> node_list(tuple_size_, tree_);
       
       DepthFirstRecursion_(node_list);
+      
+      std::cout << "Num prunes " << num_prunes_ << "\n";
       
     } // ComputeCounts()
     

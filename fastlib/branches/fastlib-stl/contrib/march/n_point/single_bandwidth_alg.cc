@@ -172,7 +172,7 @@ void npt::SingleBandwidthAlg::DepthFirstRecursion_(std::vector<SingleNode*>& nod
   else {
     
     // look over all the nodes, see if they are leaves, and if not, which one 
-    // to splits
+    // to split 
     bool all_leaves = nodes[0]->is_leaf();
     index_t split_index = 0;
     // if node 0 is not a leaf, then use it, otherwise don't
