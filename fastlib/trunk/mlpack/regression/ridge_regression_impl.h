@@ -349,11 +349,12 @@ void RidgeRegression::ExtractSubspace_
  const GenVector<index_t> *predictor_indices) {
 
   if(covariance_.n_rows() > 0) {
-
+    covariance_.PrintDebug();
     Matrix eigen_v;
     Matrix precomputed_covariance;
     ExtractCovarianceSubset_(covariance_, predictor_indices, 
 			     &precomputed_covariance);
+    precomputed_covariance.PrintDebug();
     la::SVDInit(precomputed_covariance, singular_values, &eigen_v, v_t);
     
     // Take the square root of each eigenvalue to get the singular
@@ -401,6 +402,7 @@ void RidgeRegression::ExtractSubspace_
     }
   }
   else {
+    predictors_.PrintDebug();
     la::SVDInit(predictors_, singular_values, u, v_t);
   }
 }

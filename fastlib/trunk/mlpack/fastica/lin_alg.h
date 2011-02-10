@@ -757,7 +757,12 @@ namespace linalg__private {
     //E.set(0, 1, -E.get(0, 1));
     //E.set(1, 1, -E.get(1, 1));
 
-    
+    puts("-------- cov_X ----------");
+    cov_X.PrintDebug(); 
+    puts("------- D_vector ---------");
+    D_vector.PrintDebug();
+    puts("------- E ---------");
+    E.PrintDebug();
 
     index_t d = D_vector.length();
     D.Init(d, d);
@@ -769,6 +774,9 @@ namespace linalg__private {
       D.set(i, i, sqrt_val);
       D_inv.set(i, i, 1 / sqrt_val);
     }
+
+    puts("---------- D_inv ---------");
+    D_inv.PrintDebug();
 
     la::MulTransBInit(D_inv, E, whitening_matrix);
     la::MulInit(*whitening_matrix, X, X_whitened);
