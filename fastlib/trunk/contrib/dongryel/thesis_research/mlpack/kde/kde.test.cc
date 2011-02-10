@@ -116,20 +116,20 @@ class TestKde {
         for(int k = 0; k < 3; k++) {
           // Randomly choose the number of dimensions and the points.
           mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(3, 20);
-          mlpack::kde::test_kde::num_points_ = core::math::RandInt(500, 1001);
+          mlpack::kde::test_kde::num_points_ = core::math::RandInt(5000, 10001);
 
           switch(k) {
             case 0:
               StressTest <
-              mlpack::series_expansion::GaussianKernelHypercubeAux > (k);
+              mlpack::series_expansion::GaussianKernelHypercubeAux > ();
               break;
             case 1:
               StressTest <
-              mlpack::series_expansion::GaussianKernelMultivariateAux > (k);
+              mlpack::series_expansion::GaussianKernelMultivariateAux > ();
               break;
             case 2:
               StressTest <
-              mlpack::series_expansion::EpanKernelMultivariateAux > (k);
+              mlpack::series_expansion::EpanKernelMultivariateAux > ();
               break;
           }
         }
@@ -138,7 +138,7 @@ class TestKde {
     }
 
     template<typename KernelAuxType>
-    int StressTest(int kernel_type) {
+    int StressTest() {
 
       std::vector< std::string > args;
 
@@ -157,15 +157,14 @@ class TestKde {
       std::cout << "Number of points: " <<
                 mlpack::kde::test_kde::num_points_ << "\n";
 
-      switch(kernel_type) {
-        case 0:
-          std::cout << "Epan kernel, \n";
-          args.push_back(std::string("--kernel=epan"));
-          break;
-        case 1:
-          std::cout << "Gaussian kernel, \n";
-          args.push_back(std::string("--kernel=gaussian"));
-          break;
+      KernelAuxType dummy_kernel_aux;
+      if(dummy_kernel_aux.kernel().name() == "epan") {
+        std::cout << "Epan kernel, \n";
+        args.push_back(std::string("--kernel=epan"));
+      }
+      else if(dummy_kernel_aux.kernel().name() == "gaussian") {
+        std::cout << "Gaussian kernel, \n";
+        args.push_back(std::string("--kernel=gaussian"));
       }
 
       // Push in the leaf size.
