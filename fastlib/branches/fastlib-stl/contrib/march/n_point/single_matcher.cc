@@ -36,6 +36,8 @@ bool npt::SingleMatcher::TestPointPair(double dist_sq, index_t tuple_ind_1,
     index_t template_index_1 = GetPermIndex_(i, tuple_ind_1);
     index_t template_index_2 = GetPermIndex_(i, tuple_ind_2);
     
+    //std::cout << "template_indices_checked\n";
+    
     // Do the distances work?
     if (CheckDistances_(dist_sq, template_index_1, template_index_2)) {
       any_matches = true;

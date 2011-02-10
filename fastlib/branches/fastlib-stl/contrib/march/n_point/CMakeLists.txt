@@ -11,6 +11,8 @@ set(SOURCES
 	single_matcher.cc
 	single_bandwidth_alg.h
 	single_bandwidth_alg.cc
+	naive_alg.h
+	naive_alg.cc
 )
 
 # add directory name to sources

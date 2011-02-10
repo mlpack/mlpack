@@ -16,7 +16,7 @@
 #include "permutations.h"
 
 namespace npt {
-
+  
   class SingleMatcher {
     
   private:
@@ -58,8 +58,11 @@ namespace npt {
     //SingleMatcher() {}
     
     // constructor
-    SingleMatcher(index_t n, arma::mat& lower_bds, arma::mat& upper_bds) :
-        tuple_size_(n), perms_(n) {
+    SingleMatcher(arma::mat& lower_bds, arma::mat& upper_bds) :
+    perms_(lower_bds.n_cols) {
+      
+      
+      tuple_size_ = lower_bds.n_cols;
       
       lower_bounds_sqr_ = arma::square(lower_bds);
       upper_bounds_sqr_ = arma::square(upper_bds);
@@ -70,7 +73,7 @@ namespace npt {
     
     bool TestPointPair(double dist_sq, index_t tuple_ind_1, index_t tuple_ind_2,
                        std::vector<bool>& permutation_ok);
-
+    
     bool TestHrectPair(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
                        index_t tuple_ind_1, index_t tuple_ind_2,
                        std::vector<bool>& permutation_ok);
@@ -81,7 +84,7 @@ namespace npt {
     
     
   }; // class
-
+  
 } // namespace
 
 #endif
