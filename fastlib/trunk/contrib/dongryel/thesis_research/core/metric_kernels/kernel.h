@@ -8,7 +8,6 @@
 #ifndef CORE_METRIC_KERNELS_KERNEL_H
 #define CORE_METRIC_KERNELS_KERNEL_H
 
-#include "abstract_kernel.h"
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
 #include "core/math/geometry.h"
@@ -17,11 +16,9 @@
 namespace core {
 namespace metric_kernels {
 
-/**
- * Standard multivariate Gaussian kernel.
- *
+/** @brief Standard multivariate Gaussian kernel.
  */
-class GaussianKernel: public AbstractKernel {
+class GaussianKernel {
   private:
     double neg_inv_bandwidth_2sq_;
     double bandwidth_sq_;
@@ -172,13 +169,12 @@ class GaussianStarKernel {
     }
 };
 
-/**
- * Multivariate Epanechnikov kernel.
+/** @brief Multivariate Epanechnikov kernel.
  *
  * To use, first get an unnormalized density, and divide by the
  * normalizeation factor.
  */
-class EpanKernel: public AbstractKernel {
+class EpanKernel {
   private:
     double inv_bandwidth_sq_;
     double bandwidth_sq_;
@@ -260,7 +256,7 @@ class EpanKernel: public AbstractKernel {
       return inv_bandwidth_sq_;
     }
 };
-};
-};
+}
+}
 
 #endif

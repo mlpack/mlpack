@@ -15,33 +15,36 @@
 
 namespace mlpack {
 namespace kde {
-template<typename TableType>
-TableType *Kde<TableType>::query_table() {
+
+template<typename TableType, typename KernelAuxType>
+TableType *Kde<TableType, KernelAuxType>::query_table() {
   return query_table_;
 }
 
-template<typename TableType>
-TableType *Kde<TableType>::reference_table() {
+template<typename TableType, typename KernelAuxType>
+TableType *Kde<TableType, KernelAuxType>::reference_table() {
   return reference_table_;
 }
 
-template<typename TableType>
-typename Kde<TableType>::GlobalType &Kde<TableType>::global() {
+template<typename TableType, typename KernelAuxType>
+typename Kde <
+TableType, KernelAuxType >::GlobalType &
+Kde<TableType, KernelAuxType>::global() {
   return global_;
 }
 
-template<typename TableType>
-bool Kde<TableType>::is_monochromatic() const {
+template<typename TableType, typename KernelAuxType>
+bool Kde<TableType, KernelAuxType>::is_monochromatic() const {
   return is_monochromatic_;
 }
 
-template<typename TableType>
-void Kde<TableType>::Compute(
+template<typename TableType, typename KernelAuxType>
+void Kde<TableType, KernelAuxType>::Compute(
   const KdeArguments<TableType> &arguments_in,
   KdeResult< std::vector<double> > *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
-  typedef Kde<TableType> ProblemType;
+  typedef Kde<TableType, KernelAuxType> ProblemType;
   core::gnp::DualtreeDfs< ProblemType > dualtree_dfs;
   dualtree_dfs.Init(*this);
 
@@ -64,8 +67,8 @@ void Kde<TableType>::Compute(
   }
 }
 
-template<typename TableType>
-void Kde<TableType>::Init(
+template<typename TableType, typename KernelAuxType>
+void Kde<TableType, KernelAuxType>::Init(
   KdeArguments<TableType> &arguments_in) {
 
   reference_table_ = arguments_in.reference_table_;
@@ -84,17 +87,15 @@ void Kde<TableType>::Init(
     arguments_in.effective_num_reference_points_,
     arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.absolute_error_,
-    arguments_in.probability_,
-    arguments_in.kernel_, arguments_in.normalize_densities_);
+    arguments_in.probability_, arguments_in.normalize_densities_);
 }
 
-template<typename TableType>
-void Kde<TableType>::set_bandwidth(double bandwidth_in) {
+template<typename TableType, typename KernelAuxType>
+void Kde<TableType, KernelAuxType>::set_bandwidth(double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
-template<typename TableType>
-bool Kde<TableType>::ConstructBoostVariableMap_(
+bool KdeArgumentParser::ConstructBoostVariableMap_(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -117,9 +118,14 @@ bool Kde<TableType>::ConstructBoostVariableMap_(
     "OPTIONAL file to store computed densities."
   )(
     "kernel",
-    boost::program_options::value<std::string>()->default_value("epan"),
+    boost::program_options::value<std::string>()->default_value("gaussian"),
     "Kernel function used by KDE.  One of:\n"
     "  epan, gaussian"
+  )(
+    "series_expansion_type",
+    boost::program_options::value<std::string>()->default_value("hypercube"),
+    "Series expansion type used to compress the kernel interaction. One of:\n"
+    "  hypercube, multivariate"
   )(
     "bandwidth",
     boost::program_options::value<double>(),
@@ -172,8 +178,8 @@ bool Kde<TableType>::ConstructBoostVariableMap_(
     return true;
   }
 
-  // Validate the arguments. Only immediate dying is allowed here, the
-  // parsing is done later.
+  // Validate the arguments. Only immediate termination is allowed
+  // here, the parsing is done later.
   if(vm->count("references_in") == 0) {
     std::cerr << "Missing required --references_in.\n";
     exit(0);
@@ -181,6 +187,12 @@ bool Kde<TableType>::ConstructBoostVariableMap_(
   if((*vm)["kernel"].as<std::string>() != "gaussian" &&
       (*vm)["kernel"].as<std::string>() != "epan") {
     std::cerr << "We support only epan or gaussian for the kernel.\n";
+    exit(0);
+  }
+  if((*vm)["series_expansion_type"].as<std::string>() != "hypercube" &&
+      (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
+    std::cerr << "We support only hypercube or multivariate for the "
+              "series expansion type.\n";
     exit(0);
   }
   if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
@@ -208,7 +220,7 @@ bool Kde<TableType>::ConstructBoostVariableMap_(
 }
 
 template<typename TableType>
-bool Kde<TableType>::ParseArguments(
+bool KdeArgumentParser::ParseArguments(
   const std::vector<std::string> &args,
   KdeArguments<TableType> *arguments_out) {
 
@@ -285,6 +297,12 @@ bool Kde<TableType>::ParseArguments(
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
 
+  // Parse the series expansion type.
+  arguments_out->series_expansion_type_ =
+    vm["series_expansion_type"].as<std::string>();
+  std::cout << "Using the series expansion type: " <<
+            arguments_out->series_expansion_type_ << "\n";
+
   // Parse the number of iterations.
   arguments_out->num_iterations_in_ = vm["num_iterations_in"].as<int>();
   if(arguments_out->num_iterations_in_ > 0) {
@@ -298,7 +316,7 @@ bool Kde<TableType>::ParseArguments(
 }
 
 template<typename TableType>
-bool Kde<TableType>::ParseArguments(
+bool KdeArgumentParser::ParseArguments(
   int argc,
   char *argv[],
   KdeArguments<TableType> *arguments_out) {
@@ -308,7 +326,7 @@ bool Kde<TableType>::ParseArguments(
 
   return ParseArguments(args, arguments_out);
 }
-};
-};
+}
+}
 
 #endif

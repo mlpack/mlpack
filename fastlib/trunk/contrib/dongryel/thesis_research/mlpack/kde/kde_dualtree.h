@@ -16,6 +16,8 @@
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
 #include "core/table/table.h"
+#include "mlpack/series_expansion/hypercube_farfield_dev.h"
+#include "mlpack/series_expansion/hypercube_local_dev.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
 
@@ -142,13 +144,13 @@ class KdePostponed {
 /** @brief The global constant struct passed around for KDE
  *         computation.
  */
-template<typename IncomingTableType>
+template<typename IncomingTableType, typename IncomingKernelAuxType>
 class KdeGlobal {
 
   public:
     typedef IncomingTableType TableType;
 
-    typedef core::metric_kernels::AbstractKernel KernelType;
+    typedef IncomingKernelAuxType KernelAuxType;
 
   private:
 
@@ -170,7 +172,7 @@ class KdeGlobal {
 
     /** @brief The kernel type.
      */
-    KernelType *kernel_;
+    KernelAuxType kernel_aux_;
 
     /** @brief The effective number of reference points used for
      *         normalization.
@@ -239,7 +241,7 @@ class KdeGlobal {
         (reference_table_in == query_table_in) ?
         (total_sum - 1.0) : total_sum;
       mult_const_ = 1.0 /
-                    (kernel_->CalcNormConstant(
+                    (kernel_aux_.kernel().CalcNormConstant(
                        reference_table_in->n_attributes()) *
                      ((double) effective_num_reference_points_));
     }
@@ -251,19 +253,11 @@ class KdeGlobal {
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 1.0;
-      kernel_ = NULL;
       effective_num_reference_points_ = 0.0;
       mult_const_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
-    }
-
-    /** @brief The destructor.
-     */
-    ~KdeGlobal() {
-      delete kernel_;
-      kernel_ = NULL;
     }
 
     /** @brief Returns the mean variance pair object.
@@ -331,19 +325,25 @@ class KdeGlobal {
     /** @brief Returns the bandwidth value being used.
      */
     double bandwidth() const {
-      return sqrt(kernel_->bandwidth_sq());
+      return sqrt(kernel_aux_.kernel().bandwidth_sq());
     }
 
     /** @brief Sets the bandwidth.
      */
     void set_bandwidth(double bandwidth_in) {
-      kernel_->Init(bandwidth_in);
+      kernel_aux_.kernel().Init(bandwidth_in);
     }
 
     /** @brief Returns the kernel.
      */
-    const KernelType &kernel() const {
-      return *kernel_;
+    const typename KernelAuxType::KernelType &kernel() const {
+      return kernel_aux_.kernel();
+    }
+
+    /** @brief Returns the series expansion type.
+     */
+    const std::string series_expansion_type() const {
+      return kernel_aux_.series_expansion_type();
     }
 
     /** @brief Initializes the KDE global object.
@@ -354,21 +354,12 @@ class KdeGlobal {
       double effective_num_reference_points_in,
       double bandwidth_in, const bool is_monochromatic,
       double relative_error_in, double absolute_error_in, double probability_in,
-      const std::string &kernel_type_in,
       bool normalize_densities_in = true) {
 
       effective_num_reference_points_ = effective_num_reference_points_in;
-
-      if(kernel_type_in == "gaussian") {
-        kernel_ = new core::metric_kernels::GaussianKernel();
-      }
-      else if(kernel_type_in == "epan") {
-        kernel_ = new core::metric_kernels::EpanKernel();
-      }
-
-      kernel_->Init(bandwidth_in);
+      kernel_aux_.kernel().Init(bandwidth_in);
       mult_const_ = 1.0 /
-                    (kernel_->CalcNormConstant(
+                    (kernel_aux_.kernel().CalcNormConstant(
                        reference_table_in->n_attributes()) *
                      ((double) effective_num_reference_points_));
 
@@ -470,7 +461,7 @@ class KdeResult {
       }
     }
 
-    void PrintDebug(const std::string &file_name) {
+    void Print(const std::string &file_name) {
       FILE *file_output = fopen(file_name.c_str(), "w+");
       for(unsigned int i = 0; i < densities_.size(); i++) {
         fprintf(file_output, "%g %g %g %g\n", densities_l_[i],
@@ -751,7 +742,19 @@ class KdeSummary {
           used_error_u_) /
         static_cast<double>(
           global.effective_num_reference_points() - pruned_l_);
-      return left_hand_side <= right_hand_side;
+
+      // Prunable by finite-difference.
+      if(left_hand_side <= right_hand_side) {
+        return true;
+      }
+
+      // Otherwise, try series expansion.
+      else {
+
+        // The far-field expansion of the reference node.
+        return false;
+      }
+      return false;
     }
 
     void SetZero() {
@@ -820,6 +823,12 @@ class KdeStatistic {
 
   public:
 
+    mlpack::series_expansion::CartesianFarField <
+    mlpack::series_expansion::HYPERCUBE > farfield_expansion_;
+
+    mlpack::series_expansion::CartesianLocal <
+    mlpack::series_expansion::HYPERCUBE > local_expansion_;
+
     mlpack::kde::KdePostponed postponed_;
 
     mlpack::kde::KdeSummary summary_;
@@ -851,7 +860,12 @@ class KdeStatistic {
      */
     template<typename TreeIteratorType>
     void Init(TreeIteratorType &iterator) {
+
+      // Sets the postponed quantities and summary statistics to zero.
       SetZero();
+
+      // Computes the far-field moment.
+
     }
 
     /** @brief Initializes by combining statistics of two partitions.
