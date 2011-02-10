@@ -37,8 +37,9 @@ int main(int argc, char *argv[]) {
     FATAL("Reference file %s not found", reference_file.c_str());
   }
   NOTIFY("Loaded reference data from file %s", reference_file.c_str());
+
+  AllkNN* allknn = NULL;
  
-  AllkNN allknn; 
   if (fx_param_exists(module, "query_file")) {
     std::string query_file = fx_param_str_req(module, "query_file");
     arma::mat query_data;
@@ -47,15 +48,16 @@ int main(int argc, char *argv[]) {
     }
     NOTIFY("Query data loaded from %s", query_file.c_str());
     NOTIFY("Building query and reference tree"); 
-    allknn.Init(&query_data, &reference_data, module);
+    allknn = new AllkNN(query_data, reference_data, module);
   } else {
     NOTIFY("Building reference tree");
-    allknn.Init(&reference_data, module);
+    allknn = new AllkNN(reference_data, module);
   }
+
   NOTIFY("Tree(s) built");
   index_t knns = fx_param_int_req(module, "knns");
   NOTIFY("Computing %"LI"d nearest neighbors", knns);
-  allknn.ComputeNeighbors(neighbors, distances);
+  allknn->ComputeNeighbors(neighbors, distances);
   NOTIFY("Neighbors computed");
   NOTIFY("Exporting results");
   FILE *fp = fopen(result_file.c_str(), "w");
@@ -69,5 +71,8 @@ int main(int argc, char *argv[]) {
     }
   }
   fclose(fp);
+
+  delete allknn;
+
   fx_done(module);
 }
