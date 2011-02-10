@@ -11,6 +11,10 @@
 
 namespace mlpack {
 namespace kde {
+
+/** @brief The class that manages the arguments necessary for KDE
+ *         computation.
+ */
 template<typename TableType>
 class KdeArguments {
   public:
@@ -35,6 +39,8 @@ class KdeArguments {
 
     std::string kernel_;
 
+    std::string series_expansion_type_;
+
     core::metric_kernels::LMetric<2> *metric_;
 
     bool tables_are_aliased_;
@@ -58,6 +64,7 @@ class KdeArguments {
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
+      series_expansion_type_ = global_in.series_expansion_type();
       tables_are_aliased_ = true;
       normalize_densities_ = global_in.normalize_densities();
     }
@@ -75,10 +82,13 @@ class KdeArguments {
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
+      series_expansion_type_ = global_in.series_expansion_type();
       tables_are_aliased_ = true;
       normalize_densities_ = global_in.normalize_densities();
     }
 
+    /** @brief The default constructor.
+     */
     KdeArguments() {
       leaf_size_ = 0;
       reference_table_ = NULL;
@@ -89,20 +99,29 @@ class KdeArguments {
       relative_error_ = 0.0;
       probability_ = 0.0;
       kernel_ = "";
+      series_expansion_type_ = "";
       metric_ = NULL;
       tables_are_aliased_ = false;
       normalize_densities_ = true;
       num_iterations_in_ = 0;
     }
 
+    /** @brief The destructor.
+     */
     ~KdeArguments() {
+
+      // If the tables are not aliased,
       if(tables_are_aliased_ == false) {
+
+        // If monchromatic, destroy only one of the tables.
         if(reference_table_ == query_table_) {
           if(reference_table_ != NULL) {
             delete reference_table_;
           }
         }
         else {
+
+          // Otherwise, we have to check and destroy both.
           if(reference_table_ != NULL) {
             delete reference_table_;
           }
@@ -114,13 +133,14 @@ class KdeArguments {
       reference_table_ = NULL;
       query_table_ = NULL;
 
+      // Destroy the metric.
       if(metric_ != NULL) {
         delete metric_;
         metric_ = NULL;
       }
     }
 };
-};
-};
+}
+}
 
 #endif

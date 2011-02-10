@@ -8,11 +8,12 @@
 // for BOOST testing
 #define BOOST_TEST_MAIN
 
-#include "boost/test/unit_test.hpp"
+#include <boost/test/unit_test.hpp>
 #include "core/gnp/dualtree_dfs_dev.h"
-#include "kde_dev.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/math/math_lib.h"
+#include "mlpack/kde/kde_dev.h"
+#include "mlpack/series_expansion/kernel_aux.h"
 #include <time.h>
 
 namespace mlpack {
@@ -20,7 +21,7 @@ namespace kde {
 namespace test_kde {
 int num_dimensions_;
 int num_points_;
-};
+}
 
 class TestKde {
 
@@ -68,11 +69,11 @@ class TestKde {
       }
     }
 
-    template<typename MetricType>
+    template<typename MetricType, typename KernelType>
     void UltraNaive_(
       const MetricType &metric_in,
       TableType &query_table, TableType &reference_table,
-      const core::metric_kernels::AbstractKernel &kernel,
+      const KernelType &kernel,
       std::vector<double> &ultra_naive_query_results) {
 
       ultra_naive_query_results.resize(query_table.n_entries());
@@ -112,16 +113,31 @@ class TestKde {
 
     int StressTestMain() {
       for(int i = 0; i < 20; i++) {
-        for(int k = 0; k < 2; k++) {
+        for(int k = 0; k < 3; k++) {
           // Randomly choose the number of dimensions and the points.
           mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(3, 20);
           mlpack::kde::test_kde::num_points_ = core::math::RandInt(500, 1001);
-          StressTest(k);
+
+          switch(k) {
+            case 0:
+              StressTest <
+              mlpack::series_expansion::GaussianKernelHypercubeAux > (k);
+              break;
+            case 1:
+              StressTest <
+              mlpack::series_expansion::GaussianKernelMultivariateAux > (k);
+              break;
+            case 2:
+              StressTest <
+              mlpack::series_expansion::EpanKernelMultivariateAux > (k);
+              break;
+          }
         }
       }
       return 0;
     }
 
+    template<typename KernelAuxType>
     int StressTest(int kernel_type) {
 
       std::vector< std::string > args;
@@ -182,12 +198,12 @@ class TestKde {
 
       // Parse the KDE arguments.
       mlpack::kde::KdeArguments<TableType> kde_arguments;
-      mlpack::kde::Kde<TableType>::ParseArguments(args, &kde_arguments);
+      mlpack::kde::KdeArgumentParser::ParseArguments(args, &kde_arguments);
 
       std::cout << "Bandwidth value " << bandwidth << "\n";
 
       // Call the KDE driver.
-      mlpack::kde::Kde<TableType> kde_instance;
+      mlpack::kde::Kde<TableType, KernelAuxType> kde_instance;
       kde_instance.Init(kde_arguments);
 
       // Compute the result.

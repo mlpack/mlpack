@@ -28,7 +28,7 @@ namespace series_expansion {
 /** @brief Auxiliary class for multiplicative p^D expansion for
  *         Gaussian kernel.
  */
-class GaussianKernelMultAux {
+class GaussianKernelHypercubeAux {
 
   public:
 
@@ -58,7 +58,15 @@ class GaussianKernelMultAux {
 
   public:
 
+    const std::string series_expansion_type() const {
+      return std::string("hypercube");
+    }
+
     const KernelType &kernel() const {
+      return kernel_;
+    }
+
+    KernelType &kernel() {
       return kernel_;
     }
 
@@ -308,7 +316,7 @@ class GaussianKernelMultAux {
 /** @brief Auxiliary class for Gaussian kernel for performing an
  *         $O(D^p)$ expansion.
  */
-class GaussianKernelAux {
+class GaussianKernelMultivariateAux {
 
   public:
 
@@ -336,7 +344,15 @@ class GaussianKernelAux {
 
   public:
 
+    const std::string series_expansion_type() const {
+      return std::string("multivariate");
+    }
+
     const KernelType &kernel() const {
+      return kernel_;
+    }
+
+    KernelType &kernel() {
       return kernel_;
     }
 
@@ -560,7 +576,7 @@ class GaussianKernelAux {
 
 /** @brief Auxilairy computer class for Epanechnikov kernel.
  */
-class EpanKernelAux {
+class EpanKernelMultivariateAux {
 
   public:
 
@@ -588,7 +604,15 @@ class EpanKernelAux {
 
   public:
 
+    const std::string series_expansion_type() const {
+      return std::string("multivariate");
+    }
+
     const KernelType &kernel() const {
+      return kernel_;
+    }
+
+    KernelType &kernel() {
       return kernel_;
     }
 
