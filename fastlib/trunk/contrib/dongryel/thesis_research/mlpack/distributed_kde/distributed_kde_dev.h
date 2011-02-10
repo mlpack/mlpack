@@ -322,7 +322,8 @@ void DistributedKde<DistributedTableType>::RandomGenerate(
       point[i] = core::math::Random(0.1, 1.0);
     }
   }
-  printf("Process %d generated %d points...\n", world.rank(), num_points);
+  printf("Process %d generated %d points in %d dimensionality...\n",
+         world.rank(), num_points, num_dimensions);
   random_dataset.Save(file_name);
 }
 
