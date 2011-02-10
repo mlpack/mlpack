@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  abstract_kernel.h
   kernel.h
   lmetric.h
 )
