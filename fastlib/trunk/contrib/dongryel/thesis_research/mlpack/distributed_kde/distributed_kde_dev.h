@@ -161,7 +161,7 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
     "Relative error for the approximation of KDE."
   )(
     "leaf_size",
-    boost::program_options::value<int>()->default_value(20),
+    boost::program_options::value<int>()->default_value(40),
     "Maximum number of points at a leaf of the tree."
   )(
     "top_tree_sample_probability",
