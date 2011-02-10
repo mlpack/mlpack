@@ -14,7 +14,7 @@
 #include "mlpack/kde/kde_dualtree.h"
 #include "mlpack/distributed_kde/distributed_kde_dev.h"
 
-typedef core::tree::GenKdTree<mlpack::kde::KdeStatistic> TreeSpecType;
+typedef core::tree::GenMetricTree<mlpack::kde::KdeStatistic> TreeSpecType;
 typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 typedef core::table::Table<TreeSpecType> TableType;
 typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
