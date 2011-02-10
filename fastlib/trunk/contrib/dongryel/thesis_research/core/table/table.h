@@ -187,8 +187,19 @@ class Table {
         int cumulative_index =
           begin_count_pairs_.back().get<2>() +
           begin_count_pairs_.back().get<1>();
-        begin_count_pairs_.push_back(
-          boost::tuple<int, int, int>(begin, count, cumulative_index));
+        if(begin != begin_count_pairs_.back().get<0>() +
+            begin_count_pairs_.back().get<1>()) {
+          begin_count_pairs_.push_back(
+            boost::tuple<int, int, int>(begin, count, cumulative_index));
+        }
+        else {
+          int prev_begin = begin_count_pairs_.back().get<0>();
+          int prev_count = begin_count_pairs_.back().get<1>();
+          int prev_cumulative_index = begin_count_pairs_.back().get<2>();
+          begin_count_pairs_.back() =
+            boost::tuple<int, int, int>(
+              prev_begin, prev_count + count, prev_cumulative_index);
+        }
       }
     }
 
@@ -554,7 +565,9 @@ class Table {
     }
 
     int locate_reordered_position_(int reordered_position) const {
-      if(begin_count_pairs_.size() == 0) {
+      if(begin_count_pairs_.size() == 0 ||
+          (begin_count_pairs_.size() == 1 &&
+           begin_count_pairs_[0].get<0>() == 0)) {
         return reordered_position;
       }
       int index = -1;
