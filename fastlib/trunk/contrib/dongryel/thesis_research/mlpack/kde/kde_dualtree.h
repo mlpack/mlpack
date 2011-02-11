@@ -388,20 +388,39 @@ class KdeGlobal {
       is_monochromatic_ = is_monochromatic;
 
       // Initialize the kernel series expansion object.
-      if(reference_table_->n_attributes() <= 2) {
-        kernel_aux_.Init(bandwidth_in, 7, reference_table_->n_attributes());
-      }
-      else if(reference_table_->n_attributes() <= 3) {
-        kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
-      }
-      else if(reference_table_->n_attributes() <= 5) {
-        kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
-      }
-      else if(reference_table_->n_attributes() <= 6) {
-        kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
+      if(kernel_aux_.series_expansion_type() == "multivariate") {
+        if(reference_table_->n_attributes() <= 2) {
+          kernel_aux_.Init(bandwidth_in, 7, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 3) {
+          kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 5) {
+          kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 6) {
+          kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
+        }
+        else {
+          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+        }
       }
       else {
-        kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+        if(reference_table_->n_attributes() <= 2) {
+          kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 3) {
+          kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 5) {
+          kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
+        }
+        else if(reference_table_->n_attributes() <= 6) {
+          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+        }
+        else {
+          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+        }
       }
     }
 
