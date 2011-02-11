@@ -10,6 +10,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "core/math/math_lib.h"
+#include "core/tree/gen_metric_tree.h"
 #include "physpack/nbody_simulator/nbody_simulator_dev.h"
 #include <time.h>
 
@@ -24,7 +25,8 @@ class TestNbodySimulator {
   private:
 
     typedef core::table::Table <
-    core::tree::GenMetricTree<physpack::nbody_simulator::NbodySimulatorStatistic> > TableType;
+    core::tree::GenMetricTree <
+    physpack::nbody_simulator::NbodySimulatorStatistic > > TableType;
 
     bool CheckAccuracy_(
       const std::vector<double> &query_results,
