@@ -209,7 +209,9 @@ class TestKde {
 
       // Parse the KDE arguments.
       mlpack::kde::KdeArguments<TableType> kde_arguments;
-      mlpack::kde::KdeArgumentParser::ParseArguments(args, &kde_arguments);
+      boost::program_options::variables_map vm;
+      mlpack::kde::KdeArgumentParser::ConstructBoostVariableMap(args, &vm);
+      mlpack::kde::KdeArgumentParser::ParseArguments(vm, &kde_arguments);
 
       std::cout << "Bandwidth value " << bandwidth << "\n";
 

@@ -8,7 +8,7 @@
 #ifndef MLPACK_KDE_KDE_H
 #define MLPACK_KDE_KDE_H
 
-#include "boost/program_options.hpp"
+#include <boost/program_options.hpp>
 #include "core/table/table.h"
 #include "mlpack/kde/kde_arguments.h"
 #include "mlpack/kde/kde_dualtree.h"
@@ -22,19 +22,16 @@ class KdeArgumentParser {
   public:
     template<typename TableType>
     static bool ParseArguments(
-      const std::vector<std::string> &args,
+      boost::program_options::variables_map &vm,
       mlpack::kde::KdeArguments<TableType> *arguments_out);
 
-    template<typename TableType>
-    static bool ParseArguments(
+    static bool ConstructBoostVariableMap(
+      const std::vector<std::string> &args,
+      boost::program_options::variables_map *vm);
+
+    static bool ConstructBoostVariableMap(
       int argc,
       char *argv[],
-      mlpack::kde::KdeArguments<TableType> *arguments_out);
-
-  private:
-
-    static bool ConstructBoostVariableMap_(
-      const std::vector<std::string> &args,
       boost::program_options::variables_map *vm);
 };
 
