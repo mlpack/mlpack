@@ -22,6 +22,7 @@ namespace tree {
 class AbstractStatistic {
   private:
 
+    // For Boost serialization.
     friend class boost::serialization::access;
 
   public:
@@ -45,17 +46,18 @@ class AbstractStatistic {
 
     /** @brief Initializes by taking statistics on raw data.
      */
-    template<typename TreeIteratorType>
-    void Init(TreeIteratorType &it) {
+    template<typename GlobalType, typename TreeType>
+    void Init(const GlobalType &global, TreeType *node) {
     }
 
     /** @brief Initializes by combining statistics of two partitions.
      *
      * This lets you build fast bottom-up statistics when building trees.
      */
-    template<typename TreeIteratorType>
+    template<typename GlobalType, typename TreeType>
     void Init(
-      TreeIteratorType &it,
+      const GlobalType &global,
+      TreeType *node,
       const core::tree::AbstractStatistic *left_stat,
       const core::tree::AbstractStatistic *right_stat) {
     }

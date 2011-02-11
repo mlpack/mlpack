@@ -135,17 +135,15 @@ void TripletreeDfs<ProblemType>::PreProcess_(
   typename ProblemType::TableType::TreeType *qnode) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
-  typename ProblemType::TableType::TreeIterator qnode_it =
-    table_->get_node_iterator(qnode);
 
   if(! qnode->is_leaf()) {
     PreProcess_(qnode->left());
     PreProcess_(qnode->right());
     qnode_stat.Init(
-      qnode_it, qnode->left()->stat(), qnode->right()->stat());
+      problem_->global(), qnode, qnode->left()->stat(), qnode->right()->stat());
   }
   else {
-    qnode_stat.Init(qnode_it);
+    qnode_stat.Init(problem_->global(), qnode);
   }
 }
 
