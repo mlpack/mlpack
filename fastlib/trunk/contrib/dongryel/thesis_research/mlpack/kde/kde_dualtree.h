@@ -334,6 +334,12 @@ class KdeGlobal {
       kernel_aux_.kernel().Init(bandwidth_in);
     }
 
+    /** @brief Returns the kernel auxilary object.
+     */
+    const KernelAuxType &kernel_aux() const {
+      return kernel_aux_;
+    }
+
     /** @brief Returns the kernel.
      */
     const typename KernelAuxType::KernelType &kernel() const {
@@ -357,6 +363,8 @@ class KdeGlobal {
       bool normalize_densities_in = true) {
 
       effective_num_reference_points_ = effective_num_reference_points_in;
+
+      // Initialize the kernel.
       kernel_aux_.kernel().Init(bandwidth_in);
       mult_const_ = 1.0 /
                     (kernel_aux_.kernel().CalcNormConstant(
@@ -378,6 +386,23 @@ class KdeGlobal {
 
       // Set the monochromatic flag.
       is_monochromatic_ = is_monochromatic;
+
+      // Initialize the kernel series expansion object.
+      if(reference_table_->n_attributes() <= 2) {
+        kernel_aux_.Init(bandwidth_in, 7, reference_table_->n_attributes());
+      }
+      else if(reference_table_->n_attributes() <= 3) {
+        kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
+      }
+      else if(reference_table_->n_attributes() <= 5) {
+        kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
+      }
+      else if(reference_table_->n_attributes() <= 6) {
+        kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
+      }
+      else {
+        kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+      }
     }
 
     /** @brief Gets the multiplicative normalization constant.
@@ -856,29 +881,46 @@ class KdeStatistic {
       summary_.SetZero();
     }
 
-    /**
-     * Initializes by taking statistics on raw data.
+    /** @brief Initializes by taking statistics on raw data.
      */
-    template<typename TreeIteratorType>
-    void Init(TreeIteratorType &iterator) {
+    template<typename GlobalType, typename TreeType>
+    void Init(const GlobalType &global, TreeType *node) {
 
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();
 
-      // Computes the far-field moment.
-
+      // Form the far-field moments.
+      core::table::DensePoint node_center;
+      node->bound().center(&node_center);
+      farfield_expansion_.Init(global.kernel_aux(), node_center);
+      //      farfield_expansion_.AccumulateCoeffs(
+      //global.kernel_aux(), global.reference_table()->data(),
+      //global.reference_table()->weights(), node->begin(), node->end(),
+      //global.kernel_aux().max_order());
     }
 
     /** @brief Initializes by combining statistics of two partitions.
      *
      * This lets you build fast bottom-up statistics when building trees.
      */
-    template<typename TreeIteratorType>
+    template<typename GlobalType, typename TreeType>
     void Init(
-      TreeIteratorType &iterator,
+      const GlobalType &global,
+      TreeType *node,
       const KdeStatistic &left_stat,
       const KdeStatistic &right_stat) {
+
+      // Sets the postponed quantities and summary statistics to zero.
       SetZero();
+
+      // Form the far-field moments.
+      core::table::DensePoint node_center;
+      node->bound().center(&node_center);
+      farfield_expansion_.Init(global.kernel_aux(), node_center);
+      farfield_expansion_.TranslateFromFarField(
+        global.kernel_aux(), left_stat.farfield_expansion_);
+      farfield_expansion_.TranslateFromFarField(
+        global.kernel_aux(), right_stat.farfield_expansion_);
     }
 };
 }

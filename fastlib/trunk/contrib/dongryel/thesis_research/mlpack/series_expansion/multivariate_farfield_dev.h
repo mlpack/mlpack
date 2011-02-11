@@ -303,9 +303,9 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   core::table::DensePoint prev_coeffs;
   core::table::DensePoint prev_center;
-  const std::vector <short int> *multiindex_mapping =
+  const std::vector < std::vector<short int> > &multiindex_mapping =
     kernel_aux_in.global().get_multiindex_mapping();
-  const std::vector <short int> *lower_mapping_index =
+  const std::vector < std::vector<short int> > &lower_mapping_index =
     kernel_aux_in.global().get_lower_mapping_index();
 
   std::vector <short int> tmp_storage;
@@ -340,7 +340,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
     double pos_coeff = 0;
     double neg_coeff = 0;
 
-    for(int k = 0; k < lower_mappings_for_gamma.size(); k++) {
+    for(unsigned int k = 0; k < lower_mappings_for_gamma.size(); k++) {
 
       const std::vector <short int> &inner_mapping =
         multiindex_mapping[lower_mappings_for_gamma[k]];

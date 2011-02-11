@@ -134,11 +134,9 @@ void DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
   typename ProblemType::TableType::TreeType *rnode) {
 
   typename ProblemType::StatisticType &rnode_stat = rnode->stat();
-  typename ProblemType::TableType::TreeIterator rnode_it =
-    reference_table_->get_node_iterator(rnode);
 
   if(rnode->is_leaf()) {
-    rnode_stat.Init(rnode_it);
+    rnode_stat.Init(problem_->global(), rnode);
   }
   else {
 
@@ -157,7 +155,7 @@ void DualtreeDfs<ProblemType>::PreProcessReferenceTree_(
     typename ProblemType::StatisticType &rnode_right_child_stat =
       rnode_right_child->stat();
     rnode_stat.Init(
-      rnode_it, rnode_left_child_stat, rnode_right_child_stat);
+      problem_->global(), rnode, rnode_left_child_stat, rnode_right_child_stat);
   }
 }
 
