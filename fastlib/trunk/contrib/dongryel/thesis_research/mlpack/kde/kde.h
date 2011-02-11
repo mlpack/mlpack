@@ -59,7 +59,11 @@ class Kde {
 
     typedef mlpack::kde::KdeSummary SummaryType;
 
-    typedef mlpack::kde::KdeStatistic StatisticType;
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      KernelAuxType::ExpansionType;
+
+    typedef mlpack::kde::KdeStatistic<ExpansionType> StatisticType;
 
   public:
 
