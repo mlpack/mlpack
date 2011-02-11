@@ -95,7 +95,19 @@ void Kde<TableType, KernelAuxType>::set_bandwidth(double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
-bool KdeArgumentParser::ConstructBoostVariableMap_(
+bool KdeArgumentParser::ConstructBoostVariableMap(
+  int argc,
+  char *argv[],
+  boost::program_options::variables_map *vm) {
+
+  // Convert C input to C++; skip executable name for Boost.
+  std::vector<std::string> args(argv + 1, argv + argc);
+
+  // Call the other function.
+  return ConstructBoostVariableMap(args, vm);
+}
+
+bool KdeArgumentParser::ConstructBoostVariableMap(
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
 
@@ -221,17 +233,11 @@ bool KdeArgumentParser::ConstructBoostVariableMap_(
 
 template<typename TableType>
 bool KdeArgumentParser::ParseArguments(
-  const std::vector<std::string> &args,
+  boost::program_options::variables_map &vm,
   KdeArguments<TableType> *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
-
-  // Construct the Boost variable map.
-  boost::program_options::variables_map vm;
-  if(ConstructBoostVariableMap_(args, &vm)) {
-    return true;
-  }
 
   // Given the constructed boost variable map, parse each argument.
 
@@ -313,18 +319,6 @@ bool KdeArgumentParser::ParseArguments(
     std::cout << "Running the algorithm on a non-progressive mode...\n";
   }
   return false;
-}
-
-template<typename TableType>
-bool KdeArgumentParser::ParseArguments(
-  int argc,
-  char *argv[],
-  KdeArguments<TableType> *arguments_out) {
-
-  // Convert C input to C++; skip executable name for Boost.
-  std::vector<std::string> args(argv + 1, argv + argc);
-
-  return ParseArguments(args, arguments_out);
 }
 }
 }
