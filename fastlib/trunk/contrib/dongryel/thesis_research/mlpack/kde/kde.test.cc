@@ -27,9 +27,6 @@ class TestKde {
 
   private:
 
-    typedef core::table::Table <
-    core::tree::GenMetricTree<mlpack::kde::KdeStatistic> > TableType;
-
     bool CheckAccuracy_(
       const std::vector<double> &query_results,
       const std::vector<double> &naive_query_results,
@@ -53,6 +50,7 @@ class TestKde {
       return achieved_error <= relative_error;
     }
 
+    template<typename TableType>
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
@@ -69,7 +67,7 @@ class TestKde {
       }
     }
 
-    template<typename MetricType, typename KernelType>
+    template<typename MetricType, typename TableType, typename KernelType>
     void UltraNaive_(
       const MetricType &metric_in,
       TableType &query_table, TableType &reference_table,
@@ -140,6 +138,13 @@ class TestKde {
     template<typename KernelAuxType>
     int StressTest() {
 
+      static const enum mlpack::series_expansion::CartesianExpansionType
+      ExpansionType = KernelAuxType::ExpansionType;
+      typedef core::table::Table <
+      core::tree::GenMetricTree <
+      mlpack::kde::KdeStatistic<ExpansionType> > > TableType;
+
+      // The list of arguments.
       std::vector< std::string > args;
 
       // Push in the reference dataset name.

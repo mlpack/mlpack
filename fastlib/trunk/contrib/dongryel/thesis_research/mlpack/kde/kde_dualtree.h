@@ -814,6 +814,7 @@ class KdeSummary {
     }
 };
 
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 class KdeStatistic {
 
   private:
@@ -824,10 +825,10 @@ class KdeStatistic {
   public:
 
     mlpack::series_expansion::CartesianFarField <
-    mlpack::series_expansion::HYPERCUBE > farfield_expansion_;
+    ExpansionType > farfield_expansion_;
 
     mlpack::series_expansion::CartesianLocal <
-    mlpack::series_expansion::HYPERCUBE > local_expansion_;
+    ExpansionType > local_expansion_;
 
     mlpack::kde::KdePostponed postponed_;
 
