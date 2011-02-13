@@ -55,6 +55,10 @@ class Table {
      */
     core::table::DenseMatrix data_;
 
+    /** @brief The weights associated with each point.
+     */
+    core::table::DensePoint weights_;
+
     /** @brief The rank of the table.
      */
     int rank_;
@@ -302,8 +306,21 @@ class Table {
 
     /** @brief Returns a reference to the underlying data.
      */
+    const core::table::DenseMatrix &data() const {
+      return data_;
+    }
+
+    /** @brief Returns a reference to the underlying data.
+     */
     core::table::DenseMatrix &data() {
       return data_;
+    }
+
+    /** @brief Returns a reference to the weights associated with the
+     *         underlying data.
+     */
+    const core::table::DensePoint &weights() const {
+      return weights_;
     }
 
     /** @brief Returns whether the tree is indexed or not.
@@ -483,6 +500,15 @@ class Table {
       tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, old_from_new_.get(),
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
+
+      // The following part should really be fixed in the future. What
+      // really needs to happen here is that the weights themselves
+      // need to be re-shuffled across machines as well. We hard-code
+      // uniform weights for now.
+      weights_.Init(data_.n_cols());
+      for(int i = 0; i < data_.n_cols(); i++) {
+        weights_[i] = 1.0;
+      }
     }
 
     template<typename PointType>

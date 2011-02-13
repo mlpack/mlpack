@@ -796,6 +796,13 @@ class KdeSummary {
       else {
 
         // The far-field expansion of the reference node.
+        const typename GlobalType::KernelAuxType::FarFieldType &
+        farfield_expansion = rnode->stat().farfield_expansion_;
+
+        // The local expansion of the query node.
+        const typename GlobalType::KernelAuxType::LocalType &
+        local_expansion = qnode->stat().local_expansion_;
+
         return false;
       }
       return false;
@@ -912,10 +919,10 @@ class KdeStatistic {
       core::table::DensePoint node_center;
       node->bound().center(&node_center);
       farfield_expansion_.Init(global.kernel_aux(), node_center);
-      //      farfield_expansion_.AccumulateCoeffs(
-      //global.kernel_aux(), global.reference_table()->data(),
-      //global.reference_table()->weights(), node->begin(), node->end(),
-      //global.kernel_aux().max_order());
+      farfield_expansion_.AccumulateCoeffs(
+        global.kernel_aux(), global.reference_table()->data(),
+        global.reference_table()->weights(), node->begin(), node->end(),
+        global.kernel_aux().global().get_max_order());
     }
 
     /** @brief Initializes by combining statistics of two partitions.
