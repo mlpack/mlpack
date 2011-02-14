@@ -9,13 +9,20 @@
  *  A matcher that does not examine each partition for every prune check.
  */
 
+#ifndef PERM_FREE_MATCHER_H
+#define PERM_FREE_MATCHER_H
+
 namespace npt {
   
   class PermFreeMatcher {
     
     
     
+    
   }; // class
   
 } // namespace
+
+#endif 
+
 

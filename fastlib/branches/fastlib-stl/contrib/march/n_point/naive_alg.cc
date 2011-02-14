@@ -31,11 +31,14 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
     // k > 0
     
     // all points with index <= k will violate symmetry in this tuple
-    for (index_t new_point = points_in_tuple[k] + 1; new_point < num_points_; 
+    for (index_t new_point = points_in_tuple[k-1] + 1; new_point < num_points_; 
          new_point++) {
       
       bool this_point_works = true;
       arma::colvec new_point_vec = data_points_.col(new_point);
+      
+      // TODO: does this leak memory?
+      permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
       
       // loop over points already in the tuple
       for (index_t j = 0; this_point_works && j < k; j++) {
@@ -57,8 +60,10 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
         
         points_in_tuple[k] = new_point;
         
-        // are we finished
+        // are we finished?
         if (k == tuple_size_ - 1) {
+          
+          //std::cout << "valid tuple found\n";
           
           num_tuples_++;
           double this_weight = 1.0;
