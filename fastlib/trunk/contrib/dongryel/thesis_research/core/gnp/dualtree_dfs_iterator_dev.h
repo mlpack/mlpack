@@ -153,7 +153,8 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
       metric_, engine_->problem_->global(),
       qnode, rnode, squared_distance_range);
     bool prunable = engine_->CanSummarize_(
-                      qnode, rnode, delta, query_results_);
+                      qnode, rnode, delta,
+                      squared_distance_range, query_results_);
 
     if(prunable) {
       engine_->Summarize_(qnode, delta, query_results_);
