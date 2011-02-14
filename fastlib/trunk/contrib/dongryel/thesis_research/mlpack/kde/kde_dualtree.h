@@ -627,7 +627,7 @@ class KdeSummary {
     typename GlobalType, typename DeltaType, typename TreeType,
              typename ResultType >
     bool CanSummarizeSeriesExpansion_(
-      const GlobalType &global, const DeltaType &delta,
+      const GlobalType &global, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode, double right_hand_side,
       ResultType *query_results, int *order_farfield_to_local,
@@ -636,10 +636,6 @@ class KdeSummary {
       // The far-field expansion of the reference node.
       const typename GlobalType::KernelAuxType::FarFieldType &
       farfield_expansion = rnode->stat().farfield_expansion_;
-
-      // The local expansion of the query node.
-      const typename GlobalType::KernelAuxType::LocalType &
-      local_expansion = qnode->stat().local_expansion_;
 
       // Actual amount of error incurred per each query/ref pair.
       double actual_err_farfield_to_local = 0;
@@ -674,6 +670,61 @@ class KdeSummary {
           rnode->bound(), qnode->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_local);
+
+      // Update computational cost and compute the minimum.
+      if(order_farfield_to_local >= 0) {
+        cost_farfield_to_local =
+          static_cast<int>(
+            global.kernel_aux().global().FarFieldToLocalTranslationCost(
+              *order_farfield_to_local));
+      }
+      if(order_farfield >= 0) {
+        cost_farfield =
+          static_cast<int>(
+            global.kernel_aux().global().FarFieldEvaluationCost(
+              *order_farfield) * (qnode->count()));
+      }
+      if(order_local >= 0) {
+        cost_local =
+          static_cast<int>(
+            global.kernel_aux().global().DirectLocalAccumulationCost(
+              *order_local) * (rnode->count()));
+      }
+
+      min_cost =
+        std::min(
+          cost_farfield_to_local,
+          std::min(
+            cost_farfield, std::min(
+              cost_local, cost_exhaustive)));
+
+      if(cost_farfield_to_local == min_cost) {
+        delta.used_error_ = farfield_expansion.get_weight_sum() *
+                            actual_err_farfield_to_local;
+        *order_farfield = -1;
+        *order_local = -1;
+        return true;
+      }
+
+      if(cost_farfield == min_cost) {
+        delta.used_error_ = farfield_expansion.get_weight_sum() *
+                            actual_err_farfield;
+        *order_farfield_to_local = -1;
+        *order_local = -1;
+        return true;
+      }
+
+      if(cost_local == min_cost) {
+        delta.used_error_ = farfield_expansion.get_weight_sum() *
+                            actual_err_local;
+        *order_farfield_to_local = -1;
+        *order_farfield = -1;
+        return true;
+      }
+
+      *order_farfield_to_local = -1;
+      *order_farfield = -1;
+      *order_local = -1;
       return false;
     }
 
@@ -829,7 +880,7 @@ class KdeSummary {
     template < typename GlobalType, typename DeltaType, typename TreeType,
              typename ResultType >
     bool CanSummarize(
-      const GlobalType &global, const DeltaType &delta,
+      const GlobalType &global, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
 

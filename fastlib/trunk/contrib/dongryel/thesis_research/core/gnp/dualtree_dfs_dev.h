@@ -275,7 +275,7 @@ template<typename ProblemType>
 bool DualtreeDfs<ProblemType>::CanSummarize_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
-  const typename ProblemType::DeltaType &delta,
+  typename ProblemType::DeltaType &delta,
   const core::math::Range &squared_distance_range,
   typename ProblemType::ResultType *query_results) {
 
