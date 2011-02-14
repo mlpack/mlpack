@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(MLPACK C CXX Fortran)
+project(MLPACK C CXX)
 
 #find_package(BLAS REQUIRED)
 #find_package(LAPACK REQUIRED)
