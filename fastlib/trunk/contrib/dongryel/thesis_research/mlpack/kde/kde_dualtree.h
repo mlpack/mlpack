@@ -623,6 +623,60 @@ class KdeSummary {
     // For Boost serialization.
     friend class boost::serialization::access;
 
+    template <
+    typename GlobalType, typename DeltaType, typename TreeType,
+             typename ResultType >
+    bool CanSummarizeSeriesExpansion_(
+      const GlobalType &global, const DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode, TreeType *rnode, double right_hand_side,
+      ResultType *query_results, int *order_farfield_to_local,
+      int *order_farfield, int *order_local) const {
+
+      // The far-field expansion of the reference node.
+      const typename GlobalType::KernelAuxType::FarFieldType &
+      farfield_expansion = rnode->stat().farfield_expansion_;
+
+      // The local expansion of the query node.
+      const typename GlobalType::KernelAuxType::LocalType &
+      local_expansion = qnode->stat().local_expansion_;
+
+      // Actual amount of error incurred per each query/ref pair.
+      double actual_err_farfield_to_local = 0;
+      double actual_err_farfield = 0;
+      double actual_err_local = 0;
+
+      // The allowed error per each query/ref pair.
+      double allowed_err =
+        right_hand_side / static_cast<double>(rnode->count());
+
+      // Estimated computational cost.
+      int cost_farfield_to_local = std::numeric_limits<int>::max();
+      int cost_farfield = std::numeric_limits<int>::max();
+      int cost_local = std::numeric_limits<int>::max();
+      int cost_exhaustive = (qnode->count()) * (rnode->count()) *
+                            (qnode->bound().dim());
+      int min_cost = 0;
+
+      // Get the order of approximations.
+      *order_farfield_to_local =
+        global.kernel_aux().OrderForConvertingFromFarFieldToLocal(
+          rnode->bound(), qnode->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          allowed_err, &actual_err_farfield_to_local);
+      *order_farfield =
+        global.kernel_aux().OrderForEvaluatingFarField(
+          rnode->bound(), qnode->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          allowed_err, &actual_err_farfield);
+      *order_local =
+        global.kernel_aux().OrderForEvaluatingLocal(
+          rnode->bound(), qnode->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          allowed_err, &actual_err_local);
+      return false;
+    }
+
   public:
 
     double densities_l_;
@@ -776,6 +830,7 @@ class KdeSummary {
              typename ResultType >
     bool CanSummarize(
       const GlobalType &global, const DeltaType &delta,
+      const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
 
       double left_hand_side = delta.used_error_;
@@ -795,15 +850,14 @@ class KdeSummary {
       // Otherwise, try series expansion.
       else {
 
-        // The far-field expansion of the reference node.
-        const typename GlobalType::KernelAuxType::FarFieldType &
-        farfield_expansion = rnode->stat().farfield_expansion_;
+        int order_farfield_to_local;
+        int order_farfield;
+        int order_local;
 
-        // The local expansion of the query node.
-        const typename GlobalType::KernelAuxType::LocalType &
-        local_expansion = qnode->stat().local_expansion_;
-
-        return false;
+        return CanSummarizeSeriesExpansion_(
+                 global, delta, squared_distance_range,
+                 qnode, rnode, right_hand_side, query_results,
+                 &order_farfield_to_local, &order_farfield, &order_local);
       }
       return false;
     }

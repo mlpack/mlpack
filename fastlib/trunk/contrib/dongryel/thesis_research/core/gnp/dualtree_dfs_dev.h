@@ -276,6 +276,7 @@ bool DualtreeDfs<ProblemType>::CanSummarize_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
   const typename ProblemType::DeltaType &delta,
+  const core::math::Range &squared_distance_range,
   typename ProblemType::ResultType *query_results) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -284,7 +285,8 @@ bool DualtreeDfs<ProblemType>::CanSummarize_(
   new_summary.ApplyDelta(delta);
 
   return new_summary.CanSummarize(
-           problem_->global(), delta, qnode, rnode, query_results);
+           problem_->global(), delta, squared_distance_range,
+           qnode, rnode, query_results);
 }
 
 template<typename ProblemType>
@@ -348,7 +350,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
                              squared_distance_range);
 
   // If it is prunable, then summarize and return.
-  if(CanSummarize_(qnode, rnode, delta, query_results)) {
+  if(CanSummarize_(
+        qnode, rnode, delta, squared_distance_range, query_results)) {
     Summarize_(qnode, delta, query_results);
     num_deterministic_prunes_++;
     return true;

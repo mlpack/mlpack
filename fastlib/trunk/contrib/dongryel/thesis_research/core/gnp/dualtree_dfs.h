@@ -252,6 +252,7 @@ class DualtreeDfs {
       TreeType *qnode,
       TreeType *rnode,
       const typename ProblemType::DeltaType &delta,
+      const core::math::Range &squared_distance_range,
       typename ProblemType::ResultType *query_results);
 
     /** @brief Summarize a given pair of query/reference using a
