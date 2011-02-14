@@ -215,6 +215,13 @@ get_lower_mapping_index() const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+const std::vector <
+short int > &CartesianExpansionGlobal <ExpansionType>::
+lower_mapping_index(int pos) const {
+  return lower_mapping_index_[pos];
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 int CartesianExpansionGlobal <ExpansionType>::get_max_order() const {
   return max_order_;
 }
