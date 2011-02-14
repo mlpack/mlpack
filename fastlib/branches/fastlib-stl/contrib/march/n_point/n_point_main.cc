@@ -14,60 +14,62 @@ using namespace npt;
 
 int main(int argc, char* argv[]) {
 
+  fx_init(argc, argv, NULL);
+  
   // read in data and parameters
+  
+  std::string data_filename = fx_param_str(NULL, "data", "test_data.csv");
+  arma::mat data_mat;
+  data_mat.load(data_filename);
+
+  //std::cout << "loaded data\n";
+  
+  
+  arma::colvec weights;  
+  if (fx_param_exists(NULL, "weights")) {
+    weights.load(fx_param_str_req(NULL, "weights"));
+  }
+  else {
+    weights.set_size(data_mat.n_cols);
+    weights.fill(1.0);
+  }
+  
+  //std::cout << "loaded weights\n";
+  
+  arma::mat lower_bds, upper_bds;
+  upper_bds.load(fx_param_str(NULL, "upper_bounds", "test_upper_bds.csv"));
+  lower_bds.load(fx_param_str(NULL, "lower_bounds", "test_lower_bds.csv"));
+
+  //std::cout << "loaded bounds\n";
   
   
   // run algorithm
   
+  if (fx_param_exists(NULL, "do_naive")) {
   
-  // output results
+    NaiveAlg naive_alg(data_mat, weights, lower_bds, upper_bds);
+    
+    naive_alg.ComputeCounts();
+    
+    std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n";
+    
+  }
   
+  if (fx_param_exists(NULL, "do_single_bandwidth")) {
+    
+    index_t leaf_size = fx_param_int(NULL, "leaf_size", 10);
+    
+    SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
+                                  lower_bds, upper_bds);
+    
+    single_alg.ComputeCounts();
+    
+    std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n";
+    
+    
+  }
   
-  // testing stuff
-  
-  //Permutations perms(3);
-  //perms.Print();
-  
-  arma::mat lower_bds;
-  arma::mat upper_bds;
-  
-  lower_bds << 0.0 << 0.0 << 0.0 << arma::endr
-  << 0.0 << 0.0 << 0.0 << arma::endr
-  << 0.0 << 0.0 << 0.0 << arma::endr;
-  
-  upper_bds.load("test_upper_bds.csv");
-  
-  arma::mat data;
-  data.load("test_data.csv");
-  
-  arma::colvec weights(data.n_cols);
-  weights.fill(1.0);
-  
-  index_t leaf_size = 1;
-  
-  SingleBandwidthAlg single_alg(data, weights, leaf_size, 
-                                lower_bds, upper_bds);
-  
-  single_alg.ComputeCounts();
-  
-  std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n";
-  
-  NaiveAlg naive_alg(data, weights, lower_bds, upper_bds);
-
-  naive_alg.ComputeCounts();
-  
-  std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n";
-  
-  /*
-  SingleMatcher matcher(3, lower_bds, upper_bds);
-  
-  std::vector<bool> perm_ok1(6, true);
-  std::cout << "Testing points: " << matcher.TestPointPair(0.5, 0, 1, perm_ok1)
-  << "\n";
-  */
-  
-  //std::vector<bool> perm_ok2(6, true);
-  //std::cout << "Testing boxes: " << TestHrectPair(5.0, );
+  fx_done(NULL);
   
   return 0;
   
