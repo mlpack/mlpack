@@ -157,23 +157,23 @@ mlpack::series_expansion::HYPERCUBE >::EvaluateField(
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[order_];
+  const std::vector<short int> &traversal_order =
+    kernel_aux_in.global().traversal_mapping(order_);
 
   for(int i = 1; i < total_num_coeffs; i++) {
 
     int index = traversal_order[i];
-    std::vector<short int> &lower_mappings =
-      kernel_aux_in.global().lower_mapping_index_[index];
+    const std::vector<short int> &lower_mappings =
+      kernel_aux_in.global().lower_mapping_index(index);
 
     // from the direct descendant, recursively compute the multipole moments
     int direct_ancestor_mapping_pos =
       lower_mappings[lower_mappings.size() - 2];
     int position = 0;
     const std::vector<short int> &mapping =
-      kernel_aux_in.global().multiindex_mapping_[index];
+      kernel_aux_in.global().get_multiindex(index);
     const std::vector<short int> &direct_ancestor_mapping =
-      kernel_aux_in.global().multiindex_mapping_[direct_ancestor_mapping_pos];
+      kernel_aux_in.global().get_multiindex(direct_ancestor_mapping_pos);
     for(int i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
         position = i;
@@ -296,7 +296,7 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
   new_center.Alias(se->get_center());
   int prev_order = se->get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
-  const std::vector<short int> *upper_mapping_index =
+  const std::vector< std::vector<short int> > &upper_mapping_index =
     kernel_aux_in.global().get_upper_mapping_index();
   core::table::DensePoint new_coeffs;
   new_coeffs.Alias(se->get_coeffs());
@@ -330,7 +330,7 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[order_];
+    kernel_aux_in.global().traversal_mapping(order_);
 
   // do the actual translation
   for(int j = 0; j < total_num_coeffs; j++) {
@@ -343,7 +343,7 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
-    for(int k = 0; k < upper_mappings_for_alpha.size(); k++) {
+    for(unsigned int k = 0; k < upper_mappings_for_alpha.size(); k++) {
 
       if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
         break;

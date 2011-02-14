@@ -546,9 +546,10 @@ void DualtreeDfs<ProblemType>::PostProcess_(
       core::table::DensePoint q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
-      query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
-      query_results->PostProcess(metric, q_index, problem_->global(),
-                                 problem_->is_monochromatic());
+      query_results->FinalApplyPostponed(
+        problem_->global(), q_col, q_index, qnode_stat.postponed_);
+      query_results->PostProcess(
+        metric, q_index, problem_->global(), problem_->is_monochromatic());
 
       // Refine min and max summary statistics.
       qnode_stat.summary_.Accumulate(
@@ -562,10 +563,14 @@ void DualtreeDfs<ProblemType>::PostProcess_(
     typename ProblemType::StatisticType &qnode_left_stat = qnode_left->stat();
     typename ProblemType::StatisticType &qnode_right_stat = qnode_right->stat();
 
-    qnode_left_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
-    qnode_right_stat.postponed_.ApplyPostponed(qnode_stat.postponed_);
+    // For the final term, push down the postponed contribution.
+    qnode_left_stat.postponed_.FinalApplyPostponed(
+      problem_->global(), qnode_stat.postponed_);
+    qnode_right_stat.postponed_.FinalApplyPostponed(
+      problem_->global(), qnode_stat.postponed_);
     qnode_stat.postponed_.SetZero();
 
+    // Recursively postprocess the left and the right results.
     PostProcess_(metric, qnode_left,  query_results);
     PostProcess_(metric, qnode_right, query_results);
 

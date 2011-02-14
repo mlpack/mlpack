@@ -274,7 +274,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
   new_center.Alias(se->get_center());
   int prev_order = se->get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
-  const std::vector<short int> *upper_mapping_index =
+  const std::vector< std::vector<short int> > &upper_mapping_index =
     kernel_aux_in.global().get_upper_mapping_index();
   core::table::DensePoint new_coeffs;
   new_coeffs.Alias(se->get_coeffs());
@@ -316,7 +316,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
-    for(int k = 0; k < upper_mappings_for_alpha.size(); k++) {
+    for(unsigned int k = 0; k < upper_mappings_for_alpha.size(); k++) {
 
       if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
         break;

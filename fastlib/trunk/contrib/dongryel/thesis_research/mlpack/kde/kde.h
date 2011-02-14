@@ -46,7 +46,11 @@ class Kde {
 
     typedef IncomingKernelAuxType KernelAuxType;
 
-    typedef mlpack::kde::KdePostponed PostponedType;
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      KernelAuxType::ExpansionType;
+
+    typedef mlpack::kde::KdePostponed<ExpansionType> PostponedType;
 
     typedef mlpack::kde::KdeGlobal<TableType, KernelAuxType> GlobalType;
 
@@ -55,10 +59,6 @@ class Kde {
     typedef mlpack::kde::KdeDelta DeltaType;
 
     typedef mlpack::kde::KdeSummary SummaryType;
-
-    static const
-    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
-      KernelAuxType::ExpansionType;
 
     typedef mlpack::kde::KdeStatistic<ExpansionType> StatisticType;
 

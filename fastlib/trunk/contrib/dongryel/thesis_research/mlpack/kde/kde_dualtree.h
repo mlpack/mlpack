@@ -26,6 +26,7 @@ namespace kde {
 
 /** @brief The postponed quantities for KDE.
  */
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 class KdePostponed {
 
   private:
@@ -34,6 +35,12 @@ class KdePostponed {
     friend class boost::serialization::access;
 
   public:
+
+    /** @brief The local expansion representing the postponed
+     *         quantities.
+     */
+    mlpack::series_expansion::CartesianLocal <
+    ExpansionType > local_expansion_;
 
     /** @brief The lower bound on the postponed quantities.
      */
@@ -109,7 +116,7 @@ class KdePostponed {
         rnode->stat().farfield_expansion_.TranslateToLocal(
           global.kernel_aux(),
           delta_in.order_farfield_to_local_,
-          & (qnode->stat().local_expansion_));
+          & (qnode->stat().postponed_.local_expansion_));
       }
       else if(delta_in.order_farfield_ >= 0) {
         typename GlobalType::TableType::TreeIterator qnode_it =
@@ -126,7 +133,7 @@ class KdePostponed {
         }
       }
       else if(delta_in.order_local_ >= 0) {
-        qnode->stat().local_expansion_.AccumulateCoeffs(
+        qnode->stat().postponed_.local_expansion_.AccumulateCoeffs(
           global.kernel_aux(), global.reference_table()->data(),
           global.reference_table()->weights(), rnode->begin(), rnode->end(),
           delta_in.order_local_);
@@ -147,6 +154,19 @@ class KdePostponed {
       used_error_ = used_error_ + other_postponed.used_error_;
     }
 
+    /** @brief Applies the incoming postponed contribution.
+     */
+    template<typename GlobalType>
+    void FinalApplyPostponed(
+      const GlobalType &global, const KdePostponed &other_postponed) {
+
+      // Translate the local expansion and clear it.
+      other_postponed.local_expansion_.TranslateToLocal(
+        global.kernel_aux(), &local_expansion_);
+
+      ApplyPostponed(other_postponed);
+    }
+
     /** @brief Called from an exact pairwise evaluation method
      *         (i.e. the base case) which incurs no error.
      */
@@ -162,7 +182,7 @@ class KdePostponed {
       densities_u_ = densities_u_ + density_incoming;
     }
 
-    /** @brief Sets everything to zero.
+    /** @brief Sets everything to zero except for the local expansion.
      */
     void SetZero() {
       densities_l_ = 0;
@@ -593,14 +613,29 @@ class KdeResult {
       }
     }
 
+    template<typename KdePostponedType>
     void ApplyPostponed(
-      int q_index,
-      const KdePostponed &postponed_in) {
-
+      int q_index, const KdePostponedType &postponed_in) {
       densities_l_[q_index] = densities_l_[q_index] + postponed_in.densities_l_;
       densities_u_[q_index] = densities_u_[q_index] + postponed_in.densities_u_;
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
       used_error_[q_index] = used_error_[q_index] + postponed_in.used_error_;
+    }
+
+    template<typename GlobalType, typename KdePostponedType>
+    void FinalApplyPostponed(
+      const GlobalType &global,
+      const core::table::DensePoint &qpoint,
+      int q_index,
+      const KdePostponedType &postponed_in) {
+
+      // Evaluate the local expansion.
+      densities_[q_index] +=
+        postponed_in.local_expansion_.EvaluateField(
+          global.kernel_aux(), qpoint);
+
+      // Apply postponed.
+      ApplyPostponed(q_index, postponed_in);
     }
 };
 
@@ -974,10 +1009,10 @@ class KdeSummary {
       used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
     }
 
-    template<typename GlobalType>
+    template<typename GlobalType, typename KdePostponedType>
     void Accumulate(
       const GlobalType &global, const KdeSummary &summary_in,
-      const KdePostponed &postponed_in) {
+      const KdePostponedType &postponed_in) {
       densities_l_ = std::min(
                        densities_l_,
                        summary_in.densities_l_ + postponed_in.densities_l_);
@@ -996,7 +1031,8 @@ class KdeSummary {
       densities_u_ = densities_u_ + delta_in.densities_u_;
     }
 
-    void ApplyPostponed(const KdePostponed &postponed_in) {
+    template<typename KdePostponedType>
+    void ApplyPostponed(const KdePostponedType &postponed_in) {
       densities_l_ = densities_l_ + postponed_in.densities_l_;
       densities_u_ = densities_u_ + postponed_in.densities_u_;
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
@@ -1017,10 +1053,7 @@ class KdeStatistic {
     mlpack::series_expansion::CartesianFarField <
     ExpansionType > farfield_expansion_;
 
-    mlpack::series_expansion::CartesianLocal <
-    ExpansionType > local_expansion_;
-
-    mlpack::kde::KdePostponed postponed_;
+    mlpack::kde::KdePostponed<ExpansionType> postponed_;
 
     mlpack::kde::KdeSummary summary_;
 

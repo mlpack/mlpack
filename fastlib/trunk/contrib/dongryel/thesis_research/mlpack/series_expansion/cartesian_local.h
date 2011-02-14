@@ -99,6 +99,10 @@ class CartesianLocal {
       const KernelAuxType &kernel_aux_in,
       const char *name = "", FILE *stream = stderr) const;
 
+    /** @brief Sets the coefficients to zero.
+     */
+    void SetZero();
+
     /** @brief Translate from a far field expansion to the expansion
      *         here.The translated coefficients are added up to the
      *         ones here.
@@ -116,6 +120,11 @@ class CartesianLocal {
       const KernelAuxType &kernel_aux_in,
       CartesianLocal<ExpansionType> *se) const;
 };
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianLocal<ExpansionType>::SetZero() {
+  coeffs_.SetZero();
+}
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 core::table::DensePoint &CartesianLocal<ExpansionType>::get_center() {

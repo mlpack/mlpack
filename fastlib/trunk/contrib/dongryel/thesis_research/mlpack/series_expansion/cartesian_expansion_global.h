@@ -119,6 +119,8 @@ class CartesianExpansionGlobal {
     const std::vector <
     std::vector< short int > > &get_lower_mapping_index() const;
 
+    const std::vector< short int> &lower_mapping_index(int pos) const;
+
     int get_max_order() const;
 
     const std::vector< short int > & get_multiindex(int pos) const;
