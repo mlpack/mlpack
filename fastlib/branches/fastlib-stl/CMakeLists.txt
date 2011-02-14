@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-project(FASTLIB C CXX Fortran)
+project(FASTLIB C CXX)
 
 ## External Libraries
 #  ls /usr/share/cmake-2.6/Modules/Find* | \
