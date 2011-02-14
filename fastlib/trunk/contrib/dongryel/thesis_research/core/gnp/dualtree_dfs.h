@@ -259,7 +259,7 @@ class DualtreeDfs {
      *         deterministic approximation.
      */
     void Summarize_(
-      TreeType *qnode,
+      TreeType *qnode, TreeType *rnode,
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 

@@ -177,7 +177,7 @@ double CartesianFarField<mlpack::series_expansion::HYPERCUBE>::EvaluateField(
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[order_];
+    kernel_aux_in.global().traversal_mapping(order_);
 
   // compute h_{\alpha}((x_q - x_R)/sqrt(2h^2)) ((x_r - x_R)/h)^{\alpha}
   for(int j = 0; j < total_num_coeffs; j++) {
@@ -370,7 +370,9 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
   int dimension = kernel_aux_in.global().get_dimension();
   int total_num_coeffs =
     kernel_aux_in.global().get_total_num_coeffs(truncation_order);
-  double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
+  double bandwidth_factor =
+    kernel_aux_in.BandwidthFactor(
+      kernel_aux_in.kernel().bandwidth_sq());
 
   kernel_aux_in.AllocateDerivativeMap(
     dimension, 2 * truncation_order, &derivative_map);
@@ -402,7 +404,7 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =
-    kernel_aux_in.global().traversal_mapping_[truncation_order];
+    kernel_aux_in.global().traversal_mapping(truncation_order);
 
   for(int j = 0; j < total_num_coeffs; j++) {
 

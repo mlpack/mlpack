@@ -157,7 +157,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
                       squared_distance_range, query_results_);
 
     if(prunable) {
-      engine_->Summarize_(qnode, delta, query_results_);
+      engine_->Summarize_(qnode, rnode, delta, query_results_);
     }
     else {
 

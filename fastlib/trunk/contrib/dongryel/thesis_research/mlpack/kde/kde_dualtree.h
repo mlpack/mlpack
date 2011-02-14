@@ -98,9 +98,40 @@ class KdePostponed {
      *         postponed quantities, optionally to the query results
      *         as well.
      */
-    template<typename KdeDelta, typename ResultType>
+    template < typename TreeType, typename GlobalType,
+             typename KdeDelta, typename ResultType >
     void ApplyDelta(
-      const KdeDelta &delta_in, ResultType *query_results) {
+      TreeType *qnode, TreeType *rnode,
+      const GlobalType &global, const KdeDelta &delta_in,
+      ResultType *query_results) {
+
+      if(delta_in.order_farfield_to_local_ >= 0) {
+        rnode->stat().farfield_expansion_.TranslateToLocal(
+          global.kernel_aux(),
+          delta_in.order_farfield_to_local_,
+          & (qnode->stat().local_expansion_));
+      }
+      else if(delta_in.order_farfield_ >= 0) {
+        typename GlobalType::TableType::TreeIterator qnode_it =
+          const_cast <
+          typename GlobalType::TableType * >(
+            global.query_table())->get_node_iterator(qnode);
+        while(qnode_it.HasNext()) {
+          core::table::DensePoint qpoint;
+          int qpoint_id;
+          qnode_it.Next(&qpoint, &qpoint_id);
+          query_results->densities_[qpoint_id] +=
+            rnode->stat().farfield_expansion_.EvaluateField(
+              global.kernel_aux(), qpoint, delta_in.order_farfield_);
+        }
+      }
+      else if(delta_in.order_local_ >= 0) {
+        qnode->stat().local_expansion_.AccumulateCoeffs(
+          global.kernel_aux(), global.reference_table()->data(),
+          global.reference_table()->weights(), rnode->begin(), rnode->end(),
+          delta_in.order_local_);
+      }
+
       densities_l_ = densities_l_ + delta_in.densities_l_;
       densities_u_ = densities_u_ + delta_in.densities_u_;
       pruned_ = pruned_ + delta_in.pruned_;
@@ -585,17 +616,26 @@ class KdeDelta {
 
     double used_error_;
 
+    bool finite_difference_prune_;
+
+    int order_farfield_to_local_;
+
+    int order_farfield_;
+
+    int order_local_;
+
     std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
 
     KdeDelta() {
       SetZero();
     }
 
-    ~KdeDelta() {
-    }
-
     void SetZero() {
       densities_l_ = densities_u_ = pruned_ = used_error_ = 0;
+      finite_difference_prune_ = false;
+      order_farfield_to_local_ = -1;
+      order_farfield_ = -1;
+      order_local_ = -1;
       mean_variance_pair_ = NULL;
     }
 
@@ -630,8 +670,7 @@ class KdeSummary {
       const GlobalType &global, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode, double right_hand_side,
-      ResultType *query_results, int *order_farfield_to_local,
-      int *order_farfield, int *order_local) const {
+      ResultType *query_results) const {
 
       // The far-field expansion of the reference node.
       const typename GlobalType::KernelAuxType::FarFieldType &
@@ -655,40 +694,40 @@ class KdeSummary {
       int min_cost = 0;
 
       // Get the order of approximations.
-      *order_farfield_to_local =
+      delta.order_farfield_to_local_ =
         global.kernel_aux().OrderForConvertingFromFarFieldToLocal(
           rnode->bound(), qnode->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_farfield_to_local);
-      *order_farfield =
+      delta.order_farfield_ =
         global.kernel_aux().OrderForEvaluatingFarField(
           rnode->bound(), qnode->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_farfield);
-      *order_local =
+      delta.order_local_ =
         global.kernel_aux().OrderForEvaluatingLocal(
           rnode->bound(), qnode->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_local);
 
       // Update computational cost and compute the minimum.
-      if(order_farfield_to_local >= 0) {
+      if(delta.order_farfield_to_local_ >= 0) {
         cost_farfield_to_local =
           static_cast<int>(
             global.kernel_aux().global().FarFieldToLocalTranslationCost(
-              *order_farfield_to_local));
+              delta.order_farfield_to_local_));
       }
-      if(order_farfield >= 0) {
+      if(delta.order_farfield_ >= 0) {
         cost_farfield =
           static_cast<int>(
             global.kernel_aux().global().FarFieldEvaluationCost(
-              *order_farfield) * (qnode->count()));
+              delta.order_farfield_) * (qnode->count()));
       }
-      if(order_local >= 0) {
+      if(delta.order_local_ >= 0) {
         cost_local =
           static_cast<int>(
             global.kernel_aux().global().DirectLocalAccumulationCost(
-              *order_local) * (rnode->count()));
+              delta.order_local_) * (rnode->count()));
       }
 
       min_cost =
@@ -701,30 +740,30 @@ class KdeSummary {
       if(cost_farfield_to_local == min_cost) {
         delta.used_error_ = farfield_expansion.get_weight_sum() *
                             actual_err_farfield_to_local;
-        *order_farfield = -1;
-        *order_local = -1;
+        delta.order_farfield_ = -1;
+        delta.order_local_ = -1;
         return true;
       }
 
       if(cost_farfield == min_cost) {
         delta.used_error_ = farfield_expansion.get_weight_sum() *
                             actual_err_farfield;
-        *order_farfield_to_local = -1;
-        *order_local = -1;
+        delta.order_farfield_to_local_ = -1;
+        delta.order_local_ = -1;
         return true;
       }
 
       if(cost_local == min_cost) {
         delta.used_error_ = farfield_expansion.get_weight_sum() *
                             actual_err_local;
-        *order_farfield_to_local = -1;
-        *order_farfield = -1;
+        delta.order_farfield_to_local_ = -1;
+        delta.order_farfield_ = -1;
         return true;
       }
 
-      *order_farfield_to_local = -1;
-      *order_farfield = -1;
-      *order_local = -1;
+      delta.order_farfield_to_local_ = -1;
+      delta.order_farfield_ = -1;
+      delta.order_local_ = -1;
       return false;
     }
 
@@ -895,20 +934,15 @@ class KdeSummary {
 
       // Prunable by finite-difference.
       if(left_hand_side <= right_hand_side) {
+        delta.finite_difference_prune_ = true;
         return true;
       }
 
       // Otherwise, try series expansion.
       else {
-
-        int order_farfield_to_local;
-        int order_farfield;
-        int order_local;
-
         return CanSummarizeSeriesExpansion_(
                  global, delta, squared_distance_range,
-                 qnode, rnode, right_hand_side, query_results,
-                 &order_farfield_to_local, &order_farfield, &order_local);
+                 qnode, rnode, right_hand_side, query_results);
       }
       return false;
     }
