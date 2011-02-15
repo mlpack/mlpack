@@ -182,9 +182,11 @@ class BoundsAux {
         const core::math::Range &range2 = bound2.get(d);
         double bound1_centroid_coord = range1.lo + range1.width() / 2;
         farthest_distance_manhattan =
-          max(farthest_distance_manhattan,
-              max(fabs(bound1_centroid_coord - range2.lo),
-                  fabs(bound1_centroid_coord - range2.hi)));
+          std::max(
+            farthest_distance_manhattan,
+            std::max(
+              fabs(bound1_centroid_coord - range2.lo),
+              fabs(bound1_centroid_coord - range2.hi)));
       }
       *dimension = bound1.dim();
       return farthest_distance_manhattan;

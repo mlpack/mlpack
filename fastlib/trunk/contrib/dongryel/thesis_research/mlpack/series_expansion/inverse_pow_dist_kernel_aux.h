@@ -76,7 +76,7 @@ class InversePowDistKernelAux {
     }
 
     void Init(double power, int max_order, int dim) {
-      kernel_.Init(power, dim);
+      kernel_.Init(power);
       global_.Init(max_order, dim);
     }
 
@@ -127,7 +127,7 @@ class InversePowDistKernelAux {
         // The first factor multiplied.
         double first_factor = 2 * sum_of_indices + kernel_.lambda() - 2;
 
-        // The second factor multilied.
+        // The second factor multiplied.
         double second_factor = sum_of_indices + kernel_.lambda() - 2;
 
         // Compute the contribution of $D_{x}^{n - e_d} \phi_{\nu,
@@ -161,8 +161,9 @@ class InversePowDistKernelAux {
           derivative_map->set(i, 0, 0);
         }
         else {
-          derivative_map->set(i, 0, -contribution / squared_l2_norm /
-                              sum_of_indices / inv_multiindex_factorials[i]);
+          derivative_map->set(
+            i, 0, -contribution / squared_l2_norm /
+            sum_of_indices / inv_multiindex_factorials[i]);
         }
 
       } // end of iterating over all required multiindex positions...

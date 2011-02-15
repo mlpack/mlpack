@@ -666,6 +666,10 @@ class EpanKernelMultivariateAux {
       double min_dist_sqd_regions, double max_dist_sqd_regions,
       double max_error, double *actual_error) const {
 
+      // Temporarily disabled until further debugging.
+      return -1;
+
+      /*
       // First check that the maximum distances between the two regions are
       // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
@@ -708,6 +712,7 @@ class EpanKernelMultivariateAux {
       // Failing all above, take up to 2nd terms.
       *actual_error = 0;
       return 2;
+      */
     }
 
     template<typename BoundType>
@@ -716,6 +721,10 @@ class EpanKernelMultivariateAux {
       double min_dist_sqd_regions, double max_dist_sqd_regions,
       double max_error, double *actual_error) const {
 
+      // Temporarily disabled until further debugging.
+      return -1;
+
+      /*
       // First check that the maximum distances between the two regions are
       // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq() ||
@@ -726,6 +735,7 @@ class EpanKernelMultivariateAux {
         *actual_error = 0;
         return 2;
       }
+      */
     }
 
     template<typename BoundType>
@@ -735,6 +745,10 @@ class EpanKernelMultivariateAux {
       double min_dist_sqd_regions, double max_dist_sqd_regions,
       double max_error, double *actual_error) const {
 
+      // Temporarily disabled until further debugging.
+      return -1;
+
+      /*
       // First check that the maximum distances between the two regions are
       // within the bandwidth, otherwise the expansion is not valid.
       if(max_dist_sqd_regions > kernel_.bandwidth_sq()) {
@@ -777,6 +791,7 @@ class EpanKernelMultivariateAux {
       // failing all above, take up to 2nd terms
       *actual_error = 0;
       return 2;
+      */
     }
 };
 }
