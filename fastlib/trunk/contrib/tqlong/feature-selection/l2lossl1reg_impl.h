@@ -27,12 +27,14 @@ L2LossL1Reg<D>::~L2LossL1Reg()
 template <typename D>
 void L2LossL1Reg<D>::run()
 {
-  weight_ = x_type(dim()).fill(0.0);
-  L_ = 0;
+  weight_ = randu(dim())*4*lambda_;
+  bias_ = 0;
+  L_ = 1;
 
   for (int i = 0; i < n(); i++)
     L_ += dot(data_.x(i), data_.x(i));
   r0_ = residual(weight_, bias_);
+  r_ = r0_;
 
   for (int iter = 0; iter < maxIter_; iter++) {
     double bias_grad;
@@ -42,10 +44,24 @@ void L2LossL1Reg<D>::run()
     x_type new_weight = l1SoftThreshold(z, lambda_/L_);
     double new_bias = l1SoftThreshold(bz, lambda_/L_);
 
+    double old_r = r_;
+    r_ = residual(new_weight, new_bias);
+//    double dbias = new_bias - bias_;
+//    vec dweight = new_weight - weight_;
+//    double s = (r_ - old_r - dot(dweight, grad)+bias_grad*dbias)/(0.5*(pow(norm(dweight, 2),2)+dbias*dbias));
+////    std::cout << "old_r = " << old_r << " new_r = " << r_ << "\n";
+//    if (s > L_) {
+//      L_ *= 1.5;
+//      //if (L_ >= s) L_ = s;
+//      iter--;
+//      std::cout << "Increase L = " << L_ << "\n";
+//      continue;
+//    }
+
     terminationConditions(new_weight, new_bias);
     std::cout << "iter = " << iter
         //<< " weight = \n" << weight_
-        << " residual = " << r_
+        << " objective = " << r_ + lambda_*norm(weight_,1)
         << "\n";
 
     weight_ = new_weight;
@@ -96,7 +112,6 @@ template <typename D>
 void L2LossL1Reg<D>::terminationConditions(const x_type& w, double bias)
 {
   terminated_ = false;
-  r_ = residual(w,bias);
 
   if (r_ < atol_) {
     std::cout << "Small residual ... ";
@@ -116,7 +131,7 @@ double L2LossL1Reg<D>::residual(const x_type& w, double bias)
     double d = dot(data_.x(i), w)+bias - data_.y(i);
     r += d*d;
   }
-  return r;
+  return 0.5*r;
 }
 
 template <typename D>
