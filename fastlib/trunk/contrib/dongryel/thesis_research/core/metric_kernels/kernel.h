@@ -10,7 +10,6 @@
 
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
-#include "core/math/geometry.h"
 #include "boost/math/constants/constants.hpp"
 
 namespace core {
@@ -238,7 +237,7 @@ class EpanKernel {
      * Divide by this constant when you're done.
      */
     double CalcNormConstant(int dims) const {
-      return 2.0 * math::SphereVolume(sqrt(bandwidth_sq_), dims)
+      return 2.0 * core::math::SphereVolume<double>(sqrt(bandwidth_sq_), dims)
              / (dims + 2.0);
     }
 
