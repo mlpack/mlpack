@@ -262,6 +262,22 @@ inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
   }
   return a[selected_dim] < b[selected_dim];
 }
+
+template<typename T>
+T SphereVolume(T r, int d) {
+  int n = d / 2;
+  double val;
+
+  if(d % 2 == 0) {
+    val = pow(r * boost::math::constants::root_pi<double>(), d) /
+          boost::math::factorial<double>(n);
+  }
+  else {
+    val = pow(2 * r, d) * pow(boost::math::constants::pi<double>(), n) *
+          boost::math::factorial<double>(n) / boost::math::factorial<double>(d);
+  }
+  return val;
+}
 }
 }
 
