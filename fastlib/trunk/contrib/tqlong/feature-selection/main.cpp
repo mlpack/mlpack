@@ -7,6 +7,7 @@
 
 #include "dataset.h"
 #include "l2lossl1reg.h"
+#include "loglossl1reg.h"
 #include <iostream>
 #include <armadillo>
 #include <boost/program_options.hpp>
@@ -16,6 +17,7 @@ using namespace arma;
 namespace po = boost::program_options;
 
 void genData(const std::string& fileName);
+double errorRate(const DataSet& data, const vec& w, double bias);
 
 int main(int argc, char** argv)
 {
@@ -35,7 +37,7 @@ int main(int argc, char** argv)
       ("weight", po::value<string>(&weightFileName), "compute best weight vector to file")
       ("iter", po::value<int>(&maxIter)->default_value(100), "maximum number of iterations")
       ("lambda", po::value<double>(&lambda)->default_value(0.5), "regularization parameter")
-      ("atol", po::value<double>(&lambda)->default_value(0.5), "regularization parameter")
+      ("atol", po::value<double>(&atol)->default_value(1e-5), "absolute tolerance parameter")
       ;
 
   po::store(po::parse_command_line(argc, argv, desc), vm);
@@ -60,12 +62,17 @@ int main(int argc, char** argv)
     std::vector<double> params;
     params.push_back(lambda);
     params.push_back(maxIter);
+    params.push_back(atol);
 
-    L2LossL1Reg<DataSet> algo(data);
+    //L2LossL1Reg<DataSet> algo(data);
+    LogLossL1Reg<DataSet> algo(data);
     algo.setParameter(params);
     algo.run();
-    algo.result().save(weightFileName.c_str());
-    cout << "Result = \n" << algo.result() << "\n";
+    algo.save(weightFileName.c_str());
+    cout << "weight = \n" << algo.weight()
+        << "bias = " << algo.bias() << "\n"
+        << " error = " << errorRate(data, algo.weight(), algo.bias())
+        << "\n";
     return 0;
   }
 
@@ -82,7 +89,16 @@ void genData(const std::string& fileName)
   w /= arma::norm(w,2);
   vec y = X*w;
   for (uint i = 0; i < y.n_elem; i++)
-    y[i] = y[i] < 0 ? -1 : 1;
+    y[i] = y[i] <= 0 ? -1 : 1;
   DataSet(trans(X), y).save(fileName.c_str());
   w.save((fileName+"-truth").c_str(), arma_ascii);
+}
+
+double errorRate(const DataSet& data, const vec& w, double bias)
+{
+  double n_error = 0;
+  for (int i = 0; i < data.n(); i++) {
+    n_error += (data.y(i) * (dot(w, data.x(i))+bias) > 0)? 0 : 1;
+  }
+  return n_error / data.n();
 }

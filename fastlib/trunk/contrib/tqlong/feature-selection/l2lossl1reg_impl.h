@@ -32,18 +32,28 @@ void L2LossL1Reg<D>::run()
 
   for (int i = 0; i < n(); i++)
     L_ += dot(data_.x(i), data_.x(i));
+  r0_ = residual(weight_, bias_);
 
   for (int iter = 0; iter < maxIter_; iter++) {
-    x_type grad = calGrad(weight_);
+    double bias_grad;
+    x_type grad = calGrad(weight_, bias_, bias_grad);
     x_type z = weight_ - grad/L_;
+    double bz = bias_ - bias_grad/L_;
     x_type new_weight = l1SoftThreshold(z, lambda_/L_);
-    std::cout << "iter = " << iter << " weight = \n" << weight_ << "\n";
+    double new_bias = l1SoftThreshold(bz, lambda_/L_);
 
-    if (norm(new_weight - weight_, 2) < atol_) {
-      std::cout << "Small change ... terminated\n";
+    terminationConditions(new_weight, new_bias);
+    std::cout << "iter = " << iter
+        //<< " weight = \n" << weight_
+        << " residual = " << r_
+        << "\n";
+
+    weight_ = new_weight;
+    bias_ = new_bias;
+    if (terminated_) {
+      std::cout << "terminated\n";
       break;
     }
-    weight_ = new_weight;
   }
 }
 
@@ -60,12 +70,16 @@ void L2LossL1Reg<D>::setParameter(const std::vector<double>& params)
 }
 
 template <typename D>
-typename L2LossL1Reg<D>::x_type L2LossL1Reg<D>::calGrad(const x_type& w)
+typename L2LossL1Reg<D>::x_type L2LossL1Reg<D>::calGrad(const x_type& w, double bias, double &bias_grad)
 {
   x_type g(dim());
   g.fill(0.0);
-  for (int i = 0; i < n(); i++)
-    g += (dot(data_.x(i), w)-data_.y(i)) * data_.x(i);
+  bias_grad = 0;
+  for (int i = 0; i < n(); i++) {
+    double r = dot(data_.x(i), w)+bias-data_.y(i);
+    g += r * data_.x(i);
+    bias_grad += r;
+  }
   return g;
 }
 
@@ -73,11 +87,45 @@ template <typename D>
 typename L2LossL1Reg<D>::x_type L2LossL1Reg<D>::l1SoftThreshold(const x_type& z, double mu)
 {
   x_type w(dim());
-  for (int i = 0; i < dim(); i++) {
-    if (z[i] > mu) w[i] = z[i] - mu;
-    else if (z[i] < -mu) w[i] = z[i]+mu;
-    else w[i] = 0;
-  }
+  for (int i = 0; i < dim(); i++)
+    w[i] = l1SoftThreshold(z[i], mu);
   return w;
+}
+
+template <typename D>
+void L2LossL1Reg<D>::terminationConditions(const x_type& w, double bias)
+{
+  terminated_ = false;
+  r_ = residual(w,bias);
+
+  if (r_ < atol_) {
+    std::cout << "Small residual ... ";
+    terminated_ = true;
+  }
+  if (norm(w-weight_,2) < atol_) {
+    std::cout << "Small variable change ... ";
+    terminated_ = true;
+  }
+}
+
+template <typename D>
+double L2LossL1Reg<D>::residual(const x_type& w, double bias)
+{
+  double r = 0;
+  for (int i = 0; i < n(); i++) {
+    double d = dot(data_.x(i), w)+bias - data_.y(i);
+    r += d*d;
+  }
+  return r;
+}
+
+template <typename D>
+void L2LossL1Reg<D>::save(const char* fileName, arma::file_type type)
+{
+  std::ofstream f(fileName);
+  weight_.save(f, type);
+  f << "\n";
+  f << "bias = \n" << bias_ << "\n";
+  f.close();
 }
 #endif
