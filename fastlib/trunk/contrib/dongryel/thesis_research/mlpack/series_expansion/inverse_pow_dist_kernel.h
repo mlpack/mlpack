@@ -21,17 +21,14 @@ class InversePowDistKernel {
   private:
     double lambda_;
 
-    int dimension_;
-
   public:
 
     double lambda() const {
       return lambda_;
     }
 
-    void Init(double lambda_in, int dimension_in) {
+    void Init(double lambda_in) {
       lambda_ = lambda_in;
-      dimension_ = dimension_in;
     }
 
     double EvalUnnorm(const core::table::DensePoint &point) const {
