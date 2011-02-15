@@ -13,11 +13,43 @@
 #include "core/math/math_lib.h"
 #include "mlpack/kde/kde_dualtree.h"
 #include "mlpack/distributed_kde/distributed_kde_dev.h"
+#include "mlpack/series_expansion/kernel_aux.h"
 
-typedef core::tree::GenMetricTree<mlpack::kde::KdeStatistic> TreeSpecType;
-typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
-typedef core::table::Table<TreeSpecType> TableType;
-typedef core::table::DistributedTable<TreeSpecType> DistributedTableType;
+template<typename KernelAuxType>
+void StartComputation(
+  boost::mpi::communicator &world,
+  boost::program_options::variables_map &vm) {
+
+  // Tree type: hard-coded for a metric tree.
+  typedef core::table::DistributedTable <
+  core::tree::GenMetricTree <
+  mlpack::kde::KdeStatistic <
+  KernelAuxType::ExpansionType > > > DistributedTableType;
+
+  // Parse arguments for Kde.
+  mlpack::distributed_kde::DistributedKdeArguments <
+  DistributedTableType > distributed_kde_arguments;
+  if(mlpack::distributed_kde::
+      DistributedKdeArgumentParser::ParseArguments(
+        world, vm, &distributed_kde_arguments)) {
+    return;
+  }
+
+  // Instantiate a distributed KDE object.
+  mlpack::distributed_kde::DistributedKde <
+  DistributedTableType, KernelAuxType > distributed_kde_instance;
+  distributed_kde_instance.Init(world, distributed_kde_arguments);
+
+  // Compute the result.
+  mlpack::kde::KdeResult< std::vector<double> > kde_result;
+  distributed_kde_instance.Compute(
+    distributed_kde_arguments, &kde_result);
+
+  // Output the KDE result to the file.
+  std::cerr << "Writing the densities to the file: " <<
+            distributed_kde_arguments.densities_out_ << "\n";
+  kde_result.Print(distributed_kde_arguments.densities_out_);
+}
 
 int main(int argc, char *argv[]) {
 
@@ -32,29 +64,34 @@ int main(int argc, char *argv[]) {
     printf("%d processes are present...\n", world.size());
   }
 
-  // Parse arguments for the distributed kde.
-  mlpack::distributed_kde::DistributedKdeArguments<DistributedTableType>
-  distributed_kde_arguments;
-  if(
-    mlpack::distributed_kde::DistributedKde <
-    DistributedTableType >::ParseArguments(
-      argc, argv, world, &distributed_kde_arguments)) {
+  boost::program_options::variables_map vm;
+  if(mlpack::distributed_kde::
+      DistributedKdeArgumentParser::ConstructBoostVariableMap(
+        world, argc, argv, &vm)) {
     return 0;
   }
 
-  // Instantiate a distributed KDE object.
-  mlpack::distributed_kde::DistributedKde<DistributedTableType>
-  distributed_kde_instance;
-  distributed_kde_instance.Init(world, distributed_kde_arguments);
+  // Do a quick peek at the kernel and expansion type.
+  std::string kernel_type = vm["kernel"].as<std::string>();
+  std::string series_expansion_type =
+    vm["series_Expansion_type"].as<std::string>();
 
-  // Compute the result.
-  mlpack::kde::KdeResult< std::vector<double> > kde_result;
-  distributed_kde_instance.Compute(distributed_kde_arguments, &kde_result);
+  if(kernel_type == "gaussian") {
+    if(series_expansion_type == "hypercube") {
+      StartComputation <
+      mlpack::series_expansion::GaussianKernelHypercubeAux > (world, vm);
+    }
+    else {
+      StartComputation <
+      mlpack::series_expansion::GaussianKernelMultivariateAux > (world, vm);
+    }
+  }
+  else {
 
-  // Output the KDE result to the file.
-  std::cerr << "Writing the densities to the file: " <<
-            distributed_kde_arguments.densities_out_ << "\n";
-  kde_result.PrintDebug(distributed_kde_arguments.densities_out_);
-
+    // Only the multivariate expansion is available for the
+    // Epanechnikov.
+    StartComputation <
+    mlpack::series_expansion::EpanKernelMultivariateAux > (world, vm);
+  }
   return 0;
 }
