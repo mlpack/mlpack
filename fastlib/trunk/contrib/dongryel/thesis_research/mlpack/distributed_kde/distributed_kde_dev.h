@@ -20,29 +20,32 @@ extern core::table::MemoryMappedFile *global_m_file_;
 namespace mlpack {
 namespace distributed_kde {
 
-template<typename DistributedTableType>
-DistributedTableType *DistributedKde<DistributedTableType>::query_table() {
+template<typename DistributedTableType, typename KernelAuxType>
+DistributedTableType *DistributedKde <
+DistributedTableType, KernelAuxType >::query_table() {
   return query_table_;
 }
 
-template<typename DistributedTableType>
-DistributedTableType *DistributedKde<DistributedTableType>::reference_table() {
+template<typename DistributedTableType, typename KernelAuxType>
+DistributedTableType *DistributedKde <
+DistributedTableType, KernelAuxType >::reference_table() {
   return reference_table_;
 }
 
-template<typename DistributedTableType>
-typename DistributedKde<DistributedTableType>::GlobalType &
-DistributedKde<DistributedTableType>::global() {
+template<typename DistributedTableType, typename KernelAuxType>
+typename DistributedKde<DistributedTableType, KernelAuxType>::GlobalType &
+DistributedKde<DistributedTableType, KernelAuxType>::global() {
   return global_;
 }
 
-template<typename DistributedTableType>
-bool DistributedKde<DistributedTableType>::is_monochromatic() const {
+template<typename DistributedTableType, typename KernelAuxType>
+bool DistributedKde <
+DistributedTableType, KernelAuxType >::is_monochromatic() const {
   return is_monochromatic_;
 }
 
-template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::Compute(
+template<typename DistributedTableType, typename KernelAuxType>
+void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   const mlpack::distributed_kde::DistributedKdeArguments <
   DistributedTableType > &arguments_in,
   mlpack::kde::KdeResult< std::vector<double> > *result_out) {
@@ -54,7 +57,8 @@ void DistributedKde<DistributedTableType>::Compute(
 
   // Instantiate a dual-tree algorithm of the KDE.
   core::gnp::DistributedDualtreeDfs <
-  mlpack::distributed_kde::DistributedKde<DistributedTableType> >
+  mlpack::distributed_kde::DistributedKde <
+  DistributedTableType, KernelAuxType > >
   distributed_dualtree_dfs;
   distributed_dualtree_dfs.Init(world_, *this);
   distributed_dualtree_dfs.set_work_params(
@@ -71,8 +75,8 @@ void DistributedKde<DistributedTableType>::Compute(
   }
 }
 
-template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::Init(
+template<typename DistributedTableType, typename KernelAuxType>
+void DistributedKde<DistributedTableType, KernelAuxType>::Init(
   boost::mpi::communicator &world_in,
   mlpack::distributed_kde::DistributedKdeArguments <
   DistributedTableType > &arguments_in) {
@@ -93,19 +97,18 @@ void DistributedKde<DistributedTableType>::Init(
     reference_table_, query_table_, reference_table_->n_entries(),
     arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.absolute_error_,
-    arguments_in.probability_, arguments_in.kernel_, false);
+    arguments_in.probability_, false);
   global_.set_effective_num_reference_points(
     world_in, reference_table_, query_table_);
 }
 
-template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::set_bandwidth(
+template<typename DistributedTableType, typename KernelAuxType>
+void DistributedKde<DistributedTableType, KernelAuxType>::set_bandwidth(
   double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
 
-template<typename DistributedTableType>
-bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
+bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
   boost::mpi::communicator &world,
   const std::vector<std::string> &args,
   boost::program_options::variables_map *vm) {
@@ -306,8 +309,8 @@ bool DistributedKde<DistributedTableType>::ConstructBoostVariableMap_(
   return false;
 }
 
-template<typename DistributedTableType>
-void DistributedKde<DistributedTableType>::RandomGenerate(
+template<typename TableType>
+void DistributedKdeArgumentParser::RandomGenerate(
   boost::mpi::communicator &world, const std::string &file_name,
   int num_dimensions, int num_points) {
 
@@ -328,22 +331,14 @@ void DistributedKde<DistributedTableType>::RandomGenerate(
 }
 
 template<typename DistributedTableType>
-bool DistributedKde<DistributedTableType>::ParseArguments(
+bool DistributedKdeArgumentParser::ParseArguments(
   boost::mpi::communicator &world,
-  const std::vector<std::string> &args,
+  boost::program_options::variables_map &vm,
   mlpack::distributed_kde::DistributedKdeArguments <
   DistributedTableType > *arguments_out) {
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
-
-  // Construct the Boost variable map.
-  boost::program_options::variables_map vm;
-  if(ConstructBoostVariableMap_(world, args, &vm)) {
-    return true;
-  }
-
-  // Given the constructed boost variable map, parse each argument.
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =
@@ -374,7 +369,7 @@ bool DistributedKde<DistributedTableType>::ParseArguments(
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
     reference_file_name = reference_file_name_sstr.str();
-    RandomGenerate(
+    RandomGenerate<typename DistributedTableType::TableType>(
       world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
       vm["random_generate_n_entries"].as<int>());
   }
@@ -399,7 +394,7 @@ bool DistributedKde<DistributedTableType>::ParseArguments(
       query_file_name_sstr << vm["queries_in"].as<std::string>() <<
                            world.rank();
       query_file_name = query_file_name_sstr.str();
-      RandomGenerate(
+      RandomGenerate<typename DistributedTableType::TableType>(
         world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
         vm["random_generate_n_entries"].as<int>());
     }
@@ -464,18 +459,16 @@ bool DistributedKde<DistributedTableType>::ParseArguments(
   return false;
 }
 
-template<typename DistributedTableType>
-bool DistributedKde<DistributedTableType>::ParseArguments(
+bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
+  boost::mpi::communicator &world,
   int argc,
   char *argv[],
-  boost::mpi::communicator &world,
-  mlpack::distributed_kde::DistributedKdeArguments <
-  DistributedTableType > *arguments_out) {
+  boost::program_options::variables_map *vm) {
 
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);
 
-  return ParseArguments(world, args, arguments_out);
+  return ConstructBoostVariableMap(world, args, vm);
 }
 }
 }

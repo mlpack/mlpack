@@ -16,17 +16,53 @@
 
 namespace mlpack {
 namespace distributed_kde {
-template<typename IncomingDistributedTableType>
+
+/** @brief The argument parsing class for distributed KDE computation.
+ */
+class DistributedKdeArgumentParser {
+  public:
+    template<typename DistributedTableType>
+    static bool ParseArguments(
+      boost::mpi::communicator &world,
+      boost::program_options::variables_map &vm,
+      mlpack::distributed_kde::DistributedKdeArguments <
+      DistributedTableType > *arguments_out);
+
+    static bool ConstructBoostVariableMap(
+      boost::mpi::communicator &world,
+      const std::vector<std::string> &args,
+      boost::program_options::variables_map *vm);
+
+    static bool ConstructBoostVariableMap(
+      boost::mpi::communicator &world,
+      int argc,
+      char *argv[],
+      boost::program_options::variables_map *vm);
+
+    template<typename TableType>
+    static void RandomGenerate(
+      boost::mpi::communicator &world, const std::string &file_name,
+      int num_dimensions, int num_points);
+};
+
+template<typename IncomingDistributedTableType, typename IncomingKernelAuxType>
 class DistributedKde {
   public:
 
     typedef IncomingDistributedTableType DistributedTableType;
 
+    typedef IncomingKernelAuxType KernelAuxType;
+
+    static const
+    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
+      KernelAuxType::ExpansionType;
+
     typedef typename DistributedTableType::TableType TableType;
 
-    typedef mlpack::kde::KdePostponed PostponedType;
+    typedef mlpack::kde::KdePostponed<ExpansionType> PostponedType;
 
-    typedef mlpack::kde::KdeGlobal<DistributedTableType> GlobalType;
+    typedef mlpack::kde::KdeGlobal <
+    DistributedTableType, KernelAuxType > GlobalType;
 
     typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
 
@@ -34,11 +70,11 @@ class DistributedKde {
 
     typedef mlpack::kde::KdeSummary SummaryType;
 
-    typedef mlpack::kde::KdeStatistic StatisticType;
+    typedef mlpack::kde::KdeStatistic<ExpansionType> StatisticType;
 
     typedef mlpack::kde::KdeArguments<TableType> ArgumentType;
 
-    typedef mlpack::kde::Kde< TableType > ProblemType;
+    typedef mlpack::kde::Kde<TableType, KernelAuxType> ProblemType;
 
   public:
 
@@ -82,23 +118,6 @@ class DistributedKde {
       DistributedTableType > &arguments_in,
       ResultType *result_out);
 
-    static void RandomGenerate(
-      boost::mpi::communicator &world, const std::string &file_name,
-      int num_dimensions, int num_points);
-
-    static bool ParseArguments(
-      boost::mpi::communicator &world,
-      const std::vector<std::string> &args,
-      mlpack::distributed_kde::DistributedKdeArguments <
-      DistributedTableType > *arguments_out);
-
-    static bool ParseArguments(
-      int argc,
-      char *argv[],
-      boost::mpi::communicator &world,
-      mlpack::distributed_kde::DistributedKdeArguments <
-      DistributedTableType > *arguments_out);
-
   private:
 
     boost::mpi::communicator *world_;
@@ -120,13 +139,6 @@ class DistributedKde {
      *         monochromatic.
      */
     bool is_monochromatic_;
-
-  private:
-
-    static bool ConstructBoostVariableMap_(
-      boost::mpi::communicator &world,
-      const std::vector<std::string> &args,
-      boost::program_options::variables_map *vm);
 };
 }
 }

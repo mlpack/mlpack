@@ -298,31 +298,7 @@ void DistributedDualtreeDfs <
 DistributedProblemType >::PreProcessReferenceTree_(
   TemplateTreeType *rnode) {
 
-  typename DistributedProblemType::StatisticType &rnode_stat = rnode->stat();
-  typename DistributedProblemType::DistributedTableType::TreeIterator rnode_it =
-    reference_table_->get_node_iterator(rnode);
-
-  if(rnode->is_leaf()) {
-    rnode_stat.Init(rnode_it);
-  }
-  else {
-
-    // Get the left and the right children.
-    TemplateTreeType *rnode_left_child = rnode->left();
-    TemplateTreeType *rnode_right_child = rnode->right();
-
-    // Recurse to the left and the right.
-    PreProcessReferenceTree_(rnode_left_child);
-    PreProcessReferenceTree_(rnode_right_child);
-
-    // Build the node stat by combining those owned by the children.
-    typename DistributedProblemType::StatisticType &rnode_left_child_stat =
-      rnode_left_child->stat();
-    typename DistributedProblemType::StatisticType &rnode_right_child_stat =
-      rnode_right_child->stat();
-    rnode_stat.Init(
-      rnode_it, rnode_left_child_stat, rnode_right_child_stat);
-  }
+  // Does not do anything yet.
 }
 
 template<typename DistributedProblemType>
