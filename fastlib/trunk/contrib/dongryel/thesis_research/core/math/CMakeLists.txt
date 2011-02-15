@@ -1,8 +1,6 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  geometry.cc
-  geometry.h
   global.cc
   math_lib.h
   math_lib_impl.h
