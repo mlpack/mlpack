@@ -39,6 +39,12 @@ class CartesianLocal {
 
   public:
 
+    /** @brief The default constructor.
+     */
+    CartesianLocal() {
+      order_ = -1;
+    }
+
     /** @brief Serializes the far field object.
      */
     template<class Archive>
