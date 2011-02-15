@@ -46,6 +46,10 @@ class KdePostponed {
      */
     double densities_l_;
 
+    /** @brief The finite-difference postponed quantities.
+     */
+    double densities_e_;
+
     /** @brief The upper bound on the postponed quantities.
      */
     double densities_u_;
@@ -63,6 +67,7 @@ class KdePostponed {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & densities_l_;
+      ar & densities_e_;
       ar & densities_u_;
       ar & pruned_;
       ar & used_error_;
@@ -78,6 +83,7 @@ class KdePostponed {
      */
     void Copy(const KdePostponed &postponed_in) {
       densities_l_ = postponed_in.densities_l_;
+      densities_e_ = postponed_in.densities_e_;
       densities_u_ = postponed_in.densities_u_;
       pruned_ = postponed_in.pruned_;
       used_error_ = postponed_in.used_error_;
@@ -95,6 +101,7 @@ class KdePostponed {
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
       densities_l_ = densities_u_ = 0;
+      densities_e_ = 0;
       pruned_ = (qnode == rnode && global_in.is_monochromatic()) ?
                 static_cast<double>(rnode->count() - 1) :
                 static_cast<double>(rnode->count());
@@ -147,6 +154,11 @@ class KdePostponed {
           global.reference_table()->weights(), rnode->begin(), rnode->end(),
           delta_in.order_local_);
       }
+      else {
+
+        // Finite-difference.
+        densities_e_ += 0.5 * (delta_in.densities_l_ + delta_in.densities_u_);
+      }
 
       densities_l_ = densities_l_ + delta_in.densities_l_;
       densities_u_ = densities_u_ + delta_in.densities_u_;
@@ -158,6 +170,7 @@ class KdePostponed {
      */
     void ApplyPostponed(const KdePostponed &other_postponed) {
       densities_l_ = densities_l_ + other_postponed.densities_l_;
+      densities_e_ = densities_e_ + other_postponed.densities_e_;
       densities_u_ = densities_u_ + other_postponed.densities_u_;
       pruned_ = pruned_ + other_postponed.pruned_;
       used_error_ = used_error_ + other_postponed.used_error_;
@@ -188,6 +201,7 @@ class KdePostponed {
       double distsq = metric.DistanceSq(query_point, reference_point);
       double density_incoming = global.kernel().EvalUnnormOnSq(distsq);
       densities_l_ = densities_l_ + density_incoming;
+      densities_e_ = densities_e_ + density_incoming;
       densities_u_ = densities_u_ + density_incoming;
     }
 
@@ -195,6 +209,7 @@ class KdePostponed {
      */
     void SetZero() {
       densities_l_ = 0;
+      densities_e_ = 0;
       densities_u_ = 0;
       pruned_ = 0;
       used_error_ = 0;
@@ -567,9 +582,6 @@ class KdeResult {
       const MetricType &metric,
       int q_index, const GlobalType &global,
       const bool is_monochromatic) {
-
-      densities_[q_index] = 0.5 * (
-                              densities_l_[q_index] + densities_u_[q_index]);
       if(global.normalize_densities()) {
         densities_l_[q_index] *= global.get_mult_const();
         densities_[q_index] *= global.get_mult_const();
@@ -641,6 +653,7 @@ class KdeResult {
     void ApplyPostponed(
       int q_index, const KdePostponedType &postponed_in) {
       densities_l_[q_index] = densities_l_[q_index] + postponed_in.densities_l_;
+      densities_[q_index] = densities_[q_index] + postponed_in.densities_e_;
       densities_u_[q_index] = densities_u_[q_index] + postponed_in.densities_u_;
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
       used_error_[q_index] = used_error_[q_index] + postponed_in.used_error_;
@@ -722,6 +735,9 @@ class KdeSummary {
     // For Boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief Determines whether the contribution of the reference
+     *         node can be approximated using series expansion.
+     */
     template <
     typename GlobalType, typename DeltaType, typename TreeType,
              typename ResultType >

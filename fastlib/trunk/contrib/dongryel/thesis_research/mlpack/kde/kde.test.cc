@@ -113,7 +113,7 @@ class TestKde {
       for(int i = 0; i < 20; i++) {
         for(int k = 0; k < 3; k++) {
           // Randomly choose the number of dimensions and the points.
-          mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(3, 20);
+          mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(2, 5);
           mlpack::kde::test_kde::num_points_ = core::math::RandInt(5000, 10001);
 
           switch(k) {
