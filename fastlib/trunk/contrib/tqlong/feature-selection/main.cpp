@@ -64,7 +64,7 @@ int main(int argc, char** argv)
     params.push_back(maxIter);
     params.push_back(atol);
 
-    //L2LossL1Reg<DataSet> algo(data);
+//    L2LossL1Reg<DataSet> algo(data);
     LogLossL1Reg<DataSet> algo(data);
     algo.setParameter(params);
     algo.run();
@@ -84,12 +84,13 @@ void genData(const std::string& fileName)
 {
   cout << "Generating random data ...\n";
   int n = 20, p = 2;
-  mat X = arma::randn(n, p);
+  mat X = arma::randn(n, p)*4;
   vec w = arma::randn(p);
   w /= arma::norm(w,2);
+  double bias = 1;
   vec y = X*w;
   for (uint i = 0; i < y.n_elem; i++)
-    y[i] = y[i] <= 0 ? -1 : 1;
+    y[i] = (y[i]+bias) <= 0 ? -1 : 1;
   DataSet(trans(X), y).save(fileName.c_str());
   w.save((fileName+"-truth").c_str(), arma_ascii);
 }
