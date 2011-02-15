@@ -42,6 +42,12 @@ class CartesianFarField {
 
   public:
 
+    /** @brief The default constructor.
+     */
+    CartesianFarField() {
+      order_ = -1;
+    }
+
     /** @brief Serializes the far field object.
      */
     template<class Archive>

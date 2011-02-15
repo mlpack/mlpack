@@ -1095,6 +1095,9 @@ class KdeStatistic {
         global.kernel_aux(), global.reference_table()->data(),
         global.reference_table()->weights(), node->begin(), node->end(),
         global.kernel_aux().global().get_max_order());
+
+      // Initialize the local expansion.
+      postponed_.local_expansion_.Init(global.kernel_aux(), node_center);
     }
 
     /** @brief Initializes by combining statistics of two partitions.
@@ -1119,6 +1122,9 @@ class KdeStatistic {
         global.kernel_aux(), left_stat.farfield_expansion_);
       farfield_expansion_.TranslateFromFarField(
         global.kernel_aux(), right_stat.farfield_expansion_);
+
+      // Initialize the local expansion.
+      postponed_.local_expansion_.Init(global.kernel_aux(), node_center);
     }
 };
 }
