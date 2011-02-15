@@ -113,12 +113,18 @@ class KdePostponed {
       ResultType *query_results) {
 
       if(delta_in.order_farfield_to_local_ >= 0) {
+
+        // Far-to-local translation.
+        query_results->num_farfield_to_local_prunes_++;
         rnode->stat().farfield_expansion_.TranslateToLocal(
           global.kernel_aux(),
           delta_in.order_farfield_to_local_,
           & (qnode->stat().postponed_.local_expansion_));
       }
       else if(delta_in.order_farfield_ >= 0) {
+
+        // Far-field evaluation.
+        query_results->num_farfield_prunes_++;
         typename GlobalType::TableType::TreeIterator qnode_it =
           const_cast <
           typename GlobalType::TableType * >(
@@ -133,6 +139,9 @@ class KdePostponed {
         }
       }
       else if(delta_in.order_local_ >= 0) {
+
+        // Direct local accumulation.
+        query_results->num_local_prunes_++;
         qnode->stat().postponed_.local_expansion_.AccumulateCoeffs(
           global.kernel_aux(), global.reference_table()->data(),
           global.reference_table()->weights(), rnode->begin(), rnode->end(),
@@ -513,6 +522,18 @@ class KdeResult {
      */
     ContainerType used_error_;
 
+    /** @brief The number of far-to-local translations.
+     */
+    int num_farfield_to_local_prunes_;
+
+    /** @brief The number of far-field evaluations.
+     */
+    int num_farfield_prunes_;
+
+    /** @brief The number of direct local accumulations.
+     */
+    int num_local_prunes_;
+
     /** @brief Serialize the KDE result object.
      */
     template<class Archive>
@@ -611,6 +632,9 @@ class KdeResult {
         pruned_[i] = 0;
         used_error_[i] = 0;
       }
+      num_farfield_to_local_prunes_ = 0;
+      num_farfield_prunes_ = 0;
+      num_local_prunes_ = 0;
     }
 
     template<typename KdePostponedType>
