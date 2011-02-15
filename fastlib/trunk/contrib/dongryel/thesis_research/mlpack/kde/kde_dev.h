@@ -52,6 +52,11 @@ void Kde<TableType, KernelAuxType>::Compute(
   if(arguments_in.num_iterations_in_ <= 0) {
     dualtree_dfs.Compute(* arguments_in.metric_, result_out);
     printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
+    printf(
+      "Number of far-to-local prunes: %d\n",
+      result_out->num_farfield_to_local_prunes_);
+    printf("Number of farfield prunes: %d\n", result_out->num_farfield_prunes_);
+    printf("Number of local prunes: %d\n", result_out->num_local_prunes_);
   }
   else {
     typename core::gnp::DualtreeDfs <
