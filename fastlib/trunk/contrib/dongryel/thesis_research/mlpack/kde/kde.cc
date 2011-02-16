@@ -9,6 +9,7 @@
 #include <iostream>
 #include <string>
 #include <boost/program_options.hpp>
+#include "core/util/timer.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/kde/kde_dev.h"
 #include "mlpack/series_expansion/kernel_aux.h"
@@ -29,12 +30,22 @@ void StartComputation(boost::program_options::variables_map &vm) {
   }
 
   // Instantiate a KDE object.
+  core::util::Timer init_timer;
+  init_timer.Start();
   mlpack::kde::Kde<TableType, KernelAuxType> kde_instance;
   kde_instance.Init(kde_arguments);
+  init_timer.End();
+  printf("%g seconds elapsed in initializing...\n",
+         init_timer.GetTotalElapsedTime());
 
   // Compute the result.
+  core::util::Timer compute_timer;
+  compute_timer.Start();
   mlpack::kde::KdeResult< std::vector<double> > kde_result;
   kde_instance.Compute(kde_arguments, &kde_result);
+  compute_timer.End();
+  printf("%g seconds elapsed in computation...\n",
+         compute_timer.GetTotalElapsedTime());
 
   // Output the KDE result to the file.
   std::cerr << "Writing the densities to the file: " <<
