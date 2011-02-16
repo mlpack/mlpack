@@ -145,6 +145,11 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Kernel function used by KDE.  One of:\n"
     "  epan, gaussian"
   )(
+    "series_expansion_type",
+    boost::program_options::value<std::string>()->default_value("hypercube"),
+    "Series expansion type used to compress the kernel interaction. One of:\n"
+    "  hypercube, multivariate"
+  )(
     "bandwidth",
     boost::program_options::value<double>()->default_value(0.5),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
@@ -244,6 +249,12 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
   if((*vm)["kernel"].as<std::string>() != "gaussian" &&
       (*vm)["kernel"].as<std::string>() != "epan") {
     std::cerr << "We support only epan or gaussian for the kernel.\n";
+    exit(0);
+  }
+  if((*vm)["series_expansion_type"].as<std::string>() != "hypercube" &&
+      (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
+    std::cerr << "We support only hypercube or multivariate for the "
+              "series expansion type.\n";
     exit(0);
   }
   if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
@@ -441,6 +452,14 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   if(world.rank() == 0) {
     std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+  }
+
+  // Parse the series expansion type.
+  arguments_out->series_expansion_type_ =
+    vm["series_expansion_type"].as<std::string>();
+  if(world.rank() == 0) {
+    std::cout << "Using the series expansion type: " <<
+              arguments_out->series_expansion_type_ << "\n";
   }
 
   // Parse the work parameters for the distributed engine.

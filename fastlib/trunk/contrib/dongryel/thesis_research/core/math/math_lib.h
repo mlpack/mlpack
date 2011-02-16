@@ -151,7 +151,7 @@ inline int RandInt(T lo, T hi_exclusive) {
 };
 };
 
-#include "math_lib_impl.h"
+#include "core/math/math_lib_impl.h"
 
 namespace core {
 namespace math {
