@@ -46,12 +46,6 @@ class MixedLogitDCM {
 
   private:
 
-    /** @brief Construct variable map for the algorithm.
-     */
-    static bool ConstructBoostVariableMap_(
-      const std::vector<std::string> &args,
-      boost::program_options::variables_map *vm);
-
     /** @brief Update the sample allocation using optimum allocation
      *         of integration sample strategy. Updates the first
      *         sample (the current iterate) based on the second sample
@@ -126,19 +120,6 @@ class MixedLogitDCM {
     void Compute(
       const ArgumentType &arguments_in,
       mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out);
-
-    /** @brief Parse the arguments.
-     */
-    static void ParseArguments(
-      const std::vector<std::string> &args,
-      ArgumentType *arguments_out);
-
-    /** @brief Parse the arguments.
-     */
-    static void ParseArguments(
-      int argc,
-      char *argv[],
-      ArgumentType *arguments_out);
 
   private:
 
