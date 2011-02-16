@@ -1,5 +1,7 @@
 /** @file timer.h
  *
+ *  The timer class.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
@@ -63,7 +65,7 @@ class Timer {
 
     std::vector<timeval> checkpoints_;
 };
-};
-};
+}
+}
 
 #endif
