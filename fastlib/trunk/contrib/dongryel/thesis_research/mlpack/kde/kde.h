@@ -19,6 +19,11 @@ namespace kde {
 /** @brief The argument parsing class for KDE computation.
  */
 class KdeArgumentParser {
+  private:
+    template<typename TableType>
+    static void PrescaleTable_(
+      const std::string &prescale_option, TableType *table);
+
   public:
     template<typename TableType>
     static bool ParseArguments(

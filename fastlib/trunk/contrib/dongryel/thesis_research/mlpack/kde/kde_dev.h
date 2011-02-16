@@ -11,10 +11,20 @@
 
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
+#include "core/table/transform.h"
 #include "mlpack/kde/kde.h"
 
 namespace mlpack {
 namespace kde {
+
+template<typename TableType>
+void KdeArgumentParser::PrescaleTable_(
+  const std::string &prescale_option, TableType *table) {
+
+  if(prescale_option == "hypercube") {
+    core::table::UnitHypercube::Transform(table);
+  }
+}
 
 template<typename TableType, typename KernelAuxType>
 TableType *Kde<TableType, KernelAuxType>::query_table() {
@@ -168,6 +178,11 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
     "leaf_size",
     boost::program_options::value<int>()->default_value(20),
     "Maximum number of points at a leaf of the tree."
+  )(
+    "prescale",
+    boost::program_options::value<std::string>()->default_value("none"),
+    "OPTIONAL scaling option. One of:\n"
+    "  none, hypercube"
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -233,6 +248,13 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
     std::cerr << "The --leaf_size needs to be a positive integer.\n";
     exit(0);
   }
+  if(vm->count("prescale") > 0) {
+    if((*vm)["prescale"].as<std::string>() != "hypercube" &&
+        (*vm)["prescale"].as<std::string>() != "none") {
+      std::cerr << "The --prescale needs to be: none or hypercube.\n";
+      exit(0);
+    }
+  }
   return false;
 }
 
@@ -259,6 +281,13 @@ bool KdeArgumentParser::ParseArguments(
   arguments_out->reference_table_ = new TableType();
   arguments_out->reference_table_->Init(vm["references_in"].as<std::string>());
   std::cout << "Finished reading in the reference set.\n";
+
+  // Scale the dataset.
+  PrescaleTable_(
+    vm["prescale"].as<std::string>(), arguments_out->reference_table_);
+  std::cout << "Scaled the dataset with the option: " <<
+            vm["prescale"].as<std::string>() << "\n";
+
   std::cout << "Building the reference tree.\n";
   arguments_out->reference_table_->IndexData(
     *(arguments_out->metric_), arguments_out->leaf_size_);
@@ -271,6 +300,13 @@ bool KdeArgumentParser::ParseArguments(
     arguments_out->query_table_ = new TableType();
     arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
     std::cout << "Finished reading in the query set.\n";
+
+    // Scale the dataset.
+    PrescaleTable_(
+      vm["prescale"].as<std::string>(), arguments_out->query_table_);
+    std::cout << "Scaled the dataset with the option: " <<
+              vm["prescale"].as<std::string>() << "\n";
+
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
       *(arguments_out->metric_), arguments_out->leaf_size_);

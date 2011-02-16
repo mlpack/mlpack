@@ -63,6 +63,8 @@ class DistributedKdeArguments {
      */
     std::string kernel_;
 
+    std::string series_expansion_type_;
+
     /** @brief The metric that is being used.
      */
     core::metric_kernels::LMetric<2> *metric_;
