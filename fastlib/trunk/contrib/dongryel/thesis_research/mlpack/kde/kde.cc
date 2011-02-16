@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   // Do a quick peek at the kernel and expansion type.
   std::string kernel_type = vm["kernel"].as<std::string>();
   std::string series_expansion_type =
-    vm["series_Expansion_type"].as<std::string>();
+    vm["series_expansion_type"].as<std::string>();
 
   if(kernel_type == "gaussian") {
     if(series_expansion_type == "hypercube") {
