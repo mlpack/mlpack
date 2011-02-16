@@ -7,8 +7,9 @@
 
 #include <iostream>
 #include <string>
-#include "mixed_logit_dcm_dev.h"
 #include "core/tree/gen_metric_tree.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_argument_parser.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_dev.h"
 
 int main(int argc, char *argv[]) {
 
@@ -19,8 +20,8 @@ int main(int argc, char *argv[]) {
   // Parse arguments for mixed logit discrete choice model.
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
   TableType > mixed_logit_dcm_arguments;
-  mlpack::mixed_logit_dcm::MixedLogitDCM <
-  TableType >::ParseArguments(argc, argv, &mixed_logit_dcm_arguments);
+  mlpack::mixed_logit_dcm::MixedLogitDCMArgumentParser::ParseArguments(
+    argc, argv, &mixed_logit_dcm_arguments);
 
   // Instantiate a mixed logit discrete choice model object.
   mlpack::mixed_logit_dcm::MixedLogitDCM<TableType> mixed_logit_dcm_instance;
