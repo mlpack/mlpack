@@ -85,6 +85,10 @@ class MixedLogitDCMArguments {
      */
     double max_trust_region_radius_;
 
+    /** @brief The method for updating the Hessian.
+     */
+    std::string hessian_update_method_;
+
   public:
 
     /** @brief The default constructor.

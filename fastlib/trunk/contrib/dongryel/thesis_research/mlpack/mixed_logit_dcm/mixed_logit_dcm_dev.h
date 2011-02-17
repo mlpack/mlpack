@@ -414,7 +414,19 @@ void MixedLogitDCM<TableType>::Compute(
     &table_, initial_num_data_samples, initial_num_integration_samples);
   iterate->parameters().zeros(table_.num_parameters());
   iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
-  iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+  // Depending on the selected Hessian update scheme, compute it
+  // differently.
+  if(arguments_in.hessian_update_method_ == "exact") {
+
+    // Exact computation.
+    iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+  }
+  else {
+
+    // Approximate updates start with the identity Hessian.
+    hessian.eye();
+  }
 
   // The step direction and its 2-norm.
   arma::vec p;
