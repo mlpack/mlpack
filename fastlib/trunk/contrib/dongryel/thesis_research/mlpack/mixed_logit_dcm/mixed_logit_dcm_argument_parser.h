@@ -32,14 +32,15 @@ class MixedLogitDCMArgumentParser {
         boost::program_options::value<std::string>(),
         "REQUIRED file containing the vector of attributes."
       )(
-        "num_discrete_choices_per_person_in",
-        boost::program_options::value<std::string>(),
-        "REQUIRED The number of alternatives per each person."
+        "gradient_norm_threshold",
+        boost::program_options::value<double>()->default_value(0.5),
+        "OPTIONAL The threshold for determining the termination condition "
+        "based on the gradient norm."
       )(
-        "predictions_out",
-        boost::program_options::value<std::string>()->default_value(
-          "densities_out.csv"),
-        "OPTIONAL file to store the predicted discrete choices."
+        "hessian_update_method",
+        boost::program_options::value<std::string>()->default_value("exact"),
+        "OPTIONAL The method for updating the Hessian. One of:"
+        "  exact, bfgs, sr1"
       )(
         "initial_dataset_sample_rate",
         boost::program_options::value<double>()->default_value(0.1),
@@ -51,24 +52,28 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The percentage of the maximum average integration sample "
         "to start with."
       )(
-        "gradient_norm_threshold",
-        boost::program_options::value<double>()->default_value(0.5),
-        "OPTIONAL The threshold for determining the termination condition "
-        "based on the gradient norm."
-      )(
-        "max_num_integration_samples_per_person",
-        boost::program_options::value<int>()->default_value(1000),
-        "OPTIONAL The maximum number of integration samples allowed per person."
-      )(
         "integration_sample_error_threshold",
         boost::program_options::value<double>()->default_value(1e-9),
         "OPTIONAL The threshold for determining whether the integration sample "
         "error is small or not."
       )(
+        "max_num_integration_samples_per_person",
+        boost::program_options::value<int>()->default_value(1000),
+        "OPTIONAL The maximum number of integration samples allowed per person."
+      )(
         "max_trust_region_radius",
         boost::program_options::value<double>()->default_value(10.0),
         "OPTIONAL The maximum trust region radius used in the trust region "
         "search."
+      )(
+        "num_discrete_choices_per_person_in",
+        boost::program_options::value<std::string>(),
+        "REQUIRED The number of alternatives per each person."
+      )(
+        "predictions_out",
+        boost::program_options::value<std::string>()->default_value(
+          "densities_out.csv"),
+        "OPTIONAL file to store the predicted discrete choices."
       )(
         "trust_region_search_method",
         boost::program_options::value<std::string>()->default_value("cauchy"),
@@ -118,6 +123,14 @@ class MixedLogitDCMArgumentParser {
                   "--trust_region_search_method.\n";
         exit(0);
       }
+      if((*vm)["hessian_update_method"].as<std::string>() != "none" &&
+          (*vm)["hessian_update_method"].as<std::string>() != "bfgs" &&
+          (*vm)["hessian_update_method"].as<std::string>() != "sr1") {
+        std::cerr << "Invalid option specified for " <<
+                  "--hessian_update_method.\n";
+        exit(0);
+      }
+
       return false;
     }
 
@@ -148,7 +161,8 @@ class MixedLogitDCMArgumentParser {
       // Parse the number of discrete choices per each point.
       std::cout <<
                 "Reading in the number of discrete choices per each person: " <<
-                vm["num_discrete_choices_per_person_in"].as<std::string>() << "\n";
+                vm["num_discrete_choices_per_person_in"].as<std::string>() <<
+                "\n";
       arguments_out->num_discrete_choices_per_person_ = new TableType();
       arguments_out->num_discrete_choices_per_person_->Init(
         vm["num_discrete_choices_per_person_in"].as<std::string>());
@@ -194,6 +208,10 @@ class MixedLogitDCMArgumentParser {
         arguments_out->trust_region_search_method_ =
           core::optimization::TrustRegionSearchMethod::STEIHAUG;
       }
+
+      // Parse the Hessian update method.
+      arguments_out->hessian_update_method_ =
+        vm["hessian_update_method"].as<std::string>();
 
       // The number of parameters that generate each $\beta$ is fixed now
       // as the Gaussian example in Appendix.
