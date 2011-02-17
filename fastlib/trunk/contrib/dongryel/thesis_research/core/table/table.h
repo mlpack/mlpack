@@ -182,6 +182,25 @@ class Table {
 
   public:
 
+    bool points_available_underneath(TreeType *node) const {
+      if(begin_count_pairs_.size() == 0 ||
+          (begin_count_pairs_.size() == 1 &&
+           begin_count_pairs_[0].get<0>() == 0)) {
+        return true;
+      }
+      int index = -1;
+      for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
+        if(begin_count_pairs_[i].get<0>() <= node->begin() &&
+            node->end() <=
+            begin_count_pairs_[i].get<0>() +
+            begin_count_pairs_[i].get<1>()) {
+          index = i;
+          break;
+        }
+      }
+      return index >= 0;
+    }
+
     void add_begin_count_pairs(int begin, int count) {
       if(begin_count_pairs_.size() == 0) {
         begin_count_pairs_.push_back(

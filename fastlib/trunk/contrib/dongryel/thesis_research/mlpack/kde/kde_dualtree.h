@@ -774,16 +774,28 @@ class KdeSummary {
           rnode->bound(), qnode->bound(),
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_farfield_to_local);
-      delta.order_farfield_ =
-        global.kernel_aux().OrderForEvaluatingFarField(
-          rnode->bound(), qnode->bound(),
-          squared_distance_range.lo, squared_distance_range.hi,
-          allowed_err, &actual_err_farfield);
-      delta.order_local_ =
-        global.kernel_aux().OrderForEvaluatingLocal(
-          rnode->bound(), qnode->bound(),
-          squared_distance_range.lo, squared_distance_range.hi,
-          allowed_err, &actual_err_local);
+
+      if(global.reference_table()->points_available_underneath(rnode)) {
+
+        // Farfield evaluations are possible when the query poins are
+        // available.
+        delta.order_farfield_ =
+          global.kernel_aux().OrderForEvaluatingFarField(
+            rnode->bound(), qnode->bound(),
+            squared_distance_range.lo, squared_distance_range.hi,
+            allowed_err, &actual_err_farfield);
+      }
+
+      if(global.query_table()->points_available_underneath(qnode)) {
+
+        // Direct local accumulations are possible when the reference
+        // points are available.
+        delta.order_local_ =
+          global.kernel_aux().OrderForEvaluatingLocal(
+            rnode->bound(), qnode->bound(),
+            squared_distance_range.lo, squared_distance_range.hi,
+            allowed_err, &actual_err_local);
+      }
 
       // Update computational cost and compute the minimum.
       if(delta.order_farfield_to_local_ >= 0) {
