@@ -180,11 +180,12 @@ class KdePostponed {
      */
     template<typename GlobalType>
     void FinalApplyPostponed(
-      const GlobalType &global, const KdePostponed &other_postponed) {
+      const GlobalType &global, KdePostponed &other_postponed) {
 
       // Translate the local expansion and clear it.
       other_postponed.local_expansion_.TranslateToLocal(
         global.kernel_aux(), &local_expansion_);
+      other_postponed.local_expansion_.SetZero();
 
       ApplyPostponed(other_postponed);
     }
@@ -208,6 +209,17 @@ class KdePostponed {
     /** @brief Sets everything to zero except for the local expansion.
      */
     void SetZero() {
+      densities_l_ = 0;
+      densities_e_ = 0;
+      densities_u_ = 0;
+      pruned_ = 0;
+      used_error_ = 0;
+    }
+
+    /** @brief Sets everything to zero.
+     */
+    void FinalSetZero() {
+      local_expansion_.SetZero();
       densities_l_ = 0;
       densities_e_ = 0;
       densities_u_ = 0;

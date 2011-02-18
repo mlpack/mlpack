@@ -129,6 +129,7 @@ class CartesianLocal {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianLocal<ExpansionType>::SetZero() {
+  order_ = -1;
   coeffs_.SetZero();
 }
 

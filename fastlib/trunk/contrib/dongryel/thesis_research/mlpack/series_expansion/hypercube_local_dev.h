@@ -59,7 +59,8 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
     // Precompute necessary partial derivatives based on coordinate
     // difference.
-    kernel_aux_in.ComputeDirectionalDerivatives(x_r_minus_x_Q, &derivative_map, order);
+    kernel_aux_in.ComputeDirectionalDerivatives(
+      x_r_minus_x_Q, &derivative_map, order);
 
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(int j = 0; j < total_num_coeffs; j++) {
@@ -68,8 +69,13 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
         kernel_aux_in.global().get_multiindex(index);
       double partial_derivative =
         kernel_aux_in.ComputePartialDerivative(derivative_map, mapping);
-      coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] *
+
+      // For now, the weight is uniform. Replace with the following
+      // lines for non-uniform weights.
+      coeffs_[index] += neg_inv_multiindex_factorials[index] *
                         partial_derivative;
+      //coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] *
+      //                  partial_derivative;
     }
   } // End of looping through each reference point.
 }
