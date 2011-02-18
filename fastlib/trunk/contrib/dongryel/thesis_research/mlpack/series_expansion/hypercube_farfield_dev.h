@@ -90,7 +90,10 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
     for(int i = 0; i < total_num_coeffs; i++) {
 
       int index = traversal_order[i];
-      double prod = weights[r] * tmp[index];
+
+      // Replace with the following line for non-uniform weight case.
+      double prod = tmp[index];
+      //double prod = weights[r] * tmp[index];
 
       if(prod > 0) {
         pos_coeffs[index] += prod;

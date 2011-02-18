@@ -237,7 +237,7 @@ class TestDistributed_Kde {
       // Only the master generates the number of dimensions.
       int num_dimensions;
       if(world.rank() == 0) {
-        num_dimensions = core::math::RandInt(3, 10);
+        num_dimensions = core::math::RandInt(3, 4);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
       int num_points = core::math::RandInt(3000, 5000);

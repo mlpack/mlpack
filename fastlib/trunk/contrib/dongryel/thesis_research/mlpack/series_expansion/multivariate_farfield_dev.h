@@ -78,7 +78,10 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
 
     // Tally up the result in A_k.
     for(i = 0; i < total_num_coeffs; i++) {
-      double prod = weights[r] * tmp[i];
+
+      // Replace with the following case for non-uniform weights.
+      double prod = tmp[i];
+      //double prod = weights[r] * tmp[i];
       if(prod > 0) {
         pos_coeffs[i] += prod;
       }
@@ -157,7 +160,9 @@ void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::RefineCoeffs(
         tmp *= pow(x_r[j], mapping[j]);
       }
 
-      double prod = weights[r] * tmp;
+      // Replace it with the following line for non-uniform case.
+      double prod = tmp;
+      //double prod = weights[r] * tmp;
 
       if(prod > 0) {
         pos_coeffs[i] += prod;

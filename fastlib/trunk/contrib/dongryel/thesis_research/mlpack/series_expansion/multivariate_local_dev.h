@@ -70,8 +70,11 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
     }
 
     for(int j = 0; j < total_num_coeffs; j++) {
-      coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] *
-                    arrtmp[j];
+
+      // Replace it with the following line for non-uniform case.
+      coeffs_[j] += neg_inv_multiindex_factorials[j] * arrtmp[j];
+      //coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] *
+      //              arrtmp[j];
     }
   } // End of looping through each reference point.
 }

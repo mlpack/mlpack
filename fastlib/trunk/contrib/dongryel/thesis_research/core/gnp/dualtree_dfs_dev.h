@@ -553,7 +553,7 @@ void DualtreeDfs<ProblemType>::PostProcess_(
       qnode_stat.summary_.Accumulate(
         problem_->global(), *query_results, q_index);
     }
-    qnode_stat.postponed_.SetZero();
+    qnode_stat.postponed_.FinalSetZero();
   }
   else {
     typename ProblemType::TableType::TreeType *qnode_left = qnode->left();
@@ -566,7 +566,7 @@ void DualtreeDfs<ProblemType>::PostProcess_(
       problem_->global(), qnode_stat.postponed_);
     qnode_right_stat.postponed_.FinalApplyPostponed(
       problem_->global(), qnode_stat.postponed_);
-    qnode_stat.postponed_.SetZero();
+    qnode_stat.postponed_.FinalSetZero();
 
     // Recursively postprocess the left and the right results.
     PostProcess_(metric, qnode_left,  query_results);
