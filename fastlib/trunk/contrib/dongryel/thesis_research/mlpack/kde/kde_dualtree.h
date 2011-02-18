@@ -1111,6 +1111,7 @@ class KdeStatistic {
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
+      ar & farfield_expansion_;
       ar & postponed_;
       ar & summary_;
     }

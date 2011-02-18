@@ -137,7 +137,7 @@ class DensePoint {
       ar & n_rows_;
 
       // Allocate the point.
-      if(ptr_.get() == NULL) {
+      if(ptr_.get() == NULL && n_rows_ > 0) {
         ptr_ = (core::table::global_m_file_) ?
                core::table::global_m_file_->ConstructArray<double>(n_rows_) :
                new double[n_rows_];
@@ -149,6 +149,7 @@ class DensePoint {
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Reset() {
+      n_rows_ = 0;
       ptr_ = NULL;
       is_alias_ = false;
     }
