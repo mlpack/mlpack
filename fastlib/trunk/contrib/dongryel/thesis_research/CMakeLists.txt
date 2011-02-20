@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 project(FASTLIB C CXX Fortran)
 
 ## External Libraries
@@ -44,7 +44,7 @@ if(MPI_FOUND)
 endif()
 
 # find CUDA
-find_package(CUDA)
+# find_package(CUDA)
 
 # Add additional complie flags.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")

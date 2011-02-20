@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.6)
 
 # the main driver for mixed_logit_dcm
 add_executable(mixed_logit_dcm
