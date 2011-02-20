@@ -11,6 +11,8 @@
 #define MLPACK_SERIES_EXPANSION_CARTESIAN_LOCAL_H
 
 #include <boost/serialization/serialization.hpp>
+#include <boost/serialization/tracking.hpp>
+#include <boost/serialization/tracking_enum.hpp>
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
 #include "mlpack/series_expansion/cartesian_expansion_global_dev.h"
@@ -186,6 +188,29 @@ void CartesianLocal<ExpansionType>::Init(const KernelAuxType &kernel_aux_in) {
   coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
   coeffs_.SetZero();
 }
+}
+}
+
+namespace boost {
+namespace serialization {
+template<>
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+struct tracking_level <
+    mlpack::series_expansion::CartesianLocal<ExpansionType> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_< boost::serialization::track_never > type;
+  BOOST_STATIC_CONSTANT(
+    int,
+    value = tracking_level::type::value
+  );
+  BOOST_STATIC_ASSERT((
+                        mpl::greater <
+                        implementation_level <
+                        mlpack::series_expansion::CartesianLocal<ExpansionType> > ,
+                        mpl::int_<primitive_type>
+                        >::value
+                      ));
+};
 }
 }
 
