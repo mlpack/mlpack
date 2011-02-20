@@ -696,8 +696,6 @@ class KdeDelta {
 
     double used_error_;
 
-    bool finite_difference_prune_;
-
     int order_farfield_to_local_;
 
     int order_farfield_;
@@ -712,7 +710,6 @@ class KdeDelta {
 
     void SetZero() {
       densities_l_ = densities_u_ = pruned_ = used_error_ = 0;
-      finite_difference_prune_ = false;
       order_farfield_to_local_ = -1;
       order_farfield_ = -1;
       order_local_ = -1;
@@ -1029,7 +1026,6 @@ class KdeSummary {
 
       // Prunable by finite-difference.
       if(left_hand_side <= right_hand_side) {
-        delta.finite_difference_prune_ = true;
         return true;
       }
 
