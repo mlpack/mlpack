@@ -15,12 +15,12 @@ namespace mlpack {
 namespace series_expansion {
 
 template<>
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianLocal <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data,
-  const core::table::DensePoint& weights, int begin, int end, int order) {
+  const core::table::DensePoint& weights,
+  TreeIteratorType &it, int order) {
 
   if(order > order_) {
     order_ = order;
@@ -49,12 +49,15 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // for each data point,
-  for(int r = begin; r < end; r++) {
+  while(it.HasNext()) {
+
+    // Get the reference point.
+    core::table::DensePoint point;
+    it.Next(&point);
 
     // calculate x_r - x_Q
     for(int d = 0; d < dim; d++) {
-      x_r_minus_x_Q[d] = (center_[d] - data.get(d, r)) /
-                         bandwidth_factor;
+      x_r_minus_x_Q[d] = (center_[d] - point[d]) / bandwidth_factor;
     }
 
     // precompute necessary partial derivatives based on coordinate difference

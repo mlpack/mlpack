@@ -148,11 +148,13 @@ class KdePostponed {
       else if(delta_in.order_local_ >= 0) {
 
         // Direct local accumulation.
+        typename GlobalType::TableType::TreeIterator rnode_it =
+          const_cast<GlobalType &>(global).
+          reference_table()->get_node_iterator(rnode);
         query_results->num_local_prunes_++;
         qnode->stat().postponed_.local_expansion_.AccumulateCoeffs(
-          global.kernel_aux(), global.reference_table()->data(),
-          global.reference_table()->weights(), rnode->begin(), rnode->end(),
-          delta_in.order_local_);
+          global.kernel_aux(), global.reference_table()->weights(),
+          rnode_it, delta_in.order_local_);
       }
       else {
 
@@ -1143,6 +1145,11 @@ class KdeStatistic {
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global, TreeType *node) {
 
+      // The node iterator.
+      typename GlobalType::TableType::TreeIterator node_it =
+        const_cast<GlobalType &>(global).
+        reference_table()->get_node_iterator(node);
+
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();
 
@@ -1151,8 +1158,8 @@ class KdeStatistic {
       node->bound().center(&node_center);
       farfield_expansion_.Init(global.kernel_aux(), node_center);
       farfield_expansion_.AccumulateCoeffs(
-        global.kernel_aux(), global.reference_table()->data(),
-        global.reference_table()->weights(), node->begin(), node->end(),
+        global.kernel_aux(),
+        global.reference_table()->weights(), node_it,
         global.kernel_aux().global().get_max_order());
 
       // Initialize the local expansion.

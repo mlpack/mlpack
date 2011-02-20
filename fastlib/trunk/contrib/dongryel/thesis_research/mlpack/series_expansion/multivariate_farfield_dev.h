@@ -18,15 +18,14 @@ namespace mlpack {
 namespace series_expansion {
 
 template<>
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianFarField <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights,
-  int begin, int end, int order) {
+  TreeIteratorType &it, int order) {
 
-  int dim = data.n_rows();
+  int dim = kernel_aux_in.global().get_dimension();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   core::table::DensePoint tmp;
   int r, i, j, k, t, tail;
@@ -52,12 +51,15 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   core::table::DensePoint C_k;
 
   // Repeat for each reference point in this reference node.
-  for(r = begin; r < end; r++) {
+  while(it.HasNext()) {
 
-    // Calculate the coordinate difference between the ref point and the
-    // centroid.
+    core::table::DensePoint point;
+    it.Next(&point);
+
+    // Calculate the coordinate difference between the ref point and
+    // the centroid.
     for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
+      x_r[i] = (point[i] - center_[i]) / bandwidth_factor;
     }
 
     // initialize heads
@@ -97,88 +99,6 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
 
   for(r = 0; r < total_num_coeffs; r++) {
     coeffs_[r] += (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
-  }
-}
-
-template<>
-template<typename KernelAuxType>
-void CartesianFarField<mlpack::series_expansion::MULTIVARIATE>::RefineCoeffs(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix &data,
-  const core::table::DensePoint &weights,
-  int begin, int end, int order) {
-
-  if(order_ < 0) {
-    AccumulateCoeffs(kernel_aux_in, data, weights, begin, end, order);
-    return;
-  }
-
-  int dim = data.n_rows();
-  int old_total_num_coeffs =
-    kernel_aux_in.global().get_total_num_coeffs(order_);
-  int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
-  double tmp;
-  int r, i, j;
-  core::table::DensePoint x_r;
-  double bandwidth_factor =
-    kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
-
-  // initialize temporary variables
-  x_r.Init(dim);
-  core::table::DensePoint pos_coeffs;
-  core::table::DensePoint neg_coeffs;
-  pos_coeffs.Init(total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(total_num_coeffs);
-  neg_coeffs.SetZero();
-
-  // if we already have the order of approximation, then return.
-  if(order_ >= order) {
-    return;
-  }
-  else {
-    order_ = order;
-  }
-
-  core::table::DensePoint C_k;
-  // Repeat for each reference point in this reference node.
-  for(r = begin; r < end; r++) {
-
-    // Calculate the coordinate difference between the ref point and the
-    // centroid.
-    for(i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
-    }
-
-    // compute in bruteforce way
-    for(i = old_total_num_coeffs; i < total_num_coeffs; i++) {
-      const std::vector<short int> &mapping =
-        kernel_aux_in.global().get_multiindex(i);
-      tmp = 1;
-
-      for(j = 0; j < dim; j++) {
-        tmp *= pow(x_r[j], mapping[j]);
-      }
-
-      // Replace it with the following line for non-uniform case.
-      double prod = tmp;
-      //double prod = weights[r] * tmp;
-
-      if(prod > 0) {
-        pos_coeffs[i] += prod;
-      }
-      else {
-        neg_coeffs[i] += prod;
-      }
-    }
-
-  } // End of looping through each reference point
-
-  // get multiindex factors
-  C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
-
-  for(r = old_total_num_coeffs; r < total_num_coeffs; r++) {
-    coeffs_[r] = (pos_coeffs[r] + neg_coeffs[r]) * C_k[r];
   }
 }
 

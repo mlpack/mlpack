@@ -126,22 +126,11 @@ class CartesianFarField {
      *  @param order The order up to which the far-field moments should be
      *               accumulated up to.
      */
-    template<typename KernelAuxType>
+    template<typename KernelAuxType, typename TreeIteratorType>
     void AccumulateCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &data,
       const core::table::DensePoint &weights,
-      int begin, int end, int order);
-
-    /** @brief Refine the far field moment that has been computed before
-     *         up to a new order.
-     */
-    template<typename KernelAuxType>
-    void RefineCoeffs(
-      const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &data,
-      const core::table::DensePoint &weights,
-      int begin, int end, int order);
+      TreeIteratorType &it, int order);
 
     /** @brief Evaluates the far-field coefficients at the given point.
      */
