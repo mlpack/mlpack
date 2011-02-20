@@ -140,6 +140,12 @@ class Table {
         }
 
         template<typename PointType>
+        void Next(PointType *entry) {
+          current_index_++;
+          table_->iterator_get_(current_index_, entry);
+        }
+
+        template<typename PointType>
         void get(int i, PointType *entry) {
           table_->iterator_get_(begin_ + i, entry);
         }

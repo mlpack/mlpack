@@ -18,12 +18,12 @@ namespace mlpack {
 namespace series_expansion {
 
 template<>
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
-  const KernelAuxType &kernel_aux_in, const core::table::DenseMatrix& data,
-  const core::table::DensePoint& weights, int begin, int end, int order) {
+  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& weights,
+  TreeIteratorType &it, int order) {
 
-  int dim = data.n_rows();
+  int dim = kernel_aux_in.global().get_dimension();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   int max_total_num_coeffs = kernel_aux_in.global().get_max_total_num_coeffs();
   core::table::DensePoint x_r, tmp;
@@ -50,12 +50,15 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
     kernel_aux_in.global().traversal_mapping(order_);
 
   // Repeat for each reference point in this reference node.
-  for(int r = begin; r < end; r++) {
+  while(it.HasNext()) {
 
-    // Calculate the coordinate difference between the ref point and the
-    // centroid.
+    // Calculate the coordinate difference between the ref point and
+    // the centroid.
+    core::table::DensePoint point;
+    int point_id;
+    it.Next(&point, &point_id);
     for(int i = 0; i < dim; i++) {
-      x_r[i] = (data.get(i, r) - center_[i]) / bandwidth_factor;
+      x_r[i] = (point[i] - center_[i]) / bandwidth_factor;
     }
 
     tmp.SetZero();
@@ -110,29 +113,6 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
     coeffs_[index] += (pos_coeffs[index] + neg_coeffs[index]) *
                       kernel_aux_in.global().
                       get_inv_multiindex_factorials()[index];
-  }
-}
-
-template<>
-template<typename KernelAuxType>
-void CartesianFarField <
-mlpack::series_expansion::HYPERCUBE >::RefineCoeffs(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data, const core::table::DensePoint& weights,
-  int begin, int end, int order) {
-
-  // if we already have the order of approximation, then return.
-  if(order_ >= order) {
-    return;
-  }
-
-  // otherwise, recompute from scratch... this could be improved potentially
-  // but I believe it will not squeeze out more performance (as in O(D^p)
-  // expansions).
-  else {
-    order_ = order;
-    coeffs_.SetZero();
-    AccumulateCoeffs(kernel_aux_in, data, weights, begin, end, order);
   }
 }
 

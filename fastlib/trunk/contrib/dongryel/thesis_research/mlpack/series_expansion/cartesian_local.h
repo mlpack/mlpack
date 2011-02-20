@@ -72,12 +72,11 @@ class CartesianLocal {
     /** @brief Accumulates the local moment represented by the given
      *         reference data into the coefficients.
      */
-    template<typename KernelAuxType>
+    template<typename KernelAuxType, typename TreeIteratorType>
     void AccumulateCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix& data,
       const core::table::DensePoint& weights,
-      int begin, int end, int order);
+      TreeIteratorType &it, int order);
 
     /** @brief Evaluates the local coefficients at the given point.
      */
