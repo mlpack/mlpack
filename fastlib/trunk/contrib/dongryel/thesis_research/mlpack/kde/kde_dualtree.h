@@ -787,7 +787,7 @@ class KdeSummary {
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_farfield_to_local);
 
-      if(global.reference_table()->points_available_underneath(rnode)) {
+      if(global.query_table()->points_available_underneath(qnode)) {
 
         // Farfield evaluations are possible when the query poins are
         // available.
@@ -798,7 +798,7 @@ class KdeSummary {
             allowed_err, &actual_err_farfield);
       }
 
-      if(global.query_table()->points_available_underneath(qnode)) {
+      if(global.reference_table()->points_available_underneath(rnode)) {
 
         // Direct local accumulations are possible when the reference
         // points are available.
