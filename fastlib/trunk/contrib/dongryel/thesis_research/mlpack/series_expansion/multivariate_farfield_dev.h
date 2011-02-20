@@ -387,7 +387,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
     } // end of k-loop
   } // end of j-loop
 
-  core::table::DensePoint C_k_neg =
+  const core::table::DensePoint &C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
   for(int j = 0; j < total_num_coeffs; j++) {
     local_coeffs[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
