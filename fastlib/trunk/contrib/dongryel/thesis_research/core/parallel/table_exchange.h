@@ -180,7 +180,7 @@ class TableExchange {
       // rule is that each process gets at least twice the number of
       // work that is dequeued per stage so that there is some
       // progress in the computation.
-      num_cache_blocks_per_process_ = 10 * max_num_work_to_dequeue_per_stage_in;
+      num_cache_blocks_per_process_ = 2 * max_num_work_to_dequeue_per_stage_in;
 
       if(world.rank() == 0) {
         printf(
