@@ -167,6 +167,18 @@ class GeneralBinarySpaceTree {
 
   public:
 
+    /** @brief Finds the depth of the tree.
+     */
+    int depth() const {
+      if(this->is_leaf()) {
+        return 1;
+      }
+      else {
+        return 1 + std::max(
+                 this->depth(left_.get()), this->depth(right_.get()));
+      }
+    }
+
     /** @brief A method for copying a node without its children.
      */
     void CopyWithoutChildren(const GeneralBinarySpaceTree &node) {
