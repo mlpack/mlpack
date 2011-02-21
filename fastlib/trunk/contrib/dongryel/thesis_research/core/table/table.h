@@ -218,11 +218,6 @@ class Table {
           break;
         }
       }
-      printf("%d %d is contained in %d %d at index %d\n",
-             node->begin(), node->count(),
-             begin_count_pairs_[index].get<0>(),
-             begin_count_pairs_[index].get<0>() +
-             begin_count_pairs_[index].get<1>(), index);
       return index >= 0;
     }
 
