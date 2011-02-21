@@ -59,7 +59,13 @@ class CartesianFarField {
       ar & order_;
     }
 
-    ////////// Getters/Setters //////////
+    /** @brief Copies another farfield expansion.
+     */
+    void Copy(const CartesianFarField<ExpansionType> &other_farfield) {
+      center_.Copy(other_farfield.get_center());
+      coeffs_.Copy(other_farfield.get_coeffs());
+      order_ = other_farfield.get_order();
+    }
 
     /** @brief Gets the center of expansion.
      *
