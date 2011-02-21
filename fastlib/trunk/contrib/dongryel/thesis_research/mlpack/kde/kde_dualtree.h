@@ -1120,17 +1120,22 @@ class KdeStatistic {
       ar & summary_;
     }
 
-    /** @brief Copies another abstract statistics (does not do anything).
+    /** @brief Copies another KDE statistic.
      */
     void Copy(const KdeStatistic &stat_in) {
+      farfield_expansion_.Copy(stat_in.farfield_expansion_);
       postponed_.Copy(stat_in.postponed_);
       summary_.Copy(stat_in.summary_);
     }
 
+    /** @brief The default constructor.
+     */
     KdeStatistic() {
       SetZero();
     }
 
+    /** @brief Sets the postponed and the summary statistics to zero.
+     */
     void SetZero() {
       postponed_.SetZero();
       summary_.SetZero();
