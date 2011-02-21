@@ -147,6 +147,7 @@ class TestSubTable {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
+      /*
       for(int i = 0; i < 50; i++) {
         int num_dimensions;
         if(world.rank() == 0) {
@@ -159,16 +160,17 @@ class TestSubTable {
           exit(0);
         }
       }
+      */
 
       // Now each process extracts its own subtable and checks the
       // iterator against the iterator of the original table.
       for(int i = 0; i < 50; i++) {
-        int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(30, 51);
+        int num_dimensions = core::math::RandInt(3, 7);
+        int num_points = core::math::RandInt(300, 501);
         if(SelfStressTest(world, num_dimensions, num_points) == false) {
           printf("Process %d failed on %d points!\n", world.rank(),
                  num_points);
-          break;
+          exit(0);
         }
 
         printf("%d-th iteration done for Process %d\n\n", i, world.rank());
@@ -187,6 +189,8 @@ class TestSubTable {
       core::metric_kernels::LMetric<2> l2_metric;
       int leaf_size = core::math::RandInt(3, 7);
       random_table.IndexData(l2_metric, leaf_size);
+      printf("Generated a tree of depth: %d\n",
+             random_table.get_tree()->depth());
 
       // Get the list of nodes.
       std::vector<TreeType *> local_list_of_nodes;
