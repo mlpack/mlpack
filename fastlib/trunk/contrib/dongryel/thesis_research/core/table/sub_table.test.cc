@@ -59,20 +59,30 @@ class TestSubTable {
       // The result here.
       bool result = true;
 
-      // Check whether the counts are the same.
-      result = (original_it.count() == sub_it.count());
+      if(sub_table.points_available_underneath(node_from_sub_table)) {
 
-      // Loop through each iterator and compare.
-      while(result && sub_it.HasNext()) {
-        core::table::DensePoint original_point;
-        int original_point_id;
-        core::table::DensePoint copy_point;
-        int copy_point_id;
-        original_it.Next(&original_point, &original_point_id);
-        sub_it.Next(&copy_point, &copy_point_id);
+        // Check whether the counts are the same.
+        result = (original_it.count() == sub_it.count());
 
-        // Check the IDs.
-        result = (original_point_id == copy_point_id);
+        // Loop through each iterator and compare.
+        int reordered_id = node_from_sub_table->begin();
+        while(result && sub_it.HasNext()) {
+          core::table::DensePoint original_point;
+          int original_point_id;
+          core::table::DensePoint copy_point;
+          int copy_point_id;
+          original_it.Next(&original_point, &original_point_id);
+          sub_it.Next(&copy_point, &copy_point_id);
+
+          // Check the IDs.
+          result = (original_point_id == copy_point_id);
+          if(! result) {
+            printf("The reordered index %d was translated to %d, but "
+                   "it should be %d.\n", reordered_id, copy_point_id,
+                   original_point_id);
+          }
+          reordered_id++;
+        }
       }
 
       if(result && (! node_from_sub_table->is_leaf())) {
@@ -143,7 +153,8 @@ class TestSubTable {
         int num_dimensions = core::math::RandInt(3, 20);
         int num_points = core::math::RandInt(300, 501);
         if(SelfStressTest(world, num_dimensions, num_points) == false) {
-          printf("Process %d failed!\n", world.rank());
+          printf("Process %d failed on %d points!\n", world.rank(),
+                 num_points);
           break;
         }
 
