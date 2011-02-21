@@ -221,6 +221,10 @@ class Table {
       return index >= 0;
     }
 
+    void set_entire_points_available(bool flag_in) {
+      entire_points_available_ = flag_in;
+    }
+
     void add_begin_count_pairs(int begin, int count) {
 
       // By default, we assume that not all points are available, once

@@ -351,6 +351,7 @@ class SubTable {
       start_node_ = tree_nodes[0].first;
 
       // Load the node ids for which there are points underneath.
+      table_->set_entire_points_available(false);
       int serialize_points_per_terminal_node_size;
       ar & serialize_points_per_terminal_node_size;
       serialize_points_per_terminal_node_.resize(
