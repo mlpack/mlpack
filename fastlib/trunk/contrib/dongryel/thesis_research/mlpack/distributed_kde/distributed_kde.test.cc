@@ -245,7 +245,7 @@ class TestDistributed_Kde {
         num_dimensions = core::math::RandInt(3, 4);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(3000, 5000);
+      int num_points = core::math::RandInt(300, 500);
       std::vector< std::string > args;
 
       // Push in the random generate command.
@@ -327,11 +327,7 @@ class TestDistributed_Kde {
       double max_num_levels_to_serialize;
       double max_num_work_to_dequeue_per_stage;
       if(world.rank() == 0) {
-
-        // Currently, the test does not pass for random tree heights,
-        // so I fix it to be something really big to force exchange of
-        // entire trees.
-        max_num_levels_to_serialize = 100000;
+        max_num_levels_to_serialize = core::math::RandInt(3, 10);
         max_num_work_to_dequeue_per_stage = core::math::RandInt(3, 10);
       }
       boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
