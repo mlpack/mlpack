@@ -80,6 +80,21 @@ class TestSubTable {
             printf("The reordered index %d was translated to %d, but "
                    "it should be %d.\n", reordered_id, copy_point_id,
                    original_point_id);
+            printf("Let's see the old_from_new mappings:\n");
+            printf("Original table:\n\n");
+            typename TableType::OldFromNewIndexType *original_old_from_new =
+              original_table.old_from_new();
+            typename TableType::OldFromNewIndexType *sub_old_from_new =
+              sub_table.old_from_new();
+            for(int i = 0; i < original_table.n_entries(); i++) {
+              printf("%d ", original_old_from_new[i].second.second);
+            }
+            printf("\n");
+            printf("Sub table:\n\n");
+            for(int i = 0; i < sub_table.n_entries(); i++) {
+              printf("%d ", sub_old_from_new[i].second.second);
+            }
+            printf("\n");
           }
           reordered_id++;
         }
@@ -132,7 +147,6 @@ class TestSubTable {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      /*
       for(int i = 0; i < 50; i++) {
         int num_dimensions;
         if(world.rank() == 0) {
@@ -145,13 +159,12 @@ class TestSubTable {
           exit(0);
         }
       }
-      */
 
       // Now each process extracts its own subtable and checks the
       // iterator against the iterator of the original table.
       for(int i = 0; i < 50; i++) {
         int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(300, 501);
+        int num_points = core::math::RandInt(30, 51);
         if(SelfStressTest(world, num_dimensions, num_points) == false) {
           printf("Process %d failed on %d points!\n", world.rank(),
                  num_points);
@@ -172,7 +185,7 @@ class TestSubTable {
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
       core::metric_kernels::LMetric<2> l2_metric;
-      int leaf_size = core::math::RandInt(15, 25);
+      int leaf_size = core::math::RandInt(3, 7);
       random_table.IndexData(l2_metric, leaf_size);
 
       // Get the list of nodes.

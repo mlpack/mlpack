@@ -48,6 +48,14 @@ class Table {
     // For Boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The flag that tells whether entire points are available
+     *         under the root node.
+     */
+    bool entire_points_available_;
+
+    /** @brief The list of begin/count pairs so that the underlying
+     *         points are accessed correctly using node iterators.
+     */
     std::vector< boost::tuple<int, int, int> > begin_count_pairs_;
 
     /** @brief The underlying multidimensional data owned by the
@@ -63,10 +71,16 @@ class Table {
      */
     int rank_;
 
+    /** @brief The old from new mapping.
+     */
     boost::interprocess::offset_ptr<OldFromNewIndexType> old_from_new_;
 
+    /** @brief The new from old mapping.
+     */
     boost::interprocess::offset_ptr<int> new_from_old_;
 
+    /** @brief The tree.
+     */
     boost::interprocess::offset_ptr<TreeType> tree_;
 
     /** @brief Whether the tree is an alias of another tree.
@@ -80,6 +94,8 @@ class Table {
 
   public:
 
+    /** @brief The iterator for the node that belongs to this table.
+     */
     class TreeIterator {
       private:
         int begin_;
@@ -189,9 +205,7 @@ class Table {
   public:
 
     bool points_available_underneath(TreeType *node) const {
-      if(begin_count_pairs_.size() == 0 ||
-          (begin_count_pairs_.size() == 1 &&
-           begin_count_pairs_[0].get<0>() == 0)) {
+      if(entire_points_available_) {
         return true;
       }
       int index = -1;
@@ -204,10 +218,20 @@ class Table {
           break;
         }
       }
+      printf("%d %d is contained in %d %d at index %d\n",
+             node->begin(), node->count(),
+             begin_count_pairs_[index].get<0>(),
+             begin_count_pairs_[index].get<0>() +
+             begin_count_pairs_[index].get<1>(), index);
       return index >= 0;
     }
 
     void add_begin_count_pairs(int begin, int count) {
+
+      // By default, we assume that not all points are available, once
+      // you call this method.
+      entire_points_available_ = false;
+
       if(begin_count_pairs_.size() == 0) {
         begin_count_pairs_.push_back(
           boost::tuple<int, int, int>(begin, count, 0));
@@ -357,6 +381,7 @@ class Table {
     /** @brief The default constructor.
      */
     Table() {
+      entire_points_available_ = true;
       rank_ = 0;
       tree_ = NULL;
       old_from_new_ = NULL;
@@ -401,10 +426,14 @@ class Table {
       }
     }
 
+    /** @brief Gets the iterator for the node.
+     */
     TreeIterator get_node_iterator(TreeType *node) {
       return TreeIterator(*this, node);
     }
 
+    /** @brief Gets the iterator for the node.
+     */
     TreeIterator get_node_iterator(int begin, int count) {
       return TreeIterator(*this, begin, count);
     }
@@ -457,6 +486,10 @@ class Table {
       return data_.n_cols();
     }
 
+    /** @brief Initializes an empty table with the specified number of
+     *         dimensions and number of points (optionally with the
+     *         rank).
+     */
     void Init(
       int num_dimensions_in, int num_points_in, int rank_in = 0) {
       rank_ = rank_in;
@@ -479,6 +512,8 @@ class Table {
       }
     }
 
+    /** @brief Initializes the table from a file, optionally its rank.
+     */
     void Init(const std::string &file_name, int rank_in = 0) {
       if(core::DatasetReader::ParseDataset(file_name, &data_) == false) {
         exit(0);
@@ -501,6 +536,8 @@ class Table {
         data_, rank_in, old_from_new_.get());
     }
 
+    /** @brief Saves the table to a text file.
+     */
     void Save(const std::string &file_name) const {
       FILE *foutput = fopen(file_name.c_str(), "w+");
       for(int j = 0; j < data_.n_cols(); j++) {
