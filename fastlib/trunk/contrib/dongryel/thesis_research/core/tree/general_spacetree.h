@@ -165,18 +165,26 @@ class GeneralBinarySpaceTree {
      */
     boost::interprocess::offset_ptr<GeneralBinarySpaceTree> right_;
 
-  public:
+  private:
 
-    /** @brief Finds the depth of the tree.
+    /** @brief Finds the depth of the tree rooted at a given node.
      */
-    int depth() const {
+    int depth_private_(GeneralBinarySpaceTree *node) const {
       if(this->is_leaf()) {
         return 1;
       }
       else {
         return 1 + std::max(
-                 this->depth(left_.get()), this->depth(right_.get()));
+                 depth_private_(node->left()), depth_private_(node->right()));
       }
+    }
+
+  public:
+
+    /** @brief Finds the depth of the tree at this node.
+     */
+    int depth() const {
+      return depth_private_(this);
     }
 
     /** @brief A method for copying a node without its children.
