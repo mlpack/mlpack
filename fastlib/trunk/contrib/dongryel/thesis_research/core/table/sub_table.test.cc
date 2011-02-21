@@ -8,6 +8,8 @@
 // for BOOST testing
 #define BOOST_TEST_MAIN
 
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/archive/text_iarchive.hpp>
 #include <boost/mpi.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/test/unit_test.hpp>
@@ -77,7 +79,7 @@ class TestSubTable {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 10; i++) {
+      for(int i = 0; i < 50; i++) {
         int num_dimensions;
         if(world.rank() == 0) {
           num_dimensions = core::math::RandInt(3, 20);
@@ -89,7 +91,83 @@ class TestSubTable {
           exit(0);
         }
       }
+
+      // Now each process extracts its own subtable and checks the
+      // iterator against the iterator of the original table.
+      for(int i = 0; i < 50; i++) {
+	int num_dimensions = core::math::RandInt(3, 20);
+	int num_points = core::math::RandInt(300, 501);
+	if(SelfStressTest(world, num_dimensions, num_points) == false) {
+	  printf("Process %d failed!\n", world.rank());
+	  break;
+	}
+      }
+
       return 0;
+    }
+  
+    bool SelfStressTest(
+      boost::mpi::communicator &world, int num_dimensions, int num_points) {
+      
+      // Generate the random table.
+      TableType random_table;
+      GenerateRandomDataset_(
+        num_dimensions, num_points, &random_table);
+      core::metric_kernels::LMetric<2> l2_metric;
+      int leaf_size = core::math::RandInt(15, 25);
+      random_table.IndexData(l2_metric, leaf_size);
+
+      // Get the list of nodes.
+      std::vector<TreeType *> local_list_of_nodes;
+      random_table.get_nodes(
+        random_table.get_tree(), &local_list_of_nodes);
+
+      // Repeat the self-test 10 times.
+      for(int k = 0; k < 10; k++) {
+
+        // Think of how many levels of trees to serialize.
+        int max_num_levels_to_serialize = core::math::RandInt(2, 10);
+	printf("Serializing %d levels.\n", max_num_levels_to_serialize);
+
+        // The subtable to test.
+        SubTableType subtable_to_save;
+	SubTableType subtable_to_load;
+
+	// Pick a random node to start and save it to a file, and
+	// reload it.
+	int random_node_id =
+	  core::math::RandInt(
+            0, static_cast<int>(local_list_of_nodes.size()));
+	int begin = local_list_of_nodes[random_node_id]->begin();
+	int count = local_list_of_nodes[random_node_id]->count();
+	printf("Process %d chose %d %d to test\n", world.rank(), begin, count);
+	subtable_to_save.Init(
+          &random_table,
+	  random_table.get_tree()->FindByBeginCount(begin, count),
+	  max_num_levels_to_serialize, false);
+	subtable_to_load.Init(0, max_num_levels_to_serialize, false);
+
+	{
+	  // Save.
+	  std::stringstream output_file_name_sstr;
+	  output_file_name_sstr << "output_file.csv" << world.rank();
+	  std::ofstream ofs(output_file_name_sstr.str().c_str());
+	  boost::archive::text_oarchive oa(ofs);
+	  oa << subtable_to_save;
+	}
+	{
+	  // Load.
+	  std::stringstream input_file_name_sstr;
+	  input_file_name_sstr << "input_file.csv" << world.rank();
+	  std::ifstream ifs(input_file_name_sstr.str().c_str());
+	  boost::archive::text_iarchive ia(ifs);
+	  ia >> subtable_to_load;
+	}
+	
+
+      } // end of the trial loop.
+
+      return true;
     }
 
     bool StressTest(
