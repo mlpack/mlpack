@@ -170,7 +170,7 @@ class GeneralBinarySpaceTree {
     /** @brief Finds the depth of the tree rooted at a given node.
      */
     int depth_private_(const GeneralBinarySpaceTree *node) const {
-      if(this->is_leaf()) {
+      if(node->is_leaf()) {
         return 1;
       }
       else {
