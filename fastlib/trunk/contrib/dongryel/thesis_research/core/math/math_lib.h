@@ -13,12 +13,62 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <boost/math/special_functions/binomial.hpp>
+#include <gsl/gsl_qrng.h>
 #include <gsl/gsl_randist.h>
 #include <gsl/gsl_rng.h>
 #include "core/table/dense_point.h"
 
 namespace core {
 namespace math {
+
+class QuasiRandomNumberInit {
+  private:
+    const gsl_qrng_type *global_generator_type_;
+    gsl_qrng *global_generator_;
+    int dimension_;
+
+  public:
+
+    void Init(
+      const std::string &quasi_random_number_generator_type,
+      unsigned int dimension_in) {
+
+      if(global_generator_ != NULL) {
+        gsl_qrng_free(global_generator_);
+      }
+      dimension_ = dimension_in;
+
+      // Assume that the strings match up to a valid option here.
+      if(quasi_random_number_generator_type == "halton") {
+        global_generator_type_ = gsl_qrng_halton;
+      }
+      else if(quasi_random_number_generator_type == "sobol") {
+        global_generator_type_ = gsl_qrng_sobol;
+      }
+
+      global_generator_ =
+        gsl_qrng_alloc(global_generator_type_, dimension_in);
+    }
+
+    QuasiRandomNumberInit() {
+      dimension_ = 0;
+      std::cerr << "Call Init to finish initializing the quasi-random"
+                " number generator.\n";
+    }
+
+    ~QuasiRandomNumberInit() {
+      if(global_generator_ != NULL) {
+        gsl_qrng_free(global_generator_);
+      }
+    }
+
+    void QuasiRandomPoint(arma::vec *point_out) {
+
+      // Allocate the point.
+      point_out->set_size(dimension_);
+      gsl_qrng_get(global_generator_, point_out->memptr());
+    }
+};
 
 class RandomNumberInit {
   private:
@@ -32,6 +82,10 @@ class RandomNumberInit {
 
     RandomNumberInit() {
       gsl_rng_env_setup();
+
+      // By default, unless GSL_RNG_TYPE environment variable is
+      // specified, gsl_rng_mt19937 (MT19937 generator of Makoto
+      // Matsumoto and Takuji Nishimura) is the default.
       global_generator_type_ = gsl_rng_default;
       global_generator_ = gsl_rng_alloc(global_generator_type_);
       gsl_rng_set(global_generator_, time(NULL));
@@ -57,6 +111,8 @@ class RandomNumberInit {
       return gsl_rng_uniform_int(global_generator_, max_exclusive);
     }
 };
+
+extern core::math::QuasiRandomNumberInit global_quasi_random_number_state_;
 
 extern core::math::RandomNumberInit global_random_number_state_;
 

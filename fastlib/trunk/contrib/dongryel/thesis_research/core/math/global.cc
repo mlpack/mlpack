@@ -7,6 +7,7 @@
 
 namespace core {
 namespace math {
+core::math::QuasiRandomNumberInit global_quasi_random_number_state_;
 core::math::RandomNumberInit global_random_number_state_;
 };
 };
