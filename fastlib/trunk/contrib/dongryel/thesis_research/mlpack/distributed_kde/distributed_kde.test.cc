@@ -420,6 +420,9 @@ class TestDistributed_Kde {
         std::cerr << "There is a problem!\n";
         exit(-1);
       }
+
+      // Free the memory.
+      delete[] total_distribution;
       world.barrier();
 
       return 0;
