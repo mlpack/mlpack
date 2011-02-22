@@ -32,9 +32,10 @@ class QuasiNewtonHessianUpdate {
       double second_factor = 1.0 / arma::dot(iterate_difference, tmp_vector);
 
       // Update the Hessian.
-      (*new_hessian) = current_hessian +
-                       first_factor * gradient_difference * arma::trans(gradient_difference) -
-                       second_factor * tmp_vector * arma::trans(tmp_vector);
+      (*new_hessian) =
+        current_hessian +
+        first_factor * gradient_difference * arma::trans(gradient_difference) -
+        second_factor * tmp_vector * arma::trans(tmp_vector);
     }
 
     static void SymmetricRank1Update(
