@@ -55,8 +55,9 @@
     if (unlikely((a) != (b))) \
     FATAL("%.10e (%s) != %.10e (%s)", (double)(a), #a, (double)(b), #b); else
 
+// x==x returns false if x is nan
 #define TEST_DOUBLE_APPROX(a, b, absolute_eps) \
-    if (unlikely(fabs((a) - (b)) > absolute_eps)) \
+    if ( (a==a && b==b) && unlikely(fabs((a) - (b)) > absolute_eps)) \
     FATAL("%.10e (%s) !~= %.10e (%s)", (double)(a), #a, (double)(b), #b); else
 
 /**
