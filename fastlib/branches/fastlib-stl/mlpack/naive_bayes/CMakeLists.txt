@@ -20,8 +20,15 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 add_executable(nbc
    nbc_main.cc
 )
+add_executable(nbc_test
+   test_simple_nbc_main.cc
+)
 # link dependencies of nbc
 target_link_libraries(nbc
+   mlpack
+   fastlib
+)
+target_link_libraries(nbc_test
    mlpack
    fastlib
 )

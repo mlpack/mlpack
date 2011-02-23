@@ -73,17 +73,15 @@ int main(int argc, char* argv[]) {
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
 
-  ////// Declaration of an object of the class SimpleNaiveBayesClassifier
-  SimpleNaiveBayesClassifier nbc;
-
   struct datanode* nbc_module = fx_submodule(root, "nbc");
   
   ////// Timing the training of the Naive Bayes Classifier //////
   fx_timer_start(nbc_module, "training");
 
-  ////// Calling the function that trains the classifier
-  nbc.InitTrain(training_data, nbc_module);
+  ////// Create and train the classifier
+  SimpleNaiveBayesClassifier nbc = SimpleNaiveBayesClassifier(training_data, nbc_module);
 
+  ////// Stop training timer //////
   fx_timer_stop(nbc_module, "training");
 
   ////// Timing the testing of the Naive Bayes Classifier //////
@@ -95,6 +93,7 @@ int main(int argc, char* argv[]) {
   ////// Calling the function that classifies the test data
   nbc.Classify(testing_data, results);
 
+  ////// Stop testing timer //////
   fx_timer_stop(nbc_module, "testing");
 
   ////// OUTPUT RESULTS //////

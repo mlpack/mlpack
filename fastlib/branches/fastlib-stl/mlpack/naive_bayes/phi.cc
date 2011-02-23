@@ -63,6 +63,8 @@ long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov,
   arma::mat inv;
   arma::vec diff, tmp;
 	
+  // First calculate the multivariate Gaussian probability density function
+  // We don't just call phi() to do this because we need some of the values later
   dim = x.n_rows;
   inv = arma::inv(cov);
   det = arma::det(cov); 
