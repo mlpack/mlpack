@@ -11,72 +11,64 @@ Dataset::Dataset(string fn, size_t port, bool random) :
   fn_(fn), port_(port), random_(random) {
 }
 
-////////////////////////////////////////////////////////////////////////
-// Scan through input file and count # of examples(lines), maximum #
-// of features per example, and the size of the longest line.
-///////////////////////////////////////////////////////////////////////
+////////////////////////////////////////
+// Determine file format and read info
+////////////////////////////////////////
 bool Dataset::ReadFileInfo() {
+  int c;
+  // determine file format
   ff_ = unknown;
-  /*
-  char *first_line = SkipSpace_(reader->Peek().begin());
-
-  if (!first_line) {
-    Init();
-    reader->Error("Could not parse the first line.");
-    return SUCCESS_FAIL;
-  } else if (*first_line == '@') {
-    // Okay, it's ARFF.
-    return InitFromArff(reader, filename);
-  } else {
-  // It's CSV.  We'll try to see if there are headers.
-    return InitFromCsv(reader, filename);
-  }
-
-  int ic;
-  char c;
-  size_t current_length, current_fe;
-  
-  current_length = 0;
-  current_fe = 0;
-
-  max_l_ln_ = 0;
-  n_sp_ = 1;
-  max_n_ft_ = 0;
-
-  while ((ic=getc(fp_)) != EOF) {
-    c = (char)ic;
-    current_length ++;
-    if (space_or_null((int)c)) {
-      current_fe ++;
+  while ((c=getc(fp_)) != EOF) {
+    if (c == '@') {
+      ff_ = arff;
+      break;
     }
-    if (c == '\n') {
-      num_examples ++;
-      if (current_length > max_length_line) {
-	max_length_line = current_length;
-      }
-      if (current_fe > max_features_example) {
-	max_features_example = current_fe;
-      }
-      current_length = 0;
-      current_fe = 0;
+    else if (c == ':') {
+      ff_ = svmlight;
+      break;
+    }
+    else if (c == ',') {
+      ff_ = csv;
+      break;
     }
   }
-  fclose(fp);
-*/
+
+  // Count # of examples(lines), max # of features per example,
+  // and the size of the longest line
+  if (ff_ == svmlight) {
+    size_t current_length, current_fe;
+    current_length = 0;
+    current_fe = 0;
+
+    max_l_ln_ = 0;
+    n_sp_ = 1;
+    max_n_ft_ = 0;
+
+    while ((c=getc(fp_)) != EOF) {
+      current_length ++;
+      if (space_or_null((int)c)) {
+	current_fe ++;
+      }
+      if (c == '\n') {
+	num_examples ++;
+	if (current_length > max_length_line) {
+	  max_length_line = current_length;
+	}
+	if (current_fe > max_features_example) {
+	  max_features_example = current_fe;
+	}
+	current_length = 0;
+	current_fe = 0;
+      }
+    }
+    //fclose(fp);
+  }
+
   return true;
 }
 
-void Dataset::InitFromSvmlight() {
-}
-
-void Dataset::InitFromCsv() {
-}
-
-void Dataset::InitFromArff() {
-}
-
 void Dataset::ReadFromFile() {
-  // scan size of input data file
+  // determine file format and read other info
   if ((fp_ = fopen (fn_.c_str(), "r")) == NULL) {
     cout << "Cannot open input file: " << fn_ << " !"<< endl;
     exit(1);
@@ -85,6 +77,7 @@ void Dataset::ReadFromFile() {
     cout << "Input file " << fn_ << "might be corrupted!" << endl;
     exit(1);
   }
+  // read data
   if (ff_ == svmlight) {
     InitFromSvmlight();
   }
@@ -99,6 +92,16 @@ void Dataset::ReadFromFile() {
     exit(1);
   }
 }
+
+void Dataset::InitFromSvmlight() {
+}
+
+void Dataset::InitFromCsv() {
+}
+
+void Dataset::InitFromArff() {
+}
+
 
 void Dataset::ReadFromPort() {
   // TODO: probabaly parallel read from different ports
