@@ -1,3 +1,4 @@
+#include <fastlib/fastlib.h>
 #include "simple_nbc.h"
 #include "fastlib/base/test.h"
 
@@ -21,7 +22,6 @@ const fx_module_doc test_simple_nbc_main_doc = {
 
 class TestClassSimpleNBC{
  private:
-  SimpleNaiveBayesClassifier *nbc_test_;
   const char *filename_train_, *filename_test_;
   const char *train_result_, *test_result_;
   index_t number_of_classes_;
@@ -31,7 +31,6 @@ class TestClassSimpleNBC{
   void Init(const char *filename_train, const char *filename_test,
 	    const char *train_result, const char *test_result,
 	    const int number_of_classes) {
-    nbc_test_ = new SimpleNaiveBayesClassifier();
     filename_train_ = filename_train;
     filename_test_ = filename_test;
     train_result_ = train_result;
@@ -40,59 +39,60 @@ class TestClassSimpleNBC{
   }
 
   void Destruct() {
-    delete nbc_test_;
-    delete filename_train_;
-    delete filename_test_;
-    delete train_result_;
-    delete test_result_;
-  }
-
-  void TestInitTrain(fx_module *root) {
-    Matrix train_data, train_res, calc_mat;
-    data::Load(filename_train_, &train_data);
-    data::Load(train_result_, &train_res); 
-    struct datanode* nbc_module = fx_submodule(root,"nbc");
-    fx_set_param_int(nbc_module, "classes", 2);
-    nbc_test_->InitTrain(train_data, nbc_module);
-    index_t number_of_features = nbc_test_->means_.n_rows();
-    calc_mat.Init(2*number_of_features + 1, number_of_classes_);
-    for(index_t i = 0; i < number_of_features; i++) {
-      for(index_t j = 0; j < number_of_classes_; j++) {
-	calc_mat.set(i, j, nbc_test_->means_.get(i, j));
-	calc_mat.set(i + number_of_features, j, nbc_test_->variances_.get(i, j));	
-      }
-    }
-    for(index_t i = 0; i < number_of_classes_; i++) {
-      calc_mat.set(2 * number_of_features, i, nbc_test_->class_probabilities_[i]);      
-    }
-    
-    for(index_t i = 0; i < calc_mat.n_rows(); i++) {
-      for(index_t j = 0; j < number_of_classes_; j++) {
-	TEST_DOUBLE_APPROX(train_res.get(i, j), calc_mat.get(i, j), 0.0001);
-      }
-    }
-    NONFATAL("Test InitTrain passed...\n");
-    
-  }
-
-  void TestClassify() {
-    Matrix test_data, test_res;
-    Vector test_res_vec, calc_vec;
-    data::Load(filename_test_, &test_data);
-    data::Load(test_result_, &test_res); 
-    nbc_test_->Classify(test_data, &calc_vec);
-    index_t number_of_datum = test_data.n_cols();
-    test_res.MakeColumnVector(0, &test_res_vec);
-    for(index_t i = 0; i < number_of_datum; i++) {
-      TEST_ASSERT(test_res_vec.get(i) == calc_vec.get(i));
-    }
-    NONFATAL("Test Classify passed...\n");
   }
 
   void TestAll(fx_module *root) {
-    TestInitTrain(root);
-    TestClassify();
+    arma::mat train_data, train_res, calc_mat;
+    data::Load(filename_train_, train_data);
+    data::Load(train_result_, train_res); 
+
+    struct datanode* nbc_module = fx_submodule(root,"nbc");
+    fx_set_param_int(nbc_module, "classes", number_of_classes_);
+
+    NOTIFY("Training...\n");
+
+    SimpleNaiveBayesClassifier nbc_test_(train_data, nbc_module);
+
+    index_t number_of_features = nbc_test_.means_.n_rows;
+    calc_mat.zeros(2*number_of_features + 1, number_of_classes_);
+
+    NOTIFY("Beginning training test...\n");
+
+    for(index_t i = 0; i < number_of_features; i++) {
+      for(index_t j = 0; j < number_of_classes_; j++) {
+	calc_mat(i, j) = nbc_test_.means_(i, j);
+	calc_mat(i + number_of_features, j) = nbc_test_.variances_(i, j);
+      }
+    }
+    for(index_t i = 0; i < number_of_classes_; i++) {
+      calc_mat(2 * number_of_features, i) = nbc_test_.class_probabilities_(i);
+    }
+    
+    for(index_t i = 0; i < calc_mat.n_rows; i++) {
+      for(index_t j = 0; j < number_of_classes_; j++) {
+	TEST_DOUBLE_APPROX(train_res(i, j), calc_mat(i, j), 0.0001);
+      }
+    }
+    NOTIFY("Training test passed...\n");
+    
+    NOTIFY("Beginning classification test...\n");
+
+    arma::mat test_data, test_res;
+    arma::vec test_res_vec, calc_vec;
+    data::Load(filename_test_, test_data);
+    data::Load(test_result_, test_res); 
+
+    nbc_test_.Classify(test_data, calc_vec);
+
+    index_t number_of_datum = test_data.n_cols;
+    test_res_vec = test_res.col(0);
+
+    for(index_t i = 0; i < number_of_datum; i++) {
+      TEST_ASSERT(test_res_vec(i) == calc_vec(i));
+    }
+    NOTIFY("Classification test passed...\n");
   }
+
 };
 
 int main(int argc, char *argv[]) {

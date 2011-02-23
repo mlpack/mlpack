@@ -89,29 +89,29 @@ class SimpleNaiveBayesClassifier {
   // number of classes present
   index_t number_of_classes_;
 
-  datanode *nbc_module_;
+  datanode* nbc_module_;
 		   
  public:
 
-  SimpleNaiveBayesClassifier(){
-  }
-
-  ~SimpleNaiveBayesClassifier(){
-  }
-
  /**
-  * The function that initializes the classifier as per the input
-  * and then trains it by calculating the sample mean and variances
+  * Initializes the classifier as per the input and then trains it
+  * by calculating the sample mean and variances
   *
   * Example use:
   * @code
   * arma::mat training_data, testing_data;
-  * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
+  * datanode nbc_module = fx_submodule(NULL,"nbc","nbc");
   * ....
-  * nbc.InitTrain(training_data, nbc_module);
+  * SimpleNaiveBayesClassifier nbc(training_data, nbc_module);
   * @endcode
   */
-  void InitTrain(const arma::mat& data, datanode* nbc_module); 
+  SimpleNaiveBayesClassifier(const arma::mat& data, datanode* nbc_module);
+  /**
+   * Default constructor, you need to use the other one.
+  */
+  SimpleNaiveBayesClassifier();
+  ~SimpleNaiveBayesClassifier(){
+  }
 
   /**
    * Given a bunch of data points, this function evaluates the class

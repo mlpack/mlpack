@@ -1,8 +1,8 @@
 Author : Parikshit Ram (pram@cc.gatech.edu)
 
 The files are the following:
-1. nbc_main.cc - this is the main which creates an object of the class SimpleNaiveBayesClassifier, trains it, tests it and outputs the results. The executable formed is called "simple_nbc_main".
- - the parameters taken in by the main are the following:
+1. nbc_main.cc - this is the main which creates an object of the class SimpleNaiveBayesClassifier, trains it, tests it and outputs the results. The executable formed is called "nbc".
+ - the parameters taken in by main are the following:
    --train : the file that contains the training data, the last column being the class of the data point
    --nbc/classes : the number of classes the data provided has been classified into
    --test : this file contains the testing data, this still contains its actual labels on the last column, but it is not used.
@@ -10,7 +10,7 @@ The files are the following:
 
 2. simple_nbc.h - this is the file that contains the definition of the class SimpleNaiveBayesClassifier. The rest of the details are present in the file itself.
 
-3. phi.h - this contains the function that calculates the value of the univariate Gaussian pdf
+3. phi.h - this contains the functions that calculate the value of the univariate and multivariate Gaussian probability density function
 
 4. test_simple_nbc_main.cc - this file contains the class which tests the class SimpleNaiveBayesClassifier. The executable formed is "test_simple_nbc_main".
  - the parameters taken in by this are the following:

@@ -9,20 +9,19 @@
  *
  */
 
-#define ARMA_NO_DEBUG
-
 #include "fastlib/fastlib.h"
 #include "simple_nbc.h"
 #include "phi.h"
 
-void SimpleNaiveBayesClassifier::InitTrain(const arma::mat& data, datanode* nbc_module) {
-
+SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data,
+    datanode* nbc_module) : nbc_module_(nbc_module) {
 
   index_t number_examples = data.n_cols;
   index_t number_features = data.n_rows - 1;
-  nbc_module_ = nbc_module;
 
-  arma::vec feature_sum(number_features), feature_sum_squared(number_features);
+  arma::vec feature_sum, feature_sum_squared;
+  feature_sum.zeros(number_features);
+  feature_sum_squared.zeros(number_features);
 
   // updating the variables, private and local, according to
   // the number of features and classes present in the data
@@ -55,20 +54,15 @@ void SimpleNaiveBayesClassifier::InitTrain(const arma::mat& data, datanode* nbc_
     class_probabilities_[i] = (double)number_of_occurrences 
       / (double)number_examples ;
     for(index_t k = 0; k < number_features; k++) {
-      double fs = feature_sum(k),
-	     fss = feature_sum_squared(k);
+      double sum = feature_sum(k),
+	     sum_squared = feature_sum_squared(k);
 
-      means_(k, i) = (fs / number_of_occurrences);
-      variances_(k, i) = (fss 
-			    - (fs * fs / number_of_occurrences))
+      means_(k, i) = (sum / number_of_occurrences);
+      variances_(k, i) = (sum_squared 
+			    - (sum * sum / number_of_occurrences))
 			   /(number_of_occurrences - 1);
-      /*
-      means_(k, i) = (feature_sum(k) / number_of_occurrences);
-      variances_(k, i) = (feature_sum_squared(k) 
-			    - (feature_sum(k) * feature_sum(k) / number_of_occurrences))
-			   /(number_of_occurrences - 1);
-       */
     }
+    // Reset the summations to zero for the next iteration
     feature_sum.zeros(number_features);
     feature_sum_squared.zeros(number_features);
   }
@@ -117,6 +111,7 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
     }
     results(n) = max;
   }
+
   
   return;
 }
