@@ -296,7 +296,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset_sl &dataset_in) {
     double eta0 = sqrt_n / max(1.0, LossFunctionGradient_(learner_typeid, -sqrt_n)); // initial step length
     t_ = 1.0 / (eta0 * lambda_);
     scale_w_ = 1.0;
-    
+
     printf("SGD_linear training begins...\n");
     for (epo = 0; epo<n_epochs_; epo++) {
       /* To mimic the online learning senario, in each epoch, 
@@ -308,7 +308,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset_sl &dataset_in) {
 	j = rand() % n_data_;
 	swap(old_from_new_[i], old_from_new_[j]);
       }
-      
+
       ct = 0;
       while (ct <= n_iter_) {
 	work_idx_old = old_from_new_[ct % n_data_];
@@ -324,6 +324,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset_sl &dataset_in) {
 	}
 	NZ_entry *xt;
 	xt = (dataset_->x)[work_idx_old];
+	//print_ex(xt);
 	yt = y_[work_idx_old];
 	//yt_hat = la::Dot(w_, xt) * scale_w_ + bias_;
 	yt_hat = SparseDot(w_, xt) * scale_w_ + bias_;
@@ -335,11 +336,14 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset_sl &dataset_in) {
 	  // Note: moving w's scaling calculation w_t*(1-1/t) to the testing session is faster
 	  SparseAddExpert(-eta_grad / scale_w_, xt, w_);
 	  // update bias
+	  //printf("%g-> ", bias_);
 	  bias_ -= eta_grad * 0.01;
+	  //printf("%g\n", bias_);
 	}
 
 	t_ += 1.0;
 	ct ++;
+	//print_svec(w_);
       }
     } // for epo
 
