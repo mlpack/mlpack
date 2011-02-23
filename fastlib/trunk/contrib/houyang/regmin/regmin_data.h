@@ -437,4 +437,22 @@ void SparseElementMulOverwrite(ArrayList<NZ_entry> &y, ArrayList<NZ_entry> &x) {
 }
 
 
+void print_svec(ArrayList<NZ_entry> &v) {
+  printf("v== ");
+  for (index_t i=0; i<v.size(); i++) {
+    printf("%d:%g, ", v[i].index, v[i].value);
+  }
+  printf("\n");
+}
+
+void print_ex(NZ_entry *x) {
+  printf("x== ");
+  while (x->index !=-1) {
+    printf("%d:%g, ", x->index, x->value);
+    ++x;
+  }
+  printf("\n");
+}
+
+
 #endif

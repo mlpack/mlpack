@@ -224,7 +224,7 @@ int InitTestsetFromFile(String param) {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
 
-  srand(time(NULL));
+  //srand(time(NULL));
 
   String mode = fx_param_str_req(NULL, "mode");
   String kernel = fx_param_str_req(NULL, "kernel");
