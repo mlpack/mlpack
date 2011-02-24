@@ -16,13 +16,13 @@ void Learner::OnlineLearn() {
 
   // Get input data
   if (read_port_) {
-    D_.TR_ = new Dataset(NULL, port_, false);
-    D_.TR_->ReadFromPort();
+    TR_ = new Data(NULL, port_, false);
+    TR_->ReadFromPort();
   }
   else {
     if (fn_learn_ != "") {
-      D_.TR_ = new Dataset(fn_learn_, 0, random_data_);
-      D_.TR_->ReadFromFile();
+      TR_ = new Data(fn_learn_, 0, random_data_);
+      TR_->ReadFromFile();
     }
     else {
       cout << "No input file provided!" << endl;
@@ -38,8 +38,8 @@ void Learner::BatchLearn() {
 
   // Training
   if (fn_learn_ != "") {
-    D_.TR_ = new Dataset(fn_learn_, 0, random_data_);
-    D_.TR_->ReadFromFile();
+    TR_ = new Data(fn_learn_, 0, random_data_);
+    TR_->ReadFromFile();
   }
   else {
     cout << "No training file provided!" << endl;
@@ -50,11 +50,11 @@ void Learner::BatchLearn() {
   // Testing
   if (fn_predict_ != "") {
     if (fn_predict_ == fn_learn_) {
-      D_.TE_ = D_.TR_;
+      TE_ = TR_;
     }
     else {
-      D_.TE_ = new Dataset(fn_predict_, 0, false);
-      D_.TE_->ReadFromFile();
+      TE_ = new Data(fn_predict_, 0, false);
+      TE_->ReadFromFile();
     }
   }
   else {

@@ -20,7 +20,10 @@ class Learner {
  public:
   bool v_;
   
-  Data   D_;
+  Data *TR_; // training set
+  Data *VA_; // validation set
+  Data *TE_; // testing set
+
   bool   random_data_;
   size_t n_source_, port_;
   bool   read_port_; // read data from port or file
