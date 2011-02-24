@@ -14,8 +14,6 @@
 
 using namespace std;
 
-typedef float T_LBL; // type for labels
-
 class Learner {
  public:
   bool v_;

@@ -5,6 +5,8 @@
 #include <cstdlib>
 #include <string>
 #include <iostream>
+#include <fstream>
+#include <vector>
 
 #include "sparsela.h"
 
@@ -24,21 +26,25 @@ class Data {
   size_t port_;
   bool   random_;
   // data properties
-  Example *EX_; // examples
+  vector<Example> EXs_; // examples
   size_t n_ex_; // number of examples
+  size_t n_ln_; // number of lines of example file
   // for svmlight format
   size_t max_n_nz_ft_; // maximum number of non-0 features
   size_t max_l_ln_; // maximum length of a text line
   // data stream properties
  public:
   Data(string fn, size_t port, bool random);
-  bool ReadFileInfo();
+ private:
   void InitFromSvmlight();
   void InitFromCsv();
   void InitFromArff();
-
+  bool SorN(int c);
+ public:
+  bool ReadFileInfo();
   void ReadFromFile();
   void ReadFromPort();
+  void Print();
   
   bool GetExample();
 };
