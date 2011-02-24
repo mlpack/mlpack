@@ -6,14 +6,15 @@
 #include <string>
 #include <iostream>
 
+#include "sparsela.h"
+
 using namespace std;
 
 enum FileFormat {
   csv, arff, svmlight, unknown
 };
 
-//---------------------Dataset---------------------------//
-class Dataset {
+class Data {
  public:
   // input parameters
   size_t n_source_;
@@ -22,13 +23,15 @@ class Dataset {
   FileFormat ff_; 
   size_t port_;
   bool   random_;
-  // data file properties
-  size_t n_sp_; // number of examples
-  size_t max_n_ft_; // maximum number of features
+  // data properties
+  Example *EX_; // examples
+  size_t n_ex_; // number of examples
+  // for svmlight format
+  size_t max_n_nz_ft_; // maximum number of non-0 features
   size_t max_l_ln_; // maximum length of a text line
   // data stream properties
  public:
-  Dataset(string fn, size_t port, bool random);
+  Data(string fn, size_t port, bool random);
   bool ReadFileInfo();
   void InitFromSvmlight();
   void InitFromCsv();
@@ -40,16 +43,5 @@ class Dataset {
   bool GetExample();
 };
 
-//---------------------Data---------------------------//
-class Data {
- public:
-  Dataset *TR_; // training set
-  Dataset *VA_; // validation set
-  Dataset *TE_; // testing set
-  
- public:
-  Data();
-  ~Data();
-};
 
 #endif

@@ -1,20 +1,20 @@
-// Implementation for Dataset and Data
+// Implementation for Data
 
 #include "data.h"
 
 
-//---------------------Dataset---------------------------//
+//---------------------Data---------------------------//
 ///////////////
 // Construction
 ///////////////
-Dataset::Dataset(string fn, size_t port, bool random) : 
+Data::Data(string fn, size_t port, bool random) : 
   fn_(fn), port_(port), random_(random) {
 }
 
 ////////////////////////////////////////
 // Determine file format and read info
 ////////////////////////////////////////
-bool Dataset::ReadFileInfo() {
+bool Data::ReadFileInfo() {
   int c;
   // determine file format
   ff_ = unknown;
@@ -36,38 +36,41 @@ bool Dataset::ReadFileInfo() {
   // Count # of examples(lines), max # of features per example,
   // and the size of the longest line
   if (ff_ == svmlight) {
-    size_t current_length, current_fe;
-    current_length = 0;
-    current_fe = 0;
+    size_t current_l, current_n_nz_ft;
+    current_l = 0;
+    current_n_nz_ft = 0;
 
+    n_ex_ = 0;
+    max_n_nz_ft_ = 0;
     max_l_ln_ = 0;
-    n_sp_ = 1;
-    max_n_ft_ = 0;
 
+    rewind(fp_);
     while ((c=getc(fp_)) != EOF) {
-      current_length ++;
-      if (space_or_null((int)c)) {
-	current_fe ++;
+      current_l ++;
+      if (c == ':') {
+	current_n_nz_ft ++;
       }
       if (c == '\n') {
-	num_examples ++;
-	if (current_length > max_length_line) {
-	  max_length_line = current_length;
+	n_ex_ ++;
+	if (current_l > max_l_ln_) {
+	  max_l_ln_ = current_l;
 	}
-	if (current_fe > max_features_example) {
-	  max_features_example = current_fe;
+	if (current_n_nz_ft > max_n_nz_ft_) {
+	  max_n_nz_ft_ = current_n_nz_ft;
 	}
-	current_length = 0;
-	current_fe = 0;
+	current_l = 0;
+	current_n_nz_ft = 0;
       }
     }
-    //fclose(fp);
+    //cout << "n_ex: " << n_ex_ << ", max_n_nzft: " << max_n_nz_ft_ <<
+    //  ", max_l_ln: " << max_l_ln_ << endl;
   }
+  rewind(fp_);
 
   return true;
 }
 
-void Dataset::ReadFromFile() {
+void Data::ReadFromFile() {
   // determine file format and read other info
   if ((fp_ = fopen (fn_.c_str(), "r")) == NULL) {
     cout << "Cannot open input file: " << fn_ << " !"<< endl;
@@ -91,39 +94,20 @@ void Dataset::ReadFromFile() {
     cout << "Unknown input data form! Only svmlight, csv and arff are supported!";
     exit(1);
   }
+  fclose(fp_);
 }
 
-void Dataset::InitFromSvmlight() {
+void Data::InitFromSvmlight() {
+  
 }
 
-void Dataset::InitFromCsv() {
+void Data::InitFromCsv() {
 }
 
-void Dataset::InitFromArff() {
+void Data::InitFromArff() {
 }
 
 
-void Dataset::ReadFromPort() {
+void Data::ReadFromPort() {
   // TODO: probabaly parallel read from different ports
-}
-
-
-
-//---------------------Data---------------------------//
-///////////////
-// Construction
-///////////////
-Data::Data() {
-}
-
-///////////////
-// Destruction
-///////////////
-Data::~Data() {
-  if (TR_)
-    delete TR_;
-  if (TE_)
-    delete TE_;
-  if (VA_)
-    delete VA_;
 }
