@@ -86,7 +86,7 @@ namespace la {
     do {
       double d = *va++ - *vb++;
       // using std::pow and std::abs instead of math::PowAbs
-      s += std::pow(std::abs(t_pow),d);//math::PowAbs<t_pow, 1>(d);
+      s += std::pow(d, t_pow);//math::PowAbs<t_pow, 1>(d);
     } while (--length);
     return s;
   }
@@ -103,7 +103,7 @@ namespace la {
   inline double LMetric(
       index_t length, const double *va, const double *vb) {
     // using std::pow instead of math::Pow
-    return 1.0/std::pow(t_pow,RawLMetric<t_pow>(length, va, vb));
+    return 1.0/std::pow(RawLMetric<t_pow>(length, va, vb), t_pow);
     //return math::Pow<1, t_pow>(RawLMetric<t_pow>(length, va, vb));
   }
   /** Finds the trace of the matrix.

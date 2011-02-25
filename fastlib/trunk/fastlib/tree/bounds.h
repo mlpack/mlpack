@@ -199,10 +199,10 @@ class DHrectBound {
 
       mbound++;
       mpoint++;
-      sum += std::pow(t_pow,v);
+      sum += std::pow(v, t_pow);
     } while (--d);
 
-    return std::pow(2.0/t_pow,sum) / 4.0;
+    return std::pow(sum, 2.0 / t_pow) / 4.0;
   }
 
  /**
@@ -224,10 +224,10 @@ class DHrectBound {
 
      double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-     sum += std::pow(t_pow, v);
+     sum += std::pow(v, t_pow);
    } 
 
-   return std::pow(2.0/t_pow,sum) / 4.0;
+   return std::pow(sum, 2.0 / t_pow) / 4.0;
  }
 
   /**
@@ -259,9 +259,9 @@ class DHrectBound {
       //   (x * 2)^2 / 4 = x^2
       double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
-      sum += std::pow(t_pow, v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
-    return std::pow(2.0/t_pow,sum) / 4.0;
+    return std::pow(sum, 2.0 / t_pow) / 4.0;
   }
 
 
@@ -275,9 +275,9 @@ class DHrectBound {
 
     for (index_t d = 0; d < dim_; d++) {
       double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-      sum += std::pow(t_pow, v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
-    return std::pow(2.0/t_pow, sum);
+    return std::pow(sum, 2.0 / t_pow);
   }
 
   /**
@@ -288,10 +288,10 @@ class DHrectBound {
 
     for (index_t d = 0; d < dim_; d++) {
       double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-      sum += std::pow(t_pow, v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return std::pow(2.0/t_pow, sum);
+    return std::pow(sum, 2.0 / t_pow);
   }
 
   /**
@@ -306,10 +306,10 @@ class DHrectBound {
 
     for (index_t d = 0; d < dim_; d++) {
       double v = std::max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
-      sum += std::pow(std::fabs(t_pow), v);
+      sum += std::pow(v, t_pow);
     }
 
-    return std::pow(2.0/t_pow,sum);
+    return std::pow(sum, 2.0 / t_pow);
   }
 
  /**
@@ -325,10 +325,10 @@ class DHrectBound {
     for (index_t d = 0; d < dim_; d++) {
       double v = std::max(b[d].hi + offset[d] - a[d].lo, 
 			  a[d].hi - offset[d] - b[d].lo);
-      sum += std::pow(std::fabs(t_pow), v);
+      sum += std::pow(v, t_pow);
     }
 
-    return std::pow(2.0/t_pow,sum);
+    return std::pow(sum, 2.0 / t_pow);
   }
 
  /**
@@ -352,9 +352,9 @@ class DHrectBound {
      d3 = (a[d].hi > a[d].lo & b[d].hi > b[d].lo)*
        min(b[d].lo - a[d].hi + box_size[d], a[d].lo-b[d].hi);
      v = (d1 + fabs(d1)) + (d2+  fabs(d2)) + (d3 + fabs(d3));
-     sum += std::pow(t_pow,v);
+     sum += std::pow(v, t_pow);
    }   
-   return std::pow(2.0/t_pow, sum) / 4.0;
+   return std::pow(sum, 2.0 / t_pow) / 4.0;
  }
  
 
@@ -374,10 +374,10 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
      if (bh > a){
        v = min(a - bh, box_size[d]-a);
      }
-     sum += std::pow(t_pow, v);
+     sum += std::pow(v, t_pow);
    }
    
-   return std::pow(2.0/t_pow, sum);
+   return std::pow(sum, 2.0 / t_pow);
  }
  
 
@@ -404,9 +404,9 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
      dl = dl - floor(dl / box_size[d])*box_size[d];
      v = max(min(dh,v), min(dl, v));
        
-     sum += std::pow(std::fabs(t_pow),v);
+     sum += std::pow(v, t_pow);
    }   
-   return std::pow(2.0/t_pow, sum);
+   return std::pow(sum, 2.0 / t_pow);
  }
 
 
@@ -429,9 +429,9 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
 	 v = 2*v-al;
        }
      }
-     sum += std::pow(std::fabs(t_pow), v);
+     sum += std::pow(v, t_pow);
    }   
-   return std::pow(2.0/t_pow, sum);
+   return std::pow(sum, 2.0 / t_pow);
  }
 
 
@@ -498,12 +498,12 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
       double v_lo = (v1 + fabs(v1)) + (v2 + fabs(v2));
       double v_hi = -std::min(v1, v2);
 
-      sum_lo += std::pow(t_pow, v_lo); // v_lo is non-negative
-      sum_hi += std::pow(t_pow, v_hi); // v_hi is non-negative
+      sum_lo += std::pow(v_lo, t_pow); // v_lo is non-negative
+      sum_hi += std::pow(v_hi, t_pow); // v_hi is non-negative
     }
 
-    return DRange(std::pow(2.0/t_pow, sum_lo) / 4,
-        std::pow(2.0/t_pow, sum_hi));
+    return DRange(std::pow(sum_lo, 2.0 / t_pow) / 4,
+        std::pow(sum_hi, 2.0 / t_pow));
   }
 
   /**
@@ -523,15 +523,15 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
       double v1 = mbound->lo - v;
       double v2 = v - mbound->hi;
 
-      sum_lo += std::pow(t_pow, (v1 + fabs(v1)) + (v2 + fabs(v2)));
-      sum_hi += std::pow(t_pow, -std::min(v1, v2));
+      sum_lo += std::pow((v1 + fabs(v1)) + (v2 + fabs(v2)), t_pow);
+      sum_hi += std::pow(-std::min(v1, v2), t_pow);
 
       mpoint++;
       mbound++;
     } while (--d);
 
-    return DRange(std::pow(2.0/t_pow, sum_lo) / 4,
-                  std::pow(2.0/t_pow, sum_hi));
+    return DRange(std::pow(sum_lo, 2.0 / t_pow) / 4,
+                  std::pow(sum_hi, 2.0 / t_pow));
   }
 
   /**
@@ -562,10 +562,10 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
       a++;
       b++;
 
-      sum += std::pow(t_pow, v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return std::pow(2.0/t_pow, sum) / 4;
+    return std::pow(sum, 2.0 / t_pow) / 4;
   }
 
   /**
@@ -584,10 +584,10 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
       double v2 = a[d].lo - b[d].lo;
       double v = std::max(v1, v2);
       v = (v + fabs(v)); /* truncate negatives to zero */
-      sum += std::pow(t_pow, v); // v is non-negative
+      sum += std::pow(v, t_pow); // v is non-negative
     }
 
-    return std::pow(2.0/t_pow, sum) / 4;
+    return std::pow(sum, 2.0 / t_pow) / 4;
   }
 
   /**
@@ -601,10 +601,10 @@ double PeriodicMinDistanceSq(const Vector& point, const Vector& box_size)
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
     for (index_t d = 0; d < dim_; d++) {
-      sum += std::pow(std::fabs(t_pow), a[d].hi + a[d].lo - b[d].hi - b[d].lo);
+      sum += std::pow(a[d].hi + a[d].lo - b[d].hi - b[d].lo, t_pow);
     }
 
-    return std::pow(2.0/t_pow, sum) / 4;
+    return std::pow(sum, 2.0 / t_pow) / 4;
   }
 
   /**
@@ -724,8 +724,8 @@ class LMetric {
    * Computes the distance metric between two points.
    */
   static double Distance(const Vector& a, const Vector& b) {
-    return 1.0/std::pow(t_pow, 
-        la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+    return 1.0 / std::pow(la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()),
+        t_pow);
   }
 
   /**
@@ -737,8 +737,8 @@ class LMetric {
    */
   template<int t_result_pow>
   static double PowDistance(const Vector& a, const Vector& b) {
-    return std::pow((double)t_result_pow/t_pow,
-        la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()));
+    return std::pow(la::RawLMetric<t_pow>(a.length(), a.ptr(), b.ptr()),
+        (double) t_result_pow / t_pow);
   }
 };
 
@@ -808,7 +808,7 @@ class DBallBound {
   }
 
   double MinDistanceSq(const Point& point) const {
-    return std::pow(2, MinDistance(point));
+    return std::pow(MinDistance(point), 2);
   }
 
   /**
@@ -820,7 +820,7 @@ class DBallBound {
   }
 
   double MinDistanceSq(const DBallBound& other) const {
-    return std::pow(2, MinDistance(other));
+    return std::pow(MinDistance(other), 2);
   }
 
   /**
@@ -831,7 +831,7 @@ class DBallBound {
   }
 
   double MaxDistanceSq(const Point& point) const {
-    return std::pow(2,  MaxDistance(point));
+    return std::pow(MaxDistance(point), 2);
   }
 
   /**
@@ -842,7 +842,7 @@ class DBallBound {
   }
 
   double MaxDistanceSq(const DBallBound& other) const {
-    return std::pow(2,  MaxDistance(other));
+    return std::pow(MaxDistance(other), 2);
   }
 
   /**
@@ -862,8 +862,8 @@ class DBallBound {
     double delta = MidDistance(other.center_);
     double sumradius = radius_ + other.radius_;
     return DRange(
-       std::pow(2,  math::ClampNonNegative(delta - sumradius)),
-       std::pow(2,  delta + sumradius));
+       std::pow(math::ClampNonNegative(delta - sumradius), 2),
+       std::pow(delta + sumradius, 2));
   }
 
   /**
@@ -883,7 +883,7 @@ class DBallBound {
   }
 
   double MinToMidSq(const DBallBound& other) const {
-    return std::pow(2,  MinToMid(other));
+    return std::pow(MinToMid(other), 2);
   }
 
   /**
@@ -895,7 +895,7 @@ class DBallBound {
   }
 
   double MinimaxDistanceSq(const DBallBound& other) const {
-    return std::pow(2,  MinimaxDistance(other));
+    return std::pow(MinimaxDistance(other), 2);
   }
 
   /**
@@ -906,7 +906,7 @@ class DBallBound {
   }
 
   double MidDistanceSq(const DBallBound& other) const {
-    return std::pow(2,  MidDistance(other));
+    return std::pow(MidDistance(other), 2);
   }
 
   double MidDistance(const Point& point) const {
