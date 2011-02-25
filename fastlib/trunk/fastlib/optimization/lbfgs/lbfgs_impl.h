@@ -620,8 +620,8 @@ std::string Lbfgs<OptimizedFunction>::ComputeProgress_() {
   double feasibility_error;
   optimized_function_->ComputeFeasibilityError(
       coordinates_, &feasibility_error);
-  double norm_grad=1.0/std::pow(2,la::Dot(gradient_.n_elements(), 
-      gradient_.ptr(), gradient_.ptr()));
+  double norm_grad=1.0/std::pow(la::Dot(gradient_.n_elements(), 
+      gradient_.ptr(), gradient_.ptr()), 2);
   char buffer[1024];
   sprintf(buffer, "iteration:%i sigma:%lg lagrangian:%lg objective:%lg error:%lg "
       "grad_norm:%lg step:%lg",
