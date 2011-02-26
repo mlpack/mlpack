@@ -22,13 +22,14 @@ class Data {
   size_t n_source_;
   string fn_;
   FILE   *fp_;
-  FileFormat ff_; 
   size_t port_;
   bool   random_;
+  FileFormat ff_; 
   // data properties
   vector<Example> EXs_; // examples
   size_t n_ex_; // number of examples
   size_t n_ln_; // number of lines of example file
+  T_IDX max_ft_idx_; // max index of features
   // for svmlight format
   size_t max_n_nz_ft_; // maximum number of non-0 features
   size_t max_l_ln_; // maximum length of a text line
