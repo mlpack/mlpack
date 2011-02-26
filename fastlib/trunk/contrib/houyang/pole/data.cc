@@ -71,6 +71,9 @@ bool Data::ReadFileInfo() {
   return true;
 }
 
+//////////////
+// Read file
+//////////////
 void Data::ReadFromFile() {
   // determine file format and read other info
   if ((fp_ = fopen (fn_.c_str(), "r")) == NULL) {
@@ -81,7 +84,7 @@ void Data::ReadFromFile() {
     cout << "Input file " << fn_ << "might be corrupted!" << endl;
     exit(1);
   }
-
+  cout << "Read examples from " << fn_ << "...";
   // read data
   if (ff_ == svmlight) {
     InitFromSvmlight();
@@ -96,9 +99,14 @@ void Data::ReadFromFile() {
     cout << "Unknown input data form! Only svmlight, csv and arff are supported!";
     exit(1);
   }
+  cout << "done. " << endl << n_ex_ << " examples loaded." 
+       << " Max dimension: " << max_ft_idx_ << "."<< endl;
   fclose(fp_);
 }
 
+/////////////////
+// Print dataset
+/////////////////
 void Data::Print() {
   vector<Example>::iterator it;
   for (it=EXs_.begin(); it<EXs_.end(); it++) {
@@ -115,23 +123,19 @@ bool Data::SorN(int c) {
   return (isspace(c));
 }
 
+////////////////////////////////////
+// Init dataset from Svmlight format
+////////////////////////////////////
 void Data::InitFromSvmlight() {
   char ln[max_l_ln_]; // line buffer
-  char f_pair[1000]; // feature pair buffer
-
+  char f_pair[1000], junk[1000]; // feature pair buffer
   EXs_.resize(n_ln_);
+  n_ex_ = 0; max_ft_idx_ = 0;
 
-  size_t l = 0, x = 0, pos = 0;
+  size_t l = 0, pos = 0;
   // ------------parse lines--------------
-  while(!feof(fp_)) {
+  while(!feof(fp_) && fgets(ln, max_l_ln_, fp_)) {
     l++;
-    if (!fgets(ln, max_l_ln_, fp_)) {
-      cout << "Cannot read line " << l << " !"<< endl << ln << endl;
-      exit(1);
-    }
-    if (ln[0] == '\n') {
-      continue;
-    }
     while(ln[pos]) {
       if(ln[pos] == '#') { // strip comment
 	ln[pos] = 0;
@@ -162,62 +166,57 @@ void Data::InitFromSvmlight() {
       cout << "Cannot read label at line " << l << " !"<< endl << ln << endl;
       exit(1);
     }
-    EXs_[x].y_= (T_LBL)lbl;
-    // -----------skip spaces------------
+    EXs_[n_ex_].y_= (T_LBL)lbl;
+    // -----------skip spaces and label------------
     pos=0;
     while( SorN((int)ln[pos]) )
       pos++;
     while( (!SorN((int)ln[pos])) && ln[pos] )
       pos++;
     // -----------get features------------
-    /*
-    T_IDX i; T_VAL v;
-    size_t n_f = 0, n_r = 0;
+    long idx; double val;
+    int n_r = 0; size_t n_f = 0;
+    EXs_[n_ex_].Fs_.resize(max_n_nz_ft_);
     while( ((n_r=sscanf(ln+pos, "%s", f_pair)) != EOF) && 
 	   (n_r > 0) && (n_f<max_n_nz_ft_) ) {
       while(SorN((int)ln[pos]))
 	pos++;
-      while((!space_or_null((int)line[pos])) && line[pos])
+      while((!SorN((int)ln[pos])) && ln[pos])
 	pos++;
-      if(sscanf(featurepair,"%ld:%lf%s", &w_idx, &w_val, junk)==2) {
+      if(sscanf(f_pair,"%ld:%lf%s", &idx, &val, junk)==2) {
 	// it is a regular feature
-	if(w_idx<=0) { 
-	  cerr << "Feature numbers must be larger or equal to 1!" << endl;
-	  cerr << "Line: " << line << endl;
+	if(idx <= 0) { 
+	  cout <<"Feature numbers must be larger or equal to 1!" << "Line: " << ln << endl;
 	  exit (1); 
 	}
-	if((wpos>0) && ((feat[wpos-1]).widx >= w_idx)) { 
-	  cerr << "Features must be in increasing order!" << endl;
-	  cerr << "Line: " << line << endl;
-	  exit (1); 
+	EXs_[n_ex_].Fs_[n_f].i_ = (T_IDX)idx;
+	EXs_[n_ex_].Fs_[n_f].v_ = (T_VAL)val;
+	if ((T_IDX)idx > max_ft_idx_) {
+	  max_ft_idx_ = (T_IDX)idx;
 	}
-	(feat[wpos]).widx = (T_IDX)w_idx; // feature index starts from 1
-	(feat[wpos]).wval = (T_VAL)w_val; 
-
-	if (w_idx > global.max_feature_idx)
-	  global.max_feature_idx = w_idx;
-
-	wpos++;
       }
       else {
-	cout << "Cannot parse feature/value pair!!!" << endl; 
-	cerr << featurepair << " in LINE: " << line << endl;
+	cout << "Cannot parse feature/value pair " 
+	     << f_pair << "! Line: " << ln << endl;
 	exit (1); 
       }
+      n_f ++;
     }
-    */
-    /*
-    for () {
-      EXs_[x].Fs_.PushBack(Feature( , ));
-    }
-    */
-    x++; n_ex_++;
+    EXs_[n_ex_].Fs_.resize(n_f);
+    n_ex_++;
   }
+  EXs_.resize(n_ex_);
 }
 
+////////////////////////////////////
+// Init dataset from CSV format
+////////////////////////////////////
 void Data::InitFromCsv() {
 }
 
+////////////////////////////////////
+// Init dataset from ARFF format
+////////////////////////////////////
 void Data::InitFromArff() {
 }
 

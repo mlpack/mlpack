@@ -181,6 +181,10 @@ void Pole::ArgsSanityCheck() {
   if (L_->n_log_ <0) {
     L_->n_log_ = 0;
   }
+
+  if (L_->calc_loss_ && L_->n_log_ == 0) {
+    L_->n_log_ = 1;
+  }
 }
 
 void Pole::Run() {

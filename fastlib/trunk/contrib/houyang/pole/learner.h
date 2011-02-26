@@ -3,16 +3,23 @@
 
 #include <string>
 #include <iostream>
+#include <cmath>
+#include <pthread.h>
 
 #include "data.h"
 #include "loss.h"
-
+#include "log.h"
 /*
 #include "weak_learner.h"
 #include "sparse.h"
 */
 
 using namespace std;
+
+struct thread_param {
+  size_t id_;
+  size_t state_; // algorithm dependent
+};
 
 class Learner {
  public:
@@ -27,15 +34,21 @@ class Learner {
   bool   read_port_; // read data from port or file
   string fn_learn_;
   string fn_predict_;
-
-  string lf_name_;
+  // for los function
   Loss *LF_;
-
-  string opt_name_;
+  string lf_name_;
+  // for learner logs and statistics
+  Log *LOG_;
+  bool   calc_loss_; // calculate total loss
+  size_t n_log_; // How many log points
 
   //WeakLearner **WL_;
 
+  // for parallelism
+  vector<pthread_t> Threads_;
   size_t n_thread_; // number of threads for learning
+  vector<thread_param> thd_par_;
+  
   size_t n_epoch_; // number of learning epochs
   size_t n_iter_res_; // number of training iterations besides epoches
   int    reg_type_; // type of regularization term
@@ -48,8 +61,6 @@ class Learner {
   double alpha_; // Multiplication factor in Weighte Majority
   int    comm_method_; // How agents communicate with each other
   size_t mb_size_; // Size of a mini-batch
-  bool   calc_loss_; // calculate total loss
-  size_t n_log_; // How many log points
 
  public:
   Learner();
@@ -57,6 +68,10 @@ class Learner {
   
   void OnlineLearn();
   void BatchLearn();
+
+  void ParallelLearn();
+  //void SerialLearn();
+  void FinishThreads();
 
   virtual void Learn() {};
   virtual void Test() {};
