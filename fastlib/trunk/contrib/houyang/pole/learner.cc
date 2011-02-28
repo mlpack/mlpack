@@ -29,7 +29,6 @@ void Learner::ParallelLearn() {
   }
   // for parallelism
   Threads_.resize(n_thread_);
-  thd_par_.resize(n_thread_);
 
   Learn();
 }
