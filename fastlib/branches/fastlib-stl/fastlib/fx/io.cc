@@ -43,7 +43,7 @@ void IO::add(const char* identifier, const char* description, const char* parent
 }
 
 template<class T>
-void add(const char* identifier, const char* description, const char* parent) {
+void IO::add(const char* identifier, const char* description, const char* parent) {
 	//TODO: use singleton for state, wrap this up a parallel data structure 
 	po::options_description& desc = IO::getSingleton().desc;
 
