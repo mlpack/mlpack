@@ -445,7 +445,7 @@ class AllkNN {
     number_of_prunes_ = 0;
     
     // force dual-tree mode
-    mode_ = "dual"; // fx_param_str(module_, "mode", "dual"); 
+    mode_ = fx_param_str(module_, "mode", "dual"); 
     // Get the leaf size from the module
     leaf_size_ = fx_param_int(module_, "leaf_size", 20);
     // Make sure the leaf size is valid
@@ -497,7 +497,7 @@ class AllkNN {
     module_ = module_in;
   
     // force dual-tree mode
-    mode_= "dual"; // fx_param_str(module_, "mode", "dual"); 
+    mode_= fx_param_str(module_, "mode", "dual"); 
    
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -743,6 +743,7 @@ class AllkNN {
           neighbor_distances_[i];
       }
     }
+    NOTIFY("Total of %ld prunes\n", number_of_prunes_);
   } // ComputeNeighbors
   
   
@@ -772,7 +773,7 @@ class AllkNN {
 
     }
   }
-   
+
 }; //class AllNN
 
 

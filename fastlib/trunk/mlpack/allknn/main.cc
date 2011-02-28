@@ -33,6 +33,8 @@ const fx_entry_doc allknn_entries[] = {
    "Number of nearest neighbors to compute\n"},
   {"leaf_size", FX_PARAM, FX_INT, NULL,
    "Maximum number of points to store in a leaf (default 20)\n"},
+  {"mode", FX_PARAM, FX_STR, NULL,
+   "Single-tree or dual-tree calculation ( \"dual\" || \"single\" )"},
   FX_ENTRY_DOC_DONE
 };
 
