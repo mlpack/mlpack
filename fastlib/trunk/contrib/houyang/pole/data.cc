@@ -8,7 +8,9 @@
 // Construction
 ///////////////
 Data::Data(string fn, size_t port, bool random) : 
-  fn_(fn), port_(port), random_(random) {
+  fn_(fn), port_(port), random_(random), 
+  n_ex_(0), used_ct_(0), n_ln_(0), 
+  max_ft_idx_(0), max_n_nz_ft_(0), max_l_ln_(0) {
 }
 
 ////////////////////////////////////////
@@ -99,9 +101,47 @@ void Data::ReadFromFile() {
     cout << "Unknown input data form! Only svmlight, csv and arff are supported!";
     exit(1);
   }
+  // random permutation
+  if (random_) {
+    RandomPermute();
+    cout << "random permute examples...";
+  }
   cout << "done. " << endl << n_ex_ << " examples loaded." 
        << " Max dimension: " << max_ft_idx_ << "."<< endl;
   fclose(fp_);
+}
+
+/////////////////////////////
+// Randomly permute examples
+/////////////////////////////
+void Data::RandomPermute() {
+  rnd_i_.resize(n_ex_);
+  for (size_t i=0; i<n_ex_; i++) {
+    rnd_i_[i] = i;
+  }
+  for (size_t i=0; i<n_ex_; i++) {
+    size_t j = rand() % n_ex_;
+    swap(rnd_i_[i], rnd_i_[j]);
+  }
+}
+
+///////////////////////////////
+// Get an example from dataset
+///////////////////////////////
+Example* Data::GetExample(size_t idx) {
+  if (idx >= n_ex_ || idx < 0) {
+    cout << "Invalid example index: " << idx << " !" << endl;
+    exit (1);
+  }
+  used_ct_ ++;
+  if (random_) { // get an example from permuted dataset
+    EXs_[rnd_i_[idx]].in_use_ = true;
+    return &(EXs_[rnd_i_[idx]]);
+  }
+  else {
+    EXs_[idx].in_use_ = true;
+    return &EXs_[idx];
+  }
 }
 
 /////////////////

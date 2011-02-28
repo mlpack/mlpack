@@ -149,6 +149,9 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     exit(1);
   }
 
+  if (L_->random_data_)
+    srand(time(NULL));
+
   ArgsSanityCheck();
 
 }

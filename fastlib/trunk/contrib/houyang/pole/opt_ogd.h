@@ -11,11 +11,12 @@ class OGD : public Learner {
   double eta0_, t_init_;
   pthread_barrier_t barrier_msg_all_sent_;
   pthread_barrier_t barrier_msg_all_used_;
-  static void* OgdThread(void *in_par);
  public:
   OGD();
   void Learn();
   void Test();
+ private:
+  static void* OgdThread(void *par);
 };
 
 #endif
