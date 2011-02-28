@@ -33,7 +33,9 @@ void StartComputation(boost::program_options::variables_map &vm) {
   core::util::Timer init_timer;
   init_timer.Start();
   mlpack::kde::Kde<TableType, KernelAuxType> kde_instance;
-  kde_instance.Init(kde_arguments);
+  kde_instance.Init(
+    kde_arguments,
+    (typename mlpack::kde::Kde<TableType, KernelAuxType>::GlobalType *) NULL);
   init_timer.End();
   printf("%g seconds elapsed in initializing...\n",
          init_timer.GetTotalElapsedTime());

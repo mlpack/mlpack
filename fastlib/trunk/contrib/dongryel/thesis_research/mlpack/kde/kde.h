@@ -91,10 +91,16 @@ class Kde {
      */
     bool is_monochromatic() const;
 
-    /** @brief Initialize a Kde engine with the arguments.
+    /** @brief Initialize a Kde engine with the arguments and the
+     *         global object.
      */
-    void Init(mlpack::kde::KdeArguments<TableType> &arguments_in);
+    template<typename IncomingGlobalType>
+    void Init(
+      mlpack::kde::KdeArguments<TableType> &arguments_in,
+      IncomingGlobalType *global_in);
 
+    /** @brief Computes the KDE results.
+     */
     void Compute(
       const mlpack::kde::KdeArguments<TableType> &arguments_in,
       ResultType *result_out);

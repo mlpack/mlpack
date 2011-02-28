@@ -47,7 +47,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   ProblemType self_problem;
   ArgumentType self_argument;
   self_argument.Init(problem_->global());
-  self_problem.Init(self_argument);
+  self_problem.Init(self_argument, &(problem_->global()));
   self_engine.Init(self_problem);
   self_engine.Compute(metric, query_results);
   world_->barrier();
@@ -157,7 +157,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       sub_argument.Init(
         frontier_reference_subtable->table(),
         query_table_->local_table(), problem_->global());
-      sub_problem.Init(sub_argument);
+      sub_problem.Init(sub_argument, &(problem_->global()));
       sub_engine.Init(sub_problem);
 
       // Set the right flags and fire away the computation.

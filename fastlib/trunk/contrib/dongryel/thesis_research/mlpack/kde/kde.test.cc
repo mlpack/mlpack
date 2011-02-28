@@ -217,7 +217,10 @@ class TestKde {
 
       // Call the KDE driver.
       mlpack::kde::Kde<TableType, KernelAuxType> kde_instance;
-      kde_instance.Init(kde_arguments);
+      kde_instance.Init(
+        kde_arguments,
+        (typename mlpack::kde::Kde <
+         TableType, KernelAuxType >::GlobalType *) NULL);
 
       // Compute the result.
       mlpack::kde::KdeResult< std::vector<double> > kde_result;

@@ -255,7 +255,11 @@ class KdeGlobal {
 
     /** @brief The kernel type.
      */
-    KernelAuxType kernel_aux_;
+    KernelAuxType *kernel_aux_;
+
+    /** @brief Tells whether the kernel aux object is an alias or not.
+     */
+    bool kernel_aux_is_alias_;
 
     /** @brief The effective number of reference points used for
      *         normalization.
@@ -324,7 +328,7 @@ class KdeGlobal {
         (reference_table_in == query_table_in) ?
         (total_sum - 1.0) : total_sum;
       mult_const_ = 1.0 /
-                    (kernel_aux_.kernel().CalcNormConstant(
+                    (kernel_aux_->kernel().CalcNormConstant(
                        reference_table_in->n_attributes()) *
                      ((double) effective_num_reference_points_));
     }
@@ -336,11 +340,22 @@ class KdeGlobal {
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 1.0;
+      kernel_aux_ = NULL;
+      kernel_aux_is_alias_ = false;
       effective_num_reference_points_ = 0.0;
       mult_const_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
+    }
+
+    /** @brief The destructor.
+     */
+    ~KdeGlobal() {
+      if(! kernel_aux_is_alias_) {
+        delete kernel_aux_;
+      }
+      kernel_aux_ = NULL;
     }
 
     /** @brief Returns the mean variance pair object.
@@ -408,31 +423,31 @@ class KdeGlobal {
     /** @brief Returns the bandwidth value being used.
      */
     double bandwidth() const {
-      return sqrt(kernel_aux_.kernel().bandwidth_sq());
+      return sqrt(kernel_aux_->kernel().bandwidth_sq());
     }
 
     /** @brief Sets the bandwidth.
      */
     void set_bandwidth(double bandwidth_in) {
-      kernel_aux_.kernel().Init(bandwidth_in);
+      kernel_aux_->kernel().Init(bandwidth_in);
     }
 
     /** @brief Returns the kernel auxilary object.
      */
     const KernelAuxType &kernel_aux() const {
-      return kernel_aux_;
+      return *kernel_aux_;
     }
 
     /** @brief Returns the kernel.
      */
     const typename KernelAuxType::KernelType &kernel() const {
-      return kernel_aux_.kernel();
+      return kernel_aux_->kernel();
     }
 
     /** @brief Returns the series expansion type.
      */
     const std::string series_expansion_type() const {
-      return kernel_aux_.series_expansion_type();
+      return kernel_aux_->series_expansion_type();
     }
 
     /** @brief Initializes the KDE global object.
@@ -440,7 +455,7 @@ class KdeGlobal {
     void Init(
       TableType *reference_table_in,
       TableType *query_table_in,
-      double effective_num_reference_points_in,
+      double effective_num_reference_points_in, KernelAuxType *kernel_aux_in,
       double bandwidth_in, const bool is_monochromatic,
       double relative_error_in, double absolute_error_in, double probability_in,
       bool normalize_densities_in = true) {
@@ -448,9 +463,17 @@ class KdeGlobal {
       effective_num_reference_points_ = effective_num_reference_points_in;
 
       // Initialize the kernel.
-      kernel_aux_.kernel().Init(bandwidth_in);
+      if(kernel_aux_in) {
+        kernel_aux_ = kernel_aux_in;
+        kernel_aux_is_alias_ = true;
+      }
+      else {
+        kernel_aux_ = new KernelAuxType();
+        kernel_aux_is_alias_ = false;
+        kernel_aux_->kernel().Init(bandwidth_in);
+      }
       mult_const_ = 1.0 /
-                    (kernel_aux_.kernel().CalcNormConstant(
+                    (kernel_aux_->kernel().CalcNormConstant(
                        reference_table_in->n_attributes()) *
                      ((double) effective_num_reference_points_));
 
@@ -471,38 +494,40 @@ class KdeGlobal {
       is_monochromatic_ = is_monochromatic;
 
       // Initialize the kernel series expansion object.
-      if(kernel_aux_.series_expansion_type() == "multivariate") {
-        if(reference_table_->n_attributes() <= 2) {
-          kernel_aux_.Init(bandwidth_in, 7, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 3) {
-          kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 5) {
-          kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 6) {
-          kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
-        }
-        else {
-          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
-        }
-      }
-      else {
-        if(reference_table_->n_attributes() <= 2) {
-          kernel_aux_.Init(bandwidth_in, 5, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 3) {
-          kernel_aux_.Init(bandwidth_in, 3, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 5) {
-          kernel_aux_.Init(bandwidth_in, 1, reference_table_->n_attributes());
-        }
-        else if(reference_table_->n_attributes() <= 6) {
-          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+      if(! kernel_aux_is_alias_) {
+        if(kernel_aux_->series_expansion_type() == "multivariate") {
+          if(reference_table_->n_attributes() <= 2) {
+            kernel_aux_->Init(bandwidth_in, 7, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 3) {
+            kernel_aux_->Init(bandwidth_in, 5, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 5) {
+            kernel_aux_->Init(bandwidth_in, 3, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 6) {
+            kernel_aux_->Init(bandwidth_in, 1, reference_table_->n_attributes());
+          }
+          else {
+            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+          }
         }
         else {
-          kernel_aux_.Init(bandwidth_in, 0, reference_table_->n_attributes());
+          if(reference_table_->n_attributes() <= 2) {
+            kernel_aux_->Init(bandwidth_in, 5, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 3) {
+            kernel_aux_->Init(bandwidth_in, 3, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 5) {
+            kernel_aux_->Init(bandwidth_in, 1, reference_table_->n_attributes());
+          }
+          else if(reference_table_->n_attributes() <= 6) {
+            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+          }
+          else {
+            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+          }
         }
       }
     }

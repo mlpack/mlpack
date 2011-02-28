@@ -83,8 +83,9 @@ void Kde<TableType, KernelAuxType>::Compute(
 }
 
 template<typename TableType, typename KernelAuxType>
+template<typename IncomingGlobalType>
 void Kde<TableType, KernelAuxType>::Init(
-  KdeArguments<TableType> &arguments_in) {
+  KdeArguments<TableType> &arguments_in, IncomingGlobalType *global_in) {
 
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == arguments_in.reference_table_) {
@@ -97,9 +98,12 @@ void Kde<TableType, KernelAuxType>::Init(
   }
 
   // Declare the global constants.
+  KernelAuxType *kernel_aux_ptr =
+    (global_in) ?
+    const_cast<KernelAuxType *>(& global_in->kernel_aux()) : NULL;
   global_.Init(
     reference_table_, query_table_,
-    arguments_in.effective_num_reference_points_,
+    arguments_in.effective_num_reference_points_, kernel_aux_ptr,
     arguments_in.bandwidth_, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.absolute_error_,
     arguments_in.probability_, arguments_in.normalize_densities_);
