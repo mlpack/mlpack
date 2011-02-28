@@ -21,15 +21,15 @@ foreach(file ${SOURCES})
 endforeach()
 
 # test executable
-add_executable(io_test
-   io.cc
-   io_test.cc
-   optionshierarchy.cc
-)
+#add_executable(io_test
+#   io.cc
+#   io_test.cc
+#   optionshierarchy.cc
+#)
 # link dependencies of test executable
-target_link_libraries(io_test
-   boost_program_options
-)
+#target_link_libraries(io_test
+#   boost_program_options
+#)
 
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
