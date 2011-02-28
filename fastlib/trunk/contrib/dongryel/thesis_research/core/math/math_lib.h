@@ -39,10 +39,7 @@ class QuasiRandomNumberInit {
       dimension_ = dimension_in;
 
       // Assume that the strings match up to a valid option here.
-      if(quasi_random_number_generator_type == "halton") {
-        global_generator_type_ = gsl_qrng_halton;
-      }
-      else if(quasi_random_number_generator_type == "sobol") {
+      if(quasi_random_number_generator_type == "sobol") {
         global_generator_type_ = gsl_qrng_sobol;
       }
 
