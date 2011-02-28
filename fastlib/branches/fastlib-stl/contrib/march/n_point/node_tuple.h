@@ -136,6 +136,7 @@ namespace npt {
       return all_leaves_;
     }
     
+    void PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr);
     
     
     

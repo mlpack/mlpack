@@ -51,7 +51,7 @@ std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
 
 
 void npt::NodeTuple::UpdateIndices_(index_t split_ind, 
-                                    std::vector<index_t> invalid_indices) {
+                                    std::vector<index_t>& invalid_indices) {
   
   NptNode* new_node = node_list_[split_ind];
   
@@ -123,6 +123,13 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind,
 } // UpdateIndices()
 
 
+void npt::NodeTuple::PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr) {
+  
+  NptNode* split_node = node_list_[ind_to_split_];
+  std::vector<index_t> invalid_indices = FindInvalidIndices_();
+  
+  
+} 
 
 
 
