@@ -10,6 +10,8 @@ set(SOURCES
    fx.c
    stopwatch.h
    stopwatch.c
+   io.h
+   io.cc
 )
 
 # add directory name to sources
@@ -17,6 +19,18 @@ set(DIR_SRCS)
 foreach(file ${SOURCES})
     set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
+
+# test executable
+add_executable(io_test
+   io.cc
+   io_test.cc
+   optionshierarchy.cc
+)
+# link dependencies of test executable
+target_link_libraries(io_test
+   boost_program_options
+)
+
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
