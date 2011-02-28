@@ -23,12 +23,16 @@ Learner::~Learner() {
 ////////////////////////////
 void Learner::ParallelLearn() {
   // for logs and statistics
+  epoch_ct_ = 0;
   if (n_log_ > 0) {
     size_t t_int = (size_t)floor( (n_epoch_*TR_->n_ex_ + n_iter_res_)/(n_thread_ * n_log_) );
     LOG_ = new Log(n_thread_, n_log_, t_int);
   }
   // for parallelism
   Threads_.resize(n_thread_);
+  state_.resize(n_thread_);
+  thd_n_used_examples_.resize(n_thread_);
+  pthread_mutex_init(&mutex_ex_, NULL);
 
   Learn();
 }
@@ -112,4 +116,42 @@ void Learner::BatchLearn() {
     exit(1);
   }
   Test();
+}
+
+///////////////////////////////
+// Get an immediate example
+///////////////////////////////
+bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
+  size_t ring_idx = 0;
+  pthread_mutex_lock(&mutex_ex_);
+  
+  if (epoch_ct_ < n_epoch_) {
+    ring_idx = D->used_ct_ % D->n_ex_;
+    if ( ring_idx == (D->n_ex_-1) ) { // one epoch finished
+      epoch_ct_ ++;
+      // To mimic the online learning senario, in each epoch, 
+      // we randomly permutate the dataset, indexed by old_from_new
+      if (D->random_) {
+	D->RandomPermute();
+      }
+    }
+    (*x_p) = D->GetExample(ring_idx);
+    thd_n_used_examples_[tid] = thd_n_used_examples_[tid] + 1;
+
+    pthread_mutex_unlock(&mutex_ex_);
+    return true;
+  }
+  else if (iter_res_ct_ < n_iter_res_) {
+    ring_idx = D->used_ct_ % D->n_ex_;
+    (*x_p) = D->GetExample(ring_idx);
+    thd_n_used_examples_[tid] = thd_n_used_examples_[tid] + 1;
+    iter_res_ct_ ++;
+    
+    pthread_mutex_unlock(&mutex_ex_);
+    return true;
+  }
+  else {
+    pthread_mutex_unlock(&mutex_ex_);
+    return false;
+  }
 }
