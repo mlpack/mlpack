@@ -9,38 +9,107 @@ OGD::OGD() {
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
+void* OGD::OgdThread(void *in_par) {
+  thread_param* par = (thread_param*) in_par;
+  Example **exs;
+  while (true) {
+    switch (par->state_) {
+    case 0: // waiting to read data
+      for (size_t b = 0; b<mb_size_; b++) {
+	if ( ex->GetImmedExample(exs+b, tid) ) { // new example read
+	  // 
+	}
+	else { // all epoches finished
+	  return NULL;
+	}
+      }
+      par->state_ = 1;
+      break;
+    case 1:
+      EmptyFeatures(l1.msg_pool[tid]);
+      for (b = 0; b<global.mb_size; b++) {
+	pred = LinearPredictBias(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
 
-void OGD::*OgdThread(void *in_par) {
-  return NULL;
+	// ------------for log-------------------
+	if (global.calc_loss) {
+	  // Calculate loss and number of misclassifications
+	  if (l1.type == "classification") {
+	    T_LBL pred_lbl = LinearPredictBiasLabel(l1.w_vec_pool[tid], exs[b], l1.bias_pool[tid]);
+	    //cout << exs[b]->label << " : " << pred_lbl << ", "<< l1.loss_func->getLoss(pred, (double)exs[b]->label) << endl;
+	    if (pred_lbl != exs[b]->label) {
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
+	      l1.total_misp_pool[tid] = l1.total_misp_pool[tid] + 1;
+	    }
+	    if (l1.reg == 2 && l1.reg_factor != 0) {
+	      //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + 0.5 * l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]);
+	    }
+	    if (l1.num_log > 0) {
+	      l1.t_ct[tid]  = l1.t_ct[tid] + 1;
+	      if (l1.t_ct[tid] == l1.t_int && l1.lp_ct[tid] < l1.num_log) {
+		l1.log_err[tid][l1.lp_ct[tid]] = l1.total_misp_pool[tid];
+		l1.log_loss[tid][l1.lp_ct[tid]] = l1.total_loss_pool[tid];
+		l1.t_ct[tid] = 0;
+		l1.lp_ct[tid] = l1.lp_ct[tid] + 1;
+	      }
+	    }
+	  }
+	  // Calculate loss
+	  else {
+	    l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + l1.loss_func->getLoss(pred, (double)exs[b]->label);
+	    if (l1.reg == 2 && l1.reg_factor != 0) {
+	      l1.total_loss_pool[tid] = l1.total_loss_pool[tid] + 0.5 * l1.reg_factor * SparseSqL2Norm(l1.w_vec_pool[tid]);
+	    }
+	  }
+	}
+	//----------- log end-------------
+
+	update = l1.loss_func->getUpdate(pred,(double)exs[b]->label);
+	// update message: [y_t x_t]^+_i
+	SparseAddExpertOverwrite(l1.msg_pool[tid], update, exs[b]);
+
+      }
+      SparseScaleOverwrite(l1.msg_pool[tid], 1.0/global.mb_size);
+      // dummy gradient calc time
+      //boost::this_thread::sleep(boost::posix_time::microseconds(1));
+
+      // wait till all threads send their messages
+      pthread_barrier_wait(&barrier_msg_all_sent);
+      
+      par->thread_state = 2;
+      break;
+    case 2:
+      // update using messages
+      OgdUpdate(l1.w_vec_pool[tid], l1.t_pool[tid], l1.bias_pool[tid], update, tid);
+      // wait till all threads used messages they received
+      pthread_barrier_wait(&barrier_msg_all_used);
+      // communication done
+      par->thread_state = 0;
+      break;
+    default:
+      cout << "ERROR! Unknown thread state number !" << endl;
+      return NULL;
+    }
+  }
 }
 
 void OGD::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
-  // initial learning rate
+  // init learning rate
   eta0_ = sqrt(TR_->n_ex_);
   t_init_ = 1.0 / (eta0_ * reg_factor_);
-
+  thd_par_.resize(n_thread_);
+  // init parameters
+  w_pool_.resize(n_thread_);
+  b_pool_.resize(n_thread_);
+  
   for (size_t t = 0; t < n_thread_; t++) {
     // init thread parameters
     thd_par_[t].id_ = t;
     thd_par_[t].state_ = 0;
-    /*
-    // init thread weights and messages
-    l1.w_vec_pool[t] = CreateEmptySvector();
-    l1.w_n_vec_pool[t] = CreateEmptySvector(); // not used; only for EG.
-    l1.bias_pool[t] = 0.0;
-    l1.bias_n_pool[t] = 0.0; // not used; only for EG.
-    l1.msg_pool[t] = CreateEmptySvector();
-    
-    l1.t_pool[t] = t_init;
-    l1.scale_pool[t] = 1.0;
-    l1.num_used_exp[t] = 0;
-    l1.total_loss_pool[t] = 0.0;
-    l1.total_misp_pool[t] = 0;
-    */
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, OGD::OgdThread, (void*)&thd_par_[t]);
+    pthread_create(&Threads_[t], NULL, &OGD::OgdThread, (void*)&thd_par_[t]);
   }
 
   FinishThreads();
