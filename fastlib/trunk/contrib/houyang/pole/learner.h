@@ -41,6 +41,8 @@ class Learner {
   vector<pthread_t> Threads_;
   vector<size_t> state_;
   vector<size_t> thd_n_used_examples_;
+  vector<double> loss_;
+  vector<size_t> err_;
   // for iterations
   size_t epoch_ct_; // epoch counter
   size_t n_epoch_; // number of learning epochs
@@ -66,7 +68,6 @@ class Learner {
   
   void OnlineLearn();
   void BatchLearn();
-
   void ParallelLearn();
   //void SerialLearn();
   void FinishThreads();
@@ -76,6 +77,8 @@ class Learner {
   virtual void Learn() {};
   virtual void Test() {};
 
+  double LinearPredictBias(Svector *w, Example *x, double bias);
+  T_LBL LinearPredictBiasLabelBinary(Svector *w, Example *x, double bias);
 };
 
 #endif
