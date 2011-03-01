@@ -16,6 +16,8 @@
 
 #include "single_matcher.h"
 
+// TODO: replace SingleNode* with the common type
+
 namespace npt {
 
   class SingleBandwidthAlg {
