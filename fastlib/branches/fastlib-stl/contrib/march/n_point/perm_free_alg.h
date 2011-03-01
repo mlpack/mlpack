@@ -45,7 +45,10 @@ namespace npt {
     
     //////////////// functions //////////////////
     
-    void BaseCaseHelper_();
+    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<bool>& permutation_ok,
+                         std::vector<index_t>& points_in_tuple,
+                         int k);
     
     void BaseCase_(NodeTuple& nodes);
     

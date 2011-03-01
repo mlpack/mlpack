@@ -48,6 +48,7 @@ namespace npt {
     
     void SplitHelper_();
     
+    
     // given which node we're splitting, which elments of the index lists are 
     // no longer valid
     std::vector<index_t>& FindInvalidIndices_();
@@ -118,10 +119,53 @@ namespace npt {
         
       } // loop over pairwise distances
       
-    } // constructor
+    } // constructor (init)
+    
+    // use this constructor to make children in the recursion
+    NodeTuple(NodeTuple& parent, bool is_left) : node_list_(parent.node_list()),
+    ranges_(parent.ranges()), sorted_upper_(parent.sorted_upper()), 
+    sorted_lower_(parent.sorted_lower())
+    {
+      
+      // assuming that the symmetry has already been checked
+      if (is_left) {
+        node_list_[index_to_split_] = parent.node_list[index_to_split_]->left();
+      }
+      else {
+        node_list_[index_to_split_] = parent.node_list[index_to_split_]->right();        
+      }
+      
+      ind_to_split_ = parent.ind_to_split();
+      
+      // now, fix the lists
+      // don't forget to make the maps back to the inputs
+      input_to_upper_(sorted_upper_.size());
+      input_to_lower_(sorted_lower_.size());
+      
+      // Not sure if this works, if not I should just call these outside
+      std::vector<index_t> invalid_inds = FindInvalidIndices_();
+      
+      UpdateIndices_(ind_to_split, invalid_inds);
+      
+    } // constructor (children)
     
     NPointNode* node_list(index_t i) {
       return node_list_(i);
+    }
+    
+    arma::Col<NPointNode*>& node_list() const {
+      return node_list_;
+    }
+    
+    std::vector<std::pair<double, index_t> >& sorted_upper() const {
+      return sorted_upper_;
+    }
+    std::vector<std::pair<double, index_t> > sorted_lower() const {
+      return sorted_lower_;
+    }
+    
+    std::vector<DRange>& ranges() const {
+      return ranges_;
     }
     
     double upper_bound(index_t i) {
@@ -136,8 +180,13 @@ namespace npt {
       return all_leaves_;
     }
     
-    void PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr);
+    index_t ind_to_split() const {
+      return ind_to_split_;
+    }
     
+    //void PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr);
+    
+    bool CheckSymmetry(arma::Col<NptNode*> nodes);
     
     
     

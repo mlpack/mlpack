@@ -10,6 +10,49 @@
 #include "node_tuple.h"
 
 
+bool npt::NodeTuple::CheckSymmetry(arma::Col<NptNode*> nodes, 
+                                   index_t split_ind, bool is_left) {
+  
+  // only check the new node for symmetry with respect to the others
+  if (is_left) {
+    for (index_t i = 0; i < split_ind; i++) {
+      
+      if (nodes[split_ind]->left()->end() <= nodes[i]->begin()) {
+        return false;
+      }
+      
+    } // for i
+    
+    for (index_t i = split_ind + 1; i < tuple_size_; i++) {
+      
+      if (nodes[i]->end() <= nodes[split_ind]->left()->begin()) {
+        return false;
+      } 
+      
+    } // for i
+  }
+  else {
+    for (index_t i = 0; i < split_ind; i++) {
+      
+      if (nodes[split_ind]->right()->end() <= nodes[i]->begin()) {
+        return false;
+      }
+      
+    } // for i
+    
+    for (index_t i = split_ind + 1; i < tuple_size_; i++) {
+      
+      if (nodes[i]->end() <= nodes[split_ind]->right()->begin()) {
+        return false;
+      } 
+      
+    } // for i    
+  }
+  return true;
+  
+} // CheckSymmetry_
+
+
 
 std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
 
@@ -121,15 +164,6 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind,
   } // for i
   
 } // UpdateIndices()
-
-
-void npt::NodeTuple::PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr) {
-  
-  NptNode* split_node = node_list_[ind_to_split_];
-  std::vector<index_t> invalid_indices = FindInvalidIndices_();
-  
-  
-} 
 
 
 
