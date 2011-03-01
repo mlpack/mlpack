@@ -6,6 +6,7 @@
 #include <string>
 #include <iostream>
 #include <vector>
+#include <cmath>
 
 using namespace std;
 
@@ -41,6 +42,9 @@ class Svector {
   void EraseOne(T_IDX p);
   void Clear();
   void Print();
+  // linear algebra
+  double SparseDot(Svector *x);
+  double SparseSqL2Norm();
 };
 
 

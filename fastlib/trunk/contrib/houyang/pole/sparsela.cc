@@ -107,6 +107,49 @@ void Svector::Print() {
   cout << endl;
 }
 
+/////////////////////////////
+// Sparse Dot Product: w^T x
+/////////////////////////////
+double Svector::SparseDot(Svector *x) {
+  if (Fs_.empty() || x->Fs_.empty()) {
+    return 0.0;
+  }
+  else {
+    double dv = 0.0;
+    vector<Feature>::iterator itw = Fs_.begin();
+    vector<Feature>::iterator itx = x->Fs_.begin();
+    while (itw<Fs_.end() && itx<x->Fs_.end()) {
+      if (itw->i_ == itx->i_) {
+	dv += itw->v_ * itx->v_;
+	itw++; itx++;
+      }
+      else {
+	if (itw->i_ > itx->i_) {
+	  itx++;
+	}
+	else {
+	  itw++;
+	}
+      }
+    }
+    return dv;
+  }
+}
+
+////////////////////////////////////////
+// Sparse squared L2 norm: return w^T w
+////////////////////////////////////////
+double Svector::SparseSqL2Norm() {
+  vector<Feature>::iterator it;
+  double v = 0.0;
+  for (it=Fs_.begin(); it<Fs_.end(); it++) {
+    if (it->v_ != 0)
+      v += pow(it->v_, 2);
+  }
+  return v;
+}
+
+
 //---------------------------Example-------------------------//
 //////////////////////////
 // Create an empty feature

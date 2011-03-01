@@ -32,6 +32,8 @@ void Learner::ParallelLearn() {
   Threads_.resize(n_thread_);
   state_.resize(n_thread_);
   thd_n_used_examples_.resize(n_thread_);
+  loss_.resize(n_thread_);
+  err_.resize(n_thread_);
   pthread_mutex_init(&mutex_ex_, NULL);
 
   Learn();
@@ -154,4 +156,15 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
     pthread_mutex_unlock(&mutex_ex_);
     return false;
   }
+}
+
+double Learner::LinearPredictBias(Svector *w, Example *x, double bias) {
+  return x->SparseDot(w) + bias;
+}
+
+T_LBL Learner::LinearPredictBiasLabelBinary(Svector *w, Example *x, double bias) {
+  if (x->SparseDot(w) + bias > 0.0)
+    return (T_LBL)1;
+  else
+    return (T_LBL)-1;
 }
