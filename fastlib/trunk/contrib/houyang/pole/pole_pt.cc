@@ -1,7 +1,7 @@
 /* Parallel Online Learning Experiments
  *
  * Build: cmake .. make
- * Usage: ./pole_pt -d ../heart_scale --random 0 -m ogd --type classification -l hinge --calc_loss --bias 1 -c 1 -e 3000 --threads 8
+ * Usage: ./pole_pt -d ../heart_scale --random 0 -m ogd --type classification -l hinge --calc_loss 1 --bias 1 -c 1 -e 3000 --threads 8
  *        ./pole_pt -d ../ijcnn1 -m ogd --calc_loss --comm 1 -c 1 --bias 1 -r 2 --random -e 10 --threads 100 -b 1
  *        ./pole_pt -d ../svmguide1 -m ogd --calc_loss --comm 1 -c 0.1 --threads 1 -b 1 --bias 1 -e 3000
  *        ./pole_pt -d ../svmguide1 -m oeg --type classification -l hinge --calc_loss --bias 1 --comm 1 -c 1000 -i 5000000 --threads 1 -b 1

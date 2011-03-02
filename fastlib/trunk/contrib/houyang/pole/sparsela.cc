@@ -16,6 +16,12 @@ Feature::Feature() {
 Feature::Feature(T_IDX i, T_VAL v) : i_(i), v_(v) {
 }
 
+//////////////////////////
+// Deconstruct feature
+//////////////////////////
+Feature::~Feature() {
+}
+
 //---------------------General Sparse Vector-----------------//
 
 ////////////////////////////////
@@ -38,6 +44,12 @@ Svector::Svector(T_IDX n_f, T_VAL v) : Fs_(n_f, Feature()){
   for (T_IDX i=0; i<sz; i++) {
     Fs_[i] = Feature(i, v);
   }
+}
+
+//////////////////////////
+// Deconstruct Svector
+//////////////////////////
+Svector::~Svector() {
 }
 
 //////////////////////////////////
@@ -100,8 +112,7 @@ void Svector::Clear() {
 // Print content
 /////////////////
 void Svector::Print() {
-  vector<Feature>::iterator it;
-  for (it=Fs_.begin(); it<Fs_.end(); it++) {
+  for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
     cout << it->i_ << ":" << it->v_ << " ";
   }
   cout << endl;
@@ -119,15 +130,13 @@ void Svector::SparseScaleOverwrite(double a) {
     return;
   }
   else if (a == -1.0) {
-    vector<Feature>::iterator it;
-    for (it=Fs_.begin(); it<Fs_.end(); it++) {
+    for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
       it->v_ = - it->v_;
     }
     return;
   }
   else {
-    vector<Feature>::iterator it;
-    for (it=Fs_.begin(); it<Fs_.end(); it++) {
+    for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
       if (it->v_ != 0.0)
 	it->v_ = a * it->v_;
     }
@@ -167,9 +176,8 @@ double Svector::SparseDot(Svector *v) {
 // Sparse squared L2 norm: return w^T w
 ////////////////////////////////////////
 double Svector::SparseSqL2Norm() {
-  vector<Feature>::iterator it;
   double v = 0.0;
-  for (it=Fs_.begin(); it<Fs_.end(); it++) {
+  for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
     if (it->v_ != 0)
       v += pow(it->v_, 2);
   }
@@ -292,6 +300,12 @@ Example::Example(vector<Feature> Fs, T_LBL y) :
 ////////////////////////////////////////////////////////
 Example::Example(vector<Feature> Fs, T_LBL y, string ud) : 
   Svector(Fs), y_(y), in_use_(false), ud_(ud) {
+}
+
+//////////////////////////
+// Deconstruct example
+//////////////////////////
+Example::~Example() {
 }
 
 ////////////////////////////

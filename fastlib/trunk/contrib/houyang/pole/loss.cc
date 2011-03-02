@@ -31,7 +31,7 @@ double HingeLoss::GetLoss(double prediction, double label) {
   
 double HingeLoss::GetUpdate(double prediction, double label) {
   if ( (prediction * label) < 1.0)
-    return label;  
+    return label;
   else
     return 0.0;
 }
