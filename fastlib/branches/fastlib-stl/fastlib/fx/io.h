@@ -6,6 +6,8 @@
 #include <map>
 #include <string>
 
+#include "optionshierarchy.h"
+
 namespace po = boost::program_options;
 
 namespace mlpack {
@@ -16,8 +18,30 @@ namespace mlpack {
 			static void add(const char* identifier, const char* description, const char* parent= NULL);
 		
 			/* If the argument requires a parameter, you must specify a type */
+			template<class T>
+			static void add(const char* identifier, const char* description, const char* parent = NULL) {
+				//TODO: use singleton for state, wrap this up a parallel data structure 
+				po::options_description& desc = getSingleton().desc;
+	
+				std::string path = getSingleton().manageHierarchy(identifier, parent, description);
+	
+				desc.add_options()
+					(path.c_str(), po::value<T>(), description);
+				return;
+			}
+
+		
+			/* See if the specified flag was found while parsing.  Non-zero return value indicates success.*/
+			static int checkValue(const char* identifier);
+			
+			/* Grab the value of type T found while parsing.  Non-zero return value indicates success.*/
 			template<typename T>
-			static void add(const char* identifier, const char* description, const char* parent = NULL);
+			static T getValue(const char* identifier) {
+				T tmp;
+				if(checkValue(identifier))
+					tmp = getSingleton().vmap[identifier].as<T>();
+				return tmp;
+			}
 		
 			/* The proper commandline parse method */
 			static void parseCommandLine(int argc, char** argv);
@@ -43,9 +67,13 @@ namespace mlpack {
 			//Values of the options given by user
 			po::variables_map vmap;
 		
-			/* The current prefix, all nodes added will have this 
-				prefixed to their path. */
-			static const char* rootPath;
+		
+			//Store a relative index of path names
+			OptionsHierarchy hierarchy;
+		
+			//Sanity checks strings before sending them to optionshierarchy
+			//Returns the pathname placed in the hierarchy
+			std::string manageHierarchy(const char* id, const char* parent, const char* description = "");
 		
 			//The singleton, obviously
 			static IO* singleton;

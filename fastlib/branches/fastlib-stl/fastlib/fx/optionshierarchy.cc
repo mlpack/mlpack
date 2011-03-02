@@ -22,7 +22,12 @@ OptionsHierarchy::OptionsHierarchy(const OptionsHierarchy& other) {
 /* Will never fail, as given paths are relative to current node
 and will be generated if not found */
 /* Also, we will insist on proper usage of C++ strings */
-void OptionsHierarchy::appendNode(string pathname) {
+void OptionsHierarchy::appendNode(string& pathname) {
+	string tmp = string("");
+	appendNode(pathname, tmp);
+}
+
+void OptionsHierarchy::appendNode(string& pathname, string& description) {
 	//Get the topmost node name in this path Eg root in root/foo/bar
 	string name = pathname.substr(0, pathname.find('/'));
 	
@@ -33,29 +38,36 @@ void OptionsHierarchy::appendNode(string pathname) {
 	if(children.count(name) == 0)
 		children[name] = OptionsHierarchy(name.c_str());
 	
-	if(pathname.find('/') == pathname.npos)
+	if(pathname.find('/') == pathname.npos || path.length() < 1) {
+		children[name].desc = description;
 		return;
-	if(path.length() < 1)
-		return;
+	}
 	
 	//Recurse until path is done
-	children[name].appendNode(path);
+	children[name].appendNode(path, description);
 }
 
 void OptionsHierarchy::print() {
-	std::cout << node << std::endl;
+	cout << node << ":" << std::endl;
 	
-	std::map<string, OptionsHierarchy>::iterator iter;
+	map<string, OptionsHierarchy>::iterator iter;
 	for(iter = children.begin(); iter != children.end(); iter++)
 		iter->second.print(1);
 }
 
 void OptionsHierarchy::print(int tabs) {
 	for(int i = 0; i < tabs; i++)
-		std::cout << "\t";
+		cout << "\t";
 	
-	std::cout << node << std::endl;
-	std::map<string, OptionsHierarchy>::iterator iter;
+	//Print the node, append '/' if that node is not a leaf
+	std::cout << node;
+	if(children.size())
+		cout << "/";
+	if(desc.length())
+		cout << "\t--" << desc; 
+	cout << std::endl;
+	
+	map<string, OptionsHierarchy>::iterator iter;
 	
 	for(iter = children.begin(); iter != children.end(); iter++)
 		iter->second.print(tabs+1);
