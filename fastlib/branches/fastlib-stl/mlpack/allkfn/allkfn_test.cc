@@ -14,7 +14,8 @@ class TestAllkFN {
   void Init() {
     allkfn_ = new AllkFN();
     naive_  = new AllkFN();
-    data::Load("test_data_3_1000.csv", data_for_tree_);
+    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+      FATAL("Unable to load test dataset.");
  }
 
   void Destruct() {

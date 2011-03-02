@@ -18,7 +18,8 @@ class TestAllkNN {
   void Init() {
 //    allknn_ = new AllkNN();
 //    naive_  = new AllkNN();
-    data::Load("test_data_3_1000.csv", data_for_tree_);
+    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+      FATAL("Unable to load test dataset.");
  }
 
   void Destruct() {
@@ -43,8 +44,8 @@ class TestAllkNN {
                               distances_tree);
     arma::Col<index_t> resulting_neighbors_naive;
     arma::vec distances_naive;
-    naive_->ComputeNaive(resulting_neighbors_naive,
-                         distances_naive);
+    naive_->ComputeNeighbors(resulting_neighbors_naive,
+                             distances_naive);
     for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
 
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
@@ -67,8 +68,8 @@ class TestAllkNN {
                               distances_tree);
     arma::Col<index_t> resulting_neighbors_naive;
     arma::vec distances_naive;
-    naive_->ComputeNaive(resulting_neighbors_naive,
-                         distances_naive);
+    naive_->ComputeNeighbors(resulting_neighbors_naive,
+                             distances_naive);
     for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
@@ -90,8 +91,8 @@ class TestAllkNN {
                               distances_tree);
     arma::Col<index_t> resulting_neighbors_naive;
     arma::vec distances_naive;
-    naive_->ComputeNaive(resulting_neighbors_naive,
-                         distances_naive);
+    naive_->ComputeNeighbors(resulting_neighbors_naive,
+                             distances_naive);
     for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
