@@ -107,25 +107,52 @@ void Svector::Print() {
   cout << endl;
 }
 
+/////////////////////////////////////
+// Sparse vector scaling: w <= a * w
+/////////////////////////////////////
+void Svector::SparseScaleOverwrite(double a) {
+  if (a == 0.0) {
+    Fs_.clear();
+    return;
+  }
+  else if (a == 1.0) {
+    return;
+  }
+  else if (a == -1.0) {
+    vector<Feature>::iterator it;
+    for (it=Fs_.begin(); it<Fs_.end(); it++) {
+      it->v_ = - it->v_;
+    }
+    return;
+  }
+  else {
+    vector<Feature>::iterator it;
+    for (it=Fs_.begin(); it<Fs_.end(); it++) {
+      if (it->v_ != 0.0)
+	it->v_ = a * it->v_;
+    }
+  }
+}
+
 /////////////////////////////
-// Sparse Dot Product: w^T x
+// Sparse Dot Product: w^T v
 /////////////////////////////
-double Svector::SparseDot(Svector *x) {
-  if (Fs_.empty() || x->Fs_.empty()) {
+double Svector::SparseDot(Svector *v) {
+  if (Fs_.empty() || v->Fs_.empty()) {
     return 0.0;
   }
   else {
     double dv = 0.0;
     vector<Feature>::iterator itw = Fs_.begin();
-    vector<Feature>::iterator itx = x->Fs_.begin();
-    while (itw<Fs_.end() && itx<x->Fs_.end()) {
-      if (itw->i_ == itx->i_) {
-	dv += itw->v_ * itx->v_;
-	itw++; itx++;
+    vector<Feature>::iterator itv = v->Fs_.begin();
+    while (itw<Fs_.end() && itv<v->Fs_.end()) {
+      if (itw->i_ == itv->i_) {
+	dv += itw->v_ * itv->v_;
+	itw++; itv++;
       }
       else {
-	if (itw->i_ > itx->i_) {
-	  itx++;
+	if (itw->i_ > itv->i_) {
+	  itv++;
 	}
 	else {
 	  itw++;
@@ -149,6 +176,102 @@ double Svector::SparseSqL2Norm() {
   return v;
 }
 
+///////////////////////////////////////////
+// Sparse vector scaled add: w<= w+ a * x
+///////////////////////////////////////////
+void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
+  size_t nz_x = x->Fs_.size();
+  size_t ct_w = 0, ct_x = 0;
+
+  if (a == 0.0 || x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
+    return;
+  }
+  else if (Fs_.empty()) { // w: all-0
+    Fs_ = x->Fs_;
+    for (ct_w = 0; ct_w < Fs_.size(); ct_w ++) {
+      Fs_[ct_w].v_ = a * Fs_[ct_w].v_;
+    }
+    return;
+  }
+  else { // neither w nor x is of all-0
+    while (ct_w<Fs_.size() || ct_x<nz_x) {
+      if (ct_w == Fs_.size()) { // w reaches end, while x still not
+	Fs_.push_back( Feature(x->Fs_[ct_x].i_, a * x->Fs_[ct_x].v_) );
+	++ct_w; ++ct_x;
+      }
+      else if (ct_x == nz_x) { // x reaches end, while w still not
+	// the succeeding w remain unchanged
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (Fs_[ct_w].i_ == x->Fs_[ct_x].i_) {
+	  Fs_[ct_w].v_ += a * x->Fs_[ct_x].v_;
+	  ++ct_w; ++ct_x;
+	}
+	else if (Fs_[ct_w].i_ > x->Fs_[ct_x].i_) {
+	  Fs_.insert(Fs_.begin()+ct_w, Feature(x->Fs_[ct_x].i_, a * x->Fs_[ct_x].v_));
+	  ++ct_w; ++ct_x;
+	}
+	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
+	  ++ct_w;
+	}
+      }
+    }
+  }
+}
+
+///////////////////////////////
+// Sparse vector add: w<= w+ x
+///////////////////////////////
+void Svector::SparseAddOverwrite(Svector *x) {
+  size_t nz_x = x->Fs_.size();
+  size_t ct_w = 0, ct_x = 0;
+
+  if (x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
+    return;
+  }
+  else if (Fs_.empty()) { // w: all-0
+    Fs_ = x->Fs_;
+    return;
+  }
+  else { // neither w nor x is of all-0
+    while (ct_w<Fs_.size() || ct_x<nz_x) {
+      if (ct_w == Fs_.size()) { // w reaches end, while x still not
+	Fs_.push_back(x->Fs_[ct_x]);
+	++ct_w; ++ct_x;
+      }
+      else if (ct_x == nz_x) { // x reaches end, while w still not
+	// the succeeding w remain unchanged
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (Fs_[ct_w].i_ == x->Fs_[ct_x].i_) {
+	  Fs_[ct_w].v_ += x->Fs_[ct_x].v_;
+	  ++ct_w; ++ct_x;
+	}
+	else if (Fs_[ct_w].i_ > x->Fs_[ct_x].i_) {
+	  Fs_.insert(Fs_.begin()+ct_w, x->Fs_[ct_x]);
+	  ++ct_w; ++ct_x;
+	}
+	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
+	  ++ct_w;
+	}
+      }
+    }
+  }
+}
+
+///////////////////////////////
+// Shrink: remove 0 values
+///////////////////////////////
+void Svector::Shrink(double threshold) {
+  for (size_t i=0; i<Fs_.size(); i++) {
+    if (fabs(Fs_[i].v_) < threshold) {
+      Fs_.erase(Fs_.begin()+i);
+      i--;
+    }
+  }
+}
 
 //---------------------------Example-------------------------//
 //////////////////////////

@@ -39,16 +39,18 @@ class Learner {
   size_t thread_id_;
   size_t thread_state_;
   vector<pthread_t> Threads_;
-  vector<size_t> state_;
+  vector<size_t> state_; // thread state
+  vector<size_t> n_it_; // nubmer of iterations
   vector<size_t> thd_n_used_examples_;
-  vector<double> loss_;
-  vector<size_t> err_;
+  vector<double> loss_; // thread loss
+  vector<size_t> err_; // thread error
   // for iterations
   size_t epoch_ct_; // epoch counter
   size_t n_epoch_; // number of learning epochs
   size_t iter_res_ct_; // counter for iter_res
   size_t n_iter_res_; // number of training iterations besides epoches
   // for learning
+  string opt_name_; // name of optimization method
   size_t mb_size_; // Size of a mini-batch
   int    reg_type_; // type of regularization term
   double reg_factor_; // Regularization factor ('lambda' in avg_loss + lambda * regularization)

@@ -50,6 +50,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
 	cout << "ERROR! Optimization method needs to be (ogd, oeg, dwm_i, or dwm_a)!" << endl;
 	exit(1);
       }
+      L_->opt_name_ = opt_name_;
     }
     else if (opt_opt == "-h" || opt_opt == "--help") {
       L_ = new OGD;
