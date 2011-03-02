@@ -38,7 +38,7 @@ void* OGD::OgdThread(void *in_par) {
     switch (Lp->state_[tid]) {
     case 0: // waiting to read data
       for (size_t b = 0; b<Lp->mb_size_; b++) {
-	if ( Lp->GetImmedExample(Lp->TR_, exs+b, 1) ) { // new example read
+	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  // exs[b]->Print();
 	}
 	else { // all epoches finished
@@ -218,7 +218,7 @@ void OGD::SaveLog() {
 	" samples processed. Misprediction: " << err_[t]<< ", accuracy: "<< 
 	1.0-(double)err_[t]/(double)thd_n_used_examples_[t] << endl;
     }
-    cout << "------ Total mispredictions: " << t_m << ", accuracy: " << 
+    cout << "Total mispredictions: " << t_m << ", accuracy: " << 
       1.0-(double)t_m/(double)t_s<< endl;
   }
 }
