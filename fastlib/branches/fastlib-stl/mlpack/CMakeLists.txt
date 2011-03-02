@@ -74,6 +74,7 @@ add_library(mlpack ${MLPACK_SRCS})
 add_dependencies(mlpack fastlib)
 target_link_libraries(mlpack
   fastlib
+  armadillo
   lapack
   blas
 )

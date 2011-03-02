@@ -46,6 +46,7 @@ endforeach()
 
 add_library(fastlib ${FASTLIB_SRCS})
 target_link_libraries(fastlib
+  armadillo
   lapack
   blas
   pthread
