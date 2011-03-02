@@ -50,6 +50,8 @@ bool npt::SingleMatcher::TestPointPair(double dist_sq, index_t tuple_ind_1,
     // This is because the ok permutation might get invalidated later, but we
     // could still end up believing that unchecked ones are ok for this pair
     
+    // I'm actually no longer sure about this
+    
   } // for i
   
   return any_matches;
@@ -83,6 +85,13 @@ bool npt::SingleMatcher::TestHrectPair(const DHrectBound<2>& box1,
                                                template_index_2);
     double lower_bound_sqr = lower_bounds_sqr_(template_index_1, 
                                                template_index_2);
+    
+    /*
+    printf("max_dist_sq: %g\n", max_dist_sq);
+    printf("min_dist_sq: %g\n", min_dist_sq);
+    printf("upper_bound_sq: %g\n", upper_bound_sqr);
+    printf("lower_bound_sq: %g\n", lower_bound_sqr);
+    */
     
     // are they too far or too close?
     if (max_dist_sq < lower_bound_sqr || min_dist_sq > upper_bound_sqr) {

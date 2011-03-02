@@ -30,11 +30,14 @@ bool npt::SingleBandwidthAlg::CheckNodeList_(std::vector<SingleNode*>& nodes) {
       
       // check for symmetry
       if (node_j->end() <= node_i->begin()) {
+        //printf("Pruned for symmetry\n");
         return false;
       } // symmetry check
       
-      can_prune = matcher_.TestHrectPair(node_i->bound(), node_j->bound(),
-                                         i, j, permutation_ok);
+      // IMPORTANT: need to negate this, TestHrectPair returns true if the 
+      // pair may contain tuples
+      can_prune = !(matcher_.TestHrectPair(node_i->bound(), node_j->bound(),
+                                           i, j, permutation_ok));
       
     } // for j
     
@@ -127,7 +130,7 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
 
 void npt::SingleBandwidthAlg::BaseCase_(std::vector<SingleNode*>& nodes) {
   
-  std::vector<std::vector<index_t> > point_sets;
+  std::vector<std::vector<index_t> > point_sets(tuple_size_);
 
   // TODO: can this be done more efficiently?
   
@@ -135,13 +138,16 @@ void npt::SingleBandwidthAlg::BaseCase_(std::vector<SingleNode*>& nodes) {
   // iterate over nodes
   for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
+    //printf("point_sets[%d].size() = %d\n", node_ind, point_sets[node_ind].size());
+    
     point_sets[node_ind].resize(nodes[node_ind]->count());
     
+    //printf("point_sets[%d].size() = %d\n", node_ind, point_sets[node_ind].size());
+    
     // fill in points in the node
-    for (index_t point_ind = nodes[node_ind]->begin(); 
-         point_ind < nodes[node_ind]->end(); point_ind++) {
+    for (index_t i = 0; i < nodes[node_ind]->count(); i++) {
       
-      point_sets[node_ind][point_ind] = point_ind;
+      point_sets[node_ind][i] = i + nodes[node_ind]->begin();
       
     } // points
     
@@ -161,15 +167,20 @@ void npt::SingleBandwidthAlg::BaseCase_(std::vector<SingleNode*>& nodes) {
 void npt::SingleBandwidthAlg::DepthFirstRecursion_(std::vector<SingleNode*>& nodes) {
   
   // check for symmetry and pruning
-  bool can_prune = CheckNodeList_(nodes);
+  //bool can_prune = CheckNodeList_(nodes);
+  bool can_prune = false;
   
   if (can_prune) {
+    
+    //std::cout << "Can prune\n";
     
     // note that this will count prunes based on symmetry too
     num_prunes_++;
     
   }
   else {
+    
+    //std::cout << "Can't prune\n";
     
     // look over all the nodes, see if they are leaves, and if not, which one 
     // to split 

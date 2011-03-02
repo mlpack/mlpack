@@ -13,6 +13,12 @@ set(SOURCES
 	single_bandwidth_alg.cc
 	naive_alg.h
 	naive_alg.cc
+	node_tuple.h
+	node_tuple.cc
+	perm_free_matcher.h
+	perm_free_matcher.cc
+	perm_free_alg.h
+	perm_free_alg.cc
 )
 
 # add directory name to sources

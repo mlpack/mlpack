@@ -10,7 +10,7 @@
 #include "node_tuple.h"
 
 
-bool npt::NodeTuple::CheckSymmetry(arma::Col<NptNode*> nodes, 
+bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes, 
                                    index_t split_ind, bool is_left) {
   
   // only check the new node for symmetry with respect to the others
@@ -60,7 +60,7 @@ std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
   
   // simple case
   if (tuple_size_ == 2) {
-    inds.PushBack(0);
+    inds.push_back(0);
   }
   else {
     
@@ -72,7 +72,7 @@ std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
     // we reach the diagonal
     for (index_t i = 0; i < ind_to_split_; i++) {
       
-      inds.PushBack(bad_ind);
+      inds.push_back(bad_ind);
       bad_ind += tuple_size_ - 1 - (i+1);
       bad_ind2 += tuple_size_ - i - 1;
       
@@ -81,7 +81,7 @@ std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
     // after the diagonal, we need to go down the column
     for (index_t i = ind_to_split_+1; i < tuple_size_; i++) {
       
-      inds.PushBack(bad_ind2);
+      inds.push_back(bad_ind2);
       bad_ind2++;
       
     }
@@ -109,7 +109,7 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind,
   // iterate over the entire tuple
   for (index_t i = 0; i < tuple_size_; i++) {
     
-    NptNode* node_i = node_list_(i);
+    NptNode* node_i = node_list_[i];
     
     if (!(node_i->is_leaf())) {
       
