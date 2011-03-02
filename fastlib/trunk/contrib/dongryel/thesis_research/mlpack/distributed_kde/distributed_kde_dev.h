@@ -95,7 +95,8 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Init(
   // Declare the global constants.
   global_.Init(
     reference_table_, query_table_, reference_table_->n_entries(),
-    (KernelAuxType *) NULL, arguments_in.bandwidth_, is_monochromatic_,
+    (KernelAuxType *) NULL, arguments_in.bandwidth_,
+    (typename GlobalType::MeanVariancePairListType *) NULL, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.absolute_error_,
     arguments_in.probability_, false);
   global_.set_effective_num_reference_points(

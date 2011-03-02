@@ -235,6 +235,9 @@ class KdeGlobal {
 
     typedef IncomingKernelAuxType KernelAuxType;
 
+    typedef std::vector <
+    core::monte_carlo::MeanVariancePair > MeanVariancePairListType;
+
   private:
 
     /** @brief Whether to normalize the kernel sums at the end or not.
@@ -288,7 +291,7 @@ class KdeGlobal {
 
     /** @brief The scratch space for doing a Monte Carlo sum.
      */
-    std::vector< core::monte_carlo::MeanVariancePair > mean_variance_pair_;
+    MeanVariancePairListType *mean_variance_pair_;
 
   public:
 
@@ -347,6 +350,7 @@ class KdeGlobal {
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
+      mean_variance_pair_ = NULL;
     }
 
     /** @brief The destructor.
@@ -354,14 +358,16 @@ class KdeGlobal {
     ~KdeGlobal() {
       if(! kernel_aux_is_alias_) {
         delete kernel_aux_;
+        delete mean_variance_pair_;
       }
       kernel_aux_ = NULL;
+      mean_variance_pair_ = NULL;
     }
 
     /** @brief Returns the mean variance pair object.
      */
-    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair() {
-      return &mean_variance_pair_;
+    MeanVariancePairListType *mean_variance_pair() {
+      return mean_variance_pair_;
     }
 
     /** @brief Returns the standard score corresponding to the
@@ -456,7 +462,8 @@ class KdeGlobal {
       TableType *reference_table_in,
       TableType *query_table_in,
       double effective_num_reference_points_in, KernelAuxType *kernel_aux_in,
-      double bandwidth_in, const bool is_monochromatic,
+      double bandwidth_in, MeanVariancePairListType *mean_variance_pair_in,
+      const bool is_monochromatic,
       double relative_error_in, double absolute_error_in, double probability_in,
       bool normalize_densities_in = true) {
 
@@ -466,11 +473,13 @@ class KdeGlobal {
       if(kernel_aux_in) {
         kernel_aux_ = kernel_aux_in;
         kernel_aux_is_alias_ = true;
+        mean_variance_pair_ = mean_variance_pair_in;
       }
       else {
         kernel_aux_ = new KernelAuxType();
         kernel_aux_is_alias_ = false;
         kernel_aux_->kernel().Init(bandwidth_in);
+        mean_variance_pair_ = new MeanVariancePairListType();
       }
       mult_const_ = 1.0 /
                     (kernel_aux_->kernel().CalcNormConstant(
@@ -485,7 +494,9 @@ class KdeGlobal {
 
       // Initialize the temporary vector for storing the Monte Carlo
       // results.
-      mean_variance_pair_.resize(query_table_->n_entries());
+      if(! kernel_aux_is_alias_) {
+        mean_variance_pair_->resize(query_table_->n_entries());
+      }
 
       // Set the normalize flag.
       normalize_densities_ = normalize_densities_in;
@@ -497,36 +508,46 @@ class KdeGlobal {
       if(! kernel_aux_is_alias_) {
         if(kernel_aux_->series_expansion_type() == "multivariate") {
           if(reference_table_->n_attributes() <= 2) {
-            kernel_aux_->Init(bandwidth_in, 7, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 7, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 3) {
-            kernel_aux_->Init(bandwidth_in, 5, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 5, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 5) {
-            kernel_aux_->Init(bandwidth_in, 3, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 3, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 6) {
-            kernel_aux_->Init(bandwidth_in, 1, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 1, reference_table_->n_attributes());
           }
           else {
-            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 0, reference_table_->n_attributes());
           }
         }
         else {
           if(reference_table_->n_attributes() <= 2) {
-            kernel_aux_->Init(bandwidth_in, 5, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 5, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 3) {
-            kernel_aux_->Init(bandwidth_in, 3, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 3, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 5) {
-            kernel_aux_->Init(bandwidth_in, 1, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 1, reference_table_->n_attributes());
           }
           else if(reference_table_->n_attributes() <= 6) {
-            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 0, reference_table_->n_attributes());
           }
           else {
-            kernel_aux_->Init(bandwidth_in, 0, reference_table_->n_attributes());
+            kernel_aux_->Init(
+              bandwidth_in, 0, reference_table_->n_attributes());
           }
         }
       }
