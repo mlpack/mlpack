@@ -41,6 +41,7 @@ void IO::add(const char* identifier, const char* description, const char* parent
 	return;
 }
 
+/*
 template<class T>
 void IO::add(const char* identifier, const char* description, const char* parent) {
 	//TODO: use singleton for state, wrap this up a parallel data structure 
@@ -53,6 +54,7 @@ void IO::add(const char* identifier, const char* description, const char* parent
 		(identifier, po::value<T>(), description);
 	return;
 }
+*/
 		
 //Returns the sole instance of this class
 IO& IO::getSingleton() {
