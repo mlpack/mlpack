@@ -229,7 +229,7 @@ void Data::InitFromSvmlight() {
 	  cout <<"Feature numbers must be larger or equal to 1!" << "Line: " << ln << endl;
 	  exit (1); 
 	}
-	EXs_[n_ex_].Fs_[n_f].i_ = (T_IDX)idx;
+	EXs_[n_ex_].Fs_[n_f].i_ = (T_IDX)idx-1; // idx starts from 0
 	EXs_[n_ex_].Fs_[n_f].v_ = (T_VAL)val;
 	if ((T_IDX)idx > max_ft_idx_) {
 	  max_ft_idx_ = (T_IDX)idx;

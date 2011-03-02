@@ -10,3 +10,4 @@ Log::Log(size_t n_thread, size_t n_log, size_t t_int) :
   err_(n_thread, Vec_d(n_log, 0)),
   loss_(n_thread, Vec_f(n_log, 0.0)) {
 }
+

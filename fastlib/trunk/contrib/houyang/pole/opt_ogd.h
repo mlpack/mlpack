@@ -17,6 +17,9 @@ class OGD : public Learner {
   void Test();
  private:
   static void* OgdThread(void *par);
+  void OgdCommUpdate(size_t tid);
+  void MakeLog(size_t tid, Example *x, double pred_val);
+  void SaveLog();
 };
 
 #endif

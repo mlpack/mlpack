@@ -4,6 +4,8 @@
 #include <vector>
 #include <iostream>
 
+#include "sparsela.h"
+
 using namespace std;
 
 typedef vector<size_t> Vec_d;
@@ -14,6 +16,8 @@ class Log {
   size_t n_thread_;
   size_t n_log_;
   size_t t_int_;
+  bool calc_loss_;
+  string type_;
   // statistics
   vector<size_t> ct_t_;  // counters for round t
   vector<size_t> ct_lp_; // counters for log points

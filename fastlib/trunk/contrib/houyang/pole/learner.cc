@@ -6,8 +6,6 @@ Learner::Learner() {
 }
 
 Learner::~Learner() {
-  if (LOG_)
-    delete LOG_;
   if (TR_)
     delete TR_;
   if (VA_)
@@ -16,6 +14,8 @@ Learner::~Learner() {
     delete TE_;
   if (LF_)
     delete LF_;
+  if (LOG_)
+    delete LOG_;
 }
 
 ////////////////////////////
@@ -31,6 +31,7 @@ void Learner::ParallelLearn() {
   // for parallelism
   Threads_.resize(n_thread_);
   state_.resize(n_thread_);
+  n_it_.resize(n_thread_);
   thd_n_used_examples_.resize(n_thread_);
   loss_.resize(n_thread_);
   err_.resize(n_thread_);
@@ -168,3 +169,4 @@ T_LBL Learner::LinearPredictBiasLabelBinary(Svector *w, Example *x, double bias)
   else
     return (T_LBL)-1;
 }
+

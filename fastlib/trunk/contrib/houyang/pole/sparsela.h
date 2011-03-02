@@ -43,8 +43,12 @@ class Svector {
   void Clear();
   void Print();
   // linear algebra
-  double SparseDot(Svector *x);
+  void   SparseScaleOverwrite(double a);
+  double SparseDot(Svector *v);
   double SparseSqL2Norm();
+  void   SparseAddExpertOverwrite(double a, Svector *x);
+  void   SparseAddOverwrite(Svector *x);
+  void   Shrink(double threshold);
 };
 
 
