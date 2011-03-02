@@ -101,10 +101,16 @@ void Kde<TableType, KernelAuxType>::Init(
   KernelAuxType *kernel_aux_ptr =
     (global_in) ?
     const_cast<KernelAuxType *>(& global_in->kernel_aux()) : NULL;
+  typename IncomingGlobalType::MeanVariancePairListType *
+  mean_variance_pair_ptr =
+    (global_in) ?
+    const_cast <
+    typename IncomingGlobalType::MeanVariancePairListType * >(
+      global_in->mean_variance_pair()) : NULL;
   global_.Init(
     reference_table_, query_table_,
     arguments_in.effective_num_reference_points_, kernel_aux_ptr,
-    arguments_in.bandwidth_, is_monochromatic_,
+    arguments_in.bandwidth_, mean_variance_pair_ptr, is_monochromatic_,
     arguments_in.relative_error_, arguments_in.absolute_error_,
     arguments_in.probability_, arguments_in.normalize_densities_);
 }
