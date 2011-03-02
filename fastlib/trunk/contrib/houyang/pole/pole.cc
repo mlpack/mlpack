@@ -150,6 +150,29 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     exit(1);
   }
 
+  //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+  if (vm.count("C")) {
+    L_->reg_C_ = vm["C"].as<double>();
+    if (L_->reg_C_ <= 0.0) {
+      cout << "Parameter C should be positive!" << endl;
+      exit(1);
+    }
+    L_->reg_factor_ = 1.0 / L_->reg_C_;
+  }
+  if (vm.count("lambda")) {
+    L_->reg_factor_ = vm["lambda"].as<double>();
+    if (L_->reg_factor_ < 0.0) {
+      cout << "Parameter lambda should be non-negative!" << endl;
+      exit(1);
+    }
+    else if (L_->reg_factor_ == 0) {
+      cout << "Regularization factor == 0. No regularization imposed!" << endl;
+    }
+    else {
+      L_->reg_C_ = 1.0 / L_->reg_factor_;
+    }
+  }
+
   if (L_->random_data_)
     srand(time(NULL));
 
@@ -186,8 +209,8 @@ void Pole::ArgsSanityCheck() {
     L_->n_log_ = 0;
   }
 
-  if (L_->calc_loss_ && L_->n_log_ == 0) {
-    L_->n_log_ = 1;
+  if (L_->n_log_ >0 && L_->calc_loss_ == false) {
+    L_->calc_loss_ = true;
   }
 }
 

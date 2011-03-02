@@ -22,6 +22,7 @@ class Feature {
  public:
   Feature();
   Feature(T_IDX i, T_VAL v);
+  ~Feature();
 };
 
 //---------------------General Sparse Vector-----------------//
@@ -33,6 +34,7 @@ class Svector {
   Svector();
   Svector(vector<Feature> Fs);
   Svector(T_IDX n_f, T_VAL c);
+  ~Svector();
 
   void Copy(Svector V);
   void SetAll(T_VAL v);
@@ -62,6 +64,7 @@ class Example : public Svector{
   Example();
   Example(vector<Feature> Fs, T_LBL y);
   Example(vector<Feature> Fs, T_LBL y, string ud);
+  ~Example();
 
   void Copy(Example X);
   void Clear();
@@ -71,6 +74,8 @@ class Example : public Svector{
 //------------------Row Indexed Sparse Matrix---------------//
 class SmatrixR {
  public:
+  SmatrixR();
+  ~SmatrixR();
   // a general sparse matrix, indexed by rows
   vector<Svector> Vs_; // rows
 };
