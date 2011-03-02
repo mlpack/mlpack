@@ -37,7 +37,8 @@ class TestAllNN {
     module_ = module;
   }
   void Init() {
-    data::Load("test_data_3_1000.csv", data_for_tree_);
+    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+      FATAL("Unable to load test dataset.");
   }
   void Destruct() {
     delete allnn_;
