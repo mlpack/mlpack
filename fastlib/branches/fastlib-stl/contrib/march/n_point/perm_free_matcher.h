@@ -72,11 +72,15 @@ namespace npt {
       
     } // constructor
     
+    int num_permutations() const {
+      return perms_.num_permutations();
+    }
+    
     bool TestNodeTuple(NodeTuple& nodes);
     
     bool TestPointPair(double dist_sq, index_t tuple_index_1, 
                        index_t tuple_index_2, 
-                       ArrayList<bool>& permutation_ok);
+                       std::vector<bool>& permutation_ok);
     
     
   }; // class

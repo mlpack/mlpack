@@ -88,7 +88,7 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
 
 void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
 
-  std::vector<std::vector<index_t> > point_sets;
+  std::vector<std::vector<index_t> > point_sets(tuple_size_);
   
   // TODO: can this be done more efficiently?
   
@@ -96,11 +96,11 @@ void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
   // iterate over nodes
   for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
-    point_sets[node_ind].resize(nodes[node_ind]->count());
+    point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
     
     // fill in points in the node
-    for (index_t point_ind = nodes[node_ind]->begin(); 
-         point_ind < nodes[node_ind]->end(); point_ind++) {
+    for (index_t point_ind = nodes.node_list(node_ind)->begin(); 
+         point_ind < nodes.node_list(node_ind)->end(); point_ind++) {
       
       point_sets[node_ind][point_ind] = point_ind;
       
@@ -108,13 +108,19 @@ void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
     
   } // nodes
   
-  std::vector<bool> permutation_ok(matcher_.num_permutations(), true);
+  std::vector<bool> permutation_ok(num_permutations_, true);
   
   std::vector<index_t> points_in_tuple(tuple_size_, -1);
   
   BaseCaseHelper_(point_sets, permutation_ok, points_in_tuple, 0);
   
 } // BaseCase_()
+
+bool npt::PermFreeAlg::CanPrune_(NodeTuple& nodes) {
+  
+  return matcher_.TestNodeTuple(nodes);
+  
+} // CanPrune
 
 void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
   
@@ -133,7 +139,7 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
     // split nodes and call recursion
 
     // left child
-    if (nodes.CheckSymmetry(nodes.node_list(), nodes.ind_to_split(), true)) {
+    if (nodes.CheckSymmetry(nodes.get_node_list(), nodes.ind_to_split(), true)) {
       // do left recursion
       
       NodeTuple left_child(nodes, true);
@@ -141,7 +147,7 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
       
     }
     // right child
-    if (nodes.CheckSymmetry(nodes.node_list(), nodes.ind_to_split(), false)) {
+    if (nodes.CheckSymmetry(nodes.get_node_list(), nodes.ind_to_split(), false)) {
     
       NodeTuple right_child(nodes, false);
       DepthFirstRecursion_(right_child);

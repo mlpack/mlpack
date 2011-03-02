@@ -29,6 +29,7 @@ namespace npt {
     index_t num_points_;
     index_t tuple_size_;
     index_t leaf_size_;
+    int num_permutations_;
     
     // matcher
     
@@ -52,14 +53,15 @@ namespace npt {
     
     void BaseCase_(NodeTuple& nodes);
     
+    bool CanPrune_(NodeTuple& nodes);
+    
     void DepthFirstRecursion_(NodeTuple& nodes);
     
     
   public:
     
-    PermFreeAlg(arma::mat& data, arma::colvec& weights,
-                arma::mat& upper_bds, arma::mat& lower_bds,
-                int leaf_size) 
+    PermFreeAlg(arma::mat& data, arma::colvec& weights, int leaf_size,
+                arma::mat& lower_bds, arma::mat& upper_bds)
     : matcher_(upper_bds, lower_bds) {
       
       data_points_ = data;
@@ -67,6 +69,8 @@ namespace npt {
       data_weights_ = weights;
       
       tuple_size_ = upper_bds.n_cols;
+      num_permutations_ = matcher_.num_permutations();
+      
       num_points_ = data_points_.n_cols;
       
       leaf_size_ = leaf_size;
@@ -75,16 +79,23 @@ namespace npt {
       num_prunes_ = 0;
       weighted_num_tuples_ = 0.0;
       
-      tree_ = tree::MakeKdTreeMidpoint<NptNode> (data_points_, leaf_size_, 
-                                                 &old_from_new_index_,
-                                                 NULL);
+      tree_ = tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
+                                                         leaf_size_, 
+                                                         old_from_new_index_);
       
     } // constructor
     
+    double weighted_num_tuples() const {
+      return weighted_num_tuples_;
+    }
+    
+    int num_tuples() const {
+      return num_tuples_;
+    } // num_tuples
+    
     void Compute() {
       
-      arma::Col<NptNode*> list(tuple_size_);
-      list.fill(tree_);
+      std::vector<NptNode*> list(tuple_size_, tree_);
       
       NodeTuple nodes(list);
       

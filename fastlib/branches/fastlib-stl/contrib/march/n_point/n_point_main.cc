@@ -9,6 +9,7 @@
 
 #include "single_bandwidth_alg.h"
 #include "naive_alg.h"
+#include "perm_free_alg.h"
 
 using namespace npt;
 
@@ -18,11 +19,9 @@ int main(int argc, char* argv[]) {
   
   // read in data and parameters
   
-  std::string data_filename = fx_param_str(NULL, "data", "test_data.csv");
+  std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
   arma::mat data_mat;
-  data_mat.load(data_filename);
-
-  //std::cout << "loaded data\n";
+  data_mat.load(data_filename, arma::raw_ascii);
   
   
   arma::colvec weights;  
@@ -51,23 +50,33 @@ int main(int argc, char* argv[]) {
     
     naive_alg.ComputeCounts();
     
-    std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n";
+    std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
     
   }
   
+  index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
+  
   if (fx_param_exists(NULL, "do_single_bandwidth")) {
-    
-    index_t leaf_size = fx_param_int(NULL, "leaf_size", 10);
     
     SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
                                   lower_bds, upper_bds);
     
     single_alg.ComputeCounts();
     
-    std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n";
+    std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     
     
   }
+  
+  if (fx_param_exists(NULL, "do_perm_free")) {
+    
+    PermFreeAlg alg(data_mat, weights, leaf_size, lower_bds, upper_bds);
+    
+    alg.Compute();
+    
+    std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
+    
+  } // perm free
   
   fx_done(NULL);
   
