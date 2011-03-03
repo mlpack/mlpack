@@ -14,78 +14,205 @@
 namespace mlpack {
 namespace series_expansion {
 
-core::table::DensePoint &ReducedSetFarField::get_center() {
-  return center_;
+bool ReducedSetFarField::in_dictionary(int training_point_index) const {
+  return in_dictionary_[training_point_index];
 }
 
-const core::table::DensePoint &ReducedSetFarField::get_center() const {
-  return center_;
-}
+void ReducedSetFarField::inactive_indices(
+  std::vector<int> *inactive_indices_out) const {
 
-const core::table::DensePoint &ReducedSetFarField::get_coeffs() const {
-  return coeffs_;
-}
-
-short int ReducedSetFarField::get_order() const {
-  return order_;
-}
-
-double ReducedSetFarField::get_weight_sum() const {
-  return coeffs_[0];
-}
-
-void ReducedSetFarField::set_order(short int new_order) {
-  order_ = new_order;
-}
-
-void ReducedSetFarField::set_center(
-  const core::table::DensePoint &center) {
-  for(int i = 0; i < center.length(); i++) {
-    center_[i] = center[i];
+  // Scan the in_dictionary list and build the inactive index set.
+  inactive_indices_out->resize(0);
+  for(unsigned int i = 0; i < in_dictionary_.size(); i++) {
+    if(in_dictionary_[i] == false) {
+      inactive_indices_out->push_back(i);
+    }
   }
 }
 
-template<typename KernelAuxType>
-void ReducedSetFarField::Init(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& center) {
+void ReducedSetFarField::UpdateReducedSetFarField_(
+  int new_point_index,
+  const Vector &new_column_vector,
+  double self_value,
+  double projection_error,
+  const Vector &inverse_times_column_vector) {
 
-  // Copy the center.
-  center_.Copy(center);
-  order_ = -1;
+  // Add the point to the dictionary.
+  point_indices_in_dictionary_.push_back(new_point_index);
+  in_dictionary_[ new_point_index ] = true;
+  training_index_to_dictionary_position_[ new_point_index ] =
+    point_indices_in_dictionary_.size() - 1;
 
-  // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  // Update the kernel matrix.
+  Matrix *new_kernel_matrix = new Matrix();
+  new_kernel_matrix->Init(
+    current_kernel_matrix_->n_rows() + 1,
+    current_kernel_matrix_->n_cols() + 1);
+
+  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
+    for(int i = 0; i < current_kernel_matrix_->n_rows(); i++) {
+      new_kernel_matrix->set(i, j, current_kernel_matrix_->get(i, j));
+    }
+  }
+  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
+    new_kernel_matrix->set(
+      j, current_kernel_matrix_->n_cols(), new_column_vector[j]);
+    new_kernel_matrix->set(
+      current_kernel_matrix_->n_rows(), j, new_column_vector[j]);
+  }
+
+  // Store the self value.
+  new_kernel_matrix->set(
+    current_kernel_matrix_->n_rows(),
+    current_kernel_matrix_->n_cols(),
+    self_value);
+  delete current_kernel_matrix_;
+  current_kernel_matrix_ = new_kernel_matrix;
+
+  // Update the kernel matrix inverse.
+  Matrix *new_kernel_matrix_inverse =
+    ml::DenseMatrixInverse::Update(
+      *current_kernel_matrix_inverse_,
+      inverse_times_column_vector,
+      projection_error);
+  delete current_kernel_matrix_inverse_;
+  current_kernel_matrix_inverse_ = new_kernel_matrix_inverse;
+}
+
+const Matrix *ReducedSetFarField::current_kernel_matrix() const {
+  return current_kernel_matrix_;
+}
+
+const Matrix *ReducedSetFarField::current_kernel_matrix_inverse() const {
+  return current_kernel_matrix_inverse_;
+}
+
+Matrix *ReducedSetFarField::current_kernel_matrix() {
+  return current_kernel_matrix_;
+}
+
+Matrix *ReducedSetFarField::current_kernel_matrix_inverse() {
+  return current_kernel_matrix_inverse_;
+}
+
+double ReducedSetFarField::adding_threshold() const {
+  return adding_threshold_;
+}
+
+void ReducedSetFarField::set_adding_threshold(double adding_threshold_in) {
+  adding_threshold_ = adding_threshold_in;
+}
+
+int ReducedSetFarField::size() const {
+  return point_indices_in_dictionary_.size();
+}
+
+void ReducedSetFarField::AddBasis(
+  int new_point_index,
+  const std::vector<double> &new_column_vector_in,
+  double self_value) {
+
+  if(new_column_vector_in.size() > 0) {
+
+    Vector new_column_vector;
+    new_column_vector.Init(new_column_vector_in.size());
+    for(int i = 0; i < new_column_vector.length(); i++) {
+      new_column_vector[i] = new_column_vector_in[i];
+    }
+
+    // Compute the matrix-vector product.
+    Vector inverse_times_column_vector;
+    la::MulInit(
+      *current_kernel_matrix_inverse_,
+      new_column_vector,
+      &inverse_times_column_vector);
+
+    // Compute the projection error.
+    double projection_error =
+      self_value -
+      la::Dot(new_column_vector, inverse_times_column_vector);
+
+    // If the projection error is above the threshold, add it to the
+    // dictionary.
+    if(projection_error > adding_threshold_) {
+      UpdateReducedSetFarField_(
+        new_point_index,
+        new_column_vector,
+        self_value,
+        projection_error,
+        inverse_times_column_vector);
+    }
+  }
+  else {
+    current_kernel_matrix_ = new Matrix();
+    current_kernel_matrix_->Init(1, 1);
+    current_kernel_matrix_->set(0, 0, self_value);
+    current_kernel_matrix_inverse_ = new Matrix();
+    current_kernel_matrix_inverse_->Init(1, 1);
+    current_kernel_matrix_inverse_->set(0, 0, self_value);
+  }
+}
+
+void ReducedSetFarField::Init(const Matrix *table_in) {
+
+  table_ = table_in;
+
+  // Allocate the boolean flag for the presence of each training
+  // point in the dictionary.
+  in_dictionary_.resize(table_in->n_cols());
+  training_index_to_dictionary_position_.resize(table_in->n_cols());
+
+  // Generate a random permutation and initialize the inital
+  // dictionary which consists of the first random point.
+  random_permutation_.resize(table_in->n_cols());
+  for(int i = 0; i < table_in->n_cols(); i++) {
+    random_permutation_[i] = i;
+    in_dictionary_[i] = false;
+    training_index_to_dictionary_position_[i] = -1;
+  }
+}
+
+int ReducedSetFarField::position_to_training_index_map(int position) const {
+  return random_permutation_[ position ];
+}
+
+int ReducedSetFarField::training_index_to_dictionary_position(
+  int training_index) const {
+  return training_index_to_dictionary_position_[training_index];
+}
+
+int ReducedSetFarField::point_indices_in_dictionary(
+  int nth_dictionary_point_index) const {
+  return point_indices_in_dictionary_[nth_dictionary_point_index];
+}
+
+const std::vector<int> &ReducedSetFarField::random_permutation() const {
+  return random_permutation_;
+}
+
+const std::deque<bool> &ReducedSetFarField::in_dictionary() const {
+  return in_dictionary_;
+}
+
+const std::vector<int> &ReducedSetFarField::point_indices_in_dictionary()
+const {
+  return point_indices_in_dictionary_;
+}
+
+const std::vector<int> &ReducedSetFarField::
+training_index_to_dictionary_position() const {
+  return training_index_to_dictionary_position_;
 }
 
 template<typename TKernelAux>
 void ReducedSetFarField::Init(const TKernelAux &kernel_aux_in) {
-
-  // Set the center to be a zero vector.
-  order_ = -1;
-  center_.Init(kernel_aux_in.global().get_dimension());
-  center_.SetZero();
-
-  // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
 }
 
-template<typename KernelAuxType>
+template<typename KernelAuxType, typename TreeIteratorType>
 void ReducedSetFarField::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data,
   const core::table::DensePoint& weights,
-  int begin, int end, int order) {
-
-}
-
-template<typename KernelAuxType>
-void ReducedSetFarField::RefineCoeffs(
-  const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix &data,
-  const core::table::DensePoint &weights,
-  int begin, int end, int order) {
+  TreeIteratorType &it) {
 
 }
 
@@ -94,32 +221,6 @@ double ReducedSetFarField::EvaluateField(
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &x_q) const {
 
-  // Get the already-generated grid points. We need to map this to the
-  // upward equivalent surface.
-  const core::table::DenseMatrix &uniform_grid_points =
-    kernel_aux_in.uniform_grid_points();
-
-  // Take the weighted sum.
-  double multipole_sum = 0.0;
-  arma::vec grid_point;
-  arma::vec lower_bound_upward_equivalent_alias;
-  core::table::DensePointToArmaVec(
-    lower_bound_upward_equivalent_, &lower_bound_upward_evauilent_alias);
-  for(int i = 0; i < pseudocharges_.size(); i++) {
-    arma::vec grid_point_alias;
-    uniform_grid_points.MakeColumnVector(i, &grid_point_alias);
-    grid_point = grid_point_alias;
-
-    // Scale by the upward equivalent surface of the node.
-
-    // Translate it by the lower bound.
-    grid_point += lower_bound_upward_equivalent_alias;
-
-    double kernel_value = kernel_aux_in.kernel().EvalUnnormOnSq(
-                            x_q, grid_point);
-    multipole_sum += pseudocharges_[i] * kernel_value;
-  }
-  return multipole_sum;
 }
 
 template<typename KernelAuxType>
