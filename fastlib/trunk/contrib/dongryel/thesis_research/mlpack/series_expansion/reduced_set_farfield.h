@@ -24,19 +24,34 @@ class ReducedSetFarField {
     // For Boost serialization.
     friend class boost::serialization::access;
 
+    /** @brief The random permutation of indices to assist in building
+     *         the dictionary.
+     */
     std::vector<int> random_permutation_;
 
-    std::deque<bool> in_dictionary_;
+    /** @brief Tells whether each depth-first indexed point is in the
+     *         dictionary or not.
+     */
+    std::vector<bool> in_dictionary_;
 
+    /** @brief The list of point depth-first indices in the
+     *         dictionary.
+     */
     std::vector<int> point_indices_in_dictionary_;
 
+    /** @brief Maps each depth-first index to the index in the
+     *         dictionary. -1 if the point does not exist in the
+     *         dictionary.
+     */
     std::vector<int> training_index_to_dictionary_position_;
 
+    /** @brief The current kernel matrix.
+     */
     core::table::DenseMatrix *current_kernel_matrix_;
 
+    /** @brief The inverse of the current kernel matrix.
+     */
     core::table::DenseMatrix *current_kernel_matrix_inverse_;
-
-    double adding_threshold_;
 
   private:
 
@@ -48,10 +63,6 @@ class ReducedSetFarField {
       const Vector &inverse_times_column_vector);
 
   public:
-
-    double adding_threshold() const;
-
-    void set_adding_threshold(double adding_threshold_in);
 
     void inactive_indices(std::vector<int> *inactive_indices_out) const;
 
@@ -97,6 +108,14 @@ class ReducedSetFarField {
 
     }
 
+    /** @brief The constructor.
+     */
+    ReducedSetFarField();
+
+    /** @brief The destructor.
+     */
+    ~ReducedSetFarField();
+
     /** @brief Accumulates the far field moment represented by the given
      *         reference data into the coefficients.
      */
@@ -113,8 +132,8 @@ class ReducedSetFarField {
       const KernelAuxType &kernel_aux_in,
       const core::table::DensePoint &point) const;
 
-    template<typename KernelAuxType>
-    void Init(const KernelAuxType &ka);
+    template<typename TreeIteratorType>
+    void Init(const TreeIteratorType &it);
 
     /** @brief Prints out the series expansion represented by this object.
      */

@@ -97,6 +97,9 @@ class Table {
     /** @brief The iterator for the node that belongs to this table.
      */
     class TreeIterator {
+      public:
+        typedef typename TableType::PointType PointType;
+
       private:
         int begin_;
 
@@ -148,21 +151,21 @@ class Table {
           current_index_++;
         }
 
-        template<typename PointType>
-        void Next(PointType *entry, int *point_id) {
+        template<typename IncomingPointType>
+        void Next(IncomingPointType *entry, int *point_id) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        template<typename PointType>
-        void Next(PointType *entry) {
+        template<typename IncomingPointType>
+        void Next(IncomingPointType *entry) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
         }
 
-        template<typename PointType>
-        void get(int i, PointType *entry) {
+        template<typename IncomingPointType>
+        void get(int i, IncomingPointType *entry) {
           table_->iterator_get_(begin_ + i, entry);
         }
 
@@ -170,13 +173,13 @@ class Table {
           *point_id = table_->iterator_get_id_(begin_ + i);
         }
 
-        template<typename PointType>
-        void RandomPick(PointType *entry) {
+        template<typename IncomingPointType>
+        void RandomPick(IncomingPointType *entry) {
           table_->iterator_get_(core::math::RandInt(begin_, end_), entry);
         }
 
-        template<typename PointType>
-        void RandomPick(PointType *entry, int *point_id) {
+        template<typename IncomingPointType>
+        void RandomPick(IncomingPointType *entry, int *point_id) {
           *point_id = core::math::RandInt(begin_, end_);
           table_->iterator_get_(*point_id, entry);
         }
