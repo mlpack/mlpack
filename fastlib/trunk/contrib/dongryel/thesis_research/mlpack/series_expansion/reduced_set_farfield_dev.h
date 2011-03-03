@@ -14,6 +14,20 @@
 namespace mlpack {
 namespace series_expansion {
 
+ReducedSetFarField::ReducedSetFarField() {
+  current_kernel_matrix_ = NULL;
+  current_kernel_matrix_inverse_ = NULL;
+}
+
+ReducedSetFarField::~ReducedSetFarField() {
+  if(current_kernel_matrix_ != NULL) {
+    delete current_kernel_matrix_;
+  }
+  if(current_kernel_matrix_inverse_ != NULL) {
+    delete current_kernel_matrix_inverse_;
+  }
+}
+
 bool ReducedSetFarField::in_dictionary(int training_point_index) const {
   return in_dictionary_[training_point_index];
 }
@@ -153,19 +167,18 @@ void ReducedSetFarField::AddBasis(
   }
 }
 
-void ReducedSetFarField::Init(const Matrix *table_in) {
-
-  table_ = table_in;
+template<typename TreeIteratorType>
+void ReducedSetFarField::Init(const TreeIteratorType &it) {
 
   // Allocate the boolean flag for the presence of each training
   // point in the dictionary.
-  in_dictionary_.resize(table_in->n_cols());
-  training_index_to_dictionary_position_.resize(table_in->n_cols());
+  in_dictionary_.resize(it.count());
+  training_index_to_dictionary_position_.resize(it.count());
 
   // Generate a random permutation and initialize the inital
   // dictionary which consists of the first random point.
-  random_permutation_.resize(table_in->n_cols());
-  for(int i = 0; i < table_in->n_cols(); i++) {
+  random_permutation_.resize(it.count());
+  for(int i = 0; i < it.count(); i++) {
     random_permutation_[i] = i;
     in_dictionary_[i] = false;
     training_index_to_dictionary_position_[i] = -1;
@@ -204,16 +217,26 @@ training_index_to_dictionary_position() const {
   return training_index_to_dictionary_position_;
 }
 
-template<typename TKernelAux>
-void ReducedSetFarField::Init(const TKernelAux &kernel_aux_in) {
-}
-
 template<typename KernelAuxType, typename TreeIteratorType>
 void ReducedSetFarField::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint& weights,
   TreeIteratorType &it) {
 
+  // Loop through each point and build the dictionary.
+  it.Reset();
+  while(it.HasNext()) {
+    typename TreeIteratorType::PointType point;
+    it.Next(&point);
+
+    // The DFS index shifted so that the begin index is 0.
+    int current_index = it.current_index() - it.begin();
+
+    // Fill out the kernel values, and do the self-computation.
+    FillKernelValues_();
+    AddBasis(
+      current_index, new_column_vector_in, self_value);
+  }
 }
 
 template<typename KernelAuxType>
