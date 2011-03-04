@@ -24,11 +24,6 @@ class ReducedSetFarField {
     // For Boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief The random permutation of indices to assist in building
-     *         the dictionary.
-     */
-    std::vector<int> random_permutation_;
-
     /** @brief Tells whether each depth-first indexed point is in the
      *         dictionary or not.
      */
@@ -55,16 +50,22 @@ class ReducedSetFarField {
 
   private:
 
+    template<typename KernelAuxType, typename PointType>
+    void FillKernelValues_(
+      const KernelAuxType &kernel_aux_in,
+      const PointType &candidate,
+      TreeIteratorType &it,
+      arma::vec *kernel_values_out,
+      double *self_value) const;
+
     void UpdateDictionary_(
       int new_point_index,
-      const Vector &new_column_vector,
+      const arma::vec &new_column_vector,
       double self_value,
       double projection_error,
-      const Vector &inverse_times_column_vector);
+      const arma::vec &inverse_times_column_vector);
 
   public:
-
-    void inactive_indices(std::vector<int> *inactive_indices_out) const;
 
     bool in_dictionary(int training_point_index) const;
 
@@ -78,10 +79,8 @@ class ReducedSetFarField {
 
     void AddBasis(
       int new_point_index,
-      const std::vector<double> &new_column_vector_in,
+      const arma::vec &new_column_vector_in,
       double self_value);
-
-    const std::vector<int> &random_permutation() const;
 
     const std::deque<bool> &in_dictionary() const;
 
@@ -96,8 +95,6 @@ class ReducedSetFarField {
     const Matrix *current_kernel_matrix_inverse() const;
 
     Matrix *current_kernel_matrix_inverse();
-
-    int size() const;
 
   public:
 
@@ -119,11 +116,14 @@ class ReducedSetFarField {
     /** @brief Accumulates the far field moment represented by the given
      *         reference data into the coefficients.
      */
-    template<typename KernelAuxType, typename TreeIteratorType>
+    template < typename MetricType,
+             typename KernelAuxType,
+             typename TreeIteratorType >
     void AccumulateCoeffs(
+      const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
       const core::table::DensePoint &weights,
-      TreeIteratorType &it, int order);
+      TreeIteratorType &it);
 
     /** @brief Evaluates the far-field coefficients at the given point.
      */

@@ -250,6 +250,36 @@ class DenseMatrix {
       is_alias_ = true;
     }
 };
+
+/** @brief The function that takes a raw double pointer and creates an
+ *         alias armadillo vector.
+ */
+template<typename T>
+static void DoublePtrToArmaMat(
+  const double *matrix_in, T n_rows_in, T n_cols_in, arma::mat *mat_out) {
+
+  // This constructor uses the const_cast for a hack. For some reason,
+  // Armadillo library does not allow creation of aliases for const
+  // double pointers, so I used const_cast here.
+  const_cast<arma::u32 &>(mat_out->n_rows) = n_rows_in;
+  const_cast<arma::u32 &>(mat_out->n_cols) = n_cols_in;
+  const_cast<arma::u32 &>(mat_out->n_elem) = n_rows_in * n_cols_in;
+  const_cast<arma::u16 &>(mat_out->vec_state) = 0;
+  const_cast<arma::u16 &>(mat_out->mem_state) = 2;
+  const_cast<double *&>(mat_out->mem) = const_cast<double *>(matrix_in);
+}
+
+/** @brief The function that takes a raw pointer out from a
+ *         pre-existing core::table::DenseMatrix object and creates an
+ *         alias armadillo matrix.
+ */
+template<typename DenseMatrixType>
+static void DenseMatrixToArmaMat(
+  const DenseMatrixType &matrix_in, arma::mat *mat_out) {
+
+  core::table::DoublePtrToArmaMat(
+    matrix_in.ptr(), matrix_in.n_rows(), matrix_in.n_cols(), mat_out);
+}
 }
 }
 
