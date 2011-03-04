@@ -20,6 +20,7 @@
 #include "mlpack/series_expansion/hypercube_local_dev.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
+#include "mlpack/series_expansion/reduced_set_farfield_dev.h"
 
 namespace mlpack {
 namespace series_expansion {
@@ -116,9 +117,11 @@ class SeriesExpansionTest {
           evaluation_max_error, &farfield_actual_error);
       printf("Far field truncation order: %d\n", farfield_truncation_order);
       if(farfield_truncation_order >= 0) {
+        typename TableType::TreeIterator it =
+          random_table.get_node_iterator(
+            reference_node->begin(), reference_node->count());
         farfield.AccumulateCoeffs(
-          kernel_aux, random_table.data(),
-          weights, 0, random_table.n_entries(), farfield_truncation_order);
+          kernel_aux, weights, it, farfield_truncation_order);
       }
 
       // Now form a local expansion of the reference node onto the
@@ -134,9 +137,11 @@ class SeriesExpansionTest {
           evaluation_max_error, &local_actual_error);
       printf("Local expansion truncation order: %d\n", local_truncation_order);
       if(local_truncation_order >= 0) {
+        typename TableType::TreeIterator it =
+          random_table.get_node_iterator(
+            reference_node->begin(), reference_node->count());
         local.AccumulateCoeffs(
-          kernel_aux, random_table.data(),
-          weights, 0, random_table.n_entries(), local_truncation_order);
+          kernel_aux, weights, it, local_truncation_order);
       }
       printf("\n");
 
@@ -155,18 +160,21 @@ BOOST_AUTO_TEST_CASE(TestCaseSeriesExpansion) {
 
   // Call the tests.
   mlpack::series_expansion::SeriesExpansionTest <
-  TableType, mlpack::series_expansion::GaussianKernelAux > gaussian_kernel_test;
+  TableType,
+  mlpack::series_expansion::GaussianKernelMultivariateAux >
+  gaussian_kernel_test;
   gaussian_kernel_test.StressTestMain();
   std::cout << "Passed the Gaussian kernel $O(D^p)$ test.\n";
 
   mlpack::series_expansion::SeriesExpansionTest <
-  TableType, mlpack::series_expansion::GaussianKernelMultAux >
+  TableType, mlpack::series_expansion::GaussianKernelHypercubeAux >
   gaussian_mult_kernel_test;
   gaussian_mult_kernel_test.StressTestMain();
   std::cout << "Passed the Gaussian kernel $O(p^D)$ test.\n";
 
   mlpack::series_expansion::SeriesExpansionTest <
-  TableType, mlpack::series_expansion::EpanKernelAux > epan_kernel_test;
+  TableType,
+  mlpack::series_expansion::EpanKernelMultivariateAux > epan_kernel_test;
   epan_kernel_test.StressTestMain();
   std::cout << "Passed the Epanechnikov kernel $O(D^p)$ test.\n";
 

@@ -9,6 +9,7 @@
 #ifndef MLPACK_SERIES_EXPANSION_DENSE_MATRIX_INVERSE_H
 #define MLPACK_SERIES_EXPANSION_DENSE_MATRIX_INVERSE_H
 
+#include <armadillo>
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
 
@@ -22,7 +23,7 @@ class DenseMatrixInverse {
 
     static core::table::DenseMatrix *Update(
       const core::table::DenseMatrix &previous_inverse,
-      const core::table::DensePoint &inverse_times_new_column,
+      const arma::vec &inverse_times_new_column,
       double projection_error) {
 
       core::table::DenseMatrix *new_matrix_inverse =
