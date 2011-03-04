@@ -32,24 +32,12 @@ bool ReducedSetFarField::in_dictionary(int training_point_index) const {
   return in_dictionary_[training_point_index];
 }
 
-void ReducedSetFarField::inactive_indices(
-  std::vector<int> *inactive_indices_out) const {
-
-  // Scan the in_dictionary list and build the inactive index set.
-  inactive_indices_out->resize(0);
-  for(unsigned int i = 0; i < in_dictionary_.size(); i++) {
-    if(in_dictionary_[i] == false) {
-      inactive_indices_out->push_back(i);
-    }
-  }
-}
-
-void ReducedSetFarField::UpdateReducedSetFarField_(
+void ReducedSetFarField::UpdateDictionary_(
   int new_point_index,
-  const Vector &new_column_vector,
+  const arma::vec &new_column_vector,
   double self_value,
   double projection_error,
-  const Vector &inverse_times_column_vector) {
+  const arma::vec &inverse_times_column_vector) {
 
   // Add the point to the dictionary.
   point_indices_in_dictionary_.push_back(new_point_index);
@@ -58,10 +46,9 @@ void ReducedSetFarField::UpdateReducedSetFarField_(
     point_indices_in_dictionary_.size() - 1;
 
   // Update the kernel matrix.
-  Matrix *new_kernel_matrix = new Matrix();
+  core::table::DenseMatrix *new_kernel_matrix = new core::table::DenseMatrix();
   new_kernel_matrix->Init(
-    current_kernel_matrix_->n_rows() + 1,
-    current_kernel_matrix_->n_cols() + 1);
+    current_kernel_matrix_->n_rows() + 1, current_kernel_matrix_->n_cols() + 1);
 
   for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
     for(int i = 0; i < current_kernel_matrix_->n_rows(); i++) {
@@ -117,39 +104,29 @@ void ReducedSetFarField::set_adding_threshold(double adding_threshold_in) {
   adding_threshold_ = adding_threshold_in;
 }
 
-int ReducedSetFarField::size() const {
-  return point_indices_in_dictionary_.size();
-}
-
 void ReducedSetFarField::AddBasis(
   int new_point_index,
-  const std::vector<double> &new_column_vector_in,
+  const arma::vec &new_column_vector_in,
   double self_value) {
 
-  if(new_column_vector_in.size() > 0) {
-
-    Vector new_column_vector;
-    new_column_vector.Init(new_column_vector_in.size());
-    for(int i = 0; i < new_column_vector.length(); i++) {
-      new_column_vector[i] = new_column_vector_in[i];
-    }
+  if(new_column_vector_in.n_elem > 0) {
 
     // Compute the matrix-vector product.
-    Vector inverse_times_column_vector;
-    la::MulInit(
-      *current_kernel_matrix_inverse_,
-      new_column_vector,
-      &inverse_times_column_vector);
+    arma::vec inverse_times_column_vector;
+    arma::mat current_kernel_matrix_inverse_alias;
+    core::table::DenseMatrixToArmaMat(
+      *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
+    arma::vec inverse_times_column_vector =
+      current_kernel_matrix_inverse_alias * new_column_vector_in;
 
     // Compute the projection error.
     double projection_error =
-      self_value -
-      la::Dot(new_column_vector, inverse_times_column_vector);
+      self_value - arma::dot(new_column_vector_in, inverse_times_column_vector);
 
     // If the projection error is above the threshold, add it to the
     // dictionary.
     if(projection_error > adding_threshold_) {
-      UpdateReducedSetFarField_(
+      UpdateDictionary_(
         new_point_index,
         new_column_vector,
         self_value,
@@ -175,18 +152,10 @@ void ReducedSetFarField::Init(const TreeIteratorType &it) {
   in_dictionary_.resize(it.count());
   training_index_to_dictionary_position_.resize(it.count());
 
-  // Generate a random permutation and initialize the inital
-  // dictionary which consists of the first random point.
-  random_permutation_.resize(it.count());
   for(int i = 0; i < it.count(); i++) {
-    random_permutation_[i] = i;
     in_dictionary_[i] = false;
     training_index_to_dictionary_position_[i] = -1;
   }
-}
-
-int ReducedSetFarField::position_to_training_index_map(int position) const {
-  return random_permutation_[ position ];
 }
 
 int ReducedSetFarField::training_index_to_dictionary_position(
@@ -197,10 +166,6 @@ int ReducedSetFarField::training_index_to_dictionary_position(
 int ReducedSetFarField::point_indices_in_dictionary(
   int nth_dictionary_point_index) const {
   return point_indices_in_dictionary_[nth_dictionary_point_index];
-}
-
-const std::vector<int> &ReducedSetFarField::random_permutation() const {
-  return random_permutation_;
 }
 
 const std::deque<bool> &ReducedSetFarField::in_dictionary() const {
@@ -217,14 +182,41 @@ training_index_to_dictionary_position() const {
   return training_index_to_dictionary_position_;
 }
 
-template<typename KernelAuxType, typename TreeIteratorType>
+template<typename MetricType, typename KernelAuxType, typename PointType>
+void ReducedSetFarField::FillKernelValues_(
+  const MetricType &metric_in,
+  const KernelAuxType &kernel_aux_in,
+  const PointType &candidate,
+  TreeIteratorType &it,
+  arma::vec *kernel_values_out,
+  double *self_value) const {
+
+  // Resize the kernel value vector.
+  kernel_values_out->set_size(point_indices_in_dictionary_.size());
+
+  // First the self kernel value.
+  *self_value = kernel_aux_in.kernel().EvalUnnormOnSq(0.0);
+
+  for(unsigned int i = 0; i < point_indices_in_dictionary_.size(); i++) {
+    PointType dictionary_point;
+    it.get(point_indices_in_dictionary_[i], &dictionary_point);
+    double squared_distance =
+      metric_in.DistanceSq(candidate, dictionary_point);
+    (*kernel_values_out)[i] =
+      kernel_aux_in.kernel().EvalUnnormOnSq(squared_distance);
+  }
+}
+
+template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
 void ReducedSetFarField::AccumulateCoeffs(
+  const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint& weights,
   TreeIteratorType &it) {
 
   // Loop through each point and build the dictionary.
   it.Reset();
+  arma::vec new_column_vector_in;
   while(it.HasNext()) {
     typename TreeIteratorType::PointType point;
     it.Next(&point);
@@ -233,7 +225,9 @@ void ReducedSetFarField::AccumulateCoeffs(
     int current_index = it.current_index() - it.begin();
 
     // Fill out the kernel values, and do the self-computation.
-    FillKernelValues_();
+    double self_value;
+    FillKernelValues_(
+      metric_in, kernel_aux_in, point, it, &new_column_vector_in, &self_value);
     AddBasis(
       current_index, new_column_vector_in, self_value);
   }
