@@ -14,12 +14,12 @@ void OEG::OegCommUpdate(size_t tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (size_t h=0; h<n_thread_; h++) {
       if (h != tid) {
-	w_p_pool_[tid].SparseAddOverwrite(&m_p_pool_[h]);
-	w_n_pool_[tid].SparseAddOverwrite(&m_n_pool_[h]);
+	w_p_pool_[tid].SparseMultiplyOverwrite(&m_p_pool_[h]);
+	w_n_pool_[tid].SparseMultiplyOverwrite(&m_n_pool_[h]);
       }
     }
-    w_p_pool_[tid].SparseScaleOverwrite(1.0/n_thread_);
-    w_n_pool_[tid].SparseScaleOverwrite(1.0/n_thread_);
+    w_p_pool_[tid].SparsePowerOverwrite(1.0/n_thread_);
+    w_n_pool_[tid].SparsePowerOverwrite(1.0/n_thread_);
   }
   else { // no communication
   }
@@ -32,12 +32,13 @@ void OEG::OegCommUpdate(size_t tid) {
   for (size_t i=0; i<w_n_pool_[tid].Fs_.size(); i++) {
     w_sum += w_n_pool_[tid].Fs_[i].v_;
   }
-  w_sum += (b_p_pool_[tid] + b_n_pool_[tid]);
+  w_sum = w_sum + b_p_pool_[tid] + b_n_pool_[tid];
+  //cout << w_sum << endl;
   if (w_sum > reg_C_) {
     w_p_pool_[tid].SparseScaleOverwrite(reg_C_/w_sum);
     w_n_pool_[tid].SparseScaleOverwrite(reg_C_/w_sum);
-    b_p_pool_[tid] /= reg_C_/w_sum;
-    b_n_pool_[tid] /= reg_C_/w_sum;
+    b_p_pool_[tid] = b_p_pool_[tid] * reg_C_ / w_sum;
+    b_n_pool_[tid] = b_n_pool_[tid] * reg_C_ / w_sum;
   }
 }
 
@@ -81,7 +82,7 @@ void* OEG::OegThread(void *in_par) {
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (size_t b = 0; b<Lp->mb_size_; b++) {
-	double bias = Lp->b_p_pool_[tid]- Lp->b_n_pool_[tid];
+	double bias = Lp->b_p_pool_[tid] - Lp->b_n_pool_[tid];
 	Svector w;
 	w.SparseSubtract(&Lp->w_p_pool_[tid], &Lp->w_n_pool_[tid]);
 	double pred_val = Lp->LinearPredictBias(&w, exs[b], bias);
@@ -94,7 +95,7 @@ void* OEG::OegThread(void *in_par) {
       // update bias
       if (Lp->use_bias_) {
         Lp->b_p_pool_[tid] = Lp->b_p_pool_[tid] * exp(eta * ub / Lp->mb_size_);
-	Lp->b_n_pool_[tid] = Lp->b_n_pool_[tid] * exp(-eta * ub / Lp->mb_size_);
+	Lp->b_n_pool_[tid] = Lp->b_n_pool_[tid] / exp(eta * ub / Lp->mb_size_);
       }
       // update w
       Lp->w_p_pool_[tid].SparseExpMultiplyOverwrite(&uv);
@@ -148,7 +149,7 @@ void OEG::Learn() {
     w_p_pool_[t].SetAllResize(TR_->max_ft_idx_, 0.5*reg_C_/(TR_->max_ft_idx_+1));
     w_n_pool_[t].SetAllResize(TR_->max_ft_idx_, 0.5*reg_C_/(TR_->max_ft_idx_+1));
     state_[t] = 0;
-    n_it_[t] = 0;
+    n_it_[t] = t_init_;
     thd_n_used_examples_[t] = 0;
     loss_[t] = 0;
     err_[t] = 0;
