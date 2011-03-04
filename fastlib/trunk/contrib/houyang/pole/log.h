@@ -23,9 +23,12 @@ class Log {
   vector<size_t> ct_lp_; // counters for log points
   vector<Vec_d>  err_;  // number of errors
   vector<Vec_f>  loss_;  // loss
+  // for expert-advice learners
+  vector<Vec_d>  err_exp_; // number of errors for experts
  public:
   Log();
-  Log(size_t n_thread, size_t n_log, size_t t_int);
+  Log(size_t n_thread, size_t n_log, size_t t_int, 
+      size_t n_expert, string opt_method);
 };
 
 #endif

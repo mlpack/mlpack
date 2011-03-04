@@ -36,7 +36,7 @@ void* OGD::OgdThread(void *in_par) {
   double ub = 0.0; // for bias
 
   while (true) {
-    switch (Lp->state_[tid]) {
+    switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
       for (size_t b = 0; b<Lp->mb_size_; b++) {
 	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
@@ -46,17 +46,17 @@ void* OGD::OgdThread(void *in_par) {
 	  return NULL;
 	}
       }
-      Lp->state_[tid] = 1;
+      Lp->t_state_[tid] = 1;
       break;
     case 1: // predict and local update
       //--- local update: regularization part
       double eta;
-      Lp->n_it_[tid] = Lp->n_it_[tid] + 1;
+      Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
       if (Lp->reg_type_ == 2) {
-	eta= 1.0 / (Lp->reg_factor_ * Lp->n_it_[tid]);
+	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
       }
       else {
-	eta = 1.0 / sqrt(Lp->n_it_[tid]);
+	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
       }
       if (Lp->reg_type_ == 2) {
 	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
@@ -88,7 +88,7 @@ void* OGD::OgdThread(void *in_par) {
       Lp->m_pool_[tid].Copy(Lp->w_pool_[tid]);
       //--- wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
-      Lp->state_[tid] = 2;
+      Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using other's msg
       // update using received messages
@@ -96,7 +96,7 @@ void* OGD::OgdThread(void *in_par) {
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
-      Lp->state_[tid] = 0;
+      Lp->t_state_[tid] = 0;
       break;
     default:
       cout << "ERROR! Unknown thread state number !" << endl;
@@ -125,11 +125,11 @@ void OGD::Learn() {
     pars[t].Lp_ = this;
     b_pool_[t] = 0.0;
     w_pool_[t].Clear();
-    state_[t] = 0;
-    n_it_[t] = 0;
-    thd_n_used_examples_[t] = 0;
-    loss_[t] = 0;
-    err_[t] = 0;
+    t_state_[t] = 0;
+    t_n_it_[t] = 0;
+    t_n_used_examples_[t] = 0;
+    t_loss_[t] = 0;
+    t_err_[t] = 0;
     // begin learning iterations
     pthread_create(&Threads_[t], NULL, &OGD::OgdThread, (void*)&pars[t]);
   }
@@ -148,19 +148,20 @@ void OGD::MakeLog(size_t tid, Example *x, double pred_val) {
       T_LBL pred_lbl = LinearPredictBiasLabelBinary(&w_pool_[tid], x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
-	loss_[tid] = loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
-	err_[tid] =  err_[tid] + 1;
+	t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+	t_err_[tid] =  t_err_[tid] + 1;
       }
       if (reg_type_ == 2 && reg_factor_ != 0) {
 	//L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
-	loss_[tid] = loss_[tid] + 0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
+	t_loss_[tid] = t_loss_[tid] + 
+          0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
       }
       // save intermediate logs
       if (n_log_ > 0) {
 	LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
 	if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
-	  LOG_->err_[tid][LOG_->ct_lp_[tid]] = err_[tid];
-	  LOG_->loss_[tid][LOG_->ct_lp_[tid]] = loss_[tid];
+	  LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
+	  LOG_->loss_[tid][LOG_->ct_lp_[tid]] = t_loss_[tid];
 	  LOG_->ct_t_[tid] = 0;
 	  LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
 	}
@@ -168,9 +169,10 @@ void OGD::MakeLog(size_t tid, Example *x, double pred_val) {
     }
     // Calculate loss only for regression etc.
     else {
-      loss_[tid] = loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+      t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
       if (reg_type_ == 2 && reg_factor_ != 0) {
-	loss_[tid] = loss_[tid] + 0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
+	t_loss_[tid] = t_loss_[tid] + 
+          0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
       }
     }
   }
@@ -213,9 +215,9 @@ void OGD::SaveLog() {
     // final loss
     double t_l = 0.0;
     for (size_t t = 0; t < n_thread_; t++) {
-      t_l += loss_[t];
-      cout << "t"<< t << ": " << thd_n_used_examples_[t] 
-	   << " samples processed. Loss: " << loss_[t]<< endl;
+      t_l += t_loss_[t];
+      cout << "t"<< t << ": " << t_n_used_examples_[t] 
+	   << " samples processed. Loss: " << t_loss_[t]<< endl;
     }
     cout << "Total loss: " << t_l << endl;
 
@@ -223,11 +225,11 @@ void OGD::SaveLog() {
     if (type_ == "classification") {
       size_t t_m = 0, t_s = 0;
       for (size_t t = 0; t < n_thread_; t++) {
-	t_m += err_[t];
-	t_s += thd_n_used_examples_[t];
-	cout << "t"<< t << ": " << thd_n_used_examples_[t] << 
-	  " samples processed. Misprediction: " << err_[t]<< ", accuracy: "<< 
-	  1.0-(double)err_[t]/(double)thd_n_used_examples_[t] << endl;
+	t_m += t_err_[t];
+	t_s += t_n_used_examples_[t];
+	cout << "t"<< t << ": " << t_n_used_examples_[t] << 
+	  " samples processed. Misprediction: " << t_err_[t]<< ", accuracy: "<< 
+	  1.0-(double)t_err_[t]/(double)t_n_used_examples_[t] << endl;
       }
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;

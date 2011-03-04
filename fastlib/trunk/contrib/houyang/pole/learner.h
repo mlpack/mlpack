@@ -36,14 +36,13 @@ class Learner {
   size_t n_log_; // How many log points
   // for parallelism
   size_t n_thread_; // number of threads for learning
-  size_t thread_id_;
-  size_t thread_state_;
   vector<pthread_t> Threads_;
-  vector<size_t> state_; // thread state
-  vector<size_t> n_it_; // nubmer of iterations
-  vector<size_t> thd_n_used_examples_;
-  vector<double> loss_; // thread loss
-  vector<size_t> err_; // thread error
+  vector<size_t> t_state_; // thread state
+  vector<size_t> t_n_it_; // nubmer of iterations
+  vector<size_t> t_n_used_examples_;
+  vector<double> t_loss_; // thread loss
+  vector<size_t> t_err_; // thread error
+  vector<size_t> t_exp_err_; // expert error on each thread
   // for iterations
   size_t epoch_ct_; // epoch counter
   size_t n_epoch_; // number of learning epochs

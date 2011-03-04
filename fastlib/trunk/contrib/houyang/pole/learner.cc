@@ -35,16 +35,20 @@ void Learner::ParallelLearn() {
   epoch_ct_ = 0;
   if (n_log_ > 0) {
     size_t t_int = (size_t)floor( (n_epoch_*TR_->n_ex_ + n_iter_res_)/(n_thread_ * n_log_) );
-    LOG_ = new Log(n_thread_, n_log_, t_int);
+    LOG_ = new Log(n_thread_, n_log_, t_int, n_expert_, opt_name_);
   }
   // init for parallelism
   Threads_.resize(n_thread_);
-  state_.resize(n_thread_);
-  n_it_.resize(n_thread_);
-  thd_n_used_examples_.resize(n_thread_);
-  loss_.resize(n_thread_);
-  err_.resize(n_thread_);
+  t_state_.resize(n_thread_);
+  t_n_it_.resize(n_thread_);
+  t_n_used_examples_.resize(n_thread_);
+  t_loss_.resize(n_thread_);
+  t_err_.resize(n_thread_);
   pthread_mutex_init(&mutex_ex_, NULL);
+  // for expert-advice learning methods
+  if (opt_name_ == "dwm_i" || opt_name_ == "dwm_a") {
+    t_exp_err_.resize(n_thread_);
+  }
   // begin learning
   Learn();
 }
@@ -149,7 +153,7 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
       }
     }
     (*x_p) = D->GetExample(ring_idx);
-    thd_n_used_examples_[tid] = thd_n_used_examples_[tid] + 1;
+    t_n_used_examples_[tid] = t_n_used_examples_[tid] + 1;
 
     pthread_mutex_unlock(&mutex_ex_);
     return true;
@@ -157,7 +161,7 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
   else if (iter_res_ct_ < n_iter_res_) {
     ring_idx = D->used_ct_ % D->n_ex_;
     (*x_p) = D->GetExample(ring_idx);
-    thd_n_used_examples_[tid] = thd_n_used_examples_[tid] + 1;
+    t_n_used_examples_[tid] = t_n_used_examples_[tid] + 1;
     iter_res_ct_ ++;
     
     pthread_mutex_unlock(&mutex_ex_);
