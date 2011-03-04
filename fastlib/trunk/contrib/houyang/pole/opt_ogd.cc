@@ -7,7 +7,7 @@ struct thread_par {
 };
 
 OGD::OGD() {
-  cout << "--Online Gradient Descent--" << endl;
+  cout << "---Online Gradient Descent---" << endl;
 }
 
 void OGD::OgdCommUpdate(size_t tid) {
@@ -141,7 +141,6 @@ void OGD::Learn() {
 void OGD::Test() {
 }
 
-
 void OGD::MakeLog(size_t tid, Example *x, double pred_val) {
   if (calc_loss_) {
     // Calculate loss and number of misclassifications
@@ -182,7 +181,7 @@ void OGD::SaveLog() {
     // intermediate logs
     if (n_log_ > 0) {
       FILE *fp;
-      string log_fn (TR_->fn_);
+      string log_fn(TR_->fn_);
       log_fn += ".";
       log_fn += opt_name_;
       log_fn += ".log";

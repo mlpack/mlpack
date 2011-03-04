@@ -22,13 +22,22 @@ Learner::~Learner() {
 // Parallel Learning
 ////////////////////////////
 void Learner::ParallelLearn() {
-  // for logs and statistics
+  // determine number of epochs and residual iterations
+  if (n_iter_res_ >= TR_->n_ex_) {
+    n_epoch_ += (size_t)(n_iter_res_ / TR_->n_ex_);
+    n_iter_res_ %= TR_->n_ex_;
+  }
+  size_t left_ct = (n_epoch_ * TR_->n_ex_ + n_iter_res_) % (n_thread_ * mb_size_);
+  if ( left_ct > 0)
+    n_iter_res_ += (n_thread_ * mb_size_ - left_ct);
+  cout << "n_epo= " << n_epoch_ << ", n_iter_res= " << n_iter_res_ << endl;
+  // init for intermediate logs
   epoch_ct_ = 0;
   if (n_log_ > 0) {
     size_t t_int = (size_t)floor( (n_epoch_*TR_->n_ex_ + n_iter_res_)/(n_thread_ * n_log_) );
     LOG_ = new Log(n_thread_, n_log_, t_int);
   }
-  // for parallelism
+  // init for parallelism
   Threads_.resize(n_thread_);
   state_.resize(n_thread_);
   n_it_.resize(n_thread_);
@@ -36,7 +45,7 @@ void Learner::ParallelLearn() {
   loss_.resize(n_thread_);
   err_.resize(n_thread_);
   pthread_mutex_init(&mutex_ex_, NULL);
-
+  // begin learning
   Learn();
 }
 
@@ -82,6 +91,7 @@ void Learner::OnlineLearn() {
       exit(1);
     }
   }
+
   // Learning
   ParallelLearn();
 }

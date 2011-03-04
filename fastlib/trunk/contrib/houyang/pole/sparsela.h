@@ -50,6 +50,9 @@ class Svector {
   double SparseSqL2Norm();
   void   SparseAddExpertOverwrite(double a, Svector *x);
   void   SparseAddOverwrite(Svector *x);
+  void   SparseSubtract(Svector *p, Svector *n);
+  void   SparseExpMultiplyOverwrite(Svector *x);
+  void   SparseNegExpMultiplyOverwrite(Svector *x);
   void   Shrink(double threshold);
 };
 

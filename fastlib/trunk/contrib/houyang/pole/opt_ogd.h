@@ -1,13 +1,16 @@
 #ifndef OPT_OGD_H
 #define OPT_OGD_H
 
+#include <boost/date_time/posix_time/posix_time.hpp>
+#include <boost/thread/thread.hpp>
+
 #include "learner.h"
 
 class OGD : public Learner {
  public:
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
   vector<Svector> m_pool_; // shared memory for messages
-  vector<double> b_pool_; // shared memory for bias term
+  vector<double>  b_pool_; // shared memory for bias term
  private:
   double eta0_, t_init_;
   pthread_barrier_t barrier_msg_all_sent_;
