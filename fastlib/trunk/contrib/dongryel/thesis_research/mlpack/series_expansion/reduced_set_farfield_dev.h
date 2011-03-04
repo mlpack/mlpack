@@ -9,6 +9,7 @@
 #define MLPACK_SERIES_EXPANSION_REDUCED_SET_FARFIELD_DEV_H
 
 #include <armadillo>
+#include "mlpack/series_expansion/dense_matrix_inverse.h"
 #include "mlpack/series_expansion/reduced_set_farfield.h"
 
 namespace mlpack {
@@ -71,8 +72,8 @@ void ReducedSetFarField::UpdateDictionary_(
   current_kernel_matrix_ = new_kernel_matrix;
 
   // Update the kernel matrix inverse.
-  Matrix *new_kernel_matrix_inverse =
-    ml::DenseMatrixInverse::Update(
+  core::table::DenseMatrix *new_kernel_matrix_inverse =
+    mlpack::series_expansion::DenseMatrixInverse::Update(
       *current_kernel_matrix_inverse_,
       inverse_times_column_vector,
       projection_error);
@@ -80,28 +81,21 @@ void ReducedSetFarField::UpdateDictionary_(
   current_kernel_matrix_inverse_ = new_kernel_matrix_inverse;
 }
 
-const Matrix *ReducedSetFarField::current_kernel_matrix() const {
+const core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix()
+const {
   return current_kernel_matrix_;
 }
 
-const Matrix *ReducedSetFarField::current_kernel_matrix_inverse() const {
+const core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix_inverse() const {
   return current_kernel_matrix_inverse_;
 }
 
-Matrix *ReducedSetFarField::current_kernel_matrix() {
+core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix() {
   return current_kernel_matrix_;
 }
 
-Matrix *ReducedSetFarField::current_kernel_matrix_inverse() {
+core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix_inverse() {
   return current_kernel_matrix_inverse_;
-}
-
-double ReducedSetFarField::adding_threshold() const {
-  return adding_threshold_;
-}
-
-void ReducedSetFarField::set_adding_threshold(double adding_threshold_in) {
-  adding_threshold_ = adding_threshold_in;
 }
 
 void ReducedSetFarField::AddBasis(
@@ -109,10 +103,11 @@ void ReducedSetFarField::AddBasis(
   const arma::vec &new_column_vector_in,
   double self_value) {
 
+  static const double adding_threshold_ = 1e-5;
+
   if(new_column_vector_in.n_elem > 0) {
 
     // Compute the matrix-vector product.
-    arma::vec inverse_times_column_vector;
     arma::mat current_kernel_matrix_inverse_alias;
     core::table::DenseMatrixToArmaMat(
       *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
@@ -128,17 +123,17 @@ void ReducedSetFarField::AddBasis(
     if(projection_error > adding_threshold_) {
       UpdateDictionary_(
         new_point_index,
-        new_column_vector,
+        new_column_vector_in,
         self_value,
         projection_error,
         inverse_times_column_vector);
     }
   }
   else {
-    current_kernel_matrix_ = new Matrix();
+    current_kernel_matrix_ = new core::table::DenseMatrix();
     current_kernel_matrix_->Init(1, 1);
     current_kernel_matrix_->set(0, 0, self_value);
-    current_kernel_matrix_inverse_ = new Matrix();
+    current_kernel_matrix_inverse_ = new core::table::DenseMatrix();
     current_kernel_matrix_inverse_->Init(1, 1);
     current_kernel_matrix_inverse_->set(0, 0, self_value);
   }
@@ -168,7 +163,7 @@ int ReducedSetFarField::point_indices_in_dictionary(
   return point_indices_in_dictionary_[nth_dictionary_point_index];
 }
 
-const std::deque<bool> &ReducedSetFarField::in_dictionary() const {
+const std::vector<bool> &ReducedSetFarField::in_dictionary() const {
   return in_dictionary_;
 }
 
@@ -182,11 +177,12 @@ training_index_to_dictionary_position() const {
   return training_index_to_dictionary_position_;
 }
 
-template<typename MetricType, typename KernelAuxType, typename PointType>
+template <
+typename MetricType, typename KernelAuxType, typename TreeIteratorType >
 void ReducedSetFarField::FillKernelValues_(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const PointType &candidate,
+  const core::table::DensePoint &candidate,
   TreeIteratorType &it,
   arma::vec *kernel_values_out,
   double *self_value) const {
@@ -198,7 +194,7 @@ void ReducedSetFarField::FillKernelValues_(
   *self_value = kernel_aux_in.kernel().EvalUnnormOnSq(0.0);
 
   for(unsigned int i = 0; i < point_indices_in_dictionary_.size(); i++) {
-    PointType dictionary_point;
+    core::table::DensePoint dictionary_point;
     it.get(point_indices_in_dictionary_[i], &dictionary_point);
     double squared_distance =
       metric_in.DistanceSq(candidate, dictionary_point);
@@ -218,7 +214,7 @@ void ReducedSetFarField::AccumulateCoeffs(
   it.Reset();
   arma::vec new_column_vector_in;
   while(it.HasNext()) {
-    typename TreeIteratorType::PointType point;
+    core::table::DensePoint point;
     it.Next(&point);
 
     // The DFS index shifted so that the begin index is 0.
@@ -237,7 +233,7 @@ template<typename KernelAuxType>
 double ReducedSetFarField::EvaluateField(
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &x_q) const {
-
+  return 0;
 }
 
 template<typename KernelAuxType>

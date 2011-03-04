@@ -50,10 +50,12 @@ class ReducedSetFarField {
 
   private:
 
-    template<typename KernelAuxType, typename PointType>
+    template <
+    typename MetricType, typename KernelAuxType, typename TreeIteratorType >
     void FillKernelValues_(
+      const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const PointType &candidate,
+      const core::table::DensePoint &candidate,
       TreeIteratorType &it,
       arma::vec *kernel_values_out,
       double *self_value) const;
@@ -75,26 +77,27 @@ class ReducedSetFarField {
 
     int point_indices_in_dictionary(int nth_dictionary_point_index) const;
 
-    void Init(const Matrix *table_in);
+    template<typename TreeIteratorType>
+    void Init(const TreeIteratorType &it);
 
     void AddBasis(
       int new_point_index,
       const arma::vec &new_column_vector_in,
       double self_value);
 
-    const std::deque<bool> &in_dictionary() const;
+    const std::vector<bool> &in_dictionary() const;
 
     const std::vector<int> &point_indices_in_dictionary() const;
 
     const std::vector<int> &training_index_to_dictionary_position() const;
 
-    const Matrix *current_kernel_matrix() const;
+    const core::table::DenseMatrix *current_kernel_matrix() const;
 
-    Matrix *current_kernel_matrix();
+    core::table::DenseMatrix *current_kernel_matrix();
 
-    const Matrix *current_kernel_matrix_inverse() const;
+    const core::table::DenseMatrix *current_kernel_matrix_inverse() const;
 
-    Matrix *current_kernel_matrix_inverse();
+    core::table::DenseMatrix *current_kernel_matrix_inverse();
 
   public:
 
@@ -131,9 +134,6 @@ class ReducedSetFarField {
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
       const core::table::DensePoint &point) const;
-
-    template<typename TreeIteratorType>
-    void Init(const TreeIteratorType &it);
 
     /** @brief Prints out the series expansion represented by this object.
      */

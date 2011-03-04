@@ -97,9 +97,6 @@ class Table {
     /** @brief The iterator for the node that belongs to this table.
      */
     class TreeIterator {
-      public:
-        typedef typename TableType::PointType PointType;
-
       private:
         int begin_;
 
