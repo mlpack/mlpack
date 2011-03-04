@@ -59,6 +59,10 @@ void Svector::Copy(Svector V) {
   Fs_ = V.Fs_;
 }
 
+void Svector::Copy(Svector *V) {
+  Fs_ = V->Fs_;
+}
+
 /////////////////////////////////////////////
 // Set to be a vector of given constant value
 /////////////////////////////////////////////
@@ -112,10 +116,15 @@ void Svector::Clear() {
 // Print content
 /////////////////
 void Svector::Print() {
-  for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
-    cout << it->i_ << ":" << it->v_ << " ";
+  if (Fs_.empty()) {
+    cout << "null" << endl;
   }
-  cout << endl;
+  else {
+    for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
+      cout << it->i_ << ":" << it->v_ << " ";
+    }
+    cout << endl;
+  }
 }
 
 /////////////////////////////////////
@@ -278,66 +287,151 @@ void Svector::SparseSubtract(Svector *p, Svector *n) {
   size_t nz_n = n->Fs_.size();
   size_t ct_p = 0, ct_n = 0, ct_w = 0;
 
-  while (ct_p<nz_p || ct_n<nz_n) {
-    if (ct_p == nz_p) {
-      ++ct_n;
-      ++nz_w;
-    }
-    else if (ct_n == nz_n) {
-      ++ct_p;
-      ++nz_w;
+  if (nz_p == 0) {
+    if (nz_n == 0) {
+      Fs_.clear();
+      return;
     }
     else {
-      if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
-	++ct_p;
-	++ct_n;
-	++nz_w;
+      Fs_ = n->Fs_;
+      for (ct_n = 0; ct_n < nz_n; ct_n ++) {
+        Fs_[ct_n].v_ = - n->Fs_[ct_n].v_;
       }
-      else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
-	++ct_n;
-	++nz_w;
+      return;
+    }
+  }
+  else if (nz_n == 0) {
+    Fs_ = p->Fs_;
+    return;
+  }
+  else {
+    while (ct_p<nz_p || ct_n<nz_n) {
+      if (ct_p == nz_p) {
+        ++ct_n;
+        ++nz_w;
+      }
+      else if (ct_n == nz_n) {
+        ++ct_p;
+        ++nz_w;
       }
       else {
-	++ct_p;
-	++nz_w;
+        if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
+          ++ct_p;
+          ++ct_n;
+          ++nz_w;
+        }
+        else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
+          ++ct_n;
+          ++nz_w;
+        }
+        else {
+          ++ct_p;
+          ++nz_w;
+        }
+      }
+    }
+    Fs_.resize(nz_w);
+
+    ct_p = 0; ct_n = 0; ct_w = 0;
+    while (ct_p<nz_p || ct_n<nz_n) {
+      if (ct_p == nz_p) {
+        Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
+        Fs_[ct_w].v_ = - (n->Fs_[ct_n].v_);
+        ++ct_n;
+        ++ct_w;
+      }
+      else if (ct_n == nz_n) {
+        Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+        Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
+        ++ct_p;
+        ++ct_w;
+      }
+      else {
+        if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
+          Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+          Fs_[ct_w].v_ = p->Fs_[ct_p].v_ - n->Fs_[ct_n].v_;
+          ++ct_p;
+          ++ct_n;
+          ++ct_w;
+        }
+        else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
+          Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
+          Fs_[ct_w].v_ = - n->Fs_[ct_n].v_;
+          ++ct_n;
+          ++ct_w;
+        }
+        else {
+          Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+          Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
+          ++ct_p;
+          ++ct_w;
+        }
       }
     }
   }
-  Fs_.resize(nz_w);
+}
 
-  ct_p = 0; ct_n = 0; ct_w = 0;
-  while (ct_p<nz_p || ct_n<nz_n) {
-    if (ct_p == nz_p) {
-      Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
-      Fs_[ct_w].v_ = - (n->Fs_[ct_n].v_);
-      ++ct_n;
-      ++ct_w;
-    }
-    else if (ct_n == nz_n) {
-      Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
-      Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
-      ++ct_p;
-      ++ct_w;
-    }
-    else {
-      if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
-	Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
-	Fs_[ct_w].v_ = p->Fs_[ct_p].v_ - n->Fs_[ct_n].v_;
-	++ct_p;
-	++ct_n;
-	++ct_w;
-      }
-      else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
-	Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
-	Fs_[ct_w].v_ = - n->Fs_[ct_n].v_;
-	++ct_n;
-	++ct_w;
+/////////////////////////////////
+// Sparse multiply: w <- w .* x
+/////////////////////////////////
+void Svector::SparseMultiplyOverwrite(Svector *x) {
+  if (Fs_.empty()) {
+    return; // w remains unchanged
+  }
+  else if (x->Fs_.empty()) {
+    Fs_.clear();
+    return;
+  }
+  else {
+    vector<Feature>::iterator itw = Fs_.begin();
+    vector<Feature>::iterator itx = x->Fs_.begin();
+    while (itw < Fs_.end() && itx < x->Fs_.end()) {
+      if (itw->i_ == itx->i_) {
+        itw->v_ *= itx->v_;
+	++itw; ++itx;
       }
       else {
-	Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
-	Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
-	++ct_p;
-	++ct_w;
+	if (itw->i_ > itx->i_) {
+	  ++itx;
+	}
+	else {
+          itw->v_ = 0.0;
+	  ++itw;
+	}
+      }
+    }
+  }
+}
+
+/////////////////////////////////
+// Sparse power: w <= w.^p
+/////////////////////////////////
+void Svector::SparsePowerOverwrite(double p) {
+  if (p == 0.0) {
+    SetAll(1.0);
+    return;
+  }
+  else if (p == 1.0) {
+    return;
+  }
+  else if (p == -1.0) {
+    for (vector<Feature>::iterator it = Fs_.begin(); it < Fs_.end(); it++) {
+      it->v_ = 1.0 / it->v_;
+    }
+    return;
+  }
+  else if (p == 0.5) {
+    for (vector<Feature>::iterator it = Fs_.begin(); it < Fs_.end(); it++) {
+      if (it->v_ != 1.0) {
+        it->v_ = sqrt(it->v_);
+      }
+    }
+    return;
+  }
+  else {
+    for (vector<Feature>::iterator it = Fs_.begin(); it < Fs_.end(); it++) {
+      if (it->v_ != 1.0) {
+        it->v_ = pow(it->v_, p);
       }
     }
   }
@@ -360,7 +454,7 @@ void Svector::SparseExpMultiplyOverwrite(Svector *x) {
       else { // neither w nor x reaches end
 	if (itw->i_ == itx->i_) {
 	  if (itw->v_ != 0 && itx->v_ != 0) {
-	    itw->v_ = itw->v_ * exp(itx->v_);
+	    itw->v_ *= exp(itx->v_);
 	  }
 	  ++itw; ++itx;
 	}
@@ -379,7 +473,7 @@ void Svector::SparseExpMultiplyOverwrite(Svector *x) {
 // Sparse vector exponential dot multiply: w<= w .* exp(-x)
 ///////////////////////////////////////////////////////////
 void Svector::SparseNegExpMultiplyOverwrite(Svector *x) {
-  if (Fs_.size() == 0 || x->Fs_.size() == 0) {
+  if (Fs_.empty() || x->Fs_.empty()) {
     return; // w remains unchanged
   }
   else { // neither w nor x is of all-0
@@ -473,4 +567,3 @@ void Example::Print() {
   cout << y_ << " ";
   Svector::Print();
 }
-

@@ -37,6 +37,7 @@ class Svector {
   ~Svector();
 
   void Copy(Svector V);
+  void Copy(Svector *V);
   void SetAll(T_VAL v);
   void SetAllResize(T_IDX n_f, T_VAL v);
   void PushBack(Feature F);
@@ -51,6 +52,8 @@ class Svector {
   void   SparseAddExpertOverwrite(double a, Svector *x);
   void   SparseAddOverwrite(Svector *x);
   void   SparseSubtract(Svector *p, Svector *n);
+  void   SparseMultiplyOverwrite(Svector *x);
+  void   SparsePowerOverwrite(double p);
   void   SparseExpMultiplyOverwrite(Svector *x);
   void   SparseNegExpMultiplyOverwrite(Svector *x);
   void   Shrink(double threshold);

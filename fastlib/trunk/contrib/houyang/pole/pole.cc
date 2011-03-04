@@ -42,10 +42,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
 	L_ = new OGD;
       else if (opt_name_ == "oeg")
 	L_ = new OEG;
-      else if (opt_name_ == "dwm_i")
-	L_ = new DWM_I;
-      else if (opt_name_ ==  "dwm_a")
-	L_ = new DWM_A;
+      else if (opt_name_ == "dwm_i" || opt_name_ ==  "dwm_a")
+	L_ = new WM;
       else {
 	cout << "ERROR! Optimization method needs to be (ogd, oeg, dwm_i, or dwm_a)!" << endl;
 	exit(1);

@@ -13,8 +13,7 @@
 #include "learner.h"
 #include "opt_ogd.h"
 #include "opt_oeg.h"
-#include "opt_dwm_i.h"
-#include "opt_dwm_a.h"
+#include "opt_wm.h"
 
 using namespace boost::posix_time;
 
