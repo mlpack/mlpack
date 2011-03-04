@@ -269,6 +269,144 @@ void Svector::SparseAddOverwrite(Svector *x) {
   }
 }
 
+////////////////////////////////////////
+// Sparse vector subtraction: w<= p - n
+////////////////////////////////////////
+void Svector::SparseSubtract(Svector *p, Svector *n) {
+  size_t nz_w = 0;
+  size_t nz_p = p->Fs_.size();
+  size_t nz_n = n->Fs_.size();
+  size_t ct_p = 0, ct_n = 0, ct_w = 0;
+
+  while (ct_p<nz_p || ct_n<nz_n) {
+    if (ct_p == nz_p) {
+      ++ct_n;
+      ++nz_w;
+    }
+    else if (ct_n == nz_n) {
+      ++ct_p;
+      ++nz_w;
+    }
+    else {
+      if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
+	++ct_p;
+	++ct_n;
+	++nz_w;
+      }
+      else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
+	++ct_n;
+	++nz_w;
+      }
+      else {
+	++ct_p;
+	++nz_w;
+      }
+    }
+  }
+  Fs_.resize(nz_w);
+
+  ct_p = 0; ct_n = 0; ct_w = 0;
+  while (ct_p<nz_p || ct_n<nz_n) {
+    if (ct_p == nz_p) {
+      Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
+      Fs_[ct_w].v_ = - (n->Fs_[ct_n].v_);
+      ++ct_n;
+      ++ct_w;
+    }
+    else if (ct_n == nz_n) {
+      Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+      Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
+      ++ct_p;
+      ++ct_w;
+    }
+    else {
+      if (p->Fs_[ct_p].i_ == n->Fs_[ct_n].i_) {
+	Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+	Fs_[ct_w].v_ = p->Fs_[ct_p].v_ - n->Fs_[ct_n].v_;
+	++ct_p;
+	++ct_n;
+	++ct_w;
+      }
+      else if (p->Fs_[ct_p].i_ > n->Fs_[ct_n].i_) {
+	Fs_[ct_w].i_ = n->Fs_[ct_n].i_;
+	Fs_[ct_w].v_ = - n->Fs_[ct_n].v_;
+	++ct_n;
+	++ct_w;
+      }
+      else {
+	Fs_[ct_w].i_ = p->Fs_[ct_p].i_;
+	Fs_[ct_w].v_ = p->Fs_[ct_p].v_;
+	++ct_p;
+	++ct_w;
+      }
+    }
+  }
+}
+
+///////////////////////////////////////////////////////////
+// Sparse vector exponential dot multiply: w<= w .* exp(x)
+///////////////////////////////////////////////////////////
+void Svector::SparseExpMultiplyOverwrite(Svector *x) {
+  if (Fs_.size() == 0 || x->Fs_.size() == 0) {
+    return; // w remains unchanged
+  }
+  else { // neither w nor x is of all-0
+    vector<Feature>::iterator itw = Fs_.begin();
+    vector<Feature>::iterator itx = x->Fs_.begin();
+    while (itw < Fs_.end() || itx < x->Fs_.end()) {
+      if (itw == Fs_.end() || itx == x->Fs_.end()) { // w/x reaches end
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (itw->i_ == itx->i_) {
+	  if (itw->v_ != 0 && itx->v_ != 0) {
+	    itw->v_ = itw->v_ * exp(itx->v_);
+	  }
+	  ++itw; ++itx;
+	}
+	else if(itw->i_ < itx->i_) {
+	  ++itw;
+	}
+	else {
+	  ++itx;
+        }
+      }
+    }
+  }
+}
+
+///////////////////////////////////////////////////////////
+// Sparse vector exponential dot multiply: w<= w .* exp(-x)
+///////////////////////////////////////////////////////////
+void Svector::SparseNegExpMultiplyOverwrite(Svector *x) {
+  if (Fs_.size() == 0 || x->Fs_.size() == 0) {
+    return; // w remains unchanged
+  }
+  else { // neither w nor x is of all-0
+    vector<Feature>::iterator itw = Fs_.begin();
+    vector<Feature>::iterator itx = x->Fs_.begin();
+    while (itw < Fs_.end() || itx < x->Fs_.end()) {
+      if (itw == Fs_.end() || itx == x->Fs_.end()) { // w/x reaches end
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (itw->i_ == itx->i_) {
+	  if (itw->v_ != 0 && itx->v_ != 0) {
+	    itw->v_ = itw->v_ / exp(itx->v_);
+	  }
+	  ++itw; ++itx;
+	}
+	else if(itw->i_ < itx->i_) {
+	  ++itw;
+	}
+	else {
+	  ++itx;
+        }
+      }
+    }
+  }
+}
+
 ///////////////////////////////
 // Shrink: remove 0 values
 ///////////////////////////////
