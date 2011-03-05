@@ -151,6 +151,7 @@ class SeriesExpansionTest {
         mlpack::series_expansion::ReducedSetFarField reduced_set_farfield;
         typename TableType::TreeIterator it =
           random_table.get_node_iterator(reference_node);
+        reduced_set_farfield.Init(it);
         reduced_set_farfield.AccumulateCoeffs(
           l2_metric, kernel_aux, weights, it);
       }

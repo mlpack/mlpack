@@ -335,7 +335,8 @@ class DistributedTable: public boost::noncopyable {
      */
     void Init(
       const std::string & file_name,
-      boost::mpi::communicator &world) {
+      boost::mpi::communicator &world,
+      const std::string *weight_file_name = NULL) {
 
       boost::mpi::timer distributed_table_init_timer;
 
@@ -343,7 +344,7 @@ class DistributedTable: public boost::noncopyable {
       owned_table_ = (core::table::global_m_file_) ?
                      core::table::global_m_file_->Construct<TableType>() :
                      new TableType();
-      owned_table_->Init(file_name, world.rank());
+      owned_table_->Init(file_name, world.rank(), weight_file_name);
 
       // Allocate the vector for storing the number of entries for all
       // the tables in the world, and do an all-gather operation to

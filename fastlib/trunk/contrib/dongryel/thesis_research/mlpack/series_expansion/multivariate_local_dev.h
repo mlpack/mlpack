@@ -19,7 +19,7 @@ template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianLocal <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint& weights,
+  const core::table::DenseMatrix& weights,
   TreeIteratorType &it, int order) {
 
   if(order > order_) {

@@ -65,7 +65,7 @@ class Table {
 
     /** @brief The weights associated with each point.
      */
-    core::table::DensePoint weights_;
+    core::table::DenseMatrix weights_;
 
     /** @brief The rank of the table.
      */
@@ -367,7 +367,14 @@ class Table {
     /** @brief Returns a reference to the weights associated with the
      *         underlying data.
      */
-    const core::table::DensePoint &weights() const {
+    const core::table::DenseMatrix &weights() const {
+      return weights_;
+    }
+
+    /** @brief Returns a reference to the weights associated with the
+     *         underlying data.
+     */
+    core::table::DenseMatrix &weights() {
       return weights_;
     }
 
@@ -494,6 +501,7 @@ class Table {
       rank_ = rank_in;
       if(num_dimensions_in > 0 && num_points_in > 0) {
         data_.Init(num_dimensions_in, num_points_in);
+        weights_.Init(1, num_points_in);
         if(core::table::global_m_file_) {
           old_from_new_ = core::table::global_m_file_->ConstructArray <
                           OldFromNewIndexType > (
@@ -513,9 +521,22 @@ class Table {
 
     /** @brief Initializes the table from a file, optionally its rank.
      */
-    void Init(const std::string &file_name, int rank_in = 0) {
+    void Init(
+      const std::string &file_name,
+      int rank_in = 0,
+      const std::string *weight_file_name = NULL) {
+
       if(core::DatasetReader::ParseDataset(file_name, &data_) == false) {
         exit(0);
+      }
+      if(weight_file_name != NULL &&
+          core::DatasetReader::ParseDataset(
+            *weight_file_name, &weights_) == false) {
+        exit(0);
+      }
+      if(weight_file_name == NULL) {
+        weights_.Init(1, data_.n_cols());
+        weights_.SetAll(1.0);
       }
       rank_ = rank_in;
 
@@ -561,15 +582,6 @@ class Table {
       tree_ = TreeType::MakeTree(
                 metric_in, data_, leaf_size, old_from_new_.get(),
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
-
-      // The following part should really be fixed in the future. What
-      // really needs to happen here is that the weights themselves
-      // need to be re-shuffled across machines as well. We hard-code
-      // uniform weights for now.
-      weights_.Init(data_.n_cols());
-      for(int i = 0; i < data_.n_cols(); i++) {
-        weights_[i] = 1.0;
-      }
     }
 
     template<typename PointType>

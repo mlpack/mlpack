@@ -206,6 +206,15 @@ class DensePoint {
       CopyValues(point_in);
     }
 
+    /** @brief Sets every entry of the matrix to the specified value
+     *         val.
+     */
+    void SetAll(double val) {
+      for(int i = 0; i < n_rows_; i++) {
+        ptr_[i] = val;
+      }
+    }
+
     void SetZero() {
       memset(ptr_.get(), 0, sizeof(double) * n_rows_);
     }
