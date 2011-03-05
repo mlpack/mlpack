@@ -47,11 +47,12 @@ class SeriesExpansionTest {
 
   public:
 
-    int StressTestMain() {
+    int StressTestMain(bool test_reduced_set_expansion) {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(2, 5);
         int num_points = core::math::RandInt(2000, 3000);
-        if(StressTest(num_dimensions, num_points) == false) {
+        if(StressTest(
+              num_dimensions, num_points, test_reduced_set_expansion) == false) {
           printf("Failed!\n");
           exit(0);
         }
@@ -59,7 +60,8 @@ class SeriesExpansionTest {
       return 0;
     }
 
-    bool StressTest(int num_dimensions, int num_points) {
+    bool StressTest(
+      int num_dimensions, int num_points, bool test_reduced_set_expansion) {
 
       std::cout << "Number of dimensions: " << num_dimensions << "\n";
       std::cout << "Number of points: " << num_points << "\n";
@@ -145,6 +147,14 @@ class SeriesExpansionTest {
       }
       printf("\n");
 
+      if(test_reduced_set_expansion) {
+        mlpack::series_expansion::ReducedSetFarField reduced_set_farfield;
+        typename TableType::TreeIterator it =
+          random_table.get_node_iterator(reference_node);
+        reduced_set_farfield.AccumulateCoeffs(
+          l2_metric, kernel_aux, weights, it);
+      }
+
       return true;
     }
 };
@@ -158,24 +168,24 @@ BOOST_AUTO_TEST_CASE(TestCaseSeriesExpansion) {
   typedef core::table::Table <
   core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
 
-  // Call the tests.
+  // Call the Cartesian expansion tests.
   mlpack::series_expansion::SeriesExpansionTest <
   TableType,
   mlpack::series_expansion::GaussianKernelMultivariateAux >
   gaussian_kernel_test;
-  gaussian_kernel_test.StressTestMain();
+  gaussian_kernel_test.StressTestMain(true);
   std::cout << "Passed the Gaussian kernel $O(D^p)$ test.\n";
 
   mlpack::series_expansion::SeriesExpansionTest <
   TableType, mlpack::series_expansion::GaussianKernelHypercubeAux >
   gaussian_mult_kernel_test;
-  gaussian_mult_kernel_test.StressTestMain();
+  gaussian_mult_kernel_test.StressTestMain(false);
   std::cout << "Passed the Gaussian kernel $O(p^D)$ test.\n";
 
   mlpack::series_expansion::SeriesExpansionTest <
   TableType,
   mlpack::series_expansion::EpanKernelMultivariateAux > epan_kernel_test;
-  epan_kernel_test.StressTestMain();
+  epan_kernel_test.StressTestMain(false);
   std::cout << "Passed the Epanechnikov kernel $O(D^p)$ test.\n";
 
   std::cout << "All tests passed!\n";
