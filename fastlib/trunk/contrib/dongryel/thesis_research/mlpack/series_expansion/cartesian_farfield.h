@@ -137,7 +137,7 @@ class CartesianFarField {
     template<typename KernelAuxType, typename TreeIteratorType>
     void AccumulateCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &weights,
+      const core::table::DenseMatrix &weights,
       TreeIteratorType &it, int order);
 
     /** @brief Evaluates the far-field coefficients at the given point.

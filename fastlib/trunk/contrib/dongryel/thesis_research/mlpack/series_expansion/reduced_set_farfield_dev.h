@@ -146,6 +146,7 @@ void ReducedSetFarField::Init(const TreeIteratorType &it) {
   // point in the dictionary.
   in_dictionary_.resize(it.count());
   training_index_to_dictionary_position_.resize(it.count());
+  point_indices_in_dictionary_.resize(0);
 
   for(int i = 0; i < it.count(); i++) {
     in_dictionary_[i] = false;

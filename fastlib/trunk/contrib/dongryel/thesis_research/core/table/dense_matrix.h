@@ -109,6 +109,17 @@ class DenseMatrix {
       memset(ptr_.get(), 0, sizeof(double) * n_rows_ * n_cols_);
     }
 
+    /** @brief Sets every entry of the matrix to the specified value
+     *         val.
+     */
+    void SetAll(double val) {
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          this->set(i, j, val);
+        }
+      }
+    }
+
     /** @brief Returns the raw pointer.
      */
     const double *ptr() const {

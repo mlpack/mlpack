@@ -20,7 +20,8 @@ namespace series_expansion {
 template<>
 template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& weights,
+  const KernelAuxType &kernel_aux_in,
+  const core::table::DenseMatrix& weights,
   TreeIteratorType &it, int order) {
 
   int dim = kernel_aux_in.global().get_dimension();

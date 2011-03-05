@@ -74,15 +74,20 @@ class DistributedTreeUtil {
 
     static void SetupGatherPointers(
       TableType &sampled_table, const std::vector<int> &counts,
-      std::vector< SampleDenseMatrixType > *gather_pointers_out) {
+      std::vector< SampleDenseMatrixType > *gather_pointers_out_for_data,
+      std::vector< SampleDenseMatrixType > *gather_pointers_out_for_weights) {
 
       // Have the pointers point to the right position based on the
       // prefix sum position.
-      gather_pointers_out->resize(counts.size());
+      gather_pointers_out_for_data->resize(counts.size());
+      gather_pointers_out_for_weights->resize(counts.size());
       int starting_column_index = 0;
       for(unsigned int i = 0; i < counts.size(); i++) {
-        (*gather_pointers_out)[i].Init(
+        (*gather_pointers_out_for_data)[i].Init(
           sampled_table.data(), sampled_table.old_from_new(),
+          starting_column_index, counts[i]);
+        (*gather_pointers_out_for_weights)[i].Init(
+          sampled_table.weights(), sampled_table.old_from_new(),
           starting_column_index, counts[i]);
         starting_column_index += counts[i];
       }
@@ -126,17 +131,24 @@ class DistributedTreeUtil {
         world.rank());
 
       // Setup points so that they will be reshuffled.
-      std::vector<SampleDenseMatrixType> points_to_be_distributed;
-      points_to_be_distributed.resize(world.size());
+      std::vector<SampleDenseMatrixType> points_to_be_distributed(world.size());
+      std::vector <
+      SampleDenseMatrixType > weights_to_be_distributed(world.size());
       for(unsigned int i = 0; i < points_to_be_distributed.size(); i++) {
         points_to_be_distributed[i].Init(
           distributed_table_in->local_table()->data(),
           distributed_table_in->local_table()->old_from_new(),
           assigned_point_indices[i]);
+        weights_to_be_distributed[i].Init(
+          distributed_table_in->local_table()->weights(),
+          distributed_table_in->local_table()->old_from_new(),
+          assigned_point_indices[i]);
       }
       std::vector<SampleDenseMatrixType> reshuffled_points;
+      std::vector<SampleDenseMatrixType> reshuffled_weights;
       SetupGatherPointers(
-        *new_local_table, reshuffled_contributions, &reshuffled_points);
+        *new_local_table, reshuffled_contributions,
+        &reshuffled_points, &reshuffled_weights);
 
       // Important that each process takes care of the exporting of
       // its own part.
@@ -146,6 +158,12 @@ class DistributedTreeUtil {
         reshuffled_points[world.rank()].starting_column_index());
       boost::mpi::all_to_all(
         world, points_to_be_distributed, reshuffled_points);
+      weights_to_be_distributed[world.rank()].Export(
+        reshuffled_weights[world.rank()].matrix(),
+        reshuffled_weights[world.rank()].old_from_new(),
+        reshuffled_weights[world.rank()].starting_column_index());
+      boost::mpi::all_to_all(
+        world, weights_to_be_distributed, reshuffled_weights);
 
       // Set it to the newly shuffled table.
       distributed_table_in->set_local_table(new_local_table);
