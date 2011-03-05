@@ -50,6 +50,9 @@ class ReducedSetFarField {
 
   private:
 
+    /** @brief Fills out a vector of kernel values for a given point
+     *         against the pre-existing dictionary points.
+     */
     template <
     typename MetricType, typename KernelAuxType, typename TreeIteratorType >
     void FillKernelValues_(
