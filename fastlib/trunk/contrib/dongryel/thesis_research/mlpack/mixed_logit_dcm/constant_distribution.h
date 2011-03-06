@@ -50,7 +50,7 @@ class ConstantDistribution:
       *beta_out = parameters;
     }
 
-    void Init(const std::string &file_name) const {
+    void Init(const std::string &file_name) {
 
     }
 };
