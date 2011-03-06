@@ -140,8 +140,34 @@ class GaussianDistribution:
 
     }
 
-    void Init(const std::string &file_name) const {
+    void Init(int num_parameters_in) {
+      num_parameters_ = num_parameters_in;
+      cholesky_factor_dimension_ = (-3 + sqrt(9 + 8 * num_parameters_)) / 2;
+      num_cholesky_factor_entries_ =
+        cholesky_factor_dimension_ * (cholesky_factor_dimension_ + 1) / 2;
+      nonzero_column_indices_.resize(num_parameters_);
+      std::fill(
+        nonzero_column_indices_.begin(), nonzero_column_indices_.end(), 0);
+      start_indices_.resize(num_parameters_);
+      std::fill(start_indices_.begin(), start_indices_.end(), 0);
 
+      // Fill out the non-zero column indices for the gradient of the
+      // attribute with respect to parameter.
+      int limit = cholesky_factor_dimension_;
+      int add = cholesky_factor_dimension_ - 1;
+      int row_num = 0;
+      int start = 0;
+      for(int i = 0; i < num_cholesky_factor_entries_; i++) {
+        if(i == limit) {
+          limit += add;
+          add--;
+          row_num++;
+          start = i;
+        }
+        nonzero_column_indices_[cholesky_factor_dimension_ + i] = row_num;
+        start_indices_[cholesky_factor_dimension_ + i] =
+          cholesky_factor_dimension_ + start;
+      }
     }
 };
 }
