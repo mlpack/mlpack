@@ -18,7 +18,6 @@ template<>
 template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix &weights,
   TreeIteratorType &it, int order) {
 
   if(order > order_) {
@@ -52,8 +51,9 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   // for each data point,
   while(it.HasNext()) {
 
+    double weight;
     core::table::DensePoint point;
-    it.Next(&point);
+    it.Next(&point, &weight);
 
     // calculate x_r - x_Q
     for(int d = 0; d < dim; d++) {
@@ -75,10 +75,8 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
       // For now, the weight is uniform. Replace with the following
       // lines for non-uniform weights.
-      coeffs_[index] += neg_inv_multiindex_factorials[index] *
+      coeffs_[index] += neg_inv_multiindex_factorials[index] * weight *
                         partial_derivative;
-      //coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] *
-      //                  partial_derivative;
     }
   } // End of looping through each reference point.
 }

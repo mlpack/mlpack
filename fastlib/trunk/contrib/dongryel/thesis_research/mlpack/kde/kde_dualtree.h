@@ -153,8 +153,7 @@ class KdePostponed {
           reference_table()->get_node_iterator(rnode);
         query_results->num_local_prunes_++;
         qnode->stat().postponed_.local_expansion_.AccumulateCoeffs(
-          global.kernel_aux(), global.reference_table()->weights(),
-          rnode_it, delta_in.order_local_);
+          global.kernel_aux(), rnode_it, delta_in.order_local_);
       }
       else {
 
@@ -1205,8 +1204,7 @@ class KdeStatistic {
       node->bound().center(&node_center);
       farfield_expansion_.Init(global.kernel_aux(), node_center);
       farfield_expansion_.AccumulateCoeffs(
-        global.kernel_aux(),
-        global.reference_table()->weights(), node_it,
+        global.kernel_aux(), node_it,
         global.kernel_aux().global().get_max_order());
 
       // Initialize the local expansion.

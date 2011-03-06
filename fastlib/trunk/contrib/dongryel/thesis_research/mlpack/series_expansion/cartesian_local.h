@@ -77,7 +77,6 @@ class CartesianLocal {
     template<typename KernelAuxType, typename TreeIteratorType>
     void AccumulateCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &weights,
       TreeIteratorType &it, int order);
 
     /** @brief Evaluates the local coefficients at the given point.

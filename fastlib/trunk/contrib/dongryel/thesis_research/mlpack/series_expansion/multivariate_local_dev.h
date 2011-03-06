@@ -19,7 +19,6 @@ template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianLocal <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& weights,
   TreeIteratorType &it, int order) {
 
   if(order > order_) {
@@ -52,8 +51,9 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   while(it.HasNext()) {
 
     // Get the reference point.
+    double weight;
     core::table::DensePoint point;
-    it.Next(&point);
+    it.Next(&point, &weight);
 
     // calculate x_r - x_Q
     for(int d = 0; d < dim; d++) {
@@ -75,9 +75,7 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
     for(int j = 0; j < total_num_coeffs; j++) {
 
       // Replace it with the following line for non-uniform case.
-      coeffs_[j] += neg_inv_multiindex_factorials[j] * arrtmp[j];
-      //coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] *
-      //              arrtmp[j];
+      coeffs_[j] += neg_inv_multiindex_factorials[j] * weight * arrtmp[j];
     }
   } // End of looping through each reference point.
 }
