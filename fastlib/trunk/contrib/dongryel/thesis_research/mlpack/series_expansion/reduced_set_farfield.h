@@ -128,7 +128,6 @@ class ReducedSetFarField {
     void AccumulateCoeffs(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &weights,
       TreeIteratorType &it);
 
     /** @brief Evaluates the far-field coefficients at the given point.

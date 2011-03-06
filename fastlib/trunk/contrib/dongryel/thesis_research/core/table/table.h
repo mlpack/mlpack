@@ -149,6 +149,13 @@ class Table {
         }
 
         template<typename IncomingPointType>
+        void Next(IncomingPointType *entry, double *weight) {
+          current_index_++;
+          table_->iterator_get_(current_index_, entry);
+          *weight = table_->weights().get(0, current_index_);
+        }
+
+        template<typename IncomingPointType>
         void Next(IncomingPointType *entry, int *point_id) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
@@ -502,6 +509,7 @@ class Table {
       if(num_dimensions_in > 0 && num_points_in > 0) {
         data_.Init(num_dimensions_in, num_points_in);
         weights_.Init(1, num_points_in);
+        weights_.SetAll(1.0);
         if(core::table::global_m_file_) {
           old_from_new_ = core::table::global_m_file_->ConstructArray <
                           OldFromNewIndexType > (

@@ -208,7 +208,6 @@ template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
 void ReducedSetFarField::AccumulateCoeffs(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint& weights,
   TreeIteratorType &it) {
 
   // Loop through each point and build the dictionary.

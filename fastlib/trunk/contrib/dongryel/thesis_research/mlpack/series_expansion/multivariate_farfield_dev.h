@@ -22,7 +22,6 @@ template<typename KernelAuxType, typename TreeIteratorType>
 void CartesianFarField <
 mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix &weights,
   TreeIteratorType &it, int order) {
 
   int dim = kernel_aux_in.global().get_dimension();
@@ -54,7 +53,8 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   while(it.HasNext()) {
 
     core::table::DensePoint point;
-    it.Next(&point);
+    double weight;
+    it.Next(&point, &weight);
 
     // Calculate the coordinate difference between the ref point and
     // the centroid.
@@ -82,8 +82,7 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
     for(i = 0; i < total_num_coeffs; i++) {
 
       // Replace with the following case for non-uniform weights.
-      double prod = tmp[i];
-      //double prod = weights[r] * tmp[i];
+      double prod = weight * tmp[i];
       if(prod > 0) {
         pos_coeffs[i] += prod;
       }

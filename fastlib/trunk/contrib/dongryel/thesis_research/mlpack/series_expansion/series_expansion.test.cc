@@ -96,14 +96,6 @@ class SeriesExpansionTest {
       // Form a far-field expansion and evaluate.
       mlpack::series_expansion::CartesianFarField <
       KernelAuxType::ExpansionType > farfield;
-
-      // It is important that the weight vector matches the number of
-      // points in the reference set.
-      core::table::DensePoint weights;
-      weights.Init(random_table.n_entries());
-      for(int i = 0; i < weights.length(); i++) {
-        weights[i] = core::math::Random(0.25, 1.25);
-      }
       farfield.Init(kernel_aux, reference_node->bound().center());
 
       // Determine the truncation order and form the farfield
@@ -123,7 +115,7 @@ class SeriesExpansionTest {
           random_table.get_node_iterator(
             reference_node->begin(), reference_node->count());
         farfield.AccumulateCoeffs(
-          kernel_aux, weights, it, farfield_truncation_order);
+          kernel_aux, it, farfield_truncation_order);
       }
 
       // Now form a local expansion of the reference node onto the
@@ -143,7 +135,7 @@ class SeriesExpansionTest {
           random_table.get_node_iterator(
             reference_node->begin(), reference_node->count());
         local.AccumulateCoeffs(
-          kernel_aux, weights, it, local_truncation_order);
+          kernel_aux, it, local_truncation_order);
       }
       printf("\n");
 
@@ -153,7 +145,7 @@ class SeriesExpansionTest {
           random_table.get_node_iterator(reference_node);
         reduced_set_farfield.Init(it);
         reduced_set_farfield.AccumulateCoeffs(
-          l2_metric, kernel_aux, weights, it);
+          l2_metric, kernel_aux, it);
       }
 
       return true;
