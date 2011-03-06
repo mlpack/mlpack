@@ -10,7 +10,7 @@
 #include "loss.h"
 #include "log.h"
 
-//#include "weak_learner.h"
+typedef vector<size_t> Vec_d;
 
 using namespace std;
 
@@ -42,7 +42,7 @@ class Learner {
   vector<size_t> t_n_used_examples_;
   vector<double> t_loss_; // thread loss
   vector<size_t> t_err_; // thread error
-  vector<size_t> t_exp_err_; // expert error on each thread
+  vector<Vec_d> t_exp_err_; // expert error on each thread
   // for iterations
   size_t epoch_ct_; // epoch counter
   size_t n_epoch_; // number of learning epochs

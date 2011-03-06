@@ -90,8 +90,7 @@ void* OGD::OgdThread(void *in_par) {
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;
       break;
-    case 2: // communicate and update using other's msg
-      // update using received messages
+    case 2: // communicate and update using received msg
       Lp->OgdCommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
@@ -228,8 +227,8 @@ void OGD::SaveLog() {
 	t_m += t_err_[t];
 	t_s += t_n_used_examples_[t];
 	cout << "t"<< t << ": " << t_n_used_examples_[t] << 
-	  " samples processed. Misprediction: " << t_err_[t]<< ", accuracy: "<< 
-	  1.0-(double)t_err_[t]/(double)t_n_used_examples_[t] << endl;
+	  " samples processed. Misprediction: " << t_err_[t]<< ", accuracy: "
+             << 1.0-(double)t_err_[t]/(double)t_n_used_examples_[t] << endl;
       }
       cout << "Total mispredictions: " << t_m << ", accuracy: " << 
 	1.0-(double)t_m/(double)t_s<< endl;
