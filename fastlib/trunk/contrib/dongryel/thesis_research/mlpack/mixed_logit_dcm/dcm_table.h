@@ -15,7 +15,7 @@
 #include "core/table/table.h"
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
-#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
+#include "mlpack/mixed_logit_dcm/distribution.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_sampling.h"
 
 namespace mlpack {
@@ -30,7 +30,7 @@ class DCMTable {
 
     typedef DCMTable<TableType> DCMTableType;
 
-    typedef mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
+    typedef mlpack::mixed_logit_dcm::Distribution <
     DCMTableType > DistributionType;
 
   private:

@@ -1,4 +1,4 @@
-/** @file mixed_logit_dcm_distribution.h
+/** @file distribution.h
  *
  *  A virtual class that defines the specification for which the mixed
  *  logit discrete choice model distribution should satisfy.
@@ -6,8 +6,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DISTRIBUTION_H
-#define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DISTRIBUTION_H
+#ifndef MLPACK_MIXED_LOGIT_DCM_DISTRIBUTION_H
+#define MLPACK_MIXED_LOGIT_DCM_DISTRIBUTION_H
 
 #include <armadillo>
 #include "core/table/dense_point.h"
@@ -21,7 +21,12 @@ namespace mixed_logit_dcm {
  *         parametrized by $\theta$.
  */
 template<typename DCMTableType>
-class MixedLogitDCMDistribution {
+class Distribution {
+  private:
+
+    virtual void AttributeGradientWithRespectToParameterPrecompute_(
+      const arma::vec &parameters, const arma::vec &beta_vector) const = 0;
+
   public:
 
     /** @brief Returns the number of parameters.
@@ -42,7 +47,12 @@ class MixedLogitDCMDistribution {
       const arma::vec &parameters, const arma::vec &beta_vector,
       arma::mat *gradient_out) const {
 
+      // Allocate the space for gradient.
       gradient_out->set_size(parameters.n_elem, beta_vector.n_elem);
+
+      // Call the distribution-specific precomputation.
+      AttributeGradientWithRespectToParameterPrecompute_(
+        parameters, beta_vector);
 
       for(int j = 0; j < static_cast<int>(beta_vector.n_elem); j++) {
         for(int i = 0; i < static_cast<int>(parameters.n_elem); i++) {

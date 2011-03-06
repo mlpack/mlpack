@@ -10,7 +10,7 @@
 
 #include "core/table/table.h"
 #include "core/optimization/trust_region.h"
-#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
+#include "mlpack/mixed_logit_dcm/distribution.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -45,8 +45,7 @@ class MixedLogitDCMArguments {
      *         $\beta$ attribute vector. This could be a Gaussian
      *         distribution for instance.
      */
-    mlpack::mixed_logit_dcm::MixedLogitDCMDistribution <
-    DCMTableType > *distribution_;
+    mlpack::mixed_logit_dcm::Distribution<DCMTableType> *distribution_;
 
     /** @brief The initial dataset sample rate (for the outer term in
      *         the sum).
