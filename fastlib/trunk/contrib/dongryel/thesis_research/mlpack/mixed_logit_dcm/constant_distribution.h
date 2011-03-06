@@ -1,4 +1,4 @@
-/** @file mixed_logit_dcm_constant_distribution.h
+/** @file constant_distribution.h
  *
  *  The constant (non-random) distribution that can be used for mixed
  *  logit discrete choice model.
@@ -6,10 +6,10 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
-#define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
+#ifndef MLPACK_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
+#define MLPACK_MIXED_LOGIT_DCM_CONSTANT_DISTRIBUTION_H
 
-#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_distribution.h"
+#include "mlpack/mixed_logit_dcm/distribution.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
@@ -18,8 +18,17 @@ namespace mixed_logit_dcm {
  *         discrete choice model.
  */
 template<typename DCMTableType>
-class MixedLogitDCMConstantDistribution:
-  public virtual MixedLogitDCMDistribution<DCMTableType> {
+class ConstantDistribution:
+  public virtual Distribution<DCMTableType> {
+
+  private:
+
+    virtual void AttributeGradientWithRespectToParameterPrecompute_(
+      const arma::vec &parameters, const arma::vec &beta_vector) const {
+
+      // Does not do anything.
+    }
+
   public:
 
     /** @brief Returns the (row, col)-th entry of
