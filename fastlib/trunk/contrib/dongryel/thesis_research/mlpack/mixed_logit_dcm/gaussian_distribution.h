@@ -33,6 +33,10 @@ class GaussianDistribution:
 
     int num_cholesky_factor_entries_;
 
+    std::vector<int> nonzero_column_indices_;
+
+    std::vector<int> start_indices_;
+
     /** @brief Stores the cached solution to the upper triangular
      *         linear system solved for computing the attribute
      *         gradient with respect to parameter.
@@ -113,10 +117,17 @@ class GaussianDistribution:
 
       // Lower half.
       else {
-        if() {
+
+        // Locate the non-zero column for this row. If the col_index
+        // matches this index, then return a non-zero value.
+        int nonzero_column_index = nonzero_column_indices_[row_index];
+        if(nonzero_column_index == col_index) {
+          return cached_solution_[
+                   row_index - start_indices_[row_index] +
+                   nonzero_column_index];
         }
         else {
-          return 0;
+          return 0.0;
         }
       }
     }
