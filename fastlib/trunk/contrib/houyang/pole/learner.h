@@ -8,6 +8,7 @@
 
 #include "data.h"
 #include "loss.h"
+#include "kernel.h"
 #include "log.h"
 
 typedef vector<size_t> Vec_d;
@@ -34,7 +35,7 @@ class Learner {
   Log    *LOG_;
   bool   calc_loss_; // calculate total loss
   size_t n_log_; // How many log points
-  // for parallelism
+  // thread properties and statistics
   size_t n_thread_; // number of threads for learning
   vector<pthread_t> Threads_;
   vector<size_t> t_state_; // thread state
@@ -42,7 +43,7 @@ class Learner {
   vector<size_t> t_n_used_examples_;
   vector<double> t_loss_; // thread loss
   vector<size_t> t_err_; // thread error
-  vector<Vec_d> t_exp_err_; // expert error on each thread
+  vector<Vec_d>  t_exp_err_; // expert error on each thread
   // for iterations
   size_t epoch_ct_; // epoch counter
   size_t n_epoch_; // number of learning epochs

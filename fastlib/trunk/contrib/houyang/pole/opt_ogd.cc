@@ -110,7 +110,7 @@ void OGD::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
   // init learning rate
-  eta0_ = sqrt(TR_->n_ex_);
+  eta0_ = sqrt(TR_->Size());
   t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_pool_.resize(n_thread_);
@@ -142,36 +142,29 @@ void OGD::Test() {
 
 void OGD::MakeLog(size_t tid, Example *x, double pred_val) {
   if (calc_loss_) {
-    // Calculate loss and number of misclassifications
+    // Calc loss
+    t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+    if (reg_type_ == 2 && reg_factor_ != 0) {
+      //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+      t_loss_[tid] = t_loss_[tid] + 
+        0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
+    }
+    // Calc # of misclassifications
     if (type_ == "classification") {
       T_LBL pred_lbl = LinearPredictBiasLabelBinary(&w_pool_[tid], x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
-	t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
 	t_err_[tid] =  t_err_[tid] + 1;
       }
-      if (reg_type_ == 2 && reg_factor_ != 0) {
-	//L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
-	t_loss_[tid] = t_loss_[tid] + 
-          0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
-      }
-      // save intermediate logs
-      if (n_log_ > 0) {
-	LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
-	if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
-	  LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
-	  LOG_->loss_[tid][LOG_->ct_lp_[tid]] = t_loss_[tid];
-	  LOG_->ct_t_[tid] = 0;
-	  LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
-	}
-      }
     }
-    // Calculate loss only for regression etc.
-    else {
-      t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
-      if (reg_type_ == 2 && reg_factor_ != 0) {
-	t_loss_[tid] = t_loss_[tid] + 
-          0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
+    // intermediate logs
+    if (n_log_ > 0) {
+      LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
+      if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
+        LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
+        LOG_->loss_[tid][LOG_->ct_lp_[tid]] = t_loss_[tid];
+        LOG_->ct_t_[tid] = 0;
+        LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
       }
     }
   }

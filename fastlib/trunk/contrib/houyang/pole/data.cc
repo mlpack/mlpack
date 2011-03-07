@@ -9,8 +9,15 @@
 ///////////////
 Data::Data(string fn, size_t port, bool random) : 
   fn_(fn), port_(port), random_(random), 
-  n_ex_(0), used_ct_(0), n_ln_(0), 
+  used_ct_(0), n_ln_(0), 
   max_ft_idx_(0), max_n_nz_ft_(0), max_l_ln_(0) {
+}
+
+//////////////////////
+// Number of examples
+//////////////////////
+size_t Data::Size() {
+  return EXs_.size();
 }
 
 ////////////////////////////////////////
@@ -106,7 +113,7 @@ void Data::ReadFromFile() {
     RandomPermute();
     cout << "random permute examples...";
   }
-  cout << "done. " << endl << n_ex_ << " examples loaded." 
+  cout << "done. " << endl << Size() << " examples loaded." 
        << " Max dimension: " << max_ft_idx_ << "."<< endl;
   fclose(fp_);
 }
@@ -115,12 +122,13 @@ void Data::ReadFromFile() {
 // Randomly permute examples
 /////////////////////////////
 void Data::RandomPermute() {
-  rnd_i_.resize(n_ex_);
-  for (size_t i=0; i<n_ex_; i++) {
+  size_t n_ex = Size();
+  rnd_i_.resize(n_ex);
+  for (size_t i=0; i<n_ex; i++) {
     rnd_i_[i] = i;
   }
-  for (size_t i=0; i<n_ex_; i++) {
-    size_t j = rand() % n_ex_;
+  for (size_t i=0; i<n_ex; i++) {
+    size_t j = rand() % n_ex;
     swap(rnd_i_[i], rnd_i_[j]);
   }
 }
@@ -129,7 +137,7 @@ void Data::RandomPermute() {
 // Get an example from dataset
 ///////////////////////////////
 Example* Data::GetExample(size_t idx) {
-  if (idx >= n_ex_ || idx < 0) {
+  if (idx >= Size() || idx < 0) {
     cout << "Invalid example index: " << idx << " !" << endl;
     exit (1);
   }
@@ -170,7 +178,8 @@ void Data::InitFromSvmlight() {
   char ln[max_l_ln_]; // line buffer
   char f_pair[1000], junk[1000]; // feature pair buffer
   EXs_.resize(n_ln_);
-  n_ex_ = 0; max_ft_idx_ = 0;
+  max_ft_idx_ = 0;
+  size_t n_ex = 0;
 
   size_t l = 0, pos = 0;
   // ------------parse lines--------------
@@ -206,7 +215,7 @@ void Data::InitFromSvmlight() {
       cout << "Cannot read label at line " << l << " !"<< endl << ln << endl;
       exit(1);
     }
-    EXs_[n_ex_].y_= (T_LBL)lbl;
+    EXs_[n_ex].y_= (T_LBL)lbl;
     // -----------skip spaces and label------------
     pos=0;
     while( SorN((int)ln[pos]) )
@@ -216,7 +225,7 @@ void Data::InitFromSvmlight() {
     // -----------get features------------
     long idx; double val;
     int n_r = 0; size_t n_f = 0;
-    EXs_[n_ex_].Fs_.resize(max_n_nz_ft_);
+    EXs_[n_ex].Fs_.resize(max_n_nz_ft_);
     while( ((n_r=sscanf(ln+pos, "%s", f_pair)) != EOF) && 
 	   (n_r > 0) && (n_f<max_n_nz_ft_) ) {
       while(SorN((int)ln[pos]))
@@ -229,8 +238,8 @@ void Data::InitFromSvmlight() {
 	  cout <<"Feature numbers must be larger or equal to 1!" << "Line: " << ln << endl;
 	  exit (1); 
 	}
-	EXs_[n_ex_].Fs_[n_f].i_ = (T_IDX)idx-1; // idx starts from 0
-	EXs_[n_ex_].Fs_[n_f].v_ = (T_VAL)val;
+	EXs_[n_ex].Fs_[n_f].i_ = (T_IDX)idx-1; // idx starts from 0
+	EXs_[n_ex].Fs_[n_f].v_ = (T_VAL)val;
 	if ((T_IDX)idx > max_ft_idx_) {
 	  max_ft_idx_ = (T_IDX)idx;
 	}
@@ -242,10 +251,10 @@ void Data::InitFromSvmlight() {
       }
       n_f ++;
     }
-    EXs_[n_ex_].Fs_.resize(n_f);
-    n_ex_++;
+    EXs_[n_ex].Fs_.resize(n_f);
+    n_ex++;
   }
-  EXs_.resize(n_ex_);
+  EXs_.resize(n_ex);
 }
 
 ////////////////////////////////////

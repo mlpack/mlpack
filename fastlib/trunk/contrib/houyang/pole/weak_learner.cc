@@ -9,7 +9,7 @@ DecisionStump::DecisionStump(size_t split_dim, size_t num_iter)
 }
   
 void DecisionStump::BatchLearn(Data *D) {
-  vector<float> dval (D->n_ex_, 0.0);
+  vector<float> dval (D->Size(), 0.0);
   double intv, thd_test;
   size_t ct_g_pos, ct_g_neg, ct_l_pos, ct_l_neg;
   size_t ct_err, ct_err_new;
@@ -17,7 +17,7 @@ void DecisionStump::BatchLearn(Data *D) {
   T_LBL gl_new;
 
   n_p_ex = 0; n_n_ex = 0;
-  for (size_t x = 0; x < D->n_ex_; x++) {
+  for (size_t x = 0; x < D->Size(); x++) {
     if (D->EXs_[x].y_ == 1)
       n_p_ex ++;
     else
@@ -54,7 +54,7 @@ void DecisionStump::BatchLearn(Data *D) {
     for (size_t i=0; i<n_it_; i++) {
       thd_test += intv;
       ct_g_pos = 0; ct_g_neg = 0; ct_l_pos = 0; ct_l_neg = 0;
-      for (size_t x=0; x<D->n_ex_; x++) {
+      for (size_t x=0; x<D->Size(); x++) {
         //ex = exs + x;
         if (dval[x] > thd_test) {
           if (D->EXs_[x].y_ == 1)

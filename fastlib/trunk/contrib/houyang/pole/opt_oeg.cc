@@ -26,10 +26,10 @@ void OEG::OegCommUpdate(size_t tid) {
 
   // Normalization; calc sum_i(w_p_i+w_n_i)
   double w_sum = 0.0;
-  for (size_t i=0; i<w_p_pool_[tid].Fs_.size(); i++) {
+  for (size_t i=0; i<w_p_pool_[tid].Size(); i++) {
     w_sum += w_p_pool_[tid].Fs_[i].v_;
   }
-  for (size_t i=0; i<w_n_pool_[tid].Fs_.size(); i++) {
+  for (size_t i=0; i<w_n_pool_[tid].Size(); i++) {
     w_sum += w_n_pool_[tid].Fs_[i].v_;
   }
   w_sum = w_sum + b_p_pool_[tid] + b_n_pool_[tid];
@@ -129,7 +129,7 @@ void OEG::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
   // init learning rate
-  eta0_ = sqrt(TR_->n_ex_);
+  eta0_ = sqrt(TR_->Size());
   t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_p_pool_.resize(n_thread_);
@@ -166,28 +166,25 @@ void OEG::Test() {
 
 void OEG::MakeLog(size_t tid, Svector *w, double bias, Example *x, double pred_val) {
   if (calc_loss_) {
-    // Calculate loss and number of misclassifications
+    // Calc loss
+    t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+    // Calc # of misclassifications
     if (type_ == "classification") {
       T_LBL pred_lbl = LinearPredictBiasLabelBinary(w, x, bias);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
-	t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
 	t_err_[tid] = t_err_[tid] + 1;
       }
-      // save intermediate logs
-      if (n_log_ > 0) {
-	LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
-	if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
-	  LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
-	  LOG_->loss_[tid][LOG_->ct_lp_[tid]] = t_loss_[tid];
-	  LOG_->ct_t_[tid] = 0;
-	  LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
-	}
-      }
     }
-    // Calculate loss only for regression etc.
-    else {
-      t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+    // intermediate logs
+    if (n_log_ > 0) {
+      LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
+      if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
+        LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
+        LOG_->loss_[tid][LOG_->ct_lp_[tid]] = t_loss_[tid];
+        LOG_->ct_t_[tid] = 0;
+        LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
+      }
     }
   }
 }

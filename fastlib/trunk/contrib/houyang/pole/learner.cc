@@ -1,4 +1,4 @@
-// Implementation for Learner
+// Common functions for various learners
 
 #include "learner.h"
 
@@ -23,18 +23,18 @@ Learner::~Learner() {
 ////////////////////////////
 void Learner::ParallelLearn() {
   // determine number of epochs and residual iterations
-  if (n_iter_res_ >= TR_->n_ex_) {
-    n_epoch_ += (size_t)(n_iter_res_ / TR_->n_ex_);
-    n_iter_res_ %= TR_->n_ex_;
+  if (n_iter_res_ >= TR_->Size()) {
+    n_epoch_ += (size_t)(n_iter_res_ / TR_->Size());
+    n_iter_res_ %= TR_->Size();
   }
-  size_t left_ct = (n_epoch_ * TR_->n_ex_ + n_iter_res_) % (n_thread_ * mb_size_);
+  size_t left_ct = (n_epoch_ * TR_->Size() + n_iter_res_) % (n_thread_ * mb_size_);
   if ( left_ct > 0)
     n_iter_res_ += (n_thread_ * mb_size_ - left_ct);
   cout << "n_epo= " << n_epoch_ << ", n_iter_res= " << n_iter_res_ << endl;
   // init for intermediate logs
   epoch_ct_ = 0;
   if (n_log_ > 0) {
-    size_t t_int = (size_t)floor( (n_epoch_*TR_->n_ex_ + n_iter_res_)/(n_thread_ * n_log_) );
+    size_t t_int = (size_t)floor( (n_epoch_*TR_->Size() + n_iter_res_)/(n_thread_ * n_log_) );
     LOG_ = new Log(n_thread_, n_log_, t_int, n_expert_, opt_name_);
   }
   // init for parallelism
@@ -146,8 +146,8 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
   pthread_mutex_lock(&mutex_ex_);
   
   if (epoch_ct_ < n_epoch_) {
-    ring_idx = D->used_ct_ % D->n_ex_;
-    if ( ring_idx == (D->n_ex_-1) ) { // one epoch finished
+    ring_idx = D->used_ct_ % D->Size();
+    if ( ring_idx == (D->Size()-1) ) { // one epoch finished
       epoch_ct_ ++;
       // To mimic the online learning senario, in each epoch, 
       // we randomly permutate the dataset, indexed by old_from_new
@@ -162,7 +162,7 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
     return true;
   }
   else if (iter_res_ct_ < n_iter_res_) {
-    ring_idx = D->used_ct_ % D->n_ex_;
+    ring_idx = D->used_ct_ % D->Size();
     (*x_p) = D->GetExample(ring_idx);
     t_n_used_examples_[tid] = t_n_used_examples_[tid] + 1;
     iter_res_ct_ ++;

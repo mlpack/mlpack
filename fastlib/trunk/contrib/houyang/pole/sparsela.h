@@ -35,7 +35,8 @@ class Svector {
   Svector(vector<Feature> Fs);
   Svector(T_IDX n_f, T_VAL c);
   ~Svector();
-
+  // basics
+  size_t Size();
   void Copy(Svector V);
   void Copy(Svector *V);
   void SetAll(T_VAL v);
@@ -47,15 +48,19 @@ class Svector {
   void Print();
   // linear algebra
   void   SparseScaleOverwrite(double a);
-  double SparseDot(Svector *v);
+  double SparseDot(Svector *x);
   double SparseSqL2Norm();
   void   SparseAddExpertOverwrite(double a, Svector *x);
   void   SparseAddOverwrite(Svector *x);
   void   SparseSubtract(Svector *p, Svector *n);
+  void   SparseSubtractOverwrite(Svector *x);
   void   SparseMultiplyOverwrite(Svector *x);
   void   SparsePowerOverwrite(double p);
   void   SparseExpMultiplyOverwrite(Svector *x);
   void   SparseNegExpMultiplyOverwrite(Svector *x);
+  // metrics
+  double SparseSqEuclideanDistance(Svector *x);
+  // misc
   void   Shrink(double threshold);
 };
 
