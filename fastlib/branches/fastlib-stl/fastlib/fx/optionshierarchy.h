@@ -18,8 +18,6 @@ class OptionsHierarchy {
 	
 	public:
 		/* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
-		/* TODO: Unify interface to std::string, as we shouldn't be 
-			dealing with string literals */
 		OptionsHierarchy();
 		OptionsHierarchy(const char* name);
 		~OptionsHierarchy();
@@ -31,8 +29,12 @@ class OptionsHierarchy {
 		void appendNode(string& pathname);
 		void appendNode(string& pathname, string& description);
 	
-		void print() ;
-		void print(int tabs) ;
+		/* Print functions */
+		void print();
+		void print(string& pathname);
+		void printLeaves();
+		void printBranches();
+
 };
 
 #endif
