@@ -67,13 +67,24 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
     index_t point_i_index = k_rows[i];
     bool this_point_works = true;
     
+    bad_symmetry = false;
+    
     arma::colvec vec_i = data_points_.col(point_i_index);
+    
+    /*
+    if (points_in_tuple[0] >= 0) {
+    if (old_from_new_index_[points_in_tuple[0]] == 0 && 
+        old_from_new_index_[point_i_index] == 12) {
+      std::cout << "found it\n";
+    }
+    }
+    */
     
     // TODO: Does this leak memory?
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // loop over points already in the tuple and check against them
-    for (index_t j = 0; this_point_works && j < k; j++) {
+    for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
       
       index_t point_j_index = points_in_tuple[j];
 
@@ -82,7 +93,7 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
       
       if (!bad_symmetry) {
         
-        arma::colvec vec_j = data_points_.col(j);
+        arma::colvec vec_j = data_points_.col(point_j_index);
         
         double point_dist_sq = la::DistanceSqEuclidean(vec_i, vec_j);
         
@@ -167,8 +178,7 @@ void npt::SingleBandwidthAlg::BaseCase_(std::vector<SingleNode*>& nodes) {
 void npt::SingleBandwidthAlg::DepthFirstRecursion_(std::vector<SingleNode*>& nodes) {
   
   // check for symmetry and pruning
-  //bool can_prune = CheckNodeList_(nodes);
-  bool can_prune = false;
+  bool can_prune = CheckNodeList_(nodes);
   
   if (can_prune) {
     

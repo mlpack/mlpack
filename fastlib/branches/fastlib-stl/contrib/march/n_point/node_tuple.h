@@ -37,8 +37,8 @@ namespace npt {
     
     // map the indices of the nodes to the positions of their distances in the
     // sorted list
-    arma::Col<index_t> input_to_upper_;
-    arma::Col<index_t> input_to_lower_;
+    std::vector<index_t> input_to_upper_;
+    std::vector<index_t> input_to_lower_;
     
     // this is the position of the node we should split next
     index_t ind_to_split_;
@@ -53,7 +53,7 @@ namespace npt {
     
     // given which node we're splitting, which elments of the index lists are 
     // no longer valid
-    std::vector<index_t>& FindInvalidIndices_();
+    void FindInvalidIndices_(std::vector<index_t>& inds);
     
     // after putting in a new node and getting the invalidated indices from
     // FindInvalidIndices, call this to update the distance lists
@@ -88,13 +88,15 @@ namespace npt {
       
       for (index_t i = 0; i < tuple_size_; i++) {
         
-        all_leaves_ = all_leaves_ ? node_list_[i]->is_leaf() : false;
-        
-        if (node_list_[i]->count() > split_size 
-            && !(node_list_[i]->is_leaf())) {
-          split_size = node_list_[i]->count();
-          ind_to_split_ = i;
+        if (!(node_list_[i]->is_leaf())) {
+          all_leaves_ = false;
+          if (node_list_[i]->count() > split_size) {
+            split_size = node_list_[i]->count();
+            ind_to_split_ = i;
+          }
+              
         }
+        
         
         //printf("Checked for leaves\n");
         
@@ -127,8 +129,8 @@ namespace npt {
       
       //printf("Sorted\n");
       
-      input_to_upper_.set_size(sorted_upper_.size());
-      input_to_lower_.set_size(sorted_upper_.size());
+      input_to_upper_.resize(sorted_upper_.size());
+      input_to_lower_.resize(sorted_upper_.size());
       
       
       
@@ -136,8 +138,8 @@ namespace npt {
       
       for (index_t i = 0; i < sorted_upper_.size(); i++) {
         
-        input_to_upper_(sorted_upper_[i].second) = i;
-        input_to_lower_(sorted_lower_[i].second) = i;
+        input_to_upper_[sorted_upper_[i].second] = i;
+        input_to_lower_[sorted_lower_[i].second] = i;
         
       } // loop over pairwise distances
 
@@ -151,6 +153,9 @@ namespace npt {
     sorted_lower_(parent.sorted_lower())
     {
       
+      ind_to_split_ = parent.ind_to_split();
+      tuple_size_ = node_list_.size();
+      
       // assuming that the symmetry has already been checked
       if (is_left) {
         node_list_[ind_to_split_] = parent.node_list(ind_to_split_)->left();
@@ -159,15 +164,16 @@ namespace npt {
         node_list_[ind_to_split_] = parent.node_list(ind_to_split_)->right();        
       }
       
-      ind_to_split_ = parent.ind_to_split();
+      
       
       // now, fix the lists
       // don't forget to make the maps back to the inputs
-      input_to_upper_(sorted_upper_.size());
-      input_to_lower_(sorted_lower_.size());
+      input_to_upper_.resize(sorted_upper_.size());
+      input_to_lower_.resize(sorted_lower_.size());
       
       // Not sure if this works, if not I should just call these outside
-      std::vector<index_t> invalid_inds = FindInvalidIndices_();
+      std::vector<index_t> invalid_inds;
+      FindInvalidIndices_(invalid_inds);
       
       UpdateIndices_(ind_to_split_, invalid_inds);
       

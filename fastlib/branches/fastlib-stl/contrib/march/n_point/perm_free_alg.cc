@@ -27,13 +27,15 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
     index_t point_i_index = k_rows[i];
     bool this_point_works = true;
     
+    bad_symmetry = false;
+    
     arma::colvec vec_i = data_points_.col(point_i_index);
     
     // TODO: Does this leak memory?
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // loop over points already in the tuple and check against them
-    for (index_t j = 0; this_point_works && j < k; j++) {
+    for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
       
       index_t point_j_index = points_in_tuple[j];
       
@@ -42,7 +44,7 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
       
       if (!bad_symmetry) {
         
-        arma::colvec vec_j = data_points_.col(j);
+        arma::colvec vec_j = data_points_.col(point_j_index);
         
         double point_dist_sq = la::DistanceSqEuclidean(vec_i, vec_j);
         
@@ -98,13 +100,20 @@ void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
     
     point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
     
-    // fill in points in the node
+    // fill in poilnts in the node
+    /*
     for (index_t point_ind = nodes.node_list(node_ind)->begin(); 
          point_ind < nodes.node_list(node_ind)->end(); point_ind++) {
       
       point_sets[node_ind][point_ind] = point_ind;
       
     } // points
+    */
+    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+      
+      point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
+      
+    }
     
   } // nodes
   
@@ -118,18 +127,19 @@ void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
 
 bool npt::PermFreeAlg::CanPrune_(NodeTuple& nodes) {
   
-  return matcher_.TestNodeTuple(nodes);
+  return !(matcher_.TestNodeTuple(nodes));
   
 } // CanPrune
 
 void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
   
-  if (CanPrune_(nodes)) {
-    
+  //if (CanPrune_(nodes)) {
+  if (false) {
     num_prunes_++;
     
   }
-  else if (nodes.all_leaves()) {
+  else if (true) {
+  //else if (nodes.all_leaves()) {
     
     BaseCase_(nodes);
     

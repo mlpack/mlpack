@@ -54,9 +54,9 @@ bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes,
 
 
 
-std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
+void npt::NodeTuple::FindInvalidIndices_(std::vector<index_t>& inds) {
 
-  std::vector<index_t> inds;
+  //std::vector<index_t> inds;
   
   // simple case
   if (tuple_size_ == 2) {
@@ -87,9 +87,7 @@ std::vector<index_t>& npt::NodeTuple::FindInvalidIndices_() {
     }
     
   }    
-  
-  return inds;
-  
+    
 } // FindInvalidIndices
 
 
