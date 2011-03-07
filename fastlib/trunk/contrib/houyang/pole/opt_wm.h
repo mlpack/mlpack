@@ -11,8 +11,8 @@ class WM : public Learner {
  public:
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
   vector<Svector> m_pool_; // shared memory for messages
-  vector<WeakLearner*> WLs_; // weak learners
  private:
+  vector<WeakLearner*> WLs_; // weak learners
   pthread_barrier_t barrier_msg_all_sent_;
   pthread_barrier_t barrier_msg_all_used_;
  public:

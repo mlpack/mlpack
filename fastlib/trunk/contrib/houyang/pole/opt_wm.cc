@@ -133,10 +133,10 @@ void WM::TrainWeak() {
     random_shuffle(sd.begin(), sd.end());
     // choose number of iterations
     size_t n_it;
-    if (TR_->n_ex_ > 10000)
-      n_it = min(200, (int)ceil(TR_->n_ex_/50));
+    if (TR_->Size() > 10000)
+      n_it = min(200, (int)ceil(TR_->Size()/50));
     else
-      n_it = max(200, (int)ceil(TR_->n_ex_/50));
+      n_it = max(200, (int)ceil(TR_->Size()/50));
     // train
     cout << "Training " << n_expert_ <<" experts (weak learners)...";
     for (size_t p = 0; p < n_expert_; p++) {
@@ -166,7 +166,7 @@ void WM::Learn() {
     // init thread parameters and statistics
     pars[t].id_ = t;
     pars[t].Lp_ = this;
-    w_pool_[t].SetAllResize(n_expert_, TR_->n_ex_*n_epoch_+n_iter_res_);
+    w_pool_[t].SetAllResize(n_expert_, TR_->Size()*n_epoch_+n_iter_res_);
     t_state_[t] = 0;
     t_n_it_[t] = 0;
     t_n_used_examples_[t] = 0;
@@ -189,23 +189,25 @@ void WM::Test() {
 void WM::MakeLog(size_t tid, T_LBL true_lbl, T_LBL pred_lbl, 
                  vector<T_LBL> &exp_pred) {
   if (calc_loss_) {
+    // Calc # of misclassifications
     if (type_ == "classification") {
       if (pred_lbl != true_lbl) {
         t_err_[tid] =  t_err_[tid] + 1;
       }
-      if (n_log_ > 0) {
-        LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
-        if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
-          LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
-          for (size_t p=0; p<n_expert_; p++) {
-            if (exp_pred[p] != true_lbl) {
-              LOG_->err_exp_[p][LOG_->ct_lp_[tid]] = 
-                LOG_->err_exp_[p][LOG_->ct_lp_[tid]] + 1; // TODO
-            }
+    }
+    // intermediate logs
+    if (n_log_ > 0) {
+      LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
+      if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
+        LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
+        for (size_t p=0; p<n_expert_; p++) {
+          if (exp_pred[p] != true_lbl) {
+            LOG_->err_exp_[p][LOG_->ct_lp_[tid]] = 
+              LOG_->err_exp_[p][LOG_->ct_lp_[tid]] + 1; // TODO
           }
-          LOG_->ct_t_[tid] = 0;
-	  LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
         }
+        LOG_->ct_t_[tid] = 0;
+        LOG_->ct_lp_[tid] = LOG_->ct_lp_[tid] + 1;
       }
     }
   } 

@@ -27,7 +27,6 @@ class Data {
   // data properties
   vector<Example> EXs_; // examples
   vector<size_t> rnd_i_; // index for randomly permuted examples
-  size_t n_ex_; // number of examples
   size_t used_ct_; // counter for number of times examples are used
   // data file properties
   FileFormat ff_; 
@@ -44,6 +43,7 @@ class Data {
   bool SorN(int c);
  public:
   Data(string fn, size_t port, bool random);
+  size_t Size();
   bool ReadFileInfo();
   void ReadFromFile();
   void ReadFromPort();

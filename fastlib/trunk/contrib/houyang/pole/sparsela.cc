@@ -52,6 +52,13 @@ Svector::Svector(T_IDX n_f, T_VAL v) : Fs_(n_f, Feature()){
 Svector::~Svector() {
 }
 
+//////////////////////
+// Number of faetures 
+//////////////////////
+size_t Svector::Size() {
+  return Fs_.size();
+}
+
 //////////////////////////////////
 // Copy from a given sparse vector
 //////////////////////////////////
@@ -128,7 +135,7 @@ void Svector::Print() {
 }
 
 /////////////////////////////////////
-// Sparse vector scaling: w <= a * w
+// Sparse vector scaling: w *= a
 /////////////////////////////////////
 void Svector::SparseScaleOverwrite(double a) {
   if (a == 0.0) {
@@ -194,7 +201,7 @@ double Svector::SparseSqL2Norm() {
 }
 
 ///////////////////////////////////////////
-// Sparse vector scaled add: w<= w+ a * x
+// Sparse vector scaled add: w += a * x
 ///////////////////////////////////////////
 void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
   size_t nz_x = x->Fs_.size();
@@ -238,12 +245,9 @@ void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
 }
 
 ///////////////////////////////
-// Sparse vector add: w<= w+ x
+// Sparse vector add: w += x
 ///////////////////////////////
 void Svector::SparseAddOverwrite(Svector *x) {
-  size_t nz_x = x->Fs_.size();
-  size_t ct_w = 0, ct_x = 0;
-
   if (x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return;
   }
@@ -252,12 +256,13 @@ void Svector::SparseAddOverwrite(Svector *x) {
     return;
   }
   else { // neither w nor x is of all-0
-    while (ct_w<Fs_.size() || ct_x<nz_x) {
+    size_t ct_w = 0, ct_x = 0;
+    while (ct_w<Fs_.size() || ct_x<x->Fs_.size()) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
 	Fs_.push_back(x->Fs_[ct_x]);
 	++ct_w; ++ct_x;
       }
-      else if (ct_x == nz_x) { // x reaches end, while w still not
+      else if (ct_x == x->Fs_.size()) { // x reaches end, while w still not
 	// the succeeding w remain unchanged
 	break;
       }
@@ -366,6 +371,48 @@ void Svector::SparseSubtract(Svector *p, Svector *n) {
           ++ct_p;
           ++ct_w;
         }
+      }
+    }
+  }
+}
+
+////////////////////////////////////////
+// Sparse vector subtraction: w -= x
+////////////////////////////////////////
+void Svector::SparseSubtractOverwrite(Svector *x) {
+  if (x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
+    return;
+  }
+  else if (Fs_.empty()) { // w: all-0
+    Fs_ = x->Fs_;
+    for (vector<Feature>::iterator it=Fs_.begin(); it<Fs_.end(); it++) {
+      it->v_ = - it->v_;
+    }
+    return;
+  }
+  else { // neither w nor x is of all-0
+    size_t ct_w = 0, ct_x = 0;
+    while (ct_w<Fs_.size() || ct_x<x->Fs_.size()) {
+      if (ct_w == Fs_.size()) { // w reaches end, while x still not
+	Fs_.push_back(Feature(x->Fs_[ct_x].i_, -x->Fs_[ct_x].v_));
+	++ct_w; ++ct_x;
+      }
+      else if (ct_x == x->Fs_.size()) { // x reaches end, while w still not
+	// the succeeding w remain unchanged
+	break;
+      }
+      else { // neither w nor x reaches end
+	if (Fs_[ct_w].i_ == x->Fs_[ct_x].i_) {
+	  Fs_[ct_w].v_ -= x->Fs_[ct_x].v_;
+	  ++ct_w; ++ct_x;
+	}
+	else if (Fs_[ct_w].i_ > x->Fs_[ct_x].i_) {
+	  Fs_.insert(Fs_.begin()+ct_w, Feature(x->Fs_[ct_x].i_, -x->Fs_[ct_x].v_));
+	  ++ct_w; ++ct_x;
+	}
+	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
+	  ++ct_w;
+	}
       }
     }
   }
@@ -498,6 +545,47 @@ void Svector::SparseNegExpMultiplyOverwrite(Svector *x) {
         }
       }
     }
+  }
+}
+
+//////////////////////////////////////////////////
+// Sparse squared Euclidean distance: \|w-x\|_2^2
+//////////////////////////////////////////////////
+double Svector::SparseSqEuclideanDistance(Svector *x) {
+  if (x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
+    return SparseSqL2Norm();
+  }
+  else if (Fs_.empty()) { // w: all-0
+    return x->SparseSqL2Norm();
+  }
+  else { // neither w nor x is of all-0
+    double d = 0.0;
+    size_t ct_w = 0, ct_x = 0;
+    while (ct_w<Fs_.size() || ct_x<x->Fs_.size()) {
+      if (ct_w == Fs_.size()) { // w reaches end, while x still not
+        d += pow(x->Fs_[ct_x].v_, 2);
+	++ct_x;
+      }
+      else if (ct_x == x->Fs_.size()) { // x reaches end, while w still not
+	d += pow(Fs_[ct_w].v_, 2);
+        ++ct_w;
+      }
+      else { // neither w nor x reaches end
+	if (Fs_[ct_w].i_ == x->Fs_[ct_x].i_) {
+	  d += pow(Fs_[ct_w].v_ - x->Fs_[ct_x].v_, 2);
+	  ++ct_w; ++ct_x;
+	}
+	else if (Fs_[ct_w].i_ > x->Fs_[ct_x].i_) {
+          d += pow(x->Fs_[ct_x].v_, 2);
+          ++ct_x;
+	}
+	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
+          d += pow(Fs_[ct_w].v_, 2);
+	  ++ct_w;
+	}
+      }
+    }
+    return d;
   }
 }
 

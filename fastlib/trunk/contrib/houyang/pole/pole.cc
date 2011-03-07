@@ -51,7 +51,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
       L_->opt_name_ = opt_name_;
     }
     else if (opt_opt == "-h" || opt_opt == "--help") {
-      L_ = new OGD;
+      L_ = new Learner;
     }
     else {
       cout << "ERROR! Optimization method needs to be specified!" << endl;
@@ -59,7 +59,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     }
   }
   else {
-    L_ = new OGD;
+    L_ = new Learner;
   }
  
   // Use boost's program_options
@@ -144,7 +144,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     L_->LF_ = new QuantileLoss(0.5);
   }
   else {
-    cout << "Invalid loss function name. Bailing!" << endl;
+    cout << "Invalid loss function name!" << endl;
     exit(1);
   }
 
@@ -195,7 +195,7 @@ void Pole::ArgsSanityCheck() {
 
   if (L_->alpha_ <=0 || L_->alpha_ >= 1) {
     cout << "In WM, alpha should be within (0,1)! Using default value: 0.5." << endl;
-    //L_->WL_.alpha_ = 0.5;
+    L_->alpha_ = 0.5;
   }
 
   if (L_->n_expert_ <= 0) {
