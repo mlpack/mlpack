@@ -64,15 +64,6 @@ class Distribution {
       }
     }
 
-    /** @brief Returns $\frac{\partial}{\partial \theta^2}
-     *         \beta^{\nu}(\theta)$.
-     */
-    void AttributeHessianWithRespectToParameter(
-      const arma::vec &parameters, const arma::vec &beta_vector,
-      arma::mat *hessian_out) const {
-
-    }
-
     /** @brief Draws a beta from the distribution with the given
      *         parameter.
      */
