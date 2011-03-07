@@ -48,27 +48,59 @@ void OptionsHierarchy::appendNode(string& pathname, string& description) {
 }
 
 void OptionsHierarchy::print() {
-	cout << node << ":" << std::endl;
+	//Print the node, append '/' if that node is not a leaf
+	std::cout << node << ":" << endl << endl;
 	
-	map<string, OptionsHierarchy>::iterator iter;
-	for(iter = children.begin(); iter != children.end(); iter++)
-		iter->second.print(1);
+	//Begin formatted output 	
+	cout << "Entries:" << endl;
+	printLeaves();
+	
+	cout << "Submodules:" << endl;
+	printBranches();
 }
 
-void OptionsHierarchy::print(int tabs) {
-	for(int i = 0; i < tabs; i++)
-		cout << "\t";
+void OptionsHierarchy::print(string& pathname) {
+	//Get the topmost node name in this path Eg root in root/foo/bar
+	string name = pathname.substr(0, pathname.find('/'));
+	//Get the rest of the node name Eg foo/bar in root/foo/bar
+	string path = pathname.substr(pathname.find('/')+1,pathname.length());
 	
-	//Print the node, append '/' if that node is not a leaf
-	std::cout << node;
-	if(children.size())
-		cout << "/";
-	if(desc.length())
-		cout << "\t--" << desc; 
-	cout << std::endl;
+	//Do we still need to recurse?
+	if(path.length() > 0)
+		if(children.count(name)) //Yes, and we can continue to do so
+			return children[name].print(path);
+		else if(node != name) { //Yes, but we can't find the next node.. are we already there?
+			cout << "[!]\t Unknown Module: "<< pathname << endl;
+			return;
+		}
+		
+	print();
 	
+	return;
+}
+
+/* Prints all children nodes that have no children themselves */
+void OptionsHierarchy::printLeaves() {
 	map<string, OptionsHierarchy>::iterator iter;
-	
 	for(iter = children.begin(); iter != children.end(); iter++)
-		iter->second.print(tabs+1);
+		if(!iter->second.children.size()) {
+			cout << "\"" << iter->second.node << "\":" << endl;
+			if(iter->second.desc.length() > 0)
+				cout << "\t" << iter->second.desc << endl;
+			else
+				cout << "[!]\tUndocumented option" << endl;
+		}
+}
+
+/* Prints all children of this node which are parents */
+void OptionsHierarchy::printBranches() {
+	map<string, OptionsHierarchy>::iterator iter;
+	for(iter = children.begin(); iter != children.end(); iter++)
+		if(iter->second.children.size()) {
+			cout << "\"" << iter->second.node << "\":" << endl;
+			if(iter->second.desc.length() > 0)
+				cout << "\t" << iter->second.desc << endl;
+			else
+				cout << "[!]\tUndocumented module" << endl;
+		}
 }
