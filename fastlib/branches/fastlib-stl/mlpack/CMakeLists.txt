@@ -5,7 +5,7 @@ project(MLPACK C CXX)
 #find_package(LAPACK REQUIRED)
 
 ## Global compiler flags (dep. on platform TODO)
-set(CMAKE_CXX_FLAGS "-g -Wall")
+#set(CMAKE_CXX_FLAGS "-g -Wall")
 add_definitions( -DDISABLE_DISK_MATRIX )
 
 ## Location of fastlib headers & lib
