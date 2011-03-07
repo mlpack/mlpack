@@ -133,13 +133,13 @@ bool npt::PermFreeAlg::CanPrune_(NodeTuple& nodes) {
 
 void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
   
-  //if (CanPrune_(nodes)) {
-  if (false) {
+  if (CanPrune_(nodes)) {
+  //if (false) {
     num_prunes_++;
     
   }
-  else if (true) {
-  //else if (nodes.all_leaves()) {
+  //else if (true) {
+  else if (nodes.all_leaves()) {
     
     BaseCase_(nodes);
     

@@ -94,6 +94,23 @@ void npt::NodeTuple::FindInvalidIndices_(std::vector<index_t>& inds) {
 void npt::NodeTuple::UpdateIndices_(index_t split_ind, 
                                     std::vector<index_t>& invalid_indices) {
   
+  /*
+  std::cout << "\n";
+  for (index_t i = 0; i < invalid_indices.size(); i++) {
+    std::cout << "Invalid inds[" << i << "]: " << invalid_indices[i] << "\n";
+  }
+  
+  std::cout << "\n";
+  for (index_t i = 0; i < input_to_upper_.size(); i++) {
+    std::cout << "input_to_upper[" << i << "]: " << input_to_upper_[i] << "\n";
+  }
+
+  std::cout << "\n";
+  for (index_t i = 0; i < input_to_lower_.size(); i++) {
+    std::cout << "input_to_lower[" << i << "]: " << input_to_lower_[i] << "\n";
+  }
+   */
+  
   NptNode* new_node = node_list_[split_ind];
   
   int split_size = -1;
@@ -137,10 +154,21 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind,
       index_t upper_bad_ind = input_to_upper_[bad_ind];
       index_t lower_bad_ind = input_to_lower_[bad_ind];
       
+      
       sorted_upper_[upper_bad_ind] = std::pair<double, index_t> (max_dist_sq, 
                                                                  bad_ind);
       sorted_lower_[lower_bad_ind] = std::pair<double, index_t> (min_dist_sq, 
                                                                  bad_ind);
+      
+      /*
+      if (sorted_lower_[lower_bad_ind].second != lower_bad_ind) {
+        std::cout << "problem!\n";
+      }
+      sorted_upper_[upper_bad_ind] = std::pair<double, index_t> (max_dist_sq, 
+                                                                 upper_bad_ind);
+      sorted_lower_[lower_bad_ind] = std::pair<double, index_t> (min_dist_sq, 
+                                                                 lower_bad_ind);
+      */
       
     } // computing distances
     
@@ -152,6 +180,22 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind,
   
   std::sort(sorted_upper_.begin(), sorted_upper_.end());
   std::sort(sorted_lower_.begin(), sorted_lower_.end());
+ 
+  /*
+  for (index_t i = 0; i < sorted_upper_.size(); i++) {
+    std::cout << "sorted_upper[" << i << "]: (";
+    std::cout << sorted_upper_[i].first << ", " << sorted_upper_[i].second;
+    std::cout << ")\n";
+  } 
+  
+  std::cout <<"\n";
+  
+  for (index_t i = 0; i < sorted_lower_.size(); i++) {
+    std::cout << "sorted_lower[" << i << "]: (";
+    std::cout << sorted_lower_[i].first << ", " << sorted_lower_[i].second;
+    std::cout << ")\n";
+  } 
+  */
   
   // get the new mapping to sorted indices
   for (index_t i = 0; i < sorted_upper_.size(); i++) {

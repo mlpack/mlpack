@@ -101,6 +101,8 @@ namespace npt {
       
       DepthFirstRecursion_(nodes);
       
+      std::cout << "Num prunes: " << num_prunes_ << "\n";
+      
     }
     
     
