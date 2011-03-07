@@ -19,9 +19,11 @@ bool npt::PermFreeMatcher::TestNodeTuple(NodeTuple& nodes) {
       return false;
     }
 
+    /*
     if (nodes.upper_bound(i) < lower_bounds_sq_[i]) {
       return false;
     }
+     */
     
   } // for i
   

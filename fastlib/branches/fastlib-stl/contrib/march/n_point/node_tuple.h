@@ -127,6 +127,22 @@ namespace npt {
       std::sort(sorted_upper_.begin(), sorted_upper_.end());
       std::sort(sorted_lower_.begin(), sorted_lower_.end());
       
+      /*
+      for (index_t i = 0; i < sorted_upper_.size(); i++) {
+        std::cout << "sorted_upper[" << i << "]: (";
+        std::cout << sorted_upper_[i].first << ", " << sorted_upper_[i].second;
+        std::cout << ")\n";
+      } 
+
+      std::cout <<"\n";
+      
+      for (index_t i = 0; i < sorted_lower_.size(); i++) {
+        std::cout << "sorted_lower[" << i << "]: (";
+        std::cout << sorted_lower_[i].first << ", " << sorted_lower_[i].second;
+        std::cout << ")\n";
+      } 
+       */
+      
       //printf("Sorted\n");
       
       input_to_upper_.resize(sorted_upper_.size());
@@ -142,6 +158,18 @@ namespace npt {
         input_to_lower_[sorted_lower_[i].second] = i;
         
       } // loop over pairwise distances
+      
+      /*
+      std::cout << "\n";
+      for (index_t i = 0; i < input_to_upper_.size(); i++) {
+        std::cout << "input_to_upper[" << i << "]: " << input_to_upper_[i] << "\n";
+      }
+      
+      std::cout << "\n";
+      for (index_t i = 0; i < input_to_lower_.size(); i++) {
+        std::cout << "input_to_lower[" << i << "]: " << input_to_lower_[i] << "\n";
+      }
+       */
 
       //printf("Finished\n");
       
@@ -150,7 +178,8 @@ namespace npt {
     // use this constructor to make children in the recursion
     NodeTuple(NodeTuple& parent, bool is_left) : node_list_(parent.get_node_list()),
     ranges_(parent.ranges()), sorted_upper_(parent.sorted_upper()), 
-    sorted_lower_(parent.sorted_lower())
+    sorted_lower_(parent.sorted_lower()), input_to_upper_(parent.input_to_upper()),
+    input_to_lower_(parent.input_to_upper())
     {
       
       ind_to_split_ = parent.ind_to_split();
@@ -189,6 +218,14 @@ namespace npt {
     }
     const std::vector<std::pair<double, index_t> > sorted_lower() const {
       return sorted_lower_;
+    }
+    
+    const std::vector<index_t>& input_to_upper() const {
+      return input_to_upper_;
+    }
+
+    const std::vector<index_t>& input_to_lower() const {
+      return input_to_lower_;
     }
     
     const std::vector<DRange>& ranges() const {
