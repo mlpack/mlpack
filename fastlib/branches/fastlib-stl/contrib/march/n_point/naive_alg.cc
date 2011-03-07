@@ -21,7 +21,7 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
     for (index_t i = 0; i < num_points_; i++) {
     
       points_in_tuple[0] = i;
-      ComputeCountsHelper_(permutation_ok, points_in_tuple, k+1);
+      ComputeCountsHelper_(permutation_ok_copy, points_in_tuple, k+1);
       
     } // for i
   
@@ -39,6 +39,13 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
       
       // TODO: does this leak memory?
       permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
+      
+      /*
+      if (points_in_tuple[0] == 0 && 
+          new_point == 12) {
+        std::cout << "found it\n";
+      }
+       */
       
       // loop over points already in the tuple
       for (index_t j = 0; this_point_works && j < k; j++) {
@@ -64,7 +71,13 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
         if (k == tuple_size_ - 1) {
           
           //std::cout << "valid tuple found\n";
-          
+          /*
+          for (int tuple_ind = 0; tuple_ind < tuple_size_; tuple_ind++) {
+            std::cout << "points_in_tuple[" << tuple_ind << "] = ";
+            std::cout << points_in_tuple[tuple_ind] << ", ";
+          }
+          std::cout << "\n";
+          */
           num_tuples_++;
           double this_weight = 1.0;
           

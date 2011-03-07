@@ -49,7 +49,8 @@ bool npt::PermFreeMatcher::TestPointPair(double dist_sq, index_t tuple_index_1,
     index_t template_index_2 = GetPermutationIndex_(i, tuple_index_2);
     
     
-    if (dist_sq <= upper_bounds_sq_mat_(template_index_1, template_index_2)) {
+    if (dist_sq <= upper_bounds_sq_mat_(template_index_1, template_index_2) &&
+        dist_sq >= lower_bounds_sq_mat_(template_index_1, template_index_2)) {
       any_matches = true;
     } // this placement works
     else {
