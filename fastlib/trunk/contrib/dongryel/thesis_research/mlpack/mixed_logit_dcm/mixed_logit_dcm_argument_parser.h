@@ -213,8 +213,6 @@ class MixedLogitDCMArgumentParser {
       arguments_out->hessian_update_method_ =
         vm["hessian_update_method"].as<std::string>();
 
-      // The number of parameters that generate each $\beta$ is fixed now
-      // as the Gaussian example in Appendix.
       // arguments_out->distribution_ = ;
     }
 

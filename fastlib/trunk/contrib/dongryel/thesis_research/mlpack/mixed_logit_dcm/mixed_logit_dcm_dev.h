@@ -9,6 +9,7 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DEV_H
 
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm.h"
+#include "core/optimization/quasi_newton_hessian_update.h"
 #include "core/optimization/trust_region_dev.h"
 
 namespace mlpack {
@@ -496,7 +497,10 @@ void MixedLogitDCM<TableType>::Compute(
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
-      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+      if(arguments_in.hessian_update_method_ == "exact") {
+        iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+      }
 
       // Delete the discarded iterate.
       delete next_iterate;
@@ -515,7 +519,14 @@ void MixedLogitDCM<TableType>::Compute(
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
-      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+
+      if(arguments_in.hessian_update_method_ == "exact") {
+        iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+      }
+      else if(arguments_in.hessian_update_method_ == "bfgs") {
+      }
+      else {
+      }
 
       // Delete the discarded iterate.
       delete next_iterate;
@@ -536,13 +547,32 @@ void MixedLogitDCM<TableType>::Compute(
     const double eta = 0.05;
     if(model_reduction_ratio > eta) {
 
+      // Compute the new gradient.
+      arma::vec new_gradient;
+      next_iterate->NegativeSimulatedLogLikelihoodGradient(&new_gradient);
+      arma::mat new_hessian;
+      if(arguments_in.hessian_update_method_ == "bfgs") {
+        core::optimization::QuasiNewtonHessianUpdate::BFGSUpdate(
+          hessian, iterate->parameters(), next_iterate->parameters(),
+          gradient, new_gradient, &new_hessian);
+        hessian = new_hessian;
+      }
+      else if(arguments_in.hessian_update_method_ == "sr1") {
+        core::optimization::QuasiNewtonHessianUpdate::SymmetricRank1Update(
+          hessian, iterate->parameters(), next_iterate->parameters(),
+          gradient, new_gradient, &new_hessian);
+        hessian = new_hessian;
+      }
+
       // Accept the next iterate.
       delete iterate;
       iterate = next_iterate;
 
       // Update the gradient and the hessian.
-      iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
-      iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+      gradient = new_gradient;
+      if(arguments_in.hessian_update_method_ == "exact") {
+        iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
+      }
     }
     else {
 

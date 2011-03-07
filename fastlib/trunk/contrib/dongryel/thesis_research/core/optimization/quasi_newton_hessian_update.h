@@ -28,7 +28,7 @@ class QuasiNewtonHessianUpdate {
       // Compute the temporaries.
       double first_factor =
         1.0 / arma::dot(gradient_difference, iterate_difference);
-      arma::tmp_vector = current_hessian * iterate_difference;
+      arma::vec tmp_vector = current_hessian * iterate_difference;
       double second_factor = 1.0 / arma::dot(iterate_difference, tmp_vector);
 
       // Update the Hessian.
