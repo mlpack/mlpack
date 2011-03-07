@@ -97,11 +97,13 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           outer_simulated_choice_probability_gradient,
           inner_simulated_choice_probability_gradient);
       delta_hik[0] = first_factor * dot_product;
-      delta_hik.submat(1, table_.num_parameters(), 0, 0) =
-        second_factor * outer_simulated_choice_probability_gradient;
+      delta_hik.submat(
+        arma::span(1, table_.num_parameters()), arma::span(0, 0)) =
+          second_factor * outer_simulated_choice_probability_gradient;
       delta_hik[table_.num_parameters() + 1] = third_factor * dot_product;
       delta_hik.submat(
-        table_.num_parameters() + 2, delta_hik.n_elem - 1, 0, 0) =
+        arma::span(table_.num_parameters() + 2, delta_hik.n_elem - 1),
+        arma::span(0, 0)) =
           second_factor * inner_simulated_choice_probability_gradient;
 
       // Loop through each integration sample.
@@ -190,7 +192,7 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
                    arma::dot(
                      simulated_choice_probability_gradient,
                      simulated_choice_probability_gradient);
-    delta_hii.submat(1, delta_hii.n_elem - 1, 0, 0) =
+    delta_hii.submat(arma::span(1, delta_hii.n_elem - 1), arma::span(0, 0)) =
       2.0 / core::math::Sqr(simulated_choice_probability) *
       simulated_choice_probability_gradient;
 
