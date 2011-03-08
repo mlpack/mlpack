@@ -78,6 +78,10 @@ class TestMixedLogitDCM {
           mlpack::mixed_logit_dcm::num_people_ = core::math::RandInt(50, 101);
           mlpack::mixed_logit_dcm::num_discrete_choices_.resize(
             mlpack::mixed_logit_dcm::num_people_);
+          for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
+            mlpack::mixed_logit_dcm::num_discrete_choices_[j] =
+              core::math::RandInt(3, 7);
+          }
 
           switch(k) {
             case 0:
