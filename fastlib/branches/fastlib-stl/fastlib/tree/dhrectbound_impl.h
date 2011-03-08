@@ -232,20 +232,24 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
  */
 template<int t_pow>
 double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
-  double sum = 0;
-  index_t mdim = dim_;
-
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  for (index_t d = 0; d < mdim; d++) {
-    double v1 = other.bounds_[d].lo - bounds_[d].hi;
-    double v2 = bounds_[d].lo - other.bounds_[d].hi;
+  double sum = 0;
+  const DRange* mbound = bounds_;
+  const DRange* obound = other.bounds_;
+
+  double lower, higher;
+  for (index_t d = 0; d < dim_; d++) {
+    lower = obound->lo - mbound->hi;
+    higher = mbound->lo - obound->hi;
     // We invoke the following:
     //   x + fabs(x) = max(x * 2, 0)
     //   (x * 2)^2 / 4 = x^2
-    double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
+    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
 
-    sum += pow(v, (double) t_pow);
+    // move bound pointers
+    mbound++;
+    obound++;
   }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
