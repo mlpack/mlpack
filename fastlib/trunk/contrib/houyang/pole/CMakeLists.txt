@@ -8,7 +8,7 @@ FIND_PACKAGE (Boost COMPONENTS program_options thread REQUIRED)
 #link_directories(/scratch/app/boost/lib)
 #include_directories(/scratch/app/boost/include)
 
-add_definitions( -pthread -Wall -O2 )
+add_definitions( -pthread -Wall -O2 -export)
 add_executable(pole_pt pole_pt.cc pole.cc data.cc sparsela.cc learner.cc weak_learner.cc loss.cc kernel.cc log.cc opt_ogd.cc opt_oeg.cc opt_wm.cc)
 
 target_link_libraries(pole_pt 

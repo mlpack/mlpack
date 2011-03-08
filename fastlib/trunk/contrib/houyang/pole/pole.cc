@@ -16,60 +16,86 @@ Pole::~Pole(void) {
     delete L_;
 }
   
-////////////////////////
-// Parse input arguments
-///////////////////////
+////////////////////////////////////////////////////////
+// Parse input arguments using boost's program_options
+////////////////////////////////////////////////////////
 void Pole::ParseArgs(int argc, char *argv[]) {
+  namespace po = boost::program_options;
+
   // determine optimization method first
-  string opt_opt = "";
   if (argc > 1) {
+    m_["method"] = "null";
+    m_["kernel"] = "null";
     for (int i=1; i<argc; i++) {
-      if (opt_opt.assign(argv[i]) == "-m") {
+      if (string(argv[i]) == "-m" || string(argv[i]) == "--method") {
 	if (i < argc-1) {
-	  opt_name_.assign(argv[i+1]);
+          m_["method"] = string(argv[i+1]);
 	}
 	else {
-	  opt_opt = "";
+          m_["method"] = "";
 	}
-	break;
       }
-      else if (opt_opt.assign(argv[i]) == "-h" || opt_opt.assign(argv[i]) == "--help") {
+      else if (string(argv[i]) == "-k" || string(argv[i]) == "--kernel") {
+	if (i < argc-1) {
+          m_["kernel"] = string(argv[i+1]);
+	}
+	else {
+          m_["kernel"] = "";
+	}
+      }
+      else if (string(argv[i]) == "-h" || string(argv[i]) == "--help") {
+        m_["method"] = "help";
 	break;
       }
     }
-    if (opt_opt == "-m") {
-      if (opt_name_ == "ogd")
-	L_ = new OGD;
-      else if (opt_name_ == "oeg")
-	L_ = new OEG;
-      else if (opt_name_ == "dwm_i" || opt_name_ ==  "dwm_a")
-	L_ = new WM;
+
+    if (m_["method"] == "null") {
+      cout << "ERROR! Optimization method needs to be specified!" << endl;
+      exit(1);
+    }
+    else if (m_["method"] == "ogd") {
+      L_ = new OGD;
+    }
+    else if (m_["method"] == "ogdk") {
+      if (m_["kernel"] == "null") {
+        cout << "ERROR! Kernel type needs to be specified for OGDK!" << endl;
+        exit(1);
+      }
+      else if (m_["kernel"] == "linear") {
+        L_ = new OGDK<LinearKernel>;
+      }
+      else if (m_["kernel"] == "gaussian") {
+        L_ = new OGDK<RBFKernel>;
+      }
       else {
-	cout << "ERROR! Optimization method needs to be (ogd, oeg, dwm_i, or dwm_a)!" << endl;
-	exit(1);
+        cout << "ERROR! Kernel type needs to be [lienar, gaussian]" << endl;
+        exit(1);
       }
-      L_->opt_name_ = opt_name_;
     }
-    else if (opt_opt == "-h" || opt_opt == "--help") {
+    else if (m_["method"] == "oeg") {
+      L_ = new OEG;
+    }
+    else if (m_["method"] == "dwm_i" || m_["method"] == "dwm_a") {
+      L_ = new WM;
+    }
+    else if (m_["method"] == "help") {
       L_ = new Learner;
     }
     else {
-      cout << "ERROR! Optimization method needs to be specified!" << endl;
+      cout << "ERROR! Optimization method needs to be [ogd, ogdk, oeg, dwm_i, or dwm_a]!" << endl;
       exit(1);
     }
   }
   else {
     L_ = new Learner;
   }
- 
-  // Use boost's program_options
-  namespace po = boost::program_options;
+
   po::options_description desc("POLE (Parallel Online Learning Experiments) options");
-  // Declare supported options.
+  // Declare supported options
   desc.add_options()
     ("help,h","Produce help message")
-    (",m", po::value<string>()->default_value(""), 
-     "Optimization method (ogd, oeg, dwm_i, or dwm_a).")
+    ("method,m", po::value<string>(&L_->opt_name_)->default_value(""), 
+     "Optimization method [ogd, ogdk, oeg, dwm_i, or dwm_a].")
     ("batch", po::value<bool>(&batch_)->default_value(false),
      "Online leaing or Batch learning. Default: Online.")
     ("threads", po::value<size_t>(&L_->n_thread_)->default_value(1), 
@@ -98,8 +124,12 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Number of experts. Default: 0.")
     ("weak_learner", po::value<string>(&L_->wl_name_)->default_value("stump"), 
      "Name of weak learner. Default: decision stump.")
-    ("alpha,a", po::value<double>(&L_->alpha_)->default_value(0.5), 
+    ("alpha", po::value<double>(&L_->alpha_)->default_value(0.5), 
      "Multiplication factor in Weighte Majority. Default: 0.5.")
+    ("kernel,k", po::value<string>(&L_->kernel_name_)->default_value("linear"), 
+     "Kernel (linear, rbf). Default: linear kernel.")
+    ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
+     "Sigma in Gaussian RBF kernel. Default: 1.0.")
     ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
      "How agents communicate with each other. Default: 1(full connected).")
     ("mini_batch,b", po::value<size_t>(&L_->mb_size_)->default_value(1), 

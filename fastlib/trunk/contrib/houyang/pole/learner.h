@@ -8,7 +8,6 @@
 
 #include "data.h"
 #include "loss.h"
-#include "kernel.h"
 #include "log.h"
 
 typedef vector<size_t> Vec_d;
@@ -60,6 +59,8 @@ class Learner {
   size_t n_expert_; // number of experts
   string wl_name_; // name of weak learner
   double alpha_; // Multiplication factor in Weighte Majority
+  string kernel_name_; // name of kernel
+  double sigma_; // sigma in Gaussian RBF kernel
   int    comm_method_; // How agents communicate with each other
  private:
   pthread_mutex_t mutex_ex_;
