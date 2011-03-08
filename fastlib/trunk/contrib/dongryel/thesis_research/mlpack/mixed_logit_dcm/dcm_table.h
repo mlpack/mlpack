@@ -227,7 +227,7 @@ class DCMTable {
       arma::vec last_count_vector;
       argument_in.discrete_choice_set_info_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
-      int last_count = static_cast<int>(last_count_vector[0]);
+      int last_count = static_cast<int>(last_count_vector[1]);
       if(cumulative_num_discrete_choices_[
             cumulative_num_discrete_choices_.size() - 1] +
           last_count != argument_in.attribute_table_->n_entries()) {
