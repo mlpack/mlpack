@@ -233,7 +233,6 @@ void AllkFN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
 
   // Used to find the query node's new upper bound
   double query_min_neighbor_distance = DBL_MAX;
-  std::vector<std::pair<double, index_t> > neighbors(kfns_);
 
   // node->begin() is the index of the first point in the node, 
   // node->end is one past the last index
@@ -244,10 +243,6 @@ void AllkFN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
     arma::vec query_point = queries_.unsafe_col(query_index);
 
     index_t ind = query_index * kfns_;
-    for(index_t i = 0; i < kfns_; i++) {
-      neighbors[i] = std::make_pair(neighbor_distances_[ind + i],
-          neighbor_indices_[ind + i]);
-    }
 
     double query_to_node_distance =
         reference_node->bound().MaxDistanceSq(query_point);
@@ -264,22 +259,37 @@ void AllkFN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
 
           double distance = la::DistanceSqEuclidean(query_point, reference_point);
 
-          // If the reference point is closer than the current candidate, 
-          // we'll update the candidate
+          // If the reference point is further than any of the current
+          // candidates, add it to the list.  We will insert it into the right
+          // sorted place in the list.  We must remember that our list is the
+          // subset [ind, ind + kfns_ - 1] of the neighbor_distances_ arma::vec.
           if (distance > neighbor_distances_[ind + kfns_ - 1]) {
-            neighbors.push_back(std::make_pair(distance, reference_index));
+            // The direction we have chosen to search in (largest to smallest)
+            // may not be optimal but intuitively it seems the best choice.
+            for (index_t i = ind; i < ind + kfns_; i++) {
+              if (distance >= neighbor_distances_[i]) {
+                // We will use memmove() to shift all the distances and indices
+                // to one place higher than they are now.
+                int len = (ind + kfns_) - i - 1;
+                if (len > 0) { // No need to shift anything if at last index.
+                  memmove(neighbor_distances_.memptr() + (i + 1),
+                      neighbor_distances_.memptr() + i,
+                      sizeof(double) * len);
+                  memmove(neighbor_indices_.memptr() + (i + 1),
+                      neighbor_indices_.memptr() + i,
+                      sizeof(index_t) * len);
+                }
+
+                // Now put the new information in the right index.
+                neighbor_distances_[i] = distance;
+                neighbor_indices_[i] = reference_index;
+
+                break;
+              }
+            }
           }
         }
       } // for reference_index
-
-      std::sort(neighbors.begin(), neighbors.end(),
-          std::greater<std::pair<double, index_t> >());
-
-      for(index_t i = 0; i < kfns_; i++) {
-        neighbor_distances_[ind + i] = neighbors[i].first;
-        neighbor_indices_[ind + i]  = neighbors[i].second;
-      }
-      neighbors.resize(kfns_);
     }
 
     // We need to find the lower bound distance for this query node
