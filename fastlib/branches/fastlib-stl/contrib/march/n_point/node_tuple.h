@@ -32,6 +32,7 @@ namespace npt {
     // distance ranges in the ordering given by the tuple - unsorted
     std::vector<DRange> ranges_;
     
+    // sorted upper and lower node distances
     std::vector<std::pair<double, index_t> > sorted_upper_;
     std::vector<std::pair<double, index_t> > sorted_lower_;
     
