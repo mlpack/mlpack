@@ -30,8 +30,7 @@ class DCMTable {
 
     typedef DCMTable<TableType> DCMTableType;
 
-    typedef mlpack::mixed_logit_dcm::Distribution <
-    DCMTableType > DistributionType;
+    typedef mlpack::mixed_logit_dcm::Distribution DistributionType;
 
   private:
 

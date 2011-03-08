@@ -17,9 +17,8 @@ namespace mixed_logit_dcm {
 /** @brief The constant distribution which can be used for mixed logit
  *         discrete choice model.
  */
-template<typename DCMTableType>
 class ConstantDistribution:
-  public virtual Distribution<DCMTableType> {
+  public virtual Distribution {
 
   private:
 
@@ -35,7 +34,8 @@ class ConstantDistribution:
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
      */
     double AttributeGradientWithRespectToParameter(
-      const arma::vec &parameters, int row_index, int col_index) const {
+      const arma::vec &parameters, const arma::vec &beta_vector,
+      int row_index, int col_index) const {
 
       // Since it is a constant distribution, the gradient is always
       // 1 for any (row, col) entry.

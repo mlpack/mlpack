@@ -10,6 +10,8 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_ARGUMENT_PARSER_H
 
 #include <boost/program_options.hpp>
+#include "mlpack/mixed_logit_dcm/constant_distribution.h"
+#include "mlpack/mixed_logit_dcm/gaussian_distribution.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_arguments.h"
 
 namespace mlpack {
@@ -31,6 +33,11 @@ class MixedLogitDCMArgumentParser {
         "attributes_in",
         boost::program_options::value<std::string>(),
         "REQUIRED file containing the vector of attributes."
+      )(
+        "distribution_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL The distribution each attribute is drawn from. One of: "
+        "  constant, gaussian"
       )(
         "gradient_norm_threshold",
         boost::program_options::value<double>()->default_value(0.5),
@@ -213,7 +220,15 @@ class MixedLogitDCMArgumentParser {
       arguments_out->hessian_update_method_ =
         vm["hessian_update_method"].as<std::string>();
 
-      // arguments_out->distribution_ = ;
+      // Parse the distribution type.
+      if(vm["distribution_in"].as<std::string>() == "constant") {
+        arguments_out->distribution_ =
+          new mlpack::mixed_logit_dcm::ConstantDistribution();
+      }
+      else {
+        arguments_out->distribution_ =
+          new mlpack::mixed_logit_dcm::GaussianDistribution();
+      }
     }
 
     template<typename TableType>

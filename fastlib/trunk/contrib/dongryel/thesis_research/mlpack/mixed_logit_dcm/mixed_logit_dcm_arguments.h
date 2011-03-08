@@ -45,7 +45,7 @@ class MixedLogitDCMArguments {
      *         $\beta$ attribute vector. This could be a Gaussian
      *         distribution for instance.
      */
-    mlpack::mixed_logit_dcm::Distribution<DCMTableType> *distribution_;
+    mlpack::mixed_logit_dcm::Distribution *distribution_;
 
     /** @brief The initial dataset sample rate (for the outer term in
      *         the sum).
