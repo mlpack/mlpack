@@ -1,17 +1,13 @@
 /**
  * @file allknn.h
  *
- * Defines AllNN class to perform all-nearest-neighbors on two specified 
+ * Defines the AllkNN class to perform all-k-nearest-neighbors on two specified
  * data sets.
  */
 
-// inclusion guards, please add them to your .h files
 #ifndef ALLKNN_H
 #define ALLKNN_H
 
-// We need to include fastlib.  If you want to use fastlib, 
-// you need to have this line in addition to
-// the deplibs section of your build.py
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <string>
@@ -107,11 +103,9 @@ class AllkNN {
   bool naive_;
   bool dual_mode_;
  
- public: 
   // The total number of prunes.
   index_t number_of_prunes_;
 
- private:
   // The number of points in a leaf
   index_t leaf_size_;
 
