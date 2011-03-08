@@ -53,7 +53,6 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
-  // Instead of NULL, it is possible to specify an array new_from_old_
   if (dual_mode_)
     query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_, 
         old_from_new_queries_);
@@ -144,6 +143,9 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   // Initialize the vector of upper bounds for each point.  
   neighbor_distances_.set_size(queries_.n_cols * knns_);
   neighbor_distances_.fill(DBL_MAX);
+  
+  // We'll time tree building
+  fx_timer_start(module_, "tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -158,6 +160,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
       leaf_size_, old_from_new_references_);
 
+  // Stop the timer we started above
+  fx_timer_stop(module_, "tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -188,16 +192,23 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
   neighbor_distances_.set_size(references_.n_cols * knns_);
   neighbor_distances_.fill(DBL_MAX);
 
+  // We'll time tree building
+  fx_timer_start(module_, "tree_building");
+
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
   // Instead of NULL, it is possible to specify an array new_from_old_
   query_tree_ = NULL;
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_, 
       leaf_size_, old_from_new_references_);
+  
+  // Stop the timer we started above
+  fx_timer_stop(module_, "tree_building");
 }
   
 /**
- * The tree is the only member we are responsible for deleting.  The others will take care of themselves.  
+ * The tree is the only member we are responsible for deleting.  The others will
+ * take care of themselves.  
  */
 AllkNN::~AllkNN() {
   if (reference_tree_ != query_tree_)
@@ -225,7 +236,6 @@ double AllkNN::MinPointNodeDistSq_(const arma::vec& query_point,
   // It has a function MinDistanceSq which takes another DHrectBound
   return reference_node->bound().MinDistanceSq(query_point);
 } 
-  
   
 /**
  * Performs exhaustive computation between two leaves.  
@@ -366,7 +376,7 @@ void AllkNN::ComputeDualNeighborsRecursion_(TreeType* query_node,
     // the children
     query_node->stat().set_max_distance_so_far(
         max(query_node->left()->stat().max_distance_so_far(),
-          query_node->right()->stat().max_distance_so_far()));
+            query_node->right()->stat().max_distance_so_far()));
     return;
   }
 
@@ -391,8 +401,7 @@ void AllkNN::ComputeDualNeighborsRecursion_(TreeType* query_node,
   }
 
   left_distance = MinNodeDistSq_(query_node->right(), reference_node->left());
-  right_distance = MinNodeDistSq_(query_node->right(), 
-      reference_node->right());
+  right_distance = MinNodeDistSq_(query_node->right(), reference_node->right());
 
   // Now recurse on query_node->right().
   if (left_distance < right_distance) {
@@ -410,11 +419,12 @@ void AllkNN::ComputeDualNeighborsRecursion_(TreeType* query_node,
   // Update the upper bound as above
   query_node->stat().set_max_distance_so_far(
       max(query_node->left()->stat().max_distance_so_far(),
-        query_node->right()->stat().max_distance_so_far()));
+          query_node->right()->stat().max_distance_so_far()));
 } // ComputeDualNeighborsRecursion_
 
 
-void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point,
+void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
+                                              arma::vec& point,
                                               TreeType* reference_node,
                                               double* min_dist_so_far) {
   
@@ -422,7 +432,7 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point
     // Base case: reference node is a leaf
     std::vector<std::pair<double, index_t> > neighbors(knns_);
     index_t ind = point_id * knns_;
-    for(index_t i = 0; i < knns_; i++) {
+    for (index_t i = 0; i < knns_; i++) {
       neighbors[i] = std::make_pair(neighbor_distances_[ind + i],
           neighbor_indices_[ind + i]);
     }
@@ -435,8 +445,8 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point
             reference_index == point_id)) {
         arma::vec reference_point = references_.unsafe_col(reference_index);
 
-        // We'll use lapack to find the distance between the two vectors
         double distance = la::DistanceSqEuclidean(point, reference_point);
+
         // If the reference point is closer than the current candidate, 
         // we'll update the candidate
         if (distance < neighbor_distances_[ind + knns_ - 1]) {
@@ -453,46 +463,46 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point
   } else {
     // We'll order the computation by distance 
     double left_distance = reference_node->left()->bound().MinDistanceSq(point);
-    double right_distance = reference_node->right()->bound().MinDistanceSq(point);
+    double right_distance =
+        reference_node->right()->bound().MinDistanceSq(point);
       
     if (left_distance < right_distance) {
       if (*min_dist_so_far < left_distance) {
         number_of_prunes_++;
       } else {
-        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
-            min_dist_so_far);
+        ComputeSingleNeighborsRecursion_(point_id, point,
+            reference_node->left(), min_dist_so_far);
       } 
 
       if (*min_dist_so_far < right_distance) {
         number_of_prunes_++;
       } else {
-        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->right(), 
-            min_dist_so_far);
+        ComputeSingleNeighborsRecursion_(point_id, point,
+            reference_node->right(), min_dist_so_far);
       }
     } else {
       if (*min_dist_so_far < right_distance) {
         number_of_prunes_++;
       } else {
-        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->right(), 
-            min_dist_so_far);
+        ComputeSingleNeighborsRecursion_(point_id, point,
+            reference_node->right(), min_dist_so_far);
       }
 
       if (*min_dist_so_far < left_distance) {
         number_of_prunes_++;
       } else {
-        ComputeSingleNeighborsRecursion_(point_id, point, reference_node->left(), 
-            min_dist_so_far);
+        ComputeSingleNeighborsRecursion_(point_id, point,
+            reference_node->left(), min_dist_so_far);
       }
     }
   }    
 }
-////////////////////////////////// Public Functions ////////////////////////////////////////////////
 
 /**
  * Computes the nearest neighbors and stores them in *results
  */
 void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
-    arma::vec& distances) {
+                              arma::vec& distances) {
   fx_timer_start(module_, "computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
@@ -500,7 +510,6 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
       ComputeBaseCase_(query_tree_, reference_tree_);
     else
       ComputeBaseCase_(reference_tree_, reference_tree_);
-
   } else {
     if (dual_mode_) {
       // Start on the root of each tree
@@ -518,14 +527,16 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
         for(index_t j = 0; j < chunk; j++) {
           arma::vec point = queries_.unsafe_col(i * chunk + j);
           double min_dist_so_far = DBL_MAX;
-          ComputeSingleNeighborsRecursion_(i * chunk + j, point, reference_tree_, &min_dist_so_far);
+          ComputeSingleNeighborsRecursion_(i * chunk + j, point,
+              reference_tree_, &min_dist_so_far);
         }
       }
       for(index_t i = 0; i < queries_.n_cols % 10; i++) {
         index_t ind = (queries_.n_cols / 10) * 10 + i;
         arma::vec point = queries_.unsafe_col(ind);
         double min_dist_so_far = DBL_MAX;
-        ComputeSingleNeighborsRecursion_(i, point, reference_tree_, &min_dist_so_far);
+        ComputeSingleNeighborsRecursion_(i, point, reference_tree_,
+            &min_dist_so_far);
       }
     }
   }
@@ -536,8 +547,7 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
   resulting_neighbors.set_size(neighbor_indices_.n_elem);
   distances.set_size(neighbor_distances_.n_elem);
 
-  // We need to map the indices back from how they have 
-  // been permuted
+  // We need to map the indices back from how they have been permuted
   if (query_tree_ != NULL) {
     for (index_t i = 0; i < neighbor_indices_.n_elem; i++) {
       resulting_neighbors[
