@@ -42,7 +42,7 @@ class AllkNN {
     
    private:
     /**
-    * The upper bound on the node's nearest neighbor distances.
+     * The upper bound on the node's nearest neighbor distances.
      */
     double max_distance_so_far_;
     
