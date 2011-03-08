@@ -222,12 +222,21 @@ class MixedLogitDCMArgumentParser {
 
       // Parse the distribution type.
       if(vm["distribution_in"].as<std::string>() == "constant") {
+
+        // Use the constant distribution. This is equivalent to the
+        // multinomial logit case.
         arguments_out->distribution_ =
           new mlpack::mixed_logit_dcm::ConstantDistribution();
+        arguments_out->distribution_->Init(
+          arguments_out->attribute_table_->n_attributes());
       }
       else {
+
+        // Use the Gaussian distribution.
         arguments_out->distribution_ =
           new mlpack::mixed_logit_dcm::GaussianDistribution();
+        arguments_out->distribution_->Init(
+          arguments_out->attribute_table_->n_attributes());
       }
     }
 

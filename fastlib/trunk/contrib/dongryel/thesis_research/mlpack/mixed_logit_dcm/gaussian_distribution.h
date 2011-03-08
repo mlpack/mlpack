@@ -132,9 +132,9 @@ class GaussianDistribution:
 
     }
 
-    void Init(int num_parameters_in) {
-      num_parameters_ = num_parameters_in;
-      cholesky_factor_dimension_ = (-3 + sqrt(9 + 8 * num_parameters_)) / 2;
+    void Init(int num_attributes_in) {
+      num_parameters_ = num_attributes_in * (num_attributes_in + 3) / 2;
+      cholesky_factor_dimension_ = num_attributes_in;
       num_cholesky_factor_entries_ =
         cholesky_factor_dimension_ * (cholesky_factor_dimension_ + 1) / 2;
       nonzero_column_indices_.resize(num_parameters_);
