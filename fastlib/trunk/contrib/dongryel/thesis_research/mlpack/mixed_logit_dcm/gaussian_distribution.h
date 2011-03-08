@@ -18,9 +18,8 @@ namespace mixed_logit_dcm {
  *         discrete choice model. This Gaussian distribution has the
  *         mean and the associated upper-triangular Cholesky factor.
  */
-template<typename DCMTableType>
 class GaussianDistribution:
-  public virtual Distribution<DCMTableType> {
+  public virtual Distribution {
   private:
 
     /** @brief Stores the number of parameters. This is the number of
@@ -74,10 +73,10 @@ class GaussianDistribution:
         beta_vector.n_elem, false);
       arma::vec right_hand_side = beta_vector - mean_vector;
       const_cast <
-      mlpack::mixed_logit_dcm::GaussianDistribution<DCMTableType> >(
+      mlpack::mixed_logit_dcm::GaussianDistribution * >(
         this)->cached_solution_ =
           arma::solve(
-            arma::trimatu(cholesky_factor), right_hand_side);
+            cholesky_factor, right_hand_side);
     }
 
   public:
@@ -85,15 +84,8 @@ class GaussianDistribution:
     /** @brief The default constructor.
      */
     GaussianDistribution() {
-      num_parameters_ = 0;
       cholesky_factor_dimension_ = 0;
       num_cholesky_factor_entries_ = 0;
-    }
-
-    /** @brief Returns the number of parameters.
-     */
-    int num_parameters() const {
-      return num_parameters_;
     }
 
     /** @brief Returns the (row, col)-th entry of

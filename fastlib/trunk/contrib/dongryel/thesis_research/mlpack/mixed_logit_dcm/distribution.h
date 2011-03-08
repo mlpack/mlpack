@@ -20,8 +20,10 @@ namespace mixed_logit_dcm {
  *         each $\beta$ in mixed logit models. This distribution is
  *         parametrized by $\theta$.
  */
-template<typename DCMTableType>
 class Distribution {
+  private:
+    int num_parameters_;
+
   private:
 
     virtual void AttributeGradientWithRespectToParameterPrecompute_(
@@ -29,9 +31,15 @@ class Distribution {
 
   public:
 
+    Distribution() {
+      num_parameters_ = 0;
+    }
+
     /** @brief Returns the number of parameters.
      */
-    virtual int num_parameters() const = 0;
+    int num_parameters() const {
+      return num_parameters_;
+    }
 
     /** @brief Returns the (row, col)-th entry of
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
@@ -79,6 +87,7 @@ class Distribution {
      *         the set of attribute vectors for a given person, where
      *         each vector is weighted by its choice probability.
      */
+    template<typename DCMTableType>
     void ChoiceProbabilityWeightedAttributeVector(
       const DCMTableType &dcm_table_in, int person_index,
       const arma::vec &choice_probabilities,
@@ -98,6 +107,7 @@ class Distribution {
      *         $\frac{\partial^2}{\partial \beta^2} L_{i j_i^*} (
      *         \beta^{\nu}(\theta))$ (Equation 8.5)
      */
+    template<typename DCMTableType>
     double ChoiceProbabilityHessianWithRespectToAttribute(
       const DCMTableType &dcm_table_in, int person_index,
       int row_index, int col_index,
@@ -144,6 +154,7 @@ class Distribution {
       return choice_probability * (first_part + second_part - third_part);
     }
 
+    template<typename DCMTableType>
     void ChoiceProbabilityHessianWithRespectToAttribute(
       const DCMTableType &dcm_table_in, int person_index,
       const arma::vec &choice_probabilities,
@@ -167,6 +178,7 @@ class Distribution {
      *         dcm_table.h) for a realization of $\beta$ for a given
      *         person.
      */
+    template<typename DCMTableType>
     void HessianProducts(
       const arma::vec &parameters_in,
       const DCMTableType &dcm_table_in, int person_index,
@@ -202,6 +214,7 @@ class Distribution {
     /** @brief Computes $\frac{\partial}{\partial \beta}
      *         L_{i,j}(\beta)$ (Equation 8.2).
      */
+    template<typename DCMTableType>
     void ChoiceProbabilityGradientWithRespectToAttribute(
       const DCMTableType &dcm_table_in, int person_index,
       const arma::vec &choice_probabilities,
@@ -229,6 +242,7 @@ class Distribution {
      *         notation for a fixed value of $\beta$ with respect to
      *         $\theta$ for a given person.
      */
+    template<typename DCMTableType>
     void ChoiceProbabilityGradientWithRespectToParameter(
       const arma::vec &parameters_in,
       const DCMTableType &dcm_table_in,
