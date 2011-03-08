@@ -21,8 +21,8 @@ namespace mixed_logit_dcm {
  *         mixed logit discrete choice model.
  */
 class MixedLogitDCMArgumentParser {
-  private:
-    static bool ConstructBoostVariableMap_(
+  public:
+    static bool ConstructBoostVariableMap(
       const std::vector<std::string> &args,
       boost::program_options::variables_map *vm) {
 
@@ -35,7 +35,7 @@ class MixedLogitDCMArgumentParser {
         "REQUIRED file containing the vector of attributes."
       )(
         "distribution_in",
-        boost::program_options::value<std::string>(),
+        boost::program_options::value<std::string>()->default_value("constant"),
         "OPTIONAL The distribution each attribute is drawn from. One of: "
         "  constant, gaussian"
       )(
@@ -142,8 +142,6 @@ class MixedLogitDCMArgumentParser {
       return false;
     }
 
-  public:
-
     template<typename TableType>
     static void ParseArguments(
       const std::vector<std::string> &args,
@@ -152,9 +150,18 @@ class MixedLogitDCMArgumentParser {
 
       // Construct the Boost variable map.
       boost::program_options::variables_map vm;
-      if(ConstructBoostVariableMap_(args, &vm)) {
+      if(ConstructBoostVariableMap(args, &vm)) {
         exit(0);
       }
+
+      ParseArguments(vm, arguments_out);
+    }
+
+    template<typename TableType>
+    static void ParseArguments(
+      boost::program_options::variables_map vm,
+      mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
+      TableType > *arguments_out) {
 
       // Given the constructed boost variable map, parse each argument.
 

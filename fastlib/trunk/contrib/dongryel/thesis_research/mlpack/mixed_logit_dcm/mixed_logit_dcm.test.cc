@@ -13,6 +13,7 @@
 #include <time.h>
 #include "core/table/table.h"
 #include "core/tree/gen_metric_tree.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm_argument_parser.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_dev.h"
 
 namespace mlpack {
@@ -53,8 +54,13 @@ class TestMixedLogitDCM {
       for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
         core::table::DensePoint point;
         random_discrete_choice_set_info_dataset->get(j, &point);
+
+        // This is the discrete choice index of the given person.
         point[0] = core::math::RandInt(
                      mlpack::mixed_logit_dcm::num_discrete_choices_[j]);
+
+        // This is the number of discrete choices for the given
+        // person.
         point[1] = mlpack::mixed_logit_dcm::num_discrete_choices_[j];
       }
     }
@@ -125,6 +131,22 @@ class TestMixedLogitDCM {
         &random_attribute_table, &random_discrete_choice_set_info_table);
       random_attribute_table.Save(attributes_in);
       random_discrete_choice_set_info_table.Save(discrete_choice_set_info_in);
+
+      // Parse the mixed logit DCM arguments.
+      mlpack::mixed_logit_dcm::MixedLogitDCMArguments<TableType> arguments;
+      boost::program_options::variables_map vm;
+      mlpack::mixed_logit_dcm::MixedLogitDCMArgumentParser::
+      ConstructBoostVariableMap(args, &vm);
+      mlpack::mixed_logit_dcm::MixedLogitDCMArgumentParser::ParseArguments(
+        vm, &arguments);
+
+      // Call the mixed logit driver.
+      mlpack::mixed_logit_dcm::MixedLogitDCM<TableType> instance;
+      instance.Init(arguments);
+
+      // Compute the result.
+      mlpack::mixed_logit_dcm::MixedLogitDCMResult result;
+      instance.Compute(arguments, &result);
 
       return 0;
     };
