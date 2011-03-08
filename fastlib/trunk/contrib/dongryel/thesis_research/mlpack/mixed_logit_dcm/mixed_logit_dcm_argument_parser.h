@@ -131,7 +131,7 @@ class MixedLogitDCMArgumentParser {
                   "--trust_region_search_method.\n";
         exit(0);
       }
-      if((*vm)["hessian_update_method"].as<std::string>() != "none" &&
+      if((*vm)["hessian_update_method"].as<std::string>() != "exact" &&
           (*vm)["hessian_update_method"].as<std::string>() != "bfgs" &&
           (*vm)["hessian_update_method"].as<std::string>() != "sr1") {
         std::cerr << "Invalid option specified for " <<
