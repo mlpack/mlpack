@@ -51,8 +51,7 @@ class ConstantDistribution:
     }
 
     void Init(int num_attributes_in) {
-
-      // Does not do anything.
+      num_parameters_ = num_attributes_in;
     }
 };
 }
