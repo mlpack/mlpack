@@ -7,6 +7,8 @@
 
 #include "allkfn.h"
 
+using namespace mlpack::allkfn;
+
 // We call an advanced constructor of arma::mat which allows us to alias a
 // matrix.
 AllkFN::AllkFN(arma::mat& queries_in, arma::mat& references_in,

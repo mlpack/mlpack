@@ -13,7 +13,9 @@
 #include <functional>
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
+
+namespace mlpack {
+namespace allkfn {
 
 /**
  * Forward declaration for the tester class
@@ -198,6 +200,9 @@ class AllkFN {
   void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                         arma::vec& distances);
     
-}; //class AllkFN
+}; // class AllkFN
+
+}; // namespace allkfn
+}; // namespace mlpack
 
 #endif
