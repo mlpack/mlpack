@@ -523,10 +523,6 @@ void MixedLogitDCM<TableType>::Compute(
       if(arguments_in.hessian_update_method_ == "exact") {
         iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
       }
-      else if(arguments_in.hessian_update_method_ == "bfgs") {
-      }
-      else {
-      }
 
       // Delete the discarded iterate.
       delete next_iterate;
