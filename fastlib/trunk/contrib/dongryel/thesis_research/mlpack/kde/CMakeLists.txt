@@ -11,7 +11,7 @@ target_link_libraries(kde
                       ${Boost_LIBRARIES}
                      )
 
-# the test driver for kde
+# the test driver for kde-test
 add_executable(kde-test
                EXCLUDE_FROM_ALL
                kde.test.cc

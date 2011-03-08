@@ -11,3 +11,13 @@ target_link_libraries(mixed_logit_dcm
                       core
                       ${Boost_LIBRARIES}
                      )
+# the test driver for mixed_logit_dcm-test
+add_executable(mixed_logit_dcm-test
+               EXCLUDE_FROM_ALL
+               mixed_logit_dcm.test.cc
+              )
+# link dependencies of mixed_logit_dcm-test
+target_link_libraries(mixed_logit_dcm-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
