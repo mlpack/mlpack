@@ -73,9 +73,10 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The maximum trust region radius used in the trust region "
         "search."
       )(
-        "num_discrete_choices_per_person_in",
+        "discrete_choice_set_info_in",
         boost::program_options::value<std::string>(),
-        "REQUIRED The number of alternatives per each person."
+        "REQUIRED The file containing the discrete choice and the number of "
+        "alternatives per each person."
       )(
         "predictions_out",
         boost::program_options::value<std::string>()->default_value(
@@ -119,8 +120,8 @@ class MixedLogitDCMArgumentParser {
         std::cerr << "Missing required --attributes_in.\n";
         exit(0);
       }
-      if(vm->count("num_discrete_choices_per_person_in") == 0) {
-        std::cerr << "Missing required --num_discrete_choices_per_person_in.\n";
+      if(vm->count("discrete_choice_set_info_in") == 0) {
+        std::cerr << "Missing required --discrete_choice_set_info_in.\n";
         exit(0);
       }
       if((*vm)["trust_region_search_method"].as<std::string>() != "cauchy" &&
@@ -168,11 +169,11 @@ class MixedLogitDCMArgumentParser {
       // Parse the number of discrete choices per each point.
       std::cout <<
                 "Reading in the number of discrete choices per each person: " <<
-                vm["num_discrete_choices_per_person_in"].as<std::string>() <<
+                vm["discrete_choice_set_info_in"].as<std::string>() <<
                 "\n";
-      arguments_out->num_discrete_choices_per_person_ = new TableType();
-      arguments_out->num_discrete_choices_per_person_->Init(
-        vm["num_discrete_choices_per_person_in"].as<std::string>());
+      arguments_out->discrete_choice_set_info_ = new TableType();
+      arguments_out->discrete_choice_set_info_->Init(
+        vm["discrete_choice_set_info_in"].as<std::string>());
 
       // Parse the initial dataset sample rate.
       arguments_out->initial_dataset_sample_rate_ =

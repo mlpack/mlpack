@@ -191,12 +191,12 @@ class DCMTable {
       // Set the incoming attributes table and the number of choices
       // per person in the list.
       attribute_table_ = argument_in.attribute_table_;
-      discrete_choice_set_info_ = argument_in.num_discrete_choices_per_person_;
+      discrete_choice_set_info_ = argument_in.discrete_choice_set_info_;
 
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
       shuffled_indices_for_person_.resize(
-        argument_in.num_discrete_choices_per_person_->n_entries());
+        argument_in.discrete_choice_set_info_->n_entries());
       for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
         shuffled_indices_for_person_[i] = i;
       }
@@ -209,12 +209,12 @@ class DCMTable {
       // index in the attribute table for given (person, discrete
       // choice) pair.
       cumulative_num_discrete_choices_.resize(
-        argument_in.num_discrete_choices_per_person_->n_entries());
+        argument_in.discrete_choice_set_info_->n_entries());
       cumulative_num_discrete_choices_[0] = 0;
       for(unsigned int i = 1; i < cumulative_num_discrete_choices_.size();
           i++) {
         arma::vec point;
-        argument_in.num_discrete_choices_per_person_->get(i - 1, &point);
+        argument_in.discrete_choice_set_info_->get(i - 1, &point);
         int num_choices_for_current_person = static_cast<int>(point[1]);
         cumulative_num_discrete_choices_[i] =
           cumulative_num_discrete_choices_[i - 1] +
@@ -225,7 +225,7 @@ class DCMTable {
       // distribution on the number of choices match up the total
       // number of attribute vectors. Otherwise, quit.
       arma::vec last_count_vector;
-      argument_in.num_discrete_choices_per_person_->get(
+      argument_in.discrete_choice_set_info_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
       int last_count = static_cast<int>(last_count_vector[0]);
       if(cumulative_num_discrete_choices_[

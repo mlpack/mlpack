@@ -39,7 +39,7 @@ class MixedLogitDCMArguments {
 
     /** @brief Stores the number of discrete choices per person.
      */
-    TableType *num_discrete_choices_per_person_;
+    TableType *discrete_choice_set_info_;
 
     /** @brief The pointer to the distribution that generates each
      *         $\beta$ attribute vector. This could be a Gaussian
@@ -94,7 +94,7 @@ class MixedLogitDCMArguments {
      */
     MixedLogitDCMArguments() {
       attribute_table_ = NULL;
-      num_discrete_choices_per_person_ = NULL;
+      discrete_choice_set_info_ = NULL;
       distribution_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
@@ -109,8 +109,8 @@ class MixedLogitDCMArguments {
     ~MixedLogitDCMArguments() {
       delete attribute_table_;
       attribute_table_ = NULL;
-      delete num_discrete_choices_per_person_;
-      num_discrete_choices_per_person_ = NULL;
+      delete discrete_choice_set_info_;
+      discrete_choice_set_info_ = NULL;
       delete distribution_;
       distribution_ = NULL;
     }
