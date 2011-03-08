@@ -15,11 +15,11 @@
  *
  * =====================================================================================
  */
+#include <fastlib/fastlib.h>
+#include "allknn.h"
 
 #include <string>
 #include <errno.h>
-#include "fastlib/fastlib.h"
-#include "allknn.h"
 
 #include <armadillo>
 
@@ -30,6 +30,8 @@ int main(int argc, char *argv[]) {
   std::string result_file = fx_param_str(module, "result_file", "result.txt");
   std::string reference_file = fx_param_str_req(module, "reference_file");
   arma::mat reference_data;
+
+  bool single_mode = (fx_param_int(module, "single_mode", 0) == 1) ? true : false;
 
   arma::Col<index_t> neighbors;
   arma::vec distances;
@@ -43,15 +45,15 @@ int main(int argc, char *argv[]) {
   if (fx_param_exists(module, "query_file")) {
     std::string query_file = fx_param_str_req(module, "query_file");
     arma::mat query_data;
-    if (data::Load(query_file.c_str(), query_data)==SUCCESS_FAIL) {
+    if (data::Load(query_file.c_str(), query_data) == SUCCESS_FAIL) {
       FATAL("Query file %s not found", query_file.c_str());
     }
     NOTIFY("Query data loaded from %s", query_file.c_str());
     NOTIFY("Building query and reference tree"); 
-    allknn = new AllkNN(query_data, reference_data, module);
+    allknn = new AllkNN(query_data, reference_data, module, single_mode ? AllkNN::MODE_SINGLE : 0);
   } else {
     NOTIFY("Building reference tree");
-    allknn = new AllkNN(reference_data, module);
+    allknn = new AllkNN(reference_data, module, single_mode ? AllkNN::MODE_SINGLE : 0);
   }
 
   NOTIFY("Tree(s) built");
@@ -65,7 +67,7 @@ int main(int argc, char *argv[]) {
     FATAL("Error while opening %s...%s", result_file.c_str(),
         strerror(errno));
   }
-  for(index_t i = 0 ; i < neighbors.n_elem / knns ; i++) {
+  for(index_t i = 0; i < neighbors.n_elem / knns; i++) {
     for(index_t j = 0; j < knns; j++) {
       fprintf(fp, "%"LI"d %"LI"d %lg\n", i, neighbors[i * knns + j], distances[i * knns + j]);
     }

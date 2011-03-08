@@ -75,7 +75,7 @@ class AllkNN {
      */
     void Init(const arma::mat& matrix, index_t start, index_t count, 
         const QueryStat& left, const QueryStat& right) {
-      // For allnn, non-leaves can be initialized in the same way as leaves
+      // For allknn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
     } 
     
@@ -86,12 +86,6 @@ class AllkNN {
   // and each node has a QueryStat for its bound.
   typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
 
-  enum {
-    NAIVE = 1,
-    ALIAS_MATRIX = 2,
-    MODE_SINGLE = 4
-  };
-   
   
   /////////////////////////////// Members //////////////////////////////////////////////////
  private:
@@ -112,10 +106,12 @@ class AllkNN {
 
   bool naive_;
   bool dual_mode_;
-  
+ 
+ public: 
   // The total number of prunes.
   index_t number_of_prunes_;
 
+ private:
   // The number of points in a leaf
   index_t leaf_size_;
 
@@ -131,37 +127,37 @@ class AllkNN {
   // if this flag is true then only the k-neighbor and distance are computed
   bool k_only_;
 
-
-
-  // This can be either "single" or "dual" referring to dual tree and single tree algorithm
-  std::string mode_;
-  
  public:
+  enum {
+    NAIVE = 1,
+    ALIAS_MATRIX = 2,
+    MODE_SINGLE = 4
+  };
 
   /**
-  * Initialize the AllkNN object.  If only the references matrix is given, the
-  * queries matrix is assumed to be the same.
-  *
-  * The options parameter is meant to be a combination of options, such as
-  * (NAIVE | ALIAS_MATRIX) or similar.  The three allowed options are:
-  *
-  *  - NAIVE: if set, the naive method for computation will be used
-  *  - ALIAS_MATRIX: if set, the input matrices will be aliased internally.
-  *      This will result in the input matrices being re-ordered while the
-  *      trees are built.  You will get a performance boost from using this
-  *      option, but it must be understood that the matrix you pass in will be
-  *      modified.
-  *  - MODE_SINGLE: if set, the single-tree method is used; otherwise, the
-  *      dual-tree method is used (which is the default).  Dual-tree is
-  *      recommended.
-  *
-  * @param queries_in Input matrix of query points
-  * @param references_in Input matrix of reference points to query against
-  * @param module_in Datanode containing input parameters
-  * @param options Combination of options (NAIVE, ALIAS_MATRIX, MODE_SINGLE)
-  * @param leaf_size Leaf size used for tree building (ignored in naive mode)
-  * @param knns Number of nearest neighbors to calculate
-  */
+   * Initialize the AllkNN object.  If only the references matrix is given, the
+   * queries matrix is assumed to be the same.
+   *
+   * The options parameter is meant to be a combination of options, such as
+   * (NAIVE | ALIAS_MATRIX) or similar.  The three allowed options are:
+   *
+   *  - NAIVE: if set, the naive method for computation will be used
+   *  - ALIAS_MATRIX: if set, the input matrices will be aliased internally.
+   *      This will result in the input matrices being re-ordered while the
+   *      trees are built.  You will get a performance boost from using this
+   *      option, but it must be understood that the matrix you pass in will be
+   *      modified.
+   *  - MODE_SINGLE: if set, the single-tree method is used; otherwise, the
+   *      dual-tree method is used (which is the default).  Dual-tree is
+   *      recommended.
+   *
+   * @param queries_in Input matrix of query points
+   * @param references_in Input matrix of reference points to query against
+   * @param module_in Datanode containing input parameters
+   * @param options Combination of options (NAIVE, ALIAS_MATRIX, MODE_SINGLE)
+   * @param leaf_size Leaf size used for tree building (ignored in naive mode)
+   * @param knns Number of nearest neighbors to calculate
+   */
   AllkNN(arma::mat& queries_in, arma::mat& references_in,
          struct datanode* module_in, int options = 0);
   AllkNN(arma::mat& references_in, struct datanode* module_in, int options = 0);
@@ -171,47 +167,61 @@ class AllkNN {
          int options = 0);
   
   /**
-  * The tree is the only member we are responsible for deleting.  The others will take care of themselves.  
-  */
+   * The tree is the only member we are responsible for deleting.  The others
+   * will take care of themselves.  
+   */
   ~AllkNN();  
       
   /**
-   * Computes the minimum squared distance between the bounding boxes of two nodes
+   * Computes the minimum squared distance between the bounding boxes of two
+   * nodes
    */
-  double MinNodeDistSq_ (TreeType* query_node, TreeType* reference_node);
+  double MinNodeDistSq_(TreeType* query_node, TreeType* reference_node);
 
   /**
-   * Computes the minimum squared distances between a point and a node's bounding box
+   * Computes the minimum squared distances between a point and a node's
+   * bounding box
    */
-  double MinPointNodeDistSq_ (const arma::vec& query_point, TreeType* reference_node);
+  double MinPointNodeDistSq_(const arma::vec& query_point,
+                             TreeType* reference_node);
   
   /**
-   * Performs exhaustive computation between two leaves.  
+   * Performs exhaustive computation between two leaves, comparing every node in
+   * the leaf to the other leaf to find the furthest neighbor.  The
+   * neighbor_indices_ and neighbor_distances_ arrays will be updated with the
+   * changed information.
    */
   void ComputeBaseCase_(TreeType* query_node, TreeType* reference_node);
   
   /**
-   * The recursive function for dual tree
+   * Recurse down the trees, computing base case computations when the leaves
+   * are reached.
    */
-  void ComputeDualNeighborsRecursion_(TreeType* query_node, TreeType* reference_node, 
-      double lower_bound_distance);
+  void ComputeDualNeighborsRecursion_(TreeType* query_node,
+                                      TreeType* reference_node, 
+                                      double lower_bound_distance);
   
-  void ComputeSingleNeighborsRecursion_(index_t point_id, 
-      arma::vec& point, TreeType* reference_node, 
-      double* min_dist_so_far);
+  /***
+   * Perform a recursion only on the reference tree; the query point is given.
+   * This method is similar to ComputeBaseCase_().
+   */
+  void ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point,
+                                        TreeType* reference_node,
+                                        double* min_dist_so_far);
   
   /**
-   * Computes the nearest neighbors and stores them in *results
+   * Computes the nearest neighbors and stores the output in the given arrays.
+   * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest
+   * neighbors), resulting_neighbors[0] through resulting_neighbors[4] are the
+   * five nearest neighbors of query point 0.
+   *
+   * @param resulting_neighbors List of nearest neighbors
+   * @param distances Distance of nearest neighbors
    */
   void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                         arma::vec& distances);
-  
-  /**
-   * Does the entire computation naively
-   */
-  void ComputeNaive(arma::Col<index_t>& resulting_neighbors,
-                    arma::vec& distances);
-}; // class AllNN
+
+}; // class AllkNN
 
 }; // namespace allknn
 }; // namespace mlpack
