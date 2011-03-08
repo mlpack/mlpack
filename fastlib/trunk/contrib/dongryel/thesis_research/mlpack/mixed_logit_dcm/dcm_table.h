@@ -193,6 +193,9 @@ class DCMTable {
       attribute_table_ = argument_in.attribute_table_;
       discrete_choice_set_info_ = argument_in.discrete_choice_set_info_;
 
+      // Set the distribution.
+      distribution_ = argument_in.distribution_;
+
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
       shuffled_indices_for_person_.resize(

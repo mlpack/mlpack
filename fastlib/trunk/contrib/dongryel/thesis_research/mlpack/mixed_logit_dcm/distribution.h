@@ -21,7 +21,7 @@ namespace mixed_logit_dcm {
  *         parametrized by $\theta$.
  */
 class Distribution {
-  private:
+  protected:
     int num_parameters_;
 
   private:
