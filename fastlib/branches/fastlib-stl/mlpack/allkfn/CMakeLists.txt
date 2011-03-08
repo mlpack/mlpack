@@ -5,6 +5,7 @@ cmake_minimum_required(VERSION 2.8)
 # Do not include test programs here
 set(SOURCES
    allkfn.h
+   allkfn.cc
 )
 
 # add directory name to sources
