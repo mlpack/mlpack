@@ -80,7 +80,7 @@ class Distribution {
 
     /** @brief Initializes the distribution.
      */
-    virtual void Init(int num_parameters_in) = 0;
+    virtual void Init(int num_attributes_in) = 0;
 
     /** @brief Computes $\bar{X}_i \bar{L}_i(\beta)$ for a given
      *         person, which just turns out to be a weighted sum of

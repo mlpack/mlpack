@@ -50,7 +50,7 @@ class ConstantDistribution:
       *beta_out = parameters;
     }
 
-    void Init(int num_parameters_in) {
+    void Init(int num_attributes_in) {
 
       // Does not do anything.
     }
