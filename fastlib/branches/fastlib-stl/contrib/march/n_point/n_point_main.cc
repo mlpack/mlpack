@@ -23,6 +23,8 @@ int main(int argc, char* argv[]) {
   arma::mat data_mat;
   data_mat.load(data_filename, arma::raw_ascii);
   
+  //arma::mat data_out = arma::trans(data_mat);
+  //data_out.save("3pt_test_data.csv", arma::raw_ascii);
   
   arma::colvec weights;  
   if (fx_param_exists(NULL, "weights")) {
@@ -46,9 +48,15 @@ int main(int argc, char* argv[]) {
   
   if (fx_param_exists(NULL, "do_naive")) {
   
+    std::cout << "Doing naive.\n";
+    
+    fx_timer_start(NULL, "naive_time");
+    
     NaiveAlg naive_alg(data_mat, weights, lower_bds, upper_bds);
     
     naive_alg.ComputeCounts();
+    
+    fx_timer_stop(NULL, "naive_time");
     
     std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
     
@@ -56,23 +64,35 @@ int main(int argc, char* argv[]) {
   
   index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
   
+  
   if (fx_param_exists(NULL, "do_single_bandwidth")) {
+    
+    std::cout << "Doing single bandwidth.\n";
+
+    fx_timer_start(NULL, "single_bandwidth_time");
     
     SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
                                   lower_bds, upper_bds);
     
     single_alg.ComputeCounts();
     
-    std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
+    fx_timer_stop(NULL, "naive_time");
     
+    std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     
   }
   
   if (fx_param_exists(NULL, "do_perm_free")) {
     
+    std::cout << "Doing permutation free.\n";
+
+    fx_timer_start(NULL, "perm_free_time");
+    
     PermFreeAlg alg(data_mat, weights, leaf_size, lower_bds, upper_bds);
     
     alg.Compute();
+    
+    fx_timer_stop(NULL, "perm_free_time");
     
     std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
     
