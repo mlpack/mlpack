@@ -25,6 +25,8 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack::allkfn;
+
 int main(int argc, char *argv[]) {
   fx_module *module = fx_init(argc, argv, NULL);
   std::string result_file = fx_param_str(module, "result_file", "result.txt");

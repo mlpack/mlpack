@@ -4,9 +4,14 @@
  */
 
 #include "allkfn.h"
-#include "fastlib/base/test.h"
+#include <fastlib/base/test.h>
 
 #include <armadillo>
+
+using namespace mlpack::allkfn;
+
+namespace mlpack {
+namespace allkfn {
 
 class TestAllkFN {
  public:
@@ -110,7 +115,10 @@ class TestAllkFN {
   AllkFN *allkfn_;
   AllkFN *naive_;
   arma::mat data_for_tree_;
-};
+}; // class TestAllkFN
+
+}; // namespace allkfn
+}; // namespace mlpack
 
 int main(int argc, char* argv[]) {
   fx_root = fx_init(argc, argv, NULL);
