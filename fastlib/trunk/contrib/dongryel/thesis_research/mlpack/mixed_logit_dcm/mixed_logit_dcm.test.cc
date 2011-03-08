@@ -9,7 +9,10 @@
 #define BOOST_TEST_MAIN
 
 #include <boost/test/unit_test.hpp>
+#include <numeric>
 #include <time.h>
+#include "core/table/table.h"
+#include "core/tree/gen_metric_tree.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_dev.h"
 
 namespace mlpack {
@@ -31,7 +34,8 @@ class TestMixedLogitDCM {
       // Find the total number of discrete choices.
       int total_num_attributes =
         std::accumulate(
-          num_discrete_choices.begin(), num_discrete_choices.end(), 0);
+          mlpack::mixed_logit_dcm::num_discrete_choices_.begin(),
+          mlpack::mixed_logit_dcm::num_discrete_choices_.end(), 0);
 
       random_attribute_dataset->Init(
         mlpack::mixed_logit_dcm::num_attributes_, total_num_attributes);
@@ -128,12 +132,12 @@ class TestMixedLogitDCM {
 }
 }
 
-BOOST_AUTO_TEST_SUITE(TestSuiteKde)
-BOOST_AUTO_TEST_CASE(TestCaseKde) {
+BOOST_AUTO_TEST_SUITE(TestSuiteMixedLogitDCM)
+BOOST_AUTO_TEST_CASE(TestCaseMixedLogitDCM) {
 
   // Call the tests.
-  mlpack::kde::TestKde kde_test;
-  kde_test.StressTestMain();
+  mlpack::mixed_logit_dcm::TestMixedLogitDCM dcm_test;
+  dcm_test.StressTestMain();
 
   std::cout << "All tests passed!\n";
 }
