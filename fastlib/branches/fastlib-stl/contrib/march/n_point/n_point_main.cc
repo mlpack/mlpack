@@ -76,7 +76,7 @@ int main(int argc, char* argv[]) {
     
     single_alg.ComputeCounts();
     
-    fx_timer_stop(NULL, "naive_time");
+    fx_timer_stop(NULL, "single_bandwidth_time");
     
     std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     

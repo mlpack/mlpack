@@ -31,7 +31,7 @@ bool npt::SingleBandwidthAlg::CheckNodeList_(std::vector<SingleNode*>& nodes) {
       // check for symmetry
       if (node_j->end() <= node_i->begin()) {
         //printf("Pruned for symmetry\n");
-        return false;
+        return true;
       } // symmetry check
       
       // IMPORTANT: need to negate this, TestHrectPair returns true if the 
