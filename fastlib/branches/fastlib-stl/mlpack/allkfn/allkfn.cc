@@ -249,33 +249,38 @@ void AllkFN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
           neighbor_indices_[ind + i]);
     }
 
-    // We'll do the same for the references
-    for (index_t reference_index = reference_node->begin(); 
-        reference_index < reference_node->end(); reference_index++) {
+    double query_to_node_distance =
+        reference_node->bound().MaxDistanceSq(query_point);
 
-      // Confirm that points do not identify themselves as neighbors
-      // in the monochromatic case
-      if (reference_node != query_node || reference_index != query_index) {
-        arma::vec reference_point = references_.unsafe_col(reference_index);
+    if (query_to_node_distance > neighbor_distances_[ind + kfns_ - 1]) {
+      // We'll do the same for the references
+      for (index_t reference_index = reference_node->begin(); 
+          reference_index < reference_node->end(); reference_index++) {
 
-        double distance = la::DistanceSqEuclidean(query_point, reference_point);
+        // Confirm that points do not identify themselves as neighbors
+        // in the monochromatic case
+        if (reference_node != query_node || reference_index != query_index) {
+          arma::vec reference_point = references_.unsafe_col(reference_index);
 
-        // If the reference point is closer than the current candidate, 
-        // we'll update the candidate
-        if (distance > neighbor_distances_[ind + kfns_ - 1]) {
-          neighbors.push_back(std::make_pair(distance, reference_index));
+          double distance = la::DistanceSqEuclidean(query_point, reference_point);
+
+          // If the reference point is closer than the current candidate, 
+          // we'll update the candidate
+          if (distance > neighbor_distances_[ind + kfns_ - 1]) {
+            neighbors.push_back(std::make_pair(distance, reference_index));
+          }
         }
+      } // for reference_index
+
+      std::sort(neighbors.begin(), neighbors.end(),
+          std::greater<std::pair<double, index_t> >());
+
+      for(index_t i = 0; i < kfns_; i++) {
+        neighbor_distances_[ind + i] = neighbors[i].first;
+        neighbor_indices_[ind + i]  = neighbors[i].second;
       }
-    } // for reference_index
-
-    std::sort(neighbors.begin(), neighbors.end(),
-        std::greater<std::pair<double, index_t> >());
-
-    for(index_t i = 0; i < kfns_; i++) {
-      neighbor_distances_[ind + i] = neighbors[i].first;
-      neighbor_indices_[ind + i]  = neighbors[i].second;
+      neighbors.resize(kfns_);
     }
-    neighbors.resize(kfns_);
 
     // We need to find the lower bound distance for this query node
     if (neighbor_distances_[ind + kfns_ - 1] < query_min_neighbor_distance)
