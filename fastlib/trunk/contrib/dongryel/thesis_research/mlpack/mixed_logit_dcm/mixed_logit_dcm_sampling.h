@@ -446,6 +446,9 @@ class MixedLogitDCMSampling {
       dcm_table_ = dcm_table_in;
       num_active_people_ = num_active_people_in;
 
+      // Initialize the associated parameter.
+      parameters_.zeros(dcm_table_in->num_parameters());
+
       // This maintains the number of integration samples collected
       // for each person.
       num_integration_samples_.zeros(dcm_table_->num_people());

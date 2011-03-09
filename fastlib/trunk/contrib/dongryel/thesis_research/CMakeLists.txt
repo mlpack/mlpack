@@ -9,7 +9,7 @@ project(FASTLIB C CXX Fortran)
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/CMake")
 
 # find LAPACK
-# find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
+find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 
 # find pthreads
 find_package(Pthreads REQUIRED)
@@ -57,8 +57,13 @@ include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
 # for a local installation of armadillo
-include_directories($ENV{HOME}/local/armadillo-1.0.0/include)
-link_directories($ENV{HOME}/local/armadillo-1.0.0/lib)
+include_directories($ENV{HOME}/local/armadillo-1.0.4/include)
+if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
+  link_directories($ENV{HOME}/local/armadillo-1.0.4/lib64/debug)
+endif()
+if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
+  link_directories($ENV{HOME}/local/armadillo-1.0.4/lib64/release)
+endif()
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
