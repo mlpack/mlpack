@@ -451,6 +451,7 @@ void MixedLogitDCM<TableType>::Compute(
 
     // Get the reduction ratio rho (Equation 4.4)
     SamplingType *next_iterate = new SamplingType();
+    next_iterate->Init(*iterate);
     next_iterate->parameters() = iterate->parameters() + p;
     double iterate_function_value = iterate->NegativeSimulatedLogLikelihood();
     double next_iterate_function_value =
