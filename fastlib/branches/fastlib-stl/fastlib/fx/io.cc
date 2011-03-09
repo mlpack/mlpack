@@ -4,7 +4,6 @@
 #include <boost/program_options.hpp>
 #include <iostream>
 #include <string>
-#include <boost/exception/all.hpp>
 
 using namespace mlpack;
 
