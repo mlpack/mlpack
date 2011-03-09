@@ -438,8 +438,6 @@ void MixedLogitDCM<TableType>::Compute(
   // trust region radius.
   double current_radius = 0.1 * arguments_in.max_trust_region_radius_;
 
-  printf("Starting the optimization...\n");
-
   // Enter the trust region loop.
   do {
 
@@ -451,8 +449,7 @@ void MixedLogitDCM<TableType>::Compute(
 
     // Get the reduction ratio rho (Equation 4.4)
     SamplingType *next_iterate = new SamplingType();
-    next_iterate->Init(*iterate);
-    next_iterate->parameters() = iterate->parameters() + p;
+    next_iterate->Init(*iterate, p);
     double iterate_function_value = iterate->NegativeSimulatedLogLikelihood();
     double next_iterate_function_value =
       next_iterate->NegativeSimulatedLogLikelihood();
