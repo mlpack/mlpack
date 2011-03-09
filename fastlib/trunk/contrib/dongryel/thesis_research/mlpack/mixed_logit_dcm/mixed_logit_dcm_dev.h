@@ -415,7 +415,6 @@ void MixedLogitDCM<TableType>::Compute(
   SamplingType *iterate = new SamplingType();
   iterate->Init(
     &table_, initial_num_data_samples, initial_num_integration_samples);
-  iterate->parameters().zeros(table_.num_parameters());
   iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
 
   // Depending on the selected Hessian update scheme, compute it
@@ -438,6 +437,8 @@ void MixedLogitDCM<TableType>::Compute(
   // The initial trust region radius is set to the 10 % of the maximum
   // trust region radius.
   double current_radius = 0.1 * arguments_in.max_trust_region_radius_;
+
+  printf("Starting the optimization...\n");
 
   // Enter the trust region loop.
   do {
