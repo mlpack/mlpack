@@ -414,12 +414,18 @@ class MixedLogitDCMSampling {
     /** @brief Initializes a sampling object with another sampling
      *         object. This does not copy exactly, but makes sure that
      *         the new sample gets the right number of people, each
-     *         with the same number of integration samples.
+     *         with the same number of integration samples.  The
+     *         iterate from the previous sample information is stepped
+     *         by an appropriate amount before the sampling commences.
      */
-    void Init(const SamplingType &sampling_in) {
+    void Init(
+      const SamplingType &sampling_in, const arma::vec &step) {
 
       dcm_table_ = sampling_in.dcm_table();
       num_active_people_ = sampling_in.num_active_people();
+
+      // Step the parameter from the previous sample.
+      parameters_ = sampling_in.parameters() + step;
 
       // This maintains the number of integration samples collected
       // for each person.
