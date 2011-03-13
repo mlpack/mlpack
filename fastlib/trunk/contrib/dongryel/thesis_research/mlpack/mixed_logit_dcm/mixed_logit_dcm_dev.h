@@ -380,7 +380,7 @@ void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
             first_sample->num_integration_samples(person_index))));
 
     // Add samples.
-    std::cerr << "Adding " << num_additional_samples << " to Person " <<
+    std::cerr << "  Adding " << num_additional_samples << " to Person " <<
               person_index << "\n";
     first_sample->AddSamples(person_index, num_additional_samples);
   }
@@ -445,6 +445,8 @@ void MixedLogitDCM<TableType>::Compute(
   // Enter the trust region loop.
   do {
 
+    std::cerr << "\n";
+
     // Obtain the step direction by solving Equation 4.3
     // approximately.
     core::optimization::TrustRegionUtil::ObtainStepDirection(
@@ -503,7 +505,7 @@ void MixedLogitDCM<TableType>::Compute(
       int num_additional_people =
         std::min(std::max(1, predicted_increase), max_allowable_people);
 
-      std::cerr << "Adding " << num_additional_people <<
+      std::cerr << "  Adding " << num_additional_people <<
                 " additional people.\n";
 
       iterate->AddActivePeople(
@@ -547,21 +549,21 @@ void MixedLogitDCM<TableType>::Compute(
     // next iterate based on the trust region optimization.
     if(model_reduction_ratio < 0.10) {
       current_radius = p_norm / 2.0;
-      std::cerr << "Setting the trust region radius to: " <<
+      std::cerr << "  Setting the trust region radius to: " <<
                 current_radius << "\n";
     }
     else {
       if(model_reduction_ratio > 0.80 &&
           fabs(p_norm - current_radius) <= 0.001) {
         current_radius = 2.0 * current_radius;
-        std::cerr << "Increasing the trust region radius to: " <<
+        std::cerr << "  Increasing the trust region radius to: " <<
                   current_radius << "\n";
       }
     }
     const double eta = 0.05;
     if(model_reduction_ratio > eta) {
 
-      std::cerr << "Accepting the trust region iterate...\n";
+      std::cerr << "  Accepting the trust region iterate...\n";
 
       // Compute the new gradient.
       arma::vec new_gradient;
@@ -592,7 +594,7 @@ void MixedLogitDCM<TableType>::Compute(
     }
     else {
 
-      std::cerr << "Discarding the trust region iterate...\n";
+      std::cerr << "  Discarding the trust region iterate...\n";
 
       // Delete the discarded iterate.
       delete next_iterate;
@@ -612,6 +614,8 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
   // people in the sampling (outer term consists of all people).
   if(sampling.num_active_people() == table_.num_people()) {
 
+    std::cerr << "  Testing the termination condition...\n";
+
     // If the predicted improvement in the objective value is less
     // than the integration sample error and the integration sample
     // error is small,
@@ -623,10 +627,13 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
 
       // Compute the gradient error.
       double gradient_error = this->GradientError_(sampling);
+      double squared_gradient_error_upper_bound =
+        arma::dot(gradient, gradient) +
+        arguments_in.gradient_norm_threshold_ * sqrt(gradient_error);
 
-      if(arma::dot(gradient, gradient) +
-          arguments_in.gradient_norm_threshold_ *
-          sqrt(gradient_error) <= 0.001) {
+      std::cerr << "The upper bound on the gradient squared error: " <<
+                squared_gradient_error_upper_bound;
+      if(squared_gradient_error_upper_bound <= 0.001) {
         return true;
       }
     }
