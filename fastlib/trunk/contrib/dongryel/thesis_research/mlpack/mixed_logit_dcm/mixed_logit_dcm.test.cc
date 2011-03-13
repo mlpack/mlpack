@@ -75,7 +75,7 @@ class TestMixedLogitDCM {
           // of people and the number of discrete choices per each
           // person.
           mlpack::mixed_logit_dcm::num_attributes_ = core::math::RandInt(5, 20);
-          mlpack::mixed_logit_dcm::num_people_ = core::math::RandInt(50, 101);
+          mlpack::mixed_logit_dcm::num_people_ = core::math::RandInt(15, 41);
           mlpack::mixed_logit_dcm::num_discrete_choices_.resize(
             mlpack::mixed_logit_dcm::num_people_);
           for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
