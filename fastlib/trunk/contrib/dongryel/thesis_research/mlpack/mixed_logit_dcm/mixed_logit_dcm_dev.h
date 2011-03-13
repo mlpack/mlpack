@@ -618,7 +618,8 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
     double predicted_objective_value_improvement_threshold =
       arguments_in.gradient_norm_threshold_ * sqrt(integration_sample_error);
     std::cerr << "    Comparing the predicted objective function improvement "
-              "against the sampling error: " << predicted_objective_value_improvement
+              "against the sampling error: " <<
+              predicted_objective_value_improvement
               << " against " <<
               predicted_objective_value_improvement_threshold << "\n";
     std::cerr << "    Comparing the sampling error against its threshold: " <<
@@ -628,7 +629,7 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
     // If the predicted improvement in the objective value is less
     // than the integration sample error and the integration sample
     // error is small,
-    if(fabs(predicted_objective_value_improvement)  <
+    if(predicted_objective_value_improvement >
         predicted_objective_value_improvement_threshold &&
         sqrt(integration_sample_error) <
         arguments_in.integration_sample_error_threshold_) {
@@ -640,7 +641,7 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
         arguments_in.gradient_norm_threshold_ * sqrt(gradient_error);
 
       std::cerr << "    The upper bound on the gradient squared error: " <<
-                squared_gradient_error_upper_bound;
+                squared_gradient_error_upper_bound << "\n";
       if(squared_gradient_error_upper_bound <= 0.001) {
         return true;
       }
