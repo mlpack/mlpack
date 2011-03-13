@@ -437,6 +437,8 @@ void MixedLogitDCM<TableType>::Compute(
   // The initial trust region radius is set to the 10 % of the maximum
   // trust region radius.
   double current_radius = 0.1 * arguments_in.max_trust_region_radius_;
+  std::cerr << "The initial maximum trust region radius is set to " <<
+            current_radius;
 
   // Enter the trust region loop.
   do {

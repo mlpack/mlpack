@@ -231,8 +231,8 @@ class MixedLogitDCMArgumentParser {
       // Parse the distribution type.
       if(vm["distribution_in"].as<std::string>() == "constant") {
 
-        printf("Using the constant distribution "
-               "(equivalent to multinomial logit).\n");
+        std::cerr << "Using the constant distribution " <<
+                  "(equivalent to multinomial logit).\n";
 
         // Use the constant distribution. This is equivalent to the
         // multinomial logit case.
@@ -243,7 +243,7 @@ class MixedLogitDCMArgumentParser {
       }
       else if(vm["distribution_in"].as<std::string>() == "gaussian") {
 
-        printf("Using the Gaussian distribution.\n");
+        std::cerr << "Using the Gaussian distribution.\n";
 
         // Use the Gaussian distribution.
         arguments_out->distribution_ =
