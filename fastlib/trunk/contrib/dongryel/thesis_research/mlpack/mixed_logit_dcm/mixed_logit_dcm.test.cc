@@ -68,7 +68,7 @@ class TestMixedLogitDCM {
 
     int StressTestMain() {
       for(int i = 0; i < 1; i++) {
-        for(int k = 0; k < 1; k++) {
+        for(int k = 0; k < 2; k++) {
 
           // Randomly choose the number of attributes and the number
           // of people and the number of discrete choices per each
