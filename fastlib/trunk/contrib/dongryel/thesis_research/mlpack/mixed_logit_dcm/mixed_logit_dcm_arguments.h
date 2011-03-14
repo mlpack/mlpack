@@ -71,6 +71,11 @@ class MixedLogitDCMArguments {
      */
     double gradient_norm_threshold_;
 
+    /** @brief The maximum number of iterations to try after all
+     *         terms have been added to the object function.
+     */
+    int max_num_iterations_;
+
     /** @brief The maximum average integration sample size per person.
      */
     int max_num_integration_samples_per_person_;
@@ -99,6 +104,7 @@ class MixedLogitDCMArguments {
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
       gradient_norm_threshold_ = 0;
+      max_num_iterations_ = 0;
       max_num_integration_samples_per_person_ = 0;
       integration_sample_error_threshold_ = 0;
       max_trust_region_radius_ = 0;
