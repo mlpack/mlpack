@@ -413,6 +413,13 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
         arguments_in.initial_integration_sample_rate_ *
         arguments_in.max_num_integration_samples_per_person_), 36);
 
+  // For constant distribution (multinomial logit), the number of
+  // integration samples is 2. We only need 1, but let's just take 2
+  // samples to prevent division by zero for sample variance.
+  if(arguments_in.distribution_ == "constant") {
+    initial_num_integration_samples = 2;
+  }
+
   // Initialize the starting optimization parameter $\theta_0$ and its
   // associated sampling information.
   arma::vec gradient;

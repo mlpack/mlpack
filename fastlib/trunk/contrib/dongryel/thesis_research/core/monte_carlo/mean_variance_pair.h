@@ -76,7 +76,7 @@ class MeanVariancePair {
     /** @brief Returns the variance of the sample mean.
      */
     double sample_mean_variance() const {
-      return sample_variance_ / static_cast<double>(num_samples_);
+      return sample_variance_ / static_cast<double>(num_samples_ - 1);
     }
 
     /** @brief Returns the sample variance.
