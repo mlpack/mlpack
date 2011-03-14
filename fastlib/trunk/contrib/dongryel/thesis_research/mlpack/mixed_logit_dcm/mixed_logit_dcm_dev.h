@@ -15,8 +15,8 @@
 namespace mlpack {
 namespace mixed_logit_dcm {
 
-template<typename TableType>
-double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::GradientErrorSecondPart_(
   const SamplingType &sample) const {
 
   // The temporary vector for extracting choice probability and its
@@ -117,10 +117,10 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           outer_person_index, integration_sample, &outer_choice_probabilities);
         second_tmp_vector[0] =
           outer_choice_probabilities[ outer_discrete_choice_index ];
-        table_.distribution()->ChoiceProbabilityWeightedAttributeVector(
+        table_.distribution().ChoiceProbabilityWeightedAttributeVector(
           table_, outer_person_index, outer_choice_probabilities,
           &outer_choice_prob_weighted_attribute_vector);
-        table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
+        table_.distribution().ChoiceProbabilityGradientWithRespectToParameter(
           sample.parameters(), table_,
           outer_person_index, integration_sample,
           outer_choice_probabilities,
@@ -132,10 +132,10 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
           inner_person_index, integration_sample, &inner_choice_probabilities);
         second_tmp_vector[ table_.num_parameters() + 1] =
           inner_choice_probabilities[ inner_discrete_choice_index ];
-        table_.distribution()->ChoiceProbabilityWeightedAttributeVector(
+        table_.distribution().ChoiceProbabilityWeightedAttributeVector(
           table_, inner_person_index, inner_choice_probabilities,
           &inner_choice_prob_weighted_attribute_vector);
-        table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
+        table_.distribution().ChoiceProbabilityGradientWithRespectToParameter(
           sample.parameters(), table_,
           inner_person_index, integration_sample,
           inner_choice_probabilities,
@@ -155,8 +155,8 @@ double MixedLogitDCM<TableType>::GradientErrorSecondPart_(
   return second_part;
 }
 
-template<typename TableType>
-double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::GradientErrorFirstPart_(
   const SamplingType &sample) const {
 
   // The temporary vector for extracting choice probability and its
@@ -211,11 +211,11 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
       // Get the choice probability vector and its weighted version.
       table_.choice_probabilities(
         person_index, integration_sample, &choice_probabilities);
-      table_.distribution()->ChoiceProbabilityWeightedAttributeVector(
+      table_.distribution().ChoiceProbabilityWeightedAttributeVector(
         table_, person_index, choice_probabilities,
         &choice_prob_weighted_attribute_vector);
       first_tmp_vector[0] = choice_probabilities[discrete_choice_index];
-      table_.distribution()->ChoiceProbabilityGradientWithRespectToParameter(
+      table_.distribution().ChoiceProbabilityGradientWithRespectToParameter(
         sample.parameters(), table_, person_index, integration_sample,
         choice_probabilities, choice_prob_weighted_attribute_vector,
         &first_tmp_choice_probability_gradient);
@@ -229,8 +229,8 @@ double MixedLogitDCM<TableType>::GradientErrorFirstPart_(
   return first_part;
 }
 
-template<typename TableType>
-double MixedLogitDCM<TableType>::GradientError_(
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   const SamplingType &sample) const {
 
   // Compute the first part of the gradient error.
@@ -247,8 +247,9 @@ double MixedLogitDCM<TableType>::GradientError_(
   return gradient_error;
 }
 
-template<typename TableType>
-void MixedLogitDCM<TableType>::IntegrationSampleErrorPerPerson_(
+template<typename TableType, typename DistributionType>
+void MixedLogitDCM <
+TableType, DistributionType >::IntegrationSampleErrorPerPerson_(
   int person_index,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
@@ -284,8 +285,8 @@ void MixedLogitDCM<TableType>::IntegrationSampleErrorPerPerson_(
   }
 }
 
-template<typename TableType>
-double MixedLogitDCM<TableType>::IntegrationSampleError_(
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
 
@@ -310,8 +311,8 @@ double MixedLogitDCM<TableType>::IntegrationSampleError_(
   return simulation_error;
 }
 
-template<typename TableType>
-double MixedLogitDCM<TableType>::DataSampleError_(
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::DataSampleError_(
   const SamplingType &first_sample,
   const SamplingType &second_sample) const {
 
@@ -335,8 +336,8 @@ double MixedLogitDCM<TableType>::DataSampleError_(
   return correction_factor * average_difference.sample_mean_variance();
 }
 
-template<typename TableType>
-void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
+template<typename TableType, typename DistributionType>
+void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   const ArgumentType &arguments_in,
   double integration_sample_error,
   const SamplingType &second_sample,
@@ -386,16 +387,17 @@ void MixedLogitDCM<TableType>::UpdateSampleAllocation_(
   }
 }
 
-template<typename TableType>
-void MixedLogitDCM<TableType>::Init(ArgumentType &arguments_in) {
+template<typename TableType, typename DistributionType>
+void MixedLogitDCM<TableType, DistributionType>::Init(
+  ArgumentType &arguments_in) {
 
   // Initialize the table for storing/accessing the attribute vector
   // for each person.
   table_.Init(arguments_in);
 }
 
-template<typename TableType>
-void MixedLogitDCM<TableType>::Compute(
+template<typename TableType, typename DistributionType>
+void MixedLogitDCM<TableType, DistributionType>::Compute(
   const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
@@ -493,7 +495,8 @@ void MixedLogitDCM<TableType>::Compute(
     // the integration sample size; (3) Do a step to the new iterate.
 
     std::cerr << "Data sample error: " << sqrt(data_sample_error) <<
-              " ; integration sample error: " << sqrt(integration_sample_error) << "\n";
+              " ; integration sample error: " <<
+              sqrt(integration_sample_error) << "\n";
 
     // Increase the data sample size.
     if(iterate->num_active_people() < table_.num_people() &&
@@ -612,8 +615,8 @@ void MixedLogitDCM<TableType>::Compute(
   delete iterate;
 }
 
-template<typename TableType>
-bool MixedLogitDCM<TableType>::TerminationConditionReached_(
+template<typename TableType, typename DistributionType>
+bool MixedLogitDCM<TableType, DistributionType>::TerminationConditionReached_(
   const ArgumentType &arguments_in,
   double predicted_objective_value_improvement, double data_sample_error,
   double integration_sample_error, const SamplingType &sampling,

@@ -1,7 +1,7 @@
 /** @file distribution.h
  *
- *  A virtual class that defines the specification for which the mixed
- *  logit discrete choice model distribution should satisfy.
+ *  A class that defines the specification for which the mixed logit
+ *  discrete choice model distribution should satisfy.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -12,27 +12,35 @@
 #include <armadillo>
 #include "core/table/dense_point.h"
 #include "core/table/dense_matrix.h"
+#include "mlpack/mixed_logit_dcm/constant_distribution.h"
+#include "mlpack/mixed_logit_dcm/gaussian_distribution.h"
+
 
 namespace mlpack {
 namespace mixed_logit_dcm {
 
-/** @brief The base abstract class for the distribution that generates
- *         each $\beta$ in mixed logit models. This distribution is
- *         parametrized by $\theta$.
+/** @brief The distribution that generates each $\beta$ in mixed logit
+ *         models. This distribution is parametrized by $\theta$.
  */
+template<typename DistributionType>
 class Distribution {
-  protected:
+  private:
     int num_parameters_;
+
+    typename DistributionType::PrivateData private_data_;
 
   private:
 
-    virtual void AttributeGradientWithRespectToParameterPrecompute_(
-      const arma::vec &parameters, const arma::vec &beta_vector) const = 0;
+    void AttributeGradientWithRespectToParameterPrecompute_(
+      const arma::vec &parameters, const arma::vec &beta_vector) const {
+
+      DistributionType::AttributeGradientWithRespectToParameterPrecompute(
+        parameters, beta_vector,
+        const_cast <
+        typename DistributionType::PrivateData * >(&private_data_));
+    }
 
   public:
-
-    virtual ~Distribution() {
-    }
 
     Distribution() {
       num_parameters_ = 0;
@@ -47,9 +55,13 @@ class Distribution {
     /** @brief Returns the (row, col)-th entry of
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
      */
-    virtual double AttributeGradientWithRespectToParameter(
+    double AttributeGradientWithRespectToParameter(
       const arma::vec &parameters, const arma::vec &beta_vector,
-      int row_index, int col_index) const = 0;
+      int row_index, int col_index) const {
+
+      return DistributionType::AttributeGradientWithRespectToParameter(
+               private_data_, parameters, beta_vector, row_index, col_index);
+    }
 
     /** @brief Returns $\frac{\partial}{\partial \theta}
      *         \beta^{\nu}(\theta)$.
@@ -78,12 +90,18 @@ class Distribution {
     /** @brief Draws a beta from the distribution with the given
      *         parameter.
      */
-    virtual void DrawBeta(
-      const arma::vec &parameters, arma::vec *beta_out) const = 0;
+    void DrawBeta(
+      const arma::vec &parameters, arma::vec *beta_out) const {
+
+      DistributionType::DrawBeta(private_data_, parameters, beta_out);
+    }
 
     /** @brief Initializes the distribution.
      */
-    virtual void Init(int num_attributes_in) = 0;
+    void Init(int num_attributes_in) {
+      DistributionType::Init(
+        num_attributes_in, &num_parameters_, &private_data_);
+    }
 
     /** @brief Computes $\bar{X}_i \bar{L}_i(\beta)$ for a given
      *         person, which just turns out to be a weighted sum of

@@ -9,6 +9,9 @@
 #include <time.h>
 #include "core/table/table.h"
 #include "core/tree/gen_metric_tree.h"
+#include "mlpack/mixed_logit_dcm/constant_distribution.h"
+#include "mlpack/mixed_logit_dcm/distribution.h"
+#include "mlpack/mixed_logit_dcm/gaussian_distribution.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_argument_parser.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_dev.h"
 
@@ -83,12 +86,12 @@ class TestMixedLogitDCM {
             case 0:
 
               // Test the constant distribution.
-              StressTest();
+              StressTest<mlpack::mixed_logit_dcm::ConstantDistribution>();
               break;
             case 1:
 
               // Test the Gaussian distribution.
-              StressTest();
+              StressTest<mlpack::mixed_logit_dcm::GaussianDistribution>();
               break;
           }
         }
@@ -96,6 +99,7 @@ class TestMixedLogitDCM {
       return 0;
     }
 
+    template<typename DistributionType>
     int StressTest() {
 
       typedef core::table::Table <
@@ -141,7 +145,8 @@ class TestMixedLogitDCM {
         vm, &arguments);
 
       // Call the mixed logit driver.
-      mlpack::mixed_logit_dcm::MixedLogitDCM<TableType> instance;
+      mlpack::mixed_logit_dcm::MixedLogitDCM <
+      TableType, DistributionType > instance;
       instance.Init(arguments);
 
       // Compute the result.

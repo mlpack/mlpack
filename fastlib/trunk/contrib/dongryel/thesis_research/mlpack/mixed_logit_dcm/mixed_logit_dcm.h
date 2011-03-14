@@ -22,7 +22,7 @@ namespace mixed_logit_dcm {
 /** @brief The definition of mixed logit discrete choice model using
  *         simulation-based approach.
  */
-template<typename IncomingTableType>
+template<typename IncomingTableType, typename DistributionType>
 class MixedLogitDCM {
   public:
 
@@ -32,7 +32,8 @@ class MixedLogitDCM {
 
     /** @brief The discrete choice model table type.
      */
-    typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
+    typedef mlpack::mixed_logit_dcm::DCMTable <
+    TableType, DistributionType > DCMTableType;
 
     /** @brief The sample type.
      */

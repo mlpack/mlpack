@@ -238,6 +238,7 @@ class MixedLogitDCMArgumentParser {
         vm["hessian_update_method"].as<std::string>();
 
       // Parse the distribution type.
+      arguments_out->distribution_ = vm["distribution_in"].as<std::string>();
       if(vm["distribution_in"].as<std::string>() == "constant") {
 
         std::cerr << "Using the constant distribution " <<
@@ -245,20 +246,12 @@ class MixedLogitDCMArgumentParser {
 
         // Use the constant distribution. This is equivalent to the
         // multinomial logit case.
-        arguments_out->distribution_ =
-          new mlpack::mixed_logit_dcm::ConstantDistribution();
-        arguments_out->distribution_->Init(
-          arguments_out->attribute_table_->n_attributes());
       }
       else if(vm["distribution_in"].as<std::string>() == "gaussian") {
 
         std::cerr << "Using the Gaussian distribution.\n";
 
         // Use the Gaussian distribution.
-        arguments_out->distribution_ =
-          new mlpack::mixed_logit_dcm::GaussianDistribution();
-        arguments_out->distribution_->Init(
-          arguments_out->attribute_table_->n_attributes());
       }
     }
 

@@ -15,22 +15,11 @@
 namespace mlpack {
 namespace mixed_logit_dcm {
 
-/** @brief The discrete choice model table type.
- */
-template<typename TableType>
-class DCMTable;
-
 /** @brief The argument list for the mixed logit discrete choice
  *         model.
  */
 template<typename TableType>
 class MixedLogitDCMArguments {
-  public:
-
-    /** @brief The type of the discrete choice model table being used.
-     */
-    typedef mlpack::mixed_logit_dcm::DCMTable<TableType> DCMTableType;
-
   public:
 
     /** @brief Stores the attribute vectors for each person.
@@ -45,7 +34,7 @@ class MixedLogitDCMArguments {
      *         $\beta$ attribute vector. This could be a Gaussian
      *         distribution for instance.
      */
-    mlpack::mixed_logit_dcm::Distribution *distribution_;
+    std::string distribution_;
 
     /** @brief The initial dataset sample rate (for the outer term in
      *         the sum).
@@ -100,7 +89,6 @@ class MixedLogitDCMArguments {
     MixedLogitDCMArguments() {
       attribute_table_ = NULL;
       discrete_choice_set_info_ = NULL;
-      distribution_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
       gradient_norm_threshold_ = 0;
@@ -117,8 +105,6 @@ class MixedLogitDCMArguments {
       attribute_table_ = NULL;
       delete discrete_choice_set_info_;
       discrete_choice_set_info_ = NULL;
-      delete distribution_;
-      distribution_ = NULL;
     }
 };
 }
