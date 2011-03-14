@@ -401,9 +401,10 @@ void MixedLogitDCM<TableType>::Compute(
 
   // Here is the main entry of the algorithm.
   int initial_num_data_samples =
-    static_cast<int>(
-      table_.num_people() *
-      arguments_in.initial_dataset_sample_rate_);
+    std::max(
+      1, static_cast<int>(
+        table_.num_people() *
+        arguments_in.initial_dataset_sample_rate_));
   int initial_num_integration_samples =
     std::max(
       static_cast<int>(
@@ -483,6 +484,7 @@ void MixedLogitDCM<TableType>::Compute(
           arguments_in, decrease_predicted_by_model,
           data_sample_error, integration_sample_error,
           *iterate, gradient, &num_iterations)) {
+      delete next_iterate;
       break;
     }
 
@@ -605,6 +607,9 @@ void MixedLogitDCM<TableType>::Compute(
     }
   }
   while(true);
+
+  // Free the iterate.
+  delete iterate;
 }
 
 template<typename TableType>
