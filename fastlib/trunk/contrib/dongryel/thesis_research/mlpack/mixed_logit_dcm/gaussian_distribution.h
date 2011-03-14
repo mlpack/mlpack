@@ -42,6 +42,30 @@ class GaussianDistribution {
         }
     };
 
+  private:
+    static void SetupCholeskyFactor_(
+      const PrivateData &private_data,
+      const arma::vec &parameters, arma::mat *cholesky_factor) {
+
+      cholesky_factor->zeros(
+        private_data.cholesky_factor_dimension_,
+        private_data.cholesky_factor_dimension_);
+      int limit = private_data.cholesky_factor_dimension_;
+      int add = private_data.cholesky_factor_dimension_ - 1;
+      int row_num = 0;
+      int start = 0;
+      for(int i = 0; i < private_data.num_cholesky_factor_entries_; i++) {
+        if(i == limit) {
+          limit += add;
+          add--;
+          row_num++;
+          start = i;
+        }
+        cholesky_factor->at(row_num, row_num + i - start) =
+          parameters[private_data.cholesky_factor_dimension_ + i];
+      }
+    }
+
   public:
 
     static void AttributeGradientWithRespectToParameterPrecompute(
@@ -50,23 +74,7 @@ class GaussianDistribution {
 
       // Set up the cholesky factor first.
       arma::mat cholesky_factor;
-      cholesky_factor.zeros(
-        private_data->cholesky_factor_dimension_,
-        private_data->cholesky_factor_dimension_);
-      int limit = private_data->cholesky_factor_dimension_;
-      int add = private_data->cholesky_factor_dimension_ - 1;
-      int row_num = 0;
-      int start = 0;
-      for(int i = 0; i < private_data->num_cholesky_factor_entries_; i++) {
-        if(i == limit) {
-          limit += add;
-          add--;
-          row_num++;
-          start = i;
-        }
-        cholesky_factor.at(row_num, row_num + i - start) =
-          parameters[private_data->cholesky_factor_dimension_ + i];
-      }
+      SetupCholeskyFactor_(*private_data, parameters, &cholesky_factor);
 
       // Solve. The right hand side is basically beta_vector shifted
       // by the means.
@@ -126,7 +134,21 @@ class GaussianDistribution {
       const PrivateData &private_data,
       const arma::vec &parameters, arma::vec *beta_out) {
 
+      // Setup the cholesky factor.
+      arma::mat cholesky_factor;
+      SetupCholeskyFactor_(private_data, parameters, &cholesky_factor);
 
+      arma::vec random_gaussian_vector;
+      random_gaussian_vector.set_size(cholesky_factor.n_cols);
+      for(unsigned int i = 0; i < cholesky_factor.n_cols; i++) {
+        random_gaussian_vector[i] = core::math::RandGaussian(1.0);
+      }
+
+      // Multiply by the Cholesky factor and shift it by the mean.
+      arma::vec mean(
+        const_cast<arma::vec &>(parameters).memptr(),
+        cholesky_factor.n_cols, false);
+      (*beta_out) = cholesky_factor * random_gaussian_vector + mean;
     }
 
     static void Init(
