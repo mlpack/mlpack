@@ -12,6 +12,8 @@ set(SOURCES
    stopwatch.c
    io.h
    io.cc
+   optionshierarchy.h
+   optionshierarchy.cc
 )
 
 # add directory name to sources
@@ -22,9 +24,11 @@ endforeach()
 
 # test executable
 add_executable(io_test
+   io.h
    io.cc
-   io_test.cc
+   optionshierarchy.h
    optionshierarchy.cc
+   io_test.cc
 )
 # link dependencies of test executable
 target_link_libraries(io_test

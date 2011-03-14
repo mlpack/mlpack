@@ -18,7 +18,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(allnn_test
-   allnn_test.cc
+  allnn_test.cc
 )
 # link dependencies of test executable
 target_link_libraries(allnn_test

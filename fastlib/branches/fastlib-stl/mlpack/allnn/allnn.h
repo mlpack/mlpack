@@ -9,36 +9,7 @@
 
 #ifndef MLPACK_ALLNN_H_
 #define MLPACK_ALLNN_H_
-
-#include <fastlib/fastlib.h>
-
-const fx_entry_doc allnn_entries[] = {
-  {"leaf_size", FX_PARAM, FX_INT, NULL,
-   "  The maximum number of points to store at a leaf.\n"},
-  {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spent building the kd-tree.\n"},
-  {"dual_tree_computation", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spent computing the nearest neighbors.\n"},
-  {"number_of_prunes", FX_RESULT, FX_INT, NULL,
-   "  Total node-pairs found to be too far to matter.\n"},
-  FX_ENTRY_DOC_DONE
-};
-
-const fx_module_doc allnn_doc = {
-  allnn_entries, NULL,
-  "Performs dual-tree all-nearest-neighbors computation.\n"
-};
-
-const fx_entry_doc allnn_naive_entries[] = {
-  {"naive_time", FX_TIMER, FX_CUSTOM, NULL,
-   "  Time spend performing the naive computation.\n"},
-  FX_ENTRY_DOC_DONE
-};
-
-const fx_module_doc allnn_naive_doc = {
-  allnn_naive_entries, NULL,
-  "Performs naive all-nearest-neighbors computation.\n"
-};
+#include "fastlib/fastlib.h"
 
 namespace mlpack {
 namespace allnn {
@@ -127,9 +98,6 @@ class AllNN {
   ////////// Members Variables ///////////////////////////////////////
 
  private:
-  /** Module used to pass parameters into the AllNN object. */
-  struct datanode* module_;
-
   arma::mat references_;  /// Matrix of reference points.
   arma::mat queries_;     /// Matrix of query points.
 
@@ -192,8 +160,7 @@ class AllNN {
    *   it.
    * @param[in] naive Use naive (non-tree-based) nearest neighbors calculation.
    */
-  AllNN(arma::mat& references_in, struct datanode* module_in,
-      bool alias_matrix = false, bool naive = false);
+  AllNN(arma::mat& references_in, bool alias_matrix = false, bool naive = false);
 
   /***
    * Read parameters, and build the trees.
@@ -212,8 +179,8 @@ class AllNN {
    *   it.
    * @param[in] naive Use naive (non-tree-based) nearest neighbors calculation.
    */
-  AllNN(arma::mat& queries_in, arma::mat& references_in,
-      struct datanode* module_in, bool alias_matrix = false, bool naive = false);
+  AllNN(arma::mat& queries_in, arma::mat& references_in, 
+		bool alias_matrix = false, bool naive = false);
 
   ~AllNN();
 
@@ -255,9 +222,10 @@ class AllNN {
    * Initialize and fill an arma::vec of results.
    */
   void EmitResults(arma::vec& distances, arma::Col<index_t>& results);
+ 
+  static void loadDocumentation();
 
 }; /* class AllNN */
-
 }; // namespace allnn
 }; // namespace mlpack
 

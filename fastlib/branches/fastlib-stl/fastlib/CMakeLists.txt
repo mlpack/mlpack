@@ -50,6 +50,7 @@ target_link_libraries(fastlib
   lapack
   blas
   pthread
+  boost_program_options
 )
 
 if(OPTION_WITH_SPARSE)
