@@ -24,20 +24,18 @@ namespace mixed_logit_dcm {
 /** @brief A table that basically maintains the discrete choice for
  *         each person.
  */
-template<typename TableType>
+template<typename TableType, typename DistributionType>
 class DCMTable {
   public:
 
-    typedef DCMTable<TableType> DCMTableType;
-
-    typedef mlpack::mixed_logit_dcm::Distribution DistributionType;
+    typedef DCMTable<TableType, DistributionType> DCMTableType;
 
   private:
 
     /** @brief The distribution from which each $\beta$ is sampled
      *         from.
      */
-    DistributionType *distribution_;
+    mlpack::mixed_logit_dcm::Distribution<DistributionType> distribution_;
 
     /** @brief The pointer to the attribute vector for each person per
      *         his/her discrete choice.
@@ -138,7 +136,8 @@ class DCMTable {
     /** @brief Returns the distribution from which each $\beta$ is
      *         sampled.
      */
-    const DistributionType *distribution() const {
+    const mlpack::mixed_logit_dcm::Distribution <
+    DistributionType > &distribution() const {
       return distribution_;
     }
 
@@ -174,7 +173,7 @@ class DCMTable {
     /** @brief Returns the number of parameters.
      */
     int num_parameters() const {
-      return distribution_->num_parameters();
+      return distribution_.num_parameters();
     }
 
     /** @brief Returns the total number of people.
@@ -193,8 +192,8 @@ class DCMTable {
       attribute_table_ = argument_in.attribute_table_;
       discrete_choice_set_info_ = argument_in.discrete_choice_set_info_;
 
-      // Set the distribution.
-      distribution_ = argument_in.distribution_;
+      // Initialize the distribution.
+      distribution_.Init(attribute_table_->n_attributes());
 
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.

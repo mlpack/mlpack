@@ -139,7 +139,7 @@ class MixedLogitDCMSampling {
       // Given the choice probabilities, compute the choice
       // probability weighted attribute vector.
       arma::vec choice_prob_weighted_attribute_vector;
-      dcm_table_->distribution()->ChoiceProbabilityWeightedAttributeVector(
+      dcm_table_->distribution().ChoiceProbabilityWeightedAttributeVector(
         *dcm_table_, person_index, choice_probabilities,
         &choice_prob_weighted_attribute_vector);
 
@@ -153,7 +153,7 @@ class MixedLogitDCMSampling {
 
       // The distribution knows how to compute the choice probability
       // gradient with respect to parameter
-      dcm_table_->distribution()->
+      dcm_table_->distribution().
       ChoiceProbabilityGradientWithRespectToParameter(
         parameters_, *dcm_table_, person_index,
         beta_vector, choice_probabilities,
@@ -173,7 +173,7 @@ class MixedLogitDCMSampling {
       // given person.
       arma::mat hessian_first_part;
       arma::vec hessian_second_part;
-      dcm_table_->distribution()->HessianProducts(
+      dcm_table_->distribution().HessianProducts(
         parameters_, *dcm_table_, person_index, beta_vector,
         choice_probabilities, choice_prob_weighted_attribute_vector,
         &hessian_first_part, &hessian_second_part);
@@ -213,7 +213,7 @@ class MixedLogitDCMSampling {
 
         // Draw a beta from the parameter theta and add it to the
         // sample pool.
-        dcm_table_->distribution()->DrawBeta(parameters_, &random_beta);
+        dcm_table_->distribution().DrawBeta(parameters_, &random_beta);
         this->AddIntegrationSample_(person_index, random_beta);
 
       } // end of looping each new beta sample.
