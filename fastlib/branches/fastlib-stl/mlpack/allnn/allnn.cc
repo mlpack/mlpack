@@ -8,6 +8,7 @@
  */
 
 #include "allnn.h"
+#include "fastlib/fx/io.h"
 
 using namespace mlpack;
 using namespace mlpack::allnn;
@@ -15,9 +16,7 @@ using namespace mlpack::allnn;
 // We are calling an advanced constructor of arma::mat which allows us to use
 // the same memory area as another matrix if desired (for aliasing).  For this
 // constructor, the queries matrix is the same as the references matrix.
-AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
-             bool alias_matrix, bool naive) :
-    module_(module_in),
+AllNN::AllNN(arma::mat& references_in, bool alias_matrix, bool naive) :
     references_(references_in.memptr(), references_in.n_rows,
         references_in.n_cols, !alias_matrix),
     queries_(references_.memptr(), references_.n_rows, references_.n_cols,
@@ -32,12 +31,17 @@ AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  if(IO::checkValue("leaf_size"))
+    leaf_size_ = IO::getValue<int>("leaf_size");
+  else
+    leaf_size_ = 20;
+  
   if(naive)
     leaf_size_ = references_.n_cols;
 
   // Need to move to a new timer system
-  fx_timer_start(module_, "tree_building");
+  //fx_timer_start(module_, "tree_building");
+  IO::startTimer("allnn/tree_building");
 
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
       leaf_size_, old_from_new_references_);
@@ -46,7 +50,8 @@ AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
   old_from_new_queries_ = arma::Col<index_t>(old_from_new_references_.memptr(),
       old_from_new_references_.n_elem, false, true);
 
-  fx_timer_stop(module_, "tree_building");
+  //fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("allnn/tree_building");
   
   /* Ready the list of nearest neighbor candidates to be filled. */
   neighbor_indices_.set_size(queries_.n_cols);
@@ -57,8 +62,7 @@ AllNN::AllNN(arma::mat& references_in, struct datanode* module_in,
 }
 
 AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
-             struct datanode* module_in, bool alias_matrix, bool naive) :
-    module_(module_in),
+             bool alias_matrix, bool naive) :
     references_(references_in.memptr(), references_in.n_rows,
         references_in.n_cols, !alias_matrix),
     queries_(queries_in.memptr(), queries_in.n_rows, queries_in.n_cols,
@@ -70,18 +74,24 @@ AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+  if(IO::checkValue("leaf_size"))
+    leaf_size_ = IO::getValue<int>("leaf_size");
+  else
+    leaf_size_ = 20;
+  
   if(naive)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
   
   // Need to move to a new timer system
-  fx_timer_start(module_, "tree_building");
+  //fx_timer_start(module_, "tree_building");
+  IO::startTimer("tree_building");
 
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
       leaf_size_, old_from_new_references_);
   query_tree_ = reference_tree_;
 
-  fx_timer_stop(module_, "tree_building");
+  //fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("tree_building");
   
   /* Ready the list of nearest neighbor candidates to be filled. */
   neighbor_indices_.set_size(queries_.n_cols);
@@ -315,24 +325,27 @@ void AllNN::GNPRecursion_(TreeType* query_node, TreeType* reference_node,
  */
 void AllNN::ComputeNeighbors(arma::vec& distances) {
   if(naive_) {
-    fx_timer_start(module_, "naive_time");
-
+    //fx_timer_start(module_, "naive_time");
+    IO::startTimer("allnn/naive/naive_time");
+    
     /* BaseCase_ on the roots is equivalent to naive */
     GNPBaseCase_(query_tree_, reference_tree_);
-
-    fx_timer_stop(module_, "naive_time");
+    
+    IO::stopTimer("allnn/naive/naive_time");
+    //fx_timer_stop(module_, "naive_time");
   } else {
-    fx_timer_start(module_, "dual_tree_computation");
-
+    //fx_timer_start(module_, "dual_tree_computation");
+    IO::startTimer("allnn/dual_tree_computation");
     /* Start recursion on the roots of either tree */
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
 
-    fx_timer_stop(module_, "dual_tree_computation");
-
+    //fx_timer_stop(module_, "dual_tree_computation");
+    IO::stopTimer("allnn/dual_tree_computation");
+    
     // Save the total number of prunes to the FASTexec module; this
     // will printed after calling fx_done or can be read back later.
-    fx_result_int(module_, "number_of_prunes", number_of_prunes_);
+    //fx_result_int(module_, "number_of_prunes", number_of_prunes_);
   }
 }
 void AllNN::ComputeNeighbors(arma::vec& distances, arma::Col<index_t>& results) {
@@ -355,3 +368,18 @@ void AllNN::EmitResults(arma::vec& distances, arma::Col<index_t>& results) {
   }
 
 } /* EmitResults */
+
+void AllNN::loadDocumentation() {
+	const char* rootNode = "allnn";
+	IO::add(rootNode, "Performs dual-tree all-nearest-neighbors computation.");
+	
+	IO::add<int>("leaf_size", "The maximum number of points to store at a leaf.", rootNode);
+	IO::add("tree_building", "Time spend building the kd-tree.", rootNode);
+	IO::add("dual_tree_computation", "Time spent computing the nearest neighbors.", rootNode);
+	IO::add("number_of_prunes", "Total node-pairs found to be too far to matter.", rootNode);
+	
+	const char* naive = "allnn/naive";
+	IO::add(naive, "Performs naive all-nearest-neighbors computation.");
+	
+	IO::add("naive_time", "Time spent performing the naive computation.", naive); 
+}

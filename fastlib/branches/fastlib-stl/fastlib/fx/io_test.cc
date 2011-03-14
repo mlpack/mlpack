@@ -2,24 +2,33 @@
 #include "optionshierarchy.h"
 #include <string>
 
+#include <iostream>
+#include <sys/time.h>
+
 using namespace mlpack;
 
 int main(int argc, char** argv) {
-	IO::add("test", "description");
-	IO::add("help", "This is a help message", "/bar/foo/");
-	IO::add("foo", "durka durka", "bar");
-	IO::add("help1", "This is a help message", "/bar/foo");
-	IO::add("help2", "This is a help message", "barfoo");
-	IO::add("help3", "This is a help message", "/bar/foo/");
-	IO::add("bar", "This is a submodule");
-	IO::add<std::string>("test3",  "This should be a string", NULL, true);
-	
-	IO::parseCommandLine(argc, argv);
-	
-	std::string x;
-	if(IO::checkValue("test3")) {
-		x = IO::getValue<std::string>("test3") ;
-		std::cout << x << std::endl;
-	}
-	
+  IO::add("test", "description"); 
+  IO::add("help", "This is a help message", "/bar/foo/");
+  IO::add("foo", "durka durka", "bar");
+  IO::add("help1", "This is a help message", "/bar/foo");
+  IO::add("help2", "This is a help message", "barfoo");
+  IO::add("help3", "This is a help message", "/bar/foo/");
+  IO::add("bar", "This is a submodule");
+  //IO::add<std::string>("test3",  "This should be a string", NULL, true); 
+  IO::add<std::string>("testint", "This should be an int", NULL, true);
+  
+  IO::parseCommandLine(argc, argv);
+  
+  std::string& x = IO::getValue<std::string>("testint");
+  x = "2o4";
+ 
+  //std::cout << IO::getValue<timeval>("brak/timer").tv_usec << std::endl;
+
+  for(int i = 0; i < 10; i++) { 
+    std::cout << i << std::endl;
+  }
+  IO::startTimer("brak/timer");
+  std::cout << "propogate?" << std::endl;
+  //IO::stopTimer("brak/timer");
 }
