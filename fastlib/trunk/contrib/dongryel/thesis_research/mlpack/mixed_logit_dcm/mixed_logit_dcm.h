@@ -66,7 +66,8 @@ class MixedLogitDCM {
       double data_sample_error,
       double integration_sample_error,
       const SamplingType &first_sample,
-      const arma::vec &gradient) const;
+      const arma::vec &gradient,
+      int *num_iterations) const;
 
     /** @brief Computes the sample data error (Section 3.1).
      */

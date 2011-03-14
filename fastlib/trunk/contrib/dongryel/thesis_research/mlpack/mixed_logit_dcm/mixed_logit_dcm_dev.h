@@ -443,6 +443,7 @@ void MixedLogitDCM<TableType>::Compute(
             current_radius << "\n";
 
   // Enter the trust region loop.
+  int num_iterations = 0;
   do {
 
     std::cerr << "\n";
@@ -481,7 +482,7 @@ void MixedLogitDCM<TableType>::Compute(
     if(TerminationConditionReached_(
           arguments_in, decrease_predicted_by_model,
           data_sample_error, integration_sample_error,
-          *iterate, gradient)) {
+          *iterate, gradient, &num_iterations)) {
       break;
     }
 
@@ -489,10 +490,13 @@ void MixedLogitDCM<TableType>::Compute(
     // three options. (1) Increase the data sample size; (2) Increase
     // the integration sample size; (3) Do a step to the new iterate.
 
+    std::cerr << "Data sample error: " << sqrt(data_sample_error) <<
+              " ; integration sample error: " << sqrt(integration_sample_error) << "\n";
+
     // Increase the data sample size.
     if(iterate->num_active_people() < table_.num_people() &&
         sqrt(data_sample_error) >= sqrt(integration_sample_error) &&
-        fabs(decrease_predicted_by_model) <
+        decrease_predicted_by_model <=
         arguments_in.gradient_norm_threshold_ * sqrt(data_sample_error)) {
 
       int max_allowable_people = table_.num_people() -
@@ -525,7 +529,7 @@ void MixedLogitDCM<TableType>::Compute(
 
     // Increase the integration sample size.
     if(sqrt(integration_sample_error) > sqrt(data_sample_error) &&
-        fabs(decrease_predicted_by_model) <
+        decrease_predicted_by_model <=
         arguments_in.gradient_norm_threshold_ *
         sqrt(integration_sample_error)) {
 
@@ -608,11 +612,19 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
   const ArgumentType &arguments_in,
   double predicted_objective_value_improvement, double data_sample_error,
   double integration_sample_error, const SamplingType &sampling,
-  const arma::vec &gradient) const {
+  const arma::vec &gradient,
+  int *num_iterations) const {
 
   // Termination condition is only considered when we use all the
   // people in the sampling (outer term consists of all people).
   if(sampling.num_active_people() == table_.num_people()) {
+
+    (*num_iterations)++;
+    if(*num_iterations >= arguments_in.max_num_iterations_) {
+      std::cerr << "Exceeding the maximum number of iterations of " <<
+                arguments_in.max_num_iterations_ << " so terminating...\n";
+      return true;
+    }
 
     std::cerr << "  Testing the termination condition...\n";
     double predicted_objective_value_improvement_threshold =
@@ -629,9 +641,9 @@ bool MixedLogitDCM<TableType>::TerminationConditionReached_(
     // If the predicted improvement in the objective value is less
     // than the integration sample error and the integration sample
     // error is small,
-    if(predicted_objective_value_improvement >
+    if(predicted_objective_value_improvement <=
         predicted_objective_value_improvement_threshold &&
-        sqrt(integration_sample_error) <
+        sqrt(integration_sample_error) <=
         arguments_in.integration_sample_error_threshold_) {
 
       // Compute the gradient error.

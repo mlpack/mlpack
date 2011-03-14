@@ -64,6 +64,11 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The threshold for determining whether the integration sample "
         "error is small or not."
       )(
+        "max_num_iterations_in",
+        boost::program_options::value<int>()->default_value(20),
+        "OPTIONAL The maximum number of iterations to try after all population "
+        "sample has been added to the objective function."
+      )(
         "max_num_integration_samples_per_person",
         boost::program_options::value<int>()->default_value(1000),
         "OPTIONAL The maximum number of integration samples allowed per person."
@@ -205,6 +210,10 @@ class MixedLogitDCMArgumentParser {
       // Parse where to output the discrete choice model predictions.
       arguments_out->predictions_out_ =
         vm[ "predictions_out" ].as<std::string>();
+
+      // Parse the maximum number of iterations.
+      arguments_out->max_num_iterations_ =
+        vm ["max_num_iterations_in"].as<int>();
 
       // Parse the maximum trust region radius.
       arguments_out->max_trust_region_radius_ =
