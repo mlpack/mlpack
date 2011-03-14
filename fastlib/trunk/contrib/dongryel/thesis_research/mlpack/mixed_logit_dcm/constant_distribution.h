@@ -30,6 +30,9 @@ class ConstantDistribution:
 
   public:
 
+    ~ConstantDistribution() {
+    }
+
     /** @brief Returns the (row, col)-th entry of
      *         $\frac{\partial}{\partial \theta} \beta^{\nu}(\theta)$
      */

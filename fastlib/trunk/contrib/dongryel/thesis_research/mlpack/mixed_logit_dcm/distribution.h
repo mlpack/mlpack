@@ -31,6 +31,9 @@ class Distribution {
 
   public:
 
+    virtual ~Distribution() {
+    }
+
     Distribution() {
       num_parameters_ = 0;
     }
