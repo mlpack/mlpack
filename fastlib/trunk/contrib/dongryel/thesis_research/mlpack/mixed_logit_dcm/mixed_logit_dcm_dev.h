@@ -439,7 +439,8 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
   else {
 
     // Approximate updates start with the identity Hessian.
-    hessian.eye();
+    hessian.eye(
+      iterate->parameters().n_elem, iterate->parameters().n_elem);
   }
 
   // The step direction and its 2-norm.

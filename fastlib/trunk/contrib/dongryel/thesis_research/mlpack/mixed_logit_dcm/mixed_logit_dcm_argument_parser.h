@@ -45,7 +45,7 @@ class MixedLogitDCMArgumentParser {
         "based on the gradient norm."
       )(
         "hessian_update_method",
-        boost::program_options::value<std::string>()->default_value("exact"),
+        boost::program_options::value<std::string>()->default_value("sr1"),
         "OPTIONAL The method for updating the Hessian. One of:"
         "  exact, bfgs, sr1"
       )(
