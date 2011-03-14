@@ -5,10 +5,6 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-// for BOOST testing
-#define BOOST_TEST_MAIN
-
-#include <boost/test/unit_test.hpp>
 #include <numeric>
 #include <time.h>
 #include "core/table/table.h"
@@ -158,13 +154,12 @@ class TestMixedLogitDCM {
 }
 }
 
-BOOST_AUTO_TEST_SUITE(TestSuiteMixedLogitDCM)
-BOOST_AUTO_TEST_CASE(TestCaseMixedLogitDCM) {
+int main(int argc, char *argv[]) {
 
   // Call the tests.
   mlpack::mixed_logit_dcm::TestMixedLogitDCM dcm_test;
   dcm_test.StressTestMain();
 
   std::cout << "All tests passed!\n";
+  return 0;
 }
-BOOST_AUTO_TEST_SUITE_END()
