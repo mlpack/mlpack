@@ -11,6 +11,10 @@
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_argument_parser.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_dev.h"
 
+// Tree type: hard-coded for a metric tree.
+typedef core::table::Table <
+core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+
 template<typename DistributionType>
 void BranchOnDistribution(
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
@@ -34,10 +38,6 @@ void BranchOnDistribution(
 }
 
 int main(int argc, char *argv[]) {
-
-  // Tree type: hard-coded for a metric tree.
-  typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
 
   // Parse arguments for mixed logit discrete choice model.
   mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
