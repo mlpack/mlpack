@@ -120,6 +120,7 @@ void ReducedSetFarField::AddBasis(
 
     // If the projection error is above the threshold, add it to the
     // dictionary.
+    printf("Projection error: %g vs %g\n", projection_error, adding_threshold_);
     if(projection_error > adding_threshold_) {
       UpdateDictionary_(
         new_point_index,
@@ -130,6 +131,14 @@ void ReducedSetFarField::AddBasis(
     }
   }
   else {
+
+    // Add the point to the dictionary.
+    point_indices_in_dictionary_.push_back(new_point_index);
+    in_dictionary_[ new_point_index ] = true;
+    training_index_to_dictionary_position_[ new_point_index ] =
+      point_indices_in_dictionary_.size() - 1;
+
+    // By default, we start with 1 by 1 kernel matrix and inverse.
     current_kernel_matrix_ = new core::table::DenseMatrix();
     current_kernel_matrix_->Init(1, 1);
     current_kernel_matrix_->set(0, 0, self_value);
@@ -258,6 +267,7 @@ void ReducedSetFarField::AccumulateCoeffs(
     if(in_dictionary_[current_index]) {
       projection_matrix_.set(
         current_index, num_dictionary_point_encountered, 1.0);
+      num_dictionary_point_encountered++;
     }
     else {
       arma::vec kernel_values;
