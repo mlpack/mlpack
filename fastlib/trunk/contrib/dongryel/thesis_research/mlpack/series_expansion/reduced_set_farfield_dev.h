@@ -286,14 +286,27 @@ void ReducedSetFarField::AccumulateCoeffs(
   } // end of looping over each point.
 }
 
-template<typename KernelAuxType>
+template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
 double ReducedSetFarField::EvaluateField(
+  const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &x_q) const {
+  const core::table::DensePoint &query_point,
+  TreeIteratorType &reference_it) const {
 
-  // Project the query point.
+  // Compute the kernel value between the query point and the
+  // dictionary point.
+  arma::vec kernel_values;
+  double self_value;
+  FillKernelValues_(
+    metric_in, kernel_aux_in, query_point, reference_it,
+    &kernel_values, &self_value);
 
-  return 0;
+  // Go through the projection matrix, and sum up the contribution.
+  double contribution = 0.0;
+  for(int i = 0; i < projection_matrix_.n_rows(); i++) {
+
+  }
+  return contribution;
 }
 
 template<typename KernelAuxType>

@@ -137,10 +137,13 @@ class ReducedSetFarField {
 
     /** @brief Evaluates the far-field coefficients at the given point.
      */
-    template<typename KernelAuxType>
+    template <
+    typename MetricType, typename KernelAuxType, typename TreeIteratorType >
     double EvaluateField(
+      const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point) const;
+      const core::table::DensePoint &point,
+      TreeIteratorType &reference_it) const;
 
     /** @brief Prints out the series expansion represented by this object.
      */
