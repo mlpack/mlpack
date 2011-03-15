@@ -303,8 +303,23 @@ double ReducedSetFarField::EvaluateField(
 
   // Go through the projection matrix, and sum up the contribution.
   double contribution = 0.0;
+  int num_dictionary_point_encountered = 0;
   for(int i = 0; i < projection_matrix_.n_rows(); i++) {
 
+    // The DFS index shifted so that the begin index is 0.
+    int current_index = it.current_index() - it.begin();
+
+    // If the point is in the dictionary, then set the corresponding
+    // column to 1.
+    if(in_dictionary_[current_index]) {
+      contribution += kernel_values[num_dictionary_point_encountered];
+      num_dictionary_point_encountered++;
+    }
+    else {
+      for(int j = 0; j < projection_matrix_.n_cols(); j++) {
+        contribution += projection_matrix_.get(i, j) * kernel_values[j];
+      }
+    }
   }
   return contribution;
 }
