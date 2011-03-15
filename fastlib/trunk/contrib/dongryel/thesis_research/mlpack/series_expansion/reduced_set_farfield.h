@@ -44,6 +44,11 @@ class ReducedSetFarField {
      */
     core::table::DenseMatrix *current_kernel_matrix_;
 
+    /** @brief The projection matrix that projects each point to the
+     *         span of the dictionary points.
+     */
+    core::table::DenseMatrix projection_matrix_;
+
     /** @brief The inverse of the current kernel matrix.
      */
     core::table::DenseMatrix *current_kernel_matrix_inverse_;
