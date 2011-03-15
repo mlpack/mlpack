@@ -265,6 +265,13 @@ void ReducedSetFarField::AccumulateCoeffs(
       FillKernelValues_(
         metric_in, kernel_aux_in, point, it, &kernel_values, &self_value);
       arma::vec temp = current_kernel_matrix_inverse_alias * kernel_values;
+      double scale_factor =
+        (1.0 - arma::accu(temp)) / sum_kernel_matrix_inverse_entries;
+      for(int i = 0; i < projection_matrix_.n_cols(); i++) {
+        projection_matrix_.set(
+          current_index, i,
+          temp[i] + scale_factor * column_sum_kernel_matrix_inverse[i]);
+      }
     }
   }
 }
