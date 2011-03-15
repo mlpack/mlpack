@@ -53,6 +53,10 @@ class ReducedSetFarField {
      */
     core::table::DenseMatrix *current_kernel_matrix_inverse_;
 
+    /** @brief The number of compressed points.
+     */
+    int num_compressed_points_;
+
   private:
 
     /** @brief Fills out a vector of kernel values for a given point
