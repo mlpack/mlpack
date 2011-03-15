@@ -235,7 +235,7 @@ void ReducedSetFarField::AccumulateCoeffs(
       metric_in, kernel_aux_in, point, it, &new_column_vector_in, &self_value);
     AddBasis(
       current_index, new_column_vector_in, self_value);
-  }
+  } // end of looping over each point.
 
   // The alias to the final kernel matrix inverse.
   arma::mat current_kernel_matrix_inverse_alias;
@@ -283,13 +283,16 @@ void ReducedSetFarField::AccumulateCoeffs(
           temp[i] + scale_factor * column_sum_kernel_matrix_inverse[i]);
       }
     }
-  }
+  } // end of looping over each point.
 }
 
 template<typename KernelAuxType>
 double ReducedSetFarField::EvaluateField(
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &x_q) const {
+
+  // Project the query point.
+
   return 0;
 }
 
