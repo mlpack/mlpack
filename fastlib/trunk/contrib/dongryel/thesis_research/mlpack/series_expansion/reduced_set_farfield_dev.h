@@ -18,6 +18,7 @@ namespace series_expansion {
 ReducedSetFarField::ReducedSetFarField() {
   current_kernel_matrix_ = NULL;
   current_kernel_matrix_inverse_ = NULL;
+  num_compressed_points_ = 0;
 }
 
 ReducedSetFarField::~ReducedSetFarField() {
@@ -284,6 +285,8 @@ void ReducedSetFarField::AccumulateCoeffs(
       }
     }
   } // end of looping over each point.
+
+  num_compressed_points_ += it.count();
 }
 
 template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
@@ -334,6 +337,13 @@ template<typename KernelAuxType>
 void ReducedSetFarField::TranslateFromFarField(
   const KernelAuxType &kernel_aux_in, const ReducedSetFarField &se) {
 
+  // If there is no pre-existing dictionary, then just take the
+  // target.
+  if(num_compressed_points_ == 0) {
+
+  }
+
+  // If we are done compressing, then compute the final mapping.
 }
 
 template<typename KernelAuxType, typename ReducedSetLocalType>
