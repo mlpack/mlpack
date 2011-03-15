@@ -227,6 +227,46 @@ void ReducedSetFarField::AccumulateCoeffs(
     AddBasis(
       current_index, new_column_vector_in, self_value);
   }
+
+  // The alias to the final kernel matrix inverse.
+  arma::mat current_kernel_matrix_inverse_alias;
+  core::table::DenseMatrixToArmaMat(
+    *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
+
+  // Sum of the kernel matrix inverse entries.
+  double sum_kernel_matrix_inverse_entries =
+    arma::accu(current_kernel_matrix_inverse_alias);
+
+  // Column sum of the kernel matrix inverse entries.
+  arma::vec column_sum_kernel_matrix_inverse =
+    arma::sum(current_kernel_matrix_inverse_alias, 1);
+
+  // Compute the projection matrix based on the dictionary.
+  it.Reset();
+  projection_matrix_.Init(it.count(), point_indices_in_dictionary_.size());
+  projection_matrix_.SetZero();
+  int num_dictionary_point_encountered = 0;
+  while(it.HasNext()) {
+    core::table::DensePoint point;
+    it.Next(&point);
+
+    // The DFS index shifted so that the begin index is 0.
+    int current_index = it.current_index() - it.begin();
+
+    // If the point is in the dictionary, then set the corresponding
+    // column to 1.
+    if(in_dictionary_[current_index]) {
+      projection_matrix_.set(
+        current_index, num_dictionary_point_encountered, 1.0);
+    }
+    else {
+      arma::vec kernel_values;
+      double self_value;
+      FillKernelValues_(
+        metric_in, kernel_aux_in, point, it, &kernel_values, &self_value);
+      arma::vec temp = current_kernel_matrix_inverse_alias * kernel_values;
+    }
+  }
 }
 
 template<typename KernelAuxType>
