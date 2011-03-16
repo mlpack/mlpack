@@ -25,34 +25,28 @@ class ReducedSetFarField {
     // For Boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief Tells whether each depth-first indexed point is in the
-     *         dictionary or not.
-     */
-    std::vector<bool> in_dictionary_;
-
-    /** @brief The list of point depth-first indices in the
-     *         dictionary.
-     */
-    std::vector<int> point_indices_in_dictionary_;
-
-    /** @brief Maps each depth-first index to the index in the
-     *         dictionary. -1 if the point does not exist in the
-     *         dictionary.
-     */
-    std::vector<int> training_index_to_dictionary_position_;
-
     /** @brief The current kernel matrix.
      */
     core::table::DenseMatrix *current_kernel_matrix_;
+
+    /** @brief The inverse of the current kernel matrix.
+     */
+    core::table::DenseMatrix *current_kernel_matrix_inverse_;
 
     /** @brief The projection matrix that projects each point to the
      *         span of the dictionary points.
      */
     core::table::DenseMatrix projection_matrix_;
 
-    /** @brief The inverse of the current kernel matrix.
+    /** @brief Tells whether each row of the projection matrix belongs
+     *         to the dictionary or not.
      */
-    core::table::DenseMatrix *current_kernel_matrix_inverse_;
+    std::vector<bool> in_dictionary_;
+
+    /** @brief The dictionary points and their DFS indices.
+     */
+    std::vector <
+    std::pair<core::table::DensePoint *, int> > dictionary_;
 
     /** @brief The number of compressed points.
      */
@@ -62,7 +56,7 @@ class ReducedSetFarField {
      *         far-to-far translation operators).
      */
     std::vector <
-    mlpack::series_expansion::ReducedSetFarField <
+    const mlpack::series_expansion::ReducedSetFarField <
     TreeIteratorType > * > child_expansions_;
 
   private:
@@ -76,39 +70,28 @@ class ReducedSetFarField {
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
       const core::table::DensePoint &candidate,
-      TreeIteratorType &it,
       arma::vec *kernel_values_out,
       double *self_value) const;
 
     void UpdateDictionary_(
+      const core::table::DensePoint &new_point,
       int new_point_index,
+      const TreeIteratorType &it,
       const arma::vec &new_column_vector,
       double self_value,
       double projection_error,
       const arma::vec &inverse_times_column_vector);
 
-  public:
-
-    bool in_dictionary(int training_point_index) const;
-
-    int position_to_training_index_map(int position) const;
-
-    int training_index_to_dictionary_position(int training_index) const;
-
-    int point_indices_in_dictionary(int nth_dictionary_point_index) const;
-
-    void Init(const TreeIteratorType &it);
-
-    void AddBasis(
+    void AddBasis_(
+      const core::table::DensePoint &new_point,
       int new_point_index,
+      const TreeIteratorType &it,
       const arma::vec &new_column_vector_in,
       double self_value);
 
-    const std::vector<bool> &in_dictionary() const;
+  public:
 
-    const std::vector<int> &point_indices_in_dictionary() const;
-
-    const std::vector<int> &training_index_to_dictionary_position() const;
+    void Init(const TreeIteratorType &it);
 
     const core::table::DenseMatrix *current_kernel_matrix() const;
 
