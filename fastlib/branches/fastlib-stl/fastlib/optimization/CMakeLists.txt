@@ -1,5 +1,5 @@
 add_subdirectory(contrib)
-#add_subdirectory(lbfgs)
+add_subdirectory(lbfgs)
 add_subdirectory(optpp)
 
 #set(FASTLIB_SRCS ${FASTLIB_SRCS} PARENT_SCOPE)
