@@ -15,13 +15,15 @@
 namespace mlpack {
 namespace series_expansion {
 
-ReducedSetFarField::ReducedSetFarField() {
+template<typename TreeIteratorType>
+ReducedSetFarField<TreeIteratorType>::ReducedSetFarField() {
   current_kernel_matrix_ = NULL;
   current_kernel_matrix_inverse_ = NULL;
   num_compressed_points_ = 0;
 }
 
-ReducedSetFarField::~ReducedSetFarField() {
+template<typename TreeIteratorType>
+ReducedSetFarField<TreeIteratorType>::~ReducedSetFarField() {
   if(current_kernel_matrix_ != NULL) {
     delete current_kernel_matrix_;
   }
@@ -30,11 +32,14 @@ ReducedSetFarField::~ReducedSetFarField() {
   }
 }
 
-bool ReducedSetFarField::in_dictionary(int training_point_index) const {
+template<typename TreeIteratorType>
+bool ReducedSetFarField<TreeIteratorType>::in_dictionary(
+  int training_point_index) const {
   return in_dictionary_[training_point_index];
 }
 
-void ReducedSetFarField::UpdateDictionary_(
+template<typename TreeIteratorType>
+void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
   int new_point_index,
   const arma::vec &new_column_vector,
   double self_value,
@@ -82,24 +87,32 @@ void ReducedSetFarField::UpdateDictionary_(
   current_kernel_matrix_inverse_ = new_kernel_matrix_inverse;
 }
 
-const core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix()
-const {
+template<typename TreeIteratorType>
+const core::table::DenseMatrix *ReducedSetFarField <
+TreeIteratorType >::current_kernel_matrix() const {
   return current_kernel_matrix_;
 }
 
-const core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix_inverse() const {
+template<typename TreeIteratorType>
+const core::table::DenseMatrix *ReducedSetFarField <
+TreeIteratorType >::current_kernel_matrix_inverse() const {
   return current_kernel_matrix_inverse_;
 }
 
-core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix() {
+template<typename TreeIteratorType>
+core::table::DenseMatrix *ReducedSetFarField <
+TreeIteratorType >::current_kernel_matrix() {
   return current_kernel_matrix_;
 }
 
-core::table::DenseMatrix *ReducedSetFarField::current_kernel_matrix_inverse() {
+template<typename TreeIteratorType>
+core::table::DenseMatrix *ReducedSetFarField <
+TreeIteratorType >::current_kernel_matrix_inverse() {
   return current_kernel_matrix_inverse_;
 }
 
-void ReducedSetFarField::AddBasis(
+template<typename TreeIteratorType>
+void ReducedSetFarField<TreeIteratorType>::AddBasis(
   int new_point_index,
   const arma::vec &new_column_vector_in,
   double self_value) {
@@ -150,7 +163,7 @@ void ReducedSetFarField::AddBasis(
 }
 
 template<typename TreeIteratorType>
-void ReducedSetFarField::Init(const TreeIteratorType &it) {
+void ReducedSetFarField<TreeIteratorType>::Init(const TreeIteratorType &it) {
 
   // Allocate the boolean flag for the presence of each training
   // point in the dictionary.
@@ -164,33 +177,40 @@ void ReducedSetFarField::Init(const TreeIteratorType &it) {
   }
 }
 
-int ReducedSetFarField::training_index_to_dictionary_position(
+template<typename TreeIteratorType>
+int ReducedSetFarField<TreeIteratorType>::training_index_to_dictionary_position(
   int training_index) const {
   return training_index_to_dictionary_position_[training_index];
 }
 
-int ReducedSetFarField::point_indices_in_dictionary(
+template<typename TreeIteratorType>
+int ReducedSetFarField<TreeIteratorType>::point_indices_in_dictionary(
   int nth_dictionary_point_index) const {
   return point_indices_in_dictionary_[nth_dictionary_point_index];
 }
 
-const std::vector<bool> &ReducedSetFarField::in_dictionary() const {
+template<typename TreeIteratorType>
+const std::vector<bool> &ReducedSetFarField <
+TreeIteratorType >::in_dictionary() const {
   return in_dictionary_;
 }
 
-const std::vector<int> &ReducedSetFarField::point_indices_in_dictionary()
-const {
+template<typename TreeIteratorType>
+const std::vector<int> &ReducedSetFarField <
+TreeIteratorType >::point_indices_in_dictionary() const {
   return point_indices_in_dictionary_;
 }
 
-const std::vector<int> &ReducedSetFarField::
-training_index_to_dictionary_position() const {
+template<typename TreeIteratorType>
+const std::vector<int> &ReducedSetFarField <
+TreeIteratorType >::training_index_to_dictionary_position() const {
   return training_index_to_dictionary_position_;
 }
 
+template<typename TreeIteratorType>
 template <
-typename MetricType, typename KernelAuxType, typename TreeIteratorType >
-void ReducedSetFarField::FillKernelValues_(
+typename MetricType, typename KernelAuxType >
+void ReducedSetFarField<TreeIteratorType>::FillKernelValues_(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &candidate,
@@ -214,8 +234,9 @@ void ReducedSetFarField::FillKernelValues_(
   }
 }
 
-template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
-void ReducedSetFarField::AccumulateCoeffs(
+template<typename TreeIteratorType>
+template<typename MetricType, typename KernelAuxType>
+void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   TreeIteratorType &it) {
@@ -289,8 +310,9 @@ void ReducedSetFarField::AccumulateCoeffs(
   num_compressed_points_ += it.count();
 }
 
-template<typename MetricType, typename KernelAuxType, typename TreeIteratorType>
-double ReducedSetFarField::EvaluateField(
+template<typename TreeIteratorType>
+template<typename MetricType, typename KernelAuxType>
+double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &query_point,
@@ -310,7 +332,7 @@ double ReducedSetFarField::EvaluateField(
   for(int i = 0; i < projection_matrix_.n_rows(); i++) {
 
     // The DFS index shifted so that the begin index is 0.
-    int current_index = it.current_index() - it.begin();
+    int current_index = reference_it.current_index() - reference_it.begin();
 
     // If the point is in the dictionary, then set the corresponding
     // column to 1.
@@ -327,27 +349,42 @@ double ReducedSetFarField::EvaluateField(
   return contribution;
 }
 
+template<typename TreeIteratorType>
+int ReducedSetFarField<TreeIteratorType>::num_compressed_points() const {
+  return num_compressed_points_;
+}
+
+template<typename TreeIteratorType>
 template<typename KernelAuxType>
-void ReducedSetFarField::Print(
+void ReducedSetFarField<TreeIteratorType>::Print(
   const KernelAuxType &kernel_aux_in, const char *name, FILE *stream) const {
 
 }
 
-template<typename KernelAuxType>
-void ReducedSetFarField::TranslateFromFarField(
-  const KernelAuxType &kernel_aux_in, const ReducedSetFarField &se) {
+template<typename TreeIteratorType>
+template<typename MetricType, typename KernelAuxType>
+void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
+  const MetricType &metric_in,
+  const KernelAuxType &kernel_aux_in,
+  const ReducedSetFarField &se,
+  TreeIteratorType &it) {
 
-  // If there is no pre-existing dictionary, then just take the
-  // target.
-  if(num_compressed_points_ == 0) {
+  // Keep adding the pointers to the existing series expansion object,
+  // and if we are done adding all, then start compressing all of the
+  // dictionaries.
+  if(num_compressed_points_ < it.count()) {
+
+  }
+  else {
 
   }
 
   // If we are done compressing, then compute the final mapping.
 }
 
+template<typename TreeIteratorType>
 template<typename KernelAuxType, typename ReducedSetLocalType>
-void ReducedSetFarField::TranslateToLocal(
+void ReducedSetFarField<TreeIteratorType>::TranslateToLocal(
   const KernelAuxType &kernel_aux_in, int truncation_order,
   ReducedSetLocalType *se) const {
 
