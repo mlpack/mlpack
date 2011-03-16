@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
   lbfgs_dev.h
@@ -13,15 +13,14 @@ foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(optimization-test
-               EXCLUDE_FROM_ALL
-               optimization.test.cc
-              )
+  EXCLUDE_FROM_ALL
+  optimization.test.cc
+)
 # link dependencies of test executable
 target_link_libraries(optimization-test
-                      core
-                      ${Boost_LIBRARIES}
-                     )
+  fastlib
+)
