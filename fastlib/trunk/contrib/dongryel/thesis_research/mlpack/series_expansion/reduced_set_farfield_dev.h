@@ -33,24 +33,21 @@ ReducedSetFarField<TreeIteratorType>::~ReducedSetFarField() {
 }
 
 template<typename TreeIteratorType>
-bool ReducedSetFarField<TreeIteratorType>::in_dictionary(
-  int training_point_index) const {
-  return in_dictionary_[training_point_index];
-}
-
-template<typename TreeIteratorType>
 void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
+  const core::table::DensePoint &new_point,
   int new_point_index,
+  const TreeIteratorType &it,
   const arma::vec &new_column_vector,
   double self_value,
   double projection_error,
   const arma::vec &inverse_times_column_vector) {
 
   // Add the point to the dictionary.
-  point_indices_in_dictionary_.push_back(new_point_index);
-  in_dictionary_[ new_point_index ] = true;
-  training_index_to_dictionary_position_[ new_point_index ] =
-    point_indices_in_dictionary_.size() - 1;
+  std::pair< core::table::DensePoint *, int > new_pair(
+    new core::table::DensePoint(), new_point_index);
+  new_pair.first->Copy(new_point);
+  dictionary_.push_back(new_pair);
+  in_dictionary_[ new_point_index - it.begin()] = true;
 
   // Update the kernel matrix.
   core::table::DenseMatrix *new_kernel_matrix = new core::table::DenseMatrix();
@@ -112,8 +109,10 @@ TreeIteratorType >::current_kernel_matrix_inverse() {
 }
 
 template<typename TreeIteratorType>
-void ReducedSetFarField<TreeIteratorType>::AddBasis(
+void ReducedSetFarField<TreeIteratorType>::AddBasis_(
+  const core::table::DensePoint &new_point,
   int new_point_index,
+  const TreeIteratorType &it,
   const arma::vec &new_column_vector_in,
   double self_value) {
 
@@ -134,23 +133,20 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis(
 
     // If the projection error is above the threshold, add it to the
     // dictionary.
-    printf("Projection error: %g vs %g\n", projection_error, adding_threshold_);
     if(projection_error > adding_threshold_) {
       UpdateDictionary_(
-        new_point_index,
-        new_column_vector_in,
-        self_value,
-        projection_error,
-        inverse_times_column_vector);
+        new_point, new_point_index, it, new_column_vector_in, self_value,
+        projection_error, inverse_times_column_vector);
     }
   }
   else {
 
     // Add the point to the dictionary.
-    point_indices_in_dictionary_.push_back(new_point_index);
-    in_dictionary_[ new_point_index ] = true;
-    training_index_to_dictionary_position_[ new_point_index ] =
-      point_indices_in_dictionary_.size() - 1;
+    std::pair< core::table::DensePoint *, int > new_pair(
+      new core::table::DensePoint(), new_point_index);
+    new_pair.first->Copy(new_point);
+    dictionary_.push_back(new_pair);
+    in_dictionary_[new_point_index - it.begin()] = true;
 
     // By default, we start with 1 by 1 kernel matrix and inverse.
     current_kernel_matrix_ = new core::table::DenseMatrix();
@@ -165,46 +161,6 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis(
 template<typename TreeIteratorType>
 void ReducedSetFarField<TreeIteratorType>::Init(const TreeIteratorType &it) {
 
-  // Allocate the boolean flag for the presence of each training
-  // point in the dictionary.
-  in_dictionary_.resize(it.count());
-  training_index_to_dictionary_position_.resize(it.count());
-  point_indices_in_dictionary_.resize(0);
-
-  for(int i = 0; i < it.count(); i++) {
-    in_dictionary_[i] = false;
-    training_index_to_dictionary_position_[i] = -1;
-  }
-}
-
-template<typename TreeIteratorType>
-int ReducedSetFarField<TreeIteratorType>::training_index_to_dictionary_position(
-  int training_index) const {
-  return training_index_to_dictionary_position_[training_index];
-}
-
-template<typename TreeIteratorType>
-int ReducedSetFarField<TreeIteratorType>::point_indices_in_dictionary(
-  int nth_dictionary_point_index) const {
-  return point_indices_in_dictionary_[nth_dictionary_point_index];
-}
-
-template<typename TreeIteratorType>
-const std::vector<bool> &ReducedSetFarField <
-TreeIteratorType >::in_dictionary() const {
-  return in_dictionary_;
-}
-
-template<typename TreeIteratorType>
-const std::vector<int> &ReducedSetFarField <
-TreeIteratorType >::point_indices_in_dictionary() const {
-  return point_indices_in_dictionary_;
-}
-
-template<typename TreeIteratorType>
-const std::vector<int> &ReducedSetFarField <
-TreeIteratorType >::training_index_to_dictionary_position() const {
-  return training_index_to_dictionary_position_;
 }
 
 template<typename TreeIteratorType>
@@ -214,19 +170,17 @@ void ReducedSetFarField<TreeIteratorType>::FillKernelValues_(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   const core::table::DensePoint &candidate,
-  TreeIteratorType &it,
   arma::vec *kernel_values_out,
   double *self_value) const {
 
   // Resize the kernel value vector.
-  kernel_values_out->set_size(point_indices_in_dictionary_.size());
+  kernel_values_out->set_size(dictionary_.size());
 
   // First the self kernel value.
   *self_value = kernel_aux_in.kernel().EvalUnnormOnSq(0.0);
 
-  for(unsigned int i = 0; i < point_indices_in_dictionary_.size(); i++) {
-    core::table::DensePoint dictionary_point;
-    it.get(point_indices_in_dictionary_[i], &dictionary_point);
+  for(unsigned int i = 0; i < dictionary_.size(); i++) {
+    const core::table::DensePoint &dictionary_point = *(dictionary_[i].first);
     double squared_distance =
       metric_in.DistanceSq(candidate, dictionary_point);
     (*kernel_values_out)[i] =
@@ -241,6 +195,11 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
   TreeIteratorType &it) {
 
+  // The bit flag for denoting whether each point is in the dictionary
+  // or not.
+  in_dictionary_.resize(it.count());
+  std::fill(in_dictionary_.begin(), in_dictionary_.end(), false);
+
   // Loop through each point and build the dictionary.
   it.Reset();
   arma::vec new_column_vector_in;
@@ -248,15 +207,12 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
     core::table::DensePoint point;
     it.Next(&point);
 
-    // The DFS index shifted so that the begin index is 0.
-    int current_index = it.current_index() - it.begin();
-
     // Fill out the kernel values, and do the self-computation.
     double self_value;
     FillKernelValues_(
-      metric_in, kernel_aux_in, point, it, &new_column_vector_in, &self_value);
-    AddBasis(
-      current_index, new_column_vector_in, self_value);
+      metric_in, kernel_aux_in, point, &new_column_vector_in, &self_value);
+    AddBasis_(
+      point, it.current_index(), it, new_column_vector_in, self_value);
   } // end of looping over each point.
 
   // The alias to the final kernel matrix inverse.
@@ -274,7 +230,7 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
 
   // Compute the projection matrix based on the dictionary.
   it.Reset();
-  projection_matrix_.Init(it.count(), point_indices_in_dictionary_.size());
+  projection_matrix_.Init(it.count(), dictionary_.size());
   projection_matrix_.SetZero();
   int num_dictionary_point_encountered = 0;
   while(it.HasNext()) {
@@ -282,26 +238,26 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
     it.Next(&point);
 
     // The DFS index shifted so that the begin index is 0.
-    int current_index = it.current_index() - it.begin();
+    int adjusted_current_index = it.current_index() - it.begin();
 
     // If the point is in the dictionary, then set the corresponding
     // column to 1.
-    if(in_dictionary_[current_index]) {
+    if(in_dictionary_[adjusted_current_index]) {
       projection_matrix_.set(
-        current_index, num_dictionary_point_encountered, 1.0);
+        adjusted_current_index, num_dictionary_point_encountered, 1.0);
       num_dictionary_point_encountered++;
     }
     else {
       arma::vec kernel_values;
       double self_value;
       FillKernelValues_(
-        metric_in, kernel_aux_in, point, it, &kernel_values, &self_value);
+        metric_in, kernel_aux_in, point, &kernel_values, &self_value);
       arma::vec temp = current_kernel_matrix_inverse_alias * kernel_values;
       double scale_factor =
         (1.0 - arma::accu(temp)) / sum_kernel_matrix_inverse_entries;
       for(int i = 0; i < projection_matrix_.n_cols(); i++) {
         projection_matrix_.set(
-          current_index, i,
+          adjusted_current_index, i,
           temp[i] + scale_factor * column_sum_kernel_matrix_inverse[i]);
       }
     }
@@ -323,8 +279,7 @@ double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   arma::vec kernel_values;
   double self_value;
   FillKernelValues_(
-    metric_in, kernel_aux_in, query_point, reference_it,
-    &kernel_values, &self_value);
+    metric_in, kernel_aux_in, query_point, &kernel_values, &self_value);
 
   // Go through the projection matrix, and sum up the contribution.
   double contribution = 0.0;
@@ -332,11 +287,12 @@ double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   for(int i = 0; i < projection_matrix_.n_rows(); i++) {
 
     // The DFS index shifted so that the begin index is 0.
-    int current_index = reference_it.current_index() - reference_it.begin();
+    int adjusted_current_index =
+      reference_it.current_index() - reference_it.begin();
 
     // If the point is in the dictionary, then set the corresponding
     // column to 1.
-    if(in_dictionary_[current_index]) {
+    if(in_dictionary_[adjusted_current_index]) {
       contribution += kernel_values[num_dictionary_point_encountered];
       num_dictionary_point_encountered++;
     }
@@ -369,17 +325,21 @@ void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
   const ReducedSetFarField &se,
   TreeIteratorType &it) {
 
+  // Add the pointer to the child expansion.
+  child_expansions_.push_back(&se);
+  num_compressed_points_ += se.num_compressed_points();
+
   // Keep adding the pointers to the existing series expansion object,
   // and if we are done adding all, then start compressing all of the
   // dictionaries.
-  if(num_compressed_points_ < it.count()) {
+  if(num_compressed_points_ == it.count()) {
 
+    // Take all dictionary points and compress.
+    for(int i = 0; i < child_expansions_.size(); i++) {
+      //AccumulateCoeffs(
+      //metric_in, kernel_aux_in, child_expansions_[i]->iterator());
+    }
   }
-  else {
-
-  }
-
-  // If we are done compressing, then compute the final mapping.
 }
 
 template<typename TreeIteratorType>
