@@ -115,11 +115,15 @@ class Table {
           table_ = NULL;
         }
 
-        TreeIterator(const TreeIterator &it_in) {
+        void operator=(const TreeIterator &it_in) {
           begin_ = it_in.begin();
           end_ = it_in.end();
           current_index_ = it_in.current_index();
           table_ = it_in.table();
+        }
+
+        TreeIterator(const TreeIterator &it_in) {
+          this->operator=(it_in);
         }
 
         TreeIterator(const TableType &table, TreeType *node) {

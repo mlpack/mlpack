@@ -140,7 +140,8 @@ class SeriesExpansionTest {
       printf("\n");
 
       if(test_reduced_set_expansion) {
-        mlpack::series_expansion::ReducedSetFarField reduced_set_farfield;
+        mlpack::series_expansion::ReducedSetFarField <
+        typename TableType::TreeIterator > reduced_set_farfield;
         typename TableType::TreeIterator it =
           random_table.get_node_iterator(reference_node);
         reduced_set_farfield.Init(it);

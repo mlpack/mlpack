@@ -17,6 +17,7 @@ namespace series_expansion {
 
 /** @brief Reduced set expansion based on Smola/Bengio's method.
  */
+template<typename TreeIteratorType>
 class ReducedSetFarField {
 
   private:
@@ -57,13 +58,20 @@ class ReducedSetFarField {
      */
     int num_compressed_points_;
 
+    /** @brief The list of child expansions (for implementing the
+     *         far-to-far translation operators).
+     */
+    std::vector <
+    mlpack::series_expansion::ReducedSetFarField <
+    TreeIteratorType > * > child_expansions_;
+
   private:
 
     /** @brief Fills out a vector of kernel values for a given point
      *         against the pre-existing dictionary points.
      */
     template <
-    typename MetricType, typename KernelAuxType, typename TreeIteratorType >
+    typename MetricType, typename KernelAuxType >
     void FillKernelValues_(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
@@ -89,7 +97,6 @@ class ReducedSetFarField {
 
     int point_indices_in_dictionary(int nth_dictionary_point_index) const;
 
-    template<typename TreeIteratorType>
     void Init(const TreeIteratorType &it);
 
     void AddBasis(
@@ -113,6 +120,10 @@ class ReducedSetFarField {
 
   public:
 
+    /** @brief Returns the number of compressed points.
+     */
+    int num_compressed_points() const;
+
     /** @brief Serializes the far field object.
      */
     template<class Archive>
@@ -131,9 +142,7 @@ class ReducedSetFarField {
     /** @brief Accumulates the far field moment represented by the given
      *         reference data into the coefficients.
      */
-    template < typename MetricType,
-             typename KernelAuxType,
-             typename TreeIteratorType >
+    template<typename MetricType, typename KernelAuxType>
     void AccumulateCoeffs(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
@@ -142,7 +151,7 @@ class ReducedSetFarField {
     /** @brief Evaluates the far-field coefficients at the given point.
      */
     template <
-    typename MetricType, typename KernelAuxType, typename TreeIteratorType >
+    typename MetricType, typename KernelAuxType >
     double EvaluateField(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
@@ -160,10 +169,13 @@ class ReducedSetFarField {
      *         here. The translated coefficients are added up to the
      *         ones here.
      */
-    template<typename KernelAuxType>
+    template <
+    typename MetricType, typename KernelAuxType >
     void TranslateFromFarField(
+      const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const ReducedSetFarField &se);
+      const ReducedSetFarField &se,
+      TreeIteratorType &it);
 
     /** @brief Translate to the given local expansion. The translated
      *         coefficients are added up to the passed-in local
