@@ -23,11 +23,11 @@ set(DIRS
    march
    niche
    nvasil
+#   pagarwal
    pram
    rriegel
    soyeon
    tqlong
-   pagarwal
 )
 
 foreach(dir ${DIRS})
