@@ -20,6 +20,10 @@ namespace series_expansion {
 template<typename TreeIteratorType>
 class ReducedSetFarField {
 
+  public:
+    typedef std::vector <
+    std::pair<core::table::DensePoint *, int> > DictionaryType;
+
   private:
 
     // For Boost serialization.
@@ -45,8 +49,7 @@ class ReducedSetFarField {
 
     /** @brief The dictionary points and their DFS indices.
      */
-    std::vector <
-    std::pair<core::table::DensePoint *, int> > dictionary_;
+    DictionaryType dictionary_;
 
     /** @brief The number of compressed points.
      */
@@ -89,7 +92,18 @@ class ReducedSetFarField {
       const arma::vec &new_column_vector_in,
       double self_value);
 
+    /** @brief Finalize the compression by computing the final
+     *         mapping.
+     */
+    template<typename MetricType, typename KernelAuxType>
+    void FinalizeCompression_(
+      const MetricType &metric_in,
+      const KernelAuxType &kernel_aux_in,
+      TreeIteratorType &it);
+
   public:
+
+    const DictionaryType &dictionary() const;
 
     void Init(const TreeIteratorType &it);
 
