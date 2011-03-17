@@ -179,8 +179,11 @@ class SeriesExpansionTest {
         double naive_kernel_sum =
           NaiveKernelSum_(
             l2_metric, kernel_aux, random_query_point, reference_it);
-        printf("Comparing %g %g\n", compressed_kernel_sum,
-               naive_kernel_sum);
+        printf(
+          "Compressed kernel sum using %d reference points out of "
+          "%d is %g. The naive sum is %g\n",
+          static_cast<int>(reduced_set_farfield.dictionary().size()),
+          reference_it.count(), compressed_kernel_sum, naive_kernel_sum);
       }
 
       return true;
