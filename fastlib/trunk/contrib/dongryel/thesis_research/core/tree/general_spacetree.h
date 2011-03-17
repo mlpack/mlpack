@@ -179,12 +179,58 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief A helper function for
+     *         get_frontier_node_begin_count_pairs.
+     */
+    void get_frontier_node_begin_count_pairs_private_(
+      const GeneralBinarySpaceTree *node,
+      int max_num_frontier_nodes,
+      int *num_frontier_nodes_encountered,
+      std::vector <
+      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
+
+      if(node->is_leaf()) {
+        frontier_node_begin_count_pairs->push_back(
+          std::pair<int, int>(node->begin(), node->count()));
+      }
+      else {
+        if((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
+          (*num_frontier_nodes_encountered)++;
+          get_frontier_node_begin_count_pairs_private_(
+            node->left(), max_num_frontier_nodes,
+            num_frontier_nodes_encountered, frontier_node_begin_count_pairs);
+          get_frontier_node_begin_count_pairs_private_(
+            node->right(), max_num_frontier_nodes,
+            num_frontier_nodes_encountered, frontier_node_begin_count_pairs);
+        }
+        else {
+          frontier_node_begin_count_pairs->push_back(
+            std::pair<int, int>(node->begin(), node->count()));
+        }
+      }
+    }
+
   public:
 
     /** @brief Finds the depth of the tree at this node.
      */
     int depth() const {
       return depth_private_(this);
+    }
+
+    /** @brief Gets the list of begin and count pair for at most $k$
+     *         frontier nodes of the subtree rooted at this node.
+     */
+    void get_frontier_node_begin_count_pairs(
+      int max_num_frontier_nodes,
+      std::vector <
+      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
+      int num_frontier_nodes_encountered = 1;
+
+      get_frontier_node_begin_count_pairs_private_(
+        this, max_num_frontier_nodes,
+        &num_frontier_nodes_encountered,
+        frontier_node_begin_count_pairs);
     }
 
     /** @brief A method for copying a node without its children.
