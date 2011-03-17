@@ -954,6 +954,11 @@ class KdeSummary {
       GlobalType &global, DeltaType &delta, TreeType *qnode, TreeType *rnode,
       double failure_probability, ResultType *query_results) const {
 
+      if((! global.query_table()->points_available_underneath(qnode)) ||
+          (! global.reference_table()->points_available_underneath(rnode))) {
+        return false;
+      }
+
       const int speedup_factor = 10;
       int num_samples = rnode->count() / speedup_factor;
 
