@@ -16,6 +16,7 @@ add_subdirectory(util)
 
 add_library(core ${CORE_SRCS})
 target_link_libraries(core
+  armadillo
   gsl
   gslcblas
   pthread
