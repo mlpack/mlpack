@@ -35,6 +35,21 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  // Each process divides its own reference tree into roughly equal parts.
+  std::vector< std::pair<int, int> > reference_frontier_node_begin_count_pairs;
+  const int num_reference_subtrees = 16;
+  reference_table_->local_table()->get_tree()->
+  get_frontier_node_begin_count_pairs(
+    num_reference_subtrees,
+    &reference_frontier_node_begin_count_pairs);
+  printf("Got the following for process %d:\n", world_->rank());
+  for(unsigned int i = 0; i < reference_frontier_node_begin_count_pairs.size();
+      i++) {
+    printf("(%d %d) ", reference_frontier_node_begin_count_pairs[i].first,
+           reference_frontier_node_begin_count_pairs[i].second);
+  }
+  printf("\n");
+
   // The priority queue type.
   typedef std::priority_queue <
   FrontierObjectType,
