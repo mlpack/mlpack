@@ -27,6 +27,7 @@ set(DIRS
    rriegel
    soyeon
    tqlong
+   pagarwal
 )
 
 foreach(dir ${DIRS})
@@ -63,7 +64,7 @@ endforeach()
 #install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
 #   DESTINATION bin)
 
-install(TARGETS mlpack_contrib 
+install(TARGETS mlpack_contrib
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib
