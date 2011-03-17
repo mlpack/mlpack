@@ -152,8 +152,7 @@ class ReducedSetFarField {
     double EvaluateField(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point,
-      TreeIteratorType &reference_it) const;
+      const core::table::DensePoint &point) const;
 
     /** @brief Prints out the series expansion represented by this object.
      */

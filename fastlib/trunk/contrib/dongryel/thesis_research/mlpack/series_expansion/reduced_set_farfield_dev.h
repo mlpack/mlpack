@@ -283,8 +283,7 @@ template<typename MetricType, typename KernelAuxType>
 double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &query_point,
-  TreeIteratorType &reference_it) const {
+  const core::table::DensePoint &query_point) const {
 
   // Compute the kernel value between the query point and the
   // dictionary point.
@@ -298,13 +297,9 @@ double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   int num_dictionary_point_encountered = 0;
   for(int i = 0; i < projection_matrix_.n_rows(); i++) {
 
-    // The DFS index shifted so that the begin index is 0.
-    int adjusted_current_index =
-      reference_it.current_index() - reference_it.begin();
-
     // If the point is in the dictionary, then set the corresponding
     // column to 1.
-    if(in_dictionary_[adjusted_current_index]) {
+    if(in_dictionary_[i]) {
       contribution += kernel_values[num_dictionary_point_encountered];
       num_dictionary_point_encountered++;
     }
@@ -361,6 +356,18 @@ void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
       // expansion.
       const DictionaryType &child_dictionary =
         child_expansions_[i]->dictionary();
+      for(unsigned int i = 0; i < child_dictionary.size(); i++) {
+        const core::table::DensePoint &point = *(child_dictionary[i].first);
+        int point_dfs_index = child_dictionary[i].second;
+
+        // Fill out the kernel values, and do the self-computation.
+        double self_value;
+        arma::vec new_column_vector_in;
+        FillKernelValues_(
+          metric_in, kernel_aux_in, point, &new_column_vector_in, &self_value);
+        AddBasis_(
+          point, point_dfs_index, it, new_column_vector_in, self_value);
+      } // end of looping over each point.
     }
 
     // Finalize the compression.
