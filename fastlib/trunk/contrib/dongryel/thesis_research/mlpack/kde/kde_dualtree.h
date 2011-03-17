@@ -673,6 +673,7 @@ class KdeResult {
         (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta_in.pruned_, num_standard_deviations, &contribution);
         densities_l_[qpoint_index] += contribution.lo;
+        densities_[qpoint_index] += contribution.mid();
         densities_u_[qpoint_index] += contribution.hi;
         pruned_[qpoint_index] += delta_in.pruned_;
       }
