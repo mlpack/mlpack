@@ -190,30 +190,10 @@ void ReducedSetFarField<TreeIteratorType>::FillKernelValues_(
 
 template<typename TreeIteratorType>
 template<typename MetricType, typename KernelAuxType>
-void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
+void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
   TreeIteratorType &it) {
-
-  // The bit flag for denoting whether each point is in the dictionary
-  // or not.
-  in_dictionary_.resize(it.count());
-  std::fill(in_dictionary_.begin(), in_dictionary_.end(), false);
-
-  // Loop through each point and build the dictionary.
-  it.Reset();
-  arma::vec new_column_vector_in;
-  while(it.HasNext()) {
-    core::table::DensePoint point;
-    it.Next(&point);
-
-    // Fill out the kernel values, and do the self-computation.
-    double self_value;
-    FillKernelValues_(
-      metric_in, kernel_aux_in, point, &new_column_vector_in, &self_value);
-    AddBasis_(
-      point, it.current_index(), it, new_column_vector_in, self_value);
-  } // end of looping over each point.
 
   // The alias to the final kernel matrix inverse.
   arma::mat current_kernel_matrix_inverse_alias;
@@ -262,7 +242,39 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
       }
     }
   } // end of looping over each point.
+}
 
+template<typename TreeIteratorType>
+template<typename MetricType, typename KernelAuxType>
+void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
+  const MetricType &metric_in,
+  const KernelAuxType &kernel_aux_in,
+  TreeIteratorType &it) {
+
+  // The bit flag for denoting whether each point is in the dictionary
+  // or not.
+  in_dictionary_.resize(it.count());
+  std::fill(in_dictionary_.begin(), in_dictionary_.end(), false);
+
+  // Loop through each point and build the dictionary.
+  it.Reset();
+  arma::vec new_column_vector_in;
+  while(it.HasNext()) {
+    core::table::DensePoint point;
+    it.Next(&point);
+
+    // Fill out the kernel values, and do the self-computation.
+    double self_value;
+    FillKernelValues_(
+      metric_in, kernel_aux_in, point, &new_column_vector_in, &self_value);
+    AddBasis_(
+      point, it.current_index(), it, new_column_vector_in, self_value);
+  } // end of looping over each point.
+
+  // Finalize the compression.
+  FinalizeCompression_(metric_in, kernel_aux_in, it);
+
+  // Increment the number of points compressed.
   num_compressed_points_ += it.count();
 }
 
@@ -318,6 +330,14 @@ void ReducedSetFarField<TreeIteratorType>::Print(
 }
 
 template<typename TreeIteratorType>
+const typename mlpack::series_expansion::
+ReducedSetFarField<TreeIteratorType>::DictionaryType &ReducedSetFarField <
+TreeIteratorType >::dictionary() const {
+
+  return dictionary_;
+}
+
+template<typename TreeIteratorType>
 template<typename MetricType, typename KernelAuxType>
 void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
   const MetricType &metric_in,
@@ -336,9 +356,15 @@ void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
 
     // Take all dictionary points and compress.
     for(int i = 0; i < child_expansions_.size(); i++) {
-      //AccumulateCoeffs(
-      //metric_in, kernel_aux_in, child_expansions_[i]->iterator());
+
+      // Get the list of dictionary points for the current child
+      // expansion.
+      const DictionaryType &child_dictionary =
+        child_expansions_[i]->dictionary();
     }
+
+    // Finalize the compression.
+    FinalizeCompression_(metric_in, kernel_aux_in, it);
   }
 }
 
