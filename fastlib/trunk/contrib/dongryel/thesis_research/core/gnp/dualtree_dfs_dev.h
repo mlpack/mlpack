@@ -386,8 +386,10 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
         // Otherwise, push into the list of reference nodes that must
         // be dealt later. These list will be used in the distributed
         // dualtree computation.
-        double priority = squared_distance_range.lo /
-                          static_cast<double>(qnode->count() * rnode->count());
+        double priority = 1.0 /
+                          static_cast<double>(
+                            (squared_distance_range.lo + 1.0) *
+                            qnode->count() * rnode->count());
         unpruned_query_reference_pairs_.push_back(
           boost::make_tuple(
             qnode,

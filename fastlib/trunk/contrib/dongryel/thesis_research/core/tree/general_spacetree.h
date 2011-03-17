@@ -14,6 +14,7 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/tracking_enum.hpp>
 #include <deque>
+#include <queue>
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "statistic.h"
@@ -141,6 +142,18 @@ class GeneralBinarySpaceTree {
 
   private:
 
+    /** @brief The class used for prioritizing a node by its size.
+     */
+    class PrioritizeNodesBySize_:
+      public std::binary_function <
+        const TreeType *, const TreeType *, bool > {
+      public:
+        bool operator()(
+          const TreeType *a, const TreeType *b) const {
+          return a->count() < b->count();
+        }
+    };
+
     /** @brief The bound for the node.
      */
     BoundType bound_;
@@ -183,30 +196,50 @@ class GeneralBinarySpaceTree {
      *         get_frontier_node_begin_count_pairs.
      */
     void get_frontier_node_begin_count_pairs_private_(
-      const GeneralBinarySpaceTree *node,
+      const GeneralBinarySpaceTree *start_node,
       int max_num_frontier_nodes,
       int *num_frontier_nodes_encountered,
       std::vector <
       std::pair<int, int> > *frontier_node_begin_count_pairs) const {
 
-      if(node->is_leaf()) {
-        frontier_node_begin_count_pairs->push_back(
-          std::pair<int, int>(node->begin(), node->count()));
-      }
-      else {
-        if((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
-          (*num_frontier_nodes_encountered)++;
-          get_frontier_node_begin_count_pairs_private_(
-            node->left(), max_num_frontier_nodes,
-            num_frontier_nodes_encountered, frontier_node_begin_count_pairs);
-          get_frontier_node_begin_count_pairs_private_(
-            node->right(), max_num_frontier_nodes,
-            num_frontier_nodes_encountered, frontier_node_begin_count_pairs);
+      // The priority queue type.
+      typedef std::priority_queue <
+      const TreeType *,
+            std::vector<const TreeType *>,
+            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
+      PriorityQueueType queue;
+      queue.push(start_node);
+
+      while((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
+        const TreeType *dequeued_node = queue.top();
+        queue.pop();
+        if(dequeued_node->is_leaf()) {
+          frontier_node_begin_count_pairs->push_back(
+            std::pair<int, int>(
+              dequeued_node->begin(), dequeued_node->count()));
         }
         else {
-          frontier_node_begin_count_pairs->push_back(
-            std::pair<int, int>(node->begin(), node->count()));
+          if((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
+            (*num_frontier_nodes_encountered)++;
+            queue.push(dequeued_node->left());
+            queue.push(dequeued_node->right());
+          }
+          else {
+            frontier_node_begin_count_pairs->push_back(
+              std::pair<int, int>(
+                dequeued_node->begin(), dequeued_node->count()));
+          }
         }
+      }
+      while(
+        static_cast<int>(frontier_node_begin_count_pairs->size()) <
+        max_num_frontier_nodes) {
+
+        const TreeType *dequeued_node = queue.top();
+        frontier_node_begin_count_pairs->push_back(
+          std::pair<int, int>(
+            dequeued_node->begin(), dequeued_node->count()));
+        queue.pop();
       }
     }
 
