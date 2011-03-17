@@ -29,6 +29,25 @@ template <typename TableType, typename KernelAuxType >
 class SeriesExpansionTest {
 
   private:
+
+    template<typename MetricType>
+    double NaiveKernelSum_(
+      const MetricType &metric_in,
+      const KernelAuxType &kernel_aux_in,
+      const core::table::DensePoint &query_point,
+      typename TableType::TreeIterator &rnode_it) {
+
+      double kernel_sum = 0.0;
+      rnode_it.Reset();
+      while(rnode_it.HasNext()) {
+        core::table::DensePoint rpoint;
+        rnode_it.Next(&rpoint);
+        double squared_distance = metric_in.DistanceSq(query_point, rpoint);
+        kernel_sum += kernel_aux_in.kernel().EvalUnnormOnSq(squared_distance);
+      }
+      return kernel_sum;
+    }
+
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
@@ -52,7 +71,8 @@ class SeriesExpansionTest {
         int num_dimensions = core::math::RandInt(2, 5);
         int num_points = core::math::RandInt(2000, 3000);
         if(StressTest(
-              num_dimensions, num_points, test_reduced_set_expansion) == false) {
+              num_dimensions, num_points,
+              test_reduced_set_expansion) == false) {
           printf("Failed!\n");
           exit(0);
         }
@@ -142,11 +162,25 @@ class SeriesExpansionTest {
       if(test_reduced_set_expansion) {
         mlpack::series_expansion::ReducedSetFarField <
         typename TableType::TreeIterator > reduced_set_farfield;
-        typename TableType::TreeIterator it =
+        typename TableType::TreeIterator reference_it =
           random_table.get_node_iterator(reference_node);
-        reduced_set_farfield.Init(it);
+        reduced_set_farfield.Init(reference_it);
         reduced_set_farfield.AccumulateCoeffs(
-          l2_metric, kernel_aux, it);
+          l2_metric, kernel_aux, reference_it);
+
+        // Pick a random query point.
+        core::table::DensePoint random_query_point;
+        typename TableType::TreeIterator qnode_it =
+          random_table.get_node_iterator(query_node);
+        qnode_it.RandomPick(&random_query_point);
+        double compressed_kernel_sum =
+          reduced_set_farfield.EvaluateField(
+            l2_metric, kernel_aux, random_query_point);
+        double naive_kernel_sum =
+          NaiveKernelSum_(
+            l2_metric, kernel_aux, random_query_point, reference_it);
+        printf("Comparing %g %g\n", compressed_kernel_sum,
+               naive_kernel_sum);
       }
 
       return true;
