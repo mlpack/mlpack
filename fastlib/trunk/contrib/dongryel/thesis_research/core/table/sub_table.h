@@ -137,6 +137,10 @@ class SubTable {
      */
     core::table::DenseMatrix *data_;
 
+    /** @brief The pointer to the underlying weights.
+     */
+    core::table::DenseMatrix *weights_;
+
     /** @brief The pointer to the old_from_new mapping.
      */
     boost::interprocess::offset_ptr<OldFromNewIndexType> *old_from_new_;
@@ -238,6 +242,7 @@ class SubTable {
       max_num_levels_to_serialize_ =
         const_cast<SubTableType &>(subtable_in).max_num_levels_to_serialize();
       data_ = const_cast<SubTableType &>(subtable_in).data();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       tree_ = const_cast<SubTableType &>(subtable_in).tree();
@@ -294,6 +299,9 @@ class SubTable {
         core::table::SubDenseMatrix<SubTableType> sub_data;
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
+        core::table::SubDenseMatrix<SubTableType> sub_weights;
+        sub_weights.Init(weights_, serialize_points_per_terminal_node_);
+        ar & sub_weights;
 
         // Direct mapping saving.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
@@ -371,6 +379,9 @@ class SubTable {
         core::table::SubDenseMatrix<SubTableType> sub_data;
         sub_data.Init(data_, serialize_points_per_terminal_node_);
         ar & sub_data;
+        core::table::SubDenseMatrix<SubTableType> sub_weights;
+        sub_weights.Init(weights_, serialize_points_per_terminal_node_);
+        ar & sub_weights;
         if(table_->mappings_are_aliased() == false) {
           (*old_from_new_) =
             (core::table::global_m_file_) ?
@@ -410,6 +421,7 @@ class SubTable {
       start_node_ = NULL;
       max_num_levels_to_serialize_ = std::numeric_limits<int>::max();
       data_ = NULL;
+      weights_ = NULL;
       old_from_new_ = NULL;
       new_from_old_ = NULL;
       tree_ = NULL;
@@ -446,6 +458,12 @@ class SubTable {
      */
     int max_num_levels_to_serialize() const {
       return max_num_levels_to_serialize_;
+    }
+
+    /** @brief Returns the underlying weights.
+     */
+    core::table::DenseMatrix *weights() const {
+      return weights_;
     }
 
     /** @brief Returns the underlying multi-dimensional data.
@@ -511,7 +529,8 @@ class SubTable {
       is_alias_ = true;
       start_node_ = start_node_in;
       max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
-      data_ = &table_in->data();
+      data_ = &(table_in->data());
+      weights_ = &(table_in->weights());
       old_from_new_ = table_in->old_from_new_offset_ptr();
       new_from_old_ = table_in->new_from_old_offset_ptr();
       tree_ = table_in->get_tree_offset_ptr();

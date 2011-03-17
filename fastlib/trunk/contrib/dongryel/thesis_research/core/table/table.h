@@ -155,8 +155,7 @@ class Table {
         template<typename IncomingPointType>
         void Next(IncomingPointType *entry, double *weight) {
           current_index_++;
-          table_->iterator_get_(current_index_, entry);
-          *weight = table_->weights().get(0, current_index_);
+          table_->iterator_get_(current_index_, entry, weight);
         }
 
         template<typename IncomingPointType>
@@ -659,9 +658,11 @@ class Table {
 
     template<typename PointType>
     void iterator_get_(
-      int reordered_position, PointType *entry) {
-      data_.MakeColumnVector(
-        this->locate_reordered_position_(reordered_position), entry);
+      int reordered_position, PointType *entry, double *weight) const {
+      int located_reordered_position =
+        this->locate_reordered_position_(reordered_position);
+      data_.MakeColumnVector(located_reordered_position, entry);
+      *weight = weights_.get(0, located_reordered_position);
     }
 
     int iterator_get_id_(int reordered_position) const {
