@@ -27,8 +27,8 @@ set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR
 include_directories(${Boost_INCLUDE_DIRS})
 
 # include trilinos.
-set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos ml triutils epetraext belos amesos)
-find_package(Trilinos REQUIRED)
+#set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos ml triutils epetraext belos amesos)
+#find_package(Trilinos REQUIRED)
 
 # Set the MPI compiler.
 set(MPI_COMPILER $ENV{HOME}/local/openmpi-1.4.3/bin/mpicxx)
@@ -64,6 +64,10 @@ endif()
 if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
   link_directories($ENV{HOME}/local/armadillo-1.0.4/lib64/release)
 endif()
+
+# for a local installation of gsl
+include_directories($ENV{HOME}/local/gsl-1.9/include)
+link_directories($ENV{HOME}/local/gsl-1.9/lib)
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
