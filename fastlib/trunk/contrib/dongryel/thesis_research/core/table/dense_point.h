@@ -196,14 +196,16 @@ class DensePoint {
 
     template<typename PointType>
     void Copy(const PointType &point_in) {
-      if(ptr_.get() == NULL) {
-        int length = core::table::LengthTrait<PointType>::length(point_in);
-        ptr_ =
-          (core::table::global_m_file_) ?
-          core::table::global_m_file_->ConstructArray<double>(
-            length) : new double[ length ];
+      if(core::table::LengthTrait<PointType>::length(point_in) > 0) {
+        if(ptr_.get() == NULL) {
+          int length = core::table::LengthTrait<PointType>::length(point_in);
+          ptr_ =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray<double>(
+              length) : new double[ length ];
+        }
+        CopyValues(point_in);
       }
-      CopyValues(point_in);
     }
 
     /** @brief Sets every entry of the matrix to the specified value
