@@ -1,11 +1,13 @@
 cmake_minimum_required(VERSION 2.8)
 
 set(SOURCES
-  lbfgs_dev.h
+  lbfgs_impl.h
   lbfgs.h
   quasi_newton_hessian_update.h
   trust_region_dev.h
   trust_region.h
+  test_functions.h
+  test_functions.cc
 )
 
 set(DIR_SRCS)
@@ -16,11 +18,11 @@ endforeach()
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
-add_executable(optimization-test
+add_executable(lbfgs_test
   EXCLUDE_FROM_ALL
-  optimization.test.cc
+  lbfgs_test.cc
 )
 # link dependencies of test executable
-target_link_libraries(optimization-test
+target_link_libraries(lbfgs_test
   fastlib
 )
