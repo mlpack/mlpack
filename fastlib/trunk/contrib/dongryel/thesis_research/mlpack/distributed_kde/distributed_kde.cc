@@ -22,7 +22,7 @@ void StartComputation(
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::DistributedTable <
-  core::tree::GenMetricTree <
+  core::tree::GenKdTree <
   mlpack::kde::KdeStatistic <
   KernelAuxType::ExpansionType > > > DistributedTableType;
 
