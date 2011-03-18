@@ -463,7 +463,8 @@ class GenMetricTree {
         comm, &left_destination, &right_destination, (bool *) NULL);
       left_count = 0;
       for(unsigned int i = 0; i < left_membership.size(); i++) {
-        if(left_membership[i] && left_count <= left_membership.size() / 2) {
+        if(left_membership[i] &&
+            left_count <= static_cast<int>(left_membership.size()) / 2) {
           (*assigned_point_indices)[left_destination].push_back(i);
           (*membership_counts_per_process)[left_destination]++;
           left_count++;
