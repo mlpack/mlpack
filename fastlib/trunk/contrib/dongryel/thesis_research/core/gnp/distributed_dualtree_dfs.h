@@ -192,7 +192,7 @@ class DistributedDualtreeDfs {
       public:
         bool operator()(
           const FrontierObjectType &a, const FrontierObjectType &b) const {
-          return a.get<2>() > b.get<2>();
+          return a.get<2>() < b.get<2>();
         }
     };
 
