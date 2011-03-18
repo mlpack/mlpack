@@ -200,7 +200,8 @@ class GeneralBinarySpaceTree {
       int max_num_frontier_nodes,
       int *num_frontier_nodes_encountered,
       std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
+      std::pair<int, int> > *frontier_node_begin_count_pairs,
+      std::vector< BoundType > *bounds) const {
 
       // The priority queue type.
       typedef std::priority_queue <
@@ -218,6 +219,8 @@ class GeneralBinarySpaceTree {
           frontier_node_begin_count_pairs->push_back(
             std::pair<int, int>(
               dequeued_node->begin(), dequeued_node->count()));
+          bounds->resize(bounds->size() + 1);
+          bounds->back().Copy(dequeued_node->bound());
         }
         else {
           if((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
@@ -229,6 +232,8 @@ class GeneralBinarySpaceTree {
             frontier_node_begin_count_pairs->push_back(
               std::pair<int, int>(
                 dequeued_node->begin(), dequeued_node->count()));
+            bounds->resize(bounds->size() + 1);
+            bounds->back().Copy(dequeued_node->bound());
           }
         }
       }
@@ -240,6 +245,8 @@ class GeneralBinarySpaceTree {
         frontier_node_begin_count_pairs->push_back(
           std::pair<int, int>(
             dequeued_node->begin(), dequeued_node->count()));
+        bounds->resize(bounds->size() + 1);
+        bounds->back().Copy(dequeued_node->bound());
         queue.pop();
       }
     }
@@ -258,13 +265,14 @@ class GeneralBinarySpaceTree {
     void get_frontier_node_begin_count_pairs(
       int max_num_frontier_nodes,
       std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
+      std::pair<int, int> > *frontier_node_begin_count_pairs,
+      std::vector< BoundType > *bounds) const {
       int num_frontier_nodes_encountered = 1;
 
       get_frontier_node_begin_count_pairs_private_(
         this, max_num_frontier_nodes,
         &num_frontier_nodes_encountered,
-        frontier_node_begin_count_pairs);
+        frontier_node_begin_count_pairs, bounds);
     }
 
     /** @brief A method for copying a node without its children.
