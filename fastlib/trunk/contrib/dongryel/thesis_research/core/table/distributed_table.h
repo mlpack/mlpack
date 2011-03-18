@@ -379,10 +379,10 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::communicator &world,
       int leaf_size, double sample_probability_in) {
 
-      core::parallel::VanillaDistributedTreeBuilder <
+      core::parallel::SampleDistributedTreeBuilder <
       DistributedTableType > builder;
       builder.Init(*this);
-      builder.Build(world, metric_in, leaf_size);
+      builder.Build(world, metric_in, leaf_size, sample_probability_in);
     }
 
     TreeIterator get_node_iterator(TreeType *node) {
