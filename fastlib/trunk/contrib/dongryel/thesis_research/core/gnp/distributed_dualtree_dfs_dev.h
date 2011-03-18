@@ -36,19 +36,18 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   typename DistributedProblemType::ResultType *query_results) {
 
   // Each process divides its own reference tree into roughly equal parts.
-  std::vector< std::pair<int, int> > reference_frontier_node_begin_count_pairs;
+  BeginCountPairList reference_frontier_node_begin_count_pairs;
   const int num_reference_subtrees = 16;
   reference_table_->local_table()->get_tree()->
   get_frontier_node_begin_count_pairs(
     num_reference_subtrees,
-    &reference_frontier_node_begin_count_pairs);
-  printf("Got the following for process %d:\n", world_->rank());
-  for(unsigned int i = 0; i < reference_frontier_node_begin_count_pairs.size();
-      i++) {
-    printf("(%d %d) ", reference_frontier_node_begin_count_pairs[i].first,
-           reference_frontier_node_begin_count_pairs[i].second);
-  }
-  printf("\n");
+    &reference_frontier_node_begin_count_pairs.begin_count_pairs());
+
+  // Do an all-gather.
+  std::vector< BeginCountPairList > reference_frontier_lists;
+  boost::mpi::all_gather(
+    *world_, reference_frontier_node_begin_count_pairs,
+    reference_frontier_lists);
 
   // The priority queue type.
   typedef std::priority_queue <
@@ -83,13 +82,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
-      int reference_begin = 0;
-      int reference_count = reference_table_->local_n_entries(i);
-      computation_frontier[i].push(
-        boost::make_tuple(
-          query_table_->local_table()->get_tree(),
-          boost::make_tuple<int, int, int>(
-            i, reference_begin, reference_count), 0.0));
+      const std::vector< std::pair<int, int> > &reference_frontier =
+        reference_frontier_lists[i].begin_count_pairs();
+      for(unsigned int j = 0; j < reference_frontier.size(); j++) {
+        computation_frontier[i].push(
+          boost::make_tuple(
+            query_table_->local_table()->get_tree(),
+            boost::make_tuple<int, int, int>(
+              i, reference_frontier[j].first,
+              reference_frontier[j].second), 0.0));
+      }
     }
   }
 

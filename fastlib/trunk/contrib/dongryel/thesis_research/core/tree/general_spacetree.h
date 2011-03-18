@@ -210,7 +210,8 @@ class GeneralBinarySpaceTree {
       PriorityQueueType queue;
       queue.push(start_node);
 
-      while((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
+      while((*num_frontier_nodes_encountered) < max_num_frontier_nodes &&
+            queue.size() > 0) {
         const TreeType *dequeued_node = queue.top();
         queue.pop();
         if(dequeued_node->is_leaf()) {
@@ -233,7 +234,7 @@ class GeneralBinarySpaceTree {
       }
       while(
         static_cast<int>(frontier_node_begin_count_pairs->size()) <
-        max_num_frontier_nodes) {
+        max_num_frontier_nodes && queue.size() > 0) {
 
         const TreeType *dequeued_node = queue.top();
         frontier_node_begin_count_pairs->push_back(

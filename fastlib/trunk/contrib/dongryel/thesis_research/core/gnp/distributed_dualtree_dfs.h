@@ -9,6 +9,8 @@
 #define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_H
 
 #include <boost/mpi/communicator.hpp>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/split_free.hpp>
 #include <boost/tuple/tuple.hpp>
 #include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
@@ -70,6 +72,47 @@ class DistributedDualtreeDfs {
     typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   private:
+
+    class BeginCountPairList {
+      private:
+        // For Boost serialization.
+        friend class boost::serialization::access;
+
+      private:
+        std::vector< std::pair<int, int> > begin_count_pairs_;
+
+      public:
+
+        /** @brief Serializes the begin/count pair list.
+         */
+        template<class Archive>
+        void save(Archive &ar, const unsigned int version) const {
+          int list_size = begin_count_pairs_.size();
+          ar & list_size;
+          for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
+            ar & begin_count_pairs_[i].first;
+            ar & begin_count_pairs_[i].second;
+          }
+        }
+
+        /** @brief Unserialize the begin/count pair list.
+         */
+        template<class Archive>
+        void load(Archive &ar, const unsigned int version) {
+          int list_size;
+          ar & list_size;
+          begin_count_pairs_.resize(list_size);
+          for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
+            ar & begin_count_pairs_[i].first;
+            ar & begin_count_pairs_[i].second;
+          }
+        }
+        BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+        std::vector< std::pair<int, int> > &begin_count_pairs() {
+          return begin_count_pairs_;
+        }
+    };
 
     /** @brief The pointer to the boost communicator.
      */
