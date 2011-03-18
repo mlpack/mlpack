@@ -4,7 +4,7 @@
  */
 
 #include "allknn.h"
-#include "fastlib/base/test.h"
+#include <fastlib/base/test.h>
 
 #include <armadillo>
 
