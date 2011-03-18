@@ -488,7 +488,9 @@ class SampleDistributedTreeBuilder {
 
       // To-do: to detect convergence without the number of
       // iterations.
-      for(int num_outer_it = 0; num_outer_it < 3; num_outer_it++) {
+      const int max_num_outer_it = 3;
+      for(int num_outer_it = 0; num_outer_it < max_num_outer_it;
+          num_outer_it++) {
 
         // Build the initial sample tree.
         std::vector<TreeType *> top_leaf_nodes;
@@ -507,7 +509,9 @@ class SampleDistributedTreeBuilder {
         RankPointsFromItsCentroid_(metric_in, &sorted_indices_increasing);
 
         // Do a re-distribution of points.
-        RedistributeEqually_(world, metric_in, sorted_indices_increasing);
+        if(num_outer_it < max_num_outer_it - 1) {
+          RedistributeEqually_(world, metric_in, sorted_indices_increasing);
+        }
 
         // Destroy the top leaf nodes, if not the master process.
         if(world.rank() != 0) {
