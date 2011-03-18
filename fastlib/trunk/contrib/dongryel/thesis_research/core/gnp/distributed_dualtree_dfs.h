@@ -81,6 +81,8 @@ class DistributedDualtreeDfs {
       private:
         std::vector< std::pair<int, int> > begin_count_pairs_;
 
+        std::vector<typename TreeType::BoundType> bounds_;
+
       public:
 
         /** @brief Serializes the begin/count pair list.
@@ -92,6 +94,7 @@ class DistributedDualtreeDfs {
           for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
             ar & begin_count_pairs_[i].first;
             ar & begin_count_pairs_[i].second;
+            ar & bounds_[i];
           }
         }
 
@@ -102,12 +105,18 @@ class DistributedDualtreeDfs {
           int list_size;
           ar & list_size;
           begin_count_pairs_.resize(list_size);
+          bounds_.resize(list_size);
           for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
             ar & begin_count_pairs_[i].first;
             ar & begin_count_pairs_[i].second;
+            ar & bounds_[i];
           }
         }
         BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+        std::vector< typename TreeType::BoundType > &bounds() {
+          return bounds_;
+        }
 
         std::vector< std::pair<int, int> > &begin_count_pairs() {
           return begin_count_pairs_;

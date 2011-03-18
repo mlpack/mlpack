@@ -41,7 +41,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   reference_table_->local_table()->get_tree()->
   get_frontier_node_begin_count_pairs(
     num_reference_subtrees,
-    &reference_frontier_node_begin_count_pairs.begin_count_pairs());
+    &reference_frontier_node_begin_count_pairs.begin_count_pairs(),
+    &reference_frontier_node_begin_count_pairs.bounds());
 
   // Do an all-gather.
   std::vector< BeginCountPairList > reference_frontier_lists;
@@ -84,13 +85,25 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     if(i != static_cast<unsigned int>(world_->rank())) {
       const std::vector< std::pair<int, int> > &reference_frontier =
         reference_frontier_lists[i].begin_count_pairs();
+      std::vector< typename TreeType::BoundType > reference_frontier_bound =
+        reference_frontier_lists[i].bounds();
       for(unsigned int j = 0; j < reference_frontier.size(); j++) {
+
+        core::math::Range squared_distance_range =
+          (query_table_->local_table()->get_tree()->bound()).RangeDistanceSq(
+            metric, reference_frontier_bound[j]);
+
+        // Compute the priority.
+        double priority = 1.0 /
+                          static_cast<double>(
+                            (squared_distance_range.lo + 1.0) *
+                            reference_frontier[j].second);
         computation_frontier[i].push(
           boost::make_tuple(
             query_table_->local_table()->get_tree(),
             boost::make_tuple<int, int, int>(
               i, reference_frontier[j].first,
-              reference_frontier[j].second), 0.0));
+              reference_frontier[j].second), priority));
       }
     }
   }
