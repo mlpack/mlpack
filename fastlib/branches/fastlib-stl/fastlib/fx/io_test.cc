@@ -22,13 +22,13 @@ int main(int argc, char** argv) {
   
   std::string& x = IO::getValue<std::string>("testint");
   x = "2o4";
- 
-  //std::cout << IO::getValue<timeval>("brak/timer").tv_usec << std::endl;
+  IO::startTimer("brak/timer");
+
 
   for(int i = 0; i < 10; i++) { 
-    std::cout << i << std::endl;
+    std::cout << "herp " << i << std::endl;
   }
-  IO::startTimer("brak/timer");
   std::cout << "propogate?" << std::endl;
-  //IO::stopTimer("brak/timer");
+  IO::stopTimer("brak/timer");
+  std::cout << IO::getValue<timeval>("brak/timer").tv_usec << std::endl;
 }

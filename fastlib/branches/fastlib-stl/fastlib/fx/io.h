@@ -56,25 +56,20 @@ namespace mlpack {
       template<typename T>
       static T& getValue(const char* identifier) {
         //Used to ensure we have a valid value
-        //T tmp;
+        T tmp;
         //Used to index into the globalValues map
         std::string key = std::string(identifier);
         std::map<std::string, boost::any>& gmap = getSingleton().globalValues;
         
         if(checkValue(identifier) && !gmap.count(key)) //If we have the option, set it's value
           gmap[key] = getSingleton().vmap[identifier].as<T>();
-        else if(!gmap.count(key))
-          gmap[key] = T();
         
         //We may have whatever is on the commandline, but what if
         //The programmer has made modifications?
-        //if(!gmap.count(key))  //The programmer hasn't done anything, lets register it then
-         // gmap[key] = tmp;
+        if(!gmap.count(key)) //The programmer hasn't done anything, lets register it then
+          gmap[key] = boost::any(tmp);
         
-        std::cout << "gmap " << key << std::endl;        
-        std::cout << getSingleton().globalValues.count(key) << std::endl;
-        std::cout << gmap.count(key) << std::endl;
-        return boost::any_cast<T&>(gmap[key]);
+        return *boost::any_cast<T>(&gmap[key]);
       }
       
       /* The proper commandline parse method */
