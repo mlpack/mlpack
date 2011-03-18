@@ -251,7 +251,13 @@ class SampleDistributedTreeBuilder {
         distributed_table_->local_table()->data(),
         distributed_table_->local_table()->old_from_new(),
         sampled_indices);
+      SampleDenseMatrixType weight_local_pointer;
+      weight_local_pointer.Init(
+        distributed_table_->local_table()->weights(),
+        distributed_table_->local_table()->old_from_new(),
+        sampled_indices);
       std::vector<SampleDenseMatrixType> gather_pointers;
+      std::vector<SampleDenseMatrixType> weight_gather_pointers;
       if(world.rank() == 0) {
         int total_num_samples = std::accumulate(
                                   counts.begin(), counts.end(), 0);
@@ -260,7 +266,8 @@ class SampleDistributedTreeBuilder {
 
         core::parallel::DistributedTreeUtil <
         DistributedTableType >::SetupGatherPointers(
-          *sampled_table_out, counts, &gather_pointers);
+          *sampled_table_out, counts, &gather_pointers,
+          &weight_gather_pointers);
 
         // The master process actually needs to setup its own portion
         // manually since MPI gather does not call
@@ -269,8 +276,14 @@ class SampleDistributedTreeBuilder {
           gather_pointers[0].matrix(),
           gather_pointers[0].old_from_new(),
           gather_pointers[0].starting_column_index());
+        weight_local_pointer.Export(
+          weight_gather_pointers[0].matrix(),
+          weight_gather_pointers[0].old_from_new(),
+          weight_gather_pointers[0].starting_column_index());
       }
       boost::mpi::gather(world, local_pointer, gather_pointers, 0);
+      boost::mpi::gather(
+        world, weight_local_pointer, weight_gather_pointers, 0);
 
       // Index the tree up so that the number of leaf nodes matches
       // the number of processes. If missing some nodes, then sample a
