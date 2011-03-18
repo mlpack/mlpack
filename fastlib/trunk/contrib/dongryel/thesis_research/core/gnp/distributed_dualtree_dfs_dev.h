@@ -104,7 +104,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             boost::make_tuple<int, int, int>(
               i, reference_frontier[j].first,
               reference_frontier[j].second), priority));
-	printf("Pushed in %d %g\n", i, priority);
+        printf("Pushed in %d %g\n", i, priority);
       }
     }
   }
@@ -126,7 +126,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         // Examine the top object in the frontier and sort it in the
         // priorities, while forming the request lists.
         const FrontierObjectType &top_object = computation_frontier[i].top();
-	printf("LOoking at %g\n", top_object.get<2>());
+        printf("LOoking at %g\n", top_object.get<2>());
         std::pair<int, int> reference_node_id(
           top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
         if(table_exchange.FindSubTable(
