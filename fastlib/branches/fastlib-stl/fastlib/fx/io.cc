@@ -149,7 +149,7 @@ void IO::printNotify(const char* msg) {
 /* Initializes a timer, available like a normal value specified on the command line.  
     Timers are of type timval, as defined in sys/time.h*/
 void IO::startTimer(const char* timerName) {
-  std::string key = sanitizeString(timerName);
+  std::string key = std::string(timerName);
   
   //We don't want to actually document the timer, the user can do that if he wants to.
   timeval tmp;
@@ -158,30 +158,23 @@ void IO::startTimer(const char* timerName) {
   tmp.tv_usec = 0;
   
   gettimeofday(&tmp, NULL);
-  getValue<timeval>(timerName).tv_usec;
-  std::cout << tmp.tv_usec << " : " << getSingleton().globalValues.count(key) << std::endl;
-  std::cout << &getSingleton().globalValues << std::endl;
+  getValue<timeval>(timerName) = tmp;
 }
       
 /* Halts the timer, and replaces it's value with the delta time from it's start */
 void IO::stopTimer(const char* timerName) {
-  std::string key = sanitizeString(timerName);
-  
+  std::string key = std::string(timerName);
+ 
   //We don't want to actually document the timer, the user can do that if he wants to.
-  std::cout << "KEY: " << key << std::endl;
-  //std::cout << boost::any_cast<timeval>(getSingleton().globalValues[key]).tv_usec << std::endl;
-  /*if(!getSingleton().globalValues.count(key))
+  if(!getSingleton().globalValues.count(key))
     return;
   
-  timeval delta, b, &a = getValue<timeval>(timerName);
+  timeval delta, b, &a = getValue<timeval>(timerName);  
   gettimeofday(&b, NULL);
   
   //Calculate the delta time
   timersub(&b, &a, &delta);
-  a = delta;
-  std::cout << "tmp" << std::endl;
-  std::cout << delta.tv_usec << std::endl; */
-  
+  a = delta; 
 }
 
 //Sanitizes strings, rendering input such as /foo/bar and foo/bar equal
