@@ -381,8 +381,8 @@ class DistributedTable: public boost::noncopyable {
 
       core::parallel::SampleDistributedTreeBuilder <
       DistributedTableType > builder;
-      builder.Init(*this);
-      builder.Build(world, metric_in, leaf_size, sample_probability_in);
+      builder.Init(*this, sample_probability_in);
+      builder.Build(world, metric_in, leaf_size);
     }
 
     TreeIterator get_node_iterator(TreeType *node) {
