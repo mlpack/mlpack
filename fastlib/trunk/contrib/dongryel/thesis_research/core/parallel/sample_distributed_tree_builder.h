@@ -488,7 +488,7 @@ class SampleDistributedTreeBuilder {
 
       // To-do: to detect convergence without the number of
       // iterations.
-      for(int num_outer_it = 0; num_outer_it < 30; num_outer_it++) {
+      for(int num_outer_it = 0; num_outer_it < 3; num_outer_it++) {
 
         // Build the initial sample tree.
         std::vector<TreeType *> top_leaf_nodes;

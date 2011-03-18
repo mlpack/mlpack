@@ -174,7 +174,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Maximum number of points at a leaf of the tree."
   )(
     "top_tree_sample_probability",
-    boost::program_options::value<double>()->default_value(0.2),
+    boost::program_options::value<double>()->default_value(0.3),
     "The portion of points sampled on each MPI process for building the "
     "top tree."
   )(
