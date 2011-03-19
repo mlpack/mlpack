@@ -13,6 +13,11 @@
 using namespace mlpack::optimization;
 using namespace mlpack::optimization::test;
 
+//
+// I do not like this test infrastructure.  We need to design something better
+// (or use something that someone else has designed that is better).
+//
+
 bool TestRosenbrockFunction() {
   NOTIFY("Testing Rosenbrock function...");
 
@@ -20,10 +25,8 @@ bool TestRosenbrockFunction() {
   L_BFGS<RosenbrockFunction> lbfgs;
   lbfgs.Init(f, 10); // 10 memory points
 
-  NOTIFY("Using 10 memory points...");
-
   arma::vec coords = f.GetInitialPoint();
-  if(!lbfgs.Optimize(50, coords))
+  if(!lbfgs.Optimize(0, coords))
     NOTIFY("Optimization reported failure.");
 
   double final_value = f.Evaluate(coords);
@@ -39,6 +42,70 @@ bool TestRosenbrockFunction() {
     return false;
 }
 
+bool TestWoodFunction() {
+  NOTIFY("Testing Wood function...");
+
+  WoodFunction f;
+  L_BFGS<WoodFunction> lbfgs;
+  lbfgs.Init(f, 10);
+
+  arma::vec coords = f.GetInitialPoint();
+  if(!lbfgs.Optimize(0, coords))
+    NOTIFY("Optimization reported failure.");
+
+  double final_value = f.Evaluate(coords);
+
+  NOTIFY("Final objective value is %lf at (%lf, %lf, %lf, %lf)",
+    final_value, coords[0], coords[1], coords[2], coords[3]);
+
+  if((std::abs(final_value) <= 1e-5) &&
+     (std::abs(coords[0] - 1) <= 1e-5) &&
+     (std::abs(coords[1] - 1) <= 1e-5) &&
+     (std::abs(coords[2] - 1) <= 1e-5) &&
+     (std::abs(coords[3] - 1) <= 1e-5))
+    return true;
+  else
+    return false;
+}
+
+bool TestGeneralizedRosenbrockFunction() {
+  for (int i = 2; i < 10; i++) {
+    // Dimension: powers of 2
+    int dim = std::pow(2, i);
+
+    NOTIFY("Testing GeneralizedRosenbrockFunction (%d dimensions)...", dim);
+
+    GeneralizedRosenbrockFunction f(dim);
+    L_BFGS<GeneralizedRosenbrockFunction> lbfgs;
+    lbfgs.Init(f, 20); // arbitrary choice of memory
+
+    arma::vec coords = f.GetInitialPoint();
+    if(!lbfgs.Optimize(0, coords))
+      NOTIFY("Optimization reported failure.");
+
+    double final_value = f.Evaluate(coords);
+
+    NOTIFY("Final objective value is %lf.", final_value);
+
+    bool correct = true;
+    for (int j = 0; j < dim; j++) {
+      if (std::abs(coords[j] - 1) > 1e-5) {
+        correct = false;
+        break;
+      }
+    }
+    if (std::abs(final_value) > 1e-5)
+      correct = false;
+
+    if (correct)
+      NOTIFY("Test passed.");
+    else
+      FATAL("Test failed!");
+  }
+
+  return true;
+};
+
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
@@ -46,6 +113,13 @@ int main(int argc, char* argv[]) {
     FATAL("Test failed!");
   else
     NOTIFY("Test passed.");
+
+  if(!TestWoodFunction())
+    FATAL("Test failed!");
+  else
+    NOTIFY("Test passed.");
+
+  TestGeneralizedRosenbrockFunction();
 
   fx_done(NULL);
 }

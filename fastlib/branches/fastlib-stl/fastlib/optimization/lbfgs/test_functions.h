@@ -34,6 +34,7 @@ namespace test {
 
 /***
  * The Rosenbrock function, defined by
+ *  f(x) = f1(x) + f2(x)
  *  f1(x) = 100 (x2 - x1^2)^2
  *  f2(x) = (1 - x1)^2
  *  x_0 = [-1.2, 1]
@@ -47,14 +48,75 @@ class RosenbrockFunction {
  public:
   RosenbrockFunction(); // initialize initial point
 
-  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
   double Evaluate(const arma::vec& coordinates); 
+  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
 
   const int GetDimension() { return 2; }
   const arma::vec& GetInitialPoint();
 
  private:
   arma::vec initial_point;
+};
+
+/***
+ * The Wood function, defined by
+ *  f(x) = f1(x) + f2(x) + f3(x) + f4(x) + f5(x) + f6(x)
+ *  f1(x) = 100 (x2 - x1^2)^2
+ *  f2(x) = (1 - x1)^2
+ *  f3(x) = 90 (x4 - x3^2)^2
+ *  f4(x) = (1 - x3)^2
+ *  f5(x) = 10 (x2 + x4 - 2)^2
+ *  f6(x) = (1 / 10) (x2 - x4)^2
+ *  x_0 = [-3, -1, -3, -1]
+ *
+ * This should optimize to f(x) = 0, at x = [1, 1, 1, 1].
+ *
+ * "A comparative study of nonlinear programming codes."
+ *   A.R. Colville.  1968.  Rep. 320-2949, IBM N.Y. Scientific Center.
+ */
+class WoodFunction {
+ public:
+  WoodFunction(); // initialize initial point
+
+  double Evaluate(const arma::vec& coordinates);
+  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
+
+  const int GetDimension() { return 4; }
+  const arma::vec& GetInitialPoint();
+
+ private:
+  arma::vec initial_point;
+};
+
+/***
+ * The Generalized Rosenbrock function in n dimensions, defined by
+ *  f(x) = sum_i^{n - 1} (f(i)(x))
+ *  f_i(x) = 100 * (x_i^2 - x_{i + 1})^2 + (1 - x_i)^2
+ *  x_0 = [-1.2, 1, -1.2, 1, ...]
+ *
+ * This should optimize to f(x) = 0, at x = [1, 1, 1, 1, ...].
+ *
+ * "An analysis of the behavior of a glass of genetic adaptive systems."
+ *   K.A. De Jong.  Ph.D. thesis, University of Michigan, 1975.
+ */
+class GeneralizedRosenbrockFunction {
+ public:
+  /***
+   * Set the dimensionality of the extended Rosenbrock function.
+   *
+   * @param n Number of dimensions for the function.
+   */
+  GeneralizedRosenbrockFunction(int n);
+
+  double Evaluate(const arma::vec& coordinates);
+  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
+
+  const int GetDimension() { return n; }
+  const arma::vec& GetInitialPoint();
+
+ private:
+  arma::vec initial_point;
+  int n; // Dimensionality
 };
 
 }; // namespace test
