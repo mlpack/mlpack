@@ -171,6 +171,11 @@ class Table {
           table_->iterator_get_(current_index_, entry);
         }
 
+        void Next(int *point_id) {
+          current_index_++;
+          *point_id = table_->iterator_get_id_(current_index_);
+        }
+
         template<typename IncomingPointType>
         void get(int i, IncomingPointType *entry) {
           table_->iterator_get_(begin_ + i, entry);
