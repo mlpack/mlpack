@@ -73,56 +73,6 @@ class DistributedDualtreeDfs {
 
   private:
 
-    class BeginCountPairList {
-      private:
-        // For Boost serialization.
-        friend class boost::serialization::access;
-
-      private:
-        std::vector< std::pair<int, int> > begin_count_pairs_;
-
-        std::vector<typename TreeType::BoundType> bounds_;
-
-      public:
-
-        /** @brief Serializes the begin/count pair list.
-         */
-        template<class Archive>
-        void save(Archive &ar, const unsigned int version) const {
-          int list_size = begin_count_pairs_.size();
-          ar & list_size;
-          for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
-            ar & begin_count_pairs_[i].first;
-            ar & begin_count_pairs_[i].second;
-            ar & bounds_[i];
-          }
-        }
-
-        /** @brief Unserialize the begin/count pair list.
-         */
-        template<class Archive>
-        void load(Archive &ar, const unsigned int version) {
-          int list_size;
-          ar & list_size;
-          begin_count_pairs_.resize(list_size);
-          bounds_.resize(list_size);
-          for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
-            ar & begin_count_pairs_[i].first;
-            ar & begin_count_pairs_[i].second;
-            ar & bounds_[i];
-          }
-        }
-        BOOST_SERIALIZATION_SPLIT_MEMBER()
-
-        std::vector< typename TreeType::BoundType > &bounds() {
-          return bounds_;
-        }
-
-        std::vector< std::pair<int, int> > &begin_count_pairs() {
-          return begin_count_pairs_;
-        }
-    };
-
     /** @brief The pointer to the boost communicator.
      */
     boost::mpi::communicator *world_;
