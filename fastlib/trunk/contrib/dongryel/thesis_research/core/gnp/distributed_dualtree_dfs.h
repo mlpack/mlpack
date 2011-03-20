@@ -161,6 +161,15 @@ class DistributedDualtreeDfs {
 
   private:
 
+    template<typename MetricType>
+    void ComputeEssentialReferenceSubtrees_(
+      const MetricType &metric_in,
+      int max_reference_subtree_size,
+      DistributedTreeType *global_query_node,
+      TreeType *local_reference_node,
+      std::vector< std::vector< std::pair<int, int> > > *
+      essential_reference_subtrees);
+
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation.
      */

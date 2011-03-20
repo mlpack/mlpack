@@ -31,9 +31,111 @@ namespace gnp {
 
 template<typename DistributedProblemType>
 template<typename MetricType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
+  const MetricType &metric_in,
+  int max_reference_subtree_size,
+  DistributedTreeType *global_query_node, TreeType *local_reference_node,
+  std::vector <
+  std::vector< std::pair<int, int> > > *essential_reference_subtrees) {
+
+  // Compute the squared distance ranges between the query node and
+  // the reference node.
+  core::math::Range squared_distance_range =
+    global_query_node->bound().RangeDistanceSq(
+      metric_in, local_reference_node->bound());
+
+  // If the pair is prunable, then return.
+  if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
+    return;
+  }
+
+  if(global_query_node->is_leaf()) {
+
+    // If the reference node size is within the size limit, then for
+    // each query process in the set, add the reference node to the
+    // list.
+    if(local_reference_node->count() <= max_reference_subtree_size) {
+      typename DistributedTableType::TreeIterator qnode_it =
+        query_table_->get_node_iterator(global_query_node);
+      while(qnode_it.HasNext()) {
+        int query_process_id;
+        qnode_it.Next(&query_process_id);
+        (*essential_reference_subtrees)[
+          query_process_id].push_back(
+            std::pair<int, int>(
+              local_reference_node->begin(), local_reference_node->count()));
+      }
+    }
+    else {
+
+      ComputeEssentialReferenceSubtrees_(
+        metric_in, max_reference_subtree_size,
+        global_query_node, local_reference_node->left(),
+        essential_reference_subtrees);
+      ComputeEssentialReferenceSubtrees_(
+        metric_in, max_reference_subtree_size,
+        global_query_node, local_reference_node->right(),
+        essential_reference_subtrees);
+    }
+    return;
+  }
+
+  // Here, we know that the global query node is a non-leaf, so we
+  // need to split both ways.
+  if(local_reference_node->count() <= max_reference_subtree_size) {
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->left(), local_reference_node,
+      essential_reference_subtrees);
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->right(), local_reference_node,
+      essential_reference_subtrees);
+  }
+  else {
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->left(), local_reference_node->left(),
+      essential_reference_subtrees);
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->left(), local_reference_node->right(),
+      essential_reference_subtrees);
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->right(), local_reference_node->left(),
+      essential_reference_subtrees);
+    ComputeEssentialReferenceSubtrees_(
+      metric_in, max_reference_subtree_size,
+      global_query_node->right(), local_reference_node->right(),
+      essential_reference_subtrees);
+  }
+}
+
+template<typename DistributedProblemType>
+template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
+
+  // Each process needs to customize its reference set for each
+  // participating query process.
+  const int max_reference_subtree_size = 20000;
+  std::vector< std::vector< std::pair<int, int> > >
+  essential_reference_subtrees;
+  ComputeEssentialReferenceSubtrees_(
+    metric, max_reference_subtree_size, query_table_->get_tree(),
+    reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
+
+  printf("For Reference Process %d: \n", world_->rank());
+  for(unsigned int i = 0; i < world_->rank(); i++) {
+    for(unsigned int j = 0; j < essential_reference_subtrees[i].size(); j++) {
+      printf("%d %d %d\n", world_->rank(),
+             essential_reference_subtrees[i][j].first,
+             essential_reference_subtrees[i][j].second);
+    }
+  }
 
   // Each process divides its own reference tree into roughly equal parts.
   BeginCountPairList reference_frontier_node_begin_count_pairs;
@@ -292,22 +394,17 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // Preprocess the global query tree and the local query tree owned
   // by each process.
   PreProcess_(query_table_->get_tree());
-  PreProcess_(query_table_->local_table()->get_tree());
 
   // Preprocess the global reference tree, and the local reference
   // tree owned by each process. This part needs to be fixed so that
   // it does a true bottom-up refinement using an MPI-gather.
   PreProcessReferenceTree_(reference_table_->get_tree());
-  PreProcessReferenceTree_(reference_table_->local_table()->get_tree());
 
   // Figure out each process's work using the global tree. a 2D matrix
   // workspace. This is currently doing an all-reduce type of
   // exchange.
   AllToAllReduce_(metric, query_results);
   world_->barrier();
-
-  // Postprocess.
-  // PostProcess_(metric, query_table_->get_tree(), query_results);
 }
 
 template<typename DistributedProblemType>

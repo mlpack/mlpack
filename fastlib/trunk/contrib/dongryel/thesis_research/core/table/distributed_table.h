@@ -53,7 +53,7 @@ class DistributedTable: public boost::noncopyable {
     /** @brief The index type for each point is a pair of a machine ID
      *         and a point ID.
      */
-    typedef std::pair<int, int> IndexType;
+    typedef std::pair<int, std::pair<int, int> > IndexType;
 
     // For giving private access to the distributed tree builder class.
     friend class core::parallel::SampleDistributedTreeBuilder <
@@ -112,6 +112,11 @@ class DistributedTable: public boost::noncopyable {
 
         void Next() {
           current_index_++;
+        }
+
+        void Next(int *point_id) {
+          current_index_++;
+          *point_id = table_->iterator_get_id_(current_index_);
         }
 
         void Next(core::table::DensePoint *entry, int *point_id) {
