@@ -129,7 +129,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
 
   printf("For Reference Process %d: \n", world_->rank());
-  for(unsigned int i = 0; i < world_->rank(); i++) {
+  for(int i = 0; i < world_->rank(); i++) {
     for(unsigned int j = 0; j < essential_reference_subtrees[i].size(); j++) {
       printf("%d %d %d\n", world_->rank(),
              essential_reference_subtrees[i][j].first,
