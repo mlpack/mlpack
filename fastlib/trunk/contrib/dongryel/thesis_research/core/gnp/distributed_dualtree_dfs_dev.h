@@ -123,7 +123,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   // participating query process.
   const int max_reference_subtree_size = 20000;
   std::vector< std::vector< std::pair<int, int> > >
-  essential_reference_subtrees;
+  essential_reference_subtrees(world_->size());
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
