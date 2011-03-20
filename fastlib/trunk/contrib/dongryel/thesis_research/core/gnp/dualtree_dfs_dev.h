@@ -346,8 +346,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
 
   // Compute the delta change.
   typename ProblemType::DeltaType delta;
-  delta.DeterministicCompute(metric, problem_->global(), qnode, rnode,
-                             squared_distance_range);
+  delta.DeterministicCompute(
+    metric, problem_->global(), qnode, rnode, squared_distance_range);
 
   // If it is prunable, then summarize and return.
   if(CanSummarize_(
