@@ -129,28 +129,18 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
 
   printf("For Reference Process %d: \n", world_->rank());
-  for(int i = 0; i < world_->rank(); i++) {
+  for(int i = 0; i < world_->size(); i++) {
     for(unsigned int j = 0; j < essential_reference_subtrees[i].size(); j++) {
-      printf("%d %d %d\n", world_->rank(),
+      printf("%d %d %d %d\n", world_->rank(), i,
              essential_reference_subtrees[i][j].first,
              essential_reference_subtrees[i][j].second);
     }
   }
 
-  // Each process divides its own reference tree into roughly equal parts.
-  BeginCountPairList reference_frontier_node_begin_count_pairs;
-  const int num_reference_subtrees = 16;
-  reference_table_->local_table()->get_tree()->
-  get_frontier_node_begin_count_pairs(
-    num_reference_subtrees,
-    &reference_frontier_node_begin_count_pairs.begin_count_pairs(),
-    &reference_frontier_node_begin_count_pairs.bounds());
-
-  // Do an all-gather.
-  std::vector< BeginCountPairList > reference_frontier_lists;
-  boost::mpi::all_gather(
-    *world_, reference_frontier_node_begin_count_pairs,
-    reference_frontier_lists);
+  // Do an all to all.
+  std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
+  boost::mpi::all_to_all(
+    *world_, essential_reference_subtrees, reference_frontier_lists);
 
   // The priority queue type.
   typedef std::priority_queue <
@@ -186,26 +176,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     if(i != static_cast<unsigned int>(world_->rank())) {
       const std::vector< std::pair<int, int> > &reference_frontier =
-        reference_frontier_lists[i].begin_count_pairs();
-      std::vector< typename TreeType::BoundType > reference_frontier_bound =
-        reference_frontier_lists[i].bounds();
+        reference_frontier_lists[i];
       for(unsigned int j = 0; j < reference_frontier.size(); j++) {
-
-        core::math::Range squared_distance_range =
-          (query_table_->local_table()->get_tree()->bound()).RangeDistanceSq(
-            metric, reference_frontier_bound[j]);
-
-        // Compute the priority.
-        double priority = 1.0 /
-                          static_cast<double>(
-                            (squared_distance_range.lo + 1.0) *
-                            reference_frontier[j].second);
         computation_frontier[i].push(
           boost::make_tuple(
             query_table_->local_table()->get_tree(),
             boost::make_tuple<int, int, int>(
               i, reference_frontier[j].first,
-              reference_frontier[j].second), priority));
+              reference_frontier[j].second), 0.0));
       }
     }
   }
