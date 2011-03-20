@@ -294,6 +294,16 @@ class KdeGlobal {
 
   public:
 
+    /** @brief Tells whether the given squared distance range is
+     *         sufficient for pruning for any pair of query/reference
+     *         pair that satisfies the range.
+     */
+    bool ConsiderExtrinsicPrune(
+      const core::math::Range &squared_distance_range) const {
+
+      return kernel_aux_->kernel().bandwidth_sq() <= squared_distance_range.lo;
+    }
+
     /** @brief Returns whether the computation is monochromatic or
      *         not.
      */
