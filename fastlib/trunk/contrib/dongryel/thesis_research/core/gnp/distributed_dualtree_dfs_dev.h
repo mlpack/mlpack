@@ -56,7 +56,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
     // each query process in the set, add the reference node to the
     // list.
     if(local_reference_node->count() <= max_reference_subtree_size) {
-      typename DistributedTableType::TreeIterator qnode_it =
+      typename TableType::TreeIterator qnode_it =
         query_table_->get_node_iterator(global_query_node);
       while(qnode_it.HasNext()) {
         int query_process_id;

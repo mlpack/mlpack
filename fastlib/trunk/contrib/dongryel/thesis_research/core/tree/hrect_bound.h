@@ -62,6 +62,12 @@ class HrectBound {
       }
     }
 
+    /** @brief The copy constructor.
+     */
+    HrectBound(const HrectBound &other_bound) {
+      this->operator=(other_bound);
+    }
+
     /** @brief Serialize the bounding box.
      */
     template<class Archive>

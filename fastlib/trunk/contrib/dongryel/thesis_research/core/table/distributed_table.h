@@ -58,110 +58,9 @@ class DistributedTable: public boost::noncopyable {
     // For giving private access to the distributed tree builder class.
     friend class core::parallel::SampleDistributedTreeBuilder <
         DistributedTableType >;
+
   friend class core::parallel::VanillaDistributedTreeBuilder <
         DistributedTableType >;
-
-  public:
-    class TreeIterator {
-      private:
-        int begin_;
-
-        int end_;
-
-        int current_index_;
-
-        const DistributedTableType *table_;
-
-      public:
-
-        TreeIterator() {
-          begin_ = -1;
-          end_ = -1;
-          current_index_ = -1;
-          table_ = NULL;
-        }
-
-        TreeIterator(const TreeIterator &it_in) {
-          begin_ = it_in.begin();
-          end_ = it_in.end();
-          current_index_ = it_in.current_index();
-          table_ = it_in.table();
-        }
-
-        TreeIterator(const DistributedTableType &table, const TreeType *node) {
-          table_ = &table;
-          begin_ = node->begin();
-          end_ = node->end();
-          current_index_ = begin_ - 1;
-        }
-
-        TreeIterator(const DistributedTableType &table, int begin, int count) {
-          table_ = &table;
-          begin_ = begin;
-          end_ = begin + count;
-          current_index_ = begin_ - 1;
-        }
-
-        const DistributedTableType *table() const {
-          return table_;
-        }
-
-        bool HasNext() const {
-          return current_index_ < end_ - 1;
-        }
-
-        void Next() {
-          current_index_++;
-        }
-
-        void Next(int *point_id) {
-          current_index_++;
-          *point_id = table_->iterator_get_id_(current_index_);
-        }
-
-        void Next(core::table::DensePoint *entry, int *point_id) {
-          current_index_++;
-          table_->iterator_get_(current_index_, entry);
-          *point_id = table_->iterator_get_id_(current_index_);
-        }
-
-        void get(int i, core::table::DensePoint *entry) {
-          table_->iterator_get_(begin_ + i, entry);
-        }
-
-        void get_id(int i, int *point_id) {
-          *point_id = table_->iterator_get_id_(begin_ + i);
-        }
-
-        void RandomPick(core::table::DensePoint *entry) {
-          table_->iterator_get_(core::math::Random(begin_, end_), entry);
-        }
-
-        void RandomPick(core::table::DensePoint *entry, int *point_id) {
-          *point_id = core::math::Random(begin_, end_);
-          table_->iterator_get_(*point_id, entry);
-        }
-
-        void Reset() {
-          current_index_ = begin_ - 1;
-        }
-
-        int current_index() const {
-          return current_index_;
-        }
-
-        int count() const {
-          return end_ - begin_;
-        }
-
-        int begin() const {
-          return begin_;
-        }
-
-        int end() const {
-          return end_;
-        }
-    };
 
   private:
 
@@ -193,6 +92,24 @@ class DistributedTable: public boost::noncopyable {
         world, owned_table_->n_entries(), local_n_entries_.get());
     }
 
+    template<typename BoundType>
+    void AdjustBounds_(
+      const std::vector<BoundType> &bounds, TreeType *node) {
+
+      if(node->is_leaf()) {
+        typename TableType::TreeIterator node_it =
+          global_table_->get_node_iterator(node);
+        while(node_it.HasNext()) {
+          int process_id;
+          node_it.Next(&process_id);
+        }
+      }
+      else {
+        AdjustBounds_(bounds, node->left());
+        AdjustBounds_(bounds, node->right());
+      }
+    }
+
     template<typename MetricType>
     void BuildGlobalTree_(
       boost::mpi::communicator &world, const MetricType &metric_in) {
@@ -217,6 +134,17 @@ class DistributedTable: public boost::noncopyable {
       if(world.rank() == 0) {
         global_table_->IndexData(metric_in, 1);
       }
+
+      // After building the tree, all processes send the root bound
+      // primitive to the master process.
+      std::vector<typename TreeType::BoundType> bounds;
+      boost::mpi::gather(
+        world, owned_table_->get_tree()->bound(), bounds, 0);
+      if(world.rank() == 0) {
+        AdjustBounds_(bounds, global_table_->get_tree());
+      }
+
+      // Broadcast the global tree.
       boost::mpi::broadcast(world, *global_table_, 0);
     }
 
@@ -390,12 +318,12 @@ class DistributedTable: public boost::noncopyable {
       builder.Build(world, metric_in, leaf_size);
     }
 
-    TreeIterator get_node_iterator(TreeType *node) {
-      return TreeIterator(*this, node);
+    typename TableType::TreeIterator get_node_iterator(TreeType *node) {
+      return global_table_->get_node_iterator(node);
     }
 
-    TreeIterator get_node_iterator(int begin, int count) {
-      return TreeIterator(*this, begin, count);
+    typename TableType::TreeIterator get_node_iterator(int begin, int count) {
+      return global_table_->get_node_iterator(begin, count);
     }
 
   private:
