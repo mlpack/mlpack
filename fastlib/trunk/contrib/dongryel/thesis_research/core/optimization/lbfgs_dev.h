@@ -210,6 +210,7 @@ void Lbfgs<FunctionType>::SearchDirection_(
     alpha[ iteration_num - i - 1 ] =
       rho [ iteration_num - i - 1] *
       arma::dot(s_lbfgs_.col(translated_position), q);
+    q = q - alpha[ iteration_num - i - 1] * y_lbfgs_.col(translated_position);
   }
   (*search_direction) = scaling_factor * q;
   for(int i = limit; i <= iteration_num - 1; i++) {
