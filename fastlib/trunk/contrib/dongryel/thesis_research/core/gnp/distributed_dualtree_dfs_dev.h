@@ -47,6 +47,9 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
   // If the pair is prunable, then return.
   if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
+    printf("Pruned %d %d %d %d\n", global_query_node->begin(),
+           global_query_node->count(),
+           local_reference_node->begin(), local_reference_node->end());
     return;
   }
 
@@ -127,15 +130,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
-
-  printf("For Reference Process %d: \n", world_->rank());
-  for(int i = 0; i < world_->size(); i++) {
-    for(unsigned int j = 0; j < essential_reference_subtrees[i].size(); j++) {
-      printf("%d %d %d %d\n", world_->rank(), i,
-             essential_reference_subtrees[i][j].first,
-             essential_reference_subtrees[i][j].second);
-    }
-  }
 
   // Do an all to all.
   std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;

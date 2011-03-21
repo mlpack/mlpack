@@ -104,7 +104,6 @@ class DistributedTable: public boost::noncopyable {
         node_it.Next(&process_id);
         node->bound().Copy(bounds[process_id]);
         while(node_it.HasNext()) {
-          int process_id;
           node_it.Next(&process_id);
           node->bound().Expand(metric, bounds[process_id]);
         }
@@ -150,6 +149,7 @@ class DistributedTable: public boost::noncopyable {
       std::vector<typename TreeType::BoundType> bounds;
       boost::mpi::gather(
         world, owned_table_->get_tree()->bound(), bounds, 0);
+
       if(world.rank() == 0) {
         AdjustBounds_(metric_in, bounds, global_table_->get_tree());
       }
