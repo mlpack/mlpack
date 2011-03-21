@@ -92,21 +92,28 @@ class DistributedTable: public boost::noncopyable {
         world, owned_table_->n_entries(), local_n_entries_.get());
     }
 
-    template<typename BoundType>
+    template<typename MetricType, typename BoundType>
     void AdjustBounds_(
+      const MetricType &metric,
       const std::vector<BoundType> &bounds, TreeType *node) {
 
       if(node->is_leaf()) {
         typename TableType::TreeIterator node_it =
           global_table_->get_node_iterator(node);
+        int process_id;
+        node_it.Next(&process_id);
+        BoundType tmp_bound;
+        tmp_bound.Copy(bounds[process_id]);
         while(node_it.HasNext()) {
           int process_id;
           node_it.Next(&process_id);
+          tmp_bound.Expand(metric, bounds[process_id]);
         }
+        node->bound().Copy(tmp_bound);
       }
       else {
-        AdjustBounds_(bounds, node->left());
-        AdjustBounds_(bounds, node->right());
+        AdjustBounds_(metric, bounds, node->left());
+        AdjustBounds_(metric, bounds, node->right());
       }
     }
 
@@ -141,7 +148,7 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::gather(
         world, owned_table_->get_tree()->bound(), bounds, 0);
       if(world.rank() == 0) {
-        AdjustBounds_(bounds, global_table_->get_tree());
+        AdjustBounds_(metric_in, bounds, global_table_->get_tree());
       }
 
       // Broadcast the global tree.
@@ -324,62 +331,6 @@ class DistributedTable: public boost::noncopyable {
 
     typename TableType::TreeIterator get_node_iterator(int begin, int count) {
       return global_table_->get_node_iterator(begin, count);
-    }
-
-  private:
-
-    void direct_get_(int point_id, double *entry) const {
-      if(this->IsIndexed() == false) {
-        global_table_->data().MakeolumnVector(point_id, entry);
-      }
-      else {
-        global_table_->data().MakeColumnVector(
-          IndexUtil< IndexType>::Extract(
-            global_table_->new_from_old(), point_id), entry);
-      }
-    }
-
-    void direct_get_(
-      int point_id, core::table::DensePoint *entry) const {
-      if(this->IsIndexed() == false) {
-        global_table_->data().MakeColumnVector(point_id, entry);
-      }
-      else {
-        global_table_->data().MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
-            global_table_->new_from_old(), point_id), entry);
-      }
-    }
-
-    void direct_get_(int point_id, core::table::DensePoint *entry) {
-      if(this->IsIndexed() == false) {
-        global_table_->data().MakeColumnVector(point_id, entry);
-      }
-      else {
-        global_table_->data().MakeColumnVector(
-          IndexUtil<IndexType>::Extract(
-            global_table_->new_from_old(), point_id), entry);
-      }
-    }
-
-    void iterator_get_(
-      int reordered_position, core::table::DensePoint *entry) const {
-      global_table_->data().MakeColumnVector(reordered_position, entry);
-    }
-
-    void iterator_get_(
-      int reordered_position, core::table::DensePoint *entry) {
-      global_table_->data().MakeColumnVector(reordered_position, entry);
-    }
-
-    int iterator_get_id_(int reordered_position) const {
-      if(this->IsIndexed() == false) {
-        return reordered_position;
-      }
-      else {
-        return IndexUtil<IndexType>::Extract(
-                 global_table_->old_from_new(), reordered_position);
-      }
     }
 };
 }
