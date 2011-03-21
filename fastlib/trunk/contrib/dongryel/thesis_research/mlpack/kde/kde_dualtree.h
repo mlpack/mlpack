@@ -18,6 +18,7 @@
 #include "core/table/table.h"
 #include "mlpack/series_expansion/hypercube_farfield_dev.h"
 #include "mlpack/series_expansion/hypercube_local_dev.h"
+#include "mlpack/series_expansion/kernel_aux.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
 
@@ -223,6 +224,28 @@ class KdePostponed {
     }
 };
 
+template<typename KernelAuxType>
+class ConsiderExtrinsicPruneTrait {
+  public:
+    static bool Compute(
+      const KernelAuxType &kernel_aux_in,
+      const core::math::Range &squared_distance_range_in) {
+      return false;
+    }
+};
+
+template<>
+class ConsiderExtrinsicPruneTrait <
+    mlpack::series_expansion::EpanKernelMultivariateAux > {
+  public:
+    static bool Compute(
+      const mlpack::series_expansion::EpanKernelMultivariateAux &kernel_aux_in,
+      const core::math::Range &squared_distance_range_in) {
+      return
+        kernel_aux_in.kernel().bandwidth_sq() <= squared_distance_range_in.lo;
+    }
+};
+
 /** @brief The global constant struct passed around for KDE
  *         computation.
  */
@@ -301,7 +324,8 @@ class KdeGlobal {
     bool ConsiderExtrinsicPrune(
       const core::math::Range &squared_distance_range) const {
 
-      return kernel_aux_->kernel().bandwidth_sq() <= squared_distance_range.lo;
+      return ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
+               *kernel_aux_, squared_distance_range);
     }
 
     /** @brief Returns whether the computation is monochromatic or
