@@ -104,16 +104,26 @@ class BallBound {
      *         the given point. This point is on the surface of the
      *         sphere.
      */
-    template<typename PointType>
     void FurthestPoint(
-      const PointType &avoid_point, arma::vec *furthest_point_out) const {
+      const arma::vec &avoid_point, arma::vec *furthest_point_out) const {
 
       // The vector pointing from the avoid_point to the center.
-      arma::vec direction = center_ - avoid_point;
+      arma::vec center_alias;
+      core::table::DensePointToArmaVec(center_, &center_alias);
+      arma::vec direction = center_alias - avoid_point;
       double direction_norm = arma::norm(direction, 2);
       direction = direction / direction_norm;
       double factor = direction_norm + radius_;
       (*furthest_point_out) = avoid_point + factor * direction;
+    }
+
+    void FurthestPoint(
+      const core::table::DensePoint &avoid_point,
+      arma::vec *furthest_point_out) const {
+
+      arma::vec avoid_point_alias;
+      core::table::DensePointToArmaVec(avoid_point, &avoid_point_alias);
+      this->FurthestPoint(avoid_point_alias, furthest_point_out);
     }
 
     /** @brief Generate a random point within the ball bound with
@@ -431,7 +441,7 @@ class BallBound {
         core::table::DensePointToArmaVec(center_, &center_alias);
         center_alias = 0.5 * (
                          furthest_point_on_self + furthest_point_on_new_bound);
-        radius_ = metric.Distance(center_, furthest_point_on_self);
+        radius_ = metric.Distance(center_alias, furthest_point_on_self);
       }
       return *this;
     }
