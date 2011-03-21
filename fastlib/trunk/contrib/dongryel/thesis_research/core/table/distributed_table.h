@@ -102,18 +102,21 @@ class DistributedTable: public boost::noncopyable {
           global_table_->get_node_iterator(node);
         int process_id;
         node_it.Next(&process_id);
-        BoundType tmp_bound;
-        tmp_bound.Copy(bounds[process_id]);
+        node->bound().Copy(bounds[process_id]);
         while(node_it.HasNext()) {
           int process_id;
           node_it.Next(&process_id);
-          tmp_bound.Expand(metric, bounds[process_id]);
+          node->bound().Expand(metric, bounds[process_id]);
         }
-        node->bound().Copy(tmp_bound);
       }
       else {
+
+        // Adjust so that the node bound contains the bounds of the
+        // children.
         AdjustBounds_(metric, bounds, node->left());
         AdjustBounds_(metric, bounds, node->right());
+        node->bound().Copy(node->left()->bound());
+        node->bound().Expand(metric, node->right()->bound());
       }
     }
 
