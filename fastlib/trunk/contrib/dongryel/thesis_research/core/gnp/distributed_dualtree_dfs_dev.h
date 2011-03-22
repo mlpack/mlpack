@@ -47,9 +47,6 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
   // If the pair is prunable, then return.
   if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
-    printf("Pruned %d %d %d %d\n", global_query_node->begin(),
-           global_query_node->count(),
-           local_reference_node->begin(), local_reference_node->end());
     return;
   }
 
@@ -164,9 +161,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           boost::make_tuple<int, int, int>(
             i, reference_frontier[j].first,
             reference_frontier[j].second), 0.0));
-      printf("Process %d: %d %d %d\n", world_->rank(),
-             i, reference_frontier[j].first,
-             reference_frontier[j].second);
     }
   }
 
@@ -245,10 +239,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           reference_process_id,
           top_frontier.get<1>().get<1>(),
           top_frontier.get<1>().get<2>());
-      printf("Process %d takes care of %d %d %d\n", world_->rank(),
-             reference_process_id,
-             top_frontier.get<1>().get<1>(),
-             top_frontier.get<1>().get<2>());
       sub_argument.Init(
         (frontier_reference_subtable) ?
         frontier_reference_subtable->table() : reference_table_->local_table(),
