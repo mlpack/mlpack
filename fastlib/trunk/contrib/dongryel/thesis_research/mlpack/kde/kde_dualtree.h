@@ -103,9 +103,7 @@ class KdePostponed {
     void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
       densities_l_ = densities_u_ = 0;
       densities_e_ = 0;
-      pruned_ = (qnode == rnode && global_in.is_monochromatic()) ?
-                static_cast<double>(rnode->count() - 1) :
-                static_cast<double>(rnode->count());
+      pruned_ = static_cast<double>(rnode->count());
       used_error_ = 0;
     }
 
@@ -243,6 +241,10 @@ class ConsiderExtrinsicPruneTrait <
       const core::math::Range &squared_distance_range_in) {
       return
         kernel_aux_in.kernel().bandwidth_sq() <= squared_distance_range_in.lo;
+
+      // Enable the following line when the multipole moments are
+      // properly propagated upwards in the global tree.
+      //kernel_aux_in.kernel().bandwidth_sq() >= squared_distance_range_in.hi;
     }
 };
 
@@ -669,6 +671,18 @@ class KdeResult {
       const MetricType &metric,
       int q_index, const GlobalType &global,
       const bool is_monochromatic) {
+
+      // If monochromatic, then do post correction by subtracing the
+      // self-contribution.
+      if(is_monochromatic) {
+        double self_contribution =
+          global.kernel_aux().kernel().EvalUnnormOnSq(0.0);
+        densities_l_[q_index] -= self_contribution;
+        densities_[q_index] -= self_contribution;
+        densities_u_[q_index] -= self_contribution;
+        pruned_[q_index] -= 1.0;
+      }
+
       if(global.normalize_densities()) {
         densities_l_[q_index] *= global.get_mult_const();
         densities_[q_index] *= global.get_mult_const();

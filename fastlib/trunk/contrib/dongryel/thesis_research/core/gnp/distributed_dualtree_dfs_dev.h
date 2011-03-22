@@ -131,7 +131,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
 
-  // Do an all to all.
+  // Do an all to all to let each participating query process its
+  // initial frontier.
   std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
   boost::mpi::all_to_all(
     *world_, essential_reference_subtrees, reference_frontier_lists);
@@ -143,42 +144,29 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   typename DistributedDualtreeDfs <
   DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
 
-  // Start the computation with the self interaction.
-  DualtreeDfs<ProblemType> self_engine;
-  ProblemType self_problem;
-  ArgumentType self_argument;
-  self_argument.Init(problem_->global());
-  self_problem.Init(self_argument, &(problem_->global()));
-  self_engine.Init(self_problem);
-  self_engine.Compute(metric, query_results);
-  world_->barrier();
-
-  // An abstract way of collaborative subtable exchanges. The table
-  // cache size needs to be at least more than the maximum number of
-  // leaf nodes in a balanced binary tree of
-  // max_num_levels_to_serialize times the number of such subtrees
-  // dequeued per stage.
+  // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
   table_exchange.Init(
-    *world_, *(reference_table_->local_table()), leaf_size_,
-    max_num_levels_to_serialize_, max_num_work_to_dequeue_per_stage_);
+    *world_, *(reference_table_->local_table()),
+    max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
   std::vector < PriorityQueueType > computation_frontier(
     world_->size());
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
-    if(i != static_cast<unsigned int>(world_->rank())) {
-      const std::vector< std::pair<int, int> > &reference_frontier =
-        reference_frontier_lists[i];
-      for(unsigned int j = 0; j < reference_frontier.size(); j++) {
-        computation_frontier[i].push(
-          boost::make_tuple(
-            query_table_->local_table()->get_tree(),
-            boost::make_tuple<int, int, int>(
-              i, reference_frontier[j].first,
-              reference_frontier[j].second), 0.0));
-      }
+    const std::vector< std::pair<int, int> > &reference_frontier =
+      reference_frontier_lists[i];
+    for(unsigned int j = 0; j < reference_frontier.size(); j++) {
+      computation_frontier[i].push(
+        boost::make_tuple(
+          query_table_->local_table()->get_tree(),
+          boost::make_tuple<int, int, int>(
+            i, reference_frontier[j].first,
+            reference_frontier[j].second), 0.0));
+      printf("Process %d: %d %d %d\n", world_->rank(),
+             i, reference_frontier[j].first,
+             reference_frontier[j].second);
     }
   }
 
@@ -190,7 +178,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       world_->size());
     PriorityQueueType prioritized_tasks;
     int current_computation_frontier_size = 0;
-    bool success = false;
     for(int i = 0; i < world_->size(); i++) {
       current_computation_frontier_size += computation_frontier[i].size();
       for(int j = 0; computation_frontier[i].size() > 0 &&
@@ -201,9 +188,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         const FrontierObjectType &top_object = computation_frontier[i].top();
         std::pair<int, int> reference_node_id(
           top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
+
+        // Each process does not need to receive anything from itself
+        // (it can just do a self-local lookup).
         if(table_exchange.FindSubTable(
               i, reference_node_id.first,
-              reference_node_id.second) == NULL &&
+              reference_node_id.second) == NULL && i != world_->rank() &&
             std::find(
               receive_requests[i].begin(), receive_requests[i].end(),
               reference_node_id) == receive_requests[i].end()) {
@@ -213,9 +203,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
         // Pop the top object.
         computation_frontier[i].pop();
-
-        // Successfully popped an object.
-        success = true;
       }
     }
 
@@ -259,18 +246,27 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           top_frontier.get<1>().get<1>(),
           top_frontier.get<1>().get<2>());
       sub_argument.Init(
-        frontier_reference_subtable->table(),
+        (frontier_reference_subtable) ?
+        frontier_reference_subtable->table() : reference_table_->local_table(),
         query_table_->local_table(), problem_->global());
       sub_problem.Init(sub_argument, &(problem_->global()));
       sub_engine.Init(sub_problem);
 
       // Set the right flags and fire away the computation.
-      sub_engine.set_base_case_flags(
-        frontier_reference_subtable->serialize_points_per_terminal_node());
+      if(frontier_reference_subtable != NULL) {
+        sub_engine.set_base_case_flags(
+          frontier_reference_subtable->serialize_points_per_terminal_node());
+      }
       sub_engine.set_query_reference_process_ranks(
         world_->rank(), reference_process_id);
-      sub_engine.set_query_start_node(
-        top_frontier.get<0>(), std::numeric_limits<int>::max());
+      if(frontier_reference_subtable == NULL) {
+        TreeType *reference_start_node =
+          reference_table_->local_table()->
+          get_tree()->FindByBeginCount(
+            top_frontier.get<1>().get<1>(),
+            top_frontier.get<1>().get<2>());
+        sub_engine.set_reference_start_node(reference_start_node);
+      }
       sub_engine.Compute(metric, query_results, false);
 
       // For each unpruned query reference pair, push into the
@@ -366,10 +362,20 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // Preprocess the global query tree and the local query tree owned
   // by each process.
   PreProcess_(query_table_->get_tree());
+  PreProcess_(query_table_->local_table()->get_tree());
 
   // Preprocess the global reference tree, and the local reference
   // tree owned by each process. This part needs to be fixed so that
   // it does a true bottom-up refinement using an MPI-gather.
+  core::gnp::DualtreeDfs<ProblemType> self_engine;
+  ProblemType self_problem;
+  ArgumentType self_argument;
+  self_argument.Init(problem_->global());
+  self_problem.Init(self_argument, &(problem_->global()));
+  self_engine.Init(self_problem);
+  core::gnp::DualtreeDfs<ProblemType>::PreProcessReferenceTree(
+    self_engine.problem()->global(),
+    reference_table_->local_table()->get_tree());
   PreProcessReferenceTree_(reference_table_->get_tree());
 
   // Figure out each process's work using the global tree. a 2D matrix
