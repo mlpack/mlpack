@@ -606,6 +606,11 @@ class KdeResult {
 
   public:
 
+    /** @brief The flag that tells whether the self contribution has
+     *         been subtracted or not.
+     */
+    bool self_contribution_subtracted_;
+
     /** @brief The lower bound on the density sum.
      */
     ContainerType densities_l_;
@@ -642,6 +647,7 @@ class KdeResult {
      */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
+      ar & self_contribution_subtracted_;
       ar & densities_l_;
       ar & densities_;
       ar & densities_u_;
@@ -674,12 +680,13 @@ class KdeResult {
 
       // If monochromatic, then do post correction by subtracing the
       // self-contribution.
-      if(is_monochromatic) {
+      if((!self_contribution_subtracted_) && is_monochromatic) {
         double self_contribution =
           global.kernel_aux().kernel().EvalUnnormOnSq(0.0);
         densities_l_[q_index] -= self_contribution;
         densities_[q_index] -= self_contribution;
         densities_u_[q_index] -= self_contribution;
+        self_contribution_subtracted_ = true;
       }
 
       if(global.normalize_densities()) {
@@ -738,6 +745,7 @@ class KdeResult {
     }
 
     void SetZero() {
+      self_contribution_subtracted_ = false;
       for(int i = 0; i < static_cast<int>(densities_l_.size()); i++) {
         densities_l_[i] = 0;
         densities_[i] = 0;
