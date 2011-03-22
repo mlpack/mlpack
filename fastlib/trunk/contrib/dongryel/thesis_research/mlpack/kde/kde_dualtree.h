@@ -815,8 +815,7 @@ class KdeDelta {
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
-      int rnode_count = (qnode == rnode) ?
-                        (rnode->count() - 1) : rnode->count();
+      int rnode_count = rnode->count();
       densities_l_ = rnode_count *
                      global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
       densities_u_ = rnode_count *

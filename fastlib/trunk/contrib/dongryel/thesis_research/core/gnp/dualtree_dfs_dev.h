@@ -106,6 +106,8 @@ void DualtreeDfs<ProblemType>::Compute(
   if(do_initializations) {
     query_results->Init(query_table_->n_entries());
   }
+  printf("Starting with %g for Process %d\n",
+         query_results->pruned_[0], query_rank_);
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
@@ -215,12 +217,8 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
       core::table::DensePoint r_col;
       int r_col_id;
       rnode_iterator.Next(&r_col, &r_col_id);
-      if(
-        problem_->global().is_monochromatic() == false ||
-        r_col_id != q_index) {
-        query_contribution.ApplyContribution(
-          problem_->global(), metric, q_col, r_col);
-      }
+      query_contribution.ApplyContribution(
+        problem_->global(), metric, q_col, r_col);
 
     } // end of iterating over each reference point.
 
@@ -372,28 +370,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     bool exact_compute = true;
     if(rnode->is_leaf()) {
 
-      if(do_selective_base_case_ == false ||
-          serialize_points_per_terminal_node_.find(rnode->begin())
-          != serialize_points_per_terminal_node_.end()) {
-
-        // If the base case must be done, then do so.
-        DualtreeBase_(metric, qnode, rnode, query_results);
-      }
-      else {
-
-        // Otherwise, push into the list of reference nodes that must
-        // be dealt later. These list will be used in the distributed
-        // dualtree computation.
-        double priority = 1.0 /
-                          static_cast<double>(
-                            (squared_distance_range.lo + 1.0) *
-                            qnode->count() * rnode->count());
-        unpruned_query_reference_pairs_.push_back(
-          boost::make_tuple(
-            qnode,
-            boost::make_tuple<int, int, int>(
-              reference_rank_, rnode->begin(), rnode->count()), priority));
-      }
+      // If the base case must be done, then do so.
+      DualtreeBase_(metric, qnode, rnode, query_results);
 
     } // qnode is leaf, rnode is leaf.
     else {

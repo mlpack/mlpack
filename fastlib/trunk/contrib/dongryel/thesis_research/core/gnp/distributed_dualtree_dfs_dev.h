@@ -214,7 +214,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // Try to exchange the subtables.
     if(
       table_exchange.AllToAll(
-        *world_, max_num_levels_to_serialize_, receive_requests)) {
+        *world_, receive_requests)) {
 
       // Check whether all of the processes are done. Otherwise, we
       // have to be in the loop in case some processes request
@@ -245,6 +245,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           reference_process_id,
           top_frontier.get<1>().get<1>(),
           top_frontier.get<1>().get<2>());
+      printf("Process %d takes care of %d %d %d\n", world_->rank(),
+             reference_process_id,
+             top_frontier.get<1>().get<1>(),
+             top_frontier.get<1>().get<2>());
       sub_argument.Init(
         (frontier_reference_subtable) ?
         frontier_reference_subtable->table() : reference_table_->local_table(),
@@ -268,17 +272,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         sub_engine.set_reference_start_node(reference_start_node);
       }
       sub_engine.Compute(metric, query_results, false);
-
-      // For each unpruned query reference pair, push into the
-      // priority queue.
-      const std::vector < FrontierObjectType > &unpruned_query_reference_pairs =
-        sub_engine.unpruned_query_reference_pairs();
-
-      for(unsigned int k = 0;
-          k < unpruned_query_reference_pairs.size(); k++) {
-        computation_frontier[reference_process_id].push(
-          unpruned_query_reference_pairs[k]);
-      }
 
       // Pop the top frontier object that was just explored.
       prioritized_tasks.pop();
