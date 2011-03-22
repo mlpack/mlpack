@@ -106,8 +106,6 @@ void DualtreeDfs<ProblemType>::Compute(
   if(do_initializations) {
     query_results->Init(query_table_->n_entries());
   }
-  printf("Starting with %g for Process %d\n",
-         query_results->pruned_[0], query_rank_);
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
