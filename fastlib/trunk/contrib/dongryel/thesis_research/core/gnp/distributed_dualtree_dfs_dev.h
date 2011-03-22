@@ -1,3 +1,4 @@
+
 /** @file distributed_dualtree_dfs_dev.h
  *
  *  The generic algorithm template for distributed dual-tree
@@ -154,13 +155,23 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     const std::vector< std::pair<int, int> > &reference_frontier =
       reference_frontier_lists[i];
-    for(unsigned int j = 0; j < reference_frontier.size(); j++) {
+
+    if(i != static_cast<unsigned int>(world_->rank())) {
+      for(unsigned int j = 0; j < reference_frontier.size(); j++) {
+        computation_frontier[i].push(
+          boost::make_tuple(
+            query_table_->local_table()->get_tree(),
+            boost::make_tuple<int, int, int>(
+              i, reference_frontier[j].first,
+              reference_frontier[j].second), 0.0));
+      }
+    }
+    else {
       computation_frontier[i].push(
         boost::make_tuple(
           query_table_->local_table()->get_tree(),
           boost::make_tuple<int, int, int>(
-            i, reference_frontier[j].first,
-            reference_frontier[j].second), 0.0));
+            i, 0, reference_table_->n_entries()), -1.0));
     }
   }
 
