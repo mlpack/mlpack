@@ -21,11 +21,16 @@
 // the following:
 //
 //   FunctionType(); // constructor
-//   void Gradient(const arma::vec& coordinates, arma::vec& gradient);
-//   double Evaluate(const arma::vec& coordinates);
+//   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+//   double Evaluate(const arma::mat& coordinates);
 //   const int GetDimension();
-//   const arma::vec& GetInitialPoint();
+//   const arma::mat& GetInitialPoint();
 //
+// Note that we are using an arma::mat instead of the more intuitive and
+// expected arma::vec.  This is because L-BFGS will also optimize matrices.
+// However, remember that an arma::vec is simply an (n x 1) arma::mat.  You can
+// use either internally but the L-BFGS method requires arma::mat& to be passed
+// (C++ does not allow implicit reference casting to subclasses).
 
 // these names should probably be changed later
 namespace mlpack {
@@ -48,14 +53,14 @@ class RosenbrockFunction {
  public:
   RosenbrockFunction(); // initialize initial point
 
-  double Evaluate(const arma::vec& coordinates); 
-  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
+  double Evaluate(const arma::mat& coordinates); 
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
   const int GetDimension() { return 2; }
-  const arma::vec& GetInitialPoint();
+  const arma::mat& GetInitialPoint();
 
  private:
-  arma::vec initial_point;
+  arma::mat initial_point;
 };
 
 /***
@@ -78,14 +83,14 @@ class WoodFunction {
  public:
   WoodFunction(); // initialize initial point
 
-  double Evaluate(const arma::vec& coordinates);
-  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
+  double Evaluate(const arma::mat& coordinates);
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
   const int GetDimension() { return 4; }
-  const arma::vec& GetInitialPoint();
+  const arma::mat& GetInitialPoint();
 
  private:
-  arma::vec initial_point;
+  arma::mat initial_point;
 };
 
 /***
@@ -108,14 +113,14 @@ class GeneralizedRosenbrockFunction {
    */
   GeneralizedRosenbrockFunction(int n);
 
-  double Evaluate(const arma::vec& coordinates);
-  void Gradient(const arma::vec& coordinates, arma::vec& gradient);
+  double Evaluate(const arma::mat& coordinates);
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
   const int GetDimension() { return n; }
-  const arma::vec& GetInitialPoint();
+  const arma::mat& GetInitialPoint();
 
  private:
-  arma::vec initial_point;
+  arma::mat initial_point;
   int n; // Dimensionality
 };
 

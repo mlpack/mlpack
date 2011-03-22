@@ -58,7 +58,7 @@ L_BFGS<FunctionType>::LbfgsParam::LbfgsParam() {
  * @return The value of the function
  */
 template<typename FunctionType>
-double L_BFGS<FunctionType>::Evaluate_(const arma::vec& iterate) {
+double L_BFGS<FunctionType>::Evaluate_(const arma::mat& iterate) {
 
   // Evaluate the function and keep track of the minimum function
   // value encountered during the optimization.
@@ -80,13 +80,13 @@ double L_BFGS<FunctionType>::Evaluate_(const arma::vec& iterate) {
  */
 template<typename FunctionType>
 double L_BFGS<FunctionType>::ChooseScalingFactor_(int iteration_num,
-                                                  const arma::vec& gradient) {
+                                                  const arma::mat& gradient) {
   double scaling_factor = 1.0;
   if(iteration_num > 0) {
     int previous_pos = (iteration_num - 1) % num_basis_;
-    // Get column subviews once instead of several times.
-    arma::subview_col<double> s_col = s_lbfgs_.col(previous_pos);
-    arma::subview_col<double> y_col = y_lbfgs_.col(previous_pos);
+    // Get s and y matrices once instead of multiple times.
+    arma::mat& s_col = s_lbfgs_.slice(previous_pos);
+    arma::mat& y_col = y_lbfgs_.slice(previous_pos);
     scaling_factor = dot(s_col, y_col) / dot(y_col, y_col);
   } else {
     scaling_factor = 1.0 / sqrt(dot(gradient, gradient));
@@ -102,7 +102,7 @@ double L_BFGS<FunctionType>::ChooseScalingFactor_(int iteration_num,
  * @return (norm < 1e-5)
  */
 template<typename FunctionType>
-bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::vec &gradient) {
+bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::mat& gradient) {
   const double threshold = 1e-5; // TODO: this threshold should be configurable
   return arma::norm(gradient, 2) < threshold;
 }
@@ -121,9 +121,9 @@ bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::vec &gradient) {
  */
 template<typename FunctionType>
 bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
-                                       arma::vec& iterate,
-                                       arma::vec& gradient,
-                                       const arma::vec& search_direction,
+                                       arma::mat& iterate,
+                                       arma::mat& gradient,
+                                       const arma::mat& search_direction,
                                        double& step_size) {
   // Implements the line search with back-tracking.
 
@@ -206,11 +206,11 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
  * @param search_direction Vector to store search direction in
  */
 template<typename FunctionType>
-void L_BFGS<FunctionType>::SearchDirection_(const arma::vec& gradient,
+void L_BFGS<FunctionType>::SearchDirection_(const arma::mat& gradient,
                                             int iteration_num,
                                             double scaling_factor,
-                                            arma::vec& search_direction) {
-  arma::vec q = gradient;
+                                            arma::mat& search_direction) {
+  arma::mat q = gradient;
 
   // Temporary variables.
   arma::vec rho(num_basis_);
@@ -220,18 +220,18 @@ void L_BFGS<FunctionType>::SearchDirection_(const arma::vec& gradient,
   for(int i = iteration_num - 1; i >= limit; i--) {
     int translated_position = i % num_basis_;
     rho[iteration_num - i - 1] = 1.0 / arma::dot(
-        y_lbfgs_.col(translated_position),
-        s_lbfgs_.col(translated_position));
+        y_lbfgs_.slice(translated_position),
+        s_lbfgs_.slice(translated_position));
     alpha[iteration_num - i - 1] = rho[iteration_num - i - 1] *
-        arma::dot(s_lbfgs_.col(translated_position), q);
+        arma::dot(s_lbfgs_.slice(translated_position), q);
   }
   search_direction = scaling_factor * q;
   for(int i = limit; i <= iteration_num - 1; i++) {
     int translated_position = i % num_basis_;
     double beta = rho[iteration_num - i - 1] *
-        arma::dot(y_lbfgs_.col(translated_position), search_direction);
+        arma::dot(y_lbfgs_.slice(translated_position), search_direction);
     search_direction += (alpha[iteration_num - i - 1] - beta) *
-        s_lbfgs_.col(translated_position);
+        s_lbfgs_.slice(translated_position);
   }
 
   // Negate the search direction so that it is a descent direction.
@@ -252,15 +252,15 @@ void L_BFGS<FunctionType>::SearchDirection_(const arma::vec& gradient,
  */
 template<typename FunctionType>
 void L_BFGS<FunctionType>::UpdateBasisSet_(int iteration_num,
-                                           const arma::vec& iterate,
-                                           const arma::vec& old_iterate,
-                                           const arma::vec& gradient,
-                                           const arma::vec& old_gradient) {
+                                           const arma::mat& iterate,
+                                           const arma::mat& old_iterate,
+                                           const arma::mat& gradient,
+                                           const arma::mat& old_gradient) {
   // Overwrite a certain position instead of pushing everything in the vector
   // back one position
   int overwrite_pos = iteration_num % num_basis_;
-  s_lbfgs_.col(overwrite_pos) = iterate - old_iterate;
-  y_lbfgs_.col(overwrite_pos) = gradient - old_gradient;
+  s_lbfgs_.slice(overwrite_pos) = iterate - old_iterate;
+  y_lbfgs_.slice(overwrite_pos) = gradient - old_gradient;
 }
 
 /***
@@ -273,14 +273,20 @@ void L_BFGS<FunctionType>::UpdateBasisSet_(int iteration_num,
 template<typename FunctionType>
 void L_BFGS<FunctionType>::Init(FunctionType& function_in, int num_basis) {
   function_ = &function_in;
-  new_iterate_tmp_.set_size(function_->GetDimension());
-  s_lbfgs_.set_size(function_->GetDimension(), num_basis);
-  y_lbfgs_.set_size(function_->GetDimension(), num_basis);
+
+  // Get the dimensions of the coordinates of the function; GetInitialPoint()
+  // might return an arma::vec, but that's okay because then n_cols will simply
+  // be 1.
+  int rows = function_->GetInitialPoint().n_rows;
+  int cols = function_->GetInitialPoint().n_cols;
+
+  new_iterate_tmp_.set_size(rows, cols);
+  s_lbfgs_.set_size(rows, cols, num_basis);
+  y_lbfgs_.set_size(rows, cols, num_basis);
   num_basis_ = num_basis;
 
   // Allocate the pair holding the min iterate information.
-  min_point_iterate_.first.set_size(function_->GetDimension());
-  min_point_iterate_.first.zeros();
+  min_point_iterate_.first.zeros(rows, cols);
   min_point_iterate_.second = std::numeric_limits<double>::max();
 }
 
@@ -291,7 +297,7 @@ void L_BFGS<FunctionType>::Init(FunctionType& function_in, int num_basis) {
  *     value at that point.
  */
 template<typename FunctionType>
-const std::pair<arma::vec, double>&
+const std::pair<arma::mat, double>&
 L_BFGS<FunctionType>::min_point_iterate() const {
   return min_point_iterate_;
 }
@@ -317,11 +323,10 @@ void L_BFGS<FunctionType>::set_max_num_line_searches(
  * @param iterate Starting point (will be modified)
  */
 template<typename FunctionType>
-bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::vec& iterate) {
+bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   // The old iterate to be saved.
-  arma::vec old_iterate;
-  old_iterate.set_size(function_->GetDimension());
-  old_iterate.zeros();
+  arma::mat old_iterate;
+  old_iterate.zeros(iterate.n_rows, iterate.n_cols);
 
   // Whether to optimize until convergence.
   bool optimize_until_convergence = (num_iterations <= 0);
@@ -332,15 +337,12 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::vec& iterate) {
   // The gradient: the current and the old.
   arma::vec gradient;
   arma::vec old_gradient;
-  gradient.set_size(function_->GetDimension());
-  gradient.zeros();
-  old_gradient.set_size(function_->GetDimension());
-  old_gradient.zeros();
+  gradient.zeros(iterate.n_rows, iterate.n_cols);
+  old_gradient.zeros(iterate.n_rows, iterate.n_cols);
 
   // The search direction.
   arma::vec search_direction;
-  search_direction.set_size(function_->GetDimension());
-  search_direction.zeros();
+  search_direction.zeros(iterate.n_rows, iterate.n_cols);
 
   // The initial gradient value.
   function_->Gradient(iterate, gradient);
@@ -352,6 +354,11 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::vec& iterate) {
   // The main optimization loop.
   for(int it_num = 0; optimize_until_convergence || it_num < num_iterations;
       it_num++) {
+//    NOTIFY("Iteration %d; objective %lf; coordinates", it_num,
+//        function_->Evaluate(iterate));
+//    std::cout << iterate;
+//    NOTIFY("Gradient ");
+//    std::cout << gradient;
 
     // Break when the norm of the gradient becomes too small.
     if(GradientNormTooSmall_(gradient))
