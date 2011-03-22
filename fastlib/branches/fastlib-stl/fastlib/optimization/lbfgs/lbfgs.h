@@ -64,13 +64,13 @@ class L_BFGS {
 
     FunctionType *function_;
 
-    arma::vec new_iterate_tmp_;
-    arma::mat s_lbfgs_;
-    arma::mat y_lbfgs_;
+    arma::mat new_iterate_tmp_;
+    arma::cube s_lbfgs_; // stores all the s matrices in memory
+    arma::cube y_lbfgs_; // stores all the y matrices in memory
 
     int num_basis_;
 
-    std::pair<arma::vec, double> min_point_iterate_;
+    std::pair<arma::mat, double> min_point_iterate_;
 
   private:
     /***
@@ -79,7 +79,7 @@ class L_BFGS {
      *
      * @return The value of the function
      */
-    double Evaluate_(const arma::vec& iterate);
+    double Evaluate_(const arma::mat& iterate);
 
     /***
      * Calculate the scaling factor gamma which is used to scale the Hessian
@@ -88,7 +88,7 @@ class L_BFGS {
      *
      * @return The calculated scaling factor
      */
-    double ChooseScalingFactor_(int iteration_num, const arma::vec& gradient);
+    double ChooseScalingFactor_(int iteration_num, const arma::mat& gradient);
 
     /***
      * Check to make sure that the norm of the gradient is not smaller than
@@ -96,7 +96,7 @@ class L_BFGS {
      *
      * @return (norm < 1e-5)
      */
-    bool GradientNormTooSmall_(const arma::vec &gradient);
+    bool GradientNormTooSmall_(const arma::mat& gradient);
 
     /***
      * Perform a back-tracking line search along the search direction to
@@ -111,11 +111,11 @@ class L_BFGS {
      *
      * @return false if no step size is suitable, true otherwise.
      */
-    bool LineSearch_(double &function_value,
-                     arma::vec &iterate,
-                     arma::vec &gradient,
-                     const arma::vec &search_direction,
-                     double &step_size);
+    bool LineSearch_(double& function_value,
+                     arma::mat& iterate,
+                     arma::mat& gradient,
+                     const arma::mat& search_direction,
+                     double& step_size);
 
     /***
      * Find the L-BFGS search direction.
@@ -125,10 +125,10 @@ class L_BFGS {
      * @param scaling_factor Scaling factor to use (see ChooseScalingFactor_())
      * @param search_direction Vector to store search direction in
      */
-    void SearchDirection_(const arma::vec& gradient,
+    void SearchDirection_(const arma::mat& gradient,
                           int iteration_num,
                           double scaling_factor,
-                          arma::vec& search_direction);
+                          arma::mat& search_direction);
 
     /***
      * Update the vectors y_bfgs_ and s_bfgs_, which store the differences
@@ -142,10 +142,10 @@ class L_BFGS {
      * @param old_gradient Gradient at last iteration point (old_iterate)
      */
     void UpdateBasisSet_(int iteration_num,
-                         const arma::vec &iterate,
-                         const arma::vec &old_iterate,
-                         const arma::vec &gradient,
-                         const arma::vec &old_gradient);
+                         const arma::mat& iterate,
+                         const arma::mat& old_iterate,
+                         const arma::mat& gradient,
+                         const arma::mat& old_gradient);
 
   public:
     /***
@@ -155,7 +155,7 @@ class L_BFGS {
      * @param function_in Instance of function to be optimized
      * @param num_basis Number of memory points to be stored
      */
-    void Init(FunctionType &function_in, int num_basis);
+    void Init(FunctionType& function_in, int num_basis);
 
     /***
      * Return the point where the lowest function value has been found.
@@ -163,7 +163,7 @@ class L_BFGS {
      * @return arma::vec representing the point and a double with the function
      *     value at that point.
      */
-    const std::pair<arma::vec, double>& min_point_iterate() const;
+    const std::pair<arma::mat, double>& min_point_iterate() const;
 
     /***
      * Set the maximum number of iterations for the line search.
@@ -181,7 +181,7 @@ class L_BFGS {
      * @param num_iterations Maximum number of iterations to perform
      * @param iterate Starting point (will be modified)
      */
-    bool Optimize(int num_iterations, arma::vec& iterate);
+    bool Optimize(int num_iterations, arma::mat& iterate);
 };
 
 }; // namespace optimization
