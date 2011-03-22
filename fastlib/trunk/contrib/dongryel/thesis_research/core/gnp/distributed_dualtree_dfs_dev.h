@@ -171,7 +171,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         boost::make_tuple(
           query_table_->local_table()->get_tree(),
           boost::make_tuple<int, int, int>(
-            i, 0, reference_table_->n_entries()), -1.0));
+            i, 0, reference_table_->n_entries()), 1.0));
     }
   }
 
