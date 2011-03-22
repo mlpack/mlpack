@@ -372,7 +372,7 @@ class TestDistributed_Kde {
       // have been encountered.
       DistributedTableType *distributed_reference_table =
         distributed_kde_arguments.reference_table_;
-      int total_num_points = -1;
+      int total_num_points = 0;
       for(int i = 0; i < world.size(); i++) {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
