@@ -680,7 +680,6 @@ class KdeResult {
         densities_l_[q_index] -= self_contribution;
         densities_[q_index] -= self_contribution;
         densities_u_[q_index] -= self_contribution;
-        pruned_[q_index] -= 1.0;
       }
 
       if(global.normalize_densities()) {
