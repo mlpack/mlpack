@@ -209,7 +209,6 @@ class TableExchange {
      */
     bool AllToAll(
       boost::mpi::communicator &world,
-      int max_num_levels_to_serialize,
       std::vector <
       std::vector< std::pair<int, int> > > &receive_requests) {
 
@@ -244,7 +243,7 @@ class TableExchange {
           send_subtables[j].push_back(
             local_table_,
             local_table_->get_tree()->FindByBeginCount(begin, count),
-            max_num_levels_to_serialize, false);
+            false);
         }
       }
 
@@ -260,7 +259,7 @@ class TableExchange {
           // Allocate the cache block to the subtable that is about
           // to be received.
           received_subtables_in_this_round[j].push_back(
-            free_cache_block_id, max_num_levels_to_serialize, false);
+            free_cache_block_id, false);
         }
       }
 

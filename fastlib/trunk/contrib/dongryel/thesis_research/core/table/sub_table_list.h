@@ -84,12 +84,10 @@ class SubTableList {
      */
     void push_back(
       int cache_block_id_in,
-      int max_num_levels_to_serialize_in,
       bool serialize_new_from_old_mapping_in) {
       list_.resize(list_.size() + 1);
       list_[list_.size() - 1].Init(
-        cache_block_id_in, max_num_levels_to_serialize_in,
-        serialize_new_from_old_mapping_in);
+        cache_block_id_in, serialize_new_from_old_mapping_in);
     }
 
     /** @brief Pushes back a starting node and the number of levels to
@@ -98,12 +96,10 @@ class SubTableList {
     template<typename TableType, typename TreeType>
     void push_back(
       TableType *table_in, TreeType *start_node_in,
-      int max_num_levels_to_serialize_in,
       bool serialize_new_from_old_mapping_in) {
       list_.resize(list_.size() + 1);
       list_[list_.size() - 1].Init(
-        table_in, start_node_in, max_num_levels_to_serialize_in,
-        serialize_new_from_old_mapping_in);
+        table_in, start_node_in, serialize_new_from_old_mapping_in);
     }
 };
 }

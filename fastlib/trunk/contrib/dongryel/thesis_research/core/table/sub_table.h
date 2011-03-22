@@ -128,11 +128,6 @@ class SubTable {
      */
     TreeType *start_node_;
 
-    /** @brief The maximum number of levels of subtree to
-     *         serialize/unserialize.
-     */
-    int max_num_levels_to_serialize_;
-
     /** @brief The pointer to the underlying data.
      */
     core::table::DenseMatrix *data_;
@@ -178,23 +173,19 @@ class SubTable {
       PointSerializeFlagType > *serialize_points_per_terminal_node_in,
       int level) const {
 
-      if(node != NULL && level <= max_num_levels_to_serialize_) {
+      if(node != NULL) {
         sorted_nodes.push_back(
           std::pair<TreeType *, int>(node, parent_node_index));
 
         // If the node is not a leaf,
         if(node->is_leaf() == false) {
-
-          // Recurse only if the level is still low.
-          if(level < max_num_levels_to_serialize_) {
-            int parent_node_index = sorted_nodes.size() - 1;
-            FillTreeNodes_(
-              node->left(), parent_node_index, sorted_nodes,
-              serialize_points_per_terminal_node_in, level + 1);
-            FillTreeNodes_(
-              node->right(), parent_node_index, sorted_nodes,
-              serialize_points_per_terminal_node_in, level + 1);
-          }
+          int parent_node_index = sorted_nodes.size() - 1;
+          FillTreeNodes_(
+            node->left(), parent_node_index, sorted_nodes,
+            serialize_points_per_terminal_node_in, level + 1);
+          FillTreeNodes_(
+            node->right(), parent_node_index, sorted_nodes,
+            serialize_points_per_terminal_node_in, level + 1);
         }
 
         // In case it is a leaf, we are always stuck, so we grab the
@@ -239,8 +230,6 @@ class SubTable {
       cache_block_id_ = subtable_in.cache_block_id();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
-      max_num_levels_to_serialize_ =
-        const_cast<SubTableType &>(subtable_in).max_num_levels_to_serialize();
       data_ = const_cast<SubTableType &>(subtable_in).data();
       weights_ = const_cast<SubTableType &>(subtable_in).weights();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
@@ -419,7 +408,6 @@ class SubTable {
       cache_block_id_ = 0;
       table_ = NULL;
       start_node_ = NULL;
-      max_num_levels_to_serialize_ = std::numeric_limits<int>::max();
       data_ = NULL;
       weights_ = NULL;
       old_from_new_ = NULL;
@@ -451,13 +439,6 @@ class SubTable {
      */
     TreeType *start_node() const {
       return start_node_;
-    }
-
-    /** @brief Returns the maximum level underneath the starting node
-     *         to be serialized/unserialized.
-     */
-    int max_num_levels_to_serialize() const {
-      return max_num_levels_to_serialize_;
     }
 
     /** @brief Returns the underlying weights.
@@ -495,7 +476,6 @@ class SubTable {
      */
     void Init(
       int cache_block_id_in,
-      int max_num_levels_to_serialize_in,
       bool serialize_new_from_old_mapping_in) {
 
       // Set the cache block ID.
@@ -508,8 +488,7 @@ class SubTable {
 
       // Finalize the intialization.
       this->Init(
-        table_, (TreeType *) NULL, max_num_levels_to_serialize_in,
-        serialize_new_from_old_mapping_in);
+        table_, (TreeType *) NULL, serialize_new_from_old_mapping_in);
 
       // Since table_ pointer is explicitly allocated, is_alias_ flag
       // is turned to false. It is important that it is here to
@@ -522,13 +501,11 @@ class SubTable {
      */
     void Init(
       TableType *table_in, TreeType *start_node_in,
-      int max_num_levels_to_serialize_in,
       bool serialize_new_from_old_mapping_in) {
       serialize_new_from_old_mapping_ = serialize_new_from_old_mapping_in;
       table_ = table_in;
       is_alias_ = true;
       start_node_ = start_node_in;
-      max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
       data_ = &(table_in->data());
       weights_ = &(table_in->weights());
       old_from_new_ = table_in->old_from_new_offset_ptr();
