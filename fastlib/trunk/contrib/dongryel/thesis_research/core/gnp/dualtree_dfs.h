@@ -197,13 +197,9 @@ class DualtreeDfs {
      */
     int query_rank_;
 
-    /** @brief Starting query node.
+    /** @brief Starting reference node.
      */
-    TreeType *query_start_node_;
-
-    /** @brief The depth limit for recursing on the query side.
-     */
-    int qnode_recursion_depth_limit_;
+    TreeType *reference_start_node_;
 
     /** @brief The reference table.
      */
@@ -231,8 +227,6 @@ class DualtreeDfs {
     std::vector < FrontierObjectType > unpruned_query_reference_pairs_;
 
   private:
-
-    void PreProcessReferenceTree_(TreeType *rnode);
 
     void PreProcess_(TreeType *qnode);
 
@@ -302,7 +296,6 @@ class DualtreeDfs {
     bool DualtreeCanonical_(
       const MetricType &metric,
       TreeType *qnode,
-      int qnode_recursion_depth,
       TreeType *rnode,
       double failure_probability,
       const core::math::Range &squared_distance_range,
@@ -317,6 +310,11 @@ class DualtreeDfs {
 
   public:
 
+    /** @brief Preprocesses the reference tree.
+     */
+    static void PreProcessReferenceTree(
+      GlobalType &global_in, TreeType *rnode);
+
     /** @brief The constructor.
      */
     DualtreeDfs();
@@ -326,11 +324,10 @@ class DualtreeDfs {
     const std::vector < FrontierObjectType > &
     unpruned_query_reference_pairs() const;
 
-    /** @brief Sets the starting query node for the dual-tree
+    /** @brief Sets the starting reference node for the dual-tree
      *         computation.
      */
-    void set_query_start_node(
-      TreeType *query_start_node_in, int qnode_recursion_depth_limit_in);
+    void set_reference_start_node(TreeType *reference_start_node_in);
 
     void set_query_reference_process_ranks(
       int query_process_id, int reference_process_id);

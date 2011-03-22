@@ -169,8 +169,6 @@ class TableExchange {
     void Init(
       boost::mpi::communicator &world,
       TableType &local_table_in,
-      int leaf_size_in,
-      int max_num_levels_to_serialize_in,
       int max_num_work_to_dequeue_per_stage_in) {
 
       // Set the local table.
@@ -250,8 +248,7 @@ class TableExchange {
         }
       }
 
-      // Prepare the subtable list to be received. Right now, we
-      // just receive one subtable per process.
+      // Prepare the subtable list to be received.
       std::vector< SubTableListType > received_subtables_in_this_round;
       received_subtables_in_this_round.resize(world.size());
       for(unsigned int j = 0; j < receive_requests.size(); j++) {
