@@ -228,8 +228,6 @@ class DualtreeDfs {
 
   private:
 
-    void PreProcess_(TreeType *qnode);
-
     /** @brief Performs the base case for a given node pair.
      */
     template<typename MetricType>
@@ -309,6 +307,8 @@ class DualtreeDfs {
       TreeType *qnode, ResultType *query_results);
 
   public:
+
+    static void PreProcess(TreeType *qnode, double initial_pruned_in);
 
     /** @brief Preprocesses the reference tree.
      */

@@ -38,7 +38,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   int max_reference_subtree_size,
   DistributedTreeType *global_query_node, TreeType *local_reference_node,
   std::vector <
-  std::vector< std::pair<int, int> > > *essential_reference_subtrees) {
+  std::vector< std::pair<int, int> > > *essential_reference_subtrees,
+  std::vector< double > *extrinsic_prunes) {
 
   // Compute the squared distance ranges between the query node and
   // the reference node.
@@ -48,6 +49,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
   // If the pair is prunable, then return.
   if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
+    typename TableType::TreeIterator qnode_it =
+      query_table_->get_node_iterator(global_query_node);
+    while(qnode_it.HasNext()) {
+      int query_process_id;
+      qnode_it.Next(&query_process_id);
+      (*extrinsic_prunes)[query_process_id] += local_reference_node->count();
+    }
     return;
   }
 
@@ -73,11 +81,11 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->left(),
-        essential_reference_subtrees);
+        essential_reference_subtrees, extrinsic_prunes);
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->right(),
-        essential_reference_subtrees);
+        essential_reference_subtrees, extrinsic_prunes);
     }
     return;
   }
@@ -88,29 +96,29 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node,
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node,
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
   }
   else {
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->left(),
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->right(),
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->left(),
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->right(),
-      essential_reference_subtrees);
+      essential_reference_subtrees, extrinsic_prunes);
   }
 }
 
@@ -125,15 +133,28 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const int max_reference_subtree_size = 20000;
   std::vector< std::vector< std::pair<int, int> > >
   essential_reference_subtrees(world_->size());
+  std::vector<double> extrinsic_prunes_broadcast(world_->size(), 0.0);
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
-    reference_table_->local_table()->get_tree(), &essential_reference_subtrees);
+    reference_table_->local_table()->get_tree(), &essential_reference_subtrees,
+    &extrinsic_prunes_broadcast);
 
   // Do an all to all to let each participating query process its
   // initial frontier.
   std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
+  std::vector< double > extrinsic_prune_lists;
   boost::mpi::all_to_all(
     *world_, essential_reference_subtrees, reference_frontier_lists);
+  boost::mpi::all_to_all(
+    *world_, extrinsic_prunes_broadcast, extrinsic_prune_lists);
+
+  // Add up the initial pruned amounts and reseed it on the query
+  // side.
+  double initial_pruned =
+    std::accumulate(
+      extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0.0);
+  core::gnp::DualtreeDfs<ProblemType>::PreProcess(
+    query_table_->local_table()->get_tree(), initial_pruned);
 
   // The priority queue type.
   typedef std::priority_queue <
