@@ -969,6 +969,11 @@ class KdeSummary {
 
     double used_error_u_;
 
+    void Seed(double initial_pruned_in) {
+      this->SetZero();
+      pruned_l_ = initial_pruned_in;
+    }
+
     void Print() const {
       printf("Lower bound/upper bound on the densities: [ %g %g ], "
              "Lower bound on the pruned components: %g, "
@@ -1244,6 +1249,11 @@ class KdeStatistic {
     void SetZero() {
       postponed_.SetZero();
       summary_.SetZero();
+    }
+
+    void Seed(double initial_pruned_in) {
+      postponed_.SetZero();
+      summary_.Seed(initial_pruned_in);
     }
 
     /** @brief Initializes by taking statistics on raw data.
