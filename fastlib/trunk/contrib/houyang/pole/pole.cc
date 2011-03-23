@@ -26,6 +26,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
   if (argc > 1) {
     m_["method"] = "null";
     m_["kernel"] = "null";
+    m_["transform"] = "null";
     for (int i=1; i<argc; i++) {
       if (string(argv[i]) == "-m" || string(argv[i]) == "--method") {
 	if (i < argc-1) {
@@ -41,6 +42,14 @@ void Pole::ParseArgs(int argc, char *argv[]) {
 	}
 	else {
           m_["kernel"] = "";
+	}
+      }
+      else if (string(argv[i]) == "-r" || string(argv[i]) == "--transform") {
+	if (i < argc-1) {
+          m_["transform"] = string(argv[i+1]);
+	}
+	else {
+          m_["transform"] = "";
 	}
       }
       else if (string(argv[i]) == "-h" || string(argv[i]) == "--help") {
@@ -69,6 +78,19 @@ void Pole::ParseArgs(int argc, char *argv[]) {
       }
       else {
         cout << "ERROR! Kernel type needs to be [lienar, gaussian]" << endl;
+        exit(1);
+      }
+    }
+    else if (m_["method"] == "ogdt") {
+      if (m_["transform"] == "null") {
+	cout << "ERROR! Transform type needs to be specified for OGDT!" << endl;
+        exit(1);
+      }
+      else if (m_["transform"] == "fourier_rbf") {
+	L_ = new OGDT<FourierRBFTransform>;
+      }
+      else {
+	cout << "ERROR! Transform type needs to be [fourier_rbf]" << endl;
         exit(1);
       }
     }
@@ -103,12 +125,12 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     ("data_learn,d", po::value<string>(&L_->fn_learn_)->default_value(""), 
      "File name of training example set.")
     ("data_predict,t", po::value<string>(&L_->fn_predict_)->default_value(""), 
-     "File name of training example set.")
+     "File name of predicting example set.")
     ("epoches,e", po::value<size_t>(&L_->n_epoch_)->default_value(0), 
      "Number of training epoches. Default: 0 epoch.")
     ("iterations,i", po::value<size_t>(&L_->n_iter_res_)->default_value(0), 
      "Number of training iterations besides epoches. Default: 0.")
-    ("reg,r", po::value<int>(&L_->reg_type_)->default_value(2), 
+    ("reg", po::value<int>(&L_->reg_type_)->default_value(2), 
      "Which regularization term to use. Default: 2(squared l2 norm).")
     ("lambda", po::value<double>(&L_->reg_factor_), 
      "Regularization factor ('lambda' in avg_loss + lambda * regularization). No default value.")
@@ -128,6 +150,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Multiplication factor in Weighte Majority. Default: 0.5.")
     ("kernel,k", po::value<string>(&L_->kernel_name_)->default_value("linear"), 
      "Kernel (linear, rbf). Default: linear kernel.")
+    ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
+     "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
     ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
      "Sigma in Gaussian RBF kernel. Default: 1.0.")
     ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
