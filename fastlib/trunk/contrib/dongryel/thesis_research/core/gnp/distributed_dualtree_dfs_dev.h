@@ -154,7 +154,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     std::accumulate(
       extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0.0);
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
-    query_table_->local_table()->get_tree(), initial_pruned);
+    query_table_->local_table(), query_table_->local_table()->get_tree(),
+    query_results, initial_pruned);
 
   // The priority queue type.
   typedef std::priority_queue <

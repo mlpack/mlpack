@@ -655,6 +655,10 @@ class KdeResult {
       ar & used_error_;
     }
 
+    void Seed(int qpoint_index, double initial_pruned_in) {
+      pruned_[qpoint_index] = initial_pruned_in;
+    }
+
     /** @brief The default constructor.
      */
     KdeResult() {

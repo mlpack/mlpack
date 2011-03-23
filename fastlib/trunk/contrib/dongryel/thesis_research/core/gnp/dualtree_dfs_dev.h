@@ -113,7 +113,7 @@ void DualtreeDfs<ProblemType>::Compute(
       metric, reference_start_node_->bound());
 
   if(do_initializations) {
-    PreProcess(query_table_->get_tree(), 0.0);
+    PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
     core::gnp::DualtreeDfs <
     ProblemType >::PreProcessReferenceTree(
       problem_->global(), reference_start_node_);
@@ -159,15 +159,26 @@ void DualtreeDfs<ProblemType>::PreProcessReferenceTree(
 
 template<typename ProblemType>
 void DualtreeDfs<ProblemType>::PreProcess(
+  TableType *query_table_in,
   typename ProblemType::TableType::TreeType *qnode,
+  typename ProblemType::ResultType *query_results,
   double initial_pruned) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
   qnode_stat.Seed(initial_pruned);
 
   if(! qnode->is_leaf()) {
-    PreProcess(qnode->left(), initial_pruned);
-    PreProcess(qnode->right(), initial_pruned);
+    PreProcess(query_table_in, qnode->left(), query_results, initial_pruned);
+    PreProcess(query_table_in, qnode->right(), query_results, initial_pruned);
+  }
+  else {
+    typename TableType::TreeIterator qnode_it =
+      query_table_in->get_node_iterator(qnode);
+    while(qnode_it.HasNext()) {
+      int qpoint_index;
+      qnode_it.Next(&qpoint_index);
+      query_results->Seed(qpoint_index, initial_pruned);
+    }
   }
 }
 
