@@ -1,19 +1,19 @@
-#ifndef OPT_OGD_K_H
-#define OPT_OGD_K_H
+#ifndef OPT_OGD_T_H
+#define OPT_OGD_T_H
 
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/thread/thread.hpp>
 
 #include "learner.h"
 
-template <typename TKernel>
-class OGDK : public Learner {
+template <typename TTransform>
+class OGDT : public Learner {
  public:
   struct thread_par {
     size_t id_;
-    OGDK<TKernel> *Lp_;
+    OGDT<TTransform> *Lp_;
   };
-  TKernel K_;
+  TTransform T_;
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
@@ -22,24 +22,24 @@ class OGDK : public Learner {
   pthread_barrier_t barrier_msg_all_sent_;
   pthread_barrier_t barrier_msg_all_used_;
  public:
-  OGDK();
+  OGDT();
   void Learn();
   void Test();
  private:
-  static void* OgdKThread(void *par);
-  void OgdKCommUpdate(size_t tid);
+  static void* OgdTThread(void *par);
+  void OgdTCommUpdate(size_t tid);
   void MakeLog(size_t tid, Example *x, double pred_val);
   void SaveLog();
 };
 
 
-template <typename TKernel>
-OGDK<TKernel>::OGDK() {
-  cout << "---Online Kernel Gradient Descent---" << endl;
+template <typename TTransform>
+OGDT<TTransform>::OGDT() {
+  cout << "---Online Kernel Gradient Descent using Transformed Features---" << endl;
 }
 
-template <typename TKernel>
-void OGDK<TKernel>::OgdKCommUpdate(size_t tid) {
+template <typename TTransform>
+void OGDT<TTransform>::OgdTCommUpdate(size_t tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (size_t h=0; h<n_thread_; h++) {
       if (h != tid) {
@@ -52,15 +52,15 @@ void OGDK<TKernel>::OgdKCommUpdate(size_t tid) {
   }
 }
 
-// In Distributed OGDK, thread states are defined as:
+// In Distributed OGDT, thread states are defined as:
 // 0: waiting to read data
 // 1: data read, predict and send message(e.g. calc subgradient)
 // 2: msg sent done, waiting to receive messages from other agents and update
-template <typename TKernel>
-void* OGDK<TKernel>::OgdKThread(void *in_par) {
+template <typename TTransform>
+void* OGDT<TTransform>::OgdTThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
   size_t tid = par->id_;
-  OGDK* Lp = (OGDK *)par->Lp_;
+  OGDT* Lp = (OGDT *)par->Lp_;
   Example* exs[Lp->mb_size_];
   Svector uv; // update vector
   double ub = 0.0; // for bias
@@ -121,7 +121,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       Lp->t_state_[tid] = 2;
       break;
     case 2: // communicate and update using received msg
-      Lp->OgdKCommUpdate(tid);
+      Lp->OgdTCommUpdate(tid);
       // wait till all threads used messages they received
       pthread_barrier_wait(&Lp->barrier_msg_all_used_);
       // communication done
@@ -135,8 +135,8 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
   return NULL;
 }
 
-template <typename TKernel>
-void OGDK<TKernel>::Learn() {
+template <typename TTransform>
+void OGDT<TTransform>::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
   // init learning rate
@@ -160,19 +160,19 @@ void OGDK<TKernel>::Learn() {
     t_loss_[t] = 0;
     t_err_[t] = 0;
     // begin learning iterations
-    pthread_create(&Threads_[t], NULL, &OGDK::OgdKThread, (void*)&pars[t]);
+    pthread_create(&Threads_[t], NULL, &OGDT::OgdTThread, (void*)&pars[t]);
   }
 
   FinishThreads();
   SaveLog();
 }
 
-template <typename TKernel>
-void OGDK<TKernel>::Test() {
+template <typename TTransform>
+void OGDT<TTransform>::Test() {
 }
 
-template <typename TKernel>
-void OGDK<TKernel>::MakeLog(size_t tid, Example *x, double pred_val) {
+template <typename TTransform>
+void OGDT<TTransform>::MakeLog(size_t tid, Example *x, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
@@ -202,8 +202,8 @@ void OGDK<TKernel>::MakeLog(size_t tid, Example *x, double pred_val) {
   }
 }
 
-template <typename TKernel>
-void OGDK<TKernel>::SaveLog() {
+template <typename TTransform>
+void OGDT<TTransform>::SaveLog() {
   if (calc_loss_) {
     // intermediate logs
     if (n_log_ > 0) {

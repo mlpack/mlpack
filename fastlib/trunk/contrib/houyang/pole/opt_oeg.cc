@@ -202,12 +202,12 @@ void OEG::SaveLog() {
 	cerr << "Cannot save log file!"<< endl;
 	exit (1);
       }
-      fprintf(fp, "Log intervals: %ld. Number of logs: %ld\n\n", 
+      fprintf(fp, "Log intervals: %zu. Number of logs: %zu\n\n", 
 	      LOG_->t_int_, n_log_);
       fprintf(fp, "Errors cumulated:\n");
       for (size_t t=0; t<n_thread_; t++) {
 	for (size_t k=0; k<n_log_; k++) {
-	  fprintf(fp, "%ld", LOG_->err_[t][k]);
+	  fprintf(fp, "%zu", LOG_->err_[t][k]);
 	  fprintf(fp, " ");
 	}
 	fprintf(fp, ";\n");
