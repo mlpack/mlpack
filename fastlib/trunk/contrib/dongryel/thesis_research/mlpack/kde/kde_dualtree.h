@@ -1023,10 +1023,11 @@ class KdeSummary {
         return false;
       }
 
-      const int speedup_factor = 10;
-      int num_samples = rnode->count() / speedup_factor;
-
-      if(num_samples > rnode->count()) {
+      // The number of samples.
+      const int num_samples = 25;
+      const int global_proportion = 10;
+      if(qnode->count() > global.reference_table()->n_entries() /
+          global_proportion) {
         return false;
       }
 
