@@ -47,7 +47,7 @@ L_BFGS<FunctionType>::LbfgsParam::LbfgsParam() {
   armijo_constant_ = 1e-4;
   min_step_ = 1e-20;
   max_step_ = 1e20;
-  max_line_search_ = 20;
+  max_line_search_ = 50;
   wolfe_ = 0.9;
 }
 
@@ -211,6 +211,9 @@ void L_BFGS<FunctionType>::SearchDirection_(const arma::mat& gradient,
                                             double scaling_factor,
                                             arma::mat& search_direction) {
   arma::mat q = gradient;
+  
+  // See "A Recursive Formula to Compute H * g" in "Updating quasi-Newton
+  // matrices with limited storage" (Nocedal, 1980).
 
   // Temporary variables.
   arma::vec rho(num_basis_);
@@ -224,6 +227,7 @@ void L_BFGS<FunctionType>::SearchDirection_(const arma::mat& gradient,
         s_lbfgs_.slice(translated_position));
     alpha[iteration_num - i - 1] = rho[iteration_num - i - 1] *
         arma::dot(s_lbfgs_.slice(translated_position), q);
+    q -= alpha[iteration_num - i - 1] * y_lbfgs_.slice(translated_position);
   }
   search_direction = scaling_factor * q;
   for(int i = limit; i <= iteration_num - 1; i++) {
