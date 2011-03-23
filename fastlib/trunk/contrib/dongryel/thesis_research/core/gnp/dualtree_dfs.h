@@ -308,7 +308,11 @@ class DualtreeDfs {
 
   public:
 
-    static void PreProcess(TreeType *qnode, double initial_pruned_in);
+    static void PreProcess(
+      TableType *query_table_in,
+      TreeType *qnode,
+      typename ProblemType::ResultType *query_results,
+      double initial_pruned_in);
 
     /** @brief Preprocesses the reference tree.
      */
