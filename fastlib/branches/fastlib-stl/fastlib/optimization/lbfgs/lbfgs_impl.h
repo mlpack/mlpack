@@ -62,7 +62,7 @@ double L_BFGS<FunctionType>::Evaluate_(const arma::mat& iterate) {
 
   // Evaluate the function and keep track of the minimum function
   // value encountered during the optimization.
-  double function_value = function_->Evaluate(iterate);
+  double function_value = function_.Evaluate(iterate);
 
   if(function_value < min_point_iterate_.second) {
     min_point_iterate_.first = iterate;
@@ -156,7 +156,7 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
     new_iterate_tmp_ = iterate;
     new_iterate_tmp_ += step_size * search_direction;
     function_value = Evaluate_(new_iterate_tmp_);
-    function_->Gradient(new_iterate_tmp_, gradient);
+    function_.Gradient(new_iterate_tmp_, gradient);
     num_iterations++;
 
     if(function_value > initial_function_value + step_size *
@@ -275,14 +275,14 @@ void L_BFGS<FunctionType>::UpdateBasisSet_(int iteration_num,
  * @param num_basis Number of memory points to be stored
  */
 template<typename FunctionType>
-void L_BFGS<FunctionType>::Init(FunctionType& function_in, int num_basis) {
-  function_ = &function_in;
+L_BFGS<FunctionType>::L_BFGS(FunctionType& function_in, int num_basis) :
+  function_(function_in) {
 
   // Get the dimensions of the coordinates of the function; GetInitialPoint()
   // might return an arma::vec, but that's okay because then n_cols will simply
   // be 1.
-  int rows = function_->GetInitialPoint().n_rows;
-  int cols = function_->GetInitialPoint().n_cols;
+  int rows = function_.GetInitialPoint().n_rows;
+  int cols = function_.GetInitialPoint().n_cols;
 
   new_iterate_tmp_.set_size(rows, cols);
   s_lbfgs_.set_size(rows, cols, num_basis);
@@ -349,7 +349,7 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   search_direction.zeros(iterate.n_rows, iterate.n_cols);
 
   // The initial gradient value.
-  function_->Gradient(iterate, gradient);
+  function_.Gradient(iterate, gradient);
 
   // The boolean flag telling whether the line search succeeded at
   // least once.
@@ -359,7 +359,7 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   for(int it_num = 0; optimize_until_convergence || it_num < num_iterations;
       it_num++) {
 //    NOTIFY("Iteration %d; objective %lf; coordinates", it_num,
-//        function_->Evaluate(iterate));
+//        function_.Evaluate(iterate));
 //    std::cout << iterate;
 //    NOTIFY("Gradient ");
 //    std::cout << gradient;
