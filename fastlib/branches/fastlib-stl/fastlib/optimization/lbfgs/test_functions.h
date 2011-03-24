@@ -23,7 +23,6 @@
 //   FunctionType(); // constructor
 //   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 //   double Evaluate(const arma::mat& coordinates);
-//   const int GetDimension();
 //   const arma::mat& GetInitialPoint();
 //
 // Note that we are using an arma::mat instead of the more intuitive and
@@ -56,7 +55,6 @@ class RosenbrockFunction {
   double Evaluate(const arma::mat& coordinates); 
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const int GetDimension() { return 2; }
   const arma::mat& GetInitialPoint();
 
  private:
@@ -86,7 +84,6 @@ class WoodFunction {
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const int GetDimension() { return 4; }
   const arma::mat& GetInitialPoint();
 
  private:
@@ -116,7 +113,6 @@ class GeneralizedRosenbrockFunction {
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const int GetDimension() { return n; }
   const arma::mat& GetInitialPoint();
 
  private:
@@ -137,7 +133,6 @@ class RosenbrockWoodFunction {
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
 
-  const int GetDimension() { return 8; }
   const arma::mat& GetInitialPoint();
 
  private:
