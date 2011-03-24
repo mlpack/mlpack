@@ -106,6 +106,39 @@ bool TestGeneralizedRosenbrockFunction() {
   return true;
 };
 
+bool TestRosenbrockWoodFunction() {
+  NOTIFY("Testing Rosenbrock-Wood combined function...");
+
+  RosenbrockWoodFunction f;
+  L_BFGS<RosenbrockWoodFunction> lbfgs;
+  lbfgs.Init(f, 10);
+
+  arma::mat coords = f.GetInitialPoint();
+  if(!lbfgs.Optimize(0, coords))
+    NOTIFY("Optimization reported failure.");
+
+  double final_value = f.Evaluate(coords);
+
+  NOTIFY("Final objective value is %lf at", final_value);
+  NOTIFY("  [[%lf, %lf, %lf, %lf]", coords[0, 0], coords[1, 0], coords[2, 0],
+      coords[3, 0]);
+  NOTIFY("   [%lf, %lf, %lf, %lf]]", coords[0, 1], coords[1, 1], coords[2, 1],
+      coords[3, 1]);
+
+  if((std::abs(final_value) <= 1e-5) &&
+     (std::abs(coords[0, 0] - 1) <= 1e-5) &&
+     (std::abs(coords[1, 0] - 1) <= 1e-5) &&
+     (std::abs(coords[2, 0] - 1) <= 1e-5) &&
+     (std::abs(coords[3, 0] - 1) <= 1e-5) &&
+     (std::abs(coords[0, 1] - 1) <= 1e-5) &&
+     (std::abs(coords[1, 1] - 1) <= 1e-5) &&
+     (std::abs(coords[2, 1] - 1) <= 1e-5) &&
+     (std::abs(coords[3, 1] - 1) <= 1e-5))
+    return true;
+  else
+    return false;
+}
+
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, NULL);
 
@@ -120,6 +153,11 @@ int main(int argc, char* argv[]) {
     NOTIFY("Test passed.");
 
   TestGeneralizedRosenbrockFunction();
+
+  if(!TestRosenbrockWoodFunction())
+    FATAL("Test failed!");
+  else
+    NOTIFY("Test passed.");
 
   fx_done(NULL);
 }

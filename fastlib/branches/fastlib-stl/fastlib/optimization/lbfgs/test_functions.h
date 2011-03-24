@@ -124,6 +124,28 @@ class GeneralizedRosenbrockFunction {
   int n; // Dimensionality
 };
 
+
+/***
+ * The Generalized Rosenbrock function in 4 dimensions with the Wood Function in
+ * four dimensions.  In this function we are actually optimizing a 2x4 matrix of
+ * coordinates, not a vector.
+ */
+class RosenbrockWoodFunction {
+ public:
+  RosenbrockWoodFunction(); // initialize initial point
+
+  double Evaluate(const arma::mat& coordinates);
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+
+  const int GetDimension() { return 8; }
+  const arma::mat& GetInitialPoint();
+
+ private:
+  arma::mat initial_point;
+  GeneralizedRosenbrockFunction rf;
+  WoodFunction wf;
+};
+
 }; // namespace test
 }; // namespace optimization
 }; // namespace mlpack
