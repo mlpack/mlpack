@@ -339,13 +339,13 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   double function_value = Evaluate_(iterate);
 
   // The gradient: the current and the old.
-  arma::vec gradient;
-  arma::vec old_gradient;
+  arma::mat gradient;
+  arma::mat old_gradient;
   gradient.zeros(iterate.n_rows, iterate.n_cols);
   old_gradient.zeros(iterate.n_rows, iterate.n_cols);
 
   // The search direction.
-  arma::vec search_direction;
+  arma::mat search_direction;
   search_direction.zeros(iterate.n_rows, iterate.n_cols);
 
   // The initial gradient value.
