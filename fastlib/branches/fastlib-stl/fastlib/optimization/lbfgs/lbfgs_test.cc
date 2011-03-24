@@ -22,8 +22,7 @@ bool TestRosenbrockFunction() {
   NOTIFY("Testing Rosenbrock function...");
 
   RosenbrockFunction f;
-  L_BFGS<RosenbrockFunction> lbfgs;
-  lbfgs.Init(f, 10); // 10 memory points
+  L_BFGS<RosenbrockFunction> lbfgs(f, 10);
 
   arma::vec coords = f.GetInitialPoint();
   if(!lbfgs.Optimize(0, coords))
@@ -46,8 +45,7 @@ bool TestWoodFunction() {
   NOTIFY("Testing Wood function...");
 
   WoodFunction f;
-  L_BFGS<WoodFunction> lbfgs;
-  lbfgs.Init(f, 10);
+  L_BFGS<WoodFunction> lbfgs(f, 10);
 
   arma::vec coords = f.GetInitialPoint();
   if(!lbfgs.Optimize(0, coords))
@@ -76,8 +74,7 @@ bool TestGeneralizedRosenbrockFunction() {
     NOTIFY("Testing GeneralizedRosenbrockFunction (%d dimensions)...", dim);
 
     GeneralizedRosenbrockFunction f(dim);
-    L_BFGS<GeneralizedRosenbrockFunction> lbfgs;
-    lbfgs.Init(f, 20); // arbitrary choice of memory
+    L_BFGS<GeneralizedRosenbrockFunction> lbfgs(f, 20);
 
     arma::vec coords = f.GetInitialPoint();
     if(!lbfgs.Optimize(0, coords))
@@ -110,8 +107,7 @@ bool TestRosenbrockWoodFunction() {
   NOTIFY("Testing Rosenbrock-Wood combined function...");
 
   RosenbrockWoodFunction f;
-  L_BFGS<RosenbrockWoodFunction> lbfgs;
-  lbfgs.Init(f, 10);
+  L_BFGS<RosenbrockWoodFunction> lbfgs(f, 10);
 
   arma::mat coords = f.GetInitialPoint();
   if(!lbfgs.Optimize(0, coords))

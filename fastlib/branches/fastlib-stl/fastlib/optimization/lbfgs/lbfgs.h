@@ -62,7 +62,7 @@ class L_BFGS {
   private:
     LbfgsParam param_;
 
-    FunctionType *function_;
+    FunctionType function_;
 
     arma::mat new_iterate_tmp_;
     arma::cube s_lbfgs_; // stores all the s matrices in memory
@@ -155,7 +155,7 @@ class L_BFGS {
      * @param function_in Instance of function to be optimized
      * @param num_basis Number of memory points to be stored
      */
-    void Init(FunctionType& function_in, int num_basis);
+    L_BFGS(FunctionType& function_in, int num_basis);
 
     /***
      * Return the point where the lowest function value has been found.
