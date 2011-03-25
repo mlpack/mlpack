@@ -219,12 +219,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
         // Each process does not need to receive anything from itself
         // (it can just do a self-local lookup).
-        if(table_exchange.FindSubTable(
-              i, reference_node_id.first,
-              reference_node_id.second) == NULL && i != world_->rank() &&
-            std::find(
-              receive_requests[i].begin(), receive_requests[i].end(),
-              reference_node_id) == receive_requests[i].end()) {
+        if(i != world_->rank()) {
           receive_requests[i].push_back(reference_node_id);
         }
         prioritized_tasks.push(top_object);
@@ -297,6 +292,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
     } // end of taking care of the computation tasks for the current
     // iteration.
+
+    // Clear the cache.
+    table_exchange.ClearCache();
   }
   while(true);
 }
