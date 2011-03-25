@@ -190,7 +190,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The number of levels of subtrees to serialize at a given moment."
   )(
     "max_num_work_to_dequeue_per_stage_in",
-    boost::program_options::value<int>()->default_value(5),
+    boost::program_options::value<int>()->default_value(30),
     "The number of work items to dequeue per process."
   );
 
