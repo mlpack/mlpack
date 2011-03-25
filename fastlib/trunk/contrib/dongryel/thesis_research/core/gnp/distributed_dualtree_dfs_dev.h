@@ -204,11 +204,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     std::vector< std::vector< std::pair<int, int> > > receive_requests(
       world_->size());
     PriorityQueueType prioritized_tasks;
-    int current_computation_frontier_size = 0;
-    for(int i = 0; i < world_->size(); i++) {
-      current_computation_frontier_size += computation_frontier[i].size();
+    for(int i = 0; i < world_->size() &&
+        static_cast<int>(prioritized_tasks.size()) <
+        max_num_work_to_dequeue_per_stage_; i++) {
       for(int j = 0; computation_frontier[i].size() > 0 &&
-          j < max_num_work_to_dequeue_per_stage_; j++) {
+          static_cast<int>(prioritized_tasks.size()) <
+          max_num_work_to_dequeue_per_stage_; j++) {
 
         // Examine the top object in the frontier and sort it in the
         // priorities, while forming the request lists.
@@ -232,11 +233,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         computation_frontier[i].pop();
       }
     }
-
-    // Update the computation frontier size statistics.
-    max_computation_frontier_size_ =
-      std::max(
-        max_computation_frontier_size_, current_computation_frontier_size);
 
     // Try to exchange the subtables.
     if(
@@ -303,9 +299,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // iteration.
   }
   while(true);
-
-  printf("The maximum computation frontier size during the computation: %d "
-         "for Process %d\n", max_computation_frontier_size_, world_->rank());
 }
 
 template<typename DistributedProblemType>

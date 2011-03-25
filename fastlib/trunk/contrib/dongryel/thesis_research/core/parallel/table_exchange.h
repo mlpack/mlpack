@@ -52,26 +52,23 @@ class TableExchange {
 
     /** @brief The list of free cache blocks per process.
      */
-    std::vector< std::vector<int> > free_cache_blocks_;
+    std::vector<int> free_cache_blocks_;
 
     /** @brief The number of cache blocks per process.
      */
-    int num_cache_blocks_per_process_;
+    int num_cache_blocks_;
 
     /** @brief The circular buffer that acts as the cache of received
      *         subtables.
      */
-    std::vector< boost::circular_buffer<SubTableType> > received_subtables_;
+    boost::circular_buffer<SubTableType> received_subtables_;
 
   private:
 
-    int get_free_cache_block_(int process_id) {
-
-      boost::circular_buffer<SubTableType> &circular_buffer =
-        received_subtables_[ process_id ];
+    int get_free_cache_block_() {
 
       int free_cache_block_id = -1;
-      if(free_cache_blocks_[process_id].size() == 0) {
+      if(free_cache_blocks_.size() == 0) {
 
         // In this case, the buffer is full. If so, we need to take
         // out the head element (which is going to be overwritten) and
@@ -80,19 +77,19 @@ class TableExchange {
 
         // This is somewhat a hack. See the assignment operator for
         // SubTableType in core/table/sub_table.h
-        SubTableType safe_free = circular_buffer.front();
+        SubTableType safe_free = received_subtables_.front();
 
         // Push back the freed-up cache block retrieved from the
         // subtable that is about to be evicted.
-        free_cache_blocks_[process_id].push_back(safe_free.cache_block_id());
+        free_cache_blocks_.push_back(safe_free.cache_block_id());
 
         // Evict the subtable.
-        circular_buffer.pop_front();
+        received_subtables_.pop_front();
       }
 
       // Pop the list of free cache block IDs.
-      free_cache_block_id = free_cache_blocks_[process_id].back();
-      free_cache_blocks_[process_id].pop_back();
+      free_cache_block_id = free_cache_blocks_.back();
+      free_cache_blocks_.pop_back();
       return free_cache_block_id;
     }
 
@@ -103,24 +100,21 @@ class TableExchange {
     void push_back_(
       int process_id, SubTableType &sub_table_in) {
 
-      boost::circular_buffer<SubTableType> &circular_buffer =
-        received_subtables_[ process_id ];
-
       // Check if the buffer is full. If so, we need to take out the
       // head element (which is going to be overwritten) and destruct
       // it manually since Boost circular buffer does not do so
       // automatically.
-      if(circular_buffer.full()) {
+      if(received_subtables_.full()) {
 
         // This is somewhat a hack. See the assignment operator for
         // SubTableType in core/table/sub_table.h
-        SubTableType safe_free = circular_buffer.front();
+        SubTableType safe_free = received_subtables_.front();
 
         // Push back the freed-up cache block retrieved from the
         // subtable that is about to be evicted.
-        free_cache_blocks_[process_id].push_back(safe_free.cache_block_id());
+        free_cache_blocks_.push_back(safe_free.cache_block_id());
       }
-      circular_buffer.push_back(sub_table_in);
+      received_subtables_.push_back(sub_table_in);
     }
 
     /** @brief Prints the existing subtables in the cache.
@@ -144,18 +138,19 @@ class TableExchange {
      */
     SubTableType *FindSubTable(int process_id, int begin, int count) {
       for(typename boost::circular_buffer<SubTableType>::iterator
-          it = received_subtables_[process_id].begin();
-          it != received_subtables_[process_id].end(); it++) {
+          it = received_subtables_.begin();
+          it != received_subtables_.end(); it++) {
         if(
+          it->table()->rank() == process_id &&
           it->table()->get_tree()->begin() == begin &&
           it->table()->get_tree()->count() == count) {
 
           // Put the found subtable to the end.
           SubTableType subtable_copy = *it;
-          (*it) = received_subtables_[process_id].front();
-          received_subtables_[process_id].pop_front();
-          received_subtables_[process_id].push_back(subtable_copy);
-          return &(received_subtables_[process_id].back());
+          (*it) = received_subtables_.front();
+          received_subtables_.pop_front();
+          received_subtables_.push_back(subtable_copy);
+          return &(received_subtables_.back());
         }
       }
 
@@ -178,28 +173,20 @@ class TableExchange {
       // rule is that each process gets at least twice the number of
       // work that is dequeued per stage so that there is some
       // progress in the computation.
-      num_cache_blocks_per_process_ = 2 * max_num_work_to_dequeue_per_stage_in;
+      num_cache_blocks_ = 2 * max_num_work_to_dequeue_per_stage_in;
 
       if(world.rank() == 0) {
         printf(
           "Number of cache blocks per process: %d\n",
-          num_cache_blocks_per_process_);
+          num_cache_blocks_);
       }
 
       // Preallocate the point cache.
-      received_subtables_.resize(world.size());
-      for(int i = 0; i < world.size(); i++) {
-        received_subtables_[i].set_capacity(num_cache_blocks_per_process_);
-      }
+      received_subtables_.set_capacity(num_cache_blocks_);
 
       // Allocate the free cache block list.
-      free_cache_blocks_.resize(world.size());
-      for(int i = 0; i < world.size(); i++) {
-        if(i != world.rank()) {
-          for(int j = 0; j < num_cache_blocks_per_process_; j++) {
-            free_cache_blocks_[i].push_back(j);
-          }
-        }
+      for(int j = 0; j < num_cache_blocks_; j++) {
+        free_cache_blocks_.push_back(j);
       }
     }
 
@@ -254,7 +241,7 @@ class TableExchange {
         for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
 
           // Get a free cache block.
-          int free_cache_block_id = this->get_free_cache_block_(j);
+          int free_cache_block_id = this->get_free_cache_block_();
 
           // Allocate the cache block to the subtable that is about
           // to be received.
