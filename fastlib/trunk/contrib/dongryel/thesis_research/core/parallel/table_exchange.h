@@ -114,6 +114,9 @@ class TableExchange {
         // subtable that is about to be evicted.
         free_cache_blocks_.push_back(safe_free.cache_block_id());
       }
+
+      // Set the rank before pushing.
+      sub_table_in.table()->set_rank(process_id);
       received_subtables_.push_back(sub_table_in);
     }
 
@@ -122,12 +125,11 @@ class TableExchange {
     void PrintSubTables_(boost::mpi::communicator &world) {
       printf("\n\nProcess %d owns the subtables:\n", world.rank());
       for(unsigned int i = 0; i < received_subtables_.size(); i++) {
-        for(int j = 0; j < received_subtables_[i].size(); j++) {
-          printf(
-            "%d %d %d\n", i,
-            received_subtables_[i][j].table()->get_tree()->begin(),
-            received_subtables_[i][j].table()->get_tree()->count());
-        }
+        printf(
+          "%d %d %d\n",
+          received_subtables_[i].table()->rank(),
+          received_subtables_[i].table()->get_tree()->begin(),
+          received_subtables_[i].table()->get_tree()->count());
       }
     }
 
@@ -188,6 +190,8 @@ class TableExchange {
       for(int j = 0; j < num_cache_blocks_; j++) {
         free_cache_blocks_.push_back(j);
       }
+      printf("Process %d finished initializing the cache blocks.\n",
+             world.rank());
     }
 
     /** @brief The all-to-all exchange of subtables among all MPI
