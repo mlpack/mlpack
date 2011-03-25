@@ -1,3 +1,7 @@
+//*********************************
+//* Online Kernel Gradient Descent
+//* Hua Ouyang 03/23/2011
+//*********************************
 #ifndef OPT_OGD_K_H
 #define OPT_OGD_K_H
 

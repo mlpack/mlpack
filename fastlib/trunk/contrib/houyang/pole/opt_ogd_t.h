@@ -1,3 +1,7 @@
+//***********************************************************
+//* Online Kernel Gradient Descent with Transformed Features
+//* Hua Ouyang 03/23/2011
+//***********************************************************
 #ifndef OPT_OGD_T_H
 #define OPT_OGD_T_H
 
@@ -139,6 +143,10 @@ template <typename TTransform>
 void OGDT<TTransform>::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
+  // init transform
+  T_.D_ = trdim_;
+  T_.d_ = TR_->max_ft_idx_;
+  T_.SampleW();
   // init learning rate
   eta0_ = sqrt(TR_->Size());
   t_init_ = 1.0 / (eta0_ * reg_factor_);
