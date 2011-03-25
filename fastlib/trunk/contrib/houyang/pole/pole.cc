@@ -150,10 +150,12 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Multiplication factor in Weighte Majority. Default: 0.5.")
     ("kernel,k", po::value<string>(&L_->kernel_name_)->default_value("linear"), 
      "Kernel (linear, rbf). Default: linear kernel.")
-    ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
-     "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
     ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
      "Sigma in Gaussian RBF kernel. Default: 1.0.")
+    ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
+     "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
+    ("trdim", po::value<size_t>(&L_->trdim_)->default_value(1000), 
+     "Dimension for transformed features. Default: 1000.")
     ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
      "How agents communicate with each other. Default: 1(full connected).")
     ("mini_batch,b", po::value<size_t>(&L_->mb_size_)->default_value(1), 
@@ -225,7 +227,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     }
   }
 
-  if (L_->random_data_)
+  if (L_->random_data_ || m_["transform"] != "null")
     srand(time(NULL));
 
   ArgsSanityCheck();
