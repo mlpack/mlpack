@@ -135,6 +135,23 @@ class TableExchange {
 
   public:
 
+    void ClearCache() {
+
+      while(! received_subtables_.empty()) {
+
+        // This is somewhat a hack. See the assignment operator for
+        // SubTableType in core/table/sub_table.h
+        SubTableType safe_free = received_subtables_.front();
+
+        // Push back the freed-up cache block retrieved from the
+        // subtable that is about to be evicted.
+        free_cache_blocks_.push_back(safe_free.cache_block_id());
+
+        // Pop from the received subtables.
+        received_subtables_.pop_front();
+      }
+    }
+
     /** @brief Finds a table with given MPI rank and the beginning and
      *         the count.
      */
@@ -175,7 +192,7 @@ class TableExchange {
       // rule is that each process gets at least twice the number of
       // work that is dequeued per stage so that there is some
       // progress in the computation.
-      num_cache_blocks_ = 2 * max_num_work_to_dequeue_per_stage_in;
+      num_cache_blocks_ = max_num_work_to_dequeue_per_stage_in;
 
       if(world.rank() == 0) {
         printf(
