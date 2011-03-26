@@ -1,12 +1,17 @@
-#ifndef FL_LITE_MLPACK_KCDE_MULTITREE_MONTE_CARLO_DEV_H
-#define FL_LITE_MLPACK_KCDE_MULTITREE_MONTE_CARLO_DEV_H
+/** @file multitree_monte_carlo_dev.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef CORE_MONTE_CARLO_MULTITREE_MONTE_CARLO_DEV_H
+#define CORE_MONTE_CARLO_MULTITREE_MONTE_CARLO_DEV_H
 
 #include "fastlib/monte_carlo/multitree_monte_carlo.h"
 #include "fastlib/monte_carlo/strata.h"
 #include "mlpack/kde/mean_variance_pair.h"
 
-namespace fl {
-namespace ml {
+namespace core {
+namespace monte_carlo {
 
 template<typename TableType>
 std::vector< MultitreeMonteCarlo<TableType> *> &
@@ -161,7 +166,7 @@ void MultitreeMonteCarlo<TableType>::Compute(
     }
   }
 }
-};
-};
+}
+}
 
 #endif

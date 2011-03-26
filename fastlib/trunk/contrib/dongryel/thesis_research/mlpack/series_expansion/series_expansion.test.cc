@@ -11,6 +11,7 @@
 #include <boost/test/unit_test.hpp>
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
+#include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "core/table/table.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
@@ -70,7 +71,7 @@ class SeriesExpansionTest {
     int StressTestMain(bool test_reduced_set_expansion) {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(2, 50);
-        int num_points = core::math::RandInt(2000, 3000);
+        int num_points = core::math::RandInt(20, 30);
         if(StressTest(
               num_dimensions, num_points,
               test_reduced_set_expansion) == false) {
@@ -111,6 +112,7 @@ class SeriesExpansionTest {
       KernelAuxType kernel_aux;
       double bandwidth = core::math::Random(
                            0.13 * num_dimensions, 0.2 * num_dimensions);
+      printf("Bandwidth: %g\n", bandwidth);
       kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
       kernel_aux.global().CheckIntegrity();
 
@@ -162,48 +164,30 @@ class SeriesExpansionTest {
 
       if(test_reduced_set_expansion) {
 
-        // The test reduced set expansion.
-        //mlpack::series_expansion::ReducedSetFarField <
-        //typename TableType::TreeIterator > reduced_set_farfield;
-        typename TableType::TreeIterator reference_it =
-          random_table.get_node_iterator(random_table.get_tree());
-        //reduced_set_farfield.Init(reference_it);
-        //reduced_set_farfield.AccumulateCoeffs(
-        //l2_metric, kernel_aux, reference_it);
-
-        // Using the random fourier features, generate a new table.
-        TableType transformed_table;
-        mlpack::series_expansion::RandomFeature::Transform(
-          random_table, kernel_aux.kernel(), 20, &transformed_table);
-        arma::vec transformed_point_sum;
-        transformed_point_sum.zeros(transformed_table.n_attributes());
-        for(int i = 0; i < transformed_table.n_entries(); i++) {
-          arma::vec transformed_point;
-          transformed_table.get(i, &transformed_point);
-          transformed_point_sum += transformed_point;
-        }
-
-        // Pick a random query point.
         core::table::DensePoint random_query_point;
-        int random_query_point_index;
         typename TableType::TreeIterator qnode_it =
           random_table.get_node_iterator(query_node);
+        int random_query_point_index;
         qnode_it.RandomPick(&random_query_point, &random_query_point_index);
-
-        arma::vec transformed_random_query_point;
-        transformed_table.get(
-          random_query_point_index, &transformed_random_query_point);
-        double transformed_naive_kernel_sum =
-          arma::dot(transformed_point_sum, transformed_random_query_point);
-        //double compressed_kernel_sum =
-        //reduced_set_farfield.EvaluateField(
-        //  l2_metric, kernel_aux, random_query_point);
+        typename TableType::TreeIterator rnode_it =
+          random_table.get_node_iterator(reference_node);
+        std::vector<core::monte_carlo::MeanVariancePair> kernel_sums(
+          random_table.n_entries());
+        mlpack::series_expansion::RandomFeature::EvaluateAverageField(
+          kernel_aux.kernel(), rnode_it, qnode_it, 20, &kernel_sums);
         double naive_kernel_sum =
           NaiveKernelSum_(
-            l2_metric, kernel_aux, random_query_point, reference_it);
+            l2_metric, kernel_aux, random_query_point, rnode_it);
+        printf("Random query point index: %d %d %d\n",
+               random_query_point_index, qnode_it.count(), rnode_it.count());
         printf(
-          "The naive sum is %g. The transformed kernel sum is %g.\n",
-          naive_kernel_sum, transformed_naive_kernel_sum);
+          "The naive sum is %g. The transformed kernel sum is %g with "
+          "the sample mean variance %g.\n",
+          naive_kernel_sum,
+          kernel_sums[random_query_point_index].sample_mean() *
+          rnode_it.count(),
+          kernel_sums[random_query_point_index].sample_mean_variance() *
+          rnode_it.count());
       }
 
       return true;

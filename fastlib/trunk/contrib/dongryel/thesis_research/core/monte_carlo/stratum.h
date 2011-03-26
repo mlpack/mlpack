@@ -1,12 +1,17 @@
-#ifndef FL_LITE_MLPACK_KCDE_STRATUM_H
-#define FL_LITE_MLPACK_KCDE_STRATUM_H
+/** @file stratum.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef CORE_MONTE_CARLO_STRATUM_H
+#define CORE_MONTE_CARLO_STRATUM_H
 
 #include <vector>
 #include "multitree_monte_carlo.h"
 #include "mlpack/kde/mean_variance_pair.h"
 
-namespace fl {
-namespace ml {
+namespace core {
+namespace monte_carlo {
 
 template<typename TableType>
 class Stratum {
@@ -244,7 +249,7 @@ class Stratum {
       }
     }
 };
-};
-};
+}
+}
 
 #endif

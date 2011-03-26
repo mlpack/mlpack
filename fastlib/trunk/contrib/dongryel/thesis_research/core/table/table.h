@@ -192,7 +192,8 @@ class Table {
 
         template<typename IncomingPointType>
         void RandomPick(IncomingPointType *entry, int *point_id) {
-          *point_id = core::math::RandInt(begin_, end_);
+          *point_id =
+            table_->iterator_get_id_(core::math::RandInt(begin_, end_));
           table_->iterator_get_(*point_id, entry);
         }
 

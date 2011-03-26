@@ -1,11 +1,16 @@
-#ifndef FL_LITE_MLPACK_KCDE_STRATA_H
-#define FL_LITE_MLPACK_KCDE_STRATA_H
+/** @file strata.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef CORE_MONTE_CARLO_STRATA_H
+#define CORE_MONTE_CARLO_STRATA_H
 
 #include "multitree_monte_carlo.h"
 #include "stratum.h"
 
-namespace fl {
-namespace ml {
+namespace core {
+namespace monte_carlo {
 
 #include <utility>
 
@@ -195,7 +200,7 @@ class Strata {
       }
     }
 };
-};
-};
+}
+}
 
 #endif
