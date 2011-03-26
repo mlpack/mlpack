@@ -20,6 +20,7 @@
 #include "mlpack/series_expansion/hypercube_local_dev.h"
 #include "mlpack/series_expansion/multivariate_farfield_dev.h"
 #include "mlpack/series_expansion/multivariate_local_dev.h"
+#include "mlpack/series_expansion/random_feature.h"
 #include "mlpack/series_expansion/reduced_set_farfield_dev.h"
 
 namespace mlpack {
@@ -68,7 +69,7 @@ class SeriesExpansionTest {
 
     int StressTestMain(bool test_reduced_set_expansion) {
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(2, 5);
+        int num_dimensions = core::math::RandInt(2, 50);
         int num_points = core::math::RandInt(2000, 3000);
         if(StressTest(
               num_dimensions, num_points,
@@ -87,7 +88,7 @@ class SeriesExpansionTest {
       std::cout << "Number of points: " << num_points << "\n";
 
       // Generate a random table.
-      int max_order = 6 - num_dimensions;
+      int max_order = std::max(6 - num_dimensions, 0);
       TableType random_table;
       int leaf_size = core::math::RandInt(10, 20);
       core::metric_kernels::LMetric<2> l2_metric;
@@ -160,30 +161,49 @@ class SeriesExpansionTest {
       printf("\n");
 
       if(test_reduced_set_expansion) {
-        mlpack::series_expansion::ReducedSetFarField <
-        typename TableType::TreeIterator > reduced_set_farfield;
+
+        // The test reduced set expansion.
+        //mlpack::series_expansion::ReducedSetFarField <
+        //typename TableType::TreeIterator > reduced_set_farfield;
         typename TableType::TreeIterator reference_it =
-          random_table.get_node_iterator(reference_node);
-        reduced_set_farfield.Init(reference_it);
-        reduced_set_farfield.AccumulateCoeffs(
-          l2_metric, kernel_aux, reference_it);
+          random_table.get_node_iterator(random_table.get_tree());
+        //reduced_set_farfield.Init(reference_it);
+        //reduced_set_farfield.AccumulateCoeffs(
+        //l2_metric, kernel_aux, reference_it);
+
+        // Using the random fourier features, generate a new table.
+        TableType transformed_table;
+        mlpack::series_expansion::RandomFeature::Transform(
+          random_table, kernel_aux.kernel(), 20, &transformed_table);
+        arma::vec transformed_point_sum;
+        transformed_point_sum.zeros(transformed_table.n_attributes());
+        for(int i = 0; i < transformed_table.n_entries(); i++) {
+          arma::vec transformed_point;
+          transformed_table.get(i, &transformed_point);
+          transformed_point_sum += transformed_point;
+        }
 
         // Pick a random query point.
         core::table::DensePoint random_query_point;
+        int random_query_point_index;
         typename TableType::TreeIterator qnode_it =
           random_table.get_node_iterator(query_node);
-        qnode_it.RandomPick(&random_query_point);
-        double compressed_kernel_sum =
-          reduced_set_farfield.EvaluateField(
-            l2_metric, kernel_aux, random_query_point);
+        qnode_it.RandomPick(&random_query_point, &random_query_point_index);
+
+        arma::vec transformed_random_query_point;
+        transformed_table.get(
+          random_query_point_index, &transformed_random_query_point);
+        double transformed_naive_kernel_sum =
+          arma::dot(transformed_point_sum, transformed_random_query_point);
+        //double compressed_kernel_sum =
+        //reduced_set_farfield.EvaluateField(
+        //  l2_metric, kernel_aux, random_query_point);
         double naive_kernel_sum =
           NaiveKernelSum_(
             l2_metric, kernel_aux, random_query_point, reference_it);
         printf(
-          "Compressed kernel sum using %d reference points out of "
-          "%d is %g. The naive sum is %g\n",
-          static_cast<int>(reduced_set_farfield.dictionary().size()),
-          reference_it.count(), compressed_kernel_sum, naive_kernel_sum);
+          "The naive sum is %g. The transformed kernel sum is %g.\n",
+          naive_kernel_sum, transformed_naive_kernel_sum);
       }
 
       return true;

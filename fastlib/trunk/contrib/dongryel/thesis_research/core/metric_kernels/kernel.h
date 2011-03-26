@@ -35,7 +35,8 @@ class GaussianKernel {
       // of the bandwidth.
       random_variate->set_size(num_dimensions_in);
       for(int i = 0; i < num_dimensions_in; i++) {
-        (*random_variate)[i] = core::math::RandGaussian(1.0 / bandwidth_sq_);
+        (*random_variate)[i] =
+          core::math::RandGaussian(sqrt(1.0 / bandwidth_sq_));
       }
     }
 
@@ -194,6 +195,13 @@ class EpanKernel {
     static const bool HAS_CUTOFF = true;
 
   public:
+
+    void DrawRandomVariate(
+      int num_dimensions_in, arma::vec *random_variate) const {
+
+      // Not implemented yet - implement random binning technique from
+      // Rahimi's paper.
+    }
 
     std::string name() const {
       return std::string("epan");
