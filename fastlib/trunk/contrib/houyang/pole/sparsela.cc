@@ -13,7 +13,7 @@ Feature::Feature() {
 //////////////////////////
 // Create a feature
 //////////////////////////
-Feature::Feature(const T_IDX i, const T_VAL v) : i_(i), v_(v) {
+Feature::Feature(T_IDX i, T_VAL v) : i_(i), v_(v) {
 }
 
 //////////////////////////
@@ -33,13 +33,13 @@ Svector::Svector() {
 //////////////////////////////////////////////
 // Create a sparse vector from given features
 //////////////////////////////////////////////
-Svector::Svector(const vector<Feature> Fs) : Fs_(Fs) {
+Svector::Svector(const vector<Feature>& Fs) : Fs_(Fs) {
 }
 
 ////////////////////////////////////////////
 // Create a (dense) vector of constant value
 ////////////////////////////////////////////
-Svector::Svector(const T_IDX n_f, const T_VAL v) : Fs_(n_f, Feature()){
+Svector::Svector(T_IDX n_f, T_VAL v) : Fs_(n_f, Feature()){
   T_IDX sz = Fs_.size();
   for (T_IDX i=0; i<sz; i++) {
     Fs_[i] = Feature(i, v);
@@ -55,14 +55,14 @@ Svector::~Svector() {
 //////////////////////
 // Number of faetures 
 //////////////////////
-size_t Svector::Size() {
+size_t Svector::Size() const {
   return Fs_.size();
 }
 
 /////////////////////////////////////////////
 // Set to be a vector of given constant value
 /////////////////////////////////////////////
-void Svector::SetAll(const T_VAL v) {
+void Svector::SetAll(T_VAL v) {
   T_IDX sz = Fs_.size();
   for (T_IDX i=0; i<sz; i++) {
     Fs_[i] = Feature(i, v); // idx starts from 1
@@ -72,7 +72,7 @@ void Svector::SetAll(const T_VAL v) {
 //////////////////////////////////////////////////////////////
 // Set to be a vector of given lenght and given constant value
 //////////////////////////////////////////////////////////////
-void Svector::SetAllResize(const T_IDX n_f, const T_VAL v) {
+void Svector::SetAllResize(T_IDX n_f, T_VAL v) {
   Fs_.resize(n_f);
   for (T_IDX i=0; i<n_f; i++) {
     Fs_[i] = Feature(i, v); // idx starts from 1
@@ -89,14 +89,14 @@ void Svector::PushBack(const Feature& F) {
 ///////////////////////////////////////////
 // Insert one feature at a given position p
 ///////////////////////////////////////////
-void Svector::InsertOne(const T_IDX p, const Feature& F) {
+void Svector::InsertOne(T_IDX p, const Feature& F) {
   Fs_.insert(Fs_.begin() + p, F);
 }
 
 ///////////////////////////////////////////
 // Erase one feature at a given position p
 ///////////////////////////////////////////
-void Svector::EraseOne(const T_IDX p) {
+void Svector::EraseOne(T_IDX p) {
   Fs_.erase(Fs_.begin() + p);
 }
 
@@ -216,7 +216,7 @@ Svector& Svector::operator-=(const Svector& x) {
 /////////////////////////////////////
 // Sparse vector scaling: w *= a
 /////////////////////////////////////
-Svector& Svector::operator*=(const double a) {
+Svector& Svector::operator*=(double a) {
   if (a == 0.0) {
     Fs_.clear();
     return *this;
@@ -242,7 +242,7 @@ Svector& Svector::operator*=(const double a) {
 /////////////////////////////////////
 // Sparse vector scaling: w /= a
 /////////////////////////////////////
-Svector& Svector::operator/=(const double a) {
+Svector& Svector::operator/=(double a) {
   assert(a != 0.0);
   if (a == 1.0) {
     return *this;
@@ -300,7 +300,7 @@ Svector& Svector::operator*=(const Svector& x) {
 ////////////////////////////////////
 // Pointwise sparse power: w .^ = p
 ////////////////////////////////////
-Svector& Svector::operator^=(const double p) {
+Svector& Svector::operator^=(double p) {
   if (p == 0.0) {
     SetAll(1.0);
     return *this;
@@ -377,15 +377,15 @@ double Svector::SparseSqL2Norm() const {
 ///////////////////////////////////////////
 // Sparse vector scaled add: w += a * x
 ///////////////////////////////////////////
-void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
-  size_t nz_x = x->Fs_.size();
+void Svector::SparseAddExpertOverwrite(double a, const Svector& x) {
+  size_t nz_x = x.Fs_.size();
   size_t ct_w = 0, ct_x = 0;
 
-  if (a == 0.0 || x->Fs_.empty()) { // scale==0 or all-0 x: w unchanged
+  if (a == 0.0 || x.Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return;
   }
   else if (Fs_.empty()) { // w: all-0
-    Fs_ = x->Fs_;
+    Fs_ = x.Fs_;
     for (ct_w = 0; ct_w < Fs_.size(); ct_w ++) {
       Fs_[ct_w].v_ = a * Fs_[ct_w].v_;
     }
@@ -394,7 +394,7 @@ void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
   else { // neither w nor x is of all-0
     while (ct_w<Fs_.size() || ct_x<nz_x) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
-	Fs_.push_back( Feature(x->Fs_[ct_x].i_, a * x->Fs_[ct_x].v_) );
+	Fs_.push_back( Feature(x.Fs_[ct_x].i_, a * x.Fs_[ct_x].v_) );
 	++ct_w; ++ct_x;
       }
       else if (ct_x == nz_x) { // x reaches end, while w still not
@@ -402,12 +402,12 @@ void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
 	break;
       }
       else { // neither w nor x reaches end
-	if (Fs_[ct_w].i_ == x->Fs_[ct_x].i_) {
-	  Fs_[ct_w].v_ += a * x->Fs_[ct_x].v_;
+	if (Fs_[ct_w].i_ == x.Fs_[ct_x].i_) {
+	  Fs_[ct_w].v_ += a * x.Fs_[ct_x].v_;
 	  ++ct_w; ++ct_x;
 	}
-	else if (Fs_[ct_w].i_ > x->Fs_[ct_x].i_) {
-	  Fs_.insert(Fs_.begin()+ct_w, Feature(x->Fs_[ct_x].i_, a * x->Fs_[ct_x].v_));
+	else if (Fs_[ct_w].i_ > x.Fs_[ct_x].i_) {
+	  Fs_.insert(Fs_.begin()+ct_w, Feature(x.Fs_[ct_x].i_, a * x.Fs_[ct_x].v_));
 	  ++ct_w; ++ct_x;
 	}
 	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
@@ -421,7 +421,7 @@ void Svector::SparseAddExpertOverwrite(double a, Svector *x) {
 ////////////////////////////////////////
 // Sparse vector subtraction: w<= p - n
 ////////////////////////////////////////
-void Svector::SparseSubtract(Svector& p, Svector& n) {
+void Svector::SparseSubtract(const Svector& p, const Svector& n) {
   /*
   *this = p;
   *this -= n;
@@ -518,15 +518,15 @@ void Svector::SparseSubtract(Svector& p, Svector& n) {
 ///////////////////////////////////////////////////////////
 // Sparse vector exponential dot multiply: w<= w .* exp(x)
 ///////////////////////////////////////////////////////////
-void Svector::SparseExpMultiplyOverwrite(Svector *x) {
-  if (Fs_.size() == 0 || x->Fs_.size() == 0) {
+void Svector::SparseExpMultiplyOverwrite(const Svector& x) {
+  if (Fs_.size() == 0 || x.Fs_.size() == 0) {
     return; // w remains unchanged
   }
   else { // neither w nor x is of all-0
     vector<Feature>::iterator itw = Fs_.begin();
-    vector<Feature>::iterator itx = x->Fs_.begin();
-    while (itw < Fs_.end() || itx < x->Fs_.end()) {
-      if (itw == Fs_.end() || itx == x->Fs_.end()) { // w/x reaches end
+    vector<Feature>::const_iterator itx = x.Fs_.begin();
+    while (itw < Fs_.end() || itx < x.Fs_.end()) {
+      if (itw == Fs_.end() || itx == x.Fs_.end()) { // w/x reaches end
 	break;
       }
       else { // neither w nor x reaches end
@@ -550,15 +550,15 @@ void Svector::SparseExpMultiplyOverwrite(Svector *x) {
 ///////////////////////////////////////////////////////////
 // Sparse vector exponential dot multiply: w<= w .* exp(-x)
 ///////////////////////////////////////////////////////////
-void Svector::SparseNegExpMultiplyOverwrite(Svector *x) {
-  if (Fs_.empty() || x->Fs_.empty()) {
+void Svector::SparseNegExpMultiplyOverwrite(const Svector& x) {
+  if (Fs_.empty() || x.Fs_.empty()) {
     return; // w remains unchanged
   }
   else { // neither w nor x is of all-0
     vector<Feature>::iterator itw = Fs_.begin();
-    vector<Feature>::iterator itx = x->Fs_.begin();
-    while (itw < Fs_.end() || itx < x->Fs_.end()) {
-      if (itw == Fs_.end() || itx == x->Fs_.end()) { // w/x reaches end
+    vector<Feature>::const_iterator itx = x.Fs_.begin();
+    while (itw < Fs_.end() || itx < x.Fs_.end()) {
+      if (itw == Fs_.end() || itx == x.Fs_.end()) { // w/x reaches end
 	break;
       }
       else { // neither w nor x reaches end
@@ -642,14 +642,14 @@ Example::Example() : y_(0), in_use_(false), ud_("") {
 /////////////////////////////////////////////////////////
 // Create an unused example from given features and label
 ////////////////////////////////////////////////////////
-Example::Example(const vector<Feature> Fs, const T_LBL y) : 
+Example::Example(const vector<Feature>& Fs, T_LBL y) : 
   Svector(Fs), y_(y), in_use_(false), ud_("") {
 }
 
 /////////////////////////////////////////////////////////
 // Create an unused example from given features and label
 ////////////////////////////////////////////////////////
-Example::Example(const vector<Feature> Fs, const T_LBL y, const string ud) : 
+Example::Example(const vector<Feature>& Fs, T_LBL y, const string& ud) : 
   Svector(Fs), y_(y), in_use_(false), ud_(ud) {
 }
 
