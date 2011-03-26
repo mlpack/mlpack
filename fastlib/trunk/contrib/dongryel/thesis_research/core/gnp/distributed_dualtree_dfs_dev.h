@@ -152,7 +152,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   // side.
   double initial_pruned =
     std::accumulate(
-      extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0.0);
+      extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0.0) -
+    extrinsic_prune_lists[world_->rank()];
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
@@ -204,12 +205,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     std::vector< std::vector< std::pair<int, int> > > receive_requests(
       world_->size());
     PriorityQueueType prioritized_tasks;
-    for(int i = 0; i < world_->size() &&
-        static_cast<int>(prioritized_tasks.size()) <
-        max_num_work_to_dequeue_per_stage_; i++) {
+    for(int i = 0; i < world_->size(); i++) {
       for(int j = 0; computation_frontier[i].size() > 0 &&
-          static_cast<int>(prioritized_tasks.size()) <
-          max_num_work_to_dequeue_per_stage_; j++) {
+          (i == world_->rank() ||
+           static_cast<int>(prioritized_tasks.size()) <
+           max_num_work_to_dequeue_per_stage_); j++) {
 
         // Examine the top object in the frontier and sort it in the
         // priorities, while forming the request lists.

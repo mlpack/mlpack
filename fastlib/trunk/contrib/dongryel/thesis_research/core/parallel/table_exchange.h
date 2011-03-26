@@ -188,11 +188,8 @@ class TableExchange {
       // Set the local table.
       local_table_ = &local_table_in;
 
-      // Compute the number of cache blocks allocated per process. The
-      // rule is that each process gets at least twice the number of
-      // work that is dequeued per stage so that there is some
-      // progress in the computation.
-      num_cache_blocks_ = max_num_work_to_dequeue_per_stage_in;
+      // Compute the number of cache blocks allocated per process.
+      num_cache_blocks_ = max_num_work_to_dequeue_per_stage_in + 1;
 
       if(world.rank() == 0) {
         printf(
