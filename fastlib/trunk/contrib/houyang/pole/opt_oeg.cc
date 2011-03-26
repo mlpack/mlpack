@@ -88,7 +88,7 @@ void* OEG::OegThread(void *in_par) {
 	double pred_val = Lp->LinearPredictBias(w, *exs[b], bias);
 	Lp->MakeLog(tid, &w, bias, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
-	uv.SparseAddExpertOverwrite(update, exs[b]);
+	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
       }
       uv *= eta / Lp->mb_size_;
@@ -98,8 +98,8 @@ void* OEG::OegThread(void *in_par) {
 	Lp->b_n_pool_[tid] = Lp->b_n_pool_[tid] / exp(eta * ub / Lp->mb_size_);
       }
       // update w
-      Lp->w_p_pool_[tid].SparseExpMultiplyOverwrite(&uv);
-      Lp->w_n_pool_[tid].SparseNegExpMultiplyOverwrite(&uv);
+      Lp->w_p_pool_[tid].SparseExpMultiplyOverwrite(uv);
+      Lp->w_n_pool_[tid].SparseNegExpMultiplyOverwrite(uv);
       //--- dummy gradient calc time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out

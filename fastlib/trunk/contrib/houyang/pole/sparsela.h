@@ -22,7 +22,7 @@ class Feature {
   T_VAL v_;
  public:
   Feature();
-  Feature(const T_IDX i, const T_VAL v);
+  Feature(T_IDX i, T_VAL v);
   ~Feature();
 };
 
@@ -33,16 +33,16 @@ class Svector {
   vector<Feature> Fs_; // features
  public:
   Svector();
-  Svector(const vector<Feature> Fs);
-  Svector(const T_IDX n_f, const T_VAL c);
+  Svector(const vector<Feature>& Fs);
+  Svector(T_IDX n_f, T_VAL c);
   ~Svector();
   // basics
-  size_t Size();
-  void SetAll(const T_VAL v);
-  void SetAllResize(const T_IDX n_f, const T_VAL v);
+  size_t Size() const;
+  void SetAll(T_VAL v);
+  void SetAllResize(T_IDX n_f, T_VAL v);
   void PushBack(const Feature& F);
-  void InsertOne(const T_IDX p, const Feature& F);
-  void EraseOne(const T_IDX p);
+  void InsertOne(T_IDX p, const Feature& F);
+  void EraseOne(T_IDX p);
   void Clear();
   void Print();
   // linear algebra
@@ -50,16 +50,16 @@ class Svector {
   Svector& operator+=(const Svector& x);
   Svector& operator-=(const Svector& x);
   Svector& operator*=(const Svector& x);
-  Svector& operator*=(const double a);
-  Svector& operator/=(const double a);
-  Svector& operator^=(const double p);
+  Svector& operator*=(double a);
+  Svector& operator/=(double a);
+  Svector& operator^=(double p);
+  void   SparseAddExpertOverwrite(double a, const Svector& x);  
+  void   SparseSubtract(const Svector& p, const Svector& n);
   double SparseDot(const Svector& x) const;
-  double SparseSqL2Norm() const;
-  void   SparseAddExpertOverwrite(double a, Svector *x);  
-  void   SparseSubtract(Svector& p, Svector& n);
-  void   SparseExpMultiplyOverwrite(Svector *x);
-  void   SparseNegExpMultiplyOverwrite(Svector *x);
+  void   SparseExpMultiplyOverwrite(const Svector& x);
+  void   SparseNegExpMultiplyOverwrite(const Svector& x);
   // metrics
+  double SparseSqL2Norm() const;
   double SparseSqEuclideanDistance(const Svector& x) const;
   // misc
   void   Shrink(double threshold);
@@ -73,8 +73,8 @@ class Example : public Svector{
   string ud_; // user defined info
  public:
   Example();
-  Example(const vector<Feature> Fs, const T_LBL y);
-  Example(const vector<Feature> Fs, const T_LBL y, const string ud);
+  Example(const vector<Feature>& Fs, T_LBL y);
+  Example(const vector<Feature>& Fs, T_LBL y, const string& ud);
   ~Example();
 
   Example& operator=(const Example& x);

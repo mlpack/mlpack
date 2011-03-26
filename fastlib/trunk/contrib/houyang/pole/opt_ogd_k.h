@@ -107,7 +107,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
 						*exs[b], Lp->b_pool_[tid]);
 	Lp->MakeLog(tid, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
-	uv.SparseAddExpertOverwrite(update, exs[b]);
+	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
       }
       // update bias
@@ -115,7 +115,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
         Lp->b_pool_[tid] = Lp->b_pool_[tid] + eta * ub / Lp->mb_size_;
       }
       // update w
-      Lp->w_pool_[tid].SparseAddExpertOverwrite(eta / Lp->mb_size_, &uv);
+      Lp->w_pool_[tid].SparseAddExpertOverwrite(eta / Lp->mb_size_, uv);
       //--- dummy gradient calc time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
