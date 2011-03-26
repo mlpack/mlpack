@@ -31,7 +31,12 @@ class GaussianKernel {
     void DrawRandomVariate(
       int num_dimensions_in, arma::vec *random_variate) const {
 
-
+      // Draw random $D$ Gaussian variates and scale it by the inverse
+      // of the bandwidth.
+      random_variate->set_size(num_dimensions_in);
+      for(int i = 0; i < num_dimensions_in; i++) {
+        (*random_variate)[i] = core::math::RandGaussian(1.0 / bandwidth_sq);
+      }
     }
 
     std::string name() const {
