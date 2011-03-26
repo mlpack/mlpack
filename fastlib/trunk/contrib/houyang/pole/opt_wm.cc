@@ -15,18 +15,18 @@ void WM::WmCommUpdate(size_t tid) {
     if (opt_name_ == "dwm_i") {
       for (size_t h=0; h<n_thread_; h++) {
         if (h != tid) {
-          w_pool_[tid].SparseMultiplyOverwrite(&m_pool_[h]);
+	  w_pool_[tid] *= m_pool_[h];
         }
       }
-      w_pool_[tid].SparsePowerOverwrite(1.0/n_thread_);
+      w_pool_[tid] ^= 1.0/n_thread_;
     }
     else if (opt_name_ == "dwm_a") {
       for (size_t h=0; h<n_thread_; h++) {
         if (h != tid) {
-          w_pool_[tid].SparseAddOverwrite(&m_pool_[h]);
+          w_pool_[tid] += m_pool_[h];
         }
       }
-      w_pool_[tid].SparseScaleOverwrite(1.0/n_thread_);
+      w_pool_[tid] /= n_thread_;
     }
     else {
       cout << "Unknown WM method!" << endl;
@@ -96,7 +96,7 @@ void* WM::WmThread(void *in_par) {
       // dummy calculation time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
-      Lp->m_pool_[tid].Copy(Lp->w_pool_[tid]);
+      Lp->m_pool_[tid] = Lp->w_pool_[tid];
       // wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;

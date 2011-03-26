@@ -47,10 +47,10 @@ void OGDK<TKernel>::OgdKCommUpdate(size_t tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (size_t h=0; h<n_thread_; h++) {
       if (h != tid) {
-	w_pool_[tid].SparseAddOverwrite(&m_pool_[h]);
+	w_pool_[tid] += m_pool_[h];
       }
     }
-    w_pool_[tid].SparseScaleOverwrite(1.0/n_thread_);
+    w_pool_[tid] /= n_thread_;
   }
   else { // no communication
   }
@@ -94,7 +94,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       }
       if (Lp->reg_type_ == 2) {
 	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
-	Lp->w_pool_[tid].SparseScaleOverwrite(1.0 - eta * Lp->reg_factor_);
+	Lp->w_pool_[tid] *= 1.0 - eta * Lp->reg_factor_;
 	// update bias term
 	if (Lp->use_bias_) {
 	  Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
@@ -103,8 +103,8 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (size_t b = 0; b<Lp->mb_size_; b++) {
-	double pred_val = Lp->LinearPredictBias(&Lp->w_pool_[tid], 
-						exs[b], Lp->b_pool_[tid]);
+	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
+						*exs[b], Lp->b_pool_[tid]);
 	Lp->MakeLog(tid, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, exs[b]);
@@ -119,7 +119,7 @@ void* OGDK<TKernel>::OgdKThread(void *in_par) {
       //--- dummy gradient calc time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
-      Lp->m_pool_[tid].Copy(Lp->w_pool_[tid]);
+      Lp->m_pool_[tid] = Lp->w_pool_[tid];
       //--- wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;
@@ -187,7 +187,7 @@ void OGDK<TKernel>::MakeLog(size_t tid, Example *x, double pred_val) {
     }
     // Calc # of misclassifications
     if (type_ == "classification") {
-      T_LBL pred_lbl = LinearPredictBiasLabelBinary(&w_pool_[tid], x, b_pool_[tid]);
+      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], *x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
 	t_err_[tid] =  t_err_[tid] + 1;

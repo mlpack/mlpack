@@ -10,7 +10,7 @@ class Kernel {
   Kernel();
   ~Kernel();
   
-  virtual double Eval(Svector *a, Svector *b) = 0;
+  virtual double Eval(const Svector& a, const Svector& b) = 0;
 };
 
 /////////////////////////////////////////////
@@ -21,7 +21,7 @@ class LinearKernel : public Kernel {
  public:
   LinearKernel();
   ~LinearKernel();
-  double Eval(Svector *a, Svector *b);
+  double Eval(const Svector& a, const Svector& b);
 };
 
 /////////////////////////////////////////////
@@ -35,7 +35,7 @@ class RBFKernel : public Kernel {
   RBFKernel();
   RBFKernel(double sigma);
   ~RBFKernel();
-  double Eval(Svector *a, Svector *b);
+  double Eval(const Svector& a, const Svector& b);
 };
 
 #endif

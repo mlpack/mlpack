@@ -14,12 +14,12 @@ void OEG::OegCommUpdate(size_t tid) {
   if (comm_method_ == 1) { // fully connected graph
     for (size_t h=0; h<n_thread_; h++) {
       if (h != tid) {
-	w_p_pool_[tid].SparseMultiplyOverwrite(&m_p_pool_[h]);
-	w_n_pool_[tid].SparseMultiplyOverwrite(&m_n_pool_[h]);
+	w_p_pool_[tid] *= m_p_pool_[h];
+	w_n_pool_[tid] *= m_n_pool_[h];
       }
     }
-    w_p_pool_[tid].SparsePowerOverwrite(1.0/n_thread_);
-    w_n_pool_[tid].SparsePowerOverwrite(1.0/n_thread_);
+    w_p_pool_[tid] ^= 1.0/n_thread_;
+    w_n_pool_[tid] ^= 1.0/n_thread_;
   }
   else { // no communication
   }
@@ -35,8 +35,8 @@ void OEG::OegCommUpdate(size_t tid) {
   w_sum = w_sum + b_p_pool_[tid] + b_n_pool_[tid];
   //cout << w_sum << endl;
   if (w_sum > reg_C_) {
-    w_p_pool_[tid].SparseScaleOverwrite(reg_C_/w_sum);
-    w_n_pool_[tid].SparseScaleOverwrite(reg_C_/w_sum);
+    w_p_pool_[tid] *= reg_C_/w_sum;
+    w_n_pool_[tid] *= reg_C_/w_sum;
     b_p_pool_[tid] = b_p_pool_[tid] * reg_C_ / w_sum;
     b_n_pool_[tid] = b_n_pool_[tid] * reg_C_ / w_sum;
   }
@@ -84,14 +84,14 @@ void* OEG::OegThread(void *in_par) {
       for (size_t b = 0; b<Lp->mb_size_; b++) {
 	double bias = Lp->b_p_pool_[tid] - Lp->b_n_pool_[tid];
 	Svector w;
-	w.SparseSubtract(&Lp->w_p_pool_[tid], &Lp->w_n_pool_[tid]);
-	double pred_val = Lp->LinearPredictBias(&w, exs[b], bias);
+	w.SparseSubtract(Lp->w_p_pool_[tid], Lp->w_n_pool_[tid]);
+	double pred_val = Lp->LinearPredictBias(w, *exs[b], bias);
 	Lp->MakeLog(tid, &w, bias, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, exs[b]);
         ub += update;
       }
-      uv.SparseScaleOverwrite(eta / Lp->mb_size_);
+      uv *= eta / Lp->mb_size_;
       // update bias
       if (Lp->use_bias_) {
         Lp->b_p_pool_[tid] = Lp->b_p_pool_[tid] * exp(eta * ub / Lp->mb_size_);
@@ -103,8 +103,8 @@ void* OEG::OegThread(void *in_par) {
       //--- dummy gradient calc time
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
-      Lp->m_p_pool_[tid].Copy(Lp->w_p_pool_[tid]);
-      Lp->m_n_pool_[tid].Copy(Lp->w_n_pool_[tid]);
+      Lp->m_p_pool_[tid] = Lp->w_p_pool_[tid];
+      Lp->m_n_pool_[tid] = Lp->w_n_pool_[tid];
       //--- wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;
@@ -170,7 +170,7 @@ void OEG::MakeLog(size_t tid, Svector *w, double bias, Example *x, double pred_v
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
     // Calc # of misclassifications
     if (type_ == "classification") {
-      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w, x, bias);
+      T_LBL pred_lbl = LinearPredictBiasLabelBinary(*w, *x, bias);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
 	t_err_[tid] = t_err_[tid] + 1;

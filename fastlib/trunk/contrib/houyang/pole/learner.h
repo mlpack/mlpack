@@ -81,8 +81,8 @@ class Learner {
   virtual void Learn() {};
   virtual void Test() {};
 
-  double LinearPredictBias(Svector *w, Example *x, double bias);
-  T_LBL LinearPredictBiasLabelBinary(Svector *w, Example *x, double bias);
+  double LinearPredictBias(const Svector& w, Example& x, const double bias);
+  T_LBL LinearPredictBiasLabelBinary(const Svector& w, Example& x, const double bias);
 };
 
 #endif
