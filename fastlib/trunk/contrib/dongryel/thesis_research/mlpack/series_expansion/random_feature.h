@@ -38,7 +38,7 @@ class RandomFeature {
         arma::vec new_point;
         table_out->get(i, &new_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
-          double dot_product = arma::dot(random_variates[i], old_point);
+          double dot_product = arma::dot(random_variates[j], old_point);
           new_point[j] = cos(dot_product) * normalization_factor;
           new_point[j + num_random_fourier_features] =
             sin(dot_product) * normalization_factor;
