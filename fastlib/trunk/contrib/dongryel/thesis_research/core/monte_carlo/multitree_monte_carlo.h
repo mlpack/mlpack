@@ -1,11 +1,16 @@
-#ifndef FL_LITE_MLPACK_KCDE_MULTITREE_MONTE_CARLO_H
-#define FL_LITE_MLPACK_KCDE_MULTITREE_MONTE_CARLO_H
+/** @file multitree_monte_carlo.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef CORE_MONTE_CARLO_MULTITREE_MONTE_CARLO_H
+#define CORE_MONTE_CARLO_MULTITREE_MONTE_CARLO_H
 
 #include <vector>
-#include "boost/math/distributions/normal.hpp"
+#include <boost/math/distributions/normal.hpp>
 
-namespace fl {
-namespace ml {
+namespace core {
+namespace monte_carlo {
 
 template<typename TableType>
 class MultitreeMonteCarlo {
@@ -91,7 +96,7 @@ class MultitreeMonteCarlo {
       const FunctionType &function_in,
       std::vector< std::pair<double, double> > *mean_variance_pair_out);
 };
-};
-};
+}
+}
 
 #endif

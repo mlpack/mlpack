@@ -1,15 +1,73 @@
 /** @file random_feature.h
  *
+ *  An implementation of Rahimi's random feature extraction.
+ *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
 #ifndef MLPACK_SERIES_EXPANSION_RANDOM_FEATURE_H
 #define MLPACK_SERIES_EXPANSION_RANDOM_FEATURE_H
 
+#include <vector>
+#include "core/monte_carlo/mean_variance_pair_matrix.h"
+
 namespace mlpack {
 namespace series_expansion {
 class RandomFeature {
   public:
+
+    template<typename KernelType, typename TreeIteratorType>
+    static void EvaluateAverageField(
+      const KernelType &kernel_in,
+      TreeIteratorType &rnode_it,
+      TreeIteratorType &qnode_it,
+      int num_random_fourier_features,
+      std::vector<core::monte_carlo::MeanVariancePair> *kernel_sums) {
+
+      // The list of random Fourier features drawn in this round.
+      std::vector< arma::vec > random_variates(num_random_fourier_features);
+      for(int i = 0; i < num_random_fourier_features; i++) {
+
+        // Draw a random Fourier feature.
+        kernel_in.DrawRandomVariate(
+          rnode_it.table()->n_attributes(), & random_variates[i]);
+      }
+
+      // Compute the sum of Fourier component projections of reference
+      // set.
+      arma::vec sum_reference_projections;
+      sum_reference_projections.zeros(2);
+
+      for(int j = 0; j < num_random_fourier_features; j++) {
+
+        // First compute the sum of the projections for the reference
+        // node for the current random Fourier feature.
+        rnode_it.Reset();
+        sum_reference_projections.zeros();
+        while(rnode_it.HasNext()) {
+          arma::vec reference_point;
+          rnode_it.Next(&reference_point);
+          double dot_product = arma::dot(random_variates[j], reference_point);
+          sum_reference_projections[0] += cos(dot_product);
+          sum_reference_projections[1] += sin(dot_product);
+        }
+        sum_reference_projections /= static_cast<double>(rnode_it.count());
+
+        // Compute the projection of each query point.
+        qnode_it.Reset();
+        while(qnode_it.HasNext()) {
+          arma::vec query_point;
+          int query_point_index;
+          qnode_it.Next(&query_point, &query_point_index);
+          double dot_product = arma::dot(random_variates[j], query_point);
+          double contribution =
+            cos(dot_product) * sum_reference_projections[0] +
+            sin(dot_product) * sum_reference_projections[1];
+          (*kernel_sums)[query_point_index].push_back(contribution);
+        }
+
+      } // end of looping over each random Fourier feature.
+    }
 
     template<typename TableType, typename KernelType>
     static void Transform(
