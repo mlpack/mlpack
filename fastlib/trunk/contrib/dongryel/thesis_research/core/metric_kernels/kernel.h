@@ -8,6 +8,7 @@
 #ifndef CORE_METRIC_KERNELS_KERNEL_H
 #define CORE_METRIC_KERNELS_KERNEL_H
 
+#include <armadillo>
 #include "core/math/math_lib.h"
 #include "core/math/range.h"
 #include "boost/math/constants/constants.hpp"
@@ -26,6 +27,12 @@ class GaussianKernel {
     static const bool HAS_CUTOFF = false;
 
   public:
+
+    void DrawRandomVariate(
+      int num_dimensions_in, arma::vec *random_variate) const {
+
+
+    }
 
     std::string name() const {
       return std::string("gaussian");
