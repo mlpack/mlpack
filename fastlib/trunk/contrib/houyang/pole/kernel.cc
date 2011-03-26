@@ -18,8 +18,8 @@ LinearKernel::LinearKernel() {
 LinearKernel::~LinearKernel() {
 }
 
-double LinearKernel::Eval(Svector *a, Svector *b) {
-  return a->SparseDot(b);
+double LinearKernel::Eval(const Svector& a, const Svector& b) {
+  return a.SparseDot(b);
 }
 
 //-------------------RBF Kernel-------------------//
@@ -34,6 +34,6 @@ RBFKernel::RBFKernel(double sigma) : sigma_(sigma) {
 RBFKernel::~RBFKernel() {
 }
 
-double RBFKernel::Eval(Svector *a, Svector *b) {
-  return exp( a->SparseSqEuclideanDistance(b) / (-2*pow(sigma_, 2)));
+double RBFKernel::Eval(const Svector& a, const Svector& b) {
+  return exp( a.SparseSqEuclideanDistance(b) / (-2*pow(sigma_, 2)));
 }
