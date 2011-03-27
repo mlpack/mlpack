@@ -266,6 +266,7 @@ class DualtreeDfs {
       TreeType *rnode,
       double failure_probability,
       typename ProblemType::DeltaType &delta,
+      const core::math::Range &squared_distance_range,
       typename ProblemType::ResultType *query_results);
 
     /** @brief Employ a probabilistic summarization with the given

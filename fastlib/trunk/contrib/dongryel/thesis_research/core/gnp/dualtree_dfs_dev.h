@@ -261,6 +261,7 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::TableType::TreeType *rnode,
   double failure_probability,
   typename ProblemType::DeltaType &delta,
+  const core::math::Range &squared_distance_range,
   typename ProblemType::ResultType *query_results) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
@@ -269,7 +270,8 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   new_summary.ApplyDelta(delta);
 
   return new_summary.CanProbabilisticSummarize(
-           metric, problem_->global(), delta, qnode, rnode,
+           metric, problem_->global(), delta,
+           squared_distance_range, qnode, rnode,
            failure_probability, query_results);
 }
 
@@ -375,7 +377,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
 
     // Try Monte Carlo.
     if(CanProbabilisticSummarize_(
-          metric, qnode, rnode, failure_probability, delta, query_results)) {
+          metric, qnode, rnode, failure_probability,
+          delta, squared_distance_range, query_results)) {
       ProbabilisticSummarize_(
         problem_->global(), qnode, failure_probability, delta, query_results);
       num_probabilistic_prunes_++;
