@@ -1019,8 +1019,7 @@ class KdeSummary {
       // The number of samples.
       const int num_samples = 25;
       const int global_proportion = 10;
-      if(qnode->count() > global.reference_table()->n_entries() /
-          global_proportion || rnode->count() < 50 ||
+      if(rnode->count() < 50 ||
           2.0 * global.kernel_aux().kernel().bandwidth_sq() <
           squared_distance_range.hi) {
         return false;
