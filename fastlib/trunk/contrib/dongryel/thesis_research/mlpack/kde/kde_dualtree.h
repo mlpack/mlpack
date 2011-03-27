@@ -1110,11 +1110,15 @@ class KdeSummary {
           query_results->densities_l_[qpoint_index] + correction.lo;
         double left_hand_side = correction.width() * 0.5;
         double right_hand_side =
-          rnode->count() *
-          (global.relative_error() * modified_densities_l /
-           static_cast<double>(global.reference_table()->n_entries()) +
-           global.absolute_error());
+          rnode->count() * (
+            global.relative_error() * modified_densities_l +
+            global.effective_num_reference_points() * global.absolute_error() -
+            used_error_u_) /
+          static_cast<double>(
+            global.effective_num_reference_points() -
+            query_results->pruned_[qpoint_index]);
 
+        // Prunable if the left hand side is less than right hand side.
         prunable = (left_hand_side <= right_hand_side);
 
         prev_qpoint_index = qpoint_index;
