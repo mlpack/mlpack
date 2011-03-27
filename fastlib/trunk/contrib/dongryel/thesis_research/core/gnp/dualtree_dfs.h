@@ -272,7 +272,9 @@ class DualtreeDfs {
     /** @brief Employ a probabilistic summarization with the given
      *         probability level.
      */
+    template<typename MetricType>
     void ProbabilisticSummarize_(
+      const MetricType &metric,
       GlobalType &global,
       TreeType *qnode,
       double failure_probability,
@@ -309,7 +311,8 @@ class DualtreeDfs {
     template<typename MetricType>
     void PostProcess_(
       const MetricType &metric,
-      TreeType *qnode, ResultType *query_results);
+      TreeType *qnode, ResultType *query_results,
+      bool do_query_results_postprocess);
 
   public:
 

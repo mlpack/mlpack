@@ -131,7 +131,7 @@ void DualtreeDfs<ProblemType>::Compute(
     metric, query_table_->get_tree(), reference_start_node_,
     1.0 - problem_->global().probability(), squared_distance_range,
     query_results);
-  PostProcess_(metric, query_table_->get_tree(), query_results);
+  PostProcess_(metric, query_table_->get_tree(), query_results, true);
 }
 
 template<typename ProblemType>
@@ -270,13 +270,15 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   new_summary.ApplyDelta(delta);
 
   return new_summary.CanProbabilisticSummarize(
-           metric, problem_->global(), delta,
+           metric, problem_->global(), qnode_stat.postponed_, delta,
            squared_distance_range, qnode, rnode,
            failure_probability, query_results);
 }
 
 template<typename ProblemType>
+template<typename MetricType>
 void DualtreeDfs<ProblemType>::ProbabilisticSummarize_(
+  const MetricType &metric,
   typename ProblemType::GlobalType &global,
   typename ProblemType::TableType::TreeType *qnode,
   double failure_probability,
@@ -285,6 +287,7 @@ void DualtreeDfs<ProblemType>::ProbabilisticSummarize_(
 
   query_results->ApplyProbabilisticDelta(
     global, qnode, failure_probability, delta);
+  PostProcess_(metric, qnode, query_results, false);
 }
 
 template<typename ProblemType>
@@ -380,7 +383,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
           metric, qnode, rnode, failure_probability,
           delta, squared_distance_range, query_results)) {
       ProbabilisticSummarize_(
-        problem_->global(), qnode, failure_probability, delta, query_results);
+        metric, problem_->global(), qnode,
+        failure_probability, delta, query_results);
       num_probabilistic_prunes_++;
       return false;
     }
@@ -523,7 +527,8 @@ template<typename MetricType>
 void DualtreeDfs<ProblemType>::PostProcess_(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
-  typename ProblemType::ResultType *query_results) {
+  typename ProblemType::ResultType *query_results,
+  bool do_query_results_postprocess) {
 
   typename ProblemType::StatisticType &qnode_stat = qnode->stat();
 
@@ -541,8 +546,11 @@ void DualtreeDfs<ProblemType>::PostProcess_(
       qnode_iterator.Next(&q_col, &q_index);
       query_results->FinalApplyPostponed(
         problem_->global(), q_col, q_index, qnode_stat.postponed_);
-      query_results->PostProcess(
-        metric, q_index, problem_->global(), problem_->is_monochromatic());
+
+      if(do_query_results_postprocess) {
+        query_results->PostProcess(
+          metric, q_index, problem_->global(), problem_->is_monochromatic());
+      }
 
       // Refine min and max summary statistics.
       qnode_stat.summary_.Accumulate(
@@ -564,8 +572,10 @@ void DualtreeDfs<ProblemType>::PostProcess_(
     qnode_stat.postponed_.FinalSetZero();
 
     // Recursively postprocess the left and the right results.
-    PostProcess_(metric, qnode_left,  query_results);
-    PostProcess_(metric, qnode_right, query_results);
+    PostProcess_(
+      metric, qnode_left,  query_results, do_query_results_postprocess);
+    PostProcess_(
+      metric, qnode_right, query_results,  do_query_results_postprocess);
 
     // Refine the summary statistics.
     qnode_stat.summary_.StartReaccumulate();
