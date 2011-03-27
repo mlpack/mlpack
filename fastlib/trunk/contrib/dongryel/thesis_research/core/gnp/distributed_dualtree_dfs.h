@@ -109,6 +109,14 @@ class DistributedDualtreeDfs {
      */
     int max_computation_frontier_size_;
 
+    /** @brief The number of deterministic prunes.
+     */
+    int num_deterministic_prunes_;
+
+    /** @brief The number of probabilistic prunes.
+     */
+    int num_probabilistic_prunes_;
+
   private:
 
     template<typename MetricType>
@@ -157,6 +165,14 @@ class DistributedDualtreeDfs {
     };
 
   public:
+
+    /** @brief Returns the number of deterministic prunes so far.
+     */
+    int num_deterministic_prunes() const;
+
+    /** @brief Returns the number of probabilistic prunes so far.
+     */
+    int num_probabilistic_prunes() const;
 
     /** @brief Sets the tweak parameters for the maximum number of
      *         levels of trees to grab at a time and the maximum
