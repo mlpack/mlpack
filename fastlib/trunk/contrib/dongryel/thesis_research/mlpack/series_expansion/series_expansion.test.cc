@@ -69,8 +69,21 @@ class SeriesExpansionTest {
   public:
 
     int StressTestMain(bool test_reduced_set_expansion) {
+      KernelAuxType dummy;
       for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(2, 50);
+        int num_dimensions;
+        if(KernelAuxType::ExpansionType ==
+            mlpack::series_expansion::HYPERCUBE) {
+          num_dimensions = core::math::RandInt(2, 5);
+        }
+        else {
+          if(dummy.kernel().name() == "gaussian") {
+            num_dimensions = core::math::RandInt(2, 50);
+          }
+          else {
+            num_dimensions = core::math::RandInt(2, 5);
+          }
+        }
         int num_points = core::math::RandInt(20, 30);
         if(StressTest(
               num_dimensions, num_points,
