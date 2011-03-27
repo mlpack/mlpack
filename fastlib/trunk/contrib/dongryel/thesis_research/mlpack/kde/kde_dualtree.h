@@ -730,6 +730,8 @@ class KdeResult {
         core::math::Range contribution;
         (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta_in.pruned_, num_standard_deviations, &contribution);
+        contribution.lo = std::max(contribution.lo, 0.0);
+        contribution.hi = std::min(contribution.hi, delta_in.pruned_);
         densities_l_[qpoint_index] += contribution.lo;
         densities_[qpoint_index] += contribution.mid();
         densities_u_[qpoint_index] += contribution.hi;
