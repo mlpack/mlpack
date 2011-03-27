@@ -1081,10 +1081,9 @@ class KdeSummary {
             double squared_dist = metric.DistanceSq(qpoint, rpoint);
             double kernel_value =
               global.kernel().EvalUnnormOnSq(squared_dist);
-            double new_sample = kernel_value;
 
             // Accumulate the sample.
-            (*delta.mean_variance_pair_)[qpoint_index].push_back(new_sample);
+            (*delta.mean_variance_pair_)[qpoint_index].push_back(kernel_value);
           }
         }
 
