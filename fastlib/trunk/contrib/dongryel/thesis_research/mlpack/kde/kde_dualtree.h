@@ -884,27 +884,21 @@ class KdeSummary {
           squared_distance_range.lo, squared_distance_range.hi,
           allowed_err, &actual_err_farfield_to_local);
 
-      if(global.query_table()->points_available_underneath(qnode)) {
+      // Farfield evaluations are possible when the query poins are
+      // available.
+      delta.order_farfield_ =
+        global.kernel_aux().OrderForEvaluatingFarField(
+          rnode->bound(), qnode->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          allowed_err, &actual_err_farfield);
 
-        // Farfield evaluations are possible when the query poins are
-        // available.
-        delta.order_farfield_ =
-          global.kernel_aux().OrderForEvaluatingFarField(
-            rnode->bound(), qnode->bound(),
-            squared_distance_range.lo, squared_distance_range.hi,
-            allowed_err, &actual_err_farfield);
-      }
-
-      if(global.reference_table()->points_available_underneath(rnode)) {
-
-        // Direct local accumulations are possible when the reference
-        // points are available.
-        delta.order_local_ =
-          global.kernel_aux().OrderForEvaluatingLocal(
-            rnode->bound(), qnode->bound(),
-            squared_distance_range.lo, squared_distance_range.hi,
-            allowed_err, &actual_err_local);
-      }
+      // Direct local accumulations are possible when the reference
+      // points are available.
+      delta.order_local_ =
+        global.kernel_aux().OrderForEvaluatingLocal(
+          rnode->bound(), qnode->bound(),
+          squared_distance_range.lo, squared_distance_range.hi,
+          allowed_err, &actual_err_local);
 
       // Update computational cost and compute the minimum.
       if(delta.order_farfield_to_local_ >= 0) {
@@ -1015,19 +1009,16 @@ class KdeSummary {
              typename TreeType, typename ResultType >
     bool CanProbabilisticSummarize(
       const MetricType &metric,
-      GlobalType &global, DeltaType &delta, TreeType *qnode, TreeType *rnode,
+      GlobalType &global, DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode, TreeType *rnode,
       double failure_probability, ResultType *query_results) const {
-
-      if((! global.query_table()->points_available_underneath(qnode)) ||
-          (! global.reference_table()->points_available_underneath(rnode))) {
-        return false;
-      }
 
       // The number of samples.
       const int num_samples = 25;
       const int global_proportion = 10;
       if(qnode->count() > global.reference_table()->n_entries() /
-          global_proportion) {
+          global_proportion || rnode->count() < 50) {
         return false;
       }
 
