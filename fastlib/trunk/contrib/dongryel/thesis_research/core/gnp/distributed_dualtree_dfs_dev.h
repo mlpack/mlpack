@@ -30,6 +30,16 @@ extern core::table::MemoryMappedFile *global_m_file_;
 namespace core {
 namespace gnp {
 
+template<typename ProblemType>
+int DistributedDualtreeDfs<ProblemType>::num_deterministic_prunes() const {
+  return num_deterministic_prunes_;
+}
+
+template<typename ProblemType>
+int DistributedDualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
+  return num_probabilistic_prunes_;
+}
+
 template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
@@ -286,6 +296,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
         sub_engine.set_reference_start_node(reference_start_node);
       }
       sub_engine.Compute(metric, query_results, false);
+      num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
+      num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
 
       // Pop the top frontier object that was just explored.
       prioritized_tasks.pop();
@@ -329,6 +341,8 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   max_num_levels_to_serialize_ = 15;
   max_num_work_to_dequeue_per_stage_ = 5;
   max_computation_frontier_size_ = 0;
+  num_deterministic_prunes_ = 0;
+  num_probabilistic_prunes_ = 0;
 }
 
 template<typename DistributedProblemType>
