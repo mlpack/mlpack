@@ -162,7 +162,7 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
     "  epan, gaussian"
   )(
     "series_expansion_type",
-    boost::program_options::value<std::string>()->default_value("hypercube"),
+    boost::program_options::value<std::string>()->default_value("multivariate"),
     "Series expansion type used to compress the kernel interaction. One of:\n"
     "  hypercube, multivariate"
   )(
@@ -184,7 +184,7 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
     "Absolute error for the approximation of KDE per each query point."
   )(
     "relative_error",
-    boost::program_options::value<double>()->default_value(0.01),
+    boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
   )(
     "leaf_size",
