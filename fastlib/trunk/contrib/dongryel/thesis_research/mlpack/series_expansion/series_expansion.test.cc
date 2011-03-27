@@ -191,8 +191,6 @@ class SeriesExpansionTest {
         double naive_kernel_sum =
           NaiveKernelSum_(
             l2_metric, kernel_aux, random_query_point, rnode_it);
-        printf("Random query point index: %d %d %d\n",
-               random_query_point_index, qnode_it.count(), rnode_it.count());
         printf(
           "The naive sum is %g. The transformed kernel sum is %g with "
           "the sample mean variance %g.\n",
