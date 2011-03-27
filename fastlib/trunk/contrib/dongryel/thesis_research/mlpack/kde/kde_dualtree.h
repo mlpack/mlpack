@@ -1093,7 +1093,7 @@ class KdeSummary {
         (*delta.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta.pruned_, num_standard_deviations, &correction);
         correction.lo = std::max(correction.lo, 0.0);
-        correction.hi = std::min(correction.hi, delta_in.pruned_);
+        correction.hi = std::min(correction.hi, delta.pruned_);
 
         // Take the middle estimate, though technically it is not correct.
         double modified_densities_l =
