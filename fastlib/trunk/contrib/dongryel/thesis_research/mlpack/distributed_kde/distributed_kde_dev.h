@@ -9,6 +9,7 @@
 #include "core/gnp/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
+#include "core/table/transform.h"
 #include "mlpack/distributed_kde/distributed_kde.h"
 
 namespace core {
@@ -155,8 +156,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<double>()->default_value(0.5),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
-  )
-  (
+  )(
     "probability",
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of KDE."
@@ -192,6 +192,11 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "max_num_work_to_dequeue_per_stage_in",
     boost::program_options::value<int>()->default_value(30),
     "The number of work items to dequeue per process."
+  )(
+    "prescale",
+    boost::program_options::value<std::string>()->default_value("standardize"),
+    "OPTIONAL scaling option. One of:\n"
+    "  none, hypercube, standardize"
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -317,6 +322,15 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     core::table::global_m_file_->Init(
       std::string("tmp_file"), world.rank(), world.rank(), 100000000);
   }
+  if(vm->count("prescale") > 0) {
+    if((*vm)["prescale"].as<std::string>() != "hypercube" &&
+        (*vm)["prescale"].as<std::string>() != "standardize" &&
+        (*vm)["prescale"].as<std::string>() != "none") {
+      std::cerr << "The --prescale needs to be: none or hypercube or " <<
+                "standardize.\n";
+      exit(0);
+    }
+  }
 
   return false;
 }
@@ -324,7 +338,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
 template<typename TableType>
 void DistributedKdeArgumentParser::RandomGenerate(
   boost::mpi::communicator &world, const std::string &file_name,
-  int num_dimensions, int num_points) {
+  int num_dimensions, int num_points, const std::string &prescale_option) {
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -339,6 +353,17 @@ void DistributedKdeArgumentParser::RandomGenerate(
   }
   printf("Process %d generated %d points in %d dimensionality...\n",
          world.rank(), num_points, num_dimensions);
+
+  // Scale the dataset.
+  if(prescale_option == "hypercube") {
+    core::table::UnitHypercube::Transform(&random_dataset);
+  }
+  else if(prescale_option == "standardize") {
+    core::table::Standardize::Transform(&random_dataset);
+  }
+  std::cout << "Scaled the dataset with the option: " <<
+            prescale_option << "\n";
+
   random_dataset.Save(file_name);
 }
 
@@ -372,7 +397,9 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // Parse the leaf size.
   arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
-  std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
+  }
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
@@ -383,7 +410,8 @@ bool DistributedKdeArgumentParser::ParseArguments(
     reference_file_name = reference_file_name_sstr.str();
     RandomGenerate<typename DistributedTableType::TableType>(
       world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
-      vm["random_generate_n_entries"].as<int>());
+      vm["random_generate_n_entries"].as<int>(),
+      vm["prescale"].as<std::string>());
   }
 
   std::cout << "Reading in the reference set: " <<
@@ -408,7 +436,8 @@ bool DistributedKdeArgumentParser::ParseArguments(
       query_file_name = query_file_name_sstr.str();
       RandomGenerate<typename DistributedTableType::TableType>(
         world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
-        vm["random_generate_n_entries"].as<int>());
+        vm["random_generate_n_entries"].as<int>(),
+        vm["prescale"].as<std::string>());
     }
     std::cout << "Reading in the query set: " <<
               query_file_name << "\n";

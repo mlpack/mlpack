@@ -41,6 +41,7 @@ class Standardize {
       }
       for(int i = 0; i < table_in->n_entries(); i++) {
         arma::vec point;
+        table_in->get(i, &point);
         for(int d = 0; d < table_in->n_attributes(); d++) {
           point[d] = (point[d] - means[d]) / standard_deviations[d] ;
         }

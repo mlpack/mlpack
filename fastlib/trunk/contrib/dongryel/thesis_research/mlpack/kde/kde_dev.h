@@ -24,6 +24,9 @@ void KdeArgumentParser::PrescaleTable_(
   if(prescale_option == "hypercube") {
     core::table::UnitHypercube::Transform(table);
   }
+  else if(prescale_option == "standardize") {
+    core::table::Standardize::Transform(table);
+  }
 }
 
 template<typename TableType, typename KernelAuxType>
@@ -194,7 +197,7 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
     "prescale",
     boost::program_options::value<std::string>()->default_value("none"),
     "OPTIONAL scaling option. One of:\n"
-    "  none, hypercube"
+    "  none, hypercube, standardize"
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -262,8 +265,10 @@ bool KdeArgumentParser::ConstructBoostVariableMap(
   }
   if(vm->count("prescale") > 0) {
     if((*vm)["prescale"].as<std::string>() != "hypercube" &&
+        (*vm)["prescale"].as<std::string>() != "standardize" &&
         (*vm)["prescale"].as<std::string>() != "none") {
-      std::cerr << "The --prescale needs to be: none or hypercube.\n";
+      std::cerr << "The --prescale needs to be: none or hypercube or " <<
+                "standardize.\n";
       exit(0);
     }
   }

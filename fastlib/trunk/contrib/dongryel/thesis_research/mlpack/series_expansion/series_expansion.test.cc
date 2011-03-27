@@ -84,7 +84,7 @@ class SeriesExpansionTest {
             num_dimensions = core::math::RandInt(2, 5);
           }
         }
-        int num_points = core::math::RandInt(20, 30);
+        int num_points = core::math::RandInt(2000, 3000);
         if(StressTest(
               num_dimensions, num_points,
               test_reduced_set_expansion) == false) {
@@ -124,7 +124,8 @@ class SeriesExpansionTest {
       // Form a Cartesian expansion global object.
       KernelAuxType kernel_aux;
       double bandwidth = core::math::Random(
-                           0.13 * num_dimensions, 0.2 * num_dimensions);
+                           0.5 * sqrt(num_dimensions),
+                           0.8 * sqrt(num_dimensions));
       printf("Bandwidth: %g\n", bandwidth);
       kernel_aux.Init(bandwidth, max_order, random_table.n_attributes());
       kernel_aux.global().CheckIntegrity();
@@ -183,7 +184,7 @@ class SeriesExpansionTest {
         int random_query_point_index;
         qnode_it.RandomPick(&random_query_point, &random_query_point_index);
         typename TableType::TreeIterator rnode_it =
-          random_table.get_node_iterator(reference_node);
+          random_table.get_node_iterator(random_table.get_tree());
         std::vector<core::monte_carlo::MeanVariancePair> kernel_sums(
           random_table.n_entries());
         mlpack::series_expansion::RandomFeature::EvaluateAverageField(
