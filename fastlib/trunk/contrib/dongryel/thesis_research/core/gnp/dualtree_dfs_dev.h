@@ -55,11 +55,18 @@ DualtreeDfs<ProblemType>::DualtreeDfs() {
   reference_start_node_ = NULL;
   query_rank_ = 0;
   reference_rank_ = 0;
+  num_deterministic_prunes_ = 0;
+  num_probabilistic_prunes_ = 0;
 }
 
 template<typename ProblemType>
 int DualtreeDfs<ProblemType>::num_deterministic_prunes() const {
   return num_deterministic_prunes_;
+}
+
+template<typename ProblemType>
+int DualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
+  return num_probabilistic_prunes_;
 }
 
 template<typename ProblemType>
@@ -83,6 +90,7 @@ void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 
   // Reset prune statistics.
   num_deterministic_prunes_ = 0;
+  num_probabilistic_prunes_ = 0;
 
   // Set the problem.
   problem_ = &problem_in;
@@ -370,6 +378,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
           metric, qnode, rnode, failure_probability, delta, query_results)) {
       ProbabilisticSummarize_(
         problem_->global(), qnode, failure_probability, delta, query_results);
+      num_probabilistic_prunes_++;
       return false;
     }
   }

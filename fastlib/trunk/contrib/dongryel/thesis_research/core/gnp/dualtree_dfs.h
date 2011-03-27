@@ -185,6 +185,10 @@ class DualtreeDfs {
      */
     int num_deterministic_prunes_;
 
+    /** @brief The number of probabilistic prunes.
+     */
+    int num_probabilistic_prunes_;
+
     /** @brief The pointer to the problem.
      */
     ProblemType *problem_;
@@ -346,6 +350,10 @@ class DualtreeDfs {
     /** @brief Returns the number of deterministic prunes so far.
      */
     int num_deterministic_prunes() const;
+
+    /** @brief Returns the number of probabilistic prunes so far.
+     */
+    int num_probabilistic_prunes() const;
 
     /** @brief Returns the pointer to the problem spec.
      */
