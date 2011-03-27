@@ -185,6 +185,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   // An outstanding frontier of query-reference pairs to be computed.
   std::vector < PriorityQueueType > computation_frontier(
     world_->size());
+  int total_computation_frontier_size = 0;
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     const std::vector< std::pair<int, int> > &reference_frontier =
       reference_frontier_lists[i];
@@ -198,6 +199,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
               i, reference_frontier[j].first,
               reference_frontier[j].second), 0.0));
       }
+      total_computation_frontier_size += reference_frontier.size();
     }
     else {
       computation_frontier[i].push(
@@ -205,8 +207,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
           query_table_->local_table()->get_tree(),
           boost::make_tuple<int, int, int>(
             i, 0, reference_table_->n_entries()), 1.0));
+      total_computation_frontier_size++;
     }
   }
+
+  printf("Process %d has a total computation frontier of: %d\n",
+         world_->rank(), total_computation_frontier_size);
 
   // The computation loop.
   do  {
