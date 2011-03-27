@@ -52,7 +52,7 @@ class HrectBound {
     /** @brief The assignment operator that copies.
      */
     void operator=(const HrectBound &bound_in) {
-      if(! this->is_initialized()) {
+      if((! this->is_initialized()) && bound_in.dim() > 0) {
         bounds_ = new core::math::Range[bound_in.dim()];
       }
       dim_ = bound_in.dim();
