@@ -1018,7 +1018,6 @@ class KdeSummary {
 
       // The number of samples.
       const int num_samples = 25;
-      const int global_proportion = 10;
       if(rnode->count() < 50 ||
           2.0 * global.kernel_aux().kernel().bandwidth_sq() <
           squared_distance_range.hi) {
