@@ -1007,11 +1007,13 @@ class KdeSummary {
       used_error_u_ = summary_in.used_error_u_;
     }
 
-    template < typename MetricType, typename GlobalType, typename DeltaType,
+    template < typename MetricType, typename GlobalType,
+             typename PostponedType, typename DeltaType,
              typename TreeType, typename ResultType >
     bool CanProbabilisticSummarize(
       const MetricType &metric,
-      GlobalType &global, DeltaType &delta,
+      GlobalType &global,
+      const PostponedType &postponed, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode,
       double failure_probability, ResultType *query_results) const {
@@ -1094,9 +1096,9 @@ class KdeSummary {
         correction.lo = std::max(correction.lo, 0.0);
         correction.hi = std::min(correction.hi, delta.pruned_);
 
-        // Take the middle estimate, though technically it is not correct.
         double modified_densities_l =
-          query_results->densities_l_[qpoint_index] + correction.lo;
+          query_results->densities_l_[qpoint_index] + correction.lo +
+          postponed.densities_l_;
         double left_hand_side = correction.width() * 0.5;
         double right_hand_side =
           rnode->count() * (
