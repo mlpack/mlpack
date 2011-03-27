@@ -143,12 +143,12 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL file to store computed densities."
   )(
     "kernel",
-    boost::program_options::value<std::string>()->default_value("gaussian"),
+    boost::program_options::value<std::string>()->default_value("epan"),
     "Kernel function used by KDE.  One of:\n"
     "  epan, gaussian"
   )(
     "series_expansion_type",
-    boost::program_options::value<std::string>()->default_value("hypercube"),
+    boost::program_options::value<std::string>()->default_value("multivariate"),
     "Series expansion type used to compress the kernel interaction. One of:\n"
     "  hypercube, multivariate"
   )(
