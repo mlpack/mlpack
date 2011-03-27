@@ -1044,9 +1044,6 @@ class KdeSummary {
       // The flag saying whether the pruning is a success.
       bool prunable = true;
 
-      // The min kernel value determined by the bounding box.
-      double min_kernel_value = delta.densities_l_ /
-                                static_cast<double>(rnode->count());
 
       int prev_qpoint_index = -1;
       double bandwidth = sqrt(global.kernel().bandwidth_sq());
@@ -1084,7 +1081,7 @@ class KdeSummary {
             double squared_dist = metric.DistanceSq(qpoint, rpoint);
             double kernel_value =
               global.kernel().EvalUnnormOnSq(squared_dist);
-            double new_sample = kernel_value - min_kernel_value;
+            double new_sample = kernel_value;
 
             // Accumulate the sample.
             (*delta.mean_variance_pair_)[qpoint_index].push_back(new_sample);
@@ -1096,7 +1093,7 @@ class KdeSummary {
         (*delta.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta.pruned_, num_standard_deviations, &correction);
         correction.lo = std::max(correction.lo, 0.0);
-        correction += delta.densities_l_;
+        correction.hi = std::min(correction.hi, delta_in.pruned_);
 
         // Take the middle estimate, though technically it is not correct.
         double modified_densities_l =
