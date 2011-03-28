@@ -1048,48 +1048,25 @@ class KdeSummary {
 
       // The flag saying whether the pruning is a success.
       bool prunable = true;
-
-
-      int prev_qpoint_index = -1;
-      double bandwidth = sqrt(global.kernel().bandwidth_sq());
-      double movement_threshold = 0.05 * bandwidth;
-      int movement_count = 0;
       do {
 
         // Get each query point.
         qnode_it.Next(&qpoint, &qpoint_index);
-        bool skip = false;
-        if(prev_qpoint_index >= 0) {
-          core::table::DensePoint prev_qpoint;
-          global.query_table()->get(prev_qpoint_index, &prev_qpoint);
-          double dist = sqrt(metric.DistanceSq(qpoint, prev_qpoint));
-          if(dist <= movement_threshold && movement_count < 5) {
-            (*delta.mean_variance_pair_)[qpoint_index].CopyValues(
-              (*delta.mean_variance_pair_)[prev_qpoint_index]);
-            skip = true;
-            movement_count++;
-          }
-          else {
-            movement_count = 0;
-          }
-        }
 
         // Clear the sample mean variance pair for the current query.
-        if(skip == false) {
-          (*delta.mean_variance_pair_)[qpoint_index].SetZero();
+        (*delta.mean_variance_pair_)[qpoint_index].SetZero();
 
-          for(int i = 0; i < num_samples; i++) {
+        for(int i = 0; i < num_samples; i++) {
 
-            // Pick a random reference point and compute the kernel
-            // difference.
-            rnode_it.RandomPick(&rpoint, &rpoint_index);
-            double squared_dist = metric.DistanceSq(qpoint, rpoint);
-            double kernel_value =
-              global.kernel().EvalUnnormOnSq(squared_dist);
+          // Pick a random reference point and compute the kernel
+          // difference.
+          rnode_it.RandomPick(&rpoint, &rpoint_index);
+          double squared_dist = metric.DistanceSq(qpoint, rpoint);
+          double kernel_value =
+            global.kernel().EvalUnnormOnSq(squared_dist);
 
-            // Accumulate the sample.
-            (*delta.mean_variance_pair_)[qpoint_index].push_back(kernel_value);
-          }
+          // Accumulate the sample.
+          (*delta.mean_variance_pair_)[qpoint_index].push_back(kernel_value);
         }
 
         // Add the correction.
@@ -1116,8 +1093,6 @@ class KdeSummary {
 
         // Prunable if the left hand side is less than right hand side.
         prunable = (left_hand_side <= right_hand_side);
-
-        prev_qpoint_index = qpoint_index;
       }
       while(qnode_it.HasNext() && prunable);
       return prunable;

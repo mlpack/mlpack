@@ -575,7 +575,7 @@ void DualtreeDfs<ProblemType>::PostProcess_(
     PostProcess_(
       metric, qnode_left,  query_results, do_query_results_postprocess);
     PostProcess_(
-      metric, qnode_right, query_results,  do_query_results_postprocess);
+      metric, qnode_right, query_results, do_query_results_postprocess);
 
     // Refine the summary statistics.
     qnode_stat.summary_.StartReaccumulate();
