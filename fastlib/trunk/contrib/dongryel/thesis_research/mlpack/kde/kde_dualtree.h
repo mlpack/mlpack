@@ -1096,8 +1096,10 @@ class KdeSummary {
         correction.lo = std::max(correction.lo, 0.0);
         correction.hi = std::min(correction.hi, delta.pruned_);
 
+        // Technically, though not correct, just use the mid point of
+        // the Monte Carlo contribution.
         double modified_densities_l =
-          query_results->densities_l_[qpoint_index] + correction.lo +
+          query_results->densities_l_[qpoint_index] + correction.mid() +
           postponed.densities_l_;
         double left_hand_side = correction.width() * 0.5;
         double right_hand_side =
