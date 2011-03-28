@@ -162,7 +162,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Probability guarantee for the approximation of KDE."
   )(
     "absolute_error",
-    boost::program_options::value<double>()->default_value(0.0),
+    boost::program_options::value<double>()->default_value(1e-6),
     "Absolute error for the approximation of KDE per each query point."
   )(
     "relative_error",
