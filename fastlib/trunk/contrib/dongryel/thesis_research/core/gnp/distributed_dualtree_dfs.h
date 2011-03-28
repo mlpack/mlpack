@@ -127,6 +127,8 @@ class DistributedDualtreeDfs {
       TreeType *local_reference_node,
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees,
+      std::vector< std::vector< core::math::Range> > *
+      remote_priorities,
       std::vector<double> *extrinsic_prunes);
 
     /** @brief The collaborative way of exchanging items among all MPI
