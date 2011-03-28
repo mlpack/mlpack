@@ -265,7 +265,7 @@ template<typename ProblemType>
 template<typename IteratorMetricType>
 void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::Finalize() {
   return engine_->PostProcess_(
-           metric_, query_table_->get_tree(), query_results_);
+           metric_, query_table_->get_tree(), query_results_, true);
 }
 
 template<typename ProblemType>
