@@ -1145,7 +1145,7 @@ class KdeSummary {
       }
 
       // Otherwise, try series expansion.
-      else {
+      else if(global.kernel_aux().global().get_max_order() > 0) {
         return CanSummarizeSeriesExpansion_(
                  global, delta, squared_distance_range,
                  qnode, rnode, right_hand_side, query_results);
