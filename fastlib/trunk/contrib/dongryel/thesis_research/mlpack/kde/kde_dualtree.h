@@ -326,8 +326,11 @@ class KdeGlobal {
     bool ConsiderExtrinsicPrune(
       const core::math::Range &squared_distance_range) const {
 
-      return ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
-               *kernel_aux_, squared_distance_range);
+      return
+        kernel_aux_->kernel().EvalUnnormOnSq(
+          squared_distance_range.lo) <= absolute_error_
+        || ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
+          *kernel_aux_, squared_distance_range);
     }
 
     /** @brief Returns whether the computation is monochromatic or
