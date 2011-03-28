@@ -33,7 +33,7 @@ set_target_properties(sparse_test PROPERTIES
 )
 # link dependencies of test executable
 target_link_libraries(sparse_test
-#   sparse
+   sparse
    fastlib
    ${TRILINOS_LIBS}
 )

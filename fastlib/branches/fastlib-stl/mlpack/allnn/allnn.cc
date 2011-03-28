@@ -8,7 +8,7 @@
  */
 
 #include "allnn.h"
-#include "fastlib/fx/io.h"
+#include <fastlib/fx/io.h>
 
 using namespace mlpack;
 using namespace mlpack::allnn;

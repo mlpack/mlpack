@@ -1,4 +1,4 @@
-/* MLPACK 0.2
+/* MLPACK 0.2 
  *
  * Copyright (c) 2008, 2009 Alexander Gray,
  *                          Garry Boyer,

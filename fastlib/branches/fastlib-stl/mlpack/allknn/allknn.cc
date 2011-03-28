@@ -6,7 +6,7 @@
  */
 
 #include "allknn.h"
-
+#include "fastlib/fx/io.h"
 using namespace mlpack::allknn;
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -49,7 +49,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::startTimer("tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -64,7 +64,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -100,7 +100,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::startTimer("tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -110,7 +110,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -145,7 +145,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.fill(DBL_MAX);
   
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::startTimer("tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -161,7 +161,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -193,7 +193,7 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::startTimer("tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -203,7 +203,7 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
       leaf_size_, old_from_new_references_);
   
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::stopTimer("tree_building");
 }
   
 /**
@@ -503,7 +503,7 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
  */
 void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                               arma::vec& distances) {
-  fx_timer_start(module_, "computing_neighbors");
+  IO::startTimer("computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
     if (query_tree_)
@@ -541,7 +541,7 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 
-  fx_timer_stop(module_, "computing_neighbors");
+  IO::stopTimer("computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_elem);
@@ -568,3 +568,14 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 } // ComputeNeighbors
+
+void AllkNN::loadDocumentation() {
+	const char* rootNode = "allnn";
+	IO::add(rootNode, "Performs dual-tree all-k-nearest-neighbors computation.");
+	
+    IO::add<int>("leaf_size", "The maximum number of points to store at a leaf.", rootNode);
+    IO::add("tree_building", "Time spent building the kd-tree.", rootNode);
+    IO::add("knns", "K-nearest neighbors initialization", rootNode);
+}
+  
+

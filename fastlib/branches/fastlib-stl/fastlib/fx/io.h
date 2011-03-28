@@ -85,6 +85,8 @@ namespace mlpack {
       static void printFatal(const char* msg);
       /* Prints a notification */
       static void printNotify(const char* msg);
+      /* Prints a warning */
+      static void printWarn(const char* msg);
       
       /* Initializes a timer, available like a normal value specified on the command line.  
           Timers are of type timval, as defined in sys/time.h*/

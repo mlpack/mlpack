@@ -215,6 +215,10 @@ class AllkNN {
   void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                         arma::vec& distances);
 
+  /***
+  *  Loads the documentation for this class.
+  */
+  static void loadDocumentation();
 }; // class AllkNN
 
 }; // namespace allknn

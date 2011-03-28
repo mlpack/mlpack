@@ -69,7 +69,6 @@ class TestAllNN {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }
-    //std::cout << IO::getValue<timeval>("allnn/dual_tree_computation").tv_usec << std::endl;
     
     Destruct();
   }
@@ -92,6 +91,5 @@ int main(int argc, char *argv[]) {
   AllNN::loadDocumentation();
   IO::parseCommandLine(argc, argv);
   test.TestAll();
-  std::cout << "Once only..." << std::endl;
   std::cout << IO::getValue<timeval>("allnn/dual_tree_computation").tv_usec << std::endl;
 }

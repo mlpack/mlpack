@@ -7,6 +7,11 @@
 #include <string>
 #include <sys/time.h>
 
+#define BASH_RED "\033[0;31m"
+#define BASH_GREEN "\033[0;32m"
+#define BASH_YELLOW "\033[1:33m"
+#define BASH_CLEAR "\033[0m"
+
 using namespace mlpack;
 
 /* For clarity, we will alias boost's namespace */
@@ -91,15 +96,18 @@ void IO::parseCommandLine(int argc, char** line) {
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
-    std::cout << "[FATAL] " << ex.what() << std::endl;
+    printFatal(ex.what());
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
   
   //Now, warn the user if they missed any required options
   for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!checkValue((*iter).c_str())) //If a required option isn't there...
-      std::cout << "[WARN] Required option --" << *iter << " is undefined..." << std::endl;
+    if(!checkValue((*iter).c_str())) {//If a required option isn't there...
+      printWarn("Required option --");
+      printWarn((*iter).c_str());
+      printWarn(" is undefined...");
+    }
   
   //Default help message
   if(checkValue("help"))
@@ -120,15 +128,18 @@ void IO::parseStream(std::istream& stream) {
   try{
   po::store(po::parse_config_file(stream, desc), vmap);
   }catch(std::exception& ex) {
-    std::cout << "[FATAL] " << ex.what() << std::endl;
+    printFatal(ex.what());
   }
   //Flush the buffer, make s ure changes are propgated to vmap
   po::notify(vmap);
   
   //Now, warn the user if they missed any required options
   for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!checkValue((*iter).c_str())) //If a required option isn't there...
-      std::cout << "[WARN] Required option --" << *iter << " is undefined..." << std::endl;
+    if(!checkValue((*iter).c_str())) {//If a required option isn't there...
+      printWarn("Required option --");
+      printWarn((*iter).c_str());
+      printWarn(" is undefined...");
+    }
 }
 
 //Prints the current state, right now just for debugging purposes
@@ -138,12 +149,16 @@ void IO::print() {
 
 //Prints an error message
 void IO::printFatal(const char* msg) {
-  cout << "[FATAL] " << msg << endl;
+  cout << BASH_RED << "[FATAL] " << BASH_CLEAR << msg << endl;
 }
 
 //Prints a notification
 void IO::printNotify(const char* msg) {
-  cout << "[NOTIFY] " << msg << endl;
+  cout << BASH_YELLOW << "[NOTIFY] " << BASH_CLEAR << msg << endl;
+}
+
+void IO::printWarn(const char* msg) {
+  cout << BASH_YELLOW << "[WARN]" << BASH_YELLOW << msg << endl;
 }
 
 /* Initializes a timer, available like a normal value specified on the command line.  

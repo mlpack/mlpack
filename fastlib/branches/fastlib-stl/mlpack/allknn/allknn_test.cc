@@ -5,6 +5,7 @@
 
 #include "allknn.h"
 #include <fastlib/base/test.h>
+#include <fastlib/fx/io.h>
 
 #include <armadillo>
 
@@ -19,7 +20,7 @@ class TestAllkNN {
 //    allknn_ = new AllkNN();
 //    naive_  = new AllkNN();
     if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
-      FATAL("Unable to load test dataset.");
+      IO::printFatal("Unable to load test dataset.");
   }
 
   void Destruct() {
@@ -35,8 +36,8 @@ class TestAllkNN {
     arma::mat naive_references(data_for_tree_);
 
     allknn_ = new AllkNN(dual_query, dual_references, 20, 5);
-    naive_ = new AllkNN(naive_query, naive_references, 1 /* leaf_size ignored
-        */, 5, AllkNN::NAIVE);
+    naive_ = new AllkNN(naive_query, naive_references, 1 /* leaf_size ignored */,
+	 5, AllkNN::NAIVE);
  
     arma::Col<index_t> resulting_neighbors_tree;
     arma::vec distances_tree;
@@ -51,7 +52,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    NOTIFY("AllkNN test 1 passed.");
+    IO::printNotify("AllkNN test 1 passed.");
     Destruct();
   }
 
@@ -76,7 +77,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    NOTIFY("AllkNN test 2 passed.");
+    IO::printNotify("AllkNN test 2 passed.");
     Destruct();
   }
 
@@ -101,7 +102,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    NOTIFY("AllkNN test 3 passed.");
+    IO::printNotify("AllkNN test 3 passed.");
     Destruct();
   }
 
@@ -120,9 +121,7 @@ class TestAllkNN {
 }; // namespace allknn
 }; // namespace mlpack
 
-int main(int argc, char* argv[]) {
-  fx_root = fx_init(argc, argv, NULL);
+int main(int argc, char* argv[]) { 
   TestAllkNN test;
   test.TestAll();
-  fx_done(fx_root);
 }
