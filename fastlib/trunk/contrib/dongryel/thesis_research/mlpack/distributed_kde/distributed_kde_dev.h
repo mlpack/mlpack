@@ -75,9 +75,9 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
     printf("Spent %g seconds in computation.\n", timer.elapsed());
   }
   printf("Process %d's deterministic prunes: %d, probabilistic prunes: %d.\n",
-	 world_->rank(),
-	 distributed_dualtree_dfs.num_deterministic_prunes(),
-	 distributed_dualtree_dfs.num_probabilistic_prunes());
+         world_->rank(),
+         distributed_dualtree_dfs.num_deterministic_prunes(),
+         distributed_dualtree_dfs.num_probabilistic_prunes());
 }
 
 template<typename DistributedTableType, typename KernelAuxType>
