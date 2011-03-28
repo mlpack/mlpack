@@ -3,12 +3,6 @@
 
 #include "kernel.h"
 
-Kernel::Kernel() {
-}
-
-Kernel::~Kernel() {
-}
-
 //------------------Linear Kernel------------------//
 
 LinearKernel::LinearKernel() {

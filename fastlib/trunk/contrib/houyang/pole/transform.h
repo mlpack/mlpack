@@ -13,8 +13,6 @@ class Transform {
  public:
   Transform();
   ~Transform();
-  virtual void SampleW() {};
-  virtual void Tr(Svector *src, Svector *dest) {};
 };
 
 /////////////////////////////////////////////
@@ -29,7 +27,7 @@ class FourierRBFTransform : public Transform {
   FourierRBFTransform(size_t d, size_t D);
   ~FourierRBFTransform();
   void SampleW();
-  void Tr(Svector *src, Svector *dest);
+  void Tr(const Svector &src, Svector &dest) const;
 };
 
 #endif

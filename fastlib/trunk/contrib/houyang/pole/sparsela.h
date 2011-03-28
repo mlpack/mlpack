@@ -9,11 +9,9 @@
 #include <vector>
 #include <cmath>
 
-using namespace std;
+#include "datatypes.h"
 
-typedef unsigned long T_IDX; // type for feature indices
-typedef double        T_VAL; // type for feature values
-typedef float         T_LBL; // type for lables
+using namespace std;
 
 //-------------------------Feature----------------------------//
 class Feature {
@@ -33,34 +31,37 @@ class Svector {
   vector<Feature> Fs_; // features
  public:
   Svector();
-  Svector(const vector<Feature>& Fs);
+  Svector(const vector<Feature> &Fs);
   Svector(T_IDX n_f, T_VAL c);
   ~Svector();
   // basics
   size_t Size() const;
   void SetAll(T_VAL v);
   void SetAllResize(T_IDX n_f, T_VAL v);
-  void PushBack(const Feature& F);
-  void InsertOne(T_IDX p, const Feature& F);
+  void Resize(T_IDX n_f);
+  void Reserve(T_IDX n_f);
+  void PushBack(const Feature &F);
+  void InsertOne(T_IDX p, const Feature &F);
   void EraseOne(T_IDX p);
   void Clear();
   void Print();
   // linear algebra
-  Svector& operator=(const Svector& x);
-  Svector& operator+=(const Svector& x);
-  Svector& operator-=(const Svector& x);
-  Svector& operator*=(const Svector& x);
+  Svector& operator=(const Svector &x);
+  Svector& operator+=(const Svector &x);
+  Svector& operator-=(const Svector &x);
+  Svector& operator*=(const Svector &x);
   Svector& operator*=(double a);
   Svector& operator/=(double a);
   Svector& operator^=(double p);
-  void   SparseAddExpertOverwrite(double a, const Svector& x);  
-  void   SparseSubtract(const Svector& p, const Svector& n);
-  double SparseDot(const Svector& x) const;
-  void   SparseExpMultiplyOverwrite(const Svector& x);
-  void   SparseNegExpMultiplyOverwrite(const Svector& x);
+  Feature& operator[](T_IDX);
+  void   SparseAddExpertOverwrite(double a, const Svector &x);  
+  void   SparseSubtract(const Svector& p, const Svector &n);
+  double SparseDot(const Svector &x) const;
+  void   SparseExpMultiplyOverwrite(const Svector &x);
+  void   SparseNegExpMultiplyOverwrite(const Svector &x);
   // metrics
   double SparseSqL2Norm() const;
-  double SparseSqEuclideanDistance(const Svector& x) const;
+  double SparseSqEuclideanDistance(const Svector &x) const;
   // misc
   void   Shrink(double threshold);
 };
@@ -73,11 +74,11 @@ class Example : public Svector{
   string ud_; // user defined info
  public:
   Example();
-  Example(const vector<Feature>& Fs, T_LBL y);
-  Example(const vector<Feature>& Fs, T_LBL y, const string& ud);
+  Example(const vector<Feature> &Fs, T_LBL y);
+  Example(const vector<Feature> &Fs, T_LBL y, const string &ud);
   ~Example();
 
-  Example& operator=(const Example& x);
+  Example &operator=(const Example &x);
   void Clear();
   void Print();
 };
