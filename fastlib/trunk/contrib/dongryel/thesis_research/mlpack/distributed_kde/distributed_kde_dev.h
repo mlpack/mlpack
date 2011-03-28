@@ -198,7 +198,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The number of work items to dequeue per process."
   )(
     "prescale",
-    boost::program_options::value<std::string>()->default_value("standardize"),
+    boost::program_options::value<std::string>()->default_value("none"),
     "OPTIONAL scaling option. One of:\n"
     "  none, hypercube, standardize"
   );
