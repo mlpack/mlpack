@@ -29,8 +29,12 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   // one node
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
+  else if(IO::checkValue("leaf_size"))
+    leaf_size_ = IO::getValue<index_t>("leaf_size");
   else
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = 20;
+  
+  
 
   // Make sure the leaf size is valid
   DEBUG_ASSERT(leaf_size_ > 0);
@@ -39,7 +43,10 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
 
   // K-nearest neighbors initialization
-  knns_ = fx_param_int(module_, "knns", 5);
+   if(IO::checkValue("knns"))
+    knns_ = IO::getValue<index_t>("knns");
+  else
+    knns_ = 5;
 
   // Initialize the list of nearest neighbor candidates
   neighbor_indices_.set_size(queries_.n_cols * knns_);
@@ -83,14 +90,19 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   // Get the leaf size from the module
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
+  else if(IO::checkValue("leaf_size"))
+    leaf_size_ = IO::getValue<index_t>("leaf_size");
   else
-    leaf_size_ = fx_param_int(module_, "leaf_size", 20);
+    leaf_size_ = 20;
 
   // Make sure the leaf size is valid
   DEBUG_ASSERT(leaf_size_ > 0);
 
   // K-nearest neighbors initialization
-  knns_ = fx_param_int(module_, "knns", 5);
+  if(IO::checkValue("knns"))
+    knns_ = IO::getValue<index_t>("knns");
+  else
+    knns_ = 5;
 
   // Initialize the list of nearest neighbor candidates
   neighbor_indices_.set_size(references_.n_cols * knns_);
