@@ -86,7 +86,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
           query_process_id].push_back(
             std::pair<int, int>(
               local_reference_node->begin(), local_reference_node->count()));
-	(*squared_distance_ranges)[query_process_id].push_back(
+        (*squared_distance_ranges)[query_process_id].push_back(
           squared_distance_range);
       }
     }
@@ -95,13 +95,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->left(),
-        essential_reference_subtrees, squared_distance_ranges, 
-	extrinsic_prunes);
+        essential_reference_subtrees, squared_distance_ranges,
+        extrinsic_prunes);
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->right(),
-        essential_reference_subtrees, squared_distance_ranges, 
-	extrinsic_prunes);
+        essential_reference_subtrees, squared_distance_ranges,
+        extrinsic_prunes);
     }
     return;
   }
@@ -150,7 +150,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   std::vector< std::vector< std::pair<int, int> > >
   essential_reference_subtrees(world_->size());
   std::vector< std::vector< core::math::Range > >
-  remote_priorities( world_->size() );
+  remote_priorities(world_->size());
   std::vector<double> extrinsic_prunes_broadcast(world_->size(), 0.0);
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
@@ -208,8 +208,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             query_table_->local_table()->get_tree(),
             boost::make_tuple<int, int, int>(
               i, reference_frontier[j].first,
-              reference_frontier[j].second), 
-	    - local_priorities[i][j].mid()));
+              reference_frontier[j].second),
+            - local_priorities[i][j].mid()));
       }
       total_computation_frontier_size += reference_frontier.size();
     }
