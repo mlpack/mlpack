@@ -17,11 +17,11 @@ class OGDT : public Learner {
     size_t id_;
     OGDT<TTransform> *Lp_;
   };
-  TTransform T_;
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
  private:
+  TTransform T_; // for random features
   double eta0_, t_init_;
   pthread_barrier_t barrier_msg_all_sent_;
   pthread_barrier_t barrier_msg_all_used_;
@@ -32,7 +32,7 @@ class OGDT : public Learner {
  private:
   static void* OgdTThread(void *par);
   void OgdTCommUpdate(size_t tid);
-  void MakeLog(size_t tid, Example *x, double pred_val);
+  void MakeLog(size_t tid, const Svector &x, T_LBL y, double pred_val);
   void SaveLog();
 };
 
@@ -68,6 +68,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
   Example* exs[Lp->mb_size_];
   Svector uv; // update vector
   double ub = 0.0; // for bias
+  Svector ext; // random feature
 
   while (true) {
     switch (Lp->t_state_[tid]) {
@@ -103,11 +104,12 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (size_t b = 0; b<Lp->mb_size_; b++) {
+        Lp->T_.Tr(*exs[b], ext);
 	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
-						*exs[b], Lp->b_pool_[tid]);
-	Lp->MakeLog(tid, exs[b], pred_val);
+						ext, Lp->b_pool_[tid]);
+	Lp->MakeLog(tid, ext, exs[b]->y_, pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
-	uv.SparseAddExpertOverwrite(update, *exs[b]);
+	uv.SparseAddExpertOverwrite(update, ext);
         ub += update;
       }
       // update bias
@@ -180,10 +182,10 @@ void OGDT<TTransform>::Test() {
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::MakeLog(size_t tid, Example *x, double pred_val) {
+void OGDT<TTransform>::MakeLog(size_t tid, const Svector &x, T_LBL y, double pred_val) {
   if (calc_loss_) {
     // Calc loss
-    t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
+    t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)y);
     if (reg_type_ == 2 && reg_factor_ != 0) {
       //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
       t_loss_[tid] = t_loss_[tid] + 
@@ -191,9 +193,9 @@ void OGDT<TTransform>::MakeLog(size_t tid, Example *x, double pred_val) {
     }
     // Calc # of misclassifications
     if (type_ == "classification") {
-      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], *x, b_pool_[tid]);
-      //cout << x->y_ << " : " << pred_lbl << endl;
-      if (pred_lbl != x->y_) {
+      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], x, b_pool_[tid]);
+      //cout << y << " : " << pred_lbl << endl;
+      if (pred_lbl != y) {
 	t_err_[tid] =  t_err_[tid] + 1;
       }
     }

@@ -33,7 +33,7 @@ Svector::Svector() {
 //////////////////////////////////////////////
 // Create a sparse vector from given features
 //////////////////////////////////////////////
-Svector::Svector(const vector<Feature>& Fs) : Fs_(Fs) {
+Svector::Svector(const vector<Feature> &Fs) : Fs_(Fs) {
 }
 
 ////////////////////////////////////////////
@@ -65,7 +65,7 @@ size_t Svector::Size() const {
 void Svector::SetAll(T_VAL v) {
   T_IDX sz = Fs_.size();
   for (T_IDX i=0; i<sz; i++) {
-    Fs_[i] = Feature(i, v); // idx starts from 1
+    Fs_[i] = Feature(i, v);
   }
 }
 
@@ -75,21 +75,38 @@ void Svector::SetAll(T_VAL v) {
 void Svector::SetAllResize(T_IDX n_f, T_VAL v) {
   Fs_.resize(n_f);
   for (T_IDX i=0; i<n_f; i++) {
-    Fs_[i] = Feature(i, v); // idx starts from 1
+    Fs_[i] = Feature(i, v);
   }
+}
+
+//////////////////////////////////////
+// Set to be a vector of given length
+//////////////////////////////////////
+void Svector::Resize(T_IDX n_f) {
+  Fs_.resize(n_f);
+  for (T_IDX i=0; i<n_f; i++) {
+    Fs_[i] = Feature(i, 0.0);
+  }
+}
+
+//////////////////////////////////////
+// Resverve memory for a given length
+//////////////////////////////////////
+void Svector::Reserve(T_IDX n_f) {
+  Fs_.reserve(n_f);
 }
 
 ///////////////////////////////
 // Push one feature at the end
 ///////////////////////////////
-void Svector::PushBack(const Feature& F) {
+void Svector::PushBack(const Feature &F) {
   Fs_.push_back(F);
 }
 
 ///////////////////////////////////////////
 // Insert one feature at a given position p
 ///////////////////////////////////////////
-void Svector::InsertOne(T_IDX p, const Feature& F) {
+void Svector::InsertOne(T_IDX p, const Feature &F) {
   Fs_.insert(Fs_.begin() + p, F);
 }
 
@@ -125,7 +142,7 @@ void Svector::Print() {
 //////////////////////////////////
 // Copy from a given sparse vector
 //////////////////////////////////
-Svector& Svector::operator=(const Svector& v) {
+Svector& Svector::operator=(const Svector &v) {
   Fs_ = v.Fs_;
   return *this;
 }
@@ -133,7 +150,7 @@ Svector& Svector::operator=(const Svector& v) {
 ///////////////////////////////
 // Sparse vector add: w += x
 ///////////////////////////////
-Svector& Svector::operator+=(const Svector& x) {
+Svector& Svector::operator+=(const Svector &x) {
   if (x.Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return *this;
   }
@@ -173,7 +190,7 @@ Svector& Svector::operator+=(const Svector& x) {
 ////////////////////////////////////////
 // Sparse vector subtraction: w -= x
 ////////////////////////////////////////
-Svector& Svector::operator-=(const Svector& x) {
+Svector& Svector::operator-=(const Svector &x) {
   if (x.Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return *this;
   }
@@ -267,7 +284,7 @@ Svector& Svector::operator/=(double a) {
 //////////////////////////////////////////
 // Pointwise sparse multiply: w .* = x
 //////////////////////////////////////////
-Svector& Svector::operator*=(const Svector& x) {
+Svector& Svector::operator*=(const Svector &x) {
   if (Fs_.empty()) {
     return *this; // w remains unchanged
   }
@@ -332,11 +349,17 @@ Svector& Svector::operator^=(double p) {
   }
 }
 
+/////////////////////////////////
+// Overload position operator []
+/////////////////////////////////
+Feature& Svector::operator[](T_IDX p) {
+  return Fs_[p];
+}
 
 /////////////////////////////
 // Sparse Dot Product: w^T x
 /////////////////////////////
-double Svector::SparseDot(const Svector& x) const {
+double Svector::SparseDot(const Svector &x) const {
   if (Fs_.empty() || x.Fs_.empty()) {
     return 0.0;
   }
@@ -377,7 +400,7 @@ double Svector::SparseSqL2Norm() const {
 ///////////////////////////////////////////
 // Sparse vector scaled add: w += a * x
 ///////////////////////////////////////////
-void Svector::SparseAddExpertOverwrite(double a, const Svector& x) {
+void Svector::SparseAddExpertOverwrite(double a, const Svector &x) {
   size_t nz_x = x.Fs_.size();
   size_t ct_w = 0, ct_x = 0;
 
@@ -421,7 +444,7 @@ void Svector::SparseAddExpertOverwrite(double a, const Svector& x) {
 ////////////////////////////////////////
 // Sparse vector subtraction: w<= p - n
 ////////////////////////////////////////
-void Svector::SparseSubtract(const Svector& p, const Svector& n) {
+void Svector::SparseSubtract(const Svector &p, const Svector &n) {
   /*
   *this = p;
   *this -= n;
@@ -518,7 +541,7 @@ void Svector::SparseSubtract(const Svector& p, const Svector& n) {
 ///////////////////////////////////////////////////////////
 // Sparse vector exponential dot multiply: w<= w .* exp(x)
 ///////////////////////////////////////////////////////////
-void Svector::SparseExpMultiplyOverwrite(const Svector& x) {
+void Svector::SparseExpMultiplyOverwrite(const Svector &x) {
   if (Fs_.size() == 0 || x.Fs_.size() == 0) {
     return; // w remains unchanged
   }
@@ -550,7 +573,7 @@ void Svector::SparseExpMultiplyOverwrite(const Svector& x) {
 ///////////////////////////////////////////////////////////
 // Sparse vector exponential dot multiply: w<= w .* exp(-x)
 ///////////////////////////////////////////////////////////
-void Svector::SparseNegExpMultiplyOverwrite(const Svector& x) {
+void Svector::SparseNegExpMultiplyOverwrite(const Svector &x) {
   if (Fs_.empty() || x.Fs_.empty()) {
     return; // w remains unchanged
   }
@@ -582,7 +605,7 @@ void Svector::SparseNegExpMultiplyOverwrite(const Svector& x) {
 //////////////////////////////////////////////////
 // Sparse squared Euclidean distance: \|w-x\|_2^2
 //////////////////////////////////////////////////
-double Svector::SparseSqEuclideanDistance(const Svector& x) const {
+double Svector::SparseSqEuclideanDistance(const Svector &x) const {
   if (x.Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return SparseSqL2Norm();
   }
@@ -642,14 +665,14 @@ Example::Example() : y_(0), in_use_(false), ud_("") {
 /////////////////////////////////////////////////////////
 // Create an unused example from given features and label
 ////////////////////////////////////////////////////////
-Example::Example(const vector<Feature>& Fs, T_LBL y) : 
+Example::Example(const vector<Feature> &Fs, T_LBL y) : 
   Svector(Fs), y_(y), in_use_(false), ud_("") {
 }
 
 /////////////////////////////////////////////////////////
 // Create an unused example from given features and label
 ////////////////////////////////////////////////////////
-Example::Example(const vector<Feature>& Fs, T_LBL y, const string& ud) : 
+Example::Example(const vector<Feature> &Fs, T_LBL y, const string &ud) : 
   Svector(Fs), y_(y), in_use_(false), ud_(ud) {
 }
 
@@ -662,7 +685,7 @@ Example::~Example() {
 ////////////////////////////
 // Copy from a given example
 ////////////////////////////
-Example& Example::operator=(const Example& x) {
+Example& Example::operator=(const Example &x) {
   Fs_ = x.Fs_;
   y_ = x.y_;
   in_use_ = x.in_use_;

@@ -176,11 +176,22 @@ bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
   }
 }
 
-double Learner::LinearPredictBias(const Svector& w, Example& x, const double bias) {
+double Learner::LinearPredictBias(const Svector &w, const Example &x, double bias) const {
   return x.SparseDot(w) + bias;
 }
 
-T_LBL Learner::LinearPredictBiasLabelBinary(const Svector& w, Example& x, const double bias) {
+double Learner::LinearPredictBias(const Svector &w, const Svector &x, double bias) const {
+  return x.SparseDot(w) + bias;
+}
+
+T_LBL Learner::LinearPredictBiasLabelBinary(const Svector &w, const Example &x, double bias) const {
+  if (x.SparseDot(w) + bias > 0.0)
+    return (T_LBL)1;
+  else
+    return (T_LBL)-1;
+}
+
+T_LBL Learner::LinearPredictBiasLabelBinary(const Svector &w, const Svector &x, double bias) const {
   if (x.SparseDot(w) + bias > 0.0)
     return (T_LBL)1;
   else

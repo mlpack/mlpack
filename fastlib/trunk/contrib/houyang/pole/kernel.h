@@ -3,21 +3,14 @@
 
 #include "sparsela.h"
 
-class Kernel {
- public:
-  string type_;
- public:
-  Kernel();
-  ~Kernel();
-  
-  virtual double Eval(const Svector& a, const Svector& b) = 0;
-};
-
 /////////////////////////////////////////////
 // Linear Kernel
 // k(a,b) = a^T * b
 /////////////////////////////////////////////
-class LinearKernel : public Kernel {
+//class LinearKernel : public Kernel {
+class LinearKernel {
+ public:
+  string type_;
  public:
   LinearKernel();
   ~LinearKernel();
@@ -28,8 +21,10 @@ class LinearKernel : public Kernel {
 // Gaussian RBF Kernel
 // k(a,b) = exp(-||a-b||_2^2/(2sigma^2))
 /////////////////////////////////////////////
-class RBFKernel : public Kernel {
+//class RBFKernel : public Kernel {
+class RBFKernel {
  private:
+  string type_;
   double sigma_;
  public:
   RBFKernel();
