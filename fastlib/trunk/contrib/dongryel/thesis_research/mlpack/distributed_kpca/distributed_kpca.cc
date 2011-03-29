@@ -11,6 +11,7 @@
 #include "core/tree/gen_kdtree.h"
 #include "core/math/math_lib.h"
 #include "mlpack/distributed_kpca/distributed_kpca_dev.h"
+#include "mlpack/distributed_kpca/kpca_result.h"
 
 template<typename KernelAuxType>
 void StartComputation(
@@ -19,7 +20,7 @@ void StartComputation(
 
   // Tree type: hard-coded for a kd-tree.
   typedef core::table::DistributedTable <
-  core::tree::GenKdTree < core::tree::EmptyStatistic > > DistributedTableType;
+  core::tree::GenKdTree < core::tree::AbstractStatistic > > DistributedTableType;
 
   // Parse arguments for kernel PCA.
   mlpack::distributed_kpca::DistributedKpcaArguments <
