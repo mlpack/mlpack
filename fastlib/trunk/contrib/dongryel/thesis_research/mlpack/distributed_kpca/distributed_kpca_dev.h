@@ -97,6 +97,13 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   std::vector<bool> converged(
     arguments_in.query_table_->local_table()->n_entries(), false);
 
+  // Determine the number of standard deviation coverage.
+  double cumulative_probability = arguments_in.probability_ +
+                                  0.5 * (1.0 - arguments_in.probability_);
+  int num_standard_deviations =
+    (cumulative_probability > 0.999) ?
+    3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
+
   // Call the computation.
   const int num_random_fourier_features = 20;
   int num_iterations = 0;
@@ -166,7 +173,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       }
 
       double left_hand_side =
-        1.64 * sqrt(local_kernel_sum[i].sample_mean_variance());
+        num_standard_deviations *
+        sqrt(local_kernel_sum[i].sample_mean_variance());
       double right_hand_side =
         arguments_in.relative_error_ * local_kernel_sum[i].sample_mean();
       converged[i] = (left_hand_side <= right_hand_side);
@@ -175,8 +183,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       }
       all_local_query_converged = all_local_query_converged && converged[i];
     }
-    printf("Process %d has %d converged queries.\n", world_->rank(),
-           converged_count);
     num_iterations++;
 
     // Do an all-reduction to find out we are all done.
@@ -191,6 +197,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   if(world_->rank() == 0) {
     printf("Spent %g seconds in computation.\n", timer.elapsed());
   }
+
+  // Export the results.
+  result_out->Init(1, arguments_in.query_table_->n_entries());
+  result_out->Export(num_standard_deviations, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -218,6 +228,11 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   boost::program_options::options_description desc("Available options");
   desc.add_options()(
     "help", "Print this information."
+  )(
+    "kpca_components_out",
+    boost::program_options::value<std::string>()->default_value(
+      "kpca_components.csv"),
+    "OPTIONAL output file for KPCA components."
   )(
     "references_in",
     boost::program_options::value<std::string>()->default_value(
@@ -500,6 +515,10 @@ bool DistributedKpcaArgumentParser::ParseArguments(
   if(world.rank() == 0) {
     std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
   }
+
+  // Parse the KPCA component output file.
+  arguments_out->kpca_components_out_ =
+    vm["kpca_components_out"].as<std::string>();
 
   return false;
 }

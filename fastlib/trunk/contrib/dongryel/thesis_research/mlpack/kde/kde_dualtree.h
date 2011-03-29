@@ -703,7 +703,7 @@ class KdeResult {
       }
     }
 
-    void Print(const std::string &file_name) {
+    void Print(const std::string &file_name) const {
       FILE *file_output = fopen(file_name.c_str(), "w+");
       for(unsigned int i = 0; i < densities_.size(); i++) {
         fprintf(file_output, "%g %g %g %g\n", densities_l_[i],

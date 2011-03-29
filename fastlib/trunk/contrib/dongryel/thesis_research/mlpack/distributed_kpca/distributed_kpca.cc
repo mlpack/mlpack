@@ -1,4 +1,4 @@
-/** @file distributed_kernel_pca.cc
+/** @file distributed_kpca.cc
  *
  *  The driver for the distributed kernel PCA.
  *
@@ -20,29 +20,30 @@ void StartComputation(
 
   // Tree type: hard-coded for a kd-tree.
   typedef core::table::DistributedTable <
-  core::tree::GenKdTree < core::tree::AbstractStatistic > > DistributedTableType;
+  core::tree::GenKdTree <
+  core::tree::AbstractStatistic > > DistributedTableType;
 
   // Parse arguments for kernel PCA.
   mlpack::distributed_kpca::DistributedKpcaArguments <
-  DistributedTableType > distributed_kernel_pca_arguments;
+  DistributedTableType > distributed_kpca_arguments;
   if(mlpack::distributed_kpca::
       DistributedKpcaArgumentParser::ParseArguments(
-        world, vm, &distributed_kernel_pca_arguments)) {
+        world, vm, &distributed_kpca_arguments)) {
     return;
   }
 
   // Instantiate a distributed kernel PCA object.
   mlpack::distributed_kpca::DistributedKpca <
   DistributedTableType, KernelType > distributed_kernel_pca_instance;
-  distributed_kernel_pca_instance.Init(world, distributed_kernel_pca_arguments);
+  distributed_kernel_pca_instance.Init(world, distributed_kpca_arguments);
 
   // Compute the result.
   mlpack::distributed_kpca::KpcaResult kernel_pca_result;
   distributed_kernel_pca_instance.Compute(
-    distributed_kernel_pca_arguments, &kernel_pca_result);
+    distributed_kpca_arguments, &kernel_pca_result);
 
   // Output the kernel PCA result to the file.
-
+  kernel_pca_result.Print(distributed_kpca_arguments.kpca_components_out_);
 }
 
 int main(int argc, char *argv[]) {

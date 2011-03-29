@@ -6,8 +6,9 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_H
 #define MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_H
 
-#include <boost/program_options.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <boost/mpi/communicator.hpp>
+#include <boost/program_options.hpp>
 #include "core/table/distributed_table.h"
 #include "mlpack/distributed_kpca/distributed_kpca_arguments.h"
 #include "mlpack/distributed_kpca/kpca_result.h"
@@ -88,6 +89,8 @@ class DistributedKpca {
 
   private:
 
+    /** @brief The communicator.
+     */
     boost::mpi::communicator *world_;
 
     /** @brief The distributed query table.
@@ -98,6 +101,9 @@ class DistributedKpca {
      */
     DistributedTableType *reference_table_;
 
+    /** @brief The normal distribution object.
+     */
+    boost::math::normal normal_dist_;
 };
 }
 }
