@@ -69,26 +69,47 @@ class RandomFeature {
       } // end of looping over each random Fourier feature.
     }
 
-    template<typename TableType, typename KernelType>
-    static void Transform(
+    template<typename TableType>
+    static void SumTransform(
       const TableType &table_in,
-      const KernelType &kernel_in,
-      int num_random_fourier_features,
-      TableType *table_out) {
+      const std::vector< core::table::DensePoint > &random_variates,
+      core::table::DensePoint *sum_transformations) {
 
-      // The dimensionality of the new table is twice the requested
-      // number of random fourier features (cosine and sine bases).
-      table_out->Init(2 * num_random_fourier_features, table_in.n_entries());
-      std::vector< arma::vec > random_variates(num_random_fourier_features);
-      for(int i = 0; i < num_random_fourier_features; i++) {
+      int num_random_fourier_features = random_variates.size();
+      sum_transformations->Init(2 * num_random_fourier_features);
+      sum_transformations->SetZero();
 
-        // Draw a random Fourier feature.
-        kernel_in.DrawRandomVariate(
-          table_in.n_attributes(), & random_variates[i]);
+      // Build aliases.
+      std::vector< arma::vec > random_variate_aliases;
+      for(unsigned int i = 0; i < random_variates.size(); i++) {
+        core::table::DensePointToArmaVec(
+          random_variates[i], &(random_variate_aliases[i]));
       }
 
+      for(int i = 0; i < table_in.n_entries(); i++) {
+        arma::vec old_point;
+        table_in.get(i, &old_point);
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot(random_variate_aliases[j], old_point);
+          (*sum_transformations)[j] += cos(dot_product);
+          (*sum_transformations)[j + num_random_fourier_features] +=
+            sin(dot_product);
+        }
+      }
+    }
+
+    template<typename TableType, typename PointType>
+    static void Transform(
+      const TableType &table_in,
+      const std::vector< PointType > &random_variates,
+      bool normalize,
+      TableType *table_out) {
+
       // The normalization factor.
-      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
+      int num_random_fourier_features = random_variates.size();
+      table_out->Init(2 * num_random_fourier_features, table_in.n_entries());
+      double normalization_factor =
+        (normalize) ? (1.0 / sqrt(num_random_fourier_features)) : 1.0;
 
       for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec old_point;
@@ -102,6 +123,28 @@ class RandomFeature {
             sin(dot_product) * normalization_factor;
         }
       }
+    }
+
+    template<typename TableType, typename KernelType>
+    static void Transform(
+      const TableType &table_in,
+      const KernelType &kernel_in,
+      int num_random_fourier_features,
+      TableType *table_out) {
+
+      // The dimensionality of the new table is twice the requested
+      // number of random fourier features (cosine and sine bases).
+      std::vector< arma::vec > random_variates(num_random_fourier_features);
+      for(int i = 0; i < num_random_fourier_features; i++) {
+
+        // Draw a random Fourier feature.
+        kernel_in.DrawRandomVariate(
+          table_in.n_attributes(), & random_variates[i]);
+      }
+
+      // Compute the features.
+      Transform(
+        table_in, random_variates, true, table_out, (arma::vec *) NULL);
     }
 };
 }
