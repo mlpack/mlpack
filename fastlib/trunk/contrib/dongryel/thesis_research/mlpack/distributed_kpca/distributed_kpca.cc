@@ -13,7 +13,7 @@
 #include "mlpack/distributed_kpca/distributed_kpca_dev.h"
 #include "mlpack/distributed_kpca/kpca_result.h"
 
-template<typename KernelAuxType>
+template<typename KernelType>
 void StartComputation(
   boost::mpi::communicator &world,
   boost::program_options::variables_map &vm) {

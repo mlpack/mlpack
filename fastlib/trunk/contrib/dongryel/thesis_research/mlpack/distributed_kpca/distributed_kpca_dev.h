@@ -61,29 +61,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   world_ = &world_in;
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
-    is_monochromatic_ = true;
     query_table_ = reference_table_;
   }
   else {
-    is_monochromatic_ = false;
     query_table_ = arguments_in.query_table_;
   }
-
-  // Declare the global constants.
-  global_.Init(
-    reference_table_, query_table_, reference_table_->n_entries(),
-    (KernelType *) NULL, arguments_in.bandwidth_,
-    (typename GlobalType::MeanVariancePairListType *) NULL, is_monochromatic_,
-    arguments_in.relative_error_, arguments_in.absolute_error_,
-    arguments_in.probability_, false);
-  global_.set_effective_num_reference_points(
-    world_in, reference_table_, query_table_);
-}
-
-template<typename DistributedTableType, typename KernelType>
-void DistributedKpca<DistributedTableType, KernelType>::set_bandwidth(
-  double bandwidth_in) {
-  global_.set_bandwidth(bandwidth_in);
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
@@ -140,10 +122,6 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "memory_mapped_file_size",
     boost::program_options::value<unsigned int>(),
     "The size of the memory mapped file."
-  )(
-    "max_num_levels_to_serialize_in",
-    boost::program_options::value<int>()->default_value(20),
-    "The number of levels of subtrees to serialize at a given moment."
   )(
     "prescale",
     boost::program_options::value<std::string>()->default_value("none"),
@@ -204,15 +182,8 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     std::cerr << "Missing required --references_in.\n";
     exit(0);
   }
-  if((*vm)["kernel"].as<std::string>() != "gaussian" &&
-      (*vm)["kernel"].as<std::string>() != "epan") {
-    std::cerr << "We support only epan or gaussian for the kernel.\n";
-    exit(0);
-  }
-  if((*vm)["series_expansion_type"].as<std::string>() != "hypercube" &&
-      (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
-    std::cerr << "We support only hypercube or multivariate for the "
-              "series expansion type.\n";
+  if((*vm)["kernel"].as<std::string>() != "gaussian") {
+    std::cerr << "We support only gaussian for the kernel.\n";
     exit(0);
   }
   if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
@@ -230,20 +201,6 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   }
   if((*vm)["relative_error"].as<double>() < 0) {
     std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
-    exit(0);
-  }
-  if((*vm)["leaf_size"].as<int>() <= 0) {
-    std::cerr << "The --leaf_size needs to be a positive integer.\n";
-    exit(0);
-  }
-  if((*vm)["max_num_levels_to_serialize_in"].as<int>() <= 1) {
-    std::cerr << "The --max_num_levels_to_serialize_in needs to be " <<
-              "a positive integer greater than 1.\n";
-    exit(0);
-  }
-  if((*vm)["max_num_work_to_dequeue_per_stage_in"].as<int>() <= 0) {
-    std::cerr << "The --max_num_work_to_dequeue_per_stage_in needs to be " <<
-              "a positive integer.\n";
     exit(0);
   }
 
@@ -326,33 +283,6 @@ bool DistributedKpcaArgumentParser::ParseArguments(
   mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > *arguments_out) {
 
-  // A L2 metric to index the table to use.
-  arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
-
-  // Parse the top tree sample probability.
-  arguments_out->top_tree_sample_probability_ =
-    vm["top_tree_sample_probability"].as<double>();
-  if(world.rank() == 0) {
-    std::cout << "Sampling the number of points owned by each MPI process with "
-              "the probability of " <<
-              arguments_out->top_tree_sample_probability_ << "\n";
-  }
-
-  // Parse the densities out file.
-  arguments_out->densities_out_ = vm["densities_out"].as<std::string>();
-  if(vm.count("random_generate_n_entries") > 0) {
-    std::stringstream densities_out_sstr;
-    densities_out_sstr << vm["densities_out"].as<std::string>() <<
-                       world.rank();
-    arguments_out->densities_out_ = densities_out_sstr.str();
-  }
-
-  // Parse the leaf size.
-  arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
-  if(world.rank() == 0) {
-    std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
-  }
-
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
   if(vm.count("random_generate_n_entries") > 0) {
@@ -374,9 +304,6 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     new DistributedTableType();
   arguments_out->reference_table_->Init(
     reference_file_name, world);
-  arguments_out->reference_table_->IndexData(
-    *(arguments_out->metric_), world, arguments_out->leaf_size_,
-    arguments_out->top_tree_sample_probability_);
 
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
@@ -400,10 +327,6 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     arguments_out->query_table_->Init(query_file_name, world);
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
-    arguments_out->query_table_->IndexData(
-      *(arguments_out->metric_), world, arguments_out->leaf_size_,
-      arguments_out->top_tree_sample_probability_);
-    std::cout << "Finished building the query tree.\n";
   }
 
   // Parse the bandwidth.
@@ -434,27 +357,6 @@ bool DistributedKpcaArgumentParser::ParseArguments(
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   if(world.rank() == 0) {
     std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
-  }
-
-  // Parse the series expansion type.
-  arguments_out->series_expansion_type_ =
-    vm["series_expansion_type"].as<std::string>();
-  if(world.rank() == 0) {
-    std::cout << "Using the series expansion type: " <<
-              arguments_out->series_expansion_type_ << "\n";
-  }
-
-  // Parse the work parameters for the distributed engine.
-  arguments_out->max_num_levels_to_serialize_ =
-    vm["max_num_levels_to_serialize_in"].as<int>();
-  arguments_out->max_num_work_to_dequeue_per_stage_ =
-    vm["max_num_work_to_dequeue_per_stage_in"].as<int>();
-  if(world.rank() == 0) {
-    std::cout << "Serializing " << arguments_out->max_num_levels_to_serialize_
-              << " levels of the tree at a time.\n";
-    std::cout << "Dequeuing " <<
-              arguments_out->max_num_work_to_dequeue_per_stage_ <<
-              " items at a time from each process.\n";
   }
 
   return false;
