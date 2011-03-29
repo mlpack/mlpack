@@ -19,22 +19,22 @@ enum FileFormat {
 class Data {
  public:
   // input parameters
-  size_t n_source_;
+  T_IDX n_source_;
   string fn_;
   FILE   *fp_;
-  size_t port_;
+  T_IDX port_;
   bool   random_;
   // data properties
   vector<Example> EXs_; // examples
-  vector<size_t> rnd_i_; // index for randomly permuted examples
-  size_t used_ct_; // counter for number of times examples are used
+  vector<T_IDX> rnd_i_; // index for randomly permuted examples
+  T_IDX used_ct_; // counter for number of times examples are used
   // data file properties
   FileFormat ff_; 
-  size_t n_ln_; // number of lines of example file
+  T_IDX n_ln_; // number of lines of example file
   T_IDX max_ft_idx_; // max index of features
   // for svmlight format
-  size_t max_n_nz_ft_; // maximum number of non-0 features
-  size_t max_l_ln_; // maximum length of a text line
+  T_IDX max_n_nz_ft_; // maximum number of non-0 features
+  T_IDX max_l_ln_; // maximum length of a text line
   // data stream properties
  private:
   void InitFromSvmlight();
@@ -42,13 +42,13 @@ class Data {
   void InitFromArff();
   bool SorN(int c);
  public:
-  Data(string fn, size_t port, bool random);
-  size_t Size();
+  Data(string fn, T_IDX port, bool random);
+  T_IDX Size();
   bool ReadFileInfo();
   void ReadFromFile();
   void ReadFromPort();
   void RandomPermute();
-  Example* GetExample(size_t idx); 
+  Example* GetExample(T_IDX idx); 
   void Print();
 };
 

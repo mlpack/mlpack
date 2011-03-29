@@ -14,7 +14,7 @@ template <typename TTransform>
 class OGDT : public Learner {
  public:
   struct thread_par {
-    size_t id_;
+    T_IDX id_;
     OGDT<TTransform> *Lp_;
   };
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
@@ -31,8 +31,8 @@ class OGDT : public Learner {
   void Test();
  private:
   static void* OgdTThread(void *par);
-  void OgdTCommUpdate(size_t tid);
-  void MakeLog(size_t tid, const Svector &x, T_LBL y, double pred_val);
+  void OgdTCommUpdate(T_IDX tid);
+  void MakeLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val);
   void SaveLog();
 };
 
@@ -43,9 +43,9 @@ OGDT<TTransform>::OGDT() {
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::OgdTCommUpdate(size_t tid) {
+void OGDT<TTransform>::OgdTCommUpdate(T_IDX tid) {
   if (comm_method_ == 1) { // fully connected graph
-    for (size_t h=0; h<n_thread_; h++) {
+    for (T_IDX h=0; h<n_thread_; h++) {
       if (h != tid) {
 	w_pool_[tid] += m_pool_[h];
       }
@@ -63,7 +63,7 @@ void OGDT<TTransform>::OgdTCommUpdate(size_t tid) {
 template <typename TTransform>
 void* OGDT<TTransform>::OgdTThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
-  size_t tid = par->id_;
+  T_IDX tid = par->id_;
   OGDT* Lp = (OGDT *)par->Lp_;
   Example* exs[Lp->mb_size_];
   Svector uv; // update vector
@@ -73,7 +73,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
   while (true) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  //exs[b]->Print();
 	}
@@ -103,7 +103,7 @@ void* OGDT<TTransform>::OgdTThread(void *in_par) {
       }
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
         Lp->T_.Tr(*exs[b], ext);
 	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
 						ext, Lp->b_pool_[tid]);
@@ -158,7 +158,7 @@ void OGDT<TTransform>::Learn() {
   b_pool_.resize(n_thread_);
 
   thread_par pars[n_thread_];
-  for (size_t t = 0; t < n_thread_; t++) {
+  for (T_IDX t = 0; t < n_thread_; t++) {
     // init thread parameters and statistics
     pars[t].id_ = t;
     pars[t].Lp_ = this;
@@ -182,7 +182,7 @@ void OGDT<TTransform>::Test() {
 }
 
 template <typename TTransform>
-void OGDT<TTransform>::MakeLog(size_t tid, const Svector &x, T_LBL y, double pred_val) {
+void OGDT<TTransform>::MakeLog(T_IDX tid, const Svector &x, T_LBL y, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)y);
@@ -229,16 +229,16 @@ void OGDT<TTransform>::SaveLog() {
       fprintf(fp, "Log intervals: %zu. Number of logs: %zu\n\n", 
 	      LOG_->t_int_, n_log_);
       fprintf(fp, "Errors cumulated:\n");
-      for (size_t t=0; t<n_thread_; t++) {
-	for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX t=0; t<n_thread_; t++) {
+	for (T_IDX k=0; k<n_log_; k++) {
 	  fprintf(fp, "%zu", LOG_->err_[t][k]);
 	  fprintf(fp, " ");
 	}
 	fprintf(fp, ";\n");
       }
       fprintf(fp, "\n\nLoss cumulated:\n");
-      for (size_t t=0; t<n_thread_; t++) {
-	for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX t=0; t<n_thread_; t++) {
+	for (T_IDX k=0; k<n_log_; k++) {
 	  fprintf(fp, "%lf", LOG_->loss_[t][k]);
 	  fprintf(fp, " ");
 	}
@@ -249,7 +249,7 @@ void OGDT<TTransform>::SaveLog() {
 
     // final loss
     double t_l = 0.0;
-    for (size_t t = 0; t < n_thread_; t++) {
+    for (T_IDX t = 0; t < n_thread_; t++) {
       t_l += t_loss_[t];
       cout << "t"<< t << ": " << t_n_used_examples_[t] 
 	   << " samples processed. Loss: " << t_loss_[t]<< endl;
@@ -258,8 +258,8 @@ void OGDT<TTransform>::SaveLog() {
 
     // prediction accuracy for classifications
     if (type_ == "classification") {
-      size_t t_m = 0, t_s = 0;
-      for (size_t t = 0; t < n_thread_; t++) {
+      T_IDX t_m = 0, t_s = 0;
+      for (T_IDX t = 0; t < n_thread_; t++) {
 	t_m += t_err_[t];
 	t_s += t_n_used_examples_[t];
 	cout << "t"<< t << ": " << t_n_used_examples_[t] << 

@@ -2,7 +2,7 @@
 #include "opt_wm.h"
 
 struct thread_par {
-  size_t id_;
+  T_IDX id_;
   WM *Lp_;
 };
 
@@ -10,10 +10,10 @@ WM::WM() {
   cout << "---Distributed Weighted Majority---" << endl;
 }
 
-void WM::WmCommUpdate(size_t tid) {
+void WM::WmCommUpdate(T_IDX tid) {
   if (comm_method_ == 1) {
     if (opt_name_ == "dwm_i") {
-      for (size_t h=0; h<n_thread_; h++) {
+      for (T_IDX h=0; h<n_thread_; h++) {
         if (h != tid) {
 	  w_pool_[tid] *= m_pool_[h];
         }
@@ -21,7 +21,7 @@ void WM::WmCommUpdate(size_t tid) {
       w_pool_[tid] ^= 1.0/n_thread_;
     }
     else if (opt_name_ == "dwm_a") {
-      for (size_t h=0; h<n_thread_; h++) {
+      for (T_IDX h=0; h<n_thread_; h++) {
         if (h != tid) {
           w_pool_[tid] += m_pool_[h];
         }
@@ -43,7 +43,7 @@ void WM::WmCommUpdate(size_t tid) {
 // 2: msg sent done, waiting to receive messages from other agents and update
 void* WM::WmThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
-  size_t tid = par->id_;
+  T_IDX tid = par->id_;
   WM* Lp = (WM *)par->Lp_;
   Example* exs[Lp->mb_size_];
   vector<T_LBL> exp_pred(Lp->n_expert_, 0.0);
@@ -51,7 +51,7 @@ void* WM::WmThread(void *in_par) {
   while (true) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  //exs[b]->Print();
 	}
@@ -65,9 +65,9 @@ void* WM::WmThread(void *in_par) {
       double sum_weight_pos, sum_weight_neg;
       T_LBL pred_lbl;
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	sum_weight_pos = 0.0; sum_weight_neg = 0.0;
-	for (size_t p=0; p<Lp->n_expert_; p++) {
+	for (T_IDX p=0; p<Lp->n_expert_; p++) {
 	  exp_pred[p] = Lp->WLs_[p]->PredictLabelBinary(exs[b]);
 	  if (exp_pred[p] != exs[b]->y_) {
             Lp->t_exp_err_[p][tid] = Lp->t_exp_err_[p][tid] + 1;
@@ -86,7 +86,7 @@ void* WM::WmThread(void *in_par) {
 	  pred_lbl = (T_LBL)-1;
 	}
         // local update weights
-	for (size_t p = 0; p < Lp->n_expert_; p++) {
+	for (T_IDX p = 0; p < Lp->n_expert_; p++) {
 	  if (exp_pred[p] != exs[b]->y_) {
 	    Lp->w_pool_[tid].Fs_[p].v_ = Lp->w_pool_[tid].Fs_[p].v_ * Lp->alpha_;
 	  }
@@ -126,20 +126,20 @@ void WM::TrainWeak() {
         TR_->max_ft_idx_+1 <<" !" << endl;
       exit(1);
     }
-    vector<size_t> sd(TR_->max_ft_idx_, 0);
-    for (size_t d = 0; d < TR_->max_ft_idx_; d++) {
+    vector<T_IDX> sd(TR_->max_ft_idx_, 0);
+    for (T_IDX d = 0; d < TR_->max_ft_idx_; d++) {
       sd[d] = d;
     }
     random_shuffle(sd.begin(), sd.end());
     // choose number of iterations
-    size_t n_it;
+    T_IDX n_it;
     if (TR_->Size() > 10000)
       n_it = min(200, (int)ceil(TR_->Size()/50));
     else
       n_it = max(200, (int)ceil(TR_->Size()/50));
     // train
     cout << "Training " << n_expert_ <<" experts (weak learners)...";
-    for (size_t p = 0; p < n_expert_; p++) {
+    for (T_IDX p = 0; p < n_expert_; p++) {
       WLs_[p] = new DecisionStump(sd[p], n_it);
       WLs_[p]->BatchLearn(TR_);
     }
@@ -162,7 +162,7 @@ void WM::Learn() {
   TrainWeak();
 
   thread_par pars[n_thread_];
-  for (size_t t = 0; t < n_thread_; t++) {
+  for (T_IDX t = 0; t < n_thread_; t++) {
     // init thread parameters and statistics
     pars[t].id_ = t;
     pars[t].Lp_ = this;
@@ -172,7 +172,7 @@ void WM::Learn() {
     t_n_used_examples_[t] = 0;
     t_loss_[t] = 0;
     t_err_[t] = 0;
-    for (size_t p = 0; p < n_expert_; p++) {
+    for (T_IDX p = 0; p < n_expert_; p++) {
       t_exp_err_[p][t] = 0;
     }
     // begin learning iterations
@@ -186,7 +186,7 @@ void WM::Learn() {
 void WM::Test() {
 }
 
-void WM::MakeLog(size_t tid, T_LBL true_lbl, T_LBL pred_lbl, 
+void WM::MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
                  vector<T_LBL> &exp_pred) {
   if (calc_loss_) {
     // Calc # of misclassifications
@@ -200,7 +200,7 @@ void WM::MakeLog(size_t tid, T_LBL true_lbl, T_LBL pred_lbl,
       LOG_->ct_t_[tid]  = LOG_->ct_t_[tid] + 1;
       if (LOG_->ct_t_[tid] == LOG_->t_int_ && LOG_->ct_lp_[tid] < n_log_) {
         LOG_->err_[tid][LOG_->ct_lp_[tid]] = t_err_[tid];
-        for (size_t p=0; p<n_expert_; p++) {
+        for (T_IDX p=0; p<n_expert_; p++) {
           if (exp_pred[p] != true_lbl) {
             LOG_->err_exp_[p][LOG_->ct_lp_[tid]] = 
               LOG_->err_exp_[p][LOG_->ct_lp_[tid]] + 1; // TODO
@@ -229,22 +229,22 @@ void WM::SaveLog() {
       fprintf(fp, "Log intervals: %zu. Number of logs: %zu\n\n", 
 	      LOG_->t_int_, n_log_);
       fprintf(fp, "Errors cumulated:\n");
-      for (size_t t=0; t<n_thread_; t++) {
-	for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX t=0; t<n_thread_; t++) {
+	for (T_IDX k=0; k<n_log_; k++) {
 	  fprintf(fp, "%zu", LOG_->err_[t][k]);
 	  fprintf(fp, " ");
 	}
 	fprintf(fp, ";\n");
       }
       // TODO: accumulate LOG->err_exp_
-      for (size_t p=0; p<n_expert_; p++) {
-        for (size_t k=1; k<n_log_; k++) {
+      for (T_IDX p=0; p<n_expert_; p++) {
+        for (T_IDX k=1; k<n_log_; k++) {
           LOG_->err_exp_[p][k] = LOG_->err_exp_[p][k-1] + LOG_->err_exp_[p][k];
         }
       }
       fprintf(fp, "Expert Errors:\n");
-      for (size_t p=0; p<n_expert_; p++) {
-        for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX p=0; p<n_expert_; p++) {
+        for (T_IDX k=0; k<n_log_; k++) {
           fprintf(fp, "%zu", LOG_->err_exp_[p][k]);
           fprintf(fp, " ");
         }
@@ -255,8 +255,8 @@ void WM::SaveLog() {
     
     // final prediction accuracy
     if (type_ == "classification") {
-      size_t t_m = 0, t_s = 0;
-      for (size_t t = 0; t < n_thread_; t++) {
+      T_IDX t_m = 0, t_s = 0;
+      for (T_IDX t = 0; t < n_thread_; t++) {
         t_m += t_err_[t];
         t_s += t_n_used_examples_[t];
         cout << "t"<< t << ": " << t_n_used_examples_[t] 

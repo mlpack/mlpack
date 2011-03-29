@@ -20,12 +20,12 @@ class WeakLearner {
 //---------------Decision Stump------------------//
 class DecisionStump : public WeakLearner {
  private:
-  size_t sd_; // splitting dimension
-  size_t n_it_;
+  T_IDX sd_; // splitting dimension
+  T_IDX n_it_;
   float  thd_; // threshold for decision
   T_LBL  gl_; // label for > thd
  public:
-  DecisionStump(size_t split_dim, size_t num_iter);
+  DecisionStump(T_IDX split_dim, T_IDX num_iter);
   ~DecisionStump();
   
   void  BatchLearn(Data *D);

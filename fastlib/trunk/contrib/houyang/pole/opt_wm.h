@@ -23,8 +23,8 @@ class WM : public Learner {
  private:
   void TrainWeak();
   static void* WmThread(void *par);
-  void WmCommUpdate(size_t tid);
-  void MakeLog(size_t tid, T_LBL true_lbl, T_LBL pred_lbl, 
+  void WmCommUpdate(T_IDX tid);
+  void MakeLog(T_IDX tid, T_LBL true_lbl, T_LBL pred_lbl, 
                vector<T_LBL> &exp_pred);
   void SaveLog();
 };

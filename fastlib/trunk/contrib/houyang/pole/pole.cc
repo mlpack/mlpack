@@ -120,15 +120,15 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Optimization method [ogd, ogdk, oeg, dwm_i, or dwm_a].")
     ("batch", po::value<bool>(&batch_)->default_value(false),
      "Online leaing or Batch learning. Default: Online.")
-    ("threads", po::value<size_t>(&L_->n_thread_)->default_value(1), 
+    ("threads", po::value<T_IDX>(&L_->n_thread_)->default_value(1), 
      "Number of threads. Default: 1 thread.")
     ("data_learn,d", po::value<string>(&L_->fn_learn_)->default_value(""), 
      "File name of training example set.")
     ("data_predict,t", po::value<string>(&L_->fn_predict_)->default_value(""), 
      "File name of predicting example set.")
-    ("epoches,e", po::value<size_t>(&L_->n_epoch_)->default_value(0), 
+    ("epoches,e", po::value<T_IDX>(&L_->n_epoch_)->default_value(0), 
      "Number of training epoches. Default: 0 epoch.")
-    ("iterations,i", po::value<size_t>(&L_->n_iter_res_)->default_value(0), 
+    ("iterations,i", po::value<T_IDX>(&L_->n_iter_res_)->default_value(0), 
      "Number of training iterations besides epoches. Default: 0.")
     ("reg", po::value<int>(&L_->reg_type_)->default_value(2), 
      "Which regularization term to use. Default: 2(squared l2 norm).")
@@ -142,7 +142,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Loss function to be used. Default: squared. Available: squared, hinge, logistic and quantile.")
     ("bias", po::value<bool>(&L_->use_bias_)->default_value(false),
      "Add a bias term to examples.")
-    ("experts,p", po::value<size_t>(&L_->n_expert_)->default_value(1), 
+    ("experts,p", po::value<T_IDX>(&L_->n_expert_)->default_value(1), 
      "Number of experts. Default: 0.")
     ("weak_learner", po::value<string>(&L_->wl_name_)->default_value("stump"), 
      "Name of weak learner. Default: decision stump.")
@@ -154,11 +154,11 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Sigma in Gaussian RBF kernel. Default: 1.0.")
     ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
      "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
-    ("trdim", po::value<size_t>(&L_->trdim_)->default_value(1000), 
+    ("trdim", po::value<T_IDX>(&L_->trdim_)->default_value(1000), 
      "Dimension for transformed features. Default: 1000.")
     ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
      "How agents communicate with each other. Default: 1(full connected).")
-    ("mini_batch,b", po::value<size_t>(&L_->mb_size_)->default_value(1), 
+    ("mini_batch,b", po::value<T_IDX>(&L_->mb_size_)->default_value(1), 
      "Size of a mini-batch. Default: 1.")
     ("calc_loss", po::value<bool>(&L_->calc_loss_)->default_value(false), 
      "Calculate total loss.")
@@ -166,11 +166,11 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Randomly permute the input examples.")
     ("read_port", po::value<bool>(&L_->read_port_)->default_value(false), 
      "Read data parallelly with training.")
-    ("num_port_sources", po::value<size_t>(&L_->n_source_)->default_value(0), 
+    ("num_port_sources", po::value<T_IDX>(&L_->n_source_)->default_value(0), 
      "Number of sources for daemon socket input.")
-    ("port", po::value<size_t>(&L_->port_)->default_value(0),
+    ("port", po::value<T_IDX>(&L_->port_)->default_value(0),
      "Port to listen on.")
-    ("log", po::value<size_t>(&L_->n_log_)->default_value(0), 
+    ("log", po::value<T_IDX>(&L_->n_log_)->default_value(0), 
      "How many log points. Default: 0(no logging).")
     ("verbose,v", po::value<bool>(&L_->v_)->default_value(false), 
      "Verbose debug info.");
@@ -261,7 +261,7 @@ void Pole::ArgsSanityCheck() {
 
   if (L_->sigma_ <= 0) {
     L_->sigma_ = 1.0;
-    cout << "Sigma should be positive! Using default value: 1." << endl;
+    cout << "Sigma should be positive! Using default value: 1.0." << endl;
   }
 
   if (L_->n_log_ <0) {

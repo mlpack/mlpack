@@ -2,7 +2,7 @@
 #include "opt_ogd.h"
 
 struct thread_par {
-  size_t id_;
+  T_IDX id_;
   OGD *Lp_;
 };
 
@@ -10,9 +10,9 @@ OGD::OGD() {
   cout << "---Online Gradient Descent---" << endl;
 }
 
-void OGD::OgdCommUpdate(size_t tid) {
+void OGD::OgdCommUpdate(T_IDX tid) {
   if (comm_method_ == 1) { // fully connected graph
-    for (size_t h=0; h<n_thread_; h++) {
+    for (T_IDX h=0; h<n_thread_; h++) {
       if (h != tid) {
 	w_pool_[tid] += m_pool_[h];
       }
@@ -30,7 +30,7 @@ void OGD::OgdCommUpdate(size_t tid) {
 // 2: msg sent done, waiting to receive messages from other agents and update
 void* OGD::OgdThread(void *in_par) {
   thread_par* par = (thread_par*) in_par;
-  size_t tid = par->id_;
+  T_IDX tid = par->id_;
   OGD* Lp = (OGD *)par->Lp_;
   Example* exs[Lp->mb_size_];
   Svector uv; // update vector
@@ -39,7 +39,7 @@ void* OGD::OgdThread(void *in_par) {
   while (true) {
     switch (Lp->t_state_[tid]) {
     case 0: // waiting to read data
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	if ( Lp->GetImmedExample(Lp->TR_, exs+b, tid) ) { // new example read
 	  //exs[b]->Print();
 	}
@@ -69,7 +69,7 @@ void* OGD::OgdThread(void *in_par) {
       }
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
-      for (size_t b = 0; b<Lp->mb_size_; b++) {
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
 						*exs[b], Lp->b_pool_[tid]);
 	Lp->MakeLog(tid, exs[b], pred_val);
@@ -119,7 +119,7 @@ void OGD::Learn() {
   b_pool_.resize(n_thread_);
 
   thread_par pars[n_thread_];
-  for (size_t t = 0; t < n_thread_; t++) {
+  for (T_IDX t = 0; t < n_thread_; t++) {
     // init thread parameters and statistics
     pars[t].id_ = t;
     pars[t].Lp_ = this;
@@ -141,7 +141,7 @@ void OGD::Learn() {
 void OGD::Test() {
 }
 
-void OGD::MakeLog(size_t tid, Example *x, double pred_val) {
+void OGD::MakeLog(T_IDX tid, Example *x, double pred_val) {
   if (calc_loss_) {
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
@@ -187,16 +187,16 @@ void OGD::SaveLog() {
       fprintf(fp, "Log intervals: %zu. Number of logs: %zu\n\n", 
 	      LOG_->t_int_, n_log_);
       fprintf(fp, "Errors cumulated:\n");
-      for (size_t t=0; t<n_thread_; t++) {
-	for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX t=0; t<n_thread_; t++) {
+	for (T_IDX k=0; k<n_log_; k++) {
 	  fprintf(fp, "%zu", LOG_->err_[t][k]);
 	  fprintf(fp, " ");
 	}
 	fprintf(fp, ";\n");
       }
       fprintf(fp, "\n\nLoss cumulated:\n");
-      for (size_t t=0; t<n_thread_; t++) {
-	for (size_t k=0; k<n_log_; k++) {
+      for (T_IDX t=0; t<n_thread_; t++) {
+	for (T_IDX k=0; k<n_log_; k++) {
 	  fprintf(fp, "%lf", LOG_->loss_[t][k]);
 	  fprintf(fp, " ");
 	}
@@ -207,7 +207,7 @@ void OGD::SaveLog() {
 
     // final loss
     double t_l = 0.0;
-    for (size_t t = 0; t < n_thread_; t++) {
+    for (T_IDX t = 0; t < n_thread_; t++) {
       t_l += t_loss_[t];
       cout << "t"<< t << ": " << t_n_used_examples_[t] 
 	   << " samples processed. Loss: " << t_loss_[t]<< endl;
@@ -216,8 +216,8 @@ void OGD::SaveLog() {
 
     // prediction accuracy for classifications
     if (type_ == "classification") {
-      size_t t_m = 0, t_s = 0;
-      for (size_t t = 0; t < n_thread_; t++) {
+      T_IDX t_m = 0, t_s = 0;
+      for (T_IDX t = 0; t < n_thread_; t++) {
 	t_m += t_err_[t];
 	t_s += t_n_used_examples_[t];
 	cout << "t"<< t << ": " << t_n_used_examples_[t] << 

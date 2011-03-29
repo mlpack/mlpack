@@ -24,17 +24,17 @@ Learner::~Learner() {
 void Learner::ParallelLearn() {
   // determine number of epochs and residual iterations
   if (n_iter_res_ >= TR_->Size()) {
-    n_epoch_ += (size_t)(n_iter_res_ / TR_->Size());
+    n_epoch_ += (T_IDX)(n_iter_res_ / TR_->Size());
     n_iter_res_ %= TR_->Size();
   }
-  size_t left_ct = (n_epoch_ * TR_->Size() + n_iter_res_) % (n_thread_ * mb_size_);
+  T_IDX left_ct = (n_epoch_ * TR_->Size() + n_iter_res_) % (n_thread_ * mb_size_);
   if ( left_ct > 0)
     n_iter_res_ += (n_thread_ * mb_size_ - left_ct);
   cout << "n_epo= " << n_epoch_ << ", n_iter_res= " << n_iter_res_ << endl;
   // init for intermediate logs
   epoch_ct_ = 0;
   if (n_log_ > 0) {
-    size_t t_int = (size_t)floor( (n_epoch_*TR_->Size() + n_iter_res_)/(n_thread_ * n_log_) );
+    T_IDX t_int = (T_IDX)floor( (n_epoch_*TR_->Size() + n_iter_res_)/(n_thread_ * n_log_) );
     LOG_ = new Log(n_thread_, n_log_, t_int, n_expert_, opt_name_);
   }
   // init for parallelism
@@ -48,7 +48,7 @@ void Learner::ParallelLearn() {
   // for expert-advice learning methods
   if (opt_name_ == "dwm_i" || opt_name_ == "dwm_a") {
     t_exp_err_.resize(n_expert_);
-    for (size_t p=0; p<n_expert_; p++) {
+    for (T_IDX p=0; p<n_expert_; p++) {
       t_exp_err_[p].resize(n_thread_);
     }
   }
@@ -60,7 +60,7 @@ void Learner::ParallelLearn() {
 // Thread join
 ///////////////
 void Learner::FinishThreads() {
-  for (size_t i=0; i<n_thread_; i++) {
+  for (T_IDX i=0; i<n_thread_; i++) {
     pthread_join(Threads_[i], NULL);
   }
 }
@@ -141,8 +141,8 @@ void Learner::BatchLearn() {
 ///////////////////////////////
 // Get an immediate example
 ///////////////////////////////
-bool Learner::GetImmedExample(Data *D, Example** x_p, size_t tid) {
-  size_t ring_idx = 0;
+bool Learner::GetImmedExample(Data *D, Example** x_p, T_IDX tid) {
+  T_IDX ring_idx = 0;
   pthread_mutex_lock(&mutex_ex_);
   
   if (epoch_ct_ < n_epoch_) {

@@ -7,7 +7,7 @@
 ///////////////
 // Construction
 ///////////////
-Data::Data(string fn, size_t port, bool random) : 
+Data::Data(string fn, T_IDX port, bool random) : 
   fn_(fn), port_(port), random_(random), 
   used_ct_(0), n_ln_(0), 
   max_ft_idx_(0), max_n_nz_ft_(0), max_l_ln_(0) {
@@ -16,7 +16,7 @@ Data::Data(string fn, size_t port, bool random) :
 //////////////////////
 // Number of examples
 //////////////////////
-size_t Data::Size() {
+T_IDX Data::Size() {
   return EXs_.size();
 }
 
@@ -45,7 +45,7 @@ bool Data::ReadFileInfo() {
   // Count # of examples(lines), max # of features per example,
   // and the size of the longest line
   if (ff_ == svmlight) {
-    size_t current_l, current_n_nz_ft;
+    T_IDX current_l, current_n_nz_ft;
     current_l = 0;
     current_n_nz_ft = 0;
 
@@ -122,13 +122,13 @@ void Data::ReadFromFile() {
 // Randomly permute examples
 /////////////////////////////
 void Data::RandomPermute() {
-  size_t n_ex = Size();
+  T_IDX n_ex = Size();
   rnd_i_.resize(n_ex);
-  for (size_t i=0; i<n_ex; i++) {
+  for (T_IDX i=0; i<n_ex; i++) {
     rnd_i_[i] = i;
   }
-  for (size_t i=0; i<n_ex; i++) {
-    size_t j = rand() % n_ex;
+  for (T_IDX i=0; i<n_ex; i++) {
+    T_IDX j = rand() % n_ex;
     swap(rnd_i_[i], rnd_i_[j]);
   }
 }
@@ -136,7 +136,7 @@ void Data::RandomPermute() {
 ///////////////////////////////
 // Get an example from dataset
 ///////////////////////////////
-Example* Data::GetExample(size_t idx) {
+Example* Data::GetExample(T_IDX idx) {
   if (idx >= Size() || idx < 0) {
     cout << "Invalid example index: " << idx << " !" << endl;
     exit (1);
@@ -179,9 +179,9 @@ void Data::InitFromSvmlight() {
   char f_pair[1000], junk[1000]; // feature pair buffer
   EXs_.resize(n_ln_);
   max_ft_idx_ = 0;
-  size_t n_ex = 0;
+  T_IDX n_ex = 0;
 
-  size_t l = 0, pos = 0;
+  T_IDX l = 0, pos = 0;
   // ------------parse lines--------------
   while(!feof(fp_) && fgets(ln, max_l_ln_, fp_)) {
     l++;
@@ -224,7 +224,7 @@ void Data::InitFromSvmlight() {
       pos++;
     // -----------get features------------
     long idx; double val;
-    int n_r = 0; size_t n_f = 0;
+    int n_r = 0; T_IDX n_f = 0;
     EXs_[n_ex].Fs_.resize(max_n_nz_ft_);
     while( ((n_r=sscanf(ln+pos, "%s", f_pair)) != EOF) && 
 	   (n_r > 0) && (n_f<max_n_nz_ft_) ) {

@@ -8,27 +8,27 @@
 
 using namespace std;
 
-typedef vector<size_t> Vec_d;
+typedef vector<T_IDX> Vec_d;
 typedef vector<double> Vec_f;
 
 class Log {
  public:
-  size_t n_thread_;
-  size_t n_log_;
-  size_t t_int_;
-  bool calc_loss_;
+  T_IDX  n_thread_;
+  T_IDX  n_log_;
+  T_IDX  t_int_;
+  bool   calc_loss_;
   string type_;
   // statistics
-  vector<size_t> ct_t_;  // counters for round t
-  vector<size_t> ct_lp_; // counters for log points
+  vector<T_IDX> ct_t_;  // counters for round t
+  vector<T_IDX> ct_lp_; // counters for log points
   vector<Vec_d>  err_;  // number of errors
   vector<Vec_f>  loss_;  // loss
   // for expert-advice learners
   vector<Vec_d>  err_exp_; // number of errors for experts
  public:
   Log();
-  Log(size_t n_thread, size_t n_log, size_t t_int, 
-      size_t n_expert, string opt_method);
+  Log(T_IDX n_thread, T_IDX n_log, T_IDX t_int, 
+      T_IDX n_expert, string opt_method);
 };
 
 #endif
