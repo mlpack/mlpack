@@ -38,7 +38,7 @@ class Learner {
   T_IDX  n_thread_; // number of threads for learning
   vector<pthread_t> Threads_;
   vector<T_IDX> t_state_; // thread state
-  vector<T_IDX> t_n_it_; // nubmer of iterations
+  vector<double> t_n_it_; // nubmer of iterations
   vector<T_IDX> t_n_used_examples_;
   vector<double> t_loss_; // thread loss
   vector<T_IDX> t_err_; // thread error
