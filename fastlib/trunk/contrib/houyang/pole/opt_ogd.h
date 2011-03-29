@@ -17,6 +17,7 @@ class OGD : public Learner {
   pthread_barrier_t barrier_msg_all_used_;
  public:
   OGD();
+  //~OGD();
   void Learn();
   void Test();
  private:
