@@ -99,6 +99,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     // broadcast.
     std::vector <
     core::table::DensePoint > random_variates(num_random_fourier_features);
+    std::vector< arma::vec > random_variate_aliases(
+      num_random_fourier_features);
     if(world_->rank() == 0) {
       for(int i = 0; i < num_random_fourier_features; i++) {
 
@@ -108,6 +110,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       }
     }
     boost::mpi::broadcast(*world_, random_variates, 0);
+    for(unsigned int i = 0; i < num_random_fourier_features; i++) {
+      core::table::DensePointToArmaVec(
+        random_variates[i], &(random_variate_aliases[i]));
+    }
 
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
@@ -115,7 +121,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     core::table::DensePoint local_reference_sum;
     mlpack::series_expansion::RandomFeature::SumTransform(
       *(arguments_in.reference_table_->local_table()),
-      random_variates, &local_reference_sum);
+      random_variate_aliases, &local_reference_sum);
     core::table::DensePoint global_reference_sum;
     boost::mpi::all_reduce(
       *world_, local_reference_sum, global_reference_sum,
@@ -128,7 +134,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       global_reference_sum, &global_reference_sum_alias);
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
-
+      arma::vec query_point;
+      arguments_in.query_table_->local_table()->get(i, &query_point);
+      arma::vec query_point_projected;
+      mlpack::series_expansion::RandomFeature::Transform(
+        query_point, random_variate_aliases, &query_point_projected);
     }
   }
   while(! all_done);

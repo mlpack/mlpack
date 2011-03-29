@@ -72,29 +72,36 @@ class RandomFeature {
     template<typename TableType>
     static void SumTransform(
       const TableType &table_in,
-      const std::vector< core::table::DensePoint > &random_variates,
+      const std::vector< arma::vec > &random_variates,
       core::table::DensePoint *sum_transformations) {
 
       int num_random_fourier_features = random_variates.size();
       sum_transformations->Init(2 * num_random_fourier_features);
       sum_transformations->SetZero();
 
-      // Build aliases.
-      std::vector< arma::vec > random_variate_aliases;
-      for(unsigned int i = 0; i < random_variates.size(); i++) {
-        core::table::DensePointToArmaVec(
-          random_variates[i], &(random_variate_aliases[i]));
-      }
-
       for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec old_point;
         table_in.get(i, &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
-          double dot_product = arma::dot(random_variate_aliases[j], old_point);
+          double dot_product = arma::dot(random_variates[j], old_point);
           (*sum_transformations)[j] += cos(dot_product);
           (*sum_transformations)[j + num_random_fourier_features] +=
             sin(dot_product);
         }
+      }
+    }
+
+    static void Transform(
+      const arma::vec &point_in,
+      const std::vector< arma::vec > &random_variates,
+      arma::vec *point_out) {
+
+      int num_random_fourier_features = random_variates.size();
+      point_out->set_size(2 * num_random_fourier_features);
+      for(int j = 0; j < num_random_fourier_features; j++) {
+        double dot_product = arma::dot(random_variates[j], point_in);
+        (*point_out)[j] = cos(dot_product);
+        (*point_out)[j + num_random_fourier_features] = sin(dot_product);
       }
     }
 
