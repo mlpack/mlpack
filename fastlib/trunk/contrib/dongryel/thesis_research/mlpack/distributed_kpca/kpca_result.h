@@ -60,9 +60,9 @@ class KpcaResult {
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
         double deviation = num_standard_deviations *
                            sqrt(kernel_sum[i].sample_mean_variance());
-        kpca_projections_.set(0, i, kernel_sum[i].sample_mean() - deviation);
-        kpca_projections_.set(1, i, kernel_sum[i].sample_mean());
-        kpca_projections_.set(2, i, kernel_sum[i].sample_mean() + deviation);
+        kpca_projections_l_.set(0, i, kernel_sum[i].sample_mean() - deviation);
+        kpca_projections_.set(0, i, kernel_sum[i].sample_mean());
+        kpca_projections_u_.set(0, i, kernel_sum[i].sample_mean() + deviation);
       }
     }
 

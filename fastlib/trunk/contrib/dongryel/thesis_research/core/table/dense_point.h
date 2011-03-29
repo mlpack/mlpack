@@ -227,7 +227,9 @@ class DensePoint {
     }
 
     void SetZero() {
-      memset(ptr_.get(), 0, sizeof(double) * n_rows_);
+      if(ptr_.get() != NULL && n_rows_ > 0) {
+        memset(ptr_.get(), 0, sizeof(double) * n_rows_);
+      }
     }
 
     void Alias(double *ptr_in, int length_in) {

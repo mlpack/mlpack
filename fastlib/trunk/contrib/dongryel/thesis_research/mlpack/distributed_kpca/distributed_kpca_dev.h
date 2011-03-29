@@ -103,6 +103,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   double num_standard_deviations =
     (cumulative_probability > 0.999) ?
     3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
+  printf("Number of standard deviation: %g\n", num_standard_deviations);
 
   // Call the computation.
   const int num_random_fourier_features = 20;
@@ -262,7 +263,7 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "then the --bandwidth will be ignored."
   )(
     "probability",
-    boost::program_options::value<double>()->default_value(1.0),
+    boost::program_options::value<double>()->default_value(0.9),
     "Probability guarantee for the approximation of KPCA."
   )(
     "absolute_error",
