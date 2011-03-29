@@ -8,6 +8,7 @@
  *        ./pole_pt -d rcv1_train -m ogd --type classification -l hinge --calc_loss --comm 1 -c 1 -e 2 --threads 1 -b 1
  *        ./pole_pt -d rcv1_train -m oeg --type classification -l hinge --calc_loss --comm 1 -c 100 -i 5000 --threads 1 -b 1
  *        ./pole_pt -d cod-rna -m dwm_a --type classification --calc_loss 1 --comm 1 -b 1 --threads 1 -a 0.9 -p 8 -i 6000
+ *        ./pole_pt -d svmguide1 -m ogdt --transform fourier_rbf --calc_loss 1 --comm 1 -c 100 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 2
  *
  */
 

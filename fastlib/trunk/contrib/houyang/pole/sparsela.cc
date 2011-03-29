@@ -55,7 +55,7 @@ Svector::~Svector() {
 //////////////////////
 // Number of faetures 
 //////////////////////
-size_t Svector::Size() const {
+T_IDX Svector::Size() const {
   return Fs_.size();
 }
 
@@ -159,7 +159,7 @@ Svector& Svector::operator+=(const Svector &x) {
     return *this;
   }
   else { // neither w nor x is of all-0
-    size_t ct_w = 0, ct_x = 0;
+    T_IDX ct_w = 0, ct_x = 0;
     while (ct_w<Fs_.size() || ct_x<x.Fs_.size()) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
 	Fs_.push_back(x.Fs_[ct_x]);
@@ -202,7 +202,7 @@ Svector& Svector::operator-=(const Svector &x) {
     return *this;
   }
   else { // neither w nor x is of all-0
-    size_t ct_w = 0, ct_x = 0;
+    T_IDX ct_w = 0, ct_x = 0;
     while (ct_w<Fs_.size() || ct_x<x.Fs_.size()) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
 	Fs_.push_back(Feature(x.Fs_[ct_x].i_, -x.Fs_[ct_x].v_));
@@ -401,8 +401,8 @@ double Svector::SparseSqL2Norm() const {
 // Sparse vector scaled add: w += a * x
 ///////////////////////////////////////////
 void Svector::SparseAddExpertOverwrite(double a, const Svector &x) {
-  size_t nz_x = x.Fs_.size();
-  size_t ct_w = 0, ct_x = 0;
+  T_IDX nz_x = x.Fs_.size();
+  T_IDX ct_w = 0, ct_x = 0;
 
   if (a == 0.0 || x.Fs_.empty()) { // scale==0 or all-0 x: w unchanged
     return;
@@ -449,10 +449,10 @@ void Svector::SparseSubtract(const Svector &p, const Svector &n) {
   *this = p;
   *this -= n;
   */
-  size_t nz_w = 0;
-  size_t nz_p = p.Fs_.size();
-  size_t nz_n = n.Fs_.size();
-  size_t ct_p = 0, ct_n = 0, ct_w = 0;
+  T_IDX nz_w = 0;
+  T_IDX nz_p = p.Fs_.size();
+  T_IDX nz_n = n.Fs_.size();
+  T_IDX ct_p = 0, ct_n = 0, ct_w = 0;
 
   if (nz_p == 0) {
     if (nz_n == 0) {
@@ -614,7 +614,7 @@ double Svector::SparseSqEuclideanDistance(const Svector &x) const {
   }
   else { // neither w nor x is of all-0
     double d = 0.0;
-    size_t ct_w = 0, ct_x = 0;
+    T_IDX ct_w = 0, ct_x = 0;
     while (ct_w<Fs_.size() || ct_x<x.Fs_.size()) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
         d += pow(x.Fs_[ct_x].v_, 2);
@@ -647,7 +647,7 @@ double Svector::SparseSqEuclideanDistance(const Svector &x) const {
 // Shrink: remove 0 values
 ///////////////////////////////
 void Svector::Shrink(double threshold) {
-  for (size_t i=0; i<Fs_.size(); i++) {
+  for (T_IDX i=0; i<Fs_.size(); i++) {
     if (fabs(Fs_[i].v_) < threshold) {
       Fs_.erase(Fs_.begin()+i);
       i--;

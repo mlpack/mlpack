@@ -35,7 +35,7 @@ class Svector {
   Svector(T_IDX n_f, T_VAL c);
   ~Svector();
   // basics
-  size_t Size() const;
+  T_IDX Size() const;
   void SetAll(T_VAL v);
   void SetAllResize(T_IDX n_f, T_VAL v);
   void Resize(T_IDX n_f);

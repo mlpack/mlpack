@@ -24,8 +24,8 @@ class OEG : public Learner {
   void Test();
  private:
   static void* OegThread(void *par);
-  void OegCommUpdate(size_t tid);
-  void MakeLog(size_t tid, Svector *w, double bias, Example *x, double pred_val);
+  void OegCommUpdate(T_IDX tid);
+  void MakeLog(T_IDX tid, Svector *w, double bias, Example *x, double pred_val);
   void SaveLog();
 };
 
