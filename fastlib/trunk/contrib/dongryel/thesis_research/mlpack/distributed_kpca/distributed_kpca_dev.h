@@ -13,6 +13,39 @@
 #include "mlpack/distributed_kpca/distributed_kpca.h"
 
 namespace core {
+namespace parallel {
+
+class AddDensePoint:
+  public std::binary_function <
+  core::table::DensePoint,
+  core::table::DensePoint,
+    core::table::DensePoint > {
+  public:
+    const core::table::DensePoint operator()(
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const {
+
+      core::table::DensePoint sum;
+      return sum;
+    }
+};
+}
+}
+
+namespace boost {
+namespace mpi {
+
+template<>
+class is_commutative <
+  core::parallel::AddDensePoint,
+  core::table::DensePoint  > :
+  public boost::mpl::true_ {
+
+};
+}
+}
+
+namespace core {
 namespace table {
 extern core::table::MemoryMappedFile *global_m_file_;
 }
@@ -45,8 +78,19 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   boost::mpi::timer timer;
 
   // Call the computation.
+  bool all_done = false;
+  do {
 
+    core::table::DensePoint local_reference_sum;
+    core::table::DensePoint global_reference_sum;
+    boost::mpi::all_reduce(
+      *world_, local_reference_sum, global_reference_sum,
+      core::parallel::AddDensePoint());
+  }
+  while(! all_done);
 
+  // Barrier so that every process is done.
+  world_->barrier();
   if(world_->rank() == 0) {
     printf("Spent %g seconds in computation.\n", timer.elapsed());
   }
