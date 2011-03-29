@@ -7,8 +7,8 @@
 class Transform {
  public:
   string type_;
-  size_t d_; // dimension of original data
-  size_t D_; // number of w samples, for i=1~D, w_i's dim is d_
+  T_IDX d_; // dimension of original data
+  T_IDX D_; // number of w samples, for i=1~D, w_i's dim is d_
   vector<Svector> w_;
  public:
   Transform();
@@ -21,10 +21,11 @@ class Transform {
 /////////////////////////////////////////////
 class FourierRBFTransform : public Transform {
  private:
+  double sigma_;
   RandomNumber r_;
  public:
   FourierRBFTransform();
-  FourierRBFTransform(size_t d, size_t D);
+  FourierRBFTransform(T_IDX d, T_IDX D, double sigma);
   ~FourierRBFTransform();
   void SampleW();
   void Tr(const Svector &src, Svector &dest) const;

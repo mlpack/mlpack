@@ -116,12 +116,14 @@ class RandomNumber {
   ~RandomNumber() {
     gsl_rng_free(global_generator_);
   }
-    
-  inline T_VAL Random() {
+  
+  // returns a double uniformly distributed in the range [0,1)
+  inline double Random() {
     return gsl_rng_uniform(global_generator_);
   }
   
-  inline T_VAL RandGaussian(double sigma) {
+  // returns a double Gaussian rv, with mean 0 and standard deviation sigma
+  inline double RandGaussian(double sigma) {
     return gsl_ran_gaussian(global_generator_, sigma);
   }
 };
