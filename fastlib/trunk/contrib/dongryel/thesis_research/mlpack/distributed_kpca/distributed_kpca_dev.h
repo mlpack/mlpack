@@ -11,6 +11,7 @@
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
 #include "mlpack/distributed_kpca/distributed_kpca.h"
+#include "mlpack/series_expansion/random_feature.h"
 
 namespace core {
 namespace parallel {
@@ -110,8 +111,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     // Each process computes the projection of each query point and
     // each reference point. It also computes the weighted sum of the
     // reference projections and prepares for all-reduction.
-
     core::table::DensePoint local_reference_sum;
+    mlpack::series_expansion::RandomFeature::SumTransform(
+      *(arguments_in.reference_table_->local_table()),
+      random_variates, &local_reference_sum);
     core::table::DensePoint global_reference_sum;
     boost::mpi::all_reduce(
       *world_, local_reference_sum, global_reference_sum,
