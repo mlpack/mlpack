@@ -90,9 +90,14 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   KernelType kernel;
   kernel.Init(arguments_in.bandwidth_);
 
+  // The local kernel sum.
+  core::monte_carlo::MeanVariancePairVector local_kernel_sum;
+  local_kernel_sum.Init(arguments_in.query_table_->local_table()->n_entries());
+
   // Call the computation.
   bool all_done = false;
   const int num_random_fourier_features = 20;
+  int num_iterations = 0;
   do {
 
     // The master generates a set of random Fourier features and do a
@@ -139,9 +144,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arma::vec query_point_projected;
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
+      local_kernel_sum[i].push_back(
+        arma::dot(query_point_projected, global_reference_sum_alias));
     }
+    num_iterations++;
   }
-  while(! all_done);
+  while(num_iterations < 20);
 
   // Barrier so that every process is done.
   world_->barrier();
@@ -160,6 +168,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   reference_table_ = arguments_in.reference_table_;
   if(arguments_in.query_table_ == NULL) {
     query_table_ = reference_table_;
+    arguments_in.query_table_ = reference_table_;
   }
   else {
     query_table_ = arguments_in.query_table_;
