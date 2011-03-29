@@ -26,6 +26,14 @@ class AddDensePoint:
       const core::table::DensePoint &b) const {
 
       core::table::DensePoint sum;
+      sum.Init(a.length());
+      arma::vec a_alias;
+      arma::vec b_alias;
+      arma::vec sum_alias;
+      core::table::DensePointToArmaVec(a, &a_alias);
+      core::table::DensePointToArmaVec(b, &b_alias);
+      core::table::DensePointToArmaVec(sum, &sum_alias);
+      sum_alias = a_alias + b_alias;
       return sum;
     }
 };
