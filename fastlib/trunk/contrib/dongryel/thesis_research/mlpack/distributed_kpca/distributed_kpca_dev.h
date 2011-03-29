@@ -100,7 +100,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // Determine the number of standard deviation coverage.
   double cumulative_probability = arguments_in.probability_ +
                                   0.5 * (1.0 - arguments_in.probability_);
-  int num_standard_deviations =
+  double num_standard_deviations =
     (cumulative_probability > 0.999) ?
     3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
 
