@@ -10,7 +10,7 @@ class WeakLearner {
   string method_;
  public:
   WeakLearner() {};
-  ~WeakLearner() {};
+  virtual ~WeakLearner() {};
   // train a weak classifier
   virtual void  BatchLearn(Data *D) {};
   // binary prediction using weak learner
@@ -26,7 +26,7 @@ class DecisionStump : public WeakLearner {
   T_LBL  gl_; // label for > thd
  public:
   DecisionStump(T_IDX split_dim, T_IDX num_iter);
-  ~DecisionStump();
+  //~DecisionStump();
   
   void  BatchLearn(Data *D);
   T_LBL PredictLabelBinary(Example *x);
