@@ -28,12 +28,13 @@ class GaussianKernel {
 
   public:
 
+    template<typename PointType>
     void DrawRandomVariate(
-      int num_dimensions_in, arma::vec *random_variate) const {
+      int num_dimensions_in, PointType *random_variate) const {
 
       // Draw random $D$ Gaussian variates and scale it by the inverse
       // of the bandwidth.
-      random_variate->set_size(num_dimensions_in);
+      random_variate->Init(num_dimensions_in);
       for(int i = 0; i < num_dimensions_in; i++) {
         (*random_variate)[i] =
           core::math::RandGaussian(sqrt(1.0 / bandwidth_sq_));
@@ -196,8 +197,9 @@ class EpanKernel {
 
   public:
 
+    template<typename PointType>
     void DrawRandomVariate(
-      int num_dimensions_in, arma::vec *random_variate) const {
+      int num_dimensions_in, PointType *random_variate) const {
 
       // Not implemented yet - implement random binning technique from
       // Rahimi's paper.
