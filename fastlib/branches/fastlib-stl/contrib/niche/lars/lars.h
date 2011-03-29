@@ -15,7 +15,7 @@
 #ifndef LARS_H
 #define LARS_H
 
-#define EPS 1e-16
+#define EPS 1e-13
 
 using namespace arma;
 using namespace std;
@@ -31,6 +31,9 @@ class Lars {
   mat Gram_;
   vec Xty_;
 
+  std::vector<vec> beta_path_;
+  std::vector<double> lambda_path_;
+  
   
  public:
   Lars() { }
@@ -47,7 +50,7 @@ class Lars {
     ComputeGram();
     ComputeXty();
   }
-  
+
   
   void ComputeGram() {
     Gram_ = trans(X_) * X_;
@@ -99,13 +102,24 @@ class Lars {
     y_ = y; // I don't know how to copy the values of vectors yet, so this will have to do. This is wasteful though because we reallocate memory for y_
   }
 
+  
   void PrintY() {
     y_.print();
   }
 
+  
+  const std::vector<vec> beta_path() {
+    return beta_path_;
+  }
+
+  
+  const std::vector<double> lambda_path() {
+    return lambda_path_;
+  }
+  
+  
   // vanilla LARS - using Gram matrix
   void DoLARS() {
-
     std::vector<int> active_set(0);
     std::vector<bool> inactive_set(p_);
     fill(inactive_set.begin(), inactive_set.end(), true);
@@ -121,20 +135,18 @@ class Lars {
     u32 best_ind;
     double max_corr = abs_corr.max(best_ind);
     
-    std::vector<vec> beta_path(0);
-    std::vector<vec> mu_path(0);
-    std::vector<double> lambda_path(0);
+    //std::vector<vec> mu_path;
     
-    beta_path.push_back(beta);
-    mu_path.push_back(mu);
-    lambda_path.push_back(max_corr);
+    beta_path_.push_back(beta);
+    //mu_path.push_back(mu);
+    lambda_path_.push_back(max_corr);
     
     
     // MAIN LOOP
     while((n_active < p_) && (max_corr > EPS)) {
-      printf("n_active = %d\n", n_active);
+      //printf("n_active = %d\n", n_active);
       n_active++;
-      printf("best_ind = %d\n", best_ind);
+      //printf("best_ind = %d\n", best_ind);
       active_set.push_back(best_ind);
       inactive_set[best_ind] = 0;
 
@@ -148,7 +160,6 @@ class Lars {
       //lambda_path.push_back(lambda);
       
       
-      printf("hi\n");
       // compute signs of correlations
       vec s = vec(n_active);
       for(u32 i = 0; i < n_active; i++) {
@@ -183,12 +194,9 @@ class Lars {
 	  if(!inactive_set[ind]) {
 	    continue;
 	  }
-	  printf("max_corr = %f\n", max_corr);
 	  double dir_corr = dot(X_.col(ind), mu_direction);
 	  double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
-	  printf("val1 = %f\n", val1);
 	  double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
-	  printf("val2 = %f\n", val2);
 	  if(val1 > 0) {
 	    if(val1 < gamma) {
 	      gamma = val1;
@@ -211,61 +219,20 @@ class Lars {
       for(u32 i = 0; i < n_active; i++) {
 	beta(active_set[i]) += gamma * beta_direction(i);
       }
-      beta_path.push_back(beta);
-      mu_path.push_back(mu);
+      beta_path_.push_back(beta);
+      //mu_path.push_back(mu);
       
       // compute correlates
       corr = trans(X_) * (y_ - mu);
       max_corr -= gamma * normalization;
-      lambda_path.push_back(max_corr);
+      lambda_path_.push_back(max_corr);
     }
     
-    
-    //lambda_path.add(0);
-    
-    beta.print("estimate of beta");
-
-    printf("printing entire beta path");
-    for (std::vector<vec>::iterator cur_beta = beta_path.begin(); 
-	 cur_beta != beta_path.end(); 
-	 ++cur_beta) {
-      cur_beta -> print("beta");
+    /*
+    for(u32 i = 0; i < active_set.size(); i++) {
+      printf("a %d\n", active_set[i]);
     }
-
-    mat beta_matrix = mat(p_, n_active);
-    for(u32 i = 0; i < n_active; i++) {
-      beta_matrix.col(i) = beta_path[i];
-    }
-    beta_matrix.print("beta matrix");
-
-    mat mu_matrix = mat(n_, n_active);
-    for(u32 i = 0; i < n_active; i++) {
-      mu_matrix.col(i) = mu_path[i];
-    }
-    mu_matrix.print("mu matrix");
-
-    vec norm_error = vec(n_active);
-    for(u32 i = 0; i < n_active; i++) {
-      norm_error[i] = norm(y_ - mu_path[i], 2);
-    }
-    norm_error.print("error norm");
-    
-    beta_matrix.save("beta.dat", raw_ascii);
-    mu_matrix.save("mu.dat", raw_ascii);
-
-    X_.save("X.dat", raw_ascii);
-    y_.save("y.dat", raw_ascii);
-
-    printf("lambda path\n");
-    for(u32 i = 0; i < lambda_path.size(); i++) {
-      printf("%f\n", lambda_path[i]);
-    }
-    
-
-    vec lambda_path_vec = conv_to< colvec >::from(lambda_path);
-    lambda_path_vec.save("lambda.dat", raw_ascii);
-
-    
+    */
   }
 
 };
