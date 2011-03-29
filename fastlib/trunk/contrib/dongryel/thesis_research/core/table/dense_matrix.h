@@ -106,7 +106,9 @@ class DenseMatrix {
     /** @brief Sets everything to zero.
      */
     void SetZero() {
-      memset(ptr_.get(), 0, sizeof(double) * n_rows_ * n_cols_);
+      if(ptr_.get() != NULL && n_rows_ > 0 && n_cols_ > 0) {
+        memset(ptr_.get(), 0, sizeof(double) * n_rows_ * n_cols_);
+      }
     }
 
     /** @brief Sets every entry of the matrix to the specified value
