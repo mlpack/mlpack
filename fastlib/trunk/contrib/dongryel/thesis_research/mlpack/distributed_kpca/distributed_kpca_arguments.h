@@ -67,8 +67,6 @@ class DistributedKpcaArguments {
       relative_error_ = 0.0;
       probability_ = 0.0;
       kernel_ = "";
-      max_num_levels_to_serialize_ = 0;
-      max_num_work_to_dequeue_per_stage_ = 0;
     }
 
     /** @brief The destructor.
