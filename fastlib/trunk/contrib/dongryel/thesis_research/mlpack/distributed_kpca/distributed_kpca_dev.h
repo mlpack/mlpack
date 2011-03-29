@@ -94,10 +94,13 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // The local kernel sum.
   core::monte_carlo::MeanVariancePairVector local_kernel_sum;
   local_kernel_sum.Init(arguments_in.query_table_->local_table()->n_entries());
+  std::vector<bool> converged(
+    arguments_in.query_table_->local_table()->n_entries(), false);
 
   // Call the computation.
   const int num_random_fourier_features = 20;
   int num_iterations = 0;
+  int converged_count = 0;
   bool all_query_converged = true;
   do {
 
@@ -140,9 +143,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       global_reference_sum, &global_reference_sum_alias);
 
     bool all_local_query_converged = true;
-    int converged_count = 0;
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
+
+      if(converged[i]) {
+
+        // If already converged, skip.
+        continue;
+      }
+
       arma::vec query_point;
       arguments_in.query_table_->local_table()->get(i, &query_point);
       arma::vec query_point_projected;
@@ -160,12 +169,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         1.64 * sqrt(local_kernel_sum[i].sample_mean_variance());
       double right_hand_side =
         arguments_in.relative_error_ * local_kernel_sum[i].sample_mean();
-      bool query_point_converged = (left_hand_side <= right_hand_side);
-      if(query_point_converged) {
+      converged[i] = (left_hand_side <= right_hand_side);
+      if(converged[i]) {
         converged_count++;
       }
-      all_local_query_converged = all_local_query_converged &&
-                                  query_point_converged;
+      all_local_query_converged = all_local_query_converged && converged[i];
     }
     printf("Process %d has %d converged queries.\n", world_->rank(),
            converged_count);
