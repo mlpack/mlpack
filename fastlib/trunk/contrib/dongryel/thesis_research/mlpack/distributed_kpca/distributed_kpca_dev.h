@@ -88,6 +88,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // The kernel.
   KernelType kernel;
+  kernel.Init(arguments_in.bandwidth_);
 
   // Call the computation.
   bool all_done = false;
@@ -108,9 +109,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     }
     boost::mpi::broadcast(*world_, random_variates, 0);
 
-    // Each process computes the projection of each query point and
-    // each reference point. It also computes the weighted sum of the
-    // reference projections and prepares for all-reduction.
+    // Each process computes the sum of the projections of the local
+    // reference set and does an all-reduction to compute the global
+    // sum projections.
     core::table::DensePoint local_reference_sum;
     mlpack::series_expansion::RandomFeature::SumTransform(
       *(arguments_in.reference_table_->local_table()),
@@ -119,6 +120,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     boost::mpi::all_reduce(
       *world_, local_reference_sum, global_reference_sum,
       core::parallel::AddDensePoint());
+
+    // Each process computes the local projection of each query point
+    // and adds up.
+    arma::vec global_reference_sum_alias;
+    core::table::DensePointToArmaVec(
+      global_reference_sum, &global_reference_sum_alias);
+    for(int i = 0;
+        i < arguments_in.query_table_->local_table()->n_entries(); i++) {
+
+    }
   }
   while(! all_done);
 
