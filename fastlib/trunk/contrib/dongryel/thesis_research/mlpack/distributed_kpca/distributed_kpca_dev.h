@@ -85,9 +85,23 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   boost::mpi::timer timer;
 
+  // The kernel.
+  KernelType kernel;
+
   // Call the computation.
   bool all_done = false;
+  const int num_random_fourier_features = 20;
   do {
+
+    // Generate a set of random Fourier features and do a broadcast.
+    std::vector <
+    core::table::DensePoint > random_variates(num_random_fourier_features);
+    for(int i = 0; i < num_random_fourier_features; i++) {
+
+      // Draw a random Fourier feature.
+      kernel.DrawRandomVariate(
+        arguments_in.reference_table_->n_attributes(), & random_variates[i]);
+    }
 
     core::table::DensePoint local_reference_sum;
     core::table::DensePoint global_reference_sum;
