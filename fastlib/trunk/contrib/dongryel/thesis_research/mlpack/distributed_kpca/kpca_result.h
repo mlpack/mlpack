@@ -55,7 +55,7 @@ class KpcaResult {
     }
 
     void Export(
-      int num_standard_deviations,
+      double num_standard_deviations,
       const core::monte_carlo::MeanVariancePairVector &kernel_sum) {
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
         double deviation = num_standard_deviations *
