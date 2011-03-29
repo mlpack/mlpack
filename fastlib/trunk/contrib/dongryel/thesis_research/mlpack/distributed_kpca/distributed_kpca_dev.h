@@ -84,6 +84,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // Barrier so that every process is here.
   world_->barrier();
 
+  // The MPI timer.
   boost::mpi::timer timer;
 
   // The kernel.
@@ -95,9 +96,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   local_kernel_sum.Init(arguments_in.query_table_->local_table()->n_entries());
 
   // Call the computation.
-  bool all_done = false;
   const int num_random_fourier_features = 20;
   int num_iterations = 0;
+  bool all_query_converged = true;
   do {
 
     // The master generates a set of random Fourier features and do a
@@ -115,7 +116,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       }
     }
     boost::mpi::broadcast(*world_, random_variates, 0);
-    for(unsigned int i = 0; i < num_random_fourier_features; i++) {
+    for(int i = 0; i < num_random_fourier_features; i++) {
       core::table::DensePointToArmaVec(
         random_variates[i], &(random_variate_aliases[i]));
     }
@@ -137,6 +138,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     arma::vec global_reference_sum_alias;
     core::table::DensePointToArmaVec(
       global_reference_sum, &global_reference_sum_alias);
+
+    bool all_local_query_converged = true;
+    int converged_count = 0;
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
       arma::vec query_point;
@@ -144,12 +148,35 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arma::vec query_point_projected;
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
-      local_kernel_sum[i].push_back(
-        arma::dot(query_point_projected, global_reference_sum_alias));
+      for(int j = 0; j < num_random_fourier_features; j++) {
+        double contribution =
+          query_point_projected[j] * global_reference_sum_alias[j] +
+          query_point_projected[j + num_random_fourier_features] *
+          global_reference_sum_alias[j + num_random_fourier_features];
+        local_kernel_sum[i].push_back(contribution);
+      }
+
+      double left_hand_side =
+        1.64 * sqrt(local_kernel_sum[i].sample_mean_variance());
+      double right_hand_side =
+        arguments_in.relative_error_ * local_kernel_sum[i].sample_mean();
+      bool query_point_converged = (left_hand_side <= right_hand_side);
+      if(query_point_converged) {
+        converged_count++;
+      }
+      all_local_query_converged = all_local_query_converged &&
+                                  query_point_converged;
     }
+    printf("Process %d has %d converged queries.\n", world_->rank(),
+           converged_count);
     num_iterations++;
+
+    // Do an all-reduction to find out we are all done.
+    boost::mpi::all_reduce(
+      *world_, all_local_query_converged,
+      all_query_converged, std::logical_and<bool>());
   }
-  while(num_iterations < 20);
+  while(! all_query_converged);
 
   // Barrier so that every process is done.
   world_->barrier();
