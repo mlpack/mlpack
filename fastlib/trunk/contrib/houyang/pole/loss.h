@@ -7,6 +7,7 @@ class Loss {
   virtual double GetLoss(double prediction, double label) = 0;
   // Returns the update scalar
   virtual double GetUpdate(double prediction, double label) = 0;
+  virtual ~Loss() {};
 };
 
 class SquaredLoss : public Loss {
