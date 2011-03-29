@@ -61,7 +61,7 @@ class Learner {
   double alpha_; // Multiplication factor in Weighte Majority
   string kernel_name_; // name of kernel
   double sigma_; // sigma in Gaussian RBF kernel
-  size_t trdim_; // dimension for transformed features
+  T_IDX trdim_; // dimension for transformed features
   int    comm_method_; // How agents communicate with each other
  private:
   pthread_mutex_t mutex_ex_;

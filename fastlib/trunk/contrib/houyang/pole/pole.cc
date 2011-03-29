@@ -259,6 +259,11 @@ void Pole::ArgsSanityCheck() {
     cout << "Number of expert should be positive! Using default value: 1." << endl;
   }
 
+  if (L_->sigma_ <= 0) {
+    L_->sigma_ = 1.0;
+    cout << "Sigma should be positive! Using default value: 1." << endl;
+  }
+
   if (L_->n_log_ <0) {
     L_->n_log_ = 0;
   }
