@@ -18,6 +18,8 @@ set(DIRS
 #   spike            ## No actual code in here (except some LaTeX?)
 #   spike_train_dependence  ## missing hsic.h
 #   svm  ## does not compile, several mismatched function calls
+   test_new_fastlib
+   lars
 )
 
 foreach(dir ${DIRS})
