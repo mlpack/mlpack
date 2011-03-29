@@ -20,6 +20,7 @@ class OEG : public Learner {
   pthread_barrier_t barrier_msg_all_used_;
  public:
   OEG();
+  //~OEG();
   void Learn();
   void Test();
  private:

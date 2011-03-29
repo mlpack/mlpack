@@ -68,7 +68,7 @@ class Learner {
 
  public:
   Learner();
-  ~Learner();
+  virtual ~Learner();
   
   void OnlineLearn();
   void BatchLearn();

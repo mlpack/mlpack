@@ -17,7 +17,7 @@ class WM : public Learner {
   pthread_barrier_t barrier_msg_all_used_;
  public:
   WM();
-  ~WM();
+  //~WM();
   void Learn();
   void Test();
  private:
