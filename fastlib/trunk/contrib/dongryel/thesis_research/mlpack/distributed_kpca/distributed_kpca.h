@@ -10,6 +10,7 @@
 #include <boost/mpi/communicator.hpp>
 #include "core/table/distributed_table.h"
 #include "mlpack/distributed_kpca/distributed_kpca_arguments.h"
+#include "mlpack/distributed_kpca/kpca_result.h"
 
 namespace mlpack {
 namespace distributed_kpca {
