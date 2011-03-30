@@ -93,17 +93,13 @@ class DistributedKpca {
      */
     boost::mpi::communicator *world_;
 
-    /** @brief The distributed query table.
-     */
-    DistributedTableType *query_table_;
-
-    /** @brief The distributed reference table.
-     */
-    DistributedTableType *reference_table_;
-
     /** @brief The normal distribution object.
      */
     boost::math::normal normal_dist_;
+
+    double mult_const_;
+
+    double effective_num_reference_points_;
 };
 }
 }
