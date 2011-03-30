@@ -525,6 +525,12 @@ bool DistributedKpcaArgumentParser::ParseArguments(
   // Parse the KPCA component output file.
   arguments_out->kpca_components_out_ =
     vm["kpca_components_out"].as<std::string>();
+  if(vm.count("random_generate_n_entries") > 0) {
+    std::stringstream kpca_components_out_sstr;
+    kpca_components_out_sstr << vm["kpca_components_out"].as<std::string>() <<
+                             world.rank();
+    arguments_out->kpca_components_out_ = kpca_components_out_sstr.str();
+  }
 
   return false;
 }
