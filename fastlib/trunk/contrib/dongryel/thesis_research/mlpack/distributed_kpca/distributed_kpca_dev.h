@@ -64,15 +64,10 @@ namespace mlpack {
 namespace distributed_kpca {
 
 template<typename DistributedTableType, typename KernelType>
-DistributedTableType *DistributedKpca <
-DistributedTableType, KernelType >::query_table() {
-  return query_table_;
-}
-
-template<typename DistributedTableType, typename KernelType>
-DistributedTableType *DistributedKpca <
-DistributedTableType, KernelType >::reference_table() {
-  return reference_table_;
+DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
+  world_ = NULL;
+  mult_const_ = 0.0;
+  effective_num_reference_points_ = 0.0;
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -80,6 +75,18 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   const mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
+
+  double total_sum = 0;
+  for(int i = 0; i < comm.size(); i++) {
+    total_sum += arguments_in.reference_table_->local_n_entries(i);
+  }
+  effective_num_reference_points_ =
+    (arguments.reference_table_ == arguments.query_table_) ?
+    (total_sum - 1.0) : total_sum;
+  mult_const_ = 1.0 /
+                (kernel_aux_->kernel().CalcNormConstant(
+                   reference_table_in->n_attributes()) *
+                 ((double) effective_num_reference_points_));
 
   // Barrier so that every process is here.
   world_->barrier();
@@ -211,14 +218,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   DistributedTableType > &arguments_in) {
 
   world_ = &world_in;
-  reference_table_ = arguments_in.reference_table_;
-  if(arguments_in.query_table_ == NULL) {
-    query_table_ = reference_table_;
-    arguments_in.query_table_ = reference_table_;
-  }
-  else {
-    query_table_ = arguments_in.query_table_;
-  }
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
