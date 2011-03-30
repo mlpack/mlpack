@@ -20,6 +20,7 @@ endforeach()
 
 # The executable for LARS
 add_executable(lars
+    EXCLUDE_FROM_ALL
     main.cc
 )
 target_link_libraries(lars
