@@ -61,19 +61,7 @@ class DistributedKpca {
 
   public:
 
-    /** @brief The default constructor.
-     */
-    DistributedKpca() {
-      world_ = NULL;
-    }
-
-    /** @brief returns a pointer to the query table
-     */
-    DistributedTableType *query_table();
-
-    /** @brief returns a pointer to the reference table
-     */
-    DistributedTableType *reference_table();
+    DistributedKpca();
 
     /** @brief Initialize a Kpca engine with the arguments.
      */

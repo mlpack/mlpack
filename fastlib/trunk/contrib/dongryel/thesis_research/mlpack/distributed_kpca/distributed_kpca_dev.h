@@ -76,16 +76,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
-  double total_sum = 0;
-  for(int i = 0; i < comm.size(); i++) {
-    total_sum += arguments_in.reference_table_->local_n_entries(i);
-  }
-  effective_num_reference_points_ =
-    (arguments.reference_table_ == arguments.query_table_) ?
-    (total_sum - 1.0) : total_sum;
+  // The kernel.
+  KernelType kernel;
+  kernel.Init(arguments_in.bandwidth_);
   mult_const_ = 1.0 /
-                (kernel_aux_->kernel().CalcNormConstant(
-                   reference_table_in->n_attributes()) *
+                (kernel.CalcNormConstant(
+                   arguments_in.reference_table_->n_attributes()) *
                  ((double) effective_num_reference_points_));
 
   // Barrier so that every process is here.
@@ -93,10 +89,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // The MPI timer.
   boost::mpi::timer timer;
-
-  // The kernel.
-  KernelType kernel;
-  kernel.Init(arguments_in.bandwidth_);
 
   // The local kernel sum.
   core::monte_carlo::MeanVariancePairVector local_kernel_sum;
@@ -218,6 +210,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   DistributedTableType > &arguments_in) {
 
   world_ = &world_in;
+
+  // Initialize
+  double total_sum = 0;
+  for(int i = 0; i < world_->size(); i++) {
+    total_sum += arguments_in.reference_table_->local_n_entries(i);
+  }
+  effective_num_reference_points_ =
+    (arguments_in.reference_table_ == arguments_in.query_table_) ?
+    (total_sum - 1.0) : total_sum;
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
