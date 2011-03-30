@@ -56,13 +56,16 @@ class KpcaResult {
 
     void Export(
       double num_standard_deviations,
+      double mult_const,
       const core::monte_carlo::MeanVariancePairVector &kernel_sum) {
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
         double deviation = num_standard_deviations *
                            sqrt(kernel_sum[i].sample_mean_variance());
-        kpca_projections_l_.set(0, i, kernel_sum[i].sample_mean() - deviation);
-        kpca_projections_.set(0, i, kernel_sum[i].sample_mean());
-        kpca_projections_u_.set(0, i, kernel_sum[i].sample_mean() + deviation);
+        kpca_projections_l_.set(
+          0, i, (kernel_sum[i].sample_mean() - deviation) * mult_const);
+        kpca_projections_.set(0, i, kernel_sum[i].sample_mean() * mult_const);
+        kpca_projections_u_.set(
+          0, i, (kernel_sum[i].sample_mean() + deviation) * mult_const);
       }
     }
 
