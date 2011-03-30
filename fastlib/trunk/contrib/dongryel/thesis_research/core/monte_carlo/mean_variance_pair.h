@@ -21,6 +21,11 @@ class MeanVariancePair {
 
   private:
 
+    /** @brief Sets the total number of terms from which the samples
+     *         are collected.
+     */
+    int total_num_terms_;
+
     /** @brief The number of samples gathered.
      */
     int num_samples_;
@@ -34,6 +39,18 @@ class MeanVariancePair {
     double sample_variance_;
 
   public:
+
+    /** @brief Sets the total number of terms.
+     */
+    void set_total_num_terms(int total_num_terms_in) {
+      total_num_terms_ = total_num_terms_in;
+    }
+
+    /** @brief Returns the total number of terms.
+     */
+    int total_num_terms() const {
+      return total_num_terms_;
+    }
 
     /** @brief The default constructor that sets everything to zero.
      */
@@ -50,6 +67,7 @@ class MeanVariancePair {
     /** @brief Copies another MeanVariancePair object.
      */
     void CopyValues(const MeanVariancePair &pair_in) {
+      total_num_terms_ = pair_in.total_num_terms();
       num_samples_ = pair_in.num_samples();
       sample_mean_ = pair_in.sample_mean();
       sample_variance_ = pair_in.sample_variance();
@@ -115,9 +133,37 @@ class MeanVariancePair {
     /** @brief Sets everything to zero.
      */
     void SetZero() {
+      total_num_terms_ = 0;
       num_samples_ = 0;
       sample_mean_ = 0;
       sample_variance_ = 0;
+    }
+
+    /** @brief Pushes another mean variance pair information. Assumes
+     *         that the addition is done in an asymptotic normal way.
+     */
+    void CombineWith(const core::monte_carlo::MeanVariancePair &v) {
+
+      // Update the sample mean.
+      sample_mean_ =
+        (total_num_terms_ * sample_mean_ +
+         v.total_num_terms() * v.sample_mean()) /
+        static_cast<double>(total_num_terms_ + v.total_num_terms());
+
+      // Update the sample variance.
+      double first_portion =
+        static_cast<double>(total_num_terms_) /
+        static_cast<double>(total_num_terms_ + v.total_num_terms());
+      double second_portion = 1.0 - first_portion;
+      sample_variance_ =
+        (num_samples_ + v.num_samples()) *
+        (core::math::Sqr(first_portion) * this->sample_mean_variance() +
+         core::math::Sqr(second_portion) * v.sample_mean_variance());
+
+      // Finally update the total number of terms and the number of
+      // samples.
+      total_num_terms_ = total_num_terms_ + v.total_num_terms();
+      num_samples_ = num_samples_ + v.num_samples();
     }
 
     /** @brief Pushes a sample in.

@@ -8,6 +8,7 @@
 
 #include "core/gnp/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
+#include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
 #include "mlpack/distributed_kpca/distributed_kpca.h"
@@ -15,6 +16,25 @@
 
 namespace core {
 namespace parallel {
+
+class CombineMeanVariancePairVector:
+  public std::binary_function <
+  core::monte_carlo::MeanVariancePairVector,
+  core::monte_carlo::MeanVariancePairVector,
+    core::monte_carlo::MeanVariancePairVector > {
+
+  public:
+    const core::monte_carlo::MeanVariancePairVector operator()(
+      const core::monte_carlo::MeanVariancePairVector &a,
+      const core::monte_carlo::MeanVariancePairVector &b) const {
+
+      core::monte_carlo::MeanVariancePairVector combined;
+      combined.CopyValues(a);
+      combined.CombineWith(b);
+
+      return combined;
+    }
+};
 
 class AddDensePoint:
   public std::binary_function <
@@ -195,7 +215,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // Barrier so that every process is done.
   world_->barrier();
   if(world_->rank() == 0) {
-    printf("Spent %g seconds in computation.\n", timer.elapsed());
+    printf(
+      "Spent %g seconds in computation in %d iterations.\n",
+      timer.elapsed(), num_iterations);
   }
 
   // Export the results.

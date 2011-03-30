@@ -26,8 +26,9 @@ class MeanVariancePairVector {
 
     core::monte_carlo::MeanVariancePair *ptr_;
 
-  public:
-    ~MeanVariancePairVector() {
+  private:
+
+    void DestructPtr_() {
       if(ptr_ != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(ptr_);
@@ -37,6 +38,16 @@ class MeanVariancePairVector {
         }
       }
       ptr_ = NULL;
+    }
+
+  public:
+
+    int length() const {
+      return n_elements_;
+    }
+
+    ~MeanVariancePairVector() {
+      this->DestructPtr_();
     }
 
     MeanVariancePairVector() {
@@ -50,9 +61,30 @@ class MeanVariancePairVector {
       }
     }
 
+    void operator=(const MeanVariancePairVector &v) {
+      if(ptr_ == NULL || n_elements_ != v.length()) {
+        if(ptr_ != NULL) {
+          DestructPtr_();
+        }
+        this->Init(v.length());
+      }
+      n_elements_ = v.length();
+      this->CopyValues(v);
+    }
+
+    MeanVariancePairVector(const MeanVariancePairVector &v) {
+      this->operator=(v);
+    }
+
     void push_back(const arma::vec &v) {
       for(unsigned int i = 0; i < v.n_elem; i++) {
         ptr_[i].push_back(v[i]);
+      }
+    }
+
+    void CombineWith(const core::monte_carlo::MeanVariancePairVector &v) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].CombineWith(v[i]);
       }
     }
 
