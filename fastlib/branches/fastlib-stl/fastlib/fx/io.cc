@@ -9,7 +9,7 @@
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
-#define BASH_YELLOW "\033[1:33m"
+#define BASH_YELLOW "\033[1;33m"
 #define BASH_CLEAR "\033[0m"
 
 using namespace mlpack;
