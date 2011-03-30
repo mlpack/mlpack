@@ -19,8 +19,10 @@ class TestAllkNN {
   void Init() {
 //    allknn_ = new AllkNN();
 //    naive_  = new AllkNN();
-    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS) {
       IO::printFatal("Unable to load test dataset.");
+      exit(1);
+    }
   }
 
   void Destruct() {

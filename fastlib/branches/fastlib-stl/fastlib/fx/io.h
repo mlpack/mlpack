@@ -10,15 +10,39 @@
 
 #include "optionshierarchy.h"
 
+/* These defines facilitate the registering of command line options */
+#define IO_PARAM(T, ID, DESC, PARENT) static mlpack::Option PARENT##ID = mlpack::Option<T>(#ID, DESC, #PARENT);
+#define IO_FLAG(ID, DESC, PARENT) static mlpack::Option PARENT##ID = mlpack::Option(#ID, DESC, #PARENT);
+
+#define IO_STRING(ID, DESC, PARENT) IO_PARAM(std::string, ID, DESC, PARENT)
+#define IO_INT(ID, DESC, PARENT) IO_PARAM(int, ID, DESC, PARENT)
+#define IO_VECTOR(ID, DESC, PARENT) IO_PARAM(std::vector, ID, DESC, PARENT)
+
 namespace po = boost::program_options;
 
 namespace mlpack {
+
+  /*
+  This class is used to facilitate easy addition of options to the program. 
+  */
+  class Option {
+    //Base add an option
+   public:
+     template<typename T>
+    Option(const char* identifier, const char* description, 
+      const char* parent=NULL, bool required=false);
+    //Base add a flag option
+    Option(const char* identifier, const char* description,
+      const char* parent=NULL, bool required=false);
+  };
+
+
   class IO {
     public:
       /* Adds a parameter to the heirarchy.  Incidentally, we are using 
         char* and not std::string since the vast majority of use cases will 
         be literal strings*/
-      static void add(const char* idnetifier, const char* description, 
+      static void add(const char* identifier, const char* description, 
                                   const char* parent=NULL, bool required = false);
     
       static void add(const char* identifier, const char* description, 
