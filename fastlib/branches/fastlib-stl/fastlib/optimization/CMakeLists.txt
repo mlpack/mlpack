@@ -1,4 +1,4 @@
-add_subdirectory(contrib)
+#add_subdirectory(contrib)
 add_subdirectory(lbfgs)
 #add_subdirectory(optpp)
 
