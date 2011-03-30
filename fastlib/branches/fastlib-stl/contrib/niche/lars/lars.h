@@ -17,6 +17,8 @@
 
 #define EPS 1e-13
 
+#define LASSO true
+
 using namespace arma;
 using namespace std;
 
@@ -34,12 +36,14 @@ class Lars {
   std::vector<vec> beta_path_;
   std::vector<double> lambda_path_;
   
+  double desired_lambda_;
+  
   
  public:
   Lars() { }
 
   ~Lars() { }
-
+  
   void Init(mat &X, vec &y) {
     X_ = mat(X);
     y_ = vec(y);
@@ -84,6 +88,7 @@ class Lars {
     }
   }
   
+  
   void UpdateXty(std::vector<int> &col_inds) {
     for (std::vector<int>::iterator i = col_inds.begin(); 
 	 i != col_inds.end(); 
@@ -101,7 +106,7 @@ class Lars {
   void SetY(vec &y) {
     y_ = y; // I don't know how to copy the values of vectors yet, so this will have to do. This is wasteful though because we reallocate memory for y_
   }
-
+  
   
   void PrintY() {
     y_.print();
@@ -117,12 +122,22 @@ class Lars {
     return lambda_path_;
   }
   
+  void DoLARS(double desired_lambda) {
+    SetDesiredLambda(desired_lambda);
+    DoLARS();
+  }
+
+  void SetDesiredLambda(double desired_lambda) {
+    desired_lambda_ = desired_lambda;
+  }
+  
+  
   
   // vanilla LARS - using Gram matrix
   void DoLARS() {
     std::vector<int> active_set(0);
-    std::vector<bool> inactive_set(p_);
-    fill(inactive_set.begin(), inactive_set.end(), true);
+    std::vector<bool> is_active(p_);
+    fill(is_active.begin(), is_active.end(), false);
     
     // initialize mu and beta
     vec beta = zeros(p_);
@@ -130,25 +145,38 @@ class Lars {
     
     u32 n_active = 0;
     
+    bool kick_out = false;
+    
     vec corr = trans(X_) * y_;
     vec abs_corr = abs(corr);
-    u32 best_ind;
-    double max_corr = abs_corr.max(best_ind);
-    
-    //std::vector<vec> mu_path;
+    u32 change_ind;
+    double max_corr = abs_corr.max(change_ind);
     
     beta_path_.push_back(beta);
-    //mu_path.push_back(mu);
     lambda_path_.push_back(max_corr);
     
     
     // MAIN LOOP
     while((n_active < p_) && (max_corr > EPS)) {
       //printf("n_active = %d\n", n_active);
-      n_active++;
-      //printf("best_ind = %d\n", best_ind);
-      active_set.push_back(best_ind);
-      inactive_set[best_ind] = 0;
+      //printf("change_ind = %d\n", change_ind);
+
+      if(kick_out) {
+	printf("kick out the jams!\n");
+	// index is in position change_ind in active_set
+	// remove dimension from active set
+	kick_out = false;
+	n_active--;
+	is_active[active_set[change_ind]] = 0;
+	active_set.erase(active_set.begin() + change_ind);
+      }
+      else { // index is absolute index
+	printf("active!\n");
+	// add dimension to active set
+	n_active++;
+	is_active[change_ind] = true;
+	active_set.push_back(change_ind);
+      }
 
       
       // compute lambda
@@ -177,21 +205,21 @@ class Lars {
       // compute "equiangular" direction in parameter space
       vec unnormalized_beta_direction = inv(Gram_active % trans(S) % S) * ones<mat>(n_active, 1);
       double normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
-      vec beta_direction = unnormalized_beta_direction * normalization;
+      vec beta_direction = normalization * unnormalized_beta_direction % s;
       
       // compute "equiangular" direction in output space
       vec mu_direction = zeros(n_);
       for(u32 i = 0; i < n_active; i++) {
-	mu_direction += beta_direction(i) * s(i) * X_.col(active_set[i]);
+	mu_direction += beta_direction(i) * X_.col(active_set[i]);
       }
-
+      
       // if not all variables are active
       double gamma = max_corr / normalization;
-      best_ind = -1;
+      change_ind = -1;
       if(n_active < p_) {
 	// compute correlations with direction
 	for(u32 ind = 0; ind < p_; ind++) {
-	  if(!inactive_set[ind]) {
+	  if(is_active[ind]) {
 	    continue;
 	  }
 	  double dir_corr = dot(X_.col(ind), mu_direction);
@@ -200,18 +228,39 @@ class Lars {
 	  if(val1 > 0) {
 	    if(val1 < gamma) {
 	      gamma = val1;
-	      best_ind = ind;
+	      change_ind = ind;
 	    }
 	  }
 	  if(val2 > 0) {
 	    if(val2 < gamma) {
 	      gamma = val2;
-	      best_ind = ind;
+	      change_ind = ind;
 	    }
 	  }
 	}
       }
+      
+      
+      // bound gamma according to LASSO
+      if(LASSO) {
+	printf("LASSO\n");
+	double lasso_bound_on_gamma = DBL_MAX;
+	u32 active_ind_to_kick_out = -1;
+	for(u32 i = 0; i < n_active; i++) {
+	  double val = -beta(active_set[i]) / beta_direction(i);
+	  if((val > 0) && (val < lasso_bound_on_gamma)) {
+	    lasso_bound_on_gamma = val;
+	    active_ind_to_kick_out = i;
+	  }
+	}
 
+	if(lasso_bound_on_gamma < gamma) {
+	  kick_out = true;
+	  gamma = lasso_bound_on_gamma;
+	  change_ind = active_ind_to_kick_out;
+	}
+      }
+      
       // update prediction
       mu += gamma * mu_direction;
       
@@ -220,12 +269,34 @@ class Lars {
 	beta(active_set[i]) += gamma * beta_direction(i);
       }
       beta_path_.push_back(beta);
-      //mu_path.push_back(mu);
       
       // compute correlates
       corr = trans(X_) * (y_ - mu);
       max_corr -= gamma * normalization;
       lambda_path_.push_back(max_corr);
+      
+      
+      
+      if(LASSO) {
+	double ultimate_lambda = max_corr;
+	if(ultimate_lambda <= desired_lambda_) {
+	  printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
+		 ultimate_lambda,
+		 desired_lambda_);
+	  int path_length = beta_path_.size();
+	  
+	  // interpolate beta and stop
+	  double penultimate_lambda = lambda_path_[path_length - 2];
+	  double interp = 
+	    (penultimate_lambda - desired_lambda_)
+	    / (penultimate_lambda - ultimate_lambda);
+	  beta_path_[path_length - 1] = 
+	    (1 - interp) * (beta_path_[path_length - 2]) 
+	    + interp * beta_path_[path_length - 1];
+	  lambda_path_[path_length - 1] = desired_lambda_;
+	  break;
+	}
+      }
     }
     
     /*

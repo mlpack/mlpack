@@ -11,6 +11,7 @@
 #include "lars.h"
 
 using namespace arma;
+using namespace std;
 
 int main(int argc, char* argv[]) {
 
@@ -21,7 +22,7 @@ int main(int argc, char* argv[]) {
   mat X = randu<mat>(n,p);
   mat beta = zeros(p,1);
   beta(0) = 1;
-  beta(1) = 1;
+  beta(1) = -1;
   beta(9) = 1;
 
   vec y = X * beta;
@@ -29,7 +30,7 @@ int main(int argc, char* argv[]) {
   Lars lars;
   lars.Init(X, y);
 
-  lars.DoLARS();
+  lars.DoLARS(6);
   
   u32 path_length = lars.beta_path().size();
   
