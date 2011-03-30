@@ -200,7 +200,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Export the results.
   result_out->Init(1, arguments_in.query_table_->n_entries());
-  result_out->Export(num_standard_deviations, local_kernel_sum);
+  result_out->Export(num_standard_deviations, mult_const_, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -211,7 +211,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
 
   world_ = &world_in;
 
-  // Initialize
+  // This case implies that the query equals the reference.
+  if(arguments_in.query_table_ == NULL) {
+    arguments_in.query_table_ = arguments_in.reference_table_;
+  }
+
+  // Initialize the multiplicative constant.
   double total_sum = 0;
   for(int i = 0; i < world_->size(); i++) {
     total_sum += arguments_in.reference_table_->local_n_entries(i);
