@@ -173,8 +173,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     do {
 
-      // The master generates a set of random Fourier features and do a
-      // broadcast.
+      // The master generates a set of random Fourier features and do
+      // a broadcast.
       std::vector <
       core::table::DensePoint > random_variates;
       std::vector< arma::vec > random_variate_aliases;
@@ -221,6 +221,19 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       }
     }
     while(true);
+
+    // The master eigendecomposes the converged global covariance and
+    // does a broadcast.
+    if(world_->rank() == 0) {
+      arma::mat global_covariance_alias;
+      arma::vec kernel_eigenvalues;
+      arma::mat eigenvectors;
+      global_covariance.sample_means(&global_covariance_alias);
+      arma::eig_sym(kernel_eigenvalues, eigenvectors, global_covariance_alias);
+      result_out->set_eigendecomposition_results(
+        kernel_eigenvalues, eigenvectors);
+    }
+
   }
 
   // The local kernel sum.

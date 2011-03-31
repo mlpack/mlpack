@@ -37,6 +37,14 @@ class KpcaResult {
      */
     core::table::DenseMatrix kpca_projections_u_;
 
+    /** @brief The kernel eigenvalues.
+     */
+    core::table::DensePoint kernel_eigenvalues_;
+
+    /** @brief The covariance eigenvectors.
+     */
+    core::table::DenseMatrix covariance_eigenvectors_;
+
   public:
 
     /** @brief Serialize the KPCA result object.
@@ -46,6 +54,8 @@ class KpcaResult {
       ar & kpca_projections_l_;
       ar & kpca_projections_;
       ar & kpca_projections_u_;
+      ar & kernel_eigenvalues_;
+      ar & covariance_eigenvectors_;
     }
 
     /** @brief The default constructor.
@@ -102,6 +112,16 @@ class KpcaResult {
       kpca_projections_l_.SetZero();
       kpca_projections_.SetZero();
       kpca_projections_u_.SetZero();
+      kernel_eigenvalues_.SetZero();
+      covariance_eigenvectors_.SetZero();
+    }
+
+    void set_eigendecomposition_results(
+      const arma::vec &kernel_eigenvalues_in,
+      const arma::mat &covariance_eigenvectors_in) {
+
+      kernel_eigenvalues_.Copy(kernel_eigenvalues_in);
+      covariance_eigenvectors_.Copy(covariance_eigenvectors_in);
     }
 };
 }
