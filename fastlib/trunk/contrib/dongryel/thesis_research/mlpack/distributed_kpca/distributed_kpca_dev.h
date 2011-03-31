@@ -66,6 +66,14 @@ namespace mpi {
 
 template<>
 class is_commutative <
+  core::parallel::CombineMeanVariancePairVector,
+  core::monte_carlo::MeanVariancePairVector  > :
+  public boost::mpl::true_ {
+
+};
+
+template<>
+class is_commutative <
   core::parallel::AddDensePoint,
   core::table::DensePoint  > :
   public boost::mpl::true_ {
@@ -126,6 +134,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Call the computation.
   const int num_random_fourier_features = 20;
+  const int num_reference_samples = 1000;
   int num_iterations = 0;
   int converged_count = 0;
   bool all_query_converged = true;
@@ -154,21 +163,17 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
     // sum projections.
-    core::table::DensePoint local_reference_sum;
-    mlpack::series_expansion::RandomFeature::SumTransform(
+    core::monte_carlo::MeanVariancePairVector local_reference_average;
+    mlpack::series_expansion::RandomFeature::AverageTransform(
       *(arguments_in.reference_table_->local_table()),
-      random_variate_aliases, &local_reference_sum);
-    core::table::DensePoint global_reference_sum;
+      num_reference_samples, random_variate_aliases, &local_reference_average);
+    core::monte_carlo::MeanVariancePairVector global_reference_average;
     boost::mpi::all_reduce(
-      *world_, local_reference_sum, global_reference_sum,
-      core::parallel::AddDensePoint());
+      *world_, local_reference_average, global_reference_average,
+      core::parallel::CombineMeanVariancePairVector());
 
     // Each process computes the local projection of each query point
     // and adds up.
-    arma::vec global_reference_sum_alias;
-    core::table::DensePointToArmaVec(
-      global_reference_sum, &global_reference_sum_alias);
-
     bool all_local_query_converged = true;
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
@@ -185,11 +190,14 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
       for(int j = 0; j < num_random_fourier_features; j++) {
-        double contribution =
-          query_point_projected[j] * global_reference_sum_alias[j] +
-          query_point_projected[j + num_random_fourier_features] *
-          global_reference_sum_alias[j + num_random_fourier_features];
-        local_kernel_sum[i].push_back(contribution);
+
+        // You need to multiply by the factor of two since Fourier
+        // features come in pairs of cosine and sines.
+        local_kernel_sum[i].ScaledCombineWith(
+          2.0 * query_point_projected[j], global_reference_average[j]);
+        local_kernel_sum[i].ScaledCombineWith(
+          2.0 * query_point_projected[j + num_random_fourier_features],
+          global_reference_average[j + num_random_fourier_features]);
       }
 
       double left_hand_side =
@@ -222,7 +230,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Export the results.
   result_out->Init(1, arguments_in.query_table_->n_entries());
-  result_out->Export(num_standard_deviations, mult_const_, local_kernel_sum);
+  result_out->Export(num_standard_deviations, 1.0, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>

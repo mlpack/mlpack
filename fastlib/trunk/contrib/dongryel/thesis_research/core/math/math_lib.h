@@ -238,6 +238,9 @@ inline double PowAbs(double d) {
          (t_numerator % t_denominator == 0) && ((t_numerator / t_denominator) % 2 == 0) >::Calculate(fabs(d));
 }
 
+/** @brief Generates a random combination of num_elements from the
+ *         integer range [begin, end).
+ */
 template<typename T>
 void RandomCombination(
   int begin, int end, int num_elements, std::vector<T> *combination) {

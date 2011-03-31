@@ -9,6 +9,8 @@
 #define CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_MATRIX_H
 
 #include <armadillo>
+#include <boost/serialization/serialization.hpp>
+#include <boost/serialization/split_member.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
 
 namespace core {
@@ -21,6 +23,9 @@ namespace core {
 namespace monte_carlo {
 class MeanVariancePairVector {
   private:
+
+    // For BOOST serialization.
+    friend class boost::serialization::access;
 
     int n_elements_;
 
@@ -41,6 +46,36 @@ class MeanVariancePairVector {
     }
 
   public:
+
+    /** @brief Saves the point.
+     */
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+
+      // First the length of the vector, then save each element.
+      ar & n_elements_;
+      for(int i = 0; i < n_elements_; i++) {
+        ar & ptr_[i];
+      }
+    }
+
+    /** @brief Loads the point.
+     */
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+
+      // Load the length.
+      ar & n_elements_;
+
+      // Allocate the vector.
+      if(ptr_ == NULL && n_elements_ > 0) {
+        this->Init(n_elements_);
+      }
+      for(int i = 0; i < n_elements_; i++) {
+        ar & (ptr_[i]);
+      }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     int length() const {
       return n_elements_;
@@ -100,6 +135,14 @@ class MeanVariancePairVector {
       point_out->set_size(n_elements_);
       for(int i = 0; i < n_elements_; i++) {
         (*point_out)[i] = ptr_[i].sample_mean();
+      }
+    }
+
+    /** @brief Sets the total number of terms.
+     */
+    void set_total_num_terms(int total_num_terms_in) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].set_total_num_terms(total_num_terms_in);
       }
     }
 
