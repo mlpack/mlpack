@@ -106,7 +106,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   const int num_random_fourier_features = 20;
 
   // The number of reference points to pick in each round.
-  const int num_reference_samples = 1000;
+  int num_reference_samples =
+    std::min(1000, arguments_in.reference_table_->n_entries());
 
   // Determine the number of standard deviation coverage.
   double cumulative_probability = arguments_in.probability_ +
