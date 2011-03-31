@@ -674,6 +674,14 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     arguments_out->kpca_components_out_ = kpca_components_out_sstr.str();
   }
 
+  // Parse the number of KPCA components.
+  arguments_out->num_kpca_components_in_ =
+    vm["num_kpca_components_in"].as<int>();
+  if(world.rank() == 0) {
+    std::cout << "Requesting " << arguments_out->num_kpca_components_in_ <<
+              " kernel PCA components...\n";
+  }
+
   return false;
 }
 
