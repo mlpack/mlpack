@@ -199,7 +199,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Export the results.
   result_out->Init(1, arguments_in.query_table_->n_entries());
-  result_out->Export(num_standard_deviations, 1.0, local_kernel_sum);
+  result_out->Export(num_standard_deviations, mult_const_, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>
