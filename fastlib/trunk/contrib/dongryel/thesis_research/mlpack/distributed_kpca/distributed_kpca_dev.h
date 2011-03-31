@@ -36,6 +36,26 @@ class CombineMeanVariancePairVector:
       return combined;
     }
 };
+
+class CombineMeanVariancePairMatrix:
+  public std::binary_function <
+  core::monte_carlo::MeanVariancePairMatrix,
+  core::monte_carlo::MeanVariancePairMatrix,
+    core::monte_carlo::MeanVariancePairMatrix > {
+
+  public:
+    const core::monte_carlo::MeanVariancePairMatrix operator()(
+      const core::monte_carlo::MeanVariancePairMatrix &a,
+      const core::monte_carlo::MeanVariancePairMatrix &b) const {
+
+      core::monte_carlo::MeanVariancePairMatrix combined;
+      combined.Init(a.n_rows(), a.n_cols());
+      combined.CopyValues(a);
+      combined.CombineWith(b);
+
+      return combined;
+    }
+};
 }
 }
 
@@ -46,6 +66,14 @@ template<>
 class is_commutative <
   core::parallel::CombineMeanVariancePairVector,
   core::monte_carlo::MeanVariancePairVector  > :
+  public boost::mpl::true_ {
+
+};
+
+template<>
+class is_commutative <
+  core::parallel::CombineMeanVariancePairMatrix,
+  core::monte_carlo::MeanVariancePairMatrix  > :
   public boost::mpl::true_ {
 
 };
@@ -66,6 +94,7 @@ DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
   world_ = NULL;
   mult_const_ = 0.0;
   effective_num_reference_points_ = 0.0;
+  correction_term_ = 0.0;
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -147,6 +176,19 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       GenerateRandomFourierFeatures_(
         arguments_in, kernel, num_random_fourier_features,
         &random_variates, &random_variate_aliases);
+
+      // Each process computes its local covariance and all of them
+      // participate in an all-reduce step to form the global
+      // covariance.
+      core::monte_carlo::MeanVariancePairMatrix local_covariance;
+      core::monte_carlo::MeanVariancePairMatrix global_covariance;
+      mlpack::series_expansion::RandomFeature::CovarianceTransform(
+        *(arguments_in.reference_table_->local_table()),
+        num_reference_samples, random_variate_aliases,
+        &local_covariance);
+      boost::mpi::all_reduce(
+        *world_, local_covariance, global_covariance,
+        core::parallel::CombineMeanVariancePairMatrix());
     }
     while(! kpca_eigenvectors_converged);
   }
@@ -243,7 +285,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Export the results.
   result_out->Init(1, arguments_in.query_table_->n_entries());
-  result_out->Export(num_standard_deviations, mult_const_, local_kernel_sum);
+  result_out->Export(
+    num_standard_deviations, mult_const_, correction_term_, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -267,6 +310,13 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   effective_num_reference_points_ =
     (arguments_in.reference_table_ == arguments_in.query_table_) ?
     (total_sum - 1.0) : total_sum;
+
+  // In case the mode is KDE, and is monochromatic.
+  correction_term_ = (arguments_in.mode_ == "kde") ?
+                     1.0 / static_cast<double>(
+                       (arguments_in.reference_table_ == arguments_in.query_table_) ?
+                       (effective_num_reference_points_ + 1.0) :
+                       effective_num_reference_points_) : 0.0;
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(

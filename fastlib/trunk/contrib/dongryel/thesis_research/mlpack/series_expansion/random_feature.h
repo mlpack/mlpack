@@ -70,6 +70,36 @@ class RandomFeature {
     }
 
     template<typename TableType>
+    static void CovarianceTransform(
+      const TableType &table_in,
+      int num_reference_samples,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation) {
+
+      int num_random_fourier_features = random_variates.size();
+      covariance_transformation->Init(
+        2 * num_random_fourier_features, 2 * num_random_fourier_features);
+      covariance_transformation->set_total_num_terms(table_in.n_entries());
+
+      // Generate a random combination.
+      std::vector<int> random_combination;
+      core::math::RandomCombination(
+        0, table_in.n_entries(), num_reference_samples, &random_combination);
+
+      arma::vec tmp_vector;
+      tmp_vector.set_size(2 * num_random_fourier_features);
+      for(unsigned int i = 0; i < random_combination.size(); i++) {
+        arma::vec old_point;
+        table_in.get(random_combination[i] , &old_point);
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot(random_variates[j], old_point);
+          tmp_vector[j] = cos(dot_product);
+          tmp_vector[j + num_random_fourier_features] = sin(dot_product);
+        }
+      }
+    }
+
+    template<typename TableType>
     static void AverageTransform(
       const TableType &table_in,
       int num_reference_samples,

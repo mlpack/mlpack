@@ -27,8 +27,12 @@ class MeanVariancePairVector {
     // For BOOST serialization.
     friend class boost::serialization::access;
 
+    /** @brief The number of mean variance pair objects.
+     */
     int n_elements_;
 
+    /** @brief The list of mean variance pair objects.
+     */
     core::monte_carlo::MeanVariancePair *ptr_;
 
   private:
@@ -158,16 +162,30 @@ class MeanVariancePairVector {
 class MeanVariancePairMatrix {
   private:
 
+    // For BOOST serialization.
+    friend class boost::serialization::access;
+
+    /** @brief The number of rows.
+     */
     int n_rows_;
 
+    /** @brief The number of columns.
+     */
     int n_cols_;
 
+    /** @brief The number of elements.
+     */
     int n_elements_;
 
+    /** @brief The underlying matrix of mean variance pair objects.
+     */
     core::monte_carlo::MeanVariancePair *ptr_;
 
-  public:
-    ~MeanVariancePairMatrix() {
+  private:
+
+    /** @brief Destroys the matrix.
+     */
+    void DestructPtr_() {
       if(ptr_ != NULL) {
         if(core::table::global_m_file_) {
           core::table::global_m_file_->DestroyPtr(ptr_);
@@ -179,6 +197,52 @@ class MeanVariancePairMatrix {
       ptr_ = NULL;
     }
 
+  public:
+
+    /** @brief Saves the point.
+     */
+    template<class Archive>
+    void save(Archive &ar, const unsigned int version) const {
+
+      // Save the number of rows, the number of columns, and the
+      // number of elements.
+      ar & n_rows_;
+      ar & n_cols_;
+      ar & n_elements_;
+      for(int i = 0; i < n_elements_; i++) {
+        ar & ptr_[i];
+      }
+    }
+
+    /** @brief Loads the point.
+     */
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+
+      // Load the number of rows, the number of columns and the number
+      // of elements.
+      ar & n_rows_;
+      ar & n_cols_;
+      ar & n_elements_;
+
+      // Allocate the vector.
+      if(ptr_ == NULL && n_elements_ > 0) {
+        this->Init(n_rows_, n_cols_);
+      }
+      for(int i = 0; i < n_elements_; i++) {
+        ar & (ptr_[i]);
+      }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
+
+    /** @brief The destructor.
+     */
+    ~MeanVariancePairMatrix() {
+      DestructPtr_();
+    }
+
+    /** @brief The constructor.
+     */
     MeanVariancePairMatrix() {
       n_rows_ = 0;
       n_cols_ = 0;
@@ -194,6 +258,8 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Returns the sample means in a matrix form.
+     */
     void sample_means(arma::mat *point_out) const {
       point_out->set_size(n_rows_, n_cols_);
       for(int j = 0; j < n_cols_; j++) {
@@ -203,6 +269,9 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Copies mean variance pair objects from another mean
+     *         variance pair matrix object.
+     */
     void CopyValues(const core::monte_carlo::MeanVariancePairMatrix &v) {
       for(int j = 0; j < n_cols_; j++) {
         for(int i = 0; i < n_rows_; i++) {
@@ -211,6 +280,9 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Initializes the mean variance pair matrix with the
+     *         given dimensionality.
+     */
     void Init(int n_rows_in, int n_cols_in) {
       n_rows_ = n_rows_in;
       n_cols_ = n_cols_in;
@@ -221,12 +293,46 @@ class MeanVariancePairMatrix {
              new core::monte_carlo::MeanVariancePair[n_elements_];
     }
 
+    /** @brief Sets the total number of terms.
+     */
+    void set_total_num_terms(int total_num_terms_in) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].set_total_num_terms(total_num_terms_in);
+      }
+    }
+
+    /** @brief Returns the mean variance pair object at (row, col)
+     *         position.
+     */
     const core::monte_carlo::MeanVariancePair &get(int row, int col) const {
       return ptr_[col * n_rows_ + row];
     }
 
+    /** @brief Returns the mean variance pair object at (row, col)
+     *         position.
+     */
     core::monte_carlo::MeanVariancePair &get(int row, int col) {
       return ptr_[col * n_rows_ + row];
+    }
+
+    void CombineWith(const core::monte_carlo::MeanVariancePairMatrix &v) {
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          this->get(i, j).CombineWith(v.get(i, j));
+        }
+      }
+    }
+
+    /** @brief Returns the number of rows.
+     */
+    int n_rows() const {
+      return n_rows_;
+    }
+
+    /** @brief Returns the number of columns.
+     */
+    int n_cols() const {
+      return n_cols_;
     }
 };
 }
