@@ -19,6 +19,8 @@
 
 #define LASSO true
 
+#define USE_CHOLESKY true
+
 using namespace arma;
 using namespace std;
 
@@ -44,7 +46,7 @@ class Lars {
 
   ~Lars() { }
   
-  void Init(mat &X, vec &y) {
+  void Init(const mat& X, const vec& y) {
     X_ = mat(X);
     y_ = vec(y);
     
@@ -66,7 +68,7 @@ class Lars {
   }    
   
   
-  void UpdateX(std::vector<int> &col_inds, mat &new_cols) {
+  void UpdateX(const std::vector<int>& col_inds, const mat& new_cols) {
     for(u32 i = 0; i < col_inds.size(); i++) {
       X_.col(col_inds[i]) = new_cols.col(i);
     }
@@ -76,11 +78,11 @@ class Lars {
   }
 
   
-  void UpdateGram(std::vector<int> &col_inds) {
-    for (std::vector<int>::iterator i = col_inds.begin(); 
+  void UpdateGram(const std::vector<int>& col_inds) {
+    for (std::vector<int>::const_iterator i = col_inds.begin(); 
 	 i != col_inds.end(); 
 	 ++i) {
-      for (std::vector<int>::iterator j = col_inds.begin(); 
+      for (std::vector<int>::const_iterator j = col_inds.begin(); 
 	   j != col_inds.end(); 
 	   ++j) {
 	Gram_(*i, *j) = dot(X_.col(*i), X_.col(*j));
@@ -89,8 +91,8 @@ class Lars {
   }
   
   
-  void UpdateXty(std::vector<int> &col_inds) {
-    for (std::vector<int>::iterator i = col_inds.begin(); 
+  void UpdateXty(const std::vector<int>& col_inds) {
+    for (std::vector<int>::const_iterator i = col_inds.begin(); 
 	 i != col_inds.end(); 
 	 ++i) {
       Xty_(*i) = dot(X_.col(*i), y_);
@@ -103,8 +105,8 @@ class Lars {
   }
   
   
-  void SetY(vec &y) {
-    y_ = y; // I don't know how to copy the values of vectors yet, so this will have to do. This is wasteful though because we reallocate memory for y_
+  void SetY(const vec& y) {
+    y_ = y;
   }
   
   
@@ -122,15 +124,16 @@ class Lars {
     return lambda_path_;
   }
   
+  
   void DoLARS(double desired_lambda) {
     SetDesiredLambda(desired_lambda);
     DoLARS();
   }
 
+  
   void SetDesiredLambda(double desired_lambda) {
     desired_lambda_ = desired_lambda;
   }
-  
   
   
   // vanilla LARS - using Gram matrix
@@ -154,7 +157,9 @@ class Lars {
     
     beta_path_.push_back(beta);
     lambda_path_.push_back(max_corr);
+  
     
+    mat R; // upper triangular cholesky factor, initially 0 by 0 matrix
     
     // MAIN LOOP
     while((n_active < p_) && (max_corr > EPS)) {
@@ -162,17 +167,33 @@ class Lars {
       //printf("change_ind = %d\n", change_ind);
 
       if(kick_out) {
-	printf("kick out the jams!\n");
 	// index is in position change_ind in active_set
-	// remove dimension from active set
+	printf("kick out!\n");
+	
+	if(USE_CHOLESKY) {
+	  CholeskyDelete(R, change_ind);
+	}
+	
+	// remove variable from active set
 	kick_out = false;
 	n_active--;
 	is_active[active_set[change_ind]] = 0;
 	active_set.erase(active_set.begin() + change_ind);
       }
-      else { // index is absolute index
+      else {
+	// index is absolute index
 	printf("active!\n");
-	// add dimension to active set
+	
+	if(USE_CHOLESKY) {
+	  vec new_Gram_col = vec(n_active);
+	  for(u32 i = 0; i < n_active; i++) {
+	    new_Gram_col[i] = 
+	      dot(X_.col(active_set[i]), X_.col(change_ind));
+	  }
+	  CholeskyInsert(R, X_.col(change_ind), new_Gram_col);
+	}
+	
+	// add variable to active set
 	n_active++;
 	is_active[change_ind] = true;
 	active_set.push_back(change_ind);
@@ -202,10 +223,32 @@ class Lars {
 	}
       }
 
-      // compute "equiangular" direction in parameter space
-      vec unnormalized_beta_direction = inv(Gram_active % trans(S) % S) * ones<mat>(n_active, 1);
-      double normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
-      vec beta_direction = normalization * unnormalized_beta_direction % s;
+      // compute "equiangular" direction in parameter space (beta_direction)
+      /* We use quotes because in the case of non-unit norm variables,
+	 this need not be equiangular. */
+      vec unnormalized_beta_direction; 
+      double normalization;
+      vec beta_direction;
+      if(USE_CHOLESKY) {
+	/* Note that:
+	     R^T R % S^T % S = (R % S)^T (R % S)
+	   Now:
+	     inv( (R % S)^T (R % S) ) 1
+	      = inv(R % S) inv((R % S)^T) 1
+	      = inv(R % S) Solve((R % S)^T, 1)
+	      = inv(R % S) Solve(R^T, s)
+	      = Solve(R % S, Solve(R^T, s)
+	      = s % Solve(R, Solve(R^T, s))
+	*/
+	unnormalized_beta_direction = solve(R, solve(trans(R), s));
+	normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
+	beta_direction = normalization * unnormalized_beta_direction;
+      }
+      else{
+	unnormalized_beta_direction = solve(Gram_active % trans(S) % S, ones<mat>(n_active, 1));
+	normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
+	beta_direction = normalization * unnormalized_beta_direction % s;
+      }
       
       // compute "equiangular" direction in output space
       vec mu_direction = zeros(n_);
@@ -306,6 +349,95 @@ class Lars {
     */
   }
 
+  void CholeskyInsert(mat& R, const vec& new_x, const mat& X) {
+    if(R.n_rows == 0) {
+      R = mat(1, 1);
+      R(0,0) = norm(new_x, 2);
+    }
+    else {
+      vec new_Gram_col = trans(X) * new_x;
+      CholeskyInsert(R, new_x, new_Gram_col);
+    }
+  }
+  
+  
+  void CholeskyInsert(mat& R, const vec& new_x, const vec& new_Gram_col) {
+    int n = R.n_rows;
+    
+    if(n == 0) {
+      R = mat(1, 1);
+      R(0, 0) = norm(new_x, 2);
+    }
+    else {
+      mat new_R = mat(n + 1, n + 1);
+      
+      new_R(span(0, n - 1), span(0, n - 1)) = R(span::all, span::all);
+      
+      vec R_k = solve(trimatl(trans(R)), new_Gram_col);
+      double R_kk = sqrt(dot(new_x, new_x) - dot(R_k, R_k));
+      
+      new_R(span(0, n - 1), n) = R_k;
+      
+      new_R(n, span(0, n - 1)).fill(0.0);
+      
+      new_R(n, n) = R_kk;
+      
+      R = new_R;
+    }
+  }
+  
+  
+  void GivensRotate(const vec& x, vec& rotated_x, mat& G) {
+    if(x(1) == 0) {
+      G = eye(2, 2);
+      rotated_x = x;
+    }
+    else {
+      double r = norm(x, 2);
+      G = mat(2, 2);
+      
+      double scaled_x1 = x(0) / r;
+      double scaled_x2 = x(1) / r;
+
+      G(0,0) = scaled_x1;
+      G(1,0) = -scaled_x2;
+      G(0,1) = scaled_x2;
+      G(1,1) = scaled_x1;
+      
+      rotated_x = vec(2);
+      rotated_x(0) = r;
+      rotated_x(1) = 0;
+    }
+  }
+  
+  
+  void CholeskyDelete(mat& R, u32 col_to_kill) {
+    printf("calling CholeskyDelete\n");
+    u32 n = R.n_rows;
+    
+    if(col_to_kill == (n - 1)) {
+      R = R(span(0, n - 2), span(0, n - 2));
+    }
+    else {
+      R.shed_col(col_to_kill); // remove column col_to_kill
+      n--;
+      
+      for(u32 k = col_to_kill; k < n; k++) {
+	mat G;
+	vec rotated_vec;
+	GivensRotate(R(span(k, k + 1), k),
+		     rotated_vec,
+		     G);
+	R(span(k, k + 1), k) = rotated_vec;
+	if(k < n - 1) {
+	  R(span(k, k + 1), span(k + 1, n - 1)) =
+	    G * R(span(k, k + 1), span(k + 1, n - 1));
+	}
+      }
+      R.shed_row(n);
+    }
+  }
+  
 };
 
 #endif
