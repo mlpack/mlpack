@@ -59,6 +59,14 @@ class DistributedKpcaArguments {
      */
     core::metric_kernels::LMetric<2> metric_;
 
+    /** @brief The computation mode.
+     */
+    std::string mode_;
+
+    /** @brief The number of KPCA components to compute.
+     */
+    int num_kpca_components_in_;
+
   public:
 
     /** @brief The default constructor.
@@ -72,6 +80,8 @@ class DistributedKpcaArguments {
       probability_ = 0.0;
       kpca_components_out_ = "";
       kernel_ = "";
+      mode_ = "";
+      num_kpca_components_in_ = 0;
     }
 
     /** @brief The destructor.
