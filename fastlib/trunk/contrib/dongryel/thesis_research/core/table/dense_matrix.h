@@ -17,6 +17,22 @@
 namespace core {
 namespace table {
 
+/** @brief The trait class for determining the number of rows for a
+ *         matrix-like object. Currently supports the
+ *         core::table::DensePoint and arma::vec class objects.
+ */
+template<typename MatrixType>
+class RowTrait {
+  public:
+    static int n_rows(const MatrixType &p);
+};
+
+template<typename MatrixType>
+class ColTrait {
+  public:
+    static int n_cols(const MatrixType &p);
+};
+
 /** @brief The dense column-oriented matrix.
  */
 class DenseMatrix {
@@ -261,6 +277,94 @@ class DenseMatrix {
       n_rows_ = n_rows_in;
       n_cols_ = n_cols_in;
       is_alias_ = true;
+    }
+
+    template<typename MatrixType>
+    void CopyValues(const MatrixType &matrix_in) {
+      const double *point_in_ptr =
+        core::table::PointerTrait<MatrixType>::ptr(matrix_in);
+      n_rows_ = core::table::RowTrait<MatrixType>::n_rows(matrix_in);
+      n_cols_ = core::table::ColTrait<MatrixType>::n_cols(matrix_in);
+      memcpy(
+        ptr_.get(), point_in_ptr, sizeof(double) * n_rows_ * n_cols_);
+      is_alias_ = false;
+    }
+
+    template<typename MatrixType>
+    void Copy(const MatrixType &matrix_in) {
+      if(core::table::RowTrait<MatrixType>::n_rows(matrix_in) > 0 &&
+          core::table::ColTrait<MatrixType>::n_cols(matrix_in) > 0) {
+        if(ptr_.get() == NULL) {
+          int length =
+            core::table::RowTrait<MatrixType>::n_rows(matrix_in) *
+            core::table::ColTrait<MatrixType>::n_cols(matrix_in);
+          ptr_ =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray<double>(
+              length) : new double[ length ];
+        }
+        CopyValues(matrix_in);
+      }
+    }
+};
+
+/** @brief The trait class instantiation for determining the number of
+ *         rows of an arma::mat object.
+ */
+template<>
+class RowTrait<arma::mat> {
+  public:
+    static int n_rows(const arma::mat &p) {
+      return p.n_rows;
+    }
+};
+
+/** @brief The trait class instantiation for determining the number of
+ *         rows of a core::table::DenseMatrix object.
+ */
+template<>
+class RowTrait<core::table::DenseMatrix> {
+  public:
+    static int n_rows(const core::table::DenseMatrix &p) {
+      return p.n_rows();
+    }
+};
+
+/** @brief The trait class instantiation for determining the number of
+ *         columns of an arma::mat object.
+ */
+template<>
+class ColTrait<arma::mat> {
+  public:
+    static int n_cols(const arma::mat &p) {
+      return p.n_cols;
+    }
+};
+
+/** @brief The trait class instantiation for determining the number of
+ *         columns of a core::table::DenseMatrix object.
+ */
+template<>
+class ColTrait<core::table::DenseMatrix> {
+  public:
+    static int n_cols(const core::table::DenseMatrix &p) {
+      return p.n_cols();
+    }
+};
+
+template<>
+class PointerTrait<arma::mat> {
+  public:
+    static const double *ptr(const arma::mat &p) {
+      return p.memptr();
+    }
+};
+
+template<>
+class PointerTrait<core::table::DenseMatrix> {
+  public:
+    static const double *ptr(const core::table::DenseMatrix &p) {
+      return p.ptr();
     }
 };
 
