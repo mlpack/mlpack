@@ -29,33 +29,11 @@ class CombineMeanVariancePairVector:
       const core::monte_carlo::MeanVariancePairVector &b) const {
 
       core::monte_carlo::MeanVariancePairVector combined;
+      combined.Init(a.length());
       combined.CopyValues(a);
       combined.CombineWith(b);
 
       return combined;
-    }
-};
-
-class AddDensePoint:
-  public std::binary_function <
-  core::table::DensePoint,
-  core::table::DensePoint,
-    core::table::DensePoint > {
-  public:
-    const core::table::DensePoint operator()(
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) const {
-
-      core::table::DensePoint sum;
-      sum.Init(a.length());
-      arma::vec a_alias;
-      arma::vec b_alias;
-      arma::vec sum_alias;
-      core::table::DensePointToArmaVec(a, &a_alias);
-      core::table::DensePointToArmaVec(b, &b_alias);
-      core::table::DensePointToArmaVec(sum, &sum_alias);
-      sum_alias = a_alias + b_alias;
-      return sum;
     }
 };
 }
@@ -68,14 +46,6 @@ template<>
 class is_commutative <
   core::parallel::CombineMeanVariancePairVector,
   core::monte_carlo::MeanVariancePairVector  > :
-  public boost::mpl::true_ {
-
-};
-
-template<>
-class is_commutative <
-  core::parallel::AddDensePoint,
-  core::table::DensePoint  > :
   public boost::mpl::true_ {
 
 };
