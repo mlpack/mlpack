@@ -9,6 +9,7 @@
 #ifndef CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
 #define CORE_MONTE_CARLO_MEAN_VARIANCE_PAIR_H
 
+#include <boost/serialization/serialization.hpp>
 #include <math.h>
 #include "core/math/range.h"
 
@@ -20,6 +21,9 @@ namespace monte_carlo {
 class MeanVariancePair {
 
   private:
+
+    // For BOOST serialization.
+    friend class boost::serialization::access;
 
     /** @brief Sets the total number of terms from which the samples
      *         are collected.
@@ -39,6 +43,16 @@ class MeanVariancePair {
     double sample_variance_;
 
   public:
+
+    /** @brief Serializes the mean variance pair object.
+     */
+    template<class Archive>
+    void serialize(Archive &ar, const unsigned int version) {
+      ar & total_num_terms_;
+      ar & num_samples_;
+      ar & sample_mean_;
+      ar & sample_variance_;
+    }
 
     /** @brief Sets the total number of terms.
      */
@@ -130,6 +144,15 @@ class MeanVariancePair {
       interval_out->hi = scale_in * (sample_mean_ + error);
     }
 
+    void scale(double scale_in) {
+
+      // Variance is multiplied by the square of the scale.
+      sample_variance_ *= core::math::Sqr(scale_in);
+
+      // The mean is multiplied by the scale.
+      sample_mean_ *= scale_in;
+    }
+
     /** @brief Sets everything to zero.
      */
     void SetZero() {
@@ -164,6 +187,19 @@ class MeanVariancePair {
       // samples.
       total_num_terms_ = total_num_terms_ + v.total_num_terms();
       num_samples_ = num_samples_ + v.num_samples();
+    }
+
+    /** @brief Pushes another mean variance pair information with a
+     *         scale factor. Assumes that the addition is done in an
+     *         asymptotic normal way.
+     */
+    void ScaledCombineWith(
+      double scale_in, const core::monte_carlo::MeanVariancePair &v) {
+
+      core::monte_carlo::MeanVariancePair scaled_v;
+      scaled_v.CopyValues(v);
+      scaled_v.scale(scale_in);
+      this->CombineWith(scaled_v);
     }
 
     /** @brief Pushes a sample in.
