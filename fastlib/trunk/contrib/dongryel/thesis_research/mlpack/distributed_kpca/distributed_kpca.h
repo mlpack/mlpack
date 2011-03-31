@@ -59,6 +59,17 @@ class DistributedKpca {
     typedef mlpack::distributed_kpca::DistributedKpcaArguments <
     TableType > ArgumentType;
 
+  private:
+
+    void GenerateRandomFourierFeatures_(
+      const mlpack::distributed_kpca::DistributedKpcaArguments <
+      DistributedTableType > &arguments_in,
+      const KernelType &kernel,
+      int num_random_fourier_features,
+      std::vector <
+      core::table::DensePoint > *random_variates,
+      std::vector< arma::vec > *random_variate_aliases);
+
   public:
 
     DistributedKpca();

@@ -69,10 +69,52 @@ DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
 }
 
 template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
+DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
+  const mlpack::distributed_kpca::DistributedKpcaArguments <
+  DistributedTableType > &arguments_in,
+  const KernelType &kernel,
+  int num_random_fourier_features,
+  std::vector <
+  core::table::DensePoint > *random_variates,
+  std::vector< arma::vec > *random_variate_aliases) {
+
+  random_variates->resize(num_random_fourier_features);
+  random_variate_aliases->resize(num_random_fourier_features);
+  if(world_->rank() == 0) {
+    for(int i = 0; i < num_random_fourier_features; i++) {
+
+      // Draw a random Fourier feature.
+      kernel.DrawRandomVariate(
+        arguments_in.reference_table_->n_attributes(), & (*random_variates)[i]);
+    }
+  }
+  boost::mpi::broadcast(*world_, *random_variates, 0);
+  for(int i = 0; i < num_random_fourier_features; i++) {
+    core::table::DensePointToArmaVec(
+      (*random_variates)[i], &((*random_variate_aliases)[i]));
+  }
+}
+
+template<typename DistributedTableType, typename KernelType>
 void DistributedKpca<DistributedTableType, KernelType>::Compute(
   const mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
+
+  // The number of Fourier features to sample in each round.
+  const int num_random_fourier_features = 20;
+
+  // The number of reference points to pick in each round.
+  const int num_reference_samples = 1000;
+
+  // Determine the number of standard deviation coverage.
+  double cumulative_probability = arguments_in.probability_ +
+                                  0.5 * (1.0 - arguments_in.probability_);
+  double num_standard_deviations =
+    (cumulative_probability > 0.999) ?
+    3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
+  printf("Number of standard deviation: %g\n", num_standard_deviations);
 
   // The kernel.
   KernelType kernel;
@@ -87,23 +129,34 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // The MPI timer.
   boost::mpi::timer timer;
 
+  // If the mode is KPCA, then need to compute the eigenvectors.
+  if(arguments_in.mode_ == "kpca") {
+
+    // The master computes the eigenvectors.
+    core::monte_carlo::MeanVariancePairMatrix kpca_eigenvectors;
+    bool kpca_eigenvectors_converged = false;
+    do {
+      kpca_eigenvectors_converged = false;
+
+      // The master generates a set of random Fourier features and do a
+      // broadcast.
+      std::vector <
+      core::table::DensePoint > random_variates;
+      std::vector< arma::vec > random_variate_aliases;
+      GenerateRandomFourierFeatures_(
+        arguments_in, kernel, num_random_fourier_features,
+        &random_variates, &random_variate_aliases);
+    }
+    while(! kpca_eigenvectors_converged);
+  }
+
   // The local kernel sum.
   core::monte_carlo::MeanVariancePairVector local_kernel_sum;
   local_kernel_sum.Init(arguments_in.query_table_->local_table()->n_entries());
   std::vector<bool> converged(
     arguments_in.query_table_->local_table()->n_entries(), false);
 
-  // Determine the number of standard deviation coverage.
-  double cumulative_probability = arguments_in.probability_ +
-                                  0.5 * (1.0 - arguments_in.probability_);
-  double num_standard_deviations =
-    (cumulative_probability > 0.999) ?
-    3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
-  printf("Number of standard deviation: %g\n", num_standard_deviations);
-
   // Call the computation.
-  const int num_random_fourier_features = 20;
-  const int num_reference_samples = 1000;
   int num_iterations = 0;
   int converged_count = 0;
   bool all_query_converged = true;
@@ -115,19 +168,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     core::table::DensePoint > random_variates(num_random_fourier_features);
     std::vector< arma::vec > random_variate_aliases(
       num_random_fourier_features);
-    if(world_->rank() == 0) {
-      for(int i = 0; i < num_random_fourier_features; i++) {
-
-        // Draw a random Fourier feature.
-        kernel.DrawRandomVariate(
-          arguments_in.reference_table_->n_attributes(), & random_variates[i]);
-      }
-    }
-    boost::mpi::broadcast(*world_, random_variates, 0);
-    for(int i = 0; i < num_random_fourier_features; i++) {
-      core::table::DensePointToArmaVec(
-        random_variates[i], &(random_variate_aliases[i]));
-    }
+    GenerateRandomFourierFeatures_(
+      arguments_in, kernel, num_random_fourier_features,
+      &random_variates, &random_variate_aliases);
 
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
@@ -233,6 +276,15 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   boost::program_options::options_description desc("Available options");
   desc.add_options()(
     "help", "Print this information."
+  )(
+    "mode",
+    boost::program_options::value<std::string>()->default_value("kde"),
+    "OPTIONAL The algorithm mode. One of:"
+    "  kde, kpca"
+  )(
+    "num_kpca_components_in",
+    boost::program_options::value<int>()->default_value(3),
+    "OPTIONAL The number of KPCA components to output."
   )(
     "kpca_components_out",
     boost::program_options::value<std::string>()->default_value(
@@ -340,6 +392,13 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
       exit(0);
     }
   }
+  if(vm->count("mode") > 0) {
+    if((*vm)["mode"].as<std::string>() != "kde" &&
+        (*vm)["mode"].as<std::string>() != "kpca") {
+      std::cerr << "The mode supports either kde or kpca.\n";
+      exit(0);
+    }
+  }
   if(vm->count("references_in") == 0) {
     std::cerr << "Missing required --references_in.\n";
     exit(0);
@@ -364,6 +423,9 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   if((*vm)["relative_error"].as<double>() < 0) {
     std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
     exit(0);
+  }
+  if((*vm)["num_kpca_components_in"].as<int>() <= 0) {
+    std::cerr << "The --num_kpca_components_in requires an integer > 0.\n";
   }
 
   // Check whether the memory mapped file is being requested.
