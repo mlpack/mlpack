@@ -17,12 +17,9 @@
 
 #define EPS 1e-13
 
-#define LASSO true
-
-#define USE_CHOLESKY true
-
 using namespace arma;
 using namespace std;
+
 
 class Lars {
  private:
@@ -31,14 +28,22 @@ class Lars {
 
   u32 n_;
   u32 p_;
-
+  
   mat Gram_;
   vec Xty_;
+
+  bool lasso_;
+  bool use_cholesky_;
 
   std::vector<vec> beta_path_;
   std::vector<double> lambda_path_;
   
   double desired_lambda_;
+
+  u32 n_active_;
+  std::vector<u32> active_set_;
+  std::vector<bool> is_active_;
+  
   
   
  public:
@@ -46,15 +51,26 @@ class Lars {
 
   ~Lars() { }
   
-  void Init(const mat& X, const vec& y) {
+  void Init(const mat& X, const vec& y, bool lasso, bool use_cholesky) {
     X_ = mat(X);
     y_ = vec(y);
     
     n_ = X_.n_rows;
     p_ = X_.n_cols;
-
-    ComputeGram();
+    
+    lasso_ = lasso;
+    use_cholesky_ = use_cholesky;
+    
     ComputeXty();
+    if(!use_cholesky_) {
+      ComputeGram();
+    }
+    
+    // set up active set variables
+    n_active_ = 0;
+    active_set_ = std::vector<u32>(0);
+    is_active_ = std::vector<bool>(p_);
+    fill(is_active_.begin(), is_active_.end(), false);
   }
 
   
@@ -72,11 +88,13 @@ class Lars {
     for(u32 i = 0; i < col_inds.size(); i++) {
       X_.col(col_inds[i]) = new_cols.col(i);
     }
-    
-    UpdateGram(col_inds);
+
+    if(!use_cholesky_) {
+      UpdateGram(col_inds);
+    }
     UpdateXty(col_inds);
   }
-
+  
   
   void UpdateGram(const std::vector<int>& col_inds) {
     for (std::vector<int>::const_iterator i = col_inds.begin(); 
@@ -98,6 +116,7 @@ class Lars {
       Xty_(*i) = dot(X_.col(*i), y_);
     }
   }
+  
   
   
   void PrintGram() {
@@ -138,22 +157,19 @@ class Lars {
   
   // vanilla LARS - using Gram matrix
   void DoLARS() {
-    std::vector<int> active_set(0);
-    std::vector<bool> is_active(p_);
-    fill(is_active.begin(), is_active.end(), false);
     
     // initialize mu and beta
     vec beta = zeros(p_);
     vec mu = zeros(n_);
     
-    u32 n_active = 0;
+    //u32 n_active = 0;
     
     bool kick_out = false;
     
-    vec corr = trans(X_) * y_;
+    vec corr = Xty_;
     vec abs_corr = abs(corr);
     u32 change_ind;
-    double max_corr = abs_corr.max(change_ind);
+    double max_corr = abs_corr.max(change_ind); // change_ind gets set here
     
     beta_path_.push_back(beta);
     lambda_path_.push_back(max_corr);
@@ -162,77 +178,60 @@ class Lars {
     mat R; // upper triangular cholesky factor, initially 0 by 0 matrix
     
     // MAIN LOOP
-    while((n_active < p_) && (max_corr > EPS)) {
-      //printf("n_active = %d\n", n_active);
-      //printf("change_ind = %d\n", change_ind);
-
+    while((n_active_ < p_) && (max_corr > EPS)) {
       if(kick_out) {
 	// index is in position change_ind in active_set
 	printf("kick out!\n");
+	kick_out = false;
 	
-	if(USE_CHOLESKY) {
+	if(use_cholesky_) {
 	  CholeskyDelete(R, change_ind);
 	}
 	
 	// remove variable from active set
-	kick_out = false;
-	n_active--;
-	is_active[active_set[change_ind]] = 0;
-	active_set.erase(active_set.begin() + change_ind);
+	//Deactive(change_ind);
+	n_active_--;
+	is_active_[active_set_[change_ind]] = 0;
+	active_set_.erase(active_set_.begin() + change_ind);
       }
       else {
 	// index is absolute index
 	printf("active!\n");
 	
-	if(USE_CHOLESKY) {
-	  vec new_Gram_col = vec(n_active);
-	  for(u32 i = 0; i < n_active; i++) {
+	if(use_cholesky_) {
+	  vec new_Gram_col = vec(n_active_);
+	  for(u32 i = 0; i < n_active_; i++) {
 	    new_Gram_col[i] = 
-	      dot(X_.col(active_set[i]), X_.col(change_ind));
+	      dot(X_.col(active_set_[i]), X_.col(change_ind));
 	  }
 	  CholeskyInsert(R, X_.col(change_ind), new_Gram_col);
 	}
 	
 	// add variable to active set
-	n_active++;
-	is_active[change_ind] = true;
-	active_set.push_back(change_ind);
+	n_active_++;
+	is_active_[change_ind] = true;
+	active_set_.push_back(change_ind);
       }
-
-      
-      // compute lambda
-      //double lambda = 0;
-      //for(u32 i = 0; i < n_active; i++) {
-      //lambda += fabs(dot(Gram_.col(active_set[i]), beta) - Xty_(active_set[i]));
-      //}
-      //lambda /= ((double) n_active);
-      //lambda_path.push_back(lambda);
       
       
       // compute signs of correlations
-      vec s = vec(n_active);
-      for(u32 i = 0; i < n_active; i++) {
-	s(i) = corr(active_set[i]) / fabs(corr(active_set[i]));
+      vec s = vec(n_active_);
+      for(u32 i = 0; i < n_active_; i++) {
+	s(i) = corr(active_set_[i]) / fabs(corr(active_set_[i]));
       }
-      mat S = s * ones<mat>(1, n_active);
+      mat S = s * ones<mat>(1, n_active_);
       
-      mat Gram_active = mat(n_active, n_active);
-      for(u32 i = 0; i < n_active; i++) {
-	for(u32 j = 0; j < n_active; j++) {
-	  Gram_active(i,j) = Gram_(active_set[i], active_set[j]);
-	}
-      }
-
+      
       // compute "equiangular" direction in parameter space (beta_direction)
       /* We use quotes because in the case of non-unit norm variables,
 	 this need not be equiangular. */
       vec unnormalized_beta_direction; 
       double normalization;
       vec beta_direction;
-      if(USE_CHOLESKY) {
+      if(use_cholesky_) {
 	/* Note that:
 	     R^T R % S^T % S = (R % S)^T (R % S)
-	   Now:
+	   Now, for 1 the ones vector:
 	     inv( (R % S)^T (R % S) ) 1
 	      = inv(R % S) inv((R % S)^T) 1
 	      = inv(R % S) Solve((R % S)^T, 1)
@@ -245,52 +244,56 @@ class Lars {
 	beta_direction = normalization * unnormalized_beta_direction;
       }
       else{
-	unnormalized_beta_direction = solve(Gram_active % trans(S) % S, ones<mat>(n_active, 1));
+	mat Gram_active = mat(n_active_, n_active_);
+	for(u32 i = 0; i < n_active_; i++) {
+	  for(u32 j = 0; j < n_active_; j++) {
+	    Gram_active(i,j) = Gram_(active_set_[i], active_set_[j]);
+	  }
+	}
+	
+	unnormalized_beta_direction = 
+	  solve(Gram_active % trans(S) % S, ones<mat>(n_active_, 1));
 	normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
 	beta_direction = normalization * unnormalized_beta_direction % s;
       }
       
       // compute "equiangular" direction in output space
       vec mu_direction = zeros(n_);
-      for(u32 i = 0; i < n_active; i++) {
-	mu_direction += beta_direction(i) * X_.col(active_set[i]);
+      for(u32 i = 0; i < n_active_; i++) {
+	mu_direction += beta_direction(i) * X_.col(active_set_[i]);
       }
       
-      // if not all variables are active
+
       double gamma = max_corr / normalization;
       change_ind = -1;
-      if(n_active < p_) {
+      // if not all variables are active
+      if(n_active_ < p_) {
 	// compute correlations with direction
 	for(u32 ind = 0; ind < p_; ind++) {
-	  if(is_active[ind]) {
+	  if(is_active_[ind]) {
 	    continue;
 	  }
 	  double dir_corr = dot(X_.col(ind), mu_direction);
 	  double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
 	  double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
-	  if(val1 > 0) {
-	    if(val1 < gamma) {
-	      gamma = val1;
-	      change_ind = ind;
-	    }
+	  if((val1 > 0) && (val1 < gamma)) {
+	    gamma = val1;
+	    change_ind = ind;
 	  }
-	  if(val2 > 0) {
-	    if(val2 < gamma) {
-	      gamma = val2;
-	      change_ind = ind;
-	    }
+	  if((val2 > 0) && (val2 < gamma)) {
+	    gamma = val2;
+	    change_ind = ind;
 	  }
 	}
       }
       
       
       // bound gamma according to LASSO
-      if(LASSO) {
-	printf("LASSO\n");
+      if(lasso_) {
 	double lasso_bound_on_gamma = DBL_MAX;
 	u32 active_ind_to_kick_out = -1;
-	for(u32 i = 0; i < n_active; i++) {
-	  double val = -beta(active_set[i]) / beta_direction(i);
+	for(u32 i = 0; i < n_active_; i++) {
+	  double val = -beta(active_set_[i]) / beta_direction(i);
 	  if((val > 0) && (val < lasso_bound_on_gamma)) {
 	    lasso_bound_on_gamma = val;
 	    active_ind_to_kick_out = i;
@@ -308,21 +311,23 @@ class Lars {
       mu += gamma * mu_direction;
       
       // update estimator
-      for(u32 i = 0; i < n_active; i++) {
-	beta(active_set[i]) += gamma * beta_direction(i);
+      for(u32 i = 0; i < n_active_; i++) {
+	beta(active_set_[i]) += gamma * beta_direction(i);
       }
       beta_path_.push_back(beta);
       
       // compute correlates
-      corr = trans(X_) * (y_ - mu);
+      corr = Xty_ - trans(X_) * mu;
       max_corr -= gamma * normalization;
       lambda_path_.push_back(max_corr);
       
       
       
-      if(LASSO) {
+      if(lasso_) {
 	double ultimate_lambda = max_corr;
 	if(ultimate_lambda <= desired_lambda_) {
+	  InterpolateBeta(ultimate_lambda);
+	  /*  
 	  printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
 		 ultimate_lambda,
 		 desired_lambda_);
@@ -337,18 +342,40 @@ class Lars {
 	    (1 - interp) * (beta_path_[path_length - 2]) 
 	    + interp * beta_path_[path_length - 1];
 	  lambda_path_[path_length - 1] = desired_lambda_;
+	  */
 	  break;
 	}
       }
     }
     
-    /*
-    for(u32 i = 0; i < active_set.size(); i++) {
-      printf("a %d\n", active_set[i]);
-    }
-    */
   }
 
+  
+  
+  void Deactive(u32 active_var_ind) {
+    n_active_--;
+    is_active_[active_set_[active_var_ind]] = 0;
+    active_set_.erase(active_set_.begin() + active_var_ind);
+  }
+  
+  void InterpolateBeta(double ultimate_lambda) {
+    printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
+	   ultimate_lambda,
+	   desired_lambda_);
+    int path_length = beta_path_.size();
+    
+    // interpolate beta and stop
+    double penultimate_lambda = lambda_path_[path_length - 2];
+    double interp = 
+      (penultimate_lambda - desired_lambda_)
+      / (penultimate_lambda - ultimate_lambda);
+    beta_path_[path_length - 1] = 
+      (1 - interp) * (beta_path_[path_length - 2]) 
+      + interp * beta_path_[path_length - 1];
+    lambda_path_[path_length - 1] = desired_lambda_; 
+  }
+  
+  
   void CholeskyInsert(mat& R, const vec& new_x, const mat& X) {
     if(R.n_rows == 0) {
       R = mat(1, 1);
@@ -371,15 +398,12 @@ class Lars {
     else {
       mat new_R = mat(n + 1, n + 1);
       
-      new_R(span(0, n - 1), span(0, n - 1)) = R(span::all, span::all);
-      
       vec R_k = solve(trimatl(trans(R)), new_Gram_col);
       double R_kk = sqrt(dot(new_x, new_x) - dot(R_k, R_k));
       
+      new_R(span(0, n - 1), span(0, n - 1)) = R(span::all, span::all);
       new_R(span(0, n - 1), n) = R_k;
-      
       new_R(n, span(0, n - 1)).fill(0.0);
-      
       new_R(n, n) = R_kk;
       
       R = new_R;

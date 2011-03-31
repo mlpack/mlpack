@@ -20,17 +20,23 @@ int main(int argc, char* argv[]) {
 
   std::srand(17);
   mat X = randu<mat>(n,p);
+  X.load("X.dat", raw_ascii);
+
   mat beta = zeros(p,1);
   beta(0) = 1;
   beta(1) = -1;
   beta(9) = 1;
 
-  vec y = X * beta;
+  vec y = X * beta + 0.1 * randu<vec>(n);
+  y.load("y.dat", raw_ascii);
 
+  bool lasso = true;
+  bool use_cholesky = !true;
   Lars lars;
-  lars.Init(X, y);
-
-  lars.DoLARS(1);
+  lars.Init(X, y, lasso, use_cholesky);
+  
+  double lambda = 0.12;//1.0;
+  lars.DoLARS(lambda);
   
   u32 path_length = lars.beta_path().size();
   
