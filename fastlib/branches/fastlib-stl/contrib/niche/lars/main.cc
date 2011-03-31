@@ -14,7 +14,7 @@ using namespace arma;
 using namespace std;
 
 int main(int argc, char* argv[]) {
-
+  
   int n = 100;
   int p = 10;
 
@@ -30,7 +30,7 @@ int main(int argc, char* argv[]) {
   Lars lars;
   lars.Init(X, y);
 
-  lars.DoLARS(6);
+  lars.DoLARS(1);
   
   u32 path_length = lars.beta_path().size();
   
