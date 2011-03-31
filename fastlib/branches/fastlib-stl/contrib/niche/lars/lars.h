@@ -7,7 +7,7 @@
  */
 
 // beta is the estimator
-// mu is the prediction from the current estimator
+// y_hat is the prediction from the current estimator
 
 // notes: we currently do not require the entire regularization path, so we just keep track of the previous beta and the current beta
 
@@ -158,11 +158,10 @@ class Lars {
   // vanilla LARS - using Gram matrix
   void DoLARS() {
     
-    // initialize mu and beta
+    // initialize y_hat and beta
     vec beta = zeros(p_);
-    vec mu = zeros(n_);
-    
-    //u32 n_active = 0;
+    vec y_hat = zeros(n_);
+    vec y_hat_direction = vec(n_);
     
     bool kick_out = false;
     
@@ -189,10 +188,7 @@ class Lars {
 	}
 	
 	// remove variable from active set
-	//Deactive(change_ind);
-	n_active_--;
-	is_active_[active_set_[change_ind]] = 0;
-	active_set_.erase(active_set_.begin() + change_ind);
+	Deactivate(change_ind);
       }
       else {
 	// index is absolute index
@@ -208,9 +204,7 @@ class Lars {
 	}
 	
 	// add variable to active set
-	n_active_++;
-	is_active_[change_ind] = true;
-	active_set_.push_back(change_ind);
+	Activate(change_ind);
       }
       
       
@@ -219,7 +213,6 @@ class Lars {
       for(u32 i = 0; i < n_active_; i++) {
 	s(i) = corr(active_set_[i]) / fabs(corr(active_set_[i]));
       }
-      mat S = s * ones<mat>(1, n_active_);
       
       
       // compute "equiangular" direction in parameter space (beta_direction)
@@ -233,11 +226,11 @@ class Lars {
 	     R^T R % S^T % S = (R % S)^T (R % S)
 	   Now, for 1 the ones vector:
 	     inv( (R % S)^T (R % S) ) 1
-	      = inv(R % S) inv((R % S)^T) 1
-	      = inv(R % S) Solve((R % S)^T, 1)
-	      = inv(R % S) Solve(R^T, s)
-	      = Solve(R % S, Solve(R^T, s)
-	      = s % Solve(R, Solve(R^T, s))
+	       = inv(R % S) inv((R % S)^T) 1
+	       = inv(R % S) Solve((R % S)^T, 1)
+	       = inv(R % S) Solve(R^T, s)
+	       = Solve(R % S, Solve(R^T, s)
+	       = s % Solve(R, Solve(R^T, s))
 	*/
 	unnormalized_beta_direction = solve(R, solve(trans(R), s));
 	normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
@@ -251,6 +244,7 @@ class Lars {
 	  }
 	}
 	
+	mat S = s * ones<mat>(1, n_active_);
 	unnormalized_beta_direction = 
 	  solve(Gram_active % trans(S) % S, ones<mat>(n_active_, 1));
 	normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
@@ -258,11 +252,7 @@ class Lars {
       }
       
       // compute "equiangular" direction in output space
-      vec mu_direction = zeros(n_);
-      for(u32 i = 0; i < n_active_; i++) {
-	mu_direction += beta_direction(i) * X_.col(active_set_[i]);
-      }
-      
+      ComputeYHatDirection(beta_direction, y_hat_direction);      
 
       double gamma = max_corr / normalization;
       change_ind = -1;
@@ -273,7 +263,7 @@ class Lars {
 	  if(is_active_[ind]) {
 	    continue;
 	  }
-	  double dir_corr = dot(X_.col(ind), mu_direction);
+	  double dir_corr = dot(X_.col(ind), y_hat_direction);
 	  double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
 	  double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
 	  if((val1 > 0) && (val1 < gamma)) {
@@ -308,7 +298,7 @@ class Lars {
       }
       
       // update prediction
-      mu += gamma * mu_direction;
+      y_hat += gamma * y_hat_direction;
       
       // update estimator
       for(u32 i = 0; i < n_active_; i++) {
@@ -317,32 +307,15 @@ class Lars {
       beta_path_.push_back(beta);
       
       // compute correlates
-      corr = Xty_ - trans(X_) * mu;
+      corr = Xty_ - trans(X_) * y_hat;
       max_corr -= gamma * normalization;
       lambda_path_.push_back(max_corr);
       
-      
-      
+      // Time to stop for LASSO?
       if(lasso_) {
 	double ultimate_lambda = max_corr;
 	if(ultimate_lambda <= desired_lambda_) {
 	  InterpolateBeta(ultimate_lambda);
-	  /*  
-	  printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
-		 ultimate_lambda,
-		 desired_lambda_);
-	  int path_length = beta_path_.size();
-	  
-	  // interpolate beta and stop
-	  double penultimate_lambda = lambda_path_[path_length - 2];
-	  double interp = 
-	    (penultimate_lambda - desired_lambda_)
-	    / (penultimate_lambda - ultimate_lambda);
-	  beta_path_[path_length - 1] = 
-	    (1 - interp) * (beta_path_[path_length - 2]) 
-	    + interp * beta_path_[path_length - 1];
-	  lambda_path_[path_length - 1] = desired_lambda_;
-	  */
 	  break;
 	}
       }
@@ -352,11 +325,28 @@ class Lars {
 
   
   
-  void Deactive(u32 active_var_ind) {
+  void Deactivate(u32 active_var_ind) {
     n_active_--;
     is_active_[active_set_[active_var_ind]] = 0;
     active_set_.erase(active_set_.begin() + active_var_ind);
   }
+  
+
+  void Activate(u32 var_ind) {
+    n_active_++;
+    is_active_[var_ind] = true;
+    active_set_.push_back(var_ind);
+  }
+
+  
+  void ComputeYHatDirection(const vec& beta_direction,
+			    vec& y_hat_direction) {
+    y_hat_direction.fill(0);
+    for(u32 i = 0; i < n_active_; i++) {
+      y_hat_direction += beta_direction(i) * X_.col(active_set_[i]);
+    }
+  }
+  
   
   void InterpolateBeta(double ultimate_lambda) {
     printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
