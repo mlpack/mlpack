@@ -72,7 +72,6 @@ class KpcaResult {
       ar & kpca_projections_u_;
       ar & kernel_eigenvalues_;
       ar & covariance_eigenvectors_;
-      ar & kpca_components_;
     }
 
     /** @brief The default constructor.

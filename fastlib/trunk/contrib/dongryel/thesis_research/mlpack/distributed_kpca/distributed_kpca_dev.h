@@ -126,13 +126,38 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 
     // Each process independently computes its own portion of kernel
     // eigenvectors.
-    mlpack::series_expansion::RandomFeature::AccumulateTransform(
+    mlpack::series_expansion::RandomFeature::AccumulateRotationTransform(
       *(arguments_in.reference_table_->local_table()),
       result_out->covariance_eigenvectors(),
       random_variate_aliases, &local_kpca_components);
 
+    // The master determines whether the kernel eigenvector estimates
+    // are good enough.
+    bool all_components_converged = true;
+    for(int j = 0; all_components_converged &&
+        j < local_kpca_components.n_cols(); j++) {
+      for(int i = 0; all_components_converged &&
+          i < local_kpca_components.n_rows(); i++) {
+        double left_hand_side =
+          num_standard_deviations *
+          sqrt(local_kpca_components.get(i, j).sample_mean_variance());
+        double right_hand_side =
+          arguments_in.relative_error_ *
+          local_kpca_components.get(i, j).sample_mean();
+        all_components_converged = (left_hand_side <= right_hand_side);
+      }
+    }
+    bool all_done = true;
+    boost::mpi::all_reduce(
+      *world_, all_components_converged, all_done, std::logical_and<bool>());
+    if(all_done) {
+      break;
+    }
   }
   while(true);
+
+  // Extract.
+  local_kpca_components.sample_means(& (result_out->kpca_components()));
 }
 
 template<typename DistributedTableType, typename KernelType>
