@@ -47,6 +47,14 @@ class KpcaResult {
 
   public:
 
+    core::table::DensePoint &kernel_eigenvalues() {
+      return kernel_eigenvalues_;
+    }
+
+    core::table::DenseMatrix &covariance_eigenvectors() {
+      return covariance_eigenvectors_;
+    }
+
     /** @brief Serialize the KPCA result object.
      */
     template<class Archive>
