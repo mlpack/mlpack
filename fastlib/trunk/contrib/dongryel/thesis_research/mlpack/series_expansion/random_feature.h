@@ -70,6 +70,33 @@ class RandomFeature {
     }
 
     template<typename TableType>
+    static void AccumulateTransform(
+      const TableType &table_in,
+      const core::table::DenseMatrix &covariance_eigenvectors,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *local_kpca_components) {
+
+      int num_random_fourier_features = random_variates.size();
+      for(int i = 0; i < table_in.n_entries(); i++) {
+        arma::vec old_point;
+        table_in.get(i, &old_point);
+
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot(random_variates[j], old_point);
+          double first_value = cos(dot_product);
+          double second_value = sin(dot_product);
+          for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
+            local_kpca_components->get(k, i).push_back(
+              covariance_eigenvectors.get(j, k) * first_value);
+            local_kpca_components->get(k, i).push_back(
+              covariance_eigenvectors.get(
+                j + num_random_fourier_features, k) * second_value);
+          }
+        }
+      }
+    }
+
+    template<typename TableType>
     static void CovarianceTransform(
       const TableType &table_in,
       int num_reference_samples,
@@ -95,6 +122,14 @@ class RandomFeature {
           double dot_product = arma::dot(random_variates[j], old_point);
           tmp_vector[j] = cos(dot_product);
           tmp_vector[j + num_random_fourier_features] = sin(dot_product);
+        }
+
+        // Now Accumulate the covariance.
+        for(unsigned int k = 0; k < tmp_vector.n_elem; k++) {
+          for(unsigned int j = 0; j < tmp_vector.n_elem; j++) {
+            covariance_transformation->get(j, k).push_back(
+              tmp_vector[j] * tmp_vector[k]);
+          }
         }
       }
     }
