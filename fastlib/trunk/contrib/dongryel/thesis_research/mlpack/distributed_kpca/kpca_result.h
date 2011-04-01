@@ -51,6 +51,10 @@ class KpcaResult {
 
   public:
 
+    core::table::DenseMatrix &kpca_components() {
+      return kpca_components_;
+    }
+
     core::table::DensePoint &kernel_eigenvalues() {
       return kernel_eigenvalues_;
     }
@@ -68,6 +72,7 @@ class KpcaResult {
       ar & kpca_projections_u_;
       ar & kernel_eigenvalues_;
       ar & covariance_eigenvectors_;
+      ar & kpca_components_;
     }
 
     /** @brief The default constructor.
@@ -80,21 +85,24 @@ class KpcaResult {
       double num_standard_deviations,
       double mult_const,
       double correction_term_in,
-      const core::monte_carlo::MeanVariancePairVector &kernel_sum) {
+      const core::monte_carlo::MeanVariancePairMatrix &kernel_sum) {
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
-        double deviation = num_standard_deviations *
-                           sqrt(kernel_sum[i].sample_mean_variance());
-        kpca_projections_l_.set(
-          0, i,
-          (kernel_sum[i].sample_mean() - correction_term_in - deviation) *
-          mult_const);
-        kpca_projections_.set(
-          0, i, (kernel_sum[i].sample_mean() - correction_term_in) *
-          mult_const);
-        kpca_projections_u_.set(
-          0, i,
-          (kernel_sum[i].sample_mean() - correction_term_in + deviation) *
-          mult_const);
+        for(int k = 0; k < kpca_projections_.n_rows(); k++) {
+          double deviation = num_standard_deviations *
+                             sqrt(kernel_sum.get(k, i).sample_mean_variance());
+          kpca_projections_l_.set(
+            k, i,
+            (kernel_sum.get(k, i).sample_mean() -
+             correction_term_in - deviation) *
+            mult_const);
+          kpca_projections_.set(
+            k, i, (kernel_sum.get(k, i).sample_mean() - correction_term_in) *
+            mult_const);
+          kpca_projections_u_.set(
+            k, i,
+            (kernel_sum.get(k, i).sample_mean() -
+             correction_term_in + deviation) * mult_const);
+        }
       }
     }
 
@@ -118,6 +126,7 @@ class KpcaResult {
       kpca_projections_l_.Init(num_components, query_points);
       kpca_projections_.Init(num_components, query_points);
       kpca_projections_u_.Init(num_components, query_points);
+      kpca_components_.Init(num_components, num_reference_points);
       SetZero();
     }
 
@@ -127,6 +136,7 @@ class KpcaResult {
       kpca_projections_u_.SetZero();
       kernel_eigenvalues_.SetZero();
       covariance_eigenvectors_.SetZero();
+      kpca_components_.SetZero();
     }
 
     void set_eigendecomposition_results(
