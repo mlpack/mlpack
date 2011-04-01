@@ -124,7 +124,6 @@ class TestAllkNN {
 }; // namespace mlpack
 
 int main(int argc, char* argv[]) { 
-  AllkNN::loadDocumentation();
   mlpack::IO::parseCommandLine(argc, argv);
   TestAllkNN test;
   test.TestAll();

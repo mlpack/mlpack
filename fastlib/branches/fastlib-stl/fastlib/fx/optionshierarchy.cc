@@ -1,4 +1,5 @@
 #include "optionshierarchy.h"
+#include "io.h"
 #include <iostream>
 
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
@@ -100,7 +101,7 @@ void OptionsHierarchy::print(string& pathname) {
     if(children.count(name)) //Yes, and we can continue to do so
       return children[name].print(path);
     else if(node != name) { //Yes, but we can't find the next node.. are we already there?
-      cout << "[!]\t Unknown Module: "<< pathname << endl;
+      mlpack::IO::printWarn("Undocumented module.");
       return;
     }
     
@@ -119,7 +120,7 @@ void OptionsHierarchy::printLeaves() {
       if(iter->second.desc.length() > 0)
         cout << "\t" << iter->second.desc << endl;
       else
-        cout << "[!]\tUndocumented option" << endl;
+        mlpack::IO::printWarn("Undocumented module.");
     }
 }
 
@@ -132,6 +133,6 @@ void OptionsHierarchy::printBranches() {
       if(iter->second.desc.length() > 0)
         cout << "\t" << iter->second.desc << endl;
       else
-        cout << "[!]\tUndocumented module" << endl;
+        mlpack::IO::printWarn("Undocumented module.");
     }
 }
