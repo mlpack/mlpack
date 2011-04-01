@@ -70,11 +70,11 @@ class RandomFeature {
     }
 
     template<typename TableType>
-    static void AccumulateTransform(
+    static void AccumulateRotationTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &covariance_eigenvectors,
       const std::vector< arma::vec > &random_variates,
-      core::monte_carlo::MeanVariancePairMatrix *local_kpca_components) {
+      core::monte_carlo::MeanVariancePairMatrix *accumulants) {
 
       int num_random_fourier_features = random_variates.size();
       for(int i = 0; i < table_in.n_entries(); i++) {
@@ -86,9 +86,9 @@ class RandomFeature {
           double first_value = cos(dot_product);
           double second_value = sin(dot_product);
           for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
-            local_kpca_components->get(k, i).push_back(
+            accumulants->get(k, i).push_back(
               covariance_eigenvectors.get(j, k) * first_value);
-            local_kpca_components->get(k, i).push_back(
+            accumulants->get(k, i).push_back(
               covariance_eigenvectors.get(
                 j + num_random_fourier_features, k) * second_value);
           }

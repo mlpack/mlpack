@@ -287,6 +287,15 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Returns the sample means in a matrix form.
+     */
+    void sample_means(core::table::DenseMatrix *point_out) const {
+      point_out->Init(n_rows_, n_cols_);
+      arma::mat alias;
+      core::table::DenseMatrixToArmaMat(*point_out, &alias);
+      this->sample_means(&alias);
+    }
+
     /** @brief Copies mean variance pair objects from another mean
      *         variance pair matrix object.
      */
