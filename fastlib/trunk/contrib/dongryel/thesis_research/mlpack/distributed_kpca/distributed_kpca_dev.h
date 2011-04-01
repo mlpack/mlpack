@@ -126,6 +126,93 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
 }
 
 template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
+DistributedTableType, KernelType >::ComputeEigenDecomposition_(
+  const KernelType &kernel,
+  double num_standard_deviations,
+  int num_reference_samples,
+  const mlpack::distributed_kpca::DistributedKpcaArguments <
+  DistributedTableType > &arguments_in,
+  mlpack::distributed_kpca::KpcaResult *result_out) {
+
+  int num_random_fourier_features_eigen =
+    arguments_in.num_kpca_components_in_ * 3;
+
+  // The master computes the eigenvectors.
+  core::monte_carlo::MeanVariancePairMatrix global_covariance;
+  global_covariance.Init(
+    2 * num_random_fourier_features_eigen,
+    2 * num_random_fourier_features_eigen);
+
+  do {
+
+    // The master generates a set of random Fourier features and do
+    // a broadcast.
+    std::vector <
+    core::table::DensePoint > random_variates;
+    std::vector< arma::vec > random_variate_aliases;
+    GenerateRandomFourierFeatures_(
+      arguments_in, kernel, num_random_fourier_features_eigen,
+      &random_variates, &random_variate_aliases);
+
+    // Each process computes its local covariance and the master
+    // reduces them to form the global covariance.
+    core::monte_carlo::MeanVariancePairMatrix local_covariance;
+    core::monte_carlo::MeanVariancePairMatrix global_covariance_in_this_round;
+    mlpack::series_expansion::RandomFeature::CovarianceTransform(
+      *(arguments_in.reference_table_->local_table()),
+      num_reference_samples, random_variate_aliases,
+      &local_covariance);
+    boost::mpi::reduce(
+      *world_, local_covariance, global_covariance_in_this_round,
+      core::parallel::CombineMeanVariancePairMatrix(), 0);
+
+    // The master determines whether the covariance estimates are
+    // good enough.
+    bool all_components_converged = true;
+    if(world_->rank() == 0) {
+      global_covariance.CombineWith(global_covariance_in_this_round);
+      for(int j = 0;
+          all_components_converged && j < global_covariance.n_cols(); j++) {
+        for(int i = 0;
+            all_components_converged && i < global_covariance.n_rows(); i++) {
+          double left_hand_side =
+            num_standard_deviations *
+            sqrt(global_covariance.get(i, j).sample_mean_variance());
+          double right_hand_side =
+            arguments_in.relative_error_ *
+            global_covariance.get(i, j).sample_mean();
+          all_components_converged = (left_hand_side <= right_hand_side);
+        }
+      }
+    }
+    bool all_done = true;
+    boost::mpi::all_reduce(
+      *world_, all_components_converged, all_done, std::logical_and<bool>());
+    if(all_done) {
+      break;
+    }
+  }
+  while(true);
+
+  // The master eigendecomposes the converged global covariance and
+  // does a broadcast.
+  if(world_->rank() == 0) {
+    arma::mat global_covariance_alias;
+    arma::vec kernel_eigenvalues;
+    arma::mat covariance_eigenvectors;
+    global_covariance.sample_means(&global_covariance_alias);
+    arma::eig_sym(
+      kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
+    result_out->set_eigendecomposition_results(
+      kernel_eigenvalues, covariance_eigenvectors);
+  }
+  boost::mpi::broadcast(
+    *world_, result_out->kernel_eigenvalues(), 0);
+  boost::mpi::broadcast(*world_, result_out->covariance_eigenvectors(), 0);
+}
+
+template<typename DistributedTableType, typename KernelType>
 void DistributedKpca<DistributedTableType, KernelType>::Compute(
   const mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in,
@@ -133,8 +220,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // The number of Fourier features to sample in each round.
   const int num_random_fourier_features = 20;
-  int num_random_fourier_features_eigen =
-    arguments_in.num_kpca_components_in_ * 3;
 
   // The number of reference points to pick in each round.
   int num_reference_samples =
@@ -163,81 +248,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // If the mode is KPCA, then need to compute the eigenvectors.
   if(arguments_in.mode_ == "kpca") {
-
-    // The master computes the eigenvectors.
-    core::monte_carlo::MeanVariancePairMatrix kpca_eigenvectors;
-    core::monte_carlo::MeanVariancePairMatrix global_covariance;
-    global_covariance.Init(
-      2 * num_random_fourier_features_eigen,
-      2 * num_random_fourier_features_eigen);
-
-    do {
-
-      // The master generates a set of random Fourier features and do
-      // a broadcast.
-      std::vector <
-      core::table::DensePoint > random_variates;
-      std::vector< arma::vec > random_variate_aliases;
-      GenerateRandomFourierFeatures_(
-        arguments_in, kernel, num_random_fourier_features_eigen,
-        &random_variates, &random_variate_aliases);
-
-      // Each process computes its local covariance and the master
-      // reduces them to form the global covariance.
-      core::monte_carlo::MeanVariancePairMatrix local_covariance;
-      core::monte_carlo::MeanVariancePairMatrix global_covariance_in_this_round;
-      mlpack::series_expansion::RandomFeature::CovarianceTransform(
-        *(arguments_in.reference_table_->local_table()),
-        num_reference_samples, random_variate_aliases,
-        &local_covariance);
-      boost::mpi::reduce(
-        *world_, local_covariance, global_covariance_in_this_round,
-        core::parallel::CombineMeanVariancePairMatrix(), 0);
-
-      // The master determines whether the covariance estimates are
-      // good enough.
-      bool all_components_converged = true;
-      if(world_->rank() == 0) {
-        global_covariance.CombineWith(global_covariance_in_this_round);
-        for(int j = 0;
-            all_components_converged && j < global_covariance.n_cols(); j++) {
-          for(int i = 0;
-              all_components_converged && i < global_covariance.n_rows(); i++) {
-            double left_hand_side =
-              num_standard_deviations *
-              sqrt(global_covariance.get(i, j).sample_mean_variance());
-            double right_hand_side =
-              arguments_in.relative_error_ *
-              global_covariance.get(i, j).sample_mean();
-            all_components_converged = (left_hand_side <= right_hand_side);
-          }
-        }
-      }
-      bool all_done = true;
-      boost::mpi::all_reduce(
-        *world_, all_components_converged, all_done, std::logical_and<bool>());
-      if(all_done) {
-        break;
-      }
-    }
-    while(true);
-
-    // The master eigendecomposes the converged global covariance and
-    // does a broadcast.
-    if(world_->rank() == 0) {
-      arma::mat global_covariance_alias;
-      arma::vec kernel_eigenvalues;
-      arma::mat covariance_eigenvectors;
-      global_covariance.sample_means(&global_covariance_alias);
-      arma::eig_sym(
-        kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
-      result_out->set_eigendecomposition_results(
-        kernel_eigenvalues, covariance_eigenvectors);
-    }
-    boost::mpi::broadcast(
-      *world_, result_out->kernel_eigenvalues(), 0);
-    boost::mpi::broadcast(*world_, result_out->covariance_eigenvectors(), 0);
+    ComputeEigenDecomposition_(
+      kernel, num_standard_deviations, num_reference_samples,
+      arguments_in, result_out);
   }
+
+  // Allocate the space for the results.
+  result_out->Init(
+    (arguments_in.mode_ == "kde") ? 1 : arguments_in.num_kpca_components_in_,
+    arguments_in.reference_table_->n_entries(),
+    arguments_in.query_table_->n_entries());
 
   // The local kernel sum.
   core::monte_carlo::MeanVariancePairVector local_kernel_sum;
@@ -330,7 +350,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   }
 
   // Export the results.
-  result_out->Init(1, arguments_in.query_table_->n_entries());
   result_out->Export(
     num_standard_deviations, mult_const_, correction_term_, local_kernel_sum);
 }
