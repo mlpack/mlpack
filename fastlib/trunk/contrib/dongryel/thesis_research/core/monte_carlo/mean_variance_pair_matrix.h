@@ -250,6 +250,24 @@ class MeanVariancePairMatrix {
       ptr_ = NULL;
     }
 
+    void operator=(const MeanVariancePairMatrix &v) {
+      if(ptr_ == NULL || n_rows_ != v.n_rows() ||
+          n_cols_ != v.n_cols()) {
+        if(ptr_ != NULL) {
+          DestructPtr_();
+        }
+        this->Init(v.n_rows(), v.n_cols());
+      }
+      n_rows_ = v.n_rows();
+      n_cols_ = v.n_cols();
+      n_elements_ = n_rows_ * n_cols_;
+      this->CopyValues(v);
+    }
+
+    MeanVariancePairMatrix(const MeanVariancePairMatrix &v) {
+      this->operator=(v);
+    }
+
     void push_back(const arma::mat &v) {
       for(unsigned int j = 0; j < v.n_cols; j++) {
         for(unsigned int i = 0; i < v.n_rows; i++) {
