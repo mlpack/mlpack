@@ -117,6 +117,8 @@ class DistributedKpca {
     double effective_num_reference_points_;
 
     double correction_term_;
+
+    int num_random_fourier_features_eigen_;
 };
 }
 }

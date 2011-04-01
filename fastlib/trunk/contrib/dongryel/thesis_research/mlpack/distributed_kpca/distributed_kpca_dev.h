@@ -67,6 +67,7 @@ DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
   mult_const_ = 0.0;
   effective_num_reference_points_ = 0.0;
   correction_term_ = 0.0;
+  num_random_fourier_features_eigen_ = 1;
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -107,6 +108,31 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
+  core::monte_carlo::MeanVariancePairMatrix local_kpca_components;
+  local_kpca_components.Init(
+    arguments_in.num_kpca_components_in_,
+    arguments_in.reference_table_->n_entries());
+
+  // The main loop.
+  do {
+
+    // The master generates the set of random Fourier features.
+    std::vector <
+    core::table::DensePoint > random_variates;
+    std::vector< arma::vec > random_variate_aliases;
+    GenerateRandomFourierFeatures_(
+      arguments_in, kernel, num_random_fourier_features_eigen_,
+      &random_variates, &random_variate_aliases);
+
+    // Each process independently computes its own portion of kernel
+    // eigenvectors.
+    mlpack::series_expansion::RandomFeature::AccumulateTransform(
+      *(arguments_in.reference_table_->local_table()),
+      result_out->covariance_eigenvectors(),
+      random_variate_aliases, &local_kpca_components);
+
+  }
+  while(true);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -119,15 +145,11 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
-  // Let's say we sample three times the required components.
-  int num_random_fourier_features_eigen =
-    arguments_in.num_kpca_components_in_ * 3;
-
   // The master computes the eigenvectors.
   core::monte_carlo::MeanVariancePairMatrix global_covariance;
   global_covariance.Init(
-    2 * num_random_fourier_features_eigen,
-    2 * num_random_fourier_features_eigen);
+    2 * num_random_fourier_features_eigen_,
+    2 * num_random_fourier_features_eigen_);
 
   do {
 
@@ -137,7 +159,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
-      arguments_in, kernel, num_random_fourier_features_eigen,
+      arguments_in, kernel, num_random_fourier_features_eigen_,
       &random_variates, &random_variate_aliases);
 
     // Each process computes its local covariance and the master
@@ -395,11 +417,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
     (total_sum - 1.0) : total_sum;
 
   // In case the mode is KDE, and is monochromatic.
-  correction_term_ = (arguments_in.mode_ == "kde") ?
-                     1.0 / static_cast<double>(
-                       (arguments_in.reference_table_ == arguments_in.query_table_) ?
-                       (effective_num_reference_points_ + 1.0) :
-                       effective_num_reference_points_) : 0.0;
+  correction_term_ =
+    (arguments_in.mode_ == "kde") ?
+    1.0 / static_cast<double>(
+      (arguments_in.reference_table_ == arguments_in.query_table_) ?
+      (effective_num_reference_points_ + 1.0) :
+      effective_num_reference_points_) : 0.0;
+
+  // The number of Fourier features sampled for eigendecomposition.
+  num_random_fourier_features_eigen_ =
+    arguments_in.num_kpca_components_in_ * 3;
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
