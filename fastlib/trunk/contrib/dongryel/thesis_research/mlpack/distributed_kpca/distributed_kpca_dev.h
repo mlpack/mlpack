@@ -131,8 +131,8 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
       result_out->covariance_eigenvectors(),
       random_variate_aliases, &local_kpca_components);
 
-    // The master determines whether the kernel eigenvector estimates
-    // are good enough.
+    // Each process determines whether the kernel eigenvector estimates
+    // are good enough, and notifies the master.
     bool all_components_converged = true;
     for(int j = 0; all_components_converged &&
         j < local_kpca_components.n_cols(); j++) {

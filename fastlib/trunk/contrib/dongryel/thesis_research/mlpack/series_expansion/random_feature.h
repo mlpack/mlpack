@@ -69,6 +69,9 @@ class RandomFeature {
       } // end of looping over each random Fourier feature.
     }
 
+    /** @brief Generates a random Fourier features from the given
+     *         table and rotates it by a given set of eigenvectors.
+     */
     template<typename TableType>
     static void AccumulateRotationTransform(
       const TableType &table_in,
@@ -85,6 +88,8 @@ class RandomFeature {
           double dot_product = arma::dot(random_variates[j], old_point);
           double first_value = cos(dot_product);
           double second_value = sin(dot_product);
+
+          // For each column of eigenvectors,
           for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
             accumulants->get(k, i).push_back(
               covariance_eigenvectors.get(j, k) * first_value);
