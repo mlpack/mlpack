@@ -227,13 +227,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     if(world_->rank() == 0) {
       arma::mat global_covariance_alias;
       arma::vec kernel_eigenvalues;
-      arma::mat eigenvectors;
+      arma::mat covariance_eigenvectors;
       global_covariance.sample_means(&global_covariance_alias);
-      arma::eig_sym(kernel_eigenvalues, eigenvectors, global_covariance_alias);
+      arma::eig_sym(
+        kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
       result_out->set_eigendecomposition_results(
-        kernel_eigenvalues, eigenvectors);
+        kernel_eigenvalues, covariance_eigenvectors);
     }
-
+    boost::mpi::broadcast(
+      *world_, result_out->kernel_eigenvalues(), 0);
+    boost::mpi::broadcast(*world_, result_out->covariance_eigenvectors(), 0);
   }
 
   // The local kernel sum.
