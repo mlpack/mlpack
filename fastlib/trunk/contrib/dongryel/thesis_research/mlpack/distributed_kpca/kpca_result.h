@@ -45,6 +45,10 @@ class KpcaResult {
      */
     core::table::DenseMatrix covariance_eigenvectors_;
 
+    /** @brief The kernel principal components.
+     */
+    core::table::DenseMatrix kpca_components_;
+
   public:
 
     core::table::DensePoint &kernel_eigenvalues() {
@@ -109,7 +113,8 @@ class KpcaResult {
       fclose(file_output);
     }
 
-    void Init(int num_components, int query_points) {
+    void Init(
+      int num_components, int num_reference_points, int query_points) {
       kpca_projections_l_.Init(num_components, query_points);
       kpca_projections_.Init(num_components, query_points);
       kpca_projections_u_.Init(num_components, query_points);
