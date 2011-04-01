@@ -369,17 +369,15 @@ void AllNN::EmitResults(arma::vec& distances, arma::Col<index_t>& results) {
 
 } /* EmitResults */
 
-void AllNN::loadDocumentation() {
-	const char* rootNode = "allnn";
-	IO::add(rootNode, "Performs dual-tree all-nearest-neighbors computation.");
+
+PARAM_MODULE(allnn, "Performs dual-tree all-nearest-neighbors computation.");
 	
-	IO::add<int>("leaf_size", "The maximum number of points to store at a leaf.", rootNode);
-	IO::add("tree_building", "Time spend building the kd-tree.", rootNode);
-	IO::add("dual_tree_computation", "Time spent computing the nearest neighbors.", rootNode);
-	IO::add("number_of_prunes", "Total node-pairs found to be too far to matter.", rootNode);
+PARAM_INT(leaf_size, "The maxium number of points to store at a leaf.", allnn);
+PARAM_INT(tree_building, "Time spent building the kd-tree", allnn);
+PARAM_INT(dual_tree_computation, "Time spent computing the nearest neighbors.", allnn);
+PARAM_INT(number_of_prunes, "Total node-pairs found to be too far to matter.", allnn);
+
+PARAM_MODULE(naive, "Performs naive all-nearest-neighbors computation.");
 	
-	const char* naive = "allnn/naive";
-	IO::add(naive, "Performs naive all-nearest-neighbors computation.");
-	
-	IO::add("naive_time", "Time spent performing the naive computation.", naive); 
-}
+PARAM_INT(naive_time, "Time spent performing the naive computation.", naive); 
+

@@ -11,32 +11,18 @@
 #include "optionshierarchy.h"
 
 /* These defines facilitate the registering of command line options */
-#define IO_PARAM(T, ID, DESC, PARENT) static mlpack::Option PARENT##ID = mlpack::Option<T>(#ID, DESC, #PARENT);
-#define IO_FLAG(ID, DESC, PARENT) static mlpack::Option PARENT##ID = mlpack::Option(#ID, DESC, #PARENT);
+#define PARAM(T, ID, DESC, PARENT) static mlpack::Option<T> ID = mlpack::Option<T>(false, #ID, DESC, #PARENT);
+#define PARAM_BOOL(ID, DESC, PARENT) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, #PARENT);
+#define PARAM_MODULE(ID, DESC) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, NULL);
 
-#define IO_STRING(ID, DESC, PARENT) IO_PARAM(std::string, ID, DESC, PARENT)
-#define IO_INT(ID, DESC, PARENT) IO_PARAM(int, ID, DESC, PARENT)
-#define IO_VECTOR(ID, DESC, PARENT) IO_PARAM(std::vector, ID, DESC, PARENT)
+#define PARAM_TIMER(ID, DESC, PARENT) PARAM(timeval, ID, DESC, PARENT)
+#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
+#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT)
+#define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, PARENT)
 
 namespace po = boost::program_options;
 
 namespace mlpack {
-
-  /*
-  This class is used to facilitate easy addition of options to the program. 
-  */
-  class Option {
-    //Base add an option
-   public:
-     template<typename T>
-    Option(const char* identifier, const char* description, 
-      const char* parent=NULL, bool required=false);
-    //Base add a flag option
-    Option(const char* identifier, const char* description,
-      const char* parent=NULL, bool required=false);
-  };
-
-
   class IO {
     public:
       /* Adds a parameter to the heirarchy.  Incidentally, we are using 
@@ -86,12 +72,13 @@ namespace mlpack {
         std::map<std::string, boost::any>& gmap = getSingleton().globalValues;
         
         if(checkValue(identifier) && !gmap.count(key)) //If we have the option, set it's value
-          gmap[key] = getSingleton().vmap[identifier].as<T>();
-        
+          gmap[key] = boost::any(getSingleton().vmap[identifier].as<T>());
+      
         //We may have whatever is on the commandline, but what if
         //The programmer has made modifications?
         if(!gmap.count(key)) //The programmer hasn't done anything, lets register it then
           gmap[key] = boost::any(tmp);
+        
         
         return *boost::any_cast<T>(&gmap[key]);
       }
@@ -111,6 +98,8 @@ namespace mlpack {
       static void printNotify(const char* msg);
       /* Prints a warning */
       static void printWarn(const char* msg);
+      /* Prints all valid values that it can */
+      static void printData();
       
       /* Initializes a timer, available like a normal value specified on the command line.  
           Timers are of type timval, as defined in sys/time.h*/
@@ -169,6 +158,22 @@ namespace mlpack {
       IO(std::string& optionsName);
       IO(const IO& other);
       ~IO();			
+  };
+  
+    /*
+  This class is used to facilitate easy addition of options to the program. 
+  */
+  template<typename N>
+  class Option {
+    //Base add an option
+   public:
+    Option(bool ignoreTemplate, const char* identifier, const char* description, 
+      const char* parent=NULL, bool required=false) {
+        if(ignoreTemplate)
+          IO::add(identifier, description, parent, required);
+        else
+          IO::add<N>(identifier, description, parent, required);
+      }
   };
 };
 

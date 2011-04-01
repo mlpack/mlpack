@@ -60,15 +60,14 @@ class TestAllNN {
     // run naive allnn
     arma::Col<index_t> resulting_neighbors_naive;
     arma::vec resulting_distances_naive;
-    IO::startTimer("allnn/dual_tree_computation");
   
     naive_->ComputeNeighbors(resulting_distances_naive, resulting_neighbors_naive);
-    IO::stopTimer("allnn/dual_tree_computation");
     // compare results
     for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }
+    IO::printNotify("Test 1 passed");
     
     Destruct();
   }
@@ -87,9 +86,8 @@ class TestAllNN {
 
 int main(int argc, char *argv[]) {
  TestAllNN test;
-  
-  AllNN::loadDocumentation();
   IO::parseCommandLine(argc, argv);
   test.TestAll();
-  std::cout << IO::getValue<timeval>("allnn/dual_tree_computation").tv_usec << std::endl;
+  IO::getValue<int>("allnn/leaf_size");
+  IO::printData();
 }

@@ -110,11 +110,14 @@ void IO::parseCommandLine(int argc, char** line) {
     }
   
   //Default help message
-  if(checkValue("help"))
+  if(checkValue("help")) {
     print();
+    exit(0);  //The user doesn't want to run the program, he wants to learn how to run it. 
+  }
   else if(checkValue("info")) {
     std::string str = getValue<std::string>("info");
     getSingleton().hierarchy.print(str);
+    exit(0);
   }
 }
 
@@ -154,18 +157,39 @@ void IO::printFatal(const char* msg) {
 
 //Prints a notification
 void IO::printNotify(const char* msg) {
-  cout << BASH_YELLOW << "[NOTIFY] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[NOTIFY] " << BASH_CLEAR << msg << endl;
 }
 
 void IO::printWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN]" << BASH_YELLOW << msg << endl;
+  cout << BASH_YELLOW << "[WARN] " << BASH_YELLOW << msg << endl;
 }
+
+/* Print whatever data we can */
+void IO::printData() {
+  std::map<std::string, boost::any>& gmap = IO::getSingleton().globalValues;
+  
+  for(std::map<std::string, boost::any>::iterator iter = gmap.begin(); iter != gmap.end(); ++iter) {
+    const char* str = (*iter).first.c_str();
+    boost::any data = (*iter).second;
+    
+    std::cout << str << " = ";
+    //Now, lets start guessing types.
+    if((*iter).second.type() == typeid(int))
+      std::cout << getValue<int>(str) << std::endl;
+    else if((*iter).second.type() == typeid(timeval))
+      std::cout << getValue<timeval>(str).tv_sec << ":" << getValue<timeval>(str).tv_usec << std::endl;
+     else if((*iter).second.type() == typeid(std::string))
+       std::cout << getValue<std::string>(str) << std::endl;
+     else //Don't know what it is, alert the user
+       IO::printWarn("Uknown type");
+  }
+  
+}
+
 
 /* Initializes a timer, available like a normal value specified on the command line.  
     Timers are of type timval, as defined in sys/time.h*/
 void IO::startTimer(const char* timerName) {
-  std::string key = std::string(timerName);
-  
   //We don't want to actually document the timer, the user can do that if he wants to.
   timeval tmp;
   
@@ -178,12 +202,6 @@ void IO::startTimer(const char* timerName) {
       
 /* Halts the timer, and replaces it's value with the delta time from it's start */
 void IO::stopTimer(const char* timerName) {
-  std::string key = std::string(timerName);
- 
-  //We don't want to actually document the timer, the user can do that if he wants to.
-  if(!getSingleton().globalValues.count(key))
-    return;
-  
   timeval delta, b, &a = getValue<timeval>(timerName);  
   gettimeofday(&b, NULL);
   
@@ -207,4 +225,5 @@ std::string IO::sanitizeString(const char* str) {
 
   return std::string("");
 }
+
 

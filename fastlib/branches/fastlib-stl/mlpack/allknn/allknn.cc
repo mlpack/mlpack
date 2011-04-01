@@ -600,13 +600,11 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
   }
 } // ComputeNeighbors
 
-void AllkNN::loadDocumentation() {
-	const char* rootNode = "allknn";
-	IO::add(rootNode, "Performs dual-tree all-k-nearest-neighbors computation.");
-	
-    IO::add<index_t>("leaf_size", "The maximum number of points to store at a leaf.", rootNode);
-    IO::add("tree_building", "Time spent building the kd-tree.", rootNode);
-    IO::add<index_t>("knns", "K-nearest neighbors initialization", rootNode);
-}
+
+PARAM_MODULE(allknn, "Performs dual-tree all-k-nearest-neighbors computation.");	
+PARAM(index_t, leaf_size, "The maximum number of points to store at a leaf.", allknn);
+PARAM(index_t, knns, "K-nearest neighbors initialization.", allknn);
+PARAM_BOOL(tree_building, "Time spent building the kd-tree.", allknn);
+
   
 
