@@ -17,26 +17,6 @@
 namespace core {
 namespace parallel {
 
-class CombineMeanVariancePairVector:
-  public std::binary_function <
-  core::monte_carlo::MeanVariancePairVector,
-  core::monte_carlo::MeanVariancePairVector,
-    core::monte_carlo::MeanVariancePairVector > {
-
-  public:
-    const core::monte_carlo::MeanVariancePairVector operator()(
-      const core::monte_carlo::MeanVariancePairVector &a,
-      const core::monte_carlo::MeanVariancePairVector &b) const {
-
-      core::monte_carlo::MeanVariancePairVector combined;
-      combined.Init(a.length());
-      combined.CopyValues(a);
-      combined.CombineWith(b);
-
-      return combined;
-    }
-};
-
 class CombineMeanVariancePairMatrix:
   public std::binary_function <
   core::monte_carlo::MeanVariancePairMatrix,
@@ -61,14 +41,6 @@ class CombineMeanVariancePairMatrix:
 
 namespace boost {
 namespace mpi {
-
-template<>
-class is_commutative <
-  core::parallel::CombineMeanVariancePairVector,
-  core::monte_carlo::MeanVariancePairVector  > :
-  public boost::mpl::true_ {
-
-};
 
 template<>
 class is_commutative <
@@ -127,6 +99,18 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
 
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
+DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
+  const KernelType &kernel,
+  double num_standard_deviations,
+  int num_reference_samples,
+  const mlpack::distributed_kpca::DistributedKpcaArguments <
+  DistributedTableType > &arguments_in,
+  mlpack::distributed_kpca::KpcaResult *result_out) {
+
+}
+
+template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
 DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   const KernelType &kernel,
   double num_standard_deviations,
@@ -135,6 +119,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
+  // Let's say we sample three times the required components.
   int num_random_fourier_features_eigen =
     arguments_in.num_kpca_components_in_ * 3;
 
@@ -255,15 +240,35 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // Allocate the space for the results.
   result_out->Init(
-    (arguments_in.mode_ == "kde") ? 1 : arguments_in.num_kpca_components_in_,
+    arguments_in.num_kpca_components_in_,
     arguments_in.reference_table_->n_entries(),
     arguments_in.query_table_->n_entries());
 
+  // If the mode is KPCA, then need to finalize the kernel
+  // eigenvectors.
+  if(arguments_in.mode_ == "kpca") {
+
+    FinalizeKernelEigenvectors_(
+      kernel, num_standard_deviations, num_reference_samples,
+      arguments_in, result_out);
+  }
+  else {
+
+    // Otherwise set everything to one.
+    result_out->kpca_components().SetAll(1.0);
+  }
+
   // The local kernel sum.
-  core::monte_carlo::MeanVariancePairVector local_kernel_sum;
-  local_kernel_sum.Init(arguments_in.query_table_->local_table()->n_entries());
-  std::vector<bool> converged(
-    arguments_in.query_table_->local_table()->n_entries(), false);
+  core::monte_carlo::MeanVariancePairMatrix local_kernel_sum;
+  local_kernel_sum.Init(
+    arguments_in.num_kpca_components_in_,
+    arguments_in.query_table_->local_table()->n_entries());
+  std::vector< std::vector<bool> > converged(
+    arguments_in.num_kpca_components_in_);
+  for(int i = 0; i < arguments_in.num_kpca_components_in_; i++) {
+    converged[i].resize(arguments_in.query_table_->local_table()->n_entries());
+    std::fill(converged[i].begin(), converged[i].end(), false);
+  }
 
   // Call the computation.
   int num_iterations = 0;
@@ -284,14 +289,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
     // sum projections.
-    core::monte_carlo::MeanVariancePairVector local_reference_average;
+    core::monte_carlo::MeanVariancePairMatrix local_reference_average;
     mlpack::series_expansion::RandomFeature::AverageTransform(
       *(arguments_in.reference_table_->local_table()),
+      result_out->kpca_components(),
       num_reference_samples, random_variate_aliases, &local_reference_average);
-    core::monte_carlo::MeanVariancePairVector global_reference_average;
+    core::monte_carlo::MeanVariancePairMatrix global_reference_average;
     boost::mpi::all_reduce(
       *world_, local_reference_average, global_reference_average,
-      core::parallel::CombineMeanVariancePairVector());
+      core::parallel::CombineMeanVariancePairMatrix());
 
     // Each process computes the local projection of each query point
     // and adds up.
@@ -299,7 +305,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
 
-      if(converged[i]) {
+      bool current_query_converged = true;
+      for(int k = 0; k < arguments_in.num_kpca_components_in_; k++) {
+        current_query_converged = current_query_converged && converged[k][i];
+      }
+
+      if(current_query_converged) {
 
         // If already converged, skip.
         continue;
@@ -310,27 +321,34 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arma::vec query_point_projected;
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
-      for(int j = 0; j < num_random_fourier_features; j++) {
 
-        // You need to multiply by the factor of two since Fourier
-        // features come in pairs of cosine and sines.
-        local_kernel_sum[i].ScaledCombineWith(
-          2.0 * query_point_projected[j], global_reference_average[j]);
-        local_kernel_sum[i].ScaledCombineWith(
-          2.0 * query_point_projected[j + num_random_fourier_features],
-          global_reference_average[j + num_random_fourier_features]);
-      }
+      for(int k = 0; k < arguments_in.num_kpca_components_in_; k++) {
+        for(int j = 0; j < num_random_fourier_features; j++) {
 
-      double left_hand_side =
-        num_standard_deviations *
-        sqrt(local_kernel_sum[i].sample_mean_variance());
-      double right_hand_side =
-        arguments_in.relative_error_ * local_kernel_sum[i].sample_mean();
-      converged[i] = (left_hand_side <= right_hand_side);
-      if(converged[i]) {
-        converged_count++;
-      }
-      all_local_query_converged = all_local_query_converged && converged[i];
+          // You need to multiply by the factor of two since Fourier
+          // features come in pairs of cosine and sines.
+          local_kernel_sum.get(k, i).ScaledCombineWith(
+            2.0 * query_point_projected[j],
+            global_reference_average.get(k, j));
+          local_kernel_sum.get(k, i).ScaledCombineWith(
+            2.0 * query_point_projected[j + num_random_fourier_features],
+            global_reference_average.get(k, j + num_random_fourier_features));
+        }
+
+        double left_hand_side =
+          num_standard_deviations *
+          sqrt(local_kernel_sum.get(k, i).sample_mean_variance());
+        double right_hand_side =
+          arguments_in.relative_error_ *
+          local_kernel_sum.get(k, i).sample_mean();
+        converged[k][i] = (left_hand_side <= right_hand_side);
+        if(converged[k][i]) {
+          converged_count++;
+        }
+        all_local_query_converged =
+          all_local_query_converged && converged[k][i];
+
+      } // end of checking the given KPCA component.
     }
     num_iterations++;
 
@@ -711,7 +729,8 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // Parse the number of KPCA components.
   arguments_out->num_kpca_components_in_ =
-    vm["num_kpca_components_in"].as<int>();
+    (vm["mode"].as<std::string>() == "kde") ?
+    1 : vm["num_kpca_components_in"].as<int>();
   if(world.rank() == 0) {
     std::cout << "Requesting " << arguments_out->num_kpca_components_in_ <<
               " kernel PCA components...\n";

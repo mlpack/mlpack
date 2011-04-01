@@ -102,12 +102,14 @@ class RandomFeature {
     template<typename TableType>
     static void AverageTransform(
       const TableType &table_in,
+      const core::table::DenseMatrix &weights_in,
       int num_reference_samples,
       const std::vector< arma::vec > &random_variates,
-      core::monte_carlo::MeanVariancePairVector *average_transformation) {
+      core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
 
       int num_random_fourier_features = random_variates.size();
-      average_transformation->Init(2 * num_random_fourier_features);
+      average_transformation->Init(
+        weights_in.n_rows(), 2 * num_random_fourier_features);
       average_transformation->set_total_num_terms(table_in.n_entries());
 
       // Generate a random combination.
@@ -120,10 +122,14 @@ class RandomFeature {
         table_in.get(random_combination[i] , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
-          ((*average_transformation)[j]).push_back(cos(dot_product));
-          ((*average_transformation)[
-             j + num_random_fourier_features]).push_back(
-               sin(dot_product));
+          for(int k = 0; k < weights_in.n_rows(); k++) {
+            double weight = weights_in.get(k, random_combination[i]);
+            average_transformation->get(k, j).push_back(
+              weight * cos(dot_product));
+            average_transformation->get(
+              k, j + num_random_fourier_features).push_back(
+                weight * sin(dot_product));
+          }
         }
       }
     }

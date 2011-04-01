@@ -61,6 +61,14 @@ class DistributedKpca {
 
   private:
 
+    void FinalizeKernelEigenvectors_(
+      const KernelType &kernel,
+      double num_standard_deviations_in,
+      int num_reference_samples_in,
+      const mlpack::distributed_kpca::DistributedKpcaArguments <
+      DistributedTableType > &arguments_in,
+      ResultType *result_out);
+
     void ComputeEigenDecomposition_(
       const KernelType &kernel,
       double num_standard_deviations_in,
