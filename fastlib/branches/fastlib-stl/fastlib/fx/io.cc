@@ -157,11 +157,11 @@ void IO::printFatal(const char* msg) {
 
 //Prints a notification
 void IO::printNotify(const char* msg) {
-  cout << BASH_GREEN << "[NOTIFY] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg << endl;
 }
 
 void IO::printWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN] " << BASH_YELLOW << msg << endl;
+  cout << BASH_YELLOW << "[WARN ] " << BASH_YELLOW << msg << endl;
 }
 
 /* Print whatever data we can */
