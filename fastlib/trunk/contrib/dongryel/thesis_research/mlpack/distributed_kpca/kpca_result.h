@@ -6,6 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_KPCA_RESULT_H
 #define MLPACK_DISTRIBUTED_KPCA_KPCA_RESULT_H
 
+#include <boost/bind.hpp>
 #include <boost/math/distributions/normal.hpp>
 #include <boost/mpi.hpp>
 #include <boost/serialization/serialization.hpp>
@@ -125,7 +126,6 @@ class KpcaResult {
       kpca_projections_l_.Init(num_components, query_points);
       kpca_projections_.Init(num_components, query_points);
       kpca_projections_u_.Init(num_components, query_points);
-      kpca_components_.Init(num_components, num_reference_points);
       SetZero();
     }
 
@@ -139,11 +139,37 @@ class KpcaResult {
     }
 
     void set_eigendecomposition_results(
+      int num_kpca_components_in,
       const arma::vec &kernel_eigenvalues_in,
       const arma::mat &covariance_eigenvectors_in) {
 
-      kernel_eigenvalues_.Copy(kernel_eigenvalues_in);
-      covariance_eigenvectors_.Copy(covariance_eigenvectors_in);
+      // Sort the kernel eigenvalues.
+      std::vector <
+      std::pair<int, double> > sorted_eigenvalues(
+        kernel_eigenvalues_in.n_elem);
+      for(unsigned int i = 0; i < kernel_eigenvalues_in.n_elem; i++) {
+        sorted_eigenvalues[i] =
+          std::pair<int, double>(i, kernel_eigenvalues_in[i]);
+      }
+
+      // Sort in the decreasing order and take the top ones.
+      std::sort(
+        sorted_eigenvalues.begin(), sorted_eigenvalues.end(),
+        boost::bind(&std::pair<int, double>::second, _1) >
+        boost::bind(&std::pair<int, double>::second, _2));
+
+      kernel_eigenvalues_.Init(num_kpca_components_in);
+      covariance_eigenvectors_.Init(
+        covariance_eigenvectors_in.n_rows, num_kpca_components_in);
+      for(int i = 0; i < num_kpca_components_in; i++) {
+        kernel_eigenvalues_[i] = sorted_eigenvalues[i].second;
+        for(unsigned int j = 0; j < covariance_eigenvectors_in.n_rows; j++) {
+          covariance_eigenvectors_.set(
+            j, i,
+            covariance_eigenvectors_in.at(
+              j, sorted_eigenvalues[i].first));
+        }
+      }
     }
 };
 }

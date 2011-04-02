@@ -295,13 +295,9 @@ class DenseMatrix {
       if(core::table::RowTrait<MatrixType>::n_rows(matrix_in) > 0 &&
           core::table::ColTrait<MatrixType>::n_cols(matrix_in) > 0) {
         if(ptr_.get() == NULL) {
-          int length =
-            core::table::RowTrait<MatrixType>::n_rows(matrix_in) *
-            core::table::ColTrait<MatrixType>::n_cols(matrix_in);
-          ptr_ =
-            (core::table::global_m_file_) ?
-            core::table::global_m_file_->ConstructArray<double>(
-              length) : new double[ length ];
+          this->Init(
+            core::table::RowTrait<MatrixType>::n_rows(matrix_in),
+            core::table::ColTrait<MatrixType>::n_cols(matrix_in));
         }
         CopyValues(matrix_in);
       }
