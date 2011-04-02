@@ -334,6 +334,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   else {
 
     // Otherwise set everything to one.
+    result_out->kpca_components().Init(
+      1, arguments_in.reference_table_->n_entries());
     result_out->kpca_components().SetAll(1.0);
   }
 
