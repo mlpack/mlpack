@@ -1,6 +1,6 @@
 /** @file lars.h
  *
- *  This file implements Least Angle Regression
+ *  This file implements Least Angle Regression and the LASSO
  *
  *  @author Nishant Mehta (niche)
  *  @bug No known bugs.
@@ -31,19 +31,21 @@ class Lars {
   
   mat Gram_;
   vec Xty_;
-
-  bool lasso_;
+  
   bool use_cholesky_;
-
+  
+  bool lasso_ = false;
+  double desired_lambda_;
+  
+  bool elastic_net_ = false;
+  double lambda_2_;
+  
   std::vector<vec> beta_path_;
   std::vector<double> lambda_path_;
   
-  double desired_lambda_;
-
   u32 n_active_;
   std::vector<u32> active_set_;
   std::vector<bool> is_active_;
-  
   
   
  public:
@@ -51,14 +53,29 @@ class Lars {
 
   ~Lars() { }
   
-  void Init(const mat& X, const vec& y, bool lasso, bool use_cholesky) {
+  void Init(const mat& X, const vec& y,
+	    bool use_cholesky, double desired_lambda, double lambda_2) {
+    elastic_net_ = true;
+    lambda_2_ = lambda_2;
+    Init(X, y, use_cholesky, desired_lambda);
+  }
+  
+  
+  void Init(const mat& X, const vec& y,
+	    bool use_cholesky, double desired_lambda) {
+    lasso_ = true;
+    desired_lambda_ = desired_lambda;
+    Init(X, y, use_cholesky);
+  }
+  
+  
+  void Init(const mat& X, const vec& y, bool use_cholesky) {
     X_ = mat(X);
     y_ = vec(y);
     
     n_ = X_.n_rows;
     p_ = X_.n_cols;
     
-    lasso_ = lasso;
     use_cholesky_ = use_cholesky;
     
     ComputeXty();
@@ -75,7 +92,12 @@ class Lars {
 
   
   void ComputeGram() {
-    Gram_ = trans(X_) * X_;
+    if(elastic_net_) {
+      Gram_ = trans(X_) * X_ + lambda_2_ * eye(p_, p_);
+    }
+    else {
+      Gram_ = trans(X_) * X_;
+    }
   }
   
   
@@ -242,6 +264,10 @@ class Lars {
 	  for(u32 j = 0; j < n_active_; j++) {
 	    Gram_active(i,j) = Gram_(active_set_[i], active_set_[j]);
 	  }
+	}
+	
+	if(elastic_net_) {
+	  Gram_active += lambda_2_ * eye(n_active_, n_active_);
 	}
 	
 	mat S = s * ones<mat>(1, n_active_);

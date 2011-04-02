@@ -30,13 +30,13 @@ int main(int argc, char* argv[]) {
   vec y = X * beta + 0.1 * randu<vec>(n);
   y.load("y.dat", raw_ascii);
 
-  bool lasso = true;
   bool use_cholesky = !true;
-  Lars lars;
-  lars.Init(X, y, lasso, use_cholesky);
+  double lambda_1 = 0.12;//1.0;
   
-  double lambda = 0.12;//1.0;
-  lars.DoLARS(lambda);
+  Lars lars;
+  lars.Init(X, y, use_cholesky, lambda_1);
+  
+  lars.DoLARS();
   
   u32 path_length = lars.beta_path().size();
   
