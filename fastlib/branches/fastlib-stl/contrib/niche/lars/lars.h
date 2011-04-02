@@ -383,18 +383,30 @@ class Lars {
     
     if(n == 0) {
       R = mat(1, 1);
-      R(0, 0) = norm(new_x, 2);
+      if(elastic_net_) {
+	R(0, 0) = norm(new_X, 2) + lambda_2_;
+      }
+      else {
+	R(0, 0) = norm(new_x, 2);
+      }
     }
     else {
       mat new_R = mat(n + 1, n + 1);
       
-      vec R_k = solve(trimatl(trans(R)), new_Gram_col);
-      double R_kk = sqrt(dot(new_x, new_x) - dot(R_k, R_k));
+      double sq_norm_new_x;
+      if(elastic_net_) {
+	sq_norm_new_x = dot(new_x, new_x) + lambda_2_;
+      }
+      else {
+	sq_norm_new_x = dot(new_x, new_x);
+      }
       
-      new_R(span(0, n - 1), span(0, n - 1)) = R(span::all, span::all);
+      vec R_k = solve(trimatl(trans(R)), new_Gram_col);
+      
+      new_R(span(0, n - 1), span(0, n - 1)) = R;//(span::all, span::all);
       new_R(span(0, n - 1), n) = R_k;
       new_R(n, span(0, n - 1)).fill(0.0);
-      new_R(n, n) = R_kk;
+      new_R(n, n) = sqrt(sq_norm_new_x - dot(R_k, R_k));
       
       R = new_R;
     }
