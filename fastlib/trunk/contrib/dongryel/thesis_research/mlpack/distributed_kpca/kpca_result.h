@@ -133,9 +133,6 @@ class KpcaResult {
       kpca_projections_l_.SetZero();
       kpca_projections_.SetZero();
       kpca_projections_u_.SetZero();
-      kernel_eigenvalues_.SetZero();
-      covariance_eigenvectors_.SetZero();
-      kpca_components_.SetZero();
     }
 
     void set_eigendecomposition_results(
