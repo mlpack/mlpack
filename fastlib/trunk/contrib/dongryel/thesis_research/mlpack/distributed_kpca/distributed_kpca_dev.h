@@ -30,6 +30,7 @@ class CombineMeanVariancePairMatrix:
 
       core::monte_carlo::MeanVariancePairMatrix combined;
       combined.Init(a.n_rows(), a.n_cols());
+      combined.set_total_num_terms(a.get(0, 0).total_num_terms());
       combined.CopyValues(a);
       combined.CombineWith(b);
 
@@ -143,7 +144,7 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
           sqrt(local_kpca_components.get(i, j).sample_mean_variance());
         double right_hand_side =
           arguments_in.relative_error_ *
-          local_kpca_components.get(i, j).sample_mean();
+          fabs(local_kpca_components.get(i, j).sample_mean());
         all_components_converged = (left_hand_side <= right_hand_side);
       }
     }
@@ -204,19 +205,26 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     bool all_components_converged = true;
     if(world_->rank() == 0) {
       global_covariance.CombineWith(global_covariance_in_this_round);
-      for(int j = 0;
-          all_components_converged && j < global_covariance.n_cols(); j++) {
-        for(int i = 0;
-            all_components_converged && i < global_covariance.n_rows(); i++) {
-          double left_hand_side =
-            num_standard_deviations *
-            sqrt(global_covariance.get(i, j).sample_mean_variance());
-          double right_hand_side =
-            arguments_in.relative_error_ *
-            global_covariance.get(i, j).sample_mean();
-          all_components_converged = (left_hand_side <= right_hand_side);
+
+      double total_frobenius_norm = 0.0;
+      double total_error = 0.0;
+      for(int j = 0; j < global_covariance.n_cols(); j++) {
+        for(int i = 0; i <= j; i++) {
+          total_frobenius_norm +=
+            core::math::Sqr(global_covariance.get(i, j).sample_mean());
+          total_error += num_standard_deviations *
+                         global_covariance.get(i, j).sample_mean_variance();
         }
       }
+      all_components_converged =
+        (total_error <= arguments_in.relative_error_ *
+         total_frobenius_norm + arguments_in.absolute_error_);
+
+
+      arma::mat test;
+      global_covariance.sample_means(&test);
+      test.print();
+
     }
     bool all_done = true;
     boost::mpi::all_reduce(
@@ -280,6 +288,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // If the mode is KPCA, then need to compute the eigenvectors.
   if(arguments_in.mode_ == "kpca") {
+    if(world_->rank() == 0) {
+      std::cout << "Starting to compute eigendecomposition...\n";
+    }
     ComputeEigenDecomposition_(
       kernel, num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
@@ -294,7 +305,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // If the mode is KPCA, then need to finalize the kernel
   // eigenvectors.
   if(arguments_in.mode_ == "kpca") {
-
+    if(world_->rank() == 0) {
+      std::cout << "Starting to finalize the eigendecomposition...\n";
+    }
     FinalizeKernelEigenvectors_(
       kernel, num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
@@ -303,6 +316,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     // Otherwise set everything to one.
     result_out->kpca_components().SetAll(1.0);
+  }
+
+  if(world_->rank() == 0) {
+    std::cout << "Starting the projection step...\n";
   }
 
   // The local kernel sum.
@@ -387,7 +404,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
           sqrt(local_kernel_sum.get(k, i).sample_mean_variance());
         double right_hand_side =
           arguments_in.relative_error_ *
-          local_kernel_sum.get(k, i).sample_mean();
+          fabs(local_kernel_sum.get(k, i).sample_mean());
         converged[k][i] = (left_hand_side <= right_hand_side);
         if(converged[k][i]) {
           converged_count++;
@@ -451,7 +468,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
 
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
-    arguments_in.num_kpca_components_in_ * 3;
+    arguments_in.num_kpca_components_in_ * 2;
 }
 
 bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
