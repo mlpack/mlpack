@@ -92,8 +92,7 @@ class RandomFeature {
           // For each column of eigenvectors,
           for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
             accumulants->get(k, i).push_back(
-              covariance_eigenvectors.get(j, k) * first_value);
-            accumulants->get(k, i).push_back(
+              covariance_eigenvectors.get(j, k) * first_value +
               covariance_eigenvectors.get(
                 j + num_random_fourier_features, k) * second_value);
           }

@@ -115,6 +115,7 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     arguments_in.reference_table_->n_entries());
 
   // The main loop.
+  int num_iterations = 0;
   do {
 
     // The master generates the set of random Fourier features.
@@ -135,27 +136,39 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     // Each process determines whether the kernel eigenvector estimates
     // are good enough, and notifies the master.
     bool all_components_converged = true;
-    for(int j = 0; all_components_converged &&
-        j < local_kpca_components.n_cols(); j++) {
-      for(int i = 0; all_components_converged &&
-          i < local_kpca_components.n_rows(); i++) {
-        double left_hand_side =
-          num_standard_deviations *
-          sqrt(local_kpca_components.get(i, j).sample_mean_variance());
-        double right_hand_side =
-          arguments_in.relative_error_ *
-          fabs(local_kpca_components.get(i, j).sample_mean());
-        all_components_converged = (left_hand_side <= right_hand_side);
+    for(int i = 0; all_components_converged &&
+        i < local_kpca_components.n_rows(); i++) {
+      double left_hand_side = 0.0;
+      double right_hand_side = 0.0;
+      for(int j = 0; j < local_kpca_components.n_cols(); j++) {
+        left_hand_side +=
+          core::math::Sqr(num_standard_deviations) *
+          local_kpca_components.get(i, j).sample_mean_variance();
+        right_hand_side +=
+          core::math::Sqr(local_kpca_components.get(i, j).sample_mean());
       }
+      all_components_converged =
+        (left_hand_side <= arguments_in.relative_error_ * right_hand_side +
+         arguments_in.absolute_error_);
     }
+
+    // Quit after 10 iterations.
+    all_components_converged = (num_iterations >= 10);
+
     bool all_done = true;
     boost::mpi::all_reduce(
       *world_, all_components_converged, all_done, std::logical_and<bool>());
     if(all_done) {
       break;
     }
+    num_iterations++;
   }
   while(true);
+
+  if(world_->rank() == 0) {
+    std::cout << "KPCA eigenvector finalizing took " << num_iterations <<
+              " iterations.\n";
+  }
 
   // Extract.
   local_kpca_components.sample_means(& (result_out->kpca_components()));
@@ -177,6 +190,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     2 * num_random_fourier_features_eigen_,
     2 * num_random_fourier_features_eigen_);
 
+  int num_iterations = 0;
   do {
 
     // The master generates a set of random Fourier features and do
@@ -212,7 +226,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
         for(int i = 0; i <= j; i++) {
           total_frobenius_norm +=
             core::math::Sqr(global_covariance.get(i, j).sample_mean());
-          total_error += num_standard_deviations *
+          total_error += core::math::Sqr(num_standard_deviations) *
                          global_covariance.get(i, j).sample_mean_variance();
         }
       }
@@ -223,11 +237,18 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     bool all_done = true;
     boost::mpi::all_reduce(
       *world_, all_components_converged, all_done, std::logical_and<bool>());
+
+    num_iterations++;
     if(all_done) {
       break;
     }
   }
   while(true);
+
+  if(world_->rank() == 0) {
+    std::cout << "KPCA eigenvector preprocessing took " << num_iterations <<
+              " iterations.\n";
+  }
 
   // The master eigendecomposes the converged global covariance and
   // does a broadcast.
