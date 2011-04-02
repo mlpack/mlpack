@@ -779,6 +779,10 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     arguments_out->kpca_components_out_ = kpca_components_out_sstr.str();
   }
 
+  // Parse the mode.
+  arguments_out->mode_ = vm["mode"].as<std::string>();
+  std::cout << "Running in the mode: " << arguments_out->mode_ << ".\n";
+
   // Parse the number of KPCA components.
   arguments_out->num_kpca_components_in_ =
     (vm["mode"].as<std::string>() == "kde") ?
