@@ -219,12 +219,6 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
       all_components_converged =
         (total_error <= arguments_in.relative_error_ *
          total_frobenius_norm + arguments_in.absolute_error_);
-
-
-      arma::mat test;
-      global_covariance.sample_means(&test);
-      test.print();
-
     }
     bool all_done = true;
     boost::mpi::all_reduce(
@@ -245,6 +239,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     arma::eig_sym(
       kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
     result_out->set_eigendecomposition_results(
+      arguments_in.num_kpca_components_in_,
       kernel_eigenvalues, covariance_eigenvectors);
   }
   boost::mpi::broadcast(
