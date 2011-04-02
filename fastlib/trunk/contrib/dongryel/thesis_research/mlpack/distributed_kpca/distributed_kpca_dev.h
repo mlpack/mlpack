@@ -348,16 +348,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   local_kernel_sum.Init(
     arguments_in.num_kpca_components_in_,
     arguments_in.query_table_->local_table()->n_entries());
-  std::vector< std::vector<bool> > converged(
-    arguments_in.num_kpca_components_in_);
-  for(int i = 0; i < arguments_in.num_kpca_components_in_; i++) {
-    converged[i].resize(arguments_in.query_table_->local_table()->n_entries());
-    std::fill(converged[i].begin(), converged[i].end(), false);
-  }
+
+  // Indicates the convergence of each KPCA projection.
+  core::monte_carlo::MeanVariancePairVector frobenius_norm_history;
+  frobenius_norm_history.Init(arguments_in.query_table_->n_entries());
+  std::vector< bool > converged(
+    arguments_in.query_table_->local_table()->n_entries(), false);
+
 
   // Call the computation.
   int num_iterations = 0;
-  int converged_count = 0;
   bool all_query_converged = true;
   do {
 
@@ -390,12 +390,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     for(int i = 0;
         i < arguments_in.query_table_->local_table()->n_entries(); i++) {
 
-      bool current_query_converged = true;
-      for(int k = 0; k < arguments_in.num_kpca_components_in_; k++) {
-        current_query_converged = current_query_converged && converged[k][i];
-      }
-
-      if(current_query_converged) {
+      if(converged[i]) {
 
         // If already converged, skip.
         continue;
@@ -407,6 +402,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
 
+      double frobenius_norm = 0.0;
       for(int k = 0; k < arguments_in.num_kpca_components_in_; k++) {
         for(int j = 0; j < num_random_fourier_features; j++) {
 
@@ -420,28 +416,38 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
             global_reference_average.get(k, j + num_random_fourier_features));
         }
 
-        double left_hand_side =
-          num_standard_deviations *
-          sqrt(local_kernel_sum.get(k, i).sample_mean_variance());
-        double right_hand_side =
-          arguments_in.relative_error_ *
-          fabs(local_kernel_sum.get(k, i).sample_mean());
-        converged[k][i] = (left_hand_side <= right_hand_side);
-        if(converged[k][i]) {
-          converged_count++;
-        }
-        all_local_query_converged =
-          all_local_query_converged && converged[k][i];
+        // Add up the frobenius norm contribution.
+        frobenius_norm +=
+          core::math::Sqr(local_kernel_sum.get(k, i).sample_mean());
 
       } // end of checking the given KPCA component.
-    }
+
+      // Add to the history.
+      frobenius_norm_history[i].push_back(frobenius_norm);
+
+      // Start checking the convergence after 5 iterations.
+      if(num_iterations > 5) {
+        converged[i] = (
+                         num_standard_deviations *
+                         sqrt(
+                           frobenius_norm_history[i].sample_mean_variance()) <=
+                         arguments_in.relative_error_ *
+                         frobenius_norm_history[i].sample_mean() +
+                         arguments_in.absolute_error_);
+      }
+      all_local_query_converged = converged[i];
+
+    } // end of looping over each local query.
+
+    // Increment the number of iterations.
     num_iterations++;
 
     // Do an all-reduction to find out we are all done.
     boost::mpi::all_reduce(
       *world_, all_local_query_converged,
       all_query_converged, std::logical_and<bool>());
-  }
+
+  } // Terminate the loop only if all processes are done.
   while(! all_query_converged);
 
   // Barrier so that every process is done.
