@@ -292,9 +292,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // The kernel.
   KernelType kernel;
   kernel.Init(arguments_in.bandwidth_);
-  mult_const_ = 1.0 /
-                kernel.CalcNormConstant(
-                  arguments_in.reference_table_->n_attributes());
+  mult_const_ =
+    (arguments_in.mode_ == "kpca") ?
+    1.0 :
+    1.0 /
+    kernel.CalcNormConstant(
+      arguments_in.reference_table_->n_attributes());
 
   // Barrier so that every process is here.
   world_->barrier();
