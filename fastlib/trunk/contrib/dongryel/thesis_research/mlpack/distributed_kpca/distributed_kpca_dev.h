@@ -732,6 +732,11 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
       "kpca_components.csv"),
     "OPTIONAL output file for KPCA components."
   )(
+    "kpca_projections_out",
+    boost::program_options::value<std::string>()->default_value(
+      "kpca_projections.csv"),
+    "OPTIONAL output file for KPCA projections."
+  )(
     "references_in",
     boost::program_options::value<std::string>()->default_value(
       "random_dataset.csv"),
@@ -1032,6 +1037,16 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     kpca_components_out_sstr << vm["kpca_components_out"].as<std::string>() <<
                              world.rank();
     arguments_out->kpca_components_out_ = kpca_components_out_sstr.str();
+  }
+
+  // Parse the KPCA projection output file.
+  arguments_out->kpca_projections_out_ =
+    vm["kpca_projections_out"].as<std::string>();
+  if(vm.count("random_generate_n_entries") > 0) {
+    std::stringstream kpca_projections_out_sstr;
+    kpca_projections_out_sstr << vm["kpca_projections_out"].as<std::string>() <<
+                              world.rank();
+    arguments_out->kpca_projections_out_ = kpca_projections_out_sstr.str();
   }
 
   // Parse the mode.
