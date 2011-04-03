@@ -7,7 +7,6 @@
 #define MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_ARGUMENTS_H
 
 #include <boost/interprocess/offset_ptr.hpp>
-#include "core/metric_kernels/lmetric.h"
 #include "core/table/table.h"
 
 namespace core {
@@ -58,10 +57,6 @@ class DistributedKpcaArguments {
     /** @brief The name of the kernel.
      */
     std::string kernel_;
-
-    /** @brief The default L2 metric.
-     */
-    core::metric_kernels::LMetric<2> metric_;
 
     /** @brief The computation mode.
      */
