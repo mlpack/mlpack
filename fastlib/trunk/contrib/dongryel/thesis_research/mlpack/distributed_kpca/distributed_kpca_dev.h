@@ -17,6 +17,28 @@
 namespace core {
 namespace parallel {
 
+class AddDensePoint:
+  public std::binary_function <
+  core::table::DensePoint,
+  core::table::DensePoint,
+    core::table::DensePoint > {
+
+  public:
+    const core::table::DensePoint operator()(
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const {
+
+      core::table::DensePoint sum;
+      sum.Copy(a);
+      arma::vec sum_alias;
+      core::table::DensePointToArmaVec(sum, &sum_alias);
+      arma::vec b_alias;
+      core::table::DensePointToArmaVec(b, &b_alias);
+      sum_alias += b_alias;
+      return sum;
+    }
+};
+
 class CombineMeanVariancePairMatrix:
   public std::binary_function <
   core::monte_carlo::MeanVariancePairMatrix,
@@ -42,6 +64,14 @@ class CombineMeanVariancePairMatrix:
 
 namespace boost {
 namespace mpi {
+
+template<>
+class is_commutative <
+  core::parallel::AddDensePoint,
+  core::table::DensePoint  > :
+  public boost::mpl::true_ {
+
+};
 
 template<>
 class is_commutative <
@@ -169,6 +199,35 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 
   // Extract.
   local_kpca_components.sample_means(& (result_out->kpca_components()));
+
+  // Normalize each KPCA components. Each process needs to compute its
+  // squared length and participate in the global all-reduce step.
+  core::table::DensePoint local_squared_length_contributions;
+  local_squared_length_contributions.Init(
+    result_out->kpca_components().n_rows());
+  local_squared_length_contributions.SetZero();
+  core::table::DensePoint global_lengths;
+  for(int j = 0; j < result_out->kpca_components().n_cols(); j++) {
+    for(int i = 0; i < result_out->kpca_components().n_rows(); i++) {
+      local_squared_length_contributions[i] +=
+        core::math::Sqr(result_out->kpca_components().get(i, j));
+    }
+  }
+  boost::mpi::all_reduce(
+    *world_, local_squared_length_contributions,
+    global_lengths, core::parallel::AddDensePoint());
+
+  // Take the square roots of each KPCA component to compute the
+  // actual normalization factor.
+  for(int i = 0; i < global_lengths.length(); i++) {
+    global_lengths[i] = sqrt(global_lengths[i]);
+  }
+  for(int j = 0; j < result_out->kpca_components().n_cols(); j++) {
+    for(int i = 0; i < result_out->kpca_components().n_rows(); i++) {
+      result_out->kpca_components().set(
+        i, j, result_out->kpca_components().get(i, j) / global_lengths[i]);
+    }
+  }
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -495,6 +554,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     else {
       reference_kernel_sums.Copy(query_kernel_sums);
     }
+
+    // Set the total number of terms represented by the average
+    // reference kernel sum, which is equal to the total number of
+    // points in the global list of processes.
+    average_reference_kernel_sum.set_total_num_terms(
+      effective_num_reference_points_);
     for(int i = 0; i < reference_kernel_sums.n_cols(); i++) {
       average_reference_kernel_sum.push_back(
         reference_kernel_sums.get(0, i).sample_mean());
@@ -616,7 +681,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
     total_sum += arguments_in.reference_table_->local_n_entries(i);
   }
   effective_num_reference_points_ =
-    (arguments_in.reference_table_ == arguments_in.query_table_) ?
+    (arguments_in.reference_table_ == arguments_in.query_table_ &&
+     arguments_in.mode_ == "kde") ?
     (total_sum - 1.0) : total_sum;
 
   // In case the mode is KDE, and is monochromatic.
