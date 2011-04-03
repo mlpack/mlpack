@@ -92,6 +92,13 @@ class DistributedKpca {
       const core::table::DenseMatrix &weights,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums);
 
+    void PostProcessKpcaProjections_(
+      const core::monte_carlo::MeanVariancePairMatrix &reference_kernel_sum,
+      const core::monte_carlo::MeanVariancePairMatrix &query_kernel_sums,
+      const core::monte_carlo::MeanVariancePair &average_reference_kernel_sum,
+      const core::table::DenseMatrix &kpca_components,
+      core::monte_carlo::MeanVariancePairMatrix *query_kpca_projections);
+
   public:
 
     DistributedKpca();
