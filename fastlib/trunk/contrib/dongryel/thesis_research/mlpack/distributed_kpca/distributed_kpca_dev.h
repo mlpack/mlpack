@@ -17,28 +17,6 @@
 namespace core {
 namespace parallel {
 
-class AddDensePoint:
-  public std::binary_function <
-  core::table::DensePoint,
-  core::table::DensePoint,
-    core::table::DensePoint > {
-
-  public:
-    const core::table::DensePoint operator()(
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) const {
-
-      core::table::DensePoint combined;
-      combined.Copy(a);
-      arma::vec combined_alias;
-      core::table::DensePointToArmaVec(combined, &combined_alias);
-      arma::vec b_alias;
-      core::table::DensePointToArmaVec(b, &b_alias);
-      combined_alias += b_alias;
-      return combined;
-    }
-};
-
 class CombineMeanVariancePairMatrix:
   public std::binary_function <
   core::monte_carlo::MeanVariancePairMatrix,
@@ -64,14 +42,6 @@ class CombineMeanVariancePairMatrix:
 
 namespace boost {
 namespace mpi {
-
-template<>
-class is_commutative <
-  core::parallel::AddDensePoint,
-  core::table::DensePoint  > :
-  public boost::mpl::true_ {
-
-};
 
 template<>
 class is_commutative <
@@ -410,31 +380,52 @@ void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::PostProcessKpcaProjections_(
-  const core::monte_carlo::MeanVariancePairMatrix &reference_kernel_sum,
+  const core::monte_carlo::MeanVariancePairMatrix &reference_kernel_sums,
   const core::monte_carlo::MeanVariancePairMatrix &query_kernel_sums,
   const core::monte_carlo::MeanVariancePair &average_reference_kernel_sum,
   const core::table::DenseMatrix &kpca_components,
   core::monte_carlo::MeanVariancePairMatrix *query_kpca_projections) {
 
   // The reference dot products (need to be computed across all
-  // processes).
-  core::table::DensePoint local_reference_dot_products;
-  local_reference_dot_products.Init(query_kpca_projections->n_rows());
-  local_reference_dot_products.SetZero();
-  core::table::DensePoint global_reference_dot_products;
+  // processes). The last trailing components are the sum of the KPCA
+  // components across all processes.
+  core::monte_carlo::MeanVariancePairMatrix local_reference_dot_products;
+  local_reference_dot_products.Init(1, 2 * query_kpca_projections->n_rows());
+  local_reference_dot_products.set_total_num_terms(
+    reference_kernel_sums.n_cols());
+  core::monte_carlo::MeanVariancePairMatrix global_reference_dot_products;
 
   // For each KPCA component, each process computes its local portion
   // of the dot products.
-  for(int j = 0; j < reference_kernel_sum.n_cols(); j++) {
+  for(int j = 0; j < reference_kernel_sums.n_cols(); j++) {
     for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
-      local_reference_dot_products[i] +=
+      local_reference_dot_products.get(0, i).push_back(
         kpca_components.get(i, j) *
-        reference_kernel_sum.get(0, j).sample_mean();
+        reference_kernel_sums.get(0, j).sample_mean());
+      local_reference_dot_products.get(
+        0, i + query_kpca_projections->n_rows()).push_back(
+          kpca_components.get(i, j));
     }
   }
   boost::mpi::all_reduce(
     *world_, local_reference_dot_products, global_reference_dot_products,
-    core::parallel::AddDensePoint());
+    core::parallel::CombineMeanVariancePairMatrix());
+
+  // Now do the correction.
+  for(int j = 0; j < query_kpca_projections->n_cols(); j++) {
+    for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
+      query_kpca_projections->get(i, j).ScaledCombineWith(
+        -1.0, local_reference_dot_products.get(0, i));
+      query_kpca_projections->get(i, j).ScaledCombineWith(
+        - local_reference_dot_products.get(
+          0, i + query_kpca_projections->n_rows()).sample_mean(),
+        query_kernel_sums.get(0, j));
+      query_kpca_projections->get(i, j).ScaledCombineWith(
+        - local_reference_dot_products.get(
+          0, i + query_kpca_projections->n_rows()).sample_mean(),
+        average_reference_kernel_sum);
+    }
+  }
 }
 
 template<typename DistributedTableType, typename KernelType>
