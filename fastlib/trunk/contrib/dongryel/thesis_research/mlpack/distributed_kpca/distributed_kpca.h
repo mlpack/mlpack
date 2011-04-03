@@ -62,7 +62,6 @@ class DistributedKpca {
   private:
 
     void FinalizeKernelEigenvectors_(
-      const KernelType &kernel,
       double num_standard_deviations_in,
       int num_reference_samples_in,
       const mlpack::distributed_kpca::DistributedKpcaArguments <
@@ -70,7 +69,6 @@ class DistributedKpca {
       ResultType *result_out);
 
     void ComputeEigenDecomposition_(
-      const KernelType &kernel,
       double num_standard_deviations_in,
       int num_reference_samples_in,
       const mlpack::distributed_kpca::DistributedKpcaArguments <
@@ -80,7 +78,6 @@ class DistributedKpca {
     void GenerateRandomFourierFeatures_(
       const mlpack::distributed_kpca::DistributedKpcaArguments <
       DistributedTableType > &arguments_in,
-      const KernelType &kernel,
       int num_random_fourier_features,
       std::vector <
       core::table::DensePoint > *random_variates,
@@ -119,6 +116,10 @@ class DistributedKpca {
     double correction_term_;
 
     int num_random_fourier_features_eigen_;
+
+    /** @brief The kernel.
+     */
+    KernelType kernel_;
 };
 }
 }

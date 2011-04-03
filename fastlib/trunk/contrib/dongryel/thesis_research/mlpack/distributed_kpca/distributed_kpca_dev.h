@@ -76,7 +76,6 @@ void DistributedKpca <
 DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   const mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in,
-  const KernelType &kernel,
   int num_random_fourier_features,
   std::vector <
   core::table::DensePoint > *random_variates,
@@ -88,7 +87,7 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
     for(int i = 0; i < num_random_fourier_features; i++) {
 
       // Draw a random Fourier feature.
-      kernel.DrawRandomVariate(
+      kernel_.DrawRandomVariate(
         arguments_in.reference_table_->n_attributes(), & (*random_variates)[i]);
     }
   }
@@ -102,7 +101,6 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
-  const KernelType &kernel,
   double num_standard_deviations,
   int num_reference_samples,
   const mlpack::distributed_kpca::DistributedKpcaArguments <
@@ -123,7 +121,7 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
-      arguments_in, kernel, num_random_fourier_features_eigen_,
+      arguments_in, num_random_fourier_features_eigen_,
       &random_variates, &random_variate_aliases);
 
     // Each process independently computes its own portion of kernel
@@ -177,7 +175,6 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::ComputeEigenDecomposition_(
-  const KernelType &kernel,
   double num_standard_deviations,
   int num_reference_samples,
   const mlpack::distributed_kpca::DistributedKpcaArguments <
@@ -199,7 +196,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
-      arguments_in, kernel, num_random_fourier_features_eigen_,
+      arguments_in, num_random_fourier_features_eigen_,
       &random_variates, &random_variate_aliases);
 
     // Each process computes its local covariance and the master
@@ -289,21 +286,31 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
   printf("Number of standard deviation: %g\n", num_standard_deviations);
 
-  // The kernel.
-  KernelType kernel;
-  kernel.Init(arguments_in.bandwidth_);
-  mult_const_ =
-    (arguments_in.mode_ == "kpca") ?
-    1.0 :
-    1.0 /
-    kernel.CalcNormConstant(
-      arguments_in.reference_table_->n_attributes());
-
   // Barrier so that every process is here.
   world_->barrier();
 
   // The MPI timer.
   boost::mpi::timer timer;
+
+  // If the mode is KPCA and the centering is requested or the mode is
+  // KDE, then we need to compute the kernel sum between the query set
+  // and the reference set.
+  std::vector<double> query_kernel_sums;
+  if((arguments_in.mode_ == "kpca" && arguments_in.do_centering_) ||
+      arguments_in.mode_ == "kde") {
+
+
+  }
+
+  // If the mode is KPCA and the centering is requested, and is not
+  // monochromatic, then we need to compute the kernel sum between the
+  // reference set and itself.
+  std::vector<double> reference_kernel_sums = query_kernel_sums;
+  double average_reference_kernel_sum = 0.0;
+  if(arguments_in.mode_ == "kpca" && arguments_in.do_centering_ &&
+      arguments_in.reference_table_ != arguments_in.query_table_) {
+
+  }
 
   // If the mode is KPCA, then need to compute the eigenvectors.
   if(arguments_in.mode_ == "kpca") {
@@ -311,7 +318,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       std::cout << "Starting to compute eigendecomposition...\n";
     }
     ComputeEigenDecomposition_(
-      kernel, num_standard_deviations, num_reference_samples,
+      num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
   }
 
@@ -328,7 +335,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       std::cout << "Starting to finalize the eigendecomposition...\n";
     }
     FinalizeKernelEigenvectors_(
-      kernel, num_standard_deviations, num_reference_samples,
+      num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
   }
   else {
@@ -368,7 +375,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     std::vector< arma::vec > random_variate_aliases(
       num_random_fourier_features);
     GenerateRandomFourierFeatures_(
-      arguments_in, kernel, num_random_fourier_features,
+      arguments_in, num_random_fourier_features,
       &random_variates, &random_variate_aliases);
 
     // Each process computes the sum of the projections of the local
@@ -469,6 +476,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in) {
 
+  // Initialize the kernel.
+  kernel_.Init(arguments_in.bandwidth_);
+  mult_const_ =
+    (arguments_in.mode_ == "kpca") ?
+    1.0 :
+    1.0 /
+    kernel_.CalcNormConstant(
+      arguments_in.reference_table_->n_attributes());
+
+  // Set the communicator.
   world_ = &world_in;
 
   // This case implies that the query equals the reference.
