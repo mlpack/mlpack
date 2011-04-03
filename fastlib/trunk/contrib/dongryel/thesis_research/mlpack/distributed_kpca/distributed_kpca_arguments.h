@@ -75,6 +75,11 @@ class DistributedKpcaArguments {
      */
     bool do_centering_;
 
+    /** @brief Do naive computation along with the exact (only
+     *         applicable to one process at this moment).
+     */
+    bool do_naive_;
+
   public:
 
     /** @brief The default constructor.
@@ -92,6 +97,7 @@ class DistributedKpcaArguments {
       mode_ = "";
       num_kpca_components_in_ = 0;
       do_centering_ = false;
+      do_naive_ = false;
     }
 
     /** @brief The destructor.

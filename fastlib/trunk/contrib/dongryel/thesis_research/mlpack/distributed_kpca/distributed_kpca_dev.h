@@ -17,6 +17,9 @@
 namespace core {
 namespace parallel {
 
+/** @brief The reduction function for adding two dense points
+ *         together coordinate-wise.
+ */
 class AddDensePoint:
   public std::binary_function <
   core::table::DensePoint,
@@ -39,6 +42,9 @@ class AddDensePoint:
     }
 };
 
+/** @brief The reduction function for combining two Monte Carlo
+ *         estimates.
+ */
 class CombineMeanVariancePairMatrix:
   public std::binary_function <
   core::monte_carlo::MeanVariancePairMatrix,
@@ -65,6 +71,9 @@ class CombineMeanVariancePairMatrix:
 namespace boost {
 namespace mpi {
 
+/** @brief Indicates that the function for adding two dense points
+ *         is a commutative reduction operator.
+ */
 template<>
 class is_commutative <
   core::parallel::AddDensePoint,
@@ -73,6 +82,9 @@ class is_commutative <
 
 };
 
+/** @brief Indicates that the function for combining Monte Carlo
+ *         sampling results is a commutative reduction operator.
+ */
 template<>
 class is_commutative <
   core::parallel::CombineMeanVariancePairMatrix,
@@ -85,6 +97,8 @@ class is_commutative <
 
 namespace core {
 namespace table {
+
+// The extern declaration for the memory mapped file.
 extern core::table::MemoryMappedFile *global_m_file_;
 }
 }
@@ -120,6 +134,9 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
         num_dimensions_, & (*random_variates)[i]);
     }
   }
+
+  // The master broadcasts the set of random Fourier features. All
+  // processes form a set of armadillo vector aliases.
   boost::mpi::broadcast(*world_, *random_variates, 0);
   for(int i = 0; i < num_random_fourier_features; i++) {
     core::table::DensePointToArmaVec(
@@ -718,6 +735,10 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   )(
     "do_centering", "Apply centering to KPCA if present."
   )(
+    "do_naive", "Do naive computations along with the fast for debugging "
+    "purposes. Only applies to the case when there is only one MPI process "
+    "present."
+  )(
     "mode",
     boost::program_options::value<std::string>()->default_value("kde"),
     "OPTIONAL The algorithm mode. One of:"
@@ -1071,6 +1092,15 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     else {
       std::cout << "Doing a non-centered version of kernel PCA.\n";
     }
+  }
+
+  // Parse whether the naive mode is on or not.
+  arguments_out->do_naive_ = (vm.count("do_naive") > 0 && world.size() == 1);
+  if(arguments_out->do_naive_) {
+    std::cout << "Computing naively as well.\n";
+  }
+  else {
+    std::cout << "Just doing approximation.\n";
   }
   return false;
 }
