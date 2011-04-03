@@ -69,13 +69,12 @@ DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
   effective_num_reference_points_ = 0.0;
   correction_term_ = 0.0;
   num_random_fourier_features_eigen_ = 1;
+  num_dimensions_ = 0;
 }
 
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
-  const mlpack::distributed_kpca::DistributedKpcaArguments <
-  DistributedTableType > &arguments_in,
   int num_random_fourier_features,
   std::vector <
   core::table::DensePoint > *random_variates,
@@ -88,7 +87,7 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
 
       // Draw a random Fourier feature.
       kernel_.DrawRandomVariate(
-        arguments_in.reference_table_->n_attributes(), & (*random_variates)[i]);
+        num_dimensions_, & (*random_variates)[i]);
     }
   }
   boost::mpi::broadcast(*world_, *random_variates, 0);
@@ -121,7 +120,7 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
-      arguments_in, num_random_fourier_features_eigen_,
+      num_random_fourier_features_eigen_,
       &random_variates, &random_variate_aliases);
 
     // Each process independently computes its own portion of kernel
@@ -196,7 +195,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
-      arguments_in, num_random_fourier_features_eigen_,
+      num_random_fourier_features_eigen_,
       &random_variates, &random_variate_aliases);
 
     // Each process computes its local covariance and the master
@@ -266,6 +265,118 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 }
 
 template<typename DistributedTableType, typename KernelType>
+void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
+  double relative_error_in,
+  double absolute_error_in,
+  double num_standard_deviations,
+  int num_reference_samples,
+  int num_random_fourier_features,
+  DistributedTableType *reference_table_in,
+  DistributedTableType *query_table_in,
+  const core::table::DenseMatrix &weights,
+  core::monte_carlo::MeanVariancePairMatrix *kernel_sums) {
+
+  kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
+
+  // Indicates the convergence of each kernel sum.
+  core::monte_carlo::MeanVariancePairVector frobenius_norm_history;
+  frobenius_norm_history.Init(query_table_in->n_entries());
+  std::vector< bool > converged(query_table_in->n_entries(), false);
+
+  // Call the computation.
+  int num_iterations = 0;
+  bool all_query_converged = true;
+  do {
+
+    // The master generates a set of random Fourier features and do a
+    // broadcast.
+    std::vector <
+    core::table::DensePoint > random_variates(num_random_fourier_features);
+    std::vector< arma::vec > random_variate_aliases(
+      num_random_fourier_features);
+    GenerateRandomFourierFeatures_(
+      num_random_fourier_features, &random_variates, &random_variate_aliases);
+
+    // Each process computes the sum of the projections of the local
+    // reference set and does an all-reduction to compute the global
+    // sum projections.
+    core::monte_carlo::MeanVariancePairMatrix local_reference_average;
+    mlpack::series_expansion::RandomFeature::AverageTransform(
+      *(reference_table_in->local_table()),
+      weights, num_reference_samples,
+      random_variate_aliases, &local_reference_average);
+    core::monte_carlo::MeanVariancePairMatrix global_reference_average;
+    boost::mpi::all_reduce(
+      *world_, local_reference_average, global_reference_average,
+      core::parallel::CombineMeanVariancePairMatrix());
+
+    // Each process computes the local projection of each query point
+    // and adds up.
+    bool all_local_query_converged = true;
+    for(int i = 0; i < query_table_in->local_table()->n_entries(); i++) {
+
+      if(converged[i]) {
+
+        // If already converged, skip.
+        continue;
+      }
+
+      arma::vec query_point;
+      query_table_in->local_table()->get(i, &query_point);
+      arma::vec query_point_projected;
+      mlpack::series_expansion::RandomFeature::Transform(
+        query_point, random_variate_aliases, &query_point_projected);
+
+      double frobenius_norm = 0.0;
+      for(int k = 0; k < weights.n_rows(); k++) {
+        for(int j = 0; j < num_random_fourier_features; j++) {
+
+          // You need to multiply by the factor of two since Fourier
+          // features come in pairs of cosine and sines.
+          kernel_sums->get(k, i).ScaledCombineWith(
+            2.0 * query_point_projected[j],
+            global_reference_average.get(k, j));
+          kernel_sums->get(k, i).ScaledCombineWith(
+            2.0 * query_point_projected[j + num_random_fourier_features],
+            global_reference_average.get(k, j + num_random_fourier_features));
+        }
+
+        // Add up the frobenius norm contribution.
+        frobenius_norm +=
+          core::math::Sqr(kernel_sums->get(k, i).sample_mean());
+
+      } // end of checking the given KPCA component.
+
+      // Add to the history.
+      frobenius_norm_history[i].push_back(frobenius_norm);
+
+      // Start checking the convergence after 5 iterations.
+      if(num_iterations > 5) {
+        converged[i] = (
+                         num_standard_deviations *
+                         sqrt(
+                           frobenius_norm_history[i].sample_mean_variance()) <=
+                         relative_error_in *
+                         frobenius_norm_history[i].sample_mean() +
+                         absolute_error_in);
+      }
+      all_local_query_converged = converged[i];
+
+    } // end of looping over each local query.
+
+    // Increment the number of iterations.
+    num_iterations++;
+
+    // Do an all-reduction to find out we are all done.
+    boost::mpi::all_reduce(
+      *world_, all_local_query_converged,
+      all_query_converged, std::logical_and<bool>());
+
+  } // Terminate the loop only if all processes are done.
+  while(! all_query_converged);
+}
+
+template<typename DistributedTableType, typename KernelType>
 void DistributedKpca<DistributedTableType, KernelType>::Compute(
   const mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in,
@@ -295,21 +406,47 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // If the mode is KPCA and the centering is requested or the mode is
   // KDE, then we need to compute the kernel sum between the query set
   // and the reference set.
-  std::vector<double> query_kernel_sums;
+  core::monte_carlo::MeanVariancePairMatrix query_kernel_sums;
   if((arguments_in.mode_ == "kpca" && arguments_in.do_centering_) ||
       arguments_in.mode_ == "kde") {
-
-
+    ComputeKernelSum_(
+      arguments_in.relative_error_,
+      arguments_in.absolute_error_,
+      num_standard_deviations,
+      num_reference_samples,
+      num_random_fourier_features,
+      arguments_in.reference_table_,
+      arguments_in.query_table_,
+      arguments_in.reference_table_->local_table()->weights(),
+      &query_kernel_sums);
   }
 
   // If the mode is KPCA and the centering is requested, and is not
   // monochromatic, then we need to compute the kernel sum between the
   // reference set and itself.
-  std::vector<double> reference_kernel_sums = query_kernel_sums;
-  double average_reference_kernel_sum = 0.0;
-  if(arguments_in.mode_ == "kpca" && arguments_in.do_centering_ &&
-      arguments_in.reference_table_ != arguments_in.query_table_) {
-
+  core::monte_carlo::MeanVariancePairMatrix reference_kernel_sums;
+  core::monte_carlo::MeanVariancePair average_reference_kernel_sum;
+  if(arguments_in.mode_ == "kpca") {
+    if(arguments_in.do_centering_ &&
+        arguments_in.reference_table_ != arguments_in.query_table_) {
+      ComputeKernelSum_(
+        arguments_in.relative_error_,
+        arguments_in.absolute_error_,
+        num_standard_deviations,
+        num_reference_samples,
+        num_random_fourier_features,
+        arguments_in.reference_table_,
+        arguments_in.reference_table_,
+        arguments_in.reference_table_->local_table()->weights(),
+        &reference_kernel_sums);
+    }
+    else {
+      reference_kernel_sums.Copy(query_kernel_sums);
+    }
+    for(int i = 0; i < reference_kernel_sums.n_cols(); i++) {
+      average_reference_kernel_sum.push_back(
+        reference_kernel_sums.get(0, i).sample_mean());
+    }
   }
 
   // If the mode is KPCA, then need to compute the eigenvectors.
@@ -350,124 +487,40 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     std::cout << "Starting the projection step...\n";
   }
 
-  // The local kernel sum.
-  core::monte_carlo::MeanVariancePairMatrix local_kernel_sum;
-  local_kernel_sum.Init(
-    arguments_in.num_kpca_components_in_,
-    arguments_in.query_table_->local_table()->n_entries());
-
-  // Indicates the convergence of each KPCA projection.
-  core::monte_carlo::MeanVariancePairVector frobenius_norm_history;
-  frobenius_norm_history.Init(arguments_in.query_table_->n_entries());
-  std::vector< bool > converged(
-    arguments_in.query_table_->local_table()->n_entries(), false);
-
-
-  // Call the computation.
-  int num_iterations = 0;
-  bool all_query_converged = true;
-  do {
-
-    // The master generates a set of random Fourier features and do a
-    // broadcast.
-    std::vector <
-    core::table::DensePoint > random_variates(num_random_fourier_features);
-    std::vector< arma::vec > random_variate_aliases(
-      num_random_fourier_features);
-    GenerateRandomFourierFeatures_(
-      arguments_in, num_random_fourier_features,
-      &random_variates, &random_variate_aliases);
-
-    // Each process computes the sum of the projections of the local
-    // reference set and does an all-reduction to compute the global
-    // sum projections.
-    core::monte_carlo::MeanVariancePairMatrix local_reference_average;
-    mlpack::series_expansion::RandomFeature::AverageTransform(
-      *(arguments_in.reference_table_->local_table()),
+  // If the mode is KPCA, then we need to compute the projection of
+  // each query point onto the KPCA components.
+  if(arguments_in.mode_ == "kpca") {
+    core::monte_carlo::MeanVariancePairMatrix query_kpca_projections;
+    ComputeKernelSum_(
+      arguments_in.relative_error_,
+      arguments_in.absolute_error_,
+      num_standard_deviations,
+      num_reference_samples,
+      num_random_fourier_features,
+      arguments_in.reference_table_,
+      arguments_in.query_table_,
       result_out->kpca_components(),
-      num_reference_samples, random_variate_aliases, &local_reference_average);
-    core::monte_carlo::MeanVariancePairMatrix global_reference_average;
-    boost::mpi::all_reduce(
-      *world_, local_reference_average, global_reference_average,
-      core::parallel::CombineMeanVariancePairMatrix());
+      &query_kpca_projections);
 
-    // Each process computes the local projection of each query point
-    // and adds up.
-    bool all_local_query_converged = true;
-    for(int i = 0;
-        i < arguments_in.query_table_->local_table()->n_entries(); i++) {
+    // Export the results.
+    result_out->Export(
+      num_standard_deviations, mult_const_,
+      correction_term_, query_kpca_projections);
+  }
+  else {
 
-      if(converged[i]) {
-
-        // If already converged, skip.
-        continue;
-      }
-
-      arma::vec query_point;
-      arguments_in.query_table_->local_table()->get(i, &query_point);
-      arma::vec query_point_projected;
-      mlpack::series_expansion::RandomFeature::Transform(
-        query_point, random_variate_aliases, &query_point_projected);
-
-      double frobenius_norm = 0.0;
-      for(int k = 0; k < arguments_in.num_kpca_components_in_; k++) {
-        for(int j = 0; j < num_random_fourier_features; j++) {
-
-          // You need to multiply by the factor of two since Fourier
-          // features come in pairs of cosine and sines.
-          local_kernel_sum.get(k, i).ScaledCombineWith(
-            2.0 * query_point_projected[j],
-            global_reference_average.get(k, j));
-          local_kernel_sum.get(k, i).ScaledCombineWith(
-            2.0 * query_point_projected[j + num_random_fourier_features],
-            global_reference_average.get(k, j + num_random_fourier_features));
-        }
-
-        // Add up the frobenius norm contribution.
-        frobenius_norm +=
-          core::math::Sqr(local_kernel_sum.get(k, i).sample_mean());
-
-      } // end of checking the given KPCA component.
-
-      // Add to the history.
-      frobenius_norm_history[i].push_back(frobenius_norm);
-
-      // Start checking the convergence after 5 iterations.
-      if(num_iterations > 5) {
-        converged[i] = (
-                         num_standard_deviations *
-                         sqrt(
-                           frobenius_norm_history[i].sample_mean_variance()) <=
-                         arguments_in.relative_error_ *
-                         frobenius_norm_history[i].sample_mean() +
-                         arguments_in.absolute_error_);
-      }
-      all_local_query_converged = converged[i];
-
-    } // end of looping over each local query.
-
-    // Increment the number of iterations.
-    num_iterations++;
-
-    // Do an all-reduction to find out we are all done.
-    boost::mpi::all_reduce(
-      *world_, all_local_query_converged,
-      all_query_converged, std::logical_and<bool>());
-
-  } // Terminate the loop only if all processes are done.
-  while(! all_query_converged);
+    // Export the KDE result.
+    result_out->Export(
+      num_standard_deviations, mult_const_,
+      correction_term_, query_kernel_sums);
+  }
 
   // Barrier so that every process is done.
   world_->barrier();
   if(world_->rank() == 0) {
     printf(
-      "Spent %g seconds in computation in %d iterations.\n",
-      timer.elapsed(), num_iterations);
+      "Spent %g seconds in computation.\n", timer.elapsed());
   }
-
-  // Export the results.
-  result_out->Export(
-    num_standard_deviations, mult_const_, correction_term_, local_kernel_sum);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -484,6 +537,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
     1.0 /
     kernel_.CalcNormConstant(
       arguments_in.reference_table_->n_attributes());
+
+  // Initialize the dimension.
+  num_dimensions_ = arguments_in.reference_table_->n_attributes();
 
   // Set the communicator.
   world_ = &world_in;
