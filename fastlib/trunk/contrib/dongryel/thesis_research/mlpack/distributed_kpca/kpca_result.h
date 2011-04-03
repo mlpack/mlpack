@@ -106,8 +106,12 @@ class KpcaResult {
       }
     }
 
-    void Print(const std::string &file_name) const {
-      FILE *file_output = fopen(file_name.c_str(), "w+");
+    void Print(
+      const std::string &kpca_components_file_name,
+      const std::string &kpca_projections_file_name) const {
+
+      FILE *file_output =
+        fopen(kpca_projections_file_name.c_str(), "w+");
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
         for(int j = 0; j < kpca_projections_.n_rows(); j++) {
           fprintf(
@@ -115,6 +119,15 @@ class KpcaResult {
             kpca_projections_l_.get(j, i),
             kpca_projections_.get(j, i),
             kpca_projections_u_.get(j, i));
+        }
+        fprintf(file_output, "\n");
+      }
+      fclose(file_output);
+      file_output = fopen(kpca_components_file_name.c_str(), "w+");
+      for(int j = 0; j < kpca_components_.n_cols(); j++) {
+        for(int i = 0; i < kpca_components_.n_rows(); i++) {
+          fprintf(
+            file_output, "%g ", kpca_components_.get(i, j));
         }
         fprintf(file_output, "\n");
       }

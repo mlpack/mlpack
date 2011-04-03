@@ -51,6 +51,10 @@ class DistributedKpcaArguments {
      */
     std::string kpca_components_out_;
 
+    /** @brief The output file for KPCA projections.
+     */
+    std::string kpca_projections_out_;
+
     /** @brief The name of the kernel.
      */
     std::string kernel_;
@@ -83,6 +87,7 @@ class DistributedKpcaArguments {
       relative_error_ = 0.0;
       probability_ = 0.0;
       kpca_components_out_ = "";
+      kpca_projections_out_ = "";
       kernel_ = "";
       mode_ = "";
       num_kpca_components_in_ = 0;

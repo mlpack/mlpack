@@ -45,7 +45,11 @@ void StartComputation(
   // Output the kernel PCA result to the file.
   std::cerr << "Writing the KPCA components to the file: " <<
             distributed_kpca_arguments.kpca_components_out_ << "\n";
-  kernel_pca_result.Print(distributed_kpca_arguments.kpca_components_out_);
+  std::cerr << "Writing the KPCA projections to the file: " <<
+            distributed_kpca_arguments.kpca_projections_out_ << "\n";
+  kernel_pca_result.Print(
+    distributed_kpca_arguments.kpca_components_out_,
+    distributed_kpca_arguments.kpca_projections_out_);
 }
 
 int main(int argc, char *argv[]) {
