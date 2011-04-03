@@ -100,6 +100,11 @@ class MeanVariancePairVector {
       }
     }
 
+    void Copy(const core::monte_carlo::MeanVariancePairVector &v) {
+      this->Init(v.length());
+      this->CopyValues(v);
+    }
+
     void operator=(const MeanVariancePairVector &v) {
       if(ptr_ == NULL || n_elements_ != v.length()) {
         if(ptr_ != NULL) {
@@ -307,6 +312,11 @@ class MeanVariancePairMatrix {
           this->get(i, j).CopyValues(v.get(i, j));
         }
       }
+    }
+
+    void Copy(const core::monte_carlo::MeanVariancePairMatrix &v) {
+      this->Init(v.n_rows(), v.n_cols());
+      this->CopyValues(v);
     }
 
     /** @brief Initializes the mean variance pair matrix with the

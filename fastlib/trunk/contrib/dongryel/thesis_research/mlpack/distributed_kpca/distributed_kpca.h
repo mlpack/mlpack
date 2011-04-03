@@ -76,12 +76,21 @@ class DistributedKpca {
       ResultType *result_out);
 
     void GenerateRandomFourierFeatures_(
-      const mlpack::distributed_kpca::DistributedKpcaArguments <
-      DistributedTableType > &arguments_in,
       int num_random_fourier_features,
       std::vector <
       core::table::DensePoint > *random_variates,
       std::vector< arma::vec > *random_variate_aliases);
+
+    void ComputeKernelSum_(
+      double relative_error_in,
+      double absolute_error_in,
+      double num_standard_deviations,
+      int num_reference_samples,
+      int num_random_fourier_features,
+      DistributedTableType *reference_table_in,
+      DistributedTableType *query_table_in,
+      const core::table::DenseMatrix &weights,
+      core::monte_carlo::MeanVariancePairMatrix *kernel_sums);
 
   public:
 
@@ -116,6 +125,8 @@ class DistributedKpca {
     double correction_term_;
 
     int num_random_fourier_features_eigen_;
+
+    int num_dimensions_;
 
     /** @brief The kernel.
      */
