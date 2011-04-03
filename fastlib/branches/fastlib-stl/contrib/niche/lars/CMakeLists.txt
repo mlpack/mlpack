@@ -23,7 +23,20 @@ add_executable(lars
     EXCLUDE_FROM_ALL
     main.cc
 )
+
+# The executable for testing components of LARS
+add_executable(test_lars
+    EXCLUDE_FROM_ALL
+    test.cc
+)
+
 target_link_libraries(lars
    mlpack
    fastlib
 )
+
+target_link_libraries(test_lars
+   mlpack
+   fastlib
+)
+

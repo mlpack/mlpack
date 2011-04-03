@@ -15,7 +15,7 @@
 #ifndef LARS_H
 #define LARS_H
 
-#define EPS 1e-13
+#define EPS 1e-16//3
 
 using namespace arma;
 using namespace std;
@@ -34,10 +34,10 @@ class Lars {
   
   bool use_cholesky_;
   
-  bool lasso_ = false;
+  bool lasso_;
   double desired_lambda_;
   
-  bool elastic_net_ = false;
+  bool elastic_net_;
   double lambda_2_;
   
   std::vector<vec> beta_path_;
@@ -49,7 +49,10 @@ class Lars {
   
   
  public:
-  Lars() { }
+  Lars() { 
+    lasso_ = false;
+    elastic_net_ = false;
+  }
 
   ~Lars() { }
   
@@ -128,6 +131,14 @@ class Lars {
 	Gram_(*i, *j) = dot(X_.col(*i), X_.col(*j));
       }
     }
+    
+    if(elastic_net_) {
+      for (std::vector<int>::const_iterator i = col_inds.begin(); 
+	   i != col_inds.end(); 
+	   ++i) {
+	Gram_(*i, *i) += lambda_2_;
+      }
+    }
   }
   
   
@@ -177,7 +188,6 @@ class Lars {
   }
   
   
-  // vanilla LARS - using Gram matrix
   void DoLARS() {
     
     // initialize y_hat and beta
@@ -186,19 +196,32 @@ class Lars {
     vec y_hat_direction = vec(n_);
     
     bool kick_out = false;
+
+    // used for elastic net
+    double sqrt_lambda_2 = -1;
+    if(elastic_net_) {
+      sqrt_lambda_2 = sqrt(lambda_2_);
+    }
+    else {
+      lambda_2_ = -1;
+    }
+    printf("sqrt_lambda_2 = %f\n", sqrt_lambda_2);
     
     vec corr = Xty_;
+    corr.print("corr");
     vec abs_corr = abs(corr);
     u32 change_ind;
     double max_corr = abs_corr.max(change_ind); // change_ind gets set here
     
     beta_path_.push_back(beta);
     lambda_path_.push_back(max_corr);
-  
+    
     
     mat R; // upper triangular cholesky factor, initially 0 by 0 matrix
     
     // MAIN LOOP
+    printf("elastic_net_ == %d\n", elastic_net_);
+    printf("use_cholesky_ == %d\n", use_cholesky_);
     while((n_active_ < p_) && (max_corr > EPS)) {
       if(kick_out) {
 	// index is in position change_ind in active_set
@@ -263,12 +286,13 @@ class Lars {
 	for(u32 i = 0; i < n_active_; i++) {
 	  for(u32 j = 0; j < n_active_; j++) {
 	    Gram_active(i,j) = Gram_(active_set_[i], active_set_[j]);
+	    //printf("Gram_active(%d,%d) = %f\n", i, j, Gram_active(i,j));
 	  }
 	}
 	
-	if(elastic_net_) {
-	  Gram_active += lambda_2_ * eye(n_active_, n_active_);
-	}
+	//if(elastic_net_) {
+	//  Gram_active += lambda_2_ * eye(n_active_, n_active_);
+	//}
 	
 	mat S = s * ones<mat>(1, n_active_);
 	unnormalized_beta_direction = 
@@ -276,22 +300,32 @@ class Lars {
 	normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
 	beta_direction = normalization * unnormalized_beta_direction % s;
       }
+      beta_direction.print("beta direction");
       
       // compute "equiangular" direction in output space
-      ComputeYHatDirection(beta_direction, y_hat_direction);      
+      ComputeYHatDirection(beta_direction, y_hat_direction);
+      //y_hat_direction.print("y_hat_direction");
+      //printf("norm(y_hat_direction) = %f\n", norm(y_hat_direction, 2));
 
       double gamma = max_corr / normalization;
+      printf("initial gamma = %f\n", gamma);
       change_ind = -1;
       // if not all variables are active
+      printf("n_active_ = %d\n", n_active_);
       if(n_active_ < p_) {
 	// compute correlations with direction
 	for(u32 ind = 0; ind < p_; ind++) {
 	  if(is_active_[ind]) {
 	    continue;
 	  }
+	  //printf("ind under consideration = %d\t", ind);
 	  double dir_corr = dot(X_.col(ind), y_hat_direction);
+	  //if(elastic_net_) {
+	  //  dir_corr += sqrt_lambda_2 * beta_direction(i);
+	  //}
 	  double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
 	  double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
+	  printf("val1 = %f\tval2 = %f\n", val1, val2);
 	  if((val1 > 0) && (val1 < gamma)) {
 	    gamma = val1;
 	    change_ind = ind;
@@ -302,6 +336,7 @@ class Lars {
 	  }
 	}
       }
+      printf("change_ind = %d\n", change_ind);
       
       
       // bound gamma according to LASSO
@@ -334,7 +369,19 @@ class Lars {
       
       // compute correlates
       corr = Xty_ - trans(X_) * y_hat;
+      if(elastic_net_) {
+	for(u32 i = 0; i < n_active_; i++) {
+	  //corr(active_set_[i]) -= lambda_2_ * beta[i];
+	  printf("lambda_2 * beta[i] = %f\n", lambda_2_ * beta[i]);
+	}
+      }
+
+      printf("previous max_corr = %f\n", max_corr);
       max_corr -= gamma * normalization;
+      printf("gamma = %f\nnormalization = %f\nnew max_corr = %f\n",
+	     gamma,
+	     normalization,
+	     max_corr);
       lambda_path_.push_back(max_corr);
       
       // Time to stop for LASSO?
@@ -353,7 +400,7 @@ class Lars {
   
   void Deactivate(u32 active_var_ind) {
     n_active_--;
-    is_active_[active_set_[active_var_ind]] = 0;
+    is_active_[active_set_[active_var_ind]] = false;
     active_set_.erase(active_set_.begin() + active_var_ind);
   }
   
@@ -395,7 +442,12 @@ class Lars {
   void CholeskyInsert(mat& R, const vec& new_x, const mat& X) {
     if(R.n_rows == 0) {
       R = mat(1, 1);
-      R(0,0) = norm(new_x, 2);
+      if(elastic_net_) {
+	R(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
+      }
+      else {
+	R(0, 0) = norm(new_x, 2);
+      }
     }
     else {
       vec new_Gram_col = trans(X) * new_x;
@@ -410,7 +462,7 @@ class Lars {
     if(n == 0) {
       R = mat(1, 1);
       if(elastic_net_) {
-	R(0, 0) = norm(new_X, 2) + lambda_2_;
+	R(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
       }
       else {
 	R(0, 0) = norm(new_x, 2);
