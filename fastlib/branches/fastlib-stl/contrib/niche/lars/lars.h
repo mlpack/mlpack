@@ -3,7 +3,7 @@
  *  This file implements Least Angle Regression and the LASSO
  *
  *  @author Nishant Mehta (niche)
- *  @bug No known bugs.
+ *  @bug No known bugs
  */
 
 // beta is the estimator
@@ -15,7 +15,7 @@
 #ifndef LARS_H
 #define LARS_H
 
-#define EPS 1e-16//3
+#define EPS 1e-16
 
 using namespace arma;
 using namespace std;
@@ -35,7 +35,7 @@ class Lars {
   bool use_cholesky_;
   
   bool lasso_;
-  double desired_lambda_;
+  double lambda_1_;
   
   bool elastic_net_;
   double lambda_2_;
@@ -57,17 +57,17 @@ class Lars {
   ~Lars() { }
   
   void Init(const mat& X, const vec& y,
-	    bool use_cholesky, double desired_lambda, double lambda_2) {
+	    bool use_cholesky, double lambda_1, double lambda_2) {
     elastic_net_ = true;
     lambda_2_ = lambda_2;
-    Init(X, y, use_cholesky, desired_lambda);
+    Init(X, y, use_cholesky, lambda_1);
   }
   
   
   void Init(const mat& X, const vec& y,
-	    bool use_cholesky, double desired_lambda) {
+	    bool use_cholesky, double lambda_1) {
     lasso_ = true;
-    desired_lambda_ = desired_lambda;
+    lambda_1_ = lambda_1;
     Init(X, y, use_cholesky);
   }
   
@@ -176,15 +176,15 @@ class Lars {
     return lambda_path_;
   }
   
-  
-  void DoLARS(double desired_lambda) {
-    SetDesiredLambda(desired_lambda);
+  /*
+  void DoLARS(double lambda_1) {
+    SetDesiredLambda(lambda_1);
     DoLARS();
   }
-
+  */
   
-  void SetDesiredLambda(double desired_lambda) {
-    desired_lambda_ = desired_lambda;
+  void SetDesiredLambda(double lambda_1) {
+    lambda_1_ = lambda_1;
   }
   
   
@@ -205,10 +205,8 @@ class Lars {
     else {
       lambda_2_ = -1;
     }
-    printf("sqrt_lambda_2 = %f\n", sqrt_lambda_2);
     
     vec corr = Xty_;
-    corr.print("corr");
     vec abs_corr = abs(corr);
     u32 change_ind;
     double max_corr = abs_corr.max(change_ind); // change_ind gets set here
@@ -220,24 +218,23 @@ class Lars {
     mat R; // upper triangular cholesky factor, initially 0 by 0 matrix
     
     // MAIN LOOP
-    printf("elastic_net_ == %d\n", elastic_net_);
-    printf("use_cholesky_ == %d\n", use_cholesky_);
     while((n_active_ < p_) && (max_corr > EPS)) {
       if(kick_out) {
 	// index is in position change_ind in active_set
-	printf("kick out!\n");
+	//printf("kick out!\n");
 	kick_out = false;
-	
+
+	Deactivate(change_ind); // new location
 	if(use_cholesky_) {
 	  CholeskyDelete(R, change_ind);
 	}
 	
 	// remove variable from active set
-	Deactivate(change_ind);
+	//Deactivate(change_ind); // old location
       }
       else {
 	// index is absolute index
-	printf("active!\n");
+	//printf("active!\n");
 	
 	if(use_cholesky_) {
 	  vec new_Gram_col = vec(n_active_);
@@ -250,6 +247,23 @@ class Lars {
 	
 	// add variable to active set
 	Activate(change_ind);
+	
+	/*////
+	if(use_cholesky_) {
+	  mat reconstruction = mat(n_active_, n_active_);
+	  for(u32 i = 0; i < n_active_; i++) {
+	    for(u32 j = 0; j < n_active_; j++) {
+	      reconstruction(i, j) = 
+		dot(X_.col(active_set_[i]),
+		    X_.col(active_set_[j]));
+	    }
+	  }
+	  reconstruction += lambda_2_ * eye(n_active_, n_active_);
+	  printf("cholesky insert error = %e\n",
+		 norm(trans(R) * R - reconstruction, "fro"));
+	}
+	////*/
+	
       }
       
       
@@ -286,13 +300,8 @@ class Lars {
 	for(u32 i = 0; i < n_active_; i++) {
 	  for(u32 j = 0; j < n_active_; j++) {
 	    Gram_active(i,j) = Gram_(active_set_[i], active_set_[j]);
-	    //printf("Gram_active(%d,%d) = %f\n", i, j, Gram_active(i,j));
 	  }
 	}
-	
-	//if(elastic_net_) {
-	//  Gram_active += lambda_2_ * eye(n_active_, n_active_);
-	//}
 	
 	mat S = s * ones<mat>(1, n_active_);
 	unnormalized_beta_direction = 
@@ -300,32 +309,24 @@ class Lars {
 	normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
 	beta_direction = normalization * unnormalized_beta_direction % s;
       }
-      beta_direction.print("beta direction");
       
       // compute "equiangular" direction in output space
       ComputeYHatDirection(beta_direction, y_hat_direction);
-      //y_hat_direction.print("y_hat_direction");
-      //printf("norm(y_hat_direction) = %f\n", norm(y_hat_direction, 2));
-
+      
       double gamma = max_corr / normalization;
-      printf("initial gamma = %f\n", gamma);
+      
       change_ind = -1;
       // if not all variables are active
-      printf("n_active_ = %d\n", n_active_);
+      //printf("n_active_ = %d\n", n_active_);
       if(n_active_ < p_) {
 	// compute correlations with direction
 	for(u32 ind = 0; ind < p_; ind++) {
 	  if(is_active_[ind]) {
 	    continue;
 	  }
-	  //printf("ind under consideration = %d\t", ind);
 	  double dir_corr = dot(X_.col(ind), y_hat_direction);
-	  //if(elastic_net_) {
-	  //  dir_corr += sqrt_lambda_2 * beta_direction(i);
-	  //}
 	  double val1 = (max_corr - corr(ind)) / (normalization - dir_corr);
 	  double val2 = (max_corr + corr(ind)) / (normalization + dir_corr);
-	  printf("val1 = %f\tval2 = %f\n", val1, val2);
 	  if((val1 > 0) && (val1 < gamma)) {
 	    gamma = val1;
 	    change_ind = ind;
@@ -336,7 +337,7 @@ class Lars {
 	  }
 	}
       }
-      printf("change_ind = %d\n", change_ind);
+      //printf("change_ind = %d\n", change_ind);
       
       
       // bound gamma according to LASSO
@@ -369,25 +370,43 @@ class Lars {
       
       // compute correlates
       corr = Xty_ - trans(X_) * y_hat;
+      
+      /*
+      /////
       if(elastic_net_) {
 	for(u32 i = 0; i < n_active_; i++) {
+	  double sgn1 = corr(active_set_[i]) / fabs(corr(active_set_[i]));
+	  double tmp = corr(active_set_[i]) - lambda_2_ * beta[i];
+	  double sgn2 = tmp / fabs(tmp);	
+	  
+	  if(sgn1 != sgn2) {
+	    printf("sign error! sgn1 = %f, sgn2 = %f\t", sgn1, sgn2);
+	    printf("ind = %d\t", active_set_[i]);
+	    printf("%f\t", corr(active_set_[i]));
+	    printf("%f\n", corr(active_set_[i]) - lambda_2_ * beta[i]);
+	    //printf("i = %d\n", i);
+	    //exit(1);
+	  }
+	  else {
+	    printf("ind = %d\t", active_set_[i]);
+	    printf("%f\t", corr(active_set_[i]));
+	    printf("%f\n", corr(active_set_[i]) - lambda_2_ * beta[i]);
+	  }
+	  // I have no idea why the program does not produce the correct answer when the below line is uncommented. Somehow, the program works correctly when the below line is commented out!
 	  //corr(active_set_[i]) -= lambda_2_ * beta[i];
-	  printf("lambda_2 * beta[i] = %f\n", lambda_2_ * beta[i]);
 	}
       }
+      /////
+      */
+      
 
-      printf("previous max_corr = %f\n", max_corr);
       max_corr -= gamma * normalization;
-      printf("gamma = %f\nnormalization = %f\nnew max_corr = %f\n",
-	     gamma,
-	     normalization,
-	     max_corr);
       lambda_path_.push_back(max_corr);
       
       // Time to stop for LASSO?
       if(lasso_) {
 	double ultimate_lambda = max_corr;
-	if(ultimate_lambda <= desired_lambda_) {
+	if(ultimate_lambda <= lambda_1_) {
 	  InterpolateBeta(ultimate_lambda);
 	  break;
 	}
@@ -396,6 +415,10 @@ class Lars {
     
   }
 
+  
+  void Solution(vec& beta) {
+    beta = beta_path().back();
+  }
   
   
   void Deactivate(u32 active_var_ind) {
@@ -422,20 +445,18 @@ class Lars {
   
   
   void InterpolateBeta(double ultimate_lambda) {
-    printf("ultimate_lambda = %f\ndesired_lambda = %f\n",
-	   ultimate_lambda,
-	   desired_lambda_);
+    //printf("ultimate_lambda = %f\nlambda_1 = %f\n", ultimate_lambda, lambda_1_);
     int path_length = beta_path_.size();
     
     // interpolate beta and stop
     double penultimate_lambda = lambda_path_[path_length - 2];
     double interp = 
-      (penultimate_lambda - desired_lambda_)
+      (penultimate_lambda - lambda_1_)
       / (penultimate_lambda - ultimate_lambda);
     beta_path_[path_length - 1] = 
       (1 - interp) * (beta_path_[path_length - 2]) 
       + interp * beta_path_[path_length - 1];
-    lambda_path_[path_length - 1] = desired_lambda_; 
+    lambda_path_[path_length - 1] = lambda_1_; 
   }
   
   
@@ -479,7 +500,19 @@ class Lars {
 	sq_norm_new_x = dot(new_x, new_x);
       }
       
-      vec R_k = solve(trimatl(trans(R)), new_Gram_col);
+      /*
+      vec R_k1 = solve(trimatl(trans(R)), new_Gram_col);
+      vec R_k2 = solve(trans(trimatu(R)), new_Gram_col);
+      mat Fob = trimatl(trans(R));
+      vec R_k3 = solve(Fob, new_Gram_col);
+      printf("error 1: %e\n", norm(R_k1 - R_k3, 2));
+      printf("error 2: %e\n", norm(R_k2 - R_k3, 2));
+      vec R_k = R_k3;
+      */
+      
+      vec R_k = solve(trans(trimatu(R)), new_Gram_col);
+      
+      
       
       new_R(span(0, n - 1), span(0, n - 1)) = R;//(span::all, span::all);
       new_R(span(0, n - 1), n) = R_k;
@@ -516,7 +549,7 @@ class Lars {
   
   
   void CholeskyDelete(mat& R, u32 col_to_kill) {
-    printf("calling CholeskyDelete\n");
+    //printf("calling CholeskyDelete on %d\n", col_to_kill);
     u32 n = R.n_rows;
     
     if(col_to_kill == (n - 1)) {

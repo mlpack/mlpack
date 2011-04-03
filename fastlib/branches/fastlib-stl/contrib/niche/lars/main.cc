@@ -16,11 +16,11 @@ using namespace std;
 int main(int argc, char* argv[]) {
 
   bool use_cholesky = true;
-  double lambda_1 = 0.12;
+  double lambda_1 = 1e-5;//1.0;//1e-5;//2.0;//0.001;//0.12;
   double lambda_2 = 1.0;
   
   //u32 n = 100;
-  //u32 p = 10;
+  //u32 p = 50;
 
   //std::srand(17);
   mat X;// = randu<mat>(n,p);
@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   for(u32 i = 0; i < p; i++) {
     X_reg(n + i, i) = sqrt(lambda_2);
   }
-  X_reg.print("X_reg");
+  //X_reg.print("X_reg");
   
   /*
   mat beta = zeros(p,1);
@@ -44,11 +44,12 @@ int main(int argc, char* argv[]) {
   */
   
   vec y;// = X * beta + 0.1 * randu<vec>(n);
+  //vec y = randu(n);
   y.load("y.dat", raw_ascii);
   
   vec y_reg = zeros(n + p);
   y_reg.subvec(0, n - 1) = y;
-  y_reg.print("y_reg");
+  //y_reg.print("y_reg");
   
   
   Lars lars;
@@ -68,8 +69,15 @@ int main(int argc, char* argv[]) {
   vec lambda_path_vec = conv_to< colvec >::from(lars.lambda_path());
   lambda_path_vec.print("lambda path");
   
+  
   X.save("X.dat", raw_ascii);
   y.save("y.dat", raw_ascii);
   beta_matrix.save("beta.dat", raw_ascii);
   lambda_path_vec.save("lambda.dat", raw_ascii);
+  
+  
+  vec beta;
+  lars.Solution(beta);
+  
+  beta.print("final beta");
 }
