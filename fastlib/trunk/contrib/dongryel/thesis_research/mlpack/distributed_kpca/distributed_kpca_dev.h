@@ -507,6 +507,8 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
   desc.add_options()(
     "help", "Print this information."
   )(
+    "do_centering", "Apply centering to KPCA if present."
+  )(
     "mode",
     boost::program_options::value<std::string>()->default_value("kde"),
     "OPTIONAL The algorithm mode. One of:"
@@ -836,6 +838,16 @@ bool DistributedKpcaArgumentParser::ParseArguments(
               " kernel PCA components...\n";
   }
 
+  // Parse whether the centering is requested for KPCA or not.
+  arguments_out->do_centering_ = (vm.count("do_centering") > 0);
+  if(world.rank() == 0 && arguments_out->mode_ == "kpca") {
+    if(arguments_out->do_centering_) {
+      std::cout << "Doing a centered kernel PCA.\n";
+    }
+    else {
+      std::cout << "Doing a non-centered version of kernel PCA.\n";
+    }
+  }
   return false;
 }
 

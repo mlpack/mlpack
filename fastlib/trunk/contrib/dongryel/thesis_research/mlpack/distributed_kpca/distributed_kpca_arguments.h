@@ -67,6 +67,10 @@ class DistributedKpcaArguments {
      */
     int num_kpca_components_in_;
 
+    /** @brief Whether to do the centering for KPCA.
+     */
+    bool do_centering_;
+
   public:
 
     /** @brief The default constructor.
@@ -82,6 +86,7 @@ class DistributedKpcaArguments {
       kernel_ = "";
       mode_ = "";
       num_kpca_components_in_ = 0;
+      do_centering_ = false;
     }
 
     /** @brief The destructor.
