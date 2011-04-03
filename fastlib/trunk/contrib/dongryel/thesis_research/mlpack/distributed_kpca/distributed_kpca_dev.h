@@ -434,6 +434,15 @@ void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
 
   } // Terminate the loop only if all processes are done.
   while(! all_query_converged);
+
+  // Do a post-corrrection to the number of terms for each Monte Carlo
+  // estimate.
+  for(int j = 0; j < kernel_sums->n_cols(); j++) {
+    for(int i = 0; i < kernel_sums->n_rows(); i++) {
+      kernel_sums->get(i, j).set_total_num_terms(
+        effective_num_reference_points_);
+    }
+  }
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -480,7 +489,7 @@ DistributedTableType, KernelType >::PostProcessKpcaProjections_(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
         query_kernel_sums.get(0, j));
       query_kpca_projections->get(i, j).ScaledCombineWith(
-        - local_reference_dot_products.get(
+        local_reference_dot_products.get(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
         average_reference_kernel_sum);
     }
