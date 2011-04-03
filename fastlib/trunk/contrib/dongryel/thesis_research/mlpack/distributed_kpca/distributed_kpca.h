@@ -81,7 +81,13 @@ class DistributedKpca {
       core::table::DensePoint > *random_variates,
       std::vector< arma::vec > *random_variate_aliases);
 
-    void ComputeKernelSum_(
+    void NaiveWeightedKernelAverage_(
+      DistributedTableType *reference_table_in,
+      DistributedTableType *query_table_in,
+      const core::table::DenseMatrix &weights,
+      const core::monte_carlo::MeanVariancePairMatrix &kernel_sums);
+
+    void ComputeWeightedKernelAverage_(
       double relative_error_in,
       double absolute_error_in,
       double num_standard_deviations,
@@ -133,7 +139,13 @@ class DistributedKpca {
 
     int num_random_fourier_features_eigen_;
 
+    /** @brief The dimensionality of the problem.
+     */
     int num_dimensions_;
+
+    /** @brief The default L2 metric.
+     */
+    core::metric_kernels::LMetric<2> metric_;
 
     /** @brief The kernel.
      */

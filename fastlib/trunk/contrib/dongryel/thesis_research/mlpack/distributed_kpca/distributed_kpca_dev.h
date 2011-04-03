@@ -6,12 +6,12 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_DEV_H
 #define MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_DEV_H
 
-#include "core/gnp/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
 #include "mlpack/distributed_kpca/distributed_kpca.h"
+#include "mlpack/distributed_kpca/distributed_kpca_argument_parser_dev.h"
 #include "mlpack/series_expansion/random_feature.h"
 
 namespace core {
@@ -341,7 +341,59 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 }
 
 template<typename DistributedTableType, typename KernelType>
-void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
+void DistributedKpca <
+DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
+  DistributedTableType *reference_table_in,
+  DistributedTableType *query_table_in,
+  const core::table::DenseMatrix &weights,
+  const core::monte_carlo::MeanVariancePairMatrix
+  &approx_weighted_kernel_averages) {
+
+  // Allocate the weighted kernel sum slots.
+  core::monte_carlo::MeanVariancePairMatrix naive_weighted_kernel_averages;
+  naive_weighted_kernel_averages.Init(
+    weights.n_rows(), query_table_in->n_entries());
+
+  for(int i = 0; i < query_table_in->n_entries(); i++) {
+
+    // The query point.
+    arma::vec query_point;
+    query_table_in->local_table()->get(i, &query_point);
+
+    for(int j = 0; j < reference_table_in->n_entries(); j++) {
+
+      // The reference point.
+      arma::vec reference_point;
+      reference_table_in->local_table()->get(j, &reference_point);
+
+      // Compute the squared distance and the kernel value.
+      double squared_distance =
+        metric_.DistanceSq(query_point, reference_point);
+      double kernel_value =
+        kernel_.EvalUnnormOnSq(squared_distance);
+
+      for(int k = 0; k < weights.n_rows(); k++) {
+        naive_weighted_kernel_averages.get(k, i).push_back(
+          weights.get(k, j) * kernel_value);
+      }
+    }
+  }
+
+  // Extract the means of both naive and approximated quantities.
+  arma::mat approximated;
+  arma::mat naive;
+  naive_weighted_kernel_averages.sample_means(&naive);
+  approx_weighted_kernel_averages.sample_means(&approximated);
+  for(unsigned int j = 0; j < naive.n_cols; j++) {
+    for(unsigned int i = 0; i < naive.n_rows; i++) {
+      printf("%g vs %g\n", approximated.at(i, j), naive.at(i, j));
+    }
+  }
+}
+
+template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
+DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   double relative_error_in,
   double absolute_error_in,
   double num_standard_deviations,
@@ -546,7 +598,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   core::monte_carlo::MeanVariancePairMatrix query_kernel_sums;
   if((arguments_in.mode_ == "kpca" && arguments_in.do_centering_) ||
       arguments_in.mode_ == "kde") {
-    ComputeKernelSum_(
+    ComputeWeightedKernelAverage_(
       arguments_in.relative_error_,
       arguments_in.absolute_error_,
       num_standard_deviations,
@@ -556,6 +608,14 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.query_table_,
       arguments_in.reference_table_->local_table()->weights(),
       &query_kernel_sums);
+
+    if(arguments_in.do_naive_) {
+      NaiveWeightedKernelAverage_(
+        arguments_in.reference_table_,
+        arguments_in.query_table_,
+        arguments_in.reference_table_->local_table()->weights(),
+        query_kernel_sums);
+    }
   }
 
   // If the mode is KPCA and the centering is requested, and is not
@@ -566,7 +626,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   if(arguments_in.mode_ == "kpca") {
     if(arguments_in.do_centering_ &&
         arguments_in.reference_table_ != arguments_in.query_table_) {
-      ComputeKernelSum_(
+      ComputeWeightedKernelAverage_(
         arguments_in.relative_error_,
         arguments_in.absolute_error_,
         num_standard_deviations,
@@ -634,7 +694,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // each query point onto the KPCA components.
   if(arguments_in.mode_ == "kpca") {
     core::monte_carlo::MeanVariancePairMatrix query_kpca_projections;
-    ComputeKernelSum_(
+    ComputeWeightedKernelAverage_(
       arguments_in.relative_error_,
       arguments_in.absolute_error_,
       num_standard_deviations,
@@ -722,399 +782,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
     arguments_in.num_kpca_components_in_ * 2;
-}
-
-bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
-  boost::mpi::communicator &world,
-  const std::vector<std::string> &args,
-  boost::program_options::variables_map *vm) {
-
-  boost::program_options::options_description desc("Available options");
-  desc.add_options()(
-    "help", "Print this information."
-  )(
-    "do_centering", "Apply centering to KPCA if present."
-  )(
-    "do_naive", "Do naive computations along with the fast for debugging "
-    "purposes. Only applies to the case when there is only one MPI process "
-    "present."
-  )(
-    "mode",
-    boost::program_options::value<std::string>()->default_value("kde"),
-    "OPTIONAL The algorithm mode. One of:"
-    "  kde, kpca"
-  )(
-    "num_kpca_components_in",
-    boost::program_options::value<int>()->default_value(3),
-    "OPTIONAL The number of KPCA components to output."
-  )(
-    "kpca_components_out",
-    boost::program_options::value<std::string>()->default_value(
-      "kpca_components.csv"),
-    "OPTIONAL output file for KPCA components."
-  )(
-    "kpca_projections_out",
-    boost::program_options::value<std::string>()->default_value(
-      "kpca_projections.csv"),
-    "OPTIONAL output file for KPCA projections."
-  )(
-    "references_in",
-    boost::program_options::value<std::string>()->default_value(
-      "random_dataset.csv"),
-    "REQUIRED file containing reference data."
-  )(
-    "queries_in",
-    boost::program_options::value<std::string>(),
-    "OPTIONAL file containing query positions."
-  )(
-    "random_generate_n_attributes",
-    boost::program_options::value<int>()->default_value(5),
-    "Generate the datasets on the fly of the specified dimension."
-  )(
-    "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(100000),
-    "Generate the datasets on the fly of the specified number of points."
-  )(
-    "kernel",
-    boost::program_options::value<std::string>()->default_value("gaussian"),
-    "Kernel function used by KPCA.  One of:\n"
-    "  gaussian"
-  )(
-    "bandwidth",
-    boost::program_options::value<double>()->default_value(0.5),
-    "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
-    "then the --bandwidth will be ignored."
-  )(
-    "probability",
-    boost::program_options::value<double>()->default_value(0.9),
-    "Probability guarantee for the approximation of KPCA."
-  )(
-    "absolute_error",
-    boost::program_options::value<double>()->default_value(1e-6),
-    "Absolute error for the approximation of KPCA per each query point."
-  )(
-    "relative_error",
-    boost::program_options::value<double>()->default_value(0.1),
-    "Relative error for the approximation of KPCA."
-  )(
-    "use_memory_mapped_file",
-    "Use memory mapped file for out-of-core computations."
-  )(
-    "memory_mapped_file_size",
-    boost::program_options::value<unsigned int>(),
-    "The size of the memory mapped file."
-  )(
-    "prescale",
-    boost::program_options::value<std::string>()->default_value("none"),
-    "OPTIONAL scaling option. One of:\n"
-    "  none, hypercube, standardize"
-  );
-
-  boost::program_options::command_line_parser clp(args);
-  clp.style(boost::program_options::command_line_style::default_style
-            ^ boost::program_options::command_line_style::allow_guessing);
-  try {
-    boost::program_options::store(clp.options(desc).run(), *vm);
-  }
-  catch(const boost::program_options::invalid_option_value &e) {
-    std::cerr << "Invalid Argument: " << e.what() << "\n";
-    exit(0);
-  }
-  catch(const boost::program_options::invalid_command_line_syntax &e) {
-    std::cerr << "Invalid command line syntax: " << e.what() << "\n";
-    exit(0);
-  }
-  catch(const boost::program_options::unknown_option &e) {
-    std::cerr << "Unknown option: " << e.what() << "\n";
-    exit(0);
-  }
-
-  boost::program_options::notify(*vm);
-  if(vm->count("help")) {
-    std::cout << desc << "\n";
-    return true;
-  }
-
-  // Validate the arguments. Only immediate dying is allowed here, the
-  // parsing is done later.
-  if(vm->count("random_generate_n_attributes") > 0) {
-    if(vm->count("random_generate_n_entries") == 0) {
-      std::cerr << "Missing required --random_generate_n_entries.\n";
-      exit(0);
-    }
-    if((*vm)["random_generate_n_attributes"].as<int>() <= 0) {
-      std::cerr << "The --random_generate_n_attributes requires a positive "
-                "integer.\n";
-      exit(0);
-    }
-  }
-  if(vm->count("random_generate_n_entries") > 0) {
-    if(vm->count("random_generate_n_attributes") == 0) {
-      std::cerr << "Missing required --random_generate_n_attributes.\n";
-      exit(0);
-    }
-    if((*vm)["random_generate_n_entries"].as<int>() <= 0) {
-      std::cerr << "The --random_generate_n_entries requires a positive "
-                "integer.\n";
-      exit(0);
-    }
-  }
-  if(vm->count("mode") > 0) {
-    if((*vm)["mode"].as<std::string>() != "kde" &&
-        (*vm)["mode"].as<std::string>() != "kpca") {
-      std::cerr << "The mode supports either kde or kpca.\n";
-      exit(0);
-    }
-  }
-  if(vm->count("references_in") == 0) {
-    std::cerr << "Missing required --references_in.\n";
-    exit(0);
-  }
-  if((*vm)["kernel"].as<std::string>() != "gaussian") {
-    std::cerr << "We support only gaussian for the kernel.\n";
-    exit(0);
-  }
-  if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
-    std::cerr << "The --bandwidth requires a positive real number.\n";
-    exit(0);
-  }
-  if(vm->count("bandwidth") == 0) {
-    std::cerr << "Missing required --bandwidth.\n";
-    exit(0);
-  }
-  if((*vm)["probability"].as<double>() <= 0 ||
-      (*vm)["probability"].as<double>() > 1) {
-    std::cerr << "The --probability requires a real number $0 < p <= 1$.\n";
-    exit(0);
-  }
-  if((*vm)["relative_error"].as<double>() < 0) {
-    std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
-    exit(0);
-  }
-  if((*vm)["num_kpca_components_in"].as<int>() <= 0) {
-    std::cerr << "The --num_kpca_components_in requires an integer > 0.\n";
-  }
-
-  // Check whether the memory mapped file is being requested.
-  if(vm->count("use_memory_mapped_file") > 0) {
-
-    if(vm->count("memory_mapped_file_size") == 0) {
-      std::cerr << "The --used_memory_mapped_file requires an additional "
-                "parameter --memory_mapped_file_size.\n";
-      exit(0);
-    }
-    unsigned int memory_mapped_file_size =
-      (*vm)["memory_mapped_file_size"].as<unsigned int>();
-    if(memory_mapped_file_size <= 0) {
-      std::cerr << "The --memory_mapped_file_size needs to be a positive "
-                "integer.\n";
-      exit(0);
-    }
-
-    // Delete the teporary files and put a barrier.
-    std::stringstream temporary_file_name;
-    temporary_file_name << "tmp_file" << world.rank();
-    remove(temporary_file_name.str().c_str());
-    world.barrier();
-
-    // Initialize the memory allocator.
-    core::table::global_m_file_ = new core::table::MemoryMappedFile();
-    core::table::global_m_file_->Init(
-      std::string("tmp_file"), world.rank(), world.rank(), 100000000);
-  }
-  if(vm->count("prescale") > 0) {
-    if((*vm)["prescale"].as<std::string>() != "hypercube" &&
-        (*vm)["prescale"].as<std::string>() != "standardize" &&
-        (*vm)["prescale"].as<std::string>() != "none") {
-      std::cerr << "The --prescale needs to be: none or hypercube or " <<
-                "standardize.\n";
-      exit(0);
-    }
-  }
-
-  return false;
-}
-
-template<typename TableType>
-void DistributedKpcaArgumentParser::RandomGenerate(
-  boost::mpi::communicator &world, const std::string &file_name,
-  int num_dimensions, int num_points, const std::string &prescale_option) {
-
-  // Each process generates its own random data, dumps it to the file,
-  // and read its own file back into its own distributed table.
-  TableType random_dataset;
-  random_dataset.Init(num_dimensions, num_points);
-  for(int j = 0; j < num_points; j++) {
-    core::table::DensePoint point;
-    random_dataset.get(j, &point);
-    for(int i = 0; i < num_dimensions; i++) {
-      point[i] = core::math::Random(0.1, 1.0);
-    }
-  }
-  printf("Process %d generated %d points in %d dimensionality...\n",
-         world.rank(), num_points, num_dimensions);
-
-  // Scale the dataset.
-  if(prescale_option == "hypercube") {
-    core::table::UnitHypercube::Transform(&random_dataset);
-  }
-  else if(prescale_option == "standardize") {
-    core::table::Standardize::Transform(&random_dataset);
-  }
-  std::cout << "Scaled the dataset with the option: " <<
-            prescale_option << "\n";
-
-  random_dataset.Save(file_name);
-}
-
-template<typename DistributedTableType>
-bool DistributedKpcaArgumentParser::ParseArguments(
-  boost::mpi::communicator &world,
-  boost::program_options::variables_map &vm,
-  mlpack::distributed_kpca::DistributedKpcaArguments <
-  DistributedTableType > *arguments_out) {
-
-  // Parse the reference set and index the tree.
-  std::string reference_file_name = vm["references_in"].as<std::string>();
-  if(vm.count("random_generate_n_entries") > 0) {
-    std::stringstream reference_file_name_sstr;
-    reference_file_name_sstr << vm["references_in"].as<std::string>() <<
-                             world.rank();
-    reference_file_name = reference_file_name_sstr.str();
-    RandomGenerate<typename DistributedTableType::TableType>(
-      world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
-      vm["random_generate_n_entries"].as<int>(),
-      vm["prescale"].as<std::string>());
-  }
-
-  std::cout << "Reading in the reference set: " <<
-            reference_file_name << "\n";
-  arguments_out->reference_table_ =
-    (core::table::global_m_file_) ?
-    core::table::global_m_file_->Construct<DistributedTableType>() :
-    new DistributedTableType();
-  arguments_out->reference_table_->Init(
-    reference_file_name, world);
-
-  // Parse the query set and index the tree.
-  if(vm.count("queries_in") > 0) {
-    std::string query_file_name = vm["queries_in"].as<std::string>();
-    if(vm.count("random_generate") > 0) {
-      std::stringstream query_file_name_sstr;
-      query_file_name_sstr << vm["queries_in"].as<std::string>() <<
-                           world.rank();
-      query_file_name = query_file_name_sstr.str();
-      RandomGenerate<typename DistributedTableType::TableType>(
-        world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
-        vm["random_generate_n_entries"].as<int>(),
-        vm["prescale"].as<std::string>());
-    }
-    std::cout << "Reading in the query set: " <<
-              query_file_name << "\n";
-    arguments_out->query_table_ =
-      (core::table::global_m_file_) ?
-      core::table::global_m_file_->Construct<DistributedTableType>() :
-      new DistributedTableType();
-    arguments_out->query_table_->Init(query_file_name, world);
-    std::cout << "Finished reading in the query set.\n";
-    std::cout << "Building the query tree.\n";
-  }
-
-  // Parse the bandwidth.
-  arguments_out->bandwidth_ = vm["bandwidth"].as<double>();
-  if(world.rank() == 0) {
-    std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
-  }
-
-  // Parse the relative error and the absolute error.
-  arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
-  arguments_out->relative_error_ = vm["relative_error"].as<double>();
-  if(world.rank() == 0) {
-    std::cout << "For each query point $q \\in \\mathcal{Q}$, " <<
-              "we will guarantee: " <<
-              "$| \\widetilde{G}(q) - G(q) | \\leq "
-              << arguments_out->relative_error_ <<
-              " \\cdot G(q) + " << arguments_out->absolute_error_ <<
-              " | \\mathcal{R} |$ \n";
-  }
-
-  // Parse the probability.
-  arguments_out->probability_ = vm["probability"].as<double>();
-  if(world.rank() == 0) {
-    std::cout << "Probability of " << arguments_out->probability_ << "\n";
-  }
-
-  // Parse the kernel type.
-  arguments_out->kernel_ = vm["kernel"].as< std::string >();
-  if(world.rank() == 0) {
-    std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
-  }
-
-  // Parse the KPCA component output file.
-  arguments_out->kpca_components_out_ =
-    vm["kpca_components_out"].as<std::string>();
-  if(vm.count("random_generate_n_entries") > 0) {
-    std::stringstream kpca_components_out_sstr;
-    kpca_components_out_sstr << vm["kpca_components_out"].as<std::string>() <<
-                             world.rank();
-    arguments_out->kpca_components_out_ = kpca_components_out_sstr.str();
-  }
-
-  // Parse the KPCA projection output file.
-  arguments_out->kpca_projections_out_ =
-    vm["kpca_projections_out"].as<std::string>();
-  if(vm.count("random_generate_n_entries") > 0) {
-    std::stringstream kpca_projections_out_sstr;
-    kpca_projections_out_sstr << vm["kpca_projections_out"].as<std::string>() <<
-                              world.rank();
-    arguments_out->kpca_projections_out_ = kpca_projections_out_sstr.str();
-  }
-
-  // Parse the mode.
-  arguments_out->mode_ = vm["mode"].as<std::string>();
-  std::cout << "Running in the mode: " << arguments_out->mode_ << ".\n";
-
-  // Parse the number of KPCA components.
-  arguments_out->num_kpca_components_in_ =
-    (vm["mode"].as<std::string>() == "kde") ?
-    1 : vm["num_kpca_components_in"].as<int>();
-  if(world.rank() == 0) {
-    std::cout << "Requesting " << arguments_out->num_kpca_components_in_ <<
-              " kernel PCA components...\n";
-  }
-
-  // Parse whether the centering is requested for KPCA or not.
-  arguments_out->do_centering_ = (vm.count("do_centering") > 0);
-  if(world.rank() == 0 && arguments_out->mode_ == "kpca") {
-    if(arguments_out->do_centering_) {
-      std::cout << "Doing a centered kernel PCA.\n";
-    }
-    else {
-      std::cout << "Doing a non-centered version of kernel PCA.\n";
-    }
-  }
-
-  // Parse whether the naive mode is on or not.
-  arguments_out->do_naive_ = (vm.count("do_naive") > 0 && world.size() == 1);
-  if(arguments_out->do_naive_) {
-    std::cout << "Computing naively as well.\n";
-  }
-  else {
-    std::cout << "Just doing approximation.\n";
-  }
-  return false;
-}
-
-bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
-  boost::mpi::communicator &world,
-  int argc,
-  char *argv[],
-  boost::program_options::variables_map *vm) {
-
-  // Convert C input to C++; skip executable name for Boost.
-  std::vector<std::string> args(argv + 1, argv + argc);
-
-  return ConstructBoostVariableMap(world, args, vm);
 }
 }
 }
