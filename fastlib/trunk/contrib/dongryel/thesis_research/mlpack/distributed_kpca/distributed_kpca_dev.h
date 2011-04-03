@@ -17,6 +17,28 @@
 namespace core {
 namespace parallel {
 
+class AddDensePoint:
+  public std::binary_function <
+  core::table::DensePoint,
+  core::table::DensePoint,
+    core::table::DensePoint > {
+
+  public:
+    const core::table::DensePoint operator()(
+      const core::table::DensePoint &a,
+      const core::table::DensePoint &b) const {
+
+      core::table::DensePoint combined;
+      combined.Copy(a);
+      arma::vec combined_alias;
+      core::table::DensePointToArmaVec(combined, &combined_alias);
+      arma::vec b_alias;
+      core::table::DensePointToArmaVec(b, &b_alias);
+      combined_alias += b_alias;
+      return combined;
+    }
+};
+
 class CombineMeanVariancePairMatrix:
   public std::binary_function <
   core::monte_carlo::MeanVariancePairMatrix,
@@ -42,6 +64,14 @@ class CombineMeanVariancePairMatrix:
 
 namespace boost {
 namespace mpi {
+
+template<>
+class is_commutative <
+  core::parallel::AddDensePoint,
+  core::table::DensePoint  > :
+  public boost::mpl::true_ {
+
+};
 
 template<>
 class is_commutative <
@@ -276,6 +306,7 @@ void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
   const core::table::DenseMatrix &weights,
   core::monte_carlo::MeanVariancePairMatrix *kernel_sums) {
 
+  // Allocate the weighted kernel sum slot.
   kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
 
   // Indicates the convergence of each kernel sum.
@@ -374,6 +405,36 @@ void DistributedKpca<DistributedTableType, KernelType>::ComputeKernelSum_(
 
   } // Terminate the loop only if all processes are done.
   while(! all_query_converged);
+}
+
+template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
+DistributedTableType, KernelType >::PostProcessKpcaProjections_(
+  const core::monte_carlo::MeanVariancePairMatrix &reference_kernel_sum,
+  const core::monte_carlo::MeanVariancePairMatrix &query_kernel_sums,
+  const core::monte_carlo::MeanVariancePair &average_reference_kernel_sum,
+  const core::table::DenseMatrix &kpca_components,
+  core::monte_carlo::MeanVariancePairMatrix *query_kpca_projections) {
+
+  // The reference dot products (need to be computed across all
+  // processes).
+  core::table::DensePoint local_reference_dot_products;
+  local_reference_dot_products.Init(query_kpca_projections->n_rows());
+  local_reference_dot_products.SetZero();
+  core::table::DensePoint global_reference_dot_products;
+
+  // For each KPCA component, each process computes its local portion
+  // of the dot products.
+  for(int j = 0; j < reference_kernel_sum.n_cols(); j++) {
+    for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
+      local_reference_dot_products[i] +=
+        kpca_components.get(i, j) *
+        reference_kernel_sum.get(0, j).sample_mean();
+    }
+  }
+  boost::mpi::all_reduce(
+    *world_, local_reference_dot_products, global_reference_dot_products,
+    core::parallel::AddDensePoint());
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -501,6 +562,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.query_table_,
       result_out->kpca_components(),
       &query_kpca_projections);
+
+    // If the centering is requested, then we need a post-processing.
+    if(arguments_in.do_centering_) {
+      PostProcessKpcaProjections_(
+        reference_kernel_sums, query_kernel_sums,
+        average_reference_kernel_sum,
+        result_out->kpca_components(),
+        &query_kpca_projections);
+    }
 
     // Export the results.
     result_out->Export(
