@@ -489,7 +489,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
                          frobenius_norm_history[i].sample_mean() +
                          absolute_error_in);
       }
-      all_local_query_converged = converged[i];
+      all_local_query_converged = all_local_query_converged && converged[i];
 
     } // end of looping over each local query.
 
