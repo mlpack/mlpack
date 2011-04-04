@@ -29,8 +29,9 @@ class Lars {
   u32 n_;
   u32 p_;
   
-  mat Gram_;
   vec Xty_;
+  mat Gram_;
+  mat R_; // upper triangular cholesky factor, initially 0 by 0 matrix
   
   bool use_cholesky_;
   
@@ -89,6 +90,8 @@ class Lars {
   
   void Solution(vec& beta);
   
+  void GetCholFactor(mat& R);
+  
   void Deactivate(u32 active_var_ind);
 
   void Activate(u32 var_ind);
@@ -98,13 +101,13 @@ class Lars {
   
   void InterpolateBeta(double ultimate_lambda);
   
-  void CholeskyInsert(mat& R, const vec& new_x, const mat& X);
+  void CholeskyInsert(const vec& new_x, const mat& X);
   
-  void CholeskyInsert(mat& R, const vec& new_x, const vec& new_Gram_col);
+  void CholeskyInsert(const vec& new_x, const vec& new_Gram_col);
   
   void GivensRotate(const vec& x, vec& rotated_x, mat& G);
   
-  void CholeskyDelete(mat& R, u32 col_to_kill);
+  void CholeskyDelete(u32 col_to_kill);
 };
 
 #include "lars_impl.h"

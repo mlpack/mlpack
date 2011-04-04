@@ -163,8 +163,6 @@ void Lars::DoLARS() {
   lambda_path_.push_back(max_corr);
     
     
-  mat R; // upper triangular cholesky factor, initially 0 by 0 matrix
-    
   // MAIN LOOP
   while((n_active_ < p_) && (max_corr > EPS)) {
     if(kick_out) {
@@ -174,7 +172,7 @@ void Lars::DoLARS() {
 
       Deactivate(change_ind); // new location
       if(use_cholesky_) {
-	CholeskyDelete(R, change_ind);
+	CholeskyDelete(change_ind);
       }
 	
       // remove variable from active set
@@ -190,7 +188,7 @@ void Lars::DoLARS() {
 	  new_Gram_col[i] = 
 	    dot(X_.col(active_set_[i]), X_.col(change_ind));
 	}
-	CholeskyInsert(R, X_.col(change_ind), new_Gram_col);
+	CholeskyInsert(X_.col(change_ind), new_Gram_col);
       }
 	
       // add variable to active set
@@ -239,7 +237,7 @@ void Lars::DoLARS() {
 	 = Solve(R % S, Solve(R^T, s)
 	 = s % Solve(R, Solve(R^T, s))
       */
-      unnormalized_beta_direction = solve(R, solve(trans(R), s));
+      unnormalized_beta_direction = solve(R_, solve(trans(R_), s));
       normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
       beta_direction = normalization * unnormalized_beta_direction;
     }
@@ -372,6 +370,11 @@ void Lars::DoLARS() {
 void Lars::Solution(vec& beta) {
   beta = beta_path().back();
 }
+
+
+void Lars::GetCholFactor(mat& R) {
+  R = R_;
+}
   
   
 void Lars::Deactivate(u32 active_var_ind) {
@@ -413,33 +416,33 @@ void Lars::InterpolateBeta(double ultimate_lambda) {
 }
   
   
-void Lars::CholeskyInsert(mat& R, const vec& new_x, const mat& X) {
-  if(R.n_rows == 0) {
-    R = mat(1, 1);
+void Lars::CholeskyInsert(const vec& new_x, const mat& X) {
+  if(R_.n_rows == 0) {
+    R_ = mat(1, 1);
     if(elastic_net_) {
-      R(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
+      R_(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
     }
     else {
-      R(0, 0) = norm(new_x, 2);
+      R_(0, 0) = norm(new_x, 2);
     }
   }
   else {
     vec new_Gram_col = trans(X) * new_x;
-    CholeskyInsert(R, new_x, new_Gram_col);
+    CholeskyInsert(new_x, new_Gram_col);
   }
 }
   
   
-void Lars::CholeskyInsert(mat& R, const vec& new_x, const vec& new_Gram_col) {
-  int n = R.n_rows;
+void Lars::CholeskyInsert(const vec& new_x, const vec& new_Gram_col) {
+  int n = R_.n_rows;
     
   if(n == 0) {
-    R = mat(1, 1);
+    R_ = mat(1, 1);
     if(elastic_net_) {
-      R(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
+      R_(0, 0) = sqrt(dot(new_x, new_x) + lambda_2_);
     }
     else {
-      R(0, 0) = norm(new_x, 2);
+      R_(0, 0) = norm(new_x, 2);
     }
   }
   else {
@@ -463,16 +466,16 @@ void Lars::CholeskyInsert(mat& R, const vec& new_x, const vec& new_Gram_col) {
       vec R_k = R_k3;
     */
       
-    vec R_k = solve(trans(trimatu(R)), new_Gram_col);
+    vec R_k = solve(trans(trimatu(R_)), new_Gram_col);
       
       
       
-    new_R(span(0, n - 1), span(0, n - 1)) = R;//(span::all, span::all);
+    new_R(span(0, n - 1), span(0, n - 1)) = R_;//(span::all, span::all);
     new_R(span(0, n - 1), n) = R_k;
     new_R(n, span(0, n - 1)).fill(0.0);
     new_R(n, n) = sqrt(sq_norm_new_x - dot(R_k, R_k));
       
-    R = new_R;
+    R_ = new_R;
   }
 }
   
@@ -501,29 +504,29 @@ void Lars::GivensRotate(const vec& x, vec& rotated_x, mat& G) {
 }
   
   
-void Lars::CholeskyDelete(mat& R, u32 col_to_kill) {
+void Lars::CholeskyDelete(u32 col_to_kill) {
   //printf("calling CholeskyDelete on %d\n", col_to_kill);
-  u32 n = R.n_rows;
+  u32 n = R_.n_rows;
     
   if(col_to_kill == (n - 1)) {
-    R = R(span(0, n - 2), span(0, n - 2));
+    R_ = R_(span(0, n - 2), span(0, n - 2));
   }
   else {
-    R.shed_col(col_to_kill); // remove column col_to_kill
+    R_.shed_col(col_to_kill); // remove column col_to_kill
     n--;
       
     for(u32 k = col_to_kill; k < n; k++) {
       mat G;
       vec rotated_vec;
-      GivensRotate(R(span(k, k + 1), k),
+      GivensRotate(R_(span(k, k + 1), k),
 		   rotated_vec,
 		   G);
-      R(span(k, k + 1), k) = rotated_vec;
+      R_(span(k, k + 1), k) = rotated_vec;
       if(k < n - 1) {
-	R(span(k, k + 1), span(k + 1, n - 1)) =
-	  G * R(span(k, k + 1), span(k + 1, n - 1));
+	R_(span(k, k + 1), span(k + 1, n - 1)) =
+	  G * R_(span(k, k + 1), span(k + 1, n - 1));
       }
     }
-    R.shed_row(n);
+    R_.shed_row(n);
   }
 }
