@@ -12,6 +12,9 @@
 
 #include <fastlib/fastlib.h>
 
+namespace mlpack {
+namespace optimization {
+
 /***
  * The AugLagrangian class implements the Augmented Lagrangian method of
  * optimization.  In this scheme, a penalty term is added to the Lagrangian.
@@ -52,7 +55,6 @@ class AugLagrangian {
    * with a private class, these methods are correctly protected (since they
    * should not be being used anywhere else).
    */
-  template<typename LagrangianFunction>
   class AugLagrangianFunction {
    public:
     AugLagrangianFunction(LagrangianFunction& function_in,
@@ -71,6 +73,9 @@ class AugLagrangian {
     LagrangianFunction& function_;
   };
 };
+
+}; // namespace optimization
+}; // namespace mlpack
 
 #include "aug_lagrangian_impl.h"
 
