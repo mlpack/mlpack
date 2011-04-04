@@ -1,29 +1,29 @@
 #include "io.h"
 #include "optionshierarchy.h"
-#include <string>
+#include "printing.h"
 
+#include <string>
 #include <iostream>
 #include <sys/time.h>
+#include <typeinfo>
 
 using namespace mlpack;
 
 
-PARAM_STRING(testint, "blarg", foo);
+PARAM_CUSTOM(int, testint, "blarg");
+PARAM_CUSTOM(std::string, str, "shiazer");
+PARAM_INT(tmp, "cool, dude", allnn);
+PARAM_BOOL(perm, "not cool", allknn);
+
+void test(); 
 
 int main(int argc, char** argv) {
-  
-   IO::parseCommandLine(argc, argv);
+  IO::parseCommandLine(argc, argv);
+  IO::getValue<int>("testint") = 42;
+  test();
+  IO::print();
+}
 
-  std::string& x = IO::getValue<std::string>("foo/testint");
-  std::cout << x << std::endl;
-  IO::startTimer("brak/timer");
-
-
-  for(int i = 0; i < 10; i++) { 
-    std::cout << "herp " << i << std::endl;
-  }
-
-  IO::stopTimer("brak/timer");
-  
-  std::cout << IO::getValue<timeval>("brak/timer").tv_usec << std::endl;
+void test() {
+  std::cout << IO::getValue<int>("testint") ;
 }
