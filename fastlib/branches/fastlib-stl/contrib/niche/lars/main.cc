@@ -67,11 +67,11 @@ int main(int argc, char* argv[]) {
   //beta_matrix.print("beta matrix");
 
   vec lambda_path_vec = conv_to< colvec >::from(lars.lambda_path());
-  lambda_path_vec.print("lambda path");
+  //lambda_path_vec.print("lambda path");
   
   
-  X.save("X.dat", raw_ascii);
-  y.save("y.dat", raw_ascii);
+  //X.save("X.dat", raw_ascii);
+  //y.save("y.dat", raw_ascii);
   beta_matrix.save("beta.dat", raw_ascii);
   lambda_path_vec.save("lambda.dat", raw_ascii);
   
