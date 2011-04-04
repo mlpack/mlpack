@@ -31,7 +31,7 @@ bool TestRosenbrockFunction() {
   double final_value = f.Evaluate(coords);
 
   NOTIFY("Final objective value is %lf at (%lf, %lf)",
-    final_value, coords[0], coords[1]);
+      final_value, coords[0], coords[1]);
 
   if((std::abs(final_value) <= 1e-5) &&
      (std::abs(coords[0] - 1) <= 1e-5) &&
