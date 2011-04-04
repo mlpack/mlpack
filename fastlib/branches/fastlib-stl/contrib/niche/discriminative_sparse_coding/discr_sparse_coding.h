@@ -1,4 +1,4 @@
-/** @file discriminative_sparse_coding.h
+/** @file discr_sparse_coding.h
  *
  *  This file implements Stochastic Gradient Algorithms for Discriminative Sparse Coding and Discriminative Local Coordinate Coding
  *
@@ -6,8 +6,11 @@
  *  @bug No known bugs, but no known completed code
  */
 
-#ifndef DISCRIMINATIVE_SPARSE_CODING_H
-#define DISCRIMINATIVE_SPARSE_CODING_H
+#ifndef DISCR_SPARSE_CODING_H
+#define DISCR_SPARSE_CODING_H
+
+#define INSIDE_DISCR_SPARSE_CODING_H
+
 
 #include <contrib/niche/lars/lars.h>
 
@@ -15,7 +18,7 @@ using namespace arma;
 using namespace std;
 
 
-class DiscriminativeSparseCoding {
+class DiscrSparseCoding {
  private:
   mat X_;
   vec y_;
@@ -31,11 +34,11 @@ class DiscriminativeSparseCoding {
   double lambda_2_; // l_2 regularization term
   
  public:
-  DiscriminativeSparseCoding() {
+  DiscrSparseCoding() {
   }
   
   
-  ~DiscriminativeSparseCoding() { }
+  ~DiscrSparseCoding() { }
 
   
   void Init(const mat& X, const vec& y, u32 n_atoms,
@@ -97,5 +100,9 @@ class DiscriminativeSparseCoding {
 
   }
 };
+
+#include "discr_sparse_coding_impl.h"
+
+#undef INSIDE_DISCR_SPARSE_CODING_H
 
 #endif
