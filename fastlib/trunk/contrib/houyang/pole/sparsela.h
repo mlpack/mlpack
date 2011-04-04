@@ -10,6 +10,7 @@
 #include <cmath>
 
 #include "datatypes.h"
+#include "maths.h"
 
 using namespace std;
 
@@ -84,10 +85,10 @@ class Example : public Svector{
 };
 
 //------------------Row Indexed Sparse Matrix---------------//
-class SmatrixR {
+class SparseMatrixR {
  public:
-  SmatrixR();
-  ~SmatrixR();
+  SparseMatrixR();
+  ~SparseMatrixR();
   // a general sparse matrix, indexed by rows
   vector<Svector> Vs_; // rows
 };

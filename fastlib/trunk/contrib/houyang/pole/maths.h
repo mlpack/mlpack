@@ -80,6 +80,16 @@ namespace Maths {
   const double PI_2 = 1.57079632679489661923;
 
   //////////////////////////////////////////////////////////////////////////////
+  // Calculates a relatively small power using template metaprogramming.
+  // This allows a numerator and denominator.  In the case where the
+  // numerator and denominator are equal, this will not do anything, or in
+  // the case where the denominator is one.
+  //////////////////////////////////////////////////////////////////////////////
+  template<int t_numerator, int t_denominator> inline double Pow(double d) {
+    return MathsPrivate::ZPowImpl < t_numerator, t_denominator >::Calculate(d);
+  }
+
+  //////////////////////////////////////////////////////////////////////////////
   // Calculates a small power of the absolute value of a double number
   // using template metaprogramming. This allows a numerator and denominator.  
   // In the case where the numerator and denominator are equal, 
