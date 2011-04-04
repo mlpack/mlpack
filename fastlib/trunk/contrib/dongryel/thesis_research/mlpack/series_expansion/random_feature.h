@@ -80,22 +80,28 @@ class RandomFeature {
       core::monte_carlo::MeanVariancePairMatrix *accumulants) {
 
       int num_random_fourier_features = random_variates.size();
+      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
+      arma::vec tmp_coordinate;
       for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec old_point;
         table_in.get(i, &old_point);
+        tmp_coordinate.zeros(covariance_eigenvectors.n_cols());
 
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
-          double first_value = cos(dot_product);
-          double second_value = sin(dot_product);
+          double first_value = cos(dot_product) * normalization_factor;
+          double second_value = sin(dot_product) * normalization_factor;
 
           // For each column of eigenvectors,
           for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
-            accumulants->get(k, i).push_back(
+            tmp_coordinate[k] +=
               covariance_eigenvectors.get(j, k) * first_value +
               covariance_eigenvectors.get(
-                j + num_random_fourier_features, k) * second_value);
+                j + num_random_fourier_features, k) * second_value;
           }
+        }
+        for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
+          accumulants->get(k, i).push_back(tmp_coordinate[k]);
         }
       }
     }
@@ -108,6 +114,7 @@ class RandomFeature {
       core::monte_carlo::MeanVariancePairMatrix *covariance_transformation) {
 
       int num_random_fourier_features = random_variates.size();
+      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
       covariance_transformation->Init(
         2 * num_random_fourier_features, 2 * num_random_fourier_features);
       covariance_transformation->set_total_num_terms(table_in.n_entries());
@@ -124,8 +131,9 @@ class RandomFeature {
         table_in.get(random_combination[i] , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
-          tmp_vector[j] = cos(dot_product);
-          tmp_vector[j + num_random_fourier_features] = sin(dot_product);
+          tmp_vector[j] = cos(dot_product) * normalization_factor;
+          tmp_vector[j + num_random_fourier_features] = sin(dot_product) *
+              normalization_factor;
         }
 
         // Now Accumulate the covariance.

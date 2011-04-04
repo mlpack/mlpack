@@ -81,7 +81,14 @@ class DistributedKpca {
       core::table::DensePoint > *random_variates,
       std::vector< arma::vec > *random_variate_aliases);
 
+    void NaiveKernelEigenvectors_(
+      int num_kpca_components_in_,
+      DistributedTableType *reference_table_in,
+      const core::table::DenseMatrix &kpca_components);
+
     void NaiveWeightedKernelAverage_(
+      double relative_error_in,
+      double absolute_error_in,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
       const core::table::DenseMatrix &weights,
@@ -136,6 +143,8 @@ class DistributedKpca {
     double effective_num_reference_points_;
 
     double correction_term_;
+
+    int max_num_iterations_;
 
     int num_random_fourier_features_eigen_;
 

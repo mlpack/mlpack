@@ -62,6 +62,8 @@ class DistributedKpcaArguments {
      */
     std::string mode_;
 
+    int max_num_iterations_in_;
+
     /** @brief The number of KPCA components to compute.
      */
     int num_kpca_components_in_;
@@ -90,6 +92,7 @@ class DistributedKpcaArguments {
       kpca_projections_out_ = "";
       kernel_ = "";
       mode_ = "";
+      max_num_iterations_in_ = 0;
       num_kpca_components_in_ = 0;
       do_centering_ = false;
       do_naive_ = false;
