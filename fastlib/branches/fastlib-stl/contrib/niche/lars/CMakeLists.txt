@@ -41,12 +41,13 @@ target_link_libraries(test_lars
    fastlib
 )
 
-add_library(lars_lib
-  EXCLUDE_FROM_ALL
-  main.cc
-)
+# can't figure out how to get libraries working...
+#add_library(lars_lib
+#  EXCLUDE_FROM_ALL
+#  main.cc
+#)
 
-target_link_libraries(lars_lib
-  mlpack
-  fastlib
-)
+#target_link_libraries(lars_lib
+#  mlpack
+#  fastlib
+#)

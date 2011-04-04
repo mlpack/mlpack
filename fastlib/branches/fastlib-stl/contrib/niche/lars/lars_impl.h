@@ -527,6 +527,3 @@ void Lars::CholeskyDelete(mat& R, u32 col_to_kill) {
     R.shed_row(n);
   }
 }
-
-
-#include "lars.h"
