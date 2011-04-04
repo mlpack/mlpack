@@ -2,6 +2,8 @@
 
 #include "sparsela.h"
 
+using namespace Maths;
+
 //-------------------------Feature----------------------------//
 
 //////////////////////////
@@ -392,7 +394,7 @@ double Svector::SparseSqL2Norm() const {
   double v = 0.0;
   for (vector<Feature>::const_iterator it=Fs_.begin(); it<Fs_.end(); it++) {
     if (it->v_ != 0)
-      v += pow(it->v_, 2);
+      v += Pow<2,1>(it->v_);
   }
   return v;
 }
@@ -445,10 +447,10 @@ void Svector::SparseAddExpertOverwrite(double a, const Svector &x) {
 // Sparse vector subtraction: w<= p - n
 ////////////////////////////////////////
 void Svector::SparseSubtract(const Svector &p, const Svector &n) {
-  /*
-  *this = p;
-  *this -= n;
-  */
+  // Easier but slower way:
+  // *this = p;
+  // *this -= n;
+
   T_IDX nz_w = 0;
   T_IDX nz_p = p.Fs_.size();
   T_IDX nz_n = n.Fs_.size();
@@ -617,24 +619,24 @@ double Svector::SparseSqEuclideanDistance(const Svector &x) const {
     T_IDX ct_w = 0, ct_x = 0;
     while (ct_w<Fs_.size() || ct_x<x.Fs_.size()) {
       if (ct_w == Fs_.size()) { // w reaches end, while x still not
-        d += pow(x.Fs_[ct_x].v_, 2);
+        d += Pow<2,1>(x.Fs_[ct_x].v_);
 	++ct_x;
       }
       else if (ct_x == x.Fs_.size()) { // x reaches end, while w still not
-	d += pow(Fs_[ct_w].v_, 2);
+	d += Pow<2,1>(Fs_[ct_w].v_);
         ++ct_w;
       }
       else { // neither w nor x reaches end
 	if (Fs_[ct_w].i_ == x.Fs_[ct_x].i_) {
-	  d += pow(Fs_[ct_w].v_ - x.Fs_[ct_x].v_, 2);
+	  d += Pow<2,1>(Fs_[ct_w].v_ - x.Fs_[ct_x].v_);
 	  ++ct_w; ++ct_x;
 	}
 	else if (Fs_[ct_w].i_ > x.Fs_[ct_x].i_) {
-          d += pow(x.Fs_[ct_x].v_, 2);
+          d += Pow<2,1>(x.Fs_[ct_x].v_);
           ++ct_x;
 	}
 	else { // w.Fs[ct_w].i < x.Fs[ct_x].i
-          d += pow(Fs_[ct_w].v_, 2);
+          d += Pow<2,1>(Fs_[ct_w].v_);
 	  ++ct_w;
 	}
       }
@@ -647,10 +649,13 @@ double Svector::SparseSqEuclideanDistance(const Svector &x) const {
 // Shrink: remove 0 values
 ///////////////////////////////
 void Svector::Shrink(double threshold) {
-  for (T_IDX i=0; i<Fs_.size(); i++) {
-    if (fabs(Fs_[i].v_) < threshold) {
-      Fs_.erase(Fs_.begin()+i);
-      i--;
+  vector<Feature>::iterator it = Fs_.begin();
+  while (it != Fs_.end()) {
+    if ((*it).v_ < threshold) {
+      it = Fs_.erase(it);
+    }
+    else {
+      ++it;
     }
   }
 }
@@ -682,9 +687,9 @@ Example::Example(const vector<Feature> &Fs, T_LBL y, const string &ud) :
 Example::~Example() {
 }
 
-////////////////////////////
+/////////////////////////////
 // Copy from a given example
-////////////////////////////
+/////////////////////////////
 Example& Example::operator=(const Example &x) {
   Fs_ = x.Fs_;
   y_ = x.y_;
@@ -693,9 +698,9 @@ Example& Example::operator=(const Example &x) {
   return *this;
 }
 
-////////////////
+/////////////////
 // Clear content
-////////////////
+/////////////////
 void Example::Clear() {
   Svector::Clear();
   y_ = 0;

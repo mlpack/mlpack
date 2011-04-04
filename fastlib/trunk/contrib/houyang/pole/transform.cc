@@ -34,7 +34,7 @@ void FourierRBFTransform::SampleW() {
   double inv_gamma = 1.0 / sigma_;
   w_.resize(D_);
   for (T_IDX i=0; i<D_; i++) {
-    w_[i].SetAllResize(d_, 0.0);
+    w_[i].Resize(d_);
     for (T_IDX j=0; j<d_; j++) {
       w_[i].Fs_[j].i_ = j;
       w_[i].Fs_[j].v_ = (T_VAL)r_.RandGaussian(inv_gamma);

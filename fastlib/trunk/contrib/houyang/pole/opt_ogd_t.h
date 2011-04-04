@@ -1,6 +1,7 @@
 //***********************************************************
 //* Online Kernel Gradient Descent with Transformed Features
 //* Hua Ouyang 03/23/2011
+//* Example: ./pole_pt -d svmguide1 -m ogdt --transform fourier_rbf --calc_loss 1 --comm 1 -c 100 -b 1 --bias 1 -e 50 --sigma 3 --trdim 1000 --threads 2
 //***********************************************************
 #ifndef OPT_OGD_T_H
 #define OPT_OGD_T_H
