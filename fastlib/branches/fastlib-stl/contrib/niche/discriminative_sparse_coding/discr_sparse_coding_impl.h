@@ -1,4 +1,6 @@
-#include "discr_sparse_coding.h"
+#ifndef INSIDE_DISCR_SPARSE_CODING_H
+#error "This is not a public header file!"
+#endif
 
 void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
 			     double lambda_1, double lambda_2) {
@@ -10,6 +12,8 @@ void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
   
   n_atoms_ = n_atoms;
   D_ = mat(n_dims_, n_atoms_);
+  
+  w = vec(n_atoms_);
   
   lambda_1_ = lambda_1;
   lambda_2_ = lambda_2;
@@ -34,6 +38,11 @@ void DiscrSparseCoding::KMeansInitDictionary() {
 }
 
 
+void DiscrSparseCoding::InitW() {
+  w.zeros();
+}
+
+
 void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
   for(u32 t = 0; t < n_iterations; t++) {
     u32 ind = rand() % n_points_;
@@ -49,10 +58,20 @@ void DiscrSparseCoding::SGDStep(const vec& x, double step_size) {
   lars.DoLARS();
   vec v;
   lars.Solution(v);
+  mat A_chol_factor;
+  lars.GetCholFactor(A);
   
   // active set
   std::vector<u32> active_set = lars.active_set();
-  //bob
+  u32 n_active = active_set.size();
+  
+  // for the update, we need (D_Lambda^T + D_Lambda)^{-1}
+  // fortunately, we already have the cholesky factorization of this in lars
+    
+  for(u32 i = 0; i < n_active; i++) {
+    
+    
+  }
   
   // update to Dictionary
   

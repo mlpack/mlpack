@@ -8,7 +8,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   # for discriminative_sparse_coding
    discr_sparse_coding.h
-   discr_sparse_coding.cc
+   discr_sparse_coding_impl.h
+   lars.h
 )
 
 # add directory name to sources
@@ -26,7 +27,6 @@ add_executable(discr_sparse_coding
 )
 
 target_link_libraries(discr_sparse_coding
-   lars_lib
    mlpack
    fastlib
 )
