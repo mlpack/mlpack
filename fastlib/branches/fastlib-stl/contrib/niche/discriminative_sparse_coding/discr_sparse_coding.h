@@ -9,9 +9,6 @@
 #ifndef DISCR_SPARSE_CODING_H
 #define DISCR_SPARSE_CODING_H
 
-#define INSIDE_DISCR_SPARSE_CODING_H
-
-
 #include <contrib/niche/lars/lars.h>
 
 using namespace arma;
@@ -54,9 +51,5 @@ class DiscrSparseCoding {
   
   void SGDStep(const vec& x, double step_size);
 };
-
-#include "discr_sparse_coding_impl.h"
-
-#undef INSIDE_DISCR_SPARSE_CODING_H
 
 #endif

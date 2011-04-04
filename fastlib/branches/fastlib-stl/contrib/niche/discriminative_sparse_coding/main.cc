@@ -18,4 +18,6 @@ int main(int argc, char* argv[]) {
   mat X = randu(10,100);
   vec y = randu(100);
   dsc.Init(X, y, 20, 1.0, 1.0);
+  
+  printf("running discr_sparse_coding\n");
 }

@@ -8,7 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   # for discriminative_sparse_coding
    discr_sparse_coding.h
-   discr_sparse_coding_impl.h
+   discr_sparse_coding.cc
 )
 
 # add directory name to sources
