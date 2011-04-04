@@ -108,7 +108,6 @@ class Lars {
 };
 
 #include "lars_impl.h"
-
 #undef INSIDE_LARS_H
 
 #endif
