@@ -18,6 +18,47 @@ void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
 }
 
 
+void DiscrSparseCoding::InitDictionary() {
+  RandomInitDictionary();
+}
+
+
+void DiscrSparseCoding::RandomInitDictionary() {
+  for(u32 j = 0; j < n_atoms_; j++) {
+    D_.col(j) = randu(n_dims_);
+    D_.col(j) /= norm(D_.col(j), 2);
+  }
+}
+
+
+void DiscrSparseCoding::KMeansInitDictionary() {
+  // need a constrained k-means algorithm to ensure each cluster is assigned at least one point
+}
+
+
+void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
+  for(u32 t = 0; t < n_iterations; t++) {
+    u32 ind = rand() % n_points_;
+    SGDStep(X_.col(ind), step_size);
+    // modify step size in some way
+  }
+}
+
+
+void DiscrSparseCoding::SGDStep(const vec& x, double step_size) {
+  Lars lars;
+  lars.Init(D_, x, true, lambda_1_, lambda_2_);
+  lars.DoLARS();
+  vec v;
+  lars.Solution(v);
+  
+  // update to Dictionary
+  
+}
+
+
+
+
 
 
 #include "discr_sparse_coding.h"
