@@ -76,6 +76,8 @@ class Lars {
   void SetY(const vec& y);
   
   void PrintY();
+
+  const std::vector<u32> active_set();
   
   const std::vector<vec> beta_path();
   

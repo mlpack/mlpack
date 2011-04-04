@@ -115,7 +115,12 @@ void Lars::PrintY() {
   y_.print();
 }
 
-  
+
+const std::vector<u32> Lars::active_set() {
+  return active_set_;
+}
+
+
 const std::vector<vec> Lars::beta_path() {
   return beta_path_;
 }
@@ -349,7 +354,12 @@ void Lars::DoLARS() {
     // Time to stop for LASSO?
     if(lasso_) {
       double ultimate_lambda = max_corr;
-      if(ultimate_lambda <= lambda_1_) {
+      /* 
+	 By using strict inequality below, then upon exit, the active_set_ variable will be correct; to see this, consider the two cases:
+           1) The LASSO bound on gamma went into effect, and a variable was about to be kicked out. But due to strict inequality the variable's coefficient was not shrunk enough to be kicked out, so it is still active.
+           2) Another variable was about to join the active set. Even if we used less than or equality to, this variable would be just about to join the active set, but it would not yet have joined. It's coefficient would become non-zero on the next step.
+      */
+      if(ultimate_lambda < lambda_1_) {
 	InterpolateBeta(ultimate_lambda);
 	break;
       }
@@ -520,5 +530,3 @@ void Lars::CholeskyDelete(mat& R, u32 col_to_kill) {
 
 
 #include "lars.h"
-
-
