@@ -6,8 +6,9 @@ cmake_minimum_required(VERSION 2.8)
 # In this library, these are specified twice, once here, and once for the individual library it belongs to, so make sure
 # that you have files in both sections
 set(SOURCES
-   # for discriminative_sparse_coding
-   discriminative_sparse_coding.h
+  # for discriminative_sparse_coding
+   discr_sparse_coding.h
+   discr_sparse_coding_impl.h
 )
 
 # add directory name to sources
@@ -19,12 +20,12 @@ endforeach()
 #set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The executable for Discriminative Sparse Coding
-add_executable(discriminative_sparse_coding
+add_executable(discr_sparse_coding
     EXCLUDE_FROM_ALL
     main.cc
 )
 
-target_link_libraries(discriminative_sparse_coding
+target_link_libraries(discr_sparse_coding
    lars_lib
    mlpack
    fastlib
