@@ -7,6 +7,9 @@
 #include <string>
 #include <sys/time.h>
 
+#include "printing.h"
+
+
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
 #define BASH_YELLOW "\033[1;33m"
@@ -45,7 +48,8 @@ void IO::add(const char* identifier, const char* description, const char* parent
 void IO::add(const char* identifier, const char* description, const char* parent, bool required, bool out) {
   po::options_description& desc = IO::getSingleton().desc;
   //Generate the full pathname and insert the node into the hierarchy
-  std::string path = IO::getSingleton().manageHierarchy(identifier, parent, description);
+  std::string tmp = TYPENAME(bool);
+  std::string path = IO::getSingleton().manageHierarchy(identifier, parent, tmp, description);
   //Add the option to boost program_options
   desc.add_options()
     (path.c_str(), description);
@@ -63,26 +67,23 @@ int IO::checkValue(const char* identifier) {
   
 //Returns the sole instance of this class
 IO& IO::getSingleton() {
-  if(!singleton) {
+  if(!singleton) 
     singleton = new IO();
-    //Add the default rules.
-    add("help", "default help info", NULL, false);
-    add<std::string>("info", "default submodule info option", NULL, false);
-  }
+  
   return *singleton;
 }	
 
 //Generates a full pathname, and places it in the hierarchy
-std::string IO::manageHierarchy(const char* id, const char* parent, const char* description) {
+std::string IO::manageHierarchy(const char* id, const char* parent, std::string& tname, const char* description) {
   std::string path(id), desc(description);
   
   path = sanitizeString(parent)+id;
   
   //Add the sanity checked string to the hierarchy
   if(desc.length() == 0)
-    hierarchy.appendNode(path);
+    hierarchy.appendNode(path, tname);
   else
-    hierarchy.appendNode(path, desc);
+    hierarchy.appendNode(path, tname, desc);
   return path;
 }
 
@@ -157,33 +158,15 @@ void IO::printFatal(const char* msg) {
 
 //Prints a notification
 void IO::printNotify(const char* msg) {
-  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[NOTIFY] " << BASH_CLEAR << msg << endl;
 }
 
 void IO::printWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN ] " << BASH_YELLOW << msg << endl;
+  cout << BASH_YELLOW << "[WARN] " << BASH_CLEAR << msg << endl;
 }
 
 /* Print whatever data we can */
 void IO::printData() {
-  std::map<std::string, boost::any>& gmap = IO::getSingleton().globalValues;
-  
-  for(std::map<std::string, boost::any>::iterator iter = gmap.begin(); iter != gmap.end(); ++iter) {
-    const char* str = (*iter).first.c_str();
-    boost::any data = (*iter).second;
-    
-    std::cout << str << " = ";
-    //Now, lets start guessing types.
-    if((*iter).second.type() == typeid(int))
-      std::cout << getValue<int>(str) << std::endl;
-    else if((*iter).second.type() == typeid(timeval))
-      std::cout << getValue<timeval>(str).tv_sec << ":" << getValue<timeval>(str).tv_usec << std::endl;
-     else if((*iter).second.type() == typeid(std::string))
-       std::cout << getValue<std::string>(str) << std::endl;
-     else //Don't know what it is, alert the user
-       IO::printWarn("Uknown type");
-  }
-  
 }
 
 
@@ -226,4 +209,6 @@ std::string IO::sanitizeString(const char* str) {
   return std::string("");
 }
 
+PARAM_CUSTOM(bool, help, "default help info");
+PARAM_CUSTOM(std::string, info, "default submodule info option");
 

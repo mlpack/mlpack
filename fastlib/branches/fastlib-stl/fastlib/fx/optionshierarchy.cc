@@ -1,6 +1,8 @@
 #include "optionshierarchy.h"
 #include "io.h"
+#include "printing.h"
 #include <iostream>
+
 
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
 OptionsHierarchy::OptionsHierarchy() : node(""), isOutput(false) {
@@ -23,12 +25,12 @@ OptionsHierarchy::OptionsHierarchy(const OptionsHierarchy& other) {
 /* Will never fail, as given paths are relative to current node
 and will be generated if not found */
 /* Also, we will insist on proper usage of C++ strings */
-void OptionsHierarchy::appendNode(string& pathname) {
+void OptionsHierarchy::appendNode(string& pathname, string& tname) {
   string tmp = string("");
   appendNode(pathname, tmp);
 }
 
-void OptionsHierarchy::appendNode(string& pathname, string& description) {
+void OptionsHierarchy::appendNode(string& pathname, string& tname, string& description) {
   string name = getName(pathname);
   string path = getPath(pathname);
   
@@ -38,16 +40,17 @@ void OptionsHierarchy::appendNode(string& pathname, string& description) {
   
   if(pathname.find('/') == pathname.npos || path.length() < 1) {
     children[name].desc = description;
+    children[name].tname = tname; 
     return;
   }
   
   //Recurse until path is done
-  children[name].appendNode(path, description);
+  children[name].appendNode(path, tname, description);
 }  
 
-/* Returns the node with the specified pathname */
+/* Returns the node with the specified pathname 
 OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
-  appendNode(pathname); //Make sure we actually have that node
+  appendNode(pathname, ); //Make sure we actually have that node
   
   string name = getName(pathname);
   string path = getPath(pathname);
@@ -57,7 +60,7 @@ OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
     return children[name].findNode(path);
   else
     return this;
-}
+}*/
 
 /* Returns the path in a pathname */
 string OptionsHierarchy::getPath(string& pathname) {
@@ -80,7 +83,7 @@ string OptionsHierarchy::getName(string& pathname) {
 
 void OptionsHierarchy::print() {
   //Print the node, append '/' if that node is not a leaf
-  std::cout << node << ":" << endl << endl;
+  cout << node << ":" << endl;
   
   //Begin formatted output 	
   cout << "Entries:" << endl;
@@ -116,7 +119,10 @@ void OptionsHierarchy::printLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
   for(iter = children.begin(); iter != children.end(); iter++)
     if(!iter->second.children.size()) {
+      
+      //Print the node's name, data, and description.  
       cout << "\"" << iter->second.node << "\":" << endl;
+      //Does it have a description?
       if(iter->second.desc.length() > 0)
         cout << "\t" << iter->second.desc << endl;
       else
@@ -127,9 +133,13 @@ void OptionsHierarchy::printLeaves() {
 /* Prints all children of this node which are parents */
 void OptionsHierarchy::printBranches() {
   map<string, OptionsHierarchy>::iterator iter;
+  
+  //Iterate through all children
   for(iter = children.begin(); iter != children.end(); iter++)
+  //Does this child have children?
     if(iter->second.children.size()) {
       cout << "\"" << iter->second.node << "\":" << endl;
+      //Does the child have a description?
       if(iter->second.desc.length() > 0)
         cout << "\t" << iter->second.desc << endl;
       else

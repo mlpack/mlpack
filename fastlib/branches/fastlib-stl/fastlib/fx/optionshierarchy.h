@@ -13,6 +13,8 @@ class OptionsHierarchy {
     string node;
     /* Description of this node, if any */
     string desc;
+    /* type name of this node */
+    string tname; 
     /* Map of this node's children.  All children should have a
       corresponding OptionsHierarchy, hence the references */
     map<string, OptionsHierarchy> children;
@@ -34,11 +36,11 @@ class OptionsHierarchy {
     /* Will never fail, as given paths are relative to current node
     and will be generated if not found */
     /* Also, we will insist on proper usage of C++ strings */
-    void appendNode(string& pathname);
-    void appendNode(string& pathname, string& description);
+    void appendNode(string& pathname, string& tname);
+    void appendNode(string& pathname, string& tname, string& description);
   
     /* Will return the node associated with a pathname */
-    OptionsHierarchy* findNode(string& pathname);
+    //OptionsHierarchy* findNode(string& pathname);
 
     /* Print functions */
     void print();

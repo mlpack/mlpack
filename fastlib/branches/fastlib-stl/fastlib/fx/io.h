@@ -9,11 +9,13 @@
 #include <list>
 
 #include "optionshierarchy.h"
+#include "printing.h"
 
 /* These defines facilitate the registering of command line options */
 #define PARAM(T, ID, DESC, PARENT) static mlpack::Option<T> ID = mlpack::Option<T>(false, #ID, DESC, #PARENT);
 #define PARAM_BOOL(ID, DESC, PARENT) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, #PARENT);
 #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, NULL);
+#define PARAM_CUSTOM(T, ID, DESC) static mlpack::Option<T> ID = mlpack::Option<T>(false, #ID, DESC, NULL);
 
 #define PARAM_TIMER(ID, DESC, PARENT) PARAM(timeval, ID, DESC, PARENT)
 #define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
@@ -46,8 +48,11 @@ namespace mlpack {
                                   const char* parent, bool required, bool out) {
         //Use singleton for state, wrap this up a parallel data structure 
         po::options_description& desc = getSingleton().desc;
+        std::string tmp = TYPENAME(T);
+                                    
         //Generate the full path string, and place the node in the hierarchy
-        std::string path = getSingleton().manageHierarchy(identifier, parent, description);
+        std::string path = getSingleton().manageHierarchy(identifier, parent, tmp, description);
+                                    
         //Add the option to boost program_options
         desc.add_options()
           (path.c_str(), po::value<T>(), description);
@@ -134,7 +139,7 @@ namespace mlpack {
     
       //Sanity checks strings before sending them to optionshierarchy
       //Returns the pathname placed in the hierarchy
-      std::string manageHierarchy(const char* id, const char* parent, const char* description = "");
+      std::string manageHierarchy(const char* id, const char* parent, std::string& tname, const char* description = "");
       
       //Cleans up input pathnames, rendering strings such as /foo/bar and foo/bar equivalent inputs
       static std::string sanitizeString(const char* str);
