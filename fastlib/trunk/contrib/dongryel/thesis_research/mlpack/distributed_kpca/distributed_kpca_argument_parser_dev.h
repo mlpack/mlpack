@@ -45,6 +45,10 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
       "kpca_projections.csv"),
     "OPTIONAL output file for KPCA projections."
   )(
+    "max_num_iterations_in",
+    boost::program_options::value<int>()->default_value(30),
+    "OPTIONAL The number of maximum sampling rounds."
+  )(
     "references_in",
     boost::program_options::value<std::string>()->default_value(
       "random_dataset.csv"),
@@ -357,9 +361,18 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     arguments_out->kpca_projections_out_ = kpca_projections_out_sstr.str();
   }
 
+  // Parse the maximum number of iterations.
+  arguments_out->max_num_iterations_in_ = vm["max_num_iterations_in"].as<int>();
+  if(world.rank() == 0) {
+    std::cout << "Each Monte Carlo round will try up to " <<
+              arguments_out->max_num_iterations_in_ << " rounds.\n";
+  }
+
   // Parse the mode.
   arguments_out->mode_ = vm["mode"].as<std::string>();
-  std::cout << "Running in the mode: " << arguments_out->mode_ << ".\n";
+  if(world.rank() == 0) {
+    std::cout << "Running in the mode: " << arguments_out->mode_ << ".\n";
+  }
 
   // Parse the number of KPCA components.
   arguments_out->num_kpca_components_in_ =

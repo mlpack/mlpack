@@ -173,6 +173,8 @@ class KpcaResult {
         covariance_eigenvectors_in.n_rows, num_kpca_components_in);
       for(int i = 0; i < num_kpca_components_in; i++) {
         kernel_eigenvalues_[i] = sorted_eigenvalues[i].second;
+        printf("Observing: %d %g\n", sorted_eigenvalues[i].first,
+               sorted_eigenvalues[i].second);
         for(unsigned int j = 0; j < covariance_eigenvectors_in.n_rows; j++) {
           covariance_eigenvectors_.set(
             j, i,

@@ -112,6 +112,7 @@ DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
   mult_const_ = 0.0;
   effective_num_reference_points_ = 0.0;
   correction_term_ = 0.0;
+  max_num_iterations_ = 0;
   num_random_fourier_features_eigen_ = 1;
   num_dimensions_ = 0;
 }
@@ -158,6 +159,12 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     arguments_in.num_kpca_components_in_,
     arguments_in.reference_table_->n_entries());
 
+  // Indicates the convergence of each kernel sum.
+  core::monte_carlo::MeanVariancePairVector l1_norm_history;
+  l1_norm_history.Init(arguments_in.num_kpca_components_in_);
+  std::vector< bool > converged(
+    arguments_in.num_kpca_components_in_, false);
+
   // The main loop.
   int num_iterations = 0;
   do {
@@ -180,24 +187,34 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     // Each process determines whether the kernel eigenvector estimates
     // are good enough, and notifies the master.
     bool all_components_converged = true;
-    for(int i = 0; all_components_converged &&
-        i < local_kpca_components.n_rows(); i++) {
-      double left_hand_side = 0.0;
-      double right_hand_side = 0.0;
-      for(int j = 0; j < local_kpca_components.n_cols(); j++) {
-        left_hand_side +=
-          core::math::Sqr(num_standard_deviations) *
-          local_kpca_components.get(i, j).sample_mean_variance();
-        right_hand_side +=
-          core::math::Sqr(local_kpca_components.get(i, j).sample_mean());
+    for(int i = 0; i < local_kpca_components.n_rows(); i++) {
+
+      if(converged[i]) {
+
+        // If already converged, skip it.
+        continue;
       }
-      all_components_converged =
-        (left_hand_side <= arguments_in.relative_error_ * right_hand_side +
-         arguments_in.absolute_error_);
+
+      double l1_norm = 0.0;
+      for(int j = 0; j < local_kpca_components.n_cols(); j++) {
+        l1_norm +=
+          fabs(local_kpca_components.get(i, j).sample_mean());
+      }
+      l1_norm_history[i].push_back(l1_norm);
+
+      double left_hand_side =
+        num_standard_deviations *
+        sqrt(l1_norm_history[i].sample_mean_variance());
+      double right_hand_side =
+        arguments_in.relative_error_ * l1_norm_history[i].sample_mean() +
+        arguments_in.absolute_error_;
+
+      converged[i] = (left_hand_side <= right_hand_side);
+      all_components_converged = all_components_converged && converged[i];
     }
 
-    // Quit after 10 iterations.
-    all_components_converged = (num_iterations >= 10);
+    // Quit if exceeding the max number of iterations.
+    all_components_converged = (num_iterations >= max_num_iterations_);
 
     bool all_done = true;
     boost::mpi::all_reduce(
@@ -238,6 +255,7 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
   // actual normalization factor.
   for(int i = 0; i < global_lengths.length(); i++) {
     global_lengths[i] = sqrt(global_lengths[i]);
+    printf("Got: %g\n", global_lengths[i]);
   }
   for(int j = 0; j < result_out->kpca_components().n_cols(); j++) {
     for(int i = 0; i < result_out->kpca_components().n_rows(); i++) {
@@ -267,8 +285,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 
     // The master generates a set of random Fourier features and do
     // a broadcast.
-    std::vector <
-    core::table::DensePoint > random_variates;
+    std::vector < core::table::DensePoint > random_variates;
     std::vector< arma::vec > random_variate_aliases;
     GenerateRandomFourierFeatures_(
       num_random_fourier_features_eigen_,
@@ -303,8 +320,9 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
         }
       }
       all_components_converged =
-        (total_error <= arguments_in.relative_error_ *
-         total_frobenius_norm + arguments_in.absolute_error_);
+        ((total_error <= arguments_in.relative_error_ *
+          total_frobenius_norm + arguments_in.absolute_error_) ||
+         num_iterations > max_num_iterations_);
     }
     bool all_done = true;
     boost::mpi::all_reduce(
@@ -329,11 +347,16 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     arma::vec kernel_eigenvalues;
     arma::mat covariance_eigenvectors;
     global_covariance.sample_means(&global_covariance_alias);
+
+    global_covariance_alias.print();
+
     arma::eig_sym(
       kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
     result_out->set_eigendecomposition_results(
       arguments_in.num_kpca_components_in_,
       kernel_eigenvalues, covariance_eigenvectors);
+
+    kernel_eigenvalues.print();
   }
   boost::mpi::broadcast(
     *world_, result_out->kernel_eigenvalues(), 0);
@@ -342,7 +365,82 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
+DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
+  int num_kpca_components_in_,
+  DistributedTableType *reference_table_in,
+  const core::table::DenseMatrix &kpca_components) {
+
+  arma::mat naive_kernel_matrix;
+  naive_kernel_matrix.set_size(
+    reference_table_in->n_entries(), reference_table_in->n_entries());
+  for(int j = 0; j < reference_table_in->n_entries(); j++) {
+    arma::vec point_j;
+    reference_table_in->local_table()->get(j, &point_j);
+    for(int i = 0; i < reference_table_in->n_entries(); i++) {
+      arma::vec point_i;
+      reference_table_in->local_table()->get(i, &point_i);
+      double squared_distance = metric_.DistanceSq(point_i, point_j);
+      double kernel_value = kernel_.EvalUnnormOnSq(squared_distance);
+      naive_kernel_matrix.at(i, j) =
+        kernel_value /
+        static_cast<double>(reference_table_in->n_entries());
+    }
+  }
+
+  // Eigendecompose the naive kernel matrix.
+  arma::vec naive_kernel_eigenvalues;
+  arma::mat naive_kernel_eigenvectors;
+  arma::eig_sym(
+    naive_kernel_eigenvalues, naive_kernel_eigenvectors, naive_kernel_matrix);
+
+  // Compare against the random Gram matrix generated from the random
+  // Fourier features.
+  arma::mat random_matrix;
+  random_matrix.set_size(
+    reference_table_in->n_entries(), reference_table_in->n_entries());
+  std::vector<arma::vec> transformed_points(reference_table_in->n_entries());
+
+  // The master generates a set of random Fourier features and do a
+  // broadcast.
+  const int num_random_fourier_features = 100;
+  std::vector <
+  core::table::DensePoint > random_variates(num_random_fourier_features);
+  std::vector< arma::vec > random_variate_aliases(
+    num_random_fourier_features);
+  GenerateRandomFourierFeatures_(
+    num_random_fourier_features, &random_variates, &random_variate_aliases);
+  for(int j = 0; j < reference_table_in->n_entries(); j++) {
+    arma::vec original_point;
+    reference_table_in->local_table()->get(j, &original_point);
+    mlpack::series_expansion::RandomFeature::Transform(
+      original_point, random_variate_aliases, & (transformed_points[j]));
+  }
+  for(int j = 0; j < reference_table_in->n_entries(); j++) {
+    for(int i = 0; i < reference_table_in->n_entries(); i++) {
+      double kernel_value =
+        arma::dot(transformed_points[i], transformed_points[j]);
+      random_matrix.at(i, j) =
+        kernel_value /
+        static_cast<double>(
+          reference_table_in->n_entries() * num_random_fourier_features);
+    }
+  }
+  arma::vec random_matrix_eigenvalues;
+  arma::mat random_matrix_eigenvectors;
+  arma::eig_sym(
+    random_matrix_eigenvalues, random_matrix_eigenvectors, random_matrix);
+
+  printf("\nNaive kernel matrix eigenvalues:\n");
+  naive_kernel_eigenvalues.print();
+  printf("\nRandom Gram matrix eigenvalues:\n");
+  random_matrix_eigenvalues.print();
+}
+
+template<typename DistributedTableType, typename KernelType>
+void DistributedKpca <
 DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
+  double relative_error_in,
+  double absolute_error_in,
   DistributedTableType *reference_table_in,
   DistributedTableType *query_table_in,
   const core::table::DenseMatrix &weights,
@@ -384,11 +482,21 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
   arma::mat naive;
   naive_weighted_kernel_averages.sample_means(&naive);
   approx_weighted_kernel_averages.sample_means(&approximated);
+  int error_bound_satisifed_count = 0;
   for(unsigned int j = 0; j < naive.n_cols; j++) {
+    double naive_l1_norm = 0.0;
+    double approx_l1_norm = 0.0;
+    double error_l1_norm = 0.0;
     for(unsigned int i = 0; i < naive.n_rows; i++) {
-      printf("%g vs %g\n", approximated.at(i, j), naive.at(i, j));
+      naive_l1_norm += fabs(naive.at(i, j));
+      approx_l1_norm += fabs(approximated.at(i, j));
+      error_l1_norm += fabs(naive.at(i, j) - approximated.at(i, j));
+    }
+    if(error_l1_norm <= relative_error_in * naive_l1_norm + absolute_error_in) {
+      error_bound_satisifed_count++;
     }
   }
+  printf("%d averages satisified the bound.\n", error_bound_satisifed_count);
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -408,8 +516,8 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
 
   // Indicates the convergence of each kernel sum.
-  core::monte_carlo::MeanVariancePairVector frobenius_norm_history;
-  frobenius_norm_history.Init(query_table_in->n_entries());
+  core::monte_carlo::MeanVariancePairVector l1_norm_history;
+  l1_norm_history.Init(query_table_in->n_entries());
   std::vector< bool > converged(query_table_in->n_entries(), false);
 
   // Call the computation.
@@ -456,7 +564,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
       mlpack::series_expansion::RandomFeature::Transform(
         query_point, random_variate_aliases, &query_point_projected);
 
-      double frobenius_norm = 0.0;
+      double l1_norm = 0.0;
       for(int k = 0; k < weights.n_rows(); k++) {
         for(int j = 0; j < num_random_fourier_features; j++) {
 
@@ -471,25 +579,27 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
         }
 
         // Add up the frobenius norm contribution.
-        frobenius_norm +=
-          core::math::Sqr(kernel_sums->get(k, i).sample_mean());
+        l1_norm += fabs(kernel_sums->get(k, i).sample_mean());
 
       } // end of checking the given KPCA component.
 
       // Add to the history.
-      frobenius_norm_history[i].push_back(frobenius_norm);
+      l1_norm_history[i].push_back(l1_norm);
 
-      // Start checking the convergence after 5 iterations.
-      if(num_iterations > 5) {
-        converged[i] = (
-                         num_standard_deviations *
-                         sqrt(
-                           frobenius_norm_history[i].sample_mean_variance()) <=
-                         relative_error_in *
-                         frobenius_norm_history[i].sample_mean() +
-                         absolute_error_in);
+      // Start checking the convergence after 10 iterations.
+      if(num_iterations > 10) {
+        double left_hand_side =
+          num_standard_deviations *
+          sqrt(
+            l1_norm_history[i].sample_mean_variance());
+        double right_hand_side =
+          relative_error_in * l1_norm_history[i].sample_mean() +
+          absolute_error_in;
+        converged[i] = (left_hand_side <= right_hand_side);
       }
-      all_local_query_converged = all_local_query_converged && converged[i];
+      all_local_query_converged =
+        (all_local_query_converged && converged[i]) ||
+        (num_iterations > max_num_iterations_);
 
     } // end of looping over each local query.
 
@@ -503,6 +613,9 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
 
   } // Terminate the loop only if all processes are done.
   while(! all_query_converged);
+
+  printf("Process %d converged in %d iterations...\n", world_->rank(),
+         num_iterations);
 
   // Do a post-corrrection to the number of terms for each Monte Carlo
   // estimate.
@@ -611,6 +724,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     if(arguments_in.do_naive_) {
       NaiveWeightedKernelAverage_(
+        arguments_in.relative_error_,
+        arguments_in.absolute_error_,
         arguments_in.reference_table_,
         arguments_in.query_table_,
         arguments_in.reference_table_->local_table()->weights(),
@@ -636,6 +751,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         arguments_in.reference_table_,
         arguments_in.reference_table_->local_table()->weights(),
         &reference_kernel_sums);
+
+      if(arguments_in.do_naive_) {
+        NaiveWeightedKernelAverage_(
+          arguments_in.relative_error_,
+          arguments_in.absolute_error_,
+          arguments_in.reference_table_,
+          arguments_in.reference_table_,
+          arguments_in.reference_table_->local_table()->weights(),
+          query_kernel_sums);
+      }
     }
     else {
       reference_kernel_sums.Copy(query_kernel_sums);
@@ -677,6 +802,13 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     FinalizeKernelEigenvectors_(
       num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
+
+    if(arguments_in.do_naive_) {
+      NaiveKernelEigenvectors_(
+        arguments_in.num_kpca_components_in_,
+        arguments_in.reference_table_,
+        result_out->kpca_components());
+    }
   }
   else {
 
@@ -741,6 +873,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in) {
 
+  // Set the maximum number of iterations.
+  max_num_iterations_ = arguments_in.max_num_iterations_in_;
+
   // Initialize the kernel.
   kernel_.Init(arguments_in.bandwidth_);
   mult_const_ =
@@ -781,7 +916,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
 
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
-    arguments_in.num_kpca_components_in_ * 2;
+    arguments_in.num_kpca_components_in_;
 }
 }
 }
