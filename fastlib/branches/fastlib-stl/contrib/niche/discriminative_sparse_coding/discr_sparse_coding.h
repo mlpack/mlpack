@@ -9,6 +9,9 @@
 #ifndef DISCR_SPARSE_CODING_H
 #define DISCR_SPARSE_CODING_H
 
+#define INSIDE_DISCR_SPARSE_CODING_H
+
+
 #include <contrib/niche/lars/lars.h>
 
 using namespace arma;
@@ -46,10 +49,15 @@ class DiscrSparseCoding {
   void RandomInitDictionary();
   
   void KMeansInitDictionary();
+
+  void DiscrSparseCoding::InitW();
   
   void SGDOptimize(u32 n_iterations, double step_size);
   
   void SGDStep(const vec& x, double step_size);
 };
+
+#include "discr_sparse_coding_impl.h"
+#undef INSIDE_DISCR_SPARSE_CODING_H
 
 #endif
