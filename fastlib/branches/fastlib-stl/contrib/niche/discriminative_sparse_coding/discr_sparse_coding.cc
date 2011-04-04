@@ -1,6 +1,4 @@
-#ifndef INSIDE_DISCR_SPARSE_CODING_H
-#error "This is not a public header file!"
-#endif
+#include "discr_sparse_coding.h"
 
 void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
 			     double lambda_1, double lambda_2) {
@@ -52,13 +50,10 @@ void DiscrSparseCoding::SGDStep(const vec& x, double step_size) {
   vec v;
   lars.Solution(v);
   
+  // active set
+  std::vector<u32> active_set = lars.active_set();
+  //bob
+  
   // update to Dictionary
   
 }
-
-
-
-
-
-
-#include "discr_sparse_coding.h"
