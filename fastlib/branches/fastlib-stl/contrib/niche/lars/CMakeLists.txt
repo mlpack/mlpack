@@ -8,6 +8,7 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
    # for lars
    lars.h
+   lars_impl.h
 )
 
 # add directory name to sources
@@ -40,3 +41,12 @@ target_link_libraries(test_lars
    fastlib
 )
 
+add_library(lars_lib
+  EXCLUDE_FROM_ALL
+  main.cc
+)
+
+target_link_libraries(lars_lib
+  mlpack
+  fastlib
+)
