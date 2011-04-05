@@ -76,6 +76,10 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )(
+    "num_threads_in",
+    boost::program_options::value<int>()->default_value(4),
+    "OPTIONAL The level of shared-memory parallelism."
+  )(
     "probability",
     boost::program_options::value<double>()->default_value(0.9),
     "Probability guarantee for the approximation of KPCA."
@@ -405,6 +409,13 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     else {
       std::cout << "Just doing approximation.\n";
     }
+  }
+
+  // Parse the number of threads.
+  arguments_out->num_threads_in_ = vm["num_threads_in"].as<int>();
+  if(world.rank() == 0) {
+    printf("Using %d threads for shared memory parallelism...\n",
+           arguments_out->num_threads_in_);
   }
   return false;
 }

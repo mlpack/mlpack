@@ -77,6 +77,8 @@ class DistributedKpcaArguments {
      */
     bool do_naive_;
 
+    int num_threads_in_;
+
   public:
 
     /** @brief The default constructor.
@@ -96,6 +98,7 @@ class DistributedKpcaArguments {
       num_kpca_components_in_ = 0;
       do_centering_ = false;
       do_naive_ = false;
+      num_threads_in_ = 1;
     }
 
     /** @brief The destructor.
