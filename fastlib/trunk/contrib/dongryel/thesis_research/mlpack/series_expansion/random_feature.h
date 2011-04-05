@@ -52,16 +52,13 @@ class RandomFeature {
 
     void CovarianceTransform_() {
 
-      // Allocate the projection matrix.
-      table_projections_->Init(
-        2 * random_variates_->size(), table_->n_entries());
-
       int num_random_fourier_features = random_variates_->size();
       double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
       covariance_transformation_->Init(
         2 * num_random_fourier_features, 2 * num_random_fourier_features);
       covariance_transformation_->set_total_num_terms(end_ - begin_);
 
+      printf("Doing on %d %d\n", begin_, end_);
       for(int i = begin_; i < end_; i++) {
         arma::vec old_point;
         table_->get(i , &old_point);
@@ -90,6 +87,7 @@ class RandomFeature {
           }
         }
       }
+      printf("Done on %d %d\n", begin_, end_);
     }
 
   public:
@@ -104,6 +102,10 @@ class RandomFeature {
       const std::vector< arma::vec > &random_variates,
       core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
       core::table::DenseMatrix *table_projections) {
+
+      // Allocate the projection matrix.
+      table_projections->Init(
+        2 * random_variates_->size(), table_->n_entries());
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
@@ -121,7 +123,6 @@ class RandomFeature {
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
                   (i + 1) * grain_size : table_in.n_entries();
-        printf("Begin: %d, end: %d\n", begin, end);
         tmp_objects[i].Init_(
           begin, end, table_in, do_centering,
           global_mean, random_variates,
