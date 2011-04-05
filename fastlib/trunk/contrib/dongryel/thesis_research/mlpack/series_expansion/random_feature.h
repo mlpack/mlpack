@@ -105,7 +105,7 @@ class RandomFeature {
 
       // Allocate the projection matrix.
       table_projections->Init(
-        2 * random_variates_->size(), table_->n_entries());
+        2 * random_variates.size(), table_in.n_entries());
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
