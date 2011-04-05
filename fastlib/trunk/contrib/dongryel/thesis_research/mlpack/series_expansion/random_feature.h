@@ -131,11 +131,11 @@ class RandomFeature {
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
           double first_correction_factor =
-            (do_centering) ? global_mean.get(j, i).sample_mean() : 0.0;
+            (do_centering) ? global_mean.get(0, j).sample_mean() : 0.0;
           double second_correction_factor =
             (do_centering) ?
             global_mean.get(
-              j + num_random_fourier_features, i).sample_mean() : 0.0;
+              0, j + num_random_fourier_features).sample_mean() : 0.0;
           table_projections->set(
             j, i, cos(dot_product) * normalization_factor -
             first_correction_factor);
