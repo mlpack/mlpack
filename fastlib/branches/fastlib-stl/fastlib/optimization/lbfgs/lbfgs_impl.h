@@ -96,14 +96,14 @@ double L_BFGS<FunctionType>::ChooseScalingFactor_(int iteration_num,
 }
 
 /***
- * Check to make sure that the norm of the gradient is not smaller than 1e-5.
+ * Check to make sure that the norm of the gradient is not smaller than 1e-10.
  * Currently that value is not configurable.
  *
- * @return (norm < 1e-5)
+ * @return (norm < 1e-10)
  */
 template<typename FunctionType>
 bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::mat& gradient) {
-  const double threshold = 1e-5; // TODO: this threshold should be configurable
+  const double threshold = 1e-10; // TODO: this threshold should be configurable
   return arma::norm(gradient, 2) < threshold;
 }
 
@@ -158,6 +158,12 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
     function_value = Evaluate_(new_iterate_tmp_);
     function_.Gradient(new_iterate_tmp_, gradient);
     num_iterations++;
+
+//    NOTIFY("Line search iteration %d: objective %lf, coordinates",
+//        num_iterations - 1, function_value);
+//    std::cout << new_iterate_tmp_;
+//    NOTIFY("Gradient");
+//    std::cout << gradient;
 
     if(function_value > initial_function_value + step_size *
         linear_approx_function_value_decrease) {
@@ -365,8 +371,10 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
 //    std::cout << gradient;
 
     // Break when the norm of the gradient becomes too small.
-    if(GradientNormTooSmall_(gradient))
+    if(GradientNormTooSmall_(gradient)) {
+//      NOTIFY("Gradient norm too small.");
       break;
+    }
 
     // Choose the scaling factor.
     double scaling_factor = ChooseScalingFactor_(it_num, gradient);
