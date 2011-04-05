@@ -83,6 +83,7 @@ class DistributedKpca {
 
     void NaiveKernelEigenvectors_(
       int num_kpca_components_in_,
+      bool do_centering,
       DistributedTableType *reference_table_in,
       const core::table::DenseMatrix &kpca_components);
 

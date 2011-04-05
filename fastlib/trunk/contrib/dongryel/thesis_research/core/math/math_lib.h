@@ -245,6 +245,7 @@ template<typename T>
 void RandomCombination(
   int begin, int end, int num_elements, std::vector<T> *combination) {
 
+  combination->resize(0);
   for(int i = end - begin - num_elements; i < end - begin; i++) {
     int t = core::math::RandInt(0, i + 1) + begin;
     bool already_in_list = false;

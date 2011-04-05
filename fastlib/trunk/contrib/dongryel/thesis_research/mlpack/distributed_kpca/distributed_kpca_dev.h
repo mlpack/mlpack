@@ -225,12 +225,27 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     num_random_fourier_features_eigen_,
     &random_variates, &random_variate_aliases);
 
+  // Each process computes its local mean, and performs an
+  // all-reduction, if we are performing a centered version of KPCA.
+  core::monte_carlo::MeanVariancePairMatrix local_mean;
+  core::monte_carlo::MeanVariancePairMatrix global_mean;
+  if(arguments_in.do_centering_) {
+    mlpack::series_expansion::RandomFeature::NormalizedAverageTransform(
+      *(arguments_in.reference_table_->local_table()),
+      random_variate_aliases, &local_mean);
+    boost::mpi::all_reduce(
+      *world_, local_mean, global_mean,
+      core::parallel::CombineMeanVariancePairMatrix());
+  }
+
   // Each process computes its local covariance and the master
   // reduces them to form the global covariance.
   core::monte_carlo::MeanVariancePairMatrix local_covariance;
   core::monte_carlo::MeanVariancePairMatrix global_covariance;
   mlpack::series_expansion::RandomFeature::CovarianceTransform(
     *(arguments_in.reference_table_->local_table()),
+    arguments_in.do_centering_,
+    global_mean,
     random_variate_aliases, &local_covariance,
     &result_out->reference_projections());
   boost::mpi::reduce(
@@ -258,6 +273,7 @@ template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   int num_kpca_components_in_,
+  bool do_centering,
   DistributedTableType *reference_table_in,
   const core::table::DenseMatrix &kpca_components) {
 
@@ -277,6 +293,25 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
       naive_kernel_matrix.at(i, j) =
         kernel_value /
         static_cast<double>(reference_table_in->n_entries());
+    }
+  }
+  core::monte_carlo::MeanVariancePairVector kernel_averages;
+  kernel_averages.Init(reference_table_in->n_entries());
+  core::monte_carlo::MeanVariancePair overall_average;
+  if(do_centering) {
+    for(int j = 0; j < reference_table_in->n_entries(); j++) {
+      for(int i = 0; i < reference_table_in->n_entries(); i++) {
+        kernel_averages[j].push_back(naive_kernel_matrix.at(i, j));
+        overall_average.push_back(naive_kernel_matrix.at(i, j));
+      }
+    }
+    for(unsigned int j = 0; j < naive_kernel_matrix.n_cols; j++) {
+      for(unsigned int i = 0; i < naive_kernel_matrix.n_rows; i++) {
+        naive_kernel_matrix.at(i, j) = naive_kernel_matrix.at(i, j) -
+                                       kernel_averages[j].sample_mean() -
+                                       kernel_averages[i].sample_mean() +
+                                       overall_average.sample_mean();
+      }
     }
   }
 
@@ -303,11 +338,21 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
     num_random_fourier_features);
   GenerateRandomFourierFeatures_(
     num_random_fourier_features, &random_variates, &random_variate_aliases);
+  arma::vec average_fourier_features;
+  average_fourier_features.zeros(num_random_fourier_features * 2);
   for(int j = 0; j < reference_table_in->n_entries(); j++) {
     arma::vec original_point;
     reference_table_in->local_table()->get(j, &original_point);
     mlpack::series_expansion::RandomFeature::Transform(
       original_point, random_variate_aliases, & (transformed_points[j]));
+    double first_factor = static_cast<double>(j) / static_cast<double>(j + 1);
+    double second_factor = 1.0 - first_factor;
+    average_fourier_features =
+      first_factor * average_fourier_features +
+      second_factor * transformed_points[j];
+  }
+  for(int j = 0; j < reference_table_in->n_entries(); j++) {
+    transformed_points[j] -= average_fourier_features;
   }
   for(int j = 0; j < reference_table_in->n_entries(); j++) {
     for(int i = 0; i < reference_table_in->n_entries(); i++) {
@@ -453,6 +498,9 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   // Call the computation.
   int num_iterations = 0;
   bool all_query_converged = true;
+
+  // Temporary vector used for generating a random combination.
+  std::vector<int> random_combination;
   do {
 
     // The master generates a set of random Fourier features and do a
@@ -468,10 +516,10 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     // reference set and does an all-reduction to compute the global
     // sum projections.
     core::monte_carlo::MeanVariancePairMatrix local_reference_average;
-    mlpack::series_expansion::RandomFeature::AverageTransform(
+    mlpack::series_expansion::RandomFeature::WeightedAverageTransform(
       *(reference_table_in->local_table()),
       weights, num_reference_samples,
-      random_variate_aliases, &local_reference_average);
+      random_variate_aliases, &random_combination, &local_reference_average);
     core::monte_carlo::MeanVariancePairMatrix global_reference_average;
     boost::mpi::all_reduce(
       *world_, local_reference_average, global_reference_average,
@@ -737,6 +785,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     if(arguments_in.do_naive_) {
       NaiveKernelEigenvectors_(
         arguments_in.num_kpca_components_in_,
+        arguments_in.do_centering_,
         arguments_in.reference_table_,
         result_out->kpca_components());
     }
