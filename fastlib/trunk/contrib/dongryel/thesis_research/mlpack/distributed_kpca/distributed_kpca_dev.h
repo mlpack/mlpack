@@ -230,7 +230,8 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   core::monte_carlo::MeanVariancePairMatrix local_mean;
   core::monte_carlo::MeanVariancePairMatrix global_mean;
   if(arguments_in.do_centering_) {
-    mlpack::series_expansion::RandomFeature::NormalizedAverageTransform(
+    mlpack::series_expansion::RandomFeature<TableType>::
+    NormalizedAverageTransform(
       *(arguments_in.reference_table_->local_table()),
       random_variate_aliases, &local_mean);
     boost::mpi::all_reduce(
@@ -242,7 +243,9 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   // reduces them to form the global covariance.
   core::monte_carlo::MeanVariancePairMatrix local_covariance;
   core::monte_carlo::MeanVariancePairMatrix global_covariance;
-  mlpack::series_expansion::RandomFeature::CovarianceTransform(
+  mlpack::series_expansion::RandomFeature<TableType>::
+  ThreadedCovarianceTransform(
+    arguments_in.num_threads_in_,
     *(arguments_in.reference_table_->local_table()),
     arguments_in.do_centering_,
     global_mean,
@@ -343,7 +346,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   for(int j = 0; j < reference_table_in->n_entries(); j++) {
     arma::vec original_point;
     reference_table_in->local_table()->get(j, &original_point);
-    mlpack::series_expansion::RandomFeature::Transform(
+    mlpack::series_expansion::RandomFeature<TableType>::Transform(
       original_point, random_variate_aliases, & (transformed_points[j]));
     double first_factor = static_cast<double>(j) / static_cast<double>(j + 1);
     double second_factor = 1.0 - first_factor;
@@ -516,7 +519,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     // reference set and does an all-reduction to compute the global
     // sum projections.
     core::monte_carlo::MeanVariancePairMatrix local_reference_average;
-    mlpack::series_expansion::RandomFeature::WeightedAverageTransform(
+    mlpack::series_expansion::RandomFeature<TableType>::WeightedAverageTransform(
       *(reference_table_in->local_table()),
       weights, num_reference_samples,
       random_variate_aliases, &random_combination, &local_reference_average);
@@ -539,7 +542,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
       arma::vec query_point;
       query_table_in->local_table()->get(i, &query_point);
       arma::vec query_point_projected;
-      mlpack::series_expansion::RandomFeature::Transform(
+      mlpack::series_expansion::RandomFeature<TableType>::Transform(
         query_point, random_variate_aliases, &query_point_projected);
 
       double l1_norm = 0.0;

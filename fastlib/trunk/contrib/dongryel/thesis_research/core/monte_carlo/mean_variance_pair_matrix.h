@@ -268,7 +268,9 @@ class MeanVariancePairMatrix {
         if(ptr_ != NULL) {
           DestructPtr_();
         }
-        this->Init(v.n_rows(), v.n_cols());
+        if(v.n_rows() > 0 && v.n_cols()) {
+          this->Init(v.n_rows(), v.n_cols());
+        }
       }
       n_rows_ = v.n_rows();
       n_cols_ = v.n_cols();

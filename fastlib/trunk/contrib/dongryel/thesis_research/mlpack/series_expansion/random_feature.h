@@ -8,13 +8,143 @@
 #ifndef MLPACK_SERIES_EXPANSION_RANDOM_FEATURE_H
 #define MLPACK_SERIES_EXPANSION_RANDOM_FEATURE_H
 
+#include <boost/thread/thread.hpp>
 #include <vector>
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 
 namespace mlpack {
 namespace series_expansion {
+
+template<typename TableType>
 class RandomFeature {
+  private:
+
+    int begin_;
+    int end_;
+    const TableType *table_;
+    bool do_centering_;
+    const core::monte_carlo::MeanVariancePairMatrix *global_mean_;
+    const std::vector< arma::vec > *random_variates_;
+    core::monte_carlo::MeanVariancePairMatrix *covariance_transformation_;
+    core::table::DenseMatrix *table_projections_;
+
+  private:
+
+    void Init_(
+      int begin,
+      int end,
+      const TableType &table_in,
+      bool do_centering,
+      const core::monte_carlo::MeanVariancePairMatrix &global_mean,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
+      core::table::DenseMatrix *table_projections) {
+
+      begin_ = begin;
+      end_ = end;
+      table_ = &table_in;
+      do_centering_ = do_centering;
+      global_mean_ = &global_mean;
+      random_variates_ = &random_variates;
+      covariance_transformation_ = covariance_transformation;
+      table_projections_ = table_projections;
+    }
+
+    void CovarianceTransform_() {
+
+      // Allocate the projection matrix.
+      table_projections_->Init(
+        2 * random_variates_->size(), table_->n_entries());
+
+      int num_random_fourier_features = random_variates_->size();
+      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
+      covariance_transformation_->Init(
+        2 * num_random_fourier_features, 2 * num_random_fourier_features);
+      covariance_transformation_->set_total_num_terms(end_ - begin_);
+
+      for(int i = begin_; i < end_; i++) {
+        arma::vec old_point;
+        table_->get(i , &old_point);
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot((*random_variates_)[j], old_point);
+          double first_correction_factor =
+            (do_centering_) ? global_mean_->get(0, j).sample_mean() : 0.0;
+          double second_correction_factor =
+            (do_centering_) ?
+            global_mean_->get(
+              0, j + num_random_fourier_features).sample_mean() : 0.0;
+          table_projections_->set(
+            j, i, cos(dot_product) * normalization_factor -
+            first_correction_factor);
+          table_projections_->set(
+            j + num_random_fourier_features, i,
+            sin(dot_product) * normalization_factor - second_correction_factor);
+        }
+
+        // Now Accumulate the covariance.
+        for(int k = 0; k < table_projections_->n_rows(); k++) {
+          for(int j = 0; j < table_projections_->n_rows(); j++) {
+            covariance_transformation_->get(j, k).push_back(
+              table_projections_->get(j, i) *
+              table_projections_->get(k, i));
+          }
+        }
+      }
+    }
+
   public:
+
+    /** @brief A private function for launching threads.
+     */
+    static void ThreadedCovarianceTransform(
+      int num_threads,
+      const TableType &table_in,
+      bool do_centering,
+      const core::monte_carlo::MeanVariancePairMatrix &global_mean,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
+      core::table::DenseMatrix *table_projections) {
+
+      // Basically, store sub-results and combine them later after all
+      // threads are joined.
+      boost::thread_group thread_group;
+      std::vector <
+      mlpack::series_expansion::RandomFeature<TableType> >
+      tmp_objects(num_threads);
+      core::monte_carlo::MeanVariancePairMatrix
+      *sub_covariance_transformations =
+        new core::monte_carlo::MeanVariancePairMatrix[num_threads];
+
+      // The block size.
+      int grain_size = table_in.n_entries() / num_threads;
+      for(int i = 0; i < num_threads; i++) {
+        int begin = i * grain_size;
+        int end = (i < num_threads - 1) ?
+                  (i + 1) * grain_size : table_in.n_entries();
+        printf("Begin: %d, end: %d\n", begin, end);
+        tmp_objects[i].Init_(
+          begin, end, table_in, do_centering,
+          global_mean, random_variates,
+          &(sub_covariance_transformations[i]),
+          table_projections);
+        thread_group.add_thread(
+          new boost::thread(
+            &mlpack::series_expansion::RandomFeature <
+            TableType >::CovarianceTransform_,
+            &tmp_objects[i]));
+      }
+      thread_group.join_all();
+
+      // By here, all threads have exited.
+      covariance_transformation->Init(
+        sub_covariance_transformations[0].n_rows(),
+        sub_covariance_transformations[0].n_cols());
+      for(int i = 0; i < num_threads; i++) {
+        covariance_transformation->CombineWith(
+          sub_covariance_transformations[i]);
+      }
+      delete[] sub_covariance_transformations;
+    }
 
     template<typename KernelType, typename TreeIteratorType>
     static void EvaluateAverageField(
@@ -72,7 +202,6 @@ class RandomFeature {
     /** @brief Generates a random Fourier features from the given
      *         table and rotates it by a given set of eigenvectors.
      */
-    template<typename TableType>
     static void AccumulateRotationTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &covariance_eigenvectors,
@@ -106,59 +235,9 @@ class RandomFeature {
       }
     }
 
-    template<typename TableType>
-    static void CovarianceTransform(
-      const TableType &table_in,
-      bool do_centering,
-      const core::monte_carlo::MeanVariancePairMatrix &global_mean,
-      const std::vector< arma::vec > &random_variates,
-      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
-      core::table::DenseMatrix *table_projections) {
-
-      // Allocate the projection matrix.
-      table_projections->Init(
-        2 * random_variates.size(), table_in.n_entries());
-
-      int num_random_fourier_features = random_variates.size();
-      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
-      covariance_transformation->Init(
-        2 * num_random_fourier_features, 2 * num_random_fourier_features);
-      covariance_transformation->set_total_num_terms(table_in.n_entries());
-
-      for(int i = 0; i < table_in.n_entries(); i++) {
-        arma::vec old_point;
-        table_in.get(i , &old_point);
-        for(int j = 0; j < num_random_fourier_features; j++) {
-          double dot_product = arma::dot(random_variates[j], old_point);
-          double first_correction_factor =
-            (do_centering) ? global_mean.get(0, j).sample_mean() : 0.0;
-          double second_correction_factor =
-            (do_centering) ?
-            global_mean.get(
-              0, j + num_random_fourier_features).sample_mean() : 0.0;
-          table_projections->set(
-            j, i, cos(dot_product) * normalization_factor -
-            first_correction_factor);
-          table_projections->set(
-            j + num_random_fourier_features, i,
-            sin(dot_product) * normalization_factor - second_correction_factor);
-        }
-
-        // Now Accumulate the covariance.
-        for(int k = 0; k < table_projections->n_rows(); k++) {
-          for(int j = 0; j < table_projections->n_rows(); j++) {
-            covariance_transformation->get(j, k).push_back(
-              table_projections->get(j, i) *
-              table_projections->get(k, i));
-          }
-        }
-      }
-    }
-
     /** @brief Computes an expected random Fourier feature, normalized
      *         in the dot product sense.
      */
-    template<typename TableType>
     static void NormalizedAverageTransform(
       const TableType &table_in,
       const std::vector< arma::vec > &random_variates,
@@ -187,7 +266,6 @@ class RandomFeature {
      *         runs over a sample of points weighted by a set of
      *         weights.
      */
-    template<typename TableType>
     static void WeightedAverageTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &weights_in,
@@ -222,7 +300,6 @@ class RandomFeature {
       }
     }
 
-    template<typename TableType>
     static void SumTransform(
       const TableType &table_in,
       const std::vector< arma::vec > &random_variates,
@@ -258,7 +335,7 @@ class RandomFeature {
       }
     }
 
-    template<typename TableType, typename PointType>
+    template<typename PointType>
     static void Transform(
       const TableType &table_in,
       const std::vector< PointType > &random_variates,
@@ -285,7 +362,7 @@ class RandomFeature {
       }
     }
 
-    template<typename TableType, typename KernelType>
+    template<typename KernelType>
     static void Transform(
       const TableType &table_in,
       const KernelType &kernel_in,
