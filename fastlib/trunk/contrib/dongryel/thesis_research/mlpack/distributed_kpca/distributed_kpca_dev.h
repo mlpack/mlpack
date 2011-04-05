@@ -154,97 +154,27 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
-  core::monte_carlo::MeanVariancePairMatrix local_kpca_components;
-  local_kpca_components.Init(
-    arguments_in.num_kpca_components_in_,
-    arguments_in.reference_table_->n_entries());
-
-  // Indicates the convergence of each kernel sum.
-  core::monte_carlo::MeanVariancePairVector l1_norm_history;
-  l1_norm_history.Init(arguments_in.num_kpca_components_in_);
-  std::vector< bool > converged(
-    arguments_in.num_kpca_components_in_, false);
-
-  // The main loop.
-  int num_iterations = 0;
-  do {
-
-    // The master generates the set of random Fourier features.
-    std::vector <
-    core::table::DensePoint > random_variates;
-    std::vector< arma::vec > random_variate_aliases;
-    GenerateRandomFourierFeatures_(
-      num_random_fourier_features_eigen_,
-      &random_variates, &random_variate_aliases);
-
-    // Each process independently computes its own portion of kernel
-    // eigenvectors.
-    mlpack::series_expansion::RandomFeature::AccumulateRotationTransform(
-      *(arguments_in.reference_table_->local_table()),
-      result_out->covariance_eigenvectors(),
-      random_variate_aliases, &local_kpca_components);
-
-    // Each process determines whether the kernel eigenvector estimates
-    // are good enough, and notifies the master.
-    bool all_components_converged = true;
-    for(int i = 0; i < local_kpca_components.n_rows(); i++) {
-
-      if(converged[i]) {
-
-        // If already converged, skip it.
-        continue;
-      }
-
-      double l1_norm = 0.0;
-      for(int j = 0; j < local_kpca_components.n_cols(); j++) {
-        l1_norm +=
-          fabs(local_kpca_components.get(i, j).sample_mean());
-      }
-      l1_norm_history[i].push_back(l1_norm);
-
-      double left_hand_side =
-        num_standard_deviations *
-        sqrt(l1_norm_history[i].sample_mean_variance());
-      double right_hand_side =
-        arguments_in.relative_error_ * l1_norm_history[i].sample_mean() +
-        arguments_in.absolute_error_;
-
-      converged[i] = (left_hand_side <= right_hand_side);
-      all_components_converged = all_components_converged && converged[i];
-    }
-
-    // Quit if exceeding the max number of iterations.
-    all_components_converged = (num_iterations >= max_num_iterations_);
-
-    bool all_done = true;
-    boost::mpi::all_reduce(
-      *world_, all_components_converged, all_done, std::logical_and<bool>());
-    if(all_done) {
-      break;
-    }
-    num_iterations++;
-  }
-  while(true);
-
-  if(world_->rank() == 0) {
-    std::cout << "KPCA eigenvector finalizing took " << num_iterations <<
-              " iterations.\n";
-  }
-
-  // Extract.
-  local_kpca_components.sample_means(& (result_out->kpca_components()));
+  // Temporary space for performing the covariance eigenvector times
+  // the projected reference set.
+  arma::mat covariance_eigenvectors_alias;
+  core::table::DenseMatrixToArmaMat(
+    result_out->covariance_eigenvectors(), &covariance_eigenvectors_alias);
+  arma::mat reference_projections_alias;
+  core::table::DenseMatrixToArmaMat(
+    result_out->reference_projections(), &reference_projections_alias);
+  arma::mat product = arma::trans(covariance_eigenvectors_alias) *
+                      reference_projections_alias;
 
   // Normalize each KPCA components. Each process needs to compute its
   // squared length and participate in the global all-reduce step.
   core::table::DensePoint local_squared_length_contributions;
-  local_squared_length_contributions.Init(
-    result_out->kpca_components().n_rows());
+  local_squared_length_contributions.Init(product.n_rows);
   local_squared_length_contributions.SetZero();
   core::table::DensePoint global_lengths;
-  for(int j = 0; j < result_out->kpca_components().n_cols(); j++) {
-    for(int i = 0; i < result_out->kpca_components().n_rows(); i++) {
+  for(unsigned int j = 0; j < product.n_cols; j++) {
+    for(unsigned int i = 0; i < product.n_rows; i++) {
       local_squared_length_contributions[i] +=
-        core::math::Sqr(result_out->kpca_components().get(i, j));
+        core::math::Sqr(product.at(i, j));
     }
   }
   boost::mpi::all_reduce(
@@ -253,14 +183,28 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 
   // Take the square roots of each KPCA component to compute the
   // actual normalization factor.
+  std::vector< std::pair<int, double> > eigenvalues(global_lengths.length());
   for(int i = 0; i < global_lengths.length(); i++) {
+    eigenvalues[i].first = i;
+    eigenvalues[i].second =
+      global_lengths[i] / static_cast<double>(product.n_cols);
+    printf("Got an eigenvalue of %g\n", eigenvalues[i].second);
     global_lengths[i] = sqrt(global_lengths[i]);
-    printf("Got: %g\n", global_lengths[i]);
   }
-  for(int j = 0; j < result_out->kpca_components().n_cols(); j++) {
-    for(int i = 0; i < result_out->kpca_components().n_rows(); i++) {
+
+  // Sort the eigenvalues.
+  std::sort(
+    eigenvalues.begin(), eigenvalues.end(),
+    boost::bind(&std::pair<int, double>::second, _1) >
+    boost::bind(&std::pair<int, double>::second, _2));
+
+  // Copy the eigenvectors out.
+  result_out->kpca_components().Init(
+    arguments_in.num_kpca_components_in_, product.n_cols);
+  for(unsigned int j = 0; j < product.n_cols; j++) {
+    for(int i = 0; i < arguments_in.num_kpca_components_in_; i++) {
       result_out->kpca_components().set(
-        i, j, result_out->kpca_components().get(i, j) / global_lengths[i]);
+        i, j, product.at(i, j) / global_lengths[i]);
     }
   }
 }
@@ -274,71 +218,25 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   DistributedTableType > &arguments_in,
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
-  // The master computes the eigenvectors.
+  // The master generates a set of random Fourier features and do
+  // a broadcast.
+  std::vector < core::table::DensePoint > random_variates;
+  std::vector< arma::vec > random_variate_aliases;
+  GenerateRandomFourierFeatures_(
+    num_random_fourier_features_eigen_,
+    &random_variates, &random_variate_aliases);
+
+  // Each process computes its local covariance and the master
+  // reduces them to form the global covariance.
+  core::monte_carlo::MeanVariancePairMatrix local_covariance;
   core::monte_carlo::MeanVariancePairMatrix global_covariance;
-  global_covariance.Init(
-    2 * num_random_fourier_features_eigen_,
-    2 * num_random_fourier_features_eigen_);
-
-  int num_iterations = 0;
-  do {
-
-    // The master generates a set of random Fourier features and do
-    // a broadcast.
-    std::vector < core::table::DensePoint > random_variates;
-    std::vector< arma::vec > random_variate_aliases;
-    GenerateRandomFourierFeatures_(
-      num_random_fourier_features_eigen_,
-      &random_variates, &random_variate_aliases);
-
-    // Each process computes its local covariance and the master
-    // reduces them to form the global covariance.
-    core::monte_carlo::MeanVariancePairMatrix local_covariance;
-    core::monte_carlo::MeanVariancePairMatrix global_covariance_in_this_round;
-    mlpack::series_expansion::RandomFeature::CovarianceTransform(
-      *(arguments_in.reference_table_->local_table()),
-      num_reference_samples, random_variate_aliases,
-      &local_covariance);
-    boost::mpi::reduce(
-      *world_, local_covariance, global_covariance_in_this_round,
-      core::parallel::CombineMeanVariancePairMatrix(), 0);
-
-    // The master determines whether the covariance estimates are
-    // good enough.
-    bool all_components_converged = true;
-    if(world_->rank() == 0) {
-      global_covariance.CombineWith(global_covariance_in_this_round);
-
-      double total_frobenius_norm = 0.0;
-      double total_error = 0.0;
-      for(int j = 0; j < global_covariance.n_cols(); j++) {
-        for(int i = 0; i <= j; i++) {
-          total_frobenius_norm +=
-            core::math::Sqr(global_covariance.get(i, j).sample_mean());
-          total_error += core::math::Sqr(num_standard_deviations) *
-                         global_covariance.get(i, j).sample_mean_variance();
-        }
-      }
-      all_components_converged =
-        ((total_error <= arguments_in.relative_error_ *
-          total_frobenius_norm + arguments_in.absolute_error_) ||
-         num_iterations > max_num_iterations_);
-    }
-    bool all_done = true;
-    boost::mpi::all_reduce(
-      *world_, all_components_converged, all_done, std::logical_and<bool>());
-
-    num_iterations++;
-    if(all_done) {
-      break;
-    }
-  }
-  while(true);
-
-  if(world_->rank() == 0) {
-    std::cout << "KPCA eigenvector preprocessing took " << num_iterations <<
-              " iterations.\n";
-  }
+  mlpack::series_expansion::RandomFeature::CovarianceTransform(
+    *(arguments_in.reference_table_->local_table()),
+    random_variate_aliases, &local_covariance,
+    &result_out->reference_projections());
+  boost::mpi::reduce(
+    *world_, local_covariance, global_covariance,
+    core::parallel::CombineMeanVariancePairMatrix(), 0);
 
   // The master eigendecomposes the converged global covariance and
   // does a broadcast.
@@ -347,16 +245,10 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     arma::vec kernel_eigenvalues;
     arma::mat covariance_eigenvectors;
     global_covariance.sample_means(&global_covariance_alias);
-
-    global_covariance_alias.print();
-
     arma::eig_sym(
       kernel_eigenvalues, covariance_eigenvectors, global_covariance_alias);
     result_out->set_eigendecomposition_results(
-      arguments_in.num_kpca_components_in_,
       kernel_eigenvalues, covariance_eigenvectors);
-
-    kernel_eigenvalues.print();
   }
   boost::mpi::broadcast(
     *world_, result_out->kernel_eigenvalues(), 0);
@@ -369,6 +261,8 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   int num_kpca_components_in_,
   DistributedTableType *reference_table_in,
   const core::table::DenseMatrix &kpca_components) {
+
+  printf("Verifying naively\n");
 
   arma::mat naive_kernel_matrix;
   naive_kernel_matrix.set_size(
@@ -390,6 +284,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   // Eigendecompose the naive kernel matrix.
   arma::vec naive_kernel_eigenvalues;
   arma::mat naive_kernel_eigenvectors;
+  printf("Calling on naive!\n");
   arma::eig_sym(
     naive_kernel_eigenvalues, naive_kernel_eigenvectors, naive_kernel_matrix);
 
@@ -402,7 +297,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
 
   // The master generates a set of random Fourier features and do a
   // broadcast.
-  const int num_random_fourier_features = 100;
+  const int num_random_fourier_features = 20;
   std::vector <
   core::table::DensePoint > random_variates(num_random_fourier_features);
   std::vector< arma::vec > random_variate_aliases(
@@ -427,13 +322,56 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   }
   arma::vec random_matrix_eigenvalues;
   arma::mat random_matrix_eigenvectors;
+  printf("Calling on Fourier features.\n");
   arma::eig_sym(
     random_matrix_eigenvalues, random_matrix_eigenvectors, random_matrix);
+
+  // Covariance matrix.
+  arma::mat random_matrix_covariance;
+  random_matrix_covariance.zeros(
+    2 * num_random_fourier_features, 2 * num_random_fourier_features);
+  arma::mat transformed_points_mat;
+  transformed_points_mat.set_size(
+    2 * num_random_fourier_features, reference_table_in->n_entries());
+  for(int k = 0; k < reference_table_in->n_entries(); k++) {
+    for(int j = 0; j < num_random_fourier_features * 2; j++) {
+      transformed_points_mat.at(j, k) = transformed_points[k][j] /
+                                        sqrt(num_random_fourier_features) ;
+      for(int i = 0; i < num_random_fourier_features * 2; i++) {
+        random_matrix_covariance.at(i, j) +=
+          transformed_points[k][i] * transformed_points[k][j] /
+          static_cast<double>(num_random_fourier_features);
+      }
+    }
+  }
+  random_matrix_covariance *=
+    (1.0 / static_cast<double>(reference_table_in->n_entries()));
+  arma::vec covariance_eigenvalues;
+  arma::mat covariance_eigenvectors;
+  printf("Calling on covariance:\n");
+  arma::eig_sym(
+    covariance_eigenvalues, covariance_eigenvectors, random_matrix_covariance);
 
   printf("\nNaive kernel matrix eigenvalues:\n");
   naive_kernel_eigenvalues.print();
   printf("\nRandom Gram matrix eigenvalues:\n");
   random_matrix_eigenvalues.print();
+
+  printf("Checking dimension: %d %d %d %d\n",
+         covariance_eigenvectors.n_rows,
+         covariance_eigenvectors.n_cols,
+         transformed_points_mat.n_rows,
+         transformed_points_mat.n_cols);
+  arma::mat product = arma::trans(covariance_eigenvectors) *
+                      transformed_points_mat;
+  for(unsigned int i = 0; i < product.n_rows; i++) {
+    double magnitude = 0.0;
+    for(unsigned int j = 0; j < transformed_points_mat.n_cols; j++) {
+      magnitude += core::math::Sqr(product.at(i, j));
+    }
+    printf("Checking %g\n", sqrt(magnitude) /
+           static_cast<double>(product.n_cols));
+  }
 }
 
 template<typename DistributedTableType, typename KernelType>
@@ -818,6 +756,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     result_out->kpca_components().SetAll(1.0);
   }
 
+  exit(0);
   if(world_->rank() == 0) {
     std::cout << "Starting the projection step...\n";
   }
@@ -916,7 +855,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
 
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
-    arguments_in.num_kpca_components_in_;
+    arguments_in.num_kpca_components_in_ + 5;
 }
 }
 }

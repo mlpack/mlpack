@@ -46,11 +46,20 @@ class KpcaResult {
      */
     core::table::DenseMatrix covariance_eigenvectors_;
 
+    /** @brief The data projection used for the covariance
+     *         eigenvector.
+     */
+    core::table::DenseMatrix reference_projections_;
+
     /** @brief The kernel principal components.
      */
     core::table::DenseMatrix kpca_components_;
 
   public:
+
+    core::table::DenseMatrix &reference_projections() {
+      return reference_projections_;
+    }
 
     core::table::DenseMatrix &kpca_components() {
       return kpca_components_;
@@ -149,7 +158,6 @@ class KpcaResult {
     }
 
     void set_eigendecomposition_results(
-      int num_kpca_components_in,
       const arma::vec &kernel_eigenvalues_in,
       const arma::mat &covariance_eigenvectors_in) {
 
@@ -168,13 +176,12 @@ class KpcaResult {
         boost::bind(&std::pair<int, double>::second, _1) >
         boost::bind(&std::pair<int, double>::second, _2));
 
-      kernel_eigenvalues_.Init(num_kpca_components_in);
+      kernel_eigenvalues_.Init(covariance_eigenvectors_in.n_cols);
       covariance_eigenvectors_.Init(
-        covariance_eigenvectors_in.n_rows, num_kpca_components_in);
-      for(int i = 0; i < num_kpca_components_in; i++) {
+        covariance_eigenvectors_in.n_rows,
+        covariance_eigenvectors_in.n_cols);
+      for(unsigned int i = 0; i < covariance_eigenvectors_in.n_cols; i++) {
         kernel_eigenvalues_[i] = sorted_eigenvalues[i].second;
-        printf("Observing: %d %g\n", sorted_eigenvalues[i].first,
-               sorted_eigenvalues[i].second);
         for(unsigned int j = 0; j < covariance_eigenvectors_in.n_rows; j++) {
           covariance_eigenvectors_.set(
             j, i,
