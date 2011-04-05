@@ -188,7 +188,6 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     eigenvalues[i].first = i;
     eigenvalues[i].second =
       global_lengths[i] / static_cast<double>(product.n_cols);
-    printf("Got an eigenvalue of %g\n", eigenvalues[i].second);
     global_lengths[i] = sqrt(global_lengths[i]);
   }
 
@@ -749,7 +748,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     result_out->kpca_components().SetAll(1.0);
   }
 
-  exit(0);
   if(world_->rank() == 0) {
     std::cout << "Starting the projection step...\n";
   }
