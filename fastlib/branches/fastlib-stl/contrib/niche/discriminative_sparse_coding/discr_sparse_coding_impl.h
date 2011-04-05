@@ -13,7 +13,7 @@ void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
   n_atoms_ = n_atoms;
   D_ = mat(n_dims_, n_atoms_);
   
-  w = vec(n_atoms_);
+  w_ = vec(n_atoms_);
   
   lambda_1_ = lambda_1;
   lambda_2_ = lambda_2;
@@ -39,7 +39,7 @@ void DiscrSparseCoding::KMeansInitDictionary() {
 
 
 void DiscrSparseCoding::InitW() {
-  w.zeros();
+  w_.zeros();
 }
 
 
@@ -59,7 +59,7 @@ void DiscrSparseCoding::SGDStep(const vec& x, double step_size) {
   vec v;
   lars.Solution(v);
   mat A_chol_factor;
-  lars.GetCholFactor(A);
+  lars.GetCholFactor(A_chol_factor);
   
   // active set
   std::vector<u32> active_set = lars.active_set();
