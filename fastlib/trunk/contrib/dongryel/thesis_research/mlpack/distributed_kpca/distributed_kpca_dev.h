@@ -110,7 +110,7 @@ template<typename DistributedTableType, typename KernelType>
 DistributedKpca<DistributedTableType, KernelType>::DistributedKpca() {
   world_ = NULL;
   mult_const_ = 0.0;
-  effective_num_reference_points_ = 0.0;
+  effective_num_reference_points_ = 0;
   correction_term_ = 0.0;
   max_num_iterations_ = 0;
   num_random_fourier_features_eigen_ = 1;
@@ -889,22 +889,22 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   }
 
   // Initialize the multiplicative constant.
-  double total_sum = 0;
+  int total_sum = 0;
   for(int i = 0; i < world_->size(); i++) {
     total_sum += arguments_in.reference_table_->local_n_entries(i);
   }
   effective_num_reference_points_ =
     (arguments_in.reference_table_ == arguments_in.query_table_ &&
      arguments_in.mode_ == "kde") ?
-    (total_sum - 1.0) : total_sum;
+    (total_sum - 1) : total_sum;
 
   // In case the mode is KDE, and is monochromatic.
   correction_term_ =
     (arguments_in.mode_ == "kde") ?
     1.0 / static_cast<double>(
       (arguments_in.reference_table_ == arguments_in.query_table_) ?
-      (effective_num_reference_points_ + 1.0) :
-      effective_num_reference_points_) : 0.0;
+      (effective_num_reference_points_ + 1) :
+      effective_num_reference_points_) : 0;
 
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
