@@ -109,9 +109,13 @@ class RandomFeature {
     template<typename TableType>
     static void CovarianceTransform(
       const TableType &table_in,
-      int num_reference_samples,
       const std::vector< arma::vec > &random_variates,
-      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation) {
+      core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
+      core::table::DenseMatrix *table_projections) {
+
+      // Allocate the projection matrix.
+      table_projections->Init(
+        2 * random_variates.size(), table_in.n_entries());
 
       int num_random_fourier_features = random_variates.size();
       double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
@@ -119,28 +123,24 @@ class RandomFeature {
         2 * num_random_fourier_features, 2 * num_random_fourier_features);
       covariance_transformation->set_total_num_terms(table_in.n_entries());
 
-      // Generate a random combination.
-      std::vector<int> random_combination;
-      core::math::RandomCombination(
-        0, table_in.n_entries(), num_reference_samples, &random_combination);
-
-      arma::vec tmp_vector;
-      tmp_vector.set_size(2 * num_random_fourier_features);
-      for(unsigned int i = 0; i < random_combination.size(); i++) {
+      for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec old_point;
-        table_in.get(random_combination[i] , &old_point);
+        table_in.get(i , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
-          tmp_vector[j] = cos(dot_product) * normalization_factor;
-          tmp_vector[j + num_random_fourier_features] = sin(dot_product) *
-              normalization_factor;
+          table_projections->set(
+            j, i, cos(dot_product) * normalization_factor);
+          table_projections->set(
+            j + num_random_fourier_features, i,
+            sin(dot_product) * normalization_factor);
         }
 
         // Now Accumulate the covariance.
-        for(unsigned int k = 0; k < tmp_vector.n_elem; k++) {
-          for(unsigned int j = 0; j < tmp_vector.n_elem; j++) {
+        for(int k = 0; k < table_projections->n_rows(); k++) {
+          for(int j = 0; j < table_projections->n_rows(); j++) {
             covariance_transformation->get(j, k).push_back(
-              tmp_vector[j] * tmp_vector[k]);
+              table_projections->get(j, i) *
+              table_projections->get(k, i));
           }
         }
       }
