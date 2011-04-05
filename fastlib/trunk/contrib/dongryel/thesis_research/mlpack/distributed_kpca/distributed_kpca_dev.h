@@ -356,12 +356,6 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   naive_kernel_eigenvalues.print();
   printf("\nRandom Gram matrix eigenvalues:\n");
   random_matrix_eigenvalues.print();
-
-  printf("Checking dimension: %d %d %d %d\n",
-         covariance_eigenvectors.n_rows,
-         covariance_eigenvectors.n_cols,
-         transformed_points_mat.n_rows,
-         transformed_points_mat.n_cols);
   arma::mat product = arma::trans(covariance_eigenvectors) *
                       transformed_points_mat;
   for(unsigned int i = 0; i < product.n_rows; i++) {
@@ -369,8 +363,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
     for(unsigned int j = 0; j < transformed_points_mat.n_cols; j++) {
       magnitude += core::math::Sqr(product.at(i, j));
     }
-    printf("Checking %g\n", sqrt(magnitude) /
-           static_cast<double>(product.n_cols));
+    printf("Checking %g\n", magnitude / static_cast<double>(product.n_cols));
   }
 }
 
