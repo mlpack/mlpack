@@ -109,6 +109,8 @@ class RandomFeature {
     template<typename TableType>
     static void CovarianceTransform(
       const TableType &table_in,
+      bool do_centering,
+      const core::monte_carlo::MeanVariancePairMatrix &global_mean,
       const std::vector< arma::vec > &random_variates,
       core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
       core::table::DenseMatrix *table_projections) {
@@ -128,11 +130,18 @@ class RandomFeature {
         table_in.get(i , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
+          double first_correction_factor =
+            (do_centering) ? global_mean.get(j, i).sample_mean() : 0.0;
+          double second_correction_factor =
+            (do_centering) ?
+            global_mean.get(
+              j + num_random_fourier_features, i).sample_mean() : 0.0;
           table_projections->set(
-            j, i, cos(dot_product) * normalization_factor);
+            j, i, cos(dot_product) * normalization_factor -
+            first_correction_factor);
           table_projections->set(
             j + num_random_fourier_features, i,
-            sin(dot_product) * normalization_factor);
+            sin(dot_product) * normalization_factor - second_correction_factor);
         }
 
         // Now Accumulate the covariance.
@@ -146,12 +155,45 @@ class RandomFeature {
       }
     }
 
+    /** @brief Computes an expected random Fourier feature, normalized
+     *         in the dot product sense.
+     */
     template<typename TableType>
-    static void AverageTransform(
+    static void NormalizedAverageTransform(
+      const TableType &table_in,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
+
+      int num_random_fourier_features = random_variates.size();
+      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
+      average_transformation->Init(1, 2 * num_random_fourier_features);
+      average_transformation->set_total_num_terms(table_in.n_entries());
+
+      for(int i = 0; i < table_in.n_entries(); i++) {
+        arma::vec old_point;
+        table_in.get(i, &old_point);
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot(random_variates[j], old_point);
+          average_transformation->get(0, j).push_back(
+            cos(dot_product) * normalization_factor);
+          average_transformation->get(
+            0, j + num_random_fourier_features).push_back(
+              sin(dot_product) * normalization_factor);
+        }
+      }
+    }
+
+    /** @brief Computes an expected random Fourier feature, where it
+     *         runs over a sample of points weighted by a set of
+     *         weights.
+     */
+    template<typename TableType>
+    static void WeightedAverageTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &weights_in,
       int num_reference_samples,
       const std::vector< arma::vec > &random_variates,
+      std::vector<int> *random_combination,
       core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
 
       int num_random_fourier_features = random_variates.size();
@@ -160,17 +202,16 @@ class RandomFeature {
       average_transformation->set_total_num_terms(table_in.n_entries());
 
       // Generate a random combination.
-      std::vector<int> random_combination;
       core::math::RandomCombination(
-        0, table_in.n_entries(), num_reference_samples, &random_combination);
+        0, table_in.n_entries(), num_reference_samples, random_combination);
 
-      for(unsigned int i = 0; i < random_combination.size(); i++) {
+      for(unsigned int i = 0; i < random_combination->size(); i++) {
         arma::vec old_point;
-        table_in.get(random_combination[i] , &old_point);
+        table_in.get((*random_combination)[i] , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
           for(int k = 0; k < weights_in.n_rows(); k++) {
-            double weight = weights_in.get(k, random_combination[i]);
+            double weight = weights_in.get(k, (*random_combination)[i]);
             average_transformation->get(k, j).push_back(
               weight * cos(dot_product));
             average_transformation->get(
