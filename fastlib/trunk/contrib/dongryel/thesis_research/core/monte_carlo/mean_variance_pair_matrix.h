@@ -12,6 +12,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
 #include "core/monte_carlo/mean_variance_pair.h"
+#include "core/table/dense_matrix.h"
 
 namespace core {
 namespace table {
