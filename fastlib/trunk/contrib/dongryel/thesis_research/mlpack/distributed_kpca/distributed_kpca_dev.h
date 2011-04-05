@@ -783,11 +783,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in, result_out);
 
     if(arguments_in.do_naive_) {
-      NaiveKernelEigenvectors_(
-        arguments_in.num_kpca_components_in_,
-        arguments_in.do_centering_,
-        arguments_in.reference_table_,
-        result_out->kpca_components());
+      //NaiveKernelEigenvectors_(
+      //arguments_in.num_kpca_components_in_,
+      //arguments_in.do_centering_,
+      //arguments_in.reference_table_,
+      //result_out->kpca_components());
     }
   }
   else {
@@ -798,13 +798,14 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     result_out->kpca_components().SetAll(1.0);
   }
 
-  if(world_->rank() == 0) {
-    std::cout << "Starting the projection step...\n";
-  }
-
   // If the mode is KPCA, then we need to compute the projection of
   // each query point onto the KPCA components.
   if(arguments_in.mode_ == "kpca") {
+
+    if(world_->rank() == 0) {
+      std::cout << "Starting the projection step...\n";
+    }
+
     core::monte_carlo::MeanVariancePairMatrix query_kpca_projections;
     ComputeWeightedKernelAverage_(
       arguments_in.relative_error_,
@@ -817,6 +818,16 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       result_out->kpca_components(),
       &query_kpca_projections);
 
+    if(arguments_in.do_naive_) {
+      NaiveWeightedKernelAverage_(
+        arguments_in.relative_error_,
+        arguments_in.absolute_error_,
+        arguments_in.reference_table_,
+        arguments_in.query_table_,
+        result_out->kpca_components(),
+        query_kpca_projections);
+    }
+
     // If the centering is requested, then we need a post-processing.
     if(arguments_in.do_centering_) {
       PostProcessKpcaProjections_(
@@ -826,7 +837,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         &query_kpca_projections);
     }
 
-    // Export the results.
+    // Export the results after scaling it.
+    query_kpca_projections.scale(effective_num_reference_points_);
     result_out->Export(
       num_standard_deviations, mult_const_,
       correction_term_, query_kpca_projections);

@@ -82,6 +82,12 @@ class MeanVariancePairVector {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    void scale(double scale_factor_in) {
+      for(int j = 0; j < n_elements_; j++) {
+        ptr_[j].scale(scale_factor_in);
+      }
+    }
+
     int length() const {
       return n_elements_;
     }
@@ -359,6 +365,14 @@ class MeanVariancePairMatrix {
       for(int j = 0; j < n_cols_; j++) {
         for(int i = 0; i < n_rows_; i++) {
           this->get(i, j).CombineWith(v.get(i, j));
+        }
+      }
+    }
+
+    void scale(double scale_factor_in) {
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          this->get(i, j).scale(scale_factor_in);
         }
       }
     }
