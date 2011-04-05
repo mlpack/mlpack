@@ -141,7 +141,7 @@ class DistributedKpca {
 
     double mult_const_;
 
-    double effective_num_reference_points_;
+    int effective_num_reference_points_;
 
     double correction_term_;
 
