@@ -50,7 +50,7 @@ class DiscrSparseCoding {
   
   void KMeansInitDictionary();
 
-  void DiscrSparseCoding::InitW();
+  void InitW();
   
   void SGDOptimize(u32 n_iterations, double step_size);
   
