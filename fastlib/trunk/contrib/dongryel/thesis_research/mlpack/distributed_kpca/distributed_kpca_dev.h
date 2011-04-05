@@ -676,7 +676,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   double num_standard_deviations =
     (cumulative_probability > 0.999) ?
     3.0 : boost::math::quantile(normal_dist_, cumulative_probability);
-  printf("Number of standard deviation: %g\n", num_standard_deviations);
 
   // Barrier so that every process is here.
   world_->barrier();
