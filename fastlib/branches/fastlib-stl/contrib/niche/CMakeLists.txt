@@ -19,6 +19,7 @@ set(DIRS
 #   spike_train_dependence  ## missing hsic.h
 #   svm  ## does not compile, several mismatched function calls
    lars
+   discriminative_sparse_coding
 )
 
 foreach(dir ${DIRS})
