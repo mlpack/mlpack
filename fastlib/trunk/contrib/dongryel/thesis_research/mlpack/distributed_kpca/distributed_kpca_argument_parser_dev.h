@@ -252,8 +252,10 @@ void DistributedKpcaArgumentParser::RandomGenerate(
   else if(prescale_option == "standardize") {
     core::table::Standardize::Transform(&random_dataset);
   }
-  std::cout << "Scaled the dataset with the option: " <<
-            prescale_option << "\n";
+  if(world.rank() == 0) {
+    std::cout << "Scaled the dataset with the option: " <<
+              prescale_option << "\n";
+  }
 
   random_dataset.Save(file_name);
 }
@@ -396,7 +398,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // Parse whether the naive mode is on or not.
   arguments_out->do_naive_ = (vm.count("do_naive") > 0 && world.size() == 1);
-  if(arguments_out->do_naive_) {
+  if(world.rank() == 0 && arguments_out->do_naive_) {
     std::cout << "Computing naively as well.\n";
   }
   else {
