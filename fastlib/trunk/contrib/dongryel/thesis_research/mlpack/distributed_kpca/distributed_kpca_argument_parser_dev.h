@@ -398,11 +398,13 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // Parse whether the naive mode is on or not.
   arguments_out->do_naive_ = (vm.count("do_naive") > 0 && world.size() == 1);
-  if(world.rank() == 0 && arguments_out->do_naive_) {
-    std::cout << "Computing naively as well.\n";
-  }
-  else {
-    std::cout << "Just doing approximation.\n";
+  if(world.rank() == 0) {
+    if(arguments_out->do_naive_) {
+      std::cout << "Computing naively as well.\n";
+    }
+    else {
+      std::cout << "Just doing approximation.\n";
+    }
   }
   return false;
 }
