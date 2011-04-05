@@ -32,6 +32,7 @@ class DiscrSparseCoding {
   
   double lambda_1_; // l_1 regularization term
   double lambda_2_; // l_2 regularization term
+  double lambda_w_; // regularization term for norm of hypothesis vector w
   
  public:
   DiscrSparseCoding() {
@@ -42,7 +43,8 @@ class DiscrSparseCoding {
 
   
   void Init(const mat& X, const vec& y, u32 n_atoms,
-	    double lambda_1, double lambda_2);
+	    double lambda_1, double lambda_2,
+	    double lambda_w);
   
   void InitDictionary();
   
@@ -54,7 +56,9 @@ class DiscrSparseCoding {
   
   void SGDOptimize(u32 n_iterations, double step_size);
   
-  void SGDStep(const vec& x, double step_size);
+  void SGDStep(const vec& x, double y, double step_size);
+  
+  void ProjectW();
 };
 
 #include "discr_sparse_coding_impl.h"
