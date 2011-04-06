@@ -176,17 +176,18 @@ class DensePoint {
     }
 
     void Init(int length_in) {
-      if(n_rows_ != length_in) {
-        if(ptr_) {
-          DestructPtr_();
+      if(is_alias_ == false) {
+        if(n_rows_ != length_in) {
+          if(ptr_) {
+            DestructPtr_();
+          }
+          ptr_ =
+            (core::table::global_m_file_) ?
+            core::table::global_m_file_->ConstructArray<double>(length_in) :
+            new double[length_in];
         }
-        ptr_ =
-          (core::table::global_m_file_) ?
-          core::table::global_m_file_->ConstructArray<double>(length_in) :
-          new double[length_in];
+        n_rows_ = length_in;
       }
-      n_rows_ = length_in;
-      is_alias_ = false;
     }
 
     void set_size(int length_in) {
