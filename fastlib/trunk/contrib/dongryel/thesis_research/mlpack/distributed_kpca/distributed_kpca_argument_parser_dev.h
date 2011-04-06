@@ -59,12 +59,13 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL file containing query positions."
   )(
     "random_generate_n_attributes",
-    boost::program_options::value<int>()->default_value(5),
-    "Generate the datasets on the fly of the specified dimension."
+    boost::program_options::value<int>(),
+    "OPTIONAL Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(100000),
-    "Generate the datasets on the fly of the specified number of points."
+    boost::program_options::value<int>(),
+    "OPTIONAL Generate the datasets on the fly of the specified number "
+    "of points."
   )(
     "kernel",
     boost::program_options::value<std::string>()->default_value("gaussian"),
