@@ -9,6 +9,7 @@
 #include <boost/math/distributions/normal.hpp>
 #include <boost/mpi/communicator.hpp>
 #include <boost/program_options.hpp>
+#include <boost/scoped_array.hpp>
 #include "core/table/distributed_table.h"
 #include "mlpack/distributed_kpca/distributed_kpca_arguments.h"
 #include "mlpack/distributed_kpca/kpca_result.h"
@@ -78,7 +79,7 @@ class DistributedKpca {
     void GenerateRandomFourierFeatures_(
       int num_random_fourier_features,
       core::table::DenseMatrix *random_variates,
-      std::vector< arma::vec > *random_variate_aliases);
+      boost::scoped_array< arma::vec > &random_variate_aliases);
 
     void NaiveKernelEigenvectors_(
       int num_kpca_components_in_,
