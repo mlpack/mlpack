@@ -47,6 +47,7 @@ class OptionsHierarchy {
     void print(string& pathname);
     void printLeaves();
     void printBranches();
+    void printAll(string pathname);
   
     /* Prints only nodes which are registered as outputs. */
     void printOutputs();

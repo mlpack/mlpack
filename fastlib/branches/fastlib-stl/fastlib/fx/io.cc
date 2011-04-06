@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <sys/time.h>
+#include <execinfo.h>
 
 #include "printing.h"
 
@@ -17,14 +18,15 @@
 
 using namespace mlpack;
 
+IO* IO::singleton = new IO();
+
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
 
-/* Declare the singleton variable's initial value, NULL */
-IO* IO::singleton = 0;
 
 /* Constructors, Destructors, Copy */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
+  std::cout << "CONSTRUCT" << std::endl;
   return;
 }
 
@@ -67,9 +69,8 @@ int IO::checkValue(const char* identifier) {
   
 //Returns the sole instance of this class
 IO& IO::getSingleton() {
-  if(!singleton) 
+  if(singleton == NULL)
     singleton = new IO();
-  
   return *singleton;
 }	
 
@@ -148,7 +149,7 @@ void IO::parseStream(std::istream& stream) {
 
 //Prints the current state, right now just for debugging purposes
 void IO::print() {
-  IO::getSingleton().hierarchy.print();
+  IO::getSingleton().hierarchy.printAll(std::string(""));
 }
 
 //Prints an error message

@@ -10,7 +10,6 @@ OptionsHierarchy::OptionsHierarchy() : node(""), isOutput(false) {
 }
 
 OptionsHierarchy::OptionsHierarchy(const char* name, bool isOut) : node(name), isOutput(isOut){
-  node = name;
   return;
 }
 
@@ -48,7 +47,8 @@ void OptionsHierarchy::appendNode(string& pathname, string& tname, string& descr
   children[name].appendNode(path, tname, description);
 }  
 
-/* Returns the node with the specified pathname 
+/* Returns the node with the specified pathname
+  UNUSED, but lets keep it just in case...
 OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
   appendNode(pathname, ); //Make sure we actually have that node
   
@@ -80,10 +80,21 @@ string OptionsHierarchy::getName(string& pathname) {
   return pathname.substr(0, pathname.find('/'));
 }
 
+void OptionsHierarchy::printAll(string pathname) {
+  cout << node << ": ";
+  mlpack::Printing::printValue(tname, node);
+  cout << endl;
+
+  map<string, OptionsHierarchy>::iterator iter;
+  for(iter = children.begin(); iter != children.end(); iter++) {
+    cout << pathname+iter->second.node << endl;
+    iter->second.printAll(pathname+iter->second.node);
+  }
+}
 
 void OptionsHierarchy::print() {
   //Print the node, append '/' if that node is not a leaf
-  cout << node << ":" << endl;
+  cout << node << ":" <<  endl;
   
   //Begin formatted output 	
   cout << "Entries:" << endl;
@@ -121,7 +132,9 @@ void OptionsHierarchy::printLeaves() {
     if(!iter->second.children.size()) {
       
       //Print the node's name, data, and description.  
-      cout << "\"" << iter->second.node << "\":" << endl;
+      cout << "\"" << iter->second.node << "\": ";
+      mlpack::Printing::printValue(iter->second.tname, iter->second.node);
+      cout	 << endl;
       //Does it have a description?
       if(iter->second.desc.length() > 0)
         cout << "\t" << iter->second.desc << endl;
