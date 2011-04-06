@@ -334,7 +334,8 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   arma::mat random_matrix;
   random_matrix.set_size(
     reference_table_in->n_entries(), reference_table_in->n_entries());
-  std::vector<arma::vec> transformed_points(reference_table_in->n_entries());
+  boost::scoped_array<arma::vec> transformed_points(
+    new arma::vec[reference_table_in->n_entries()]);
 
   // The master generates a set of random Fourier features and do a
   // broadcast.
