@@ -111,7 +111,7 @@ class RandomFeature {
       int num_random_fourier_features = random_variates_->size();
       double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
       average_transformation_->Init(1, 2 * num_random_fourier_features);
-      average_transformation_->set_total_num_terms(table_->n_entries());
+      average_transformation_->set_total_num_terms(end_ - begin_);
 
       for(int i = begin_; i < end_; i++) {
         arma::vec old_point;

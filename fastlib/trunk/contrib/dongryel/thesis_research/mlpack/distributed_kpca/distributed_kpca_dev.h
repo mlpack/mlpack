@@ -758,11 +758,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in, result_out);
 
     if(arguments_in.do_naive_) {
-      //NaiveKernelEigenvectors_(
-      //arguments_in.num_kpca_components_in_,
-      //arguments_in.do_centering_,
-      //arguments_in.reference_table_,
-      //result_out->kpca_components());
+      NaiveKernelEigenvectors_(
+        arguments_in.num_kpca_components_in_,
+        arguments_in.do_centering_,
+        arguments_in.reference_table_,
+        result_out->kpca_components());
     }
   }
   else {
