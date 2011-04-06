@@ -694,7 +694,7 @@ DistributedTableType, KernelType >::PostProcessKpcaProjections_(
   for(int j = 0; j < query_kpca_projections->n_cols(); j++) {
     for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
       query_kpca_projections->get(i, j).ScaledCombineWith(
-        -1.0, local_reference_dot_products.get(0, i));
+        -1.0, global_reference_dot_products.get(0, i));
       query_kpca_projections->get(i, j).ScaledCombineWith(
         - global_reference_dot_products.get(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
@@ -893,6 +893,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         average_reference_kernel_sum,
         result_out->kpca_components(),
         &query_kpca_projections);
+    }
+
+    // Export the results after scaling it.
+    query_kpca_projections.scale(effective_num_reference_points_);
+    result_out->Export(
+      num_standard_deviations, mult_const_,
+      correction_term_, query_kpca_projections);
+
+    if(arguments_in.do_centering_ && arguments_in.do_naive_) {
 
       // Check again on the centered result, if naive computation is
       // required.
@@ -905,12 +914,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         result_out->kpca_components(),
         query_kpca_projections);
     }
-
-    // Export the results after scaling it.
-    query_kpca_projections.scale(effective_num_reference_points_);
-    result_out->Export(
-      num_standard_deviations, mult_const_,
-      correction_term_, query_kpca_projections);
   }
   else {
 
