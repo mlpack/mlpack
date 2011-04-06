@@ -88,6 +88,7 @@ class DistributedKpca {
       const core::table::DenseMatrix &kpca_components);
 
     void NaiveWeightedKernelAverage_(
+      bool do_centering,
       double relative_error_in,
       double absolute_error_in,
       DistributedTableType *reference_table_in,
