@@ -158,7 +158,7 @@ class RandomFeature {
 
       // Allocate the projection matrix.
       average_transformation_in->Init(
-        2 * num_random_fourier_features, table_in.n_entries());
+        1, 2 * num_random_fourier_features);
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
