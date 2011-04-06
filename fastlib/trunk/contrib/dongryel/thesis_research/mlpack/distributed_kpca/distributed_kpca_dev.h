@@ -422,6 +422,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
+  bool do_centering,
   double relative_error_in,
   double absolute_error_in,
   DistributedTableType *reference_table_in,
@@ -429,6 +430,70 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
   const core::table::DenseMatrix &weights,
   const core::monte_carlo::MeanVariancePairMatrix
   &approx_weighted_kernel_averages) {
+
+  // Compute the kernel averages.
+  core::monte_carlo::MeanVariancePairVector naive_query_kernel_averages;
+  core::monte_carlo::MeanVariancePair global_reference_kernel_average;
+  core::monte_carlo::MeanVariancePairVector naive_reference_kernel_averages;
+  naive_query_kernel_averages.Init(query_table_in->n_entries());
+  naive_reference_kernel_averages.Init(reference_table_in->n_entries());
+
+  if(do_centering) {
+    for(int i = 0; i < query_table_in->n_entries(); i++) {
+
+      // The query point.
+      arma::vec query_point;
+      query_table_in->local_table()->get(i, &query_point);
+      for(int j = 0; j < reference_table_in->n_entries(); j++) {
+
+        // The reference point.
+        arma::vec reference_point;
+        reference_table_in->local_table()->get(j, &reference_point);
+
+        // Compute the squared distance and the kernel value.
+        double squared_distance =
+          metric_.DistanceSq(query_point, reference_point);
+        double kernel_value =
+          kernel_.EvalUnnormOnSq(squared_distance);
+        naive_query_kernel_averages[i].push_back(kernel_value);
+      }
+    }
+    if(query_table_in != reference_table_in) {
+      for(int i = 0; i < reference_table_in->n_entries(); i++) {
+
+        // The outer reference point.
+        arma::vec outer_reference_point;
+        reference_table_in->local_table()->get(i, &outer_reference_point);
+        for(int j = 0; j < reference_table_in->n_entries(); j++) {
+
+          // The reference point.
+          arma::vec inner_reference_point;
+          reference_table_in->local_table()->get(j, &inner_reference_point);
+
+          // Compute the squared distance and the kernel value.
+          double squared_distance =
+            metric_.DistanceSq(outer_reference_point, inner_reference_point);
+          double kernel_value =
+            kernel_.EvalUnnormOnSq(squared_distance);
+          naive_reference_kernel_averages[i].push_back(kernel_value);
+        }
+      }
+    }
+    else {
+      naive_reference_kernel_averages.CopyValues(naive_query_kernel_averages);
+    }
+    for(int i = 0; i < reference_table_in->n_entries(); i++) {
+      global_reference_kernel_average.push_back(
+        naive_reference_kernel_averages[i].sample_mean());
+    }
+
+    printf("References:\n");
+    for(int i = 0; i < reference_table_in->n_entries(); i++) {
+      printf("%g ", naive_reference_kernel_averages[i].sample_mean());
+    }
+    printf("\n");
+    printf("Global average: %g\n", global_reference_kernel_average.sample_mean());
+  }
 
   // Allocate the weighted kernel sum slots.
   core::monte_carlo::MeanVariancePairMatrix naive_weighted_kernel_averages;
@@ -452,7 +517,14 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
         metric_.DistanceSq(query_point, reference_point);
       double kernel_value =
         kernel_.EvalUnnormOnSq(squared_distance);
-
+      if(do_centering) {
+        kernel_value = kernel_value -
+                       query_table_in->n_entries() *
+                       naive_query_kernel_averages[i].sample_mean() -
+                       reference_table_in->n_entries() *
+                       naive_reference_kernel_averages[j].sample_mean() +
+                       global_reference_kernel_average.sample_mean();
+      }
       for(int k = 0; k < weights.n_rows(); k++) {
         naive_weighted_kernel_averages.get(k, i).push_back(
           weights.get(k, j) * kernel_value);
@@ -477,6 +549,9 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
     }
     if(error_l1_norm <= relative_error_in * naive_l1_norm + absolute_error_in) {
       error_bound_satisifed_count++;
+    }
+    else {
+      printf("Error: %g %g\n", error_l1_norm, relative_error_in * naive_l1_norm + absolute_error_in);
     }
   }
   printf("%d averages satisified the bound.\n", error_bound_satisifed_count);
@@ -621,11 +696,11 @@ DistributedTableType, KernelType >::PostProcessKpcaProjections_(
       query_kpca_projections->get(i, j).ScaledCombineWith(
         -1.0, local_reference_dot_products.get(0, i));
       query_kpca_projections->get(i, j).ScaledCombineWith(
-        - local_reference_dot_products.get(
+        - global_reference_dot_products.get(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
         query_kernel_sums.get(0, j));
       query_kpca_projections->get(i, j).ScaledCombineWith(
-        local_reference_dot_products.get(
+        global_reference_dot_products.get(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
         average_reference_kernel_sum);
     }
@@ -679,6 +754,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     if(arguments_in.do_naive_) {
       NaiveWeightedKernelAverage_(
+        false,
         arguments_in.relative_error_,
         arguments_in.absolute_error_,
         arguments_in.reference_table_,
@@ -710,6 +786,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
       if(arguments_in.do_naive_) {
         NaiveWeightedKernelAverage_(
+          false,
           arguments_in.relative_error_,
           arguments_in.absolute_error_,
           arguments_in.reference_table_,
@@ -760,11 +837,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in, result_out);
 
     if(arguments_in.do_naive_) {
-      NaiveKernelEigenvectors_(
-        arguments_in.num_kpca_components_in_,
-        arguments_in.do_centering_,
-        arguments_in.reference_table_,
-        result_out->kpca_components());
+      //NaiveKernelEigenvectors_(
+      //arguments_in.num_kpca_components_in_,
+      //arguments_in.do_centering_,
+      //arguments_in.reference_table_,
+      //result_out->kpca_components());
     }
   }
   else {
@@ -798,6 +875,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     if(arguments_in.do_naive_) {
       NaiveWeightedKernelAverage_(
+        false,
         arguments_in.relative_error_,
         arguments_in.absolute_error_,
         arguments_in.reference_table_,
@@ -808,11 +886,24 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     // If the centering is requested, then we need a post-processing.
     if(arguments_in.do_centering_) {
+
+      std::cout << "Doing post-correction to the projections...\n";
       PostProcessKpcaProjections_(
         reference_kernel_sums, query_kernel_sums,
         average_reference_kernel_sum,
         result_out->kpca_components(),
         &query_kpca_projections);
+
+      // Check again on the centered result, if naive computation is
+      // required.
+      NaiveWeightedKernelAverage_(
+        true,
+        arguments_in.relative_error_,
+        arguments_in.absolute_error_,
+        arguments_in.reference_table_,
+        arguments_in.query_table_,
+        result_out->kpca_components(),
+        query_kpca_projections);
     }
 
     // Export the results after scaling it.
