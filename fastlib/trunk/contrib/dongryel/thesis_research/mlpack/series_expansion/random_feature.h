@@ -188,9 +188,6 @@ class RandomFeature {
       thread_group.join_all();
 
       // By here, all threads have exited.
-      average_transformation_in->Init(
-        sub_average_transformations[0].n_rows(),
-        sub_average_transformations[0].n_cols());
       for(int i = 0; i < num_threads; i++) {
         average_transformation_in->CombineWith(
           sub_average_transformations[i]);
