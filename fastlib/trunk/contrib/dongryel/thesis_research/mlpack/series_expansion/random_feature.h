@@ -58,7 +58,6 @@ class RandomFeature {
         2 * num_random_fourier_features, 2 * num_random_fourier_features);
       covariance_transformation_->set_total_num_terms(end_ - begin_);
 
-      printf("Doing on %d %d\n", begin_, end_);
       for(int i = begin_; i < end_; i++) {
         arma::vec old_point;
         table_->get(i , &old_point);
@@ -87,7 +86,6 @@ class RandomFeature {
           }
         }
       }
-      printf("Done on %d %d\n", begin_, end_);
     }
 
   public:

@@ -34,7 +34,6 @@ class GaussianKernel {
 
       // Draw random $D$ Gaussian variates and scale it by the inverse
       // of the bandwidth.
-      random_variate->Init(num_dimensions_in);
       for(int i = 0; i < num_dimensions_in; i++) {
         (*random_variate)[i] =
           core::math::RandGaussian(sqrt(1.0 / bandwidth_sq_));

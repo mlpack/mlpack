@@ -77,8 +77,7 @@ class DistributedKpca {
 
     void GenerateRandomFourierFeatures_(
       int num_random_fourier_features,
-      std::vector <
-      core::table::DensePoint > *random_variates,
+      core::table::DenseMatrix *random_variates,
       std::vector< arma::vec > *random_variate_aliases);
 
     void NaiveKernelEigenvectors_(
