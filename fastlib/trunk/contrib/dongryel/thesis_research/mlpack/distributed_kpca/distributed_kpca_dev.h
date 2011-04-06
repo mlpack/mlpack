@@ -6,6 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_DEV_H
 #define MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_DEV_H
 
+#include <boost/scoped_array.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "core/table/memory_mapped_file.h"
@@ -123,10 +124,9 @@ void DistributedKpca <
 DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   int num_random_fourier_features,
   core::table::DenseMatrix *random_variates,
-  std::vector< arma::vec > *random_variate_aliases) {
+  boost::scoped_array<arma::vec> &random_variate_aliases) {
 
   random_variates->Init(num_dimensions_, num_random_fourier_features);
-  random_variate_aliases->resize(num_random_fourier_features);
   if(world_->rank() == 0) {
     for(int i = 0; i < num_random_fourier_features; i++) {
 
@@ -145,7 +145,7 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
     core::table::DensePoint point_alias;
     random_variates->MakeColumnVector(i, &point_alias);
     core::table::DensePointToArmaVec(
-      point_alias, &((*random_variate_aliases)[i]));
+      point_alias, &(random_variate_aliases[i]));
   }
 }
 
@@ -224,10 +224,11 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   // The master generates a set of random Fourier features and do
   // a broadcast.
   core::table::DenseMatrix random_variates;
-  std::vector< arma::vec > random_variate_aliases;
+  boost::scoped_array<arma::vec> random_variate_aliases(
+    new arma::vec[num_random_fourier_features_eigen_]);
   GenerateRandomFourierFeatures_(
     num_random_fourier_features_eigen_,
-    &random_variates, &random_variate_aliases);
+    &random_variates, random_variate_aliases);
 
   // Each process computes its local mean, and performs an
   // all-reduction, if we are performing a centered version of KPCA.
@@ -238,7 +239,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
     ThreadedNormalizedAverageTransform(
       arguments_in.num_threads_in_,
       *(arguments_in.reference_table_->local_table()),
-      random_variate_aliases, &local_mean);
+      random_variate_aliases, num_random_fourier_features_eigen_, &local_mean);
     boost::mpi::all_reduce(
       *world_, local_mean, global_mean,
       core::parallel::CombineMeanVariancePairMatrix());
@@ -251,11 +252,9 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   mlpack::series_expansion::RandomFeature<TableType>::
   ThreadedCovarianceTransform(
     arguments_in.num_threads_in_,
-    *(arguments_in.reference_table_->local_table()),
-    arguments_in.do_centering_,
-    global_mean,
-    random_variate_aliases, &local_covariance,
-    &result_out->reference_projections());
+    *(arguments_in.reference_table_->local_table()), arguments_in.do_centering_,
+    global_mean, random_variate_aliases, num_random_fourier_features_eigen_,
+    &local_covariance, &result_out->reference_projections());
   boost::mpi::reduce(
     *world_, local_covariance, global_covariance,
     core::parallel::CombineMeanVariancePairMatrix(), 0);
@@ -341,17 +340,18 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   // broadcast.
   const int num_random_fourier_features = 20;
   core::table::DenseMatrix random_variates;
-  std::vector< arma::vec > random_variate_aliases(
-    num_random_fourier_features);
+  boost::scoped_array<arma::vec> random_variate_aliases(
+    new arma::vec[num_random_fourier_features]);
   GenerateRandomFourierFeatures_(
-    num_random_fourier_features, &random_variates, &random_variate_aliases);
+    num_random_fourier_features, &random_variates, random_variate_aliases);
   arma::vec average_fourier_features;
   average_fourier_features.zeros(num_random_fourier_features * 2);
   for(int j = 0; j < reference_table_in->n_entries(); j++) {
     arma::vec original_point;
     reference_table_in->local_table()->get(j, &original_point);
     mlpack::series_expansion::RandomFeature<TableType>::Transform(
-      original_point, random_variate_aliases, & (transformed_points[j]));
+      original_point, random_variate_aliases,
+      num_random_fourier_features, & (transformed_points[j]));
     double first_factor = static_cast<double>(j) / static_cast<double>(j + 1);
     double second_factor = 1.0 - first_factor;
     average_fourier_features =
@@ -509,15 +509,15 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
 
   // Temporary vector used for generating a random combination.
   std::vector<int> random_combination;
+  boost::scoped_array<arma::vec> random_variate_aliases(
+    new arma::vec[num_random_fourier_features]);
   do {
 
     // The master generates a set of random Fourier features and do a
     // broadcast.
     core::table::DenseMatrix random_variates;
-    std::vector< arma::vec > random_variate_aliases(
-      num_random_fourier_features);
     GenerateRandomFourierFeatures_(
-      num_random_fourier_features, &random_variates, &random_variate_aliases);
+      num_random_fourier_features, &random_variates, random_variate_aliases);
 
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
@@ -527,7 +527,8 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     TableType >::WeightedAverageTransform(
       *(reference_table_in->local_table()),
       weights, num_reference_samples,
-      random_variate_aliases, &random_combination, &local_reference_average);
+      random_variate_aliases, num_random_fourier_features,
+      &random_combination, &local_reference_average);
     core::monte_carlo::MeanVariancePairMatrix global_reference_average;
     boost::mpi::all_reduce(
       *world_, local_reference_average, global_reference_average,
@@ -543,13 +544,13 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
         absolute_error_in,
         num_standard_deviations,
         num_reference_samples,
-        num_random_fourier_features,
         reference_table_in,
         query_table_in,
         weights,
         kernel_sums,
         converged,
         random_variate_aliases,
+        num_random_fourier_features,
         l1_norm_history,
         num_iterations,
         max_num_iterations_,

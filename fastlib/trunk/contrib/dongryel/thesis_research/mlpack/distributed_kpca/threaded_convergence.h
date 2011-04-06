@@ -6,6 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_THREADED_CONVERGENCE_H
 #define MLPACK_DISTRIBUTED_KPCA_THREADED_CONVERGENCE_H
 
+#include <boost/scoped_array.hpp>
 #include <queue>
 #include "mlpack/series_expansion/random_feature.h"
 
@@ -32,7 +33,7 @@ class ThreadedConvergence {
     const core::table::DenseMatrix *weights_;
     core::monte_carlo::MeanVariancePairMatrix *kernel_sums_;
     std::deque<bool> *converged_;
-    std::vector< arma::vec > *random_variate_aliases_;
+    boost::scoped_array< arma::vec > *random_variate_aliases_;
     core::monte_carlo::MeanVariancePairVector *l1_norm_history_;
     int max_num_iterations_;
     int num_iterations_;
@@ -56,7 +57,8 @@ class ThreadedConvergence {
         query_table_->local_table()->get(i, &query_point);
         arma::vec query_point_projected;
         mlpack::series_expansion::RandomFeature<TableType>::Transform(
-          query_point, *random_variate_aliases_, &query_point_projected);
+          query_point, *random_variate_aliases_,
+          num_random_fourier_features_, &query_point_projected);
 
         double l1_norm = 0.0;
         for(int k = 0; k < weights_->n_rows(); k++) {
@@ -106,13 +108,13 @@ class ThreadedConvergence {
       double absolute_error_in,
       double num_standard_deviations,
       int num_reference_samples,
-      int num_random_fourier_features,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
       const core::table::DenseMatrix &weights,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums,
       std::deque<bool> &converged,
-      std::vector< arma::vec > &random_variate_aliases,
+      boost::scoped_array< arma::vec > &random_variate_aliases,
+      int num_random_fourier_features,
       core::monte_carlo::MeanVariancePairVector &l1_norm_history,
       int num_iterations,
       int max_num_iterations,
@@ -169,13 +171,13 @@ class ThreadedConvergence {
       double absolute_error_in,
       double num_standard_deviations,
       int num_reference_samples,
-      int num_random_fourier_features,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
       const core::table::DenseMatrix &weights,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums,
       std::deque<bool> &converged,
-      std::vector< arma::vec > &random_variate_aliases,
+      boost::scoped_array< arma::vec > &random_variate_aliases,
+      int num_random_fourier_features,
       core::monte_carlo::MeanVariancePairVector &l1_norm_history,
       int num_iterations, int max_num_iterations,
       core::monte_carlo::MeanVariancePairMatrix *global_reference_average) {
@@ -196,9 +198,9 @@ class ThreadedConvergence {
         tmp_objects[i].Init_(
           begin, end, relative_error_in, absolute_error_in,
           num_standard_deviations, num_reference_samples,
-          num_random_fourier_features, reference_table_in,
-          query_table_in, weights, kernel_sums, converged,
-          random_variate_aliases, l1_norm_history, num_iterations,
+          reference_table_in, query_table_in, weights, kernel_sums, converged,
+          random_variate_aliases, num_random_fourier_features,
+          l1_norm_history, num_iterations,
           max_num_iterations, global_reference_average);
         thread_group.add_thread(
           new boost::thread(
