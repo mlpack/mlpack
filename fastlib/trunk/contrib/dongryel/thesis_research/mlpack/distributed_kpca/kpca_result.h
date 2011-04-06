@@ -123,11 +123,7 @@ class KpcaResult {
         fopen(kpca_projections_file_name.c_str(), "w+");
       for(int i = 0; i < kpca_projections_.n_cols(); i++) {
         for(int j = 0; j < kpca_projections_.n_rows(); j++) {
-          fprintf(
-            file_output, "(%g %g %g) ",
-            kpca_projections_l_.get(j, i),
-            kpca_projections_.get(j, i),
-            kpca_projections_u_.get(j, i));
+          fprintf(file_output, "%g ", kpca_projections_.get(j, i));
         }
         fprintf(file_output, "\n");
       }
