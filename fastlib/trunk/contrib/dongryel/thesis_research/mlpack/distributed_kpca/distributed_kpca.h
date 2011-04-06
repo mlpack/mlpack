@@ -95,6 +95,7 @@ class DistributedKpca {
       const core::monte_carlo::MeanVariancePairMatrix &kernel_sums);
 
     void ComputeWeightedKernelAverage_(
+      int num_threads_in,
       double relative_error_in,
       double absolute_error_in,
       double num_standard_deviations,
