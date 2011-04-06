@@ -16,11 +16,11 @@ Printing::Printing(std::string id) {
 void Printing::printValue(std::string& id, std::string& pathname) {
   //Is there a handler registered for this type?  Is that a valid pathname?
   if(!castingMap.count(id)) {
-    IO::printWarn("No handler registered");
+    //IO::printWarn("No handler registered");
     return;
   }
   if(!IO::checkValue(pathname.c_str())) {
-    IO::printWarn(pathname.c_str());
+    //IO::printWarn(pathname.c_str());
     return;
   }
   

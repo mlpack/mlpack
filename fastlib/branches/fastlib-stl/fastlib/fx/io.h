@@ -112,7 +112,7 @@ namespace mlpack {
       
       /* Halts the timer, and replaces it's value with the delta time from it's start */
       static void stopTimer(const char* timerName);
-      
+
     private:
       /* Private member variables & methods */
     
@@ -162,9 +162,9 @@ namespace mlpack {
       //Initialize desc with a particular name
       IO(std::string& optionsName);
       IO(const IO& other);
-      ~IO();			
+      ~IO();
   };
-  
+ 
     /*
   This class is used to facilitate easy addition of options to the program. 
   */
