@@ -234,7 +234,8 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   core::monte_carlo::MeanVariancePairMatrix global_mean;
   if(arguments_in.do_centering_) {
     mlpack::series_expansion::RandomFeature<TableType>::
-    NormalizedAverageTransform(
+    ThreadedNormalizedAverageTransform(
+      arguments_in.num_threads_in_,
       *(arguments_in.reference_table_->local_table()),
       random_variate_aliases, &local_mean);
     boost::mpi::all_reduce(

@@ -26,11 +26,26 @@ class RandomFeature {
     const core::monte_carlo::MeanVariancePairMatrix *global_mean_;
     const std::vector< arma::vec > *random_variates_;
     core::monte_carlo::MeanVariancePairMatrix *covariance_transformation_;
+    core::monte_carlo::MeanVariancePairMatrix *average_transformation_;
     core::table::DenseMatrix *table_projections_;
 
   private:
 
-    void Init_(
+    void NormalizedAverageTransformInit_(
+      int begin,
+      int end,
+      const TableType &table_in,
+      const std::vector<arma::vec> &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
+
+      begin_ = begin;
+      end_ = end;
+      table_ = &table_in;
+      random_variates_ = &random_variates;
+      average_transformation_ = average_transformation;
+    }
+
+    void CovarianceTransformInit_(
       int begin,
       int end,
       const TableType &table_in,
@@ -88,7 +103,94 @@ class RandomFeature {
       }
     }
 
+    /** @brief Computes an expected random Fourier feature, normalized
+     *         in the dot product sense.
+     */
+    void NormalizedAverageTransform_() {
+
+      int num_random_fourier_features = random_variates_->size();
+      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
+      average_transformation_->Init(1, 2 * num_random_fourier_features);
+      average_transformation_->set_total_num_terms(table_->n_entries());
+
+      for(int i = begin_; i < end_; i++) {
+        arma::vec old_point;
+        table_->get(i, &old_point);
+        for(int j = 0; j < num_random_fourier_features; j++) {
+          double dot_product = arma::dot((*random_variates_)[j], old_point);
+          average_transformation_->get(0, j).push_back(
+            cos(dot_product) * normalization_factor);
+          average_transformation_->get(
+            0, j + num_random_fourier_features).push_back(
+              sin(dot_product) * normalization_factor);
+        }
+      }
+    }
+
   public:
+
+    RandomFeature() {
+      begin_ = 0;
+      end_ = 0;
+      table_ = NULL;
+      do_centering_ = false;
+      global_mean_ = NULL;
+      random_variates_ = NULL;
+      covariance_transformation_ = NULL;
+      average_transformation_ = NULL;
+      table_projections_ = NULL;
+    }
+
+    /** @brief Computes an expected random Fourier feature, normalized
+     *         in the dot product sense.
+     */
+    static void ThreadedNormalizedAverageTransform(
+      int num_threads,
+      const TableType &table_in,
+      const std::vector< arma::vec > &random_variates,
+      core::monte_carlo::MeanVariancePairMatrix *average_transformation_in) {
+
+      // Allocate the projection matrix.
+      average_transformation_in->Init(
+        2 * random_variates.size(), table_in.n_entries());
+
+      // Basically, store sub-results and combine them later after all
+      // threads are joined.
+      boost::thread_group thread_group;
+      std::vector <
+      mlpack::series_expansion::RandomFeature<TableType> >
+      tmp_objects(num_threads);
+      core::monte_carlo::MeanVariancePairMatrix
+      *sub_average_transformations =
+        new core::monte_carlo::MeanVariancePairMatrix[num_threads];
+
+      // The block size.
+      int grain_size = table_in.n_entries() / num_threads;
+      for(int i = 0; i < num_threads; i++) {
+        int begin = i * grain_size;
+        int end = (i < num_threads - 1) ?
+                  (i + 1) * grain_size : table_in.n_entries();
+        tmp_objects[i].NormalizedAverageTransformInit_(
+          begin, end, table_in, random_variates,
+          &(sub_average_transformations[i]));
+        thread_group.add_thread(
+          new boost::thread(
+            &mlpack::series_expansion::RandomFeature <
+            TableType >::NormalizedAverageTransform_,
+            &tmp_objects[i]));
+      }
+      thread_group.join_all();
+
+      // By here, all threads have exited.
+      average_transformation_in->Init(
+        sub_average_transformations[0].n_rows(),
+        sub_average_transformations[0].n_cols());
+      for(int i = 0; i < num_threads; i++) {
+        average_transformation_in->CombineWith(
+          sub_average_transformations[i]);
+      }
+      delete[] sub_average_transformations;
+    }
 
     /** @brief A private function for launching threads.
      */
@@ -121,7 +223,7 @@ class RandomFeature {
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
                   (i + 1) * grain_size : table_in.n_entries();
-        tmp_objects[i].Init_(
+        tmp_objects[i].CovarianceTransformInit_(
           begin, end, table_in, do_centering,
           global_mean, random_variates,
           &(sub_covariance_transformations[i]),
@@ -230,33 +332,6 @@ class RandomFeature {
         }
         for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
           accumulants->get(k, i).push_back(tmp_coordinate[k]);
-        }
-      }
-    }
-
-    /** @brief Computes an expected random Fourier feature, normalized
-     *         in the dot product sense.
-     */
-    static void NormalizedAverageTransform(
-      const TableType &table_in,
-      const std::vector< arma::vec > &random_variates,
-      core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
-
-      int num_random_fourier_features = random_variates.size();
-      double normalization_factor = 1.0 / sqrt(num_random_fourier_features);
-      average_transformation->Init(1, 2 * num_random_fourier_features);
-      average_transformation->set_total_num_terms(table_in.n_entries());
-
-      for(int i = 0; i < table_in.n_entries(); i++) {
-        arma::vec old_point;
-        table_in.get(i, &old_point);
-        for(int j = 0; j < num_random_fourier_features; j++) {
-          double dot_product = arma::dot(random_variates[j], old_point);
-          average_transformation->get(0, j).push_back(
-            cos(dot_product) * normalization_factor);
-          average_transformation->get(
-            0, j + num_random_fourier_features).push_back(
-              sin(dot_product) * normalization_factor);
         }
       }
     }
