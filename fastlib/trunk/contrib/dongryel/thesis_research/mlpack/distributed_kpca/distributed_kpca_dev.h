@@ -121,18 +121,19 @@ template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   int num_random_fourier_features,
-  std::vector <
-  core::table::DensePoint > *random_variates,
+  core::table::DenseMatrix *random_variates,
   std::vector< arma::vec > *random_variate_aliases) {
 
-  random_variates->resize(num_random_fourier_features);
+  random_variates->Init(num_dimensions_, num_random_fourier_features);
   random_variate_aliases->resize(num_random_fourier_features);
   if(world_->rank() == 0) {
     for(int i = 0; i < num_random_fourier_features; i++) {
 
       // Draw a random Fourier feature.
+      core::table::DensePoint point_alias;
+      random_variates->MakeColumnVector(i, &point_alias);
       kernel_.DrawRandomVariate(
-        num_dimensions_, & (*random_variates)[i]);
+        num_dimensions_, & point_alias);
     }
   }
 
@@ -140,8 +141,10 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   // processes form a set of armadillo vector aliases.
   boost::mpi::broadcast(*world_, *random_variates, 0);
   for(int i = 0; i < num_random_fourier_features; i++) {
+    core::table::DensePoint point_alias;
+    random_variates->MakeColumnVector(i, &point_alias);
     core::table::DensePointToArmaVec(
-      (*random_variates)[i], &((*random_variate_aliases)[i]));
+      point_alias, &((*random_variate_aliases)[i]));
   }
 }
 
@@ -219,7 +222,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 
   // The master generates a set of random Fourier features and do
   // a broadcast.
-  std::vector < core::table::DensePoint > random_variates;
+  core::table::DenseMatrix random_variates;
   std::vector< arma::vec > random_variate_aliases;
   GenerateRandomFourierFeatures_(
     num_random_fourier_features_eigen_,
@@ -335,8 +338,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   // The master generates a set of random Fourier features and do a
   // broadcast.
   const int num_random_fourier_features = 20;
-  std::vector <
-  core::table::DensePoint > random_variates(num_random_fourier_features);
+  core::table::DenseMatrix random_variates;
   std::vector< arma::vec > random_variate_aliases(
     num_random_fourier_features);
   GenerateRandomFourierFeatures_(
@@ -508,8 +510,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
 
     // The master generates a set of random Fourier features and do a
     // broadcast.
-    std::vector <
-    core::table::DensePoint > random_variates(num_random_fourier_features);
+    core::table::DenseMatrix random_variates;
     std::vector< arma::vec > random_variate_aliases(
       num_random_fourier_features);
     GenerateRandomFourierFeatures_(
