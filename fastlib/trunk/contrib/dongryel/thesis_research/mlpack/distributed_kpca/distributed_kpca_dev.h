@@ -519,9 +519,7 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
         kernel_.EvalUnnormOnSq(squared_distance);
       if(do_centering) {
         kernel_value = kernel_value -
-                       query_table_in->n_entries() *
                        naive_query_kernel_averages[i].sample_mean() -
-                       reference_table_in->n_entries() *
                        naive_reference_kernel_averages[j].sample_mean() +
                        global_reference_kernel_average.sample_mean();
       }
@@ -546,12 +544,12 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
       naive_l1_norm += fabs(naive.at(i, j));
       approx_l1_norm += fabs(approximated.at(i, j));
       error_l1_norm += fabs(naive.at(i, j) - approximated.at(i, j));
+      printf(
+        "%g vs %g: %g %g\n", approximated.at(i, j), naive.at(i, j),
+        error_l1_norm, relative_error_in * naive_l1_norm + absolute_error_in);
     }
     if(error_l1_norm <= relative_error_in * naive_l1_norm + absolute_error_in) {
       error_bound_satisifed_count++;
-    }
-    else {
-      printf("Error: %g %g\n", error_l1_norm, relative_error_in * naive_l1_norm + absolute_error_in);
     }
   }
   printf("%d averages satisified the bound.\n", error_bound_satisifed_count);
@@ -703,6 +701,7 @@ DistributedTableType, KernelType >::PostProcessKpcaProjections_(
         global_reference_dot_products.get(
           0, i + query_kpca_projections->n_rows()).sample_mean(),
         average_reference_kernel_sum);
+      query_kpca_projections->get(i, j).scale(4.0);
     }
   }
 }
@@ -895,12 +894,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         &query_kpca_projections);
     }
 
-    // Export the results after scaling it.
-    query_kpca_projections.scale(effective_num_reference_points_);
-    result_out->Export(
-      num_standard_deviations, mult_const_,
-      correction_term_, query_kpca_projections);
-
     if(arguments_in.do_centering_ && arguments_in.do_naive_) {
 
       // Check again on the centered result, if naive computation is
@@ -914,6 +907,12 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         result_out->kpca_components(),
         query_kpca_projections);
     }
+
+    // Export the results after scaling it.
+    query_kpca_projections.scale(effective_num_reference_points_);
+    result_out->Export(
+      num_standard_deviations, mult_const_,
+      correction_term_, query_kpca_projections);
   }
   else {
 
