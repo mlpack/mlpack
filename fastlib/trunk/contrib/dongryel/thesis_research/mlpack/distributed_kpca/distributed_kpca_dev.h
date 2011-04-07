@@ -714,7 +714,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
   // The number of Fourier features to sample in each round.
   int num_random_fourier_features =
-    arguments_in.num_kpca_components_in_ + 5;
+    std::min(20, arguments_in.reference_table_->n_attributes() + 5) ;
 
   // The number of reference points to pick in each round.
   int num_reference_samples =
