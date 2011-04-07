@@ -235,7 +235,7 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
 template<typename TableType>
 void DistributedKpcaArgumentParser::RandomGenerate(
   boost::mpi::communicator &world, const std::string &file_name,
-  int num_dimensions, int num_points, const std::string &prescale_option) {
+  int num_dimensions, int num_points) {
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -251,18 +251,7 @@ void DistributedKpcaArgumentParser::RandomGenerate(
   printf("Process %d generated %d points in %d dimensionality...\n",
          world.rank(), num_points, num_dimensions);
 
-  // Scale the dataset.
-  if(prescale_option == "hypercube") {
-    core::table::UnitHypercube::Transform(&random_dataset);
-  }
-  else if(prescale_option == "standardize") {
-    core::table::Standardize::Transform(&random_dataset);
-  }
-  if(world.rank() == 0) {
-    std::cout << "Scaled the dataset with the option: " <<
-              prescale_option << "\n";
-  }
-
+  // Save the randomly generate dataset to the file.
   random_dataset.Save(file_name);
 }
 
@@ -282,8 +271,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     reference_file_name = reference_file_name_sstr.str();
     RandomGenerate<typename DistributedTableType::TableType>(
       world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
-      vm["random_generate_n_entries"].as<int>(),
-      vm["prescale"].as<std::string>());
+      vm["random_generate_n_entries"].as<int>());
   }
 
   // This is a hack to make sure that the same dataset is split across
@@ -313,6 +301,20 @@ bool DistributedKpcaArgumentParser::ParseArguments(
   arguments_out->reference_table_->Init(
     reference_file_name, world);
 
+  // Scale the reference dataset.
+  if(vm["prescale"].as<std::string>() == "hypercube") {
+    core::table::UnitHypercube::Transform(
+      arguments_out->reference_table_->local_table());
+  }
+  else if(vm["prescale"].as<std::string>() == "standardize") {
+    core::table::Standardize::Transform(
+      arguments_out->reference_table_->local_table());
+  }
+  if(world.rank() == 0) {
+    std::cout << "Scaled the reference dataset with the option: " <<
+              vm["prescale"].as<std::string>() << "\n";
+  }
+
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
     std::string query_file_name = vm["queries_in"].as<std::string>();
@@ -323,8 +325,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
       query_file_name = query_file_name_sstr.str();
       RandomGenerate<typename DistributedTableType::TableType>(
         world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
-        vm["random_generate_n_entries"].as<int>(),
-        vm["prescale"].as<std::string>());
+        vm["random_generate_n_entries"].as<int>());
     }
 
     // A hack to split the query file into multiple files across each
@@ -351,8 +352,20 @@ bool DistributedKpcaArgumentParser::ParseArguments(
       core::table::global_m_file_->Construct<DistributedTableType>() :
       new DistributedTableType();
     arguments_out->query_table_->Init(query_file_name, world);
-    std::cout << "Finished reading in the query set.\n";
-    std::cout << "Building the query tree.\n";
+
+    // Scale the query dataset.
+    if(vm["prescale"].as<std::string>() == "hypercube") {
+      core::table::UnitHypercube::Transform(
+        arguments_out->query_table_->local_table());
+    }
+    else if(vm["prescale"].as<std::string>() == "standardize") {
+      core::table::Standardize::Transform(
+        arguments_out->query_table_->local_table());
+    }
+    if(world.rank() == 0) {
+      std::cout << "Scaled the reference dataset with the option: " <<
+                vm["prescale"].as<std::string>() << "\n";
+    }
   }
 
   // Parse the bandwidth.

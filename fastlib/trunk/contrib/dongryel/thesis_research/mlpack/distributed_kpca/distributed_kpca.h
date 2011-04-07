@@ -42,7 +42,7 @@ class DistributedKpcaArgumentParser {
     template<typename TableType>
     static void RandomGenerate(
       boost::mpi::communicator &world, const std::string &file_name,
-      int num_dimensions, int num_points, const std::string &prescale_option);
+      int num_dimensions, int num_points);
 };
 
 template<typename IncomingDistributedTableType, typename IncomingKernelType>
