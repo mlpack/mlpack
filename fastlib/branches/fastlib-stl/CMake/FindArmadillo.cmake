@@ -115,13 +115,22 @@ if(ARMA_VERSION_FILE)
           string(REGEX REPLACE ".*static const unsigned int patch = \([0-9]+\).*" "\\1" ARMA_PATCH_VERSION "${_contents}")
         endif()
 
-        if(NOT ${ARMA_MAJOR_VERSION} MATCHES "[0-9]+")
+	if(NOT "${ARMA_MAJOR_VERSION}" MATCHES "^[0-9]+$")
+	  # For some reason Debian puts version.hpp where arma_version.hpp is
+	  # supposed to be and this messes up our regexes (0.9.52), so try
+	  # again.
+          string(REGEX REPLACE ".*static const unsigned int major = \([0-9]+\).*" "\\1" ARMA_MAJOR_VERSION "${_contents}")
+          string(REGEX REPLACE ".*static const unsigned int minor = \([0-9]+\).*" "\\1" ARMA_MINOR_VERSION "${_contents}")
+          string(REGEX REPLACE ".*static const unsigned int patch = \([0-9]+\).*" "\\1" ARMA_PATCH_VERSION "${_contents}")
+        endif()  
+
+        if(NOT "${ARMA_MAJOR_VERSION}" MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_MAJOR!")
         endif()
-        if(NOT ${ARMA_MINOR_VERSION} MATCHES "[0-9]+")
+        if(NOT "${ARMA_MINOR_VERSION}" MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_MINOR!")
         endif()
-        if(NOT ${ARMA_PATCH_VERSION} MATCHES "[0-9]+")
+        if(NOT "${ARMA_PATCH_VERSION}" MATCHES "^[0-9]+$")
             message(FATAL_ERROR "Version parsing failed for ARMA_VERSION_PATCH!")
         endif()
     else()
