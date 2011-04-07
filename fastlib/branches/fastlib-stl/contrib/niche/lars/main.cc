@@ -16,15 +16,16 @@ using namespace std;
 int main(int argc, char* argv[]) {
   
   bool use_cholesky = true;
-  double lambda_1 = 1e-5;//1.0;//1e-5;//2.0;//0.001;//0.12;
-  double lambda_2 = 1.0;
+  double lambda_1 = 1e-3;//1e-5;//1.0;//1e-5;//2.0;//0.001;//0.12;
+  double lambda_2 = 1e-3;//1.0;
   
   //u32 n = 100;
   //u32 p = 50;
 
   //std::srand(17);
   mat X;// = randu<mat>(n,p);
-  X.load("X.dat", raw_ascii);
+  //X.load("X.dat", raw_ascii);
+  X.load("D.dat", raw_ascii);
   
   u32 n = X.n_rows;
   u32 p = X.n_cols;
@@ -45,7 +46,8 @@ int main(int argc, char* argv[]) {
   
   vec y;// = X * beta + 0.1 * randu<vec>(n);
   //vec y = randu(n);
-  y.load("y.dat", raw_ascii);
+  //y.load("y.dat", raw_ascii);
+  y.load("x.dat", raw_ascii);
   
   vec y_reg = zeros(n + p);
   y_reg.subvec(0, n - 1) = y;
@@ -72,8 +74,9 @@ int main(int argc, char* argv[]) {
   
   //X.save("X.dat", raw_ascii);
   //y.save("y.dat", raw_ascii);
-  beta_matrix.save("beta.dat", raw_ascii);
-  lambda_path_vec.save("lambda.dat", raw_ascii);
+
+  ////beta_matrix.save("beta.dat", raw_ascii);
+  ////lambda_path_vec.save("lambda.dat", raw_ascii);
   
   
   vec beta;

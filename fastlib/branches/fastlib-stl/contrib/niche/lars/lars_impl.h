@@ -164,7 +164,7 @@ void Lars::DoLARS() {
     
     
   // MAIN LOOP
-  while((n_active_ < p_) && (max_corr > EPS)) {
+  while(kick_out || ((n_active_ < p_) && (max_corr > EPS))) {
     if(kick_out) {
       // index is in position change_ind in active_set
       //printf("kick out!\n");
@@ -283,6 +283,9 @@ void Lars::DoLARS() {
 	}
       }
     }
+    else {
+      //printf("all variables active, last iteration\n");
+    }
     //printf("change_ind = %d\n", change_ind);
       
       
@@ -299,6 +302,7 @@ void Lars::DoLARS() {
       }
 
       if(lasso_bound_on_gamma < gamma) {
+	//printf("about to kick out\n");
 	kick_out = true;
 	gamma = lasso_bound_on_gamma;
 	change_ind = active_ind_to_kick_out;
@@ -358,6 +362,7 @@ void Lars::DoLARS() {
            2) Another variable was about to join the active set. Even if we used less than or equality to, this variable would be just about to join the active set, but it would not yet have joined. It's coefficient would become non-zero on the next step.
       */
       if(ultimate_lambda < lambda_1_) {
+	//printf("early stopping by LASSO\n");
 	InterpolateBeta(ultimate_lambda);
 	break;
       }
