@@ -713,8 +713,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   mlpack::distributed_kpca::KpcaResult *result_out) {
 
   // The number of Fourier features to sample in each round.
-  int num_random_fourier_features =
-    std::min(20, arguments_in.reference_table_->n_attributes() + 5) ;
+  int num_random_fourier_features = num_random_fourier_features_eigen_;
 
   // The number of reference points to pick in each round.
   int num_reference_samples =
