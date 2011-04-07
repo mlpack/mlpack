@@ -436,8 +436,13 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     (vm["mode"].as<std::string>() == "kde") ?
     1 : vm["num_kpca_components_in"].as<int>();
   if(world.rank() == 0) {
-    std::cout << "Requesting " << arguments_out->num_kpca_components_in_ <<
-              " kernel PCA components...\n";
+    if(arguments_out->mode_ == "kpca") {
+      std::cout << "Requesting " << arguments_out->num_kpca_components_in_ <<
+                " kernel PCA components...\n";
+    }
+    else {
+      std::cout << "Computing KDE estimates...\n";
+    }
   }
 
   // Parse whether the centering is requested for KPCA or not.
