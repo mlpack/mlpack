@@ -979,7 +979,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
 
   // The number of Fourier features sampled for eigendecomposition.
   num_random_fourier_features_eigen_ =
-    arguments_in.num_kpca_components_in_ + 5;
+    (arguments_in.mode_ == "kpca") ?
+    arguments_in.num_kpca_components_in_ + 5 :
+    std::min(20, arguments_in.reference_table_->n_attributes() + 5) ;
 }
 }
 }
