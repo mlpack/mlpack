@@ -288,7 +288,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // This is a hack to make sure that the same dataset is split across
   // multiple processes when there are more than one MPI process.
-  else if(world.size() > 0) {
+  else if(world.size() > 1) {
 
     // Only the master splits the file.
     if(world.rank() == 0) {
@@ -329,7 +329,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
     // A hack to split the query file into multiple files across each
     // MPI process.
-    else {
+    else if(world.size() > 1) {
 
       // Only the master splits the file.
       if(world.rank() == 0) {
