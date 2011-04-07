@@ -6,6 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_ARGUMENT_PARSER_DEV_H
 #define MLPACK_DISTRIBUTED_KPCA_DISTRIBUTED_KPCA_ARGUMENT_PARSER_DEV_H
 
+#include "core/csv_parser/dataset_reader.h"
 #include "mlpack/distributed_kpca/distributed_kpca.h"
 
 namespace mlpack {
@@ -131,8 +132,8 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     return true;
   }
 
-  // Validate the arguments. Only immediate dying is allowed here, the
-  // parsing is done later.
+  // Validate the arguments. Only immediate termination is allowed
+  // here, the parsing is done later.
   if(vm->count("random_generate_n_attributes") > 0) {
     if(vm->count("random_generate_n_entries") == 0) {
       std::cerr << "Missing required --random_generate_n_entries.\n";
@@ -207,7 +208,7 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
       exit(0);
     }
 
-    // Delete the teporary files and put a barrier.
+    // Delete the temporary files and put a barrier.
     std::stringstream temporary_file_name;
     temporary_file_name << "tmp_file" << world.rank();
     remove(temporary_file_name.str().c_str());
@@ -285,6 +286,24 @@ bool DistributedKpcaArgumentParser::ParseArguments(
       vm["prescale"].as<std::string>());
   }
 
+  // This is a hack to make sure that the same dataset is split across
+  // multiple processes when there are more than one MPI process.
+  else if(world.size() > 0) {
+
+    // Only the master splits the file.
+    if(world.rank() == 0) {
+      std::cout << "Splitting the file into parts...\n";
+      core::DatasetReader::SplitFile <
+      typename DistributedTableType::TableType > (
+        reference_file_name, world.size());
+    }
+    world.barrier();
+    std::stringstream reference_file_name_sstr;
+    reference_file_name_sstr << vm["references_in"].as<std::string>() <<
+                             world.rank();
+    reference_file_name = reference_file_name_sstr.str();
+  }
+
   std::cout << "Reading in the reference set: " <<
             reference_file_name << "\n";
   arguments_out->reference_table_ =
@@ -307,6 +326,24 @@ bool DistributedKpcaArgumentParser::ParseArguments(
         vm["random_generate_n_entries"].as<int>(),
         vm["prescale"].as<std::string>());
     }
+
+    // A hack to split the query file into multiple files across each
+    // MPI process.
+    else {
+
+      // Only the master splits the file.
+      if(world.rank() == 0) {
+        std::cout << "Splitting the file into parts...\n";
+        core::DatasetReader::SplitFile <
+        typename DistributedTableType::TableType > (
+          query_file_name, world.size());
+      }
+      world.barrier();
+      std::stringstream query_file_name_sstr;
+      query_file_name_sstr << query_file_name << world.rank();
+      query_file_name = query_file_name_sstr.str();
+    }
+
     std::cout << "Reading in the query set: " <<
               query_file_name << "\n";
     arguments_out->query_table_ =
