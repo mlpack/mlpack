@@ -18,7 +18,7 @@
 
 using namespace mlpack;
 
-IO* IO::singleton = new IO();
+IO* IO::singleton;
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -26,7 +26,6 @@ namespace po = boost::program_options;
 
 /* Constructors, Destructors, Copy */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
-  std::cout << "CONSTRUCT" << std::endl;
   return;
 }
 
@@ -44,10 +43,6 @@ IO::~IO() {
 
 /* Methods */
 void IO::add(const char* identifier, const char* description, const char* parent, bool required) {
-  add(identifier, description, parent, required, false); //Allow the programmer to use fewer parameters...
-}
-
-void IO::add(const char* identifier, const char* description, const char* parent, bool required, bool out) {
   po::options_description& desc = IO::getSingleton().desc;
   //Generate the full pathname and insert the node into the hierarchy
   std::string tmp = TYPENAME(bool);
@@ -118,7 +113,7 @@ void IO::parseCommandLine(int argc, char** line) {
   }
   else if(checkValue("info")) {
     std::string str = getValue<std::string>("info");
-    getSingleton().hierarchy.print(str);
+    getSingleton().hierarchy.printAll();
     exit(0);
   }
 }
@@ -149,7 +144,7 @@ void IO::parseStream(std::istream& stream) {
 
 //Prints the current state, right now just for debugging purposes
 void IO::print() {
-  IO::getSingleton().hierarchy.printAll(std::string(""));
+  IO::getSingleton().hierarchy.printAll();
 }
 
 //Prints an error message
@@ -210,6 +205,6 @@ std::string IO::sanitizeString(const char* str) {
   return std::string("");
 }
 
-PARAM_CUSTOM(bool, help, "default help info");
+PARAM_MODULE(help, "default help info");
 PARAM_CUSTOM(std::string, info, "default submodule info option");
 
