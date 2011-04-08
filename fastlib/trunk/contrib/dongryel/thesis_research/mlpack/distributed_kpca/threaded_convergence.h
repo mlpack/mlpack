@@ -202,11 +202,17 @@ class ThreadedConvergence {
           random_variate_aliases, num_random_fourier_features,
           l1_norm_history, num_iterations,
           max_num_iterations, global_reference_average);
-        thread_group.add_thread(
-          new boost::thread(
-            &mlpack::distributed_kpca::ThreadedConvergence <
-            DistributedTableType >::Check_,
-            &tmp_objects[i]));
+
+        if(i == 0) {
+          tmp_objects[0].ThreadedConvergence<DistributedTableType>::Check_();
+        }
+        else {
+          thread_group.add_thread(
+            new boost::thread(
+              &mlpack::distributed_kpca::ThreadedConvergence <
+              DistributedTableType >::Check_,
+              &tmp_objects[i]));
+        }
       }
       thread_group.join_all();
 
