@@ -16,8 +16,9 @@
 #define PARAM_BOOL(ID, DESC, PARENT) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, #PARENT);
 #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> ID = mlpack::Option<int>(true, #ID, DESC, NULL);
 #define PARAM_CUSTOM(T, ID, DESC) static mlpack::Option<T> ID = mlpack::Option<T>(false, #ID, DESC, NULL);
+#define PARAM_COMPLEX_TYPE(T, ID, DESC, PARENT) static mlpack::Option<T> ID = mlpack::Option<T>(#ID, DESC, #PARENT);
 
-#define PARAM_TIMER(ID, DESC, PARENT) PARAM(timeval, ID, DESC, PARENT)
+#define PARAM_TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT);
 #define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
 #define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT)
 #define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, PARENT)
@@ -33,25 +34,17 @@ namespace mlpack {
       static void add(const char* identifier, const char* description, 
                                   const char* parent=NULL, bool required = false);
     
-      static void add(const char* identifier, const char* description, 
-                                  const char* parent, bool required, bool out);
-    
       /* If the argument requires a parameter, you must specify a type */
-      template<class T>
-      static void add(const char* identifier, const char* description, 
-                                  const char* parent = NULL, bool required = false) {
-        add<T>(identifier, description, parent, required, false);
-      }
       
       template<class T>
       static void add(const char* identifier, const char* description, 
-                                  const char* parent, bool required, bool out) {
+                                  const char* parent, bool required=false) {
         //Use singleton for state, wrap this up a parallel data structure 
         po::options_description& desc = getSingleton().desc;
-        std::string tmp = TYPENAME(T);
+        std::string type = TYPENAME(T);
                                     
         //Generate the full path string, and place the node in the hierarchy
-        std::string path = getSingleton().manageHierarchy(identifier, parent, tmp, description);
+        std::string path = getSingleton().manageHierarchy(identifier, parent, type, description);
                                     
         //Add the option to boost program_options
         desc.add_options()
@@ -63,6 +56,16 @@ namespace mlpack {
         return;
       }
 
+      template<class T>
+      static void addComplexType(const char* identifier, const char* description,
+                                              const char* parent) {
+        //Use singleton for state, wrap this up in a parallel data structure
+        std::string type = TYPENAME(T);
+        
+        //Generate the full path string, and place the node in the hierarchy
+        std::string path = getSingleton().manageHierarchy(identifier, parent, type, description);
+        
+      }
     
       /* See if the specified flag was found while parsing.  Non-zero return value indicates success.*/
       static int checkValue(const char* identifier);
@@ -76,13 +79,16 @@ namespace mlpack {
         std::string key = std::string(identifier);
         std::map<std::string, boost::any>& gmap = getSingleton().globalValues;
         
-        if(checkValue(identifier) && !gmap.count(key)) //If we have the option, set it's value
+        if(checkValue(identifier) && !gmap.count(key)) { //If we have the option, set it's value
           gmap[key] = boost::any(getSingleton().vmap[identifier].as<T>());
+        }
       
         //We may have whatever is on the commandline, but what if
         //The programmer has made modifications?
-        if(!gmap.count(key)) //The programmer hasn't done anything, lets register it then
+        if(!gmap.count(key)) {//The programmer hasn't done anything, lets register it then 
           gmap[key] = boost::any(tmp);
+          *boost::any_cast<T>(&gmap[key]) = tmp; 
+        }
         
         
         return *boost::any_cast<T>(&gmap[key]);
@@ -179,6 +185,9 @@ namespace mlpack {
         else
           IO::add<N>(identifier, description, parent, required);
       }
+    Option(const char* identifier, const char* description, const char* parent=NULL, bool required=false) {
+      IO::addComplexType<N>(identifier, description, parent);
+    }
   };
 };
 
