@@ -76,7 +76,9 @@ class UnitHypercube {
         table_in->get(i, &point);
         for(int d = 0; d < table_in->n_attributes(); d++) {
           double length = maximums[d] - minimums[d];
-          point[d] = (point[d] - minimums[d]) / length;
+          if(length > 0.0) {
+            point[d] = (point[d] - minimums[d]) / length;
+          }
         }
       }
     }
