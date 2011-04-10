@@ -16,7 +16,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
   
   bool use_cholesky = true;
-  double lambda_1 = 1e-1;//1e-5;//1.0;//1e-5;//2.0;//0.001;//0.12;
+  double lambda_1 = 0;//1e-3;//1e-1;//1e-5;//1.0;//1e-5;//2.0;//0.001;//0.12;
   double lambda_2 = 1.0;//1.0;//1e-3;//1.0;
   
   u32 n = 100;
