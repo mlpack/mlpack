@@ -20,9 +20,9 @@ class DatasetReader {
     static void Extract_(
       const std::string &filename_in,
       const std::string &filename_out,
-      int num_dimensions_in, int begin, int end) {
+      int num_dimensions_in, int begin, int end, int growupto) {
 
-      int count = end - begin;
+      int count = (growupto > 0) ? growupto : end - begin;
       TableType extracted_table;
       extracted_table.Init(num_dimensions_in, count);
 
@@ -61,26 +61,52 @@ class DatasetReader {
         }
         row_index++;
       }
+      for(; num_points < growupto; num_points++) {
+        int random_point_index = core::math::RandInt(0, num_points);
+        arma::vec source_point;
+        arma::vec destination_point;
+        extracted_table.get(random_point_index, &source_point);
+        extracted_table.get(num_points, &destination_point);
+        for(unsigned int j = 0; j < source_point.n_elem; j++) {
+          destination_point[j] =
+            source_point[j] +
+            core::math::RandGaussian<double>(core::math::Random(0.5, 1.5));
+        }
+      }
+      if(growupto > 0) {
+        for(int i = 0; i < growupto; i++) {
+          arma::vec point;
+          extracted_table.get(i, &point);
+          for(unsigned int j = 0; j < point.n_elem; j++) {
+            point[j] +=
+              core::math::RandGaussian<double>(core::math::Random(0.5, 1.5));
+          }
+        }
+      }
       extracted_table.Save(filename_out);
     }
 
   public:
 
     template<typename TableType>
-    static void SplitFile(const std::string &filename_in, int num_parts) {
+    static void SplitFile(
+      const std::string &filename_in, int num_parts, int growupto) {
 
       // Count the number of points in total.
       int num_dimensions = 0;
       int total_num_points = CountNumPoints(filename_in, &num_dimensions);
       int grain_size = total_num_points / num_parts;
       for(int i = 0; i < num_parts; i++) {
-        int begin = i * grain_size;
-        int end = (i < num_parts - 1) ? (i + 1) * grain_size : total_num_points;
+        int begin = (growupto > 0) ? 0 : i * grain_size;
+        int end =
+          (growupto > 0) ?
+          total_num_points :
+          ((i < num_parts - 1) ? (i + 1) * grain_size : total_num_points);
         std::stringstream filename_out_sstr;
         filename_out_sstr << filename_in << i;
         std::string filename_out = filename_out_sstr.str();
         Extract_<TableType>(
-          filename_in, filename_out, num_dimensions, begin, end);
+          filename_in, filename_out, num_dimensions, begin, end, growupto);
       }
     }
 
