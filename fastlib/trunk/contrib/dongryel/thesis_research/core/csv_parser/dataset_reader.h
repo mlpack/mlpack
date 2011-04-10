@@ -89,24 +89,37 @@ class DatasetReader {
   public:
 
     template<typename TableType>
+    static void GrowFile(
+      const std::string &filename_in, int rank, int growupto) {
+
+      // Count the number of points in total.
+      int num_dimensions = 0;
+      int total_num_points = CountNumPoints(filename_in, &num_dimensions);
+      std::stringstream filename_out_sstr;
+      filename_out_sstr << filename_in << rank;
+      std::string filename_out = filename_out_sstr.str();
+      Extract_<TableType>(
+        filename_in, filename_out, num_dimensions,
+        0, total_num_points, growupto);
+    }
+
+    template<typename TableType>
     static void SplitFile(
-      const std::string &filename_in, int num_parts, int growupto) {
+      const std::string &filename_in, int num_parts) {
 
       // Count the number of points in total.
       int num_dimensions = 0;
       int total_num_points = CountNumPoints(filename_in, &num_dimensions);
       int grain_size = total_num_points / num_parts;
       for(int i = 0; i < num_parts; i++) {
-        int begin = (growupto > 0) ? 0 : i * grain_size;
+        int begin = i * grain_size;
         int end =
-          (growupto > 0) ?
-          total_num_points :
-          ((i < num_parts - 1) ? (i + 1) * grain_size : total_num_points);
+          (i < num_parts - 1) ? (i + 1) * grain_size : total_num_points;
         std::stringstream filename_out_sstr;
         filename_out_sstr << filename_in << i;
         std::string filename_out = filename_out_sstr.str();
         Extract_<TableType>(
-          filename_in, filename_out, num_dimensions, begin, end, growupto);
+          filename_in, filename_out, num_dimensions, begin, end, -1);
       }
     }
 
