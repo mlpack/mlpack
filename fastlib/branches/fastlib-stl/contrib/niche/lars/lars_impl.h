@@ -243,10 +243,8 @@ void Lars::DoLARS() {
 	 = Solve(R % S, Solve(R^T, s)
 	 = s % Solve(R, Solve(R^T, s))
       */
-      unnormalized_beta_direction = solve(R_, solve(trans(R_), s));
-      /*unnormalized_beta_direction = 
-	solve(trimatu(R_), 
-	solve_trans(trimatu(R_), s));*/
+      unnormalized_beta_direction = solve(trimatu(R_), 
+					  solve_trans(trimatu(R_), s));
       normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
       beta_direction = normalization * unnormalized_beta_direction;
     }
@@ -491,23 +489,8 @@ void Lars::CholeskyInsert(const vec& new_x, const vec& new_Gram_col) {
       sq_norm_new_x = dot(new_x, new_x);
     }
       
-    /*
-      vec R_k1 = solve(trimatl(trans(R)), new_Gram_col);
-      vec R_k2 = solve(trans(trimatu(R)), new_Gram_col);
-      mat Fob = trimatl(trans(R));
-      vec R_k3 = solve(Fob, new_Gram_col);
-      printf("error 1: %e\n", norm(R_k1 - R_k3, 2));
-      printf("error 2: %e\n", norm(R_k2 - R_k3, 2));
-      vec R_k = R_k3;
-    */
-      
-    //vec R_k = solve(trans(trimatu(R_)), new_Gram_col);
-    //vec R_k = solve_trans(trimatu(R_), new_Gram_col);
-    mat RT = trans(R_);
-    vec R_k = solve(RT, new_Gram_col);
-      
-      
-      
+    vec R_k = solve_trans(trimatu(R_), new_Gram_col);
+    
     new_R(span(0, n - 1), span(0, n - 1)) = R_;//(span::all, span::all);
     new_R(span(0, n - 1), n) = R_k;
     new_R(n, span(0, n - 1)).fill(0.0);
