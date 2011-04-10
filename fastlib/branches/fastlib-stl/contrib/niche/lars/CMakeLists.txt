@@ -37,7 +37,6 @@ target_link_libraries(lars
 )
 
 target_link_libraries(test_lars
-   mlpack
    fastlib
 )
 

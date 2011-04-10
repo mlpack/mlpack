@@ -162,12 +162,15 @@ void Lars::DoLARS() {
   beta_path_.push_back(beta);
   lambda_path_.push_back(max_corr);
     
-    
   // MAIN LOOP
   while(kick_out || ((n_active_ < p_) && (max_corr > EPS))) {
+    
+
+    
+    
     if(kick_out) {
       // index is in position change_ind in active_set
-      //printf("kick out!\n");
+      //printf("KICK OUT %d!\n", change_ind);
       kick_out = false;
 
       Deactivate(change_ind); // new location
@@ -211,6 +214,9 @@ void Lars::DoLARS() {
       ////*/
 	
     }
+
+
+
       
       
     // compute signs of correlations
@@ -238,6 +244,9 @@ void Lars::DoLARS() {
 	 = s % Solve(R, Solve(R^T, s))
       */
       unnormalized_beta_direction = solve(R_, solve(trans(R_), s));
+      /*unnormalized_beta_direction = 
+	solve(trimatu(R_), 
+	solve_trans(trimatu(R_), s));*/
       normalization = 1.0 / sqrt(dot(s, unnormalized_beta_direction));
       beta_direction = normalization * unnormalized_beta_direction;
     }
@@ -287,6 +296,8 @@ void Lars::DoLARS() {
       //printf("all variables active, last iteration\n");
     }
     //printf("change_ind = %d\n", change_ind);
+    //printf("gamma may be %e, via %d\n", gamma, change_ind);
+    
       
       
     // bound gamma according to LASSO
@@ -305,6 +316,7 @@ void Lars::DoLARS() {
 	//printf("about to kick out\n");
 	kick_out = true;
 	gamma = lasso_bound_on_gamma;
+	//printf("gamma = %f\n", gamma);
 	change_ind = active_ind_to_kick_out;
       }
     }
@@ -316,6 +328,7 @@ void Lars::DoLARS() {
     for(u32 i = 0; i < n_active_; i++) {
       beta(active_set_[i]) += gamma * beta_direction(i);
     }
+    //beta.print("beta");
     beta_path_.push_back(beta);
       
     // compute correlates
@@ -349,8 +362,25 @@ void Lars::DoLARS() {
  /////
  */
       
+    //max_corr -= gamma * normalization;
+    //printf("efficient max_corr = %f\n", max_corr);
 
-    max_corr -= gamma * normalization;
+    // explicit computation of max correlation, among inactive indices
+    double temp_max_val = 0;
+    for(u32 i = 0; i < p_; i++) {
+      if(is_active_[i] && !(kick_out && (i == active_set_[change_ind]))) {
+	continue;
+      }
+      if(fabs(corr(i)) > temp_max_val) {
+	temp_max_val = fabs(corr(i));
+      }
+    }
+    //printf("exact max corr = %f\n", temp_max_val);
+    //printf("difference: %e\n", fabs(temp_max_val - max_corr));
+    max_corr = temp_max_val;
+    //
+
+    //printf("normalization = %f\n", normalization);
     lambda_path_.push_back(max_corr);
       
     // Time to stop for LASSO?
@@ -471,7 +501,10 @@ void Lars::CholeskyInsert(const vec& new_x, const vec& new_Gram_col) {
       vec R_k = R_k3;
     */
       
-    vec R_k = solve(trans(trimatu(R_)), new_Gram_col);
+    //vec R_k = solve(trans(trimatu(R_)), new_Gram_col);
+    //vec R_k = solve_trans(trimatu(R_), new_Gram_col);
+    mat RT = trans(R_);
+    vec R_k = solve(RT, new_Gram_col);
       
       
       
