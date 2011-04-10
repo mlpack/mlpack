@@ -32,7 +32,6 @@ add_executable(test_lars
 )
 
 target_link_libraries(lars
-   mlpack
    fastlib
 )
 
