@@ -20,6 +20,7 @@ set(DIRS
 #   svm  ## does not compile, several mismatched function calls
    lars
    discriminative_sparse_coding
+#   test_solver ## not meant to be public
 )
 
 foreach(dir ${DIRS})
