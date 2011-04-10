@@ -46,7 +46,11 @@ class DiscrSparseCoding {
 	    double lambda_1, double lambda_2,
 	    double lambda_w);
   
+  void SetDictionary(mat D);
+  
   void InitDictionary();
+
+  void InitDictionary(const char* dictionary_filename);
   
   void RandomInitDictionary();
   
@@ -59,6 +63,14 @@ class DiscrSparseCoding {
   void SGDStep(const vec& x, double y, double step_size);
   
   void ProjectW();
+
+  void PrintDictionary();
+
+  void GetDictionary(mat& D);
+
+  void PrintW();
+  
+  void GetW(vec& w);
 };
 
 #include "discr_sparse_coding_impl.h"

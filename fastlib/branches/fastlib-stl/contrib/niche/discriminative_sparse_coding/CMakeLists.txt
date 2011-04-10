@@ -27,6 +27,14 @@ add_executable(discr_sparse_coding
 )
 
 target_link_libraries(discr_sparse_coding
-   mlpack
+   fastlib
+)
+
+add_executable(dsc_mnist
+    EXCLUDE_FROM_ALL
+    mnist_main.cc
+)
+
+target_link_libraries(dsc_mnist
    fastlib
 )
