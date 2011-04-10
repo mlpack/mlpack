@@ -27,6 +27,11 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "purposes. Only applies to the case when there is only one MPI process "
     "present."
   )(
+    "growupto",
+    boost::program_options::value<int>()->default_value(-1),
+    "OPTIONAL When specified, the code will use the specified dataset and "
+    "grow the dataset to the specified size by adding Gaussian noise."
+  )(
     "mode",
     boost::program_options::value<std::string>()->default_value("kde"),
     "OPTIONAL The algorithm mode. One of:"
@@ -276,14 +281,18 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // This is a hack to make sure that the same dataset is split across
   // multiple processes when there are more than one MPI process.
-  else if(world.size() > 1) {
+  else if(world.size() > 1 || vm["growupto"].as<int>() > 0) {
 
     // Only the master splits the file.
     if(world.rank() == 0) {
       std::cout << "Splitting the file into parts...\n";
+      if(vm["growupto"].as<int>() > 0) {
+        std::cout << "and growing each file up to " <<
+                  vm["growupto"].as<int>() << " points.\n";
+      }
       core::DatasetReader::SplitFile <
       typename DistributedTableType::TableType > (
-        reference_file_name, world.size());
+        reference_file_name, world.size(), vm["growupto"].as<int>());
     }
     world.barrier();
     std::stringstream reference_file_name_sstr;
@@ -337,7 +346,7 @@ bool DistributedKpcaArgumentParser::ParseArguments(
         std::cout << "Splitting the file into parts...\n";
         core::DatasetReader::SplitFile <
         typename DistributedTableType::TableType > (
-          query_file_name, world.size());
+          query_file_name, world.size(), vm["growupto"].as<int>());
       }
       world.barrier();
       std::stringstream query_file_name_sstr;
