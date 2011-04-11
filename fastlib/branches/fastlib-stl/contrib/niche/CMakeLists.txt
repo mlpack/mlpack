@@ -21,6 +21,7 @@ set(DIRS
    lars
    discriminative_sparse_coding
 #   test_solver ## not meant to be public
+   local_coordinate_coding
 )
 
 foreach(dir ${DIRS})
