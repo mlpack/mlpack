@@ -6,6 +6,7 @@
 
 using namespace std; //We'll be using std a lot in this file
 
+namespace mlpack {
 /* Aids in the extensibility of OptionsHierarchy by focusing the potential changes into 
   one structure. */
 struct OptionsData {
@@ -17,6 +18,7 @@ struct OptionsData {
   string tname;
 };
 
+
 class OptionsHierarchy {
   private:
     /* Holds all node specific data */
@@ -27,9 +29,9 @@ class OptionsHierarchy {
     map<string, OptionsHierarchy> children;
   
     /* Returns the name foo in the pathname foo/bar/fizz */
-    string getName(string& pathname);
+    string GetName(string& pathname);
     /* Returns the path bar/fizz in the pathname foo/bar/fizz */
-    string getPath(string& pathname);
+    string GetPath(string& pathname);
   
   public:
     /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
@@ -41,19 +43,19 @@ class OptionsHierarchy {
     /* Will never fail, as given paths are relative to current node
     and will be generated if not found */
     /* Also, we will insist on proper usage of C++ strings */
-    void appendNode(string& pathname, string& tname);
-    void appendNode(string& pathname, string& tname, string& description);
-    void appendNode(string& pathname, string& tname, string& description, OptionsData& data);
+    void AppendNode(string& pathname, string& tname);
+    void AppendNode(string& pathname, string& tname, string& description);
+    void AppendNode(string& pathname, string& tname, string& description, OptionsData& data);
   
     /* Will return the node associated with a pathname */
     //OptionsHierarchy* findNode(string& pathname);
 
     /* Print functions */
-    void print();
-    void printAll();
-    void printNode();
-    void printLeaves();
-    void printBranches();
+    void Print();
+    void PrintAll();
+    void PrintNode();
+    void PrintLeaves();
+    void PrintBranches();
 };
-
+}
 #endif

@@ -20,7 +20,7 @@ class TestAllkNN {
 //    allknn_ = new AllkNN();
 //    naive_  = new AllkNN();
     if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS) {
-      IO::printFatal("Unable to load test dataset.");
+      IO::PrintFatal("Unable to load test dataset.");
       exit(1);
     }
   }
@@ -54,7 +54,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::printNotify("AllkNN test 1 passed.");
+    IO::PrintNotify("AllkNN test 1 passed.");
     Destruct();
   }
 
@@ -79,7 +79,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::printNotify("AllkNN test 2 passed.");
+    IO::PrintNotify("AllkNN test 2 passed.");
     Destruct();
   }
 
@@ -104,7 +104,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::printNotify("AllkNN test 3 passed.");
+    IO::PrintNotify("AllkNN test 3 passed.");
     Destruct();
   }
 
@@ -124,7 +124,7 @@ class TestAllkNN {
 }; // namespace mlpack
 
 int main(int argc, char* argv[]) { 
-  mlpack::IO::parseCommandLine(argc, argv);
+  mlpack::IO::ParseCommandLine(argc, argv);
   TestAllkNN test;
   test.TestAll();
 }

@@ -7,6 +7,7 @@
 #include <map>
 #include <string>
 #include <list>
+#include <boost/scoped_ptr.hpp>
 
 #include "optionshierarchy.h"
 #include "printing.h"
@@ -18,7 +19,7 @@
 #define PARAM_CUSTOM(T, ID, DESC) static mlpack::Option<T> ID = mlpack::Option<T>(false, #ID, DESC, NULL);
 #define PARAM_COMPLEX_TYPE(T, ID, DESC, PARENT) static mlpack::Option<T> ID = mlpack::Option<T>(#ID, DESC, #PARENT);
 
-#define PARAM_TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT);
+#define TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT);
 #define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
 #define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT)
 #define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, PARENT)
@@ -31,20 +32,20 @@ namespace mlpack {
       /* Adds a parameter to the heirarchy.  Incidentally, we are using 
         char* and not std::string since the vast majority of use cases will 
         be literal strings*/
-      static void add(const char* identifier, const char* description, 
+      static void Add(const char* identifier, const char* description, 
                                   const char* parent=NULL, bool required = false);
     
       /* If the argument requires a parameter, you must specify a type */
       
       template<class T>
-      static void add(const char* identifier, const char* description, 
+      static void Add(const char* identifier, const char* description, 
                                   const char* parent, bool required=false) {
         //Use singleton for state, wrap this up a parallel data structure 
-        po::options_description& desc = getSingleton().desc;
+        po::options_description& desc = GetSingleton().desc;
         std::string type = TYPENAME(T);
                                     
         //Generate the full path string, and place the node in the hierarchy
-        std::string path = getSingleton().manageHierarchy(identifier, parent, type, description);
+        std::string path = GetSingleton().ManageHierarchy(identifier, parent, type, description);
                                     
         //Add the option to boost program_options
         desc.add_options()
@@ -52,35 +53,36 @@ namespace mlpack {
         
         //If the option is required, add it to the required options list
         if(required)
-          getSingleton().requiredOptions.push_front(path);
+          GetSingleton().requiredOptions.push_front(path);
         return;
       }
 
+      /*Registers a complex type for use globally, without referencing the commandline */
       template<class T>
-      static void addComplexType(const char* identifier, const char* description,
+      static void AddComplexType(const char* identifier, const char* description,
                                               const char* parent) {
         //Use singleton for state, wrap this up in a parallel data structure
         std::string type = TYPENAME(T);
         
         //Generate the full path string, and place the node in the hierarchy
-        std::string path = getSingleton().manageHierarchy(identifier, parent, type, description);
+        std::string path = GetSingleton().ManageHierarchy(identifier, parent, type, description);
         
       }
     
       /* See if the specified flag was found while parsing.  Non-zero return value indicates success.*/
-      static int checkValue(const char* identifier);
+      static int CheckValue(const char* identifier);
       
       /* Grab the value of type T found while parsing.  Should use checkValue first.*/
       template<typename T>
-      static T& getValue(const char* identifier) {
+      static T& GetValue(const char* identifier) {
         //Used to ensure we have a valid value
         T tmp;
         //Used to index into the globalValues map
         std::string key = std::string(identifier);
-        std::map<std::string, boost::any>& gmap = getSingleton().globalValues;
+        std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
         
-        if(checkValue(identifier) && !gmap.count(key)) { //If we have the option, set it's value
-          gmap[key] = boost::any(getSingleton().vmap[identifier].as<T>());
+        if(CheckValue(identifier) && !gmap.count(key)) { //If we have the option, set it's value
+          gmap[key] = boost::any(GetSingleton().vmap[identifier].as<T>());
         }
       
         //We may have whatever is on the commandline, but what if
@@ -95,30 +97,32 @@ namespace mlpack {
       }
       
       /* The proper commandline parse method */
-      static void parseCommandLine(int argc, char** argv);
+      static void ParseCommandLine(int argc, char** argv);
     
       /* Parses a stream for options & values */
-      static void parseStream(std::istream& stream);
+      static void ParseStream(std::istream& stream);
       
       /* Prints out the current heirachy */
-      static void print();
+      static void Print();
       
       /* Prints a fatal error message */
-      static void printFatal(const char* msg);
+      static void PrintFatal(const char* msg);
       /* Prints a notification */
-      static void printNotify(const char* msg);
+      static void PrintNotify(const char* msg);
       /* Prints a warning */
-      static void printWarn(const char* msg);
+      static void PrintWarn(const char* msg);
       /* Prints all valid values that it can */
-      static void printData();
+      static void PrintData();
       
       /* Initializes a timer, available like a normal value specified on the command line.  
           Timers are of type timval, as defined in sys/time.h*/
-      static void startTimer(const char* timerName);
+      static void StartTimer(const char* timerName);
       
       /* Halts the timer, and replaces it's value with the delta time from it's start */
-      static void stopTimer(const char* timerName);
+      static void StopTimer(const char* timerName);
 
+      //Destructor
+      ~IO();
     private:
       /* Private member variables & methods */
     
@@ -145,30 +149,29 @@ namespace mlpack {
     
       //Sanity checks strings before sending them to optionshierarchy
       //Returns the pathname placed in the hierarchy
-      std::string manageHierarchy(const char* id, const char* parent, std::string& tname, const char* description = "");
+      std::string ManageHierarchy(const char* id, const char* parent, std::string& tname, const char* description = "");
       
       //Cleans up input pathnames, rendering strings such as /foo/bar and foo/bar equivalent inputs
-      static std::string sanitizeString(const char* str);
+      static std::string SanitizeString(const char* str);
     
       //The singleton, obviously
       static IO* singleton;
     
       
       /* Not exposed to the outside, so as to spare users some ungainly
-        x.getSingleton().foo() syntax 
+        x.GetSingleton().foo() syntax 
         In this case, the singleton is used to store data for the static methods, 
         as there is no point in defining static methods only to have users call 
         private instance methods */
     
       /* Returns the singleton instance for use in the static methods */
-      static IO& getSingleton();
+      static IO& GetSingleton();
     
       /* Make the constructor private, to preclude unauthorized instances */
       IO();
       //Initialize desc with a particular name
       IO(std::string& optionsName);
       IO(const IO& other);
-      ~IO();
   };
  
     /*
@@ -181,12 +184,12 @@ namespace mlpack {
     Option(bool ignoreTemplate, const char* identifier, const char* description, 
       const char* parent=NULL, bool required=false) {
         if(ignoreTemplate)
-          IO::add(identifier, description, parent, required);
+          IO::Add(identifier, description, parent, required);
         else
-          IO::add<N>(identifier, description, parent, required);
+          IO::Add<N>(identifier, description, parent, required);
       }
     Option(const char* identifier, const char* description, const char* parent=NULL, bool required=false) {
-      IO::addComplexType<N>(identifier, description, parent);
+      IO::AddComplexType<N>(identifier, description, parent);
     }
   };
 };

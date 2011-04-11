@@ -3,6 +3,7 @@
 #include "printing.h"
 #include <iostream>
 
+using namespace mlpack; 
 
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
 OptionsHierarchy::OptionsHierarchy() {
@@ -30,26 +31,26 @@ OptionsHierarchy::OptionsHierarchy(const OptionsHierarchy& other) {
 /* Will never fail, as given paths are relative to current node
 and will be generated if not found */
 /* Also, we will insist on proper usage of C++ strings */
-void OptionsHierarchy::appendNode(string& pathname, string& tname) {
+void OptionsHierarchy::AppendNode(string& pathname, string& tname) {
   string tmp = string("");
   OptionsData d;
   d.node = pathname;
   d.desc = tmp;
   d.tname = tname;
-  appendNode(pathname, tname, tmp, d);
+  AppendNode(pathname, tname, tmp, d);
 }
 
-void OptionsHierarchy::appendNode(string& pathname, string& tname, string& description) {
+void OptionsHierarchy::AppendNode(string& pathname, string& tname, string& description) {
   OptionsData d;
   d.node = pathname;
   d.desc = description; 
   d.tname = tname;
-  appendNode(pathname, tname, description, d);
+  AppendNode(pathname, tname, description, d);
 }
 
-void OptionsHierarchy::appendNode(string& pathname, string& tname, string& description, OptionsData& data) {
-  string name = getName(pathname);
-  string path = getPath(pathname);
+void OptionsHierarchy::AppendNode(string& pathname, string& tname, string& description, OptionsData& data) {
+  string name = GetName(pathname);
+  string path = GetPath(pathname);
   //Append the new name, if it isn't already there
   if(children.count(name) == 0)
     children[name] = OptionsHierarchy(name.c_str());
@@ -60,7 +61,7 @@ void OptionsHierarchy::appendNode(string& pathname, string& tname, string& descr
   }
   
   //Recurse until path is done
-  children[name].appendNode(path, tname, description, data);
+  children[name].AppendNode(path, tname, description, data);
 }  
 
 /* Returns the node with the specified pathname
@@ -78,7 +79,7 @@ OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
 }*/
 
 /* Returns the path in a pathname */
-string OptionsHierarchy::getPath(string& pathname) {
+string OptionsHierarchy::GetPath(string& pathname) {
   //Want to make sure we return a valid string
   if(pathname.find('/') == pathname.npos)
     return string("");
@@ -87,7 +88,7 @@ string OptionsHierarchy::getPath(string& pathname) {
 }
 
 /* Returns the name in a pathname, eg foo in foo/bar/fizz */
-string OptionsHierarchy::getName(string& pathname) {
+string OptionsHierarchy::GetName(string& pathname) {
   //Want to makesure we return a valid string
   if(pathname.find('/') == pathname.npos)
     return pathname;
@@ -95,52 +96,52 @@ string OptionsHierarchy::getName(string& pathname) {
   return pathname.substr(0, pathname.find('/'));
 }
 
-void OptionsHierarchy::printAll() {
-  printNode(); 
+void OptionsHierarchy::PrintAll() {
+  PrintNode(); 
 
   map<string, OptionsHierarchy>::iterator iter;
   for(iter = children.begin(); iter != children.end(); iter++) {
-    iter->second.printAll();
+    iter->second.PrintAll();
   }
 }
 
-void OptionsHierarchy::printNode() {
-  cout << nodeData.node << " : ";
-  mlpack::Printing::printValue(nodeData.tname, nodeData.node);
+void OptionsHierarchy::PrintNode() {
+  cout << nodeData.node << ": ";
+  Printing::PrintValue(nodeData.tname, nodeData.node);
   cout << endl;
 }
 
-void OptionsHierarchy::print() {
+void OptionsHierarchy::Print() {
   //Print the node, append '/' if that node is not a leaf
-  printNode();
+  PrintNode();
  
   //Begin formatted output 	
   cout << "Entries:" << endl;
-  printLeaves();
+  PrintLeaves();
   
   cout << "Submodules:" << endl;
-  printBranches();
+  PrintBranches();
 }
 
 /* Prints all children nodes that have no children themselves */
-void OptionsHierarchy::printLeaves() {
+void OptionsHierarchy::PrintLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
   for(iter = children.begin(); iter != children.end(); iter++)
     if(!iter->second.children.size()) 
       //Print the node's name, data, and description.  
-      iter->second.printNode(); 
+      iter->second.PrintNode(); 
       //Does it have a description?
 
 }
 
 /* Prints all children of this node which are parents */
-void OptionsHierarchy::printBranches() {
+void OptionsHierarchy::PrintBranches() {
   map<string, OptionsHierarchy>::iterator iter;
   
   //Iterate through all children
   for(iter = children.begin(); iter != children.end(); iter++)
   //Does this child have children?
     if(iter->second.children.size()) {
-      iter->second.printNode();
+      iter->second.PrintNode();
     }
 }
