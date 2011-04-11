@@ -16,39 +16,39 @@ namespace mlpack {
       Prints the value of the given variable, by finding the class registered to handle
       a particular type, specified by the integer ID given by typeid(..).
       */
-      static void printValue(std::string& id, std::string& pathname);
+      static void PrintValue(std::string& id, std::string& pathname);
     protected:
       static std::map<std::string, Printing*> castingMap;
       Printing(std::string id);
-      virtual void toString(std::string& pathname)=0;
+      virtual void ToString(std::string& pathname)=0;
   };
   
   
   class IntPrinter : public Printing{
       IntPrinter();
     public:
-      void toString(std::string& pathname);
+      void ToString(std::string& pathname);
       static IntPrinter tmp;
   };
   
     class StringPrinter : public Printing{
       StringPrinter();
     public:
-      void toString(std::string& pathname);
+      void ToString(std::string& pathname);
       static StringPrinter tmp;
   };
   
     class TimerPrinter : public Printing{
       TimerPrinter();
     public:
-      void toString(std::string& pathname);
+      void ToString(std::string& pathname);
       static TimerPrinter tmp;
   };
   
   class BoolPrinter : public Printing{
       BoolPrinter();
     public:
-      void toString(std::string& pathname);
+      void ToString(std::string& pathname);
       static BoolPrinter tmp;
   };
 };

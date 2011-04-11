@@ -29,8 +29,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   // one node
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
-  else if(IO::checkValue("allknn/leaf_size"))
-    leaf_size_ = IO::getValue<index_t>("allknn/leaf_size");
+  else if(IO::CheckValue("allknn/leaf_size"))
+    leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
   else
     leaf_size_ = 20;
   
@@ -43,8 +43,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
 
   // K-nearest neighbors initialization
-   if(IO::checkValue("allknn/knns"))
-    knns_ = IO::getValue<index_t>("allknn/knns");
+   if(IO::CheckValue("allknn/knns"))
+    knns_ = IO::GetValue<index_t>("allknn/knns");
   else
     knns_ = 5;
 
@@ -56,7 +56,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  IO::startTimer("allknn/tree_building");
+  IO::StartTimer("allknn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -71,7 +71,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  IO::stopTimer("allknn/tree_building");
+  IO::StopTimer("allknn/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -90,8 +90,8 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   // Get the leaf size from the module
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
-  else if(IO::checkValue("allknn/leaf_size"))
-    leaf_size_ = IO::getValue<index_t>("allknn/leaf_size");
+  else if(IO::CheckValue("allknn/leaf_size"))
+    leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
   else
     leaf_size_ = 20;
 
@@ -99,8 +99,8 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   DEBUG_ASSERT(leaf_size_ > 0);
 
   // K-nearest neighbors initialization
-  if(IO::checkValue("allknn/knns"))
-    knns_ = IO::getValue<index_t>("allknn/knns");
+  if(IO::CheckValue("allknn/knns"))
+    knns_ = IO::GetValue<index_t>("allknn/knns");
   else
     knns_ = 5;
 
@@ -112,7 +112,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  IO::startTimer("allknn/tree_building");
+  IO::StartTimer("allknn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -122,7 +122,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  IO::stopTimer("allknn/tree_building");
+  IO::StopTimer("allknn/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -144,16 +144,16 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
    // Get the leaf size from the module
    if(naive_)
      leaf_size_ = max(queries_.n_cols, references_.n_cols);
-   else if(IO::checkValue("allknn/leaf_size"))
-     leaf_size_ = IO::getValue<index_t>("allknn/leaf_size");
+   else if(IO::CheckValue("allknn/leaf_size"))
+     leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
    else
      leaf_size_ = 20;
    // Make sure the leaf size is valid
    DEBUG_ASSERT(leaf_size_ > 0);
  
    // K-nearest neighbors initialization
-   if(IO::checkValue("allknn/knns"))
-     knns_ = IO::getValue<index_t>("allknn/knns");
+   if(IO::CheckValue("allknn/knns"))
+     knns_ = IO::GetValue<index_t>("allknn/knns");
    else
      knns_ = 5;
 
@@ -176,7 +176,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.fill(DBL_MAX);
   
   // We'll time tree building
-  IO::startTimer("allknn/tree_building");
+  IO::StartTimer("allknn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -192,7 +192,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  IO::stopTimer("allknn/tree_building");
+  IO::StopTimer("allknn/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -224,7 +224,7 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
   neighbor_distances_.fill(DBL_MAX);
 
   // We'll time tree building
-  IO::startTimer("allknn/tree_building");
+  IO::StartTimer("allknn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays 
   // that record the permutation of the data points
@@ -234,7 +234,7 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
       leaf_size_, old_from_new_references_);
   
   // Stop the timer we started above
-  IO::stopTimer("allknn/tree_building");
+  IO::StopTimer("allknn/tree_building");
 }
   
 /**
@@ -534,7 +534,7 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
  */
 void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                               arma::vec& distances) {
-  IO::startTimer("computing_neighbors");
+  IO::StartTimer("computing_neighbors");
   if (naive_) {
     // Run the base case computation on all nodes
     if (query_tree_)
@@ -572,7 +572,7 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 
-  IO::stopTimer("computing_neighbors");
+  IO::StopTimer("computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_elem);

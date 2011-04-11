@@ -3,6 +3,7 @@
 #include <list>
 #include <boost/program_options.hpp>
 #include <boost/any.hpp>
+#include <boost/scoped_ptr.hpp>
 #include <iostream>
 #include <string>
 #include <sys/time.h>
@@ -42,133 +43,133 @@ IO::~IO() {
 }
 
 /* Methods */
-void IO::add(const char* identifier, const char* description, const char* parent, bool required) {
-  po::options_description& desc = IO::getSingleton().desc;
+void IO::Add(const char* identifier, const char* description, const char* parent, bool required) {
+  po::options_description& desc = IO::GetSingleton().desc;
   //Generate the full pathname and insert the node into the hierarchy
   std::string tmp = TYPENAME(bool);
-  std::string path = IO::getSingleton().manageHierarchy(identifier, parent, tmp, description);
+  std::string path = IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
   //Add the option to boost program_options
   desc.add_options()
     (path.c_str(), description);
   //If the option is required, add it to the required options list
   if(required)
-    getSingleton().requiredOptions.push_front(path);
+    GetSingleton().requiredOptions.push_front(path);
   
   return;
 }
 
 //Returns true if the specified value has been flagged by the user
-int IO::checkValue(const char* identifier) {
-  return getSingleton().vmap.count(identifier);
+int IO::CheckValue(const char* identifier) {
+  return GetSingleton().vmap.count(identifier);
 }
   
 //Returns the sole instance of this class
-IO& IO::getSingleton() {
+IO& IO::GetSingleton() {
   if(singleton == NULL)
     singleton = new IO();
   return *singleton;
 }	
 
 //Generates a full pathname, and places it in the hierarchy
-std::string IO::manageHierarchy(const char* id, const char* parent, std::string& tname, const char* description) {
+std::string IO::ManageHierarchy(const char* id, const char* parent, std::string& tname, const char* description) {
   std::string path(id), desc(description);
   
-  path = sanitizeString(parent)+id;
+  path = SanitizeString(parent)+id;
   
   //Add the sanity checked string to the hierarchy
   if(desc.length() == 0)
-    hierarchy.appendNode(path, tname);
+    hierarchy.AppendNode(path, tname);
   else
-    hierarchy.appendNode(path, tname, desc);
+    hierarchy.AppendNode(path, tname, desc);
   return path;
 }
 
 //Parses the command line for options
-void IO::parseCommandLine(int argc, char** line) {
-  po::variables_map& vmap = getSingleton().vmap;
-  po::options_description& desc = getSingleton().desc;
-  std::list<std::string> rOpt = getSingleton().requiredOptions;
+void IO::ParseCommandLine(int argc, char** line) {
+  po::variables_map& vmap = GetSingleton().vmap;
+  po::options_description& desc = GetSingleton().desc;
+  std::list<std::string> rOpt = GetSingleton().requiredOptions;
   
   //Parse the command line, place the options & values into vmap
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
-    printFatal(ex.what());
+    PrintFatal(ex.what());
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
   
   //Now, warn the user if they missed any required options
   for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!checkValue((*iter).c_str())) {//If a required option isn't there...
-      printWarn("Required option --");
-      printWarn((*iter).c_str());
-      printWarn(" is undefined...");
+    if(!CheckValue((*iter).c_str())) {//If a required option isn't there...
+      PrintWarn("Required option --");
+      PrintWarn((*iter).c_str());
+      PrintWarn(" is undefined...");
     }
   
   //Default help message
-  if(checkValue("help")) {
-    print();
+  if(CheckValue("help")) {
+    Print();
     exit(0);  //The user doesn't want to run the program, he wants to learn how to run it. 
   }
-  else if(checkValue("info")) {
-    std::string str = getValue<std::string>("info");
-    getSingleton().hierarchy.printAll();
+  else if(CheckValue("info")) {
+    std::string str = GetValue<std::string>("info");
+    GetSingleton().hierarchy.PrintAll();
     exit(0);
   }
 }
 
 
-void IO::parseStream(std::istream& stream) {
-  po::variables_map& vmap = getSingleton().vmap;
-  po::options_description& desc = getSingleton().desc;
-  std::list<std::string> rOpt = getSingleton().requiredOptions;
+void IO::ParseStream(std::istream& stream) {
+  po::variables_map& vmap = GetSingleton().vmap;
+  po::options_description& desc = GetSingleton().desc;
+  std::list<std::string> rOpt = GetSingleton().requiredOptions;
   
   //Parse the stream, place options & values into vmap
   try{
   po::store(po::parse_config_file(stream, desc), vmap);
   }catch(std::exception& ex) {
-    printFatal(ex.what());
+    PrintFatal(ex.what());
   }
   //Flush the buffer, make s ure changes are propgated to vmap
   po::notify(vmap);
   
   //Now, warn the user if they missed any required options
   for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!checkValue((*iter).c_str())) {//If a required option isn't there...
-      printWarn("Required option --");
-      printWarn((*iter).c_str());
-      printWarn(" is undefined...");
+    if(!CheckValue((*iter).c_str())) {//If a required option isn't there...
+      PrintWarn("Required option --");
+      PrintWarn((*iter).c_str());
+      PrintWarn(" is undefined...");
     }
 }
 
 //Prints the current state, right now just for debugging purposes
-void IO::print() {
-  IO::getSingleton().hierarchy.printAll();
+void IO::Print() {
+  IO::GetSingleton().hierarchy.PrintAll();
 }
 
 //Prints an error message
-void IO::printFatal(const char* msg) {
+void IO::PrintFatal(const char* msg) {
   cout << BASH_RED << "[FATAL] " << BASH_CLEAR << msg << endl;
 }
 
 //Prints a notification
-void IO::printNotify(const char* msg) {
+void IO::PrintNotify(const char* msg) {
   cout << BASH_GREEN << "[NOTIFY] " << BASH_CLEAR << msg << endl;
 }
 
-void IO::printWarn(const char* msg) {
+void IO::PrintWarn(const char* msg) {
   cout << BASH_YELLOW << "[WARN] " << BASH_CLEAR << msg << endl;
 }
 
 /* Print whatever data we can */
-void IO::printData() {
+void IO::PrintData() {
 }
 
 
 /* Initializes a timer, available like a normal value specified on the command line.  
     Timers are of type timval, as defined in sys/time.h*/
-void IO::startTimer(const char* timerName) {
+void IO::StartTimer(const char* timerName) {
   //We don't want to actually document the timer, the user can do that if he wants to.
   timeval tmp;
   
@@ -176,12 +177,12 @@ void IO::startTimer(const char* timerName) {
   tmp.tv_usec = 0;
   
   gettimeofday(&tmp, NULL);
-  getValue<timeval>(timerName) = tmp;
+  GetValue<timeval>(timerName) = tmp;
 }
       
 /* Halts the timer, and replaces it's value with the delta time from it's start */
-void IO::stopTimer(const char* timerName) {
-  timeval delta, b, &a = getValue<timeval>(timerName);  
+void IO::StopTimer(const char* timerName) {
+  timeval delta, b, &a = GetValue<timeval>(timerName);  
   gettimeofday(&b, NULL);
   
   //Calculate the delta time
@@ -190,7 +191,7 @@ void IO::stopTimer(const char* timerName) {
 }
 
 //Sanitizes strings, rendering input such as /foo/bar and foo/bar equal
-std::string IO::sanitizeString(const char* str) {
+std::string IO::SanitizeString(const char* str) {
   if(str != NULL) {
     std::string p(str);
     //Lets sanity check string, remove superfluous '/' prefixes

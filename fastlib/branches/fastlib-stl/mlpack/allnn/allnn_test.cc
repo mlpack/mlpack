@@ -40,7 +40,7 @@ class TestAllNN {
   }
   void Init() {
     if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
-      IO::printFatal("Unable to load test dataset.");
+      IO::PrintFatal("Unable to load test dataset.");
   }
   void Destruct() {
     delete allnn_;
@@ -67,7 +67,7 @@ class TestAllNN {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }
-    IO::printNotify("Test 1 passed");
+    IO::PrintNotify("Test 1 passed");
     
     Destruct();
   }
@@ -86,8 +86,8 @@ class TestAllNN {
 
 int main(int argc, char *argv[]) {
  TestAllNN test;
-  IO::parseCommandLine(argc, argv);
+  IO::ParseCommandLine(argc, argv);
   test.TestAll();
-  IO::getValue<int>("allnn/leaf_size");
-  IO::printData();
+  IO::GetValue<int>("allnn/leaf_size");
+  IO::PrintData();
 }

@@ -26,14 +26,14 @@ using namespace allnn;
 
 int main (int argc, char *argv[]) {
 	
-  IO::parseCommandLine(argc, argv);
+  IO::ParseCommandLine(argc, argv);
   arma::mat data_for_tree;
 
-  string input_file = IO::getValue<string>("input_file");
+  string input_file = IO::GetValue<string>("input_file");
   string output_file;
 
-  if(IO::checkValue("output_file"))
-    output_file = IO::getValue<string>("output_file");
+  if(IO::CheckValue("output_file"))
+    output_file = IO::GetValue<string>("output_file");
   else
     output_file = "output.csv";
   

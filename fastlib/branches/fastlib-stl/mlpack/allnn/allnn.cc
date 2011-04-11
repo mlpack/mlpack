@@ -31,8 +31,8 @@ AllNN::AllNN(arma::mat& references_in, bool alias_matrix, bool naive) :
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  if(IO::checkValue("leaf_size"))
-    leaf_size_ = IO::getValue<int>("leaf_size");
+  if(IO::CheckValue("leaf_size"))
+    leaf_size_ = IO::GetValue<int>("leaf_size");
   else
     leaf_size_ = 20;
   
@@ -41,7 +41,7 @@ AllNN::AllNN(arma::mat& references_in, bool alias_matrix, bool naive) :
 
   // Need to move to a new timer system
   //fx_timer_start(module_, "tree_building");
-  IO::startTimer("allnn/tree_building");
+  IO::StartTimer("allnn/tree_building");
 
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
       leaf_size_, old_from_new_references_);
@@ -51,7 +51,7 @@ AllNN::AllNN(arma::mat& references_in, bool alias_matrix, bool naive) :
       old_from_new_references_.n_elem, false, true);
 
   //fx_timer_stop(module_, "tree_building");
-  IO::stopTimer("allnn/tree_building");
+  IO::StopTimer("allnn/tree_building");
   
   /* Ready the list of nearest neighbor candidates to be filled. */
   neighbor_indices_.set_size(queries_.n_cols);
@@ -74,8 +74,8 @@ AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  if(IO::checkValue("leaf_size"))
-    leaf_size_ = IO::getValue<int>("leaf_size");
+  if(IO::CheckValue("leaf_size"))
+    leaf_size_ = IO::GetValue<int>("leaf_size");
   else
     leaf_size_ = 20;
   
@@ -84,14 +84,14 @@ AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
   
   // Need to move to a new timer system
   //fx_timer_start(module_, "tree_building");
-  IO::startTimer("tree_building");
+  IO::StartTimer("tree_building");
 
   reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
       leaf_size_, old_from_new_references_);
   query_tree_ = reference_tree_;
 
   //fx_timer_stop(module_, "tree_building");
-  IO::stopTimer("tree_building");
+  IO::StopTimer("tree_building");
   
   /* Ready the list of nearest neighbor candidates to be filled. */
   neighbor_indices_.set_size(queries_.n_cols);
@@ -326,22 +326,22 @@ void AllNN::GNPRecursion_(TreeType* query_node, TreeType* reference_node,
 void AllNN::ComputeNeighbors(arma::vec& distances) {
   if(naive_) {
     //fx_timer_start(module_, "naive_time");
-    IO::startTimer("allnn/naive/naive_time");
+    IO::StartTimer("allnn/naive/naive_time");
     
     /* BaseCase_ on the roots is equivalent to naive */
     GNPBaseCase_(query_tree_, reference_tree_);
     
-    IO::stopTimer("allnn/naive/naive_time");
+    IO::StopTimer("allnn/naive/naive_time");
     //fx_timer_stop(module_, "naive_time");
   } else {
     //fx_timer_start(module_, "dual_tree_computation");
-    IO::startTimer("allnn/dual_tree_computation");
+    IO::StartTimer("allnn/dual_tree_computation");
     /* Start recursion on the roots of either tree */
     GNPRecursion_(query_tree_, reference_tree_,
         MinNodeDistSq_(query_tree_, reference_tree_));
 
     //fx_timer_stop(module_, "dual_tree_computation");
-    IO::stopTimer("allnn/dual_tree_computation");
+    IO::StopTimer("allnn/dual_tree_computation");
     
     // Save the total number of prunes to the FASTexec module; this
     // will printed after calling fx_done or can be read back later.
