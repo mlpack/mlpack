@@ -177,7 +177,7 @@ void Lars::DoLARS() {
     
     if(kick_out) {
       // index is in position change_ind in active_set
-      printf("KICK OUT %d!\n", change_ind);
+      //printf("KICK OUT %d!\n", change_ind);
       kick_out = false;
 
       Deactivate(change_ind); // new location
@@ -190,7 +190,7 @@ void Lars::DoLARS() {
     }
     else {
       // index is absolute index
-      printf("active!\n");
+      //printf("active!\n");
 	
       if(use_cholesky_) {
 	vec new_Gram_col = vec(n_active_);
@@ -298,7 +298,7 @@ void Lars::DoLARS() {
       }
     }
     else {
-      printf("all variables active, last iteration\n");
+      //printf("all variables active, last iteration\n");
     }
     //printf("change_ind = %d\n", change_ind);
     //printf("gamma may be %e, via %d\n", gamma, change_ind);
@@ -318,7 +318,7 @@ void Lars::DoLARS() {
       }
 
       if(lasso_bound_on_gamma < gamma) {
-	printf("about to kick out\n");
+	//printf("about to kick out\n");
 	kick_out = true;
 	gamma = lasso_bound_on_gamma;
 	//printf("gamma = %f\n", gamma);
@@ -397,7 +397,7 @@ void Lars::DoLARS() {
            2) Another variable was about to join the active set. Even if we used less than or equality to, this variable would be just about to join the active set, but it would not yet have joined. It's coefficient would become non-zero on the next step.
       */
       if(ultimate_lambda < lambda_1_) {
-	printf("early stopping by LASSO\n");
+	//printf("early stopping by LASSO\n");
 	InterpolateBeta(ultimate_lambda);
 	break;
       }
