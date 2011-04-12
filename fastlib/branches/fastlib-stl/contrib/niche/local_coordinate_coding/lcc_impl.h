@@ -47,7 +47,6 @@ void LocalCoordinateCoding::RandomInitDictionary() {
 
 void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
   OptimizeCode();
-  return;
   uvec adjacencies = find(V_);
   printf("Objective function value: %f\n",
 	 Objective(adjacencies));
@@ -56,6 +55,7 @@ void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
 	 ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
   printf("Optimizing Codebook\n");
   OptimizeCodebook(adjacencies);
+  return;
   printf("Objective function value: %f\n",
 	 Objective(adjacencies));
 }
@@ -68,18 +68,17 @@ void LocalCoordinateCoding::OptimizeCode() {
     - 2 * trans(D_) * X_;
   
   mat inv_sq_dists = 1.0 / sq_dists; // is this allowed? it's so convenient!
-  //return;
   
   for(u32 i = 0; i < n_points_; i++) {
-    if((i % 1000) == 0) {
-      printf(" %d", i);
+    if((i % 100) == 0) {
+      printf(" %d\n", i);
     }
-    vec w = sq_dists.col(i);
-    vec inv_w = inv_sq_dists.col(i);
+    vec w = sq_dists.unsafe_col(i);
+    vec inv_w = inv_sq_dists.unsafe_col(i);
     mat D_prime = D_ * diagmat(inv_w);
     
     Lars lars;
-    lars.Init(D_prime, X_.col(i), true, 0.5 * lambda_); // do we still need 0.5 * lambda??
+    lars.Init(D_prime, X_.unsafe_col(i), true, 0.5 * lambda_); // do we still need 0.5 * lambda??
     lars.DoLARS();
     vec beta;
     lars.Solution(beta);
@@ -120,6 +119,7 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
     }
     cur_col += neighbor_counts(i);
   }
+  X_prime.save("X_prime.dat", raw_ascii);
   
   // handle the case of inactive atoms (atoms not used in the given coding)
   std::vector<u32> inactive_atoms;
@@ -205,16 +205,35 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
   mat D_estimate;
   if(inactive_atoms.empty()) {
     printf("solving\n");
+    mat A = V_prime * diagmat(w_squared) * trans(V_prime);
+    A.save("inside_A.dat", raw_ascii);
+    printf("V_prime dims = %d,%d\n", V_prime.n_rows, V_prime.n_cols);
+    mat temp = diagmat(w_squared);
+    printf("diagmat(w_squared) dims = %d,%d\n", temp.n_rows, temp.n_cols);
+    mat theXT = trans(X_);
+    printf("trans(X_prime) dims = %d,%d\n", theXT.n_rows, theXT.n_cols);
+    
+    mat B = V_prime * diagmat(w_squared) * trans(X_prime);
+    B.save("inside_B.dat", raw_ascii);
+
+
+    printf("calling solver for real\n");
+
+    D_estimate = 
+      trans(solve(A, B));
+    /*    
+    
     D_estimate = 
       trans(solve(V_prime * diagmat(w_squared) * trans(V_prime),
 		  V_prime * diagmat(w_squared) * trans(X_)));
+    */
   }
   else {
     D_estimate = zeros(n_dims_, n_atoms_);
     printf("solving\n");
     mat D_active_estimate = 
       trans(solve(V_prime * diagmat(w_squared) * trans(V_prime),
-		  V_prime * diagmat(w_squared) * trans(X_)));
+		  V_prime * diagmat(w_squared) * trans(X_prime)));
     for(u32 i = 0; i < n_active_atoms; i++) {
       D_estimate.col(active_atoms[i]) = D_active_estimate.col(i);
     }
@@ -224,6 +243,7 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
 	new_atom / norm(new_atom, 2);
     }
   }
+  D_ = D_estimate;
 }
 // need to test above function, sleepy now, will resume soon!
 
