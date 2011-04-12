@@ -54,6 +54,12 @@ class MeanVariancePair {
       ar & sample_variance_;
     }
 
+    /** @brief Sets the sample mean.
+     */
+    void set_sample_mean(double new_sample_mean) {
+      sample_mean_ = new_sample_mean;
+    }
+
     /** @brief Sets the total number of terms.
      */
     void set_total_num_terms(int total_num_terms_in) {

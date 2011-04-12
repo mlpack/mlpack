@@ -33,7 +33,6 @@ class ThreadedConvergence {
       int num_random_fourier_features_;
       DistributedTableType *reference_table_;
       DistributedTableType *query_table_;
-      const core::table::DenseMatrix *weights_;
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums_;
       std::deque<bool> *converged_;
       boost::scoped_array< arma::vec > *random_variate_aliases_;
@@ -52,7 +51,6 @@ class ThreadedConvergence {
         int num_reference_samples,
         DistributedTableType *reference_table_in,
         DistributedTableType *query_table_in,
-        const core::table::DenseMatrix &weights,
         core::monte_carlo::MeanVariancePairMatrix *kernel_sums,
         std::deque<bool> &converged,
         boost::scoped_array< arma::vec > &random_variate_aliases,
@@ -71,7 +69,6 @@ class ThreadedConvergence {
         num_random_fourier_features_ = num_random_fourier_features;
         reference_table_ = reference_table_in;
         query_table_ = query_table_in;
-        weights_ = &weights;
         kernel_sums_ = kernel_sums;
         converged_ = &converged;
         random_variate_aliases_ = &random_variate_aliases;
@@ -105,7 +102,7 @@ class ThreadedConvergence {
           args.num_random_fourier_features_, &query_point_projected);
 
         double l1_norm = 0.0;
-        for(int k = 0; k < args.weights_->n_rows(); k++) {
+        for(int k = 0; k < args.kernel_sums_->n_rows(); k++) {
           for(int j = 0; j < args.num_random_fourier_features_; j++) {
 
             // You need to multiply by the factor of two since Fourier
@@ -158,7 +155,6 @@ class ThreadedConvergence {
       int num_reference_samples,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
-      const core::table::DenseMatrix &weights,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums,
       std::deque<bool> &converged,
       boost::scoped_array< arma::vec > &random_variate_aliases,
@@ -182,7 +178,7 @@ class ThreadedConvergence {
         tmp_arguments[i].Init(
           begin, end, relative_error_in, absolute_error_in,
           num_standard_deviations, num_reference_samples,
-          reference_table_in, query_table_in, weights, kernel_sums, converged,
+          reference_table_in, query_table_in, kernel_sums, converged,
           random_variate_aliases, num_random_fourier_features,
           l1_norm_history, num_iterations,
           max_num_iterations, global_reference_average);

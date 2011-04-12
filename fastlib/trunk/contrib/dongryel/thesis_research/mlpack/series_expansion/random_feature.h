@@ -373,6 +373,7 @@ class RandomFeature {
     static void WeightedAverageTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &weights_in,
+      const core::table::DensePoint &min_negative_weights_in,
       int num_reference_samples,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
@@ -393,7 +394,9 @@ class RandomFeature {
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
           for(int k = 0; k < weights_in.n_rows(); k++) {
-            double weight = weights_in.get(k, (*random_combination)[i]);
+            double weight =
+              weights_in.get(
+                k, (*random_combination)[i]) - min_negative_weights_in[k];
             average_transformation->get(k, j).push_back(
               weight * cos(dot_product));
             average_transformation->get(
