@@ -70,7 +70,7 @@ class DatasetReader {
         for(unsigned int j = 0; j < source_point.n_elem; j++) {
           destination_point[j] =
             source_point[j] +
-            core::math::RandGaussian<double>(core::math::Random(0.5, 1.5));
+            core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
         }
       }
       if(growupto > 0) {
@@ -79,7 +79,7 @@ class DatasetReader {
           extracted_table.get(i, &point);
           for(unsigned int j = 0; j < point.n_elem; j++) {
             point[j] +=
-              core::math::RandGaussian<double>(core::math::Random(0.5, 1.5));
+              core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
           }
         }
       }
