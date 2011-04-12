@@ -359,8 +359,12 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
       first_factor * average_fourier_features +
       second_factor * transformed_points[j];
   }
-  for(int j = 0; j < reference_table_in->n_entries(); j++) {
-    transformed_points[j] -= average_fourier_features;
+
+  // Do centering if requested.
+  if(do_centering) {
+    for(int j = 0; j < reference_table_in->n_entries(); j++) {
+      transformed_points[j] -= average_fourier_features;
+    }
   }
   for(int j = 0; j < reference_table_in->n_entries(); j++) {
     for(int i = 0; i < reference_table_in->n_entries(); i++) {
@@ -835,11 +839,11 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in, result_out);
 
     if(arguments_in.do_naive_) {
-      //NaiveKernelEigenvectors_(
-      //arguments_in.num_kpca_components_in_,
-      //arguments_in.do_centering_,
-      //arguments_in.reference_table_,
-      //result_out->kpca_components());
+      NaiveKernelEigenvectors_(
+        arguments_in.num_kpca_components_in_,
+        arguments_in.do_centering_,
+        arguments_in.reference_table_,
+        result_out->kpca_components());
     }
   }
   else {
