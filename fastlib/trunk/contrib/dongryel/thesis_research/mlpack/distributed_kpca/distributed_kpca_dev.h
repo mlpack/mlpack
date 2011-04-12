@@ -571,24 +571,8 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   DistributedTableType *reference_table_in,
   DistributedTableType *query_table_in,
   const core::table::DenseMatrix &weights,
-  core::monte_carlo::MeanVariancePairMatrix *query_kernel_averages,
+  bool do_centering_in,
   core::monte_carlo::MeanVariancePairMatrix *kernel_sums) {
-
-  // Compute the minimum weights for each row.
-  core::table::DensePoint min_negative_weights;
-  min_negative_weights.Init(weights.n_rows());
-  min_negative_weights.SetZero();
-  if(query_kernel_averages != NULL) {
-    for(int i = 0; i < weights.n_rows(); i++) {
-      double min_negative_weight = 0.0;
-      for(int j = 0; j < weights.n_cols(); j++) {
-        if(weights.get(i, j) < 0.0 && weights.get(i, j) < min_negative_weight) {
-          min_negative_weight = weights.get(i, j);
-        }
-      }
-      min_negative_weights[i] = min_negative_weight;
-    }
-  }
 
   // Allocate the weighted kernel sum slot.
   kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
@@ -614,6 +598,34 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     GenerateRandomFourierFeatures_(
       num_random_fourier_features, &random_variates, random_variate_aliases);
 
+    // Each process computes the local feature map average and the
+    // global process combines it.
+    core::monte_carlo::MeanVariancePairMatrix local_mean;
+    core::monte_carlo::MeanVariancePairMatrix global_mean;
+
+    // Depending on whether the centering is requested or not, compute
+    // the center of the training set in the feature space.
+    if(do_centering_in) {
+      mlpack::series_expansion::RandomFeature<TableType>::
+      ThreadedNormalizedAverageTransform(
+        num_threads_in,
+        *(reference_table_in->local_table()),
+        random_variate_aliases, num_random_fourier_features_eigen_,
+        &local_mean);
+      boost::mpi::all_reduce(
+        *world_, local_mean, global_mean,
+        core::parallel::CombineMeanVariancePairMatrix());
+
+      // Multiply back by this factor to make sure that the random
+      // features for the training set are centered properly.
+      global_mean.scale(sqrt(num_random_fourier_features_eigen_));
+    }
+    else {
+
+      // Zero global mean for non-centered KPCA.
+      global_mean.Init(1, random_variates.n_cols() * 2);
+    }
+
     // Each process computes the sum of the projections of the local
     // reference set and does an all-reduction to compute the global
     // sum projections.
@@ -621,8 +633,8 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     mlpack::series_expansion::RandomFeature <
     TableType >::WeightedAverageTransform(
       *(reference_table_in->local_table()),
-      weights, min_negative_weights, num_reference_samples,
-      random_variate_aliases, num_random_fourier_features,
+      weights, num_reference_samples,
+      random_variate_aliases, num_random_fourier_features, global_mean,
       &random_combination, &local_reference_average);
     core::monte_carlo::MeanVariancePairMatrix global_reference_average;
     boost::mpi::all_reduce(
@@ -668,66 +680,8 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   // estimate.
   for(int j = 0; j < kernel_sums->n_cols(); j++) {
     for(int i = 0; i < kernel_sums->n_rows(); i++) {
-      if(query_kernel_averages != NULL) {
-        kernel_sums->get(i, j).set_sample_mean(
-          kernel_sums->get(i, j).sample_mean() +
-          min_negative_weights[i] *
-          query_kernel_averages->get(0, j).sample_mean());
-      }
       kernel_sums->get(i, j).set_total_num_terms(
         effective_num_reference_points_);
-    }
-  }
-}
-
-template<typename DistributedTableType, typename KernelType>
-void DistributedKpca <
-DistributedTableType, KernelType >::PostProcessKpcaProjections_(
-  const core::monte_carlo::MeanVariancePairMatrix &reference_kernel_sums,
-  const core::monte_carlo::MeanVariancePairMatrix &query_kernel_sums,
-  const core::monte_carlo::MeanVariancePair &average_reference_kernel_sum,
-  const core::table::DenseMatrix &kpca_components,
-  core::monte_carlo::MeanVariancePairMatrix *query_kpca_projections) {
-
-  // The reference dot products (need to be computed across all
-  // processes). The last trailing components are the sum of the KPCA
-  // components across all processes.
-  core::monte_carlo::MeanVariancePairMatrix local_reference_dot_products;
-  local_reference_dot_products.Init(1, 2 * query_kpca_projections->n_rows());
-  local_reference_dot_products.set_total_num_terms(
-    reference_kernel_sums.n_cols());
-  core::monte_carlo::MeanVariancePairMatrix global_reference_dot_products;
-
-  // For each KPCA component, each process computes its local portion
-  // of the dot products.
-  for(int j = 0; j < reference_kernel_sums.n_cols(); j++) {
-    for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
-      local_reference_dot_products.get(0, i).push_back(
-        kpca_components.get(i, j) *
-        reference_kernel_sums.get(0, j).sample_mean());
-      local_reference_dot_products.get(
-        0, i + query_kpca_projections->n_rows()).push_back(
-          kpca_components.get(i, j));
-    }
-  }
-  boost::mpi::all_reduce(
-    *world_, local_reference_dot_products, global_reference_dot_products,
-    core::parallel::CombineMeanVariancePairMatrix());
-
-  // Now do the correction.
-  for(int j = 0; j < query_kpca_projections->n_cols(); j++) {
-    for(int i = 0; i < query_kpca_projections->n_rows(); i++) {
-      query_kpca_projections->get(i, j).ScaledCombineWith(
-        -1.0, global_reference_dot_products.get(0, i));
-      query_kpca_projections->get(i, j).ScaledCombineWith(
-        - global_reference_dot_products.get(
-          0, i + query_kpca_projections->n_rows()).sample_mean(),
-        query_kernel_sums.get(0, j));
-      query_kpca_projections->get(i, j).ScaledCombineWith(
-        global_reference_dot_products.get(
-          0, i + query_kpca_projections->n_rows()).sample_mean(),
-        average_reference_kernel_sum);
-      query_kpca_projections->get(i, j).scale(4.0);
     }
   }
 }
@@ -774,7 +728,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.reference_table_,
       arguments_in.query_table_,
       arguments_in.reference_table_->local_table()->weights(),
-      NULL,
+      false,
       &query_kernel_averages);
 
     if(arguments_in.do_naive_) {
@@ -807,7 +761,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         arguments_in.reference_table_,
         arguments_in.reference_table_,
         arguments_in.reference_table_->local_table()->weights(),
-        NULL,
+        false,
         &reference_kernel_averages);
 
       if(arguments_in.do_naive_) {
@@ -897,37 +851,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.reference_table_,
       arguments_in.query_table_,
       result_out->kpca_components(),
-      (arguments_in.do_centering_) ? &query_kernel_averages : NULL,
+      arguments_in.do_centering_,
       &query_kpca_projections);
 
     if(arguments_in.do_naive_) {
-      NaiveWeightedKernelAverage_(
-        false,
-        arguments_in.relative_error_,
-        arguments_in.absolute_error_,
-        arguments_in.reference_table_,
-        arguments_in.query_table_,
-        result_out->kpca_components(),
-        query_kpca_projections);
-    }
-
-    // If the centering is requested, then we need a post-processing.
-    if(arguments_in.do_centering_) {
-
-      std::cout << "Doing post-correction to the projections...\n";
-      PostProcessKpcaProjections_(
-        reference_kernel_averages, query_kernel_averages,
-        average_reference_kernel_value,
-        result_out->kpca_components(),
-        &query_kpca_projections);
-    }
-
-    if(arguments_in.do_centering_ && arguments_in.do_naive_) {
 
       // Check again on the centered result, if naive computation is
       // required.
       NaiveWeightedKernelAverage_(
-        true,
+        arguments_in.do_centering_,
         arguments_in.relative_error_,
         arguments_in.absolute_error_,
         arguments_in.reference_table_,

@@ -200,10 +200,11 @@ class RandomFeature {
           NormalizedAverageTransform_(&tmp_arguments[0]);
         }
         else {
-          pthread_create(&thread_group[i - 1], NULL,
-                         mlpack::series_expansion::RandomFeature <
-                         TableType >::NormalizedAverageTransform_,
-                         &tmp_arguments[i]);
+          pthread_create(
+            &thread_group[i - 1], NULL,
+            mlpack::series_expansion::RandomFeature <
+            TableType >::NormalizedAverageTransform_,
+            &tmp_arguments[i]);
         }
       }
       for(int i = 1; i < num_threads; i++) {
@@ -373,10 +374,10 @@ class RandomFeature {
     static void WeightedAverageTransform(
       const TableType &table_in,
       const core::table::DenseMatrix &weights_in,
-      const core::table::DensePoint &min_negative_weights_in,
       int num_reference_samples,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
+      const core::monte_carlo::MeanVariancePairMatrix &global_mean,
       std::vector<int> *random_combination,
       core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
 
@@ -394,14 +395,16 @@ class RandomFeature {
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
           for(int k = 0; k < weights_in.n_rows(); k++) {
-            double weight =
-              weights_in.get(
-                k, (*random_combination)[i]) - min_negative_weights_in[k];
+            double weight = weights_in.get(k, (*random_combination)[i]);
             average_transformation->get(k, j).push_back(
-              weight * cos(dot_product));
+              weight *(
+                cos(dot_product) - global_mean.get(0, j).sample_mean()));
             average_transformation->get(
               k, j + num_random_fourier_features).push_back(
-                weight * sin(dot_product));
+                weight *
+                (sin(dot_product) -
+                 global_mean.get(
+                   0, j + num_random_fourier_features).sample_mean())) ;
           }
         }
       }
