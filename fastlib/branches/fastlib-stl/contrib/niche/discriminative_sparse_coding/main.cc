@@ -16,7 +16,7 @@ using namespace std;
 int main(int argc, char* argv[]) {
   u32 n_atoms = 100;
 
-  double lambda_1 = 1.5;//0.4;//0.0001;//0.001;
+  double lambda_1 = 0.05;//0.4;//0.0001;//0.001;
   double lambda_2 = 0.001;//0.001;//0.05;
   double lambda_w = 0.1;//1.0;//1;//0.1;
   
