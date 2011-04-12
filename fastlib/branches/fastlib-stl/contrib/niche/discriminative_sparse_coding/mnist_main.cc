@@ -13,38 +13,50 @@
 using namespace arma;
 using namespace std;
 
-int main(int argc, char* argv[]) {
-  u32 n_atoms = 100;
 
-  double lambda_1 = 0.055;
-  double lambda_2 = 0.001;
-  double lambda_w = 0.1;
+void Train(u32 digit_1, u32 digit_2,
+	   u32 n_atoms, double lambda_1, double lambda_2, double lambda_w,
+	   u32 n_iterations,
+	   const char* initial_dictionary_filename) {
+  char* file_prefix = (char*) malloc(160 * sizeof(char));
+  sprintf(file_prefix, 
+	  "dsc_results%dvs%d_%datoms_lambda1is%f_lambda2is%f_lambdawis%f_%diterations",
+	  digit_1, digit_2,
+	  n_atoms, lambda_1, lambda_2, lambda_w, 
+	  n_iterations);
+  
 
-  
-  
-  
   DiscrSparseCoding dsc;
-
  
   
-  mat X7;
-  X7.load("../contrib/niche/discriminative_sparse_coding/mnist/train7.arm");
-  u32 n7_points = X7.n_cols;
-  n7_points = (int) (n7_points * 0.8);
+  char* X_neg_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(X_neg_filename,
+	  "../contrib/niche/discriminative_sparse_coding/mnist/train%d.arm",
+	  digit_1);
+  mat X_neg;
+  X_neg.load(X_neg_filename);
+  free(X_neg_filename);
+  u32 n_neg_points = X_neg.n_cols;
+  n_neg_points = (int) (n_neg_points * 0.8);
 
-  mat X9;
-  X9.load("../contrib/niche/discriminative_sparse_coding/mnist/train9.arm");
-  u32 n9_points = X9.n_cols;
-  n9_points = (int) (n9_points * 0.8);
+  char* X_pos_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(X_pos_filename,
+	  "../contrib/niche/discriminative_sparse_coding/mnist/train%d.arm",
+	  digit_2);
+  mat X_pos;
+  X_pos.load(X_pos_filename);
+  free(X_pos_filename);
+  u32 n_pos_points = X_pos.n_cols;
+  n_pos_points = (int) (n_pos_points * 0.8);
   
-  mat X = join_rows(X7(span::all, span(0, n7_points - 1)),
-		    X9(span::all, span(0, n9_points - 1)));
+  mat X = join_rows(X_neg(span::all, span(0, n_neg_points - 1)),
+		    X_pos(span::all, span(0, n_pos_points - 1)));
   
   u32 n_points = X.n_cols;
 
   vec y = vec(n_points);
-  y.subvec(0, n7_points - 1).fill(-1);
-  y.subvec(n7_points, n_points - 1).fill(1);
+  y.subvec(0, n_neg_points - 1).fill(-1);
+  y.subvec(n_neg_points, n_points - 1).fill(1);
 
   printf("%d points\n", n_points);
   
@@ -55,19 +67,22 @@ int main(int argc, char* argv[]) {
     X.col(i) /= norm(X.col(i), 2);
   }
   
-  X.save("normalized_mnist_7vs9.dat", raw_ascii);
+  //X.save("normalized_mnist_7vs9.dat", raw_ascii);
   
   
   
   dsc.Init(X, y, n_atoms, lambda_1, lambda_2, lambda_w);
   
   double step_size = 0.1;// not used
-  u32 n_iterations = 20000;
+
   
   //dsc.SetDictionary(eye(10,10));
-  srand ( time(NULL) );
+  //srand ( time(NULL) );
   //dsc.InitDictionary();
-  dsc.InitDictionary("MNIST7v9_100atoms_InitialDictionary.dat");
+
+  dsc.InitDictionary(initial_dictionary_filename);
+  //dsc.InitDictionary("MNIST7vs9_100atoms_InitialDictionary.dat");
+  //dsc.InitDictionary("MNIST0vs1_100atoms_InitialDictionary.dat");
   dsc.InitW();
 
 
@@ -80,9 +95,22 @@ int main(int argc, char* argv[]) {
   mat D;
   dsc.GetDictionary(D);
 
+  char* w_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(w_filename, "%s_w.dat", file_prefix);
+  w.save(w_filename, raw_ascii);
+  free(w_filename);
+
+  char* D_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(D_filename, "%s_D.dat", file_prefix);
+  D.save(D_filename, raw_ascii);
+  free(D_filename);
+
 
   mat V = mat(n_atoms, n_points);
   for(u32 i = 0; i < n_points; i++) {
+    if((i % 1000) == 0) {
+      printf("%i\n", i);
+    }
     Lars lars;
     lars.Init(D, X.col(i), true, lambda_1, lambda_2);
     lars.DoLARS();
@@ -90,6 +118,18 @@ int main(int argc, char* argv[]) {
     lars.Solution(v);
     V.col(i) = v;
   }
+
+  char* V_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(V_filename, "%s_V.dat", file_prefix);
+  V.save(V_filename, raw_ascii);
+  free(V_filename);
+
+  char* y_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(y_filename, "%s_y.dat", file_prefix);
+  y.save(y_filename, raw_ascii);
+  free(y_filename);
+  
+  free(file_prefix);
 
   vec predictions = trans(trans(w) * V);
   vec y_hat = vec(n_points);
@@ -113,6 +153,149 @@ int main(int argc, char* argv[]) {
   }
   error /= ((double)n_points);
   printf("error: %f\n", error);
+}
+
+
+
+void Test(u32 digit_1, u32 digit_2,
+	  u32 n_atoms, double lambda_1, double lambda_2, double lambda_w,
+	  u32 n_iterations) {
+  char* file_prefix = (char*) malloc(160 * sizeof(char));
+  sprintf(file_prefix, 
+	  "dsc_results%dvs%d_%datoms_lambda1is%f_lambda2is%f_lambdawis%f_%diterations",
+	  digit_1, digit_2,
+	  n_atoms, lambda_1, lambda_2, lambda_w, 
+	  n_iterations);
   
+  char* w_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(w_filename, "%s_w.dat", file_prefix);
+  vec w;
+  w.load(w_filename, raw_ascii);
+  free(w_filename);
+  
+  char* D_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(D_filename, "%s_D.dat", file_prefix);
+  mat D;
+  D.load(D_filename, raw_ascii);
+  free(D_filename);
+  
+  char* X_neg_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(X_neg_filename,
+	  "../contrib/niche/discriminative_sparse_coding/mnist/test%d.arm",
+	  digit_1);
+  mat X_neg;
+  X_neg.load(X_neg_filename);
+  free(X_neg_filename);
+  u32 n_neg_points = X_neg.n_cols;
+
+  char* X_pos_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(X_pos_filename,
+	  "../contrib/niche/discriminative_sparse_coding/mnist/test%d.arm",
+	  digit_2);
+  mat X_pos;
+  X_pos.load(X_pos_filename);
+  free(X_pos_filename);
+  u32 n_pos_points = X_pos.n_cols;
+  
+  mat X = join_rows(X_neg(span::all, span(0, n_neg_points - 1)),
+			 X_pos(span::all, span(0, n_pos_points - 1)));
+  
+  u32 n_points = X.n_cols;
+
+  vec y = vec(n_points);
+  y.subvec(0, n_neg_points - 1).fill(-1);
+  y.subvec(n_neg_points, n_points - 1).fill(1);
+
+  printf("%d points\n", n_points);
+  
+  
+  
+  // normalize each column of data
+  for(u32 i = 0; i < n_points; i++) {
+    X.col(i) /= norm(X.col(i), 2);
+  }
+  
+  mat V = mat(n_atoms, n_points);
+  for(u32 i = 0; i < n_points; i++) {
+    if((i % 1000) == 0) {
+      printf("%i\n", i);
+    }
+    Lars lars;
+    lars.Init(D, X.col(i), true, lambda_1, lambda_2);
+    lars.DoLARS();
+    vec v;
+    lars.Solution(v);
+    V.col(i) = v;
+  }
+
+  char* V_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(V_filename, "%s_V_test.dat", file_prefix);
+  V.save(V_filename, raw_ascii);
+  free(V_filename);
+
+  char* y_filename = (char*) malloc(160 * sizeof(char));
+  sprintf(y_filename, "%s_y_test.dat", file_prefix);
+  y.save(y_filename, raw_ascii);
+  free(y_filename);
+
+  free(file_prefix);
+  
+  vec predictions = trans(trans(w) * V);
+  vec y_hat = vec(n_points);
+  for(u32 i = 0; i < n_points; i++) {
+    if(predictions(i) != 0) {
+      y_hat(i) = predictions(i) / fabs(predictions(i));
+    }
+    else {
+      y_hat(i) = 0;
+    }
+  }
+
+  mat compare = join_rows(y, y_hat);
+  compare.print("y y_hat");
+  
+  double error = 0;
+  for(u32 i = 0; i < n_points; i++) {
+    if(y(i) != y_hat(i)) {
+      error++;
+    }
+  }
+  error /= ((double)n_points);
+  printf("error: %f\n", error);
   
 }
+
+
+int main(int argc, char* argv[]) {
+
+
+  
+  double lambda_1 = 0.1;//0.055;
+  double lambda_2 = 0.001;
+  double lambda_w = 0.1;//0.5;
+  u32 n_atoms = 200;
+
+  u32 n_iterations = 20000;
+  
+  u32 digit_1 = 7;
+  u32 digit_2 = 9;
+  
+    
+  Train(digit_1, digit_2 ,
+	n_atoms, lambda_1, lambda_2, lambda_w,
+	n_iterations,
+	"MNIST7vs9_200atoms_lambdais0.1_10iterations_InitialDictionary.dat");
+  
+  //"MNIST7vs9_100atoms_InitialDictionary.dat"
+  
+  /*
+  Test(digit_1, digit_2,
+       n_atoms, lambda_1, lambda_2, lambda_w,
+       n_iterations);
+  */
+
+
+}
+  
+
+
