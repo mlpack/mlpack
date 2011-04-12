@@ -571,7 +571,24 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   DistributedTableType *reference_table_in,
   DistributedTableType *query_table_in,
   const core::table::DenseMatrix &weights,
+  core::monte_carlo::MeanVariancePairMatrix *query_kernel_averages,
   core::monte_carlo::MeanVariancePairMatrix *kernel_sums) {
+
+  // Compute the minimum weights for each row.
+  core::table::DensePoint min_negative_weights;
+  min_negative_weights.Init(weights.n_rows());
+  min_negative_weights.SetZero();
+  if(query_kernel_averages != NULL) {
+    for(int i = 0; i < weights.n_rows(); i++) {
+      double min_negative_weight = 0.0;
+      for(int j = 0; j < weights.n_cols(); j++) {
+        if(weights.get(i, j) < 0.0 && weights.get(i, j) < min_negative_weight) {
+          min_negative_weight = weights.get(i, j);
+        }
+      }
+      min_negative_weights[i] = min_negative_weight;
+    }
+  }
 
   // Allocate the weighted kernel sum slot.
   kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
@@ -604,7 +621,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     mlpack::series_expansion::RandomFeature <
     TableType >::WeightedAverageTransform(
       *(reference_table_in->local_table()),
-      weights, num_reference_samples,
+      weights, min_negative_weights, num_reference_samples,
       random_variate_aliases, num_random_fourier_features,
       &random_combination, &local_reference_average);
     core::monte_carlo::MeanVariancePairMatrix global_reference_average;
@@ -624,7 +641,6 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
         num_reference_samples,
         reference_table_in,
         query_table_in,
-        weights,
         kernel_sums,
         converged,
         random_variate_aliases,
@@ -652,6 +668,12 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   // estimate.
   for(int j = 0; j < kernel_sums->n_cols(); j++) {
     for(int i = 0; i < kernel_sums->n_rows(); i++) {
+      if(query_kernel_averages != NULL) {
+        kernel_sums->get(i, j).set_sample_mean(
+          kernel_sums->get(i, j).sample_mean() +
+          min_negative_weights[i] *
+          query_kernel_averages->get(0, j).sample_mean());
+      }
       kernel_sums->get(i, j).set_total_num_terms(
         effective_num_reference_points_);
     }
@@ -739,7 +761,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // If the mode is KPCA and the centering is requested or the mode is
   // KDE, then we need to compute the kernel sum between the query set
   // and the reference set.
-  core::monte_carlo::MeanVariancePairMatrix query_kernel_sums;
+  core::monte_carlo::MeanVariancePairMatrix query_kernel_averages;
   if((arguments_in.mode_ == "kpca" && arguments_in.do_centering_) ||
       arguments_in.mode_ == "kde") {
     ComputeWeightedKernelAverage_(
@@ -752,7 +774,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.reference_table_,
       arguments_in.query_table_,
       arguments_in.reference_table_->local_table()->weights(),
-      &query_kernel_sums);
+      NULL,
+      &query_kernel_averages);
 
     if(arguments_in.do_naive_) {
       NaiveWeightedKernelAverage_(
@@ -762,15 +785,15 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         arguments_in.reference_table_,
         arguments_in.query_table_,
         arguments_in.reference_table_->local_table()->weights(),
-        query_kernel_sums);
+        query_kernel_averages);
     }
   }
 
   // If the mode is KPCA and the centering is requested, and is not
   // monochromatic, then we need to compute the kernel sum between the
   // reference set and itself.
-  core::monte_carlo::MeanVariancePairMatrix reference_kernel_sums;
-  core::monte_carlo::MeanVariancePair average_reference_kernel_sum;
+  core::monte_carlo::MeanVariancePairMatrix reference_kernel_averages;
+  core::monte_carlo::MeanVariancePair average_reference_kernel_value;
   if(arguments_in.mode_ == "kpca") {
     if(arguments_in.do_centering_ &&
         arguments_in.reference_table_ != arguments_in.query_table_) {
@@ -784,7 +807,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         arguments_in.reference_table_,
         arguments_in.reference_table_,
         arguments_in.reference_table_->local_table()->weights(),
-        &reference_kernel_sums);
+        NULL,
+        &reference_kernel_averages);
 
       if(arguments_in.do_naive_) {
         NaiveWeightedKernelAverage_(
@@ -794,21 +818,21 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
           arguments_in.reference_table_,
           arguments_in.reference_table_,
           arguments_in.reference_table_->local_table()->weights(),
-          query_kernel_sums);
+          reference_kernel_averages);
       }
     }
     else {
-      reference_kernel_sums.Copy(query_kernel_sums);
+      reference_kernel_averages.Copy(query_kernel_averages);
     }
 
     // Set the total number of terms represented by the average
     // reference kernel sum, which is equal to the total number of
     // points in the global list of processes.
-    average_reference_kernel_sum.set_total_num_terms(
+    average_reference_kernel_value.set_total_num_terms(
       effective_num_reference_points_);
-    for(int i = 0; i < reference_kernel_sums.n_cols(); i++) {
-      average_reference_kernel_sum.push_back(
-        reference_kernel_sums.get(0, i).sample_mean());
+    for(int i = 0; i < reference_kernel_averages.n_cols(); i++) {
+      average_reference_kernel_value.push_back(
+        reference_kernel_averages.get(0, i).sample_mean());
     }
   }
 
@@ -873,6 +897,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
       arguments_in.reference_table_,
       arguments_in.query_table_,
       result_out->kpca_components(),
+      (arguments_in.do_centering_) ? &query_kernel_averages : NULL,
       &query_kpca_projections);
 
     if(arguments_in.do_naive_) {
@@ -891,8 +916,8 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
       std::cout << "Doing post-correction to the projections...\n";
       PostProcessKpcaProjections_(
-        reference_kernel_sums, query_kernel_sums,
-        average_reference_kernel_sum,
+        reference_kernel_averages, query_kernel_averages,
+        average_reference_kernel_value,
         result_out->kpca_components(),
         &query_kpca_projections);
     }
@@ -922,7 +947,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     // Export the KDE result.
     result_out->Export(
       num_standard_deviations, mult_const_,
-      correction_term_, query_kernel_sums);
+      correction_term_, query_kernel_averages);
   }
 
   // Barrier so that every process is done.

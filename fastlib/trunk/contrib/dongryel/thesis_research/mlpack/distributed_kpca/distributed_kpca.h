@@ -106,6 +106,7 @@ class DistributedKpca {
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
       const core::table::DenseMatrix &weights,
+      core::monte_carlo::MeanVariancePairMatrix *query_kernel_averages,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums);
 
     void PostProcessKpcaProjections_(
