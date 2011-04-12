@@ -43,7 +43,10 @@ class Standardize {
         arma::vec point;
         table_in->get(i, &point);
         for(int d = 0; d < table_in->n_attributes(); d++) {
-          point[d] = (point[d] - means[d]) / standard_deviations[d] ;
+          if(standard_deviations[d] > 0 && (! isnan(standard_deviations[d])) &&
+              (! isinf(standard_deviations[d]))) {
+            point[d] = (point[d] - means[d]) / standard_deviations[d] ;
+          }
         }
       }
     }
