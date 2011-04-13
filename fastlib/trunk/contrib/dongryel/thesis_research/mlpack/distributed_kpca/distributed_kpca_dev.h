@@ -712,12 +712,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   // The MPI timer.
   boost::mpi::timer timer;
 
-  // If the mode is KPCA and the centering is requested or the mode is
-  // KDE, then we need to compute the kernel sum between the query set
-  // and the reference set.
+  // If the mode is KDE, then we need to compute the kernel sum
+  // between the query set and the reference set.
   core::monte_carlo::MeanVariancePairMatrix query_kernel_averages;
-  if((arguments_in.mode_ == "kpca" && arguments_in.do_centering_) ||
-      arguments_in.mode_ == "kde") {
+  if(arguments_in.mode_ == "kde") {
     ComputeWeightedKernelAverage_(
       arguments_in.num_threads_in_,
       arguments_in.relative_error_,
@@ -740,53 +738,6 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
         arguments_in.query_table_,
         arguments_in.reference_table_->local_table()->weights(),
         query_kernel_averages);
-    }
-  }
-
-  // If the mode is KPCA and the centering is requested, and is not
-  // monochromatic, then we need to compute the kernel sum between the
-  // reference set and itself.
-  core::monte_carlo::MeanVariancePairMatrix reference_kernel_averages;
-  core::monte_carlo::MeanVariancePair average_reference_kernel_value;
-  if(arguments_in.mode_ == "kpca") {
-    if(arguments_in.do_centering_ &&
-        arguments_in.reference_table_ != arguments_in.query_table_) {
-      ComputeWeightedKernelAverage_(
-        arguments_in.num_threads_in_,
-        arguments_in.relative_error_,
-        arguments_in.absolute_error_,
-        num_standard_deviations,
-        num_reference_samples,
-        num_random_fourier_features,
-        arguments_in.reference_table_,
-        arguments_in.reference_table_,
-        arguments_in.reference_table_->local_table()->weights(),
-        false,
-        &reference_kernel_averages);
-
-      if(arguments_in.do_naive_) {
-        NaiveWeightedKernelAverage_(
-          false,
-          arguments_in.relative_error_,
-          arguments_in.absolute_error_,
-          arguments_in.reference_table_,
-          arguments_in.reference_table_,
-          arguments_in.reference_table_->local_table()->weights(),
-          reference_kernel_averages);
-      }
-    }
-    else {
-      reference_kernel_averages.Copy(query_kernel_averages);
-    }
-
-    // Set the total number of terms represented by the average
-    // reference kernel sum, which is equal to the total number of
-    // points in the global list of processes.
-    average_reference_kernel_value.set_total_num_terms(
-      effective_num_reference_points_);
-    for(int i = 0; i < reference_kernel_averages.n_cols(); i++) {
-      average_reference_kernel_value.push_back(
-        reference_kernel_averages.get(0, i).sample_mean());
     }
   }
 
