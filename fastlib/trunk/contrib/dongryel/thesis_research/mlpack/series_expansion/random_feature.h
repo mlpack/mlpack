@@ -9,7 +9,7 @@
 #define MLPACK_SERIES_EXPANSION_RANDOM_FEATURE_H
 
 #include <boost/scoped_array.hpp>
-#include <pthread.h>
+#include <omp.h>
 #include <vector>
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 
@@ -179,15 +179,16 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      boost::scoped_array<pthread_t> thread_group(
-        new pthread_t[num_threads - 1]);
       std::vector < RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_average_transformations(
         new core::monte_carlo::MeanVariancePairMatrix[num_threads]);
 
-      // The block size.
+      // The grain size per thread.
       int grain_size = table_in.n_entries() / num_threads;
+
+      // OpenMP parallel region.
+#pragma omp parallel for shared(tmp_arguments)
       for(int i = 0; i < num_threads; i++) {
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
@@ -195,22 +196,8 @@ class RandomFeature {
         tmp_arguments[i].NormalizedAverageTransformInit_(
           begin, end, table_in, random_variates,
           num_random_fourier_features, &(sub_average_transformations[i]));
-
-        if(i > 0) {
-          pthread_create(
-            &thread_group[i - 1], NULL,
-            mlpack::series_expansion::RandomFeature <
-            TableType >::NormalizedAverageTransform_,
-            &tmp_arguments[i]);
-        }
-      }
-
-      // The main thread goes after launching the children.
-      NormalizedAverageTransform_(&tmp_arguments[0]);
-
-      // The main thread joins the children.
-      for(int i = 1; i < num_threads; i++) {
-        pthread_join(thread_group[i - 1], NULL);
+        mlpack::series_expansion::RandomFeature <
+        TableType >::NormalizedAverageTransform_(&tmp_arguments[i]);
       }
 
       // By here, all threads have exited.
@@ -238,8 +225,6 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      boost::scoped_array<pthread_t> thread_group(
-        new pthread_t[num_threads - 1]);
       std::vector <RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_covariance_transformations(
@@ -247,6 +232,8 @@ class RandomFeature {
 
       // The block size.
       int grain_size = table_in.n_entries() / num_threads;
+
+#pragma omp parallel for shared(tmp_arguments)
       for(int i = 0; i < num_threads; i++) {
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
@@ -256,20 +243,8 @@ class RandomFeature {
           global_mean, random_variates, num_random_fourier_features,
           &(sub_covariance_transformations[i]),
           table_projections);
-        if(i > 0) {
-          pthread_create(
-            &thread_group[i - 1], NULL,
-            mlpack::series_expansion::RandomFeature <
-            TableType >::CovarianceTransform_, &tmp_arguments[i]);
-        }
-      }
-
-      // The main thread goes after launching the children.
-      CovarianceTransform_(&tmp_arguments[0]);
-
-      // The main thread joins the children.
-      for(int i = 1; i < num_threads; i++) {
-        pthread_join(thread_group[i - 1], NULL);
+        mlpack::series_expansion::RandomFeature <
+        TableType >::CovarianceTransform_(&tmp_arguments[i]);
       }
 
       // By here, all threads have exited.
