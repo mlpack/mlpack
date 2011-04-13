@@ -3,7 +3,7 @@
 #include "printing.h"
 #include <iostream>
 
-using namespace mlpack; 
+using namespace mlpack::io; 
 
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
 OptionsHierarchy::OptionsHierarchy() {
@@ -40,7 +40,9 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname) {
   AppendNode(pathname, tname, tmp, d);
 }
 
-void OptionsHierarchy::AppendNode(string& pathname, string& tname, string& description) {
+void OptionsHierarchy::AppendNode(string& pathname, 
+                                  string& tname, 
+                                  string& description) {
   OptionsData d;
   d.node = pathname;
   d.desc = description; 
@@ -48,14 +50,15 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname, string& descr
   AppendNode(pathname, tname, description, d);
 }
 
-void OptionsHierarchy::AppendNode(string& pathname, string& tname, string& description, OptionsData& data) {
+void OptionsHierarchy::AppendNode(string& pathname, string& tname, 
+                                  string& description, OptionsData& data) {
   string name = GetName(pathname);
   string path = GetPath(pathname);
   //Append the new name, if it isn't already there
-  if(children.count(name) == 0)
+  if (children.count(name) == 0)
     children[name] = OptionsHierarchy(name.c_str());
   
-  if(pathname.find('/') == pathname.npos || path.length() < 1) {
+  if (pathname.find('/') == pathname.npos || path.length() < 1) {
     children[name].nodeData = data;
     return;
   }
@@ -81,7 +84,7 @@ OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
 /* Returns the path in a pathname */
 string OptionsHierarchy::GetPath(string& pathname) {
   //Want to make sure we return a valid string
-  if(pathname.find('/') == pathname.npos)
+  if (pathname.find('/') == pathname.npos)
     return string("");
   //Get the rest of the node name Eg foo/bar in root/foo/bar
   return pathname.substr(pathname.find('/')+1,pathname.length());
@@ -90,7 +93,7 @@ string OptionsHierarchy::GetPath(string& pathname) {
 /* Returns the name in a pathname, eg foo in foo/bar/fizz */
 string OptionsHierarchy::GetName(string& pathname) {
   //Want to makesure we return a valid string
-  if(pathname.find('/') == pathname.npos)
+  if (pathname.find('/') == pathname.npos)
     return pathname;
   //Get the topmost node name in this path Eg root in root/foo/bar
   return pathname.substr(0, pathname.find('/'));
@@ -100,7 +103,7 @@ void OptionsHierarchy::PrintAll() {
   PrintNode(); 
 
   map<string, OptionsHierarchy>::iterator iter;
-  for(iter = children.begin(); iter != children.end(); iter++) {
+  for (iter = children.begin(); iter != children.end(); iter++) {
     iter->second.PrintAll();
   }
 }
@@ -126,8 +129,8 @@ void OptionsHierarchy::Print() {
 /* Prints all children nodes that have no children themselves */
 void OptionsHierarchy::PrintLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
-  for(iter = children.begin(); iter != children.end(); iter++)
-    if(!iter->second.children.size()) 
+  for (iter = children.begin(); iter != children.end(); iter++)
+    if (!iter->second.children.size()) 
       //Print the node's name, data, and description.  
       iter->second.PrintNode(); 
       //Does it have a description?
@@ -139,9 +142,9 @@ void OptionsHierarchy::PrintBranches() {
   map<string, OptionsHierarchy>::iterator iter;
   
   //Iterate through all children
-  for(iter = children.begin(); iter != children.end(); iter++)
+  for (iter = children.begin(); iter != children.end(); iter++)
   //Does this child have children?
-    if(iter->second.children.size()) {
+    if (iter->second.children.size()) {
       iter->second.PrintNode();
     }
 }

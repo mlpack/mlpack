@@ -30,7 +30,8 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
   return;
 }
 
-IO::IO(std::string& optionsName) : desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
+IO::IO(std::string& optionsName) : 
+    desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
   return;
 }
 
@@ -43,16 +44,24 @@ IO::~IO() {
 }
 
 /* Methods */
-void IO::Add(const char* identifier, const char* description, const char* parent, bool required) {
+void IO::Add(const char* identifier, 
+             const char* description, 
+             const char* parent, 
+             bool required) {
+
   po::options_description& desc = IO::GetSingleton().desc;
+
   //Generate the full pathname and insert the node into the hierarchy
   std::string tmp = TYPENAME(bool);
-  std::string path = IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
+  std::string path = 
+    IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
+
   //Add the option to boost program_options
   desc.add_options()
     (path.c_str(), description);
+
   //If the option is required, add it to the required options list
-  if(required)
+  if (required)
     GetSingleton().requiredOptions.push_front(path);
   
   return;
@@ -65,19 +74,23 @@ int IO::CheckValue(const char* identifier) {
   
 //Returns the sole instance of this class
 IO& IO::GetSingleton() {
-  if(singleton == NULL)
+  if (singleton == NULL)
     singleton = new IO();
   return *singleton;
 }	
 
 //Generates a full pathname, and places it in the hierarchy
-std::string IO::ManageHierarchy(const char* id, const char* parent, std::string& tname, const char* description) {
+std::string IO::ManageHierarchy(const char* id, 
+                                const char* parent, 
+                                std::string& tname, 
+                                const char* description) {
+
   std::string path(id), desc(description);
   
   path = SanitizeString(parent)+id;
   
   //Add the sanity checked string to the hierarchy
-  if(desc.length() == 0)
+  if (desc.length() == 0)
     hierarchy.AppendNode(path, tname);
   else
     hierarchy.AppendNode(path, tname, desc);
@@ -100,19 +113,20 @@ void IO::ParseCommandLine(int argc, char** line) {
   po::notify(vmap);	
   
   //Now, warn the user if they missed any required options
-  for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!CheckValue((*iter).c_str())) {//If a required option isn't there...
+  std::list<std::string>::iterator iter;
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+    if (!CheckValue((*iter).c_str())) {//If a required option isn't there...
       PrintWarn("Required option --");
       PrintWarn((*iter).c_str());
       PrintWarn(" is undefined...");
     }
   
   //Default help message
-  if(CheckValue("help")) {
+  if (CheckValue("help")) {
     Print();
-    exit(0);  //The user doesn't want to run the program, he wants to learn how to run it. 
+    exit(0);  //The user doesn't want to run the program, he wants help. 
   }
-  else if(CheckValue("info")) {
+  else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
     GetSingleton().hierarchy.PrintAll();
     exit(0);
@@ -135,8 +149,9 @@ void IO::ParseStream(std::istream& stream) {
   po::notify(vmap);
   
   //Now, warn the user if they missed any required options
-  for(std::list<std::string>::iterator iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if(!CheckValue((*iter).c_str())) {//If a required option isn't there...
+  std::list<std::string>::iterator iter;
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+    if (!CheckValue((*iter).c_str())) {//If a required option isn't there...
       PrintWarn("Required option --");
       PrintWarn((*iter).c_str());
       PrintWarn(" is undefined...");
@@ -167,10 +182,10 @@ void IO::PrintData() {
 }
 
 
-/* Initializes a timer, available like a normal value specified on the command line.  
-    Timers are of type timval, as defined in sys/time.h*/
+/* Initializes a timer, available like a normal value specified on the command 
+   line.  Timers are of type timval, as defined in sys/time.h*/
 void IO::StartTimer(const char* timerName) {
-  //We don't want to actually document the timer, the user can do that if he wants to.
+  //Don't want to actually document the timer, the user can do that if he wants
   timeval tmp;
   
   tmp.tv_sec = 0;
@@ -180,7 +195,8 @@ void IO::StartTimer(const char* timerName) {
   GetValue<timeval>(timerName) = tmp;
 }
       
-/* Halts the timer, and replaces it's value with the delta time from it's start */
+/* Halts the timer, and replaces it's value with the delta time from it's start 
+*/
 void IO::StopTimer(const char* timerName) {
   timeval delta, b, &a = GetValue<timeval>(timerName);  
   gettimeofday(&b, NULL);
@@ -192,13 +208,13 @@ void IO::StopTimer(const char* timerName) {
 
 //Sanitizes strings, rendering input such as /foo/bar and foo/bar equal
 std::string IO::SanitizeString(const char* str) {
-  if(str != NULL) {
+  if (str != NULL) {
     std::string p(str);
     //Lets sanity check string, remove superfluous '/' prefixes
-    if(p.find_first_of("/") == 0)
+    if (p.find_first_of("/") == 0)
       p = p.substr(1,p.length()-1);
     //Add necessary '/' suffixes to parent
-    if(p.find_last_of("/") != p.length()-1)
+    if (p.find_last_of("/") != p.length()-1)
       p = p+"/";
     return p;
   }

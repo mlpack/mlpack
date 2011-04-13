@@ -11,6 +11,7 @@ set(SOURCES
    stopwatch.h
    stopwatch.c
    io.h
+   io_impl.h
    io.cc
    optionshierarchy.h
    optionshierarchy.cc
@@ -27,6 +28,7 @@ endforeach()
 # test executable
 add_executable(io_test
    io.h
+   io_impl.h
    io.cc
    optionshierarchy.h
    optionshierarchy.cc

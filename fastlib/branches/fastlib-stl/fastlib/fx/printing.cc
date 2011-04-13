@@ -5,9 +5,10 @@
 #include <map>
 #include <sys/time.h>
 
-using namespace mlpack;
+using namespace mlpack::io;
 
-std::map<std::string, Printing*> Printing::castingMap = std::map<std::string, Printing*>();
+std::map<std::string, Printing*> Printing::castingMap = 
+  std::map<std::string, Printing*>();
 
 Printing::Printing(std::string id) {
   castingMap.insert(std::pair<std::string, Printing*>(id, this));
@@ -18,10 +19,6 @@ void Printing::PrintValue(std::string& id, std::string& pathname) {
   if(!castingMap.count(id)) {
     return;
   }
-  /*if(!IO::checkValue(pathname.c_str())) {
-    //IO::printWarn(pathname.c_str());
-    return;
-  }*/
   
   //Great! Lets print it.
   if(castingMap[id] != NULL) {    
@@ -52,8 +49,8 @@ TimerPrinter::TimerPrinter() : Printing(TYPENAME(timeval)) {
 };
 
 void TimerPrinter::ToString(std::string& pathname) {
-  std::cout << " sec: " << IO::GetValue<timeval>(pathname.c_str()).tv_sec << 
-                                              " usec: " << IO::GetValue<timeval>(pathname.c_str()).tv_usec;
+  std::cout << " sec: " << IO::GetValue<timeval>(pathname.c_str()).tv_sec <<
+    " usec: " << IO::GetValue<timeval>(pathname.c_str()).tv_usec;
 };
 
 //Bool printer

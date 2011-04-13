@@ -7,8 +7,10 @@
 using namespace std; //We'll be using std a lot in this file
 
 namespace mlpack {
-/* Aids in the extensibility of OptionsHierarchy by focusing the potential changes into 
-  one structure. */
+namespace io {
+
+/* Aids in the extensibility of OptionsHierarchy by 
+   focusing the potential changes into one structure. */
 struct OptionsData {
   /* Name of this node */
   string node;
@@ -21,41 +23,43 @@ struct OptionsData {
 
 class OptionsHierarchy {
   private:
-    /* Holds all node specific data */
-    OptionsData nodeData;
+   /* Holds all node specific data */
+   OptionsData nodeData;
 
-    /* Map of this node's children.  All children should have a
+   /* Map of this node's children.  All children should have a
       corresponding OptionsHierarchy, hence the references */
-    map<string, OptionsHierarchy> children;
+   map<string, OptionsHierarchy> children;
   
-    /* Returns the name foo in the pathname foo/bar/fizz */
-    string GetName(string& pathname);
-    /* Returns the path bar/fizz in the pathname foo/bar/fizz */
-    string GetPath(string& pathname);
+   /* Returns the name foo in the pathname foo/bar/fizz */
+   string GetName(string& pathname);
+   /* Returns the path bar/fizz in the pathname foo/bar/fizz */
+   string GetPath(string& pathname);
   
   public:
-    /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
-    OptionsHierarchy();
-    OptionsHierarchy(const char* name);
-    OptionsHierarchy(const OptionsHierarchy& other);
-    virtual ~OptionsHierarchy();
+   /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
+   OptionsHierarchy();
+   OptionsHierarchy(const char* name);
+   OptionsHierarchy(const OptionsHierarchy& other);
+   virtual ~OptionsHierarchy();
   
-    /* Will never fail, as given paths are relative to current node
-    and will be generated if not found */
-    /* Also, we will insist on proper usage of C++ strings */
-    void AppendNode(string& pathname, string& tname);
-    void AppendNode(string& pathname, string& tname, string& description);
-    void AppendNode(string& pathname, string& tname, string& description, OptionsData& data);
+   /* Will never fail, as given paths are relative to current node
+      and will be generated if not found */
+   /* Also, we will insist on proper usage of C++ strings */
+   void AppendNode(string& pathname, string& tname);
+   void AppendNode(string& pathname, string& tname, string& description);
+   void AppendNode(string& pathname, string& tname, 
+                   string& description, OptionsData& data);
   
-    /* Will return the node associated with a pathname */
-    //OptionsHierarchy* findNode(string& pathname);
+   /* Will return the node associated with a pathname */
+   //OptionsHierarchy* findNode(string& pathname);
 
-    /* Print functions */
-    void Print();
-    void PrintAll();
-    void PrintNode();
-    void PrintLeaves();
-    void PrintBranches();
+   /* Print functions */
+   void Print();
+   void PrintAll();
+   void PrintNode();
+   void PrintLeaves();
+   void PrintBranches();
 };
-}
+};
+};
 #endif
