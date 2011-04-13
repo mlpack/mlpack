@@ -237,6 +237,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   if(arguments_in.do_centering_) {
     mlpack::series_expansion::RandomFeature<TableType>::
     ThreadedNormalizedAverageTransform(
+      arguments_in.num_threads_in_,
       *(arguments_in.reference_table_->local_table()),
       random_variate_aliases, num_random_fourier_features_eigen_, &local_mean);
     boost::mpi::all_reduce(
@@ -250,6 +251,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
   core::monte_carlo::MeanVariancePairMatrix global_covariance;
   mlpack::series_expansion::RandomFeature<TableType>::
   ThreadedCovarianceTransform(
+    arguments_in.num_threads_in_,
     *(arguments_in.reference_table_->local_table()), arguments_in.do_centering_,
     global_mean, random_variate_aliases, num_random_fourier_features_eigen_,
     &local_covariance, &result_out->reference_projections());
@@ -560,6 +562,7 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
 template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
+  int num_threads_in,
   double relative_error_in,
   double absolute_error_in,
   double num_standard_deviations,
@@ -605,6 +608,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     if(do_centering_in) {
       mlpack::series_expansion::RandomFeature<TableType>::
       ThreadedNormalizedAverageTransform(
+        num_threads_in,
         *(reference_table_in->local_table()),
         random_variate_aliases, num_random_fourier_features_eigen_,
         &local_mean);
@@ -642,6 +646,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     bool all_local_query_converged =
       mlpack::distributed_kpca::
       ThreadedConvergence<DistributedTableType>::ThreadedCheck(
+        num_threads_in,
         relative_error_in,
         absolute_error_in,
         num_standard_deviations,
@@ -712,6 +717,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   core::monte_carlo::MeanVariancePairMatrix query_kernel_averages;
   if(arguments_in.mode_ == "kde") {
     ComputeWeightedKernelAverage_(
+      arguments_in.num_threads_in_,
       arguments_in.relative_error_,
       arguments_in.absolute_error_,
       num_standard_deviations,
@@ -791,6 +797,7 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
 
     core::monte_carlo::MeanVariancePairMatrix query_kpca_projections;
     ComputeWeightedKernelAverage_(
+      arguments_in.num_threads_in_,
       arguments_in.relative_error_,
       arguments_in.absolute_error_,
       num_standard_deviations,
@@ -843,6 +850,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Init(
   boost::mpi::communicator &world_in,
   mlpack::distributed_kpca::DistributedKpcaArguments <
   DistributedTableType > &arguments_in) {
+
+  // Set the number of threads.
+  omp_set_num_threads(arguments_in.num_threads_in_);
 
   // Set the maximum number of iterations.
   max_num_iterations_ = arguments_in.max_num_iterations_in_;
