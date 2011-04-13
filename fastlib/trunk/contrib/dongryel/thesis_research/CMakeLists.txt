@@ -47,8 +47,8 @@ endif()
 # find_package(CUDA)
 
 # Add additional complie flags.
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
 
 # Add the Electric fence.
 # set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -lefence")

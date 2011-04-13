@@ -7,7 +7,7 @@
 #define MLPACK_DISTRIBUTED_KPCA_THREADED_CONVERGENCE_H
 
 #include <boost/scoped_array.hpp>
-#include <pthread.h>
+#include <omp.h>
 #include <queue>
 #include "mlpack/series_expansion/random_feature.h"
 
@@ -165,12 +165,13 @@ class ThreadedConvergence {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      boost::scoped_array<pthread_t> thread_group(
-        new pthread_t[ num_threads - 1 ]);
       std::vector < ThreadedConvergenceArgument > tmp_arguments(num_threads);
 
       // The block size.
       int grain_size = query_table_in->n_entries() / num_threads;
+
+      // OpenMP parallel region.
+#pragma omp parallel for shared(tmp_arguments)
       for(int i = 0; i < num_threads; i++) {
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
@@ -182,23 +183,11 @@ class ThreadedConvergence {
           random_variate_aliases, num_random_fourier_features,
           l1_norm_history, num_iterations,
           max_num_iterations, global_reference_average);
-
-        if(i > 0) {
-          pthread_create(&thread_group[i - 1], NULL,
-                         mlpack::distributed_kpca::ThreadedConvergence <
-                         DistributedTableType >::Check_,
-                         &tmp_arguments[i]);
-        }
+        mlpack::distributed_kpca::ThreadedConvergence <
+        DistributedTableType >::Check_(&tmp_arguments[i]);
       }
 
-      // The main thread goes here after launching the children.
-      Check_(&tmp_arguments[0]);
-
-      // The main thread joins the children.
-      for(int i = 1; i < num_threads; i++) {
-        pthread_join(thread_group[i - 1], NULL);
-      }
-
+      // Merge the result to product the global convergence result.
       bool converged_result = true;
       for(int i = 0; converged_result && i < num_threads; i++) {
         converged_result =
