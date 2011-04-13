@@ -766,6 +766,10 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
     FinalizeKernelEigenvectors_(
       num_standard_deviations, num_reference_samples,
       arguments_in, result_out);
+    if(world_->rank() == 0) {
+      printf(
+        "Spent up to %g seconds in kernel eigenvectors.\n", timer.elapsed());
+    }
 
     if(arguments_in.do_naive_) {
       NaiveKernelEigenvectors_(

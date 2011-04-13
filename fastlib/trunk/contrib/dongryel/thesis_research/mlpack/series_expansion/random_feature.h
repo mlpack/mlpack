@@ -196,10 +196,7 @@ class RandomFeature {
           begin, end, table_in, random_variates,
           num_random_fourier_features, &(sub_average_transformations[i]));
 
-        if(i == 0) {
-          NormalizedAverageTransform_(&tmp_arguments[0]);
-        }
-        else {
+        if(i > 0) {
           pthread_create(
             &thread_group[i - 1], NULL,
             mlpack::series_expansion::RandomFeature <
@@ -207,6 +204,11 @@ class RandomFeature {
             &tmp_arguments[i]);
         }
       }
+
+      // The main thread goes after launching the children.
+      NormalizedAverageTransform_(&tmp_arguments[0]);
+
+      // The main thread joins the children.
       for(int i = 1; i < num_threads; i++) {
         pthread_join(thread_group[i - 1], NULL);
       }
@@ -254,16 +256,18 @@ class RandomFeature {
           global_mean, random_variates, num_random_fourier_features,
           &(sub_covariance_transformations[i]),
           table_projections);
-        if(i == 0) {
-          CovarianceTransform_(&tmp_arguments[0]);
-        }
-        else {
+        if(i > 0) {
           pthread_create(
             &thread_group[i - 1], NULL,
             mlpack::series_expansion::RandomFeature <
             TableType >::CovarianceTransform_, &tmp_arguments[i]);
         }
       }
+
+      // The main thread goes after launching the children.
+      CovarianceTransform_(&tmp_arguments[0]);
+
+      // The main thread joins the children.
       for(int i = 1; i < num_threads; i++) {
         pthread_join(thread_group[i - 1], NULL);
       }

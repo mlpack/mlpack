@@ -183,16 +183,18 @@ class ThreadedConvergence {
           l1_norm_history, num_iterations,
           max_num_iterations, global_reference_average);
 
-        if(i == 0) {
-          Check_(&tmp_arguments[0]);
-        }
-        else {
+        if(i > 0) {
           pthread_create(&thread_group[i - 1], NULL,
                          mlpack::distributed_kpca::ThreadedConvergence <
                          DistributedTableType >::Check_,
                          &tmp_arguments[i]);
         }
       }
+
+      // The main thread goes here after launching the children.
+      Check_(&tmp_arguments[0]);
+
+      // The main thread joins the children.
       for(int i = 1; i < num_threads; i++) {
         pthread_join(thread_group[i - 1], NULL);
       }
