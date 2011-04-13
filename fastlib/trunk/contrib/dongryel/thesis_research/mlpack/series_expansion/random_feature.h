@@ -167,7 +167,6 @@ class RandomFeature {
      *         in the dot product sense.
      */
     static void ThreadedNormalizedAverageTransform(
-      int num_threads,
       const TableType &table_in,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
@@ -179,6 +178,7 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
+      int num_threads = omp_get_num_threads();
       std::vector < RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_average_transformations(
@@ -188,8 +188,9 @@ class RandomFeature {
       int grain_size = table_in.n_entries() / num_threads;
 
       // OpenMP parallel region.
-#pragma omp parallel for shared(tmp_arguments)
-      for(int i = 0; i < num_threads; i++) {
+#pragma omp parallel
+      {
+        int i = omp_get_thread_num();
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
                   (i + 1) * grain_size : table_in.n_entries();
@@ -210,7 +211,6 @@ class RandomFeature {
     /** @brief A private function for launching threads.
      */
     static void ThreadedCovarianceTransform(
-      int num_threads,
       const TableType &table_in,
       bool do_centering,
       const core::monte_carlo::MeanVariancePairMatrix &global_mean,
@@ -225,6 +225,7 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
+      int num_threads = omp_get_num_threads();
       std::vector <RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_covariance_transformations(
@@ -233,8 +234,9 @@ class RandomFeature {
       // The block size.
       int grain_size = table_in.n_entries() / num_threads;
 
-#pragma omp parallel for shared(tmp_arguments)
-      for(int i = 0; i < num_threads; i++) {
+#pragma omp parallel
+      {
+        int i = omp_get_thread_num();
         int begin = i * grain_size;
         int end = (i < num_threads - 1) ?
                   (i + 1) * grain_size : table_in.n_entries();
