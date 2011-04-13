@@ -148,6 +148,7 @@ class ThreadedConvergence {
   public:
 
     static bool ThreadedCheck(
+      int num_threads,
       double relative_error_in,
       double absolute_error_in,
       double num_standard_deviations,
@@ -164,7 +165,6 @@ class ThreadedConvergence {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      int num_threads = omp_get_num_threads();
       std::vector < ThreadedConvergenceArgument > tmp_arguments(num_threads);
 
       // The block size.

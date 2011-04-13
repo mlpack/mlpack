@@ -167,6 +167,7 @@ class RandomFeature {
      *         in the dot product sense.
      */
     static void ThreadedNormalizedAverageTransform(
+      int num_threads,
       const TableType &table_in,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
@@ -178,7 +179,6 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      int num_threads = omp_get_num_threads();
       std::vector < RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_average_transformations(
@@ -211,6 +211,7 @@ class RandomFeature {
     /** @brief A private function for launching threads.
      */
     static void ThreadedCovarianceTransform(
+      int num_threads,
       const TableType &table_in,
       bool do_centering,
       const core::monte_carlo::MeanVariancePairMatrix &global_mean,
@@ -225,7 +226,6 @@ class RandomFeature {
 
       // Basically, store sub-results and combine them later after all
       // threads are joined.
-      int num_threads = omp_get_num_threads();
       std::vector <RandomFeatureArgument > tmp_arguments(num_threads);
       boost::scoped_array<core::monte_carlo::MeanVariancePairMatrix>
       sub_covariance_transformations(
