@@ -516,6 +516,7 @@ class Table {
       rank_ = rank_in;
       if(num_dimensions_in > 0 && num_points_in > 0) {
         data_.Init(num_dimensions_in, num_points_in);
+        data_.SetZero();
         weights_.Init(1, num_points_in);
         weights_.SetAll(1.0);
         if(core::table::global_m_file_) {
@@ -551,7 +552,9 @@ class Table {
         exit(0);
       }
       if(weight_file_name == NULL) {
-        weights_.Init(1, data_.n_cols());
+        if(weights_.n_rows() == 0) {
+          weights_.Init(1, data_.n_cols());
+        }
         weights_.SetAll(1.0);
       }
       rank_ = rank_in;
@@ -565,8 +568,12 @@ class Table {
                           data_.n_cols());
       }
       else {
-        old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
-        new_from_old_ = new int[data_.n_cols()];
+        if(old_from_new_ == NULL) {
+          old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
+        }
+        if(new_from_old_ == NULL) {
+          new_from_old_ = new int[data_.n_cols()];
+        }
       }
       core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
         data_, rank_in, old_from_new_.get());
