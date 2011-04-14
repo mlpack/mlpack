@@ -52,7 +52,7 @@ bool DistributedKpcaArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL output file for KPCA projections."
   )(
     "max_num_iterations_in",
-    boost::program_options::value<int>()->default_value(30),
+    boost::program_options::value<int>()->default_value(10),
     "OPTIONAL The number of maximum sampling rounds."
   )(
     "references_in",
@@ -269,6 +269,12 @@ bool DistributedKpcaArgumentParser::ParseArguments(
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
+
+  arguments_out->reference_table_ =
+    (core::table::global_m_file_) ?
+    core::table::global_m_file_->Construct<DistributedTableType>() :
+    new DistributedTableType();
+
   if(vm.count("random_generate_n_entries") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
@@ -287,9 +293,18 @@ bool DistributedKpcaArgumentParser::ParseArguments(
     if(vm["growupto"].as<int>() > 0) {
       std::cout << "Growing each file up to " <<
                 vm["growupto"].as<int>() << " points.\n";
-      core::DatasetReader::GrowFile <
-      typename DistributedTableType::TableType > (
-        reference_file_name, world.rank(), vm["growupto"].as<int>());
+
+      // Peek the number of dimensions.
+      int peek_num_dimensions =
+        core::DatasetReader::PeekNumDimensions(reference_file_name);
+      if(world.rank() == 0) {
+        std::cout << "Peeked and found " << peek_num_dimensions <<
+                  " dimensionality points.\n";
+      }
+      *(arguments_out->reference_table_->local_table_ptr()) =
+        new typename DistributedTableType::TableType();
+      arguments_out->reference_table_->local_table()->Init(
+        peek_num_dimensions, vm["growupto"].as<int>());
     }
     else {
       if(world.rank() == 0) {
@@ -298,22 +313,56 @@ bool DistributedKpcaArgumentParser::ParseArguments(
         typename DistributedTableType::TableType > (
           reference_file_name, world.size());
       }
+      world.barrier();
+      std::stringstream reference_file_name_sstr;
+      reference_file_name_sstr << vm["references_in"].as<std::string>() <<
+                               world.rank();
+      reference_file_name = reference_file_name_sstr.str();
     }
-    world.barrier();
-    std::stringstream reference_file_name_sstr;
-    reference_file_name_sstr << vm["references_in"].as<std::string>() <<
-                             world.rank();
-    reference_file_name = reference_file_name_sstr.str();
   }
 
   std::cout << "Reading in the reference set: " <<
             reference_file_name << "\n";
-  arguments_out->reference_table_ =
-    (core::table::global_m_file_) ?
-    core::table::global_m_file_->Construct<DistributedTableType>() :
-    new DistributedTableType();
   arguments_out->reference_table_->Init(
     reference_file_name, world);
+
+  // Postprocess the growing.
+  if(vm["growupto"].as<int>() > 0) {
+    for(int i = 1;
+        i < arguments_out->reference_table_->local_table()->n_entries(); i++) {
+
+      int random_index = core::math::RandInt(0, i);
+      arma::vec source_point;
+      arma::vec destination_point;
+      arguments_out->reference_table_->local_table()->get(
+        random_index, &source_point);
+      arguments_out->reference_table_->local_table()->get(
+        i, &destination_point);
+
+      bool all_zero = true;
+      for(unsigned int j = 0; j < destination_point.n_elem && all_zero; j++) {
+        all_zero = (destination_point[j] == 0);
+      }
+
+      // If the destination is all zero, then take the source and
+      // perturb it.
+      if(all_zero) {
+        for(unsigned int j = 0; j < destination_point.n_elem; j++) {
+          destination_point[j] =
+            source_point[j] +
+            core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
+        }
+      }
+
+      // Otherwise, just perturb self.
+      else {
+        for(unsigned int j = 0; j < destination_point.n_elem; j++) {
+          destination_point[j] +=
+            core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
+        }
+      }
+    }
+  }
 
   // Scale the reference dataset.
   if(vm["prescale"].as<std::string>() == "hypercube") {

@@ -230,6 +230,10 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_.get();
     }
 
+    boost::interprocess::offset_ptr<TableType> *local_table_ptr() {
+      return &owned_table_;
+    }
+
     /** @brief Retrieves the global old from new mapping.
      */
     typename TableType::OldFromNewIndexType *old_from_new() {
@@ -284,9 +288,11 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::timer distributed_table_init_timer;
 
       // Initialize the table owned by the distributed table.
-      owned_table_ = (core::table::global_m_file_) ?
-                     core::table::global_m_file_->Construct<TableType>() :
-                     new TableType();
+      if(owned_table_ == NULL) {
+        owned_table_ = (core::table::global_m_file_) ?
+                       core::table::global_m_file_->Construct<TableType>() :
+                       new TableType();
+      }
       owned_table_->Init(file_name, world.rank(), weight_file_name);
 
       // Allocate the vector for storing the number of entries for all

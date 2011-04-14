@@ -163,6 +163,38 @@ class DatasetReader {
       return num_points;
     }
 
+    /** @brief Find the number of dimensions.
+     */
+    static int PeekNumDimensions(
+      const std::string &filename_in) {
+
+      const char *filename = filename_in.c_str();
+      const char field_terminator = ',';
+      const char line_terminator  = '\n';
+      const char enclosure_char   = '"';
+
+      csv_parser file_parser;
+
+      // Specify the number of lines to skip.
+      file_parser.set_skip_lines(0);
+
+      // Specify the file to parse.
+      if(file_parser.init(filename) == false) {
+        return false;
+      }
+
+      // Here we tell the parser how to parse the file.
+      file_parser.set_enclosed_char(enclosure_char, ENCLOSURE_OPTIONAL);
+
+      file_parser.set_field_term_char(field_terminator);
+
+      file_parser.set_line_term_char(line_terminator);
+
+      // Get the record
+      csv_row row = file_parser.get_row();
+      return row.size();
+    }
+
     static bool ParseDataset(
       const std::string &filename_in, core::table::DenseMatrix *dataset_out) {
 
@@ -202,7 +234,9 @@ class DatasetReader {
 
       // Given the row count, allocate the matrix, while resetting the
       // file pointer.
-      dataset_out->Init(num_dimensions, num_points);
+      if(dataset_out->n_rows() == 0) {
+        dataset_out->Init(num_dimensions, num_points);
+      }
       file_parser.init(filename);
 
       // Grab each point and store.
