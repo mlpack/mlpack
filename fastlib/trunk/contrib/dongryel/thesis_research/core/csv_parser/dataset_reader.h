@@ -8,6 +8,7 @@
 
 #include <string>
 #include "core/csv_parser/csv_parser.h"
+#include "core/math/math_lib.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 
