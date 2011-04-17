@@ -8,9 +8,10 @@
 #ifndef MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DEV_H
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_DEV_H
 
-#include "mlpack/mixed_logit_dcm/mixed_logit_dcm.h"
 #include "core/optimization/quasi_newton_hessian_update.h"
 #include "core/optimization/trust_region_dev.h"
+#include "mlpack/mixed_logit_dcm/mixed_logit_dcm.h"
+#include "mlpack/mixed_logit_dcm/training_error_measure.h"
 
 namespace mlpack {
 namespace mixed_logit_dcm {
