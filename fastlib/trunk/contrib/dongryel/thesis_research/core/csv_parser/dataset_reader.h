@@ -90,21 +90,6 @@ class DatasetReader {
   public:
 
     template<typename TableType>
-    static void GrowFile(
-      const std::string &filename_in, int rank, int growupto) {
-
-      // Count the number of points in total.
-      int num_dimensions = 0;
-      int total_num_points = CountNumPoints(filename_in, &num_dimensions);
-      std::stringstream filename_out_sstr;
-      filename_out_sstr << filename_in << rank;
-      std::string filename_out = filename_out_sstr.str();
-      Extract_<TableType>(
-        filename_in, filename_out, num_dimensions,
-        0, total_num_points, growupto);
-    }
-
-    template<typename TableType>
     static void SplitFile(
       const std::string &filename_in, int num_parts) {
 
