@@ -11,6 +11,7 @@
 #include "core/math/math_lib.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
+#include "core/util/timer.h"
 
 namespace core {
 class DatasetReader {
@@ -44,6 +45,9 @@ class DatasetReader {
     template<typename TableType>
     static void SplitFile(
       const std::string &filename_in, int num_parts) {
+
+      core::util::Timer timer;
+      timer.Start();
 
       const char *filename = filename_in.c_str();
       const char field_terminator = ',';
@@ -79,6 +83,10 @@ class DatasetReader {
         Extract_<TableType>(
           filename_out, num_dimensions, begin, end, &file_parser);
       }
+
+      timer.End();
+      std::cout << timer.GetTotalElapsedTime() <<
+                " seconds spent in splitting the file...\n";
     }
 
     /** @brief Counts the number of points in the dataset.
