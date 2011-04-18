@@ -19,13 +19,31 @@ class DatasetReader {
 
     template<typename TableType>
     static void Extract_(
-      const std::string &filename_in,
       const std::string &filename_out,
-      int num_dimensions_in, int begin, int end, int growupto) {
+      int num_dimensions_in, int begin, int end,
+      csv_parser *file_parser) {
 
-      int count = (growupto > 0) ? growupto : end - begin;
+      int count = end - begin;
       TableType extracted_table;
       extracted_table.Init(num_dimensions_in, count);
+
+      // Extract the subset.
+      for(int j = 0; j < count; j++) {
+
+        // Get the record
+        csv_row row = file_parser->get_row();
+        for(unsigned i = 0; i < row.size(); i++) {
+          extracted_table.data().set(i, j, atof(row[i].c_str()));
+        }
+      }
+      extracted_table.Save(filename_out);
+    }
+
+  public:
+
+    template<typename TableType>
+    static void SplitFile(
+      const std::string &filename_in, int num_parts) {
 
       const char *filename = filename_in.c_str();
       const char field_terminator = ',';
@@ -47,52 +65,6 @@ class DatasetReader {
       file_parser.set_field_term_char(field_terminator);
       file_parser.set_line_term_char(line_terminator);
 
-      int row_index = 0;
-      int num_points = 0;
-      while(file_parser.has_more_rows()) {
-
-        // Get the record
-        csv_row row = file_parser.get_row();
-
-        if(row_index >= begin && row_index < end) {
-          for(unsigned i = 0; i < row.size(); i++) {
-            extracted_table.data().set(i, num_points, atof(row[i].c_str()));
-          }
-          num_points++;
-        }
-        row_index++;
-      }
-      for(; num_points < growupto; num_points++) {
-        int random_point_index = core::math::RandInt(0, num_points);
-        arma::vec source_point;
-        arma::vec destination_point;
-        extracted_table.get(random_point_index, &source_point);
-        extracted_table.get(num_points, &destination_point);
-        for(unsigned int j = 0; j < source_point.n_elem; j++) {
-          destination_point[j] =
-            source_point[j] +
-            core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
-        }
-      }
-      if(growupto > 0) {
-        for(int i = 0; i < growupto; i++) {
-          arma::vec point;
-          extracted_table.get(i, &point);
-          for(unsigned int j = 0; j < point.n_elem; j++) {
-            point[j] +=
-              core::math::RandGaussian<double>(core::math::Random(0.1, 0.3));
-          }
-        }
-      }
-      extracted_table.Save(filename_out);
-    }
-
-  public:
-
-    template<typename TableType>
-    static void SplitFile(
-      const std::string &filename_in, int num_parts) {
-
       // Count the number of points in total.
       int num_dimensions = 0;
       int total_num_points = CountNumPoints(filename_in, &num_dimensions);
@@ -105,7 +77,7 @@ class DatasetReader {
         filename_out_sstr << filename_in << i;
         std::string filename_out = filename_out_sstr.str();
         Extract_<TableType>(
-          filename_in, filename_out, num_dimensions, begin, end, -1);
+          filename_out, num_dimensions, begin, end, &file_parser);
       }
     }
 
