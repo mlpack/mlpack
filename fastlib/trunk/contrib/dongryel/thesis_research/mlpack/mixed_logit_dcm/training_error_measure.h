@@ -21,6 +21,7 @@ class TrainingErrorMeasure {
     static void Compute(
       const DCMTableType &dcm_table,
       const arma::vec &parameters,
+      std::vector<double> *zero_one_error_per_discrete_choice,
       double *zero_one_error,
       double *expected_error,
       arma::vec *percentage_alternative_ratios) {
@@ -30,6 +31,13 @@ class TrainingErrorMeasure {
 
       // The total number of people in the dataset.
       int total_num_people = dcm_table.num_people();
+
+      // The total number of discrete choices.
+      int total_num_discrete_choices = dcm_table.total_num_discrete_choices();
+      zero_one_error_per_discrete_choice->resize(total_num_discrete_choices);
+      std::fill(
+        zero_one_error_per_discrete_choice->begin(),
+        zero_one_error_per_discrete_choice->end(), 0.0);
 
       // Given the parameters, recompute the simulated choice
       // probability for the given person.
@@ -81,15 +89,21 @@ class TrainingErrorMeasure {
 
         // Get the person's discrete choice index.
         int discrete_choice_index = dcm_table.get_discrete_choice_index(i);
-        (*zero_one_error) +=
-          ((discrete_choice_index == max_simulated_choice_probability.first) ?
-           1.0 : 0.0);
+
+        if(discrete_choice_index == max_simulated_choice_probability.first) {
+          (*zero_one_error) += 1.0;
+          (*zero_one_error_per_discrete_choice)[discrete_choice_index] += 1.0;
+        }
         (*expected_error) +=
           (1.0 - simulated_choice_probabilities[i][
              max_simulated_choice_probability.first].sample_mean());
       }
 
       (*zero_one_error) /= static_cast<double>(total_num_people);
+      for(int i = 0; i < total_num_discrete_choices; i++) {
+        (*zero_one_error_per_discrete_choice)[i] /=
+          static_cast<double>(dcm_table.num_people_per_discrete_choice(i));
+      }
       (*expected_error) *= (2.0 / static_cast<double>(total_num_people));
     }
 };

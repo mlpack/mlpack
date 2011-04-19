@@ -58,6 +58,11 @@ class DCMTable {
      */
     std::vector<int> shuffled_indices_for_person_;
 
+    /** @brief The number of people choosing a particular discrete
+     *         choice.
+     */
+    std::vector<int> num_people_per_discrete_choice_;
+
   public:
 
     /** @brief Computes the choice probability vector for the
@@ -141,6 +146,13 @@ class DCMTable {
       return distribution_;
     }
 
+    /** @brief Returns the number of pepole choosing the given
+     *         discrete choice.
+     */
+    int num_people_per_discrete_choice(int discrete_choice_index) const {
+      return num_people_per_discrete_choice_[discrete_choice_index];
+    }
+
     /** @brief Returns the real person index for the $pos$-th person
      *         in the shuffled list.
      */
@@ -161,6 +173,12 @@ class DCMTable {
     int num_discrete_choices(int person_index) const {
       return static_cast<int>(
                discrete_choice_set_info_->data().get(1, person_index));
+    }
+
+    /** @brief Returns the total number of discrete choices available.
+     */
+    int total_num_discrete_choices() const {
+      return num_people_per_discrete_choice_.size();
     }
 
     /** @brief Returns the discrete choice index for the given person.
@@ -236,6 +254,21 @@ class DCMTable {
         std::cerr << "The total number of discrete choices do not equal "
                   "the number of total number of attribute vectors.\n";
         exit(0);
+      }
+
+      // Now count the number of people choosing each discrete choice.
+      int total_num_discrete_choices = 0;
+      for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
+        total_num_discrete_choices =
+          std::max(
+            total_num_discrete_choices, this->num_discrete_choices(i));
+      }
+      num_people_per_discrete_choice_.resize(total_num_discrete_choices);
+      std::fill(
+        num_people_per_discrete_choice_.begin(),
+        num_people_per_discrete_choice_.end(), 0);
+      for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
+        num_people_per_discrete_choice_[this->get_discrete_choice_index(i)]++;
       }
     }
 
