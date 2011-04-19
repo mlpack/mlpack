@@ -28,7 +28,7 @@ class TrainingErrorMeasure {
       // For now, fix the number of samples.
       const int total_num_samples = 100;
 
-      double zero_one_measure = 0.0;
+      // The total number of people in the dataset.
       int total_num_people = dcm_table.num_people();
 
       // Given the parameters, recompute the simulated choice
@@ -62,6 +62,7 @@ class TrainingErrorMeasure {
 
       // Given the simulated choice probabilities, compute the error.
       *zero_one_error = 0.0;
+      *expected_error = 0.0;
       for(int i = 0; i < total_num_people; i++) {
 
         // Among the simulated choice proabilities for the given
@@ -74,7 +75,7 @@ class TrainingErrorMeasure {
               max_simulated_choice_probability.second) {
             max_simulated_choice_probability.first = k;
             max_simulated_choice_probability.second =
-              simulated_choice_probabilities[i][k];
+              simulated_choice_probabilities[i][k].sample_mean();
           }
         }
 
@@ -83,10 +84,13 @@ class TrainingErrorMeasure {
         (*zero_one_error) +=
           ((discrete_choice_index == max_simulated_choice_probability.first) ?
            1.0 : 0.0);
+        (*expected_error) +=
+          (1.0 - simulated_choice_probabilities[i][
+             max_simulated_choice_probability.first].sample_mean());
       }
 
-      *zero_one_error /= static_cast<double>(total_num_people);
-      *expected_error *= (2.0 / static_cast<double>(total_num_people));
+      (*zero_one_error) /= static_cast<double>(total_num_people);
+      (*expected_error) *= (2.0 / static_cast<double>(total_num_people));
     }
 };
 }
