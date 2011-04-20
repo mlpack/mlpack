@@ -61,11 +61,11 @@ class NbodySimulator {
       const physpack::nbody_simulator::NbodySimulatorArguments<TableType> &arguments_in,
       ResultType *result_out);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       const std::vector<std::string> &args,
       physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out);
 
-    static void ParseArguments(
+    static bool ParseArguments(
       int argc,
       char *argv[],
       physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out);

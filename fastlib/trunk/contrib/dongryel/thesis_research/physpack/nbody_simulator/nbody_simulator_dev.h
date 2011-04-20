@@ -204,7 +204,7 @@ bool physpack::nbody_simulator::NbodySimulator<TableType>::ConstructBoostVariabl
 }
 
 template<typename TableType>
-void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
+bool physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   const std::vector<std::string> &args,
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out) {
 
@@ -213,7 +213,9 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  ConstructBoostVariableMap_(args, &vm);
+  if( ConstructBoostVariableMap_(args, &vm) == false ) {
+    return false;
+  }
 
   // Given the constructed boost variable map, parse each argument.
 
@@ -251,10 +253,12 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
 
   // Determine whether we need to verify against the naive.
   arguments_out->verify_accuracy_ = (vm.count("verify_accuracy") > 0);
+
+  return true;
 }
 
 template<typename TableType>
-void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
+bool physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   int argc,
   char *argv[],
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> *arguments_out) {
@@ -262,7 +266,7 @@ void physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   // Convert C input to C++; skip executable name for Boost.
   std::vector<std::string> args(argv + 1, argv + argc);
 
-  ParseArguments(args, arguments_out);
+  return ParseArguments(args, arguments_out);
 }
 
 #endif

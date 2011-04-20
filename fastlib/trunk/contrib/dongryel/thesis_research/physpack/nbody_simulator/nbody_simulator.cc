@@ -22,8 +22,10 @@ int main(int argc, char *argv[]) {
 
   // Parse arguments for Nbody.
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> nbody_simulator_arguments;
-  physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
-    argc, argv, &nbody_simulator_arguments);
+  if( physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
+	argc, argv, &nbody_simulator_arguments) ) {
+    return -1;
+  }
 
   if(nbody_simulator_arguments.table_->n_attributes() != 3) {
     std::cerr << "The dimensionality of the points is not three!\n";
