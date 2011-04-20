@@ -440,7 +440,7 @@ void TripletreeDfs<ProblemType>::AllocateProbabilities_(
 
   new_failure_probabilities->resize(3);
   for(int i = 0; i < 3; i++) {
-    (*new_failure_probabilites)[i] = failure_probabilities[i];
+    (*new_failure_probabilities)[i] = failure_probabilities[i];
   }
   /*
   for(unsigned int i = 0; i < node_is_split.size(); i++) {
