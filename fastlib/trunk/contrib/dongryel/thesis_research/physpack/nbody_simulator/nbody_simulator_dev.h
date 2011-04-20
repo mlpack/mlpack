@@ -213,8 +213,8 @@ bool physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  if( ConstructBoostVariableMap_(args, &vm) == false ) {
-    return false;
+  if( ConstructBoostVariableMap_(args, &vm) ) {
+    return true;
   }
 
   // Given the constructed boost variable map, parse each argument.
@@ -254,7 +254,7 @@ bool physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
   // Determine whether we need to verify against the naive.
   arguments_out->verify_accuracy_ = (vm.count("verify_accuracy") > 0);
 
-  return true;
+  return false;
 }
 
 template<typename TableType>
