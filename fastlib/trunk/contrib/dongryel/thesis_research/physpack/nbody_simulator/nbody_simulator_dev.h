@@ -213,7 +213,7 @@ bool physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
 
   // Construct the Boost variable map.
   boost::program_options::variables_map vm;
-  if( ConstructBoostVariableMap_(args, &vm) ) {
+  if(ConstructBoostVariableMap_(args, &vm)) {
     return true;
   }
 

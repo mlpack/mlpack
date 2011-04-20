@@ -22,8 +22,8 @@ int main(int argc, char *argv[]) {
 
   // Parse arguments for Nbody.
   physpack::nbody_simulator::NbodySimulatorArguments<TableType> nbody_simulator_arguments;
-  if( physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
-	argc, argv, &nbody_simulator_arguments) ) {
+  if(physpack::nbody_simulator::NbodySimulator<TableType>::ParseArguments(
+        argc, argv, &nbody_simulator_arguments)) {
     return -1;
   }
 
