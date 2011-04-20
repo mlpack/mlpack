@@ -243,9 +243,12 @@ inline double PowAbs(double d) {
  */
 template<typename T>
 void RandomCombination(
-  int begin, int end, int num_elements, std::vector<T> *combination) {
+  int begin, int end, int num_elements, std::vector<T> *combination,
+  bool clear_combination = true) {
 
-  combination->resize(0);
+  if( clear_combination ) {
+    combination->resize(0);
+  }
   for(int i = end - begin - num_elements; i < end - begin; i++) {
     int t = core::math::RandInt(0, i + 1) + begin;
     bool already_in_list = false;

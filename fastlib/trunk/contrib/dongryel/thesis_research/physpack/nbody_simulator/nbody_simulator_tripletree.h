@@ -457,7 +457,7 @@ class NbodySimulatorSummary {
           core::math::RandomCombination(
             range_sq_in.node(0)->begin(),
             range_sq_in.node(0)->end(), 2,
-            random_combination_out);
+            random_combination_out, false);
         }
 
         // node 0 equals node 1, node 1 does not equal node 2.
@@ -466,17 +466,17 @@ class NbodySimulatorSummary {
             core::math::RandomCombination(
               range_sq_in.node(0)->begin(),
               range_sq_in.node(0)->end(), 1,
-              random_combination_out);
+              random_combination_out, false);
             core::math::RandomCombination(
               range_sq_in.node(2)->begin(),
               range_sq_in.node(2)->end(), 1,
-              random_combination_out);
+              random_combination_out, false);
           }
           else {
             core::math::RandomCombination(
               range_sq_in.node(0)->begin(),
               range_sq_in.node(0)->end(), 2,
-              random_combination_out);
+              random_combination_out, false);
           }
         }
       }
@@ -489,17 +489,17 @@ class NbodySimulatorSummary {
             core::math::RandomCombination(
               range_sq_in.node(1)->begin(),
               range_sq_in.node(1)->end(), 2,
-              random_combination_out);
+              random_combination_out, false);
           }
           else {
             core::math::RandomCombination(
               range_sq_in.node(0)->begin(),
               range_sq_in.node(0)->end(), 1,
-              random_combination_out);
+              random_combination_out, false);
             core::math::RandomCombination(
               range_sq_in.node(2)->begin(),
               range_sq_in.node(2)->end(), 1,
-              random_combination_out);
+              random_combination_out, false);
           }
         }
 
@@ -510,7 +510,7 @@ class NbodySimulatorSummary {
               core::math::RandomCombination(
                 range_sq_in.node(i)->begin(),
                 range_sq_in.node(i)->end(), 1,
-                random_combination_out);
+                random_combination_out, false);
             }
           }
         }
@@ -616,7 +616,8 @@ class NbodySimulatorSummary {
         random_combination.resize(1);
 
         // Generate the random combination.
-        RandomCombination_(range_sq_in, node_index, &random_combination);
+        RandomCombination_(
+          range_sq_in, node_index, &random_combination);
 
         // Translate the DFS indices to the real point indices.
         TranslateCombination_(
