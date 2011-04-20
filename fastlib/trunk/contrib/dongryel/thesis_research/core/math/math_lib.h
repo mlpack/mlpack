@@ -246,7 +246,7 @@ void RandomCombination(
   int begin, int end, int num_elements, std::vector<T> *combination,
   bool clear_combination = true) {
 
-  if( clear_combination ) {
+  if(clear_combination) {
     combination->resize(0);
   }
   for(int i = end - begin - num_elements; i < end - begin; i++) {
