@@ -139,9 +139,10 @@ class MeanVariancePair {
       double sample_mv = this->sample_mean_variance();
       double error = standard_deviation_factor * sqrt(sample_mv);
 
-      // In case no sample has been collected, then we need to set the
-      // error to zero (since the variance will be infinite).
-      if(num_samples_ == 0) {
+      // In case at most one sample has been collected, then we need
+      // to set the error to zero (since the variance will be
+      // infinite).
+      if(num_samples_ <= 1) {
         error = 0;
       }
 
