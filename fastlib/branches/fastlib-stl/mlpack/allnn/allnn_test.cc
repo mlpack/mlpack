@@ -39,7 +39,7 @@ class TestAllNN {
   TestAllNN() {
   }
   void Init() {
-    if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+    if (data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
       IO::PrintFatal("Unable to load test dataset.");
   }
   void Destruct() {
@@ -63,7 +63,7 @@ class TestAllNN {
   
     naive_->ComputeNeighbors(resulting_distances_naive, resulting_neighbors_naive);
     // compare results
-    for(index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
+    for (index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }

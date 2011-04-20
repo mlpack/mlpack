@@ -51,13 +51,25 @@ class OptionsHierarchy {
                    string& description, OptionsData& data);
   
    /* Will return the node associated with a pathname */
-   //OptionsHierarchy* findNode(string& pathname);
+   OptionsHierarchy* FindNode(string& pathname);
 
    /* Print functions */
+   //Prints a single node, and outlines relations
    void Print();
+
+   //Prints all nodes, plus their data
    void PrintAll();
+   //Prints a node and it's data
    void PrintNode();
+
+   //Prints all nodes, plus their description
+   void PrintAllHelp();
+   //Prints a node and it's description
+   void PrintNodeHelp();
+
+   //Prints the leaves of a node
    void PrintLeaves();
+   //Prints the branches of a node
    void PrintBranches();
 };
 };

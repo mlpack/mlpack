@@ -51,12 +51,6 @@ class TimerPrinter : public Printing{
    static TimerPrinter tmp;
 };
   
-class BoolPrinter : public Printing{
- BoolPrinter();
-  public:
-   void ToString(std::string& pathname);
-   static BoolPrinter tmp;
-};
 };
 };
 #endif 

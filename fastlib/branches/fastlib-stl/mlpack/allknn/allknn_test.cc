@@ -6,7 +6,6 @@
 #include "allknn.h"
 #include <fastlib/base/test.h>
 #include <fastlib/fx/io.h>
-
 #include <armadillo>
 
 using namespace mlpack::allknn;
@@ -17,8 +16,8 @@ namespace allknn {
 class TestAllkNN {
  public:
   void Init() {
-//    allknn_ = new AllkNN();
-//    naive_  = new AllkNN();
+    //allknn_ = new AllkNN();
+    //naive_  = new AllkNN();
     if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS) {
       IO::PrintFatal("Unable to load test dataset.");
       exit(1);
