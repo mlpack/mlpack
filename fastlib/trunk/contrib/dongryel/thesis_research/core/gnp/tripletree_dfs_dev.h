@@ -439,6 +439,10 @@ void TripletreeDfs<ProblemType>::AllocateProbabilities_(
   std::vector<double> *new_failure_probabilities) const {
 
   new_failure_probabilities->resize(3);
+  for(int i = 0; i < 3; i++) {
+    (*new_failure_probabilites)[i] = failure_probabilities[i];
+  }
+  /*
   for(unsigned int i = 0; i < node_is_split.size(); i++) {
     int count = 0;
     for(unsigned int j = 0; j < node_is_split.size(); j++) {
@@ -453,6 +457,7 @@ void TripletreeDfs<ProblemType>::AllocateProbabilities_(
                                       static_cast<double>(
                                         (1 << count) - minus_count);
   }
+  */
 }
 
 template<typename ProblemType>
