@@ -148,7 +148,9 @@ class IO {
    IO(std::string& optionsName);
    IO(const IO& other);
 };
- 
+
+
+//Include the actual definitions of templated methods 
 #include "io_impl.h"
 };
 

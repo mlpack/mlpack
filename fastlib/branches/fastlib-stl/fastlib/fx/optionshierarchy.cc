@@ -68,18 +68,19 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname,
 }  
 
 /* Returns the node with the specified pathname
-  UNUSED, but lets keep it just in case...
-OptionsHierarchy* OptionsHierarchy::findNode(string& pathname) {
-  appendNode(pathname, ); //Make sure we actually have that node
+  UNUSED, but lets keep it just in case... */
+OptionsHierarchy* OptionsHierarchy::FindNode(string& pathname) {
+  string name = GetName(pathname);
+  string path = GetPath(pathname);
   
-  string name = getName(pathname);
-  string path = getPath(pathname);
-  
-  //The node must be there, recurse to it.
-  if(pathname.find('/') != pathname.npos)
-    return children[name].findNode(path);
-
-}*/
+  //If the node is there, recurse to it.
+  if (pathname.find('/') != pathname.npos)
+    return children[name].FindNode(path);
+  else if (name == this->nodeData.node)
+    return this;
+  else
+    return false;
+}
 
 /* Returns the path in a pathname */
 string OptionsHierarchy::GetPath(string& pathname) {
@@ -99,9 +100,17 @@ string OptionsHierarchy::GetName(string& pathname) {
   return pathname.substr(0, pathname.find('/'));
 }
 
+
+void OptionsHierarchy::PrintAllHelp() {
+  PrintNodeHelp();
+  map<string, OptionsHierarchy>::iterator iter;
+  for (iter = children.begin(); iter != children.end(); iter++) {
+    iter->second.PrintAllHelp();
+  }
+}
+
 void OptionsHierarchy::PrintAll() {
   PrintNode(); 
-
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     iter->second.PrintAll();
@@ -109,9 +118,18 @@ void OptionsHierarchy::PrintAll() {
 }
 
 void OptionsHierarchy::PrintNode() {
-  cout << nodeData.node << ": ";
+  cout << nodeData.node << ": " ;
   Printing::PrintValue(nodeData.tname, nodeData.node);
   cout << endl;
+}
+
+void OptionsHierarchy::PrintNodeHelp() {
+  cout << nodeData.node << ": ";
+  if (nodeData.desc.length() > 0)
+    cout << endl << nodeData.desc;
+  else
+    cout << endl << "Undocumented module.";
+  cout << endl << endl;
 }
 
 void OptionsHierarchy::Print() {

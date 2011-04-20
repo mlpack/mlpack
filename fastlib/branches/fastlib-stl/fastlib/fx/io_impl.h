@@ -7,7 +7,7 @@ void IO::Add(const char* identifier,
 
   po::options_description& desc = IO::GetSingleton().desc;
   //Generate the full pathname and insert the node into the hierarchy
-  std::string tmp = TYPENAME(bool);
+  std::string tmp = TYPENAME(T);
   std::string path = IO::GetSingleton().ManageHierarchy(identifier, parent, 
     tmp, description);
 

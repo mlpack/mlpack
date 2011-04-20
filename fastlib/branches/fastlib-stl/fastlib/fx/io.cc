@@ -19,7 +19,7 @@
 
 using namespace mlpack;
 
-IO* IO::singleton;
+IO* IO::singleton = NULL;
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -27,19 +27,23 @@ namespace po = boost::program_options;
 
 /* Constructors, Destructors, Copy */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
+  IO::PrintNotify("Compiled with debug checks.");
   return;
 }
 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
+    IO::PrintNotify("Compiled with debug checks.");
   return;
 }
 
 IO::IO(const IO::IO& other) : desc(other.desc){
+  IO::PrintWarn("IO has been copied!");
   return;
 }
 
 IO::~IO() {
+  IO::PrintNotify("Compiled with debug checks.");
   return;
 }
 
@@ -69,7 +73,11 @@ void IO::Add(const char* identifier,
 
 //Returns true if the specified value has been flagged by the user
 int IO::CheckValue(const char* identifier) {
-  return GetSingleton().vmap.count(identifier);
+  int isInVmap = GetSingleton().vmap.count(identifier);
+  int isInGmap = GetSingleton().globalValues.count(identifier);
+
+  //Return true if we have a defined value for identifier 
+  return isInVmap || isInGmap ? true : false; 
 }
   
 //Returns the sole instance of this class
@@ -123,12 +131,14 @@ void IO::ParseCommandLine(int argc, char** line) {
   
   //Default help message
   if (CheckValue("help")) {
-    Print();
+    GetSingleton().hierarchy.PrintAllHelp(); 
     exit(0);  //The user doesn't want to run the program, he wants help. 
   }
   else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
-    GetSingleton().hierarchy.PrintAll();
+    io::OptionsHierarchy* n =GetSingleton().hierarchy.FindNode(str);
+    if (n != NULL)
+      n->PrintNode();
     exit(0);
   }
 }
