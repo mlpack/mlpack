@@ -74,16 +74,21 @@ class IO {
       
    /* Prints out the current heirachy */
    static void Print();
-      
+   static ostream& Out;  
+   static ostream& DebugOut;
+
+   static const char* endl;
    /* Prints a fatal error message */
    static void PrintFatal(const char* msg);
    /* Prints a notification */
    static void PrintNotify(const char* msg);
    /* Prints a warning */
    static void PrintWarn(const char* msg);
+   /* Prints a message, only when in debug mode */
+   static void PrintDebug(const char* msg);
    /* Prints all valid values that it can */
    static void PrintData();
-      
+     
    /* Initializes a timer, available like a normal value specified on 
       the command line.  Timers are of type timval*/
    static void StartTimer(const char* timerName);

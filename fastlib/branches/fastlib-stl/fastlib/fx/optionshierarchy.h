@@ -28,7 +28,8 @@ class OptionsHierarchy {
 
    /* Map of this node's children.  All children should have a
       corresponding OptionsHierarchy, hence the references */
-   map<string, OptionsHierarchy> children;
+   typedef map<string, OptionsHierarchy> ChildMap;
+   ChildMap children;
   
    /* Returns the name foo in the pathname foo/bar/fizz */
    string GetName(string& pathname);
@@ -51,7 +52,8 @@ class OptionsHierarchy {
                    string& description, OptionsData& data);
   
    /* Will return the node associated with a pathname */
-   OptionsHierarchy* FindNode(string& pathname);
+   void FindNode(string& pathname);
+   void FindNodeHelper(string& pathname, string& target);
 
    /* Print functions */
    //Prints a single node, and outlines relations

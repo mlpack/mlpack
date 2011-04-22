@@ -88,6 +88,4 @@ int main(int argc, char *argv[]) {
  TestAllNN test;
   IO::ParseCommandLine(argc, argv);
   test.TestAll();
-  IO::GetValue<int>("allnn/leaf_size");
-  IO::PrintData();
 }
