@@ -69,17 +69,20 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname,
 
 /* Returns the node with the specified pathname
   UNUSED, but lets keep it just in case... */
-OptionsHierarchy* OptionsHierarchy::FindNode(string& pathname) {
+void OptionsHierarchy::FindNode(string& pathname) {
+  ChildMap::iterator iter;
+  for (iter = children.begin(); iter != children.end(); iter++)
+    iter->second.FindNodeHelper(pathname, pathname);  
+}
+
+void OptionsHierarchy::FindNodeHelper(string& pathname, string& target) {
   string name = GetName(pathname);
   string path = GetPath(pathname);
-  
   //If the node is there, recurse to it.
-  if (pathname.find('/') != pathname.npos)
-    return children[name].FindNode(path);
-  else if (name == this->nodeData.node)
-    return this;
-  else
-    return false;
+  if (pathname.find('/') != pathname.npos && children.count(path))
+    children[path].FindNodeHelper(name, target);
+  if (target.compare(nodeData.node) == 0)
+    PrintNodeHelp();
 }
 
 /* Returns the path in a pathname */
@@ -110,7 +113,9 @@ void OptionsHierarchy::PrintAllHelp() {
 }
 
 void OptionsHierarchy::PrintAll() {
+  cout << "Print" << endl;
   PrintNode(); 
+  cout << "Loop" << endl;
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     iter->second.PrintAll();

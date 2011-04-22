@@ -20,6 +20,16 @@
 using namespace mlpack;
 
 IO* IO::singleton = NULL;
+ostream& IO::Out = cout;
+
+#ifdef DEBUG
+ostream& IO::DebugOut = cout;
+#else
+ostream tmp_stream(NULL);
+ostream& IO::DebugOut = tmp_stream;
+#endif
+
+const char* IO::endl = "\n";
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -27,23 +37,23 @@ namespace po = boost::program_options;
 
 /* Constructors, Destructors, Copy */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
-  IO::PrintNotify("Compiled with debug checks.");
+  IO::PrintDebug("Compiled with debug checks.");
   return;
 }
 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
-    IO::PrintNotify("Compiled with debug checks.");
+    IO::PrintDebug("Compiled with debug checks.");
   return;
 }
 
 IO::IO(const IO::IO& other) : desc(other.desc){
-  IO::PrintWarn("IO has been copied!");
+  IO::PrintDebug("IO has been copied!");
   return;
 }
 
 IO::~IO() {
-  IO::PrintNotify("Compiled with debug checks.");
+  IO::PrintDebug("Compiled with debug checks.");
   return;
 }
 
@@ -136,9 +146,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   }
   else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
-    io::OptionsHierarchy* n =GetSingleton().hierarchy.FindNode(str);
-    if (n != NULL)
-      n->PrintNode();
+    GetSingleton().hierarchy.FindNode(str);
     exit(0);
   }
 }
@@ -180,17 +188,21 @@ void IO::PrintFatal(const char* msg) {
 
 //Prints a notification
 void IO::PrintNotify(const char* msg) {
-  cout << BASH_GREEN << "[NOTIFY] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg << endl;
 }
 
 void IO::PrintWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN] " << BASH_CLEAR << msg << endl;
+  cout << BASH_YELLOW << "[WARN ] " << BASH_CLEAR << msg << endl;
 }
 
+void IO::PrintDebug(const char* msg) {
+  #ifdef DEBUG
+  cout << BASH_GREEN << "[DEBUG] " << BASH_CLEAR << msg << endl;
+  #endif 
+}
 /* Print whatever data we can */
 void IO::PrintData() {
 }
-
 
 /* Initializes a timer, available like a normal value specified on the command 
    line.  Timers are of type timval, as defined in sys/time.h*/

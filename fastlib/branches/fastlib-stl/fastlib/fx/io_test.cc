@@ -21,6 +21,8 @@ int main(int argc, char** argv) {
   IO::ParseCommandLine(argc, argv);
   IO::StopTimer("allnn/timer");
   IO::GetValue<int>("testint") = 42;
-  IO::Print();
+  IO::Out << IO::GetValue<int>("testint") 
+      << " Does this work?" << IO::endl;
+  IO::DebugOut << "Will this die?" << IO::endl;
 }
 

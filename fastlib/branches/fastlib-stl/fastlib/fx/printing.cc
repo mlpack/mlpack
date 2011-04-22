@@ -16,11 +16,11 @@ Printing::Printing(std::string id) {
 
 void Printing::PrintValue(std::string& id, std::string& pathname) {
   //Is there a handler registered for this type?  Is that a valid pathname?
-  if(!castingMap.count(id)) {
+  if (!id.length() || !castingMap.count(id)) {
     return;
   }
   //Great! Lets print it.
-  if(castingMap[id] != NULL) {    
+  if (castingMap[id] != NULL) {    
     castingMap[id]->ToString(pathname);
   }
 };
@@ -30,7 +30,7 @@ IntPrinter::IntPrinter() : Printing(TYPENAME(int)) {
 };
 
 void IntPrinter::ToString(std::string& pathname) {
-  if(IO::CheckValue(pathname.c_str()))
+  if (IO::CheckValue(pathname.c_str()))
     std::cout << IO::GetValue<int>(pathname.c_str());
 };
 
@@ -40,7 +40,7 @@ StringPrinter::StringPrinter() : Printing(TYPENAME(std::string)) {
 };
 
 void StringPrinter::ToString(std::string& pathname) {
-  if(IO::CheckValue(pathname.c_str()))
+  if (IO::CheckValue(pathname.c_str()))
     std::cout << IO::GetValue<std::string>(pathname.c_str());
 };
 
@@ -50,7 +50,7 @@ TimerPrinter::TimerPrinter() : Printing(TYPENAME(timeval)) {
 };
 
 void TimerPrinter::ToString(std::string& pathname) {
-  if(IO::CheckValue(pathname.c_str()))
+  if (IO::CheckValue(pathname.c_str()))
     std::cout << " sec: " << IO::GetValue<timeval>(pathname.c_str()).tv_sec <<
       " usec: " << IO::GetValue<timeval>(pathname.c_str()).tv_usec;
 };
