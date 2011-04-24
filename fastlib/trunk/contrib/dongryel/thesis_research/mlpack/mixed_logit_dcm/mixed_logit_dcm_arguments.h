@@ -34,6 +34,20 @@ class MixedLogitDCMArguments {
      */
     TableType *num_alternatives_table_;
 
+    /** @brief Stores the attribute vectors for each person (the test
+     *         set).
+     */
+    TableType *test_attribute_table_;
+
+    /** @brief The decision per each person (the test set).
+     */
+    TableType *test_decisions_table_;
+
+    /** @brief Stores the number of discrete choices per person (the
+     *         test set).
+     */
+    TableType *test_num_alternatives_table_;
+
     /** @brief The pointer to the distribution that generates each
      *         $\beta$ attribute vector. This could be a Gaussian
      *         distribution for instance.
@@ -94,6 +108,9 @@ class MixedLogitDCMArguments {
       attribute_table_ = NULL;
       decisions_table_ = NULL;
       num_alternatives_table_ = NULL;
+      test_attribute_table_ = NULL;
+      test_decisions_table_ = NULL;
+      test_num_alternatives_table_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
       gradient_norm_threshold_ = 0;
@@ -112,6 +129,15 @@ class MixedLogitDCMArguments {
       decisions_table_ = NULL;
       delete num_alternatives_table_;
       num_alternatives_table_ = NULL;
+
+      if(test_attribute_table_ != NULL) {
+        delete test_attribute_table_;
+        test_attribute_table_ = NULL;
+        delete test_decisions_table_;
+        test_decisions_table_ = NULL;
+        delete test_num_alternatives_table_;
+        test_num_alternatives_table_ = NULL;
+      }
     }
 };
 }
