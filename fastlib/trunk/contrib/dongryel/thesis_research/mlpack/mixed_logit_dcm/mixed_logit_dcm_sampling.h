@@ -10,6 +10,7 @@
 #define MLPACK_MIXED_LOGIT_DCM_MIXED_LOGIT_DCM_SAMPLING_H
 
 #include <armadillo>
+#include <boost/scoped_array.hpp>
 #include <vector>
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
 
@@ -35,13 +36,13 @@ class MixedLogitDCMSampling {
     /** @brief The simulated choice probabilities (sample mean
      *         and sample variance information).
      */
-    std::vector< core::monte_carlo::MeanVariancePair >
+    boost::scoped_array< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
 
     /** @brief The gradient of the simulated choice probability per
      *         person.
      */
-    std::vector <
+    boost::scoped_array <
     core::monte_carlo::MeanVariancePairVector >
     simulated_choice_probability_gradients_;
 
@@ -56,7 +57,7 @@ class MixedLogitDCMSampling {
      *         {\beta} {P_{i,j_i^*} (\beta^{\nu}(\theta))$. This vector
      *         keeps track of Equation 8.14.
      */
-    std::vector <
+    boost::scoped_array <
     std::pair < core::monte_carlo::MeanVariancePairMatrix,
         core::monte_carlo::MeanVariancePairVector > >
         simulated_loglikelihood_hessians_;
@@ -94,22 +95,37 @@ class MixedLogitDCMSampling {
 
       // This vector maintains the running simulated choice
       // probabilities per person.
-      simulated_choice_probabilities_.resize(dcm_table_->num_people());
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePair >
+      tmp_simulated_choice_probabilities(
+        new core::monte_carlo::MeanVariancePair[dcm_table_->num_people()]);
+      simulated_choice_probabilities_.swap(tmp_simulated_choice_probabilities);
 
       // This vector maintains the gradients of the simulated choice
       // probability per person.
-      simulated_choice_probability_gradients_.resize(dcm_table_->num_people());
-      for(unsigned int i = 0;
-          i < simulated_choice_probability_gradients_.size(); i++) {
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairVector >
+      tmp_simulated_choice_probability_gradients(
+        new core::monte_carlo::MeanVariancePairVector[
+          dcm_table_->num_people()]);
+      simulated_choice_probability_gradients_.swap(
+        tmp_simulated_choice_probability_gradients);
+      for(int i = 0; i < dcm_table_->num_people(); i++) {
         simulated_choice_probability_gradients_[i].Init(
           dcm_table_->num_parameters());
       }
 
       // This vector maintains the components necessary to regenerate
       // the Hessians of the simulated loglikelihood per person.
-      simulated_loglikelihood_hessians_.resize(dcm_table_->num_people());
-      for(unsigned int i = 0; i < simulated_loglikelihood_hessians_.size();
-          i++) {
+      boost::scoped_array <
+      std::pair < core::monte_carlo::MeanVariancePairMatrix,
+          core::monte_carlo::MeanVariancePairVector > >
+          tmp_simulated_loglikelihood_hessians(
+            new std::pair < core::monte_carlo::MeanVariancePairMatrix,
+            core::monte_carlo::MeanVariancePairVector > [dcm_table_->num_people()]);
+      simulated_loglikelihood_hessians_.swap(
+        tmp_simulated_loglikelihood_hessians);
+      for(int i = 0; i < dcm_table_->num_people(); i++) {
         simulated_loglikelihood_hessians_[i].first.Init(
           dcm_table_->num_parameters(), dcm_table_->num_parameters());
         simulated_loglikelihood_hessians_[i].second.Init(

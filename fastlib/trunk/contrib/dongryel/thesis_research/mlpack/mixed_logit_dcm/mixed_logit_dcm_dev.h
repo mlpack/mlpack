@@ -484,6 +484,7 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
     std::cerr << "The function value at the next iterate: " <<
               next_iterate_function_value << "; ";
     std::cerr << "The model reduction ratio: " << model_reduction_ratio << "\n";
+    exit(0);
 
     // Compute the data sample error and the integration sample error.
     double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
