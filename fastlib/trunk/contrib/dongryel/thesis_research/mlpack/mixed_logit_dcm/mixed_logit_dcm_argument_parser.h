@@ -92,6 +92,20 @@ class MixedLogitDCMArgumentParser {
           "densities_out.csv"),
         "OPTIONAL file to store the predicted discrete choices."
       )(
+        "test_attributes_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL file containing the vector of attributes for the test set."
+      )(
+        "test_decisions_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL file containing the decision per each person for the "
+        "test set."
+      )(
+        "test_num_alternatives_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL The file containing the number of alternative per each "
+        "person for the test set."
+      )(
         "trust_region_search_method",
         boost::program_options::value<std::string>()->default_value("cauchy"),
         "OPTIONAL Trust region search method.  One of:\n"
@@ -140,6 +154,16 @@ class MixedLogitDCMArgumentParser {
                   "--hessian_update_method.\n";
         exit(0);
       }
+
+      int test_arguments_count =
+        vm->count("test_attributes_in") + vm->count("test_decisions_in") +
+        vm->count("test_num_alternatives_in");
+      if(test_arguments_count != 0 && test_arguments_count != 3) {
+        std::cerr << "The test set needs all of the following: the attribute "
+                  << "set, the number of alternatives, and the decision set.\n";
+        exit(0);
+      }
+
       if((*vm)["trust_region_search_method"].as<std::string>() != "cauchy" &&
           (*vm)["trust_region_search_method"].as<std::string>() != "dogleg" &&
           (*vm)["trust_region_search_method"].as<std::string>() != "steihaug") {
@@ -197,6 +221,35 @@ class MixedLogitDCMArgumentParser {
       arguments_out->decisions_table_ = new TableType();
       arguments_out->decisions_table_->Init(
         vm["decisions_in"].as<std::string>());
+
+      // Parse the test set.
+      if(vm.count("test_attributes_in") > 0) {
+
+        // Parse the set of attribute vectors for the test set.
+        std::cout << "Reading in the test attribute set: " <<
+                  vm["test_attributes_in"].as<std::string>() << "\n";
+        arguments_out->test_attribute_table_ = new TableType();
+        arguments_out->test_attribute_table_->Init(
+          vm["test_attributes_in"].as<std::string>());
+        std::cout << "Finished reading in the test attributes set.\n";
+
+        // Parse the number of discrete choices per each person for
+        // the test set.
+        std::cout << "Reading in the test number of alternatives: " <<
+                  vm["test_num_alternatives_in"].as<std::string>() << "\n";
+        arguments_out->test_num_alternatives_table_ = new TableType();
+        arguments_out->test_num_alternatives_table_->Init(
+          vm["test_num_alternatives_in"].as<std::string>());
+
+        // Parse the decision choice per each person for the test set.
+        std::cout <<
+                  "Reading in the test decisions per each person: " <<
+                  vm["test_decisions_in"].as<std::string>() <<
+                  "\n";
+        arguments_out->test_decisions_table_ = new TableType();
+        arguments_out->test_decisions_table_->Init(
+          vm["test_decisions_in"].as<std::string>());
+      } // end of parsing the test set.
 
       // Parse the initial dataset sample rate.
       arguments_out->initial_dataset_sample_rate_ =
