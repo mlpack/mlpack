@@ -164,7 +164,7 @@ class MixedLogitDCMArgumentParser {
 
     template<typename TableType>
     static void ParseArguments(
-      boost::program_options::variables_map vm,
+      boost::program_options::variables_map &vm,
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments <
       TableType > *arguments_out) {
 
