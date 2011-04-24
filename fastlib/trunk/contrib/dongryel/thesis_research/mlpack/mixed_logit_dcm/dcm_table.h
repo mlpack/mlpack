@@ -46,7 +46,11 @@ class DCMTable {
      *         discrete choices made by each person (in a
      *         column-oriented matrix table form).
      */
-    TableType *discrete_choice_set_info_;
+    TableType *decisions_table_;
+
+    /** @brief The number of discrete choices avaible to each person.
+     */
+    TableType *num_alternatives_table_;
 
     /** @brief The cumulative distribution on the number of discrete
      *         choices on the person scale.
@@ -172,7 +176,7 @@ class DCMTable {
      */
     int num_discrete_choices(int person_index) const {
       return static_cast<int>(
-               discrete_choice_set_info_->data().get(1, person_index));
+               num_alternatives_table_->data().get(0, person_index));
     }
 
     /** @brief Returns the total number of discrete choices available.
@@ -185,7 +189,7 @@ class DCMTable {
      */
     int get_discrete_choice_index(int person_index) const {
       return static_cast<int>(
-               discrete_choice_set_info_->data().get(0, person_index));
+               decisions_table_->data().get(0, person_index));
     }
 
     /** @brief Returns the number of parameters.
@@ -208,7 +212,8 @@ class DCMTable {
       // Set the incoming attributes table and the number of choices
       // per person in the list.
       attribute_table_ = argument_in.attribute_table_;
-      discrete_choice_set_info_ = argument_in.discrete_choice_set_info_;
+      decisions_table_ = argument_in.decisions_table_;
+      num_alternatives_table_ = argument_in.num_alternatives_table_;
 
       // Initialize the distribution.
       distribution_.Init(attribute_table_->n_attributes());
@@ -216,7 +221,7 @@ class DCMTable {
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
       shuffled_indices_for_person_.resize(
-        argument_in.discrete_choice_set_info_->n_entries());
+        argument_in.decisions_table_->n_entries());
       for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
         shuffled_indices_for_person_[i] = i;
       }
@@ -229,13 +234,13 @@ class DCMTable {
       // index in the attribute table for given (person, discrete
       // choice) pair.
       cumulative_num_discrete_choices_.resize(
-        argument_in.discrete_choice_set_info_->n_entries());
+        argument_in.decisions_table_->n_entries());
       cumulative_num_discrete_choices_[0] = 0;
       for(unsigned int i = 1; i < cumulative_num_discrete_choices_.size();
           i++) {
         arma::vec point;
-        argument_in.discrete_choice_set_info_->get(i - 1, &point);
-        int num_choices_for_current_person = static_cast<int>(point[1]);
+        argument_in.num_alternatives_table_->get(i - 1, &point);
+        int num_choices_for_current_person = static_cast<int>(point[0]);
         cumulative_num_discrete_choices_[i] =
           cumulative_num_discrete_choices_[i - 1] +
           num_choices_for_current_person;
@@ -245,9 +250,9 @@ class DCMTable {
       // distribution on the number of choices match up the total
       // number of attribute vectors. Otherwise, quit.
       arma::vec last_count_vector;
-      argument_in.discrete_choice_set_info_->get(
+      argument_in.num_alternatives_table_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
-      int last_count = static_cast<int>(last_count_vector[1]);
+      int last_count = static_cast<int>(last_count_vector[0]);
       if(cumulative_num_discrete_choices_[
             cumulative_num_discrete_choices_.size() - 1] +
           last_count != argument_in.attribute_table_->n_entries()) {
