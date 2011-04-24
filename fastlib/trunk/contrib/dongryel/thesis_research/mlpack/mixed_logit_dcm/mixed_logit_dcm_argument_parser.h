@@ -34,6 +34,10 @@ class MixedLogitDCMArgumentParser {
         boost::program_options::value<std::string>(),
         "REQUIRED file containing the vector of attributes."
       )(
+        "decisions_in",
+        boost::program_options::value<std::string>(),
+        "REQUIRED file containing the decision per each person."
+      )(
         "distribution_in",
         boost::program_options::value<std::string>()->default_value("constant"),
         "OPTIONAL The distribution each attribute is drawn from. One of: "
@@ -78,10 +82,10 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The maximum trust region radius used in the trust region "
         "search."
       )(
-        "discrete_choice_set_info_in",
+        "num_alternatives_in",
         boost::program_options::value<std::string>(),
-        "REQUIRED The file containing the discrete choice and the number of "
-        "alternatives per each person."
+        "REQUIRED The file containing the number of alternative per each "
+        "person."
       )(
         "predictions_out",
         boost::program_options::value<std::string>()->default_value(
@@ -125,15 +129,8 @@ class MixedLogitDCMArgumentParser {
         std::cerr << "Missing required --attributes_in.\n";
         exit(0);
       }
-      if(vm->count("discrete_choice_set_info_in") == 0) {
-        std::cerr << "Missing required --discrete_choice_set_info_in.\n";
-        exit(0);
-      }
-      if((*vm)["trust_region_search_method"].as<std::string>() != "cauchy" &&
-          (*vm)["trust_region_search_method"].as<std::string>() != "dogleg" &&
-          (*vm)["trust_region_search_method"].as<std::string>() != "steihaug") {
-        std::cerr << "Invalid option specified for " <<
-                  "--trust_region_search_method.\n";
+      if(vm->count("decisions_in") == 0) {
+        std::cerr << "Missing required --decisions_in.\n";
         exit(0);
       }
       if((*vm)["hessian_update_method"].as<std::string>() != "exact" &&
@@ -141,6 +138,13 @@ class MixedLogitDCMArgumentParser {
           (*vm)["hessian_update_method"].as<std::string>() != "sr1") {
         std::cerr << "Invalid option specified for " <<
                   "--hessian_update_method.\n";
+        exit(0);
+      }
+      if((*vm)["trust_region_search_method"].as<std::string>() != "cauchy" &&
+          (*vm)["trust_region_search_method"].as<std::string>() != "dogleg" &&
+          (*vm)["trust_region_search_method"].as<std::string>() != "steihaug") {
+        std::cerr << "Invalid option specified for " <<
+                  "--trust_region_search_method.\n";
         exit(0);
       }
 
@@ -178,14 +182,21 @@ class MixedLogitDCMArgumentParser {
         vm["attributes_in"].as<std::string>());
       std::cout << "Finished reading in the attributes set.\n";
 
-      // Parse the number of discrete choices per each point.
+      // Parse the number of discrete choices per each person.
+      std::cout << "Reading in the number of alternatives: " <<
+                vm["num_alternatives_in"].as<std::string>() << "\n";
+      arguments_out->num_alternatives_table_ = new TableType();
+      arguments_out->num_alternatives_table_->Init(
+        vm["num_alternatives_in"].as<std::string>());
+
+      // Parse the decision choice per each person.
       std::cout <<
-                "Reading in the number of discrete choices per each person: " <<
-                vm["discrete_choice_set_info_in"].as<std::string>() <<
+                "Reading in the decisions per each person: " <<
+                vm["decisions_in"].as<std::string>() <<
                 "\n";
-      arguments_out->discrete_choice_set_info_ = new TableType();
-      arguments_out->discrete_choice_set_info_->Init(
-        vm["discrete_choice_set_info_in"].as<std::string>());
+      arguments_out->decisions_table_ = new TableType();
+      arguments_out->decisions_table_->Init(
+        vm["decisions_in"].as<std::string>());
 
       // Parse the initial dataset sample rate.
       arguments_out->initial_dataset_sample_rate_ =
