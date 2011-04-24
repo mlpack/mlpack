@@ -29,7 +29,8 @@ class TestMixedLogitDCM {
     template<typename TableType>
     void GenerateRandomDataset_(
       TableType *random_attribute_dataset,
-      TableType *random_discrete_choice_set_info_dataset) {
+      TableType *random_decisions_dataset,
+      TableType *random_num_alternatives_dataset) {
 
       // Find the total number of discrete choices.
       int total_num_attributes =
@@ -48,19 +49,25 @@ class TestMixedLogitDCM {
         }
       }
 
-      random_discrete_choice_set_info_dataset->Init(
-        2, mlpack::mixed_logit_dcm::num_people_);
+      random_num_alternatives_dataset->Init(
+        1, mlpack::mixed_logit_dcm::num_people_);
       for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
         core::table::DensePoint point;
-        random_discrete_choice_set_info_dataset->get(j, &point);
+        random_num_alternatives_dataset->get(j, &point);
+
+        // This is the number of discrete choices for the given
+        // person.
+        point[0] = mlpack::mixed_logit_dcm::num_discrete_choices_[j];
+      }
+      random_decisions_dataset->Init(
+        1, mlpack::mixed_logit_dcm::num_people_);
+      for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
+        core::table::DensePoint point;
+        random_decisions_dataset->get(j, &point);
 
         // This is the discrete choice index of the given person.
         point[0] = core::math::RandInt(
                      mlpack::mixed_logit_dcm::num_discrete_choices_[j]);
-
-        // This is the number of discrete choices for the given
-        // person.
-        point[1] = mlpack::mixed_logit_dcm::num_discrete_choices_[j];
       }
     }
 
@@ -113,12 +120,18 @@ class TestMixedLogitDCM {
       std::string attributes_in("random_attributes.csv");
       args.push_back(std::string("--attributes_in=") + attributes_in);
 
-      // Push in the discrete choice set info name.
-      std::string discrete_choice_set_info_in(
-        "random_discrete_choice_set_info.csv");
+      // Push in the decision set info name.
+      std::string decisions_in(
+        "random_decisions.csv");
       args.push_back(
-        std::string("--discrete_choice_set_info_in=") +
-        discrete_choice_set_info_in);
+        std::string("--decisions_in=") +
+        decisions_in);
+
+      // Push in the number of alternatives.
+      std::string num_alternatives_in("random_num_alternatives.csv");
+      args.push_back(
+        std::string("--num_alternatives_in=") +
+        num_alternatives_in);
 
       // Print out the header of the trial.
       std::cout << "\n==================\n";
@@ -130,11 +143,15 @@ class TestMixedLogitDCM {
 
       // Generate the random dataset and save it.
       TableType random_attribute_table;
-      TableType random_discrete_choice_set_info_table;
+      TableType random_decisions_table;
+      TableType random_num_alternatives_table;
       GenerateRandomDataset_(
-        &random_attribute_table, &random_discrete_choice_set_info_table);
+        &random_attribute_table,
+        &random_decisions_table,
+        &random_num_alternatives_table);
       random_attribute_table.Save(attributes_in);
-      random_discrete_choice_set_info_table.Save(discrete_choice_set_info_in);
+      random_decisions_table.Save(decisions_in);
+      random_num_alternatives_table.Save(num_alternatives_in);
 
       // Parse the mixed logit DCM arguments.
       mlpack::mixed_logit_dcm::MixedLogitDCMArguments<TableType> arguments;
