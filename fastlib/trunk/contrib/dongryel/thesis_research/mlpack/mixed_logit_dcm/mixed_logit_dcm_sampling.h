@@ -122,7 +122,8 @@ class MixedLogitDCMSampling {
           core::monte_carlo::MeanVariancePairVector > >
           tmp_simulated_loglikelihood_hessians(
             new std::pair < core::monte_carlo::MeanVariancePairMatrix,
-            core::monte_carlo::MeanVariancePairVector > [dcm_table_->num_people()]);
+            core::monte_carlo::MeanVariancePairVector > [
+              dcm_table_->num_people()]);
       simulated_loglikelihood_hessians_.swap(
         tmp_simulated_loglikelihood_hessians);
       for(int i = 0; i < dcm_table_->num_people(); i++) {
@@ -337,25 +338,27 @@ class MixedLogitDCMSampling {
         // Get the simulated choice probability for the given person.
         double simulated_choice_probability =
           this->simulated_choice_probability(person_index);
-        double inverse_simulated_choice_probability =
-          1.0 / simulated_choice_probability;
 
         // Get the components for the Hessian for the person.
         const core::monte_carlo::MeanVariancePairMatrix &hessian_first_part =
           simulated_loglikelihood_hessians_[person_index].first;
         const core::monte_carlo::MeanVariancePairVector &hessian_second_part =
           simulated_loglikelihood_hessians_[person_index].second;
-        arma::mat hessian_first;
-        arma::vec hessian_second;
-        hessian_first_part.sample_means(&hessian_first);
-        hessian_second_part.sample_means(&hessian_second);
+        arma::mat hessian_first_scaled;
+        arma::vec hessian_second_scaled;
+
+        // Compute the first part of the Hessian and scale it.
+        hessian_first_part.sample_means(&hessian_first_scaled);
+        hessian_first_scaled /= simulated_choice_probability;
+
+        // Compute the second part of the Hessian and scale it.
+        hessian_second_part.sample_means(&hessian_second_scaled);
+        hessian_second_scaled /= simulated_choice_probability;
 
         // Construct the contribution on the fly.
-        (*likelihood_hessian) += inverse_simulated_choice_probability *
-                                 hessian_first;
-        (*likelihood_hessian) +=
-          (- core::math::Sqr(inverse_simulated_choice_probability)) *
-          hessian_second * arma::trans(hessian_second);
+        (*likelihood_hessian) += hessian_first_scaled;
+        (*likelihood_hessian) -=
+          hessian_second_scaled * arma::trans(hessian_second_scaled);
       }
 
       // Divide by the number of people.
@@ -384,19 +387,21 @@ class MixedLogitDCMSampling {
         // Get the simulated choice probability for the given person.
         double simulated_choice_probability =
           this->simulated_choice_probability(person_index);
-        double inverse_simulated_choice_probability =
-          1.0 / simulated_choice_probability;
 
         // Get the gradient for the person.
-        arma::vec gradient_vector;
+        arma::vec gradient_divided_by_simulated_choice_probability;
         this->simulated_choice_probability_gradient(
-          person_index, &gradient_vector);
+          person_index, &gradient_divided_by_simulated_choice_probability);
+
+        // Scale by the simulated choice probability.
+        gradient_divided_by_simulated_choice_probability /=
+          simulated_choice_probability;
 
         // Add the inverse probability weighted gradient vector for
         // the current person to the total tally.
         (*likelihood_gradient) =
           (*likelihood_gradient) +
-          inverse_simulated_choice_probability * gradient_vector;
+          gradient_divided_by_simulated_choice_probability;
       }
 
       // Divide by the number of people.

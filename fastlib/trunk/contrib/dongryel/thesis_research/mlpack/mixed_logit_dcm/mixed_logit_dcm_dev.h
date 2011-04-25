@@ -456,6 +456,7 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
 
   // Enter the trust region loop.
   int num_iterations = 0;
+  exit(0);
   do {
 
     std::cerr << "\n";
