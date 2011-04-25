@@ -262,13 +262,8 @@ class DCMTable {
       }
 
       // Now count the number of people choosing each discrete choice.
-      int total_num_discrete_choices = 0;
-      for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
-        total_num_discrete_choices =
-          std::max(
-            total_num_discrete_choices, this->num_discrete_choices(i));
-      }
-      num_people_per_discrete_choice_.resize(total_num_discrete_choices);
+      num_people_per_discrete_choice_.resize(
+        shuffled_indices_for_person_.size());
       std::fill(
         num_people_per_discrete_choice_.begin(),
         num_people_per_discrete_choice_.end(), 0);
