@@ -278,7 +278,7 @@ class DCMTable {
       std::fill(
         num_people_per_discrete_choice_.begin(),
         num_people_per_discrete_choice_.end(), 0);
-      for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
+      for(unsigned int i = 0; i < num_people_per_discrete_choice_.size(); i++) {
         num_people_per_discrete_choice_[this->get_discrete_choice_index(i)]++;
       }
     }
