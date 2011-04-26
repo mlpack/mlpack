@@ -256,14 +256,25 @@ class DCMTable {
       if(cumulative_num_discrete_choices_[
             cumulative_num_discrete_choices_.size() - 1] +
           last_count != argument_in.attribute_table_->n_entries()) {
-        std::cerr << "The total number of discrete choices do not equal "
+        std::cerr << "The cumulative number of discrete choices do not equal "
                   "the number of total number of attribute vectors.\n";
         exit(0);
       }
+      else {
+        std::cerr << "The cumulative number of discrete choices: " <<
+                  argument_in.attribute_table_->n_entries() << "\n";
+      }
 
       // Now count the number of people choosing each discrete choice.
+      int total_num_discrete_choices = 0;
+      for(int i = 0; i < num_alternatives_table_->n_entries(); i++) {
+        arma::vec point;
+        num_alternatives_table_->get(i, &point);
+        total_num_discrete_choices =
+          std::max(total_num_discrete_choices, static_cast<int>(point[0]));
+      }
       num_people_per_discrete_choice_.resize(
-        shuffled_indices_for_person_.size());
+        total_num_discrete_choices);
       std::fill(
         num_people_per_discrete_choice_.begin(),
         num_people_per_discrete_choice_.end(), 0);
