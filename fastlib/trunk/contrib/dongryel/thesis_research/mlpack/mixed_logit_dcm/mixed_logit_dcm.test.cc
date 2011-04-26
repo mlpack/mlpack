@@ -67,7 +67,7 @@ class TestMixedLogitDCM {
 
         // This is the discrete choice index of the given person.
         point[0] = core::math::RandInt(
-                     mlpack::mixed_logit_dcm::num_discrete_choices_[j]);
+                     mlpack::mixed_logit_dcm::num_discrete_choices_[j]) + 1;
       }
     }
 

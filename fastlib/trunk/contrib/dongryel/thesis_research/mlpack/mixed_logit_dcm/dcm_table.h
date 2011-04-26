@@ -215,6 +215,14 @@ class DCMTable {
       decisions_table_ = argument_in.decisions_table_;
       num_alternatives_table_ = argument_in.num_alternatives_table_;
 
+      // Subtract 1's from the decisions table to make it
+      // zero-indexed.
+      for(int i = 0; i < decisions_table_->n_entries(); i++) {
+        arma::vec point;
+        decisions_table_->get(i, &point);
+        point[0] -= 1.0;
+      }
+
       // Initialize the distribution.
       distribution_.Init(attribute_table_->n_attributes());
 
