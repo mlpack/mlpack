@@ -73,10 +73,6 @@ class Distribution {
       // Allocate the space for gradient.
       gradient_out->set_size(parameters.n_elem, beta_vector.n_elem);
 
-      // Call the distribution-specific precomputation.
-      AttributeGradientWithRespectToParameterPrecompute_(
-        parameters, beta_vector);
-
       for(int j = 0; j < static_cast<int>(beta_vector.n_elem); j++) {
         for(int i = 0; i < static_cast<int>(parameters.n_elem); i++) {
           gradient_out->at(
@@ -271,6 +267,10 @@ class Distribution {
       const arma::vec &choice_probabilities,
       const arma::vec &choice_prob_weighted_attribute_vector,
       arma::vec *product_out) const {
+
+      // Call the distribution-specific precomputation.
+      AttributeGradientWithRespectToParameterPrecompute_(
+        parameters_in, beta_vector);
 
       // Initialize the product.
       product_out->set_size(parameters_in.n_elem);
