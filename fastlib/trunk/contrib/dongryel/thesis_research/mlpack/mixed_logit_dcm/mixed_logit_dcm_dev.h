@@ -462,7 +462,8 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
   int num_iterations = 0;
   do {
 
-    std::cerr << "\n";
+    std::cerr << "\nThe current iterate:\n";
+    iterate->parameters().print();
 
     // Obtain the step direction by solving Equation 4.3
     // approximately.
@@ -623,6 +624,9 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
     }
   }
   while(true);
+
+  std::cerr << "The final iterate:\n";
+  iterate->parameters().print();
 
   // Free the iterate.
   delete iterate;
