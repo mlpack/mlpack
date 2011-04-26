@@ -279,9 +279,13 @@ TableType, DistributionType >::IntegrationSampleErrorPerPerson_(
       table_.choice_probability(person_index, first_integration_sample);
     double second_choice_probability =
       table_.choice_probability(person_index, second_integration_sample);
-    double difference =
-      first_choice_probability / first_simulated_choice_probability -
-      second_choice_probability / second_simulated_choice_probability;
+    double first_part = first_choice_probability /
+                        first_simulated_choice_probability;
+    double second_part = second_choice_probability /
+                         second_simulated_choice_probability;
+    double difference = (isinf(first_part) || isnan(first_part) ||
+                         isinf(second_part) || isnan(second_part)) ?
+                        0.0 : (first_part - second_part);
     integration_sample_error->push_back(difference);
   }
 }
@@ -488,7 +492,7 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
     // Compute the data sample error and the integration sample error.
     double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
     double integration_sample_error =
-      this->IntegrationSampleError_(*iterate, *next_iterate);
+      fabs(this->IntegrationSampleError_(*iterate, *next_iterate));
 
     // Determine whether the termination condition has been reached.
     if(TerminationConditionReached_(
