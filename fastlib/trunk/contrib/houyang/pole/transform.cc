@@ -31,13 +31,13 @@ FourierRBFTransform::~FourierRBFTransform() {
 // Sample D d-dim w vectors from Gaussian pdf N(0, 1/sigma)
 ///////////////////////////////////////////////////////////
 void FourierRBFTransform::SampleW() {
-  double inv_gamma = 1.0 / sigma_;
+  double inv_sigma = 1.0 / sigma_;
   w_.resize(D_);
   for (T_IDX i=0; i<D_; i++) {
     w_[i].Resize(d_);
     for (T_IDX j=0; j<d_; j++) {
       w_[i].Fs_[j].i_ = j;
-      w_[i].Fs_[j].v_ = (T_VAL)r_.RandGaussian(inv_gamma);
+      w_[i].Fs_[j].v_ = (T_VAL)r_.RandGaussian(inv_sigma);
     }
   }
 }

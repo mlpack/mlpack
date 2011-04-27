@@ -20,8 +20,9 @@ class Transform {
 // k(a,b) = exp(-||a-b||_2^2/(2sigma^2))
 /////////////////////////////////////////////
 class FourierRBFTransform : public Transform {
- private:
+ public:
   double sigma_;
+ private:
   RandomNumber r_;
  public:
   FourierRBFTransform();
