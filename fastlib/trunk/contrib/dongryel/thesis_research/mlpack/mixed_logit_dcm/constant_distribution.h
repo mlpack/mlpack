@@ -39,8 +39,8 @@ class ConstantDistribution {
       int row_index, int col_index) {
 
       // Since it is a constant distribution, the gradient is always
-      // 1 for any (row, col) entry.
-      return 1.0;
+      // 1 for any (row, col) for which (row == col).
+      return (row_index == col_index) ? 1.0 : 0.0;
     }
 
     static void DrawBeta(
