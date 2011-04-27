@@ -34,7 +34,7 @@ class LocalRegressionArgumentParser {
       )(
         "kernel",
         boost::program_options::value<std::string>()->default_value("gaussian"),
-        "Kernel function used by KDE.  One of:\n"
+        "Kernel function used by local regression.  One of:\n"
         "  epan, gaussian"
       )(
         "leaf_size",
@@ -62,7 +62,7 @@ class LocalRegressionArgumentParser {
       )(
         "relative_error",
         boost::program_options::value<double>()->default_value(0.1),
-        "Relative error for the approximation of KDE."
+        "Relative error for the approximation of local regression."
       );
 
       boost::program_options::command_line_parser clp(args);
@@ -152,28 +152,36 @@ class LocalRegressionArgumentParser {
 
       // Parse bandwidth.
       arguments_out->bandwidth_ =  vm["bandwidth"].as<double>();
+      std::cerr << "Bandwidth: " << arguments_out->bandwidth_ << "\n";
 
       // Parse the kernel.
       arguments_out->kernel_ = vm["kernel"].as<std::string>();
+      std::cerr << "Kernel: " << arguments_out->kernel_ << "\n";
 
       // Parse the leaf size.
       arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
+      std::cerr << "Leaf size: " << arguments_out->leaf_size_ << "\n";
 
       // Parse the predictions out file.
       arguments_out->predictions_out_ = vm["predictions_out"].as<std::string>();
 
       // Parse the prescale option.
       arguments_out->prescale_ = vm["prescale"].as<std::string>();
+      std::cerr << "The prescale option: " << arguments_out->prescale << "\n";
 
       // Read in the reference set.
       arguments_out->reference_table_ = new TableType();
       arguments_out->reference_table_->Init(
         vm["references_in"].as<std::string>());
+      std::cerr << "Read in " << arguments_out->reference_table_->n_entries() <<
+                " points.\n";
 
       // Read in the optional query set.
       if(vm.count("queries_in") > 0) {
         arguments_out->queries_in_ = new TableType();
         arguments_out->queries_in_->Init(vm["queries_in"].as<std::string>());
+        std::cerr << "Read in " << arguments_out->queries_in->n_entries() <<
+                  " points.\n";
       }
       else {
         arguments_out->queries_in_ = arguments_out->references_in_;
@@ -181,6 +189,8 @@ class LocalRegressionArgumentParser {
 
       // Read in the relative error.
       arguments_out->relative_error_ = vm["relative_error"].as<double>();
+      std::cerr << "The relative error requested: " <<
+                arguments_out->relative_error_ << "\n";
     }
 
     template<typename TableType>
