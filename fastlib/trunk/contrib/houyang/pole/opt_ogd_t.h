@@ -149,6 +149,7 @@ void OGDT<TTransform>::Learn() {
   // init transform
   T_.D_ = trdim_;
   T_.d_ = TR_->max_ft_idx_;
+  T_.sigma_ = sigma_;
   T_.SampleW();
   // init learning rate
   eta0_ = sqrt(TR_->Size());
