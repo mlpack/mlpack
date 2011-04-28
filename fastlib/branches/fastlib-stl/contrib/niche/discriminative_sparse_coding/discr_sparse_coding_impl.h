@@ -36,11 +36,14 @@ void DiscrSparseCoding::InitDictionary() {
 
 
 void DiscrSparseCoding::InitDictionary(const char* dictionary_filename) {  
+  /*
   char* dictionary_fullpath = (char*) malloc(160 * sizeof(char));
   sprintf(dictionary_fullpath,
 	  "../contrib/niche/discriminative_sparse_coding/%s",
 	  dictionary_filename);
   D_.load(dictionary_fullpath);
+  */
+  D_.load(dictionary_filename);
 }
 
 

@@ -38,3 +38,30 @@ add_executable(dsc_mnist
 target_link_libraries(dsc_mnist
    fastlib
 )
+
+add_executable(mnist_1vsrest
+    EXCLUDE_FROM_ALL
+    mnist_one_vs_rest_main.cc
+)
+
+target_link_libraries(mnist_1vsrest
+   fastlib
+)
+
+add_executable(mnist_pairwise
+    EXCLUDE_FROM_ALL
+    mnist_pairwise.cc
+)
+
+target_link_libraries(mnist_pairwise
+   fastlib
+)
+
+add_executable(mnist_pairwise_test
+    EXCLUDE_FROM_ALL
+    mnist_pairwise_test.cc
+)
+
+target_link_libraries(mnist_pairwise_test
+   fastlib
+)
