@@ -82,12 +82,12 @@ void IO::Add(const char* identifier,
 }
 
 //Returns true if the specified value has been flagged by the user
-int IO::CheckValue(const char* identifier) {
+bool IO::CheckValue(const char* identifier) {
   int isInVmap = GetSingleton().vmap.count(identifier);
   int isInGmap = GetSingleton().globalValues.count(identifier);
 
   //Return true if we have a defined value for identifier 
-  return isInVmap || isInGmap ? true : false; 
+  return (isInVmap || isInGmap) ? true : false; 
 }
   
 //Returns the sole instance of this class

@@ -57,9 +57,8 @@ class IO {
                               const char* description, 
                               const char* parent);
     
-   /* See if the specified flag was found while parsing.  
-      Non-zero return value indicates success.*/
-   static int CheckValue(const char* identifier);
+   /* See if the specified flag was found while parsing. */
+   static bool CheckValue(const char* identifier);
       
    /* Grab the value of type T found while parsing.  
       Should use checkValue first.*/
