@@ -21,13 +21,21 @@
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_BOOL(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT)
-#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT)
-#define PARAM_FLOAT(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT)
-#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
+#define PARAM_BOOL(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false)
+#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, false)
+#define PARAM_FLOAT(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, false)
+#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT, \
+    false)
 #define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
-    PARENT)
+    PARENT, false)
 
+#define PARAM_BOOL_REQ(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, true)
+#define PARAM_INT_REQ(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, true)
+#define PARAM_FLOAT_REQ(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, true)
+#define PARAM_STRING_REQ(ID, DESC, PARENT) PARAM(std::string, ID, DESC, \
+    PARENT, true);
+#define PARAM_VECTOR_REQ(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
+    PARENT, true);
 
 #define TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT)
 
@@ -41,9 +49,15 @@
  * that call it.  Note that we are using the CURRENT_PARAM_NUM macro for naming
  * these actual parameters, which is a bit of an ugly hack... but this is the
  * preprocessor, after all.  We don't have much choice other than ugliness.
+ * 
+ * @param T type of parameter
+ * @param ID name of parameter (for --help, pass "help")
+ * @param DESC description of parameter (string)
+ * @param PARENT name of parent module (string)
+ * @param REQ whether or not parameter is required (bool)
  */
-#define PARAM(T, ID, DESC, PARENT) static mlpack::Option<T> \
-    JOIN(io_option_dummy_object_, __COUNTER__) (false, ID, DESC, PARENT);
+#define PARAM(T, ID, DESC, PARENT, REQ) static mlpack::Option<T> \
+    JOIN(io_option_dummy_object_, __COUNTER__) (false, ID, DESC, PARENT, REQ);
 
 #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
     JOIN(io_option_module_dummy_object_, __COUNTER__) (true, ID, DESC, NULL);
