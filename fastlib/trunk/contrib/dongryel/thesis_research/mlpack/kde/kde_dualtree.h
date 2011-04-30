@@ -327,9 +327,7 @@ class KdeGlobal {
       const core::math::Range &squared_distance_range) const {
 
       return
-        kernel_aux_->kernel().EvalUnnormOnSq(
-          squared_distance_range.lo) <= absolute_error_
-        || ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
+        ConsiderExtrinsicPruneTrait<KernelAuxType>::Compute(
           *kernel_aux_, squared_distance_range);
     }
 
