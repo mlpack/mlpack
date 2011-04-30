@@ -14,22 +14,27 @@
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
-#define BASH_YELLOW "\033[1;33m"
+#define BASH_YELLOW "\033[0;33m"
+#define BASH_CYAN "\033[0;36m"
 #define BASH_CLEAR "\033[0m"
 
 using namespace mlpack;
+using namespace mlpack::io;
 
 IO* IO::singleton = NULL;
-ostream& IO::Out = cout;
 
 #ifdef DEBUG
-ostream& IO::DebugOut = cout;
+PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout, 
+    BASH_CYAN "[DEBUG] " BASH_CLEAR);
 #else
-ostream tmp_stream(NULL);
-ostream& IO::DebugOut = tmp_stream;
+NullOutStream IO::Debug = NullOutStream();
 #endif
-
-const char* IO::endl = "\n";
+PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
+    BASH_GREEN "[INFO ] " BASH_CLEAR);
+PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
+    BASH_YELLOW "[WARN ] " BASH_CLEAR);
+PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
+    BASH_RED "[FATAL] " BASH_CLEAR);
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -37,23 +42,20 @@ namespace po = boost::program_options;
 
 /* Constructors, Destructors, Copy */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
-  IO::PrintDebug("Compiled with debug checks.");
+
   return;
 }
 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
-    IO::PrintDebug("Compiled with debug checks.");
   return;
 }
 
 IO::IO(const IO::IO& other) : desc(other.desc){
-  IO::PrintDebug("IO has been copied!");
   return;
 }
 
 IO::~IO() {
-  IO::PrintDebug("Compiled with debug checks.");
   return;
 }
 
@@ -153,6 +155,8 @@ void IO::ParseCommandLine(int argc, char** line) {
 
 
 void IO::ParseStream(std::istream& stream) {
+  IO::Debug << "Compiled with debug checks.";
+
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
@@ -183,21 +187,21 @@ void IO::Print() {
 
 //Prints an error message
 void IO::PrintFatal(const char* msg) {
-  cout << BASH_RED << "[FATAL] " << BASH_CLEAR << msg << endl;
+  cout << BASH_RED << "[FATAL] " << BASH_CLEAR << msg;
 }
 
 //Prints a notification
 void IO::PrintNotify(const char* msg) {
-  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg;
 }
 
 void IO::PrintWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN ] " << BASH_CLEAR << msg << endl;
+  cout << BASH_YELLOW << "[WARN ] " << BASH_CLEAR << msg;
 }
 
 void IO::PrintDebug(const char* msg) {
   #ifdef DEBUG
-  cout << BASH_GREEN << "[DEBUG] " << BASH_CLEAR << msg << endl;
+  cout << BASH_GREEN << "[DEBUG] " << BASH_CLEAR << msg;
   #endif 
 }
 /* Print whatever data we can */

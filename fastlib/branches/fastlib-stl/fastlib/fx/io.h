@@ -111,8 +111,16 @@ class IO {
       
    /* Prints out the current heirachy */
    static void Print();
-   static ostream& Out;
-   static ostream& DebugOut;
+
+// We only use PrefixedOutStream if the program is compiled with debug symbols.
+#ifdef DEBUG
+   static io::PrefixedOutStream Debug;
+#else
+   static io::NullOutStream Debug;
+#endif
+   static io::PrefixedOutStream Info;
+   static io::PrefixedOutStream Warn;
+   static io::PrefixedOutStream Fatal;
 
    static const char* endl;
    /* Prints a fatal error message */
@@ -135,6 +143,7 @@ class IO {
    static void StopTimer(const char* timerName);
 
    //Destructor
+
    ~IO();
   private:
    /* Private member variables & methods */
@@ -174,7 +183,6 @@ class IO {
    //The singleton, obviously
    static IO* singleton;
     
-      
    /* Not exposed to the outside, so as to spare users some ungainly
       x.GetSingleton().foo() syntax.
       In this case, the singleton is used to store data for the static methods, 
