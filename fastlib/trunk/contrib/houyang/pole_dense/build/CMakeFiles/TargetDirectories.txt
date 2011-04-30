@@ -1,1 +1,0 @@
-/home/houyang/code/fastlab/trunk/contrib/houyang/pole_dense/build/CMakeFiles/pole_pt.dir
