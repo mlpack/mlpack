@@ -26,11 +26,11 @@
 
 // Define our input parameters that this program will take.
 PARAM_MODULE("allknn", "The all-k-nearest-neighbors computation.");
-PARAM_STRING("reference_file", "CSV file containing the reference dataset.",
+PARAM_STRING_REQ("reference_file", "CSV file containing the reference dataset.",
     "allknn");
 PARAM_STRING("query_file", "CSV file containing query points (optional).",
     "allknn");
-PARAM_STRING("output_file", "File to output CSV-formatted results into.",
+PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
     "allknn");
 PARAM_INT("k", "Number of nearest neighbors to compute.", "allknn");
 PARAM_INT("leaf_size", "Leaf size for kd-tree calculation.", "allknn");
