@@ -10,11 +10,12 @@
 using namespace mlpack;
 
 
-PARAM_CUSTOM(int, testint, "blarg");
-PARAM_CUSTOM(std::string, str, "shiazer");
-PARAM_INT(tmp, "cool, dude", allnn);
-PARAM_BOOL(perm, "not cool", allknn);
-TIMER(timer, "desc", allnn);
+//PARAM_CUSTOM(int, "testint", "blarg");
+PARAM_INT("testint", "cool", "");
+//PARAM_CUSTOM(std::string, "str", "shiazer");
+PARAM_INT("tmp", "cool, dude", "allnn");
+PARAM_BOOL("perm", "not cool", "allknn");
+//TIMER("timer", "desc", "allnn");
 
 int main(int argc, char** argv) {
   IO::StartTimer("allnn/timer");
