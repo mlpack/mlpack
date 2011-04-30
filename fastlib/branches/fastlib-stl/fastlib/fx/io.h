@@ -12,22 +12,46 @@
 #include "optionshierarchy.h"
 #include "printing.h"
 
-/* These defines facilitate the registering of command line options */
-#define PARAM(T, ID, DESC, PARENT) static mlpack::Option<T> ID = \
-    mlpack::Option<T>(false, #ID, DESC, #PARENT);
-#define PARAM_BOOL(ID, DESC, PARENT) static mlpack::Option<int> ID = \
-    mlpack::Option<int>(true, #ID, DESC, #PARENT);
-#define PARAM_MODULE(ID, DESC) static mlpack::Option<int> ID = \
-    mlpack::Option<int>(true, #ID, DESC, NULL);
-#define PARAM_CUSTOM(T, ID, DESC) static mlpack::Option<T> ID = \
-    mlpack::Option<T>(false, #ID, DESC, NULL);
-#define PARAM_COMPLEX_TYPE(T, ID, DESC, PARENT) static mlpack::Option<T> ID = \
-    mlpack::Option<T>(#ID, DESC, #PARENT);
+/* These defines facilitate the registering of command line options.  Use the
+ * macro which specifies the type of the option you want to add.
+ *
+ * @param ID Name of the parameter.
+ * @param DESC Quick description of the parameter.
+ * @param PARENT Parent module of the parameter.
+ *
+ * The parameter will then be specified with --PARENT/ID=value.
+ */
+#define PARAM_BOOL(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT)
+#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT)
+#define PARAM_FLOAT(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT)
+#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT)
+#define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
+    PARENT)
 
-#define TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT);
-#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT);
-#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT);
-#define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, PARENT);
+
+#define TIMER(ID, DESC, PARENT) PARAM_COMPLEX_TYPE(timeval, ID, DESC, PARENT)
+
+/// These are ugly, but necessary utility functions we must use to generate a
+/// unique identifier inside of the PARAM() module.
+#define JOIN(x, y) JOIN_AGAIN(x, y)
+#define JOIN_AGAIN(x, y) x ## y
+
+/***
+ * Define an input parameter.  Don't use this function, use the other ones above
+ * that call it.  Note that we are using the CURRENT_PARAM_NUM macro for naming
+ * these actual parameters, which is a bit of an ugly hack... but this is the
+ * preprocessor, after all.  We don't have much choice other than ugliness.
+ */
+#define PARAM(T, ID, DESC, PARENT) static mlpack::Option<T> \
+    JOIN(io_option_dummy_object_, __COUNTER__) (false, ID, DESC, PARENT);
+
+#define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
+    JOIN(io_option_module_dummy_object_, __COUNTER__) (true, ID, DESC, NULL);
+
+//#define PARAM_COMPLEX_TYPE(T, ID, DESC, PARENT) static mlpack::Option<T> ID = \
+//    mlpack::Option<T>(#ID, DESC, #PARENT);
+
+
 
 namespace po = boost::program_options;
 
@@ -73,7 +97,7 @@ class IO {
       
    /* Prints out the current heirachy */
    static void Print();
-   static ostream& Out;  
+   static ostream& Out;
    static ostream& DebugOut;
 
    static const char* endl;
