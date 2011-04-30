@@ -87,7 +87,7 @@ bool IO::CheckValue(const char* identifier) {
   int isInGmap = GetSingleton().globalValues.count(identifier);
 
   //Return true if we have a defined value for identifier 
-  return (isInVmap || isInGmap) ? true : false; 
+  return (isInVmap || isInGmap); 
 }
   
 //Returns the sole instance of this class
@@ -244,6 +244,4 @@ std::string IO::SanitizeString(const char* str) {
   return std::string("");
 }
 
-PARAM_MODULE(help, "default help info");
-PARAM_CUSTOM(std::string, info, "default submodule info option");
-
+PARAM_MODULE("help", "default help info");
