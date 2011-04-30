@@ -17,24 +17,49 @@
  */
 #include <fastlib/fastlib.h>
 #include "allknn.h"
+#include <fastlib/fx/io.h>
 
 #include <string>
 #include <errno.h>
 
 #include <armadillo>
 
+// Define our input parameters that this program will take.
+PARAM_MODULE("allknn", "The all-k-nearest-neighbors computation.");
+PARAM_STRING("reference_file", "CSV file containing the reference dataset.",
+    "allknn");
+PARAM_STRING("query_file", "CSV file containing query points (optional).",
+    "allknn");
+PARAM_STRING("output_file", "File to output CSV-formatted results into.",
+    "allknn");
+PARAM_INT("k", "Number of nearest neighbors to compute.", "allknn");
+PARAM_INT("leaf_size", "Leaf size for kd-tree calculation.", "allknn");
+PARAM_BOOL("single_mode", "If true, use single-tree mode (instead of " 
+    "dual-tree).", "allknn");
+PARAM_BOOL("naive_mode", "If true, use naive computation (no trees).  This "
+    "overrides single_mode.", "allknn");
+
+using namespace mlpack;
 using namespace mlpack::allknn;
 
 int main(int argc, char *argv[]) {
-  fx_module *module = fx_init(argc, argv, NULL);
-  std::string result_file = fx_param_str(module, "result_file", "result.txt");
-  std::string reference_file = fx_param_str_req(module, "reference_file");
+  // Give IO the command line parameters the user passed in.
+  IO::ParseCommandLine(argc, argv);
+
+  std::string reference_file =
+      IO::GetValue<std::string>("allknn/reference_file");
+  std::string output_file = IO::GetValue<std::string>("allknn/output_file");
+
   arma::mat reference_data;
 
-  bool single_mode = (fx_param_int(module, "single_mode", 0) == 1) ? true : false;
+  bool single_mode = IO::GetValue<bool>("allknn/single_mode");
+  bool naive_mode = IO::GetValue<bool>("allknn/naive_mode");
+  int knn_options = (single_mode ? AllkNN::MODE_SINGLE : 0) |
+      (naive_mode ? AllkNN::NAIVE : 0);
 
   arma::Col<index_t> neighbors;
   arma::vec distances;
+
   if (data::Load(reference_file.c_str(), reference_data) == SUCCESS_FAIL) {
     FATAL("Reference file %s not found", reference_file.c_str());
   }
@@ -42,39 +67,43 @@ int main(int argc, char *argv[]) {
 
   AllkNN* allknn = NULL;
  
-  if (fx_param_exists(module, "query_file")) {
-    std::string query_file = fx_param_str_req(module, "query_file");
+  if (IO::CheckValue("query_file")) {
+    std::string query_file = IO::GetValue<std::string>("query_file");
     arma::mat query_data;
+
     if (data::Load(query_file.c_str(), query_data) == SUCCESS_FAIL) {
       FATAL("Query file %s not found", query_file.c_str());
     }
     NOTIFY("Query data loaded from %s", query_file.c_str());
+
     NOTIFY("Building query and reference tree"); 
-    allknn = new AllkNN(query_data, reference_data, module, single_mode ? AllkNN::MODE_SINGLE : 0);
+    allknn = new AllkNN(query_data, reference_data, (datanode*) NULL, knn_options);
+
   } else {
     NOTIFY("Building reference tree");
-    allknn = new AllkNN(reference_data, module, single_mode ? AllkNN::MODE_SINGLE : 0);
+    allknn = new AllkNN(reference_data, (datanode*) NULL, knn_options);
   }
 
   NOTIFY("Tree(s) built");
-  index_t knns = fx_param_int_req(module, "knns");
-  NOTIFY("Computing %"LI"d nearest neighbors", knns);
+
+  int k = IO::GetValue<int>("allknn/k");
+  
+  NOTIFY("Computing %"LI"d nearest neighbors", k);
   allknn->ComputeNeighbors(neighbors, distances);
+
   NOTIFY("Neighbors computed");
   NOTIFY("Exporting results");
-  FILE *fp = fopen(result_file.c_str(), "w");
+  FILE *fp = fopen(output_file.c_str(), "w");
   if (fp == NULL) {
-    FATAL("Error while opening %s...%s", result_file.c_str(),
+    FATAL("Error while opening %s...%s", output_file.c_str(),
         strerror(errno));
   }
-  for(index_t i = 0; i < neighbors.n_elem / knns; i++) {
-    for(index_t j = 0; j < knns; j++) {
-      fprintf(fp, "%"LI"d %"LI"d %lg\n", i, neighbors[i * knns + j], distances[i * knns + j]);
+  for(index_t i = 0; i < neighbors.n_elem / k; i++) {
+    for(index_t j = 0; j < k; j++) {
+      fprintf(fp, "%"LI"d %"LI"d %lg\n", i, neighbors[i * k + j], distances[i * k + j]);
     }
   }
   fclose(fp);
 
   delete allknn;
-
-  fx_done(module);
 }
