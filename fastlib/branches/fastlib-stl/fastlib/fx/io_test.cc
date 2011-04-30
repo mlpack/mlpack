@@ -22,8 +22,11 @@ int main(int argc, char** argv) {
   IO::ParseCommandLine(argc, argv);
   IO::StopTimer("allnn/timer");
   IO::GetValue<int>("testint") = 42;
-  IO::Out << IO::GetValue<int>("testint") 
-      << " Does this work?" << IO::endl;
-  IO::DebugOut << "Will this die?" << IO::endl;
+
+  // Some output
+  IO::Debug << "A test of debugging output.";
+  IO::Info << "A test of info output.";
+  IO::Warn << "A test of warning output.";
+  IO::Fatal << "A test of fatal output.";
 }
 
