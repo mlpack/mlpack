@@ -135,7 +135,8 @@ class AllkNN {
    * The options parameter is meant to be a combination of options, such as
    * (NAIVE | ALIAS_MATRIX) or similar.  The three allowed options are:
    *
-   *  - NAIVE: if set, the naive method for computation will be used
+   *  - NAIVE: if set, the naive method for computation will be used.  This
+   *      overrides the MODE_SINGLE option.
    *  - ALIAS_MATRIX: if set, the input matrices will be aliased internally.
    *      This will result in the input matrices being re-ordered while the
    *      trees are built.  You will get a performance boost from using this

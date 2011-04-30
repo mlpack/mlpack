@@ -6,7 +6,8 @@
  */
 
 #include "allknn.h"
-#include "fastlib/fx/io.h"
+#include <fastlib/fx/io.h>
+
 using namespace mlpack::allknn;
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -30,10 +31,9 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
   else if(IO::CheckValue("allknn/leaf_size"))
-    leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
+    leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
   else
     leaf_size_ = 20;
-  
   
 
   // Make sure the leaf size is valid
@@ -43,8 +43,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
 
   // K-nearest neighbors initialization
-   if(IO::CheckValue("allknn/knns"))
-    knns_ = IO::GetValue<index_t>("allknn/knns");
+   if(IO::CheckValue("allknn/k"))
+    knns_ = IO::GetValue<index_t>("allknn/k");
   else
     knns_ = 5;
 
@@ -99,8 +99,8 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   DEBUG_ASSERT(leaf_size_ > 0);
 
   // K-nearest neighbors initialization
-  if(IO::CheckValue("allknn/knns"))
-    knns_ = IO::GetValue<index_t>("allknn/knns");
+  if(IO::CheckValue("allknn/k"))
+    knns_ = IO::GetValue<index_t>("allknn/k");
   else
     knns_ = 5;
 
@@ -148,17 +148,16 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
      leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
    else
      leaf_size_ = 20;
+
    // Make sure the leaf size is valid
    DEBUG_ASSERT(leaf_size_ > 0);
  
    // K-nearest neighbors initialization
-   if(IO::CheckValue("allknn/knns"))
-     knns_ = IO::GetValue<index_t>("allknn/knns");
+   if(IO::CheckValue("allknn/k"))
+     knns_ = IO::GetValue<index_t>("allknn/k");
    else
      knns_ = 5;
 
-
- 
   // Make sure the leaf size is valid
   DEBUG_ASSERT(leaf_size_ > 0);
 
@@ -318,7 +317,8 @@ void AllkNN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
             // The direction we have chosen to search in (smallest to largest)
             // may not be optimal but intuitively it seems the best choice.
             for (index_t i = ind; i < ind + knns_; i++) {
-              if (distance <= neighbor_distances_[i]) { // We have found the place to insert
+              if (distance <= neighbor_distances_[i]) {
+                // We have found the place to insert.
                 // We will use memmove() to shift all the distances and indices
                 // to one place higher than they are now.
                 int len = (ind + knns_) - i - 1;
@@ -599,12 +599,3 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 } // ComputeNeighbors
-
-
-PARAM_MODULE(allknn, "Performs dual-tree all-k-nearest-neighbors computation.");	
-PARAM(index_t, leaf_size, "The maximum number of points to store at a leaf.", allknn);
-PARAM(index_t, knns, "K-nearest neighbors initialization.", allknn);
-PARAM_BOOL(tree_building, "Time spent building the kd-tree.", allknn);
-
-  
-
