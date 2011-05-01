@@ -23,8 +23,15 @@ class ConstantDistribution {
 
   public:
 
-    static void AttributeGradientWithRespectToParameterPrecompute(
-      const arma::vec &parameters, const arma::vec &beta_vector,
+    static void SetupDistribution(
+      const arma::vec &parameters, PrivateData *private_data) {
+
+      // Does not do anything.
+    }
+
+    static void SamplingAccumulatePrecompute(
+      const arma::vec &parameters,
+      const arma::vec &beta_vector,
       PrivateData *private_data) {
 
       // Does not do anything.
