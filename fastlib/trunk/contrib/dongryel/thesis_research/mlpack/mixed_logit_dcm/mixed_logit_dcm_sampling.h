@@ -205,8 +205,8 @@ class MixedLogitDCMSampling {
      */
     void BuildSamples_() {
 
-      // The drawn beta for building the samples.
-      arma::vec random_beta;
+      // Set up the distribution so that the samples can be drawn.
+      dcm_table_->distribution().SetupDistribution(parameters_);
 
       for(int i = 0; i < num_active_people_; i++) {
 
@@ -231,6 +231,8 @@ class MixedLogitDCMSampling {
         // Draw a beta from the parameter theta and add it to the
         // sample pool.
         dcm_table_->distribution().DrawBeta(parameters_, &random_beta);
+        dcm_table_->distribution().SamplingAccumulatePrecompute(
+          parameters_, random_beta);
         this->AddIntegrationSample_(person_index, random_beta);
 
       } // end of looping each new beta sample.

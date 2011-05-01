@@ -29,21 +29,37 @@ class Distribution {
 
     typename DistributionType::PrivateData private_data_;
 
-  private:
+  public:
 
-    void AttributeGradientWithRespectToParameterPrecompute_(
-      const arma::vec &parameters, const arma::vec &beta_vector) const {
+    /** @brief Initializes the number of parameters to zero.
+     */
+    Distribution() {
+      num_parameters_ = 0;
+    }
 
-      DistributionType::AttributeGradientWithRespectToParameterPrecompute(
-        parameters, beta_vector,
+    /** @brief Call this function to set up distribution specific
+     *         precomputed values.
+     */
+    void SetupDistribution(
+      const arma::vec &parameters) const {
+
+      DistributionType::SetupDistribution(
+        parameters,
         const_cast <
         typename DistributionType::PrivateData * >(&private_data_));
     }
 
-  public:
+    /** @brief This function is called before each beta sample is used
+     *         to accumulate the simulated probabilities and the
+     *         gradient/Hessians.
+     */
+    void SamplingAccumulatePrecompute(
+      const arma::vec &parameters, const arma::vec &beta_vector) const {
 
-    Distribution() {
-      num_parameters_ = 0;
+      DistributionType::SamplingAccumulatePrecompute(
+        parameters, beta_vector,
+        const_cast <
+        typename DistributionType::PrivateData * >(&private_data_));
     }
 
     /** @brief Returns the number of parameters.
@@ -267,10 +283,6 @@ class Distribution {
       const arma::vec &choice_probabilities,
       const arma::vec &choice_prob_weighted_attribute_vector,
       arma::vec *product_out) const {
-
-      // Call the distribution-specific precomputation.
-      AttributeGradientWithRespectToParameterPrecompute_(
-        parameters_in, beta_vector);
 
       // Initialize the product.
       product_out->set_size(parameters_in.n_elem);
