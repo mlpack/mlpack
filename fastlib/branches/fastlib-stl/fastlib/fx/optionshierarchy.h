@@ -60,12 +60,12 @@ class OptionsHierarchy {
 
    //Prints all nodes, plus their data
    void PrintAll();
-   //Prints a node and it's data
+   //Prints a node and its data
    void PrintNode();
 
    //Prints all nodes, plus their description
    void PrintAllHelp();
-   //Prints a node and it's description
+   //Prints a node and its description
    void PrintNodeHelp();
 
    //Prints the leaves of a node
