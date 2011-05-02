@@ -13,6 +13,7 @@
 
 
 #include <contrib/niche/lars/lars.h>
+#include <contrib/niche/tools/tools.h>
 
 using namespace arma;
 using namespace std;
@@ -49,7 +50,7 @@ class LocalCoordinateCoding {
 
   void OptimizeCode();
   
-  void OptimizeCodebook(uvec adjacencies);
+  void OptimizeDictionary(uvec adjacencies);
   
   double Objective(uvec adjacencies);
   

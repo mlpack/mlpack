@@ -9,6 +9,7 @@ set(SOURCES
    local_coordinate_coding.h
    local_coordinate_coding_impl.h
    lars.h
+   tools.h
 )
 
 # add directory name to sources
@@ -27,4 +28,14 @@ add_executable(lcc
 
 target_link_libraries(lcc
    fastlib
+)
+
+# Test neighbor counts
+add_executable(test_neighbor_counts
+    EXCLUDE_FROM_ALL
+    test_neighbor_counts.cc
+)
+
+target_link_libraries(test_neighbor_counts
+    fastlib
 )
