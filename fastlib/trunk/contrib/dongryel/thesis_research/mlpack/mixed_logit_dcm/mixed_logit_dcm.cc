@@ -49,7 +49,11 @@ int main(int argc, char *argv[]) {
     BranchOnDistribution<mlpack::mixed_logit_dcm::ConstantDistribution>(
       mixed_logit_dcm_arguments);
   }
-  else if(mixed_logit_dcm_arguments.distribution_ == "gaussian") {
+  else if(mixed_logit_dcm_arguments.distribution_ == "diag_gaussian") {
+    BranchOnDistribution<mlpack::mixed_logit_dcm::DiagonalGaussianDistribution>(
+      mixed_logit_dcm_arguments);
+  }
+  else if(mixed_logit_dcm_arguments.distribution_ == "full_gaussian") {
     BranchOnDistribution<mlpack::mixed_logit_dcm::GaussianDistribution>(
       mixed_logit_dcm_arguments);
   }
