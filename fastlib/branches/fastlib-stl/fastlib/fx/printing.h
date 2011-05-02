@@ -52,7 +52,7 @@ class PrefixedOutStream {
    */
   template<typename T>
   std::ostream& operator<<(const T& rhs) {
-    destination << prefix << rhs << std::endl;
+    destination << prefix << rhs;
     return destination;
   }
 
