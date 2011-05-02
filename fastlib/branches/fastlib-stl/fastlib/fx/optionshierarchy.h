@@ -4,8 +4,6 @@
 #include <map>
 #include <string>
 
-using namespace std; //We'll be using std a lot in this file
-
 namespace mlpack {
 namespace io {
 
@@ -13,11 +11,11 @@ namespace io {
    focusing the potential changes into one structure. */
 struct OptionsData {
   /* Name of this node */
-  string node;
+  std::string node;
   /* Description of this node, if any */
-  string desc;
+  std::string desc;
   /* Type information of this node */
-  string tname;
+  std::string tname;
 };
 
 
@@ -28,13 +26,13 @@ class OptionsHierarchy {
 
    /* Map of this node's children.  All children should have a
       corresponding OptionsHierarchy, hence the references */
-   typedef map<string, OptionsHierarchy> ChildMap;
+   typedef std::map<std::string, OptionsHierarchy> ChildMap;
    ChildMap children;
   
    /* Returns the name foo in the pathname foo/bar/fizz */
-   string GetName(string& pathname);
+   std::string GetName(std::string& pathname);
    /* Returns the path bar/fizz in the pathname foo/bar/fizz */
-   string GetPath(string& pathname);
+   std::string GetPath(std::string& pathname);
   
   public:
    /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
@@ -46,14 +44,15 @@ class OptionsHierarchy {
    /* Will never fail, as given paths are relative to current node
       and will be generated if not found */
    /* Also, we will insist on proper usage of C++ strings */
-   void AppendNode(string& pathname, string& tname);
-   void AppendNode(string& pathname, string& tname, string& description);
-   void AppendNode(string& pathname, string& tname, 
-                   string& description, OptionsData& data);
+   void AppendNode(std::string& pathname, std::string& tname);
+   void AppendNode(std::string& pathname, std::string& tname,
+                   std::string& description);
+   void AppendNode(std::string& pathname, std::string& tname, 
+                   std::string& description, OptionsData& data);
   
    /* Will return the node associated with a pathname */
-   void FindNode(string& pathname);
-   void FindNodeHelper(string& pathname, string& target);
+   void FindNode(std::string& pathname);
+   void FindNodeHelper(std::string& pathname, std::string& target);
 
    /* Print functions */
    //Prints a single node, and outlines relations
@@ -74,6 +73,7 @@ class OptionsHierarchy {
    //Prints the branches of a node
    void PrintBranches();
 };
-};
-};
+
+}; // namespace io
+}; // namespace mlpack
 #endif
