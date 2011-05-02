@@ -37,8 +37,7 @@ int main (int argc, char *argv[]) {
   else
     output_file = "output.csv";
   
-  IO::PrintNotify("Loading file ...");
-  IO::PrintNotify(input_file.c_str());
+  IO::Info << "Loading file " << input_file << "..." << std::endl;
   data::Load(input_file.c_str(), data_for_tree);
 
   AllNN allnn(data_for_tree, fx_root);
@@ -46,12 +45,11 @@ int main (int argc, char *argv[]) {
   arma::Col<index_t> resulting_neighbors_tree;
   arma::vec resulting_distances_tree;
 
-  IO::PrintNotify("Computing neighbors...");
+  IO::Info << "Computing neighbors...";
 
   allnn.ComputeNeighbors(resulting_distances_tree, resulting_neighbors_tree);
 
-  IO::PrintNotify("Saving results to ...");
-  IO::PrintNotify(output_file.c_str());
+  IO::Info << "Saving results to " << output_file << "..." << std::endl;
 
   data::Save(output_file.c_str(), resulting_neighbors_tree, resulting_distances_tree); 
 }
