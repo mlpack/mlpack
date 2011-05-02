@@ -127,7 +127,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
-    PrintFatal(ex.what());
+    IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
@@ -164,7 +164,7 @@ void IO::ParseStream(std::istream& stream) {
   try{
   po::store(po::parse_config_file(stream, desc), vmap);
   }catch(std::exception& ex) {
-    PrintFatal(ex.what());
+    IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make s ure changes are propgated to vmap
   po::notify(vmap);
@@ -182,25 +182,6 @@ void IO::Print() {
   IO::GetSingleton().hierarchy.PrintAll();
 }
 
-//Prints an error message
-void IO::PrintFatal(const char* msg) {
-  cout << BASH_RED << "[FATAL] " << BASH_CLEAR << msg;
-}
-
-//Prints a notification
-void IO::PrintNotify(const char* msg) {
-  cout << BASH_GREEN << "[INFO ] " << BASH_CLEAR << msg;
-}
-
-void IO::PrintWarn(const char* msg) {
-  cout << BASH_YELLOW << "[WARN ] " << BASH_CLEAR << msg;
-}
-
-void IO::PrintDebug(const char* msg) {
-  #ifdef DEBUG
-  cout << BASH_GREEN << "[DEBUG] " << BASH_CLEAR << msg;
-  #endif 
-}
 /* Print whatever data we can */
 void IO::PrintData() {
 }
