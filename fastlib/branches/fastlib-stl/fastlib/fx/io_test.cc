@@ -24,9 +24,9 @@ int main(int argc, char** argv) {
   IO::GetValue<int>("testint") = 42;
 
   // Some output
-  IO::Debug << "A test of debugging output.";
-  IO::Info << "A test of info output.";
-  IO::Warn << "A test of warning output.";
-  IO::Fatal << "A test of fatal output.";
+  IO::Debug << "A test of debugging output." << std::endl;
+  IO::Info << "A test of info output." << std::endl;
+  IO::Warn << "A test of warning output (" << 7 << ")." << std::endl;
+  IO::Fatal << "A test of fatal output." << std::endl;
 }
 

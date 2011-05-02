@@ -135,11 +135,10 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str())) {//If a required option isn't there...
-      PrintWarn("Required option --");
-      PrintWarn((*iter).c_str());
-      PrintWarn(" is undefined...");
-    }
+    if (!CheckValue((*iter).c_str())) // If a required option isn't there...
+      IO::Warn << "Required option --" << iter->c_str() << " is undefined..."
+          << std::endl;
+    
   
   //Default help message
   if (CheckValue("help")) {
@@ -155,7 +154,7 @@ void IO::ParseCommandLine(int argc, char** line) {
 
 
 void IO::ParseStream(std::istream& stream) {
-  IO::Debug << "Compiled with debug checks.";
+  IO::Debug << "Compiled with debug checks." << std::endl;
 
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
@@ -173,11 +172,9 @@ void IO::ParseStream(std::istream& stream) {
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str())) {//If a required option isn't there...
-      PrintWarn("Required option --");
-      PrintWarn((*iter).c_str());
-      PrintWarn(" is undefined...");
-    }
+    if (!CheckValue((*iter).c_str())) //If a required option isn't there...
+      IO::Warn << "Required option --" << iter->c_str() << " is undefined..."
+          << std::endl;
 }
 
 //Prints the current state, right now just for debugging purposes
