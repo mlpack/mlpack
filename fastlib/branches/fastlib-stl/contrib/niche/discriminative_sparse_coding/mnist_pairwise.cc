@@ -274,6 +274,8 @@ int main(int argc, char* argv[]) {
   u32 n_atoms = 50;
   */
 
+  const char* LCC_results_dir = fx_param_str_req(NULL, "LCC_results_dir");
+
   double lambda_1 = fx_param_double_req(NULL, "lambda1");
   double lambda_2 = fx_param_double_req(NULL, "lambda2");
   double lambda_w = fx_param_double_req(NULL, "lambdaw");
@@ -286,9 +288,10 @@ int main(int argc, char* argv[]) {
   u32 digit_1 = 7;
   u32 digit_2 = 9;
   
-  char* initial_dictionary_filename = (char*) malloc(160 * sizeof(char));
+  char* initial_dictionary_filename = (char*) malloc(512 * sizeof(char));
   sprintf(initial_dictionary_filename,
-	  "/scratch/niche/LCC_results/LCC_results%d%d_atoms%d_lambda%f_iterations%d_D.dat",
+	  "%s/LCC_results%d%d_atoms%d_lambda%f_iterations%d_D.dat",
+	  LCC_results_dir,
 	  digit_1, digit_2,
 	  n_atoms, lambda_1, n_LCC_iterations);
 
