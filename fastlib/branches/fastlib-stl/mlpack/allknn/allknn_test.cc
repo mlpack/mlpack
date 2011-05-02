@@ -19,7 +19,7 @@ class TestAllkNN {
     //allknn_ = new AllkNN();
     //naive_  = new AllkNN();
     if(data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS) {
-      IO::PrintFatal("Unable to load test dataset.");
+      IO::Fatal << "Unable to load test dataset." << std::endl;
       exit(1);
     }
   }
@@ -37,7 +37,8 @@ class TestAllkNN {
     arma::mat naive_references(data_for_tree_);
 
     allknn_ = new AllkNN(dual_query, dual_references, 20, 5);
-    naive_ = new AllkNN(naive_query, naive_references, 1 /* leaf_size ignored */,
+    naive_ = new AllkNN(naive_query, naive_references, 1 /* leaf_size ignored
+*/,
 	 5, AllkNN::NAIVE);
  
     arma::Col<index_t> resulting_neighbors_tree;
@@ -53,7 +54,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::PrintNotify("AllkNN test 1 passed.");
+    IO::Info << "AllkNN test 1 passed." << std::endl;
     Destruct();
   }
 
@@ -78,7 +79,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::PrintNotify("AllkNN test 2 passed.");
+    IO::Info << "AllkNN test 2 passed." << std::endl;
     Destruct();
   }
 
@@ -103,7 +104,7 @@ class TestAllkNN {
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
 
-    IO::PrintNotify("AllkNN test 3 passed.");
+    IO::Info << "AllkNN test 3 passed." << std::endl;
     Destruct();
   }
 
