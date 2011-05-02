@@ -53,9 +53,9 @@ void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
   printf("\n%d nonzero entries in code V (%f%%)\n\n",
 	 adjacencies.n_elem,
 	 ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
-  printf("Optimizing Codebook\n");
-  OptimizeCodebook(adjacencies);
-  return;
+  printf("Optimizing Dictionary\n");
+  OptimizeDictionary(adjacencies);
+
   printf("Objective function value: %f\n",
 	 Objective(adjacencies));
 }
@@ -67,18 +67,21 @@ void LocalCoordinateCoding::OptimizeCode() {
     + repmat(sum(square(X_)), n_atoms_, 1)
     - 2 * trans(D_) * X_;
   
-  mat inv_sq_dists = 1.0 / sq_dists; // is this allowed? it's so convenient!
+  mat inv_sq_dists = 1.0 / sq_dists;
   
   for(u32 i = 0; i < n_points_; i++) {
+    // report progress
     if((i % 100) == 0) {
       printf(" %d\n", i);
     }
+    
     vec w = sq_dists.unsafe_col(i);
     vec inv_w = inv_sq_dists.unsafe_col(i);
     mat D_prime = D_ * diagmat(inv_w);
     
     Lars lars;
-    lars.Init(D_prime, X_.unsafe_col(i), true, 0.5 * lambda_); // do we still need 0.5 * lambda??
+    lars.Init(D_prime, X_.unsafe_col(i), false, 0.5 * lambda_); // do we still need 0.5 * lambda? yes, yes we do
+    
     lars.DoLARS();
     vec beta;
     lars.Solution(beta);
@@ -87,7 +90,7 @@ void LocalCoordinateCoding::OptimizeCode() {
 }
 
 
-void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
+void LocalCoordinateCoding::OptimizeDictionary(uvec adjacencies) {
   // count number of atomic neighbors for each point x^i
   vec neighbor_counts = zeros(n_points_, 1);
   if(adjacencies.n_elem > 0) {
@@ -119,14 +122,13 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
     }
     cur_col += neighbor_counts(i);
   }
-  X_prime.save("X_prime.dat", raw_ascii);
   
   // handle the case of inactive atoms (atoms not used in the given coding)
   std::vector<u32> inactive_atoms;
   std::vector<u32> active_atoms;
   active_atoms.reserve(n_atoms_);
   for(u32 j = 0; j < n_atoms_; j++) {
-    if(((uvec)(find(V_.row(j)))).n_elem == 0) {
+    if(accu(V_.row(j) != 0) == 0) {
       inactive_atoms.push_back(j);
     }
     else {
@@ -136,96 +138,53 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
   u32 n_active_atoms = active_atoms.size();
   u32 n_inactive_atoms = inactive_atoms.size();
 
+  // efficient construction of V restricted to active atoms
   mat active_V;
   if(inactive_atoms.empty()) {
     active_V = V_;
   }
   else {
-    active_V.set_size(n_active_atoms, n_points_);
-
-    u32 cur_row = 0;
-    u32 inactive_atom_ind = 0;
-    // first, check 0 to first inactive atom
-    if(inactive_atoms[0] > 0) {
-      // note that this implies that n_atoms_ > 1
-      u32 height = inactive_atoms[0];
-      active_V(span(cur_row, cur_row + height - 1), span::all) =
-	V_(span(0, inactive_atoms[0] - 1), span::all);
-      cur_row += height;
-    }
-    // now, check i'th inactive atom to (i + 1)'th inactive atom, until i = penultimate atom
-    while(inactive_atom_ind < n_inactive_atoms - 1) {
-      u32 height = 
-	inactive_atoms[inactive_atom_ind + 1]
-	- inactive_atoms[inactive_atom_ind]
-	- 1;
-      if(height > 0) {
-	active_V(span(cur_row, cur_row + height - 1), 
-		 span::all) =
-	  V_(span(inactive_atoms[inactive_atom_ind] + 1,
-		  inactive_atoms[inactive_atom_ind + 1] - 1), 
-	     span::all);
-	cur_row += height;
-      }
-      inactive_atom_ind++;
-    }
-    // now that i is last inactive atom, check last inactive atom to last atom
-    if(inactive_atoms[inactive_atom_ind] < n_atoms_ - 1) {
-      active_V(span(cur_row, n_active_atoms - 1), 
-	       span::all) = 
-	V_(span(inactive_atoms[inactive_atom_ind] + 1, n_atoms_ - 1), 
-	   span::all);
-    }
+    uvec inactive_atoms_vec = conv_to< uvec >::from(inactive_atoms);
+    RemoveRows(V_, inactive_atoms_vec, active_V);
   }
   
-  std::vector<u32> atom_reverse_lookup(n_atoms_);
-  for(u32 i = 0; i < n_active_atoms; i++) { // use an iterator, too lazy right now..
-    atom_reverse_lookup[active_atoms[i]] = i;
+  uvec atom_reverse_lookup = uvec(n_atoms_);
+  for(u32 i = 0; i < n_active_atoms; i++) {
+    atom_reverse_lookup(active_atoms[i]) = i;
   }
+
   
   printf("%d inactive atoms\n", n_inactive_atoms);
   
   mat V_prime = zeros(n_active_atoms, n_points_ + adjacencies.n_elem);
-  for(u32 i = 0; i < n_active_atoms; i++) {
-    V_prime(span::all, span(0, n_points_ - 1)) = active_V;
-  }
+  printf("adjacencies.n_elem = %d\n", adjacencies.n_elem);
+  V_prime(span::all, span(0, n_points_ - 1)) = active_V;
   
   vec w_squared = ones(n_points_ + adjacencies.n_elem, 1);
   printf("building up V_prime\n");
   for(u32 l = 0; l < adjacencies.n_elem; l++) {
     u32 atom_ind = adjacencies(l) % n_atoms_;
     u32 point_ind = (u32) (adjacencies(l) / n_atoms_);
-    V_prime(atom_reverse_lookup[atom_ind], n_points_ + l) = 1.0;
+    V_prime(atom_reverse_lookup(atom_ind), n_points_ + l) = 1.0;
     w_squared(n_points_ + l) = V_(atom_ind, point_ind); 
   }
+  
   w_squared.subvec(n_points_, w_squared.n_elem - 1) = 
     lambda_ * abs(w_squared.subvec(n_points_, w_squared.n_elem - 1));
   
   printf("about to solve\n");
   mat D_estimate;
   if(inactive_atoms.empty()) {
-    printf("solving\n");
     mat A = V_prime * diagmat(w_squared) * trans(V_prime);
-    A.save("inside_A.dat", raw_ascii);
-    printf("V_prime dims = %d,%d\n", V_prime.n_rows, V_prime.n_cols);
-    mat temp = diagmat(w_squared);
-    printf("diagmat(w_squared) dims = %d,%d\n", temp.n_rows, temp.n_cols);
-    mat theXT = trans(X_);
-    printf("trans(X_prime) dims = %d,%d\n", theXT.n_rows, theXT.n_cols);
-    
     mat B = V_prime * diagmat(w_squared) * trans(X_prime);
-    B.save("inside_B.dat", raw_ascii);
-
-
-    printf("calling solver for real\n");
-
+    
+    printf("solving\n");
     D_estimate = 
       trans(solve(A, B));
     /*    
-    
     D_estimate = 
       trans(solve(V_prime * diagmat(w_squared) * trans(V_prime),
-		  V_prime * diagmat(w_squared) * trans(X_)));
+		  V_prime * diagmat(w_squared) * trans(X_prime)));
     */
   }
   else {
@@ -238,7 +197,7 @@ void LocalCoordinateCoding::OptimizeCodebook(uvec adjacencies) {
       D_estimate.col(active_atoms[i]) = D_active_estimate.col(i);
     }
     for(u32 i = 0; i < n_inactive_atoms; i++) {
-      vec new_atom = randn(n_dims_, 1);
+      vec new_atom = randu(n_dims_, 1);
       D_estimate.col(inactive_atoms[i]) = 
 	new_atom / norm(new_atom, 2);
     }
