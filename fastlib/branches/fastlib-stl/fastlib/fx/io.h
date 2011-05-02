@@ -122,16 +122,6 @@ class IO {
    static io::PrefixedOutStream Warn;
    static io::PrefixedOutStream Fatal;
 
-   static const char* endl;
-   /* Prints a fatal error message */
-   static void PrintFatal(const char* msg);
-   /* Prints a notification */
-   static void PrintNotify(const char* msg);
-   /* Prints a warning */
-   static void PrintWarn(const char* msg);
-   /* Prints a message, only when in debug mode */
-   static void PrintDebug(const char* msg);
-   /* Prints all valid values that it can */
    static void PrintData();
      
    /* Initializes a timer, available like a normal value specified on 
