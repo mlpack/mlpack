@@ -132,14 +132,6 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
   
-  //Now, warn the user if they missed any required options
-  std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str())) // If a required option isn't there...
-      IO::Warn << "Required option --" << iter->c_str() << " is undefined..."
-          << std::endl;
-    
-  
   //Default help message
   if (CheckValue("help")) {
     GetSingleton().hierarchy.PrintAllHelp(); 
@@ -150,6 +142,13 @@ void IO::ParseCommandLine(int argc, char** line) {
     GetSingleton().hierarchy.FindNode(str);
     exit(0);
   }
+
+  //Now, warn the user if they missed any required options
+  std::list<std::string>::iterator iter;
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+    if (!CheckValue((*iter).c_str())) // If a required option isn't there...
+      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
+          << std::endl;
 }
 
 
@@ -173,7 +172,7 @@ void IO::ParseStream(std::istream& stream) {
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
     if (!CheckValue((*iter).c_str())) //If a required option isn't there...
-      IO::Warn << "Required option --" << iter->c_str() << " is undefined..."
+      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
           << std::endl;
 }
 
