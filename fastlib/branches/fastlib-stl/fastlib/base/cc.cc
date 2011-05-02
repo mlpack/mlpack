@@ -52,16 +52,16 @@ namespace cc__private {
   class InformDebug {
    public:
     InformDebug() {
-      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
-      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
+      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:"));
+      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out"));
       DEBUG_ONLY(NOTIFY_STAR(
-          "Program compiled with debug checks.\n"));
+          "Program compiled with debug checks."));
     }
     ~InformDebug() {
-      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:\n"));
-      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out\n"));
+      PROFILE_ONLY(NOTIFY_STAR("Profiling information available with:"));
+      PROFILE_ONLY(NOTIFY_STAR("  gprof $THIS > prof.out && less prof.out"));
       DEBUG_ONLY(NOTIFY_STAR(
-          "Program compiled with debug checks.\n"));
+          "Program compiled with debug checks."));
     }
   };
 
