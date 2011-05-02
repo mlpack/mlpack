@@ -31,11 +31,11 @@ target_link_libraries(lcc
 )
 
 # Test neighbor counts
-add_executable(test_neighbor_counts
-    EXCLUDE_FROM_ALL
-    test_neighbor_counts.cc
-)
+#add_executable(test_neighbor_counts
+#    EXCLUDE_FROM_ALL
+#    test_neighbor_counts.cc
+#)
 
-target_link_libraries(test_neighbor_counts
-    fastlib
-)
+#target_link_libraries(test_neighbor_counts
+#    fastlib
+#)
