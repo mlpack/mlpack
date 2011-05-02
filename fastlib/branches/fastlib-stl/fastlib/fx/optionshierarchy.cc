@@ -3,6 +3,7 @@
 #include "printing.h"
 #include <iostream>
 
+using namespace std;
 using namespace mlpack::io; 
 
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
