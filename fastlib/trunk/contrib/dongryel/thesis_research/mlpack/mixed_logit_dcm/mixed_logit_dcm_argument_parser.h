@@ -11,6 +11,7 @@
 
 #include <boost/program_options.hpp>
 #include "mlpack/mixed_logit_dcm/constant_distribution.h"
+#include "mlpack/mixed_logit_dcm/diagonal_gaussian_distribution.h"
 #include "mlpack/mixed_logit_dcm/gaussian_distribution.h"
 #include "mlpack/mixed_logit_dcm/mixed_logit_dcm_arguments.h"
 
@@ -41,7 +42,7 @@ class MixedLogitDCMArgumentParser {
         "distribution_in",
         boost::program_options::value<std::string>()->default_value("constant"),
         "OPTIONAL The distribution each attribute is drawn from. One of: "
-        "  constant, gaussian"
+        "  constant, diag_gaussian, full_gaussian"
       )(
         "gradient_norm_threshold",
         boost::program_options::value<double>()->default_value(0.5),
@@ -311,11 +312,17 @@ class MixedLogitDCMArgumentParser {
         // Use the constant distribution. This is equivalent to the
         // multinomial logit case.
       }
-      else if(vm["distribution_in"].as<std::string>() == "gaussian") {
+      else if(vm["distribution_in"].as<std::string>() == "diag_gaussian") {
 
-        std::cerr << "Using the Gaussian distribution.\n";
+        std::cerr << "Using the diagonal Gaussian distribution.\n";
 
-        // Use the Gaussian distribution.
+        // Use the diagonal Gaussian distribution.
+      }
+      else if(vm["distribution_in"].as<std::string>() == "full_gaussian") {
+
+        std::cerr << "Using the full Gaussian distribution.\n";
+
+        // Use the full Gaussian distribution.
       }
     }
 
