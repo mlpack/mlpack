@@ -9,6 +9,28 @@ Lars::Lars() {
 
 //~Lars() { }
 
+
+void Lars::Init(const mat& X, const vec& y,
+		bool use_cholesky, double lambda_1, double lambda_2,
+		const mat& Gram) {
+  Gram_ = Gram;
+  Init(X, y, use_cholesky, lambda_1, lambda_2);
+}
+
+void Lars::Init(const mat& X, const vec& y,
+		bool use_cholesky, double lambda_1,
+		const mat& Gram) {
+  Gram_ = Gram;
+  Init(X, y, use_cholesky, lambda_1);
+}
+
+void Lars::Init(const mat& X, const vec& y, bool use_cholesky,
+		const mat& Gram) {
+  Gram_ = Gram;
+  Init(X, y, use_cholesky);
+}
+
+
 void Lars::Init(const mat& X, const vec& y,
 		bool use_cholesky, double lambda_1, double lambda_2) {
   elastic_net_ = true;
@@ -33,7 +55,8 @@ void Lars::Init(const mat& X, const vec& y, bool use_cholesky) {
   use_cholesky_ = use_cholesky;
   
   ComputeXty();
-  if(!use_cholesky_) {
+  if(!use_cholesky_ && Gram_.is_empty()) {
+    printf("Computing Gram matrix\n");
     ComputeGram();
   }
   
