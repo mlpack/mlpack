@@ -56,7 +56,6 @@ void Lars::Init(const mat& X, const vec& y, bool use_cholesky) {
   
   ComputeXty();
   if(!use_cholesky_ && Gram_.is_empty()) {
-    printf("Computing Gram matrix\n");
     ComputeGram();
   }
   
