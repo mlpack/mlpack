@@ -55,6 +55,17 @@ class Lars {
   
   
   void Init(const mat& X, const vec& y,
+	    bool use_cholesky, double lambda_1, double lambda_2,
+	    const mat& Gram);
+  
+  void Init(const mat& X, const vec& y,
+	    bool use_cholesky, double lambda_1,
+	    const mat& Gram);
+  
+  void Init(const mat& X, const vec& y, bool use_cholesky,
+	    const mat& Gram);
+
+  void Init(const mat& X, const vec& y,
 	    bool use_cholesky, double lambda_1, double lambda_2);
   
   void Init(const mat& X, const vec& y,
