@@ -80,7 +80,7 @@ void LocalCoordinateCoding::OptimizeCode() {
     mat D_prime = D_ * diagmat(inv_w);
     
     Lars lars;
-    lars.Init(D_prime, X_.unsafe_col(i), false, 0.5 * lambda_); // do we still need 0.5 * lambda? yes, yes we do
+    lars.Init(D_prime, X_.unsafe_col(i), true, 0.5 * lambda_); // do we still need 0.5 * lambda? yes, yes we do
     
     lars.DoLARS();
     vec beta;
