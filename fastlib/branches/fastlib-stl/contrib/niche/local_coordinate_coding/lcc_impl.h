@@ -38,7 +38,7 @@ void LocalCoordinateCoding::InitDictionary(const char* dictionary_filename) {
 
 
 void LocalCoordinateCoding::RandomInitDictionary() {
-  D_ = randu(n_dims_, n_atoms_);
+  D_ = randn(n_dims_, n_atoms_);
   for(u32 j = 0; j < n_atoms_; j++) {
     D_.col(j) /= norm(D_.col(j), 2);
   }
@@ -69,6 +69,9 @@ void LocalCoordinateCoding::OptimizeCode() {
   
   mat inv_sq_dists = 1.0 / sq_dists;
   
+  mat DtD = trans(D_) * D_;
+  mat D_prime_transpose_D_prime(DtD.n_rows, DtD.n_cols);
+  
   for(u32 i = 0; i < n_points_; i++) {
     // report progress
     if((i % 100) == 0) {
@@ -79,8 +82,16 @@ void LocalCoordinateCoding::OptimizeCode() {
     vec inv_w = inv_sq_dists.unsafe_col(i);
     mat D_prime = D_ * diagmat(inv_w);
     
+    mat D_prime_transpose_D_prime = diagmat(inv_w) * DtD * diagmat(inv_w);
+    
     Lars lars;
-    lars.Init(D_prime, X_.unsafe_col(i), true, 0.5 * lambda_); // do we still need 0.5 * lambda? yes, yes we do
+    // do we still need 0.5 * lambda? yes, yes we do
+    //lars.Init(D_prime.memptr(), X_.colptr(i), n_dims_, n_atoms_, true, 0.5 * lambda_); // apparently not as fast as using the below duo
+                                                                                       // this may change, depending on the dimensionality and sparsity
+
+    // the duo
+    lars.Init(D_prime.memptr(), X_.colptr(i), n_dims_, n_atoms_, false, 0.5 * lambda_);
+    lars.SetGram(D_prime_transpose_D_prime.memptr(), n_atoms_);
     
     lars.DoLARS();
     vec beta;
@@ -197,7 +208,7 @@ void LocalCoordinateCoding::OptimizeDictionary(uvec adjacencies) {
       D_estimate.col(active_atoms[i]) = D_active_estimate.col(i);
     }
     for(u32 i = 0; i < n_inactive_atoms; i++) {
-      vec new_atom = randu(n_dims_, 1);
+      vec new_atom = randn(n_dims_, 1);
       D_estimate.col(inactive_atoms[i]) = 
 	new_atom / norm(new_atom, 2);
     }
