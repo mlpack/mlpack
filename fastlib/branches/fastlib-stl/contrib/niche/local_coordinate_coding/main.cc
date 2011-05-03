@@ -43,8 +43,12 @@ int main(int argc, char* argv[]) {
   lcc.SetDictionary(initial_D);
   
   //printf("n_atoms = %d\n", n_atoms);
-  
+
+  wall_clock timer;
+  timer.tic();
   lcc.DoLCC(n_iterations);
+  double n_secs = timer.toc();
+  cout << "took " << n_secs << " seconds" << endl;
 
   mat learned_D;
   lcc.GetDictionary(learned_D);

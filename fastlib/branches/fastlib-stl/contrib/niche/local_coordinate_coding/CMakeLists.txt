@@ -30,6 +30,15 @@ target_link_libraries(lcc
    fastlib
 )
 
+#add_executable(mnist_lcc
+#    EXCLUDE_FROM_ALL
+#    mnist_main.cc
+#)
+
+#target_link_libraries(mnist_lcc
+#    fastlib
+#)
+
 # Test neighbor counts
 #add_executable(test_neighbor_counts
 #    EXCLUDE_FROM_ALL
