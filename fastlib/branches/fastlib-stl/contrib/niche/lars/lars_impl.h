@@ -10,39 +10,75 @@ Lars::Lars() {
 //~Lars() { }
 
 
-void Lars::Init(const mat& X, const vec& y,
-		bool use_cholesky, double lambda_1, double lambda_2,
-		const mat& Gram) {
-  Gram_ = Gram;
-  Init(X, y, use_cholesky, lambda_1, lambda_2);
-}
-
-void Lars::Init(const mat& X, const vec& y,
-		bool use_cholesky, double lambda_1,
-		const mat& Gram) {
-  Gram_ = Gram;
-  Init(X, y, use_cholesky, lambda_1);
-}
-
-void Lars::Init(const mat& X, const vec& y, bool use_cholesky,
-		const mat& Gram) {
-  Gram_ = Gram;
-  Init(X, y, use_cholesky);
-}
-
-
-void Lars::Init(const mat& X, const vec& y,
+// power user Init functions
+void Lars::Init(double* X_mem, double* y_mem, u32 n, u32 p,
 		bool use_cholesky, double lambda_1, double lambda_2) {
+  X_ = mat(X_mem, n, p, false, true);
+  y_ = vec(y_mem, n, false, true);
+  
+  n_ = n;
+  p_ = p;
+  
+  lasso_ = true;
+  lambda_1_ = lambda_1;
   elastic_net_ = true;
   lambda_2_ = lambda_2;
-  Init(X, y, use_cholesky, lambda_1);
+  use_cholesky_ = use_cholesky;
+}
+
+void Lars::Init(double* X_mem, double* y_mem, u32 n, u32 p,
+		bool use_cholesky, double lambda_1) {
+  X_ = mat(X_mem, n, p, false, true);
+  y_ = vec(y_mem, n, false, true);
+  
+  n_ = n;
+  p_ = p;
+  
+  lasso_ = true;
+  lambda_1_ = lambda_1;
+  use_cholesky_ = use_cholesky;
+}
+
+void Lars::Init(double* X_mem, double* y_mem, u32 n, u32 p,
+		bool use_cholesky) {
+  X_ = mat(X_mem, n, p, false, true);
+  y_ = vec(y_mem, n, false, true);
+  
+  n_ = n;
+  p_ = p;
+  
+  use_cholesky_ = use_cholesky;
+}
+
+
+// normal Init functions
+void Lars::Init(const mat& X, const vec& y,
+		bool use_cholesky, double lambda_1, double lambda_2) {
+  X_ = mat(X);
+  y_ = vec(y);
+  
+  n_ = X_.n_rows;
+  p_ = X_.n_cols;
+  
+  
+  lasso_ = true;
+  lambda_1_ = lambda_1;
+  elastic_net_ = true;
+  lambda_2_ = lambda_2;
+  use_cholesky_ = use_cholesky;
 }
 
 void Lars::Init(const mat& X, const vec& y,
 		bool use_cholesky, double lambda_1) {
+  X_ = mat(X);
+  y_ = vec(y);
+  
+  n_ = X_.n_rows;
+  p_ = X_.n_cols;
+
   lasso_ = true;
   lambda_1_ = lambda_1;
-  Init(X, y, use_cholesky);
+  use_cholesky_ = use_cholesky;
 }
 
 void Lars::Init(const mat& X, const vec& y, bool use_cholesky) {
@@ -53,7 +89,10 @@ void Lars::Init(const mat& X, const vec& y, bool use_cholesky) {
   p_ = X_.n_cols;
   
   use_cholesky_ = use_cholesky;
-  
+}
+
+/*
+void Lars::CommonInit() {
   ComputeXty();
   if(!use_cholesky_ && Gram_.is_empty()) {
     ComputeGram();
@@ -65,6 +104,16 @@ void Lars::Init(const mat& X, const vec& y, bool use_cholesky) {
   is_active_ = std::vector<bool>(p_);
   fill(is_active_.begin(), is_active_.end(), false);
 }
+*/
+
+void Lars::SetGram(double* Gram_mem, u32 p) {
+  Gram_ = mat(Gram_mem, p, p, false, true);
+}
+
+void Lars::SetGram(const mat& Gram) {
+  Gram_ = Gram;
+}
+
 
 void Lars::ComputeGram() {
   if(elastic_net_) {
@@ -159,7 +208,20 @@ void Lars::SetDesiredLambda(double lambda_1) {
   
   
 void Lars::DoLARS() {
-    
+  // compute Gram matrix, XtY, and initialize active set varibles
+  ComputeXty();
+  if(!use_cholesky_ && Gram_.is_empty()) {
+    ComputeGram();
+  }
+  
+  // set up active set variables
+  n_active_ = 0;
+  active_set_ = std::vector<u32>(0);
+  is_active_ = std::vector<bool>(p_);
+  fill(is_active_.begin(), is_active_.end(), false);
+  
+  
+  
   // initialize y_hat and beta
   vec beta = zeros(p_);
   vec y_hat = zeros(n_);

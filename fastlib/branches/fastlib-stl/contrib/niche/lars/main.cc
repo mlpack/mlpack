@@ -55,6 +55,7 @@ int main(int argc, char* argv[]) {
   
   Lars lars;
   lars.Init(X, y, false, lambda_1);
+  lars.SetGram(Gram.memptr(), X.n_cols);
   //lars.Init(X, y, use_cholesky, lambda_1, lambda_2);
   //lars.Init(X_reg, y_reg, use_cholesky, lambda_1);
   //lars.Init(X_reg, y_reg, use_cholesky);
