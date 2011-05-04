@@ -2,8 +2,8 @@ cmake_minimum_required(VERSION 2.8)
 project(MLPACK_CONTRIB C CXX)
 
 # compiler flags
-set(CMAKE_CXX_FLAGS "-g -Wall")
-add_definitions(-DDISABLE_DISK_MATRIX)
+#set(CMAKE_CXX_FLAGS "-g -Wall")
+#add_definitions(-DDISABLE_DISK_MATRIX)
 
 # include directories
 include_directories(..)
