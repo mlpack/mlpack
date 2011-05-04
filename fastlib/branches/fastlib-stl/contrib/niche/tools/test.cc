@@ -12,7 +12,7 @@ void SpeedTest() {
   
   mat X = randn(k, n);
   uvec rows_to_remove;
-  u32 n_to_remove = 5;
+  u32 n_to_remove = 1;
   rows_to_remove.set_size(n_to_remove, 1);
   for(u32 i = 0; i < n_to_remove; i++) {
     rows_to_remove(i) = i;
@@ -41,7 +41,6 @@ void SpeedTest() {
   for(u32 t = 0; t < 1000; t++) {
     mat X_mod_theirs = X;
     timer.tic();
-    X_mod_theirs.shed_row(0);
     for(u32 i = 0; i < n_to_remove; i++) {
       X_mod_theirs.shed_row(rows_to_remove(i) - i);      
     }
@@ -83,6 +82,7 @@ void SpeedTest() {
 int main(int argc, char* argv[]) {
   SpeedTest();
   return 1;
+
   mat X = randu(10,3);
   
   uvec rows_to_remove;
