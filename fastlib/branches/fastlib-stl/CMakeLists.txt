@@ -34,13 +34,15 @@ if(WITH_SPARSE)
    include_directories(${MPI_INCLUDE_DIR})
 endif(WITH_SPARSE)
 
-if(DEBUG)                                                                                                                                                                                   
+if(DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -pg -O0")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -pg -O0")
   set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
   add_definitions(-DDEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -O2")
 endif(DEBUG)
 
 
