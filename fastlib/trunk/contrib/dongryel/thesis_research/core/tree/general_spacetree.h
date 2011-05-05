@@ -197,11 +197,9 @@ class GeneralBinarySpaceTree {
      */
     void get_frontier_node_begin_count_pairs_private_(
       const GeneralBinarySpaceTree *start_node,
-      int max_num_frontier_nodes,
-      int *num_frontier_nodes_encountered,
+      int max_num_points_subtree,
       std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs,
-      std::vector< BoundType > *bounds) const {
+      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
 
       // The priority queue type.
       typedef std::priority_queue <
@@ -211,43 +209,19 @@ class GeneralBinarySpaceTree {
       PriorityQueueType queue;
       queue.push(start_node);
 
-      while((*num_frontier_nodes_encountered) < max_num_frontier_nodes &&
-            queue.size() > 0) {
+      while(queue.size() > 0) {
         const TreeType *dequeued_node = queue.top();
         queue.pop();
-        if(dequeued_node->is_leaf()) {
+        if(dequeued_node->is_leaf() ||
+            dequeued_node->count() <= max_num_points_subtree) {
           frontier_node_begin_count_pairs->push_back(
             std::pair<int, int>(
               dequeued_node->begin(), dequeued_node->count()));
-          bounds->resize(bounds->size() + 1);
-          bounds->back().Copy(dequeued_node->bound());
         }
         else {
-          if((*num_frontier_nodes_encountered) < max_num_frontier_nodes) {
-            (*num_frontier_nodes_encountered)++;
-            queue.push(dequeued_node->left());
-            queue.push(dequeued_node->right());
-          }
-          else {
-            frontier_node_begin_count_pairs->push_back(
-              std::pair<int, int>(
-                dequeued_node->begin(), dequeued_node->count()));
-            bounds->resize(bounds->size() + 1);
-            bounds->back().Copy(dequeued_node->bound());
-          }
+          queue.push(dequeued_node->left());
+          queue.push(dequeued_node->right());
         }
-      }
-      while(
-        static_cast<int>(frontier_node_begin_count_pairs->size()) <
-        max_num_frontier_nodes && queue.size() > 0) {
-
-        const TreeType *dequeued_node = queue.top();
-        frontier_node_begin_count_pairs->push_back(
-          std::pair<int, int>(
-            dequeued_node->begin(), dequeued_node->count()));
-        bounds->resize(bounds->size() + 1);
-        bounds->back().Copy(dequeued_node->bound());
-        queue.pop();
       }
     }
 
@@ -263,16 +237,14 @@ class GeneralBinarySpaceTree {
      *         frontier nodes of the subtree rooted at this node.
      */
     void get_frontier_node_begin_count_pairs(
-      int max_num_frontier_nodes,
+      int max_num_points_subtree_size,
       std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs,
-      std::vector< BoundType > *bounds) const {
+      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
       int num_frontier_nodes_encountered = 1;
 
       get_frontier_node_begin_count_pairs_private_(
-        this, max_num_frontier_nodes,
-        &num_frontier_nodes_encountered,
-        frontier_node_begin_count_pairs, bounds);
+        this, max_num_points_subtree_size,
+        frontier_node_begin_count_pairs);
     }
 
     /** @brief A method for copying a node without its children.
