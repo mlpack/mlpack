@@ -14,8 +14,10 @@
 #include <boost/tuple/tuple.hpp>
 #include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
+#include "core/parallel/table_exchange.h"
 #include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
+#include <omp.h>
 
 namespace core {
 namespace gnp {
@@ -119,6 +121,27 @@ class DistributedDualtreeDfs {
 
   private:
 
+    /** @brief The class used for prioritizing a computation object
+     *         (query, reference pair).
+     */
+    class PrioritizeTasks_:
+      public std::binary_function <
+        FrontierObjectType &, FrontierObjectType &, bool > {
+      public:
+        bool operator()(
+          const FrontierObjectType &a, const FrontierObjectType &b) const {
+          return a.get<2>() < b.get<2>();
+        }
+    };
+
+    /** @brief The type of the priority queue that is used.
+     */
+    typedef std::priority_queue <
+    FrontierObjectType,
+    std::vector<FrontierObjectType>,
+    typename DistributedDualtreeDfs <
+    DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
+
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
       const MetricType &metric_in,
@@ -130,6 +153,17 @@ class DistributedDualtreeDfs {
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
       std::vector<double> *extrinsic_prunes);
+
+    /** @brief In each round, for each reference subtree that is
+     *         grabbed, we need to generate a set of independent
+     *         tasks. Generally, each query subtree is
+     *         task-independent since the writes on the subtree are
+     *         independent.
+     */
+    void SharedMemoryParallelize_(
+      core::parallel::TableExchange <
+      DistributedTableType, SubTableListType > &table_exchange,
+      PriorityQueueType &prioritized_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation.
@@ -152,19 +186,6 @@ class DistributedDualtreeDfs {
     void PostProcess_(
       const MetricType &metric,
       TreeType *qnode, ResultType *query_results);
-
-    /** @brief The class used for prioritizing a computation object
-     *         (query, reference pair).
-     */
-    class PrioritizeTasks_:
-      public std::binary_function <
-        FrontierObjectType &, FrontierObjectType &, bool > {
-      public:
-        bool operator()(
-          const FrontierObjectType &a, const FrontierObjectType &b) const {
-          return a.get<2>() < b.get<2>();
-        }
-    };
 
   public:
 
