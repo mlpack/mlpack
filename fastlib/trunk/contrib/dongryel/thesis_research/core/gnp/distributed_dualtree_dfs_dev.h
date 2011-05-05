@@ -41,6 +41,20 @@ int DistributedDualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
 }
 
 template<typename DistributedProblemType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::SharedMemoryParallelize_(
+  core::parallel::TableExchange <
+  DistributedTableType, SubTableListType > &table_exchange,
+  PriorityQueueType &prioritized_tasks) {
+
+  // The global list of query subtree that is being computed. This is
+  // necessary for preventing two threads from grabbing tasks that
+  // involve the same query subtree. The hashing is done on the basis
+  // of the beginning index of the subtree root node.
+  std::map<int, bool > active_query_subtrees;
+}
+
+template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
@@ -144,9 +158,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  // The max number of points for the query subtree for each task.
+  const int max_query_subtree_size = 20000;
+
+  // The max number of points for the reference subtree for each task.
+  const int max_reference_subtree_size = 20000;
+
   // Each process needs to customize its reference set for each
   // participating query process.
-  const int max_reference_subtree_size = 20000;
   std::vector< std::vector< std::pair<int, int> > >
   essential_reference_subtrees(world_->size());
   std::vector< std::vector< core::math::Range > >
@@ -179,13 +198,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
 
-  // The priority queue type.
-  typedef std::priority_queue <
-  FrontierObjectType,
-  std::vector<FrontierObjectType>,
-  typename DistributedDualtreeDfs <
-  DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
-
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
   DistributedTableType, SubTableListType > table_exchange;
@@ -201,6 +213,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     const std::vector< std::pair<int, int> > &reference_frontier =
       reference_frontier_lists[i];
 
+    // This makes sure that the reference tree on the same process is
+    // considered first.
     if(i != static_cast<unsigned int>(world_->rank())) {
       for(unsigned int j = 0; j < reference_frontier.size(); j++) {
         computation_frontier[i].push(
