@@ -4,6 +4,8 @@
  *
  *  @author Nishant Mehta (niche)
  */
+// example for running program via fx-run on no.cc.gatech.edu:
+//   fx-run mnist_lcc /scratch/niche/fastlib-stl/build/bin/mnist_lcc --lambda=0.05, --data_dir=/scratch/niche/fastlib-stl/contrib/niche/discriminative_sparse_coding/mnist --digit1=4, --digit2=9, --n_iterations=1, --n_atoms=50,
 
 #include <fastlib/fastlib.h>
 #include <armadillo>
@@ -22,14 +24,16 @@ int main(int argc, char* argv[]) {
   
   const char* data_dir = 
     fx_param_str_req(NULL, "data_dir");
-  const char* initial_dictionary_fullpath = 
-    fx_param_str_req(NULL, "initial_dictionary");
+  //const char* initial_dictionary_fullpath = 
+  //  fx_param_str_req(NULL, "initial_dictionary");
   
   u32 digit_1 = fx_param_int_req(NULL, "digit1");
   u32 digit_2 = fx_param_int_req(NULL, "digit2");
 
   u32 n_iterations = fx_param_int_req(NULL, "n_iterations");
-
+  
+  u32 n_atoms = fx_param_int_req(NULL, "n_atoms");
+  
   
   
   // Load Data
@@ -64,13 +68,13 @@ int main(int argc, char* argv[]) {
   
   LocalCoordinateCoding lcc;
   
-  mat initial_D;
+  //mat initial_D;
   //initial_D.load("/home/niche/fastlib-stl/contrib/niche/local_coordinate_coding/D.dat");
-  initial_D.load(initial_dictionary_fullpath);
-  u32 n_atoms = initial_D.n_cols;
+  //initial_D.load(initial_dictionary_fullpath);
+  //u32 n_atoms = initial_D.n_cols;
   
   lcc.Init(X, n_atoms, lambda);
-  lcc.InitDictionary();
+  lcc.RandomInitDictionary();
   //lcc.SetDictionary(initial_D);
   
   //printf("n_atoms = %d\n", n_atoms);
@@ -80,7 +84,7 @@ int main(int argc, char* argv[]) {
   lcc.DoLCC(n_iterations);
   double n_secs = timer.toc();
   cout << "took " << n_secs << " seconds" << endl;
-
+  
   mat learned_D;
   lcc.GetDictionary(learned_D);
 
