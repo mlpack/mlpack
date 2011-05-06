@@ -9,8 +9,6 @@ set(SOURCES
    # for lars
    lars.h
    lars_impl.h
-   new_lars.h
-   new_lars_impl.h
 )
 
 # add directory name to sources
@@ -27,39 +25,6 @@ add_executable(lars
     main.cc
 )
 
-# The executable for testing components of LARS
-add_executable(test_lars
-    EXCLUDE_FROM_ALL
-    test.cc
-)
-
 target_link_libraries(lars
    fastlib
 )
-
-target_link_libraries(test_lars
-   fastlib
-)
-
-
-# The executable for LARS
-add_executable(new_lars
-    EXCLUDE_FROM_ALL
-    new_main.cc
-)
-
-target_link_libraries(new_lars
-   fastlib
-)
-
-
-# can't figure out how to get libraries working...
-#add_library(lars_lib
-#  EXCLUDE_FROM_ALL
-#  main.cc
-#)
-
-#target_link_libraries(lars_lib
-#  mlpack
-#  fastlib
-#)

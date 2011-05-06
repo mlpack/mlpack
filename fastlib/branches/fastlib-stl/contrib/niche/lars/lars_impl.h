@@ -1,4 +1,4 @@
-#ifndef INSIDE_NEW_LARS_H
+#ifndef INSIDE_LARS_H
 #error "This is not a public header file!"
 #endif
 

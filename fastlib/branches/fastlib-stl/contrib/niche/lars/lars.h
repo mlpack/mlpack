@@ -9,10 +9,10 @@
 // beta is the estimator
 // y_hat is the prediction from the current estimator
 
-#ifndef NEW_LARS_H
-#define NEW_LARS_H
+#ifndef LARS_H
+#define LARS_H
 
-#define INSIDE_NEW_LARS_H
+#define INSIDE_LARS_H
 
 
 #define EPS 1e-16
@@ -124,7 +124,7 @@ class Lars {
   void CholeskyDelete(u32 col_to_kill);
 };
 
-#include "new_lars_impl.h"
-#undef INSIDE_NEW_LARS_H
+#include "lars_impl.h"
+#undef INSIDE_LARS_H
 
 #endif
