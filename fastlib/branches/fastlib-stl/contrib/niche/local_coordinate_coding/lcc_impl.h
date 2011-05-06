@@ -46,18 +46,21 @@ void LocalCoordinateCoding::RandomInitDictionary() {
 
 
 void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
-  OptimizeCode();
-  uvec adjacencies = find(V_);
-  printf("Objective function value: %f\n",
-	 Objective(adjacencies));
-  printf("\n%d nonzero entries in code V (%f%%)\n\n",
-	 adjacencies.n_elem,
-	 ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
-  printf("Optimizing Dictionary\n");
-  OptimizeDictionary(adjacencies);
-
-  printf("Objective function value: %f\n",
-	 Objective(adjacencies));
+  for(u32 t = 1; t <= n_iterations; t++) {
+    printf("Iteration %d of %d\n", t, n_iterations);
+    OptimizeCode();
+    uvec adjacencies = find(V_);
+    printf("Objective function value: %f\n",
+	   Objective(adjacencies));
+    printf("\n%d nonzero entries in code V (%f%%)\n\n",
+	   adjacencies.n_elem,
+	   ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
+    printf("Optimizing Dictionary\n");
+    OptimizeDictionary(adjacencies);
+    
+    printf("Objective function value: %f\n",
+	   Objective(adjacencies));
+  }
 }
 
 
@@ -74,8 +77,8 @@ void LocalCoordinateCoding::OptimizeCode() {
   
   for(u32 i = 0; i < n_points_; i++) {
     // report progress
-    if((i % 100) == 0) {
-      printf(" %d\n", i);
+    if((i % 1000) == 0) {
+      printf("%d\n", i);
     }
     
     vec w = sq_dists.unsafe_col(i);
