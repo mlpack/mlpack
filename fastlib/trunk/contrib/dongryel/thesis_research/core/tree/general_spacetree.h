@@ -8,6 +8,7 @@
 #ifndef CORE_TREE_GENERAL_SPACETREE_H
 #define CORE_TREE_GENERAL_SPACETREE_H
 
+#include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/level.hpp>
@@ -18,7 +19,6 @@
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "statistic.h"
-#include <boost/interprocess/offset_ptr.hpp>
 #include "core/table/memory_mapped_file.h"
 
 namespace core {
@@ -192,39 +192,6 @@ class GeneralBinarySpaceTree {
       }
     }
 
-    /** @brief A helper function for
-     *         get_frontier_node_begin_count_pairs.
-     */
-    void get_frontier_node_begin_count_pairs_private_(
-      const GeneralBinarySpaceTree *start_node,
-      int max_num_points_subtree,
-      std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
-
-      // The priority queue type.
-      typedef std::priority_queue <
-      const TreeType *,
-            std::vector<const TreeType *>,
-            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
-      PriorityQueueType queue;
-      queue.push(start_node);
-
-      while(queue.size() > 0) {
-        const TreeType *dequeued_node = queue.top();
-        queue.pop();
-        if(dequeued_node->is_leaf() ||
-            dequeued_node->count() <= max_num_points_subtree) {
-          frontier_node_begin_count_pairs->push_back(
-            std::pair<int, int>(
-              dequeued_node->begin(), dequeued_node->count()));
-        }
-        else {
-          queue.push(dequeued_node->left());
-          queue.push(dequeued_node->right());
-        }
-      }
-    }
-
   public:
 
     /** @brief Finds the depth of the tree at this node.
@@ -236,15 +203,30 @@ class GeneralBinarySpaceTree {
     /** @brief Gets the list of begin and count pair for at most $k$
      *         frontier nodes of the subtree rooted at this node.
      */
-    void get_frontier_node_begin_count_pairs(
+    void get_frontier_nodes(
       int max_num_points_subtree_size,
-      std::vector <
-      std::pair<int, int> > *frontier_node_begin_count_pairs) const {
-      int num_frontier_nodes_encountered = 1;
+      std::vector < TreeType * > *frontier_nodes) const {
 
-      get_frontier_node_begin_count_pairs_private_(
-        this, max_num_points_subtree_size,
-        frontier_node_begin_count_pairs);
+      // The priority queue type.
+      typedef std::priority_queue <
+      const TreeType *,
+            std::vector<const TreeType *>,
+            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
+      PriorityQueueType queue;
+      queue.push(const_cast<TreeType *>(this));
+
+      while(queue.size() > 0) {
+        TreeType *dequeued_node = const_cast<TreeType *>(queue.top());
+        queue.pop();
+        if(dequeued_node->is_leaf() ||
+            dequeued_node->count() <= max_num_points_subtree_size) {
+          frontier_nodes->push_back(dequeued_node);
+        }
+        else {
+          queue.push(dequeued_node->left());
+          queue.push(dequeued_node->right());
+        }
+      }
     }
 
     /** @brief A method for copying a node without its children.
