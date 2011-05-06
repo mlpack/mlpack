@@ -597,6 +597,20 @@ class Table {
       fclose(foutput);
     }
 
+    /** @brief Gets the frontier nodes of the indexed tree such that
+     *         the subtree contains a specified number of points
+     *         bounded by the parameter.
+     */
+    void get_frontier_nodes(
+      int max_subtree_size,
+      std::vector<TreeType *> *frontier_nodes_out) const {
+
+      tree_->get_frontier_nodes(max_subtree_size, frontier_nodes_out);
+    }
+
+    /** @brief Builds the tree with a specified metric and a leaf
+     *         size.
+     */
     template<typename MetricType>
     void IndexData(
       const MetricType &metric_in, int leaf_size,

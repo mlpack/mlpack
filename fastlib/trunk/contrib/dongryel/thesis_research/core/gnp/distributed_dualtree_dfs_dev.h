@@ -164,6 +164,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   // The max number of points for the reference subtree for each task.
   const int max_reference_subtree_size = 20000;
 
+  // For each process, break up the local query tree into a list of
+  // subtree query lists.
+  std::vector< TreeType *> local_query_subtrees;
+  query_table_->local_table()->get_frontier_nodes(
+    max_query_subtree_size, &local_query_subtrees);
+
   // Each process needs to customize its reference set for each
   // participating query process.
   std::vector< std::vector< std::pair<int, int> > >
