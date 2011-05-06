@@ -8,7 +8,7 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
-#include "new_lars.h"
+#include "lars.h"
 
 using namespace arma;
 using namespace std;
