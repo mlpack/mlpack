@@ -252,10 +252,21 @@ void Lars::DoLARS() {
     return;
   }
     
-    
+  u32 n_iterations_run = 0;
   // MAIN LOOP
   while(kick_out || ((n_active_ < p_) && (max_corr > EPS))) {
     
+    n_iterations_run++;
+    if(n_iterations_run > 2 * p_) {
+      printf("n_iterations_run = %d\n", n_iterations_run);
+      printf("n_active = %d\n", n_active_);
+      if(kick_out) {
+	printf("about to kick out %d\n", active_set_[change_ind]);
+      }
+      else {
+	printf("about to add %d\n", change_ind);
+      }	
+    }
 
     
     
@@ -287,23 +298,7 @@ void Lars::DoLARS() {
 	
       // add variable to active set
       Activate(change_ind);
-	
-      /*////
-	if(use_cholesky_) {
-	mat reconstruction = mat(n_active_, n_active_);
-	for(u32 i = 0; i < n_active_; i++) {
-	for(u32 j = 0; j < n_active_; j++) {
-	reconstruction(i, j) = 
-	dot(X_.col(active_set_[i]),
-	X_.col(active_set_[j]));
-	}
-	}
-	reconstruction += lambda_2_ * eye(n_active_, n_active_);
-	printf("cholesky insert error = %e\n",
-	norm(trans(R) * R - reconstruction, "fro"));
-	}
-      ////*/
-	
+      
     }
 
 
@@ -350,6 +345,20 @@ void Lars::DoLARS() {
       mat S = s * ones<mat>(1, n_active_);
       unnormalized_beta_direction = 
 	solve(Gram_active % trans(S) % S, ones<mat>(n_active_, 1));
+      if(n_iterations_run > 2 * p_) {
+	vec check_result = (Gram_active % trans(S) % S) * unnormalized_beta_direction;
+	printf("should be ones vector\n");
+	for(u32 z = 0; z < check_result.n_elem; z++) {
+	  printf("%e ", check_result[z]);
+	}
+	printf("\n");
+	printf("unnormalized_beta_direction\n");
+	for(u32 z = 0; z < unnormalized_beta_direction.n_elem; z++) {
+	  printf("%e ", unnormalized_beta_direction[z]);
+	}
+	printf("\n");
+	//check_result.print("should be ones vector");
+      }
       normalization = 1.0 / sqrt(sum(unnormalized_beta_direction));
       beta_direction = normalization * unnormalized_beta_direction % s;
     }
@@ -484,6 +493,11 @@ void Lars::DoLARS() {
 	//printf("early stopping by LASSO\n");
 	InterpolateBeta(ultimate_lambda);
 	break;
+      }
+      else {
+	if(n_iterations_run > 2 * p_) {
+	  printf("lambda_1 = %f\tultimate_lambda = %f\n", lambda_1_, ultimate_lambda);
+	}
       }
     }
   }

@@ -17,21 +17,21 @@ int main(int argc, char* argv[]) {
   
   //bool use_cholesky = false;
   double lambda_1 = 0.1;
-  //double lambda_2 = 0;
+  double lambda_2 = 0.5;
   
   u32 n = 100;
   u32 p = 10;
 
   mat X = randu<mat>(n,p);
   
-  /*
+  
   mat X_reg = zeros(n + p, p);
   X_reg(span(0, n - 1), span::all) = X;
   for(u32 i = 0; i < p; i++) {
     X_reg(n + i, i) = sqrt(lambda_2);
   }
   //X_reg.print("X_reg");
-  */
+  
   
   
   mat beta_true = zeros(p,1);
@@ -45,19 +45,19 @@ int main(int argc, char* argv[]) {
   //y.load("y.dat", raw_ascii);
   //y.load("x.dat", raw_ascii);
   
-  /*
+  
   vec y_reg = zeros(n + p);
   y_reg.subvec(0, n - 1) = y;
   //y_reg.print("y_reg");
-  */
+  
   
   mat Gram = trans(X) * X;
   
   Lars lars;
-  lars.Init(X, y, false, lambda_1);
-  lars.SetGram(Gram.memptr(), X.n_cols);
-  //lars.Init(X, y, use_cholesky, lambda_1, lambda_2);
-  //lars.Init(X_reg, y_reg, use_cholesky, lambda_1);
+  //lars.Init(X, y, false, lambda_1);
+  //lars.SetGram(Gram.memptr(), X.n_cols);
+  //lars.Init(X, y, false, lambda_1, lambda_2);
+  lars.Init(X_reg, y_reg, false, lambda_1);
   //lars.Init(X_reg, y_reg, use_cholesky);
   
   lars.DoLARS();
