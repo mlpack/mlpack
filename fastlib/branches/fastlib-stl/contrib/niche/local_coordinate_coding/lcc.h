@@ -46,6 +46,10 @@ class LocalCoordinateCoding {
   
   void RandomInitDictionary();
 
+  void DataDependentRandomInitDictionary();
+  
+  void RandomAtom(vec& atom);
+
   void DoLCC(u32 n_iterations);
 
   void OptimizeCode();
@@ -54,9 +58,11 @@ class LocalCoordinateCoding {
   
   double Objective(uvec adjacencies);
   
-  void PrintDictionary();
-  
   void GetDictionary(mat& D);
+
+  void PrintDictionary();
+    
+  void GetCoding(mat& V);
   
   void PrintCoding();
   

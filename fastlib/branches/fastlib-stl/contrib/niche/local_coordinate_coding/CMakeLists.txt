@@ -39,12 +39,11 @@ target_link_libraries(mnist_lcc
     fastlib
 )
 
-# Test neighbor counts
-#add_executable(test_neighbor_counts
-#    EXCLUDE_FROM_ALL
-#    test_neighbor_counts.cc
-#)
-
-#target_link_libraries(test_neighbor_counts
-#    fastlib
-#)
+add_executable(mnist_lcc_synth
+    EXCLUDE_FROM_ALL
+    mnist_test_synth.cc
+)
+	
+target_link_libraries(mnist_lcc_synth
+    fastlib
+)
