@@ -45,6 +45,25 @@ void LocalCoordinateCoding::RandomInitDictionary() {
 }
 
 
+void LocalCoordinateCoding::DataDependentRandomInitDictionary() {
+  for(u32 i = 0; i < n_atoms_; i++) {
+    vec D_i = D_.unsafe_col(i);
+    RandomAtom(D_i);
+  }
+}
+
+
+void LocalCoordinateCoding::RandomAtom(vec& atom) {
+  atom.zeros();
+  const u32 n_seed_atoms = 3;
+  for(u32 i = 0; i < n_seed_atoms; i++) {
+    atom +=  X_.col(rand() % n_points_);
+  }
+  atom /= ((double) n_seed_atoms);
+  atom /= norm(atom, 2);
+}
+
+
 void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
   for(u32 t = 1; t <= n_iterations; t++) {
     printf("Iteration %d of %d\n", t, n_iterations);
@@ -211,9 +230,13 @@ void LocalCoordinateCoding::OptimizeDictionary(uvec adjacencies) {
       D_estimate.col(active_atoms[i]) = D_active_estimate.col(i);
     }
     for(u32 i = 0; i < n_inactive_atoms; i++) {
+      vec D_i = D_estimate.unsafe_col(inactive_atoms[i]);
+      RandomAtom(D_i);
+      /*
       vec new_atom = randn(n_dims_, 1);
       D_estimate.col(inactive_atoms[i]) = 
 	new_atom / norm(new_atom, 2);
+      */
     }
   }
   D_ = D_estimate;
@@ -234,13 +257,18 @@ double LocalCoordinateCoding::Objective(uvec adjacencies) {
 }
 
 
+void LocalCoordinateCoding::GetDictionary(mat& D) {
+  D = D_;
+}
+
+
 void LocalCoordinateCoding::PrintDictionary() {
   D_.print("Dictionary");
 }
 
-  
-void LocalCoordinateCoding::GetDictionary(mat& D) {
-  D = D_;
+
+void LocalCoordinateCoding::GetCoding(mat& V) {
+  V = V_;
 }
 
 

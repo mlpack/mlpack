@@ -74,7 +74,8 @@ int main(int argc, char* argv[]) {
   //u32 n_atoms = initial_D.n_cols;
   
   lcc.Init(X, n_atoms, lambda);
-  lcc.RandomInitDictionary();
+  //lcc.RandomInitDictionary();
+  lcc.DataDependentRandomInitDictionary();
   //lcc.SetDictionary(initial_D);
   
   //printf("n_atoms = %d\n", n_atoms);
