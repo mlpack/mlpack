@@ -25,6 +25,7 @@ set(DIRS
    nvasil
 #   pagarwal
    pram
+   rcurtin
    rriegel
    soyeon
    tqlong
