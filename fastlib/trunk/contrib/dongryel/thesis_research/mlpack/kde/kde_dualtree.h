@@ -12,6 +12,7 @@
 #include <boost/math/distributions/normal.hpp>
 #include <boost/mpi.hpp>
 #include <boost/serialization/serialization.hpp>
+#include <deque>
 #include "core/monte_carlo/mean_variance_pair.h"
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
@@ -239,12 +240,9 @@ class ConsiderExtrinsicPruneTrait <
     static bool Compute(
       const mlpack::series_expansion::EpanKernelMultivariateAux &kernel_aux_in,
       const core::math::Range &squared_distance_range_in) {
+
       return
         kernel_aux_in.kernel().bandwidth_sq() <= squared_distance_range_in.lo;
-
-      // Enable the following line when the multipole moments are
-      // properly propagated upwards in the global tree.
-      //kernel_aux_in.kernel().bandwidth_sq() >= squared_distance_range_in.hi;
     }
 };
 
@@ -610,7 +608,7 @@ class KdeResult {
     /** @brief The flag that tells whether the self contribution has
      *         been subtracted or not.
      */
-    bool self_contribution_subtracted_;
+    std::deque<bool> self_contribution_subtracted_;
 
     /** @brief The lower bound on the density sum.
      */
@@ -685,13 +683,13 @@ class KdeResult {
 
       // If monochromatic, then do post correction by subtracing the
       // self-contribution.
-      if((!self_contribution_subtracted_) && is_monochromatic) {
+      if((! self_contribution_subtracted_[q_index]) && is_monochromatic) {
         double self_contribution =
           global.kernel_aux().kernel().EvalUnnormOnSq(0.0);
         densities_l_[q_index] -= self_contribution;
         densities_[q_index] -= self_contribution;
         densities_u_[q_index] -= self_contribution;
-        self_contribution_subtracted_ = true;
+        self_contribution_subtracted_[q_index] = true;
       }
 
       if(global.normalize_densities()) {
@@ -747,18 +745,18 @@ class KdeResult {
       densities_u_.resize(num_points);
       pruned_.resize(num_points);
       used_error_.resize(num_points);
-
+      self_contribution_subtracted_.resize(num_points);
       SetZero();
     }
 
     void SetZero() {
-      self_contribution_subtracted_ = false;
       for(int i = 0; i < static_cast<int>(densities_l_.size()); i++) {
         densities_l_[i] = 0;
         densities_[i] = 0;
         densities_u_[i] = 0;
         pruned_[i] = 0;
         used_error_[i] = 0;
+        self_contribution_subtracted_[i] = false;
       }
       num_farfield_to_local_prunes_ = 0;
       num_farfield_prunes_ = 0;
