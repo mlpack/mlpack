@@ -104,7 +104,7 @@ void DualtreeDfs<ProblemType>::Compute(
 
   // Call the algorithm computation.
   core::math::Range squared_distance_range =
-    (query_table_->get_tree()->bound()).RangeDistanceSq(
+    (query_start_node_->bound()).RangeDistanceSq(
       metric, reference_start_node_->bound());
 
   if(do_initializations) {
