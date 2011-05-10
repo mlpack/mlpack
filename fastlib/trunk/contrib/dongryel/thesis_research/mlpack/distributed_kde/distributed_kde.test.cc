@@ -324,22 +324,22 @@ class TestDistributed_Kde {
       args.push_back(relative_error_sstr.str());
 
       // Push in the randomly generate work parameters.
-      double max_num_levels_to_serialize;
+      double max_subtree_size;
       double max_num_work_to_dequeue_per_stage;
       if(world.rank() == 0) {
-        max_num_levels_to_serialize = core::math::RandInt(3, 10);
+        max_subtree_size = core::math::RandInt(60, 200);
         max_num_work_to_dequeue_per_stage = core::math::RandInt(3, 10);
       }
-      boost::mpi::broadcast(world, max_num_levels_to_serialize, 0);
+      boost::mpi::broadcast(world, max_subtree_size, 0);
       boost::mpi::broadcast(world, max_num_work_to_dequeue_per_stage, 0);
-      std::stringstream max_num_levels_to_serialize_sstr;
+      std::stringstream max_subtree_size_sstr;
       std::stringstream max_num_work_to_dequeue_per_stage_sstr;
-      max_num_levels_to_serialize_sstr
-          << "--max_num_levels_to_serialize_in=" << max_num_levels_to_serialize;
+      max_subtree_size_sstr
+          << "--max_subtree_size_in=" << max_subtree_size;
       max_num_work_to_dequeue_per_stage_sstr
           << "--max_num_work_to_dequeue_per_stage_in=" <<
           max_num_work_to_dequeue_per_stage;
-      args.push_back(max_num_levels_to_serialize_sstr.str());
+      args.push_back(max_subtree_size_sstr.str());
       args.push_back(max_num_work_to_dequeue_per_stage_sstr.str());
 
       // Parse the distributed KDE arguments.
