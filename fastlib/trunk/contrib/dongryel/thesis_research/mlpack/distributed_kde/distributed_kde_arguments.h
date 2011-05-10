@@ -79,6 +79,10 @@ class DistributedKdeArguments {
      */
     int max_num_work_to_dequeue_per_stage_;
 
+    /** @brief The number of threads to use.
+     */
+    int num_threads_;
+
   public:
 
     /** @brief The default constructor.
@@ -96,6 +100,7 @@ class DistributedKdeArguments {
       metric_ = NULL;
       max_subtree_size_ = 0;
       max_num_work_to_dequeue_per_stage_ = 0;
+      num_threads_ = 1;
     }
 
     /** @brief The destructor.

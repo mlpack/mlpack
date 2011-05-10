@@ -6,6 +6,7 @@
 #ifndef MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 
+#include <omp.h>
 #include "core/gnp/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
@@ -123,10 +124,53 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
   desc.add_options()(
     "help", "Print this information."
   )(
-    "references_in",
+    "absolute_error",
+    boost::program_options::value<double>()->default_value(0.0),
+    "Absolute error for the approximation of KDE per each query point."
+  )(
+    "bandwidth",
+    boost::program_options::value<double>()->default_value(0.5),
+    "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
+    "then the --bandwidth will be ignored."
+  )(
+    "densities_out",
     boost::program_options::value<std::string>()->default_value(
-      "random_dataset.csv"),
-    "REQUIRED file containing reference data."
+      "densities_out.csv"),
+    "OPTIONAL file to store computed densities."
+  )(
+    "kernel",
+    boost::program_options::value<std::string>()->default_value("epan"),
+    "Kernel function used by KDE.  One of:\n"
+    "  epan, gaussian"
+  )(
+    "leaf_size",
+    boost::program_options::value<int>()->default_value(40),
+    "Maximum number of points at a leaf of the tree."
+  )(
+    "max_num_work_to_dequeue_per_stage_in",
+    boost::program_options::value<int>()->default_value(30),
+    "The number of work items to dequeue per process."
+  )(
+    "max_subtree_size_in",
+    boost::program_options::value<int>()->default_value(20000),
+    "The maximum size of the subtree to serialize at a given moment."
+  )(
+    "memory_mapped_file_size",
+    boost::program_options::value<unsigned int>(),
+    "The size of the memory mapped file."
+  )(
+    "num_threads_in",
+    boost::program_options::value<int>()->default_value(1),
+    "The number of threads to use for shared-memory parallelism."
+  )(
+    "probability",
+    boost::program_options::value<double>()->default_value(1.0),
+    "Probability guarantee for the approximation of KDE."
+  )(
+    "prescale",
+    boost::program_options::value<std::string>()->default_value("none"),
+    "OPTIONAL scaling option. One of:\n"
+    "  none, hypercube, standardize"
   )(
     "queries_in",
     boost::program_options::value<std::string>(),
@@ -141,41 +185,19 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<int>()->default_value(100000),
     "Generate the datasets on the fly of the specified number of points."
   )(
-    "densities_out",
+    "references_in",
     boost::program_options::value<std::string>()->default_value(
-      "densities_out.csv"),
-    "OPTIONAL file to store computed densities."
-  )(
-    "kernel",
-    boost::program_options::value<std::string>()->default_value("epan"),
-    "Kernel function used by KDE.  One of:\n"
-    "  epan, gaussian"
-  )(
-    "series_expansion_type",
-    boost::program_options::value<std::string>()->default_value("multivariate"),
-    "Series expansion type used to compress the kernel interaction. One of:\n"
-    "  hypercube, multivariate"
-  )(
-    "bandwidth",
-    boost::program_options::value<double>()->default_value(0.5),
-    "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
-    "then the --bandwidth will be ignored."
-  )(
-    "probability",
-    boost::program_options::value<double>()->default_value(1.0),
-    "Probability guarantee for the approximation of KDE."
-  )(
-    "absolute_error",
-    boost::program_options::value<double>()->default_value(0.0),
-    "Absolute error for the approximation of KDE per each query point."
+      "random_dataset.csv"),
+    "REQUIRED file containing reference data."
   )(
     "relative_error",
     boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
   )(
-    "leaf_size",
-    boost::program_options::value<int>()->default_value(40),
-    "Maximum number of points at a leaf of the tree."
+    "series_expansion_type",
+    boost::program_options::value<std::string>()->default_value("multivariate"),
+    "Series expansion type used to compress the kernel interaction. One of:\n"
+    "  hypercube, multivariate"
   )(
     "top_tree_sample_probability",
     boost::program_options::value<double>()->default_value(0.3),
@@ -184,23 +206,6 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
   )(
     "use_memory_mapped_file",
     "Use memory mapped file for out-of-core computations."
-  )(
-    "memory_mapped_file_size",
-    boost::program_options::value<unsigned int>(),
-    "The size of the memory mapped file."
-  )(
-    "max_subtree_size_in",
-    boost::program_options::value<int>()->default_value(20000),
-    "The maximum size of the subtree to serialize at a given moment."
-  )(
-    "max_num_work_to_dequeue_per_stage_in",
-    boost::program_options::value<int>()->default_value(30),
-    "The number of work items to dequeue per process."
-  )(
-    "prescale",
-    boost::program_options::value<std::string>()->default_value("none"),
-    "OPTIONAL scaling option. One of:\n"
-    "  none, hypercube, standardize"
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -228,8 +233,52 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     return true;
   }
 
-  // Validate the arguments. Only immediate dying is allowed here, the
-  // parsing is done later.
+  // Validate the arguments.
+  if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
+    std::cerr << "The --bandwidth requires a positive real number.\n";
+    exit(0);
+  }
+  if(vm->count("bandwidth") == 0) {
+    std::cerr << "Missing required --bandwidth.\n";
+    exit(0);
+  }
+  if((*vm)["kernel"].as<std::string>() != "gaussian" &&
+      (*vm)["kernel"].as<std::string>() != "epan") {
+    std::cerr << "We support only epan or gaussian for the kernel.\n";
+    exit(0);
+  }
+  if((*vm)["leaf_size"].as<int>() <= 0) {
+    std::cerr << "The --leaf_size needs to be a positive integer.\n";
+    exit(0);
+  }
+  if((*vm)["max_num_work_to_dequeue_per_stage_in"].as<int>() <= 0) {
+    std::cerr << "The --max_num_work_to_dequeue_per_stage_in needs to be " <<
+              "a positive integer.\n";
+    exit(0);
+  }
+  if((*vm)["max_subtree_size_in"].as<int>() <= 1) {
+    std::cerr << "The --max_subtree_size_in needs to be " <<
+              "a positive integer greater than 1.\n";
+    exit(0);
+  }
+  if((*vm)["num_threads_in"].as<int>() <= 0) {
+    std::cerr << "The --num_threads_in needs to be a positive integer.\n";
+    exit(0);
+  }
+  if(vm->count("prescale") > 0) {
+    if((*vm)["prescale"].as<std::string>() != "hypercube" &&
+        (*vm)["prescale"].as<std::string>() != "standardize" &&
+        (*vm)["prescale"].as<std::string>() != "none") {
+      std::cerr << "The --prescale needs to be: none or hypercube or " <<
+                "standardize.\n";
+      exit(0);
+    }
+  }
+  if((*vm)["probability"].as<double>() <= 0 ||
+      (*vm)["probability"].as<double>() > 1) {
+    std::cerr << "The --probability requires a real number $0 < p <= 1$.\n";
+    exit(0);
+  }
   if(vm->count("random_generate_n_attributes") > 0) {
     if(vm->count("random_generate_n_entries") == 0) {
       std::cerr << "Missing required --random_generate_n_entries.\n";
@@ -256,46 +305,14 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     std::cerr << "Missing required --references_in.\n";
     exit(0);
   }
-  if((*vm)["kernel"].as<std::string>() != "gaussian" &&
-      (*vm)["kernel"].as<std::string>() != "epan") {
-    std::cerr << "We support only epan or gaussian for the kernel.\n";
+  if((*vm)["relative_error"].as<double>() < 0) {
+    std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
     exit(0);
   }
   if((*vm)["series_expansion_type"].as<std::string>() != "hypercube" &&
       (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
     std::cerr << "We support only hypercube or multivariate for the "
               "series expansion type.\n";
-    exit(0);
-  }
-  if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
-    std::cerr << "The --bandwidth requires a positive real number.\n";
-    exit(0);
-  }
-  if(vm->count("bandwidth") == 0) {
-    std::cerr << "Missing required --bandwidth.\n";
-    exit(0);
-  }
-  if((*vm)["probability"].as<double>() <= 0 ||
-      (*vm)["probability"].as<double>() > 1) {
-    std::cerr << "The --probability requires a real number $0 < p <= 1$.\n";
-    exit(0);
-  }
-  if((*vm)["relative_error"].as<double>() < 0) {
-    std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
-    exit(0);
-  }
-  if((*vm)["leaf_size"].as<int>() <= 0) {
-    std::cerr << "The --leaf_size needs to be a positive integer.\n";
-    exit(0);
-  }
-  if((*vm)["max_subtree_size_in"].as<int>() <= 1) {
-    std::cerr << "The --max_subtree_size_in needs to be " <<
-              "a positive integer greater than 1.\n";
-    exit(0);
-  }
-  if((*vm)["max_num_work_to_dequeue_per_stage_in"].as<int>() <= 0) {
-    std::cerr << "The --max_num_work_to_dequeue_per_stage_in needs to be " <<
-              "a positive integer.\n";
     exit(0);
   }
 
@@ -325,15 +342,6 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     core::table::global_m_file_ = new core::table::MemoryMappedFile();
     core::table::global_m_file_->Init(
       std::string("tmp_file"), world.rank(), world.rank(), 100000000);
-  }
-  if(vm->count("prescale") > 0) {
-    if((*vm)["prescale"].as<std::string>() != "hypercube" &&
-        (*vm)["prescale"].as<std::string>() != "standardize" &&
-        (*vm)["prescale"].as<std::string>() != "none") {
-      std::cerr << "The --prescale needs to be: none or hypercube or " <<
-                "standardize.\n";
-      exit(0);
-    }
   }
 
   return false;
@@ -403,6 +411,14 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
   if(world.rank() == 0) {
     std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
+  }
+
+  // Parse the number of threads.
+  arguments_out->num_threads_ = vm["num_threads_in"].as<int>();
+  omp_set_num_threads(arguments_out->num_threads_);
+  if(world.rank() == 0) {
+    std::cout << "Using " << arguments_out->num_threads_ << " threads for " <<
+              "shared memory parallelism.\n";
   }
 
   // Parse the reference set and index the tree.
