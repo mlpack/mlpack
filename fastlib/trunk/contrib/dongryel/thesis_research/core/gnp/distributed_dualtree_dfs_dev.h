@@ -128,19 +128,10 @@ DistributedProblemType >::SharedMemoryParallelize_(
 
           // Check whether the current query subtree is empty.
           all_empty = all_empty && (tasks[i].size() == 0);
-        } // end of pragma omp critical
-
-        // If the task list for the current query subtree is empty,
-        // then skip.
-        if(all_empty) {
-          continue;
-        }
-
-#pragma omp critical
-        {
 
           // Try to see if the thread can dequeue a task here.
-          if(! active_query_subtrees[i]) {
+          if((! all_empty) && (! active_query_subtrees[i]) &&
+          tasks[i].size() > 0) {
 
             // Copy the task and the query subtree number.
             found_task.first = tasks[i].top();
@@ -317,10 +308,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   typename DistributedProblemType::ResultType *query_results) {
 
   // The max number of points for the query subtree for each task.
-  const int max_query_subtree_size = 2000;
+  int max_query_subtree_size = max_subtree_size_;
 
   // The max number of points for the reference subtree for each task.
-  const int max_reference_subtree_size = 2000;
+  int max_reference_subtree_size = max_subtree_size_;
 
   // For each process, break up the local query tree into a list of
   // subtree query lists.
@@ -476,7 +467,7 @@ DistributedProblemType >::ResetStatistic() {
 template<typename DistributedProblemType>
 DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   leaf_size_ = 0;
-  max_num_levels_to_serialize_ = 15;
+  max_subtree_size_ = 20000;
   max_num_work_to_dequeue_per_stage_ = 5;
   max_computation_frontier_size_ = 0;
   num_deterministic_prunes_ = 0;
@@ -486,11 +477,11 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
 template<typename DistributedProblemType>
 void DistributedDualtreeDfs<DistributedProblemType>::set_work_params(
   int leaf_size_in,
-  int max_num_levels_to_serialize_in,
+  int max_subtree_size_in,
   int max_num_work_to_dequeue_per_stage_in) {
 
   leaf_size_ = leaf_size_in;
-  max_num_levels_to_serialize_ = max_num_levels_to_serialize_in;
+  max_subtree_size_ = max_subtree_size_in;
   max_num_work_to_dequeue_per_stage_ = max_num_work_to_dequeue_per_stage_in;
 }
 

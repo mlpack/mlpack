@@ -64,7 +64,7 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   distributed_dualtree_dfs.Init(world_, *this);
   distributed_dualtree_dfs.set_work_params(
     arguments_in.leaf_size_,
-    arguments_in.max_num_levels_to_serialize_,
+    arguments_in.max_subtree_size_,
     arguments_in.max_num_work_to_dequeue_per_stage_);
 
   // Compute the result and do post-normalize.
@@ -166,7 +166,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Probability guarantee for the approximation of KDE."
   )(
     "absolute_error",
-    boost::program_options::value<double>()->default_value(1e-6),
+    boost::program_options::value<double>()->default_value(0.0),
     "Absolute error for the approximation of KDE per each query point."
   )(
     "relative_error",
@@ -189,9 +189,9 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<unsigned int>(),
     "The size of the memory mapped file."
   )(
-    "max_num_levels_to_serialize_in",
-    boost::program_options::value<int>()->default_value(20),
-    "The number of levels of subtrees to serialize at a given moment."
+    "max_subtree_size_in",
+    boost::program_options::value<int>()->default_value(20000),
+    "The maximum size of the subtree to serialize at a given moment."
   )(
     "max_num_work_to_dequeue_per_stage_in",
     boost::program_options::value<int>()->default_value(30),
@@ -288,8 +288,8 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     std::cerr << "The --leaf_size needs to be a positive integer.\n";
     exit(0);
   }
-  if((*vm)["max_num_levels_to_serialize_in"].as<int>() <= 1) {
-    std::cerr << "The --max_num_levels_to_serialize_in needs to be " <<
+  if((*vm)["max_subtree_size_in"].as<int>() <= 1) {
+    std::cerr << "The --max_subtree_size_in needs to be " <<
               "a positive integer greater than 1.\n";
     exit(0);
   }
@@ -497,13 +497,12 @@ bool DistributedKdeArgumentParser::ParseArguments(
   }
 
   // Parse the work parameters for the distributed engine.
-  arguments_out->max_num_levels_to_serialize_ =
-    vm["max_num_levels_to_serialize_in"].as<int>();
+  arguments_out->max_subtree_size_ = vm["max_subtree_size_in"].as<int>();
   arguments_out->max_num_work_to_dequeue_per_stage_ =
     vm["max_num_work_to_dequeue_per_stage_in"].as<int>();
   if(world.rank() == 0) {
-    std::cout << "Serializing " << arguments_out->max_num_levels_to_serialize_
-              << " levels of the tree at a time.\n";
+    std::cout << "Serializing " << arguments_out->max_subtree_size_
+              << " points of the tree at a time.\n";
     std::cout << "Dequeuing " <<
               arguments_out->max_num_work_to_dequeue_per_stage_ <<
               " items at a time from each process.\n";

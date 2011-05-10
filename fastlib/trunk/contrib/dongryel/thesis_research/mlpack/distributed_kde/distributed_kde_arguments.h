@@ -63,14 +63,20 @@ class DistributedKdeArguments {
      */
     std::string kernel_;
 
+    /** @brief The type of series expansion used.
+     */
     std::string series_expansion_type_;
 
     /** @brief The metric that is being used.
      */
     core::metric_kernels::LMetric<2> *metric_;
 
-    int max_num_levels_to_serialize_;
+    /** @brief The maximum size of the subtree to serialize.
+     */
+    int max_subtree_size_;
 
+    /** @brief The maximum number of work to grab in total per stage.
+     */
     int max_num_work_to_dequeue_per_stage_;
 
   public:
@@ -88,7 +94,7 @@ class DistributedKdeArguments {
       probability_ = 0.0;
       kernel_ = "";
       metric_ = NULL;
-      max_num_levels_to_serialize_ = 0;
+      max_subtree_size_ = 0;
       max_num_work_to_dequeue_per_stage_ = 0;
     }
 

@@ -105,10 +105,9 @@ class DistributedDualtreeDfs {
      */
     int leaf_size_;
 
-    /** @brief The maximum number of tree levels to serialize at a
-     *         time.
+    /** @brief The maximum size of the subtree to serialize at a time.
      */
-    int max_num_levels_to_serialize_;
+    int max_subtree_size_;
 
     /** @brief The maximum number of work items to dequeue per
      *         process.
@@ -227,7 +226,7 @@ class DistributedDualtreeDfs {
      */
     void set_work_params(
       int leaf_size_in,
-      int max_num_levels_to_serialize_in,
+      int max_subtree_size_in,
       int max_num_work_to_dequeue_per_stage_in);
 
     /** @brief The default constructor.
