@@ -24,34 +24,20 @@ void DualtreeDfs<ProblemType>::set_query_reference_process_ranks(
 }
 
 template<typename ProblemType>
+void DualtreeDfs<ProblemType>::set_query_start_node(
+  TreeType *query_start_node_in) {
+  query_start_node_ = query_start_node_in;
+}
+
+template<typename ProblemType>
 void DualtreeDfs<ProblemType>::set_reference_start_node(
   TreeType *reference_start_node_in) {
   reference_start_node_ = reference_start_node_in;
 }
 
 template<typename ProblemType>
-const std::vector <
-typename core::gnp::DualtreeDfs<ProblemType>::FrontierObjectType >
-&DualtreeDfs <
-ProblemType >::unpruned_query_reference_pairs() const {
-  return unpruned_query_reference_pairs_;
-}
-
-template<typename ProblemType>
-template<typename PointSerializeFlagType>
-void DualtreeDfs<ProblemType>::set_base_case_flags(
-  const std::vector<PointSerializeFlagType> &flags_in) {
-
-  for(unsigned int i = 0; i < flags_in.size(); i++) {
-    serialize_points_per_terminal_node_[flags_in[i].begin()] =
-      flags_in[i].count();
-  }
-  do_selective_base_case_ = true;
-}
-
-template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
-  do_selective_base_case_ = false;
+  query_start_node_ = NULL;
   reference_start_node_ = NULL;
   query_rank_ = 0;
   reference_rank_ = 0;
@@ -97,6 +83,7 @@ void DualtreeDfs<ProblemType>::Init(ProblemType &problem_in) {
 
   // Set the query table.
   query_table_ = problem_->query_table();
+  query_start_node_ = query_table_->get_tree();
 
   // Set the reference table and its starting node.
   reference_table_ = problem_->reference_table();
@@ -128,10 +115,10 @@ void DualtreeDfs<ProblemType>::Compute(
   }
 
   DualtreeCanonical_(
-    metric, query_table_->get_tree(), reference_start_node_,
+    metric, query_start_node_, reference_start_node_,
     1.0 - problem_->global().probability(), squared_distance_range,
     query_results);
-  PostProcess_(metric, query_table_->get_tree(), query_results, true);
+  PostProcess_(metric, query_start_node_, query_results, true);
 }
 
 template<typename ProblemType>

@@ -41,17 +41,175 @@ int DistributedDualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
 }
 
 template<typename DistributedProblemType>
+template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::SharedMemoryParallelize_(
+  const MetricType &metric_in,
+  const std::vector <
+  typename DistributedDualtreeDfs<DistributedProblemType>::TreeType * >
+  &local_query_subtrees,
   core::parallel::TableExchange <
-  DistributedTableType, SubTableListType > &table_exchange,
-  PriorityQueueType &prioritized_tasks) {
+  typename DistributedDualtreeDfs <
+  DistributedProblemType >::DistributedTableType,
+  typename DistributedDualtreeDfs <
+  DistributedProblemType >::SubTableListType > &table_exchange,
+  typename DistributedDualtreeDfs <
+  DistributedProblemType >::CoarsePriorityQueueType &prioritized_tasks,
+  typename DistributedProblemType::ResultType *query_results) {
 
   // The global list of query subtree that is being computed. This is
   // necessary for preventing two threads from grabbing tasks that
-  // involve the same query subtree. The hashing is done on the basis
-  // of the beginning index of the subtree root node.
-  std::map<int, bool > active_query_subtrees;
+  // involve the same query subtree.
+  std::deque<bool> active_query_subtrees(local_query_subtrees.size(), false);
+
+  // Generate the list of tasks.
+  std::vector< FinePriorityQueueType > tasks(local_query_subtrees.size());
+  while(! prioritized_tasks.empty()) {
+
+    // Examine the top object in the frontier.
+    const CoarseFrontierObjectType &top_frontier = prioritized_tasks.top();
+
+    // Find the reference process ID and grab its subtable.
+    int reference_process_id = top_frontier.get<1>().get<0>();
+    SubTableType *frontier_reference_subtable =
+      table_exchange.FindSubTable(
+        reference_process_id,
+        top_frontier.get<1>().get<1>(),
+        top_frontier.get<1>().get<2>());
+
+    // Find the table and the starting reference node.
+    TableType *frontier_reference_table =
+      (frontier_reference_subtable != NULL) ?
+      frontier_reference_subtable->table() : reference_table_->local_table();
+    TreeType *reference_starting_node =
+      (frontier_reference_subtable != NULL) ?
+      frontier_reference_subtable->table()->get_tree() :
+      reference_table_->local_table()->
+      get_tree()->FindByBeginCount(
+        top_frontier.get<1>().get<1>(),
+        top_frontier.get<1>().get<2>());
+    boost::tuple<TableType *, TreeType *> reference_table_node_pair(
+      frontier_reference_table, reference_starting_node);
+
+    // For each query subtree, create a new task.
+    for(unsigned int i = 0; i < local_query_subtrees.size(); i++) {
+
+      // Create a fine frontier object to be dequeued by each thread
+      // later.
+      core::math::Range squared_distance_range(
+        local_query_subtrees[i]->bound().RangeDistanceSq(
+          metric_in, reference_table_node_pair.get<1>()->bound()));
+      FineFrontierObjectType new_task =
+        boost::tuple < TreeType * ,
+        boost::tuple<TableType *, TreeType *>, double > (
+          local_query_subtrees[i], reference_table_node_pair,
+          - squared_distance_range.mid());
+      tasks[i].push(new_task);
+    }
+
+    // Make sure to pop.
+    prioritized_tasks.pop();
+  }
+
+  // OpenMP parallel region. Each thread enters into a infinite loop
+  // where it tries to grab an independent task.
+#pragma omp parallel
+  {
+
+    do {
+
+      std::pair<FineFrontierObjectType, int> found_task;
+      found_task.second = -1;
+      bool all_empty = true;
+      for(unsigned int i = 0; i < tasks.size(); i++) {
+
+#pragma omp critical
+        {
+
+          // Check whether the current query subtree is empty.
+          all_empty = all_empty && (tasks[i].size() == 0);
+        } // end of pragma omp critical
+
+        // If the task list for the current query subtree is empty,
+        // then skip.
+        if(all_empty) {
+          continue;
+        }
+
+#pragma omp critical
+        {
+
+          // Try to see if the thread can dequeue a task here.
+          if(! active_query_subtrees[i]) {
+
+            // Copy the task and the query subtree number.
+            found_task.first = tasks[i].top();
+            found_task.second = i;
+
+            // Pop the task from the priority queue after copying and
+            // put a lock on the query subtree.
+            tasks[i].pop();
+            active_query_subtrees[i] = true;
+          }
+        } // end of pragma omp critical
+
+        if(found_task.second >= 0) {
+
+          // If something is found, then break.
+          break;
+        }
+      }
+
+      // The thread exits if the global task list is all empty.
+      if(all_empty) {
+        break;
+      }
+
+      // If found something to run on, then call the serial dual-tree
+      // method.
+      if(found_task.second >= 0) {
+
+        // Run a sub-dualtree algorithm on the computation object.
+        core::gnp::DualtreeDfs<ProblemType> sub_engine;
+        ProblemType sub_problem;
+        ArgumentType sub_argument;
+        TableType *task_reference_table = found_task.first.get<1>().get<0>();
+        TreeType *task_starting_rnode = found_task.first.get<1>().get<1>();
+
+        // Initialize the argument, the problem, and the engine.
+        sub_argument.Init(
+          task_reference_table,
+          query_table_->local_table(), problem_->global());
+        sub_problem.Init(sub_argument, &(problem_->global()));
+        sub_engine.Init(sub_problem);
+
+        // Set the starting query node.
+        sub_engine.set_query_start_node(found_task.first.get<0>());
+
+        // Set the starting reference node.
+        sub_engine.set_reference_start_node(task_starting_rnode);
+
+        // Fire away the computation.
+        sub_engine.Compute(metric_in, query_results, false);
+
+#pragma omp critical
+        {
+          num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
+          num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
+        }
+
+        // After finishing, the lock on the query subtree is released.
+#pragma omp critical
+        {
+          active_query_subtrees[ found_task.second ] = false;
+        }
+      } // end of finding a task.
+    }
+    while(true);
+  } // end of pragma omp parallel.
+
+  // Clear the cache.
+  table_exchange.ClearCache();
 }
 
 template<typename DistributedProblemType>
@@ -159,10 +317,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   typename DistributedProblemType::ResultType *query_results) {
 
   // The max number of points for the query subtree for each task.
-  const int max_query_subtree_size = 20000;
+  const int max_query_subtree_size = 2000;
 
   // The max number of points for the reference subtree for each task.
-  const int max_reference_subtree_size = 20000;
+  const int max_reference_subtree_size = 2000;
 
   // For each process, break up the local query tree into a list of
   // subtree query lists.
@@ -212,35 +370,23 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
-  std::vector < PriorityQueueType > computation_frontier(
+  std::vector < CoarsePriorityQueueType > computation_frontier(
     world_->size());
   int total_computation_frontier_size = 0;
   for(unsigned int i = 0; i < computation_frontier.size(); i++) {
     const std::vector< std::pair<int, int> > &reference_frontier =
       reference_frontier_lists[i];
 
-    // This makes sure that the reference tree on the same process is
-    // considered first.
-    if(i != static_cast<unsigned int>(world_->rank())) {
-      for(unsigned int j = 0; j < reference_frontier.size(); j++) {
-        computation_frontier[i].push(
-          boost::make_tuple(
-            query_table_->local_table()->get_tree(),
-            boost::make_tuple<int, int, int>(
-              i, reference_frontier[j].first,
-              reference_frontier[j].second),
-            - local_priorities[i][j].mid()));
-      }
-      total_computation_frontier_size += reference_frontier.size();
-    }
-    else {
+    for(unsigned int j = 0; j < reference_frontier.size(); j++) {
       computation_frontier[i].push(
         boost::make_tuple(
           query_table_->local_table()->get_tree(),
           boost::make_tuple<int, int, int>(
-            i, 0, reference_table_->n_entries()), 10000.0));
-      total_computation_frontier_size++;
+            i, reference_frontier[j].first,
+            reference_frontier[j].second),
+          - local_priorities[i][j].mid()));
     }
+    total_computation_frontier_size += reference_frontier.size();
   }
 
   printf("Process %d has a total computation frontier of: %d\n",
@@ -252,7 +398,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     // Fill out the tasks that need to be completed in this iteration.
     std::vector< std::vector< std::pair<int, int> > > receive_requests(
       world_->size());
-    PriorityQueueType prioritized_tasks;
+    CoarsePriorityQueueType prioritized_tasks;
     for(int i = 0; i < world_->size(); i++) {
       for(int j = 0; computation_frontier[i].size() > 0 &&
           (i == world_->rank() ||
@@ -261,7 +407,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
         // Examine the top object in the frontier and sort it in the
         // priorities, while forming the request lists.
-        const FrontierObjectType &top_object = computation_frontier[i].top();
+        const CoarseFrontierObjectType &top_object =
+          computation_frontier[i].top();
         std::pair<int, int> reference_node_id(
           top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
 
@@ -294,57 +441,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
       }
     }
 
-    // Each process calls the independent sets of serial dual-tree dfs
-    // algorithms. Further parallelism can be exploited here.
-    while(! prioritized_tasks.empty()) {
-
-      // Examine the top object in the frontier.
-      const FrontierObjectType &top_frontier = prioritized_tasks.top();
-
-      // Run a sub-dualtree algorithm on the computation object.
-      core::gnp::DualtreeDfs<ProblemType> sub_engine;
-      ProblemType sub_problem;
-      ArgumentType sub_argument;
-      int reference_process_id = top_frontier.get<1>().get<0>();
-      SubTableType *frontier_reference_subtable =
-        table_exchange.FindSubTable(
-          reference_process_id,
-          top_frontier.get<1>().get<1>(),
-          top_frontier.get<1>().get<2>());
-      sub_argument.Init(
-        (frontier_reference_subtable) ?
-        frontier_reference_subtable->table() : reference_table_->local_table(),
-        query_table_->local_table(), problem_->global());
-      sub_problem.Init(sub_argument, &(problem_->global()));
-      sub_engine.Init(sub_problem);
-
-      // Set the right flags and fire away the computation.
-      if(frontier_reference_subtable != NULL) {
-        sub_engine.set_base_case_flags(
-          frontier_reference_subtable->serialize_points_per_terminal_node());
-      }
-      sub_engine.set_query_reference_process_ranks(
-        world_->rank(), reference_process_id);
-      if(frontier_reference_subtable == NULL) {
-        TreeType *reference_start_node =
-          reference_table_->local_table()->
-          get_tree()->FindByBeginCount(
-            top_frontier.get<1>().get<1>(),
-            top_frontier.get<1>().get<2>());
-        sub_engine.set_reference_start_node(reference_start_node);
-      }
-      sub_engine.Compute(metric, query_results, false);
-      num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
-      num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
-
-      // Pop the top frontier object that was just explored.
-      prioritized_tasks.pop();
-
-    } // end of taking care of the computation tasks for the current
-    // iteration.
-
-    // Clear the cache.
-    table_exchange.ClearCache();
+    // Each process utilizes the shared memory parallelism here.
+    SharedMemoryParallelize_(
+      metric, local_query_subtrees, table_exchange,
+      prioritized_tasks, query_results);
   }
   while(true);
 }
