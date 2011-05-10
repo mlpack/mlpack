@@ -21,6 +21,7 @@
 
 namespace core {
 namespace gnp {
+
 template<typename DistributedProblemType>
 class DistributedDualtreeDfs {
 
@@ -60,10 +61,18 @@ class DistributedDualtreeDfs {
     typedef typename DistributedProblemType::ArgumentType ArgumentType;
 
     /** @brief The type of the object used for prioritizing the
-     *         computation.
+     *         computation globally (or on a coarse scale).
      */
-    typedef typename core::gnp::DualtreeDfs<ProblemType>::FrontierObjectType
-    FrontierObjectType;
+    typedef boost::tuple <
+    TreeType *, boost::tuple<int, int, int>, double > CoarseFrontierObjectType;
+
+    /** @brief The type of the object used for prioritizing the
+     *         computation per stage on a shared memory (on a fine
+     *         scale).
+     */
+    typedef boost::tuple <
+    TreeType *,
+             boost::tuple<TableType *, TreeType *>, double > FineFrontierObjectType;
 
     /** @brief The type of the subtable in use.
      */
@@ -124,6 +133,7 @@ class DistributedDualtreeDfs {
     /** @brief The class used for prioritizing a computation object
      *         (query, reference pair).
      */
+    template<typename FrontierObjectType>
     class PrioritizeTasks_:
       public std::binary_function <
         FrontierObjectType &, FrontierObjectType &, bool > {
@@ -134,13 +144,23 @@ class DistributedDualtreeDfs {
         }
     };
 
-    /** @brief The type of the priority queue that is used.
+    /** @brief The type of the priority queue that is used for
+     *         prioritizing the coarse-grained computations.
      */
     typedef std::priority_queue <
-    FrontierObjectType,
-    std::vector<FrontierObjectType>,
-    typename DistributedDualtreeDfs <
-    DistributedProblemType >::PrioritizeTasks_ > PriorityQueueType;
+    CoarseFrontierObjectType,
+    std::vector<CoarseFrontierObjectType>,
+    PrioritizeTasks_<CoarseFrontierObjectType> >
+    CoarsePriorityQueueType;
+
+    /** @brief The type of the priority queue that is used for
+     *         prioritizing the fine-grained computations.
+     */
+    typedef std::priority_queue <
+    FineFrontierObjectType,
+    std::vector<FineFrontierObjectType>,
+    PrioritizeTasks_<FineFrontierObjectType> >
+    FinePriorityQueueType;
 
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
@@ -160,10 +180,14 @@ class DistributedDualtreeDfs {
      *         task-independent since the writes on the subtree are
      *         independent.
      */
+    template<typename MetricType>
     void SharedMemoryParallelize_(
+      const MetricType &metric_in,
+      const std::vector< TreeType * > &local_query_subtrees,
       core::parallel::TableExchange <
       DistributedTableType, SubTableListType > &table_exchange,
-      PriorityQueueType &prioritized_tasks);
+      CoarsePriorityQueueType &prioritized_tasks,
+      typename DistributedProblemType::ResultType *query_results);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation.

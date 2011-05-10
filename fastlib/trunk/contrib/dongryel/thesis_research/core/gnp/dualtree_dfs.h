@@ -40,12 +40,6 @@ class DualtreeDfs {
      */
     typedef typename ProblemType::ResultType ResultType;
 
-    /** @brief The type of the object used for prioritizing the
-     *         computation.
-     */
-    typedef boost::tuple <
-    TreeType *, boost::tuple<int, int, int>, double > FrontierObjectType;
-
   public:
 
     /** @brief An iterator object for iterative dual-tree computation.
@@ -193,6 +187,10 @@ class DualtreeDfs {
      */
     ProblemType *problem_;
 
+    /** @brief The starting query node.
+     */
+    TreeType *query_start_node_;
+
     /** @brief The query table.
      */
     TableType *query_table_;
@@ -212,23 +210,6 @@ class DualtreeDfs {
     /** @brief The rank of the reference set.
      */
     int reference_rank_;
-
-    /** @brief The flag whether to do a selective base case for the
-     *         case when the reference tree is not assumed to be
-     *         complete.
-     */
-    bool do_selective_base_case_;
-
-    /** @brief The list of reference nodes (IDed by the begin/count)
-     *         that have points underneath (i.e. for which the base
-     *         case computation and the Monte Carlo computation are
-     *         possible).
-     */
-    std::map<int, int> serialize_points_per_terminal_node_;
-
-    /** @brief The list of unpruned query/reference pairs.
-     */
-    std::vector < FrontierObjectType > unpruned_query_reference_pairs_;
 
   private:
 
@@ -331,10 +312,10 @@ class DualtreeDfs {
      */
     DualtreeDfs();
 
-    /** @brief Returns the list of unpruned query/reference pairs.
+    /** @brief Sets the starting query node for the dual-tree
+     *         computation.
      */
-    const std::vector < FrontierObjectType > &
-    unpruned_query_reference_pairs() const;
+    void set_query_start_node(TreeType *query_start_node_in);
 
     /** @brief Sets the starting reference node for the dual-tree
      *         computation.
@@ -343,13 +324,6 @@ class DualtreeDfs {
 
     void set_query_reference_process_ranks(
       int query_process_id, int reference_process_id);
-
-    /** @brief Sets the flag for each reference leaf node whether to
-     *         compute the base case or not.
-     */
-    template<typename PointSerializeFlagType>
-    void set_base_case_flags(
-      const std::vector<PointSerializeFlagType> &flags_in);
 
     /** @brief Returns the number of deterministic prunes so far.
      */
