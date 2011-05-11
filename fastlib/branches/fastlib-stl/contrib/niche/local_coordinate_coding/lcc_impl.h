@@ -67,6 +67,7 @@ void LocalCoordinateCoding::RandomAtom(vec& atom) {
 void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
   for(u32 t = 1; t <= n_iterations; t++) {
     printf("Iteration %d of %d\n", t, n_iterations);
+    printf("Optimizing Coding\n");
     OptimizeCode();
     uvec adjacencies = find(V_);
     printf("Objective function value: %f\n",
@@ -80,6 +81,8 @@ void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
     printf("Objective function value: %f\n",
 	   Objective(adjacencies));
   }
+  printf("Final Optimization of Coding\n");
+  OptimizeCode();
 }
 
 

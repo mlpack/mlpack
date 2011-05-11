@@ -78,39 +78,23 @@ int main(int argc, char* argv[]) {
   
   if(strlen(results_dir) == 0) {
     V.save("V.dat", raw_ascii);
-  }
-  else {
-    char* V_fullpath = (char*) malloc(320 * sizeof(char));
-    sprintf(V_fullpath,
-	    "%s/V.dat",
-	    results_dir);
-    V.save(V_fullpath, raw_ascii);
-    free(V_fullpath);
-  }
-
-  if(strlen(results_dir) == 0) {
     synthesized_X.save("X_hat.dat", raw_ascii);
-  }
-  else {
-    char* synthesized_X_fullpath = (char*) malloc(320 * sizeof(char));
-    sprintf(synthesized_X_fullpath,
-	    "%s/X_hat.dat",
-	    results_dir);
-    synthesized_X.save(synthesized_X_fullpath, raw_ascii);
-    free(synthesized_X_fullpath);
-  }
-  
-  if(strlen(results_dir) == 0) {
     X.save("X.dat", raw_ascii);
   }
   else {
-    char* X_fullpath = (char*) malloc(320 * sizeof(char));
-    sprintf(X_fullpath,
-	    "%s/X.dat",
-	    results_dir);
-    X.save(X_fullpath, raw_ascii);
-    free(X_fullpath);
-  }
+    char* data_fullpath = (char*) malloc(320 * sizeof(char));
 
+    sprintf(data_fullpath, "%s/V.dat", results_dir);
+    V.save(data_fullpath, raw_ascii);
+    
+    sprintf(data_fullpath, "%s/X_hat.dat", results_dir);
+    synthesized_X.save(data_fullpath, raw_ascii);
+
+    sprintf(data_fullpath, "%s/X.dat", results_dir);
+    X.save(data_fullpath, raw_ascii);
+    
+    free(data_fullpath);
+  }
+  
   fx_done(root);
 }
