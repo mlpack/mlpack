@@ -22,7 +22,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   const SamplingType &sample) const {
 
   int num_error_trials =
-    (arguments_in.distribution_ == "constant") ? 1 : 30;
+    (arguments_in.distribution_ == "constant") ? 2 : 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
@@ -66,7 +66,7 @@ double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
   core::monte_carlo::MeanVariancePairVector *error_per_person) const {
 
   int num_error_trials =
-    (arguments_in.distribution_ == "constant") ? 1 : 30;
+    (arguments_in.distribution_ == "constant") ? 2 : 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
