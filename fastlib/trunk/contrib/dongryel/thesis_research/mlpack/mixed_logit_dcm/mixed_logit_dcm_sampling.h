@@ -29,10 +29,6 @@ class MixedLogitDCMSampling {
 
   private:
 
-    /** @brief The storing of each $\beta$ for each person.
-     */
-    std::vector< std::vector<arma::vec> > integration_samples_;
-
     /** @brief The simulated choice probabilities (sample mean
      *         and sample variance information).
      */
@@ -90,9 +86,6 @@ class MixedLogitDCMSampling {
      */
     void InitCommon_() {
 
-      // This vector maintains each integration sample per person.
-      integration_samples_.resize(dcm_table_->num_people());
-
       // This vector maintains the running simulated choice
       // probabilities per person.
       boost::scoped_array <
@@ -144,9 +137,6 @@ class MixedLogitDCMSampling {
      */
     void AddIntegrationSample_(
       int person_index, const arma::vec &beta_vector) {
-
-      // Add the beta vector to the pool.
-      integration_samples_[person_index].push_back(beta_vector);
 
       // Given the beta vector, compute the choice probabilities.
       arma::vec choice_probabilities;
@@ -293,14 +283,6 @@ class MixedLogitDCMSampling {
      */
     int num_active_people() const {
       return num_active_people_;
-    }
-
-    /** @brief Returns the set of integration samples for a given
-     *         person.
-     */
-    const std::vector <
-    arma::vec > &integration_samples(int person_index) const {
-      return integration_samples_[person_index];
     }
 
     /** @brief Returns the simulated choice probability for the given
