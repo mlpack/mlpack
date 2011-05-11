@@ -79,13 +79,15 @@ class MixedLogitDCM {
     /** @brief Computes the simulation error (Section 3.2).
      */
     double IntegrationSampleError_(
+      const ArgumentType &arguments_in,
       const SamplingType &first_sample,
       const SamplingType &second_sample,
       core::monte_carlo::MeanVariancePairVector *error_per_person) const;
 
     /** @brief Computes the gradient error (Section 3.3).
      */
-    double GradientError_(const SamplingType &sample) const;
+    double GradientError_(
+      const ArgumentType &arguments_in, const SamplingType &sample) const;
 
   public:
 

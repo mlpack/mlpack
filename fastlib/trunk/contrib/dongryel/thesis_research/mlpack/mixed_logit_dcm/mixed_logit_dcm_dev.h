@@ -18,7 +18,11 @@ namespace mixed_logit_dcm {
 
 template<typename TableType, typename DistributionType>
 double MixedLogitDCM<TableType, DistributionType>::GradientError_(
+  const ArgumentType &arguments_in,
   const SamplingType &sample) const {
+
+  int num_error_trials =
+    (arguments_in.distribution_ == "constant") ? 1 : 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
@@ -30,7 +34,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   // Repeat until convergence.
   arma::vec gradient;
   arma::vec weighted_gradient;
-  for(int j = 0; j < 30; j++) {
+  for(int j = 0; j < num_error_trials; j++) {
 
     // Re-sample at the two parameters with the same number of
     // samples.
@@ -56,9 +60,13 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
 
 template<typename TableType, typename DistributionType>
 double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
+  const ArgumentType &arguments_in,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
   core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+
+  int num_error_trials =
+    (arguments_in.distribution_ == "constant") ? 1 : 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
@@ -68,7 +76,7 @@ double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
   error_per_person->Init(first_sample.num_active_people());
 
   // Repeat until convergence.
-  for(int j = 0; j < 30; j++) {
+  for(int j = 0; j < num_error_trials; j++) {
 
     // Re-sample at the two parameters with the same number of
     // samples.
@@ -134,10 +142,14 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   std::vector<double> tmp_vector(first_sample->num_active_people());
   double total_sample_variance = 0.0;
 
+  // Compute integration sample error.
   core::monte_carlo::MeanVariancePairVector
   integration_sample_error_per_person;
   IntegrationSampleError_(
-    *first_sample, second_sample, &integration_sample_error_per_person);
+    arguments_in,
+    *first_sample,
+    second_sample,
+    &integration_sample_error_per_person);
 
   // Loop over each active person.
   for(int i = 0; i < first_sample->num_active_people(); i++) {
@@ -280,7 +292,10 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
     double integration_sample_error =
       fabs(
         this->IntegrationSampleError_(
-          *iterate, *next_iterate, &integration_sample_error_per_person));
+          arguments_in,
+          *iterate,
+          *next_iterate,
+          &integration_sample_error_per_person));
 
     // Determine whether the termination condition has been reached.
     if(TerminationConditionReached_(
@@ -459,7 +474,7 @@ bool MixedLogitDCM<TableType, DistributionType>::TerminationConditionReached_(
         arguments_in.integration_sample_error_threshold_) {
 
       // Compute the gradient error.
-      double gradient_error = this->GradientError_(sampling);
+      double gradient_error = this->GradientError_(arguments_in, sampling);
       double squared_gradient_error_upper_bound =
         arma::dot(gradient, gradient) +
         arguments_in.gradient_norm_threshold_ * sqrt(gradient_error);
