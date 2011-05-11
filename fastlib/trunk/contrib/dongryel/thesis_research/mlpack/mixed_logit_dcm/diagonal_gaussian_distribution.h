@@ -90,7 +90,7 @@ class DiagonalGaussianDistribution {
       // Lower half.
       else {
         if(row_index == col_index + num_attributes) {
-          return 1.0;
+          return private_data.cached_solution_[col_index];
         }
         else {
           return 0.0;
