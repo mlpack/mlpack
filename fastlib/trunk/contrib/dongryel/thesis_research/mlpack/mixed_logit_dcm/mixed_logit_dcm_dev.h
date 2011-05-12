@@ -59,7 +59,19 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
 }
 
 template<typename TableType, typename DistributionType>
-double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
+double MixedLogitDCM <
+TableType, DistributionType >::IntegrationSampleErrorByFormula_(
+  const ArgumentType &arguments_in,
+  const SamplingType &first_sample,
+  const SamplingType &second_sample,
+  core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+
+  return 0.0;
+}
+
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM <
+TableType, DistributionType >::IntegrationSampleErrorBySampling_(
   const ArgumentType &arguments_in,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
@@ -105,6 +117,18 @@ double MixedLogitDCM<TableType, DistributionType>::IntegrationSampleError_(
   integration_sample_error /=
     core::math::Sqr(first_sample.num_active_people());
   return integration_sample_error;
+}
+
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM <
+TableType, DistributionType >::IntegrationSampleError_(
+  const ArgumentType &arguments_in,
+  const SamplingType &first_sample,
+  const SamplingType &second_sample,
+  core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+
+  return IntegrationSampleErrorBySampling_(
+           arguments_in, first_sample, second_sample, error_per_person);
 }
 
 template<typename TableType, typename DistributionType>
