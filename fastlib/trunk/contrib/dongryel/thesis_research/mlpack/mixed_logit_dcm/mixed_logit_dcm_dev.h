@@ -136,20 +136,13 @@ template<typename TableType, typename DistributionType>
 void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   const ArgumentType &arguments_in,
   double integration_sample_error,
+  const core::monte_carlo::MeanVariancePairVector
+  &integration_sample_error_per_person,
   const SamplingType &second_sample,
   SamplingType *first_sample) const {
 
   std::vector<double> tmp_vector(first_sample->num_active_people());
   double total_sample_variance = 0.0;
-
-  // Compute integration sample error.
-  core::monte_carlo::MeanVariancePairVector
-  integration_sample_error_per_person;
-  IntegrationSampleError_(
-    arguments_in,
-    *first_sample,
-    second_sample,
-    &integration_sample_error_per_person);
 
   // Loop over each active person.
   for(int i = 0; i < first_sample->num_active_people(); i++) {
@@ -174,7 +167,7 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
     tmp_vector[i] *= total_sample_variance;
     int num_additional_samples =
       std::max(
-        1,
+        10,
         static_cast<int>(
           ceil(
             tmp_vector[i] -
@@ -356,7 +349,9 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
 
       // Update the sample size for each active person.
       UpdateSampleAllocation_(
-        arguments_in, integration_sample_error, *next_iterate, iterate);
+        arguments_in, integration_sample_error,
+        integration_sample_error_per_person,
+        *next_iterate, iterate);
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
