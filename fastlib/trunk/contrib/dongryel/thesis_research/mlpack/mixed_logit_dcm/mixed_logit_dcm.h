@@ -78,6 +78,23 @@ class MixedLogitDCM {
       const SamplingType &first_sample,
       const SamplingType &second_sample) const;
 
+    /** @brief Computes the simulation error by the formula (Section
+     *         3.2).
+     */
+    double IntegrationSampleErrorByFormula_(
+      const ArgumentType &arguments_in,
+      const SamplingType &first_sample,
+      const SamplingType &second_sample,
+      core::monte_carlo::MeanVariancePairVector *error_per_person) const;
+
+    /** @brief Computes the simulation error by sampling (Section 3.2).
+     */
+    double IntegrationSampleErrorBySampling_(
+      const ArgumentType &arguments_in,
+      const SamplingType &first_sample,
+      const SamplingType &second_sample,
+      core::monte_carlo::MeanVariancePairVector *error_per_person) const;
+
     /** @brief Computes the simulation error (Section 3.2).
      */
     double IntegrationSampleError_(
