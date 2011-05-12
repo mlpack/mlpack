@@ -56,6 +56,8 @@ class MixedLogitDCM {
     void UpdateSampleAllocation_(
       const ArgumentType &arguments_in,
       double integration_sample_error,
+      const core::monte_carlo::MeanVariancePairVector
+      &integration_sample_error_per_person,
       const SamplingType &second_sample,
       SamplingType *first_sample) const;
 
