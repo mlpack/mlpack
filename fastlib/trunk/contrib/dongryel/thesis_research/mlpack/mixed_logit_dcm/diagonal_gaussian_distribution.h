@@ -105,8 +105,8 @@ class DiagonalGaussianDistribution {
       const arma::vec &parameters, arma::vec *beta_out) {
 
       arma::vec random_gaussian_vector;
-      random_gaussian_vector.set_size(parameters.n_elem);
-      for(unsigned int i = 0; i < parameters.n_elem; i++) {
+      random_gaussian_vector.set_size(private_data.solution_dimension_);
+      for(int i = 0; i < private_data.solution_dimension_; i++) {
         random_gaussian_vector[i] = core::math::RandGaussian(1.0);
       }
 
