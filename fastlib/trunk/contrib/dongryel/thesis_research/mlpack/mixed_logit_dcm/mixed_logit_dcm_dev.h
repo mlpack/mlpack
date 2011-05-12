@@ -147,14 +147,19 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   // Loop over each active person.
   for(int i = 0; i < first_sample->num_active_people(); i++) {
 
+    // Get the active person index.
+    int person_index = table_.shuffled_indices_for_person(i);
+
     // Form the $S_i'$ for the current person without the
     // multiplicative factor $\sum\limits_{i \in N} s_{i, diff}$.
-    tmp_vector[i] = integration_sample_error_per_person[i].sample_variance() /
-                    (arguments_in.gradient_norm_threshold_ *
-                     integration_sample_error *
-                     core::math::Sqr(second_sample.num_active_people()));
+    tmp_vector[i] =
+      sqrt(second_sample.num_integration_samples(person_index) *
+           integration_sample_error_per_person[i].sample_variance()) /
+      (arguments_in.gradient_norm_threshold_ *
+       integration_sample_error *
+       core::math::Sqr(second_sample.num_active_people()));
     total_sample_variance +=
-      integration_sample_error_per_person[i].sample_variance();
+      sqrt(integration_sample_error_per_person[i].sample_variance());
   }
 
   // Loop over each active person and update.
