@@ -70,12 +70,12 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
   const ArgumentType &arguments_in,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
-  core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+  arma::vec *error_per_person) const {
 
   double integration_sample_error = 0.0;
 
   // Initialize the error per person.
-  error_per_person->Init(first_sample.num_active_people());
+  error_per_person->zeros(first_sample.num_active_people());
 
   for(int i = 0; i < first_sample.num_active_people(); i++) {
     int person_index = table_.shuffled_indices_for_person(i);
@@ -96,10 +96,8 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
       second_average_squared_choice_probability /
       core::math::Sqr(second_simulated_choice_probability);
 
-    // Accumulate the difference twice to prevent the division by zero
-    // later.
-    (*error_per_person)[i].push_back(accumulant);
-    (*error_per_person)[i].push_back(accumulant);
+    // Accumulate the difference.
+    (*error_per_person)[i] = accumulant;
 
     // Accumulate the integration sample error.
     integration_sample_error +=
@@ -118,7 +116,7 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
   const ArgumentType &arguments_in,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
-  core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+  arma::vec *error_per_person) const {
 
   // Re-sample this number of times.
   int num_error_trials = 30;
@@ -128,7 +126,9 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
   zero_vector.zeros(table_.distribution().num_parameters());
 
   // Accumulated samples.
-  error_per_person->Init(first_sample.num_active_people());
+  core::monte_carlo::MeanVariancePairVector error_per_person_stat;
+  error_per_person_stat.Init(first_sample.num_active_people());
+  error_per_person->zeros(first_sample.num_active_people());
 
   // Repeat until convergence.
   for(int j = 0; j < num_error_trials; j++) {
@@ -149,13 +149,14 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
         new_second_sample.simulated_choice_probability(person_index);
       double difference = log(first_simulated_choice_probability) -
                           log(second_simulated_choice_probability);
-      (*error_per_person)[i].push_back(difference);
+      error_per_person_stat[i].push_back(difference);
     }
   }
 
   double integration_sample_error = 0.0;
   for(int i = 0; i < first_sample.num_active_people(); i++) {
-    integration_sample_error += (*error_per_person)[i].sample_variance();
+    (*error_per_person)[i] = error_per_person_stat[i].sample_variance();
+    integration_sample_error += (*error_per_person)[i];
   }
   integration_sample_error /=
     core::math::Sqr(first_sample.num_active_people());
@@ -168,7 +169,7 @@ TableType, DistributionType >::IntegrationSampleError_(
   const ArgumentType &arguments_in,
   const SamplingType &first_sample,
   const SamplingType &second_sample,
-  core::monte_carlo::MeanVariancePairVector *error_per_person) const {
+  arma::vec *error_per_person) const {
 
   if(arguments_in.distribution_ == "constant") {
     return 0.0;
@@ -208,8 +209,7 @@ template<typename TableType, typename DistributionType>
 void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   const ArgumentType &arguments_in,
   double integration_sample_error,
-  const core::monte_carlo::MeanVariancePairVector
-  &integration_sample_error_per_person,
+  const arma::vec &integration_sample_error_per_person,
   const SamplingType &second_sample,
   SamplingType *first_sample) const {
 
@@ -219,19 +219,15 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   // Loop over each active person.
   for(int i = 0; i < first_sample->num_active_people(); i++) {
 
-    // Get the active person index.
-    int person_index = table_.shuffled_indices_for_person(i);
-
     // Form the $S_i'$ for the current person without the
     // multiplicative factor $\sum\limits_{i \in N} s_{i, diff}$.
     tmp_vector[i] =
-      sqrt(second_sample.num_integration_samples(person_index) *
-           integration_sample_error_per_person[i].sample_variance()) /
+      sqrt(integration_sample_error_per_person[i]) /
       (arguments_in.gradient_norm_threshold_ *
        integration_sample_error *
        core::math::Sqr(second_sample.num_active_people()));
     total_sample_variance +=
-      sqrt(integration_sample_error_per_person[i].sample_variance());
+      sqrt(integration_sample_error_per_person[i]);
   }
 
   // Loop over each active person and update.
@@ -241,10 +237,11 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
     int person_index = table_.shuffled_indices_for_person(i);
 
     // Finalize by multiplying by the sum factor.
+    printf("Total sample variance: %g\n", total_sample_variance);
     tmp_vector[i] *= total_sample_variance;
     int num_additional_samples =
       std::max(
-        10,
+        1,
         static_cast<int>(
           ceil(
             tmp_vector[i] -
@@ -356,8 +353,7 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
 
     // Compute the data sample error and the integration sample error.
     double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
-    core::monte_carlo::MeanVariancePairVector
-    integration_sample_error_per_person;
+    arma::vec integration_sample_error_per_person;
     double integration_sample_error =
       fabs(
         this->IntegrationSampleError_(

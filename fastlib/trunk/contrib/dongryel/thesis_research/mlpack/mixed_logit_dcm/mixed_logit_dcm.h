@@ -56,8 +56,7 @@ class MixedLogitDCM {
     void UpdateSampleAllocation_(
       const ArgumentType &arguments_in,
       double integration_sample_error,
-      const core::monte_carlo::MeanVariancePairVector
-      &integration_sample_error_per_person,
+      const arma::vec &integration_sample_error_per_person,
       const SamplingType &second_sample,
       SamplingType *first_sample) const;
 
@@ -85,7 +84,7 @@ class MixedLogitDCM {
       const ArgumentType &arguments_in,
       const SamplingType &first_sample,
       const SamplingType &second_sample,
-      core::monte_carlo::MeanVariancePairVector *error_per_person) const;
+      arma::vec *error_per_person) const;
 
     /** @brief Computes the simulation error by sampling (Section 3.2).
      */
@@ -93,7 +92,7 @@ class MixedLogitDCM {
       const ArgumentType &arguments_in,
       const SamplingType &first_sample,
       const SamplingType &second_sample,
-      core::monte_carlo::MeanVariancePairVector *error_per_person) const;
+      arma::vec *error_per_person) const;
 
     /** @brief Computes the simulation error (Section 3.2).
      */
@@ -101,7 +100,7 @@ class MixedLogitDCM {
       const ArgumentType &arguments_in,
       const SamplingType &first_sample,
       const SamplingType &second_sample,
-      core::monte_carlo::MeanVariancePairVector *error_per_person) const;
+      arma::vec *error_per_person) const;
 
     /** @brief Computes the gradient error (Section 3.3).
      */
