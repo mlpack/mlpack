@@ -16,6 +16,7 @@
 namespace mlpack {
 namespace mixed_logit_dcm {
 
+
 template<typename TableType, typename DistributionType>
 double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   const ArgumentType &arguments_in,
@@ -26,6 +27,15 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   if(arguments_in.distribution_ == "constant") {
     return 0.0;
   }
+  else {
+    return GradientErrorBySampling_(arguments_in, sample);
+  }
+}
+
+template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::GradientErrorBySampling_(
+  const ArgumentType &arguments_in,
+  const SamplingType &sample) const {
 
   // Resample this amount of times.
   int num_error_trials = 30;
@@ -237,7 +247,6 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
     int person_index = table_.shuffled_indices_for_person(i);
 
     // Finalize by multiplying by the sum factor.
-    printf("Total sample variance: %g\n", total_sample_variance);
     tmp_vector[i] *= total_sample_variance;
     int num_additional_samples =
       std::max(
