@@ -35,6 +35,12 @@ class MixedLogitDCMSampling {
     boost::scoped_array< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
 
+    /** @brief The statistics on squared choice probabilities (sample
+     *         mean and sample variance information).
+     */
+    boost::scoped_array < core::monte_carlo::MeanVariancePair >
+    squared_choice_probabilities_;
+
     /** @brief The gradient of the simulated choice probability per
      *         person.
      */
@@ -93,6 +99,14 @@ class MixedLogitDCMSampling {
       tmp_simulated_choice_probabilities(
         new core::monte_carlo::MeanVariancePair[dcm_table_->num_people()]);
       simulated_choice_probabilities_.swap(tmp_simulated_choice_probabilities);
+
+      // This maintains the running statistics on the squared choice
+      // probabilities encountered for each person.
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePair >
+      tmp_squared_choice_probabilities(
+        new core::monte_carlo::MeanVariancePair[dcm_table_->num_people()]);
+      squared_choice_probabilities_.swap(tmp_squared_choice_probabilities);
 
       // This vector maintains the gradients of the simulated choice
       // probability per person.
@@ -167,10 +181,13 @@ class MixedLogitDCMSampling {
         choice_prob_weighted_attribute_vector,
         &choice_probability_gradient_wrt_parameter);
 
-      // Update the simulated choice probabilities
-      // and the simulated log-likelihood gradients.
+      // Update the simulated choice probabilities.
       simulated_choice_probabilities_[person_index].push_back(
         choice_probabilities[discrete_choice_index]);
+
+      // Update the statistics on the squared choice probabilities.
+      squared_choice_probabilities_[person_index].push_back(
+        core::math::Sqr(choice_probabilities[ discrete_choice_index ]));
 
       // Simulated log-likelihood gradient update.
       simulated_choice_probability_gradients_[person_index].push_back(
@@ -290,6 +307,13 @@ class MixedLogitDCMSampling {
      */
     double simulated_choice_probability(int person_index) const {
       return simulated_choice_probabilities_[person_index].sample_mean();
+    }
+
+    /** @brief Returns the average squared choice probability for the
+     *         given person.
+     */
+    double average_squared_choice_probability(int person_index) const {
+      return squared_choice_probabilities_[person_index].sample_mean();
     }
 
     /** @brief Returns the gradient of the simulated choice

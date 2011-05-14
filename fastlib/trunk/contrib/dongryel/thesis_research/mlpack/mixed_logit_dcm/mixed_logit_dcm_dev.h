@@ -21,8 +21,14 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
   const ArgumentType &arguments_in,
   const SamplingType &sample) const {
 
-  int num_error_trials =
-    (arguments_in.distribution_ == "constant") ? 2 : 30;
+  // In case of multinomial logit, the gradient error is zero when all
+  // people are in the term.
+  if(arguments_in.distribution_ == "constant") {
+    return 0.0;
+  }
+
+  // Resample this amount of times.
+  int num_error_trials = 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
@@ -66,7 +72,42 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
   const SamplingType &second_sample,
   core::monte_carlo::MeanVariancePairVector *error_per_person) const {
 
-  return 0.0;
+  double integration_sample_error = 0.0;
+
+  // Initialize the error per person.
+  error_per_person->Init(first_sample.num_active_people());
+
+  for(int i = 0; i < first_sample.num_active_people(); i++) {
+    int person_index = table_.shuffled_indices_for_person(i);
+    double first_average_squared_choice_probability =
+      first_sample.average_squared_choice_probability(person_index);
+    double first_simulated_choice_probability =
+      first_sample.simulated_choice_probability(person_index);
+    double second_average_squared_choice_probability =
+      second_sample.average_squared_choice_probability(person_index);
+    double second_simulated_choice_probability =
+      second_sample.simulated_choice_probability(person_index);
+
+    double accumulant =
+      first_average_squared_choice_probability /
+      core::math::Sqr(first_simulated_choice_probability) +
+      second_average_squared_choice_probability /
+      core::math::Sqr(second_simulated_choice_probability);
+
+    // Accumulate the difference twice to prevent the division by zero
+    // later.
+    (*error_per_person)[i].push_back(accumulant);
+    (*error_per_person)[i].push_back(accumulant);
+
+    // Accumulate the integration sample error.
+    integration_sample_error +=
+      accumulant / static_cast<double>(
+        first_sample.num_integration_samples(person_index));
+  }
+
+  integration_sample_error /=
+    core::math::Sqr(first_sample.num_active_people());
+  return integration_sample_error;
 }
 
 template<typename TableType, typename DistributionType>
@@ -77,8 +118,8 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
   const SamplingType &second_sample,
   core::monte_carlo::MeanVariancePairVector *error_per_person) const {
 
-  int num_error_trials =
-    (arguments_in.distribution_ == "constant") ? 2 : 30;
+  // Re-sample this number of times.
+  int num_error_trials = 30;
 
   // The dummy zero vector.
   arma::vec zero_vector;
@@ -127,8 +168,13 @@ TableType, DistributionType >::IntegrationSampleError_(
   const SamplingType &second_sample,
   core::monte_carlo::MeanVariancePairVector *error_per_person) const {
 
-  return IntegrationSampleErrorBySampling_(
-           arguments_in, first_sample, second_sample, error_per_person);
+  if(arguments_in.distribution_ == "constant") {
+    return 0.0;
+  }
+  else {
+    return IntegrationSampleErrorByFormula_(
+             arguments_in, first_sample, second_sample, error_per_person);
+  }
 }
 
 template<typename TableType, typename DistributionType>
@@ -236,10 +282,9 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
         arguments_in.max_num_integration_samples_per_person_), 36);
 
   // For constant distribution (multinomial logit), the number of
-  // integration samples is 2. We only need 1, but let's just take 2
-  // samples to prevent division by zero for sample variance.
+  // integration samples is 1.
   if(arguments_in.distribution_ == "constant") {
-    initial_num_integration_samples = 2;
+    initial_num_integration_samples = 1;
   }
 
   // Initialize the starting optimization parameter $\theta_0$ and its
