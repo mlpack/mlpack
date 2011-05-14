@@ -88,6 +88,8 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
     double second_simulated_choice_probability =
       second_sample.simulated_choice_probability(person_index);
 
+    // Ignores the cross-term to avoid re-sampling. In a sense, this
+    // over-estimates the variance contribution of each person.
     double accumulant =
       first_average_squared_choice_probability /
       core::math::Sqr(first_simulated_choice_probability) +
@@ -102,7 +104,7 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
     // Accumulate the integration sample error.
     integration_sample_error +=
       accumulant / static_cast<double>(
-        first_sample.num_integration_samples(person_index));
+        first_sample.num_integration_samples(person_index) - 1);
   }
 
   integration_sample_error /=
