@@ -90,11 +90,13 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
   for(int i = 0; i < first_sample.num_active_people(); i++) {
     int person_index = table_.shuffled_indices_for_person(i);
     double first_average_squared_choice_probability =
-      first_sample.average_squared_choice_probability(person_index);
+      first_sample.simulated_choice_probability_stat(
+        person_index).sample_variance();
     double first_simulated_choice_probability =
       first_sample.simulated_choice_probability(person_index);
     double second_average_squared_choice_probability =
-      second_sample.average_squared_choice_probability(person_index);
+      second_sample.simulated_choice_probability_stat(
+        person_index).sample_variance();
     double second_simulated_choice_probability =
       second_sample.simulated_choice_probability(person_index);
 
@@ -257,8 +259,8 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
             first_sample->num_integration_samples(person_index))));
 
     // Add samples.
-    std::cerr << "  Adding " << num_additional_samples << " to Person " <<
-              person_index << "\n";
+    //std::cerr << "  Adding " << num_additional_samples << " to Person " <<
+    //          person_index << "\n";
     first_sample->AddSamples(person_index, num_additional_samples);
   }
 }

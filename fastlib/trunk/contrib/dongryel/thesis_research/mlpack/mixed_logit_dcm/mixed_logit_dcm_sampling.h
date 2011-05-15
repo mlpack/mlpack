@@ -309,6 +309,14 @@ class MixedLogitDCMSampling {
       return simulated_choice_probabilities_[person_index].sample_mean();
     }
 
+    /** @brief Returns the simulated choice probability statistics for
+     *         the given person.
+     */
+    const core::monte_carlo::MeanVariancePair &
+    simulated_choice_probability_stat(int person_index) const {
+      return simulated_choice_probabilities_[person_index];
+    }
+
     /** @brief Returns the average squared choice probability for the
      *         given person.
      */
