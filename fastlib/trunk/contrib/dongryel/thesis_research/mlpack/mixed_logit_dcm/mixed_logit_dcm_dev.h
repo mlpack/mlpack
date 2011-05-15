@@ -334,7 +334,8 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
   int num_iterations = 0;
   do {
 
-    std::cerr << "\nThe current iterate:\n";
+    std::cerr << "\nThe current iterate uses " <<
+              iterate->max_num_integration_samples() << " per person:\n";
     iterate->parameters().print();
 
     // Obtain the step direction by solving Equation 4.3

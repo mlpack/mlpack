@@ -254,6 +254,17 @@ class MixedLogitDCMSampling {
       return num_integration_samples_[person_index];
     }
 
+    int max_num_integration_samples() const {
+      int max_samples = 0;
+      for(int i = 0; i < this->num_active_people(); i++) {
+        int person_index = dcm_table_->shuffled_indices_for_person(i);
+        max_samples = std::max(
+                        max_samples,
+                        this->num_integration_samples(person_index));
+      }
+      return max_samples;
+    }
+
     /** @brief Returns the associated discrete choice model table.
      */
     const DCMTableType *dcm_table() const {
