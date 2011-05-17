@@ -104,6 +104,11 @@ class MixedLogitDCM {
 
     /** @brief Computes the gradient error (Section 3.3).
      */
+    double GradientErrorByFormula_(
+      const ArgumentType &arguments_in, const SamplingType &sample) const;
+
+    /** @brief Computes the gradient error (Section 3.3).
+     */
     double GradientErrorBySampling_(
       const ArgumentType &arguments_in, const SamplingType &sample) const;
 
