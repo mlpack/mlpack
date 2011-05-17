@@ -74,7 +74,7 @@ void LocalCoordinateCoding::DoLCC(u32 n_iterations) {
 	   Objective(adjacencies));
     printf("\n%d nonzero entries in code V (%f%%)\n\n",
 	   adjacencies.n_elem,
-	   ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
+	   100.0 * ((double)(adjacencies.n_elem)) / ((double)(n_atoms_ * n_points_)));
     printf("Optimizing Dictionary\n");
     OptimizeDictionary(adjacencies);
     
