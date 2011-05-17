@@ -46,6 +46,7 @@
 #include "cc.h"
 
 #include <new>
+#include <cstddef>
 
 #define MEM__DEBUG_MEMORY(ptr) \
     DEBUG_ASSERT_MSG((ptr) != NULL, "out of memory")
