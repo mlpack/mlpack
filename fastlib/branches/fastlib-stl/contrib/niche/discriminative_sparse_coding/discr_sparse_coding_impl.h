@@ -227,8 +227,8 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
 void DiscrSparseCoding::ProjectW() {
   double norm_w = norm(w_, 2);
   // can we use 1 / lambda_w, as in Pegasos, or can we only use the weaker 2 / lambda_w?
-  if(norm_w > 2 / lambda_w_) {
-    w_ = w_  * ((2 / lambda_w_) / norm_w);
+  if(norm_w > sqrt(2.0 / lambda_w_)) {
+    w_ = w_  * (sqrt((2.0 / lambda_w_)) / norm_w);
   }
 }
 
