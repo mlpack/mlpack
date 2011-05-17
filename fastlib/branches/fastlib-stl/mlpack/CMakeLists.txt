@@ -65,6 +65,10 @@ if(WITH_SPARSE)
 #   set(DIRS ${DIRS} kernel_pca)
 endif()
 
+if(WITH_OPTIMIZERS)
+  set(DIRS ${DIRS} mvu)
+endif()
+
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()

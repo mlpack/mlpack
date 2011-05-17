@@ -19,7 +19,7 @@ set(Boost_ADDITIONAL_VERSIONS "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0"
 find_package(Boost COMPONENTS math_c99 program_options REQUIRED) # may require math_tr1?
 
 option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
-option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." ON)
+option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." OFF)
 option(SCALE_NORMAL "Compile with supported indices up to native int type" OFF)
 option(SCALE_LARGE "Support indices up to the maximum the machine's architecture can support" OFF)
 option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
