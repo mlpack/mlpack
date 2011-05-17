@@ -33,6 +33,16 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
 }
 
 template<typename TableType, typename DistributionType>
+double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
+  const ArgumentType &arguments_in,
+  const SamplingType &sample) const {
+
+  // This function will ignore the cross-term of Formula (2.1) in
+  // error_grad_calc.pdf since it is too expensive to compute.
+  return 0.0;
+}
+
+template<typename TableType, typename DistributionType>
 double MixedLogitDCM<TableType, DistributionType>::GradientErrorBySampling_(
   const ArgumentType &arguments_in,
   const SamplingType &sample) const {

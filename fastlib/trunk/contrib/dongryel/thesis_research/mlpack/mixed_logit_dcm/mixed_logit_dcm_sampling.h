@@ -35,11 +35,11 @@ class MixedLogitDCMSampling {
     boost::scoped_array< core::monte_carlo::MeanVariancePair >
     simulated_choice_probabilities_;
 
-    /** @brief The statistics on squared choice probabilities (sample
-     *         mean and sample variance information).
+    /** @brief The quantities necessary for computing the gradient
+     *         approximation error.
      */
-    boost::scoped_array < core::monte_carlo::MeanVariancePair >
-    squared_choice_probabilities_;
+    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
+    gradient_error_quantities_;
 
     /** @brief The gradient of the simulated choice probability per
      *         person.
@@ -100,13 +100,17 @@ class MixedLogitDCMSampling {
         new core::monte_carlo::MeanVariancePair[dcm_table_->num_people()]);
       simulated_choice_probabilities_.swap(tmp_simulated_choice_probabilities);
 
-      // This maintains the running statistics on the squared choice
-      // probabilities encountered for each person.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePair >
-      tmp_squared_choice_probabilities(
-        new core::monte_carlo::MeanVariancePair[dcm_table_->num_people()]);
-      squared_choice_probabilities_.swap(tmp_squared_choice_probabilities);
+      // This vector maintains the running statistics on the gradient
+      // error quantities per person.
+      boost::scoped_array < core::monte_carlo::MeanVariancePairMatrix >
+      tmp_gradient_error_quantities(
+        new core::monte_carlo::MeanVariancePairMatrix[
+          dcm_table_->num_people()]);
+      gradient_error_quantities_.swap(tmp_gradient_error_quantities);
+      for(int i = 0; i < dcm_table_->num_people(); i++) {
+        gradient_error_quantities_[i].Init(
+          dcm_table_->num_parameters() + 1, dcm_table_->num_parameters() + 1);
+      }
 
       // This vector maintains the gradients of the simulated choice
       // probability per person.
@@ -185,9 +189,22 @@ class MixedLogitDCMSampling {
       simulated_choice_probabilities_[person_index].push_back(
         choice_probabilities[discrete_choice_index]);
 
-      // Update the statistics on the squared choice probabilities.
-      squared_choice_probabilities_[person_index].push_back(
-        core::math::Sqr(choice_probabilities[ discrete_choice_index ]));
+      // Update the gradient error quantities.
+      gradient_error_quantities_[person_index].get(0, 0).push_back(
+        core::math::Sqr(choice_probabilities[discrete_choice_index]));
+      for(int i = 0; i < dcm_table_->num_parameters(); i++) {
+        gradient_error_quantities_[person_index].get(0, i + 1).push_back(
+          choice_probabilities[discrete_choice_index] *
+          choice_probability_gradient_wrt_parameter[i]);
+        gradient_error_quantities_[person_index].get(i + 1, 0).push_back(
+          choice_probabilities[discrete_choice_index] *
+          choice_probability_gradient_wrt_parameter[i]);
+        for(int j = 0; j < dcm_table_->num_parameters(); j++) {
+          gradient_error_quantities_[person_index].get(i + 1, j + 1).push_back(
+            choice_probability_gradient_wrt_parameter[i] *
+            choice_probability_gradient_wrt_parameter[j]);
+        }
+      }
 
       // Simulated log-likelihood gradient update.
       simulated_choice_probability_gradients_[person_index].push_back(
@@ -328,13 +345,6 @@ class MixedLogitDCMSampling {
       return simulated_choice_probabilities_[person_index];
     }
 
-    /** @brief Returns the average squared choice probability for the
-     *         given person.
-     */
-    double average_squared_choice_probability(int person_index) const {
-      return squared_choice_probabilities_[person_index].sample_mean();
-    }
-
     /** @brief Returns the gradient of the simulated choice
      *         probability for the given person.
      */
@@ -342,6 +352,15 @@ class MixedLogitDCMSampling {
       int person_index, arma::vec *gradient_out) const {
       simulated_choice_probability_gradients_[
         person_index].sample_means(gradient_out);
+    }
+
+    /** @brief Returns the sample mean of the gradient error component
+     *         for the given person.
+     */
+    void gradient_error_quantities(
+      int person_index, arma::mat *quantities_out) const {
+
+      gradient_error_quantities_[person_index].sample_means(quantities_out);
     }
 
     /** @brief Returns the Hessian of the current simulated log
