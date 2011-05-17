@@ -46,28 +46,31 @@ int main(int argc, char* argv[]) {
 	  digit_1);
   mat X_neg;
   X_neg.load(data_filename);
-
+  u32 n_neg_points = X_neg.n_cols;
+  
   sprintf(data_filename,
 	  "%s/train%d.arm",
 	  data_dir,
 	  digit_2);
   mat X_pos;
   X_pos.load(data_filename);
+  u32 n_pos_points = X_pos.n_cols;
   free(data_filename);
   
   mat X = join_rows(X_neg, X_pos);
-  
   u32 n_points = X.n_cols;
-  
   // normalize each column of data
   for(u32 i = 0; i < n_points; i++) {
     X.col(i) /= norm(X.col(i), 2);
   }
   
+  // create a labels vector, NOT so that we can use it for LCC, but so we can save the labels for easy discriminative training upon exit of this program
+  vec y = vec(n_points);
+  y.subvec(0, n_neg_points - 1).fill(-1);
+  y.subvec(n_neg_points, n_points - 1).fill(1);
   
   
   // run LCC
-  
   LocalCoordinateCoding lcc;
   
   //mat initial_D;
@@ -76,9 +79,7 @@ int main(int argc, char* argv[]) {
   //u32 n_atoms = initial_D.n_cols;
   
   lcc.Init(X, n_atoms, lambda);
-  //lcc.RandomInitDictionary();
   lcc.DataDependentRandomInitDictionary();
-  //lcc.SetDictionary(initial_D);
   
   //printf("n_atoms = %d\n", n_atoms);
   
@@ -97,6 +98,7 @@ int main(int argc, char* argv[]) {
   if(strlen(results_dir) == 0) {
     learned_D.save("D.dat", raw_ascii);
     learned_V.save("V.dat", raw_ascii);
+    y.save("y.dat", raw_ascii);
   }
   else {
     char* data_fullpath = (char*) malloc(320 * sizeof(char));
@@ -106,6 +108,9 @@ int main(int argc, char* argv[]) {
     
     sprintf(data_fullpath, "%s/V.dat", results_dir);
     learned_V.save(data_fullpath, raw_ascii);
+    
+    sprintf(data_fullpath, "%s/y.dat", results_dir);
+    y.save(data_fullpath, raw_ascii);
     
     free(data_fullpath);
   }
