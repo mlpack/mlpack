@@ -10,6 +10,10 @@ set(SOURCES
    discr_sparse_coding.h
    discr_sparse_coding_impl.h
    lars.h
+   lars_impl.h
+   lcc.h
+   lcc_impl.h
+   svm.h
 )
 
 # add directory name to sources
@@ -65,3 +69,14 @@ add_executable(mnist_pairwise_test
 target_link_libraries(mnist_pairwise_test
    fastlib
 )
+
+add_executable(mnist_dlcc
+    EXCLUDE_FROM_ALL
+    mnist_dlcc_main.cc
+)
+
+target_link_libraries(mnist_dlcc
+    mlpack
+    fastlib
+)
+

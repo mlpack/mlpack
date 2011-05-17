@@ -57,6 +57,8 @@ class DiscrSparseCoding {
   void KMeansInitDictionary();
 
   void InitW();
+
+  void InitW(const char* w_filename);
   
   void SGDOptimize(u32 n_iterations, double step_size);
   

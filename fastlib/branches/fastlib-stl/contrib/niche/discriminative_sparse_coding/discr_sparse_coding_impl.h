@@ -36,13 +36,6 @@ void DiscrSparseCoding::InitDictionary() {
 
 
 void DiscrSparseCoding::InitDictionary(const char* dictionary_filename) {  
-  /*
-  char* dictionary_fullpath = (char*) malloc(160 * sizeof(char));
-  sprintf(dictionary_fullpath,
-	  "../contrib/niche/discriminative_sparse_coding/%s",
-	  dictionary_filename);
-  D_.load(dictionary_fullpath);
-  */
   D_.load(dictionary_filename);
 }
 
@@ -65,6 +58,11 @@ void DiscrSparseCoding::InitW() {
 }
 
 
+void DiscrSparseCoding::InitW(const char* w_filename) {  
+  w_.load(w_filename);
+}
+
+
 void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
   //InitDictionary();
   //InitW();
@@ -74,10 +72,10 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
     u32 ind = rand() % n_points_;
     
     // modify step size in some way
-    //step_size = 1.0 / ((double)t);
-    step_size = 1.0 / (lambda_w_ * ((double)t));
+    step_size = 1.0 / ((double)t);
+    //step_size = 1.0 / (lambda_w_ * ((double)t));
 
-    if((t % 50) == 0) {
+    if((t % 100) == 0) {
       printf("iteration %d: drew point %d\n", t, ind);
     }
     //((vec)(X_.col(ind))).print("point");
@@ -100,7 +98,9 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   //x.save("x.dat", raw_ascii);
   lars.DoLARS();
   vec v;
+  //printf("try lars\n");
   lars.Solution(v);
+  //printf("success\n");
   //v.print("lars solution");
   /*
   printf("lars solution\n");
@@ -124,6 +124,16 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   // active set
   std::vector<u32> active_set = lars.active_set();
   u32 n_active = active_set.size();
+  
+  if(n_active == 0) {
+    printf("empty active set!\n");
+
+    // this case is indicative of a possibly poor dictionary, but computationally, it's fucking great!
+    //   no update to w, since v is zero
+    //   no update to D, since D_active is 0-dimensional
+    return;    
+  }
+  
   /*
   printf("active set: ( ");
   for(u32 i = 0; i < n_active; i++) {
@@ -156,7 +166,8 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   
   // 4 parts
   // 1st part:
-  vec A_w = solve(chol_factor, solve(trans(chol_factor), w_active));
+  //vec A_w = solve(chol_factor, solve(trans(chol_factor), w_active));
+  vec A_w = solve(trimatu(chol_factor), solve_trans(trimatu(chol_factor), w_active));
   rowvec wt_A = trans(A_w);
   //wt_A.print("wt_A");
   //sign_v_active.print("sign_v_active");
