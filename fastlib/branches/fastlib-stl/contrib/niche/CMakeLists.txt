@@ -14,6 +14,7 @@ set(DIRS
 #   log_newhmm   ## apparent namespace conflicts?
 #   mmf  ## apparent namespace conflicts?
 #   new_hmm  ## apparent namespace conflicts?
+   pegasos
    regularized_ISM
 #   spike            ## No actual code in here (except some LaTeX?)
 #   spike_train_dependence  ## missing hsic.h
