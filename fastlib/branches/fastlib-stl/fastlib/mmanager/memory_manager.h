@@ -2,6 +2,7 @@
 #define FASTLIB_MEMORY_MANAGER_MEMORY_MANAGER_H_
 
 #include <assert.h>
+#include <cstddef>
 #include <sys/unistd.h>
 #include <sys/mman.h>
 #include <sys/types.h>
