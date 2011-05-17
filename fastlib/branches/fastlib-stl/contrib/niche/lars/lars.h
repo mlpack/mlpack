@@ -3,7 +3,7 @@
  *  This file implements Least Angle Regression and the LASSO
  *
  *  @author Nishant Mehta (niche)
- *  @bug Possible issue. Search for "I have no idea why..." in lars_impl.h
+ *  @bug No known bugs
  */
 
 // beta is the estimator
