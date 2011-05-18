@@ -75,10 +75,10 @@ index_t Dataset::n_labels() const {
   return n_labels;
 }
 
-void Dataset::GetLabels(arma::vec &labels_list,
-                        arma::Col<index_t> &labels_index,
-                        arma::Col<index_t> &labels_ct,
-                        arma::Col<index_t> &labels_startpos) const {
+void Dataset::GetLabels(std::vector<double> &labels_list,
+                        std::vector<index_t> &labels_index,
+                        std::vector<index_t> &labels_ct,
+                        std::vector<index_t> &labels_startpos) const {
   index_t i = 0;
   index_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
   index_t n_points = matrix_.n_cols;
@@ -86,41 +86,41 @@ void Dataset::GetLabels(arma::vec &labels_list,
 
   double current_label;
 
-  labels_index.zeros(n_points);
+  labels_list.clear();
+  labels_index.clear();
+  labels_ct.clear();
+  labels_startpos.clear();
+
+  labels_index.reserve(n_points);
 
   std::vector<index_t> labels_temp;
   labels_temp.reserve(n_points);
   labels_temp.push_back(0);
 
-  labels_list.zeros(matrix_.n_rows);
-  labels_list(0)=matrix_(label_row_idx,0);
-  //labels_ct.push_back(1);
-  labels_ct << 1;
+  labels_list.push_back(matrix_(label_row_idx,0));
+  labels_ct.push_back(1);
   n_labels++;
 
   for (i = 1; i < n_points; i++) {
     current_label = matrix_(label_row_idx, i);
     index_t j = 0;
     for (j = 0; j < n_labels; j++) {
-      if (current_label == labels_list(j)) {
-        labels_ct(j)++;
+      if (current_label == labels_list[j]) {
+        labels_ct[j]++;
 	break;
       }
     }
     labels_temp[i] = j;
     if (j == n_labels) { // new label
-      // Add a new label to the list with a count of 1
+      labels_list.push_back(current_label); // add new label to list
+      labels_ct.push_back(1);
       n_labels++;
-      labels_list(n_labels)=current_label;
-      labels_ct(n_labels)=1;
     }
   }
-  labels_list.set_size(n_labels);
   
-  labels_startpos.set_size(n_labels);
-  labels_startpos(0) = 0;
+  labels_startpos.push_back(0);
   for(i = 1; i < n_labels; i++)
-    labels_startpos(i) = labels_startpos(i - 1) + labels_ct(i - 1);
+    labels_startpos.push_back(labels_startpos[i - 1] + labels_ct[i - 1]);
 
   for(i = 0; i < n_points; i++) {
     labels_index[labels_startpos[labels_temp[i]]] = i;
