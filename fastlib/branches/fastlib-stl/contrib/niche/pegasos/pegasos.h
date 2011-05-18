@@ -27,8 +27,7 @@ class Pegasos{
 
   double lambda_;
   u32 T_;
-  
-  
+  u32 k_;
   
   
  public:
@@ -38,9 +37,18 @@ class Pegasos{
   void Init(const mat& X, const vec& y,
 	    double lambda, u32 T);
   
+  void Init(const mat& X, const vec& y,
+	    double lambda, u32 T, u32 k);
+  
   void DoPegasos();
   
+  void DoPegasosTrivialBatch();
+  
+  void DoPegasosMiniBatch();
+  
   vec GetW();
+
+  void Shuffle(uvec& numbers);
   
 };
 
