@@ -360,7 +360,8 @@ class MixedLogitDCMSampling {
     void gradient_error_quantities(
       int person_index, arma::mat *quantities_out) const {
 
-      gradient_error_quantities_[person_index].sample_means(quantities_out);
+      gradient_error_quantities_[
+        person_index].sample_mean_variances(quantities_out);
     }
 
     /** @brief Returns the Hessian of the current simulated log
