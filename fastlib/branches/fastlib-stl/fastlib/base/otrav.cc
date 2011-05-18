@@ -48,13 +48,13 @@ void ot::StandardFormat::PrintIndent_() {
 void ot::StandardFormat::PrintHeader_(const char *name, index_t index,
 				      const char *type, index_t len) {
   if (index >= 0) {
-    fprintf(stream_, "[%"LI"d]", index);
+    fprintf(stream_, "[%"LI"]", index);
   } else {
     fprintf(stream_, "%s", name);
   }
   fprintf(stream_, " : ");
   if (len >= 0) {
-    fprintf(stream_, "len %"LI"d ", len);
+    fprintf(stream_, "len %"LI" ", len);
   }
   fprintf(stream_, "%s = ", type);
 }

@@ -108,13 +108,6 @@ extern "C" {
  * Values are signed to allow uninitialized indices of -1 as well as
  * consideration of potentially negative differences between indices.
  */
-#if defined(SCALE_MASSIVE)
-typedef int64 index_t;          /* For larger than RAM data sets. */
-#elif defined(SCALE_LARGE)
-typedef ssize_t index_t;        /* As large as this machine can handle. */
-#elif defined(SCALE_NORMAL)
-typedef int index_t;            /* Normal sized data; usually 32-bit. */
-#endif
 
 /**
  * Length modifier for emitting index_t with printf.
@@ -125,12 +118,17 @@ typedef int index_t;            /* Normal sized data; usually 32-bit. */
  *   printf("%"LI"d\n", i);
  * @endcode
  */
-#if defined(SCALE_MASSIVE)
-#define LI L64
-#elif defined(SCALE_LARGE)
-#define LI "l"                  /* TODO: confirm correct. */
-#elif defined(SCALE_NORMAL)
-#define LI ""
+
+#include <inttypes.h>
+#ifdef __USE_ISOC99
+typedef size_t index_t;
+# if __WORDSIZE == 64
+#  define LI "zu"
+# else
+#  define LI "u"
+# endif
+#else
+# error "Wrong C standard"
 #endif
 
 /** Size of a kilobyte in bytes. */
@@ -190,16 +188,16 @@ void fl_pause(void);
 void fl_print_msg_header(char marker, const char *color);
 
 /** Print a location in code. */
-void fl_print_msg_loc(const char *file, const char *func, int line);
+void fl_print_msg_loc(const char *file, const char *func, const int line);
 
 /** Implementation for FATAL. */
 __attribute__((noreturn, format(printf, 4, 5)))
-void fl_print_fatal_msg(const char *file, const char *func, int line,
+void fl_print_fatal_msg(const char *file, const char *func, const int line,
                         const char* format, ...);
 
 /** Implementation for NONFATAL, NOTIFY_STAR, and NOTIFY. */
 __attribute__((format(printf, 5, 6)))
-void fl_print_msg(const char *file, const char *func, int line,
+void fl_print_msg(const char *file, const char *func, const int line,
                   fl_msg_t msg_type, const char* format, ...);
 
 /**

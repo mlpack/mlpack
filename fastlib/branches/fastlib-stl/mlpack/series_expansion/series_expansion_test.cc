@@ -101,7 +101,7 @@ class SeriesExpansionTest {
       printf("maps to %d\n", number);
       
       if(number != i) {
-	FATAL("The mapping at the position %d is computed incorrectly!", i);
+	FATAL("The mapping at the position %"LI" is computed incorrectly!", i);
       }
     }
   }

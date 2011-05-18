@@ -683,9 +683,9 @@ class MemoryManager {
 
 	void set_capacity(uint64 capacity) {
 	  if (pool_ != NULL) {
-			const char *temp="Too late to cahnge capacity, memory manager is already "
+			const char *temp="Too late to change capacity, memory manager is already%c"
 					       "initialized\n";
-		  FATAL(temp);
+		  FATAL(temp, ' ');
 		}
 		if (capacity % system_page_size_ != 0) {
 			const char *temp=
@@ -715,7 +715,7 @@ class MemoryManager {
 		page_access_filename_ = file;
 		fp_log_ = fopen(page_access_filename_.c_str(), "w");
 		if (fp_log_ == NULL) {
-		  FATAL("Could not opene %s, error %s encountered\n", 
+		  FATAL("Could not open %s, error %s encountered\n", 
 					page_access_filename_.c_str(), strerror(errno));
 		}
 

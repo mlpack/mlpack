@@ -102,7 +102,7 @@ class RidgeRegressionTest {
 
     printf("Output indices: ");
     for(index_t i = 0; i < output_predictor_indices.n_elem; i++) {
-      printf(" %d ", output_predictor_indices[i]);
+      printf(" %"LI" ", output_predictor_indices[i]);
     }
     printf("\n");
     NOTIFY("[*] TESTVIFBasedFeatureSelection complete!");

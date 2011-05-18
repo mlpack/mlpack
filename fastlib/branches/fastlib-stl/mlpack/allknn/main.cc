@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 
   int k = IO::GetValue<int>("allknn/k");
   
-  NOTIFY("Computing %"LI"d nearest neighbors", k);
+  NOTIFY("Computing %d nearest neighbors", k);
   allknn->ComputeNeighbors(neighbors, distances);
 
   NOTIFY("Neighbors computed");

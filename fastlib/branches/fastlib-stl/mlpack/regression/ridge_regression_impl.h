@@ -167,13 +167,13 @@ void RidgeRegression::Init(fx_module *module, const arma::mat &predictors,
 
   module_ = module;
   DEBUG_ERROR_MSG_IF(predictors.n_cols<predictors.n_rows,
-     "The number of the columns %"LI"d must be less or equal to the number of "
-     " the rows %"LI"d ", predictors.n_cols, predictors.n_rows);
+     "The number of the columns %d must be less or equal to the number of "
+     " the rows %d ", predictors.n_cols, predictors.n_rows);
   DEBUG_ERROR_MSG_IF(predictions.n_rows >1, 
       "The current implementation supports only one dimensional predictions");
   DEBUG_ERROR_MSG_IF(predictors.n_cols!=predictions.n_cols, 
       "Predictors and predictions must have the same same number "
-      "of cols %"LI"d != %"LI"d ", predictors.n_cols, predictions.n_cols);
+      "of cols %d != %d ", predictors.n_cols, predictions.n_cols);
 
   if(use_normal_equation_method) {
 
@@ -541,7 +541,7 @@ void RidgeRegression::FeatureSelectedRegression
       ReInitTargetValues
 	(*predictors_, (*current_prune_predictor_indices)[i]);
       
-      printf("Current leave one out index: %d\n",
+      printf("Current leave one out index: %"LI"\n",
 	     (*current_prune_predictor_indices)[i]);
 
       // Do the regression.
@@ -563,7 +563,7 @@ void RidgeRegression::FeatureSelectedRegression
 	RidgeRegressionUtil::VarianceInflationFactor(loo_feature,
 						     loo_predictions);
       
-      NOTIFY("The %d-th dimension has a variance inflation factor of %g.\n",
+      NOTIFY("The %"LI"-th dimension has a variance inflation factor of %g.\n",
 	     (*current_prune_predictor_indices)[i], 
 	     variance_inflation_factor);
       

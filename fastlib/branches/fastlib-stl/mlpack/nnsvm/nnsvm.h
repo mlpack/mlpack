@@ -194,7 +194,7 @@ void NNSVM<TKernel>::SaveModel(std::string modelfilename) {
   fprintf(fp, "kernel_typeid %d\n", param_.kerneltypeid_);
   // save kernel parameters
   param_.kernel_.SaveParam(fp);
-  fprintf(fp, "total_num_sv %d\n", model_.num_sv_);
+  fprintf(fp, "total_num_sv %"LI"\n", model_.num_sv_);
   fprintf(fp, "threshold %g\n", model_.thresh_);
   fprintf(fp, "weights");
   index_t len = model_.w_.n_elem;
@@ -233,6 +233,7 @@ void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
   char cmd[80]; 
   int i, j;
   double temp_f;
+  char kernel_name[1024];
   while (1) {
     fscanf(fp, "%80s", cmd);
     if(strcmp(cmd,"svm_type") == 0) {
@@ -242,11 +243,14 @@ void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
       }
     }
     else if (strcmp(cmd, "kernel_name") == 0)
-      fscanf(fp, "%80s", param_.kernelname_.c_str());
+    {
+      fscanf(fp, "%80s", &kernel_name[0]);
+      param_.kernelname_ = std::string(kernel_name);
+    }
     else if (strcmp(cmd, "kernel_typeid") == 0)
       fscanf(fp, "%d", &param_.kerneltypeid_);
     else if (strcmp(cmd, "total_num_sv") == 0)
-      fscanf(fp, "%d", &model_.num_sv_);
+      fscanf(fp, "%"LI, &model_.num_sv_);
     else if (strcmp(cmd, "threshold") == 0)
       fscanf(fp, "%lf", &model_.thresh_); 
     else if (strcmp(cmd, "weights")==0) {

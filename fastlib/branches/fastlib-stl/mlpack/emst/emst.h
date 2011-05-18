@@ -43,7 +43,7 @@ public:
     void Init(index_t lesser, index_t greater, double dist) {
       
       DEBUG_ASSERT_MSG(lesser != greater, 
-          "indices equal when creating EdgePair, lesser = %d, distance = %f\n",
+          "indices equal when creating EdgePair, lesser = %"LI", distance = %f\n",
                                                  lesser, dist);
       lesser_index_ = lesser;
       greater_index_ = greater;

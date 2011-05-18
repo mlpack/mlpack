@@ -79,7 +79,7 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 		      
   results.zeros(test_data.n_cols);
   
-  NOTIFY("%"LI"d test cases with %"LI"d features each\n",
+  NOTIFY("%d test cases with %"LI" features each\n",
 	 test_data.n_cols, number_features);
 
   fx_result_int(nbc_module_,"tests", test_data.n_cols);

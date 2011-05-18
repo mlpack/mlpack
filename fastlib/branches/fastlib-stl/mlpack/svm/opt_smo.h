@@ -462,7 +462,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   // General learner-independent initializations
   budget_ = 0; //  Safe?
-  budget_ = min(budget_, n_data_);
+  budget_ = min(budget_, (int) n_data_);
   bias_ = 0.0;
   n_sv_ = 0;
   reconstructed_ = false;
@@ -532,13 +532,13 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %d.\n", accuracy_, ct_iter_);
+      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %"LI".\n", accuracy_, ct_iter_);
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      fprintf(stderr, "SMO terminates since the number of iterations %d exceeded !!! Gap: %f.\n", n_iter_, gap_);
+      fprintf(stderr, "SMO terminates since the number of iterations %"LI" exceeded !!! Gap: %f.\n", n_iter_, gap_);
       break;
     }
   }
@@ -971,7 +971,7 @@ void SMO<TKernel>::GetSV(std::vector<index_t> &dataset_index, std::vector<double
 	coef.push_back(0);
       }
     }
-    printf("Number of SVs: %d\n", n_sv_);
+    printf("Number of SVs: %"LI"\n", n_sv_);
   }
   else if (learner_typeid_ == 1) {// SVM_R
     for (index_t ii = 0; ii < n_data_; ii++) {

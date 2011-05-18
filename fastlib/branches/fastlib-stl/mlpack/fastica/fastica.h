@@ -486,7 +486,7 @@ class FastICA {
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
     num_of_IC_ = fx_param_int(module_, "num_of_IC", d);
     if(num_of_IC_ < 1 || num_of_IC_ > d) {
-      printf("ERROR: num_of_IC = %d must be >= 1 and <= dimensionality of data",
+      printf("ERROR: num_of_IC = %"LI" must be >= 1 and <= dimensionality of data",
             num_of_IC_);
       return SUCCESS_FAIL;
     }
@@ -756,7 +756,7 @@ class FastICA {
       }
     }
 
-    printf("No convergence after %d steps\n", max_num_iterations_);
+    printf("No convergence after %"LI" steps\n", max_num_iterations_);
 	
     // orthogonalize B via: newB = B * (B' * B) ^ -.5;
     Orthogonalize(B);
@@ -784,7 +784,7 @@ class FastICA {
     index_t num_failures = 0;
 
     while(round < num_of_IC_) {
-      VERBOSE_ONLY( printf("Estimating IC %d\n", round + 1) );
+      VERBOSE_ONLY( printf("Estimating IC %"LI"\n", round + 1) );
       mu_ = mu_orig;
       used_nonlinearity = g_orig;
       stroke = 0;
@@ -817,7 +817,7 @@ class FastICA {
 	    round++;
 	    num_failures++;
 	    if(num_failures > failure_limit) {
-	      printf("Too many failures to converge (%d). Giving up.\n", num_failures);
+	      printf("Too many failures to converge (%"LI"). Giving up.\n", num_failures);
 	      return SUCCESS_FAIL;
 	    }
 	    break;

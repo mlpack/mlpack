@@ -77,7 +77,7 @@ int main(int argc, char* argv[]) {
   arma::mat tmp;
   data::Load(A_in, tmp);
   arma_compat::armaToMatrix(tmp, A);
-  printf("n_rows = %d, n_cols = %d, done.\n", A.n_rows(), A.n_cols());
+  printf("n_rows = %"LI", n_cols = %"LI", done.\n", A.n_rows(), A.n_cols());
 
   // parse target relative error, default = 0.1
   const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
