@@ -29,7 +29,7 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
 	}
       }
       if(does_not_exist_yet) {
-	printf("Found: %s at position %d.\n", feature_name.c_str(), i);
+	printf("Found: %s at position %"LI".\n", feature_name.c_str(), i);
 	remove_indices.push_back(i);
 	
 	if(!keep_going_after_first_match) {
@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
       }
     }
     if(!to_be_removed) {
-      fprintf(predictor_file, "%d\n", i);
+      fprintf(predictor_file, "%"LI"\n", i);
     }
   }
   for(index_t i = 0; i < prune_indices.size(); i++) {
@@ -104,7 +104,7 @@ int main(int argc, char *argv[]) {
   arma_compat::armaToMatrix(initial_dataset.matrix(), tmp);
   la::QRInit(tmp, &q, &r);
   fx_timer_stop(fx_root, "qr_time");
-  printf("%d %d %d %d\n", q.n_rows(), q.n_cols(), r.n_rows(), r.n_cols());
+  printf("%"LI" %"LI" %"LI" %"LI"\n", q.n_rows(), q.n_cols(), r.n_rows(), r.n_cols());
 
   fx_done(fx_root);
   return 0;

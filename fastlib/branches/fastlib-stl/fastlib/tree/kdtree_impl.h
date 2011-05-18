@@ -343,7 +343,7 @@ namespace tree_kdtree_private {
             left->bound(), right->bound(),
             old_from_new);
         
-        VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
+        VERBOSE_MSG(3.0,"split (%"LI",[%"LI"],%"LI") dim %d on %f (between %f, %f)",
             node->begin(), split_col,
             node->begin() + node->count(), (int) split_dimensions[split_dim],
 		    split_val,

@@ -240,7 +240,7 @@ void RpcSockImpl::UnregisterTransaction(int peer_num, int channel, int id) {
   } else {
     //fprintf(stderr, "%d to %d: unregistering %d\n", rpc::rank(), peer_num, id);
     DEBUG_ASSERT_MSG(peer->outgoing_transactions[id] != NULL,
-       "%d: %d of %d already NULL when unregistering outgoing transaction",
+       "%d: %d of %"LI" already NULL when unregistering outgoing transaction",
        rpc::rank(), id, peer->outgoing_transactions.size());
     peer->outgoing_transactions[id] = NULL;
     peer->outgoing_freelist[id] = peer->outgoing_free;

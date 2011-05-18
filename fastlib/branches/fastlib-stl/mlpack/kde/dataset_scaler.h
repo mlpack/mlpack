@@ -55,7 +55,7 @@ class DatasetScaler {
       double min_coord = min(qset_range.lo, rset_range.lo);
       double max_coord = max(qset_range.hi, rset_range.hi);
 
-      printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
+      printf("Dimension %"LI" range: [%g, %g]\n", i, min_coord, max_coord);
 
       for(index_t j = 0; j < rset.n_cols; j++) {
 	rset(i, j) -= min_coord;
@@ -100,7 +100,7 @@ class DatasetScaler {
       double max_coord = total_range.hi;
       double width = max_coord - min_coord;
 
-      printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
+      printf("Dimension %"LI" range: [%g, %g]\n", i, min_coord, max_coord);
 
       for(index_t j = 0; j < rset.n_cols; j++) {
 	if(width > 0) {

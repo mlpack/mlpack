@@ -615,7 +615,7 @@ void SVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, std::strin
   }
   fclose(fp);
   /* calculate testing error */
-  printf( "\n*** %d out of %d misclassified ***\n", err_ct, testset.n_points() );
+  printf( "\n*** %"LI" out of %"LI" misclassified ***\n", err_ct, testset.n_points() );
   printf( "*** Testing error is %f, accuracy is %f. ***\n", double(err_ct)/double(testset.n_points()), 1- double(err_ct)/double(testset.n_points()) );
   //fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", predictedvalue_filename.c_str());
 }
@@ -653,7 +653,7 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, std::string model_filename) {
 
   if (learner_typeid == 0) { // for SVM_C
     fprintf(fp, "svm_type SVM_C\n");
-    fprintf(fp, "total_num_sv %d\n", total_num_sv_);
+    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
     fprintf(fp, "num_classes %d\n", num_classes_);
     // save labels
     fprintf(fp, "labels ");
@@ -663,27 +663,27 @@ void SVM<TKernel>::SaveModel_(int learner_typeid, std::string model_filename) {
     // save support vector info
     fprintf(fp, "sv_list_startpos ");
     for (i =0; i < num_classes_; i++)
-      fprintf(fp, "%d ", sv_list_startpos_[i]);
+      fprintf(fp, "%lu ", sv_list_startpos_[i]);
     fprintf(fp, "\n");
     fprintf(fp, "sv_list_ct ");
     for (i =0; i < num_classes_; i++)
-      fprintf(fp, "%d ", sv_list_ct_[i]);
+      fprintf(fp, "%lu ", sv_list_ct_[i]);
     fprintf(fp, "\n");
   }
   else if (learner_typeid == 1) { // for SVM_R
     fprintf(fp, "svm_type SVM_R\n");
-    fprintf(fp, "total_num_sv %d\n", total_num_sv_);
+    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
     fprintf(fp, "sv_index ");
     for (i = 0; i < total_num_sv_; i++)
-      fprintf(fp, "%d ", sv_index_[i]);
+      fprintf(fp, "%lu ", sv_index_[i]);
     fprintf(fp, "\n");
   }
   else if (learner_typeid == 2) { // for SVM_DE
     fprintf(fp, "svm_type SVM_DE\n");
-    fprintf(fp, "total_num_sv %d\n", total_num_sv_);
+    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
     fprintf(fp, "sv_index ");
     for (i = 0; i < total_num_sv_; i++)
-      fprintf(fp, "%d ", sv_index_[i]);
+      fprintf(fp, "%lu ", sv_index_[i]);
     fprintf(fp, "\n");
   }
 
@@ -754,7 +754,7 @@ void SVM<TKernel>::LoadModel_(int learner_typeid, std::string model_filename) {
 	learner_typeid_ = 2;
     }
     else if (strcmp(cmd, "total_num_sv")==0) {
-      fscanf(fp,"%d",&total_num_sv_);
+      fscanf(fp,"%"LI,&total_num_sv_);
     }
     // for SVM_C
     else if (strcmp(cmd, "num_classes")==0) {

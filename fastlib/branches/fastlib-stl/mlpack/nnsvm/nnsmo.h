@@ -51,7 +51,7 @@ class NNSMO {
     dataset_ = &dataset_in;
     
     n_data_ = matrix_.n_cols;
-    budget_ = min(budget_in, n_data_);
+    budget_ = min(budget_in, (int) n_data_);
 
     alpha_.zeros(n_data_);
     sum_alpha_ = 0;
@@ -212,7 +212,7 @@ void NNSMO<TKernel>::Train() {
 
   //compute the final objective value
   double obj = sum_alpha_ - w_square_sum_/2;
-  fprintf(stderr, "iter=%d, %d, %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
+  fprintf(stderr, "iter=%d, %"LI", %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
 }
 
 //NNSMO training iteration
@@ -292,7 +292,7 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   
   if (l >= u - NNSMO_ZERO) {
     // TODO: might put in some tolerance
-    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
     return -1;
   }
@@ -367,7 +367,7 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   if (l >= u - NNSMO_ZERO) {
     // TODO: might put in some tolerance
-    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%f", l, u, r, c_, s);
+    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
     return false;
   }

@@ -92,7 +92,7 @@ void AssertSameMatrix(const mat& a, const mat& b) {
   
   for (index_t ri = 0; ri < r; ri++) {
     for (index_t ci = 0; ci < c; ci++) {
-      DEBUG_ASSERT_MSG(a(ri, ci) == b(ri, ci), "(%d, %d): %f != %f",
+      DEBUG_ASSERT_MSG(a(ri, ci) == b(ri, ci), "(%"LI", %"LI"): %f != %f",
           ri, ci, a(ri, ci), b(ri, ci));
     }
   }

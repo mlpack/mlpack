@@ -199,11 +199,11 @@ class DualTreeBoruvka {
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
-        "Indices are equal in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
+        "Indices are equal in DualTreeBoruvka.add_edge(%"LI", %"LI", %f)\n", 
         e1, e2, distance);
     
     DEBUG_ASSERT_MSG((distance >= 0.0), 
-        "Negative distance input in DualTreeBoruvka.add_edge(%d, %d, %f)\n", 
+        "Negative distance input in DualTreeBoruvka.add_edge(%"LI", %"LI", %f)\n", 
         e1, e2, distance);
     
     if (e1 < e2) {
@@ -649,7 +649,7 @@ class DualTreeBoruvka {
       
       Cleanup_();
     
-      VERBOSE_ONLY(printf("number_of_loops = %d\n", number_of_loops_));
+      VERBOSE_ONLY(printf("number_of_loops = %"LI"\n", number_of_loops_));
     }
     
     fx_timer_stop(module_, "MST_computation");
