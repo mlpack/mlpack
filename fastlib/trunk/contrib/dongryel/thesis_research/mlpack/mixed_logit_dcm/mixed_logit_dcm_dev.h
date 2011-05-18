@@ -28,7 +28,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
     return 0.0;
   }
   else {
-    return GradientErrorBySampling_(arguments_in, sample);
+    return GradientErrorByFormula_(arguments_in, sample);
   }
 }
 
@@ -39,7 +39,41 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
 
   // This function will ignore the cross-term of Formula (2.1) in
   // error_grad_calc.pdf since it is too expensive to compute.
-  return 0.0;
+  double error = 0.0;
+  arma::mat gradient_error_per_person;
+  arma::vec vector;
+  arma::vec simulated_choice_probability_grad;
+  vector.set_size(table_.num_parameters() + 1);
+  for(int i = 0; i < table_.num_people(); i++) {
+
+    // Get the contribution of the current person.
+    sample.gradient_error_quantities(i, &gradient_error_per_person);
+
+    // Get the simulated choice probability.
+    double simulated_choice_prob =
+      sample.simulated_choice_probability(i);
+
+    // Get the simulated choice probability gradient.
+    sample.simulated_choice_probability_gradient(
+      i, &simulated_choice_probability_grad);
+
+    // Fill out the vector.
+    vector[0] = -2.0 / std::pow(simulated_choice_prob, 3) *
+                arma::dot(
+                  simulated_choice_probability_grad,
+                  simulated_choice_probability_grad);
+    double factor = 2.0 / std::pow(simulated_choice_prob, 2);
+    for(int j = 0; j < table_.num_parameters(); j++) {
+      vector[j + 1] = factor * simulated_choice_probability_grad[j];
+    }
+
+    error +=
+      arma::as_scalar(
+        arma::trans(vector) * gradient_error_per_person * vector);
+  }
+
+  error /= static_cast<double>(std::pow(table_.num_people(), 4));
+  return error;
 }
 
 template<typename TableType, typename DistributionType>
