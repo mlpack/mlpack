@@ -301,6 +301,13 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
           ceil(
             tmp_vector[i] -
             first_sample->num_integration_samples(person_index))));
+    if(num_additional_samples +
+        first_sample->num_integration_samples(person_index) >=
+        arguments_in.max_num_integration_samples_per_person_) {
+
+      // No more sample can be added.
+      num_additional_samples = 0;
+    }
 
     // Add samples.
     //std::cerr << "  Adding " << num_additional_samples << " to Person " <<
