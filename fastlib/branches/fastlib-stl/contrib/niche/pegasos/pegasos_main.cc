@@ -22,13 +22,12 @@ int main(int argc, char* argv[]) {
 
   double lambda = fx_param_double_req(NULL, "lambda");
   u32 n_iterations = fx_param_int_req(NULL, "n_iterations");
+  u32 mini_batch_size = fx_param_int(NULL, "k", 1);
   
   const char* data_fullpath = 
     fx_param_str_req(NULL, "data");
   const char* labels_fullpath = 
     fx_param_str_req(NULL, "labels");
-  
-  
   
   
   mat X;
@@ -39,7 +38,7 @@ int main(int argc, char* argv[]) {
   
   
   Pegasos pegasos;
-  pegasos.Init(X, y, lambda, n_iterations);
+  pegasos.Init(X, y, lambda, n_iterations, mini_batch_size);
   
   pegasos.DoPegasos();
   
