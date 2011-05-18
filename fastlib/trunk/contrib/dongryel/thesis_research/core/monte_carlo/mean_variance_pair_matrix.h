@@ -290,6 +290,17 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Returns the sample mean variances in a matrix form.
+     */
+    void sample_mean_variances(arma::mat *point_out) const {
+      point_out->set_size(n_rows_, n_cols_);
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          point_out->at(i, j) = this->get(i, j).sample_mean_variance();
+        }
+      }
+    }
+
     /** @brief Returns the sample means in a matrix form.
      */
     void sample_means(arma::mat *point_out) const {
