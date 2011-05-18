@@ -13,7 +13,8 @@ set(SOURCES
    lars_impl.h
    lcc.h
    lcc_impl.h
-   svm.h
+   #svm.h
+   pegasos.h
 )
 
 # add directory name to sources
@@ -79,4 +80,3 @@ target_link_libraries(mnist_dlcc
     mlpack
     fastlib
 )
-

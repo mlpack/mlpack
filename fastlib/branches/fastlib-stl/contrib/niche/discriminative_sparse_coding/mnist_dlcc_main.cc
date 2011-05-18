@@ -8,7 +8,7 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
-#include <mlpack/svm/svm.h>
+//#include <mlpack/svm/svm.h>
 //#include <fastlib/math/statistics.h>
 
 //#include <fastlib/base/arma_compat.h>
@@ -17,6 +17,7 @@
 #include "discr_sparse_coding.h"
 #include <contrib/niche/local_coordinate_coding/lcc.h>
 
+#include <contrib/niche/pegasos/pegasos.h>
 
 
 using namespace arma;
@@ -28,6 +29,7 @@ using namespace std;
 void Train(u32 digit_1, u32 digit_2,
 	   u32 n_atoms, double lambda_1, double lambda_2, double lambda_w,
 	   u32 n_iterations,
+	   u32 n_pegasos_iterations,
 	   const char* initial_dictionary_fullpath,
 	   const char* data_dir,
 	   const char* results_dir) {
@@ -90,6 +92,45 @@ void Train(u32 digit_1, u32 digit_2,
   mat V;
   lcc.GetCoding(V);
   
+  
+  {
+    vec predictions = trans(trans(w) * V);
+    vec y_hat = vec(n_points);
+    for(u32 i = 0; i < n_points; i++) {
+      if(predictions(i) != 0) {
+	y_hat(i) =  predictions(i) / fabs(predictions(i));
+      }
+      else {
+	y_hat(i) = 0;
+      }
+    }
+    
+    //mat compare = join_rows(y, y_hat);
+    //compare.print("y y_hat");
+    
+    double error = 0;
+    for(u32 i = 0; i < n_points; i++) {
+      if(y(i) != y_hat(i)) {
+	error++;
+      }
+    }
+    error /= ((double)n_points);
+    printf("Pre-pegasos error: %f\n", error);
+  }
+  
+  
+  
+  // now that we have a coding, run Pegasos to optimize w
+  Pegasos pegasos;
+  printf("n_pegasos_iterations = %d\n",
+	 n_pegasos_iterations);
+  pegasos.Init(V, y, lambda_w, n_pegasos_iterations);
+  pegasos.DoPegasos();
+  w = pegasos.GetW();
+  
+  
+  
+  
   //mat synthesized_X = D * V;
   
   if(strlen(results_dir) == 0) {
@@ -127,8 +168,8 @@ void Train(u32 digit_1, u32 digit_2,
     }
   }
   
-  mat compare = join_rows(y, y_hat);
-  compare.print("y y_hat");
+  //mat compare = join_rows(y, y_hat);
+  //compare.print("y y_hat");
   
   double error = 0;
   for(u32 i = 0; i < n_points; i++) {
@@ -137,7 +178,7 @@ void Train(u32 digit_1, u32 digit_2,
     }
   }
   error /= ((double)n_points);
-  printf("error: %f\n", error);
+  printf("Pegasos error: %f\n", error);
 
   free(data_fullpath);
 
@@ -174,6 +215,8 @@ int main(int argc, char* argv[]) {
   u32 n_atoms = fx_param_int_req(NULL, "n_atoms");
 
   u32 n_iterations = fx_param_int(NULL, "n_iterations", 20000);
+  u32 n_pegasos_iterations = 
+    fx_param_int(NULL, "n_pegasos_iterations", n_iterations);
   
   //u32 n_LCC_iterations = 30;
   
@@ -192,6 +235,7 @@ int main(int argc, char* argv[]) {
   Train(digit_1, digit_2,
 	n_atoms, lambda_1, lambda_2, lambda_w,
 	n_iterations,
+	n_pegasos_iterations,
 	initial_dictionary_fullpath,
 	data_dir,
 	results_dir);
