@@ -51,7 +51,7 @@ IO::IO(std::string& optionsName) :
   return;
 }
 
-IO::IO(const IO::IO& other) : desc(other.desc){
+IO::IO(const IO& other) : desc(other.desc){
   return;
 }
 
