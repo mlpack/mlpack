@@ -271,15 +271,28 @@ class MixedLogitDCMSampling {
       return num_integration_samples_[person_index];
     }
 
-    int max_num_integration_samples() const {
-      int max_samples = 0;
+    /** @brief Returns the minimum and the maximum number of samples
+     *         collected.
+     */
+    void num_integration_samples_stat(
+      int *min_num_samples, int *max_num_samples,
+      double *avg_num_samples, double *variance) const {
+
+      core::monte_carlo::MeanVariancePair accum;
+      *min_num_samples = std::numeric_limits<int>::max();
+      *max_num_samples = 0;
       for(int i = 0; i < this->num_active_people(); i++) {
         int person_index = dcm_table_->shuffled_indices_for_person(i);
-        max_samples = std::max(
-                        max_samples,
-                        this->num_integration_samples(person_index));
+        *min_num_samples = std::min(
+                             *min_num_samples,
+                             this->num_integration_samples(person_index));
+        *max_num_samples = std::max(
+                             *max_num_samples,
+                             this->num_integration_samples(person_index));
+        accum.push_back(this->num_integration_samples(person_index));
       }
-      return max_samples;
+      *avg_num_samples = accum.sample_mean();
+      *variance = accum.sample_variance();
     }
 
     /** @brief Returns the associated discrete choice model table.
@@ -514,6 +527,7 @@ class MixedLogitDCMSampling {
      */
     void Init(
       DCMTableType *dcm_table_in,
+      const arma::vec &initial_parameters_in,
       int num_active_people_in,
       int initial_num_integration_samples_in) {
 
@@ -521,8 +535,7 @@ class MixedLogitDCMSampling {
       num_active_people_ = num_active_people_in;
 
       // Initialize the associated parameter.
-      parameters_.zeros(dcm_table_in->num_parameters());
-      parameters_.fill(1.0);
+      parameters_ = initial_parameters_in;
 
       // This maintains the number of integration samples collected
       // for each person.
