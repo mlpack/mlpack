@@ -72,7 +72,9 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
         arma::trans(vector) * gradient_error_per_person * vector);
   }
 
-  error /= static_cast<double>(std::pow(table_.num_people(), 4));
+  error /= static_cast<double>(
+             std::pow(
+               static_cast<double>(table_.num_people()), 4));
   return error;
 }
 
