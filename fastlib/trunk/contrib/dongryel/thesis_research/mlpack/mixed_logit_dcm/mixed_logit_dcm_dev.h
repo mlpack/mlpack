@@ -269,6 +269,8 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   const SamplingType &second_sample,
   SamplingType *first_sample) const {
 
+  std::cerr << "    Updating the number of samples...\n";
+
   std::vector<double> tmp_vector(first_sample->num_active_people());
   double total_sample_variance = 0.0;
 
@@ -433,12 +435,31 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
         p, iterate_function_value, next_iterate_function_value,
         gradient, hessian, &decrease_predicted_by_model);
 
+    // Compute the new gradient and do the approximate Hessian update.
+    arma::vec new_gradient;
+    next_iterate->NegativeSimulatedLogLikelihoodGradient(&new_gradient);
+    arma::mat new_hessian;
+    if(arguments_in.hessian_update_method_ == "bfgs") {
+      core::optimization::QuasiNewtonHessianUpdate::BFGSUpdate(
+        hessian, iterate->parameters(), next_iterate->parameters(),
+        gradient, new_gradient, &new_hessian);
+      hessian = new_hessian;
+    }
+    else if(arguments_in.hessian_update_method_ == "sr1") {
+      core::optimization::QuasiNewtonHessianUpdate::SymmetricRank1Update(
+        hessian, iterate->parameters(), next_iterate->parameters(),
+        gradient, new_gradient, &new_hessian);
+      hessian = new_hessian;
+    }
+
     std::cerr << "The current function value (with " <<
               iterate->num_active_people() << " people: " <<
               iterate_function_value << "; ";
     std::cerr << "The function value at the next iterate: " <<
               next_iterate_function_value << "; ";
     std::cerr << "The model reduction ratio: " << model_reduction_ratio << "\n";
+    std::cerr << "The decrease predicted by the trust region model: " <<
+              decrease_predicted_by_model << "\n";
 
     // Compute the data sample error and the integration sample error.
     double data_sample_error = this->DataSampleError_(*iterate, *next_iterate);
@@ -546,29 +567,13 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
 
       std::cerr << "  Accepting the trust region iterate...\n";
 
-      // Compute the new gradient.
-      arma::vec new_gradient;
-      next_iterate->NegativeSimulatedLogLikelihoodGradient(&new_gradient);
-      arma::mat new_hessian;
-      if(arguments_in.hessian_update_method_ == "bfgs") {
-        core::optimization::QuasiNewtonHessianUpdate::BFGSUpdate(
-          hessian, iterate->parameters(), next_iterate->parameters(),
-          gradient, new_gradient, &new_hessian);
-        hessian = new_hessian;
-      }
-      else if(arguments_in.hessian_update_method_ == "sr1") {
-        core::optimization::QuasiNewtonHessianUpdate::SymmetricRank1Update(
-          hessian, iterate->parameters(), next_iterate->parameters(),
-          gradient, new_gradient, &new_hessian);
-        hessian = new_hessian;
-      }
-
       // Accept the next iterate.
       delete iterate;
       iterate = next_iterate;
 
       // Update the gradient and the hessian.
       gradient = new_gradient;
+
       if(arguments_in.hessian_update_method_ == "exact") {
         iterate->NegativeSimulatedLogLikelihoodHessian(&hessian);
       }
