@@ -1,5 +1,10 @@
-#ifndef FL_LITE_MLPACK_KDE_KDE_LSCV_FUNCTION_H
-#define FL_LITE_MLPACK_KDE_KDE_LSCV_FUNCTION_H
+/** @file kde_lscv_function.h
+ *
+ *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ */
+
+#ifndef MLPACK_KDE_KDE_LSCV_FUNCTION_H
+#define MLPACK_KDE_KDE_LSCV_FUNCTION_H
 
 #include "fastlib/math/fl_math.h"
 #include "fastlib/monte_carlo/multitree_monte_carlo_dev.h"
