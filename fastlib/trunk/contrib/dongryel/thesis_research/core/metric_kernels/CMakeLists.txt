@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 set(SOURCES
   kernel.h
   lmetric.h
+  weighted_lmetric.h
 )
 
 set(DIR_SRCS)
