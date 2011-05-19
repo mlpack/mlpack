@@ -64,6 +64,11 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The percentage of the maximum average integration sample "
         "to start with."
       )(
+        "initial_parameters_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL The file containing the initial parameter values to start "
+        "the optimization on."
+      )(
         "integration_sample_error_threshold",
         boost::program_options::value<double>()->default_value(1e-9),
         "OPTIONAL The threshold for determining whether the integration sample "
@@ -259,6 +264,13 @@ class MixedLogitDCMArgumentParser {
       // Parse the initial integration sample rate.
       arguments_out->initial_integration_sample_rate_ =
         vm[ "initial_integration_sample_rate" ].as<double>();
+
+      // Parse the initial parameter values, if available.
+      if(vm.count("initial_parameters_in") > 0) {
+        arguments_out->initial_parameters_table_ = new TableType();
+        arguments_out->initial_parameters_table_->Init(
+          vm["initial_parameters_in"].as<std::string>());
+      }
 
       // Parse the gradient norm threshold.
       arguments_out->gradient_norm_threshold_ =

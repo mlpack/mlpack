@@ -305,8 +305,11 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
         first_sample->num_integration_samples(person_index) >=
         arguments_in.max_num_integration_samples_per_person_) {
 
-      // No more sample can be added.
-      num_additional_samples = 0;
+      // Limit the number of samples that can be added.
+      num_additional_samples =
+        std::max(
+          arguments_in.max_num_integration_samples_per_person_ -
+          first_sample->num_integration_samples(person_index), 0);
     }
 
     // Add samples.
@@ -353,8 +356,21 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
   arma::vec gradient;
   arma::mat hessian;
   SamplingType *iterate = new SamplingType();
+
+  // Copy the starting parameter values.
+  arma::vec starting_point;
+  starting_point.set_size(table_.num_parameters());
+  starting_point.fill(1.0);
+  if(arguments_in.initial_parameters_table_ != NULL) {
+    for(int i = 0; i < table_.num_parameters(); i++) {
+      starting_point[i] =
+        arguments_in.initial_parameters_table_->data().get(0, i);
+    }
+  }
+
   iterate->Init(
-    &table_, initial_num_data_samples, initial_num_integration_samples);
+    &table_, starting_point,
+    initial_num_data_samples, initial_num_integration_samples);
   iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
 
   // Depending on the selected Hessian update scheme, compute it
@@ -385,8 +401,18 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
   int num_iterations = 0;
   do {
 
-    std::cerr << "\nThe current iterate uses " <<
-              iterate->max_num_integration_samples() << " per person:\n";
+    int min_num_samples;
+    int max_num_samples;
+    double avg_num_samples;
+    double variance;
+    iterate->num_integration_samples_stat(
+      &min_num_samples, &max_num_samples, &avg_num_samples, &variance);
+    std::cerr << "\nThe current iterate uses the minimum of " <<
+              min_num_samples << " samples per person and";
+    std::cerr << " and the maximum of " << max_num_samples <<
+              " samples per person and the average of " <<
+              avg_num_samples << " and the sample variance of " <<
+              variance << "\n";
     iterate->parameters().print();
 
     // Obtain the step direction by solving Equation 4.3

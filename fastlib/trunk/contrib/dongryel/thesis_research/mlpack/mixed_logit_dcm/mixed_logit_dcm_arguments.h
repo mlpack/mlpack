@@ -48,6 +48,10 @@ class MixedLogitDCMArguments {
      */
     TableType *test_num_alternatives_table_;
 
+    /** @brief Stores the initial parameter values to start with.
+     */
+    TableType *initial_parameters_table_;
+
     /** @brief The pointer to the distribution that generates each
      *         $\beta$ attribute vector. This could be a Gaussian
      *         distribution for instance.
@@ -111,6 +115,7 @@ class MixedLogitDCMArguments {
       test_attribute_table_ = NULL;
       test_decisions_table_ = NULL;
       test_num_alternatives_table_ = NULL;
+      initial_parameters_table_ = NULL;
       initial_dataset_sample_rate_ = 0;
       initial_integration_sample_rate_ = 0;
       gradient_norm_threshold_ = 0;
@@ -138,6 +143,9 @@ class MixedLogitDCMArguments {
         delete test_num_alternatives_table_;
         test_num_alternatives_table_ = NULL;
       }
+
+      delete initial_parameters_table_;
+      initial_parameters_table_ = NULL;
     }
 };
 }
