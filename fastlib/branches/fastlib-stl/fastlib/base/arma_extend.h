@@ -11,9 +11,17 @@
 #ifndef __ARMA_EXTEND_H
 #define __ARMA_EXTEND_H
 
+namespace arma {
+  #include "arma_extend/typedef.hpp" // This has to come first.
+}
+
 #include <armadillo>
 
 namespace arma {
+  // 64-bit support
+  #include "arma_extend/traits.hpp"
+  #include "arma_extend/promote_type.hpp"
+
   // ccov()
   #include "arma_extend/op_ccov_proto.hpp"
   #include "arma_extend/op_ccov_meat.hpp"
