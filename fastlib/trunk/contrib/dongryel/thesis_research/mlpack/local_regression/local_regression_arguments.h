@@ -15,7 +15,7 @@ namespace local_regression {
 
 /** @brief The argument list for the local regression.
  */
-template<typename TableType>
+template<typename TableType, typename MetricType>
 class LocalRegressionArguments {
   public:
 
@@ -50,6 +50,10 @@ class LocalRegressionArguments {
     /** @brief The relative error.
      */
     double relative_error_;
+
+    /** @brief The metric used for computing the distances.
+     */
+    MetricType metric_;
 
   public:
 

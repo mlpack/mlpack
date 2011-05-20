@@ -13,17 +13,14 @@
 namespace mlpack {
 namespace local_regression {
 
-template<typename TableType, typename KernelType>
-void LocalRegression<TableType, KernelType>::Init(
+template<typename TableType, typename KernelType, typename MetricType>
+void LocalRegression<TableType, KernelType, MetricType>::Init(
   ArgumentType &arguments_in) {
 
-  // Initialize the table for storing/accessing the attribute vector
-  // for each person.
-  table_.Init(arguments_in);
 }
 
-template<typename TableType, typename KernelType>
-void LocalRegression<TableType, KernelType>::Compute(
+template<typename TableType, typename KernelType, typename MetricType>
+void LocalRegression<TableType, KernelType, MetricType>::Compute(
   const ArgumentType &arguments_in,
   mlpack::local_regression::LocalRegressionResult *result_out) {
 

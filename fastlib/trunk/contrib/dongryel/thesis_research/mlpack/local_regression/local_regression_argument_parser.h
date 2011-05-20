@@ -9,6 +9,7 @@
 #define MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_ARGUMENT_PARSER_H
 
 #include <boost/program_options.hpp>
+#include "core/table/transform.h"
 #include "mlpack/local_regression/local_regression_arguments.h"
 
 namespace mlpack {
@@ -129,11 +130,18 @@ class LocalRegressionArgumentParser {
       return false;
     }
 
-    template<typename TableType>
-    static void ParseArguments(
+    static bool ConstructBoostVariableMap(
+      int argc, char *argv[],
+      boost::program_options::variables_map *vm) {
+
+      return false;
+    }
+
+    template<typename TableType, typename MetricType>
+    static bool ParseArguments(
       const std::vector<std::string> &args,
       mlpack::local_regression::LocalRegressionArguments <
-      TableType > *arguments_out) {
+      TableType, MetricType > *arguments_out) {
 
       // Construct the Boost variable map.
       boost::program_options::variables_map vm;
@@ -141,14 +149,26 @@ class LocalRegressionArgumentParser {
         exit(0);
       }
 
-      ParseArguments(vm, arguments_out);
+      return ParseArguments(vm, arguments_out);
     }
 
     template<typename TableType>
-    static void ParseArguments(
+    static void PrescaleTable_(
+      const std::string &prescale_option, TableType *table) {
+
+      if(prescale_option == "hypercube") {
+        core::table::UnitHypercube::Transform(table);
+      }
+      else if(prescale_option == "standardize") {
+        core::table::Standardize::Transform(table);
+      }
+    }
+
+    template<typename TableType, typename MetricType>
+    static bool ParseArguments(
       boost::program_options::variables_map &vm,
       mlpack::local_regression::LocalRegressionArguments <
-      TableType > *arguments_out) {
+      TableType, MetricType > *arguments_out) {
 
       // Parse bandwidth.
       arguments_out->bandwidth_ =  vm["bandwidth"].as<double>();
@@ -167,7 +187,7 @@ class LocalRegressionArgumentParser {
 
       // Parse the prescale option.
       arguments_out->prescale_ = vm["prescale"].as<std::string>();
-      std::cerr << "The prescale option: " << arguments_out->prescale << "\n";
+      std::cerr << "The prescale option: " << arguments_out->prescale_ << "\n";
 
       // Read in the reference set.
       arguments_out->reference_table_ = new TableType();
@@ -176,34 +196,58 @@ class LocalRegressionArgumentParser {
       std::cerr << "Read in " << arguments_out->reference_table_->n_entries() <<
                 " points.\n";
 
+      // Scale the dataset.
+      PrescaleTable_(
+        vm["prescale"].as<std::string>(), arguments_out->reference_table_);
+      std::cout << "Scaled the dataset with the option: " <<
+                vm["prescale"].as<std::string>() << "\n";
+
+      std::cout << "Building the reference tree.\n";
+      arguments_out->reference_table_->IndexData(
+        arguments_out->metric_, arguments_out->leaf_size_);
+      std::cout << "Finished building the reference tree.\n";
+
       // Read in the optional query set.
       if(vm.count("queries_in") > 0) {
-        arguments_out->queries_in_ = new TableType();
-        arguments_out->queries_in_->Init(vm["queries_in"].as<std::string>());
-        std::cerr << "Read in " << arguments_out->queries_in->n_entries() <<
+        arguments_out->query_table_ = new TableType();
+        arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
+        std::cerr << "Read in " << arguments_out->query_table_->n_entries() <<
                   " points.\n";
+
+        // Scale the dataset.
+        PrescaleTable_(
+          vm["prescale"].as<std::string>(), arguments_out->query_table_);
+        std::cout << "Scaled the dataset with the option: " <<
+                  vm["prescale"].as<std::string>() << "\n";
+
+        std::cout << "Building the query tree.\n";
+        arguments_out->query_table_->IndexData(
+          arguments_out->metric_, arguments_out->leaf_size_);
+        std::cout << "Finished building the query tree.\n";
       }
       else {
-        arguments_out->queries_in_ = arguments_out->references_in_;
+        arguments_out->query_table_ = arguments_out->reference_table_;
       }
 
       // Read in the relative error.
       arguments_out->relative_error_ = vm["relative_error"].as<double>();
       std::cerr << "The relative error requested: " <<
                 arguments_out->relative_error_ << "\n";
+
+      return false;
     }
 
-    template<typename TableType>
-    static void ParseArguments(
+    template<typename TableType, typename MetricType>
+    static bool ParseArguments(
       int argc,
       char *argv[],
       mlpack::local_regression::LocalRegressionArguments <
-      TableType > *arguments_out) {
+      TableType, MetricType > *arguments_out) {
 
       // Convert C input to C++; skip executable name for Boost.
       std::vector<std::string> args(argv + 1, argv + argc);
 
-      ParseArguments(args, arguments_out);
+      return ParseArguments(args, arguments_out);
     }
 };
 }
