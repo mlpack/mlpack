@@ -1,3 +1,9 @@
+#ifndef MLPACK_IO_IO_IMPL_H
+#define MLPACK_IO_IO_IMPL_H
+
+//Include option.h here because it requires IO but is also templated
+#include "option.h"
+
 /* Adds an option and global variable to IO */
 template<typename T>
 void IO::Add(const char* identifier, 
@@ -58,33 +64,4 @@ T& IO::GetValue(const char* identifier) {
   return *boost::any_cast<T>(&gmap[key]);
 }
 
-
-/* This class is used to facilitate easy addition of options to the program. 
-*/
-template<typename N>
-class Option {
-  //Base add an option
-  public:
-    Option(bool ignoreTemplate, 
-           const char* identifier, 
-           const char* description, 
-           const char* parent=NULL, 
-           bool required=false) {
-
-      if(ignoreTemplate)
-        IO::Add(identifier, description, parent, required);
-      else
-        IO::Add<N>(identifier, description, parent, required);
-
-    }   
-    
-    Option(const char* identifier, 
-           const char* description, 
-           const char* parent=NULL, 
-           bool required=false) {
-
-      IO::AddComplexType<N>(identifier, description, parent);
-
-  }   
-};  
-
+#endif 

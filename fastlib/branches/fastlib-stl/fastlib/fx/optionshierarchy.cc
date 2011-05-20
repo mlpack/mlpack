@@ -68,22 +68,27 @@ void OptionsHierarchy::AppendNode(string& pathname, string& tname,
   children[name].AppendNode(path, tname, description, data);
 }  
 
-/* Returns the node with the specified pathname
-  UNUSED, but lets keep it just in case... */
-void OptionsHierarchy::FindNode(string& pathname) {
-  ChildMap::iterator iter;
-  for (iter = children.begin(); iter != children.end(); iter++)
-    iter->second.FindNodeHelper(pathname, pathname);  
+/* Returns the data associated with this node. */
+OptionsData OptionsHierarchy::GetNodeData() {
+  return nodeData;
 }
 
-void OptionsHierarchy::FindNodeHelper(string& pathname, string& target) {
+/* Returns the node with the specified pathname */
+OptionsHierarchy* OptionsHierarchy::FindNode(string& pathname) {
+  return FindNodeHelper(pathname, pathname);  
+}
+
+OptionsHierarchy* OptionsHierarchy::FindNodeHelper(string& pathname, 
+                                                  string& target) {
   string name = GetName(pathname);
   string path = GetPath(pathname);
   //If the node is there, recurse to it.
-  if (pathname.find('/') != pathname.npos && children.count(path))
-    children[path].FindNodeHelper(name, target);
-  if (target.compare(nodeData.node) == 0)
-    PrintNodeHelp();
+  if (path.length() != 0)
+    return children[name].FindNodeHelper(path, target);
+  if (name.compare(nodeData.node) == 0)
+   return this;
+  
+  return NULL;   
 }
 
 /* Returns the path in a pathname */
@@ -114,9 +119,7 @@ void OptionsHierarchy::PrintAllHelp() {
 }
 
 void OptionsHierarchy::PrintAll() {
-  cout << "Print" << endl;
   PrintNode(); 
-  cout << "Loop" << endl;
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     iter->second.PrintAll();

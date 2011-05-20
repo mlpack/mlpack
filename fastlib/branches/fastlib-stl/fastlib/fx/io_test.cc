@@ -7,26 +7,64 @@
 #include <sys/time.h>
 #include <typeinfo>
 
+#define DEFAULT_INT 42
+
 using namespace mlpack;
+PARAM_INT("gint", "global desc", "global");
 
 
-//PARAM_CUSTOM(int, "testint", "blarg");
-PARAM_INT("testint", "cool", "");
-//PARAM_CUSTOM(std::string, "str", "shiazer");
-PARAM_INT("tmp", "cool, dude", "allnn");
-PARAM_BOOL("perm", "not cool", "allknn");
-//TIMER("timer", "desc", "allnn");
+bool TestIO();
+bool TestHierarchy();
+bool TestOption();
 
 int main(int argc, char** argv) {
-  IO::StartTimer("allnn/timer");
-  IO::ParseCommandLine(argc, argv);
-  IO::StopTimer("allnn/timer");
-  IO::GetValue<int>("testint") = 42;
+  IO::GetValue<int>("global/gint") = DEFAULT_INT;
 
-  // Some output
-  IO::Debug << "A test of debugging output." << std::endl;
-  IO::Info << "A test of info output." << std::endl;
-  IO::Warn << "A test of warning output (" << 7 << ")." << std::endl;
-  IO::Fatal << "A test of fatal output." << std::endl;
+  if (TestIO())
+    IO::Info << "Test IO Succeeded." << std::endl;
+  else
+    IO::Fatal << "Test IO Failed." << std::endl;
+
+  if (TestHierarchy())
+    IO::Info << "Test Hierarchy Passed." << std::endl;
+  else
+    IO::Fatal << "Test Hierarchy Failed." << std::endl;
+
+  if (TestOption())
+    IO::Info << "Test Option Passed." << std::endl;
+  else
+    IO::Fatal << "Test Option Failed." << std::endl;
+
 }
 
+
+
+bool TestIO() {
+  return false;
+}
+
+bool TestHierarchy() {
+  return false;
+}
+
+bool TestOption() {
+  //This test will involve creating an option, and making sure IO reflects this.
+  PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
+  IO::GetValue<int>("test_parent/test");
+  
+  //Does IO reflect this?
+  if (!IO::CheckValue("test_parent/test"))
+    return false;
+  IO::Debug << "CheckValue passed." << std::endl;
+
+  if (IO::GetDescription("test_parent/test").compare(std::string("test desc")) != 0)
+    return false;
+
+  IO::Debug << "GetDescription passed." << std::endl;
+
+  if (IO::GetValue<int>("test_parent/test") != DEFAULT_INT)
+    return false;
+
+  IO::Debug << "GetValuePassed." << std::endl;
+  return true;
+}
