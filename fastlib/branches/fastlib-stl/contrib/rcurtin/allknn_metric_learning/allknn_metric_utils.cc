@@ -12,6 +12,11 @@ using namespace mlpack;
 using namespace mlpack::allknn;
 using namespace mlpack::allknn::metric;
 
+// Utility function for std::pair<int, double> sorting.
+bool sortPairedVector(std::pair<int, double> lhs, std::pair<int, double> rhs) {
+  return lhs.second < rhs.second;
+}
+
 /***
  * Take a majority vote among the labels of neighbors to determine the class of
  * a point.  The only parameter is the list of sorted neighbor labels.  The
@@ -59,6 +64,49 @@ int mlpack::allknn::metric::ClassifyKNN(arma::vec& neighbors) {
   }
 
   return max_index;
+}
+
+/***
+ * Given a new weighting vector, estimate the new classification score.  The
+ * resultant neighbors list and distance list from the AllkNN class are taken as
+ * parameters.  The returned integer is the number of correctly classified
+ * points.
+ *
+ * @param input Matrix of input points 
+ * @param neighbors List of calculated neighbors (length n_points * knns)
+ * @param distances List of calculated distances (length n_points * knns)
+ * @param labels List of correct classes of points (length n_points)
+ * @param knns Value of k used in AllkNN calculation
+ * @param score Number of neighbors to use for scoring ( <= knns )
+ * @return Number of correctly classified points
+ */
+int mlpack::allknn::metric::EstimateScores(arma::mat& input,
+                                           arma::Col<index_t>& neighbors,
+                                           arma::vec& labels,
+                                           int knns,
+                                           int score) {
+  // We will not do this a particularly smart way, but instead we will just run
+  // the naive calculation on the nearest {knns} neighbors as calculated with a
+  // different weighting matrix, then resorting them and reclassifying.
+  int correct = 0;
+  for (int i = 0; i < input.n_cols; i++) {
+    std::vector<std::pair<int, double> > local_neighbors;
+    for (int j = 0; j < knns; j++) {
+      int ind = (i * knns) + j;
+      double dist = norm(input.col(i) - input.col(neighbors[ind]), 2);
+      local_neighbors.push_back(std::make_pair(neighbors[ind], dist));
+    }
+
+    // Now sort our new vector by distance (since the order has likely changed).
+    std::sort(local_neighbors.begin(), local_neighbors.end(), sortPairedVector);
+    arma::Col<index_t> tmp(local_neighbors.size());
+    for (int j = 0; j < local_neighbors.size(); j++)
+      tmp(j) = local_neighbors.at(j).first;
+
+    correct += EvaluateCorrect(tmp, knns, score, labels, i);
+  }
+
+  return correct;
 }
 
 /***

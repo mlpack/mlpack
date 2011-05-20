@@ -32,11 +32,15 @@ const fx_entry_doc allnn_timit_main[] = {
       "Output CSV file; weights are exported."},
   {"k", FX_REQUIRED, FX_INT, NULL, "k-nearest-neighbors value."},
   {"alpha", FX_PARAM, FX_DOUBLE, NULL, "Learning rate (default 0.7)."},
-  {"iterations", FX_PARAM, FX_INT, NULL, "Maximum iterations (default 50)."},
+  {"beta", FX_PARAM, FX_DOUBLE, NULL, "Learning slowdown rate (default 0.95)."},
+  {"max_iterations", FX_PARAM, FX_INT, NULL,
+      "Maximum iterations to find perturbation improvement (default 100000)."},
   {"input_weights", FX_PARAM, FX_STR, NULL,
       "File containing weights to start with (default is [1 ... 1]^T)"},
   {"initial_step", FX_PARAM, FX_DOUBLE, NULL,
       "Initial step size (default 1.0)"},
+  {"perturbation", FX_PARAM, FX_DOUBLE, NULL,
+      "Size of perturbations to use in gradient estimates (default 0.05)"},
   FX_ENTRY_DOC_DONE
 };
 
