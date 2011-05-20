@@ -19,7 +19,9 @@ namespace local_regression {
 
 /** @brief The definition of the fixed bandwidth local regression.
  */
-template<typename IncomingTableType, typename IncomingKernelType>
+template <
+typename IncomingTableType, typename IncomingKernelType,
+         typename IncomingMetricType >
 class LocalRegression {
   public:
 
@@ -29,10 +31,12 @@ class LocalRegression {
 
     typedef IncomingKernelType KernelType;
 
+    typedef IncomingMetricType MetricType;
+
     /** @brief The argument type.
      */
     typedef mlpack::local_regression::LocalRegressionArguments <
-    TableType > ArgumentType;
+    TableType, MetricType > ArgumentType;
 
   public:
 
