@@ -55,6 +55,8 @@
 #include "tree/statistic.h"
 #include "tree/kdtree.h"
 
+#include "base/arma_extend.h"
+
 #endif
 
 /**
