@@ -1,3 +1,11 @@
+/***
+ * @file optionshierarchy.h 
+ * @author Matthew Amidon 
+ * 
+ * This file holds the OptionsHierarchy class, which is a tree 
+ * of parameters.  Each node can have an arbitrary number of children. 
+ */
+
 #ifndef OPTIONSHIERARCHY_H
 #define OPTIONSHIERARCHY_H
 
@@ -35,24 +43,72 @@ class OptionsHierarchy {
    std::string GetPath(std::string& pathname);
   
   public:
-   /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
+   /* Constructs an empty OptionsHierarchy node. */
    OptionsHierarchy();
+
+   /*
+   * Constructs an empty OptionsHierarchy node
+   *
+   * @param name The name of the node to be created.
+   */
    OptionsHierarchy(const char* name);
+
+   /*
+   * Constructs an equivalent node to the given one.
+   *
+   * @param other The node to be copied 
+   */
    OptionsHierarchy(const OptionsHierarchy& other);
-   virtual ~OptionsHierarchy();
+   
+   /* 
+   * Destroys the node.
+   */
+   ~OptionsHierarchy();
   
-   /* Will never fail, as given paths are relative to current node
-      and will be generated if not found */
-   /* Also, we will insist on proper usage of C++ strings */
+   /* 
+   * Will never fail, as given paths are relative to current node
+   * and will be generated if not found.
+   * 
+   * @param pathname The full pathname of the given node, eg /foo/bar.
+   * @param tname A string unique to the type of the node.
+   */
    void AppendNode(std::string& pathname, std::string& tname);
+
+   /* 
+   * Will never fail, as given paths are relative to current node
+   * and will be generated if not found.
+   * 
+   * @param pathname The full pathname of the given node, eg /foo/bar.
+   * @param tname A string unique to the type of the node.
+   * @param description String description of the node.
+   */
    void AppendNode(std::string& pathname, std::string& tname,
                    std::string& description);
+
+   /* 
+   * Will never fail, as given paths are relative to current node
+   * and will be generated if not found.
+   * 
+   * @param pathname The full pathname of the given node, eg /foo/bar.
+   * @param tname A string unique to the type of the node.
+   * @param description String description of the node.
+   * @param data Specifies all fields of the new node.
+   */
    void AppendNode(std::string& pathname, std::string& tname, 
                    std::string& description, OptionsData& data);
   
+   /*
+   * Returns the various data associated with a node.  Passed by copy,
+   * since this is only for unit testing.
+   *
+   * @return The data associated with the node, 
+   * eg it's name, description, and value.
+   */
+   OptionsData GetNodeData();
+
    /* Will return the node associated with a pathname */
-   void FindNode(std::string& pathname);
-   void FindNodeHelper(std::string& pathname, std::string& target);
+   OptionsHierarchy* FindNode(std::string& pathname);
+   OptionsHierarchy* FindNodeHelper(std::string& pathname, std::string& target);
 
    /* Print functions */
    //Prints a single node, and outlines relations

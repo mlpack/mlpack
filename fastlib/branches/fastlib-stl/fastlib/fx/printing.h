@@ -2,7 +2,7 @@
  * @file printing.h
  * @author Ryan Curtin
  *
- * Four classes that define the output levels for IO.  They are very simply and
+ * Four classes that define the output levels for IO.  They are very simple and
  * simply prepend an output level notifier to the output.
  */
 
@@ -80,20 +80,32 @@ class NullOutStream {
 
 class Printing {
   public:
-   /**
-   Prints the value of the given variable, by finding the class registered
-  handle a particular type, specified by the integer ID given by
-typeid(..).
-  */
-  static void PrintValue(std::string& id, std::string& pathname);
-  protected:
+   /*
+   * Prints the value of the given variable, by finding the class registered
+   * handle a particular type, specified by the integer ID given by
+   * typeid(..).
+   *
+   * @param id ID of the type of the value.
+   * @param pathname Pathname of the value to be printed. 
+   */
+   static void PrintValue(std::string& id, std::string& pathname);
+   protected:
+   
    /* Maps a type to the appropriate printing class. */
    static std::map<std::string, Printing*> castingMap;
  
-   /* Registers a printing class in the map. */
+   /* 
+   * Registers a printing class in the map. 
+   *
+   * @param id Type to register the new instance to.
+   */
    Printing(std::string id);
 
-   /* Prints the actual data */
+   /* 
+   * Prints the actual data 
+   * 
+   * @param pathname Full pathname of the value to be printed. 
+   */
    virtual void ToString(std::string& pathname)=0;
 };
  

@@ -88,7 +88,7 @@ bool IO::CheckValue(const char* identifier) {
   int isInVmap = GetSingleton().vmap.count(identifier);
   int isInGmap = GetSingleton().globalValues.count(identifier);
 
-  //Return true if we have a defined value for identifier 
+  //Return true if we have a defined value for identifier
   return (isInVmap || isInGmap); 
 }
   
@@ -98,6 +98,18 @@ IO& IO::GetSingleton() {
     singleton = new IO();
   return *singleton;
 }	
+
+//Returns the description of the specified node
+std::string IO::GetDescription(const char* identifier) {
+  std::string tmp = std::string(identifier);
+  OptionsHierarchy* h = GetSingleton().hierarchy.FindNode(tmp);
+  
+  if (h == NULL)
+    return std::string("");
+
+  OptionsData d = h->GetNodeData();
+  return d.desc;
+}
 
 //Generates a full pathname, and places it in the hierarchy
 std::string IO::ManageHierarchy(const char* id, 
@@ -139,7 +151,8 @@ void IO::ParseCommandLine(int argc, char** line) {
   }
   else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
-    GetSingleton().hierarchy.FindNode(str);
+    //the info node should always be there.
+    GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
     exit(0);
   }
 
@@ -179,10 +192,6 @@ void IO::ParseStream(std::istream& stream) {
 //Prints the current state, right now just for debugging purposes
 void IO::Print() {
   IO::GetSingleton().hierarchy.PrintAll();
-}
-
-/* Print whatever data we can */
-void IO::PrintData() {
 }
 
 /* Initializes a timer, available like a normal value specified on the command 
