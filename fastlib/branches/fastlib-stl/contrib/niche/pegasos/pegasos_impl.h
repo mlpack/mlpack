@@ -55,14 +55,14 @@ void Pegasos::DoPegasosTrivialBatch() {
       w_ = (1 - step_size * lambda_) * w_;
     }
     
-    /*
+    
     // project onto 1 / sqrt(lambda) ball
     double norm_w = norm(w_, 2);
     if(norm_w > 1.0 / sqrt(lambda_)) {
       w_ = w_ * (1.0 / sqrt(lambda_)) / norm_w;
       
     }
-    */
+    
   }
 }
 
@@ -92,14 +92,14 @@ void Pegasos::DoPegasosMiniBatch() {
     }
     w_ = (1 - step_size * lambda_) * w_ + (step_size / ((double)k_)) * subgrad;
     
-    /*
+    
     // project onto 1 / sqrt(lambda) ball
     double norm_w = norm(w_, 2);
     if(norm_w > 1.0 / sqrt(lambda_)) {
       w_ = w_ * (1.0 / sqrt(lambda_)) / norm_w;
       
     }
-    */
+    
   }
 }
 
