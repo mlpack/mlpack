@@ -13,7 +13,6 @@ set(SOURCES
    lars_impl.h
    lcc.h
    lcc_impl.h
-   #svm.h
    pegasos.h
 )
 
