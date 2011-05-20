@@ -81,7 +81,7 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
     //step_size = 1.0 / (sqrt(lambda_w_) * ((double)t));
     //step_size = 1.0 / (lambda_w_ * ((double)t));
 
-    if((t % 100) == 0) {
+    if((t % 1000) == 0) {
       printf("iteration %d: drew point %d\n", t, ind);
     }
     //((vec)(X_.col(ind))).print("point");
