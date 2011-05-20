@@ -29,10 +29,7 @@ using namespace mlpack;
 using namespace mlpack::allknn;
 using namespace mlpack::allknn::metric;
 
-// Utility function for std::pair<int, double> sorting.
-bool sortPairedVector(std::pair<int, double> lhs, std::pair<int, double> rhs) {
-  return lhs.second < rhs.second;
-}
+
 
 //
 // Main method.
@@ -45,7 +42,9 @@ int main(int argc, char* argv[]) {
 
   index_t knns = fx_param_int_req(root, "k");
   double alpha = fx_param_double(root, "alpha", 0.7);
-  int iterations = fx_param_int(root, "iterations", 50);
+  double beta = fx_param_double(root, "beta", 0.95);
+  double perturbation = fx_param_double(root, "perturbation", 0.05);
+  int max_iterations = fx_param_int(root, "max_iterations", 100000);
   double initial_step = fx_param_double(root, "initial_step", 1.0);
 
   // Initialize random numbers.
@@ -91,7 +90,10 @@ int main(int argc, char* argv[]) {
 
   arma::vec random_weights;
 
-  for(int n = 0; n < iterations; n++) {
+  // Loop infinitely until we cannot find an improvement (termination is later
+  // in loop).
+  int n = 0; // Iteration number.
+  while(true) {
     // Update input matrix with the current weights.
     diag.diag() = weights;
     input = diag * input_preserved;
@@ -117,87 +119,81 @@ int main(int argc, char* argv[]) {
 
     bool improvement = false;
 
-    // Now we will apply random weighting vectors until we produce one which
-    // improves performance.
-    while(!improvement) {
-      // Now we want to apply an arbitrary weighting vector
-      if(new_random_vec) {
-        // We produce a uniformly distributed normalized random vector with mean
-        // 0.
-        random_weights = arma::randu(weights.n_elem);
-        random_weights -= 0.5;
-        random_weights /= (norm(random_weights, 2) / initial_step);
+    // We use an FDSA gradient estimate (perturb in each dimension and estimate
+    // the gradient in that direction).
+    arma::vec gradient_estimate(weights.n_elem);
+    arma::vec gradient_weights = weights;
+    
+    for (int i = 0; i < weights.n_elem; i++) {
+      arma::mat diag_weights;
+      diag_weights.zeros(weights.n_elem, weights.n_elem);
+      diag_weights.diag() = gradient_weights;
+      
+      // First add the perturbation.
+      diag_weights(i, i) += perturbation;
+      input = diag_weights * input_preserved;
+
+      int cor_pos = EstimateScores(input, neighbors, labels, 5 * knns, knns);
+
+      // Now subtract the perturbation.
+      diag_weights(i, i) -= 2 * perturbation;
+      input = diag_weights * input_preserved;
+
+      int cor_neg = EstimateScores(input, neighbors, labels, 5 * knns, knns);
+
+      // The actual gradient estimate for each dimension is
+      //   (cor_pos - cor_neg) / perturbation(i).
+      gradient_estimate(i) = (cor_pos - cor_neg) * perturbation;
+    }
+
+    // Now, with the gradient estimate, attempt to search in this direction.
+    double delta = 0.005;
+    double factor = 0;
+    int attempts = 1;
+    arma::vec new_weights;
+    while (!improvement) {
+      // We will choose a search direction related to the gradient, and if it
+      // doesn't work we will add a little bit of a perturbation.
+      arma::vec perturbation_vec = arma::randu(weights.n_elem);
+      perturbation_vec -= 0.5;
+      perturbation_vec /= (norm(perturbation_vec, 2) / initial_step);
+
+      // Calculate new weights.
+      new_weights = weights + alpha * (((1 - factor) * perturbation *
+          gradient_estimate) + (factor * perturbation_vec));
+      arma::mat diag_new_weights;
+      diag_new_weights.zeros(weights.n_elem, weights.n_elem);
+      diag_new_weights.diag() = new_weights;
+      input = diag_new_weights * input_preserved;
+
+      // Try this weighting vector.
+      int new_cor = EstimateScores(input, neighbors, labels, 5 * knns, knns);
+
+      // Did it improve?
+      if (new_cor > correct) {
+        improvement = true;
+        break;
       }
 
-      // Let's see what happens when we apply this weight vector positively,
-      // then negatively.  We will keep the number of calculations down by only
-      // re-weighting and evaluating only the points which are in the set of
-      // (5 * knns) we calculated earlier.  It would be more "correct" to
-      // actually run the AllkNN calculation again, but that would take a long
-      // time for each random vector, so we simply use this shortcut.
-      int cor_pos, cor_neg;
-      for (int dir = 0; dir < 2; dir++) {
-        arma::mat diag_weights;
-        diag_weights.zeros(weights.n_elem, weights.n_elem);
+      factor += delta;
+      if (factor > 1)
+        factor = 1; // Fully random perturbation.
+      attempts++; // Keep track of the number of attempts.
 
-        if(dir == 0)
-          diag_weights.diag() = weights +
-            ((double) ((iterations - n) / (double) iterations)) *
-            alpha * random_weights;
-        if(dir == 1)
-          diag_weights.diag() = weights -
-            ((double) ((iterations - n) / (double) iterations)) *
-            alpha * random_weights;
-
-        input = diag_weights * input_preserved;
-
-        int tmp_correct = 0;
-        for (int i = 0; i < input.n_cols; i++) { // Likely slower than I want.
-          std::vector<std::pair<int, double> > local_neighbors;
-          for (int j = 0; j < 5 * knns; j++) {
-            int ind = (i * (5 * knns)) + j;
-            double dist = norm(input.col(i) - input.col(neighbors[ind]), 2);
-            local_neighbors.push_back(std::make_pair(neighbors[ind], dist));
-          }
-
-          // Now sort our new vector by distance (since the order has likely
-          // changed).
-          std::sort(local_neighbors.begin(), local_neighbors.end(),
-              sortPairedVector);
-          arma::Col<index_t> tmp(local_neighbors.size());
-          for(int j = 0; j < local_neighbors.size(); j++)
-            tmp(j) = local_neighbors.at(j).first;
-
-          tmp_correct += EvaluateCorrect(tmp, 5 * knns, knns, labels, i);
-        }
-
-        if (dir == 0)
-          cor_pos = tmp_correct;
-        if (dir == 1)
-          cor_neg = tmp_correct;
-
-        // Pick the direction that is positive
-        new_random_vec = true;
-        if(cor_pos >= cor_neg) {
-          if(cor_pos > correct) { // apply weighting; there is an improvement
-            weights += ((double) ((iterations - n) / (double) iterations))
-              * alpha * random_weights;
-            new_random_vec = false;
-            improvement = true;
-          } 
-        } else {
-          if(cor_neg > correct) { // apply weighting: there is an improvement
-            weights -= ((double) ((iterations - n) / (double) iterations))
-              * alpha * random_weights;
-            new_random_vec = false;
-            improvement = true;
-          } 
-        }
+      if (attempts > max_iterations) {
+        FATAL("Giving up after %d random attempts to find an improvement "
+            "were unsuccessful.");
       }
     }
-  }
 
-  data::Save(outputfile, weights);
+    NOTIFY("Improvement found after %d attempts.", attempts);
+
+    weights = new_weights;
+    alpha *= beta;
+  
+    data::Save(outputfile, weights);
+    n++;
+  }
 
   fx_done(root);
 }

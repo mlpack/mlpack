@@ -39,6 +39,26 @@ namespace metric {
 int ClassifyKNN(arma::vec& neighbor_labels);
 
 /***
+ * Given a new weighting vector, estimate the new classification score.  The
+ * resultant neighbors list and distance list from the AllkNN class are taken as
+ * parameters.  The returned integer is the number of correctly classified
+ * points.
+ *
+ * @param input Matrix of input points
+ * @param neighbors List of calculated neighbors (length n_points * knns)
+ * @param distances List of calculated distances (length n_points * knns)
+ * @param labels List of correct classes of points (length n_points)
+ * @param knns Value of k used in AllkNN calculation
+ * @param score Number of neighbors to use for scoring ( <= knns )
+ * @return Number of correctly classified points
+ */
+int EstimateScores(arma::mat& input,
+                   arma::Col<index_t>& neighbors,
+                   arma::vec& labels,
+                   int knns,
+                   int score);
+
+/***
  * Given a list of calculated neighbors and their associated labels, evaluate
  * the accuracy of the calculated neighbors.  The vector of neighbors should be
  * of the same format as the output of the AllkNN class.

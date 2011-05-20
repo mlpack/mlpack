@@ -93,8 +93,8 @@ int main(int argc, char* argv[]) {
   }
 
   // Assemble our results into a matrix for exporting.
-  arma::mat counts_scores(2, 61);
-  for (int i = 0; i < 61; i++) {
+  arma::mat counts_scores(2, 62);
+  for (int i = 0; i < 62; i++) {
     counts_scores[0, i] = class_counts[i];
     counts_scores[1, i] = class_scores[i];
   }
