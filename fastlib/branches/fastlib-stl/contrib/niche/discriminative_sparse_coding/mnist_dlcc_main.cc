@@ -8,15 +8,8 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
-//#include <mlpack/svm/svm.h>
-//#include <fastlib/math/statistics.h>
-
-//#include <fastlib/base/arma_compat.h>
-
-// if these are included first, we have compilation errors from svm.h. why??
 #include "discr_sparse_coding.h"
 #include <contrib/niche/local_coordinate_coding/lcc.h>
-
 #include <contrib/niche/pegasos/pegasos.h>
 
 
@@ -24,6 +17,28 @@ using namespace arma;
 using namespace std;
 
 
+double ComputeLoss(const mat& X, const vec&y, const vec&w) {
+  u32 n_points = y.n_elem;
+  vec predictions = trans(trans(w) * X);
+  vec y_hat = vec(n_points);
+  for(u32 i = 0; i < n_points; i++) {
+    if(predictions(i) != 0) {
+      y_hat(i) =  predictions(i) / fabs(predictions(i));
+    }
+    else {
+      y_hat(i) = 0;
+    }
+  }
+  
+  double loss = 0;
+  for(u32 i = 0; i < n_points; i++) {
+    if(y(i) != y_hat(i)) {
+      loss++;
+    }
+  }
+  loss /= ((double)n_points);
+  return loss;
+}
 
 
 void Train(u32 digit_1, u32 digit_2,
@@ -72,7 +87,37 @@ void Train(u32 digit_1, u32 digit_2,
   double step_size = 0.1;// not used
   
   dsc.InitDictionary(initial_dictionary_fullpath);
-  dsc.InitW(); // we should initialize w by using the solution to an SVM problem from the coding to the original dictionary
+
+  
+    
+  /// See how well initial dictionary does ///
+  // now that we've learned a dictionary, do a final coding step of LCC
+  // for now, we assume lambda_2 = 0
+  LocalCoordinateCoding lcc_initial;
+  lcc_initial.Init(X, n_atoms, lambda_1);
+  mat D_initial;
+  dsc.GetDictionary(D_initial);
+  lcc_initial.SetDictionary(D_initial);
+  lcc_initial.OptimizeCode();
+  mat V_lcc;
+  lcc_initial.GetCoding(V_lcc);
+  
+  
+  // now that we have a coding, run Pegasos to optimize w
+  Pegasos pegasos_lcc;
+  printf("n_pegasos_iterations = %d\n",
+	 n_pegasos_iterations);
+  pegasos_lcc.Init(V_lcc, y, lambda_w, n_pegasos_iterations);
+  pegasos_lcc.DoPegasos();
+  vec w_lcc = pegasos_lcc.GetW();
+  
+  printf("LCC Pegasos Error:\n\t %f\n", ComputeLoss(V_lcc, y, w_lcc));
+  
+  
+  
+  
+  //dsc.InitW(); // we should initialize w by using the solution to an SVM problem from the coding to the original dictionary
+  dsc.SetW(w_lcc);
   
   
   dsc.SGDOptimize(n_iterations, step_size);
@@ -85,39 +130,14 @@ void Train(u32 digit_1, u32 digit_2,
   
   // now that we've learned a dictionary, do a final coding step of LCC
   // for now, we assume lambda_2 = 0
-  LocalCoordinateCoding lcc;
-  lcc.Init(X, n_atoms, lambda_1);
-  lcc.SetDictionary(D);
-  lcc.OptimizeCode();
+  LocalCoordinateCoding lcc_final;
+  lcc_final.Init(X, n_atoms, lambda_1);
+  lcc_final.SetDictionary(D);
+  lcc_final.OptimizeCode();
   mat V;
-  lcc.GetCoding(V);
+  lcc_final.GetCoding(V);
   
-  
-  {
-    vec predictions = trans(trans(w) * V);
-    vec y_hat = vec(n_points);
-    for(u32 i = 0; i < n_points; i++) {
-      if(predictions(i) != 0) {
-	y_hat(i) =  predictions(i) / fabs(predictions(i));
-      }
-      else {
-	y_hat(i) = 0;
-      }
-    }
-    
-    //mat compare = join_rows(y, y_hat);
-    //compare.print("y y_hat");
-    
-    double error = 0;
-    for(u32 i = 0; i < n_points; i++) {
-      if(y(i) != y_hat(i)) {
-	error++;
-      }
-    }
-    error /= ((double)n_points);
-    printf("Pre-pegasos error: %f\n", error);
-  }
-  
+  printf("DLCC Pre-Pegasos Error:\n\t%f\n", ComputeLoss(V, y, w));
   
   
   // now that we have a coding, run Pegasos to optimize w
@@ -127,7 +147,8 @@ void Train(u32 digit_1, u32 digit_2,
   pegasos.Init(V, y, lambda_w, n_pegasos_iterations);
   pegasos.DoPegasos();
   w = pegasos.GetW();
-  
+
+  printf("DLCC Pegasos error: %f\n", ComputeLoss(V, y, w));
   
   
   
@@ -137,7 +158,6 @@ void Train(u32 digit_1, u32 digit_2,
     w.save("w.dat", raw_ascii);
     D.save("D.dat", raw_ascii);
     V.save("V.dat", raw_ascii);
-    //synthesized_X.save("X_hat.dat", raw_ascii);
     y.save("y.dat", raw_ascii);
   }
   else {
@@ -150,59 +170,14 @@ void Train(u32 digit_1, u32 digit_2,
     sprintf(data_fullpath, "%s/V.dat", results_dir);
     V.save(data_fullpath, raw_ascii);
     
-    //sprintf(data_fullpath, "%s/X_hat.dat", results_dir);
-    //synthesized_X.save(data_fullpath, raw_ascii);
-    
     sprintf(data_fullpath, "%s/y.dat", results_dir);
     y.save(data_fullpath, raw_ascii);
   }
   
-  vec predictions = trans(trans(w) * V);
-  vec y_hat = vec(n_points);
-  for(u32 i = 0; i < n_points; i++) {
-    if(predictions(i) != 0) {
-      y_hat(i) =  predictions(i) / fabs(predictions(i));
-    }
-    else {
-      y_hat(i) = 0;
-    }
-  }
-  
-  //mat compare = join_rows(y, y_hat);
-  //compare.print("y y_hat");
-  
-  double error = 0;
-  for(u32 i = 0; i < n_points; i++) {
-    if(y(i) != y_hat(i)) {
-      error++;
-    }
-  }
-  error /= ((double)n_points);
-  printf("Pegasos error: %f\n", error);
-
   free(data_fullpath);
-
-
-
-  /*
-  // given the coding V and labels y, learn an SVM use Hua's code
-  SVM<SVMLinearKernel> svm;
-  
-  u32 learner_typeid = 0; // corresponds to support vector classification
-  Dataset trainset;
-  mat svm_data(V.n_rows + 1, V.n_cols);
-  svm_data(span(0, V.n_rows - 1), span::all) = V;
-  svm_data(V.n_rows, span::all) = trans(y);
-  trainset.CopyMatrix(svm_data);
-  
-  datanode* svm_module = fx_submodule(fx_root, "svm");
-  fx_set_param_double(svm_module, "c", lambda_w);
-  
-  svm.InitTrain(learner_typeid, trainset, svm_module);
-  */  
-
-
 }
+
+
 
 
 

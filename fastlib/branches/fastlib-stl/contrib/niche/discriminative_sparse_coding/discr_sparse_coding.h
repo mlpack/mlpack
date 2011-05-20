@@ -46,7 +46,9 @@ class DiscrSparseCoding {
 	    double lambda_1, double lambda_2,
 	    double lambda_w);
   
-  void SetDictionary(mat D);
+  void SetDictionary(const mat& D);
+  
+  void SetW(const vec& w);
   
   void InitDictionary();
 

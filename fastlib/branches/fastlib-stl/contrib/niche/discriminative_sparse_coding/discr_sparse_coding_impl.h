@@ -25,8 +25,13 @@ void DiscrSparseCoding::Init(const mat& X, const vec& y, u32 n_atoms,
 }
 
 
-void DiscrSparseCoding::SetDictionary(mat D) {
+void DiscrSparseCoding::SetDictionary(const mat& D) {
   D_ = D;
+}
+
+
+void DiscrSparseCoding::SetW(const vec& w) {
+  w_ = w;
 }
 
 
