@@ -32,9 +32,9 @@ int main(int argc, char* argv[]) {
   u32 digit_1 = fx_param_int_req(NULL, "digit1");
   u32 digit_2 = fx_param_int_req(NULL, "digit2");
   
-  u32 n_iterations = fx_param_int_req(NULL, "n_iterations");
+  u32 n_iterations = (u32) fx_param_double_req(NULL, "n_iterations");
   
-  u32 n_atoms = fx_param_int_req(NULL, "n_atoms");
+  u32 n_atoms = (u32) fx_param_double_req(NULL, "n_atoms");
   
   
   
