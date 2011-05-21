@@ -107,7 +107,7 @@ void Train(u32 digit_1, u32 digit_2,
   Pegasos pegasos_lcc;
   printf("n_pegasos_iterations = %d\n",
 	 n_pegasos_iterations);
-  pegasos_lcc.Init(V_lcc, y, lambda_w, n_pegasos_iterations);
+  pegasos_lcc.Init(V_lcc, y, lambda_w, n_pegasos_iterations, 2);
   pegasos_lcc.DoPegasos();
   vec w_lcc = pegasos_lcc.GetW();
   
@@ -116,8 +116,8 @@ void Train(u32 digit_1, u32 digit_2,
   
   
   
-  //dsc.InitW(); // we should initialize w by using the solution to an SVM problem from the coding to the original dictionary
-  dsc.SetW(w_lcc);
+  //dsc.InitW();
+  dsc.SetW(w_lcc); // initialize w by using the solution to an SVM problem from the coding to the original dictionary
   
   
   dsc.SGDOptimize(n_iterations, step_size);
@@ -187,11 +187,11 @@ int main(int argc, char* argv[]) {
   double lambda_1 = fx_param_double_req(NULL, "lambda1");
   double lambda_2 = fx_param_double_req(NULL, "lambda2");
   double lambda_w = fx_param_double_req(NULL, "lambdaw");
-  u32 n_atoms = fx_param_int_req(NULL, "n_atoms");
+  u32 n_atoms = (u32) fx_param_double_req(NULL, "n_atoms");
 
-  u32 n_iterations = fx_param_int(NULL, "n_iterations", 20000);
+  u32 n_iterations = (u32) fx_param_double(NULL, "n_iterations", 20000);
   u32 n_pegasos_iterations = 
-    fx_param_int(NULL, "n_pegasos_iterations", n_iterations);
+    (u32) fx_param_double(NULL, "n_pegasos_iterations", n_iterations);
   
   //u32 n_LCC_iterations = 30;
   
