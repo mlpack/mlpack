@@ -18,7 +18,7 @@ void LocalCoordinateCoding::Init(const mat& X, u32 n_atoms, double lambda) {
 }
 
 
-void LocalCoordinateCoding::SetDictionary(mat D) {
+void LocalCoordinateCoding::SetDictionary(const mat& D) {
   D_ = D;
 }
 
