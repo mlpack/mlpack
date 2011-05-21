@@ -38,7 +38,7 @@ class LocalCoordinateCoding {
   
   void Init(const mat& X, u32 n_atoms, double lambda);
   
-  void SetDictionary(mat D);
+  void SetDictionary(const mat& D);
   
   void InitDictionary();
   
