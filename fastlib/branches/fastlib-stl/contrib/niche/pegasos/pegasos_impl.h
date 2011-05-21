@@ -75,13 +75,16 @@ void Pegasos::DoPegasosMiniBatch() {
   
   w_.zeros();
   vec subgrad(w_.n_elem);
+  u32 draw, ind;
   for(u32 t = 1; t <= T_; t++) {
     double step_size = 1 / (lambda_ * ((double) t));
-    Shuffle(inds);
     
     subgrad.zeros();
     for(u32 i = 0; i < k_; i++) {
-      u32 ind = inds(i);
+      draw = (rand() % (n_points_ - i));
+      ind = inds(draw);
+      inds(draw) = inds(n_points_ - i - 1);
+      inds(n_points_ - i - 1) = ind;
       
       vec x_t = X_.unsafe_col(ind);
       double y_t = y_(ind);

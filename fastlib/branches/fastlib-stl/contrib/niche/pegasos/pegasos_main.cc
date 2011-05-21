@@ -21,7 +21,10 @@ int main(int argc, char* argv[]) {
   fx_module* root = fx_init(argc, argv, NULL);
 
   double lambda = fx_param_double_req(NULL, "lambda");
-  u32 n_iterations = fx_param_int_req(NULL, "n_iterations");
+
+  // Note: fx_param_double lets us input via scientific notation
+  u32 n_iterations = (u32) fx_param_double_req(NULL, "n_iterations");
+  printf("n_iterations = %f\n", ((double)n_iterations));
   u32 mini_batch_size = fx_param_int(NULL, "k", 1);
   
   const char* data_fullpath = 
