@@ -128,7 +128,7 @@ void LocalCoordinateCoding::OptimizeCode() {
 
 void LocalCoordinateCoding::OptimizeDictionary(uvec adjacencies) {
   // count number of atomic neighbors for each point x^i
-  vec neighbor_counts = zeros(n_points_, 1);
+  uvec neighbor_counts = zeros<uvec>(n_points_, 1);
   if(adjacencies.n_elem > 0) {
     // this gets the column index
     u32 cur_point_ind = (u32)(adjacencies(0) / n_atoms_);
