@@ -26,8 +26,8 @@ int main(int argc, char* argv[]) {
   const char* data_dir = 
     fx_param_str_req(NULL, "data_dir");
   
-  //const char* initial_dictionary_fullpath = 
-  //  fx_param_str_req(NULL, "initial_dictionary");
+  const char* initial_dictionary_fullpath = 
+    fx_param_str(NULL, "initial_dictionary", "");
   
   u32 digit_1 = fx_param_int_req(NULL, "digit1");
   u32 digit_2 = fx_param_int_req(NULL, "digit2");
@@ -73,15 +73,27 @@ int main(int argc, char* argv[]) {
   // run LCC
   LocalCoordinateCoding lcc;
   
-  //mat initial_D;
-  //initial_D.load("/home/niche/fastlib-stl/contrib/niche/local_coordinate_coding/D.dat");
-  //initial_D.load(initial_dictionary_fullpath);
-  //u32 n_atoms = initial_D.n_cols;
-  
   lcc.Init(X, n_atoms, lambda);
-  lcc.DataDependentRandomInitDictionary();
-  
-  //printf("n_atoms = %d\n", n_atoms);
+  if(strlen(initial_dictionary_fullpath) == 0) {
+    lcc.DataDependentRandomInitDictionary();
+  }
+  else {
+    mat initial_D;
+    initial_D.load(initial_dictionary_fullpath);
+    if(initial_D.n_cols != n_atoms) {
+      fprintf(stderr, "Error: The specified initial dictionary to load has %d atoms, but the learned dictionary was specified to have %d atoms! Exiting..\n",
+	      initial_D.n_cols,
+	      n_atoms);
+      return EXIT_FAILURE;
+    }
+    if(initial_D.n_rows != X.n_rows) {
+      fprintf(stderr, "Error: The specified initial dictionary to load has %d dimensions, but the specified data has %d dimensions! Exiting..\n",
+	      initial_D.n_rows,
+	      X.n_rows);
+      return EXIT_FAILURE;
+    }
+    lcc.SetDictionary(initial_D);
+  }
   
   wall_clock timer;
   timer.tic();
