@@ -24,6 +24,8 @@ void LocalRegression<TableType, KernelType, MetricType>::Compute(
   const ArgumentType &arguments_in,
   mlpack::local_regression::LocalRegressionResult *result_out) {
 
+  // Use the reference tree to form the frontier.
+
 }
 
 }
