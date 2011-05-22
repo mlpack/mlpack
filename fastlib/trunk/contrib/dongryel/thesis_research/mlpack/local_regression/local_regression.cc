@@ -10,13 +10,14 @@
 #include <string>
 #include <boost/program_options.hpp>
 #include "core/util/timer.h"
+#include "core/metric_kernels/kernel.h"
+#include "core/metric_kernels/lmetric.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/local_regression/local_regression_argument_parser.h"
 #include "mlpack/local_regression/local_regression_dev.h"
 #include "mlpack/local_regression/local_regression_result.h"
-#include "mlpack/series_expansion/kernel_aux.h"
 
-template<typename KernelAuxType>
+template<typename KernelType>
 void StartComputation(boost::program_options::variables_map &vm) {
 
   // Tree type: hard-coded for a metric tree.
@@ -37,7 +38,7 @@ void StartComputation(boost::program_options::variables_map &vm) {
   core::util::Timer init_timer;
   init_timer.Start();
   mlpack::local_regression::LocalRegression <
-  TableType, KernelAuxType,  core::metric_kernels::LMetric<2> >
+  TableType, KernelType,  core::metric_kernels::LMetric<2> >
   local_regression_instance;
   local_regression_instance.Init(
     local_regression_arguments);
@@ -73,25 +74,17 @@ int main(int argc, char *argv[]) {
 
   // Do a quick peek at the kernel and expansion type.
   std::string kernel_type = vm["kernel"].as<std::string>();
-  std::string series_expansion_type =
-    vm["series_expansion_type"].as<std::string>();
 
   if(kernel_type == "gaussian") {
-    if(series_expansion_type == "hypercube") {
-      StartComputation <
-      mlpack::series_expansion::GaussianKernelHypercubeAux > (vm);
-    }
-    else {
-      StartComputation <
-      mlpack::series_expansion::GaussianKernelMultivariateAux > (vm);
-    }
+    StartComputation <
+    core::metric_kernels::GaussianKernel > (vm);
   }
   else {
 
     // Only the multivariate expansion is available for the
     // Epanechnikov.
     StartComputation <
-    mlpack::series_expansion::EpanKernelMultivariateAux > (vm);
+    core::metric_kernels::EpanKernel > (vm);
   }
 
   return 0;

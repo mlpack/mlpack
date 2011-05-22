@@ -30,8 +30,7 @@ class LocalRegressionArgumentParser {
       )(
         "bandwidth",
         boost::program_options::value<double>(),
-        "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
-        "then the --bandwidth will be ignored."
+        "REQUIRED kernel bandwidth"
       )(
         "kernel",
         boost::program_options::value<std::string>()->default_value("gaussian"),
