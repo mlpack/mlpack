@@ -361,15 +361,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     max_num_work_to_dequeue_per_stage_);
 
   // An outstanding frontier of query-reference pairs to be computed.
-  std::vector < CoarsePriorityQueueType > computation_frontier(
-    world_->size());
-  int total_computation_frontier_size = 0;
-  for(unsigned int i = 0; i < computation_frontier.size(); i++) {
+  CoarsePriorityQueueType computation_frontier;
+  for(int i = 0; i < world_->size(); i++) {
     const std::vector< std::pair<int, int> > &reference_frontier =
       reference_frontier_lists[i];
-
     for(unsigned int j = 0; j < reference_frontier.size(); j++) {
-      computation_frontier[i].push(
+      computation_frontier.push(
         boost::make_tuple(
           query_table_->local_table()->get_tree(),
           boost::make_tuple<int, int, int>(
@@ -377,11 +374,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
             reference_frontier[j].second),
           - local_priorities[i][j].mid()));
     }
-    total_computation_frontier_size += reference_frontier.size();
   }
 
   printf("Process %d has a total computation frontier of: %d\n",
-         world_->rank(), total_computation_frontier_size);
+         world_->rank(), computation_frontier.size());
 
   // The computation loop.
   do  {
@@ -390,29 +386,27 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     std::vector< std::vector< std::pair<int, int> > > receive_requests(
       world_->size());
     CoarsePriorityQueueType prioritized_tasks;
-    for(int i = 0; i < world_->size(); i++) {
-      for(int j = 0; computation_frontier[i].size() > 0 &&
-          (i == world_->rank() ||
-           static_cast<int>(prioritized_tasks.size()) <
-           max_num_work_to_dequeue_per_stage_); j++) {
+    for(int j = 0; computation_frontier.size() > 0 &&
+        static_cast<int>(prioritized_tasks.size()) <
+        max_num_work_to_dequeue_per_stage_; j++) {
 
-        // Examine the top object in the frontier and sort it in the
-        // priorities, while forming the request lists.
-        const CoarseFrontierObjectType &top_object =
-          computation_frontier[i].top();
-        std::pair<int, int> reference_node_id(
-          top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
+      // Examine the top object in the frontier and sort it in the
+      // priorities, while forming the request lists.
+      const CoarseFrontierObjectType &top_object =
+        computation_frontier.top();
+      int reference_process_id = top_object.get<1>().get<0>();
+      std::pair<int, int> reference_node_id(
+        top_object.get<1>().get<1>(), top_object.get<1>().get<2>());
 
-        // Each process does not need to receive anything from itself
-        // (it can just do a self-local lookup).
-        if(i != world_->rank()) {
-          receive_requests[i].push_back(reference_node_id);
-        }
-        prioritized_tasks.push(top_object);
-
-        // Pop the top object.
-        computation_frontier[i].pop();
+      // Each process does not need to receive anything from itself
+      // (it can just do a self-local lookup).
+      if(reference_process_id != world_->rank()) {
+        receive_requests[reference_process_id].push_back(reference_node_id);
       }
+      prioritized_tasks.push(top_object);
+
+      // Pop the top object.
+      computation_frontier.pop();
     }
 
     // Try to exchange the subtables.
