@@ -25,9 +25,9 @@ set(SOURCES
    debug.c
    deprecated.h
    fortran.h
-   otrav.h
-   otrav.cc
-   otrav_impl.h
+#   otrav.h
+#   otrav.cc
+#   otrav_impl.h
    test.h
 )
 

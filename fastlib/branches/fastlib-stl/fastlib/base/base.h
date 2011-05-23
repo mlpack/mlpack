@@ -50,7 +50,6 @@
 #ifdef __cplusplus
   #include "cc.h"
   #include "ccmem.h"
-  #include "otrav.h"
 #endif
 
 #endif /* BASE_H */
