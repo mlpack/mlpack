@@ -11,6 +11,8 @@
 
 #include <iostream>
 #include <map>
+#include <string>
+#include <string.h>
 
 #define TYPENAME(x) (std::string(typeid(x).name()))
 
@@ -43,7 +45,8 @@ class PrefixedOutStream {
    * @param prefix The prefix to prepend to each line.
    */
   PrefixedOutStream(std::ostream& destination, const char* prefix) :
-    destination(destination), prefix(prefix) { /* nothing to do */ }
+    destination(destination), prefix(prefix), cariageReturned(true)
+     { /* nothing to do */ }
 
   /***
    * This is meant to be used similarly to the std::cout and std::cerr ostreams.
@@ -51,15 +54,16 @@ class PrefixedOutStream {
    * appended, and it will be sent to std::cout.
    */
   template<typename T>
-  std::ostream& operator<<(const T& rhs) {
-    destination << prefix << rhs;
-    return destination;
-  }
-
+  std::ostream& operator<<(const T& rhs);
+  
  private:
   std::ostream& destination;
   const char* prefix;
+  bool cariageReturned;
 };
+
+//Template definitions
+#include "printing_impl.h"
 
 /***
  * The NullOutStream is used in place of the PrefixedOutStream for the IO debug
@@ -82,7 +86,7 @@ class Printing {
   public:
    /*
    * Prints the value of the given variable, by finding the class registered
-   * handle a particular type, specified by the integer ID given by
+   * to handle a particular type, specified by the integer ID given by
    * typeid(..).
    *
    * @param id ID of the type of the value.

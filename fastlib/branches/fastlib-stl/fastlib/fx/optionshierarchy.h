@@ -121,7 +121,15 @@ class OptionsHierarchy {
    */
    OptionsData GetNodeData();
 
-   /* Will return the node associated with a pathname */
+   /* 
+    * Will return the node associated with a pathname 
+    * 
+    * @param pathname The full pathname of the node, 
+    *   eg foo/bar in foo/bar.
+    *
+    * @return Pointer to the node with that pathname, 
+    *   null if not found.
+    */
    OptionsHierarchy* FindNode(std::string& pathname);
    OptionsHierarchy* FindNodeHelper(std::string& pathname, std::string& target);
 

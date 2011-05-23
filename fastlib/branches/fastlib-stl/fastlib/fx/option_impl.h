@@ -1,6 +1,10 @@
 #ifndef MLPACK_IO_OPTION_IMPL_H
 #define MLPACK_IO_OPTION_IMPL_H
 
+/*
+ * @brief Registers a parameter with IO.  
+ *    This allows the registration of parameters at program start.
+ */
 template<typename N>
 Option<N>::Option(bool ignoreTemplate,
                 N defaultValue,
