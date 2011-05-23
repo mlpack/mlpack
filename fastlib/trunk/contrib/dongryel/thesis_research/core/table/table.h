@@ -153,6 +153,14 @@ class Table {
         }
 
         template<typename IncomingPointType>
+        void Next(
+          IncomingPointType *entry, int *point_id, double *weight) {
+          current_index_++;
+          table_->iterator_get_(current_index_, entry, weight);
+          *point_id = table_->iterator_get_id_(current_index_);
+        }
+
+        template<typename IncomingPointType>
         void Next(IncomingPointType *entry, double *weight) {
           current_index_++;
           table_->iterator_get_(current_index_, entry, weight);

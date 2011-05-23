@@ -8,8 +8,9 @@
 #ifndef CORE_GNP_DUALTREE_DFS_DEV_H
 #define CORE_GNP_DUALTREE_DFS_DEV_H
 
-#include "dualtree_dfs.h"
-#include "dualtree_dfs_iterator_dev.h"
+#include <armadillo>
+#include "core/gnp/dualtree_dfs.h"
+#include "core/gnp/dualtree_dfs_iterator_dev.h"
 #include "core/table/table.h"
 
 namespace core {
@@ -203,9 +204,10 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
   while(qnode_iterator.HasNext()) {
 
     // Get the query point and its real index.
-    core::table::DensePoint q_col;
+    arma::vec q_col;
     int q_index;
-    qnode_iterator.Next(&q_col, &q_index);
+    double q_weight;
+    qnode_iterator.Next(&q_col, &q_index, &q_weight);
 
     // Reset the temporary variable for accumulating each
     // reference point contribution.
@@ -219,11 +221,12 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
     while(rnode_iterator.HasNext()) {
 
       // Get the reference point and accumulate contribution.
-      core::table::DensePoint r_col;
+      arma::vec r_col;
       int r_col_id;
-      rnode_iterator.Next(&r_col, &r_col_id);
+      double r_weight;
+      rnode_iterator.Next(&r_col, &r_col_id, &r_weight);
       query_contribution.ApplyContribution(
-        problem_->global(), metric, q_col, r_col);
+        problem_->global(), metric, q_col, q_weight, r_col, r_weight);
 
     } // end of iterating over each reference point.
 
