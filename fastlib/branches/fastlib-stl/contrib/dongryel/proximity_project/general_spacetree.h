@@ -40,15 +40,6 @@ class GeneralBinarySpaceTree {
   index_t count_;
   Statistic stat_;
   
-  OT_DEF(GeneralBinarySpaceTree) {
-    OT_MY_OBJECT(bound_);
-    OT_PTR_NULLABLE(left_);
-    OT_PTR_NULLABLE(right_);
-    OT_MY_OBJECT(begin_);
-    OT_MY_OBJECT(count_);
-    OT_MY_OBJECT(stat_);
-  }
-  
   public:
   /*
   GeneralBinarySpaceTree() {
