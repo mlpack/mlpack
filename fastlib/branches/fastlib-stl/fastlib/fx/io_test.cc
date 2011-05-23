@@ -73,6 +73,10 @@ bool TestIO() {
   success = success & ASSERT(IO::GetValue<bool>("global/bool") == true, 
                     "IO::GetValue failed on global/bool");
 
+  //Now lets test the output functions.  Will have to eyeball it manually.
+  IO::Info << "Test the new lines...";
+  IO::Info << "shouldn't get 'Info' here." << std::endl;
+  IO::Info << "But now I should." << std::endl;
   return success;
 }
 

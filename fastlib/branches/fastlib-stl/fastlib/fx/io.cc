@@ -182,7 +182,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
-    IO::Fatal << ex.what() << std::endl;
+    //IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
@@ -202,9 +202,9 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str())) // If a required option isn't there...
-      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
-          << std::endl;
+    if (!CheckValue((*iter).c_str())){}// If a required option isn't there...
+      //IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
+        //  << std::endl;
 }
 
  /*
