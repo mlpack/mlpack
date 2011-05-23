@@ -1,8 +1,8 @@
 #include <fastlib/fastlib.h>
 #include <fastlib/base/test.h>
+#include <complex>
 #include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"
-#include "complex_matrix.h"
 #include "fourier_kernel_aux.h"
 
 class SeriesExpansionTest {
