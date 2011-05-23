@@ -192,11 +192,14 @@ class KdePostponed {
     /** @brief Called from an exact pairwise evaluation method
      *         (i.e. the base case) which incurs no error.
      */
-    template<typename GlobalType, typename MetricType, typename PointType>
+    template<typename GlobalType, typename MetricType>
     void ApplyContribution(
       const GlobalType &global,
       const MetricType &metric,
-      const PointType &query_point, const PointType &reference_point) {
+      const arma::vec &query_point,
+      double query_weight,
+      const arma::vec &reference_point,
+      double reference_weight) {
 
       double distsq = metric.DistanceSq(query_point, reference_point);
       double density_incoming = global.kernel().EvalUnnormOnSq(distsq);
