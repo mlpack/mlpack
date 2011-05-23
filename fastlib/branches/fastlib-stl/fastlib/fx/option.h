@@ -36,25 +36,7 @@ class Option {
             const char* description,
             const char* parent=NULL,
             bool required=false);
-
- /***
- * Construct an Option object without referencing the command line.  
- * When constructed, it will register itself with IO.
- * 
- * @param defaultValue The default value this parameter will be initialized to.
- * @param identifier The name of the option (no dashes in front; for
- *       --help, we would pass "help").
- * @param description A short string describing the option.
- * @param parent Parent module that "owns" this option.
- * @param required Whether or not the option is required at runtime.
- */
-  Option(N defaultValue,
-          const char* identifier,
-          const char* description,
-          const char* parent=NULL,
-          bool required=false);
 };
-
 //For implementations of templated functions
 #include "option_impl.h"
 

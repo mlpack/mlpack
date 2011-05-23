@@ -4,7 +4,18 @@
 //Include option.h here because it requires IO but is also templated
 #include "option.h"
 
-/* Adds an option and global variable to IO */
+/**
+* @brief Adds a parameter to IO, making 
+*   it accessibile via GetValue & CheckValue.
+*
+* @tparam T The type of the parameter.
+* @param identifier The name of the parameter, eg foo in bar/foo.
+* @param description A string description of the parameter.
+* @param parent The name of the parent of the parameter, 
+*   eg bar/foo in bar/foo/buzz.
+* @param required If required, the program will refuse to run 
+*   unless the parameter is specified.
+*/
 template<typename T>
 void IO::Add(const char* identifier, 
              const char* description, 
@@ -26,21 +37,18 @@ void IO::Add(const char* identifier,
   return;
 }
 
-/* Adds a complex type to the global values system, but creates no option */
-template<class T>
-void IO::AddComplexType(const char* identifier, 
-                        const char* description,
-                        const char* parent) {
 
-  //Use singleton for state, wrap this up in a parallel data structure
-  std::string type = TYPENAME(T);
-            
-  //Generate the full path string, and place the node in the hierarchy
-  std::string path = GetSingleton().ManageHierarchy(identifier, parent, 
-    type, description);
-}
-
-/* Returns a value of the specified type, creates one if not found */   
+/**
+* @brief Returns the value of the specified parameter.  
+*   If the parameter is unspecified, an undefined but 
+*   more or less valid value is returned.
+*
+* @tparam T The type of the parameter.
+* @param identifier The full pathname of the parameter.
+*
+* @return The value of the parameter.  
+*   Use IO::CheckValue to determine if it's valid.
+*/
 template<typename T>
 T& IO::GetValue(const char* identifier) {
   //Used to ensure we have a valid value
