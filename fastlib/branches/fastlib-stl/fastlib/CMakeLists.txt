@@ -26,7 +26,6 @@ set(DIRS
    la
    math
    par
-   thor  # requires pthread linking
    tree
 #   sparse
 )  #!!
