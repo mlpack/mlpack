@@ -67,9 +67,6 @@ foreach(incl_file ${INCLUDE_FILES})
     COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/fastlib/${incl_file} )
 endforeach()
 
-add_executable( otrav_test otrav_test.cc )
-target_link_libraries( otrav_test fastlib )
-
 # make sure header files are installed correctly
 #install(FILES ${CMAKE_BINARY_DIR}/include/fastlib/
 #   DESTINATION include/fastlib)
