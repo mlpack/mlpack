@@ -133,10 +133,7 @@ int main(int argc, char* argv[]) {
       const char* naive_output_filename = 
         fx_param_str(naive_module, "output_filename", "naive_output.txt");
       
-      FILE* naive_output = fopen(naive_output_filename, "w");
-      
-      ot::Print(naive_results, naive_output);
-      
+      data::Save(naive_output_filename, naive_results);
     }
     
     //////////////// Output the Results ////////////////

@@ -46,13 +46,6 @@ class InversePowDistFarFieldExpansion {
    */
   const InversePowDistSeriesExpansionAux *sea_;
 
-  OT_DEF(InversePowDistFarFieldExpansion) {
-    OT_MY_OBJECT(inverse_power_);
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-
  public:
   
   // getters and setters

@@ -40,13 +40,6 @@ class InversePowDistLocalExpansion {
    */
   const InversePowDistSeriesExpansionAux *sea_;
 
-  OT_DEF(InversePowDistLocalExpansion) {
-    OT_MY_OBJECT(inverse_power_);
-    OT_MY_OBJECT(center_);
-    OT_MY_OBJECT(coeffs_);
-    OT_MY_OBJECT(order_);
-  }
-
  public:
   
   ////////// Getters/Setters //////////
