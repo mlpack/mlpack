@@ -396,4 +396,49 @@ static void DenseMatrixToArmaMat(
 }
 }
 
+BOOST_SERIALIZATION_SPLIT_FREE(arma::mat)
+
+namespace boost {
+namespace serialization {
+
+template<class Archive>
+void save(Archive & ar, const arma::mat & t, unsigned int version) {
+
+  // First save the dimensions.
+  ar & t.n_rows;
+  ar & t.n_cols;
+  for(unsigned int j = 0; j < t.n_cols; j++) {
+    for(unsigned int i = 0; i < t.n_rows; i++) {
+      ar & t.at(i, j);
+    }
+  }
+}
+
+template<class Archive>
+void load(Archive & ar, arma::mat & t, unsigned int version) {
+
+  // Load the dimensions.
+  int n_rows;
+  int n_cols;
+  ar & n_rows;
+  ar & n_cols;
+
+  // The new memory block.
+  double *new_double_ptr =
+    (core::table::global_m_file_) ?
+    core::table::global_m_file_->ConstructArray<double>(n_rows * n_cols) :
+    new double[n_rows * n_cols];
+  int pos = 0;
+  for(int j = 0; j < n_cols; j++) {
+    for(int i = 0; i < n_rows; i++, pos++) {
+      ar & new_double_ptr[pos];
+    }
+  }
+
+  // Finally, put the memory block into the armadillo matrix.
+  core::table::DoublePtrToArmaMat(new_double_ptr, n_rows, n_cols, &t);
+}
+}
+}
+
 #endif

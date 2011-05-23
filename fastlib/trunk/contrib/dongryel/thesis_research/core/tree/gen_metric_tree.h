@@ -34,38 +34,6 @@ void serialize(
   ar & c.get<2>();
 }
 
-template <class Archive>
-void save(
-  Archive & ar, const arma::vec &c, const unsigned int version) {
-
-  // Save the length.
-  int length = static_cast<int>(c.n_elem);
-  ar & length;
-  for(int i = 0; i < length; i++) {
-    double v = c[i];
-    ar & v;
-  }
-}
-
-template <class Archive>
-void load(
-  Archive & ar, arma::vec &c, const unsigned int version) {
-
-  // Load the length.
-  int length;
-  ar & length;
-  c.set_size(length);
-  for(int i = 0; i < length; i++) {
-    ar & c[i];
-  }
-}
-
-template <class Archive>
-void serialize(
-  Archive & ar, arma::vec &c, const unsigned int version) {
-  boost::serialization::split_free(ar, c, version);
-}
-
 template <class Archive, typename T>
 void serialize(
   Archive & ar, std::pair<arma::vec, T> &c, const unsigned int version) {

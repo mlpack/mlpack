@@ -12,6 +12,7 @@
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
+#include <boost/serialization/split_free.hpp>
 #include <vector>
 #include "memory_mapped_file.h"
 
@@ -328,6 +329,43 @@ static void DensePointToArmaVec(
 
   core::table::DoublePtrToArmaVec(
     point_in.ptr(), point_in.length(), vec_out);
+}
+}
+}
+
+BOOST_SERIALIZATION_SPLIT_FREE(arma::vec)
+
+namespace boost {
+namespace serialization {
+
+template<class Archive>
+void save(Archive & ar, const arma::vec & t, unsigned int version) {
+
+  // First save the dimensions.
+  ar & t.n_elem;
+  for(unsigned int i = 0; i < t.n_elem; i++) {
+    ar & t[i];
+  }
+}
+
+template<class Archive>
+void load(Archive & ar, arma::vec & t, unsigned int version) {
+
+  // Load the dimensions.
+  int n_elem;
+  ar & n_elem;
+
+  // The new memory block.
+  double *new_double_ptr =
+    (core::table::global_m_file_) ?
+    core::table::global_m_file_->ConstructArray<double>(n_elem) :
+    new double[n_elem];
+  for(int i = 0; i < n_elem; i++) {
+    ar & new_double_ptr[i];
+  }
+
+  // Finally, put the memory block into the armadillo matrix.
+  core::table::DoublePtrToArmaVec(new_double_ptr, n_elem, &t);
 }
 }
 }
