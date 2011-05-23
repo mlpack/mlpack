@@ -247,7 +247,7 @@ class FourierSeriesExpansionAux {
     index_t num_coefficients = list_total_num_coeffs_[order];
 
     // The coefficients to be evaluated.
-    const ComplexVector<typename TExpansion::data_type> &coeffs = 
+    const arma::Col<std::complex<typename TExpansion::data_type> > &coeffs = 
       expansion.get_coeffs();
     const arma::Col<typename TExpansion::data_type> &source_center =
       expansion.get_center();
@@ -269,7 +269,7 @@ class FourierSeriesExpansionAux {
 	(get_max_order() * 
 	 sqrt(2 * (expansion.ka_->kernel_.bandwidth_sq())));
       std::complex<T> factor(cos(trig_argument), sin(trig_argument));
-      std::complex<T> new_coefficient = coeffs.get(i) * factor;
+      std::complex<T> new_coefficient = coeffs(i) * factor;
 
       result += precomputed_constants_[i] * new_coefficient;
     }

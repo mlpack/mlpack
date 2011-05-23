@@ -65,8 +65,8 @@ class SeriesExpansionTest {
     expansion.AccumulateCoeffs(random_dataset, weights, 0, 20, 3);
     
     // Retrieve the coefficients and print them out.
-    const ComplexVector<double> &coeffs = expansion.get_coeffs();
-    coeffs.PrintDebug();
+    const arma::Col<std::complex<double> > &coeffs = expansion.get_coeffs();
+    std::cout << coeffs;
 
     // Evaluate the expansion, and compare against the naive.
     arma::vec evaluation_point(3);
