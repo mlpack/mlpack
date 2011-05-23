@@ -80,14 +80,6 @@ class GenVector {
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
   
-  OBJECT_TRAVERSAL_ONLY(GenVector) {
-    OT_OBJ(length_);
-    OT_ALLOC(ptr_, length_);
-  }
-  OT_REFILL_TRANSIENTS(GenVector) {
-    should_free_ = true;
-  }
-  
  public:
   /**
    * Creates a completely uninitialized Vector which must be initialized.
@@ -464,15 +456,6 @@ class GenMatrix {
   index_t n_cols_;
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
-
-  OBJECT_TRAVERSAL_ONLY(GenMatrix) {
-    OT_OBJ(n_rows_);
-    OT_OBJ(n_cols_);
-    OT_ALLOC(ptr_, n_elements());
-  }
-  OT_REFILL_TRANSIENTS(GenMatrix) {
-    should_free_ = false;
-  }
 
  public:
   /**

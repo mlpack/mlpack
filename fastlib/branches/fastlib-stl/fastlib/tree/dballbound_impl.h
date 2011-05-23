@@ -63,7 +63,7 @@ bool DBallBound<TMetric, TPoint>::Contains(const Point& point) const {
  */
 template<typename TMetric, typename TPoint>
 void DBallBound<TMetric, TPoint>::CalculateMidpoint(Point *centroid) const {
-  ot::InitCopy(centroid, center_);
+  (*centroid) = center_;
 }
 
 /**

@@ -67,11 +67,6 @@ class DBallBound {
     double radius_;
     TPoint center_;
 
-    OBJECT_TRAVERSAL(DBallBound) {
-      OT_OBJ(radius_);
-      OT_OBJ(center_);
-    }
-
   public:
     /***
      * Return the radius of the ball bound.

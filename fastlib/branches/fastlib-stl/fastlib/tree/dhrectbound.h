@@ -60,11 +60,6 @@ class DHrectBound {
     DRange *bounds_;
     index_t dim_;
 
-//    OBJECT_TRAVERSAL(DHrectBound) {
-//      OT_OBJ(dim_);
-    //  OT_ALLOC(bounds_, dim_);
-//    };
-
   public:
     /**
      * Empty constructor.

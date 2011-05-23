@@ -53,12 +53,6 @@ class DenseIntMap {
   index_t size_;
   Value default_value_;
 
-  OT_DEF(DenseIntMap) {
-    OT_MY_OBJECT(size_);
-    OT_MY_OBJECT(default_value_);
-    OT_MALLOC_ARRAY(ptr_, size_);
-  }
-
  public:
   /** Creates a blank mapping. */
   void Init() {
