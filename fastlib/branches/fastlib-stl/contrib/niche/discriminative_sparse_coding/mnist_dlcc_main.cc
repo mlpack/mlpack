@@ -107,11 +107,13 @@ void Train(u32 digit_1, u32 digit_2,
   Pegasos pegasos_lcc;
   printf("n_pegasos_iterations = %d\n",
 	 n_pegasos_iterations);
-  pegasos_lcc.Init(V_lcc, y, lambda_w, n_pegasos_iterations, 2);
+  pegasos_lcc.Init(V_lcc, y, lambda_w, n_pegasos_iterations);
   pegasos_lcc.DoPegasos();
   vec w_lcc = pegasos_lcc.GetW();
   
-  printf("LCC Pegasos Error:\n\t %f\n", ComputeLoss(V_lcc, y, w_lcc));
+  double lcc_loss = ComputeLoss(V_lcc, y, w_lcc);
+  fx_result_double(NULL, "lcc_loss", lcc_loss);
+  printf("LCC Pegasos Loss:\n\t %f\n", lcc_loss);
   
   
   
@@ -136,8 +138,10 @@ void Train(u32 digit_1, u32 digit_2,
   lcc_final.OptimizeCode();
   mat V;
   lcc_final.GetCoding(V);
-  
-  printf("DLCC Pre-Pegasos Error:\n\t%f\n", ComputeLoss(V, y, w));
+
+  double dlcc_pre_pegasos_loss = ComputeLoss(V, y, w);
+  fx_result_double(NULL, "dlcc_pre_pegasos_loss", dlcc_pre_pegasos_loss);
+  printf("DLCC Pre-Pegasos Loss:\n\t%f\n", dlcc_pre_pegasos_loss);
   
   
   // now that we have a coding, run Pegasos to optimize w
@@ -148,7 +152,9 @@ void Train(u32 digit_1, u32 digit_2,
   pegasos.DoPegasos();
   w = pegasos.GetW();
 
-  printf("DLCC Pegasos error: %f\n", ComputeLoss(V, y, w));
+  double dlcc_loss = ComputeLoss(V, y, w);
+  fx_result_double(NULL, "dlcc_loss", dlcc_loss);
+  printf("DLCC Loss: %f\n", dlcc_loss);
   
   
   

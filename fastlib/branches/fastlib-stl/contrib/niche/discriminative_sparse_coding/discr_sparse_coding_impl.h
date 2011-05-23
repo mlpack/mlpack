@@ -77,7 +77,8 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
     u32 ind = rand() % n_points_;
     
     // modify step size in some way
-    step_size = 1.0 / ((double)t);
+    //step_size = 1.0 / ((double)t);
+    step_size = 2.0 / (((double)t) + 2.0);
     //step_size = 1.0 / (sqrt(lambda_w_) * ((double)t));
     //step_size = 1.0 / (lambda_w_ * ((double)t));
 
