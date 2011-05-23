@@ -104,6 +104,10 @@ class MixedLogitDCMArguments {
      */
     std::string hessian_update_method_;
 
+    /** @brief The method used to compute the error.
+     */
+    std::string error_compute_method_;
+
   public:
 
     /** @brief The default constructor.

@@ -28,7 +28,12 @@ double MixedLogitDCM<TableType, DistributionType>::GradientError_(
     return 0.0;
   }
   else {
-    return GradientErrorByFormula_(arguments_in, sample);
+    if(arguments_in.error_compute_method_ == "formula") {
+      return GradientErrorByFormula_(arguments_in, sample);
+    }
+    else {
+      return GradientErrorBySampling_(arguments_in, sample);
+    }
   }
 }
 
@@ -233,8 +238,14 @@ TableType, DistributionType >::IntegrationSampleError_(
     return 0.0;
   }
   else {
-    return IntegrationSampleErrorByFormula_(
-             arguments_in, first_sample, second_sample, error_per_person);
+    if(arguments_in.error_compute_method_ == "formula") {
+      return IntegrationSampleErrorByFormula_(
+               arguments_in, first_sample, second_sample, error_per_person);
+    }
+    else {
+      return IntegrationSampleErrorBySampling_(
+               arguments_in, first_sample, second_sample, error_per_person);
+    }
   }
 }
 
