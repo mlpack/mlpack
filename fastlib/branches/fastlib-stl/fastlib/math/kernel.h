@@ -55,11 +55,6 @@ class GaussianKernel {
   double neg_inv_bandwidth_2sq_;
   double bandwidth_sq_;
 
-  OBJECT_TRAVERSAL(GaussianKernel) {
-    OT_OBJ(neg_inv_bandwidth_2sq_);
-    OT_OBJ(bandwidth_sq_);
-  }
-
  public:
   static const bool HAS_CUTOFF = false;
 
@@ -132,14 +127,6 @@ class GaussianStarKernel {
   double bandwidth_sq_;
   double critical_point_sq_;
   double critical_point_value_;
-  
-  OBJECT_TRAVERSAL(GaussianStarKernel) {
-    OT_OBJ(neg_inv_bandwidth_2sq_);
-    OT_OBJ(factor_);
-    OT_OBJ(bandwidth_sq_);
-    OT_OBJ(critical_point_sq_);
-    OT_OBJ(critical_point_value_);
-  }
   
  public:
   static const bool HAS_CUTOFF = false;
@@ -226,11 +213,6 @@ class EpanKernel {
   double inv_bandwidth_sq_;
   double bandwidth_sq_;
 
-  OBJECT_TRAVERSAL(EpanKernel) {
-    OT_OBJ(inv_bandwidth_sq_);
-    OT_OBJ(bandwidth_sq_);
-  }
-  
  public:
   static const bool HAS_CUTOFF = true;
   

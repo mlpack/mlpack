@@ -194,10 +194,6 @@ class MinMaxVal {
   /** The underlying value. */
   Value val;
 
-  OBJECT_TRAVERSAL(MinMaxVal) {
-    OT_OBJ(val);
-  }
-
  public:
   /**
    * Converts implicitly to the value.
@@ -252,12 +248,10 @@ struct DRange {
    */
   double hi;
 
-  OBJECT_TRAVERSAL(DRange) {
-    OT_OBJ(lo);
-    OT_OBJ(hi);
-  }
-  
  public:
+  /** Initialize to 0. */
+  DRange() : lo(0), hi(0) {}
+
   /** Initializes to specified values. */
   DRange(double lo_in, double hi_in)
       : lo(lo_in), hi(hi_in)
@@ -424,30 +418,22 @@ struct DRange {
   }
 
   friend DRange operator + (const DRange& a, const DRange& b) {
-    DRange result;
-    result.lo = a.lo + b.lo;
-    result.hi = a.hi + b.hi;
+    DRange result(a.lo + b.lo, a.hi + b.hi);
     return result;
   }
 
   friend DRange operator - (const DRange& a, const DRange& b) {
-    DRange result;
-    result.lo = a.lo - b.hi;
-    result.hi = a.hi - b.lo;
+    DRange result(a.lo - b.hi, a.hi - b.lo);
     return result;
   }
   
   friend DRange operator + (const DRange& a, double b) {
-    DRange result;
-    result.lo = a.lo + b;
-    result.hi = a.hi + b;
+    DRange result(a.lo + b, a.hi + b);
     return result;
   }
 
   friend DRange operator - (const DRange& a, double b) {
-    DRange result;
-    result.lo = a.lo - b;
-    result.hi = a.hi - b;
+    DRange result(a.lo - b, a.hi - b);
     return result;
   }
 
