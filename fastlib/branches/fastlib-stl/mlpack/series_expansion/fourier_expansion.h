@@ -16,7 +16,6 @@
 #include <complex>
 
 #include "kernel_aux.h"
-#include "complex_matrix.h"
 #include "fourier_series_expansion_aux.h"
 
 /** @brief The far-field expansion class.
