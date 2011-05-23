@@ -51,13 +51,6 @@ class InversePowDistSeriesExpansionAux {
    */
   Vector factorials_;
 
-  OT_DEF_BASIC(InversePowDistSeriesExpansionAux) {
-    OT_MY_OBJECT(dim_);
-    OT_MY_OBJECT(max_order_);
-    OT_MY_OBJECT(multiplicative_constants_);
-    OT_MY_OBJECT(factorials_);
-  }
-
   double Factorial_(int index) {
     
     if(index < 0) {

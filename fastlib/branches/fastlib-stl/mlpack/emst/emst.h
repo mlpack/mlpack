@@ -19,13 +19,6 @@
 */
 class EdgePair {
   
-  //FORBID_ACCIDENTAL_COPIES(EdgePair);
-  OT_DEF(EdgePair) {
-    OT_MY_OBJECT(lesser_index_);
-    OT_MY_OBJECT(greater_index_);
-    OT_MY_OBJECT(distance_);
-  }
-  
 private:
   index_t lesser_index_;
   index_t greater_index_;
