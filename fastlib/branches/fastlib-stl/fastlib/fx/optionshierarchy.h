@@ -37,9 +37,24 @@ class OptionsHierarchy {
    typedef std::map<std::string, OptionsHierarchy> ChildMap;
    ChildMap children;
   
-   /* Returns the name foo in the pathname foo/bar/fizz */
+   /* Returns the name foo in the pathname foo/bar/fizz 
+    *
+    * @param pathname The full pathname of the parameter,
+    *   eg foo/bar in foo/bar.
+    * 
+    * @return The name of the next node in the path
+    *   eg foo in foo/bar.
+    */
    std::string GetName(std::string& pathname);
-   /* Returns the path bar/fizz in the pathname foo/bar/fizz */
+  
+   /* Returns the path bar/fizz in the pathname foo/bar/fizz 
+    *
+    * @param pathname The full pathname of the parameter,
+    *   eg foo/bar in foo/bar.
+    *
+    * @return The identifiers of all nodes after the next node in the path,
+    *   eg fizz/bar in foo/fizz/bar.
+    */
    std::string GetPath(std::string& pathname);
   
   public:

@@ -41,16 +41,23 @@ namespace po = boost::program_options;
 
 
 /* Constructors, Destructors, Copy */
+/* Make the constructor private, to preclude unauthorized instances */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
 
   return;
 }
 
+ /* 
+   * Initialize desc with a particular name.
+   * 
+   * @param optionsName Name of the module, as far as boost is concerned.
+   */ 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
   return;
 }
 
+//Private copy constructor; don't want copies floating around.
 IO::IO(const IO& other) : desc(other.desc){
   return;
 }
@@ -60,6 +67,18 @@ IO::~IO() {
 }
 
 /* Methods */
+
+/*
+   * Adds a parameter to the heirarchy. Use char* and not 
+   * std::string since the vast majority of use cases will 
+   * be literal strings.
+   * 
+   * 
+   *  @param identifier The name of the parameter.
+   * @param description Short string description of the parameter.
+   * @param parent Full pathname of a parent module, default is root node.
+   * @param required Indicates if parameter must be set on command line.
+   */
 void IO::Add(const char* identifier, 
              const char* description, 
              const char* parent, 
@@ -83,23 +102,27 @@ void IO::Add(const char* identifier,
   return;
 }
 
-//Returns true if the specified value has been flagged by the user
+ /* 
+   * See if the specified flag was found while parsing. 
+   * 
+   * @param identifier The name of the parameter in question. 
+   */
 bool IO::CheckValue(const char* identifier) {
-  int isInVmap = GetSingleton().vmap.count(identifier);
-  int isInGmap = GetSingleton().globalValues.count(identifier);
+  std::string key = std::string(identifier);
+
+  int isInVmap = GetSingleton().vmap.count(key);
+  int isInGmap = GetSingleton().globalValues.count(key);
 
   //Return true if we have a defined value for identifier
   return (isInVmap || isInGmap); 
 }
-  
-//Returns the sole instance of this class
-IO& IO::GetSingleton() {
-  if (singleton == NULL)
-    singleton = new IO();
-  return *singleton;
-}	
 
-//Returns the description of the specified node
+/*
+   * Grab the description of the specified node.
+   * 
+   * @param identifier Name of the node in question.
+   * @return Description of the node in question. 
+   */
 std::string IO::GetDescription(const char* identifier) {
   std::string tmp = std::string(identifier);
   OptionsHierarchy* h = GetSingleton().hierarchy.FindNode(tmp);
@@ -111,7 +134,22 @@ std::string IO::GetDescription(const char* identifier) {
   return d.desc;
 }
 
-//Generates a full pathname, and places it in the hierarchy
+//Returns the sole instance of this class
+IO& IO::GetSingleton() {
+  if (singleton == NULL)
+    singleton = new IO();
+  return *singleton;
+}	
+
+/* 
+ * Properly formats strings such that there aren't too few or too many '/'s.
+ * 
+ * @param id The name of the parameter, eg bar in foo/bar.
+ * @param parent The full name of the parameter's parent, 
+ *   eg foo/bar in foo/bar/buzz.
+ * @param tname String identifier of the parameter's type.
+ * @param description String description of the parameter.
+ */
 std::string IO::ManageHierarchy(const char* id, 
                                 const char* parent, 
                                 std::string& tname, 
@@ -129,7 +167,12 @@ std::string IO::ManageHierarchy(const char* id,
   return path;
 }
 
-//Parses the command line for options
+/*
+   * Parses the commandline for arguments.
+   *
+   * @param argc The number of arguments on the commandline.
+   * @param argv The array of arguments as strings 
+   */
 void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
@@ -164,7 +207,11 @@ void IO::ParseCommandLine(int argc, char** line) {
           << std::endl;
 }
 
-
+ /*
+   * Parses a stream for arguments
+   *
+   * @param stream The stream to be parsed.
+   */
 void IO::ParseStream(std::istream& stream) {
   IO::Debug << "Compiled with debug checks." << std::endl;
 
@@ -189,36 +236,13 @@ void IO::ParseStream(std::istream& stream) {
           << std::endl;
 }
 
-//Prints the current state, right now just for debugging purposes
+/* Prints out the current heirachy */
 void IO::Print() {
   IO::GetSingleton().hierarchy.PrintAll();
 }
 
-/* Initializes a timer, available like a normal value specified on the command 
-   line.  Timers are of type timval, as defined in sys/time.h*/
-void IO::StartTimer(const char* timerName) {
-  //Don't want to actually document the timer, the user can do that if he wants
-  timeval tmp;
-  
-  tmp.tv_sec = 0;
-  tmp.tv_usec = 0;
-  
-  gettimeofday(&tmp, NULL);
-  GetValue<timeval>(timerName) = tmp;
-}
-      
-/* Halts the timer, and replaces it's value with the delta time from it's start 
-*/
-void IO::StopTimer(const char* timerName) {
-  timeval delta, b, &a = GetValue<timeval>(timerName);  
-  gettimeofday(&b, NULL);
-  
-  //Calculate the delta time
-  timersub(&b, &a, &delta);
-  a = delta; 
-}
-
-//Sanitizes strings, rendering input such as /foo/bar and foo/bar equal
+/* Cleans up input pathnames, rendering strings such as /foo/bar
+      and foo/bar equivalent inputs */
 std::string IO::SanitizeString(const char* str) {
   if (str != NULL) {
     std::string p(str);
@@ -233,5 +257,38 @@ std::string IO::SanitizeString(const char* str) {
 
   return std::string("");
 }
+
+/*
+ * Initializes a timer, available like a normal value specified on 
+ * the command line.  Timers are of type timval
+ *
+ * @param timerName The name of the timer in question.
+ */
+void IO::StartTimer(const char* timerName) {
+  //Don't want to actually document the timer, the user can do that if he wants
+  timeval tmp;
+  
+  tmp.tv_sec = 0;
+  tmp.tv_usec = 0;
+  
+  gettimeofday(&tmp, NULL);
+  GetValue<timeval>(timerName) = tmp;
+}
+      
+ /* 
+   * Halts the timer, and replaces it's value with 
+   * the delta time from it's start 
+   *
+   * @param timerName The name of the timer in question.
+   */
+void IO::StopTimer(const char* timerName) {
+  timeval delta, b, &a = GetValue<timeval>(timerName);  
+  gettimeofday(&b, NULL);
+  
+  //Calculate the delta time
+  timersub(&b, &a, &delta);
+  a = delta; 
+}
+
 
 PARAM_MODULE("help", "default help info");

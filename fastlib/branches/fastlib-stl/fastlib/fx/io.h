@@ -73,10 +73,6 @@
 #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
     JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, NULL);
 
-#define PARAM_COMPLEX_TYPE(T, ID, DESC, PARENT) static mlpack::Option<T> \
-    JOIN(io_option_dummy_object_, __COUNTER__) (false, ID, DESC, PARENT, false);
-
-
 
 namespace po = boost::program_options;
 
@@ -116,21 +112,7 @@ class IO {
                    const char* description, 
                    const char* parent, 
                    bool required=false); 
-
-   /*
-   * Registers a complex type for use globally, 
-   * without referencing the commandline 
-   *
-   * @param identifier The name of the parameter.
-   * @param description Short string description of the parameter.
-   * @param parent Full pathname of a parent module, default is root node.
-   * @param required Indicates if parameter must be set on command line.
-   */
-   template<class T>
-   static void AddComplexType(const char* identifier, 
-                              const char* description, 
-                              const char* parent);
-    
+                   
    /* 
    * See if the specified flag was found while parsing. 
    * 
@@ -187,6 +169,10 @@ class IO {
    static io::PrefixedOutStream Warn;
    static io::PrefixedOutStream Fatal;
 
+   /* Cleans up input pathnames, rendering strings such as /foo/bar
+      and foo/bar equivalent inputs */
+   static std::string SanitizeString(const char* str);
+ 
    /*
    * Initializes a timer, available like a normal value specified on 
    * the command line.  Timers are of type timval
@@ -221,18 +207,7 @@ class IO {
       
    //Store a relative index of path names
    io::OptionsHierarchy hierarchy;
-    
-   //Sanity checks strings before sending them to optionshierarchy
-   //Returns the pathname placed in the hierarchy
-   std::string ManageHierarchy(const char* id, 
-                               const char* parent, 
-                               std::string& tname, 
-                               const char* description = "");
       
-   /* Cleans up input pathnames, rendering strings such as /foo/bar
-      and foo/bar equivalent inputs */
-   static std::string SanitizeString(const char* str);
-    
    //The singleton, obviously
    static IO* singleton;
     
@@ -246,6 +221,20 @@ class IO {
    * Returns the singleton instance for use in the static methods 
    */
    static IO& GetSingleton();
+   
+    /* 
+    * Properly formats strings such that there aren't too few or too many '/'s.
+    * 
+    * @param id The name of the parameter, eg bar in foo/bar.
+    * @param parent The full name of the parameter's parent, 
+    *   eg foo/bar in foo/bar/buzz.
+    * @param tname String identifier of the parameter's type.
+    * @param description String description of the parameter.
+    */
+  std::string ManageHierarchy(const char* id, 
+                               const char* parent, 
+                               std::string& tname, 
+                               const char* description = "");
     
    /* Make the constructor private, to preclude unauthorized instances */
    IO();

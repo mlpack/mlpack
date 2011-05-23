@@ -83,15 +83,23 @@ OptionsHierarchy* OptionsHierarchy::FindNodeHelper(string& pathname,
   string name = GetName(pathname);
   string path = GetPath(pathname);
   //If the node is there, recurse to it.
-  if (path.length() != 0)
+  if (path.length() != 0 || name.length() != 0)
     return children[name].FindNodeHelper(path, target);
-  if (name.compare(nodeData.node) == 0)
+
+  if (target.compare(nodeData.node) == 0)
    return this;
   
   return NULL;   
 }
 
-/* Returns the path in a pathname */
+ /* Returns the path bar/fizz in the pathname foo/bar/fizz 
+  *
+  * @param pathname The full pathname of the parameter,
+  *   eg foo/bar in foo/bar.
+  *
+  * @return The identifiers of all nodes after the next node in the path,
+  *   eg fizz/bar in foo/fizz/bar.
+  */
 string OptionsHierarchy::GetPath(string& pathname) {
   //Want to make sure we return a valid string
   if (pathname.find('/') == pathname.npos)
@@ -100,7 +108,14 @@ string OptionsHierarchy::GetPath(string& pathname) {
   return pathname.substr(pathname.find('/')+1,pathname.length());
 }
 
-/* Returns the name in a pathname, eg foo in foo/bar/fizz */
+/* Returns the name foo in the pathname foo/bar/fizz 
+ *
+ * @param pathname The full pathname of the parameter,
+ *   eg foo/bar in foo/bar.
+ * 
+ * @return The name of the next node in the path
+ *   eg foo in foo/bar.
+ */
 string OptionsHierarchy::GetName(string& pathname) {
   //Want to makesure we return a valid string
   if (pathname.find('/') == pathname.npos)

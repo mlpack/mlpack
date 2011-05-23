@@ -12,17 +12,11 @@ Option<N>::Option(bool ignoreTemplate,
     IO::Add(identifier, description, parent, required);
   else {
     IO::Add<N>(identifier, description, parent, required);
-    IO::GetValue<N>(identifier) = defaultValue;
+
+    //Create the full pathname.
+    std::string pathname = IO::SanitizeString(parent) + std::string(identifier);
+    IO::GetValue<N>(pathname.c_str()) = defaultValue;
   }
 }
 
-template<typename N>
-Option<N>::Option(N defaultValue,
-                const char* identifier,
-                const char* description,
-                const char* parent,
-                bool required) {
-  IO::AddComplexType<N>(identifier, description, parent);
-  IO::GetValue<N>(identifier) = defaultValue;
-}
 #endif 
