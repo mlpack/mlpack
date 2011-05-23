@@ -710,7 +710,13 @@ class LocalRegressionDelta {
     }
 
     void SetZero() {
-      densities_l_ = densities_u_ = pruned_ = used_error_ = 0;
+      left_hand_side_l_.SetZero();
+      left_hand_side_e_.SetZero();
+      left_hand_side_u_.SetZero();
+      right_hand_side_l_.SetZero();
+      right_hand_side_e_.SetZero();
+      right_hand_side_u_.SetZero();
+      pruned_ = used_error_ = 0.0;
     }
 
     template<typename MetricType, typename GlobalType, typename TreeType>
@@ -719,11 +725,21 @@ class LocalRegressionDelta {
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
+      // Initialize.
+      left_hand_side_l_.Init(
+        global.reference_table()->n_attributes() + 1,
+        global.reference_table()->n_attributes() + 1);
+      left_hand_side_e_.Init(
+        global.reference_table()->n_attributes() + 1,
+        global.reference_table()->n_attributes() + 1);
+      left_hand_side_u_.Init(
+        global.reference_table()->n_attributes() + 1,
+        global.reference_table()->n_attributes() + 1);
+      right_hand_side_l_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
+
       int rnode_count = rnode->count();
-      densities_l_ = rnode_count *
-                     global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
-      densities_u_ = rnode_count *
-                     global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
       pruned_ = static_cast<double>(rnode_count);
       used_error_ = 0.5 * (densities_u_ - densities_l_);
     }
@@ -782,94 +798,6 @@ class LocalRegressionSummary {
       densities_u_ = summary_in.densities_u_;
       pruned_l_ = summary_in.pruned_l_;
       used_error_u_ = summary_in.used_error_u_;
-    }
-
-    template < typename MetricType, typename GlobalType,
-             typename PostponedType, typename DeltaType,
-             typename TreeType, typename ResultType >
-    bool CanProbabilisticSummarize(
-      const MetricType &metric,
-      GlobalType &global,
-      const PostponedType &postponed, DeltaType &delta,
-      const core::math::Range &squared_distance_range,
-      TreeType *qnode, TreeType *rnode,
-      double failure_probability, ResultType *query_results) const {
-
-      // The number of samples.
-      const int num_samples = 25;
-      if(rnode->count() < 50 ||
-          2.0 * global.kernel_aux().kernel().bandwidth_sq() <
-          squared_distance_range.hi) {
-        return false;
-      }
-
-      // Get the iterator for the query node.
-      typename GlobalType::TableType::TreeIterator qnode_it =
-        global.query_table()->get_node_iterator(qnode);
-      core::table::DensePoint qpoint;
-      int qpoint_index;
-
-      // Get the iterator for the reference node.
-      typename GlobalType::TableType::TreeIterator rnode_it =
-        global.reference_table()->get_node_iterator(rnode);
-      core::table::DensePoint rpoint;
-      int rpoint_index;
-
-      // Interval for the pivot query point.
-      double num_standard_deviations = global.compute_quantile(
-                                         failure_probability);
-      delta.mean_variance_pair_ = ((GlobalType &) global).mean_variance_pair();
-
-      // The flag saying whether the pruning is a success.
-      bool prunable = true;
-      do {
-
-        // Get each query point.
-        qnode_it.Next(&qpoint, &qpoint_index);
-
-        // Clear the sample mean variance pair for the current query.
-        (*delta.mean_variance_pair_)[qpoint_index].SetZero();
-
-        for(int i = 0; i < num_samples; i++) {
-
-          // Pick a random reference point and compute the kernel
-          // difference.
-          rnode_it.RandomPick(&rpoint, &rpoint_index);
-          double squared_dist = metric.DistanceSq(qpoint, rpoint);
-          double kernel_value =
-            global.kernel().EvalUnnormOnSq(squared_dist);
-
-          // Accumulate the sample.
-          (*delta.mean_variance_pair_)[qpoint_index].push_back(kernel_value);
-        }
-
-        // Add the correction.
-        core::math::Range correction;
-        (*delta.mean_variance_pair_)[qpoint_index].scaled_interval(
-          delta.pruned_, num_standard_deviations, &correction);
-        correction.lo = std::max(correction.lo, 0.0);
-        correction.hi = std::min(correction.hi, delta.pruned_);
-
-        // Technically, though not correct, just use the mid point of
-        // the Monte Carlo contribution.
-        double modified_densities_l =
-          query_results->densities_l_[qpoint_index] + correction.mid() +
-          postponed.densities_l_;
-        double left_hand_side = correction.width() * 0.5;
-        double right_hand_side =
-          rnode->count() * (
-            global.relative_error() * modified_densities_l +
-            global.effective_num_reference_points() * global.absolute_error() -
-            used_error_u_) /
-          static_cast<double>(
-            global.effective_num_reference_points() -
-            query_results->pruned_[qpoint_index]);
-
-        // Prunable if the left hand side is less than right hand side.
-        prunable = (left_hand_side <= right_hand_side);
-      }
-      while(qnode_it.HasNext() && prunable);
-      return prunable;
     }
 
     template < typename GlobalType, typename DeltaType, typename TreeType,
