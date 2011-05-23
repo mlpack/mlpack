@@ -681,7 +681,8 @@ class KdeResult {
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
-      int q_index, const GlobalType &global,
+      int q_index,
+      const GlobalType &global,
       const bool is_monochromatic) {
 
       // If monochromatic, then do post correction by subtracing the

@@ -292,14 +292,7 @@ class LocalRegressionGlobal {
 
     typedef IncomingKernelType KernelType;
 
-    typedef std::vector <
-    core::monte_carlo::MeanVariancePair > MeanVariancePairListType;
-
   private:
-
-    /** @brief Whether to normalize the kernel sums at the end or not.
-     */
-    bool normalize_densities_;
 
     /** @brief The absolute error approximation level.
      */
@@ -334,14 +327,6 @@ class LocalRegressionGlobal {
      */
     bool is_monochromatic_;
 
-    /** @brief The normal distribution object.
-     */
-    boost::math::normal normal_dist_;
-
-    /** @brief The scratch space for doing a Monte Carlo sum.
-     */
-    MeanVariancePairListType *mean_variance_pair_;
-
   public:
 
     /** @brief Tells whether the given squared distance range is
@@ -361,12 +346,6 @@ class LocalRegressionGlobal {
      */
     bool is_monochromatic() const {
       return is_monochromatic_;
-    }
-
-    /** @brief Returns whether we should normalize the sum at the end.
-     */
-    bool normalize_densities() const {
-      return normalize_densities_;
     }
 
     /** @brief Returns the effective number of reference points.
@@ -396,48 +375,13 @@ class LocalRegressionGlobal {
     /** @brief The constructor.
      */
     LocalRegressionGlobal() {
-      normalize_densities_ = true;
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 1.0;
-      kernel_aux_ = NULL;
-      kernel_aux_is_alias_ = false;
       effective_num_reference_points_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
-      mean_variance_pair_ = NULL;
-    }
-
-    /** @brief The destructor.
-     */
-    ~LocalRegressionGlobal() {
-      if(! kernel_aux_is_alias_) {
-        delete kernel_aux_;
-        delete mean_variance_pair_;
-      }
-      kernel_aux_ = NULL;
-      mean_variance_pair_ = NULL;
-    }
-
-    /** @brief Returns the mean variance pair object.
-     */
-    MeanVariancePairListType *mean_variance_pair() {
-      return mean_variance_pair_;
-    }
-
-    /** @brief Returns the standard score corresponding to the
-     *         cumulative distribution of the unit variance normal
-     *         distribution with the given tail mass.
-     */
-    double compute_quantile(double tail_mass) const {
-      double mass = 1 - 0.5 * tail_mass;
-      if(mass > 0.999) {
-        return 3;
-      }
-      else {
-        return boost::math::quantile(normal_dist_, mass);
-      }
     }
 
     /** @brief Returns the query table.
@@ -505,30 +449,24 @@ class LocalRegressionGlobal {
     void Init(
       TableType *reference_table_in,
       TableType *query_table_in,
-      double effective_num_reference_points_in, KernelType *kernel_in,
-      double bandwidth_in, MeanVariancePairListType *mean_variance_pair_in,
+      double effective_num_reference_points_in,
+      KernelType *kernel_in,
+      double bandwidth_in,
       const bool is_monochromatic,
-      double relative_error_in, double absolute_error_in, double probability_in,
-      bool normalize_densities_in = true) {
+      double relative_error_in,
+      double absolute_error_in,
+      double probability_in) {
 
       effective_num_reference_points_ = effective_num_reference_points_in;
 
       // Initialize the kernel.
       kernel_.Init(bandwidth_in);
-      mean_variance_pair_ = new MeanVariancePairListType();
 
       relative_error_ = relative_error_in;
       absolute_error_ = absolute_error_in;
       probability_ = probability_in;
       query_table_ = query_table_in;
       reference_table_ = reference_table_in;
-
-      // Initialize the temporary vector for storing the Monte Carlo
-      // results.
-      mean_variance_pair_->resize(query_table_->n_entries());
-
-      // Set the normalize flag.
-      normalize_densities_ = normalize_densities_in;
 
       // Set the monochromatic flag.
       is_monochromatic_ = is_monochromatic;
@@ -546,55 +484,94 @@ class LocalRegressionResult {
 
   public:
 
+    /** @brief The number of query points.
+     */
+    int num_query_points_;
+
     /** @brief The flag that tells whether the self contribution has
      *         been subtracted or not.
      */
-    std::deque<bool> self_contribution_subtracted_;
+    boost::scoped_array<bool> self_contribution_subtracted_;
 
     /** @brief The lower bound on the left hand side.
      */
     boost::scoped_array <
     core::monte_carlo::MeanVariancePairMatrix > left_hand_side_l_;
 
-    /** @brief The approximated left hand side.
+    /** @brief The estimated left hand side.
      */
-    ContainerType densities_;
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairMatrix > left_hand_side_e_;
 
-    /** @brief The upper bound on the density sum.
+    /** @brief The upper bound on the left hand side.
      */
-    ContainerType densities_u_;
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairMatrix > left_hand_side_u_;
+
+    /** @brief The lower bound on the right hand side.
+     */
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairVector > right_hand_side_l_;
+
+    /** @brief The estimated right hand side.
+     */
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairVector > right_hand_side_e_;
+
+    /** @brief The upper bound on the left hand side.
+     */
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairVector > right_hand_side_u_;
 
     /** @brief The number of points pruned per each query.
      */
-    ContainerType pruned_;
+    boost::scoped_array<double> pruned_;
 
     /** @brief The amount of maximum error incurred per each query.
      */
-    ContainerType used_error_;
+    boost::scoped_array<double> used_error_;
 
-    /** @brief The number of far-to-local translations.
-     */
-    int num_farfield_to_local_prunes_;
-
-    /** @brief The number of far-field evaluations.
-     */
-    int num_farfield_prunes_;
-
-    /** @brief The number of direct local accumulations.
-     */
-    int num_local_prunes_;
-
-    /** @brief Serialize the local regression result object.
+    /** @brief Saves the local regression result object.
      */
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version) {
-      ar & self_contribution_subtracted_;
-      ar & densities_l_;
-      ar & densities_;
-      ar & densities_u_;
-      ar & pruned_;
-      ar & used_error_;
+    void save(Archive &ar, const unsigned int version) const {
+      ar & num_query_points_;
+      for(unsigned int i = 0; i < self_contribution_subtracted.size(); i++) {
+        ar & self_contribution_subtracted_[i];
+        ar & left_hand_side_l_[i];
+        ar & left_hand_side_e_[i];
+        ar & left_hand_side_u_[i];
+        ar & right_hand_side_l_[i];
+        ar & right_hand_side_e_[i];
+        ar & right_hand_side_u_[i];
+        ar & pruned_[i];
+        ar & used_error_[i];
+      }
     }
+
+    /** @brief Loads the local regression result object.
+     */
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      ar & num_query_points_;
+
+      // Initialize the array.
+      this->Init(num_query_points_);
+
+      // Load.
+      for(unsigned int i = 0; i < self_contribution_subtracted.size(); i++) {
+        ar & self_contribution_subtracted_[i];
+        ar & left_hand_side_l_[i];
+        ar & left_hand_side_e_[i];
+        ar & left_hand_side_u_[i];
+        ar & right_hand_side_l_[i];
+        ar & right_hand_side_e_[i];
+        ar & right_hand_side_u_[i];
+        ar & pruned_[i];
+        ar & used_error_[i];
+      }
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Seed(int qpoint_index, double initial_pruned_in) {
       pruned_[qpoint_index] = initial_pruned_in;
@@ -606,126 +583,102 @@ class LocalRegressionResult {
       SetZero();
     }
 
-    /** @brief Normalizes the density of each query.
-     */
-    template<typename GlobalType>
-    void Normalize(const GlobalType &global) {
-      for(unsigned int q_index = 0; q_index < densities_l_.size(); q_index++) {
-        densities_l_[q_index] *= global.get_mult_const();
-        densities_[q_index] *= global.get_mult_const();
-        densities_u_[q_index] *= global.get_mult_const();
-      }
-    }
-
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
-      int q_index, const GlobalType &global,
+      int q_index,
+      const GlobalType &global,
       const bool is_monochromatic) {
 
-      // If monochromatic, then do post correction by subtracing the
-      // self-contribution.
-      if((! self_contribution_subtracted_[q_index]) && is_monochromatic) {
-        double self_contribution =
-          global.kernel_aux().kernel().EvalUnnormOnSq(0.0);
-        densities_l_[q_index] -= self_contribution;
-        densities_[q_index] -= self_contribution;
-        densities_u_[q_index] -= self_contribution;
-        self_contribution_subtracted_[q_index] = true;
-      }
-
-      if(global.normalize_densities()) {
-        densities_l_[q_index] *= global.get_mult_const();
-        densities_[q_index] *= global.get_mult_const();
-        densities_u_[q_index] *= global.get_mult_const();
-      }
     }
 
     void Print(const std::string &file_name) const {
-      FILE *file_output = fopen(file_name.c_str(), "w+");
-      for(unsigned int i = 0; i < densities_.size(); i++) {
-        fprintf(file_output, "%g %g %g %g\n", densities_l_[i],
-                densities_[i], densities_u_[i], pruned_[i]);
-      }
-      fclose(file_output);
-    }
-
-    template<typename GlobalType, typename TreeType, typename DeltaType>
-    void ApplyProbabilisticDelta(
-      GlobalType &global, TreeType *qnode, double failure_probability,
-      const DeltaType &delta_in) {
-
-      // Get the iterator for the query node.
-      typename GlobalType::TableType::TreeIterator qnode_it =
-        global.query_table()->get_node_iterator(qnode);
-      core::table::DensePoint qpoint;
-      int qpoint_index;
-
-      // Look up the number of standard deviations.
-      double num_standard_deviations = global.compute_quantile(
-                                         failure_probability);
-
-      do {
-        // Get each query point.
-        qnode_it.Next(&qpoint, &qpoint_index);
-        core::math::Range contribution;
-        (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
-          delta_in.pruned_, num_standard_deviations, &contribution);
-        contribution.lo = std::max(contribution.lo, 0.0);
-        contribution.hi = std::min(contribution.hi, delta_in.pruned_);
-        densities_l_[qpoint_index] += contribution.lo;
-        densities_[qpoint_index] += contribution.mid();
-        densities_u_[qpoint_index] += contribution.hi;
-        pruned_[qpoint_index] += delta_in.pruned_;
-      }
-      while(qnode_it.HasNext());
     }
 
     void Init(int num_points) {
-      densities_l_.resize(num_points);
-      densities_.resize(num_points);
-      densities_u_.resize(num_points);
-      pruned_.resize(num_points);
-      used_error_.resize(num_points);
-      self_contribution_subtracted_.resize(num_points);
+
+      boost::scoped_array<bool> tmp_self_contribution_subtracted(
+        new bool[num_query_points_]);
+      self_contribution_subtracted_.swap(tmp_self_contribution_subtracted);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairMatrix >
+      tmp_left_hand_side_l(
+        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
+      left_hand_side_l_.swap(tmp_left_hand_side_l);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairMatrix >
+      tmp_left_hand_side_e(
+        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
+      left_hand_side_e_.swap(tmp_left_hand_side_e);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairMatrix >
+      tmp_left_hand_side_u(
+        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
+      left_hand_side_u_.swap(tmp_left_hand_side_u);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairVector >
+      tmp_right_hand_side_l(
+        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
+      right_hand_side_l_.swap(tmp_right_hand_side_l);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairVector >
+      tmp_right_hand_side_e(
+        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
+      right_hand_side_e_.swap(tmp_right_hand_side_e);
+
+      boost::scoped_array <
+      core::monte_carlo::MeanVariancePairVector >
+      tmp_right_hand_side_u(
+        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
+      right_hand_side_u_.swap(tmp_right_hand_side_u);
+
+      // Set everything to zero.
       SetZero();
     }
 
     void SetZero() {
-      for(int i = 0; i < static_cast<int>(densities_l_.size()); i++) {
-        densities_l_[i] = 0;
-        densities_[i] = 0;
-        densities_u_[i] = 0;
+      for(int i = 0; i < num_queries_; i++) {
+        self_contribution_subtracted_[i] = false;
+        left_hand_side_l_[i].SetZero();
+        left_hand_side_e_[i].SetZero();
+        left_hand_side_u_[i].SetZero();
+        right_hand_side_l_[i].SetZero();
+        right_hand_side_e_[i].SetZero();
+        right_hand_side_u_[i].SetZero();
         pruned_[i] = 0;
         used_error_[i] = 0;
-        self_contribution_subtracted_[i] = false;
       }
-      num_farfield_to_local_prunes_ = 0;
-      num_farfield_prunes_ = 0;
-      num_local_prunes_ = 0;
     }
 
+    /** @brief Apply postponed contributions.
+     */
     template<typename LocalRegressionPostponedType>
     void ApplyPostponed(
       int q_index, const LocalRegressionPostponedType &postponed_in) {
-      densities_l_[q_index] = densities_l_[q_index] + postponed_in.densities_l_;
-      densities_[q_index] = densities_[q_index] + postponed_in.densities_e_;
-      densities_u_[q_index] = densities_u_[q_index] + postponed_in.densities_u_;
+      left_hand_side_l_[q_index].CombineWith(postponed_in.left_hand_side_l_);
+      left_hand_side_e_[q_index].CombineWith(postponed_in.left_hand_side_e_);
+      left_hand_side_u_[q_index].CombineWith(postponed_in.left_hand_side_u_);
+      right_hand_side_l_[q_index].CombineWith(postponed_in.right_hand_side_l_);
+      right_hand_side_e_[q_index].CombineWith(postponed_in.right_hand_side_e_);
+      right_hand_side_u_[q_index].CombineWith(postponed_in.right_hand_side_u_);
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
       used_error_[q_index] = used_error_[q_index] + postponed_in.used_error_;
     }
 
+    /** @brief Apply the postponed quantities to the query results
+     *         during the final postprocessing stage.
+     */
     template<typename GlobalType, typename LocalRegressionPostponedType>
     void FinalApplyPostponed(
       const GlobalType &global,
       const core::table::DensePoint &qpoint,
       int q_index,
       const LocalRegressionPostponedType &postponed_in) {
-
-      // Evaluate the local expansion.
-      densities_[q_index] +=
-        postponed_in.local_expansion_.EvaluateField(
-          global.kernel_aux(), qpoint);
 
       // Apply postponed.
       ApplyPostponed(q_index, postponed_in);
@@ -736,21 +689,21 @@ class LocalRegressionDelta {
 
   public:
 
-    double densities_l_;
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_l_;
 
-    double densities_u_;
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_e_;
+
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_u_;
+
+    core::monte_carlo::MeanVariancePairVector right_hand_side_l_;
+
+    core::monte_carlo::MeanVariancePairVector right_hand_side_e_;
+
+    core::monte_carlo::MeanVariancePairVector right_hand_side_u_;
 
     double pruned_;
 
     double used_error_;
-
-    int order_farfield_to_local_;
-
-    int order_farfield_;
-
-    int order_local_;
-
-    std::vector< core::monte_carlo::MeanVariancePair > *mean_variance_pair_;
 
     LocalRegressionDelta() {
       SetZero();
@@ -758,10 +711,6 @@ class LocalRegressionDelta {
 
     void SetZero() {
       densities_l_ = densities_u_ = pruned_ = used_error_ = 0;
-      order_farfield_to_local_ = -1;
-      order_farfield_ = -1;
-      order_local_ = -1;
-      mean_variance_pair_ = NULL;
     }
 
     template<typename MetricType, typename GlobalType, typename TreeType>
