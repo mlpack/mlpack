@@ -13,6 +13,7 @@
 #define FOURIER_FARFIELD_EXPANSION
 
 #include <fastlib/fastlib.h>
+#include <complex>
 
 #include "kernel_aux.h"
 #include "complex_matrix.h"
@@ -29,7 +30,7 @@ class FourierExpansion {
   arma::Col<T> center_;
   
   /** @brief The coefficients. */
-  ComplexVector<T> coeffs_;
+  arma::Col<std::complex<T> > coeffs_;
 
   /** @brief The order of approximation. */
   int order_;
@@ -65,7 +66,7 @@ class FourierExpansion {
   }
 
   /** Get the coefficients */
-  const ComplexVector<T>& get_coeffs() const {
+  const arma::Col<std::complex<T> >& get_coeffs() const {
     return coeffs_;
   }
   
@@ -135,7 +136,7 @@ class FourierExpansion {
 	contribution *= weights[i];
 	
 	// This does the actual accumulation.
-	coeffs_.set(j, coeffs_.get(j) + contribution);
+	coeffs_(j) += contribution;
 
       } // end of iterating over each coefficient position.
     }
@@ -176,8 +177,7 @@ class FourierExpansion {
     ka_ = &ka;
     
     // initialize coefficient array
-    coeffs_.Init(sea_->get_max_total_num_coeffs());
-    coeffs_.SetAll(0.0);
+    coeffs_.zeros(sea_->get_max_total_num_coeffs());
   }
   
   void Init(const TKernelAux &ka) {
