@@ -101,6 +101,12 @@ class MeanVariancePairVector {
       ptr_ = NULL;
     }
 
+    void SetZero() {
+      for(int j = 0; j < n_elemenets_; j++) {
+        ptr_[j].SetZero();
+      }
+    }
+
     void CopyValues(const core::monte_carlo::MeanVariancePairVector &v) {
       for(int i = 0; i < n_elements_; i++) {
         ptr_[i].CopyValues(v[i]);
@@ -260,6 +266,12 @@ class MeanVariancePairMatrix {
       n_cols_ = 0;
       n_elements_ = 0;
       ptr_ = NULL;
+    }
+
+    void SetZero() {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].SetZero();
+      }
     }
 
     void operator=(const MeanVariancePairMatrix &v) {
