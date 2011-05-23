@@ -344,7 +344,8 @@ void save(Archive & ar, const arma::vec & t, unsigned int version) {
   // First save the dimensions.
   ar & t.n_elem;
   for(unsigned int i = 0; i < t.n_elem; i++) {
-    ar & t[i];
+    double val = t[i];
+    ar & val;
   }
 }
 
