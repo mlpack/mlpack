@@ -11,9 +11,11 @@
 
 #include <boost/math/distributions/normal.hpp>
 #include <boost/mpi.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <deque>
 #include "core/monte_carlo/mean_variance_pair.h"
+#include "core/monte_carlo/mean_variance_pair_matrix.h"
 #include "core/metric_kernels/kernel.h"
 #include "core/tree/statistic.h"
 #include "core/table/table.h"
@@ -35,32 +37,32 @@ class LocalRegressionPostponed {
     /** @brief The lower bound on the postponed quantities for the
      *         left hand side.
      */
-    arma::mat left_hand_side_l_;
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_l_;
 
     /** @brief The finite-difference postponed quantities for the left
      *         hand side.
      */
-    arma::mat left_hand_side_e_;
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_e_;
 
     /** @brief The upper bound on the postponed quantities for the
      *         left hand side.
      */
-    arma::mat left_hand_side_u_;
+    core::monte_carlo::MeanVariancePairMatrix left_hand_side_u_;
 
     /** @brief The lower bound on the postponed quantities for the
      *         right hand side.
      */
-    arma::vec right_hand_side_l_;
+    core::monte_carlo::MeanVariancePairVector right_hand_side_l_;
 
     /** @brief The finite-difference postponed quantities for the left
      *         right side.
      */
-    arma::vec right_hand_side_e_;
+    core::monte_carlo::MeanVariancePairVector right_hand_side_e_;
 
     /** @brief The upper bound on the postponed quantities for the
      *         right hand side.
      */
-    arma::vec right_hand_side_u_;
+    core::monte_carlo::MeanVariancePairVector right_hand_side_u_;
 
     /** @brief The amount of pruned quantities.
      */
@@ -93,12 +95,12 @@ class LocalRegressionPostponed {
     /** @brief Copies another postponed object.
      */
     void Copy(const LocalRegressionPostponed &postponed_in) {
-      left_hand_side_l_ = postponed_in.left_hand_side_l_;
-      left_hand_side_e_ = postponed_in.left_hand_side_e_;
-      left_hand_side_u_ = postponed_in.left_hand_side_u_;
-      right_hand_side_l_ = postponed_in.right_hand_side_l_;
-      right_hand_side_e_ = postponed_in.right_hand_side_e_;
-      right_hand_side_u_ = postponed_in.right_hand_side_u_;
+      left_hand_side_l_.CopyValues(postponed_in.left_hand_side_l_);
+      left_hand_side_e_.CopyValues(postponed_in.left_hand_side_e_);
+      left_hand_side_u_.CopyValues(postponed_in.left_hand_side_u_);
+      right_hand_side_l_.CopyValues(postponed_in.right_hand_side_l_);
+      right_hand_side_e_.CopyValues(postponed_in.right_hand_side_e_);
+      right_hand_side_u_.CopyValues(postponed_in.right_hand_side_u_);
       pruned_ = postponed_in.pruned_;
       used_error_ = postponed_in.used_error_;
     }
@@ -114,13 +116,23 @@ class LocalRegressionPostponed {
      */
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
-      left_hand_side_l_.zeros();
-      left_hand_side_e_.zeros();
-      left_hand_side_u_.zeros();
-      right_hand_side_l_.zeros();
-      right_hand_side_e_.zeros();
-      right_hand_side_u_.zeros();
+      left_hand_side_l_.SetZero();
+      left_hand_side_e_.SetZero();
+      left_hand_side_u_.SetZero();
+      right_hand_side_l_.SetZero();
+      right_hand_side_e_.SetZero();
+      right_hand_side_u_.SetZero();
+
+      // Set the total number of terms.
+      left_hand_side_l_.set_total_num_terms(rnode->count());
+      left_hand_side_e_.set_total_num_terms(rnode->count());
+      left_hand_side_u_.set_total_num_terms(rnode->count());
+      right_hand_side_l_.set_total_num_terms(rnode->count());
+      right_hand_side_e_.set_total_num_terms(rnode->count());
+      right_hand_side_u_.set_total_num_terms(rnode->count());
       pruned_ = static_cast<double>(rnode->count());
+
+      // Used error is zero.
       used_error_ = 0;
     }
 
@@ -135,17 +147,15 @@ class LocalRegressionPostponed {
       const GlobalType &global, const LocalRegressionDelta &delta_in,
       ResultType *query_results) {
 
-      // Finite-difference.
-      left_hand_side_e_ +=
-        0.5 * (
-          delta_in.left_hand_side_l_ + delta_in.left_hand_side_u_);
-      left_hand_side_l_ = left_hand_side_l_ + delta_in.left_hand_side_l_;
-      left_hand_side_u_ = left_hand_side_u_ + delta_in.left_hand_side_u_;
-      right_hand_side_e_ +=
-        0.5 * (
-          delta_in.right_hand_side_l_ + delta_in.right_hand_side_u_);
-      right_hand_side_l_ = right_hand_side_l_ + delta_in.right_hand_side_l_;
-      right_hand_side_u_ = right_hand_side_u_ + delta_in.right_hand_side_u_;
+      // Combine the delta.
+      left_hand_side_l_.CombineWith(delta_in.left_hand_side_l_);
+      left_hand_side_e_.CombineWith(delta_in.left_hand_side_e_);
+      left_hand_side_u_.CombineWith(delta_in.left_hand_side_u_);
+      right_hand_side_l_.CombineWith(delta_in.right_hand_side_l_);
+      right_hand_side_e_.CombineWith(delta_in.right_hand_side_e_);
+      right_hand_side_u_.CombineWith(delta_in.right_hand_side_u_);
+
+      // Add the pruned and used error quantities.
       pruned_ = pruned_ + delta_in.pruned_;
       used_error_ = used_error_ + delta_in.used_error_;
     }
@@ -153,15 +163,16 @@ class LocalRegressionPostponed {
     /** @brief Applies the incoming postponed contribution.
      */
     void ApplyPostponed(const LocalRegressionPostponed &other_postponed) {
-      left_hand_side_l_ = left_hand_side_l_ + other_postponed.left_hand_side_l_;
-      left_hand_side_e_ = left_hand_side_e_ + other_postponed.left_hand_side_e_;
-      left_hand_side_u_ = left_hand_side_u_ + other_postponed.left_hand_side_u_;
-      right_hand_side_l_ = right_hand_side_l_ +
-                           other_postponed.right_hand_side_l_;
-      right_hand_side_e_ = right_hand_side_e_ +
-                           other_postponed.right_hand_side_e_;
-      right_hand_side_u_ = right_hand_side_u_ +
-                           other_postponed.right_hand_side_u_;
+
+      // Combine the postponed quantities.
+      left_hand_side_l_.CombineWith(other_postponed.left_hand_side_l_);
+      left_hand_side_e_.CombineWith(other_postponed.left_hand_side_e_);
+      left_hand_side_u_.CombineWith(other_postponed.left_hand_side_u_);
+      right_hand_side_l_.CombineWith(other_postponed.right_hand_side_l_);
+      right_hand_side_e_.CombineWith(other_postponed.right_hand_side_e_);
+      right_hand_side_u_.CombineWith(other_postponed.right_hand_side_u_);
+
+      // Add the pruned and used error quantities.
       pruned_ = pruned_ + other_postponed.pruned_;
       used_error_ = used_error_ + other_postponed.used_error_;
     }
@@ -190,39 +201,39 @@ class LocalRegressionPostponed {
 
       double distsq = metric.DistanceSq(query_point, reference_point);
       double kernel_value = global.kernel().EvalUnnormOnSq(distsq);
-      left_hand_side_l_.at(0, 0) += kernel_value;
-      left_hand_side_e_.at(0, 0) += kernel_value;
-      left_hand_side_u_.at(0, 0) += kernel_value;
-      right_hand_side_l_.at(0, 0) += kernel_value * reference_weight;
-      right_hand_side_e_.at(0, 0) += kernel_value * reference_weight;
-      right_hand_side_u_.at(0, 0) += kernel_value * reference_weight;
+      left_hand_side_l_.get(0, 0).push_back(kernel_value);
+      left_hand_side_e_.get(0, 0).push_back(kernel_value);
+      left_hand_side_u_.get(0, 0).push_back(kernel_value);
+      right_hand_side_l_.get(0, 0).push_back(kernel_value * reference_weight);
+      right_hand_side_e_.get(0, 0).push_back(kernel_value * reference_weight);
+      right_hand_side_u_.get(0, 0).push_back(kernel_value * reference_weight);
       for(unsigned int j = 1; j <= reference_point.n_elem; j++) {
 
         // The row update for the left hand side.
         double left_hand_side_increment = kernel_value * reference_point[j - 1];
-        left_hand_side_l_.at(0, j - 1) += left_hand_side_increment;
-        left_hand_side_e_.at(0, j - 1) += left_hand_side_increment;
-        left_hand_side_u_.at(0, j - 1) += left_hand_side_increment;
+        left_hand_side_l_.get(0, j - 1).push_back(left_hand_side_increment);
+        left_hand_side_e_.get(0, j - 1).push_back(left_hand_side_increment);
+        left_hand_side_u_.get(0, j - 1).push_back(left_hand_side_increment);
 
         // The column update for the left hand side.
-        left_hand_side_l_.at(j - 1, 0) += left_hand_side_increment;
-        left_hand_side_e_.at(j - 1, 0) += left_hand_side_increment;
-        left_hand_side_u_.at(j - 1, 0) += left_hand_side_increment;
+        left_hand_side_l_.get(j - 1, 0).push_back(left_hand_side_increment);
+        left_hand_side_e_.get(j - 1, 0).push_back(left_hand_side_increment);
+        left_hand_side_u_.get(j - 1, 0).push_back(left_hand_side_increment);
 
         // The right hand side.
         double right_hand_side_increment =
           kernel_value * reference_weight * reference_point[j - 1];
-        right_hand_side_l_[j - 1] += right_hand_side_increment;
-        right_hand_side_e_[j - 1] += right_hand_side_increment;
-        right_hand_side_u_[j - 1] += right_hand_side_increment;
+        right_hand_side_l_[j - 1].push_back(right_hand_side_increment);
+        right_hand_side_e_[j - 1].push_back(right_hand_side_increment);
+        right_hand_side_u_[j - 1].push_back(right_hand_side_increment);
 
         for(unsigned int i = 1; i <= reference_point.n_elem; i++) {
 
           double inner_increment = kernel_value * reference_point[i - 1] *
                                    reference_point[j - 1];
-          left_hand_side_l_.at(i, j) += inner_increment;
-          left_hand_side_e_.at(i, j) += inner_increment;
-          left_hand_side_u_.at(i, j) += inner_increment;
+          left_hand_side_l_.get(i, j).push_back(inner_increment);
+          left_hand_side_e_.get(i, j).push_back(inner_increment);
+          left_hand_side_u_.get(i, j).push_back(inner_increment);
         }
       }
     }
@@ -230,12 +241,12 @@ class LocalRegressionPostponed {
     /** @brief Sets everything to zero.
      */
     void SetZero() {
-      left_hand_side_l_.zeros();
-      left_hand_side_e_.zeros();
-      left_hand_side_u_.zeros();
-      right_hand_side_l_.zeros();
-      right_hand_side_e_.zeros();
-      right_hand_side_u_.zeros();
+      left_hand_side_l_.SetZero();
+      left_hand_side_e_.SetZero();
+      left_hand_side_u_.SetZero();
+      right_hand_side_l_.SetZero();
+      right_hand_side_e_.SetZero();
+      right_hand_side_u_.SetZero();
       pruned_ = 0;
       used_error_ = 0;
     }
@@ -259,7 +270,7 @@ class ConsiderExtrinsicPruneTrait {
 
 template<>
 class ConsiderExtrinsicPruneTrait <
-    mlpack::series_expansion::EpanKernel > {
+    core::metric_kernels::EpanKernel > {
   public:
     static bool Compute(
       const core::metric_kernels::EpanKernel &kernel_in,
@@ -309,12 +320,7 @@ class LocalRegressionGlobal {
     /** @brief The effective number of reference points used for
      *         normalization.
      */
-
     double effective_num_reference_points_;
-
-    /** @brief The normalization constant.
-     */
-    double mult_const_;
 
     /** @brief The query table.
      */
@@ -385,10 +391,6 @@ class LocalRegressionGlobal {
       effective_num_reference_points_ =
         (reference_table_in == query_table_in) ?
         (total_sum - 1.0) : total_sum;
-      mult_const_ = 1.0 /
-                    (kernel_aux_->kernel().CalcNormConstant(
-                       reference_table_in->n_attributes()) *
-                     ((double) effective_num_reference_points_));
     }
 
     /** @brief The constructor.
@@ -401,7 +403,6 @@ class LocalRegressionGlobal {
       kernel_aux_ = NULL;
       kernel_aux_is_alias_ = false;
       effective_num_reference_points_ = 0.0;
-      mult_const_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
@@ -499,7 +500,7 @@ class LocalRegressionGlobal {
       return kernel_;
     }
 
-    /** @brief Initializes the KDE global object.
+    /** @brief Initializes the local regression global object.
      */
     void Init(
       TableType *reference_table_in,
@@ -515,10 +516,6 @@ class LocalRegressionGlobal {
       // Initialize the kernel.
       kernel_.Init(bandwidth_in);
       mean_variance_pair_ = new MeanVariancePairListType();
-      mult_const_ = 1.0 /
-                    (kernel_.CalcNormConstant(
-                       reference_table_in->n_attributes()) *
-                     ((double) effective_num_reference_points_));
 
       relative_error_ = relative_error_in;
       absolute_error_ = absolute_error_in;
@@ -536,17 +533,11 @@ class LocalRegressionGlobal {
       // Set the monochromatic flag.
       is_monochromatic_ = is_monochromatic;
     }
-
-    /** @brief Gets the multiplicative normalization constant.
-     */
-    double get_mult_const() const {
-      return mult_const_;
-    }
 };
 
-/** @brief Represents the storage of KDE computation results.
+/** @brief Represents the storage of local regression computation
+ *         results.
  */
-template<typename ContainerType>
 class LocalRegressionResult {
   private:
 
@@ -560,11 +551,12 @@ class LocalRegressionResult {
      */
     std::deque<bool> self_contribution_subtracted_;
 
-    /** @brief The lower bound on the density sum.
+    /** @brief The lower bound on the left hand side.
      */
-    ContainerType densities_l_;
+    boost::scoped_array <
+    core::monte_carlo::MeanVariancePairMatrix > left_hand_side_l_;
 
-    /** @brief The approximate density sum per query.
+    /** @brief The approximated left hand side.
      */
     ContainerType densities_;
 
@@ -592,7 +584,7 @@ class LocalRegressionResult {
      */
     int num_local_prunes_;
 
-    /** @brief Serialize the KDE result object.
+    /** @brief Serialize the local regression result object.
      */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
@@ -1028,9 +1020,9 @@ class LocalRegressionStatistic {
 
   public:
 
-    mlpack::kde::LocalRegressionPostponed<ExpansionType> postponed_;
+    mlpack::local_regression::LocalRegressionPostponed postponed_;
 
-    mlpack::kde::LocalRegressionSummary summary_;
+    mlpack::local_regression::LocalRegressionSummary summary_;
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
@@ -1038,7 +1030,7 @@ class LocalRegressionStatistic {
       ar & summary_;
     }
 
-    /** @brief Copies another KDE statistic.
+    /** @brief Copies another local regression statistic.
      */
     void Copy(const LocalRegressionStatistic &stat_in) {
       postponed_.Copy(stat_in.postponed_);
