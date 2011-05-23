@@ -44,6 +44,11 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The distribution each attribute is drawn from. One of: "
         "  constant, diag_gaussian, full_gaussian"
       )(
+        "error_compute_method",
+        boost::program_options::value<std::string>()->default_value("formula"),
+        "OPTIONAL The method used to compute the gradient error, etc. One of: "
+        "  formula, sampling"
+      )(
         "gradient_norm_threshold",
         boost::program_options::value<double>()->default_value(0.5),
         "OPTIONAL The threshold for determining the termination condition "
@@ -153,6 +158,12 @@ class MixedLogitDCMArgumentParser {
         std::cerr << "Missing required --decisions_in.\n";
         exit(0);
       }
+      if((*vm)["error_compute_method"].as<std::string>() != "formula" &&
+          (*vm)["error_compute_method"].as<std::string>() != "sampling") {
+        std::cerr << "Invalid option specified for " <<
+                  "--error_compute_method.\n";
+        exit(0);
+      }
       if((*vm)["hessian_update_method"].as<std::string>() != "exact" &&
           (*vm)["hessian_update_method"].as<std::string>() != "bfgs" &&
           (*vm)["hessian_update_method"].as<std::string>() != "sr1") {
@@ -256,6 +267,10 @@ class MixedLogitDCMArgumentParser {
         arguments_out->test_decisions_table_->Init(
           vm["test_decisions_in"].as<std::string>());
       } // end of parsing the test set.
+
+      // Parse the error compute method.
+      arguments_out->error_compute_method_ =
+        vm[ "error_compute_method" ].as<std::string>();
 
       // Parse the initial dataset sample rate.
       arguments_out->initial_dataset_sample_rate_ =
