@@ -102,7 +102,7 @@ class MeanVariancePairVector {
     }
 
     void SetZero() {
-      for(int j = 0; j < n_elemenets_; j++) {
+      for(int j = 0; j < n_elements_; j++) {
         ptr_[j].SetZero();
       }
     }
