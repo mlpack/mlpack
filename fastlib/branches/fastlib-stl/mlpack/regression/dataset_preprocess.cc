@@ -4,7 +4,7 @@
 #include <fastlib/base/arma_compat.h>
 
 void FindIndexWithPrefix(Dataset &dataset, char *prefix,
-			 std::vector<int> &remove_indices, 
+			 std::vector<index_t> &remove_indices, 
 			 bool keep_going_after_first_match) {
 
   // Get the dataset information containing the feature types and
@@ -52,7 +52,7 @@ int main(int argc, char *argv[]) {
 
   // Now examine each feature name of the dataset, and construct the
   // indices.
-  std::vector<int> remove_indices;
+  std::vector<index_t> remove_indices;
   char buffer[1000];
   do {
     printf("Input the prefix of the feature that you want to remove ");
@@ -65,7 +65,7 @@ int main(int argc, char *argv[]) {
     FindIndexWithPrefix(initial_dataset, buffer, remove_indices, false);
   } while(true);
 
-  std::vector<int> prune_indices;
+  std::vector<index_t> prune_indices;
   do {
     printf("Input the prefix of the feature that you want to consider for pruning ");
     printf("(just press enter if you are done): ");
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
     }
   }
   for(index_t i = 0; i < prune_indices.size(); i++) {
-    fprintf(prune_file, "%d\n", prune_indices[i]);
+    fprintf(prune_file, "%"LI"\n", prune_indices[i]);
   }
   fclose(predictor_file);
   fclose(prune_file);

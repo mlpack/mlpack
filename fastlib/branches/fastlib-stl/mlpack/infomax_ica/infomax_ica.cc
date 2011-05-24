@@ -16,7 +16,7 @@ InfomaxICA::InfomaxICA(){
 
 }
 
-InfomaxICA::InfomaxICA(double lambda, int b, double epsilon):
+InfomaxICA::InfomaxICA(double lambda, index_t b, double epsilon):
   lambda_(lambda),
   b_(b),
   epsilon_(epsilon){
@@ -282,7 +282,7 @@ void InfomaxICA::setLambda(const double lambda){
   lambda_=lambda;
 }
 
-void InfomaxICA::setB(const int b){
+void InfomaxICA::setB(const index_t b){
   b_=b;
 }
 

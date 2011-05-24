@@ -58,7 +58,7 @@ class GaussianHMM {
   void InitFromFile(const char* profile);
 
   /** Initializes using K-means algorithm using data as a guide */
-  void InitFromData(const std::vector<arma::mat>& list_data_seq, int numstate);
+  void InitFromData(const std::vector<arma::mat>& list_data_seq, index_t numstate);
 
   /** Initializes using data and state sequence as a guide */  
   void InitFromData(const arma::mat& data_seq, const arma::vec& state_seq);
@@ -70,7 +70,7 @@ class GaussianHMM {
   void SaveProfile(const char* profile) const;
 
   /** Generate a random data sequence of a given length */
-  void GenerateSequence(int L, arma::mat& data_seq, arma::vec& state_seq) const;
+  void GenerateSequence(index_t L, arma::mat& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Estimate the matrices by a data sequence and a state sequence 
@@ -78,7 +78,7 @@ class GaussianHMM {
    */
 
   void EstimateModel(const arma::mat& data_seq, const arma::vec& state_seq);
-  void EstimateModel(int numstate, 
+  void EstimateModel(index_t numstate, 
 		     const arma::mat& data_seq, const arma::vec& state_seq);
 
   /** 
@@ -108,14 +108,14 @@ class GaussianHMM {
    * using Baum-Welch EM algorithm
    */
   void TrainBaumWelch(const std::vector<arma::mat>& list_data_seq, 
-		      int max_iteration, double tolerance);
+		      index_t max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
   void TrainViterbi(const std::vector<arma::mat>& list_data_seq, 
-		    int max_iteration, double tolerance);
+		    index_t max_iteration, double tolerance);
 
 
   ////////// Static helper functions ///////////////////////////////////////
@@ -134,13 +134,13 @@ class GaussianHMM {
    * seq: generated sequence, uninitialized matrix, will have size N x L
    * states: generated states, uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const arma::mat& trans, const std::vector<arma::vec>& means, 
+  static void GenerateInit(index_t L, const arma::mat& trans, const std::vector<arma::vec>& means, 
 			   const std::vector<arma::mat>& covs, arma::mat& seq, arma::vec& states);
 
   /** Estimate transition and emission distribution from sequence and states */
   static void EstimateInit(const arma::mat& seq, const arma::vec& states, arma::mat& trans, 
 			   std::vector<arma::vec>& means, std::vector<arma::mat>& covs);
-  static void EstimateInit(int numStates, const arma::mat& seq, const arma::vec& states,
+  static void EstimateInit(index_t numStates, const arma::mat& seq, const arma::vec& states,
 			   arma::mat& trans, std::vector<arma::vec>& means, 
 			   std::vector<arma::mat>& covs);
 
@@ -156,13 +156,13 @@ class GaussianHMM {
    * scales: scale factors, length L
    * RETURN: log probabilities of sequence
    */
-  static void ForwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+  static void ForwardProcedure(index_t L, const arma::mat& trans, const arma::mat& emis_prob, 
 			       arma::vec& scales, arma::mat& fs);
-  static void BackwardProcedure(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+  static void BackwardProcedure(index_t L, const arma::mat& trans, const arma::mat& emis_prob, 
 				const arma::vec& scales, arma::mat& bs);
   static double Decode(const arma::mat& trans, const arma::mat& emis_prob, arma::mat& pstates, 
 		       arma::mat& fs, arma::mat& bs, arma::vec& scales);
-  static double Decode(int L, const arma::mat& trans, const arma::mat& emis_prob, 
+  static double Decode(index_t L, const arma::mat& trans, const arma::mat& emis_prob, 
 		       arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales);
   static void CalculateEmissionProb(const arma::mat& seq, const std::vector<arma::vec>& means, 
 				    const std::vector<arma::mat>& inv_covs, const arma::vec& det,
@@ -177,22 +177,22 @@ class GaussianHMM {
    * RETURN: log probability of the most probable sequence
    */
   static double ViterbiInit(const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
-  static double ViterbiInit(int L, const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
+  static double ViterbiInit(index_t L, const arma::mat& trans, const arma::mat& emis_prob, arma::vec& states);
 
   /** 
    * Baum-Welch and Viterbi estimation of transition and emission 
    * distribution (Gaussian)
    */
-  static void InitGaussParameter(int M, const std::vector<arma::mat>& seqs, 
+  static void InitGaussParameter(index_t M, const std::vector<arma::mat>& seqs, 
 				 arma::mat& guessTR, std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO);
 
   static void Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
 		    std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO, 
-		    int max_iter, double tol);
+		    index_t max_iter, double tol);
 
   static void TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
 			   std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO, 
-			   int max_iter, double tol);
+			   index_t max_iter, double tol);
 };
 
 #endif

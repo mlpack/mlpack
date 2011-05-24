@@ -83,9 +83,9 @@ void matrix_concatenate_row_init(const Matrix& a_mat, const Matrix& b_mat,
  * _in refers to the starting row(column)
  * _out refers to the ending row(column)
  */
-void extract_sub_matrix_init(const Matrix& a_mat, const int& r_in, 
-			     const int& r_out, const int& c_in, 
-			     const int& c_out, Matrix* x_mat);
+void extract_sub_matrix_init(const Matrix& a_mat, const index_t& r_in, 
+			     const index_t& r_out, const index_t& c_in, 
+			     const index_t& c_out, Matrix* x_mat);
 
 
 /**
@@ -94,8 +94,8 @@ void extract_sub_matrix_init(const Matrix& a_mat, const int& r_in,
  * _in refers to the starting row
  * _out refers to the ending row
  */
-void extract_sub_vector_of_vector_init(const Vector& v, const int& r_in, 
-				       const int& r_out, Vector* x);
+void extract_sub_vector_of_vector_init(const Vector& v, const index_t& r_in, 
+				       const index_t& r_out, Vector* x);
 
 /**
  * x is given  the same values as a sub-vector of vector v
@@ -104,8 +104,8 @@ void extract_sub_vector_of_vector_init(const Vector& v, const int& r_in,
  * _out refers to the ending row
  * done via a ptr
  */
-void extract_sub_vector_of_vector(const Vector& v, const int& r_in, 
-				  const int& r_out, Vector* x);
+void extract_sub_vector_of_vector(const Vector& v, const index_t& r_in, 
+				  const index_t& r_out, Vector* x);
 
 
 /**
@@ -114,9 +114,9 @@ void extract_sub_vector_of_vector(const Vector& v, const int& r_in,
  * a_mat is a matrix or vector (as appropriate)
  * x_mat needs to be initialized a-priori and is passed as a ptr
  */
-void set_portion_of_matrix(const Matrix& a_mat, const int& r_in,
-			   const int& r_out, const int& c_in, 
-			   const int& c_out, Matrix* x_mat);
+void set_portion_of_matrix(const Matrix& a_mat, const index_t& r_in,
+			   const index_t& r_out, const index_t& c_in, 
+			   const index_t& c_out, Matrix* x_mat);
 
 
 /**
@@ -125,8 +125,8 @@ void set_portion_of_matrix(const Matrix& a_mat, const int& r_in,
  * a_mat is a matrix or vector (as appropriate)
  * x_mat needs to be initialized a-priori and passed as a ptr
  */
-void set_portion_of_matrix(const Vector& a_mat, const int& r_in, 
-			   const int& r_out, const int& c, Matrix* x_mat);
+void set_portion_of_matrix(const Vector& a_mat, const index_t& r_in, 
+			   const index_t& r_out, const index_t& c, Matrix* x_mat);
 
 /**
  * Returns vector realization of zero-mean multi-variate Gaussian 

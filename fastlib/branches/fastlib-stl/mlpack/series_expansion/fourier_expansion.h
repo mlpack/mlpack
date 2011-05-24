@@ -32,7 +32,7 @@ class FourierExpansion {
   arma::Col<std::complex<T> > coeffs_;
 
   /** @brief The order of approximation. */
-  int order_;
+  index_t order_;
   
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
   const TKernelAux *ka_;
@@ -70,12 +70,12 @@ class FourierExpansion {
   }
   
   /** Get the approximation order */
-  int get_order() const {
+  index_t get_order() const {
     return order_;
   }
   
   /** Get the maximum possible approximation order */
-  int get_max_order() const {
+  index_t get_max_order() const {
     return sea_->get_max_order();
   }
 
@@ -86,7 +86,7 @@ class FourierExpansion {
   }
 
   /** Set the approximation order */
-  void set_order(int new_order) {
+  void set_order(index_t new_order) {
     order_ = new_order;
   }
   
@@ -105,7 +105,7 @@ class FourierExpansion {
    * data into the coefficients
    */
   void AccumulateCoeffs(const arma::Mat<T>& data, const arma::Col<T>& weights,
-			int begin, int end, int order) {
+			index_t begin, index_t end, index_t order) {
     
     // Loop over each data point and accumulate its contribution.
     index_t num_coefficients = sea_->get_total_num_coeffs(order);
@@ -118,7 +118,7 @@ class FourierExpansion {
       for(index_t j = 0; j < num_coefficients; j++) {
 	
 	// Retrieve the current mapping.
-	const std::vector<short int> &mapping = sea_->get_multiindex(j);
+	const std::vector<index_t> &mapping = sea_->get_multiindex(j);
 	
 	// Dot product between the multiindex and the relative
 	// coorindate of the data point.
@@ -146,7 +146,7 @@ class FourierExpansion {
    * a new order.
    */
   void RefineCoeffs(const arma::Mat<T>& data, const arma::Col<T>& weights,
-		    int begin, int end, int order) {
+		    index_t begin, index_t end, index_t order) {
     
     AccumulateCoeffs(data, weights, begin, end, order);
   }
@@ -154,11 +154,11 @@ class FourierExpansion {
   /**
    * Evaluates the far-field coefficients at the given point
    */
-  T EvaluateField(const arma::Mat<T> &data, int row_num, int order) const {
+  T EvaluateField(const arma::Mat<T> &data, index_t row_num, index_t order) const {
     return EvaluateField(data.colptr(row_num), order);
   }
   
-  T EvaluateField(const T *x_q, int order) const {
+  T EvaluateField(const T *x_q, index_t order) const {
     return sea_->EvaluationOperator(*this, x_q, order);
   }
   
@@ -249,7 +249,7 @@ class FourierExpansion {
    * are added up to the passed-in local expansion coefficients.
    */
   void TranslateToLocal(FourierExpansion<TKernelAux, T> &se, 
-			int truncation_order) {
+			index_t truncation_order) {
     
     sea_->TranslationOperator(*this, se, truncation_order);
   }

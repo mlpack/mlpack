@@ -30,8 +30,8 @@ class DualtreeKdeCVCommon {
       InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
     
     // The initial number of samples is equal to the default.
-    int num_samples = 50;
-    int total_samples = 0;
+    index_t num_samples = 50;
+    index_t total_samples = 0;
     
     for(index_t s = 0; s < num_samples; s++) {
       

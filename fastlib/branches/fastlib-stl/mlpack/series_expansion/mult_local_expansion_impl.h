@@ -8,15 +8,15 @@
 template<typename TKernelAux>
 void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data, 
 						      const arma::vec& weights, 
-						      int begin, int end, 
-						      int order) {
+						      index_t begin, index_t end, 
+						      index_t order) {
 
   if(order > order_) {
     order_ = order;
   }
 
-  int dim = sea_->get_dimension();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order);
+  index_t dim = sea_->get_dimension();
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(order);
   
   // get inverse factorials (precomputed)
   const arma::vec& neg_inv_multiindex_factorials = sea_->get_neg_inv_multiindex_factorials();
@@ -32,7 +32,7 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data,
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // get the order of traversal for the given order of approximation
-  const std::vector<short int> &traversal_order = 
+  const std::vector<index_t> &traversal_order = 
     sea_->traversal_mapping_[order];
 
   // for each data point,
@@ -49,8 +49,8 @@ void MultLocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data,
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
     for(index_t j = 0; j < total_num_coeffs; j++) {
-      int index = traversal_order[j];
-      const std::vector<short int>& mapping = sea_->get_multiindex(index);
+      index_t index = traversal_order[j];
+      const std::vector<index_t>& mapping = sea_->get_multiindex(index);
       double partial_derivative = 
 	ka_->ComputePartialDerivative(derivative_map, mapping);
       coeffs_[index] += neg_inv_multiindex_factorials[index] * weights[r] * 
@@ -64,8 +64,8 @@ void MultLocalExpansion<TKernelAux>::PrintDebug(const char *name,
 						FILE *stream) const {
   
     
-  int dim = sea_->get_dimension();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  index_t dim = sea_->get_dimension();
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
   fprintf(stream, "Local expansion\n");
@@ -85,7 +85,7 @@ void MultLocalExpansion<TKernelAux>::PrintDebug(const char *name,
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
   for (index_t i = 0; i < total_num_coeffs; i++) {
-    std::vector<short int> mapping = sea_->get_multiindex(i);
+    std::vector<index_t> mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
     
     for(index_t d = 0; d < dim; d++) {
@@ -101,7 +101,7 @@ void MultLocalExpansion<TKernelAux>::PrintDebug(const char *name,
 
 template<typename TKernelAux>
 double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data,
-						     int row_num) const {
+						     index_t row_num) const {
     
   // if there are no local coefficients, then return 0
   if(order_ < 0) {
@@ -109,10 +109,10 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data,
   }
 
   // total number of coefficient
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // number of dimensions
-  int dim = sea_->get_dimension();
+  index_t dim = sea_->get_dimension();
 
   // evaluated sum to be returned
   double sum = 0;
@@ -123,7 +123,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data,
   // temporary variable
   arma::vec x_Q_to_x_q(dim);
   arma::vec tmp(sea_->get_max_total_num_coeffs());
-  std::vector<short int> heads(dim + 1);
+  std::vector<index_t> heads(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
   for(index_t i = 0; i < dim; i++) {
@@ -137,21 +137,21 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data,
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  const std::vector<short int>& traversal_order = 
+  const std::vector<index_t>& traversal_order = 
     sea_->traversal_mapping_[order_];
 
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
-    int index = traversal_order[i];
-    const std::vector<short int> &lower_mappings = 
+    index_t index = traversal_order[i];
+    const std::vector<index_t> &lower_mappings = 
       sea_->lower_mapping_index_[index];
     
     // from the direct descendant, recursively compute the multipole moments
-    int direct_ancestor_mapping_pos = 
+    index_t direct_ancestor_mapping_pos = 
       lower_mappings[lower_mappings.size() - 2];
-    int position = 0;
-    const std::vector<short int>& mapping = sea_->multiindex_mapping_[index];
-    const std::vector<short int>& direct_ancestor_mapping = 
+    index_t position = 0;
+    const std::vector<index_t>& mapping = sea_->multiindex_mapping_[index];
+    const std::vector<index_t>& direct_ancestor_mapping = 
       sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
     for(index_t i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -163,7 +163,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data,
   }
 
   for(index_t i = 0; i < total_num_coeffs; i++) {
-    int index = traversal_order[i];
+    index_t index = traversal_order[i];
     sum += coeffs_[index] * tmp[index];
   }
 
@@ -179,10 +179,10 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::vec& x_q) const
   }
 
   // total number of coefficient
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // number of dimensions
-  int dim = sea_->get_dimension();
+  index_t dim = sea_->get_dimension();
 
   // evaluated sum to be returned
   double sum = 0;
@@ -193,7 +193,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::vec& x_q) const
   // temporary variable
   arma::vec x_Q_to_x_q(dim);
   arma::vec tmp(sea_->get_max_total_num_coeffs());
-  std::vector<short int> heads(dim + 1);
+  std::vector<index_t> heads(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
   for(index_t i = 0; i < dim; i++) {
@@ -202,24 +202,24 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::vec& x_q) const
   
   for(index_t i = 0; i < dim; i++)
     heads[i] = 0;
-  heads[dim] = INT_MAX;
+  heads[dim] = UINT_MAX;
 
   tmp[0] = 1.0;
 
   // get the order of traversal for the given order of approximation
-  std::vector<short int>& traversal_order = sea_->traversal_mapping_[order_];
+  std::vector<index_t>& traversal_order = sea_->traversal_mapping_[order_];
 
   for(index_t i = 1; i < total_num_coeffs; i++) {
     
-    int index = traversal_order[i];
-    std::vector<short int> &lower_mappings = sea_->lower_mapping_index_[index];
+    index_t index = traversal_order[i];
+    std::vector<index_t> &lower_mappings = sea_->lower_mapping_index_[index];
     
     // from the direct descendant, recursively compute the multipole moments
-    int direct_ancestor_mapping_pos = 
+    index_t direct_ancestor_mapping_pos = 
       lower_mappings[lower_mappings.size() - 2];
-    int position = 0;
-    const std::vector<short int> &mapping = sea_->multiindex_mapping_[index];
-    const std::vector<short int> &direct_ancestor_mapping = 
+    index_t position = 0;
+    const std::vector<index_t> &mapping = sea_->multiindex_mapping_[index];
+    const std::vector<index_t> &direct_ancestor_mapping = 
       sea_->multiindex_mapping_[direct_ancestor_mapping_pos];
     for(index_t i = 0; i < dim; i++) {
       if(mapping[i] != direct_ancestor_mapping[i]) {
@@ -231,7 +231,7 @@ double MultLocalExpansion<TKernelAux>::EvaluateField(const arma::vec& x_q) const
   }
 
   for(index_t i = 0; i < total_num_coeffs; i++) {
-    int index = traversal_order[i];
+    index_t index = traversal_order[i];
     sum += coeffs_[index] * tmp[index];
   }
 
@@ -267,7 +267,7 @@ void MultLocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
 
 template<typename TKernelAux>
 template<typename TBound>
-int MultLocalExpansion<TKernelAux>::OrderForEvaluating
+index_t MultLocalExpansion<TKernelAux>::OrderForEvaluating
 (const TBound &far_field_region, 
  const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error) const {
@@ -287,10 +287,10 @@ void MultLocalExpansion<TKernelAux>::TranslateFromFarField
   arma::vec& far_center;
   arma::vec cent_diff;
   arma::vec& far_coeffs;
-  int dimension = sea_->get_dimension();
-  int far_order = se.get_order();
-  int total_num_coeffs = sea_->get_total_num_coeffs(far_order);
-  int limit;
+  index_t dimension = sea_->get_dimension();
+  index_t far_order = se.get_order();
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(far_order);
+  index_t limit;
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   ka_->AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
@@ -317,22 +317,22 @@ void MultLocalExpansion<TKernelAux>::TranslateFromFarField
 
   // compute required partial derivatives
   ka_->ComputeDirectionalDerivatives(cent_diff, &derivative_map, 2 * order_);
-  std::vector<short int> beta_plus_alpha;
+  std::vector<index_t> beta_plus_alpha;
   beta_plus_alpha.reserve(dimension);
 
   // get the order of traversal for the given order of approximation
-  std::vector<short int> &traversal_order = sea_->traversal_mapping_[far_order];
+  std::vector<index_t> &traversal_order = sea_->traversal_mapping_[far_order];
 
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    int index_j = traversal_order[j];
-    std::vector<short int> beta_mapping = sea_->get_multiindex(index_j);
+    index_t index_j = traversal_order[j];
+    std::vector<index_t> beta_mapping = sea_->get_multiindex(index_j);
     pos_arrtmp[index_j] = neg_arrtmp[index_j] = 0;
 
     for(index_t k = 0; k < total_num_coeffs; k++) {
 
-      int index_k = traversal_order[k];
-      std::vector<short int> alpha_mapping = sea_->get_multiindex(index_k);
+      index_t index_k = traversal_order[k];
+      std::vector<index_t> alpha_mapping = sea_->get_multiindex(index_k);
       for(index_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
@@ -352,7 +352,7 @@ void MultLocalExpansion<TKernelAux>::TranslateFromFarField
 
   arma::vec C_k_neg = sea_->get_neg_inv_multiindex_factorials();
   for(index_t j = 0; j < total_num_coeffs; j++) {
-    int index_j = traversal_order[j];
+    index_t index_j = traversal_order[j];
     coeffs_[index_j] += (pos_arrtmp[index_j] + neg_arrtmp[index_j]) * 
       C_k_neg[index_j];
   }
@@ -370,17 +370,17 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
   // the expansion we are translating from. Also get coefficients we
   // are translating
   arma::vec& new_center = se.get_center();
-  int prev_order = se.get_order();
-  int total_num_coeffs = sea_->get_total_num_coeffs(order_);
-  const std::vector<std::vector<short int> >& upper_mapping_index = 
+  index_t prev_order = se.get_order();
+  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  const std::vector<std::vector<index_t> >& upper_mapping_index = 
     sea_->get_upper_mapping_index();
   arma::vec& new_coeffs = se.get_coeffs();
 
   // dimension
-  int dim = sea_->get_dimension();
+  index_t dim = sea_->get_dimension();
 
   // temporary variable
-  std::vector<short int> tmp_storage;
+  std::vector<index_t> tmp_storage;
   tmp_storage.reserve(dim);
 
   // sqrt two times bandwidth
@@ -399,18 +399,18 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
   }
 
   // inverse multiindex factorials
-  const arma::vec& C_k = sea_->get_inv_multiindex_factorials();
+  //const arma::vec& C_k = sea_->get_inv_multiindex_factorials();
 
   // get the order of traversal for the given order of approximation
-  const std::vector<short int> &traversal_order = 
+  const std::vector<index_t> &traversal_order =
     sea_->traversal_mapping_[order_];
 
   // do the actual translation
   for(index_t j = 0; j < total_num_coeffs; j++) {
 
-    int index_j = traversal_order[j];
-    const std::vector<short int> &alpha_mapping = sea_->get_multiindex(index_j);
-    const std::vector<short int> &upper_mappings_for_alpha = 
+    index_t index_j = traversal_order[j];
+    const std::vector<index_t> &alpha_mapping = sea_->get_multiindex(index_j);
+    const std::vector<index_t> &upper_mappings_for_alpha = 
       upper_mapping_index[index_j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
@@ -421,9 +421,9 @@ void MultLocalExpansion<TKernelAux>::TranslateToLocal(MultLocalExpansion &se) {
 	break;
       }
 
-      const std::vector<short int> &beta_mapping = 
+      const std::vector<index_t> &beta_mapping = 
 	sea_->get_multiindex(upper_mappings_for_alpha[k]);
-      int flag = 0;
+      index_t flag = 0;
       double diff1 = 1.0;
 
       for(index_t l = 0; l < dim; l++) {

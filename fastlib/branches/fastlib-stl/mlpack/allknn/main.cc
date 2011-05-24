@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
 
   bool single_mode = IO::GetValue<bool>("allknn/single_mode");
   bool naive_mode = IO::GetValue<bool>("allknn/naive_mode");
-  int knn_options = (single_mode ? AllkNN::MODE_SINGLE : 0) |
+  index_t knn_options = (single_mode ? AllkNN::MODE_SINGLE : 0) |
       (naive_mode ? AllkNN::NAIVE : 0);
 
   arma::Col<index_t> neighbors;
@@ -86,9 +86,9 @@ int main(int argc, char *argv[]) {
 
   NOTIFY("Tree(s) built");
 
-  int k = IO::GetValue<int>("allknn/k");
+  index_t k = IO::GetValue<index_t>("allknn/k");
   
-  NOTIFY("Computing %d nearest neighbors", k);
+  NOTIFY("Computing %"LI" nearest neighbors", k);
   allknn->ComputeNeighbors(neighbors, distances);
 
   NOTIFY("Neighbors computed");

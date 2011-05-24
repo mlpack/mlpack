@@ -22,7 +22,7 @@ const fx_module_doc infomax_ica_main_doc = {
 };
 
 int main(int argc, char *argv[]) {
-  fx_module *root = fx_init(argc, argv, &infomax_ica_main_doc);
+  //fx_module *root = fx_init(argc, argv, &infomax_ica_main_doc);
 
   TestInfomaxICA *testica = new TestInfomaxICA();
   testica->Init();

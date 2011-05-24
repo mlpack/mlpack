@@ -50,10 +50,10 @@ void RidgeRegression::BuildCovariance_
     predictions_(i, 0)= predictions_in[i];
 
     // Loop over each predictor index.
-    for(index_t j = -1; j < limit; j++) {
+    for(int j = -1; j < limit; j++) {
       
       // The current predictor index.
-      index_t outer_predictor_index = -1;
+      int outer_predictor_index = -1;
       double outer_value = 1.0;
       
       if(j >= 0) {
@@ -68,10 +68,10 @@ void RidgeRegression::BuildCovariance_
       }
       
       // Accumulate the covariance matrix.
-      for(index_t k = -1; k < limit; k++) {
+      for(int k = -1; k < limit; k++) {
 	
 	// The inner predictor index.
-	index_t inner_predictor_index = -1;
+	int inner_predictor_index = -1;
 	double inner_value = 1.0;
 	
 	if(k >= 0) {
@@ -99,7 +99,7 @@ void RidgeRegression::ExtractDesignMatrixSubset_
 (const arma::Col<index_t> *loo_current_predictor_indices,
  arma::mat *extracted_design_matrix_subset) {
 
-  int num_features = 0;
+  index_t num_features = 0;
   
   if(loo_current_predictor_indices == NULL) {
     num_features = predictors_->n_rows;
@@ -145,16 +145,16 @@ void RidgeRegression::ExtractCovarianceSubset_
       (loo_current_predictor_indices->n_elem + 1,
        loo_current_predictor_indices->n_elem + 1);
     
-    for(index_t i = -1; i < loo_current_predictor_indices->n_elem; i++) {
-      index_t column_position = (i == -1) ? 
-	0:(*loo_current_predictor_indices)[i] + 1;
+    for(index_t i = 0; i-1 < loo_current_predictor_indices->n_elem; i++) {
+      index_t column_position = (i == 0) ? 
+	0:(*loo_current_predictor_indices)[i-1] + 1;
       
-      for(index_t j = -1; j < loo_current_predictor_indices->n_elem; j++) {
-	index_t row_position = (j == -1) ? 
-	  0:(*loo_current_predictor_indices)[j] + 1;
+      for(index_t j = 0; j-1 < loo_current_predictor_indices->n_elem; j++) {
+	index_t row_position = (j == 0) ? 
+	  0:(*loo_current_predictor_indices)[j-1] + 1;
 	
 	// ???
-	(*precomputed_covariance_subset)(j + 1, i + 1) = 
+	(*precomputed_covariance_subset)(j-1 + 1, i-1 + 1) = 
 	   precomputed_covariance(row_position, column_position);
       }
     }
@@ -275,7 +275,7 @@ void RidgeRegression::BuildDesignMatrixFromIndexSet_
 
 void RidgeRegression::ComputeLinearModel_
 (double lambda_sq, const arma::vec &singular_values, 
- const arma::mat &u, const arma::mat &v_t, int num_features) {
+ const arma::mat &u, const arma::mat &v_t, index_t num_features) {
 
   std::cout << "lambda " << lambda_sq <<
     "\nsingular_values\n" << singular_values <<
@@ -385,7 +385,7 @@ void RidgeRegression::ExtractSubspace_
 	
 	const arma::vec& eigen_v_column = eigen_v.col(j);
 	double dot_product = eigen_v_column(0);
-	for(index_t k = 1; k <= limit; k++) {
+	for(int k = 1; k <= limit; k++) {
 	  
 	  if(predictor_indices == NULL) {
 	    dot_product += point(k - 1) * eigen_v_column(k);

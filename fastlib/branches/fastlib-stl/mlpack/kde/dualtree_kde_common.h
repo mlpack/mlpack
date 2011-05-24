@@ -136,7 +136,7 @@ class DualtreeKdeCommon {
 	sample_size - r_star, population_size, sample_size);
       */
       total_probability +=
-	math::BinomialCoefficient((int) sample_size, (int) r_star) *
+	math::BinomialCoefficient((index_t) sample_size, (index_t) r_star) *
 	pow(lower_percentile, r_star) * 
 	pow(1 - lower_percentile, sample_size - r_star);
     }
@@ -226,8 +226,8 @@ class DualtreeKdeCommon {
 	InverseNormalCDF::Compute(probability + 0.5 * (1 - probability));
       
       // The initial number of samples is equal to the default.
-      int num_samples = 25;
-      int total_samples = 0;
+      index_t num_samples = 25;
+      index_t total_samples = 0;
       
       do {
 	for(index_t s = 0; s < num_samples; s++) {

@@ -37,7 +37,7 @@ class DatasetScaler {
   static void TranslateDataByMin(arma::mat& qset, arma::mat& rset,
 				 bool queries_equal_references) {
     
-    int num_dims = rset.n_rows;
+    index_t num_dims = rset.n_rows;
     DHrectBound<2> qset_bound(qset.n_rows);
     DHrectBound<2> rset_bound(qset.n_rows);
 

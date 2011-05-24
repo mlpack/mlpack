@@ -107,20 +107,20 @@ class AllkFN {
   bool naive_;
   bool dual_mode_;
 
-  // The total number of prunes.
-  index_t number_of_prunes_;
-
   // The number of points in a leaf
   index_t leaf_size_;
+
+  // number of furthest neighbrs
+  index_t kfns_; 
+
+  // The total number of prunes.
+  index_t number_of_prunes_;
 
   // The distance to the candidate nearest neighbor for each query
   arma::vec neighbor_distances_;
 
   // The indices of the candidate nearest neighbor for each query
   arma::Col<index_t> neighbor_indices_;
-
-  // number of furthest neighbrs
-  index_t kfns_; 
 
  public:
   enum {

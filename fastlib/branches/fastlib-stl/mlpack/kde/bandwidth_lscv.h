@@ -18,8 +18,8 @@ class BandwidthLSCV {
   static double plugin_bandwidth_(const arma::mat& references) {
     
     double avg_sdev = 0;
-    int num_dims = references.n_rows;
-    int num_data = references.n_cols;
+    index_t num_dims = references.n_rows;
+    index_t num_data = references.n_cols;
     arma::vec mean_vector(references.n_rows);
     mean_vector.zeros();
     

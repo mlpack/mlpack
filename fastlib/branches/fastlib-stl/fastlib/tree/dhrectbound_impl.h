@@ -264,7 +264,6 @@ double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
 
   DEBUG_SAME_SIZE(point.n_elem, dim_);
 
-  double v;
   for (index_t d = 0; d < dim_; d++) {
     double v = fabs(std::max(
       point[d] - bounds_[d].lo,
