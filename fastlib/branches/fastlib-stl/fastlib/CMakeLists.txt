@@ -25,7 +25,6 @@ set(DIRS
    fx
    la
    math
-   par
    tree
 #   sparse
 )  #!!
