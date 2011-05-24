@@ -151,9 +151,10 @@ char *TextLineReader::ReadLine_() {
 
     // Reallocate
     char* newbuf = new char[size];
-    if (buf != NULL)
+    if (buf != NULL) {
       memcpy(newbuf, buf, len * sizeof(char));
       delete[] buf;
+    }
     buf = newbuf;
 
     //! doesn't handle mac eol - OK?
@@ -173,7 +174,7 @@ char *TextLineReader::ReadLine_() {
         char* newbuf = new char[size * sizeof(char)];
         memcpy(newbuf, buf, (size - 1) * sizeof(char));
         delete[] buf;
-        newbuf = buf;
+        buf = newbuf;
         buf[len] = tmp;
       } else {
         // go back a character
