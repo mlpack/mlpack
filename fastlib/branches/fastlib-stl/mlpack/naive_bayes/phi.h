@@ -9,8 +9,8 @@
 #ifndef MLPACK_PHI_H
 #define MLPACK_PHI_H
 
-#include "fastlib/fastlib.h"
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib.h>
+#include <fastlib/fastlib_int.h>
 #include <cmath>
 
 /**

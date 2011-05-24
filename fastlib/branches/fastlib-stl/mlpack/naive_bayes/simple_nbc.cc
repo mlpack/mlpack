@@ -9,7 +9,7 @@
  *
  */
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "simple_nbc.h"
 #include "phi.h"
 
