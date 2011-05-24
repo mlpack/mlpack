@@ -28,3 +28,11 @@ set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #   ${BLAS_LIBRARIES}
 #   ${LAPACK_LIBRARIES}
 #)
+
+add_executable(uselapack_test
+  uselapack_test.cc
+)
+target_link_libraries(uselapack_test
+  fastlib
+  lapack
+)
