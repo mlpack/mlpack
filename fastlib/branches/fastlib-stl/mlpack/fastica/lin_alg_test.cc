@@ -113,8 +113,8 @@ bool test_Orthogonalize() {
   // test orthogonality
   mat test = ccov(orth);
   double ival = test(0, 0);
-  for(int row = 0; row < test.n_rows; row++) {
-    for(int col = 0; col < test.n_cols; col++) {
+  for(index_t row = 0; row < test.n_rows; row++) {
+    for(index_t col = 0; col < test.n_cols; col++) {
       if(row == col) {
         if(std::abs(test(row, col) - ival) > 1e-12 && test(row, col) != 0)
           return false;

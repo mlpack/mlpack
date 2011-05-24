@@ -35,6 +35,12 @@
  * Implementation for path-based string data storage.
  */
 
+/* to obtain strdup */
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE
+#endif
+#include <string.h>
+
 #include "datanode.h"
 /*#include "datanode.h"*/
 

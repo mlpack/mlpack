@@ -105,7 +105,7 @@ class RidgeRegression {
 
   void ComputeLinearModel_(double lambda_sq, const arma::vec &singular_values, 
 			   const arma::mat &u, const arma::mat &v_t,
-			   int num_features);
+			   index_t num_features);
   
   void BuildDesignMatrixFromIndexSet_
   (const arma::mat &input_data, const arma::mat& predictions,

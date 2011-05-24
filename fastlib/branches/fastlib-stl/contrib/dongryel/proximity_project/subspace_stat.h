@@ -159,7 +159,7 @@ class SubspaceStat {
        &total_squared_lengths);
     
     // The number of samples...
-    int num_samples = std::max((int) sqrt(mean_centered.n_cols()), 1);
+    index_t num_samples = std::max((index_t) sqrt(mean_centered.n_cols()), (index_t) 1);
     Matrix sampled_columns;
     sampled_columns.Init(mean_centered.n_rows(), num_samples);
 
@@ -191,7 +191,7 @@ class SubspaceStat {
 		&tmp_right_singular_vectors, &tmp_vectors);
 
     // Cut off small eigen values...
-    int eigen_count = 0;
+    index_t eigen_count = 0;
     for(index_t i = 0; i < tmp_eigen_values.length(); i++) {
       if(tmp_eigen_values[i] >= 0 &&
 	 tmp_eigen_values[i] >= epsilon_ * tmp_eigen_values[0]) {
@@ -260,12 +260,12 @@ class SubspaceStat {
   /** @brief The starting index of the points owned by the current
    *         statistics object.
    */
-  int start_;
+  index_t start_;
   
   /** @brief The number of points owned by the current statistics
    *         object.
    */
-  int count_;
+  index_t count_;
   
   /** @brief The mean of the points owned by the current statistics
    *         object.
@@ -356,7 +356,7 @@ class SubspaceStat {
     
     // Take square root of the returned values so that the proper
     // singular values can be computed.
-    int subspace_count = 0;
+    index_t subspace_count = 0;
     for(index_t i = 0; i < tmp_singular_values.length(); i++) {
       tmp_singular_values[i] = sqrt(tmp_singular_values[i]);
       if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
@@ -429,7 +429,7 @@ class SubspaceStat {
     // Now we setup the eigenproblem to be solved for stitching two
     // PCA models together.
     Matrix merging_problem;
-    int dimension_merging_problem = left_stat.singular_values_.length() +
+    index_t dimension_merging_problem = left_stat.singular_values_.length() +
       right_stat.singular_values_.length();
     merging_problem.Init(dimension_merging_problem, dimension_merging_problem);
     merging_problem.SetZero();
@@ -558,7 +558,7 @@ class SubspaceStat {
 
     la::SVDInit(merging_problem, &tmp_singular_values,
 		&tmp_left_singular_vectors, &tmp_right_singular_vectors);
-    int eigen_count = 0;
+    index_t eigen_count = 0;
     for(index_t i = 0; i < tmp_singular_values.length(); i++) {
       if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
 	eigen_count++;

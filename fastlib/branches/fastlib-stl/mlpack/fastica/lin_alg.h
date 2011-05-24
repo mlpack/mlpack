@@ -50,7 +50,7 @@ namespace linalg__private {
    * ignored in the power operation and then re-added.  Useful for eigenvalues.
    */
   void VectorPower(arma::vec& vec, double power) {
-    for(int i = 0; i < vec.n_elem; i++) {
+    for(index_t i = 0; i < vec.n_elem; i++) {
         if(std::abs(vec(i)) > 1e-12)
           vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) : -std::pow(-vec(i), (double) power);
         else

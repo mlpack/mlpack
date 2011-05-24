@@ -102,13 +102,13 @@ success_t viterbi_mixture() {
     return SUCCESS_FAIL;
   }
 
-  for (int i = 0; i < seqs.size(); i++) {
+  for (index_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
 
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %d", i);
+    sprintf(s, "%% viterbi state sequence %"LI"", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 
@@ -136,12 +136,12 @@ success_t viterbi_gaussian() {
     return SUCCESS_FAIL;
   }
 
-  for (int i = 0; i < seqs.size(); i++) {
+  for (index_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %d", i);
+    sprintf(s, "%% viterbi state sequence %"LI"", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 
@@ -170,13 +170,13 @@ success_t viterbi_discrete() {
     return SUCCESS_FAIL;
   }
 
-  for (int i = 0; i < seqs.size(); i++) {
+  for (index_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
     
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %d", i);
+    sprintf(s, "%% viterbi state sequence %"LI"", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 

@@ -82,7 +82,7 @@ void DoSvmNormalize(Dataset* dataset) {
   for (index_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
-    for(int j = 0; j < dataset->n_features() - 1; j++)
+    for(index_t j = 0; j < dataset->n_features() - 1; j++)
       s[j] = dataset->matrix()(j, i);
 
     m.MakeColumnVector(i, &d);
@@ -123,7 +123,7 @@ void DoSvmNormalize(Dataset* dataset) {
   for (index_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
-    for(int j = 0; j < dataset->n_features() - 1; j++)
+    for(index_t j = 0; j < dataset->n_features() - 1; j++)
       d[j] = dataset->matrix()(j, i);
 
     final.MakeColumnVector(i, &s);
@@ -190,7 +190,7 @@ void GenerateArtificialDataset(Dataset* dataset){
 * @param: the dataset
 * @param: name of the data file to be loaded
 */
-int LoadData(Dataset* dataset, string datafilename){
+index_t LoadData(Dataset* dataset, string datafilename){
   if (fx_param_exists(NULL, datafilename.c_str())) {
     // when a data file is specified, use it.
     if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename.c_str()) )) ) {
@@ -227,7 +227,7 @@ int main(int argc, char *argv[]) {
   string mode = fx_param_str_req(NULL, "mode");
   string kernel = fx_param_str_req(NULL, "kernel");
   string learner_name = fx_param_str_req(root,"learner_name");
-  int learner_typeid;
+  index_t learner_typeid;
   
   if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;

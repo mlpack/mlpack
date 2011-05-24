@@ -17,8 +17,8 @@ void arma_compat::armaToMatrix(const arma::mat& mat, Matrix& mg) {
   mg.Init(mat.n_rows, mat.n_cols);
 
   // copy elementwise.  this is slow as hell
-  for(int r = 0; r < mat.n_rows; r++) {
-    for(int c = 0; c < mat.n_cols; c++) {
+  for(index_t r = 0; r < mat.n_rows; r++) {
+    for(index_t c = 0; c < mat.n_cols; c++) {
       mg.set(r, c, mat(r, c));
     }
   }
@@ -34,8 +34,8 @@ void arma_compat::matrixToArma(const Matrix& gm, arma::mat& mat) {
   mat.set_size(gm.n_rows(), gm.n_cols());
 
   // copy elementwise.  this is slow as hell
-  for(int r = 0; r < gm.n_rows(); r++) {
-    for(int c = 0; c < gm.n_cols(); c++) {
+  for(index_t r = 0; r < gm.n_rows(); r++) {
+    for(index_t c = 0; c < gm.n_cols(); c++) {
       mat(r, c) = gm.get(r, c);
     }
   }
@@ -51,7 +51,7 @@ void arma_compat::armaColVector(const arma::mat& mat, int col, Vector& v) {
   v.Init(mat.n_rows);
 
   // copy elementwise.  this is slow as hell
-  for(int r = 0; r < mat.n_rows; r++)
+  for(index_t r = 0; r < mat.n_rows; r++)
     v[r] = mat(r, col);
 }
 
@@ -63,7 +63,7 @@ void arma_compat::armaColVector(const arma::mat& mat, int col, Vector& v) {
 void arma_compat::vectorToVec(const Vector& gv, arma::vec& vec) {
   vec.set_size(gv.length());
 
-  for(int i = 0; i < gv.length(); i++)
+  for(index_t i = 0; i < gv.length(); i++)
     vec[i] = gv[i];
 }
 
@@ -75,6 +75,6 @@ void arma_compat::vectorToVec(const Vector& gv, arma::vec& vec) {
 void arma_compat::vecToVector(const arma::vec& vec, Vector& gv) {
   gv.Init(vec.n_cols);
 
-  for(int i = 0; i < vec.n_cols; i++)
+  for(index_t i = 0; i < vec.n_cols; i++)
     gv[i] = vec[i];
 }

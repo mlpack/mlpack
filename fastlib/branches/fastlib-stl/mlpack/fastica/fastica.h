@@ -83,10 +83,10 @@ class FastICA {
   arma::mat X;
 
   /** Optimization approach to use (deflation vs symmetric) */
-  int approach_;
+  index_t approach_;
 
   /** Nonlinearity (contrast function) to use for evaluating independence */
-  int nonlinearity_;
+  index_t nonlinearity_;
 
   //const index_t first_eig;
   //const index_t last_eig;
@@ -131,7 +131,7 @@ class FastICA {
     
     hyp_tan = trans(X) * B;
     // elementwise tanh()
-    for(int i = 0; i < hyp_tan.n_elem; i++)
+    for(index_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
    
     col_vector.set_size(d);
@@ -156,7 +156,7 @@ class FastICA {
     Y = trans(X) * B;
     hyp_tan.set_size(Y.n_rows, Y.n_cols);
     // elementwise tanh()
-    for(int i = 0; i < hyp_tan.n_elem; i++)
+    for(index_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * Y[i]);
     Beta = sum(Y % hyp_tan, 1); // sum columns of elementwise multiplication
 
@@ -293,7 +293,7 @@ class FastICA {
     arma::vec hyp_tan, temp1;
     
     hyp_tan = trans(X) * w;
-    for(int i = 0; i < hyp_tan.n_elem; i++)
+    for(index_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
 
     w *= a1_ * (accu(pow(hyp_tan, 2)) - n);
@@ -309,7 +309,7 @@ class FastICA {
     arma::vec hyp_tan, X_hyp_tan;
     
     hyp_tan = trans(X) * w;
-    for(int i = 0; i < hyp_tan.n_elem; i++)
+    for(index_t i = 0; i < hyp_tan.n_elem; i++)
       hyp_tan[i] = tanh(a1_ * hyp_tan[i]);
   
     X_hyp_tan = X * hyp_tan;
@@ -431,7 +431,7 @@ class FastICA {
   /**
    * Initializes the FastICA object by obtaining everything the algorithm needs
    */
-  int Init(arma::mat& X_in, struct datanode* module_in) {
+  index_t Init(arma::mat& X_in, struct datanode* module_in) {
 
     module_ = module_in;
 
@@ -498,18 +498,18 @@ class FastICA {
     stabilization_ = fx_param_bool(module_, "stabilization", false);
     epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
   
-    int int_max_num_iterations =
+    index_t int_max_num_iterations =
       fx_param_int(module_, "max_num_iterations", 1000);
     if(int_max_num_iterations < 0) {
-      printf("ERROR: max_num_iterations = %d must be >= 0\n",
+      printf("ERROR: max_num_iterations = %"LI" must be >= 0\n",
 	     int_max_num_iterations);
       return SUCCESS_FAIL;
     }
     max_num_iterations_ = (index_t) int_max_num_iterations;
 
-    int int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
+    index_t int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
     if(int_max_fine_tune < 0) {
-      printf("ERROR: max_fine_tune = %d must be >= 0\n",
+      printf("ERROR: max_fine_tune = %"LI" must be >= 0\n",
 	     int_max_fine_tune);
       return SUCCESS_FAIL;
     }
@@ -534,8 +534,8 @@ class FastICA {
    * percentage, and return indices in a Vector
    */
   index_t RandomSubMatrix(index_t n, double percent_cut, const arma::mat& X, arma::mat& X_sub) {
-    std::vector<int> colnums;
-    for(int i = 0; i < X.n_cols; i++) {
+    std::vector<index_t> colnums;
+    for(index_t i = 0; i < X.n_cols; i++) {
       if(drand48() <= percent_cut) // add column
         colnums.push_back(i);
     }
@@ -543,7 +543,7 @@ class FastICA {
     // now that we have all the column numbers we want, assemble the random
     // submatrix
     X_sub.set_size(X.n_rows, colnums.size());
-    for(int i = 0; i < colnums.size(); i++)
+    for(index_t i = 0; i < colnums.size(); i++)
       X_sub.col(i) = X.col(colnums[i]);
 
     return colnums.size();
@@ -553,12 +553,12 @@ class FastICA {
   /**
    * Run FastICA using Symmetric approach
    */
-  int SymmetricFixedPointICA(bool stabilization_enabled,
+  index_t SymmetricFixedPointICA(bool stabilization_enabled,
 			     bool fine_tuning_enabled,
 			     double mu_orig, double mu_k, index_t failure_limit,
-			     int used_nonlinearity, int g_fine, double stroke,
+			     index_t used_nonlinearity, index_t g_fine, double stroke,
 			     bool not_fine, bool taking_long,
-			     int initial_state_mode,
+			     index_t initial_state_mode,
 			     const arma::mat& X, arma::mat& B, arma::mat& W,
 			     arma::mat& whitening_matrix) {
     
@@ -750,7 +750,7 @@ class FastICA {
       }
 	  
       default:
-	printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
+	printf("ERROR: invalid contrast function: used_nonlinearity = %"LI"\n",
 	       used_nonlinearity);
 	exit(SUCCESS_FAIL);
       }
@@ -769,12 +769,12 @@ class FastICA {
   /**
    * Run FastICA using Deflation approach
    */
-  int DeflationFixedPointICA(bool stabilization_enabled,
+  index_t DeflationFixedPointICA(bool stabilization_enabled,
  			     bool fine_tuning_enabled,
 			     double mu_orig, double mu_k, index_t failure_limit,
-			     int used_nonlinearity, int g_orig, int g_fine,
+			     index_t used_nonlinearity, index_t g_orig, index_t g_fine,
 			     double stroke, bool not_fine, bool taking_long,
-			     int initial_state_mode,
+			     index_t initial_state_mode,
 			     const arma::mat& X, arma::mat& B, arma::mat& W,
 			     arma::mat& whitening_matrix) {
 
@@ -790,7 +790,7 @@ class FastICA {
       stroke = 0;
       not_fine = true;
       taking_long = false;
-      int end_fine_tuning = 0;
+      index_t end_fine_tuning = 0;
 	
       arma::vec w(d);
       if(initial_state_mode == 0)
@@ -1010,7 +1010,7 @@ class FastICA {
 	}
 	    
 	default: 
-	  printf("ERROR: invalid contrast function: used_nonlinearity = %d\n",
+	  printf("ERROR: invalid contrast function: used_nonlinearity = %"LI"\n",
 		 used_nonlinearity);
 	  exit(SUCCESS_FAIL);
 	}
@@ -1031,7 +1031,7 @@ class FastICA {
    * the specified approach
    * @pre{ X is a d by n data matrix, for d dimensions and n samples}
    */
-  int FixedPointICA(const arma::mat& X, arma::mat& whitening_matrix, arma::mat& W) {
+  index_t FixedPointICA(const arma::mat& X, arma::mat& whitening_matrix, arma::mat& W) {
     // ensure default values are passed into this function if the user doesn't care about certain parameters
     if(d < num_of_IC_) {
       printf("ERROR: must have num_of_IC <= dimension!\n");
@@ -1048,13 +1048,13 @@ class FastICA {
     else if(percent_cut_ < 1) {
       if((percent_cut_ * n) < 1000) {
 	percent_cut_ = min(1000 / (double) n, (double) 1);
-	printf("Warning: Setting percent_cut to %0.3f (%d samples).\n",
+	printf("Warning: Setting percent_cut to %0.3f (%"LI" samples).\n",
 	       percent_cut_,
-	       (int) floor(percent_cut_ * n));
+	       (index_t) floor(percent_cut_ * n));
       }
     }
     
-    int g_orig = nonlinearity_;
+    index_t g_orig = nonlinearity_;
 
     if(percent_cut_ != 1) {
       g_orig += 2;
@@ -1065,7 +1065,7 @@ class FastICA {
     }
 
     bool fine_tuning_enabled = true;
-    int g_fine;
+    index_t g_fine;
 
     if(fine_tune_) {
       g_fine = nonlinearity_ + 1;
@@ -1091,17 +1091,17 @@ class FastICA {
     double mu_orig = mu_;
     double mu_k = 0.01;
     index_t failure_limit = 5;
-    int used_nonlinearity = g_orig;
+    index_t used_nonlinearity = g_orig;
     double stroke = 0;
     bool not_fine = true;
     bool taking_long = false;
 
     // currently we don't allow for guesses for the initial unmixing matrix B
-    int initial_state_mode = 0;
+    index_t initial_state_mode = 0;
 
     arma::mat B;
 
-    int ret_val = SUCCESS_FAIL;
+    index_t ret_val = SUCCESS_FAIL;
     
     if(approach_ == SYMMETRIC) {
       ret_val = 
@@ -1130,7 +1130,7 @@ class FastICA {
    * Runs FastICA Algorithm on matrix X and sets W to unmixing matrix and Y to
    * independent components matrix, such that \f$ X = W * Y \f$
    */
-  int DoFastICA(arma::mat& W, arma::mat& Y) {
+  index_t DoFastICA(arma::mat& W, arma::mat& Y) {
     arma::mat X_centered, X_whitened, whitening_matrix;
 
     Center(X, X_centered);
@@ -1163,7 +1163,7 @@ class FastICA {
     tmpw.row(4) = -whitening_matrix.row(1);
     whitening_matrix = tmpw;*/
   
-    int ret_val =
+    index_t ret_val =
       FixedPointICA(X_whitened, whitening_matrix, W);
 
     if(ret_val == SUCCESS_PASS) {

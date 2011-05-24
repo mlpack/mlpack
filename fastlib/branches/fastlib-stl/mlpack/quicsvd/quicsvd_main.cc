@@ -55,7 +55,7 @@ const fx_module_doc quicsvd_main_doc = {
 
 double norm(const Matrix& A) {
   double s = 0;
-  for (int i = 0; i < A.n_cols(); i++) {
+  for (index_t i = 0; i < A.n_cols(); i++) {
     Vector col;
     A.MakeColumnVector(i, &col);
     s += math::Sqr(la::LengthEuclidean(col));

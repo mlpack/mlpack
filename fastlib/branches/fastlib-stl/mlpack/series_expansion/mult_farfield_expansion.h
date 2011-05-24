@@ -34,7 +34,7 @@ class MultFarFieldExpansion {
   arma::vec coeffs_;
 
   /** @brief The order of approximation. */
-  int order_;
+  index_t order_;
   
   /** auxilirary methods for the kernel (derivative, truncation error bound) */
   const TKernelAux *ka_;
@@ -62,17 +62,17 @@ class MultFarFieldExpansion {
   const arma::vec& get_coeffs() const { return coeffs_; }
   
   /** Get the approximation order */
-  int get_order() const { return order_; }
+  index_t get_order() const { return order_; }
   
   /** Get the maximum possible approximation order */
-  int get_max_order() const { return sea_->get_max_order(); }
+  index_t get_max_order() const { return sea_->get_max_order(); }
 
   /** @brief Gets the weight sum.
    */
   double get_weight_sum() const { return coeffs_[0]; }
 
   /** Set the approximation order */
-  void set_order(int new_order) { order_ = new_order; }
+  void set_order(index_t new_order) { order_ = new_order; }
   
   /** 
    * Set the center of the expansion - assumes that the center has been
@@ -92,32 +92,32 @@ class MultFarFieldExpansion {
    * data into the coefficients
    */
   void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
-			int begin, int end, int order);
+			index_t begin, index_t end, index_t order);
 
   /**
    * Refine the far field moment that has been computed before up to
    * a new order.
    */
   void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
-		    int begin, int end, int order);
+		    index_t begin, index_t end, index_t order);
   
   /**
    * Evaluates the far-field coefficients at the given point
    */
-  double EvaluateField(const arma::mat& data, int row_num, int order) const;
-  double EvaluateField(const double *x_q, int order) const;
+  double EvaluateField(const arma::mat& data, index_t row_num, index_t order) const;
+  double EvaluateField(const double *x_q, index_t order) const;
 
   /**
    * Evaluates the two-way convolution mixed with exhaustive computations
    * with two other far field expansions
    */
-  double MixField(const arma::mat& data, int node1_begin, int node1_end, 
-		  int node2_begin, int node2_end,
+  double MixField(const arma::mat& data, index_t node1_begin, index_t node1_end, 
+		  index_t node2_begin, index_t node2_end,
 		  const MultFarFieldExpansion& fe2,
 		  const MultFarFieldExpansion& fe3,
-		  int order2, int order3) const;
+		  index_t order2, index_t order3) const;
 
-  double ConvolveField(const MultFarFieldExpansion& fe, int order) const;
+  double ConvolveField(const MultFarFieldExpansion& fe, index_t order) const;
 
   /**
    * Evaluates the three-way convolution with two other far field
@@ -125,7 +125,7 @@ class MultFarFieldExpansion {
    */
   double ConvolveField(const MultFarFieldExpansion& fe2,
 		       const MultFarFieldExpansion& fe3,
-		       int order1, int order2, int order3) const;
+		       index_t order1, index_t order2, index_t order3) const;
   
   /**
    * Initializes the current far field expansion object with the given
@@ -139,7 +139,7 @@ class MultFarFieldExpansion {
    *         for a given bound.
    */
   template<typename TBound>
-  int OrderForEvaluating(const TBound& far_field_region,
+  index_t OrderForEvaluating(const TBound& far_field_region,
 			 const TBound& local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
@@ -155,7 +155,7 @@ class MultFarFieldExpansion {
    *         -1 if approximation up to the maximum order is not possible
    */
   template<typename TBound>
-  int OrderForConvertingToLocal(const TBound& far_field_region,
+  index_t OrderForConvertingToLocal(const TBound& far_field_region,
 				const TBound& local_field_region, 
 				double min_dist_sqd_regions, 
 				double max_dist_sqd_regions,
@@ -178,7 +178,7 @@ class MultFarFieldExpansion {
    * are added up to the passed-in local expansion coefficients.
    */
   void TranslateToLocal(MultLocalExpansion<TKernelAux>& se, 
-			int truncation_order);
+			index_t truncation_order);
 
 };
 

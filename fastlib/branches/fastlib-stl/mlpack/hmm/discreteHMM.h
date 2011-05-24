@@ -46,7 +46,7 @@ class DiscreteHMM {
   void InitFromFile(const char* profile);
 
   /** Initializes randomly using data as a guide */
-  void InitFromData(const std::vector<arma::vec>& list_data_seq, int numstate);
+  void InitFromData(const std::vector<arma::vec>& list_data_seq, index_t numstate);
 
   /** Load from file, used when already initialized */
   void LoadProfile(const char* profile);
@@ -55,14 +55,14 @@ class DiscreteHMM {
   void SaveProfile(const char* profile) const;
 
   /** Generate a random data sequence of a given length */
-  void GenerateSequence(int length, arma::vec& data_seq, arma::vec& state_seq) const;
+  void GenerateSequence(index_t length, arma::vec& data_seq, arma::vec& state_seq) const;
 
   /** 
    * Estimate the matrices by a data sequence and a state sequence 
    * Must be already initialized
    */
   void EstimateModel(const arma::vec& data_seq, const arma::vec& state_seq);
-  void EstimateModel(int numstate, int numsymbol, const arma::vec& data_seq, const arma::vec& state_seq);
+  void EstimateModel(index_t numstate, index_t numsymbol, const arma::vec& data_seq, const arma::vec& state_seq);
 
   /** 
    * Decode a sequence into probabilities of each state at each time step
@@ -87,13 +87,13 @@ class DiscreteHMM {
    * Train the model with a list of sequences, must be already initialized 
    * using Baum-Welch EM algorithm
    */
-  void TrainBaumWelch(const std::vector<arma::vec>& list_data_seq, int max_iteration, double tolerance);
+  void TrainBaumWelch(const std::vector<arma::vec>& list_data_seq, index_t max_iteration, double tolerance);
 
   /** 
    * Train the model with a list of sequences, must be already initialized 
    * using Viterbi algorithm to determine the state sequence of each sequence
    */
-  void TrainViterbi(const std::vector<arma::vec>& list_data_seq, int max_iteration, double tolerance);
+  void TrainViterbi(const std::vector<arma::vec>& list_data_seq, index_t max_iteration, double tolerance);
 
 
   ///////// Static helper functions ///////////////////////////////////////
@@ -106,11 +106,11 @@ class DiscreteHMM {
    * seq: uninitialized vector, will have length L
    * states: uninitialized vector, will have length L
    */
-  static void GenerateInit(int L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states);
+  static void GenerateInit(index_t L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states);
 
   /** Estimate transition and emission probabilities from sequence and states */
   static void EstimateInit(const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis);
-  static void EstimateInit(int numSymbols, int numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis);
+  static void EstimateInit(index_t numSymbols, index_t numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis);
 
   /** Calculate posteriori probabilities of states at each steps
    * Scaled Forward - Backward procedure
@@ -136,13 +136,13 @@ class DiscreteHMM {
    * RETURN: log probability of the most probable sequence
    */
   static double ViterbiInit(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states);
-  static double ViterbiInit(int L, const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states);
+  static double ViterbiInit(index_t L, const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states);
 
   /** Baum-Welch estimation of transition and emission probabilities */
-  static void Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, int max_iter, double tol);
+  static void Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, index_t max_iter, double tol);
 
   /** Viterbi estimation of transition and emission probabilities */
-  static void TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, int max_iter, double tol);
+  static void TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, index_t max_iter, double tol);
 
 };
 

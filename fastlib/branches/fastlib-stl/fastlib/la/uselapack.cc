@@ -5,7 +5,7 @@
  *                          Ryan Riegel,
  *                          Nikolaos Vasiloglou,
  *                          Dongryeol Lee,
- *                          Chip Mappus, 
+ *                          Chip Mappus,
  *                          Nishant Mehta,
  *                          Hua Ouyang,
  *                          Parikshit Ram,
@@ -153,7 +153,7 @@ success_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
 
 long double la::Determinant(const Matrix &A) {
   DEBUG_MATSQUARE(A);
-  int n = A.n_rows();
+  index_t n = A.n_rows();
   f77_integer pivots[n];
   Matrix LU;
 
@@ -163,7 +163,7 @@ long double la::Determinant(const Matrix &A) {
   long double det = 1.0;
 
   for (index_t i = 0; i < n; i++) {
-    if (pivots[i] != i+1) {
+    if ((index_t) pivots[i] != i+1) {
       // pivoting occured (note FORTRAN has 1-based indexing)
       det = -det;
     }
@@ -175,7 +175,7 @@ long double la::Determinant(const Matrix &A) {
 
 double la::DeterminantLog(const Matrix &A, int *sign_out) {
   DEBUG_MATSQUARE(A);
-  int n = A.n_rows();
+  index_t n = A.n_rows();
   f77_integer pivots[n];
   Matrix LU;
 
@@ -186,7 +186,7 @@ double la::DeterminantLog(const Matrix &A, int *sign_out) {
   int sign_det = 1;
 
   for (index_t i = 0; i < n; i++) {
-    if (pivots[i] != i+1) {
+    if ((index_t) pivots[i] != i+1) {
       // pivoting occured (note FORTRAN has one-based indexing)
       sign_det = -sign_det;
     }
@@ -278,7 +278,7 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
   }
 
   // Extract R
-  for (index_t j = 0; j < n; j++) {
+  for (index_t j = 0; j < (index_t) n; j++) {
     double *r_col = R->GetColumnPtr(j);
     double *q_col = A_in_Q_out->GetColumnPtr(j);
     int i = std::min(j + 1, index_t(k));
@@ -362,7 +362,7 @@ success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
     return success;
   }
 
-  for (index_t j = 0; j < n; j++) {
+  for (index_t j = 0; j < (index_t) n; j++) {
     if (unlikely(w_imag[j] != 0.0)) {
       (*w)[j] = DBL_NAN;
     }

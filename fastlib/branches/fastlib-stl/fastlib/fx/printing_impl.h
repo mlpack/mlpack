@@ -21,7 +21,6 @@ class PrefixedHelper<const char*> {
   public:
    bool print(std::ostream& out, const char* rhs) {
       out << rhs;
-      int t = '\n';
       if(strchr(rhs, '\0') != NULL || strchr(rhs, '\n') != NULL)
         return true;
       else

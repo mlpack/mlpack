@@ -80,7 +80,7 @@ bool VectorApproxEqual(const Vector& a, const Vector& b,
     if (!(diff <= eps)) {
       wrong++;
       if (wrong <= 3) {
-        fprintf(stderr, "XXX Mismatch (index %d) zero-based (%e)\n",
+        fprintf(stderr, "XXX Mismatch (index %"LI") zero-based (%e)\n",
             i, diff);
       }
     }
@@ -120,7 +120,7 @@ bool MatrixApproxEqual(const Matrix& a, const Matrix& b,
       if (!(diff <= eps)) {
         wrong++;
         if (wrong <= 3) {
-          fprintf(stderr, "XXX Mismatch (%d, %d) zero-based (%e)\n",
+          fprintf(stderr, "XXX Mismatch (%"LI", %"LI") zero-based (%e)\n",
               r, c, diff);
         }
       }

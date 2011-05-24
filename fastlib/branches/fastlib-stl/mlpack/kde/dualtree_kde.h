@@ -175,9 +175,9 @@ class DualtreeKde {
   /** @brief The number of initial samples to take per each query when
    *         doing Monte Carlo sampling.
    */
-  static const int num_initial_samples_per_query_ = 25;
+  static const index_t num_initial_samples_per_query_ = 25;
 
-  static const int sample_multiple_ = 1;
+  static const index_t sample_multiple_ = 1;
 
   ////////// Private Member Variables //////////
 
@@ -255,23 +255,23 @@ class DualtreeKde {
   
   /** @brief The number of far-field to local conversions.
    */
-  int num_farfield_to_local_prunes_;
+  index_t num_farfield_to_local_prunes_;
 
   /** @brief The number of far-field evaluations.
    */
-  int num_farfield_prunes_;
+  index_t num_farfield_prunes_;
   
   /** @brief The number of local accumulations.
    */
-  int num_local_prunes_;
+  index_t num_local_prunes_;
   
   /** @brief The number of finite difference prunes.
    */
-  int num_finite_difference_prunes_;
+  index_t num_finite_difference_prunes_;
 
   /** @brief The number of prunes using Monte Carlo.
    */
-  int num_monte_carlo_prunes_;
+  index_t num_monte_carlo_prunes_;
 
   /** @brief The permutation mapping indices of queries_ to original
    *         order.
@@ -298,8 +298,8 @@ class DualtreeKde {
 			 DRange &dsqd_range, DRange &kernel_value_range, 
 			 double &dl, double &du,
 			 double &used_error, double &n_pruned,
-			 int &order_farfield_to_local,
-			 int &order_farfield, int &order_local);
+			 index_t &order_farfield_to_local,
+			 index_t &order_farfield, index_t &order_local);
   
   double EvalUnnormOnSq_(index_t reference_point_index,
 			 double squared_distance);
@@ -412,11 +412,11 @@ class DualtreeKde {
     PostProcess(qroot_);
     fx_timer_stop(NULL, "fast_kde_compute");
     printf("\nFast KDE completed...\n");
-    printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
-    printf("Monte Carlo prunes: %d\n", num_monte_carlo_prunes_);
-    printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
-    printf("F prunes: %d\n", num_farfield_prunes_);
-    printf("L prunes: %d\n", num_local_prunes_);
+    printf("Finite difference prunes: %"LI"\n", num_finite_difference_prunes_);
+    printf("Monte Carlo prunes: %"LI"\n", num_monte_carlo_prunes_);
+    printf("F2L prunes: %"LI"\n", num_farfield_to_local_prunes_);
+    printf("F prunes: %"LI"\n", num_farfield_prunes_);
+    printf("L prunes: %"LI"\n", num_local_prunes_);
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
@@ -446,7 +446,7 @@ class DualtreeKde {
       (queries.memptr() == references.memptr());
 
     // Read in the number of points owned by a leaf.
-    int leaflen = fx_param_int(module_in, "leaflen", 20);
+    index_t leaflen = fx_param_int(module_in, "leaflen", 20);
     
 
     // Copy reference dataset and reference weights and compute its

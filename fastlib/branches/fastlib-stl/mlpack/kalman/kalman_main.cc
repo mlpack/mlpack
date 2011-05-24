@@ -53,7 +53,7 @@ int main(int argc, char* argv[]) {
   arma::mat tmp;
   data::Load(t_in, tmp);
   arma_compat::armaToMatrix(tmp, t_tot_mat);
-  int t_tot = (int)t_tot_mat.get(0, 0);
+  index_t t_tot = (index_t)t_tot_mat.get(0, 0);
   
   // User-specified: system parameters. Stored in *.csv files 
   // a_mat, b_mat, c_mat, d_mat, q_mat, r_mat, s_mat
@@ -106,9 +106,9 @@ int main(int argc, char* argv[]) {
   // Assumed to be an lds with the same params. as the KF
   // for the purpose of demonstration
   // assume that x is initially zero
-  int nx = lds.a_mat.n_rows(); 
-  int ny = lds.c_mat.n_rows(); 
-  int nu = lds.b_mat.n_cols();
+  index_t nx = lds.a_mat.n_rows(); 
+  index_t ny = lds.c_mat.n_rows(); 
+  index_t nu = lds.b_mat.n_cols();
   Matrix x(nx, t_tot + 1); x.SetZero();
   Matrix y(ny, t_tot + 1); 
   Matrix u(nu, t_tot + 1); 
@@ -129,7 +129,7 @@ int main(int argc, char* argv[]) {
   Matrix k_gain[t_tot + 1];
   set_portion_of_matrix(x_pred_0, 0, nx-1, 0, 0, &x_pred);
   set_portion_of_matrix(y_pred_0, 0, ny-1, 0, 0, &y_pred);
-  for (int t =0; t<=t_tot; t++ ) {
+  for (index_t t =0; t<=t_tot; t++ ) {
     p_pred[t].Init(nx, nx);
     p_hat[t].Init(nx, nx);
     k_gain[t].Init(nx, ny);
@@ -149,7 +149,7 @@ int main(int argc, char* argv[]) {
 
 
   ///////////////////BEGIN DEMO /////////////////////////
-  for (int t=0; t<=t_tot; t++) {
+  for (index_t t=0; t<=t_tot; t++) {
     /*
       Signal generation. As a demo, the system will also 
       be an lds with the same parameters as the k.f. 

@@ -83,16 +83,16 @@ class FFTKde {
   arma::vec densities_;
 
   /** number of grid points along each dimension */
-  int m_;
+  index_t m_;
 
   /** number of points along each dimension in the zero padded */
-  std::vector<int> size_;
+  std::vector<index_t> size_;
   
   /** minimum coordinate along each dimension */
   arma::vec mincoords_;
 
   /** minimum indices along each dimension */
-  std::vector<int> minindices_;
+  std::vector<index_t> minindices_;
 
   /** maximum coordinate along each dimension */
   arma::vec maxcoords_;
@@ -104,10 +104,10 @@ class FFTKde {
   arma::vec gridsizes_;
 
   /** kernel weights along each dimension */
-  std::vector<int>  kernelweights_dims_;
+  std::vector<index_t>  kernelweights_dims_;
 
   /** total number of grid points */
-  int numgridpts_;
+  index_t numgridpts_;
   
   /** grid box volume */
   double gridbinvolume_;
@@ -115,7 +115,7 @@ class FFTKde {
   /** discretized dataset storing the assigned kernel weights */
   arma::vec discretized_;
 
-  int nyquistnum_;
+  index_t nyquistnum_;
 
   arma::vec d_fnyquist_;
   
@@ -129,9 +129,9 @@ class FFTKde {
    * and N must be a power of 2.  Forward determines whether to do a
    * forward transform (1) or an inverse one (-1)
    */
-  void fftc1(double *f, int N, int skip, int forward) {
+  void fftc1(double *f, index_t N, index_t skip, index_t forward) {
 
-    int b, index1, index2, trans_size, trans;
+    index_t b, index1, index2, trans_size, trans;
     double pi2 = 4. * asin(1.);
     
     // used in recursive formula for Re(W^b) and Im(W^b)
@@ -236,14 +236,14 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one(-1)
    */
-  void fftcn(double *f, int ndims, std::vector<int>& size, int forward) {
+  void fftcn(double *f, index_t ndims, std::vector<index_t>& size, index_t forward) {
 
     // These determine where to begin successive transforms and the skip 
     // between their elements (see below)
-    int planesize = 1, skip = 1;
+    index_t planesize = 1, skip = 1;
 
     // Total size of the ndims dimensional array
-    int totalsize = 1;
+    index_t totalsize = 1;
     
     // determine total size of array
     for(index_t dim = 0; dim < ndims; dim++) {
@@ -279,9 +279,9 @@ class FFTKde {
    * Forward determines whether to do a forward transform (>=0) or an inverse 
    * one(<0)
    */
-  void fftr1(double *f, int N, int forward) {
+  void fftr1(double *f, index_t N, index_t forward) {
 
-    int b;
+    index_t b;
     
     // pi2n = 2 Pi/N
     double pi2n = 4. * asin(1.) / N, cospi2n = cos(pi2n), sinpi2n = sin(pi2n);
@@ -339,7 +339,7 @@ class FFTKde {
     // put b = N / 2 term in imaginary part of first term
     c[0].imag = temp1.real-temp1.imag;
     
-    if(forward == -1) {
+    if(forward == (index_t) -1) {
       c[0].real *= .5;
       c[0].imag *= .5;
       fftc1(f, N / 2, 1, -1);
@@ -354,20 +354,21 @@ class FFTKde {
    * Forward determines whether to do a forward transform (1) or an inverse 
    * one (-1)
    */
-  void fftrn(double *f, double *fnyquist, int ndims, std::vector<int>& size, int forward) {
+  void fftrn(double *f, double *fnyquist, index_t ndims, std::vector<index_t>& size, index_t forward) {
 
-    int i, j, b;
+    index_t i, j, b;
 
     // Positions in the 1-d arrays of points labeled by indices 
     // (i0,i1,...,i(ndims-1)); indexneg gives the position in the array of 
     // the corresponding negative frequency
-    int index,indexneg = 0;
-    int stepsize; // Used in calculating indexneg
+    index_t index = 0;
+    int indexneg = 0;
+    index_t stepsize; // Used in calculating indexneg
 
     // The size of the last dimension is used often enough to merit its own 
     // name.
-    int N = size[ndims - 1];
-    
+    index_t N = size[ndims - 1];
+
     // pi2n = 2Pi / N
     double pi2n = 4. * asin(1.) / N, cospi2n = cos(pi2n), sinpi2n = sin(pi2n);
 
@@ -383,10 +384,10 @@ class FFTKde {
       *cnyquist = (struct complex *)fnyquist;
 
     // Total number of complex points in array
-    int totalsize = 1;
+    index_t totalsize = 1;
 
     // Indices for looping through array
-    std::vector<int> indices;
+    std::vector<index_t> indices;
     indices.reserve(ndims);
     
     // Set size[] to be the sizes of f viewed as a complex array
@@ -504,7 +505,7 @@ class FFTKde {
     } // End of i loop (over total array)
     
     // inverse transform
-    if(forward == -1) {
+    if(forward == (index_t) -1) {
       fftcn(f, ndims, size, -1);
     }
     
@@ -513,9 +514,9 @@ class FFTKde {
 
   }
   
-  void assign_weights(int reference_pt_num, int level, double volume, int pos,
-		      int skip) {
-    if(level == -1) {
+  void assign_weights(index_t reference_pt_num, index_t level, double volume, index_t pos,
+		      index_t skip) {
+    if(level == (index_t) -1) {
       discretized_[pos] += volume;
     }
     else {
@@ -527,8 +528,8 @@ class FFTKde {
       double rightgridcoord = leftgridcoord + gridsizes_[level];
       double leftvolume = volume * (rightgridcoord - coord);
       double rightvolume = volume * (coord - leftgridcoord);
-      int nextskip = size_[level] * skip;
-      int nextleftpos = pos + skip * minindices_[level];
+      index_t nextskip = size_[level] * skip;
+      index_t nextleftpos = pos + skip * minindices_[level];
       
       if(leftvolume > 0.0) {
 	assign_weights(reference_pt_num, level - 1, leftvolume, nextleftpos, 
@@ -542,10 +543,10 @@ class FFTKde {
     }
   }
 
-  void retrieve_weights(int query_pt_num, double volume, int level, int pos, 
-			int skip, double divfactor) {
+  void retrieve_weights(index_t query_pt_num, double volume, index_t level, index_t pos, 
+			index_t skip, double divfactor) {
 
-    if(level == -1) {
+    if(level == (index_t) -1) {
       densities_[query_pt_num] += discretized_[pos] * volume / divfactor;
     }
     else {
@@ -557,8 +558,8 @@ class FFTKde {
       double rightgridcoord = leftgridcoord + gridsizes_[level];
       double leftvolume = volume * (rightgridcoord - coord);
       double rightvolume = volume * (coord - leftgridcoord);
-      int nextskip = size_[level] * skip;
-      int nextleftpos = pos + skip * minindices_[level];
+      index_t nextskip = size_[level] * skip;
+      index_t nextleftpos = pos + skip * minindices_[level];
       
       if(leftvolume > 0.0) {
 	retrieve_weights(query_pt_num, leftvolume, level - 1, nextleftpos, 
@@ -583,7 +584,7 @@ class FFTKde {
       densities_[r] = 0.0;
       
       for(index_t d = 0; d < qset_.n_rows; d++) {
-	minindices_[d] = (int) floor((qset_(d, r) - mincoords_[d])/
+	minindices_[d] = (index_t) floor((qset_(d, r) - mincoords_[d])/
 				     gridsizes_[d]);
       }
       retrieve_weights(r, 1.0, qset_.n_rows - 1, 0, 1, 
@@ -604,7 +605,7 @@ class FFTKde {
     // Find the min/max in each coordinate direction, and calculate the grid
     // size in each dimension.
     for(index_t d = 0; d < qset_.n_rows; d++) {
-      int possiblesample;
+      index_t possiblesample;
       min = DBL_MAX;
       max = -DBL_MAX;
       
@@ -626,7 +627,7 @@ class FFTKde {
       // Determine how many kernel weight calculation to do for this 
       // dimension.
       kernelweights_dims_[d] = m_ - 1;
-      possiblesample = (int) floor(TAU * sqrt(kernel_.bandwidth_sq()) / 
+      possiblesample = (index_t) floor(TAU * sqrt(kernel_.bandwidth_sq()) / 
 				   gridsizes_[d]);
       
       if(kernelweights_dims_[d] > possiblesample) {
@@ -639,7 +640,7 @@ class FFTKde {
       // Wand p440: Need to calculate the actual dimension of the matrix
       // after the necessary 0 padding of the kernel weight matrix and the
       // bin count matrix.
-      size_[d] = (int) ceil(log(m_ + kernelweights_dims_[d]) / log(2));
+      size_[d] = (index_t) ceil(log(m_ + kernelweights_dims_[d]) / log(2));
       size_[d] = 1 << size_[d];
 
       numgridpts_ *= size_[d];
@@ -657,7 +658,7 @@ class FFTKde {
       // First locate the bin the data point falls into and identify it by
       // the lower grid coordinates.
       for(index_t d = 0; d < rset_.n_rows; d++) {
-	minindices_[d] = (int) floor((rset_(d, r) - mincoords_[d])/
+	minindices_[d] = (index_t) floor((rset_(d, r) - mincoords_[d])/
 				     gridsizes_[d]);
       }
 
@@ -669,18 +670,18 @@ class FFTKde {
 
   }
   
-  void Gaussify(double acc, double precalc, int level, int pos, int skip) {
+  void Gaussify(double acc, double precalc, index_t level, index_t pos, index_t skip) {
 
-    if(level == -1) {
+    if(level == (index_t) -1) {
       kernelweights_[pos] = exp(precalc * acc);
     }
     else {
-      int half = kernelweights_dims_[level];
-      int g;
+      index_t half = kernelweights_dims_[level];
+      index_t g;
       for(g = 0; g <= half; g++) {
 	double addThis = g * gridsizes_[level];
 	double newacc = acc + addThis * addThis;
-	int newskip = skip * size_[level];
+	index_t newskip = skip * size_[level];
 	
 	Gaussify(newacc, precalc, level - 1, pos + skip * g, newskip);
 	

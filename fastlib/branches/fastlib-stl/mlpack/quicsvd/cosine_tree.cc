@@ -18,7 +18,7 @@ CosineNode::CosineNode(const Matrix& A) {
   this->A_.Alias(A);
   origIndices_.reserve(A_.n_cols());
   norms_.reserve(n_cols());
-  for (int i_col = 0; i_col < origIndices_.size(); i_col++) {
+  for (index_t i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = i_col;
     norms_[i_col] = columnNormL2(A_, i_col);
   }
@@ -36,7 +36,7 @@ CosineNode::CosineNode(CosineNode& parent,
   A_.Alias(parent.A_);
   origIndices_.reserve(indices.size());
   norms_.reserve(n_cols());
-  for (int i_col = 0; i_col < origIndices_.size(); i_col++) {
+  for (index_t i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = parent.origIndices_[indices[i_col]];
     norms_[i_col] = parent.norms_[indices[i_col]];
   }
@@ -54,7 +54,7 @@ CosineNode::CosineNode(CosineNode& parent,
 void CosineNode::CalStats() {
   // Calculate cummlulative sum square of L2 norms
   cum_norms_.reserve(origIndices_.size());
-  for (int i_col = 0; i_col < origIndices_.size(); i_col++)
+  for (index_t i_col = 0; i_col < origIndices_.size(); i_col++)
     cum_norms_[i_col] = ((i_col > 0) ? cum_norms_[i_col-1]:0)
       + math::Sqr(norms_[i_col]);
 

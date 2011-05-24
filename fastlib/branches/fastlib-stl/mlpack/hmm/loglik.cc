@@ -104,7 +104,7 @@ success_t loglik_mixture() {
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (int i = 0; i < seqs.size(); i++)
+  for (index_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
   
   return SUCCESS_PASS;
@@ -134,7 +134,7 @@ success_t loglik_gaussian() {
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (int i = 0; i < seqs.size(); i++)
+  for (index_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
   
   return SUCCESS_PASS;
@@ -164,7 +164,7 @@ success_t loglik_discrete() {
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (int i = 0; i < seqs.size(); i++)
+  for (index_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
 
   return SUCCESS_PASS;

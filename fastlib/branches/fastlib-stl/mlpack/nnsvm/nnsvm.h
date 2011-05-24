@@ -36,7 +36,7 @@ struct SVMLinearKernel {
     kname = "linear";
   }
   /* Get an type ID for kernel */
-  int GetTypeId() {
+  index_t GetTypeId() {
     return ID_LINEAR;
   }  
   /* Save kernel parameters to file */
@@ -60,7 +60,7 @@ class SVMRBFKernel {
     kname = "gaussian";
   }
   /* Get an type ID for kernel */
-  int GetTypeId() {
+  index_t GetTypeId() {
     return ID_GAUSSIAN;
   }
   /* Kernel value evaluation */
@@ -95,23 +95,23 @@ class NNSVM {
   struct NNSVM_PARAMETERS {
     TKernel kernel_; 
     std::string kernelname_; 
-    int kerneltypeid_;
+    index_t kerneltypeid_;
     double c_; 
-    int b_;
+    index_t b_;
     double eps_; //tolerance
-    int max_iter_; // maximum iterations
+    index_t max_iter_; // maximum iterations
   };
   NNSVM_PARAMETERS param_; // same for every binary model
  
   arma::mat support_vectors_;
-  int num_features_;
+  index_t num_features_;
   
  public:
-  void Init(const Dataset& dataset, int n_classes, datanode *module);
-  void InitTrain(const Dataset& dataset, int n_classes, datanode *module);
+  void Init(const Dataset& dataset, index_t n_classes, datanode *module);
+  void InitTrain(const Dataset& dataset, index_t n_classes, datanode *module);
   void SaveModel(std::string modelfilename);
   void LoadModel(Dataset& testset, std::string modelfilename);
-  int Classify(const arma::vec& vector);
+  index_t Classify(const arma::vec& vector);
   void BatchClassify(Dataset& testset, std::string testlabelfilename);
   void LoadModelBatchClassify(Dataset& testset, std::string modelfilename, std::string testlabelfilename);
 };
@@ -124,7 +124,7 @@ class NNSVM {
 * @param: module name
 */
 template<typename TKernel>
-void NNSVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *module){
+void NNSVM<TKernel>::Init(const Dataset& dataset, index_t n_classes, datanode *module){
   param_.kernel_.Init(fx_submodule(module, "kernel"));
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
@@ -136,7 +136,7 @@ void NNSVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *modul
   param_.eps_ = fx_param_double(NULL, "eps", 1.0e-6); 
   //max iterations: max_iter, default: 1000
   param_.max_iter_ = fx_param_int(NULL, "max_iter", 1000); 
-  fprintf(stderr, "c=%f, eps=%g, max_iter=%d \n", param_.c_, param_.eps_, param_.max_iter_);
+  fprintf(stderr, "c=%f, eps=%g, max_iter=%"LI" \n", param_.c_, param_.eps_, param_.max_iter_);
 }
 
 /**
@@ -148,7 +148,7 @@ void NNSVM<TKernel>::Init(const Dataset& dataset, int n_classes, datanode *modul
 */
 template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
-    const Dataset& dataset, int n_classes, datanode *module) {
+    const Dataset& dataset, index_t n_classes, datanode *module) {
   Init(dataset, n_classes, module);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_features() - 1;
@@ -191,7 +191,7 @@ void NNSVM<TKernel>::SaveModel(std::string modelfilename) {
   
   fprintf(fp, "svm_type svm_c\n"); // TODO: svm-mu, svm-regression...
   fprintf(fp, "kernel_name %s\n", param_.kernelname_.c_str());
-  fprintf(fp, "kernel_typeid %d\n", param_.kerneltypeid_);
+  fprintf(fp, "kernel_typeid %"LI"\n", param_.kerneltypeid_);
   // save kernel parameters
   param_.kernel_.SaveParam(fp);
   fprintf(fp, "total_num_sv %"LI"\n", model_.num_sv_);
@@ -231,7 +231,7 @@ void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
     return;
   }
   char cmd[80]; 
-  int i, j;
+  index_t i, j;
   double temp_f;
   char kernel_name[1024];
   while (1) {
@@ -248,7 +248,7 @@ void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
       param_.kernelname_ = std::string(kernel_name);
     }
     else if (strcmp(cmd, "kernel_typeid") == 0)
-      fscanf(fp, "%d", &param_.kerneltypeid_);
+      fscanf(fp, "%"LI, &param_.kerneltypeid_);
     else if (strcmp(cmd, "total_num_sv") == 0)
       fscanf(fp, "%"LI, &model_.num_sv_);
     else if (strcmp(cmd, "threshold") == 0)
@@ -290,7 +290,7 @@ void NNSVM<TKernel>::LoadModel(Dataset& testset, std::string modelfilename) {
 */
 
 template<typename TKernel>
-int NNSVM<TKernel>::Classify(const arma::vec& datum) {
+index_t NNSVM<TKernel>::Classify(const arma::vec& datum) {
   
   double summation = dot(model_.w_, datum);
   
@@ -321,11 +321,11 @@ void NNSVM<TKernel>::BatchClassify(Dataset& testset, std::string testlablefilena
   num_features_ = testset.n_features() - 1;
   for (index_t i = 0; i < testset.n_points(); i++) {
     arma::vec testvec(num_features_);
-    for(int j = 0; j < num_features_; j++)
+    for(index_t j = 0; j < num_features_; j++)
       testvec[j] = testset.matrix()(j, i);
 
-    int testlabel = Classify(testvec);
-    fprintf(fp, "%d\n", testlabel);
+    index_t testlabel = Classify(testvec);
+    fprintf(fp, "%"LI"\n", testlabel);
   }
   fclose(fp);
 }

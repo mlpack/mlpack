@@ -27,14 +27,14 @@ class NNSMO {
   arma::vec error_; // the error cache
   double thresh_; // negation of the intercept
   double c_;
-  int budget_;
+  index_t budget_;
   double sum_alpha_; 
 
   index_t n_feature_; // number of data features
   double w_square_sum_; // square sum of the weight vector
   arma::vec VTA_; //
   double eps_; // the tolerace of progress on alpha values
-  int max_iter_; // the maximum iteration, termination criteria
+  index_t max_iter_; // the maximum iteration, termination criteria
 
  public:
   NNSMO() {}
@@ -45,13 +45,13 @@ class NNSMO {
    *
    * You must initialize separately the kernel.
    */
-  void Init(const Dataset& dataset_in, double c_in, int budget_in, double eps_in, int max_iter_in) {
+  void Init(const Dataset& dataset_in, double c_in, index_t budget_in, double eps_in, index_t max_iter_in) {
     c_ = c_in;
 
     dataset_ = &dataset_in;
     
     n_data_ = matrix_.n_cols;
-    budget_ = min(budget_in, (int) n_data_);
+    budget_ = min(budget_in, (index_t) n_data_);
 
     alpha_.zeros(n_data_);
     sum_alpha_ = 0;
@@ -181,8 +181,8 @@ template<typename TKernel>
 void NNSMO<TKernel>::Train() {
   bool examine_all = true;
   index_t num_changed = 0;
-  int n_iter = 0;
-  int counter = 1000;
+  index_t n_iter = 0;
+  index_t counter = 1000;
   if (counter > n_data_)
     counter = n_data_;
 
@@ -212,7 +212,7 @@ void NNSMO<TKernel>::Train() {
 
   //compute the final objective value
   double obj = sum_alpha_ - w_square_sum_/2;
-  fprintf(stderr, "iter=%d, %"LI", %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
+  fprintf(stderr, "iter=%"LI", %"LI", %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
 }
 
 //NNSMO training iteration
@@ -253,7 +253,7 @@ bool NNSMO<TKernel>::TryChange_(index_t j) {
       i = k;
     }
   }
-  if (i != -1 && TakeStep_(i, j, error_j)) {
+  if (i != (index_t) -1 && TakeStep_(i, j, error_j)) {
     return true;
   }
 

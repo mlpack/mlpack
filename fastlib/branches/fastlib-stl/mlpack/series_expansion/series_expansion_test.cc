@@ -35,8 +35,8 @@ class SeriesExpansionTest {
     
     NOTIFY("[*] TestFourierExpansion");
     GaussianKernelFourierAux<double> kernel_aux;
-    int order = 3;
-    int dim = 3;
+    index_t order = 3;
+    index_t dim = 3;
     double bandwidth = 30;
     kernel_aux.Init(bandwidth, order, dim);
 
@@ -81,24 +81,24 @@ class SeriesExpansionTest {
 
     NOTIFY("[*] TestFourierExpansionMapping");
     FourierSeriesExpansionAux<double> series_aux;
-    int order = 2;
-    int dim = 3;
+    index_t order = 2;
+    index_t dim = 3;
     series_aux.Init(order, dim);
     series_aux.PrintDebug();
 
     // Verify that the shifting of each multiindex by the max order
     // roughly corresponds to the base ((2 * order) + 1) number.
-    int total_num_mapping = (int) pow(2 * order + 1, dim);
+    index_t total_num_mapping = (index_t) pow(2 * order + 1, dim);
     for(index_t i = 0; i < total_num_mapping; i++) {
-      const std::vector<short int> &mapping = series_aux.get_multiindex(i);
+      const std::vector<index_t> &mapping = series_aux.get_multiindex(i);
 
-      int number = 0;
+      index_t number = 0;
       printf("The mapping: ");
       for(index_t j = 0; j < dim; j++) {
 	number = (2 * order + 1) * number + (mapping[j] + order);
-	printf("%d ", mapping[j]);
+	printf("%"LI" ", mapping[j]);
       }
-      printf("maps to %d\n", number);
+      printf("maps to %"LI"\n", number);
       
       if(number != i) {
 	FATAL("The mapping at the position %"LI" is computed incorrectly!", i);

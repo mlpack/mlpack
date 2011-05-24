@@ -253,7 +253,7 @@ success_t DatasetInfo::ReadMatrix(TextLineReader& reader, arma::mat &matrix) con
   // make sure we are in the same place in our file, just in case it was passed
   // to us and we had already been some of the way through it (this is why we
   // saved the line number
-  while(reader.line_num() < cur_line) {
+  while((index_t) reader.line_num() < cur_line) {
     reader.Gobble();
   }
 

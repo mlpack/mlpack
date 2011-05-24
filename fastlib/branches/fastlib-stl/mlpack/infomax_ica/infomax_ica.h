@@ -57,7 +57,7 @@ class InfomaxICA {
   
  public:
   InfomaxICA();
-  InfomaxICA(double lambda, int B, double epsilon);
+  InfomaxICA(double lambda, index_t B, double epsilon);
   void applyICA(const Matrix &dataset);
   void evaluateICA();
   void displayMatrix(const Matrix &m);
@@ -65,7 +65,7 @@ class InfomaxICA {
   void getUnmixing(Matrix &w);
   void getSources(const Matrix &dataset, Matrix &s);
   void setLambda(const double lambda);
-  void setB(const int b);
+  void setB(const index_t b);
   void setEpsilon(const double epsilon);
 
  private:
@@ -74,7 +74,7 @@ class InfomaxICA {
   // learning rate 
   double lambda_;
   // block size
-  int b_;
+  index_t b_;
   // epsilon for convergence
   double epsilon_;
   // utility functions

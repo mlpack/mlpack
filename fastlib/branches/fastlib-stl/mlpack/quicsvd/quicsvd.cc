@@ -120,8 +120,8 @@ void QuicSVD::ComputeSVD(Vector* s, Matrix* U, Matrix* VT) {
 // with smaller dimension
 void createUTA2(const std::vector<Vector>& UTA, Matrix* UTA2) {
   UTA2->Init(UTA.size(), UTA.size());
-  for (int i = 0; i < UTA.size(); i++)
-    for (int j = 0; j < UTA.size(); j++)
+  for (index_t i = 0; i < UTA.size(); i++)
+    for (index_t j = 0; j < UTA.size(); j++)
       UTA2->ref(i, j) = la::Dot(UTA[i], UTA[j]);
 }
 

@@ -5,7 +5,7 @@
  *                          Ryan Riegel,
  *                          Nikolaos Vasiloglou,
  *                          Dongryeol Lee,
- *                          Chip Mappus, 
+ *                          Chip Mappus,
  *                          Nishant Mehta,
  *                          Hua Ouyang,
  *                          Parikshit Ram,
@@ -40,14 +40,18 @@
 
 #include "../base/debug.h"
 
+#ifndef __USE_XOPEN_EXTENDED
+#define __USE_XOPEN_EXTENDED
+#endif
+#include <string.h>
+#include <pthread.h>
 #include <stdarg.h>
-#include <unistd.h>
 #include <sys/resource.h>
 #include <sys/time.h>
 #include <sys/utsname.h>
-#include <pthread.h>
+#include <unistd.h>
 
-
+#define STRDUP_PORTABLE(a) strcpy((char*) malloc(strlen(a)), a)
 
 /* TODO: Use this mutex where appropriate */
 // static pthread_mutex_t fx__mutex;
@@ -611,7 +615,7 @@ static char *fx__alloc_int(long long val)
 
 static char *fx__alloc_bool(int val)
 {
-  return strdup(val ? "t" : "f");
+  return STRDUP_PORTABLE(val ? "t" : "f");
 }
 
 
@@ -619,7 +623,7 @@ static char *fx__alloc_bool(int val)
 static char *fx__alloc_str_list(size_t size, va_list vl)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     va_list vl_temp;
     char *retval;
@@ -649,7 +653,7 @@ static char *fx__alloc_str_list(size_t size, va_list vl)
 static char *fx__alloc_double_list(size_t size, va_list vl)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * FX__BUF_SIZE * sizeof(char));
     char *str = retval;
@@ -666,7 +670,7 @@ static char *fx__alloc_double_list(size_t size, va_list vl)
 static char *fx__alloc_int_list(size_t size, va_list vl)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * FX__BUF_SIZE * sizeof(char));
     char *str = retval;
@@ -683,7 +687,7 @@ static char *fx__alloc_int_list(size_t size, va_list vl)
 static char *fx__alloc_bool_list(size_t size, va_list vl)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * 2 * sizeof(char));
     char *str = retval;
@@ -704,7 +708,7 @@ static char *fx__alloc_bool_list(size_t size, va_list vl)
 static char *fx__alloc_str_array(size_t size, const char *const *list)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval;
     char *str;
@@ -731,7 +735,7 @@ static char *fx__alloc_str_array(size_t size, const char *const *list)
 static char *fx__alloc_double_array(size_t size, const double *list)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * FX__BUF_SIZE * sizeof(char));
     char *str = retval;
@@ -748,7 +752,7 @@ static char *fx__alloc_double_array(size_t size, const double *list)
 static char *fx__alloc_int_array(size_t size, const long long *list)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * FX__BUF_SIZE * sizeof(char));
     char *str = retval;
@@ -765,7 +769,7 @@ static char *fx__alloc_int_array(size_t size, const long long *list)
 static char *fx__alloc_bool_array(size_t size, const int *list)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     char *retval = malloc(size * 2 * sizeof(char));
     char *str = retval;
@@ -802,7 +806,7 @@ static char *fx__alloc_format(const char *format, va_list vl)
 static char *fx__alloc_format_list(size_t size, va_list vl)
 {
   if (size == 0) {
-    return strdup("");
+    return STRDUP_PORTABLE("");
   } else {
     va_list vl_temp;
     char *retval;
@@ -945,7 +949,7 @@ const char *fx_param_str(fx_module *mod, const char *key, const char *def)
   fx_module *param = fx__param(mod, key, FX_STR);
 
   if (!param->val) {
-    param->val = strdup(def);
+    param->val = STRDUP_PORTABLE(def);
   }
 
   return param->val;
@@ -1117,7 +1121,7 @@ void fx_set_param_str(fx_module *mod, const char *key, const char *val)
   fx_module *param = fx__get_entry(mod, key, FX_RESERVED, FX_STR);
 
   free(param->val);
-  param->val = strdup(val);
+  param->val = STRDUP_PORTABLE(val);
 }
 
 void fx_set_param_double(fx_module *mod, const char *key, double val)
@@ -1386,7 +1390,7 @@ void fx_result_str(fx_module *mod, const char *key, const char *val)
   fx_module *result = fx__get_entry(mod, key, FX_RESULT, FX_STR);
 
   free(result->val);
-  result->val = strdup(val);
+  result->val = STRDUP_PORTABLE(val);
 }
 
 void fx_result_double(fx_module *mod, const char *key, double val)
@@ -1784,7 +1788,7 @@ static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[])
     if (argv[i][0] != '-' || argv[i][1] != '-') {
       NONFATAL("Ignoring argument missing \"--\": \"%s\".", argv[i]);
     } else {
-      char *arg = strdup(argv[i] + 2);
+      char *arg = STRDUP_PORTABLE(argv[i] + 2);
       char *val = strchr(arg, '=');
       fx_module *entry;
 
@@ -1802,7 +1806,7 @@ static void fx__parse_cmd_line(fx_module *root, int argc, char *argv[])
             val, entry->val);
         free(entry->val);
       }
-      entry->val = strdup(val);
+      entry->val = STRDUP_PORTABLE(val);
 
       free(arg);
     }

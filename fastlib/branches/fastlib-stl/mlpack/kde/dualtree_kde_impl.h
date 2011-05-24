@@ -55,10 +55,10 @@ template<typename TKernelAux>
 bool DualtreeKde<TKernelAux>::PrunableEnhanced_
 (Tree *qnode, Tree *rnode, double probability, DRange &dsqd_range, 
  DRange &kernel_value_range, double &dl, double &du, double &used_error, 
- double &n_pruned, int &order_farfield_to_local, int &order_farfield, 
- int &order_local) {
+ double &n_pruned, index_t &order_farfield_to_local, index_t &order_farfield, 
+ index_t &order_local) {
   
-  int dim = rset_.n_rows;
+  index_t dim = rset_.n_rows;
   
   // actual amount of error incurred per each query/ref pair
   double actual_err_farfield_to_local = 0;
@@ -66,11 +66,11 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   double actual_err_local = 0;
   
   // estimated computational cost
-  int cost_farfield_to_local = INT_MAX;
-  int cost_farfield = INT_MAX;
-  int cost_local = INT_MAX;
-  int cost_exhaustive = (qnode->count()) * (rnode->count()) * dim;
-  int min_cost = 0;
+  index_t cost_farfield_to_local = UINT_MAX;
+  index_t cost_farfield = UINT_MAX;
+  index_t cost_local = UINT_MAX;
+  index_t cost_exhaustive = (qnode->count()) * (rnode->count()) * dim;
+  index_t min_cost = 0;
   
   // query node and reference node statistics
   KdeStat<TKernelAux> &qstat = qnode->stat();
@@ -113,15 +113,15 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
   
   // Update computational cost and compute the minimum.
   if(order_farfield_to_local >= 0) {
-    cost_farfield_to_local = (int) 
+    cost_farfield_to_local = (index_t) 
       ka_.sea_.FarFieldToLocalTranslationCost(order_farfield_to_local);
   }
   if(order_farfield >= 0) {
-    cost_farfield = (int) 
+    cost_farfield = (index_t) 
       ka_.sea_.FarFieldEvaluationCost(order_farfield) * (qnode->count());
   }
   if(order_local >= 0) {
-    cost_local = (int) 
+    cost_local = (index_t) 
       ka_.sea_.DirectLocalAccumulationCost(order_local) * (rnode->count());
   }
   
@@ -172,7 +172,7 @@ bool DualtreeKde<TKernelAux>::DualtreeKdeCanonical_
 
   // Temporary variable for storing lower bound change.
   double dl = 0, de = 0, du = 0;
-  int order_farfield_to_local = -1, order_farfield = -1, order_local = -1;
+  index_t order_farfield_to_local = -1, order_farfield = -1, order_local = -1;
   
   // Temporary variables for holding used error for pruning.
   double used_error = 0, n_pruned = 0;

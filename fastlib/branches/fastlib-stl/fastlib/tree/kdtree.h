@@ -196,7 +196,7 @@ namespace tree {
     // create vector of dimensions that we will split on
     // by default we'll just split the first dimension first, and so on
     arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
+    for(index_t i = 0; i < matrix.n_rows; i++)
       split_dimensions[i] = i;
 
     TKdTree *result;

@@ -14,13 +14,13 @@ class SeriesExpansionAux {
   
  private:
 
-  int dim_;
+  index_t dim_;
 
-  int max_order_;
+  index_t max_order_;
 
   arma::vec factorials_;
 
-  std::vector<int> list_total_num_coeffs_;
+  std::vector<index_t> list_total_num_coeffs_;
 
   arma::vec inv_multiindex_factorials_;
   
@@ -28,21 +28,21 @@ class SeriesExpansionAux {
 
   arma::mat multiindex_combination_;
 
-  std::vector< std::vector<short int> > multiindex_mapping_;
+  std::vector< std::vector<index_t> > multiindex_mapping_;
 
   /** 
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j >= 0 (the difference in
    * all coordinates is nonnegative).
    */
-  std::vector< std::vector<short int> > lower_mapping_index_;
+  std::vector< std::vector<index_t> > lower_mapping_index_;
 
   /** 
    * for each i-th multiindex m_i, store the positions of the j-th
    * multiindex mapping such that m_i - m_j <= 0 (the difference in
    * all coordinates is nonpositive).
    */
-  std::vector< std::vector<short int> > upper_mapping_index_;
+  std::vector< std::vector<index_t> > upper_mapping_index_;
 
   /** row index is for n, column index is for k */
   arma::mat n_choose_k_;
@@ -60,20 +60,20 @@ class SeriesExpansionAux {
 
   void ComputeLowerMappingIndex() {
     
-    std::vector<int> diff;
+    std::vector<index_t> diff;
     diff.reserve(dim_);
 
-    int limit = 2 * max_order_;
+    index_t limit = 2 * max_order_;
 
     // initialize the index
     lower_mapping_index_.reserve(list_total_num_coeffs_[limit]);
 
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const std::vector<short int> &outer_mapping = multiindex_mapping_[i];
+      const std::vector<index_t> &outer_mapping = multiindex_mapping_[i];
 
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-	const std::vector<short int> &inner_mapping = multiindex_mapping_[j];
-	int flag = 0;
+	const std::vector<index_t> &inner_mapping = multiindex_mapping_[j];
+	index_t flag = 0;
 
 	for(index_t d = 0; d < dim_; d++) {
 	  diff[d] = outer_mapping[d] - inner_mapping[d];
@@ -93,19 +93,19 @@ class SeriesExpansionAux {
 
   void ComputeMultiindexCombination() {
 
-    int limit = 2 * max_order_;
+    index_t limit = 2 * max_order_;
     multiindex_combination_.set_size(list_total_num_coeffs_[limit],
                                      list_total_num_coeffs_[limit]);
 
     for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
       
       // beta mapping
-      const std::vector<short int> &beta_mapping = multiindex_mapping_[j];
+      const std::vector<index_t> &beta_mapping = multiindex_mapping_[j];
       
       for(index_t k = 0; k < list_total_num_coeffs_[limit]; k++) {
 	
 	// alpha mapping
-	const std::vector<short int> &alpha_mapping = multiindex_mapping_[k];
+	const std::vector<index_t> &alpha_mapping = multiindex_mapping_[k];
 	
 	// initialize the factor to 1
 	multiindex_combination_(j, k) = 1;
@@ -123,19 +123,19 @@ class SeriesExpansionAux {
 
   void ComputeUpperMappingIndex() {
     
-    int limit = 2 * max_order_;
-    std::vector<int> diff;
+    index_t limit = 2 * max_order_;
+    std::vector<index_t> diff;
     diff.reserve(dim_);
     
     // initialize the index
     upper_mapping_index_.reserve(list_total_num_coeffs_[limit]);
     
     for(index_t i = 0; i < list_total_num_coeffs_[limit]; i++) {
-      const std::vector<short int> &outer_mapping = multiindex_mapping_[i];
+      const std::vector<index_t> &outer_mapping = multiindex_mapping_[i];
       
       for(index_t j = 0; j < list_total_num_coeffs_[limit]; j++) {
-	const std::vector<short int> &inner_mapping = multiindex_mapping_[j];
-	int flag = 0;
+	const std::vector<index_t> &inner_mapping = multiindex_mapping_[j];
+	index_t flag = 0;
 	
 	for(index_t d = 0; d < dim_; d++) {
 	  diff[d] = inner_mapping[d] - outer_mapping[d];
@@ -154,59 +154,59 @@ class SeriesExpansionAux {
   }
   
   // getters and setters
-  double factorial(int k) const { return factorials_[k]; }
+  double factorial(index_t k) const { return factorials_[k]; }
 
-  int get_dimension() const { return dim_; }
+  index_t get_dimension() const { return dim_; }
 
-  int get_total_num_coeffs(int order) const;
+  index_t get_total_num_coeffs(index_t order) const;
 
-  int get_max_total_num_coeffs() const;
+  index_t get_max_total_num_coeffs() const;
 
   const arma::vec& get_inv_multiindex_factorials() const;
 
-  const std::vector< std::vector<short int> > & get_lower_mapping_index() const;
+  const std::vector< std::vector<index_t> > & get_lower_mapping_index() const;
 
-  int get_max_order() const;
+  index_t get_max_order() const;
 
-  const std::vector< short int > & get_multiindex(int pos) const;
+  const std::vector< index_t > & get_multiindex(index_t pos) const;
 
-  const std::vector< std::vector<short int> > & get_multiindex_mapping() const;
+  const std::vector< std::vector<index_t> > & get_multiindex_mapping() const;
 
   const arma::vec& get_neg_inv_multiindex_factorials() const;
 
-  double get_n_choose_k(int n, int k) const;
+  double get_n_choose_k(index_t n, index_t k) const;
 
-  double get_n_multichoose_k_by_pos(int n, int k) const;
+  double get_n_multichoose_k_by_pos(index_t n, index_t k) const;
 
-  const std::vector< std::vector<short int> >& get_upper_mapping_index() const;
+  const std::vector< std::vector<index_t> >& get_upper_mapping_index() const;
 
   // interesting functions
 
   /**
    * Computes the position of the given multiindex
    */
-  int ComputeMultiindexPosition(const std::vector<short int> &multiindex) const;
+  index_t ComputeMultiindexPosition(const std::vector<index_t> &multiindex) const;
 
   /** @brief Computes the computational cost of evaluating a far-field
    *         expansion of order p at a single query point.
    */
-  double FarFieldEvaluationCost(int order) const;
+  double FarFieldEvaluationCost(index_t order) const;
 
   /** @brief Computes the compuational cost of translating a far-field
    *         moment of order p into a local moment of the same order.
    */
-  double FarFieldToLocalTranslationCost(int order) const;
+  double FarFieldToLocalTranslationCost(index_t order) const;
 
   /** @brief Computes the computational cost of directly accumulating
    *         a single reference point into a local moment of order p.
    */
-  double DirectLocalAccumulationCost(int order) const;
+  double DirectLocalAccumulationCost(index_t order) const;
 
   /** 
    * Initialize the auxiliary object with precomputed quantities for
    * order up to max_order for the given dimensionality.
    */
-  void Init(int max_order, int dim);
+  void Init(index_t max_order, index_t dim);
 
   /**
    * Print useful information about this object

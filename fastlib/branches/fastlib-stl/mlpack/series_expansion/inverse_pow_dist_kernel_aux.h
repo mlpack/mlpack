@@ -11,8 +11,8 @@ class InversePowDistGradientKernelAux {
  private:
 
   void SubFrom_(index_t dimension, int decrement,
-		const std::vector<short int> &subtract_from, 
-		std::vector<short int> &result) const {
+		const std::vector<index_t> &subtract_from, 
+		std::vector<index_t> &result) const {
     
     for(index_t d = 0; d < subtract_from.size(); d++) {
       if(d == dimension) {
@@ -64,7 +64,7 @@ class InversePowDistGradientKernelAux {
 
     // Temporary variable to look for arithmetic operations on
     // multiindex.
-    std::vector<short int> tmp_multiindex;
+    std::vector<index_t> tmp_multiindex;
     tmp_multiindex.reserve(sea_.get_dimension());
 
     for(index_t i = 0; i < derivative_map.n_rows; i++) {
@@ -73,7 +73,7 @@ class InversePowDistGradientKernelAux {
       double contribution = 0;
 
       // Retrieve the multiindex mapping.
-      const std::vector<short int>& multiindex = sea_.get_multiindex(i);
+      const std::vector<index_t>& multiindex = sea_.get_multiindex(i);
       
       // $D_{x}^{0} \phi_{\nu, d}(x)$ should be computed normally.
       if(i == 0) {
@@ -127,7 +127,7 @@ class InversePowDistGradientKernelAux {
     for(index_t i = 1; i < derivative_map.n_rows; i++) {
 
       // Retrieve the multiindex mapping.
-      const std::vector<short int>& multiindex = sea_.get_multiindex(i);
+      const std::vector<index_t>& multiindex = sea_.get_multiindex(i);
 
       // The sum of the indices.
       index_t sum_of_indices = 0;
@@ -142,7 +142,7 @@ class InversePowDistGradientKernelAux {
   }
   
   double ComputePartialDerivative(const arma::mat& derivative_map,
-				  const std::vector<short int>& mapping) const {
+				  const std::vector<index_t>& mapping) const {
     
     return derivative_map(sea_.ComputeMultiindexPosition(mapping), 0);
   }
@@ -156,8 +156,8 @@ class InversePowDistKernelAux {
 
  private:
   void SubFrom_(index_t dimension, int decrement,
-		const std::vector<short int>& subtract_from, 
-		std::vector<short int>& result) const {
+		const std::vector<index_t>& subtract_from, 
+		std::vector<index_t>& result) const {
     
     for(index_t d = 0; d < subtract_from.size(); d++) {
       if(d == dimension) {
@@ -209,7 +209,7 @@ class InversePowDistKernelAux {
 
     // Temporary variable to look for arithmetic operations on
     // multiindex.
-    std::vector<short int> tmp_multiindex;
+    std::vector<index_t> tmp_multiindex;
     tmp_multiindex.reserve(sea_.get_dimension());
 
     // Get the inverse multiindex factorial factors.
@@ -222,7 +222,7 @@ class InversePowDistKernelAux {
       double contribution = 0;
 
       // Retrieve the multiindex mapping.
-      const std::vector<short int>& multiindex = sea_.get_multiindex(i);
+      const std::vector<index_t>& multiindex = sea_.get_multiindex(i);
       
       // $D_{x}^{0} \phi_{\nu, d}(x)$ should be computed normally.
       if(i == 0) {
@@ -284,7 +284,7 @@ class InversePowDistKernelAux {
     for(index_t i = 1; i < derivative_map.n_rows; i++) {
 
       // Retrieve the multiindex mapping.
-      const std::vector<short int>& multiindex = sea_.get_multiindex(i);
+      const std::vector<index_t>& multiindex = sea_.get_multiindex(i);
 
       // The sum of the indices.
       index_t sum_of_indices = 0;
@@ -299,7 +299,7 @@ class InversePowDistKernelAux {
   }
   
   double ComputePartialDerivative(const arma::mat& derivative_map,
-				  const std::vector<short int>& mapping) const {
+				  const std::vector<index_t>& mapping) const {
     
     return derivative_map(sea_.ComputeMultiindexPosition(mapping), 0);
   }
