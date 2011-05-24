@@ -731,6 +731,7 @@ class LocalRegressionDelta {
       // The maximum deviation between the lower and the upper
       // estimated quantities for the left hand side and the right
       // hand side.
+      double max_deviation = 0;
 
       // Lower and upper bound on the kernels.
       double lower_kernel_value =
@@ -804,6 +805,22 @@ class LocalRegressionDelta {
           rnode->stat().weighted_average_info_[j].sample_mean());
       }
 
+      // Compute the maximum deviation.
+      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+        max_deviation =
+          std::max(
+            max_deviation,
+            right_hand_side_u_[j].sample_mean() -
+            right_hand_side_l_[j].sample_mean());
+        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+          max_deviation =
+            std::max(
+              max_deviation,
+              left_hand_side_u_.get(i, j).sample_mean() -
+              left_hand_side_l_.get(i, j).sample_mean());
+        }
+      }
+
       int rnode_count = rnode->count();
       pruned_ = static_cast<double>(rnode_count);
       used_error_ = 0.5 * max_deviation;
@@ -819,9 +836,13 @@ class LocalRegressionSummary {
 
   public:
 
-    double densities_l_;
+    arma::mat left_hand_side_l_;
 
-    double densities_u_;
+    arma::mat left_hand_side_u_;
+
+    arma::vec right_hand_side_l_;
+
+    arma::vec right_hand_side_u_;
 
     double pruned_l_;
 
@@ -832,37 +853,31 @@ class LocalRegressionSummary {
       pruned_l_ = initial_pruned_in;
     }
 
-    void Print() const {
-      printf("Lower bound/upper bound on the densities: [ %g %g ], "
-             "Lower bound on the pruned components: %g, "
-             "Upper bound on the used error: %g\n",
-             densities_l_, densities_u_, pruned_l_, used_error_u_);
-    }
-
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
-      ar & densities_l_;
-      ar & densities_u_;
+      ar & left_hand_side_l_;
+      ar & left_hand_side_u_;
+      ar & right_hand_side_l_;
+      ar & right_hand_side_u_;
       ar & pruned_l_;
       ar & used_error_u_;
     }
 
     void Copy(const LocalRegressionSummary &summary_in) {
-      densities_l_ = summary_in.densities_l_;
-      densities_u_ = summary_in.densities_u_;
+      left_hand_side_l_ = summary_in.left_hand_side_l_;
+      left_hand_side_u_ = summary_in.left_hand_side_u_;
+      right_hand_side_l_ = summary_in.right_hand_side_l_;
+      right_hand_side_u_ = summary_in.right_hand_side_u_;
       pruned_l_ = summary_in.pruned_l_;
       used_error_u_ = summary_in.used_error_u_;
     }
 
     LocalRegressionSummary() {
-      SetZero();
+      this->SetZero();
     }
 
     LocalRegressionSummary(const LocalRegressionSummary &summary_in) {
-      densities_l_ = summary_in.densities_l_;
-      densities_u_ = summary_in.densities_u_;
-      pruned_l_ = summary_in.pruned_l_;
-      used_error_u_ = summary_in.used_error_u_;
+      this->Copy(summary_in);
     }
 
     template < typename GlobalType, typename DeltaType, typename TreeType,
@@ -873,31 +888,31 @@ class LocalRegressionSummary {
       TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
 
       double left_hand_side = delta.used_error_;
+      double lower_bound_l1_norm = 0.0;
+      for(int j = 0; j < left_hand_side_l_.n_cols; j++) {
+        lower_bound_l1_norm += right_hand_side_l_[j];
+        for(int i = 0; i < left_hand_side_l_.n_rows; i++) {
+          lower_bound_l1_norm += left_hand_side_l_.at(i, j);
+        }
+      }
+
       double right_hand_side =
         rnode->count() * (
-          global.relative_error() * densities_l_ +
+          global.relative_error() * lower_bound_l1_norm +
           global.effective_num_reference_points() * global.absolute_error() -
           used_error_u_) /
         static_cast<double>(
           global.effective_num_reference_points() - pruned_l_);
 
       // Prunable by finite-difference.
-      if(left_hand_side <= right_hand_side) {
-        return true;
-      }
-
-      // Otherwise, try series expansion.
-      else if(global.kernel_aux().global().get_max_order() > 0) {
-        return CanSummarizeSeriesExpansion_(
-                 global, delta, squared_distance_range,
-                 qnode, rnode, right_hand_side, query_results);
-      }
-      return false;
+      return left_hand_side <= right_hand_side;
     }
 
     void SetZero() {
-      densities_l_ = 0;
-      densities_u_ = 0;
+      left_hand_side_l_.zeros();
+      left_hand_side_u_.zeros();
+      right_hand_side_l_.zeros();
+      right_hand_side_u_.zeros();
       pruned_l_ = 0;
       used_error_u_ = 0;
     }
@@ -907,17 +922,42 @@ class LocalRegressionSummary {
     }
 
     void StartReaccumulate() {
-      densities_l_ = std::numeric_limits<double>::max();
-      densities_u_ = 0;
-      pruned_l_ = densities_l_;
+      left_hand_side_l_.fill(std::numeric_limits<double>::max());
+      left_hand_side_u_.zeros();
+      right_hand_side_l_.fill(std::numeric_limits<double>::max());
+      right_hand_side_u_.zeros();
+      pruned_l_ = std::numeric_limits<double>::max();
       used_error_u_ = 0;
     }
 
     template<typename GlobalType, typename ResultType>
     void Accumulate(
       const GlobalType &global, const ResultType &results, int q_index) {
-      densities_l_ = std::min(densities_l_, results.densities_l_[q_index]);
-      densities_u_ = std::max(densities_u_, results.densities_u_[q_index]);
+
+      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+        right_hand_side_l_[j] =
+          std::min(
+            right_hand_side_l_[j],
+            results.right_hand_side_l_[q_index][j].sample_mean() *
+            results.pruned_[q_index]);
+        right_hand_side_u_[j] =
+          std::max(
+            right_hand_side_u_[j],
+            results.right_hand_side_u_[q_index][j].sample_mean() *
+            results.pruned_[q_index]);
+        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+          left_hand_side_l_.at(i, j) =
+            std::min(
+              left_hand_side_l_.at(i, j),
+              results.left_hand_side_l_[q_index].get(i, j).sample_mean() *
+              results.pruned_[q_index]);
+          left_hand_side_u_.at(i, j) =
+            std::max(
+              left_hand_side_u_.at(i, j),
+              results.left_hand_side_u_[q_index].get(i, j).sample_mean() *
+              results.pruned_[q_index]);
+        }
+      }
       pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
       used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
     }
@@ -926,12 +966,35 @@ class LocalRegressionSummary {
     void Accumulate(
       const GlobalType &global, const LocalRegressionSummary &summary_in,
       const LocalRegressionPostponedType &postponed_in) {
-      densities_l_ = std::min(
-                       densities_l_,
-                       summary_in.densities_l_ + postponed_in.densities_l_);
-      densities_u_ = std::max(
-                       densities_u_,
-                       summary_in.densities_u_ + postponed_in.densities_u_);
+
+      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+        right_hand_side_l_[j] =
+          std::min(
+            right_hand_side_l_[j],
+            summary_in.right_hand_side_l_[j] +
+            postponed_in.right_hand_side_l_[j].sample_mean() *
+            postponed_in.pruned_);
+        right_hand_side_u_[j] =
+          std::max(
+            right_hand_side_u_[j],
+            summary_in.right_hand_side_u_[j] +
+            postponed_in.right_hand_side_u_[j].sample_mean() *
+            postponed_in.pruned_);
+        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+          left_hand_side_l_.at(i, j) =
+            std::min(
+              left_hand_side_l_.at(i, j),
+              summary_in.left_hand_side_l_.at(i, j) +
+              postponed_in.left_hand_side_l_.get(i, j).sample_mean() *
+              postponed_in.pruned_);
+          left_hand_side_u_.at(i, j) =
+            std::max(
+              left_hand_side_u_.at(i, j),
+              summary_in.left_hand_side_u_.at(i, j) +
+              postponed_in.left_hand_side_u_.get(i, j).sample_mean() *
+              postponed_in.pruned_);
+        }
+      }
       pruned_l_ = std::min(
                     pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
       used_error_u_ = std::max(
@@ -940,14 +1003,36 @@ class LocalRegressionSummary {
     }
 
     void ApplyDelta(const LocalRegressionDelta &delta_in) {
-      densities_l_ = densities_l_ + delta_in.densities_l_;
-      densities_u_ = densities_u_ + delta_in.densities_u_;
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
+        right_hand_side_l_[j] +=
+          delta_in.right_hand_side_l_[j].sample_mean() * delta_in.pruned_;
+        right_hand_side_u_[j] +=
+          delta_in.right_hand_side_u_[j].sample_mean() * delta_in.pruned_;
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
+          left_hand_side_l_.at(i, j) +=
+            delta_in.left_hand_side_l_.get(i, j).sample_mean() *
+            delta_in.pruned_;
+          left_hand_side_u_.at(i, j) +=
+            delta_in.left_hand_side_u_.get(i, j).sample_mean() *
+            delta_in.pruned_;
+        }
+      }
     }
 
     template<typename LocalRegressionPostponedType>
     void ApplyPostponed(const LocalRegressionPostponedType &postponed_in) {
-      densities_l_ = densities_l_ + postponed_in.densities_l_;
-      densities_u_ = densities_u_ + postponed_in.densities_u_;
+      for(int j = 0; j < left_hand_side_l_.n_cols; j++) {
+        right_hand_side_l_[j] +=
+          postponed_in.right_hand_side_l_[j] * postponed_in.pruned_;
+        right_hand_side_u_[j] +=
+          postponed_in.right_hand_side_u_[j] * postponed_in.pruned_;
+        for(int i = 0; i < left_hand_side_l_.n_rows; i++) {
+          left_hand_side_l_.at(i, j) +=
+            postponed_in.left_hand_side_l_.get(i, j) * postponed_in.pruned_;
+          left_hand_side_u_.at(i, j) +=
+            postponed_in.left_hand_side_u_.get(i, j) * postponed_in.pruned_;
+        }
+      }
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
       used_error_u_ = used_error_u_ + postponed_in.used_error_;
     }
