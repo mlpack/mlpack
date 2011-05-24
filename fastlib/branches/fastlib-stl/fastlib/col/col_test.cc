@@ -30,9 +30,6 @@
  * 02110-1301, USA.
  */
 #include "heap.h"
-#include "fastalloc.h"
-#include "intmap.h"
-#include "rangeset.h"
 #include "tokenizer.h"
 
 #include <assert.h>
@@ -251,99 +248,5 @@ void TestMinHeap() {
   DEBUG_ASSERT_MSG(last == 97, "%d", h.top());
 }
 
-struct MyStruct {
-  int a;
-  int b;
-  MyStruct *next;
-  
-  MyStruct() {}
-  MyStruct(int a_in, int b_in, MyStruct *next_in) {
-    a = a_in;
-    b = b_in;
-    next = next_in;
-  }
-};
-
-void TestFastAlloc() {
-  MyStruct *a = fast_new(MyStruct)(3, 4, NULL);
-  MyStruct *b = fast_new(MyStruct)(1, 2, a);
-  
-  fast_delete(a);
-  fast_delete(b);
-}
-
-void TestIntMap() {
-  DenseIntMap<double> map;
-  map.Init();
-  map.default_value() = 0.0;
-  map[31] = 31;
-  map[41] = 41;
-  map[59] = 59;
-  map[26] = 26;
-  TEST_DOUBLE_EXACT(map[0], 0);
-  TEST_DOUBLE_EXACT(map[499], 0);
-  TEST_DOUBLE_EXACT(map[31], 31);
-  TEST_DOUBLE_EXACT(map[41], 41);
-  TEST_DOUBLE_EXACT(map[59], 59);
-}
-
-void TestRangeSet() {
-  RangeSet<int> set;
-  
-  set.Union(1, 4);
-  set.Union(10, 16);
-  set.Union(4, 10);
-  assert(set.size()==1);
-  assert(set.ranges()[0].begin == 1);
-  assert(set.ranges()[0].end == 16);
-  
-  set.Reset();
-  assert(set.size() == 0);
-  set.Union(3, 7);
-  set.Union(50, 100);
-  set.Union(4, 8);
-  assert(set.size() == 2);
-  assert(set.ranges()[0].begin == 3);
-  assert(set.ranges()[0].end == 8);
-  assert(set.ranges()[1].begin == 50);
-  assert(set.ranges()[1].end == 100);
-  
-  set.Reset();
-  set.Union(1, 5);
-  set.Union(59, 79);
-  set.Union(6, 10);
-  set.Union(9, 18);
-  set.Union(48, 60);
-  set.Union(19, 44);
-  set.Union(44, 46);
-  set.Union(18, 19);
-  set.Union(42, 48);
-  set.Union(5, 6);
-  assert(set.size() == 1);
-  assert(set.ranges()[0].begin == 1);
-  assert(set.ranges()[0].end == 79);
-  set.Union(-55, -52);
-  set.Union(500, 600);
-  set.Union(800, 900);
-  set.Union(550, 801);
-  set.Union(-400, -200);
-  set.Union(6, 81);
-  assert(set.ranges().size() == 4);
-  assert(set[0].begin == -400);
-  assert(set[0].end == -200);
-  assert(set[1].begin == -55);
-  assert(set[1].end == -52);
-  assert(set[2].begin == 1);
-  assert(set[2].end == 81);
-  assert(set[3].begin == 500);
-  assert(set[3].end == 900);
-  set.Reset();
-  set.Union(3, 5);
-  set.Union(3, 5);
-  set.Union(3, 5);
-  assert(set.size() == 1);
-}
-
-TEST_SUITE_END(col, TestMinHeap, TestTokenizer,
-    TestFastAlloc, TestIntMap, TestRangeSet)
+TEST_SUITE_END(col, TestMinHeap, TestTokenizer)
 
