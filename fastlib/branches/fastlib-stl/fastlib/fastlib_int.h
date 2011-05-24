@@ -50,17 +50,6 @@
 #include "math/math_lib.h"
 #include "file/textfile.h"
 #include "fx/fx.h"
-//#include "base/base.h"
-//#include "la/la.h"
-//#include "la/matrix.h"
-//#include "col/heap.h"
-//#include "col/intmap.h"
-//#include "col/rangeset.h"
-//#include "data/dataset.h"
-//#include "data/crossvalidation.h"
-//#include "math/math_lib.h"
-//#include "file/textfile.h"
-//#include "fx/fx.h"
 
 #include "par/thread.h"
 #include "par/grain.h"
@@ -68,14 +57,5 @@
 #include "tree/bounds.h"
 #include "tree/statistic.h"
 #include "tree/kdtree.h"
-//#include "par/thread.h"
-//#include "par/grain.h"
-//#include "tree/spacetree.h"
-//#include "tree/bounds.h"
-//#include "tree/statistic.h"
-//#include "tree/kdtree.h"
-
-#include "base/otrav.h"
-//#include "base/otrav.h"
 
 #endif
