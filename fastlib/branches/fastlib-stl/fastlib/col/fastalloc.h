@@ -77,7 +77,7 @@ void SlabAllocator<item_size>::AllocSlab() {
   int slab_items = 128; // TODO: hard-coded constant
   size_t real_item_size = stride_align(item_size, char *);
   size_t size = real_item_size * slab_items + sizeof(char *);
-  char *slab = mem::Alloc<char>(size);
+  char *slab = new char[size];
   
   // slab_items must be at least 2
   

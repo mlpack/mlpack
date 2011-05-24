@@ -94,9 +94,9 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::Copy(ucol, lcol, j + 1);
-      mem::Zero(ucol + j + 1, n - j - 1);
-      mem::Zero(lcol, j);
+      memcpy(ucol, lcol, (j + 1) * sizeof(double));
+      memset(ucol + j + 1, 0, (n - j - 1) * sizeof(double));
+      memset(lcol, 0, j * sizeof(double));
       lcol[j] = 1.0;
     }
   } else {
@@ -113,10 +113,10 @@ success_t la::PLUInit(const Matrix &A,
       double *lcol = L->GetColumnPtr(j);
       double *ucol = U->GetColumnPtr(j);
 
-      mem::Zero(lcol, j);
+      memset(lcol, 0, j * sizeof(double));
       lcol[j] = 1.0;
-      mem::Copy(lcol + j + 1, ucol + j + 1, m - j - 1);
-      mem::Zero(ucol + j + 1, m - j - 1);
+      memcpy(lcol + j + 1, ucol + j + 1, (m - j - 1) * sizeof(double));
+      memset(ucol + j + 1, 0, (m - j - 1) * sizeof(double));
     }
   }
 
@@ -282,8 +282,8 @@ success_t la::QRExpert(Matrix *A_in_Q_out, Matrix *R) {
     double *r_col = R->GetColumnPtr(j);
     double *q_col = A_in_Q_out->GetColumnPtr(j);
     int i = std::min(j + 1, index_t(k));
-    mem::Copy(r_col, q_col, i);
-    mem::Zero(r_col + i, k - i);
+    memcpy(r_col, q_col, i * sizeof(double));
+    memset(r_col + i, 0, (k - i) * sizeof(double));
   }
 
   // Fix Q
@@ -522,12 +522,12 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
   {
     f77_integer lwork = (f77_integer)d;
     // work for DGESDD can be large, we really do need to malloc it
-    double *work = mem::Alloc<double>(lwork);
+    double *work = new double[lwork];
 
     F77_FUNC(dgesdd)(job, m, n, A_garbage->ptr(), m,
         s, U, m, VT, k, work, lwork, iwork, &info);
 
-    mem::Free(work);
+    delete[] work;
   }
 
   return SUCCESS_FROM_LAPACK(info);
@@ -542,7 +542,8 @@ success_t la::Cholesky(Matrix *A_in_U_out) {
 
   /* set the garbage part of the matrix to 0. */
   for (f77_integer j = 0; j < n; j++) {
-    mem::Zero(A_in_U_out->GetColumnPtr(j) + j + 1, n - j - 1);
+    memset(A_in_U_out->GetColumnPtr(j) + j + 1, 0,
+        (n - j - 1) * sizeof(double));
   }
 
   return SUCCESS_FROM_LAPACK(info);

@@ -127,11 +127,11 @@ bool TextLineReader::Gobble() {
     line_ = ptr;
     has_line_ = true;
     line_num_++;
-	 mem::Free(ptr);
+    delete[] ptr;
     return true;
   } else {
     has_line_ = false;
-	 mem::Free(ptr);
+    delete[] ptr;
     return false;
   }
 }
@@ -148,11 +148,18 @@ char *TextLineReader::ReadLine_() {
   
   for (;;) {
     size = size * 2 + extra;
-    buf = mem::Realloc(buf, size);
+
+    // Reallocate
+    char* newbuf = new char[size];
+    if (buf != NULL)
+      memcpy(newbuf, buf, len * sizeof(char));
+      delete[] buf;
+    buf = newbuf;
+
     //! doesn't handle mac eol - OK?
     char *result = ::fgets(buf + len, size - len, f_); 
     if (len == 0 && result == NULL) {
-      mem::Free(buf);
+      delete[] buf;
       return NULL;
     }
     len += strlen(buf + len);
@@ -162,7 +169,11 @@ char *TextLineReader::ReadLine_() {
       char tmp = fgetc(f_);
       if(tmp == '\n') { // append to end
         size++;
-        mem::Realloc(buf, size);
+
+        char* newbuf = new char[size * sizeof(char)];
+        memcpy(newbuf, buf, (size - 1) * sizeof(char));
+        delete[] buf;
+        newbuf = buf;
         buf[len] = tmp;
       } else {
         // go back a character

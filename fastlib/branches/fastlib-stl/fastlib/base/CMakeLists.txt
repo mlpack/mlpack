@@ -16,8 +16,6 @@ set(SOURCES
    base.h
    cc.h
    cc.cc
-   ccmem.h
-   ccmem.cc
    common.h
    common.c
    compiler.h
@@ -25,9 +23,6 @@ set(SOURCES
    debug.c
    deprecated.h
    fortran.h
-#   otrav.h
-#   otrav.cc
-#   otrav_impl.h
    test.h
 )
 
