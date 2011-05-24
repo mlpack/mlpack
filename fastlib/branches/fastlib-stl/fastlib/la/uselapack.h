@@ -177,7 +177,7 @@ namespace la {
    */
   inline void ScaleOverwrite(index_t length,
       double alpha, const double *x, double *y) {
-    mem::Copy(y, x, length);
+    memcpy(y, x, length * sizeof(double));
     Scale(length, alpha, y);
   }
 
@@ -203,7 +203,7 @@ namespace la {
    */
   inline void AddOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::Copy(z, y, length);
+    memcpy(z, y, length * sizeof(double));
     AddTo(length, x, z);
   }
 
@@ -220,7 +220,7 @@ namespace la {
    */
   inline void SubOverwrite(index_t length,
       const double *x, const double *y, double *z) {
-    mem::Copy(z, y, length);
+    memcpy(z, y, length * sizeof(double));
     SubFrom(length, x, z);
   }
 #else

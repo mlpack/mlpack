@@ -89,7 +89,12 @@ class DenseIntMap {
     if (unlikely(index >= size_)) {
       index_t old_size = size_;
       size_ = std::max(size_ * 2, index + 1);
-      ptr_ = mem::Realloc(ptr_, size_);
+      Value* newptr = new Value[size_];
+      if (ptr_ != NULL) {
+        memcpy(newptr, ptr_, old_size * sizeof(Value));
+        delete[] ptr_;
+      }
+      ptr_ = newptr;
       for (index_t i = old_size; i < size_; i++) {
         new(ptr_+i)Value(default_value_);
       }

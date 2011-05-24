@@ -49,7 +49,7 @@
 
 #ifdef __cplusplus
   #include "cc.h"
-  #include "ccmem.h"
+//  #include "ccmem.h"
 #endif
 
 #endif /* BASE_H */

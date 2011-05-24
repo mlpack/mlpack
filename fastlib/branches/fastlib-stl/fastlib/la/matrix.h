@@ -113,8 +113,7 @@ class GenVector {
     
     /* mark slow case as "unlikely" even if it might be the likely case */
     if (unlikely(should_free_)) {
-      mem::DebugPoison(ptr_, length_);
-      mem::Free(ptr_);
+      delete[] ptr_;
     }
     
     DEBUG_ONLY(Uninitialize_());
@@ -125,7 +124,7 @@ class GenVector {
    * values in it.
    */
   void Init(index_t in_length) {
-    ptr_ = mem::Alloc<T>(in_length);
+    ptr_ = new T[in_length];
     length_ = in_length;
     should_free_ = true;
   }
@@ -148,7 +147,8 @@ class GenVector {
    * Sets all elements to the same value.
    */
   void SetAll(T d) {
-    mem::RepeatConstruct(ptr_, d, length_);
+    for (index_t i = 0; i < length_; i++)
+      ptr_[i] = d;
   }
   
   /**
@@ -177,7 +177,8 @@ class GenVector {
   void Copy(const T *doubles, index_t in_length) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocCopy(doubles, in_length);
+    ptr_ = new T[in_length];
+    memcpy(ptr_, doubles, in_length * sizeof(T));
     length_ = in_length;
     should_free_ = true;
   }
@@ -324,7 +325,11 @@ class GenVector {
    */
   void SwapValues(GenVector* other) {
     DEBUG_ASSERT(length() == other->length());
-    mem::Swap(ptr_, other->ptr_, length_);
+    for (index_t i = 0; i < length_; i++) {
+      T tmp = ptr_[i];
+      ptr_[i] = other->ptr_[i];
+      other->ptr_[i] = tmp;
+    }
   }
   
   /**
@@ -334,7 +339,7 @@ class GenVector {
    */
   void CopyValues(const GenVector& other) {
     DEBUG_ASSERT(length() == other.length());
-    mem::Copy(ptr_, other.ptr_, length_);
+    memcpy(ptr_, other.ptr_, length_ * sizeof(T));
   }
 
   /**
@@ -344,7 +349,7 @@ class GenVector {
    *        length() elements
    */
   void CopyValues(const T *src_ptr) {
-    mem::Copy(ptr_, src_ptr, length_);
+    memcpy(ptr_, src_ptr, length_ * sizeof(T));
   }
   
   /**
@@ -497,8 +502,7 @@ class GenMatrix {
     DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
        "You forgot to initialize a Matrix before it got automatically freed.");
     if (unlikely(should_free_)) {
-      mem::DebugPoison(ptr_, n_rows_ * n_cols_);
-      mem::Free(ptr_);
+      delete[] ptr_;
       DEBUG_ONLY(Uninitialize_());
     }
     DEBUG_POISON_PTR(ptr_);
@@ -511,7 +515,7 @@ class GenMatrix {
    */
   void Init(index_t in_rows, index_t in_cols) {
     DEBUG_ONLY(AssertUninitialized_());
-    ptr_ = mem::Alloc<T>(in_rows * in_cols);
+    ptr_ = new T[in_rows * in_cols];
     n_rows_ = in_rows;
     n_cols_ = in_cols;
     should_free_ = true;
@@ -554,7 +558,8 @@ class GenMatrix {
    * Sets the entire matrix to zero.
    */
   void SetAll(T d) {
-    mem::RepeatConstruct(ptr_, d, n_elements());
+    for (index_t i = 0; i < n_elements(); i++)
+      ptr_[i] = d;
   }
 
   /**
@@ -598,7 +603,10 @@ class GenMatrix {
   void Copy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
     DEBUG_ONLY(AssertUninitialized_());
     
-    ptr_ = mem::AllocCopy(ptr_in, n_rows_in * n_cols_in);
+    ptr_ = new T[n_rows_in * n_cols_in];
+    for (index_t i = 0; i < n_rows_in * n_cols_in; i++)
+      ptr_[i] = ptr_in[i];
+
     n_rows_ = n_rows_in;
     n_cols_ = n_cols_in;
     should_free_ = true;
@@ -711,7 +719,7 @@ class GenMatrix {
   
   /**
    * Initializes this uninitialized matrix as the "owning copy" of
-   * some linearized chunk of RAM allocated with mem::Alloc.
+   * some linearized chunk of RAM allocated with new.
    *
    * @param ptr_in the pointer to a block of column-major doubles
    *        allocated via mem::Alloc
@@ -913,7 +921,12 @@ class GenMatrix {
   void ResizeNoalias(index_t new_n_cols) {
     DEBUG_ASSERT(should_free_); // the best assert we can do
     n_cols_ = new_n_cols;
-    ptr_ = mem::Realloc(ptr_, n_elements());
+    
+    // reimplementation of mem::Realloc()
+    T* newptr = new T[n_elements()];
+    memcpy(newptr, ptr_, n_elements() * sizeof(T));
+    delete[] ptr_;
+    ptr_ = newptr;
   }
   
   /**
@@ -927,7 +940,12 @@ class GenMatrix {
   void SwapValues(GenMatrix* other) {
     DEBUG_ASSERT(n_cols() == other->n_cols());
     DEBUG_ASSERT(n_rows() == other->n_rows());
-    mem::Swap(ptr_, other->ptr_, n_elements());
+
+    for (index_t i = 0; i < n_elements(); i++) {
+      T tmp = ptr_[i];
+      ptr_[i] = other->ptr_[i];
+      other->ptr_[i] = tmp;
+    }
   }
   
   /**
@@ -938,7 +956,7 @@ class GenMatrix {
   void CopyValues(const GenMatrix& other) {
     DEBUG_ASSERT(n_rows() == other.n_rows());
     DEBUG_ASSERT(n_cols() == other.n_cols());
-    mem::Copy(ptr_, other.ptr_, n_elements());
+    memcpy(ptr_, other.ptr_, n_elements() * sizeof(T));
   }
 
   /**
