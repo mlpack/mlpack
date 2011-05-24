@@ -51,6 +51,7 @@ endfunction()
 
 find_path (ARMADILLO_INCLUDES arma_ostream_proto.hpp
   PATHS 
+  /usr/include
   /usr/local/include
   /opt/include
   PATH_SUFFIXES armadillo armadillo_bits
@@ -61,6 +62,7 @@ find_path (ARMADILLO_INCLUDES arma_ostream_proto.hpp
 
 find_library (ARMADILLO_LIBRARIES armadillo
   PATHS
+  /usr/lib
   /usr/local/lib
   /opt/lib
   PATH_SUFFIXES
