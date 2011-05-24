@@ -725,19 +725,77 @@ class LocalRegressionDelta {
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
-      // Initialize.
+      // Lower and upper bound on the kernels.
+      double lower_kernel_value =
+        global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
+      double upper_kernel_value =
+        global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
+
+      // Initialize the left hand side lower bound.
       left_hand_side_l_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
+      left_hand_side_l_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
+          left_hand_side_l_.get(i, j).push_back(
+            lower_bound_kernel_value *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+        }
+      }
+
+      // Initialize the left hand side estimate.
       left_hand_side_e_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
+      left_hand_side_e_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
+          left_hand_side_e_.get(i, j).push_back(
+            0.5 *(lower_bound_kernel_value + upper_bound_kernel_value) *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+        }
+      }
+
+      // Initialize the left hand side upper bound.
       left_hand_side_u_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
+      left_hand_side_u_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
+          left_hand_side_u_.get(i, j).push_back(
+            upper_bound_kernel_value *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+        }
+      }
+
+      // Initialize the right hand side lower bound.
       right_hand_side_l_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_l_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        right_hand_side_l_[j].push_back(
+          lower_bound_kernel_value *
+          rnode->stat().weighted_average_info_[j].sample_mean());
+      }
+
+      // Initialize the right hand side estimate.
       right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_e_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        right_hand_side_e_[j].push_back(
+          0.5 *(lower_bound_kernel_value + upper_bound_kernel_value) *
+          rnode->stat().weighted_average_info_[j].sample_mean());
+      }
+
+      // Initialize the right hand side upper bound.
       right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_u_.set_total_num_terms(rnode->count());
+      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+        right_hand_side_u_[j].push_back(
+          upper_bound_kernel_value *
+          rnode->stat().weighted_average_info_[j].sample_mean());
+      }
 
       int rnode_count = rnode->count();
       pruned_ = static_cast<double>(rnode_count);
@@ -897,6 +955,10 @@ class LocalRegressionStatistic {
 
   public:
 
+    core::monte_carlo::MeanVariancePairMatrix average_info_;
+
+    core::monte_carlo::MeanVariancePairVector weighted_average_info_;
+
     mlpack::local_regression::LocalRegressionPostponed postponed_;
 
     mlpack::local_regression::LocalRegressionSummary summary_;
@@ -937,6 +999,26 @@ class LocalRegressionStatistic {
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global, TreeType *node) {
 
+      average_info_.Init(
+        global.reference_table()->n_attributes() + 1,
+        global.reference_table()->n_attributes() + 1);
+      average_info_.set_total_num_terms(node->count());
+      weighted_average_info_.Init(
+        global.reference_table()->n_attributes() + 1);
+      weighted_average_info_.set_total_num_terms(node->count());
+
+      // Accumulate from the raw data.
+      typename GlobalType::TableType::TreeIterator node_it =
+        const_cast<GlobalType &>(global).
+        reference_table()->get_node_iterator(node);
+      arma::vec point;
+      while(node_it.HasNext()) {
+        int point_id;
+        double point_weight;
+        it.Next(&point, &point_id, &point_weight);
+
+      }
+
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();
     }
@@ -951,6 +1033,12 @@ class LocalRegressionStatistic {
       TreeType *node,
       const LocalRegressionStatistic &left_stat,
       const LocalRegressionStatistic &right_stat) {
+
+      average_info_.Init(
+        global.reference_table()->n_attributes() + 1,
+        global.reference_table()->n_attributes() + 1);
+      weighted_average_info_.Init(
+        global.reference_table()->n_attributes() + 1);
 
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();
