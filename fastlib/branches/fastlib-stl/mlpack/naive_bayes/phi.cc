@@ -5,8 +5,7 @@
  * This file computes the Gaussian probability
  * density function
  */
-#include "fastlib/fastlib.h"
-#include "fastlib/fastlib_int.h"
+#include <fastlib/fastlib.h>
 #include <cmath>
 #include "phi.h"
 
