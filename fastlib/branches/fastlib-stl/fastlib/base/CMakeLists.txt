@@ -21,7 +21,6 @@ set(SOURCES
    compiler.h
    debug.h
    debug.c
-   deprecated.h
    fortran.h
    test.h
 )

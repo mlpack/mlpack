@@ -95,13 +95,6 @@
  */
 #define unlikely(cond) expect(!!(cond), 0)
 
-/** Returns 1 if the compiler can prove the expression is constant. */
-#ifndef __GNUC__
-#define IS_CONST_EXPR(expr) (__builtin_constant_p(expr))
-#else
-#define IS_CONST_EXPR(expr) 0
-#endif
-
 /**
  * Define __attribute__(( )) as nothing on compilers that don't support it.
  */
@@ -167,12 +160,6 @@ struct compiler_strideof {
  */
 #define stride_align_max(num) \
     (((size_t)(num) + MAX_STRIDE - 1) & ~(size_t)(MAX_STRIDE - 1))
-
-/* Fill possibly lacking definition for member memory offsets. */
-#ifndef offsetof
-#define offsetof(S, member) ((size_t)(&((S const *)0)->member))
-#endif
-
 
 
 /** Use a constant reference in C++, or constant pointer in C. */
