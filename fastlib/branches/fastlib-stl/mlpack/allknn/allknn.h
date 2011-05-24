@@ -20,72 +20,72 @@ namespace allknn {
  */
 class TestAllkNN;
 /**
-* Performs all-nearest-neighbors.  This class will build the trees and 
+* Performs all-nearest-neighbors.  This class will build the trees and
 * perform the recursive  computation.
 */
 class AllkNN {
   // Declare the tester class as a friend class so that it has access
   // to the private members of the class
   friend class TestAllkNN;
-  
+
   //////////////////////////// Nested Classes ///////////////////////////////////////////////
   /**
-  * Extra data for each node in the tree.  For all nearest neighbors, 
+  * Extra data for each node in the tree.  For all nearest neighbors,
   * each node only
-  * needs its upper bound on its nearest neighbor distances.  
+  * needs its upper bound on its nearest neighbor distances.
   */
   class QueryStat {
-    
+
    private:
     /**
      * The upper bound on the node's nearest neighbor distances.
      */
     double max_distance_so_far_;
-    
+
    public:
     double max_distance_so_far() {
-      return max_distance_so_far_; 
-    } 
-    
+      return max_distance_so_far_;
+    }
+
     void set_max_distance_so_far(double new_dist) {
-      max_distance_so_far_ = new_dist; 
-    } 
-    
-    // In addition to any member variables for the statistic, all stat 
-    // classes need two Init 
-    // functions, one for leaves and one for non-leaves. 
-    
+      max_distance_so_far_ = new_dist;
+    }
+
+    // In addition to any member variables for the statistic, all stat
+    // classes need two Init
+    // functions, one for leaves and one for non-leaves.
+
     /**
-     * Initialization function used in tree-building when initializing 
-     * a leaf node.  For allnn, needs no additional information 
-     * at the time of tree building.  
+     * Initialization function used in tree-building when initializing
+     * a leaf node.  For allnn, needs no additional information
+     * at the time of tree building.
      */
     void Init(const arma::mat& matrix, index_t start, index_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
-    } 
-    
+    }
+
     /**
      * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
-     * node statistics can be built using information from the children.  
+     * node statistics can be built using information from the children.
      */
-    void Init(const arma::mat& matrix, index_t start, index_t count, 
+    void Init(const arma::mat& matrix, index_t start, index_t count,
         const QueryStat& left, const QueryStat& right) {
       // For allknn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
-    } 
-    
-  }; //class AllNNStat  
-  
-  // TreeType are BinarySpaceTrees where the data are bounded by 
-  // Euclidean bounding boxes, the data are stored in a Matrix, 
+    }
+
+  }; //class AllNNStat
+
+  // TreeType are BinarySpaceTrees where the data are bounded by
+  // Euclidean bounding boxes, the data are stored in a Matrix,
   // and each node has a QueryStat for its bound.
   typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
 
-  
+
   /////////////////////////////// Members //////////////////////////////////////////////////
  private:
-  // The module containing the parameters for this computation. 
+  // The module containing the parameters for this computation.
   struct datanode* module_;
 
   // These will store our data sets.
@@ -102,12 +102,12 @@ class AllkNN {
 
   bool naive_;
   bool dual_mode_;
- 
+
   // The number of points in a leaf
   index_t leaf_size_;
 
   // number of nearest neighbrs
-  index_t knns_; 
+  index_t knns_;
 
   // The total number of prunes.
   index_t number_of_prunes_;
@@ -160,13 +160,13 @@ class AllkNN {
          index_t knns, int options = 0);
   AllkNN(arma::mat& references_in, index_t leaf_size, index_t knns,
          int options = 0);
-  
+
   /**
    * The tree is the only member we are responsible for deleting.  The others
-   * will take care of themselves.  
+   * will take care of themselves.
    */
-  ~AllkNN();  
-      
+  ~AllkNN();
+
   /**
    * Computes the minimum squared distance between the bounding boxes of two
    * nodes
@@ -179,7 +179,7 @@ class AllkNN {
    */
   double MinPointNodeDistSq_(const arma::vec& query_point,
                              TreeType* reference_node);
-  
+
   /**
    * Performs exhaustive computation between two leaves, comparing every node in
    * the leaf to the other leaf to find the furthest neighbor.  The
@@ -187,15 +187,15 @@ class AllkNN {
    * changed information.
    */
   void ComputeBaseCase_(TreeType* query_node, TreeType* reference_node);
-  
+
   /**
    * Recurse down the trees, computing base case computations when the leaves
    * are reached.
    */
   void ComputeDualNeighborsRecursion_(TreeType* query_node,
-                                      TreeType* reference_node, 
+                                      TreeType* reference_node,
                                       double lower_bound_distance);
-  
+
   /***
    * Perform a recursion only on the reference tree; the query point is given.
    * This method is similar to ComputeBaseCase_().
@@ -203,7 +203,7 @@ class AllkNN {
   void ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point,
                                         TreeType* reference_node,
                                         double* min_dist_so_far);
-  
+
   /**
    * Computes the nearest neighbors and stores the output in the given arrays.
    * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest
