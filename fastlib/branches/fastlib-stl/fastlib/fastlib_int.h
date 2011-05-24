@@ -48,8 +48,6 @@
 #include "file/textfile.h"
 #include "fx/fx.h"
 
-#include "par/thread.h"
-#include "par/grain.h"
 #include "tree/spacetree.h"
 #include "tree/bounds.h"
 #include "tree/statistic.h"
