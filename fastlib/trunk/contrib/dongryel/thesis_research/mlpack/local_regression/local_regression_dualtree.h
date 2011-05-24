@@ -204,9 +204,9 @@ class LocalRegressionPostponed {
       left_hand_side_l_.get(0, 0).push_back(kernel_value);
       left_hand_side_e_.get(0, 0).push_back(kernel_value);
       left_hand_side_u_.get(0, 0).push_back(kernel_value);
-      right_hand_side_l_.get(0, 0).push_back(kernel_value * reference_weight);
-      right_hand_side_e_.get(0, 0).push_back(kernel_value * reference_weight);
-      right_hand_side_u_.get(0, 0).push_back(kernel_value * reference_weight);
+      right_hand_side_l_[0].push_back(kernel_value * reference_weight);
+      right_hand_side_e_[0].push_back(kernel_value * reference_weight);
+      right_hand_side_u_[0].push_back(kernel_value * reference_weight);
       for(unsigned int j = 1; j <= reference_point.n_elem; j++) {
 
         // The row update for the left hand side.
@@ -338,7 +338,7 @@ class LocalRegressionGlobal {
 
       return
         ConsiderExtrinsicPruneTrait<KernelType>::Compute(
-          *kernel_aux_, squared_distance_range);
+          kernel_, squared_distance_range);
     }
 
     /** @brief Returns whether the computation is monochromatic or
@@ -429,13 +429,13 @@ class LocalRegressionGlobal {
     /** @brief Returns the bandwidth value being used.
      */
     double bandwidth() const {
-      return sqrt(kernel_aux_->kernel().bandwidth_sq());
+      return sqrt(kernel_.bandwidth_sq());
     }
 
     /** @brief Sets the bandwidth.
      */
     void set_bandwidth(double bandwidth_in) {
-      kernel_aux_->kernel().Init(bandwidth_in);
+      kernel_.Init(bandwidth_in);
     }
 
     /** @brief Returns the kernel.
@@ -536,7 +536,7 @@ class LocalRegressionResult {
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       ar & num_query_points_;
-      for(unsigned int i = 0; i < self_contribution_subtracted.size(); i++) {
+      for(unsigned int i = 0; i < num_query_points_; i++) {
         ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
@@ -553,13 +553,15 @@ class LocalRegressionResult {
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
+      // Load the number of points.
       ar & num_query_points_;
 
       // Initialize the array.
       this->Init(num_query_points_);
 
       // Load.
-      for(unsigned int i = 0; i < self_contribution_subtracted.size(); i++) {
+      for(int i = 0; i < num_query_points_; i++) {
         ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
@@ -580,6 +582,7 @@ class LocalRegressionResult {
     /** @brief The default constructor.
      */
     LocalRegressionResult() {
+      num_query_points_ = 0;
       SetZero();
     }
 
@@ -642,7 +645,7 @@ class LocalRegressionResult {
     }
 
     void SetZero() {
-      for(int i = 0; i < num_queries_; i++) {
+      for(int i = 0; i < num_query_points_; i++) {
         self_contribution_subtracted_[i] = false;
         left_hand_side_l_[i].SetZero();
         left_hand_side_e_[i].SetZero();
@@ -725,6 +728,10 @@ class LocalRegressionDelta {
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
       const core::math::Range &squared_distance_range) {
 
+      // The maximum deviation between the lower and the upper
+      // estimated quantities for the left hand side and the right
+      // hand side.
+
       // Lower and upper bound on the kernels.
       double lower_kernel_value =
         global.kernel().EvalUnnormOnSq(squared_distance_range.hi);
@@ -739,7 +746,7 @@ class LocalRegressionDelta {
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_l_.get(i, j).push_back(
-            lower_bound_kernel_value *
+            lower_kernel_value *
             rnode->stat().average_info_.get(i, j).sample_mean());
         }
       }
@@ -752,7 +759,7 @@ class LocalRegressionDelta {
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_e_.get(i, j).push_back(
-            0.5 *(lower_bound_kernel_value + upper_bound_kernel_value) *
+            0.5 *(lower_kernel_value + upper_kernel_value) *
             rnode->stat().average_info_.get(i, j).sample_mean());
         }
       }
@@ -765,7 +772,7 @@ class LocalRegressionDelta {
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_u_.get(i, j).push_back(
-            upper_bound_kernel_value *
+            upper_kernel_value *
             rnode->stat().average_info_.get(i, j).sample_mean());
         }
       }
@@ -775,7 +782,7 @@ class LocalRegressionDelta {
       right_hand_side_l_.set_total_num_terms(rnode->count());
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_l_[j].push_back(
-          lower_bound_kernel_value *
+          lower_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
       }
 
@@ -784,7 +791,7 @@ class LocalRegressionDelta {
       right_hand_side_e_.set_total_num_terms(rnode->count());
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_e_[j].push_back(
-          0.5 *(lower_bound_kernel_value + upper_bound_kernel_value) *
+          0.5 *(lower_kernel_value + upper_kernel_value) *
           rnode->stat().weighted_average_info_[j].sample_mean());
       }
 
@@ -793,13 +800,13 @@ class LocalRegressionDelta {
       right_hand_side_u_.set_total_num_terms(rnode->count());
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_u_[j].push_back(
-          upper_bound_kernel_value *
+          upper_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
       }
 
       int rnode_count = rnode->count();
       pruned_ = static_cast<double>(rnode_count);
-      used_error_ = 0.5 * (densities_u_ - densities_l_);
+      used_error_ = 0.5 * max_deviation;
     }
 };
 
@@ -1013,10 +1020,25 @@ class LocalRegressionStatistic {
         reference_table()->get_node_iterator(node);
       arma::vec point;
       while(node_it.HasNext()) {
+
+        // Point ID and its weight.
         int point_id;
         double point_weight;
-        it.Next(&point, &point_id, &point_weight);
 
+        // Get each point.
+        node_it.Next(&point, &point_id, &point_weight);
+
+        // Push the contribution of each point.
+        average_info_.get(0, 0).push_back(1.0);
+        weighted_average_info_[0].push_back(point_weight);
+        for(int j = 1; j <= global.reference_table()->n_attributes(); j++) {
+          average_info_.get(0, j).push_back(point[j - 1]);
+          average_info_.get(j, 0).push_back(point[j - 1]);
+          weighted_average_info_[j].push_back(point_weight * point[j - 1]);
+          for(int i = 1; i <= global.reference_table()->n_attributes(); i++) {
+            average_info_.get(i, j).push_back(point[i - 1] * point[j - 1]);
+          }
+        }
       }
 
       // Sets the postponed quantities and summary statistics to zero.
@@ -1034,11 +1056,19 @@ class LocalRegressionStatistic {
       const LocalRegressionStatistic &left_stat,
       const LocalRegressionStatistic &right_stat) {
 
+      // Initialize the average information.
       average_info_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
       weighted_average_info_.Init(
         global.reference_table()->n_attributes() + 1);
+
+      // Form the average information by combining from the children
+      // information.
+      average_info_.CombineWith(left_stat.average_info_);
+      average_info_.CombineWith(right_stat.average_info_);
+      weighted_average_info_.CombineWith(left_stat.weighted_average_info_);
+      weighted_average_info_.CombineWith(right_stat.weighted_average_info_);
 
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();

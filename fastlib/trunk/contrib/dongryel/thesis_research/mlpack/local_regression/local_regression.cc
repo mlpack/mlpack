@@ -15,7 +15,6 @@
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/local_regression/local_regression_argument_parser.h"
 #include "mlpack/local_regression/local_regression_dev.h"
-#include "mlpack/local_regression/local_regression_result.h"
 
 template<typename KernelType>
 void StartComputation(boost::program_options::variables_map &vm) {

@@ -12,7 +12,7 @@
 #include <boost/program_options.hpp>
 #include "core/table/table.h"
 #include "mlpack/local_regression/local_regression_arguments.h"
-#include "mlpack/local_regression/local_regression_result.h"
+#include "mlpack/local_regression/local_regression_dualtree.h"
 
 namespace mlpack {
 namespace local_regression {
