@@ -8,9 +8,7 @@
  *
  */
  
-#include "fastlib/fastlib.h"
-#include "fastlib/fastlib_int.h"
-
+#include <fastlib/fastlib.h>
 
 /**
  * Finds the index of the minimum element
