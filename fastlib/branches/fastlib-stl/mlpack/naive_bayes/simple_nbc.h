@@ -11,7 +11,7 @@
 #ifndef NBC_H
 #define NBC_H
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
 #include "phi.h"
 
 const fx_entry_doc parm_nbc_entries[] ={
