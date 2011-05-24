@@ -91,7 +91,6 @@ RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
 EXCLUDE_PATTERNS       = */u/* \
-                         */trilinos/* \
                          */auton/* \
                          */test/* \
                          */bin/* \
