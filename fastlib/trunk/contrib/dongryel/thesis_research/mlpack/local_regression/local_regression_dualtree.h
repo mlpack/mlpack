@@ -450,7 +450,6 @@ class LocalRegressionGlobal {
       TableType *reference_table_in,
       TableType *query_table_in,
       double effective_num_reference_points_in,
-      KernelType *kernel_in,
       double bandwidth_in,
       const bool is_monochromatic,
       double relative_error_in,
@@ -656,6 +655,13 @@ class LocalRegressionResult {
         pruned_[i] = 0;
         used_error_[i] = 0;
       }
+    }
+
+    template<typename GlobalType, typename TreeType, typename DeltaType>
+    void ApplyProbabilisticDelta(
+      GlobalType &global, TreeType *qnode, double failure_probability,
+      const DeltaType &delta_in) {
+
     }
 
     /** @brief Apply postponed contributions.
@@ -880,6 +886,20 @@ class LocalRegressionSummary {
       this->Copy(summary_in);
     }
 
+    template < typename MetricType, typename GlobalType,
+             typename PostponedType, typename DeltaType,
+             typename TreeType, typename ResultType >
+    bool CanProbabilisticSummarize(
+      const MetricType &metric,
+      GlobalType &global,
+      const PostponedType &postponed, DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode, TreeType *rnode,
+      double failure_probability, ResultType *query_results) const {
+
+      return false;
+    }
+
     template < typename GlobalType, typename DeltaType, typename TreeType,
              typename ResultType >
     bool CanSummarize(
@@ -889,9 +909,9 @@ class LocalRegressionSummary {
 
       double left_hand_side = delta.used_error_;
       double lower_bound_l1_norm = 0.0;
-      for(int j = 0; j < left_hand_side_l_.n_cols; j++) {
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         lower_bound_l1_norm += right_hand_side_l_[j];
-        for(int i = 0; i < left_hand_side_l_.n_rows; i++) {
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
           lower_bound_l1_norm += left_hand_side_l_.at(i, j);
         }
       }
@@ -934,7 +954,7 @@ class LocalRegressionSummary {
     void Accumulate(
       const GlobalType &global, const ResultType &results, int q_index) {
 
-      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         right_hand_side_l_[j] =
           std::min(
             right_hand_side_l_[j],
@@ -945,7 +965,7 @@ class LocalRegressionSummary {
             right_hand_side_u_[j],
             results.right_hand_side_u_[q_index][j].sample_mean() *
             results.pruned_[q_index]);
-        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
           left_hand_side_l_.at(i, j) =
             std::min(
               left_hand_side_l_.at(i, j),
@@ -967,7 +987,7 @@ class LocalRegressionSummary {
       const GlobalType &global, const LocalRegressionSummary &summary_in,
       const LocalRegressionPostponedType &postponed_in) {
 
-      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         right_hand_side_l_[j] =
           std::min(
             right_hand_side_l_[j],
@@ -980,7 +1000,7 @@ class LocalRegressionSummary {
             summary_in.right_hand_side_u_[j] +
             postponed_in.right_hand_side_u_[j].sample_mean() *
             postponed_in.pruned_);
-        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
           left_hand_side_l_.at(i, j) =
             std::min(
               left_hand_side_l_.at(i, j),
@@ -1021,16 +1041,20 @@ class LocalRegressionSummary {
 
     template<typename LocalRegressionPostponedType>
     void ApplyPostponed(const LocalRegressionPostponedType &postponed_in) {
-      for(int j = 0; j < left_hand_side_l_.n_cols; j++) {
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         right_hand_side_l_[j] +=
-          postponed_in.right_hand_side_l_[j] * postponed_in.pruned_;
+          postponed_in.right_hand_side_l_[j].sample_mean() *
+          postponed_in.pruned_;
         right_hand_side_u_[j] +=
-          postponed_in.right_hand_side_u_[j] * postponed_in.pruned_;
-        for(int i = 0; i < left_hand_side_l_.n_rows; i++) {
+          postponed_in.right_hand_side_u_[j].sample_mean() *
+          postponed_in.pruned_;
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
           left_hand_side_l_.at(i, j) +=
-            postponed_in.left_hand_side_l_.get(i, j) * postponed_in.pruned_;
+            postponed_in.left_hand_side_l_.get(i, j).sample_mean() *
+            postponed_in.pruned_;
           left_hand_side_u_.at(i, j) +=
-            postponed_in.left_hand_side_u_.get(i, j) * postponed_in.pruned_;
+            postponed_in.left_hand_side_u_.get(i, j).sample_mean() *
+            postponed_in.pruned_;
         }
       }
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
@@ -1103,7 +1127,6 @@ class LocalRegressionStatistic {
       typename GlobalType::TableType::TreeIterator node_it =
         const_cast<GlobalType &>(global).
         reference_table()->get_node_iterator(node);
-      arma::vec point;
       while(node_it.HasNext()) {
 
         // Point ID and its weight.
@@ -1111,6 +1134,7 @@ class LocalRegressionStatistic {
         double point_weight;
 
         // Get each point.
+        arma::vec point;
         node_it.Next(&point, &point_id, &point_weight);
 
         // Push the contribution of each point.
