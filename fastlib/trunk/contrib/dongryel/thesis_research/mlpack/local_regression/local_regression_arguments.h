@@ -47,13 +47,21 @@ class LocalRegressionArguments {
      */
     TableType *reference_table_;
 
+    double absolute_error_;
+
     /** @brief The relative error.
      */
     double relative_error_;
 
+    double probability_;
+
     /** @brief The metric used for computing the distances.
      */
     MetricType metric_;
+
+    int num_iterations_in_;
+
+    int effective_num_reference_points_;
 
   public:
 
@@ -64,7 +72,11 @@ class LocalRegressionArguments {
       leaf_size_ = 0;
       query_table_ = NULL;
       reference_table_ = NULL;
+      absolute_error_ = 0.0;
       relative_error_ = 0.0;
+      probability_ = 1.0;
+      num_iterations_in_ = -1;
+      effective_num_reference_points_ = 0;
     }
 
     /** @brief The destructor.

@@ -22,7 +22,7 @@ void StartComputation(boost::program_options::variables_map &vm) {
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
   core::tree::GenMetricTree <
-  core::tree::AbstractStatistic > > TableType;
+  mlpack::local_regression::LocalRegressionStatistic > > TableType;
 
   // Parse arguments for local regression.
   mlpack::local_regression::LocalRegressionArguments <
@@ -40,7 +40,10 @@ void StartComputation(boost::program_options::variables_map &vm) {
   TableType, KernelType,  core::metric_kernels::LMetric<2> >
   local_regression_instance;
   local_regression_instance.Init(
-    local_regression_arguments);
+    local_regression_arguments,
+    (typename mlpack::local_regression::LocalRegression <
+     TableType, KernelType,
+     core::metric_kernels::LMetric<2> >::GlobalType *) NULL);
   init_timer.End();
   std::cerr << init_timer.GetTotalElapsedTime() <<
             " seconds elapsed in initializing...\n";
