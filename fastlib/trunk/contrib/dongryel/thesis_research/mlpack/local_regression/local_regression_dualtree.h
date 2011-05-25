@@ -599,50 +599,62 @@ class LocalRegressionResult {
 
     void Init(int num_points) {
 
+      // Sets the number of points.
+      num_query_points_ = num_points;
+
+      // Initialize the self contribution subtracted array.
       boost::scoped_array<bool> tmp_self_contribution_subtracted(
         new bool[num_query_points_]);
       self_contribution_subtracted_.swap(tmp_self_contribution_subtracted);
 
+      // Initialize the left hand side lower bound.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairMatrix >
       tmp_left_hand_side_l(
         new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
       left_hand_side_l_.swap(tmp_left_hand_side_l);
 
+      // Initialize the left hand side estimate.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairMatrix >
       tmp_left_hand_side_e(
         new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
       left_hand_side_e_.swap(tmp_left_hand_side_e);
 
+      // Initialize the left hand side upper bound.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairMatrix >
       tmp_left_hand_side_u(
         new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
       left_hand_side_u_.swap(tmp_left_hand_side_u);
 
+      // Initialize the right hand side lower bound.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairVector >
       tmp_right_hand_side_l(
         new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
       right_hand_side_l_.swap(tmp_right_hand_side_l);
 
+      // Initialize the right hand side estimate.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairVector >
       tmp_right_hand_side_e(
         new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
       right_hand_side_e_.swap(tmp_right_hand_side_e);
 
+      // Initialize the right hand side upper bound.
       boost::scoped_array <
       core::monte_carlo::MeanVariancePairVector >
       tmp_right_hand_side_u(
         new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
       right_hand_side_u_.swap(tmp_right_hand_side_u);
 
+      // Initialize the pruned quantities.
       boost::scoped_array< double > tmp_pruned(
         new double[num_query_points_]);
       pruned_.swap(tmp_pruned);
 
+      // Initialize the used error quantities.
       boost::scoped_array< double > tmp_used_error(
         new double[num_query_points_]);
       used_error_.swap(tmp_used_error);
