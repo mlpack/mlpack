@@ -639,6 +639,14 @@ class LocalRegressionResult {
         new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
       right_hand_side_u_.swap(tmp_right_hand_side_u);
 
+      boost::scoped_array< double > tmp_pruned(
+        new double[num_query_points_]);
+      pruned_.swap(tmp_pruned);
+
+      boost::scoped_array< double > tmp_used_error(
+        new double[num_query_points_]);
+      used_error_.swap(tmp_used_error);
+
       // Set everything to zero.
       SetZero();
     }
