@@ -63,6 +63,10 @@ class LocalRegressionArgumentParser {
         "relative_error",
         boost::program_options::value<double>()->default_value(0.1),
         "Relative error for the approximation of local regression."
+      )(
+        "reference_targets_in",
+        boost::program_options::value<std::string>(),
+        "The file containing the target values for the reference set."
       );
 
       boost::program_options::command_line_parser clp(args);
@@ -121,6 +125,10 @@ class LocalRegressionArgumentParser {
         std::cerr << "Missing required --references_in.\n";
         exit(0);
       }
+      if(vm->count("reference_targets_in") == 0) {
+        std::cerr << "Missing reqiured --reference_targets_in.\n";
+        exit(0);
+      }
       if((*vm)["relative_error"].as<double>() < 0.0) {
         std::cerr << "The --relative_error requires a positive real number.\n";
         exit(0);
@@ -133,7 +141,10 @@ class LocalRegressionArgumentParser {
       int argc, char *argv[],
       boost::program_options::variables_map *vm) {
 
-      return false;
+      // Convert C input to C++; skip executable name for Boost.
+      std::vector<std::string> args(argv + 1, argv + argc);
+
+      return ConstructBoostVariableMap(args, vm);
     }
 
     template<typename TableType, typename MetricType>
@@ -191,7 +202,8 @@ class LocalRegressionArgumentParser {
       // Read in the reference set.
       arguments_out->reference_table_ = new TableType();
       arguments_out->reference_table_->Init(
-        vm["references_in"].as<std::string>());
+        vm["references_in"].as<std::string>(), 0,
+        &(vm["reference_targets_in"].as<std::string>()));
       std::cerr << "Read in " << arguments_out->reference_table_->n_entries() <<
                 " points.\n";
 

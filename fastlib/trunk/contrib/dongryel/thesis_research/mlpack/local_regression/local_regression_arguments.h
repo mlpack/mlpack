@@ -47,20 +47,29 @@ class LocalRegressionArguments {
      */
     TableType *reference_table_;
 
+    /** @brief The absolute error.
+     */
     double absolute_error_;
 
     /** @brief The relative error.
      */
     double relative_error_;
 
+    /** @brief The probability level.
+     */
     double probability_;
 
     /** @brief The metric used for computing the distances.
      */
     MetricType metric_;
 
+    /** @brief The number of iterations to run (on iterative mode).
+     */
     int num_iterations_in_;
 
+    /** @brief The effective number of reference points (discounting
+     *         the self-contribution when monochromatic).
+     */
     int effective_num_reference_points_;
 
   public:
