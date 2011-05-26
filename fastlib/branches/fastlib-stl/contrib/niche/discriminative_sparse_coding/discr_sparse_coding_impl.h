@@ -68,6 +68,7 @@ void DiscrSparseCoding::InitW(const char* w_filename) {
 }
 
 
+// this only handles sparse coding, not local coordinate coding
 void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
   //InitDictionary();
   //InitW();
@@ -89,26 +90,25 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
     //printf("label = %f\n", y_(ind));
     //PrintDictionary();
     //PrintW();
-    SGDStep(X_.col(ind), y_(ind), step_size);
+    //SGDStep(X_.col(ind), y_(ind), step_size);
+    SGDStep(X_.colptr(ind), y_(ind), step_size);
     //PrintDictionary();
     //PrintW();
   }
 }
 
 
-void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
+// this only handles sparse coding, not local coordinate coding
+//void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
+void DiscrSparseCoding::SGDStep(double* x_mem, double y, double step_size) {
+  vec x = vec(x_mem, n_dims_, false, true); 
+
   //printf("sgdstep\n");
   Lars lars;
-  lars.Init(D_, x, true, lambda_1_, lambda_2_);
-  //printf("running LARS\n");
-  //D_.save("D.dat", raw_ascii);
-  //x.save("x.dat", raw_ascii);
+  lars.Init(D_.memptr(), x_mem, n_dims_, n_atoms_, true, 0.5 * lambda_1_, lambda_2_);
   lars.DoLARS();
   vec v;
-  //printf("try lars\n");
   lars.Solution(v);
-  //printf("success\n");
-  //v.print("lars solution");
   /*
   printf("lars solution\n");
   for(u32 i = 0; i < v.n_elem; i++) {
@@ -117,7 +117,6 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   printf("\n");
   */
 
-  //printf("LARS FINISHED OK\n");
   if(y * dot(v, w_) > 1) {
     // no update necessary
     return;
@@ -134,7 +133,6 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   
   if(n_active == 0) {
     printf("empty active set!\n");
-
     // this case is indicative of a possibly poor dictionary, but computationally, it's fucking great!
     //   no update to w, since v is zero
     //   no update to D, since D_active is 0-dimensional
@@ -150,7 +148,7 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   */
   
   // for the update, we need (D_Lambda^T + D_Lambda)^{-1}
-  // fortunately, we already have the cholesky factorization of this in lars
+  // fortunately, we already have the cholesky factorization of this in LARS
   
   // first, set up some things that will be useful later
   vec w_active = vec(n_active);
@@ -171,7 +169,7 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   
   // Let A := inv(D^T * D + lambda_2 * I)
   
-  // 4 parts
+  // 3 parts (there's a 4th part for discriminative LCC)
   // 1st part:
   //vec A_w = solve(chol_factor, solve(trans(chol_factor), w_active));
   vec A_w = solve(trimatu(chol_factor), solve_trans(trimatu(chol_factor), w_active));
@@ -183,20 +181,19 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   vec first_part_middle = A_w;
   rowvec first_part_rhs = trans(v_active);
   mat first_part = first_part_lhs * first_part_middle * first_part_rhs;
-  //printf("done part 1\n");
-  //
+
   // 2nd part:
   vec second_part_lhs = D_active * v_active;
   rowvec second_part_rhs = wt_A;
   mat second_part = second_part_lhs * second_part_rhs;
-  //printf("done part 2\n");
-  //
+
   // 3rd part:
   vec third_part_lhs = x;
   rowvec third_part_rhs = wt_A;
   mat third_part = -third_part_lhs * third_part_rhs;
-  //printf("done part 3\n");
-  //
+  
+  /*
+  // the fourth part is only necessary for Discriminative LCC
   // 4th part:
   vec fourth_part_1_lhs = x;
   rowvec fourth_part_1_rhs = wt_A % trans(sign_v_active);
@@ -205,9 +202,13 @@ void DiscrSparseCoding::SGDStep(const vec& x, double y, double step_size) {
   mat fourth_part = 
     -fourth_part_1_lhs * fourth_part_1_rhs - 
     fourth_part_2 * diagmat(fourth_part_2_col_scaling);
-  //printf("done part 4\n");
+  */
 
-  mat D_active_update = step_size * y * (first_part + second_part + third_part + fourth_part);
+  // for Discriminative Sparse Coding
+  mat D_active_update = step_size * y * (first_part + second_part + third_part);
+
+  // for Discriminative LCC
+  //mat D_active_update = step_size * y * (first_part + second_part + third_part + fourth_part);
 
   
   // now, update hypothesis vector w
