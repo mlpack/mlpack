@@ -93,7 +93,7 @@ class KdePostponed {
 
     /** @brief Initializes the postponed quantities.
      */
-    void Init() {
+    void Init(int num_dimensions_in) {
       SetZero();
     }
 
@@ -743,7 +743,8 @@ class KdeResult {
       while(qnode_it.HasNext());
     }
 
-    void Init(int num_points) {
+    template<typename GlobalType>
+    void Init(const GlobalType &global_in, int num_points) {
       densities_l_.resize(num_points);
       densities_.resize(num_points);
       densities_u_.resize(num_points);
