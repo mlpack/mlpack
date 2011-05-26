@@ -64,7 +64,8 @@ class DiscrSparseCoding {
   
   void SGDOptimize(u32 n_iterations, double step_size);
   
-  void SGDStep(const vec& x, double y, double step_size);
+  //void SGDStep(const vec& x, double y, double step_size);
+  void SGDStep(double* x_mem, double y, double step_size);
   
   void ProjectW();
 

@@ -14,6 +14,7 @@ set(SOURCES
    lcc.h
    lcc_impl.h
    pegasos.h
+   pegasos_impl.h
 )
 
 # add directory name to sources
@@ -25,50 +26,6 @@ endforeach()
 #set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # The executable for Discriminative Sparse Coding
-add_executable(discr_sparse_coding
-    EXCLUDE_FROM_ALL
-    main.cc
-)
-
-target_link_libraries(discr_sparse_coding
-   fastlib
-)
-
-add_executable(dsc_mnist
-    EXCLUDE_FROM_ALL
-    mnist_main.cc
-)
-
-target_link_libraries(dsc_mnist
-   fastlib
-)
-
-add_executable(mnist_1vsrest
-    EXCLUDE_FROM_ALL
-    mnist_one_vs_rest_main.cc
-)
-
-target_link_libraries(mnist_1vsrest
-   fastlib
-)
-
-add_executable(mnist_pairwise
-    EXCLUDE_FROM_ALL
-    mnist_pairwise.cc
-)
-
-target_link_libraries(mnist_pairwise
-   fastlib
-)
-
-add_executable(mnist_pairwise_test
-    EXCLUDE_FROM_ALL
-    mnist_pairwise_test.cc
-)
-
-target_link_libraries(mnist_pairwise_test
-   fastlib
-)
 
 add_executable(mnist_dlcc
     EXCLUDE_FROM_ALL
@@ -76,6 +33,26 @@ add_executable(mnist_dlcc
 )
 
 target_link_libraries(mnist_dlcc
+    mlpack
+    fastlib
+)
+
+add_executable(mnist_dlcc_test
+    EXCLUDE_FROM_ALL
+    mnist_dlcc_test.cc
+)
+
+target_link_libraries(mnist_dlcc_test
+    mlpack
+    fastlib
+)
+
+add_executable(mnist_dlcc_test_1000
+    EXCLUDE_FROM_ALL
+    mnist_dlcc_test_1000.cc
+)
+
+target_link_libraries(mnist_dlcc_test_1000
     mlpack
     fastlib
 )
