@@ -290,7 +290,8 @@ DualtreeDfs<ProblemType>::get_iterator(
   typename ProblemType::ResultType *query_results_in) {
 
   // Allocate space for storing the final results.
-  query_results_in->Init(query_table_->n_entries());
+  query_results_in->Init(
+    problem_->global(), query_table_->n_entries());
 
   return typename DualtreeDfs<ProblemType>::template
          iterator<IteratorMetricType>(

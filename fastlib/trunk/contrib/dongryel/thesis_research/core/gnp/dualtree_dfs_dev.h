@@ -100,7 +100,8 @@ void DualtreeDfs<ProblemType>::Compute(
 
   // Allocate space for storing the final results.
   if(do_initializations) {
-    query_results->Init(query_table_->n_entries());
+    query_results->Init(
+      problem_->global(), query_table_->n_entries());
   }
 
   // Call the algorithm computation.
@@ -197,6 +198,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 
   // Postponed object to hold each query contribution.
   typename ProblemType::PostponedType query_contribution;
+  query_contribution.Init(reference_table_->n_attributes());
 
   // Get the query node iterator and the reference node iterator.
   typename ProblemType::TableType::TreeIterator qnode_iterator =
