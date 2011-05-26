@@ -105,12 +105,6 @@ class LocalRegressionPostponed {
       used_error_ = postponed_in.used_error_;
     }
 
-    /** @brief Initializes the postponed quantities.
-     */
-    void Init() {
-      SetZero();
-    }
-
     /** @brief Initializes the postponed quantities with the given
      *         dimension.
      */
@@ -613,6 +607,8 @@ class LocalRegressionResult {
     void Print(const std::string &file_name) const {
     }
 
+    /** @brief Basic allocation for local regression results.
+     */
     void Init(int num_points) {
 
       // Sets the number of points.
@@ -674,6 +670,27 @@ class LocalRegressionResult {
       boost::scoped_array< double > tmp_used_error(
         new double[num_query_points_]);
       used_error_.swap(tmp_used_error);
+    }
+
+    template<typename GlobalType>
+    void Init(const GlobalType &global_in, int num_points) {
+
+      // Basic allocation.
+      this->Init(num_points);
+
+      // Allocate Monte Carlo results.
+      int num_dimensions = global_in.reference_table()->n_attributes();
+      for(int i = 0; i < num_query_points_; i++) {
+        left_hand_side_l_[i].Init(
+          num_dimensions + 1, num_dimensions + 1);
+        left_hand_side_e_[i].Init(
+          num_dimensions + 1, num_dimensions + 1);
+        left_hand_side_u_[i].Init(
+          num_dimensions + 1, num_dimensions + 1);
+        right_hand_side_l_[i].Init(num_dimensions + 1);
+        right_hand_side_e_[i].Init(num_dimensions + 1);
+        right_hand_side_u_[i].Init(num_dimensions + 1);
+      }
 
       // Set everything to zero.
       SetZero();
