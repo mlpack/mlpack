@@ -111,6 +111,22 @@ class LocalRegressionPostponed {
       SetZero();
     }
 
+    /** @brief Initializes the postponed quantities with the given
+     *         dimension.
+     */
+    void Init(int num_dimensions_in) {
+      left_hand_side_l_.Init(
+        num_dimensions_in + 1, num_dimensions_in + 1);
+      left_hand_side_e_.Init(
+        num_dimensions_in + 1, num_dimensions_in + 1);
+      left_hand_side_u_.Init(
+        num_dimensions_in + 1, num_dimensions_in + 1);
+      right_hand_side_l_.Init(num_dimensions_in + 1);
+      right_hand_side_e_.Init(num_dimensions_in + 1);
+      right_hand_side_u_.Init(num_dimensions_in + 1);
+      SetZero();
+    }
+
     /** @brief Initializes the postponed quantities given a global
      *         object and a query reference pair.
      */
@@ -948,6 +964,19 @@ class LocalRegressionSummary {
       return left_hand_side <= right_hand_side;
     }
 
+    /** @brief Initializes the postponed quantities with the given
+     *         dimension.
+     */
+    void Init(int num_dimensions_in) {
+      left_hand_side_l_.zeros(
+        num_dimensions_in + 1, num_dimensions_in + 1);
+      left_hand_side_u_.zeros(
+        num_dimensions_in + 1, num_dimensions_in + 1);
+      right_hand_side_l_.zeros(num_dimensions_in + 1);
+      right_hand_side_u_.zeros(num_dimensions_in + 1);
+      SetZero();
+    }
+
     void SetZero() {
       left_hand_side_l_.zeros();
       left_hand_side_u_.zeros();
@@ -1135,6 +1164,11 @@ class LocalRegressionStatistic {
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global, TreeType *node) {
 
+      // Initialize the postponed and the summary.
+      postponed_.Init(global.reference_table()->n_attributes());
+      summary_.Init(global.reference_table()->n_attributes());
+
+      // Initialize the average information.
       average_info_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
@@ -1184,6 +1218,10 @@ class LocalRegressionStatistic {
       TreeType *node,
       const LocalRegressionStatistic &left_stat,
       const LocalRegressionStatistic &right_stat) {
+
+      // Initialize the postponed and the summary.
+      postponed_.Init(global.reference_table()->n_attributes());
+      summary_.Init(global.reference_table()->n_attributes());
 
       // Initialize the average information.
       average_info_.Init(
