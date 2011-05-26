@@ -109,10 +109,14 @@ void DualtreeDfs<ProblemType>::Compute(
       metric, reference_start_node_->bound());
 
   if(do_initializations) {
-    PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
+
+    // Initialze the reference tree.
     core::gnp::DualtreeDfs <
     ProblemType >::PreProcessReferenceTree(
       problem_->global(), reference_start_node_);
+
+    // Then the query tree.
+    PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
   }
 
   DualtreeCanonical_(
