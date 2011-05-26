@@ -10,6 +10,8 @@ set(SOURCES
    local_coordinate_coding_impl.h
    lars.h
    tools.h
+   pegasos.h
+   pegasos_impl.h
 )
 
 # add directory name to sources
@@ -39,11 +41,20 @@ target_link_libraries(mnist_lcc
     fastlib
 )
 
-add_executable(mnist_lcc_synth
+add_executable(mnist_lcc_test
     EXCLUDE_FROM_ALL
-    mnist_test_synth.cc
+    mnist_lcc_test.cc
 )
-	
-target_link_libraries(mnist_lcc_synth
+
+target_link_libraries(mnist_lcc_test
+    fastlib
+)
+
+add_executable(mnist_lcc_test_1000
+    EXCLUDE_FROM_ALL
+    mnist_lcc_test_1000.cc
+)
+
+target_link_libraries(mnist_lcc_test_1000
     fastlib
 )
