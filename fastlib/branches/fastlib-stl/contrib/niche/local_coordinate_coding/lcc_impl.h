@@ -29,11 +29,7 @@ void LocalCoordinateCoding::InitDictionary() {
 
 
 void LocalCoordinateCoding::InitDictionary(const char* dictionary_filename) {  
-  char* dictionary_fullpath = (char*) malloc(160 * sizeof(char));
-  sprintf(dictionary_fullpath,
-	  "../contrib/niche/local_coordinate_coding/%s",
-	  dictionary_filename);
-  D_.load(dictionary_fullpath);
+  D_.load(dictionary_filename);
 }
 
 
