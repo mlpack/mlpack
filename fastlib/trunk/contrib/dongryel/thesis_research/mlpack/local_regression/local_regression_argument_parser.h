@@ -205,7 +205,8 @@ class LocalRegressionArgumentParser {
         vm["references_in"].as<std::string>(), 0,
         &(vm["reference_targets_in"].as<std::string>()));
       std::cerr << "Read in " << arguments_out->reference_table_->n_entries() <<
-                " points.\n";
+                " points in " <<
+                arguments_out->reference_table_->n_attributes() << " dimensions.\n";
 
       // Scale the dataset.
       PrescaleTable_(
@@ -223,7 +224,9 @@ class LocalRegressionArgumentParser {
         arguments_out->query_table_ = new TableType();
         arguments_out->query_table_->Init(vm["queries_in"].as<std::string>());
         std::cerr << "Read in " << arguments_out->query_table_->n_entries() <<
-                  " points.\n";
+                  " points in " <<
+                  arguments_out->query_table_->n_attributes()
+                  << " dimensions.\n";
 
         // Scale the dataset.
         PrescaleTable_(
