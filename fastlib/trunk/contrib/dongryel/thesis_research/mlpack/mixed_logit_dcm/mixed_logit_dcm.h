@@ -129,9 +129,15 @@ class MixedLogitDCM {
      */
     void Init(ArgumentType &arguments_in);
 
-    /** @brief Computes the result.
+    /** @brief Train the mixed logit discrete choice model.
      */
-    void Compute(
+    void Train(
+      const ArgumentType &arguments_in,
+      mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out);
+
+    /** @brief Test the mixed logit discrete choice model.
+     */
+    void Test(
       const ArgumentType &arguments_in,
       mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out);
 
