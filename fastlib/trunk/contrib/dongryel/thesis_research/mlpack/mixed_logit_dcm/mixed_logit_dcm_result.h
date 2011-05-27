@@ -14,6 +14,10 @@ class MixedLogitDCMResult {
 
   public:
 
+    arma::vec trained_parameters_;
+
+  public:
+
     void PrintDebug(const std::string &file_out) {
     }
 

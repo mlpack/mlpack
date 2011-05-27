@@ -27,8 +27,14 @@ void BranchOnDistribution(
 
   // Compute the result.
   mlpack::mixed_logit_dcm::MixedLogitDCMResult mixed_logit_dcm_result;
-  mixed_logit_dcm_instance.Compute(
+  mixed_logit_dcm_instance.Train(
     mixed_logit_dcm_arguments, &mixed_logit_dcm_result);
+
+  // If there is a test set available, then compute the loss.
+  if(mixed_logit_dcm_arguments.test_attribute_table_ != NULL) {
+    mixed_logit_dcm_instance.Test(
+      mixed_logit_dcm_arguments, &mixed_logit_dcm_result);
+  }
 
   // Output the mixed logit discrete choice model result to the file.
   std::cerr << "Writing the discrete choice predictions to the file: " <<

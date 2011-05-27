@@ -344,7 +344,14 @@ void MixedLogitDCM<TableType, DistributionType>::Init(
 }
 
 template<typename TableType, typename DistributionType>
-void MixedLogitDCM<TableType, DistributionType>::Compute(
+void MixedLogitDCM<TableType, DistributionType>::Test(
+  const ArgumentType &arguments_in,
+  mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
+
+}
+
+template<typename TableType, typename DistributionType>
+void MixedLogitDCM<TableType, DistributionType>::Train(
   const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
@@ -603,6 +610,9 @@ void MixedLogitDCM<TableType, DistributionType>::Compute(
 
   std::cerr << "The final iterate:\n";
   iterate->parameters().print();
+
+  // Copy the final iterate parameter values to the result.
+  result_out->trained_parameters_ = iterate->parameters();
 
   // Free the iterate.
   delete iterate;
