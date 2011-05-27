@@ -6,7 +6,8 @@
 #include <sys/time.h>
 
 using namespace mlpack::io;
- 
+
+
 std::map<std::string, Printing*> Printing::castingMap = 
   std::map<std::string, Printing*>();
 

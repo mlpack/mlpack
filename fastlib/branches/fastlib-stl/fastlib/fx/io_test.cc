@@ -72,11 +72,26 @@ bool TestIO() {
                               "IO::CheckValue failed on global/bool #2");
   success = success & ASSERT(IO::GetValue<bool>("global/bool") == true, 
                     "IO::GetValue failed on global/bool");
+  success = success & ASSERT(IO::GetDescription("global/bool").compare(
+                              std::string("True or False")) == 0, 
+                            "IO::GetDescription failed on global/bool");
+
+  //Check that SanitizeString is sanitary. 
+  std::string tmp = IO::SanitizeString("/foo/bar/fizz");
+  success = success & ASSERT(tmp.compare(std::string("foo/bar/fizz/")) == 0, 
+                              "IO::SanitizeString failed on 'foo/bar/fizz'");
 
   //Now lets test the output functions.  Will have to eyeball it manually.
   IO::Info << "Test the new lines...";
   IO::Info << "shouldn't get 'Info' here." << std::endl;
-  IO::Info << "But now I should." << std::endl;
+  IO::Info << "But now I should." << std::endl << std::endl;
+
+  //Test IO::Debug 
+  IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl << std::endl;
+
+  //Test IO's print
+  IO::Print();
+
   return success;
 }
 
@@ -172,5 +187,6 @@ bool ASSERT(bool expression, const char* msg) {
 }; //namespace mlpack
 
 int main(int argc, char** argv) {
+  mlpack::IO::ParseCommandLine(argc, argv);
   mlpack::io::TestAll();
 }

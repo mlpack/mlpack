@@ -19,6 +19,8 @@
 
 #include "optionshierarchy.h"
 #include "printing.h"
+#include "prefixedoutstream.h"
+#include "nulloutstream.h"
 
 /* These defines facilitate the registering of command line options.  Use the
  * macro which specifies the type of the option you want to add.
@@ -170,7 +172,7 @@ class IO {
    static io::PrefixedOutStream Fatal;
 
    /* Cleans up input pathnames, rendering strings such as /foo/bar
-      and foo/bar equivalent inputs */
+      and foo/bar/ equivalent inputs */
    static std::string SanitizeString(const char* str);
  
    /*
