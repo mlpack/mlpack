@@ -14,8 +14,7 @@
 namespace mlpack {
 namespace io {
 
-PARAM_INT("gint", "global desc", "global");
-
+PARAM(int, "gint", "global desc", "global", 42, false); 
 
 bool ASSERT(bool expression, const char* msg);
 void TestAll();
@@ -27,9 +26,7 @@ bool TestOption();
 /**
 * @brief Runs all the other tests, printing output as appropriate.
 */
-void TestAll() {
-  IO::GetValue<int>("global/gint") = DEFAULT_INT;
-
+void TestAll() {  
   if (TestIO())
     IO::Info << "Test IO Succeeded." << std::endl;
   else
