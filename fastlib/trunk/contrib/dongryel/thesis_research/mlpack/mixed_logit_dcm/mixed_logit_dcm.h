@@ -144,9 +144,14 @@ class MixedLogitDCM {
   private:
 
     /** @brief The table that holds the discrete choice model
-     *         information.
+     *         information for the train set.
      */
-    DCMTableType table_;
+    DCMTableType train_table_;
+
+    /** @brief The table that holds the discrete choice model
+     *         information for the test set.
+     */
+    DCMTableType test_table_;
 };
 }
 }
