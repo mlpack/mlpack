@@ -48,8 +48,8 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
   arma::mat gradient_error_per_person;
   arma::vec vector;
   arma::vec simulated_choice_probability_grad;
-  vector.set_size(table_.num_parameters() + 1);
-  for(int i = 0; i < table_.num_people(); i++) {
+  vector.set_size(train_table_.num_parameters() + 1);
+  for(int i = 0; i < train_table_.num_people(); i++) {
 
     // Get the contribution of the current person.
     sample.gradient_error_quantities(i, &gradient_error_per_person);
@@ -68,7 +68,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
                   simulated_choice_probability_grad,
                   simulated_choice_probability_grad);
     double factor = 2.0 / std::pow(simulated_choice_prob, 2);
-    for(int j = 0; j < table_.num_parameters(); j++) {
+    for(int j = 0; j < train_table_.num_parameters(); j++) {
       vector[j + 1] = factor * simulated_choice_probability_grad[j];
     }
 
@@ -79,7 +79,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorByFormula_(
 
   error /= static_cast<double>(
              std::pow(
-               static_cast<double>(table_.num_people()), 4));
+               static_cast<double>(train_table_.num_people()), 4));
   return error;
 }
 
@@ -93,7 +93,7 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorBySampling_(
 
   // The dummy zero vector.
   arma::vec zero_vector;
-  zero_vector.zeros(table_.distribution().num_parameters());
+  zero_vector.zeros(train_table_.distribution().num_parameters());
 
   // Accumulated samples.
   core::monte_carlo::MeanVariancePair weighted_gradient_norms;
@@ -109,9 +109,9 @@ double MixedLogitDCM<TableType, DistributionType>::GradientErrorBySampling_(
     new_sample.Init(sample, zero_vector);
 
     // Accumulate samples.
-    weighted_gradient.zeros(table_.distribution().num_parameters());
+    weighted_gradient.zeros(train_table_.distribution().num_parameters());
     for(int i = 0; i < sample.num_active_people(); i++) {
-      int person_index = table_.shuffled_indices_for_person(i);
+      int person_index = train_table_.shuffled_indices_for_person(i);
       sample.simulated_choice_probability_gradient(
         person_index, &gradient);
       double probability = sample.simulated_choice_probability(person_index);
@@ -139,7 +139,7 @@ TableType, DistributionType >::IntegrationSampleErrorByFormula_(
   error_per_person->zeros(first_sample.num_active_people());
 
   for(int i = 0; i < first_sample.num_active_people(); i++) {
-    int person_index = table_.shuffled_indices_for_person(i);
+    int person_index = train_table_.shuffled_indices_for_person(i);
     double first_average_squared_choice_probability =
       first_sample.simulated_choice_probability_stat(
         person_index).sample_variance();
@@ -186,7 +186,7 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
 
   // The dummy zero vector.
   arma::vec zero_vector;
-  zero_vector.zeros(table_.distribution().num_parameters());
+  zero_vector.zeros(train_table_.distribution().num_parameters());
 
   // Accumulated samples.
   core::monte_carlo::MeanVariancePairVector error_per_person_stat;
@@ -205,7 +205,7 @@ TableType, DistributionType >::IntegrationSampleErrorBySampling_(
 
     // Accumulate samples.
     for(int i = 0; i < first_sample.num_active_people(); i++) {
-      int person_index = table_.shuffled_indices_for_person(i);
+      int person_index = train_table_.shuffled_indices_for_person(i);
       double first_simulated_choice_probability =
         new_first_sample.simulated_choice_probability(person_index);
       double second_simulated_choice_probability =
@@ -259,13 +259,13 @@ double MixedLogitDCM<TableType, DistributionType>::DataSampleError_(
   // The following computes the CF quantity in the paper.
   double correction_factor =
     static_cast<double>(
-      table_.num_people() - first_sample.num_active_people()) /
-    static_cast<double>(table_.num_people() - 1);
+      train_table_.num_people() - first_sample.num_active_people()) /
+    static_cast<double>(train_table_.num_people() - 1);
 
   // Compute the average difference of simulated log probabilities.
   core::monte_carlo::MeanVariancePair average_difference;
   for(int i = 0; i < first_sample.num_active_people(); i++) {
-    int person_index = table_.shuffled_indices_for_person(i);
+    int person_index = train_table_.shuffled_indices_for_person(i);
     double difference =
       (log(first_sample.simulated_choice_probability(person_index)) -
        log(second_sample.simulated_choice_probability(person_index)));
@@ -305,7 +305,7 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   for(int i = 0; i < first_sample->num_active_people(); i++) {
 
     // Get the active person index.
-    int person_index = table_.shuffled_indices_for_person(i);
+    int person_index = train_table_.shuffled_indices_for_person(i);
 
     // Finalize by multiplying by the sum factor.
     tmp_vector[i] *= total_sample_variance;
@@ -340,7 +340,18 @@ void MixedLogitDCM<TableType, DistributionType>::Init(
 
   // Initialize the table for storing/accessing the attribute vector
   // for each person.
-  table_.Init(arguments_in);
+  train_table_.Init(
+    arguments_in.attribute_table_,
+    arguments_in.decisions_table_,
+    arguments_in.num_alternatives_table_);
+
+  // Initialize the test set if available.
+  if(arguments_in.test_attribute_table_ != NULL) {
+    test_table_.Init(
+      arguments_in.test_attribute_table_,
+      arguments_in.test_decisions_table_,
+      arguments_in.test_num_alternatives_table_);
+  }
 }
 
 template<typename TableType, typename DistributionType>
@@ -348,6 +359,9 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
   const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
+  // Loop over each test individual.
+  for(int i = 0; i < test_table_.num_people(); i++) {
+  }
 }
 
 template<typename TableType, typename DistributionType>
@@ -359,7 +373,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
   int initial_num_data_samples =
     std::max(
       1, static_cast<int>(
-        table_.num_people() *
+        train_table_.num_people() *
         arguments_in.initial_dataset_sample_rate_));
   int initial_num_integration_samples =
     std::max(
@@ -381,17 +395,17 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
 
   // Copy the starting parameter values.
   arma::vec starting_point;
-  starting_point.set_size(table_.num_parameters());
+  starting_point.set_size(train_table_.num_parameters());
   starting_point.fill(1.0);
   if(arguments_in.initial_parameters_table_ != NULL) {
-    for(int i = 0; i < table_.num_parameters(); i++) {
+    for(int i = 0; i < train_table_.num_parameters(); i++) {
       starting_point[i] =
         arguments_in.initial_parameters_table_->data().get(0, i);
     }
   }
 
   iterate->Init(
-    &table_, starting_point,
+    &train_table_, starting_point,
     initial_num_data_samples, initial_num_integration_samples);
   iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
 
@@ -510,12 +524,12 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
               sqrt(integration_sample_error) << "\n";
 
     // Increase the data sample size.
-    if(iterate->num_active_people() < table_.num_people() &&
+    if(iterate->num_active_people() < train_table_.num_people() &&
         sqrt(data_sample_error) >= sqrt(integration_sample_error) &&
         decrease_predicted_by_model <=
         arguments_in.gradient_norm_threshold_ * sqrt(data_sample_error)) {
 
-      int max_allowable_people = table_.num_people() -
+      int max_allowable_people = train_table_.num_people() -
                                  iterate->num_active_people();
       int predicted_increase =
         core::math::Sqr(
@@ -628,7 +642,7 @@ bool MixedLogitDCM<TableType, DistributionType>::TerminationConditionReached_(
 
   // Termination condition is only considered when we use all the
   // people in the sampling (outer term consists of all people).
-  if(sampling.num_active_people() == table_.num_people()) {
+  if(sampling.num_active_people() == train_table_.num_people()) {
 
     (*num_iterations)++;
     if(*num_iterations >= arguments_in.max_num_iterations_) {

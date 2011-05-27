@@ -206,14 +206,16 @@ class DCMTable {
 
     /** @brief Initializes the discrete choice model table.
      */
-    template<typename ArgumentType>
-    void Init(ArgumentType &argument_in) {
+    void Init(
+      TableType *attribute_table_in,
+      TableType *decisions_table_in,
+      TableType *num_alternatives_table_in) {
 
       // Set the incoming attributes table and the number of choices
       // per person in the list.
-      attribute_table_ = argument_in.attribute_table_;
-      decisions_table_ = argument_in.decisions_table_;
-      num_alternatives_table_ = argument_in.num_alternatives_table_;
+      attribute_table_ = attribute_table_in;
+      decisions_table_ = decisions_table_in;
+      num_alternatives_table_ = num_alternatives_table_in;
 
       // Subtract 1's from the decisions table to make it
       // zero-indexed.
@@ -229,7 +231,7 @@ class DCMTable {
       // Initialize a randomly shuffled vector of indices for sampling
       // the outer term in the simulated log-likelihood.
       shuffled_indices_for_person_.resize(
-        argument_in.decisions_table_->n_entries());
+        decisions_table_->n_entries());
       for(unsigned int i = 0; i < shuffled_indices_for_person_.size(); i++) {
         shuffled_indices_for_person_[i] = i;
       }
@@ -242,12 +244,12 @@ class DCMTable {
       // index in the attribute table for given (person, discrete
       // choice) pair.
       cumulative_num_discrete_choices_.resize(
-        argument_in.decisions_table_->n_entries());
+        decisions_table_->n_entries());
       cumulative_num_discrete_choices_[0] = 0;
       for(unsigned int i = 1; i < cumulative_num_discrete_choices_.size();
           i++) {
         arma::vec point;
-        argument_in.num_alternatives_table_->get(i - 1, &point);
+        num_alternatives_table_->get(i - 1, &point);
         int num_choices_for_current_person = static_cast<int>(point[0]);
         cumulative_num_discrete_choices_[i] =
           cumulative_num_discrete_choices_[i - 1] +
@@ -258,19 +260,19 @@ class DCMTable {
       // distribution on the number of choices match up the total
       // number of attribute vectors. Otherwise, quit.
       arma::vec last_count_vector;
-      argument_in.num_alternatives_table_->get(
+      num_alternatives_table_->get(
         cumulative_num_discrete_choices_.size() - 1, &last_count_vector);
       int last_count = static_cast<int>(last_count_vector[0]);
       if(cumulative_num_discrete_choices_[
             cumulative_num_discrete_choices_.size() - 1] +
-          last_count != argument_in.attribute_table_->n_entries()) {
+          last_count != attribute_table_->n_entries()) {
         std::cerr << "The cumulative number of discrete choices do not equal "
                   "the number of total number of attribute vectors.\n";
         exit(0);
       }
       else {
         std::cerr << "The cumulative number of discrete choices: " <<
-                  argument_in.attribute_table_->n_entries() << "\n";
+                  attribute_table_->n_entries() << "\n";
       }
 
       // Now count the number of people choosing each discrete choice.
