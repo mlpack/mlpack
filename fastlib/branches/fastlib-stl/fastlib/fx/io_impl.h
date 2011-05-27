@@ -68,7 +68,7 @@ T& IO::GetValue(const char* identifier) {
     gmap[key] = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key]) = tmp;
   }
-
+  tmp =*boost::any_cast<T>(&gmap[key]);
   return *boost::any_cast<T>(&gmap[key]);
 }
 

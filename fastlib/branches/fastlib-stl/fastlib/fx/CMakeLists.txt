@@ -17,6 +17,10 @@ set(SOURCES
    optionshierarchy.cc
    printing.h
    printing.cc
+   nulloutstream.h
+   nulloutstream.cc 
+   prefixedoutstream.h
+   prefixedoutstream.cc
 )
 
 # add directory name to sources
@@ -35,6 +39,10 @@ add_executable(io_test
    io_test.cc
    printing.h
    printing.cc
+   nulloutstream.h
+   nulloutstream.cc
+   prefixedoutstream.h
+   prefixedoutstream.cc
 )
 # link dependencies of test executable
 target_link_libraries(io_test

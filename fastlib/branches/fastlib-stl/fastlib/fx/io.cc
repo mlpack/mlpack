@@ -10,7 +10,7 @@
 #include <execinfo.h>
 
 #include "printing.h"
-
+#include "nulloutstream.h"
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
@@ -43,7 +43,7 @@ namespace po = boost::program_options;
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
-
+  
   return;
 }
 
@@ -136,8 +136,10 @@ std::string IO::GetDescription(const char* identifier) {
 
 //Returns the sole instance of this class
 IO& IO::GetSingleton() {
-  if (singleton == NULL)
+  if (singleton == NULL) {
     singleton = new IO();
+    Add<std::string>("info", "get help info on a specific module", NULL, false);
+  }
   return *singleton;
 }	
 
@@ -177,15 +179,24 @@ void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
-  
+  std::map<std::string, boost::any> gmap = GetSingleton().globalValues;
   //Parse the command line, place the options & values into vmap
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
-    //IO::Fatal << ex.what() << std::endl;
+    IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
+ 
+  //Iterate through Gmap, and overwrite default values with anything found on 
+  //command line. 
+  std::map<std::string, boost::any>::iterator i;
+  for (i = gmap.begin(); i != gmap.end(); i++) {
+    po::variable_value tmp = vmap[i->first];
+    if (!tmp.empty()) //We need to overwrite gmap.
+      gmap[i->first] = tmp.value();
+  }
   
   //Default help message
   if (CheckValue("help")) {
@@ -202,9 +213,9 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str())){}// If a required option isn't there...
-      //IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
-        //  << std::endl;
+    if (!CheckValue((*iter).c_str()))// If a required option isn't there...
+      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
+          << std::endl;
 }
 
  /*
@@ -242,7 +253,7 @@ void IO::Print() {
 }
 
 /* Cleans up input pathnames, rendering strings such as /foo/bar
-      and foo/bar equivalent inputs */
+      and foo/bar/ equivalent inputs */
 std::string IO::SanitizeString(const char* str) {
   if (str != NULL) {
     std::string p(str);
