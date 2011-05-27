@@ -179,7 +179,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
-  std::map<std::string, boost::any> gmap = GetSingleton().globalValues;
+  std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   //Parse the command line, place the options & values into vmap
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
@@ -194,7 +194,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   std::map<std::string, boost::any>::iterator i;
   for (i = gmap.begin(); i != gmap.end(); i++) {
     po::variable_value tmp = vmap[i->first];
-    if (!tmp.empty()) //We need to overwrite gmap.
+    if (!tmp.empty()) //We need to overwrite gmap. 
       gmap[i->first] = tmp.value();
   }
   
