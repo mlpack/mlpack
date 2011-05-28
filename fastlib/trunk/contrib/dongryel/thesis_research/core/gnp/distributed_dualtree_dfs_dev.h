@@ -376,8 +376,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
     }
   }
 
-  printf("Process %d has a total computation frontier of: %d\n",
-         world_->rank(), computation_frontier.size());
+  printf(
+    "Process %d has a total computation frontier of: %d\n",
+    world_->rank(), static_cast<int>(computation_frontier.size()));
 
   // The computation loop.
   do  {
@@ -501,7 +502,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   typename DistributedProblemType::ResultType *query_results) {
 
   // Allocate space for storing the final results.
-  query_results->Init(query_table_->n_entries());
+  query_results->Init(problem_->global(), query_table_->n_entries());
 
   // Preprocess the global query tree and the local query tree owned
   // by each process.
