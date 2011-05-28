@@ -681,6 +681,7 @@ class KdeResult {
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
+      const core::table::DensePoint &qpoint,
       int q_index,
       const GlobalType &global,
       const bool is_monochromatic) {

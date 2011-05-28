@@ -493,9 +493,25 @@ class LocalRegressionResult {
 
   public:
 
+    /** @brief The temporary space for extracting the left hand side.
+     */
+    arma::mat tmp_left_hand_side_;
+
+    /** @brief The temporary space for extracting the right hand side.
+     */
+    arma::vec tmp_right_hand_side_;
+
+    /** @brief The temporary space for storing the solution vector.
+     */
+    arma::vec tmp_solution_;
+
     /** @brief The number of query points.
      */
     int num_query_points_;
+
+    /** @brief The final regression estimates.
+     */
+    boost::scoped_array<double> regression_estimates_;
 
     /** @brief The flag that tells whether the self contribution has
      *         been subtracted or not.
@@ -546,6 +562,7 @@ class LocalRegressionResult {
     void save(Archive &ar, const unsigned int version) const {
       ar & num_query_points_;
       for(unsigned int i = 0; i < num_query_points_; i++) {
+        ar & regression_estimates_[i];
         ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
@@ -571,6 +588,7 @@ class LocalRegressionResult {
 
       // Load.
       for(int i = 0; i < num_query_points_; i++) {
+        ar & regression_estimates_[i];
         ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
@@ -598,11 +616,25 @@ class LocalRegressionResult {
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
+      const core::table::DensePoint &qpoint,
       int q_index,
       const GlobalType &global,
       const bool is_monochromatic) {
 
+      // Solve the linear system.
+      left_hand_side_e_[q_index].sample_means(&tmp_left_hand_side_);
+      right_hand_side_e_[q_index].sample_means(&tmp_right_hand_side_);
+      tmp_solution_ = arma::solve(tmp_left_hand_side_, tmp_right_hand_side_);
+
+      // Take the dot product with the solution vector to get the
+      // regression estimate.
+      regression_estimates_[q_index] = tmp_solution_[0];
+      for(unsigned int i = 1; i < tmp_solution_.n_elem; i++) {
+        regression_estimates_[q_index] += tmp_solution_[i] *
+                                          qpoint[i - 1];
+      }
     }
+
 
     void Print(const std::string &file_name) const {
     }
@@ -613,6 +645,11 @@ class LocalRegressionResult {
 
       // Sets the number of points.
       num_query_points_ = num_points;
+
+      // Initialize the array storing the final regression estimates.
+      boost::scoped_array<double> tmp_regression_estimates(
+        new double[num_query_points_]);
+      regression_estimates_.swap(tmp_regression_estimates);
 
       // Initialize the self contribution subtracted array.
       boost::scoped_array<bool> tmp_self_contribution_subtracted(
