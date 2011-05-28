@@ -174,6 +174,12 @@ class MeanVariancePair {
      */
     void CombineWith(const core::monte_carlo::MeanVariancePair &v) {
 
+      // If the incoming mean variance pair is empty, then do not do
+      // anything.
+      if(v.total_num_terms() == 0) {
+        return;
+      }
+
       // Update the sample mean.
       sample_mean_ =
         (total_num_terms_ * sample_mean_ +
