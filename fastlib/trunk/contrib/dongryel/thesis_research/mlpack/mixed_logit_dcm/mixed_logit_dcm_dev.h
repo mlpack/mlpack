@@ -359,8 +359,40 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
   const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
+  // Set up the distribution so that the samples can be drawn.
+  test_table_.distribution().SetupDistribution(
+    result_out->trained_parameters_);
+
   // Loop over each test individual.
   for(int i = 0; i < test_table_.num_people(); i++) {
+
+    // Get the number of available discrete choices.
+    int num_discrete_choices = test_table_.num_discrete_choices(i);
+
+    // For the current person, accumulate the simulated choice
+    // probabilities for each discrete choice.
+    core::monte_carlo::MeanVariancePairVector simulated_choice_probabilities;
+    simulated_choice_probabilities.Init(num_discrete_choices);
+
+    do {
+
+      // Draw a random beta from the distribution.
+      arma::vec random_beta;
+      test_table_.distribution().DrawBeta(
+        result_out->trained_parameters_, &random_beta);
+      test_table_.distribution().SamplingAccumulatePrecompute(
+        result_out->trained_parameters_, random_beta);
+
+      // Given the beta vector, compute the choice probabilities.
+      arma::vec choice_probabilities;
+      test_table_.choice_probabilities(
+        i, random_beta, &choice_probabilities);
+
+      // Accumulate the choice probabilities.
+      simulated_choice_probabilities.push_back(choice_probabilities);
+
+    }
+    while(true);
   }
 }
 
