@@ -168,7 +168,7 @@ class TestMixedLogitDCM {
 
       // Compute the result.
       mlpack::mixed_logit_dcm::MixedLogitDCMResult result;
-      instance.Compute(arguments, &result);
+      instance.Train(arguments, &result);
 
       return 0;
     };
