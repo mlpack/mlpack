@@ -545,7 +545,8 @@ void DualtreeDfs<ProblemType>::PostProcess_(
 
       if(do_query_results_postprocess) {
         query_results->PostProcess(
-          metric, q_index, problem_->global(), problem_->is_monochromatic());
+          metric, q_col, q_index, problem_->global(),
+          problem_->is_monochromatic());
       }
 
       // Refine min and max summary statistics.
