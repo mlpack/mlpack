@@ -61,8 +61,8 @@ void StartComputation(boost::program_options::variables_map &vm) {
   // Output the local regression result to the file.
   std::cerr << "Writing the predictions to the file: " <<
             local_regression_arguments.predictions_out_ << "\n";
-  //local_regression_result.Print(
-  //local_regression_arguments.predictions_out_);
+  local_regression_result.Print(
+    local_regression_arguments.predictions_out_);
 }
 
 int main(int argc, char *argv[]) {

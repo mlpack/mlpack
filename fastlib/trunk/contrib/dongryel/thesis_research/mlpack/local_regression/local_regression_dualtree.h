@@ -637,6 +637,11 @@ class LocalRegressionResult {
 
 
     void Print(const std::string &file_name) const {
+      FILE *file_output = fopen(file_name.c_str(), "w+");
+      for(int i = 0; i < num_query_points_; i++) {
+        fprintf(file_output, "%g %g\n", regression_estimates_[i], pruned_[i]);
+      }
+      fclose(file_output);
     }
 
     /** @brief Basic allocation for local regression results.
