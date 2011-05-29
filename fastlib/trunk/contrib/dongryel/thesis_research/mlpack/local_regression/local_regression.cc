@@ -74,7 +74,7 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  // Do a quick peek at the kernel and expansion type.
+  // Do a quick peek at the kernel type.
   std::string kernel_type = vm["kernel"].as<std::string>();
 
   if(kernel_type == "gaussian") {
@@ -82,9 +82,6 @@ int main(int argc, char *argv[]) {
     core::metric_kernels::GaussianKernel > (vm);
   }
   else {
-
-    // Only the multivariate expansion is available for the
-    // Epanechnikov.
     StartComputation <
     core::metric_kernels::EpanKernel > (vm);
   }

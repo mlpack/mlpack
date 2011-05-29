@@ -134,12 +134,13 @@ class LocalRegressionPostponed {
       right_hand_side_u_.SetZero();
 
       // Set the total number of terms.
-      left_hand_side_l_.set_total_num_terms(rnode->count());
-      left_hand_side_e_.set_total_num_terms(rnode->count());
-      left_hand_side_u_.set_total_num_terms(rnode->count());
-      right_hand_side_l_.set_total_num_terms(rnode->count());
-      right_hand_side_e_.set_total_num_terms(rnode->count());
-      right_hand_side_u_.set_total_num_terms(rnode->count());
+      int total_num_terms = rnode->count();
+      left_hand_side_l_.set_total_num_terms(total_num_terms);
+      left_hand_side_e_.set_total_num_terms(total_num_terms);
+      left_hand_side_u_.set_total_num_terms(total_num_terms);
+      right_hand_side_l_.set_total_num_terms(total_num_terms);
+      right_hand_side_e_.set_total_num_terms(total_num_terms);
+      right_hand_side_u_.set_total_num_terms(total_num_terms);
       pruned_ = static_cast<double>(rnode->count());
 
       // Used error is zero.
@@ -501,6 +502,16 @@ class LocalRegressionResult {
      */
     arma::vec tmp_right_hand_side_;
 
+    /** @brief The temporary space used for extracting the
+     *         eigenvectors.
+     */
+    arma::mat tmp_eigenvectors_;
+
+    /** @brief The temporary space used for extracting the
+     *         eigenvalues.
+     */
+    arma::vec tmp_eigenvalues_;
+
     /** @brief The temporary space for storing the solution vector.
      */
     arma::vec tmp_solution_;
@@ -618,13 +629,70 @@ class LocalRegressionResult {
       const MetricType &metric,
       const core::table::DensePoint &qpoint,
       int q_index,
+      double q_weight,
       const GlobalType &global,
       const bool is_monochromatic) {
 
-      // Solve the linear system.
+      // Subtract the self-contribution.
+      if(is_monochromatic && (! self_contribution_subtracted_[q_index])) {
+
+        left_hand_side_l_[q_index].get(0, 0).pop(1.0);
+        left_hand_side_e_[q_index].get(0, 0).pop(1.0);
+        left_hand_side_u_[q_index].get(0, 0).pop(1.0);
+        right_hand_side_l_[q_index][0].pop(q_weight);
+        right_hand_side_e_[q_index][0].pop(q_weight);
+        right_hand_side_u_[q_index][0].pop(q_weight);
+        for(int j = 1; j <= qpoint.length(); j++) {
+
+          // The row update for the left hand side.
+          double left_hand_side_decrement = qpoint[j - 1];
+          left_hand_side_l_[q_index].get(0, j - 1).pop(
+            left_hand_side_decrement);
+          left_hand_side_e_[q_index].get(0, j - 1).pop(
+            left_hand_side_decrement);
+          left_hand_side_u_[q_index].get(0, j - 1).pop(
+            left_hand_side_decrement);
+
+          // The column update for the left hand side.
+          left_hand_side_l_[q_index].get(j - 1, 0).pop(
+            left_hand_side_decrement);
+          left_hand_side_e_[q_index].get(j - 1, 0).pop(
+            left_hand_side_decrement);
+          left_hand_side_u_[q_index].get(j - 1, 0).pop(
+            left_hand_side_decrement);
+
+          // The right hand side.
+          double right_hand_side_decrement = q_weight * qpoint[j - 1];
+          right_hand_side_l_[q_index][j - 1].pop(right_hand_side_decrement);
+          right_hand_side_e_[q_index][j - 1].pop(right_hand_side_decrement);
+          right_hand_side_u_[q_index][j - 1].pop(right_hand_side_decrement);
+
+          for(int i = 1; i <= qpoint.length(); i++) {
+
+            double inner_decrement = qpoint[i - 1] * qpoint[j - 1];
+            left_hand_side_l_[q_index].get(i, j).pop(inner_decrement);
+            left_hand_side_e_[q_index].get(i, j).pop(inner_decrement);
+            left_hand_side_u_[q_index].get(i, j).pop(inner_decrement);
+          }
+        }
+        self_contribution_subtracted_[q_index] = true;
+      }
+
+      // Set up the linear system.
       left_hand_side_e_[q_index].sample_means(&tmp_left_hand_side_);
       right_hand_side_e_[q_index].sample_means(&tmp_right_hand_side_);
-      tmp_solution_ = arma::solve(tmp_left_hand_side_, tmp_right_hand_side_);
+
+      // Solve the linear system.
+      arma::eig_sym(tmp_eigenvalues_, tmp_eigenvectors_, tmp_left_hand_side_);
+      tmp_solution_.zeros(tmp_left_hand_side_.n_rows);
+      for(unsigned int i = 0; i < tmp_eigenvalues_.n_elem; i++) {
+        double dot_product = arma::dot(
+                               tmp_eigenvectors_.col(i), tmp_right_hand_side_);
+        if(tmp_eigenvalues_[i] > 1e-6) {
+          tmp_solution_ +=
+            (dot_product / tmp_eigenvalues_[i]) * tmp_eigenvectors_.col(i);
+        }
+      }
 
       // Take the dot product with the solution vector to get the
       // regression estimate.
@@ -844,7 +912,8 @@ class LocalRegressionDelta {
       left_hand_side_l_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
-      left_hand_side_l_.set_total_num_terms(rnode->count());
+      int total_num_terms = rnode->count();
+      left_hand_side_l_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_l_.get(i, j).push_back(
@@ -857,7 +926,7 @@ class LocalRegressionDelta {
       left_hand_side_e_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
-      left_hand_side_e_.set_total_num_terms(rnode->count());
+      left_hand_side_e_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_e_.get(i, j).push_back(
@@ -870,7 +939,7 @@ class LocalRegressionDelta {
       left_hand_side_u_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
-      left_hand_side_u_.set_total_num_terms(rnode->count());
+      left_hand_side_u_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
           left_hand_side_u_.get(i, j).push_back(
@@ -881,7 +950,7 @@ class LocalRegressionDelta {
 
       // Initialize the right hand side lower bound.
       right_hand_side_l_.Init(global.reference_table()->n_attributes() + 1);
-      right_hand_side_l_.set_total_num_terms(rnode->count());
+      right_hand_side_l_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_l_[j].push_back(
           lower_kernel_value *
@@ -890,7 +959,7 @@ class LocalRegressionDelta {
 
       // Initialize the right hand side estimate.
       right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
-      right_hand_side_e_.set_total_num_terms(rnode->count());
+      right_hand_side_e_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_e_[j].push_back(
           0.5 *(lower_kernel_value + upper_kernel_value) *
@@ -899,7 +968,7 @@ class LocalRegressionDelta {
 
       // Initialize the right hand side upper bound.
       right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
-      right_hand_side_u_.set_total_num_terms(rnode->count());
+      right_hand_side_u_.set_total_num_terms(total_num_terms);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_u_[j].push_back(
           upper_kernel_value *
