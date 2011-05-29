@@ -231,6 +231,32 @@ class MeanVariancePair {
                           delta * (sample - sample_mean_)) /
                          ((double) num_samples_);
     }
+
+    /** @brief Removes the number from the mean variance. This
+     *         decreases the number of terms and the samples at the
+     *         same time.
+     */
+    void pop(double sample) {
+
+      double new_sample_mean =
+        (static_cast<double>(num_samples_) /
+         static_cast<double>(num_samples_ - 1)) * sample_mean_ -
+        sample / static_cast<double>(num_samples_ - 1);
+
+      // Set the new sample variance.
+      sample_variance_ =
+        (num_samples_ * sample_variance_ -
+         (sample - sample_mean_) * (sample - new_sample_mean)) /
+        static_cast<double>(num_samples_ - 1);
+
+      // Set the new sample mean.
+      sample_mean_ = new_sample_mean;
+
+      // Decrease the number of samples and the total number of terms
+      // represented by this object.
+      num_samples_--;
+      total_num_terms_--;
+    }
 };
 }
 }

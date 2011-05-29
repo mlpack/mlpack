@@ -539,13 +539,14 @@ void DualtreeDfs<ProblemType>::PostProcess_(
     while(qnode_iterator.HasNext()) {
       core::table::DensePoint q_col;
       int q_index;
-      qnode_iterator.Next(&q_col, &q_index);
+      double q_weight;
+      qnode_iterator.Next(&q_col, &q_index, &q_weight);
       query_results->FinalApplyPostponed(
         problem_->global(), q_col, q_index, qnode_stat.postponed_);
 
       if(do_query_results_postprocess) {
         query_results->PostProcess(
-          metric, q_col, q_index, problem_->global(),
+          metric, q_col, q_index, q_weight, problem_->global(),
           problem_->is_monochromatic());
       }
 
