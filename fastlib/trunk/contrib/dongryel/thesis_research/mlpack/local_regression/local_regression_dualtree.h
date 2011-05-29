@@ -908,71 +908,49 @@ class LocalRegressionDelta {
       double upper_kernel_value =
         global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
 
-      // Initialize the left hand side lower bound.
+      // Initialize the left hand sides and the right hand sides.
+      int total_num_terms = rnode->count();
       left_hand_side_l_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
-      int total_num_terms = rnode->count();
       left_hand_side_l_.set_total_num_terms(total_num_terms);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
-        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
-          left_hand_side_l_.get(i, j).push_back(
-            lower_kernel_value *
-            rnode->stat().average_info_.get(i, j).sample_mean());
-        }
-      }
-
-      // Initialize the left hand side estimate.
       left_hand_side_e_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
       left_hand_side_e_.set_total_num_terms(total_num_terms);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
-        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
-          left_hand_side_e_.get(i, j).push_back(
-            0.5 *(lower_kernel_value + upper_kernel_value) *
-            rnode->stat().average_info_.get(i, j).sample_mean());
-        }
-      }
-
-      // Initialize the left hand side upper bound.
       left_hand_side_u_.Init(
         global.reference_table()->n_attributes() + 1,
         global.reference_table()->n_attributes() + 1);
       left_hand_side_u_.set_total_num_terms(total_num_terms);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
-        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
-          left_hand_side_u_.get(i, j).push_back(
-            upper_kernel_value *
-            rnode->stat().average_info_.get(i, j).sample_mean());
-        }
-      }
-
-      // Initialize the right hand side lower bound.
       right_hand_side_l_.Init(global.reference_table()->n_attributes() + 1);
       right_hand_side_l_.set_total_num_terms(total_num_terms);
+      right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_e_.set_total_num_terms(total_num_terms);
+      right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_u_.set_total_num_terms(total_num_terms);
+
+      double kernel_average = 0.5 * (lower_kernel_value + upper_kernel_value);
       for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_l_[j].push_back(
           lower_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
-      }
-
-      // Initialize the right hand side estimate.
-      right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
-      right_hand_side_e_.set_total_num_terms(total_num_terms);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_e_[j].push_back(
-          0.5 *(lower_kernel_value + upper_kernel_value) *
+          kernel_average *
           rnode->stat().weighted_average_info_[j].sample_mean());
-      }
-
-      // Initialize the right hand side upper bound.
-      right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
-      right_hand_side_u_.set_total_num_terms(total_num_terms);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
         right_hand_side_u_[j].push_back(
           upper_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
+        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
+          left_hand_side_l_.get(i, j).push_back(
+            lower_kernel_value *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+          left_hand_side_e_.get(i, j).push_back(
+            kernel_average *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+          left_hand_side_u_.get(i, j).push_back(
+            upper_kernel_value *
+            rnode->stat().average_info_.get(i, j).sample_mean());
+        }
       }
 
       // Compute the maximum deviation.
@@ -993,10 +971,12 @@ class LocalRegressionDelta {
 
       int rnode_count = rnode->count();
       pruned_ = static_cast<double>(rnode_count);
-      used_error_ = 0.5 * max_deviation;
+      used_error_ = 0.5 * max_deviation * rnode->count();
     }
 };
 
+/** @brief The summary statistics for the local regression object.
+ */
 class LocalRegressionSummary {
 
   private:
@@ -1118,15 +1098,21 @@ class LocalRegressionSummary {
       SetZero();
     }
 
+    /** @brief Resets the summary statistics so that it can be
+     *         re-accumulated.
+     */
     void StartReaccumulate() {
       left_hand_side_l_.fill(std::numeric_limits<double>::max());
-      left_hand_side_u_.zeros();
+      left_hand_side_u_.fill(- std::numeric_limits<double>::max());
       right_hand_side_l_.fill(std::numeric_limits<double>::max());
-      right_hand_side_u_.zeros();
+      right_hand_side_u_.fill(- std::numeric_limits<double>::max());
       pruned_l_ = std::numeric_limits<double>::max();
       used_error_u_ = 0;
     }
 
+    /** @brief Accumulates the given query result into the summary
+     *         statistics.
+     */
     template<typename GlobalType, typename ResultType>
     void Accumulate(
       const GlobalType &global, const ResultType &results, int q_index) {
