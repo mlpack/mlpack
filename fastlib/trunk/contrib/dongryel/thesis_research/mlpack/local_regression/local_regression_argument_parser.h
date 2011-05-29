@@ -43,8 +43,8 @@ class LocalRegressionArgumentParser {
       )(
         "predictions_out",
         boost::program_options::value<std::string>()->default_value(
-          "densities_out.csv"),
-        "OPTIONAL file to store the predicted discrete choices."
+          "predictions_out.csv"),
+        "OPTIONAL file to store the predicted regression values."
       )(
         "prescale",
         boost::program_options::value<std::string>()->default_value("none"),

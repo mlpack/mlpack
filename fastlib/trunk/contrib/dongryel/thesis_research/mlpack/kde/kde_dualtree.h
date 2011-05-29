@@ -683,6 +683,7 @@ class KdeResult {
       const MetricType &metric,
       const core::table::DensePoint &qpoint,
       int q_index,
+      double q_weight,
       const GlobalType &global,
       const bool is_monochromatic) {
 
