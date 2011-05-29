@@ -172,6 +172,11 @@ class LocalRegressionArgumentParser {
       else if(prescale_option == "standardize") {
         core::table::Standardize::Transform(table);
       }
+
+      // Now, make sure that all coordinates are non-negative.
+      if(prescale_option != "hypercube") {
+        core::table::TranslateToNonnegative::Transform(table);
+      }
     }
 
     template<typename TableType, typename MetricType>
