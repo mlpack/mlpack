@@ -11,6 +11,7 @@
 
 #include <boost/serialization/serialization.hpp>
 #include <math.h>
+#include "core/math/math_lib.h"
 #include "core/math/range.h"
 
 namespace core {

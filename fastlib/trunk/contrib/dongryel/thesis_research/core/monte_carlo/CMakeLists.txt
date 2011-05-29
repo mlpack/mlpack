@@ -16,3 +16,14 @@ foreach(file ${SOURCES})
 endforeach()
 
 set(CORE_SRCS ${CORE_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+
+# test executable
+add_executable(monte_carlo-test
+               EXCLUDE_FROM_ALL
+               monte_carlo.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(monte_carlo-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
