@@ -28,6 +28,10 @@ class LocalRegressionArgumentParser {
       desc.add_options()(
         "help", "Print this information."
       )(
+        "absolute_error",
+        boost::program_options::value<double>()->default_value(0.0),
+        "The absolute error level in approximation."
+      )(
         "bandwidth",
         boost::program_options::value<double>(),
         "REQUIRED kernel bandwidth"
@@ -40,6 +44,11 @@ class LocalRegressionArgumentParser {
         "leaf_size",
         boost::program_options::value<int>()->default_value(20),
         "Maximum number of points at a leaf of the tree."
+      )(
+        "order",
+        boost::program_options::value<int>()->default_value(0),
+        "The order of local polynomial to fit at each query point. One of: "
+        "  0 or 1"
       )(
         "predictions_out",
         boost::program_options::value<std::string>()->default_value(
@@ -90,7 +99,7 @@ class LocalRegressionArgumentParser {
 
       boost::program_options::notify(*vm);
       if(vm->count("help")) {
-        std::cout << desc << "\n";
+        std::cerr << desc << "\n";
         return true;
       }
 
@@ -113,6 +122,11 @@ class LocalRegressionArgumentParser {
         std::cerr << "The --leaf_size requires a positive integer.\n";
         exit(0);
       }
+      if((*vm)["order"].as<int>() < 0 || (*vm)["order"].as<int>() > 1) {
+        std::cerr << "The --order requires either 0 (Nadaraya-Watson) or "
+                  "1 (local-linear).\n";
+        exit(0);
+      }
       if((*vm)["prescale"].as<std::string>() != "none" &&
           (*vm)["prescale"].as<std::string>() != "hypercube" &&
           (*vm)["prescale"].as<std::string>() != "standardize") {
@@ -129,8 +143,14 @@ class LocalRegressionArgumentParser {
         std::cerr << "Missing reqiured --reference_targets_in.\n";
         exit(0);
       }
+      if((*vm)["absolute_error"].as<double>() < 0.0) {
+        std::cerr << "The --absolute_error requires a non-negative real "
+                  << "number.\n";
+        exit(0);
+      }
       if((*vm)["relative_error"].as<double>() < 0.0) {
-        std::cerr << "The --relative_error requires a positive real number.\n";
+        std::cerr << "The --relative_error requires a non-negative real "
+                  << "number.\n";
         exit(0);
       }
 
@@ -211,18 +231,24 @@ class LocalRegressionArgumentParser {
         &(vm["reference_targets_in"].as<std::string>()));
       std::cerr << "Read in " << arguments_out->reference_table_->n_entries() <<
                 " points in " <<
-                arguments_out->reference_table_->n_attributes() << " dimensions.\n";
+                arguments_out->reference_table_->n_attributes() <<
+                " dimensions.\n";
+
+      // Parse the local polynomial order.
+      arguments_out->order_ = vm["order"].as<int>();
+      std::cerr << "The requested local polynomial order: " <<
+                arguments_out->order_ << "\n";
 
       // Scale the dataset.
       PrescaleTable_(
         vm["prescale"].as<std::string>(), arguments_out->reference_table_);
-      std::cout << "Scaled the dataset with the option: " <<
+      std::cerr << "Scaled the dataset with the option: " <<
                 vm["prescale"].as<std::string>() << "\n";
 
-      std::cout << "Building the reference tree.\n";
+      std::cerr << "Building the reference tree.\n";
       arguments_out->reference_table_->IndexData(
         arguments_out->metric_, arguments_out->leaf_size_);
-      std::cout << "Finished building the reference tree.\n";
+      std::cerr << "Finished building the reference tree.\n";
 
       // Read in the optional query set.
       if(vm.count("queries_in") > 0) {
@@ -236,13 +262,13 @@ class LocalRegressionArgumentParser {
         // Scale the dataset.
         PrescaleTable_(
           vm["prescale"].as<std::string>(), arguments_out->query_table_);
-        std::cout << "Scaled the dataset with the option: " <<
+        std::cerr << "Scaled the dataset with the option: " <<
                   vm["prescale"].as<std::string>() << "\n";
 
-        std::cout << "Building the query tree.\n";
+        std::cerr << "Building the query tree.\n";
         arguments_out->query_table_->IndexData(
           arguments_out->metric_, arguments_out->leaf_size_);
-        std::cout << "Finished building the query tree.\n";
+        std::cerr << "Finished building the query tree.\n";
         arguments_out->effective_num_reference_points_ =
           arguments_out->reference_table_->n_entries();
       }
@@ -251,6 +277,11 @@ class LocalRegressionArgumentParser {
         arguments_out->effective_num_reference_points_ =
           arguments_out->reference_table_->n_entries() - 1;
       }
+
+      // Read in the absolute error.
+      arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
+      std::cerr << "The absolute error requested: " <<
+                arguments_out->absolute_error_ << "\n";
 
       // Read in the relative error.
       arguments_out->relative_error_ = vm["relative_error"].as<double>();

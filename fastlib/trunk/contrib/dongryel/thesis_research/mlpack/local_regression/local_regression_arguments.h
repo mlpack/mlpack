@@ -31,6 +31,10 @@ class LocalRegressionArguments {
      */
     int leaf_size_;
 
+    /** @brief The local polynomial order.
+     */
+    int order_;
+
     /** @brief The file name to output the predictions to.
      */
     std::string predictions_out_;
@@ -79,6 +83,7 @@ class LocalRegressionArguments {
     LocalRegressionArguments() {
       bandwidth_ = 0.0;
       leaf_size_ = 0;
+      order_ = 0;
       query_table_ = NULL;
       reference_table_ = NULL;
       absolute_error_ = 0.0;
