@@ -969,8 +969,7 @@ class LocalRegressionDelta {
         }
       }
 
-      int rnode_count = rnode->count();
-      pruned_ = static_cast<double>(rnode_count);
+      pruned_ = static_cast<double>(rnode->count());
       used_error_ = 0.5 * max_deviation * rnode->count();
     }
 };
