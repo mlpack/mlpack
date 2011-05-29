@@ -243,9 +243,13 @@ class LocalRegressionArgumentParser {
         arguments_out->query_table_->IndexData(
           arguments_out->metric_, arguments_out->leaf_size_);
         std::cout << "Finished building the query tree.\n";
+        arguments_out->effective_num_reference_points_ =
+          arguments_out->reference_table_->n_entries();
       }
       else {
         arguments_out->query_table_ = arguments_out->reference_table_;
+        arguments_out->effective_num_reference_points_ =
+          arguments_out->reference_table_->n_entries() - 1;
       }
 
       // Read in the relative error.
