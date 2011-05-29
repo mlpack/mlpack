@@ -11,6 +11,36 @@
 
 namespace core {
 namespace table {
+
+class TranslateToNonnegative {
+
+  public:
+
+    template<typename TableType>
+    static void Transform(TableType *table_in) {
+
+      // Get the minimum coordinates of each dimension.
+      std::vector<double> mins(
+        table_in->n_attributes(), std::numeric_limits<double>::max());
+      for(int i = 0; i < table_in->n_entries(); i++) {
+        arma::vec point;
+        table_in->get(i, &point);
+        for(int d = 0; d < table_in->n_attributes(); d++) {
+          mins[d] = std::min(mins[d], point[d]);
+        }
+      }
+
+      // Now shift by the minimum along each coordinate.
+      for(int i = 0; i < table_in->n_entries(); i++) {
+        arma::vec point;
+        table_in->get(i, &point);
+        for(unsigned int d = 0; d < point.n_elem; d++) {
+          point[d] -= mins[d];
+        }
+      }
+    }
+};
+
 class Standardize {
   public:
 
