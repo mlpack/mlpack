@@ -226,21 +226,21 @@ class LocalRegressionPostponed {
 
         // The row update for the left hand side.
         double left_hand_side_increment = kernel_value * reference_point[j - 1];
-        left_hand_side_l_.get(0, j - 1).push_back(left_hand_side_increment);
-        left_hand_side_e_.get(0, j - 1).push_back(left_hand_side_increment);
-        left_hand_side_u_.get(0, j - 1).push_back(left_hand_side_increment);
+        left_hand_side_l_.get(0, j).push_back(left_hand_side_increment);
+        left_hand_side_e_.get(0, j).push_back(left_hand_side_increment);
+        left_hand_side_u_.get(0, j).push_back(left_hand_side_increment);
 
         // The column update for the left hand side.
-        left_hand_side_l_.get(j - 1, 0).push_back(left_hand_side_increment);
-        left_hand_side_e_.get(j - 1, 0).push_back(left_hand_side_increment);
-        left_hand_side_u_.get(j - 1, 0).push_back(left_hand_side_increment);
+        left_hand_side_l_.get(j, 0).push_back(left_hand_side_increment);
+        left_hand_side_e_.get(j, 0).push_back(left_hand_side_increment);
+        left_hand_side_u_.get(j, 0).push_back(left_hand_side_increment);
 
         // The right hand side.
         double right_hand_side_increment =
           kernel_value * reference_weight * reference_point[j - 1];
-        right_hand_side_l_[j - 1].push_back(right_hand_side_increment);
-        right_hand_side_e_[j - 1].push_back(right_hand_side_increment);
-        right_hand_side_u_[j - 1].push_back(right_hand_side_increment);
+        right_hand_side_l_[j].push_back(right_hand_side_increment);
+        right_hand_side_e_[j].push_back(right_hand_side_increment);
+        right_hand_side_u_[j].push_back(right_hand_side_increment);
 
         for(int i = 1; i < left_hand_side_l_.n_rows(); i++) {
 
@@ -645,37 +645,37 @@ class LocalRegressionResult {
 
       // Subtract the self-contribution.
       if(is_monochromatic && (! self_contribution_subtracted_[q_index])) {
-
         left_hand_side_l_[q_index].get(0, 0).pop(1.0);
         left_hand_side_e_[q_index].get(0, 0).pop(1.0);
         left_hand_side_u_[q_index].get(0, 0).pop(1.0);
         right_hand_side_l_[q_index][0].pop(q_weight);
         right_hand_side_e_[q_index][0].pop(q_weight);
         right_hand_side_u_[q_index][0].pop(q_weight);
+
         for(int j = 1; j < left_hand_side_l_[q_index].n_cols(); j++) {
 
           // The row update for the left hand side.
           double left_hand_side_decrement = qpoint[j - 1];
-          left_hand_side_l_[q_index].get(0, j - 1).pop(
+          left_hand_side_l_[q_index].get(0, j).pop(
             left_hand_side_decrement);
-          left_hand_side_e_[q_index].get(0, j - 1).pop(
+          left_hand_side_e_[q_index].get(0, j).pop(
             left_hand_side_decrement);
-          left_hand_side_u_[q_index].get(0, j - 1).pop(
+          left_hand_side_u_[q_index].get(0, j).pop(
             left_hand_side_decrement);
 
           // The column update for the left hand side.
-          left_hand_side_l_[q_index].get(j - 1, 0).pop(
+          left_hand_side_l_[q_index].get(j, 0).pop(
             left_hand_side_decrement);
-          left_hand_side_e_[q_index].get(j - 1, 0).pop(
+          left_hand_side_e_[q_index].get(j, 0).pop(
             left_hand_side_decrement);
-          left_hand_side_u_[q_index].get(j - 1, 0).pop(
+          left_hand_side_u_[q_index].get(j, 0).pop(
             left_hand_side_decrement);
 
           // The right hand side.
           double right_hand_side_decrement = q_weight * qpoint[j - 1];
-          right_hand_side_l_[q_index][j - 1].pop(right_hand_side_decrement);
-          right_hand_side_e_[q_index][j - 1].pop(right_hand_side_decrement);
-          right_hand_side_u_[q_index][j - 1].pop(right_hand_side_decrement);
+          right_hand_side_l_[q_index][j].pop(right_hand_side_decrement);
+          right_hand_side_e_[q_index][j].pop(right_hand_side_decrement);
+          right_hand_side_u_[q_index][j].pop(right_hand_side_decrement);
 
           for(int i = 1; i < left_hand_side_l_[q_index].n_rows(); i++) {
 
@@ -683,8 +683,8 @@ class LocalRegressionResult {
             left_hand_side_l_[q_index].get(i, j).pop(inner_decrement);
             left_hand_side_e_[q_index].get(i, j).pop(inner_decrement);
             left_hand_side_u_[q_index].get(i, j).pop(inner_decrement);
-          }
-        }
+          } // end of the inner for-loop.
+        } // end of the outer for-loop.
         self_contribution_subtracted_[q_index] = true;
       }
 
