@@ -198,7 +198,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 
   // Postponed object to hold each query contribution.
   typename ProblemType::PostponedType query_contribution;
-  query_contribution.Init(reference_table_->n_attributes());
+  query_contribution.Init(problem_->global());
 
   // Get the query node iterator and the reference node iterator.
   typename ProblemType::TableType::TreeIterator qnode_iterator =
