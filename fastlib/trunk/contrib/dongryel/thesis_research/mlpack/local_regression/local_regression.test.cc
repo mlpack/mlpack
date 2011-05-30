@@ -55,6 +55,8 @@ class TestLocalRegression {
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
+      double lower_bound,
+      double upper_bound,
       TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
@@ -63,7 +65,7 @@ class TestLocalRegression {
         core::table::DensePoint point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
+          point[i] = core::math::Random(lower_bound, upper_bound);
         }
       }
     }
@@ -76,6 +78,11 @@ class TestLocalRegression {
       std::vector<double> &ultra_naive_query_results) {
 
       ultra_naive_query_results.resize(query_table.n_entries());
+
+      // Allocate the numerators and the denominators.
+      std::vector<double> numerators(query_table.n_entries(), 0.0);
+      std::vector<double> denominators(query_table.n_entries(), 0.0);
+
       for(int i = 0; i < query_table.n_entries(); i++) {
         core::table::DensePoint query_point;
         query_table.get(i, &query_point);
@@ -98,14 +105,13 @@ class TestLocalRegression {
           double kernel_value =
             kernel.EvalUnnormOnSq(squared_distance);
 
-          ultra_naive_query_results[i] += kernel_value;
+          // Accumulate the sum.
+          numerators[i] += reference_weight * kernel_value;
+          denominators[i] += kernel_value;
         }
 
-        // Divide by N - 1 for LOO. May have to be adjusted later.
-        ultra_naive_query_results[i] *=
-          (1.0 / (kernel.CalcNormConstant(query_table.n_attributes()) *
-                  ((double)
-                   reference_table.n_entries() - 1)));
+        // Divide the numerator by the denominator.
+        ultra_naive_query_results[i] = numerators[i] / denominators[i];
       }
     }
 
@@ -149,6 +155,11 @@ class TestLocalRegression {
       std::string references_in("random.csv");
       args.push_back(std::string("--references_in=") + references_in);
 
+      // Push in the reference target name.
+      std::string reference_targets_in("random_targets.csv");
+      args.push_back(
+        std::string("--reference_targets_in=") + reference_targets_in);
+
       // Push in the prediction output file name.
       args.push_back(std::string("--predictions_out=predictions.txt"));
 
@@ -182,6 +193,11 @@ class TestLocalRegression {
       relative_error_sstr << "--relative_error=" << relative_error;
       args.push_back(relative_error_sstr.str());
 
+      // Push in the order argument.
+      std::stringstream order_sstr;
+      order_sstr << "--order=" << 0;
+      args.push_back(order_sstr.str());
+
       // Push in the randomly generated bandwidth.
       double bandwidth =
         core::math::Random(
@@ -198,8 +214,18 @@ class TestLocalRegression {
       GenerateRandomDataset_(
         mlpack::local_regression::test_local_regression::num_dimensions_,
         mlpack::local_regression::test_local_regression::num_points_,
+        0.1, 1.0,
         &random_table);
       random_table.Save(references_in);
+
+      // Generate the random dataset targets and save it.
+      TableType random_target_table;
+      GenerateRandomDataset_(
+        1,
+        mlpack::local_regression::test_local_regression::num_points_,
+        1.0, 5.0,
+        &random_target_table);
+      random_target_table.Save(reference_targets_in);
 
       // Parse the local regression arguments.
       mlpack::local_regression::LocalRegressionArguments <
