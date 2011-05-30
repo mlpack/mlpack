@@ -9,6 +9,7 @@
 #define MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_DEV_H
 
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/metric_kernels/lmetric.h"
 #include "mlpack/local_regression/local_regression.h"
 
 namespace mlpack {
