@@ -236,6 +236,7 @@ class LocalRegressionArgumentParser {
 
       // Parse the local polynomial order.
       arguments_out->order_ = vm["order"].as<int>();
+      arguments_out->problem_dimension_ = arguments_out->order_ + 1;
       std::cerr << "The requested local polynomial order: " <<
                 arguments_out->order_ << "\n";
 
@@ -271,11 +272,13 @@ class LocalRegressionArgumentParser {
         std::cerr << "Finished building the query tree.\n";
         arguments_out->effective_num_reference_points_ =
           arguments_out->reference_table_->n_entries();
+        arguments_out->is_monochromatic_ = false;
       }
       else {
         arguments_out->query_table_ = arguments_out->reference_table_;
         arguments_out->effective_num_reference_points_ =
           arguments_out->reference_table_->n_entries() - 1;
+        arguments_out->is_monochromatic_ = true;
       }
 
       // Read in the absolute error.

@@ -108,16 +108,20 @@ class LocalRegressionPostponed {
     /** @brief Initializes the postponed quantities with the given
      *         dimension.
      */
-    void Init(int num_dimensions_in) {
+    template<typename GlobalType>
+    void Init(const GlobalType &global_in) {
       left_hand_side_l_.Init(
-        num_dimensions_in + 1, num_dimensions_in + 1);
+        global_in.problem_dimension() ,
+        global_in.problem_dimension());
       left_hand_side_e_.Init(
-        num_dimensions_in + 1, num_dimensions_in + 1);
+        global_in.problem_dimension() ,
+        global_in.problem_dimension());
       left_hand_side_u_.Init(
-        num_dimensions_in + 1, num_dimensions_in + 1);
-      right_hand_side_l_.Init(num_dimensions_in + 1);
-      right_hand_side_e_.Init(num_dimensions_in + 1);
-      right_hand_side_u_.Init(num_dimensions_in + 1);
+        global_in.problem_dimension() ,
+        global_in.problem_dimension());
+      right_hand_side_l_.Init(global_in.problem_dimension());
+      right_hand_side_e_.Init(global_in.problem_dimension());
+      right_hand_side_u_.Init(global_in.problem_dimension());
       SetZero();
     }
 
@@ -218,7 +222,7 @@ class LocalRegressionPostponed {
       right_hand_side_l_[0].push_back(kernel_value * reference_weight);
       right_hand_side_e_[0].push_back(kernel_value * reference_weight);
       right_hand_side_u_[0].push_back(kernel_value * reference_weight);
-      for(unsigned int j = 1; j <= reference_point.n_elem; j++) {
+      for(int j = 1; j < left_hand_side_l_.n_cols(); j++) {
 
         // The row update for the left hand side.
         double left_hand_side_increment = kernel_value * reference_point[j - 1];
@@ -238,7 +242,7 @@ class LocalRegressionPostponed {
         right_hand_side_e_[j - 1].push_back(right_hand_side_increment);
         right_hand_side_u_[j - 1].push_back(right_hand_side_increment);
 
-        for(unsigned int i = 1; i <= reference_point.n_elem; i++) {
+        for(int i = 1; i < left_hand_side_l_.n_rows(); i++) {
 
           double inner_increment = kernel_value * reference_point[i - 1] *
                                    reference_point[j - 1];
@@ -326,6 +330,10 @@ class LocalRegressionGlobal {
      */
     double effective_num_reference_points_;
 
+    /** @brief The dimensionality of the problem.
+     */
+    int problem_dimension_;
+
     /** @brief The query table.
      */
     TableType *query_table_;
@@ -350,6 +358,10 @@ class LocalRegressionGlobal {
       return
         ConsiderExtrinsicPruneTrait<KernelType>::Compute(
           kernel_, squared_distance_range);
+    }
+
+    int problem_dimension() const {
+      return problem_dimension_;
     }
 
     /** @brief Returns whether the computation is monochromatic or
@@ -389,6 +401,7 @@ class LocalRegressionGlobal {
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 1.0;
+      problem_dimension_ = 1;
       effective_num_reference_points_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
@@ -457,29 +470,26 @@ class LocalRegressionGlobal {
 
     /** @brief Initializes the local regression global object.
      */
-    void Init(
-      TableType *reference_table_in,
-      TableType *query_table_in,
-      double effective_num_reference_points_in,
-      double bandwidth_in,
-      const bool is_monochromatic,
-      double relative_error_in,
-      double absolute_error_in,
-      double probability_in) {
+    template<typename ArgumentType>
+    void Init(ArgumentType &arguments_in) {
 
-      effective_num_reference_points_ = effective_num_reference_points_in;
+      effective_num_reference_points_ =
+        arguments_in.effective_num_reference_points_;
 
       // Initialize the kernel.
-      kernel_.Init(bandwidth_in);
+      kernel_.Init(arguments_in.bandwidth_);
 
-      relative_error_ = relative_error_in;
-      absolute_error_ = absolute_error_in;
-      probability_ = probability_in;
-      query_table_ = query_table_in;
-      reference_table_ = reference_table_in;
+      relative_error_ = arguments_in.relative_error_;
+      absolute_error_ = arguments_in.absolute_error_;
+      probability_ = arguments_in.probability_;
+      query_table_ = arguments_in.query_table_;
+      reference_table_ = arguments_in.reference_table_;
 
       // Set the monochromatic flag.
-      is_monochromatic_ = is_monochromatic;
+      is_monochromatic_ = arguments_in.is_monochromatic_;
+
+      // Set the problem dimension.
+      problem_dimension_ = arguments_in.problem_dimension_;
     }
 };
 
@@ -789,17 +799,19 @@ class LocalRegressionResult {
       this->Init(num_points);
 
       // Allocate Monte Carlo results.
-      int num_dimensions = global_in.reference_table()->n_attributes();
       for(int i = 0; i < num_query_points_; i++) {
         left_hand_side_l_[i].Init(
-          num_dimensions + 1, num_dimensions + 1);
+          global_in.problem_dimension() ,
+          global_in.problem_dimension());
         left_hand_side_e_[i].Init(
-          num_dimensions + 1, num_dimensions + 1);
+          global_in.problem_dimension() ,
+          global_in.problem_dimension());
         left_hand_side_u_[i].Init(
-          num_dimensions + 1, num_dimensions + 1);
-        right_hand_side_l_[i].Init(num_dimensions + 1);
-        right_hand_side_e_[i].Init(num_dimensions + 1);
-        right_hand_side_u_[i].Init(num_dimensions + 1);
+          global_in.problem_dimension() ,
+          global_in.problem_dimension());
+        right_hand_side_l_[i].Init(global_in.problem_dimension());
+        right_hand_side_e_[i].Init(global_in.problem_dimension());
+        right_hand_side_u_[i].Init(global_in.problem_dimension());
       }
 
       // Set everything to zero.
@@ -911,26 +923,26 @@ class LocalRegressionDelta {
       // Initialize the left hand sides and the right hand sides.
       int total_num_terms = rnode->count();
       left_hand_side_l_.Init(
-        global.reference_table()->n_attributes() + 1,
-        global.reference_table()->n_attributes() + 1);
+        global.problem_dimension() ,
+        global.problem_dimension());
       left_hand_side_l_.set_total_num_terms(total_num_terms);
       left_hand_side_e_.Init(
-        global.reference_table()->n_attributes() + 1,
-        global.reference_table()->n_attributes() + 1);
+        global.problem_dimension(),
+        global.problem_dimension());
       left_hand_side_e_.set_total_num_terms(total_num_terms);
       left_hand_side_u_.Init(
-        global.reference_table()->n_attributes() + 1,
-        global.reference_table()->n_attributes() + 1);
+        global.problem_dimension(),
+        global.problem_dimension());
       left_hand_side_u_.set_total_num_terms(total_num_terms);
-      right_hand_side_l_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_l_.Init(global.problem_dimension());
       right_hand_side_l_.set_total_num_terms(total_num_terms);
-      right_hand_side_e_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_e_.Init(global.problem_dimension());
       right_hand_side_e_.set_total_num_terms(total_num_terms);
-      right_hand_side_u_.Init(global.reference_table()->n_attributes() + 1);
+      right_hand_side_u_.Init(global.problem_dimension());
       right_hand_side_u_.set_total_num_terms(total_num_terms);
 
       double kernel_average = 0.5 * (lower_kernel_value + upper_kernel_value);
-      for(int j = 0; j <= global.reference_table()->n_attributes(); j++) {
+      for(int j = 0; j < global.problem_dimension(); j++) {
         right_hand_side_l_[j].push_back(
           lower_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
@@ -940,7 +952,7 @@ class LocalRegressionDelta {
         right_hand_side_u_[j].push_back(
           upper_kernel_value *
           rnode->stat().weighted_average_info_[j].sample_mean());
-        for(int i = 0; i <= global.reference_table()->n_attributes(); i++) {
+        for(int i = 0; i < global.problem_dimension() ; i++) {
           left_hand_side_l_.get(i, j).push_back(
             lower_kernel_value *
             rnode->stat().average_info_.get(i, j).sample_mean());
@@ -1074,13 +1086,16 @@ class LocalRegressionSummary {
     /** @brief Initializes the postponed quantities with the given
      *         dimension.
      */
-    void Init(int num_dimensions_in) {
+    template<typename GlobalType>
+    void Init(const GlobalType &global_in) {
       left_hand_side_l_.zeros(
-        num_dimensions_in + 1, num_dimensions_in + 1);
+        global_in.problem_dimension(),
+        global_in.problem_dimension());
       left_hand_side_u_.zeros(
-        num_dimensions_in + 1, num_dimensions_in + 1);
-      right_hand_side_l_.zeros(num_dimensions_in + 1);
-      right_hand_side_u_.zeros(num_dimensions_in + 1);
+        global_in.problem_dimension(),
+        global_in.problem_dimension());
+      right_hand_side_l_.zeros(global_in.problem_dimension());
+      right_hand_side_u_.zeros(global_in.problem_dimension());
       SetZero();
     }
 
@@ -1278,8 +1293,8 @@ class LocalRegressionStatistic {
     void Init(const GlobalType &global, TreeType *node) {
 
       // Initialize the postponed and the summary.
-      postponed_.Init(global.reference_table()->n_attributes());
-      summary_.Init(global.reference_table()->n_attributes());
+      postponed_.Init(global);
+      summary_.Init(global);
 
       // Initialize the average information.
       average_info_.Init(
@@ -1333,8 +1348,8 @@ class LocalRegressionStatistic {
       const LocalRegressionStatistic &right_stat) {
 
       // Initialize the postponed and the summary.
-      postponed_.Init(global.reference_table()->n_attributes());
-      summary_.Init(global.reference_table()->n_attributes());
+      postponed_.Init(global);
+      summary_.Init(global);
 
       // Initialize the average information.
       average_info_.Init(
