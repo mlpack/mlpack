@@ -57,12 +57,7 @@ void LocalRegression<TableType, KernelType, MetricType>::Init(
   }
 
   // Declare the global constants.
-  global_.Init(
-    reference_table_, query_table_,
-    arguments_in.effective_num_reference_points_,
-    arguments_in.bandwidth_, is_monochromatic_,
-    arguments_in.relative_error_, arguments_in.absolute_error_,
-    arguments_in.probability_);
+  global_.Init(arguments_in);
 }
 
 template<typename TableType, typename KernelType, typename MetricType>

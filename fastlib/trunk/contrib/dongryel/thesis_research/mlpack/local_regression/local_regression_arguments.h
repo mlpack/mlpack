@@ -43,6 +43,10 @@ class LocalRegressionArguments {
      */
     std::string prescale_;
 
+    /** @brief The problem dimension.
+     */
+    int problem_dimension_;
+
     /** @brief Stores the query table.
      */
     TableType *query_table_;
@@ -76,6 +80,11 @@ class LocalRegressionArguments {
      */
     int effective_num_reference_points_;
 
+    /** @brief The flag denoting whether the computation is
+     *         monochromatic or not.
+     */
+    bool is_monochromatic_;
+
   public:
 
     /** @brief The default constructor.
@@ -84,6 +93,7 @@ class LocalRegressionArguments {
       bandwidth_ = 0.0;
       leaf_size_ = 0;
       order_ = 0;
+      problem_dimension_ = 1;
       query_table_ = NULL;
       reference_table_ = NULL;
       absolute_error_ = 0.0;
@@ -91,6 +101,7 @@ class LocalRegressionArguments {
       probability_ = 1.0;
       num_iterations_in_ = -1;
       effective_num_reference_points_ = 0;
+      is_monochromatic_ = false;
     }
 
     /** @brief The destructor.

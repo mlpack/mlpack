@@ -93,7 +93,8 @@ class KdePostponed {
 
     /** @brief Initializes the postponed quantities.
      */
-    void Init(int num_dimensions_in) {
+    template<typename GlobalType>
+    void Init(const GlobalType &global_in) {
       SetZero();
     }
 
@@ -1136,10 +1137,6 @@ class KdeSummary {
       densities_u_ = 0;
       pruned_l_ = 0;
       used_error_u_ = 0;
-    }
-
-    void Init() {
-      SetZero();
     }
 
     void StartReaccumulate() {
