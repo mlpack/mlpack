@@ -124,7 +124,7 @@ class TestLocalRegression {
           mlpack::local_regression::test_local_regression::num_dimensions_ =
             core::math::RandInt(2, 5);
           mlpack::local_regression::test_local_regression::num_points_ =
-            core::math::RandInt(5000, 10001);
+            core::math::RandInt(500, 1001);
 
           switch(k) {
             case 0:
@@ -182,7 +182,7 @@ class TestLocalRegression {
       }
 
       // Push in the leaf size.
-      int leaf_size = 20;
+      int leaf_size = core::math::RandInt(20, 30);
       std::stringstream leaf_size_sstr;
       leaf_size_sstr << "--leaf_size=" << leaf_size;
       args.push_back(leaf_size_sstr.str());
