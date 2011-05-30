@@ -68,9 +68,15 @@ class LocalRegressionPostponed {
      */
     double pruned_;
 
-    /** @brief The upper bound on the used error.
+    /** @brief The upper bound on the used error on the left hand
+     *         side.
      */
-    double used_error_;
+    double left_hand_side_used_error_;
+
+    /** @brief The upper bound on the used error on the right hand
+     *         side.
+     */
+    double right_hand_side_used_error_;
 
     /** @brief Serialize the postponed quantities.
      */
@@ -83,7 +89,8 @@ class LocalRegressionPostponed {
       ar & right_hand_side_e_;
       ar & right_hand_side_u_;
       ar & pruned_;
-      ar & used_error_;
+      ar & left_hand_side_used_error_;
+      ar & right_hand_side_used_error_;
     }
 
     /** @brief The default constructor.
@@ -102,7 +109,8 @@ class LocalRegressionPostponed {
       right_hand_side_e_.CopyValues(postponed_in.right_hand_side_e_);
       right_hand_side_u_.CopyValues(postponed_in.right_hand_side_u_);
       pruned_ = postponed_in.pruned_;
-      used_error_ = postponed_in.used_error_;
+      left_hand_side_used_error_ = postponed_in.left_hand_side_used_error_;
+      right_hand_side_used_error_ = postponed_in.right_hand_side_used_error_;
     }
 
     /** @brief Initializes the postponed quantities with the given
@@ -148,7 +156,8 @@ class LocalRegressionPostponed {
       pruned_ = static_cast<double>(rnode->count());
 
       // Used error is zero.
-      used_error_ = 0;
+      left_hand_side_used_error_ = 0.0;
+      right_hand_side_used_error_ = 0.0;
     }
 
     /** @brief Applies the incoming delta contribution to the
@@ -172,7 +181,10 @@ class LocalRegressionPostponed {
 
       // Add the pruned and used error quantities.
       pruned_ = pruned_ + delta_in.pruned_;
-      used_error_ = used_error_ + delta_in.used_error_;
+      left_hand_side_used_error_ = left_hand_side_used_error_ +
+                                   delta_in.left_hand_side_used_error_;
+      right_hand_side_used_error_ = right_hand_side_used_error_ +
+                                    delta_in.right_hand_side_used_error_;
     }
 
     /** @brief Applies the incoming postponed contribution.
@@ -189,7 +201,10 @@ class LocalRegressionPostponed {
 
       // Add the pruned and used error quantities.
       pruned_ = pruned_ + other_postponed.pruned_;
-      used_error_ = used_error_ + other_postponed.used_error_;
+      left_hand_side_used_error_ = left_hand_side_used_error_ +
+                                   other_postponed.left_hand_side_used_error_;
+      right_hand_side_used_error_ = right_hand_side_used_error_ +
+                                    other_postponed.right_hand_side_used_error_;
     }
 
     /** @brief Applies the incoming postponed contribution during the
@@ -263,7 +278,8 @@ class LocalRegressionPostponed {
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
       pruned_ = 0;
-      used_error_ = 0;
+      left_hand_side_used_error_ = 0.0;
+      right_hand_side_used_error_ = 0.0;
     }
 
     /** @brief Sets everything to zero in the post-processing step.
@@ -316,6 +332,11 @@ class LocalRegressionGlobal {
     /** @brief The relative error approximation level.
      */
     double relative_error_;
+
+    /** @brief The adjusted relative error factor to guarantee overall
+     *         relative error.
+     */
+    double adjusted_relative_error_;
 
     /** @brief For the probabilistic approximation.
      */
@@ -400,6 +421,7 @@ class LocalRegressionGlobal {
     LocalRegressionGlobal() {
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
+      adjusted_relative_error_ = 0.0;
       probability_ = 1.0;
       problem_dimension_ = 1;
       effective_num_reference_points_ = 0.0;
@@ -444,6 +466,12 @@ class LocalRegressionGlobal {
       return relative_error_;
     }
 
+    /** @brief Returns the adjust relative error.
+     */
+    double adjusted_relative_error() const {
+      return adjusted_relative_error_;
+    }
+
     /** @brief Returns the probability.
      */
     double probability() const {
@@ -480,6 +508,8 @@ class LocalRegressionGlobal {
       kernel_.Init(arguments_in.bandwidth_);
 
       relative_error_ = arguments_in.relative_error_;
+      adjusted_relative_error_ =
+        (2.0 * relative_error_) / (relative_error_ + 2.0);
       absolute_error_ = arguments_in.absolute_error_;
       probability_ = arguments_in.probability_;
       query_table_ = arguments_in.query_table_;
@@ -573,9 +603,15 @@ class LocalRegressionResult {
      */
     boost::scoped_array<double> pruned_;
 
-    /** @brief The amount of maximum error incurred per each query.
+    /** @brief The amount of maximum error incurred per each query for
+     *         the left hand side.
      */
-    boost::scoped_array<double> used_error_;
+    boost::scoped_array<double> left_hand_side_used_error_;
+
+    /** @brief The amount of maximum error incurred per each query for
+     *         the right hand side.
+     */
+    boost::scoped_array<double> right_hand_side_used_error_;
 
     /** @brief Saves the local regression result object.
      */
@@ -592,7 +628,8 @@ class LocalRegressionResult {
         ar & right_hand_side_e_[i];
         ar & right_hand_side_u_[i];
         ar & pruned_[i];
-        ar & used_error_[i];
+        ar & left_hand_side_used_error_[i];
+        ar & right_hand_side_used_error_[i];
       }
     }
 
@@ -618,7 +655,8 @@ class LocalRegressionResult {
         ar & right_hand_side_e_[i];
         ar & right_hand_side_u_[i];
         ar & pruned_[i];
-        ar & used_error_[i];
+        ar & left_hand_side_used_error_[i];
+        ar & right_hand_side_used_error_[i];
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -787,9 +825,12 @@ class LocalRegressionResult {
       pruned_.swap(tmp_pruned);
 
       // Initialize the used error quantities.
-      boost::scoped_array< double > tmp_used_error(
+      boost::scoped_array< double > tmp_left_hand_side_used_error(
         new double[num_query_points_]);
-      used_error_.swap(tmp_used_error);
+      left_hand_side_used_error_.swap(tmp_left_hand_side_used_error);
+      boost::scoped_array< double > tmp_right_hand_side_used_error(
+        new double[num_query_points_]);
+      right_hand_side_used_error_.swap(tmp_right_hand_side_used_error);
     }
 
     template<typename GlobalType>
@@ -828,7 +869,8 @@ class LocalRegressionResult {
         right_hand_side_e_[i].SetZero();
         right_hand_side_u_[i].SetZero();
         pruned_[i] = 0;
-        used_error_[i] = 0;
+        left_hand_side_used_error_[i] = 0.0;
+        right_hand_side_used_error_[i] = 0.0;
       }
     }
 
@@ -851,7 +893,12 @@ class LocalRegressionResult {
       right_hand_side_e_[q_index].CombineWith(postponed_in.right_hand_side_e_);
       right_hand_side_u_[q_index].CombineWith(postponed_in.right_hand_side_u_);
       pruned_[q_index] = pruned_[q_index] + postponed_in.pruned_;
-      used_error_[q_index] = used_error_[q_index] + postponed_in.used_error_;
+      left_hand_side_used_error_[q_index] =
+        left_hand_side_used_error_[q_index] +
+        postponed_in.left_hand_side_used_error_;
+      right_hand_side_used_error_[q_index] =
+        right_hand_side_used_error_[q_index] +
+        postponed_in.right_hand_side_used_error_;
     }
 
     /** @brief Apply the postponed quantities to the query results
@@ -887,7 +934,9 @@ class LocalRegressionDelta {
 
     double pruned_;
 
-    double used_error_;
+    double left_hand_side_used_error_;
+
+    double right_hand_side_used_error_;
 
     LocalRegressionDelta() {
       SetZero();
@@ -900,7 +949,7 @@ class LocalRegressionDelta {
       right_hand_side_l_.SetZero();
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
-      pruned_ = used_error_ = 0.0;
+      pruned_ = left_hand_side_used_error_ = right_hand_side_used_error_ = 0.0;
     }
 
     template<typename MetricType, typename GlobalType, typename TreeType>
@@ -912,7 +961,8 @@ class LocalRegressionDelta {
       // The maximum deviation between the lower and the upper
       // estimated quantities for the left hand side and the right
       // hand side.
-      double max_deviation = 0;
+      double left_hand_side_max_deviation = 0.0;
+      double right_hand_side_max_deviation = 0.0;
 
       // Lower and upper bound on the kernels.
       double lower_kernel_value =
@@ -967,22 +1017,25 @@ class LocalRegressionDelta {
 
       // Compute the maximum deviation.
       for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
-        max_deviation =
+        right_hand_side_max_deviation =
           std::max(
-            max_deviation,
+            right_hand_side_max_deviation,
             right_hand_side_u_[j].sample_mean() -
             right_hand_side_l_[j].sample_mean());
         for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
-          max_deviation =
+          left_hand_side_max_deviation =
             std::max(
-              max_deviation,
+              left_hand_side_max_deviation,
               left_hand_side_u_.get(i, j).sample_mean() -
               left_hand_side_l_.get(i, j).sample_mean());
         }
       }
 
       pruned_ = static_cast<double>(rnode->count());
-      used_error_ = 0.5 * max_deviation * rnode->count();
+      left_hand_side_used_error_ =
+        0.5 * left_hand_side_max_deviation * rnode->count();
+      right_hand_side_used_error_ =
+        0.5 * right_hand_side_max_deviation * rnode->count();
     }
 };
 
@@ -1007,7 +1060,9 @@ class LocalRegressionSummary {
 
     double pruned_l_;
 
-    double used_error_u_;
+    double left_hand_side_used_error_u_;
+
+    double right_hand_side_used_error_u_;
 
     void Seed(double initial_pruned_in) {
       this->SetZero();
@@ -1021,7 +1076,8 @@ class LocalRegressionSummary {
       ar & right_hand_side_l_;
       ar & right_hand_side_u_;
       ar & pruned_l_;
-      ar & used_error_u_;
+      ar & left_hand_side_used_error_u_;
+      ar & right_hand_side_used_error_u_;
     }
 
     void Copy(const LocalRegressionSummary &summary_in) {
@@ -1030,7 +1086,8 @@ class LocalRegressionSummary {
       right_hand_side_l_ = summary_in.right_hand_side_l_;
       right_hand_side_u_ = summary_in.right_hand_side_u_;
       pruned_l_ = summary_in.pruned_l_;
-      used_error_u_ = summary_in.used_error_u_;
+      left_hand_side_used_error_u_ = summary_in.left_hand_side_used_error_u_;
+      right_hand_side_used_error_u_ = summary_in.right_hand_side_used_error_u_;
     }
 
     LocalRegressionSummary() {
@@ -1062,25 +1119,35 @@ class LocalRegressionSummary {
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
 
-      double left_hand_side = delta.used_error_;
-      double lower_bound_l1_norm = 0.0;
+      double left_hand_side_for_left = delta.left_hand_side_used_error_;
+      double left_hand_side_for_right = delta.right_hand_side_used_error_;
+      double lower_bound_l1_norm_for_left = 0.0;
+      double lower_bound_l1_norm_for_right = 0.0;
       for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
-        lower_bound_l1_norm += right_hand_side_l_[j];
+        lower_bound_l1_norm_for_right += right_hand_side_l_[j];
         for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
-          lower_bound_l1_norm += left_hand_side_l_.at(i, j);
+          lower_bound_l1_norm_for_left += left_hand_side_l_.at(i, j);
         }
       }
 
-      double right_hand_side =
+      double right_hand_side_for_left =
         rnode->count() * (
-          global.relative_error() * lower_bound_l1_norm +
+          global.adjusted_relative_error() * lower_bound_l1_norm_for_left +
           global.effective_num_reference_points() * global.absolute_error() -
-          used_error_u_) /
+          left_hand_side_used_error_u_) /
+        static_cast<double>(
+          global.effective_num_reference_points() - pruned_l_);
+      double right_hand_side_for_right =
+        rnode->count() * (
+          global.adjusted_relative_error() * lower_bound_l1_norm_for_right +
+          global.effective_num_reference_points() * global.absolute_error() -
+          right_hand_side_used_error_u_) /
         static_cast<double>(
           global.effective_num_reference_points() - pruned_l_);
 
       // Prunable by finite-difference.
-      return left_hand_side <= right_hand_side;
+      return left_hand_side_for_left <= right_hand_side_for_left &&
+             left_hand_side_for_right <= right_hand_side_for_right;
     }
 
     /** @brief Initializes the postponed quantities with the given
@@ -1105,7 +1172,7 @@ class LocalRegressionSummary {
       right_hand_side_l_.zeros();
       right_hand_side_u_.zeros();
       pruned_l_ = 0;
-      used_error_u_ = 0;
+      left_hand_side_used_error_u_ = 0;
     }
 
     void Init() {
@@ -1121,7 +1188,7 @@ class LocalRegressionSummary {
       right_hand_side_l_.fill(std::numeric_limits<double>::max());
       right_hand_side_u_.fill(- std::numeric_limits<double>::max());
       pruned_l_ = std::numeric_limits<double>::max();
-      used_error_u_ = 0;
+      left_hand_side_used_error_u_ = 0;
     }
 
     /** @brief Accumulates the given query result into the summary
@@ -1156,7 +1223,7 @@ class LocalRegressionSummary {
         }
       }
       pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
-      used_error_u_ = std::max(used_error_u_, results.used_error_[q_index]);
+      left_hand_side_used_error_u_ = std::max(left_hand_side_used_error_u_, results.left_hand_side_used_error_[q_index]);
     }
 
     template<typename GlobalType, typename LocalRegressionPostponedType>
@@ -1194,9 +1261,9 @@ class LocalRegressionSummary {
       }
       pruned_l_ = std::min(
                     pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
-      used_error_u_ = std::max(
-                        used_error_u_,
-                        summary_in.used_error_u_ + postponed_in.used_error_);
+      left_hand_side_used_error_u_ = std::max(
+                                       left_hand_side_used_error_u_,
+                                       summary_in.left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_);
     }
 
     void ApplyDelta(const LocalRegressionDelta &delta_in) {
@@ -1235,7 +1302,7 @@ class LocalRegressionSummary {
         }
       }
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
-      used_error_u_ = used_error_u_ + postponed_in.used_error_;
+      left_hand_side_used_error_u_ = left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_;
     }
 };
 
