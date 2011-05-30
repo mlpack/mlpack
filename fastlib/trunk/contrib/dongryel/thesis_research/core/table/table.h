@@ -629,14 +629,33 @@ class Table {
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
     }
 
+    /** @brief Gets the point with the specific ID.
+     */
     template<typename PointType>
     void get(int point_id, PointType *point_out) const {
       direct_get_(point_id, point_out);
     }
 
+    /** @brief Gets the point with the specific ID.
+     */
     template<typename PointType>
     void get(int point_id, PointType *point_out) {
       direct_get_(point_id, point_out);
+    }
+
+    /** @brief Gets the point with the specific ID and its weight.
+     */
+    template<typename PointType>
+    void get(
+      int point_id, PointType *point_out, double *point_weight_out) const {
+      direct_get_(point_id, point_out, point_weight_out);
+    }
+
+    /** @brief Gets the point with the specific ID and its weight.
+     */
+    template<typename PointType>
+    void get(int point_id, PointType *point_out, double *point_weight_out) {
+      direct_get_(point_id, point_out, point_weight_out);
     }
 
     /** @brief Prints the tree owned by the table.
@@ -680,6 +699,35 @@ class Table {
         data_.MakeColumnVector(
           IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
+      }
+    }
+
+    template<typename PointType>
+    void direct_get_(
+      int point_id, PointType *entry, double *point_weight) const {
+      if(this->IsIndexed() == false) {
+        data_.MakeColumnVector(point_id, entry);
+        *point_weight = weights_.get(0, point_id);
+      }
+      else {
+        int located_position = IndexUtil<int>::Extract(
+                                 new_from_old_.get(), point_id);
+        data_.MakeColumnVector(located_position, entry);
+        *point_weight = weights_.get(0, located_position);
+      }
+    }
+
+    template<typename PointType>
+    void direct_get_(int point_id, PointType *entry, double *point_weight) {
+      if(this->IsIndexed() == false) {
+        data_.MakeColumnVector(point_id, entry);
+        *point_weight = weights_.get(0, point_id);
+      }
+      else {
+        int located_position = IndexUtil<int>::Extract(
+                                 new_from_old_.get(), point_id);
+        data_.MakeColumnVector(located_position, entry);
+        *point_weight = weights_.get(0, located_position);
       }
     }
 
