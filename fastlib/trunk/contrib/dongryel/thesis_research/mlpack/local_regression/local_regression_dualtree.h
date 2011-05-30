@@ -652,7 +652,7 @@ class LocalRegressionResult {
         right_hand_side_l_[q_index][0].pop(q_weight);
         right_hand_side_e_[q_index][0].pop(q_weight);
         right_hand_side_u_[q_index][0].pop(q_weight);
-        for(int j = 1; j <= qpoint.length(); j++) {
+        for(int j = 1; j < left_hand_side_l_[q_index].n_cols(); j++) {
 
           // The row update for the left hand side.
           double left_hand_side_decrement = qpoint[j - 1];
@@ -677,7 +677,7 @@ class LocalRegressionResult {
           right_hand_side_e_[q_index][j - 1].pop(right_hand_side_decrement);
           right_hand_side_u_[q_index][j - 1].pop(right_hand_side_decrement);
 
-          for(int i = 1; i <= qpoint.length(); i++) {
+          for(int i = 1; i < left_hand_side_l_[q_index].n_rows(); i++) {
 
             double inner_decrement = qpoint[i - 1] * qpoint[j - 1];
             left_hand_side_l_[q_index].get(i, j).pop(inner_decrement);
