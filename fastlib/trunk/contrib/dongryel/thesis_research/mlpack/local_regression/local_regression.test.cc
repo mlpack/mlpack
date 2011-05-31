@@ -119,7 +119,7 @@ class TestLocalRegression {
 
     int StressTestMain() {
       for(int i = 0; i < 20; i++) {
-        for(int k = 0; k < 2; k++) {
+        for(int k = 0; k < 4; k++) {
           // Randomly choose the number of dimensions and the points.
           mlpack::local_regression::test_local_regression::num_dimensions_ =
             core::math::RandInt(2, 5);
@@ -129,11 +129,23 @@ class TestLocalRegression {
           switch(k) {
             case 0:
               StressTest <
-              core::metric_kernels::GaussianKernel > ();
+              core::metric_kernels::GaussianKernel,
+                   core::metric_kernels::LMetric<2> > ();
               break;
             case 1:
               StressTest <
-              core::metric_kernels::EpanKernel > ();
+              core::metric_kernels::EpanKernel,
+                   core::metric_kernels::LMetric<2> > ();
+              break;
+            case 2:
+              StressTest <
+              core::metric_kernels::GaussianKernel,
+                   core::metric_kernels::WeightedLMetric<2> > ();
+              break;
+            case 3:
+              StressTest <
+              core::metric_kernels::EpanKernel,
+                   core::metric_kernels::WeightedLMetric<2> > ();
               break;
           }
         }
@@ -141,7 +153,7 @@ class TestLocalRegression {
       return 0;
     }
 
-    template<typename KernelType>
+    template<typename KernelType, typename MetricType>
     int StressTest() {
 
       typedef core::table::Table <
@@ -173,12 +185,30 @@ class TestLocalRegression {
 
       KernelType dummy_kernel;
       if(dummy_kernel.name() == "epan") {
-        std::cout << "Epan kernel, \n";
         args.push_back(std::string("--kernel=epan"));
       }
       else if(dummy_kernel.name() == "gaussian") {
-        std::cout << "Gaussian kernel, \n";
         args.push_back(std::string("--kernel=gaussian"));
+      }
+
+      // Push in the metric type.
+      MetricType dummy_metric;
+      if(dummy_metric.name() == "lmetric") {
+        args.push_back(std::string("--metric=lmetric"));
+      }
+      else if(dummy_metric.name() == "weighted_lmetric") {
+        args.push_back(std::string("--metric=weighted_lmetric"));
+
+        // In this case, we need to generate the random scaling
+        // factors.
+        TableType random_scales_table;
+        std::string random_scales_file_name("random_scales.csv");
+        GenerateRandomDataset_(
+          1, mlpack::local_regression::test_local_regression::num_points_,
+          &random_scales_table);
+        random_scales_table.Save(random_scales_file_name);
+        args.push_back(
+          std::string("--metric_scales_in=") + random_scales_file_name);
       }
 
       // Push in the leaf size.
@@ -219,7 +249,7 @@ class TestLocalRegression {
 
       // Parse the local regression arguments.
       mlpack::local_regression::LocalRegressionArguments <
-      TableType, core::metric_kernels::LMetric<2> >
+      TableType, MetricType >
       local_regression_arguments;
       boost::program_options::variables_map vm;
       mlpack::local_regression::LocalRegressionArgumentParser::ConstructBoostVariableMap(args, &vm);
@@ -230,13 +260,11 @@ class TestLocalRegression {
 
       // Call the local regression driver.
       mlpack::local_regression::LocalRegression <
-      TableType, KernelType,
-               core::metric_kernels::LMetric<2> > local_regression_instance;
+      TableType, KernelType, MetricType > local_regression_instance;
       local_regression_instance.Init(
         local_regression_arguments,
         (typename mlpack::local_regression::LocalRegression <
-         TableType, KernelType,
-         core::metric_kernels::LMetric<2> >::GlobalType *) NULL);
+         TableType, KernelType, MetricType >::GlobalType *) NULL);
 
       // Compute the result.
       mlpack::local_regression::LocalRegressionResult local_regression_result;
