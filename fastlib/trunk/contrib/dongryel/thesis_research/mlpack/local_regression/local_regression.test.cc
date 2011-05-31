@@ -40,7 +40,7 @@ class TestLocalRegression {
           fabs(naive_query_results[j] - query_results[j]) /
           fabs(naive_query_results[j]);
         achieved_error = std::max(achieved_error, per_relative_error);
-        if(relative_error < per_relative_error) {
+        if(1.0 < per_relative_error) {
           std::cout << query_results[j] << " against " <<
                     naive_query_results[j] << ": " <<
                     per_relative_error << "\n";

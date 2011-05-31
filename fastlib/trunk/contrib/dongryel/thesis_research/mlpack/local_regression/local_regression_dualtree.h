@@ -509,7 +509,7 @@ class LocalRegressionGlobal {
 
       relative_error_ = arguments_in.relative_error_;
       adjusted_relative_error_ =
-        (2.0 * relative_error_) / (relative_error_ + 2.0);
+        relative_error_ / (relative_error_ + 2.0);
       absolute_error_ = arguments_in.absolute_error_;
       probability_ = arguments_in.probability_;
       query_table_ = arguments_in.query_table_;
@@ -730,24 +730,31 @@ class LocalRegressionResult {
       left_hand_side_e_[q_index].sample_means(&tmp_left_hand_side_);
       right_hand_side_e_[q_index].sample_means(&tmp_right_hand_side_);
 
-      // Solve the linear system.
-      arma::eig_sym(tmp_eigenvalues_, tmp_eigenvectors_, tmp_left_hand_side_);
-      tmp_solution_.zeros(tmp_left_hand_side_.n_rows);
-      for(unsigned int i = 0; i < tmp_eigenvalues_.n_elem; i++) {
-        double dot_product = arma::dot(
-                               tmp_eigenvectors_.col(i), tmp_right_hand_side_);
-        if(tmp_eigenvalues_[i] > 1e-6) {
-          tmp_solution_ +=
-            (dot_product / tmp_eigenvalues_[i]) * tmp_eigenvectors_.col(i);
-        }
+      if(global.problem_dimension() == 1) {
+        regression_estimates_[q_index] = tmp_right_hand_side_[0] /
+                                         tmp_left_hand_side_.at(0, 0);
       }
+      else {
 
-      // Take the dot product with the solution vector to get the
-      // regression estimate.
-      regression_estimates_[q_index] = tmp_solution_[0];
-      for(unsigned int i = 1; i < tmp_solution_.n_elem; i++) {
-        regression_estimates_[q_index] += tmp_solution_[i] *
-                                          qpoint[i - 1];
+        // Solve the linear system.
+        arma::eig_sym(tmp_eigenvalues_, tmp_eigenvectors_, tmp_left_hand_side_);
+        tmp_solution_.zeros(tmp_left_hand_side_.n_rows);
+        for(unsigned int i = 0; i < tmp_eigenvalues_.n_elem; i++) {
+          double dot_product = arma::dot(
+                                 tmp_eigenvectors_.col(i), tmp_right_hand_side_);
+          if(tmp_eigenvalues_[i] > 1e-6) {
+            tmp_solution_ +=
+              (dot_product / tmp_eigenvalues_[i]) * tmp_eigenvectors_.col(i);
+          }
+        }
+
+        // Take the dot product with the solution vector to get the
+        // regression estimate.
+        regression_estimates_[q_index] = tmp_solution_[0];
+        for(unsigned int i = 1; i < tmp_solution_.n_elem; i++) {
+          regression_estimates_[q_index] += tmp_solution_[i] *
+                                            qpoint[i - 1];
+        }
       }
     }
 
@@ -1365,11 +1372,9 @@ class LocalRegressionStatistic {
 
       // Initialize the average information.
       average_info_.Init(
-        global.reference_table()->n_attributes() + 1,
-        global.reference_table()->n_attributes() + 1);
+        global.problem_dimension(), global.problem_dimension());
       average_info_.set_total_num_terms(node->count());
-      weighted_average_info_.Init(
-        global.reference_table()->n_attributes() + 1);
+      weighted_average_info_.Init(global.problem_dimension());
       weighted_average_info_.set_total_num_terms(node->count());
 
       // Accumulate from the raw data.
@@ -1389,11 +1394,11 @@ class LocalRegressionStatistic {
         // Push the contribution of each point.
         average_info_.get(0, 0).push_back(1.0);
         weighted_average_info_[0].push_back(point_weight);
-        for(int j = 1; j <= global.reference_table()->n_attributes(); j++) {
+        for(int j = 1; j < average_info_.n_cols(); j++) {
           average_info_.get(0, j).push_back(point[j - 1]);
           average_info_.get(j, 0).push_back(point[j - 1]);
           weighted_average_info_[j].push_back(point_weight * point[j - 1]);
-          for(int i = 1; i <= global.reference_table()->n_attributes(); i++) {
+          for(int i = 1; i < average_info_.n_rows(); i++) {
             average_info_.get(i, j).push_back(point[i - 1] * point[j - 1]);
           }
         }
@@ -1420,10 +1425,8 @@ class LocalRegressionStatistic {
 
       // Initialize the average information.
       average_info_.Init(
-        global.reference_table()->n_attributes() + 1,
-        global.reference_table()->n_attributes() + 1);
-      weighted_average_info_.Init(
-        global.reference_table()->n_attributes() + 1);
+        global.problem_dimension(), global.problem_dimension());
+      weighted_average_info_.Init(global.problem_dimension());
 
       // Form the average information by combining from the children
       // information.
