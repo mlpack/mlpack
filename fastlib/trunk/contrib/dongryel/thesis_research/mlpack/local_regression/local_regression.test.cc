@@ -79,14 +79,13 @@ class TestLocalRegression {
 
       ultra_naive_query_results.resize(query_table.n_entries());
 
-      // Allocate the numerators and the denominators.
-      std::vector<double> numerators(query_table.n_entries(), 0.0);
-      std::vector<double> denominators(query_table.n_entries(), 0.0);
-
       for(int i = 0; i < query_table.n_entries(); i++) {
         core::table::DensePoint query_point;
         query_table.get(i, &query_point);
-        ultra_naive_query_results[i] = 0;
+
+        // Monte Carlo result.
+        core::monte_carlo::MeanVariancePair numerator;
+        core::monte_carlo::MeanVariancePair denominator;
 
         for(int j = 0; j < reference_table.n_entries(); j++) {
           core::table::DensePoint reference_point;
@@ -106,12 +105,13 @@ class TestLocalRegression {
             kernel.EvalUnnormOnSq(squared_distance);
 
           // Accumulate the sum.
-          numerators[i] += reference_weight * kernel_value;
-          denominators[i] += kernel_value;
+          numerator.push_back(reference_weight * kernel_value);
+          denominator.push_back(kernel_value);
         }
 
         // Divide the numerator by the denominator.
-        ultra_naive_query_results[i] = numerators[i] / denominators[i];
+        ultra_naive_query_results[i] =
+          numerator.sample_mean() / denominator.sample_mean();
       }
     }
 
