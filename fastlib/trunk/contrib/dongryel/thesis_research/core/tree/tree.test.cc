@@ -33,14 +33,19 @@ class TestTree {
       do {
         core::table::DensePoint point;
         int point_id;
-        node_it.Next(&point, &point_id);
+        double point_weight;
+        node_it.Next(&point, &point_id, &point_weight);
         core::table::DensePoint compare_point;
-        table.get(point_id, &compare_point);
+        double compare_point_weight;
+        table.get(point_id, &compare_point, &compare_point_weight);
 
         for(int i = 0; i < point.length(); i++) {
           if(point[i] != compare_point[i]) {
             return false;
           }
+        }
+        if(point_weight != compare_point_weight) {
+          return false;
         }
       }
       while(node_it.HasNext());
@@ -65,6 +70,10 @@ class TestTree {
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
         }
+
+        // Set the weight to the random one.
+        random_dataset->weights().set(
+          0, j, core::math::Random(1.0, 5.0));
       }
     }
 
@@ -92,29 +101,38 @@ class TestTree {
       // Push in the reference dataset name.
       std::string references_in("random.csv");
 
+      // The weight dataset name.
+      std::string weights_in("weights.csv");
+
       // Generate the random dataset and save it.
       TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
-      random_table.Save(references_in);
+      random_table.Save(references_in, &weights_in);
 
       // Reload the table twice and build the tree on one of them.
       TableType reordered_table;
-      reordered_table.Init(references_in);
+      reordered_table.Init(references_in, 0, &weights_in);
       TableType original_table;
-      original_table.Init(references_in);
+      original_table.Init(references_in, 0, &weights_in);
       core::metric_kernels::LMetric<2> l2_metric;
       reordered_table.IndexData(l2_metric, leaf_size);
       for(int i = 0; i < reordered_table.n_entries(); i++) {
         core::table::DensePoint reordered_point;
+        double reordered_weight;
         core::table::DensePoint original_point;
-        reordered_table.get(i, &reordered_point);
-        original_table.get(i, &original_point);
+        double original_weight;
+        reordered_table.get(i, &reordered_point, &reordered_weight);
+        original_table.get(i, &original_point, &original_weight);
         for(int j = 0; j < reordered_table.n_attributes(); j++) {
           if(reordered_point[j] != original_point[j]) {
             printf("Reordered points and original points do not match!\n");
             return false;
           }
+        }
+        if(reordered_weight != original_weight) {
+          printf("Reordered point weight and the original one do not match!\n");
+          return false;
         }
       }
 

@@ -446,7 +446,9 @@ class GenMetricTree {
     template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix, TreeType *node, TreeType **left,
+      core::table::DenseMatrix &matrix,
+      core::table::DenseMatrix &weights,
+      TreeType *node, TreeType **left,
       TreeType **right, int leaf_size, IndexType *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {
 
@@ -493,7 +495,7 @@ class GenMetricTree {
       }
       else {
         left_count = TreeType::MatrixPartition(
-                       metric_in, matrix, node->begin(), node->count(),
+                       metric_in, matrix, weights, node->begin(), node->count(),
                        (*left)->bound(), (*right)->bound(), old_from_new);
       }
       (*left)->Init(node->begin(), left_count);

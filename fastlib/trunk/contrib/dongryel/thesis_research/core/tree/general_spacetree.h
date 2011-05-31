@@ -495,6 +495,7 @@ class GeneralBinarySpaceTree {
     static void SplitTree(
       const MetricType &metric_in,
       core::table::DenseMatrix& matrix,
+      core::table::DenseMatrix &weights,
       TreeType *node,
       int leaf_size,
       int max_num_leaf_nodes,
@@ -516,17 +517,17 @@ class GeneralBinarySpaceTree {
       // Otherwise, attempt to split.
       else {
         bool can_cut = TreeSpecType::AttemptSplitting(
-                         metric_in, matrix, node, &left, &right,
+                         metric_in, matrix, weights, node, &left, &right,
                          leaf_size, old_from_new, core::table::global_m_file_);
 
         if(can_cut) {
           (*current_num_leaf_nodes)++;
           (*num_nodes) = (*num_nodes) + 2;
           SplitTree(
-            metric_in, matrix, left, leaf_size, max_num_leaf_nodes,
+            metric_in, matrix, weights, left, leaf_size, max_num_leaf_nodes,
             current_num_leaf_nodes, old_from_new, num_nodes);
           SplitTree(
-            metric_in, matrix, right, leaf_size, max_num_leaf_nodes,
+            metric_in, matrix, weights, right, leaf_size, max_num_leaf_nodes,
             current_num_leaf_nodes, old_from_new, num_nodes);
           TreeSpecType::CombineBounds(metric_in, matrix, node, left, right);
         }
@@ -549,7 +550,9 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static TreeType *MakeTree(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix, int leaf_size,
+      core::table::DenseMatrix& matrix,
+      core::table::DenseMatrix &weights,
+      int leaf_size,
       IndexType *old_from_new,
       int *new_from_old,
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
@@ -571,7 +574,7 @@ class GeneralBinarySpaceTree {
 
       int current_num_leaf_nodes = 1;
       SplitTree(
-        metric_in, matrix, node, leaf_size, max_num_leaf_nodes,
+        metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
         &current_num_leaf_nodes, old_from_new, &num_nodes_in);
 
       if(num_nodes) {
@@ -592,7 +595,9 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static int MatrixPartition(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix, int first, int count,
+      core::table::DenseMatrix &matrix,
+      core::table::DenseMatrix &weights,
+      int first, int count,
       BoundType &left_bound, BoundType &right_bound,
       IndexType *old_from_new) {
 
@@ -627,6 +632,7 @@ class GeneralBinarySpaceTree {
 
         // Swap the left vector with the right vector.
         matrix.swap_cols(left, right);
+        weights.swap_cols(left, right);
         std::swap(
           left_membership[left - first], left_membership[right - first]);
 
