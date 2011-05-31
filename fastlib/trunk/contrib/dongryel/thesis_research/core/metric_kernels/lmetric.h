@@ -61,6 +61,19 @@ class LMetric {
     void serialize(Archive &ar, const unsigned int version) {
     }
 
+    /** @brief Returns the identifier.
+     */
+    std::string name() const {
+      return std::string("lmetric");
+    }
+
+    /** @brief Sets the scaling factor for each dimension. This does
+     *         not do anything.
+     */
+    template<typename TableType>
+    void set_scales(const TableType &scales_in) {
+    }
+
     /** @brief Computes the distance metric between two points.
      */
     template<typename PointType>
