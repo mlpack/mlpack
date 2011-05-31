@@ -978,11 +978,9 @@ class LocalRegressionDelta {
           std::max(
             right_hand_side_max_deviation,
             upper_kernel_value *
-            std::max(
-              rnode->stat().max_weighted_average_info_[j] -
-              rnode->stat().weighted_average_info_[j].sample_mean(),
-              rnode->stat().weighted_average_info_[j].sample_mean() -
-              rnode->stat().min_weighted_average_info_[j]));
+            rnode->stat().max_weighted_average_info_[j] -
+            lower_kernel_value *
+            rnode->stat().min_weighted_average_info_[j]);
         for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
           left_hand_side_max_deviation =
             std::max(
