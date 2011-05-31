@@ -589,11 +589,21 @@ class Table {
 
     /** @brief Saves the table to a text file.
      */
-    void Save(const std::string &file_name) const {
+    void Save(
+      const std::string &file_name,
+      const std::string *weight_file_name = NULL) const {
+
       FILE *foutput = fopen(file_name.c_str(), "w+");
+      FILE *woutput = (weight_file_name != NULL) ?
+                      fopen(weight_file_name->c_str(), "w+") : NULL;
       for(int j = 0; j < data_.n_cols(); j++) {
         core::table::DensePoint point;
-        this->direct_get_(j, &point);
+        double point_weight;
+
+        // Grab each point with its weight.
+        this->direct_get_(j, &point, &point_weight);
+
+        // Output the point.
         for(int i = 0; i < data_.n_rows(); i++) {
           fprintf(foutput, "%g", point[i]);
           if(i < data_.n_rows() - 1) {
@@ -601,8 +611,16 @@ class Table {
           }
         }
         fprintf(foutput, "\n");
+
+        // Output the weight if requested.
+        if(woutput != NULL) {
+          fprintf(woutput, "%g\n", point_weight);
+        }
       }
       fclose(foutput);
+      if(woutput != NULL) {
+        fclose(woutput);
+      }
     }
 
     /** @brief Gets the frontier nodes of the indexed tree such that
@@ -625,7 +643,7 @@ class Table {
       int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
       tree_ = TreeType::MakeTree(
-                metric_in, data_, leaf_size, old_from_new_.get(),
+                metric_in, data_, weights_, leaf_size, old_from_new_.get(),
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
     }
 
