@@ -38,10 +38,21 @@ class WeightedLMetric {
     void serialize(Archive &ar, const unsigned int version) {
     }
 
-    void set_scales(const std::vector<double> &scales_in) {
-      scales_.resize(scales_in.size());
-      for(unsigned int i = 0; i < scales_in.size(); i++) {
-        scales_[i] = scales_in[i];
+    /** @brief Returns the identifier.
+     */
+    std::string name() const {
+      return std::string("weighted_lmetric");
+    }
+
+    /** @brief Sets the scaling factor for each dimension.
+     */
+    template<typename TableType>
+    void set_scales(const TableType &scales_in) {
+      scales_.resize(scales_in.n_entries());
+      for(int i = 0; i < scales_in.n_entries(); i++) {
+        arma::vec scale_per_dimension;
+        scales_in.get(i, &scale_per_dimension);
+        scales_[i] = scale_per_dimension[0];
       }
     }
 
@@ -60,7 +71,7 @@ class WeightedLMetric {
       int length = core::table::LengthTrait<PointType>::length(a);
       for(int i = 0; i < length; i++) {
         distance_ineq +=
-          core::math::Pow<t_pow, 1>((a[i] - b[i]) / scales_[i]);
+          core::math::Pow<t_pow, 1>((a[i] - b[i]) * scales_[i]);
       }
       return distance_ineq;
     }
