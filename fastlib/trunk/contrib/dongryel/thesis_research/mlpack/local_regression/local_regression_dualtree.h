@@ -977,8 +977,12 @@ class LocalRegressionDelta {
         right_hand_side_max_deviation =
           std::max(
             right_hand_side_max_deviation,
-            right_hand_side_u_[j].sample_mean() -
-            right_hand_side_l_[j].sample_mean());
+            upper_kernel_value *
+            std::max(
+              rnode->stat().max_weighted_average_info_[j] -
+              rnode->stat().weighted_average_info_[j].sample_mean(),
+              rnode->stat().weighted_average_info_[j].sample_mean() -
+              rnode->stat().min_weighted_average_info_[j]));
         for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
           left_hand_side_max_deviation =
             std::max(
@@ -992,7 +996,7 @@ class LocalRegressionDelta {
       left_hand_side_used_error_ =
         0.5 * left_hand_side_max_deviation * total_num_terms;
       right_hand_side_used_error_ =
-        0.5 * right_hand_side_max_deviation * total_num_terms;
+        right_hand_side_max_deviation * total_num_terms;
     }
 };
 
