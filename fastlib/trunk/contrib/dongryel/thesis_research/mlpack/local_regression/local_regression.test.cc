@@ -204,7 +204,7 @@ class TestLocalRegression {
         TableType random_scales_table;
         std::string random_scales_file_name("random_scales.csv");
         GenerateRandomDataset_(
-          1, mlpack::local_regression::test_local_regression::num_points_,
+          1, mlpack::local_regression::test_local_regression::num_dimensions_,
           &random_scales_table);
         random_scales_table.Save(random_scales_file_name);
         args.push_back(
