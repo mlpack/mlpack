@@ -55,8 +55,6 @@ class TestLocalRegression {
     void GenerateRandomDataset_(
       int num_dimensions,
       int num_points,
-      double lower_bound,
-      double upper_bound,
       TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
@@ -65,8 +63,10 @@ class TestLocalRegression {
         core::table::DensePoint point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(lower_bound, upper_bound);
+          point[i] = core::math::Random(0.1, 1.0);
         }
+
+        random_dataset->weights().set(0, j, core::math::Random(1.0, 5.0));
       }
     }
 
@@ -214,18 +214,8 @@ class TestLocalRegression {
       GenerateRandomDataset_(
         mlpack::local_regression::test_local_regression::num_dimensions_,
         mlpack::local_regression::test_local_regression::num_points_,
-        0.1, 1.0,
         &random_table);
-      random_table.Save(references_in);
-
-      // Generate the random dataset targets and save it.
-      TableType random_target_table;
-      GenerateRandomDataset_(
-        1,
-        mlpack::local_regression::test_local_regression::num_points_,
-        1.0, 5.0,
-        &random_target_table);
-      random_target_table.Save(reference_targets_in);
+      random_table.Save(references_in, &reference_targets_in);
 
       // Parse the local regression arguments.
       mlpack::local_regression::LocalRegressionArguments <
