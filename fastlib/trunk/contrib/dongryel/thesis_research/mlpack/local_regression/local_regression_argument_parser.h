@@ -45,6 +45,15 @@ class LocalRegressionArgumentParser {
         boost::program_options::value<int>()->default_value(20),
         "Maximum number of points at a leaf of the tree."
       )(
+        "metric",
+        boost::program_options::value<std::string>()->default_value("lmetric"),
+        "Metric type used by local regression.  One of:\n"
+        "  lmetric, weighted_lmetric"
+      )(
+        "metric_scales_in",
+        boost::program_options::value<std::string>(),
+        "The file containing the scaling factors for the weighted L2 metric."
+      )(
         "order",
         boost::program_options::value<int>()->default_value(0),
         "The order of local polynomial to fit at each query point. One of: "
@@ -120,6 +129,12 @@ class LocalRegressionArgumentParser {
       }
       if((*vm)["leaf_size"].as<int>() <= 0) {
         std::cerr << "The --leaf_size requires a positive integer.\n";
+        exit(0);
+      }
+      if((*vm)["metric"].as<std::string>() == "weighted_lmetric" &&
+          vm->count("metric_scales_in") == 0) {
+        std::cerr << "The weighted L2 metric option requires " <<
+                  "--metric_scales_in option.\n";
         exit(0);
       }
       if((*vm)["order"].as<int>() < 0 || (*vm)["order"].as<int>() > 1) {
@@ -216,6 +231,16 @@ class LocalRegressionArgumentParser {
       // Parse the leaf size.
       arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
       std::cerr << "Leaf size: " << arguments_out->leaf_size_ << "\n";
+
+      // Parse the metric weights file.
+      std::cerr << "Metric type: " << vm["metric"].as<std::string>() << "\n";
+      if(vm["metric"].as<std::string>() == "weighted_lmetric") {
+        TableType metric_scales_in;
+        std::cerr << "Reading in the metric scales from: " <<
+                  vm["metric_scales_in"].as<std::string>() << "\n";
+        metric_scales_in.Init(vm["metric_scales_in"].as<std::string>());
+        arguments_out->metric_.set_scales(metric_scales_in);
+      }
 
       // Parse the predictions out file.
       arguments_out->predictions_out_ = vm["predictions_out"].as<std::string>();

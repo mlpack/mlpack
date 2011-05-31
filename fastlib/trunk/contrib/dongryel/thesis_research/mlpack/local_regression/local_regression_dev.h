@@ -10,6 +10,7 @@
 
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
+#include "core/metric_kernels/weighted_lmetric.h"
 #include "mlpack/local_regression/local_regression.h"
 
 namespace mlpack {
@@ -81,7 +82,7 @@ void LocalRegression<TableType, KernelType, MetricType>::Compute(
   else {
     typename core::gnp::DualtreeDfs <
     ProblemType >::template iterator <
-    core::metric_kernels::LMetric<2> > local_regression_it =
+    MetricType > local_regression_it =
       dualtree_dfs.get_iterator(arguments_in.metric_, result_out);
     for(int i = 0; i < arguments_in.num_iterations_in_; i++) {
       ++local_regression_it;
