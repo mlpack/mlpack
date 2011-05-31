@@ -229,6 +229,12 @@ class LocalRegressionPostponed {
       const arma::vec &reference_point,
       double reference_weight) {
 
+      // If monochromatic, return.
+      if(global.is_monochromatic() &&
+          query_point.memptr() == reference_point.memptr()) {
+        return;
+      }
+
       double distsq = metric.DistanceSq(query_point, reference_point);
       double kernel_value = global.kernel().EvalUnnormOnSq(distsq);
       left_hand_side_l_.get(0, 0).push_back(kernel_value);
@@ -564,11 +570,6 @@ class LocalRegressionResult {
      */
     boost::scoped_array<double> regression_estimates_;
 
-    /** @brief The flag that tells whether the self contribution has
-     *         been subtracted or not.
-     */
-    boost::scoped_array<bool> self_contribution_subtracted_;
-
     /** @brief The lower bound on the left hand side.
      */
     boost::scoped_array <
@@ -620,7 +621,6 @@ class LocalRegressionResult {
       ar & num_query_points_;
       for(unsigned int i = 0; i < num_query_points_; i++) {
         ar & regression_estimates_[i];
-        ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
         ar & left_hand_side_u_[i];
@@ -647,7 +647,6 @@ class LocalRegressionResult {
       // Load.
       for(int i = 0; i < num_query_points_; i++) {
         ar & regression_estimates_[i];
-        ar & self_contribution_subtracted_[i];
         ar & left_hand_side_l_[i];
         ar & left_hand_side_e_[i];
         ar & left_hand_side_u_[i];
@@ -681,51 +680,6 @@ class LocalRegressionResult {
       const GlobalType &global,
       const bool is_monochromatic) {
 
-      // Subtract the self-contribution.
-      if(is_monochromatic && (! self_contribution_subtracted_[q_index])) {
-        left_hand_side_l_[q_index].get(0, 0).pop(1.0);
-        left_hand_side_e_[q_index].get(0, 0).pop(1.0);
-        left_hand_side_u_[q_index].get(0, 0).pop(1.0);
-        right_hand_side_l_[q_index][0].pop(q_weight);
-        right_hand_side_e_[q_index][0].pop(q_weight);
-        right_hand_side_u_[q_index][0].pop(q_weight);
-
-        for(int j = 1; j < left_hand_side_l_[q_index].n_cols(); j++) {
-
-          // The row update for the left hand side.
-          double left_hand_side_decrement = qpoint[j - 1];
-          left_hand_side_l_[q_index].get(0, j).pop(
-            left_hand_side_decrement);
-          left_hand_side_e_[q_index].get(0, j).pop(
-            left_hand_side_decrement);
-          left_hand_side_u_[q_index].get(0, j).pop(
-            left_hand_side_decrement);
-
-          // The column update for the left hand side.
-          left_hand_side_l_[q_index].get(j, 0).pop(
-            left_hand_side_decrement);
-          left_hand_side_e_[q_index].get(j, 0).pop(
-            left_hand_side_decrement);
-          left_hand_side_u_[q_index].get(j, 0).pop(
-            left_hand_side_decrement);
-
-          // The right hand side.
-          double right_hand_side_decrement = q_weight * qpoint[j - 1];
-          right_hand_side_l_[q_index][j].pop(right_hand_side_decrement);
-          right_hand_side_e_[q_index][j].pop(right_hand_side_decrement);
-          right_hand_side_u_[q_index][j].pop(right_hand_side_decrement);
-
-          for(int i = 1; i < left_hand_side_l_[q_index].n_rows(); i++) {
-
-            double inner_decrement = qpoint[i - 1] * qpoint[j - 1];
-            left_hand_side_l_[q_index].get(i, j).pop(inner_decrement);
-            left_hand_side_e_[q_index].get(i, j).pop(inner_decrement);
-            left_hand_side_u_[q_index].get(i, j).pop(inner_decrement);
-          } // end of the inner for-loop.
-        } // end of the outer for-loop.
-        self_contribution_subtracted_[q_index] = true;
-      }
-
       // Set up the linear system.
       left_hand_side_e_[q_index].sample_means(&tmp_left_hand_side_);
       right_hand_side_e_[q_index].sample_means(&tmp_right_hand_side_);
@@ -741,7 +695,8 @@ class LocalRegressionResult {
         tmp_solution_.zeros(tmp_left_hand_side_.n_rows);
         for(unsigned int i = 0; i < tmp_eigenvalues_.n_elem; i++) {
           double dot_product = arma::dot(
-                                 tmp_eigenvectors_.col(i), tmp_right_hand_side_);
+                                 tmp_eigenvectors_.col(i),
+                                 tmp_right_hand_side_);
           if(tmp_eigenvalues_[i] > 1e-6) {
             tmp_solution_ +=
               (dot_product / tmp_eigenvalues_[i]) * tmp_eigenvectors_.col(i);
@@ -778,11 +733,6 @@ class LocalRegressionResult {
       boost::scoped_array<double> tmp_regression_estimates(
         new double[num_query_points_]);
       regression_estimates_.swap(tmp_regression_estimates);
-
-      // Initialize the self contribution subtracted array.
-      boost::scoped_array<bool> tmp_self_contribution_subtracted(
-        new bool[num_query_points_]);
-      self_contribution_subtracted_.swap(tmp_self_contribution_subtracted);
 
       // Initialize the left hand side lower bound.
       boost::scoped_array <
@@ -868,7 +818,6 @@ class LocalRegressionResult {
 
     void SetZero() {
       for(int i = 0; i < num_query_points_; i++) {
-        self_contribution_subtracted_[i] = false;
         left_hand_side_l_[i].SetZero();
         left_hand_side_e_[i].SetZero();
         left_hand_side_u_[i].SetZero();
@@ -978,7 +927,8 @@ class LocalRegressionDelta {
         global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
 
       // Initialize the left hand sides and the right hand sides.
-      int total_num_terms = rnode->count();
+      int total_num_terms = (qnode == rnode) ?
+                            rnode->count() - 1 : rnode->count();
       left_hand_side_l_.Init(
         global.problem_dimension() ,
         global.problem_dimension());
@@ -1038,11 +988,11 @@ class LocalRegressionDelta {
         }
       }
 
-      pruned_ = static_cast<double>(rnode->count());
+      pruned_ = static_cast<double>(total_num_terms);
       left_hand_side_used_error_ =
-        0.5 * left_hand_side_max_deviation * rnode->count();
+        0.5 * left_hand_side_max_deviation * total_num_terms;
       right_hand_side_used_error_ =
-        0.5 * right_hand_side_max_deviation * rnode->count();
+        0.5 * right_hand_side_max_deviation * total_num_terms;
     }
 };
 
@@ -1268,9 +1218,11 @@ class LocalRegressionSummary {
       }
       pruned_l_ = std::min(
                     pruned_l_, summary_in.pruned_l_ + postponed_in.pruned_);
-      left_hand_side_used_error_u_ = std::max(
-                                       left_hand_side_used_error_u_,
-                                       summary_in.left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_);
+      left_hand_side_used_error_u_ =
+        std::max(
+          left_hand_side_used_error_u_,
+          summary_in.left_hand_side_used_error_u_ +
+          postponed_in.left_hand_side_used_error_);
     }
 
     void ApplyDelta(const LocalRegressionDelta &delta_in) {
@@ -1309,7 +1261,8 @@ class LocalRegressionSummary {
         }
       }
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
-      left_hand_side_used_error_u_ = left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_;
+      left_hand_side_used_error_u_ =
+        left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_;
     }
 };
 
@@ -1320,11 +1273,46 @@ class LocalRegressionStatistic {
     // For Boost serialization.
     friend class boost::serialization::access;
 
+  private:
+
+    template<typename GlobalType>
+    void InitCommon_(const GlobalType &global) {
+
+      // Initialize the postponed and the summary.
+      postponed_.Init(global);
+      summary_.Init(global);
+
+      // Initialize the average information.
+      average_info_.Init(
+        global.problem_dimension(), global.problem_dimension());
+      weighted_average_info_.Init(global.problem_dimension());
+
+      // Initialize the min/max statistics.
+      min_average_info_.set_size(
+        global.problem_dimension(), global.problem_dimension());
+      min_average_info_.fill(std::numeric_limits<double>::max());
+      max_average_info_.set_size(
+        global.problem_dimension(), global.problem_dimension());
+      max_average_info_.fill(- std::numeric_limits<double>::max());
+      min_weighted_average_info_.set_size(global.problem_dimension());
+      min_weighted_average_info_.fill(std::numeric_limits<double>::max());
+      max_weighted_average_info_.set_size(global.problem_dimension());
+      max_weighted_average_info_.fill(- std::numeric_limits<double>::max());
+    }
+
   public:
 
     core::monte_carlo::MeanVariancePairMatrix average_info_;
 
     core::monte_carlo::MeanVariancePairVector weighted_average_info_;
+
+    arma::mat min_average_info_;
+
+    arma::mat max_average_info_;
+
+    arma::vec min_weighted_average_info_;
+
+    arma::vec max_weighted_average_info_;
 
     mlpack::local_regression::LocalRegressionPostponed postponed_;
 
@@ -1366,15 +1354,11 @@ class LocalRegressionStatistic {
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global, TreeType *node) {
 
-      // Initialize the postponed and the summary.
-      postponed_.Init(global);
-      summary_.Init(global);
+      // Initialize.
+      this->InitCommon_(global);
 
-      // Initialize the average information.
-      average_info_.Init(
-        global.problem_dimension(), global.problem_dimension());
+      // Set the number of terms for the average information.
       average_info_.set_total_num_terms(node->count());
-      weighted_average_info_.Init(global.problem_dimension());
       weighted_average_info_.set_total_num_terms(node->count());
 
       // Accumulate from the raw data.
@@ -1393,13 +1377,42 @@ class LocalRegressionStatistic {
 
         // Push the contribution of each point.
         average_info_.get(0, 0).push_back(1.0);
+        min_average_info_.at(0, 0) = std::min(min_average_info_.at(0, 0), 1.0);
+        max_average_info_.at(0, 0) = std::max(max_average_info_.at(0, 0), 1.0);
+
         weighted_average_info_[0].push_back(point_weight);
+        min_weighted_average_info_[0] =
+          std::min(min_weighted_average_info_[0], point_weight);
+        max_weighted_average_info_[0] =
+          std::max(max_weighted_average_info_[0], point_weight);
         for(int j = 1; j < average_info_.n_cols(); j++) {
           average_info_.get(0, j).push_back(point[j - 1]);
+          min_average_info_.at(0, j) =
+            std::min(min_average_info_.at(0, j), point[j - 1]);
+          max_average_info_.at(0, j) =
+            std::max(max_average_info_.at(0, j), point[j - 1]);
+
           average_info_.get(j, 0).push_back(point[j - 1]);
+          min_average_info_.at(j, 0) =
+            std::min(min_average_info_.at(j, 0), point[j - 1]);
+          max_average_info_.at(j, 0) =
+            std::max(max_average_info_.at(j, 0), point[j - 1]);
+
           weighted_average_info_[j].push_back(point_weight * point[j - 1]);
+          min_weighted_average_info_[j] =
+            std::min(
+              min_weighted_average_info_[j], point_weight * point[j - 1]);
+          max_weighted_average_info_[j] =
+            std::max(
+              max_weighted_average_info_[j], point_weight * point[j - 1]);
           for(int i = 1; i < average_info_.n_rows(); i++) {
             average_info_.get(i, j).push_back(point[i - 1] * point[j - 1]);
+            min_average_info_.at(i, j) =
+              std::min(
+                min_average_info_.at(i, j), point[i - 1] * point[j - 1]);
+            max_average_info_.at(i, j) =
+              std::max(
+                max_average_info_.at(i, j), point[i - 1] * point[j - 1]);
           }
         }
       }
@@ -1419,14 +1432,8 @@ class LocalRegressionStatistic {
       const LocalRegressionStatistic &left_stat,
       const LocalRegressionStatistic &right_stat) {
 
-      // Initialize the postponed and the summary.
-      postponed_.Init(global);
-      summary_.Init(global);
-
-      // Initialize the average information.
-      average_info_.Init(
-        global.problem_dimension(), global.problem_dimension());
-      weighted_average_info_.Init(global.problem_dimension());
+      // Initialize first.
+      this->InitCommon_(global);
 
       // Form the average information by combining from the children
       // information.
@@ -1434,6 +1441,32 @@ class LocalRegressionStatistic {
       average_info_.CombineWith(right_stat.average_info_);
       weighted_average_info_.CombineWith(left_stat.weighted_average_info_);
       weighted_average_info_.CombineWith(right_stat.weighted_average_info_);
+
+      // Form the min/max from the children.
+      min_average_info_ = left_stat.min_average_info_;
+      max_average_info_ = left_stat.max_average_info_;
+      min_weighted_average_info_ = left_stat.min_weighted_average_info_;
+      max_weighted_average_info_ = left_stat.max_weighted_average_info_;
+      for(unsigned int j = 0; j < min_average_info_.n_cols; j++) {
+        min_weighted_average_info_[j] =
+          std::min(
+            min_weighted_average_info_[j],
+            right_stat.min_weighted_average_info_[j]);
+        max_weighted_average_info_[j] =
+          std::max(
+            max_weighted_average_info_[j],
+            right_stat.max_weighted_average_info_[j]);
+        for(unsigned int i = 0; i < min_average_info_.n_rows; i++) {
+          min_average_info_.at(i, j) =
+            std::min(
+              min_average_info_.at(i, j),
+              right_stat.min_average_info_.at(i, j));
+          max_average_info_.at(i, j) =
+            std::max(
+              max_average_info_.at(i, j),
+              right_stat.max_average_info_.at(i, j));
+        }
+      }
 
       // Sets the postponed quantities and summary statistics to zero.
       SetZero();
