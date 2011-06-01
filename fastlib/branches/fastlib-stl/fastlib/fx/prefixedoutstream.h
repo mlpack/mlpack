@@ -36,7 +36,7 @@ namespace io {
     * @param prefix The prefix to prepend to each line.
     */
    PrefixedOutStream(std::ostream& destination, const char* prefix) :
-     destination(destination), prefix(prefix), cariageReturned(true) 
+     destination(destination), prefix(prefix), carriageReturned(true) 
      //We want the first call to operator<< to prefix the prefix.
       { /* nothing to do */ } 
  
@@ -87,7 +87,7 @@ namespace io {
 
    /**
    * @brief Contains a string which will be prefixed to the output after every 
-   *   cariage return.
+   *   carriage return.
    */
    const char* prefix;
 
@@ -96,7 +96,7 @@ namespace io {
    * @brief If true, then the previous call to operator<< encountered a CR.  
    *   The prefix should therefore be prefixed.
    */
-   bool cariageReturned;
+   bool carriageReturned;
  };
 
 //Template definitions

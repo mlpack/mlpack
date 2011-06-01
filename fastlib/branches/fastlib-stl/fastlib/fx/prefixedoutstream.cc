@@ -66,8 +66,11 @@ PrefixedOutStream& PrefixedOutStream::operator<< (void* val) {
 PrefixedOutStream& PrefixedOutStream::operator<< (const char* str) {
   BaseLogic<const char*>(str);
   
+  // No need to worry about platform-independent newline characters; because
+  // stdout and stderr are text-mode streams, they do the relevant conversions
+  // automatically.
   if (strstr(str, "\n") != NULL)
-    cariageReturned = true;
+    carriageReturned = true;
 
   return *this;
 }
@@ -77,8 +80,11 @@ PrefixedOutStream& PrefixedOutStream::operator<< (std::string& str) {
   
   BaseLogic<std::string&>(str);
   
+  // No need to worry about platform-independent newline characters; because
+  // stdout and stderr are text-mode streams, they do the relevant conversions
+  // automatically.
   if (str.find("\n") != std::string::npos)
-    cariageReturned = true;
+    carriageReturned = true;
 
   return *this;
 }
@@ -90,9 +96,9 @@ PrefixedOutStream& PrefixedOutStream::operator<< (std::streambuf* sb) {
 
 PrefixedOutStream& PrefixedOutStream::operator<< 
     (std::ostream& (*pf) (std::ostream&)) {
-  //We don't want to prefix on what will show up as empty lines. 
+  // We don't want to prefix on what will show up as empty lines. 
   destination << pf;
-  cariageReturned = true;
+  carriageReturned = true;
 
   return *this;
 }
