@@ -5,7 +5,7 @@
  *                          Ryan Riegel,
  *                          Nikolaos Vasiloglou,
  *                          Dongryeol Lee,
- *                          Chip Mappus, 
+ *                          Chip Mappus,
  *                          Nishant Mehta,
  *                          Hua Ouyang,
  *                          Parikshit Ram,
@@ -82,7 +82,7 @@ extern "C" {
 #if defined(SCALE_LARGE) || defined(SCALE_NORMAL)
 #error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
 #endif
-#elif defined(SCALE_LARGE) 
+#elif defined(SCALE_LARGE)
 #if defined(SCALE_NORMAL)
 #error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
 #endif
@@ -110,25 +110,28 @@ extern "C" {
  */
 
 /**
- * Length modifier for emitting index_t with printf.
+ * Length modifier for emitting index_t with printf; presumably,
+ *   adoption of cout and cerr will obviate this check and tag
  *
  * Example:
  * @code
  *   index_t i = 42;
- *   printf("%"LI"d\n", i);
+ *   printf("%"LI"\n", i);
  * @endcode
  */
 
 #include <inttypes.h>
-#ifdef __USE_ISOC99
 typedef size_t index_t;
-# if __WORDSIZE == 64
+#if __WORDSIZE == 64
+//# ifdef __USE_ISOC99 /* presumably, these macros are the same */
+# if __STDC_VERSION__ >= 199901L
 #  define LI "zu"
 # else
-#  define LI "u"
+  /* using an older version of C */
+#  define LI "lu"
 # endif
 #else
-# error "Wrong C standard"
+# define LI "u"
 #endif
 
 /** Size of a kilobyte in bytes. */
