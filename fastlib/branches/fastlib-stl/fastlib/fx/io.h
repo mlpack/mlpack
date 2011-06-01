@@ -68,13 +68,27 @@
  * @param DEF default value of the parameter
  * @param REQ whether or not parameter is required (bool)
  */
-#define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
-    JOIN(io_option_dummy_object_, __COUNTER__) \
-    (false, DEF, ID, DESC, PARENT, REQ);
+#ifdef __COUNTER__
+  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
+      JOIN(io_option_dummy_object_, __COUNTER__) \
+      (false, DEF, ID, DESC, PARENT, REQ);
 
-#define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
-    JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, NULL);
+  #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
+      JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
+      NULL);
+#else
+  // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
+  // don't think we can absolutely guarantee success, but it should be "good
+  // enough".  We use the last bits the __LINE__ macro and the type of the
+  // parameter to try and get a good guess at something unique.
+  #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
+      JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, DESC, \
+      PARENT, REQ);
 
+  #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
+      JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
+      NULL);
+#endif
 
 namespace po = boost::program_options;
 
