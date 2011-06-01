@@ -3,9 +3,9 @@
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
-  if (cariageReturned) {
+  if (carriageReturned) {
     destination << prefix << val;
-    cariageReturned = false;
+    carriageReturned = false;
   }
   else
     destination << val;
