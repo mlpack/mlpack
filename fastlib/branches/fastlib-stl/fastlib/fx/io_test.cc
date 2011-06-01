@@ -41,6 +41,9 @@ void TestAll() {
     IO::Info << "Test Option Passed." << std::endl;
   else
     IO::Fatal << "Test Option Failed." << std::endl;
+
+  IO::Fatal << "Arbitrary failure." << std::endl;
+  IO::Warn << "Application did not terminate..." << std::endl;
 }
 
 
