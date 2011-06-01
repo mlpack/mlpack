@@ -34,7 +34,7 @@ PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
 PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
     BASH_YELLOW "[WARN ] " BASH_CLEAR);
 PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
-    BASH_RED "[FATAL] " BASH_CLEAR);
+    BASH_RED "[FATAL] " BASH_CLEAR, true /* fatal */);
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
