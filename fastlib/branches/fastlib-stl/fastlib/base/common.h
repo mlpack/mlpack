@@ -121,10 +121,16 @@ extern "C" {
  */
 
 #include <inttypes.h>
+
+#ifdef __USE_ISOC99
 typedef size_t index_t;
+#else
+#  error "Wrong C standard; size_t not defined"
+#endif
+
 #if __WORDSIZE == 64
-//# ifdef __USE_ISOC99 /* presumably, these macros are the same */
-# if __STDC_VERSION__ >= 199901L
+# ifdef __USE_ISOC99 /* presumably, these macros are the same */
+//# if __STDC_VERSION__ >= 199901L
 #  define LI "zu"
 # else
   /* using an older version of C */
