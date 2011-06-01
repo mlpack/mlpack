@@ -15,6 +15,8 @@ Printing::Printing(std::string id) {
   castingMap.insert(std::pair<std::string, Printing*>(id, this));
 }
 
+Printing::~Printing() { }
+
 void Printing::PrintValue(std::string& id, std::string& pathname) {
   //Is there a handler registered for this type?  Is that a valid pathname?
   if (!id.length() || !castingMap.count(id)) {
@@ -29,6 +31,7 @@ void Printing::PrintValue(std::string& id, std::string& pathname) {
 IntPrinter IntPrinter::tmp;
 IntPrinter::IntPrinter() : Printing(TYPENAME(int)) {
 };
+IntPrinter::~IntPrinter() { }
 
 void IntPrinter::ToString(std::string& pathname) {
   if (IO::CheckValue(pathname.c_str()))
@@ -39,6 +42,7 @@ void IntPrinter::ToString(std::string& pathname) {
 StringPrinter StringPrinter::tmp;
 StringPrinter::StringPrinter() : Printing(TYPENAME(std::string)) {
 };
+StringPrinter::~StringPrinter() { }
 
 void StringPrinter::ToString(std::string& pathname) {
   if (IO::CheckValue(pathname.c_str()))
@@ -49,6 +53,7 @@ void StringPrinter::ToString(std::string& pathname) {
 TimerPrinter TimerPrinter::tmp;
 TimerPrinter::TimerPrinter() : Printing(TYPENAME(timeval)) {
 };
+TimerPrinter::~TimerPrinter() { }
 
 void TimerPrinter::ToString(std::string& pathname) {
   if (IO::CheckValue(pathname.c_str()))

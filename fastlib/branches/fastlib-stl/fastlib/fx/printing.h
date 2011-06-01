@@ -39,6 +39,8 @@ class Printing {
    */
    Printing(std::string id);
 
+   virtual ~Printing();
+
    /* 
    * Prints the actual data 
    * 
@@ -50,13 +52,15 @@ class Printing {
  
 class IntPrinter : public Printing{
   IntPrinter();
+  virtual ~IntPrinter();
   public:
    void ToString(std::string& pathname);
    static IntPrinter tmp;
 };
  
 class StringPrinter : public Printing{
- StringPrinter();
+  StringPrinter();
+  virtual ~StringPrinter();
   public:
    void ToString(std::string& pathname);
    static StringPrinter tmp;
@@ -64,6 +68,7 @@ class StringPrinter : public Printing{
 
 class TimerPrinter : public Printing{
   TimerPrinter();
+  virtual ~TimerPrinter();
  public:
   void ToString(std::string& pathname);
   static TimerPrinter tmp;
