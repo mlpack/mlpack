@@ -1131,7 +1131,8 @@ class LocalRegressionSummary {
       right_hand_side_l_.zeros();
       right_hand_side_u_.zeros();
       pruned_l_ = 0;
-      left_hand_side_used_error_u_ = 0;
+      left_hand_side_used_error_u_ = 0.0;
+      right_hand_side_used_error_u_ = 0.0;
     }
 
     void Init() {
@@ -1147,7 +1148,8 @@ class LocalRegressionSummary {
       right_hand_side_l_.fill(std::numeric_limits<double>::max());
       right_hand_side_u_.fill(- std::numeric_limits<double>::max());
       pruned_l_ = std::numeric_limits<double>::max();
-      left_hand_side_used_error_u_ = 0;
+      left_hand_side_used_error_u_ = 0.0;
+      right_hand_side_used_error_u_ = 0.0;
     }
 
     /** @brief Accumulates the given query result into the summary
@@ -1182,7 +1184,14 @@ class LocalRegressionSummary {
         }
       }
       pruned_l_ = std::min(pruned_l_, results.pruned_[q_index]);
-      left_hand_side_used_error_u_ = std::max(left_hand_side_used_error_u_, results.left_hand_side_used_error_[q_index]);
+      left_hand_side_used_error_u_ =
+        std::max(
+          left_hand_side_used_error_u_,
+          results.left_hand_side_used_error_[q_index]);
+      right_hand_side_used_error_u_ =
+        std::max(
+          right_hand_side_used_error_u_,
+          results.right_hand_side_used_error_[q_index]);
     }
 
     template<typename GlobalType, typename LocalRegressionPostponedType>
@@ -1225,6 +1234,11 @@ class LocalRegressionSummary {
           left_hand_side_used_error_u_,
           summary_in.left_hand_side_used_error_u_ +
           postponed_in.left_hand_side_used_error_);
+      right_hand_side_used_error_u_ =
+        std::max(
+          right_hand_side_used_error_u_,
+          summary_in.right_hand_side_used_error_u_ +
+          postponed_in.right_hand_side_used_error_);
     }
 
     void ApplyDelta(const LocalRegressionDelta &delta_in) {
@@ -1265,6 +1279,9 @@ class LocalRegressionSummary {
       pruned_l_ = pruned_l_ + postponed_in.pruned_;
       left_hand_side_used_error_u_ =
         left_hand_side_used_error_u_ + postponed_in.left_hand_side_used_error_;
+      right_hand_side_used_error_u_ =
+        right_hand_side_used_error_u_ +
+        postponed_in.right_hand_side_used_error_;
     }
 };
 
