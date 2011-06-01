@@ -4,6 +4,7 @@
 #include <iostream>
 #include <streambuf>
 #include <string.h>
+#include <stdlib.h>
 
 using namespace mlpack::io;
 
