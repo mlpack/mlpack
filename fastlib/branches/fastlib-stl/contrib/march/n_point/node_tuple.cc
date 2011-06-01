@@ -91,119 +91,85 @@ void npt::NodeTuple::FindInvalidIndices_(std::vector<index_t>& inds) {
 } // FindInvalidIndices
 
 
-void npt::NodeTuple::UpdateIndices_(index_t split_ind, 
-                                    std::vector<index_t>& invalid_indices) {
-  
-  /*
-  std::cout << "\n";
-  for (index_t i = 0; i < invalid_indices.size(); i++) {
-    std::cout << "Invalid inds[" << i << "]: " << invalid_indices[i] << "\n";
-  }
-  
-  std::cout << "\n";
-  for (index_t i = 0; i < input_to_upper_.size(); i++) {
-    std::cout << "input_to_upper[" << i << "]: " << input_to_upper_[i] << "\n";
-  }
-
-  std::cout << "\n";
-  for (index_t i = 0; i < input_to_lower_.size(); i++) {
-    std::cout << "input_to_lower[" << i << "]: " << input_to_lower_[i] << "\n";
-  }
-   */
+void npt::NodeTuple::UpdateIndices_(index_t split_ind) {
   
   NptNode* new_node = node_list_[split_ind];
   
-  int split_size = -1;
+  // everything at and past new_positions[i] has been pushed back one space
+  // I'll need to consider the ordering to know how things have been pushed back
+  std::vector<index_t> new_positions_max;
+  std::vector<index_t> new_positions_min;
+  
   ind_to_split_ = -1;
+  int split_count = 0;
   
-  // iterate over the invalid indices with this
-  index_t invalid_ind = 0;
-  
-  all_leaves_ = true;
-  
-  // iterate over the entire tuple
   for (index_t i = 0; i < tuple_size_; i++) {
     
+    // check for all leaves here
     NptNode* node_i = node_list_[i];
     
-    if (!(node_i->is_leaf())) {
-      
+    if (!node_i->is_leaf()) {
       all_leaves_ = false;
-      
-      if (node_i->count() > split_size) {
-        split_size = node_i->count();
+      if (node_i->count() > split_count) {
+        split_count = node_i->count();
         ind_to_split_ = i;
       }
-      
-    } // not leaf
+    }
     
-    // don't compute the distance of the new node to itself
     if (i != split_ind) {
+
       
-      double max_dist_sq = node_i->bound().MaxDistanceSq(new_node->bound());
-      double min_dist_sq = node_i->bound().MinDistanceSq(new_node->bound());
+      double max_dist_sq = new_node->bound().MaxDistanceSq(node_i->bound());
+      double min_dist_sq = new_node->bound().MinDistanceSq(node_i->bound());
+    
+      for (index_t max_ind = 0; max_ind < sorted_upper_.size(); max_ind++) {
+        
+        if (max_dist_sq <= sorted_upper_[max_ind]) {
+          
+          sorted_upper_.insert(max_ind, max_dist_sq);
+          
+          // now, keep track of how the other indices changed
+          new_positions_max.push_back(max_ind);
+          
+          break;
+          
+        }
+        
+      } // max_ind
       
-      DRange this_range;
-      this_range.Init(min_dist_sq, max_dist_sq);
+      for (index_t min_ind = 0; min_ind < sorted_upper_.size(); min_ind++) {
+        
+        if (min_dist_sq <= sorted_lower_[min_ind]) {
+          
+          sorted_lower_.insert(min_ind, min_dist_sq);
+          
+          // now, keep track of how the other indices changed
+          new_positions_min.push_back(min_ind);
+          
+          break;
+          
+        }
+        
+      } // min_ind
       
-      index_t bad_ind = invalid_indices[invalid_ind];
-      invalid_ind++;
       
-      ranges_[bad_ind] = this_range;
-      
-      index_t upper_bad_ind = input_to_upper_[bad_ind];
-      index_t lower_bad_ind = input_to_lower_[bad_ind];
-      
-      
-      sorted_upper_[upper_bad_ind] = std::pair<double, index_t> (max_dist_sq, 
-                                                                 bad_ind);
-      sorted_lower_[lower_bad_ind] = std::pair<double, index_t> (min_dist_sq, 
-                                                                 bad_ind);
-      
-      /*
-      if (sorted_lower_[lower_bad_ind].second != lower_bad_ind) {
-        std::cout << "problem!\n";
-      }
-      sorted_upper_[upper_bad_ind] = std::pair<double, index_t> (max_dist_sq, 
-                                                                 upper_bad_ind);
-      sorted_lower_[lower_bad_ind] = std::pair<double, index_t> (min_dist_sq, 
-                                                                 lower_bad_ind);
-      */
-      
-    } // computing distances
+    } // not equal to split ind
     
   } // for i
   
-  
-  // now, resort the ordered lists
-  // TODO: can I do better than sorting the entire thing?  
-  
-  std::sort(sorted_upper_.begin(), sorted_upper_.end());
-  std::sort(sorted_lower_.begin(), sorted_lower_.end());
- 
-  /*
-  for (index_t i = 0; i < sorted_upper_.size(); i++) {
-    std::cout << "sorted_upper[" << i << "]: (";
-    std::cout << sorted_upper_[i].first << ", " << sorted_upper_[i].second;
-    std::cout << ")\n";
-  } 
-  
-  std::cout <<"\n";
-  
-  for (index_t i = 0; i < sorted_lower_.size(); i++) {
-    std::cout << "sorted_lower[" << i << "]: (";
-    std::cout << sorted_lower_[i].first << ", " << sorted_lower_[i].second;
-    std::cout << ")\n";
-  } 
-  */
-  
-  // get the new mapping to sorted indices
-  for (index_t i = 0; i < sorted_upper_.size(); i++) {
-   
-    input_to_upper_[sorted_upper_[i].second] = i;
-    input_to_lower_[sorted_lower_[i].second] = i;
+  // now handle the indices
+  for (index_t i = 0; i < tuple_size_; i++) {
+    
+    if (i == split_ind) { 
+      continue;
+    }
+    
+    // erase entry map_upper_to_sorted_(i, split_ind) + shifts from
+    // sorted_upper_
+    
     
   } // for i
+  
   
 } // UpdateIndices()
 

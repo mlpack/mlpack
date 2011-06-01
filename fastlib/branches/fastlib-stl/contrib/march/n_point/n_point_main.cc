@@ -7,6 +7,8 @@
  *
  */
 
+#include "fastlib/fastlib.h"
+
 #include "single_bandwidth_alg.h"
 #include "naive_alg.h"
 #include "perm_free_alg.h"
@@ -97,6 +99,12 @@ int main(int argc, char* argv[]) {
     std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
     
   } // perm free
+  
+  if (fx_param_exists(NULL, "do_multi")) {
+    
+    std::cout << "Not implemented yet\n";
+    
+  } // multi
   
   fx_done(NULL);
   

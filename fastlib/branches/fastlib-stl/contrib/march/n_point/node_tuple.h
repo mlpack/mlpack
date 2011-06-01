@@ -29,17 +29,20 @@ namespace npt {
     
     index_t tuple_size_;
     
-    // distance ranges in the ordering given by the tuple - unsorted
-    std::vector<DRange> ranges_;
+    // entry i, j is the distance bound for entries i and j in the list above
+    arma::mat upper_bounds_sq_;
+    arma::mat lower_bounds_sq_;
+    
+    // IMPORTANT: all the upper and lower bounds start off the same, 
+    // so this doesn't matter
+    arma::Mat<index_t> map_upper_to_sorted_;
+    arma::Mat<index_t> map_lower_to_sorted_;
     
     // sorted upper and lower node distances
-    std::vector<std::pair<double, index_t> > sorted_upper_;
-    std::vector<std::pair<double, index_t> > sorted_lower_;
+    std::vector<double> sorted_upper_;
+    std::vector<double> sorted_lower_;
     
-    // map the indices of the nodes to the positions of their distances in the
-    // sorted list
-    std::vector<index_t> input_to_upper_;
-    std::vector<index_t> input_to_lower_;
+    
     
     // this is the position of the node we should split next
     index_t ind_to_split_;
@@ -65,14 +68,13 @@ namespace npt {
     
   public:
     
-    NptNode* node_list(index_t i) {
-      return node_list_[i];
-    }
-    
-    // constructor - only use this one to make the original node tuple
+       // constructor - only use this one to make the original node tuple
     // at the start of the algorithm
     // The copy constructor will be used for the others
-    NodeTuple(std::vector<NptNode*>& list_in) {
+    NodeTuple(std::vector<NptNode*>& list_in) : 
+    upper_bounds_sq_(list_in.size()),
+    lower_bounds_sq_(list_in.size(), list_in.size()) 
+    {
       
       tuple_size_ = list_in.size();
       
@@ -83,6 +85,7 @@ namespace npt {
       ind_to_split_ = -1;
       int split_size = -1;
       all_leaves_ = true;
+      
       
       //printf("Checking for leaves\n");
       
@@ -106,17 +109,14 @@ namespace npt {
           double max_dist_sq = node_list_[i]->bound().MaxDistanceSq(node_list_[j]->bound());
           double min_dist_sq = node_list_[i]->bound().MinDistanceSq(node_list_[j]->bound());
           
-          DRange this_range;
-          this_range.Init(min_dist_sq, max_dist_sq);
-          
-          ranges_.push_back(this_range);
-          
-          index_t this_ind = ranges_.size();
+          upper_bounds_sq_(i, j) = max_dist_sq;
+          upper_bounds_sq_(j, i) = max_dist_sq;
 
-          sorted_upper_.push_back(std::pair<double, index_t> (max_dist_sq, 
-                                                             this_ind-1));
-          sorted_lower_.push_back(std::pair<double, index_t> (min_dist_sq, 
-                                                             this_ind-1));
+          lower_bounds_sq_(i, j) = min_dist_sq;
+          lower_bounds_sq_(i, j) = min_dist_sq;
+          
+          sorted_upper_.push_back(max_dist_sq);
+          sorted_lower_.push_back(min_dist_sq);
           
         } // for j
         
@@ -144,43 +144,14 @@ namespace npt {
       } 
        */
       
-      //printf("Sorted\n");
-      
-      input_to_upper_.resize(sorted_upper_.size());
-      input_to_lower_.resize(sorted_upper_.size());
-      
-      
-      
-      //printf("Sized input arrays\n");
-      
-      for (index_t i = 0; i < sorted_upper_.size(); i++) {
-        
-        input_to_upper_[sorted_upper_[i].second] = i;
-        input_to_lower_[sorted_lower_[i].second] = i;
-        
-      } // loop over pairwise distances
-      
-      /*
-      std::cout << "\n";
-      for (index_t i = 0; i < input_to_upper_.size(); i++) {
-        std::cout << "input_to_upper[" << i << "]: " << input_to_upper_[i] << "\n";
-      }
-      
-      std::cout << "\n";
-      for (index_t i = 0; i < input_to_lower_.size(); i++) {
-        std::cout << "input_to_lower[" << i << "]: " << input_to_lower_[i] << "\n";
-      }
-       */
-
       //printf("Finished\n");
       
     } // constructor (init)
     
     // use this constructor to make children in the recursion
     NodeTuple(NodeTuple& parent, bool is_left) : node_list_(parent.get_node_list()),
-    ranges_(parent.ranges()), sorted_upper_(parent.sorted_upper()), 
-    sorted_lower_(parent.sorted_lower()), input_to_upper_(parent.input_to_upper()),
-    input_to_lower_(parent.input_to_upper())
+    sorted_upper_(parent.sorted_upper()), 
+    sorted_lower_(parent.sorted_lower())
     {
       
       ind_to_split_ = parent.ind_to_split();
@@ -193,13 +164,6 @@ namespace npt {
       else {
         node_list_[ind_to_split_] = parent.node_list(ind_to_split_)->right();        
       }
-      
-      
-      
-      // now, fix the lists
-      // don't forget to make the maps back to the inputs
-      input_to_upper_.resize(sorted_upper_.size());
-      input_to_lower_.resize(sorted_lower_.size());
       
       // Not sure if this works, if not I should just call these outside
       std::vector<index_t> invalid_inds;
@@ -249,8 +213,13 @@ namespace npt {
       return ind_to_split_;
     }
     
-    //void PerformSplit(NodeTuple* left_ptr, NodeTuple* right_ptr);
+    NptNode* node_list(index_t i) {
+      return node_list_[i];
+    }
     
+    
+    
+
     bool CheckSymmetry(const std::vector<NptNode*>& nodes, int split_ind, 
                        bool is_left);
         
