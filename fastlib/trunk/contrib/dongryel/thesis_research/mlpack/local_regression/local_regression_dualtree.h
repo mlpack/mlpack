@@ -146,14 +146,15 @@ class LocalRegressionPostponed {
       right_hand_side_u_.SetZero();
 
       // Set the total number of terms.
-      int total_num_terms = rnode->count();
+      int total_num_terms = (global_in.is_monochromatic() && qnode == rnode) ?
+                            rnode->count() - 1 : rnode->count() ;
       left_hand_side_l_.set_total_num_terms(total_num_terms);
       left_hand_side_e_.set_total_num_terms(total_num_terms);
       left_hand_side_u_.set_total_num_terms(total_num_terms);
       right_hand_side_l_.set_total_num_terms(total_num_terms);
       right_hand_side_e_.set_total_num_terms(total_num_terms);
       right_hand_side_u_.set_total_num_terms(total_num_terms);
-      pruned_ = static_cast<double>(rnode->count());
+      pruned_ = static_cast<double>(total_num_terms);
 
       // Used error is zero.
       left_hand_side_used_error_ = 0.0;
@@ -283,7 +284,7 @@ class LocalRegressionPostponed {
       right_hand_side_l_.SetZero();
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
-      pruned_ = 0;
+      pruned_ = 0.0;
       left_hand_side_used_error_ = 0.0;
       right_hand_side_used_error_ = 0.0;
     }
@@ -824,7 +825,7 @@ class LocalRegressionResult {
         right_hand_side_l_[i].SetZero();
         right_hand_side_e_[i].SetZero();
         right_hand_side_u_[i].SetZero();
-        pruned_[i] = 0;
+        pruned_[i] = 0.0;
         left_hand_side_used_error_[i] = 0.0;
         right_hand_side_used_error_[i] = 0.0;
       }
@@ -927,7 +928,7 @@ class LocalRegressionDelta {
         global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
 
       // Initialize the left hand sides and the right hand sides.
-      int total_num_terms = (qnode == rnode) ?
+      int total_num_terms = (global.is_monochromatic() && qnode == rnode) ?
                             rnode->count() - 1 : rnode->count();
       left_hand_side_l_.Init(
         global.problem_dimension() ,
@@ -1130,7 +1131,7 @@ class LocalRegressionSummary {
       left_hand_side_u_.zeros();
       right_hand_side_l_.zeros();
       right_hand_side_u_.zeros();
-      pruned_l_ = 0;
+      pruned_l_ = 0.0;
       left_hand_side_used_error_u_ = 0.0;
       right_hand_side_used_error_u_ = 0.0;
     }
