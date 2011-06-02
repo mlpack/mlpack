@@ -261,7 +261,9 @@ class LocalRegressionArgumentParser {
 
       // Parse the local polynomial order.
       arguments_out->order_ = vm["order"].as<int>();
-      arguments_out->problem_dimension_ = arguments_out->order_ + 1;
+      arguments_out->problem_dimension_ =
+        (arguments_out->order_ == 0) ?
+        1 : arguments_out->reference_table_->n_attributes() + 1;
       std::cerr << "The requested local polynomial order: " <<
                 arguments_out->order_ << "\n";
 
