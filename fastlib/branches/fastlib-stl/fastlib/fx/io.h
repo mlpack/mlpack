@@ -23,22 +23,27 @@
 #include "nulloutstream.h"
 
 /* These defines facilitate the registering of command line options.  Use the
- * macro which specifies the type of the option you want to add.
+ * macro which specifies the type of the option you want to add.  Default values
+ * are not used for required parameters (since they are required).
  *
  * @param ID Name of the parameter.
  * @param DESC Quick description of the parameter.
  * @param PARENT Parent module of the parameter.
+ * @param DEF Default value of the parameter (used if the parameter is not
+ *   specified on the command line).
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_BOOL(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false, false)
-#define PARAM_INT(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, 0, false)
-#define PARAM_FLOAT(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, 0.0f \
-  , false)
-#define PARAM_STRING(ID, DESC, PARENT) PARAM(std::string, ID, DESC, PARENT, \
-    "", false)
-#define PARAM_VECTOR(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
-    PARENT, std::vector<T>(), false)
+#define PARAM_BOOL(ID, DESC, PARENT, DEF) \
+    PARAM(bool, ID, DESC, PARENT, DEF, false)
+#define PARAM_INT(ID, DESC, PARENT, DEF) \
+    PARAM(int, ID, DESC, PARENT, DEF, false)
+#define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
+    PARAM(float, ID, DESC, PARENT, DEF, false)
+#define PARAM_STRING(ID, DESC, PARENT, DEF) \
+    PARAM(std::string, ID, DESC, PARENT, DEF, false)
+#define PARAM_VECTOR(T, ID, DESC, PARENT) \
+    PARAM(std::vector<T>, ID, DESC, PARENT, std::vector<T>(), false)
 
 #define PARAM_BOOL_REQ(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false, \
   true)
