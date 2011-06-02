@@ -35,7 +35,9 @@ class TranslateToNonnegative {
         arma::vec point;
         table_in->get(i, &point);
         for(unsigned int d = 0; d < point.n_elem; d++) {
-          point[d] -= mins[d];
+          if(mins[d] < 0.0) {
+            point[d] -= mins[d];
+          }
         }
       }
     }
