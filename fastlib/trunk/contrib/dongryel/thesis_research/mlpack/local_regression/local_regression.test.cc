@@ -72,6 +72,7 @@ class TestLocalRegression {
 
     template<typename MetricType, typename TableType, typename KernelType>
     void UltraNaive_(
+      int order,
       const MetricType &metric_in,
       TableType &query_table, TableType &reference_table,
       const KernelType &kernel,
@@ -79,13 +80,16 @@ class TestLocalRegression {
 
       ultra_naive_query_results.resize(query_table.n_entries());
 
+      int problem_dimension = (order == 0) ? 1 : query_table.n_attributes() + 1;
       for(int i = 0; i < query_table.n_entries(); i++) {
         core::table::DensePoint query_point;
         query_table.get(i, &query_point);
 
         // Monte Carlo result.
-        core::monte_carlo::MeanVariancePair numerator;
-        core::monte_carlo::MeanVariancePair denominator;
+        core::monte_carlo::MeanVariancePairVector numerator;
+        core::monte_carlo::MeanVariancePairMatrix denominator ;
+        numerator.Init(problem_dimension);
+        denominator.Init(problem_dimension, problem_dimension);
 
         for(int j = 0; j < reference_table.n_entries(); j++) {
           core::table::DensePoint reference_point;
@@ -105,48 +109,89 @@ class TestLocalRegression {
             kernel.EvalUnnormOnSq(squared_distance);
 
           // Accumulate the sum.
-          numerator.push_back(reference_weight * kernel_value);
-          denominator.push_back(kernel_value);
+          numerator[0].push_back(reference_weight * kernel_value);
+          denominator.get(0, 0).push_back(kernel_value);
+          for(int n = 1; n < problem_dimension; n++) {
+            numerator[n].push_back(
+              reference_weight * kernel_value * reference_point[n - 1]);
+            denominator.get(0, n).push_back(
+              kernel_value * reference_point[n - 1]);
+            denominator.get(n, 0).push_back(
+              kernel_value * reference_point[n - 1]);
+            for(int m = 1; m < problem_dimension; m++) {
+              denominator.get(m, n).push_back(
+                kernel_value * reference_point[m - 1] *
+                reference_point[n - 1]);
+            }
+          }
+        } // end of looping over each reference point.
+
+        // Eigendecompose and solve the least squares problem.
+        arma::mat left_hand_side;
+        arma::vec right_hand_side;
+        denominator.sample_means(&left_hand_side);
+        numerator.sample_means(&right_hand_side);
+
+        // Solve the linear system.
+        arma::mat tmp_eigenvectors;
+        arma::vec tmp_eigenvalues;
+        arma::vec tmp_solution;
+        arma::eig_sym(tmp_eigenvalues, tmp_eigenvectors, left_hand_side);
+        tmp_solution.zeros(left_hand_side.n_rows);
+        for(unsigned int m = 0; m < tmp_eigenvalues.n_elem; m++) {
+          double dot_product = arma::dot(
+                                 tmp_eigenvectors.col(m),
+                                 right_hand_side);
+          if(tmp_eigenvalues[m] > 1e-6) {
+            tmp_solution +=
+              (dot_product / tmp_eigenvalues[m]) * tmp_eigenvectors.col(m);
+          }
         }
 
-        // Divide the numerator by the denominator.
-        ultra_naive_query_results[i] =
-          numerator.sample_mean() / denominator.sample_mean();
-      }
+        // Take the dot product with the solution vector to get the
+        // regression estimate.
+        ultra_naive_query_results[i] = tmp_solution[0];
+        for(unsigned int m = 1; m < tmp_solution.n_elem; m++) {
+          ultra_naive_query_results[i] += tmp_solution[m] *
+                                          query_point[m - 1];
+        }
+      } // end of looping over query point.
     }
 
   public:
 
     int StressTestMain() {
-      for(int i = 0; i < 20; i++) {
-        for(int k = 0; k < 4; k++) {
-          // Randomly choose the number of dimensions and the points.
-          mlpack::local_regression::test_local_regression::num_dimensions_ =
-            core::math::RandInt(2, 5);
-          mlpack::local_regression::test_local_regression::num_points_ =
-            core::math::RandInt(500, 1001);
+      for(int order = 0; order < 2; order++) {
+        for(int i = 0; i < 20; i++) {
+          for(int k = 0; k < 4; k++) {
+            // Randomly choose the number of dimensions and the points.
+            mlpack::local_regression::test_local_regression::num_dimensions_ =
+              core::math::RandInt(2, 5);
+            mlpack::local_regression::test_local_regression::num_points_ =
+              core::math::RandInt(500, 1001);
 
-          switch(k) {
-            case 0:
-              StressTest <
-              core::metric_kernels::GaussianKernel,
-                   core::metric_kernels::LMetric<2> > ();
-              break;
-            case 1:
-              StressTest <
-              core::metric_kernels::EpanKernel,
-                   core::metric_kernels::LMetric<2> > ();
-              break;
-            case 2:
-              StressTest <
-              core::metric_kernels::GaussianKernel,
-                   core::metric_kernels::WeightedLMetric<2> > ();
-              break;
-            case 3:
-              StressTest <
-              core::metric_kernels::EpanKernel,
-                   core::metric_kernels::WeightedLMetric<2> > ();
-              break;
+            switch(k) {
+              case 0:
+                StressTest <
+                core::metric_kernels::GaussianKernel,
+                     core::metric_kernels::LMetric<2> > (order);
+                break;
+              case 1:
+                StressTest <
+                core::metric_kernels::EpanKernel,
+                     core::metric_kernels::LMetric<2> > (order);
+                break;
+              case 2:
+                StressTest <
+                core::metric_kernels::GaussianKernel,
+                     core::metric_kernels::WeightedLMetric<2> > (order);
+                break;
+              case 3:
+                StressTest <
+                core::metric_kernels::EpanKernel,
+                     core::metric_kernels::WeightedLMetric<2> > (order);
+                break;
+            }
           }
         }
       }
@@ -154,7 +199,7 @@ class TestLocalRegression {
     }
 
     template<typename KernelType, typename MetricType>
-    int StressTest() {
+    int StressTest(int order) {
 
       typedef core::table::Table <
       core::tree::GenMetricTree <
@@ -174,6 +219,9 @@ class TestLocalRegression {
 
       // Push in the prediction output file name.
       args.push_back(std::string("--predictions_out=predictions.txt"));
+
+      // Push in the prescale option.
+      args.push_back(std::string("--prescale=none"));
 
       // Push in the kernel type.
       std::cout << "\n==================\n";
@@ -225,7 +273,7 @@ class TestLocalRegression {
 
       // Push in the order argument.
       std::stringstream order_sstr;
-      order_sstr << "--order=" << 0;
+      order_sstr << "--order=" << order;
       args.push_back(order_sstr.str());
 
       // Push in the randomly generated bandwidth.
@@ -275,6 +323,7 @@ class TestLocalRegression {
       std::vector<double> ultra_naive_local_regression_result;
 
       UltraNaive_(
+        order,
         local_regression_arguments.metric_,
         *(local_regression_arguments.reference_table_),
         *(local_regression_arguments.reference_table_),
