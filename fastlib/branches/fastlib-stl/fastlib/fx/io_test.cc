@@ -15,6 +15,7 @@ namespace mlpack {
 namespace io {
 
 PARAM(int, "gint", "global desc", "global", 42, false); 
+PARAM(int, "req", "required", "global", 23, true);
 
 bool ASSERT(bool expression, const char* msg);
 void TestAll();
@@ -42,8 +43,6 @@ void TestAll() {
   else
     IO::Fatal << "Test Option Failed." << std::endl;
 
-  IO::Fatal << "Arbitrary failure." << std::endl;
-  IO::Warn << "Application did not terminate..." << std::endl;
 }
 
 
@@ -87,10 +86,8 @@ bool TestIO() {
   IO::Info << "But now I should." << std::endl << std::endl;
 
   //Test IO::Debug 
-  IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl << std::endl;
+  IO::Debug <<"You shouldn't see this when DEBUG=OFF" << std::endl << std::endl;
 
-  //Test IO's print
-  IO::Print();
 
   return success;
 }
@@ -187,6 +184,7 @@ bool ASSERT(bool expression, const char* msg) {
 }; //namespace mlpack
 
 int main(int argc, char** argv) {
-  mlpack::IO::ParseCommandLine(argc, argv);
   mlpack::io::TestAll();
+  mlpack::IO::ParseCommandLine(argc, argv);
+  mlpack::IO::Warn << "Application did not terminate..." << std::endl;
 }

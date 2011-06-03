@@ -80,7 +80,7 @@ int main(int argc, char *argv[]) {
 
   IO::Info << "Tree(s) built." << endl;
 
-  index_t k = IO::GetValue<index_t>("allknn/k");
+  index_t k = IO::GetValue<int>("allknn/k");
   
   IO::Info << "Computing " << k << " nearest neighbors..." << endl;
   allknn->ComputeNeighbors(neighbors, distances);

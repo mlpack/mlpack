@@ -44,7 +44,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
 
   // K-nearest neighbors initialization
    if(IO::CheckValue("allknn/k"))
-    knns_ = IO::GetValue<index_t>("allknn/k");
+    knns_ = IO::GetValue<int>("allknn/k");
   else
     knns_ = 5;
 
@@ -91,7 +91,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
   else if(IO::CheckValue("allknn/leaf_size"))
-    leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
+    leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
   else
     leaf_size_ = 20;
 
@@ -100,7 +100,7 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
 
   // K-nearest neighbors initialization
   if(IO::CheckValue("allknn/k"))
-    knns_ = IO::GetValue<index_t>("allknn/k");
+    knns_ = IO::GetValue<int>("allknn/k");
   else
     knns_ = 5;
 
@@ -145,7 +145,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
    if(naive_)
      leaf_size_ = max(queries_.n_cols, references_.n_cols);
    else if(IO::CheckValue("allknn/leaf_size"))
-     leaf_size_ = IO::GetValue<index_t>("allknn/leaf_size");
+     leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
    else
      leaf_size_ = 20;
 
@@ -154,7 +154,7 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
 
    // K-nearest neighbors initialization
    if(IO::CheckValue("allknn/k"))
-     knns_ = IO::GetValue<index_t>("allknn/k");
+     knns_ = IO::GetValue<int>("allknn/k");
    else
      knns_ = 5;
 

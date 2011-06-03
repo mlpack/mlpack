@@ -212,10 +212,12 @@ void IO::ParseCommandLine(int argc, char** line) {
 
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
-    if (!CheckValue((*iter).c_str()))// If a required option isn't there...
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
+  std::string str = *iter;
+  if (!vmap.count(str))// If a required option isn't there...
       IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
           << std::endl;
+  }
 }
 
  /*
@@ -241,10 +243,11 @@ void IO::ParseStream(std::istream& stream) {
   
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++)
+  for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
     if (!CheckValue((*iter).c_str())) //If a required option isn't there...
       IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
           << std::endl;
+  }
 }
 
 /* Prints out the current heirachy */
