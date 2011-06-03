@@ -30,6 +30,8 @@ namespace arma {
   #include "arma_extend/fn_ccov.hpp"
 
   // operator overloading for IO
+  #include "arma_extend/arma_ostream_prefixed_bones.hpp"
+  #include "arma_extend/arma_ostream_prefixed_meat.hpp"
   #include "arma_extend/operator_ostream.hpp"
 };
 

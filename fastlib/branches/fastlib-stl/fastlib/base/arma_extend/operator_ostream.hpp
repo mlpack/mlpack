@@ -17,7 +17,7 @@ operator<< (mlpack::io::PrefixedOutStream& o, const Base<eT, T1>& X)
 
   const unwrap<T1> tmp(X.get_ref());
 
-  arma_ostream::print(o.destination, tmp.M, true);
+  arma_ostream_prefixed::print(o, tmp.M, true);
 
   return o;
   }
@@ -43,7 +43,7 @@ operator<< (mlpack::io::PrefixedOutStream& o,
 
   const unwrap_cube<T1> tmp(X.get_ref());
 
-  arma_ostream::print(o.destination, tmp.M, true);
+  arma_ostream_prefixed::print(o, tmp.M, true);
 
   return o;
   }
@@ -67,7 +67,7 @@ operator<< (mlpack::io::PrefixedOutStream& o, const field<T1>& X)
   {
   arma_extra_debug_sigprint();
 
-  arma_ostream::print(o.destination, X);
+  arma_ostream_prefixed::print(o, X);
 
   return o;
   }
@@ -90,7 +90,7 @@ operator<< (mlpack::io::PrefixedOutStream& o, const subview_field<T1>& X)
   {
   arma_extra_debug_sigprint();
 
-  arma_ostream::print(o.destination, X);
+  arma_ostream_prefixed::print(o, X);
 
   return o;
   }
