@@ -56,12 +56,12 @@ T& IO::GetValue(const char* identifier) {
   //Used to index into the globalValues map
   std::string key = std::string(identifier);
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
-
-  /*//If we have the option, set it's value
-  if (CheckValue(identifier) && !gmap.count(key)) {
-    gmap[key] = boost::any(GetSingleton().vmap[identifier].as<T>());
+  po::variables_map& vmap = GetSingleton().vmap;
+  //If we have the option, set it's value
+  if (vmap.count(key) && !gmap.count(key)) {
+    gmap[key] = boost::any(vmap[identifier].as<T>());
   }
-*/
+
   //We may have whatever is on the commandline, but what if
   //The programmer has made modifications?
   if (!gmap.count(key)) {//The programmer hasn't done anything, lets register it

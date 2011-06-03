@@ -104,10 +104,10 @@ class AllkNN {
   bool dual_mode_;
 
   // The number of points in a leaf
-  index_t leaf_size_;
+  int leaf_size_;
 
   // number of nearest neighbrs
-  index_t knns_;
+  int knns_;
 
   // The total number of prunes.
   index_t number_of_prunes_;
