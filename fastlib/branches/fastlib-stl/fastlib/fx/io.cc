@@ -35,6 +35,7 @@ PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
     BASH_YELLOW "[WARN ] " BASH_CLEAR);
 PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
     BASH_RED "[FATAL] " BASH_CLEAR, true /* fatal */);
+std::ostream& IO::cout = std::cout;
 
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
@@ -178,8 +179,7 @@ std::string IO::ManageHierarchy(const char* id,
 void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
-  std::list<std::string> rOpt = GetSingleton().requiredOptions;
-  std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
+  
   //Parse the command line, place the options & values into vmap
   try{ 
     po::store(po::parse_command_line(argc, line, desc), vmap);
@@ -189,35 +189,10 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
  
-  //Iterate through Gmap, and overwrite default values with anything found on 
-  //command line. 
-  std::map<std::string, boost::any>::iterator i;
-  for (i = gmap.begin(); i != gmap.end(); i++) {
-    po::variable_value tmp = vmap[i->first];
-    if (!tmp.empty()) //We need to overwrite gmap. 
-      gmap[i->first] = tmp.value();
-  }
-  
-  //Default help message
-  if (CheckValue("help")) {
-    GetSingleton().hierarchy.PrintAllHelp(); 
-    exit(0);  //The user doesn't want to run the program, he wants help. 
-  }
-  else if (CheckValue("info")) {
-    std::string str = GetValue<std::string>("info");
-    //the info node should always be there.
-    GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
-    exit(0);
-  }
-
-  //Now, warn the user if they missed any required options
-  std::list<std::string>::iterator iter;
-  for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
-  std::string str = *iter;
-  if (!vmap.count(str))// If a required option isn't there...
-      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
-          << std::endl;
-  }
+ 
+  UpdateGmap();
+  DefaultMessages();
+  RequiredOptions();
 }
 
  /*
@@ -230,7 +205,6 @@ void IO::ParseStream(std::istream& stream) {
 
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
-  std::list<std::string> rOpt = GetSingleton().requiredOptions;
   
   //Parse the stream, place options & values into vmap
   try{
@@ -241,10 +215,64 @@ void IO::ParseStream(std::istream& stream) {
   //Flush the buffer, make s ure changes are propgated to vmap
   po::notify(vmap);
   
+  UpdateGmap();
+  DefaultMessages();
+  RequiredOptions();
+}
+
+/*
+ * Parses the values given on the command line,
+ * overriding any default values.
+ */
+void IO::UpdateGmap()
+{
+  std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
+  po::variables_map& vmap = GetSingleton().vmap;
+  
+  //Iterate through Gmap, and overwrite default values with anything found on 
+  //command line. 
+  std::map<std::string, boost::any>::iterator i;
+  for (i = gmap.begin(); i != gmap.end(); i++) {
+    po::variable_value tmp = vmap[i->first];
+    if (!tmp.empty()) //We need to overwrite gmap. 
+      gmap[i->first] = tmp.value();
+  }
+}
+
+/* 
+ * Parses the parameters for 'help' and 'info' 
+ * If found, will print out the appropriate information
+ * and kill the program.
+ */
+void IO::DefaultMessages() {
+  //Default help message
+  if (CheckValue("help")) {
+    GetSingleton().hierarchy.PrintAllHelp(); 
+    exit(0);  //The user doesn't want to run the program, he wants help. 
+  }
+  else if (CheckValue("info")) {
+    std::string str = GetValue<std::string>("info");
+    //the info node should always be there.
+    GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
+    exit(0);
+  }
+}
+  
+/*
+ * Checks that all parameters specified as required 
+ * have been specified on the command line.
+ * If they havent, prints an error message and kills the
+ * program.
+ */
+void IO::RequiredOptions() {
+  po::variables_map& vmap = GetSingleton().vmap;
+  std::list<std::string> rOpt = GetSingleton().requiredOptions;
+  
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
-    if (!CheckValue((*iter).c_str())) //If a required option isn't there...
+  std::string str = *iter;
+  if (!vmap.count(str))// If a required option isn't there...
       IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
           << std::endl;
   }

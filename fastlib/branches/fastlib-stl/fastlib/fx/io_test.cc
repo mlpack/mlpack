@@ -28,6 +28,7 @@ bool TestOption();
 * @brief Runs all the other tests, printing output as appropriate.
 */
 void TestAll() {  
+  IO::StartTimer("TestTimer");
   if (TestIO())
     IO::Info << "Test IO Succeeded." << std::endl;
   else
@@ -42,7 +43,10 @@ void TestAll() {
     IO::Info << "Test Option Passed." << std::endl;
   else
     IO::Fatal << "Test Option Failed." << std::endl;
+  IO::StopTimer("TestTimer");
 
+  IO::Info << "Elapsed uSecs: " << IO::GetValue<timeval>("TestTimer").tv_usec 
+            << std::endl;
 }
 
 
@@ -81,9 +85,9 @@ bool TestIO() {
                               "IO::SanitizeString failed on 'foo/bar/fizz'");
 
   //Now lets test the output functions.  Will have to eyeball it manually.
-  IO::Info << "Test the new lines...";
-  IO::Info << "shouldn't get 'Info' here." << std::endl;
-  IO::Info << "But now I should." << std::endl << std::endl;
+  IO::Debug << "Test the new lines...";
+  IO::Debug << "shouldn't get 'Info' here." << std::endl;
+  IO::Debug << "But now I should." << std::endl << std::endl;
 
   //Test IO::Debug 
   IO::Debug <<"You shouldn't see this when DEBUG=OFF" << std::endl << std::endl;

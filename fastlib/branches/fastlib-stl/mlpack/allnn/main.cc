@@ -24,16 +24,19 @@ using namespace std;
 using namespace mlpack;
 using namespace allnn;
 
+
+PARAM_STRING_REQ("input_file", "File for input data", "allnn");
+PARAM_STRING_REQ("output_file", "File for output data", "allnn");
 int main (int argc, char *argv[]) {
 	
   IO::ParseCommandLine(argc, argv);
   arma::mat data_for_tree;
 
-  string input_file = IO::GetValue<string>("input_file");
+  string input_file = IO::GetValue<string>("allnn/input_file");
   string output_file;
 
-  if (IO::CheckValue("output_file"))
-    output_file = IO::GetValue<string>("output_file");
+  if (IO::CheckValue("allnn/output_file"))
+    output_file = IO::GetValue<string>("allnn/output_file");
   else
     output_file = "output.csv";
   

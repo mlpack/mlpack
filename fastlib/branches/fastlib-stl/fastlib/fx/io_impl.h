@@ -57,6 +57,7 @@ T& IO::GetValue(const char* identifier) {
   std::string key = std::string(identifier);
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
+
   //If we have the option, set it's value
   if (vmap.count(key) && !gmap.count(key)) {
     gmap[key] = boost::any(vmap[identifier].as<T>());
