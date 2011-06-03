@@ -40,26 +40,24 @@ std::ostream& IO::cout = std::cout;
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
 
-
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
-  
   return;
 }
 
- /* 
-   * Initialize desc with a particular name.
-   * 
-   * @param optionsName Name of the module, as far as boost is concerned.
-   */ 
+/* 
+ * Initialize desc with a particular name.
+ * 
+ * @param optionsName Name of the module, as far as boost is concerned.
+ */ 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
   return;
 }
 
 //Private copy constructor; don't want copies floating around.
-IO::IO(const IO& other) : desc(other.desc){
+IO::IO(const IO& other) : desc(other.desc) {
   return;
 }
 
@@ -70,16 +68,15 @@ IO::~IO() {
 /* Methods */
 
 /*
-   * Adds a parameter to the heirarchy. Use char* and not 
-   * std::string since the vast majority of use cases will 
-   * be literal strings.
-   * 
-   * 
-   *  @param identifier The name of the parameter.
-   * @param description Short string description of the parameter.
-   * @param parent Full pathname of a parent module, default is root node.
-   * @param required Indicates if parameter must be set on command line.
-   */
+ * Adds a parameter to the hierarchy. Use char* and not 
+ * std::string since the vast majority of use cases will 
+ * be literal strings.
+ * 
+ * @param identifier The name of the parameter.
+ * @param description Short string description of the parameter.
+ * @param parent Full pathname of a parent module, default is root node.
+ * @param required Indicates if parameter must be set on command line.
+ */
 void IO::Add(const char* identifier, 
              const char* description, 
              const char* parent, 
@@ -103,11 +100,11 @@ void IO::Add(const char* identifier,
   return;
 }
 
- /* 
-   * See if the specified flag was found while parsing. 
-   * 
-   * @param identifier The name of the parameter in question. 
-   */
+/* 
+ * See if the specified flag was found while parsing. 
+ * 
+ * @param identifier The name of the parameter in question. 
+ */
 bool IO::CheckValue(const char* identifier) {
   std::string key = std::string(identifier);
 
@@ -119,11 +116,11 @@ bool IO::CheckValue(const char* identifier) {
 }
 
 /*
-   * Grab the description of the specified node.
-   * 
-   * @param identifier Name of the node in question.
-   * @return Description of the node in question. 
-   */
+ * Grab the description of the specified node.
+ * 
+ * @param identifier Name of the node in question.
+ * @return Description of the node in question. 
+ */
 std::string IO::GetDescription(const char* identifier) {
   std::string tmp = std::string(identifier);
   OptionsHierarchy* h = GetSingleton().hierarchy.FindNode(tmp);
@@ -139,7 +136,7 @@ std::string IO::GetDescription(const char* identifier) {
 IO& IO::GetSingleton() {
   if (singleton == NULL) {
     singleton = new IO();
-    Add<std::string>("info", "get help info on a specific module", NULL, false);
+
   }
   return *singleton;
 }	
@@ -171,11 +168,11 @@ std::string IO::ManageHierarchy(const char* id,
 }
 
 /*
-   * Parses the commandline for arguments.
-   *
-   * @param argc The number of arguments on the commandline.
-   * @param argv The array of arguments as strings 
-   */
+ * Parses the commandline for arguments.
+ *
+ * @param argc The number of arguments on the commandline.
+ * @param argv The array of arguments as strings 
+ */
 void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
@@ -195,11 +192,11 @@ void IO::ParseCommandLine(int argc, char** line) {
   RequiredOptions();
 }
 
- /*
-   * Parses a stream for arguments
-   *
-   * @param stream The stream to be parsed.
-   */
+/*
+ * Parses a stream for arguments
+ *
+ * @param stream The stream to be parsed.
+ */
 void IO::ParseStream(std::istream& stream) {
   IO::Debug << "Compiled with debug checks." << std::endl;
 
@@ -247,12 +244,13 @@ void IO::UpdateGmap()
 void IO::DefaultMessages() {
   //Default help message
   if (CheckValue("help")) {
+    // A little snippet about the program itself.
     GetSingleton().hierarchy.PrintAllHelp(); 
-    exit(0);  //The user doesn't want to run the program, he wants help. 
+    exit(0); // The user doesn't want to run the program, he wants help. 
   }
   else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
-    //the info node should always be there.
+    // The info node should always be there.
     GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
     exit(0);
   }
@@ -272,8 +270,8 @@ void IO::RequiredOptions() {
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
   std::string str = *iter;
-  if (!vmap.count(str))// If a required option isn't there...
-      IO::Fatal << "Required option --" << iter->c_str() << " is undefined..."
+  if (!vmap.count(str)) // If a required option isn't there...
+      IO::Fatal << "Required option --" << iter->c_str() << " is undefined."
           << std::endl;
   }
 }
@@ -317,12 +315,12 @@ void IO::StartTimer(const char* timerName) {
   GetValue<timeval>(timerName) = tmp;
 }
       
- /* 
-   * Halts the timer, and replaces it's value with 
-   * the delta time from it's start 
-   *
-   * @param timerName The name of the timer in question.
-   */
+/* 
+ * Halts the timer, and replaces it's value with 
+ * the delta time from it's start 
+ *
+ * @param timerName The name of the timer in question.
+ */
 void IO::StopTimer(const char* timerName) {
   timeval delta, b, &a = GetValue<timeval>(timerName);  
   gettimeofday(&b, NULL);
@@ -332,5 +330,6 @@ void IO::StopTimer(const char* timerName) {
   a = delta; 
 }
 
-
-PARAM_MODULE("help", "default help info");
+// Add help parameter.
+PARAM_MODULE("help", "Default help info.");
+PARAM_STRING("info", "Get help on a specific module or option.", "", "");

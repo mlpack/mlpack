@@ -16,6 +16,11 @@ namespace io {
 
 PARAM(int, "gint", "global desc", "global", 42, false); 
 PARAM(int, "req", "required", "global", 23, true);
+PARAM_INT("something_long_long_long", "A particularly long and needlessly "
+  "verbose description ensures that my line hyphenator is working correctly "
+  "but to test we need a "
+  "really_really_really_long_long_long_long_long_long_long_long_word.", "",
+  10);
 
 bool ASSERT(bool expression, const char* msg);
 void TestAll();

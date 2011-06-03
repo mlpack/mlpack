@@ -28,68 +28,68 @@ struct OptionsData {
 
 
 class OptionsHierarchy {
-  private:
-   /* Holds all node specific data */
-   OptionsData nodeData;
+ private:
+  /* Holds all node specific data */
+  OptionsData nodeData;
 
-   /* Map of this node's children.  All children should have a
-      corresponding OptionsHierarchy, hence the references */
-   typedef std::map<std::string, OptionsHierarchy> ChildMap;
-   ChildMap children;
+  /* Map of this node's children.  All children should have a
+     corresponding OptionsHierarchy, hence the references */
+  typedef std::map<std::string, OptionsHierarchy> ChildMap;
+  ChildMap children;
   
-   /* Returns the name foo in the pathname foo/bar/fizz 
-    *
-    * @param pathname The full pathname of the parameter,
-    *   eg foo/bar in foo/bar.
-    * 
-    * @return The name of the next node in the path
-    *   eg foo in foo/bar.
-    */
-   std::string GetName(std::string& pathname);
+  /* Returns the name foo in the pathname foo/bar/fizz 
+   *
+   * @param pathname The full pathname of the parameter,
+   *   eg foo/bar in foo/bar.
+   * 
+   * @return The name of the next node in the path
+   *   eg foo in foo/bar.
+   */
+  std::string GetName(std::string& pathname);
+ 
+  /* Returns the path bar/fizz in the pathname foo/bar/fizz 
+   *
+   * @param pathname The full pathname of the parameter,
+   *   eg foo/bar in foo/bar.
+   *
+   * @return The identifiers of all nodes after the next node in the path,
+   *   eg fizz/bar in foo/fizz/bar.
+   */
+  std::string GetPath(std::string& pathname);
   
-   /* Returns the path bar/fizz in the pathname foo/bar/fizz 
-    *
-    * @param pathname The full pathname of the parameter,
-    *   eg foo/bar in foo/bar.
-    *
-    * @return The identifiers of all nodes after the next node in the path,
-    *   eg fizz/bar in foo/fizz/bar.
-    */
-   std::string GetPath(std::string& pathname);
-  
-  public:
-   /* Constructs an empty OptionsHierarchy node. */
-   OptionsHierarchy();
+ public:
+  /* Constructs an empty OptionsHierarchy node. */
+  OptionsHierarchy();
 
-   /*
+  /*
    * Constructs an empty OptionsHierarchy node
    *
    * @param name The name of the node to be created.
    */
-   OptionsHierarchy(const char* name);
+  OptionsHierarchy(const char* name);
 
-   /*
+  /*
    * Constructs an equivalent node to the given one.
    *
    * @param other The node to be copied 
    */
-   OptionsHierarchy(const OptionsHierarchy& other);
+  OptionsHierarchy(const OptionsHierarchy& other);
    
-   /* 
+  /* 
    * Destroys the node.
    */
-   ~OptionsHierarchy();
+  ~OptionsHierarchy();
   
-   /* 
+  /* 
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    * 
    * @param pathname The full pathname of the given node, eg /foo/bar.
    * @param tname A string unique to the type of the node.
    */
-   void AppendNode(std::string& pathname, std::string& tname);
+  void AppendNode(std::string& pathname, std::string& tname);
 
-   /* 
+  /* 
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    * 
@@ -97,10 +97,10 @@ class OptionsHierarchy {
    * @param tname A string unique to the type of the node.
    * @param description String description of the node.
    */
-   void AppendNode(std::string& pathname, std::string& tname,
-                   std::string& description);
+  void AppendNode(std::string& pathname, std::string& tname,
+                  std::string& description);
 
-   /* 
+  /* 
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
    * 
@@ -109,48 +109,58 @@ class OptionsHierarchy {
    * @param description String description of the node.
    * @param data Specifies all fields of the new node.
    */
-   void AppendNode(std::string& pathname, std::string& tname, 
-                   std::string& description, OptionsData& data);
+  void AppendNode(std::string& pathname, std::string& tname, 
+                  std::string& description, OptionsData& data);
   
-   /*
+  /*
    * Returns the various data associated with a node.  Passed by copy,
    * since this is only for unit testing.
    *
    * @return The data associated with the node, 
    * eg it's name, description, and value.
    */
-   OptionsData GetNodeData();
+  OptionsData GetNodeData();
 
-   /* 
-    * Will return the node associated with a pathname 
-    * 
-    * @param pathname The full pathname of the node, 
-    *   eg foo/bar in foo/bar.
-    *
-    * @return Pointer to the node with that pathname, 
-    *   null if not found.
-    */
-   OptionsHierarchy* FindNode(std::string& pathname);
-   OptionsHierarchy* FindNodeHelper(std::string& pathname, std::string& target);
+  /* 
+   * Will return the node associated with a pathname 
+   * 
+   * @param pathname The full pathname of the node, 
+   *   eg foo/bar in foo/bar.
+   *
+   * @return Pointer to the node with that pathname, 
+   *   null if not found.
+   */
+  OptionsHierarchy* FindNode(std::string& pathname);
+  OptionsHierarchy* FindNodeHelper(std::string& pathname, std::string& target);
 
-   /* Print functions */
-   //Prints a single node, and outlines relations
-   void Print();
+  /* Print functions */
+  // Prints a single node, and outlines relations
+  void Print();
 
-   //Prints all nodes, plus their data
-   void PrintAll();
-   //Prints a node and its data
-   void PrintNode();
+  // Prints all nodes, plus their data
+  void PrintAll();
+  // Prints a node and its data
+  void PrintNode();
 
-   //Prints all nodes, plus their description
-   void PrintAllHelp();
-   //Prints a node and its description
-   void PrintNodeHelp();
+  // Prints all nodes, plus their description
+  void PrintAllHelp();
+  // Prints a node and its description
+  void PrintNodeHelp();
 
-   //Prints the leaves of a node
-   void PrintLeaves();
-   //Prints the branches of a node
-   void PrintBranches();
+  // Prints the leaves of a node
+  void PrintLeaves();
+  // Prints the branches of a node
+  void PrintBranches();
+
+ private:
+  /**
+   * Hyphenate a string or split it onto multiple 80-character lines, with some
+   * amount of padding on each line.  This is used for option output.
+   *
+   * @param str String to hyphenate (splits are on ' ').
+   * @param padding Amount of padding on the left for each new line.
+   */
+  std::string HyphenateString(std::string str, int padding);
 };
 
 }; // namespace io
