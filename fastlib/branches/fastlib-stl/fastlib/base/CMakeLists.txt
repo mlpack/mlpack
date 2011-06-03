@@ -8,6 +8,8 @@ set(SOURCES
    arma_compat.h
    arma_compat.cc
    arma_extend.h
+   arma_extend/arma_ostream_prefixed_bones.hpp
+   arma_extend/arma_ostream_prefixed_meat.hpp
    arma_extend/fn_ccov.hpp
    arma_extend/glue_ccov_meat.hpp
    arma_extend/glue_ccov_proto.hpp
