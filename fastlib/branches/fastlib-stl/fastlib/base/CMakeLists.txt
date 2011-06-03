@@ -13,6 +13,10 @@ set(SOURCES
    arma_extend/glue_ccov_proto.hpp
    arma_extend/op_ccov_meat.hpp
    arma_extend/op_ccov_proto.hpp
+   arma_extend/operator_ostream.hpp
+   arma_extend/promote_type.hpp
+   arma_extend/traits.hpp
+   arma_extend/typedef.hpp
    base.h
    cc.h
    cc.cc
