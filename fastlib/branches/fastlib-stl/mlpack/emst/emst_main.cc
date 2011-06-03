@@ -12,32 +12,41 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <fastlib/fx/io.h>
+
+PARAM_BOOL("using_thor", "For when an implementation of thor is around", 
+                        "emst", 0);
+PARAM_STRING_REQ("input_file", "Data input file.", "emst");
+PARAM_STRING("output_file", "Data output file.", "emst", "emst_output.csv");
+
+PARAM_BOOL("do_naive", "Check against naive.", "naive", 1);
+PARAM_STRING("output_file", "Naive data output file.", "naive", "naive_output.csv");
+
+PARAM(double, "total_squared_length", "Calculation result.", "dtb", 0.0, false);
+
+using namespace mlpack;
 
 int main(int argc, char* argv[]) {
- 
-  fx_init(argc, argv, NULL);
- 
+  IO::ParseCommandLine(argc, argv);
+  
   // For when I implement a thor version
-  bool using_thor = fx_param_bool(NULL, "using_thor", 0);
+  bool using_thor = IO::GetValue<bool>("emst/using_thor");
   
   
   if unlikely(using_thor) {
-    printf("thor is not yet supported\n");
+    IO::Warn << "thor is not yet supported" << std::endl;
   }
   else {
       
     ///////////////// READ IN DATA ////////////////////////////////// 
     
-    const char* data_file_name = fx_param_str_req(NULL, "data");
+    std::string data_file_name = IO::GetValue<std::string>("emst/input_file");
     
     arma::mat data_points;
-    data::Load(data_file_name, data_points);
+    data::Load(data_file_name.c_str(), data_points);
     
     /////////////// Initialize DTB //////////////////////
     DualTreeBoruvka dtb;
-    //struct datanode* dtb_module = fx_submodule(NULL, "dtb", "dtb_module");
-    struct datanode* dtb_module = fx_submodule(NULL, "dtb_module");
-    dtb.Init(data_points, dtb_module);
     
     ////////////// Run DTB /////////////////////
     arma::mat results;
@@ -45,20 +54,19 @@ int main(int argc, char* argv[]) {
     dtb.ComputeMST(results);
     
     //////////////// Check against naive //////////////////////////
-    if (fx_param_bool(NULL, "do_naive", 0)) {
+    if (IO::GetValue<bool>("naive/do_naive")) {
      
       DualTreeBoruvka naive;
-      struct datanode* naive_module = fx_submodule(NULL, "naive_module");
-      fx_set_param_bool(naive_module, "do_naive", 1);
+      IO::GetValue<bool>("naive/do_naive") = true;
       
-      naive.Init(data_points, naive_module);
+      naive.Init(data_points);
       
       arma::mat naive_results;
       naive.ComputeMST(naive_results);
       
       /* Compare the naive output to the DTB output */
       
-      fx_timer_start(naive_module, "comparison");
+      IO::StartTimer("naive/comparison");
       
            
       // Check if the edge lists are the same
@@ -101,16 +109,17 @@ int main(int argc, char* argv[]) {
       */
       if (is_correct == 0) {
        
-        printf("Naive check failed!\n  Edge lists are different.\n\n");
+        IO::Warn << "Naive check failed!" << std::endl <<  
+        "Edge lists are different." << std::endl << std::endl;
+        
         // Check if the outputs have the same length
-        if (fx_get_result_double(dtb_module, "total_squared_length") !=
-            fx_get_result_double(naive_module, "total_squared_length")) { 
+        if (IO::GetValue<double>("naive/total_squared_length") !=
+           IO::GetValue<double>("naive/total_squared_length")) { 
           
-          printf("Total lengths are different!  One algorithm has failed.\n");
-          
-          fx_done(NULL);
+          IO::Fatal << "Total lengths are different! " 
+             << " One algorithm has failed." << std::endl;
+             
           return 1;
-          
         }
         else {
           // NOTE: if the edge lists are different, but the total lengths are
@@ -118,36 +127,33 @@ int main(int argc, char* argv[]) {
           // uniquely defined for some point sets.  For example, an equilateral
           // triangle has three minimum spanning trees.  It is possible for 
           // naive and DTB to find different spanning trees in this case.
-          printf("Total lengths are the same.");
-          printf("It is possible the point set"); 
-          printf("has more than one minimum spanning tree.\n");
+          IO::Info << "Total lengths are the same."; 
+          IO::Info << "It is possible the point set"; 
+          IO::Info << "has more than one minimum spanning tree." << std::endl;
         }
       
       }
       else {
-        printf("Naive and DualTreeBoruvka produced the same MST.\n\n");
+        IO::Info << "Naive and DualTreeBoruvka produced the same MST." <<
+          std::endl << std::endl;
       }
       
-      fx_timer_stop(naive_module, "comparison");
+      IO::StopTimer("naive/comparison");
       
-      const char* naive_output_filename = 
-        fx_param_str(naive_module, "output_filename", "naive_output.txt");
+      std::string naive_output_filename = 
+          IO::GetValue<std::string>("naive/output_file");
       
-      data::Save(naive_output_filename, naive_results);
+      data::Save(naive_output_filename.c_str(), naive_results);
     }
     
     //////////////// Output the Results ////////////////
     
-    const char* output_filename = 
-        fx_param_str(NULL, "output_filename", "output.txt");
-    
-    //FILE* output_file = fopen(output_filename, "w");
+    std::string output_filename = 
+        IO::GetValue<std::string>("emst/output_file");
    
-    data::Save(output_filename, results);
+    data::Save(output_filename.c_str(), results);
     
   }// end else (if using_thor)
-  
-  fx_done(NULL);
   
   return 0;
   
