@@ -141,6 +141,14 @@ class IO {
    */
    static bool CheckValue(const char* identifier);
       
+      
+  /* 
+   * Parses the parameters for 'help' and 'info' 
+   * If found, will print out the appropriate information
+   * and kill the program.
+   */
+   static void DefaultMessages();
+   
    /*
    * Grab the value of type T found while parsing.  
    * Should use checkValue first.
@@ -189,6 +197,15 @@ class IO {
    static io::PrefixedOutStream Info;
    static io::PrefixedOutStream Warn;
    static io::PrefixedOutStream Fatal;
+   static std::ostream& cout; 
+   
+  /*
+   * Checks that all parameters specified as required 
+   * have been specified on the command line.
+   * If they havent, prints an error message and kills the
+   * program.
+   */
+   static void RequiredOptions();
 
    /* Cleans up input pathnames, rendering strings such as /foo/bar
       and foo/bar/ equivalent inputs */
@@ -209,6 +226,12 @@ class IO {
    * @param timerName The name of the timer in question.
    */
    static void StopTimer(const char* timerName);
+   
+  /*
+   * Parses the values given on the command line,
+   * overriding any default values.
+   */
+   static void UpdateGmap();
 
    //Destructor
    ~IO();
