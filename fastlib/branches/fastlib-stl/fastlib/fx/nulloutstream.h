@@ -28,16 +28,16 @@ namespace io {
    *
    * @return Reference to do nothing in the future.
    */
-   NullOutStream& operator<<(bool& val);
-   NullOutStream& operator<<(short& val);
-   NullOutStream& operator<<(unsigned short& val);
-   NullOutStream& operator<<(int& val);
-   NullOutStream& operator<<(unsigned int& val);
-   NullOutStream& operator<<(long & val);
-   NullOutStream& operator<<(unsigned long& val);
-   NullOutStream& operator<<(float& val);
-   NullOutStream& operator<<(double& val);
-   NullOutStream& operator<<(long double& val);
+   NullOutStream& operator<<(bool val);
+   NullOutStream& operator<<(short val);
+   NullOutStream& operator<<(unsigned short val);
+   NullOutStream& operator<<(int val);
+   NullOutStream& operator<<(unsigned int val);
+   NullOutStream& operator<<(long val);
+   NullOutStream& operator<<(unsigned long val);
+   NullOutStream& operator<<(float val);
+   NullOutStream& operator<<(double val);
+   NullOutStream& operator<<(long double val);
    NullOutStream& operator<<(void* val);
    NullOutStream& operator<<(const char* str);
    NullOutStream& operator<<(std::string& str);

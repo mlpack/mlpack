@@ -8,46 +8,43 @@ NullOutStream::NullOutStream() { /* Nothing to do */ }
 
 NullOutStream::NullOutStream(const NullOutStream& other) { /* Nothing to do */ }
 
-NullOutStream& NullOutStream::operator<< (bool& val) {
+NullOutStream& NullOutStream::operator<< (bool val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (short& val) {
+NullOutStream& NullOutStream::operator<< (short val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (unsigned short& val) {
+NullOutStream& NullOutStream::operator<< (unsigned short val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (int& val) {
+NullOutStream& NullOutStream::operator<< (int val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (unsigned int& val) {
+NullOutStream& NullOutStream::operator<< (unsigned int val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (long& val) {
+NullOutStream& NullOutStream::operator<< (long val) {
   return *this;
 }
 
-
-NullOutStream& NullOutStream::operator<< (unsigned long& val) {
+NullOutStream& NullOutStream::operator<< (unsigned long val) {
   return *this;
 }
 
-NullOutStream& NullOutStream::operator<< (float& val) {
+NullOutStream& NullOutStream::operator<< (float val) {
   return *this;
 }
 
-
-NullOutStream& NullOutStream::operator<< (double& val) {
+NullOutStream& NullOutStream::operator<< (double val) {
   return *this;
 }
 
-
-NullOutStream& NullOutStream::operator<< (long double& val) {
+NullOutStream& NullOutStream::operator<< (long double val) {
   return *this;
 }
 
