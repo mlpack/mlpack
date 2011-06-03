@@ -52,16 +52,16 @@ class PrefixedOutStream {
    *
    * @return Reference to this object, so as to allow chained '<<' operations.
    */
-  PrefixedOutStream& operator<<(bool& val);
-  PrefixedOutStream& operator<<(short& val);
-  PrefixedOutStream& operator<<(unsigned short& val);
-  PrefixedOutStream& operator<<(int& val);
-  PrefixedOutStream& operator<<(unsigned int& val);
-  PrefixedOutStream& operator<<(long & val);
-  PrefixedOutStream& operator<<(unsigned long& val);
-  PrefixedOutStream& operator<<(float& val);
-  PrefixedOutStream& operator<<(double& val);
-  PrefixedOutStream& operator<<(long double& val);
+  PrefixedOutStream& operator<<(bool val);
+  PrefixedOutStream& operator<<(short val);
+  PrefixedOutStream& operator<<(unsigned short val);
+  PrefixedOutStream& operator<<(int val);
+  PrefixedOutStream& operator<<(unsigned int val);
+  PrefixedOutStream& operator<<(long val);
+  PrefixedOutStream& operator<<(unsigned long val);
+  PrefixedOutStream& operator<<(float val);
+  PrefixedOutStream& operator<<(double val);
+  PrefixedOutStream& operator<<(long double val);
   PrefixedOutStream& operator<<(void* val);
   PrefixedOutStream& operator<<(const char* str);
   PrefixedOutStream& operator<<(std::string& str);
@@ -69,6 +69,11 @@ class PrefixedOutStream {
   PrefixedOutStream& operator<<(std::ostream& (*pf) (std::ostream&));
   PrefixedOutStream& operator<<(std::ios& (*pf) (std::ios&));
   PrefixedOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&));
+
+  /**
+   * @brief The output stream that all data is to be sent too.  Eg, cout.
+   */
+  std::ostream& destination;
 
  private:
   /**
@@ -80,11 +85,6 @@ class PrefixedOutStream {
    */
   template<typename T>
   void BaseLogic(T val);
-
-  /**
-   * @brief The output stream that all data is to be sent too.  Eg, cout.
-   */
-  std::ostream& destination;
 
   /**
    * @brief Contains a string which will be prefixed to the output after every 

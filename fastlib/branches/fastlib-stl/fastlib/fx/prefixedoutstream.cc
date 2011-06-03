@@ -8,54 +8,53 @@
 
 using namespace mlpack::io;
 
-PrefixedOutStream& PrefixedOutStream::operator<< (bool& val) {
-  BaseLogic<bool&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (bool val) {
+  BaseLogic<bool>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (short& val) {
-  BaseLogic<short&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (short val) {
+  BaseLogic<short>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (unsigned short& val) {
- BaseLogic<unsigned short&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (unsigned short val) {
+ BaseLogic<unsigned short>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (int& val) {
-  BaseLogic<int&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (int val) {
+  BaseLogic<int>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (unsigned int& val) {
-  BaseLogic<unsigned int&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (unsigned int val) {
+  BaseLogic<unsigned int>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (long& val) {
-  BaseLogic<long&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (long val) {
+  BaseLogic<long>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (unsigned long& val) {
-  BaseLogic<unsigned long&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (unsigned long val) {
+  BaseLogic<unsigned long>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (float& val) {
-  BaseLogic<float&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (float val) {
+  BaseLogic<float>(val);
   return *this;
 }
 
-
-PrefixedOutStream& PrefixedOutStream::operator<< (double& val) {
-  BaseLogic<double&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (double val) {
+  BaseLogic<double>(val);
   return *this;
 }
 
-PrefixedOutStream& PrefixedOutStream::operator<< (long double& val) {
-  BaseLogic<long double&>(val);
+PrefixedOutStream& PrefixedOutStream::operator<< (long double val) {
+  BaseLogic<long double>(val);
   return *this;
 }
 
