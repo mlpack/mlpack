@@ -28,6 +28,9 @@ namespace arma {
   #include "arma_extend/glue_ccov_proto.hpp"
   #include "arma_extend/glue_ccov_meat.hpp"
   #include "arma_extend/fn_ccov.hpp"
+
+  // operator overloading for IO
+  #include "arma_extend/operator_ostream.hpp"
 };
 
 #endif
