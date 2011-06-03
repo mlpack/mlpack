@@ -16,19 +16,12 @@ namespace mlpack {
 namespace allknn {
 
 /**
- * Forward declaration for the tester class
- */
-class TestAllkNN;
-/**
 * Performs all-nearest-neighbors.  This class will build the trees and
 * perform the recursive  computation.
 */
 class AllkNN {
-  // Declare the tester class as a friend class so that it has access
-  // to the private members of the class
-  friend class TestAllkNN;
 
-  //////////////////////////// Nested Classes ///////////////////////////////////////////////
+  //////////////////////////// Nested Classes /////////////////////////////////
   /**
   * Extra data for each node in the tree.  For all nearest neighbors,
   * each node only
@@ -83,7 +76,7 @@ class AllkNN {
   typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
 
 
-  /////////////////////////////// Members //////////////////////////////////////////////////
+  /////////////////////////////// Members /////////////////////////////////////
  private:
   // The module containing the parameters for this computation.
   struct datanode* module_;
