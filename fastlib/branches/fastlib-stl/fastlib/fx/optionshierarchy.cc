@@ -9,7 +9,7 @@ using namespace mlpack::io;
 /* Ctors, Dtors, and R2D2 [actually, just copy-tors] */
 
 /* Constructs an empty OptionsHierarchy node. */
-OptionsHierarchy::OptionsHierarchy() {
+OptionsHierarchy::OptionsHierarchy() : children() {
   nodeData.node = "";
   nodeData.desc = "";
   nodeData.tname = "";
@@ -21,7 +21,7 @@ OptionsHierarchy::OptionsHierarchy() {
  *
  * @param name The name of the node to be created.
  */
-OptionsHierarchy::OptionsHierarchy(const char* name) {
+OptionsHierarchy::OptionsHierarchy(const char* name) : children() {
   nodeData.node = string(name);
   nodeData.desc = "";
   nodeData.tname = "";
@@ -203,12 +203,21 @@ void OptionsHierarchy::PrintAll() {
  * Prints every node and it's description.
  */
 void OptionsHierarchy::PrintAllHelp() {
-  PrintNodeHelp();
+  // Special case for the top of the hierarchy.
+  if (nodeData.node == "Allowed Options")
+    cout << "Allowed Options:" << endl << endl;
+  else
+    PrintNodeHelp();
+
+  // Now print all the children.
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     iter->second.PrintAllHelp();
   }
+  if (children.size() > 0) // If this was a module.
+    cout << endl; // Newline for separation from other modules.
 }
+
 /* Prints all children of this node which are parents */
 void OptionsHierarchy::PrintBranches() {
   map<string, OptionsHierarchy>::iterator iter;
@@ -234,7 +243,7 @@ void OptionsHierarchy::PrintLeaves() {
 }
 
 /* 
- * Prints a node and it's value.
+ * Prints a node and its value.
  */
 void OptionsHierarchy::PrintNode() {
   cout << nodeData.node << ": " ;
@@ -243,14 +252,91 @@ void OptionsHierarchy::PrintNode() {
 }
 
 /* 
- * Prints a node and it's description.
+ * Prints a node and its description.  The format is similar to that help given
+ * by the ImageMagick suite of programs.
  */
 void OptionsHierarchy::PrintNodeHelp() {
-  cout << nodeData.node << ": ";
-  if (nodeData.desc.length() > 0)
-    cout << endl << nodeData.desc;
-  else
-    cout << endl << "Undocumented module.";
-  cout << endl << endl;
+  // We want to print differently if this is a module node (i.e. if it has any
+  // children).
+  if (children.size() > 0) {
+    cout << '\'' << nodeData.node << "' module: " << endl;
+    cout << "  ";
+    if (nodeData.desc.length() > 0)
+      cout << nodeData.desc << endl << endl;
+    else
+      cout << "Undocumented module." << endl << endl;
+
+    return; // Nothing else to do.
+  }
+
+  // Name of node gets printed first, with two spaces in front.
+  // If there is a parameter, we specify that below.  We keep track of the
+  // length of what we've written.
+  cout << "  --" << nodeData.node << " ";
+  int len = 5 + nodeData.node.length();
+
+  // Perhaps this should be moved somewhere more central, as it may need to be
+  // used more than just here.
+  string value = "[value]";
+  if (nodeData.tname == TYPENAME(bool))
+    value = "";
+  else if (nodeData.tname == TYPENAME(int))
+    value = "[int]";
+  else if (nodeData.tname == TYPENAME(float))
+    value = "[float]";
+  else if (nodeData.tname == TYPENAME(std::string))
+    value = "[string]";
+
+  cout << value;
+  len += value.length();
+
+  // So, we only want to use a new line if we have used more than 30 characters
+  // already.  Descriptions start at character 30.
+  if (len < 30) {
+    cout << std::string(30 - len, ' ');
+    if (nodeData.desc.length() > 0)
+      cout << HyphenateString(nodeData.desc, 30) << endl;
+    else
+      cout << "Undocumented option." << endl;
+  } else {
+    cout << endl << std::string(30, ' ');
+    if (nodeData.desc.length() > 0)
+      cout << HyphenateString(nodeData.desc, 30) << endl;
+    else
+      cout << "Undocumented option." << endl;
+  }
 }
 
+// Hyphenate a string or split it onto multiple 80-character lines, with some
+// amount of padding on each line.
+string OptionsHierarchy::HyphenateString(string str, int padding) {
+  if (str.length() < (80 - padding))
+    return str;
+
+  string out("");
+  unsigned int pos = 0;
+
+  // First try to look as far as possible.
+  while(pos < str.length() - 1) {
+    size_t splitpos;
+    if (str.length() - pos < (80 - padding)) {
+      splitpos = str.length() - 1; // The rest fits on one line.
+    } else {
+      splitpos = str.rfind(' ', (80 - padding) + pos); // Find nearest space.
+      if (splitpos <= pos || splitpos == string::npos) // Not found.
+        splitpos = pos + (80 - padding);
+    }
+
+    out += str.substr(pos, (splitpos - pos));
+    if (splitpos != str.length() - 1) {
+      out += '\n';
+      out += string(padding, ' ');
+    }
+
+    pos = splitpos;
+    if (str[pos] == ' ')
+      pos++;
+  }
+
+  return out;
+}
