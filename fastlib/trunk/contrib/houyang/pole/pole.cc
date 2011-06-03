@@ -100,11 +100,14 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     else if (m_["method"] == "dwm_i" || m_["method"] == "dwm_a") {
       L_ = new WM;
     }
+    else if (m_["method"] == "drwm_i" || m_["method"] == "drwm_r") {
+      L_ = new RWM;
+    }
     else if (m_["method"] == "help") {
       L_ = new Learner;
     }
     else {
-      cout << "ERROR! Optimization method needs to be [ogd, ogdk, oeg, dwm_i, or dwm_a]!" << endl;
+      cout << "ERROR! Optimization method needs to be [ogd, ogdk, oeg, dwm_i, dwm_a, drwm_i or drwm_r]!" << endl;
       exit(1);
     }
   }
@@ -117,7 +120,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
   desc.add_options()
     ("help,h","Produce help message")
     ("method,m", po::value<string>(&L_->opt_name_)->default_value(""), 
-     "Optimization method [ogd, ogdk, oeg, dwm_i, or dwm_a].")
+     "Optimization method [ogd, ogdk, oeg, dwm_i, dwm_a, drwm_i, or drwm_d].")
     ("batch", po::value<bool>(&batch_)->default_value(false),
      "Online leaing or Batch learning. Default: Online.")
     ("threads", po::value<T_IDX>(&L_->n_thread_)->default_value(1), 

@@ -11,7 +11,7 @@ Log::Log(T_IDX n_thread, T_IDX n_log, T_IDX t_int,
   err_(n_thread, Vec_d(n_log, 0)),
   loss_(n_thread, Vec_f(n_log, 0.0)) {
   // init for expert-advice learners
-  if (opt_name == "dwm_i" || opt_name ==  "dwm_a") {
+  if (opt_name == "dwm_i" || opt_name ==  "dwm_a" || opt_name == "drwm_i" || opt_name ==  "drwm_r") {
     err_exp_.resize(n_expert);
     for (T_IDX i=0; i<n_expert; i++) {
       err_exp_[i] = Vec_d(n_log, 0);

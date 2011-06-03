@@ -14,6 +14,7 @@
 #include "opt_ogd_t.h"
 #include "opt_oeg.h"
 #include "opt_wm.h"
+#include "opt_rwm.h"
 
 using namespace boost::posix_time;
 
