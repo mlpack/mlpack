@@ -8,7 +8,6 @@
  */
 #include <fastlib/fastlib.h>
 #include "allknn.h"
-#include <fastlib/fx/io.h>
 
 #include <string>
 #include <errno.h>
@@ -55,8 +54,23 @@ int main(int argc, char *argv[]) {
 
   if (data::Load(reference_file.c_str(), reference_data) == SUCCESS_FAIL)
     IO::Fatal << "Reference file " << reference_file << "not found." << endl;
-
+  
   IO::Info << "Loaded reference data from " << reference_file << endl;
+  
+  // Sanity check on k value: must be greater than 0, must be less than the
+  // number of reference points.
+  int k = IO::GetValue<int>("allknn/k");
+  if ((k <= 0) || (k >= reference_data.n_cols)) {
+    IO::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
+    IO::Fatal << "than the number of reference points (";
+    IO::Fatal << reference_data.n_cols << ")." << endl;
+  }
+
+  // Sanity check on leaf size.
+  if (IO::GetValue<int>("allknn/leaf_size") <= 0) {
+    IO::Fatal << "Invalid leaf size: " << IO::GetValue<int>("allknn/leaf_size") 
+        << endl;
+  }
 
   AllkNN* allknn = NULL;
  
@@ -80,8 +94,6 @@ int main(int argc, char *argv[]) {
 
   IO::Info << "Tree(s) built." << endl;
 
-  index_t k = IO::GetValue<int>("allknn/k");
-  
   IO::Info << "Computing " << k << " nearest neighbors..." << endl;
   allknn->ComputeNeighbors(neighbors, distances);
 
@@ -97,7 +109,7 @@ int main(int argc, char *argv[]) {
   }
 
   for(index_t i = 0; i < neighbors.n_elem / k; i++) {
-    for(index_t j = 0; j < k; j++) {
+    for(int j = 0; j < k; j++) {
       fprintf(fp, "%"LI"d %"LI"d %lg\n", i, neighbors[i * k + j], distances[i * k + j]);
     }
   }
