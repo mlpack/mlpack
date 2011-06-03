@@ -16,8 +16,12 @@
 
 #include <typeinfo>
 
-#define ID_LINEAR 0
-#define ID_GAUSSIAN 1
+enum kernelEnumType
+{
+  ID_LINEAR,
+  ID_GAUSSIAN,
+  ID_END_OF_LIST
+};
 
 /**
 * Class for Linear Kernel
