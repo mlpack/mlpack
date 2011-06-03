@@ -13,6 +13,36 @@
 namespace mlpack {
 namespace local_regression {
 
+template<typename KernelType>
+class CanProbabilisticSummarizeTrait {
+  public:
+
+    template<typename MetricType, typename GlobalType>
+    static bool QuickTest(
+      const MetricType &metric_in,
+      const GlobalType &global_in,
+      const core::math::Range &squared_distance_range) {
+      return false;
+    }
+};
+
+template<>
+class CanProbabilisticSummarizeTrait<core::metric_kernels::GaussianKernel> {
+  public:
+    template<typename MetricType, typename GlobalType>
+    static bool QuickTest(
+      const MetricType &metric_in,
+      const GlobalType &global_in,
+      const core::math::Range &squared_distance_range) {
+
+      double mid_distance =
+        0.5 * (squared_distance_range.lo + squared_distance_range.hi);
+
+      return fabs(mid_distance - sqrt(global_in.kernel().bandwidth_sq())) <=
+             0.2 * mid_distance;
+    }
+};
+
 /** @brief The summary statistics for the local regression object.
  */
 class LocalRegressionSummary {
@@ -82,6 +112,14 @@ class LocalRegressionSummary {
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode,
       double failure_probability, ResultType *query_results) const {
+
+      // If there is a sufficient overlap for the bandwidth and max
+      // node distance, do Monte Carlo.
+      if(! CanProbabilisticSummarizeTrait <
+          typename GlobalType::KernelType >::QuickTest(
+            metric, global, squared_distance_range)) {
+        return false;
+      }
 
       return false;
     }
