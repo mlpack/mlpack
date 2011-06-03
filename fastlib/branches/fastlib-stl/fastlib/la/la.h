@@ -139,9 +139,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_vec, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        IO::Fatal << "Least square fit failed " << std::endl;
+        FATAL("Least square fit failed \n");
       } else {
-        IO::Warn << "Least square fit returned a warning " << std::endl;
+        NONFATAL("Least square fit returned a warning \n");
       }
     }
     return status;
@@ -164,9 +164,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        IO::Fatal << "Least square fit failed " << std::endl;
+        FATAL("Least square fit failed \n");
       } else {
-        IO::Fatal << "Least square fit returned a warning " << std::endl;
+        NONFATAL("Least square fit returned a warning \n");
       }
     }
     return status;
@@ -189,9 +189,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        IO:Fatal << "Least square fit failed " << std::endl;
+        FATAL("Least square fit failed \n");
       } else {
-        IO:Warn << "Least square fit returned a warning " << std::endl;
+        NONFATAL("Least square fit returned a warning \n");
       }
     }
     return status;
