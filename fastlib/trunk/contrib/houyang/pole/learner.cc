@@ -46,7 +46,7 @@ void Learner::ParallelLearn() {
   t_err_.resize(n_thread_);
   pthread_mutex_init(&mutex_ex_, NULL);
   // for expert-advice learning methods
-  if (opt_name_ == "dwm_i" || opt_name_ == "dwm_a") {
+  if (opt_name_ == "dwm_i" || opt_name_ == "dwm_a" || opt_name_ == "drwm_i" || opt_name_ == "drwm_r") {
     t_exp_err_.resize(n_expert_);
     for (T_IDX p=0; p<n_expert_; p++) {
       t_exp_err_[p].resize(n_thread_);

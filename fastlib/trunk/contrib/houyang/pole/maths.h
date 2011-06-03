@@ -128,7 +128,7 @@ class RandomNumber {
   }
   
   // returns a double uniformly distributed in the range [0,1)
-  inline double Random() {
+  inline double RandomUniform() {
     return gsl_rng_uniform(global_generator_);
   }
   
