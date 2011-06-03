@@ -15,6 +15,7 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <fastlib/fx/io.h>
 
 const fx_entry_doc dtb_entries[] = {
   
@@ -51,6 +52,9 @@ const fx_entry_doc dtb_entries[] = {
 FX_ENTRY_DOC_DONE
 };
 
+PARAM(index_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
+
+using namespace mlpack;
 /*
 const fx_submodule_doc dtb_submodules[] = {
 FX_SUBMODULE_DOC_DONE
@@ -588,26 +592,25 @@ class DualTreeBoruvka {
    * This module will be checked for the optional parameters "leaf_size" and 
    * "do_naive".  
    */
-  void Init(const arma::mat& data, struct datanode* mod) {
+  void Init(const arma::mat& data) {
     
     number_of_edges_ = 0;
     data_points_ = data; // copy
-    module_ = mod;
     
-    do_naive_ = fx_param_exists(module_, "do_naive");
+    do_naive_ = IO::GetValue<bool>("naive/do_naive");
     
     if (!do_naive_) {
       // Default leaf size is 1
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
-      leaf_size_ = fx_param_int(module_, "leaf_size", 1);
+      leaf_size_ = IO::GetValue<index_t>("naive/leaf_size");
       
-      fx_timer_start(module_, "tree_building");
+      IO::StartTimer("naive/tree_building");
 
       tree_ = tree::MakeKdTreeMidpoint<DTBTree>
           (data_points_, leaf_size_, old_from_new_permutation_);
       
-      fx_timer_stop(module_, "tree_building");
+      IO::StopTimer("naive/tree_building");
     }
     else {
       tree_ = NULL;
@@ -640,7 +643,7 @@ class DualTreeBoruvka {
    */
   void ComputeMST(arma::mat& results) {
     
-    fx_timer_start(module_, "MST_computation");
+    IO::StartTimer("emst/MST_computation");
     
     while (number_of_edges_ < (number_of_points_ - 1)) {
       ComputeNeighbors_();
@@ -652,7 +655,7 @@ class DualTreeBoruvka {
       VERBOSE_ONLY(printf("number_of_loops = %"LI"\n", number_of_loops_));
     }
     
-    fx_timer_stop(module_, "MST_computation");
+    IO::StopTimer("emst/MST_computation");
     
 //    if (results != NULL) {
      

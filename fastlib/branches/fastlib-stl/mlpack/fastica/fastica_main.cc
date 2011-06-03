@@ -49,46 +49,25 @@
  * Note: Compile with verbose mode to display convergence-related values
  */
 
-const fx_entry_doc fastica_main_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing data.\n"},
-  {"ic_filename", FX_PARAM, FX_STR, NULL,
-   "  Filename to which independent components are written.\n"},
-  {"unmixing_filename", FX_PARAM, FX_STR, NULL,
-   "  Filename to which unmixing matrix is written.\n"},
-  FX_ENTRY_DOC_DONE
-};
-
-const fx_submodule_doc fastica_main_submodules[] = {
-  {"fastica", &fastica_doc,
-   " Responsible for performing fastica.\n"},
-  FX_SUBMODULE_DOC_DONE
-};
-
-const fx_module_doc fastica_main_doc = {
-  fastica_main_entries, fastica_main_submodules,
-  "This program performs fastica.\n"
-};
-
-
+PARAM_STRING_REQ("input_file", "File containing input data.", "fastica");
+PARAM_STRING("ic_file", "File containing IC data.", "fastica", "ic.dat");
+PARAM_STRING("unmixing_file", "File containing unmixing data.", "fastica", "unmixing.dat");
 
 int main(int argc, char *argv[]) {
-  fx_module* root = fx_init(argc, argv, &fastica_main_doc);
-
   arma::mat X;
-  const char* data = fx_param_str_req(NULL, "data");
+  
+  IO::ParseCommandLine(argc, argv);
+  const char* data = IO::GetValue<std::string>("fastica/input_file").c_str();
   data::Load(data, X);
 
-  const char* ic_filename = fx_param_str(NULL, "ic_filename", "ic.dat");
+  const char* ic_filename = IO::GetValue<std::string>("fastica/ic_file").c_str();
   const char* unmixing_filename =
-    fx_param_str(NULL, "unmixing_filename", "unmixing.dat");
-  struct datanode* fastica_module =
-    fx_submodule(root, "fastica");
+    IO::GetValue<std::string>("fastica/unmixing_file").c_str();
 
   FastICA fastica;
 
   int success_status = SUCCESS_FAIL;
-  if(fastica.Init(X, fastica_module) == SUCCESS_PASS) {
+  if(fastica.Init(X) == SUCCESS_PASS) {
     arma::mat W, Y;
     if(fastica.DoFastICA(W, Y) == SUCCESS_PASS) {
       data::Save(unmixing_filename, trans(W));
@@ -102,8 +81,6 @@ int main(int argc, char *argv[]) {
   if(success_status == SUCCESS_FAIL) {
     VERBOSE_ONLY( printf("FAILED!\n") );
   }
-
-  fx_done(root);
 
   return success_status;
 }

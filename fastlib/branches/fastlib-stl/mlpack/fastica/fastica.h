@@ -16,6 +16,8 @@
 #define FASTICA_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
+
 #include "lin_alg.h"
 
 #include <armadillo>
@@ -28,43 +30,36 @@
 #define SYMMETRIC 0
 #define DEFLATION 1
 
-const fx_entry_doc fastica_entries[] = {
-  {"seed", FX_PARAM, FX_INT, NULL,
-   "  Seed for the random number generator.\n"},
-  {"approach", FX_PARAM, FX_STR, NULL,
-   "  Independent component recovery approach: 'deflation' or 'symmetric'.\n"},
-  {"nonlinearity", FX_PARAM, FX_STR, NULL,
-   "  Nonlinear function to use: 'logcosh', 'gauss', 'kurtosis', or 'skew'.\n"},
-  {"num_of_IC", FX_PARAM, FX_INT, NULL,
-   "  Number of independent components to find: integer between 1 and dimensionality of data.\n"},
-  {"fine_tune", FX_PARAM, FX_BOOL, NULL,
-   "  Enable fine tuning.\n"},
-  {"a1", FX_PARAM, FX_DOUBLE, NULL,
-   "  Numeric constant for logcosh nonlinearity.\n"},
-  {"a2", FX_PARAM, FX_DOUBLE, NULL,
-   "  Numeric constant for gauss nonlinearity.\n"},
-  {"mu", FX_PARAM, FX_DOUBLE, NULL,
-   "  Numeric constant for fine-tuning Newton-Raphson method.\n"},
-  {"stabilization", FX_PARAM, FX_BOOL, NULL,
-   "  Use stabilization.\n"},
-  {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
-   "  Threshold for convergence.\n"},
-  {"max_num_iterations", FX_PARAM, FX_INT, NULL,
-   "  Maximum number of iterations of fixed-point iterations.\n"},
-  {"max_fine_tune", FX_PARAM, FX_INT, NULL,
-   "  Maximum number of fine-tuning iterations.\n"},
-  {"percent_cut", FX_PARAM, FX_DOUBLE, NULL,
-   "  Number in [0,1] indicating percent data to use in stabilization updates.\n"},
-  FX_ENTRY_DOC_DONE
-};
+PARAM_INT("seed", "Seed for the random number generator.", "fastica", 0);
+PARAM_STRING("approach", 
+    "Independent component recovery approach: 'deflation' or 'symmetric'.",
+    "fastica", "deflation");
+PARAM_STRING("nonlinearity", 
+    "Nonlinear function to use: 'logcosh', 'gause', 'kurtosis', or 'skew'.",
+    "fastica", "logcosh");
+PARAM_INT("num_of_IC", 
+    "Number of independent components to find: integer between 1 and dimensionality of data.",
+    "fastica", 1);
+PARAM_BOOL("fine_tune", "Enable fine tuning.", "fastica", false);
+PARAM(double, "a1", "Numeric constant for logcosh nonlinearity", 
+            "fastica", 1.0, false);
+PARAM(double, "a2", "Numeric constant for gauss nonlinearity", 
+            "fastica", 1.0, false);
+PARAM(double, "mu", "Numeric constant for fine-tuning Newton-Raphson method.", 
+            "fastica", 1.0, false);
+PARAM_BOOL("stabilization", "Use stabilization.", "fastica", false);
+PARAM(double, "epsilon", "Threshold for convergence.", "fastica", 0.0001, false);
+PARAM_INT("max_num_iterations", 
+    "Maximum number of iterations of fixed-point iterations.", "fastica", 1000);
+PARAM_INT("max_fine_tune", "Maximum number of fine-tuning iterations.", "fastica", 5);
+PARAM(double, "percent_cut", 
+    "Number in [0,1] indicating percent data to use in stabilization updates.",
+    "fastica", 1.0, false);
 
-const fx_module_doc fastica_doc = {
-  fastica_entries, NULL,
-  "Performs fastica.\n"
-};
+PARAM_MODULE("fastica", "Performs fastica operations.");
 
 using namespace linalg__private;
-
+using namespace mlpack;
 
 /**
  * Class for running FastICA Algorithm
@@ -431,20 +426,18 @@ class FastICA {
   /**
    * Initializes the FastICA object by obtaining everything the algorithm needs
    */
-  index_t Init(arma::mat& X_in, struct datanode* module_in) {
-
-    module_ = module_in;
+  index_t Init(arma::mat& X_in) {
 
     X = X_in; 
     d = X.n_rows;
     n = X.n_cols;
 
-    long seed = fx_param_int(module_, "seed", clock() + time(0));
+    long seed = IO::GetValue<int>("fastica/seed") + clock() + time(0);
     srand48(seed);
 
     
     const char* string_approach =
-      fx_param_str(module_, "approach", "deflation");
+      IO::GetValue<std::string>("fastica/approach").c_str();
     if(strcasecmp(string_approach, "deflation") == 0) {
       VERBOSE_ONLY( printf("using Deflation approach ") );
       approach_ = DEFLATION;
@@ -459,7 +452,7 @@ class FastICA {
     }
     
     const char* string_nonlinearity =
-      fx_param_str(module_, "nonlinearity", "logcosh");
+      IO::GetValue<std::string>("fastica/nonlinearity").c_str();
     if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
       VERBOSE_ONLY( printf("with log cosh nonlinearity\n") );
       nonlinearity_ = LOGCOSH;
@@ -484,22 +477,23 @@ class FastICA {
     //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = fx_param_int(module_, "num_of_IC", d);
+    num_of_IC_ = IO::GetValue<int>("fastica/num_of_IC");
     if(num_of_IC_ < 1 || num_of_IC_ > d) {
-      printf("ERROR: num_of_IC = %"LI" must be >= 1 and <= dimensionality of data",
-            num_of_IC_);
+      IO::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<  
+          " must be >= 1 and <= dimensionality of data" << std::endl;
+      
       return SUCCESS_FAIL;
     }
 
-    fine_tune_ = fx_param_bool(module_, "fine_tune", false);
-    a1_ = fx_param_double(module_, "a1", 1);
-    a2_ = fx_param_double(module_, "a2", 1);
-    mu_ = fx_param_double(module_, "mu", 1);
-    stabilization_ = fx_param_bool(module_, "stabilization", false);
-    epsilon_ = fx_param_double(module_, "epsilon", 0.0001);
+    fine_tune_ = IO::GetValue<bool>("fastica/fine_tune");
+    a1_ = IO::GetValue<double>("fastica/a1");
+    a2_ = IO::GetValue<double>("fastica/a2");
+    mu_ = IO::GetValue<double>("fastica/mu");
+    stabilization_ = IO::GetValue<bool>("fastica/stabilization");
+    epsilon_ = IO::GetValue<double>("fastica/epsilon");
   
     index_t int_max_num_iterations =
-      fx_param_int(module_, "max_num_iterations", 1000);
+      IO::GetValue<int>("fastica/max_num_iterations");
     if(int_max_num_iterations < 0) {
       printf("ERROR: max_num_iterations = %"LI" must be >= 0\n",
 	     int_max_num_iterations);
@@ -507,7 +501,7 @@ class FastICA {
     }
     max_num_iterations_ = (index_t) int_max_num_iterations;
 
-    index_t int_max_fine_tune = fx_param_int(module_, "max_fine_tune", 5);
+    index_t int_max_fine_tune = IO::GetValue<int>("fastica/max_fine_tune");
     if(int_max_fine_tune < 0) {
       printf("ERROR: max_fine_tune = %"LI" must be >= 0\n",
 	     int_max_fine_tune);
@@ -515,7 +509,7 @@ class FastICA {
     }
     max_fine_tune_ = (index_t) int_max_fine_tune;
 
-    percent_cut_ = fx_param_double(module_, "percent_cut", 1);
+    percent_cut_ = IO::GetValue<double>("fastica/percent_cut");
     if((percent_cut_ < 0) || (percent_cut_ > 1)) {
       printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
 	     percent_cut_);
