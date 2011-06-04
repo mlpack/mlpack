@@ -48,7 +48,7 @@
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_BOOL(ID, DESC, PARENT, DEF) \
+#define PARAM_FLAG(ID, DESC, PARENT, DEF) \
     PARAM(bool, ID, DESC, PARENT, DEF, false)
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
@@ -59,8 +59,9 @@
 #define PARAM_VECTOR(T, ID, DESC, PARENT) \
     PARAM(std::vector<T>, ID, DESC, PARENT, std::vector<T>(), false)
 
-#define PARAM_BOOL_REQ(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false, \
-  true)
+// Required bool?  Probably not necessary.
+//#define PARAM_BOOL_REQ(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false,
+//  true)
 #define PARAM_INT_REQ(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, 0, true)
 #define PARAM_FLOAT_REQ(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, 0.0f, \
   true)
