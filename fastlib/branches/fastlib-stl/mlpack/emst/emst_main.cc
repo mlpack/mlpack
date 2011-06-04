@@ -14,13 +14,14 @@
 #include <fastlib/base/arma_compat.h>
 #include <fastlib/fx/io.h>
 
-PARAM_BOOL("using_thor", "For when an implementation of thor is around", 
-                        "emst", 0);
+PARAM_FLAG("using_thor", "For when an implementation of thor is around", 
+    "emst");
 PARAM_STRING_REQ("input_file", "Data input file.", "emst");
 PARAM_STRING("output_file", "Data output file.", "emst", "emst_output.csv");
 
-PARAM_BOOL("do_naive", "Check against naive.", "naive", 1);
-PARAM_STRING("output_file", "Naive data output file.", "naive", "naive_output.csv");
+PARAM_FLAG("do_naive", "Check against naive.", "naive");
+PARAM_STRING("output_file", "Naive data output file.", "naive",
+    "naive_output.csv");
 
 PARAM(double, "total_squared_length", "Calculation result.", "dtb", 0.0, false);
 
