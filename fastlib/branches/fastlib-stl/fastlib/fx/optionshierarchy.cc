@@ -211,9 +211,23 @@ void OptionsHierarchy::PrintAllHelp() {
 
   // Now print all the children.
   map<string, OptionsHierarchy>::iterator iter;
+  // First print modules.
   for (iter = children.begin(); iter != children.end(); iter++) {
-    iter->second.PrintAllHelp();
+    if (iter->second.children.size() > 0)
+      iter->second.PrintAllHelp();
   }
+
+  // Now print leaves.
+  // If this is the root node, we have to mention that these are default
+  // options.
+  if (nodeData.node == "Allowed Options")
+    cout << "Other options:" << endl << endl;
+
+  for (iter = children.begin(); iter != children.end(); iter++) {
+    if (iter->second.children.size() == 0)
+      iter->second.PrintAllHelp();
+  }
+
   if (children.size() > 0) // If this was a module.
     cout << endl; // Newline for separation from other modules.
 }
@@ -259,7 +273,10 @@ void OptionsHierarchy::PrintNodeHelp() {
   // We want to print differently if this is a module node (i.e. if it has any
   // children).
   if (children.size() > 0) {
-    cout << '\'' << nodeData.node << "' module: " << endl;
+    if (nodeData.node == "default") // Special case for default module.
+      cout << "Default options:" << endl;
+    else // Other standard module title output.
+      cout << '\'' << nodeData.node << "' module: " << endl;
     cout << "  ";
     if (nodeData.desc.length() > 0)
       cout << nodeData.desc << endl << endl;
