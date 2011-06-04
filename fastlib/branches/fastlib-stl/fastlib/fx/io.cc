@@ -9,6 +9,8 @@
 #include <sys/time.h>
 #include <execinfo.h>
 
+#include "option.h"
+#include "optionshierarchy.h"
 #include "printing.h"
 #include "nulloutstream.h"
 
@@ -40,9 +42,13 @@ std::ostream& IO::cout = std::cout;
 /* For clarity, we will alias boost's namespace */
 namespace po = boost::program_options;
 
+// Fake ProgramDoc in case none is supplied.
+static ProgramDoc empty_program_doc = ProgramDoc("", "");
+
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
-IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
+IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
+    doc(&empty_program_doc) {
   return;
 }
 
@@ -52,12 +58,13 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options") {
  * @param optionsName Name of the module, as far as boost is concerned.
  */ 
 IO::IO(std::string& optionsName) : 
-    desc(optionsName.c_str()), hierarchy(optionsName.c_str()) {
+    desc(optionsName.c_str()), hierarchy(optionsName.c_str()),
+    doc(&empty_program_doc) {
   return;
 }
 
 //Private copy constructor; don't want copies floating around.
-IO::IO(const IO& other) : desc(other.desc) {
+IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc) {
   return;
 }
 
@@ -221,8 +228,7 @@ void IO::ParseStream(std::istream& stream) {
  * Parses the values given on the command line,
  * overriding any default values.
  */
-void IO::UpdateGmap()
-{
+void IO::UpdateGmap() {
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
   
@@ -236,6 +242,19 @@ void IO::UpdateGmap()
   }
 }
 
+/**
+ * Registers a ProgramDoc object, which contains documentation about the
+ * program.
+ *
+ * @param doc Pointer to the ProgramDoc object.
+ */
+void IO::RegisterProgramDoc(ProgramDoc* doc) {
+  // Only register the doc if it is not the dummy object we created at the
+  // beginning of the file (as a default value in case this is never called).
+  if (doc != &empty_program_doc)
+    GetSingleton().doc = doc;
+}
+
 /* 
  * Parses the parameters for 'help' and 'info' 
  * If found, will print out the appropriate information
@@ -244,15 +263,24 @@ void IO::UpdateGmap()
 void IO::DefaultMessages() {
   //Default help message
   if (CheckValue("help")) {
-    // A little snippet about the program itself.
+    // A little snippet about the program itself, if we have it.
+    if (GetSingleton().doc != &empty_program_doc) {
+      cout << GetSingleton().doc->programName << std::endl << std::endl;
+      cout << "  " << OptionsHierarchy::HyphenateString(
+        GetSingleton().doc->documentation, 2) << std::endl << std::endl;
+    }
+
     GetSingleton().hierarchy.PrintAllHelp(); 
     exit(0); // The user doesn't want to run the program, he wants help. 
   }
   else if (CheckValue("info")) {
     std::string str = GetValue<std::string>("info");
-    // The info node should always be there.
-    GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
-    exit(0);
+    // The info node should always be there, but the user may not have specified
+    // anything.
+    if (str != "") {
+      GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
+      exit(0);
+    }
   }
 }
   

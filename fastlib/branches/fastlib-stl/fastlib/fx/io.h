@@ -22,7 +22,21 @@
 #include "prefixedoutstream.h"
 #include "nulloutstream.h"
 
-/* These defines facilitate the registering of command line options.  Use the
+/***
+ * This macro is used as shorthand for documenting the program.  Only one of
+ * these should be present in your program!  Therefore, use it in the main.cc
+ * (or corresponding executable) in your program.
+ *
+ * @param NAME Short string representing the name of the program.
+ * @param DESC Long string describing what the program does and possibly a
+ *     simple usage example.  Newlines should not be used here; this is taken
+ *     care of by IO.
+ */
+#define PROGRAM_INFO(NAME, DESC) static mlpack::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::ProgramDoc(NAME, DESC);
+
+/***
+ * These defines facilitate the registering of command line options.  Use the
  * macro which specifies the type of the option you want to add.  Default values
  * are not used for required parameters (since they are required).
  *
@@ -99,6 +113,10 @@ namespace po = boost::program_options;
 
 namespace mlpack {
 
+// Externally defined in option.h, this class holds information about the
+// program being run.
+class ProgramDoc;
+
 class IO {
  public:
   /*
@@ -107,7 +125,7 @@ class IO {
    * be literal strings.
    * 
    * 
-   *  @param identifier The name of the parameter.
+   * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
    * @param parent Full pathname of a parent module, default is root node.
    * @param required Indicates if parameter must be set on command line.
@@ -182,7 +200,7 @@ class IO {
    */
   static void ParseStream(std::istream& stream);
       
-  /* Prints out the current heirachy */
+  /* Prints out the current hierachy */
   static void Print();
 
 // We only use PrefixedOutStream if the program is compiled with debug symbols.
@@ -232,9 +250,20 @@ class IO {
    * overriding any default values.
    */
   static void UpdateGmap();
+  
+  /**
+   * Registers a ProgramDoc object, which contains documentation about the
+   * program.  If this method has been called before (that is, if two
+   * ProgramDocs are instantiated in the program), a fatal error will be thrown.
+   *
+   * @param doc Pointer to the ProgramDoc object.
+   */
+  static void RegisterProgramDoc(ProgramDoc* doc);
 
   // Destructor
   ~IO();
+
+
   
  private:
   // The documentation and names of options
@@ -255,7 +284,12 @@ class IO {
       
   // The singleton, obviously
   static IO* singleton;
-    
+
+ public:
+  // Pointer to the ProgramDoc object.
+  ProgramDoc *doc;
+  
+ private:  
   /* 
    * Not exposed to the outside, so as to spare users some ungainly
    * x.GetSingleton().foo() syntax.
@@ -295,9 +329,9 @@ class IO {
   IO(const IO& other);
 };
 
+}; // namespace mlpack
+
 // Include the actual definitions of templated methods 
 #include "io_impl.h"
-
-}; // namespace mlpack
 
 #endif
