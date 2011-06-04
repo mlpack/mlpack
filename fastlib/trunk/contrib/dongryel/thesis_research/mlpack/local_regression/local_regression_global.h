@@ -46,6 +46,10 @@ class LocalRegressionGlobal {
 
     typedef IncomingKernelType KernelType;
 
+    static const int min_sampling_threshold = 2000;
+
+    static const int sampling_batch_size = 20;
+
   private:
 
     /** @brief The absolute error approximation level.
@@ -78,6 +82,10 @@ class LocalRegressionGlobal {
      */
     int problem_dimension_;
 
+    /** @brief The number of random features to use.
+     */
+    int num_random_features_;
+
     /** @brief The query table.
      */
     TableType *query_table_;
@@ -90,7 +98,34 @@ class LocalRegressionGlobal {
      */
     bool is_monochromatic_;
 
+    /** @brief The temporary space for marking convergence of each
+     *         query.
+     */
+    std::deque<bool> converged_flags_;
+
+    /** @brief The temporary space for accumulating Monte Carlo
+     *         samples for the left hand side for each query.
+     */
+    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
+    tmp_left_hand_sides_;
+
+    /** @brief The temporary space for accumulating Monte Carlo
+     *         samples for the right hand side for each query.
+     */
+    boost::scoped_array< core::monte_carlo::MeanVariancePairVector >
+    tmp_right_hand_sides_;
+
   public:
+
+    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix > &
+    tmp_left_hand_sides() {
+      return tmp_left_hand_sides_;
+    }
+
+    boost::scoped_array< core::monte_carlo::MeanVariancePairVector > &
+    tmp_right_hand_sides() {
+      return tmp_right_hand_sides_;
+    }
 
     /** @brief Tells whether the given squared distance range is
      *         sufficient for pruning for any pair of query/reference
@@ -106,6 +141,10 @@ class LocalRegressionGlobal {
 
     int problem_dimension() const {
       return problem_dimension_;
+    }
+
+    std::deque<bool> &converged_flags() {
+      return converged_flags_;
     }
 
     /** @brief Returns whether the computation is monochromatic or
@@ -147,6 +186,7 @@ class LocalRegressionGlobal {
       adjusted_relative_error_ = 0.0;
       probability_ = 1.0;
       problem_dimension_ = 1;
+      num_random_features_ = 0;
       effective_num_reference_points_ = 0.0;
       query_table_ = NULL;
       reference_table_ = NULL;
@@ -219,6 +259,12 @@ class LocalRegressionGlobal {
       return kernel_;
     }
 
+    /** @brief Returns the number of random features to sample.
+     */
+    int num_random_features() const {
+      return num_random_features_;
+    }
+
     /** @brief Initializes the local regression global object.
      */
     template<typename ArgumentType>
@@ -243,9 +289,30 @@ class LocalRegressionGlobal {
 
       // Set the problem dimension.
       problem_dimension_ = arguments_in.problem_dimension_;
+
+      // Set the number of random features to use.
+      num_random_features_ = std::min(
+                               reference_table_->n_attributes() + 5, 20);
+
+      // Allocate the space for storing the convergence flags.
+      converged_flags_.resize(query_table_->n_entries());
+      for(unsigned int i = 0; i < converged_flags_.size(); i++) {
+        converged_flags_[i] = false;
+      }
+
+      // Allocate temporary spaces for Monte Carlo accumulations.
+      boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
+      scratch_left_hand_sides(
+        new core::monte_carlo::MeanVariancePairMatrix[
+          query_table_->n_entries()]);
+      tmp_left_hand_sides_.swap(scratch_left_hand_sides);
+      boost::scoped_array< core::monte_carlo::MeanVariancePairVector >
+      scratch_right_hand_sides(
+        new core::monte_carlo::MeanVariancePairVector[
+          query_table_->n_entries()]);
+      tmp_right_hand_sides_.swap(scratch_right_hand_sides);
     }
 };
-
 }
 }
 

@@ -10,6 +10,8 @@
 #ifndef MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_SUMMARY_H
 #define MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_SUMMARY_H
 
+#include "mlpack/local_regression/local_regression_sampling.h"
+
 namespace mlpack {
 namespace local_regression {
 
@@ -17,11 +19,12 @@ template<typename KernelType>
 class CanProbabilisticSummarizeTrait {
   public:
 
-    template<typename MetricType, typename GlobalType>
+    template<typename MetricType, typename GlobalType, typename TreeType>
     static bool QuickTest(
       const MetricType &metric_in,
       const GlobalType &global_in,
-      const core::math::Range &squared_distance_range) {
+      const core::math::Range &squared_distance_range,
+      TreeType *rnode) {
       return false;
     }
 };
@@ -29,17 +32,23 @@ class CanProbabilisticSummarizeTrait {
 template<>
 class CanProbabilisticSummarizeTrait<core::metric_kernels::GaussianKernel> {
   public:
-    template<typename MetricType, typename GlobalType>
+    template<typename MetricType, typename GlobalType, typename TreeType>
     static bool QuickTest(
       const MetricType &metric_in,
       const GlobalType &global_in,
-      const core::math::Range &squared_distance_range) {
+      const core::math::Range &squared_distance_range,
+      TreeType *rnode) {
 
       double mid_distance =
         0.5 * (squared_distance_range.lo + squared_distance_range.hi);
 
+      // Disabled until the probabilistic sampling works.
+      return false;
+      /*
       return fabs(mid_distance - sqrt(global_in.kernel().bandwidth_sq())) <=
-             0.2 * mid_distance;
+             0.2 * mid_distance &&
+             rnode->count() >= GlobalType::min_sampling_threshold;
+      */
     }
 };
 
@@ -117,11 +126,56 @@ class LocalRegressionSummary {
       // node distance, do Monte Carlo.
       if(! CanProbabilisticSummarizeTrait <
           typename GlobalType::KernelType >::QuickTest(
-            metric, global, squared_distance_range)) {
+            metric, global, squared_distance_range, rnode)) {
         return false;
       }
 
-      return false;
+      // The iterators for the query node and the reference node.
+      typename GlobalType::TableType::TreeIterator qnode_it =
+        global.query_table()->get_node_iterator(qnode);
+      typename GlobalType::TableType::TreeIterator rnode_it =
+        global.reference_table()->get_node_iterator(rnode);
+
+      // Declare the sampling object.
+      LocalRegressionSampling sampling;
+      sampling.Init(global, qnode_it);
+
+      // More temporary variables.
+      arma::vec random_variate;
+
+      // Repeat until all queries are converged.
+      do {
+
+        // The convergence flag.
+        bool converged = true;
+
+        for(int f = 0; f < global.num_random_features(); f++) {
+
+          // Reset the accumulants.
+          sampling.Reset(rnode_it);
+
+          // Generate a random feature.
+          global.kernel().DrawRandomVariate(
+            rnode_it.table()->n_attributes(), & random_variate);
+
+          // Accumulate for the current random feature.
+          sampling.push_back_reference_contributions(
+            global, random_variate, rnode_it);
+
+          // Now loop over each query point and accumulate the averages.
+          sampling.AccumulateContributions(global, random_variate, qnode_it);
+
+
+        } // end of looping over each random Fourier feature.
+
+        // If converged, break.
+        if(converged) {
+          break;
+        }
+      }
+      while(true);
+
+      return true;
     }
 
     template < typename GlobalType, typename DeltaType, typename TreeType,
