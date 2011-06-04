@@ -31,6 +31,9 @@ class LengthTrait {
     static int length(const PointType &p);
 };
 
+/** @brief The trait class for returning the underlying pointer of a
+ *         point-like object.
+ */
 template<typename PointType>
 class PointerTrait {
   public:

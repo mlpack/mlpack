@@ -205,6 +205,14 @@ class Table {
           table_->iterator_get_(pre_translated_dfs_id, entry);
         }
 
+        template<typename IncomingPointType>
+        void RandomPick(
+          IncomingPointType *entry, int *point_id, double *weight) {
+          int pre_translated_dfs_id = core::math::RandInt(begin_, end_);
+          *point_id = table_->iterator_get_id_(pre_translated_dfs_id);
+          table_->iterator_get_(pre_translated_dfs_id, entry, weight);
+        }
+
         void Reset() {
           current_index_ = begin_ - 1;
         }
