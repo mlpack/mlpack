@@ -48,8 +48,8 @@
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_FLAG(ID, DESC, PARENT, DEF) \
-    PARAM(bool, ID, DESC, PARENT, DEF, false)
+#define PARAM_FLAG(ID, DESC, PARENT) \
+    PARAM(bool, ID, DESC, PARENT, false, false)
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
