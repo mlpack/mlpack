@@ -1,6 +1,10 @@
 #ifndef MLPACK_IO_OPTION_IMPL_H
 #define MLPACK_IO_OPTION_IMPL_H
 
+#include "io.h"
+
+namespace mlpack {
+
 /*
  * @brief Registers a parameter with IO.  
  *    This allows the registration of parameters at program start.
@@ -22,5 +26,7 @@ Option<N>::Option(bool ignoreTemplate,
     IO::GetValue<N>(pathname.c_str()) = defaultValue;
   }
 }
+
+}; // namespace mlpack
 
 #endif 

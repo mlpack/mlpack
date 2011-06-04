@@ -152,7 +152,6 @@ class OptionsHierarchy {
   // Prints the branches of a node
   void PrintBranches();
 
- private:
   /**
    * Hyphenate a string or split it onto multiple 80-character lines, with some
    * amount of padding on each line.  This is used for option output.
@@ -160,9 +159,10 @@ class OptionsHierarchy {
    * @param str String to hyphenate (splits are on ' ').
    * @param padding Amount of padding on the left for each new line.
    */
-  std::string HyphenateString(std::string str, int padding);
+  static std::string HyphenateString(std::string str, int padding);
 };
 
 }; // namespace io
 }; // namespace mlpack
+
 #endif

@@ -307,8 +307,13 @@ void OptionsHierarchy::PrintNodeHelp() {
   }
 }
 
-// Hyphenate a string or split it onto multiple 80-character lines, with some
-// amount of padding on each line.
+/**
+ * Hyphenate a string or split it onto multiple 80-character lines, with some
+ * amount of padding on each line.  This is used for option output.
+ *
+ * @param str String to hyphenate (splits are on ' ').
+ * @param padding Amount of padding on the left for each new line.
+ */
 string OptionsHierarchy::HyphenateString(string str, int padding) {
   if (str.length() < (80 - padding))
     return str;
@@ -320,7 +325,7 @@ string OptionsHierarchy::HyphenateString(string str, int padding) {
   while(pos < str.length() - 1) {
     size_t splitpos;
     if (str.length() - pos < (80 - padding)) {
-      splitpos = str.length() - 1; // The rest fits on one line.
+      splitpos = str.length(); // The rest fits on one line.
     } else {
       splitpos = str.rfind(' ', (80 - padding) + pos); // Find nearest space.
       if (splitpos <= pos || splitpos == string::npos) // Not found.

@@ -4,6 +4,8 @@
 //Include option.h here because it requires IO but is also templated
 #include "option.h"
 
+namespace mlpack {
+
 /**
 * @brief Adds a parameter to IO, making 
 *   it accessibile via GetValue & CheckValue.
@@ -72,5 +74,7 @@ T& IO::GetValue(const char* identifier) {
   tmp =*boost::any_cast<T>(&gmap[key]);
   return *boost::any_cast<T>(&gmap[key]);
 }
+
+}; // namespace mlpack
 
 #endif 

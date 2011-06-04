@@ -13,6 +13,9 @@ set(SOURCES
    io.h
    io_impl.h
    io.cc
+   option.h
+   option_impl.h
+   option.cc
    optionshierarchy.h
    optionshierarchy.cc
    printing.h
@@ -31,21 +34,11 @@ endforeach()
 
 # test executable
 add_executable(io_test
-   io.h
-   io_impl.h
-   io.cc
-   optionshierarchy.h
-   optionshierarchy.cc
    io_test.cc
-   printing.h
-   printing.cc
-   nulloutstream.h
-   nulloutstream.cc
-   prefixedoutstream.h
-   prefixedoutstream.cc
 )
 # link dependencies of test executable
 target_link_libraries(io_test
+   fastlib
    boost_program_options
 )
 

@@ -14,6 +14,10 @@
 namespace mlpack {
 namespace io {
 
+PROGRAM_INFO("MLPACK IO Test",
+  "This is a simple test of the IO framework for input options and timers.  "
+  "This particular text can be seen if you type --help.")
+
 PARAM(int, "gint", "global desc", "global", 42, false); 
 PARAM(int, "req", "required", "global", 23, true);
 PARAM_INT("something_long_long_long", "A particularly long and needlessly "
