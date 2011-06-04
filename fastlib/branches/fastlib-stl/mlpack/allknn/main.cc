@@ -26,9 +26,9 @@ PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
     "allknn");
 PARAM_INT("k", "Number of nearest neighbors to compute.", "allknn", 5);
 PARAM_INT("leaf_size", "Leaf size for kd-tree calculation.", "allknn", 20);
-PARAM_BOOL("single_mode", "If true, use single-tree mode (instead of " 
+PARAM_FLAG("single_mode", "If true, use single-tree mode (instead of " 
     "dual-tree).", "allknn", false);
-PARAM_BOOL("naive_mode", "If true, use naive computation (no trees).  This "
+PARAM_FLAG("naive_mode", "If true, use naive computation (no trees).  This "
     "overrides single_mode.", "allknn", false);
 
 using namespace mlpack;
