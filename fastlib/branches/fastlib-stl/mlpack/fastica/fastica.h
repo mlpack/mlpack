@@ -40,14 +40,14 @@ PARAM_STRING("nonlinearity",
 PARAM_INT("num_of_IC", 
     "Number of independent components to find: integer between 1 and dimensionality of data.",
     "fastica", 1);
-PARAM_BOOL("fine_tune", "Enable fine tuning.", "fastica", false);
+PARAM_FLAG("fine_tune", "Enable fine tuning.", "fastica");
 PARAM(double, "a1", "Numeric constant for logcosh nonlinearity", 
             "fastica", 1.0, false);
 PARAM(double, "a2", "Numeric constant for gauss nonlinearity", 
             "fastica", 1.0, false);
 PARAM(double, "mu", "Numeric constant for fine-tuning Newton-Raphson method.", 
             "fastica", 1.0, false);
-PARAM_BOOL("stabilization", "Use stabilization.", "fastica", false);
+PARAM_FLAG("stabilization", "Use stabilization.", "fastica");
 PARAM(double, "epsilon", "Threshold for convergence.", "fastica", 0.0001, false);
 PARAM_INT("max_num_iterations", 
     "Maximum number of iterations of fixed-point iterations.", "fastica", 1000);
