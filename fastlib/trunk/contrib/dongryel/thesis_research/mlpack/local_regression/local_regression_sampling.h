@@ -1,5 +1,6 @@
 /** @file local_regression_sampling.h
  *
+ *  Used for Monte Carlo sampling in local regression computation.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -14,6 +15,8 @@
 
 namespace mlpack {
 namespace local_regression {
+
+template<typename DeltaType, typename SummaryType>
 class LocalRegressionSampling {
 
   private:
@@ -26,11 +29,7 @@ class LocalRegressionSampling {
         core::monte_carlo::MeanVariancePairVector >
         avg_right_hand_side_for_reference_;
 
-    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
-    *tmp_left_hand_sides_;
-
-    boost::scoped_array< core::monte_carlo::MeanVariancePairVector >
-    *tmp_right_hand_sides_;
+    boost::scoped_array< DeltaType > *query_deltas_;
 
     std::deque<bool> *converged_flags_;
 
@@ -94,39 +93,8 @@ class LocalRegressionSampling {
       }
     }
 
-  public:
-
     template<typename GlobalType, typename TreeIteratorType>
-    void Init(GlobalType &global, TreeIteratorType &qnode_it) {
-
-      avg_left_hand_side_for_reference_.first.Init(
-        global.problem_dimension(), global.problem_dimension());
-      avg_left_hand_side_for_reference_.second.Init(
-        global.problem_dimension(), global.problem_dimension());
-      avg_right_hand_side_for_reference_.first.Init(
-        global.problem_dimension());
-      avg_right_hand_side_for_reference_.second.Init(
-        global.problem_dimension());
-
-      tmp_left_hand_sides_ = &(global.tmp_left_hand_sides());
-      tmp_right_hand_sides_ = &(global.tmp_right_hand_sides());
-      converged_flags_ = &(global.converged_flags());
-
-      // First, initialize the query convergence slots.
-      qnode_it.Reset();
-      do {
-        int qpoint_id;
-        qnode_it.Next(&qpoint_id);
-        (*converged_flags_)[qpoint_id] = false;
-        (*tmp_left_hand_sides_)[qpoint_id].SetZero();
-        (*tmp_right_hand_sides_)[qpoint_id].SetZero();
-      }
-      while(qnode_it.HasNext());
-      qnode_it.Reset();
-    }
-
-    template<typename GlobalType, typename TreeIteratorType>
-    void push_back_reference_contributions(
+    void push_back_reference_contributions_(
       GlobalType &global,
       const arma::vec &random_variate, TreeIteratorType &rnode_it) {
 
@@ -148,10 +116,85 @@ class LocalRegressionSampling {
       } // end of looping over each reference sample.
     }
 
+  public:
+
+    template <
+    typename GlobalType,
+             typename PostponedType,
+             typename TreeIteratorType,
+             typename ResultType >
+    bool Converged(
+      const GlobalType &global,
+      const PostponedType &postponed,
+      const DeltaType &delta,
+      ResultType *query_results,
+      TreeIteratorType &qnode_it,
+      double num_standard_deviations) {
+
+      bool all_converged = true;
+      qnode_it.Reset();
+      do {
+
+        int qpoint_id;
+        qnode_it.Next(&qpoint_id);
+
+        // If already converged, then skip.
+        if((*converged_flags_)[qpoint_id]) {
+          continue;
+        }
+
+        // Get the lower bound on the left and the right hand sides.
+        SummaryType query_summary;
+        query_summary.StartReaccumulate();
+        query_summary.Accumulate(global, *query_results, qpoint_id);
+        query_summary.ApplyPostponed(postponed);
+        query_summary.ApplyDelta((*query_deltas_)[qpoint_id]);
+
+        bool query_converged = false ;
+        all_converged = all_converged && query_converged;
+
+      }
+      while(qnode_it.HasNext());
+      return all_converged;
+    }
+
+    template<typename GlobalType, typename TreeIteratorType>
+    void Init(GlobalType &global, TreeIteratorType &qnode_it) {
+
+      avg_left_hand_side_for_reference_.first.Init(
+        global.problem_dimension(), global.problem_dimension());
+      avg_left_hand_side_for_reference_.second.Init(
+        global.problem_dimension(), global.problem_dimension());
+      avg_right_hand_side_for_reference_.first.Init(
+        global.problem_dimension());
+      avg_right_hand_side_for_reference_.second.Init(
+        global.problem_dimension());
+
+      query_deltas_ = &(global.query_deltas());
+      converged_flags_ = &(global.converged_flags());
+
+      // First, initialize the query convergence slots.
+      qnode_it.Reset();
+      do {
+        int qpoint_id;
+        qnode_it.Next(&qpoint_id);
+        (*query_deltas_)[qpoint_id].SetZero();
+        (*converged_flags_)[qpoint_id] = false;
+      }
+      while(qnode_it.HasNext());
+      qnode_it.Reset();
+    }
+
     template<typename GlobalType, typename TreeIteratorType>
     void AccumulateContributions(
       const GlobalType &global,
-      const arma::vec &random_variate, TreeIteratorType &qnode_it) {
+      const arma::vec &random_variate,
+      TreeIteratorType &qnode_it,
+      TreeIteratorType &rnode_it) {
+
+      // Accumulate for the current random feature.
+      this->push_back_reference_contributions_(
+        global, random_variate, rnode_it);
 
       qnode_it.Reset();
       do {
@@ -168,28 +211,12 @@ class LocalRegressionSampling {
         double scaled_sine_value = 2.0 * sin(dot_product);
 
         // Accumulate the contribution in this round.
-        for(int j = 0; j < global.problem_dimension(); j++) {
-          (*tmp_right_hand_sides_)[
-            qpoint_id][j].ScaledCombineWith(
-              scaled_cosine_value,
-              avg_right_hand_side_for_reference_.first[j]);
-          (*tmp_right_hand_sides_)[
-            qpoint_id][j].ScaledCombineWith(
-              scaled_sine_value,
-              avg_right_hand_side_for_reference_.second[j]);
-
-          for(int i = 0; i < global.problem_dimension(); i++) {
-            (*tmp_left_hand_sides_)[
-              qpoint_id].get(i, j).ScaledCombineWith(
-                scaled_cosine_value,
-                avg_left_hand_side_for_reference_.first.get(i, j));
-            (*tmp_left_hand_sides_)[
-              qpoint_id].get(i, j).ScaledCombineWith(
-                scaled_sine_value,
-                avg_left_hand_side_for_reference_.second.get(i, j));
-          }
-        }
-
+        (*query_deltas_)[qpoint_id].push_back(
+          global,
+          scaled_cosine_value,
+          scaled_sine_value,
+          avg_left_hand_side_for_reference_,
+          avg_right_hand_side_for_reference_);
       }
       while(qnode_it.HasNext());
     }

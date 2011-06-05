@@ -34,6 +34,11 @@ class LocalRegressionDelta {
 
     double right_hand_side_used_error_;
 
+    /** @brief The pointer to the scratch space for accumulating each
+     *         query's Monte Carlo result.
+     */
+    boost::scoped_array< LocalRegressionDelta > *query_deltas_;
+
     LocalRegressionDelta() {
       SetZero();
     }
@@ -46,6 +51,38 @@ class LocalRegressionDelta {
       right_hand_side_e_.SetZero();
       right_hand_side_u_.SetZero();
       pruned_ = left_hand_side_used_error_ = right_hand_side_used_error_ = 0.0;
+      query_deltas_ = NULL;
+    }
+
+    template<typename GlobalType>
+    void push_back(
+      const GlobalType &global,
+      double scaled_cosine_value,
+      double scaled_sine_value,
+      const std::pair < core::monte_carlo::MeanVariancePairMatrix,
+      core::monte_carlo::MeanVariancePairMatrix >
+      &avg_left_hand_side_for_reference,
+      const std::pair < core::monte_carlo::MeanVariancePairVector,
+      core::monte_carlo::MeanVariancePairVector >
+      &avg_right_hand_side_for_reference) {
+
+      for(int j = 0; j < global.problem_dimension(); j++) {
+        right_hand_side_e_[j].ScaledCombineWith(
+          scaled_cosine_value,
+          avg_right_hand_side_for_reference.first[j]);
+        right_hand_side_e_[j].ScaledCombineWith(
+          scaled_sine_value,
+          avg_right_hand_side_for_reference.second[j]);
+
+        for(int i = 0; i < global.problem_dimension(); i++) {
+          left_hand_side_e_.get(i, j).ScaledCombineWith(
+            scaled_cosine_value,
+            avg_left_hand_side_for_reference.first.get(i, j));
+          left_hand_side_e_.get(i, j).ScaledCombineWith(
+            scaled_sine_value,
+            avg_left_hand_side_for_reference.second.get(i, j));
+        }
+      }
     }
 
     template<typename MetricType, typename GlobalType, typename TreeType>
