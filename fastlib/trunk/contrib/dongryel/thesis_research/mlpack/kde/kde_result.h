@@ -22,11 +22,6 @@ class KdeResult {
 
   public:
 
-    /** @brief The flag that tells whether the self contribution has
-     *         been subtracted or not.
-     */
-    std::deque<bool> self_contribution_subtracted_;
-
     /** @brief The lower bound on the density sum.
      */
     ContainerType densities_l_;
@@ -63,7 +58,6 @@ class KdeResult {
      */
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
-      ar & self_contribution_subtracted_;
       ar & densities_l_;
       ar & densities_;
       ar & densities_u_;
@@ -100,18 +94,6 @@ class KdeResult {
       double q_weight,
       const GlobalType &global,
       const bool is_monochromatic) {
-
-      // If monochromatic, then do post correction by subtracing the
-      // self-contribution.
-      if((! self_contribution_subtracted_[q_index]) && is_monochromatic) {
-        double self_contribution =
-          global.kernel_aux().kernel().EvalUnnormOnSq(0.0);
-        densities_l_[q_index] -= self_contribution;
-        densities_[q_index] -= self_contribution;
-        densities_u_[q_index] -= self_contribution;
-        self_contribution_subtracted_[q_index] = true;
-      }
-
       if(global.normalize_densities()) {
         densities_l_[q_index] *= global.get_mult_const();
         densities_[q_index] *= global.get_mult_const();
@@ -166,7 +148,6 @@ class KdeResult {
       densities_u_.resize(num_points);
       pruned_.resize(num_points);
       used_error_.resize(num_points);
-      self_contribution_subtracted_.resize(num_points);
       SetZero();
     }
 
@@ -177,7 +158,6 @@ class KdeResult {
         densities_u_[i] = 0;
         pruned_[i] = 0;
         used_error_[i] = 0;
-        self_contribution_subtracted_[i] = false;
       }
       num_farfield_to_local_prunes_ = 0;
       num_farfield_prunes_ = 0;
