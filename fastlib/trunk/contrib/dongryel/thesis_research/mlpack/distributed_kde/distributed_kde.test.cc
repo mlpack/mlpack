@@ -377,10 +377,10 @@ class TestDistributed_Kde {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
       for(unsigned int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
-        if(distributed_kde_result.pruned_[i] != total_num_points) {
+        if(distributed_kde_result.pruned_[i] != total_num_points - 1) {
           std::cerr << "Not all reference point have been accounted for.\n";
           std::cerr << "Got " << distributed_kde_result.pruned_[i] <<
-                    " instead of " << total_num_points << "\n";
+                    " instead of " << total_num_points - 1 << "\n";
           exit(-1);
         }
       }
