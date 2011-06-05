@@ -88,10 +88,12 @@ class KdePostponed {
      */
     template<typename GlobalType, typename TreeType>
     void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
-      densities_l_ = densities_u_ = 0;
-      densities_e_ = 0;
-      pruned_ = static_cast<double>(rnode->count());
-      used_error_ = 0;
+      int rnode_count = (global_in.is_monochromatic() && qnode == rnode) ?
+                        rnode->count() - 1 : rnode->count();
+      densities_l_ = densities_u_ = 0.0;
+      densities_e_ = 0.0;
+      pruned_ = static_cast<double>(rnode_count);
+      used_error_ = 0.0;
     }
 
     /** @brief Applies the incoming delta contribution to the
@@ -187,6 +189,11 @@ class KdePostponed {
       const arma::vec &reference_point,
       double reference_weight) {
 
+      if(global.is_monochromatic() &&
+          query_point.memptr() == reference_point.memptr()) {
+        return;
+      }
+
       double distsq = metric.DistanceSq(query_point, reference_point);
       double density_incoming = global.kernel().EvalUnnormOnSq(distsq);
       densities_l_ = densities_l_ + density_incoming;
@@ -197,11 +204,11 @@ class KdePostponed {
     /** @brief Sets everything to zero except for the local expansion.
      */
     void SetZero() {
-      densities_l_ = 0;
-      densities_e_ = 0;
-      densities_u_ = 0;
-      pruned_ = 0;
-      used_error_ = 0;
+      densities_l_ = 0.0;
+      densities_e_ = 0.0;
+      densities_u_ = 0.0;
+      pruned_ = 0.0;
+      used_error_ = 0.0;
     }
 
     /** @brief Sets everything to zero.

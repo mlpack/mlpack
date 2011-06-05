@@ -290,7 +290,8 @@ class KdeSummary {
       }
 
       // Otherwise, try series expansion.
-      else if(global.kernel_aux().global().get_max_order() > 0) {
+      else if(((! global.is_monochromatic()) || qnode != rnode) &&
+              global.kernel_aux().global().get_max_order() > 0) {
         return CanSummarizeSeriesExpansion_(
                  global, delta, squared_distance_range,
                  qnode, rnode, right_hand_side, query_results);
