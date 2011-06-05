@@ -160,6 +160,20 @@ class MeanVariancePairVector {
       }
     }
 
+    double max_scaled_deviation(
+      double scale_in, double num_standard_deviations) const {
+
+      double max_scaled_dev = 0.0;
+      for(int i = 0; i < n_elements_; i++) {
+        max_scaled_dev =
+          std::max(
+            max_scaled_dev,
+            ptr_[i].scaled_deviation(
+              scale_in, num_standard_deviations));
+      }
+      return max_scaled_dev;
+    }
+
     /** @brief Sets the total number of terms.
      */
     void set_total_num_terms(int total_num_terms_in) {
@@ -311,6 +325,22 @@ class MeanVariancePairMatrix {
           point_out->at(i, j) = this->get(i, j).sample_mean_variance();
         }
       }
+    }
+
+    double max_scaled_deviation(
+      double scale_in, double num_standard_deviations) const {
+
+      double max_scaled_dev = 0.0;
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          max_scaled_dev =
+            std::max(
+              max_scaled_dev,
+              this->get(i, j).scaled_deviation(
+                scale_in, num_standard_deviations));
+        }
+      }
+      return max_scaled_dev;
     }
 
     /** @brief Returns the sample means in a matrix form.

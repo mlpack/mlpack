@@ -140,7 +140,7 @@ class LocalRegressionSummary {
       // Declare the sampling object.
       LocalRegressionSampling <
       DeltaType, mlpack::local_regression::LocalRegressionSummary > sampling;
-      sampling.Init(global, qnode_it);
+      sampling.Init(global, delta, qnode_it);
 
       // More temporary variables.
       arma::vec random_variate;
@@ -159,14 +159,15 @@ class LocalRegressionSummary {
 
           // Now loop over each query point and accumulate the averages.
           sampling.AccumulateContributions(
-            global, random_variate, qnode_it, rnode_it);
+            global, random_variate, qnode_it, rnode_it,
+            num_standard_deviations);
 
         } // end of looping over each random Fourier feature.
 
         // If converged, break.
         if(sampling.Converged(
-              global, postponed, delta,
-              query_results, qnode_it,
+              global, postponed, delta, squared_distance_range,
+              qnode, rnode, query_results, qnode_it,
               num_standard_deviations)) {
           break;
         }
@@ -348,6 +349,8 @@ class LocalRegressionSummary {
           postponed_in.right_hand_side_used_error_);
     }
 
+    /** @brief Applies the delta change computed deterministically.
+     */
     void ApplyDelta(const LocalRegressionDelta &delta_in) {
       for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         right_hand_side_l_[j] +=
@@ -361,6 +364,31 @@ class LocalRegressionSummary {
           left_hand_side_u_.at(i, j) +=
             delta_in.left_hand_side_u_.get(i, j).sample_mean() *
             delta_in.pruned_;
+        }
+      }
+    }
+
+    /** @brief Applies a delta that represents the result of a Monte
+     *         Carlo sampling result.
+     */
+    void ApplyProbabilisticDelta(
+      const LocalRegressionDelta &delta_in, int num_standard_deviations) {
+      for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
+        core::math::Range delta_right_hand_side;
+        delta_in.right_hand_side_e_[j].scaled_interval(
+          delta_in.pruned_, num_standard_deviations, &delta_right_hand_side);
+        delta_right_hand_side.lo = std::max(delta_right_hand_side.lo, 0.0);
+
+        right_hand_side_l_[j] += delta_right_hand_side.lo;
+        right_hand_side_u_[j] += delta_right_hand_side.hi;
+        for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
+          core::math::Range delta_left_hand_side;
+          delta_in.left_hand_side_e_.get(i, j).scaled_interval(
+            delta_in.pruned_, num_standard_deviations, &delta_left_hand_side);
+          delta_left_hand_side.lo = std::max(delta_left_hand_side.lo, 0.0);
+
+          left_hand_side_l_.at(i, j) += delta_left_hand_side.lo;
+          left_hand_side_u_.at(i, j) += delta_left_hand_side.hi;
         }
       }
     }

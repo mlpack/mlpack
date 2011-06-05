@@ -136,9 +136,21 @@ class MeanVariancePair {
       double scale_in, double standard_deviation_factor,
       core::math::Range *interval_out) const {
 
+      // Compute the interval.
+      double scaled_dev = this->scaled_deviation(
+                            scale_in, standard_deviation_factor);
+      interval_out->lo = scale_in * sample_mean_ - scaled_dev;
+      interval_out->hi = scale_in * sample_mean_ + scaled_dev;
+    }
+
+    /** @brief Returns the scaled deviation.
+     */
+    double scaled_deviation(
+      double scale_in, double num_standard_deviations) const {
+
       // Compute the sample mean variance.
       double sample_mv = this->sample_mean_variance();
-      double error = standard_deviation_factor * sqrt(sample_mv);
+      double error = num_standard_deviations * sqrt(sample_mv);
 
       // In case at most one sample has been collected, then we need
       // to set the error to zero (since the variance will be
@@ -146,10 +158,7 @@ class MeanVariancePair {
       if(num_samples_ <= 1) {
         error = 0;
       }
-
-      // Compute the interval.
-      interval_out->lo = scale_in * (sample_mean_ - error);
-      interval_out->hi = scale_in * (sample_mean_ + error);
+      return scale_in * error;
     }
 
     void scale(double scale_in) {

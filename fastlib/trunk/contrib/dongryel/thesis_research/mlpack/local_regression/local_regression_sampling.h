@@ -121,12 +121,16 @@ class LocalRegressionSampling {
     template <
     typename GlobalType,
              typename PostponedType,
-             typename TreeIteratorType,
-             typename ResultType >
+             typename TreeType,
+             typename ResultType,
+             typename TreeIteratorType >
     bool Converged(
       const GlobalType &global,
       const PostponedType &postponed,
       const DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode,
+      TreeType *rnode,
       ResultType *query_results,
       TreeIteratorType &qnode_it,
       double num_standard_deviations) {
@@ -148,10 +152,14 @@ class LocalRegressionSampling {
         query_summary.StartReaccumulate();
         query_summary.Accumulate(global, *query_results, qpoint_id);
         query_summary.ApplyPostponed(postponed);
-        query_summary.ApplyDelta((*query_deltas_)[qpoint_id]);
+        query_summary.ApplyProbabilisticDelta(
+          (*query_deltas_)[qpoint_id], num_standard_deviations);
 
-        bool query_converged = false ;
-        all_converged = all_converged && query_converged;
+        (*converged_flags_)[qpoint_id] =
+          query_summary.CanSummarize(
+            global, (*query_deltas_)[qpoint_id],
+            squared_distance_range, qnode, rnode, query_results);
+        all_converged = all_converged && ((*converged_flags_)[qpoint_id]);
 
       }
       while(qnode_it.HasNext());
@@ -159,7 +167,10 @@ class LocalRegressionSampling {
     }
 
     template<typename GlobalType, typename TreeIteratorType>
-    void Init(GlobalType &global, TreeIteratorType &qnode_it) {
+    void Init(
+      GlobalType &global,
+      const DeltaType &deterministic_delta,
+      TreeIteratorType &qnode_it) {
 
       avg_left_hand_side_for_reference_.first.Init(
         global.problem_dimension(), global.problem_dimension());
@@ -179,6 +190,7 @@ class LocalRegressionSampling {
         int qpoint_id;
         qnode_it.Next(&qpoint_id);
         (*query_deltas_)[qpoint_id].SetZero();
+        (*query_deltas_)[qpoint_id].pruned_ = deterministic_delta.pruned_;
         (*converged_flags_)[qpoint_id] = false;
       }
       while(qnode_it.HasNext());
@@ -190,7 +202,8 @@ class LocalRegressionSampling {
       const GlobalType &global,
       const arma::vec &random_variate,
       TreeIteratorType &qnode_it,
-      TreeIteratorType &rnode_it) {
+      TreeIteratorType &rnode_it,
+      double num_standard_deviations) {
 
       // Accumulate for the current random feature.
       this->push_back_reference_contributions_(
@@ -216,7 +229,8 @@ class LocalRegressionSampling {
           scaled_cosine_value,
           scaled_sine_value,
           avg_left_hand_side_for_reference_,
-          avg_right_hand_side_for_reference_);
+          avg_right_hand_side_for_reference_,
+          num_standard_deviations);
       }
       while(qnode_it.HasNext());
     }

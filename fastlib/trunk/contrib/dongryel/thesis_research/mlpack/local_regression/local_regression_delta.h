@@ -64,7 +64,8 @@ class LocalRegressionDelta {
       &avg_left_hand_side_for_reference,
       const std::pair < core::monte_carlo::MeanVariancePairVector,
       core::monte_carlo::MeanVariancePairVector >
-      &avg_right_hand_side_for_reference) {
+      &avg_right_hand_side_for_reference,
+      double num_standard_deviations) {
 
       for(int j = 0; j < global.problem_dimension(); j++) {
         right_hand_side_e_[j].ScaledCombineWith(
@@ -83,6 +84,14 @@ class LocalRegressionDelta {
             avg_left_hand_side_for_reference.second.get(i, j));
         }
       }
+
+      // Set the error as well.
+      left_hand_side_used_error_ =
+        left_hand_side_e_.max_scaled_deviation(
+          pruned_, num_standard_deviations);
+      right_hand_side_used_error_ =
+        right_hand_side_e_.max_scaled_deviation(
+          pruned_, num_standard_deviations);
     }
 
     template<typename MetricType, typename GlobalType, typename TreeType>
