@@ -42,13 +42,9 @@ class CanProbabilisticSummarizeTrait<core::metric_kernels::GaussianKernel> {
       double mid_distance =
         0.5 * (squared_distance_range.lo + squared_distance_range.hi);
 
-      // Disabled until the probabilistic sampling works.
-      return false;
-      /*
       return fabs(mid_distance - sqrt(global_in.kernel().bandwidth_sq())) <=
              0.2 * mid_distance &&
              rnode->count() >= GlobalType::min_sampling_threshold;
-      */
     }
 };
 
@@ -130,6 +126,11 @@ class LocalRegressionSummary {
         return false;
       }
 
+      // The number of standard deviations corresponding to the
+      // failure probability.
+      double num_standard_deviations = global.compute_quantile(
+                                         failure_probability);
+
       // The iterators for the query node and the reference node.
       typename GlobalType::TableType::TreeIterator qnode_it =
         global.query_table()->get_node_iterator(qnode);
@@ -137,7 +138,8 @@ class LocalRegressionSummary {
         global.reference_table()->get_node_iterator(rnode);
 
       // Declare the sampling object.
-      LocalRegressionSampling sampling;
+      LocalRegressionSampling <
+      DeltaType, mlpack::local_regression::LocalRegressionSummary > sampling;
       sampling.Init(global, qnode_it);
 
       // More temporary variables.
@@ -146,35 +148,33 @@ class LocalRegressionSummary {
       // Repeat until all queries are converged.
       do {
 
-        // The convergence flag.
-        bool converged = true;
-
         for(int f = 0; f < global.num_random_features(); f++) {
 
-          // Reset the accumulants.
+          // Reset the accumulants for every random feature.
           sampling.Reset(rnode_it);
 
           // Generate a random feature.
           global.kernel().DrawRandomVariate(
             rnode_it.table()->n_attributes(), & random_variate);
 
-          // Accumulate for the current random feature.
-          sampling.push_back_reference_contributions(
-            global, random_variate, rnode_it);
-
           // Now loop over each query point and accumulate the averages.
-          sampling.AccumulateContributions(global, random_variate, qnode_it);
-
+          sampling.AccumulateContributions(
+            global, random_variate, qnode_it, rnode_it);
 
         } // end of looping over each random Fourier feature.
 
         // If converged, break.
-        if(converged) {
+        if(sampling.Converged(
+              global, postponed, delta,
+              query_results, qnode_it,
+              num_standard_deviations)) {
           break;
         }
       }
       while(true);
 
+      // Set the delta to point to the query deltas.
+      delta.query_deltas_ = &(global.query_deltas());
       return true;
     }
 
@@ -197,14 +197,14 @@ class LocalRegressionSummary {
       }
 
       double right_hand_side_for_left =
-        rnode->count() * (
+        delta.pruned_ * (
           global.adjusted_relative_error() * lower_bound_l1_norm_for_left +
           global.effective_num_reference_points() * global.absolute_error() -
           left_hand_side_used_error_u_) /
         static_cast<double>(
           global.effective_num_reference_points() - pruned_l_);
       double right_hand_side_for_right =
-        rnode->count() * (
+        delta.pruned_ * (
           global.adjusted_relative_error() * lower_bound_l1_norm_for_right +
           global.effective_num_reference_points() * global.absolute_error() -
           right_hand_side_used_error_u_) /

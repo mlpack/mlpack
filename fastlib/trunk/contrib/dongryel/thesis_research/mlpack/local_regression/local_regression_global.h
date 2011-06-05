@@ -9,6 +9,8 @@
 #ifndef MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_GLOBAL_H
 #define MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_GLOBAL_H
 
+#include "mlpack/local_regression/local_regression_delta.h"
+
 namespace mlpack {
 namespace local_regression {
 
@@ -106,25 +108,32 @@ class LocalRegressionGlobal {
     /** @brief The temporary space for accumulating Monte Carlo
      *         samples for the left hand side for each query.
      */
-    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
-    tmp_left_hand_sides_;
+    boost::scoped_array <
+    mlpack::local_regression::LocalRegressionDelta > query_deltas_;
 
-    /** @brief The temporary space for accumulating Monte Carlo
-     *         samples for the right hand side for each query.
+    /** @brief The normal distribution object.
      */
-    boost::scoped_array< core::monte_carlo::MeanVariancePairVector >
-    tmp_right_hand_sides_;
+    boost::math::normal normal_dist_;
 
   public:
 
-    boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix > &
-    tmp_left_hand_sides() {
-      return tmp_left_hand_sides_;
+    /** @brief Returns the standard score corresponding to the
+     *         cumulative distribution of the unit variance normal
+     *         distribution with the given tail mass.
+     */
+    double compute_quantile(double tail_mass) const {
+      double mass = 1 - 0.5 * tail_mass;
+      if(mass > 0.999) {
+        return 3;
+      }
+      else {
+        return boost::math::quantile(normal_dist_, mass);
+      }
     }
 
-    boost::scoped_array< core::monte_carlo::MeanVariancePairVector > &
-    tmp_right_hand_sides() {
-      return tmp_right_hand_sides_;
+    boost::scoped_array< mlpack::local_regression::LocalRegressionDelta > &
+    query_deltas() {
+      return query_deltas_;
     }
 
     /** @brief Tells whether the given squared distance range is
@@ -301,16 +310,11 @@ class LocalRegressionGlobal {
       }
 
       // Allocate temporary spaces for Monte Carlo accumulations.
-      boost::scoped_array< core::monte_carlo::MeanVariancePairMatrix >
-      scratch_left_hand_sides(
-        new core::monte_carlo::MeanVariancePairMatrix[
+      boost::scoped_array< mlpack::local_regression::LocalRegressionDelta >
+      scratch_deltas(
+        new mlpack::local_regression::LocalRegressionDelta[
           query_table_->n_entries()]);
-      tmp_left_hand_sides_.swap(scratch_left_hand_sides);
-      boost::scoped_array< core::monte_carlo::MeanVariancePairVector >
-      scratch_right_hand_sides(
-        new core::monte_carlo::MeanVariancePairVector[
-          query_table_->n_entries()]);
-      tmp_right_hand_sides_.swap(scratch_right_hand_sides);
+      query_deltas_.swap(scratch_deltas);
     }
 };
 }
