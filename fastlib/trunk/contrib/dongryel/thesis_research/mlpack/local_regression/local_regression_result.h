@@ -343,6 +343,13 @@ class LocalRegressionResult {
           &right_hand_side_contribution_u =
             (*delta_in.query_deltas_)[qpoint_index].right_hand_side_u_[j];
 
+          // Combine with the query result right hand side.
+          right_hand_side_l_[
+            qpoint_index].CombineWith(right_hand_side_contribution_l);
+          right_hand_side_e_[
+            qpoint_index].CombineWith(right_hand_side_contribution_e);
+          right_hand_side_u_[
+            qpoint_index].CombineWith(right_hand_side_contribution_u);
 
           for(int i = 0 ; i < global.problem_dimension() ; i++) {
             const core::monte_carlo::MeanVariancePair
@@ -358,9 +365,22 @@ class LocalRegressionResult {
               (*delta_in.query_deltas_)[
                 qpoint_index].left_hand_side_u_.get(i, j);
 
+            // Combine with the left hand side for the query result.
+            left_hand_side_l_[
+              qpoint_index].CombineWith(left_hand_side_contribution_l);
+            left_hand_side_e_[
+              qpoint_index].CombineWith(left_hand_side_contribution_e);
+            left_hand_side_u_[
+              qpoint_index].CombineWith(left_hand_side_contribution_u);
 
           } // end of looping over each row.
         } // end of looping over each column.
+
+        // Add in the incurred error quantities.
+        left_hand_side_used_error_[qpoint_index] +=
+          (*delta_in.query_deltas_)[qpoint_index].left_hand_side_used_error_;
+        right_hand_side_used_error_[qpoint_index] +=
+          (*delta_in.query_deltas_)[qpoint_index].right_hand_side_used_error_;
 
         // Add in the pruned quantities.
         pruned_[qpoint_index] += delta_in.pruned_;
