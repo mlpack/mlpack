@@ -13,6 +13,8 @@ set(SOURCES
    io.h
    io_impl.h
    io.cc
+   io_deleter.h
+   io_deleter.cc
    option.h
    option_impl.h
    option.cc

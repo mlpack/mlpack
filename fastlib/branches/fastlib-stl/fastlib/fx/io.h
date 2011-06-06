@@ -21,6 +21,7 @@
 #include "printing.h"
 #include "prefixedoutstream.h"
 #include "nulloutstream.h"
+#include "io_deleter.h" // To make sure we can delete the singleton.
 
 /***
  * This macro is used as shorthand for documenting the program.  Only one of
@@ -49,7 +50,7 @@
  * The parameter will then be specified with --PARENT/ID=value.
  */
 #define PARAM_FLAG(ID, DESC, PARENT) \
-    PARAM(bool, ID, DESC, PARENT, false, false)
+    PARAM_NOVALUE(ID, DESC, PARENT)
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
@@ -96,18 +97,25 @@
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
       NULL);
+
+  #define PARAM_NOVALUE(ID, DESC, PARENT) static mlpack::Option<int> \
+      JOIN(io_option_noval_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
+      PARENT);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
   // don't think we can absolutely guarantee success, but it should be "good
   // enough".  We use the last bits the __LINE__ macro and the type of the
   // parameter to try and get a good guess at something unique.
   #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
-      JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, DESC, \
-      PARENT, REQ);
+      JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
+      DESC, PARENT, REQ);
 
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
       NULL);
+
+  #define PARAM_NOVALUE(ID, DESC, PARENT) static mlpack::Option<int> \
+      JOIN(io_option_noval_dummy_object_, __LINE__) (true, 0, ID, DESC, PARENT);
 #endif
 
 namespace po = boost::program_options;
@@ -261,10 +269,15 @@ class IO {
    */
   static void RegisterProgramDoc(ProgramDoc* doc);
 
+  /***
+   * Destroy the IO object.  This resets the pointer to the singleton, so in
+   * case someone tries to access it after destruction, a new one will be made
+   * (the program will not fail).
+   */
+  static void Destroy();
+
   // Destructor
   ~IO();
-
-
   
  private:
   // The documentation and names of options
