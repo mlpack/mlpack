@@ -16,8 +16,22 @@
 
 using namespace std;
 
+// Information about the program itself.
+PROGRAM_INFO("All K-Nearest-Neighbors",
+    "This program will calculate the all k-nearest-neighbors of a set of "
+    "points. You may specify a separate set of reference points and query "
+    "points, or just a reference set which will be used as both the reference "
+    "and query set."
+    "\n\n"
+    "For example, the following will calculate the 5 nearest neighbors of each"
+    "point in 'input.csv' and store the results in 'output.csv':"
+    "\n\n"
+    "$ allknn --allknn/k=5 --allknn/reference_file=input.csv \n"
+    "    --allknn/output_file=output.csv");
+
 // Define our input parameters that this program will take.
-PARAM_MODULE("allknn", "The all-k-nearest-neighbors computation.");
+PARAM_MODULE("allknn",
+    "Parameters for the all-k-nearest-neighbors computation.");
 PARAM_STRING_REQ("reference_file", "CSV file containing the reference dataset.",
     "allknn");
 PARAM_STRING("query_file", "CSV file containing query points (optional).",
