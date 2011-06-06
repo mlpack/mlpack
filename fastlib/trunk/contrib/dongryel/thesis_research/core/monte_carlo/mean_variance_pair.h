@@ -115,7 +115,12 @@ class MeanVariancePair {
     /** @brief Returns the variance of the sample mean.
      */
     double sample_mean_variance() const {
-      return sample_variance_ / static_cast<double>(num_samples_ - 1);
+      if(num_samples_ <= 1) {
+        return 0.0;
+      }
+      else {
+        return sample_variance_ / static_cast<double>(num_samples_ - 1);
+      }
     }
 
     /** @brief Returns the sample variance.
@@ -124,9 +129,14 @@ class MeanVariancePair {
 
       // Note that this function scales this way to return the proper
       // variance.
-      return sample_variance_ * (
-               static_cast<double>(num_samples_) /
-               static_cast<double>(num_samples_ - 1));
+      if(num_samples_ <= 1) {
+        return 0.0;
+      }
+      else {
+        return sample_variance_ * (
+                 static_cast<double>(num_samples_) /
+                 static_cast<double>(num_samples_ - 1));
+      }
     }
 
     /** @brief Returns a scaled interval centered around the current
@@ -177,6 +187,14 @@ class MeanVariancePair {
       num_samples_ = 0;
       sample_mean_ = 0;
       sample_variance_ = 0;
+    }
+
+    /** @brief Sets everything to zero and sets the total number of
+     *         terms represented by this object to a given number.
+     */
+    void SetZero(int total_num_terms_in) {
+      this->SetZero();
+      total_num_terms_ = total_num_terms_in;
     }
 
     /** @brief Pushes another mean variance pair information. Assumes

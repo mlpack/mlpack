@@ -317,6 +317,55 @@ class LocalRegressionResult {
       GlobalType &global, TreeType *qnode, double failure_probability,
       const DeltaType &delta_in) {
 
+      // Get the iterator for the query node.
+      typename GlobalType::TableType::TreeIterator qnode_it =
+        global.query_table()->get_node_iterator(qnode);
+      int qpoint_index;
+
+      // Look up the number of standard deviations.
+      double num_standard_deviations = global.compute_quantile(
+                                         failure_probability);
+
+      do {
+
+        // Get each query point.
+        qnode_it.Next(&qpoint_index);
+
+        // Accumulate the delta contributions for each component.
+        for(int j = 0 ; j < global.problem_dimension() ; j++) {
+          const core::monte_carlo::MeanVariancePair
+          &right_hand_side_contribution_l =
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_l_[j];
+          const core::monte_carlo::MeanVariancePair
+          &right_hand_side_contribution_e =
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_e_[j];
+          const core::monte_carlo::MeanVariancePair
+          &right_hand_side_contribution_u =
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_u_[j];
+
+
+          for(int i = 0 ; i < global.problem_dimension() ; i++) {
+            const core::monte_carlo::MeanVariancePair
+            &left_hand_side_contribution_l =
+              (*delta_in.query_deltas_)[
+                qpoint_index].left_hand_side_l_.get(i, j);
+            const core::monte_carlo::MeanVariancePair
+            &left_hand_side_contribution_e =
+              (*delta_in.query_deltas_)[
+                qpoint_index].left_hand_side_e_.get(i, j);
+            const core::monte_carlo::MeanVariancePair
+            &left_hand_side_contribution_u =
+              (*delta_in.query_deltas_)[
+                qpoint_index].left_hand_side_u_.get(i, j);
+
+
+          } // end of looping over each row.
+        } // end of looping over each column.
+
+        // Add in the pruned quantities.
+        pruned_[qpoint_index] += delta_in.pruned_;
+      }
+      while(qnode_it.HasNext());
     }
 
     /** @brief Apply postponed contributions.
