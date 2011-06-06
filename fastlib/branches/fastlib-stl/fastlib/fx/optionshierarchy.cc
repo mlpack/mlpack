@@ -341,12 +341,17 @@ string OptionsHierarchy::HyphenateString(string str, int padding) {
   // First try to look as far as possible.
   while(pos < str.length() - 1) {
     size_t splitpos;
-    if (str.length() - pos < (80 - padding)) {
-      splitpos = str.length(); // The rest fits on one line.
-    } else {
-      splitpos = str.rfind(' ', (80 - padding) + pos); // Find nearest space.
-      if (splitpos <= pos || splitpos == string::npos) // Not found.
-        splitpos = pos + (80 - padding);
+    // Check that we don't have a newline first.
+    splitpos = str.find('\n', pos);
+    if (splitpos == string::npos || splitpos > (pos + (80 - padding))) {
+      // We did not find a newline.
+      if (str.length() - pos < (80 - padding)) {
+        splitpos = str.length(); // The rest fits on one line.
+      } else {
+        splitpos = str.rfind(' ', (80 - padding) + pos); // Find nearest space.
+        if (splitpos <= pos || splitpos == string::npos) // Not found.
+          splitpos = pos + (80 - padding);
+      }
     }
 
     out += str.substr(pos, (splitpos - pos));
@@ -356,7 +361,7 @@ string OptionsHierarchy::HyphenateString(string str, int padding) {
     }
 
     pos = splitpos;
-    if (str[pos] == ' ')
+    if (str[pos] == ' ' || str[pos] == '\n')
       pos++;
   }
 
