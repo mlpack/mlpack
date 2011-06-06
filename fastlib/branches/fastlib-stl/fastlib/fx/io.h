@@ -109,6 +109,11 @@
       NULL);
 #endif
 
+/***
+ * The TYPENAME macro is used internally to convert a type into a string.
+ */
+#define TYPENAME(x) (std::string(typeid(x).name()))
+
 namespace po = boost::program_options;
 
 namespace mlpack {
