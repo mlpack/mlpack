@@ -1,6 +1,5 @@
 #include "io.h"
 #include "optionshierarchy.h"
-#include "printing.h"
 
 #include <string>
 #include <iostream>

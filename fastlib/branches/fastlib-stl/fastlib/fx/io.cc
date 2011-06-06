@@ -10,9 +10,6 @@
 #include <execinfo.h>
 
 #include "option.h"
-#include "optionshierarchy.h"
-#include "printing.h"
-#include "nulloutstream.h"
 
 #define BASH_RED "\033[0;31m"
 #define BASH_GREEN "\033[0;32m"
