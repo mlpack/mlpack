@@ -96,7 +96,7 @@ bool TestIO() {
   //Now lets test the output functions.  Will have to eyeball it manually.
   IO::Debug << "Test the new lines...";
   IO::Debug << "shouldn't get 'Info' here." << std::endl;
-  IO::Debug << "But now I should." << std::endl;
+  IO::Debug << "But now I should." << std::endl << std::endl;
 
   //Test IO::Debug 
   IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl;

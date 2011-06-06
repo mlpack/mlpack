@@ -103,7 +103,10 @@ PrefixedOutStream& PrefixedOutStream::operator<< (std::streambuf* sb) {
 PrefixedOutStream& PrefixedOutStream::operator<< 
     (std::ostream& (*pf) (std::ostream&)) {
   // We don't want to prefix on what will show up as empty lines. 
-  destination << pf;
+  if (carriageReturned) //We have multiple empty lines..
+    destination << prefix << pf;
+  else
+    destination << pf;
   carriageReturned = true;
   if (fatal) // Terminate application.
     exit(1);
