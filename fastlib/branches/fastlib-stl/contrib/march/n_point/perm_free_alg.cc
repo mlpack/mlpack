@@ -149,7 +149,7 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
     // split nodes and call recursion
 
     // left child
-    if (nodes.CheckSymmetry(nodes.get_node_list(), nodes.ind_to_split(), true)) {
+    if (nodes.CheckSymmetry(nodes.ind_to_split(), true)) {
       // do left recursion
       
       NodeTuple left_child(nodes, true);
@@ -157,7 +157,7 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
       
     }
     // right child
-    if (nodes.CheckSymmetry(nodes.get_node_list(), nodes.ind_to_split(), false)) {
+    if (nodes.CheckSymmetry(nodes.ind_to_split(), false)) {
     
       NodeTuple right_child(nodes, false);
       DepthFirstRecursion_(right_child);

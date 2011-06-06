@@ -64,6 +64,7 @@ int main(int argc, char* argv[]) {
     
   }
   
+  
   index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
   
   
@@ -84,6 +85,8 @@ int main(int argc, char* argv[]) {
     
   }
   
+  
+  
   if (fx_param_exists(NULL, "do_perm_free")) {
     
     std::cout << "Doing permutation free.\n";
@@ -100,11 +103,14 @@ int main(int argc, char* argv[]) {
     
   } // perm free
   
+
   if (fx_param_exists(NULL, "do_multi")) {
     
     std::cout << "Not implemented yet\n";
     
   } // multi
+
+  
   
   fx_done(NULL);
   

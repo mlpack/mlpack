@@ -197,7 +197,7 @@ void npt::SingleBandwidthAlg::DepthFirstRecursion_(std::vector<SingleNode*>& nod
     bool all_leaves = nodes[0]->is_leaf();
     index_t split_index = 0;
     // if node 0 is not a leaf, then use it, otherwise don't
-    index_t split_count = all_leaves ? -1 : nodes[0]->count();
+    index_t split_count = all_leaves ? 0 : nodes[0]->count();
 
     // loop over the other nodes, check for leaves and who to split
     for (index_t i = 1; i < tuple_size_; i++) {
