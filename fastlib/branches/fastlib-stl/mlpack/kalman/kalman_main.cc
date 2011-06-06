@@ -5,9 +5,10 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <fastlib/fx/io.h>
 
 using namespace std;
-
+using namespace mlpack;
 /**
  * @file kalman_main.cc
  *
@@ -40,15 +41,28 @@ using namespace std;
  * @see kalman.h
  */
 
+PARAM_STRING("t_in", "Duration of expt.", "kalman", "t_in");
+PARAM_STRING("a_in", "System parameter.", "kalman", "a_in");
+PARAM_STRING("b_in", "System parameter.", "kalman", "b_in");
+PARAM_STRING("c_in", "System parameter.", "kalman", "c_in");
+PARAM_STRING("q_in", "System parameter.", "kalman", "q_in");
+PARAM_STRING("r_in", "System parameter.", "kalman", "r_in");
+PARAM_STRING("s_in", "System parameter.", "kalman", "s_in");
+
+PARAM_STRING("x_pred_0_in", "Initializes kf.", "kalman", "x_pred_0_in");
+PARAM_STRING("p_pred_0_in", "Initializes kf.", "kalman", "p_pred_0_in");
+PARAM_STRING("y_pred_0_in", "Initializes kf.", "kalman", "y_pred_0_in");
+PARAM_STRING("inno_cov_0_in", "Initializes kf.", "kalman", "inno_cov_0_in");
+
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv);
  
   ///////////LOADING DATA AND SETTING PARAMETERS//////////////////////////
 
   // User-specified: duration of experiment 
   // Note that the experiment will run from t=0 to t_tot
-  const char* t_in = fx_param_str(NULL, "t_in", "t_in");
+  const char* t_in = IO::GetValue<std::string>("kalman/t_in").c_str();
   Matrix t_tot_mat;
   arma::mat tmp;
   data::Load(t_in, tmp);
@@ -59,12 +73,12 @@ int main(int argc, char* argv[]) {
   // a_mat, b_mat, c_mat, d_mat, q_mat, r_mat, s_mat
   // are the typical time-invariant system params
   // Proceed to Load init matrices within a struct called lds
-  const char* a_in = fx_param_str(NULL, "a_in", "a_in");
-  const char* b_in = fx_param_str(NULL, "b_in", "b_in");
-  const char* c_in = fx_param_str(NULL, "c_in", "c_in");
-  const char* q_in = fx_param_str(NULL, "q_in", "q_in");
-  const char* r_in = fx_param_str(NULL, "r_in", "r_in");
-  const char* s_in = fx_param_str(NULL, "s_in", "s_in");  
+  const char* a_in = IO::GetValue<std::string>("kalman/a_in").c_str();
+  const char* b_in = IO::GetValue<std::string>("kalman/b_in").c_str();
+  const char* c_in = IO::GetValue<std::string>("kalman/c_in").c_str(); 
+  const char* q_in = IO::GetValue<std::string>("kalman/q_in").c_str(); 
+  const char* r_in = IO::GetValue<std::string>("kalman/r_in").c_str();
+  const char* s_in = IO::GetValue<std::string>("kalman/s_in").c_str();   
   
   ssm lds;
   data::Load(a_in, tmp);
@@ -83,11 +97,10 @@ int main(int argc, char* argv[]) {
   // User-specified: kf parameters. Stored in *.csv files 
   // Includes x_{0|-1}, p_pred_{0|-1}, y_{0|-1}, inno_cov_{0|-1}
   // {t|t-1} means var. at time t given info. up to t-1
-  const char* x_pred_0_in = fx_param_str(NULL, "x_pred_0_in", "x_pred_0_in");
-  const char* p_pred_0_in = fx_param_str(NULL, "p_pred_0_in", "p_pred_0_in");
-  const char* y_pred_0_in = fx_param_str(NULL, "y_pred_0_in", "y_pred_0_in");
-  const char* inno_cov_0_in = fx_param_str(NULL, "inno_cov_0_in", 
-					   "inno_cov_0_in");
+  const char* x_pred_0_in = IO::GetValue<std::string>("kalman/x_pred_0_in").c_str();
+  const char* p_pred_0_in = IO::GetValue<std::string>("kalman/p_pred_0_in").c_str();
+  const char* y_pred_0_in = IO::GetValue<std::string>("kalman/y_pred_0_in").c_str();
+  const char* inno_cov_0_in = IO::GetValue<std::string>("kalman/inno_cov_0_in").c_str();
   
   Matrix x_pred_0; 
   data::Load(x_pred_0_in, tmp);
@@ -271,6 +284,4 @@ int main(int argc, char* argv[]) {
   data::Save("inno_cov_end_out", tmp);
   arma_compat::matrixToArma(k_gain_end_trans, tmp); 
   data::Save("k_gain_end_out", tmp);             
-  
-  fx_done(fx_root);
 }; /* main */

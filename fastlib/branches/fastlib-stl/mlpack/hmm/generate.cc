@@ -10,6 +10,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -23,7 +24,7 @@ success_t generate_gaussian();
 success_t generate_mixture();
 void usage();
 
-const fx_entry_doc hmm_generate_main_entries[] = {
+/*const fx_entry_doc hmm_generate_main_entries[] = {
   {"type", FX_REQUIRED, FX_STR, NULL,
    "  HMM type : discrete | gaussian | mixture.\n"},
   {"profile", FX_REQUIRED, FX_STR, NULL,
@@ -39,22 +40,37 @@ const fx_entry_doc hmm_generate_main_entries[] = {
   {"statefile", FX_PARAM, FX_STR, NULL,
    "  Output file for the generated state sequences.\n"},
   FX_ENTRY_DOC_DONE
-};
+}; */
 
-const fx_submodule_doc hmm_generate_main_submodules[] = {
+PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "hmm");
+PARAM_STRING_REQ("profile", "A file containing HMM profile.", "hmm");
+PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "hmm");
+PARAM_STRING_REQ("statefile", "Output file for the generated state sequences.",
+		"hmm");
+
+PARAM_INT("length", "Sequence length, default = 10.", "hmm", 10);
+PARAM_INT("lenmax", "Maximum sequence length, default = 10", "hmm", 10);
+PARAM_INT("numseq", "Number of sequance, default = 10.\n", "hmm", 10);
+
+PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
+
+/* const fx_submodule_doc hmm_generate_main_submodules[] = {
   FX_SUBMODULE_DOC_DONE
-};
+}; */
 
-const fx_module_doc hmm_generate_main_doc = {
+/* const fx_module_doc hmm_generate_main_doc = {
   hmm_generate_main_entries, hmm_generate_main_submodules,
   "This is a program generating sequences from HMM models.\n"
-};
+}; */
+
+using namespace mlpack;
 
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv, &hmm_generate_main_doc );
+
+  IO::ParseCommandLine(argc, argv);
   success_t s = SUCCESS_PASS;
-  if (fx_param_exists(NULL,"type")) {
-    const char* type = fx_param_str_req(NULL, "type");
+  if (IO::CheckValue("hmm/type")) {
+    const char* type = IO::GetValue<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
       s = generate_discrete();
     else if (strcmp(type, "gaussian")==0) 
@@ -62,42 +78,43 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture")==0)
       s = generate_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
+      IO::Fatal << "Unrecognized type: must be: " << 
+		"discrete | gaussian | mixture !!!" << std::endl;
       return SUCCESS_PASS;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
+    IO::Fatal << "Unrecognized type: must be: " << 
+		"discrete | gaussian | mixture  !!!" << std::endl;
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
 
-  fx_done(NULL);
 }
 
 void usage() {
-  printf("\nUsage:\n");
-  printf("  generate --type=={discrete|gaussian|mixture} OPTIONS\n");
-  printf("[OPTIONS]\n");
-  printf("  --profile=file   : file contains HMM profile\n");
-  printf("  --length=NUM     : sequence length\n");
-  printf("  --lenmax=NUM     : maximum sequence length, default = length\n");
-  printf("  --numseq=NUM     : number of sequence\n");
-  printf("  --seqfile=file   : output file for generated sequences\n");
-  printf("  --statefile=file : output file for generated state sequences\n");
+  IO::Info << std::endl << "Usage:" << std::endl;
+  IO::Info << "  generate --hmm/type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
+  IO::Info << "[OPTIONS]" << std::endl;
+  IO::Info << "  --hmm/profile=file   : file contains HMM profile" << std::endl;
+  IO::Info << "  --hmm/length=NUM     : sequence length" << std::endl;
+  IO::Info << "  --hmm/lenmax=NUM     : maximum sequence length, default = length" << std::endl;
+  IO::Info << "  --hmm/numseq=NUM     : number of sequence" << std::endl;
+  IO::Info << "  --hmm/seqfile=file   : output file for generated sequences" << std::endl;
+  IO::Info << "  --hmm/statefile=file : output file for generated state sequences" << std::endl;
 }
 
 success_t generate_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const int seqlen = fx_param_int(NULL, "length", 10);
-  const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
-  const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.mix.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.mix.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetValue<int>("hmm/length");
+  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
+  const int numseq = IO::GetValue<int>("hmm/numseq");
+  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -109,12 +126,12 @@ success_t generate_mixture() {
   
   TextWriter w_seq, w_state;
   if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
@@ -137,16 +154,16 @@ success_t generate_mixture() {
 }
 
 success_t generate_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const int seqlen = fx_param_int(NULL, "length", 10);
-  const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
-  const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.gauss.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.gauss.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetValue<int>("hmm/length");
+  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
+  const int numseq = IO::GetValue<int>("hmm/numseq");
+  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -158,12 +175,12 @@ success_t generate_gaussian() {
   
   TextWriter w_seq, w_state;
   if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
@@ -184,16 +201,16 @@ success_t generate_gaussian() {
 }
 
 success_t generate_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const int seqlen = fx_param_int(NULL, "length", 10);
-  const int seqlmax = fx_param_int(NULL, "lenmax", seqlen);
-  const int numseq = fx_param_int(NULL, "numseq", 10);
-  const char* seqout = fx_param_str(NULL, "seqfile", "seq.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetValue<int>("hmm/length");
+  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
+  const int numseq = IO::GetValue<int>("hmm/numseq");
+  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -205,12 +222,12 @@ success_t generate_discrete() {
 
   TextWriter w_seq, w_state;
   if (!PASSED(w_seq.Open(seqout))) {
-    NONFATAL("Couldn't open '%s' for writing.", seqout);
+    IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 

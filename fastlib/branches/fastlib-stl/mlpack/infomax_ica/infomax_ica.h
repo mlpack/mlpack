@@ -20,10 +20,11 @@
 #include <limits.h>
 #include <float.h>
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 
 class TestInfomaxICA; // forward reference
 
-const fx_entry_doc infomax_ica_entries[] = {
+/* const fx_entry_doc infomax_ica_entries[] = {
   {"lambda", FX_PARAM, FX_DOUBLE, NULL,
    "  Learning rate for infomax method.\n"},
   {"B", FX_PARAM, FX_INT, NULL,
@@ -31,12 +32,15 @@ const fx_entry_doc infomax_ica_entries[] = {
   {"epsilon", FX_PARAM, FX_DOUBLE, NULL,
    "  Infomax algorithm stop threshold.\n"},
   FX_ENTRY_DOC_DONE
-};
+}; */
 
-const fx_module_doc infomax_ica_doc = {
+
+
+
+/* const fx_module_doc infomax_ica_doc = {
   infomax_ica_entries, NULL,
   "Performs ICA decomposition using Infomax method.\n"
-};
+}; */
 
 /**
  * Infomax ICA. Given an observation matrix and input parameters,
