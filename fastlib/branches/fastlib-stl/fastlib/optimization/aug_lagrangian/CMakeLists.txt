@@ -21,4 +21,5 @@ add_executable(aug_lagrangian_test
 )
 target_link_libraries(aug_lagrangian_test
   fastlib
+  boost_unit_test_framework
 )

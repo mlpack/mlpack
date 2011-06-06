@@ -18,6 +18,12 @@ AugLagrangianTestFunction::AugLagrangianTestFunction() {
   initial_point_.zeros(2, 1);
 }
 
+AugLagrangianTestFunction::AugLagrangianTestFunction(
+      const arma::mat& initial_point) :
+    initial_point_(initial_point) {
+  // Nothing to do.
+}
+
 double AugLagrangianTestFunction::Evaluate(const arma::mat& coordinates) {
   // f(x) = 6 x_1^2 + 4 x_1 x_2 + 3 x_2^2
   return ((6 * std::pow(coordinates[0], 2)) +
@@ -65,6 +71,11 @@ GockenbachFunction::GockenbachFunction() {
   // Set the initial point to (0, 0, 1).
   initial_point_.zeros(3, 1);
   initial_point_[2] = 1;
+}
+
+GockenbachFunction::GockenbachFunction(const arma::mat& initial_point) :
+    initial_point_(initial_point) {
+  // Nothing to do.
 }
 
 double GockenbachFunction::Evaluate(const arma::mat& coordinates) {
