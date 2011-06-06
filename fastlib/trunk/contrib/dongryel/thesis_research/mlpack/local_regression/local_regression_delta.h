@@ -43,6 +43,19 @@ class LocalRegressionDelta {
       SetZero();
     }
 
+    void set_total_num_terms(int total_num_terms_in) {
+      for(int j = 0; j < left_hand_side_l_.n_cols(); j++) {
+        right_hand_side_l_[j].set_total_num_terms(total_num_terms_in);
+        right_hand_side_e_[j].set_total_num_terms(total_num_terms_in);
+        right_hand_side_u_[j].set_total_num_terms(total_num_terms_in);
+        for(int i = 0; i < left_hand_side_l_.n_rows(); i++) {
+          left_hand_side_l_.get(i, j).set_total_num_terms(total_num_terms_in);
+          left_hand_side_e_.get(i, j).set_total_num_terms(total_num_terms_in);
+          left_hand_side_u_.get(i, j).set_total_num_terms(total_num_terms_in);
+        }
+      }
+    }
+
     void SetZero() {
       left_hand_side_l_.SetZero();
       left_hand_side_e_.SetZero();
@@ -67,6 +80,8 @@ class LocalRegressionDelta {
       &avg_right_hand_side_for_reference,
       double num_standard_deviations) {
 
+      // Just accumulate onto the "e" slot, ignoring "l" and "u"
+      // slots. Readjust the "l" and "u" slots accordingly.
       for(int j = 0; j < global.problem_dimension(); j++) {
         right_hand_side_e_[j].ScaledCombineWith(
           scaled_cosine_value,
@@ -75,6 +90,24 @@ class LocalRegressionDelta {
           scaled_sine_value,
           avg_right_hand_side_for_reference.second[j]);
 
+        // Get the lower and the upper bound away from the right hand
+        // side mean.
+        core::math::Range unscaled_right_hand_side_contribution;
+        right_hand_side_e_[j].scaled_interval(
+          1.0, num_standard_deviations, &unscaled_right_hand_side_contribution);
+        unscaled_right_hand_side_contribution.lo =
+          std::max(unscaled_right_hand_side_contribution.lo, 0.0);
+
+        // Right hand side lower bound.
+        right_hand_side_l_[j].SetZero(pruned_);
+        right_hand_side_l_[j].push_back(
+          unscaled_right_hand_side_contribution.lo);
+
+        // Right hand side upper bound.
+        right_hand_side_u_[j].SetZero(pruned_);
+        right_hand_side_u_[j].push_back(
+          unscaled_right_hand_side_contribution.hi);
+
         for(int i = 0; i < global.problem_dimension(); i++) {
           left_hand_side_e_.get(i, j).ScaledCombineWith(
             scaled_cosine_value,
@@ -82,6 +115,26 @@ class LocalRegressionDelta {
           left_hand_side_e_.get(i, j).ScaledCombineWith(
             scaled_sine_value,
             avg_left_hand_side_for_reference.second.get(i, j));
+
+          // Get the lower and the upper bound away from the left hand
+          // side mean.
+          core::math::Range unscaled_left_hand_side_contribution;
+          left_hand_side_e_.get(i, j).scaled_interval(
+            1.0, num_standard_deviations,
+            &unscaled_left_hand_side_contribution);
+          unscaled_left_hand_side_contribution.lo =
+            std::max(unscaled_left_hand_side_contribution.lo, 0.0);
+
+          // Left hand side lower bound.
+          left_hand_side_l_.get(i, j).SetZero(pruned_);
+          left_hand_side_l_.get(i, j).push_back(
+            unscaled_left_hand_side_contribution.lo);
+
+          // Left hand side upper bound.
+          left_hand_side_u_.get(i, j).SetZero(pruned_);
+          left_hand_side_u_.get(i, j).push_back(
+            unscaled_left_hand_side_contribution.hi);
+
         }
       }
 

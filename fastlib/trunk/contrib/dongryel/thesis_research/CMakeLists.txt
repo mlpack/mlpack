@@ -57,13 +57,8 @@ include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
 # for a local installation of armadillo
-include_directories($ENV{HOME}/local/armadillo-1.0.4/include)
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  link_directories($ENV{HOME}/local/armadillo-1.0.4/lib64/debug)
-endif()
-if(${CMAKE_BUILD_TYPE} STREQUAL "Release")
-  link_directories($ENV{HOME}/local/armadillo-1.0.4/lib64/release)
-endif()
+include_directories($ENV{HOME}/local/armadillo-1.2.0/include)
+link_directories($ENV{HOME}/local/armadillo-1.2.0/lib64)
 
 # for a local installation of gsl
 include_directories($ENV{HOME}/local/gsl-1.9/include)

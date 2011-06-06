@@ -176,6 +176,17 @@ class LocalRegressionSummary {
 
       // Set the delta to point to the query deltas.
       delta.query_deltas_ = &(global.query_deltas());
+      qnode_it.Reset();
+      do {
+
+        // Set the correct number of terms for each query.
+        int qpoint_id;
+        qnode_it.Next(&qpoint_id);
+        (* delta.query_deltas_)[qpoint_id].set_total_num_terms(
+          delta.pruned_);
+      }
+      while(qnode_it.HasNext());
+
       return true;
     }
 
