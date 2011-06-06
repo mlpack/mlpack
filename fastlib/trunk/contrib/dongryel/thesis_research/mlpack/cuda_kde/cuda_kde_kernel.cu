@@ -5,7 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-int main(int argc, char *argv[]) {
+#include <cuda.h>
 
-  return 0;
+__global__ void NbodyKernel() {
+
 }
