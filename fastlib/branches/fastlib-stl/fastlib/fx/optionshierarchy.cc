@@ -1,6 +1,5 @@
 #include "optionshierarchy.h"
 #include "io.h"
-#include "printing.h"
 #include <iostream>
 
 using namespace std;
