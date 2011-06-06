@@ -1,6 +1,7 @@
 cmake_minimum_required(VERSION 2.6)
 project(FASTLIB C CXX Fortran)
 
+add_subdirectory(cuda_kde)
 add_subdirectory(distributed_kde)
 add_subdirectory(distributed_kpca)
 add_subdirectory(kde)
