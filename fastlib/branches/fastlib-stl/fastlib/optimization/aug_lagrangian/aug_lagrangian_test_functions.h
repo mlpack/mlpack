@@ -24,6 +24,7 @@ namespace optimization {
 class AugLagrangianTestFunction {
  public:
   AugLagrangianTestFunction();
+  AugLagrangianTestFunction(const arma::mat& initial_point);
 
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
@@ -55,6 +56,7 @@ class AugLagrangianTestFunction {
 class GockenbachFunction {
  public:
   GockenbachFunction();
+  GockenbachFunction(const arma::mat& initial_point);
 
   double Evaluate(const arma::mat& coordinates);
   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
