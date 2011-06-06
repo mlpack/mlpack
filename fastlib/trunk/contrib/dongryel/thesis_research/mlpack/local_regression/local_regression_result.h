@@ -328,52 +328,24 @@ class LocalRegressionResult {
         qnode_it.Next(&qpoint_index);
 
         // Accumulate the delta contributions for each component.
-        for(int j = 0 ; j < global.problem_dimension() ; j++) {
-          const core::monte_carlo::MeanVariancePair
-          &right_hand_side_contribution_l =
-            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_l_[j];
-          const core::monte_carlo::MeanVariancePair
-          &right_hand_side_contribution_e =
-            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_e_[j];
-          const core::monte_carlo::MeanVariancePair
-          &right_hand_side_contribution_u =
-            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_u_[j];
-
-          // Combine with the query result right hand side.
-          right_hand_side_l_[
-            qpoint_index][j].CombineWith(right_hand_side_contribution_l[j]);
-          right_hand_side_e_[
-            qpoint_index][j].CombineWith(right_hand_side_contribution_e[j]);
-          right_hand_side_u_[
-            qpoint_index][j].CombineWith(right_hand_side_contribution_u[j]);
-
-          for(int i = 0 ; i < global.problem_dimension() ; i++) {
-            const core::monte_carlo::MeanVariancePair
-            &left_hand_side_contribution_l =
-              (*delta_in.query_deltas_)[
-                qpoint_index].left_hand_side_l_.get(i, j);
-            const core::monte_carlo::MeanVariancePair
-            &left_hand_side_contribution_e =
-              (*delta_in.query_deltas_)[
-                qpoint_index].left_hand_side_e_.get(i, j);
-            const core::monte_carlo::MeanVariancePair
-            &left_hand_side_contribution_u =
-              (*delta_in.query_deltas_)[
-                qpoint_index].left_hand_side_u_.get(i, j);
-
-            // Combine with the left hand side for the query result.
-            left_hand_side_l_[
-              qpoint_index].get(i, j).CombineWith(
-                left_hand_side_contribution_l.get(i, j));
-            left_hand_side_e_[
-              qpoint_index].get(i, j).CombineWith(
-                left_hand_side_contribution_e);
-            left_hand_side_u_[
-              qpoint_index].get(i, j).CombineWith(
-                left_hand_side_contribution_u);
-
-          } // end of looping over each row.
-        } // end of looping over each column.
+        left_hand_side_l_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].left_hand_side_l_);
+        left_hand_side_e_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].left_hand_side_e_);
+        left_hand_side_u_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].left_hand_side_u_);
+        right_hand_side_l_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_l_);
+        right_hand_side_e_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_e_);
+        right_hand_side_u_[
+          qpoint_index].CombineWith(
+            (*delta_in.query_deltas_)[qpoint_index].right_hand_side_u_);
 
         // Add in the incurred error quantities.
         left_hand_side_used_error_[qpoint_index] +=
