@@ -1,7 +1,9 @@
 #ifndef MLPACK_IO_NULL_OUT_STREAM_H
 #define MLPACK_IO_NULL_OUT_STREAM_H
 
-#include "printing.h"
+#include <iostream>
+#include <streambuf>
+#include <string>
 
 namespace mlpack {
 namespace io {
