@@ -118,7 +118,6 @@ class KdeResult {
       // Get the iterator for the query node.
       typename GlobalType::TableType::TreeIterator qnode_it =
         global.query_table()->get_node_iterator(qnode);
-      core::table::DensePoint qpoint;
       int qpoint_index;
 
       // Look up the number of standard deviations.
@@ -127,7 +126,7 @@ class KdeResult {
 
       do {
         // Get each query point.
-        qnode_it.Next(&qpoint, &qpoint_index);
+        qnode_it.Next(&qpoint_index);
         core::math::Range contribution;
         (*delta_in.mean_variance_pair_)[qpoint_index].scaled_interval(
           delta_in.pruned_, num_standard_deviations, &contribution);

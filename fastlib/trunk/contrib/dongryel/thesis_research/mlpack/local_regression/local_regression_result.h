@@ -322,10 +322,6 @@ class LocalRegressionResult {
         global.query_table()->get_node_iterator(qnode);
       int qpoint_index;
 
-      // Look up the number of standard deviations.
-      double num_standard_deviations = global.compute_quantile(
-                                         failure_probability);
-
       do {
 
         // Get each query point.
@@ -345,11 +341,11 @@ class LocalRegressionResult {
 
           // Combine with the query result right hand side.
           right_hand_side_l_[
-            qpoint_index].CombineWith(right_hand_side_contribution_l);
+            qpoint_index][j].CombineWith(right_hand_side_contribution_l[j]);
           right_hand_side_e_[
-            qpoint_index].CombineWith(right_hand_side_contribution_e);
+            qpoint_index][j].CombineWith(right_hand_side_contribution_e[j]);
           right_hand_side_u_[
-            qpoint_index].CombineWith(right_hand_side_contribution_u);
+            qpoint_index][j].CombineWith(right_hand_side_contribution_u[j]);
 
           for(int i = 0 ; i < global.problem_dimension() ; i++) {
             const core::monte_carlo::MeanVariancePair
@@ -367,11 +363,14 @@ class LocalRegressionResult {
 
             // Combine with the left hand side for the query result.
             left_hand_side_l_[
-              qpoint_index].CombineWith(left_hand_side_contribution_l);
+              qpoint_index].get(i, j).CombineWith(
+                left_hand_side_contribution_l.get(i, j));
             left_hand_side_e_[
-              qpoint_index].CombineWith(left_hand_side_contribution_e);
+              qpoint_index].get(i, j).CombineWith(
+                left_hand_side_contribution_e);
             left_hand_side_u_[
-              qpoint_index].CombineWith(left_hand_side_contribution_u);
+              qpoint_index].get(i, j).CombineWith(
+                left_hand_side_contribution_u);
 
           } // end of looping over each row.
         } // end of looping over each column.
