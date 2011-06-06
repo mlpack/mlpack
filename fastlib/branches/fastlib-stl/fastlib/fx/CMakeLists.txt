@@ -20,8 +20,6 @@ set(SOURCES
    option.cc
    optionshierarchy.h
    optionshierarchy.cc
-   printing.h
-   printing.cc
    nulloutstream.h
    nulloutstream.cc 
    prefixedoutstream.h

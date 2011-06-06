@@ -248,21 +248,35 @@ void OptionsHierarchy::PrintBranches() {
 /* Prints all children nodes that have no children themselves */
 void OptionsHierarchy::PrintLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
-  for (iter = children.begin(); iter != children.end(); iter++)
-    if (!iter->second.children.size()) 
-      //Print the node's name, data, and description.  
-      iter->second.PrintNode(); 
-      //Does it have a description?
-
+  for (iter = children.begin(); iter != children.end(); iter++) {
+    if (!iter->second.children.size()) {
+      //Print the node's name, data, and description.
+      iter->second.PrintNode();
+    } else {
+      iter->second.PrintLeaves();
+    }
+  }
 }
 
 /* 
  * Prints a node and its value.
  */
 void OptionsHierarchy::PrintNode() {
-  cout << nodeData.node << ": " ;
-  Printing::PrintValue(nodeData.tname, nodeData.node);
-  cout << endl;
+  IO::Info << "  " << nodeData.node << " = " ;
+  
+  if (nodeData.tname == TYPENAME(bool))
+    IO::Info << boolalpha << IO::GetValue<bool>(nodeData.node.c_str());
+  else if (nodeData.tname == TYPENAME(int))
+    IO::Info << IO::GetValue<int>(nodeData.node.c_str());
+  else if (nodeData.tname == TYPENAME(std::string)) {
+    std::string value = IO::GetValue<std::string>(nodeData.node.c_str());
+    if (value == "")
+      value = "\"\""; // So that the user isn't presented with an empty space.
+    IO::Info << value;
+  } else if (nodeData.tname == TYPENAME(float))
+    IO::Info << IO::GetValue<float>(nodeData.node.c_str());
+  
+  IO::Info << endl;
 }
 
 /* 
