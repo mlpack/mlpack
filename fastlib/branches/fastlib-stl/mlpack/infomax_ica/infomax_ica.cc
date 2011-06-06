@@ -8,6 +8,18 @@
  */
 
 #include "infomax_ica.h"
+#include <fastlib/fx/io.h>
+
+
+PARAM(double, "lambda", "The learning rate.", "info", .001, 
+  false);
+PARAM_INT_REQ("B", "Infomax data window size.", "info");
+PARAM(double, "epsilon", "Infomax algorithm stop threshold.", "info", .001, 
+  false);
+PARAM_MODULE("info", 
+  "This performs ICO decomposition on a given dataset using the Infomax method");
+
+using namespace mlpack;
 
 /** 
  * Dummy constructor 
@@ -45,7 +57,7 @@ void InfomaxICA::applyICA(const Matrix &dataset){
     }
   }
   else
-    fprintf(stdout,"Window size must be less than number of instances.");
+    IO::Warn << "Window size must be less than number of instances." << std::endl;
 }
 
 /**
@@ -154,10 +166,10 @@ Matrix InfomaxICA::sqrtm(const Matrix &m){
       la::MulExpert(1,false,tm1,true,u,0.0,&output);
     }
     else
-      fprintf(stderr,"infomaxICA sqrtm: SVD failed.\n");      
+      IO::Warn << "infomaxICA sqrtm: SVD failed." << std::endl;      
   }
   else
-    fprintf(stderr,"infomaxICA sqrtm: Cholesky decomposition failed.\n");
+    IO::Warn << "infomaxICA sqrtm: Cholesky decomposition failed." << std::endl;
   return output;
 }
 
@@ -171,7 +183,7 @@ double InfomaxICA::w_delta(const Matrix &w_prev, const Matrix &w_pres){
   vectorize(temp,delta_r);
   vectorize(temp,delta_c);
   delta_dot = la::Dot(delta_r.length(),delta_r.ptr(),delta_c.ptr());
-  fprintf(stderr,"w change=%f\n",delta_dot);
+  IO::Warn << "w change=" << delta_dot << std::endl;
   return delta_dot;
 }
 
@@ -241,12 +253,12 @@ void InfomaxICA::vectorize(const Matrix &m, Vector &v){
  * Simple display matrix function 
  */
 void InfomaxICA::displayMatrix(const Matrix &m){
-  fprintf(stdout,"\n");
+  IO::Info << std::endl;
   for (index_t i=0;i<m.n_rows();i++){
     for (index_t j=0;j<m.n_cols();j++){
-      fprintf(stdout,"%f ",m.get(i,j));
+      IO::Info << m.get(i,j);
     }
-    fprintf(stdout,"\n");
+    IO::Info << std::endl;
   }  
 }
 
@@ -254,11 +266,11 @@ void InfomaxICA::displayMatrix(const Matrix &m){
  * Simple display vector function 
  */
 void InfomaxICA::displayVector(const Vector &m){
-  fprintf(stdout,"\n");
+  IO::Info << std::endl;
   for (index_t i=0;i<m.length();i++){
-    fprintf(stdout,"%f ",m[i]);
+    IO::Info << m[i];
   }
-  fprintf(stdout,"\n");
+  IO::Info << std::endl;
 }
 
 /** 

@@ -12,6 +12,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -24,7 +25,7 @@ success_t train_baumwelch();
 success_t train_viterbi();
 void usage();
 
-const fx_entry_doc hmm_train_main_entries[] = {
+/* const fx_entry_doc hmm_train_main_entries[] = {
   {"type", FX_REQUIRED, FX_STR, NULL,
    "  HMM type : discrete | gaussian | mixture.\n"},
   {"algorithm", FX_PARAM, FX_STR, NULL,
@@ -42,51 +43,70 @@ const fx_entry_doc hmm_train_main_entries[] = {
   {"tolerance", FX_PARAM, FX_DOUBLE, NULL,
    "  Error tolerance on log-likelihood as a stopping criteria.\n"},
   FX_ENTRY_DOC_DONE
-};
+}; */
 
+PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mixture.", "hmm");
+PARAM_STRING_REQ("profile", "A file containing HMM profile.", "hmm");
+PARAM_STRING_REQ("seqfile", "Output file for the generated sequences.", "hmm");
+PARAM_STRING("algorithm", "Training algorithm: baumwelch | viterbi.", "hmm", 
+	"baumwelch");
+PARAM_STRING("guess", "File containing guessing HMM model profile.", "hmm",
+	"");
+
+
+PARAM(double, "tolerance", 
+	"Error tolerance on log-likelihood as a stopping criteria.", "hmm", 1e-3, false);
+PARAM_INT("maxiter", "Maximum number of iterations, default = 500.", "hmm", 500);
+PARAM_INT("numstate", "If no guessing profile specified, at least provide the number of states.", "hmm", 10);
+
+PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
+
+/* 
 const fx_submodule_doc hmm_train_main_submodules[] = {
   FX_SUBMODULE_DOC_DONE
-};
+}; */
 
+/*
 const fx_module_doc hmm_train_main_doc = {
   hmm_train_main_entries, hmm_train_main_submodules,
   "This is a program training HMM models from data sequences. \n"
-};
+};*/
+
+using namespace mlpack; 
 
 void usage() {
-  printf("\nUsage:\n"
-	 "  train --type=={discrete|gaussian|mixture} OPTION\n"
-	 "[OPTIONS]\n"
-	 "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch\n"
-	 "  --seqfile=file   : file contains input sequences\n"
-	 "  --guess=file     : file contains guess HMM profile\n"
-	 "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state\n"
-	 "  --profile=file   : output file for estimated HMM profile\n"
-	 "  --maxiter=NUM    : maximum number of iteration, default=500\n"
-	 "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3\n"
-	 );
+  IO::Warn << "Usage:" << std::endl;
+  IO::Warn << "  train --type=={discrete|gaussian|mixture} OPTION" << std::endl;
+  IO::Warn << "[OPTIONS]" << std::endl;
+  IO::Warn << "  --algorithm={baumwelch|viterbi} : algorithm used for training, default Baum-Welch" << std::endl;
+  IO::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
+  IO::Warn << "  --guess=file     : file contains guess HMM profile" << std::endl;
+  IO::Warn << "  --numstate=NUM   : if no guess profile is specified, at least specify the number of state" << std::endl;
+  IO::Warn << "  --profile=file   : output file for estimated HMM profile" << std::endl;
+  IO::Warn << "  --maxiter=NUM    : maximum number of iteration, default=500" << std::endl;
+  IO::Warn << "  --tolerance=NUM  : error tolerance on log-likelihood, default=1e-3" << std::endl;
 }
 
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv, &hmm_train_main_doc);
+  IO::ParseCommandLine(argc, argv);
+
   success_t s = SUCCESS_PASS;
-  if (fx_param_exists(NULL,"type")) {
-    const char* algorithm = fx_param_str(NULL, "algorithm", "baumwelch");
+  if (IO::CheckValue("hmm/type")) {
+    const char* algorithm = IO::GetValue<std::string>("hmm/algorithm").c_str();
     if (strcmp(algorithm,"baumwelch") == 0)
       s = train_baumwelch();
     else if (strcmp(algorithm,"viterbi") == 0)
       s = train_viterbi();
     else {
-      printf("Unrecognized algorithm: must be baumwelch or viterbi!\n");
+      IO::Fatal << "Unrecognized algorithm: must be baumwelch or viterbi!";
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
+    IO::Fatal << "Unrecognized type: must be: discrete | gaussian | mixture!";
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
-  fx_done(NULL);
 }
 
 success_t train_baumwelch_discrete();
@@ -94,7 +114,7 @@ success_t train_baumwelch_gaussian();
 success_t train_baumwelch_mixture();
 
 success_t train_baumwelch() {
-  const char* type = fx_param_str_req(NULL, "type");
+  const char* type = IO::GetValue<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_baumwelch_discrete();
   else if (strcmp(type, "gaussian")==0)
@@ -112,7 +132,7 @@ success_t train_viterbi_gaussian();
 success_t train_viterbi_mixture();
 
 success_t train_viterbi() {
-  const char* type = fx_param_str_req(NULL, "type");
+  const char* type = IO::GetValue<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_viterbi_discrete();
   else if (strcmp(type, "gaussian")==0)
@@ -126,7 +146,7 @@ success_t train_viterbi() {
 }
 
 success_t train_baumwelch_mixture() {
-  if (!fx_param_exists(NULL, "seqfile")) {
+  if (!IO::CheckValue("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -134,24 +154,24 @@ success_t train_baumwelch_mixture() {
   MixtureofGaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.mix.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.mix.out"
 
   load_matrix_list(seqin, seqs);
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load parameters from file %s\n", guess);
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else {
     hmm.Init();
-    printf("Automatic initialization not supported !!!");
+    IO::Fatal <<"Automatic initialization not supported !!!";
     return SUCCESS_FAIL;
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   hmm.TrainBaumWelch(seqs, maxiter, tol);
 
@@ -161,32 +181,32 @@ success_t train_baumwelch_mixture() {
 }
 
 success_t train_baumwelch_gaussian() {
-  if (!fx_param_exists(NULL, "seqfile")) {
+  if (!IO::CheckValue("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
   GaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.gauss.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.gauss.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load parameters from file %s\n", guess);
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
-    int numstate = fx_param_int_req(NULL, "numstate");
-    printf("Generate HMM parameters: NUMSTATE = %d\n", numstate);
+    int numstate = IO::GetValue<int>("hmm/numstate");
+    IO::Info << "Generate HMM parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
-    printf("Done.\n");
+    IO::Info << "Done." << std::endl;
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   printf("Training ...\n");
   hmm.TrainBaumWelch(seqs, maxiter, tol);
@@ -198,32 +218,32 @@ success_t train_baumwelch_gaussian() {
 }
 
 success_t train_baumwelch_discrete() {
-  if (!fx_param_exists(NULL, "seqfile")) {
+  if (!IO::CheckValue("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.dis.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.dis.out");
 
   std::vector<arma::vec> seqs;
   load_vector_list(seqin, seqs);
 
   DiscreteHMM hmm;
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load HMM parameters from file %s\n", guess);
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load HMM parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data
-    int numstate = fx_param_int_req(NULL, "numstate");
-    printf("Randomly generate parameters: NUMSTATE = %d\n", numstate);
+    int numstate = IO::GetValue<int>("hmm/numstate");
+    IO::Info << "Randomly generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   hmm.TrainBaumWelch(seqs, maxiter, tol);
 
@@ -233,7 +253,7 @@ success_t train_baumwelch_discrete() {
 }
 
 success_t train_viterbi_mixture() {
-  if (!fx_param_exists(NULL, "seqfile")) {
+  if (!IO::CheckValue("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -241,23 +261,23 @@ success_t train_viterbi_mixture() {
   MixtureofGaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.mix.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.mix.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load parameters from file %s\n", guess);
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   } else {
     hmm.Init();
-    printf("Automatic initialization not supported !!!");
+    IO::Info << "Automatic initialization not supported !!!" << std::endl;
     return SUCCESS_FAIL;
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 
@@ -267,32 +287,32 @@ success_t train_viterbi_mixture() {
 }
 
 success_t train_viterbi_gaussian() {
-  if (!fx_param_exists(NULL, "seqfile")) {
-    printf("--seqfile must be defined.\n");
+  if (!IO::CheckValue("hmm/seqfile")) {
+    IO::Fatal << "--seqfile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
   
   GaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.gauss.viterbi.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.gauss.viterbi.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load parameters from file %s\n", guess);
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
-    int numstate = fx_param_int_req(NULL, "numstate");
-    printf("Generate parameters: NUMSTATE = %d\n", numstate);
+    int numstate = IO::GetValue<int>("hmm/numstate");
+    IO::Info << "Generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 
@@ -302,7 +322,7 @@ success_t train_viterbi_gaussian() {
 }
 
 success_t train_viterbi_discrete() {
-  if (!fx_param_exists(NULL, "seqfile")) {
+  if (!IO::CheckValue("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -310,25 +330,25 @@ success_t train_viterbi_discrete() {
   DiscreteHMM hmm;
   std::vector<arma::vec> seqs;
 
-  const char* seqin = fx_param_str_req(NULL, "seqfile");
-  const char* proout = fx_param_str(NULL, "profile", "pro.dis.viterbi.out");
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.dis.viterbi.out");
 
   load_vector_list(seqin, seqs);
 
-  if (fx_param_exists(NULL, "guess")) { // guessed parameters in a file
+  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
     std::vector<arma::mat> matlst;
-    const char* guess = fx_param_str_req(NULL, "guess");
-    printf("Load parameters from file %s\n", guess);
+    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data
-    int numstate = fx_param_int_req(NULL, "numstate");
+    int numstate = IO::GetValue<int>("hmm/numstate");
     printf("Generate parameters with NUMSTATE = %d\n", numstate);
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = fx_param_int(NULL, "maxiter", 500);
-  double tol = fx_param_double(NULL, "tolerance", 1e-3);
+  int maxiter = IO::GetValue<int>("hmm/maxiter");
+  double tol = IO::GetValue<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 

@@ -11,6 +11,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "support.h"
 #include "discreteHMM.h"
 #include "gaussianHMM.h"
@@ -24,7 +25,7 @@ success_t viterbi_gaussian();
 success_t viterbi_mixture();
 void usage();
 
-const fx_entry_doc hmm_viterbi_main_entries[] = {
+/* const fx_entry_doc hmm_viterbi_main_entries[] = {
   {"type", FX_REQUIRED, FX_STR, NULL,
    "  HMM type : discrete | gaussian | mixture.\n"},
   {"profile", FX_REQUIRED, FX_STR, NULL,
@@ -34,23 +35,32 @@ const fx_entry_doc hmm_viterbi_main_entries[] = {
   {"statefile", FX_PARAM, FX_STR, NULL,
    "  Output file for the most probable state sequences.\n"},
   FX_ENTRY_DOC_DONE
-};
+}; */
 
-const fx_submodule_doc hmm_viterbi_main_submodules[] = {
+PARAM_STRING_REQ("type", "HMM type : discrete | gaussian | mistruxe.", "hmm");
+PARAM_STRING_REQ("profile", "A file containing HMM profile", "hmm");
+PARAM_STRING_REQ("seqfile", "Output file for the data sequences.", "hmm");
+PARAM_STRING_REQ("statefile", "Output file for the most probable state sequences.", "hmm");
+
+PARAM_MODULE("hmm", "This is a program computing th emost probable state\n sequences of data sequences from HMM models.\n");
+/* const fx_submodule_doc hmm_viterbi_main_submodules[] = {
   FX_SUBMODULE_DOC_DONE
-};
+}; */
 
-const fx_module_doc hmm_viterbi_main_doc = {
+/* const fx_module_doc hmm_viterbi_main_doc = {
   hmm_viterbi_main_entries, hmm_viterbi_main_submodules,
   "This is a program computing the most probable state sequences \n"
   "of data sequences from HMM models.\n"
-};
+}; */
+
+using namespace mlpack;
 
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv, &hmm_viterbi_main_doc);
+  IO::ParseCommandLine(argc, argv);
+
   success_t s = SUCCESS_PASS;
-  if (fx_param_exists(NULL,"type")) {
-    const char* type = fx_param_str_req(NULL, "type");
+  if (IO::CheckValue("hmm/type")) {
+    const char* type = IO::GetValue<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete") == 0)
       s = viterbi_discrete();
     else if (strcmp(type, "gaussian") == 0)
@@ -58,37 +68,34 @@ int main(int argc, char* argv[]) {
     else if (strcmp(type, "mixture") == 0)
       s = viterbi_mixture();
     else {
-      printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
+      IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!" << std::endl;
       s = SUCCESS_FAIL;
     }
   }
   else {
-    printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
+    IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!";
     s = SUCCESS_FAIL;
   }
   if (!PASSED(s)) usage();
-  fx_done(NULL);
 }
 
 void usage() {
-  printf("\n"
-	 "Usage:\n"
-	 "  viterbi --type=={discrete|gaussian|mixture} OPTIONS\n"
-	 "[OPTIONS]\n"
-	 "  --profile=file   : file contains HMM profile\n"
-	 "  --seqfile=file   : file contains input sequences\n"
-	 "  --statefile=file : output file for state sequences\n"
-	 );
+  IO::Warn << "Usage:" << std::endl;
+  IO::Warn << "  viterbi --type=={discrete|gaussian|mixture} OPTIONS" << std::endl;
+  IO::Warn << "[OPTIONS]" << std::endl;
+  IO::Warn << "  --profile=file   : file contains HMM profile" << std::endl;
+  IO::Warn << "  --seqfile=file   : file contains input sequences" << std::endl;
+  IO::Warn << "  --statefile=file : output file for state sequences" << std::endl;
 }
 
 success_t viterbi_mixture() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.mix.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -98,7 +105,7 @@ success_t viterbi_mixture() {
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
@@ -116,13 +123,13 @@ success_t viterbi_mixture() {
 }
 
 success_t viterbi_gaussian() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.gauss.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -132,7 +139,7 @@ success_t viterbi_gaussian() {
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 
@@ -149,13 +156,13 @@ success_t viterbi_gaussian() {
 }
 
 success_t viterbi_discrete() {
-  if (!fx_param_exists(NULL, "profile")) {
-    printf("--profile must be defined.\n");
+  if (!IO::CheckValue("hmm/profile")) {
+    IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = fx_param_str_req(NULL, "profile");
-  const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
-  const char* stateout = fx_param_str(NULL, "statefile", "state.viterbi.out");
+  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.out");
+  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
 
   DiscreteHMM hmm;
 
@@ -166,7 +173,7 @@ success_t viterbi_discrete() {
 
   TextWriter w_state;
   if (!PASSED(w_state.Open(stateout))) {
-    NONFATAL("Couldn't open '%s' for writing.", stateout);
+    IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
     return SUCCESS_FAIL;
   }
 

@@ -278,7 +278,11 @@ void IO::DefaultMessages() {
     // The info node should always be there, but the user may not have specified
     // anything.
     if (str != "") {
-      GetSingleton().hierarchy.FindNode(str)->PrintNodeHelp();
+      OptionsHierarchy* node = GetSingleton().hierarchy.FindNode(str);
+      if(node != NULL)
+	node->PrintNodeHelp();
+      else
+        IO::Fatal << "Invalid paramter: " << str << std::endl;
       exit(0);
     }
   }
