@@ -2,6 +2,7 @@
 #define MLPACK_IO_PREFIXED_OUT_STREAM_H
 
 #include <iostream>
+#include <string>
 #include <streambuf>
 
 namespace mlpack {
