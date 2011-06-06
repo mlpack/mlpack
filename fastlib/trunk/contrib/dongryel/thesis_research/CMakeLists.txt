@@ -15,11 +15,8 @@ find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
 
 # include boost.
-set(Boost_ROOT "$ENV{HOME}/local/boost_1_45_0")
-set(Boost_LIB_DIR "${Boost_ROOT}/stage/release/lib")
-if(${CMAKE_BUILD_TYPE} STREQUAL "Debug")
-  set(Boost_LIB_DIR "${Boost_ROOT}/stage/debug/lib")
-endif()
+set(Boost_ROOT "$ENV{HOME}/local/boost_1_46_1")
+set(Boost_LIB_DIR "${Boost_ROOT}/stage/lib")
 set(Boost_INCLUDE_DIRS "${Boost_ROOT}")
 set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR}/libboost_mpi.a;${Boost_LIB_DIR}/libboost_serialization.a;${Boost_LIB_DIR}/libboost_system.a;${Boost_LIB_DIR}/libboost_thread.a;${Boost_LIB_DIR}/libboost_unit_test_framework.a")
 #set(Boost_USE_STATIC_LIBS   ON)
