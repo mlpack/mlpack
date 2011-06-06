@@ -69,6 +69,11 @@ IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc) {
 }
 
 IO::~IO() {
+  // Did the user ask for verbose output?  If so we need to print everything.
+  Debug << "Destructing!" << std::endl;
+  if (CheckValue("verbose"))
+    Print();
+
   return;
 }
 
@@ -143,7 +148,6 @@ std::string IO::GetDescription(const char* identifier) {
 IO& IO::GetSingleton() {
   if (singleton == NULL) {
     singleton = new IO();
-
   }
   return *singleton;
 }	
@@ -253,6 +257,18 @@ void IO::RegisterProgramDoc(ProgramDoc* doc) {
   // beginning of the file (as a default value in case this is never called).
   if (doc != &empty_program_doc)
     GetSingleton().doc = doc;
+}
+
+/***
+ * Destroy the IO object.  This resets the pointer to the singleton, so in case
+ * someone tries to access it after destruction, a new one will be made (the
+ * program will not fail).
+ */
+void IO::Destroy() {
+  if (singleton != NULL) {
+    delete singleton;
+    singleton = NULL; // Reset pointer.
+  }
 }
 
 /* 
@@ -365,3 +381,5 @@ void IO::StopTimer(const char* timerName) {
 // Add help parameter.
 PARAM_MODULE("help", "Default help info.");
 PARAM_STRING("info", "Get help on a specific module or option.", "", "");
+PARAM_FLAG("verbose", "Display informational messages and the full list of "
+    "parameters and timers at the end of execution.", "");
