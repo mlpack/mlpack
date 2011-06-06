@@ -10,14 +10,13 @@
 #include "node_tuple.h"
 
 
-bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes, 
-                                   index_t split_ind, bool is_left) {
+bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
   
   // only check the new node for symmetry with respect to the others
   if (is_left) {
     for (index_t i = 0; i < split_ind; i++) {
       
-      if (nodes[split_ind]->left()->end() <= nodes[i]->begin()) {
+      if (node_list_[split_ind]->left()->end() <= node_list_[i]->begin()) {
         return false;
       }
       
@@ -25,7 +24,7 @@ bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes,
     
     for (index_t i = split_ind + 1; i < tuple_size_; i++) {
       
-      if (nodes[i]->end() <= nodes[split_ind]->left()->begin()) {
+      if (node_list_[i]->end() <= node_list_[split_ind]->left()->begin()) {
         return false;
       } 
       
@@ -34,7 +33,7 @@ bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes,
   else {
     for (index_t i = 0; i < split_ind; i++) {
       
-      if (nodes[split_ind]->right()->end() <= nodes[i]->begin()) {
+      if (node_list_[split_ind]->right()->end() <= node_list_[i]->begin()) {
         return false;
       }
       
@@ -42,7 +41,7 @@ bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes,
     
     for (index_t i = split_ind + 1; i < tuple_size_; i++) {
       
-      if (nodes[i]->end() <= nodes[split_ind]->right()->begin()) {
+      if (node_list_[i]->end() <= node_list_[split_ind]->right()->begin()) {
         return false;
       } 
       
@@ -53,7 +52,7 @@ bool npt::NodeTuple::CheckSymmetry(const std::vector<NptNode*>& nodes,
 } // CheckSymmetry_
 
 
-
+/*
 void npt::NodeTuple::FindInvalidIndices_(std::vector<index_t>& inds) {
 
   //std::vector<index_t> inds;
@@ -89,8 +88,9 @@ void npt::NodeTuple::FindInvalidIndices_(std::vector<index_t>& inds) {
   }    
     
 } // FindInvalidIndices
+*/
 
-
+/*
 void npt::NodeTuple::UpdateIndices_(index_t split_ind) {
   
   NptNode* new_node = node_list_[split_ind];
@@ -172,7 +172,61 @@ void npt::NodeTuple::UpdateIndices_(index_t split_ind) {
   
   
 } // UpdateIndices()
+*/
 
+void npt::NodeTuple::UpdateSplitInd_() {
+  
+  int split_size = 0;
+  
+  all_leaves_ = true;
+  
+  for (index_t i = 0; i < tuple_size_; i++) {
+    
+    if (!(node_list_[i]->is_leaf())) {
+      
+      all_leaves_ = false;
+
+      if (node_list_[i]->count() > split_size) {
+        split_size = node_list_[i]->count();
+        ind_to_split_ = i;
+      }
+        
+    } // is a leaf?
+    
+  } // for i
+  
+} // UpdateSplitInd_
+
+void npt::NodeTuple::FillInSortedArrays_() {
+  
+  index_t next_insert = 0;
+  
+  for (index_t i = 0; i < tuple_size_; i++) {
+    
+    NptNode* node_i = node_list_[i];
+    
+    for (index_t j = i+1; j < tuple_size_; j++) {
+      
+      NptNode* node_j = node_list_[j];
+      
+      double min_dist = node_i->bound().MinDistanceSq(node_j->bound());
+      double max_dist = node_i->bound().MaxDistanceSq(node_j->bound());
+      
+      sorted_upper_[next_insert] = max_dist;
+      sorted_lower_[next_insert] = min_dist;
+      
+      next_insert++;
+      
+    } // for j
+    
+  } // for i
+  
+  // now, sort them
+  
+  std::sort(sorted_upper_.begin(), sorted_upper_.end());
+  std::sort(sorted_lower_.begin(), sorted_lower_.end());
+  
+} // FillInSortedArrays
 
 
 

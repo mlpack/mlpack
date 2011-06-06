@@ -1,26 +1,19 @@
 /*
- *  perm_free_alg.h
+ *  multi_bandwidth_alg.h
  *  
  *
- *  Created by William March on 2/14/11.
+ *  Created by William March on 6/6/11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
  *
  */
 
-#ifndef PERM_FREE_ALG_H
-#define PERM_FREE_ALG_H
-
 #include "node_tuple.h"
-//#include "old_node_tuple.h"
-#include "perm_free_matcher.h"
 
 namespace npt {
-  
-  class PermFreeAlg {
-    
+
+  class MultiBandwidthAlg {
     
   private:
-    
     
     // data
     arma::mat data_points_;
@@ -32,12 +25,8 @@ namespace npt {
     index_t leaf_size_;
     int num_permutations_;
     
-    // matcher
     
-    PermFreeMatcher matcher_;
-    
-    int num_tuples_;
-    double weighted_num_tuples_;
+    // need results tensors
     
     int num_prunes_;
     
@@ -45,7 +34,10 @@ namespace npt {
     
     NptNode* tree_;
     
-    //////////////// functions //////////////////
+    // need a matcher
+    
+    
+    ////////////////////// functions //////////////////////////
     
     void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
@@ -59,11 +51,13 @@ namespace npt {
     void DepthFirstRecursion_(NodeTuple& nodes);
     
     
+    
   public:
     
-    PermFreeAlg(arma::mat& data, arma::colvec& weights, int leaf_size,
-                arma::mat& lower_bds, arma::mat& upper_bds)
-    : matcher_(upper_bds, lower_bds) {
+    MultiBandwidthAlg(arma::mat& data, arma::colvec& weights, int leaf_size,
+                      arma::mat& lower_bds, arma::mat& upper_bds) {
+      
+      // don't forget to initialize the matcher
       
       data_points_ = data;
       
@@ -76,23 +70,17 @@ namespace npt {
       
       leaf_size_ = leaf_size;
       
-      num_tuples_ = 0;
       num_prunes_ = 0;
-      weighted_num_tuples_ = 0.0;
+      
+      // initialize the results tensor
       
       tree_ = tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
                                                          leaf_size_, 
                                                          old_from_new_index_);
       
+      
+      
     } // constructor
-    
-    double weighted_num_tuples() const {
-      return weighted_num_tuples_;
-    }
-    
-    int num_tuples() const {
-      return num_tuples_;
-    } // num_tuples
     
     void Compute() {
       
@@ -109,10 +97,12 @@ namespace npt {
     }
     
     
+    
+    
   }; // class
   
-  
+
 } // namespace
 
 
-#endif
+
