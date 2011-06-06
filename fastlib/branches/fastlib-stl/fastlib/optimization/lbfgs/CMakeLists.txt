@@ -25,4 +25,5 @@ add_executable(lbfgs_test
 # link dependencies of test executable
 target_link_libraries(lbfgs_test
   fastlib
+  boost_unit_test_framework
 )
