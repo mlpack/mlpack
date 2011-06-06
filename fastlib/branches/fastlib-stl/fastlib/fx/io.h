@@ -18,7 +18,6 @@
 #include <list>
 
 #include "optionshierarchy.h"
-#include "printing.h"
 #include "prefixedoutstream.h"
 #include "nulloutstream.h"
 #include "io_deleter.h" // To make sure we can delete the singleton.
@@ -49,8 +48,7 @@
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_FLAG(ID, DESC, PARENT) \
-    PARAM_NOVALUE(ID, DESC, PARENT)
+#define PARAM_FLAG(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false, false)
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
@@ -97,10 +95,6 @@
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
       NULL);
-
-  #define PARAM_NOVALUE(ID, DESC, PARENT) static mlpack::Option<int> \
-      JOIN(io_option_noval_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
-      PARENT);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
   // don't think we can absolutely guarantee success, but it should be "good
@@ -113,9 +107,6 @@
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
       NULL);
-
-  #define PARAM_NOVALUE(ID, DESC, PARENT) static mlpack::Option<int> \
-      JOIN(io_option_noval_dummy_object_, __LINE__) (true, 0, ID, DESC, PARENT);
 #endif
 
 namespace po = boost::program_options;

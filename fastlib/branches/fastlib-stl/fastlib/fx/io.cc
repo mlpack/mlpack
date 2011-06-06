@@ -70,9 +70,12 @@ IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc) {
 
 IO::~IO() {
   // Did the user ask for verbose output?  If so we need to print everything.
-  Debug << "Destructing!" << std::endl;
-  if (CheckValue("verbose"))
-    Print();
+  // But only if the user did not ask for help or info.
+//  if (CheckValue("verbose") && !CheckValue("help") && !CheckValue("info"))
+  if (CheckValue("verbose")) {
+    Info << "Execution parameters:" << std::endl;
+    hierarchy.PrintLeaves();
+  }
 
   return;
 }
@@ -324,7 +327,7 @@ void IO::RequiredOptions() {
   }
 }
 
-/* Prints out the current heirachy */
+/* Prints out the current hierachy */
 void IO::Print() {
   IO::GetSingleton().hierarchy.PrintAll();
 }
