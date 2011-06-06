@@ -1,5 +1,5 @@
 ## Regular expression matching source files
-SRC_PATTERN = ".*\.\(cc\|hh\|[ch]\(pp\|xx\|\+\+\)?\)"
+SRC_PATTERN = ".*\.\(cu\|cc\|hh\|[ch]\(pp\|xx\|\+\+\)?\)"
 ## All source files built by this project
 SOURCES     = ${shell find core mlpack physpack -iregex ${SRC_PATTERN}}
 

@@ -44,7 +44,8 @@ if(MPI_FOUND)
 endif()
 
 # find CUDA
-# find_package(CUDA)
+set(CUDA_TOOLKIT_ROOT_DIR $ENV{HOME}/local/cuda)
+find_package(CUDA)
 
 # Add additional complie flags.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
