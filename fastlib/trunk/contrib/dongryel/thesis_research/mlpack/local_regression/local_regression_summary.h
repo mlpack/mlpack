@@ -151,7 +151,7 @@ class LocalRegressionSummary {
         for(int f = 0; f < global.num_random_features(); f++) {
 
           // Reset the accumulants for every random feature.
-          sampling.Reset(rnode_it);
+          sampling.Reset(delta);
 
           // Generate a random feature.
           global.kernel().DrawRandomVariate(

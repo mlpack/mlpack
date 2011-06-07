@@ -52,7 +52,7 @@ class MeanVariancePairVector {
 
   public:
 
-    /** @brief Saves the point.
+    /** @brief Saves the mean variance pair vector.
      */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
@@ -64,7 +64,7 @@ class MeanVariancePairVector {
       }
     }
 
-    /** @brief Loads the point.
+    /** @brief Loads the vector of mean variance pairs.
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
@@ -82,28 +82,49 @@ class MeanVariancePairVector {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief Scales each component of the mean variance pair
+     *         vector by a common scalar.
+     */
     void scale(double scale_factor_in) {
       for(int j = 0; j < n_elements_; j++) {
         ptr_[j].scale(scale_factor_in);
       }
     }
 
+    /** @brief Returns the length of the vector.
+     */
     int length() const {
       return n_elements_;
     }
 
+    /** @brief The destructor.
+     */
     ~MeanVariancePairVector() {
       this->DestructPtr_();
     }
 
+    /** @brief The default constructor.
+     */
     MeanVariancePairVector() {
       n_elements_ = 0;
       ptr_ = NULL;
     }
 
+    /** @brief Resets everything in the vector to empty set of
+     *         samples.
+     */
     void SetZero() {
       for(int j = 0; j < n_elements_; j++) {
         ptr_[j].SetZero();
+      }
+    }
+
+    /** @brief Sets everything to zero and sets the total number of
+     *         terms represented by this object to a given number.
+     */
+    void SetZero(int total_num_terms_in) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].SetZero(total_num_terms_in);
       }
     }
 
@@ -282,9 +303,21 @@ class MeanVariancePairMatrix {
       ptr_ = NULL;
     }
 
+    /** @brief Resets every component of the mean variance pair matrix
+     *         to empty state.
+     */
     void SetZero() {
       for(int i = 0; i < n_elements_; i++) {
         ptr_[i].SetZero();
+      }
+    }
+
+    /** @brief Sets everything to zero and sets the total number of
+     *         terms represented by this object to a given number.
+     */
+    void SetZero(int total_num_terms_in) {
+      for(int i = 0; i < n_elements_; i++) {
+        ptr_[i].SetZero(total_num_terms_in);
       }
     }
 
@@ -424,6 +457,9 @@ class MeanVariancePairMatrix {
       }
     }
 
+    /** @brief Scales the mean variance pair matrix by a common
+     *         scalar.
+     */
     void scale(double scale_factor_in) {
       for(int j = 0; j < n_cols_; j++) {
         for(int i = 0; i < n_rows_; i++) {
