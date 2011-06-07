@@ -159,7 +159,20 @@ class AllkNN {
    * will take care of themselves.
    */
   ~AllkNN();
+  
+  /**
+   * Computes the nearest neighbors and stores the output in the given arrays.
+   * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest
+   * neighbors), resulting_neighbors[0] through resulting_neighbors[4] are the
+   * five nearest neighbors of query point 0.
+   *
+   * @param resulting_neighbors List of nearest neighbors
+   * @param distances Distance of nearest neighbors
+   */
+  void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
+                        arma::vec& distances);
 
+ private:
   /**
    * Computes the minimum squared distance between the bounding boxes of two
    * nodes
@@ -197,17 +210,19 @@ class AllkNN {
                                         TreeType* reference_node,
                                         double* min_dist_so_far);
 
-  /**
-   * Computes the nearest neighbors and stores the output in the given arrays.
-   * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest
-   * neighbors), resulting_neighbors[0] through resulting_neighbors[4] are the
-   * five nearest neighbors of query point 0.
+  /***
+   * Helper function to insert a point into the current neighbors vector.  Given
+   * a distance and a neighbor ID and the correct place in the list, this method
+   * searches for the correct place to insert this neighbor and distance into.
+   * This method assumes that the check to see if the point should be inserted
+   * is already done.
    *
-   * @param resulting_neighbors List of nearest neighbors
-   * @param distances Distance of nearest neighbors
+   * @param ind Index of query point whose neighbors we are inserting into.
+   * @param neighbor Index of reference point we are inserting.
+   * @param distance Distance from query point to reference point.
    */
-  void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
-                        arma::vec& distances);
+  void InsertNeighbor(index_t ind, index_t neighbor, double distance);
+
 }; // class AllkNN
 
 }; // namespace allknn

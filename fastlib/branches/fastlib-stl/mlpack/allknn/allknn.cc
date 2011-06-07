@@ -208,7 +208,7 @@ AllkNN::AllkNN(arma::mat& references_in, index_t leaf_size,
     leaf_size_(naive_ ? references_.n_cols : leaf_size),
     knns_(knns),
     number_of_prunes_(0) {
-
+  
   // Make sure the leaf size is valid
   DEBUG_ASSERT(leaf_size_ > 0);
 
@@ -310,36 +310,9 @@ void AllkNN::ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
             la::DistanceSqEuclidean(query_point, reference_point);
 
           // If the reference point is closer than any of the current
-          // candidates, add it to the list.  We will insert it into the right
-          // sorted place in the list.  We must remember that our list is the
-          // subset [ind, ind + knns_ - 1] of the neighbor_distances_ arma::vec.
-          if (distance < neighbor_distances_[ind + knns_ - 1]) {
-            // The direction we have chosen to search in (smallest to largest)
-            // may not be optimal but intuitively it seems the best choice.
-            for (index_t i = ind; i < ind + knns_; i++) {
-              if (distance <= neighbor_distances_[i]) {
-                // We have found the place to insert.
-                // We will use memmove() to shift all the distances and indices
-                // to one place higher than they are now.
-                int len = (ind + knns_) - i - 1;
-                if (len > 0) { // No need to shift anything if at last index.
-                  memmove(neighbor_distances_.memptr() + (i + 1),
-                      neighbor_distances_.memptr() + i,
-                      sizeof(double) * len);
-                  memmove(neighbor_indices_.memptr() + (i + 1),
-                      neighbor_indices_.memptr() + i,
-                      sizeof(index_t) * len);
-                }
-
-
-                // Now put the new information in the right index.
-                neighbor_distances_[i] = distance;
-                neighbor_indices_[i] = reference_index;
-
-                break;
-              }
-            }
-          }
+          // candidates, add it to the list.
+          if (distance < neighbor_distances_[ind + knns_ - 1])
+            InsertNeighbor(ind, reference_index, distance);
         }
       }
     }
@@ -461,12 +434,8 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
 
   if (reference_node->is_leaf()) {
     // Base case: reference node is a leaf
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
     index_t ind = point_id * knns_;
-    for (index_t i = 0; i < knns_; i++) {
-      neighbors[i] = std::make_pair(neighbor_distances_[ind + i],
-          neighbor_indices_[ind + i]);
-    }
+    
     // We'll do the same for the references
     for (index_t reference_index = reference_node->begin();
         reference_index < reference_node->end(); reference_index++) {
@@ -476,20 +445,20 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
             reference_index == point_id)) {
         arma::vec reference_point = references_.unsafe_col(reference_index);
 
-        double distance = la::DistanceSqEuclidean(point, reference_point);
+        double distance = dot(point, reference_point);
 
-        // If the reference point is closer than the current candidate,
-        // we'll update the candidate
+        // If the reference point is closer than any of the current candidates,
+        // insert it into the list correctly.
         if (distance < neighbor_distances_[ind + knns_ - 1]) {
-          neighbors.push_back(std::make_pair(distance, reference_index));
+          IO::Debug << "Inserting neighbor " << reference_index
+              << " with distance " << distance << " and coordinate "
+              << reference_point[0] << " into list for point " << point_id
+              << " which has coordinate " << point[0] << "." << std::endl;
+          InsertNeighbor(ind, reference_index, distance);
         }
       }
     } // for reference_index
-    std::sort(neighbors.begin(), neighbors.end());
-    for(index_t i = 0; i < knns_; i++) {
-      neighbor_distances_[ind + i] = neighbors[i].first;
-      neighbor_indices_[ind + i]  = neighbors[i].second;
-    }
+    
     *min_dist_so_far = neighbor_distances_[ind + knns_ - 1];
   } else {
     // We'll order the computation by distance
@@ -599,3 +568,45 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 } // ComputeNeighbors
+
+/***
+ * Helper function to insert a point into the current neighbors vector.  Given
+ * a distance and a neighbor ID and the correct place in the list, this method
+ * searches for the correct place to insert this neighbor and distance into.
+ * This method assumes that the check to see if the point should be inserted
+ * is already done.
+ *
+ * @param ind Index of query point whose neighbors we are inserting into.
+ * @param neighbor Index of reference point we are inserting.
+ * @param distance Distance from query point to reference point.
+ * @param neighbors Vector of neighbors.
+ * @param distances Vector of distances.
+ */
+void AllkNN::InsertNeighbor(index_t ind, index_t neighbor, double distance) {
+  // The direction we have chosen to search in (smallest to largest)
+  // may not be optimal but intuitively it seems the best choice.
+  for (index_t i = ind; i < ind + knns_; i++) {
+    if (distance <= neighbor_distances_[i]) {
+      // We have found the place to insert.
+      // We will use memmove() to shift all the distances and indices
+      // to one place higher than they are now.
+      int len = (ind + knns_) - i - 1;
+      if (len > 0) { // No need to shift anything if at last index.
+        memmove(neighbor_distances_.memptr() + (i + 1),
+            neighbor_distances_.memptr() + i,
+            sizeof(double) * len);
+        memmove(neighbor_indices_.memptr() + (i + 1),
+            neighbor_indices_.memptr() + i,
+            sizeof(index_t) * len);
+      }
+
+
+      // Now put the new information in the right index.
+      neighbor_distances_[i] = distance;
+      neighbor_indices_[i] = neighbor;
+
+      break;
+    }
+  }
+}
+
