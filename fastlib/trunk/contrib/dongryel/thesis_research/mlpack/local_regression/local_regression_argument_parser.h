@@ -69,6 +69,10 @@ class LocalRegressionArgumentParser {
         "OPTIONAL scaling option. One of:\n"
         "  none, hypercube, standardize"
       )(
+        "probability",
+        boost::program_options::value<double>()->default_value(1.0),
+        "The required probability guarantee level.\n"
+      )(
         "queries_in",
         boost::program_options::value<std::string>(),
         "OPTIONAL file containing query positions.  If omitted, local "
@@ -147,6 +151,10 @@ class LocalRegressionArgumentParser {
           (*vm)["prescale"].as<std::string>() != "standardize") {
         std::cerr << "The --prescale supports only one of: none, hypercube, " <<
                   "standardize.\n";
+        exit(0);
+      }
+      if((*vm)["probability"].as<double>() <= 0.0) {
+        std::cerr << "The --probability requires a non-negative real number.\n";
         exit(0);
       }
 
@@ -277,6 +285,11 @@ class LocalRegressionArgumentParser {
       arguments_out->reference_table_->IndexData(
         arguments_out->metric_, arguments_out->leaf_size_);
       std::cerr << "Finished building the reference tree.\n";
+
+      // Read in the probability.
+      arguments_out->probability_ = vm["probability"].as<double>();
+      std::cerr << "The probability guarantee requested: " <<
+                arguments_out->probability_ << "\n";
 
       // Read in the optional query set.
       if(vm.count("queries_in") > 0) {
