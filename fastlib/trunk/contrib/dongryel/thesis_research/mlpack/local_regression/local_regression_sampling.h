@@ -137,6 +137,10 @@ class LocalRegressionSampling {
 
       bool all_converged = true;
       qnode_it.Reset();
+
+      // Used for accumulating the summary for each query point.
+      SummaryType query_summary;
+      query_summary.Init(global);
       do {
 
         int qpoint_id;
@@ -148,7 +152,6 @@ class LocalRegressionSampling {
         }
 
         // Get the lower bound on the left and the right hand sides.
-        SummaryType query_summary;
         query_summary.StartReaccumulate();
         query_summary.Accumulate(global, *query_results, qpoint_id);
         query_summary.ApplyPostponed(postponed);
