@@ -445,17 +445,12 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
             reference_index == point_id)) {
         arma::vec reference_point = references_.unsafe_col(reference_index);
 
-        double distance = dot(point, reference_point);
+        double distance = la::DistanceSqEuclidean(point, reference_point);
 
         // If the reference point is closer than any of the current candidates,
         // insert it into the list correctly.
-        if (distance < neighbor_distances_[ind + knns_ - 1]) {
-          IO::Debug << "Inserting neighbor " << reference_index
-              << " with distance " << distance << " and coordinate "
-              << reference_point[0] << " into list for point " << point_id
-              << " which has coordinate " << point[0] << "." << std::endl;
+        if (distance < neighbor_distances_[ind + knns_ - 1])
           InsertNeighbor(ind, reference_index, distance);
-        }
       }
     } // for reference_index
     
@@ -466,34 +461,32 @@ void AllkNN::ComputeSingleNeighborsRecursion_(index_t point_id,
     double right_distance =
         reference_node->right()->bound().MinDistanceSq(point);
 
+    // Recurse in the closest direction first.
     if (left_distance < right_distance) {
-      if (*min_dist_so_far < left_distance) {
-        number_of_prunes_++;
-      } else {
+      if (*min_dist_so_far < left_distance)
+        number_of_prunes_++; // Prune; no possibility of finding a better point.
+      else
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->left(), min_dist_so_far);
-      }
 
-      if (*min_dist_so_far < right_distance) {
-        number_of_prunes_++;
-      } else {
+      if (*min_dist_so_far < right_distance)
+        number_of_prunes_++; // Prune; no possibility of finding a better point.
+      else
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->right(), min_dist_so_far);
-      }
+      
     } else {
-      if (*min_dist_so_far < right_distance) {
-        number_of_prunes_++;
-      } else {
+      if (*min_dist_so_far < right_distance)
+        number_of_prunes_++; // Prune; no possibility of finding a better point.
+      else
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->right(), min_dist_so_far);
-      }
 
-      if (*min_dist_so_far < left_distance) {
-        number_of_prunes_++;
-      } else {
+      if (*min_dist_so_far < left_distance)
+        number_of_prunes_++; // Prune; no possibility of finding a better point.
+      else
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->left(), min_dist_so_far);
-      }
     }
   }
 }
@@ -535,7 +528,7 @@ void AllkNN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
         index_t ind = (queries_.n_cols / 10) * 10 + i;
         arma::vec point = queries_.unsafe_col(ind);
         double min_dist_so_far = DBL_MAX;
-        ComputeSingleNeighborsRecursion_(i, point, reference_tree_,
+        ComputeSingleNeighborsRecursion_(ind, point, reference_tree_,
             &min_dist_so_far);
       }
     }
