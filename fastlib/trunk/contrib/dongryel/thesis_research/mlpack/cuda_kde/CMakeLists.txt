@@ -18,6 +18,7 @@ add_executable(cuda_kde
               )
 #link dependencies of cuda_kde
 target_link_libraries(cuda_kde
+                      cuda_kde_kernel
                       core
                       ${Boost_LIBRARIES}
                      )
