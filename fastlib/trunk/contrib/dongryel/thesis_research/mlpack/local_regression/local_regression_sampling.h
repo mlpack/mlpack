@@ -235,20 +235,16 @@ class LocalRegressionSampling {
       while(qnode_it.HasNext());
     }
 
-    template<typename TreeIteratorType>
-    void Reset(const TreeIteratorType &rnode_it) {
-      avg_left_hand_side_for_reference_.first.SetZero();
-      avg_left_hand_side_for_reference_.second.SetZero();
-      avg_right_hand_side_for_reference_.first.SetZero();
-      avg_right_hand_side_for_reference_.second.SetZero();
-      avg_left_hand_side_for_reference_.first.set_total_num_terms(
-        rnode_it.count());
-      avg_left_hand_side_for_reference_.second.set_total_num_terms(
-        rnode_it.count());
-      avg_right_hand_side_for_reference_.first.set_total_num_terms(
-        rnode_it.count());
-      avg_right_hand_side_for_reference_.second.set_total_num_terms(
-        rnode_it.count());
+    template<typename DeltaType>
+    void Reset(const DeltaType &deterministic_delta) {
+      avg_left_hand_side_for_reference_.first.SetZero(
+        deterministic_delta.pruned_);
+      avg_left_hand_side_for_reference_.second.SetZero(
+        deterministic_delta.pruned_);
+      avg_right_hand_side_for_reference_.first.SetZero(
+        deterministic_delta.pruned_);
+      avg_right_hand_side_for_reference_.second.SetZero(
+        deterministic_delta.pruned_);
     }
 };
 }
