@@ -103,9 +103,43 @@ extern "C" {
   void NbodyKernelOnHost(
     int num_dimensions,
     float bandwidth,
-    float *query, int num_query_points,
-    float *reference, int num_reference_points,
+    double *query, int num_query_points,
+    double *reference, int num_reference_points,
     float *kernel_sums_out) {
+
+    // Prepare to copy the points into single precision format on the
+    // GPU.
+    float *query_on_host = new float[
+      num_dimensions * num_query_points ];
+    float *query_on_device = NULL;
+    float *reference_on_host = new float[
+      num_dimensions * num_reference_points ];
+    float *reference_on_device = NULL;
+    float *kernel_sums_out_device = NULL;
+    int num_query_bytes = num_query_points * num_dimensions * sizeof(float);
+    int num_reference_bytes =
+      num_reference_points * num_dimensions * sizeof(float);
+    cudaMalloc(&query_on_device, num_query_bytes);
+    cudaMalloc(&reference_on_device, num_reference_bytes);
+    cudaMalloc(&kernel_sums_out_device, num_query_points * sizeof(float));
+    int i, j;
+    int pos = 0;
+    for(i = 0; i < num_query_points; i++) {
+      for(j = 0; j < num_dimensions; j++, pos++) {
+        query_on_host[pos] = query[pos];
+      }
+    }
+    cudaMemcpy(
+      query_on_device, query_on_host, num_query_bytes, cudaMemcpyHostToDevice);
+    pos = 0;
+    for(i = 0; i < num_reference_points; i++) {
+      for(j = 0; j < num_dimensions; j++, pos++) {
+        reference_on_host[pos] = reference[pos];
+      }
+    }
+    cudaMemcpy(
+      reference_on_device, reference_on_host,
+      num_reference_bytes, cudaMemcpyHostToDevice);
 
     // Query the number of multiprocessors on the GPU.
     cudaDeviceProp prop;
@@ -116,7 +150,12 @@ extern "C" {
     int num_blocks = prop.multiProcessorCount;
     int num_threads_per_block = num_dimensions / num_blocks;
     NbodyKernelOnDevice <<< num_blocks, num_threads_per_block >>>(
-      num_dimensions, bandwidth, query, num_query_points,
-      reference, num_reference_points, kernel_sums_out);
+      num_dimensions, bandwidth, query_on_device, num_query_points,
+      reference_on_device, num_reference_points, kernel_sums_out_device);
+
+    // Copy out the result.
+    cudaMemcpy(
+      kernel_sums_out, kernel_sums_out_device,
+      num_query_points * sizeof(float), cudaMemcpyDeviceToHost);
   }
 }
