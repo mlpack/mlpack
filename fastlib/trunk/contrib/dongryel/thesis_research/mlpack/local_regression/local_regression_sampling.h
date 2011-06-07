@@ -235,7 +235,6 @@ class LocalRegressionSampling {
       while(qnode_it.HasNext());
     }
 
-    template<typename DeltaType>
     void Reset(const DeltaType &deterministic_delta) {
       avg_left_hand_side_for_reference_.first.SetZero(
         deterministic_delta.pruned_);
