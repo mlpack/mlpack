@@ -315,6 +315,9 @@ class LocalRegressionGlobal {
         new mlpack::local_regression::LocalRegressionDelta[
           query_table_->n_entries()]);
       query_deltas_.swap(scratch_deltas);
+      for(int i = 0; i < query_table_->n_entries(); i++) {
+        query_deltas_[i].Init(*this);
+      }
     }
 };
 }
