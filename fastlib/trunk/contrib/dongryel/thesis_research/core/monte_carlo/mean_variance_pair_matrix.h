@@ -91,6 +91,21 @@ class MeanVariancePairVector {
       }
     }
 
+    /** @brief Pushes another mean variance pair vector information
+     *         with a scale factor, componentwise. Assumes that the
+     *         addition is done in an asymptotic normal way.
+     */
+    void ScaledCombineWith(
+      double scale_in, const core::monte_carlo::MeanVariancePairVector &v) {
+
+      for(int j = 0; j < n_elements_; j++) {
+        core::monte_carlo::MeanVariancePair scaled_v;
+        scaled_v.CopyValues(v[j]);
+        scaled_v.scale(scale_in);
+        ptr_[j].CombineWith(scaled_v);
+      }
+    }
+
     /** @brief Returns the length of the vector.
      */
     int length() const {
@@ -345,6 +360,23 @@ class MeanVariancePairMatrix {
       for(unsigned int j = 0; j < v.n_cols; j++) {
         for(unsigned int i = 0; i < v.n_rows; i++) {
           this->get(i, j).push_back(v.at(i, j));
+        }
+      }
+    }
+
+    /** @brief Pushes another mean variance pair matrix information
+     *         with a scale factor, componentwise. Assumes that the
+     *         addition is done in an asymptotic normal way.
+     */
+    void ScaledCombineWith(
+      double scale_in, const core::monte_carlo::MeanVariancePairMatrix &v) {
+
+      for(int j = 0; j < n_cols_; j++) {
+        for(int i = 0; i < n_rows_; i++) {
+          core::monte_carlo::MeanVariancePair scaled_v;
+          scaled_v.CopyValues(v.get(i, j));
+          scaled_v.scale(scale_in);
+          this->get(i, j).CombineWith(scaled_v);
         }
       }
     }
