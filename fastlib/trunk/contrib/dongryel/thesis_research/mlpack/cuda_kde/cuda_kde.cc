@@ -15,8 +15,11 @@
 #include "mlpack/series_expansion/kernel_aux.h"
 
 extern "C" void NbodyKernelOnHost(
-  int num_dimensions, float *query, int num_query_points,
-  float *reference, int num_reference_points);
+  int num_dimensions,
+  float bandwidth,
+  float *query, int num_query_points,
+  float *reference, int num_reference_points,
+  float *kernel_sums_out);
 
 template<typename KernelAuxType>
 void StartComputation(boost::program_options::variables_map &vm) {
@@ -38,7 +41,15 @@ void StartComputation(boost::program_options::variables_map &vm) {
   float *tmp_reference_host = new float[1024];
   float *query_device = NULL;
   float *reference_device = NULL;
-  NbodyKernelOnHost(3, query_device, 1024, reference_device, 1024);
+  float *kernel_sums_device = NULL;
+  NbodyKernelOnHost(
+    kde_arguments.reference_table_->n_attributes(),
+    static_cast<float>(kde_arguments.bandwidth_),
+    query_device,
+    kde_arguments.query_table_->n_entries(),
+    reference_device,
+    kde_arguments.reference_table_->n_entries(),
+    kernel_sums_device);
 }
 
 int main(int argc, char *argv[]) {
