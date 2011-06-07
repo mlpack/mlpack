@@ -24,6 +24,7 @@ add_executable(allkfn_test
 target_link_libraries(allkfn_test
    mlpack
    fastlib
+   boost_unit_test_framework
 )
 
 # main executable
