@@ -40,10 +40,18 @@ class CanProbabilisticSummarizeTrait<core::metric_kernels::GaussianKernel> {
       TreeType *rnode) {
 
       double mid_distance =
-        0.5 * (squared_distance_range.lo + squared_distance_range.hi);
+        0.5 * (
+          sqrt(squared_distance_range.lo) + sqrt(squared_distance_range.hi));
+
+      printf("Am I here! %g %g %g %d %d\n",
+             squared_distance_range.lo,
+             core::math::Sqr(mid_distance),
+             squared_distance_range.hi,
+             rnode->count(),
+             GlobalType::min_sampling_threshold);
 
       return fabs(mid_distance - sqrt(global_in.kernel().bandwidth_sq())) <=
-             0.2 * mid_distance &&
+             0.5 * mid_distance &&
              rnode->count() >= GlobalType::min_sampling_threshold;
     }
 };
@@ -130,6 +138,8 @@ class LocalRegressionSummary {
       // failure probability.
       double num_standard_deviations = global.compute_quantile(
                                          failure_probability);
+
+      printf("Trying: %g\n", num_standard_deviations);
 
       // The iterators for the query node and the reference node.
       typename GlobalType::TableType::TreeIterator qnode_it =

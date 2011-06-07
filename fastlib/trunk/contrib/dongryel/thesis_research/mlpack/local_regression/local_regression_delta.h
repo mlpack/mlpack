@@ -39,6 +39,20 @@ class LocalRegressionDelta {
      */
     boost::scoped_array< LocalRegressionDelta > *query_deltas_;
 
+    template<typename GlobalType>
+    void Init(const GlobalType &global) {
+      left_hand_side_l_.Init(
+        global.problem_dimension(), global.problem_dimension());
+      left_hand_side_e_.Init(
+        global.problem_dimension(), global.problem_dimension());
+      left_hand_side_u_.Init(
+        global.problem_dimension(), global.problem_dimension());
+      right_hand_side_l_.Init(global.problem_dimension());
+      right_hand_side_e_.Init(global.problem_dimension());
+      right_hand_side_u_.Init(global.problem_dimension());
+      SetZero();
+    }
+
     LocalRegressionDelta() {
       SetZero();
     }
