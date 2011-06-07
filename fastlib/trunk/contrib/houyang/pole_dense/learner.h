@@ -63,6 +63,7 @@ class Learner {
   string kernel_name_; // name of kernel
   double sigma_; // sigma in Gaussian RBF kernel
   T_IDX trdim_; // dimension for transformed features
+  T_IDX maxeig_; // max number of eigenvalues want to keep
   int    comm_method_; // How agents communicate with each other
  private:
   pthread_mutex_t mutex_ex_;

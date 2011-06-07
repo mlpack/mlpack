@@ -21,6 +21,8 @@ class BKPCA : public Learner {
   Mat<T_VAL> K_; // kernel matrix
   Col<T_VAL> eigval_; // eigenvalues
   Mat<T_VAL> eigvec_; // eigenvectors
+  uvec eig_order_; // index of ascending eigenvalues
+  Mat<T_VAL> test_f_; // features for test data; size: maxeig x n_TE
  private:
   TKernel kn_; // for random features
  public:
@@ -66,17 +68,43 @@ void BKPCA<TKernel>::Learn() {
   // eigen decomposition
   eig_sym(eigval_, eigvec_, K_);
   cout << "done!"<< endl;
+  // sort eigenvalues ascendingly
+  eig_order_ = sort_index(eigval_, 0);
   //cout << eigval_ << endl;
+  //cout << eig_order << endl;
   SaveLog();
 }
 
 template <typename TKernel>
 void BKPCA<TKernel>::Test() {
+  Col<T_VAL> kval;
+  T_IDX n_tr = TR_->EXs_.n_cols;
+  T_IDX n_te;
   if (fn_learn_ != fn_predict_) {
-    
+    n_te = TE_->EXs_.n_cols;
   }
   else {
-    
+    n_te = n_tr;
+  }
+  kval.set_size(n_tr);
+  test_f_.set_size(maxeig_, n_te);
+  for (T_IDX t=0; t<n_te; t++) {
+    if (fn_learn_ != fn_predict_) {
+      // TE_ != TR_
+      for (T_IDX i=0; i<n_tr; i++) {
+        kval(i) = kn_.Eval(TE_->EXs_.col(t), TR_->EXs_.col(i));
+      }
+    }
+    else {
+      // TE_ == TR_
+      for (T_IDX i=0; i<n_tr; i++) {
+        kval(i) = kn_.Eval(TR_->EXs_.col(t), TR_->EXs_.col(i));
+      }
+    }
+    for (T_IDX g=0; g<maxeig_; g++) {
+      // calculate projections
+      test_f_(g, t) = dot(kval, eigvec_.col(g));
+    }
   }
 }
 
