@@ -49,7 +49,7 @@ AllkFN::AllkFN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.zeros(queries_.n_cols * kfns_);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::StartTimer("allknn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays that
   // record the permutation of the data points.
@@ -63,7 +63,7 @@ AllkFN::AllkFN(arma::mat& queries_in, arma::mat& references_in,
       old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::StopTimer("allknn/tree_building");
 } 
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -101,7 +101,7 @@ AllkFN::AllkFN(arma::mat& references_in, struct datanode* module_in,
   neighbor_distances_.zeros(queries_.n_cols * kfns_);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::StartTimer("allkfn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays that
   // record the permutation of the data points.
@@ -110,7 +110,7 @@ AllkFN::AllkFN(arma::mat& references_in, struct datanode* module_in,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::StopTimer("allkfn/tree_building");
 }
 
 
@@ -142,7 +142,7 @@ AllkFN::AllkFN(arma::mat& queries_in, arma::mat& references_in,
   neighbor_distances_.zeros(queries_.n_cols * kfns_);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::StartTimer("allkfn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays that
   // record the permutation of the data points.
@@ -156,7 +156,7 @@ AllkFN::AllkFN(arma::mat& queries_in, arma::mat& references_in,
       old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::StopTimer("allkfn/tree_building");
 }
 
 // We call an advanced constructor of arma::mat which allows us to alias a
@@ -187,7 +187,7 @@ AllkFN::AllkFN(arma::mat& references_in, index_t leaf_size,
   neighbor_distances_.zeros(queries_.n_cols * kfns_);
 
   // We'll time tree building
-  fx_timer_start(module_, "tree_building");
+  IO::StartTimer("allkfn/tree_building");
 
   // This call makes each tree from a matrix, leaf size, and two arrays that
   // record the permutation of the data points.
@@ -196,7 +196,7 @@ AllkFN::AllkFN(arma::mat& references_in, index_t leaf_size,
       leaf_size_, old_from_new_references_);
 
   // Stop the timer we started above
-  fx_timer_stop(module_, "tree_building");
+  IO::StopTimer("allkfn/tree_building");
 }
 
 /**
@@ -480,7 +480,7 @@ void AllkFN::ComputeSingleNeighborsRecursion_(index_t point_id,
  */
 void AllkFN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
                               arma::vec& distances) {
-  fx_timer_start(module_, "computing_neighbors");
+  IO::StartTimer("allkfn/computing_neighbors");
   if (naive_) {
     // Run the base computation on all nodes
     if (query_tree_)
@@ -518,7 +518,7 @@ void AllkFN::ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
     }
   }
 
-  fx_timer_stop(module_, "computing_neighbors");
+  IO::StopTimer("allkfn/computing_neighbors");
 
   // We need to initialize the results list before filling it
   resulting_neighbors.set_size(neighbor_indices_.n_elem);

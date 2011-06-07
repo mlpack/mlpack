@@ -18,20 +18,11 @@ namespace mlpack {
 namespace allkfn {
 
 /**
- * Forward declaration for the tester class
- */
-class TestAllkFN;
-
-/**
 * Performs all-furthest-neighbors.  This class will build the trees and 
 * perform the recursive computation.
 */
 class AllkFN {
-  // Declare the tester class as a friend class so that it has access
-  // to the private members of the class
-  friend class TestAllkNFN;
-  
-  //////////////////////////// Nested Classes ///////////////////////////////////////////////
+  //////////////////////////// Nested Classes /////////////////////////////////
   /**
   * Extra data for each node in the tree.  For all nearest neighbors, 
   * each node only
@@ -70,8 +61,9 @@ class AllkFN {
     } 
     
     /**
-     * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
-     * node statistics can be built using information from the children.  
+     * Initialization function used in tree-building when initializing a
+     * non-leaf node.  For other algorithms, node statistics can be built using
+     * information from the children.  
      */
     void Init(const arma::mat& matrix, index_t start, index_t count, 
         const QueryStat& left, const QueryStat& right) {
@@ -87,7 +79,7 @@ class AllkFN {
   typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
    
   
-  /////////////////////////////// Members //////////////////////////////////////////////////
+  /////////////////////////////// Members ////////////////////////////////////
  private:
   // The module containing the parameters for this computation. 
   struct datanode* module_;
@@ -168,10 +160,11 @@ class AllkFN {
   ~AllkFN();
     
       
- /////////////////////////////// Helper Functions ///////////////////////////////////////////////////
+ /////////////////////////////// Helper Functions ////////////////////////////
   
   /**
-   * Computes the maximum squared distance between the bounding boxes of two nodes
+   * Computes the maximum squared distance between the bounding boxes of two
+   * nodes
    */
   double MaxNodeDistSq_(TreeType* query_node, TreeType* reference_node);
   
