@@ -145,6 +145,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
     ("trdim", po::value<T_IDX>(&L_->trdim_)->default_value(1000), 
      "Dimension for transformed features. Default: 1000.")
+    ("maxeig", po::value<T_IDX>(&L_->maxeig_)->default_value(1), 
+     "Max number of eigenvalues want to keep. Default: 1.")
     ("comm", po::value<int>(&L_->comm_method_)->default_value(1), 
      "How agents communicate with each other. Default: 1(full connected).")
     ("mini_batch,b", po::value<T_IDX>(&L_->mb_size_)->default_value(1), 
