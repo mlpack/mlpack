@@ -89,7 +89,7 @@ __global__ void NbodyKernelOnDevice(
 
     // Each thread loads the specified number of points, and
     // synchronize all threads within this block before computing.
-    int reference_point_id = tile * blockDim.x + threadIdx.x;
+    int reference_point_id = tile * num_reference_points_per_tile + threadIdx.x;
     int num_reference_points_in_this_tile =
       min(
         num_reference_points - i, num_reference_points_per_tile);
