@@ -90,74 +90,74 @@ class NNSMO
 
     void GetNNSVM(arma::mat& support_vectors, arma::vec& alpha, arma::vec& w) const;
 
-private:
-  index_t TrainIteration_(bool examine_all);
+  private:
+    index_t TrainIteration_(bool examine_all);
 
-  bool TryChange_(index_t j);
+    bool TryChange_(index_t j);
 
-  double CalculateDF_(index_t i, index_t j, double error_j);
+    double CalculateDF_(index_t i, index_t j, double error_j);
 
-  bool TakeStep_(index_t i, index_t j, double error_j);
+    bool TakeStep_(index_t i, index_t j, double error_j);
 
-  double FixAlpha_(double alpha) const
-  {
-    if (alpha < NNSMO_ZERO)
+    double FixAlpha_(double alpha) const
     {
-      alpha = 0;
-    }
-    else if (alpha > c_ - NNSMO_ZERO)
-    {
-      alpha = c_;
-    }
-    return alpha;
-  }
-
-  bool IsBound_(double alpha) const
-  {
-    return alpha <= 0 || alpha >= c_;
-  }
-
- // labels: the last row of the data matrix, 0 or 1
-  int GetLabelSign_(index_t i) const
-  {
-    return (dataset_(dataset_.n_rows - 1, i) != 0) ? 1 : -1;
-  }
-
-  void GetVector_(index_t i, arma::vec& v) const
-  {
-    v = arma::vec((double*) dataset_.colptr(i), dataset_.n_rows - 1, false, true); // manual ugly constructor
-  }
-
-  double Error_(index_t i) const
-  {
-    return error_[i];
-  }
-
-  double Evaluate_(index_t i) const;
-
-  double EvalKernel_(index_t i, index_t j) const
-  {
-    return kernel_cache_sign_(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
-  }
-
-  void CalcKernels_()
-  {
-    kernel_cache_sign_.set_size(n_data_, n_data_);
-    fprintf(stderr, "Kernel Start\n");
-    for (index_t i = 0; i < n_data_; i++)
-    {
-      for (index_t j = 0; j < n_data_; j++)
+      if (alpha < NNSMO_ZERO)
       {
-        arma::vec v_i;
-        GetVector_(i, v_i);
-        arma::vec v_j;
-        GetVector_(j, v_j);
-        double k = kernel_.Eval(v_i, v_j);
-        kernel_cache_sign_(j, i) = k * GetLabelSign_(i) * GetLabelSign_(j);
+        alpha = 0;
       }
+      else if (alpha > c_ - NNSMO_ZERO)
+      {
+        alpha = c_;
+      }
+      return alpha;
     }
-    fprintf(stderr, "Kernel Stop\n");
-  }
+
+    bool IsBound_(double alpha) const
+    {
+      return alpha <= 0 || alpha >= c_;
+    }
+
+   // labels: the last row of the data matrix, 0 or 1
+    int GetLabelSign_(index_t i) const
+    {
+      return (dataset_(dataset_.n_rows - 1, i) != 0) ? 1 : -1;
+    }
+
+    void GetVector_(index_t i, arma::vec& v) const
+    {
+      v = arma::vec((double*) dataset_.colptr(i), dataset_.n_rows - 1, false, true); // manual ugly constructor
+    }
+
+    double Error_(index_t i) const
+    {
+      return error_[i];
+    }
+
+    double Evaluate_(index_t i) const;
+
+    double EvalKernel_(index_t i, index_t j) const
+    {
+      return kernel_cache_sign_(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
+    }
+
+    void CalcKernels_()
+    {
+      kernel_cache_sign_.set_size(n_data_, n_data_);
+      fprintf(stderr, "Kernel Start\n");
+      for (index_t i = 0; i < n_data_; i++)
+      {
+        for (index_t j = 0; j < n_data_; j++)
+        {
+          arma::vec v_i;
+          GetVector_(i, v_i);
+          arma::vec v_j;
+          GetVector_(j, v_j);
+          double k = kernel_.Eval(v_i, v_j);
+          kernel_cache_sign_(j, i) = k * GetLabelSign_(i) * GetLabelSign_(j);
+        }
+      }
+      fprintf(stderr, "Kernel Stop\n");
+    }
 };
 
 #include "nnsmo_impl.h"
