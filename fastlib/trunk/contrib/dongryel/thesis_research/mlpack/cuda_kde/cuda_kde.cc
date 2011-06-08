@@ -36,6 +36,9 @@ void StartComputation(boost::program_options::variables_map &vm) {
     return;
   }
 
+  // KDE result.
+  mlpack::kde::KdeResult< std::vector<double> > kde_result;
+
   // Invoke the CUDA kernel.
   float *kernel_sums_host =
     new float[ kde_arguments.query_table_->n_entries()];
@@ -47,6 +50,18 @@ void StartComputation(boost::program_options::variables_map &vm) {
     kde_arguments.reference_table_->data().ptr(),
     kde_arguments.reference_table_->n_entries(),
     kernel_sums_host);
+
+  // Copy to the result. Avoid this by eliminating std::vector in the
+  // KdeResult object.
+  kde_result.Init(kde_arguments.query_table_->n_entries());
+  for(int i = 0; i < kde_arguments.query_table_->n_entries(); i++) {
+    kde_result.densities_[i] = kernel_sums_host[i];
+  }
+
+  // Output the KDE result to the file.
+  std::cerr << "Writing the densities to the file: " <<
+            kde_arguments.densities_out_ << "\n";
+  kde_result.Print(kde_arguments.densities_out_);
 }
 
 int main(int argc, char *argv[]) {
