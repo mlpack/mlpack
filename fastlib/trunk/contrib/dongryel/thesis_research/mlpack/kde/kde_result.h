@@ -142,6 +142,10 @@ class KdeResult {
 
     template<typename GlobalType>
     void Init(const GlobalType &global_in, int num_points) {
+      this->Init(num_points);
+    }
+
+    void Init(int num_points) {
       densities_l_.resize(num_points);
       densities_.resize(num_points);
       densities_u_.resize(num_points);
