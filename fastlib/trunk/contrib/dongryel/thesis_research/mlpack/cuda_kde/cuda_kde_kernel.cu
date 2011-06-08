@@ -139,9 +139,20 @@ extern "C" {
     int num_query_bytes = num_query_points * num_dimensions * sizeof(float);
     int num_reference_bytes =
       num_reference_points * num_dimensions * sizeof(float);
-    cudaMalloc(&query_on_device, num_query_bytes);
-    cudaMalloc(&reference_on_device, num_reference_bytes);
-    cudaMalloc(&kernel_sums_out_device, num_query_points * sizeof(float));
+    if(cudaSuccess != cudaMalloc(&query_on_device, num_query_bytes)) {
+      printf("Error in allocating the query on the GPU.\n");
+      return;
+    }
+    if(cudaSuccess != cudaMalloc(&reference_on_device, num_reference_bytes)) {
+      printf("Error in allocating the reference on the GPU.\n");
+      return;
+    }
+    if(cudaSuccess !=
+        cudaMalloc(
+          &kernel_sums_out_device, num_query_points * sizeof(float))) {
+      printf("Error in allocating the kernel sum slots on the GPU.\n");
+      return;
+    }
     int i, j;
     int pos = 0;
     for(i = 0; i < num_query_points; i++) {
@@ -164,13 +175,19 @@ extern "C" {
     int num_threads_per_block = 512;
     int num_blocks = (num_query_points + num_threads_per_block - 1) /
                      num_threads_per_block;
+
+    // Call the CUDA kernel.
     NbodyKernelOnDevice <<< num_blocks, num_threads_per_block >>>(
       num_dimensions, bandwidth, query_on_device, num_query_points,
       reference_on_device, num_reference_points, kernel_sums_out_device);
 
-    // Copy out the result.
+    // Copy out the result from the device to the host.
     cudaMemcpy(
       kernel_sums_out, kernel_sums_out_device,
       num_query_points * sizeof(float), cudaMemcpyDeviceToHost);
+
+    // Free memory.
+    delete[] query_on_host;
+    delete[] reference_on_host;
   }
 }
