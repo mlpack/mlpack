@@ -4,7 +4,6 @@
 #include <fastlib/fastlib.h>
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 /* TODO: I don't actually want these to be public */
 /* but sometimes we should provide freedoms for our advanced users */
@@ -12,77 +11,84 @@ const double NNSMO_ZERO = 1.0e-8;
 const double NNSMO_TOLERANCE = 1.0e-3;
 
 template<typename TKernel>
-class NNSMO {
+class NNSMO
+{
 
- public:
-  typedef TKernel Kernel;
+  public:
+    typedef TKernel Kernel;
 
- private:
-  arma::mat kernel_cache_sign_;
-  Kernel kernel_;
-  const Dataset* dataset_;
-  index_t n_data_; // number of data samples
-  arma::mat matrix_; // alias for the data matrix
-  arma::vec alpha_; // the alphas, to be optimized
-  arma::vec error_; // the error cache
-  double thresh_; // negation of the intercept
-  double c_;
-  index_t budget_;
-  double sum_alpha_;
+  private:
+    arma::mat kernel_cache_sign_;
+    Kernel kernel_;
+    index_t n_data_; // number of data samples
+    arma::mat dataset_; // alias for the data matrix
+    arma::vec alpha_; // the alphas, to be optimized
+    arma::vec error_; // the error cache
+    double thresh_; // negation of the intercept
+    double c_;
+    index_t budget_;
+    double sum_alpha_;
 
-  index_t n_feature_; // number of data features
-  double w_square_sum_; // square sum of the weight vector
-  arma::vec VTA_; //
-  double eps_; // the tolerace of progress on alpha values
-  index_t max_iter_; // the maximum iteration, termination criteria
+    index_t n_feature_; // number of data features
+    double w_square_sum_; // square sum of the weight vector
+    arma::vec VTA_; //
+    double eps_; // the tolerace of progress on alpha values
+    index_t max_iter_; // the maximum iteration, termination criteria
 
- public:
-  NNSMO() {}
-  ~NNSMO() {}
+  public:
+    NNSMO() {}
+    ~NNSMO() {}
 
-  /**
-   * Initializes an NNSMO problem.
-   *
-   * You must initialize separately the kernel.
-   */
-  void Init(const Dataset& dataset_in, double c_in, index_t budget_in, double eps_in, index_t max_iter_in) {
-    c_ = c_in;
+    /**
+     * Initializes an NNSMO problem.
+     *
+     * You must initialize separately the kernel.
+     */
+    void Init(const arma::mat& dataset_in, double c_in, index_t budget_in,
+              double eps_in, index_t max_iter_in)
+    {
+      c_ = c_in;
 
-    dataset_ = &dataset_in;
+      dataset_ = dataset_in;
 
-    n_data_ = matrix_.n_cols;
-    budget_ = min(budget_in, (index_t) n_data_);
+      n_data_ = dataset_.n_cols;
+      budget_ = min(budget_in, (index_t) n_data_);
 
-    alpha_.zeros(n_data_);
-    sum_alpha_ = 0;
+      alpha_.zeros(n_data_);
+      sum_alpha_ = 0;
 
-    error_.zeros(n_data_);
-    for(index_t i = 0; i < n_data_; i++)
-      error_[i] -= GetLabelSign_(i);
+      error_.zeros(n_data_);
+      for(index_t i = 0; i < n_data_; i++)
+      {
+        error_[i] -= GetLabelSign_(i);
+      }
 
-    thresh_ = 0;
+      thresh_ = 0;
 
-    n_feature_ = matrix_.n_rows - 1;
-    VTA_.zeros(n_feature_);
-    eps_ = eps_in;
-    max_iter_ = max_iter_in;
-  }
+      n_feature_ = dataset_.n_rows - 1;
+      VTA_.zeros(n_feature_);
+      eps_ = eps_in;
+      max_iter_ = max_iter_in;
+    }
 
-  void Train();
+    void Train();
 
-  const Kernel& kernel() const {
-    return kernel_;
-  }
+    const Kernel& kernel() const
+    {
+      return kernel_;
+    }
 
-  Kernel& kernel() {
-    return kernel_;
-  }
+    Kernel& kernel()
+    {
+      return kernel_;
+    }
 
-  double threshold() const {
-    return thresh_;
-  }
+    double threshold() const
+    {
+      return thresh_;
+    }
 
-  void GetNNSVM(arma::mat& support_vectors, arma::vec& alpha, arma::vec& w) const;
+    void GetNNSVM(arma::mat& support_vectors, arma::vec& alpha, arma::vec& w) const;
 
 private:
   index_t TrainIteration_(bool examine_all);
@@ -93,43 +99,55 @@ private:
 
   bool TakeStep_(index_t i, index_t j, double error_j);
 
-  double FixAlpha_(double alpha) const {
-    if (alpha < NNSMO_ZERO) {
+  double FixAlpha_(double alpha) const
+  {
+    if (alpha < NNSMO_ZERO)
+    {
       alpha = 0;
-    } else if (alpha > c_ - NNSMO_ZERO) {
+    }
+    else if (alpha > c_ - NNSMO_ZERO)
+    {
       alpha = c_;
     }
     return alpha;
   }
 
-  bool IsBound_(double alpha) const {
+  bool IsBound_(double alpha) const
+  {
     return alpha <= 0 || alpha >= c_;
   }
 
  // labels: the last row of the data matrix, 0 or 1
-  int GetLabelSign_(index_t i) const {
-    return (matrix_(matrix_.n_rows - 1, i) != 0) ? 1 : -1;
+  int GetLabelSign_(index_t i) const
+  {
+    return (dataset_(dataset_.n_rows - 1, i) != 0) ? 1 : -1;
   }
 
-  void GetVector_(index_t i, arma::vec& v) const {
-    v = arma::vec((double*) matrix_.colptr(i), matrix_.n_rows - 1, false, true); // manual ugly constructor
+  void GetVector_(index_t i, arma::vec& v) const
+  {
+    v = arma::vec((double*) dataset_.colptr(i), dataset_.n_rows - 1, false, true); // manual ugly constructor
   }
 
-  double Error_(index_t i) const {
+  double Error_(index_t i) const
+  {
     return error_[i];
   }
 
   double Evaluate_(index_t i) const;
 
-  double EvalKernel_(index_t i, index_t j) const {
+  double EvalKernel_(index_t i, index_t j) const
+  {
     return kernel_cache_sign_(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
   }
 
-  void CalcKernels_() {
+  void CalcKernels_()
+  {
     kernel_cache_sign_.set_size(n_data_, n_data_);
     fprintf(stderr, "Kernel Start\n");
-    for (index_t i = 0; i < n_data_; i++) {
-      for (index_t j = 0; j < n_data_; j++) {
+    for (index_t i = 0; i < n_data_; i++)
+    {
+      for (index_t j = 0; j < n_data_; j++)
+      {
         arma::vec v_i;
         GetVector_(i, v_i);
         arma::vec v_j;
@@ -144,21 +162,26 @@ private:
 
 // return the support vector, the support alpha vector and the weight vector of the trained NNSVM
 template<typename TKernel>
-void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const {
+void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
+{
   index_t n_support = 0;
   index_t i_support = 0;
 
-  for (index_t i = 0; i < n_data_; i++) {
-    if (alpha_[i] != 0) {
+  for (index_t i = 0; i < n_data_; i++)
+  {
+    if (alpha_[i] != 0)
+    {
       n_support++;
     }
   }
 
-  support_vectors.set_size(matrix_.n_rows - 1, n_support);
+  support_vectors.set_size(dataset_.n_rows - 1, n_support);
   support_alpha.set_size(n_support);
 
-  for (index_t i = 0; i < n_data_; i++) {
-    if (alpha_[i] != 0) {
+  for (index_t i = 0; i < n_data_; i++)
+  {
+    if (alpha_[i] != 0)
+    {
       arma::vec source;
       arma::vec dest;
       GetVector_(i, source);
@@ -176,7 +199,8 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
 
 //NNSMO training for 2-classes
 template<typename TKernel>
-void NNSMO<TKernel>::Train() {
+void NNSMO<TKernel>::Train()
+{
   bool examine_all = true;
   index_t num_changed = 0;
   index_t n_iter = 0;
@@ -186,19 +210,24 @@ void NNSMO<TKernel>::Train() {
 
   // calculate kernel_cache_sign_: [k_ij* y_i* y_j]
   CalcKernels_();
-  while ((num_changed > 0 || examine_all)) {
+  while ((num_changed > 0 || examine_all))
+  {
     VERBOSE_GOT_HERE(0);
     //NNSMO training iterations
 	num_changed = TrainIteration_(examine_all);
 
-    if (examine_all) {
+    if (examine_all)
+    {
       examine_all = false;
-    } else if (num_changed == 0) {
+    }
+    else if (num_changed == 0)
+    {
       examine_all = true;
     }
 
 	//if exceed the maximum number of iterations, finished
-    if (++n_iter == max_iter_) {
+    if (++n_iter == max_iter_)
+    {
       fprintf(stderr, "Max iterations Reached! \n");
       break;
     }
@@ -215,11 +244,14 @@ void NNSMO<TKernel>::Train() {
 
 //NNSMO training iteration
 template<typename TKernel>
-index_t NNSMO<TKernel>::TrainIteration_(bool examine_all) {
+index_t NNSMO<TKernel>::TrainIteration_(bool examine_all)
+{
   index_t num_changed = 0;
 
-  for (index_t i = 0; i < n_data_; i++) {
-    if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i)) {
+  for (index_t i = 0; i < n_data_; i++)
+  {
+    if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i))
+    {
       num_changed++;
     }
   }
@@ -230,28 +262,33 @@ index_t NNSMO<TKernel>::TrainIteration_(bool examine_all) {
 //	outer loop: alpha_j, KKT violation
 //	inner loop: alpha_i, maximum objective value increase with respective to alpha_i, j
 template<typename TKernel>
-bool NNSMO<TKernel>::TryChange_(index_t j) {
+bool NNSMO<TKernel>::TryChange_(index_t j)
+{
   double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
 
   VERBOSE_GOT_HERE(0);
 
   if (!((rj < -NNSMO_TOLERANCE && alpha_[j] < c_)
-      || (rj > NNSMO_TOLERANCE && alpha_[j] > 0))) {
+      || (rj > NNSMO_TOLERANCE && alpha_[j] > 0)))
+  {
     return false; // nothing to change
   }
 
   // first try the one we suspect to have the largest yield
   index_t i = -1;
   double df_max = 0;
-  for (index_t k = 0; k < n_data_; k++) {
+  for (index_t k = 0; k < n_data_; k++)
+  {
     double df_k = CalculateDF_(k, j, error_j);
-    if (df_k > df_max) {
+    if (df_k > df_max)
+    {
       df_max = df_k;
       i = k;
     }
   }
-  if (i != (index_t) -1 && TakeStep_(i, j, error_j)) {
+  if (i != (index_t) -1 && TakeStep_(i, j, error_j))
+  {
     return true;
   }
 
@@ -262,9 +299,11 @@ bool NNSMO<TKernel>::TryChange_(index_t j) {
 
 //compute the increase of objective value with respect to updating of alpha_i, alpha_j
 template<typename TKernel>
-double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
+double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
+{
   //1. check i,j
-  if (i == j) {
+  if (i == j)
+  {
     VERBOSE_GOT_HERE(0);
     return -1;
   }
@@ -279,16 +318,20 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   double r;
 
   //2. compute L, H of alpha_j
-  if (s < 0) {
+  if (s < 0)
+  {
     DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
-  } else {
+  }
+  else
+  {
     r = alpha_j + alpha_i - c_; // target values are equal
   }
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
 
-  if (l >= u - NNSMO_ZERO) {
+  if (l >= u - NNSMO_ZERO)
+  {
     // TODO: might put in some tolerance
     VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
@@ -303,27 +346,32 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
   VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
 
   // calculate alpha_j^{new}
-  if (likely(eta < 0)) {
+  if (likely(eta < 0))
+  {
     VERBOSE_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
-  } else {
+  }
+  else
+  {
     VERBOSE_MSG(0, "Uncommon case");
-	return -1;
+	  return -1;
   }
   alpha_j = FixAlpha_(alpha_j);
   double delta_alpha_j = alpha_j - alpha_[j];
 
   // check if there is progress
-  if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_)) {
+  if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_))
+  {
     VERBOSE_GOT_HERE(0);
     return -1;
   }
 
   //4. compute increase of objective value
   arma::vec w(n_feature_);
-  for (index_t s = 0; s < n_feature_; s++) {
-    double VTdA_s = (matrix_(s, j) - matrix_(s, i)) * yj * delta_alpha_j;
+  for (index_t s = 0; s < n_feature_; s++)
+  {
+    double VTdA_s = (dataset_(s, j) - dataset_(s, i)) * yj * delta_alpha_j;
     w[s] = math::ClampNonNegative(VTA_[s] + VTdA_s);
   }
   double delta_f = w_square_sum_ / 2 - dot(w, w) / 2;
@@ -336,9 +384,11 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)  {
 
 // update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_ and the error cache: error_
 template<typename TKernel>
-bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
+bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
+{
   //1. check i,j
-  if (i == j) {
+  if (i == j)
+  {
     VERBOSE_GOT_HERE(0);
     return false;
   }
@@ -354,16 +404,20 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   double r;
 
   //2. compute L, H of alpha_j
-  if (s < 0) {
+  if (s < 0)
+  {
     DEBUG_ASSERT(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
-  } else {
+  }
+  else
+  {
     r = alpha_j + alpha_i - c_; // target values are equal
   }
   l = math::ClampNonNegative(r);
   u = c_ + math::ClampNonPositive(r);
 
-  if (l >= u - NNSMO_ZERO) {
+  if (l >= u - NNSMO_ZERO)
+  {
     // TODO: might put in some tolerance
     VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
     VERBOSE_GOT_HERE(0);
@@ -378,29 +432,36 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
 
   // calculate alpha_j^{new}
-  if (likely(eta < 0)) {
+  if (likely(eta < 0))
+  {
     VERBOSE_MSG(0,"Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
-  } else {
+  }
+  else
+  {
     VERBOSE_MSG(0, "Uncommon case");
-	return false;
+	  return false;
   }
   alpha_j = FixAlpha_(alpha_j);
   double delta_alpha_j = alpha_j - alpha_[j];
 
   // check if there is progress
-  if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_)) {
+  if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_))
+  {
     VERBOSE_GOT_HERE(0);
     return false;
   }
 
   // calculate alpha_i^new
   alpha_i = alpha_i - (s)*(delta_alpha_j);
-  if (alpha_i < NNSMO_ZERO) {
+  if (alpha_i < NNSMO_ZERO)
+  {
     alpha_j += s * alpha_i;
     alpha_i = 0;
-  } else if (alpha_i > c_ - NNSMO_ZERO) {
+  }
+  else if (alpha_i > c_ - NNSMO_ZERO)
+  {
     double t = alpha_i - c_;
     alpha_j += s * t;
     alpha_i = c_;
@@ -410,8 +471,9 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
 
   //4. update VTA_, w_square_sum_
   arma::vec w(n_feature_);
-  for (index_t s = 0; s < n_feature_; s++) {
-    double VTdA_s = matrix_(s, i) * yi * delta_alpha_i + matrix_(s, j) * yj * delta_alpha_j;
+  for (index_t s = 0; s < n_feature_; s++)
+  {
+    double VTdA_s = dataset_(s, i) * yi * delta_alpha_i + dataset_(s, j) * yj * delta_alpha_j;
     VTA_[s] += VTdA_s;
     w[s] = math::ClampNonNegative(VTA_[s]);
   }
@@ -425,11 +487,13 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
   // update error cache and threshold
   double thresh_sum = 0;
   index_t nb_count = 0;
-  for (index_t k = 0; k < n_data_ ; k++) {
+  for (index_t k = 0; k < n_data_ ; k++)
+  {
     arma::vec x_k;
     GetVector_(k, x_k);
     error_[k] = dot(w, x_k) - GetLabelSign_(k);
-    if(!IsBound_(alpha_[k])) {
+    if(!IsBound_(alpha_[k]))
+    {
       thresh_sum += error_[k];
       nb_count++;
     }
@@ -438,8 +502,10 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j) {
     thresh_ = thresh_sum/nb_count;
 
   // update error cache using the new threshold
-  for (index_t k = 0; k < n_data_ ; k++ )
+  for (index_t k = 0; k < n_data_ ; k++)
+  {
     error_[k] -= thresh_;
+  }
 
   VERBOSE_GOT_HERE(0);
   return true;
