@@ -43,13 +43,15 @@ __device__ void AccumulateTileContribution_(
   int num_dimensions,
   float bandwidth,
   float *query_point,
+  int num_reference_points_in_this_tile,
   float *local_sum) {
 
   extern __shared__ float reference_point_shared_mem[];
 
   int i;
   float *reference_point = reference_point_shared_mem;
-  for(i = 0; i < blockDim.x; i++, reference_point += num_dimensions) {
+  for(i = 0; i < num_reference_points_in_this_tile; i++,
+      reference_point += num_dimensions) {
     AccumulateReferencePointContribution_(
       num_dimensions, bandwidth, query_point, reference_point, local_sum);
   }
@@ -71,8 +73,10 @@ __global__ void NbodyKernelOnDevice(
   int global_thread_id = blockIdx.x * blockDim.x + threadIdx.x;
   int offset = num_dimensions * global_thread_id;
   int i, tile;
-  for(i = 0; i < num_dimensions; i++, offset++) {
-    query_point_local_mem[i] = query[offset];
+  if(global_thread_id < num_query_points) {
+    for(i = 0; i < num_dimensions; i++, offset++) {
+      query_point_local_mem[i] = query[offset];
+    }
   }
 
   // Local variable for accumulating the kernel sum.
@@ -83,19 +87,29 @@ __global__ void NbodyKernelOnDevice(
     // Each thread loads the specified number of points, and
     // synchronize all threads within this block before computing.
     int reference_point_id = tile * blockDim.x + threadIdx.x;
-    LoadReferencePoint_(num_dimensions, reference, reference_point_id);
+    int num_reference_points_in_this_tile =
+      min(num_reference_points - i, blockDim.x);
+
+    if(reference_point_id < num_reference_points) {
+      LoadReferencePoint_(num_dimensions, reference, reference_point_id);
+    }
     __syncthreads();
 
     // Accumulate the kernel sum contribution of the current tile.
-    AccumulateTileContribution_(
-      num_dimensions, bandwidth, query_point_local_mem, & local_sum);
+    if(global_thread_id < num_query_points) {
+      AccumulateTileContribution_(
+        num_dimensions, bandwidth, query_point_local_mem,
+        num_reference_points_in_this_tile, & local_sum);
+    }
 
     // Synchronize all threads within this block before loading new
     // sets of points.
     __syncthreads();
   }
 
-  kernel_sums_out[ global_thread_id ] = local_sum;
+  if(global_thread_id < num_query_points) {
+    kernel_sums_out[ global_thread_id ] = local_sum;
+  }
 }
 
 extern "C" {
