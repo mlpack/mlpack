@@ -82,14 +82,17 @@ __global__ void NbodyKernelOnDevice(
 
   // Local variable for accumulating the kernel sum.
   float local_sum = 0.0;
+  int num_reference_points_per_tile = 1024 / num_dimensions;
 
-  for(i = 0, tile = 0; i < num_reference_points; i += blockDim.x, tile++) {
+  for(i = 0, tile = 0; i < num_reference_points;
+      i += num_reference_points_per_tile, tile++) {
 
     // Each thread loads the specified number of points, and
     // synchronize all threads within this block before computing.
     int reference_point_id = tile * blockDim.x + threadIdx.x;
     int num_reference_points_in_this_tile =
-      min(num_reference_points - i, blockDim.x);
+      min(
+        num_reference_points - i, num_reference_points_per_tile);
 
     if(reference_point_id < num_reference_points) {
       LoadReferencePoint_(num_dimensions, reference, reference_point_id);
