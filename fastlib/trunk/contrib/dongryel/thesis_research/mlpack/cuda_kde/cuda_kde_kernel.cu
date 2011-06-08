@@ -93,8 +93,10 @@ __global__ void NbodyKernelOnDevice(
     int num_reference_points_in_this_tile =
       min(
         num_reference_points - i, num_reference_points_per_tile);
+    int ending_rpoint_id = tile * num_reference_points_per_tile +
+                           num_reference_points_in_this_tile;
 
-    if(reference_point_id < num_reference_points) {
+    if(reference_point_id < ending_rpoint_id) {
       LoadReferencePoint_(num_dimensions, reference, reference_point_id);
     }
     __syncthreads();
@@ -159,8 +161,9 @@ extern "C" {
       reference_on_device, reference_on_host,
       num_reference_bytes, cudaMemcpyHostToDevice);
 
-    int num_blocks = (num_query_points + 511) / 512;
     int num_threads_per_block = 512;
+    int num_blocks = (num_query_points + num_threads_per_block - 1) /
+                     num_threads_per_block;
     NbodyKernelOnDevice <<< num_blocks, num_threads_per_block >>>(
       num_dimensions, bandwidth, query_on_device, num_query_points,
       reference_on_device, num_reference_points, kernel_sums_out_device);
