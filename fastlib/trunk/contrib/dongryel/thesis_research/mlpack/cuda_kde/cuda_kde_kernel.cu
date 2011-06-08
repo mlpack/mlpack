@@ -6,6 +6,7 @@
  */
 
 #include <cuda.h>
+#include <stdio.h>
 
 __device__ void LoadReferencePoint_(
   int num_dimensions,
@@ -155,14 +156,8 @@ extern "C" {
       reference_on_device, reference_on_host,
       num_reference_bytes, cudaMemcpyHostToDevice);
 
-    // Query the number of multiprocessors on the GPU.
-    cudaDeviceProp prop;
-    int count;
-    cudaGetDeviceCount(& count);
-    cudaGetDeviceProperties(&prop, 0);
-
-    int num_blocks = prop.multiProcessorCount;
-    int num_threads_per_block = num_dimensions / num_blocks;
+    int num_blocks = (num_query_points + 511) / 512;
+    int num_threads_per_block = 512;
     NbodyKernelOnDevice <<< num_blocks, num_threads_per_block >>>(
       num_dimensions, bandwidth, query_on_device, num_query_points,
       reference_on_device, num_reference_points, kernel_sums_out_device);
