@@ -19,84 +19,79 @@
 #include "nnsvm.h"
 
 /**
-* Load data set from data file.
-*
-* @param: the dataset
-* @param: name of the data file to be loaded
-*/
-int LoadData(Dataset& dataset, std::string datafilename){
-  if (fx_param_exists(NULL, datafilename.c_str())) {
-    // if a data file is specified, use it.
-    if (!PASSED(dataset.InitFromFile(fx_param_str_req(NULL, datafilename.c_str()))))
-    {
-      std::cerr << "Couldn't open the data file.\n";
-      return 0;
-    }
-  }
-  return 1;
-}
-
-/**
 * NNSVM training - Main function
 *
 * @param: argc
 * @param: argv
 */
-int main(int argc, char *argv[]) {
-
+int main(int argc, char *argv[])
+{
   fx_init(argc, argv, NULL);
 
   std::string mode = fx_param_str_req(NULL, "mode");
   std::string kernel = fx_param_str_req(NULL, "kernel");
 
   /* Training Mode, need training data */
-  if (mode == "train" || mode == "train_test") {
+  if (mode == "train" || mode == "train_test")
+  {
     std::cerr << "Non-Negativity Constrained SVM Training... \n";
 
+    std::string trainFile = fx_param_str_req(NULL, "train_data");
     // Load training data
-    Dataset trainset;
-    if (LoadData(trainset, "train_data") == 0) // TODO:param_req
+    arma::mat dataSet;
+    if (data::Load(trainFile.c_str(), dataSet) == SUCCESS_FAIL) // TODO:param_req
+    {
+      /* TODO: eventually, we need better exception handling */
+      std::cerr << "Could not open " << trainFile << " for reading\n";
       return 1;
+    }
 
     // Begin NNSVM Training
     datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
 
-    if (kernel == "linear") {
+    if (kernel == "linear")
+    {
       NNSVM<SVMLinearKernel> nnsvm;
-      nnsvm.InitTrain(trainset, 2, nnsvm_module);
+
+      nnsvm.InitTrain(dataSet, 2, nnsvm_module);
 
       fx_timer_start(NULL, "nnsvm_train");
       fx_timer *nnsvm_train_time = fx_get_timer(NULL, "nnsvm_train");
       std::cerr << "nnsvm_train_time" << nnsvm_train_time->total.micros / 1e6 << "\n";
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test"){
-	std::cerr << "Non-Negativity SVM Classifying... \n";
-	/* Load testing data */
-	Dataset testset;
-	if (LoadData(testset, "test_data") == 0) // TODO:param_req
-	  return 1;
-	nnsvm.BatchClassify(testset, "testlabels");
+      if (mode=="train_test")
+      {
+        std::cerr << "Non-Negativity SVM Classifying... \n";
+        /* Load testing data */
+        std::string testFile = fx_param_str_req(NULL, "test_data");
+        arma::mat testset;
+        if (data::Load(testFile.c_str(), testset) == SUCCESS_FAIL) // TODO:param_req
+        {
+          /* TODO: eventually, we need better exception handling */
+          std::cerr << "Could not open " << testFile << " for reading\n";
+          return 1;
+        }
+        nnsvm.BatchClassify(testset, "testlabels");
       }
     }
   }
   /* Testing(offline) Mode, need loading model file and testing data */
-  else if (mode == "test") {
+  else if (mode == "test")
+  {
     std::cerr << "Non-Negativity Constrained SVM Classifying... \n";
 
     /* Load testing data */
-    Dataset testset;
-    if (LoadData(testset, "test_data") == 0) // TODO:param_req
-      return 1;
+    arma::mat testset;
 
     /* Begin Classification */
     datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
 
-    if (kernel == "linear") {
+    if (kernel == "linear")
+    {
       NNSVM<SVMLinearKernel> nnsvm;
       nnsvm.Init(testset, 2, nnsvm_module);
       nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
     }
   }
-
   fx_done(NULL);
 }
