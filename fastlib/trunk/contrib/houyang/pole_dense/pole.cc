@@ -26,7 +26,6 @@ void Pole::ParseArgs(int argc, char *argv[]) {
   if (argc > 1) {
     m_["method"] = "null";
     m_["kernel"] = "null";
-    m_["transform"] = "null";
     for (int i=1; i<argc; i++) {
       if (string(argv[i]) == "-m" || string(argv[i]) == "--method") {
 	if (i < argc-1) {
@@ -42,14 +41,6 @@ void Pole::ParseArgs(int argc, char *argv[]) {
 	}
 	else {
           m_["kernel"] = "";
-	}
-      }
-      else if (string(argv[i]) == "-r" || string(argv[i]) == "--transform") {
-	if (i < argc-1) {
-          m_["transform"] = string(argv[i+1]);
-	}
-	else {
-          m_["transform"] = "";
 	}
       }
       else if (string(argv[i]) == "-h" || string(argv[i]) == "--help") {
@@ -79,11 +70,11 @@ void Pole::ParseArgs(int argc, char *argv[]) {
       }
     }
     else if (m_["method"] == "ogdt") {
-      if (m_["transform"] == "null") {
-	cout << "ERROR! Transform type needs to be specified for OGDT!" << endl;
+      if (m_["kernel"] == "null") {
+	cout << "ERROR! Transform kernel type needs to be specified for OGDT!" << endl;
         exit(1);
       }
-      else if (m_["transform"] == "fourier_rbf") {
+      else if (m_["kernel"] == "fourier_rbf") {
 	L_ = new OGDT<FourierRBFTransform>;
       }
       else {
@@ -141,8 +132,6 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Kernel (linear, rbf). Default: linear kernel.")
     ("sigma", po::value<double>(&L_->sigma_)->default_value(1.0), 
      "Sigma in Gaussian RBF kernel. Default: 1.0.")
-    ("transform,r", po::value<string>(&L_->kernel_name_)->default_value("fourier_rbf"), 
-     "Transform of original data vectors (fourier_rbf). Default: fourier transform of rbf kernel.")
     ("trdim", po::value<T_IDX>(&L_->trdim_)->default_value(1000), 
      "Dimension for transformed features. Default: 1000.")
     ("maxeig", po::value<T_IDX>(&L_->maxeig_)->default_value(1), 
@@ -220,7 +209,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
     }
   }
 
-  if (L_->random_data_ || m_["transform"] != "null")
+  if (L_->random_data_ || m_["method"] == "ogdt")
     srand(time(NULL));
 
   ArgsSanityCheck();
