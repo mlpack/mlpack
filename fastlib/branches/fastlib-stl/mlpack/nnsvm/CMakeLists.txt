@@ -4,8 +4,10 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   nnsvm.h
    nnsmo.h
+   nnsmo_impl.h
+   nnsvm.h
+   nnsvm_impl.h
 )
 
 # add directory name to sources
