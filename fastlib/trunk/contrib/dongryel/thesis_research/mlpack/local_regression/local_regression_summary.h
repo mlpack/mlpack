@@ -389,9 +389,10 @@ class LocalRegressionSummary {
         core::math::Range delta_right_hand_side;
         delta_in.right_hand_side_e_[j].scaled_interval(
           delta_in.pruned_, num_standard_deviations, &delta_right_hand_side);
-        delta_right_hand_side.lo = std::max(delta_right_hand_side.lo, 0.0);
 
-        right_hand_side_l_[j] += delta_right_hand_side.lo;
+        // For the lower bound, apply something larger.
+        right_hand_side_l_[j] += delta_in.right_hand_side_e_[j].sample_mean() *
+                                 delta_in.pruned_;
         right_hand_side_u_[j] += delta_right_hand_side.hi;
         for(unsigned int i = 0; i < left_hand_side_l_.n_rows; i++) {
           core::math::Range delta_left_hand_side;
@@ -399,7 +400,10 @@ class LocalRegressionSummary {
             delta_in.pruned_, num_standard_deviations, &delta_left_hand_side);
           delta_left_hand_side.lo = std::max(delta_left_hand_side.lo, 0.0);
 
-          left_hand_side_l_.at(i, j) += delta_left_hand_side.lo;
+          // Same here.
+          left_hand_side_l_.at(i, j) +=
+            delta_in.left_hand_side_e_.get(i, j).sample_mean() *
+            delta_in.pruned_;
           left_hand_side_u_.at(i, j) += delta_left_hand_side.hi;
         }
       }
