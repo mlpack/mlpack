@@ -41,37 +41,37 @@ void IO::Add(const char* identifier,
 
 
 /**
-* @brief Returns the value of the specified parameter.  
-*   If the parameter is unspecified, an undefined but 
-*   more or less valid value is returned.
-*
-* @tparam T The type of the parameter.
-* @param identifier The full pathname of the parameter.
-*
-* @return The value of the parameter.  
-*   Use IO::CheckValue to determine if it's valid.
-*/
+ * @brief Returns the value of the specified parameter.  
+ *   If the parameter is unspecified, an undefined but 
+ *   more or less valid value is returned.
+ *
+ * @tparam T The type of the parameter.
+ * @param identifier The full pathname of the parameter.
+ *
+ * @return The value of the parameter.  
+ *   Use IO::CheckValue to determine if it's valid.
+ */
 template<typename T>
 T& IO::GetValue(const char* identifier) {
-  //Used to ensure we have a valid value
+  // Used to ensure we have a valid value
   T tmp;
-  //Used to index into the globalValues map
+  // Used to index into the globalValues map
   std::string key = std::string(identifier);
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
 
-  //If we have the option, set it's value
+  // If we have the option, set its value
   if (vmap.count(key) && !gmap.count(key)) {
     gmap[key] = boost::any(vmap[identifier].as<T>());
   }
 
-  //We may have whatever is on the commandline, but what if
-  //The programmer has made modifications?
-  if (!gmap.count(key)) {//The programmer hasn't done anything, lets register it
+  // We may have whatever is on the commandline, but what if the programmer has
+  // made modifications?
+  if (!gmap.count(key)) { // The programmer hasn't done anything; register it
     gmap[key] = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key]) = tmp;
   }
-  tmp =*boost::any_cast<T>(&gmap[key]);
+  tmp = *boost::any_cast<T>(&gmap[key]);
   return *boost::any_cast<T>(&gmap[key]);
 }
 

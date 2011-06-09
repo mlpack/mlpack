@@ -174,14 +174,14 @@ class IO {
    
   /*
    * Grab the value of type T found while parsing.  
-   * Should use checkValue first.
+   * Should use CheckValue() first.  You can set the value using this reference
+   * safely.
    *
-   * @param argc The number of arguments on the commandline.
-   * @param argv The array of arguments as strings 
+   * @param identifier The name of the parameter in question.
    */
   template<typename T>
-  static T& GetValue(const char* identifier); 
-   
+  static T& GetValue(const char* identifier);
+
   /*
    * Grab the description of the specified node.
    * 
