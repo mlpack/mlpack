@@ -11,9 +11,8 @@
 __device__ void LoadReferencePoint_(
   int num_dimensions,
   float *reference,
-  int reference_point_id) {
-
-  extern __shared__ float reference_point_shared_mem[];
+  int reference_point_id,
+  float *reference_point_shared_mem) {
 
   int i;
   int source_pos = reference_point_id * num_dimensions;
@@ -21,6 +20,9 @@ __device__ void LoadReferencePoint_(
   for(i = 0; i < num_dimensions; i++, dest_pos++, source_pos++) {
     reference_point_shared_mem[dest_pos] = reference[source_pos];
   }
+
+  source_pos = reference_point_id * num_dimensions;
+  dest_pos = threadIdx.x * num_dimensions;
 }
 
 __device__ void AccumulateReferencePointContribution_(
@@ -33,10 +35,10 @@ __device__ void AccumulateReferencePointContribution_(
   int i;
   float squared_distance = 0.0;
   for(i = 0; i < num_dimensions; i++) {
-    float diff = (query_point[i] - reference_point[i]) / bandwidth;
+    float diff = (query_point[i] - reference_point[i]);
     squared_distance += diff * diff;
   }
-  float kernel_value = expf(- squared_distance * 0.5);
+  float kernel_value = exp(- squared_distance / (2 * bandwidth * bandwidth));
   (*local_sum) += kernel_value;
 }
 
@@ -45,9 +47,8 @@ __device__ void AccumulateTileContribution_(
   float bandwidth,
   float *query_point,
   int num_reference_points_in_this_tile,
+  float *reference_point_shared_mem,
   float *local_sum) {
-
-  extern __shared__ float reference_point_shared_mem[];
 
   int i;
   float *reference_point = reference_point_shared_mem;
@@ -82,7 +83,12 @@ __global__ void NbodyKernelOnDevice(
 
   // Local variable for accumulating the kernel sum.
   float local_sum = 0.0;
-  int num_reference_points_per_tile = 1024 / num_dimensions;
+
+  // The number of reference points in each round is the minimum of
+  // the two quantities: the number of points that can be packed in
+  // the shared memory and the number of threads available.
+  int num_reference_points_per_tile =
+    min(1024 / num_dimensions, blockDim.x);
 
   for(i = 0, tile = 0; i < num_reference_points;
       i += num_reference_points_per_tile, tile++) {
@@ -97,7 +103,9 @@ __global__ void NbodyKernelOnDevice(
                            num_reference_points_in_this_tile;
 
     if(reference_point_id < ending_rpoint_id) {
-      LoadReferencePoint_(num_dimensions, reference, reference_point_id);
+      LoadReferencePoint_(
+        num_dimensions, reference, reference_point_id,
+        reference_point_shared_mem);
     }
     __syncthreads();
 
@@ -105,7 +113,8 @@ __global__ void NbodyKernelOnDevice(
     if(global_thread_id < num_query_points) {
       AccumulateTileContribution_(
         num_dimensions, bandwidth, query_point_local_mem,
-        num_reference_points_in_this_tile, & local_sum);
+        num_reference_points_in_this_tile,
+        reference_point_shared_mem, & local_sum);
     }
 
     // Synchronize all threads within this block before loading new
@@ -172,7 +181,7 @@ extern "C" {
       reference_on_device, reference_on_host,
       num_reference_bytes, cudaMemcpyHostToDevice);
 
-    int num_threads_per_block = 512;
+    int num_threads_per_block = 2;
     int num_blocks = (num_query_points + num_threads_per_block - 1) /
                      num_threads_per_block;
 
