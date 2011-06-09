@@ -181,7 +181,7 @@ extern "C" {
       reference_on_device, reference_on_host,
       num_reference_bytes, cudaMemcpyHostToDevice);
 
-    int num_threads_per_block = 2;
+    int num_threads_per_block = 512;
     int num_blocks = (num_query_points + num_threads_per_block - 1) /
                      num_threads_per_block;
 
