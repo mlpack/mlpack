@@ -502,9 +502,11 @@ class GeneralBinarySpaceTree {
       std::vector<int> *membership_counts_per_process) {
 
       // Perform tree-spec specific task first.
+      int left_count;
       std::deque<bool> left_membership;
       if(!  TreeSpecType::AttemptSplitting(
-            comm, metric_in, bound, matrix_in, &left_membership)) {
+            comm, metric_in, bound, matrix_in,
+            &left_count, &left_membership)) {
         return false;
       }
 
@@ -513,6 +515,34 @@ class GeneralBinarySpaceTree {
       // will be outputted.
       assigned_point_indices->resize(comm.size());
       membership_counts_per_process->resize(comm.size());
+
+      // Check whether the left or the right is empty. If so, steal at
+      // least one point from the non-empty part to make sure that it
+      // does not partition into one part containing nothing.
+      if(left_count == matrix_in.n_cols()) {
+        for(unsigned int i = 0; i < left_membership.size(); i++) {
+
+          // Find the first one that is assigned to the left and
+          // switch it to the right.
+          if(left_membership[i]) {
+            left_membership[i] = false;
+            left_count--;
+            break;
+          }
+        }
+      }
+      else if(left_count == 0) {
+        for(unsigned int i = 0; i < left_membership.size(); i++) {
+
+          // Find the first one that is assigned to the right and
+          // switch it to the left.
+          if(left_membership[i] == false) {
+            left_membership[i] = true;
+            left_count++;
+            break;
+          }
+        }
+      }
 
       // Loop through the membership vectors and assign to the right
       // process partner.
@@ -529,6 +559,7 @@ class GeneralBinarySpaceTree {
           (*membership_counts_per_process)[right_destination]++;
         }
       }
+
       return true;
     }
 

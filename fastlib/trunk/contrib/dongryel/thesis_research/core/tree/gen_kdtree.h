@@ -207,6 +207,7 @@ class GenKdTree {
       const MetricType &metric_in,
       const BoundType &bound,
       const core::table::DenseMatrix &matrix_in,
+      int *left_count,
       std::deque<bool> *left_membership) {
 
       // Splitting dimension/widest dimension info.
@@ -237,10 +238,9 @@ class GenKdTree {
 
       // Assign the point on the local process using the splitting
       // value.
-      int left_count;
       ComputeMemberships(
         metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
-        &left_count, left_membership);
+        left_count, left_membership);
 
       return true;
     }
