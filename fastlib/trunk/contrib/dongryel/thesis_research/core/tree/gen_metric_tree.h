@@ -348,6 +348,7 @@ class GenMetricTree {
       const MetricType &metric_in,
       const BoundType &bound,
       const core::table::DenseMatrix &matrix_in,
+      int *left_count,
       std::deque<bool> *left_membership) {
 
       // Pick a random point across all processes.
@@ -407,7 +408,6 @@ class GenMetricTree {
 
       // Assign the point on the local process using the splitting
       // value.
-      int left_count;
       BoundType left_bound, right_bound;
       left_bound.center().Copy(
         global_furthest_from_random_row_vec.first);
@@ -415,7 +415,7 @@ class GenMetricTree {
         global_furthest_from_furthest_random_row_vec.first);
       ComputeMemberships(
         metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
-        &left_count, left_membership);
+        left_count, left_membership);
 
       return true;
     }
