@@ -57,10 +57,6 @@ class BandwidthLSCV {
   static void ComputeLSCVScore(const arma::mat& references,
 			       const arma::mat& reference_weights,
 			       double bandwidth) {
-
-    // Get the parameters.
-    struct datanode *kde_module = fx_submodule(fx_root, "kde");
-
     // Kernel object.
     typename TKernelAux::TKernel kernel;
     
@@ -70,27 +66,25 @@ class BandwidthLSCV {
     // Set the bandwidth of the kernel.
     kernel.Init(bandwidth);
     
-    printf("Trying the bandwidth value of %g...\n", bandwidth);
+    mlpack::IO::Info << "Trying the bandwidth value of " << bandwidth << "..." << std::endl;
     
     // Need to run density estimates twice: on $h$ and $sqrt(2)
     // h$. Free memory after each run to minimize memory usage.
-    fx_set_param_double(kde_module, "bandwidth", bandwidth);
+    mlpack::IO::GetParam<double>("kde/bandwidth") = bandwidth;
+
     DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth = 
       new DualtreeKdeCV<TKernelAux>();
-    fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
+    fast_kde_on_bandwidth->Init(references, reference_weights);
     lscv_score = fast_kde_on_bandwidth->Compute();
     delete fast_kde_on_bandwidth;
     
-    printf("Least squares cross-validation score is %g...\n\n", lscv_score); 
+    mlpack::IO::Info << "Least squares cross-validation score is " 
+      << lscv_score << "..." << std::endl << std::endl;
   }
 
   template<typename TKernelAux>
   static void Optimize(const arma::mat& references,
 		       const arma::mat& reference_weights) {
-    
-    // Get the parameters.
-    struct datanode *kde_module = fx_submodule(fx_root, "kde");
-
     // Minimum LSCV score so far.
     double min_lscv_score = DBL_MAX;
 
@@ -103,8 +97,9 @@ class BandwidthLSCV {
     double current_upper_search_limit = plugin_bandwidth;
     double min_bandwidth = DBL_MAX;
 
-    printf("Searching the optimal bandwidth in [%g %g]...\n",
-	   current_lower_search_limit, current_upper_search_limit);
+    mlpack::IO::Info << "Searching the optimal bandwidth in [" 
+      << current_lower_search_limit 
+      << " " << current_upper_search_limit <<"]..." << std::endl;
 
     do {
       
@@ -113,18 +108,19 @@ class BandwidthLSCV {
       double bandwidth = current_upper_search_limit;
       kernel.Init(bandwidth);
 
-      printf("Trying the bandwidth value of %g...\n", bandwidth);
+      mlpack::IO::Info << "Trying the bandwidth value of " << bandwidth << "..." << std::endl;
 
       // Need to run density estimates twice: on $h$ and $sqrt(2)
       // h$. Free memory after each run to minimize memory usage.
-      fx_set_param_double(kde_module, "bandwidth", bandwidth);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = bandwidth;
       DualtreeKdeCV<TKernelAux> *fast_kde_on_bandwidth =
 	new DualtreeKdeCV<TKernelAux>();
-      fast_kde_on_bandwidth->Init(references, reference_weights, kde_module);
+      fast_kde_on_bandwidth->Init(references, reference_weights);
       double lscv_score = fast_kde_on_bandwidth->Compute();
       delete fast_kde_on_bandwidth;
 
-      printf("Least squares cross-validation score is %g...\n\n", lscv_score);
+      mlpack::IO::Info << "Least squares cross-validation score is " 
+        << lscv_score << "..." << std::endl << std::endl;
 
       if(lscv_score < min_lscv_score) {
 	min_lscv_score = lscv_score;
@@ -137,8 +133,8 @@ class BandwidthLSCV {
 
     // Output the final density estimates that minimize the least
     // squares cross-validation to the file.
-    printf("Minimum score was %g and achieved at the bandwidth value of %g\n", 
-	   min_lscv_score, min_bandwidth);
+    mlpack::IO::Info << "Minimum score was " << min_lscv_score <<
+       " and achieved at the bandwidth value of " << min_bandwidth << std::endl; 
 
   }
 

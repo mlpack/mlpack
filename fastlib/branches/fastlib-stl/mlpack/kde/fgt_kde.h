@@ -29,6 +29,7 @@
 #define FGT_KDE_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
 #include "mlpack/series_expansion/mult_series_expansion_aux.h"
 
@@ -57,9 +58,6 @@ class FGTKde {
  private:
 
   ////////// Private Member Variables //////////
-
-  /** @brief The datanode holding the parameters. */
-  struct datanode *module_;
 
   /** @brief The column-oriented query dataset. */
   arma::mat qset_;
@@ -1146,13 +1144,9 @@ class FGTKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module holding the parameters for execution.
    */
-  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
-
-    // initialize with the incoming module holding the paramters
-    module_ = module_in;
-
+  void Init(arma::mat& qset, arma::mat& rset) {
     // initialize the kernel
-    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
+    kernel_.Init(mlpack::IO::GetParam<double>("kde/bandwidth"));
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
@@ -1161,7 +1155,10 @@ class FGTKde {
     rset_ = rset;
 
     // set accuracy
-    tau_ = fx_param_double(module_, "absolute_error", 0.1);
+    if(!mlpack::IO::HasParam("kde/absolute_error"))
+      mlpack::IO::GetParam<double>("kde/absolute_error") = .1;
+
+    tau_ = mlpack::IO::GetParam<double>("kde/absolute_error");
   }
 
   /** @brief Compute KDE estimates using fast Gauss transform.
@@ -1179,15 +1176,15 @@ class FGTKde {
     sidelengths.set_size(rset_.n_rows);
     mincoords.set_size(rset_.n_rows);
 
-    printf("Computing FGT KDE...\n");
+    mlpack::IO::Info << "Computing FGT KDE..." << std::endl;
     
     // initialize densities to zero
     densities_.zeros();
 
-    fx_timer_start(module_, "fgt_kde_init");
+    mlpack::IO::StartTimer("kde/fgt_kde_init");
     FastGaussTransformPreprocess_(&interaction_radius, nsides, sidelengths,
 				  mincoords, &nboxes, &nterms);
-    fx_timer_stop(module_, "fgt_kde_init");
+    mlpack::IO::StopTimer("kde/fgt_kde_init");
 
     // precompute factorials
     msea_.Init(nterms - 1, qset_.n_rows);
@@ -1213,15 +1210,15 @@ class FGTKde {
     
     double delta = 2 * kernel_.bandwidth_sq();
 
-    fx_timer_start(module_, "fgt_kde");
+    mlpack::IO::StartTimer("kde/fgt_kde");
     GaussTransform_(delta, nterms, nboxes, nsides, sidelengths, mincoords,
 		    locexp, center, queries_assigned, references_assigned, 
 		    mcoeffs);
 
     // normalize the sum
     NormalizeDensities_();
-    fx_timer_stop(module_, "fgt_kde");
-    printf("FGT KDE completed...\n");
+    mlpack::IO::StopTimer("kde/fgt_kde");
+    mlpack::IO::Info << "FGT KDE completed..." << std::endl;
   }
 
   /** @brief Output KDE results to a stream 
@@ -1235,8 +1232,9 @@ class FGTKde {
 
     FILE *stream = stdout;
     const char *fname = NULL;
+    fname = mlpack::IO::GetParam<std::string>("kde/fgt_kde_output").c_str();
 
-    if((fname = fx_param_str(module_, "fgt_kde_output", NULL)) != NULL) {
+    if(mlpack::IO::HasParam("kde/fgt_kde_output")) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {

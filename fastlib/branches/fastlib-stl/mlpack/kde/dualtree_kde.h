@@ -65,6 +65,7 @@
 #define INSIDE_DUALTREE_KDE_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
 
 #include "mlpack/series_expansion/farfield_expansion.h"
@@ -78,61 +79,29 @@
 #include "kde_stat.h"
 
 ////////// Documentation stuffs //////////
-const fx_entry_doc kde_main_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   "  A file containing reference data.\n"},
-  {"query", FX_PARAM, FX_STR, NULL,
-   "  A file containing query data (defaults to data).\n"},
-  FX_ENTRY_DOC_DONE
-};
+PARAM_STRING_REQ("data", "A file containing reference data.", "kde");
+PARAM_STRING_REQ("query", "A file containing query data (defaults to data).", "kde");
 
-const fx_entry_doc kde_entries[] = {
-  {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
-   "  The bandwidth parameter.\n"},
-  {"do_naive", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to perform naive computation as well.\n"},
-  {"dwgts", FX_PARAM, FX_STR, NULL,
-   "  A file that contains the weight of each point. If missing, will\
- assume uniform weight\n"},
-  {"fast_kde_output", FX_PARAM, FX_STR, NULL,
-   "  A file to receive the results of computation.\n"},
-  {"kernel", FX_PARAM, FX_STR, NULL,
-   "  The type of kernel to use.\n"},
-  {"knn", FX_PARAM, FX_INT, NULL,
-   "  The number of k-nearest neighbor to use for variable bandwidth.\n"},
-  {"loo", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to output the density estimates using leave-one-out.\n"},
-  {"mode", FX_PARAM, FX_STR, NULL,
-   "  Fixed bandwidth or variable bandwidth mode.\n"},
-  {"multiplicative_expansion", FX_PARAM, FX_BOOL, NULL,
-   "  Whether to do O(p^D) kernel expansion instead of O(D^p).\n"},
-  {"probability", FX_PARAM, FX_DOUBLE, NULL,
-   "  The probability guarantee that the relative error accuracy holds.\n"},
-  {"relative_error", FX_PARAM, FX_DOUBLE, NULL,
-   "  The required relative error accuracy.\n"},
-  {"threshold", FX_PARAM, FX_DOUBLE, NULL,
-   "  If less than this value, then absolute error bound.\n"},
-  {"scaling", FX_PARAM, FX_STR, NULL,
-   "  The scaling option.\n"},
-  FX_ENTRY_DOC_DONE
-};
+PARAM(double, "bandwidth","The bandwidth parameter.", "kde", 0.0, false);
+PARAM(double, "probability", "The probability guarantee that the relative error accuracy holds.", "kde", 1.0, false);
+PARAM(double, "relative_error", "The required relative error accuracy.", "kde", 0.1, false);
+PARAM(double, "threshold", "If less than this value, then absolute error bound.", "kde", 0, false);
 
-const fx_module_doc kde_doc = {
-  kde_entries, NULL,
-  "Performs dual-tree kernel density estimate computation.\n"
-};
+PARAM_FLAG("do_naive", "Whether to perform naive computation as well.", "kde");
 
-const fx_submodule_doc kde_main_submodules[] = {
-  {"kde", &kde_doc,
-   "  Responsible for dual-tree kernel density estimate computation.\n"},
-  FX_SUBMODULE_DOC_DONE
-};
+PARAM_INT("knn", "The number of k-nearest neighbor to use for variable bandwidth.", "kde", 0);
 
-const fx_module_doc kde_main_doc = {
-  kde_main_entries, kde_main_submodules,
-  "This is the driver for the kernel density estimator.\n"
-};
+PARAM_FLAG("loo", "Whether to output the density estimates using leave-one-out.", "kde");
+PARAM_FLAG("multiplicative_expansion", "Whether to do O(p^D) kernel expansion instead of O(D^p).", "kde");
 
+PARAM_STRING("scaling", "The scaling option.", "kde", "none");
+PARAM_STRING("dwgts", "A file that contains the weight of each point. If missing, will\
+ assume uniform weight", "kde", "");
+PARAM_STRING("fast_kde_output", "A file to receive the results of computation.", "kde", "fast_kde_output.txt");
+PARAM_STRING("kernel", "The type of kernel to use.", "kde", "");
+PARAM_STRING("mode", "Fixed bandwidth or variable bandwidth mode.", "kde", "");
+
+PARAM_MODULE("kde", "Responsible for dual-tree kernel density estimate computation.");
 
 
 /** @brief A computation class for dual-tree based kernel density
@@ -180,11 +149,6 @@ class DualtreeKde {
   static const index_t sample_multiple_ = 1;
 
   ////////// Private Member Variables //////////
-
-  /** @brief The pointer to the module holding the parameters.
-   */
-  struct datanode *module_;
-
   /** @brief The boolean flag to control the leave-one-out computation.
    */
   bool leave_one_out_;
@@ -363,20 +327,21 @@ class DualtreeKde {
   void Compute(arma::vec& results) {
 
     // compute normalization constant
-    if(fx_param_exists(module_, "normalizing_dimension"))  {
-      NOTIFY("Using normalizing dimension of %lld", 
-	     fx_param_int(module_, "normalizing_dimension", qset_.n_rows));
+    if(mlpack::IO::HasParam("kde/normalizing_dimension"))  {
+      mlpack::IO::Info << "Using normalizing dimension of " <<  
+	     mlpack::IO::GetParam<int>("kde/normalizing_dimension");
       mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant
-	(fx_param_int(module_, "normalizing_dimension", qset_.n_rows));
+	(mlpack::IO::GetParam<int>("kde/normalizing_dimension"));
     }
     else {
-      NOTIFY("Using the default dimension of %d", qset_.n_rows);
+      mlpack::IO::Info << "Using the default dimension of " << qset_.n_rows;
+      mlpack::IO::GetParam<int>("kde/normalizing_dimension") = qset_.n_rows;
       mult_const_ = 1.0 / ka_.kernel_.CalcNormConstant(qset_.n_rows);
     }
 
     // Set accuracy parameters.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
-    threshold_ = fx_param_double(module_, "threshold", 0) *
+    relative_error_ = mlpack::IO::GetParam<double>("kde/relative_error");
+    threshold_ = mlpack::IO::GetParam<double>("kde/threshold") *
       ka_.kernel_.CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
@@ -393,9 +358,10 @@ class DualtreeKde {
       num_farfield_to_local_prunes_ = num_farfield_prunes_ = 
       num_local_prunes_ = 0;
 
-    printf("\nStarting fast KDE on bandwidth value of %g...\n",
-	   sqrt(ka_.kernel_.bandwidth_sq()));
-    fx_timer_start(NULL, "fast_kde_compute");
+    mlpack::IO::Info << "Starting fast KDE on bandwidth value of "<< 
+      sqrt(ka_.kernel_.bandwidth_sq()) << "..." << std::endl;
+
+    mlpack::IO::StartTimer("kde/fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
     PreProcess(rroot_);
@@ -405,18 +371,18 @@ class DualtreeKde {
     
     // Get the required probability guarantee for each query and call
     // the main routine.
-    double probability = fx_param_double(module_, "probability", 1);
+    double probability = mlpack::IO::GetParam<double>("kde/probability");
     DualtreeKdeCanonical_(qroot_, rroot_, probability);
 
     // Postprocessing step for finalizing the sums.
     PostProcess(qroot_);
-    fx_timer_stop(NULL, "fast_kde_compute");
-    printf("\nFast KDE completed...\n");
-    printf("Finite difference prunes: %"LI"\n", num_finite_difference_prunes_);
-    printf("Monte Carlo prunes: %"LI"\n", num_monte_carlo_prunes_);
-    printf("F2L prunes: %"LI"\n", num_farfield_to_local_prunes_);
-    printf("F prunes: %"LI"\n", num_farfield_prunes_);
-    printf("L prunes: %"LI"\n", num_local_prunes_);
+    mlpack::IO::StopTimer("kde/fast_kde_compute");
+    mlpack::IO::Info << std::endl << "Fast KDE completed..." << std::endl;
+    mlpack::IO::Info << "Finite difference prunes: " << num_finite_difference_prunes_ << std::endl;
+    mlpack::IO::Info << "Monte Carlo prunes: "<< num_monte_carlo_prunes_ << std::endl;
+    mlpack::IO::Info << "F2L prunes: "<< num_farfield_to_local_prunes_ << std::endl;
+    mlpack::IO::Info << "F prunes: "<< num_farfield_prunes_ << std::endl;
+    mlpack::IO::Info << "L prunes: "<< num_local_prunes_ << std::endl;
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
@@ -435,18 +401,18 @@ class DualtreeKde {
   }
 
   void Init(const arma::mat &queries, const arma::mat &references,
-	    const arma::mat &rset_weights, bool queries_equal_references, 
-	    struct datanode *module_in) {
+	    const arma::mat &rset_weights, bool queries_equal_references) {
 
-    // point to the incoming module
-    module_ = module_in;
 
     // Set the flag for whether to perform leave-one-out computation.
-    leave_one_out_ = fx_param_exists(module_in, "loo") &&
+    leave_one_out_ = mlpack::IO::HasParam("kde/loo") &&
       (queries.memptr() == references.memptr());
 
     // Read in the number of points owned by a leaf.
-    index_t leaflen = fx_param_int(module_in, "leaflen", 20);
+    if(!mlpack::IO::HasParam("kde/leaflen"))
+      mlpack::IO::GetParam<int>("kde/leaflen") = 20;
+
+    index_t leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
     
 
     // Copy reference dataset and reference weights and compute its
@@ -472,7 +438,7 @@ class DualtreeKde {
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
-    fx_timer_start(NULL, "tree_d");
+    mlpack::IO::StartTimer("kde/tree_d");
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
 						&old_from_new_references_, 
 						NULL);
@@ -488,7 +454,7 @@ class DualtreeKde {
 						  &old_from_new_queries_, 
 						  NULL);
     }
-    fx_timer_stop(NULL, "tree_d");
+    mlpack::IO::StopTimer("kde/tree_d");
     
     // Initialize the density lists
     densities_l_.set_size(qset_.n_cols);
@@ -500,24 +466,25 @@ class DualtreeKde {
     n_pruned_.set_size(qset_.n_cols);
 
     // Initialize the kernel.
-    double bandwidth = fx_param_double_req(module_, "bandwidth");
+    double bandwidth = mlpack::IO::GetParam<double>("kde/bandwidth");
 
     // initialize the series expansion object
     if(qset_.n_rows <= 2) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 7), qset_.n_rows);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = 7;
     }
     else if(qset_.n_rows <= 3) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 5), qset_.n_rows);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = 5;
     }
     else if(qset_.n_rows <= 5) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 3), qset_.n_rows);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = 3;
     }
     else if(qset_.n_rows <= 6) {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 1), qset_.n_rows);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = 1;
     }
     else {
-      ka_.Init(bandwidth, fx_param_int(module_, "order", 0), qset_.n_rows);
+      mlpack::IO::GetParam<double>("kde/bandwidth") = 0;
     }
+    ka_.Init(bandwidth, mlpack::IO::GetParam<double>("kde/bandwidth"), qset_.n_rows);
   }
 
   void PrintDebug() {
@@ -525,8 +492,7 @@ class DualtreeKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "fast_kde_output", 
-			     "fast_kde_output.txt")) != NULL) {
+    if((fname = mlpack::IO::GetParam<std::string>("kde/fast_kde_output").c_str()) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {

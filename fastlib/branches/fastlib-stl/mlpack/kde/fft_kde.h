@@ -23,6 +23,7 @@
 #define FFT_KDE_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
   
 /** constant TAU */
@@ -64,11 +65,6 @@ class FFTKde {
   };
 
   ////////// Private Member Variables //////////
-
-  /** pointer to the module holding the relevant parameters */
-  struct datanode *module_;
-
-
 
   /** query dataset */
   arma::mat qset_;
@@ -723,17 +719,15 @@ class FFTKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module containing the parameters for execution.
    */
-  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
-    
-    // initialize module to the incoming one
-    module_ = module_in;
-
-    printf("Initializing FFT KDE...\n");
-    fx_timer_start(module_, "fft_kde_init");
+  void Init(arma::mat& qset, arma::mat& rset) {
+    mlpack::IO::Info << "Initializing FFT KDE..." << std::endl;
+    mlpack::IO::StartTimer("kde/fft_kde_init");
 
     // initialize the kernel and read in the number of grid points
-    kernel_.Init(fx_param_double_req(module_, "bandwidth"));
-    m_ = fx_param_int(module_, "num_grid_pts_per_dim", 128);
+    kernel_.Init(mlpack::IO::GetParam<double>("kde/bandwidth"));
+    if(!mlpack::IO::HasParam("kde/num_grid_pts_per_dim"))
+      m_ = mlpack::IO::GetParam<int>("kde/num_grid_pts_per_dim") = 128;
+    m_ = mlpack::IO::GetParam<int>("kde/num_grid_pts_per_dim");
 
     // set aliases to the query and reference datasets and initialize
     // query density sets
@@ -759,16 +753,16 @@ class FFTKde {
     k_fnyquist_.set_size(nyquistnum_);
     kernelweights_.set_size(numgridpts_);
 
-    fx_timer_stop(module_, "fft_kde_init");
-    printf("FFT KDE initialization completed...\n");
+    mlpack::IO::StopTimer("kde/fft_kde_init");
+    mlpack::IO::Info << "FFT KDE initialization completed..." << std::endl;
   }
 
   /** @brief Compute density estimates using FFT after initialization
    */
   void Compute() {
 
-    printf("Computing FFT KDE...\n");
-    fx_timer_start(module_, "fft_kde");
+    mlpack::IO::Info << "Computing FFT KDE..." << std::endl;
+    mlpack::IO::StartTimer("kde/fft_kde");
 
     // FFT the discretized bin count matrix.
     d_fnyquist_.zeros();
@@ -815,8 +809,8 @@ class FFTKde {
     // Retrieve the densities of each data point.
     RetrieveDensities();
 
-    fx_timer_stop(module_, "fft_kde");
-    printf("FFT KDE completed...\n");
+    mlpack::IO::StopTimer("kde/fft_kde");
+    mlpack::IO::Info << "FFT KDE completed..." << std::endl;
   }
 
   /** @brief Output KDE results to a stream 
@@ -831,7 +825,7 @@ class FFTKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "fft_kde_output", NULL)) != NULL) {
+    if((fname = mlpack::IO::GetParam<std::string>("kde/fft_kde_output").c_str()) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {

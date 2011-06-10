@@ -80,9 +80,6 @@ class OriginalIFGT {
 
   ////////// Private Member Variables //////////
 
-  /** @brief The module pointing to the parameters for execution. */
-  struct datanode *module_;
-
   /** @brief Dimensionality of the points. */
   index_t dim_;
 
@@ -517,11 +514,8 @@ class OriginalIFGT {
 
   ////////// User-leverl Functions //////////
 
-  void Init(arma::mat& queries, arma::mat& references, struct datanode *module_in) {
-    
-    // set module to the incoming one.
-    module_ = module_in;
-    
+  void Init(arma::mat& queries, arma::mat& references) {
+
     // set dimensionality
     dim_ = references.n_rows;
         
@@ -537,24 +531,24 @@ class OriginalIFGT {
     densities_.set_size(query_set_.n_cols);
     
     // A "hack" such that the code uses the proper Gaussian kernel.
-    bandwidth_ = fx_param_double_req(module_, "bandwidth");
+    bandwidth_ = mlpack::IO::GetParam<double>("kde/bandwidth");
     bandwidth_sq_ = bandwidth_ * bandwidth_;
     bandwidth_factor_ = sqrt(2) * bandwidth_;
     
     // Read in the desired absolute error accuracy.
-    epsilon_ = fx_param_double(module_, "absolute_error", 0.1);
+    epsilon_ = mlpack::IO::GetParam<double>("kde/absolute_error"); //Default value .1
 
     // This is the upper limit on the number of clusters.
     index_t cluster_limit = (index_t) ceilf(20.0 * sqrt(dim_) / sqrt(bandwidth_));
     
-    VERBOSE_MSG(0,"Automatic parameter selection phase...\n");
+    mlpack::IO::Debug << "Automatic parameter selection phase..." << std::endl;
 
-    printf("Preprocessing phase for the original IFGT...\n");
+    mlpack::IO::Info << "Preprocessing phase for the original IFGT..." << std::endl;
 
-    fx_timer_start(module_, "ifgt_kde_preprocess");
+    mlpack::IO::StartTimer("kde/ifgt_kde_preprocess");
     IFGTChooseParameters_(cluster_limit);
-    VERBOSE_MSG(0,"Chose %"LI" clusters...\n", num_cluster_desired_);
-    VERBOSE_MSG(0,"Tentatively chose %"LI" truncation order...\n", pterms_);
+    mlpack::IO::Debug << "Chose " << num_cluster_desired_ << " clusters..." << std::endl;
+    mlpack::IO::Debug << "Tentatively chose " << pterms_ << " truncation order..." << std::endl;
 
     // Allocate spaces for storing coefficients and clustering information.
     cluster_centers_.set_size(dim_, num_cluster_desired_);
@@ -563,7 +557,7 @@ class OriginalIFGT {
     cluster_radii_.set_size(num_cluster_desired_);
     num_reference_points_in_cluster_.reserve(num_cluster_desired_);    
     
-    VERBOSE_MSG(0,"Now clustering...\n");
+    mlpack::IO::Debug << "Now clustering..." << std::endl;
 
     // Divide the source space into num_cluster_desired_ parts using
     // K-center algorithm
@@ -580,24 +574,26 @@ class OriginalIFGT {
     weighted_coeffs_.set_size(total_num_coeffs_, num_cluster_desired_);
     unweighted_coeffs_.set_size(total_num_coeffs_, num_cluster_desired_);
 
-    VERBOSE_MSG(0,"Maximum radius generated in the cluster: %g...\n",
-		max_radius_cluster_);
-    VERBOSE_MSG(0,"Truncation order updated to %"LI" after clustering...\n", 
-		pterms_);
+    mlpack::IO::Debug << "Maximum radius generated in the cluster: " 
+      << max_radius_cluster_ << "..." << std::endl,
+		
+    mlpack::IO::Debug << "Truncation order updated to " 
+      << pterms_ << " after clustering..." << std::endl;
 
     // Compute coefficients.    
-    VERBOSE_MSG(0,"Now computing Taylor coefficients...\n");
+    mlpack::IO::Debug << "Now computing Taylor coefficients..." << std::endl;
     TaylorExpansion();
-    VERBOSE_MSG(0,"Taylor coefficient computation finished...\n");
-    fx_timer_stop(module_, "ifgt_kde_preprocess");
-    printf("Preprocessing step finished...\n");
+    mlpack::IO::Debug << "Taylor coefficient computation finished..." << std::endl;
+    mlpack::IO::StopTimer("kde/ifgt_kde_preprocess");
+    mlpack::IO::Info << "Preprocessing step finished..." << std::endl;
   }
 
   void Compute() {
     
-    printf("Starting the original IFGT-based KDE computation...\n");
+    mlpack::IO::Info << "Starting the original IFGT-based KDE computation..."
+      << std::endl;
 
-    fx_timer_start(module_, "original_ifgt_kde_compute");
+    mlpack::IO::StartTimer("kde/original_ifgt_kde_compute");
 
     arma::vec dy(dim_);
     arma::vec tempy(dim_);
@@ -655,17 +651,18 @@ class OriginalIFGT {
     // normalize density estimates
     NormalizeDensities();
 
-    fx_timer_stop(module_, "original_ifgt_kde_compute");
-    printf("Computation finished...\n");
-    return;
+    mlpack::IO::StopTimer("kde/original_ifgt_kde_compute");
+    mlpack::IO::Info << "Computation finished..." << std::endl;
   }
 
   void PrintDebug() {
     
     FILE *stream = stdout;
     const char *fname = NULL;
-    
-    if((fname = fx_param_str(module_, "ifgt_kde_output", NULL)) != NULL) {
+    if(mlpack::IO::HasParam("kde/ifgt_kde_output"))
+      fname = mlpack::IO::GetParam<std::string>("kde/ifgt_kde_output").c_str();
+
+    if(fname != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < query_set_.n_cols; q++) {

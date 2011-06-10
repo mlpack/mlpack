@@ -87,8 +87,8 @@ class NaiveKde {
    */
   void Compute(arma::vec& results) {
 
-    printf("\nStarting naive KDE...\n");
-    fx_timer_start(module_, "naive_kde_compute");
+    mlpack::IO::Info << std::endl << "Starting naive KDE..." << std::endl;
+    mlpack::IO::StartTimer("kde/naive_kde_compute");
 
     for(index_t q = 0; q < qset_.n_cols; q++) {
       
@@ -105,8 +105,8 @@ class NaiveKde {
       // Then normalize it.
       densities_[q] /= norm_const_;
     }
-    fx_timer_stop(module_, "naive_kde_compute");
-    printf("\nNaive KDE completed...\n");
+    mlpack::IO::StopTimer("kde/naive_kde_compute");
+    mlpack::IO::Info << std::endl << "Naive KDE completed..." << std::endl;
 
     // retrieve density estimates
     get_density_estimates(results);
@@ -116,8 +116,8 @@ class NaiveKde {
    */
   void Compute() {
 
-    printf("\nStarting naive KDE...\n");
-    fx_timer_start(module_, "naive_kde_compute");
+    mlpack::IO::Info << std::endl << "Starting naive KDE..." << std::endl;
+    mlpack::IO::StartTimer("kde/naive_kde_compute");
 
     for(index_t q = 0; q < qset_.n_cols; q++) {
       
@@ -133,17 +133,17 @@ class NaiveKde {
       // Then, normalize it.
       densities_[q] /= norm_const_;
     }
-    fx_timer_stop(module_, "naive_kde_compute");
-    printf("\nNaive KDE completed...\n");
+    mlpack::IO::StopTimer("kde/naive_kde_compute");
+    mlpack::IO::Info << std::endl << "Naive KDE completed..." << std::endl;
   }
 
-  void Init(arma::mat& qset, arma::mat& rset, struct datanode *module_in) {
+  void Init(arma::mat& qset, arma::mat& rset) {
 
     // Use the uniform weights for a moment.
     arma::mat uniform_weights(1, rset.n_cols);
     uniform_weights.fill(1.0);
 
-    Init(qset, rset, uniform_weights, module_in);
+    Init(qset, rset, uniform_weights);
   }
 
   /** @brief Initialize the naive KDE algorithm object with the query and the
@@ -153,12 +153,7 @@ class NaiveKde {
    *  @param rset The column-oriented reference dataset.
    *  @param module_in The module holding the parameters.
    */
-  void Init(arma::mat& qset, arma::mat& rset, arma::mat& reference_weights,
-	    struct datanode *module_in) {
-
-    // Set the datanode module to be the incoming one.
-    module_ = module_in;
-
+  void Init(arma::mat& qset, arma::mat& rset, arma::mat& reference_weights) {
     // Get datasets.
     qset_ = qset;
     rset_ = rset;
@@ -175,21 +170,24 @@ class NaiveKde {
     
     // Get bandwidth and compute the normalizing constant.
     kernels_.reserve(rset_.n_cols);
-    if(!strcmp(fx_param_str(module_, "mode", "variablebw"), "variablebw")) {
+    if(!mlpack::IO::HasParam("kde/mode"))
+      mlpack::IO::GetParam<std::string>("kde/mode") = "variablebw";
+
+    if(!strcmp(mlpack::IO::GetParam<std::string>("kde/mode").c_str(), "variablebw")) {
 
       // Initialize the kernels for each reference point.
-      int knns = fx_param_int_req(module_, "knn");
+      int knns = mlpack::IO::GetParam<int>("kde/knn");
       mlpack::allknn::AllkNN all_knn(rset_, 20, knns);
       arma::Col<index_t> resulting_neighbors;
       arma::vec squared_distances;    
       
-      fx_timer_start(fx_root, "bandwidth_initialization");
+      mlpack::IO::StartTimer("kde/bandwidth_initialization");
       all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
       
       for(index_t i = 0; i < squared_distances.n_elem; i += knns) {
 	kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
       }
-      fx_timer_stop(fx_root, "bandwidth_initialization");
+      mlpack::IO::StopTimer("kde/bandwidth_initialization");
 
       // Renormalize the reference weights according to the bandwidths
       // that have been chosen.
@@ -208,7 +206,7 @@ class NaiveKde {
     }
     else {
       for(index_t i = 0; i < kernels_.size(); i++) {
-	kernels_[i].Init(fx_param_double_req(module_, "bandwidth"));
+	kernels_[i].Init(mlpack::IO::GetParam<double>("kde/bandwidth"));
       }
       norm_const_ = kernels_[0].CalcNormConstant(qset_.n_rows) * weight_sum;
     }
@@ -230,8 +228,7 @@ class NaiveKde {
     const char *fname = NULL;
 
     {
-      fname = fx_param_str(module_, "naive_kde_output", 
-			   "naive_kde_output.txt");
+      fname = mlpack::IO::GetParam<std::string>("kde/naive_kde_output").c_str();
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {
@@ -266,13 +263,13 @@ class NaiveKde {
 
       if(std::isnan(density_estimates[q]) || std::isinf(density_estimates[q]) || 
          std::isnan(densities_[q]) || std::isinf(densities_[q])) {
-	VERBOSE_MSG(0,"Warning: Got infs or nans!\n");
+	mlpack::IO::Debug << "Warning: Got infs or nans!" << std::endl;
       }
 
       if(rel_err > max_rel_err) {
 	max_rel_err = rel_err;
       }
-      if(rel_err <= fx_param_double(module_, "relative_error", 0.01)) {
+      if(rel_err <= mlpack::IO::GetParam<double>("kde/relative_error")) {
 	within_limit++;
       }
 
@@ -280,10 +277,10 @@ class NaiveKde {
     }
     
     fclose(stream);
-    fx_format_result(module_, "maximum_relative_error_for_fast_KDE", "%g", 
-		     max_rel_err);
-    fx_format_result(module_, "under_relative_error_limit", "%d",
-		     within_limit);
+    mlpack::IO::Info << "maximum_relative_error_for_fast_KDE " 
+      << max_rel_err << std::endl;
+    mlpack::IO::Info << "under_relative_error_limit " << 
+      within_limit << std::endl;
   }
 
 };
