@@ -489,6 +489,47 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief Attempts to split a set of points and re-distribute
+     *         them across a set of MPI processes.
+     */
+    template<typename MetricType>
+    static bool AttemptSplitting(
+      boost::mpi::communicator &comm,
+      const MetricType &metric_in,
+      const BoundType &bound,
+      const core::table::DenseMatrix &matrix_in,
+      std::vector< std::vector<int> > *assigned_point_indices,
+      std::vector<int> *membership_counts_per_process) {
+
+      // Perform tree-spec specific task first.
+      std::deque<bool> left_membership;
+      TreeSpecType::AttemptSplitting(
+        comm, metric_in, bound, matrix_in, &left_membership);
+
+      // Post-process the assignments here.
+      // The assigned point indices per process and per-process counts
+      // will be outputted.
+      assigned_point_indices->resize(comm.size());
+      membership_counts_per_process->resize(comm.size());
+
+      // Loop through the membership vectors and assign to the right
+      // process partner.
+      int left_destination, right_destination;
+      core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
+        comm, &left_destination, &right_destination, (int *) NULL);
+      for(unsigned int i = 0; i < left_membership.size(); i++) {
+        if(left_membership[i]) {
+          (*assigned_point_indices)[left_destination].push_back(i);
+          (*membership_counts_per_process)[left_destination]++;
+        }
+        else {
+          (*assigned_point_indices)[right_destination].push_back(i);
+          (*membership_counts_per_process)[right_destination]++;
+        }
+      }
+      return true;
+    }
+
     /** @brief Recursively splits a given node creating its children.
      */
     template<typename MetricType, typename IndexType>

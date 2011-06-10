@@ -77,9 +77,15 @@ class VanillaDistributedTreeBuilder {
       boost::mpi::communicator &world,
       const MetricType &metric_in) {
 
-      // If the communicator size is greater than one, then try to split.
+      // If the communicator size is greater than one and there is
+      // more than one data point, then try to re-shuffle.
       boost::mpi::communicator current_comm = world;
-      while(current_comm.size() > 1) {
+      bool participate_in_split =
+        (distributed_table_->local_table()->n_entries() > 1);
+      current_comm.split(participate_in_split);
+
+      while(
+        current_comm.size() > 1 && participate_in_split) {
 
         // Find the bounding primitive containing all the points
         // belonging to the process belonging to the communicator.
@@ -93,7 +99,7 @@ class VanillaDistributedTreeBuilder {
         std::vector< std::vector<int> > assigned_point_indices;
         std::vector<int> membership_counts_per_process;
         bool can_cut =
-          TreeSpecType::AttemptSplitting(
+          TreeType::AttemptSplitting(
             current_comm, metric_in, bound,
             distributed_table_->local_table()->data(),
             &assigned_point_indices, &membership_counts_per_process);
@@ -107,9 +113,17 @@ class VanillaDistributedTreeBuilder {
             membership_counts_per_process, distributed_table_, n_attributes_);
 
           // Split the communicator into two groups here and recurse.
-          bool color;
+          int color;
           core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
             current_comm, (int *) NULL, (int *) NULL, &color);
+
+          // In case the resulting table contains at most one point
+          // for the current process, it does not partcipate in the
+          // next round.
+          if(distributed_table_->local_table()->n_entries() <= 1) {
+            color = 2;
+            participate_in_split = false;
+          }
           current_comm = current_comm.split(color);
         }
         else {
