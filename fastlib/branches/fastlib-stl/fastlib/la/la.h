@@ -51,6 +51,7 @@
 
 #include <math.h>
 #include <armadillo>
+#include "../fx/io.h"
 
 namespace la {
   /**
@@ -139,9 +140,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_vec, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        FATAL("Least square fit failed \n");
+        mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {
-        NONFATAL("Least square fit returned a warning \n");
+        mlpack::IO::Warn << "Least square fit returned a warning " << std::endl;
       }
     }
     return status;
@@ -164,9 +165,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        FATAL("Least square fit failed \n");
+        mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {
-        NONFATAL("Least square fit returned a warning \n");
+        mlpack::IO::Fatal << "Least square fit returned a warning " << std::endl;
       }
     }
     return status;
@@ -189,9 +190,9 @@ namespace la {
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
     if unlikely(status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
-        FATAL("Least square fit failed \n");
+        mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {
-        NONFATAL("Least square fit returned a warning \n");
+        mlpack::IO::Warn << "Least square fit returned a warning " << std::endl;
       }
     }
     return status;

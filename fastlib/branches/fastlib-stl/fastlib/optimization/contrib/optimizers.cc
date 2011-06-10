@@ -84,7 +84,7 @@ void NelderMead::Eval(double **pts) {
       break;
     }
     if(num_func_eval > NMAX){
-      NOTIFY("Maximum number of function evaluations exceeded");
+      IO::Info << "Maximum number of function evaluations exceeded " << std::endl;
       break;
     }
     num_func_eval += 2;
@@ -289,7 +289,7 @@ void QuasiNewton::Eval(double *pt) {
     la::MulOverwrite(hessian, grad, &xi);
     la::Scale((-1.0), &xi);
   }
-  NOTIFY("Too many iterations in Quasi Newton\n");
+  IO::Info << "Too many iterations in Quasi Newton " << std::endl;
 }
 
 void QuasiNewton::LineSearch_(Vector pold, long double fold,
