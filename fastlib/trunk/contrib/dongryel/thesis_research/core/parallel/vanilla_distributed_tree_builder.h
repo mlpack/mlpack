@@ -170,6 +170,7 @@ class VanillaDistributedTreeBuilder {
 
       // Refresh the final count on each distributed table on each
       // process.
+      world.barrier();
       distributed_table_->RefreshCounts_(world);
 
       // Index the local tree on each process.
@@ -177,6 +178,7 @@ class VanillaDistributedTreeBuilder {
 
       // Build the top tree from the collected root nodes from all
       // processes.
+      world.barrier();
       distributed_table_->BuildGlobalTree_(world, metric_in);
 
       // Report timing for the master process.
