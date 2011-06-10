@@ -46,6 +46,8 @@
 
 #include <sstream>
 #include <iostream>
+#include "../fx/io.h"
+
 
 index_t Dataset::n_labels() const {
   index_t i = 0;
@@ -143,7 +145,7 @@ success_t Dataset::InitFromFile(const char *fname) {
   } else {
     matrix_ = 0.0; // 0x0 matrix
     info_.Init();
-    NONFATAL("Could not open file '%s' for reading.", fname);
+    mlpack::IO::Warn << " Could not open file " << fname << " for reading. " << std::endl;
     return SUCCESS_FAIL;
   }
 }
@@ -167,7 +169,7 @@ success_t Dataset::WriteCsv(std::string fname, bool header) const {
   TextWriter writer;
 
   if (!PASSED(writer.Open(fname.c_str()))) {
-    NONFATAL("Couldn't open '%s' for writing.", fname.c_str());
+    mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
     return SUCCESS_FAIL;
   } else {
     if (header) {
@@ -182,7 +184,7 @@ success_t Dataset::WriteArff(std::string fname) const {
   TextWriter writer;
 
   if (!PASSED(writer.Open(fname.c_str()))) {
-    NONFATAL("Couldn't open '%s' for writing.", fname.c_str());
+    mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
     return SUCCESS_FAIL;
   } else {
     info_.WriteArffHeader(writer);
@@ -252,7 +254,7 @@ success_t data::Load(const char *fname, arma::mat& matrix) {
       result = info.ReadMatrix(reader, matrix);
     }
   } else {
-    NONFATAL("Could not open file '%s' for reading.", fname);
+    mlpack::IO::Warn << "Could not open file " << fname << " for reading." << std::endl;
     return SUCCESS_FAIL;
   }
 
@@ -267,7 +269,7 @@ success_t data::Save(const char *fname, const arma::mat& matrix) {
   info.InitContinuous(matrix.n_rows);
 
   if (!PASSED(writer.Open(fname))) {
-    NONFATAL("Couldn't open '%s' for writing.", fname);
+    mlpack::IO::Warn << "Couldn't open " << fname << " for writing. " << std::endl;
     return SUCCESS_FAIL;
   }
 

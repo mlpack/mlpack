@@ -258,14 +258,14 @@ class OptimizationTrait {
         if (search_strategy=="trust_pds") {
           method->setSearchStrategy(OPTPP::TrustPDS);
         } else {
-          FATAL("The specified search strategy %s is not supported", 
-              search_strategy.c_str());
+          IO::Fatal << "The specified search strategy " 
+             << search_strategy.c_str() << " is not supported " << std::endl;
         }
       }
     } 
     if (method->checkDeriv()==false) {
-      NONFATAL("Warning finite difference derivative/hessian doesn't much "
-          "analytic");
+      IO::Warn << "Warning finite difference derivative/hessian doesn't much "
+        << "analytic" << std::endl;
     }    
   }
 };
@@ -293,15 +293,18 @@ class OptimizationTrait<OPTPP::OptNewtonLike> {
       } else {
         if (search_strategy=="trust_pds") {
           method->setSearchStrategy(OPTPP::TrustPDS);
-        } else {
-          FATAL("The specified search strategy %s is not supported", 
-              search_strategy.c_str());
+        } else {                  
+          IO::Warn << "Warning finite difference derivative/hessian doesn't much "
+              << "analytic" << std::endl;
         }
       }
     } 
+
     if (method->checkDeriv()==false) {
-      NONFATAL("Warning finite difference derivative/hessian doesn't much "
-         " analytic");
+      IO::Warn << "Warning finite difference derivative/hessian doesn't much "
+        << "analytic" << std::endl;
+
+
     }    
   }
 };
@@ -713,8 +716,9 @@ class StaticOptppOptimizer {
     // setting some generic options for the optimization method
     const char *status_file=fx_param_str(module_, "status_file", "status.txt" );
     if (method_->setOutputFile(status_file, 0)==false) {
-      FATAL("Failed to open the status file %s for writing", status_file);
-    }
+       IO::Fatal << "Failed to open the status file " 
+          << status_file << " for writing " << std::endl;
+  }
 
     OptimizationTrait<Method>::InitializeMethod(module_, method_);
     
@@ -858,7 +862,7 @@ class StaticOptppOptimizer {
       NEWMAT::ColumnVector &cvalue, NEWMAT::Matrix &cJacobian,
       OPTPP::OptppArray<NEWMAT::SymmetricMatrix> &cHessian,
       int &result) {
-    FATAL("Not supported yet");
+    IO::Fatal << "Not supported yet " << std::endl;
   }
  
   static void ComputeNonLinearInequalityConstraints(int mode, 
@@ -902,7 +906,7 @@ class StaticOptppOptimizer {
       NEWMAT::ColumnVector &cvalue, NEWMAT::Matrix &cJacobian,
       OPTPP::OptppArray<NEWMAT::SymmetricMatrix> &cHessian,
       int &result) {
-    FATAL("Not supported yet");
+    IO::Fatal << "Not supported yet " << std::endl;
   }
 
 };
