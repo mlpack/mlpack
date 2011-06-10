@@ -25,6 +25,9 @@
 #include "disk_allnn.h"
 #include "fastlib/base/test.h"
 
+#include "../fx/io.h"
+using namespace mlpack;
+
 class TestDiskAllNN {
  public:
   TestDiskAllNN(fx_module *module) {
@@ -64,7 +67,7 @@ class TestDiskAllNN {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }
-    NOTIFY("DiskAllknn test 1 passed");
+    mlpack::IO::Info << "DiskALLknn test 1 passed" << std::endl;
     Destruct();
   }
  
@@ -84,7 +87,7 @@ class TestDiskAllNN {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(resulting_distances_tree[i], resulting_distances_naive[i], 1e-5);
     }
-    NOTIFY("DiskAllknn test 2 passed");
+    mlpack::IO::Info << "DiskAllknn test 2 passed" << std::endl;
     Destruct();
   }
  

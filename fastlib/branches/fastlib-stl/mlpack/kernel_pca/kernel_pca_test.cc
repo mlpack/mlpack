@@ -32,14 +32,14 @@ class KernelPCATest {
     delete engine_;
   }
   void TestGeneralKernelPCA() {
-   NOTIFY("Testing KernelPCA...\n");
+   IO::Info << "Testing KernelPCA ..." << std::endl;
    arma::mat eigen_vectors;
    arma::vec eigen_values;
    Init();
    engine_->ComputeNeighborhoods();
    double bandwidth;
    engine_->EstimateBandwidth(&bandwidth);
-   NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
+   IO::Info << "Estimated Bandwidth " << bandwidth << "..." << std::endl;
    kernel_.set(bandwidth); 
    engine_->LoadAffinityMatrix();
    engine_->ComputeGeneralKernelPCA(kernel_, 15, 
@@ -48,10 +48,10 @@ class KernelPCATest {
 
    engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
    Destruct();
-   NOTIFY("Test ComputeGeneralKernelPCA passed...!\n");
+   IO::Info << "Test ComputeGeneralKernelPCA passed...!" << std::endl;
   }
   void TestLLE() {
-    NOTIFY("Testing ComputeLLE\n");
+   IO::Info << "Testing ComputeLLE" << std::endl;
     arma::mat eigen_vectors;
     arma::vec eigen_values;
     Init();
@@ -62,15 +62,15 @@ class KernelPCATest {
                          &eigen_values);
     engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
     Destruct();
-    NOTIFY("Test ComputeLLE passed...!\n");
+    IO::Info << "Test ComputeLLE passed...!" << std::endl; 
   }
   void TestSpectralRegression() {
-    NOTIFY("Test ComputeSpectralRegression...\n");
+    IO::Info << "Test ComputeSpectralRegression..." << std::endl;
     Init();
     engine_->ComputeNeighborhoods();
     double bandwidth;
     engine_->EstimateBandwidth(&bandwidth);
-    NOTIFY("Estimated bandwidth %lg ...\n", bandwidth);
+    IO::Info << "Estimated bandwidth " << bandwidth << " ..." << std::endl;
     kernel_.set(bandwidth); 
     engine_->LoadAffinityMatrix();
     std::map<index_t, index_t> data_label;
@@ -87,7 +87,7 @@ class KernelPCATest {
     engine_->SaveToTextFile("results", embedded_coordinates, eigenvalues);
     Destruct();
 
-    NOTIFY("Test ComputeSpectralRegression passed...\n"); 
+    IO::Info << "Test ComputeSpectralRegression passed..." << std::endl;
   }
   void TestAll() {
      //TestGeneralKernelPCA();

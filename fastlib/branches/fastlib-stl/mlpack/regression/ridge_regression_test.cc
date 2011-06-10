@@ -23,6 +23,9 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack;
+
+
 class RidgeRegressionTest {
  public:
   void Init(fx_module *module) {
@@ -41,7 +44,7 @@ class RidgeRegressionTest {
 
   void TestSVDNormalEquationRegressVersusSVDRegress() {
 
-    NOTIFY("[*] TestSVDNormalEquationRegressVersusSVDRegress");
+    IO::Info << "[*] TestSVDNormalEquationRegressVersusSVDRegress" << std::endl;
 
     engine_ = new RidgeRegression();
     engine_->Init(module_, predictors_, predictions_, true);
@@ -55,19 +58,19 @@ class RidgeRegressionTest {
     svd_engine.factors(&svd_factors);
     
     for(index_t i=0; i<factors.n_rows; i++) {
-      NOTIFY("Normal Equation: %g, SVD: %g\n", factors(i, 0),
-	     svd_factors(i, 0));
+      IO::Info << "Normal Equation: " << factors(i,0)
+		<< ", SVD:" << svd_factors(i,0) << std::endl;
       TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
     }
     
     Destruct();
 
-    NOTIFY("[*] TestRegressVersusSVDRegress complete!");
+    IO::Info << "[*] TestRegressVersusSVDRegress complete!" << std::endl;
   }
 
   void TestVIFBasedFeatureSelection() {
     
-    NOTIFY("[*] TestVIFBasedFeatureSelection");
+    IO::Info << "[*] TestVIFBasedFeatureSelection" << std::endl;
 
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
@@ -105,13 +108,13 @@ class RidgeRegressionTest {
       printf(" %"LI" ", output_predictor_indices[i]);
     }
     printf("\n");
-    NOTIFY("[*] TESTVIFBasedFeatureSelection complete!");
+    IO::Info << "[*] TESTVIFBasedFeatureSelection complete!" << std::endl;
   }
 
   void TestAll() {
     TestSVDNormalEquationRegressVersusSVDRegress();
     TestVIFBasedFeatureSelection();
-    NOTIFY("[*] All tests passed !!");
+    IO::Info << "[*] All tests passed !!" << std::endl;
   }  
 
   void Destruct() {

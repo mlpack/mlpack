@@ -25,6 +25,7 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack;
 using namespace mlpack::allkfn;
 
 int main(int argc, char *argv[]) {
@@ -39,9 +40,9 @@ int main(int argc, char *argv[]) {
   arma::Col<index_t> neighbors;
   arma::vec distances;
   if (data::Load(reference_file.c_str(), reference_data) == SUCCESS_FAIL) {
-    FATAL("Reference file %s not found", reference_file.c_str());
+    IO::Fatal << "Reference file " << reference_file.c_str() << " not found" << std::endl;
   }
-  NOTIFY("Loaded reference data from file %s", reference_file.c_str());
+  IO::Info << "Loaded reference data from file " << reference_file.c_str() << std:: endl;
  
   AllkFN* allkfn = NULL;
  
@@ -49,28 +50,27 @@ int main(int argc, char *argv[]) {
     std::string query_file = fx_param_str_req(module, "query_file");
     arma::mat query_data;
     if (data::Load(query_file.c_str(), query_data) == SUCCESS_FAIL) {
-      FATAL("Query file %s not found", query_file.c_str());
+      IO::Fatal << "Query file " << query_file.c_str() << " not found" << std::endl;
     }
-    NOTIFY("Query data loaded from %s", query_file.c_str());
-    NOTIFY("Building query and reference tree");
+    IO::Info << "Query data loaded from " << query_file.c_str() << std::endl; 
+    IO::Info << "Building query and reference tree" << std::endl;
     allkfn = new AllkFN(query_data, reference_data, module,
         single_mode ? AllkFN::MODE_SINGLE : 0);
   } else {
-    NOTIFY("Building reference tree");
+    IO::Info << "Building reference tree" << std::endl; 
     allkfn = new AllkFN(reference_data, module,
         single_mode ? AllkFN::MODE_SINGLE : 0);
   }
-
-  NOTIFY("Tree(s) built");
+  IO::Info << "Tree(s) built" << std::endl;
   index_t kfns = fx_param_int_req(module, "kfns");
-  NOTIFY("Computing %"LI"d furthest neighbors", kfns);
+  IO::Info << "Computing " << kfns << LI << "d furthest neighbors" << std::endl;
   allkfn->ComputeNeighbors(neighbors, distances);
-  NOTIFY("Neighbors computed");
-  NOTIFY("Exporting results");
+  IO::Info << "Neighbors computed " << std::endl;
+  IO::Info << "Exporting results " << std::endl;
   FILE *fp = fopen(result_file.c_str(), "w");
   if (fp == NULL) {
-    FATAL("Error while opening %s...%s", result_file.c_str(),
-        strerror(errno));
+    IO::Fatal << "Error while opening " << result_file.c_str() 
+	      << "..." << strerror(errno) << std::endl; 
   }
   for (index_t i = 0; i < neighbors.n_elem / kfns; i++) {
     for (index_t j = 0; j < kfns; j++) {

@@ -5,6 +5,8 @@
 #include "fourier_series_expansion_aux.h"
 #include "fourier_kernel_aux.h"
 
+using namespace mlpack;
+
 class SeriesExpansionTest {
 
  private:
@@ -33,7 +35,7 @@ class SeriesExpansionTest {
 
   void TestFourierExpansion() {
     
-    NOTIFY("[*] TestFourierExpansion");
+    IO::Info << "[*] TestFourierExpansion" << std::endl;
     GaussianKernelFourierAux<double> kernel_aux;
     index_t order = 3;
     index_t dim = 3;
@@ -71,15 +73,13 @@ class SeriesExpansionTest {
     // Evaluate the expansion, and compare against the naive.
     arma::vec evaluation_point(3);
     evaluation_point.fill(2.0);
-    NOTIFY("Expansion evaluated to be: %g",
-	   expansion.EvaluateField(evaluation_point.memptr(), 3));
-    NOTIFY("Naive sum: %g", BaseCase_(evaluation_point, random_dataset,
-				      weights, kernel_aux));    
+    IO::Info << "Expansion evaluated to be: "
+ 	     << expansion.EvaluateField(evaluation_point.memptr(), 3) << std::endl;
+    IO::Info << "Naive sum: " << BaseCase_(evaluation_point, random_dataset,weights, kernel_aux) << std::endl;
   }
 
   void TestFourierExpansionMapping() {
-
-    NOTIFY("[*] TestFourierExpansionMapping");
+    IO::Info << "[*] TestFourierExpansionMapping" << std::endl;
     FourierSeriesExpansionAux<double> series_aux;
     index_t order = 2;
     index_t dim = 3;
@@ -101,7 +101,7 @@ class SeriesExpansionTest {
       printf("maps to %"LI"\n", number);
       
       if(number != i) {
-	FATAL("The mapping at the position %"LI" is computed incorrectly!", i);
+        IO::Info << "The mapping at the position " << i << LI << " is computed incorrectly!" << std::endl;
       }
     }
   }
@@ -109,7 +109,7 @@ class SeriesExpansionTest {
   void TestAll() {
     TestFourierExpansionMapping();
     TestFourierExpansion();
-    NOTIFY("[*] All tests passed !!");
+    IO::Info << "[*] All tests passed !!" << std::endl;
   }
 
  private:
