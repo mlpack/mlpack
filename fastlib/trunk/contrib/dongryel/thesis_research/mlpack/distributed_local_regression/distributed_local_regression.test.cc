@@ -365,7 +365,7 @@ class TestDistributedLocalRegression {
 
       // Compute the result.
       mlpack::local_regression::LocalRegressionResult
-	distributed_local_regression_result;
+      distributed_local_regression_result;
       distributed_local_regression_instance.Compute(
         distributed_local_regression_arguments, &distributed_local_regression_result);
 

@@ -24,7 +24,7 @@ class DistributedTreeExtraUtil {
      */
     static void left_and_right_destinations(
       boost::mpi::communicator &comm, int *left_rank, int *right_rank,
-      bool *color) {
+      int *color) {
       int threshold = comm.size() / 2;
       if(left_rank != NULL) {
         *left_rank =
@@ -35,7 +35,7 @@ class DistributedTreeExtraUtil {
                       comm.rank() + threshold : comm.rank();
       }
       if(color != NULL) {
-        *color = (comm.rank() < threshold);
+        *color = (comm.rank() < threshold) ? 0 : 1;
       }
     }
 };

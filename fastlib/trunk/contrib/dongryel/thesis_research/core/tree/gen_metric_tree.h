@@ -348,8 +348,7 @@ class GenMetricTree {
       const MetricType &metric_in,
       const BoundType &bound,
       const core::table::DenseMatrix &matrix_in,
-      std::vector< std::vector<int> > *assigned_point_indices,
-      std::vector<int> *membership_counts_per_process) {
+      std::deque<bool> *left_membership) {
 
       // Pick a random point across all processes.
       int local_random_row =
@@ -409,7 +408,6 @@ class GenMetricTree {
       // Assign the point on the local process using the splitting
       // value.
       int left_count;
-      std::deque<bool> left_membership;
       BoundType left_bound, right_bound;
       left_bound.center().Copy(
         global_furthest_from_random_row_vec.first);
@@ -417,29 +415,8 @@ class GenMetricTree {
         global_furthest_from_furthest_random_row_vec.first);
       ComputeMemberships(
         metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
-        &left_count, &left_membership);
+        &left_count, left_membership);
 
-      // The assigned point indices per process and per-process counts
-      // will be outputted.
-      assigned_point_indices->resize(comm.size());
-      membership_counts_per_process->resize(comm.size());
-
-      // Loop through the membership vectors and assign to the right
-      // process partner.
-      int left_destination, right_destination;
-      core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
-        comm, &left_destination, &right_destination, (bool *) NULL);
-      for(unsigned int i = 0; i < left_membership.size(); i++) {
-        if(left_membership[i]) {
-          (*assigned_point_indices)[left_destination].push_back(i);
-          (*membership_counts_per_process)[left_destination]++;
-          left_count++;
-        }
-        else {
-          (*assigned_point_indices)[right_destination].push_back(i);
-          (*membership_counts_per_process)[right_destination]++;
-        }
-      }
       return true;
     }
 
