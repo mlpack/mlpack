@@ -31,7 +31,7 @@ int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
   
   // For when I implement a thor version
-  bool using_thor = IO::GetValue<bool>("emst/using_thor");
+  bool using_thor = IO::GetParam<bool>("emst/using_thor");
   
   
   if unlikely(using_thor) {
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
       
     ///////////////// READ IN DATA ////////////////////////////////// 
     
-    std::string data_file_name = IO::GetValue<std::string>("emst/input_file");
+    std::string data_file_name = IO::GetParam<std::string>("emst/input_file");
     
     arma::mat data_points;
     data::Load(data_file_name.c_str(), data_points);
@@ -55,10 +55,10 @@ int main(int argc, char* argv[]) {
     dtb.ComputeMST(results);
     
     //////////////// Check against naive //////////////////////////
-    if (IO::GetValue<bool>("naive/do_naive")) {
+    if (IO::GetParam<bool>("naive/do_naive")) {
      
       DualTreeBoruvka naive;
-      IO::GetValue<bool>("naive/do_naive") = true;
+      IO::GetParam<bool>("naive/do_naive") = true;
       
       naive.Init(data_points);
       
@@ -114,8 +114,8 @@ int main(int argc, char* argv[]) {
         "Edge lists are different." << std::endl << std::endl;
         
         // Check if the outputs have the same length
-        if (IO::GetValue<double>("naive/total_squared_length") !=
-           IO::GetValue<double>("naive/total_squared_length")) { 
+        if (IO::GetParam<double>("naive/total_squared_length") !=
+           IO::GetParam<double>("naive/total_squared_length")) { 
           
           IO::Fatal << "Total lengths are different! " 
              << " One algorithm has failed." << std::endl;
@@ -142,7 +142,7 @@ int main(int argc, char* argv[]) {
       IO::StopTimer("naive/comparison");
       
       std::string naive_output_filename = 
-          IO::GetValue<std::string>("naive/output_file");
+          IO::GetParam<std::string>("naive/output_file");
       
       data::Save(naive_output_filename.c_str(), naive_results);
     }
@@ -150,7 +150,7 @@ int main(int argc, char* argv[]) {
     //////////////// Output the Results ////////////////
     
     std::string output_filename = 
-        IO::GetValue<std::string>("emst/output_file");
+        IO::GetParam<std::string>("emst/output_file");
    
     data::Save(output_filename.c_str(), results);
     

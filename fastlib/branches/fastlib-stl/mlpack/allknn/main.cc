@@ -53,13 +53,13 @@ int main(int argc, char *argv[]) {
   IO::ParseCommandLine(argc, argv);
 
   std::string reference_file =
-      IO::GetValue<std::string>("allknn/reference_file");
-  std::string output_file = IO::GetValue<std::string>("allknn/output_file");
+      IO::GetParam<std::string>("allknn/reference_file");
+  std::string output_file = IO::GetParam<std::string>("allknn/output_file");
 
   arma::mat reference_data;
 
-  bool single_mode = IO::GetValue<bool>("allknn/single_mode");
-  bool naive_mode = IO::GetValue<bool>("allknn/naive_mode");
+  bool single_mode = IO::GetParam<bool>("allknn/single_mode");
+  bool naive_mode = IO::GetParam<bool>("allknn/naive_mode");
   index_t knn_options = (single_mode ? AllkNN::MODE_SINGLE : 0) |
       (naive_mode ? AllkNN::NAIVE : 0);
 
@@ -73,7 +73,7 @@ int main(int argc, char *argv[]) {
   
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
-  int k = IO::GetValue<int>("allknn/k");
+  int k = IO::GetParam<int>("allknn/k");
   if ((k <= 0) || (k >= reference_data.n_cols)) {
     IO::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     IO::Fatal << "than the number of reference points (";
@@ -81,15 +81,15 @@ int main(int argc, char *argv[]) {
   }
 
   // Sanity check on leaf size.
-  if (IO::GetValue<int>("allknn/leaf_size") <= 0) {
-    IO::Fatal << "Invalid leaf size: " << IO::GetValue<int>("allknn/leaf_size") 
+  if (IO::GetParam<int>("allknn/leaf_size") <= 0) {
+    IO::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size") 
         << endl;
   }
 
   AllkNN* allknn = NULL;
  
-  if (IO::CheckValue("query_file")) {
-    std::string query_file = IO::GetValue<std::string>("query_file");
+  if (IO::HasParam("query_file")) {
+    std::string query_file = IO::GetParam<std::string>("query_file");
     arma::mat query_data;
 
     if (data::Load(query_file.c_str(), query_data) == SUCCESS_FAIL)

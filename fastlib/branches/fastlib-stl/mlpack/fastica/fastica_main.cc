@@ -57,12 +57,12 @@ int main(int argc, char *argv[]) {
   arma::mat X;
   
   IO::ParseCommandLine(argc, argv);
-  const char* data = IO::GetValue<std::string>("fastica/input_file").c_str();
+  const char* data = IO::GetParam<std::string>("fastica/input_file").c_str();
   data::Load(data, X);
 
-  const char* ic_filename = IO::GetValue<std::string>("fastica/ic_file").c_str();
+  const char* ic_filename = IO::GetParam<std::string>("fastica/ic_file").c_str();
   const char* unmixing_filename =
-    IO::GetValue<std::string>("fastica/unmixing_file").c_str();
+    IO::GetParam<std::string>("fastica/unmixing_file").c_str();
 
   FastICA fastica;
 

@@ -59,8 +59,8 @@ int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
   success_t s = SUCCESS_PASS;
-  if (IO::CheckValue("hmm/type")) {
-    const char* type = IO::GetValue<std::string>("hmm/type").c_str();
+  if (IO::HasParam("hmm/type")) {
+    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete") == 0)
       s = viterbi_discrete();
     else if (strcmp(type, "gaussian") == 0)
@@ -89,13 +89,13 @@ void usage() {
 }
 
 success_t viterbi_mixture() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.mix.out");
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -123,13 +123,13 @@ success_t viterbi_mixture() {
 }
 
 success_t viterbi_gaussian() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.gauss.out");
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -156,13 +156,13 @@ success_t viterbi_gaussian() {
 }
 
 success_t viterbi_discrete() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); //"seq.out");
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.out");
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str(); //"state.viterbi.out");
 
   DiscreteHMM hmm;
 

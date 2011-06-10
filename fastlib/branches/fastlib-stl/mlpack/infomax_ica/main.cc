@@ -24,10 +24,10 @@ using namespace mlpack;
 int main(int argc, char *argv[]) {
   IO::ParseCommandLine(argc, argv);
 
-  const char *data_file_name = IO::GetValue<std::string>("info/data").c_str();
-  double lambda = IO::GetValue<double>("info/lambda");
-  int B = IO::GetValue<int>("info/B");
-  double epsilon = IO::GetValue<double>("info/epsilon");
+  const char *data_file_name = IO::GetParam<std::string>("info/data").c_str();
+  double lambda = IO::GetParam<double>("info/lambda");
+  int B = IO::GetParam<int>("info/B");
+  double epsilon = IO::GetParam<double>("info/epsilon");
 
   Matrix dataset;
   arma::mat tmp_dataset;

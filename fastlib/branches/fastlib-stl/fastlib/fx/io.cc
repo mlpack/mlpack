@@ -68,8 +68,8 @@ IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc) {
 IO::~IO() {
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
-//  if (CheckValue("verbose") && !CheckValue("help") && !CheckValue("info"))
-  if (CheckValue("verbose")) {
+//  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
+  if (HasParam("verbose")) {
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
   }
@@ -112,12 +112,32 @@ void IO::Add(const char* identifier,
   return;
 }
 
+
+/* 
+ * @brief Adds a flag paramater to IO.
+ */
+
+void IO::AddFlag(const char* identifier,
+                 const char* description,
+                 const char* parent) {
+  po::options_description& desc = IO::GetSingleton().desc;
+
+  //Generate the full pathname and insert node into the hierarchy
+  std::string tname = TYPENAME(bool);
+  std::string path = 
+    IO::GetSingleton().ManageHierarchy(identifier, parent, tname, description);
+
+  //Add the option to boost program_options
+  desc.add_options()
+    (path.c_str(), po::value<bool>()->implicit_value(true) ,description);
+}
+
 /* 
  * See if the specified flag was found while parsing. 
  * 
  * @param identifier The name of the parameter in question. 
  */
-bool IO::CheckValue(const char* identifier) {
+bool IO::HasParam(const char* identifier) {
   std::string key = std::string(identifier);
 
   int isInVmap = GetSingleton().vmap.count(key);
@@ -278,7 +298,7 @@ void IO::Destroy() {
  */
 void IO::DefaultMessages() {
   //Default help message
-  if (CheckValue("help")) {
+  if (HasParam("help")) {
     // A little snippet about the program itself, if we have it.
     if (GetSingleton().doc != &empty_program_doc) {
       cout << GetSingleton().doc->programName << std::endl << std::endl;
@@ -289,8 +309,8 @@ void IO::DefaultMessages() {
     GetSingleton().hierarchy.PrintAllHelp(); 
     exit(0); // The user doesn't want to run the program, he wants help. 
   }
-  else if (CheckValue("info")) {
-    std::string str = GetValue<std::string>("info");
+  else if (HasParam("info")) {
+    std::string str = GetParam<std::string>("info");
     // The info node should always be there, but the user may not have specified
     // anything.
     if (str != "") {
@@ -360,7 +380,7 @@ void IO::StartTimer(const char* timerName) {
   tmp.tv_usec = 0;
   
   gettimeofday(&tmp, NULL);
-  GetValue<timeval>(timerName) = tmp;
+  GetParam<timeval>(timerName) = tmp;
 }
       
 /* 
@@ -370,7 +390,7 @@ void IO::StartTimer(const char* timerName) {
  * @param timerName The name of the timer in question.
  */
 void IO::StopTimer(const char* timerName) {
-  timeval delta, b, &a = GetValue<timeval>(timerName);  
+  timeval delta, b, &a = GetParam<timeval>(timerName);  
   gettimeofday(&b, NULL);
   
   //Calculate the delta time

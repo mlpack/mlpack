@@ -69,8 +69,8 @@ int main(int argc, char* argv[]) {
 
   IO::ParseCommandLine(argc, argv);
   success_t s = SUCCESS_PASS;
-  if (IO::CheckValue("hmm/type")) {
-    const char* type = IO::GetValue<std::string>("hmm/type").c_str();
+  if (IO::HasParam("hmm/type")) {
+    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
       s = generate_discrete();
     else if (strcmp(type, "gaussian")==0) 
@@ -105,16 +105,16 @@ void usage() {
 }
 
 success_t generate_mixture() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetValue<int>("hmm/length");
-  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
-  const int numseq = IO::GetValue<int>("hmm/numseq");
-  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetParam<int>("hmm/length");
+  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
+  const int numseq = IO::GetParam<int>("hmm/numseq");
+  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -154,16 +154,16 @@ success_t generate_mixture() {
 }
 
 success_t generate_gaussian() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetValue<int>("hmm/length");
-  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
-  const int numseq = IO::GetValue<int>("hmm/numseq");
-  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetParam<int>("hmm/length");
+  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
+  const int numseq = IO::GetParam<int>("hmm/numseq");
+  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
@@ -201,16 +201,16 @@ success_t generate_gaussian() {
 }
 
 success_t generate_discrete() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const int seqlen = IO::GetValue<int>("hmm/length");
-  const int seqlmax = IO::GetValue<int>("hmm/lenmax");
-  const int numseq = IO::GetValue<int>("hmm/numseq");
-  const char* seqout = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* stateout = IO::GetValue<std::string>("hmm/statefile").c_str();
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const int seqlen = IO::GetParam<int>("hmm/length");
+  const int seqlmax = IO::GetParam<int>("hmm/lenmax");
+  const int numseq = IO::GetParam<int>("hmm/numseq");
+  const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
   DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
   DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");

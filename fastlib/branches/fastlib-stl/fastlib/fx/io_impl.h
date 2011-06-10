@@ -8,7 +8,7 @@ namespace mlpack {
 
 /**
 * @brief Adds a parameter to IO, making 
-*   it accessibile via GetValue & CheckValue.
+*   it accessibile via GetParam & CheckValue.
 *
 * @tparam T The type of the parameter.
 * @param identifier The name of the parameter, eg foo in bar/foo.
@@ -52,7 +52,7 @@ void IO::Add(const char* identifier,
  *   Use IO::CheckValue to determine if it's valid.
  */
 template<typename T>
-T& IO::GetValue(const char* identifier) {
+T& IO::GetParam(const char* identifier) {
   // Used to ensure we have a valid value
   T tmp;
   // Used to index into the globalValues map

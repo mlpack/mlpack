@@ -30,8 +30,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   // one node
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
-  else if(IO::CheckValue("allknn/leaf_size"))
-    leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
+  else if(IO::HasParam("allknn/leaf_size"))
+    leaf_size_ = IO::GetParam<int>("allknn/leaf_size");
   else
     leaf_size_ = 20;
 
@@ -43,8 +43,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
   DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
 
   // K-nearest neighbors initialization
-   if(IO::CheckValue("allknn/k"))
-    knns_ = IO::GetValue<int>("allknn/k");
+   if(IO::HasParam("allknn/k"))
+    knns_ = IO::GetParam<int>("allknn/k");
   else
     knns_ = 5;
 
@@ -90,8 +90,8 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   // Get the leaf size from the module
   if(naive_)
     leaf_size_ = max(queries_.n_cols, references_.n_cols);
-  else if(IO::CheckValue("allknn/leaf_size"))
-    leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
+  else if(IO::HasParam("allknn/leaf_size"))
+    leaf_size_ = IO::GetParam<int>("allknn/leaf_size");
   else
     leaf_size_ = 20;
 
@@ -99,8 +99,8 @@ AllkNN::AllkNN(arma::mat& references_in, struct datanode* module_in,
   DEBUG_ASSERT(leaf_size_ > 0);
 
   // K-nearest neighbors initialization
-  if(IO::CheckValue("allknn/k"))
-    knns_ = IO::GetValue<int>("allknn/k");
+  if(IO::HasParam("allknn/k"))
+    knns_ = IO::GetParam<int>("allknn/k");
   else
     knns_ = 5;
 
@@ -144,8 +144,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
    // Get the leaf size from the module
    if(naive_)
      leaf_size_ = max(queries_.n_cols, references_.n_cols);
-   else if(IO::CheckValue("allknn/leaf_size"))
-     leaf_size_ = IO::GetValue<int>("allknn/leaf_size");
+   else if(IO::HasParam("allknn/leaf_size"))
+     leaf_size_ = IO::GetParam<int>("allknn/leaf_size");
    else
      leaf_size_ = 20;
 
@@ -153,8 +153,8 @@ AllkNN::AllkNN(arma::mat& queries_in, arma::mat& references_in,
    DEBUG_ASSERT(leaf_size_ > 0);
 
    // K-nearest neighbors initialization
-   if(IO::CheckValue("allknn/k"))
-     knns_ = IO::GetValue<int>("allknn/k");
+   if(IO::HasParam("allknn/k"))
+     knns_ = IO::GetParam<int>("allknn/k");
    else
      knns_ = 5;
 

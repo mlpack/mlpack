@@ -62,7 +62,7 @@ int main(int argc, char* argv[]) {
 
   // User-specified: duration of experiment 
   // Note that the experiment will run from t=0 to t_tot
-  const char* t_in = IO::GetValue<std::string>("kalman/t_in").c_str();
+  const char* t_in = IO::GetParam<std::string>("kalman/t_in").c_str();
   Matrix t_tot_mat;
   arma::mat tmp;
   data::Load(t_in, tmp);
@@ -73,12 +73,12 @@ int main(int argc, char* argv[]) {
   // a_mat, b_mat, c_mat, d_mat, q_mat, r_mat, s_mat
   // are the typical time-invariant system params
   // Proceed to Load init matrices within a struct called lds
-  const char* a_in = IO::GetValue<std::string>("kalman/a_in").c_str();
-  const char* b_in = IO::GetValue<std::string>("kalman/b_in").c_str();
-  const char* c_in = IO::GetValue<std::string>("kalman/c_in").c_str(); 
-  const char* q_in = IO::GetValue<std::string>("kalman/q_in").c_str(); 
-  const char* r_in = IO::GetValue<std::string>("kalman/r_in").c_str();
-  const char* s_in = IO::GetValue<std::string>("kalman/s_in").c_str();   
+  const char* a_in = IO::GetParam<std::string>("kalman/a_in").c_str();
+  const char* b_in = IO::GetParam<std::string>("kalman/b_in").c_str();
+  const char* c_in = IO::GetParam<std::string>("kalman/c_in").c_str(); 
+  const char* q_in = IO::GetParam<std::string>("kalman/q_in").c_str(); 
+  const char* r_in = IO::GetParam<std::string>("kalman/r_in").c_str();
+  const char* s_in = IO::GetParam<std::string>("kalman/s_in").c_str();   
   
   ssm lds;
   data::Load(a_in, tmp);
@@ -97,10 +97,10 @@ int main(int argc, char* argv[]) {
   // User-specified: kf parameters. Stored in *.csv files 
   // Includes x_{0|-1}, p_pred_{0|-1}, y_{0|-1}, inno_cov_{0|-1}
   // {t|t-1} means var. at time t given info. up to t-1
-  const char* x_pred_0_in = IO::GetValue<std::string>("kalman/x_pred_0_in").c_str();
-  const char* p_pred_0_in = IO::GetValue<std::string>("kalman/p_pred_0_in").c_str();
-  const char* y_pred_0_in = IO::GetValue<std::string>("kalman/y_pred_0_in").c_str();
-  const char* inno_cov_0_in = IO::GetValue<std::string>("kalman/inno_cov_0_in").c_str();
+  const char* x_pred_0_in = IO::GetParam<std::string>("kalman/x_pred_0_in").c_str();
+  const char* p_pred_0_in = IO::GetParam<std::string>("kalman/p_pred_0_in").c_str();
+  const char* y_pred_0_in = IO::GetParam<std::string>("kalman/y_pred_0_in").c_str();
+  const char* inno_cov_0_in = IO::GetParam<std::string>("kalman/inno_cov_0_in").c_str();
   
   Matrix x_pred_0; 
   data::Load(x_pred_0_in, tmp);

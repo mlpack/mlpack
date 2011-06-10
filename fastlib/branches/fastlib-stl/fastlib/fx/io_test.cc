@@ -53,7 +53,7 @@ void TestAll() {
     IO::Fatal << "Test Option Failed." << std::endl;
   IO::StopTimer("TestTimer");
 
-  IO::Info << "Elapsed uSecs: " << IO::GetValue<timeval>("TestTimer").tv_usec 
+  IO::Info << "Elapsed uSecs: " << IO::GetParam<timeval>("TestTimer").tv_usec 
             << std::endl;
 }
 
@@ -66,23 +66,23 @@ void TestAll() {
 */
 bool TestIO() {
   bool success = true;
-  success = success & ASSERT(IO::GetValue<int>("global/gint") == DEFAULT_INT,
-                    "IO::GetValue failed on gint");
+  success = success & ASSERT(IO::GetParam<int>("global/gint") == DEFAULT_INT,
+                    "IO::GetParam failed on gint");
    
   
-  //Check that the IO::CheckValue returns false if no value has been specified
+  //Check that the IO::HasParam returns false if no value has been specified
   //On the commandline or programmatically.
   IO::Add<bool>("bool", "True or False", "global");
-  success = success & ASSERT(IO::CheckValue("global/bool") == false, 
-                    "IO::CheckValue failed on global/bool");
+  success = success & ASSERT(IO::HasParam("global/bool") == false, 
+                    "IO::HasParam failed on global/bool");
 
-  IO::GetValue<bool>("global/bool") = true;
+  IO::GetParam<bool>("global/bool") = true;
 
-  //IO::CheckValue should return true now.
-  success = success & ASSERT(IO::CheckValue("global/bool") == true, 
-                              "IO::CheckValue failed on global/bool #2");
-  success = success & ASSERT(IO::GetValue<bool>("global/bool") == true, 
-                    "IO::GetValue failed on global/bool");
+  //IO::HasParam should return true now.
+  success = success & ASSERT(IO::HasParam("global/bool") == true, 
+                              "IO::HasParam failed on global/bool #2");
+  success = success & ASSERT(IO::GetParam<bool>("global/bool") == true, 
+                    "IO::GetParam failed on global/bool");
   success = success & ASSERT(IO::GetDescription("global/bool").compare(
                               std::string("True or False")) == 0, 
                             "IO::GetDescription failed on global/bool");
@@ -158,8 +158,8 @@ bool TestOption() {
   PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
   
   //Does IO reflect this?
-  success = success & ASSERT(IO::CheckValue("test_parent/test"),
-                              "IO::CheckValue failed on parent/test");
+  success = success & ASSERT(IO::HasParam("test_parent/test"),
+                              "IO::HasParam failed on parent/test");
    
 
   std::string desc = std::string("test desc");
@@ -168,8 +168,8 @@ bool TestOption() {
             "IO::GetDescription fails on test_parent/test");
 
   success = success & 
-    ASSERT(IO::GetValue<int>("test_parent/test") == DEFAULT_INT, 
-            "IO::GetValue fails on test_parent/test");
+    ASSERT(IO::GetParam<int>("test_parent/test") == DEFAULT_INT, 
+            "IO::GetParam fails on test_parent/test");
 
   return success;
 }

@@ -23,8 +23,19 @@ Option<N>::Option(bool ignoreTemplate,
 
     //Create the full pathname.
     std::string pathname = IO::SanitizeString(parent) + std::string(identifier);
-    IO::GetValue<N>(pathname.c_str()) = defaultValue;
+    IO::GetParam<N>(pathname.c_str()) = defaultValue;
   }
+}
+
+
+/*
+ * @brief Registers a flag parameter with IO.
+ */
+template<typename N>
+Option<N>::Option(const char* identifier,
+                  const char* description,
+                  const char* parent) {
+  IO::AddFlag(identifier, description, parent);
 }
 
 }; // namespace mlpack
