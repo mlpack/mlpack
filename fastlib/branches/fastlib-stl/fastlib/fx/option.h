@@ -39,6 +39,20 @@ class Option {
          const char* description,
          const char* parent = NULL,
          bool required = false);
+  
+  /**
+   * Constructs an Option object.  When constructed, it will register a flag
+   * with IO.
+   *
+   * @param identifier The name of the option (no dashes in front); for
+   * 	--help, we would pass "help"
+   * @param descriptoin A short string describing the option.
+   * @param parent Full pathname of the parent module that "owns" this 
+   *    option.  The default evaluates to the root node.
+   */    
+  Option(const char* identifier,
+         const char* description, 
+         const char* parent = NULL);
 };
 
 class ProgramDoc {

@@ -48,7 +48,8 @@
  *
  * The parameter will then be specified with --PARENT/ID=value.
  */
-#define PARAM_FLAG(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false, false)
+#define PARAM_FLAG(ID, DESC, PARENT) \
+ mlpack::Option<bool> JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
@@ -156,13 +157,24 @@ class IO {
                   const char* description, 
                   const char* parent, 
                   bool required=false); 
-                   
+  
+  /*
+   * Adds a flag parameter to the heirarchy.  
+   * 
+   * @param identifier The name of the paramter.
+   * @param description Short string description of the parameter.
+   * @param parent Full pathname of the parent module, default is root node.
+   */
+  static void AddFlag(const char* identifier,
+                      const char* description,
+                      const char* parent);
+                 
   /* 
    * See if the specified flag was found while parsing. 
    * 
    * @param identifier The name of the parameter in question. 
    */
-  static bool CheckValue(const char* identifier);
+  static bool HasParam(const char* identifier);
       
       
   /* 
@@ -174,13 +186,13 @@ class IO {
    
   /*
    * Grab the value of type T found while parsing.  
-   * Should use CheckValue() first.  You can set the value using this reference
+   * Should use HasParam() first.  You can set the value using this reference
    * safely.
    *
    * @param identifier The name of the parameter in question.
    */
   template<typename T>
-  static T& GetValue(const char* identifier);
+  static T& GetParam(const char* identifier);
 
   /*
    * Grab the description of the specified node.

@@ -32,11 +32,11 @@ int main (int argc, char *argv[]) {
   IO::ParseCommandLine(argc, argv);
   arma::mat data_for_tree;
 
-  string input_file = IO::GetValue<string>("allnn/input_file");
+  string input_file = IO::GetParam<string>("allnn/input_file");
   string output_file;
 
-  if (IO::CheckValue("allnn/output_file"))
-    output_file = IO::GetValue<string>("allnn/output_file");
+  if (IO::HasParam("allnn/output_file"))
+    output_file = IO::GetParam<string>("allnn/output_file");
   else
     output_file = "output.csv";
   

@@ -597,13 +597,13 @@ class DualTreeBoruvka {
     number_of_edges_ = 0;
     data_points_ = data; // copy
     
-    do_naive_ = IO::GetValue<bool>("naive/do_naive");
+    do_naive_ = IO::GetParam<bool>("naive/do_naive");
     
     if (!do_naive_) {
       // Default leaf size is 1
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
-      leaf_size_ = IO::GetValue<index_t>("naive/leaf_size");
+      leaf_size_ = IO::GetParam<index_t>("naive/leaf_size");
       
       IO::StartTimer("naive/tree_building");
 

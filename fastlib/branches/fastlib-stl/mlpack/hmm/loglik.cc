@@ -61,8 +61,8 @@ int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
   success_t s = SUCCESS_PASS;
-  if (IO::CheckValue("hmm/type")) {
-    const char* type = IO::GetValue<std::string>("hmm/type").c_str();
+  if (IO::HasParam("hmm/type")) {
+    const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
       s = loglik_discrete();
     else if (strcmp(type, "gaussian")==0) 
@@ -92,13 +92,13 @@ void usage() {
 }
 
 success_t loglik_mixture() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); 
-  const char* logout = IO::GetValue<std::string>("hmm/logfile").c_str(); 
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
+  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str(); 
 
   MixtureofGaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -122,13 +122,13 @@ success_t loglik_mixture() {
 }
 
 success_t loglik_gaussian() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); 
-  const char* logout = IO::GetValue<std::string>("hmm/logfile").c_str();
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
+  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str();
 
   GaussianHMM hmm;
   hmm.InitFromFile(profile);
@@ -152,13 +152,13 @@ success_t loglik_gaussian() {
 }
 
 success_t loglik_discrete() {
-  if (!IO::CheckValue("hmm/profile")) {
+  if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
-  const char* profile = IO::GetValue<std::string>("hmm/profile").c_str();
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str(); 
-  const char* logout = IO::GetValue<std::string>("hmm/logfile").c_str();
+  const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
+  const char* logout = IO::GetParam<std::string>("hmm/logfile").c_str();
 
   DiscreteHMM hmm;
   hmm.InitFromFile(profile);

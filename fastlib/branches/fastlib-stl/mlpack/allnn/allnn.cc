@@ -31,8 +31,8 @@ AllNN::AllNN(arma::mat& references_in, bool alias_matrix, bool naive) :
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  if(IO::CheckValue("leaf_size"))
-    leaf_size_ = IO::GetValue<int>("leaf_size");
+  if(IO::HasParam("leaf_size"))
+    leaf_size_ = IO::GetParam<int>("leaf_size");
   else
     leaf_size_ = 20;
   
@@ -74,8 +74,8 @@ AllNN::AllNN(arma::mat& queries_in, arma::mat& references_in,
    * A bit of a trick so we can still use BaseCase_: we'll expand
    * the leaf size so that our trees only have one node.
    */
-  if(IO::CheckValue("leaf_size"))
-    leaf_size_ = IO::GetValue<int>("leaf_size");
+  if(IO::HasParam("leaf_size"))
+    leaf_size_ = IO::GetParam<int>("leaf_size");
   else
     leaf_size_ = 20;
   

@@ -432,12 +432,12 @@ class FastICA {
     d = X.n_rows;
     n = X.n_cols;
 
-    long seed = IO::GetValue<int>("fastica/seed") + clock() + time(0);
+    long seed = IO::GetParam<int>("fastica/seed") + clock() + time(0);
     srand48(seed);
 
     
     const char* string_approach =
-      IO::GetValue<std::string>("fastica/approach").c_str();
+      IO::GetParam<std::string>("fastica/approach").c_str();
     if(strcasecmp(string_approach, "deflation") == 0) {
       VERBOSE_ONLY( printf("using Deflation approach ") );
       approach_ = DEFLATION;
@@ -452,7 +452,7 @@ class FastICA {
     }
     
     const char* string_nonlinearity =
-      IO::GetValue<std::string>("fastica/nonlinearity").c_str();
+      IO::GetParam<std::string>("fastica/nonlinearity").c_str();
     if(strcasecmp(string_nonlinearity, "logcosh") == 0) {
       VERBOSE_ONLY( printf("with log cosh nonlinearity\n") );
       nonlinearity_ = LOGCOSH;
@@ -477,7 +477,7 @@ class FastICA {
     //const index_t first_eig_ = fx_param_int(module_, "first_eig", 1);
     // for now, the last eig must be d, and num_of IC must be d, until I have time to incorporate PCA into this code
     //const index_t last_eig_ = fx_param_int(module_, "last_eig", d);
-    num_of_IC_ = IO::GetValue<int>("fastica/num_of_IC");
+    num_of_IC_ = IO::GetParam<int>("fastica/num_of_IC");
     if(num_of_IC_ < 1 || num_of_IC_ > d) {
       IO::Fatal << "ERROR: num_of_IC = " << num_of_IC_ <<  
           " must be >= 1 and <= dimensionality of data" << std::endl;
@@ -485,15 +485,15 @@ class FastICA {
       return SUCCESS_FAIL;
     }
 
-    fine_tune_ = IO::GetValue<bool>("fastica/fine_tune");
-    a1_ = IO::GetValue<double>("fastica/a1");
-    a2_ = IO::GetValue<double>("fastica/a2");
-    mu_ = IO::GetValue<double>("fastica/mu");
-    stabilization_ = IO::GetValue<bool>("fastica/stabilization");
-    epsilon_ = IO::GetValue<double>("fastica/epsilon");
+    fine_tune_ = IO::GetParam<bool>("fastica/fine_tune");
+    a1_ = IO::GetParam<double>("fastica/a1");
+    a2_ = IO::GetParam<double>("fastica/a2");
+    mu_ = IO::GetParam<double>("fastica/mu");
+    stabilization_ = IO::GetParam<bool>("fastica/stabilization");
+    epsilon_ = IO::GetParam<double>("fastica/epsilon");
   
     index_t int_max_num_iterations =
-      IO::GetValue<int>("fastica/max_num_iterations");
+      IO::GetParam<int>("fastica/max_num_iterations");
     if(int_max_num_iterations < 0) {
       printf("ERROR: max_num_iterations = %"LI" must be >= 0\n",
 	     int_max_num_iterations);
@@ -501,7 +501,7 @@ class FastICA {
     }
     max_num_iterations_ = (index_t) int_max_num_iterations;
 
-    index_t int_max_fine_tune = IO::GetValue<int>("fastica/max_fine_tune");
+    index_t int_max_fine_tune = IO::GetParam<int>("fastica/max_fine_tune");
     if(int_max_fine_tune < 0) {
       printf("ERROR: max_fine_tune = %"LI" must be >= 0\n",
 	     int_max_fine_tune);
@@ -509,7 +509,7 @@ class FastICA {
     }
     max_fine_tune_ = (index_t) int_max_fine_tune;
 
-    percent_cut_ = IO::GetValue<double>("fastica/percent_cut");
+    percent_cut_ = IO::GetParam<double>("fastica/percent_cut");
     if((percent_cut_ < 0) || (percent_cut_ > 1)) {
       printf("ERROR: percent_cut = %f must be an element in [0,1]\n",
 	     percent_cut_);

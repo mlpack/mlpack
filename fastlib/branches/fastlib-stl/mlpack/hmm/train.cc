@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
   success_t s = SUCCESS_PASS;
-  if (IO::CheckValue("hmm/type")) {
-    const char* algorithm = IO::GetValue<std::string>("hmm/algorithm").c_str();
+  if (IO::HasParam("hmm/type")) {
+    const char* algorithm = IO::GetParam<std::string>("hmm/algorithm").c_str();
     if (strcmp(algorithm,"baumwelch") == 0)
       s = train_baumwelch();
     else if (strcmp(algorithm,"viterbi") == 0)
@@ -114,7 +114,7 @@ success_t train_baumwelch_gaussian();
 success_t train_baumwelch_mixture();
 
 success_t train_baumwelch() {
-  const char* type = IO::GetValue<std::string>("hmm/type").c_str();
+  const char* type = IO::GetParam<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_baumwelch_discrete();
   else if (strcmp(type, "gaussian")==0)
@@ -132,7 +132,7 @@ success_t train_viterbi_gaussian();
 success_t train_viterbi_mixture();
 
 success_t train_viterbi() {
-  const char* type = IO::GetValue<std::string>("hmm/type").c_str();
+  const char* type = IO::GetParam<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_viterbi_discrete();
   else if (strcmp(type, "gaussian")==0)
@@ -146,7 +146,7 @@ success_t train_viterbi() {
 }
 
 success_t train_baumwelch_mixture() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -154,13 +154,13 @@ success_t train_baumwelch_mixture() {
   MixtureofGaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.mix.out"
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.mix.out"
 
   load_matrix_list(seqin, seqs);
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
@@ -170,8 +170,8 @@ success_t train_baumwelch_mixture() {
     return SUCCESS_FAIL;
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   hmm.TrainBaumWelch(seqs, maxiter, tol);
 
@@ -181,32 +181,32 @@ success_t train_baumwelch_mixture() {
 }
 
 success_t train_baumwelch_gaussian() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
   GaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.gauss.out");
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.gauss.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
-    int numstate = IO::GetValue<int>("hmm/numstate");
+    int numstate = IO::GetParam<int>("hmm/numstate");
     IO::Info << "Generate HMM parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
     IO::Info << "Done." << std::endl;
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   printf("Training ...\n");
   hmm.TrainBaumWelch(seqs, maxiter, tol);
@@ -218,32 +218,32 @@ success_t train_baumwelch_gaussian() {
 }
 
 success_t train_baumwelch_discrete() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.dis.out");
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.dis.out");
 
   std::vector<arma::vec> seqs;
   load_vector_list(seqin, seqs);
 
   DiscreteHMM hmm;
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load HMM parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data
-    int numstate = IO::GetValue<int>("hmm/numstate");
+    int numstate = IO::GetParam<int>("hmm/numstate");
     IO::Info << "Randomly generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   hmm.TrainBaumWelch(seqs, maxiter, tol);
 
@@ -253,7 +253,7 @@ success_t train_baumwelch_discrete() {
 }
 
 success_t train_viterbi_mixture() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -261,13 +261,13 @@ success_t train_viterbi_mixture() {
   MixtureofGaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.mix.out");
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.mix.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   } else {
@@ -276,8 +276,8 @@ success_t train_viterbi_mixture() {
     return SUCCESS_FAIL;
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 
@@ -287,7 +287,7 @@ success_t train_viterbi_mixture() {
 }
 
 success_t train_viterbi_gaussian() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     IO::Fatal << "--seqfile must be defined." << std::endl;
     return SUCCESS_FAIL;
   }
@@ -295,24 +295,24 @@ success_t train_viterbi_gaussian() {
   GaussianHMM hmm;
   std::vector<arma::mat> seqs;
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.gauss.viterbi.out");
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.gauss.viterbi.out");
 
   load_matrix_list(seqin, seqs);
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise initialized using information from the data
-    int numstate = IO::GetValue<int>("hmm/numstate");
+    int numstate = IO::GetParam<int>("hmm/numstate");
     IO::Info << "Generate parameters: NUMSTATE = " << numstate << std::endl;
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 
@@ -322,7 +322,7 @@ success_t train_viterbi_gaussian() {
 }
 
 success_t train_viterbi_discrete() {
-  if (!IO::CheckValue("hmm/seqfile")) {
+  if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
     return SUCCESS_FAIL;
   }
@@ -330,25 +330,25 @@ success_t train_viterbi_discrete() {
   DiscreteHMM hmm;
   std::vector<arma::vec> seqs;
 
-  const char* seqin = IO::GetValue<std::string>("hmm/seqfile").c_str();
-  const char* proout = IO::GetValue<std::string>("hmm/profile").c_str(); //"pro.dis.viterbi.out");
+  const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
+  const char* proout = IO::GetParam<std::string>("hmm/profile").c_str(); //"pro.dis.viterbi.out");
 
   load_vector_list(seqin, seqs);
 
-  if (IO::CheckValue("hmm/guess")) { // guessed parameters in a file
+  if (IO::HasParam("hmm/guess")) { // guessed parameters in a file
     std::vector<arma::mat> matlst;
-    const char* guess = IO::GetValue<std::string>("hmm/guess").c_str();
+    const char* guess = IO::GetParam<std::string>("hmm/guess").c_str();
     IO::Info << "Load parameters from file " << guess << std::endl;
     hmm.InitFromFile(guess);
   }
   else { // otherwise randomly initialized using information from the data
-    int numstate = IO::GetValue<int>("hmm/numstate");
+    int numstate = IO::GetParam<int>("hmm/numstate");
     printf("Generate parameters with NUMSTATE = %d\n", numstate);
     hmm.InitFromData(seqs, numstate);
   }
 
-  int maxiter = IO::GetValue<int>("hmm/maxiter");
-  double tol = IO::GetValue<double>("hmm/tolerance");
+  int maxiter = IO::GetParam<int>("hmm/maxiter");
+  double tol = IO::GetParam<double>("hmm/tolerance");
 
   hmm.TrainViterbi(seqs, maxiter, tol);
 
