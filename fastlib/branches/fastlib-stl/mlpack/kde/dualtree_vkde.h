@@ -61,6 +61,7 @@
 #define INSIDE_DUALTREE_VKDE_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
 
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
@@ -113,10 +114,6 @@ class DualtreeVKde {
   static const int sample_multiple_ = 10;
 
   ////////// Private Member Variables //////////
-
-  /** @brief The pointer to the module holding the parameters.
-   */
-  struct datanode *module_;
 
   /** @brief The boolean flag to control the leave-one-out computation.
    */
@@ -282,8 +279,8 @@ class DualtreeVKde {
   void Compute(arma::vec& results) {
 
     // Set accuracy parameters.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
-    threshold_ = fx_param_double(module_, "threshold", 0) *
+    relative_error_ = mlpack::IO::GetParam<double>("kde/relative_error");
+    threshold_ = mlpack::IO::GetParam<double>("kde/threshold") *
       kernels_[0].CalcNormConstant(qset_.n_rows);
     
     // initialize the lower and upper bound densities
@@ -298,10 +295,11 @@ class DualtreeVKde {
     // Reset prune statistics.
     num_finite_difference_prunes_ = num_monte_carlo_prunes_ = 0;
 
-    printf("\nStarting variable KDE using %d neighbors...\n",
-	   (int) fx_param_int_req(module_, "knn"));
+    mlpack::IO::Info << std::endl << "Starting variable KDE using " << 
+      mlpack::IO::GetParam<int>("kde/knn") << " neighbors..." << std::endl;
+	 //  (int) fx_param_int_req(module_, "knn"));
 
-    fx_timer_start(NULL, "fast_kde_compute");
+    mlpack::IO::StartTimer("kde/fast_kde_compute");
 
     // Preprocessing step for initializing series expansion objects
     PreProcess(rroot_, true);
@@ -311,15 +309,15 @@ class DualtreeVKde {
     
     // Get the required probability guarantee for each query and call
     // the main routine.
-    double probability = fx_param_double(module_, "probability", 1);
+    double probability = mlpack::IO::GetParam<double>("kde/probability");
     DualtreeVKdeCanonical_(qroot_, rroot_, probability);
 
     // Postprocessing step for finalizing the sums.
     PostProcess(qroot_);
-    fx_timer_stop(NULL, "fast_kde_compute");
-    printf("\nFast KDE completed...\n");
-    printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
-    printf("Monte Carlo prunes: %d\n", num_monte_carlo_prunes_);
+    mlpack::IO::StopTimer("kde/fast_kde_compute");
+    mlpack::IO::Info << std::endl << "Fast KDE completed..." << std::endl;
+    mlpack::IO::Info << "Finite difference prunes: " << num_finite_difference_prunes_ << std::endl;
+    mlpack::IO::Info << "Monte Carlo prunes: " << num_monte_carlo_prunes_ << std::endl;
 
     // Reshuffle the results to account for dataset reshuffling
     // resulted from tree constructions.
@@ -338,18 +336,18 @@ class DualtreeVKde {
   }
 
   void Init(const arma::mat& queries, const arma::mat& references,
-	    const arma::mat& rset_weights, bool queries_equal_references, 
-	    struct datanode *module_in) {
-
-    // point to the incoming module
-    module_ = module_in;
+	    const arma::mat& rset_weights, bool queries_equal_references) {
 
     // Set the flag for whether to perform leave-one-out computation.
-    leave_one_out_ = fx_param_exists(module_in, "loo") &&
+    leave_one_out_ = mlpack::IO::HasParam("kde/loo") &&
       (queries.memptr() == references.memptr());
 
     // read in the number of points owned by a leaf
-    int leaflen = fx_param_int(module_in, "leaflen", 20);
+    int leaflen = 0;
+    if(!mlpack::IO::HasParam("kde/leaflen"))
+      leaflen = mlpack::IO::GetParam<int>("kde/leaflen") = 20;
+    else
+      leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
 
     // Copy reference dataset and reference weights and compute its
     // sum. rset_weight_sum_ should be the raw sum of the reference
@@ -377,7 +375,7 @@ class DualtreeVKde {
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
-    fx_timer_start(NULL, "tree_d");
+    mlpack::IO::StartTimer("kde/tree_d");
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
 						&old_from_new_references_, 
 						NULL);
@@ -393,7 +391,7 @@ class DualtreeVKde {
 						  &old_from_new_queries_, 
 						  NULL);
     }
-    fx_timer_stop(NULL, "tree_d");
+    mlpack::IO::StopTimer("kde/tree_d");
     
     // Initialize the density lists
     densities_l_.set_size(qset_.n_cols);
@@ -405,19 +403,19 @@ class DualtreeVKde {
     n_pruned_.set_size(qset_.n_cols);
 
     // Initialize the kernels for each reference point.
-    int knns = fx_param_int_req(module_, "knn");
+    int knns = mlpack::IO::GetParam<int>("kde/knn");
     mlpack::allknn::AllkNN all_knn(rset_, 20, knns);
     kernels_.reserve(rset_.n_cols);
     arma::Col<index_t> resulting_neighbors;
     arma::vec squared_distances;    
 
-    fx_timer_start(fx_root, "bandwidth_initialization");
+    mlpack::IO::StartTimer("kde/bandwidth_initialization");
     all_knn.ComputeNeighbors(resulting_neighbors, squared_distances);
 
     for(index_t i = 0; i < squared_distances.n_elem; i += knns) {
       kernels_[i / knns].Init(sqrt(squared_distances[i + knns - 1]));
     }
-    fx_timer_stop(fx_root, "bandwidth_initialization");
+    mlpack::IO::StopTimer("kde/bandwidth_initialization");
 
     // Renormalize the reference weights according to the bandwidths
     // that have been chosen.
@@ -440,8 +438,7 @@ class DualtreeVKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = fx_param_str(module_, "fast_kde_output", 
-			     "fast_kde_output.txt")) != NULL) {
+    if((fname = mlpack::IO::GetParam<std::string>("fast_kde_output").c_str()) != NULL) {
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {

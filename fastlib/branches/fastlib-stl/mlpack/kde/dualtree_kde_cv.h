@@ -291,8 +291,8 @@ class DualtreeKdeCV {
       second_ka_.kernel_.CalcNormConstant(rset_.n_rows);
 
     // Set accuracy parameters.
-    relative_error_ = fx_param_double(module_, "relative_error", 0.1);
-    threshold_ = fx_param_double(module_, "threshold", 0) *
+    relative_error_ = mlpack::IO::GetParam<double>("kde/relative_error"); //Default value .1
+    threshold_ = mlpack::IO::GetParam<double>("kde/threshold") * //Default value 0
       first_ka_.kernel_.CalcNormConstant(rset_.n_rows);
 
     // Reset prune statistics.
@@ -300,9 +300,9 @@ class DualtreeKdeCV {
       num_farfield_to_local_prunes_ = num_farfield_prunes_ = 
       num_local_prunes_ = 0;
 
-    printf("\nStarting fast KDE on bandwidth value of %g...\n",
-	   sqrt(second_ka_.kernel_.bandwidth_sq()));
-    fx_timer_start(NULL, "fast_kde_compute");
+    mlpack::IO::Info << "Starting fast KDE on bandwidth value of " 
+      << sqrt(second_ka_.kernel_.bandwidth_sq()) << "..." << std::endl;
+    mlpack::IO::StartTimer("kde/fast_kde_compute");
 
     // Reset the accumulated sum...
     first_sum_l_ = first_sum_e_ = 0;
@@ -317,15 +317,15 @@ class DualtreeKdeCV {
         
     // Get the required probability guarantee for each query and call
     // the main routine.
-    double probability = fx_param_double(module_, "probability", 1);
+    double probability = mlpack::IO::GetParam<double>("kde/probability"); //Default value 1
     DualtreeKdeCVCanonical_(rroot_, rroot_, probability);
     fx_timer_stop(NULL, "fast_kde_compute");
-    printf("\nFast KDE completed...\n");
-    printf("Finite difference prunes: %d\n", num_finite_difference_prunes_);
-    printf("Monte Carlo prunes: %d\n", num_monte_carlo_prunes_);
-    printf("F2L prunes: %d\n", num_farfield_to_local_prunes_);
-    printf("F prunes: %d\n", num_farfield_prunes_);
-    printf("L prunes: %d\n", num_local_prunes_);
+    mlpack::IO::Info << std::endl << "Fast KDE completed..." << std::endl;
+    mlpack::IO::Info << "Finite difference prunes: " << num_finite_difference_prunes_ << std::endl;
+    mlpack::IO::Info << "Monte Carlo prunes: " <<  num_monte_carlo_prunes_ << std::endl;
+    mlpack::IO::Info << "F2L prunes: " << num_farfield_to_local_prunes_ << std::endl;
+    mlpack::IO::Info << "F prunes: " << num_farfield_prunes_ << std::endl;
+    mlpack::IO::Info << "L prunes: " << num_local_prunes_ << std::endl;
 
     // Normalize accordingly.
     first_sum_e_ *= (first_mult_const_ / rset_weight_sum_);
@@ -340,14 +340,14 @@ class DualtreeKdeCV {
     return lscv_score;
   }
 
-  void Init(const arma::mat& references, const arma::mat& rset_weights,
-	    struct datanode *module_in) {
-
-    // point to the incoming module
-    module_ = module_in;
+  void Init(const arma::mat& references, const arma::mat& rset_weights) {
 
     // Read in the number of points owned by a leaf.
-    int leaflen = fx_param_int(module_in, "leaflen", 20);
+    int leaflen;
+    if(!mlpack::IO::HasParam("kde/leaflen"))
+      leaflen = 20;
+    else
+      leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
     
     // Copy reference dataset and reference weights and compute its
     // sum.
@@ -362,49 +362,39 @@ class DualtreeKdeCV {
     // Construct query and reference trees. Shuffle the reference
     // weights according to the permutation of the reference set in
     // the reference tree.
-    fx_timer_start(NULL, "tree_d");
+    mlpack::IO::StartTimer("kde/tree_d");
     rroot_ = proximity::MakeGenMetricTree<Tree>(rset_, leaflen,
 						&old_from_new_references_, 
 						NULL);
     DualtreeKdeCommon::ShuffleAccordingToPermutation
       (rset_weights_, old_from_new_references_);
-    fx_timer_stop(NULL, "tree_d");
+    mlpack::IO::StopTimer("kde/tree_d");
 
     // Initialize the kernel.
-    double bandwidth = fx_param_double_req(module_, "bandwidth");
+    double bandwidth = mlpack::IO::GetParam<double>("kde/bandwidth");
 
     // Initialize the series expansion object. I should think about
     // whether this is true for kernels other than Gaussian.
     if(rset_.n_rows <= 2) {
-      first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 7), 
-		     rset_.n_rows);
-      second_ka_.Init(bandwidth, fx_param_int(module_, "order", 7), 
-		      rset_.n_rows);
+      mlpack::IO::GetParam<int>("kde/order") = 7;
     }
     else if(rset_.n_rows <= 3) {
-      first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 5), 
-		     rset_.n_rows);
-      second_ka_.Init(bandwidth, fx_param_int(module_, "order", 5), 
-		      rset_.n_rows);
+      mlpack::IO::GetParam<int>("kde/order") = 5;
     }
     else if(rset_.n_rows <= 5) {
-      first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 3), 
-		     rset_.n_rows);
-      second_ka_.Init(bandwidth, fx_param_int(module_, "order", 3), 
-		      rset_.n_rows);
+      mlpack::IO::GetParam<int>("kde/order") = 3;
     }
     else if(rset_.n_rows <= 6) {
-      first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 1), 
-		     rset_.n_rows);
-      second_ka_.Init(bandwidth, fx_param_int(module_, "order", 1), 
-		      rset_.n_rows);
+      mlpack::IO::GetParam<int>("kde/order") = 1;
     }
     else {
-      first_ka_.Init(sqrt(2) * bandwidth, fx_param_int(module_, "order", 0), 
-		     rset_.n_rows);
-      second_ka_.Init(bandwidth, fx_param_int(module_, "order", 0), 
-		      rset_.n_rows); 
+      mlpack::IO::GetParam<int>("kde/order") = 0;
     }
+
+    first_ka_.Init(sqrt(2) * bandwidth,  mlpack::IO::GetParam<int>("kde/order"), 
+		     rset_.n_rows);
+    second_ka_.Init(bandwidth,  mlpack::IO::GetParam<int>("kde/order"), 
+		      rset_.n_rows); 
   }
 };
 

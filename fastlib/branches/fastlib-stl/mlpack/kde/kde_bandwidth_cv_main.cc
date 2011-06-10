@@ -6,6 +6,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
 
 #include "bandwidth_lscv.h"
@@ -78,10 +79,13 @@
  * fast algorithm; default value is 0.1 (10 percent relative error for
  * all query density estimates).
  */
+
+using namespace mlpack;
+
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv, &kde_main_doc);
+  IO::ParseCommandLine(argc, argv);
 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -89,14 +93,16 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "kde_module" under the
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined "--kde/...=...".
-  struct datanode* kde_module = fx_submodule(fx_root, "kde");
 
   // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(fx_root, "data");
+  const char* references_file_name = IO::GetParam<std::string>("kde/data").c_str();
   
   // The query data file defaults to the references.
-  const char* queries_file_name =
-    fx_param_str(fx_root, "query", references_file_name);
+  const char* queries_file_name;
+  if(!IO::HasParam("kde/query"))
+    queries_file_name = references_file_name;
+  else
+    queries_file_name = IO::GetParam<std::string>("kde/queries").c_str();
 
   // Query and reference datasets, reference weight dataset.
   arma::mat references;
@@ -120,7 +126,7 @@ int main(int argc, char *argv[]) {
   
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
-  if(fx_param_exists(fx_root, "dwgts")) {
+  if(IO::HasParam("kde/dwgts")) {
     data::Load(fx_param_str(fx_root, "dwgts", NULL), reference_weights);
   }
   else {
@@ -128,11 +134,11 @@ int main(int argc, char *argv[]) {
   }
 
   // Confirm whether the user asked for scaling of the dataset.
-  if(!strcmp(fx_param_str(kde_module, "scaling", "none"), "range")) {
+  if(!strcmp(IO::GetParam<std::string>("kde/scaling").c_str(), "range")) {
     DatasetScaler::ScaleDataByMinMax(*queries_ptr, references,
                                      queries_equal_references);
   }
-  else if(!strcmp(fx_param_str(kde_module, "scaling", "none"), 
+  else if(!strcmp(IO::GetParam<std::string>("kde/scaling").c_str(), 
 		  "standardize")) {
     DatasetScaler::StandardizeData(*queries_ptr, references, 
 				   queries_equal_references);
@@ -140,14 +146,14 @@ int main(int argc, char *argv[]) {
 
   // There are two options: 1) do bandwidth optimization 2) output a
   // goodness score of a given bandwidth.
-  if(!strcmp(fx_param_str(kde_module, "task", "optimize"), "optimize")) {
+  if(!strcmp(IO::GetParam<std::string>("kde/task").c_str(), "optimize")) { //Default value optimize
 
     // Optimize bandwidth using least squares cross-validation.
-    if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+    if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "gaussian")) { //Default value gaussian
       BandwidthLSCV::Optimize<GaussianKernelAux>(references, 
 						 reference_weights);
     }
-    else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+    else if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "epan")) { //Default value epan
       
       // Currently, I have not implemented the direct way to
       // cross-validate for the optimal bandwidth using the Epanechnikov
@@ -157,18 +163,18 @@ int main(int argc, char *argv[]) {
 						 reference_weights);
     }
   }
-  else if(!strcmp(fx_param_str(kde_module, "task", "lscvscore"), 
+  else if(!strcmp(IO::GetParam<std::string>("kde/task").c_str(), //Default value lscvscore
 		  "lscvscore")) {
     
     // Get the bandwidth.
-    double bandwidth = fx_param_double(kde_module, "bandwidth", 0.1);
+    double bandwidth = IO::GetParam<double>("kde/bandwidth"); //Default value .1
 
     // Optimize bandwidth using least squares cross-validation.
-    if(!strcmp(fx_param_str(kde_module, "kernel", "gaussian"), "gaussian")) {
+    if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "gaussian")) { //Default value gaussian
       BandwidthLSCV::ComputeLSCVScore<GaussianKernelAux>
 	(references, reference_weights, bandwidth);
     }
-    else if(!strcmp(fx_param_str(kde_module, "kernel", "epan"), "epan")) {
+    else if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "epan")) { //Default value epan
       
       // Currently, I have not implemented the direct way to
       // cross-validate for the optimal bandwidth using the Epanechnikov
@@ -179,6 +185,5 @@ int main(int argc, char *argv[]) {
     }    
   }
 
-  fx_done(fx_root);
   return 0;
 }

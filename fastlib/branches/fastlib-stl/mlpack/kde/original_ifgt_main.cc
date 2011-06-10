@@ -6,6 +6,8 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
+
 #include <armadillo>
 #include "dataset_scaler.h"
 #include "original_ifgt.h"
@@ -62,10 +64,13 @@
  * fast algorithm; default value is 0.1 (0.1 absolute error for all
  * query density estimates).
  */
+
+using namespace mlpack;
+
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv);
   
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
@@ -73,15 +78,16 @@ int main(int argc, char *argv[]) {
   // of this as creating a new folder named "fgt_kde_module" under the
   // root directory (NULL) for the Kde object to work inside.  Here,
   // we initialize it with all parameters defined "--kde/...=...".
-  struct datanode *ifgt_kde_module =
-    fx_submodule(fx_root, "kde");
 
   // The reference data file is a required parameter.
-  const char* references_file_name = fx_param_str_req(NULL, "data");
+  const char* references_file_name = IO::GetParam<std::string>("kde/data").c_str();
 
   // The query data file defaults to the references.
-  const char* queries_file_name =
-    fx_param_str(NULL, "query", references_file_name);
+  const char* queries_file_name;
+  if(IO::HasParam("kde/query"))
+    queries_file_name = IO::GetParam<std::string>("kde/query").c_str();
+  else
+    queries_file_name = references_file_name;
 
   // query and reference datasets
   arma::mat references;
@@ -103,7 +109,7 @@ int main(int argc, char *argv[]) {
   }
 
   // confirm whether the user asked for scaling of the dataset
-  if(!strcmp(fx_param_str(ifgt_kde_module, "scaling", "none"), "range")) {
+  if(!strcmp(IO::GetParam<std::string>("kde/scaling").c_str(), "range")) {
     DatasetScaler::ScaleDataByMinMax(queries, references,
                                      queries_equal_references);
   }
@@ -112,28 +118,26 @@ int main(int argc, char *argv[]) {
   // the final results
   OriginalIFGT ifgt_kde;
   arma::vec ifgt_kde_results;
-  ifgt_kde.Init(*queries_ptr, references, ifgt_kde_module);
+  ifgt_kde.Init(*queries_ptr, references);
   ifgt_kde.Compute();
   ifgt_kde.get_density_estimates(ifgt_kde_results);
 
   // print out the results if the user specified the flag for output
-  if(fx_param_exists(ifgt_kde_module, "ifgt_kde_output")) {
+  if(IO::HasParam("kde/ifgt_kde_output")) {
     ifgt_kde.PrintDebug();
   }
 
   // do naive computation and compare to the FGT computations if the
   // user specified --do_naive flag
-  if(fx_param_exists(ifgt_kde_module, "do_naive")) {
+  if(IO::HasParam("kde/do_naive")) {
     NaiveKde<GaussianKernel> naive_kde;
-    naive_kde.Init(*queries_ptr, references, ifgt_kde_module);
+    naive_kde.Init(*queries_ptr, references);
     naive_kde.Compute();
     
-    if(fx_param_exists(ifgt_kde_module, "naive_kde_output")) {
+    if(IO::HasParam("kde/naive_kde_output")) {
       naive_kde.PrintDebug();
     }
     naive_kde.ComputeMaximumRelativeError(ifgt_kde_results);
   }
-
-  fx_done(NULL);
   return 0;
 }
