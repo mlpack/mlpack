@@ -18,6 +18,8 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack;
+
 void KernelPCA::Init(std::string data_file, index_t knns, 
     index_t leaf_size) {
   arma::mat tmp;
@@ -33,18 +35,18 @@ void KernelPCA::Destruct() {
 }
 
 void KernelPCA::ComputeNeighborhoods() {
-  NOTIFY("Building tree...\n");
+  IO::Info << "Building tree..." << std::endl;
   fflush(stdout);
   arma::Col<index_t> resulting_neighbors;
   arma::vec  distances;
-  NOTIFY("Computing Neighborhoods");
+  IO::Info << "Computing Neighborhoods" << std::endl;
   allknn_.ComputeNeighbors(resulting_neighbors,
                            distances);
   FILE *fp=fopen("allnn.txt", "w");
   if (fp==NULL) {
-    FATAL("Unable to open allnn for exporting the results, error %s\n",
-           strerror(errno));
-  }
+    IO::Fatal << "Unable to open allnn for exporting the results, error " 
+		<< strerror(errno) << std::endl; 
+ }
   for(index_t i=0; i<resulting_neighbors.n_rows; i++) {
     fprintf(fp, "%lli %lli %lg\n", i / knns_, resulting_neighbors[i],
         distances[i]);
@@ -64,7 +66,7 @@ void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
   temp.fill(1.0);
   kernel_matrix_.SetDiagonal(temp);
   kernel_matrix_.EndLoading();
-  NOTIFY("Computing eigen values...\n");
+  IO::Info << "Computing eigen values..." << std::endl;
   kernel_matrix_.Eig(num_of_eigenvalues, 
                      "LM", 
                      eigen_vectors,
@@ -85,8 +87,8 @@ void KernelPCA::SaveToTextFile(std::string file,
   lam_file.append(".lambdas");
   FILE *fp = fopen(vec_file.c_str(), "w");  
   if (unlikely(fp==NULL)) {
-    FATAL("Unable to open file %s, error: %s", vec_file.c_str(), 
-           strerror(errno));
+    IO::Fatal << "Unable to open file " << vec_file.c_str() 
+	      << ", error: " << strerrer(errno) << std::endl;
   }
   for(index_t i=0; i<eigen_vectors.n_rows; i++) {
     for(index_t j=0; j<eigen_vectors.n_cols; j++) {
@@ -97,8 +99,8 @@ void KernelPCA::SaveToTextFile(std::string file,
   fclose(fp);
   fp = fopen(lam_file.c_str(), "w");  
   if (unlikely(fp==NULL)) {
-    FATAL("Unable to open file %s, error: %s", lam_file.c_str(), 
-          strerror(errno));
+    IO::Fatal << "Unable to open file " << lam_file.c_str()
+	      << ", error: " << strerror(errno) << std::endl;
   }
   for(index_t i=0; i<(index_t)eigen_values.n_rows; i++) {
     fprintf(fp, "%lg\n", eigen_values[i]);
@@ -109,7 +111,7 @@ void KernelPCA::SaveToTextFile(std::string file,
 void KernelPCA::EstimateBandwidth(double *bandwidth) {
   FILE *fp=fopen("allnn.txt", "r");
   if unlikely(fp==NULL) {
-    FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
+     IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64 p1, p2;
   double dist;
@@ -131,7 +133,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
                            arma::vec *eigen_values) {
   FILE *fp=fopen("allnn.txt", "r");
   if unlikely(fp==NULL) {
-    FATAL("Unable to open allnn.txt, error %s\n", strerror(errno));
+     IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64 p1, p2;
   double dist;
@@ -196,7 +198,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   }
   kernel_matrix_.Negate();
   kernel_matrix_.SetDiagonal(1.0);
-  NONFATAL("Computing eigen values...\n");
+  IO::Warn << "Computing eigen values ... " << std::endl;
   SparseMatrix kernel_matrix1;
   kernel_matrix_.ToFile("i_w.txt");
   kernel_matrix_.EndLoading();

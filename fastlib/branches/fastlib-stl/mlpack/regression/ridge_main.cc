@@ -23,6 +23,8 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+using namespace mlpack;
+
 int main(int argc, char *argv[]) {
 
   ////////// Documentation stuffs //////////
@@ -84,16 +86,17 @@ considered for pruning for the input dataset.\n"},
 
   arma::mat predictors;
   if (data::Load(predictors_file.c_str(), predictors) == SUCCESS_FAIL) {
-    FATAL("Unable to open file %s", predictors_file.c_str());
+    IO::Fatal << "Unable to open file " << predictors_file.c_str() << std::endl;
   }
 
   arma::mat predictions;
   if (data::Load(predictions_file.c_str(), predictions) == SUCCESS_FAIL) {
-    FATAL("Unable to open file %s", predictions_file.c_str());
+    IO::Fatal << "Unable to open file " << predictions_file.c_str() << std::endl;
   }
 
   RidgeRegression engine;
-  NOTIFY("Computing Regression...");
+  IO::Info << "Computing Regression..." << std::endl;
+  
 
   if(!strcmp(mode, "regress")) {
 
@@ -103,14 +106,20 @@ considered for pruning for the input dataset.\n"},
     engine.QRRegress(lambda_min);
   }
   else if(!strcmp(mode, "cvregress")) {
-    NOTIFY("Crossvalidating for the optimal lambda in [ %g %g ] by trying \
-%d values...", lambda_min, lambda_max, num_lambdas_to_cv);
+  //    IO::Info << "Crossvalidating for the optimal lamda in [ " 
+//	<< lambda_min << " " << lamda_max << " ] by trying "
+//	<< num_lamdas_to_cv << std::endl;
+
+     IO::Info << "Crossvalidating for the optimal lambda in [" 
+	<<  lambda_min << " " << lambda_max << " ] " 
+     	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
+   
     engine.Init(module, predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
   else if(!strcmp(mode, "fsregress")) {
 
-    NOTIFY("Feature selection based regression.\n");
+    IO::Info << "Feature selection based regression." << std::endl;
 
     arma::mat predictor_indices_intermediate;
     arma::mat prune_predictor_indices_intermediate;
@@ -120,11 +129,11 @@ considered for pruning for the input dataset.\n"},
       fx_param_str_req(module, "prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(), 
 	  predictor_indices_intermediate) == SUCCESS_FAIL) {
-      FATAL("Unable to open file %s", predictor_indices_file.c_str());
+      IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
     }
     if(data::Load(prune_predictor_indices_file.c_str(),
 	  prune_predictor_indices_intermediate) == SUCCESS_FAIL) {
-      FATAL("Unable to open file %s", prune_predictor_indices_file.c_str());
+      IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
     }
 
     arma::Col<index_t> predictor_indices;
@@ -157,14 +166,14 @@ considered for pruning for the input dataset.\n"},
 				     &output_predictor_indices);
   }
 
-  NOTIFY("Ridge Regression Model Training Complete!");
+  IO::Info << "Ridge Regression Model Training Complete!" << std::endl;
   double square_error = engine.ComputeSquareError();
-  NOTIFY("Square Error:%g", square_error);
+  IO::Info << "Square Error: " << square_error << std::endl;
   fx_result_double(module, "square error", square_error);
   arma::mat factors;
   engine.factors(&factors);
   std::string factors_file = fx_param_str(module, "factors", "factors.csv");
-  NOTIFY("Saving factors...");
+  IO::Info << "Saving factors..." << std::endl;
   data::Save(factors_file.c_str(), factors);
 
   fx_done(module);
