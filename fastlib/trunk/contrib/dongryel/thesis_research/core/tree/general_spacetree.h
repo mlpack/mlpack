@@ -503,8 +503,10 @@ class GeneralBinarySpaceTree {
 
       // Perform tree-spec specific task first.
       std::deque<bool> left_membership;
-      TreeSpecType::AttemptSplitting(
-        comm, metric_in, bound, matrix_in, &left_membership);
+      if(!  TreeSpecType::AttemptSplitting(
+            comm, metric_in, bound, matrix_in, &left_membership)) {
+        return false;
+      }
 
       // Post-process the assignments here.
       // The assigned point indices per process and per-process counts
