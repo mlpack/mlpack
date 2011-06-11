@@ -564,10 +564,12 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
       int max_allowable_people = train_table_.num_people() -
                                  iterate->num_active_people();
       int predicted_increase =
-        core::math::Sqr(
-          arguments_in.gradient_norm_threshold_ *
-          sqrt(data_sample_error) / decrease_predicted_by_model) *
-        iterate->num_active_people() - iterate->num_active_people();
+        static_cast<int>(
+          ceil(
+            core::math::Sqr(
+              arguments_in.gradient_norm_threshold_ *
+              sqrt(data_sample_error) / decrease_predicted_by_model) *
+            iterate->num_active_people() - iterate->num_active_people()));
       int num_additional_people =
         std::min(std::max(1, predicted_increase), max_allowable_people);
 
