@@ -78,7 +78,7 @@ class LocalRegressionArguments {
     /** @brief The effective number of reference points (discounting
      *         the self-contribution when monochromatic).
      */
-    int effective_num_reference_points_;
+    double effective_num_reference_points_;
 
     /** @brief The flag denoting whether the computation is
      *         monochromatic or not.
