@@ -384,7 +384,7 @@ class LocalRegressionSummary {
      *         Carlo sampling result.
      */
     void ApplyProbabilisticDelta(
-      const LocalRegressionDelta &delta_in, int num_standard_deviations) {
+      const LocalRegressionDelta &delta_in, double num_standard_deviations) {
       for(unsigned int j = 0; j < left_hand_side_l_.n_cols; j++) {
         core::math::Range delta_right_hand_side;
         delta_in.right_hand_side_e_[j].scaled_interval(
