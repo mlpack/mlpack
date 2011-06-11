@@ -184,7 +184,7 @@ class LocalRegressionSummary {
         int qpoint_id;
         qnode_it.Next(&qpoint_id);
         (* delta.query_deltas_)[qpoint_id].set_total_num_terms(
-          delta.pruned_);
+          static_cast<int>(delta.pruned_));
       }
       while(qnode_it.HasNext());
 
