@@ -240,13 +240,13 @@ class LocalRegressionSampling {
 
     void Reset(const DeltaType &deterministic_delta) {
       avg_left_hand_side_for_reference_.first.SetZero(
-        deterministic_delta.pruned_);
+        static_cast<int>(deterministic_delta.pruned_));
       avg_left_hand_side_for_reference_.second.SetZero(
-        deterministic_delta.pruned_);
+        static_cast<int>(deterministic_delta.pruned_));
       avg_right_hand_side_for_reference_.first.SetZero(
-        deterministic_delta.pruned_);
+        static_cast<int>(deterministic_delta.pruned_));
       avg_right_hand_side_for_reference_.second.SetZero(
-        deterministic_delta.pruned_);
+        static_cast<int>(deterministic_delta.pruned_));
     }
 };
 }
