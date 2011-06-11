@@ -22,35 +22,44 @@ extern core::table::MemoryMappedFile *global_m_file_;
 namespace mlpack {
 namespace distributed_local_regression {
 
-template<typename DistributedTableType, typename KernelAuxType>
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
 DistributedTableType *DistributedLocalRegression <
-DistributedTableType, KernelAuxType >::query_table() {
+DistributedTableType, KernelType, MetricType >::query_table() {
   return query_table_;
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
 DistributedTableType *DistributedLocalRegression <
-DistributedTableType, KernelAuxType >::reference_table() {
+DistributedTableType, KernelType, MetricType >::reference_table() {
   return reference_table_;
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
-typename DistributedLocalRegression<DistributedTableType, KernelAuxType>::GlobalType &
-DistributedLocalRegression<DistributedTableType, KernelAuxType>::global() {
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
+typename DistributedLocalRegression <
+DistributedTableType, KernelType, MetricType >::GlobalType &
+DistributedLocalRegression <
+DistributedTableType, KernelType, MetricType >::global() {
   return global_;
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
 bool DistributedLocalRegression <
-DistributedTableType, KernelAuxType >::is_monochromatic() const {
+DistributedTableType, KernelType, MetricType >::is_monochromatic() const {
   return is_monochromatic_;
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
-void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Compute(
-  const mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-  DistributedTableType > &arguments_in,
-  mlpack::local_regression::LocalRegressionResult< std::vector<double> > *result_out) {
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
+void DistributedLocalRegression <
+DistributedTableType, KernelType, MetricType >::Compute(
+  const mlpack::distributed_local_regression::
+  DistributedLocalRegressionArguments <
+  DistributedTableType, MetricType > &arguments_in,
+  mlpack::local_regression::LocalRegressionResult *result_out) {
 
   // Barrier so that every process is here.
   world_->barrier();
@@ -60,7 +69,7 @@ void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Compute(
   // Instantiate a dual-tree algorithm of the local regression.
   core::gnp::DistributedDualtreeDfs <
   mlpack::distributed_local_regression::DistributedLocalRegression <
-  DistributedTableType, KernelAuxType > >
+  DistributedTableType, KernelType, MetricType > >
   distributed_dualtree_dfs;
   distributed_dualtree_dfs.Init(world_, *this);
   distributed_dualtree_dfs.set_work_params(
@@ -69,8 +78,7 @@ void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Compute(
     arguments_in.max_num_work_to_dequeue_per_stage_);
 
   // Compute the result and do post-normalize.
-  distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
-  result_out->Normalize(global_);
+  distributed_dualtree_dfs.Compute(arguments_in.metric_, result_out);
 
   if(world_->rank() == 0) {
     printf("Spent %g seconds in computation.\n", timer.elapsed());
@@ -81,11 +89,13 @@ void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Compute(
          distributed_dualtree_dfs.num_probabilistic_prunes());
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
-void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Init(
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
+void DistributedLocalRegression <
+DistributedTableType, KernelType, MetricType >::Init(
   boost::mpi::communicator &world_in,
   mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-  DistributedTableType > &arguments_in) {
+  DistributedTableType, MetricType > &arguments_in) {
 
   world_ = &world_in;
   reference_table_ = arguments_in.reference_table_;
@@ -99,18 +109,15 @@ void DistributedLocalRegression<DistributedTableType, KernelAuxType>::Init(
   }
 
   // Declare the global constants.
-  global_.Init(
-    reference_table_, query_table_, reference_table_->n_entries(),
-    (KernelAuxType *) NULL, arguments_in.bandwidth_,
-    (typename GlobalType::MeanVariancePairListType *) NULL, is_monochromatic_,
-    arguments_in.relative_error_, arguments_in.absolute_error_,
-    arguments_in.probability_, false);
+  global_.Init(arguments_in);
   global_.set_effective_num_reference_points(
     world_in, reference_table_, query_table_);
 }
 
-template<typename DistributedTableType, typename KernelAuxType>
-void DistributedLocalRegression<DistributedTableType, KernelAuxType>::set_bandwidth(
+template <
+typename DistributedTableType, typename KernelType, typename MetricType >
+void DistributedLocalRegression <
+DistributedTableType, KernelType, MetricType >::set_bandwidth(
   double bandwidth_in) {
   global_.set_bandwidth(bandwidth_in);
 }
@@ -380,15 +387,12 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
   random_dataset.Save(file_name);
 }
 
-template<typename DistributedTableType>
+template<typename DistributedTableType, typename MetricType>
 bool DistributedLocalRegressionArgumentParser::ParseArguments(
   boost::mpi::communicator &world,
   boost::program_options::variables_map &vm,
   mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-  DistributedTableType > *arguments_out) {
-
-  // A L2 metric to index the table to use.
-  arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
+  DistributedTableType, MetricType > *arguments_out) {
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =
@@ -444,7 +448,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   arguments_out->reference_table_->Init(
     reference_file_name, world);
   arguments_out->reference_table_->IndexData(
-    *(arguments_out->metric_), world, arguments_out->leaf_size_,
+    arguments_out->metric_, world, arguments_out->leaf_size_,
     arguments_out->top_tree_sample_probability_);
 
   // Parse the query set and index the tree.
@@ -470,7 +474,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
-      *(arguments_out->metric_), world, arguments_out->leaf_size_,
+      arguments_out->metric_, world, arguments_out->leaf_size_,
       arguments_out->top_tree_sample_probability_);
     std::cout << "Finished building the query tree.\n";
   }
@@ -503,14 +507,6 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   if(world.rank() == 0) {
     std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
-  }
-
-  // Parse the series expansion type.
-  arguments_out->series_expansion_type_ =
-    vm["series_expansion_type"].as<std::string>();
-  if(world.rank() == 0) {
-    std::cout << "Using the series expansion type: " <<
-              arguments_out->series_expansion_type_ << "\n";
   }
 
   // Parse the work parameters for the distributed engine.

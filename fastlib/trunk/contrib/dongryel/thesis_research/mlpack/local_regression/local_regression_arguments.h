@@ -85,7 +85,41 @@ class LocalRegressionArguments {
      */
     bool is_monochromatic_;
 
+    bool tables_are_aliased_;
+
   public:
+
+    template<typename GlobalType>
+    void Init(
+      TableType *reference_table_in, TableType *query_table_in,
+      GlobalType &global_in) {
+      reference_table_ = reference_table_in;
+      query_table_ = query_table_in;
+      effective_num_reference_points_ =
+        global_in.effective_num_reference_points();
+      bandwidth_ = global_in.bandwidth();
+      absolute_error_ = global_in.absolute_error();
+      relative_error_ = global_in.relative_error();
+      probability_ = global_in.probability();
+      kernel_ = global_in.kernel().name();
+      tables_are_aliased_ = true;
+    }
+
+    template<typename GlobalType>
+    void Init(GlobalType &global_in) {
+      reference_table_ = global_in.reference_table()->local_table();
+      if(reference_table_ != query_table_) {
+        query_table_ = global_in.query_table()->local_table();
+      }
+      effective_num_reference_points_ =
+        global_in.effective_num_reference_points();
+      bandwidth_ = global_in.bandwidth();
+      absolute_error_ = global_in.absolute_error();
+      relative_error_ = global_in.relative_error();
+      probability_ = global_in.probability();
+      kernel_ = global_in.kernel().name();
+      tables_are_aliased_ = true;
+    }
 
     /** @brief The default constructor.
      */
@@ -102,17 +136,20 @@ class LocalRegressionArguments {
       num_iterations_in_ = -1;
       effective_num_reference_points_ = 0;
       is_monochromatic_ = false;
+      tables_are_aliased_ = false;
     }
 
     /** @brief The destructor.
      */
     ~LocalRegressionArguments() {
-      if(query_table_ != reference_table_) {
-        delete query_table_;
-        delete reference_table_;
-      }
-      else {
-        delete reference_table_;
+      if(! tables_are_aliased_) {
+        if(query_table_ != reference_table_) {
+          delete query_table_;
+          delete reference_table_;
+        }
+        else {
+          delete reference_table_;
+        }
       }
       query_table_ = NULL;
       reference_table_ = NULL;

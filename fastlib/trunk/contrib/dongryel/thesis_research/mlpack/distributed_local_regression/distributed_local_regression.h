@@ -22,12 +22,13 @@ namespace distributed_local_regression {
  */
 class DistributedLocalRegressionArgumentParser {
   public:
-    template<typename DistributedTableType>
+    template<typename DistributedTableType, typename MetricType>
     static bool ParseArguments(
       boost::mpi::communicator &world,
       boost::program_options::variables_map &vm,
-      mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-      DistributedTableType > *arguments_out);
+      mlpack::distributed_local_regression::
+      DistributedLocalRegressionArguments <
+      DistributedTableType, MetricType > *arguments_out);
 
     static bool ConstructBoostVariableMap(
       boost::mpi::communicator &world,
@@ -46,36 +47,39 @@ class DistributedLocalRegressionArgumentParser {
       int num_dimensions, int num_points, const std::string &prescale_option);
 };
 
-template<typename IncomingDistributedTableType, typename IncomingKernelAuxType>
+template <
+typename IncomingDistributedTableType,
+         typename IncomingKernelType,
+         typename IncomingMetricType >
 class DistributedLocalRegression {
   public:
 
     typedef IncomingDistributedTableType DistributedTableType;
 
-    typedef IncomingKernelAuxType KernelAuxType;
+    typedef IncomingKernelType KernelType;
 
-    static const
-    enum mlpack::series_expansion::CartesianExpansionType ExpansionType =
-      KernelAuxType::ExpansionType;
+    typedef IncomingMetricType MetricType;
 
     typedef typename DistributedTableType::TableType TableType;
 
     typedef mlpack::local_regression::LocalRegressionPostponed PostponedType;
 
     typedef mlpack::local_regression::LocalRegressionGlobal <
-    DistributedTableType, KernelAuxType > GlobalType;
+    DistributedTableType, KernelType > GlobalType;
 
-    typedef mlpack::local_regression::LocalRegressionResult< std::vector<double> > ResultType;
+    typedef mlpack::local_regression::LocalRegressionResult ResultType;
 
     typedef mlpack::local_regression::LocalRegressionDelta DeltaType;
 
     typedef mlpack::local_regression::LocalRegressionSummary SummaryType;
 
-    typedef mlpack::local_regression::LocalRegressionStatistic<ExpansionType> StatisticType;
+    typedef mlpack::local_regression::LocalRegressionStatistic StatisticType;
 
-    typedef mlpack::local_regression::LocalRegressionArguments<TableType> ArgumentType;
+    typedef mlpack::local_regression::LocalRegressionArguments <
+    TableType, MetricType > ArgumentType;
 
-    typedef mlpack::local_regression::LocalRegression<TableType, KernelAuxType> ProblemType;
+    typedef mlpack::local_regression::LocalRegression <
+    TableType, KernelType, MetricType > ProblemType;
 
   public:
 
@@ -111,12 +115,14 @@ class DistributedLocalRegression {
      */
     void Init(
       boost::mpi::communicator &world_in,
-      mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-      DistributedTableType > &arguments_in);
+      mlpack::distributed_local_regression::
+      DistributedLocalRegressionArguments <
+      DistributedTableType, MetricType > &arguments_in);
 
     void Compute(
-      const mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-      DistributedTableType > &arguments_in,
+      const mlpack::distributed_local_regression::
+      DistributedLocalRegressionArguments <
+      DistributedTableType, MetricType > &arguments_in,
       ResultType *result_out);
 
   private:

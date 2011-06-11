@@ -79,6 +79,16 @@ class DistributedLocalRegressionArguments {
      */
     int num_threads_;
 
+    /** @brief The effective number of reference points.
+     */
+    int effective_num_reference_points_;
+
+    /** @brief Whether the computation is monochromatic or not.
+     */
+    bool is_monochromatic_;
+
+    int problem_dimension_;
+
   public:
 
     /** @brief The default constructor.
@@ -96,6 +106,9 @@ class DistributedLocalRegressionArguments {
       max_subtree_size_ = 0;
       max_num_work_to_dequeue_per_stage_ = 0;
       num_threads_ = 1;
+      effective_num_reference_points_ = 0;
+      is_monochromatic_ = true;
+      problem_dimension_ = 0;
     }
 
     /** @brief The destructor.
@@ -139,6 +152,8 @@ class DistributedLocalRegressionArguments {
         core::table::global_m_file_ = NULL;
       }
     }
+
+
 };
 }
 }
