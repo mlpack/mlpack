@@ -9,13 +9,16 @@
 #define CORE_TREE_GENERAL_SPACETREE_H
 
 #include <boost/interprocess/offset_ptr.hpp>
+#include <boost/mpi.hpp>
 #include <boost/serialization/split_free.hpp>
 #include <boost/serialization/string.hpp>
 #include <boost/serialization/level.hpp>
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/tracking_enum.hpp>
 #include <deque>
+#include <omp.h>
 #include <queue>
+#include "core/parallel/distributed_tree_util.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
 #include "statistic.h"
@@ -489,6 +492,48 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief Attempts to split a kd-tree node and reshuffles the
+     *         data accordingly and creates two child nodes.
+     */
+    template<typename MetricType, typename TreeType, typename IndexType>
+    static bool AttemptSplitting(
+      const MetricType &metric_in,
+      core::table::DenseMatrix &matrix,
+      core::table::DenseMatrix &weights,
+      TreeType *node, TreeType **left,
+      TreeType **right, int leaf_size,
+      IndexType *old_from_new,
+      core::table::MemoryMappedFile *m_file_in) {
+
+      bool can_cut = TreeSpecType::AttemptSplitting(
+                       metric_in, matrix, weights, node, left, right,
+                       leaf_size, old_from_new, m_file_in);
+
+      // In case splitting fails, then free memory.
+      if(! can_cut) {
+        if((*left) != NULL) {
+          if(m_file_in != NULL) {
+            m_file_in->DestroyPtr(* left) ;
+          }
+          else {
+            delete(*left);
+            *left = NULL;
+          }
+        }
+        if((*right) != NULL) {
+          if(m_file_in != NULL) {
+            m_file_in->DestroyPtr(*right);
+          }
+          else {
+            delete(*right);
+            *right = NULL;
+          }
+        }
+      }
+
+      return can_cut;
+    }
+
     /** @brief Attempts to split a set of points and re-distribute
      *         them across a set of MPI processes.
      */
@@ -563,10 +608,87 @@ class GeneralBinarySpaceTree {
       return true;
     }
 
-    /** @brief Recursively splits a given node creating its children.
+    /** @brief Recursively splits a given node creating its children
+     *         in a breadth-first manner. This function is better for
+     *         multi-threading.
      */
     template<typename MetricType, typename IndexType>
-    static void SplitTree(
+    static void SplitTreeBreadthFirst(
+      const MetricType &metric_in,
+      core::table::DenseMatrix& matrix,
+      core::table::DenseMatrix &weights,
+      TreeType *node,
+      int leaf_size,
+      int max_num_leaf_nodes,
+      int *current_num_leaf_nodes,
+      IndexType *old_from_new,
+      int *num_nodes) {
+
+      // Get the number of available OpenMP threads.
+      int num_threads = omp_get_max_threads();
+
+      // If the number of points fall under this threshold, then we
+      // call the serial depth-first.
+      int serial_depth_first_limit = matrix.n_cols() / num_threads;
+
+      // The list of active nodes on the current level.
+      std::deque< TreeType * > active_nodes;
+      active_nodes.push_back(node);
+
+      do {
+
+        // The number of active nodes on the current round.
+        int num_items_on_level = static_cast<int>(active_nodes.size());
+
+#pragma omp for
+        for(int i = 0; i < num_items_on_level; i++) {
+
+          // If the i-th node contains more than the depth first limit
+          // threshold, then split the node and put the children nodes
+          // at the end.
+          if(active_nodes[i]->count() > serial_depth_first_limit) {
+
+            TreeType *left = NULL;
+            TreeType *right = NULL;
+            bool can_cut = AttemptSplitting(
+                             metric_in, matrix, weights,
+                             active_nodes[i], &left, &right,
+                             leaf_size, old_from_new,
+                             core::table::global_m_file_);
+
+            // Set children information appropriately.
+            active_nodes[i]->set_children(matrix, left, right);
+
+            if(can_cut) {
+#pragma omp critical
+              {
+                // Start of critical section.
+                active_nodes.push_back(active_nodes[i]->left());
+                active_nodes.push_back(active_nodes[i]->right());
+              }  // End of critical section.
+            }
+          }
+          else {
+            SplitTreeDepthFirst(
+              metric_in, matrix, weights, active_nodes[i],
+              leaf_size, max_num_leaf_nodes, current_num_leaf_nodes,
+              old_from_new, num_nodes);
+          }
+        } // end of omp parallel for.
+
+        // Clean up the previous level.
+        for(int i = 0; i < num_items_on_level; i++) {
+          active_nodes.pop_front();
+        }
+      }
+      while(active_nodes.size() > 0);
+    }
+
+    /** @brief Recursively splits a given node creating its children
+     *         in a depth-first manner.
+     */
+    template<typename MetricType, typename IndexType>
+    static void SplitTreeDepthFirst(
       const MetricType &metric_in,
       core::table::DenseMatrix& matrix,
       core::table::DenseMatrix &weights,
@@ -582,25 +704,35 @@ class GeneralBinarySpaceTree {
 
       // If the node is just too small or we have reached the maximum
       // number of leaf nodes allowed, then do not split.
-      if(node->count() <= leaf_size ||
-          (*current_num_leaf_nodes) >= max_num_leaf_nodes) {
+      bool constructed_leaf_node = false;
+#pragma omp critical
+      {
+        constructed_leaf_node =
+          (node->count() <= leaf_size ||
+           (*current_num_leaf_nodes) >= max_num_leaf_nodes);
+      }
+
+      if(constructed_leaf_node) {
         TreeSpecType::MakeLeafNode(
           metric_in, matrix, node->begin(), node->count(), &(node->bound()));
       }
 
       // Otherwise, attempt to split.
       else {
-        bool can_cut = TreeSpecType::AttemptSplitting(
+        bool can_cut = AttemptSplitting(
                          metric_in, matrix, weights, node, &left, &right,
                          leaf_size, old_from_new, core::table::global_m_file_);
 
         if(can_cut) {
-          (*current_num_leaf_nodes)++;
-          (*num_nodes) = (*num_nodes) + 2;
-          SplitTree(
+#pragma omp critical
+          {
+            (*current_num_leaf_nodes)++;
+            (*num_nodes) = (*num_nodes) + 2;
+          }
+          SplitTreeDepthFirst(
             metric_in, matrix, weights, left, leaf_size, max_num_leaf_nodes,
             current_num_leaf_nodes, old_from_new, num_nodes);
-          SplitTree(
+          SplitTreeDepthFirst(
             metric_in, matrix, weights, right, leaf_size, max_num_leaf_nodes,
             current_num_leaf_nodes, old_from_new, num_nodes);
           TreeSpecType::CombineBounds(metric_in, matrix, node, left, right);
@@ -647,7 +779,7 @@ class GeneralBinarySpaceTree {
         metric_in, matrix, 0, matrix.n_cols(), &node->bound());
 
       int current_num_leaf_nodes = 1;
-      SplitTree(
+      SplitTreeBreadthFirst(
         metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
         &current_num_leaf_nodes, old_from_new, &num_nodes_in);
 
