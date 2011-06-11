@@ -640,7 +640,7 @@ class GeneralBinarySpaceTree {
         // The number of active nodes on the current round.
         int num_items_on_level = static_cast<int>(active_nodes.size());
 
-#pragma omp for
+#pragma omp parallel for
         for(int i = 0; i < num_items_on_level; i++) {
 
           // If the i-th node contains more than the depth first limit
