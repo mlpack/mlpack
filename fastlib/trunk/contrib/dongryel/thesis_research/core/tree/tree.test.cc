@@ -82,7 +82,7 @@ class TestTree {
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
         int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(3000, 5001);
+        int num_points = core::math::RandInt(130000, 200001);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
