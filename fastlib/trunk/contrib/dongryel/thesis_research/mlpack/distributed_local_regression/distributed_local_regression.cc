@@ -15,7 +15,7 @@
 #include "mlpack/distributed_local_regression/distributed_local_regression_dev.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 
-template<typename KernelAuxType>
+template<typename KernelType, typename MetricType>
 void StartComputation(
   boost::mpi::communicator &world,
   boost::program_options::variables_map &vm) {
@@ -23,12 +23,11 @@ void StartComputation(
   // Tree type: hard-coded for a metric tree.
   typedef core::table::DistributedTable <
   core::tree::GenKdTree <
-  mlpack::local_regression::LocalRegressionStatistic <
-  KernelAuxType::ExpansionType > > > DistributedTableType;
+  mlpack::local_regression::LocalRegressionStatistic > > DistributedTableType;
 
   // Parse arguments for local regression.
   mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
-  DistributedTableType > distributed_local_regression_arguments;
+  DistributedTableType, MetricType > distributed_local_regression_arguments;
   if(mlpack::distributed_local_regression::
       DistributedLocalRegressionArgumentParser::ParseArguments(
         world, vm, &distributed_local_regression_arguments)) {
@@ -37,7 +36,8 @@ void StartComputation(
 
   // Instantiate a distributed local regression object.
   mlpack::distributed_local_regression::DistributedLocalRegression <
-  DistributedTableType, KernelAuxType > distributed_local_regression_instance;
+  DistributedTableType, KernelType, MetricType >
+  distributed_local_regression_instance;
   distributed_local_regression_instance.Init(world, distributed_local_regression_arguments);
 
   // Compute the result.
@@ -78,21 +78,17 @@ int main(int argc, char *argv[]) {
     vm["series_expansion_type"].as<std::string>();
 
   if(kernel_type == "gaussian") {
-    if(series_expansion_type == "hypercube") {
-      StartComputation <
-      mlpack::series_expansion::GaussianKernelHypercubeAux > (world, vm);
-    }
-    else {
-      StartComputation <
-      mlpack::series_expansion::GaussianKernelMultivariateAux > (world, vm);
-    }
+    StartComputation <
+    core::metric_kernels::GaussianKernel,
+         core::metric_kernels::LMetric<2> > (world, vm);
   }
   else {
 
     // Only the multivariate expansion is available for the
     // Epanechnikov.
     StartComputation <
-    mlpack::series_expansion::EpanKernelMultivariateAux > (world, vm);
+    core::metric_kernels::EpanKernel,
+         core::metric_kernels::LMetric<2> > (world, vm);
   }
   return 0;
 }

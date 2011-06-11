@@ -409,7 +409,8 @@ void save(Archive & ar, const arma::mat & t, unsigned int version) {
   ar & t.n_cols;
   for(unsigned int j = 0; j < t.n_cols; j++) {
     for(unsigned int i = 0; i < t.n_rows; i++) {
-      ar & t.at(i, j);
+      double val = t.at(i, j);
+      ar & val;
     }
   }
 }
