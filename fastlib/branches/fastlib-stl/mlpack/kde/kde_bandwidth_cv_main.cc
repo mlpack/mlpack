@@ -146,9 +146,16 @@ int main(int argc, char *argv[]) {
 
   // There are two options: 1) do bandwidth optimization 2) output a
   // goodness score of a given bandwidth.
+  if(IO::GetParam<std::string>("kde/task").compare("") == 0)
+    IO::GetParam<std::string>("kde/task") = "optimize";
+
   if(!strcmp(IO::GetParam<std::string>("kde/task").c_str(), "optimize")) { //Default value optimize
 
     // Optimize bandwidth using least squares cross-validation.
+    //kde/kernel will always default to gaussian.
+    if(IO::GetParam<std::string>("kde/kernel").compare("") == 0)
+      IO::GetParam<std::string>("kde/kernel") = "gaussian";
+
     if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "gaussian")) { //Default value gaussian
       BandwidthLSCV::Optimize<GaussianKernelAux>(references, 
 						 reference_weights);

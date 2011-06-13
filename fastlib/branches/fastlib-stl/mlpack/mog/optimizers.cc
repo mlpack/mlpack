@@ -7,6 +7,9 @@
  */
 
 #include "optimizers.h"
+#include <fastlib/fx/io.h>
+
+using namespace mlpack;
 
 void NelderMead::Eval(double **pts) {
 
@@ -16,8 +19,8 @@ void NelderMead::Eval(double **pts) {
   long double swap_y, rtol, ytry, ysave, TINY = 1.0e-10;
   long double *y;
   Vector param_passed;
-  long double tol = fx_param_double(opt_module_,"tolerance", 1.0e-5);
-  index_t NMAX = fx_param_int(opt_module_, "MAX_FUNC_EVAL", 50000);
+  long double tol = IO::GetParam<double>("opt/tolerance"); // Default value, 1.0e-5
+  index_t NMAX = IO::GetParam<int>("opt/MAX_FUNC_EVAL"); //Default value 50000
 
   param_passed.Init(dim);
   psum = (double*)malloc(dim * sizeof(double));
@@ -107,7 +110,7 @@ void NelderMead::Eval(double **pts) {
     }
     else --num_func_eval;
   }
-  fx_result_int(opt_module_, "func_evals", num_func_eval);
+  IO::GetParam<int>("opt/func_evals") = num_func_eval;
   return;
 }
 
@@ -139,16 +142,16 @@ long double NelderMead::ModSimplex_(double **pts, long double *y,
 void QuasiNewton::Eval(double *pt) {
 
   index_t n = dimension(), iters;
-  index_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",200);
+  index_t i, its, MAXIMUM_ITERATIONS = IO::GetParam<int>("opt/MAX_ITERS"); //Default value, 200
   long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
     maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
   Vector dgrad, grad, hdgrad, xi;
   Vector pold, pnew;
   Matrix hessian;
-  double EPSILON = fx_param_double(opt_module_, "EPSILON", 3.0e-8);
-  double TOLERANCE = fx_param_double(opt_module_, "TOLERANCE", 1.0e-5);
-  double MAX_STEP_SIZE = fx_param_double(opt_module_, "MAX_STEP_SIZE", 100.0);
-  double g_tol = fx_param_double(opt_module_, "gtol", 1.0e-7);
+  double EPSILON = IO::GetParam<double>("opt/EPSILON"); //Default value, 3.0e-8
+  double TOLERANCE = IO::GetParam<double>("optTOLERANCE"); //Default value, 1.0e-5
+  double MAX_STEP_SIZE = IO::GetParam<double>("opt/MAX_STEP_SIZE"); //Default value, 100
+  double g_tol = IO::GetParam<double>("opt/gtol"); //Default value, 1.0e-7
 
   dgrad.Init(n);
   grad.Init(n);
@@ -196,7 +199,7 @@ void QuasiNewton::Eval(double *pt) {
     }
     if(test < TOLERANCE) {
       iters = its;
-      fx_result_int(opt_module_, "iters", iters);
+      IO::GetParam<int>("opt/iters") = iters;
       return;
     }
 
@@ -213,7 +216,7 @@ void QuasiNewton::Eval(double *pt) {
     }
     if(test < g_tol) {
       iters = its;
-      fx_result_int(opt_module_, "iters", iters);
+      IO::GetParam<int>("opt/iters") = iters;
       return;
     }
 
@@ -258,7 +261,7 @@ void QuasiNewton::Eval(double *pt) {
     la::MulOverwrite(hessian, grad, &xi);
     la::Scale((-1.0), &xi);
   }
-  NOTIFY("Too many iterations in Quasi Newton\n");
+  IO::Info << "Too many iterations in Quasi Newton" << std::endl;
 }
 
 void QuasiNewton::LineSearch_(Vector pold, long double fold,

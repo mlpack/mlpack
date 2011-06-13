@@ -23,36 +23,41 @@
 
 #include "mog_em.h"
 
-const fx_entry_doc mog_em_main_entries[] = {
+/*const fx_entry_doc mog_em_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
    " A file containing the data on which the model"
    " has to be fit.\n"},
   {"output", FX_PARAM, FX_STR, NULL,
    " The file into which the output is to be written into.\n"},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_submodule_doc mog_em_main_submodules[] = {
+PARAM_STRING_REQ("data", "A file containing the data on which the model has to be fit.", "mog");
+PARAM_STRING("output", "The file into which the output is to be written into.", "mog", "output.csv");
+
+/*const fx_submodule_doc mog_em_main_submodules[] = {
   {"mog_em", &mog_em_doc,
    " Responsible for intializing the model and"
    " computing the parameters.\n"},
   FX_SUBMODULE_DOC_DONE
-};
+};*/
 
-const fx_module_doc mog_em_main_doc = {
+/*const fx_module_doc mog_em_main_doc = {
   mog_em_main_entries, mog_em_main_submodules,
   " This program test drives the parametric estimation "
   "of a Gaussian mixture model using maximum likelihood.\n"
-};
+};*/
+
+
+
 
 int main(int argc, char* argv[]) {
-
-  fx_module *root = 
-    fx_init(argc, argv, &mog_em_main_doc);
+  
+  IO::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   
-  const char *data_filename = fx_param_str_req(root, "data");
+  const char *data_filename = IO::GetParam<std::string>("mog/data").c_str();
 
   Matrix data_points;
   data::Load(data_filename, &data_points);
@@ -61,35 +66,32 @@ int main(int argc, char* argv[]) {
 
   MoGEM mog;
 
-  struct datanode* mog_em_module = 
-    fx_submodule(root, "mog_em");
-  fx_param_int(mog_em_module, "K", 1);
-  fx_set_param_int(mog_em_module, "D", data_points.n_rows());
+  IO::GetParam<int>("mog/K") = 1;
+  IO::GetParam<int>("mog/D") = data_points.n_rows());
 
   ////// Timing the initialization of the mixture model //////
-  fx_timer_start(mog_em_module, "model_init");
+  IO::StartTimer("mog/model_init");
   mog.Init(mog_em_module);
-  fx_timer_stop(mog_em_module, "model_init");
+  IO::StopTimer("mog/model_init");
 
   ////// Computing the parameters of the model using the EM algorithm //////
   ArrayList<double> results;
 
-  fx_timer_start(mog_em_module, "EM");
+  IO::StartTimer("mog/EM");
   mog.ExpectationMaximization(data_points);
-  fx_timer_stop(mog_em_module, "EM");
+  IO::StopTimer("mog/EM");
   
   mog.Display();
   mog.OutputResults(&results);
 
   ////// OUTPUT RESULTS //////
 
-  const char *output_filename = fx_param_str(NULL, "output", "output.csv");
+  const char *output_filename = IO::GetParam<std::string>("mog/output").c_str();
 
   FILE *output_file = fopen(output_filename, "w");
 
   ot::Print(results, output_file);
   fclose(output_file);
-  fx_done(root);
 
   return 1;
 }

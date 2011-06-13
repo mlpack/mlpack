@@ -10,11 +10,14 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "simple_nbc.h"
 #include "phi.h"
 
-SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data,
-    datanode* nbc_module) : nbc_module_(nbc_module) {
+using namespace mlpack;
+
+SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
+{
 
   index_t number_examples = data.n_cols;
   index_t number_features = data.n_rows - 1;
@@ -25,15 +28,16 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data,
 
   // updating the variables, private and local, according to
   // the number of features and classes present in the data
-  number_of_classes_ = fx_param_int_req(nbc_module_,"classes");
+  number_of_classes_ = mlpack::IO::GetParam<int>("nbc/classes");
   class_probabilities_.set_size(number_of_classes_);
   means_.set_size(number_features,number_of_classes_);
   variances_.set_size(number_features,number_of_classes_);
 
-  NOTIFY("%"LI"d examples with %"LI"d features each\n",
-	 number_examples, number_features);
-  fx_result_int(nbc_module_, "features", number_features);
-  fx_result_int(nbc_module_, "examples", number_examples);
+  IO::Info << number_examples << " examples with " << number_features 
+    << " features each" << std::endl;
+
+  IO::GetParam<int>("nbc/features") = number_features;
+  IO::GetParam<int>("nbc/examples") = number_examples;
 
   // calculating the class probabilities as well as the 
   // sample mean and variance for each of the features
@@ -79,10 +83,10 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 		      
   results.zeros(test_data.n_cols);
   
-  NOTIFY("%d test cases with %"LI" features each\n",
-	 test_data.n_cols, number_features);
+  IO::Info << test_data.n_cols << " test cases with " << number_features 
+    << " features each" << std::endl;
 
-  fx_result_int(nbc_module_,"tests", test_data.n_cols);
+  IO::GetParam<int>("nbc/tests") = test_data.n_cols;
   // Calculating the joint probability for each of the data points
   // for each of the classes
 

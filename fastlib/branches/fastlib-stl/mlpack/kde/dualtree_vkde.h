@@ -343,11 +343,7 @@ class DualtreeVKde {
       (queries.memptr() == references.memptr());
 
     // read in the number of points owned by a leaf
-    int leaflen = 0;
-    if(!mlpack::IO::HasParam("kde/leaflen"))
-      leaflen = mlpack::IO::GetParam<int>("kde/leaflen") = 20;
-    else
-      leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
+    int leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
 
     // Copy reference dataset and reference weights and compute its
     // sum. rset_weight_sum_ should be the raw sum of the reference

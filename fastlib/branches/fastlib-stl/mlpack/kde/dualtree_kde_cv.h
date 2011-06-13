@@ -343,11 +343,7 @@ class DualtreeKdeCV {
   void Init(const arma::mat& references, const arma::mat& rset_weights) {
 
     // Read in the number of points owned by a leaf.
-    int leaflen;
-    if(!mlpack::IO::HasParam("kde/leaflen"))
-      leaflen = 20;
-    else
-      leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
+    int leaflen = mlpack::IO::GetParam<int>("kde/leaflen");
     
     // Copy reference dataset and reference weights and compute its
     // sum.
@@ -376,19 +372,24 @@ class DualtreeKdeCV {
     // Initialize the series expansion object. I should think about
     // whether this is true for kernels other than Gaussian.
     if(rset_.n_rows <= 2) {
-      mlpack::IO::GetParam<int>("kde/order") = 7;
+      if(mlpack::IO::GetParam<int>("kde/order") == -1)
+        mlpack::IO::GetParam<int>("kde/order") = 7;
     }
     else if(rset_.n_rows <= 3) {
-      mlpack::IO::GetParam<int>("kde/order") = 5;
+      if(mlpack::IO::GetParam<int>("kde/order") == -1)
+        mlpack::IO::GetParam<int>("kde/order") = 5;
     }
     else if(rset_.n_rows <= 5) {
-      mlpack::IO::GetParam<int>("kde/order") = 3;
+      if(mlpack::IO::GetParam<int>("kde/order") == -1)
+        mlpack::IO::GetParam<int>("kde/order") = 3;
     }
     else if(rset_.n_rows <= 6) {
-      mlpack::IO::GetParam<int>("kde/order") = 1;
+      if(mlpack::IO::GetParam<int>("kde/order") == -1)
+        mlpack::IO::GetParam<int>("kde/order") = 1;
     }
     else {
-      mlpack::IO::GetParam<int>("kde/order") = 0;
+      if(mlpack::IO::GetParam<int>("kde/order") == -1)
+        mlpack::IO::GetParam<int>("kde/order") = 0;
     }
 
     first_ka_.Init(sqrt(2) * bandwidth,  mlpack::IO::GetParam<int>("kde/order"), 

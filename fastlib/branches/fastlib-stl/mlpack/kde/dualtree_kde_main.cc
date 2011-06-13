@@ -22,6 +22,11 @@ void VariableBandwidthKde(arma::mat& queries, arma::mat& references,
 
   // flag for determining whether to compute naively
   bool do_naive = IO::HasParam("kde/do_naive");
+  
+  //Despite the various default values specified for kde/kernel
+  //kde/kernel can only have one, and that is 'gaussian'
+  if(IO::GetParam<std::string>("kde/kernel").compare("") == 0)
+    IO::GetParam<std::string>("kde/kernel") = "gaussian";  
 
   if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "gaussian")) {
     
@@ -98,7 +103,8 @@ void FixedBandwidthKde(arma::mat& queries, arma::mat& references,
   
   // flag for determining whether to compute naively
   bool do_naive = IO::HasParam("kde/do_naive");
-  if(!IO::HasParam("kde/kernel"))
+
+  if(IO::GetParam<std::string>("kde/kernel").compare("") == 0)
     IO::GetParam<std::string>("kde/kernel") = std::string("epan");
 
   if(!strcmp(IO::GetParam<std::string>("kde/kernel").c_str(), "gaussian")) {
@@ -306,6 +312,9 @@ int main(int argc, char *argv[]) {
 
   // By default, we want to run the fixed-bandwidth KDE.
   //Default kde/mode = fixedbw
+  if(IO::GetParam<std::string>("kde/mode").compare("") == 0)
+    IO::GetParam<std::string>("kde/mode") = "variablebw";
+
   if(!strcmp(IO::GetParam<std::string>("kde/mode").c_str(), "variablebw")) {
     VariableBandwidthKde(queries, references, reference_weights, 
 			 queries_equal_references);

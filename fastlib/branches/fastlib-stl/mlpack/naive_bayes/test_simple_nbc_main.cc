@@ -1,24 +1,29 @@
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "simple_nbc.h"
 #include "fastlib/base/test.h"
 
-const fx_entry_doc test_simple_nbc_main_entries[] = {
+/*const fx_entry_doc test_simple_nbc_main_entries[] = {
   {"nbc/classes", FX_RESERVED, FX_INT, NULL,
    "Set during testing."},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_submodule_doc test_simple_nbc_main_submodules[] = {
+/*const fx_submodule_doc test_simple_nbc_main_submodules[] = {
   {"nbc", &parm_nbc_doc,
    " Trains on a given set and number of classes and "
    "tests them on a given set\n"},
   FX_SUBMODULE_DOC_DONE
-};
+};*/
 
-const fx_module_doc test_simple_nbc_main_doc = {
+/*const fx_module_doc test_simple_nbc_main_doc = {
   test_simple_nbc_main_entries, test_simple_nbc_main_submodules,
   " Tests the simple nbc class.\n"
-};
+};*/
+
+PROGRAM_INFO("NBC", "Tests the simple nbc class.");
+
+using namespace mlpack;
 
 class TestClassSimpleNBC{
  private:
@@ -41,22 +46,21 @@ class TestClassSimpleNBC{
   void Destruct() {
   }
 
-  void TestAll(fx_module *root) {
+  void TestAll() {
     arma::mat train_data, train_res, calc_mat;
     data::Load(filename_train_, train_data);
     data::Load(train_result_, train_res); 
 
-    struct datanode* nbc_module = fx_submodule(root,"nbc");
-    fx_set_param_int(nbc_module, "classes", number_of_classes_);
+    IO::GetParam<int>("nbc/classes") = number_of_classes_;
 
-    NOTIFY("Training...\n");
+    IO::Info << "Training..." << std::endl;
 
-    SimpleNaiveBayesClassifier nbc_test_(train_data, nbc_module);
+    SimpleNaiveBayesClassifier nbc_test_(train_data);
 
     index_t number_of_features = nbc_test_.means_.n_rows;
     calc_mat.zeros(2*number_of_features + 1, number_of_classes_);
 
-    NOTIFY("Beginning training test...\n");
+    IO::Info << "Beginning training test..." << std::endl;
 
     for(index_t i = 0; i < number_of_features; i++) {
       for(index_t j = 0; j < number_of_classes_; j++) {
@@ -73,9 +77,9 @@ class TestClassSimpleNBC{
 	TEST_DOUBLE_APPROX(train_res(i, j), calc_mat(i, j), 0.0001);
       }
     }
-    NOTIFY("Training test passed...\n");
+    IO::Info << "Training test passed..." << std::endl;
     
-    NOTIFY("Beginning classification test...\n");
+    IO::Info << "Beginning classification test..." << std::endl;
 
     arma::mat test_data, test_res;
     arma::vec test_res_vec, calc_vec;
@@ -90,15 +94,14 @@ class TestClassSimpleNBC{
     for(index_t i = 0; i < number_of_datum; i++) {
       TEST_ASSERT(test_res_vec(i) == calc_vec(i));
     }
-    NOTIFY("Classification test passed...\n");
+    IO::Info << "Classification test passed..." << std::endl;
   }
 
 };
 
 int main(int argc, char *argv[]) {
 
-  fx_module *root =
-    fx_init(argc, argv, &test_simple_nbc_main_doc);
+  IO::ParseCommandLine(argc, argv);
 
   TestClassSimpleNBC test;
 
@@ -109,7 +112,6 @@ int main(int argc, char *argv[]) {
   const int num_classes = 2;
 
   test.Init(train_data, test_data, train_res, test_res, num_classes);
-  test.TestAll(root);
+  test.TestAll();
   
-  fx_done(root);
 }

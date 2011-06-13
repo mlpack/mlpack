@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 
   // The query data file defaults to the references.
   const char* queries_file_name;
-  if(IO::HasParam("kde/query"))
+  if(IO::GetParam<std::string>("kde/query").compare("") == 0)
     queries_file_name = IO::GetParam<std::string>("kde/query").c_str();
   else
     queries_file_name = references_file_name;
