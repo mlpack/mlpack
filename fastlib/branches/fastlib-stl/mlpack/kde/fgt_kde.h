@@ -1155,9 +1155,6 @@ class FGTKde {
     rset_ = rset;
 
     // set accuracy
-    if(!mlpack::IO::HasParam("kde/absolute_error"))
-      mlpack::IO::GetParam<double>("kde/absolute_error") = .1;
-
     tau_ = mlpack::IO::GetParam<double>("kde/absolute_error");
   }
 

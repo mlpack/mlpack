@@ -725,8 +725,7 @@ class FFTKde {
 
     // initialize the kernel and read in the number of grid points
     kernel_.Init(mlpack::IO::GetParam<double>("kde/bandwidth"));
-    if(!mlpack::IO::HasParam("kde/num_grid_pts_per_dim"))
-      m_ = mlpack::IO::GetParam<int>("kde/num_grid_pts_per_dim") = 128;
+    //Undocumented, default value is 128
     m_ = mlpack::IO::GetParam<int>("kde/num_grid_pts_per_dim");
 
     // set aliases to the query and reference datasets and initialize
@@ -825,7 +824,11 @@ class FFTKde {
     FILE *stream = stdout;
     const char *fname = NULL;
 
-    if((fname = mlpack::IO::GetParam<std::string>("kde/fft_kde_output").c_str()) != NULL) {
+    
+    if(mlpack::IO::GetParam<std::string>("kde/fft_kde_output").compare("") != 0)
+    {
+      fname = 
+      mlpack::IO::GetParam<std::string>("kde/fft_kde_output").c_str();
       stream = fopen(fname, "w+");
     }
     for(index_t q = 0; q < qset_.n_cols; q++) {

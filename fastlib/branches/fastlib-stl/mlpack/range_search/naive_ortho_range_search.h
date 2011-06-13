@@ -10,7 +10,7 @@
 #define NAIVE_ORTHO_RANGE_SEARCH_H
 
 #include "fastlib/fastlib.h"
-
+#include <fastlib/fx/io.h>
 
 /** @brief Naive orthogonal range search class.
  *
@@ -76,7 +76,7 @@ class NaiveOrthoRangeSearch {
     search_results->Init(data_.n_cols(), low_coord_limits.n_cols());
 
     // Start the search.
-    fx_timer_start(NULL, "naive_search");
+    mlpack::IO::StartTimer("range/naive_search");
     for(index_t j = 0; j < low_coord_limits.n_cols(); j++) {
       for(index_t i = 0; i < data_.n_cols(); i++) {	
 	GenVector<T> pt;
@@ -97,7 +97,7 @@ class NaiveOrthoRangeSearch {
 	(*search_results).set(i, j, flag);
       }
     }
-    fx_timer_stop(NULL, "naive_search");
+    mlpack::IO::StopTimer("range/naive_search");
     
     // Search is now finished.
     

@@ -9,6 +9,7 @@
 #define ORTHO_RANGE_SEARCH_H
 
 #include "fastlib/fastlib.h"
+#include <fastlib/fx/io.h>
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree_hyper.h"
 #include "contrib/dongryel/proximity_project/general_type_bounds.h"
@@ -26,6 +27,9 @@
  *    search.get_results(&search_results);
  *  @endcode
  */
+
+PARAM_INT("leaflen", "Undocumented parameter", "range", 20);
+
 template<typename T>
 class OrthoRangeSearch {
 
@@ -79,7 +83,7 @@ class OrthoRangeSearch {
       }
     }
 
-    fx_timer_start(NULL, "tree_range_search");
+    mlpack::IO::StartTimer("range/tree_range_search");
 
     // First build a tree out of the set of range windows.
     ArrayList<index_t> old_from_new_windows;
@@ -95,7 +99,7 @@ class OrthoRangeSearch {
 		       new_from_old_windows,
 		       root_, 0, data_.n_rows() - 1, *candidate_points);
     
-    fx_timer_stop(NULL, "tree_range_search");
+    mlpack::IO::StopTimer("range/tree_range_search");
 
     // Delete the tree of search windows...
     delete tree_of_windows;
@@ -130,14 +134,15 @@ class OrthoRangeSearch {
    */
   void SaveTree(const char *save_tree_file_name) {
 
-    printf("Serializing the tree data structure...\n");
+    mlpack::IO::Info << "Serializing the tree data structure..." << std::endl;
 
     FILE *output = fopen(save_tree_file_name, "w+");
 
     // first serialize the total amount of bytes needed for serializing the
     // tree and the tree itself
     int tree_size = ot::FrozenSize(*root_);
-    printf("Tree occupies %d bytes...\n", tree_size);
+    mlpack::IO::Info << "Tree occupies " << tree_size << " bytes..." 
+      << std::endl;
 
     fwrite((const void *) &tree_size, sizeof(int), 1, output);
     char *tmp_root = (char *) mem::AllocBytes<Tree>(tree_size);
@@ -162,7 +167,7 @@ class OrthoRangeSearch {
     
     mem::Free(tmp_array);
 
-    printf("Tree is serialized...\n");
+    mlpack::IO::Info << "Tree is serialized..." << std::endl;
   }
 
   /** @brief Initialization function - to read the data and to construct tree.
@@ -178,7 +183,7 @@ class OrthoRangeSearch {
   void Init(GenMatrix<T> &dataset, bool make_copy, 
 	    const char *load_tree_file_name) {
 
-    int leaflen = fx_param_int(NULL, "leaflen", 20);
+    int leaflen = mlpack::IO::GetParam<int>("range/leaflen");
 
     // decide whether to make a copy or not.
     if(make_copy) {
@@ -188,7 +193,7 @@ class OrthoRangeSearch {
       data_.StaticOwn(&dataset);
     }
 
-    fx_timer_start(NULL, "tree_d");
+    mlpack::IO::StartTimer("range/tree_d");
 
     // If the user wants to load the tree from a file,
     if(load_tree_file_name != NULL) {
@@ -202,7 +207,7 @@ class OrthoRangeSearch {
 						      &old_from_new_, 
 						      &new_from_old_);
     }
-    fx_timer_stop(NULL, "tree_d");
+    mlpack::IO::StopTimer("range/tree_d");
   }
 
  private:
@@ -250,8 +255,8 @@ class OrthoRangeSearch {
     int tree_size, old_from_new_size, new_from_old_size;
     fread((void *) &tree_size, sizeof(int), 1, input);
 
-    printf("Tree file: %s occupies %d bytes...\n", load_tree_file_name, 
-	   tree_size);
+    mlpack::IO::Info << "Tree file: "<< load_tree_file_name <<" occupies "<< tree_size <<" bytes..." << std::endl;
+
     tree_buffer_ = mem::AllocBytes<Tree>(tree_size);
     fread((void *) tree_buffer_, 1, tree_size, input);
     root_ = ot::SemiThaw<Tree>((char *) tree_buffer_);
@@ -272,7 +277,7 @@ class OrthoRangeSearch {
     new_from_old_.InitCopy(*(ot::SemiThaw<ArrayList<index_t> >
 			     ((char *) new_from_old_buffer_)));
 
-    printf("Tree has been loaded...\n");
+    mlpack::IO::Info << "Tree has been loaded..." << std::endl;
 
     // apply permutation to the dataset
     GenMatrix<T> tmp_data;

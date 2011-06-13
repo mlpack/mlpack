@@ -10,6 +10,8 @@
 
 #include "fastlib/mmanager/memory_manager.h"
 
+#include <fastlib/fx/io.h>
+
 void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
 				       const char *file_name) {
   
@@ -78,11 +80,26 @@ void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
  *                                trees. If you want to use this feature, let
  *                                me (dongryel@cc.gatech.edu) know.
  */
+
+PARAM_STRING_REQ("data", "The name of the dataset", "range");
+PARAM_STRING_REQ("range", "Textfile containing the range", "range");
+
+PARAM_STRING("lower", "Undocumented parameter", "range", "lower.csv");
+PARAM_STRING("upper", "Undocumented parameter", "range", "upper.csv");
+PARAM_STRING("load_tree_file", "Undocumented parameter", "range", "");
+PARAM_STRING("save_tree_file", "Undocumented parameter", "range", "");
+
+PARAM_FLAG("do_naive", "Indicates that the naive algorithm \
+will be compared with the regular algorithm", "range");
+
+
+using namespace mlpack;
+
 int main(int argc, char *argv[]) {
 
   // Always initialize FASTexec with main's inputs at the beggining of
   // your program.  This reads the command line, among other things.
-  fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv);
 
   // Initialize Nick's memory manager...
   std::string pool_name("/scratch/temp_mem");
@@ -95,7 +112,7 @@ int main(int argc, char *argv[]) {
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // The reference data file is a required parameter.
-  const char* dataset_file_name = fx_param_str(NULL, "data", "data.csv");
+  const char* dataset_file_name = IO::GetParam<std::string>("range/data");
 
   // column-oriented dataset matrix.
   GenMatrix<double> dataset;
@@ -108,20 +125,20 @@ int main(int argc, char *argv[]) {
   
   // The file containing the lower and the upper limits of each search
   // window.
-  const char *lower_limit_file_name = fx_param_str(NULL, "lower", "lower.csv");
-  const char *upper_limit_file_name = fx_param_str(NULL, "upper", "upper.csv");
+  const char *lower_limit_file_name = IO::GetParam<std::string>("range/lower").c_str();
+  const char *upper_limit_file_name = IO::GetParam<std::string>("range/upper").c_str();
 
   data::Load(lower_limit_file_name, &low_coord_limits);
   data::Load(upper_limit_file_name, &high_coord_limits);
 
   // flag for determining whether we need to do naive algorithm.
-  bool do_naive = fx_param_exists(NULL, "do_naive");
+  bool do_naive = IO::HasParam("range/do_naive");
 
   // File name containing the saved tree (if the user desires to do so)
   const char *load_tree_file_name;
 
-  if(fx_param_exists(NULL, "load_tree_file")) {
-    load_tree_file_name = fx_param_str(NULL, "load_tree_file", NULL);
+  if(IO::HasParam("range/load_tree_file")) {
+    load_tree_file_name = IO::GetParam<std::string>("range/load_tree_file").c_str();
   }
   else {
     load_tree_file_name = NULL;
@@ -129,15 +146,14 @@ int main(int argc, char *argv[]) {
 
   // Declare fast tree-based orthogonal range search algorithm object.
   OrthoRangeSearch<double> fast_search;
-  fast_search.Init(dataset, fx_param_exists(NULL, "do_naive"),
+  fast_search.Init(dataset, IO::HasParam("range/do_naive"),
 		   load_tree_file_name);
   GenMatrix<bool> fast_search_results;
   fast_search.Compute(low_coord_limits, high_coord_limits, 
 		      &fast_search_results);
 
-  if(fx_param_exists(NULL, "save_tree_file")) {
-    const char *save_tree_file_name = fx_param_str(NULL, "save_tree_file",
-						   NULL);
+  if(IO::HasParam("range/save_tree_file")) {
+    const char *save_tree_file_name = IO::GetParam<std::string>("range/save_tree_file").c_str();
     fast_search.SaveTree(save_tree_file_name);
   }
 
@@ -156,28 +172,26 @@ int main(int argc, char *argv[]) {
       for(index_t j = 0; j < dataset.n_cols(); j++) {	
 	if(fast_search_results.get(j, i) != naive_search_results.get(j, i)) {
 	  flag = false;
-	  printf("Differ on (%d, %d)\n", i, j);
+	  IO::Info << "Differ on (" << i << ", " << j << ")" << std::endl;
 	  break;
 	}
       }
     }
     if(flag) {
-      printf("Both naive and tree-based method got the same results...\n");
+      IO::Info << "Both naive and tree-based method got the same results..." << std::endl;
     }
     else {
-      printf("Both methods have different results...\n");
+      IO::Info << "Both methods have different results..." << std::endl;
     }
   }
-  fx_timer *tree_range_search_time = fx_get_timer(NULL, "tree_range_search");
-  fx_timer *naive_search_time = fx_get_timer(NULL, "naive_search");
 	 
-  fx_format_result(NULL, "speedup", "%g", 
-		   ((double)(naive_search_time->total).micros) / 
-		   ((double)(tree_range_search_time->total).micros));
+  IO::GetParam<double>("range/speedup") =
+		   ((double)(IO::GetParam<timeval>("range/naive_search").tv_usec) / 
+		   (double)(IO::GetParam<timeval>("range/tree_range_search").tv_usec));
 
   // Destroy Nick's memory manager...
   mmapmm::MemoryManager<false>::allocator_->Destruct();
   delete mmapmm::MemoryManager<false>::allocator_;
-  fx_done(NULL);
+
   return 0;
 }

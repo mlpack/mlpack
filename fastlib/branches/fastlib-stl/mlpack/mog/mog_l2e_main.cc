@@ -24,16 +24,21 @@
 #include "mog_l2e.h"
 #include "mlpack/optimization/optimizers.h"
 
-const fx_entry_doc mog_l2e_main_entries[] = {
+/*const fx_entry_doc mog_l2e_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
    " A file containing the data on which the model"
    " has to be fit.\n"},
   {"output", FX_PARAM, FX_STR, NULL,
    " The file into which the output is to be written into.\n"},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_submodule_doc mog_l2e_main_submodules[] = {
+PARAM_STRING_REQ("data", "A file containing the data on\
+ which the model has to fit", "mog_l2e");
+PARAM_STRING("output", "The file into which the output \
+is to be written into", "mog_l2e", "output.csv");
+
+/*const fx_submodule_doc mog_l2e_main_submodules[] = {
   {"mog_l2e", &mog_l2e_doc,
    " Responsible for intializing the model and"
    " computing the parameters.\n"},
@@ -41,39 +46,46 @@ const fx_submodule_doc mog_l2e_main_submodules[] = {
     " Responsible for minimizing the L2 loss function"
     " and obtaining the parameter values.\n"},
   FX_SUBMODULE_DOC_DONE
-};
+};*/
 
-const fx_module_doc mog_l2e_main_doc = {
+PARAM_MODULE("mog_l2e", "Responsible for initializing the\
+ model and computing the parameters.");
+PARAM_MODULE("opt", "Responsible for minimizing the L2 loss\
+ function and obtaining the parameter values");
+
+/*const fx_module_doc mog_l2e_main_doc = {
   mog_l2e_main_entries, mog_l2e_main_submodules,
   " This program test drives the parametric estimation "
   "of a Gaussian mixture model using L2 loss function.\n"
-};
+};*/
+
+PROGRAM_INFO("MOG", "This program test drives the parametric estimation\
+ of a Gaussian mixture model using L2 loss function.");
+
+using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
-  fx_module *root = 
-    fx_init(argc, argv, &mog_l2e_main_doc);
+  IO::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
   
-  const char *data_filename = fx_param_str_req(root, "data");
+  const char *data_filename = IO::GetParam<std::string>("mog/data").c_str();
 
   Matrix data_points;
   data::Load(data_filename, &data_points);
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
-  datanode *mog_l2e_module = fx_submodule(root, "mog_l2e");
-  index_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);
-  fx_set_param_int(mog_l2e_module, "D", data_points.n_rows());
-  index_t dimension = fx_param_int_req(mog_l2e_module, "D");;
+  index_t number_of_gaussians = IO::GetParam<int>("mog_l2e/K");
+  IO::GetParam<int>("mog_l2e/D") = data_points.n_rows());
+  index_t dimension = IO::GetParam<int>("mog_l2e/D");
   
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
-  datanode *opt_module = fx_submodule(root, "opt");
-  const char *opt_method = fx_param_str(opt_module, "method", "QuasiNewton");
+  const char *opt_method = IO::GetParam<std::string>("opt/method");
   index_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
-  fx_set_param_int(opt_module, "param_space_dim", param_dim);
+  IO::GetParam<int>("opt/param_space_dim") = param_dim;
 
   index_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
@@ -85,9 +97,9 @@ int main(int argc, char* argv[]) {
     NelderMead opt;
     
     ////// Initializing the optimizer //////
-    fx_timer_start(opt_module, "init_opt");
+    IO::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
-    fx_timer_stop(opt_module, "init_opt");
+    IO::StopTimer("opt/init_opt");
 
     ////// Getting starting points for the optimization //////
     double **pts;
@@ -96,16 +108,16 @@ int main(int argc, char* argv[]) {
       pts[i] = (double*)malloc(param_dim*sizeof(double));
     }
 
-    fx_timer_start(opt_module, "get_init_pts");
+    IO::StartTimer("opt/get_init_pts");
     MoGL2E::MultiplePointsGenerator(pts, param_dim+1, 
 				    data_points, number_of_gaussians);
-    fx_timer_stop(opt_module, "get_init_pts");
+    IO::StopTimer("opt/get_init_pts");
 
     ////// The optimization //////
     
-    fx_timer_start(opt_module, "optimizing");
+    IO::StartTimer("opt/optimizing");
     opt.Eval(pts);
-    fx_timer_stop(opt_module, "optimizing");
+    IO::StopTimer("opt/optimizing");
     
     ////// Making model with the optimal parameters //////
     mog.MakeModel(mog_l2e_module, pts[0]);
@@ -118,23 +130,23 @@ int main(int argc, char* argv[]) {
     QuasiNewton opt;
     
     ////// Initializing the optimizer //////
-    fx_timer_start(opt_module, "init_opt");
+    IO::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
-    fx_timer_stop(opt_module, "init_opt");
+    IO::StopTimer("opt/init_opt");
 
     ////// Getting starting point for the optimization //////
     double *pt;
     pt = (double*)malloc(param_dim*sizeof(double));
 
-    fx_timer_start(opt_module, "get_init_pt");
+    IO::StartTimer("opt/get_init_pt");
     MoGL2E::InitialPointGenerator(pt, data_points, number_of_gaussians);
-    fx_timer_stop(opt_module, "get_init_pt");
+    IO::StopTimer("opt/get_init_pt");
 
     ////// The optimization //////
     
-    fx_timer_start(opt_module, "optimizing");
+    IO::StartTimer("opt/optimizing");
     opt.Eval(pt);
-    fx_timer_stop(opt_module, "optimizing");
+    IO::StopTimer("opt/optimizing");
     
     ////// Making model with optimal parameters //////
     mog.MakeModel(mog_l2e_module, pt);
@@ -151,13 +163,12 @@ int main(int argc, char* argv[]) {
   
   ////// OUTPUT RESULTS //////
   
-  const char *output_filename = fx_param_str(NULL, "output", "output.csv");
+  const char *output_filename = IO::GetParam<std::string>("mog_l2e/output");
   
   FILE *output_file = fopen(output_filename, "w");
   
   ot::Print(results, output_file);
   fclose(output_file);
-  fx_done(root);
 
   return 1;
 }

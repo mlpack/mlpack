@@ -12,7 +12,7 @@
 
 #include <fastlib/fastlib.h>
 
-const fx_entry_doc mog_l2e_entries[] = {
+/*const fx_entry_doc mog_l2e_entries[] = {
   {"K", FX_PARAM, FX_INT, NULL,
    " The number of Gaussians in the mixture model."
    " (defaults to 1)\n"},
@@ -20,14 +20,23 @@ const fx_entry_doc mog_l2e_entries[] = {
    " The number of dimensions of the data on which the"
    " the mixture model is to be fit.\n"},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_module_doc mog_l2e_doc = {
+PARAM_INT_REQ("K", "The number of Gaussians in the mixture model. \
+(defaults to 1)", "mog_l2e");
+PARAM_INT_REQ("D", "The number of dimensions of the data on which \
+the mixture model is to be fit.", "mog_l2e");
+
+/*const fx_module_doc mog_l2e_doc = {
   mog_l2e_entries, NULL,
   " This program defines a Gaussian mixture model"
   " and calculates the L2 error for the present"
   " parameter setting to be used by an optimizer.\n"
-};
+};*/
+
+PARAM_MODULE("mog_l2e", "This program defines a Gaussian mixture model\
+ and calculates the L2 error for the present paremeter setting to be\
+ used by an optimizer.");
 
 /**
  * A Gaussian mixture model class.
@@ -182,8 +191,8 @@ class MoGL2E {
   }			
 
   void MakeModel(datanode *mog_l2e_module, double* theta) {
-    index_t num_gauss = fx_param_int_req(mog_l2e_module, "K");
-    index_t dimension = fx_param_int_req(mog_l2e_module, "D");
+    index_t num_gauss = IO::GetParam<int>("mog/K");
+    index_t dimension = IO::GetParam<int>("mog/D");
     MakeModel(num_gauss, dimension, theta);
   }
 
@@ -434,33 +443,33 @@ class MoGL2E {
   void Display(){
 
     // Output the model parameters as the omega, mu and sigma			
-    printf(" Omega : [ ");
+    IO::Info << " Omega : [ ";
     for (index_t i = 0; i < number_of_gaussians_; i++) {
-      printf("%lf ", omega(i));
+      IO::Info << omega(i));
     }
-    printf("]\n");
-    printf(" Mu : \n[");
+    IO::Info << "]" << std::endl;
+    IO::Info << " Mu : " << std::endl << "[";
     for (index_t i = 0; i < number_of_gaussians_; i++) {
       for (index_t j = 0; j < dimension_ ; j++) {
-	printf("%lf ", mu(i).get(j));
+	IO::Info << mu(i).get(j);
       }
-      printf(";");
+      IO::Info << ";";
       if (i == (number_of_gaussians_ - 1)) {
-	printf("\b]\n");
+	IO::Info << "\b]" << std::endl;
       }
     }
-    printf("Sigma : ");
+    IO::Info << "Sigma : ";
     for (index_t i = 0; i < number_of_gaussians_; i++) {
-      printf("\n[");
+      IO::Info << std::endl << "[";
       for (index_t j = 0; j < dimension_ ; j++) {
 	for(index_t k = 0; k < dimension_ ; k++) {
-	  printf("%lf ",sigma(i).get(j, k));
+	  IO::Info << sigma(i).get(j, k);
 	}
-	printf(";");
+	IO::Info << ";";
       }
-      printf("\b]");
+      IO::Info << "\b]";
     }
-    printf("\n");
+    IO::Info << std::endl;
   }
 
   

@@ -12,9 +12,10 @@
 #define NBC_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "phi.h"
 
-const fx_entry_doc parm_nbc_entries[] ={
+/*const fx_entry_doc parm_nbc_entries[] ={
   {"training", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to record the training time\n"},
   {"testing", FX_TIMER, FX_CUSTOM, NULL,
@@ -28,18 +29,25 @@ const fx_entry_doc parm_nbc_entries[] ={
   {"tests", FX_RESULT, FX_INT, NULL,
    " The number of data points in the test set\n"},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_submodule_doc parm_nbc_submodules[] = {
+PARAM_INT_REQ("classes", "The number of classes present in the data", "nbc");
+PARAM_INT("features", "The number of features in the data", "nbc", 0);
+PARAM_INT("examples", "The number of examples in the training set", "nbc", 0);
+PARAM_INT("tests", "The number of data points in the test set", "nbc", 0);
+
+/*const fx_submodule_doc parm_nbc_submodules[] = {
   FX_SUBMODULE_DOC_DONE
-};
+};*/
 
-const fx_module_doc parm_nbc_doc = {
+/*const fx_module_doc parm_nbc_doc = {
   parm_nbc_entries, parm_nbc_submodules,
   " Trains the classifier using the training set and "
   "outputs the results for the test set\n"
-};
+};*/
   
+PARAM_MODULE("nbc", "Trains the classifier using the training set \
+and outputs the results for the test set");
 
 /**
  * A classification class. The class labels are assumed
@@ -88,8 +96,6 @@ class SimpleNaiveBayesClassifier {
   // The variable keeping the information about the 
   // number of classes present
   index_t number_of_classes_;
-
-  datanode* nbc_module_;
 		   
  public:
 
@@ -105,7 +111,7 @@ class SimpleNaiveBayesClassifier {
   * SimpleNaiveBayesClassifier nbc(training_data, nbc_module);
   * @endcode
   */
-  SimpleNaiveBayesClassifier(const arma::mat& data, datanode* nbc_module);
+  SimpleNaiveBayesClassifier(const arma::mat& data);
   /**
    * Default constructor, you need to use the other one.
   */

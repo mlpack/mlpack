@@ -10,8 +10,9 @@
 #define MOG_EM_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 
-const fx_entry_doc mog_em_entries[] = {
+/*const fx_entry_doc mog_em_entries[] = {
   {"K", FX_PARAM, FX_INT, NULL,
    " The number of Gaussians in the mixture model."
    " (defaults to 1)\n"},
@@ -24,14 +25,22 @@ const fx_entry_doc mog_em_entries[] = {
    " The time required for the EM algorithm to obtain"
    " the parameter values.\n"},
   FX_ENTRY_DOC_DONE
-};
+};*/
 
-const fx_module_doc mog_em_doc = {
+PARAM_INT("K", "The number of Gaussians in the mixture model. \
+(defaults to 1)", "mog", 1);
+PARAM_INT("D", "The number of dimensions of the data on which \
+the mixture model is to be fit.", "mog", 0);
+
+/*const fx_module_doc mog_em_doc = {
   mog_em_entries, NULL,
   " This program defines a Gaussian mixture model"
   " and estimates the parameters using maximum"
   " likelihood via the EM algorithm.\n"
-};
+};*/
+
+PARAM_MODULE("mog", "This program defines a Gaussian mixture model and\
+estimates the parameters using maximum likelihood via the EM algorithm.");
 
 /**
  * A Gaussian mixture model class.
@@ -198,33 +207,34 @@ class MoGEM {
   void Display(){
 
     // Output the model parameters as the omega, mu and sigma			
-    printf(" Omega : [ ");
+    IO::Info << " Omega : [ "; 
     for (index_t i = 0; i < number_of_gaussians_; i++) {
-      printf("%lf ", omega(i));
+      IO::Info << omega(i) << " ";
     }
-    printf("]\n");
-    printf(" Mu : \n[");
+    IO::Info << "]" << std::endl;
+
+    IO::Info << " Mu : " << std::endl << "[";
     for (index_t i = 0; i < number_of_gaussians_; i++) {
       for (index_t j = 0; j < dimension_ ; j++) {
-	printf("%lf ", mu(i).get(j));
+	IO::Info << mu(i).get(j);
       }
-      printf(";");
+      IO::Info << ";");
       if (i == (number_of_gaussians_ - 1)) {
-	printf("\b]\n");
+	IO::Info << "\b]" << std::endl;
       }
     }
-    printf("Sigma : ");
+    IO::Info << "Sigma : ";
     for (index_t i = 0; i < number_of_gaussians_; i++) {
-      printf("\n[");
+      IO::Info << std::endl << "[";
       for (index_t j = 0; j < dimension_ ; j++) {
 	for(index_t k = 0; k < dimension_ ; k++) {
-	  printf("%lf ",sigma(i).get(j, k));
+	  IO::Info << sigma(i).get(j, k));
 	}
-	printf(";");
+	IO::Info << ";";
       }
-      printf("\b]");
+      IO::Info << "\b]";
     }
-    printf("\n");
+    IO::Info << std::endl;
   }
 
   /**

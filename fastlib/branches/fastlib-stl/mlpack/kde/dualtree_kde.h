@@ -80,19 +80,24 @@
 
 ////////// Documentation stuffs //////////
 PARAM_STRING_REQ("data", "A file containing reference data.", "kde");
-PARAM_STRING_REQ("query", "A file containing query data (defaults to data).", "kde");
+PARAM_STRING("query", "A file containing query data (defaults to data).", "kde", "");
 
-PARAM(double, "bandwidth","The bandwidth parameter.", "kde", 0.0, false);
+PARAM(double, "bandwidth","The bandwidth parameter.", "kde", 0.0, true);
 PARAM(double, "probability", "The probability guarantee that the relative error accuracy holds.", "kde", 1.0, false);
 PARAM(double, "relative_error", "The required relative error accuracy.", "kde", 0.1, false);
-PARAM(double, "threshold", "If less than this value, then absolute error bound.", "kde", 0, false);
+PARAM(double, "threshold", "If less than this value, then absolute error bound.", "kde", 0.0, false);
+PARAM(double, "absolute_error", "The required absolute error accuracy.", "kde", .1, false);
 
-PARAM_FLAG("do_naive", "Whether to perform naive computation as well.", "kde");
-
-PARAM_INT("knn", "The number of k-nearest neighbor to use for variable bandwidth.", "kde", 0);
+PARAM_INT_REQ("knn", "The number of k-nearest neighbor to use for variable bandwidth.", "kde");
+PARAM_INT("num_grid_pts_per_dim", "Undocumented parameter", "kde", 128);
+PARAM_INT("leaflen", "Undocumented parameter", "kde", 20);
+PARAM_INT("order", "Undocumented parameter", "kde", -1);
+PARAM_INT("normalizing_dimension", "Undocumented parameter", "kde", 0);
 
 PARAM_FLAG("loo", "Whether to output the density estimates using leave-one-out.", "kde");
 PARAM_FLAG("multiplicative_expansion", "Whether to do O(p^D) kernel expansion instead of O(D^p).", "kde");
+PARAM_FLAG("fgt_kde_output", "Undocumented parameter", "kde");
+PARAM_FLAG("do_naive", "Whether to perform naive computation as well.", "kde");
 
 PARAM_STRING("scaling", "The scaling option.", "kde", "none");
 PARAM_STRING("dwgts", "A file that contains the weight of each point. If missing, will\
@@ -100,6 +105,8 @@ PARAM_STRING("dwgts", "A file that contains the weight of each point. If missing
 PARAM_STRING("fast_kde_output", "A file to receive the results of computation.", "kde", "fast_kde_output.txt");
 PARAM_STRING("kernel", "The type of kernel to use.", "kde", "");
 PARAM_STRING("mode", "Fixed bandwidth or variable bandwidth mode.", "kde", "");
+PARAM_STRING("task", "Undocumented parameter", "kde", "");
+PARAM_STRING("naive_kde_output", "Undocumented parameter", "kde", "");
 
 PARAM_MODULE("kde", "Responsible for dual-tree kernel density estimate computation.");
 
