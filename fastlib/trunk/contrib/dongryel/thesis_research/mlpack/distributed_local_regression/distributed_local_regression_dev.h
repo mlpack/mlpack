@@ -391,7 +391,7 @@ template<typename TableType>
 void DistributedLocalRegressionArgumentParser::RandomGenerate(
   boost::mpi::communicator &world,
   const std::string &file_name,
-  const std::string &weight_file_name,
+  const std::string *weight_file_name,
   int num_dimensions,
   int num_points,
   const std::string &prescale_option) {
@@ -406,6 +406,10 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
     for(int i = 0; i < num_dimensions; i++) {
       point[i] = core::math::Random(0.1, 1.0);
     }
+
+    // Set the weight to the random one.
+    random_dataset.weights().set(
+      0, j, core::math::Random(1.0, 5.0));
   }
   printf("Process %d generated %d points in %d dimensionality...\n",
          world.rank(), num_points, num_dimensions);
@@ -426,7 +430,7 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
   std::cout << "Scaled the dataset with the option: " <<
             prescale_option << "\n";
 
-  random_dataset.Save(file_name, &weight_file_name);
+  random_dataset.Save(file_name, weight_file_name);
 }
 
 template<typename DistributedTableType, typename MetricType>
@@ -484,7 +488,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
 
     RandomGenerate<typename DistributedTableType::TableType>(
       world, reference_file_name,
-      reference_targets_file_name,
+      &reference_targets_file_name,
       vm["random_generate_n_attributes"].as<int>(),
       vm["random_generate_n_entries"].as<int>(),
       vm["prescale"].as<std::string>());
@@ -511,7 +515,9 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
                            world.rank();
       query_file_name = query_file_name_sstr.str();
       RandomGenerate<typename DistributedTableType::TableType>(
-        world, query_file_name, vm["random_generate_n_attributes"].as<int>(),
+        world, query_file_name,
+        (const std::string *) NULL,
+        vm["random_generate_n_attributes"].as<int>(),
         vm["random_generate_n_entries"].as<int>(),
         vm["prescale"].as<std::string>());
     }
