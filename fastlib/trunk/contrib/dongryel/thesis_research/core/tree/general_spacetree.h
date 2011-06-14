@@ -643,6 +643,9 @@ class GeneralBinarySpaceTree {
 #pragma omp parallel for
         for(int i = 0; i < num_items_on_level; i++) {
 
+          // Set the number of threads in the inner level.
+          omp_set_num_threads(std::max(1, num_threads / num_items_on_level));
+
           // If the i-th node contains more than the depth first limit
           // threshold, then split the node and put the children nodes
           // at the end.
@@ -764,6 +767,9 @@ class GeneralBinarySpaceTree {
       int max_num_leaf_nodes = std::numeric_limits<int>::max(),
       int *num_nodes = NULL,
       int rank_in = 0) {
+
+      // Enable OpenMP nested parallelization.
+      omp_set_nested(true);
 
       // Postprocess old_from_new indices before building the tree.
       IndexInitializer<IndexType>::PostProcessOldFromNew(matrix, old_from_new);
