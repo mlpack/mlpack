@@ -21,10 +21,10 @@ template<typename DistributedTableType, typename MetricType>
 class DistributedLocalRegressionArguments {
   public:
 
-    /** @brief The name of the output file that will hold the density
-     *         estimates.
+    /** @brief The name of the output file that will hold the
+     *         regression estimates.
      */
-    std::string densities_out_;
+    std::string predictions_out_;
 
     /** @brief The size of each leaf node.
      */
@@ -79,6 +79,10 @@ class DistributedLocalRegressionArguments {
      */
     int num_threads_;
 
+    /** @brief The order of local polynomial regression.
+     */
+    int order_;
+
     /** @brief The effective number of reference points.
      */
     int effective_num_reference_points_;
@@ -87,6 +91,9 @@ class DistributedLocalRegressionArguments {
      */
     bool is_monochromatic_;
 
+    /** @brief The dimension of the linear system. For NWR, it is 1 by
+     *         1 system, For local linear, it is (D + 1) by (D + 1).
+     */
     int problem_dimension_;
 
   public:
@@ -108,6 +115,7 @@ class DistributedLocalRegressionArguments {
       num_threads_ = 1;
       effective_num_reference_points_ = 0;
       is_monochromatic_ = true;
+      order_ = 0;
       problem_dimension_ = 0;
     }
 
@@ -152,8 +160,6 @@ class DistributedLocalRegressionArguments {
         core::table::global_m_file_ = NULL;
       }
     }
-
-
 };
 }
 }

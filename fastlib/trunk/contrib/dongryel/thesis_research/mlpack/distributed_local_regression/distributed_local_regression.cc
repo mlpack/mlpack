@@ -38,7 +38,8 @@ void StartComputation(
   mlpack::distributed_local_regression::DistributedLocalRegression <
   DistributedTableType, KernelType, MetricType >
   distributed_local_regression_instance;
-  distributed_local_regression_instance.Init(world, distributed_local_regression_arguments);
+  distributed_local_regression_instance.Init(
+    world, distributed_local_regression_arguments);
 
   // Compute the result.
   mlpack::local_regression::LocalRegressionResult local_regression_result;
@@ -46,10 +47,10 @@ void StartComputation(
     distributed_local_regression_arguments, &local_regression_result);
 
   // Output the local regression result to the file.
-  std::cerr << "Writing the densities to the file: " <<
-            distributed_local_regression_arguments.densities_out_ << "\n";
+  std::cerr << "Writing the predictions to the file: " <<
+            distributed_local_regression_arguments.predictions_out_ << "\n";
   local_regression_result.Print(
-    distributed_local_regression_arguments.densities_out_);
+    distributed_local_regression_arguments.predictions_out_);
 }
 
 int main(int argc, char *argv[]) {

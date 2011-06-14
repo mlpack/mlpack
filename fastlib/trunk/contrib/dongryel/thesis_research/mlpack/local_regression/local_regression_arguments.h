@@ -85,6 +85,9 @@ class LocalRegressionArguments {
      */
     bool is_monochromatic_;
 
+    /** @brief Whether the tables are aliased or should be freed when
+     *         the argument gets destructed.
+     */
     bool tables_are_aliased_;
 
   public:
