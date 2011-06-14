@@ -141,11 +141,6 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
   )(
-    "densities_out",
-    boost::program_options::value<std::string>()->default_value(
-      "densities_out.csv"),
-    "OPTIONAL file to store computed densities."
-  )(
     "kernel",
     boost::program_options::value<std::string>()->default_value("epan"),
     "Kernel function used by local regression.  One of:\n"
@@ -167,9 +162,33 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<unsigned int>(),
     "The size of the memory mapped file."
   )(
+    "metric",
+    boost::program_options::value<std::string>()->default_value("lmetric"),
+    "Metric type used by local regression.  One of:\n"
+    "  lmetric, weighted_lmetric"
+  )(
+    "metric_scales_in",
+    boost::program_options::value<std::string>(),
+    "The file containing the scaling factors for the weighted L2 metric."
+  )(
     "num_threads_in",
     boost::program_options::value<int>()->default_value(1),
     "The number of threads to use for shared-memory parallelism."
+  )(
+    "order",
+    boost::program_options::value<int>()->default_value(0),
+    "The order of local polynomial to fit at each query point. One of: "
+    "  0 or 1"
+  )(
+    "predictions_out",
+    boost::program_options::value<std::string>()->default_value(
+      "predictions_out.csv"),
+    "OPTIONAL file to store the predicted regression values."
+  )(
+    "prescale",
+    boost::program_options::value<std::string>()->default_value("none"),
+    "OPTIONAL scaling option. One of:\n"
+    "  none, hypercube, standardize"
   )(
     "probability",
     boost::program_options::value<double>()->default_value(1.0),
@@ -198,14 +217,13 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
       "random_dataset.csv"),
     "REQUIRED file containing reference data."
   )(
+    "reference_targets_in",
+    boost::program_options::value<std::string>(),
+    "The file containing the target values for the reference set."
+  )(
     "relative_error",
     boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of local regression."
-  )(
-    "series_expansion_type",
-    boost::program_options::value<std::string>()->default_value("multivariate"),
-    "Series expansion type used to compress the kernel interaction. One of:\n"
-    "  hypercube, multivariate"
   )(
     "top_tree_sample_probability",
     boost::program_options::value<double>()->default_value(0.3),
@@ -242,6 +260,11 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
   }
 
   // Validate the arguments.
+  if((*vm)["absolute_error"].as<double>() < 0.0) {
+    std::cerr << "The --absolute_error requires a non-negative real "
+              << "number.\n";
+    exit(0);
+  }
   if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
     std::cerr << "The --bandwidth requires a positive real number.\n";
     exit(0);
@@ -269,8 +292,19 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
               "a positive integer greater than 1.\n";
     exit(0);
   }
+  if((*vm)["metric"].as<std::string>() == "weighted_lmetric" &&
+      vm->count("metric_scales_in") == 0) {
+    std::cerr << "The weighted L2 metric option requires " <<
+              "--metric_scales_in option.\n";
+    exit(0);
+  }
   if((*vm)["num_threads_in"].as<int>() <= 0) {
     std::cerr << "The --num_threads_in needs to be a positive integer.\n";
+    exit(0);
+  }
+  if((*vm)["order"].as<int>() < 0 || (*vm)["order"].as<int>() > 1) {
+    std::cerr << "The --order requires either 0 (Nadaraya-Watson) or "
+              "1 (local-linear).\n";
     exit(0);
   }
   if(vm->count("prescale") > 0) {
@@ -313,14 +347,12 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
     std::cerr << "Missing required --references_in.\n";
     exit(0);
   }
-  if((*vm)["relative_error"].as<double>() < 0) {
-    std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
+  if(vm->count("reference_targets_in") == 0) {
+    std::cerr << "Missing reqiured --reference_targets_in.\n";
     exit(0);
   }
-  if((*vm)["series_expansion_type"].as<std::string>() != "hypercube" &&
-      (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
-    std::cerr << "We support only hypercube or multivariate for the "
-              "series expansion type.\n";
+  if((*vm)["relative_error"].as<double>() < 0) {
+    std::cerr << "The --relative_error requires a real number $r >= 0$.\n";
     exit(0);
   }
 
@@ -357,8 +389,12 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
 
 template<typename TableType>
 void DistributedLocalRegressionArgumentParser::RandomGenerate(
-  boost::mpi::communicator &world, const std::string &file_name,
-  int num_dimensions, int num_points, const std::string &prescale_option) {
+  boost::mpi::communicator &world,
+  const std::string &file_name,
+  const std::string &weight_file_name,
+  int num_dimensions,
+  int num_points,
+  const std::string &prescale_option) {
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
@@ -381,10 +417,16 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
   else if(prescale_option == "standardize") {
     core::table::Standardize::Transform(&random_dataset);
   }
+
+  // Now, make sure that all coordinates are non-negative.
+  if(prescale_option != "hypercube") {
+    core::table::TranslateToNonnegative::Transform(table);
+  }
+
   std::cout << "Scaled the dataset with the option: " <<
             prescale_option << "\n";
 
-  random_dataset.Save(file_name);
+  random_dataset.Save(file_name, &weight_file_name);
 }
 
 template<typename DistributedTableType, typename MetricType>
@@ -403,13 +445,13 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
               arguments_out->top_tree_sample_probability_ << "\n";
   }
 
-  // Parse the densities out file.
-  arguments_out->densities_out_ = vm["densities_out"].as<std::string>();
+  // Parse the predictions out file.
+  arguments_out->predictions_out_ = vm["predictions_out"].as<std::string>();
   if(vm.count("random_generate_n_entries") > 0) {
-    std::stringstream densities_out_sstr;
-    densities_out_sstr << vm["densities_out"].as<std::string>() <<
-                       world.rank();
-    arguments_out->densities_out_ = densities_out_sstr.str();
+    std::stringstream predictions_out_sstr;
+    predictions_out_sstr << vm["predictions_out"].as<std::string>() <<
+                         world.rank();
+    arguments_out->predictions_out_ = predictions_out_sstr.str();
   }
 
   // Parse the leaf size.
@@ -428,13 +470,22 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
+  std::string reference_targets_file_name =
+    vm["reference_targets_in"].as<std::string>();
   if(vm.count("random_generate_n_entries") > 0) {
     std::stringstream reference_file_name_sstr;
+    std::stringstream reference_targets_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
     reference_file_name = reference_file_name_sstr.str();
+    reference_targets_file_name_sstr <<
+                                     vm["reference_targets_in"].as<std::string>() << world.rank();
+    reference_targets_file_name = reference_targets_file_name_sstr.str();
+
     RandomGenerate<typename DistributedTableType::TableType>(
-      world, reference_file_name, vm["random_generate_n_attributes"].as<int>(),
+      world, reference_file_name,
+      reference_targets_file_name,
+      vm["random_generate_n_attributes"].as<int>(),
       vm["random_generate_n_entries"].as<int>(),
       vm["prescale"].as<std::string>());
   }
@@ -446,7 +497,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
     core::table::global_m_file_->Construct<DistributedTableType>() :
     new DistributedTableType();
   arguments_out->reference_table_->Init(
-    reference_file_name, world);
+    reference_file_name, world, &reference_targets_file_name);
   arguments_out->reference_table_->IndexData(
     arguments_out->metric_, world, arguments_out->leaf_size_,
     arguments_out->top_tree_sample_probability_);
