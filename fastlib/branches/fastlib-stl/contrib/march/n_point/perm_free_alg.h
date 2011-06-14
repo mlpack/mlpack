@@ -40,6 +40,7 @@ namespace npt {
     double weighted_num_tuples_;
     
     int num_prunes_;
+    int num_base_cases_;
     
     arma::Col<index_t> old_from_new_index_;
     
@@ -79,6 +80,7 @@ namespace npt {
       num_tuples_ = 0;
       num_prunes_ = 0;
       weighted_num_tuples_ = 0.0;
+      num_base_cases_ = 0;
       
       tree_ = tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
                                                          leaf_size_, 
@@ -103,6 +105,7 @@ namespace npt {
       DepthFirstRecursion_(nodes);
       
       std::cout << "Num prunes: " << num_prunes_ << "\n";
+      std::cout << "Num base cases: " << num_base_cases_ << "\n";
       
       
       

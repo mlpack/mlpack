@@ -23,6 +23,8 @@ set(SOURCES
 	perm_free_alg.cc
 	multi_bandwidth_alg.h
 	multi_bandwidth_alg.cc
+	multi_matcher.h
+	multi_matcher.cc
 )
 
 # add directory name to sources

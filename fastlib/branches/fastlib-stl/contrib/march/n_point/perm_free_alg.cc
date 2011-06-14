@@ -142,6 +142,7 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
   else if (nodes.all_leaves()) {
     
     BaseCase_(nodes);
+    num_base_cases_++;
     
   } 
   else {

@@ -212,6 +212,13 @@ void npt::NodeTuple::FillInSortedArrays_() {
       double min_dist = node_i->bound().MinDistanceSq(node_j->bound());
       double max_dist = node_i->bound().MaxDistanceSq(node_j->bound());
       
+      upper_bounds_sq_(i,j) = max_dist;
+      upper_bounds_sq_(j,i) = max_dist;
+
+      lower_bounds_sq_(i,j) = min_dist;
+      lower_bounds_sq_(j,i) = min_dist;
+
+      
       sorted_upper_[next_insert] = max_dist;
       sorted_lower_[next_insert] = min_dist;
       
