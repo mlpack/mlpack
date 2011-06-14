@@ -220,6 +220,7 @@ void npt::SingleBandwidthAlg::DepthFirstRecursion_(std::vector<SingleNode*>& nod
     if (all_leaves) {
       
       BaseCase_(nodes);
+      num_base_cases_++;
       
     } 
     else {

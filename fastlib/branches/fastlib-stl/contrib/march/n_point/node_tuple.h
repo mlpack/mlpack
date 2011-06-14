@@ -30,8 +30,8 @@ namespace npt {
     index_t tuple_size_;
     
     // entry i, j is the distance bound for entries i and j in the list above
-    //arma::mat upper_bounds_sq_;
-    //arma::mat lower_bounds_sq_;
+    arma::mat upper_bounds_sq_;
+    arma::mat lower_bounds_sq_;
     
     // IMPORTANT: all the upper and lower bounds start off the same, 
     // so this doesn't matter
@@ -78,7 +78,9 @@ namespace npt {
     NodeTuple(std::vector<NptNode*>& list_in) :
     tuple_size_(list_in.size()),
     sorted_upper_((tuple_size_ * (tuple_size_ - 1)) / 2),
-    sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2)
+    sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
+    upper_bounds_sq_(tuple_size_, tuple_size_),
+    lower_bounds_sq_(tuple_size_, tuple_size_)
     {
      
       for (index_t i = 0; i < tuple_size_; i++) {
@@ -111,13 +113,15 @@ namespace npt {
     } // constructor (init)
     
     // use this constructor to make children in the recursion
-    NodeTuple(NodeTuple& parent, bool is_left) : node_list_(parent.get_node_list()),
+    NodeTuple(NodeTuple& parent, bool is_left) : tuple_size_(parent.tuple_size()),
+    node_list_(parent.get_node_list()),
     sorted_upper_(parent.sorted_upper().size()), 
-    sorted_lower_(parent.sorted_lower().size())
+    sorted_lower_(parent.sorted_lower().size()),
+    upper_bounds_sq_(tuple_size_, tuple_size_),
+    lower_bounds_sq_(tuple_size_, tuple_size_)
     {
       
       ind_to_split_ = parent.ind_to_split();
-      tuple_size_ = node_list_.size();
       
       // assuming that the symmetry has already been checked
       if (is_left) {
@@ -175,7 +179,15 @@ namespace npt {
     double lower_bound(index_t i) {
       return sorted_lower_[i];
     }
-  
+    
+    double upper_mat(index_t i, index_t j) {
+      return upper_bounds_sq_(i,j);
+    }
+
+    double lower_mat(index_t i, index_t j) {
+      return lower_bounds_sq_(i,j);
+    }
+    
     bool all_leaves() {
       return all_leaves_;
     }
@@ -186,6 +198,10 @@ namespace npt {
     
     NptNode* node_list(index_t i) {
       return node_list_[i];
+    }
+    
+    index_t tuple_size() const {
+      return tuple_size_;
     }
     
     

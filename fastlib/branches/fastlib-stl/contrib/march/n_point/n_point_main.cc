@@ -12,6 +12,7 @@
 #include "single_bandwidth_alg.h"
 #include "naive_alg.h"
 #include "perm_free_alg.h"
+#include "multi_bandwidth_alg.h"
 
 using namespace npt;
 
@@ -106,7 +107,25 @@ int main(int argc, char* argv[]) {
 
   if (fx_param_exists(NULL, "do_multi")) {
     
-    std::cout << "Not implemented yet\n";
+    std::cout << "Doing Multi Bandwidth\n";
+
+    
+    int tuple_size = 3;
+    std::vector<double> min_bands(3, 0.6);
+    std::vector<double> max_bands(3, 1.0);
+    std::vector<int> num_bands(3, 3);
+    double bandwidth = 0.05;
+    
+    
+    
+    fx_timer_start(NULL, "multi_time");
+    MultiBandwidthAlg alg(data_mat, weights, leaf_size, tuple_size,
+                          min_bands, max_bands, num_bands, bandwidth);
+    
+    
+    alg.Compute();
+
+    fx_timer_stop(NULL, "multi_time");
     
   } // multi
 

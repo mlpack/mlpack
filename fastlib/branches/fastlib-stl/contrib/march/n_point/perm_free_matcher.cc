@@ -19,14 +19,27 @@ bool npt::PermFreeMatcher::TestNodeTuple(NodeTuple& nodes) {
       return false;
     }
 
-    /*
+    
     if (nodes.upper_bound(i) < lower_bounds_sq_[i]) {
       return false;
     }
-     */
-    
+     
   } // for i
   
+/*
+ // Thinking about trying something with the triangle inequality here
+  for (index_t i = 0; i < tuple_size_; i++) {
+    for (index_t j = i+1; j < tuple_size_; j++) {
+      for (index_t k = j+1; k < tuple_size_; k++) {
+        
+        if () {
+          
+        }
+        
+      } // for k
+    } // for j
+  } // for i
+  */
   return true;
   
 } // TestNodeTuple
