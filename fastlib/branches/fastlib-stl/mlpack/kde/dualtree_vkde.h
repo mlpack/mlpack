@@ -67,7 +67,7 @@
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "dualtree_kde_common.h"
 #include "kde_stat.h"
-#include "mlpack/allknn/allknn.h"
+#include <mlpack/neighbor_search/neighbor_search.h>
 
 /** @brief A computation class for dual-tree based variable-bandwidth
  *         kernel density estimation.
@@ -399,8 +399,8 @@ class DualtreeVKde {
     n_pruned_.set_size(qset_.n_cols);
 
     // Initialize the kernels for each reference point.
-    int knns = mlpack::IO::GetParam<int>("kde/knn");
-    mlpack::allknn::AllkNN all_knn(rset_, 20, knns);
+    int knns = mlpack::IO::GetParam<int>("kde/knns");
+    mlpack::neighbor::AllkNN all_knn(rset_);
     kernels_.reserve(rset_.n_cols);
     arma::Col<index_t> resulting_neighbors;
     arma::vec squared_distances;    

@@ -9,7 +9,7 @@
 #ifndef NAIVE_KDE_H
 #define NAIVE_KDE_H
 
-#include "mlpack/allknn/allknn.h"
+#include <mlpack/neighbor_search/neighbor_search.h>
 
 /** @brief A templatized class for computing the KDE naively.
  *
@@ -176,8 +176,8 @@ class NaiveKde {
     if(!strcmp(mlpack::IO::GetParam<std::string>("kde/mode").c_str(), "variablebw")) {
 
       // Initialize the kernels for each reference point.
-      int knns = mlpack::IO::GetParam<int>("kde/knn");
-      mlpack::allknn::AllkNN all_knn(rset_, 20, knns);
+      int knns = mlpack::IO::GetParam<int>("kde/knns");
+      mlpack::neighbor::AllkNN all_knn(rset_);
       arma::Col<index_t> resulting_neighbors;
       arma::vec squared_distances;    
       
