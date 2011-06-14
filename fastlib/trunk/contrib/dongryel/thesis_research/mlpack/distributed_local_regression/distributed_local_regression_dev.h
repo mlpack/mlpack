@@ -424,7 +424,7 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
 
   // Now, make sure that all coordinates are non-negative.
   if(prescale_option != "hypercube") {
-    core::table::TranslateToNonnegative::Transform(table);
+    core::table::TranslateToNonnegative::Transform(&random_dataset);
   }
 
   std::cout << "Scaled the dataset with the option: " <<
