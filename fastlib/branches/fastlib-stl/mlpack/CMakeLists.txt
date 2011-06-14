@@ -35,10 +35,12 @@ link_directories( ${FASTLIB_LIB_DIR} )
 set(MLPACK_STD_LIBS fastlib lapack blas )  ##! this ordering matters :(
 
 ## recurse
-set( DIRS
-    allkfn
-    allknn allnn
+set(DIRS
+#    allkfn
+#    allknn
+    allnn
 #    disk_allnn  # does not compile, perhaps due to an API change
+    core
     emst
     fastica
     hmm
@@ -51,6 +53,7 @@ set( DIRS
 #    mlpackdemo  ## matlab routines
     #mvu # requires optimization
     naive_bayes
+    neighbor_search
     nnsvm
     quicsvd
     # range_search  ##! uses contrib code
@@ -66,7 +69,7 @@ if(WITH_SPARSE)
 endif()
 
 if(WITH_OPTIMIZERS)
-  set(DIRS ${DIRS} mvu)
+#  set(DIRS ${DIRS} mvu)
 endif()
 
 foreach(dir ${DIRS})
