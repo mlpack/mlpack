@@ -1,25 +1,53 @@
 /**
- * @file allknn.h
+ * @file neighbor_search.h
  *
  * Defines the AllkNN class to perform all-k-nearest-neighbors on two specified
  * data sets.
  */
 
-#ifndef ALLKNN_H
-#define ALLKNN_H
+#ifndef MLPACK_NEIGHBOR_SEARCH_H
+#define MLPACK_NEIGHBOR_SEARCH_H
 
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <string>
 
-namespace mlpack {
-namespace allknn {
+#include <mlpack/core/kernels/l2_squared_metric.h>
+#include "sort_policies/nearest_neighbor_sort.h"
 
-/**
-* Performs all-nearest-neighbors.  This class will build the trees and
-* perform the recursive  computation.
-*/
-class AllkNN {
+// Define IO parameters for the NeighborSearch class.
+PARAM_MODULE("neighbor_search",
+    "Parameters for the distance-based neighbor search.");
+PARAM_INT("k", "Number of neighbors to search for.", "neighbor_search", 5);
+PARAM_INT("leaf_size", "Leaf size for tree-building.", "neighbor_search", 20);
+PARAM_FLAG("single_mode", "If set, use single-tree mode (instead of "
+    "dual-tree).", "neighbor_search");
+PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
+    "overrides the single_mode flag.", "neighbor_search");
+
+namespace mlpack {
+namespace neighbor {
+
+/***
+ * The NeighborSearch class is a template class for performing distance-based
+ * neighbor searches.  It takes a query dataset and a reference dataset (or just
+ * a reference dataset) and finds the k neighbors which have the 'best' distance
+ * according to a given sorting policy.
+ *
+ * The template parameters Kernel and SortPolicy define the distance function
+ * used and the sort function used.
+ *
+ * @tparam Kernel The kernel function.  Must provide a default constructor and
+ *   a function 'void Evaluate(arma::vec&, arma::vec&)'.
+ * @tparam SortPolicy The sort function for distances.  Must provide a function
+ *   'index_t SortDistance(arma::vec&, double)'.  In this function a vector of
+ *   distances is given (as well as a new distance) and the function must return
+ *   the index in the vector where this distance should be inserted, or SIZE_MAX
+ *   if it should not be inserted.
+ */
+template<typename Kernel = mlpack::kernel::L2SquaredMetric,
+         typename SortPolicy = NearestNeighborSort>
+class NeighborSearch {
 
   //////////////////////////// Nested Classes /////////////////////////////////
   /**
@@ -59,8 +87,9 @@ class AllkNN {
     }
 
     /**
-     * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
-     * node statistics can be built using information from the children.
+     * Initialization function used in tree-building when initializing a
+     * non-leaf node.  For other algorithms, node statistics can be built using
+     * information from the children.
      */
     void Init(const arma::mat& matrix, index_t start, index_t count,
         const QueryStat& left, const QueryStat& right) {
@@ -78,12 +107,12 @@ class AllkNN {
 
   /////////////////////////////// Members /////////////////////////////////////
  private:
-  // The module containing the parameters for this computation.
-  struct datanode* module_;
-
   // These will store our data sets.
   arma::mat references_;
   arma::mat queries_;
+
+  // Instantiation of kernel (potentially not necessary).
+  Kernel kernel_;
 
   // Pointers to the roots of the two trees.
   TreeType* reference_tree_;
@@ -106,59 +135,35 @@ class AllkNN {
   index_t number_of_prunes_;
 
   // The distance to the candidate nearest neighbor for each query
-  arma::vec neighbor_distances_;
+  arma::mat neighbor_distances_;
 
   // The indices of the candidate nearest neighbor for each query
-  arma::Col<index_t> neighbor_indices_;
-
-  // if this flag is true then only the k-neighbor and distance are computed
-  bool k_only_;
+  arma::Mat<index_t> neighbor_indices_;
 
  public:
-  enum {
-    NAIVE = 1,
-    ALIAS_MATRIX = 2,
-    MODE_SINGLE = 4
-  };
-
   /**
-   * Initialize the AllkNN object.  If only the references matrix is given, the
-   * queries matrix is assumed to be the same.
+   * Initialize the NeighborSearch object.  If only a reference dataset is
+   * given, it is assumed that the query set is also the reference set.
+   * Optionally, an initialized kernel can be passed in, for cases where the
+   * kernel has internal data (i.e. the Mahalanobis distance).
    *
-   * The options parameter is meant to be a combination of options, such as
-   * (NAIVE | ALIAS_MATRIX) or similar.  The three allowed options are:
-   *
-   *  - NAIVE: if set, the naive method for computation will be used.  This
-   *      overrides the MODE_SINGLE option.
-   *  - ALIAS_MATRIX: if set, the input matrices will be aliased internally.
-   *      This will result in the input matrices being re-ordered while the
-   *      trees are built.  You will get a performance boost from using this
-   *      option, but it must be understood that the matrix you pass in will be
-   *      modified.
-   *  - MODE_SINGLE: if set, the single-tree method is used; otherwise, the
-   *      dual-tree method is used (which is the default).  Dual-tree is
-   *      recommended.
-   *
-   * @param queries_in Input matrix of query points
-   * @param references_in Input matrix of reference points to query against
-   * @param module_in Datanode containing input parameters
-   * @param options Combination of options (NAIVE, ALIAS_MATRIX, MODE_SINGLE)
-   * @param leaf_size Leaf size used for tree building (ignored in naive mode)
-   * @param knns Number of nearest neighbors to calculate
+   * @param queries_in Set of query points.
+   * @param references_in Set of reference points.
+   * @param alias_matrix If true, alias the passed matrices instead of copying
+   *     them.  While this lowers memory footprint and computational load, the
+   *     matrices will be modified during the tree-building process!
+   * @param kernel An optional instance of the Kernel class.
    */
-  AllkNN(arma::mat& queries_in, arma::mat& references_in,
-         struct datanode* module_in, int options = 0);
-  AllkNN(arma::mat& references_in, struct datanode* module_in, int options = 0);
-  AllkNN(arma::mat& queries_in, arma::mat& references_in, index_t leaf_size,
-         index_t knns, int options = 0);
-  AllkNN(arma::mat& references_in, index_t leaf_size, index_t knns,
-         int options = 0);
+  NeighborSearch(arma::mat& queries_in, arma::mat& references_in,
+                 bool alias_matrix = false, Kernel kernel = Kernel());
+  NeighborSearch(arma::mat& references_in, bool alias_matrix = false,
+                 Kernel kernel = Kernel());
 
   /**
    * The tree is the only member we are responsible for deleting.  The others
    * will take care of themselves.
    */
-  ~AllkNN();
+  ~NeighborSearch();
   
   /**
    * Computes the nearest neighbors and stores the output in the given arrays.
@@ -169,8 +174,8 @@ class AllkNN {
    * @param resulting_neighbors List of nearest neighbors
    * @param distances Distance of nearest neighbors
    */
-  void ComputeNeighbors(arma::Col<index_t>& resulting_neighbors,
-                        arma::vec& distances);
+  void ComputeNeighbors(arma::Mat<index_t>& resulting_neighbors,
+                        arma::mat& distances);
 
  private:
   /**
@@ -200,7 +205,7 @@ class AllkNN {
    */
   void ComputeDualNeighborsRecursion_(TreeType* query_node,
                                       TreeType* reference_node,
-                                      double lower_bound_distance);
+                                      double lower_bound);
 
   /***
    * Perform a recursion only on the reference tree; the query point is given.
@@ -211,21 +216,26 @@ class AllkNN {
                                         double* min_dist_so_far);
 
   /***
-   * Helper function to insert a point into the current neighbors vector.  Given
-   * a distance and a neighbor ID and the correct place in the list, this method
-   * searches for the correct place to insert this neighbor and distance into.
-   * This method assumes that the check to see if the point should be inserted
-   * is already done.
+   * Helper function to insert a point into the neighbors and distances
+   * matrices.
    *
-   * @param ind Index of query point whose neighbors we are inserting into.
-   * @param neighbor Index of reference point we are inserting.
+   * @param query_index Index of point whose neighbors we are inserting into.
+   * @param pos Position in list to insert into.
+   * @param neighbor Index of reference point which is being inserted.
    * @param distance Distance from query point to reference point.
    */
-  void InsertNeighbor(index_t ind, index_t neighbor, double distance);
+  void InsertNeighbor(index_t query_index, index_t pos, index_t neighbor,
+                      double distance);
 
 }; // class AllkNN
 
+typedef NeighborSearch<mlpack::kernel::L2SquaredMetric, NearestNeighborSort>
+    AllkNN;
+
 }; // namespace allknn
 }; // namespace mlpack
+
+// Include implementation.
+#include "neighbor_search_impl.h"
 
 #endif
