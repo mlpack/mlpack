@@ -4,8 +4,10 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   allknn.h
-   allknn.cc
+  neighbor_search.h
+  neighbor_search_impl.h
+  sort_policies/nearest_neighbor_sort.h
+  sort_policies/nearest_neighbor_sort.cc
 )
 
 # add directory name to sources
@@ -29,7 +31,7 @@ target_link_libraries(allknn_test
 
 # main executable
 add_executable(allknn
-   main.cc
+   allknn_main.cc
 )
 # link dependencies of allknn
 target_link_libraries(allknn
