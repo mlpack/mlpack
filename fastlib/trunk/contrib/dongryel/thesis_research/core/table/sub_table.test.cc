@@ -219,8 +219,8 @@ class TestSubTable {
         subtable_to_save.Init(
           &random_table,
           random_table.get_tree()->FindByBeginCount(begin, count),
-          max_num_levels_to_serialize, false);
-        subtable_to_load.Init(0, max_num_levels_to_serialize, false);
+          false);
+        subtable_to_load.Init(0, false);
 
         // File name to test.
         std::stringstream test_file_name_sstr;
