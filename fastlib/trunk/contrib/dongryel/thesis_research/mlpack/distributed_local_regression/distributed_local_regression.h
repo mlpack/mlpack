@@ -45,7 +45,7 @@ class DistributedLocalRegressionArgumentParser {
     static void RandomGenerate(
       boost::mpi::communicator &world,
       const std::string &file_name,
-      const std::string &weight_file_name,
+      const std::string *weight_file_name,
       int num_dimensions,
       int num_points,
       const std::string &prescale_option);
