@@ -14,6 +14,7 @@
 #include <boost/mpi/operations.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/tuple/tuple.hpp>
+#include <omp.h>
 #include "core/math/math_lib.h"
 #include "core/parallel/distributed_tree_util.h"
 #include "core/tree/ball_bound.h"
@@ -199,17 +200,34 @@ class GenMetricTree {
       int end = begin + count;
       *furthest_distance = -1.0;
 
-      for(int i = begin; i < end; i++) {
-        PointType point;
-        matrix.MakeColumnVector(i, &point);
-        double distance_between_center_and_point =
-          metric_in.Distance(pivot, point);
+#pragma omp parallel
+      {
+        // Local variables used for reduction.
+        int local_furthest_index = -1;
+        double local_furthest_distance = -1.0;
 
-        if((*furthest_distance) < distance_between_center_and_point) {
-          *furthest_distance = distance_between_center_and_point;
-          furthest_index = i;
-        }
-      }
+#pragma omp for
+        for(int i = begin; i < end; i++) {
+          PointType point;
+          matrix.MakeColumnVector(i, &point);
+          double distance_between_center_and_point =
+            metric_in.Distance(pivot, point);
+
+          if(local_furthest_distance < distance_between_center_and_point) {
+            local_furthest_distance = distance_between_center_and_point;
+            local_furthest_index = i;
+          }
+        } // end of for-loop.
+
+        // Reduction.
+#pragma omp critical
+        {
+          if(local_furthest_distance > (*furthest_distance)) {
+            *furthest_distance = local_furthest_distance;
+            furthest_index = local_furthest_index;
+          }
+        } // end of omp critical.
+      } // end of omp parallel.
       return furthest_index;
     }
 
@@ -263,16 +281,33 @@ class GenMetricTree {
       const core::table::DenseMatrix& matrix,
       int begin, int count, BoundType *bounds) {
 
+      // Clear the bound to zero.
       bounds->center().SetZero();
 
       int end = begin + count;
       arma::vec bound_ref;
       core::table::DensePointToArmaVec(bounds->center(), &bound_ref);
-      for(int i = begin; i < end; i++) {
-        arma::vec col_point;
-        matrix.MakeColumnVector(i, &col_point);
-        bound_ref += col_point;
+
+#pragma omp parallel
+      {
+        arma::vec local_sum;
+        local_sum.zeros(bound_ref.n_elem);
+
+#pragma omp for
+        for(int i = begin; i < end; i++) {
+          arma::vec col_point;
+          matrix.MakeColumnVector(i, &col_point);
+          local_sum += col_point;
+        }
+
+        // Final reduction.
+#pragma omp critical
+        {
+          bound_ref += local_sum;
+        } // end omp critical.
       }
+
+      // Divide by the number of points.
       bound_ref = (1.0 / static_cast<double>(count)) * bound_ref;
 
       double furthest_distance;
@@ -319,27 +354,40 @@ class GenMetricTree {
       int *left_count, std::deque<bool> *left_membership) {
 
       left_membership->resize(end - first);
-      for(int left = first; left < end; left++) {
 
-        // Make alias of the current point.
-        core::table::DensePoint point;
-        matrix.MakeColumnVector(left, &point);
+#pragma omp parallel
+      {
+        int local_left_count = 0;
 
-        // Compute the distances from the two pivots.
-        double distance_from_left_pivot =
-          metric_in.Distance(point, left_bound.center());
-        double distance_from_right_pivot =
-          metric_in.Distance(point, right_bound.center());
+#pragma omp for
+        for(int left = first; left < end; left++) {
 
-        // We swap if the point is further away from the left pivot.
-        if(distance_from_left_pivot > distance_from_right_pivot) {
-          (*left_membership)[left - first] = false;
+          // Make alias of the current point.
+          core::table::DensePoint point;
+          matrix.MakeColumnVector(left, &point);
+
+          // Compute the distances from the two pivots.
+          double distance_from_left_pivot =
+            metric_in.Distance(point, left_bound.center());
+          double distance_from_right_pivot =
+            metric_in.Distance(point, right_bound.center());
+
+          // We swap if the point is further away from the left pivot.
+          if(distance_from_left_pivot > distance_from_right_pivot) {
+            (*left_membership)[left - first] = false;
+          }
+          else {
+            (*left_membership)[left - first] = true;
+            local_left_count++;
+          }
         }
-        else {
-          (*left_membership)[left - first] = true;
-          (*left_count)++;
-        }
-      }
+
+        // Final reduction.
+#pragma omp critical
+        {
+          (*left_count) += local_left_count;
+        } // end of omp critical.
+      } // end of omp parallel.
     }
 
     template<typename MetricType>

@@ -9,6 +9,7 @@
 #define CORE_TREE_GEN_KDTREE_H
 
 #include <boost/mpi.hpp>
+#include <omp.h>
 #include "core/parallel/distributed_tree_util.h"
 #include "core/tree/general_spacetree.h"
 #include "core/tree/hrect_bound.h"
@@ -107,11 +108,27 @@ class GenKdTree {
       int first, int count, BoundType *bounds) {
 
       int end = first + count;
-      for(int i = first; i < end; i++) {
-        core::table::DensePoint col;
-        matrix.MakeColumnVector(i, &col);
-        *bounds |= col;
-      }
+
+#pragma omp parallel
+      {
+        // Local variable for accumulating the bound information for a
+        // thread.
+        BoundType local_bound;
+        local_bound.Init(bounds->dim());
+
+#pragma omp for
+        for(int i = first; i < end; i++) {
+          core::table::DensePoint col;
+          matrix.MakeColumnVector(i, &col);
+          local_bound |= col;
+        }
+
+        // The final reduction.
+#pragma omp critical
+        {
+          (*bounds) |= local_bound;
+        } // end of omp critical.
+      } // end of omp parallel.
     }
 
     /** @brief The parallel MPI version of finding the bound for which
@@ -182,23 +199,42 @@ class GenKdTree {
       left_membership->resize(end - first);
 
       // Build the bounds for the kd-tree.
-      for(int left = first; left < end; left++) {
+#pragma omp parallel
+      {
+        // The local accumulants.
+        int local_left_count = 0;
+        BoundType local_left_bound;
+        BoundType local_right_bound;
+        local_left_bound.Init(left_bound.dim());
+        local_right_bound.Init(right_bound.dim());
 
-        // Make alias of the current point.
-        core::table::DensePoint point;
-        matrix.MakeColumnVector(left, &point);
+#pragma omp for
+        for(int left = first; left < end; left++) {
 
-        // We swap if the point is further away from the left pivot.
-        if(point[split_dim] > split_val) {
-          (*left_membership)[left - first] = false;
-          right_bound |= point;
-        }
-        else {
-          (*left_membership)[left - first] = true;
-          left_bound |= point;
-          (*left_count)++;
-        }
-      }
+          // Make alias of the current point.
+          core::table::DensePoint point;
+          matrix.MakeColumnVector(left, &point);
+
+          // We swap if the point is further away from the left pivot.
+          if(point[split_dim] > split_val) {
+            (*left_membership)[left - first] = false;
+            local_right_bound |= point;
+          }
+          else {
+            (*left_membership)[left - first] = true;
+            local_left_bound |= point;
+            local_left_count++;
+          }
+        } // end of for-loop.
+
+        // Final reduction.
+#pragma omp critical
+        {
+          (*left_count) += local_left_count;
+          left_bound |= local_left_bound;
+          right_bound |= local_right_bound;
+        } // end of omp critical.
+      } // end of omp parallel.
     }
 
     template<typename MetricType>
