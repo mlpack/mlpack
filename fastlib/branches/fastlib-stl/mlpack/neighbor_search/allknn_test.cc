@@ -30,7 +30,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
   data[2] = 0.15;
   data[3] = 1.25;
   data[4] = 5.05;
-  data[5] = -0.20;
+  data[5] = -0.22;
   data[6] = -2.00;
   data[7] = -1.30;
   data[8] = 0.45;
@@ -72,7 +72,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(0, 0) == 2);
     BOOST_REQUIRE_CLOSE(distances(0, 0), (0.10 * 0.10), 1e-5);
     BOOST_REQUIRE(neighbors(1, 0) == 5);
-    BOOST_REQUIRE_CLOSE(distances(1, 0), (0.25 * 0.25), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(1, 0), (0.27 * 0.27), 1e-5);
     BOOST_REQUIRE(neighbors(2, 0) == 1);
     BOOST_REQUIRE_CLOSE(distances(2, 0), (0.30 * 0.30), 1e-5);
     BOOST_REQUIRE(neighbors(3, 0) == 8);
@@ -100,7 +100,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(3, 1) == 9);
     BOOST_REQUIRE_CLOSE(distances(3, 1), (0.55 * 0.55), 1e-5);
     BOOST_REQUIRE(neighbors(4, 1) == 5);
-    BOOST_REQUIRE_CLOSE(distances(4, 1), (0.55 * 0.55), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(4, 1), (0.57 * 0.57), 1e-5);
     BOOST_REQUIRE(neighbors(5, 1) == 10);
     BOOST_REQUIRE_CLOSE(distances(5, 1), (0.65 * 0.65), 1e-5);
     BOOST_REQUIRE(neighbors(6, 1) == 3);
@@ -120,7 +120,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(2, 2) == 8);
     BOOST_REQUIRE_CLOSE(distances(2, 2), (0.30 * 0.30), 1e-5);
     BOOST_REQUIRE(neighbors(3, 2) == 5);
-    BOOST_REQUIRE_CLOSE(distances(3, 2), (0.35 * 0.35), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(3, 2), (0.37 * 0.37), 1e-5);
     BOOST_REQUIRE(neighbors(4, 2) == 9);
     BOOST_REQUIRE_CLOSE(distances(4, 2), (0.75 * 0.75), 1e-5);
     BOOST_REQUIRE(neighbors(5, 2) == 10);
@@ -148,7 +148,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(5, 3) == 0);
     BOOST_REQUIRE_CLOSE(distances(5, 3), (1.20 * 1.20), 1e-5);
     BOOST_REQUIRE(neighbors(6, 3) == 5);
-    BOOST_REQUIRE_CLOSE(distances(6, 3), (1.45 * 1.45), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(6, 3), (1.47 * 1.47), 1e-5);
     BOOST_REQUIRE(neighbors(7, 3) == 7);
     BOOST_REQUIRE_CLOSE(distances(7, 3), (2.55 * 2.55), 1e-5);
     BOOST_REQUIRE(neighbors(8, 3) == 6);
@@ -172,7 +172,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(6, 4) == 0);
     BOOST_REQUIRE_CLOSE(distances(6, 4), (5.00 * 5.00), 1e-5);
     BOOST_REQUIRE(neighbors(7, 4) == 5);
-    BOOST_REQUIRE_CLOSE(distances(7, 4), (5.25 * 5.25), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(7, 4), (5.27 * 5.27), 1e-5);
     BOOST_REQUIRE(neighbors(8, 4) == 7);
     BOOST_REQUIRE_CLOSE(distances(8, 4), (6.35 * 6.35), 1e-5);
     BOOST_REQUIRE(neighbors(9, 4) == 6);
@@ -180,31 +180,31 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     
     // Neighbors of point 5.
     BOOST_REQUIRE(neighbors(0, 5) == 0);
-    BOOST_REQUIRE_CLOSE(distances(0, 5), (0.25 * 0.25), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(0, 5), (0.27 * 0.27), 1e-5);
     BOOST_REQUIRE(neighbors(1, 5) == 2);
-    BOOST_REQUIRE_CLOSE(distances(1, 5), (0.35 * 0.35), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(1, 5), (0.37 * 0.37), 1e-5);
     BOOST_REQUIRE(neighbors(2, 5) == 1);
-    BOOST_REQUIRE_CLOSE(distances(2, 5), (0.55 * 0.55), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(2, 5), (0.57 * 0.57), 1e-5);
     BOOST_REQUIRE(neighbors(3, 5) == 8);
-    BOOST_REQUIRE_CLOSE(distances(3, 5), (0.65 * 0.65), 1e-5);
-    BOOST_REQUIRE(neighbors(4, 5) == 9);
-    BOOST_REQUIRE_CLOSE(distances(4, 5), (1.10 * 1.10), 1e-5);
-    BOOST_REQUIRE(neighbors(5, 5) == 7);
-    BOOST_REQUIRE_CLOSE(distances(5, 5), (1.10 * 1.10), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(3, 5), (0.67 * 0.67), 1e-5);
+    BOOST_REQUIRE(neighbors(4, 5) == 7);
+    BOOST_REQUIRE_CLOSE(distances(4, 5), (1.08 * 1.08), 1e-5);
+    BOOST_REQUIRE(neighbors(5, 5) == 9);
+    BOOST_REQUIRE_CLOSE(distances(5, 5), (1.12 * 1.12), 1e-5);
     BOOST_REQUIRE(neighbors(6, 5) == 10);
-    BOOST_REQUIRE_CLOSE(distances(6, 5), (1.20 * 1.20), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(6, 5), (1.22 * 1.22), 1e-5);
     BOOST_REQUIRE(neighbors(7, 5) == 3);
-    BOOST_REQUIRE_CLOSE(distances(7, 5), (1.45 * 1.45), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(7, 5), (1.47 * 1.47), 1e-5);
     BOOST_REQUIRE(neighbors(8, 5) == 6);
-    BOOST_REQUIRE_CLOSE(distances(8, 5), (1.80 * 1.80), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(8, 5), (1.78 * 1.78), 1e-5);
     BOOST_REQUIRE(neighbors(9, 5) == 4);
-    BOOST_REQUIRE_CLOSE(distances(9, 5), (5.25 * 5.25), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(9, 5), (5.27 * 5.27), 1e-5);
     
     // Neighbors of point 6.
     BOOST_REQUIRE(neighbors(0, 6) == 7);
     BOOST_REQUIRE_CLOSE(distances(0, 6), (0.70 * 0.70), 1e-5);
     BOOST_REQUIRE(neighbors(1, 6) == 5);
-    BOOST_REQUIRE_CLOSE(distances(1, 6), (1.80 * 1.80), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(1, 6), (1.78 * 1.78), 1e-5);
     BOOST_REQUIRE(neighbors(2, 6) == 0);
     BOOST_REQUIRE_CLOSE(distances(2, 6), (2.05 * 2.05), 1e-5);
     BOOST_REQUIRE(neighbors(3, 6) == 2);
@@ -226,7 +226,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(0, 7) == 6);
     BOOST_REQUIRE_CLOSE(distances(0, 7), (0.70 * 0.70), 1e-5);
     BOOST_REQUIRE(neighbors(1, 7) == 5);
-    BOOST_REQUIRE_CLOSE(distances(1, 7), (1.10 * 1.10), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(1, 7), (1.08 * 1.08), 1e-5);
     BOOST_REQUIRE(neighbors(2, 7) == 0);
     BOOST_REQUIRE_CLOSE(distances(2, 7), (1.35 * 1.35), 1e-5);
     BOOST_REQUIRE(neighbors(3, 7) == 2);
@@ -256,7 +256,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(4, 8) == 10);
     BOOST_REQUIRE_CLOSE(distances(4, 8), (0.55 * 0.55), 1e-5);
     BOOST_REQUIRE(neighbors(5, 8) == 5);
-    BOOST_REQUIRE_CLOSE(distances(5, 8), (0.65 * 0.65), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(5, 8), (0.67 * 0.67), 1e-5);
     BOOST_REQUIRE(neighbors(6, 8) == 3);
     BOOST_REQUIRE_CLOSE(distances(6, 8), (0.80 * 0.80), 1e-5);
     BOOST_REQUIRE(neighbors(7, 8) == 7);
@@ -280,7 +280,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(5, 9) == 0);
     BOOST_REQUIRE_CLOSE(distances(5, 9), (0.85 * 0.85), 1e-5);
     BOOST_REQUIRE(neighbors(6, 9) == 5);
-    BOOST_REQUIRE_CLOSE(distances(6, 9), (1.10 * 1.10), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(6, 9), (1.12 * 1.12), 1e-5);
     BOOST_REQUIRE(neighbors(7, 9) == 7);
     BOOST_REQUIRE_CLOSE(distances(7, 9), (2.20 * 2.20), 1e-5);
     BOOST_REQUIRE(neighbors(8, 9) == 6);
@@ -302,7 +302,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE(neighbors(5, 10) == 0);
     BOOST_REQUIRE_CLOSE(distances(5, 10), (0.95 * 0.95), 1e-5);
     BOOST_REQUIRE(neighbors(6, 10) == 5);
-    BOOST_REQUIRE_CLOSE(distances(6, 10), (1.20 * 1.20), 1e-5);
+    BOOST_REQUIRE_CLOSE(distances(6, 10), (1.22 * 1.22), 1e-5);
     BOOST_REQUIRE(neighbors(7, 10) == 7);
     BOOST_REQUIRE_CLOSE(distances(7, 10), (2.30 * 2.30), 1e-5);
     BOOST_REQUIRE(neighbors(8, 10) == 6);
