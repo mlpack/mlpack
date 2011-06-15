@@ -1,0 +1,31 @@
+jenkins (1.415) natty; urgency=low
+
+  * Fork from jenkins-ci.org packaging, remove jenkins.list file
+  * 
+
+ -- Sterling Peet <speet3@hotwheels>  Wed, 15 Jun 2011 00:48:01 -0400
+
+jenkins (1.398) unstable; urgency=low
+
+  * See http://jenkins-ci.org/changelog for more details.
+
+ -- Kohsuke Kawaguchi <kk@kohsuke.org>  Sun, 20 Feb 2011 20:01:53 -0800
+
+jenkins (1.397) unstable; urgency=low
+
+  * See http://jenkins-ci.org/changelog for more details.
+
+ -- Kohsuke Kawaguchi <kk@kohsuke.org>  Sat, 12 Feb 2011 07:57:47 -0800
+
+jenkins (1.396) unstable; urgency=low
+
+  * See http://jenkins-ci.org/changelog for more details.
+
+ -- Kohsuke Kawaguchi <kk@kohsuke.org>  Wed, 02 Feb 2011 11:50:36 -0800
+
+jenkins (1.395) unstable; urgency=low
+
+  * See http://jenkins-ci.org/changelog for more details.
+
+ -- Kohsuke Kawaguchi <kk@kohsuke.org>  Fri, 21 Jan 2011 23:33:06 -0800
+
