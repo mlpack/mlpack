@@ -6,6 +6,7 @@
  */
 
 #include "core/tree/gen_metric_tree.h"
+#include "mlpack/kde/test_kde.h"
 #include "mlpack/distributed_kde/distributed_kde_dev.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 #include <time.h>
@@ -158,46 +159,6 @@ class TestDistributed_Kde {
       // Give some room for failure to account for numerical roundoff
       // error.
       return achieved_error <= 2 * relative_error;
-    }
-
-    template<typename MetricType, typename TableType, typename KernelType>
-    void UltraNaive_(
-      const MetricType &metric_in,
-      TableType &query_table, TableType &reference_table,
-      const KernelType &kernel,
-      std::vector<double> &ultra_naive_query_results) {
-
-      ultra_naive_query_results.resize(query_table.n_entries());
-      for(int i = 0; i < query_table.n_entries(); i++) {
-        core::table::DensePoint query_point;
-        query_table.get(i, &query_point);
-        ultra_naive_query_results[i] = 0;
-
-        for(int j = 0; j < reference_table.n_entries(); j++) {
-          core::table::DensePoint reference_point;
-          reference_table.get(j, &reference_point);
-
-          // By default, monochromaticity is assumed in the test -
-          // this will be addressed later for general bichromatic
-          // test.
-          if(i == j) {
-            continue;
-          }
-
-          double squared_distance =
-            metric_in.DistanceSq(query_point, reference_point);
-          double kernel_value =
-            kernel.EvalUnnormOnSq(squared_distance);
-
-          ultra_naive_query_results[i] += kernel_value;
-        }
-
-        // Divide by N - 1 for LOO. May have to be adjusted later.
-        ultra_naive_query_results[i] *=
-          (1.0 / (kernel.CalcNormConstant(query_table.n_attributes()) *
-                  ((double)
-                   reference_table.n_entries() - 1)));
-      }
     }
 
   public:
@@ -398,7 +359,7 @@ class TestDistributed_Kde {
         &total_distribution);
 
       if(world.rank() == 0) {
-        UltraNaive_(
+        mlpack::kde::TestKde::UltraNaive(
           *(distributed_kde_arguments.metric_),
           combined_reference_table, combined_reference_table,
           distributed_kde_instance.global().kernel(),
