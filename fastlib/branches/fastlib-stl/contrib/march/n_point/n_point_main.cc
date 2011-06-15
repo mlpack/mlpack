@@ -124,6 +124,8 @@ int main(int argc, char* argv[]) {
     
     
     alg.Compute();
+    
+    alg.OutputResults();
 
     fx_timer_stop(NULL, "multi_time");
     
