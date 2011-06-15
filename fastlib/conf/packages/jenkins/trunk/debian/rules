@@ -101,6 +101,7 @@ get-orig-source:
 			-f jenkins_$(DEB_UPSTREAM_VERSION).orig.tar.gz \
 			jenkins-$(DEB_UPSTREAM_VERSION)
 	rm -r jenkins-$(DEB_UPSTREAM_VERSION)
+	if [ -d ../tarballs ]; then mv jenkins_$(DEB_UPSTREAM_VERSION).orig.tar.gz ../tarballs; fi
 
 get-latest-source:
 	# Uscan can grab upstream source war
