@@ -10,6 +10,7 @@
 #include "core/metric_kernels/lmetric.h"
 #include "core/tree/gen_metric_tree.h"
 #include "mlpack/distributed_local_regression/distributed_local_regression_dev.h"
+#include "mlpack/local_regression/test_local_regression.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 #include <time.h>
 
@@ -25,7 +26,9 @@ class TestDistributedLocalRegression {
     typedef core::metric_kernels::LMetric<2> MetricType;
 
     template<typename TableType>
-    void CopyTable_(TableType *local_table, double **start_ptrs) {
+    void CopyTable_(
+      TableType *local_table, double **start_ptrs,
+      double **weight_start_ptrs) {
       int n_attributes = local_table->n_attributes();
 
       // Look at old_from_new_indices.
@@ -34,14 +37,20 @@ class TestDistributedLocalRegression {
 
       for(int i = 0; i < local_table->n_entries(); i++) {
         core::table::DensePoint point;
+        double weight;
         int old_process_index = old_from_new[i].first;
         int old_process_point_index = old_from_new[i].second.first;
         int new_process_old_from_new_index =
           old_from_new[i].second.second;
-        local_table->get(new_process_old_from_new_index, &point);
+        local_table->get(new_process_old_from_new_index, &point, &weight);
         double *destination = start_ptrs[old_process_index] +
                               n_attributes * old_process_point_index;
         memcpy(destination, point.ptr(), sizeof(double) * n_attributes);
+
+        // Currently assumes that there is only one weight per point.
+        double *weight_destination =
+          weight_start_ptrs[old_process_index] + old_process_point_index;
+        weight_destination[0] = weight;
       }
     }
 
@@ -54,6 +63,7 @@ class TestDistributedLocalRegression {
       TableType *local_table = distributed_reference_table->local_table();
       int n_attributes = local_table->n_attributes();
       double **start_ptrs = NULL;
+      double **weight_start_ptrs = NULL;
 
       // The master process needs to figure out the layout of the
       // original tables.
@@ -76,20 +86,25 @@ class TestDistributedLocalRegression {
       // copies its own data onto it.
       if(world.rank() == 0) {
         start_ptrs = new double *[world.size()];
+        weight_start_ptrs = new double *[world.size()];
         for(int i = 0; i < world.size(); i++) {
           total_num_points += total_distribution[i];
         }
         output_table.Init(n_attributes, total_num_points);
         start_ptrs[0] = output_table.data().ptr();
+        weight_start_ptrs[0] = output_table.weights().ptr();
         total_num_points = 0;
         for(int i = 0; i < world.size(); i++) {
           total_num_points += total_distribution[i];
           if(i + 1 < world.size()) {
             start_ptrs[i + 1] =
               start_ptrs[0] + total_num_points * n_attributes;
+            weight_start_ptrs[i + 1] =
+              weight_start_ptrs[0] +
+              total_num_points * output_table.weights().n_rows();
           }
         }
-        CopyTable_(local_table, start_ptrs);
+        CopyTable_(local_table, start_ptrs, weight_start_ptrs);
       }
 
       for(int i = 1; i < world.size(); i++) {
@@ -97,7 +112,7 @@ class TestDistributedLocalRegression {
         if(world.rank() == 0) {
           // Receive the table from $i$-th process and copy.
           world.recv(i, boost::mpi::any_tag, received_table);
-          CopyTable_(&received_table, start_ptrs);
+          CopyTable_(&received_table, start_ptrs, weight_start_ptrs);
         }
         else {
           // Send the table to the master process.
@@ -107,6 +122,7 @@ class TestDistributedLocalRegression {
       }
       if(world.rank() == 0) {
         delete[] start_ptrs;
+        delete[] weight_start_ptrs;
       }
       delete[] point_distribution;
     }
@@ -165,46 +181,6 @@ class TestDistributedLocalRegression {
       return achieved_error <= 2 * relative_error;
     }
 
-    template<typename MetricType, typename TableType, typename KernelType>
-    void UltraNaive_(
-      const MetricType &metric_in,
-      TableType &query_table, TableType &reference_table,
-      const KernelType &kernel,
-      std::vector<double> &ultra_naive_query_results) {
-
-      ultra_naive_query_results.resize(query_table.n_entries());
-      for(int i = 0; i < query_table.n_entries(); i++) {
-        core::table::DensePoint query_point;
-        query_table.get(i, &query_point);
-        ultra_naive_query_results[i] = 0;
-
-        for(int j = 0; j < reference_table.n_entries(); j++) {
-          core::table::DensePoint reference_point;
-          reference_table.get(j, &reference_point);
-
-          // By default, monochromaticity is assumed in the test -
-          // this will be addressed later for general bichromatic
-          // test.
-          if(i == j) {
-            continue;
-          }
-
-          double squared_distance =
-            metric_in.DistanceSq(query_point, reference_point);
-          double kernel_value =
-            kernel.EvalUnnormOnSq(squared_distance);
-
-          ultra_naive_query_results[i] += kernel_value;
-        }
-
-        // Divide by N - 1 for LOO. May have to be adjusted later.
-        ultra_naive_query_results[i] *=
-          (1.0 / (kernel.CalcNormConstant(query_table.n_attributes()) *
-                  ((double)
-                   reference_table.n_entries() - 1)));
-      }
-    }
-
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
@@ -246,6 +222,11 @@ class TestDistributedLocalRegression {
       int num_points = core::math::RandInt(300, 500);
       std::vector< std::string > args;
 
+      // Push in the order (just NWR).
+      std::stringstream order_sstr;
+      order_sstr << "--order=0";
+      args.push_back(order_sstr.str());
+
       // Push in the random generate command.
       std::stringstream random_generate_n_attributes_sstr;
       random_generate_n_attributes_sstr << "--random_generate_n_attributes=" <<
@@ -260,8 +241,8 @@ class TestDistributedLocalRegression {
       std::string references_in("random_dataset.csv");
       args.push_back(std::string("--references_in=") + references_in);
 
-      // Push in the densities output file name.
-      args.push_back(std::string("--densities_out=densities.txt"));
+      // Push in the predictions output file name.
+      args.push_back(std::string("--predictions_out=predictions.txt"));
 
       // Push in the kernel type.
       if(world.rank() == 0) {
@@ -393,7 +374,8 @@ class TestDistributedLocalRegression {
         &total_distribution);
 
       if(world.rank() == 0) {
-        UltraNaive_(
+        mlpack::local_regression::TestLocalRegression::UltraNaive(
+          0,
           distributed_local_regression_arguments.metric_,
           combined_reference_table, combined_reference_table,
           distributed_local_regression_instance.global().kernel(),
