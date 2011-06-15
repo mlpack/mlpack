@@ -152,6 +152,10 @@ namespace npt {
       return perms_.num_permutations(); 
     }
     
+    double matcher_dists(index_t i, index_t j) {
+      return (matcher_dists_[i][j]);
+    }
+    
   }; // class
   
 } // namespace

@@ -57,6 +57,9 @@ namespace npt {
     
     index_t FindResultsInd_(const std::vector<index_t>& perm_locations);
     
+    void FindMatcherInd_(index_t loc, std::vector<index_t>& result);
+
+    
     void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
                          std::vector<std::vector<index_t> >& perm_locations,

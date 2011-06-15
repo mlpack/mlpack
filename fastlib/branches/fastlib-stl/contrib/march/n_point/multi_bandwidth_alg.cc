@@ -25,6 +25,49 @@ index_t npt::MultiBandwidthAlg::FindResultsInd_(
   
 } // FindResultsInd
 
+// this is the inverse of the function above
+void npt::MultiBandwidthAlg::FindMatcherInd_(index_t loc,
+                                             std::vector<index_t>& result) {
+  
+  //std::vector<index_t> result(num_bands_.size());
+
+  index_t new_loc = loc;
+
+  index_t mod_fac = 1;
+  
+  for (index_t i = 0; i < num_bands_.size(); i++) {
+    mod_fac *= num_bands_[i];
+  }
+  
+  
+  for (int i = num_bands_.size() - 1; i >= 0; i--) {
+    
+    result[i] = new_loc;
+    
+    mod_fac = mod_fac / num_bands_[i];
+    
+    new_loc = new_loc % mod_fac;
+    
+  } // for i
+  
+
+  mod_fac = num_bands_[0];
+  for (index_t i = 1; i < result.size(); i++) {
+    
+    for (index_t j = 0; j < i; j++) {
+    
+      result[i] = result[i] - result[j];
+    
+    } // for j
+    
+    result[i] = result[i] / mod_fac;
+    
+    mod_fac = mod_fac * num_bands_[i];
+    
+  } // for i
+  
+} // FindMatcherInd
+
 
 void npt::MultiBandwidthAlg::BaseCaseHelper_(
                          std::vector<std::vector<index_t> >& point_sets,
@@ -193,7 +236,23 @@ void npt::MultiBandwidthAlg::DepthFirstRecursion_(NodeTuple& nodes) {
         
 void npt::MultiBandwidthAlg::OutputResults() {
   
-  std::cout << "First result: " << results_[0] << "\n\n";
+  //std::cout << "First result: " << results_[0] << "\n\n";
   
-} 
+  for (index_t i = 0; i < results_.size(); i++) {
+    
+    std::vector<index_t> matcher_ind(num_bands_.size());
+    FindMatcherInd_(i, matcher_ind);
+    
+    std::cout << "Matcher: ";
+    for (index_t j = 0; j < matcher_ind.size(); j++) {
+      
+      std::cout << matcher_.matcher_dists(j, matcher_ind[j]) << ", ";
+      
+    }
+    std::cout << ": " << results_[i] << "\n";
+    
+  } // for i
+  
+  
+} // OutputResults
 

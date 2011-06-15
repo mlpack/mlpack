@@ -20,8 +20,10 @@ index_t npt::MultiMatcher::IndexMatcherDim_(index_t i, index_t j) {
   
   index_t res = 0;
   
-  for (index_t k = 0; k < i-1; k++) {
-    res += (tuple_size_ - k - 1);
+  if (i > 0) {
+    for (index_t k = 0; k < i-1; k++) {
+      res += (tuple_size_ - k - 1);
+    }
   }
   
   res += (j - i - 1);
