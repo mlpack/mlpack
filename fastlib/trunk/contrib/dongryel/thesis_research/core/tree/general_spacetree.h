@@ -650,25 +650,29 @@ class GeneralBinarySpaceTree {
           // threshold, then split the node and put the children nodes
           // at the end.
           if(active_nodes[i]->count() > serial_depth_first_limit) {
+            if(active_nodes[i]->count() > leaf_size) {
 
-            TreeType *left = NULL;
-            TreeType *right = NULL;
-            bool can_cut = AttemptSplitting(
-                             metric_in, matrix, weights,
-                             active_nodes[i], &left, &right,
-                             leaf_size, old_from_new,
-                             core::table::global_m_file_);
+              TreeType *left = NULL;
+              TreeType *right = NULL;
+              bool can_cut = AttemptSplitting(
+                               metric_in, matrix, weights,
+                               active_nodes[i], &left, &right,
+                               leaf_size, old_from_new,
+                               core::table::global_m_file_);
 
-            // Set children information appropriately.
-            active_nodes[i]->set_children(matrix, left, right);
+              // Set children information appropriately.
+              active_nodes[i]->set_children(matrix, left, right);
 
-            if(can_cut) {
+              if(can_cut) {
 #pragma omp critical
-              {
-                // Start of critical section.
-                active_nodes.push_back(active_nodes[i]->left());
-                active_nodes.push_back(active_nodes[i]->right());
-              }  // End of critical section.
+                {
+                  // Start of critical section.
+                  active_nodes.push_back(active_nodes[i]->left());
+                  active_nodes.push_back(active_nodes[i]->right());
+                  (*current_num_leaf_nodes)++;
+                  (*num_nodes) += 2;
+                }  // End of critical section.
+              }
             }
           }
           else {
