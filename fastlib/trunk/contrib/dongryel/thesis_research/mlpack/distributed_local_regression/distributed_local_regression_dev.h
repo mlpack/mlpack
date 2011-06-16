@@ -102,6 +102,7 @@ DistributedTableType, KernelType, MetricType >::Init(
   if(arguments_in.query_table_ == NULL) {
     is_monochromatic_ = true;
     query_table_ = reference_table_;
+    arguments_in.query_table_ = query_table_;
   }
   else {
     is_monochromatic_ = false;
@@ -552,6 +553,16 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
               << arguments_out->relative_error_ <<
               " \\cdot G(q) + " << arguments_out->absolute_error_ <<
               " | \\mathcal{R} |$ \n";
+  }
+
+  // Parse the order and determine the problem dimension.
+  arguments_out->order_ = vm["order"].as<int>();
+  arguments_out->problem_dimension_ =
+    (arguments_out->order_ == 0) ?
+    1 : arguments_out->reference_table_->n_attributes() + 1;
+  if(world.rank() == 0) {
+    std::cout << "The order of local polynomial approximation: " <<
+              arguments_out->order_ << "\n";
   }
 
   // Parse the probability.
