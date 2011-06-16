@@ -195,11 +195,6 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<double>()->default_value(1.0),
     "Probability guarantee for the approximation of local regression."
   )(
-    "prescale",
-    boost::program_options::value<std::string>()->default_value("none"),
-    "OPTIONAL scaling option. One of:\n"
-    "  none, hypercube, standardize"
-  )(
     "queries_in",
     boost::program_options::value<std::string>(),
     "OPTIONAL file containing query positions.  If omitted, local "
