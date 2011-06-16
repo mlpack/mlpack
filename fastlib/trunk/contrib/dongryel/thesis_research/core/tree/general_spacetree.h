@@ -195,6 +195,26 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    template<typename MetricType>
+    static void SplitTreeBreadthFirstPostProcess_(
+      const MetricType &metric_in,
+      core::table::DenseMatrix& matrix,
+      TreeType *node,
+      int serial_depth_first_limit) {
+
+      if(! node->is_leaf()) {
+        if(node->count() > serial_depth_first_limit) {
+          SplitTreeBreadthFirstPostProcess_(
+            metric_in, matrix, node->left(), serial_depth_first_limit);
+          SplitTreeBreadthFirstPostProcess_(
+            metric_in, matrix, node->right(), serial_depth_first_limit);
+        }
+
+        TreeSpecType::CombineBounds(
+          metric_in, matrix, node, node->left(), node->right());
+      }
+    }
+
   public:
 
     /** @brief Finds the depth of the tree at this node.
@@ -673,6 +693,16 @@ class GeneralBinarySpaceTree {
                   (*num_nodes) += 2;
                 }  // End of critical section.
               }
+              else {
+                TreeSpecType::MakeLeafNode(
+                  metric_in, matrix, active_nodes[i]->begin(),
+                  active_nodes[i]->count(), &(active_nodes[i]->bound()));
+              }
+            } // end of splitting a non-leaf node.
+            else {
+              TreeSpecType::MakeLeafNode(
+                metric_in, matrix, active_nodes[i]->begin(),
+                active_nodes[i]->count(), &(active_nodes[i]->bound()));
             }
           }
           else {
@@ -689,6 +719,10 @@ class GeneralBinarySpaceTree {
         }
       }
       while(active_nodes.size() > 0);
+
+      // Correct the bounds later. Start from the root again.
+      SplitTreeBreadthFirstPostProcess_(
+        metric_in, matrix, node, serial_depth_first_limit);
     }
 
     /** @brief Recursively splits a given node creating its children
