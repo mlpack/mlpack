@@ -148,7 +148,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
   DEBUG_WARN_IF(!reference_node->is_leaf());
 
   // Used to find the query node's new upper bound
-  double query_max_neighbor_distance = SortPolicy::BestDistance();
+  double query_worst_distance = SortPolicy::BestDistance();
 
   // node->begin() is the index of the first point in the node,
   // node->end is one past the last index
@@ -189,13 +189,13 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
     }
 
     // We need to find the upper bound distance for this query node
-    if (SortPolicy::IsBetter(query_max_neighbor_distance,
+    if (SortPolicy::IsBetter(query_worst_distance,
         neighbor_distances_(knns_ - 1, query_index)))
-      query_max_neighbor_distance = neighbor_distances_(knns_ - 1, query_index);
+      query_worst_distance = neighbor_distances_(knns_ - 1, query_index);
   }
 
   // Update the upper bound for the query_node
-  query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
+  query_node->stat().bound_ = query_worst_distance;
 
 } // ComputeBaseCase_
 
@@ -208,8 +208,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       TreeType* reference_node,
       double lower_bound) {
 
-  if (SortPolicy::IsBetter(query_node->stat().max_distance_so_far(),
-      lower_bound)) {
+  if (SortPolicy::IsBetter(query_node->stat().bound_, lower_bound)) {
     number_of_prunes_++; // Pruned by distance; the nodes cannot be any closer
     return;              // than the already established lower bound.
   }
@@ -257,13 +256,13 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
     // We need to update the upper bound based on the new upper bounds of
     // the children
-    double left_bound = query_node->left()->stat().max_distance_so_far();
-    double right_bound = query_node->right()->stat().max_distance_so_far();
+    double left_bound = query_node->left()->stat().bound_;
+    double right_bound = query_node->right()->stat().bound_;
 
     if (SortPolicy::IsBetter(left_bound, right_bound))
-      query_node->stat().set_max_distance_so_far(right_bound);
+      query_node->stat().bound_ = right_bound;
     else
-      query_node->stat().set_max_distance_so_far(left_bound);
+      query_node->stat().bound_ = left_bound;
 
     return;
   }
@@ -307,13 +306,13 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
   }
 
   // Update the upper bound as above
-  double left_bound = query_node->left()->stat().max_distance_so_far();
-  double right_bound = query_node->right()->stat().max_distance_so_far();
+  double left_bound = query_node->left()->stat().bound_;
+  double right_bound = query_node->right()->stat().bound_;
 
   if (SortPolicy::IsBetter(left_bound, right_bound))
-    query_node->stat().set_max_distance_so_far(right_bound);
+    query_node->stat().bound_ = right_bound;
   else
-    query_node->stat().set_max_distance_so_far(left_bound);
+    query_node->stat().bound_ = left_bound;
 
 } // ComputeDualNeighborsRecursion_
 
