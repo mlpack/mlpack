@@ -50,7 +50,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
 
   // Initialize the vector of upper bounds for each point.
   neighbor_distances_.set_size(knns_, queries_.n_cols);
-  neighbor_distances_.fill(DBL_MAX);
+  neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
   IO::StartTimer("neighbor_search/tree_building");
@@ -103,7 +103,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
 
   // Initialize the vector of upper bounds for each point.
   neighbor_distances_.set_size(knns_, references_.n_cols);
-  neighbor_distances_.fill(DBL_MAX);
+  neighbor_distances_.fill(SortPolicy::WorstDistance());
 
   // We'll time tree building
   IO::StartTimer("neighbor_search/tree_building");
@@ -132,31 +132,6 @@ NeighborSearch<Kernel, SortPolicy>::~NeighborSearch() {
 }
 
 /**
- * Computes the minimum squared distance between the bounding boxes of two nodes
- */
-template<typename Kernel, typename SortPolicy>
-double NeighborSearch<Kernel, SortPolicy>::MinNodeDistSq_(
-      TreeType* query_node,
-      TreeType* reference_node) {
-  // node->bound() gives us the DHrectBound class for the node
-  // It has a function MinDistanceSq which takes another DHrectBound
-  return query_node->bound().MinDistanceSq(reference_node->bound());
-}
-
-/**
- * Computes the minimum squared distances between a point and a node's bounding
- * box
- */
-template<typename Kernel, typename SortPolicy>
-double NeighborSearch<Kernel, SortPolicy>::MinPointNodeDistSq_(
-      const arma::vec& query_point,
-      TreeType* reference_node) {
-  // node->bound() gives us the DHrectBound class for the node
-  // It has a function MinDistanceSq which takes another DHrectBound
-  return reference_node->bound().MinDistanceSq(query_point);
-}
-
-/**
  * Performs exhaustive computation between two leaves.
  */
 template<typename Kernel, typename SortPolicy>
@@ -173,7 +148,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
   DEBUG_WARN_IF(!reference_node->is_leaf());
 
   // Used to find the query node's new upper bound
-  double query_max_neighbor_distance = -1.0;
+  double query_max_neighbor_distance = SortPolicy::BestDistance();
 
   // node->begin() is the index of the first point in the node,
   // node->end is one past the last index
@@ -184,9 +159,10 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
     arma::vec query_point = queries_.unsafe_col(query_index);
 
     double query_to_node_distance =
-      MinPointNodeDistSq_(query_point, reference_node);
+      SortPolicy::BestPointToNodeDistance(query_point, reference_node);
 
-    if (query_to_node_distance < neighbor_distances_(knns_ - 1, query_index)) {
+    if (SortPolicy::IsBetter(query_to_node_distance,
+        neighbor_distances_(knns_ - 1, query_index))) {
       // We'll do the same for the references
       for (index_t reference_index = reference_node->begin();
           reference_index < reference_node->end(); reference_index++) {
@@ -213,8 +189,8 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
     }
 
     // We need to find the upper bound distance for this query node
-    if (neighbor_distances_(knns_ - 1, query_index) >
-        query_max_neighbor_distance)
+    if (SortPolicy::IsBetter(query_max_neighbor_distance,
+        neighbor_distances_(knns_ - 1, query_index)))
       query_max_neighbor_distance = neighbor_distances_(knns_ - 1, query_index);
   }
 
@@ -232,7 +208,8 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
       TreeType* reference_node,
       double lower_bound) {
 
-  if (lower_bound > query_node->stat().max_distance_so_far()) {
+  if (SortPolicy::IsBetter(query_node->stat().max_distance_so_far(),
+      lower_bound)) {
     number_of_prunes_++; // Pruned by distance; the nodes cannot be any closer
     return;              // than the already established lower bound.
   }
@@ -247,10 +224,12 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
     // We'll order the computation by distance; descend in the direction of less
     // distance first.
-    double left_distance = MinNodeDistSq_(query_node, reference_node->left());
-    double right_distance = MinNodeDistSq_(query_node, reference_node->right());
+    double left_distance = SortPolicy::BestNodeToNodeDistance(query_node,
+        reference_node->left());
+    double right_distance = SortPolicy::BestNodeToNodeDistance(query_node,
+        reference_node->right());
 
-    if (left_distance < right_distance) {
+    if (SortPolicy::IsBetter(left_distance, right_distance)) {
       ComputeDualNeighborsRecursion_(query_node, reference_node->left(),
           left_distance);
       ComputeDualNeighborsRecursion_(query_node, reference_node->right(),
@@ -266,8 +245,10 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
   if (reference_node->is_leaf()) {
     // We must descend down the query node to get to a leaf.
-    double left_distance = MinNodeDistSq_(query_node->left(), reference_node);
-    double right_distance = MinNodeDistSq_(query_node->right(), reference_node);
+    double left_distance = SortPolicy::BestNodeToNodeDistance(
+        query_node->left(), reference_node);
+    double right_distance = SortPolicy::BestNodeToNodeDistance(
+        query_node->right(), reference_node);
 
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node,
         left_distance);
@@ -276,21 +257,26 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
     // We need to update the upper bound based on the new upper bounds of
     // the children
-    query_node->stat().set_max_distance_so_far(
-        max(query_node->left()->stat().max_distance_so_far(),
-            query_node->right()->stat().max_distance_so_far()));
+    double left_bound = query_node->left()->stat().max_distance_so_far();
+    double right_bound = query_node->right()->stat().max_distance_so_far();
+
+    if (SortPolicy::IsBetter(left_bound, right_bound))
+      query_node->stat().set_max_distance_so_far(right_bound);
+    else
+      query_node->stat().set_max_distance_so_far(left_bound);
+
     return;
   }
 
   // Neither side is a leaf; so we recurse on all combinations of both.  The
   // calculations are ordered by distance.
-  double left_distance = MinNodeDistSq_(query_node->left(),
+  double left_distance = SortPolicy::BestNodeToNodeDistance(query_node->left(),
       reference_node->left());
-  double right_distance = MinNodeDistSq_(query_node->left(),
+  double right_distance = SortPolicy::BestNodeToNodeDistance(query_node->left(),
       reference_node->right());
 
   // Recurse on query_node->left() first.
-  if (left_distance < right_distance) {
+  if (SortPolicy::IsBetter(left_distance, right_distance)) {
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->left(),
         left_distance);
     ComputeDualNeighborsRecursion_(query_node->left(), reference_node->right(),
@@ -302,11 +288,13 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
         left_distance);
   }
 
-  left_distance = MinNodeDistSq_(query_node->right(), reference_node->left());
-  right_distance = MinNodeDistSq_(query_node->right(), reference_node->right());
+  left_distance = SortPolicy::BestNodeToNodeDistance(query_node->right(),
+      reference_node->left());
+  right_distance = SortPolicy::BestNodeToNodeDistance(query_node->right(),
+      reference_node->right());
 
   // Now recurse on query_node->right().
-  if (left_distance < right_distance) {
+  if (SortPolicy::IsBetter(left_distance, right_distance)) {
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->left(),
         left_distance);
     ComputeDualNeighborsRecursion_(query_node->right(), reference_node->right(),
@@ -319,9 +307,14 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
   }
 
   // Update the upper bound as above
-  query_node->stat().set_max_distance_so_far(
-      max(query_node->left()->stat().max_distance_so_far(),
-          query_node->right()->stat().max_distance_so_far()));
+  double left_bound = query_node->left()->stat().max_distance_so_far();
+  double right_bound = query_node->right()->stat().max_distance_so_far();
+
+  if (SortPolicy::IsBetter(left_bound, right_bound))
+    query_node->stat().set_max_distance_so_far(right_bound);
+  else
+    query_node->stat().set_max_distance_so_far(left_bound);
+
 } // ComputeDualNeighborsRecursion_
 
 template<typename Kernel, typename SortPolicy>
@@ -329,7 +322,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
       index_t point_id,
       arma::vec& point,
       TreeType* reference_node,
-      double* min_dist_so_far) {
+      double& best_dist_so_far) {
 
   if (reference_node->is_leaf()) {
     // Base case: reference node is a leaf
@@ -344,7 +337,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
 
         double distance = kernel_.Evaluate(point, reference_point);
 
-        // If the reference point is closer than any of the current candidates,
+        // If the reference point is better than any of the current candidates,
         // insert it into the list correctly.
         arma::vec query_dist = neighbor_distances_.unsafe_col(point_id);
         index_t insert_position =  SortPolicy::SortDistance(query_dist,
@@ -355,45 +348,47 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
       }
     } // for reference_index
     
-    *min_dist_so_far = neighbor_distances_(knns_ - 1, point_id);
+    best_dist_so_far = neighbor_distances_(knns_ - 1, point_id);
   } else {
-    // We'll order the computation by distance
-    double left_distance = reference_node->left()->bound().MinDistanceSq(point);
-    double right_distance =
-        reference_node->right()->bound().MinDistanceSq(point);
+    // We'll order the computation by distance.
+    double left_distance = SortPolicy::BestPointToNodeDistance(point,
+        reference_node->left());
+    double right_distance = SortPolicy::BestPointToNodeDistance(point,
+        reference_node->right());
 
-    // Recurse in the closest direction first.
-    if (left_distance < right_distance) {
-      if (*min_dist_so_far < left_distance)
+    // Recurse in the best direction first.
+    if (SortPolicy::IsBetter(left_distance, right_distance)) {
+      if (SortPolicy::IsBetter(best_dist_so_far, left_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
         ComputeSingleNeighborsRecursion_(point_id, point,
-            reference_node->left(), min_dist_so_far);
+            reference_node->left(), best_dist_so_far);
 
-      if (*min_dist_so_far < right_distance)
+      if (SortPolicy::IsBetter(best_dist_so_far, right_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
         ComputeSingleNeighborsRecursion_(point_id, point,
-            reference_node->right(), min_dist_so_far);
+            reference_node->right(), best_dist_so_far);
       
     } else {
-      if (*min_dist_so_far < right_distance)
+      if (SortPolicy::IsBetter(best_dist_so_far, right_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
         ComputeSingleNeighborsRecursion_(point_id, point,
-            reference_node->right(), min_dist_so_far);
+            reference_node->right(), best_dist_so_far);
 
-      if (*min_dist_so_far < left_distance)
+      if (SortPolicy::IsBetter(best_dist_so_far, left_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.
       else
         ComputeSingleNeighborsRecursion_(point_id, point,
-            reference_node->left(), min_dist_so_far);
+            reference_node->left(), best_dist_so_far);
     }
   }
 }
 
 /**
- * Computes the nearest neighbors and stores them in *results
+ * Computes the best neighbors and stores them in resulting_neighbors and
+ * distances.
  */
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
@@ -412,10 +407,11 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       // Start on the root of each tree
       if (query_tree_) {
         ComputeDualNeighborsRecursion_(query_tree_, reference_tree_,
-            MinNodeDistSq_(query_tree_, reference_tree_));
+            SortPolicy::BestNodeToNodeDistance(query_tree_, reference_tree_));
       } else {
         ComputeDualNeighborsRecursion_(reference_tree_, reference_tree_,
-            MinNodeDistSq_(reference_tree_, reference_tree_));
+            SortPolicy::BestNodeToNodeDistance(reference_tree_,
+            reference_tree_));
       }
     } else {
       index_t chunk = queries_.n_cols / 10;
@@ -423,17 +419,17 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
       for(index_t i = 0; i < 10; i++) {
         for(index_t j = 0; j < chunk; j++) {
           arma::vec point = queries_.unsafe_col(i * chunk + j);
-          double min_dist_so_far = DBL_MAX;
+          double best_dist_so_far = SortPolicy::WorstDistance();
           ComputeSingleNeighborsRecursion_(i * chunk + j, point,
-              reference_tree_, &min_dist_so_far);
+              reference_tree_, best_dist_so_far);
         }
       }
       for(index_t i = 0; i < queries_.n_cols % 10; i++) {
         index_t ind = (queries_.n_cols / 10) * 10 + i;
         arma::vec point = queries_.unsafe_col(ind);
-        double min_dist_so_far = DBL_MAX;
+        double best_dist_so_far = SortPolicy::WorstDistance();
         ComputeSingleNeighborsRecursion_(ind, point, reference_tree_,
-            &min_dist_so_far);
+            best_dist_so_far);
       }
     }
   }
