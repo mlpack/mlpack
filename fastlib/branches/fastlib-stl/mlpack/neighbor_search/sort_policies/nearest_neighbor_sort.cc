@@ -21,4 +21,7 @@ index_t NearestNeighborSort::SortDistance(arma::vec& list,
     if (new_distance <= list[i])
       return i;
   }
+
+  // Control should never reach here.
+  return (index_t() - 1);
 }

@@ -5,8 +5,8 @@
  * data sets.
  */
 
-#ifndef MLPACK_NEIGHBOR_SEARCH_H
-#define MLPACK_NEIGHBOR_SEARCH_H
+#ifndef __MLPACK_NEIGHBOR_SEARCH_H
+#define __MLPACK_NEIGHBOR_SEARCH_H
 
 #include <fastlib/fastlib.h>
 #include <vector>
@@ -82,8 +82,8 @@ class NeighborSearch {
      * at the time of tree building.
      */
     void Init(const arma::mat& matrix, index_t start, index_t count) {
-      // The bound starts at infinity
-      max_distance_so_far_ = DBL_MAX;
+      // The bound starts at the worst possible distance.
+      max_distance_so_far_ = SortPolicy::WorstDistance();
     }
 
     /**
@@ -179,19 +179,6 @@ class NeighborSearch {
 
  private:
   /**
-   * Computes the minimum squared distance between the bounding boxes of two
-   * nodes
-   */
-  double MinNodeDistSq_(TreeType* query_node, TreeType* reference_node);
-
-  /**
-   * Computes the minimum squared distances between a point and a node's
-   * bounding box
-   */
-  double MinPointNodeDistSq_(const arma::vec& query_point,
-                             TreeType* reference_node);
-
-  /**
    * Performs exhaustive computation between two leaves, comparing every node in
    * the leaf to the other leaf to find the furthest neighbor.  The
    * neighbor_indices_ and neighbor_distances_ arrays will be updated with the
@@ -213,7 +200,7 @@ class NeighborSearch {
    */
   void ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point,
                                         TreeType* reference_node,
-                                        double* min_dist_so_far);
+                                        double& best_dist_so_far);
 
   /***
    * Helper function to insert a point into the neighbors and distances
@@ -227,15 +214,15 @@ class NeighborSearch {
   void InsertNeighbor(index_t query_index, index_t pos, index_t neighbor,
                       double distance);
 
-}; // class AllkNN
+}; // class NeighborSearch
 
-typedef NeighborSearch<mlpack::kernel::L2SquaredMetric, NearestNeighborSort>
-    AllkNN;
-
-}; // namespace allknn
+}; // namespace neighbor
 }; // namespace mlpack
 
 // Include implementation.
 #include "neighbor_search_impl.h"
+
+// Include convenience typedefs.
+#include "typedef.h"
 
 #endif
