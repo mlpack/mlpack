@@ -1,0 +1,44 @@
+/***
+ * @file typedef.h
+ * @author Ryan Curtin
+ *
+ * Simple typedefs describing template instantiations of the NeighborSearch
+ * class which are commonly used.  This is meant to be included by
+ * neighbor_search.h but is a separate file for simplicity.
+ */
+#ifndef __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+#define __MLPACK_NEIGHBOR_SEARCH_TYPEDEF_H
+
+// In case someone included this directly.
+#include "neighbor_search.h"
+
+#include <mlpack/core/kernels/l2_squared_metric.h>
+
+#include "sort_policies/nearest_neighbor_sort.h"
+#include "sort_policies/furthest_neighbor_sort.h"
+
+namespace mlpack {
+namespace neighbor {
+
+/***
+ * The AllkNN class is the all-k-nearest-neighbors method.  It returns squared
+ * L2 distances (squared Euclidean distances) for each of the k nearest
+ * neighbors.  Squared distances are used because they are slightly faster than
+ * non-squared distances (they have one fewer call to sqrt()).
+ */
+typedef NeighborSearch<mlpack::kernel::L2SquaredMetric, NearestNeighborSort>
+    AllkNN;
+
+/***
+ * The AllkFN class is the all-k-furthest-neighbors method.  It returns squared
+ * L2 distances (squared Euclidean distances) for each of the k furthest
+ * neighbors.  Squared distances are used because they are slightly faster than
+ * non-squared distances (they have one fewer call to sqrt()).
+ */
+typedef NeighborSearch<mlpack::kernel::L2SquaredMetric, FurthestNeighborSort>
+    AllkFN;
+
+}; // namespace neighbor
+}; // namespace mlpack
+
+#endif
