@@ -66,6 +66,12 @@ class LocalRegressionStatistic {
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
+      ar & average_info_;
+      ar & weighted_average_info_;
+      ar & min_average_info_;
+      ar & max_average_info_;
+      ar & min_weighted_average_info_;
+      ar & max_weighted_average_info_;
       ar & postponed_;
       ar & summary_;
     }
