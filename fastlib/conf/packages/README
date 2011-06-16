@@ -4,9 +4,13 @@ you DO NOT want to store the upstream source in the repository.  If you
 do this, you need to provide a watch file and get-orig-source target in the
 rules file, so anyone who checks out the packaging can build the package.
 
-"-c 2" checks out the entire package source tree, not just trunk.  Omission
-will not check the source out by default.
+Alternatively or complimentary to the get-orig-source target, consider using
+a helper script found in the debian folder with the watch file.  This way,
+the person trying to replicate your package can use
+uscan --download-current-version to get the original source tarball, and
+automated scripts will know how to put that source tarball in the right
+place to built the package.
 
-svn-inject -o -c 2 --no-branches /path/to/<package>_<version>.dsc http://svn.cc.gatech.edu/fastlab/fastlib/conf/packages/
+svn-inject -o --no-branches /path/to/<package>_<version>.dsc http://svn.cc.gatech.edu/fastlab/fastlib/conf/packages/
 
 
