@@ -115,7 +115,16 @@ class LocalRegressionGlobal {
      */
     boost::math::normal normal_dist_;
 
+    /** @brief Whether to do a postprocessing for each query
+     *         (i.e. solve the linear system).
+     */
+    bool do_postprocess_;
+
   public:
+
+    bool do_postprocess() const {
+      return do_postprocess_;
+    }
 
     /** @brief Returns the standard score corresponding to the
      *         cumulative distribution of the unit variance normal
@@ -200,6 +209,7 @@ class LocalRegressionGlobal {
       query_table_ = NULL;
       reference_table_ = NULL;
       is_monochromatic_ = true;
+      do_postprocess_ = true;
     }
 
     /** @brief Returns the query table.
@@ -279,6 +289,10 @@ class LocalRegressionGlobal {
     template<typename ArgumentType>
     void Init(ArgumentType &arguments_in) {
 
+      // Set do_postprocess flag.
+      do_postprocess_ = arguments_in.do_postprocess_;
+
+      // Set the effective number of reference points.
       effective_num_reference_points_ =
         arguments_in.effective_num_reference_points_;
 

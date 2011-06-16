@@ -96,6 +96,11 @@ class DistributedLocalRegressionArguments {
      */
     int problem_dimension_;
 
+    /** @brief Whether to do the postprocessing at every GNP
+     *         computation.
+     */
+    bool do_postprocess_;
+
   public:
 
     /** @brief The default constructor.
@@ -117,6 +122,7 @@ class DistributedLocalRegressionArguments {
       is_monochromatic_ = true;
       order_ = 0;
       problem_dimension_ = 0;
+      do_postprocess_ = true;
     }
 
     /** @brief The destructor.

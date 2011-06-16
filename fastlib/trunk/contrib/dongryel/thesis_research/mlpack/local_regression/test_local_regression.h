@@ -158,7 +158,7 @@ class TestLocalRegression {
     }
 
     int StressTestMain() {
-      for(int order = 1; order >= 0; order--) {
+      for(int order = 0; order >= 0; order--) {
         for(int i = 0; i < 20; i++) {
           for(int k = 0; k < 4; k++) {
             // Randomly choose the number of dimensions and the points.
