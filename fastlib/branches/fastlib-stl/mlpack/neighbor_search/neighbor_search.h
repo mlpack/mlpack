@@ -35,21 +35,53 @@ namespace neighbor {
  * according to a given sorting policy.
  *
  * The template parameters Kernel and SortPolicy define the distance function
- * used and the sort function used.
+ * used and the sort function used.  Prototypes for the two policy classes are
+ * given below.
+ *
+ * class Kernel {
+ *  public:
+ *   Kernel(); // Default constructor is necessary.
+ *
+ *   // Evaluate the kernel function on these two vectors.
+ *   double Evaluate(arma::vec&, arma::vec&);
+ * };
+ *
+ * class SortPolicy {
+ *  public:
+ *   // Return the index in the list where the new distance should be inserted,
+ *   // or index_t() - 1 if it should not be inserted (i.e. if it is not any
+ *   // better than any of the existing points in the list).  The list is sorted
+ *   // such that the best point is first in the list.  The actual insertion is
+ *   // not performed.
+ *   static index_t SortDistance(arma::vec& list, double new_distance);
+ *
+ *   // Return whether or not value is "better" than ref.
+ *   static inline bool IsBetter(const double value, const double ref);
+ *
+ *   // Return the best possible distance between two nodes.
+ *   template<typename TreeType>
+ *   static double BestNodeToNodeDistacne(TreeType* query_node,
+ *                                        TreeType* reference_node);
+ *
+ *   // Return the best possible distance between a node and a point.
+ *   template<typename TreeType>
+ *   static double BestPointToNodeDistance(const arma::vec& query_point,
+ *                                         TreeType* reference_node);
+ *
+ *   // Return the worst or best possible distance for this sort policy.
+ *   static inline const double WorstDistance();
+ *   static inline const double BestDistance();
+ * };
  *
  * @tparam Kernel The kernel function.  Must provide a default constructor and
- *   a function 'void Evaluate(arma::vec&, arma::vec&)'.
- * @tparam SortPolicy The sort function for distances.  Must provide a function
- *   'index_t SortDistance(arma::vec&, double)'.  In this function a vector of
- *   distances is given (as well as a new distance) and the function must return
- *   the index in the vector where this distance should be inserted, or SIZE_MAX
- *   if it should not be inserted.
+ *   a function 'double Evaluate(arma::vec&, arma::vec&)'.
+ * @tparam SortPolicy The sort policy for distances.  See
+ *   sort_policies/nearest_neighbor_sort.h for an example.
  */
 template<typename Kernel = mlpack::kernel::L2SquaredMetric,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch {
 
-  //////////////////////////// Nested Classes /////////////////////////////////
   /**
   * Extra data for each node in the tree.  For all nearest neighbors,
   * each node only
@@ -57,20 +89,11 @@ class NeighborSearch {
   */
   class QueryStat {
 
-   private:
-    /**
-     * The upper bound on the node's nearest neighbor distances.
-     */
-    double max_distance_so_far_;
-
    public:
-    double max_distance_so_far() {
-      return max_distance_so_far_;
-    }
-
-    void set_max_distance_so_far(double new_dist) {
-      max_distance_so_far_ = new_dist;
-    }
+    /**
+     * The bound on the node's neighbor distances.
+     */
+    double bound_;
 
     // In addition to any member variables for the statistic, all stat
     // classes need two Init
@@ -83,7 +106,7 @@ class NeighborSearch {
      */
     void Init(const arma::mat& matrix, index_t start, index_t count) {
       // The bound starts at the worst possible distance.
-      max_distance_so_far_ = SortPolicy::WorstDistance();
+      bound_ = SortPolicy::WorstDistance();
     }
 
     /**
@@ -97,15 +120,13 @@ class NeighborSearch {
       Init(matrix, start, count);
     }
 
-  }; //class AllNNStat
+  }; //class QueryStat
 
   // TreeType are BinarySpaceTrees where the data are bounded by
   // Euclidean bounding boxes, the data are stored in a Matrix,
   // and each node has a QueryStat for its bound.
   typedef BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
 
-
-  /////////////////////////////// Members /////////////////////////////////////
  private:
   // These will store our data sets.
   arma::mat references_;
