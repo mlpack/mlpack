@@ -153,14 +153,20 @@ class LocalRegressionResult {
       SetZero();
     }
 
-    template<typename MetricType, typename GlobalType>
+    template<typename GlobalType, typename TableType>
+    void PostProcess(const GlobalType &global, TableType &query_table) {
+      for(int i = 0; i < num_query_points_; i++) {
+        core::table::DensePoint qpoint;
+        query_table.get(i, &qpoint);
+        PostProcess(global, qpoint, i);
+      }
+    }
+
+    template<typename GlobalType>
     void PostProcess(
-      const MetricType &metric,
-      const core::table::DensePoint &qpoint,
-      int q_index,
-      double q_weight,
       const GlobalType &global,
-      const bool is_monochromatic) {
+      const core::table::DensePoint &qpoint,
+      int q_index) {
 
       // Set up the linear system.
       left_hand_side_e_[q_index].sample_means(&tmp_left_hand_side_);
@@ -192,6 +198,20 @@ class LocalRegressionResult {
           regression_estimates_[q_index] += tmp_solution_[i] *
                                             qpoint[i - 1];
         }
+      }
+    }
+
+    template<typename MetricType, typename GlobalType>
+    void PostProcess(
+      const MetricType &metric,
+      const core::table::DensePoint &qpoint,
+      int q_index,
+      double q_weight,
+      const GlobalType &global,
+      const bool is_monochromatic) {
+
+      if(global.do_postprocess()) {
+        PostProcess(global, qpoint, q_index);
       }
     }
 

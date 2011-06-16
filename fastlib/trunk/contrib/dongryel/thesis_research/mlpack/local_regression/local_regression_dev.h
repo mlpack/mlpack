@@ -60,7 +60,9 @@ void LocalRegression<TableType, KernelType, MetricType>::Init(
 
   if(global_in != NULL) {
     arguments_in.is_monochromatic_ = global_in->is_monochromatic();
+    arguments_in.do_postprocess_ = global_in->do_postprocess();
   }
+
   // Declare the global constants.
   global_.Init(arguments_in);
 }

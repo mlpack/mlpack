@@ -90,6 +90,10 @@ class LocalRegressionArguments {
      */
     bool tables_are_aliased_;
 
+    /** @brief Whether the linear system is solved at the end.
+     */
+    bool do_postprocess_;
+
   public:
 
     template<typename GlobalType>
@@ -106,6 +110,7 @@ class LocalRegressionArguments {
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
+      do_postprocess_ = global_in.do_postprocess();
     }
 
     template<typename GlobalType>
@@ -122,6 +127,7 @@ class LocalRegressionArguments {
       probability_ = global_in.probability();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
+      do_postprocess_ = global_in.do_postprocess();
     }
 
     /** @brief The default constructor.
@@ -140,6 +146,7 @@ class LocalRegressionArguments {
       effective_num_reference_points_ = 0;
       is_monochromatic_ = false;
       tables_are_aliased_ = false;
+      do_postprocess_ = true;
     }
 
     /** @brief The destructor.

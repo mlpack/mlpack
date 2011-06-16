@@ -79,6 +79,7 @@ DistributedTableType, KernelType, MetricType >::Compute(
 
   // Compute the result and do post-normalize.
   distributed_dualtree_dfs.Compute(arguments_in.metric_, result_out);
+  result_out->PostProcess(global_, *(query_table_->local_table()));
 
   if(world_->rank() == 0) {
     printf("Spent %g seconds in computation.\n", timer.elapsed());
@@ -110,6 +111,7 @@ DistributedTableType, KernelType, MetricType >::Init(
   }
 
   // Declare the global constants.
+  arguments_in.do_postprocess_ = false;
   global_.Init(arguments_in);
   global_.set_effective_num_reference_points(
     world_in, reference_table_, query_table_);
