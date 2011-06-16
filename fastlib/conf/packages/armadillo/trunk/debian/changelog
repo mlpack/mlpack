@@ -1,0 +1,136 @@
+armadillo (1.2.0+dfsg-0ubuntu1) natty; urgency=low
+
+  * Latest stable release
+  * Rebuild package for Ubuntu, (fork from debian)
+
+ -- Sterling Peet <sterling.peet@gatech.edu>  Thu, 16 Jun 2011 10:45:15 -0400
+
+armadillo (1.1.92+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+  * Remove patches/no_lib64.diff; include definition in rules file for lib
+    directory.
+  * Add binary-indep to the rules file.
+
+ -- Kumar Appaiah <akumar@debian.org>  Wed, 06 Apr 2011 01:35:19 -0500
+
+armadillo (1.1.90+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+
+ -- Kumar Appaiah <akumar@debian.org>  Wed, 23 Mar 2011 16:17:03 -0500
+
+armadillo (1.1.4+dfsg-1) unstable; urgency=low
+
+  * New upstream release
+  * Don't generate Doxygen docs anymore (Build-Depend on doxygen removed)
+  * Add missing copyright information
+  * Repack to be DFSG compliant
+  * Preserve config.hpp during clean operation
+  * Remove doc package; documentation now in dev package
+
+ -- Kumar Appaiah <akumar@debian.org>  Sun, 20 Feb 2011 18:00:25 -0600
+
+armadillo (1.1.2-1) unstable; urgency=low
+
+  * New upstream release
+  * Bump soname to 1
+  * Don't compress C++ example files
+
+ -- Kumar Appaiah <akumar@debian.org>  Tue, 15 Feb 2011 23:34:00 -0600
+
+armadillo (1.0.0-1) experimental; urgency=low
+
+  * New upstream release.
+  * Fix cleanup routine in debian/rules.
+  * Standards version is now 3.9.1 (no changes needed)
+
+ -- Kumar Appaiah <akumar@debian.org>  Thu, 25 Nov 2010 08:17:45 -0600
+
+armadillo (0.9.52-1) unstable; urgency=low
+
+  * New upstream release.
+  * Update Standards Version to 3.9.0 (No changes needed)
+
+ -- Kumar Appaiah <akumar@debian.org>  Sun, 25 Jul 2010 09:24:52 -0500
+
+armadillo (0.9.8-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kumar Appaiah <akumar@debian.org>  Mon, 17 May 2010 14:33:25 -0500
+
+armadillo (0.9.4-1) unstable; urgency=low
+
+  * New Upstream Release.
+
+ -- Kumar Appaiah <akumar@debian.org>  Sat, 20 Mar 2010 08:53:13 -0500
+
+armadillo (0.9.2-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kumar Appaiah <akumar@debian.org>  Thu, 04 Mar 2010 22:16:57 -0600
+
+armadillo (0.9.0-1) unstable; urgency=low
+
+  * New upstream release.
+
+ -- Kumar Appaiah <akumar@debian.org>  Wed, 17 Feb 2010 10:09:34 -0600
+
+armadillo (0.8.2-1) unstable; urgency=low
+
+  * New upstream release.
+  * Standards Version is now 3.8.4 (No changes needed)
+  * Add {$misc:Depends} to all packages.
+
+ -- Kumar Appaiah <akumar@debian.org>  Wed, 03 Feb 2010 06:04:11 -0600
+
+armadillo (0.8.0-1) unstable; urgency=low
+
+  * New upstream release.
+  * Standards Version is now 3.8.3 (no changes needed)
+  * Update watch file.
+
+ -- Kumar Appaiah <akumar@debian.org>  Sat, 19 Dec 2009 01:41:31 -0600
+
+armadillo (0.6.12-2) unstable; urgency=low
+
+  * Add boost dependency. Thanks to Dirk Eddelbuettel for bringing this to
+    my notice. In particular, use libboost-math-dev and
+    libboost-date-time-dev.
+  * Fix echo -e bashism. Thanks to Raphael Geissert for pointing
+    this out. (Closes: #535371)
+
+ -- Kumar Appaiah <akumar@debian.org>  Mon, 27 Jul 2009 09:17:46 -0500
+
+armadillo (0.6.12-1) UNRELEASED; urgency=low
+
+  * New upstream release.
+  * Standards version is now 3.8.2 (no changes).
+
+ -- Kumar Appaiah <akumar@debian.org>  Mon, 06 Jul 2009 06:30:45 -0400
+
+armadillo (0.6.10-2) unstable; urgency=low
+
+  * debian/control: Add quilt to Build-Depends.
+  * debian/patches: no_lib64.diff
+    + Patch to use lib64 always.
+
+ -- Kumar Appaiah <akumar@debian.org>  Sat, 09 May 2009 18:14:29 -0500
+
+armadillo (0.6.10-1) unstable; urgency=low
+
+  * New Upstream Version
+  * Update copyright: correct to mention that package is licensed under
+    LGPL v3 or later.
+  * Place library in /usr/lib64.
+
+ -- Kumar Appaiah <akumar@debian.org>  Sat, 09 May 2009 16:54:18 -0500
+
+armadillo (0.6.2-1) unstable; urgency=low
+
+  * Initial release (Closes: #521978)
+
+ -- Kumar Appaiah <akumar@debian.org>  Wed, 25 Mar 2009 15:02:42 -0500
+
