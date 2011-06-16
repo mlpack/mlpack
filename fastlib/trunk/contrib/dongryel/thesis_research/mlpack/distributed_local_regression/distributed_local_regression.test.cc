@@ -241,6 +241,11 @@ class TestDistributedLocalRegression {
       std::string references_in("random_dataset.csv");
       args.push_back(std::string("--references_in=") + references_in);
 
+      // Push in the reference target dataset name.
+      std::string reference_targets_in("random_weights.csv");
+      args.push_back(
+        std::string("--reference_targets_in=") + reference_targets_in);
+
       // Push in the predictions output file name.
       args.push_back(std::string("--predictions_out=predictions.txt"));
 
