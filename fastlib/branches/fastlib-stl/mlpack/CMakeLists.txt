@@ -36,9 +36,6 @@ set(MLPACK_STD_LIBS fastlib lapack blas )  ##! this ordering matters :(
 
 ## recurse
 set(DIRS
-    allkfn
-#    allknn
-    allnn
 #    disk_allnn  # does not compile, perhaps due to an API change
     core
     emst

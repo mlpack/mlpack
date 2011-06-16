@@ -8,6 +8,10 @@ set(SOURCES
   neighbor_search_impl.h
   sort_policies/nearest_neighbor_sort.h
   sort_policies/nearest_neighbor_sort.cc
+  sort_policies/nearest_neighbor_sort_impl.h
+  sort_policies/furthest_neighbor_sort.h
+  sort_policies/furthest_neighbor_sort.cc
+  typedef.h
 )
 
 # add directory name to sources
@@ -35,6 +39,27 @@ add_executable(allknn
 )
 # link dependencies of allknn
 target_link_libraries(allknn
+   mlpack
+   fastlib
+)
+
+# test executable
+add_executable(allkfn_test
+   allkfn_test.cc
+)
+# link dependencies of test executable
+target_link_libraries(allkfn_test
+   mlpack
+   fastlib
+   boost_unit_test_framework
+)
+
+# main executable
+add_executable(allkfn
+   allkfn_main.cc
+)
+# link dependencies of allknn
+target_link_libraries(allkfn
    mlpack
    fastlib
 )
