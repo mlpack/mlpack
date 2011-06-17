@@ -16,7 +16,11 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/tracking_enum.hpp>
 #include <deque>
+
+#ifdef _OPENMP
 #include <omp.h>
+#endif
+
 #include <queue>
 #include "core/parallel/distributed_tree_util.h"
 #include "core/table/dense_matrix.h"
@@ -628,6 +632,8 @@ class GeneralBinarySpaceTree {
       return true;
     }
 
+#ifdef _OPENMP
+
     /** @brief Recursively splits a given node creating its children
      *         in a breadth-first manner. This function is better for
      *         multi-threading.
@@ -724,6 +730,8 @@ class GeneralBinarySpaceTree {
       SplitTreeBreadthFirstPostProcess_(
         metric_in, matrix, node, serial_depth_first_limit);
     }
+
+#endif
 
     /** @brief Recursively splits a given node creating its children
      *         in a depth-first manner.
@@ -823,9 +831,16 @@ class GeneralBinarySpaceTree {
         metric_in, matrix, 0, matrix.n_cols(), &node->bound());
 
       int current_num_leaf_nodes = 1;
+
+#ifdef _OPENMP
       SplitTreeBreadthFirst(
         metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
         &current_num_leaf_nodes, old_from_new, &num_nodes_in);
+#else
+      SplitTreeDepthFirst(
+        metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
+        &current_num_leaf_nodes, old_from_new, &num_nodes_in);
+#endif
 
       if(num_nodes) {
         *num_nodes = num_nodes_in;
