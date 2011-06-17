@@ -146,6 +146,7 @@ class TestDistributedLocalRegression {
       int n_entries,
       int *total_distribution,
       const boost::scoped_array<double> &query_results,
+      int local_num_queries,
       const std::vector<double> &naive_query_results,
       double relative_error) {
 
@@ -156,8 +157,8 @@ class TestDistributedLocalRegression {
       }
 
       // Compute the collective L1 norm of the products.
-      double achieved_error = 0;
-      for(unsigned int j = 0; j < naive_query_results.size(); j++) {
+      double achieved_error = 0.0;
+      for(int j = 0; j < local_num_queries; j++) {
         int process_index = 0;
         int point_index = 0;
         FindOriginalIndices_(
@@ -167,11 +168,6 @@ class TestDistributedLocalRegression {
           fabs(naive_query_results[naive_index] - query_results[j]) /
           fabs(naive_query_results[naive_index]);
         achieved_error = std::max(achieved_error, per_relative_error);
-        if(relative_error < per_relative_error) {
-          std::cout << query_results[j] << " against " <<
-                    naive_query_results[naive_index] << ": " <<
-                    per_relative_error << "\n";
-        }
       }
       std::cout << "Process " << world.rank() <<
                 " achieved a relative error of " << achieved_error << "\n";
@@ -216,10 +212,10 @@ class TestDistributedLocalRegression {
       // Only the master generates the number of dimensions.
       int num_dimensions;
       if(world.rank() == 0) {
-        num_dimensions = core::math::RandInt(3, 4);
+        num_dimensions = core::math::RandInt(2, 5);
       }
       boost::mpi::broadcast(world, num_dimensions, 0);
-      int num_points = core::math::RandInt(300, 500);
+      int num_points = core::math::RandInt(500, 1000);
       std::vector< std::string > args;
 
       // Push in the order (just NWR).
@@ -398,6 +394,7 @@ class TestDistributedLocalRegression {
             distributed_reference_table->n_entries(),
             total_distribution,
             distributed_local_regression_result.regression_estimates_,
+            distributed_reference_table->n_entries(),
             ultra_naive_distributed_local_regression_result,
             distributed_local_regression_arguments.relative_error_) == false) {
         std::cerr << "There is a problem!\n";
