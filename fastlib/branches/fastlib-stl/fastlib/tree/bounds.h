@@ -43,7 +43,8 @@
 #ifndef TREE_BOUNDS_H
 #define TREE_BOUNDS_H
 
-#include "lmetric.h"
+#include <fastlib/math/math_lib.h>
+#include "../../mlpack/core/kernels/lmetric.h"
 #include "dhrectbound.h"
 #include "dballbound.h"
 
