@@ -17,7 +17,7 @@
 #include <boost/serialization/tracking_enum.hpp>
 #include <deque>
 
-#ifdef _OPENMP
+#ifdef OPENMP
 #include <omp.h>
 #endif
 
@@ -632,7 +632,7 @@ class GeneralBinarySpaceTree {
       return true;
     }
 
-#ifdef _OPENMP
+#ifdef OPENMP
 
     /** @brief Recursively splits a given node creating its children
      *         in a breadth-first manner. This function is better for
@@ -815,7 +815,9 @@ class GeneralBinarySpaceTree {
       int rank_in = 0) {
 
       // Enable OpenMP nested parallelization.
+#ifdef OPENMP
       omp_set_nested(true);
+#endif
 
       // Postprocess old_from_new indices before building the tree.
       IndexInitializer<IndexType>::PostProcessOldFromNew(matrix, old_from_new);
@@ -832,7 +834,7 @@ class GeneralBinarySpaceTree {
 
       int current_num_leaf_nodes = 1;
 
-#ifdef _OPENMP
+#ifdef OPENMP
       SplitTreeBreadthFirst(
         metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
         &current_num_leaf_nodes, old_from_new, &num_nodes_in);
