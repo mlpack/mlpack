@@ -41,7 +41,8 @@
 #ifndef TREE_DBALLBOUND_IMPL_H
 #define TREE_DBALLBOUND_IMPL_H
 
-#include "lmetric.h"
+// Awaiting transition
+#include "../../mlpack/core/kernels/lmetric.h"
 
 #include <armadillo>
 #include "../base/arma_compat.h"
@@ -182,12 +183,12 @@ double DBallBound<TMetric, TPoint>::MinimaxDistanceSq(const DBallBound& other) c
  * Calculates midpoint-to-midpoint bounding box distance.
  */
 template< >
-inline double DBallBound<LMetric<2>, GenVector<double> >::MidDistance(const GenVector<double>& point) const {
+inline double DBallBound<mlpack::kernel::SquaredEuclideanDistance, GenVector<double> >::MidDistance(const GenVector<double>& point) const {
   arma::vec tmp1;
   arma::vec tmp2;
   arma_compat::vectorToVec(center_, tmp1);
   arma_compat::vectorToVec(point, tmp2);
-  return Metric::Distance(tmp1, tmp2);
+  return Metric::Evaluate(tmp1, tmp2);
 }
 
 template<typename TMetric, typename TPoint>
@@ -202,7 +203,7 @@ double DBallBound<TMetric, TPoint>::MidDistanceSq(const DBallBound& other) const
 
 template<typename TMetric, typename TPoint>
 double DBallBound<TMetric, TPoint>::MidDistance(const Point& point) const {
-  return Metric::Distance(center_, point);
+  return Metric::Evaluate(center_, point);
 }
 
 #endif
