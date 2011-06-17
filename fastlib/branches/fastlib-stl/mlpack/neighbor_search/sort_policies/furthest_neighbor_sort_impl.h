@@ -8,7 +8,7 @@
 #ifndef __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_H
 #define __MLPACK_NEIGHBOR_FURTHEST_NEIGHBOR_SORT_IMPL_H
 
-#include <mlpack/core/kernels/l2_squared_metric.h>
+#include <mlpack/core/kernels/lmetric.h>
 
 namespace mlpack {
 namespace neighbor {

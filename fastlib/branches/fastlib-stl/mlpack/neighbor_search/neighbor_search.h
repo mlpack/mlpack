@@ -12,7 +12,7 @@
 #include <vector>
 #include <string>
 
-#include <mlpack/core/kernels/l2_squared_metric.h>
+#include <mlpack/core/kernels/lmetric.h>
 #include "sort_policies/nearest_neighbor_sort.h"
 
 // Define IO parameters for the NeighborSearch class.
@@ -78,7 +78,7 @@ namespace neighbor {
  * @tparam SortPolicy The sort policy for distances.  See
  *   sort_policies/nearest_neighbor_sort.h for an example.
  */
-template<typename Kernel = mlpack::kernel::L2SquaredMetric,
+template<typename Kernel = mlpack::kernel::SquaredEuclideanDistance,
          typename SortPolicy = NearestNeighborSort>
 class NeighborSearch {
 
