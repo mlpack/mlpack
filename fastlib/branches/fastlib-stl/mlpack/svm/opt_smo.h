@@ -495,7 +495,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   grad_bar_.set_size(n_alpha_);
   grad_bar_.zeros();
 
-  do_shrinking_ = fx_param_int(NULL, "shrink", 0);
+  do_shrinking_ = mlpack::IO::GetParam<int>("svm/shrink");
   ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i=0; i<n_alpha_; i++) {

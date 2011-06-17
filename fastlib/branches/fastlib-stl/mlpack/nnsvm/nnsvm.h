@@ -16,6 +16,11 @@
 
 #include <typeinfo>
 
+PARAM(double, "c", "Undocumented", "nnsvm", 10.0, false);
+PARAM(double, "eps", "Undocumented", "nnsvm", 1.0e-6, false);
+PARAM_INT("max_iter", "Undocumented", "nnsvm", 1000);
+PARAM(double, "sigma", "Undocumented", "nnsvm", 0.0, true);
+
 enum kernelEnumType
 {
   ID_LINEAR,
@@ -28,7 +33,7 @@ enum kernelEnumType
 */
 struct SVMLinearKernel
 {
-  void Init(datanode *node) {}
+  void Init() {}
 
   void Copy(const SVMLinearKernel& other) {}
 
@@ -59,9 +64,9 @@ class SVMRBFKernel
 {
   /* Init of kernel parameters */
   std::vector<double> kpara_; // kernel parameters
-  void Init(datanode *node) { //TODO: NULL->node
+  void Init() { //TODO: NULL->node
     kpara_.reserve(2);
-    kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
+    kpara_[0] = mlpack::IO::GetParam<double>("nnsvm/sigma"); //sigma
     kpara_[1] = -1.0 / (2 * pow(kpara_[0], 2.0)); //gamma
   }
   /* Kernel name */
@@ -124,8 +129,8 @@ class NNSVM
   index_t num_features_;
 
   public:
-    void Init(const arma::mat& dataset, index_t n_classes, datanode *module);
-    void InitTrain(const arma::mat& dataset, index_t n_classes, datanode *module);
+    void Init(const arma::mat& dataset, index_t n_classes);
+    void InitTrain(const arma::mat& dataset, index_t n_classes);
     void SaveModel(std::string modelfilename);
     void LoadModel(arma::mat& testset, std::string modelfilename);
     index_t Classify(const arma::vec& vector);

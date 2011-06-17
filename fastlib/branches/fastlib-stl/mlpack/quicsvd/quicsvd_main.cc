@@ -12,46 +12,28 @@
  */
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "quicsvd.h"
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
-const fx_entry_doc quicsvd_main_entries[] = {
-  {"A_in", FX_REQUIRED, FX_STR, NULL,
-   " File consists of matrix A to be decomposed A = U S VT. \n"},
-  {"relErr", FX_PARAM, FX_DOUBLE, NULL,
-   " Target relative error |A|-|A'|/|A|, default = 0.1.\n"},
-  {"U_out", FX_PARAM, FX_STR, NULL,
-   " File to hold matrix U.\n"},
-  {"s_out", FX_PARAM, FX_STR, NULL,
-   " File to hold the singular values vector s.\n"},
-  {"VT_out", FX_PARAM, FX_STR, NULL,
-   " File to hold matrix VT (V transposed).\n"},
-  {"SVT_out", FX_PARAM, FX_STR, NULL,
-   " File to hold matrix S * VT (the dimension reduced data).\n"},
-  {"lasvd", FX_PARAM, FX_STR, NULL,
-   " Use this parameter to compare running time to that of la::SVDInit().\n"},
-  {"quicsvd_time", FX_TIMER, FX_CUSTOM, NULL,
-   " time to run the QUIC-SVD algorithm.\n"},
-  {"lasvd_time", FX_TIMER, FX_CUSTOM, NULL,
-   " time to run the SVD algorithm from LAPACK.\n"},
-  {"actualErr", FX_RESULT, FX_DOUBLE, NULL,
-   " actual relative norm error.\n"},
-  {"dimension", FX_RESULT, FX_INT, NULL,
-   " the reduced dimension of the data.\n"},
-  FX_ENTRY_DOC_DONE
-};
+PARAM_STRING_REQ("A_in", "File consists of matrix A to be decomposed A = U S VT.", "kernel");
+PARAM_STRING("U_out", "File to hold matrix U.", "kernel", "");
+PARAM_STRING("s_out", "File to hold the singular values vector s.", "kernel", "");
+PARAM_STRING("VT_out", "File to hold matrix VT (V transposed).", "kernel", "");
+PARAM_STRING("SVT_out", "File to hold matrix S * VT (the dimension reduced data).", "kernel", "");
+PARAM_STRING("lasvd", "Use this parameter to compare running time to that of la::SVDInit().", "kernel", "");
 
-const fx_submodule_doc quicsvd_main_submodules[] = {
-  FX_SUBMODULE_DOC_DONE
-};
+PARAM_INT("dimension", "the reduced dimension of the data.", "kernel", 0);
 
-const fx_module_doc quicsvd_main_doc = {
-  quicsvd_main_entries, quicsvd_main_submodules,
-  "This is a program calculating an approximated Singular "
-  "Value Decomposition using QUIC-SVD method.\n"
-};
+PARAM(double, "actualErr", "actual relative norm error.", "kernel", 0.0, false);
+PARAM(double, "relErr", "actual relative norm error.", "kernel", 0.1, false);
+
+PROGRAM_INFO("QuicSVD", "This is a program calculating an approximated\
+ Singular Value Decomposition using QUIC-SVD method.");
+
+using namespace mlpack;
 
 double norm(const Matrix& A) {
   double s = 0;
@@ -64,62 +46,63 @@ double norm(const Matrix& A) {
 }
 
 int main(int argc, char* argv[]) {
-  fx_init(argc, argv, &quicsvd_main_doc);
+  IO::ParseCommandLine(argc, argv);
 
   Matrix A, U, VT;
   Vector s;
 
   // parse input file to get matrix A
-  const char* A_in = fx_param_str(NULL, "A_in", NULL);
+  const char* A_in = IO::GetParam<std::string>("kernel/A_in").c_str();
 
-  printf("Loading data ... ");
+  IO::Info << "Loading data ... " << std::endl;
   fflush(stdout);
   arma::mat tmp;
   data::Load(A_in, tmp);
   arma_compat::armaToMatrix(tmp, A);
-  printf("n_rows = %"LI", n_cols = %"LI", done.\n", A.n_rows(), A.n_cols());
+  IO::Info << "n_rows = " << A.n_rows() << ", n_cols = " << 
+    A.n_cols() << ", done." << std::endl;
 
   // parse target relative error, default = 0.1
-  const double targetRelErr = fx_param_double(NULL, "relErr", 0.1);
+  const double targetRelErr = IO::GetParam<double>("kernel/relErr");
 
-  printf("QUIC-SVD start ... ");
+  IO::Info << "QUIC-SVD start ... " << std::endl;
   fflush(stdout);
-  fx_timer_start(NULL, "quicsvd_time");
+  IO::StartTimer("kernel/quicsvd_time");
   // call the QUIC-SVD method
   double actualErr = QuicSVD::SVDInit(A, targetRelErr, &s, &U, &VT);
-  fx_timer_stop(NULL, "quicsvd_time");
-  printf("stop.\n");
+  IO::StopTimer("kernel/quicsvd_time");
+  IO::Info << "stop." << std::endl;
   
-  fx_result_double(NULL, "actualErr", actualErr);
-  fx_result_int(NULL, "dimension", s.length());
+  IO::GetParam<double>("kernel/actualErr") = actualErr;
+  IO::GetParam<int>("kernel/dimension") = s.length();
 
-  if (fx_param_exists(NULL, "U_out")) {
+  if (IO::HasParam("kernel/U_out")) {
     arma_compat::matrixToArma(U, tmp);
-    data::Save(fx_param_str(NULL, "U_out", NULL), tmp);
+    data::Save(IO::GetParam<std::string>("kernel/U_out").c_str(), tmp);
   }
   //else // use OT to write to standard output
   //  ot::Print(U, "U", stdout);
 
-  if (fx_param_exists(NULL, "s_out")) {
+  if (IO::HasParam("kernel/s_out")) {
     Matrix S;
     S.AliasColVector(s);
     arma_compat::matrixToArma(S, tmp);
-    data::Save(fx_param_str(NULL, "s_out", NULL), tmp);
+    data::Save(IO::GetParam<std::string>("kernel/s_out").c_str(), tmp);
   }
   //else 
   //  ot::Print(s, "s", stdout);
 
-  if (fx_param_exists(NULL, "VT_out")) {
+  if (IO::HasParam("kernel/VT_out")) {
     arma_compat::matrixToArma(VT, tmp);
-    data::Save(fx_param_str(NULL, "VT_out", NULL), tmp);
+    data::Save(IO::GetParam<std::string>("kernel/VT_out").c_str(), tmp);
   }
   //else 
   //  ot::Print(VT, "VT", stdout);
 
-  if (fx_param_exists(NULL, "SVT_out")) {
+  if (IO::HasParam("kernel/SVT_out")) {
     la::ScaleRows(s, &VT);
     arma_compat::matrixToArma(VT, tmp);
-    data::Save(fx_param_str(NULL, "SVT_out", NULL), tmp);
+    data::Save(IO::GetParam<std::string>("kernel/SVT_out").c_str(), tmp);
   }
 
   /*
@@ -143,18 +126,16 @@ int main(int argc, char* argv[]) {
   printf("relative error: %f\n", norm(B)/norm(A));
   */
 
-  if (fx_param_exists(NULL, "lasvd")) {
+  if (IO::HasParam("kernel/lasvd")) {
     s.Destruct();
     U.Destruct();
     VT.Destruct();
-    printf("LAPACK-SVD start ... ");
+    IO::Info << "LAPACK-SVD start ... " << std::endl;
     fflush(stdout);
-    fx_timer_start(NULL, "lasvd_time");
+    IO::StartTimer("kernel/lasvd_time");
     // call the QUIC-SVD method
     la::SVDInit(A, &s, &U, &VT);
-    fx_timer_stop(NULL, "lasvd_time");
-    printf("stop.\n");
+    IO::StopTimer("kernel/lasvd_time");
+    IO::Info << "stop." << std::endl;
   }
-
-  fx_done(NULL);
 }

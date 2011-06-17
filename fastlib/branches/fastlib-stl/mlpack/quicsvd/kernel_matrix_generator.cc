@@ -1,35 +1,24 @@
 #include "fastlib/fastlib.h"
+#include <fastlib/fx/io.h>
 
-const fx_entry_doc kernel_matrix_generator_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   " File consists of data points in lines.\n"},
-  {"kernel", FX_REQUIRED, FX_STR, NULL,
-   " The kernel type: gaussian / polynomial.\n"},
-  {"bandwidth", FX_PARAM, FX_DOUBLE, NULL,
-   " The gaussian kernel bandwidth, default = 1.\n"},
-  {"degree", FX_PARAM, FX_DOUBLE, NULL,
-   " The polynomial kernel degree, default = 1.\n"},
-  {"rate", FX_PARAM, FX_INT, NULL,
-   " The sampling rate, default = 20 choose 1.\n"},
-  {"output", FX_PARAM, FX_STR, NULL,
-   " File to hold output kernel matrix,"
-   " default = \"kernel_matrix.txt\".\n"},
-  FX_ENTRY_DOC_DONE
-};
+PARAM_STRING_REQ("data", "File consists of data points in lines.", "kernel");
+PARAM_STRING_REQ("kernel", "The kernel type: gaussian / polynomial", "kernel");
+PARAM_STRING("output", "File to hold output kernel matrix default =\
+ kernel_matrix.txt.", "kernel", "kernel_matrix.txt");
+PARAM_INT("rate", "The sampling rate, default = 20 choose 1.", "kernel", 20);
+PARAM(double, "bandwidth", "The gaussian kernel bandwidth, default = 1.",
+  "kernel", 1, false);
+PARAM(double, "degree", "The polynomial kernel degree, default = 1.",
+  "kernel", 1, false);
 
-const fx_submodule_doc kernel_matrix_generator_submodules[] = {
-  FX_SUBMODULE_DOC_DONE
-};
+PROGRAM_INFO("Kernel Generator", 
+  "This is a program generating the kernel matrix of a set of points.");
 
-const fx_module_doc kernel_matrix_generator_doc = {
-  kernel_matrix_generator_entries, kernel_matrix_generator_submodules,
-  "This is a program generating the kernel matrix of "
-  "a set of points.\n"
-};
+using namespace mlpack;
 
 void gen_gaussian_kernel(const Matrix& ref, Matrix* kernel_matrix,
 			 int rate) {
-  double bandwidth = fx_param_double(fx_root, "bandwidth", 1);
+  double bandwidth = IO::GetParam<double>("kernel/bandwidth");
 
   // Initialize the kernel.
   GaussianKernel kernel;
@@ -51,7 +40,7 @@ void gen_gaussian_kernel(const Matrix& ref, Matrix* kernel_matrix,
 
 void gen_polynomial_kernel(const Matrix& ref, Matrix* kernel_matrix,
 			   int rate) {
-  double degree = fx_param_double(fx_root, "degree", 1);
+  double degree = IO::GetParam<double>("kernel/degree");
 
   int n_cols = (ref.n_cols()-1)/rate+1;
   kernel_matrix->Init(n_cols, n_cols);
@@ -72,14 +61,14 @@ int main(int argc, char *argv[]) {
   fx_init(argc, argv, &kernel_matrix_generator_doc);
   
   Matrix references;
-  const char *references_file_name = fx_param_str_req(fx_root, "data");
+  const char *references_file_name = 
+    IO::GetParam<std::string>("kernel/data").c_str();
   data::Load(references_file_name, &references);
 
-  printf("nrows = %d ncols = %d\n", references.n_rows(), 
-	 references.n_cols());
+  IO::Info << "nrows = " << references.n_rows() << " ncols = " << references.n_cols() << std::endl;
 
-  const char* kernel_type = fx_param_str_req(fx_root, "kernel");
-  int rate = fx_param_int(fx_root, "rate", 20);
+  const char* kernel_type = IO::GetParam<std::string.("kernel/kernel").c_str();
+  int rate = IO::GetParam<int>("kernel/rate");
 
 #define RUNNING 1
 #if RUNNING==1  
@@ -113,8 +102,7 @@ int main(int argc, char *argv[]) {
   */
 
   // Output the matrix.
-  const char *file_name = fx_param_str(fx_root, "output", 
-				       "kernel_matrix.txt");
+  const char *file_name = IO::GetParam<std::string>("kernel/output").c_str();
   data::Save(file_name, kernel_matrix);
   /*
   FILE *output_file = fopen(file_name, "w+");
@@ -125,7 +113,6 @@ int main(int argc, char *argv[]) {
     fprintf(output_file, "\n");
   }
   */
-  fx_done(fx_root);
 #endif
   return 0;
 }

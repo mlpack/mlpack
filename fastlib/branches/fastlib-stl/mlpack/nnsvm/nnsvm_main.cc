@@ -17,6 +17,16 @@
 
 #include <iostream>
 #include "nnsvm.h"
+#include <fastlib/fx/io.h>
+
+PARAM_STRING_REQ("mode", "Undocumented", "nnsvm");
+PARAM_STRING_REQ("kernel", "Undocumented", "nnsvm");
+PARAM_STRING_REQ("train_data", "Undocumented", "nnsvm");
+
+
+
+
+using namespace mlpack;
 
 /**
 * NNSVM training - Main function
@@ -26,49 +36,46 @@
 */
 int main(int argc, char *argv[])
 {
-  fx_init(argc, argv, NULL);
-
-  std::string mode = fx_param_str_req(NULL, "mode");
-  std::string kernel = fx_param_str_req(NULL, "kernel");
+  IO::ParseCommandLine(argc, argv);
+  std::string mode = IO::GetParam<std::string>("nnsvm/mode");
+  std::string kernel = IO::GetParam<std::string>("nnsvm/kernel");
 
   /* Training Mode, need training data */
   if (mode == "train" || mode == "train_test")
   {
-    std::cerr << "Non-Negativity Constrained SVM Training... \n";
+    IO::Debug << "Non-Negativity Constrained SVM Training... " << std::endl;
 
-    std::string trainFile = fx_param_str_req(NULL, "train_data");
+    std::string trainFile = IO::GetParam<std::string>("nnsvm/train_data");
     // Load training data
     arma::mat dataSet;
     if (data::Load(trainFile.c_str(), dataSet) == SUCCESS_FAIL) // TODO:param_req
     {
       /* TODO: eventually, we need better exception handling */
-      std::cerr << "Could not open " << trainFile << " for reading\n";
+      IO::Debug << "Could not open " << trainFile << " for reading" << std::endl;
       return 1;
     }
 
     // Begin NNSVM Training
-    datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
-
     if (kernel == "linear")
     {
       NNSVM<SVMLinearKernel> nnsvm;
 
-      nnsvm.InitTrain(dataSet, 2, nnsvm_module);
+      nnsvm.InitTrain(dataSet, 2);
 
-      fx_timer_start(NULL, "nnsvm_train");
-      fx_timer *nnsvm_train_time = fx_get_timer(NULL, "nnsvm_train");
-      std::cerr << "nnsvm_train_time" << nnsvm_train_time->total.micros / 1e6 << "\n";
+      IO::StartTimer("nnsvm/nnsvm_train");
+      IO::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test")
       {
-        std::cerr << "Non-Negativity SVM Classifying... \n";
+        IO::Debug << "Non-Negativity SVM Classifying... " << std::endl;
         /* Load testing data */
-        std::string testFile = fx_param_str_req(NULL, "test_data");
+        std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
         arma::mat testset;
         if (data::Load(testFile.c_str(), testset) == SUCCESS_FAIL) // TODO:param_req
         {
           /* TODO: eventually, we need better exception handling */
-          std::cerr << "Could not open " << testFile << " for reading\n";
+          IO::Debug << "Could not open " << testFile << " for reading" <<
+            std::endl;
           return 1;
         }
         nnsvm.BatchClassify(testset, "testlabels");
@@ -78,20 +85,17 @@ int main(int argc, char *argv[])
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode == "test")
   {
-    std::cerr << "Non-Negativity Constrained SVM Classifying... \n";
+    IO::Debug << "Non-Negativity Constrained SVM Classifying... " << std::endl;
 
     /* Load testing data */
     arma::mat testset;
 
     /* Begin Classification */
-    datanode *nnsvm_module = fx_submodule(fx_root, "nnsvm");
-
     if (kernel == "linear")
     {
       NNSVM<SVMLinearKernel> nnsvm;
-      nnsvm.Init(testset, 2, nnsvm_module);
+      nnsvm.Init(testset, 2);
       nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
     }
   }
-  fx_done(NULL);
 }
