@@ -10,7 +10,7 @@
 
 #include <boost/mpi.hpp>
 
-#ifdef OPENMP
+#ifdef _OPENMP_
 #include <omp.h>
 #endif
 
