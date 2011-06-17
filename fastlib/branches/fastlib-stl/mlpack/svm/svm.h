@@ -58,7 +58,7 @@ class SVMRBFKernel {
   std::vector<double> kpara_; // kernel parameters
   void Init(datanode *node) { //TODO: NULL->node
     kpara_.resize(2,0);
-    kpara_[0] = fx_param_double_req(NULL, "sigma"); //sigma
+    kpara_[0] = mlpack::IO::GetParam<double>("svm/sigma"); //sigma
     kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
   }
   /* Kernel name */
@@ -166,7 +166,7 @@ class SVM {
   typedef TKernel Kernel;
   class SMO<Kernel>;
 
-  void Init(index_t learner_typeid, const Dataset& dataset, datanode *module);
+  void Init(index_t learner_typeid, const Dataset& dataset);
   void InitTrain(index_t learner_typeid, const Dataset& dataset, datanode *module);
 
   double Predict(index_t learner_typeid, const arma::vec& vector);
@@ -174,9 +174,9 @@ class SVM {
   void LoadModelBatchPredict(index_t learner_typeid, Dataset& testset, std::string model_filename, std::string predictedvalue_filename);
 
  private:
-  void SVM_C_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module);
-  void SVM_R_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module);
-  void SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module);
+  void SVM_C_Train_(index_t learner_typeid, const Dataset& dataset);
+  void SVM_R_Train_(index_t learner_typeid, const Dataset& dataset);
+  void SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset);
   double SVM_C_Predict_(const arma::vec& vector);
   double SVM_R_Predict_(const arma::vec& vector);
   double SVM_DE_Predict_(const arma::vec& vector);
@@ -193,10 +193,10 @@ class SVM {
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset, datanode *module){
+void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
   learner_typeid_ = learner_typeid;
 
-  opt_method_ = fx_param_str(NULL, "opt", "smo"); // optimization method: default using SMO
+  opt_method_ = mlpack::IO::GetParam<std::string>("svm/opt"); //Default "smo" optimization method: default using SMO
 
   n_data_ = dataset.n_points();
   // # of features == # of row - 1, exclude the last row (for labels)
@@ -221,27 +221,27 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset, datanode
   /* Note: it has the same index as the training !!! */
   trainset_sv_indicator_.resize(n_data_,false);
 
-  param_.kernel_.Init(fx_submodule(module, "kernel"));
+  param_.kernel_.Init(NULL);
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // working set selection scheme. default: 1st order expansion
-  param_.wss_ = fx_param_int(NULL, "wss", 1);
+  param_.wss_ = mlpack::IO::GetParam<int>("svm/wss");
   // whether do L1-SVM(1) or L2-SVM (2)
-  param_.hinge_sqhinge_ = fx_param_int(NULL, "hinge", 1); // default do L1-SVM
+  param_.hinge_sqhinge_ = mlpack::IO::GetParam<int>("svm/hinge");//Default value 1
 
   // accuracy for optimization
-  param_.accuracy_ = fx_param_double(NULL, "accuracy", 1e-4);
+  param_.accuracy_ = mlpack::IO::GetParam<double>("svm/accuracy");//Default value 1e-4
   // number of iterations
-  param_.n_iter_ = fx_param_int(NULL, "n_iter", 100000000);
+  param_.n_iter_ = mlpack::IO::GetParam<int>("svm/n_iter");//Default value 100000000
 
   // tradeoff parameter for C-SV
-  param_.C_ = fx_param_double(NULL, "c", 10.0);
-  param_.Cp_ = fx_param_double(NULL, "c_p", param_.C_);
-  param_.Cn_ = fx_param_double(NULL, "c_n", param_.C_);
+  param_.C_ = mlpack::IO::GetParam<double>("svm/c"); 
+  param_.Cp_ = mlpack::IO::GetParam<double>("svm/c_p");
+  param_.Cn_ = mlpack::IO::GetParam<double>("svm/c_n"); 
 
   if (learner_typeid == 1) { // for SVM_R only
     // the "epsilon", default: 0.1
-    param_.epsilon_ = fx_param_double(NULL, "epsilon", 0.1);
+    param_.epsilon_ = mlpack::IO::GetParam<double>("svm/epsilon");
   }
   else if (learner_typeid == 2) { // SVM_DE
   }
@@ -249,23 +249,24 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset, datanode
 
 /**
 * Initialization(data dependent) and training for SVM learners
+
 *
 * @param: typeid of the learner
 * @param: number of classes (different labels) in the training set
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset, datanode *module) {
-  Init(learner_typeid, dataset, module);
+void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset, datanode *tmp) {
+  Init(learner_typeid, dataset);
   
   if (learner_typeid == 0) { // Multiclass SVM Clssification
-    SVM_C_Train_(learner_typeid, dataset, module);
+    SVM_C_Train_(learner_typeid, dataset);
   }
   else if (learner_typeid == 1) { // SVM Regression
-    SVM_R_Train_(learner_typeid, dataset, module);
+    SVM_R_Train_(learner_typeid, dataset);
   }
   else if (learner_typeid == 2) { // One Class SVM
-    SVM_DE_Train_(learner_typeid, dataset, module);
+    SVM_DE_Train_(learner_typeid, dataset);
   }
   
   /* Save models to file "svm_model" */
@@ -283,7 +284,7 @@ void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset, dat
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module) {
+void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) {
   num_classes_ = dataset.n_labels();
   /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
@@ -326,12 +327,10 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset, 
 	smo.InitPara(learner_typeid, param_.Cp_, param_.Cn_, param_.hinge_sqhinge_, param_.wss_, param_.n_iter_, param_.accuracy_);
 
 	/* Initialize kernel */
-	smo.kernel().Init(fx_submodule(module, "kernel"));
-
 	/* 2-classes SVM training using SMO */
-	fx_timer_start(NULL, "train_smo");
+	mlpack::IO::StartTimer("svm/train_smo");
 	smo.Train(learner_typeid, &dataset_bi);
-	fx_timer_stop(NULL, "train_smo");
+	mlpack::IO::StopTimer("svm/train_smo");
 
 	/* Get the trained bi-class model */
 	models_[ct].bias_ = smo.Bias(); // bias
@@ -401,7 +400,7 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset, 
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module) {
+void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset) {
   index_t i;
   std::vector<index_t> dataset_index;
   dataset_index.reserve(n_data_);
@@ -417,8 +416,6 @@ void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset, 
     smo.InitPara(learner_typeid, param_.Cp_, param_.epsilon_, param_.hinge_sqhinge_, param_.wss_, param_.n_iter_, param_.accuracy_);
     
     /* Initialize kernel */
-    smo.kernel().Init(fx_submodule(module, "kernel"));
-
     /* SVM_R Training using SMO*/
     smo.Train(learner_typeid, &dataset);
     
@@ -460,7 +457,7 @@ void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset, 
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset, datanode *module) {
+void SVM<TKernel>::SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset) {
   // TODO
 }
 

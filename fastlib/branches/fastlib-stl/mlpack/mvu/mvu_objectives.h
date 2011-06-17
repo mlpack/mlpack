@@ -24,24 +24,27 @@
 #include <mlpack/allkfn/allkfn.h>
 #include <fastlib/optimization/lbfgs/optimization_utils.h>
 
-const fx_entry_doc mvu_entries[] = {
-  {"new_dimension", FX_REQUIRED, FX_INT, NULL,
-   " the number fo dimensions for the unfolded"},
-  {"nearest_neighbor_file", FX_PARAM, FX_STR, NULL,
-   " file with the nearest neighbor pairs and the squared distances \n"
-   " defaults to nearest.txt"},
-  {"furthest_neighbor_file", FX_PARAM, FX_STR, NULL,
-   " file with the nearest neighbor pairs and the squared distances "},
-  {"knns", FX_PARAM, FX_INT, NULL,
-   " number of nearest neighbors to build the graph\n"
-   " if you choose the option with the nearest file you don't need to specify it"},
- {"leaf_size", FX_PARAM, FX_INT, NULL,
-   " leaf_size for the tree.\n "
-   " if you choose the option with the nearest file you don't need to specify it"},
-FX_ENTRY_DOC_DONE
-};
+PARAM_INT_REQ("new_dimension", "the number of dimensions for the unfolded", 
+  "optfun");
+PARAM_STRING("nearest_neighbor_file", "file with the nearest neighbor pairs\
+ and the squared distances defaults to nearest.txt", "optfun", "nearest.txt");
+PARAM_STRING("furthest_neighbor_file", "file with the nearets neighbor\
+ pairs and the squared distances", "optfun", "furthest.txt");
+PARAM_INT("knns", "number of nearest neighbors to build the graph", "optfun",
+  5);
+PARAM_INT("leaf_size", "leaf_size for the tree.\
+  if you choose the option with the nearest file you don't need to specify it",
+  "optfun", 20);
 
-const fx_module_doc mvu_doc = {
+//***UNDOCUMENTED VALUES***
+PARAM(double, "desired_feasibility_error", "Undocumented value.", "optfun", 1,
+  false);
+PARAM(double, "grad_tolerance", "Undocumented value.", "optfun", 0.1, false);
+PARAM(double, "infeasibility_tolerance", "Undocumented value.", "optfun", 0.01,
+  false);
+
+
+/*const fx_module_doc mvu_doc = {
   mvu_entries, NULL,
   " This program computes the Maximum Variance Unfolding"
   " and the Maximum Futhest Neighbor Unfolding as presented "
@@ -53,7 +56,9 @@ const fx_module_doc mvu_doc = {
   "   pages={368--373},\n"
   "   year={2008}\n"
   " }\n"
-};
+};*/
+
+
 
 class MaxVariance {
  public:
@@ -73,7 +78,7 @@ class MaxVariance {
   void set_sigma(double sigma);
   bool IsDiverging(double objective);
 
-  // what the hell is this?
+  // what the hell is this? // I don't know, you tell me?
   bool IsOptimizationOver(const arma::mat& coordinates, arma::mat& gradient, double step) { return false; }
   bool IsIntermediateStepOver(const arma::mat& coordinates, arma::mat& gradient, double step) { return true; }
 

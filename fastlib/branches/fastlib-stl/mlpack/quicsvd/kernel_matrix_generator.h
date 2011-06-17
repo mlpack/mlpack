@@ -1,13 +1,15 @@
 #include "fastlib/fastlib.h"
+#include <fastlib/fx/io.h>
 
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv, &kde_main_doc);
+  mlpack::IO::ParseCommandLine(argc, argv);
   
   Matrix references;
-  const char *references_file_name = fx_param_str_req(fx_root, "data");
-  double bandwidth = fx_param_double_req(fx_root, "bandwidth");
+  const char *references_file_name = 
+    mlpack::IO::GetParam<std::string>("kernel/data").c_str();
+  double bandwidth = mlpack::IO::GetParm<double>("kernel/bandwidth");
   data::Load(references_file_name, &references);
   
   // Kernel matrix to be outputted.
@@ -40,6 +42,5 @@ int main(int argc, char *argv[]) {
     fprintf(output_file, "\n");
   }
 
-  fx_done(fx_root);
   return 0;
 }

@@ -1,6 +1,7 @@
 #ifndef NNSVM_IMPL_H
 #define NNSVM_IMPL_H
 
+#include <fastlib/fx/io.h>
 /**
 * NNSVM initialization
 *
@@ -9,19 +10,22 @@
 * @param: module name
 */
 template<typename TKernel>
-void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, datanode *module)
+void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes)
 {
-  param_.kernel_.Init(fx_submodule(module, "kernel"));
+  param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
-  param_.c_ = fx_param_double(NULL, "c", 10.0);
+  param_.c_ = mlpack::IO::GetParam<double>("nnsvm/c");
   // budget parameter, contorls # of support vectors; default: # of data samples
-  param_.b_ = fx_param_int(module, "b", dataset.n_rows);
+  if(!mlpack::IO::HasParam("nnsvm/b"))
+    mlpack::IO::GetParam<double>("nnsvm/b") = dataset.n_rows;
+
+  param_.b_ = mlpack::IO::GetParam<double>("nnsvm/b");
   // tolerance: eps, default: 1.0e-6
-  param_.eps_ = fx_param_double(NULL, "eps", 1.0e-6);
+  param_.eps_ = mlpack::IO::GetParam<double>("nnsvm/eps");
   //max iterations: max_iter, default: 1000
-  param_.max_iter_ = fx_param_int(NULL, "max_iter", 1000);
+  param_.max_iter_ = mlpack::IO::GetParam<double>("nnsvm/max_iter");
   fprintf(stderr, "c=%f, eps=%g, max_iter=%"LI" \n", param_.c_, param_.eps_, param_.max_iter_);
 }
 
@@ -34,13 +38,13 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, datanode 
 */
 template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
-    const arma::mat& dataset, index_t n_classes, datanode *module)
+    const arma::mat& dataset, index_t n_classes)
 {
-  Init(dataset, n_classes, module);
+  Init(dataset, n_classes);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
   DEBUG_ASSERT_MSG(n_classes == 2, "SVM is only a binary classifier");
-  fx_set_param_str(module, "kernel_type", typeid(TKernel).name());
+  mlpack::IO::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
 
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
@@ -48,9 +52,9 @@ void NNSVM<TKernel>::InitTrain(
   nnsmo.kernel().Copy(param_.kernel_);
 
   /* 2-classes NNSVM training using NNSMO */
-  fx_timer_start(NULL, "nnsvm_train");
+  mlpack::IO::StartTimer("nnsvm/nnsvm_train");
   nnsmo.Train();
-  fx_timer_stop(NULL, "nnsvm_train");
+  mlpack::IO::StopTimer("nnsvm/nnsvm_train");
 
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);
