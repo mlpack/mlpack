@@ -15,7 +15,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/tuple/tuple.hpp>
 
-#ifdef OPENMP
+#ifdef _OPENMP_
 #include <omp.h>
 #endif
 
