@@ -48,9 +48,9 @@ namespace tree_gen_metric_tree_private {
 
       // Compute the distances from the two pivots.
       double distance_from_left_pivot =
-	LMetric<2>::Distance(point, left_bound.center());
+	mlpack::kernel::SquaredEuclideanDistance::Evaluate(point, left_bound.center());
       double distance_from_right_pivot =
-	LMetric<2>::Distance(point, right_bound.center());
+	mlpack::kernel::SquaredEuclideanDistance::Evaluate(point, right_bound.center());
 
       // We swap if the point is further away from the left pivot.
       if(distance_from_left_pivot > distance_from_right_pivot) {	
@@ -115,7 +115,7 @@ namespace tree_gen_metric_tree_private {
 
     for(index_t i = begin; i < end; i++) {
       double distance_between_center_and_point = 
-	LMetric<2>::Distance(pivot, matrix.unsafe_col(i));
+	mlpack::kernel::SquaredEuclideanDistance::Evaluate(pivot, matrix.unsafe_col(i));
       
       if((*furthest_distance) < distance_between_center_and_point) {
 	*furthest_distance = distance_between_center_and_point;

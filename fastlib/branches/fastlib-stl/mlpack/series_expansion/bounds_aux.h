@@ -2,6 +2,7 @@
 #define BOUNDS_AUX_H
 
 #include <fastlib/fastlib.h>
+#include <mlpack/core/kernels/lmetric.h>
 
 class bounds_aux {
   
@@ -67,7 +68,7 @@ class bounds_aux {
   }
 
   template<int t_pow, typename TVector>
-  static void MaxDistanceSq(const DBallBound < LMetric<t_pow>, TVector > &bound1, 
+  static void MaxDistanceSq(const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &bound1, 
 			    arma::vec& bound2_centroid,
 			    arma::vec& furthest_point_in_bound1,
 			    double &furthest_dsqd) {
@@ -77,7 +78,7 @@ class bounds_aux {
     // First compute the distance between the centroid of the bounding
     // ball and the given point.
     double distance = 
-      LMetric<t_pow>::Distance(bound1.center(), bound2_centroid);
+      mlpack::kernel::LMetric<t_pow>::Distance(bound1.center(), bound2_centroid);
     
     // Compute the unit vector that has the same direction as the
     // vector pointing from the given point to the bounding ball
@@ -98,7 +99,7 @@ class bounds_aux {
    */
   template<int t_pow, typename TVector>
   static double MaxSideLengthOfBoundingBox
-  (const DBallBound < LMetric<t_pow>, TVector > &ball_bound) {
+  (const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &ball_bound) {
     return ball_bound.radius() * 2;
   }
   
@@ -123,8 +124,8 @@ class bounds_aux {
    */
   template<int t_pow, typename TVector>
   static double MaxL1Distance
-  (const DBallBound < LMetric<t_pow>, TVector > &ball_bound1,
-   const DBallBound < LMetric<t_pow>, TVector > &ball_bound2,
+  (const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &ball_bound1,
+   const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &ball_bound2,
    index_t *dimension) {
     
     const arma::vec& center1 = ball_bound1.center();

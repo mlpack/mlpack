@@ -66,6 +66,7 @@
 
 #include <fastlib/fastlib.h>
 #include <fastlib/fx/io.h>
+#include <mlpack/core/kernels/lmetric.h>
 #include <armadillo>
 
 #include "mlpack/series_expansion/farfield_expansion.h"
@@ -142,7 +143,7 @@ class DualtreeKde {
  public:
   
   // our tree type using the KdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, arma::vec>, arma::mat, KdeStat<TKernelAux> > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound <mlpack::kernel::SquaredEuclideanDistance, arma::vec>, arma::mat, KdeStat<TKernelAux> > Tree;
     
  private:
 

@@ -63,6 +63,7 @@
 #include <fastlib/fastlib.h>
 #include <fastlib/fx/io.h>
 #include <armadillo>
+#include <mlpack/core/kernels/lmetric.h>
 
 #include "contrib/dongryel/proximity_project/gen_metric_tree.h"
 #include "dualtree_kde_common.h"
@@ -100,7 +101,7 @@ class DualtreeVKde {
  public:
   
   // our tree type using the VKdeStat
-  typedef GeneralBinarySpaceTree<DBallBound < LMetric<2>, arma::vec>, arma::mat, VKdeStat<TKernel> > Tree;
+  typedef GeneralBinarySpaceTree<DBallBound <mlpack::kernel::SquaredEuclideanDistance, arma::vec>, arma::mat, VKdeStat<TKernel> > Tree;
     
  private:
 
