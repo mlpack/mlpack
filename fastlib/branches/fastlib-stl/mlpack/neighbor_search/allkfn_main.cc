@@ -20,7 +20,7 @@ using namespace mlpack;
 using namespace mlpack::neighbor;
 
 // Information about the program itself.
-PROGRAM_INFO("All K-Furthrest-Neighbors",
+PROGRAM_INFO("All K-Furthest-Neighbors",
     "This program will calculate the all k-furthest-neighbors of a set of "
     "points. You may specify a separate set of reference points and query "
     "points, or just a reference set which will be used as both the reference "
