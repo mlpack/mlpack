@@ -63,3 +63,13 @@ target_link_libraries(allkfn
    mlpack
    fastlib
 )
+
+# test for sorting policies
+add_executable(sort_policy_test
+  sort_policies/sort_policy_test.cc
+)
+target_link_libraries(sort_policy_test
+  mlpack
+  fastlib
+  boost_unit_test_framework
+)
