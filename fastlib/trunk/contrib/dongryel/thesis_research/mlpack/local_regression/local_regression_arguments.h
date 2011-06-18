@@ -108,6 +108,7 @@ class LocalRegressionArguments {
       absolute_error_ = global_in.absolute_error();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
+      problem_dimension_ = global_in.problem_dimension();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
       do_postprocess_ = global_in.do_postprocess();
@@ -125,6 +126,7 @@ class LocalRegressionArguments {
       absolute_error_ = global_in.absolute_error();
       relative_error_ = global_in.relative_error();
       probability_ = global_in.probability();
+      problem_dimension_ = global_in.problem_dimension();
       kernel_ = global_in.kernel().name();
       tables_are_aliased_ = true;
       do_postprocess_ = global_in.do_postprocess();
