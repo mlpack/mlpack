@@ -177,6 +177,9 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "OPTIONAL file containing query positions.  If omitted, KDE computes "
     "the leave-one-out density at each reference point."
   )(
+    "random_generate",
+    "If present, generate the datasets on the fly."
+  )(
     "random_generate_n_attributes",
     boost::program_options::value<int>()->default_value(5),
     "Generate the datasets on the fly of the specified dimension."
@@ -423,7 +426,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
-  if(vm.count("random_generate_n_entries") > 0) {
+  if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
