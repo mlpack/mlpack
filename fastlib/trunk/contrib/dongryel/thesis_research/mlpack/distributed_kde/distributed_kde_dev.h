@@ -516,7 +516,11 @@ bool DistributedKdeArgumentParser::ParseArguments(
   }
 
   // Parse the work parameters for the distributed engine.
-  arguments_out->max_subtree_size_ = vm["max_subtree_size_in"].as<int>();
+  arguments_out->max_subtree_size_ =
+    std::min(
+      vm["max_subtree_size_in"].as<int>(),
+      arguments_out->reference_table_->n_entries() /
+      arguments_out->num_threads_);
   arguments_out->max_num_work_to_dequeue_per_stage_ =
     vm["max_num_work_to_dequeue_per_stage_in"].as<int>();
   if(world.rank() == 0) {
