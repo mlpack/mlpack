@@ -173,8 +173,11 @@ class LocalRegressionResult {
       right_hand_side_e_[q_index].sample_means(&tmp_right_hand_side_);
 
       if(global.problem_dimension() == 1) {
-        regression_estimates_[q_index] = tmp_right_hand_side_[0] /
-                                         tmp_left_hand_side_.at(0, 0);
+        regression_estimates_[q_index] = 0.0;
+        if(tmp_left_hand_side_.at(0, 0) != 0.0) {
+          regression_estimates_[q_index] = tmp_right_hand_side_[0] /
+                                           tmp_left_hand_side_.at(0, 0);
+        }
       }
       else {
 
