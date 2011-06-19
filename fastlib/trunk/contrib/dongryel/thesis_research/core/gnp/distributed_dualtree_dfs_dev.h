@@ -116,6 +116,9 @@ DistributedProblemType >::SharedMemoryParallelize_(
 #pragma omp parallel
   {
 
+    // Get the thread ID.
+    int thread_id = omp_get_thread_num();
+
     do {
 
       std::pair<FineFrontierObjectType, int> found_task;
@@ -123,24 +126,27 @@ DistributedProblemType >::SharedMemoryParallelize_(
       bool all_empty = true;
       for(unsigned int i = 0; i < tasks.size(); i++) {
 
+        // Index to probe.
+        int probe_index = (thread_id + i) % tasks.size();
+
 #pragma omp critical
         {
 
           // Check whether the current query subtree is empty.
-          all_empty = all_empty && (tasks[i].size() == 0);
+          all_empty = all_empty && (tasks[ probe_index ].size() == 0);
 
           // Try to see if the thread can dequeue a task here.
-          if((! all_empty) && (! active_query_subtrees[i]) &&
-          tasks[i].size() > 0) {
+          if((! all_empty) && (! active_query_subtrees[ probe_index ]) &&
+              tasks[ probe_index ].size() > 0) {
 
             // Copy the task and the query subtree number.
-            found_task.first = tasks[i].top();
-            found_task.second = i;
+            found_task.first = tasks[ probe_index ].top();
+            found_task.second = probe_index;
 
             // Pop the task from the priority queue after copying and
             // put a lock on the query subtree.
-            tasks[i].pop();
-            active_query_subtrees[i] = true;
+            tasks[ probe_index ].pop();
+            active_query_subtrees[ probe_index ] = true;
           }
         } // end of pragma omp critical
 
@@ -149,7 +155,7 @@ DistributedProblemType >::SharedMemoryParallelize_(
           // If something is found, then break.
           break;
         }
-      }
+      } // end of for-loop.
 
       // The thread exits if the global task list is all empty.
       if(all_empty) {
