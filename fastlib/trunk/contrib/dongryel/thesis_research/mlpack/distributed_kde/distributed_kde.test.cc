@@ -218,6 +218,7 @@ class TestDistributed_Kde {
       random_generate_n_entries_sstr << "--random_generate_n_entries=" <<
                                      num_points;
       args.push_back(random_generate_n_entries_sstr.str());
+      args.push_back("--random_generate");
 
       // Push in the reference dataset name.
       std::string references_in("random_dataset.csv");
