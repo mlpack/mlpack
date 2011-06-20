@@ -6,6 +6,7 @@
  */
 
 #include "lmetric.h"
+#include "mahalanobis_distance.h"
 
 #define BOOST_TEST_MODULE Kernel Test
 #include <boost/test/unit_test.hpp>
@@ -88,47 +89,63 @@ BOOST_AUTO_TEST_CASE(lmetric_zeros) {
   BOOST_REQUIRE((LMetric<5, true>::Evaluate(a, a)) == 0);
 }
 
-/* Template parameters cannot be doubles, so the InfinityNorm cannot be created
- * using LMetric<>.  I left the tests here though...
-
 /***
- * Basic test of infinity norm.
- *
-BOOST_AUTO_TEST_CASE(infinity_norm) {
-  arma::vec a = "3.0 4.0 5.0 6.0 7.0 8.0";
-  arma::vec b = "1.0 1.0 1.0 2.0 2.0 1.0";
+ * Simple test of Mahalanobis distance with unset covariance matrix.
+ */
+BOOST_AUTO_TEST_CASE(md_unset_covariance) {
+  MahalanobisDistance<false> md;
+  arma::vec a = "1.0 2.0 2.0 3.0";
+  arma::vec b = "0.0 0.0 1.0 3.0";
 
-  BOOST_REQUIRE_CLOSE(InfinityNorm::Evaluate(a, b), 7.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(InfinityNorm::Evaluate(b, a), 7.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(a, b), 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(b, a), 6.0, 1e-5);
 }
 
 /***
- * Corner case: when a stupid user asks for the non-rooted infinity norm, we
- * should answer correctly: unless all elements are zero, the result is
- * infinity.
- 
-BOOST_AUTO_TEST_CASE(nonrooted_infinity_nonzero) {
-  arma::vec a = "1.0 5.0";
-  arma::vec b = "2.0 3.0";
+ * Simple test of Mahalanobis distance with unset covariance matrix and
+ * t_take_root set to true.
+ */
+BOOST_AUTO_TEST_CASE(md_root_unset_covariance) {
+  MahalanobisDistance<true> md;
+  arma::vec a = "1.0 2.0 2.5 5.0";
+  arma::vec b = "0.0 2.0 0.5 8.0";
 
-  BOOST_REQUIRE(
-      LMetric<numeric_limits<double>::infinity, false>::Evaluate(a, b) ==
-      numeric_limits<double>::infinity);
-  BOOST_REQUIRE(
-      LMetric<numeric_limits<double>::infinity, false>::Evaluate(b, a) ==
-      numeric_limits<double>::infinity);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(a, b), sqrt(14.0), 1e-5);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(b, a), sqrt(14.0), 1e-5);
 }
 
 /***
- * Corner case: a stupid user asks for the non-rooted infinity norm and gives an
- * entirely zero vector to evaluate.  The result should be 1.
- 
-BOOST_AUTO_TEST_CASE(nonrooted_infinity_zero) {
-  arma::vec a = "1.0 5.0";
+ * Simple test with diagonal covariance matrix.
+ */
+BOOST_AUTO_TEST_CASE(md_diagonal_covariance) {
+  arma::mat cov = arma::eye<arma::mat>(5, 5);
+  cov(0, 0) = 2.0;
+  cov(1, 1) = 0.5;
+  cov(2, 2) = 3.0;
+  cov(3, 3) = 1.0;
+  cov(4, 4) = 1.5;
+  MahalanobisDistance<false> md(cov);
 
-  BOOST_REQUIRE(
-      LMetric<numeric_limits<double>::infinity, false>::Evaluate(a, a) == 0.0);
+  arma::vec a = "1.0 2.0 2.0 4.0 5.0";
+  arma::vec b = "2.0 3.0 1.0 1.0 0.0";
+
+  BOOST_REQUIRE_CLOSE(md.Evaluate(a, b), 52.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(b, a), 52.0, 1e-5);
 }
-*/
 
+/***
+ * More specific case with more difficult covariance matrix.
+ */
+BOOST_AUTO_TEST_CASE(md_full_covariance) {
+  arma::mat cov = "1.0 2.0 3.0 4.0;"
+                  "0.5 0.6 0.7 0.1;"
+                  "3.4 4.3 5.0 6.1;"
+                  "1.0 2.0 4.0 1.0;";
+  MahalanobisDistance<false> md(cov);
 
+  arma::vec a = "1.0 2.0 2.0 4.0";
+  arma::vec b = "2.0 3.0 1.0 1.0";
+
+  BOOST_REQUIRE_CLOSE(md.Evaluate(a, b), 15.7, 1e-5);
+  BOOST_REQUIRE_CLOSE(md.Evaluate(b, a), 15.7, 1e-5);
+}

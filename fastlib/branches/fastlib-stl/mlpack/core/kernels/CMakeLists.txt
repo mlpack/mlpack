@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   lmetric.h
   lmetric.cc
+  mahalanobis_distance.h
+  mahalanobis_distance_impl.h
 )
 
 # add directory name to sources
