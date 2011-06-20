@@ -63,14 +63,14 @@ namespace npt {
   public:
     
     PermFreeAlg(arma::mat& data, arma::colvec& weights, int leaf_size,
-                arma::mat& lower_bds, arma::mat& upper_bds)
-    : matcher_(upper_bds, lower_bds) {
+                arma::mat& matcher_dists, double bandwidth)
+    : matcher_(matcher_dists, bandwidth) {
       
       data_points_ = data;
       
       data_weights_ = weights;
       
-      tuple_size_ = upper_bds.n_cols;
+      tuple_size_ = matcher_dists.n_cols;
       num_permutations_ = matcher_.num_permutations();
       
       num_points_ = data_points_.n_cols;

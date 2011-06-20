@@ -64,7 +64,7 @@ add_executable(n_point_multi_main
    EXCLUDE_FROM_ALL
    n_point_multi_main.cc
 )
-target_link_libraries(n_point_single_main
+target_link_libraries(n_point_multi_main
    fastlib
    mlpack
    mlpack_contrib
