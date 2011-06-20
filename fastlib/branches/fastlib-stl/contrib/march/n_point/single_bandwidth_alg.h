@@ -74,14 +74,14 @@ namespace npt {
      */
     SingleBandwidthAlg(arma::mat& data, arma::colvec weights,
                        index_t leaf_size,
-                       arma::mat& lower_bds, arma::mat& upper_bds) : 
-                       matcher_(lower_bds, upper_bds)
+                       arma::mat& matcher_dists, double bandwidth) : 
+                       matcher_(matcher_dists, bandwidth)
     {
       
       data_points_ = data;
       data_weights_ = weights;
       num_points_ = data_points_.n_cols;
-      tuple_size_ = lower_bds.n_cols;
+      tuple_size_ = matcher_dists.n_cols;
       leaf_size_ = leaf_size;
       
       num_tuples_ = 0;

@@ -38,9 +38,9 @@ namespace npt {
     
   public:
     
-    NaiveAlg(arma::mat& data, arma::colvec& weights, arma::mat& lower_bds, 
-             arma::mat& upper_bds) : 
-    matcher_(lower_bds, upper_bds) {
+    NaiveAlg(arma::mat& data, arma::colvec& weights, arma::mat& matcher_dists, 
+             double bandwidth) : 
+    matcher_(matcher_dists, bandwidth) {
       
       data_points_ = data;
       data_weights_ = weights;

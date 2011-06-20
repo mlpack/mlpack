@@ -40,10 +40,11 @@ int main(int argc, char* argv[]) {
   
   //std::cout << "loaded weights\n";
   
-  arma::mat lower_bds, upper_bds;
-  upper_bds.load(fx_param_str(NULL, "upper_bounds", "test_upper_bds.csv"));
-  lower_bds.load(fx_param_str(NULL, "lower_bounds", "test_lower_bds.csv"));
-
+  arma::mat matcher_dists;
+  matcher_dists.load(fx_param_str(NULL, "matcher_dists", 
+                                  "test_matcher_dists.csv"));
+  double bandwidth = fx_param_double(NULL, "bandwidth", 0.05);
+  
   //std::cout << "loaded bounds\n";
   
   
@@ -55,7 +56,7 @@ int main(int argc, char* argv[]) {
     
     fx_timer_start(NULL, "naive_time");
     
-    NaiveAlg naive_alg(data_mat, weights, lower_bds, upper_bds);
+    NaiveAlg naive_alg(data_mat, weights, matcher_dists, bandwidth);
     
     naive_alg.ComputeCounts();
     
@@ -76,7 +77,7 @@ int main(int argc, char* argv[]) {
     fx_timer_start(NULL, "single_bandwidth_time");
     
     SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
-                                  lower_bds, upper_bds);
+                                  matcher_dists, bandwidth);
     
     single_alg.ComputeCounts();
     
@@ -94,7 +95,7 @@ int main(int argc, char* argv[]) {
 
     fx_timer_start(NULL, "perm_free_time");
     
-    PermFreeAlg alg(data_mat, weights, leaf_size, lower_bds, upper_bds);
+    PermFreeAlg alg(data_mat, weights, leaf_size, matcher_dists, bandwidth);
     
     alg.Compute();
     

@@ -48,16 +48,41 @@ int main(int argc, char* argv[]) {
   arma::mat matcher_mat;
   matcher_mat.load(matcher_filename, arma::raw_ascii);
 
-  matcher_mat.print();
+  std::vector<double> min_bands(matcher_mat.n_cols);
+  std::vector<double> max_bands(matcher_mat.n_cols);
+  std::vector<int> num_bands(matcher_mat.n_cols);
   
-  /*
+  for (index_t i = 0; i < matcher_mat.n_rows; i++) {
+   
+    min_bands[i] = matcher_mat.at(i, 0);
+    max_bands[i] = matcher_mat.at(i, 1);
+    num_bands[i] = (int)matcher_mat.at(i,2);
+    
+  }
+
+  int n_choose_2 = num_bands.size();
+  std::vector<std::vector<double> > matcher_dists(n_choose_2);
   
-  std::vector<double> min_bands;
-  std::vector<double> max_bands;
-  std::vector<int> num_bands;
+  for (index_t i = 0; i < n_choose_2; i++) {
+    
+    double band_step = (max_bands[i] - min_bands[i]) / (double)num_bands[i];
+    
+    matcher_dists[i].resize(num_bands[i]);
+    
+    for (index_t j = 0; j < num_bands[i]; j++) {
+      
+      matcher_dists[i][j] = min_bands[i] + (double)j * band_step;
+      
+    } // for j
+    
+  } // for i
+  
+  
   
   
   // run algorithm
+  
+  int tuple_size = (1 + (int)sqrt()) / 2;
   
   if (fx_param_exists(NULL, "do_naive")) {
   
@@ -65,9 +90,16 @@ int main(int argc, char* argv[]) {
     
     fx_timer_start(NULL, "naive_time");
     
+    
+    
+    
     NaiveAlg naive_alg(data_mat, weights, lower_bds, upper_bds);
     
     naive_alg.ComputeCounts();
+    
+    
+    
+    
     
     fx_timer_stop(NULL, "naive_time");
     
@@ -142,8 +174,8 @@ int main(int argc, char* argv[]) {
   } // multi
 
   
-  */
   
+   
   
   fx_done(NULL);
   

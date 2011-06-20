@@ -48,12 +48,39 @@ namespace npt {
     
   public:
     
-    PermFreeMatcher(arma::mat& upper, arma::mat& lower) : perms_(upper.n_cols) {
+    PermFreeMatcher(arma::mat& matcher_dists, double bandwidth) 
+    : perms_(matcher_dists.n_cols),
+    lower_bounds_sqr_mat_(matcher_dists.n_rows, matcher_dists.n_cols),
+    upper_bounds_sqr_mat_(matcher_dists.n_rows, matcher_dists.n_cols)
+    {
       
-      upper_bounds_sq_mat_ = arma::square(upper);
-      lower_bounds_sq_mat_ = arma::square(lower);
+      double half_band = bandwidth / 2.0;
       
-      tuple_size_ = upper.n_cols;
+      for (index_t i = 0; i < tuple_size_; i++) {
+        
+        lower_bounds_sqr_mat_(i,i) = 0.0;
+        upper_bounds_sqr_mat_(i,i) = 0.0;
+        
+        for (index_t j = i+1; j < tuple_size_; j++) {
+          
+          lower_bounds_sqr_mat_(i,j) = (matcher_dists(i,j) - half_band)
+          * (matcher_dists(i,j) - half_band);
+          
+          lower_bounds_sqr_mat_(j,i) = (matcher_dists(i,j) - half_band)
+          * (matcher_dists(i,j) - half_band);
+          
+          upper_bounds_sqr_mat_(i,j) = (matcher_dists(i,j) + half_band)
+          * (matcher_dists(i,j) + half_band);
+          
+          upper_bounds_sqr_mat_(j,i) = (matcher_dists(i,j) + half_band)
+          * (matcher_dists(i,j) + half_band);
+          
+        }
+        
+      }
+      
+      
+      tuple_size_ = matcher_dists.n_cols;
       
       // TODO: check that the matrices are the same size
       

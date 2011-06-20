@@ -58,14 +58,39 @@ namespace npt {
     //SingleMatcher() {}
     
     // constructor
-    SingleMatcher(arma::mat& lower_bds, arma::mat& upper_bds) :
-    perms_(lower_bds.n_cols) {
+    SingleMatcher(arma::mat& matcher_dists, double bandwidth) :
+    perms_(matcher_dists.n_cols), 
+    lower_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
+    upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols)
+    {
       
       
-      tuple_size_ = lower_bds.n_cols;
+      tuple_size_ = matcher_dists.n_cols;
       
-      lower_bounds_sqr_ = arma::square(lower_bds);
-      upper_bounds_sqr_ = arma::square(upper_bds);
+      double half_band = bandwidth / 2.0;
+      
+      for (index_t i = 0; i < tuple_size_; i++) {
+        
+        lower_bounds_sqr_(i,i) = 0.0;
+        upper_bounds_sqr_(i,i) = 0.0;
+        
+        for (index_t j = i+1; j < tuple_size_; j++) {
+         
+          lower_bounds_sqr_(i,j) = (matcher_dists(i,j) - half_band)
+                                    * (matcher_dists(i,j) - half_band);
+          
+          lower_bounds_sqr_(j,i) = (matcher_dists(i,j) - half_band)
+          * (matcher_dists(i,j) - half_band);
+          
+          upper_bounds_sqr_(i,j) = (matcher_dists(i,j) + half_band)
+          * (matcher_dists(i,j) + half_band);
+
+          upper_bounds_sqr_(j,i) = (matcher_dists(i,j) + half_band)
+          * (matcher_dists(i,j) + half_band);
+          
+        }
+        
+      }
       
       num_permutations_ = perms_.num_permutations();
       
