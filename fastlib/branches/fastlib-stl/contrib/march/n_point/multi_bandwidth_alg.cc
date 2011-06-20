@@ -13,6 +13,8 @@
 index_t npt::MultiBandwidthAlg::FindResultsInd_(
                const std::vector<index_t>& perm_locations) {
   
+  std::cout << "Finding results ind\n";
+  
   index_t result = 0;
   index_t num_previous_bands = 1;
   
@@ -22,6 +24,8 @@ index_t npt::MultiBandwidthAlg::FindResultsInd_(
     num_previous_bands *= num_bands_[i];
     
   }
+  
+  return result;
   
 } // FindResultsInd
 
@@ -52,6 +56,7 @@ void npt::MultiBandwidthAlg::FindMatcherInd_(index_t loc,
   
 
   mod_fac = num_bands_[0];
+  
   for (index_t i = 1; i < result.size(); i++) {
     
     for (index_t j = 0; j < i; j++) {
@@ -112,6 +117,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
       
       bad_symmetry = (new_point_ind <= old_point_ind);
       
+      // TODO: if bad_symmetry, can I break out of the loop?
       if (!bad_symmetry) {
         
         arma::colvec old_point_vec = data_points_.col(old_point_ind);
@@ -122,6 +128,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         this_point_works = matcher_.TestPointPair(point_dist_sq, j, k, 
                                                   perm_ok_copy,
                                                   perm_locations_copy);
+        // perm_locations_copy should now be filled in 
         
       } // check symmetry
       
@@ -135,14 +142,26 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         // fill in all the results that worked
         
+        std::set<index_t> results_set;
+        
         for (index_t n = 0; n < perm_locations_copy.size(); n++) {
           
           if (perm_ok_copy[n]) {
             index_t results_ind = FindResultsInd_(perm_locations_copy[n]);
-            results_[results_ind]++;
+            results_set.insert(results_ind);
+            std::cout << "Inserting: " << results_ind << "\n";
           }
         } // for n
         
+        // Now, iterate through all (distinct) results keys in the set and add
+        // them to the total
+        std::set<index_t>::iterator it;
+        
+        for (it = results_set.begin(); it != results_set.end(); it++) {
+          
+          results_[*it]++;
+          
+        }
         
       }
       else {
@@ -152,7 +171,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
       }
       
-    }
+    } // do we still need to work with these points?
     
   } // iterate over possible new points
   
@@ -210,6 +229,7 @@ void npt::MultiBandwidthAlg::DepthFirstRecursion_(NodeTuple& nodes) {
   }
   else if (nodes.all_leaves()) {
     
+    num_base_cases_++;
     BaseCase_(nodes);
     
   } // base case

@@ -4,7 +4,9 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-	n_point_main.cc
+#	n_point_main.cc
+	n_point_single_main.cc
+	n_point_multi_main.cc
 	permutations.h
 	permutations.cc
 	single_matcher.h
@@ -48,11 +50,21 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #   mlpack_contrib
 #)
 
-add_executable(n_point_main
+add_executable(n_point_single_main
    EXCLUDE_FROM_ALL
-   n_point_main.cc
+   n_point_single_main.cc
 )
-target_link_libraries(n_point_main
+target_link_libraries(n_point_single_main
+   fastlib
+   mlpack
+   mlpack_contrib
+)
+
+add_executable(n_point_multi_main
+   EXCLUDE_FROM_ALL
+   n_point_multi_main.cc
+)
+target_link_libraries(n_point_single_main
    fastlib
    mlpack
    mlpack_contrib
