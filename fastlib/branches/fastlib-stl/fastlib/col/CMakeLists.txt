@@ -19,13 +19,17 @@ set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #add_library(col ${SOURCES})
 #add_dependencies(col base) # depends on base library
 
-# test executable
-add_executable(col_test
-   col_test.cc
+ add_executable(col_test
+    col_test.cc
 )
+
+#nk
 # link col_test against col and base libraries
+#target_link_libraries(col_test
+#   fastlib
+#)
+
 target_link_libraries(col_test
-#   col
-#   base
    fastlib
+   boost_unit_test_framework
 )
