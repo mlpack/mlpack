@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   heap.h
    tokenizer.h
    tokenizer.cc
 )

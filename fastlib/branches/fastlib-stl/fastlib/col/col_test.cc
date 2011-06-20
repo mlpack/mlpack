@@ -29,7 +29,6 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
  * 02110-1301, USA.
  */
-#include "heap.h"
 #include "tokenizer.h"
 
 #include <assert.h>
@@ -202,51 +201,5 @@ void TestTokenizer() {
   // by tests that don't specify values above.
 }
 
-// TODO(garryb): this should really be a runnable unit test
-void TestMinHeap() {
-  MinHeap<double, int> h;
-  int a[] = {31,41,59,26,53,58,97,93,23,84,62,64,33,83,27,92};
-  int n = sizeof(a)/sizeof(a[0]);
-  
-  h.Init();
-  
-  
-  for (int i = 0; i < n; i++) {
-    h.Put(a[i], a[i]);
-  }
-
-  MinHeap<double, int> h2(h);
-  
-  int last = -1;
-  
-  DEBUG_ASSERT_MSG(h.top() == 23, "%d", h.top());
-  h.set_top(2);
-  DEBUG_ASSERT_MSG(h.top() == 2, "%d", h.top());
-  
-  for (int i = 0; i < n; i++) {
-    int v = h.Pop();
-    assert(v > last); // no duplicates
-    last = v;
-  }
-  
-  DEBUG_ASSERT_MSG(last == 97, "%d", h.top());
-
-  h = h2;
-  
-  last = -1;
-  
-  DEBUG_ASSERT_MSG(h.top() == 23, "%d", h.top());
-  h.set_top(2);
-  DEBUG_ASSERT_MSG(h.top() == 2, "%d", h.top());
-  
-  for (int i = 0; i < n; i++) {
-    int v = h.Pop();
-    assert(v > last); // no duplicates
-    last = v;
-  }
-  
-  DEBUG_ASSERT_MSG(last == 97, "%d", h.top());
-}
-
-TEST_SUITE_END(col, TestMinHeap, TestTokenizer)
+TEST_SUITE_END(col, TestTokenizer)
 

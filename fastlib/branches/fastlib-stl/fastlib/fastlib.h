@@ -42,7 +42,6 @@
 #include "base/base.h"
 #include "la/la.h"
 #include "la/matrix.h"
-#include "col/heap.h"
 #include "data/dataset.h"
 #include "data/crossvalidation.h"
 #include "math/math_lib.h"
