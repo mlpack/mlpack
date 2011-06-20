@@ -38,13 +38,23 @@ int main(int argc, char* argv[]) {
     weights.fill(1.0);
   }
   
-  //std::cout << "loaded weights\n";
-  
-  arma::mat lower_bds, upper_bds;
-  upper_bds.load(fx_param_str(NULL, "upper_bounds", "test_upper_bds.csv"));
-  lower_bds.load(fx_param_str(NULL, "lower_bounds", "test_lower_bds.csv"));
+  // input format: each row is a pair (min, max, num)
 
-  //std::cout << "loaded bounds\n";
+  double bandwidth = fx_param_double(NULL, "bandwidth", 0.05);
+  
+  std::string matcher_filename = fx_param_str(NULL, "matchers",
+                                              "test_matchers.csv");
+  
+  arma::mat matcher_mat;
+  matcher_mat.load(matcher_filename, arma::raw_ascii);
+
+  matcher_mat.print();
+  
+  /*
+  
+  std::vector<double> min_bands;
+  std::vector<double> max_bands;
+  std::vector<int> num_bands;
   
   
   // run algorithm
@@ -131,6 +141,8 @@ int main(int argc, char* argv[]) {
     
   } // multi
 
+  
+  */
   
   
   fx_done(NULL);

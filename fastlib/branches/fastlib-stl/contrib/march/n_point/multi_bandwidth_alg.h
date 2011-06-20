@@ -38,6 +38,8 @@ namespace npt {
     // need results tensors
     
     int num_prunes_;
+    int num_base_cases_;
+    
     
     arma::Col<index_t> old_from_new_index_;
     
@@ -99,6 +101,7 @@ namespace npt {
       leaf_size_ = leaf_size;
       
       num_prunes_ = 0;
+      num_base_cases_ = 0;
       
       // initialize the results tensor
       
@@ -126,7 +129,7 @@ namespace npt {
       DepthFirstRecursion_(nodes);
       
       std::cout << "Num prunes: " << num_prunes_ << "\n";
-      
+      std::cout << "Num base cases: " << num_base_cases_ << "\n";
       // output results here
       
       
