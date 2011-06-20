@@ -1,7 +1,7 @@
 Source: jenkins
 Section: devel
 Priority: extra
-Maintainer: Kohsuke Kawaguchi <kk@kohsuke.org>, Sterling Peet <sterling.peet@gatech.edu>
+Maintainer: Sterling Peet <sterling.peet@gatech.edu>
 Build-Depends: debhelper (>= 5)
 Standards-Version: 3.9.1
 Homepage: https://jenkins-ci.org/
