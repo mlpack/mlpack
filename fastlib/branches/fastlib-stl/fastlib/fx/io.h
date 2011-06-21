@@ -49,7 +49,8 @@
  * The parameter will then be specified with --PARENT/ID=value.
  */
 #define PARAM_FLAG(ID, DESC, PARENT) \
- mlpack::Option<bool> JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
+    PARAM_FLAG_INTERNAL(ID, DESC, PARENT);
+
 #define PARAM_INT(ID, DESC, PARENT, DEF) \
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
@@ -93,17 +94,23 @@
       JOIN(io_option_dummy_object_, __COUNTER__) \
       (false, DEF, ID, DESC, PARENT, REQ);
 
+  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
+      JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
+
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \
       NULL);
 #else
   // We have to do some really bizarre stuff since __COUNTER__ isn't defined.  I
   // don't think we can absolutely guarantee success, but it should be "good
-  // enough".  We use the last bits the __LINE__ macro and the type of the
-  // parameter to try and get a good guess at something unique.
+  // enough".  We use the __LINE__ macro and the type of the parameter to try
+  // and get a good guess at something unique.
   #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
       DESC, PARENT, REQ);
+  
+  #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
+      JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, PARENT);
 
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), mod) (true, 0, ID, DESC, \
