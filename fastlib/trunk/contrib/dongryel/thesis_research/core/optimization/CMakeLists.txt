@@ -26,3 +26,14 @@ target_link_libraries(optimization-test
                       core
                       ${Boost_LIBRARIES}
                      )
+
+# test executable
+add_executable(rand_approx-test
+               EXCLUDE_FROM_ALL
+               rand_approx.test.cc
+              )
+# link dependencies of test executable
+target_link_libraries(rand_approx-test
+                      core
+                      ${Boost_LIBRARIES}
+                     )
