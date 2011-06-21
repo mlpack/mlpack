@@ -59,7 +59,7 @@ int main(int argc, char *argv[]) {
   
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
-  int k = IO::GetParam<int>("neighbor_search/k");
+  index_t k = IO::GetParam<int>("neighbor_search/k");
   if ((k <= 0) || (k >= reference_data.n_cols)) {
     IO::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     IO::Fatal << "than the number of reference points (";
