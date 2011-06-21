@@ -23,11 +23,11 @@ namespace npt {
     
   private:
     
-    arma::mat upper_bounds_sq_mat_;
-    arma::mat lower_bounds_sq_mat_;
+    arma::mat upper_bounds_sqr_mat_;
+    arma::mat lower_bounds_sqr_mat_;
     
-    std::vector<double> upper_bounds_sq_;
-    std::vector<double> lower_bounds_sq_;
+    std::vector<double> upper_bounds_sqr_;
+    std::vector<double> lower_bounds_sqr_;
     
     index_t tuple_size_;
     
@@ -87,16 +87,16 @@ namespace npt {
       for (index_t i = 0; i < tuple_size_; i++) {
         for (index_t j = i+1; j < tuple_size_; j++) {
       
-          upper_bounds_sq_.push_back(upper_bounds_sq_mat_(i,j));
-          lower_bounds_sq_.push_back(lower_bounds_sq_mat_(i,j));
+          upper_bounds_sqr_.push_back(upper_bounds_sqr_mat_(i,j));
+          lower_bounds_sqr_.push_back(lower_bounds_sqr_mat_(i,j));
           
         } // for j
       } // for i
       
       // TODO: check that the lists came out the right size
       
-      std::sort(upper_bounds_sq_.begin(), upper_bounds_sq_.end());
-      std::sort(lower_bounds_sq_.begin(), lower_bounds_sq_.end());
+      std::sort(upper_bounds_sqr_.begin(), upper_bounds_sqr_.end());
+      std::sort(lower_bounds_sqr_.begin(), lower_bounds_sqr_.end());
       
     } // constructor
     

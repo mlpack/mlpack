@@ -27,6 +27,8 @@ set(SOURCES
 	multi_bandwidth_alg.cc
 	multi_matcher.h
 	multi_matcher.cc
+	matcher_generation.h
+	matcher_generation.cc
 )
 
 # add directory name to sources
