@@ -30,6 +30,9 @@
 #define SYMMETRIC 0
 #define DEFLATION 1
 
+/***
+ * Parameters for FastICA.
+ */
 PARAM_INT("seed", "Seed for the random number generator.", "fastica", 0);
 PARAM_STRING("approach", 
     "Independent component recovery approach: 'deflation' or 'symmetric'.",
@@ -41,17 +44,19 @@ PARAM_INT("num_of_IC",
     "Number of independent components to find: integer between 1 and dimensionality of data.",
     "fastica", 1);
 PARAM_FLAG("fine_tune", "Enable fine tuning.", "fastica");
+PARAM_INT("max_num_iterations", 
+    "Maximum number of iterations of fixed-point iterations.", "fastica", 1000);
+PARAM_INT("max_fine_tune", "Maximum number of fine-tuning iterations.", "fastica", 5);
 PARAM(double, "a1", "Numeric constant for logcosh nonlinearity", 
             "fastica", 1.0, false);
+
+
 PARAM(double, "a2", "Numeric constant for gauss nonlinearity", 
             "fastica", 1.0, false);
 PARAM(double, "mu", "Numeric constant for fine-tuning Newton-Raphson method.", 
             "fastica", 1.0, false);
 PARAM_FLAG("stabilization", "Use stabilization.", "fastica");
 PARAM(double, "epsilon", "Threshold for convergence.", "fastica", 0.0001, false);
-PARAM_INT("max_num_iterations", 
-    "Maximum number of iterations of fixed-point iterations.", "fastica", 1000);
-PARAM_INT("max_fine_tune", "Maximum number of fine-tuning iterations.", "fastica", 5);
 PARAM(double, "percent_cut", 
     "Number in [0,1] indicating percent data to use in stabilization updates.",
     "fastica", 1.0, false);

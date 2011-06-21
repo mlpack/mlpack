@@ -6,15 +6,13 @@
  *
  * @see nnsmo.h
  */
-
 #ifndef U_NNSVM_NNSVM_H
 #define U_NNSVM_NNSVM_H
 
 #include <fastlib/fastlib.h>
+#include <typeinfo>
 
 #include "nnsmo.h"
-
-#include <typeinfo>
 
 PARAM(double, "c", "Undocumented", "nnsvm", 10.0, false);
 PARAM(double, "eps", "Undocumented", "nnsvm", 1.0e-6, false);
