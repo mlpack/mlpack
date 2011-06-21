@@ -11,6 +11,7 @@
 #define CORE_OPTIMIZATION_RAND_RANGE_FINDER_H
 
 #include <armadillo>
+#include "core/math/math_lib.h"
 #include "core/table/cyclic_dense_matrix.h"
 
 namespace core {
@@ -52,7 +53,7 @@ class RandRangeFinder {
 
     static double MaxL2Norm_(const core::table::CyclicArmaMat &matrix) {
       double max_l2_norm = 0.0;
-      for(unsigned int i = 0; i < matrix.n_cols; i++) {
+      for(int i = 0; i < matrix.n_cols(); i++) {
         arma::vec matrix_column;
         matrix.col(i, &matrix_column);
         max_l2_norm = std::max(max_l2_norm, arma::norm(matrix_column, 2));
@@ -99,18 +100,19 @@ class RandRangeFinder {
         *normalized_residual = first_vector / arma::norm(first_vector, 2);
 
         // Grow the basis set.
-        collected_basis_set->push_back(normalized_residual);
+        collected_basis_set.push_back(normalized_residual);
 
         // Draw a new candidate vector.
         candidate_basis_set.col(0, &candidate_vector);
         ApplyGaussianNoise_(input, 1, &candidate_vector);
         ComputeResidual_(collected_basis_set, &candidate_vector);
         for(int i = 1; i < rank; i++) {
+          arma::vec column_alias;
+          candidate_basis_set.col(i, &column_alias);
           double dot_product =
-            arma::dot(
-              *normalized_residual, candidate_basis_set.col(i));
-          candidate_basis_set.col(i) =
-            candidate_basis_set.col(i) - dot_product * (*normalized_residual);
+            arma::dot(*normalized_residual, column_alias);
+          column_alias =
+            column_alias - dot_product * (*normalized_residual);
         }
 
         // Shift the starting index by one.
