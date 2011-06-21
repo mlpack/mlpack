@@ -24,8 +24,16 @@ int main(int argc, char* argv[]) {
   // read in data and parameters
   
   std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
-  arma::mat data_mat;
-  data_mat.load(data_filename, arma::raw_ascii);
+  arma::mat data_in, data_mat;
+  data_in.load(data_filename, arma::raw_ascii);
+  
+  if (data_in.n_rows > data_in.n_cols) {
+    data_mat = arma::trans(data_in);
+  }
+  else {
+    data_mat = data_in;
+  }
+  // delete data_in
   
   //arma::mat data_out = arma::trans(data_mat);
   //data_out.save("3pt_test_data.csv", arma::raw_ascii);

@@ -108,7 +108,7 @@ namespace npt {
       
       for (index_t i = 0; i < n_choose_2_; i++) {
         
-        double band_step = (max_bands[i] - min_bands[i]) / (double)num_bands_[i];
+        double band_step = (max_bands[i] - min_bands[i]) / ((double)num_bands_[i] - 1.0);
         
         matcher_dists_[i].resize(num_bands_[i]);
         
