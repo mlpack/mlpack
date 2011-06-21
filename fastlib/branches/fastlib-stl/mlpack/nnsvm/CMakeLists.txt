@@ -18,11 +18,21 @@ endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
 set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
+# test executable
+add_executable(nnsvm_test
+   nnsvm_test.cc
+)
+# link dependencies of nnsvm_test
+target_link_libraries(nnsvm_test
+   mlpack
+   fastlib
+   boost_unit_test_framework
+)
 # main executable
 add_executable(nnsvm
    nnsvm_main.cc
 )
-# link dependencies of allknn
+# link dependencies of nnsvm
 target_link_libraries(nnsvm
    mlpack
    fastlib

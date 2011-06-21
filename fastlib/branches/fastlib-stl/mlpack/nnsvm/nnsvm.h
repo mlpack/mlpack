@@ -92,6 +92,17 @@ class SVMRBFKernel
   }
 };
 
+struct nnsvm_model
+{
+  double thresh_; //negation of the intercept
+  arma::vec sv_coef_; // the alpha vector
+  arma::vec w_; // the weight vector
+  index_t num_sv_; // number of support vectors
+};
+
+namespace mlpack {
+namespace nnsvm {
+
 /**
 * Class for NNSVM
 */
@@ -102,14 +113,7 @@ class NNSVM
     typedef TKernel Kernel;
 
   private:
-    struct NNSVM_MODELS
-    {
-      double thresh_; //negation of the intercept
-      arma::vec sv_coef_; // the alpha vector
-      arma::vec w_; // the weight vector
-      index_t num_sv_; // number of support vectors
-    };
-    NNSVM_MODELS model_;
+    struct nnsvm_model model_;
 
   struct NNSVM_PARAMETERS
   {
@@ -128,13 +132,22 @@ class NNSVM
 
   public:
     void Init(const arma::mat& dataset, index_t n_classes);
+    void Init(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter);
     void InitTrain(const arma::mat& dataset, index_t n_classes);
+    void InitTrain(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter);
     void SaveModel(std::string modelfilename);
     void LoadModel(arma::mat& testset, std::string modelfilename);
     index_t Classify(const arma::vec& vector);
     void BatchClassify(arma::mat& testset, std::string testlabelfilename);
     void LoadModelBatchClassify(arma::mat& testset, std::string modelfilename, std::string testlabelfilename);
+    double getThreshold() { return model_.thresh_; }
+    index_t getSupportVectorCount() { return model_.num_sv_; }
+    const arma::vec getSupportVectorCoefficients() { return model_.sv_coef_; }
+    const arma::vec getWeightVector() { return model_.w_; }
 };
+
+} // namespace nnsvm
+} // namespace mlpack
 
 #include "nnsvm_impl.h"
 

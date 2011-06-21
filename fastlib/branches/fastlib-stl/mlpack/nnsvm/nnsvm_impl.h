@@ -2,6 +2,9 @@
 #define NNSVM_IMPL_H
 
 #include <fastlib/fx/io.h>
+
+using namespace mlpack::nnsvm;
+
 /**
 * NNSVM initialization
 *
@@ -12,20 +15,25 @@
 template<typename TKernel>
 void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes)
 {
+  Init(dataset, n_classes, 10, dataset.n_rows, 1.0e-6, 1000);
+}
+template<typename TKernel>
+void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter)
+{
   param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
-  param_.c_ = mlpack::IO::GetParam<double>("nnsvm/c");
-  // budget parameter, contorls # of support vectors; default: # of data samples
+  param_.c_ = c;
+  // budget parameter, controls # of support vectors; default: # of data samples
   if(!mlpack::IO::HasParam("nnsvm/b"))
     mlpack::IO::GetParam<double>("nnsvm/b") = dataset.n_rows;
 
-  param_.b_ = mlpack::IO::GetParam<double>("nnsvm/b");
+  param_.b_ = b;
   // tolerance: eps, default: 1.0e-6
-  param_.eps_ = mlpack::IO::GetParam<double>("nnsvm/eps");
+  param_.eps_ = eps;
   //max iterations: max_iter, default: 1000
-  param_.max_iter_ = mlpack::IO::GetParam<double>("nnsvm/max_iter");
+  param_.max_iter_ = max_iter;
   fprintf(stderr, "c=%f, eps=%g, max_iter=%"LI" \n", param_.c_, param_.eps_, param_.max_iter_);
 }
 
@@ -40,7 +48,13 @@ template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
     const arma::mat& dataset, index_t n_classes)
 {
-  Init(dataset, n_classes);
+  InitTrain(dataset, n_classes, 10, dataset.n_rows, 1.0e-6, 1000);
+}
+template<typename TKernel>
+void NNSVM<TKernel>::InitTrain(
+    const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter)
+{
+  Init(dataset, n_classes, c, b, eps, max_iter);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
   DEBUG_ASSERT_MSG(n_classes == 2, "SVM is only a binary classifier");
