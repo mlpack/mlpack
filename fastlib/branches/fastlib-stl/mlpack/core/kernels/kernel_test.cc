@@ -22,12 +22,12 @@ BOOST_AUTO_TEST_CASE(manhattan_distance) {
   arma::vec a = "1.0 3.0 4.0";
   arma::vec b = "3.0 3.0 5.0";
 
-  BOOST_REQUIRE_CLOSE(ManhattanDistance::Evaluate(a, b), 3, 1e-5);
-  BOOST_REQUIRE_CLOSE(ManhattanDistance::Evaluate(b, a), 3, 1e-5);
+  BOOST_REQUIRE_CLOSE(ManhattanDistance::Evaluate(a, b), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(ManhattanDistance::Evaluate(b, a), 3.0, 1e-5);
 
   // Check also for when the root is taken (should be the same).
-  BOOST_REQUIRE_CLOSE((LMetric<1, true>::Evaluate(a, b)), 3, 1e-5);
-  BOOST_REQUIRE_CLOSE((LMetric<1, true>::Evaluate(b, a)), 3, 1e-5);
+  BOOST_REQUIRE_CLOSE((LMetric<1, true>::Evaluate(a, b)), 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE((LMetric<1, true>::Evaluate(b, a)), 3.0, 1e-5);
 }
 
 /***
