@@ -131,18 +131,15 @@ bool npt::MultiMatcher::TestPointPair(double dist_sq, index_t new_ind, index_t o
 
     bool this_matches = (dist_sq <= high_dist) &&
                         (dist_sq >= low_dist);
+
     
-    std::cout << "Testing closest_ind: " << closest_ind << "\n";
-    std::cout << "Testing closest_matcher: " << closest_matcher << "\n";
-    
-    if (closest_ind == 1) {
-      std::cout << "Looking at 0.6\n";
-    }
+    //std::cout << "Testing closest_ind: " << closest_ind << "\n";
+    //std::cout << "Testing closest_matcher: " << closest_matcher << "\n";
     
     if (this_matches) {
       
       any_matches = true;
-      std::cout << "Setting perm locations to " << closest_ind << "\n";
+     // std::cout << "Setting perm locations to " << closest_ind << "\n";
       
       assert(closest_ind < matcher_dists_[matcher_ind].size());
       

@@ -13,7 +13,7 @@
 index_t npt::MultiBandwidthAlg::FindResultsInd_(
                const std::vector<index_t>& perm_locations) {
   
-  std::cout << "Finding results ind\n";
+  //std::cout << "Finding results ind\n";
   
   index_t result = 0;
   index_t num_previous_bands = 1;
@@ -149,7 +149,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
           if (perm_ok_copy[n]) {
             index_t results_ind = FindResultsInd_(perm_locations_copy[n]);
             results_set.insert(results_ind);
-            std::cout << "Inserting: " << results_ind << "\n";
+            //std::cout << "Inserting: " << results_ind << "\n";
           }
         } // for n
         

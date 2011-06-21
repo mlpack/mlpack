@@ -13,6 +13,7 @@
 #include "naive_alg.h"
 #include "perm_free_alg.h"
 #include "multi_bandwidth_alg.h"
+#include "matcher_generation.h"
 
 using namespace npt;
 
@@ -60,52 +61,38 @@ int main(int argc, char* argv[]) {
     
   }
 
-  int n_choose_2 = num_bands.size();
-  std::vector<std::vector<double> > matcher_dists(n_choose_2);
+  int tuple_size = (1 + (int)sqrt(1 + 8 * num_bands.size())) / 2;
+  //std::cout << "tuple size: " << tuple_size << "\n";
   
-  for (index_t i = 0; i < n_choose_2; i++) {
-    
-    double band_step = (max_bands[i] - min_bands[i]) / (double)num_bands[i];
-    
-    matcher_dists[i].resize(num_bands[i]);
-    
-    for (index_t j = 0; j < num_bands[i]; j++) {
-      
-      matcher_dists[i][j] = min_bands[i] + (double)j * band_step;
-      
-    } // for j
-    
-  } // for i
+  MatcherGenerator generator(min_bands, max_bands, num_bands, tuple_size);
   
-  
-  
+  //generator.print();
   
   // run algorithm
   
-  int tuple_size = (1 + (int)sqrt()) / 2;
+  
   
   if (fx_param_exists(NULL, "do_naive")) {
   
-    std::cout << "Doing naive.\n";
+    std::cout << "\nDoing naive.\n";
     
     fx_timer_start(NULL, "naive_time");
     
     
+    for (index_t i = 0; i < generator.num_matchers(); i++) {
+      
+      NaiveAlg naive_alg(data_mat, weights, generator.matcher(i), bandwidth);
+      
+      naive_alg.ComputeCounts();
+      
+      generator.matcher(i).print("Matcher: ");
+      std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n\n";
     
-    
-    NaiveAlg naive_alg(data_mat, weights, lower_bds, upper_bds);
-    
-    naive_alg.ComputeCounts();
-    
-    
-    
-    
+    }
     
     fx_timer_stop(NULL, "naive_time");
     
-    std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
-    
-  }
+  } // do naive
   
   
   index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
@@ -113,18 +100,29 @@ int main(int argc, char* argv[]) {
   
   if (fx_param_exists(NULL, "do_single_bandwidth")) {
     
-    std::cout << "Doing single bandwidth.\n";
+    std::cout << "\nDoing single bandwidth.\n";
 
     fx_timer_start(NULL, "single_bandwidth_time");
     
-    SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
-                                  lower_bds, upper_bds);
     
-    single_alg.ComputeCounts();
+    for (index_t i = 0; i < generator.num_matchers(); i++) {
+      
+      
     
+    
+      SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
+                                    generator.matcher(i), bandwidth);
+      
+      single_alg.ComputeCounts();
+
+      
+      generator.matcher(i).print("Matcher: ");
+      std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
+
+    }
+      
     fx_timer_stop(NULL, "single_bandwidth_time");
     
-    std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
     
   }
   
@@ -132,38 +130,35 @@ int main(int argc, char* argv[]) {
   
   if (fx_param_exists(NULL, "do_perm_free")) {
     
-    std::cout << "Doing permutation free.\n";
+    std::cout << "\nDoing permutation free.\n";
 
     fx_timer_start(NULL, "perm_free_time");
     
-    PermFreeAlg alg(data_mat, weights, leaf_size, lower_bds, upper_bds);
-    
-    alg.Compute();
+    for (index_t i = 0; i < generator.num_matchers(); i++) {
+      
+      PermFreeAlg alg(data_mat, weights, leaf_size, generator.matcher(i), 
+                      bandwidth);
+      
+      alg.Compute();
+      
+      generator.matcher(i).print("Matcher: ");
+      std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
+      
+    }
     
     fx_timer_stop(NULL, "perm_free_time");
-    
-    std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
     
   } // perm free
   
 
   if (fx_param_exists(NULL, "do_multi")) {
     
-    std::cout << "Doing Multi Bandwidth\n";
+    std::cout << "\nDoing Multi Bandwidth\n";
 
-    
-    int tuple_size = 3;
-    std::vector<double> min_bands(3, 0.5);
-    std::vector<double> max_bands(3, 1.0);
-    std::vector<int> num_bands(3, 5);
-    double bandwidth = 0.05;
-    
-    
-    
+        
     fx_timer_start(NULL, "multi_time");
     MultiBandwidthAlg alg(data_mat, weights, leaf_size, tuple_size,
                           min_bands, max_bands, num_bands, bandwidth);
-    
     
     alg.Compute();
     

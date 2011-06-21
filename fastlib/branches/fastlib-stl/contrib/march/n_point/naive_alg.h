@@ -46,7 +46,7 @@ namespace npt {
       data_weights_ = weights;
       
       num_points_ = data_points_.n_cols;
-      tuple_size_ = lower_bds.n_cols;
+      tuple_size_ = matcher_dists.n_cols;
       
       
       num_tuples_ = 0;
