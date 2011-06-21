@@ -27,6 +27,7 @@ PARAM_STRING_REQ("train_data", "Undocumented", "nnsvm");
 
 
 using namespace mlpack;
+using namespace mlpack::nnsvm;
 
 /**
 * NNSVM training - Main function
@@ -60,7 +61,11 @@ int main(int argc, char *argv[])
     {
       NNSVM<SVMLinearKernel> nnsvm;
 
-      nnsvm.InitTrain(dataSet, 2);
+      nnsvm.InitTrain(dataSet, 2,
+          IO::GetParam<double>("nnsvm/c"),
+          IO::GetParam<double>("nnsvm/b"),
+          IO::GetParam<double>("nnsvm/eps"),
+          IO::GetParam<double>("nnsvm/max_iter"));
 
       IO::StartTimer("nnsvm/nnsvm_train");
       IO::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
