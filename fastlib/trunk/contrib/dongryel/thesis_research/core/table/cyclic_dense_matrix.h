@@ -27,6 +27,10 @@ class CyclicArmaMat {
 
   public:
 
+    void zeros(int row, int col) {
+      mat_.zeros(row, col);
+    }
+
     int ShiftStartingIndex(int shift = 1) {
       starting_column_index_ =
         (starting_column_index_ + shift) % mat_.n_cols;
