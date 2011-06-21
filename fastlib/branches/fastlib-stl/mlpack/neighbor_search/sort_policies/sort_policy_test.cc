@@ -114,7 +114,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
 
   // Again, the distance is the L2 squared distance.
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 1, 1e-5);
+      &node_two), 1.0, 1e-5);
 
   // Now, when the bounds overlap.
   node_two.bound().Reset();
@@ -124,7 +124,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
   node_two.bound() |= utility;
 
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestNodeToNodeDistance(&node_one,
-      &node_two), 0, 1e-5);
+      &node_two), 0.0, 1e-5);
 }
 
 /***
@@ -160,7 +160,7 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
   point[0] = 0.5;
 
   BOOST_REQUIRE_CLOSE(NearestNeighborSort::BestPointToNodeDistance(point,
-      &node), 0, 1e-5);
+      &node), 0.0, 1e-5);
 }
 
 // Tests for FurthestNeighborSort
