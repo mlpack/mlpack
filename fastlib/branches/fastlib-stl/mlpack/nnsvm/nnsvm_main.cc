@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
           IO::GetParam<double>("nnsvm/c"),
           IO::GetParam<double>("nnsvm/b"),
           IO::GetParam<double>("nnsvm/eps"),
-          IO::GetParam<double>("nnsvm/max_iter"));
+          IO::GetParam<int>("nnsvm/max_iter"));
   std::cerr << "made it to " << __LINE__ << "\n";
 
       IO::StartTimer("nnsvm/nnsvm_train");
