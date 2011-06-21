@@ -54,6 +54,7 @@ template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
     const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter)
 {
+  std::cerr << "made it to " << __LINE__ << " in "__FILE__"\n";
   Init(dataset, n_classes, c, b, eps, max_iter);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
@@ -72,6 +73,7 @@ void NNSVM<TKernel>::InitTrain(
 
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);
+  std::cerr << "the NUMBER of elements in sv_coef_ is " << model_.sv_coef_.n_elem << "\n";
   DEBUG_ASSERT(model_.sv_coef_.n_elem != 0);
   model_.num_sv_ = support_vectors_.n_cols;
   model_.thresh_ = nnsmo.threshold();
