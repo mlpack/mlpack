@@ -4,6 +4,7 @@ set(SOURCES
   lbfgs_dev.h
   lbfgs.h
   quasi_newton_hessian_update.h
+  rand_range_finder.h
   trust_region_dev.h
   trust_region.h
 )
