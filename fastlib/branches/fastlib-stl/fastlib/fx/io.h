@@ -55,17 +55,18 @@
     PARAM(int, ID, DESC, PARENT, DEF, false)
 #define PARAM_FLOAT(ID, DESC, PARENT, DEF) \
     PARAM(float, ID, DESC, PARENT, DEF, false)
+#define PARAM_DOUBLE(ID, DESC, PARENT, DEF) \
+    PARAM(double, ID, DESC, PARENT, DEF, false)
 #define PARAM_STRING(ID, DESC, PARENT, DEF) \
     PARAM(std::string, ID, DESC, PARENT, DEF, false)
 #define PARAM_VECTOR(T, ID, DESC, PARENT) \
     PARAM(std::vector<T>, ID, DESC, PARENT, std::vector<T>(), false)
 
-// Required bool?  Probably not necessary.
-//#define PARAM_BOOL_REQ(ID, DESC, PARENT) PARAM(bool, ID, DESC, PARENT, false,
-//  true)
+// Required flag doesn't make sense.
 #define PARAM_INT_REQ(ID, DESC, PARENT) PARAM(int, ID, DESC, PARENT, 0, true)
-#define PARAM_FLOAT_REQ(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, 0.0f, \
-  true)
+#define PARAM_FLOAT_REQ(ID, DESC, PARENT) PARAM(float, ID, DESC, PARENT, 0.0f, \    true)
+#define PARAM_DOUBLE_REQ(ID, DESC, PARENT) PARAM(double, ID, DESC, PARENT, \
+    0.0f, true)
 #define PARAM_STRING_REQ(ID, DESC, PARENT) PARAM(std::string, ID, DESC, \
     PARENT, "", true);
 #define PARAM_VECTOR_REQ(T, ID, DESC, PARENT) PARAM(std::vector<T>, ID, DESC, \
