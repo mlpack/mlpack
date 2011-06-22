@@ -10,6 +10,7 @@
 #include "kernel.h"
 #include "transform.h"
 #include "opt_bkpca.h"
+#include "opt_bmkpca.h"
 #include "opt_ogd_t.h"
 
 using namespace boost::posix_time;
