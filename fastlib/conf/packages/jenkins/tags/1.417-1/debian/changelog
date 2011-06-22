@@ -1,0 +1,12 @@
+jenkins (1.417-1) UNRELEASED; urgency=low
+
+  * New upstream release
+
+ -- Sterling Peet <sterling.peet@gatech.edu>  Mon, 20 Jun 2011 17:05:56 -0400
+
+jenkins (1.415-1) natty; urgency=low
+
+  * Fork from jenkins-ci.org packaging, remove jenkins.list file
+  * Switch to non-Debian-native type packaging, as we do not maintain jenkins
+
+ -- Sterling Peet <sterling.peet@gatech.edu>  Wed, 15 Jun 2011 00:48:01 -0400
