@@ -39,4 +39,6 @@ target_link_libraries(dataset_test
 #   fx
 #   math
    fastlib
+   boost_unit_test_framework
+
 )
