@@ -23,8 +23,15 @@ int main(int argc, char* argv[]) {
   // read in data and parameters
   
   std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
-  arma::mat data_mat;
-  data_mat.load(data_filename, arma::raw_ascii);
+  arma::mat data_in, data_mat;
+  data_in.load(data_filename, arma::raw_ascii);
+  
+  if (data_in.n_rows > data_mat.n_cols) {
+    data_mat = arma::trans(data_in);
+  }
+  else {
+    data_mat = data_in;
+  }
   
   //arma::mat data_out = arma::trans(data_mat);
   //data_out.save("3pt_test_data.csv", arma::raw_ascii);
@@ -106,35 +113,7 @@ int main(int argc, char* argv[]) {
   } // perm free
   
 
-  if (fx_param_exists(NULL, "do_multi")) {
-    
-    std::cout << "Doing Multi Bandwidth\n";
-
-    
-    int tuple_size = 3;
-    std::vector<double> min_bands(3, 0.5);
-    std::vector<double> max_bands(3, 1.0);
-    std::vector<int> num_bands(3, 5);
-    double bandwidth = 0.05;
-    
-    
-    
-    fx_timer_start(NULL, "multi_time");
-    MultiBandwidthAlg alg(data_mat, weights, leaf_size, tuple_size,
-                          min_bands, max_bands, num_bands, bandwidth);
-    
-    
-    alg.Compute();
-    
-    alg.OutputResults();
-
-    fx_timer_stop(NULL, "multi_time");
-    
-  } // multi
-
-  
-  
-  fx_done(NULL);
+    fx_done(NULL);
   
   return 0;
   
