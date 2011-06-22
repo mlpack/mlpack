@@ -69,6 +69,19 @@ void Pole::ParseArgs(int argc, char *argv[]) {
         exit(1);
       }
     }
+    else if (m_["method"] == "bmkpca") {
+      if (m_["kernel"] == "null") {
+        cout << "ERROR! Kernel type needs to be specified for OGDK!" << endl;
+        exit(1);
+      }
+      else if (m_["kernel"] == "fourier_rbf") {
+        L_ = new BMKPCA<FourierRBFTransform>;
+      }
+      else {
+        cout << "ERROR! Kernel type needs to be [fourier_rbf]" << endl;
+        exit(1);
+      }
+    }
     else if (m_["method"] == "ogdt") {
       if (m_["kernel"] == "null") {
 	cout << "ERROR! Transform kernel type needs to be specified for OGDT!" << endl;
@@ -220,7 +233,7 @@ void Pole::ParseArgs(int argc, char *argv[]) {
 // Check input parameters
 //////////////////////////
 void Pole::ArgsSanityCheck() {
-  if (L_->opt_name_ == "bkpca")
+  if (L_->opt_name_ == "bkpca" || L_->opt_name_ == "bmkpca")
     batch_ = true;
 
   if (L_->n_epoch_ < 0 )
