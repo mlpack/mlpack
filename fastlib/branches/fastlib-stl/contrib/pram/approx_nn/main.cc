@@ -4,7 +4,7 @@
 const fx_entry_doc approx_nn_main_entries[] = {
   {"r", FX_REQUIRED, FX_STR, NULL,
    " A file containing the reference set.\n"},
-  {"q", FX_REQUIRED, FX_STR, NULL,
+  {"q", FX_PARAM, FX_STR, NULL,
    " A file containing the query set"
    " (defaults to the reference set).\n"},
   {"Init", FX_TIMER, FX_CUSTOM, NULL,
@@ -54,12 +54,21 @@ int main (int argc, char *argv[]) {
     = fx_init(argc, argv, &approx_nn_main_doc);
 
   Matrix qdata, rdata;
-  std::string qfile = fx_param_str_req(root, "q");
   std::string rfile = fx_param_str_req(root, "r");
   NOTIFY("Loading files...");
-  data::Load(qfile.c_str(), &qdata);
   data::Load(rfile.c_str(), &rdata);
+
+  if (fx_param_exists(root, "q")) {
+    std::string qfile = fx_param_str_req(root, "q");
+    data::Load(qfile.c_str(), &qdata);
+  } else {
+    qdata.Copy(rdata);
+  }
+
   NOTIFY("File loaded...");
+  NOTIFY("R(%"LI"d, %"LI"d), Q(%"LI"d, %"LI"d)",
+	 rdata.n_rows(), rdata.n_cols(), 
+	 qdata.n_rows(), qdata.n_cols());
 
 //   AllkNN allknn;
 //   ArrayList<index_t> neighbor_indices;
@@ -109,12 +118,18 @@ int main (int argc, char *argv[]) {
     exact_nn.ComputeNeighbors(&exc, &die);
     fx_timer_stop(ann_module, "exact");
     NOTIFY("Neighbors Computed.");
+
+    FILE *fp = fopen("svmtree/nn_results.txt","w");
+    for (index_t i = 0; i < exc.size(); i++) {
+      fprintf(fp,"%"LI"d,%"LI"d,%lg\n", i, exc[i], die[i]);
+    }
+    fclose(fp);
   }
 
 //   compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
 
   // Approximate computation
-  if (fx_param_bool(root, "doapprox", true)) {
+  if (fx_param_bool(root, "doapprox", false)) {
     ApproxNN approx_nn;
     NOTIFY("Rank Approximate using Single Tree");
     NOTIFY("Initializing....");

@@ -62,6 +62,12 @@ const fx_module_doc approx_nn_doc = {
   " - exact, approximate, brute.\n"
 };
 
+
+index_t dc = 0;
+index_t mc = 0;
+
+
+
 /**
  * Performs all-nearest-neighbors.  This class will build the trees and 
  * perform the recursive  computation.
@@ -246,6 +252,7 @@ private:
    * bounding boxes of two nodes
    */
   double MinNodeDistSq_ (TreeType* query_node, TreeType* reference_node) {
+    mc++;
     return query_node->bound().MinDistanceSq(reference_node->bound());
   } 
 
@@ -384,6 +391,7 @@ private:
     } // for query_index 
     // Update the upper bound for the query_node
     query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
+    dc += reference_node->end() - reference_node->begin();
          
   } // ComputeBaseCase_
   
@@ -1128,6 +1136,10 @@ public:
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
     }
+
+    NOTIFY("Tdc = %"LI"d, Tmc = %"LI"d, adc = %lg, amc = %lg",
+	   dc, mc, (float)dc/(float)query_trees_.size(), 
+	   (float)mc/(float)query_trees_.size());
   } // ComputeNeighbors
   
   
