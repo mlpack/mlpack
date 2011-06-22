@@ -45,9 +45,9 @@ class TestRandApprox {
   public:
 
     int StressTestMain() {
-      for(int i = 0; i < 10; i++) {
-        int num_dimensions = core::math::RandInt(3, 20);
-        int num_points = core::math::RandInt(1300, 2001);
+      for(int i = 0; i < 1; i++) {
+        int num_dimensions = core::math::RandInt(30, 100);
+        int num_points = core::math::RandInt(10, 21);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -58,7 +58,9 @@ class TestRandApprox {
 
     int StressTest(int num_dimensions, int num_points) {
 
-      // Generate the random dataset and save it.
+      // Generate the random dataset.
+      std::cerr << "Generating " << num_points << " points of " <<
+                num_dimensions << " dimensionality.\n";
       TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
@@ -66,9 +68,21 @@ class TestRandApprox {
       core::table::DenseMatrixToArmaMat(
         random_table.data(), &random_matrix);
 
+      // Compute.
       arma::mat basis;
       core::optimization::RandRangeFinder::Compute(
-        random_matrix, 0.01, 0.9, &basis);
+        random_matrix, 0.1, 0.9, &basis);
+
+      // Compute the two norm error.
+      arma::mat error = random_matrix;
+      for(unsigned int j = 0; j < random_matrix.n_cols; j++) {
+        for(unsigned int k = 0; k < basis.n_cols; k++) {
+          double dot_product = arma::dot(error.col(j) , basis.col(k));
+          error.col(j) -= dot_product * basis.col(k);
+        }
+      }
+      std::cerr << "Epsilon achieved: " << arma::norm(error, 2) <<
+                " achieved with " << basis.n_cols << " basis vectors.\n";
 
       return 1;
     }
