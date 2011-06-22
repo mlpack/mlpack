@@ -7,9 +7,11 @@
 
 using arma::mat;
 
-TEST_SUITE_BEGIN(dataset)
+#define BOOST_TEST_MODULE Something
+#include <boost/test/unit_test.hpp>
 
-void TestSplitTrainTest() {
+BOOST_AUTO_TEST_CASE(TestSplitTrainTest) {
+
   Dataset orig;
   
   orig.InitBlank();
@@ -32,84 +34,85 @@ void TestSplitTrainTest() {
   for(int i = 0; i < 12; i++)
     permutation.push_back(i);
   
-  orig.SplitTrainTest(5, 1, permutation,
+  orig.SplitTrainTest(4, 1, permutation,
       train, test);
-  
-  DEBUG_ASSERT(test.n_points() == 3);
-  DEBUG_ASSERT(train.n_points() == 9);
-  DEBUG_ASSERT_MSG(test.get(0, 0) == 1, "%f", (test.get(0, 0)));
-  DEBUG_ASSERT_MSG(test.get(0, 1) == 6, "%f", (test.get(0, 1)));
-  DEBUG_ASSERT_MSG(test.get(0, 2) == 11, "%f", (test.get(0, 2)));
-  
-  DEBUG_ASSERT_MSG(train.get(0, 0) == 0, "%f", (train.get(0, 0)));
-  DEBUG_ASSERT_MSG(train.get(0, 1) == 2, "%f", (train.get(0, 1)));
-  DEBUG_ASSERT_MSG(train.get(0, 2) == 3, "%f", (train.get(0, 2)));
-  DEBUG_ASSERT_MSG(train.get(0, 3) == 4, "%f", (train.get(0, 3)));
-  DEBUG_ASSERT_MSG(train.get(0, 4) == 5, "%f", (train.get(0, 4)));
-  DEBUG_ASSERT_MSG(train.get(0, 5) == 7, "%f", (train.get(0, 5)));
-  DEBUG_ASSERT_MSG(train.get(0, 6) == 8, "%f", (train.get(0, 6)));
-  DEBUG_ASSERT_MSG(train.get(0, 7) == 9, "%f", (train.get(0, 7)));
-  DEBUG_ASSERT_MSG(train.get(0, 8) == 10, "%f", (train.get(0, 8)));
+   
+   BOOST_REQUIRE_CLOSE(test.n_points(), 3.0, 1e-5); 
+   BOOST_REQUIRE_CLOSE(train.n_points(), 9.0, 1e-5);
+
+   BOOST_REQUIRE_CLOSE(test.get(0,0), 1.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(test.get(0, 1), 5.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(test.get(0, 2), 9.0, 1e-5);
+
+   BOOST_REQUIRE_CLOSE(train.get(0, 3), 4.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(train.get(0, 4), 6.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(train.get(0, 5), 7.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(train.get(0, 6), 8.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(train.get(0, 7), 10.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(train.get(0, 8), 11.0, 1e-5);
+
 }
 
 void AssertSameMatrix(const mat& a, const mat& b) {
   index_t r = a.n_rows;
-  index_t c = a.n_cols;
-  
-  TEST_ASSERT(a.n_rows == b.n_rows);
-  TEST_ASSERT(a.n_cols == b.n_cols);
-  
+  index_t c = a.n_cols; 
+   
+  BOOST_REQUIRE_CLOSE(a.n_rows + 1e-6, b.n_rows + 1e-6, 1e-5); 
+  BOOST_REQUIRE_CLOSE(a.n_cols + 1e-6, b.n_cols + 1e-6, 1e-5);
+
   for (index_t ri = 0; ri < r; ri++) {
     for (index_t ci = 0; ci < c; ci++) {
-      DEBUG_ASSERT_MSG(a(ri, ci) == b(ri, ci), "(%"LI", %"LI"): %f != %f",
-          ri, ci, a(ri, ci), b(ri, ci));
+       BOOST_REQUIRE_CLOSE(a(ri,ci) + 1e-6, b(ri,ci) + 1e-6, 1e-5);
     }
   }
 }
 
-void TestLoad() {
+BOOST_AUTO_TEST_CASE(TestLoad) {
+
   Dataset d1;
   Dataset d2;
   Dataset d3;
   Dataset d4;
   Dataset d5;
-  
-  MUST_PASS(d1.InitFromFile("test/fake.arff"));
-  MUST_PASS(d2.InitFromFile("test/fake.csv"));
-  MUST_PASS(d3.InitFromFile("test/fake.csvh"));
-  MUST_PASS(d4.InitFromFile("test/fake.tsv"));
-  MUST_PASS(d5.InitFromFile("test/fake.weird"));
-  
+ 
+  BOOST_REQUIRE(d1.InitFromFile("fake.arff") == SUCCESS_PASS);
+  BOOST_REQUIRE(d2.InitFromFile("fake.csv") == SUCCESS_PASS);
+  BOOST_REQUIRE(d3.InitFromFile("fake.csvh") == SUCCESS_PASS);
+  BOOST_REQUIRE(d4.InitFromFile("fake.tsv") == SUCCESS_PASS);
+  BOOST_REQUIRE(d5.InitFromFile("fake.weird") == SUCCESS_PASS);
+ 
   AssertSameMatrix(d1.matrix(), d2.matrix());
   AssertSameMatrix(d1.matrix(), d3.matrix());
   AssertSameMatrix(d1.matrix(), d4.matrix());
   AssertSameMatrix(d1.matrix(), d5.matrix());
 }
 
-void TestStoreLoad() {
+
+BOOST_AUTO_TEST_CASE(TestStoreLoad) {
   Dataset d1;
   Dataset d2;
   Dataset d3;
+ 
+  BOOST_REQUIRE(d1.InitFromFile("fake.arff") == SUCCESS_PASS);
   
-  MUST_PASS(d1.InitFromFile("test/fake.arff"));
-  d1.WriteCsv("test/fakeout1.csv");
-  d1.WriteArff("test/fakeout1.arff");
-  
-  MUST_PASS(d2.InitFromFile("test/fakeout1.arff"));
-  MUST_PASS(d3.InitFromFile("test/fakeout1.csv"));
-  
+  d1.WriteCsv("fakeout1.csv");
+  d1.WriteArff("fakeout1.arff");
+
+  BOOST_REQUIRE(d2.InitFromFile("fakeout1.arff") == SUCCESS_PASS);
+  BOOST_REQUIRE(d3.InitFromFile("fakeout1.csv") == SUCCESS_PASS);
+
   AssertSameMatrix(d1.matrix(), d2.matrix());
   AssertSameMatrix(d1.matrix(), d3.matrix());
   
-  DEBUG_ASSERT_MSG(strcmp(d1.info().name().c_str(), d2.info().name().c_str()) == 0,
-      "%s != %s", d1.info().name().c_str(), d2.info().name().c_str());
+  BOOST_REQUIRE_CLOSE(strcmp(d1.info().name().c_str(), d2.info().name().c_str()) 
+	+ 1e-6, 1e-6, 1e-5);
+
   for (index_t i = 0; i < d1.info().n_features(); i++) {
-    DEBUG_ASSERT( d1.info().feature(i).name() == d2.info().feature(i).name() );
-    DEBUG_ASSERT(d1.info().feature(i).type() == d2.info().feature(i).type());
+    BOOST_REQUIRE_EQUAL(d1.info().feature(i).name(), d2.info().feature(i).name());
+    BOOST_REQUIRE_EQUAL(d1.info().feature(i).type(), d2.info().feature(i).type());
   }
 }
 
-TEST_SUITE_END(dataset, TestSplitTrainTest, TestLoad, TestStoreLoad)
 
 /*
 int main(int argc, char *argv[]) {
