@@ -60,7 +60,7 @@ binary-indep: build install
 	dh_installexamples
 #	dh_installmenu
 #	dh_installdebconf	
-#	dh_installlogrotate
+	dh_installlogrotate
 #	dh_installemacsen
 #	dh_installpam
 #	dh_installmime
