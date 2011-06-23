@@ -99,19 +99,20 @@ class TestClassSimpleNBC{
 
 };
 
-int main(int argc, char *argv[]) {
+//int main(int argc, char *argv[]) {
+int main(){ 
+//  IO::ParseCommandLine(argc, argv);
 
-  IO::ParseCommandLine(argc, argv);
 
-  TestClassSimpleNBC test;
-
+  TestClassSimpleNBC*  test;
   const char *train_data = "trainSet.arff";
   const char *train_res = "trainRes.arff";
   const char *test_data = "testSet.arff";
   const char *test_res = "testRes.arff";
   const int num_classes = 2;
 
-  test.Init(train_data, test_data, train_res, test_res, num_classes);
-  test.TestAll();
-  
+  //test.Init(train_data, test_data, train_res, test_res, num_classes);
+ // test.TestAll();
+
+
 }
