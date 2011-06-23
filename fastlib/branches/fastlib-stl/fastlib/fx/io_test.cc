@@ -101,6 +101,7 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   std::string tmp = IO::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
 
+/*
   //Now lets test the output functions.  Will have to eyeball it manually.
   IO::Debug << "Test the new lines...";
   IO::Debug << "shouldn't get 'Info' here." << std::endl;
@@ -108,6 +109,7 @@ BOOST_AUTO_TEST_CASE(TestIO) {
 
   //Test IO::Debug 
   IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl;
+*/
 
 }
 
