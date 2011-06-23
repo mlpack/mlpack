@@ -43,4 +43,5 @@ add_executable(tree_test
 target_link_libraries(tree_test
 #   tree
    fastlib
+   boost_unit_test_framework
 )
