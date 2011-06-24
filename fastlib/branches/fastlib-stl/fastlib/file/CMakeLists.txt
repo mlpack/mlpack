@@ -33,4 +33,6 @@ target_link_libraries(textfile_test
 #   col
 #   file
    fastlib
+   boost_unit_test_framework
+
 )
