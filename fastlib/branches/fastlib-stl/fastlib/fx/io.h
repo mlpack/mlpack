@@ -193,6 +193,16 @@ class IO {
   static void DefaultMessages();
    
   /*
+   *  Takes all nodes at or below the specifie dmodule and 
+   *  returns a list of their pathnames.  
+   *
+   * @param folder the module to start gathering nodes. 
+   *
+   * @return a list of pathnames to everything at or below folder.
+   */ 
+  static std::vector<std::string> GetFolder(const char* folder); 
+
+  /*
    * Grab the value of type T found while parsing.  
    * Should use HasParam() first.  You can set the value using this reference
    * safely.

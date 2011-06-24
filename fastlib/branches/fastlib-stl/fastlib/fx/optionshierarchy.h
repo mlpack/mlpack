@@ -11,6 +11,7 @@
 
 #include <map>
 #include <string>
+#include <vector>
 
 namespace mlpack {
 namespace io {
@@ -29,14 +30,14 @@ struct OptionsData {
 
 class OptionsHierarchy {
  private:
-  /* Holds all node specific data */
+   /* Holds all node specific data */
   OptionsData nodeData;
 
   /* Map of this node's children.  All children should have a
      corresponding OptionsHierarchy, hence the references */
   typedef std::map<std::string, OptionsHierarchy> ChildMap;
   ChildMap children;
-  
+
   /* Returns the name foo in the pathname foo/bar/fizz 
    *
    * @param pathname The full pathname of the parameter,
@@ -56,8 +57,7 @@ class OptionsHierarchy {
    *   eg fizz/bar in foo/fizz/bar.
    */
   std::string GetPath(std::string& pathname);
-  
- public:
+public:  
   /* Constructs an empty OptionsHierarchy node. */
   OptionsHierarchy();
 
@@ -120,6 +120,17 @@ class OptionsHierarchy {
    * eg it's name, description, and value.
    */
   OptionsData GetNodeData();
+  
+  /*
+   * Returns a vector containing the relative pathnames of nodes subordinant
+   * to the one specified.
+   * 
+   * @param pathname The node to start the traversal at.
+   * 
+   * @return Vector containing relative pathnames of all subordinant nodes.
+   */ 
+  std::vector<std::string> GetRelativePaths(std::string& pathname);
+  std::vector<std::string> GetRelativePathsHelper(OptionsHierarchy& node);  
 
   /* 
    * Will return the node associated with a pathname 

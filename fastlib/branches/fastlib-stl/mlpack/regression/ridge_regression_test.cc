@@ -28,8 +28,7 @@ using namespace mlpack;
 
 class RidgeRegressionTest {
  public:
-  void Init(fx_module *module) {
-    module_ = module;
+  void Init() {
     arma::mat tmp;
     data::Load("predictors.csv", predictors_);
     data::Load("predictions.csv", predictions_);
@@ -47,10 +46,10 @@ class RidgeRegressionTest {
     IO::Info << "[*] TestSVDNormalEquationRegressVersusSVDRegress" << std::endl;
 
     engine_ = new RidgeRegression();
-    engine_->Init(module_, predictors_, predictions_, true);
+    engine_->Init(predictors_, predictions_, true);
     engine_->SVDRegress(0);
     RidgeRegression svd_engine;
-    svd_engine.Init(module_, predictors_, predictions_, false);
+    svd_engine.Init(predictors_, predictions_, false);
     std::cout<< "wut" << std::endl;
     svd_engine.SVDRegress(0);
     arma::mat factors, svd_factors;
@@ -96,7 +95,7 @@ class RidgeRegressionTest {
     prune_predictor_indices = predictor_indices;
 
     engine_ = new RidgeRegression();
-    engine_->Init(module_, synthetic_data, predictor_indices,
+    engine_->Init(synthetic_data, predictor_indices,
 		  synthetic_data_target_training_values);
     engine_->FeatureSelectedRegression(predictor_indices,
 				       prune_predictor_indices,
@@ -122,7 +121,6 @@ class RidgeRegressionTest {
   }
 
  private:
-  fx_module *module_;
   RidgeRegression *engine_;
   arma::mat predictors_;
   arma::mat predictions_;
@@ -130,10 +128,10 @@ class RidgeRegressionTest {
 };
 
 int main(int argc, char *argv[]) {
-  fx_module *module = fx_init(argc, argv, NULL);
-  fx_set_param_double(module, "lambda", 1.0);
+   IO::ParseCommandLine(argc, argv);
+ 
+  IO::GetParam<double>("ridge/lambda") = 1.0;
   RidgeRegressionTest  test;
-  test.Init(module);
+  test.Init();
   test.TestAll();
-  fx_done(module);
 }

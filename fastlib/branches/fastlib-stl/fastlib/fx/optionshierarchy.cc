@@ -172,6 +172,45 @@ string OptionsHierarchy::GetName(string& pathname) {
   return pathname.substr(0, pathname.find('/'));
 }
 
+
+/*
+ * Obtains a vector containing relative pathnames of nodes subordinant to 
+ * the one specified in the parameter.
+ *
+ * @param pathname The full pathname to the node in question.
+ *
+ * @return Vector containing relative pathnames of subordinant nodes.
+ */
+std::vector<std::string> 
+  OptionsHierarchy::GetRelativePaths(std::string& pathname) {
+  std::vector<std::string> ret;  
+
+  //Obtain the starting node.
+  OptionsHierarchy* node = FindNode(pathname);
+  if(node == NULL)
+    return ret;
+
+  //Start adding it's children etc.
+  return GetRelativePathsHelper(*node);
+}
+
+std::vector<std::string>
+  OptionsHierarchy::GetRelativePathsHelper(OptionsHierarchy& node) {
+  std::vector<std::string> ret;
+  std::vector<std::string> tmp;
+
+  tmp.push_back(node.nodeData.node);
+  ChildMap::iterator iter;
+  for(iter = node.children.begin(); iter != node.children.end(); iter++) 
+    tmp = GetRelativePathsHelper((*iter).second);
+
+  while(tmp.size()) {
+    ret.push_back(tmp.back());
+    tmp.pop_back();
+  }
+  
+  return ret;
+}
 /*
  * Prints a node, followed by it's entries and submodules.
  */
@@ -345,7 +384,8 @@ void OptionsHierarchy::PrintNodeHelp() {
  * @param padding Amount of padding on the left for each new line.
  */
 string OptionsHierarchy::HyphenateString(string str, int padding) {
-  if (str.length() < (80 - padding))
+  size_t margin = 80 - padding;
+  if (str.length() < margin)
     return str;
 
   string out("");
@@ -356,14 +396,14 @@ string OptionsHierarchy::HyphenateString(string str, int padding) {
     size_t splitpos;
     // Check that we don't have a newline first.
     splitpos = str.find('\n', pos);
-    if (splitpos == string::npos || splitpos > (pos + (80 - padding))) {
+    if (splitpos == string::npos || splitpos > (pos + margin)) {
       // We did not find a newline.
-      if (str.length() - pos < (80 - padding)) {
+      if (str.length() - pos < margin) {
         splitpos = str.length(); // The rest fits on one line.
       } else {
-        splitpos = str.rfind(' ', (80 - padding) + pos); // Find nearest space.
+        splitpos = str.rfind(' ', margin + pos); // Find nearest space.
         if (splitpos <= pos || splitpos == string::npos) // Not found.
-          splitpos = pos + (80 - padding);
+          splitpos = pos + margin;
       }
     }
 

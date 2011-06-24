@@ -11,20 +11,17 @@ class RidgeRegression {
   RidgeRegression() {
   }
 
-  void Init(fx_module *module, const arma::mat &predictors, 
+  void Init(const arma::mat &predictors, 
 	    const arma::mat &predictions, 
 	    bool use_normal_equation_method = true);
 
-  void Init(fx_module *module, const arma::mat &input_data, index_t selector,
+  void Init(const arma::mat &input_data, index_t selector,
 	    bool use_normal_equation_method = true);
 
   /** @brief From a column-oriented dataset, initialize the design
    *         matrix using the row features whose indices belong to the
    *         given index set, and the predicted values from the given
    *         prediction index.
-   *
-   *  @param module The module from which the parameters are passed
-   *  from.
    *
    *  @param input_data The entire dataset containing the features and
    *  the prediction values.
@@ -35,13 +32,11 @@ class RidgeRegression {
    *  @param prediction_index The row index of the input data that
    *  should be used as the predictions (training target).
    */
-  void Init(fx_module *module, 
-            const arma::mat &input_data, 
+  void Init(const arma::mat &input_data, 
             const arma::Col<index_t> &predictor_indices,
             index_t &prediction_index, bool use_normal_equation_method = true);
 
-  void Init(fx_module *module, 
-            const arma::mat &input_data, 
+  void Init(const arma::mat &input_data, 
             const arma::Col<index_t> &predictor_indices,
             const arma::mat &prediction, bool use_normal_equation_method = true);
 
@@ -82,9 +77,7 @@ class RidgeRegression {
 
  private:
 
-  fx_module *module_;
-
-  /** @brief The design matrix.
+ /** @brief The design matrix.
    */
   arma::mat const* predictors_;
 

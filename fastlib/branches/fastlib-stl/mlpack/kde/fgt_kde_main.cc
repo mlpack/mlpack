@@ -72,8 +72,8 @@ using namespace mlpack;
 int main(int argc, char *argv[]) {
 
   // initialize FastExec (parameter handling stuff)
-  fx_init(argc, argv, NULL);
-  
+  IO::ParseCommandLine(argc, argv);
+ 
   ////////// READING PARAMETERS AND LOADING DATA /////////////////////
 
   // FASTexec organizes parameters and results into submodules.  Think

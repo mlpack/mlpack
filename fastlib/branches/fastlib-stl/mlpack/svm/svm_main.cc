@@ -226,7 +226,6 @@ index_t LoadData(Dataset* dataset, string datafilename){
 * @param: argv
 */
 int main(int argc, char *argv[]) {
-  //fx_init(argc, argv, NULL);
   IO::ParseCommandLine(argc, argv);
   srand(time(NULL));
 
@@ -289,7 +288,7 @@ int main(int argc, char *argv[]) {
     /* Begin SVM Training | Training and Testing */
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.InitTrain(learner_typeid, trainset, NULL);
+      svm.InitTrain(learner_typeid, trainset);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");
@@ -302,7 +301,7 @@ int main(int argc, char *argv[]) {
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.InitTrain(learner_typeid, trainset, NULL);
+      svm.InitTrain(learner_typeid, trainset);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
 	fprintf(stderr, "SVM Predicting... \n");

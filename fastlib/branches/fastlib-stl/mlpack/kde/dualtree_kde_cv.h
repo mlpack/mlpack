@@ -320,7 +320,7 @@ class DualtreeKdeCV {
     // the main routine.
     double probability = mlpack::IO::GetParam<double>("kde/probability"); //Default value 1
     DualtreeKdeCVCanonical_(rroot_, rroot_, probability);
-    fx_timer_stop(NULL, "fast_kde_compute");
+    mlpack::IO::StopTimer("kde/fast_kde_compute");
     mlpack::IO::Info << std::endl << "Fast KDE completed..." << std::endl;
     mlpack::IO::Info << "Finite difference prunes: " << num_finite_difference_prunes_ << std::endl;
     mlpack::IO::Info << "Monte Carlo prunes: " <<  num_monte_carlo_prunes_ << std::endl;

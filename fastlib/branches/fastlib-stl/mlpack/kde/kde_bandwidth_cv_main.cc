@@ -127,7 +127,7 @@ int main(int argc, char *argv[]) {
   // If the reference weight file name is specified, then read in,
   // otherwise, initialize to uniform weights.
   if(IO::HasParam("kde/dwgts")) {
-    data::Load(fx_param_str(fx_root, "dwgts", NULL), reference_weights);
+    data::Load(IO::GetParam<std::string>("kde/dwgts").c_str(), reference_weights);
   }
   else {
     reference_weights.ones(1, queries.n_cols);

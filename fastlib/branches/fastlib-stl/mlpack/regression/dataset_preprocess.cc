@@ -2,6 +2,9 @@
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
+#include <fastlib/fx/io.h>
+
+using namespace mlpack;
 
 void FindIndexWithPrefix(Dataset &dataset, char *prefix,
 			 std::vector<index_t> &remove_indices, 
@@ -41,13 +44,13 @@ void FindIndexWithPrefix(Dataset &dataset, char *prefix,
 }
 
 int main(int argc, char *argv[]) {
-  fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv); 
 
   // Read in the dataset from the file.
   Dataset initial_dataset;
-  const char *dataset_name = fx_param_str_req(fx_root, "data");
+  const char *dataset_name = IO::GetParam<std::string>("data").c_str();
   if(initial_dataset.InitFromFile(dataset_name) != SUCCESS_PASS) {
-    FATAL("Could ont read the dataset %s", dataset_name);
+    IO::Fatal << "Could ont read the dataset " <<  dataset_name;
   }
 
   // Now examine each feature name of the dataset, and construct the
@@ -55,8 +58,8 @@ int main(int argc, char *argv[]) {
   std::vector<index_t> remove_indices;
   char buffer[1000];
   do {
-    printf("Input the prefix of the feature that you want to remove ");
-    printf("(just press enter if you are done): ");
+    IO::Info << "Input the prefix of the feature that you want to remove " << std::endl;
+    IO::Info << "(just press enter if you are done): " << std::endl;
     fgets(buffer, 998, stdin);
 
     if(strlen(buffer) == 1) {
@@ -67,8 +70,8 @@ int main(int argc, char *argv[]) {
 
   std::vector<index_t> prune_indices;
   do {
-    printf("Input the prefix of the feature that you want to consider for pruning ");
-    printf("(just press enter if you are done): ");
+    IO::Info << "Input the prefix of the feature that you want to consider for pruning " << std::endl;
+    IO::Info << "(just press enter if you are done): " << std::endl;
     fgets(buffer, 998, stdin);
     
     if(strlen(buffer) == 1) {
@@ -99,13 +102,12 @@ int main(int argc, char *argv[]) {
   fclose(predictor_file);
   fclose(prune_file);
 
-  fx_timer_start(fx_root, "qr_time");
+  IO::StartTimer("qr_time");
   Matrix q, r, tmp;
   arma_compat::armaToMatrix(initial_dataset.matrix(), tmp);
   la::QRInit(tmp, &q, &r);
-  fx_timer_stop(fx_root, "qr_time");
-  printf("%"LI" %"LI" %"LI" %"LI"\n", q.n_rows(), q.n_cols(), r.n_rows(), r.n_cols());
+  IO::StopTimer("qr_time");
+  IO::Info << q.n_rows() << " " << q.n_cols() << " " << r.n_rows() << " " << r.n_cols() << std::endl;
 
-  fx_done(fx_root);
   return 0;
 }

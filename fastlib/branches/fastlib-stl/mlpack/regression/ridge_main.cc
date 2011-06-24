@@ -17,6 +17,7 @@
  */
 #include <string>
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
 
@@ -25,64 +26,53 @@
 
 using namespace mlpack;
 
-int main(int argc, char *argv[]) {
 
   ////////// Documentation stuffs //////////
-  const fx_entry_doc ridge_main_entries[] = {
-    {"inversion_method", FX_PARAM, FX_STR, NULL,
-     "  The method chosen for inverting the design matrix: normalsvd\
- (SVD on normal equation: default), svd (SVD), quicsvd (QUIC-SVD).\n"},
-    {"lambda_min", FX_PARAM, FX_DOUBLE, NULL,
-     "  The minimum lambda value used for CV (set to zero by default).\n"},
-    {"lambda_max", FX_PARAM, FX_DOUBLE, NULL,
-     "  The maximum lambda value used for CV (set to zero by default).\n"},
-    {"mode", FX_PARAM, FX_STR, NULL,
-     "  The computation mode: regress, cvregress (cross-validated regression),\
- fsregress (feature selection then regress).\n"},
-    {"num_lambdas", FX_PARAM, FX_INT, NULL,
-     "  The number of lambdas to try for CV (set to 1 by default).\n"},
-    {"predictions", FX_REQUIRED, FX_STR, NULL,
-     "  A file containing the observed predictions.\n"},
-    {"predictor_indices", FX_PARAM, FX_STR, NULL,
-     "  The file containing the indices of the dimensions that act as the \
-predictors for the input dataset.\n"},
-    {"predictors", FX_REQUIRED, FX_STR, NULL,
-     "  A file containing the predictors.\n"},
-    {"prune_predictor_indices", FX_PARAM, FX_STR, NULL,
-     "  The file containing the indices of the dimensions that must be \
-considered for pruning for the input dataset.\n"},
-    FX_ENTRY_DOC_DONE
-  };
-  
-  const fx_submodule_doc ridge_main_submodules[] = {
-    FX_SUBMODULE_DOC_DONE
-  };
-  
-  const fx_module_doc ridge_main_doc = {
-    ridge_main_entries, ridge_main_submodules,
-    "This is the driver for the ridge regression.\n"
-  };
+PARAM_STRING("inversion_method", "The method chosen for inverting the design matrix: normalsvd\
+ (SVD on normal equation: default), svd (SVD), quicsvd (QUIC-SVD).\n", "ridge", "");
+PARAM_STRING_REQ("predictions", "A file containing the observed predictions.", "ridge");
+PARAM_STRING("predictor_indices", "The file containing the indces of the\
+ dimensions that act as the predictors for the input dataset.", "ridge", "");
+PARAM_STRING_REQ("predictors", "A file containing the predictors.", "ridge");
+PARAM_STRING("predictor_indices", "The file containing the indecs of the\
+ dimensions that act as the predictors for the input database.", "ridge", "");
+PARAM_STRING("prune_predictor_indices","The file containing the indeces of the\
+ dimensions that must be considered for pruning for the input dataset.", "ridge", "");
+PARAM_STRING("mode", "Undocumented module", "ridge", "regress");
+PARAM_STRING("inversion_method", "Undocumented parameter", "ridge", "normal_svd");
+PARAM_STRING("factors", "Undocumented parameter", "ridge", "factors.csv");
 
-  fx_module *module = fx_init(argc, argv, &ridge_main_doc);
-  double lambda_min = fx_param_double(module, "lambda_min", 0.0);
-  double lambda_max = fx_param_double(module, "lambda_max", 0.0);
-  int num_lambdas_to_cv = fx_param_int(module, "num_lambdas", 1);
-  const char *mode = fx_param_str(module, "mode", "regress");  
+PARAM(double, "lambda_min", "The minimum lambda value used for CV (set to zero\
+ by default).", "ridge", 0.0, false); 
+PARAM(double, "lambda_max", "The maximum lambda value used for CV (set to zero\
+ by default).", "ridge", 0.0, false);
+
+PARAM_INT("num_lambdas", "The number of lamdas to try for CV (set to 1 by default).",
+ "ridge", 1);
+
+int main(int argc, char** argv) {
+  IO::ParseCommandLine(argc, argv);
+
+  double lambda_min = IO::GetParam<double>("ridge/lambda_min");
+  double lambda_max = IO::GetParam<double>("ridge/lambda_max");
+  int num_lambdas_to_cv = IO::GetParam<int>("ridge/num_lambdas");
+
+  const char *mode = IO::GetParam<std::string>("ridge/mode").c_str();  
   if(lambda_min == lambda_max) {
     num_lambdas_to_cv = 1;
     if(!strcmp(mode, "crossvalidate")) {
-      fx_set_param_str(module, "mode", "regress");
-      mode = fx_param_str(module, "mode", "regress");
+      IO::GetParam<std::string>("ridge/mode") = "regress";
+      mode = IO::GetParam<std::string>("ridge/mode").c_str();
     }
   }
   else {
-    fx_set_param_str(module, "mode", "cvregress");
-    mode = fx_param_str(module, "mode", "cvregress");
+    IO::GetParam<std::string>("ridge/mode") = "cvregress";
+    mode = IO::GetParam<std::string>("ridge/mode").c_str();
   }
 
   // Read the dataset and its labels.
-  std::string predictors_file = fx_param_str_req(module, "predictors"); 
-  std::string predictions_file = fx_param_str_req(module, "predictions");
+  std::string predictors_file = IO::GetParam<std::string>("ridge/predictors"); 
+  std::string predictions_file = IO::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
   if (data::Load(predictors_file.c_str(), predictors) == SUCCESS_FAIL) {
@@ -100,9 +90,8 @@ considered for pruning for the input dataset.\n"},
 
   if(!strcmp(mode, "regress")) {
 
-    engine.Init(module, predictors, predictions, 
-		!strcmp(fx_param_str(fx_root, "inversion_method",
-                                     "normalsvd"), "normalsvd"));
+    engine.Init(predictors, predictions, 
+		!strcmp(IO::GetParam<std::string>("ridge/inversion_method").c_str(), "normalsvd"));
     engine.QRRegress(lambda_min);
   }
   else if(!strcmp(mode, "cvregress")) {
@@ -114,7 +103,7 @@ considered for pruning for the input dataset.\n"},
 	<<  lambda_min << " " << lambda_max << " ] " 
      	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
    
-    engine.Init(module, predictors, predictions);
+    engine.Init(predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
   else if(!strcmp(mode, "fsregress")) {
@@ -123,10 +112,10 @@ considered for pruning for the input dataset.\n"},
 
     arma::mat predictor_indices_intermediate;
     arma::mat prune_predictor_indices_intermediate;
-    std::string predictor_indices_file = fx_param_str_req(module, 
-							  "predictor_indices");
+    std::string predictor_indices_file = 
+      IO::GetParam<std::string>("ridge/predictor_indices");
     std::string prune_predictor_indices_file = 
-      fx_param_str_req(module, "prune_predictor_indices");
+      IO::GetParam<std::string>("ridge/prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(), 
 	  predictor_indices_intermediate) == SUCCESS_FAIL) {
       IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
@@ -157,9 +146,8 @@ considered for pruning for the input dataset.\n"},
     
     // Run the feature selection.
     arma::Col<index_t> output_predictor_indices;
-    engine.Init(module, predictors, predictor_indices, predictions,
-		!strcmp(fx_param_str(fx_root, "inversion_method", 
-				     "normalsvd"), "normalsvd"));
+    engine.Init(predictors, predictor_indices, predictions,
+		!strcmp(IO::GetParam<std::string>("ridge/inversion_method").c_str(), "normalsvd"));
     engine.FeatureSelectedRegression(predictor_indices,
 				     prune_predictor_indices,
 				     predictions,
@@ -169,13 +157,12 @@ considered for pruning for the input dataset.\n"},
   IO::Info << "Ridge Regression Model Training Complete!" << std::endl;
   double square_error = engine.ComputeSquareError();
   IO::Info << "Square Error: " << square_error << std::endl;
-  fx_result_double(module, "square error", square_error);
+  IO::GetParam<double>("ridge/square error") = square_error;
   arma::mat factors;
   engine.factors(&factors);
-  std::string factors_file = fx_param_str(module, "factors", "factors.csv");
+  std::string factors_file = IO::GetParam<std::string>("ridge/factors");
   IO::Info << "Saving factors..." << std::endl;
   data::Save(factors_file.c_str(), factors);
 
-  fx_done(module);
   return 0;
 }

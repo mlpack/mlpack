@@ -161,11 +161,10 @@ void RidgeRegression::ExtractCovarianceSubset_
   }
 }
 
-void RidgeRegression::Init(fx_module *module, const arma::mat &predictors, 
+void RidgeRegression::Init(const arma::mat &predictors, 
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
 
-  module_ = module;
   DEBUG_ERROR_MSG_IF(predictors.n_cols<predictors.n_rows,
      "The number of the columns %d must be less or equal to the number of "
      " the rows %d ", predictors.n_cols, predictors.n_rows);
@@ -191,14 +190,11 @@ void RidgeRegression::Init(fx_module *module, const arma::mat &predictors,
   factors_.reset();
 }
 
-void RidgeRegression::Init(fx_module *module, 
-                           const arma::mat &input_data, 
+void RidgeRegression::Init(const arma::mat &input_data, 
                            const arma::Col<index_t> &predictor_indices,
                            index_t &prediction_index,
 			   bool use_normal_equation_method) {
   
-  module_ = module;
- 
   if(use_normal_equation_method) {
 
     // Build the covariance matrix.
@@ -218,13 +214,10 @@ void RidgeRegression::Init(fx_module *module,
   factors_.reset();
 }
 
-void RidgeRegression::Init(fx_module *module, 
-                           const arma::mat &input_data, 
+void RidgeRegression::Init(const arma::mat &input_data, 
                            const arma::Col<index_t> &predictor_indices,
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
-
-  module_ = module;
 
   if(use_normal_equation_method) {
 
@@ -483,7 +476,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
       min_index = i;
     }
   }
-  fx_result_double(module_, "cross_validation_score", min_score);
+  mlpack::IO::GetParam<double>("reg/cross_validation_score") =  min_score;
 
   mlpack::IO::Info << "The optimal lamda: " <<  lambda_min + min_index * step << std::endl;
  
@@ -502,9 +495,9 @@ void RidgeRegression::FeatureSelectedRegression
   
   mlpack::IO::Info << "Starting VIF-based feature selection." << std::endl;
   
-  double lambda = fx_param_double(module_, "lambda", 0.0);
+  double lambda = mlpack::IO::GetParam<double>("ridge/lambda"); //Default value, 0.0
   double variance_inflation_factor_threshold = 
-    fx_param_double(module_, "vif_threshold", 8.0);
+    mlpack::IO::GetParam<double>("ridge/vif_threshold"); //Default value, 8.0;
   bool done_flag = false;
   arma::Col<index_t> *current_predictor_indices = new arma::Col<index_t>();
   arma::Col<index_t> *current_prune_predictor_indices = new 

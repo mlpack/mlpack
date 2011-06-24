@@ -17,7 +17,7 @@
 #include "spacetree.h"
 #include "bounds.h"
 
-#include "../fx/fx.h"
+#include "../fx/io.h"
 
 #include "kdtree_impl.h"
 
@@ -191,6 +191,12 @@ namespace tree {
     return result;
   }
 
+ /*** UNDOCUMENTED PARAMETERS ***/
+ PARAM_STRING("q", "Specifies input file.", "kdtree", "foo.txt");
+ PARAM_STRING("type", "Undocumented", "kdtree", "text");
+ PARAM_INT("leaflen", "Leaf size.", "kdtree", 20);
+ 
+
   /**
    * Loads a KD tree from a command-line parameter,
    * creating a KD tree if necessary.
@@ -230,30 +236,29 @@ namespace tree {
    * @return SUCCESS_PASS or SUCCESS_FAIL
    */
   template<typename TKdTree, typename T>
-  success_t LoadKdTree(datanode* module,
-                       arma::Mat<T>& matrix,
+  success_t LoadKdTree(arma::Mat<T>& matrix,
                        TKdTree** tree_pp,
                        arma::Col<index_t>& old_from_new) {
-    const char *type = fx_param_str(module, "type", "text");
-    const char *fname = fx_param_str(module, "", NULL);
+    const char *type = mlpack::IO::GetParam<std::string>("kdtree/type").c_str();
+    const char *fname = mlpack::IO::GetParam<std::string>("kdtree/q").c_str();
     success_t success = SUCCESS_PASS;
 
-    fx_timer_start(module, "load");
+    mlpack::IO::StartTimer("kdtree/load");
     if (strcmp(type, "text") == 0) {
-      int leaflen = fx_param_int(module, "leaflen", 20);
+      int leaflen = mlpack::IO::GetParam<int>("kdtree/leaflen");
 
-      fx_timer_start(module, "load_matrix");
+      mlpack::IO::StartTimer("kdtree/load_matrix");
       success = data::Load(fname, matrix);
-      fx_timer_stop(module, "load_matrix");
+      mlpack::IO::StopTimer("kdtree/load_matrix");
 
       //if (fx_param_exists("do_pca")) {}
 
-      fx_timer_start(module, "make_tree");
+      mlpack::IO::StartTimer("kdtree/make_tree");
       *tree_pp = MakeKdTreeMidpoint<TKdTree>(
           matrix, leaflen, old_from_new);
-      fx_timer_stop(module, "make_tree");
+      mlpack::IO::StopTimer("kdtree/make_tree");
     }
-    fx_timer_stop(module, "load");
+    mlpack::IO::StopTimer("kdtree/load");
 
     return success;
   }
