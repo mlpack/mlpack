@@ -80,10 +80,19 @@ class TestRandApprox {
       arma::svd(
         left_singular_vectors, singular_values,
         right_singular_vectors, random_matrix);
-      singular_values.print();
+      int truncation_order =
+        core::math::RandInt(
+          1, std::min(
+            std::min(
+              20, num_dimensions), num_points));
+      int num_power_iter = core::math::RandInt(3, 20);
 
       core::optimization::RandRangeFinder::Compute(
-        random_matrix, 10, 3, &basis);
+        random_matrix, truncation_order, num_power_iter, &basis);
+      std::cerr <<  "The largest truncated singular value: " <<
+                singular_values[ truncation_order ] << "\n";
+      std::cerr << "Tried " << num_power_iter << " number of power iterations."
+                << "\n";
 
       // Compute the two norm error.
       arma::mat error = random_matrix;
@@ -94,7 +103,7 @@ class TestRandApprox {
         }
       }
       std::cerr << "Epsilon achieved: " << arma::norm(error, 2) <<
-                " achieved with " << basis.n_cols << " basis vectors.\n";
+                " achieved with " << basis.n_cols << " basis vectors.\n\n";
 
       return 1;
     }
