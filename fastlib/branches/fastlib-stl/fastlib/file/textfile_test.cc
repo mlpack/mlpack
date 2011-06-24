@@ -1,10 +1,10 @@
 #include "textfile.h"
 //#include "textfile.h"
 #include "../base/test.h"
-
 #include <math.h>
 
-TEST_SUITE_BEGIN(textfile)
+#define BOOST_TEST_MODULE Something
+#include <boost/test/unit_test.hpp>
 
 /*void Test1() {
   TextTokenizer scanner;
@@ -18,12 +18,7 @@ TEST_SUITE_BEGIN(textfile)
   }
 }*/
 
-#define REQUIRE(scanner, cond) \
-    if (!(scanner.cond)) { fprintf(stderr, "FAILED: %s: '%s'\n", #cond, \
-        scanner.Peek().c_str()); } else
-    
-
-void Test2() {
+BOOST_AUTO_TEST_CASE(Test2) {
   const char *fname = "tmpfile.txt";
   TextWriter writer;
   
@@ -34,35 +29,32 @@ void Test2() {
   
   TextTokenizer scanner;
   scanner.Open(fname, "#", "-", TextTokenizer::WANT_NEWLINE);
-  
-  REQUIRE(scanner, MatchPunct());
-  REQUIRE(scanner, MatchIdentifier());
-  REQUIRE(scanner, MatchPunct());
-  REQUIRE(scanner, MatchInteger());
-  REQUIRE(scanner, Match(","));
-  REQUIRE(scanner, MatchDouble());
-  REQUIRE(scanner, Match(","));
-  REQUIRE(scanner, MatchDouble());
-  REQUIRE(scanner, Match(","));
-  REQUIRE(scanner, MatchType(TextTokenizer::IDENTIFIER));
-  REQUIRE(scanner, Match(","));
-  REQUIRE(scanner, MatchString());
-  REQUIRE(scanner, Match(","));
-  REQUIRE(scanner, MatchString());
-  REQUIRE(scanner, MatchPunct());
-  REQUIRE(scanner, Match("\n"));
-  REQUIRE(scanner, Match("@"));
-  REQUIRE(scanner, Match("end"));
-  REQUIRE(scanner, Match("("));
-  REQUIRE(scanner, Match("2.0e-21"));
+
+  BOOST_REQUIRE(scanner.MatchPunct());
+  BOOST_REQUIRE(scanner.MatchIdentifier());
+  BOOST_REQUIRE(scanner.MatchPunct());
+  BOOST_REQUIRE(scanner.MatchInteger());
+  BOOST_REQUIRE(scanner.Match(","));
+  BOOST_REQUIRE(scanner.MatchDouble());
+  BOOST_REQUIRE(scanner.Match(","));
+  BOOST_REQUIRE(scanner.MatchDouble());
+  BOOST_REQUIRE(scanner.Match(","));
+  BOOST_REQUIRE(scanner.MatchType(TextTokenizer::IDENTIFIER));
+  BOOST_REQUIRE(scanner.Match(","));
+  BOOST_REQUIRE(scanner.MatchString());
+  BOOST_REQUIRE(scanner.Match(","));
+  BOOST_REQUIRE(scanner.MatchString());
+  BOOST_REQUIRE(scanner.MatchPunct());
+  BOOST_REQUIRE(scanner.Match("\n"));
+  BOOST_REQUIRE(scanner.Match("@"));
+  BOOST_REQUIRE(scanner.Match("end"));
+  BOOST_REQUIRE(scanner.Match("("));
+  BOOST_REQUIRE(scanner.Match("2.0e-21"));
   //assert(scanner.Current() == "2.0e-21");
-  TEST_ASSERT(scanner.Current() == "2.0e-21");
+  BOOST_REQUIRE(scanner.Current() == "2.0e-21");
   //assert(fabs(strtod(scanner.Current().c_str(), NULL) - 2.0e-21) < 1.0e-30);
-  TEST_DOUBLE_APPROX(strtod(scanner.Current().c_str(), NULL), 2.0e-21, 1.0e-30);
-  REQUIRE(scanner, Match(")"));
-  REQUIRE(scanner, Match("\n"));
-  REQUIRE(scanner, Match("abc"));
+  BOOST_REQUIRE_CLOSE(strtod(scanner.Current().c_str(), NULL),2.0e-21, 1e-5);
+  BOOST_REQUIRE(scanner.Match(")"));
+  BOOST_REQUIRE(scanner.Match("\n"));
+  BOOST_REQUIRE(scanner.Match("abc"));
 }
-
-TEST_SUITE_END(textfile, Test2)
-
