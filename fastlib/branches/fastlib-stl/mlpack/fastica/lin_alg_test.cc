@@ -40,17 +40,16 @@ bool test_Center() {
   Center(tmp, tmp_out);
   
   // average should be
-  // [[2 4 6 8 10]]
+  // [[0 3 6 9 12]]'
   // so result should be
-  // [[-2 -4 -6 -8 -10]
-  //  [-1 -2 -3 -4 -5 ]
-  //  [ 0  0  0  0  0 ]
-  //  [ 1  2  3  4  5 ]
-  //  [ 2  4  6  8  10]]
-  for(int row = 0; row < 5; row++) {
-    for(int col = 0; col < 5; col++) {
-      if(tmp_out(row, col) != (row * (col + 1)) - ((col + 1) * 2))
-        return false;
+  // [[ 0  0  0  0  0]
+  //  [-2 -1  0  1  2 ]
+  //  [-4 -2  0  2  4 ]
+  //  [-6 -3  0  3  6 ]
+  //  [-8 -4  0  4  8]]
+  for (int row = 0; row < 5; row++) {
+    for (int col = 0; col < 5; col++) {
+      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2) * row, 1e-5);
     }
   }
   
@@ -62,17 +61,16 @@ bool test_Center() {
   Center(tmp2, tmp_out);
 
   // average should be
-  // [[2 4 6 8 10 12]]
+  // [[0 3.5 7 10.5 14]]'
   // so result should be
-  // [[-2 -4 -6 -8 -10 -12]
-  //  [-1 -2 -3 -4 -5  -6 ]
-  //  [ 0  0  0  0  0   0 ]
-  //  [ 1  2  3  4  5   6 ]
-  //  [ 2  4  6  8  10  12]]
+  // [[ 0    0    0   0   0   0  ]
+  //  [-2.5 -1.5 -0.5 0.5 1.5 2.5]
+  //  [-5   -3   -1   1   3   5  ]
+  //  [-7.5 -4.5 -1.5 1.5 1.5 4.5]
+  //  [-10  -6   -2   2   6   10 ]]
   for(int row = 0; row < 5; row++) {
     for(int col = 0; col < 6; col++) {
-      if(tmp_out(row, col) != (row * (col + 1)) - ((col + 1) * 2))
-        return false;
+      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2.5) * row, 1e-5);
     }
   }
   
