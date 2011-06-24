@@ -5,13 +5,12 @@
  */
 
 #include "../base/test.h"
-
 #include "uselapack.h"
-//#include "uselapack.h"
 
 #include "la.h"
-//#include "la.h"
-TEST_SUITE_BEGIN(uselapack);
+#define BOOST_TEST_MODULE Something
+#include <boost/test/unit_test.hpp>
+
 
 /**
  * Creates a matrix locally.
@@ -106,12 +105,7 @@ bool MatrixApproxEqual(const Matrix& a, const Matrix& b,
 
 void AssertApproxMatrix(const Matrix& a, const Matrix& b,
     double eps) {
-  if (!MatrixApproxEqual(a, b, eps)) {
-    a.PrintDebug("a");
-    b.PrintDebug("b");
-    abort();
-  }
-  //fprintf(stderr, "... Correct matrix!\n");
+  BOOST_REQUIRE(MatrixApproxEqual(a, b, eps));
 }
 
 void AssertExactMatrix(const Matrix& a, const Matrix& b) {
@@ -122,22 +116,21 @@ void AssertApproxTransMatrix(const Matrix& a, const Matrix& b,
     double eps) {
   Matrix a_trans;
   la::TransposeInit(a, &a_trans);
-  if (!MatrixApproxEqual(a_trans, b, eps)) {
-    a_trans.PrintDebug("a_trans");
-    b.PrintDebug("b");
-    abort();
-  }
+
+  BOOST_REQUIRE(MatrixApproxEqual(a_trans, b, eps));
 }
 
-void TestVectorDot() {
+
+BOOST_AUTO_TEST_CASE(TestVectorDot) { 
+
   MAKE_VECTOR(a, 4,    2, 1, 4, 5);
   MAKE_VECTOR(b, 4,    3, 0, 2, -1);
   
   //TEST_DOUBLE_EXACT(F77_FUNC(ddot)(4, a.ptr(), 1, a.ptr(), 1),  4+1+16+25);
   TEST_DOUBLE_EXACT(la::Dot(a, a), 4+1+16+25);
   TEST_DOUBLE_EXACT(la::Dot(a, b), 6+0+8-5);
-  TEST_DOUBLE_APPROX(la::LengthEuclidean(b), sqrt(9+0+4+1), 1.0e-8);
-  TEST_DOUBLE_APPROX(la::LengthEuclidean(a), sqrt(4+1+16+25), 1.0e-8);
+  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(b), sqrt(9+0+4+1), 1.0e-8);
+  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(a), sqrt(4+1+16+25), 1.0e-8);
 }
 
 // ---- INCLUDED FROM ORIGINAL LA TEST -----
@@ -166,7 +159,9 @@ void MakeConstantMatrix(index_t n_rows, index_t n_cols, double v, Matrix *m) {
 }
 
 /** Tests level 1 BLAS-ish stuff. */
-void TestMatrixSimpleMath() {
+
+BOOST_AUTO_TEST_CASE (TestMatrixSimpleMath)  { 
+
   Matrix m1;
   Matrix m2;
   Matrix m3;
@@ -177,18 +172,21 @@ void TestMatrixSimpleMath() {
   MakeCountMatrix(3, 4, &m2);
   la::AddTo(m2, &m1);
   la::AddInit(m1, m2, &m3);
-  TEST_ASSERT(m3.get(0, 0) == 0);
-  TEST_ASSERT(m3.get(2, 3) == (2+3)*3);
+
+  BOOST_REQUIRE(m3.get(0,0) == 0 );
+
+  BOOST_REQUIRE(m3.get(0, 0) == 0);
+  BOOST_REQUIRE(m3.get(2, 3) == (2+3)*3);
   la::AddExpert(-1.0, m2, &m1);
-  TEST_ASSERT(m1.get(0, 0) == 0);
-  TEST_ASSERT(m1.get(2, 3) == (2+3));
+  BOOST_REQUIRE(m1.get(0, 0) == 0);
+  BOOST_REQUIRE(m1.get(2, 3) == (2+3));
   la::Scale(4.0, &m1);
-  TEST_ASSERT(m1.get(2, 3) == (2+3)*4);
+  BOOST_REQUIRE(m1.get(2, 3) == (2+3)*4);
   MakeConstantMatrix(3, 4, 7.0, &m4);
   la::AddInit(m1, m4, &m5);
-  TEST_ASSERT(m5.get(2, 3) == (2+3)*4 + 7.0);
-  TEST_ASSERT(m5.get(1, 3) == (1+3)*4 + 7.0);
-  TEST_ASSERT(m5.get(1, 0) == (1+0)*4 + 7.0);
+  BOOST_REQUIRE(m5.get(2, 3) == (2+3)*4 + 7.0);
+  BOOST_REQUIRE(m5.get(1, 3) == (1+3)*4 + 7.0);
+  BOOST_REQUIRE(m5.get(1, 0) == (1+0)*4 + 7.0);
 }
 
 void MakeCountVector(index_t n, Vector *v) {
@@ -208,7 +206,7 @@ void MakeConstantVector(index_t n, double d, Vector *v) {
 }
 
 /** Tests level 1 BLAS-ish stuff. */
-void TestVectorSimpleMath() {
+BOOST_AUTO_TEST_CASE(TestVectorSimpleMath) { 
   Vector v1;
   Vector v2;
   Vector v3;
@@ -219,22 +217,23 @@ void TestVectorSimpleMath() {
   MakeCountVector(6, &v2);
   la::AddTo(v2, &v1);
   la::AddInit(v1, v2, &v3);
-  TEST_ASSERT(v3[0] == 0);
-  TEST_ASSERT(v3[5] == (5)*3);
+  BOOST_REQUIRE(v3[0] == 0);
+  BOOST_REQUIRE(v3[5] == (5)*3);
   la::AddExpert(-1.0, v2, &v1);
-  TEST_ASSERT(v1[0] == 0);
-  TEST_ASSERT(v1[5] == (5));
+  BOOST_REQUIRE(v1[0] == 0);
+  BOOST_REQUIRE(v1[5] == (5));
   la::Scale(4.0, &v1);
-  TEST_ASSERT(v1[5] == (5)*4);
+  BOOST_REQUIRE(v1[5] == (5)*4);
   MakeConstantVector(6, 7.0, &v4);
   la::AddInit(v1, v4, &v5);
-  TEST_ASSERT(v5[5] == (5)*4 + 7.0);
-  TEST_ASSERT(v5[4] == (4)*4 + 7.0);
-  TEST_ASSERT(v5[1] == (1)*4 + 7.0);
+  BOOST_REQUIRE(v5[5] == (5)*4 + 7.0);
+  BOOST_REQUIRE(v5[4] == (4)*4 + 7.0);
+  BOOST_REQUIRE(v5[1] == (1)*4 + 7.0);
 }
 
 /** Tests aliases and copies */
-void TestVector() {
+
+BOOST_AUTO_TEST_CASE(TestVector) { 
   Vector v1;
   const Vector *v_const;
   Vector v2;
@@ -246,52 +245,52 @@ void TestVector() {
   Vector v9;
   
   MakeCountVector(10, &v1);
-  TEST_ASSERT(v1.length() == 10);
-  TEST_ASSERT(v1.ptr()[3] == v1[3]);
+  BOOST_REQUIRE(v1.length() == 10);
+  BOOST_REQUIRE(v1.ptr()[3] == v1[3]);
   v_const = &v1;
-  TEST_ASSERT(v_const->ptr()[3] == (*v_const)[3]);
+  BOOST_REQUIRE(v_const->ptr()[3] == (*v_const)[3]);
   
   
   v2.Alias(v1);
-  TEST_ASSERT(v2[9] == 9);
-  TEST_ASSERT(v1.ptr() == v2.ptr());
+  BOOST_REQUIRE(v2[9] == 9);
+  BOOST_REQUIRE(v1.ptr() == v2.ptr());
   v2.MakeSubvector(2, 5, &v3);
-  TEST_ASSERT(v3.length() == 5);
-  TEST_ASSERT(v3[4] == 6);
-  TEST_ASSERT(v3.ptr() != v2.ptr());
+  BOOST_REQUIRE(v3.length() == 5);
+  BOOST_REQUIRE(v3[4] == 6);
+  BOOST_REQUIRE(v3.ptr() != v2.ptr());
   v4.Copy(v3);
-  TEST_ASSERT(v4.length() == 5);
-  TEST_ASSERT(v4[4] == 6);
+  BOOST_REQUIRE(v4.length() == 5);
+  BOOST_REQUIRE(v4[4] == 6);
   SmallVector<21> v5;
   v5.SetZero();
-  TEST_ASSERT(v5[20] == 0.0);
+  BOOST_REQUIRE(v5[20] == 0.0);
   v6.Alias(v1.ptr(), v1.length());
-  TEST_ASSERT(v6[9] == 9);
-  TEST_ASSERT(v6[3] == 3);
+  BOOST_REQUIRE(v6[9] == 9);
+  BOOST_REQUIRE(v6[3] == 3);
   v7.Own(&v1);
-  TEST_ASSERT(v7[9] == 9);
-  TEST_ASSERT(v7[3] == 3);
+  BOOST_REQUIRE(v7[9] == 9);
+  BOOST_REQUIRE(v7[3] == 3);
   v8.WeakCopy(v1);
-  TEST_ASSERT(v8[9] == 9);
-  TEST_ASSERT(v8[3] == 3);
+  BOOST_REQUIRE(v8[9] == 9);
+  BOOST_REQUIRE(v8[3] == 3);
   MakeConstantVector(10, 3.5, &v9);
-  TEST_ASSERT(v9[0] == 3.5);
-  TEST_ASSERT(v1[0] == 0.0);
+  BOOST_REQUIRE(v9[0] == 3.5);
+  BOOST_REQUIRE(v1[0] == 0.0);
   v9.SwapValues(&v1);
   TEST_DOUBLE_EXACT(v1[0], 3.5);
-  TEST_ASSERT(v9[0] == 0.0);
-  TEST_ASSERT(v2[0] == 3.5);
-  TEST_ASSERT(v3[0] == 3.5);
-  TEST_ASSERT(v4[0] != 3.5);
-  TEST_ASSERT(v6[0] == 3.5);
-  TEST_ASSERT(v7[0] == 3.5);
-  TEST_ASSERT(v8[0] == 3.5);
+  BOOST_REQUIRE(v9[0] == 0.0);
+  BOOST_REQUIRE(v2[0] == 3.5);
+  BOOST_REQUIRE(v3[0] == 3.5);
+  BOOST_REQUIRE(v4[0] != 3.5);
+  BOOST_REQUIRE(v6[0] == 3.5);
+  BOOST_REQUIRE(v7[0] == 3.5);
+  BOOST_REQUIRE(v8[0] == 3.5);
   v8.SetZero();
-  TEST_ASSERT(v1[0] == 0.0);
+  BOOST_REQUIRE(v1[0] == 0.0);
 }
 
+BOOST_AUTO_TEST_CASE(TestMatrix) {
 
-void TestMatrix() {
   Matrix m1;
   const Matrix *m_const;
   Matrix m2;
@@ -303,56 +302,57 @@ void TestMatrix() {
   Matrix m9;
   
   MakeCountMatrix(13, 10, &m1);
-  TEST_ASSERT(m1.n_cols() == 10);
-  TEST_ASSERT(m1.n_rows() == 13);
-  TEST_ASSERT(m1.ptr()[3] == m1.get(3, 0));
+  BOOST_REQUIRE(m1.n_cols() == 10);
+  BOOST_REQUIRE(m1.n_rows() == 13);
+  BOOST_REQUIRE(m1.ptr()[3] == m1.get(3, 0));
   m_const = &m1;
-  TEST_ASSERT(m_const->ptr()[3] == (*m_const).get(3, 0));
+  BOOST_REQUIRE(m_const->ptr()[3] == (*m_const).get(3, 0));
+
 
   Vector v1, v2;  
   m1.MakeColumnVector(0, &v1);
   m1.MakeColumnVector(1, &v2);
-  TEST_ASSERT(v1[12] == 12);
-  TEST_ASSERT(v2[12] == 13);
+  BOOST_REQUIRE(v1[12] == 12);
+  BOOST_REQUIRE(v2[12] == 13);
   
   m2.Alias(m1);
-  TEST_ASSERT(m2.get(9, 0) == 9);
-  TEST_ASSERT(m1.ptr() == m2.ptr());
+  BOOST_REQUIRE(m2.get(9, 0) == 9);
+  BOOST_REQUIRE(m1.ptr() == m2.ptr());
   m2.MakeColumnSlice(2, 5, &m3);
-  TEST_ASSERT(m3.n_cols() == 5);
-  TEST_ASSERT(m3.get(4, 0) == 6);
-  TEST_ASSERT(m3.ptr() != m2.ptr());
+  BOOST_REQUIRE(m3.n_cols() == 5);
+  BOOST_REQUIRE(m3.get(4, 0) == 6);
+  BOOST_REQUIRE(m3.ptr() != m2.ptr());
   m4.Copy(m3);
-  TEST_ASSERT(m4.n_cols() == 5);
-  TEST_ASSERT(m4.get(4, 0) == 6);
+  BOOST_REQUIRE(m4.n_cols() == 5);
+  BOOST_REQUIRE(m4.get(4, 0) == 6);
   SmallMatrix<21, 21> m5;
   m5.SetZero();
-  TEST_ASSERT(m5.get(20, 0) == 0.0);
+  BOOST_REQUIRE(m5.get(20, 0) == 0.0);
   m6.Alias(m1.ptr(), m1.n_rows(), m1.n_cols());
-  TEST_ASSERT(m6.get(9, 0) == 9);
-  TEST_ASSERT(m6.get(3, 0) == 3);
+  BOOST_REQUIRE(m6.get(9, 0) == 9);
+  BOOST_REQUIRE(m6.get(3, 0) == 3);
   m7.Own(&m1);
-  TEST_ASSERT(m7.get(9, 0) == 9);
-  TEST_ASSERT(m7.get(3, 0) == 3);
+  BOOST_REQUIRE(m7.get(9, 0) == 9);
+  BOOST_REQUIRE(m7.get(3, 0) == 3);
   m8.WeakCopy(m1);
-  TEST_ASSERT(m8.get(9, 0) == 9);
-  TEST_ASSERT(m8.get(3, 0) == 3);
+  BOOST_REQUIRE(m8.get(9, 0) == 9);
+  BOOST_REQUIRE(m8.get(3, 0) == 3);
   MakeConstantMatrix(13, 10, 3.5, &m9);
-  TEST_ASSERT(m9.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m9.get(0, 0) == 3.5);
   m9.SwapValues(&m1);
-  TEST_ASSERT(m9.get(0, 0) == 0.0);
-  TEST_ASSERT(m1.get(0, 0) == 3.5);
-  TEST_ASSERT(m2.get(0, 0) == 3.5);
-  TEST_ASSERT(m3.get(0, 0) == 3.5);
-  TEST_ASSERT(m4.get(0, 0) != 3.5);
-  TEST_ASSERT(m6.get(0, 0) == 3.5);
-  TEST_ASSERT(m7.get(0, 0) == 3.5);
-  TEST_ASSERT(m8.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m9.get(0, 0) == 0.0);
+  BOOST_REQUIRE(m1.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m2.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m3.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m4.get(0, 0) != 3.5);
+  BOOST_REQUIRE(m6.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m7.get(0, 0) == 3.5);
+  BOOST_REQUIRE(m8.get(0, 0) == 3.5);
   m8.SetZero();
-  TEST_ASSERT(m1.get(0, 0) == 0.0);
+  BOOST_REQUIRE(m1.get(0, 0) == 0.0);
   
   m8.ref(3, 4) = 21.75;
-  TEST_ASSERT(m8.get(3, 4) == 21.75);
+  BOOST_REQUIRE(m8.get(3, 4) == 21.75);
 }
 
 // ---- -------- ----
@@ -363,7 +363,8 @@ void TestMatrix() {
 // ---- -------- ----
 // ---- -------- ----
 
-void TestMultiply() {
+BOOST_AUTO_TEST_CASE(TestMultiply) {
+
   MAKE_MATRIX_TRANS(a, 3, 3,
       3, 1, 4,
       1, 5, 9,
@@ -454,7 +455,7 @@ void TestMultiply() {
   
 }
 
-void TestInverse() {
+BOOST_AUTO_TEST_CASE(TestInverse) {  
   MAKE_MATRIX_TRANS(a, 3, 3,
       .5, 0, 0,
       0, 1, 0,
@@ -479,25 +480,26 @@ void TestInverse() {
   
   Matrix a_inv_actual;
   
-  TEST_ASSERT(PASSED(la::InverseInit(a, &a_inv_actual)));
+  BOOST_REQUIRE(PASSED(la::InverseInit(a, &a_inv_actual)));
   AssertExactMatrix(a_inv_expect, a_inv_actual);
   
   Matrix b_inv_actual;
   
   b_inv_actual.Init(3, 3);
-  TEST_ASSERT(PASSED(la::InverseOverwrite(b, &b_inv_actual)));
+  BOOST_REQUIRE(PASSED(la::InverseOverwrite(b, &b_inv_actual)));
   AssertApproxMatrix(b_inv_expect, b_inv_actual, 1.0e-5);
   
   Matrix c_inv_actual;
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(!PASSED(la::InverseInit(c, &c_inv_actual)));
+  BOOST_REQUIRE(!PASSED(la::InverseInit(c, &c_inv_actual)));
   
   // Try inverting a 3x3 rank-3 matrix
-  TEST_ASSERT(PASSED(la::Inverse(&b)));
+  BOOST_REQUIRE(PASSED(la::Inverse(&b)));
   AssertApproxMatrix(b, b_inv_actual, 1.0e-5);
 }
 
-void TestDeterminant() {
+BOOST_AUTO_TEST_CASE(TestDeterminant) { 
+
   MAKE_MATRIX_TRANS(a, 3, 3,
       3, 1, 4,
       1, 5, 9,
@@ -517,17 +519,19 @@ void TestDeterminant() {
   
   int sign;
   
-  TEST_DOUBLE_APPROX(-90.0, la::Determinant(a), 1.0e-7);
-  TEST_DOUBLE_APPROX(log(90.0), la::DeterminantLog(a, &sign), 1.0e-7);
-  DEBUG_ASSERT_MSG(sign == -1, "%d", sign);
-  TEST_DOUBLE_APPROX(-412.0, la::Determinant(b), 1.0e-7);
-  TEST_DOUBLE_APPROX(262.0, la::Determinant(c), 1.0e-7);
-  TEST_DOUBLE_APPROX(log(262.0), la::DeterminantLog(c, &sign), 1.0e-7);
-  DEBUG_ASSERT_MSG(sign == 1, "%d", sign);
-  TEST_DOUBLE_APPROX(-8.3934e4, la::Determinant(d), 1.0e-7);
+  BOOST_REQUIRE_CLOSE(-90.0, la::Determinant(a), 1.0e-7);
+  BOOST_REQUIRE_CLOSE(log(90.0), la::DeterminantLog(a, &sign), 1.0e-7);
+  BOOST_REQUIRE(sign==-1);
+
+  BOOST_REQUIRE_CLOSE(-412.0, la::Determinant(b), 1.0e-7);
+  BOOST_REQUIRE_CLOSE(262.0, la::Determinant(c), 1.0e-7);
+  BOOST_REQUIRE_CLOSE(log(262.0), la::DeterminantLog(c, &sign), 1.0e-7);
+  BOOST_REQUIRE(sign == 1);
+  BOOST_REQUIRE_CLOSE(-8.3934e4, la::Determinant(d), 1.0e-7);
 }
 
-void TestQR() {
+
+BOOST_AUTO_TEST_CASE(TestQR) { 
   MAKE_MATRIX_TRANS(a, 3, 3,
       3, 1, 4,
       1, 5, 9,
@@ -574,7 +578,7 @@ void TestQR() {
   Matrix a_r_actual;
   Matrix a_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(a, &a_q_actual, &a_r_actual)));
+  BOOST_REQUIRE(PASSED(la::QRInit(a, &a_q_actual, &a_r_actual)));
   la::MulInit(a_q_actual, a_r_actual, &a_q_r_actual);
   AssertApproxMatrix(a, a_q_r_actual, 1.0e-5);
   
@@ -582,7 +586,7 @@ void TestQR() {
   Matrix b_r_actual;
   Matrix b_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(b, &b_q_actual, &b_r_actual)));
+  BOOST_REQUIRE(PASSED(la::QRInit(b, &b_q_actual, &b_r_actual)));
   la::MulInit(b_q_actual, b_r_actual, &b_q_r_actual);
   AssertApproxMatrix(b, b_q_r_actual, 1.0e-5);
   
@@ -590,13 +594,13 @@ void TestQR() {
   Matrix c_r_actual;
   Matrix c_q_r_actual;
   
-  TEST_ASSERT(PASSED(la::QRInit(c, &c_q_actual, &c_r_actual)));
+  BOOST_REQUIRE(PASSED(la::QRInit(c, &c_q_actual, &c_r_actual)));
   la::MulInit(c_q_actual, c_r_actual, &c_q_r_actual);
   AssertApproxMatrix(c, c_q_r_actual, 1.0e-5);
 }
 
 
-void TestEigen() {
+BOOST_AUTO_TEST_CASE (TestEigen) { 
   MAKE_MATRIX_TRANS(a, 3, 3,
       3, 1, 4,
       1, 5, 9,
@@ -627,20 +631,20 @@ void TestEigen() {
   Matrix a_eigenvectors_actual;
   Vector a_eigenvalues_actual;
   
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  BOOST_REQUIRE(PASSED(la::EigenvectorsInit(
       a, &a_eigenvalues_actual, &a_eigenvectors_actual)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual, 1.0e-5);
   AssertApproxTransMatrix(a_eigenvectors_expect, a_eigenvectors_actual, 1.0e-5);
 
   Vector a_eigenvalues_real_actual;
   Vector a_eigenvalues_imag_actual;
-  TEST_ASSERT(PASSED(la::EigenvaluesInit(
+  BOOST_REQUIRE(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_real_actual, &a_eigenvalues_imag_actual)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_real_actual, 1.0e-5);
   AssertApproxVector(a_eigenvalues_imag_expect, a_eigenvalues_imag_actual, 0.0);
 
   Vector a_eigenvalues_actual_2;
-  TEST_ASSERT(PASSED(la::EigenvaluesInit(
+  BOOST_REQUIRE(PASSED(la::EigenvaluesInit(
       a, &a_eigenvalues_actual_2)));
   AssertApproxVector(a_eigenvalues_real_expect, a_eigenvalues_actual_2, 1.0e-5);
   
@@ -651,14 +655,14 @@ void TestEigen() {
    */
   //Matrix b_eigenvectors_actual;
   //Vector b_eigenvalues_actual;
-  //TEST_ASSERT(!PASSED(la::EigenvectorsInit(
+  //BOOST_REQUIRE(!PASSED(la::EigenvectorsInit(
   //    b, &b_eigenvalues_actual, &b_eigenvectors_actual)));
 
   Matrix b_eigenvectors_real_actual;
   Matrix b_eigenvectors_imag_actual;
   Vector b_eigenvalues_real_actual;
   Vector b_eigenvalues_imag_actual;
-  TEST_ASSERT(PASSED(la::EigenvectorsInit(
+  BOOST_REQUIRE(PASSED(la::EigenvectorsInit(
       b, &b_eigenvalues_real_actual, &b_eigenvalues_imag_actual,
       &b_eigenvectors_real_actual, &b_eigenvectors_imag_actual)));
   AssertApproxVector(b_eigenvalues_real_expect, b_eigenvalues_real_actual, 1.0e-5);
@@ -694,7 +698,8 @@ void TrySchur(const Matrix &orig) {
   //AssertApproxVector(eigen_real_2, eigen_real, 1.0e-8);
 }
 
-void TestSchur() {
+
+BOOST_AUTO_TEST_CASE(TestSchur) { 
   MAKE_MATRIX_TRANS(a, 3, 3,
      3, 1, 4,
      1, 5, 9,
@@ -722,6 +727,8 @@ void AssertProperSVD(const Matrix& orig,
   AssertApproxMatrix(result, orig, 1.0e-8);
 }
 
+
+
 void TrySVD(const Matrix& orig) {
   Vector s;
   Matrix u;
@@ -730,7 +737,9 @@ void TrySVD(const Matrix& orig) {
   AssertProperSVD(orig, s, u, vt);
 }
 
-void TestSVD() {
+
+
+BOOST_AUTO_TEST_CASE(TestSVD) { 
   MAKE_MATRIX_TRANS(a, 3, 3,
       3, 1, 4,
       1, 5, 9,
@@ -797,13 +806,15 @@ void TestSVD() {
 
 void TryCholesky(const Matrix &orig) {
   Matrix u;
-  TEST_ASSERT(PASSED(la::CholeskyInit(orig, &u)));
+  BOOST_REQUIRE(PASSED(la::CholeskyInit(orig, &u)));
   Matrix result;
   la::MulTransAInit(u, u, &result);
   AssertApproxMatrix(orig, result, 1.0e-8);
 }
 
-void TestCholesky() {
+
+BOOST_AUTO_TEST_CASE(TestCholesky) { 
+
   MAKE_MATRIX_TRANS(a, 3, 3,
       1, 0, 0,
       0, 2, 0,
@@ -819,7 +830,7 @@ void TestCholesky() {
 
 void TrySolveMatrix(const Matrix& a, const Matrix& b) {
   Matrix x;
-  TEST_ASSERT(PASSED(la::SolveInit(a, b, &x)));
+  BOOST_REQUIRE(PASSED(la::SolveInit(a, b, &x)));
   Matrix result;
   la::MulInit(a, x, &result);
   AssertApproxMatrix(b, result, 1.0e-8);
@@ -833,7 +844,7 @@ void TrySolveVector(const Matrix& a, const Vector& b) {
   AssertApproxVector(b, result, 1.0e-8);
 }
 
-void TestSolve() {
+BOOST_AUTO_TEST_CASE(TestSolve) { 
   MAKE_MATRIX_TRANS(a, 3, 3,
      3, 1, 4,
      1, 5, 9,
@@ -865,7 +876,9 @@ void TestSolve() {
 /**
  * Writen by Nick to Test LeastSquareFit
  */
-void TestLeastSquareFit() {
+
+BOOST_AUTO_TEST_CASE(TestLeastSquareFit) { 
+
   Matrix x;
   Matrix y;
   Matrix a;
@@ -892,7 +905,9 @@ void TestLeastSquareFit() {
   true_a.set(1, 1, 4.064);
   for (index_t i=0; i<2; i++) {
     for(index_t j=0; j<2; j++) {
-      TEST_DOUBLE_APPROX(true_a.get(i,j), a.get(i, j), 0.001);
+  
+      BOOST_REQUIRE_CLOSE(true_a.get(i,j)+1e-6, a.get(i, j)+1e-6, 1e-1);
+
     }
   }
   
@@ -900,6 +915,7 @@ void TestLeastSquareFit() {
 
 }
 
+/*
 TEST_SUITE_END(uselapack,
     TestVector,
     TestMatrix,
@@ -917,3 +933,6 @@ TEST_SUITE_END(uselapack,
     TestSolve,
     TestLeastSquareFit
     );
+
+*/
+
