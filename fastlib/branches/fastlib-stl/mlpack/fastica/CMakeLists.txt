@@ -35,4 +35,5 @@ add_executable(lin_alg_test
 target_link_libraries(lin_alg_test
   mlpack
   fastlib
+  boost_unit_test_framework
 )

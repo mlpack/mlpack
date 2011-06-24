@@ -16,6 +16,10 @@
 using namespace arma;
 using namespace linalg__private;
 
+
+#define BOOST_TEST_MODULE linAlgTest
+#include <boost/test/unit_test.hpp>
+
 /***
  * Test for linalg__private::Center().  There are no edge cases here, so we'll
  * just try it once for now.
@@ -128,30 +132,10 @@ bool test_Orthogonalize() {
   return true;
 }
 
-int main() {
-  printf("test_Center(): ");
-  if(test_Center()) {
-    printf("pass\n");
-  } else {
-    printf("fail\n");
-    return 1;
-  }
+BOOST_AUTO_TEST_CASE(AllTests) {
+   
+   BOOST_REQUIRE(test_Center());
+   BOOST_REQUIRE(test_WhitenUsingEig());
+   BOOST_REQUIRE(test_Orthogonalize()); 
   
-  printf("test_WhitenUsingEig(): ");
-  if(test_WhitenUsingEig()) {
-    printf("pass\n");
-  } else {
-    printf("fail\n");
-    return 1;
-  }
-  
-  printf("test_Orthogonalize(): ");
-  if(test_Orthogonalize()) {
-    printf("pass\n");
-  } else {
-    printf("fail\n");
-    return 1;
-  }
-
-  return 0;
 }
