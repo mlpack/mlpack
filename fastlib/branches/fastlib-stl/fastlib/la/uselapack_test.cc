@@ -8,7 +8,7 @@
 #include "uselapack.h"
 
 #include "la.h"
-#define BOOST_TEST_MODULE Something
+#define BOOST_TEST_MODULE UseLapackTest
 #include <boost/test/unit_test.hpp>
 
 
@@ -18,7 +18,7 @@
  */
 #define MAKE_MATRIX_TRANS(name, n_rows, n_cols, contents ...) \
     double name ## _values [] = { contents }; \
-    DEBUG_ASSERT(sizeof(name ## _values) / sizeof(double) == n_rows * n_cols); \
+    BOOST_REQUIRE(sizeof(name ## _values) / sizeof(double) == n_rows * n_cols); \
     Matrix name; \
     name.Alias(name ## _values, (n_rows), (n_cols));
 
@@ -28,7 +28,7 @@
  */
 #define MAKE_VECTOR(name, length, contents ...) \
     double name ## _values [] = { contents }; \
-    DEBUG_ASSERT(sizeof(name ## _values) / sizeof(double) == (length)); \
+    BOOST_REQUIRE(sizeof(name ## _values) / sizeof(double) == (length)); \
     Vector name; \
     name.Alias(name ## _values, (length));
 
@@ -126,9 +126,8 @@ BOOST_AUTO_TEST_CASE(TestVectorDot) {
   MAKE_VECTOR(a, 4,    2, 1, 4, 5);
   MAKE_VECTOR(b, 4,    3, 0, 2, -1);
   
-  //TEST_DOUBLE_EXACT(F77_FUNC(ddot)(4, a.ptr(), 1, a.ptr(), 1),  4+1+16+25);
-  TEST_DOUBLE_EXACT(la::Dot(a, a), 4+1+16+25);
-  TEST_DOUBLE_EXACT(la::Dot(a, b), 6+0+8-5);
+  BOOST_REQUIRE_CLOSE(la::Dot(a, a), 4+1+16+25, 1e-5);
+  BOOST_REQUIRE_CLOSE(la::Dot(a, b), 6+0+8-5, 1e-5);
   BOOST_REQUIRE_CLOSE(la::LengthEuclidean(b), sqrt(9+0+4+1), 1.0e-8);
   BOOST_REQUIRE_CLOSE(la::LengthEuclidean(a), sqrt(4+1+16+25), 1.0e-8);
 }
@@ -277,7 +276,8 @@ BOOST_AUTO_TEST_CASE(TestVector) {
   BOOST_REQUIRE(v9[0] == 3.5);
   BOOST_REQUIRE(v1[0] == 0.0);
   v9.SwapValues(&v1);
-  TEST_DOUBLE_EXACT(v1[0], 3.5);
+  BOOST_REQUIRE_CLOSE(v1[0], 3.5, 1e-5);
+
   BOOST_REQUIRE(v9[0] == 0.0);
   BOOST_REQUIRE(v2[0] == 3.5);
   BOOST_REQUIRE(v3[0] == 3.5);
