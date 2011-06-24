@@ -144,6 +144,5 @@ int main(int argc, char *argv[]) {
     naive_kde.ComputeMaximumRelativeError(fft_kde_results);
   }
   
-  fx_done(NULL);
   return 0;
 }

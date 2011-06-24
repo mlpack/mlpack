@@ -101,6 +101,13 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   std::string tmp = IO::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
 
+  IO::Add("global/tmp", "desc");
+  std::vector<std::string> folder = IO::GetFolder("global");
+
+  IO::Info << folder.size() << std::endl;
+  for(std::vector<std::string>::iterator i = folder.begin();
+  i != folder.end(); i++)
+    IO::Info << *i << std::endl;
 /*
   //Now lets test the output functions.  Will have to eyeball it manually.
   IO::Debug << "Test the new lines...";

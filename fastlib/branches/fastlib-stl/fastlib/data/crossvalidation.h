@@ -12,7 +12,7 @@
 #include "dataset.h"
 
 #include "../la/matrix.h"
-#include "../fx/fx.h"
+#include "../fx/io.h"
 
 /**
  * Cross-validator for simple classifiers, integrating tightly with
@@ -93,9 +93,9 @@ class SimpleCrossValidator {
   /** The dataset. */
   const Dataset *data_;
   /** The originating module. */
-  datanode *root_module_;
+  std::string root_path;
   /** The fastexec module for cross validation and result storage. */
-  datanode *kfold_module_;
+  std::string kfold_path;
   /** Number of folds. */
   int n_folds_;
   /** Number of labels. */
@@ -106,7 +106,7 @@ class SimpleCrossValidator {
   index_t n_correct_;
   /** Confusion matrix. */
   arma::mat confusion_matrix_;
-  
+ 
  public:
   SimpleCrossValidator() {}
   ~SimpleCrossValidator() {}
@@ -130,7 +130,7 @@ class SimpleCrossValidator {
       const Dataset *data_with_labels,
       int n_labels,
       int default_k,
-      struct datanode *module_root,
+      const char* path_to_root,
       const char *classifier_fx_name,
       const char *kfold_fx_name = "kfold");
   
@@ -173,6 +173,44 @@ class SimpleCrossValidator {
     return *data_;
   }
 
+
+ /**
+  * Copies a certain folder structure to another folder.
+  *
+  * Will copy the following parameters:
+  * --timers: train, test, validation
+  * --ints: local_n_correct, local_n_incorrect
+  * --doubles: local_p_correct
+  *
+  */
+ std::string CopyFolder(std::string& root, const char* classifier, 
+                          int i_num, std::string& kfold) {
+  //Take root, prepend it to the source path (root+classifier) 
+  std::string source_path = root+classifier;
+
+  //Take root, prepend it to the destination path (kfold/i_fold/class)
+  std::string dest_path = kfold_path + 
+                          std::string("/") + 
+                          std::string(i_num) + 
+                          std::string("/") + 
+                          std::string(classifier_fx_name_);
+
+  mlpack::IO::GetParam<timeval>((dest_path+"train").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+  mlpack::IO::GetParam<timeval>((dest_path+"test").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+  mlpack::IO::GetParam<timeval>((dest_path+"validation").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+  mlpack::IO::GetParam<int>((dest_path+"local_n_correct").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+  mlpack::IO::GetParam<int>((dest_path+"local_in_correct").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+  mlpack::IO::GetParam<double>((dest_path+"local_p_correct").c_str()) =
+    mlpack::IO::GetParam<timeval>((root+"train").c_str());
+
+   return dest_path; 
+ }
+
  private:
   void SaveTrainTest_(int i_fold,
       const Dataset& train, const Dataset& test) const;
@@ -194,15 +232,14 @@ void SimpleCrossValidator<TClassifier>::SaveTrainTest_(
   test.WriteCsv(test_name);
 }
 
-
 template<class TClassifier>
 void SimpleCrossValidator<TClassifier>::Init(
     const Dataset *data_with_labels,
     int n_labels,
     int default_k,
-    struct datanode *module_root,
+    const char* path_to_root,
     const char *classifier_fx_name,
-    const char *kfold_fx_name) {
+    const char *kfold_name) {
   data_ = data_with_labels;
   
   if (n_labels <= 0) {
@@ -215,11 +252,14 @@ void SimpleCrossValidator<TClassifier>::Init(
     n_classes_ = n_labels;
   }
   
-  root_module_ = module_root;
-  kfold_module_ = fx_submodule(module_root, kfold_fx_name);
+  root_path = path_to_root;
+  kfold_path = kfold_name;
   classifier_fx_name_ = classifier_fx_name;
-  
-  n_folds_ = fx_param_int(kfold_module_, "k", default_k);
+
+  if(!mlpack::IO::HasParam((kfold_path+"k").c_str()))
+    mlpack::IO::GetParam<int>((kfold_path+"k").c_str()) = default_k;  
+
+  n_folds_ = mlpack::IO::GetParam<int>((kfold_path+"k").c_str());
   
   DEBUG_ONLY(n_correct_ = BIG_BAD_NUMBER);
   
@@ -238,30 +278,38 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
   
   n_correct_ = 0;
   
-  fx_timer_start(kfold_module_, "total");
+  mlpack::IO::StartTimer((kfold_path+"total").c_str());
   
   for (int i_fold = 0; i_fold < n_folds_; i_fold++) {
     Classifier classifier;
     Dataset test;
     Dataset train;
     index_t local_n_correct = 0;
+
+    /** COPY MODULE 
     datanode *classifier_module = fx_copy_module(root_module_,
         classifier_fx_name_, "%s/%d/%s",
         kfold_module_->key, i_fold, classifier_fx_name_);
     datanode *foldmodule = fx_submodule(classifier_module, "..");
+    //foldpath = blah
+     COPY MODULE **/
+
+    
+    std::string fold_path = CopyFolder(root_path, classifier_fx_name_, 
+                              i_fold, kfold_path);
 
     data_->SplitTrainTest(n_folds_, i_fold, permutation, train, test);
     
-    if (fx_param_bool(kfold_module_, "save", 0)) {
+    if (mlpack::IO::HasParam((kfold_path+"save").c_str())) {
       SaveTrainTest_(i_fold, train, test);
     }
   
     VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
-    fx_timer_start(foldmodule, "train");
-    classifier.InitTrain(train, n_classes_, classifier_module);
-    fx_timer_stop(foldmodule, "train");
+    mlpack::IO::StartTimer((fold_path+"train").c_str());
+    classifier.InitTrain(train, n_classes_, NULL);
+    mlpack::IO::StopTimer((fold_path+"train").c_str());
     
-    fx_timer_start(foldmodule, "test");
+    mlpack::IO::StartTimer((fold_path+"test").c_str());
     VERBOSE_MSG(1, "cross: Testing fold %d", i_fold);
     for (index_t i = 0; i < test.n_points(); i++) {
       arma::vec test_vector(test.n_features() - 1);
@@ -284,33 +332,29 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
       
       confusion_matrix_(label_expect, label_predict) += 1;
     }
-    fx_timer_stop(foldmodule, "test");
+    mlpack::IO::StopTimer((fold_path+"test").c_str());
     
-    fx_format_result(foldmodule, "n_correct", "%"LI"d",
-        local_n_correct);
-    fx_format_result(foldmodule, "n_incorrect", "%"LI"d",
-        test.n_points() - local_n_correct);
-    fx_format_result(foldmodule, "p_correct", "%.03f",
-        local_n_correct * 1.0 / test.n_points());
-    
+    mlpack::IO::GetParam<int>((fold_path+"n_correct").c_str()) = 
+      local_n_correct;
+    mlpack::IO::GetParam<int>((fold_path+"n_incorrect").c_str()) = 
+      test.n_points() - local_n_correct;
+    mlpack::IO::GetParam<double>((fold_path+"p_correct").c_str()) = 
+      local_n_correct * 1.0 / test.n_points();
     n_correct_ += local_n_correct;
+
   }
-  fx_timer_stop(kfold_module_, "total");
+  mlpack::IO::StopTimer((kfold_path+"total").c_str());
 
-  fx_format_result(kfold_module_, "n_points", "%"LI"d",
-      data_->n_points());
-  fx_format_result(kfold_module_, "n_correct", "%"LI"d",
-      n_correct());
-  fx_format_result(kfold_module_, "n_incorrect", "%"LI"d",
-      n_incorrect());
-  fx_format_result(kfold_module_, "p_correct", "%.03f",
-      1.0 * portion_correct());
+
+  mlpack::IO::GetParam<int>((kfold_path+"n_points").c_str()) = 
+    data_->n_points();
+  mlpack::IO::GetParam<int>((kfold_path+"n_correct").c_str()) = 
+    n_correct();
+  mlpack::IO::GetParam<int>((kfold_path+"n_incorrect").c_str()) = 
+    n_incorrect();
+  mlpack::IO::GetParam<double>((kfold_path+"p_correct").c_str()) = 
+    1.0 * portion_correct();
 }
-
-
-
-
-
 
 /** ALPHA VERSION, STILL UNDER CONSTRUCTION
  *
@@ -353,9 +397,9 @@ class GeneralCrossValidator {
   /** Number of data points  */
   index_t num_data_points_;
   /** The originating module */
-  datanode *root_module_;
+  std::string root_path;
   /** The fastexec module for cross validation and result storage */
-  datanode *kfold_module_;
+  std::string kfold_path;
   /** The FastExec name of the learner */
   const char *learner_fx_name_;
 
@@ -393,7 +437,7 @@ class GeneralCrossValidator {
   void Init(int learner_typeid,
 	    int default_k,
 	    const Dataset *data_input,
-	    struct datanode *module_root,
+	    const char* path_to_root,
 	    const char *learner_fx_name,
 	    const char *kfold_fx_name = "kfold");
 
@@ -512,16 +556,20 @@ void GeneralCrossValidator<TLearner>::Init(
     int learner_typeid,
     int default_k,
     const Dataset *data_input,
-    struct datanode *module_root,
+    const char* path_to_root,
     const char *learner_fx_name,
     const char *kfold_fx_name) {
   /** initialization for general parameters */
   learner_typeid_ = learner_typeid;
   data_ = data_input;
 
-  root_module_ = module_root;
-  kfold_module_ = fx_submodule(module_root, kfold_fx_name);
-  n_folds_ = fx_param_int(kfold_module_, "k", default_k);
+  root_path = path_to_root;
+  kfold_path = kfold_fx_name;
+
+  if(!mlpack::IO::HasParam((kfold_path+"k").c_str()))
+    mlpack::IO::GetParam<int>((kfold_path+"k").c_str()) = default_k;
+  n_folds_ = mlpack::IO::GetParam<int>((kfold_path+"k").c_str());
+
   learner_fx_name_ = learner_fx_name;
 
   /** initialization for type 0: classification ONLY */
@@ -542,7 +590,7 @@ void GeneralCrossValidator<TLearner>::Init(
 
 template<class TLearner>
 void GeneralCrossValidator<TLearner>::Run(bool randomized) {  
-  fx_timer_start(kfold_module_, "total");
+  mlpack::IO::StartTimer((kfold_path+"total").c_str());
   num_data_points_ = data_->n_points();
 
   /** for type 0: Classification ONLY */
@@ -590,26 +638,30 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       Dataset validation;
       
       index_t local_n_correct = 0;
+
+      /** COPY
       datanode *learner_module = fx_copy_module(root_module_,
           learner_fx_name_, "%s/%d/%s",
           kfold_module_->key, i_fold, learner_fx_name_);
       datanode *foldmodule = fx_submodule(learner_module, "..");
+      */
+      std::string fold_path;
 
       // Split labeled data sets according to i_fold. Use Stratified Cross-Validation to ensure 
       // that approximately the same portion of data (training/validation) are used for each class.
       StratifiedSplitCVSet_(i_fold, num_classes, cv_labels_ct, cv_labels_startpos, permutation, &train, &validation);
-      if (fx_param_bool(kfold_module_, "save", 0)) {
+      if (mlpack::IO::HasParam((kfold_path+"save").c_str())) {
 	SaveTrainValidationSet_(i_fold, train, validation);
       }
       
       VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
-      fx_timer_start(foldmodule, "train");
+      mlpack::IO::StartTimer((fold_path+"train").c_str());
       // training
-      classifier.InitTrain(learner_typeid_, train, learner_module);
-      fx_timer_stop(foldmodule, "train");
+      classifier.InitTrain(learner_typeid_, train);
+      mlpack::IO::StopTimer((fold_path+"train").c_str());
 
       // validation; measure method: percent of correctly classified validation samples
-      fx_timer_start(foldmodule, "validation");
+      mlpack::IO::StartTimer((fold_path+"validation").c_str());
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
 
       for (index_t i = 0; i < validation.n_points(); i++) {
@@ -634,20 +686,26 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	}
 	clsf_confusion_matrix_(label_expect, label_predict) += 1;
       }
-      fx_timer_stop(foldmodule, "validation");
-
-      fx_format_result(foldmodule, "local_n_correct", "%"LI"d", local_n_correct);
-      fx_format_result(foldmodule, "local_n_incorrect", "%"LI"d", validation.n_points() - local_n_correct);
-      fx_format_result(foldmodule, "local_p_correct", "%.03f", local_n_correct * 1.0 / validation.n_points());
+      mlpack::IO::StopTimer((fold_path+"validation").c_str());
+      mlpack::IO::GetParam<int>((fold_path+"local_n_correct").c_str()) = 
+        local_n_correct;
+      mlpack::IO::GetParam<int>((fold_path+"local_n_incorrect").c_str()) = 
+        validation.n_points() - local_n_correct;
+      mlpack::IO::GetParam<double>((fold_path+"local_p_correct").c_str()) = 
+        local_n_correct * 1.0 / validation.n_points();
 
       clsf_n_correct_ += local_n_correct;
     }
-    fx_timer_stop(kfold_module_, "total");
-    
-    fx_format_result(kfold_module_, "n_points", "%"LI"d", num_data_points_);
-    fx_format_result(kfold_module_, "n_correct", "%"LI"d", clsf_n_correct());
-    fx_format_result(kfold_module_, "n_incorrect", "%"LI"d", clsf_n_incorrect());
-    fx_format_result(kfold_module_, "p_correct", "%.03f", 1.0 * clsf_portion_correct());
+    mlpack::IO::StopTimer((kfold_path+"total").c_str());
+
+    mlpack::IO::GetParam<int>((kfold_path+"n_points").c_str()) = 
+      num_data_points_;
+    mlpack::IO::GetParam<int>((kfold_path+"n_correct").c_str()) = 
+      clsf_n_correct();
+    mlpack::IO::GetParam<int>((kfold_path+"n_incorrect").c_str()) = 
+      clsf_n_incorrect();
+    mlpack::IO::GetParam<double>((kfold_path+"p_correct").c_str()) = 
+      1.0 * clsf_portion_correct();
   }
   /** For type 1:regression & 2:density estimation */
   else if (learner_typeid_ == 1 || learner_typeid_ == 2) {
@@ -668,26 +726,29 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       
       double msq_err_local = 0.0;
       double accu_sq_err_local = 0.0;
+      /* COPY
       datanode *learner_module = fx_copy_module(root_module_,
           learner_fx_name_, "%s/%d/%s",
           kfold_module_->key, i_fold, learner_fx_name_);
       datanode *foldmodule = fx_submodule(learner_module, "..");
-      
+      */
+      std::string fold_path;
+
       // Split general data sets according to i_fold
       data_->SplitTrainTest(n_folds_, i_fold, permutation, train, validation);
       
-      if (fx_param_bool(kfold_module_, "save", 0)) {
+      if (mlpack::IO::HasParam((fold_path+"save").c_str())) {
 	SaveTrainValidationSet_(i_fold, train, validation);
       }
       
       VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
-      fx_timer_start(foldmodule, "train");
+      mlpack::IO::StartTimer((fold_path+"train").c_str());
       // training
-      learner.InitTrain(learner_typeid_, train, learner_module); // 0: dummy number of classes
-      fx_timer_stop(foldmodule, "train");
+      learner.InitTrain(learner_typeid_, train); // 0: dummy number of classes
+      mlpack::IO::StopTimer((fold_path+"train").c_str());
       
       // validation
-      fx_timer_start(foldmodule, "validation");
+      mlpack::IO::StartTimer((fold_path+"validation").c_str());
       VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
       for (index_t i = 0; i < validation.n_points(); i++) {
 	arma::vec validation_vector(validation.n_features() - 1);
@@ -703,18 +764,18 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	// Calculate squared error: sublevel
 	accu_sq_err_local  += pow(value_err, 2);
       }
-      fx_timer_stop(foldmodule, "validation");
+      mlpack::IO::StopTimer((fold_path+"validation").c_str());
       
       msq_err_local = accu_sq_err_local / validation.n_points();
-      fx_format_result(foldmodule, "local_msq_err", "%f", msq_err_local);
+//      fx_format_result(foldmodule, "local_msq_err", "%f", msq_err_local);
 
       accu_msq_err_all_folds += msq_err_local;
     }
-    fx_timer_stop(kfold_module_, "total");
+    mlpack::IO::StopTimer((kfold_path+"total").c_str());
     
     // Calculate mean squared error: over all folds
     msq_err_all_folds_ = accu_msq_err_all_folds / n_folds_;
-    fx_format_result(kfold_module_, "msq_err_all_folds", "%f", msq_err_all_folds_);
+  //  fx_format_result(kfold_module_, "msq_err_all_folds", "%f", msq_err_all_folds_);
   }
   else {
     fprintf(stderr, "Other learner types or Unknown learner type id! Cross validation stops!\n");

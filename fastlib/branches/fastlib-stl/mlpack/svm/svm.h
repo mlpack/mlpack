@@ -30,7 +30,7 @@ class SVMLinearKernel {
  public:
   /* Init of kernel parameters */
   std::vector<double> kpara_; // kernel parameters
-  void Init(datanode *node) { //TODO: NULL->node
+  void Init() { //TODO: NULL->node
   }
   /* Kernel name */
   void GetName(std::string& kname) {
@@ -56,7 +56,7 @@ class SVMRBFKernel {
  public:
   /* Init of kernel parameters */
   std::vector<double> kpara_; // kernel parameters
-  void Init(datanode *node) { //TODO: NULL->node
+  void Init() { //TODO: NULL->node
     kpara_.resize(2,0);
     kpara_[0] = mlpack::IO::GetParam<double>("svm/sigma"); //sigma
     kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
@@ -167,7 +167,7 @@ class SVM {
   class SMO<Kernel>;
 
   void Init(index_t learner_typeid, const Dataset& dataset);
-  void InitTrain(index_t learner_typeid, const Dataset& dataset, datanode *module);
+  void InitTrain(index_t learner_typeid, const Dataset& dataset);
 
   double Predict(index_t learner_typeid, const arma::vec& vector);
   void BatchPredict(index_t learner_typeid, Dataset& testset, std::string predictedvalue_filename);
@@ -221,7 +221,7 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
   /* Note: it has the same index as the training !!! */
   trainset_sv_indicator_.resize(n_data_,false);
 
-  param_.kernel_.Init(NULL);
+  param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // working set selection scheme. default: 1st order expansion
@@ -256,7 +256,7 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset, datanode *tmp) {
+void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset) {
   Init(learner_typeid, dataset);
   
   if (learner_typeid == 0) { // Multiclass SVM Clssification

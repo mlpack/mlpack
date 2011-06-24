@@ -1,4 +1,5 @@
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <fastlib/base/test.h>
 #include <complex>
 #include "fourier_expansion.h"
@@ -29,8 +30,7 @@ class SeriesExpansionTest {
 
  public:
 
-  void Init(fx_module *module_in) {
-    module_ = module_in;
+  void Init() {
   }
 
   void TestFourierExpansion() {
@@ -111,18 +111,12 @@ class SeriesExpansionTest {
     TestFourierExpansion();
     IO::Info << "[*] All tests passed !!" << std::endl;
   }
-
- private:
-
-  fx_module *module_;
-
 };
 
 int main(int argc, char *argv[]) {
-  fx_module *module = fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv);
   SeriesExpansionTest test;
-  test.Init(module);
+  test.Init();
   test.TestAll();
-  fx_done(module);
   return 0;
 }

@@ -4,12 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not add test executables here
 set(SOURCES
-   datanode.h
-   datanode.c
-   fx.h
-   fx.c
-   stopwatch.h
-   stopwatch.c
    io.h
    io_impl.h
    io.cc

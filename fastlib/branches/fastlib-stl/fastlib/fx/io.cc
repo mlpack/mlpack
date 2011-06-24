@@ -164,6 +164,11 @@ std::string IO::GetDescription(const char* identifier) {
   return d.desc;
 }
 
+std::vector<std::string> IO::GetFolder(const char* folder) {
+  std::string str = folder;
+  return GetSingleton().hierarchy.GetRelativePaths(str);
+}
+
 //Returns the sole instance of this class
 IO& IO::GetSingleton() {
   if (singleton == NULL) {
