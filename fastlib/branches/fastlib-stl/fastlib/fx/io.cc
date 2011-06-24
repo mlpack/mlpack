@@ -246,16 +246,16 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Insert the default module where appropriate 
   std::vector<std::string> in = InsertDefaultModule(argc, line); 
   //Rebuild argv as appropriate now.
-  char** argv = new char*[argc];
+  /*char** argv = new char*[argc];
   for(int i = 1; i < argc; i++) {
     argv[i] = const_cast<char*>(in.back().c_str());
     in.pop_back();
   }
-  argv[0] = line[0];
+  argv[0] = line[0];*/
   
   //Parse the command line, place the options & values into vmap
   try{ 
-    po::store(po::parse_command_line(argc, argv, desc), vmap);
+    po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
@@ -266,7 +266,6 @@ void IO::ParseCommandLine(int argc, char** line) {
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
-  delete argv;
 }
 
 /*
