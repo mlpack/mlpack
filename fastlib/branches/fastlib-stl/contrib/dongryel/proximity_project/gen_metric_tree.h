@@ -17,7 +17,6 @@
 #include "general_spacetree.h"
 
 #include "fastlib/base/common.h"
-#include "fastlib/fx/fx.h"
 
 #include "gen_metric_tree_impl.h"
 
