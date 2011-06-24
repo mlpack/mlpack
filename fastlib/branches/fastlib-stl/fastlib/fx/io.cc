@@ -166,8 +166,10 @@ std::vector<std::string>
     std::string str = argv[i];
 
     //Are we lacking any qualifiers?
-    if(str.find('/') == std::string::npos) 
-      str = path+str;
+    if(str.find('/') == std::string::npos &&
+       str.compare("--help") != 0 &&
+       str.compare("--info") != 0) 
+      str = "--"+path+str.substr(2,str.length());
 
     ret.push_back(str);    
   }
