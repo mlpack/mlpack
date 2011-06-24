@@ -187,8 +187,8 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
 
   for (i_orig = 0; i_orig < n_points(); i_orig++) {
     double *dest;
-
-    if (unlikely((i_orig - fold_number) % folds == 0)) {
+//nk
+    if ((i_orig - fold_number) % folds == 0) {
       // put this column into the test set
       dest = test.matrix().colptr(i_test);
       i_test++;

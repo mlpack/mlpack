@@ -7,7 +7,7 @@
 
 using arma::mat;
 
-#define BOOST_TEST_MODULE Something
+#define BOOST_TEST_MODULE DataSetTest 
 #include <boost/test/unit_test.hpp>
 
 BOOST_AUTO_TEST_CASE(TestSplitTrainTest) {
