@@ -68,7 +68,7 @@ PARAM_MODULE("nbc", "Trains on a given set and number\
 
 PROGRAM_INFO("Parametric Naive Bayes", "This program test drives the\
  Parametric Naive Bayes Classifier assuming that the features are\
- sampled from a Gaussian distribution.");
+ sampled from a Gaussian distribution.", "nbc");
 
 using namespace mlpack;
 

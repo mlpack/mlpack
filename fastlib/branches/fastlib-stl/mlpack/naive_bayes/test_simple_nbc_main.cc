@@ -21,7 +21,7 @@
   " Tests the simple nbc class.\n"
 };*/
 
-PROGRAM_INFO("NBC", "Tests the simple nbc class.");
+PROGRAM_INFO("NBC", "Tests the simple nbc class.", "nbc");
 
 using namespace mlpack;
 

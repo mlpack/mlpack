@@ -40,7 +40,7 @@ std::ostream& IO::cout = std::cout;
 namespace po = boost::program_options;
 
 // Fake ProgramDoc in case none is supplied.
-static ProgramDoc empty_program_doc = ProgramDoc("", "");
+static ProgramDoc empty_program_doc = ProgramDoc("", "", "");
 
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
@@ -147,6 +147,34 @@ bool IO::HasParam(const char* identifier) {
   return (isInVmap || isInGmap); 
 }
 
+
+/*
+ * Searches for unqualified parameters, when one is found prepend the default
+ * module path onto it.
+ * 
+ * @param argc The number of parameters
+ * @param argv 2D array of the parameter strings themselves
+ * @return some valid modified strings
+ */
+std::vector<std::string>
+ IO::InsertDefaultModule(int argc, char** argv) {
+  std::vector<std::string> ret;
+  std::string path = GetSingleton().doc->defaultModule;
+  path = SanitizeString(path.c_str());
+
+  for(int i = 1; i < argc; i++) {//First parameter is just the program name.
+    std::string str = argv[i];
+
+    //Are we lacking any qualifiers?
+    if(str.find('/') == std::string::npos) 
+      str = path+str;
+
+    ret.push_back(str);    
+  }
+
+  return ret;
+}
+
 /*
  * Grab the description of the specified node.
  * 
@@ -212,10 +240,20 @@ std::string IO::ManageHierarchy(const char* id,
 void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
+
+  //Insert the default module where appropriate 
+  std::vector<std::string> in = InsertDefaultModule(argc, line); 
+  //Rebuild argv as appropriate now.
+  char** argv = new char*[argc];
+  for(int i = 1; i < argc; i++) {
+    argv[i] = const_cast<char*>(in.back().c_str());
+    in.pop_back();
+  }
+  argv[0] = line[0];
   
   //Parse the command line, place the options & values into vmap
   try{ 
-    po::store(po::parse_command_line(argc, line, desc), vmap);
+    po::store(po::parse_command_line(argc, argv, desc), vmap);
   }catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
@@ -226,6 +264,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
+  delete argv;
 }
 
 /*

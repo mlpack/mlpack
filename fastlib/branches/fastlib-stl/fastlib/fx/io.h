@@ -31,9 +31,11 @@
  * @param DESC Long string describing what the program does and possibly a
  *     simple usage example.  Newlines should not be used here; this is taken
  *     care of by IO.
+ * @param DEF_MOD A default module to use for parameters, mostly just to save
+ *     excess typing.
  */
-#define PROGRAM_INFO(NAME, DESC) static mlpack::ProgramDoc \
-    io_programdoc_dummy_object = mlpack::ProgramDoc(NAME, DESC);
+#define PROGRAM_INFO(NAME, DESC, DEF_MOD) static mlpack::ProgramDoc \
+    io_programdoc_dummy_object = mlpack::ProgramDoc(NAME, DESC, DEF_MOD);
 
 /***
  * These defines facilitate the registering of command line options.  Use the
@@ -219,6 +221,8 @@ class IO {
    * @return Description of the node in question. 
    */
   static std::string GetDescription(const char* identifier);
+
+  static std::vector<std::string> InsertDefaultModule(int argc, char** argv);
 
   /*
    * Parses the commandline for arguments.

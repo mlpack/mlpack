@@ -66,10 +66,12 @@ class ProgramDoc {
    *    program and what it is.  No newline characters are necessary; this is
    *    taken care of by IO later.
    */
-  ProgramDoc(std::string programName, std::string documentation);
+  ProgramDoc(std::string programName, std::string documentation, 
+    std::string defaultModule);
 
   std::string programName;
   std::string documentation;
+  std::string defaultModule;
 };
 
 }; // namespace mlpack

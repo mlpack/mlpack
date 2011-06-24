@@ -31,7 +31,7 @@ PARAM(double, "actualErr", "actual relative norm error.", "kernel", 0.0, false);
 PARAM(double, "relErr", "actual relative norm error.", "kernel", 0.1, false);
 
 PROGRAM_INFO("QuicSVD", "This is a program calculating an approximated\
- Singular Value Decomposition using QUIC-SVD method.");
+ Singular Value Decomposition using QUIC-SVD method.", "kernel");
 
 using namespace mlpack;
 

@@ -30,7 +30,7 @@ PROGRAM_INFO("All K-Furthest-Neighbors",
     "point in 'input.csv' and store the results in 'output.csv':"
     "\n\n"
     "$ allknn --neighbor_search/k=5 --reference_file=input.csv\n"
-    "  --output_file=output.csv");
+    "  --output_file=output.csv", "neighbor_search");
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "CSV file containing the reference dataset.",
