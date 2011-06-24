@@ -22,8 +22,11 @@ using namespace std;
  *    program and what it is.  No newline characters are necessary; this is
  *    taken care of by IO later.
  */
-ProgramDoc::ProgramDoc(std::string programName, std::string documentation) :
-    programName(programName), documentation(documentation) {
+ProgramDoc::ProgramDoc(std::string programName, std::string documentation, 
+  std::string defaultModule) :
+    programName(programName), documentation(documentation), 
+    defaultModule(defaultModule) {
+
   // Register this with IO.
   IO::RegisterProgramDoc(this);
 }

@@ -68,7 +68,7 @@ PARAM_FLAG("normalize", "Whether need to do data normalization before\
  training/testing, values: '0' for no normalize, '1' for normalize", "svm");
 
 PROGRAM_INFO("SVM", "These are the implementations for Support Vector\
- Machines, including Multiclass classification, Regression, and One Class SVM");
+ Machines, including Multiclass classification, Regression, and One Class SVM", "svm");
 
 using namespace mlpack;
 
