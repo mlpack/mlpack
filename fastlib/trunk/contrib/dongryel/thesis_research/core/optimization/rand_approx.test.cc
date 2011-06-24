@@ -45,9 +45,9 @@ class TestRandApprox {
   public:
 
     int StressTestMain() {
-      for(int i = 0; i < 1; i++) {
-        int num_dimensions = core::math::RandInt(30, 100);
-        int num_points = core::math::RandInt(10, 21);
+      for(int i = 0; i < 30; i++) {
+        int num_dimensions = core::math::RandInt(100, 200);
+        int num_points = core::math::RandInt(100, 210);
         if(StressTest(num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -56,7 +56,7 @@ class TestRandApprox {
       return 0;
     }
 
-    int StressTest(int num_dimensions, int num_points) {
+    bool StressTest(int num_dimensions, int num_points) {
 
       // Generate the random dataset.
       std::cerr << "Generating " << num_points << " points of " <<
@@ -70,8 +70,20 @@ class TestRandApprox {
 
       // Compute.
       arma::mat basis;
+      double random_matrix_norm = arma::norm(random_matrix, 2);
+      std::cerr << "Random matrix norm: " << random_matrix_norm << "\n";
+      double required_error = 0.1 * random_matrix_norm;
+      std::cerr << "  Requiring: " << required_error << "\n";
+
+      arma::mat left_singular_vectors, right_singular_vectors;
+      arma::vec singular_values;
+      arma::svd(
+        left_singular_vectors, singular_values,
+        right_singular_vectors, random_matrix);
+      singular_values.print();
+
       core::optimization::RandRangeFinder::Compute(
-        random_matrix, 0.1, 0.9, &basis);
+        random_matrix, 10, 3, &basis);
 
       // Compute the two norm error.
       arma::mat error = random_matrix;
