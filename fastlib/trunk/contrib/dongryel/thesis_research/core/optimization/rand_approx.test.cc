@@ -89,8 +89,12 @@ class TestRandApprox {
 
       core::optimization::RandRangeFinder::Compute(
         random_matrix, truncation_order, num_power_iter, &basis);
+      std::cerr << "The largest singular value: " <<
+                singular_values[0] << "\n";
       std::cerr <<  "The largest truncated singular value: " <<
                 singular_values[ truncation_order ] << "\n";
+      std::cerr << "The smallest singular value: " <<
+                singular_values[ singular_values.n_elem - 1 ] << "\n";
       std::cerr << "Tried " << num_power_iter << " number of power iterations."
                 << "\n";
 
