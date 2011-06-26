@@ -1,6 +1,6 @@
 /** @file gp_regression_arguments.h
  *
- *  The arguments used for the local regression.
+ *  The arguments used for the GP regression.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */

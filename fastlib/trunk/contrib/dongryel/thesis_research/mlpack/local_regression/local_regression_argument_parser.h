@@ -76,7 +76,8 @@ class LocalRegressionArgumentParser {
         "queries_in",
         boost::program_options::value<std::string>(),
         "OPTIONAL file containing query positions.  If omitted, local "
-        "regression computes the leave-one-out density at each reference point."
+        "regression computes the leave-one-out regression at each reference "
+        "point."
       )(
         "references_in",
         boost::program_options::value<std::string>(),
