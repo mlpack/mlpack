@@ -67,38 +67,52 @@ void GpRegression<TableType, KernelType, MetricType>::Init(
   global_.Init(arguments_in);
 }
 
+
+template<typename TableType, typename KernelType, typename MetricType>
+void GpRegression<TableType, KernelType, MetricType>::Solve_(
+  const std::vector< TreeType *> &reference_frontier,
+  arma::mat &variable_states,
+  int reference_frontier_id) {
+
+  TreeType *reference_node = reference_frontier[reference_frontier_id];
+  int rank = std::min(reference_node->count(), 10);
+
+}
+
 template<typename TableType, typename KernelType, typename MetricType>
 void GpRegression<TableType, KernelType, MetricType>::Compute(
   const ArgumentType &arguments_in,
   mlpack::gp_regression::GpRegressionResult *result_out) {
 
-  // Instantiate a dual-tree algorithm of the GP regression.
-  typedef GpRegression<TableType, KernelType, MetricType> ProblemType;
-  core::gnp::DualtreeDfs< ProblemType > dualtree_dfs;
-  dualtree_dfs.Init(*this);
+  // Convergence flag.
+  bool converged = false;
 
-  // Compute the result.
-  if(arguments_in.num_iterations_in_ <= 0) {
-    dualtree_dfs.Compute(arguments_in.metric_, result_out);
-    printf("Number of prunes: %d\n", dualtree_dfs.num_deterministic_prunes());
-    printf("Number of probabilistic prunes: %d\n",
-           dualtree_dfs.num_probabilistic_prunes());
-  }
-  else {
-    typename core::gnp::DualtreeDfs <
-    ProblemType >::template iterator <
-    MetricType > gp_regression_it =
-      dualtree_dfs.get_iterator(arguments_in.metric_, result_out);
-    for(int i = 0; i < arguments_in.num_iterations_in_; i++) {
-      ++gp_regression_it;
+  // Get a partition using the reference tree.
+  std::vector< TreeType *> reference_frontier;
+  reference_table_->get_tree()->get_frontier_nodes(
+    arguments_in.admm_max_subproblem_size_, &reference_frontier);
+
+  // The variable state for each subproblem (each column).
+  arma::mat variable_states(
+    reference_table_->n_entries(), reference_frontier.size());
+  variable_states.randn();
+
+  do {
+
+    // Solve the least squares problem, while fixing the other
+    // variables in each strata.
+    for(unsigned int i = 0; i < reference_frontier.size(); i++) {
+      Solve_(reference_frontier, variable_states, i);
     }
 
-    // Tell the iterator that we are done using it so that the
-    // result can be finalized.
-    gp_regression_it.Finalize();
-  }
-}
+    // Do the correction at the interfaces.
+    for(unsigned int i = 1; i < reference_frontier.size(); i++) {
 
+    }
+
+  }
+  while(converged);
+}
 }
 }
 
