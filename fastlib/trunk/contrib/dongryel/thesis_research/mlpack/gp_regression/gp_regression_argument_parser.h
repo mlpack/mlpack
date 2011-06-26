@@ -40,7 +40,7 @@ class GpRegressionArgumentParser {
         "kernel",
         boost::program_options::value<std::string>()->default_value("gaussian"),
         "Kernel function used by Gaussian process regression.  One of:\n"
-        "  matern, gaussian"
+        "  gaussian"
       )(
         "leaf_size",
         boost::program_options::value<int>()->default_value(20),
@@ -121,9 +121,8 @@ class GpRegressionArgumentParser {
         std::cerr << "Missing required --bandwidth.\n";
         exit(0);
       }
-      if((*vm)["kernel"].as<std::string>() != "gaussian" &&
-          (*vm)["kernel"].as<std::string>() != "matern") {
-        std::cerr << "We support only matern or gaussian for the kernel.\n";
+      if((*vm)["kernel"].as<std::string>() != "gaussian") {
+        std::cerr << "We support only gaussian for the kernel.\n";
         exit(0);
       }
       if((*vm)["leaf_size"].as<int>() <= 0) {
