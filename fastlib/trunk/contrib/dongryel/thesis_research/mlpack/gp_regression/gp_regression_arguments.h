@@ -19,53 +19,23 @@ template<typename TableType, typename MetricType>
 class GpRegressionArguments {
   public:
 
-    /** @brief The bandwidth.
-     */
-    double bandwidth_;
-
-    /** @brief The kernel.
-     */
-    std::string kernel_;
-
-    /** @brief The leaf size.
-     */
-    int leaf_size_;
-
-    /** @brief The file name to output the predictions to.
-     */
-    std::string predictions_out_;
-
-    /** @brief The prescale option.
-     */
-    std::string prescale_;
-
-    /** @brief Stores the query table.
-     */
-    TableType *query_table_;
-
-    /** @brief Stores the reference table.
-     */
-    TableType *reference_table_;
-
     /** @brief The absolute error.
      */
     double absolute_error_;
 
-    /** @brief The relative error.
+    /** @brief The maximum size of the reference subtree for solving
+     *         the subproblem in the alternating direction method of
+     *         multipliers.
      */
-    double relative_error_;
+    int admm_max_subproblem_size_;
 
-    /** @brief The probability level.
+    /** @brief The bandwidth.
      */
-    double probability_;
+    double bandwidth_;
 
-    /** @brief The metric used for computing the distances.
+    /** @brief Whether the linear system is solved at the end.
      */
-    MetricType metric_;
-
-    /** @brief The number of iterations to run (on iterative mode).
-     */
-    int num_iterations_in_;
+    bool do_postprocess_;
 
     /** @brief The effective number of reference points (discounting
      *         the self-contribution when monochromatic).
@@ -77,14 +47,50 @@ class GpRegressionArguments {
      */
     bool is_monochromatic_;
 
+    /** @brief The kernel.
+     */
+    std::string kernel_;
+
+    /** @brief The leaf size.
+     */
+    int leaf_size_;
+
+    /** @brief The metric used for computing the distances.
+     */
+    MetricType metric_;
+
+    /** @brief The number of iterations to run (on iterative mode).
+     */
+    int num_iterations_in_;
+
+    /** @brief The file name to output the predictions to.
+     */
+    std::string predictions_out_;
+
+    /** @brief The prescale option.
+     */
+    std::string prescale_;
+
+    /** @brief The probability level.
+     */
+    double probability_;
+
+    /** @brief Stores the query table.
+     */
+    TableType *query_table_;
+
+    /** @brief Stores the reference table.
+     */
+    TableType *reference_table_;
+
+    /** @brief The relative error.
+     */
+    double relative_error_;
+
     /** @brief Whether the tables are aliased or should be freed when
      *         the argument gets destructed.
      */
     bool tables_are_aliased_;
-
-    /** @brief Whether the linear system is solved at the end.
-     */
-    bool do_postprocess_;
 
   public:
 
@@ -127,15 +133,16 @@ class GpRegressionArguments {
     /** @brief The default constructor.
      */
     GpRegressionArguments() {
+      absolute_error_ = 0.0;
+      admm_max_subproblem_size_ = 0;
       bandwidth_ = 0.0;
+      effective_num_reference_points_ = 0;
       leaf_size_ = 0;
       query_table_ = NULL;
       reference_table_ = NULL;
-      absolute_error_ = 0.0;
       relative_error_ = 0.0;
       probability_ = 1.0;
       num_iterations_in_ = -1;
-      effective_num_reference_points_ = 0;
       is_monochromatic_ = false;
       tables_are_aliased_ = false;
       do_postprocess_ = true;

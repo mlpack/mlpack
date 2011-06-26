@@ -33,6 +33,11 @@ class GpRegressionArgumentParser {
         boost::program_options::value<double>()->default_value(0.0),
         "The absolute error level in approximation."
       )(
+        "admm_max_subproblem_size",
+        boost::program_options::value<int>()->default_value(1000),
+        "The maximum number of variables to solve in each subproblem using "
+        "alternating direction method of multipliers."
+      )(
         "bandwidth",
         boost::program_options::value<double>(),
         "REQUIRED kernel bandwidth"
@@ -113,6 +118,12 @@ class GpRegressionArgumentParser {
 
       // Validate the arguments. Only immediate quitting is allowed
       // here, the parsing is done later.
+      if(vm->count("admm_max_subproblem_size") > 0 &&
+          (*vm)["admm_max_subproblem_size"].as<int>() <= 0) {
+        std::cerr << "The --admm_max_subproblem_size requires a positive " <<
+                  "real number.\n";
+        exit(0);
+      }
       if(vm->count("bandwidth") > 0 && (*vm)["bandwidth"].as<double>() <= 0) {
         std::cerr << "The --bandwidth requires a positive real number.\n";
         exit(0);
@@ -216,6 +227,12 @@ class GpRegressionArgumentParser {
       boost::program_options::variables_map &vm,
       mlpack::gp_regression::GpRegressionArguments <
       TableType, MetricType > *arguments_out) {
+
+      // Parse the ADMM subproblem size.
+      arguments_out->admm_max_subproblem_size_ =
+        vm["admm_max_subproblem_size"].as<int>();
+      std::cerr << "Solving " << arguments_out->admm_max_subproblem_size_ <<
+                " at a time.\n";
 
       // Parse bandwidth.
       arguments_out->bandwidth_ =  vm["bandwidth"].as<double>();
