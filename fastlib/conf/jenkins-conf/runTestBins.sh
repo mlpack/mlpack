@@ -4,7 +4,7 @@
 TEST_DIR="build/bin"
 REPORT_DIR="reports"
 TEST_OPTS="--report_level=detailed --log_level=test_suite --log_format=xml"
-XML_REGEX="s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//go"
+XML_REGEX="s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//g"
 
 echo "Wipe out old reports"
 mkdir -p $REPORT_DIR
