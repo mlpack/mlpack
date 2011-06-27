@@ -4,7 +4,7 @@
 TEST_DIR="build/bin"
 REPORT_DIR="reports"
 TEST_OPTS="--report_level=detailed --log_level=test_suite --log_format=xml"
-XML_REGEX="s/[^\x09\x0A\x0D\x20-\x{D7FF}\x{E000}-\x{FFFD}\x{10000}-\x{10FFFF}]//g"
+XML_REGEX="[:print:]"
 
 echo "Wipe out old reports"
 mkdir -p $REPORT_DIR
@@ -30,7 +30,7 @@ do
    BOOST_BASENAME=$(basename $BOOST_TEST)
    echo "Found boost_$BOOST_BASENAME"
    #mv $BOOST_TEST $REPORT_DIR/boost_$BOOST_BASENAME
-   cat $BOOST_TEST | sed $XML_REGEX > $REPORT_DIR/boost_$BOOST_BASENAME
+   cat $BOOST_TEST | tr -cd  $XML_REGEX > $REPORT_DIR/boost_$BOOST_BASENAME
 done
 
 echo "Cleaning up working directory"
