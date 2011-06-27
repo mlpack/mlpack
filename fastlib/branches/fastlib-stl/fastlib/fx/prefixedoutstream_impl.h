@@ -3,15 +3,12 @@
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
-  if (carriageReturned && !isNullStream) {
+  if (carriageReturned) {
     destination << prefix << val;
-    debugBuffer << prefix << val;
     carriageReturned = false;
   }
-  else if (!isNullStream) {
+  else
     destination << val;
-    debugBuffer << val;
-  }
 }
 
 #endif //MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H

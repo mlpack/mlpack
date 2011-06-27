@@ -3,7 +3,6 @@
 
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <streambuf>
 
 namespace mlpack {
@@ -37,13 +36,13 @@ class PrefixedOutStream {
    * @param destination ostream which receives output from this object.
    * @param prefix The prefix to prepend to each line.
    */
-  PrefixedOutStream(std::ostream& destination, const char* prefix, 
-      std::stringstream& sstream, bool fatal = false) : 
-      destination(destination), debugBuffer(sstream), isNullStream(false), 
-      prefix(prefix), carriageReturned(true), fatal(fatal)
+  PrefixedOutStream(std::ostream& destination, const char* prefix,
+      bool fatal = false) :
+      destination(destination), prefix(prefix), carriageReturned(true),
+      fatal(fatal)
       // We want the first call to operator<< to prefix the prefix so we set
       // carriageReturned to true.
-    {  } 
+    { /* nothing to do */ } 
  
   /**
    * @brief Each of these functions outputs the specified value.  If a newline 
@@ -77,14 +76,6 @@ class PrefixedOutStream {
    */
   std::ostream& destination;
 
-  std::stringstream& debugBuffer; 
-
-  /**
-   * @brief Indicates that this stream should discard any input and print 
-   *   nothing.
-   */
-  bool isNullStream;
-
  private:
   /**
    * @brief Conducts the base logic required in all the operator << overloads.
@@ -113,6 +104,7 @@ class PrefixedOutStream {
    *    carriage return is encountered.
    */
   bool fatal;
+
 };
 
 // Template definitions

@@ -88,6 +88,7 @@ BOOST_AUTO_TEST_CASE(TestIO) {
 
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), false);
 
+
   IO::GetParam<bool>("global/bool") = true;
 
   //IO::HasParam should return true now.
@@ -110,9 +111,7 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   //Test IO::Debug 
   IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl;
 */
-  IO::Debug << "blah blah" << std::endl;
-  char buffer[20];
-  IO::Warn << IO::Debug.debugBuffer.getline(buffer, 20);
+
 }
 
 /**
