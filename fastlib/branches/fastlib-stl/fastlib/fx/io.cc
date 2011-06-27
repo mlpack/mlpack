@@ -6,7 +6,6 @@
 #include <boost/scoped_ptr.hpp>
 #include <iostream>
 #include <string>
-#include <sstream>
 #include <sys/time.h>
 #include <execinfo.h>
 
@@ -22,19 +21,19 @@ using namespace mlpack;
 using namespace mlpack::io;
 
 IO* IO::singleton = NULL;
-std::stringstream buffer;
+
 #ifdef DEBUG
 PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout, 
-    BASH_CYAN "[DEBUG] " BASH_CLEAR, buffer);
+    BASH_CYAN "[DEBUG] " BASH_CLEAR);
 #else
 NullOutStream IO::Debug = NullOutStream();
 #endif
-PrefixedOutStream IO::Info = PrefixedOutStream(std::cout, 
-    BASH_GREEN "[INFO ] " BASH_CLEAR, buffer);
-PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout, 
-    BASH_YELLOW "[WARN ] " BASH_CLEAR, buffer);
-PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr, 
-    BASH_RED "[FATAL] " BASH_CLEAR, buffer, true /* fatal */);
+PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
+    BASH_GREEN "[INFO ] " BASH_CLEAR);
+PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
+    BASH_YELLOW "[WARN ] " BASH_CLEAR);
+PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
+    BASH_RED "[FATAL] " BASH_CLEAR, true /* fatal */);
 std::ostream& IO::cout = std::cout;
 
 /* For clarity, we will alias boost's namespace */
@@ -71,7 +70,6 @@ IO::~IO() {
   // But only if the user did not ask for help or info.
 //  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
   if (HasParam("verbose")) {
-    IO::Info.isNullStream = false;
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
   }
@@ -170,8 +168,7 @@ std::vector<std::string>
     //Are we lacking any qualifiers?
     if(str.find('/') == std::string::npos &&
        str.compare("--help") != 0 &&
-       str.compare("--info") != 0 && 
-       str.compare("--verbose") != 0) 
+       str.compare("--info") != 0) 
       str = "--"+path+str.substr(2,str.length());
 
     ret.push_back(str);    
@@ -200,21 +197,6 @@ std::string IO::GetDescription(const char* identifier) {
 std::vector<std::string> IO::GetFolder(const char* folder) {
   std::string str = folder;
   return GetSingleton().hierarchy.GetRelativePaths(str);
-}
-
-/*
- * Grab the ProgramDoc structure registered to the program.
- *
- * @return ProgramDoc structure registered to the program.
- */
-ProgramDoc IO::GetProgramDoc() {
-  ProgramDoc* tmp = IO::GetSingleton().doc;
-
-  //If none has been registered, return a dummy object.
-  if(tmp == NULL) 
-    return ProgramDoc("Fubar 2.0", "Undocumented", "");
-
-  return *tmp;
 }
 
 //Returns the sole instance of this class
@@ -264,16 +246,16 @@ void IO::ParseCommandLine(int argc, char** line) {
   //Insert the default module where appropriate 
   std::vector<std::string> in = InsertDefaultModule(argc, line); 
   //Rebuild argv as appropriate now.
-  char** argv = new char*[argc];
+  /*char** argv = new char*[argc];
   for(int i = 1; i < argc; i++) {
     argv[i] = const_cast<char*>(in.back().c_str());
     in.pop_back();
   }
-  argv[0] = line[0];
+  argv[0] = line[0];*/
   
   //Parse the command line, place the options & values into vmap
   try{ 
-    po::store(po::parse_command_line(argc, argv, desc), vmap);
+    po::store(po::parse_command_line(argc, line, desc), vmap);
   }catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
@@ -284,7 +266,6 @@ void IO::ParseCommandLine(int argc, char** line) {
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
-  delete argv;
 }
 
 /*
@@ -386,8 +367,6 @@ void IO::DefaultMessages() {
       exit(0);
     }
   }
-  if (!HasParam("vergose"))
-    IO::Info.isNullStream = true;
 }
   
 /*

@@ -324,21 +324,11 @@ void OptionsHierarchy::PrintNode() {
 void OptionsHierarchy::PrintNodeHelp() {
   // We want to print differently if this is a module node (i.e. if it has any
   // children).
-
-  //Check that this parameter is descended from the default path.
-  std::string nodePath = IO::SanitizeString(nodeData.node.c_str());
-  std::string defPath = 
-    IO::SanitizeString(IO::GetProgramDoc().defaultModule.c_str());
-  //Is this a child node of the default path?  
-  if (nodePath.find(defPath) == 0 && defPath.length() < nodePath.length()) 
-    nodePath = nodePath.substr(defPath.length(), nodePath.length());
-
   if (children.size() > 0) {
     if (nodeData.node == "default") // Special case for default module.
       cout << "Default options:" << endl;
-    else {// Other standard module title output.      
-      cout << '\'' << nodePath << "' module: " << endl;
-    }
+    else // Other standard module title output.
+      cout << '\'' << nodeData.node << "' module: " << endl;
     cout << "  ";
     if (nodeData.desc.length() > 0)
       cout << nodeData.desc << endl << endl;
@@ -351,9 +341,7 @@ void OptionsHierarchy::PrintNodeHelp() {
   // Name of node gets printed first, with two spaces in front.
   // If there is a parameter, we specify that below.  We keep track of the
   // length of what we've written.
-
-
-  cout << "  --" << nodePath << " ";
+  cout << "  --" << nodeData.node << " ";
   int len = 5 + nodeData.node.length();
 
   // Perhaps this should be moved somewhere more central, as it may need to be
