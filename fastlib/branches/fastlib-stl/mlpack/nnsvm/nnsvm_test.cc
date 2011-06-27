@@ -46,13 +46,13 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test)
   // check for correctness on the linear kernel
   BOOST_REQUIRE(calculatedSupportVectorCount == 3);
   BOOST_REQUIRE_CLOSE(calculatedThreshold, -1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(calculatedSupportVectorCoefficients[0], 3.7499750112886758, 1e-5);
-  BOOST_REQUIRE_CLOSE(calculatedSupportVectorCoefficients[1], 6.2500249887113277, 1e-5);
+  BOOST_REQUIRE_CLOSE(calculatedSupportVectorCoefficients[0], 3.7499785159728178, 1e-5);
+  BOOST_REQUIRE_CLOSE(calculatedSupportVectorCoefficients[1], 6.2500214840271884, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedSupportVectorCoefficients[2], -10.000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[0], 0.00000000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[1], 0.00000000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[2], 0.00000000, 1e-5);
-  BOOST_REQUIRE_CLOSE(calculatedWeightVector[3], 0.00019990969060756925, 1e-5);
+  BOOST_REQUIRE_CLOSE(calculatedWeightVector[3], 0.00017187221748210524, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[4], 0.00000000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[5], 0.00000000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[6], 0.00000000, 1e-5);
