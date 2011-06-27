@@ -34,18 +34,18 @@ PROGRAM_INFO("All K-Nearest-Neighbors",
 
 // Define our input parameters that this program will take.
 PARAM_STRING_REQ("reference_file", "CSV file containing the reference dataset.",
-    "");
+    "neighbor_search");
 PARAM_STRING("query_file", "CSV file containing query points (optional).",
-    "", "");
+    "neighbor_search", "");
 PARAM_STRING_REQ("output_file", "File to output CSV-formatted results into.",
-    "");
+    "neighbor_search");
 
 int main(int argc, char *argv[]) {
   // Give IO the command line parameters the user passed in.
   IO::ParseCommandLine(argc, argv);
 
-  string reference_file = IO::GetParam<string>("reference_file");
-  string output_file = IO::GetParam<string>("output_file");
+  string reference_file = IO::GetParam<string>("neighbor_search/reference_file");
+  string output_file = IO::GetParam<string>("neighbor_search/output_file");
 
   arma::mat reference_data;
 

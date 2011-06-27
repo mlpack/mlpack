@@ -66,6 +66,7 @@ void
 arma_ostream_prefixed::print(mlpack::io::PrefixedOutStream& o, const Mat<eT>& m,
                              const bool modify)
   {
+
   arma_extra_debug_sigprint();
 
   const arma_ostream_state stream_state(o.destination);

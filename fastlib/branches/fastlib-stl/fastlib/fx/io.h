@@ -222,6 +222,21 @@ class IO {
    */
   static std::string GetDescription(const char* identifier);
 
+  /*
+   * Returns a copy of the program doc structure for this program.
+   *
+   * @return ProgramDoc structure which gives some info about the program.
+   */
+  static ProgramDoc GetProgramDoc();
+
+  /*
+   * Prepends the default program path to any unqualified parameters.
+   *
+   * @param argc The number of parameters, namely argc from main.
+   * @param argv The actual data of the parameters, namely argv from main.
+   *
+   * @return Vector of the modified strings.
+   */
   static std::vector<std::string> InsertDefaultModule(int argc, char** argv);
 
   /*
