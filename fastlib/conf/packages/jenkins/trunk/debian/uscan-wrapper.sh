@@ -7,7 +7,7 @@ uscan --report-status
 
 if [ $? -eq 0 ]
 then
-  echo "[uscan-wrapper] [uscan-wrapper-warning] uscan reports updates upstream"
+  echo "[uscan-wrapper] [uscanwrapperwarning] uscan reports updates upstream"
 else
   echo "[uscan-wrapper] uscan reports local package is up-to-date"
 fi
