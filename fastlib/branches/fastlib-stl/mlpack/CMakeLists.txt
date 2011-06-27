@@ -47,6 +47,7 @@ set(DIRS
     kde
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
+    methods/nca
 #    mlpackdemo  ## matlab routines
     #mvu # requires optimization
     naive_bayes
