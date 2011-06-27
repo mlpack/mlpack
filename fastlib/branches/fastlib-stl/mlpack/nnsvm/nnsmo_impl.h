@@ -5,6 +5,13 @@
 template<typename TKernel>
 void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
 {
+  mlpack::IO::Warn << "NNSMO::GetNNSVM()" << std::endl << "support vectors are " << std::endl;
+  std::cout << support_vectors << std::endl;
+  mlpack::IO::Warn << "support_alpha is " << std::endl;
+  std::cout << support_alpha << std::endl;
+  mlpack::IO::Warn << "w is " << std::endl;
+  std::cout << w << std::endl;
+
   index_t n_support = 0;
   index_t i_support = 0;
 
@@ -31,11 +38,18 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
       support_alpha[i_support] = alpha_[i] * GetLabelSign_(i);
       i_support++;
     }
+
+    mlpack::IO::Warn << "After point " << i << " of training we have support_alpha is " << std::endl;
+    std::cout << support_alpha << std::endl;
   }
 
+  mlpack::IO::Warn << "Before clamping we have w as " << std::endl;
+  std::cout << VTA_ << std::endl;
   w.set_size(n_feature_);
   for(index_t s = 0; s < n_feature_; s++)
     w[s] = math::ClampNonNegative(VTA_[s]);
+  mlpack::IO::Warn << "After clamping we have w as " << std::endl;
+  std::cout << w << std::endl;
 }
 
 //NNSMO training for 2-classes
