@@ -5,13 +5,6 @@
 template<typename TKernel>
 void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
 {
-  mlpack::IO::Warn << "NNSMO::GetNNSVM()" << std::endl << "support vectors are " << std::endl;
-  std::cout << support_vectors << std::endl;
-  mlpack::IO::Warn << "support_alpha is " << std::endl;
-  std::cout << support_alpha << std::endl;
-  mlpack::IO::Warn << "w is " << std::endl;
-  std::cout << w << std::endl;
-
   index_t n_support = 0;
   index_t i_support = 0;
 
@@ -38,18 +31,11 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
       support_alpha[i_support] = alpha_[i] * GetLabelSign_(i);
       i_support++;
     }
-
-    mlpack::IO::Warn << "After point " << i << " of training we have support_alpha is " << std::endl;
-    std::cout << support_alpha << std::endl;
   }
 
-  mlpack::IO::Warn << "Before clamping we have w as " << std::endl;
-  std::cout << VTA_ << std::endl;
   w.set_size(n_feature_);
   for(index_t s = 0; s < n_feature_; s++)
     w[s] = math::ClampNonNegative(VTA_[s]);
-  mlpack::IO::Warn << "After clamping we have w as " << std::endl;
-  std::cout << w << std::endl;
 }
 
 //NNSMO training for 2-classes
@@ -199,9 +185,9 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
   VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
-
+  
   // calculate alpha_j^{new}
-  if (likely(eta < 0))
+  if (eta < 0)
   {
     VERBOSE_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
@@ -210,7 +196,7 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   else
   {
     VERBOSE_MSG(0, "Uncommon case");
-	  return -1;
+    return -1;
   }
   alpha_j = FixAlpha_(alpha_j);
   double delta_alpha_j = alpha_j - alpha_[j];
@@ -229,7 +215,8 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
     double VTdA_s = (dataset_(s, j) - dataset_(s, i)) * yj * delta_alpha_j;
     w[s] = math::ClampNonNegative(VTA_[s] + VTdA_s);
   }
-  double delta_f = w_square_sum_ / 2 - dot(w, w) / 2;
+  w_square_sum_ = dot(w, w);
+  double delta_f = w_square_sum_ / 2;
   if(yi != yj)
     delta_f += 2* delta_alpha_j;
 
