@@ -11,8 +11,8 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
-PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a
-    back-tracing line search to determine the step size to take.");
+PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a "
+    "back-tracing line search to determine the step size to take.");
 
 PARAM_DOUBLE("armijo_constant", "Controls the accuracy of the line search "
     "routine for determining the Armijo condition.", "lbfgs", 1e-4);
