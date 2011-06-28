@@ -136,7 +136,7 @@ class ProgramDoc;
 class IO {
  public:
   /*
-   * Adds a parameter to the heirarchy. Use char* and not 
+   * Adds a parameter to the hierarchy. Use char* and not 
    * std::string since the vast majority of use cases will 
    * be literal strings.
    * 
