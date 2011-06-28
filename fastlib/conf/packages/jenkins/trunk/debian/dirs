@@ -6,7 +6,8 @@ var/lib/jenkins
 
 # Need to create jenkins's own directory to track the pid since the daemon is not run as root 
 # and doesn't have permission to write the pid to /var/run (which would be the preferred location).
-var/run/jenkins
+## This should be (and seems to be) handled in initd script
+#var/run/jenkins
 
 # Store jenkins log file in it's own directory since they can become rather large and in the future
 # rotating logs can be easily added.
