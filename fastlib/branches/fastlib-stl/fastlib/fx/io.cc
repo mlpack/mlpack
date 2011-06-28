@@ -285,13 +285,13 @@ void IO::ParseStream(std::istream& stream) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
   
-  //Parse the stream, place options & values into vmap
+  // Parse the stream, place options & values into vmap
   try {
   po::store(po::parse_config_file(stream, desc), vmap);
   } catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
-  //Flush the buffer, make s ure changes are propgated to vmap
+  // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
   
   UpdateGmap();

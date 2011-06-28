@@ -331,7 +331,7 @@ void OptionsHierarchy::PrintNodeHelp() {
       cout << '\'' << nodeData.node << "' module: " << endl;
     cout << "  ";
     if (nodeData.desc.length() > 0)
-      cout << nodeData.desc << endl << endl;
+      cout << HyphenateString(nodeData.desc, 2) << endl << endl;
     else
       cout << "Undocumented module." << endl << endl;
 
@@ -353,6 +353,8 @@ void OptionsHierarchy::PrintNodeHelp() {
     value = "[int]";
   else if (nodeData.tname == TYPENAME(float))
     value = "[float]";
+  else if (nodeData.tname == TYPENAME(double))
+    value = "[double]";
   else if (nodeData.tname == TYPENAME(std::string))
     value = "[string]";
 
