@@ -34,18 +34,18 @@ BOOST_AUTO_TEST_CASE(TestGeneralKernelPCA) {
    KernelPCA::GaussianKernel kernel_;
 
    engine_ = new KernelPCA();
-   engine_->Init("test_data_3_1000.csv", 5, 20);
+   engine_.Init("test_data_3_1000.csv", 5, 20);
 
-   engine_->ComputeNeighborhoods();
+   engine_.ComputeNeighborhoods();
    double bandwidth;
-   engine_->EstimateBandwidth(&bandwidth);
+   engine_.EstimateBandwidth(&bandwidth);
    kernel_.set(bandwidth); 
-   engine_->LoadAffinityMatrix();
-   engine_->ComputeGeneralKernelPCA(kernel_, 15, 
+   engine_.LoadAffinityMatrix();
+   engine_.ComputeGeneralKernelPCA(kernel_, 15, 
                                     &eigen_vectors,
                                     &eigen_values);
 
-   engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
+   engine_.SaveToTextFile("results", eigen_vectors, eigen_values);
    delete engine_;
   }
 
@@ -58,14 +58,14 @@ BOOST_AUTO_TEST_CASE(TestLLE) {
     KernelPCA::GaussianKernel kernel_;
 
     engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
+    engine_.Init("test_data_3_1000.csv", 5, 20);
 
-    engine_->ComputeNeighborhoods();
-    engine_->LoadAffinityMatrix();
-    engine_->ComputeLLE(2,
+    engine_.ComputeNeighborhoods();
+    engine_.LoadAffinityMatrix();
+    engine_.ComputeLLE(2,
                          &eigen_vectors,
                          &eigen_values);
-    engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
+    engine_.SaveToTextFile("results", eigen_vectors, eigen_values);
     delete engine_
 }
   
@@ -76,25 +76,25 @@ BOOST_AUTO_TEST_CASE (TestSpectralRegression) {
     KernelPCA::GaussianKernel kernel_;
 
     engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
+    engine_.Init("test_data_3_1000.csv", 5, 20);
 
-    engine_->ComputeNeighborhoods();
+    engine_.ComputeNeighborhoods();
     double bandwidth;
-    engine_->EstimateBandwidth(&bandwidth);
+    engine_.EstimateBandwidth(&bandwidth);
     kernel_.set(bandwidth); 
-    engine_->LoadAffinityMatrix();
+    engine_.LoadAffinityMatrix();
     std::map<index_t, index_t> data_label;
     for(index_t i=0; i<20; i++) {
-      data_label[math::RandInt(0, engine_->data_.n_cols())] = 
+      data_label[math::RandInt(0, engine_.data_.n_cols())] = 
         math::RandInt(0 ,2);
     }
     arma::mat embedded_coordinates;
     arma::vec eigenvalues; 
-    engine_->ComputeSpectralRegression(kernel_,
+    engine_.ComputeSpectralRegression(kernel_,
                                        data_label,
                                        &embedded_coordinates, 
                                        &eigenvalues);
-    engine_->SaveToTextFile("results", embedded_coordinates, eigenvalues);
+    engine_.SaveToTextFile("results", embedded_coordinates, eigenvalues);
     delete engine_;
   }
 
