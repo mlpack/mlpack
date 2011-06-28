@@ -11,46 +11,6 @@
 namespace mlpack {
 namespace optimization {
 
-template<typename FunctionType>
-void L_BFGS<FunctionType>::LbfgsParam::set_max_num_line_searches(
-    int max_num_line_searches_in) {
-  max_line_search_ = max_num_line_searches_in;
-}
-
-template<typename FunctionType>
-double L_BFGS<FunctionType>::LbfgsParam::armijo_constant() const {
-  return armijo_constant_;
-}
-
-template<typename FunctionType>
-double L_BFGS<FunctionType>::LbfgsParam::min_step() const {
-  return min_step_;
-}
-
-template<typename FunctionType>
-double L_BFGS<FunctionType>::LbfgsParam::max_step() const {
-  return max_step_;
-}
-
-template<typename FunctionType>
-int L_BFGS<FunctionType>::LbfgsParam::max_line_search() const {
-  return max_line_search_;
-}
-
-template<typename FunctionType>
-double L_BFGS<FunctionType>::LbfgsParam::wolfe() const {
-  return wolfe_;
-}
-
-template<typename FunctionType>
-L_BFGS<FunctionType>::LbfgsParam::LbfgsParam() {
-  armijo_constant_ = 1e-4;
-  min_step_ = 1e-20;
-  max_step_ = 1e20;
-  max_line_search_ = 50;
-  wolfe_ = 0.9;
-}
-
 /***
  * Evaluate the function at the given iterate point and store the result if
  * it is a new minimum.
@@ -99,14 +59,14 @@ double L_BFGS<FunctionType>::ChooseScalingFactor_(int iteration_num,
  * Check to make sure that the norm of the gradient is not smaller than 1e-10.
  * Currently that value is not configurable.
  *
- * @return (norm < 1e-10)
+ * @return (norm < lbfgs/min_gradient_norm)
  */
 template<typename FunctionType>
 bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::mat& gradient) {
-  const double threshold = 1e-10; // TODO: this threshold should be configurable
-  IO::Debug << "L-BFGS gradient norm is " << arma::norm(gradient, 2)
-      << std::endl;
-  return arma::norm(gradient, 2) < threshold;
+  double norm = arma::norm(gradient, 2);
+  IO::Debug << "L-BFGS gradient norm is " << norm << "." << std::endl;
+
+  return (norm < IO::GetParam<double>("lbfgs/min_gradient_norm"));
 }
 
 /***
@@ -142,7 +102,8 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
   double initial_function_value = function_value;
 
   // Unit linear approximation to the decrease in function value.
-  double linear_approx_function_value_decrease = param_.armijo_constant() *
+  double linear_approx_function_value_decrease =
+      IO::GetParam<double>("lbfgs/armijo_constant") * 
       initial_search_direction_dot_gradient;
 
   // The number of iteration in the search.
@@ -171,12 +132,13 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
       // Check Wolfe's condition.
       double search_direction_dot_gradient =
           arma::dot(gradient, search_direction);
+      double wolfe = IO::GetParam<double>("lbfgs/wolfe");
 
-      if(search_direction_dot_gradient < param_.wolfe() *
+      if(search_direction_dot_gradient < wolfe *
           initial_search_direction_dot_gradient) {
         width = inc;
       } else {
-        if(search_direction_dot_gradient > -param_.wolfe() *
+        if(search_direction_dot_gradient > -wolfe *
             initial_search_direction_dot_gradient) {
           width = dec;
         } else {
@@ -187,9 +149,9 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
 
     // Terminate when the step size gets too small or too big or it
     // exceeds the max number of iterations.
-    if((step_size < param_.min_step()) || 
-       (step_size > param_.max_step()) ||
-       (num_iterations >= param_.max_line_search())) {
+    if((step_size < IO::GetParam<double>("lbfgs/min_step")) || 
+       (step_size > IO::GetParam<double>("lbfgs/max_step")) ||
+       (num_iterations >= IO::GetParam<int>("lbfgs/max_line_search_trials"))) {
       return false;
     }
 
@@ -309,17 +271,6 @@ template<typename FunctionType>
 const std::pair<arma::mat, double>&
 L_BFGS<FunctionType>::min_point_iterate() const {
   return min_point_iterate_;
-}
-
-/***
- * Set the maximum number of iterations for the line search.
- *                                                                                                                                                                                              
- * @param max_num_line_searches_in New maximum number of iterations
- */
-template<typename FunctionType>
-void L_BFGS<FunctionType>::set_max_num_line_searches(
-    int max_num_line_searches_in) {
-  param_.set_max_num_line_searches(max_num_line_searches_in);
 }
 
 /***
