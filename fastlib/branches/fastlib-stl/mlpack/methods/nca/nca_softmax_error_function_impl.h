@@ -39,16 +39,6 @@ double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
       // Evaluate exp(-K(x_i, x_j)).
       double eval = exp(-kernel_.Evaluate(newpoints.unsafe_col(i),
                                           newpoints.unsafe_col(j)));
-      if (eval == 0) {
-        IO::Warn << "Kernel evaluation for points " << i << " and " << j <<
-            " is 0!" << std::endl;
-        IO::Warn << "Value of kernel was " << 
-            -kernel_.Evaluate(newpoints.unsafe_col(i), newpoints.unsafe_col(j))
-            << std::endl;
-      }
-      if (eval < 0)
-        IO::Warn << "Kernel evaluation for points " << i << " and " << j <<
-            " is less than 0!" << std::endl;
 
       // Add this to the denominators of both i and j: p_ij = p_ji.
       denominators[i] += eval;
@@ -67,7 +57,7 @@ double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
   numerators /= denominators; // Output is in numerators object.
   
   // Check for bad values.
-  for (int i = 0; i < newpoints.n_cols; i++) {
+  for (index_t i = 0; i < newpoints.n_cols; i++) {
     if (denominators[i] == 0) {
       IO::Warn << "Denominator " << i << " is 0!" << std::endl;
       numerators[i] = 0; // Set correctly.
@@ -117,7 +107,7 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
   p /= denominators;
   
   // Check for bad values.
-  for (int i = 0; i < newpoints.n_cols; i++) {
+  for (index_t i = 0; i < newpoints.n_cols; i++) {
     if (denominators[i] == 0) {
       IO::Warn << "Denominator " << i << " is 0!" << std::endl;
       p[i] = 0; // Set correctly.
