@@ -312,6 +312,9 @@ class IO {
  private:
   // The documentation and names of options
   po::options_description desc;
+      
+  // Store a relative index of path names
+  io::OptionsHierarchy hierarchy;
     
   // Values of the options given by user
   po::variables_map vmap;
@@ -322,9 +325,6 @@ class IO {
   // Map of global values, stored here instead of in OptionsHierarchy
   // For ease of implementation
   std::map<std::string, boost::any> globalValues;
-      
-  // Store a relative index of path names
-  io::OptionsHierarchy hierarchy;
       
   // The singleton, obviously
   static IO* singleton;

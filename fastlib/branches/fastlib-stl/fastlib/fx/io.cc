@@ -45,7 +45,7 @@ static ProgramDoc empty_program_doc = ProgramDoc("", "", "");
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
-    doc(&empty_program_doc), did_parse(false) {
+    did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
@@ -56,13 +56,13 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
  */ 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()),
-    doc(&empty_program_doc), did_parse(false) {
+    did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
 //Private copy constructor; don't want copies floating around.
-IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc),
-    did_parse(false) {
+IO::IO(const IO& other) : desc(other.desc),
+    did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
