@@ -86,3 +86,42 @@ BOOST_AUTO_TEST_CASE(softmax_initial_gradient) {
   BOOST_REQUIRE(gradient(0, 1) == 0.0);
   BOOST_REQUIRE_CLOSE(gradient(1, 1), 1.63823, 0.01);
 }
+
+/***
+ * On optimally separated datasets, ensure that the objective function is
+ * optimal (equal to the negative number of points).
+ */
+BOOST_AUTO_TEST_CASE(softmax_optimal_evaluation) {
+  // Simple optimal dataset.
+  arma::mat data    = " 500  500 -500 -500;"
+                      "   1    0    1    0 ";
+  arma::uvec labels = "   0    0    1    1 ";
+
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  double objective = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+
+  // Use a very close tolerance for optimality; we need to be sure this function
+  // gives optimal results correctly.
+  BOOST_REQUIRE_CLOSE(objective, -4.0, 1e-10);
+}
+
+/***
+ * On optimally separated datasets, ensure that the gradient is zero.
+ */
+BOOST_AUTO_TEST_CASE(softmax_optimal_gradient) {
+  // Simple optimal dataset.
+  arma::mat data    = " 500  500 -500 -500;"
+                      "   1    0    1    0 ";
+  arma::uvec labels = "   0    0    1    1 ";
+
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  arma::mat gradient;
+  sef.Gradient(arma::eye<arma::mat>(2, 2), gradient);
+
+  BOOST_REQUIRE(gradient(0, 0) == 0.0);
+  BOOST_REQUIRE(gradient(0, 1) == 0.0);
+  BOOST_REQUIRE(gradient(1, 0) == 0.0);
+  BOOST_REQUIRE(gradient(1, 1) == 0.0);
+}
