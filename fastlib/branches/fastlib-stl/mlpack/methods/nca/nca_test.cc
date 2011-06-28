@@ -152,12 +152,14 @@ BOOST_AUTO_TEST_CASE(nca_simple_dataset) {
 
   double init_obj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
   double final_obj = sef.Evaluate(output_matrix);
+  arma::mat final_gradient;
+  sef.Gradient(output_matrix, final_gradient);
 
   // final_obj must be less than init_obj.
   BOOST_REQUIRE_LT(final_obj, init_obj);
   // Verify that final objective is optimal.
   BOOST_REQUIRE_CLOSE(final_obj, -6.0, 1e-8);
-
-  // The optimal output matrix has not been calculated by hand yet.  This is
-  // pending...
+  // The solution is not unique, so the best we can do is ensure the gradient
+  // norm is close to 0.
+  BOOST_REQUIRE_LT(arma::norm(final_gradient, 2), 1e-10);
 }
