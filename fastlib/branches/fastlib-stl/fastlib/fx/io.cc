@@ -45,7 +45,7 @@ static ProgramDoc empty_program_doc = ProgramDoc("", "", "");
 /* Constructors, Destructors, Copy */
 /* Make the constructor private, to preclude unauthorized instances */
 IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
-    doc(&empty_program_doc) {
+    doc(&empty_program_doc), did_parse(false) {
   return;
 }
 
@@ -56,12 +56,13 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
  */ 
 IO::IO(std::string& optionsName) : 
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()),
-    doc(&empty_program_doc) {
+    doc(&empty_program_doc), did_parse(false) {
   return;
 }
 
 //Private copy constructor; don't want copies floating around.
-IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc) {
+IO::IO(const IO& other) : desc(other.desc), doc(&empty_program_doc),
+    did_parse(false) {
   return;
 }
 
@@ -74,8 +75,11 @@ IO::~IO() {
     hierarchy.PrintLeaves();
   }
 
-  // Notify the user if we are debugging.
-  Debug << "Compiled with debugging symbols." << std::endl;
+  // Notify the user if we are debugging, but only if we actually parsed the
+  // options.  This way this output doesn't show up inexplicably for someone who
+  // may not have wanted it there (i.e. in Boost unit tests).
+  if (did_parse)
+    Debug << "Compiled with debugging symbols." << std::endl;
 
   return;
 }
@@ -257,14 +261,13 @@ void IO::ParseCommandLine(int argc, char** line) {
   argv[0] = line[0];*/
   
   //Parse the command line, place the options & values into vmap
-  try{ 
+  try { 
     po::store(po::parse_command_line(argc, line, desc), vmap);
-  }catch(std::exception& ex) {
+  } catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make sure changes are propogated to vmap
   po::notify(vmap);	
- 
  
   UpdateGmap();
   DefaultMessages();
@@ -283,9 +286,9 @@ void IO::ParseStream(std::istream& stream) {
   po::options_description& desc = GetSingleton().desc;
   
   //Parse the stream, place options & values into vmap
-  try{
+  try {
   po::store(po::parse_config_file(stream, desc), vmap);
-  }catch(std::exception& ex) {
+  } catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
   //Flush the buffer, make s ure changes are propgated to vmap
