@@ -26,3 +26,13 @@ target_link_libraries(nca
   fastlib
   mlpack
 )
+
+# test executable
+add_executable(nca_test
+  nca_test.cc
+)
+target_link_libraries(nca_test
+  fastlib
+  mlpack
+  boost_unit_test_framework
+)
