@@ -24,25 +24,13 @@
 #define BOOST_TEST_MODULE KernelPCATest
 #include <boost/test/unit_test.hpp>
 
-/*
-class KernelPCATest {
- public:    
-  void Init() {
-    engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
-  }
-  void Destruct() {
-    delete engine_;
-  }
-
-*/
 
 BOOST_AUTO_TEST_CASE(TestGeneralKernelPCA) { 
 
    arma::mat eigen_vectors;
    arma::vec eigen_values;
    
-   KernelPCA *engine_;
+   KernelPCA engine_;
    KernelPCA::GaussianKernel kernel_;
 
    engine_ = new KernelPCA();
@@ -66,7 +54,7 @@ BOOST_AUTO_TEST_CASE(TestLLE) {
     arma::mat eigen_vectors;
     arma::vec eigen_values;
 
-    KernelPCA *engine_;
+    KernelPCA engine_;
     KernelPCA::GaussianKernel kernel_;
 
     engine_ = new KernelPCA();
@@ -84,8 +72,7 @@ BOOST_AUTO_TEST_CASE(TestLLE) {
 
 BOOST_AUTO_TEST_CASE (TestSpectralRegression) { 
 
-
-    KernelPCA *engine_;
+    KernelPCA engine_;
     KernelPCA::GaussianKernel kernel_;
 
     engine_ = new KernelPCA();
@@ -111,15 +98,3 @@ BOOST_AUTO_TEST_CASE (TestSpectralRegression) {
     delete engine_;
   }
 
-/*
- private:
-  KernelPCA *engine_;
-  KernelPCA::GaussianKernel kernel_;
-};
-*/
-/*
-int main() {
-  KernelPCATest test;
-  test.TestAll();
-}
-*/
