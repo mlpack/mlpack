@@ -96,7 +96,7 @@ BOOST_AUTO_TEST_CASE(rosenbrock_wood_function) {
 
   BOOST_REQUIRE_SMALL(final_value, 1e-5);
   for (int row = 0; row < 4; row++) {
-    BOOST_REQUIRE_CLOSE((coords[row, 0]), 1, 1e-5);
-    BOOST_REQUIRE_CLOSE((coords[row, 1]), 1, 1e-5);
+    BOOST_REQUIRE_CLOSE((coords(row, 0)), 1, 1e-5);
+    BOOST_REQUIRE_CLOSE((coords(row, 1)), 1, 1e-5);
   }
 }
