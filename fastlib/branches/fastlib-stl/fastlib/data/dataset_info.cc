@@ -286,7 +286,6 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
     size_t len = str.end() - pos;
     size_t cpos = pos - str.begin();
     if (!PASSED(features_[i].Parse(str.substr(cpos, len), col[i]))) {
-      string::iterator end = reader.Peek().end();
       string tmp;
       tmp.assign(pos, str.end());
       reader.Error("Invalid parse: [%s]", tmp.c_str());
