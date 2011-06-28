@@ -23,5 +23,6 @@ add_executable(kernel_pca_test
 # link dependencies of test executable
 target_link_libraries(kernel_pca_test
    mlpack
-   fastlib
+   fastlib  
+   boost_unit_test_framework
 )

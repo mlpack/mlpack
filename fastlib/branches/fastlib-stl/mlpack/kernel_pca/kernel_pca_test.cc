@@ -21,7 +21,10 @@
 #include <fastlib/fastlib.h>
 #include <fastlib/base/test.h>
 #include <fastlib/base/common.h>
+#define BOOST_TEST_MODULE KernelPCATest
+#include <boost/test/unit_test.hpp>
 
+/*
 class KernelPCATest {
  public:    
   void Init() {
@@ -31,15 +34,23 @@ class KernelPCATest {
   void Destruct() {
     delete engine_;
   }
-  void TestGeneralKernelPCA() {
-   IO::Info << "Testing KernelPCA ..." << std::endl;
+
+*/
+
+BOOST_AUTO_TEST_CASE(TestGeneralKernelPCA) { 
+
    arma::mat eigen_vectors;
    arma::vec eigen_values;
-   Init();
+   
+   KernelPCA *engine_;
+   KernelPCA::GaussianKernel kernel_;
+
+   engine_ = new KernelPCA();
+   engine_->Init("test_data_3_1000.csv", 5, 20);
+
    engine_->ComputeNeighborhoods();
    double bandwidth;
    engine_->EstimateBandwidth(&bandwidth);
-   IO::Info << "Estimated Bandwidth " << bandwidth << "..." << std::endl;
    kernel_.set(bandwidth); 
    engine_->LoadAffinityMatrix();
    engine_->ComputeGeneralKernelPCA(kernel_, 15, 
@@ -47,30 +58,42 @@ class KernelPCATest {
                                     &eigen_values);
 
    engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
-   Destruct();
-   IO::Info << "Test ComputeGeneralKernelPCA passed...!" << std::endl;
+   delete engine_;
   }
-  void TestLLE() {
-   IO::Info << "Testing ComputeLLE" << std::endl;
+
+
+BOOST_AUTO_TEST_CASE(TestLLE) { 
     arma::mat eigen_vectors;
     arma::vec eigen_values;
-    Init();
+
+    KernelPCA *engine_;
+    KernelPCA::GaussianKernel kernel_;
+
+    engine_ = new KernelPCA();
+    engine_->Init("test_data_3_1000.csv", 5, 20);
+
     engine_->ComputeNeighborhoods();
     engine_->LoadAffinityMatrix();
     engine_->ComputeLLE(2,
                          &eigen_vectors,
                          &eigen_values);
     engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
-    Destruct();
-    IO::Info << "Test ComputeLLE passed...!" << std::endl; 
-  }
-  void TestSpectralRegression() {
-    IO::Info << "Test ComputeSpectralRegression..." << std::endl;
-    Init();
+    delete engine_
+}
+  
+
+BOOST_AUTO_TEST_CASE (TestSpectralRegression) { 
+
+
+    KernelPCA *engine_;
+    KernelPCA::GaussianKernel kernel_;
+
+    engine_ = new KernelPCA();
+    engine_->Init("test_data_3_1000.csv", 5, 20);
+
     engine_->ComputeNeighborhoods();
     double bandwidth;
     engine_->EstimateBandwidth(&bandwidth);
-    IO::Info << "Estimated bandwidth " << bandwidth << " ..." << std::endl;
     kernel_.set(bandwidth); 
     engine_->LoadAffinityMatrix();
     std::map<index_t, index_t> data_label;
@@ -85,21 +108,18 @@ class KernelPCATest {
                                        &embedded_coordinates, 
                                        &eigenvalues);
     engine_->SaveToTextFile("results", embedded_coordinates, eigenvalues);
-    Destruct();
+    delete engine_;
+  }
 
-    IO::Info << "Test ComputeSpectralRegression passed..." << std::endl;
-  }
-  void TestAll() {
-     //TestGeneralKernelPCA();
-     TestLLE();
-     //TestSpectralRegression();
-  }
+/*
  private:
   KernelPCA *engine_;
   KernelPCA::GaussianKernel kernel_;
 };
-
+*/
+/*
 int main() {
   KernelPCATest test;
   test.TestAll();
 }
+*/
