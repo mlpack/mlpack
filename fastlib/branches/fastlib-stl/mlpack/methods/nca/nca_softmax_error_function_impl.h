@@ -22,10 +22,6 @@ SoftmaxErrorFunction<Kernel>::SoftmaxErrorFunction(const arma::mat& dataset,
 
 template<typename Kernel>
 double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
-  IO::Debug << "Beginning evaluation of function with coordinates " <<
-      std::endl;
-  std::cout << coordinates << std::endl;
-
   // First stretch the dimensions.
   arma::mat newpoints = coordinates * dataset_;
 
@@ -85,8 +81,6 @@ double SoftmaxErrorFunction<Kernel>::Evaluate(const arma::mat& coordinates) {
 template<typename Kernel>
 void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
                                             arma::mat& gradient) {
-  IO::Debug << "Beginning evaluation of gradient." << std::endl;
-
   // Stretch the dimensions.
   arma::mat newpoints = coordinates * dataset_;
 
@@ -168,11 +162,6 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
 
   // Assemble the final gradient.
   gradient = -2 * coordinates * sum;
-
-  IO::Info << "Gradient is " << std::endl;
-  std::cout << gradient << std::endl;
-
-  IO::Debug << "Finished evaluating the gradient." << std::endl;
 }
 
 template<typename Kernel>
