@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   data::Load(IO::GetParam<string>("input_file").c_str(), data);
 
   arma::uvec labels(data.n_cols);
-  for (int i = 0; i < data.n_cols; i++)
+  for (index_t i = 0; i < data.n_cols; i++)
     labels[i] = (int) data(data.n_rows - 1, i);
 
   data.shed_row(data.n_rows - 1);
