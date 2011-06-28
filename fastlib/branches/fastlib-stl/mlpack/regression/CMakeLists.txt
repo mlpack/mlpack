@@ -44,4 +44,5 @@ add_executable(dataset_preprocess
 target_link_libraries(dataset_preprocess
    mlpack
    fastlib
+   boost_unit_test_framework
 )
