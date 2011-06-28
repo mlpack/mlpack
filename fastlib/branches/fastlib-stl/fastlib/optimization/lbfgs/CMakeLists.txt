@@ -3,9 +3,6 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   lbfgs_impl.h
   lbfgs.h
-  quasi_newton_hessian_update.h
-  trust_region_dev.h
-  trust_region.h
   test_functions.h
   test_functions.cc
 )
