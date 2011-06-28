@@ -329,6 +329,9 @@ class IO {
   // The singleton, obviously
   static IO* singleton;
 
+  // True if IO was used to parse command line options.
+  bool did_parse;
+
  public:
   // Pointer to the ProgramDoc object.
   ProgramDoc *doc;
