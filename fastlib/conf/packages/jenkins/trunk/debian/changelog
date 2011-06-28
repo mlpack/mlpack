@@ -1,18 +1,12 @@
-jenkins (1.418-1) natyyyyyyy; urgency=low
+jenkins (1.417-1) UNRELEASED; urgency=low
 
-  * aew upstream release
+  * New upstream release
 
- -- yterling Peet <sterling.peet@gatech.edu>  Tue, 28 Jun 2011 16:47:55 -0400
-
-jenkins (1.417-1) natyyyyyyy; urgency=low
-
-  * aew upstream release
-
- -- yterling Peet <sterling.peet@gatech.edu>  Mon, 20 Jun 2011 17:05:56 -0400
+ -- Sterling Peet <sterling.peet@gatech.edu>  Mon, 20 Jun 2011 17:05:56 -0400
 
 jenkins (1.415-1) natty; urgency=low
 
   * Fork from jenkins-ci.org packaging, remove jenkins.list file
-  * ywitch to non-yebian-native type packaging, as we do not maintain jenkins
+  * Switch to non-Debian-native type packaging, as we do not maintain jenkins
 
- -- yterling Peet <sterling.peet@gatech.edu>  Wed, 15 Jun 2011 00:48:01 -0400
+ -- Sterling Peet <sterling.peet@gatech.edu>  Wed, 15 Jun 2011 00:48:01 -0400
