@@ -16,6 +16,10 @@ using namespace mlpack;
 using namespace mlpack::kernel;
 using namespace mlpack::nca;
 
+//
+// Tests for the SoftmaxErrorFunction
+//
+
 /***
  * The Softmax error function should return the identity matrix as its initial
  * point.
@@ -50,8 +54,6 @@ BOOST_AUTO_TEST_CASE(softmax_initial_evaluation) {
   arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
                       " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
   arma::uvec labels = " 0    0    0    1    1    1   ";
-
-  std::cout << data << std::endl;
 
   SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
 
@@ -124,4 +126,38 @@ BOOST_AUTO_TEST_CASE(softmax_optimal_gradient) {
   BOOST_REQUIRE(gradient(0, 1) == 0.0);
   BOOST_REQUIRE(gradient(1, 0) == 0.0);
   BOOST_REQUIRE(gradient(1, 1) == 0.0);
+}
+
+//
+// Tests for the NCA algorithm.
+//
+
+/***
+ * On our simple dataset, ensure that the NCA algorithm fully separates the
+ * points.
+ */
+BOOST_AUTO_TEST_CASE(nca_simple_dataset) {
+  // Useful but simple dataset with six points and two classes.
+  arma::mat data    = "-0.1 -0.1 -0.1  0.1  0.1  0.1;"
+                      " 1.0  0.0 -1.0  1.0  0.0 -1.0 ";
+  arma::uvec labels = " 0    0    0    1    1    1   ";
+
+  NCA<SquaredEuclideanDistance> nca(data, labels);
+
+  arma::mat output_matrix;
+  nca.LearnDistance(output_matrix);
+
+  // Ensure that the objective function is better now.
+  SoftmaxErrorFunction<SquaredEuclideanDistance> sef(data, labels);
+
+  double init_obj = sef.Evaluate(arma::eye<arma::mat>(2, 2));
+  double final_obj = sef.Evaluate(output_matrix);
+
+  // final_obj must be less than init_obj.
+  BOOST_REQUIRE_LT(final_obj, init_obj);
+  // Verify that final objective is optimal.
+  BOOST_REQUIRE_CLOSE(final_obj, -6.0, 1e-8);
+
+  // The optimal output matrix has not been calculated by hand yet.  This is
+  // pending...
 }
