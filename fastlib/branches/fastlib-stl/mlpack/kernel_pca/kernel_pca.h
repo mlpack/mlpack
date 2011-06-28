@@ -18,7 +18,6 @@
 // so we must include allknn.h (which uses LI) first
 #include <fastlib/sparse/sparse_matrix.h>
 
-class KernelPCATest;
 /**
  * KernelPCA class is the main class that implements several spectral methods
  * that are variances of Kernel PCA
