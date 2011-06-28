@@ -74,6 +74,9 @@ IO::~IO() {
     hierarchy.PrintLeaves();
   }
 
+  // Notify the user if we are debugging.
+  Debug << "Compiled with debugging symbols." << std::endl;
+
   return;
 }
 
@@ -367,6 +370,11 @@ void IO::DefaultMessages() {
       exit(0);
     }
   }
+  
+  // Notify the user if we are debugging.  This is not done in the constructor
+  // because the output streams may not be set up yet.  We also don't want this
+  // message twice if the user just asked for help or information.
+  Debug << "Compiled with debugging symbols." << std::endl;
 }
   
 /*
