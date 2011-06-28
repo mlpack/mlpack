@@ -25,6 +25,7 @@ add_executable(ridge_regression_test
 target_link_libraries(ridge_regression_test
    mlpack
    fastlib
+   boost_unit_test_framework
 )
 
 # main executable

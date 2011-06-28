@@ -30,6 +30,7 @@
 using namespace mlpack;
 
 BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) { 
+
     
     RidgeRegression engine_;
     arma::mat predictors_;
@@ -41,24 +42,27 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
     data::Load("predictions.csv", predictions_);
     data::Load("true_factors.csv", true_factors_);
 
-    engine_ = new RidgeRegression();
-    engine_->Init(predictors_, predictions_, true);
-    engine_->SVDRegress(0);
+
+    engine_.Init(predictors_, predictions_, true);
+
+    engine_.SVDRegress(0);
+
     RidgeRegression svd_engine;
+
+
     svd_engine.Init(predictors_, predictions_, false);
-    std::cout<< "wut" << std::endl;
     svd_engine.SVDRegress(0);
     arma::mat factors, svd_factors;
-    engine_->factors(&factors);
+    engine_.factors(&factors);
     svd_engine.factors(&svd_factors);
     
     for(index_t i=0; i<factors.n_rows; i++) {
-      IO::Info << "Normal Equation: " << factors(i,0)
-		<< ", SVD:" << svd_factors(i,0) << std::endl;
-      TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
+      
+       std::cout << factors(i, 0) << std::endl;
+       std::cout << svd_factors(i, 0) << std::endl;
+       TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
     }
-    
-    delete engine_;
+
 
   }
 
@@ -77,6 +81,7 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
 
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
+
     arma::mat synthetic_data;
     arma::mat synthetic_data_target_training_values;
     synthetic_data.zeros(4, 5);
@@ -88,6 +93,8 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
       synthetic_data(3, i) = 5;
       synthetic_data_target_training_values(0, i) = i;
     }
+    
+  
     arma::Col<index_t> predictor_indices;
     arma::Col<index_t> prune_predictor_indices;
     arma::Col<index_t> output_predictor_indices;
@@ -98,10 +105,13 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
     predictor_indices[3] = 3;
     prune_predictor_indices = predictor_indices;
 
-    engine_ = new RidgeRegression();
-    engine_->Init(synthetic_data, predictor_indices,
+   // engine_ = new RidgeRegression();
+
+
+    engine_.Init(synthetic_data, predictor_indices,
 		  synthetic_data_target_training_values);
-    engine_->FeatureSelectedRegression(predictor_indices,
+
+    engine_.FeatureSelectedRegression(predictor_indices,
 				       prune_predictor_indices,
 				       synthetic_data_target_training_values,
 				       &output_predictor_indices);
@@ -111,6 +121,6 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
       printf(" %"LI" ", output_predictor_indices[i]);
     }
     printf("\n");
-    delete engine_;  
+   
 }
 
