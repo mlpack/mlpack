@@ -73,7 +73,24 @@ class SoftmaxErrorFunction {
 
   Kernel kernel_;
 
-  std::multimap<index_t, index_t> class_mapping_;
+  arma::mat last_coordinates_; 
+  arma::mat stretched_dataset_; 
+  arma::vec p_; // Holds calculated p_i. 
+  arma::vec denominators_; // Holds denominators for calculation of p_ij. 
+ 
+  /*** 
+   * Precalculate the denominators and numerators that will make up the p_ij, 
+   * but only if the coordinates matrix is different than the last coordinates 
+   * the Precalculate() method was run with. 
+   * 
+   * This will update last_coordinates_ and stretched_dataset_, and also 
+   * calculate the p_i and denominators_ which are used in the calculation of 
+   * p_i or p_ij.  The calculation will be O((n * (n + 1)) / 2), which is not 
+   * great. 
+   * 
+   * @param coordinates Coordinates matrix to use for precalculation.  
+   */ 
+  void Precalculate(const arma::mat& coordinates); 
 };
 
 }; // namespace nca
