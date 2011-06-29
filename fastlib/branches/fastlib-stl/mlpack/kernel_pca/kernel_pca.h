@@ -1,7 +1,6 @@
 /**  
  * @file kernel_pca.h
  * nvasil@ieee.org
- *
  */
 #ifndef KERNEL_PCA_H_
 #define KERNEL_PCA_H_
