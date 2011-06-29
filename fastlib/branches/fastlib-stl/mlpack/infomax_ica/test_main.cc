@@ -1,7 +1,6 @@
 /**
  * @file main.cc
  *
- *
  * Test driver for our infomax ICA method.
  */
 
