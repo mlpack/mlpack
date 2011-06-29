@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 2.8)
-#
+
 # Define the files we need to compile
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
@@ -25,7 +25,6 @@ add_executable(ridge_regression_test
 target_link_libraries(ridge_regression_test
    mlpack
    fastlib
-   boost_unit_test_framework
 )
 
 # main executable

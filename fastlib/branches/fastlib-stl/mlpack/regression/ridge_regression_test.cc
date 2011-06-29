@@ -23,27 +23,23 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
+#define BOOST_TEST_MODULE RidgeRegressionTest
+#include <boost/test/unit_test.hpp>
+
+
 using namespace mlpack;
 
+BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) { 
+    
+    RidgeRegression engine_;
+    arma::mat predictors_;
+    arma::mat predictions_;
+    arma::mat true_factors_;
 
-class RidgeRegressionTest {
- public:
-  void Init() {
     arma::mat tmp;
     data::Load("predictors.csv", predictors_);
     data::Load("predictions.csv", predictions_);
     data::Load("true_factors.csv", true_factors_);
-//    predictions_ = trans(predictions_);
-    //predictors_ = trans(predictors_);
-//    true_factors_ = trans(true_factors_);
-    std::cout << predictors_ << '\n' <<
-      predictions_ << '\n' <<
-      true_factors_ << std::endl;
-  }
-
-  void TestSVDNormalEquationRegressVersusSVDRegress() {
-
-    IO::Info << "[*] TestSVDNormalEquationRegressVersusSVDRegress" << std::endl;
 
     engine_ = new RidgeRegression();
     engine_->Init(predictors_, predictions_, true);
@@ -62,14 +58,22 @@ class RidgeRegressionTest {
       TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
     }
     
-    Destruct();
+    delete engine_;
 
-    IO::Info << "[*] TestRegressVersusSVDRegress complete!" << std::endl;
   }
 
-  void TestVIFBasedFeatureSelection() {
-    
-    IO::Info << "[*] TestVIFBasedFeatureSelection" << std::endl;
+
+BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) { 
+
+    RidgeRegression engine_;
+    arma::mat predictors_;
+    arma::mat predictions_;
+    arma::mat true_factors_;
+
+    arma::mat tmp;
+    data::Load("predictors.csv", predictors_);
+    data::Load("predictions.csv", predictions_);
+    data::Load("true_factors.csv", true_factors_);
 
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
@@ -107,31 +111,6 @@ class RidgeRegressionTest {
       printf(" %"LI" ", output_predictor_indices[i]);
     }
     printf("\n");
-    IO::Info << "[*] TESTVIFBasedFeatureSelection complete!" << std::endl;
-  }
-
-  void TestAll() {
-  void TestAll() {
-    engine_.FeatureSelectedRegression(predictor_indices,
-				       prune_predictor_indices,
-				       synthetic_data_target_training_values,
-				       &output_predictor_indices);
-
-    printf("Output indices: ");
-    for(index_t i = 0; i < output_predictor_indices.n_elem; i++) {
-      printf(" %"LI" ", output_predictor_indices[i]);
-    }
-    printf("\n");
-   
+    delete engine_;  
 }
 
-/*
- * =====================================================================================
- *
- *       Filename:  ridge_regression_test.cc
- *
- *    Description:  
- *
- *        Version:  1.0
- *        Created:  02/15/2009 01:34:25 PM EST
- *       Revision:  none
