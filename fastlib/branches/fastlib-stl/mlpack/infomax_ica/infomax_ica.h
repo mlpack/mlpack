@@ -7,6 +7,7 @@
  * Bell, A. and Sejnowski,T. (1995)
  * "An information maximisation approach to blind signal
  * separation."  Neural Computation. 1129-1159.
+ * 
  *
  * For details:
  * http://www.cnl.salk.edu/~tony/ica.html
