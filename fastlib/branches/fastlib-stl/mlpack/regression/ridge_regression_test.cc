@@ -23,23 +23,27 @@
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
 
-#define BOOST_TEST_MODULE RidgeRegressionTest
-#include <boost/test/unit_test.hpp>
-
-
 using namespace mlpack;
 
-BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) { 
-    
-    RidgeRegression engine_;
-    arma::mat predictors_;
-    arma::mat predictions_;
-    arma::mat true_factors_;
 
+class RidgeRegressionTest {
+ public:
+  void Init() {
     arma::mat tmp;
     data::Load("predictors.csv", predictors_);
     data::Load("predictions.csv", predictions_);
     data::Load("true_factors.csv", true_factors_);
+//    predictions_ = trans(predictions_);
+    //predictors_ = trans(predictors_);
+//    true_factors_ = trans(true_factors_);
+    std::cout << predictors_ << '\n' <<
+      predictions_ << '\n' <<
+      true_factors_ << std::endl;
+  }
+
+  void TestSVDNormalEquationRegressVersusSVDRegress() {
+
+    IO::Info << "[*] TestSVDNormalEquationRegressVersusSVDRegress" << std::endl;
 
     engine_ = new RidgeRegression();
     engine_->Init(predictors_, predictions_, true);
@@ -58,22 +62,14 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
       TEST_DOUBLE_APPROX(factors(i, 0), svd_factors(i, 0), 1e-3);
     }
     
-    delete engine_;
+    Destruct();
 
+    IO::Info << "[*] TestRegressVersusSVDRegress complete!" << std::endl;
   }
 
-
-BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) { 
-
-    RidgeRegression engine_;
-    arma::mat predictors_;
-    arma::mat predictions_;
-    arma::mat true_factors_;
-
-    arma::mat tmp;
-    data::Load("predictors.csv", predictors_);
-    data::Load("predictions.csv", predictions_);
-    data::Load("true_factors.csv", true_factors_);
+  void TestVIFBasedFeatureSelection() {
+    
+    IO::Info << "[*] TestVIFBasedFeatureSelection" << std::endl;
 
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
@@ -111,6 +107,31 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
       printf(" %"LI" ", output_predictor_indices[i]);
     }
     printf("\n");
-    delete engine_;  
-}
+    IO::Info << "[*] TESTVIFBasedFeatureSelection complete!" << std::endl;
+  }
 
+  void TestAll() {
+    TestSVDNormalEquationRegressVersusSVDRegress();
+    TestVIFBasedFeatureSelection();
+    IO::Info << "[*] All tests passed !!" << std::endl;
+  }  
+
+  void Destruct() {
+    delete engine_;
+  }
+
+ private:
+  RidgeRegression *engine_;
+  arma::mat predictors_;
+  arma::mat predictions_;
+  arma::mat true_factors_;
+};
+
+int main(int argc, char *argv[]) {
+   IO::ParseCommandLine(argc, argv);
+ 
+  IO::GetParam<double>("ridge/lambda") = 1.0;
+  RidgeRegressionTest  test;
+  test.Init();
+  test.TestAll();
+}

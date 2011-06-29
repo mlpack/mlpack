@@ -24,15 +24,14 @@ add_executable(infomax_ica_test
 target_link_libraries(infomax_ica_test
    mlpack
    fastlib
-   boost_unit_test_framework
 )
 
 # main executable
 add_executable(infomax_ica
    main.cc
 )
-# link dependencies of infomax_ica
+# link dependencies of allknn
 target_link_libraries(infomax_ica
-   fastlib
    mlpack
+   fastlib
 )
