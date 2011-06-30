@@ -3,7 +3,7 @@
  *
  *       Filename:  kernel_pca_test.cc
  *
- *    Description:  
+ *    Description: 
  *
  *        Version:  1.0
  *        Created:  01/09/2008 11:26:48 AM EST
@@ -15,111 +15,67 @@
  *
  * =====================================================================================
  */
-
 #include "kernel_pca.h"
 #include <vector>
 #include <fastlib/fastlib.h>
 #include <fastlib/base/test.h>
 #include <fastlib/base/common.h>
+
 #define BOOST_TEST_MODULE KernelPCATest
 #include <boost/test/unit_test.hpp>
 
-/*
-class KernelPCATest {
- public:    
-  void Init() {
-    engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
-  }
-  void Destruct() {
-    delete engine_;
-  }
-
-*/
-
-BOOST_AUTO_TEST_CASE(TestGeneralKernelPCA) { 
-
+BOOST_AUTO_TEST_CASE(TestGeneralKernelPCA) {
    arma::mat eigen_vectors;
    arma::vec eigen_values;
    
-   KernelPCA *engine_;
+   KernelPCA engine_;
    KernelPCA::GaussianKernel kernel_;
-
-   engine_ = new KernelPCA();
-   engine_->Init("test_data_3_1000.csv", 5, 20);
-
-   engine_->ComputeNeighborhoods();
+   engine_.Init("test_data_3_1000.csv", 5, 20);
+   engine_.ComputeNeighborhoods();
    double bandwidth;
-   engine_->EstimateBandwidth(&bandwidth);
-   kernel_.set(bandwidth); 
-   engine_->LoadAffinityMatrix();
-   engine_->ComputeGeneralKernelPCA(kernel_, 15, 
+   engine_.EstimateBandwidth(&bandwidth);
+   kernel_.set(bandwidth);
+   engine_.LoadAffinityMatrix();
+   engine_.ComputeGeneralKernelPCA(kernel_, 15,
                                     &eigen_vectors,
                                     &eigen_values);
-
-   engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
-   delete engine_;
+   engine_.SaveToTextFile("results", eigen_vectors, eigen_values);
   }
 
-
-BOOST_AUTO_TEST_CASE(TestLLE) { 
+BOOST_AUTO_TEST_CASE(TestLLE) {
     arma::mat eigen_vectors;
     arma::vec eigen_values;
-
-    KernelPCA *engine_;
+    KernelPCA engine_;
     KernelPCA::GaussianKernel kernel_;
-
-    engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
-
-    engine_->ComputeNeighborhoods();
-    engine_->LoadAffinityMatrix();
-    engine_->ComputeLLE(2,
+    engine_.Init("test_data_3_1000.csv", 5, 20);
+    engine_.ComputeNeighborhoods();
+    engine_.LoadAffinityMatrix();
+    engine_.ComputeLLE(2,
                          &eigen_vectors,
                          &eigen_values);
-    engine_->SaveToTextFile("results", eigen_vectors, eigen_values);
-    delete engine_
+    engine_.SaveToTextFile("results", eigen_vectors, eigen_values);
 }
-  
-
-BOOST_AUTO_TEST_CASE (TestSpectralRegression) { 
-
-
-    KernelPCA *engine_;
+ 
+BOOST_AUTO_TEST_CASE (TestSpectralRegression) {
+    KernelPCA engine_;
     KernelPCA::GaussianKernel kernel_;
-
-    engine_ = new KernelPCA();
-    engine_->Init("test_data_3_1000.csv", 5, 20);
-
-    engine_->ComputeNeighborhoods();
+    engine_.Init("test_data_3_1000.csv", 5, 20);
+    engine_.ComputeNeighborhoods();
     double bandwidth;
-    engine_->EstimateBandwidth(&bandwidth);
-    kernel_.set(bandwidth); 
-    engine_->LoadAffinityMatrix();
+    engine_.EstimateBandwidth(&bandwidth);
+    kernel_.set(bandwidth);
+    engine_.LoadAffinityMatrix();
     std::map<index_t, index_t> data_label;
     for(index_t i=0; i<20; i++) {
-      data_label[math::RandInt(0, engine_->data_.n_cols())] = 
+      data_label[math::RandInt(0, engine_->data_.n_cols())] =
         math::RandInt(0 ,2);
     }
     arma::mat embedded_coordinates;
-    arma::vec eigenvalues; 
-    engine_->ComputeSpectralRegression(kernel_,
+    arma::vec eigenvalues;
+    engine_.ComputeSpectralRegression(kernel_,
                                        data_label,
-                                       &embedded_coordinates, 
+                                       &embedded_coordinates,
                                        &eigenvalues);
-    engine_->SaveToTextFile("results", embedded_coordinates, eigenvalues);
-    delete engine_;
+    engine_.SaveToTextFile("results", embedded_coordinates, eigenvalues);
   }
 
-/*
- private:
-  KernelPCA *engine_;
-  KernelPCA::GaussianKernel kernel_;
-};
-*/
-/*
-int main() {
-  KernelPCATest test;
-  test.TestAll();
-}
-*/
