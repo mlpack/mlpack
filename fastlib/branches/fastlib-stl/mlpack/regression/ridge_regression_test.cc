@@ -27,16 +27,11 @@ using namespace mlpack;
 BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
    
     RidgeRegression engine_;
-    arma::mat predictors_;
-    arma::mat predictions_;
-    arma::mat true_factors_;
-    arma::mat tmp;
-
-    data::Load("predictors.csv", predictors_);
-    data::Load("predictions.csv", predictions_);
-    data::Load("true_factors.csv", true_factors_);
- 
-   
+    arma::mat predictors_ = "1.2 4.2 2.1 0.3 4.2;"
+                            "3.1 1.1 4.7 1.8 0.4;"
+                            "2.5 3.3 9.1 7.4 0.1";
+    arma::mat predictions_ = "0.4 0.33 0.8 1.4 3.3";
+    arma::mat true_factors_ = "0; 0; 0";
 
     engine_.Init(predictors_, predictions_, true);
     engine_.SVDRegress(0);
@@ -47,7 +42,6 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
  
     engine_.factors(&factors);
     svd_engine.factors(&svd_factors);
-   
 
     for(index_t i=0; i<factors.n_rows; i++) {
         BOOST_REQUIRE_CLOSE(factors(i, 0), svd_factors(i, 0), 1e-5);
@@ -56,13 +50,7 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
 
 BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
     RidgeRegression engine_;
-    arma::mat predictors_;
-    arma::mat predictions_;
-    arma::mat true_factors_;
-    arma::mat tmp;
-    data::Load("predictors.csv", predictors_);
-    data::Load("predictions.csv", predictions_);
-    data::Load("true_factors.csv", true_factors_);
+    
     // Craft a synthetic dataset in which the third dimension is
     // completely dependent on the first and the second.
     arma::mat synthetic_data;
