@@ -45,7 +45,7 @@ class SVMLinearKernel {
     return dot(a.rows(0,n_features-1),b.rows(0,n_features-1));
   }
   /* Save kernel parameters to file */
-  void SaveParam(FILE* fp) {
+  void SaveParam(std::ostream& f) {
   }
 };
 
@@ -75,9 +75,9 @@ class SVMRBFKernel {
     return exp(kpara_[1] * distance_squared);
   }
   /* Save kernel parameters to file */
-  void SaveParam(FILE* fp) {
-    fprintf(fp, "sigma %g\n", kpara_[0]);
-    fprintf(fp, "gamma %g\n", kpara_[1]);
+  void SaveParam(std::ostream& f) {
+    f << "sigma " << kpara_[0] << std::endl;
+    f << "gamma " << kpara_[1] << std::endl;
   }
 };
 
@@ -638,79 +638,83 @@ void SVM<TKernel>::LoadModelBatchPredict(index_t learner_typeid, Dataset& testse
 * @param: type id of the learner
 * @param: name of the model file
 */
-// TODO: use XML
 template<typename TKernel>
 void SVM<TKernel>::SaveModel_(index_t learner_typeid, std::string model_filename) {
-  FILE *fp = fopen(model_filename.c_str(), "w");
-  if (fp == NULL) {
-    fprintf(stderr, "Cannot save trained model to file!");
-    return;
-  }
+  std::ofstream f(model_filename.c_str());
+
+  if (!f.is_open())
+    mlpack::IO::Fatal << "Cannot save trained SVM model to file " <<
+        model_filename << "!" << std::endl;
+
   index_t i, j;
 
   if (learner_typeid == 0) { // for SVM_C
-    fprintf(fp, "svm_type SVM_C\n");
-    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
-    fprintf(fp, "num_classes %"LI"\n", num_classes_);
-    // save labels
-    fprintf(fp, "labels ");
-    for (i = 0; i < num_classes_; i++) 
-      fprintf(fp, "%f ", train_labels_list_[i]);
-    fprintf(fp, "\n");
-    // save support vector info
-    fprintf(fp, "sv_list_startpos ");
-    for (i =0; i < num_classes_; i++)
-      fprintf(fp, "%lu ", sv_list_startpos_[i]);
-    fprintf(fp, "\n");
-    fprintf(fp, "sv_list_ct ");
-    for (i =0; i < num_classes_; i++)
-      fprintf(fp, "%lu ", sv_list_ct_[i]);
-    fprintf(fp, "\n");
+    f << "svm_type SVM_C" << std::endl;
+    f << "total_num_sv " << total_num_sv_ << std::endl;
+    f << "num_classes " << num_classes_ << std::endl;
+
+    // Save labels.
+    f << "labels ";
+    for (i = 0; i < num_classes_; i++)
+      f << train_labels_list_[i] << " ";
+    f << std::endl;
+
+    // Save support vector info.
+    f << "sv_list_startpos ";
+    for (i = 0; i < num_classes_; i++)
+      f << sv_list_startpos_[i] << " ";
+    f << std::endl;
+
+    f << "sv_list_ct ";
+    for (i = 0; i < num_classes_; i++)
+      f << sv_list_ct_[i] << " ";
+    f << std::endl;
   }
   else if (learner_typeid == 1) { // for SVM_R
-    fprintf(fp, "svm_type SVM_R\n");
-    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
-    fprintf(fp, "sv_index ");
+    f << "svm_type SVM_R" << std::endl;
+    f << "total_num_sv " << total_num_sv_ << std::endl;
+    f << "sv_index ";
     for (i = 0; i < total_num_sv_; i++)
-      fprintf(fp, "%lu ", sv_index_[i]);
-    fprintf(fp, "\n");
+      f << sv_index_[i] << " ";
+    f << std::endl;
   }
   else if (learner_typeid == 2) { // for SVM_DE
-    fprintf(fp, "svm_type SVM_DE\n");
-    fprintf(fp, "total_num_sv %"LI"\n", total_num_sv_);
-    fprintf(fp, "sv_index ");
+    f << "svm_type SVM_DE" << std::endl;
+    f << "total_num_sv " << total_num_sv_ << std::endl;
+    f << "sv_index ";
     for (i = 0; i < total_num_sv_; i++)
-      fprintf(fp, "%lu ", sv_index_[i]);
-    fprintf(fp, "\n");
+      f << sv_index_[i] << " ";
+    f << std::endl;
   }
 
   // save kernel parameters
-  fprintf(fp, "kernel_name %s\n", param_.kernelname_.c_str());
-  fprintf(fp, "kernel_typeid %"LI"\n", param_.kerneltypeid_);
-  param_.kernel_.SaveParam(fp);
+  f << "kernel_name " << param_.kernelname_ << std::endl;
+  f << "kernel_typeid " << param_.kerneltypeid_ << std::endl;
+  param_.kernel_.SaveParam(f);
 
   // save models: bias, coefficients and support vectors
-  fprintf(fp, "bias ");
+  f << "bias ";
   for (i = 0; i < num_models_; i++)
-    fprintf(fp, "%.16g ", models_[i].bias_);
-  fprintf(fp, "\n");
+    f << models_[i].bias_ << " ";
+  f << std::endl;
   
-  fprintf(fp, "SV_coefs\n");
+  f << "SV_coefs" << std::endl;
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_classes_-1; j++) {
-      fprintf(fp, "%.16g ", sv_coef_(j,i));
+      f << sv_coef_(j, i) << " ";
     }
-    fprintf(fp, "\n");
+    f << std::endl;
   }
 
-  fprintf(fp, "SVs\n");
+  f << "SVs" << std::endl;
   for (i = 0; i < total_num_sv_; i++) {
     for (j = 0; j < num_features_; j++) { // n_rows-1
-      fprintf(fp, "%.8g ", sv_(j,i));
+      f << sv_(j, i) << " ";
     }
-    fprintf(fp, "\n");
+    f << std::endl;
   }
-  fclose(fp);
+
+  f.close();
 }
 
 /**
