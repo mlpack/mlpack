@@ -36,4 +36,5 @@ add_executable(union_find_test
 target_link_libraries(union_find_test
   mlpack
   fastlib
+  boost_unit_test_framework
 )
