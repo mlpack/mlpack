@@ -3,7 +3,6 @@
 DATA_FILE="reports/sloccount.sc"
 DATA_DIR="reports/slocdata"
 SRC_DIR="repo"
-SRC_DIR="fastlib-stl"
 
 if [ ! -d $DATA_DIR ]
 then
