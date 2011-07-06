@@ -30,8 +30,8 @@ then
    
   rm -rf $TDIR
   
-  echo "[auto-packager] attempting to update the repository with changes"
-  echo svn ci -m $SVN_MSG --username speet3 --password $SECRET
+  echo "[auto-packager] [auto-packager-warning] attempting to update the repository with changes"
+  svn ci -m $SVN_MSG --username speet3 --password $SECRET
 else
   echo "[auto-packager] svn-update reports local package is up-to-date"
 fi
