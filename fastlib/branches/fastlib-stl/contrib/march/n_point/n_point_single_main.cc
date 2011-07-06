@@ -15,10 +15,22 @@
 #include "perm_free_alg.h"
 #include "multi_bandwidth_alg.h"
 
-PARAM_FLAG("do_naive", "Permform Naive computation", "n_point_single_main");
 
-using namespace npt;
+PARAM_STRING_REQ("data", "Point coordinates.", NULL);
+PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL)
+PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
+PARAM_STRING_REQ("matcher_dists", "The distances in the matcher, stored in a symmetric matrix.",
+                 NULL);
+PARAM(double, "bandwidth", "Thickness of the matcher", NULL,
+      1.0, false)
+PARAM(index_t, "leaf_size", "Max number of points in a leaf node", NULL, 
+      1, false);
+PARAM_FLAG("do_naive", "Permform Naive computation", NULL);
+PARAM_FLAG("do_single_bandwidth", "Permform old (Moore & Gray) tree computation", NULL);
+PARAM_FLAG("do_perm_free", "Tree computation with alternative pruning rule", NULL);
+
 using namespace mlpack;
+using namespace npt;
 
 int main(int argc, char* argv[]) {
 
@@ -46,7 +58,7 @@ int main(int argc, char* argv[]) {
   
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weights")) {
+  if (IO::HasParam("weighted_computation")) {
     weights.load(IO::GetParam<std::string>("weights"));
   }
   else {
