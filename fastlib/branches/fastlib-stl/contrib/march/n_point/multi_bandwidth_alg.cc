@@ -263,13 +263,13 @@ void npt::MultiBandwidthAlg::OutputResults() {
     std::vector<index_t> matcher_ind(num_bands_.size());
     FindMatcherInd_(i, matcher_ind);
     
-    std::cout << "Matcher: ";
+    mlpack::IO::Info << "Matcher: ";
     for (index_t j = 0; j < matcher_ind.size(); j++) {
       
-      std::cout << matcher_.matcher_dists(j, matcher_ind[j]) << ", ";
+      mlpack::IO::Info << matcher_.matcher_dists(j, matcher_ind[j]) << ", ";
       
     }
-    std::cout << ": " << results_[i] << "\n";
+    mlpack::IO::Info << ": " << results_[i] << "\n";
     
   } // for i
   

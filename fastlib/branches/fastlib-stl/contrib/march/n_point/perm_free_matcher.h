@@ -56,6 +56,12 @@ namespace npt {
       
       double half_band = bandwidth / 2.0;
       
+      tuple_size_ = matcher_dists.n_rows;
+      
+      //std::cout << "half band: " << half_band << "\n";
+      
+      //matcher_dists.print("matcher dists");
+      
       for (index_t i = 0; i < tuple_size_; i++) {
         
         lower_bounds_sqr_mat_(i,i) = 0.0;
@@ -80,9 +86,10 @@ namespace npt {
       }
       
       
-      tuple_size_ = matcher_dists.n_cols;
       
-      // TODO: check that the matrices are the same size
+      //lower_bounds_sqr_mat_.print("Lower");
+      //upper_bounds_sqr_mat_.print("Upper");
+      
       
       for (index_t i = 0; i < tuple_size_; i++) {
         for (index_t j = i+1; j < tuple_size_; j++) {
@@ -97,6 +104,7 @@ namespace npt {
       
       std::sort(upper_bounds_sqr_.begin(), upper_bounds_sqr_.end());
       std::sort(lower_bounds_sqr_.begin(), lower_bounds_sqr_.end());
+      
       
     } // constructor
     
