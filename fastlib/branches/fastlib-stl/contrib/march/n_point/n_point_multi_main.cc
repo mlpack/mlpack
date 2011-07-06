@@ -16,14 +16,15 @@
 #include "matcher_generation.h"
 
 using namespace npt;
+using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
-  fx_init(argc, argv, NULL);
+  IO::ParseCommandLine(argc, argv);
   
   // read in data and parameters
   
-  std::string data_filename = fx_param_str(NULL, "data", "test_npt_pts.csv");
+  std::string data_filename = IO::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
   data_in.load(data_filename, arma::raw_ascii);
   
@@ -39,8 +40,8 @@ int main(int argc, char* argv[]) {
   //data_out.save("3pt_test_data.csv", arma::raw_ascii);
   
   arma::colvec weights;  
-  if (fx_param_exists(NULL, "weights")) {
-    weights.load(fx_param_str_req(NULL, "weights"));
+  if (IO::HasParam("weights")) {
+    weights.load(IO::GetParam<std::string>("weights"));
   }
   else {
     weights.set_size(data_mat.n_cols);
@@ -49,10 +50,11 @@ int main(int argc, char* argv[]) {
   
   // input format: each row is a pair (min, max, num)
 
-  double bandwidth = fx_param_double(NULL, "bandwidth", 0.05);
+  double bandwidth = IO::GetParam<double>("bandwidth");
   
-  std::string matcher_filename = fx_param_str(NULL, "matchers",
-                                              "test_matchers.csv");
+  //std::string matcher_filename = fx_param_str(NULL, "matchers",
+  //                                            "test_matchers.csv");
+  std::string matcher_filename = IO::GetParam<std::string>("matchers");
   
   arma::mat matcher_mat;
   matcher_mat.load(matcher_filename, arma::raw_ascii);
@@ -80,11 +82,11 @@ int main(int argc, char* argv[]) {
   
   
   
-  if (fx_param_exists(NULL, "do_naive")) {
-  
-    std::cout << "\nDoing naive.\n";
+  if (IO::HasParam("do_naive")) {
     
-    fx_timer_start(NULL, "naive_time");
+    IO::Info << "\nDoing naive.\n";
+    
+    IO::StartTimer("naive_time");
     
     
     for (index_t i = 0; i < generator.num_matchers(); i++) {
@@ -94,23 +96,23 @@ int main(int argc, char* argv[]) {
       naive_alg.ComputeCounts();
       
       generator.matcher(i).print("Matcher: ");
-      std::cout << "Naive num tuples: " << naive_alg.num_tuples() << "\n\n";
+      IO::Info << "Naive num tuples: " << naive_alg.num_tuples() << "\n\n";
     
     }
     
-    fx_timer_stop(NULL, "naive_time");
+    IO::StopTimer("naive_time");
     
   } // do naive
   
   
-  index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
+  index_t leaf_size = IO::GetParam<index_t>("leaf_size");
   
   
-  if (fx_param_exists(NULL, "do_single_bandwidth")) {
+  if (IO::HasParam("do_single_bandwidth")) {
     
-    std::cout << "\nDoing single bandwidth.\n";
+    IO::Info << "\nDoing single bandwidth.\n";
 
-    fx_timer_start(NULL, "single_bandwidth_time");
+    IO::StartTimer("single_bandwidth_time");
     
     
     for (index_t i = 0; i < generator.num_matchers(); i++) {
@@ -125,22 +127,22 @@ int main(int argc, char* argv[]) {
 
       
       generator.matcher(i).print("Matcher: ");
-      std::cout << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
+      IO::Info << "Single Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
 
     }
       
-    fx_timer_stop(NULL, "single_bandwidth_time");
+    IO::StopTimer("single_bandwidth_time");
     
     
-  }
+  } // single bandwidth
   
   
   
-  if (fx_param_exists(NULL, "do_perm_free")) {
+  if (IO::HasParam("do_perm_free")) {
     
-    std::cout << "\nDoing permutation free.\n";
+    IO::Info << "\nDoing permutation free.\n";
 
-    fx_timer_start(NULL, "perm_free_time");
+    IO::StartTimer("perm_free_time");
     
     for (index_t i = 0; i < generator.num_matchers(); i++) {
       
@@ -150,21 +152,22 @@ int main(int argc, char* argv[]) {
       alg.Compute();
       
       generator.matcher(i).print("Matcher: ");
-      std::cout << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
+      IO::Info << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
       
     }
     
-    fx_timer_stop(NULL, "perm_free_time");
+    IO::StopTimer("perm_free_time");
     
   } // perm free
   
 
-  if (fx_param_exists(NULL, "do_multi")) {
+  if (IO::HasParam("do_multi")) {
     
-    std::cout << "\nDoing Multi Bandwidth\n";
+    IO::Info << "\nDoing Multi Bandwidth\n";
 
         
-    fx_timer_start(NULL, "multi_time");
+    IO::StartTimer("multi_time");
+    
     MultiBandwidthAlg alg(data_mat, weights, leaf_size, tuple_size,
                           min_bands, max_bands, num_bands, bandwidth);
     
@@ -172,15 +175,11 @@ int main(int argc, char* argv[]) {
     
     alg.OutputResults();
 
-    fx_timer_stop(NULL, "multi_time");
+    IO::StopTimer("multi_time");
     
   } // multi
 
   
-  
-   
-  
-  fx_done(NULL);
   
   return 0;
   
