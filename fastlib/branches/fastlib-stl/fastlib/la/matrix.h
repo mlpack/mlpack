@@ -468,16 +468,20 @@ class GenMatrix {
    * on this again.
    */
   void Destruct() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
+ /* 
+   DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
        "You forgot to initialize a Matrix before it got automatically freed.");
+   
     if (unlikely(should_free_)) {
       delete[] ptr_;
-      DEBUG_ONLY(Uninitialize_());
-    }
+    //  DEBUG_ONLY(Uninitialize_());
+    //}
+  */ 
     DEBUG_POISON_PTR(ptr_);
     DEBUG_ONLY(n_rows_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
-  }
+
+ }
 
   /**
    * Creates a Matrix with uninitialized elements of the specified size.
