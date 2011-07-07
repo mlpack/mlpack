@@ -109,7 +109,8 @@ class SparseMatrixTest {
   void TestInit3() {
     FILE *fp = fopen("temp.txt", "w");
     if (fp==NULL) {
-      FATAL("Cannot open temp.txt error %s", strerror(errno));
+      mlpack::IO::Fatal << "Cannot open temp.txt error " << strerror(errno) <<
+          std::endl;
     }
     for(index_t i=0; i<num_of_cols_; i++) {
       for(index_t j=0; j<num_of_cols_; j++) {
