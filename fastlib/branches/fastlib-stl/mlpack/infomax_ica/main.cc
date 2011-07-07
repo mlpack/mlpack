@@ -6,7 +6,6 @@
  */
 
 #include "infomax_ica.h"
-#include "test_infomax_ica.h"
 #include <fastlib/fastlib.h>
 #include <fastlib/fx/io.h>
 #include <fastlib/data/dataset.h>

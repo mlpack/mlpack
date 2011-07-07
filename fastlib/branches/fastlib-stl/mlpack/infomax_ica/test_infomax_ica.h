@@ -4,7 +4,7 @@
  *
  * Unit tests for infomax ica method.
  */
-
+/*
 #include "infomax_ica.h"
 #include "fastlib/base/test.h"
 
@@ -18,12 +18,43 @@ class TestInfomaxICA {
     // load some test data that has been verified using the matlab
     // implementation of infomax
     arma::mat tmpdata;
-    data::Load("../../fastlib/fake.arff", tmpdata);
+    data::Load("fake.arff", tmpdata);
     arma_compat::armaToMatrix(tmpdata, testdata_);
     lambda_=0.001;
     b_=5;
     epsilon_=0.001;
     ica_ = new InfomaxICA(lambda_,b_,epsilon_);
+  }
+
+
+  void NoahAll() { 
+
+
+  //InfomaxICA *icab_;
+  Matrix testdatab_;
+  double lambdab_;
+  int bb_;
+  double epsilonb_;
+
+
+    arma::mat tmpdatab;
+    data::Load("fake.arff", tmpdatab);
+    arma_compat::armaToMatrix(tmpdatab, testdatab_);
+    lambdab_=0.001;
+    bb_=5;
+    epsilonb_=0.001;
+    
+    InfomaxICA icab_(lambdab_, bb_, epsilonb_);
+
+    //icab_ = new InfomaxICA(lambdab_,bb_,epsilonb_);
+
+
+   
+    Matrix intermediateb = icab_.sampleCovariance(testdatab_);
+    icab_.sqrtm(intermediateb);
+
+
+
   }
 
   void Destruct(){
@@ -47,9 +78,13 @@ class TestInfomaxICA {
   }
 
   void TestAll() {
-    TestSqrtm();
+   
+ TestSqrtm();
     TestCov();
     TestICA();
+    
+  
+    NoahAll();
   }
 
  private:
@@ -59,3 +94,5 @@ class TestInfomaxICA {
   int b_;
   double epsilon_;
 };
+*/
+

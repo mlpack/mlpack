@@ -71,6 +71,10 @@ class InfomaxICA {
   void setLambda(const double lambda);
   void setB(const index_t b);
   void setEpsilon(const double epsilon);
+  
+  Matrix sampleCovariance(const Matrix &m);
+  Matrix sqrtm(const Matrix &m);
+
 
  private:
   Matrix w_;
@@ -87,11 +91,11 @@ class InfomaxICA {
   void invertVals(Matrix &m);
   void vectorize(const Matrix &m, Vector &v);
   Matrix eye(index_t dim,double diagVal);
-  Matrix sqrtm(const Matrix &m);
+ // Matrix sqrtm(const Matrix &m);
   void sphere(Matrix &m);
   Matrix subMeans(const Matrix &m);
   Vector rowMean(const Matrix &m);
-  Matrix sampleCovariance(const Matrix &m);
+  //Matrix sampleCovariance(const Matrix &m);
   double w_delta(const Matrix &w_prev, const Matrix &w_pres);
 };
 
