@@ -360,7 +360,18 @@ class IO {
   std::string ManageHierarchy(const char* id, 
                               const char* parent, 
                               std::string& tname, 
-                              const char* description = "");
+                              const char* desc = "");
+
+  /***
+   * Add a parameter to the hierarchy.  We assume the string has already been
+   * sanity-checked.
+   *
+   * @param path Full pathname of the parameter (parent/parameter).
+   * @param tname String identifier of the parameter's type (TYPENAME(T)).
+   * @param desc String description of the parameter (optional).
+   */
+  void AddToHierarchy(std::string& path, std::string& tname,  
+                      const char* desc = "");
     
   /* Make the constructor private, to preclude unauthorized instances */
   IO();

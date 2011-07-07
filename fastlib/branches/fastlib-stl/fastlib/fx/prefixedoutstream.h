@@ -2,6 +2,7 @@
 #define MLPACK_IO_PREFIXED_OUT_STREAM_H
 
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <streambuf>
 
@@ -70,6 +71,9 @@ class PrefixedOutStream {
   PrefixedOutStream& operator<<(std::ostream& (*pf) (std::ostream&));
   PrefixedOutStream& operator<<(std::ios& (*pf) (std::ios&));
   PrefixedOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&));
+
+  template<typename T>
+  PrefixedOutStream& operator<<(T s);
 
   /**
    * @brief The output stream that all data is to be sent too.  Eg, cout.
