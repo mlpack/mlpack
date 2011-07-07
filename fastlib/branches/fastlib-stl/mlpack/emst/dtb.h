@@ -211,7 +211,6 @@ class DualTreeBoruvka {
   double ComputeBaseCase_(index_t query_start, index_t query_end, 
                           index_t reference_start, index_t reference_end) {
     
-    VERBOSE_MSG(0.0, "at base case\n");
     number_leaf_computations_++;
     
     double new_upper_bound = -1.0;
@@ -272,7 +271,6 @@ class DualTreeBoruvka {
     // Check for a distance prune
     if (query_node->stat().max_neighbor_distance() < incoming_distance) {
       //pruned by distance
-      VERBOSE_MSG(0.0, "distance prune");
       number_distance_prunes_++;
     }
     // Check for a component prune
@@ -283,7 +281,6 @@ class DualTreeBoruvka {
       
       DEBUG_ASSERT(reference_node->stat().component_membership() >= 0);
       
-      VERBOSE_MSG(0.0, "component prune");
       number_component_prunes_++;
     }
     // The base case
@@ -299,7 +296,6 @@ class DualTreeBoruvka {
     // Other recursive calls
     else if unlikely(query_node->is_leaf()) {
       //recurse on reference_node only 
-      VERBOSE_MSG(0.0, "query_node is_leaf");
       number_r_recursions_++;
       
       double left_dist = 
@@ -326,7 +322,6 @@ class DualTreeBoruvka {
     else if unlikely(reference_node->is_leaf()) {
       //recurse on query_node only
       
-      VERBOSE_MSG(0.0, "reference_node is_leaf");
       number_q_recursions_++;
       
       double left_dist = 
@@ -348,7 +343,6 @@ class DualTreeBoruvka {
     else {
       //recurse on both
       
-      VERBOSE_MSG(0.0, "recurse on both");
       number_both_recursions_++;
       
       double left_dist = query_node->left()->bound().
@@ -478,7 +472,6 @@ class DualTreeBoruvka {
       if ((tree->left()->stat().component_membership() >= 0) 
           && (tree->left()->stat().component_membership() == 
               tree->right()->stat().component_membership())) {
-        VERBOSE_MSG(0.0, "connecting components");
         tree->stat().set_component_membership(tree->left()->stat().
                                               component_membership());
       }
@@ -521,8 +514,6 @@ class DualTreeBoruvka {
     * Format and output the results
    */
   void OutputResults_() {
-    
-    //VERBOSE_ONLY(ot::Print(edges));
     
     /* fx_result_double(module_, "total_squared_length", total_dist_);
     fx_result_int(module_, "number_of_points", number_of_points_);
@@ -614,7 +605,7 @@ class DualTreeBoruvka {
       
       Cleanup_();
     
-      VERBOSE_ONLY(printf("number_of_loops = %"LI"\n", number_of_loops_));
+      IO::Info << "number_of_loops = " << number_of_loops_ << std::endl;
     }
     
     IO::StopTimer("emst/MST_computation");
