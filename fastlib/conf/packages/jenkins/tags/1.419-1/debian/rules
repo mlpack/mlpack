@@ -1,0 +1,127 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+# Sample debian/rules that uses debhelper.
+# This file was originally written by Joey Hess and Craig Small.
+# As a special exception, when this file is copied by dh-make into a
+# dh-make output file, you may use that output file without restriction.
+# This special exception was added by Craig Small in version 0.37 of dh-make.
+
+# Uncomment this to turn on verbose mode.
+#export DH_VERBOSE=1
+
+
+configure: configure-stamp
+configure-stamp:
+	dh_testdir
+	# Add here commands to configure the package.
+
+	touch configure-stamp
+
+
+build: build-stamp
+
+build-stamp: configure-stamp 
+	dh_testdir
+
+	# Add here commands to compile the package.
+
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp configure-stamp
+
+	# Add here commands to clean up after the build process.
+
+	dh_clean 
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean -k 
+	dh_installdirs
+	dh_install
+	    
+	# Add here commands to install the package into debian/jenkins.
+	
+	# Moved creation of dirs to dirs template to be invoked by dh_installdirs
+
+    # Moved copying of 'upstream' files (jenkins.war) to install template to be invoked by dh_install
+	#cp jenkins.war $(CURDIR)/debian/jenkins/usr/share/jenkins/jenkins.war
+
+
+# Build architecture-independent files here.
+binary-indep: build install
+	dh_testdir
+	dh_testroot
+	dh_installchangelogs 
+	dh_installdocs
+	dh_installexamples
+#	dh_installmenu
+#	dh_installdebconf	
+	dh_installlogrotate
+#	dh_installemacsen
+#	dh_installpam
+#	dh_installmime
+#	dh_python
+	dh_installinit
+#	dh_installcron
+#	dh_installinfo
+	dh_installman
+	dh_link
+	dh_strip
+	dh_compress
+	dh_fixperms
+#	dh_perl
+#	dh_makeshlibs
+	dh_installdeb
+	dh_shlibdeps
+	dh_gencontrol
+	dh_md5sums
+	dh_builddeb
+
+# Build architecture-dependent files here.
+binary-arch: build install
+# Java war files are cross platform, nothing to do here!
+
+# Grab the version from the changelog, up to the first -
+DEB_UPSTREAM_VERSION=$(shell dpkg-parsechangelog | sed -rne 's,^Version: ([^-]+).*,\1,p')
+get-orig-source:
+	# Uscan can grab upstream source war
+	uscan --noconf --force-download --download-current-version --destdir=.
+	# Just to be safe
+	rm -rf jenkins-$(DEB_UPSTREAM_VERSION)
+	# Unpack
+#	rm jenkins-$(DEB_UPSTREAM_VERSION).zip
+	# NOTE: I am not using the .orig folder convention for this internal repackaging
+	mkdir jenkins-$(DEB_UPSTREAM_VERSION)
+	mv jenkins-$(DEB_UPSTREAM_VERSION).war jenkins-$(DEB_UPSTREAM_VERSION)/jenkins.war
+	GZIP=--best tar -cz --owner root --group root --mode a+rX \
+			-f jenkins_$(DEB_UPSTREAM_VERSION).orig.tar.gz \
+			jenkins-$(DEB_UPSTREAM_VERSION)
+	rm -r jenkins-$(DEB_UPSTREAM_VERSION)
+	if [ -d ../tarballs ]; then mv jenkins_$(DEB_UPSTREAM_VERSION).orig.tar.gz ../tarballs; fi
+
+get-latest-source:
+	# Uscan can grab upstream source war
+	uscan --noconf --force-download --verbose --destdir=.
+	# Get new version number
+
+DEB_NEW_UPSTREAM_VERSION=$(shell ls -1 . | grep jenkins- | tail -1 | sed -rne 's/jenkins-(.*).war/\1/p')
+tar-latest-source: get-latest-source
+	# Just to be safe
+	rm -rf jenkins-$(DEB_NEW_UPSTREAM_VERSION)
+	# Unpack
+#	rm jenkins-$(DEB_NEW_UPSTREAM_VERSION).zip
+	# NOTE: I am not using the .orig folder convention for this internal repackaging
+	mkdir jenkins-$(DEB_NEW_UPSTREAM_VERSION)
+	mv jenkins-$(DEB_NEW_UPSTREAM_VERSION).war jenkins-$(DEB_NEW_UPSTREAM_VERSION)/jenkins.war
+	GZIP=--best tar -cz --owner root --group root --mode a+rX \
+			-f jenkins_$(DEB_NEW_UPSTREAM_VERSION).orig.tar.gz \
+			jenkins-$(DEB_NEW_UPSTREAM_VERSION)
+	rm -r jenkins-$(DEB_NEW_UPSTREAM_VERSION)
+	if [ -d ../tarballs ]; then mv jenkins_$(DEB_NEW_UPSTREAM_VERSION).orig.tar.gz ../tarballs; fi
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-indep binary-arch binary install configure
