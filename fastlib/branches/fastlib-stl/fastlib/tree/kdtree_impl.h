@@ -312,13 +312,6 @@ namespace tree_kdtree_private {
             left->bound(), right->bound(),
             old_from_new);
         
-        VERBOSE_MSG(3.0,"split (%"LI",[%"LI"],%"LI") dim %d on %f (between %f, %f)",
-            node->begin(), split_col,
-            node->begin() + node->count(), (int) split_dimensions[split_dim],
-		    split_val,
-            node->bound()[split_dim].lo,
-            node->bound()[split_dim].hi);
-
         left->Init(node->begin(), split_col - node->begin());
         right->Init(split_col, node->begin() + node->count() - split_col);
 
@@ -377,13 +370,6 @@ namespace tree_kdtree_private {
             node->begin(), node->count(),
             left->bound(), right->bound());
         
-        VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
-            node->begin(), split_col,
-            node->begin() + node->count(), (int) split_dimensions[split_dim],
-		    split_val,
-            node->bound()[split_dim].lo,
-            node->bound()[split_dim].hi);
-
         left->Init(node->begin(), split_col - node->begin());
         right->Init(split_col, node->begin() + node->count() - split_col);
 

@@ -304,13 +304,11 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
       SaveTrainTest_(i_fold, train, test);
     }
   
-    VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
     mlpack::IO::StartTimer((fold_path+"train").c_str());
     classifier.InitTrain(train, n_classes_, NULL);
     mlpack::IO::StopTimer((fold_path+"train").c_str());
     
     mlpack::IO::StartTimer((fold_path+"test").c_str());
-    VERBOSE_MSG(1, "cross: Testing fold %d", i_fold);
     for (index_t i = 0; i < test.n_points(); i++) {
       arma::vec test_vector(test.n_features() - 1);
       for(int j = 0; j < test.n_features() - 1; j++)
@@ -654,7 +652,6 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	SaveTrainValidationSet_(i_fold, train, validation);
       }
       
-      VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
       mlpack::IO::StartTimer((fold_path+"train").c_str());
       // training
       classifier.InitTrain(learner_typeid_, train);
@@ -662,7 +659,6 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 
       // validation; measure method: percent of correctly classified validation samples
       mlpack::IO::StartTimer((fold_path+"validation").c_str());
-      VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
 
       for (index_t i = 0; i < validation.n_points(); i++) {
 	arma::vec validation_vector(validation.n_features() - 1);
@@ -741,7 +737,6 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
 	SaveTrainValidationSet_(i_fold, train, validation);
       }
       
-      VERBOSE_MSG(1, "cross: Training fold %d", i_fold);
       mlpack::IO::StartTimer((fold_path+"train").c_str());
       // training
       learner.InitTrain(learner_typeid_, train); // 0: dummy number of classes
@@ -749,7 +744,6 @@ void GeneralCrossValidator<TLearner>::Run(bool randomized) {
       
       // validation
       mlpack::IO::StartTimer((fold_path+"validation").c_str());
-      VERBOSE_MSG(1, "cross: Validation fold %d", i_fold);
       for (index_t i = 0; i < validation.n_points(); i++) {
 	arma::vec validation_vector(validation.n_features() - 1);
 
