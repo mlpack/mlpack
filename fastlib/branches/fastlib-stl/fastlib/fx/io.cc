@@ -73,6 +73,9 @@ IO::~IO() {
   if (HasParam("verbose")) {
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
+
+    Info << "Program timers:" << std::endl;
+    hierarchy.PrintTimers();
   }
 
   // Notify the user if we are debugging, but only if we actually parsed the
@@ -163,8 +166,7 @@ bool IO::HasParam(const char* identifier) {
  * @param argv 2D array of the parameter strings themselves
  * @return some valid modified strings
  */
-std::vector<std::string>
- IO::InsertDefaultModule(int argc, char** argv) {
+std::vector<std::string> IO::InsertDefaultModule(int argc, char** argv) {
   std::vector<std::string> ret;
   std::string path = GetSingleton().doc->defaultModule;
   path = SanitizeString(path.c_str());
@@ -221,23 +223,38 @@ IO& IO::GetSingleton() {
  * @param parent The full name of the parameter's parent, 
  *   eg foo/bar in foo/bar/buzz.
  * @param tname String identifier of the parameter's type.
- * @param description String description of the parameter.
+ * @param desc String description of the parameter.
  */
 std::string IO::ManageHierarchy(const char* id, 
                                 const char* parent, 
                                 std::string& tname, 
-                                const char* description) {
+                                const char* desc) {
 
-  std::string path(id), desc(description);
+  std::string path(id);
   
-  path = SanitizeString(parent)+id;
-  
-  //Add the sanity checked string to the hierarchy
-  if (desc.length() == 0)
+  path = SanitizeString(parent) + id;
+ 
+  AddToHierarchy(path, tname, desc); 
+
+  return path;
+}
+
+/***
+ * Add a parameter to the hierarchy.  We assume the string has already been
+ * sanity-checked.
+ *
+ * @param path Full pathname of the parameter (parent/parameter).
+ * @param tname String identifier of the parameter's type (TYPENAME(T)).
+ * @param desc String description of the parameter (optional).
+ */
+void IO::AddToHierarchy(std::string& path, std::string& tname, 
+                        const char* desc) {
+  // Add the sanity checked string to the hierarchy
+  std::string d(desc);
+  if (d.length() == 0)
     hierarchy.AppendNode(path, tname);
   else
-    hierarchy.AppendNode(path, tname, desc);
-  return path;
+    hierarchy.AppendNode(path, tname, d);
 }
 
 /*
@@ -250,23 +267,16 @@ void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
-  //Insert the default module where appropriate 
+  // Insert the default module where appropriate 
   std::vector<std::string> in = InsertDefaultModule(argc, line); 
-  //Rebuild argv as appropriate now.
-  /*char** argv = new char*[argc];
-  for(int i = 1; i < argc; i++) {
-    argv[i] = const_cast<char*>(in.back().c_str());
-    in.pop_back();
-  }
-  argv[0] = line[0];*/
   
-  //Parse the command line, place the options & values into vmap
+  // Parse the command line, place the options & values into vmap
   try { 
     po::store(po::parse_command_line(argc, line, desc), vmap);
   } catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
-  //Flush the buffer, make sure changes are propogated to vmap
+  // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);	
  
   UpdateGmap();

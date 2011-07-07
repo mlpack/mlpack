@@ -2,6 +2,13 @@
 #define MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H
 
 template<typename T>
+PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
+  BaseLogic<T>(s);
+
+  return *this;
+}
+
+template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
   if (carriageReturned) {
     destination << prefix << val;

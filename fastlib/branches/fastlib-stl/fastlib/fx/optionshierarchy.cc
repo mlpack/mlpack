@@ -1,6 +1,7 @@
 #include "optionshierarchy.h"
 #include "io.h"
 #include <iostream>
+#include <iomanip>
 
 using namespace std;
 using namespace mlpack::io; 
@@ -288,10 +289,25 @@ void OptionsHierarchy::PrintLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     if (!iter->second.children.size()) {
-      // Print the node's name, data, and description.
-      iter->second.PrintNode();
+      // Print the node's name, data, and description, but only if it is not a
+      // timer.
+      if (iter->second.nodeData.tname != TYPENAME(timeval))
+        iter->second.PrintNode();
     } else {
       iter->second.PrintLeaves();
+    }
+  }
+}
+
+/* Prints all children nodes that are timers */
+void OptionsHierarchy::PrintTimers() {
+  map<string, OptionsHierarchy>::iterator iter;
+  for (iter = children.begin(); iter != children.end(); iter++) {
+    if (!iter->second.children.size()) {
+      if (iter->second.nodeData.tname == TYPENAME(timeval))
+        iter->second.PrintNode();
+    } else {
+      iter->second.PrintTimers();
     }
   }
 }
@@ -315,6 +331,11 @@ void OptionsHierarchy::PrintNode() {
     IO::Info << IO::GetParam<float>(nodeData.node.c_str());
   else if (nodeData.tname == TYPENAME(double))
     IO::Info << IO::GetParam<double>(nodeData.node.c_str());
+  else if (nodeData.tname == TYPENAME(timeval)) {
+    timeval& t = IO::GetParam<timeval>(nodeData.node.c_str());
+    IO::Info << t.tv_sec << "." << std::setw(6) << std::setfill('0') 
+        << t.tv_usec << " sec";
+  }
   
   IO::Info << endl;
 }

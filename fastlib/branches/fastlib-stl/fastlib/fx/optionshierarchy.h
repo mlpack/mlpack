@@ -160,6 +160,8 @@ public:
 
   // Prints the leaves of a node
   void PrintLeaves();
+  // Prints the timers of a node
+  void PrintTimers();
   // Prints the branches of a node
   void PrintBranches();
 

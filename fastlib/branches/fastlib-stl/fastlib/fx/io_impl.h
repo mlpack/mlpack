@@ -7,8 +7,8 @@
 namespace mlpack {
 
 /**
-* @brief Adds a parameter to IO, making 
-*   it accessibile via GetParam & CheckValue.
+* @brief Adds a parameter to IO, making it accessibile via GetParam &
+*     CheckValue.
 *
 * @tparam T The type of the parameter.
 * @param identifier The name of the parameter, eg foo in bar/foo.
@@ -70,6 +70,12 @@ T& IO::GetParam(const char* identifier) {
   if (!gmap.count(key)) { // The programmer hasn't done anything; register it
     gmap[key] = boost::any(tmp);
     *boost::any_cast<T>(&gmap[key]) = tmp;
+
+    // Also add it to the hierarchy for printing at the end of execution.
+    // We don't have any documentation, so omit it.  Since program execution
+    // already started, a user couldn't get to the documentation anyway.
+    std::string tname = TYPENAME(T);
+    IO::GetSingleton().AddToHierarchy(key, tname);
   }
   tmp = *boost::any_cast<T>(&gmap[key]);
   return *boost::any_cast<T>(&gmap[key]);

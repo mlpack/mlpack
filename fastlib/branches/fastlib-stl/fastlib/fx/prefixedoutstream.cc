@@ -126,4 +126,3 @@ PrefixedOutStream& PrefixedOutStream::operator<<
   BaseLogic<std::ios_base& (*) (std::ios_base&)>(pf);
   return *this;
 }
- 
