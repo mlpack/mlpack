@@ -237,7 +237,7 @@ class SparseMatrix {
    */
   void ColumnScale(const Vector &vec) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You should call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     Epetra_Vector temp(View, *map_, (double*)vec.ptr());
     matrix_->RightScale(temp);
@@ -248,7 +248,7 @@ class SparseMatrix {
    */
   void RowScale(const Vector &vec) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You should call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     Epetra_Vector temp(View, *map_, (double *)vec.ptr());
     matrix_->LeftScale(temp);
@@ -259,7 +259,7 @@ class SparseMatrix {
    */
   double L1Norm() {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You should call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     return matrix_->NormOne();
   }
@@ -269,7 +269,7 @@ class SparseMatrix {
    */
   double LInfNorm() {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You should call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     return matrix_->NormInf();
   }
@@ -280,7 +280,7 @@ class SparseMatrix {
    */
   void InvRowSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -293,7 +293,7 @@ class SparseMatrix {
   */
   void RowSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -309,7 +309,7 @@ class SparseMatrix {
    */
   void InvRowMaxs(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -321,7 +321,7 @@ class SparseMatrix {
    */
   void InvColSums(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     result->Init(dimension_);
     Epetra_Vector temp(View, *map_, result->ptr());
@@ -333,7 +333,7 @@ class SparseMatrix {
    */
   void InvColMaxs(Vector *result) {
     if (unlikely(!matrix_->Filled())) {
-      FATAL("You have to call EndLoading first...\n");
+      mlpack::IO::Fatal << "You should call EndLoading() first..." << std::endl;
     }
     result->Init(num_of_columns_);  
     Epetra_Vector temp(View, *map_, result->ptr());

@@ -47,16 +47,12 @@ void SparseMatrix::Init(const index_t num_of_rows,
                         const index_t nnz_per_row) {
   issymmetric_ = false;
   if likely(num_of_rows < num_of_columns) {
-    FATAL("Num of rows %i should be greater than the num of columns %i\n",
-          num_of_rows, num_of_columns);
+    mlpack::IO::Fatal << "Num of rows " << num_of_rows << " should be greater "
+        "than the num of columns " << num_of_columns << "." << std::endl;
   }
   num_of_rows_=num_of_rows;
   num_of_columns_=num_of_columns;
   dimension_ = num_of_rows_;
-  if (num_of_rows_ < num_of_columns_) {
-    FATAL("Num of rows  %i is less than the number or columns %i",
-           num_of_rows_, num_of_columns_);
-  }
   map_ = new Epetra_Map(num_of_rows_, 0, comm_);
   matrix_ = Teuchos::rcp(
       new Epetra_CrsMatrix((Epetra_DataAccess)0, *map_, nnz_per_row));
@@ -80,8 +76,8 @@ void SparseMatrix::Init(index_t num_of_rows,
   num_of_columns_=num_of_columns;
   dimension_ = num_of_rows;
   if (num_of_rows_ < num_of_columns_) {
-    FATAL("Num of rows  %i is less than the number or columns %i",
-           num_of_rows_, num_of_columns_);
+    mlpack::IO::Fatal << "Num of rows " << num_of_rows << " should be greater "
+        "than the num of columns " << num_of_columns << "." << std::endl;
   }
   map_ = new Epetra_Map(num_of_rows_, 0, comm_);
   matrix_ = Teuchos::rcp(
@@ -115,12 +111,12 @@ void SparseMatrix::Init(const std::vector<index_t> &rows,
     num_of_columns_++;
     num_of_rows_++;
     if (num_of_rows_ < num_of_columns_) {
-      FATAL("At this point we only support rows (%i) >= columns (%i)\n", 
-            num_of_rows_, num_of_columns_);
+      mlpack::IO::Fatal << "At this point we only support rows (" << 
+        num_of_rows_ << ") >= columns (" << num_of_columns_ << ")" << std::endl; 
     }
     dimension_ = num_of_rows_;
     if ((index_t)frequencies.size()!=num_of_rows_) {
-      NONFATAL("Some of the rows are zeros only!");
+      mlpack::IO::Warn << "Some of the rows are zeros only!" << std::endl;
     }
     index_t *nnz= new index_t[dimension_];
     for(index_t i=0; i<num_of_rows_; i++) {
@@ -148,9 +144,8 @@ void SparseMatrix::Init(std::string filename) {
   issymmetric_ = false;
   FILE *fp = fopen(filename.c_str(), "r");
   if (fp == NULL) {
-    FATAL("Cannot open %s, error: %s", 
-          filename.c_str(), 
-          strerror(errno));
+    mlpack::IO::Fatal << "Cannot open " << filename << ", error " <<
+        strerror(errno) << std::endl;
   }
   std::vector<index_t> rows;
   std::vector<index_t> cols;
@@ -257,8 +252,8 @@ void SparseMatrix::LoadRow(index_t row,
 
 void SparseMatrix::SortIndices() {
   if (matrix_->IndicesAreLocal()) {
-    NONFATAL("EndLoading has been called, indices are already sorted,"  
-        "SortIndices cannot do anything further\n");
+    mlpack::IO::Warn << "EndLoading has been called, indices are already sorted"
+        "; SortIndices() cannot do anything further" << std::endl;
     return;
   }
   double *values;
@@ -306,7 +301,8 @@ void SparseMatrix::MakeSymmetric() {
 
 void SparseMatrix::SetDiagonal(const Vector &vector) { 
   if (unlikely(vector.length()!=dimension_)) {
-    FATAL("Vector should have the same dimension with the matrix!\n");
+    mlpack::IO::Fatal << "Vector should have the same dimension as the matrix!"
+        << std::endl;
   }
   for(index_t i=0; i<dimension_; i++) {
     set(i,i, vector[i]);
@@ -406,8 +402,8 @@ void SparseMatrix::ApplyFunction(FUNC &function){
 void SparseMatrix::ToFile(std::string file) {
   FILE *fp=fopen(file.c_str(), "w");
   if (fp==NULL) {
-    FATAL("Unable to open %s for exporting the matrix, error %s\n",
-        file.c_str(), strerror(errno));
+    mlpack::IO::Fatal << "Unable to open " << file << " to save the matrix, "
+        "error: " << strerror(errno) << std::endl;
   }
   double *values;
   index_t *indices;
@@ -443,8 +439,8 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
                        Vector *real_eigvalues,
                        Vector *imag_eigvalues) {
   if (unlikely(!matrix_->Filled())) {
-    FATAL("You have to call EndLoading before running eigenvalues otherwise "
-          "it will fail\n");
+    mlpack::IO::Fatal << "You must call EndLoading() before calculating "
+        "eigenvalues." << std::endl;
   }
   
   index_t block_size=std::min(2*num_of_eigvalues, 10);
@@ -459,7 +455,8 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
         new Anasazi::BasicEigenproblem<double,MV,OP>(matrix_, ivec));
   } else {
     if (!pencil_matrix.matrix_->Filled()) {
-      FATAL("Call EndLoading() for the pencil_matrix  before calling Eig...\n");
+      mlpack::IO::Fatal << "Call EndLoading() for the pencil_matrix "
+          "before calling Eig..." << std::endl;
     }
     problem =Teuchos::rcp(
         new Anasazi::BasicEigenproblem<double,MV,OP>(
@@ -483,8 +480,8 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
   // error. This probably means we did not specify enough information for
   // the eigenproblem.
   if unlikely(ierr == false) {
-    FATAL("Trilinos solver error, you probably didn't specify enough information "
-          "for the eigenvalue problem\n");
+    mlpack::IO::Fatal << "Trilinos solver error, you probably didn't specify "
+        "enough information for the eigenvalue problem" << std::endl;
   }
 
   // Specify the verbosity level. Options include:
@@ -543,24 +540,26 @@ void SparseMatrix::Eig(SparseMatrix &pencil_matrix,
     case Anasazi::Unconverged:
       if (num_of_blocks<100) {
         num_of_blocks+=num_of_eigvalues;
-        NONFATAL("Didn't converge, increasing num_of_blocks to %i\n and retrying ", 
-                 (int)num_of_blocks);
+        mlpack::IO::Warn << "Didn't converge, increasing num_of_blocks to " <<
+          num_of_blocks << "and retrying." << std::endl;
         goto retry;
-      }  
-      FATAL("Anasazi::BlockKrylovSchur::solve() did not converge!\n");  
+      }
+      mlpack::IO::Fatal << "Anasazi::BlockKrylovSchur::solve() did not "
+          "converge!" << std::endl;
       return ;    
     // CONVERGED
     case Anasazi::Converged:
-      NONFATAL("Anasazi::BlockKrylovSchur::solve() converged!\n");
+      mlpack::IO::Info << "Anasazi::BlockKrylovSchur::solve() converged!" <<
+          std::endl;
   }
   // Get eigensolution struct
   Anasazi::Eigensolution<double, Epetra_MultiVector> sol = problem->getSolution();
   // Get the number of eigenpairs returned
   int num_of_eigvals_returned = sol.numVecs;
   if (num_of_eigvals_returned < num_of_eigvalues) {
-    NONFATAL("The solver returned less eigenvalues (%i) "
-             "than requested (%i)\n", num_of_eigvalues,
-             num_of_eigvals_returned);
+    mlpack::IO::Warn << "The solver returned fewer eigenvalues ("
+        << num_of_eigvalues << ") than requested (" << num_of_eigvals_returned
+        << ")" << std::endl;
   }
 
   // Get eigenvectors
@@ -614,7 +613,7 @@ void SparseMatrix::LinSolve(Vector &b, // must be initialized (space allocated)
                             index_t iterations) {
 
   if (matrix_->Filled()==false && matrix_->StorageOptimized()==false){
-    FATAL("You should call EndLoading() first\n");
+    mlpack::IO::Fatal << "You should call EndLoading() first" << std::endl;
   }
   Epetra_Vector tempb(View, *map_, b.ptr());
   Epetra_Vector tempx(View, *map_, x->ptr());
@@ -624,8 +623,8 @@ void SparseMatrix::LinSolve(Vector &b, // must be initialized (space allocated)
   AztecOO solver(problem);
   solver.SetAztecOption( AZ_precond, AZ_Jacobi);
   solver.Iterate(iterations, tolerance);
-  NONFATAL("Solver performed %i iterations, true residual %lg",
-           solver.NumIters(), solver.TrueResidual());
+  mlpack::IO::Warn << "Solver performed " << solver.NumIters() << "iterations,"
+      " true residual " << solver.TrueResidual() << std::endl;
 }
 
 
@@ -640,7 +639,7 @@ void SparseMatrix::IncompleteCholesky(index_t level_fill,
   ict->InitValues(*matrix_);
   // compute the factors
   if (unlikely(ict->Factor()<0)) {
-    NONFATAL("Cholesky factorization failed!\n");
+    mlpack::IO::Warn << "Cholesky factorization failed!" << std::endl;
   };
   // and now estimate the condition number
   ict->Condest(false, *condest);
@@ -687,10 +686,10 @@ inline void Sparsem::Add(const SparseMatrix &a,
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
   if (a.indices_sorted_==false) {
-    FATAL("The indices of a are not sorted");
+    mlpack::IO::Fatal << "The indices of a are not sorted" << std::endl;
   }
   if (b.indices_sorted_==false) {
-    FATAL("The indices of b are not sorted");
+    mlpack::IO::Fatal << "The indices of b are not sorted" << std::endl;
   }
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
       b.nnz()/b.num_of_rows_);
@@ -774,10 +773,10 @@ inline void Sparsem::Subtract(const SparseMatrix &a,
   DEBUG_ASSERT(a.num_of_rows_==b.num_of_rows_);
   DEBUG_ASSERT(a.num_of_columns_==b.num_of_columns_);
   if (a.indices_sorted_==false) {
-    FATAL("The indices of a are not sorted");
+    mlpack::IO::Fatal << "The indices of a are not sorted" << std::endl;
   }
   if (b.indices_sorted_==false) {
-    FATAL("The indices of b are not sorted");
+    mlpack::IO::Fatal << "The indices of b are not sorted" << std::endl;
   }
 
   result->Init(a.num_of_rows_, a.num_of_columns_, a.nnz()/a.num_of_rows_+
@@ -870,10 +869,10 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
                               SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
   if (a.indices_sorted_==false) {
-    FATAL("The indices of a are not sorted");
+    mlpack::IO::Fatal << "The indices of a are not sorted" << std::endl;
   }
   if (b.indices_sorted_==false) {
-    FATAL("The indices of b are not sorted");
+    mlpack::IO::Fatal << "The indices of b are not sorted" << std::endl;
   }
 
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
@@ -982,7 +981,7 @@ inline void Sparsem::Multiply(const SparseMatrix &a,
 inline void Sparsem::MultiplyT(SparseMatrix &a,
                                SparseMatrix *result) {
   if (a.indices_sorted_==false) {
-    FATAL("The indices of a are not sorted");
+    mlpack::IO::Fatal << "The indices of a are not sorted" << std::endl;
   }
 
   bool flag=a.issymmetric_;
@@ -1013,10 +1012,10 @@ inline void Sparsem::DotMultiply(const SparseMatrix &a,
                                  SparseMatrix *result) {
   DEBUG_ASSERT(a.num_of_columns_ == b.num_of_rows_);
   if (a.indices_sorted_==false) {
-    FATAL("The indices of a are not sorted");
+    mlpack::IO::Fatal << "The indices of a are not sorted" << std::endl;
   }
   if (b.indices_sorted_==false) {
-    FATAL("The indices of b are not sorted");
+    mlpack::IO::Fatal << "The indices of b are not sorted" << std::endl;
   }
 
   result->Init(a.num_of_rows_, b.num_of_columns_, a.nnz()/a.num_of_rows_+
