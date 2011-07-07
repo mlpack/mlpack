@@ -71,48 +71,6 @@ extern int print_got_heres;
 extern int print_warnings;
 
 /**
- * Prints a message only in verbose mode at a given level of
- * verbosity.
- *
- * Calls to this macro may double as comments for your code and
- * produce no overhead outside of verbose mode.  Additionally,
- * messages will not be printed if verbosity_level is less than the
- * specified minimum.
- *
- * Example:
- * @code
- *   if (object.type == RABBIT) {
- *     VERBOSE_MSG(3.0, "Processing %s as a rabbit", object.name);
- *     process_rabbit(object);
- *   }
- * @endcode
- *
- * @param min_verbosity level of verbosity required to emit mesage
- * @param msg_params format string and variables, as in printf
- *
- * @see VERBOSE_GOT_HERE
- */
-#define VERBOSE_MSG(min_verbosity, msg_params...) \
-    VERBOSE_ONLY( \
-        unlikely(verbosity_level >= (min_verbosity)) \
-            ? NOTIFY(msg_params) : NOP)
-
-/**
- * Prints a default message to indicate having reached a line of code.
- *
- * These messages may be run-time disabled by unsetting global
- * print_got_heres.
- *
- * @param min_verbosity level of verbosity required to emit mesage
- *
- * @see VERBOSE_MSG
- */
-#define VERBOSE_GOT_HERE(min_verbosity) \
-    VERBOSE_ONLY( \
-        unlikely(print_got_heres && verbosity_level >= (min_verbosity)) \
-            ? NOTIFY("Got to line %d of %s", __LINE__, __FUNCTION__) : NOP)
-
-/**
  * Conditionally emits a warning message, which may abort or pause
  * process.
  *

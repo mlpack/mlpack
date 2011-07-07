@@ -196,24 +196,6 @@ void fl_print_msg(const char *file, const char *func, const int line,
     __FILE__, __FUNCTION__, __LINE__, FL_MSG_NONFATAL, msg_params))
 
 /**
- * Prints (possibly) call location and a message with special marker
- * to stderr.
- *
- * @param msg_params format string and variables, as in printf
- */
-#define NOTIFY_STAR(msg_params...) (fl_print_msg( \
-    __FILE__, __FUNCTION__, __LINE__, FL_MSG_NOTIFY_STAR, msg_params))
-
-/**
- * Prints (possibly) call location and a message with standard marker
- * to stderr.
- *
- * @param msg_params format string and variables, as in printf
- */
-#define NOTIFY(msg_params...) (fl_print_msg( \
-    __FILE__, __FUNCTION__, __LINE__, FL_MSG_NOTIFY, msg_params))
-
-/**
  * Prints a progress bar using ANSI commands to stay in place.
  *
  * For proper formatting, desc should be 22 characters or fewer and
