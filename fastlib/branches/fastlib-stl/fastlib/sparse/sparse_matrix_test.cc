@@ -71,7 +71,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("TestInit1 sucess!!\n");
   }
   
   void TestInit2() {
@@ -105,7 +104,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("TestInit2 success!!\n");
   }
   
   void TestInit3() {
@@ -131,12 +129,10 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("TestInit3 success!!");
   }
   
   void TestCopyConstructor() {
     smat_ = new SparseMatrix();
-     NOTIFY("TestCopyConstructor success!!\n");
   }
   
   void TestMakeSymmetric() {
@@ -153,7 +149,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("Test MakeSymmetric success!!\n");
   }
   
   void TestNegate() {
@@ -165,7 +160,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("Test Negate success!!");
   }
   
   void TestColumnScale() {
@@ -183,7 +177,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("Test ColumnScale success!!");
   }
 
   void TestRowScale() {
@@ -201,7 +194,6 @@ class SparseMatrixTest {
                            std::numeric_limits<double>::epsilon());
       }
     }
-    NOTIFY("Test RowScale success!!");
   }
   
   void TestRowSums() {
@@ -216,7 +208,6 @@ class SparseMatrixTest {
       }
       TEST_DOUBLE_APPROX(row_sums[i], row_sum, 0.001);
     } 
-    NOTIFY("Test RowSums success!!");
   }
   
   void TestInvRowSums() {
@@ -232,7 +223,6 @@ class SparseMatrixTest {
       TEST_DOUBLE_APPROX(row_sums[i], 1.0/row_sum ,
                            std::numeric_limits<double>::epsilon());
     } 
-    NOTIFY("Test InvRowSums success!!");
   }
   
   void TestInvColMaxs() {
@@ -248,7 +238,6 @@ class SparseMatrixTest {
       TEST_DOUBLE_APPROX(col_maxs[i], 1.0/col_max,
           std::numeric_limits<double>::epsilon());
     } 
-    NOTIFY("Test InvColMaxs success!!");
   
   }
   
@@ -260,7 +249,6 @@ class SparseMatrixTest {
     Matrix eigvectors;
     smat_->Eig(1, "LM", &eigvectors, &eigvalues_real, &eigvalues_imag);
     // eigvectors.PrintDebug();
-    NOTIFY("Test Eigenvector success!!\n");
   }
   
   void TestLinSolve() {
@@ -274,7 +262,6 @@ class SparseMatrixTest {
     smat_->EndLoading();
     smat_->LinSolve(b, &x);
     x.PrintDebug();
-    NOTIFY("Test Linear Solve success!!\n");
   }
   void TestBasicOperations() {
     SparseMatrix a("A.txt");
@@ -298,7 +285,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix addition sucess!!\n");
     
     Sparsem::Subtract(a, b, &temp);
     temp.EndLoading();
@@ -309,7 +295,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix subtraction success!!\n");
     
     Sparsem::Multiply(a, b, &temp);
 //    printf("%s\n", temp.Print().c_str());
@@ -322,7 +307,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix multiplication success!!\n");
     
     SparseMatrix i_w("I-W.txt");
     SparseMatrix i_w_i_w_trans("I-W_time_I-W_trans.txt");
@@ -339,7 +323,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix multiplication success!!\n");
 
     
     Sparsem::DotMultiply(a, b, &temp);
@@ -354,7 +337,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix dot multiplication success!!\n");
     
     Sparsem::Multiply(a, 3.45, &temp);
     for(index_t i=0; i<21; i++) {
@@ -364,7 +346,6 @@ class SparseMatrixTest {
       }
     }
     temp.Destruct();
-    NOTIFY("Matrix scalar multiplication success!!\n");
     
   }
   void TestAll() {
