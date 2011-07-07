@@ -21,10 +21,9 @@ PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights"
 PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
 PARAM_STRING_REQ("matcher_dists", "The distances in the matcher, stored in a symmetric matrix.",
                  NULL);
-PARAM(double, "bandwidth", "Thickness of the matcher", NULL,
-      1.0, false)
-PARAM(index_t, "leaf_size", "Max number of points in a leaf node", NULL, 
-      1, false);
+PARAM_DOUBLE("bandwidth", "Thickness of the matcher", NULL,
+      1.0)
+PARAM_INT("leaf_size", "Max number of points in a leaf node", NULL, 1);
 PARAM_FLAG("do_naive", "Permform Naive computation", NULL);
 PARAM_FLAG("do_single_bandwidth", "Permform old (Moore & Gray) tree computation", NULL);
 PARAM_FLAG("do_perm_free", "Tree computation with alternative pruning rule", NULL);
@@ -104,7 +103,7 @@ int main(int argc, char* argv[]) {
   
   
   //index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
-  index_t leaf_size = IO::GetParam<index_t>("leaf_size");
+  index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
   
   //if (fx_param_exists(NULL, "do_single_bandwidth")) {
   if (IO::HasParam("do_single_bandwidth")) {
