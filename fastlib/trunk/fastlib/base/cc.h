@@ -39,6 +39,7 @@
 
 #include "common.h"
 
+#include <cstddef>
 #include <algorithm>
 #include <limits>
 
