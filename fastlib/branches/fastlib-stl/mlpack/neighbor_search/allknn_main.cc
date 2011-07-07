@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
   arma::mat distances;
 
   if (data::Load(reference_file.c_str(), reference_data) == SUCCESS_FAIL)
-    IO::Fatal << "Reference file " << reference_file << "not found." << endl;
+    IO::Fatal << "Reference file " << reference_file << " not found." << endl;
   
   IO::Info << "Loaded reference data from " << reference_file << endl;
   
