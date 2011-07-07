@@ -274,9 +274,9 @@ void OptionsHierarchy::PrintAllHelp() {
 void OptionsHierarchy::PrintBranches() {
   map<string, OptionsHierarchy>::iterator iter;
   
-  //Iterate through all children
+  // Iterate through all children
   for (iter = children.begin(); iter != children.end(); iter++)
-  //Does this child have children?
+  // Does this child have children?
     if (iter->second.children.size()) {
       iter->second.PrintNode();
     }
@@ -288,7 +288,7 @@ void OptionsHierarchy::PrintLeaves() {
   map<string, OptionsHierarchy>::iterator iter;
   for (iter = children.begin(); iter != children.end(); iter++) {
     if (!iter->second.children.size()) {
-      //Print the node's name, data, and description.
+      // Print the node's name, data, and description.
       iter->second.PrintNode();
     } else {
       iter->second.PrintLeaves();
@@ -313,6 +313,8 @@ void OptionsHierarchy::PrintNode() {
     IO::Info << value;
   } else if (nodeData.tname == TYPENAME(float))
     IO::Info << IO::GetParam<float>(nodeData.node.c_str());
+  else if (nodeData.tname == TYPENAME(double))
+    IO::Info << IO::GetParam<double>(nodeData.node.c_str());
   
   IO::Info << endl;
 }
