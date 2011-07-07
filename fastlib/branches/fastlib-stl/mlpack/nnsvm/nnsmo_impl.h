@@ -53,7 +53,6 @@ void NNSMO<TKernel>::Train()
   CalcKernels_();
   while ((num_changed > 0 || examine_all))
   {
-    VERBOSE_GOT_HERE(0);
     //NNSMO training iterations
 	num_changed = TrainIteration_(examine_all);
 
@@ -108,7 +107,6 @@ bool NNSMO<TKernel>::TryChange_(index_t j)
   double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
 
-  VERBOSE_GOT_HERE(0);
 
   if (!((rj < -NNSMO_TOLERANCE && alpha_[j] < c_)
       || (rj > NNSMO_TOLERANCE && alpha_[j] > 0)))
@@ -133,7 +131,6 @@ bool NNSMO<TKernel>::TryChange_(index_t j)
     return true;
   }
 
-  VERBOSE_GOT_HERE(0);
 
   return false;
 }
@@ -145,7 +142,6 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   //1. check i,j
   if (i == j)
   {
-    VERBOSE_GOT_HERE(0);
     return -1;
   }
   int yi = GetLabelSign_(i);
@@ -174,8 +170,6 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   if (l >= u - NNSMO_ZERO)
   {
     // TODO: might put in some tolerance
-    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
-    VERBOSE_GOT_HERE(0);
     return -1;
   }
 
@@ -184,18 +178,15 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
-  VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
   
   // calculate alpha_j^{new}
   if (eta < 0)
   {
-    VERBOSE_MSG(0, "Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   }
   else
   {
-    VERBOSE_MSG(0, "Uncommon case");
     return -1;
   }
   alpha_j = FixAlpha_(alpha_j);
@@ -204,7 +195,6 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   // check if there is progress
   if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_))
   {
-    VERBOSE_GOT_HERE(0);
     return -1;
   }
 
@@ -220,7 +210,6 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   if(yi != yj)
     delta_f += 2* delta_alpha_j;
 
-  VERBOSE_GOT_HERE(0);
   return delta_f;
 }
 
@@ -231,7 +220,6 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   //1. check i,j
   if (i == j)
   {
-    VERBOSE_GOT_HERE(0);
     return false;
   }
 
@@ -261,8 +249,6 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   if (l >= u - NNSMO_ZERO)
   {
     // TODO: might put in some tolerance
-    VERBOSE_MSG(0, "l=%f, u=%f, r=%f, c_=%f, s=%d", l, u, r, c_, s);
-    VERBOSE_GOT_HERE(0);
     return false;
   }
 
@@ -271,19 +257,16 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
-  VERBOSE_MSG(0, "kij=%f, kii=%f, kjj=%f", kij, kii, kjj);
 
   // calculate alpha_j^{new}
   if (likely(eta < 0))
   {
-    VERBOSE_MSG(0,"Common case");
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));
   }
   else
   {
-    VERBOSE_MSG(0, "Uncommon case");
-	  return false;
+    return false;
   }
   alpha_j = FixAlpha_(alpha_j);
   double delta_alpha_j = alpha_j - alpha_[j];
@@ -291,7 +274,6 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   // check if there is progress
   if (fabs(delta_alpha_j) < eps_*(alpha_j + alpha_[j] + eps_))
   {
-    VERBOSE_GOT_HERE(0);
     return false;
   }
 
@@ -349,7 +331,6 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
     error_[k] -= thresh_;
   }
 
-  VERBOSE_GOT_HERE(0);
   return true;
 }
 #endif

@@ -222,8 +222,6 @@ index_t NNSVM<TKernel>::Classify(const arma::vec& datum)
 {
   double summation = dot(model_.w_, datum);
 
-  VERBOSE_MSG(0, "summation=%f, thresh_=%f", summation, model_.thresh_);
-
   return (summation - model_.thresh_ > 0.0) ? 1 : 0;
 
   return 0;
@@ -245,7 +243,7 @@ void NNSVM<TKernel>::BatchClassify(arma::mat& testset, std::string testlablefile
   FILE *fp = fopen(testlablefilename.c_str(), "w");
   if (fp == NULL)
   {
-    fprintf(stderr, "Cannot save test labels to file!");
+    mlpack::IO::Fatal << "Cannot save test labels to file!" << std::endl;
     return;
   }
   num_features_ = testset.n_cols - 1;
