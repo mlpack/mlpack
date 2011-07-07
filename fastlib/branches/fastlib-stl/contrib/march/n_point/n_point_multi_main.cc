@@ -15,8 +15,27 @@
 #include "multi_bandwidth_alg.h"
 #include "matcher_generation.h"
 
+
+PARAM_STRING_REQ("data", "Point coordinates.", NULL);
+PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL)
+PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
+PARAM_STRING_REQ("matchers", "A 3 column, (n choose 2) row csv, where the first and second columns are the upper and lower bounds and the third is the number of matchers.",
+                 NULL);
+PARAM(double, "bandwidth", "Thickness of the matcher", NULL,
+      1.0, false)
+PARAM(index_t, "leaf_size", "Max number of points in a leaf node", NULL, 
+      1, false);
+PARAM_FLAG("do_naive", "Permform Naive computation", NULL);
+PARAM_FLAG("do_single_bandwidth", "Permform old (Moore & Gray) tree computation", NULL);
+PARAM_FLAG("do_perm_free", "Tree computation with alternative pruning rule", NULL);
+PARAM_FLAG("do_multi", "Multi-bandwidth computation -- i.e. one pass through the tree.", NULL);
+
+
+
 using namespace npt;
 using namespace mlpack;
+
+
 
 int main(int argc, char* argv[]) {
 
@@ -40,7 +59,8 @@ int main(int argc, char* argv[]) {
   //data_out.save("3pt_test_data.csv", arma::raw_ascii);
   
   arma::colvec weights;  
-  if (IO::HasParam("weights")) {
+  //if (fx_param_exists(NULL, "weights")) {
+  if (IO::HasParam("weighted_computation")) {
     weights.load(IO::GetParam<std::string>("weights"));
   }
   else {
