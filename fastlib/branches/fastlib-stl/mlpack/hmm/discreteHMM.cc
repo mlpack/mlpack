@@ -30,9 +30,11 @@ void DiscreteHMM::InitFromFile(const char* profile) {
   std::vector<arma::mat> list_mat;
   load_matrix_list(profile, list_mat);
   if (list_mat.size() < 2)
-    FATAL("Number of matrices in the file should be at least 2.");
+    mlpack::IO::Fatal << "Number of matrices in the file should be at least 2."
+        << std::endl;
   else if (list_mat.size() > 2)
-    NONFATAL("Number of matrices in the file should be 2 (any after the second are ignored.");
+    mlpack::IO::Warn << "Number of matrices in the file should be 2 (any after the second are ignored."
+        << std::endl;
 
   transmission_ = list_mat[0];
   emission_ = list_mat[1];
@@ -72,7 +74,8 @@ void DiscreteHMM::LoadProfile(const char* profile) {
 void DiscreteHMM::SaveProfile(const char* profile) const {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
-    NONFATAL("Couldn't open '%s' for writing.", profile);
+    mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
+        std::endl;
     return;
   }
 
