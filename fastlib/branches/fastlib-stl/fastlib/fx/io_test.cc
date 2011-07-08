@@ -79,7 +79,6 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   //Check that the IO::HasParam returns false if no value has been specified
   //On the commandline or programmatically.
   IO::Add<bool>("bool", "True or False", "global");
-
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), false);
 
 
@@ -87,24 +86,36 @@ BOOST_AUTO_TEST_CASE(TestIO) {
 
   //IO::HasParam should return true now.
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), true);
-
+  
   BOOST_REQUIRE_EQUAL(IO::GetDescription("global/bool").compare(
                               std::string("True or False")) , 0);
 
   //Check that SanitizeString is sanitary. 
   std::string tmp = IO::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
+  
 
+  //Test the output of IO.  We will pass bogus input 
+  //Such that nothing will be printed to screen, only currentLine will
+  //Hold our 'output'.
+  IO::Info.ignoreInput = true;
+  IO::Info << "This shouldn't break anything" << std::endl;
+  BOOST_REQUIRE_EQUAL(
+    IO::Info.currentLine.compare("This shouldn't break anything"), 0); 
 
-/*
   //Now lets test the output functions.  Will have to eyeball it manually.
-  IO::Debug << "Test the new lines...";
-  IO::Debug << "shouldn't get 'Info' here." << std::endl;
-  IO::Debug << "But now I should." << std::endl << std::endl;
+  IO::Info << "Test the new lines...";
+  IO::Info << "shouldn't get 'Info' here." << std::endl;
 
-  //Test IO::Debug 
-  IO::Debug << "You shouldn't see this when DEBUG=OFF" << std::endl;
-*/
+  BOOST_REQUIRE_EQUAL(
+    IO::Info.currentLine.
+    compare("Test the new lines...shouldn't get 'Info' here."), 0);
+
+  IO::Info << "But now I should." << std::endl << std::endl;
+  IO::Info << "";  
+  BOOST_REQUIRE_EQUAL(IO::Info.currentLine.compare(""), 0);
+
+
 
 }
 

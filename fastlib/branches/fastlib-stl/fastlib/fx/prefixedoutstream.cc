@@ -96,16 +96,20 @@ PrefixedOutStream& PrefixedOutStream::operator<< (std::string& str) {
 }
 
 PrefixedOutStream& PrefixedOutStream::operator<< (std::streambuf* sb) {
+  if(ignoreInput)
+    return *this;
+
   destination << sb;
   return *this;
 }
 
 PrefixedOutStream& PrefixedOutStream::operator<< 
     (std::ostream& (*pf) (std::ostream&)) {
+
   // We don't want to prefix on what will show up as empty lines. 
-  if (carriageReturned) //We have multiple empty lines..
+  if (carriageReturned && !ignoreInput) //We have multiple empty lines..
     destination << prefix << pf;
-  else
+  else if (!ignoreInput)
     destination << pf;
   carriageReturned = true;
   if (fatal) // Terminate application.

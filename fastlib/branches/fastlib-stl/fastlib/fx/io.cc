@@ -29,11 +29,11 @@ PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout,
 NullOutStream IO::Debug = NullOutStream();
 #endif
 PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
-    BASH_GREEN "[INFO ] " BASH_CLEAR);
+    BASH_GREEN "[INFO ] " BASH_CLEAR, false, false);
 PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
-    BASH_YELLOW "[WARN ] " BASH_CLEAR);
+    BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
 PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
-    BASH_RED "[FATAL] " BASH_CLEAR, true /* fatal */);
+    BASH_RED "[FATAL] " BASH_CLEAR, false, true /* fatal */);
 std::ostream& IO::cout = std::cout;
 
 /* For clarity, we will alias boost's namespace */
@@ -250,6 +250,10 @@ std::string IO::ManageHierarchy(const char* id,
  */
 void IO::AddToHierarchy(std::string& path, std::string& tname, 
                         const char* desc) {
+  // Make sure we don't overwrite any data.
+  if (hierarchy.FindNode(path) != NULL)
+    return;
+
   // Add the sanity checked string to the hierarchy
   std::string d(desc);
   if (d.length() == 0)
@@ -373,7 +377,7 @@ void IO::DefaultMessages() {
     GetSingleton().hierarchy.PrintAllHelp(); 
     exit(0); // The user doesn't want to run the program, he wants help. 
   }
-  else if (HasParam("info")) {
+  if (HasParam("info")) {
     std::string str = GetParam<std::string>("info");
     // The info node should always be there, but the user may not have specified
     // anything.
@@ -386,6 +390,8 @@ void IO::DefaultMessages() {
       exit(0);
     }
   }
+  if (!HasParam("verbose"))
+    Info.ignoreInput = true;
   
   // Notify the user if we are debugging.  This is not done in the constructor
   // because the output streams may not be set up yet.  We also don't want this
