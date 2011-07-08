@@ -188,8 +188,28 @@ class DistributedDualtreeDfs {
       CoarsePriorityQueueType &prioritized_tasks,
       typename DistributedProblemType::ResultType *query_results);
 
+    template<typename MetricType>
+    void InitialSetup_(
+      const MetricType &metric,
+      typename DistributedProblemType::ResultType *query_results,
+      std::vector< TreeType *> *local_query_subtrees,
+      std::vector <
+      std::vector< std::pair<int, int> > > *reference_frontier_lists,
+      std::vector< std::vector< core::math::Range> > *local_priorities);
+
     /** @brief The collaborative way of exchanging items among all MPI
-     *         processes for a distributed computation.
+     *         processes for a distributed computation. This routine
+     *         utilizes asynchronous MPI calls to maximize
+     *         communication and computation overlap.
+     */
+    template<typename MetricType>
+    void AllToAllIReduce_(
+      const MetricType &metric,
+      typename DistributedProblemType::ResultType *query_results);
+
+    /** @brief The collaborative way of exchanging items among all MPI
+     *         processes for a distributed computation. This uses
+     *         all-to-allv and has many sync points.
      */
     template<typename MetricType>
     void AllToAllReduce_(

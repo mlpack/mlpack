@@ -1,4 +1,3 @@
-
 /** @file distributed_dualtree_dfs_dev.h
  *
  *  The generic algorithm template for distributed dual-tree
@@ -309,9 +308,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
+void DistributedDualtreeDfs <
+DistributedProblemType >::InitialSetup_(
   const MetricType &metric,
-  typename DistributedProblemType::ResultType *query_results) {
+  typename DistributedProblemType::ResultType *query_results,
+  std::vector< TreeType *> *local_query_subtrees,
+  std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
+  std::vector< std::vector< core::math::Range> > *local_priorities) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -321,9 +324,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
   // For each process, break up the local query tree into a list of
   // subtree query lists.
-  std::vector< TreeType *> local_query_subtrees;
   query_table_->local_table()->get_frontier_nodes(
-    max_query_subtree_size, &local_query_subtrees);
+    max_query_subtree_size, local_query_subtrees);
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -339,13 +341,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
 
   // Do an all to all to let each participating query process its
   // initial frontier.
-  std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
   std::vector< double > extrinsic_prune_lists;
-  std::vector< std::vector< core::math::Range> > local_priorities;
   boost::mpi::all_to_all(
-    *world_, essential_reference_subtrees, reference_frontier_lists);
+    *world_, essential_reference_subtrees, *reference_frontier_lists);
   boost::mpi::all_to_all(
-    *world_, remote_priorities, local_priorities);
+    *world_, remote_priorities, *local_priorities);
   boost::mpi::all_to_all(
     *world_, extrinsic_prunes_broadcast, extrinsic_prune_lists);
 
@@ -358,6 +358,36 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
+}
+
+template<typename DistributedProblemType>
+template<typename MetricType>
+void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
+  const MetricType &metric,
+  typename DistributedProblemType::ResultType *query_results) {
+
+  std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
+  std::vector< std::vector< core::math::Range> > local_priorities;
+  std::vector< TreeType *> local_query_subtrees;
+  InitialSetup_(
+    metric, query_results, &local_query_subtrees,
+    &reference_frontier_lists, &local_priorities);
+}
+
+template<typename DistributedProblemType>
+template<typename MetricType>
+void DistributedDualtreeDfs<DistributedProblemType>::AllToAllReduce_(
+  const MetricType &metric,
+  typename DistributedProblemType::ResultType *query_results) {
+
+  std::vector< std::vector< std::pair<int, int> > > reference_frontier_lists;
+  std::vector< std::vector< core::math::Range> > local_priorities;
+  std::vector< TreeType *> local_query_subtrees;
+
+  // Setup the initial frontier of reference subtrees.
+  InitialSetup_(
+    metric, query_results, &local_query_subtrees,
+    &reference_frontier_lists, &local_priorities);
 
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
