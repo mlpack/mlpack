@@ -26,7 +26,7 @@ trap '[ ! -d "$TDIR" ] || rm -r "$TDIR"' EXIT
 cd $TDIR
 svn co $SVN_URL $PKG_NAME --username $SVN_USR --password $SECRET --non-interactive
 cd $PKG_NAME
-svn cat -r 8500 debian/changelog > debian/changelog
+svn cat -r 8500 --username $SVN_USR --password $SECRET --non-interactive debian/changelog > debian/changelog
 svn-upgrade -u --noninteractive
 
 if [ $? -eq 0 ]
