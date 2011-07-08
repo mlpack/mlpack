@@ -1,10 +1,8 @@
 #include "tokenizer.h"
 
-#include <assert.h>
 #include <string>
 
 #include <iostream>
-#include "../base/test.h"
 
 #define BOOST_TEST_MODULE Something
 #include <boost/test/unit_test.hpp>

@@ -1,6 +1,4 @@
 #include "textfile.h"
-//#include "textfile.h"
-#include "../base/test.h"
 #include <math.h>
 
 #define BOOST_TEST_MODULE Something

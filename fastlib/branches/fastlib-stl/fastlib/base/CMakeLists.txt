@@ -28,7 +28,6 @@ set(SOURCES
    debug.h
    debug.c
    fortran.h
-   test.h
 )
 
 # add directory name to sources
