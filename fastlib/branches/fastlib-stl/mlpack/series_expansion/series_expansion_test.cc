@@ -1,6 +1,5 @@
 #include <fastlib/fastlib.h>
 #include <fastlib/fx/io.h>
-#include <fastlib/base/test.h>
 #include <complex>
 #include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"

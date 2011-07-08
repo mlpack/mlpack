@@ -16,7 +16,6 @@
  * =====================================================================================
  */
 #include <fastlib/fastlib.h>
-#include <fastlib/base/test.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
 #include <armadillo>
