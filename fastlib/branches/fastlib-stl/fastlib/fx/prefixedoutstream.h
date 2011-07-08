@@ -5,6 +5,7 @@
 #include <iomanip>
 #include <string>
 #include <streambuf>
+#include <boost/lexical_cast.hpp>
 
 namespace mlpack {
 namespace io {
@@ -38,9 +39,9 @@ class PrefixedOutStream {
    * @param prefix The prefix to prepend to each line.
    */
   PrefixedOutStream(std::ostream& destination, const char* prefix,
-      bool fatal = false) :
-      destination(destination), prefix(prefix), carriageReturned(true),
-      fatal(fatal)
+      bool ignoreInput = false, bool fatal = false) :
+      destination(destination), ignoreInput(ignoreInput), 
+      prefix(prefix), carriageReturned(true), fatal(fatal)
       // We want the first call to operator<< to prefix the prefix so we set
       // carriageReturned to true.
     { /* nothing to do */ } 
@@ -80,6 +81,16 @@ class PrefixedOutStream {
    */
   std::ostream& destination;
 
+  /**
+   * @brief Discards input, prints nothing if true.
+   */
+   bool ignoreInput;
+
+  /**
+   * @brief Stores the current line of output.
+   */
+   std::string currentLine;
+ 
  private:
   /**
    * @brief Conducts the base logic required in all the operator << overloads.
@@ -95,7 +106,7 @@ class PrefixedOutStream {
    * @brief Contains a string which will be prefixed to the output after every 
    *   carriage return.
    */
-  const char* prefix;
+  std::string prefix;
 
   /**
    * @brief If true, then the previous call to operator<< encountered a CR.  

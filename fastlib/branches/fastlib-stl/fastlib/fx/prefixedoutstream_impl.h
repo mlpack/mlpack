@@ -10,7 +10,22 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
+  //Maintain the debug buffer.
+  if (carriageReturned && ignoreInput) { 
+    currentLine = "";
+    carriageReturned = false;
+  }
+
+  try { 
+    currentLine += boost::lexical_cast<std::string>(val);
+  } catch(boost::bad_lexical_cast &e) {};
+
+  //Cancel output operation?
+  if (ignoreInput)
+    return; 
+
   if (carriageReturned) {
+    currentLine = "";
     destination << prefix << val;
     carriageReturned = false;
   }
