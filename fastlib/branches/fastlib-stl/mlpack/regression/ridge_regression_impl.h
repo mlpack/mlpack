@@ -164,15 +164,17 @@ void RidgeRegression::ExtractCovarianceSubset_
 void RidgeRegression::Init(const arma::mat &predictors, 
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
-
-  DEBUG_ERROR_MSG_IF(predictors.n_cols<predictors.n_rows,
-     "The number of the columns %d must be less or equal to the number of "
-     " the rows %d ", predictors.n_cols, predictors.n_rows);
-  DEBUG_ERROR_MSG_IF(predictions.n_rows >1, 
-      "The current implementation supports only one dimensional predictions");
-  DEBUG_ERROR_MSG_IF(predictors.n_cols!=predictions.n_cols, 
-      "Predictors and predictions must have the same same number "
-      "of cols %d != %d ", predictors.n_cols, predictions.n_cols);
+  if (predictors.n_cols < predictors.n_rows)
+    IO::Fatal << "The number of columns (" << predictors.n_cols << ") must be "
+        "less than or equal to the number of the rows (" << predictors.n_rows
+        << ")." << std::endl;
+  if (predictors.n_rows > 1)
+    IO::Fatal << "The current implementation only supports one-dimensional"
+        " predictions." << std::endl;
+  if (predictors.n_cols != predictions.n_cols)
+    IO::Fatal << "Predictors and predictions must have the same number of "
+        "columns (" << predictors.n_cols << " != " << predictions.n_cols << ")."
+        << std::endl;
 
   if(use_normal_equation_method) {
 
@@ -406,9 +408,10 @@ void RidgeRegression::ExtractSubspace_
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
 					       double lambda_max,
 					       index_t num) {
-  DEBUG_ERROR_MSG_IF(lambda_min > lambda_max, 
-		     "lambda_max %lg must be larger than lambda_min %lg",
-		     lambda_max, lambda_min );
+  if (lambda_min > lambda_max)
+    IO::Fatal << "lambda_max (" << lambda_max << ") must be larger than "
+        "lambda_min (" << lambda_min << ")." << std::endl;
+
   double step = (lambda_max - lambda_min) / num;
   arma::vec singular_values;
   arma::mat u, v_t;
