@@ -470,7 +470,7 @@ string OptionsHierarchy::HyphenateString(string str, int padding) {
     }
 
     out += str.substr(pos, (splitpos - pos));
-    if (splitpos != str.length() - 1) {
+    if (splitpos < str.length()) {
       out += '\n';
       out += string(padding, ' ');
     }
