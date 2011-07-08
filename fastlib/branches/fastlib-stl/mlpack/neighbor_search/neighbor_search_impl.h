@@ -36,12 +36,6 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   else
     leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
 
-  // Make sure the leaf size is valid
-  DEBUG_ASSERT(leaf_size_ > 0);
-
-  // The data sets need to have the same number of points
-  DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
-
   // K-nearest neighbors initialization
   knns_ = IO::GetParam<int>("neighbor_search/k");
 
@@ -92,9 +86,6 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   else
     leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
 
-  // Make sure the leaf size is valid
-  DEBUG_ASSERT(leaf_size_ > 0);
-
   // K-nearest neighbors initialization
   knns_ = IO::GetParam<int>("neighbor_search/k");
 
@@ -138,14 +129,6 @@ template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
       TreeType* query_node,
       TreeType* reference_node) {
-
-  // Check that the pointers are not NULL
-  DEBUG_ASSERT(query_node != NULL);
-  DEBUG_ASSERT(reference_node != NULL);
-
-  // Check that we really should be in the base case
-  DEBUG_WARN_IF(!query_node->is_leaf());
-  DEBUG_WARN_IF(!reference_node->is_leaf());
 
   // Used to find the query node's new upper bound
   double query_worst_distance = SortPolicy::BestDistance();
