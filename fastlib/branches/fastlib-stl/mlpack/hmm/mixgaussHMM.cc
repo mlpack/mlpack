@@ -22,7 +22,8 @@ void MixtureofGaussianHMM::setModel(const arma::mat& transmission,
 
 void MixtureofGaussianHMM::InitFromFile(const char* profile) {
   if (!PASSED(MixtureofGaussianHMM::LoadProfile(profile, transmission_, list_mixture_gauss_)))
-    FATAL("Couldn't open '%s' for reading.", profile);
+    mlpack::IO::Fatal << "Couldn't open " << profile << " for reading." <<
+        std::endl;
 }
 
 void MixtureofGaussianHMM::LoadProfile(const char* profile) {
@@ -137,7 +138,8 @@ void MixtureofGaussianHMM::TrainViterbi(const std::vector<arma::mat>& list_data_
 success_t MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
   std::vector<arma::mat> matlst;
   if (!PASSED(load_matrix_list(profile, matlst))) {
-    NONFATAL("Couldn't open '%s' for reading.", profile);
+    mlpack::IO::Warn << "Couldn't open " << profile << " for reading." <<
+        std::endl;
     return SUCCESS_FAIL;
   }
   DEBUG_ASSERT(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
@@ -161,7 +163,8 @@ success_t MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& tran
 success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<MixtureGauss>& mixs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
-    NONFATAL("Couldn't open '%s' for writing.", profile);
+    mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
+        std::endl;
     return SUCCESS_FAIL;
   }
   index_t M = trans.n_rows; // num of states

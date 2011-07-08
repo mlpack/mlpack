@@ -7,7 +7,6 @@
  */
 
 #include "union_find.h"
-#include <fastlib/base/test.h>
 #include <fastlib/fastlib.h>
 
 #define BOOST_TEST_MODULE UnionFindTest

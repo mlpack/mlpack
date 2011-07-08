@@ -46,7 +46,8 @@ void GaussianHMM::Init(const arma::mat& transmission, const std::vector<arma::ve
 
 void GaussianHMM::InitFromFile(const char* profile) {
   if (!PASSED(GaussianHMM::LoadProfile(profile, transmission_, list_mean_vec_, list_covariance_mat_)))
-    FATAL("Couldn't open '%s' for reading.", profile);
+    mlpack::IO::Fatal << "Couldn't open " << profile << " for reading." <<
+        std::endl;
 
   list_inverse_cov_mat_ = list_covariance_mat_;
   gauss_const_vec_.set_size(list_covariance_mat_.size());
@@ -223,7 +224,8 @@ success_t GaussianHMM::LoadProfile(const char* profile, arma::mat& trans, std::v
 success_t GaussianHMM::SaveProfile(const char* profile, const arma::mat& trans, const std::vector<arma::vec>& means, const std::vector<arma::mat>& covs) {
   TextWriter w_pro;
   if (!PASSED(w_pro.Open(profile))) {
-    NONFATAL("Couldn't open '%s' for writing.", profile);
+    mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
+        std::endl;
     return SUCCESS_FAIL;
   }
 

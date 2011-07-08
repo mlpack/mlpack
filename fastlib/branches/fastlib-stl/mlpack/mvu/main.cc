@@ -167,7 +167,7 @@ int main(int argc, char *argv[]){
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
       if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
-        FATAL("Didn't manage to save %s", result_file.c_str());
+        IO::Fatal << "Didn't manage to save " << result_file << std::endl;
       }
       done=true;
     }
