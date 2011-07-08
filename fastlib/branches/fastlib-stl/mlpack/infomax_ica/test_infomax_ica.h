@@ -6,7 +6,6 @@
  */
 /*
 #include "infomax_ica.h"
-#include "fastlib/base/test.h"
 
 #include <armadillo>
 #include <fastlib/base/arma_compat.h>
