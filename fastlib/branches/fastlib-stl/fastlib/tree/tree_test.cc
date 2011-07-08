@@ -5,9 +5,6 @@
  */
 
 #include "bounds.h"
-//#include "bounds.h"
-
-#include "../base/test.h"
 
 #define BOOST_TEST_MODULE Something
 #include <boost/test/unit_test.hpp>

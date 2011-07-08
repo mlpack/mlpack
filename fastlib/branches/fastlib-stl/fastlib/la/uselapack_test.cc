@@ -4,7 +4,6 @@
  * Tests for LAPACK integration.
  */
 
-#include "../base/test.h"
 #include "uselapack.h"
 
 #include "la.h"

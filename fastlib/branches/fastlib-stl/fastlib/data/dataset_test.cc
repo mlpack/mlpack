@@ -3,7 +3,6 @@
 #include "dataset.h"
 
 #include "../math/discrete.h"
-#include "../base/test.h"
 
 using arma::mat;
 
