@@ -48,7 +48,9 @@
  * @param DEF Default value of the parameter (used if the parameter is not
  *   specified on the command line).
  *
- * The parameter will then be specified with --PARENT/ID=value.
+ * The parameter will then be specified with --PARENT/ID=value.  If PARENT is
+ * equal to DEF_MOD (which is set using the PROGRAM_INFO() macro), the parameter
+ * can be specified with just --ID=value.
  */
 #define PARAM_FLAG(ID, DESC, PARENT) \
     PARAM_FLAG_INTERNAL(ID, DESC, PARENT);
