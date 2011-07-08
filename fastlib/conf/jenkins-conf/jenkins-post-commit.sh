@@ -13,7 +13,7 @@ JENKINS="http://hotwheels.cc.gt.atl.ga.us:8080"
 UUID=`svnlook uuid $REPOS`
 /usr/bin/wget \
   --header `wget -q --output-document - \
-  '${JENKINS}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,":",//crumb)'` \
+  "${JENKINS}/crumbIssuer/api/xml?xpath=concat(//crumbRequestField,\":\",//crumb)"` \
   --post-data "`svnlook changed --revision $REV $REPOS`" \
   --output-document "-" \
   --timeout=2 \
