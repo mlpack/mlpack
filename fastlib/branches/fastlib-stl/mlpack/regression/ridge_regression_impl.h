@@ -165,16 +165,16 @@ void RidgeRegression::Init(const arma::mat &predictors,
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
   if (predictors.n_cols < predictors.n_rows)
-    IO::Fatal << "The number of columns (" << predictors.n_cols << ") must be "
-        "less than or equal to the number of the rows (" << predictors.n_rows
-        << ")." << std::endl;
+    mlpack::IO::Fatal << "The number of columns (" << predictors.n_cols <<
+        ") must be less than or equal to the number of the rows (" <<
+        predictors.n_rows << ")." << std::endl;
   if (predictors.n_rows > 1)
-    IO::Fatal << "The current implementation only supports one-dimensional"
-        " predictions." << std::endl;
+    mlpack::IO::Fatal << "The current implementation only supports "
+        "one-dimensional predictions." << std::endl;
   if (predictors.n_cols != predictions.n_cols)
-    IO::Fatal << "Predictors and predictions must have the same number of "
-        "columns (" << predictors.n_cols << " != " << predictions.n_cols << ")."
-        << std::endl;
+    mlpack::IO::Fatal << "Predictors and predictions must have the same number "
+        "of columns (" << predictors.n_cols << " != " << predictions.n_cols <<
+        ")." << std::endl;
 
   if(use_normal_equation_method) {
 
@@ -409,8 +409,8 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 					       double lambda_max,
 					       index_t num) {
   if (lambda_min > lambda_max)
-    IO::Fatal << "lambda_max (" << lambda_max << ") must be larger than "
-        "lambda_min (" << lambda_min << ")." << std::endl;
+    mlpack::IO::Fatal << "lambda_max (" << lambda_max << ") must be larger than"
+        " lambda_min (" << lambda_min << ")." << std::endl;
 
   double step = (lambda_max - lambda_min) / num;
   arma::vec singular_values;
