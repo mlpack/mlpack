@@ -12,7 +12,7 @@
 
 
 using namespace mlpack;
-
+using namespace mlpack::io;
 
 /*
 PROGRAM_INFO("MLPACK IO Test",
@@ -34,10 +34,6 @@ PARAM_INT("something_long_long_long", "A particularly long and needlessly "
 *
 * @return True indicating all is well with OptionsHierarchy
 */
-
-namespace mlpack {
-namespace io {
-
 BOOST_AUTO_TEST_CASE(TestHierarchy) {
   OptionsHierarchy tmp = OptionsHierarchy("UTest");
 
@@ -67,9 +63,7 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
     BOOST_REQUIRE(testDesc.compare(node.desc) == 0);
     BOOST_REQUIRE(testTID.compare(node.tname) == 0);
 
-  } else {}
-}
-}
+  }
 }
 
 /**
