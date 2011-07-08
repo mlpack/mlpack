@@ -70,6 +70,7 @@ IO::~IO() {
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
 //  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
+  StopTimer("total_time");
   if (HasParam("verbose")) {
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
@@ -282,6 +283,8 @@ void IO::ParseCommandLine(int argc, char** line) {
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
+  
+  StartTimer("total_time");
 }
 
 /*
@@ -439,11 +442,18 @@ std::string IO::SanitizeString(const char* str) {
  * @param timerName The name of the timer in question.
  */
 void IO::StartTimer(const char* timerName) {
-  //Don't want to actually document the timer, the user can do that if he wants
+  // Don't want to actually document the timer, the user can do that if he wants
   timeval tmp;
   
   tmp.tv_sec = 0;
   tmp.tv_usec = 0;
+
+  // Also add it to the hierarchy for printing at the end of execution.
+  // We don't have any documentation, so omit it.  Since program execution
+  // already started, a user couldn't get to the documentation anyway.
+  std::string name(timerName);
+  std::string tname = TYPENAME(timeval);
+  IO::GetSingleton().AddToHierarchy(name, tname);
   
   gettimeofday(&tmp, NULL);
   GetParam<timeval>(timerName) = tmp;
