@@ -372,6 +372,32 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   InitialSetup_(
     metric, query_results, &local_query_subtrees,
     &reference_frontier_lists, &local_priorities);
+
+  // The global list of query subtree that is being computed. This is
+  // necessary for preventing two threads from grabbing tasks that
+  // involve the same query subtree.
+  std::deque<bool> active_query_subtrees(local_query_subtrees.size(), false);
+
+  // OpenMP parallel region. The master thread is the only one that is
+  // allowed to make MPI calls (sending and receiving reference
+  // subtables).
+#pragma omp parallel
+  {
+
+    int thread_id = omp_get_thread_num();
+
+    // The master thread routine.
+    if(thread_id == 0) {
+
+
+    }
+
+    // The slave threads routine.
+    else {
+
+
+    }
+  } // end of omp parallel
 }
 
 template<typename DistributedProblemType>
