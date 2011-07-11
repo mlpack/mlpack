@@ -75,7 +75,6 @@ class InfomaxICA {
   Matrix sampleCovariance(const Matrix &m);
   Matrix sqrtm(const Matrix &m);
 
-
  private:
   Matrix w_;
   Matrix data_;

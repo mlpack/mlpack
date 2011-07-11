@@ -170,6 +170,7 @@ Matrix InfomaxICA::sqrtm(const Matrix &m){
   }
   else
     IO::Warn << "infomaxICA sqrtm: Cholesky decomposition failed." << std::endl;
+
   return output;
 }
 

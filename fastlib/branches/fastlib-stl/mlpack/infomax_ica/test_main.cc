@@ -16,8 +16,12 @@ using namespace mlpack;
 #include <boost/test/unit_test.hpp> 
 
 
-BOOST_AUTO_TEST_CASE(SqrtM) { 
 
+
+void testSQRTM(InfomaxICA &icab_, Matrix &m) { 
+   icab_.sqrtm(m);
+}
+BOOST_AUTO_TEST_CASE(SqrtM) { 
     Matrix testdatab_;
     double lambdab_;
     int bb_;
@@ -29,11 +33,10 @@ BOOST_AUTO_TEST_CASE(SqrtM) {
     lambdab_=0.001;
     bb_=5;
     epsilonb_=0.001;
-
     InfomaxICA icab_(lambdab_, bb_, epsilonb_);
 
     Matrix intermediateb = icab_.sampleCovariance(testdatab_);
-    icab_.sqrtm(intermediateb);
+    testSQRTM(icab_, intermediateb);   
 }
 
 
