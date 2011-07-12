@@ -1,7 +1,7 @@
 #include "textfile.h"
 #include <math.h>
 
-#define BOOST_TEST_MODULE Something
+#define BOOST_TEST_MODULE TextFileTest
 #include <boost/test/unit_test.hpp>
 
 /*void Test1() {
