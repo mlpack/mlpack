@@ -31,4 +31,5 @@ target_link_libraries(nbc
 target_link_libraries(nbc_test
    mlpack
    fastlib
+   boost_unit_test_framework
 )

@@ -82,9 +82,16 @@ and outputs the results for the test set");
 class SimpleNaiveBayesClassifier {
 
   // The class for testing this class is made a friend class
-  friend class TestClassSimpleNBC;
+  //friend class TestClassSimpleNBC;
 
  private:
+
+		   
+ public:
+
+ 
+  // The variables containing the sample mean and variance
+  // for each of the features with respect to each class
 
   // The variables containing the sample mean and variance
   // for each of the features with respect to each class
@@ -93,12 +100,10 @@ class SimpleNaiveBayesClassifier {
   // The variable containing the class probabilities
   arma::vec class_probabilities_;
 
-  // The variable keeping the information about the 
+  // The variable keeping the information about the
   // number of classes present
   index_t number_of_classes_;
-		   
- public:
-
+ 
  /**
   * Initializes the classifier as per the input and then trains it
   * by calculating the sample mean and variances
