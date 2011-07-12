@@ -6,7 +6,7 @@
 
 #include "bounds.h"
 
-#define BOOST_TEST_MODULE Something
+#define BOOST_TEST_MODULE Tree_Test
 #include <boost/test/unit_test.hpp>
 
 
