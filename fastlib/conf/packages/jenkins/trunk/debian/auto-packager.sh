@@ -40,7 +40,7 @@ then
   
   NEW_VER=$(ls ../tarballs | sed -n "s/[^0-9]*\([0-9]\.[0-9]*\)[^0-9]*/\1-1/p")
   NEW_VER=$(echo $NEW_VER | awk '{print $1}')
-  dch -v $NEW_VER
+  dch -v $NEW_VER "New upstream release"
   
   cp debian/changelog $CTDIR/changelog
   sed "s/UNRELEASED/$(lsb_release -cs)/" < $CTDIR/changelog > debian/changelog
