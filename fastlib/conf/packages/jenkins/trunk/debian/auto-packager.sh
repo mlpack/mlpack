@@ -27,6 +27,7 @@ cd $TDIR
 svn co $SVN_URL $PKG_NAME --username $SVN_USR --password $SECRET --non-interactive
 cd $PKG_NAME
 # svn cat -r 8500 --username $SVN_USR --password $SECRET --non-interactive debian/changelog > debian/changelog
+mkdir -p ../tarballs
 uscan --destdir ../tarballs
 # TODO: instead of useing the convienence of svn-upgrade, use uscan, sed and dch to get the same effect.
 
