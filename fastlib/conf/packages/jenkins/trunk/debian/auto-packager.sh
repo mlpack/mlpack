@@ -39,7 +39,7 @@ then
   trap '[ ! -d "$TDIR" ] || rm -r "$TDIR"' EXIT
   
   NEW_VER=$(ls ../tarballs | sed -n "s/[^0-9]*\([0-9]\.[0-9]*\)[^0-9]*/\1-1/p")
-  NEW_VER=$(echo NEW_VER | awk '{print $1}')
+  NEW_VER=$(echo $NEW_VER | awk '{print $1}')
   dch -v $NEW_VER
   
   cp debian/changelog $CTDIR/changelog
