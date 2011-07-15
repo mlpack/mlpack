@@ -50,7 +50,7 @@ then
   rm -rf $CTDIR
   
   echo "[auto-packager] [auto-packager-warning] attempting to update the repository with changes"
-  echo svn ci -m "$SVN_MSG" --username $SVN_USR #--password $SECRET # TODO: un-echo
+  svn ci -m "$SVN_MSG" --username $SVN_USR --password $SECRET
 else
   echo "[auto-packager] svn-update reports local package is up-to-date"
 fi
