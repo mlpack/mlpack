@@ -15,7 +15,7 @@ double SquaredLoss::GetLoss(double prediction, double label) {
 }
 
 double SquaredLoss::GetUpdate(double prediction, double label) {
-  return (label - prediction);
+  return 2*(label - prediction);
 }
 
 

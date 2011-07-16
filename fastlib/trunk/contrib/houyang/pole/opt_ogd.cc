@@ -50,8 +50,8 @@ void* OGD::OgdThread(void *in_par) {
       Lp->t_state_[tid] = 1;
       break;
     case 1: // predict and local update
-      //--- local update: regularization part
       double eta;
+      //--- step size for SGD
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
       if (Lp->reg_type_ == 2) {
 	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
@@ -59,6 +59,10 @@ void* OGD::OgdThread(void *in_par) {
       else {
 	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
       }
+      //--- constant step size
+      //eta = 1.0 / Lp->reg_factor_;
+
+      //--- local update: regularization part
       if (Lp->reg_type_ == 2) {
 	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
 	Lp->w_pool_[tid] *= 1.0 - eta * Lp->reg_factor_;
@@ -150,7 +154,7 @@ void OGD::MakeLog(T_IDX tid, Example *x, double pred_val) {
       t_loss_[tid] = t_loss_[tid] + 
         0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
     }
-    // Calc # of misclassifications
+    // for classification only: calc # of misclassifications
     if (type_ == "classification") {
       T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], *x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
