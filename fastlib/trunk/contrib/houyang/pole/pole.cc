@@ -163,8 +163,6 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "How agents communicate with each other. Default: 1(full connected).")
     ("mini_batch,b", po::value<T_IDX>(&L_->mb_size_)->default_value(1), 
      "Size of a mini-batch. Default: 1.")
-    ("calc_loss", po::value<bool>(&L_->calc_loss_)->default_value(false), 
-     "Calculate total loss.")
     ("random", po::value<bool>(&L_->random_data_)->default_value(true), 
      "Randomly permute the input examples.")
     ("read_port", po::value<bool>(&L_->read_port_)->default_value(false), 
@@ -173,6 +171,8 @@ void Pole::ParseArgs(int argc, char *argv[]) {
      "Number of sources for daemon socket input.")
     ("port", po::value<T_IDX>(&L_->port_)->default_value(0),
      "Port to listen on.")
+    ("calc_loss", po::value<bool>(&L_->calc_loss_)->default_value(false), 
+     "Calculate total loss.")
     ("log", po::value<T_IDX>(&L_->n_log_)->default_value(0), 
      "How many log points. Default: 0(no logging).")
     ("verbose,v", po::value<bool>(&L_->v_)->default_value(false), 
