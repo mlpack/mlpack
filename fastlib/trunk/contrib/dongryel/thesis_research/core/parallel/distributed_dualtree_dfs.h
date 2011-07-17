@@ -5,8 +5,8 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_H
-#define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_H
+#ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_DFS_H
+#define CORE_PARALLEL_DISTRIBUTED_DUALTREE_DFS_H
 
 #include <boost/mpi/communicator.hpp>
 #include <boost/serialization/serialization.hpp>
@@ -21,7 +21,7 @@
 #include <omp.h>
 
 namespace core {
-namespace gnp {
+namespace parallel {
 
 template<typename DistributedProblemType>
 class DistributedDualtreeDfs {

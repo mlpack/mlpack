@@ -1,7 +1,11 @@
 cmake_minimum_required(VERSION 2.6)
 
 set(SOURCES
+  distributed_dualtree_dfs_dev.h
+  distributed_dualtree_dfs.h
   distributed_tree_util.h
+  distributed_tripletree_dfs_dev.h
+  distributed_tripletree_dfs.h
   parallel_sample_sort.h
   sample_distributed_tree_builder.h
   subtable_send_request.h

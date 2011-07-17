@@ -7,7 +7,7 @@
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 
 #include <omp.h>
-#include "core/gnp/distributed_dualtree_dfs_dev.h"
+#include "core/parallel/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
@@ -58,7 +58,7 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   boost::mpi::timer timer;
 
   // Instantiate a dual-tree algorithm of the KDE.
-  core::gnp::DistributedDualtreeDfs <
+  core::parallel::DistributedDualtreeDfs <
   mlpack::distributed_kde::DistributedKde <
   DistributedTableType, KernelAuxType > >
   distributed_dualtree_dfs;
