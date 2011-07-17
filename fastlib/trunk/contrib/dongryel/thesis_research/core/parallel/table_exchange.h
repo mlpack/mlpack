@@ -8,7 +8,6 @@
 #ifndef CORE_PARALLEL_TABLE_EXCHANGE_H
 #define CORE_PARALLEL_TABLE_EXCHANGE_H
 
-#include <boost/circular_buffer.hpp>
 #include <boost/mpi.hpp>
 #include "core/table/memory_mapped_file.h"
 #include "core/table/dense_matrix.h"
@@ -50,131 +49,81 @@ class TableExchange {
      */
     TableType *local_table_;
 
-    /** @brief The list of free cache blocks per process.
-     */
-    std::vector<int> free_cache_blocks_;
-
     /** @brief The number of cache blocks per process.
      */
     int num_cache_blocks_;
 
-    /** @brief The circular buffer that acts as the cache of received
-     *         subtables.
-     */
-    boost::circular_buffer<SubTableType> received_subtables_;
+    std::vector <
+    std::pair <
+    SubTableType, boost::mpi::request > > subtables_to_receive_;
+
+    std::vector< int > receive_cache_locks_;
+
+    std::vector<int> receiving_in_progress_;
+
+    std::vector<int> free_slots_for_receiving_;
+
+    std::vector <
+    boost::tuple <
+    SubTableType, boost::mpi::request, int > > subtables_to_send_;
+
+    std::vector<int> sending_in_progress_;
+
+    std::vector<int> free_slots_for_sending_;
 
   private:
-
-    int get_free_cache_block_() {
-
-      int free_cache_block_id = -1;
-      if(free_cache_blocks_.size() == 0) {
-
-        // In this case, the buffer is full. If so, we need to take
-        // out the head element (which is going to be overwritten) and
-        // destruct it manually since Boost circular buffer does not
-        // do so automatically.
-
-        // This is somewhat a hack. See the assignment operator for
-        // SubTableType in core/table/sub_table.h
-        SubTableType safe_free = received_subtables_.front();
-
-        // Push back the freed-up cache block retrieved from the
-        // subtable that is about to be evicted.
-        free_cache_blocks_.push_back(safe_free.cache_block_id());
-
-        // Evict the subtable.
-        received_subtables_.pop_front();
-      }
-
-      // Pop the list of free cache block IDs.
-      free_cache_block_id = free_cache_blocks_.back();
-      free_cache_blocks_.pop_back();
-      return free_cache_block_id;
-    }
-
-    /** @brief Pushes a new subtable to the given circular buffer,
-     *         evicting a pre-existing subtable and destroying it
-     *         appropriately if necessary.
-     */
-    void push_back_(
-      int process_id, SubTableType &sub_table_in) {
-
-      // Check if the buffer is full. If so, we need to take out the
-      // head element (which is going to be overwritten) and destruct
-      // it manually since Boost circular buffer does not do so
-      // automatically.
-      if(received_subtables_.full()) {
-
-        // This is somewhat a hack. See the assignment operator for
-        // SubTableType in core/table/sub_table.h
-        SubTableType safe_free = received_subtables_.front();
-
-        // Push back the freed-up cache block retrieved from the
-        // subtable that is about to be evicted.
-        free_cache_blocks_.push_back(safe_free.cache_block_id());
-      }
-
-      // Set the rank before pushing.
-      sub_table_in.table()->set_rank(process_id);
-      received_subtables_.push_back(sub_table_in);
-    }
 
     /** @brief Prints the existing subtables in the cache.
      */
     void PrintSubTables_(boost::mpi::communicator &world) {
       printf("\n\nProcess %d owns the subtables:\n", world.rank());
-      for(unsigned int i = 0; i < received_subtables_.size(); i++) {
+      for(unsigned int i = 0; i < subtables_to_receive_.size(); i++) {
         printf(
           "%d %d %d\n",
-          received_subtables_[i].table()->rank(),
-          received_subtables_[i].table()->get_tree()->begin(),
-          received_subtables_[i].table()->get_tree()->count());
+          subtables_to_receive_[i].first.table()->rank(),
+          subtables_to_receive_[i].first.table()->get_tree()->begin(),
+          subtables_to_receive_[i].first.table()->get_tree()->count());
       }
     }
 
   public:
 
-    void ClearCache() {
+    bool is_empty() const {
+      return
+        static_cast<int>(free_slots_for_receiving_.size()) ==
+        num_cache_blocks_ &&
+        static_cast<int>(free_slots_for_sending_.size()) == num_cache_blocks_;
+    }
 
-      while(! received_subtables_.empty()) {
-
-        // This is somewhat a hack. See the assignment operator for
-        // SubTableType in core/table/sub_table.h
-        SubTableType safe_free = received_subtables_.front();
-
-        // Push back the freed-up cache block retrieved from the
-        // subtable that is about to be evicted.
-        free_cache_blocks_.push_back(safe_free.cache_block_id());
-
-        // Pop from the received subtables.
-        received_subtables_.pop_front();
+    void LockCache(int cache_id, int num_times) {
+      if(cache_id >= 0) {
+        receive_cache_locks_[ cache_id ] += num_times;
       }
     }
 
-    /** @brief Finds a table with given MPI rank and the beginning and
-     *         the count.
-     */
-    SubTableType *FindSubTable(int process_id, int begin, int count) {
-      for(typename boost::circular_buffer<SubTableType>::iterator
-          it = received_subtables_.begin();
-          it != received_subtables_.end(); it++) {
-        if(
-          it->table()->rank() == process_id &&
-          it->table()->get_tree()->begin() == begin &&
-          it->table()->get_tree()->count() == count) {
+    void ReleaseCache(int cache_id) {
+      if(cache_id >= 0) {
+        receive_cache_locks_[ cache_id ] --;
 
-          // Put the found subtable to the end.
-          SubTableType subtable_copy = *it;
-          (*it) = received_subtables_.front();
-          received_subtables_.pop_front();
-          received_subtables_.push_back(subtable_copy);
-          return &(received_subtables_.back());
+        // If the subtable is not needed, feel free to free it.
+        if(receive_cache_locks_[ cache_id ] == 0) {
+
+          // This is a hack. See the assignment operator for SubTable.
+          SubTableType safe_free = subtables_to_receive_[cache_id].first;
+
+          free_slots_for_receiving_.push_back(cache_id);
         }
       }
+    }
 
-      // Returns a NULL pointer for the non-existing table request.
-      return NULL;
+    /** @brief Grabs the subtable in the given cache position.
+     */
+    SubTableType *FindSubTable(int cache_id) {
+      SubTableType *returned_subtable = NULL;
+      if(cache_id >= 0) {
+        returned_subtable = &(subtables_to_receive_[cache_id].first);
+      }
+      return returned_subtable;
     }
 
     /** @brief Initialize the all-to-all exchange object with a
@@ -197,93 +146,143 @@ class TableExchange {
           num_cache_blocks_);
       }
 
-      // Preallocate the point cache.
-      received_subtables_.set_capacity(num_cache_blocks_);
+      // Preallocate the send and receive caches.
+      subtables_to_receive_.resize(num_cache_blocks_);
+      subtables_to_send_.resize(num_cache_blocks_);
 
-      // Allocate the free cache block list.
+      // Initialize the locks.
+      receive_cache_locks_.resize(num_cache_blocks_);
+      std::fill(
+        receive_cache_locks_.begin(), receive_cache_locks_.end(), 0);
+
+      // Allocate the free cache block lists.
       for(int j = 0; j < num_cache_blocks_; j++) {
-        free_cache_blocks_.push_back(j);
+        free_slots_for_receiving_.push_back(j);
+        free_slots_for_sending_.push_back(j);
       }
-      printf("Process %d finished initializing the cache blocks.\n",
-             world.rank());
+      printf(
+        "Process %d finished initializing the cache blocks.\n", world.rank());
     }
 
-    /** @brief The all-to-all exchange of subtables among all MPI
-     *         processes. Up to a given number of levels of subtrees
-     *         are exchanged per request.
+    /** @brief Issue a set of asynchronous send and receive
+     *         operations.
+     *
+     *  @return received_subtables The list of received subtables.
      */
-    bool AllToAll(
+    template<typename SendRequestPriorityQueueType>
+    void AsynchSendReceive(
       boost::mpi::communicator &world,
-      std::vector <
-      std::vector< std::pair<int, int> > > &receive_requests) {
+      std::vector< SendRequestPriorityQueueType > &prioritized_send_subtables,
+      std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids,
+      int *num_completed_sends) {
 
-      // The gathered request lists to send to each process.
-      std::vector< std::vector< std::pair<int, int> > > send_requests;
+      // Clear the list of received subtables in this round.
+      received_subtable_ids->resize(0);
 
-      // Do an all-reduce to check whether you are done.
-      bool all_done_flag = true;
-      bool local_done_flag = true;
-      for(unsigned int i = 0;
-          local_done_flag && i < receive_requests.size(); i++) {
-        local_done_flag = (receive_requests[i].size() == 0);
-      }
-      boost::mpi::all_reduce(
-        world, local_done_flag, all_done_flag, std::logical_and<bool>());
-      if(all_done_flag) {
-        return true;
-      }
+      // Initiate send requests.
+      while(free_slots_for_sending_.size() > 0) {
 
-      // Each process gathers the list of requests: (node
-      // begin, node count) pairs.
-      boost::mpi::all_to_all(
-        world, receive_requests, send_requests);
+        // This is so that we do not send everything to one single
+        // process, i.e. pseudo-load-balancing.
+        int probe_start = core::math::RandInt(world.size());
+        bool all_empty = true;
 
-      // Prepare the list of subtables to send.
-      std::vector< SubTableListType > send_subtables(
-        send_requests.size());
-      for(unsigned int j = 0; j < send_requests.size(); j++) {
-        for(unsigned int i = 0; i < send_requests[j].size(); i++) {
-          int begin = send_requests[j][i].first;
-          int count = send_requests[j][i].second;
-          send_subtables[j].push_back(
-            local_table_,
-            local_table_->get_tree()->FindByBeginCount(begin, count),
-            false);
+        for(int i = 0; all_empty && i < world.size(); i++) {
+
+          // Skip empty lists.
+          int probe_index = (i + probe_start) % world.size();
+          if(prioritized_send_subtables[probe_index].size() == 0) {
+            continue;
+          }
+          all_empty = false;
+
+          // Take a peek at the top send request and pop it.
+          const typename
+          SendRequestPriorityQueueType::value_type &top_send_request =
+            prioritized_send_subtables[probe_index].top();
+          int destination = top_send_request.destination();
+          int begin = top_send_request.begin();
+          int count = top_send_request.count();
+          prioritized_send_subtables[probe_index].pop();
+
+          // Get a free send slot.
+          int free_send_slot = free_slots_for_sending_.back();
+          free_slots_for_sending_.pop_back();
+
+          // Prepare the subtable to send.
+          subtables_to_send_[
+            free_send_slot].get<0>().Init(
+              local_table_,
+              local_table_->get_tree()->FindByBeginCount(begin, count),
+              false);
+
+          // Issue an asynchronous send and break.
+          subtables_to_send_[free_send_slot].get<1>() =
+            world.isend(
+              destination, begin, subtables_to_send_[free_send_slot].get<0>());
+          subtables_to_send_[free_send_slot].get<2>() = destination;
+          sending_in_progress_.push_back(free_send_slot);
+          break;
         }
-      }
 
-      // Prepare the subtable list to be received.
-      std::vector< SubTableListType > received_subtables_in_this_round;
-      received_subtables_in_this_round.resize(world.size());
-      for(unsigned int j = 0; j < receive_requests.size(); j++) {
-        for(unsigned int i = 0; i < receive_requests[j].size(); i++) {
+        // If nothing was found, then break.
+        if(all_empty) {
+          break;
+        }
+      } // end of queuing up the sends.
+
+      // Queue incoming receives as long as there is a free slot.
+      while(free_slots_for_receiving_.size() > 0) {
+
+        // Probe whether there is an incoming reference subtable.
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(boost::mpi::any_source, boost::mpi::any_tag)) {
 
           // Get a free cache block.
-          int free_cache_block_id = this->get_free_cache_block_();
+          int free_receive_slot = free_slots_for_receiving_.back();
+          free_slots_for_receiving_.pop_back();
 
-          // Allocate the cache block to the subtable that is about
-          // to be received.
-          received_subtables_in_this_round[j].push_back(
-            free_cache_block_id, false);
+          // Prepare the subtable to be received.
+          subtables_to_receive_[ free_receive_slot ].first.Init(
+            free_receive_slot, false);
+          world.recv(
+            l_status->source(),
+            l_status->tag(),
+            subtables_to_receive_[ free_receive_slot ].first);
+          receiving_in_progress_.push_back(free_receive_slot);
+
+          received_subtable_ids->push_back(
+            boost::make_tuple(
+              subtables_to_receive_[
+                free_receive_slot ].first.table()->rank(),
+              subtables_to_receive_[
+                free_receive_slot ].first.table()->get_tree()->begin(),
+              subtables_to_receive_[
+                free_receive_slot ].first.table()->get_tree()->count(),
+              free_receive_slot));
+        }
+        else {
+          break;
         }
       }
 
-      // All-to-all to exchange the subtables.
-      boost::mpi::all_to_all(
-        world, send_subtables, received_subtables_in_this_round);
+      // Check whether the subtables have been sent.
+      for(int i = 0; i < static_cast<int>(sending_in_progress_.size()); i++) {
+        int send_subtable_to_test = sending_in_progress_[i];
+        if(subtables_to_send_[ send_subtable_to_test ].get<1>().test()) {
 
-      // Add the new subtables to the existing cache.
-      for(int j = 0; j < world.size(); j++) {
-        for(unsigned int i = 0;
-            i < received_subtables_in_this_round[j].size(); i++) {
+          // Free up the send slot.
+          sending_in_progress_[i] = sending_in_progress_.back();
+          sending_in_progress_.pop_back();
+          free_slots_for_sending_.push_back(send_subtable_to_test);
 
-          // Put the fixed subtables into the list.
-          this->push_back_(
-            j, received_subtables_in_this_round[j][i]);
+          // Tally the finished sends.
+          (*num_completed_sends)++;
+
+          // Decrement so that the current index can be re-tested.
+          i--;
         }
       }
-
-      return false;
     }
 };
 }

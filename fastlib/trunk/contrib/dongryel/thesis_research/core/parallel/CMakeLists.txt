@@ -4,6 +4,7 @@ set(SOURCES
   distributed_tree_util.h
   parallel_sample_sort.h
   sample_distributed_tree_builder.h
+  subtable_send_request.h
   table_exchange.h
   vanilla_distributed_tree_builder.h
 )
