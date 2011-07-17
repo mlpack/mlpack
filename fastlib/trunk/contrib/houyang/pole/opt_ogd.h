@@ -9,6 +9,7 @@
 class OGD : public Learner {
  public:
   vector<Svector> w_pool_; // shared memory for weight vectors of each thread
+  vector<Svector> w_avg_pool_; // shared memory for averaged weight vec over iterations
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
  private:
