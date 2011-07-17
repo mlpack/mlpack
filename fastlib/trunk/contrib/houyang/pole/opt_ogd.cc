@@ -51,35 +51,50 @@ void* OGD::OgdThread(void *in_par) {
       break;
     case 1: // predict and local update
       double eta;
-      //--- step size for SGD
+      //Lp->w_pool_[tid].Print();
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
+
+      for (T_IDX b = 0; b<Lp->mb_size_; b++) {
+	// calculate w_avg and make logs
+	Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
+	Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
+	Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
+	//Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
+	double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
+						*exs[b], Lp->b_pool_[tid]);
+	Lp->MakeLog(tid, exs[b], pred_val);
+      }
+
+      //--- step size for SGD
+      
       if (Lp->reg_type_ == 2) {
-	eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+	//eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+	//eta= 1.0 / sqrt(Lp->t_n_it_[tid]);
       }
       else {
 	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
       }
+      
       //--- constant step size
-      //eta = 1.0 / Lp->reg_factor_;
+      eta = 1.0/(60*Lp->reg_factor_);
 
-      //--- local update: regularization part
-      if (Lp->reg_type_ == 2) {
-	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
-	Lp->w_pool_[tid] *= 1.0 - eta * Lp->reg_factor_;
-	// update bias term
-	if (Lp->use_bias_) {
-	  Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
-	}
-      }
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
 	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
 						*exs[b], Lp->b_pool_[tid]);
-	Lp->MakeLog(tid, exs[b], pred_val);
 	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
+      }
+      //--- local update: regularization part
+      if (Lp->reg_type_ == 2) {
+	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
+	Lp->w_pool_[tid] *= (1.0 - eta * Lp->reg_factor_);
+	// update bias term
+	if (Lp->use_bias_) {
+	  Lp->b_pool_[tid] = Lp->b_pool_[tid] *(1.0 - eta * Lp->reg_factor_);
+	}
       }
       // update bias
       if (Lp->use_bias_) {
@@ -91,6 +106,7 @@ void* OGD::OgdThread(void *in_par) {
       //boost::this_thread::sleep(boost::posix_time::microseconds(1));
       // send message out
       Lp->m_pool_[tid] = Lp->w_pool_[tid];
+      
       //--- wait till all threads send their messages
       pthread_barrier_wait(&Lp->barrier_msg_all_sent_);
       Lp->t_state_[tid] = 2;
@@ -119,6 +135,7 @@ void OGD::Learn() {
   t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_pool_.resize(n_thread_);
+  w_avg_pool_.resize(n_thread_);
   m_pool_.resize(n_thread_);
   b_pool_.resize(n_thread_);
 
@@ -129,6 +146,7 @@ void OGD::Learn() {
     pars[t].Lp_ = this;
     b_pool_[t] = 0.0;
     w_pool_[t].Clear();
+    w_avg_pool_[t].Clear();
     t_state_[t] = 0;
     t_n_it_[t] = 0;
     t_n_used_examples_[t] = 0;
@@ -147,16 +165,17 @@ void OGD::Test() {
 
 void OGD::MakeLog(T_IDX tid, Example *x, double pred_val) {
   if (calc_loss_) {
+    //cout << "pred: " << pred_val <<", y: " << (double)x->y_ << endl;
     // Calc loss
     t_loss_[tid] = t_loss_[tid] + LF_->GetLoss(pred_val, (double)x->y_);
     if (reg_type_ == 2 && reg_factor_ != 0) {
       //L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
       t_loss_[tid] = t_loss_[tid] + 
-        0.5 * reg_factor_ * w_pool_[tid].SparseSqL2Norm();
+        0.5 * reg_factor_ * w_avg_pool_[tid].SparseSqL2Norm();
     }
     // for classification only: calc # of misclassifications
     if (type_ == "classification") {
-      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_pool_[tid], *x, b_pool_[tid]);
+      T_LBL pred_lbl = LinearPredictBiasLabelBinary(w_avg_pool_[tid], *x, b_pool_[tid]);
       //cout << x->y_ << " : " << pred_lbl << endl;
       if (pred_lbl != x->y_) {
 	t_err_[tid] =  t_err_[tid] + 1;
