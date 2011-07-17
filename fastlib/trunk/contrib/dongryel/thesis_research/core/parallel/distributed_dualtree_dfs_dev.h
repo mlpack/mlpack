@@ -105,7 +105,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   std::vector< std::pair<int, int> > > *essential_reference_subtrees,
   std::vector <
   std::vector< core::math::Range > > *squared_distance_ranges,
-  std::vector< double > *extrinsic_prunes) {
+  std::vector< double > *extrinsic_prunes,
+  std::vector<int> *num_pruned_reference_subtrees) {
 
   // Compute the squared distance ranges between the query node and
   // the reference node.
@@ -121,6 +122,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       int query_process_id;
       qnode_it.Next(&query_process_id);
       (*extrinsic_prunes)[query_process_id] += local_reference_node->count();
+      ((*num_pruned_reference_subtrees)[query_process_id])++;
     }
     return;
   }
@@ -150,12 +152,12 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->left(),
         essential_reference_subtrees, squared_distance_ranges,
-        extrinsic_prunes);
+        extrinsic_prunes, num_pruned_reference_subtrees);
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->right(),
         essential_reference_subtrees, squared_distance_ranges,
-        extrinsic_prunes);
+        extrinsic_prunes, num_pruned_reference_subtrees);
     }
     return;
   }
@@ -166,29 +168,35 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node,
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node,
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
   }
   else {
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->left(),
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->right(),
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->left(),
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->right(),
-      essential_reference_subtrees, squared_distance_ranges, extrinsic_prunes);
+      essential_reference_subtrees, squared_distance_ranges,
+      extrinsic_prunes, num_pruned_reference_subtrees);
   }
 }
 
@@ -209,6 +217,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
+  int *num_pruned_reference_subtrees,
   std::vector< FinePriorityQueueType > *tasks) {
 
   // The max number of points for the query subtree for each task.
@@ -225,11 +234,13 @@ DistributedProblemType >::InitialSetup_(
   // Each process needs to customize its reference set for each
   // participating query process.
   std::vector<double> extrinsic_prunes_broadcast(world_->size(), 0.0);
+  std::vector<int> num_pruned_reference_subtrees_broadcast(world_->size(), 0);
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(),
     essential_reference_subtrees_to_send,
-    send_priorities, &extrinsic_prunes_broadcast);
+    send_priorities, &extrinsic_prunes_broadcast,
+    &num_pruned_reference_subtrees_broadcast);
 
   // Fill out the prioritized send list.
   std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
@@ -268,19 +279,27 @@ DistributedProblemType >::InitialSetup_(
   // Do an all to all to let each participating query process its
   // initial frontier.
   std::vector< double > extrinsic_prune_lists;
+  std::vector<int> num_pruned_reference_subtree_lists;
   boost::mpi::all_to_all(
     *world_, *essential_reference_subtrees_to_send, *reference_frontier_lists);
   boost::mpi::all_to_all(
     *world_, *send_priorities, *receive_priorities);
   boost::mpi::all_to_all(
     *world_, extrinsic_prunes_broadcast, extrinsic_prune_lists);
+  boost::mpi::all_to_all(
+    *world_, num_pruned_reference_subtrees_broadcast,
+    num_pruned_reference_subtree_lists);
 
   // Tally up the number of reference subtrees to receive for the
-  // current MPI process.
+  // current MPI process. Tally up the number of pruned reference
+  // subtrees.
   *num_reference_subtrees_to_receive = 0;
+  *num_pruned_reference_subtrees = 0;
   for(unsigned int i = 0; i < reference_frontier_lists->size(); i++) {
     (*num_reference_subtrees_to_receive) +=
       ((*reference_frontier_lists)[i]).size();
+    (*num_pruned_reference_subtrees) +=
+      num_pruned_reference_subtree_lists[i];
   }
 
   // Add up the initial pruned amounts and reseed it on the query
@@ -292,11 +311,6 @@ DistributedProblemType >::InitialSetup_(
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
-
-  printf("Process %d pruned initially: %g\n", world_->rank(), initial_pruned);
-  if(initial_pruned > 0) {
-    exit(0);
-  }
 }
 
 template<typename DistributedProblemType>
@@ -333,6 +347,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
+  int num_pruned_reference_subtrees;
   InitialSetup_(
     metric, query_results, table_exchange, &local_query_subtrees,
     &reference_subtrees_to_send, &send_priorities,
@@ -341,6 +356,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &reference_subtrees_to_receive,
     &receive_priorities,
     &num_reference_subtrees_to_receive,
+    &num_pruned_reference_subtrees,
     &tasks);
 
   // The number of reference subtree releases (used for termination
@@ -486,7 +502,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
               num_reference_subtree_releases ==
               static_cast<int>(
                 local_query_subtrees.size() *
-                num_reference_subtrees_to_receive) &&
+                num_reference_subtrees_to_receive +
+                num_pruned_reference_subtrees) &&
               num_reference_subtrees_to_send == num_completed_sends);
         }
       }

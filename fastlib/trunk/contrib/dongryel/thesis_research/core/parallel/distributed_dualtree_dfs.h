@@ -62,12 +62,6 @@ class DistributedDualtreeDfs {
     typedef typename DistributedProblemType::ArgumentType ArgumentType;
 
     /** @brief The type of the object used for prioritizing the
-     *         computation globally (or on a coarse scale).
-     */
-    typedef boost::tuple <
-    TreeType *, boost::tuple<int, int, int>, double > CoarseFrontierObjectType;
-
-    /** @brief The type of the object used for prioritizing the
      *         computation per stage on a shared memory (on a fine
      *         scale).
      */
@@ -169,15 +163,6 @@ class DistributedDualtreeDfs {
          SendRequestPriorityQueueType;
 
     /** @brief The type of the priority queue that is used for
-     *         prioritizing the coarse-grained computations.
-     */
-    typedef std::priority_queue <
-    CoarseFrontierObjectType,
-    std::vector<CoarseFrontierObjectType>,
-    PrioritizeTasks_<CoarseFrontierObjectType> >
-    CoarsePriorityQueueType;
-
-    /** @brief The type of the priority queue that is used for
      *         prioritizing the fine-grained computations.
      */
     typedef std::priority_queue <
@@ -196,7 +181,8 @@ class DistributedDualtreeDfs {
       essential_reference_subtrees,
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
-      std::vector<double> *extrinsic_prunes);
+      std::vector<double> *extrinsic_prunes,
+      std::vector<int> *num_pruned_reference_subtrees);
 
     template<typename MetricType>
     void GenerateTasks_(
@@ -224,6 +210,7 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
+      int *num_pruned_reference_subtrees,
       std::vector< FinePriorityQueueType > *tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
