@@ -7,7 +7,7 @@
 #define MLPACK_DISTRIBUTED_LOCAL_REGRESSION_DISTRIBUTED_LOCAL_REGRESSION_DEV_H
 
 #include <omp.h>
-#include "core/gnp/distributed_dualtree_dfs_dev.h"
+#include "core/parallel/distributed_dualtree_dfs_dev.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
@@ -67,7 +67,7 @@ DistributedTableType, KernelType, MetricType >::Compute(
   boost::mpi::timer timer;
 
   // Instantiate a dual-tree algorithm of the local regression.
-  core::gnp::DistributedDualtreeDfs <
+  core::parallel::DistributedDualtreeDfs <
   mlpack::distributed_local_regression::DistributedLocalRegression <
   DistributedTableType, KernelType, MetricType > >
   distributed_dualtree_dfs;

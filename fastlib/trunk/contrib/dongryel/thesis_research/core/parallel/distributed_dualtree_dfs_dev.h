@@ -6,15 +6,15 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
-#define CORE_GNP_DISTRIBUTED_DUALTREE_DFS_DEV_H
+#ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_DFS_DEV_H
+#define CORE_PARALLEL_DISTRIBUTED_DUALTREE_DFS_DEV_H
 
 #include <boost/bind.hpp>
 #include <boost/mpi.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <map>
 #include <queue>
-#include "core/gnp/distributed_dualtree_dfs.h"
+#include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
@@ -27,7 +27,7 @@ extern core::table::MemoryMappedFile *global_m_file_;
 }
 
 namespace core {
-namespace gnp {
+namespace parallel {
 
 template<typename ProblemType>
 int DistributedDualtreeDfs<ProblemType>::num_deterministic_prunes() const {
