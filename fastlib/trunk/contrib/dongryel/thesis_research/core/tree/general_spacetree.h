@@ -585,51 +585,45 @@ class GeneralBinarySpaceTree {
       assigned_point_indices->resize(comm.size());
       membership_counts_per_process->resize(comm.size());
 
-      // Check whether the left or the right is empty. If so, steal at
-      // least one point from the non-empty part to make sure that it
-      // does not partition into one part containing nothing.
-      if(left_count == matrix_in.n_cols()) {
-        for(unsigned int i = 0; i < left_membership.size(); i++) {
-
-          // Find the first one that is assigned to the left and
-          // switch it to the right.
-          if(left_membership[i]) {
-            left_membership[i] = false;
-            left_count--;
-            break;
-          }
-        }
-      }
-      else if(left_count == 0) {
-        for(unsigned int i = 0; i < left_membership.size(); i++) {
-
-          // Find the first one that is assigned to the right and
-          // switch it to the left.
-          if(left_membership[i] == false) {
-            left_membership[i] = true;
-            left_count++;
-            break;
-          }
-        }
-      }
-
       // Loop through the membership vectors and assign to the right
       // process partner.
       int left_destination, right_destination;
       core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
         comm, &left_destination, &right_destination, (int *) NULL);
+
+      int random_start = (comm.rank() < comm.size() / 2) ?
+                         comm.size() / 2 : 0;
+      int random_end = (comm.rank() < comm.size() / 2) ?
+                       comm.size() : comm.size() / 2;
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
+          if(comm.rank() >= comm.size() / 2) {
+            left_destination = core::math::RandInt(random_start, random_end);
+          }
           (*assigned_point_indices)[left_destination].push_back(i);
           (*membership_counts_per_process)[left_destination]++;
         }
         else {
+          if(comm.rank() < comm.size() / 2) {
+            right_destination = core::math::RandInt(random_start, random_end);
+          }
           (*assigned_point_indices)[right_destination].push_back(i);
           (*membership_counts_per_process)[right_destination]++;
         }
       }
 
-      return true;
+      // Check whether the local assignment is ok.
+      bool assignment_is_ok =
+        (comm.rank() < comm.size() / 2) ?
+        (left_count > 0) : (left_count < matrix_in.n_cols());
+
+      // Do an all-reduction to check whether the assignment is ok.
+      bool global_assignment_is_ok = true;
+      boost::mpi::all_reduce(
+        comm, assignment_is_ok, global_assignment_is_ok,
+        std::logical_and<bool>());
+
+      return global_assignment_is_ok;
     }
 
 #ifdef _OPENMP_
@@ -797,10 +791,6 @@ class GeneralBinarySpaceTree {
     }
 
     /** @brief Creates a tree from data.
-     *
-     * This requires you to pass in two unitialized ArrayLists which
-     * will contain index mappings so you can account for the
-     * re-ordering of the matrix.
      */
     template<typename MetricType, typename IndexType>
     static TreeType *MakeTree(
