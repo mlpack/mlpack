@@ -13,7 +13,7 @@ Package: libarmadillo-dev
 Section: libdevel
 Architecture: any
 Suggests: libitpp-dev
-Depends: libarmadillo1 (= ${binary:Version}), ${misc:Depends}
+Depends: libarmadillo2 (= ${binary:Version}), ${misc:Depends}
 Replaces: libarmadillo-doc (<= 1.1.2-1)
 Conflicts: libarmadillo-doc
 Description: streamlined C++ linear algebra library - Headers
@@ -25,7 +25,7 @@ Description: streamlined C++ linear algebra library - Headers
  .
  This package has the development libraries and headers for Armadillo.
 
-Package: libarmadillo1
+Package: libarmadillo2
 Section: libs
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}

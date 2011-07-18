@@ -1,3 +1,9 @@
+armadillo (2.0.2+dfsg-0ubuntu1) natty; urgency=low
+
+  * New upstream release
+
+ -- Sterling Peet <sterling.peet@gatech.edu>  Mon, 18 Jul 2011 16:32:21 -0400
+
 armadillo (1.2.0+dfsg-0ubuntu1) natty; urgency=low
 
   * Latest stable release
