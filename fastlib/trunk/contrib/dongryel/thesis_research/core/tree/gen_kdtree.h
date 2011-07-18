@@ -95,6 +95,7 @@ class GenKdTreeMidpointSplitter {
  */
 template< typename IncomingStatisticType >
 class GenKdTree {
+
   public:
 
     /** @brief The bounding primitive used in kd-tree.
@@ -104,6 +105,8 @@ class GenKdTree {
     /** @brief The statistics type used in the tree.
      */
     typedef IncomingStatisticType StatisticType;
+
+  public:
 
     template<typename MetricType>
     static void FindBoundFromMatrix(
@@ -258,15 +261,14 @@ class GenKdTree {
       core::tree::GenKdTreeMidpointSplitter::ComputeWidestDimension(
         bound, &split_dim, &max_width);
 
+      if(max_width < std::numeric_limits<double>::epsilon()) {
+        return false;
+      }
 
       // Choose the split value along the dimension to be splitted.
       double split_val =
         core::tree::GenKdTreeMidpointSplitter::ChooseKdTreeSplitValue(
           bound, split_dim);
-
-      if(max_width < std::numeric_limits<double>::epsilon()) {
-        return false;
-      }
 
       // Copy the split dimension and split value.
       BoundType left_bound;

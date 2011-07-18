@@ -6,6 +6,7 @@
  */
 
 #include <boost/mpi.hpp>
+#include <omp.h>
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/distributed_table.h"
@@ -93,6 +94,8 @@ class TestDistributedTree {
 }
 
 int main(int argc, char *argv[]) {
+
+  omp_set_num_threads(1);
 
   // Initialize boost MPI.
   boost::mpi::environment env(argc, argv);
