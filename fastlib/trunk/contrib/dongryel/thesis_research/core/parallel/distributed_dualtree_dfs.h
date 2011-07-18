@@ -181,8 +181,7 @@ class DistributedDualtreeDfs {
       essential_reference_subtrees,
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
-      std::vector<double> *extrinsic_prunes,
-      std::vector<int> *num_pruned_reference_subtrees);
+      std::vector<double> *extrinsic_prunes);
 
     template<typename MetricType>
     void GenerateTasks_(
@@ -210,7 +209,6 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
-      int *num_pruned_reference_subtrees,
       std::vector< FinePriorityQueueType > *tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
