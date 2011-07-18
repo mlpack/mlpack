@@ -1,0 +1,6 @@
+version=3
+#http://sf.net/arma/armadillo-(.*)\.tar\.gz
+opts=filenamemangle=s/.*armadillo-(.*)\.tar\.gz\/download/armadillo-$1.tar.gz/,\
+dversionmangle=s/\+dfsg// \
+http://sourceforge.net/projects/arma/files armadillo-(.*)\.tar\.gz/download debian bash debian/dfsg-repack.sh
+

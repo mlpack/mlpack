@@ -1,0 +1,12 @@
+Document: armadillo
+Title: Armadillo Manual
+Author: Conrad Sanderson
+Abstract: This manual contains the Armadillo technical documentation
+ which documents the various features and methods provided in
+ the Armadillo library for vector and matrix based mathematical
+ computations.
+Section: Science/Mathematics
+
+Format: HTML
+Index: /usr/share/doc/libarmadillo-dev/index.html
+Files: /usr/share/doc/libarmadillo-dev/*.html

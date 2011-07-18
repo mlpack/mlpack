@@ -1,0 +1,22 @@
+Patch system for armadillo
+==========================
+
+This package uses quilt to maintain local changes to the speech-tools
+distribution.  The Debian-specific patches are maintained in the debian/patches/
+directory.
+
+To apply all the patches, preparing the source for building, use:
+  debian/rules patch
+
+To revert the patches, preparing to build a source package, use:
+  debian/rules unpatch
+
+You do not need to manually execute these targets when building the package;
+they are part of the debian/rules target chain.
+
+For more information on the quilt integration with Debian packages, as well as
+editing, adding or removing patches, please see the quilt documentation; in
+recent versions of the Debian package of quilt, See:
+  /usr/share/doc/quilt/README.source
+
+ -- Kumar Appaiah <akumar@debian.org>, Sat, 19 Dec 2009 01:45:05 -0600
