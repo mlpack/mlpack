@@ -1,0 +1,66 @@
+#!/usr/bin/make -f
+# -*- makefile -*-
+
+DEB_HOST_GNU_TYPE   ?= $(shell dpkg-architecture -qDEB_HOST_GNU_TYPE)
+DEB_BUILD_GNU_TYPE  ?= $(shell dpkg-architecture -qDEB_BUILD_GNU_TYPE)
+ifneq ($(DEB_HOST_GNU_TYPE),$(DEB_BUILD_GNU_TYPE))
+CROSS= --build $(DEB_BUILD_GNU_TYPE) --host $(DEB_HOST_GNU_TYPE)
+else
+CROSS= --build $(DEB_BUILD_GNU_TYPE)
+endif
+
+config.status: configure
+	dh_testdir
+	./configure
+
+build: build-stamp
+
+build-stamp: config.status
+	dh_testdir
+	cmake -D INSTALL_LIB_DIR=lib -D CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT:BOOL=ON  . # specified to install to the debian/tmp directory.
+	$(MAKE)
+	touch $@
+
+clean:
+	dh_testdir
+	dh_testroot
+	rm -f build-stamp
+	rm -rf debian/doc_gen
+	[ ! -f Makefile ] || $(MAKE) clean
+	rm -f config.guess config.sub Makefile
+	rm -f CMakeCache.txt cmake_install.cmake
+	rm -rf CMakeFiles
+	rm -f install_manifest.txt
+	dh_clean  --exclude ./src/include/armadillo_bits/dgemm_proto.hpp.orig
+
+install: build
+	dh_testdir
+	dh_testroot
+	dh_clean --exclude ./src/include/armadillo_bits/dgemm_proto.hpp.orig
+	dh_installdirs
+	$(MAKE) prefix=$(CURDIR)/debian/tmp/usr install DESTDIR=debian/tmp
+
+binary-arch: build install
+	dh_testdir -a
+	dh_testroot -a
+	dh_installchangelogs -a
+	dh_installdocs -a
+	dh_installexamples -a
+	dh_install -a --sourcedir=debian/tmp
+	dh_installman -a
+	dh_link -a
+	dh_strip -a
+	dh_compress -a -X.cpp
+	dh_fixperms -a
+	dh_makeshlibs -a
+	dh_installdeb -a
+	dh_shlibdeps -a
+	dh_gencontrol -a
+	dh_md5sums -a
+	dh_builddeb -a
+
+binary-indep: build install
+# Currently no arch-independent packages
+
+binary: binary-indep binary-arch
+.PHONY: build clean binary-arch binary install
