@@ -16,6 +16,7 @@
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/parallel/load_balancer.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"

@@ -44,12 +44,14 @@ endif()
 set(CUDA_TOOLKIT_ROOT_DIR $ENV{HOME}/local/cuda)
 find_package(CUDA)
 
+# find ParMETIS
+find_package(PARMETIS)
+include_directories(${PARMETIS_INCLUDE_DIR})
+link_directories(${PARMETIS_LIBRARIES})
+
 # Add additional complie flags.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
-
-# Add the Electric fence.
-# set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} -lefence")
 
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
