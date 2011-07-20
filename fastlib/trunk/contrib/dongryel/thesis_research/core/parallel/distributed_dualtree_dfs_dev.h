@@ -305,6 +305,7 @@ DistributedProblemType >::InitialSetup_(
     *world_,
     *local_query_subtrees,
     *essential_reference_subtrees_to_send,
+    *reference_frontier_lists,
     *num_reference_subtrees_to_receive);
 }
 
