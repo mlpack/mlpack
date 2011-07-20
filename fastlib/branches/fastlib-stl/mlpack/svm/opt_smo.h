@@ -79,7 +79,7 @@ class SMO {
   Kernel kernel_;
   index_t n_data_; /* number of data samples */
   index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  arma::mat datamatrix_; /* alias for the data matrix, including labels in the last row */
+  arma::mat *datamatrix_; /* alias for the data matrix, including labels in the last row */
   //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
   arma::vec alpha_; /* the alphas, to be optimized */
@@ -126,7 +126,7 @@ class SMO {
     n_iter_ = n_iter < MAX_NUM_ITER_SMO ? n_iter: MAX_NUM_ITER_SMO;
     accuracy_ = accuracy;
     if (learner_typeid == 0) { // SVM_C
-      if (hinge_sqhinge_==2) { // L2-SVM
+      if (hinge_sqhinge_ == 2) { // L2-SVM
 	Cp_ = INFINITY;
 	Cn_ = INFINITY;
 	C_ = CnEpsilon;
@@ -174,7 +174,7 @@ class SMO {
   void CalcBias_();
 
   /*  void GetVector_(index_t i, Vector *v) const {
-    datamatrix_.MakeColumnSubvector(i, 0, datamatrix_.n_rows()-1, v);
+    datamatrix_->MakeColumnSubvector(i, 0, datamatrix_->n_rows()-1, v);
   }
   */
 
@@ -229,7 +229,7 @@ class SMO {
     // Do Caching. Store the recently caculated kernel values.
     //i_cache_ = i;
     //j_cache_ = j;
-    cached_kernel_value_ = kernel_.Eval(datamatrix_.col(i), datamatrix_.col(j), n_features_);
+    cached_kernel_value_ = kernel_.Eval(datamatrix_->col(i), datamatrix_->col(j), n_features_);
     
     if (hinge_sqhinge_ == 2) { // L2-SVM
       if (i == j) {
@@ -260,7 +260,7 @@ void SMO<TKernel>::ReconstructGradient_() {
   else if (learner_typeid_ == 1) { // SVM_R
     for (i=n_active_; i<n_alpha_; i++) {
       j = i >= n_data_ ? (i-n_data_) : i;
-      grad_[j] = grad_bar_[j] + datamatrix_(datamatrix_.n_rows-1, active_set_[j]) - epsilon_; // TODO
+      grad_[j] = grad_bar_[j] + (*datamatrix_)(datamatrix_->n_rows-1, active_set_[j]) - epsilon_; // TODO
     }
   }
 
@@ -343,7 +343,6 @@ void SMO<TKernel>::Shrinking_() {
   }
 
   // Find the alpha to be shrunk
-  printf("Shrinking...\n");
   for (t=0; t<n_active_; t++) {
     // Shrinking: put inactive alphas behind the active set
     if (TestShrink_(t, y_grad_max, y_grad_min)) {
@@ -367,7 +366,6 @@ void SMO<TKernel>::Shrinking_() {
   //printf("%d: gap:%f, n_active:%d\n", ct_iter_, gap, n_active_);
   // do unshrinking for the first time when y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_
   if ( reconstructed_==false && gap <= SMO_UNSHRINKING_FACTOR * accuracy_ ) {
-    printf("Unshrinking...\n");
     // Unshrinking: put shrinked alphas back to active set
     // 1.recover gradient
     ReconstructGradient_();
@@ -417,7 +415,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 
     y_.resize(n_alpha_,0);
     for (i = 0; i < n_alpha_; i++) {
-      y_[i] = datamatrix_(datamatrix_.n_rows-1, i) > 0 ? 1 : -1;
+      y_[i] = (*datamatrix_)(datamatrix_->n_rows-1, i) > 0 ? 1 : -1;
     }
   }
   else if (learner_typeid_ == 1) { // SVM_R
@@ -432,8 +430,8 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
     for (i = 0; i < n_data_; i++) {
       y_[i] = 1; // -> alpha_i
       y_[i + n_data_] = -1; // -> alpha_i^*
-      grad_[i] = epsilon_ - datamatrix_(datamatrix_.n_rows-1, i);
-      grad_[i + n_data_] = epsilon_ + datamatrix_(datamatrix_.n_rows-1, i);
+      grad_[i] = epsilon_ - (*datamatrix_)(datamatrix_->n_rows-1, i);
+      grad_[i + n_data_] = epsilon_ + (*datamatrix_)(datamatrix_->n_rows-1, i);
     }
   }
   else if (learner_typeid_ == 2) { // SVM_DE
@@ -451,18 +449,19 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   index_t i,j;
-  // Load data
-  datamatrix_ = dataset_in->matrix();
-  n_data_ = datamatrix_.n_cols;
-  n_features_ = datamatrix_.n_rows - 1; // excluding the last row for labels
-  //datamatrix_samples_only_.Alias(datamatrix_.ptr(), n_features_, n_data_);
+  // Load data, no deep copy
+  datamatrix_ = const_cast<arma::mat*>(&dataset_in->matrix()); // FIXME: const_cast should go
+  //*datamatrix_ = arma::trans(*datamatrix_);
+  n_data_ = datamatrix_->n_cols;
+  n_features_ = datamatrix_->n_rows - 1; // excluding the last row for labels
+  //datamatrix_samples_only_.Alias(datamatrix_->ptr(), n_features_, n_data_);
 
   // Learners initialization
   LearnersInit_(learner_typeid);
 
   // General learner-independent initializations
-  budget_ = 0; //  Safe?
-  budget_ = min(budget_, (int) n_data_);
+  //budget_ = min(budget_, (int) n_data_);
+  budget_ = (int) n_data_;
   bias_ = 0.0;
   n_sv_ = 0;
   reconstructed_ = false;
@@ -495,7 +494,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   grad_bar_.set_size(n_alpha_);
   grad_bar_.zeros();
 
-  do_shrinking_ = mlpack::IO::GetParam<int>("svm/shrink");
+  do_shrinking_ = mlpack::IO::GetParam<bool>("svm/shrink");
   ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i=0; i<n_alpha_; i++) {
@@ -507,7 +506,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     }
   }
 
-  printf("SMO initialization done!\n");
+  std::cout << "SMO initialization done!\n";
   
   // Begin SMO iterations
   ct_iter_ = 0;
@@ -532,13 +531,13 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      printf("SMO terminates since the accuracy %f achieved!!! Number of iterations: %"LI".\n", accuracy_, ct_iter_);
+      std::cout << "SMO terminates since the accuracy " << accuracy_ << " achieved!!! Number of iterations: " << ct_iter_ << ".\n";
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      fprintf(stderr, "SMO terminates since the number of iterations %"LI" exceeded !!! Gap: %f.\n", n_iter_, gap_);
+      std::cerr<< "SMO terminates since the number of iterations " << ct_iter_ << " exceeded!!! Gap: " << gap_ << "\n";
       break;
     }
   }
