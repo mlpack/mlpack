@@ -148,7 +148,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Maximum number of points at a leaf of the tree."
   )(
     "max_num_work_to_dequeue_per_stage_in",
-    boost::program_options::value<int>()->default_value(30),
+    boost::program_options::value<int>()->default_value(5),
     "The number of work items to dequeue per process."
   )(
     "max_subtree_size_in",

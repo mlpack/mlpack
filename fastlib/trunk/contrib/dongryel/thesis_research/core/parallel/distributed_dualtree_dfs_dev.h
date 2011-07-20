@@ -16,6 +16,7 @@
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/parallel/dualtree_load_balancer.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
@@ -299,6 +300,12 @@ DistributedProblemType >::InitialSetup_(
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
+
+  core::parallel::DualtreeLoadBalancer::Compute(
+    *world_,
+    *local_query_subtrees,
+    *essential_reference_subtrees_to_send,
+    *num_reference_subtrees_to_receive);
 }
 
 template<typename DistributedProblemType>

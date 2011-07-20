@@ -590,23 +590,12 @@ class GeneralBinarySpaceTree {
       int left_destination, right_destination;
       core::parallel::DistributedTreeExtraUtil::left_and_right_destinations(
         comm, &left_destination, &right_destination, (int *) NULL);
-
-      int random_start = (comm.rank() < comm.size() / 2) ?
-                         comm.size() / 2 : 0;
-      int random_end = (comm.rank() < comm.size() / 2) ?
-                       comm.size() : comm.size() / 2;
       for(unsigned int i = 0; i < left_membership.size(); i++) {
         if(left_membership[i]) {
-          if(comm.rank() >= comm.size() / 2) {
-            left_destination = core::math::RandInt(random_start, random_end);
-          }
           (*assigned_point_indices)[left_destination].push_back(i);
           (*membership_counts_per_process)[left_destination]++;
         }
         else {
-          if(comm.rank() < comm.size() / 2) {
-            right_destination = core::math::RandInt(random_start, random_end);
-          }
           (*assigned_point_indices)[right_destination].push_back(i);
           (*membership_counts_per_process)[right_destination]++;
         }
