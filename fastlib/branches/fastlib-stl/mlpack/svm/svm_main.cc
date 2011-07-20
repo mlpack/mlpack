@@ -30,43 +30,6 @@
 using std::string;
 using std::vector;
 
-
-PARAM(double, "sigma", "(for Gaussian kernel) sigma in the gaussian kernel \
-k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using 'guassian' kernel"\
-,"svm", 0.0, false);
-PARAM(double, "c", "(for SVM_C) the weight (0~1) that controls compromise\
- between large margins and small margin violations. Default value: 10.0.",\
-"svm", 10.0, false);
-PARAM(double, "c_p", "(for SVM_C) the weight (0~1) for the positive class\
- (y==1). Default value: c.", "svm", 3e8, false);
-PARAM(double, "c_n", "(for SVM_C) the weight (0~1) for the negative class\
- (y==-1). Default value: c.", "svm", 3e8, false);
-PARAM(double, "epsilon", "(for SVM_R) the epsilon in SVM regression of\
- epsilon-insensitive loss. Default value: 0.1.", "svm", 0.1, false);
-
-PARAM_STRING_REQ("learner_name", "The name of the support vector learner,\
- values: 'svm_c' for classification, 'svm_r' for regression, 'svn_de'\
- for one class SVM", "svm");
-
-PARAM_STRING_REQ("mode", "The mode of svm_main, values: 'cv', 'train',\
- 'train_test', 'test'.", "svm");
-
-PARAM_STRING_REQ("kernel", "Kernel name, values: 'linear', 'gaussian'.", "svm");
-PARAM_STRING("cv_data", "The file name for cross validation data, only\
- required  under 'cv' mode.", "svm", "");
-PARAM_STRING("train_data", "The file name for training data, only required\
- under 'train' or 'train_test' mode.", "svm", "");
-PARAM_STRING("test_data", "The file name for testing data, only required\
- under 'test' or 'train_test' mode.", "svm", "");
-
-PARAM_INT("k_cv", "The number of folds for cross validation, only required\
- under 'cv' mode.", "svm", 0);
-PARAM_INT("wss", "Working set selection scheme.  1 for 1st order\
- expansion, 2 for 2nd order expansion. Default value: 1.", "svm", 1);
-
-PARAM_FLAG("normalize", "Whether need to do data normalization before\
- training/testing, values: '0' for no normalize, '1' for normalize", "svm");
-
 PROGRAM_INFO("SVM", "These are the implementations for Support Vector\
  Machines, including Multiclass classification, Regression, and One Class SVM", "svm");
 
@@ -78,62 +41,57 @@ using namespace mlpack;
 * @param: the dataset to be normalized
 */
 void DoSvmNormalize(Dataset* dataset) {
-  Matrix m;
-  Vector sums;
+  arma::mat m;
+  arma::vec sums;
 
-  m.Init(dataset->n_features()-1, dataset->n_points());
-  sums.Init(dataset->n_features() - 1);
-  sums.SetZero();
+  m.zeros(dataset->n_features(), dataset->n_points());
+  sums.zeros(dataset->n_features());
 
   for (index_t i = 0; i < dataset->n_points(); i++) {
-    Vector s;
-    Vector d;
-    for(index_t j = 0; j < dataset->n_features() - 1; j++)
-      s[j] = dataset->matrix()(j, i);
-
-    m.MakeColumnVector(i, &d);
-    d.CopyValues(s);
-    la::AddTo(s, &sums);
+    m.col(i) = dataset->matrix().col(i);
+    dataset->matrix().col(i) += sums;
   }
   
-  la::Scale(-1.0 / dataset->n_points(), &sums);
+  sums = (-1.0/dataset->n_points())*sums;
   for (index_t i = 0; i < dataset->n_points(); i++) {
-    Vector d;
-    m.MakeColumnVector(i, &d);
-    la::AddTo(sums, &d);
+    m.col(i) += sums;
   }
   
-  Matrix cov;
+  arma::mat cov;
 
-  la::MulTransBInit(m, m, &cov);
+  cov = m*trans(m);
 
-  Vector d;
-  Matrix u; // eigenvectors
-  Matrix ui; // the inverse of eigenvectors
+  arma::vec d;
+  arma::mat u; // eigenvectors
+  arma::mat ui; // the inverse of eigenvectors
 
-  PASSED(la::EigenvectorsInit(cov, &d, &u));
-  la::TransposeInit(u, &ui);
+  //PASSED(la::EigenvectorsInit(cov, &d, &u));
+  arma::eig_sym(d, u, cov); // find eigenvector
+  //la::TransposeInit(u, &ui);
+  ui = arma::trans(u);
 
-  for (index_t i = 0; i < d.length(); i++) {
+  for (index_t i = 0; i < d.n_rows; i++) {
     d[i] = 1.0 / sqrt(d[i] / (dataset->n_points() - 1));
   }
 
-  la::ScaleRows(d, &ui);
+  //la::ScaleRows(d, &ui);
+  ui = diagmat(d)*ui;
 
-  Matrix cov_inv_half;
-  la::MulInit(u, ui, &cov_inv_half);
+  arma::mat cov_inv_half;
+  //la::MulInit(u, ui, &cov_inv_half);
+  cov_inv_half = u*ui;
 
-  Matrix final;
-  la::MulInit(cov_inv_half, m, &final);
+  arma::mat final;
+  //la::MulInit(cov_inv_half, m, &final);
+  final = cov_inv_half*m;
 
   for (index_t i = 0; i < dataset->n_points(); i++) {
-    Vector s;
-    Vector d;
-    for(index_t j = 0; j < dataset->n_features() - 1; j++)
-      d[j] = dataset->matrix()(j, i);
+    arma::vec s;
 
-    final.MakeColumnVector(i, &s);
-    d.CopyValues(s);
+    //final.MakeColumnVector(i, &s);
+    //d.CopyValues(s);
+
+    dataset->matrix().col(i) = final.col(i);
   }
 
   if (IO::HasParam("svm/save")) {
@@ -282,7 +240,7 @@ int main(int argc, char *argv[]) {
 
     /* Load training data */
     Dataset trainset;
-    if (LoadData(&trainset, "train_data") == 0) // TODO:param_req
+    if (LoadData(&trainset, "svm/train_data") == 0) // TODO:param_req
       return 1;
     
     /* Begin SVM Training | Training and Testing */
@@ -294,7 +252,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
-	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
+	if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
 	  return 1;
 	svm.BatchPredict(learner_typeid, testset, "predicted_values");
       }
@@ -307,7 +265,7 @@ int main(int argc, char *argv[]) {
 	fprintf(stderr, "SVM Predicting... \n");
 	/* Load testing data */
 	Dataset testset;
-	if (LoadData(&testset, "test_data") == 0) // TODO:param_req
+	if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
 	  return 1;
 	svm.BatchPredict(learner_typeid, testset, "predicted_values"); // TODO:param_req
       }
@@ -319,7 +277,7 @@ int main(int argc, char *argv[]) {
 
     /* Load testing data */
     Dataset testset;
-    if (LoadData(&testset, "test_data") == 0) // TODO:param_req
+    if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
       return 1;
 
     /* Begin Prediction */

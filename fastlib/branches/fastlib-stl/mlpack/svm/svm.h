@@ -15,10 +15,60 @@
 #include "opt_smo.h"
 
 #include "fastlib/fastlib.h"
+#include "fastlib/fx/io.h"
 
+#include <string>
 #include <typeinfo>
 #include <vector>
 
+PARAM_MODULE("svm","Parameters for Support Vector Machines.");
+
+PARAM(double, "sigma", "(for Gaussian kernel) sigma in the gaussian kernel\
+k(x1,x2)=exp(-(x1-x2)^2/(2sigma^2)), only required when using 'guassian' kernel"\
+,"svm", 0.0, false);
+PARAM(double, "c", "(for SVM_C) the weight (0~1) that controls compromise\
+ between large margins and small margin violations. Default value: 10.0.",\
+"svm", 10.0, false);
+PARAM(double, "c_p", "(for SVM_C) the weight (0~1) for the positive class\
+ (y==1). Default value: c.", "svm", 3e8, false);
+PARAM(double, "c_n", "(for SVM_C) the weight (0~1) for the negative class\
+ (y==-1). Default value: c.", "svm", 3e8, false);
+PARAM(double, "epsilon", "(for SVM_R) the epsilon in SVM regression of\
+ epsilon-insensitive loss. Default value: 0.1.", "svm", 0.1, false);
+PARAM(double, "wss", "Working set selection scheme.  1 for 1st order\
+ expansion, 2 for 2nd order expansion. Default value: 1.", "svm", 1, false);
+PARAM(double, "accuracy", "The minimum accuracy required to stop the optimization\
+ algorithm. Default 1e-4.", "svm", 1e-4, false);
+
+PARAM(index_t, "hinge", "Value for hinge loss. Default 1.", "svm", 1, false);
+PARAM(index_t, "n_iter", "Maximum number of iterations. Default 100000000.",
+ "svm", 100000000, false);
+
+PARAM(std::string, "opt", "The optimization algorithm to use. A the moment\
+ the only choice is SMO.", "svm", "smo", false); // TODO: Update if more added
+
+PARAM_STRING_REQ("learner_name", "The name of the support vector learner,\
+ values: 'svm_c' for classification, 'svm_r' for regression, 'svn_de'\
+ for one class SVM", "svm");
+
+PARAM_STRING_REQ("mode", "The mode of svm_main, values: 'cv', 'train',\
+ 'train_test', 'test'.", "svm");
+
+PARAM_STRING_REQ("kernel", "Kernel name, values: 'linear', 'gaussian'.", "svm");
+PARAM_STRING("cv_data", "The file name for cross validation data, only\
+ required  under 'cv' mode.", "svm", "");
+PARAM_STRING("train_data", "The file name for training data, only required\
+ under 'train' or 'train_test' mode.", "svm", "");
+PARAM_STRING("test_data", "The file name for testing data, only required\
+ under 'test' or 'train_test' mode.", "svm", "");
+
+PARAM_INT("k_cv", "The number of folds for cross validation, only required\
+ under 'cv' mode.", "svm", 0);
+
+PARAM_FLAG("normalize", "Whether need to do data normalization before\
+ training/testing, values: '0' for no normalize, '1' for normalize", "svm");
+PARAM(bool, "shrink", "Whether we shrink every so many iterations or not.\
+ Only used with SMO.", "svm", true, false);
 
 #define ID_LINEAR 0
 #define ID_GAUSSIAN 1
@@ -30,7 +80,7 @@ class SVMLinearKernel {
  public:
   /* Init of kernel parameters */
   std::vector<double> kpara_; // kernel parameters
-  void Init() { //TODO: NULL->node
+  SVMLinearKernel() { //TODO: NULL->node
   }
   /* Kernel name */
   void GetName(std::string& kname) {
@@ -56,7 +106,7 @@ class SVMRBFKernel {
  public:
   /* Init of kernel parameters */
   std::vector<double> kpara_; // kernel parameters
-  void Init() { //TODO: NULL->node
+  SVMRBFKernel() { //TODO: NULL->node
     kpara_.resize(2,0);
     kpara_[0] = mlpack::IO::GetParam<double>("svm/sigma"); //sigma
     kpara_[1] = -1.0 / (2 * math::Sqr(kpara_[0])); //gamma
@@ -71,7 +121,8 @@ class SVMRBFKernel {
   }
   /* Kernel value evaluation */
   double Eval(const arma::vec& a, const arma::vec& b, index_t n_features) const {
-    double distance_squared = norm(a-b,2);
+    double distance_squared = arma::norm(a.subvec(0,n_features-1)-b.subvec(0,n_features-1),2);
+    //double distance_squared = arma::norm(a-b,2);
     return exp(kpara_[1] * distance_squared);
   }
   /* Save kernel parameters to file */
@@ -221,18 +272,18 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
   /* Note: it has the same index as the training !!! */
   trainset_sv_indicator_.resize(n_data_,false);
 
-  param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // working set selection scheme. default: 1st order expansion
-  param_.wss_ = mlpack::IO::GetParam<int>("svm/wss");
+  param_.wss_ = mlpack::IO::GetParam<double>("svm/wss");
   // whether do L1-SVM(1) or L2-SVM (2)
-  param_.hinge_sqhinge_ = mlpack::IO::GetParam<int>("svm/hinge");//Default value 1
+  param_.hinge_sqhinge_ = mlpack::IO::GetParam<index_t>("svm/hinge");//Default value 1
+  param_.hinge_sqhinge_ = 1;
 
   // accuracy for optimization
   param_.accuracy_ = mlpack::IO::GetParam<double>("svm/accuracy");//Default value 1e-4
   // number of iterations
-  param_.n_iter_ = mlpack::IO::GetParam<int>("svm/n_iter");//Default value 100000000
+  param_.n_iter_ = mlpack::IO::GetParam<index_t>("svm/n_iter");//Default value 100000000
 
   // tradeoff parameter for C-SV
   param_.C_ = mlpack::IO::GetParam<double>("svm/c"); 
@@ -337,7 +388,7 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) 
 	smo.GetSV(dataset_bi_index, models_[ct].coef_, trainset_sv_indicator_); // get support vectors
       }
       else {
-	fprintf(stderr, "ERROR!!! Unknown optimization method!\n");
+	std::cerr << "ERROR!!! Unknown optimization method!\n";
       }
 
       ct++;
@@ -424,7 +475,7 @@ void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset) 
     smo.GetSV(dataset_index, models_[0].coef_, trainset_sv_indicator_); // get support vectors
   }
   else {
-    fprintf(stderr, "ERROR!!! Unknown optimization method!");
+    std::cerr << "ERROR!!! Unknown optimization method!\n";
   }
 
   /* Get index list of support vectors */
@@ -496,17 +547,17 @@ template<typename TKernel>
 double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
   index_t i, j, k;
   std::vector<double> keval;
-  keval.reserve(total_num_sv_);
+  keval.resize(total_num_sv_,0);
   for (i = 0; i < total_num_sv_; i++) {
     keval[i] = param_.kernel_.Eval(datum, sv_.col(i), num_features_);
   }
   std::vector<double> values;
-  values.reserve(num_models_);
+  values.resize(num_models_,0);
   index_t ct = 0;
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
-      if (opt_method_== "smo") {
+      if (opt_method_== "smo" || 1) {
 	sum = 0.0;
 	for(k = 0; k < sv_list_ct_[i]; k++) {
 	  sum += sv_coef_(j-1, sv_list_startpos_[i]+k) * keval[sv_list_startpos_[i]+k];
@@ -594,15 +645,13 @@ template<typename TKernel>
 void SVM<TKernel>::BatchPredict(index_t learner_typeid, Dataset& testset, std::string predictedvalue_filename) {
   FILE *fp = fopen(predictedvalue_filename.c_str(), "w");
   if (fp == NULL) {
-    fprintf(stderr, "Cannot save predicted values to file!");
+    std::cerr << "Cannot save predicted values to file!\n";
     return;
   }
   index_t err_ct = 0;
   num_features_ = testset.n_features()-1;
   for (index_t i = 0; i < testset.n_points(); i++) {
-    arma::vec testvec(num_features_);
-    for(index_t j = 0; j < num_features_; j++)
-      testvec[j] = testset.matrix()(j, i);
+    arma::vec testvec = testset.matrix().col(i);
 
     double predictedvalue = Predict(learner_typeid, testvec);
     if (predictedvalue != testset.matrix()(num_features_, i))
@@ -734,7 +783,7 @@ void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename
   /* load model file */
   FILE *fp = fopen(model_filename.c_str(), "r");
   if (fp == NULL) {
-    fprintf(stderr, "Cannot open SVM model file!");
+    std::cerr << "Cannot open SVM model file!\n";
     return;
   }
   char cmd[80]; 

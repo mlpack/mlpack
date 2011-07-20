@@ -25,3 +25,14 @@ target_link_libraries(svm
    mlpack
    fastlib
 )
+
+# test executable
+add_executable(svm_test
+   svm_test.cc
+)
+# link dependencies for svm_test
+target_link_libraries(svm_test
+   mlpack
+   fastlib
+   boost_unit_test_framework
+)
