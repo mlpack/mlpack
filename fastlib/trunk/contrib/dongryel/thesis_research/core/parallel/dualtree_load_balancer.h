@@ -21,6 +21,9 @@ class DualtreeLoadBalancer {
       const std::vector <
       std::vector <
       std::pair<int, int> > > &essential_reference_subtrees_to_send,
+      const std::vector <
+      std::vector <
+      std::pair<int, int> > > &reference_subtrees_to_receive,
       int num_reference_subtrees_to_receive) {
 
       // Figure out the subtree distribution by computing the prefix
@@ -44,8 +47,8 @@ class DualtreeLoadBalancer {
       // different one.
       std::vector<int> local_adjacency;
       boost::scoped_array<int> local_xadjacency(
-        new int[local_query_subtrees.size() + 2]);
-      for(unsigned int i = 0; i < local_query_subtrees.size() + 2; i++) {
+        new int[ num_local_vertices + 1 ]);
+      for(int i = 0; i <= num_local_vertices; i++) {
         local_xadjacency[i] = 0;
       }
       boost::scoped_array<int> local_vertex_weights(
@@ -62,8 +65,8 @@ class DualtreeLoadBalancer {
 
         if(i != comm.rank()) {
 
-          // Otherwise, the weight is negative infinity.
-          local_edge_weights.push_back(- 1000);
+          // Otherwise, the weight is a very small positive integer.
+          local_edge_weights.push_back(1);
 
           // Have the process vertex point to the current process vertex.
           local_adjacency.push_back(query_subtree_distribution[i]);
@@ -73,28 +76,52 @@ class DualtreeLoadBalancer {
             query_subtree_distribution[i] + j + 1;
 
           // The edge weight from the process vertex to the query
-          // subtree is the number of outgoig reference trees.
-          local_edge_weights.push_back(send_list.size());
+          // subtree is the number of outgoig reference
+          // trees. Multiply the edge weight by 10.
+          local_edge_weights.push_back(send_list.size() * 10);
           local_adjacency.push_back(query_subtree_vertex_id);
         }
       }
       local_xadjacency[1] = local_adjacency.size();
 
+      // Up to here, we are done with the adjacency list of the
+      // process vertex.
+
       // Now fill out the vertex weights for the query subtrees, which
       // is proportional to the number of reference subtrees to
       // compute on.
-      for(unsigned int i = 0; i < local_query_subtrees.size(); i++) {
-        local_vertex_weights[i + 1] = num_reference_subtrees_to_receive;
+      for(int i = 1; i < num_local_vertices; i++) {
+        local_vertex_weights[i] = num_reference_subtrees_to_receive;
       }
 
       // Now outgoing edges for the subtree vertices.
-      for(unsigned int i = 2; i < local_query_subtrees.size() + 2; i++) {
-        local_adjacency.push_back(
-          query_subtree_distribution[ comm.rank()]);
-        local_edge_weights.push_back(
-          num_reference_subtrees_to_receive);
-        local_xadjacency[i] = local_xadjacency[i - 1] + 1;
+      for(int i = 1; i < num_local_vertices; i++) {
+        for(int j = 0; j < comm.size(); j++) {
+          local_adjacency.push_back(
+            query_subtree_distribution[ j ]);
+          local_edge_weights.push_back(
+            reference_subtrees_to_receive[j].size());
+        }
+        local_xadjacency[i + 1] = local_xadjacency[i] + comm.size();
       }
+
+
+      printf("Checking on %d with %d subtrees.\n", comm.rank(),
+             local_query_subtrees.size());
+      printf("Xadjacency: ");
+      for(int i = 0; i <= num_local_vertices; i++) {
+        printf("%d ", local_xadjacency[i]);
+      }
+      printf("\n");
+      printf("Adjacency: ");
+      for(unsigned int i = 0; i < local_adjacency.size(); i++) {
+        printf("%d ", local_adjacency[i]);
+      }
+      printf("\nEdge weights: ");
+      for(unsigned int i = 0; i < local_edge_weights.size(); i++) {
+        printf("%d ", local_edge_weights[i]);
+      }
+      printf("\n\n");
 
       // Parameters necessary for calling the parallel graph
       // partitioner.
