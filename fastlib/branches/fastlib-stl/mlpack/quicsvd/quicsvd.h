@@ -108,46 +108,5 @@ class QuicSVD {
   /** Extract SVD in the subspace of basis after the target 
    *  relative error has been achieved */
   void extractSVD(Vector* s, Matrix* U, Matrix* VT);
-
-  /** Friend unit test class */
-  friend class QuicSVDTest;
 };
-
-class QuicSVDTest {
-  FILE * logfile;
-
-  void test_QuicSVD() {
-    Matrix A;
-    arma::mat tmpA;
-    printf("Load data from input1.txt.\n");
-    data::Load("input1.txt", tmpA);
-    arma_compat::armaToMatrix(tmpA, A);
-    QuicSVD svd(A, 0.1);
-    Vector s;
-    Matrix U, VT, S;
-    svd.ComputeSVD(&s, &U, &VT);
-    arma::mat tmpU, tmpVT, tmpS;
-    arma_compat::matrixToArma(U, tmpU);
-    arma_compat::matrixToArma(VT, tmpVT);
-    arma_compat::matrixToArma(S, tmpS);
-    data::Save("U.txt", tmpU);
-    S.InitDiagonal(s);
-    data::Save("S.txt", tmpS);
-    data::Save("VT.txt", tmpVT);
-    printf("U,s,VT are saved to U.txt, S.txt, VT.txt, respectively.\n");
-  }
-public:
-  QuicSVDTest() {
-    logfile = fopen("LOG", "w");
-  }
-  ~QuicSVDTest() {
-    fclose(logfile);
-  }
-
-  void run_tests() {
-    test_QuicSVD();
-  }
-
-};
-
 #endif

@@ -26,6 +26,7 @@ add_executable(quicsvd_test
 target_link_libraries(quicsvd_test
    mlpack
    fastlib
+   boost_unit_test_framework
 )
 
 # main executable
