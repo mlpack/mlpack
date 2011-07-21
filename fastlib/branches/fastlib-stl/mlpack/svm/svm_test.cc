@@ -46,7 +46,7 @@ void setup() {
   IO::GetParam<double>("svm/epsilon") = .1;
   IO::GetParam<double>("svm/sigma") = 1;
   // Protect the test from taking forever
-  //IO::GetParam<index_t>("svm/n_iter") = 10000;
+  IO::GetParam<index_t>("svm/n_iter") = 10000;
 
   matrix <<
     7.19906628001437787e-01 << 1.83250823399634477e+00 << 0 << arma::endr <<
