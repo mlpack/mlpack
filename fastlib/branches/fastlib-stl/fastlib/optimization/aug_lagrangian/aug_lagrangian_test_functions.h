@@ -77,4 +77,54 @@ class GockenbachFunction {
 }; // namespace optimization
 }; // namespace mlpack
 
+/***
+ * This function is the Lovasz-Theta semidefinite program, as implemented in the
+ * following paper:
+ *
+ * S. Burer, R. Monteiro
+ * "A nonlinear programming algorithm for solving semidefinite programs via
+ * low-rank factorization."
+ * Journal of Mathematical Programming, 2004
+ *
+ * Given a simple, undirected graph G = (V, E), the Lovasz-Theta SDP is defined
+ * by:
+ *
+ * min_X{Tr(-(e e^T)^T X) : Tr(X) = 1, X_ij = 0 for all (i, j) in E, X >= 0}
+ *
+ * where e is the vector of all ones and X has dimension |V| x |V|.
+ *
+ * In the Monteiro-Burer formulation, we take X = R * R^T, where R is the
+ * coordinates given to the Evaluate(), Gradient(), EvaluateConstraint(), and
+ * GradientConstraint() functions.
+ */
+class LovaszThetaSDP {
+ public:
+  LovaszThetaSDP();
+
+  /***
+   * Initialize the Lovasz-Theta SDP with the given set of edges.  The edge
+   * matrix should consist of rows of two dimensions, where dimension 0 is the
+   * first vertex of the edge and dimension 1 is the second edge (or vice versa,
+   * as it doesn't make a difference).
+   *
+   * @param edges Matrix of edges.
+   */
+  LovaszThetaSDP(const arma::mat& edges);
+
+  double Evaluate(const arma::mat& coordinates);
+  void Gradient(const arma::mat& coordinates, arma::mat& gradient);
+
+  int NumConstraints();
+
+  double EvaluateConstraint(int index, const arma::mat& coordinates);
+  void GradientConstraint(int index,
+                          const arma::mat& coordinates,
+                          arma::mat& gradient);
+
+  const arma::mat GetInitialPoint();
+
+ private:
+  arma::mat edges_;
+};
+
 #endif

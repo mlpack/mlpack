@@ -29,7 +29,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
   // Choose initial lambda parameters (vector of zeros, for simplicity).
   arma::vec lambda(function_.NumConstraints());
   lambda.ones();
-  double penalty_threshold = 1; // Approximately (1 / (sigma_0 ^ 0.1)).
+  double penalty_threshold = DBL_MAX; // Ensure we update lambda immediately.
 
   // Track the last objective to compare for convergence.
   double last_objective = function_.Evaluate(coordinates);
