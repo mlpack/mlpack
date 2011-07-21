@@ -17,11 +17,22 @@ bool isZero(double d) {
 CosineNode::CosineNode(const Matrix& A) {
   this->A_.Alias(A);
   origIndices_.reserve(A_.n_cols());
-  norms_.reserve(n_cols());
-  for (index_t i_col = 0; i_col < origIndices_.size(); i_col++) {
-    origIndices_[i_col] = i_col;
-    norms_[i_col] = columnNormL2(A_, i_col);
+   norms_.reserve(A_.n_cols());
+
+   int newval = A_.n_cols();
+
+
+   for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
+        origIndices_.push_back(0);      
+        norms_.push_back(0);
+    }
+
+ 
+   for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
+        origIndices_[i_col] = i_col;
+        norms_[i_col] = columnNormL2(A_, i_col);
   }
+
   parent_ = NULL;
   left_ = NULL;
   right_ = NULL;
@@ -36,6 +47,12 @@ CosineNode::CosineNode(CosineNode& parent,
   A_.Alias(parent.A_);
   origIndices_.reserve(indices.size());
   norms_.reserve(n_cols());
+   
+for(index_t i_col = 0; i_col < indices.size(); i_col++) {    
+      norms_.push_back(0);
+      origIndices_.push_back(0);
+   }
+
   for (index_t i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = parent.origIndices_[indices[i_col]];
     norms_[i_col] = parent.norms_[indices[i_col]];
@@ -47,17 +64,22 @@ CosineNode::CosineNode(CosineNode& parent,
   
   if (isLeft) parent.left_ = this;
   else parent.right_ = this;
-
   CalStats();
 }
 
 void CosineNode::CalStats() {
   // Calculate cummlulative sum square of L2 norms
-  cum_norms_.reserve(origIndices_.size());
-  for (index_t i_col = 0; i_col < origIndices_.size(); i_col++)
-    cum_norms_[i_col] = ((i_col > 0) ? cum_norms_[i_col-1]:0)
-      + math::Sqr(norms_[i_col]);
 
+ cum_norms_.reserve(A_.n_cols());
+
+  for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
+     cum_norms_.push_back(0);
+  }  
+
+  for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
+  cum_norms_[i_col] = ((i_col > 0) ? cum_norms_[i_col-1]:0)
+      + math::Sqr(norms_[i_col]);
+  }
   // Calculate mean vector
   mean_.Init(A_.n_rows()); mean_.SetZero();
   for (index_t i_col = 0; i_col < n_cols(); i_col++) {
@@ -69,6 +91,7 @@ void CosineNode::CalStats() {
 }
 
 void CosineNode::ChooseCenter(Vector* center) {
+
   double r = (double)rand()/RAND_MAX * cum_norms_[n_cols()-1];
   index_t i_col;
   for (i_col = 0; i_col < n_cols(); i_col++)
@@ -78,9 +101,15 @@ void CosineNode::ChooseCenter(Vector* center) {
 
 void CosineNode::CalCosines(const Vector& center, 
 			    std::vector<double>* cosines) {
-  cosines->reserve(n_cols());
+
+  for(index_t i_col=0; i_col < n_cols(); i_col++) {
+    (*cosines).push_back(0);
+  }
+
   double centerL2 = la::LengthEuclidean(center);
-  for (index_t i_col = 0; i_col < n_cols(); i_col++) 
+ 
+ for (index_t i_col = 0; i_col < n_cols(); i_col++)
+  { 
     // if col is a zero vector then push it to the left node
     if (isZero(norms_[i_col]))
       (*cosines)[i_col] = 2;
@@ -91,11 +120,18 @@ void CosineNode::CalCosines(const Vector& center,
       double denominator = centerL2 * norms_[i_col];
       (*cosines)[i_col] = numerator/denominator;
     }
+  }
 }
 
 void CosineNode::CreateIndices(std::vector<int>* indices) {
   indices->reserve(n_cols());
-  for (index_t i_col = 0; i_col < n_cols(); i_col++)
+ 
+   for (index_t i_col = 0; i_col < n_cols(); i_col++)
+   {
+      (*indices).push_back(0);
+   }
+
+   for (index_t i_col = 0; i_col < n_cols(); i_col++)
     (*indices)[i_col] = i_col;
 }
 
@@ -104,12 +140,17 @@ index_t qpartition(std::vector<double>& key, std::vector<int>& data,
 		index_t left, index_t right) {
   index_t j = left;
   double x = key[left];
-  for (index_t i = left+1; i <= right; i++)
-    if (key[i] >= x) {
+  
+ for (index_t i = left+1; i <= right; i++)
+  {    
+ 
+   if (key[i] >= x) {
       j++;
       double tmp_d = key[i]; key[i] = key[j]; key[j] = tmp_d;
       index_t tmp_i = data[i]; data[i] = data[j]; data[j] = tmp_i;
     }
+   }
+
   double tmp_d = key[left]; key[left] = key[j]; key[j] = tmp_d;
   index_t tmp_i = data[left]; data[left] = data[j]; data[j] = tmp_i;
   return j;
@@ -119,7 +160,8 @@ index_t qpartition(std::vector<double>& key, std::vector<int>& data,
 // Quicksort on the cosine values
 void qsort(std::vector<double>& key, std::vector<int>& data,
 	   index_t left, index_t right) {
-  if (left >= right) return;
+
+ if (left >= right) return;
   index_t middle = qpartition(key, data, left, right);
   qsort(key, data, left, middle-1);
   qsort(key, data, middle+1, right);
@@ -143,8 +185,12 @@ index_t calSplitPoint(const std::vector<double>& key) {
 // Init a subcopy of an array list
 void InitSubCopy(const std::vector<int>& src, index_t pos, index_t size,
 		 std::vector<int>* dst) {
-  dst->reserve(size);
-  for (index_t i = 0; i < size; i++)
+
+   dst->reserve(size);
+   for (index_t i = 0; i < size; i++)
+    (*dst).push_back(0);
+
+   for (index_t i = 0; i < size; i++)
     (*dst)[i] = src[pos+i];
 }
 
@@ -161,30 +207,25 @@ void splitIndices(std::vector<int>& indices, int leftSize,
 // This procedure won't split a node if either child has the same
 // set of columns as the parent
 void CosineNode::Split() {
+
   if (n_cols() < 2) return;
   Vector center;
   std::vector<double> cosines;
   std::vector<int> indices, leftIdx, rightIdx;
 
   ChooseCenter(&center);
-  //ot::Print(center, "center", stdout);
 
   CalCosines(center, &cosines);
-  //ot::Print(cosines, "cosines", stdout);
 
   CreateIndices(&indices);
 
   Sort(cosines, indices);
-  //ot::Print(cosines, "cosines", stdout);
-  //ot::Print(indices, "indices", stdout);
 
   index_t leftSize = calSplitPoint(cosines);
 
   if (leftSize == n_cols() || leftSize == 0) return;
   
   splitIndices(indices, leftSize, &leftIdx, &rightIdx);
-  //ot::Print(leftIdx, "left indices", stdout);
-  //ot::Print(rightIdx, "right indices", stdout);
   
   left_ = new CosineNode(*this, leftIdx, true);
   right_ = new CosineNode(*this, rightIdx, false);

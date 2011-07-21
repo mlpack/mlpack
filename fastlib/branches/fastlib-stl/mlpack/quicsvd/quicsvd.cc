@@ -43,6 +43,7 @@ bool MGS(const std::vector<Vector>& basis, const Vector& newVec,
 }
 
 void QuicSVD::addBasisFrom(const CosineNode& node) {
+
   Vector nodeBasis;
   // check if new vector are independent and orthogonalize it
   if (MGS(basis_, node.getMean(), &nodeBasis)) {
@@ -50,6 +51,7 @@ void QuicSVD::addBasisFrom(const CosineNode& node) {
     basis_.push_back(nodeBasis);  // add to the basis
     la::MulInit(nodeBasis, A_, &av); // calculate projection of A
     UTA_.push_back(av);           // on the new basis vector and save
+
     for (index_t i_col = 0; i_col < n_cols(); i_col++) {
       double magSq = math::Sqr(av[i_col]);  // magnitude square of the i-th
       projMagSq_[i_col] += magSq;           // column of A in the new subspace
@@ -95,6 +97,7 @@ void QuicSVD::ComputeSVD(Vector* s, Matrix* U, Matrix* VT) {
     CosineNode* node = leaves_.top(); 
     leaves_.pop();  // pop the top of the queue
 
+   //error here ...
     node->Split();  // split it
 
     // only add the basis from the right node as the left node 
@@ -106,7 +109,8 @@ void QuicSVD::ComputeSVD(Vector* s, Matrix* U, Matrix* VT) {
     addToQueue(node->getRight());
     
     //ot::Print(curRelErr(), "curRelErr = ", stdout);
-  } 
+  }
+
   //ot::Print(basis_, "basis", stdout);
 
   // after achieve the desire subspace, SVD on this subspace
@@ -167,7 +171,6 @@ void InverseRowScale(const Vector& s, Matrix* A) {
 // spanned by the basis
 void QuicSVD::extractSVD(Vector* s, Matrix* U, Matrix* VT) {
   //ot::Print(UTA_, "UTA", stdout);
-
   Matrix UTA2;
   Matrix Uprime, VprimeT;
   Vector sprime;

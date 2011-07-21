@@ -63,7 +63,7 @@ class CosineNode {
 
   /** Return number of columns in this node */
   index_t n_cols() const {
-    return origIndices_.size();
+        return origIndices_.size();
   }
 
   /** Split this node into 2 nodes: left child and right child
@@ -75,7 +75,7 @@ class CosineNode {
   
   /** Return sum of L2 norm square of the columns */
   double getSumL2() const {
-    return cum_norms_[n_cols()-1];
+     return cum_norms_[n_cols()-1];
   }
 
   /** Get the mean vector */
@@ -143,36 +143,4 @@ class CompareCosineNode {
     return a->L2Err_ < b->L2Err_;
   }
 };
-
-class CosineNodeTest {
-  FILE * logfile;
-
-  void test_CosineTreeNode() {
-    Matrix A;
-    arma::mat tmpA;
-    data::Load("input.txt", tmpA);
-    arma_compat::armaToMatrix(tmpA, A);
-    CosineNode root(A);
-    //ot::Print(root, "cosine root", logfile);
-
-    root.Split();
-
-    //ot::Print(*root.left_, "left node", logfile);
-    //ot::Print(*root.right_, "right node", logfile);
-  }
-
-public:
-  CosineNodeTest() {
-    logfile = fopen("LOG", "w");
-  }
-  ~CosineNodeTest() {
-    fclose(logfile);
-  }
-
-  void run_tests() {
-    test_CosineTreeNode();
-  }
-};
-
-
 #endif
