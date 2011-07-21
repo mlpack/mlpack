@@ -131,7 +131,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
     // If the reference node size is within the size limit, then for
     // each query process in the set, add the reference node to the
     // list.
-    if(local_reference_node->count() <= max_reference_subtree_size) {
+    if(local_reference_node->count() <= max_reference_subtree_size ||
+        local_reference_node->is_leaf()) {
       typename TableType::TreeIterator qnode_it =
         query_table_->get_node_iterator(global_query_node);
       while(qnode_it.HasNext()) {
@@ -163,7 +164,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
   // Here, we know that the global query node is a non-leaf, so we
   // need to split both ways.
-  if(local_reference_node->count() <= max_reference_subtree_size) {
+  if(local_reference_node->count() <= max_reference_subtree_size ||
+      local_reference_node->is_leaf()) {
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node,
