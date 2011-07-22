@@ -29,7 +29,7 @@ class DualtreeLoadBalancer {
       boost::scoped_array<int> query_subtree_distribution(
         new int[ comm.size()]);
       boost::scoped_array<int> distribution_prefix_sum_before(
-        new int[ comm.size()]);
+        new int[ comm.size() + 1]);
       boost::mpi::all_gather(
         comm,
         static_cast<int>(local_query_subtrees.size()),
@@ -38,11 +38,12 @@ class DualtreeLoadBalancer {
       for(int i = 1; i < comm.size(); i++) {
         distribution_prefix_sum_before[i] =
           distribution_prefix_sum_before[i - 1] +
-          query_subtree_distribution[i];
+          query_subtree_distribution[i - 1];
       }
       int total_num_query_subtrees =
         distribution_prefix_sum_before[ comm.size() - 1 ] +
         query_subtree_distribution[ comm.size() - 1 ];
+      distribution_prefix_sum_before[ comm.size()] = total_num_query_subtrees;
 
       // Query subtree distribution.
       int num_query_subtree_per_process =
@@ -51,6 +52,7 @@ class DualtreeLoadBalancer {
         new int[comm.size() + 1]);
       distribution_prefix_sum_after[0] = 0;
       int remainder = total_num_query_subtrees % comm.size();
+
       int process_id = -1;
       for(int i = 0; i < comm.size(); i++) {
         int portion = num_query_subtree_per_process;
@@ -59,9 +61,9 @@ class DualtreeLoadBalancer {
         }
         distribution_prefix_sum_after[i + 1] =
           portion + distribution_prefix_sum_after[i];
-        if(query_subtree_distribution[ comm.rank()] >=
+        if(distribution_prefix_sum_before[ comm.rank()] >=
             distribution_prefix_sum_after[i] &&
-            query_subtree_distribution[ comm.rank()] <
+            distribution_prefix_sum_before[ comm.rank()] <
             distribution_prefix_sum_after[i + 1]) {
           process_id = i;
         }
@@ -74,15 +76,12 @@ class DualtreeLoadBalancer {
         local_query_subtrees.size(), 0);
       for(unsigned int i = 0; i < local_query_subtrees.size(); i++) {
         int local_query_subtree_global_id =
-          i + query_subtree_distribution[ comm.rank()];
+          i + distribution_prefix_sum_before[ comm.rank()];
         if(local_query_subtree_global_id >=
-            distribution_prefix_sum_after[i + 1]) {
+            distribution_prefix_sum_after[process_id + 1]) {
           process_id++;
         }
         local_query_subtree_assignments[i] = process_id;
-
-        printf("Assigned %d to %d\n",
-               local_query_subtree_global_id, process_id);
       }
     }
 };
