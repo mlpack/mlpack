@@ -17,7 +17,6 @@
 #include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/sub_table.h"
-#include "core/table/sub_table_list.h"
 #include <omp.h>
 
 namespace core {
@@ -72,10 +71,6 @@ class DistributedDualtreeDfs {
     /** @brief The type of the subtable in use.
      */
     typedef core::table::SubTable<TableType> SubTableType;
-
-    /** @brief The type of the list of subtables in use.
-     */
-    typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   private:
 
@@ -171,6 +166,13 @@ class DistributedDualtreeDfs {
     PrioritizeTasks_<FineFrontierObjectType> >
     FinePriorityQueueType;
 
+    void RedistributeQuerySubtrees_(
+      const std::vector<TreeType *> &local_query_subtrees,
+      const std::vector<int> &local_query_subtree_assignments,
+      int total_num_query_subtrees_to_receive,
+      core::parallel::TableExchange <
+      DistributedTableType, SubTableType > *query_subtree_cache);
+
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
       const MetricType &metric_in,
@@ -187,7 +189,7 @@ class DistributedDualtreeDfs {
     void GenerateTasks_(
       const MetricType &metric_in,
       core::parallel::TableExchange <
-      DistributedTableType, SubTableListType > &table_exchange,
+      DistributedTableType, SubTableType > &table_exchange,
       std::vector<TreeType *> &local_query_subtrees,
       const std::vector <
       boost::tuple<int, int, int, int> > &received_subtable_ids,
@@ -198,7 +200,7 @@ class DistributedDualtreeDfs {
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results,
       core::parallel::TableExchange <
-      DistributedTableType, SubTableListType > &table_exchange,
+      DistributedTableType, SubTableType > &table_exchange,
       std::vector< TreeType *> *local_query_subtrees,
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees_to_send,

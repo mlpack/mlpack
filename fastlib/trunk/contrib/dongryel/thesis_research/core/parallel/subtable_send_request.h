@@ -39,13 +39,19 @@ class SubTableSendRequest {
       priority_ = 0.0;
     }
 
-    SubTableSendRequest(
+    void Init(
       int destination_in, int begin_in, int count_in, double priority_in) {
 
       destination_ = destination_in;
       begin_ = begin_in;
       count_ = count_in;
       priority_ = priority_in;
+    }
+
+    SubTableSendRequest(
+      int destination_in, int begin_in, int count_in, double priority_in) {
+
+      this->Init(destination_in, begin_in, count_in, priority_in);
     }
 
     int destination() const {

@@ -7,13 +7,14 @@
 #define CORE_PARALLEL_DUALTREE_LOAD_BALANCER_H
 
 #include <boost/mpi.hpp>
+#include "core/parallel/table_exchange.h"
 
 namespace core {
 namespace parallel {
 class DualtreeLoadBalancer {
   public:
 
-    template<typename TreeType>
+    template < typename TreeType >
     static void Compute(
       boost::mpi::communicator &comm,
       const std::vector<TreeType *> &local_query_subtrees,
@@ -23,7 +24,9 @@ class DualtreeLoadBalancer {
       const std::vector <
       std::vector <
       std::pair<int, int> > > &reference_subtrees_to_receive,
-      int num_reference_subtrees_to_receive) {
+      int num_reference_subtrees_to_receive,
+      std::vector<int> *local_query_subtree_assignments,
+      int *total_num_query_subtrees_to_receive) {
 
       // Figure out the subtree distribution by doing an all-gather.
       boost::scoped_array<int> query_subtree_distribution(
@@ -69,19 +72,24 @@ class DualtreeLoadBalancer {
         }
       }
 
+      // Figure out how many query subtrees to receive.
+      *total_num_query_subtrees_to_receive =
+        distribution_prefix_sum_after[ comm.rank() + 1 ] -
+        distribution_prefix_sum_after[ comm.rank()];
+
       // Each process assigns its local query subtrees. Right now,
       // just assign an equal number of query subtrees across all MPI
       // processes.
-      std::vector<int> local_query_subtree_assignments(
-        local_query_subtrees.size(), 0);
+      local_query_subtree_assignments->resize(local_query_subtrees.size());
       for(unsigned int i = 0; i < local_query_subtrees.size(); i++) {
         int local_query_subtree_global_id =
           i + distribution_prefix_sum_before[ comm.rank()];
-        if(local_query_subtree_global_id >=
-            distribution_prefix_sum_after[process_id + 1]) {
+        while(
+          local_query_subtree_global_id >=
+          distribution_prefix_sum_after[process_id + 1]) {
           process_id++;
         }
-        local_query_subtree_assignments[i] = process_id;
+        (*local_query_subtree_assignments)[i] = process_id;
       }
     }
 };
