@@ -25,17 +25,13 @@ namespace parallel {
 /** @brief A class for performing an all-to-all exchange of subtrees
  *         among MPI processes.
  */
-template<typename DistributedTableType, typename SubTableListType>
+template<typename DistributedTableType, typename SubTableType>
 class TableExchange {
   public:
 
     /** @brief The table type used in the exchange process.
      */
     typedef typename DistributedTableType::TableType TableType;
-
-    /** @brief The subtable type used in the exchange process.
-     */
-    typedef typename SubTableListType::SubTableType SubTableType;
 
     /** @brief The old from new index type used in the exchange
      *         process.
@@ -88,6 +84,8 @@ class TableExchange {
 
   public:
 
+    /** @brief Tests whether the cache is empty or not.
+     */
     bool is_empty() const {
       return
         static_cast<int>(free_slots_for_receiving_.size()) ==

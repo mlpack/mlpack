@@ -46,7 +46,7 @@ void DistributedDualtreeDfs <
 DistributedProblemType >::GenerateTasks_(
   const MetricType &metric_in,
   core::parallel::TableExchange <
-  DistributedTableType, SubTableListType > &table_exchange,
+  DistributedTableType, SubTableType > &table_exchange,
   std::vector<TreeType *> &local_query_subtrees,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
   std::vector< FinePriorityQueueType > *tasks) {
@@ -202,13 +202,55 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 }
 
 template<typename DistributedProblemType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::RedistributeQuerySubtrees_(
+  const std::vector<TreeType *> &local_query_subtrees,
+  const std::vector<int> &local_query_subtree_assignments,
+  int total_num_query_subtrees_to_receive,
+  core::parallel::TableExchange <
+  DistributedTableType, SubTableType > *query_subtree_cache) {
+
+  // Initialize the query subtree cache.
+  query_subtree_cache->Init(
+    * world_, * query_table_->local_table(),
+    max_num_work_to_dequeue_per_stage_);
+
+  // Fill out the query subtree send requests.
+  std::vector <
+  SendRequestPriorityQueueType > query_subtree_send_requests(world_->size());
+  for(unsigned int i = 0; i < local_query_subtree_assignments.size(); i++) {
+    query_subtree_send_requests[local_query_subtree_assignments[i]].push(
+      core::parallel::SubTableSendRequest(
+        local_query_subtree_assignments[i],
+        local_query_subtrees[i]->begin(),
+        local_query_subtrees[i]->count(), 0.0));
+  }
+
+  // Exchange until done.
+  int num_completed_sends = 0;
+  int num_completed_receives = 0;
+  do {
+    std::vector< boost::tuple<int, int, int, int> > received_query_subtable_ids;
+    query_subtree_cache->AsynchSendReceive(
+      * world_, query_subtree_send_requests, &received_query_subtable_ids,
+      &num_completed_sends);
+    num_completed_receives += received_query_subtable_ids.size();
+
+  }
+  while(
+    num_completed_sends <
+    static_cast<int>(local_query_subtree_assignments.size()) ||
+    num_completed_receives < total_num_query_subtrees_to_receive);
+}
+
+template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::InitialSetup_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results,
   core::parallel::TableExchange <
-  DistributedTableType, SubTableListType > &table_exchange,
+  DistributedTableType, SubTableType > &table_exchange,
   std::vector< TreeType *> *local_query_subtrees,
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
@@ -303,12 +345,24 @@ DistributedProblemType >::InitialSetup_(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
 
+  // Load-balance the query subtrees.
+  int total_num_query_subtrees_to_receive;
+  core::parallel::TableExchange <
+  DistributedTableType, SubTableType > query_subtree_cache;
+  std::vector<int> local_query_subtree_assignments;
   core::parallel::DualtreeLoadBalancer::Compute(
     *world_,
     *local_query_subtrees,
     *essential_reference_subtrees_to_send,
     *reference_frontier_lists,
-    *num_reference_subtrees_to_receive);
+    *num_reference_subtrees_to_receive,
+    &local_query_subtree_assignments,
+    &total_num_query_subtrees_to_receive);
+
+  // Re-distribute the query subtrees based on the assignments.
+  RedistributeQuerySubtrees_(
+    *local_query_subtrees, local_query_subtree_assignments,
+    total_num_query_subtrees_to_receive, & query_subtree_cache);
 }
 
 template<typename DistributedProblemType>
@@ -334,7 +388,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
-  DistributedTableType, SubTableListType > table_exchange;
+  DistributedTableType, SubTableType > table_exchange;
   table_exchange.Init(
     *world_, *(reference_table_->local_table()),
     max_num_work_to_dequeue_per_stage_);
