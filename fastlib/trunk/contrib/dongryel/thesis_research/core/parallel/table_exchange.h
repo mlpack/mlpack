@@ -9,15 +9,10 @@
 #define CORE_PARALLEL_TABLE_EXCHANGE_H
 
 #include <boost/mpi.hpp>
+#include "core/parallel/message_tag.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/sub_table.h"
-
-namespace core {
-namespace table {
-extern core::table::MemoryMappedFile *global_m_file_;
-}
-}
 
 namespace core {
 namespace parallel {

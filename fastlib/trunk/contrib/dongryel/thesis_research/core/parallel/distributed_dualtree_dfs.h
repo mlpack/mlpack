@@ -166,13 +166,6 @@ class DistributedDualtreeDfs {
     PrioritizeTasks_<FineFrontierObjectType> >
     FinePriorityQueueType;
 
-    void RedistributeQuerySubtrees_(
-      const std::vector<TreeType *> &local_query_subtrees,
-      const std::vector<int> &local_query_subtree_assignments,
-      int total_num_query_subtrees_to_receive,
-      core::parallel::TableExchange <
-      DistributedTableType, SubTableType > *query_subtree_cache);
-
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
       const MetricType &metric_in,
@@ -211,7 +204,8 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
-      std::vector< FinePriorityQueueType > *tasks);
+      std::vector< FinePriorityQueueType > *tasks,
+      int *total_num_remaining_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine

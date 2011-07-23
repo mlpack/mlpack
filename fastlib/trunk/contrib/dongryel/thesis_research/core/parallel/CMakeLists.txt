@@ -6,7 +6,7 @@ set(SOURCES
   distributed_tree_util.h
   distributed_tripletree_dfs_dev.h
   distributed_tripletree_dfs.h
-  dualtree_load_balancer.h
+  message_tag.h
   parallel_sample_sort.h
   sample_distributed_tree_builder.h
   subtable_send_request.h
