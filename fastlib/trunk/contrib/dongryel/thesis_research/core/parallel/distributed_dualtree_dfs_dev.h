@@ -591,6 +591,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  // The MPI timer.
+  boost::mpi::timer timer;
+
   // Allocate space for storing the final results.
   query_results->Init(problem_->global(), query_table_->n_entries());
 
@@ -617,6 +620,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // workspace. This is currently doing an all-reduce type of
   // exchange.
   AllToAllIReduce_(metric, query_results);
+  std::cerr << "Process " << world_->rank() << " took " <<
+            timer.elapsed() << " seconds to compute.\n";
+  std::cerr << "  Deterministic prunes: " <<
+            this->num_deterministic_prunes() <<
+            " , probabilistic prunes: " <<
+            this->num_probabilistic_prunes() << "\n";
   world_->barrier();
 }
 

@@ -55,8 +55,6 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   // Barrier so that every process is here.
   world_->barrier();
 
-  boost::mpi::timer timer;
-
   // Instantiate a dual-tree algorithm of the KDE.
   core::parallel::DistributedDualtreeDfs <
   mlpack::distributed_kde::DistributedKde <
@@ -71,14 +69,6 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   // Compute the result and do post-normalize.
   distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
   result_out->Normalize(global_);
-
-  if(world_->rank() == 0) {
-    printf("Spent %g seconds in computation.\n", timer.elapsed());
-  }
-  printf("Process %d's deterministic prunes: %d, probabilistic prunes: %d.\n",
-         world_->rank(),
-         distributed_dualtree_dfs.num_deterministic_prunes(),
-         distributed_dualtree_dfs.num_probabilistic_prunes());
 }
 
 template<typename DistributedTableType, typename KernelAuxType>
