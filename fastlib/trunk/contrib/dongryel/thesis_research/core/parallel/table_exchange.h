@@ -212,7 +212,9 @@ class TableExchange {
           // Issue an asynchronous send and break.
           subtables_to_send_[free_send_slot].get<1>() =
             world.isend(
-              destination, begin, subtables_to_send_[free_send_slot].get<0>());
+              destination,
+              core::parallel::MessageTag::RECEIVE_SUBTABLE,
+              subtables_to_send_[free_send_slot].get<0>());
           subtables_to_send_[free_send_slot].get<2>() = destination;
           sending_in_progress_.push_back(free_send_slot);
           break;
@@ -229,7 +231,9 @@ class TableExchange {
 
         // Probe whether there is an incoming reference subtable.
         if(boost::optional< boost::mpi::status > l_status =
-              world.iprobe(boost::mpi::any_source, boost::mpi::any_tag)) {
+              world.iprobe(
+                boost::mpi::any_source,
+                core::parallel::MessageTag::RECEIVE_SUBTABLE)) {
 
           // Get a free cache block.
           int free_receive_slot = free_slots_for_receiving_.back();
@@ -240,7 +244,7 @@ class TableExchange {
             free_receive_slot, false);
           world.recv(
             l_status->source(),
-            l_status->tag(),
+            core::parallel::MessageTag::RECEIVE_SUBTABLE,
             subtables_to_receive_[ free_receive_slot ].first);
           receiving_in_progress_.push_back(free_receive_slot);
 
