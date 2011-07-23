@@ -16,7 +16,7 @@
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/gnp/dualtree_dfs_dev.h"
-#include "core/parallel/dualtree_load_balancer.h"
+#include "core/parallel/message_tag.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
@@ -92,6 +92,7 @@ DistributedProblemType >::GenerateTasks_(
     // Assuming that each query subtree needs to lock on the reference
     // subtree, do so.
     table_exchange.LockCache(cache_id, local_query_subtrees.size());
+
   } //end of looping over each reference subtree.
 }
 
@@ -202,57 +203,6 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 }
 
 template<typename DistributedProblemType>
-void DistributedDualtreeDfs <
-DistributedProblemType >::RedistributeQuerySubtrees_(
-  const std::vector<TreeType *> &local_query_subtrees,
-  const std::vector<int> &local_query_subtree_assignments,
-  int total_num_query_subtrees_to_receive,
-  core::parallel::TableExchange <
-  DistributedTableType, SubTableType > *query_subtree_cache) {
-
-  // Initialize the query subtree cache equal to the total number of
-  // query subtrees to receive.
-  query_subtree_cache->Init(
-    * world_, * query_table_->local_table(),
-    total_num_query_subtrees_to_receive);
-
-  // Fill out the query subtree send requests.
-  int num_completed_sends = 0;
-  int num_completed_receives = 0;
-  std::vector <
-  SendRequestPriorityQueueType > query_subtree_send_requests(world_->size());
-  for(unsigned int i = 0; i < local_query_subtree_assignments.size(); i++) {
-
-    // Do not send self-trees.
-    if(local_query_subtree_assignments[i] == world_->rank()) {
-      num_completed_sends++;
-      num_completed_receives++;
-    }
-    else {
-      query_subtree_send_requests[local_query_subtree_assignments[i]].push(
-        core::parallel::SubTableSendRequest(
-          local_query_subtree_assignments[i],
-          local_query_subtrees[i]->begin(),
-          local_query_subtrees[i]->count(), 0.0));
-    }
-  }
-
-  // Exchange until done.
-  do {
-    std::vector< boost::tuple<int, int, int, int> > received_query_subtable_ids;
-    query_subtree_cache->AsynchSendReceive(
-      * world_, query_subtree_send_requests, &received_query_subtable_ids,
-      &num_completed_sends);
-    num_completed_receives += received_query_subtable_ids.size();
-
-  }
-  while(
-    num_completed_sends <
-    static_cast<int>(local_query_subtree_assignments.size()) ||
-    num_completed_receives < total_num_query_subtrees_to_receive);
-}
-
-template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::InitialSetup_(
@@ -269,7 +219,8 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
-  std::vector< FinePriorityQueueType > *tasks) {
+  std::vector< FinePriorityQueueType > *tasks,
+  int *total_num_remaining_tasks) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -354,24 +305,10 @@ DistributedProblemType >::InitialSetup_(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
 
-  // Load-balance the query subtrees.
-  int total_num_query_subtrees_to_receive;
-  core::parallel::TableExchange <
-  DistributedTableType, SubTableType > query_subtree_cache;
-  std::vector<int> local_query_subtree_assignments;
-  core::parallel::DualtreeLoadBalancer::Compute(
-    *world_,
-    *local_query_subtrees,
-    *essential_reference_subtrees_to_send,
-    *reference_frontier_lists,
-    *num_reference_subtrees_to_receive,
-    &local_query_subtree_assignments,
-    &total_num_query_subtrees_to_receive);
-
-  // Re-distribute the query subtrees based on the assignments.
-  RedistributeQuerySubtrees_(
-    *local_query_subtrees, local_query_subtree_assignments,
-    total_num_query_subtrees_to_receive, & query_subtree_cache);
+  // The total number of tasks initially is equal to the number of
+  // reference subtrees to receive times the number of query subtrees.
+  (*total_num_remaining_tasks) = local_query_subtrees->size() *
+                                 (*num_reference_subtrees_to_receive);
 }
 
 template<typename DistributedProblemType>
@@ -408,6 +345,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
+  int total_num_remaining_tasks;
   InitialSetup_(
     metric, query_results, table_exchange, &local_query_subtrees,
     &reference_subtrees_to_send, &send_priorities,
@@ -416,7 +354,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &reference_subtrees_to_receive,
     &receive_priorities,
     &num_reference_subtrees_to_receive,
-    &tasks);
+    &tasks,
+    &total_num_remaining_tasks);
 
   // The number of reference subtree releases (used for termination
   // condition) for the current MPI process.
@@ -549,7 +488,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
             // Release the reference subtable.
             table_exchange.ReleaseCache(task_reference_cache_id);
-          }
+
+            // Decrement the total number of remaining tasks.
+            total_num_remaining_tasks--;
+
+          } // end of a critical section.
+
         } // end of finding a task.
 
         // Quit if all of the sending is done and the task queue is
@@ -563,6 +507,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
                 local_query_subtrees.size() *
                 num_reference_subtrees_to_receive) &&
               num_reference_subtrees_to_send == num_completed_sends);
+        } // end of a critical section.
+      }
+
+      // If the current MPI process is running out of work soon, its
+      // master thread tries to steal work from the neighbors to
+      // achieve a local load balancing.
+      if(! work_left_to_do) {
+#pragma omp master
+        {
+
         }
       }
     }
