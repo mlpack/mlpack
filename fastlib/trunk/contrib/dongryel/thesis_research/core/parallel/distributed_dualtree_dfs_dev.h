@@ -210,25 +210,34 @@ DistributedProblemType >::RedistributeQuerySubtrees_(
   core::parallel::TableExchange <
   DistributedTableType, SubTableType > *query_subtree_cache) {
 
-  // Initialize the query subtree cache.
+  // Initialize the query subtree cache equal to the total number of
+  // query subtrees to receive.
   query_subtree_cache->Init(
     * world_, * query_table_->local_table(),
-    max_num_work_to_dequeue_per_stage_);
+    total_num_query_subtrees_to_receive);
 
   // Fill out the query subtree send requests.
+  int num_completed_sends = 0;
+  int num_completed_receives = 0;
   std::vector <
   SendRequestPriorityQueueType > query_subtree_send_requests(world_->size());
   for(unsigned int i = 0; i < local_query_subtree_assignments.size(); i++) {
-    query_subtree_send_requests[local_query_subtree_assignments[i]].push(
-      core::parallel::SubTableSendRequest(
-        local_query_subtree_assignments[i],
-        local_query_subtrees[i]->begin(),
-        local_query_subtrees[i]->count(), 0.0));
+
+    // Do not send self-trees.
+    if(local_query_subtree_assignments[i] == world_->rank()) {
+      num_completed_sends++;
+      num_completed_receives++;
+    }
+    else {
+      query_subtree_send_requests[local_query_subtree_assignments[i]].push(
+        core::parallel::SubTableSendRequest(
+          local_query_subtree_assignments[i],
+          local_query_subtrees[i]->begin(),
+          local_query_subtrees[i]->count(), 0.0));
+    }
   }
 
   // Exchange until done.
-  int num_completed_sends = 0;
-  int num_completed_receives = 0;
   do {
     std::vector< boost::tuple<int, int, int, int> > received_query_subtable_ids;
     query_subtree_cache->AsynchSendReceive(
