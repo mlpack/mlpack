@@ -15,6 +15,7 @@
 #include <map>
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
+#include "core/parallel/distributed_termination.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/table_exchange.h"
