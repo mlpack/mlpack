@@ -50,8 +50,6 @@ class TableExchange {
 
     std::vector< int > receive_cache_locks_;
 
-    std::vector<int> receiving_in_progress_;
-
     std::vector<int> free_slots_for_receiving_;
 
     std::vector <
@@ -246,7 +244,6 @@ class TableExchange {
             l_status->source(),
             core::parallel::MessageTag::RECEIVE_SUBTABLE,
             subtables_to_receive_[ free_receive_slot ].first);
-          receiving_in_progress_.push_back(free_receive_slot);
 
           received_subtable_ids->push_back(
             boost::make_tuple(
