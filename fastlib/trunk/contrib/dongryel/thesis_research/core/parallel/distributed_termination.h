@@ -132,7 +132,7 @@ class DistributedTermination {
       }
       termination_count_ = 0;
 
-      diameter_ = ceil(log2(comm.size()));
+      diameter_ = static_cast<int>(ceil(log2(comm.size())));
       messages_in_transit_.resize(diameter_);
       free_slots_for_sending_.resize(diameter_);
       for(int i = 0; i < diameter_; i++) {
