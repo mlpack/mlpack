@@ -204,8 +204,7 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
-      std::vector< FinePriorityQueueType > *tasks,
-      int *total_num_remaining_tasks);
+      std::vector< FinePriorityQueueType > *tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine
