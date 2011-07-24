@@ -15,6 +15,7 @@
 #include <map>
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
+#include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/distributed_termination.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
@@ -220,8 +221,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
-  std::vector< FinePriorityQueueType > *tasks,
-  int *total_num_remaining_tasks) {
+  std::vector< FinePriorityQueueType > *tasks) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -305,11 +305,6 @@ DistributedProblemType >::InitialSetup_(
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
     query_results, initial_pruned);
-
-  // The total number of tasks initially is equal to the number of
-  // reference subtrees to receive times the number of query subtrees.
-  (*total_num_remaining_tasks) = local_query_subtrees->size() *
-                                 (*num_reference_subtrees_to_receive);
 }
 
 template<typename DistributedProblemType>
@@ -346,7 +341,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
-  int total_num_remaining_tasks;
   InitialSetup_(
     metric, query_results, table_exchange, &local_query_subtrees,
     &reference_subtrees_to_send, &send_priorities,
@@ -355,8 +349,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &reference_subtrees_to_receive,
     &receive_priorities,
     &num_reference_subtrees_to_receive,
-    &tasks,
-    &total_num_remaining_tasks);
+    &tasks);
 
   // The number of reference subtree releases (used for termination
   // condition) for the current MPI process.
@@ -370,6 +363,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of completed sends used for determining the
   // termination condition.
   int num_completed_sends = 0;
+
+  // Used for termination condition check.
+  core::parallel::DistributedTermination termination_check;
+  termination_check.Init(*world_);
 
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
@@ -490,9 +487,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             // Release the reference subtable.
             table_exchange.ReleaseCache(task_reference_cache_id);
 
-            // Decrement the total number of remaining tasks.
-            total_num_remaining_tasks--;
-
           } // end of a critical section.
 
         } // end of finding a task.
@@ -509,7 +503,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
                 num_reference_subtrees_to_receive) &&
               num_reference_subtrees_to_send == num_completed_sends);
         } // end of a critical section.
-      }
+      } // end of attempting to deque a task.
 
       // If the current MPI process is running out of work soon, its
       // master thread tries to steal work from the neighbors to
@@ -517,11 +511,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       if(! work_left_to_do) {
 #pragma omp master
         {
-
+          // Send a signal that I am done.
+          termination_check.set_termination_flag(world_->rank());
+          termination_check.AsynchForwardTerminationMessages(*world_);
         }
       }
     }
-    while(work_left_to_do);
+    while(! termination_check.can_terminate(*world_));
 
   } // end of omp parallel
 }
