@@ -42,8 +42,8 @@ class DistributedTermination {
           return originating_rank_;
         }
 
-        void set_stage(int stage_in) {
-          stage_ = stage_in;
+        void move_to_next_stage() {
+          stage_++;
         }
 
         void Init(int stage_in, int originating_rank_in) {
@@ -51,12 +51,16 @@ class DistributedTermination {
           originating_rank_ = originating_rank_in;
         }
 
-        void operator=(int stage_in, int originating_rank_in) {
-          this->Init(stage_in, originating_rank_in);
+        void operator=(const TerminationMessage &message_in) {
+          this->Init(message_in.stage(), message_in.originating_rank());
+        }
+
+        TerminationMessage(const TerminationMessage &message_in) {
+          this->operator=(message_in);
         }
 
         TerminationMessage(int stage_in, int originating_rank_in) {
-          this->operator=(stage_in, originating_rank_in);
+          this->Init(stage_in, originating_rank_in);
         }
 
         TerminationMessage() {
@@ -72,6 +76,10 @@ class DistributedTermination {
      */
     std::deque<bool> terminated_;
 
+    /** @brief The number of MPI process that are done.
+     */
+    int termination_count_;
+
     /** @brief Messages originating from other processes that are
      *         in transit.
      */
@@ -83,6 +91,10 @@ class DistributedTermination {
      *         messages from other processes.
      */
     std::vector<int> free_slots_for_sending_;
+
+    /** @brief The list of slots that are being used for messages.
+     */
+    std::vector<int> sending_in_progress_;
 
     /** @brief The diameter of the hypercube network topology.
      */
@@ -103,18 +115,28 @@ class DistributedTermination {
 
   public:
 
+    void set_termination_flag(int rank_in) {
+      terminated_[ rank_in ] = true;
+    }
+
+    bool can_terminate(boost::mpi::communicator &comm) const {
+      return termination_count_ == comm.size();
+    }
+
     void Init(boost::mpi::communicator &comm) {
 
+      // Set the termination information.
       terminated_.resize(comm.size());
       for(int i = 0; i < comm.size(); i++) {
         terminated_[i] = false;
       }
+      termination_count_ = 0;
 
       diameter_ = ceil(log2(comm.size()));
       messages_in_transit_.resize(diameter_);
       free_slots_for_sending_.resize(diameter_);
-      for(int i = 0; i < num_messages; i++) {
-        free_slots_for_sendings_[i] = i;
+      for(int i = 0; i < diameter_; i++) {
+        free_slots_for_sending_[i] = i;
       }
 
       // Initialize the termination message originating from this
@@ -124,70 +146,87 @@ class DistributedTermination {
       next_self_message_dest_ = (comm.rank() ^ 1);
     }
 
-    bool Done(boost::mpi::communicator &comm) {
+    void AsynchForwardTerminationMessages(boost::mpi::communicator &comm) {
 
       // If the current process is done, then send out the
       // message.
       if(terminated_[ comm.rank()]) {
-        if(self_message_is_free_)
-          if(next_self_message_ < comm.size()) {
+        if(self_message_is_free_) {
+          if(next_self_message_dest_ < comm.size()) {
             self_message_.second =
-              comm.isend(next_self_message_dest_,);
+              comm.isend(
+                next_self_message_dest_,
+                core::parallel::MessageTag::MPI_PROCESS_DONE,
+                self_message_.first);
           }
+        }
+        else if(self_message_.second.test()) {
+
+          // Try to receive the acknowledgement to free the slot, and
+          // move onto the next stage.
+          self_message_is_free_ = true;
+          self_message_.first.move_to_next_stage();
+          next_self_message_dest_ = comm.rank() ^ self_message_.first.stage();
+        }
       }
-      else if(
-        boost::optional< boost::mpi::status> l_status =
-          comm.iprobe(
-            probe_index,
-            core::parallel::MessageTag::MPI_PROCESS_DONE_ACK)) {
 
-        // Try to receive the acknowledgement to free the slot.
+      // Probe from any of the neighbors and forward termination
+      // messages appropriately.
+      for(int i = 0;
+          free_slots_for_sending_.size() > 0 && i < diameter_; i++) {
 
-      }
-    }
+        int probe_index = comm.rank() ^(1 << i);
+        if(probe_index < comm.size()) {
+          if(boost::optional< boost::mpi::status> l_status =
+                comm.iprobe(
+                  probe_index,
+                  core::parallel::MessageTag::MPI_PROCESS_DONE)) {
 
-    // Probe from any of the neighbors that are active and
-    // forward termination messages appropriately.
-    for(int i = 0;
-        free_slots_for_sending_.size() > 0 && i < diameter_; i++) {
-
-      int probe_index = comm.rank() ^(1 << i);
-      if(
-        probe_index < comm.size() &&
-        (boost::optional< boost::mpi::status> l_status =
-           comm.iprobe(
-             probe_index,
-             core::parallel::MessageTag::MPI_PROCESS_DONE))) {
-
-        TerminationMessage received_message;
-        comm.recv(
-          l_status->source(),
-          core::parallel::MessageTag::MPI_PROCESS_DONE,
-          received_termination_message);
-
-        // Mark the termination flag on the current process.
-        int free_slot = free_slots_for_sending_.back();
-        free_slots_for_sending_.pop_back();
-
-        // Forward the message for the next stage.
-        int next_destination = 1 << (received_message.stage() + 1);
-        if(next_destination < comm.size()) {
-          messages_in_transit_[free_slot].second =
-            comm.isend(
-              next_destination,
+            // Receive the probed message and tally the count.
+            TerminationMessage received_message;
+            comm.recv(
+              l_status->source(),
               core::parallel::MessageTag::MPI_PROCESS_DONE,
-              TerminationMessage(next_destination));
+              received_message);
+            terminated_[ received_message.originating_rank()] = true;
+            termination_count_++;
+
+            // Forward the message for the next destination.
+            int next_destination = 1 << (received_message.stage() + 1);
+            if(next_destination < comm.size()) {
+
+              // Get a free slot and prepare the message.
+              int free_slot = free_slots_for_sending_.back();
+              free_slots_for_sending_.pop_back();
+              messages_in_transit_[free_slot].first = received_message;
+              messages_in_transit_[free_slot].first.move_to_next_stage();
+
+              // Issue the asnychronous send.
+              messages_in_transit_[free_slot].second =
+                comm.isend(
+                  next_destination,
+                  core::parallel::MessageTag::MPI_PROCESS_DONE,
+                  messages_in_transit_[free_slot].first);
+              sending_in_progress_.push_back(free_slot);
+            }
+          }
+        }
+      }
+
+      // Now probe for acknowledgements from the neighbors that
+      // they have received the message.
+      for(int i = 0; i < static_cast<int>(sending_in_progress_.size()); i++) {
+        int test_slot = sending_in_progress_[i];
+        if(messages_in_transit_[test_slot].second.test()) {
+
+          // Free the slot if sending is done.
+          sending_in_progress_[i] = sending_in_progress_.back();
+          sending_in_progress_.pop_back();
+          free_slots_for_sending_.push_back(test_slot);
+          i--;
         }
       }
     }
-
-    // Now probe for acknowledgements from the neighbors that
-    // they have received the message.
-    while() {
-    }
-
-    return false;
-}
 };
 }
 }
