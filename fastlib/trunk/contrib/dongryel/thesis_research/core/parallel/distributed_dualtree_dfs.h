@@ -14,6 +14,7 @@
 #include <boost/tuple/tuple.hpp>
 #include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
+#include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/sub_table.h"
@@ -183,10 +184,10 @@ class DistributedDualtreeDfs {
       const MetricType &metric_in,
       core::parallel::TableExchange <
       DistributedTableType, SubTableType > &table_exchange,
-      std::vector<TreeType *> &local_query_subtrees,
       const std::vector <
       boost::tuple<int, int, int, int> > &received_subtable_ids,
-      std::vector< FinePriorityQueueType > *tasks);
+      core::parallel::DistributedDualtreeTask <
+      TreeType, FinePriorityQueueType > *distributed_tasks);
 
     template<typename MetricType>
     void InitialSetup_(
@@ -194,7 +195,6 @@ class DistributedDualtreeDfs {
       typename DistributedProblemType::ResultType *query_results,
       core::parallel::TableExchange <
       DistributedTableType, SubTableType > &table_exchange,
-      std::vector< TreeType *> *local_query_subtrees,
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees_to_send,
       std::vector< std::vector< core::math::Range> > *send_priorities,
@@ -204,7 +204,8 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
-      std::vector< FinePriorityQueueType > *tasks);
+      core::parallel::DistributedDualtreeTask <
+      TreeType, FinePriorityQueueType > *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine

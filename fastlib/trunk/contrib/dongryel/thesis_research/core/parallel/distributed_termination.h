@@ -113,6 +113,11 @@ class DistributedTermination {
      */
     int next_self_message_dest_;
 
+    /** @brief Whether the current MPI process is done sending all
+     *         termination messages throughout the network.
+     */
+    bool done_sending_termination_messages_;
+
   public:
 
     void set_termination_flag(int rank_in) {
@@ -120,7 +125,12 @@ class DistributedTermination {
     }
 
     bool can_terminate(boost::mpi::communicator &comm) const {
-      return termination_count_ == comm.size();
+
+      // Safely terminate when the current process has received all
+      // termination signals and sent out all necessary messages
+      // originating from here.
+      return termination_count_ == comm.size() &&
+             done_sending_termination_messages_;
     }
 
     void Init(boost::mpi::communicator &comm) {
@@ -144,13 +154,14 @@ class DistributedTermination {
       self_message_.first.Init(0, comm.rank());
       self_message_is_free_ = true;
       next_self_message_dest_ = (comm.rank() ^ 1);
+      done_sending_termination_messages_ = false;
     }
 
     void AsynchForwardTerminationMessages(boost::mpi::communicator &comm) {
 
       // If the current process is done, then send out the
       // message.
-      if(terminated_[ comm.rank()]) {
+      if(terminated_[ comm.rank()] && (! done_sending_termination_messages_)) {
         if(self_message_is_free_) {
           if(next_self_message_dest_ < comm.size()) {
             self_message_.second =
@@ -158,6 +169,9 @@ class DistributedTermination {
                 next_self_message_dest_,
                 core::parallel::MessageTag::MPI_PROCESS_DONE,
                 self_message_.first);
+          }
+          else {
+            done_sending_termination_messages_ = true;
           }
         }
         else if(self_message_.second.test()) {
