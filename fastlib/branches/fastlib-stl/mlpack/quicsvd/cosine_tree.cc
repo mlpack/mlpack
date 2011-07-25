@@ -16,16 +16,10 @@ bool isZero(double d) {
 // Init a root cosine node from a matrix
 CosineNode::CosineNode(const Matrix& A) {
   this->A_.Alias(A);
-  origIndices_.reserve(A_.n_cols());
-   norms_.reserve(A_.n_cols());
+  origIndices_.resize(A_.n_cols());
+   norms_.resize(A_.n_cols());
 
    int newval = A_.n_cols();
-
-
-   for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
-        origIndices_.push_back(0);      
-        norms_.push_back(0);
-    }
 
  
    for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
@@ -45,13 +39,8 @@ CosineNode::CosineNode(const Matrix& A) {
 CosineNode::CosineNode(CosineNode& parent, 
 		       const std::vector<int>& indices, bool isLeft) {
   A_.Alias(parent.A_);
-  origIndices_.reserve(indices.size());
-  norms_.reserve(n_cols());
-   
-for(index_t i_col = 0; i_col < indices.size(); i_col++) {    
-      norms_.push_back(0);
-      origIndices_.push_back(0);
-   }
+  origIndices_.resize(indices.size());
+  norms_.resize(n_cols());
 
   for (index_t i_col = 0; i_col < origIndices_.size(); i_col++) {
     origIndices_[i_col] = parent.origIndices_[indices[i_col]];
@@ -70,11 +59,8 @@ for(index_t i_col = 0; i_col < indices.size(); i_col++) {
 void CosineNode::CalStats() {
   // Calculate cummlulative sum square of L2 norms
 
- cum_norms_.reserve(A_.n_cols());
-
-  for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
-     cum_norms_.push_back(0);
-  }  
+  cum_norms_.resize(A_.n_cols());
+ 
 
   for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {
   cum_norms_[i_col] = ((i_col > 0) ? cum_norms_[i_col-1]:0)
@@ -102,10 +88,6 @@ void CosineNode::ChooseCenter(Vector* center) {
 void CosineNode::CalCosines(const Vector& center, 
 			    std::vector<double>* cosines) {
 
-  for(index_t i_col=0; i_col < n_cols(); i_col++) {
-    (*cosines).push_back(0);
-  }
-
   double centerL2 = la::LengthEuclidean(center);
  
  for (index_t i_col = 0; i_col < n_cols(); i_col++)
@@ -124,12 +106,8 @@ void CosineNode::CalCosines(const Vector& center,
 }
 
 void CosineNode::CreateIndices(std::vector<int>* indices) {
-  indices->reserve(n_cols());
- 
-   for (index_t i_col = 0; i_col < n_cols(); i_col++)
-   {
-      (*indices).push_back(0);
-   }
+  
+   indices->resize(n_cols());
 
    for (index_t i_col = 0; i_col < n_cols(); i_col++)
     (*indices)[i_col] = i_col;
@@ -186,9 +164,7 @@ index_t calSplitPoint(const std::vector<double>& key) {
 void InitSubCopy(const std::vector<int>& src, index_t pos, index_t size,
 		 std::vector<int>* dst) {
 
-   dst->reserve(size);
-   for (index_t i = 0; i < size; i++)
-    (*dst).push_back(0);
+   dst->resize(size);
 
    for (index_t i = 0; i < size; i++)
     (*dst)[i] = src[pos+i];
