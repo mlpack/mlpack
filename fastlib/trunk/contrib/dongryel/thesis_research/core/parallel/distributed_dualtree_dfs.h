@@ -14,6 +14,7 @@
 #include <boost/tuple/tuple.hpp>
 #include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
+#include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
@@ -65,9 +66,8 @@ class DistributedDualtreeDfs {
      *         computation per stage on a shared memory (on a fine
      *         scale).
      */
-    typedef boost::tuple <
-    TreeType *,
-             boost::tuple<TableType *, TreeType *, int>, double > FineFrontierObjectType;
+    typedef core::parallel::DistributedDualtreeTask <
+    TableType, TreeType > FineFrontierObjectType;
 
     /** @brief The type of the subtable in use.
      */
@@ -145,7 +145,7 @@ class DistributedDualtreeDfs {
       public:
         bool operator()(
           const FrontierObjectType &a, const FrontierObjectType &b) const {
-          return a.get<2>() < b.get<2>();
+          return a.priority() < b.priority();
         }
     };
 
