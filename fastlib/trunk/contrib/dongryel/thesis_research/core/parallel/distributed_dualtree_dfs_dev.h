@@ -408,9 +408,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           core::gnp::DualtreeDfs<ProblemType> sub_engine;
           ProblemType sub_problem;
           ArgumentType sub_argument;
-          TableType *task_reference_table = found_task.first.get<1>().get<0>();
-          TreeType *task_starting_rnode = found_task.first.get<1>().get<1>();
-          int task_reference_cache_id = found_task.first.get<1>().get<2>();
+          TableType *task_reference_table =
+            found_task.first.reference_table();
+          TreeType *task_starting_rnode =
+            found_task.first.reference_start_node();
+          int task_reference_cache_id = found_task.first.cache_id();
 
           // Initialize the argument, the problem, and the engine.
           sub_argument.Init(
@@ -420,7 +422,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           sub_engine.Init(sub_problem);
 
           // Set the starting query node.
-          sub_engine.set_query_start_node(found_task.first.get<0>());
+          sub_engine.set_query_start_node(found_task.first.query_start_node());
 
           // Set the starting reference node.
           sub_engine.set_reference_start_node(task_starting_rnode);

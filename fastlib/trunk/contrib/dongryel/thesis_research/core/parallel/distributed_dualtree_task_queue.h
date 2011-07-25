@@ -100,7 +100,10 @@ class DistributedDualtreeTaskQueue {
           metric_in, reference_table_node_pair.get<1>()->bound()));
       TaskType new_task(
         local_query_subtrees_[push_index],
-        reference_table_node_pair, - squared_distance_range.mid());
+        reference_table_node_pair.get<0>(),
+        reference_table_node_pair.get<1>(),
+        reference_table_node_pair.get<2>(),
+        - squared_distance_range.mid());
       tasks_[ push_index].push(new_task);
     }
 
