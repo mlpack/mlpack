@@ -32,6 +32,5 @@ BOOST_AUTO_TEST_CASE(CosineNodeTest) {
   arma_compat::armaToMatrix(tmpA, A);
   CosineNode root(A);
 
-  //todo:  figure out what breaks Split()
-  //    root.Split();
+  root.Split();
 }

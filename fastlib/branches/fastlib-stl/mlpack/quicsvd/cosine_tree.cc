@@ -88,13 +88,19 @@ void CosineNode::ChooseCenter(Vector* center) {
 void CosineNode::CalCosines(const Vector& center, 
 			    std::vector<double>* cosines) {
 
+  cosines->resize(n_cols());
+
   double centerL2 = la::LengthEuclidean(center);
  
+
+
  for (index_t i_col = 0; i_col < n_cols(); i_col++)
   { 
     // if col is a zero vector then push it to the left node
     if (isZero(norms_[i_col]))
+     {
       (*cosines)[i_col] = 2;
+     }
     else {
       Vector col;
       GetColumn(i_col, &col);
@@ -121,16 +127,18 @@ index_t qpartition(std::vector<double>& key, std::vector<int>& data,
   
  for (index_t i = left+1; i <= right; i++)
   {    
- 
    if (key[i] >= x) {
       j++;
       double tmp_d = key[i]; key[i] = key[j]; key[j] = tmp_d;
-      index_t tmp_i = data[i]; data[i] = data[j]; data[j] = tmp_i;
+      index_t tmp_i = data[i]; 
+      data[i] = data[j]; 
+      data[j] = tmp_i;
     }
    }
 
   double tmp_d = key[left]; key[left] = key[j]; key[j] = tmp_d;
   index_t tmp_i = data[left]; data[left] = data[j]; data[j] = tmp_i;
+
   return j;
 }
 
@@ -141,11 +149,16 @@ void qsort(std::vector<double>& key, std::vector<int>& data,
 
  if (left >= right) return;
   index_t middle = qpartition(key, data, left, right);
+
+  //have Ryan Check this
+  if(middle == 0) { middle = 1; } 
+
   qsort(key, data, left, middle-1);
   qsort(key, data, middle+1, right);
 }
 
 void Sort(std::vector<double>& key, std::vector<int>& data) {
+
   qsort(key, data, 0, key.size()-1);
 }
 
