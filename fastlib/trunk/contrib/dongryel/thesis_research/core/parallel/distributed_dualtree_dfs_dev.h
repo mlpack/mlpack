@@ -49,9 +49,9 @@ DistributedProblemType >::GenerateTasks_(
   const MetricType &metric_in,
   core::parallel::TableExchange <
   DistributedTableType, SubTableType > &table_exchange,
-  std::vector<TreeType *> &local_query_subtrees,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
-  std::vector< FinePriorityQueueType > *tasks) {
+  core::parallel::DistributedDualtreeTask <
+  TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
 
@@ -76,24 +76,13 @@ DistributedProblemType >::GenerateTasks_(
       frontier_reference_table, reference_starting_node, cache_id);
 
     // For each query subtree, create a new task.
-    for(unsigned int j = 0; j < local_query_subtrees.size(); j++) {
-
-      // Create a fine frontier object to be dequeued by each thread
-      // later.
-      core::math::Range squared_distance_range(
-        local_query_subtrees[j]->bound().RangeDistanceSq(
-          metric_in, reference_table_node_pair.get<1>()->bound()));
-      FineFrontierObjectType new_task =
-        boost::tuple < TreeType * ,
-        boost::tuple<TableType *, TreeType *, int>, double > (
-          local_query_subtrees[j], reference_table_node_pair,
-          - squared_distance_range.mid());
-      (*tasks)[j].push(new_task);
+    for(int j = 0; j < distributed_tasks->size(); j++) {
+      distributed_tasks->PushTask(metric_in, j, reference_table_node_pair);
     }
 
     // Assuming that each query subtree needs to lock on the reference
     // subtree, do so.
-    table_exchange.LockCache(cache_id, local_query_subtrees.size());
+    table_exchange.LockCache(cache_id, distributed_tasks->size());
 
   } //end of looping over each reference subtree.
 }
@@ -212,7 +201,6 @@ DistributedProblemType >::InitialSetup_(
   typename DistributedProblemType::ResultType *query_results,
   core::parallel::TableExchange <
   DistributedTableType, SubTableType > &table_exchange,
-  std::vector< TreeType *> *local_query_subtrees,
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
@@ -221,7 +209,8 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
-  std::vector< FinePriorityQueueType > *tasks) {
+  core::parallel::DistributedDualtreeTask <
+  TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -229,10 +218,9 @@ DistributedProblemType >::InitialSetup_(
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
 
-  // For each process, break up the local query tree into a list of
-  // subtree query lists.
-  query_table_->local_table()->get_frontier_nodes(
-    max_query_subtree_size, local_query_subtrees);
+  // For each process, initialize the distributed task object.
+  distributed_tasks->Init(
+    query_table_->local_table(), max_query_subtree_size);
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -272,10 +260,8 @@ DistributedProblemType >::InitialSetup_(
 
   // Fill out the initial task consisting of the reference trees on
   // the same process.
-  tasks->resize(local_query_subtrees->size());
   GenerateTasks_(
-    metric, table_exchange, * local_query_subtrees,
-    received_subtable_ids, tasks);
+    metric, table_exchange, received_subtable_ids, distributed_tasks);
 
   // Do an all to all to let each participating query process its
   // initial frontier.
@@ -326,7 +312,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // The list of prioritized tasks this MPI process needs to take care
   // of.
-  std::vector< FinePriorityQueueType > tasks;
+  core::parallel::DistributedDualtreeTask <
+  TreeType, FinePriorityQueueType > distributed_tasks;
 
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
@@ -335,30 +322,22 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     *world_, *(reference_table_->local_table()),
     max_num_work_to_dequeue_per_stage_);
 
-  // The local query subtrees.
-  std::vector< TreeType *> local_query_subtrees;
-
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
   InitialSetup_(
-    metric, query_results, table_exchange, &local_query_subtrees,
+    metric, query_results, table_exchange,
     &reference_subtrees_to_send, &send_priorities,
     &prioritized_send_subtables,
     &num_reference_subtrees_to_send,
     &reference_subtrees_to_receive,
     &receive_priorities,
     &num_reference_subtrees_to_receive,
-    &tasks);
+    &distributed_tasks);
 
   // The number of reference subtree releases (used for termination
   // condition) for the current MPI process.
   int num_reference_subtree_releases = 0;
-
-  // The global list of query subtree that is being computed. This is
-  // necessary for preventing two threads from grabbing tasks that
-  // involve the same query subtree.
-  std::deque<bool> active_query_subtrees(local_query_subtrees.size(), false);
 
   // The number of completed sends used for determining the
   // termination condition.
@@ -397,8 +376,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
           // Generate the list of work and put it into the queue.
           GenerateTasks_(
-            metric, table_exchange, local_query_subtrees,
-            received_subtable_ids, &tasks);
+            metric, table_exchange, received_subtable_ids, &distributed_tasks);
         }
       } // end of the master thread.
 
@@ -411,31 +389,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         quick_test = (num_reference_subtrees_to_send == num_completed_sends);
       }
       if(thread_id > 0 || omp_get_num_threads() == 1 || quick_test) {
-        bool all_empty = true;
-        for(unsigned int i = 0; i < tasks.size(); i++) {
+        for(int i = 0; i < distributed_tasks.size(); i++) {
 
           // Index to probe.
-          int probe_index = (thread_id + i) % tasks.size();
+          int probe_index = (thread_id + i) % distributed_tasks.size();
 
 #pragma omp critical
           {
-
-            // Check whether the current query subtree is empty.
-            all_empty = all_empty && (tasks[ probe_index ].size() == 0);
-
-            // Try to see if the thread can dequeue a task here.
-            if((! all_empty) && (! active_query_subtrees[ probe_index ]) &&
-                tasks[ probe_index ].size() > 0) {
-
-              // Copy the task and the query subtree number.
-              found_task.first = tasks[ probe_index ].top();
-              found_task.second = probe_index;
-
-              // Pop the task from the priority queue after copying and
-              // put a lock on the query subtree.
-              tasks[ probe_index ].pop();
-              active_query_subtrees[ probe_index ] = true;
-            }
+            distributed_tasks.DequeueTask(probe_index, &found_task);
           } // end of pragma omp critical
 
           if(found_task.second >= 0) {
@@ -479,7 +440,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
 
             // After finishing, the lock on the query subtree is released.
-            active_query_subtrees[ found_task.second ] = false;
+            distributed_tasks.UnlockQuerySubtree(found_task.second);
 
             // Count the number of times the reference subtree is released.
             num_reference_subtree_releases++;
@@ -499,25 +460,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             !(table_exchange.is_empty() &&
               num_reference_subtree_releases ==
               static_cast<int>(
-                local_query_subtrees.size() *
+                distributed_tasks.size() *
                 num_reference_subtrees_to_receive) &&
               num_reference_subtrees_to_send == num_completed_sends);
         } // end of a critical section.
       } // end of attempting to deque a task.
-
-      // If the current MPI process is running out of work soon, its
-      // master thread tries to steal work from the neighbors to
-      // achieve a local load balancing.
-      if(! work_left_to_do) {
-#pragma omp master
-        {
-          // Send a signal that I am done.
-          termination_check.set_termination_flag(world_->rank());
-          termination_check.AsynchForwardTerminationMessages(*world_);
-        }
-      }
     }
-    while(! termination_check.can_terminate(*world_));
+    while(work_left_to_do);
 
   } // end of omp parallel
 }

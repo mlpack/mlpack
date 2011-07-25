@@ -44,11 +44,6 @@ endif()
 set(CUDA_TOOLKIT_ROOT_DIR $ENV{HOME}/local/cuda)
 find_package(CUDA)
 
-# find ParMETIS
-find_package(PARMETIS)
-include_directories(${PARMETIS_INCLUDE_DIR})
-link_directories(${PARMETIS_LIBRARIES})
-
 # Add additional complie flags.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
@@ -57,8 +52,8 @@ include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
 # for a local installation of armadillo
-include_directories($ENV{HOME}/local/armadillo-1.2.0/include)
-link_directories($ENV{HOME}/local/armadillo-1.2.0/lib64)
+include_directories($ENV{HOME}/local/armadillo-2.0.2/include)
+link_directories($ENV{HOME}/local/armadillo-2.0.2/lib64)
 
 # for a local installation of gsl
 include_directories($ENV{HOME}/local/gsl-1.9/include)
