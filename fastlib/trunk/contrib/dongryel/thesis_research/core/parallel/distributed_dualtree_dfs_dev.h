@@ -15,19 +15,13 @@
 #include <map>
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
-#include "core/parallel/distributed_dualtree_task.h"
+#include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/distributed_termination.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
-
-namespace core {
-namespace table {
-extern core::table::MemoryMappedFile *global_m_file_;
-}
-}
 
 namespace core {
 namespace parallel {
@@ -50,7 +44,7 @@ DistributedProblemType >::GenerateTasks_(
   core::parallel::TableExchange <
   DistributedTableType, SubTableType > &table_exchange,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
-  core::parallel::DistributedDualtreeTask <
+  core::parallel::DistributedDualtreeTaskQueue <
   TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
@@ -209,7 +203,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
-  core::parallel::DistributedDualtreeTask <
+  core::parallel::DistributedDualtreeTaskQueue <
   TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the query subtree for each task.
@@ -312,7 +306,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // The list of prioritized tasks this MPI process needs to take care
   // of.
-  core::parallel::DistributedDualtreeTask <
+  core::parallel::DistributedDualtreeTaskQueue <
   TreeType, FinePriorityQueueType > distributed_tasks;
 
   // An abstract way of collaborative subtable exchanges.
