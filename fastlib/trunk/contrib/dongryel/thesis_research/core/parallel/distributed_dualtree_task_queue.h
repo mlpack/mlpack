@@ -1,10 +1,10 @@
-/** @file distributed_dualtree_task.h
+/** @file distributed_dualtree_task_queue.h
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
-#ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_H
-#define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_H
+#ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
+#define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
 
 #include <deque>
 #include <vector>
@@ -14,7 +14,7 @@ namespace core {
 namespace parallel {
 
 template<typename TreeType, typename TaskPriorityQueueType>
-class DistributedDualtreeTask {
+class DistributedDualtreeTaskQueue {
   private:
 
     std::vector< TreeType *> local_query_subtrees_;
@@ -99,8 +99,8 @@ class DistributedDualtreeTask {
         local_query_subtrees_[push_index]->bound().RangeDistanceSq(
           metric_in, reference_table_node_pair.get<1>()->bound()));
       TaskType new_task(
-        local_query_subtrees_[push_index], reference_table_node_pair,
-        - squared_distance_range.mid());
+        local_query_subtrees_[push_index],
+        reference_table_node_pair, - squared_distance_range.mid());
       tasks_[ push_index].push(new_task);
     }
 
