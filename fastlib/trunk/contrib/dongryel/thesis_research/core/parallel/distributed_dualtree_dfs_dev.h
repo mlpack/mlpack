@@ -41,11 +41,10 @@ template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::GenerateTasks_(
   const MetricType &metric_in,
-  core::parallel::TableExchange <
-  DistributedTableType, SubTableType > &table_exchange,
+  core::parallel::TableExchange < DistributedTableType > &table_exchange,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
   core::parallel::DistributedDualtreeTaskQueue <
-  TableType, TreeType, FinePriorityQueueType > *distributed_tasks) {
+  DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
 
   for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
 
@@ -193,8 +192,7 @@ void DistributedDualtreeDfs <
 DistributedProblemType >::InitialSetup_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results,
-  core::parallel::TableExchange <
-  DistributedTableType, SubTableType > &table_exchange,
+  core::parallel::TableExchange < DistributedTableType > &table_exchange,
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
@@ -204,7 +202,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
   core::parallel::DistributedDualtreeTaskQueue <
-  TableType, TreeType, FinePriorityQueueType > *distributed_tasks) {
+  DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -214,7 +212,7 @@ DistributedProblemType >::InitialSetup_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    query_table_->local_table(), max_query_subtree_size);
+    query_table_->local_table(), max_query_subtree_size, table_exchange);
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -307,11 +305,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The list of prioritized tasks this MPI process needs to take care
   // of.
   core::parallel::DistributedDualtreeTaskQueue <
-  TableType, TreeType, FinePriorityQueueType > distributed_tasks;
+  DistributedTableType, FinePriorityQueueType > distributed_tasks;
 
   // An abstract way of collaborative subtable exchanges.
-  core::parallel::TableExchange <
-  DistributedTableType, SubTableType > table_exchange;
+  core::parallel::TableExchange < DistributedTableType > table_exchange;
   table_exchange.Init(
     *world_, *(reference_table_->local_table()),
     max_num_work_to_dequeue_per_stage_);
