@@ -437,6 +437,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           } // end of a critical section.
 
         } // end of finding a task.
+        else {
+
+          // Otherwise, ask other threads to share the work.
+          distributed_tasks.set_split_subtree_flag();
+        }
 
         // Quit if all of the sending is done and the task queue is
         // empty.

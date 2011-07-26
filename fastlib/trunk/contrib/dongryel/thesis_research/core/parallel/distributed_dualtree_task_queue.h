@@ -113,9 +113,14 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    void set_split_subtree_flag() {
+      split_subtree_after_unlocking_ = true;
+    }
+
     DistributedDualtreeTaskQueue() {
       num_remaining_tasks_ = 0;
       table_exchange_ = NULL;
+      split_subtree_after_unlocking_ = false;
     }
 
     bool is_empty() const {
@@ -218,13 +223,6 @@ class DistributedDualtreeTaskQueue {
 
           // Decrement the number of tasks.
           num_remaining_tasks_--;
-        }
-        else {
-
-          // Otherwise request the query subtree to be split after it
-          // is unlocked so that this thread has more chances for
-          // giving a work in the next iteration.
-          split_subtree_after_unlocking_ = true;
         }
       }
     }
