@@ -60,7 +60,7 @@ class DistributedDualtreeTaskQueue {
       std::vector<TaskType> prev_tasks;
       while(tasks_[subtree_index].size() > 0) {
         std::pair<TaskType, int> task_pair;
-        this->DequeueTask(subtree_index, &task_pair);
+        this->DequeueTask(subtree_index, &task_pair, false);
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.resize(tasks_.size() + 1);
@@ -161,7 +161,8 @@ class DistributedDualtreeTaskQueue {
     }
 
     void DequeueTask(
-      int probe_index, std::pair<TaskType, int> *task_out) {
+      int probe_index, std::pair<TaskType, int> *task_out,
+      bool lock_query_subtree_in) {
 
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
@@ -176,7 +177,7 @@ class DistributedDualtreeTaskQueue {
           // Pop the task from the priority queue after copying and
           // put a lock on the query subtree.
           tasks_[ probe_index ].pop();
-          local_query_subtree_locks_[ probe_index ] = true;
+          local_query_subtree_locks_[ probe_index ] = lock_query_subtree_in;
 
           // Decrement the number of tasks.
           num_remaining_tasks_--;
