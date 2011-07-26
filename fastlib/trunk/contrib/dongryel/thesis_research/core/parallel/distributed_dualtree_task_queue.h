@@ -32,7 +32,7 @@ class DistributedDualtreeTaskQueue {
 
     std::vector< TaskPriorityQueueType > tasks_;
 
-    std::deque< bool > split_subtree_after_unlocking_;
+    bool split_subtree_after_unlocking_;
 
     TableExchangeType *table_exchange_;
 
@@ -54,7 +54,6 @@ class DistributedDualtreeTaskQueue {
       // Grow the list of local query subtrees.
       local_query_subtrees_.push_back(right);
       local_query_subtree_locks_.push_back(false);
-      split_subtree_after_unlocking_.push_back(false);
 
       // Adjust the list of tasks.
       std::vector<TaskType> prev_tasks;
@@ -91,7 +90,6 @@ class DistributedDualtreeTaskQueue {
     }
 
     bool is_empty() const {
-      printf("Number of remaining tasks: %d\n", num_remaining_tasks_);
       return num_remaining_tasks_ == 0;
     }
 
@@ -105,14 +103,25 @@ class DistributedDualtreeTaskQueue {
       // Unlock the query subtree.
       local_query_subtree_locks_[ subtree_index ] = false;
 
-      // If the splitting was requested and the tree is a non-leaf,
-      // then split the query subtree.
-      if(split_subtree_after_unlocking_[ subtree_index ] &&
-          (! local_query_subtrees_[subtree_index]->is_leaf())) {
-        if(tasks_[subtree_index].size() > 0) {
-          split_subtree_(metric_in, subtree_index);
+      // If the splitting was requested,
+      if(split_subtree_after_unlocking_) {
+
+        // Try to find a subtree to split.
+        int split_index_query_size = 0;
+        int split_index = -1;
+        for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
+          if((! local_query_subtree_locks_[i]) &&
+              (! local_query_subtrees_[i]->is_leaf()) &&
+              tasks_[i].size() > 0 &&
+              split_index_query_size < local_query_subtrees_[i]->count())  {
+            split_index_query_size = local_query_subtrees_[i]->count();
+            split_index = i;
+          }
         }
-        split_subtree_after_unlocking_[ subtree_index ] = false;
+        if(split_index >= 0) {
+          split_subtree_(metric_in, split_index);
+        }
+        split_subtree_after_unlocking_ = false;
       }
     }
 
@@ -128,10 +137,9 @@ class DistributedDualtreeTaskQueue {
       // Initialize the other member variables.
       local_query_subtree_locks_.resize(local_query_subtrees_.size());
       tasks_.resize(local_query_subtrees_.size());
-      split_subtree_after_unlocking_.resize(local_query_subtrees_.size());
+      split_subtree_after_unlocking_ = false;
       for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
         local_query_subtree_locks_[i] = false;
-        split_subtree_after_unlocking_[i] = false;
       }
 
       // Pointer to the exchange mechanism.
@@ -187,7 +195,7 @@ class DistributedDualtreeTaskQueue {
           // Otherwise request the query subtree to be split after it
           // is unlocked so that this thread has more chances for
           // giving a work in the next iteration.
-          split_subtree_after_unlocking_[probe_index] = true;
+          split_subtree_after_unlocking_ = true;
         }
       }
     }
