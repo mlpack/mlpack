@@ -269,9 +269,13 @@ DistributedProblemType >::InitialSetup_(
   // current MPI process. Tally up the number of pruned reference
   // subtrees.
   *num_reference_subtrees_to_receive = 0;
-  for(unsigned int i = 0; i < reference_frontier_lists->size(); i++) {
-    (*num_reference_subtrees_to_receive) +=
-      ((*reference_frontier_lists)[i]).size();
+  for(int i = 0; i < static_cast<int>(reference_frontier_lists->size()); i++) {
+
+    // Exclude the reference subtrees from the self.
+    if(i != world_->rank()) {
+      (*num_reference_subtrees_to_receive) +=
+        ((*reference_frontier_lists)[i]).size();
+    }
   }
 
   // Add up the initial pruned amounts and reseed it on the query
@@ -454,9 +458,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         work_left_to_do =
           !(num_reference_subtrees_to_receive ==
             table_exchange.total_num_subtables_received() &&
-            num_reference_subtrees_to_send == num_completed_sends);
+            num_reference_subtrees_to_send == num_completed_sends &&
+            distributed_tasks.is_empty());
       } // end of a critical section.
-
     }
     while(work_left_to_do);
 
