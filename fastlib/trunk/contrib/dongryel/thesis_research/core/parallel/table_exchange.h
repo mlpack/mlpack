@@ -56,6 +56,8 @@ class TableExchange {
 
     std::vector<int> free_slots_for_receiving_;
 
+    int total_num_subtables_received_;
+
     std::vector <
     boost::tuple <
     SubTableType, boost::mpi::request, int > > subtables_to_send_;
@@ -80,6 +82,18 @@ class TableExchange {
     }
 
   public:
+
+    int total_num_subtables_received() const {
+      return total_num_subtables_received_;
+    }
+
+    /** @brief The default constructor.
+     */
+    TableExchange() {
+      local_table_ = NULL;
+      num_cache_blocks_ = 0;
+      total_num_subtables_received_ = 0;
+    }
 
     /** @brief Tests whether the cache is empty or not.
      */
@@ -248,6 +262,9 @@ class TableExchange {
             l_status->source(),
             core::parallel::MessageTag::RECEIVE_SUBTABLE,
             subtables_to_receive_[ free_receive_slot ].first);
+
+          // Increment the number of subtables received.
+          total_num_subtables_received_++;
 
           received_subtable_ids->push_back(
             boost::make_tuple(

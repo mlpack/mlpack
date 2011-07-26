@@ -130,10 +130,6 @@ class DistributedDualtreeTaskQueue {
       split_subtree_after_unlocking_ = false;
     }
 
-    bool is_empty() const {
-      return num_remaining_tasks_ == 0;
-    }
-
     int size() const {
       return local_query_subtrees_.size();
     }
