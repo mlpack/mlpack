@@ -383,7 +383,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
 #pragma omp critical
           {
-            distributed_tasks.DequeueTask(probe_index, &found_task);
+            distributed_tasks.DequeueTask(probe_index, &found_task, true);
           } // end of pragma omp critical
 
           if(found_task.second >= 0) {
