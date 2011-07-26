@@ -64,17 +64,46 @@ class DistributedDualtreeTaskQueue {
       }
       tasks_.resize(tasks_.size() + 1);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
-        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-          prev_tasks[i].reference_table(),
-          prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
-        this->PushTask(metric_in, subtree_index, reference_table_node_pair);
-        this->PushTask(
-          metric_in, local_query_subtrees_.size() - 1,
-          reference_table_node_pair);
+        if(prev_tasks[i].reference_start_node()->is_leaf()) {
+          boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
+            prev_tasks[i].reference_table(),
+            prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
+          this->PushTask(metric_in, subtree_index, reference_table_node_pair);
+          this->PushTask(
+            metric_in, local_query_subtrees_.size() - 1,
+            reference_table_node_pair);
 
-        // After splitting, it is important to lock each of the
-        // reference frontier of the original tree one more time.
-        table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
+          // Lock only one time since only the query side is split.
+          table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
+        }
+        else {
+          TreeType *reference_left_child =
+            prev_tasks[i].reference_start_node()->left();
+          TreeType *reference_right_child =
+            prev_tasks[i].reference_start_node()->right();
+          boost::tuple <
+          TableType *, TreeType *, int > reference_table_left_node_pair(
+            prev_tasks[i].reference_table(),
+            reference_left_child, prev_tasks[i].cache_id());
+          boost::tuple <
+          TableType *, TreeType *, int > reference_table_right_node_pair(
+            prev_tasks[i].reference_table(),
+            reference_right_child, prev_tasks[i].cache_id());
+          this->PushTask(
+            metric_in, subtree_index, reference_table_left_node_pair);
+          this->PushTask(
+            metric_in, subtree_index, reference_table_right_node_pair);
+          this->PushTask(
+            metric_in, local_query_subtrees_.size() - 1,
+            reference_table_left_node_pair);
+          this->PushTask(
+            metric_in, local_query_subtrees_.size() - 1,
+            reference_table_right_node_pair);
+
+          // Lock three more times since the reference side is also
+          // split.
+          table_exchange_->LockCache(prev_tasks[i].cache_id(), 3);
+        }
       }
     }
 
