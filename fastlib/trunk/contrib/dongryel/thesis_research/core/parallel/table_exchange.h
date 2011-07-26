@@ -1,6 +1,6 @@
 /** @file table_exchange.h
  *
- *  A class to do a set of all-to-all table exchanges.
+ *  A class to do a set of all-to-some table exchanges asynchronously.
  *
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
@@ -17,16 +17,20 @@
 namespace core {
 namespace parallel {
 
-/** @brief A class for performing an all-to-all exchange of subtrees
+/** @brief A class for performing an all-to-some exchange of subtrees
  *         among MPI processes.
  */
-template<typename DistributedTableType, typename SubTableType>
+template<typename DistributedTableType>
 class TableExchange {
   public:
 
     /** @brief The table type used in the exchange process.
      */
     typedef typename DistributedTableType::TableType TableType;
+
+    /** @brief The subtable type used in the exchange process.
+     */
+    typedef core::table::SubTable<TableType> SubTableType;
 
     /** @brief The old from new index type used in the exchange
      *         process.
@@ -117,7 +121,7 @@ class TableExchange {
       return returned_subtable;
     }
 
-    /** @brief Initialize the all-to-all exchange object with a
+    /** @brief Initialize the all-to-some exchange object with a
      *         distributed table and the cache size.
      */
     void Init(

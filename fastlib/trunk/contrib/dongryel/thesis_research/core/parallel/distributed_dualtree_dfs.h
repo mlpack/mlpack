@@ -182,19 +182,17 @@ class DistributedDualtreeDfs {
     template<typename MetricType>
     void GenerateTasks_(
       const MetricType &metric_in,
-      core::parallel::TableExchange <
-      DistributedTableType, SubTableType > &table_exchange,
+      core::parallel::TableExchange < DistributedTableType > &table_exchange,
       const std::vector <
       boost::tuple<int, int, int, int> > &received_subtable_ids,
       core::parallel::DistributedDualtreeTaskQueue <
-      TableType, TreeType, FinePriorityQueueType > *distributed_tasks);
+      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
 
     template<typename MetricType>
     void InitialSetup_(
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results,
-      core::parallel::TableExchange <
-      DistributedTableType, SubTableType > &table_exchange,
+      core::parallel::TableExchange < DistributedTableType > &table_exchange,
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees_to_send,
       std::vector< std::vector< core::math::Range> > *send_priorities,
@@ -205,7 +203,7 @@ class DistributedDualtreeDfs {
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
       core::parallel::DistributedDualtreeTaskQueue <
-      TableType, TreeType, FinePriorityQueueType > *distributed_tasks);
+      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine

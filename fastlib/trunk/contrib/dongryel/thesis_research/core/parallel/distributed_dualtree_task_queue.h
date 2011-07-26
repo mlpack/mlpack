@@ -9,12 +9,21 @@
 #include <deque>
 #include <vector>
 #include "core/math/range.h"
+#include "core/parallel/table_exchange.h"
 
 namespace core {
 namespace parallel {
 
-template<typename TableType, typename TreeType, typename TaskPriorityQueueType>
+template<typename DistributedTableType, typename TaskPriorityQueueType>
 class DistributedDualtreeTaskQueue {
+  public:
+
+    typedef typename DistributedTableType::TableType TableType;
+
+    typedef typename DistributedTableType::TreeType TreeType;
+
+    typedef core::parallel::TableExchange<DistributedTableType> TableExchangeType;
+
   private:
 
     std::vector< TreeType *> local_query_subtrees_;
@@ -24,6 +33,8 @@ class DistributedDualtreeTaskQueue {
     std::vector< TaskPriorityQueueType > tasks_;
 
     std::deque< bool > split_subtree_after_unlocking_;
+
+    TableExchangeType *table_exchange_;
 
   private:
 
@@ -58,6 +69,10 @@ class DistributedDualtreeTaskQueue {
         this->PushTask(
           metric_in, local_query_subtrees_.size() - 1,
           reference_table_node_pair);
+
+        // After splitting, it is important to lock each of the
+        // reference frontier of the original tree one more time.
+        table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
       }
     }
 
@@ -88,7 +103,9 @@ class DistributedDualtreeTaskQueue {
       local_query_subtree_locks_[ subtree_index ] = false;
     }
 
-    void Init(TableType *local_query_table, int max_query_subtree_size) {
+    void Init(
+      TableType *local_query_table, int max_query_subtree_size,
+      TableExchangeType &table_exchange_in) {
 
       // For each process, break up the local query tree into a list of
       // subtree query lists.
@@ -103,6 +120,9 @@ class DistributedDualtreeTaskQueue {
         local_query_subtree_locks_[i] = false;
         split_subtree_after_unlocking_[i] = false;
       }
+
+      // Pointer to the exchange mechanism.
+      table_exchange_ = &table_exchange_in;
     }
 
     template<typename MetricType>
