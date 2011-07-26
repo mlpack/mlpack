@@ -326,10 +326,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &num_reference_subtrees_to_receive,
     &distributed_tasks);
 
-  // The number of reference subtree releases (used for termination
-  // condition) for the current MPI process.
-  int num_reference_subtree_releases = 0;
-
   // The number of completed sends used for determining the
   // termination condition.
   int num_completed_sends = 0;
@@ -435,9 +431,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             // After finishing, the lock on the query subtree is released.
             distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
-            // Count the number of times the reference subtree is released.
-            num_reference_subtree_releases++;
-
             // Release the reference subtable.
             table_exchange.ReleaseCache(task_reference_cache_id);
 
@@ -451,10 +444,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           work_left_to_do =
             !(table_exchange.is_empty() &&
-              num_reference_subtree_releases ==
-              static_cast<int>(
-                distributed_tasks.size() *
-                num_reference_subtrees_to_receive) &&
+              distributed_tasks.is_empty() &&
               num_reference_subtrees_to_send == num_completed_sends);
         } // end of a critical section.
       } // end of attempting to deque a task.

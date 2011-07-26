@@ -36,6 +36,8 @@ class DistributedDualtreeTaskQueue {
 
     TableExchangeType *table_exchange_;
 
+    int num_remaining_tasks_;
+
   private:
 
     template<typename MetricType>
@@ -81,6 +83,15 @@ class DistributedDualtreeTaskQueue {
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
   public:
+
+    DistributedDualtreeTaskQueue() {
+      num_remaining_tasks_ = 0;
+      table_exchange_ = NULL;
+    }
+
+    bool is_empty() const {
+      return num_remaining_tasks_ == 0;
+    }
 
     int size() const {
       return local_query_subtrees_.size();
@@ -142,6 +153,9 @@ class DistributedDualtreeTaskQueue {
         reference_table_node_pair.get<2>(),
         - squared_distance_range.mid());
       tasks_[ push_index].push(new_task);
+
+      // Increment the number of tasks.
+      num_remaining_tasks_++;
     }
 
     void DequeueTask(
@@ -161,6 +175,9 @@ class DistributedDualtreeTaskQueue {
           // put a lock on the query subtree.
           tasks_[ probe_index ].pop();
           local_query_subtree_locks_[ probe_index ] = true;
+
+          // Decrement the number of tasks.
+          num_remaining_tasks_--;
         }
         else {
 
