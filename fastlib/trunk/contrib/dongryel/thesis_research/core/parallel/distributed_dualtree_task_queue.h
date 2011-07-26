@@ -46,9 +46,11 @@ class DistributedDualtreeTaskQueue {
       // After splitting, the current index will have the left child
       // and the right child will be appended to the end of the list
       // of trees, plus duplicating the reference tasks along the way.
+      TreeType *prev_qnode = local_query_subtrees_[subtree_index];
       TreeType *left = local_query_subtrees_[subtree_index]->left();
       TreeType *right = local_query_subtrees_[subtree_index]->right();
 
+      // Overwrite with the left child.
       local_query_subtrees_[subtree_index] = left;
 
       // Grow the list of local query subtrees.
@@ -64,19 +66,11 @@ class DistributedDualtreeTaskQueue {
       }
       tasks_.resize(tasks_.size() + 1);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
-        if(prev_tasks[i].reference_start_node()->is_leaf()) {
-          boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-            prev_tasks[i].reference_table(),
-            prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
-          this->PushTask(metric_in, subtree_index, reference_table_node_pair);
-          this->PushTask(
-            metric_in, local_query_subtrees_.size() - 1,
-            reference_table_node_pair);
 
-          // Lock only one time since only the query side is split.
-          table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
-        }
-        else {
+        // If the previous query node is equal to the reference node,
+        // then split the reference as well.
+        if((! prev_tasks[i].reference_start_node()->is_leaf()) &&
+            prev_qnode == prev_tasks[i].reference_start_node()) {
           TreeType *reference_left_child =
             prev_tasks[i].reference_start_node()->left();
           TreeType *reference_right_child =
@@ -103,6 +97,19 @@ class DistributedDualtreeTaskQueue {
           // Lock three more times since the reference side is also
           // split.
           table_exchange_->LockCache(prev_tasks[i].cache_id(), 3);
+        }
+        else {
+
+          boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
+            prev_tasks[i].reference_table(),
+            prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
+          this->PushTask(metric_in, subtree_index, reference_table_node_pair);
+          this->PushTask(
+            metric_in, local_query_subtrees_.size() - 1,
+            reference_table_node_pair);
+
+          // Lock only one time since only the query side is split.
+          table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
         }
       }
     }
