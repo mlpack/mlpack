@@ -445,17 +445,18 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             distributed_tasks.set_split_subtree_flag();
           }
         }
-
-        // Quit if all of the sending is done and the task queue is
-        // empty.
-#pragma omp critical
-        {
-          work_left_to_do =
-            !(table_exchange.is_empty() &&
-              distributed_tasks.is_empty() &&
-              num_reference_subtrees_to_send == num_completed_sends);
-        } // end of a critical section.
       } // end of attempting to deque a task.
+
+      // Quit if all of the sending is done and the task queue is
+      // empty.
+#pragma omp critical
+      {
+        work_left_to_do =
+          !(table_exchange.is_empty() &&
+            distributed_tasks.is_empty() &&
+            num_reference_subtrees_to_send == num_completed_sends);
+      } // end of a critical section.
+
     }
     while(work_left_to_do);
 
