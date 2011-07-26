@@ -45,7 +45,7 @@ DistributedProblemType >::GenerateTasks_(
   DistributedTableType, SubTableType > &table_exchange,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
   core::parallel::DistributedDualtreeTaskQueue <
-  TreeType, FinePriorityQueueType > *distributed_tasks) {
+  TableType, TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
 
@@ -204,7 +204,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
   core::parallel::DistributedDualtreeTaskQueue <
-  TreeType, FinePriorityQueueType > *distributed_tasks) {
+  TableType, TreeType, FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the query subtree for each task.
   int max_query_subtree_size = max_subtree_size_;
@@ -307,7 +307,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The list of prioritized tasks this MPI process needs to take care
   // of.
   core::parallel::DistributedDualtreeTaskQueue <
-  TreeType, FinePriorityQueueType > distributed_tasks;
+  TableType, TreeType, FinePriorityQueueType > distributed_tasks;
 
   // An abstract way of collaborative subtable exchanges.
   core::parallel::TableExchange <
@@ -436,7 +436,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
 
             // After finishing, the lock on the query subtree is released.
-            distributed_tasks.UnlockQuerySubtree(found_task.second);
+            distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
             // Count the number of times the reference subtree is released.
             num_reference_subtree_releases++;

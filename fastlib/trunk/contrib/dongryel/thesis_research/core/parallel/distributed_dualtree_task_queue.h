@@ -13,7 +13,7 @@
 namespace core {
 namespace parallel {
 
-template<typename TreeType, typename TaskPriorityQueueType>
+template<typename TableType, typename TreeType, typename TaskPriorityQueueType>
 class DistributedDualtreeTaskQueue {
   private:
 
@@ -27,7 +27,8 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
-    void split_subtree_(int subtree_index) {
+    template<typename MetricType>
+    void split_subtree_(const MetricType &metric_in, int subtree_index) {
 
       // After splitting, the current index will have the left child
       // and the right child will be appended to the end of the list
@@ -36,10 +37,28 @@ class DistributedDualtreeTaskQueue {
       TreeType *right = local_query_subtrees_[subtree_index]->right();
 
       local_query_subtrees_[subtree_index] = left;
+
+      // Grow the list of local query subtrees.
       local_query_subtrees_.push_back(right);
       local_query_subtree_locks_.push_back(false);
-      tasks_.push_back(tasks_[ subtree_index ]);
       split_subtree_after_unlocking_.push_back(false);
+
+      // Adjust the list of tasks.
+      std::vector<TaskType> prev_tasks;
+      while(tasks_[subtree_index].size() > 0) {
+        prev_tasks.push_back(tasks_[subtree_index].top());
+        tasks_[subtree_index].pop();
+      }
+      tasks_.resize(tasks_.size() + 1);
+      for(unsigned int i = 0; i < prev_tasks.size(); i++) {
+        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
+          prev_tasks[i].reference_table(),
+          prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
+        this->PushTask(metric_in, subtree_index, reference_table_node_pair);
+        this->PushTask(
+          metric_in, local_query_subtrees_.size() - 1,
+          reference_table_node_pair);
+      }
     }
 
   public:
@@ -52,25 +71,23 @@ class DistributedDualtreeTaskQueue {
       return local_query_subtrees_.size();
     }
 
-    void UnlockQuerySubtree(int subtree_index) {
+    template<typename MetricType>
+    void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
 
       // If the splitting was requested and the tree is a non-leaf,
       // then split the query subtree.
-      /*
       if(split_subtree_after_unlocking_[ subtree_index ] &&
           (! local_query_subtrees_[subtree_index]->is_leaf())) {
         if(tasks_[subtree_index].size() > 0) {
-          split_subtree_(subtree_index);
+          split_subtree_(metric_in, subtree_index);
         }
         split_subtree_after_unlocking_[ subtree_index ] = false;
       }
-      */
 
       // Unlock the query subtree.
       local_query_subtree_locks_[ subtree_index ] = false;
     }
 
-    template<typename TableType>
     void Init(TableType *local_query_table, int max_query_subtree_size) {
 
       // For each process, break up the local query tree into a list of
@@ -88,7 +105,7 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
-    template<typename MetricType, typename TableType>
+    template<typename MetricType>
     void PushTask(
       const MetricType &metric_in,
       int push_index,
