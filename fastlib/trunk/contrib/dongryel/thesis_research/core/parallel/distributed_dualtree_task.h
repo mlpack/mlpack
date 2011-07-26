@@ -25,6 +25,10 @@ class DistributedDualtreeTask {
 
   public:
 
+    void set_query_start_node(TreeType *query_start_node_in) {
+      query_start_node_ = query_start_node_in;
+    }
+
     void Init(
       TreeType *query_start_node_in,
       TableType *reference_table_in, TreeType *reference_start_node_in,
