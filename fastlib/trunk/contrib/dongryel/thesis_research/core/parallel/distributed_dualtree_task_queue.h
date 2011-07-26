@@ -59,8 +59,9 @@ class DistributedDualtreeTaskQueue {
       // Adjust the list of tasks.
       std::vector<TaskType> prev_tasks;
       while(tasks_[subtree_index].size() > 0) {
-        prev_tasks.push_back(tasks_[subtree_index].top());
-        tasks_[subtree_index].pop();
+        std::pair<TaskType, int> task_pair;
+        this->DequeueTask(subtree_index, &task_pair);
+        prev_tasks.push_back(task_pair.first);
       }
       tasks_.resize(tasks_.size() + 1);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
@@ -90,6 +91,7 @@ class DistributedDualtreeTaskQueue {
     }
 
     bool is_empty() const {
+      printf("Number of remaining tasks: %d\n", num_remaining_tasks_);
       return num_remaining_tasks_ == 0;
     }
 
@@ -100,6 +102,9 @@ class DistributedDualtreeTaskQueue {
     template<typename MetricType>
     void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
 
+      // Unlock the query subtree.
+      local_query_subtree_locks_[ subtree_index ] = false;
+
       // If the splitting was requested and the tree is a non-leaf,
       // then split the query subtree.
       if(split_subtree_after_unlocking_[ subtree_index ] &&
@@ -109,9 +114,6 @@ class DistributedDualtreeTaskQueue {
         }
         split_subtree_after_unlocking_[ subtree_index ] = false;
       }
-
-      // Unlock the query subtree.
-      local_query_subtree_locks_[ subtree_index ] = false;
     }
 
     void Init(
