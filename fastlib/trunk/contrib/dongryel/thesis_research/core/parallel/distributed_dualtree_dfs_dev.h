@@ -452,8 +452,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 #pragma omp critical
       {
         work_left_to_do =
-          !(table_exchange.is_empty() &&
-            distributed_tasks.is_empty() &&
+          !(num_reference_subtrees_to_receive ==
+            table_exchange.total_num_subtables_received() &&
             num_reference_subtrees_to_send == num_completed_sends);
       } // end of a critical section.
 
