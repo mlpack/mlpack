@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 2.6)
 set(SOURCES
   distributed_dualtree_dfs_dev.h
   distributed_dualtree_dfs.h
+  distributed_dualtree_subtable_routing.h
   distributed_dualtree_task_queue.h
   distributed_termination.h
   distributed_tree_util.h
