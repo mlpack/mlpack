@@ -340,7 +340,7 @@ T SphereVolume(T r, int d) {
 }
 
 template<typename T>
-T LeastSignificantDifferentBit(
+T LeastSignificantDifferingBit(
   int a, int b, int starting_lower_index, int upper_limit_inclusive_index) {
 
   int mask = 1 << starting_lower_index;
