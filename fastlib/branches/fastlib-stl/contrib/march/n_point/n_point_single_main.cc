@@ -17,8 +17,10 @@
 
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
+PARAM_STRING_REQ("random", "Poisson set coordinates.", NULL);
 PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL)
 PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
+PARAM_STRING("random_weights", "Optional weights on Poisson set.", NULL, "default_weights.csv");
 PARAM_STRING_REQ("matcher_dists", "The distances in the matcher, stored in a symmetric matrix.",
                  NULL);
 PARAM_DOUBLE("bandwidth", "Thickness of the matcher", NULL,
@@ -65,6 +67,34 @@ int main(int argc, char* argv[]) {
     weights.fill(1.0);
   }
   
+  
+  std::string random_filename = IO::GetParam<std::string>("random");
+  
+  arma::mat random_in, random_mat;
+  random_in.load(random_filename, arma::raw_ascii);
+  
+  // THIS IS BAD: do it better
+  if (random_in.n_rows > random_mat.n_cols) {
+    random_mat = arma::trans(random_in);
+  }
+  else {
+    random_mat = random_in;
+  }
+  
+  //arma::mat data_out = arma::trans(data_mat);
+  //data_out.save("3pt_test_data.csv", arma::raw_ascii);
+  
+  arma::colvec random_weights;  
+  //if (fx_param_exists(NULL, "weights")) {
+  if (IO::HasParam("weighted_computation")) {
+    weights.load(IO::GetParam<std::string>("random_weights"));
+  }
+  else {
+    random_weights.set_size(random_mat.n_cols);
+    random_weights.fill(1.0);
+  }
+  
+  
   //std::cout << "loaded weights\n";
   
   arma::mat matcher_dists;
@@ -88,7 +118,8 @@ int main(int argc, char* argv[]) {
     //fx_timer_start(NULL, "naive_time");
     IO::StartTimer("naive_time");
     
-    NaiveAlg naive_alg(data_mat, weights, matcher_dists, bandwidth);
+    NaiveAlg naive_alg(data_mat, weights, random_mat, 
+                       random_weights, matcher_dists, bandwidth);
     
     naive_alg.ComputeCounts();
     
@@ -96,7 +127,10 @@ int main(int argc, char* argv[]) {
     IO::StopTimer("naive_time");
     
     //std::cout << "\nNaive num tuples: " << naive_alg.num_tuples() << "\n\n";
-    IO::Info << std::endl << "Naive num tuples: " << naive_alg.num_tuples();
+    IO::Info << std::endl << "Naive num tuples: " << std::endl;
+    
+    naive_alg.print_num_tuples();
+    
     IO::Info << std::endl << std::endl;
     
   } // do naive
@@ -114,7 +148,8 @@ int main(int argc, char* argv[]) {
     //fx_timer_start(NULL, "single_bandwidth_time");
     IO::StartTimer("single_bandwidth_time");
     
-    SingleBandwidthAlg single_alg(data_mat, weights, leaf_size, 
+    SingleBandwidthAlg single_alg(data_mat, weights, random_mat, 
+                                  random_weights, leaf_size, 
                                   matcher_dists, bandwidth);
     
     single_alg.ComputeCounts();
@@ -123,7 +158,10 @@ int main(int argc, char* argv[]) {
     IO::StopTimer("single_bandwidth_time");
     
     //std::cout << "\nSingle Bandwidth num tuples: " << single_alg.num_tuples() << "\n\n";
-    IO::Info << std::endl << "Single bandwidth num tuples: " << single_alg.num_tuples();
+    IO::Info << std::endl << "Single bandwidth num tuples: " << std::endl;
+    
+    single_alg.print_num_tuples();
+    
     IO::Info << std::endl << std::endl;
     
   } // single bandwidth
@@ -137,14 +175,18 @@ int main(int argc, char* argv[]) {
     //fx_timer_start(NULL, "perm_free_time");
     IO::StartTimer("perm_free_time");
     
-    PermFreeAlg alg(data_mat, weights, leaf_size, matcher_dists, bandwidth);
+    PermFreeAlg alg(data_mat, weights, random_mat, random_weights, leaf_size, 
+                    matcher_dists, bandwidth);
     
     alg.Compute();
     
     //fx_timer_stop(NULL, "perm_free_time");
     IO::StopTimer("perm_free_time");
     
-    IO::Info << "\nPerm Free num tuples: " << alg.num_tuples() << "\n\n";
+    IO::Info << "\nPerm Free num tuples: " << std::endl;
+    alg.print_num_tuples();
+    IO::Info << std::endl << std::endl;
+    
     
   } // perm free
   

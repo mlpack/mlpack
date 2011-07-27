@@ -29,7 +29,15 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
     
     bad_symmetry = false;
     
-    arma::colvec vec_i = data_points_.col(point_i_index);
+    bool i_is_random = (k < num_random_);
+    
+    arma::colvec vec_i;
+    if (i_is_random) {
+      vec_i = random_points_.col(point_i_index);
+    }
+    else {
+      vec_i = data_points_.col(point_i_index);
+    }
     
     // TODO: Does this leak memory?
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
@@ -40,11 +48,20 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
       index_t point_j_index = points_in_tuple[j];
       
       // j comes before i in the tuple, so it should have a lower index
-      bad_symmetry = (point_i_index <= point_j_index);
+      bool j_is_random = (j < num_random_);
+      
+      bad_symmetry = (i_is_random == j_is_random) 
+                      && (point_i_index <= point_j_index);
       
       if (!bad_symmetry) {
         
-        arma::colvec vec_j = data_points_.col(point_j_index);
+        arma::colvec vec_j;
+        if (j_is_random) {
+          vec_j = random_points_.col(point_j_index);
+        }
+        else {
+          vec_j = data_points_.col(point_j_index);
+        }
         
         double point_dist_sq = la::DistanceSqEuclidean(vec_i, vec_j);
         
@@ -63,17 +80,21 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
       // are we finished?
       if (k == tuple_size_ - 1) {
         
-        num_tuples_++;
+        num_tuples_[num_random_]++;
         
         double this_weight = 1.0;
         
-        for (index_t tuple_ind = 0; tuple_ind < tuple_size_; tuple_ind++) {
+        for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
+          this_weight *= random_weights_(points_in_tuple[tuple_ind]);
+        }
+        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+             tuple_ind++) {
           
           this_weight *= data_weights_(points_in_tuple[tuple_ind]);
           
         } // iterate over the tuple
         
-        weighted_num_tuples_ += this_weight;
+        weighted_num_tuples_[num_random_] += this_weight;
         
       } 
       else {
@@ -157,12 +178,18 @@ void npt::PermFreeAlg::DepthFirstRecursion_(NodeTuple& nodes) {
       DepthFirstRecursion_(left_child);
       
     }
+    else {
+      num_prunes_++;
+    }
     // right child
     if (nodes.CheckSymmetry(nodes.ind_to_split(), false)) {
     
       NodeTuple right_child(nodes, false);
       DepthFirstRecursion_(right_child);
       
+    }
+    else {
+      num_prunes_++;
     }
     
   } // recurse 

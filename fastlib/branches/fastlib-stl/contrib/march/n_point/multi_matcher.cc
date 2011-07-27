@@ -69,7 +69,7 @@ bool npt::MultiMatcher::TestPointPair(double dist_sq, index_t new_ind, index_t o
     index_t template_index_2 = GetPermIndex_(perm_ind, old_ind);
     
     std::vector<double>::iterator lo;
-    std::vector<double>::iterator hi;
+    //std::vector<double>::iterator hi;
     
     double dist = std::sqrt(dist_sq);
     

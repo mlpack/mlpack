@@ -57,7 +57,8 @@ void npt::MatcherGenerator::FillInMatchers_(std::vector<index_t>& matcher_ind,
           
           index_t which_matcher = FindWhichMatcher_(m, n);
           
-          matcher(m,n) = matcher_dists_[which_matcher][matcher_ind[which_matcher]];
+          //matcher(m,n) = matcher_dists_[which_matcher][matcher_ind[which_matcher]];
+          matcher(m,n) = matcher_dists_[which_matcher][matcher_ind_copy[which_matcher]];
           matcher(n,m) = matcher(m,n);
           
         } // for n

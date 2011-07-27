@@ -93,9 +93,15 @@ namespace npt {
         min_bands_sq_[i] = min_bands[i] * min_bands[i];
         max_bands_sq_[i] = max_bands[i] * max_bands[i];
         
-        lower_bounds_sq_[i] = (min_bands[i] - half_band_) 
-                              * (min_bands[i] - half_band_);
-        upper_bounds_sq_[i] = (max_bands[i] + half_band_) 
+        if (min_bands[i] - half_band_ > 0) {
+          lower_bounds_sq_[i] = (min_bands[i] - half_band_) 
+                                * (min_bands[i] - half_band_);
+        
+        }
+        else {
+          lower_bounds_sq_[i] = 0.0;
+        }
+          upper_bounds_sq_[i] = (max_bands[i] + half_band_) 
                               * (max_bands[i] + half_band_);
         
       }
@@ -112,29 +118,18 @@ namespace npt {
         
         matcher_dists_[i].resize(num_bands_[i]);
         
-        for (index_t j = 0; j < num_bands_[i]; j++) {
-          
-          matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
-          
-        } // for j
-        
-      } // for i
-      
-      /*
-      matcher_dim_equal_.resize(n_choose_2_);
-      
-      for (index_t i = 0; i < n_choose_2_; i++) {
-
-        matcher_dim_equal_[i].resize(n_choose_2_);
-        
-        for (index_t j = 0; j < n_choose_2_; j++) {
-          
-          matcher_dim_equal_[i][j] = (min_bands[i] == min_bands[j])
-                                     && (max_bands[i] == max_bands[j])
-                                     && (num_bands[i] == num_bands[j]);
+        if (num_bands_[i] > 1) {
+          for (index_t j = 0; j < num_bands_[i]; j++) {
+            
+            matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
+            
+          } // for j
         }
-      }
-      */
+        else {
+          matcher_dists_[i][0] = min_bands[i];
+        }
+      } // for i
+
       
       num_permutations_ = perms_.num_permutations();
       

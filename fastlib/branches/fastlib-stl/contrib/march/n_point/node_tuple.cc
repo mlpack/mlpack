@@ -10,11 +10,30 @@
 #include "node_tuple.h"
 
 
+
+// Invariant: a tuple of points must go in increasing order of index (within
+// the data and random parts of the tuple)
+// Therefore, for a tuple of nodes to be valid, it must be possible that some 
+// tuple of points taken from it satisfies this requirement
+// Therefore, if the begin of one node is larger than the end of a node that 
+// preceeds it, the symmetry is violated
 bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
+  
+  bool new_is_random = (split_ind < num_random_);
+  int start_point, end_point;
+  
+  if (new_is_random) {
+    start_point = 0;
+    end_point = num_random_;
+  }
+  else {
+    start_point = num_random_;
+    end_point = tuple_size_;
+  }
   
   // only check the new node for symmetry with respect to the others
   if (is_left) {
-    for (index_t i = 0; i < split_ind; i++) {
+    for (index_t i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->left()->end() <= node_list_[i]->begin()) {
         return false;
@@ -22,16 +41,18 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
       
     } // for i
     
-    for (index_t i = split_ind + 1; i < tuple_size_; i++) {
+    for (index_t i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->left()->begin()) {
         return false;
       } 
       
     } // for i
+    
   }
   else {
-    for (index_t i = 0; i < split_ind; i++) {
+
+    for (index_t i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->right()->end() <= node_list_[i]->begin()) {
         return false;
@@ -39,13 +60,14 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
       
     } // for i
     
-    for (index_t i = split_ind + 1; i < tuple_size_; i++) {
+    for (index_t i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->right()->begin()) {
         return false;
       } 
       
     } // for i    
+    
   }
   return true;
   
