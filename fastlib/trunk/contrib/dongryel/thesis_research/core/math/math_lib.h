@@ -338,6 +338,24 @@ T SphereVolume(T r, int d) {
   }
   return val;
 }
+
+template<typename T>
+T LeastSignificantDifferentBit(
+  int a, int b, int starting_lower_index, int upper_limit_inclusive_index) {
+
+  int mask = 1 << starting_lower_index;
+  int return_position = -1;
+  for(
+    int i = starting_lower_index; i <= upper_limit_inclusive_index; i++,
+    mask = mask << 1) {
+
+    if((a ^ mask) != (b ^ mask)) {
+      return_position = i;
+      break;
+    }
+  }
+  return return_position;
+}
 }
 }
 
