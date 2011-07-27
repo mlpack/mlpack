@@ -26,25 +26,32 @@ namespace npt {
     arma::mat data_points_;
     arma::colvec data_weights_;
     
+    arma::mat random_points_;
+    arma::colvec random_weights_;
+    
     // general parameters
     index_t num_points_;
     index_t tuple_size_;
     index_t leaf_size_;
     int num_permutations_;
     
+    int num_random_;
+    
     // matcher
     
     PermFreeMatcher matcher_;
     
-    int num_tuples_;
-    double weighted_num_tuples_;
+    std::vector<int> num_tuples_;
+    std::vector<double> weighted_num_tuples_;
     
     int num_prunes_;
     int num_base_cases_;
     
     arma::Col<index_t> old_from_new_index_;
+    arma::Col<index_t> old_from_new_index_random_;
     
     NptNode* tree_;
+    NptNode* random_tree_;
     
     //////////////// functions //////////////////
     
@@ -62,13 +69,21 @@ namespace npt {
     
   public:
     
-    PermFreeAlg(arma::mat& data, arma::colvec& weights, int leaf_size,
+    PermFreeAlg(arma::mat& data, arma::colvec& weights, 
+                arma::mat& random, arma::colvec& rweights,
+                int leaf_size,
                 arma::mat& matcher_dists, double bandwidth)
-    : matcher_(matcher_dists, bandwidth) {
+    : matcher_(matcher_dists, bandwidth),
+      num_tuples_(matcher_dists.n_cols+1, 0),
+      weighted_num_tuples_(matcher_dists.n_cols+1, 0)
+    {
       
       data_points_ = data;
       
       data_weights_ = weights;
+      
+      random_points_ = random;
+      random_weights_ = rweights;
       
       tuple_size_ = matcher_dists.n_cols;
       num_permutations_ = matcher_.num_permutations();
@@ -77,40 +92,77 @@ namespace npt {
       
       leaf_size_ = leaf_size;
       
-      num_tuples_ = 0;
       num_prunes_ = 0;
-      weighted_num_tuples_ = 0.0;
       num_base_cases_ = 0;
       
       tree_ = tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
                                                          leaf_size_, 
                                                          old_from_new_index_);
       
+      random_tree_ = tree::MakeKdTreeMidpoint<NptNode, double>(random_points_,
+                                                               leaf_size_,
+                                                               old_from_new_index_random_);
+      
     } // constructor
     
-    double weighted_num_tuples() const {
+    std::vector<double>& weighted_num_tuples() {
       return weighted_num_tuples_;
     }
     
-    int num_tuples() const {
+    std::vector<int>& num_tuples() {
       return num_tuples_;
     } // num_tuples
     
+    void print_num_tuples() {
+      
+      
+      std::string d_string(tuple_size_, 'D');
+      std::string r_string(tuple_size_, 'R');
+      std::string label_string;
+      label_string+=d_string;
+      label_string+=r_string;
+      
+      for (int i = 0; i <= tuple_size_; i++) {
+        
+        // i is the number of random points in the tuple
+        std::string this_string(label_string, i, tuple_size_);
+        mlpack::IO::Info << this_string << ": ";
+        mlpack::IO::Info << num_tuples_[i] << std::endl;
+        
+      } // for i
+      
+    } // print_num_tuples
+    
+    
+    
     void Compute() {
       
-      std::vector<NptNode*> list(tuple_size_, tree_);
       
-      NodeTuple nodes(list);
-      
-      DepthFirstRecursion_(nodes);
+      for (num_random_ = 0; num_random_ <= tuple_size_; num_random_++) {
+        
+        std::vector<NptNode*> node_list(tuple_size_);
+        
+        for (int i = 0; i < num_random_; i++) {
+          
+          node_list[i] = random_tree_;
+          
+        }
+        for (int i = num_random_; i < tuple_size_; i++) {
+          
+          node_list[i] = tree_;
+          
+        }
+        
+        NodeTuple nodes(node_list, num_random_);
+        
+        DepthFirstRecursion_(nodes);
+        
+      } // for num_random
       
       std::cout << "Num prunes: " << num_prunes_ << "\n";
       std::cout << "Num base cases: " << num_base_cases_ << "\n";
       
-      
-      
     }
-    
     
   }; // class
   

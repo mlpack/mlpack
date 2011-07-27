@@ -9,6 +9,27 @@
 
 #include "single_bandwidth_alg.h"
 
+// Returns true if ind1 and ind2 in the tuple are both data or both random
+/*
+bool npt::SingleBandwidthAlg::CheckSameSet_(int ind1, int ind2) {
+  
+  if (ind1 > ind2) {
+    std::swap(ind1,ind2);
+  }
+  
+  if (ind2 <= num_random_) {
+    return true;
+  }
+  else if (ind1 > num_random_) {
+    return true;
+  }
+  else {
+    return false;
+  }
+  
+}
+ */
+
 bool npt::SingleBandwidthAlg::CheckNodeList_(std::vector<SingleNode*>& nodes) {
   
   bool can_prune = false;
@@ -21,15 +42,19 @@ bool npt::SingleBandwidthAlg::CheckNodeList_(std::vector<SingleNode*>& nodes) {
   // I need to double check that this works
   for (index_t i = 0; !can_prune && i < tuple_size_; i++) {
     
+    bool i_is_random = i < num_random_;
+    
     SingleNode* node_i = nodes[i];
     
     // iterate over all nodes > i
     for (index_t j = i+1; !can_prune && j < tuple_size_; j++) {
       
+      bool j_is_random = j < num_random_;
+      
       SingleNode* node_j = nodes[j];
       
       // check for symmetry
-      if (node_j->end() <= node_i->begin()) {
+      if (node_j->end() <= node_i->begin() && (i_is_random == j_is_random)) {
         //printf("Pruned for symmetry\n");
         return true;
       } // symmetry check
@@ -67,18 +92,17 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
     index_t point_i_index = k_rows[i];
     bool this_point_works = true;
     
+    bool i_is_random = (k < num_random_);
+    
     bad_symmetry = false;
     
-    arma::colvec vec_i = data_points_.col(point_i_index);
-    
-    /*
-    if (points_in_tuple[0] >= 0) {
-    if (old_from_new_index_[points_in_tuple[0]] == 0 && 
-        old_from_new_index_[point_i_index] == 12) {
-      std::cout << "found it\n";
+    arma::colvec vec_i;
+    if (i_is_random) {
+      vec_i = random_points_.col(point_i_index);
     }
+    else {
+      vec_i = data_points_.col(point_i_index);
     }
-    */
     
     // TODO: Does this leak memory?
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
@@ -86,14 +110,26 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
     // loop over points already in the tuple and check against them
     for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
       
-      index_t point_j_index = points_in_tuple[j];
 
+      bool j_is_random = (j < num_random_);
+      index_t point_j_index = points_in_tuple[j];
+      
+      // Need to change this so it only checks if they came from the same sets
       // j comes before i in the tuple, so it should have a lower index
-      bad_symmetry = (point_i_index <= point_j_index);
+      //bad_symmetry = CheckSameSet_(k, j) 
+      //               && (point_i_index <= point_j_index);
+      bad_symmetry = (i_is_random == j_is_random) 
+                       && (point_i_index <= point_j_index);
       
       if (!bad_symmetry) {
         
-        arma::colvec vec_j = data_points_.col(point_j_index);
+        arma::colvec vec_j;
+        if (j_is_random) {
+          vec_j = random_points_.col(point_j_index);
+        }
+        else {
+          vec_j = data_points_.col(point_j_index);
+        }
         
         double point_dist_sq = la::DistanceSqEuclidean(vec_i, vec_j);
         
@@ -112,7 +148,7 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
       // are we finished?
       if (k == tuple_size_ - 1) {
         
-        num_tuples_++;
+        num_tuples_[num_random_]++;
         
         double this_weight = 1.0;
         
@@ -122,7 +158,7 @@ void npt::SingleBandwidthAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >
           
         } // iterate over the tuple
         
-        weighted_num_tuples_ += this_weight;
+        weighted_num_tuples_[num_random_] += this_weight;
         
       } 
       else {

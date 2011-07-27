@@ -99,8 +99,17 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
     
     bad_symmetry = false;
     
-    arma::colvec new_point_vec = data_points_.col(new_point_ind);
-   
+    bool i_is_random = (k < num_random_);
+    
+    arma::colvec new_point_vec;
+    
+    if (i_is_random) {
+      new_point_vec = random_points_.col(new_point_ind);
+    } 
+    else {
+      new_point_vec = data_points_.col(new_point_ind);
+    }
+    
     // copy the permutation 
     perm_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
@@ -115,12 +124,21 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
       
       index_t old_point_ind = points_in_tuple[j];
       
-      bad_symmetry = (new_point_ind <= old_point_ind);
+      bool j_is_random = (j < num_random_);
+      
+      bad_symmetry = (i_is_random == j_is_random) 
+                      && (new_point_ind <= old_point_ind);
       
       // TODO: if bad_symmetry, can I break out of the loop?
       if (!bad_symmetry) {
         
-        arma::colvec old_point_vec = data_points_.col(old_point_ind);
+        arma::colvec old_point_vec;
+        if (j_is_random) {
+          old_point_vec = random_points_.col(old_point_ind);
+        }
+        else {
+          old_point_vec = data_points_.col(old_point_ind);
+        }
         
         double point_dist_sq = la::DistanceSqEuclidean(old_point_vec, 
                                                        new_point_vec);
@@ -159,9 +177,24 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         for (it = results_set.begin(); it != results_set.end(); it++) {
           
-          results_[*it]++;
+          results_[num_random_][*it]++;
           
         }
+        
+        double this_weight = 1.0;
+        for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
+          this_weight *= random_weights_(points_in_tuple[tuple_ind]);
+        }
+        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+             tuple_ind++) {
+          
+          this_weight *= data_weights_(points_in_tuple[tuple_ind]);
+          
+        } // iterate over the tuple
+        
+        for (it = results_set.begin(); it != results_set.end(); it++) {
+          weighted_results_[num_random_][*it] += this_weight;
+        } 
         
       }
       else {
@@ -258,18 +291,34 @@ void npt::MultiBandwidthAlg::OutputResults() {
   
   //std::cout << "First result: " << results_[0] << "\n\n";
   
-  for (index_t i = 0; i < results_.size(); i++) {
+  std::string d_string(tuple_size_, 'D');
+  std::string r_string(tuple_size_, 'R');
+  std::string label_string;
+  label_string+=d_string;
+  label_string+=r_string;
+  
+  for (int i = 0; i <= tuple_size_; i++) {
     
-    std::vector<index_t> matcher_ind(num_bands_.size());
-    FindMatcherInd_(i, matcher_ind);
+    // i is the number of random points in the tuple
+    std::string this_string(label_string, i, tuple_size_);
+    mlpack::IO::Info << this_string << "\n";
     
-    mlpack::IO::Info << "Matcher: ";
-    for (index_t j = 0; j < matcher_ind.size(); j++) {
+    for (index_t j = 0; j < results_[i].size(); j++) {
       
-      mlpack::IO::Info << matcher_.matcher_dists(j, matcher_ind[j]) << ", ";
+      std::vector<index_t> matcher_ind(num_bands_.size());
+      FindMatcherInd_(j, matcher_ind);
       
-    }
-    mlpack::IO::Info << ": " << results_[i] << "\n";
+      mlpack::IO::Info << "Matcher: ";
+      for (index_t k = 0; k < matcher_ind.size(); k++) {
+        
+        mlpack::IO::Info << matcher_.matcher_dists(k, matcher_ind[k]) << ", ";
+        
+      } // for k
+      mlpack::IO::Info << ": " << results_[i][j] << "\n";
+      
+    } // for j
+    
+    mlpack::IO::Info << "\n\n";
     
   } // for i
   

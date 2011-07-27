@@ -52,11 +52,18 @@ namespace npt {
         
         matcher_dists_[i].resize(num_bands[i]);
         
-        for (index_t j = 0; j < num_bands[i]; j++) {
+        if (num_bands[i] > 1) {
+          for (index_t j = 0; j < num_bands[i]; j++) {
+            
+            matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
+            
+          } // for j
+        } // if more than one band
+        else {
           
-          matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
+          matcher_dists_[i][0] = min_bands[i];
           
-        } // for j
+        } // only one band
         
       } // for i
       

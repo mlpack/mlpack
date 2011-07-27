@@ -42,6 +42,8 @@ namespace npt {
     std::vector<double> sorted_upper_;
     std::vector<double> sorted_lower_;
     
+    int num_random_;
+    
     
     
     // this is the position of the node we should split next
@@ -75,12 +77,13 @@ namespace npt {
     // constructor - only use this one to make the original node tuple
     // at the start of the algorithm
     // The copy constructor will be used for the others
-    NodeTuple(std::vector<NptNode*>& list_in) :
+    NodeTuple(std::vector<NptNode*>& list_in, int num_random) :
     tuple_size_(list_in.size()),
     sorted_upper_((tuple_size_ * (tuple_size_ - 1)) / 2),
     sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
     upper_bounds_sq_(tuple_size_, tuple_size_),
-    lower_bounds_sq_(tuple_size_, tuple_size_)
+    lower_bounds_sq_(tuple_size_, tuple_size_),
+    num_random_(num_random)
     {
      
       for (index_t i = 0; i < tuple_size_; i++) {
@@ -118,7 +121,8 @@ namespace npt {
     sorted_upper_(parent.sorted_upper().size()), 
     sorted_lower_(parent.sorted_lower().size()),
     upper_bounds_sq_(tuple_size_, tuple_size_),
-    lower_bounds_sq_(tuple_size_, tuple_size_)
+    lower_bounds_sq_(tuple_size_, tuple_size_),
+    num_random_(parent.num_random())
     {
       
       ind_to_split_ = parent.ind_to_split();
@@ -202,6 +206,10 @@ namespace npt {
     
     index_t tuple_size() const {
       return tuple_size_;
+    }
+    
+    int num_random() const {
+      return num_random_;
     }
     
     
