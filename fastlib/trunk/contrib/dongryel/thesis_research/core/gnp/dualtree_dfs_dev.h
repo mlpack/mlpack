@@ -120,10 +120,61 @@ void DualtreeDfs<ProblemType>::Compute(
     PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
   }
 
-  DualtreeCanonical_(
-    metric, query_start_node_, reference_start_node_,
-    1.0 - problem_->global().probability(), squared_distance_range,
-    query_results);
+  if(problem_->global().is_monochromatic() && query_rank_ == reference_rank_) {
+
+    // Take care such that the monochromatic case is handled
+    // correctly.
+    if(query_start_node_->count() > reference_start_node_->count() &&
+        query_start_node_->begin() <= reference_start_node_->begin() &&
+        reference_start_node_->end() <= query_start_node_->end()) {
+
+      std::vector<TreeType *> query_start_node_sublist;
+      query_start_node_->get_frontier_nodes_disjoint_from(
+        reference_start_node_, &query_start_node_sublist);
+
+      for(unsigned int i = 0; i < query_start_node_sublist.size(); i++) {
+        core::math::Range sub_squared_distance_range =
+          (query_start_node_sublist[i]->bound()).RangeDistanceSq(
+            metric, reference_start_node_->bound());
+        DualtreeCanonical_(
+          metric, query_start_node_sublist[i], reference_start_node_,
+          1.0 - problem_->global().probability(), sub_squared_distance_range,
+          query_results);
+      }
+    }
+    else if(reference_start_node_->count() > query_start_node_->count() &&
+            reference_start_node_->begin() <= query_start_node_->begin() &&
+            query_start_node_->end() <= reference_start_node_->end()) {
+
+      std::vector<TreeType *> reference_start_node_sublist;
+      reference_start_node_->get_frontier_nodes_disjoint_from(
+        query_start_node_, &reference_start_node_sublist);
+
+      for(unsigned int i = 0; i < reference_start_node_sublist.size(); i++) {
+        core::math::Range sub_squared_distance_range =
+          (query_start_node_->bound()).RangeDistanceSq(
+            metric, reference_start_node_sublist[i]->bound());
+        DualtreeCanonical_(
+          metric, query_start_node_, reference_start_node_sublist[i],
+          1.0 - problem_->global().probability(), sub_squared_distance_range,
+          query_results);
+      }
+    }
+    else {
+      DualtreeCanonical_(
+        metric, query_start_node_, reference_start_node_,
+        1.0 - problem_->global().probability(), squared_distance_range,
+        query_results);
+    }
+  }
+  else {
+    DualtreeCanonical_(
+      metric, query_start_node_, reference_start_node_,
+      1.0 - problem_->global().probability(), squared_distance_range,
+      query_results);
+  }
+
+  // Postprocess.
   PostProcess_(metric, query_start_node_, query_results, true);
 }
 
