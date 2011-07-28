@@ -147,11 +147,9 @@ class GeneralBinarySpaceTree {
      */
     typedef typename TreeSpecType::StatisticType StatisticType;
 
-  private:
-
     /** @brief The class used for prioritizing a node by its size.
      */
-    class PrioritizeNodesBySize_:
+    class PrioritizeNodesBySize:
       public std::binary_function <
         const TreeType *, const TreeType *, bool > {
       public:
@@ -160,6 +158,8 @@ class GeneralBinarySpaceTree {
           return a->count() < b->count();
         }
     };
+
+  private:
 
     /** @brief The bound for the node.
      */
@@ -227,6 +227,34 @@ class GeneralBinarySpaceTree {
       return depth_private_(this);
     }
 
+    void get_frontier_nodes_disjoint_from(
+      TreeType *disjoint_from, std::vector< TreeType *> *frontier_nodes) const {
+
+      // The priority queue type.
+      typedef std::priority_queue <
+      const TreeType *,
+            std::vector<const TreeType *>,
+            typename TreeType::PrioritizeNodesBySize > PriorityQueueType;
+      PriorityQueueType queue;
+      queue.push(const_cast<TreeType *>(this));
+
+      while(queue.size() > 0) {
+        TreeType *dequeued_node = const_cast<TreeType *>(queue.top());
+        queue.pop();
+        if(dequeued_node->is_leaf() ||
+            disjoint_from->end() <= dequeued_node->begin() ||
+            dequeued_node->end() <= disjoint_from->begin() ||
+            (dequeued_node->begin() == disjoint_from->begin() &&
+             dequeued_node->end() == disjoint_from->end())) {
+          frontier_nodes->push_back(dequeued_node);
+        }
+        else {
+          queue.push(dequeued_node->left());
+          queue.push(dequeued_node->right());
+        }
+      }
+    }
+
     /** @brief Gets the list of begin and count pair for at most $k$
      *         frontier nodes of the subtree rooted at this node.
      */
@@ -238,7 +266,7 @@ class GeneralBinarySpaceTree {
       typedef std::priority_queue <
       const TreeType *,
             std::vector<const TreeType *>,
-            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
+            typename TreeType::PrioritizeNodesBySize > PriorityQueueType;
       PriorityQueueType queue;
       queue.push(const_cast<TreeType *>(this));
 
@@ -264,7 +292,7 @@ class GeneralBinarySpaceTree {
       typedef std::priority_queue <
       const TreeType *,
             std::vector<const TreeType *>,
-            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
+            typename TreeType::PrioritizeNodesBySize > PriorityQueueType;
       PriorityQueueType queue;
       queue.push(const_cast<TreeType *>(this));
 
