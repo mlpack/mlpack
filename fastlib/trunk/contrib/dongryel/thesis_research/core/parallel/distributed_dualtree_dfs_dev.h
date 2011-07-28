@@ -253,7 +253,7 @@ DistributedProblemType >::InitialSetup_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    query_table_->local_table(), omp_get_num_threads(), table_exchange);
+    query_table_->local_table(), omp_get_max_threads(), table_exchange);
 
   // Each process needs to customize its reference set for each
   // participating query process.
