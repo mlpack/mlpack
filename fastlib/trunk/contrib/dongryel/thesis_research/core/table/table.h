@@ -642,6 +642,16 @@ class Table {
       tree_->get_frontier_nodes(max_subtree_size, frontier_nodes_out);
     }
 
+    /** @brief Gets the fronter nodes of the indexed tree up to a
+     *         specified number of nodes.
+     */
+    void get_frontier_nodes_bounded_by_number(
+      int max_num_nodes, std::vector<TreeType *> *frontier_nodes_out) const {
+
+      tree_->get_frontier_nodes_bounded_by_number(
+        max_num_nodes, frontier_nodes_out);
+    }
+
     /** @brief Builds the tree with a specified metric and a leaf
      *         size.
      */

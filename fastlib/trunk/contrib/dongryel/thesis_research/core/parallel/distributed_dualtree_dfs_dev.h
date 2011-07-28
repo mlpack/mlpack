@@ -81,6 +81,37 @@ DistributedProblemType >::GenerateTasks_(
 }
 
 template<typename DistributedProblemType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::HashSendList_(
+  const std::pair<int, int> &local_rnode_id,
+  int query_process_id,
+  std::vector <
+  core::parallel::SubTableRouteRequest<TableType> > *
+  hashed_essential_reference_subtrees) {
+
+  // May consider using a STL map to speed up the hashing.
+  int found_index = -1;
+  for(unsigned int i = 0;
+      i < hashed_essential_reference_subtrees->size(); i++) {
+
+    if((*hashed_essential_reference_subtrees)[i].has_same_subtable_id(local_rnode_id)) {
+      found_index = i;
+      break;
+    }
+  }
+  if(found_index < 0) {
+    hashed_essential_reference_subtrees->resize(
+      hashed_essential_reference_subtrees->size() + 1);
+    found_index = hashed_essential_reference_subtrees->size() - 1;
+    (*hashed_essential_reference_subtrees)[
+      found_index].InitSubTableForSending(
+        reference_table_->local_table(), local_rnode_id);
+  }
+  (*hashed_essential_reference_subtrees)[
+    found_index].add_destination(query_process_id);
+}
+
+template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
@@ -89,6 +120,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   DistributedTreeType *global_query_node, TreeType *local_reference_node,
   std::vector <
   std::vector< std::pair<int, int> > > *essential_reference_subtrees,
+  std::vector <
+  core::parallel::SubTableRouteRequest<TableType> > *hashed_essential_reference_subtrees,
   std::vector <
   std::vector< core::math::Range > > *squared_distance_ranges,
   std::vector< double > *extrinsic_prunes) {
@@ -120,13 +153,21 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         local_reference_node->is_leaf()) {
       typename TableType::TreeIterator qnode_it =
         query_table_->get_node_iterator(global_query_node);
+      std::pair<int, int> local_rnode_id(
+        local_reference_node->begin(), local_reference_node->count());
       while(qnode_it.HasNext()) {
         int query_process_id;
         qnode_it.Next(&query_process_id);
         (*essential_reference_subtrees)[
-          query_process_id].push_back(
-            std::pair<int, int>(
-              local_reference_node->begin(), local_reference_node->count()));
+          query_process_id].push_back(local_rnode_id);
+
+        // Add the query process ID to the list of query processes
+        // that this reference subtree needs to be sent to.
+        HashSendList_(
+          local_rnode_id, query_process_id,
+          hashed_essential_reference_subtrees);
+
+        // Push in the squared distance range.
         (*squared_distance_ranges)[query_process_id].push_back(
           squared_distance_range);
       }
@@ -136,13 +177,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->left(),
-        essential_reference_subtrees, squared_distance_ranges,
-        extrinsic_prunes);
+        essential_reference_subtrees, hashed_essential_reference_subtrees,
+        squared_distance_ranges, extrinsic_prunes);
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->right(),
-        essential_reference_subtrees, squared_distance_ranges,
-        extrinsic_prunes);
+        essential_reference_subtrees, hashed_essential_reference_subtrees,
+        squared_distance_ranges, extrinsic_prunes);
     }
     return;
   }
@@ -154,35 +195,35 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node,
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node,
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
   }
   else {
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->left(),
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->right(),
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->left(),
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->right(),
-      essential_reference_subtrees, squared_distance_ranges,
-      extrinsic_prunes);
+      essential_reference_subtrees, hashed_essential_reference_subtrees,
+      squared_distance_ranges, extrinsic_prunes);
   }
 }
 
@@ -196,6 +237,9 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
+  std::vector <
+  core::parallel::SubTableRouteRequest<TableType> >
+  *hashed_essential_reference_subtress_to_send,
   std::vector< SendRequestPriorityQueueType > *prioritized_send_subtables,
   int *num_reference_subtrees_to_send,
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
@@ -204,15 +248,12 @@ DistributedProblemType >::InitialSetup_(
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
 
-  // The max number of points for the query subtree for each task.
-  int max_query_subtree_size = max_subtree_size_;
-
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    query_table_->local_table(), max_query_subtree_size, table_exchange);
+    query_table_->local_table(), omp_get_num_threads(), table_exchange);
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -221,6 +262,7 @@ DistributedProblemType >::InitialSetup_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(),
     essential_reference_subtrees_to_send,
+    hashed_essential_reference_subtress_to_send,
     send_priorities, &extrinsic_prunes_broadcast);
 
   // Fill out the prioritized send list.
@@ -235,6 +277,8 @@ DistributedProblemType >::InitialSetup_(
       int reference_count =
         (*essential_reference_subtrees_to_send)[i][j].second;
       if(i == world_->rank()) {
+
+        // Reference subtables on the self are already available.
         received_subtable_ids.push_back(
           boost::make_tuple(i, reference_begin, reference_count, -1));
       }
@@ -320,9 +364,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
+  std::vector <
+  core::parallel::SubTableRouteRequest<TableType> >
+  hashed_essential_reference_subtrees_to_send;
   InitialSetup_(
     metric, query_results, table_exchange,
     &reference_subtrees_to_send, &send_priorities,
+    &hashed_essential_reference_subtrees_to_send,
     &prioritized_send_subtables,
     &num_reference_subtrees_to_send,
     &reference_subtrees_to_receive,

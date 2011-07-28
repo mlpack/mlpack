@@ -10,6 +10,7 @@
 
 #include <boost/mpi.hpp>
 #include "core/parallel/message_tag.h"
+#include "core/parallel/subtable_route_request.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/sub_table.h"
