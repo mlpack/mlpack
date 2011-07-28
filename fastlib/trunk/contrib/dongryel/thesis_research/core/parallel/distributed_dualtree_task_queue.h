@@ -167,13 +167,13 @@ class DistributedDualtreeTaskQueue {
     }
 
     void Init(
-      TableType *local_query_table, int max_query_subtree_size,
+      TableType *local_query_table, int num_threads_in,
       TableExchangeType &table_exchange_in) {
 
       // For each process, break up the local query tree into a list of
       // subtree query lists.
-      local_query_table->get_frontier_nodes(
-        max_query_subtree_size, &local_query_subtrees_);
+      local_query_table->get_frontier_nodes_bounded_by_number(
+        num_threads_in, &local_query_subtrees_);
 
       // Initialize the other member variables.
       local_query_subtree_locks_.resize(local_query_subtrees_.size());

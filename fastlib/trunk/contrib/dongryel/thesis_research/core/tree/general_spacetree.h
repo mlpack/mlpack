@@ -256,6 +256,37 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    void get_frontier_nodes_bounded_by_number(
+      int max_num_nodes,
+      std::vector < TreeType * > *frontier_nodes) const {
+
+      // The priority queue type.
+      typedef std::priority_queue <
+      const TreeType *,
+            std::vector<const TreeType *>,
+            typename TreeType::PrioritizeNodesBySize_ > PriorityQueueType;
+      PriorityQueueType queue;
+      queue.push(const_cast<TreeType *>(this));
+
+      while(queue.size() + frontier_nodes->size() <
+            static_cast<unsigned int>(max_num_nodes)) {
+        TreeType *dequeued_node = const_cast<TreeType *>(queue.top());
+        queue.pop();
+        if(dequeued_node->is_leaf()) {
+          frontier_nodes->push_back(dequeued_node);
+        }
+        else {
+          queue.push(dequeued_node->left());
+          queue.push(dequeued_node->right());
+        }
+      }
+      while(queue.size() > 0) {
+        TreeType *dequeued_node = const_cast<TreeType *>(queue.top());
+        frontier_nodes->push_back(dequeued_node);
+        queue.pop();
+      }
+    }
+
     /** @brief A method for copying a node without its children.
      */
     void CopyWithoutChildren(const GeneralBinarySpaceTree &node) {
