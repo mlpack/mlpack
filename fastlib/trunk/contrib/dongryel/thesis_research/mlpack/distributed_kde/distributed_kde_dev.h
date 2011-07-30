@@ -178,6 +178,10 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<int>()->default_value(100000),
     "Generate the datasets on the fly of the specified number of points."
   )(
+    "random_seed_in",
+    boost::program_options::value<unsigned long int>(),
+    "Random seed to start for each MPI process."
+  )(
     "references_in",
     boost::program_options::value<std::string>()->default_value(
       "random_dataset.csv"),
@@ -409,9 +413,14 @@ bool DistributedKdeArgumentParser::ParseArguments(
   // Parse the number of threads.
   arguments_out->num_threads_ = vm["num_threads_in"].as<int>();
   omp_set_num_threads(arguments_out->num_threads_);
-  if(world.rank() == 0) {
-    std::cout << "Using " << arguments_out->num_threads_ << " threads for " <<
-              "shared memory parallelism.\n";
+  std::cerr << "  Process " << world.rank() << " is using " <<
+            arguments_out->num_threads_ << " threads for " <<
+            "shared memory parallelism.\n";
+
+  // Parse the random seed if it is available and set it.
+  if(vm.count("random_seed_in") > 0) {
+    unsigned long int seed = vm["random_seed_in"].as<unsigned long int>();
+    core::math::global_random_number_state_.set_seed(seed + world.rank());
   }
 
   // Parse the reference set and index the tree.
