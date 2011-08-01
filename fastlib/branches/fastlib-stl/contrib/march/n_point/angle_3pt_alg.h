@@ -21,7 +21,7 @@ namespace npt {
     
   private:
     
-    int tuple_size_ = 3;
+    int tuple_size_;
     int num_random_;
     
     arma::mat data_mat_;
@@ -35,8 +35,8 @@ namespace npt {
     
     
     // indexed by [num_random][r1][theta]
-    std::vector<std::vector<int> > results_;
-    std::vector<std::vector<double> > weighted_results_;
+    std::vector<std::vector<std::vector<int> > > results_;
+    std::vector<std::vector<std::vector<double> > > weighted_results_;
     
     std::vector<double> r1_;
     double r2_multiplier_;
@@ -71,13 +71,15 @@ namespace npt {
     Angle3ptAlg(arma::mat& data, arma::colvec& weights, 
                 arma::mat& rdata, arma::colvec& rweights, int leaf_size,
                 std::vector<double>& r1_vec, double r2_mult, 
-                std::vector<double>& theta_vec, double bandwidth) :
-    matcher_(r1_vec, r2_mult, theta_vec, bandwidth),
+                std::vector<double>& theta_vec, double bin_fac) :
+    matcher_(r1_vec, r2_mult, theta_vec, bin_fac),
     data_mat_(data), random_mat_(rdata), data_weights_(weights), 
     random_weights_(rweights), results_(tuple_size_ + 1), 
     weighted_results_(r1_vec.size()), r1_(r1_vec), r2_multiplier_(r2_mult),
     thetas_(theta_vec)
     {
+      
+      tuple_size_ = 3;
       
       for (int i = 0; i < tuple_size_; i++) {
         

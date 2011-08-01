@@ -59,7 +59,7 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
           vec_k = data_mat_.col(k);
         }
         
-        std::vector<int>& valid_thetas;
+        std::vector<int> valid_thetas;
         
         int valid_r1 = matcher_.TestPointTuple(vec_i, vec_j, vec_k,
                                                valid_thetas);
@@ -93,8 +93,8 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
 // returns true if we can prune, false otherwise
 bool npt::Angle3ptAlg::CanPrune_(std::vector<NptNode*>& node_list) {
   
-  return (!TestNodeTuple_(node_list[0]->bound(), node_list[1]->bound(),
-                          node_list[2]->bound()));
+  return (!matcher_.TestNodeTuple(node_list[0]->bound(), node_list[1]->bound(),
+                                  node_list[2]->bound()));
   
 } // CanPrune_
 
@@ -200,7 +200,7 @@ void npt::Angle3ptAlg::OutputResults() {
         mlpack::IO::Info << "R2: " << (r1_[j] * r2_multiplier_) << ", ";
         mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
         
-        mlpack::IO::Info << results_[i][j][k] < "\n";
+        mlpack::IO::Info << results_[i][j][k] << "\n";
         
       } // for k
       
