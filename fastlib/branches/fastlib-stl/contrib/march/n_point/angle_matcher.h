@@ -22,6 +22,9 @@
 // Values of r1 are spaced far enough apart such that a tuple of points will 
 // only satisfy one
 
+// IMPORTANT: I think I'm assuming that r2 is enough larger than r1 that there
+// isn't any overlap
+
 namespace npt {
 
   class AngleMatcher {
@@ -50,6 +53,7 @@ namespace npt {
     
     
     // upper and lower bound arrays
+    // these include the half bandwidth added or subtracted
     std::vector<double> r1_lower_sqr_;
     std::vector<double> r1_upper_sqr_;
     
@@ -67,40 +71,52 @@ namespace npt {
     // Does this mean in each dimension?
     double bin_thickness_factor_;
     
+    double min_area_sq_;
+    double max_area_sq_;
+    
+    int num_min_area_prunes_;
+    int num_max_area_prunes_;
+    
+    int num_prunes_;
+    
     
     ////////////////////////////
     
+    double ComputeR3_(double r1, double r2, double theta);
     
     
   public:
     
     AngleMatcher(std::vector<double>& short_sides, double long_side,
                  std::vector<double>& thetas, double bin_size) :
-    short_sides_(short_sides), long_side_multiplier_(long_size), 
+    short_sides_(short_sides), long_side_multiplier_(long_side), 
     thetas_(thetas), bin_thickness_factor_(bin_size),
     r3_sides_(thetas.size()), long_sides_(short_sides.size()),
     r1_lower_sqr_(short_sides.size()), r1_upper_sqr_(short_sides.size()), 
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
     r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()) {
       
-      theta_cutoff_ = math::acos(1.0/(2.0 * long_side_multiplier_));
+      theta_cutoff_ = acos(1.0/(2.0 * long_side_multiplier_));
       theta_cutoff_index_ = std::lower_bound(thetas_.begin(), thetas_.end(), 
-                                             theta_cutoff) - thetas_.begin();
+                                             theta_cutoff_) - thetas_.begin();
+      
+      double half_thickness = bin_thickness_factor_ / 2.0;
+
       
       for (int i = 0; i < short_sides_.size(); i++) {
           
         r3_sides_[i].resize(thetas_.size());
         long_sides_[i] = long_side_multiplier_ * short_sides_[i];
         
-        r1_lower_sqr_[i] = ((1.0 - bin_thickness_factor_) * short_sides_[i])
-                            * ((1.0 - bin_thickness_factor_) * short_sides_[i]);
-        r1_upper_sqr_[i] = ((1.0 + bin_thickness_factor_) * short_sides_[i])
-                            * ((1.0 + bin_thickness_factor_) * short_sides_[i]);
+        r1_lower_sqr_[i] = ((1.0 - half_thickness) * short_sides_[i])
+                            * ((1.0 - half_thickness) * short_sides_[i]);
+        r1_upper_sqr_[i] = ((1.0 + half_thickness) * short_sides_[i])
+                            * ((1.0 + half_thickness) * short_sides_[i]);
         
-        r2_lower_sqr_[i] = ((1.0 - bin_thickness_factor_) * long_sides_[i])
-        * ((1.0 - bin_thickness_factor_) * long_sides_[i]);
-        r2_upper_sqr_[i] = ((1.0 + bin_thickness_factor_) * long_sides_[i])
-        * ((1.0 + bin_thickness_factor_) * long_sides_[i]);
+        r2_lower_sqr_[i] = ((1.0 - half_thickness) * long_sides_[i])
+        * ((1.0 - half_thickness) * long_sides_[i]);
+        r2_upper_sqr_[i] = ((1.0 + half_thickness) * long_sides_[i])
+        * ((1.0 + half_thickness) * long_sides_[i]);
         
         for (int j = 0; i < thetas_.size(); j++) {
           
@@ -108,14 +124,33 @@ namespace npt {
                                      long_sides_[i], 
                                      thetas_[j]);
           
-          r3_lower_sqr_[i][j] = ((1.0 - bin_thickness_factor_) * r3_sides_[i][j])
-                              * ((1.0 - bin_thickness_factor_) * r3_sides_[i][j]);
-          r3_upper_sqr_[i][j] = ((1.0 + bin_thickness_factor_) * r3_sides_[i][j])
-                              * ((1.0 + bin_thickness_factor_) * r3_sides_[i][j]);
+          r3_lower_sqr_[i][j] = ((1.0 - half_thickness) * r3_sides_[i][j])
+                              * ((1.0 - half_thickness) * r3_sides_[i][j]);
+          r3_upper_sqr_[i][j] = ((1.0 + half_thickness) * r3_sides_[i][j])
+                              * ((1.0 + half_thickness) * r3_sides_[i][j]);
           
         } // for j
         
       } // for i
+      
+      double half_min_perimeter = (sqrt(r1_lower_sqr_[0]) 
+                                   + sqrt(r2_lower_sqr_[0]) 
+                                   + sqrt(r3_lower_sqr_[0][0])) / 2.0;
+      double half_max_perimeter = (sqrt(r1_upper_sqr_[2]) 
+                                   + sqrt(r2_upper_sqr_[2]) 
+                                   + sqrt(r3_upper_sqr_[2].back())) / 2.0;
+      min_area_sq_ = half_min_perimeter 
+      * (half_min_perimeter - sqrt(r1_lower_sqr_[0])) 
+            * (half_min_perimeter - sqrt(r2_lower_sqr_[0])) 
+            * (half_min_perimeter - sqrt(r3_lower_sqr_[0][0]));
+      max_area_sq_ = half_max_perimeter 
+      * (half_max_perimeter - sqrt(r1_upper_sqr_[2])) 
+      * (half_max_perimeter - sqrt(r2_upper_sqr_[2])) 
+      * (half_max_perimeter - sqrt(r3_upper_sqr_[2].back()));
+      
+      num_min_area_prunes_ = 0;
+      num_max_area_prunes_ = 0;
+      num_prunes_ = 0;
       
       // IMPORTANT: I'm not sure the upper and lower sqr arrays are still sorted
       // especially for r3

@@ -89,7 +89,7 @@ int main(int argc, char* argv[]) {
   arma::colvec random_weights;  
   //if (fx_param_exists(NULL, "weights")) {
   if (IO::HasParam("weighted_computation")) {
-    weights.load(IO::GetParam<std::string>("random_weights"));
+    random_weights.load(IO::GetParam<std::string>("random_weights"));
   }
   else {
     random_weights.set_size(random_mat.n_cols);

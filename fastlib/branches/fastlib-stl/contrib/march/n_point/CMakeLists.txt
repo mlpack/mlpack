@@ -29,6 +29,11 @@ set(SOURCES
 	multi_matcher.cc
 	matcher_generation.h
 	matcher_generation.cc
+	angle_matcher.h
+	angle_matcher.cc
+	angle_3pt_alg.h
+	angle_3pt_alg.cc
+	n_point_angle_main.cc
 )
 
 # add directory name to sources
@@ -71,3 +76,14 @@ target_link_libraries(n_point_multi_main
    mlpack
    mlpack_contrib
 )
+
+add_executable(n_point_angle_main
+   EXCLUDE_FROM_ALL
+   n_point_angle_main.cc
+)
+target_link_libraries(n_point_angle_main
+   fastlib
+   mlpack
+   mlpack_contrib
+)
+
