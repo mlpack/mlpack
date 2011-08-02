@@ -1,3 +1,9 @@
+jenkins (1.424-1) natty; urgency=low
+
+  * New upstream release
+
+ -- Sterling Peet <sterling.peet@gatech.edu>  Tue, 02 Aug 2011 05:01:21 -0400
+
 jenkins (1.423-1) natty; urgency=low
 
   * New upstream release
