@@ -222,6 +222,22 @@ class SubTable {
       return is_alias_;
     }
 
+    void Alias(const SubTable<TableType> &subtable_in) {
+      serialize_new_from_old_mapping_ =
+        subtable_in.serialize_new_from_old_mapping();
+      cache_block_id_ = subtable_in.cache_block_id();
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      data_ = const_cast<SubTableType &>(subtable_in).data();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
+      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
+      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
+      is_alias_ = true;
+      serialize_points_per_terminal_node_ =
+        subtable_in.serialize_points_per_terminal_node();
+    }
+
     /** @brief Steals the ownership of the incoming subtable.
      */
     void operator=(const SubTable<TableType> &subtable_in) {

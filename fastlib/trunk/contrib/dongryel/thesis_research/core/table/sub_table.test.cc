@@ -14,6 +14,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
+#include "core/parallel/subtable_route_request.h"
 #include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
 #include "core/table/distributed_table.h"
@@ -147,8 +148,8 @@ class TestSubTable {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      /*
-      for(int i = 0; i < 50; i++) {
+
+      for(int i = 0; i < 20; i++) {
         int num_dimensions;
         if(world.rank() == 0) {
           num_dimensions = core::math::RandInt(3, 20);
@@ -160,11 +161,10 @@ class TestSubTable {
           exit(0);
         }
       }
-      */
 
       // Now each process extracts its own subtable and checks the
       // iterator against the iterator of the original table.
-      for(int i = 0; i < 50; i++) {
+      for(int i = 0; i < 20; i++) {
         int num_dimensions = core::math::RandInt(3, 7);
         int num_points = core::math::RandInt(300, 501);
         if(SelfStressTest(world, num_dimensions, num_points) == false) {
@@ -336,8 +336,7 @@ class TestSubTable {
               send_subtables[j].push_back(
                 distributed_table.local_table(),
                 distributed_table.local_table()->get_tree()->
-                FindByBeginCount(begin, count), max_num_levels_to_serialize,
-                false);
+                FindByBeginCount(begin, count), false);
             }
           }
         }
@@ -352,7 +351,7 @@ class TestSubTable {
               // Allocate the cache block to the subtable that is about
               // to be received.
               received_subtables_in_this_round[j].push_back(
-                0, max_num_levels_to_serialize, false);
+                0, false);
             }
           }
         }
