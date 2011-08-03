@@ -176,6 +176,12 @@ class VanillaDistributedTreeBuilder {
       // Index the local tree on each process.
       distributed_table_->local_table()->IndexData(metric_in, leaf_size);
 
+      // Correct the rank of the local tables due to splitting of the
+      // communicators. This may be taken out after changing the
+      // RecursiveShuffle method to use non-splitting communicator
+      // version.
+      distributed_table_->local_table()->set_rank(world.rank());
+
       // Build the top tree from the collected root nodes from all
       // processes.
       world.barrier();
