@@ -91,7 +91,8 @@ class TestSubTable {
               printf("%d ", original_old_from_new[i].second.second);
             }
             printf("\n");
-            printf("Sub table:\n\n");
+            printf("Sub table containing %d %d points: \n\n",
+                   sub_table.n_entries(), sub_table.get_tree()->count());
             for(int i = 0; i < sub_table.n_entries(); i++) {
               printf("%d ", sub_old_from_new[i].second.second);
             }
@@ -237,6 +238,12 @@ class TestSubTable {
           boost::archive::text_iarchive ia(ifs);
           ia >> subtable_to_load;
         }
+        {
+          // Save again.
+          std::ofstream ofs(test_file_name_sstr.str().c_str());
+          boost::archive::text_oarchive oa(ofs);
+          oa << subtable_to_load;
+        }
 
         // Test the iterator.
         if(TestNodeIterator_(
@@ -245,6 +252,29 @@ class TestSubTable {
               *(subtable_to_load.table()),
               subtable_to_load.table()->get_tree()) == false) {
           return false;
+        }
+
+        // See if saving and reloading repeatedly gives a valid subtable.
+        for(int p = 0; p < 4; p++) {
+
+          printf("Saving and loading for the %d-th times.\n", p);
+          SubTableType subtable_to_reload;
+          subtable_to_reload.Init(0, false);
+          {
+            // Reload.
+            std::ifstream ifs(test_file_name_sstr.str().c_str());
+            boost::archive::text_iarchive ia(ifs);
+            ia >> subtable_to_reload;
+          }
+
+          // Test the iterator.
+          if(TestNodeIterator_(
+                random_table,
+                random_table.get_tree()->FindByBeginCount(begin, count),
+                *(subtable_to_reload.table()),
+                subtable_to_reload.table()->get_tree()) == false) {
+            return false;
+          }
         }
 
       } // end of the trial loop.
