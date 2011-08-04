@@ -171,7 +171,7 @@ class SubTable {
       std::vector< std::pair< TreeType *, int > > &sorted_nodes,
       std::vector <
       PointSerializeFlagType > *serialize_points_per_terminal_node_in,
-      int level) const {
+      int level, bool add_serialize_points_per_terminal_node) const {
 
       if(node != NULL) {
         sorted_nodes.push_back(
@@ -182,15 +182,17 @@ class SubTable {
           int parent_node_index = sorted_nodes.size() - 1;
           FillTreeNodes_(
             node->left(), parent_node_index, sorted_nodes,
-            serialize_points_per_terminal_node_in, level + 1);
+            serialize_points_per_terminal_node_in, level + 1,
+            add_serialize_points_per_terminal_node);
           FillTreeNodes_(
             node->right(), parent_node_index, sorted_nodes,
-            serialize_points_per_terminal_node_in, level + 1);
+            serialize_points_per_terminal_node_in, level + 1,
+            add_serialize_points_per_terminal_node);
         }
 
         // In case it is a leaf, we are always stuck, so we grab the
         // points belonging to it as well.
-        else {
+        else if(add_serialize_points_per_terminal_node) {
           serialize_points_per_terminal_node_in->push_back(
             PointSerializeFlagType(node->begin(), node->count()));
         }
@@ -281,7 +283,7 @@ class SubTable {
           serialize_points_per_terminal_node_);
       FillTreeNodes_(
         start_node_, -1, tree_nodes,
-        &serialize_points_per_terminal_node_alias, 0);
+        &serialize_points_per_terminal_node_alias, 0, is_alias_);
       num_nodes = tree_nodes.size();
       ar & num_nodes;
       for(unsigned int i = 0; i < tree_nodes.size(); i++) {
@@ -302,16 +304,26 @@ class SubTable {
       // Save the matrix and the mappings if requested.
       {
         core::table::SubDenseMatrix<SubTableType> sub_data;
-        sub_data.Init(data_, serialize_points_per_terminal_node_);
-        ar & sub_data;
         core::table::SubDenseMatrix<SubTableType> sub_weights;
-        sub_weights.Init(weights_, serialize_points_per_terminal_node_);
+
+        // If the subtable is an alias, specify which subset to save.
+        if(is_alias_) {
+          sub_data.Init(data_, serialize_points_per_terminal_node_);
+          sub_weights.Init(weights_, serialize_points_per_terminal_node_);
+        }
+
+        // Otherwise, we save the entire thing.
+        else {
+          sub_data.Init(data_);
+          sub_weights.Init(weights_);
+        }
+        ar & sub_data;
         ar & sub_weights;
 
         // Direct mapping saving.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
-          serialize_points_per_terminal_node_, false);
+          serialize_points_per_terminal_node_, is_alias_, false);
 
         // Save whether the new from old mapping is going to be
         // serialized or not.
@@ -319,7 +331,7 @@ class SubTable {
         if(serialize_new_from_old_mapping_) {
           core::table::IndexUtil<int>::Serialize(
             ar, new_from_old_->get(),
-            serialize_points_per_terminal_node_, false);
+            serialize_points_per_terminal_node_, is_alias_, false);
         }
       }
     }
@@ -403,7 +415,7 @@ class SubTable {
         // space.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
-          serialize_points_per_terminal_node_, true);
+          serialize_points_per_terminal_node_, true, true);
 
         // Find out whether the new from old mapping was serialized or
         // not, and load accordingly.
@@ -411,7 +423,7 @@ class SubTable {
         if(serialize_new_from_old_mapping_) {
           core::table::IndexUtil<int>::Serialize(
             ar, new_from_old_->get(),
-            serialize_points_per_terminal_node_, true);
+            serialize_points_per_terminal_node_, true, true);
         }
       }
     }

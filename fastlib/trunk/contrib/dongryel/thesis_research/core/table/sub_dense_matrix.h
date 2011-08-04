@@ -63,6 +63,13 @@ class SubDenseMatrix {
         &serialize_points_per_terminal_node_in;
     }
 
+    /** @brief Initialize a sub dense matrix class for serializing it
+     *         in entirety.
+     */
+    void Init(core::table::DenseMatrix *matrix_in) {
+      matrix_ = matrix_in;
+    }
+
     /** @brief Serialize a subset of a dense matrix.
      */
     template<class Archive>
@@ -70,23 +77,38 @@ class SubDenseMatrix {
 
       // Save the dimensionality.
       int n_rows = matrix_->n_rows();
-      int n_cols = 0;
-      for(unsigned int j = 0;
-          j < serialize_points_per_terminal_node_->size(); j++) {
-        n_cols += ((*serialize_points_per_terminal_node_)[j]).count();
+      int n_cols = matrix_->n_cols();
+      if(serialize_points_per_terminal_node_) {
+        n_cols = 0;
+        for(unsigned int j = 0;
+            j < serialize_points_per_terminal_node_->size(); j++) {
+          n_cols += ((*serialize_points_per_terminal_node_)[j]).count();
+        }
       }
       ar & n_rows;
       ar & n_cols;
 
       // Since we are extracting an already well-formed matrix, we use
       // the direct mapping.
-      for(unsigned int j = 0;
-          j < serialize_points_per_terminal_node_->size(); j++) {
-        for(int i = (*serialize_points_per_terminal_node_)[j].begin();
-            i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
-          const double *column_ptr = matrix_->GetColumnPtr(i);
-          for(int k = 0; k < matrix_->n_rows(); k++) {
-            ar & column_ptr[k];
+      if(serialize_points_per_terminal_node_) {
+        for(unsigned int j = 0;
+            j < serialize_points_per_terminal_node_->size(); j++) {
+          for(int i = (*serialize_points_per_terminal_node_)[j].begin();
+              i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
+            const double *column_ptr = matrix_->GetColumnPtr(i);
+            for(int k = 0; k < matrix_->n_rows(); k++) {
+              ar & column_ptr[k];
+            }
+          }
+        }
+      }
+      else {
+
+        // Otherwise, save the entire thing.
+        for(int j = 0; j < n_cols; j++) {
+          const double *column_ptr = matrix_->GetColumnPtr(j);
+          for(int i = 0; i < n_rows; i++) {
+            ar & column_ptr[i];
           }
         }
       }
