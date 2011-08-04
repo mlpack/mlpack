@@ -11,7 +11,7 @@ set(SOURCES
   message_tag.h
   parallel_sample_sort.h
   sample_distributed_tree_builder.h
-  subtable_route_request.h
+  sub_table_route_request.h
   subtable_send_request.h
   table_exchange.h
   vanilla_distributed_tree_builder.h
