@@ -10,7 +10,7 @@
 
 #include <boost/mpi.hpp>
 #include "core/parallel/message_tag.h"
-#include "core/parallel/subtable_route_request.h"
+#include "core/parallel/route_request.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/sub_table.h"
@@ -111,9 +111,9 @@ class TableExchange {
       }
     }
 
-    void ReleaseCache(int cache_id) {
+    void ReleaseCache(int cache_id, int num_times) {
       if(cache_id >= 0) {
-        receive_cache_locks_[ cache_id ] --;
+        receive_cache_locks_[ cache_id ] -= num_times;
 
         // If the subtable is not needed, feel free to free it.
         if(receive_cache_locks_[ cache_id ] == 0) {
