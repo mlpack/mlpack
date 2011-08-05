@@ -82,6 +82,8 @@ class SubTableRouteRequest {
     }
 
     int next_destination() const {
+      const_cast <
+      core::parallel::SubTableRouteRequest<TableType> * >(this)->ComputeNextDestination_();
       return next_destination_;
     }
 
@@ -142,25 +144,25 @@ class SubTableRouteRequest {
 
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-
       core::parallel::SubTableRouteRequest<TableType> *this_modifiable =
         const_cast< core::parallel::SubTableRouteRequest<TableType> * >(this);
-
-      // Compute the next destination.
-      this_modifiable->ComputeNextDestination_();
 
       // Count how many messages were routed.
       std::vector<int> filtered;
       if(rank_ <= threshold_) {
-
-        int new_count = threshold_ - begin_count_pair_.first + 1;
-        ar & begin_count_pair_.first;
-        ar & new_count;
+        int right_begin = threshold_ + 1;
+        int right_count = begin_count_pair_.first +
+                          begin_count_pair_.second - (threshold_ + 1) ;
+        ar & right_begin;
+        ar & right_count;
+        this_modifiable->begin_count_pair_ =
+          std::pair<int, int>(
+            begin_count_pair_.first, begin_count_pair_.second - right_count);
 
         // Route to the destination which are larger than the threshold.
         for(int i = 0; i < static_cast<int>(destinations_.size()); i++) {
           if(destinations_[i] > threshold_) {
-            filtered_.push_back(destinations_[i]);
+            filtered.push_back(destinations_[i]);
             this_modifiable->destinations_[i] = destinations_.back();
             this_modifiable->destinations_.pop_back();
             i--;
@@ -169,30 +171,34 @@ class SubTableRouteRequest {
       }
       else {
 
-        int new_begin = threshold_ + 1;
-        int new_count = begin_count_pair_.first + begin_count_pair_.second -
-                        new_begin;
-        ar & new_begin;
-        ar & new_count;
+        int left_count = threshold_ - begin_count_pair_.first + 1;
+        ar & begin_count_pair_.first;
+        ar & left_count;
+        this_modifiable->begin_count_pair_ =
+          std::pair<int, int>(
+            threshold_ + 1, begin_count_pair_.second - left_count);
 
         // Route to the destination which are at most the threshold.
         for(int i = 0; i < static_cast<int>(destinations_.size()); i++) {
           if(destinations_[i] <= threshold_) {
-            filtered_.push_back(destinations_[i]);
+            filtered.push_back(destinations_[i]);
             this_modifiable->destinations_[i] = destinations_.back();
             this_modifiable->destinations_.pop_back();
             i--;
           }
         }
       }
-      this_modifiable_->num_routed_ = filtered.size();
+      this_modifiable->num_routed_ = filtered.size();
       ar & num_routed_;
       for(int i = 0; i < num_routed_; i++) {
-        ar & filtered_[i];
+        ar & filtered[i];
       }
 
-      // Save the subtable.
-      ar & sub_table_;
+      // Save the subtable, only if the number of routed messages is
+      // at least 1.
+      if(filtered.size() > 0) {
+        ar & sub_table_;
+      }
     }
 
     template<class Archive>
@@ -211,8 +217,10 @@ class SubTableRouteRequest {
         ar & destinations_[i];
       }
 
-      // Load the subtable.
-      ar & sub_table_;
+      // Load the subtable, if the message is not empty.
+      if(size > 0) {
+        ar & sub_table_;
+      }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -227,7 +235,9 @@ class SubTableRouteRequest {
       sub_table_ = source_in.sub_table();
     }
 
-    void InitSubTableForReceiving(int cache_id) {
+    void InitSubTableForReceiving(
+      boost::mpi::communicator &comm, int cache_id) {
+      rank_ = comm.rank();
       sub_table_.Init(cache_id, false);
     }
 
@@ -235,7 +245,7 @@ class SubTableRouteRequest {
       boost::mpi::communicator &comm,
       TableType *table_in, const std::pair<int, int> &rnode_subtree_id) {
 
-      beign_count_pair_ = std::pair<int, int>(0, comm.size());
+      begin_count_pair_ = std::pair<int, int>(0, comm.size());
       rank_ = comm.rank();
       sub_table_.Init(
         table_in,
