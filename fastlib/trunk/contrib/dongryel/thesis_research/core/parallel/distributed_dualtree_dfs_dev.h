@@ -16,7 +16,6 @@
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
-#include "core/parallel/distributed_termination.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/table_exchange.h"
@@ -86,7 +85,7 @@ DistributedProblemType >::HashSendList_(
   const std::pair<int, int> &local_rnode_id,
   int query_process_id,
   std::vector <
-  core::parallel::SubTableRouteRequest<TableType> > *
+  core::parallel::RouteRequest<SubTableType> > *
   hashed_essential_reference_subtrees) {
 
   // May consider using a STL map to speed up the hashing.
@@ -94,7 +93,8 @@ DistributedProblemType >::HashSendList_(
   for(unsigned int i = 0;
       i < hashed_essential_reference_subtrees->size(); i++) {
 
-    if((*hashed_essential_reference_subtrees)[i].has_same_subtable_id(local_rnode_id)) {
+    if((*hashed_essential_reference_subtrees)[i].object().has_same_subtable_id(
+          local_rnode_id)) {
       found_index = i;
       break;
     }
@@ -105,7 +105,7 @@ DistributedProblemType >::HashSendList_(
     found_index = hashed_essential_reference_subtrees->size() - 1;
     (*hashed_essential_reference_subtrees)[
       found_index].InitSubTableForSending(
-        reference_table_->local_table(), local_rnode_id);
+        * world_, reference_table_->local_table(), local_rnode_id);
   }
   (*hashed_essential_reference_subtrees)[
     found_index].add_destination(query_process_id);
@@ -121,7 +121,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   std::vector <
   std::vector< std::pair<int, int> > > *essential_reference_subtrees,
   std::vector <
-  core::parallel::SubTableRouteRequest<TableType> > *hashed_essential_reference_subtrees,
+  core::parallel::RouteRequest<SubTableType> > *hashed_essential_reference_subtrees,
   std::vector <
   std::vector< core::math::Range > > *squared_distance_ranges,
   std::vector< double > *extrinsic_prunes) {
@@ -163,9 +163,11 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
 
         // Add the query process ID to the list of query processes
         // that this reference subtree needs to be sent to.
-        HashSendList_(
-          local_rnode_id, query_process_id,
-          hashed_essential_reference_subtrees);
+        if(query_process_id != world_->rank()) {
+          HashSendList_(
+            local_rnode_id, query_process_id,
+            hashed_essential_reference_subtrees);
+        }
 
         // Push in the squared distance range.
         (*squared_distance_ranges)[query_process_id].push_back(
@@ -238,7 +240,7 @@ DistributedProblemType >::InitialSetup_(
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
   std::vector <
-  core::parallel::SubTableRouteRequest<TableType> >
+  core::parallel::RouteRequest<SubTableType> >
   *hashed_essential_reference_subtress_to_send,
   std::vector< SendRequestPriorityQueueType > *prioritized_send_subtables,
   int *num_reference_subtrees_to_send,
@@ -365,7 +367,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
   std::vector <
-  core::parallel::SubTableRouteRequest<TableType> >
+  core::parallel::RouteRequest<SubTableType> >
   hashed_essential_reference_subtrees_to_send;
   InitialSetup_(
     metric, query_results, table_exchange,
@@ -381,10 +383,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The number of completed sends used for determining the
   // termination condition.
   int num_completed_sends = 0;
-
-  // Used for termination condition check.
-  core::parallel::DistributedTermination termination_check;
-  termination_check.Init(*world_);
 
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
@@ -410,8 +408,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
           table_exchange.AsynchSendReceive(
-            *world_, prioritized_send_subtables, &received_subtable_ids,
-            &num_completed_sends);
+            *world_, hashed_essential_reference_subtrees_to_send,
+            &received_subtable_ids, &num_completed_sends);
 
           // Generate the list of work and put it into the queue.
           GenerateTasks_(
@@ -484,7 +482,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
             // Release the reference subtable.
-            table_exchange.ReleaseCache(task_reference_cache_id);
+            table_exchange.ReleaseCache(task_reference_cache_id, 1);
 
           } // end of a critical section.
 
