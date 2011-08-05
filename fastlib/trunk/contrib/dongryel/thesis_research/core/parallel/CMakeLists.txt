@@ -10,8 +10,8 @@ set(SOURCES
   distributed_tripletree_dfs.h
   message_tag.h
   parallel_sample_sort.h
+  route_request.h
   sample_distributed_tree_builder.h
-  sub_table_route_request.h
   subtable_send_request.h
   table_exchange.h
   vanilla_distributed_tree_builder.h
