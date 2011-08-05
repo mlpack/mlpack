@@ -408,7 +408,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
           table_exchange.AsynchSendReceive(
-            *world_, hashed_essential_reference_subtrees_to_send,
+            *world_, prioritized_send_subtables,
             &received_subtable_ids, &num_completed_sends);
 
           // Generate the list of work and put it into the queue.
