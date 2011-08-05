@@ -121,7 +121,7 @@ class DistributedDualtreeTaskQueue {
   public:
 
     bool is_empty() const {
-      return num_remaining_tasks_ == 0;
+      return num_remaining_tasks_ == 0 && table_exchange_->is_empty();
     }
 
     void set_split_subtree_flag() {

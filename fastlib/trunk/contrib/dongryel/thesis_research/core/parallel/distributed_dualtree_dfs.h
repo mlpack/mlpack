@@ -16,7 +16,7 @@
 #include "core/math/range.h"
 #include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
-#include "core/parallel/subtable_route_request.h"
+#include "core/parallel/route_request.h"
 #include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/sub_table.h"
@@ -172,7 +172,7 @@ class DistributedDualtreeDfs {
       const std::pair<int, int> &local_rnode_id,
       int query_process_id,
       std::vector <
-      core::parallel::SubTableRouteRequest<TableType> > *
+      core::parallel::RouteRequest<SubTableType> > *
       hashed_essential_reference_subtrees);
 
     template<typename MetricType>
@@ -184,7 +184,7 @@ class DistributedDualtreeDfs {
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees,
       std::vector <
-      core::parallel::SubTableRouteRequest<TableType> > *
+      core::parallel::RouteRequest<SubTableType> > *
       hashed_essential_reference_subtrees,
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
@@ -208,7 +208,7 @@ class DistributedDualtreeDfs {
       essential_reference_subtrees_to_send,
       std::vector< std::vector< core::math::Range> > *send_priorities,
       std::vector <
-      core::parallel::SubTableRouteRequest<TableType> >
+      core::parallel::RouteRequest<SubTableType> >
       *hashed_essential_reference_subtress_to_send,
       std::vector< SendRequestPriorityQueueType > *prioritized_send_subtables,
       int *num_reference_subtrees_to_send,
