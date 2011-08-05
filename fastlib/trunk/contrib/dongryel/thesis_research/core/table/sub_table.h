@@ -500,6 +500,11 @@ class SubTable {
       return tree_;
     }
 
+    bool has_same_subtable_id(const std::pair<int, int> &sub_table_id) const {
+      return start_node_->begin() == sub_table_id.first &&
+             start_node_->count() == sub_table_id.second;
+    }
+
     /** @brief Initializes a subtable before loading.
      */
     void Init(
