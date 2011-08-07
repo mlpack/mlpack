@@ -16,6 +16,7 @@
 #include "core/math/range.h"
 #include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
+#include "core/parallel/distributed_termination.h"
 #include "core/parallel/route_request.h"
 #include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
@@ -188,7 +189,7 @@ class DistributedDualtreeDfs {
       hashed_essential_reference_subtrees,
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
-      std::vector<double> *extrinsic_prunes);
+      std::vector<unsigned long int> *extrinsic_prunes);
 
     template<typename MetricType>
     void GenerateTasks_(
@@ -217,7 +218,8 @@ class DistributedDualtreeDfs {
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       int *num_reference_subtrees_to_receive,
       core::parallel::DistributedDualtreeTaskQueue <
-      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
+      DistributedTableType, FinePriorityQueueType > *distributed_tasks,
+      core::parallel::DistributedTermination *termination_check);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine

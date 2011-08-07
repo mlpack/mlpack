@@ -16,6 +16,7 @@
 #include <queue>
 #include "core/parallel/distributed_dualtree_dfs.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
+#include "core/parallel/distributed_termination.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/table_exchange.h"
@@ -103,9 +104,12 @@ DistributedProblemType >::HashSendList_(
     hashed_essential_reference_subtrees->resize(
       hashed_essential_reference_subtrees->size() + 1);
     found_index = hashed_essential_reference_subtrees->size() - 1;
+    (*hashed_essential_reference_subtrees)[ found_index ].Init(*world_);
     (*hashed_essential_reference_subtrees)[
-      found_index].InitSubTableForSending(
-        * world_, reference_table_->local_table(), local_rnode_id);
+      found_index].object().Init(
+        reference_table_->local_table(),
+        reference_table_->local_table()->get_tree()->FindByBeginCount(
+          local_rnode_id.first, local_rnode_id.second), false);
   }
   (*hashed_essential_reference_subtrees)[
     found_index].add_destination(query_process_id);
@@ -124,7 +128,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   core::parallel::RouteRequest<SubTableType> > *hashed_essential_reference_subtrees,
   std::vector <
   std::vector< core::math::Range > > *squared_distance_ranges,
-  std::vector< double > *extrinsic_prunes) {
+  std::vector< unsigned long int > *extrinsic_prunes) {
 
   // Compute the squared distance ranges between the query node and
   // the reference node.
@@ -248,7 +252,8 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   int *num_reference_subtrees_to_receive,
   core::parallel::DistributedDualtreeTaskQueue <
-  DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
+  DistributedTableType, FinePriorityQueueType > *distributed_tasks,
+  core::parallel::DistributedTermination *termination_check) {
 
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
@@ -259,7 +264,7 @@ DistributedProblemType >::InitialSetup_(
 
   // Each process needs to customize its reference set for each
   // participating query process.
-  std::vector<double> extrinsic_prunes_broadcast(world_->size(), 0.0);
+  std::vector<unsigned long int> extrinsic_prunes_broadcast(world_->size(), 0);
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(),
@@ -303,7 +308,7 @@ DistributedProblemType >::InitialSetup_(
 
   // Do an all to all to let each participating query process its
   // initial frontier.
-  std::vector< double > extrinsic_prune_lists;
+  std::vector< unsigned long int > extrinsic_prune_lists;
   boost::mpi::all_to_all(
     *world_, *essential_reference_subtrees_to_send, *reference_frontier_lists);
   boost::mpi::all_to_all(
@@ -326,13 +331,21 @@ DistributedProblemType >::InitialSetup_(
 
   // Add up the initial pruned amounts and reseed it on the query
   // side.
-  double initial_pruned =
+  unsigned long int initial_pruned =
     std::accumulate(
-      extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0.0) -
-    extrinsic_prune_lists[world_->rank()];
+      extrinsic_prune_lists.begin(), extrinsic_prune_lists.end(), 0);
+  double initial_pruned_cast =
+    static_cast<double>(initial_pruned);
   core::gnp::DualtreeDfs<ProblemType>::PreProcess(
     query_table_->local_table(), query_table_->local_table()->get_tree(),
-    query_results, initial_pruned);
+    query_results, initial_pruned_cast);
+
+  // Also seed it on the distributed termination checker.
+  unsigned long int initial_completed_work =
+    static_cast<unsigned long int>(query_table_->local_table()->n_entries()) *
+    initial_pruned;
+  termination_check->push_completed_computation(
+    *world_, initial_completed_work);
 }
 
 template<typename DistributedProblemType>
@@ -363,6 +376,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     *world_, *(reference_table_->local_table()),
     max_num_work_to_dequeue_per_stage_);
 
+  // The distributed termination checker.
+  core::parallel::DistributedTermination termination_check;
+  termination_check.Init(
+    *world_, query_table_, reference_table_,
+    max_num_work_to_dequeue_per_stage_);
+
   // The number of reference subtrees to receive and to send in total.
   int num_reference_subtrees_to_send;
   int num_reference_subtrees_to_receive;
@@ -378,7 +397,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &reference_subtrees_to_receive,
     &receive_priorities,
     &num_reference_subtrees_to_receive,
-    &distributed_tasks);
+    &distributed_tasks,
+    &termination_check);
 
   // The number of completed sends used for determining the
   // termination condition.
@@ -408,8 +428,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
           table_exchange.AsynchSendReceive(
-            *world_, prioritized_send_subtables,
+            *world_, hashed_essential_reference_subtrees_to_send,
             &received_subtable_ids, &num_completed_sends);
+
+          // Propagate termination messages.
+          termination_check.AsynchForwardTerminationMessages(*world_);
 
           // Generate the list of work and put it into the queue.
           GenerateTasks_(
@@ -478,6 +501,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
             num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
 
+            // Push in the completed amount of work.
+            unsigned long int completed_work =
+              static_cast<unsigned long int>(
+                found_task.first.query_start_node()->count()) *
+              static_cast<unsigned long int>(task_starting_rnode->count());
+            termination_check.push_completed_computation(
+              * world_, completed_work);
+
             // After finishing, the lock on the query subtree is released.
             distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
@@ -494,18 +525,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             // Otherwise, ask other threads to share the work.
             distributed_tasks.set_split_subtree_flag();
           }
-        }
+        } // end of failing to find a task.
       } // end of attempting to deque a task.
 
-      // Quit if all of the sending is done and the task queue is
-      // empty.
+      // Quit if all work is done.
 #pragma omp critical
       {
-        work_left_to_do =
-          !(num_reference_subtrees_to_receive ==
-            table_exchange.total_num_subtables_received() &&
-            num_reference_subtrees_to_send == num_completed_sends &&
-            distributed_tasks.is_empty());
+        work_left_to_do = (! termination_check.can_terminate(*world_));
       } // end of a critical section.
     }
     while(work_left_to_do);
@@ -604,9 +630,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     reference_table_->local_table()->get_tree());
   PreProcessReferenceTree_(reference_table_->get_tree());
 
-  // Figure out each process's work using the global tree. a 2D matrix
-  // workspace. This is currently doing an all-reduce type of
-  // exchange.
+  // Figure out each process's work using the global tree. Currently
+  // only supports P = power of two. Fix this later.
+  if(!(world_->rank() ^(world_->rank() - 1))) {
+    std::cerr << "Re-run with the number of processes equal to a power of "
+              << "two!\n";
+    return;
+  }
+
   AllToAllIReduce_(metric, query_results);
   std::cerr << "Process " << world_->rank() << " took " <<
             timer.elapsed() << " seconds to compute.\n";

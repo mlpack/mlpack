@@ -22,12 +22,6 @@ class RouteRequest {
 
   private:
 
-    /** @brief The beginning index and the count of the destinations,
-     *         roughly corresponds to one of the nodes in the MPI
-     *         process binary tree.
-     */
-    std::pair<int, int> begin_count_pair_;
-
     /** @brief The list of MPI ranks for which the subtable should be
      *         forwarded to.
      */
@@ -51,35 +45,18 @@ class RouteRequest {
      */
     ObjectType object_;
 
-    /** @brief The threshold used for determining whether the calling
-     *         process belongs to the left or the right. If it is
-     *         above this threshold, then it belongs to the
-     *         right. Otherwise to the left.
-     */
-    int threshold_;
+    int stage_;
 
   private:
 
     void ComputeNextDestination_() {
-      int offset = static_cast<int>(ceil(begin_count_pair_.second * 0.5));
-      threshold_ = begin_count_pair_.first + offset - 1;
-      int upper_limit = begin_count_pair_.first +
-                        begin_count_pair_.second - 1;
-
-      // Determine which half the process falls into and the next
-      // destination based on it.
-      if(rank_ <= threshold_) {
-        next_destination_ = std::min(rank_ + offset, upper_limit);
-      }
-      else {
-        next_destination_ = rank_ - offset;
-      }
+      next_destination_ = rank_ ^(1 << stage_);
     }
 
   public:
 
-    const std::pair<int, int> &begin_count_pair() const {
-      return begin_count_pair_;
+    int stage() const {
+      return stage_;
     }
 
     int rank() const {
@@ -124,8 +101,7 @@ class RouteRequest {
       num_routed_ = 0;
       next_destination_ = 0;
       rank_ = 0;
-      begin_count_pair_ = std::pair<int, int>(0, 0);
-      threshold_ = 0;
+      stage_ = 0;
     }
 
     ObjectType &object() {
@@ -144,6 +120,14 @@ class RouteRequest {
       destinations_.push_back(new_dest_in);
     }
 
+    void add_destinations(boost::mpi::communicator &comm) {
+      for(int i = 0; i < comm.size(); i++) {
+        if(i != comm.rank()) {
+          destinations_.push_back(i);
+        }
+      }
+    }
+
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
       RouteRequestType *this_modifiable =
@@ -151,43 +135,15 @@ class RouteRequest {
 
       // Count how many messages were routed.
       std::vector<int> filtered;
-      if(rank_ <= threshold_) {
-        int right_begin = threshold_ + 1;
-        int right_count = begin_count_pair_.first +
-                          begin_count_pair_.second - (threshold_ + 1) ;
-        ar & right_begin;
-        ar & right_count;
-        this_modifiable->begin_count_pair_ =
-          std::pair<int, int>(
-            begin_count_pair_.first, begin_count_pair_.second - right_count);
 
-        // Route to the destination which are larger than the threshold.
-        for(int i = 0; i < static_cast<int>(destinations_.size()); i++) {
-          if(destinations_[i] > threshold_) {
-            filtered.push_back(destinations_[i]);
-            this_modifiable->destinations_[i] = destinations_.back();
-            this_modifiable->destinations_.pop_back();
-            i--;
-          }
-        }
-      }
-      else {
-
-        int left_count = threshold_ - begin_count_pair_.first + 1;
-        ar & begin_count_pair_.first;
-        ar & left_count;
-        this_modifiable->begin_count_pair_ =
-          std::pair<int, int>(
-            threshold_ + 1, begin_count_pair_.second - left_count);
-
-        // Route to the destination which are at most the threshold.
-        for(int i = 0; i < static_cast<int>(destinations_.size()); i++) {
-          if(destinations_[i] <= threshold_) {
-            filtered.push_back(destinations_[i]);
-            this_modifiable->destinations_[i] = destinations_.back();
-            this_modifiable->destinations_.pop_back();
-            i--;
-          }
+      int mask_next_destination = next_destination_ & (1 << stage_);
+      for(int i = 0; i < static_cast<int>(destinations_.size()); i++) {
+        int masked_destination = (destinations_[i]) & (1 << stage_) ;
+        if((mask_next_destination ^ masked_destination) == 0) {
+          filtered.push_back(destinations_[i]);
+          this_modifiable->destinations_[i] = destinations_.back();
+          this_modifiable->destinations_.pop_back();
+          i--;
         }
       }
       this_modifiable->num_routed_ = filtered.size();
@@ -195,6 +151,10 @@ class RouteRequest {
       for(int i = 0; i < num_routed_; i++) {
         ar & filtered[i];
       }
+
+      // Increment the stage.
+      this_modifiable->stage_++;
+      ar & stage_;
 
       // Save the object, only if the number of routed messages is
       // at least 1.
@@ -206,11 +166,6 @@ class RouteRequest {
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
 
-      // Load the begin and count pair that includes the receiving MPI
-      // rank.
-      ar & begin_count_pair_.first;
-      ar & begin_count_pair_.second;
-
       // Load the size.
       int size;
       ar & size;
@@ -219,6 +174,9 @@ class RouteRequest {
         ar & destinations_[i];
       }
 
+      // Load the stage.
+      ar & stage_;
+
       // Load the object, if the message is not empty.
       if(size > 0) {
         ar & object_;
@@ -226,36 +184,40 @@ class RouteRequest {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief The assignment operator.
+     */
+    void operator=(const RouteRequestType &route_request_in) {
+      destinations_ = route_request_in.destinations();
+      num_routed_ = route_request_in.num_routed();
+      rank_ = route_request_in.rank();
+      object_ = route_request_in.object();
+      stage_ = route_request_in.stage();
+    }
+
+    /** @brief The copy constructor.
+     */
+    RouteRequest(const RouteRequestType &route_request_in) {
+      this->operator=(route_request_in);
+    }
+
+    /** @brief Initializes the routing message for the first time.
+     */
+    void Init(boost::mpi::communicator &comm) {
+      rank_ = comm.rank();
+      stage_ = 0;
+    }
+
+    /** @brief Copies from another routing message.
+     */
     void Init(
       boost::mpi::communicator &comm,
       const RouteRequestType &source_in) {
-      begin_count_pair_ = source_in.begin_count_pair();
       destinations_ = source_in.destinations();
       next_destination_ = source_in.next_destination(comm);
       num_routed_ = 0;
       rank_ = comm.rank();
       object_ = source_in.object();
-    }
-
-    void InitSubTableForReceiving(
-      boost::mpi::communicator &comm, int cache_id) {
-      rank_ = comm.rank();
-      object_.Init(cache_id, false);
-    }
-
-    template<typename TableType>
-    void InitSubTableForSending(
-      boost::mpi::communicator &comm,
-      TableType *table_in, const std::pair<int, int> &rnode_subtree_id) {
-
-      begin_count_pair_ = std::pair<int, int>(0, comm.size());
-      rank_ = comm.rank();
-      object_.Init(
-        table_in,
-        table_in->get_tree()->FindByBeginCount(
-          rnode_subtree_id.first,
-          rnode_subtree_id.second),
-        false);
+      stage_ = source_in.stage();
     }
 };
 }
