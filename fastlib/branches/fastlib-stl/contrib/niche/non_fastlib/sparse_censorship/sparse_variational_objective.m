@@ -1,7 +1,7 @@
-function [f,g,h] = sparse_variational_objective(x, laplace_var, exp_param)
+function [f,g,h] = sparse_variational_objective(a, laplace_var, exp_param)
 
-a = x(1);
-b = x(2);
+b = (1 + sqrt(1 + 8 * exp_param * laplace_var^2 * a / (a - 1))) ...
+    / (4 * exp_param * a);
 
 gamma_a = gamma(a);
 
@@ -13,5 +13,3 @@ g = -(2 - 2 * b * exp_param + (laplace_var^2) / ((a - 1)^2 * b) ...
 
 h = -(-(laplace_var^2 / ((a - 1)^3 * b)) - psi(1, a) ...
     + (1/2 - a) * psi(2, a));
-
-     
