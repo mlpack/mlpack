@@ -45,6 +45,8 @@ class RouteRequest {
      */
     ObjectType object_;
 
+    bool object_is_valid_;
+
     int stage_;
 
   private:
@@ -54,6 +56,14 @@ class RouteRequest {
     }
 
   public:
+
+    void set_object_is_valid_flag() {
+      object_is_valid_ = true;
+    }
+
+    bool object_is_valid() const {
+      return object_is_valid_;
+    }
 
     int stage() const {
       return stage_;
@@ -100,6 +110,7 @@ class RouteRequest {
     RouteRequest() {
       num_routed_ = 0;
       next_destination_ = 0;
+      object_is_valid_ = false;
       rank_ = 0;
       stage_ = 0;
     }
@@ -158,7 +169,8 @@ class RouteRequest {
 
       // Save the object, only if the number of routed messages is
       // at least 1.
-      if(filtered.size() > 0) {
+      ar & object_is_valid_;
+      if(filtered.size() > 0 && object_is_valid_) {
         ar & object_;
       }
     }
@@ -178,7 +190,8 @@ class RouteRequest {
       ar & stage_;
 
       // Load the object, if the message is not empty.
-      if(size > 0) {
+      ar & object_is_valid_;
+      if(size > 0 && object_is_valid_) {
         ar & object_;
       }
     }
@@ -191,6 +204,7 @@ class RouteRequest {
       num_routed_ = route_request_in.num_routed();
       rank_ = route_request_in.rank();
       object_ = route_request_in.object();
+      object_is_valid_ = route_request_in.object_is_valid();
       stage_ = route_request_in.stage();
     }
 
@@ -203,6 +217,8 @@ class RouteRequest {
     /** @brief Initializes the routing message for the first time.
      */
     void Init(boost::mpi::communicator &comm) {
+      destinations_.resize(0);
+      object_is_valid_ = false;
       rank_ = comm.rank();
       stage_ = 0;
     }
@@ -217,6 +233,7 @@ class RouteRequest {
       num_routed_ = 0;
       rank_ = comm.rank();
       object_ = source_in.object();
+      object_is_valid_ = source_in.object_is_valid();
       stage_ = source_in.stage();
     }
 };

@@ -38,7 +38,9 @@ class TableExchange {
      */
     typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
 
-    typedef core::parallel::RouteRequest<SubTableType> RouteRequestType;
+    typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
+
+    typedef core::parallel::RouteRequest<bool> SynchRouteRequestType;
 
   private:
 
@@ -47,29 +49,27 @@ class TableExchange {
      */
     TableType *local_table_;
 
-    /** @brief The number of cache blocks per process.
-     */
-    int num_cache_blocks_;
+    int max_stage_;
+
+    int reached_max_stage_count_;
+
+    unsigned int stage_;
 
     std::vector <
     std::pair <
-    RouteRequestType, boost::mpi::request > > subtables_to_receive_;
+    SubTableRouteRequestType, boost::mpi::request > > subtable_cache_;
 
-    std::vector< int > receive_cache_locks_;
-
-    std::vector<int> free_slots_for_receiving_;
-
-    int total_num_subtables_received_;
+    std::vector< int > subtable_sending_in_progress_;
 
     std::vector <
-    boost::tuple <
-    RouteRequestType, boost::mpi::request > > subtables_to_send_;
+    std::pair <
+    SynchRouteRequestType, boost::mpi::request > > synch_messages_;
 
-    std::vector<int> sending_in_progress_;
+    std::vector<int> synch_message_sending_in_progress_;
 
-    std::vector<int> free_slots_for_sending_;
+    std::vector< int > subtable_locks_;
 
-    std::vector<int> queue_up_for_sending_from_receive_slots_;
+    int total_num_locks_;
 
   private:
 
@@ -77,54 +77,146 @@ class TableExchange {
      */
     void PrintSubTables_(boost::mpi::communicator &world) {
       printf("\n\nProcess %d owns the subtables:\n", world.rank());
-      for(unsigned int i = 0; i < subtables_to_receive_.size(); i++) {
+      for(unsigned int i = 0; i < subtable_cache_.size(); i++) {
         printf(
           "%d %d %d\n",
-          subtables_to_receive_[i].first.table()->rank(),
-          subtables_to_receive_[i].first.table()->get_tree()->begin(),
-          subtables_to_receive_[i].first.table()->get_tree()->count());
+          subtable_cache_[i].first.table()->rank(),
+          subtable_cache_[i].first.table()->get_tree()->begin(),
+          subtable_cache_[i].first.table()->get_tree()->count());
       }
     }
 
-  public:
+    void AsynchBarrier_(boost::mpi::communicator &world) {
 
-    int total_num_subtables_received() const {
-      return total_num_subtables_received_;
+      // Test whether the outgoing sends are complete.
+      for(int i = 0;
+          i < static_cast<int>(synch_message_sending_in_progress_.size()); i++) {
+
+        int send_test_index = synch_message_sending_in_progress_[i];
+        std::pair < SynchRouteRequestType,
+            boost::mpi::request > &route_request_pair =
+              synch_messages_[ send_test_index ];
+        if(route_request_pair.second.test()) {
+
+          // Release the cache number of times equal to the number of
+          // destinations routed.
+          this->ReleaseCache(
+            send_test_index, route_request_pair.first.num_routed(), false);
+
+          // If more destinations left, then re-issue. Otherwise free.
+          if(route_request_pair.first.num_destinations() > 0) {
+            IssueSending_(
+              world, route_request_pair.second,
+              route_request_pair.first,
+              core::parallel::MessageTag::SYNCHRONIZE,
+              send_test_index,
+              (std::vector<int> *) NULL);
+          }
+          else {
+            synch_message_sending_in_progress_[i] =
+              synch_message_sending_in_progress_.back();
+            synch_message_sending_in_progress_.pop_back();
+            i--;
+          }
+        }
+      }
+
+      // Send and receive from the partner of all log_2 P neighbors by
+      // IProbing.
+      for(int i = 0; i < max_stage_; i++) {
+        int neighbor = world.rank() ^(1 << i);
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::SYNCHRONIZE)) {
+
+          // Receive the message and increment the count.
+          std::pair < SynchRouteRequestType,
+              boost::mpi::request > &route_request_pair =
+                synch_messages_[ neighbor ];
+          SynchRouteRequestType &route_request = route_request_pair.first;
+          world.recv(
+            neighbor,
+            core::parallel::MessageTag::SYNCHRONIZE,
+            route_request);
+          reached_max_stage_count_++;
+
+          // Remove self.
+          route_request.remove_from_destination_list(world.rank());
+
+          // Forward the barrier message.
+          if(route_request.num_destinations() > 0) {
+            IssueSending_(
+              world, route_request_pair.second,
+              route_request,
+              core::parallel::MessageTag::SYNCHRONIZE,
+              neighbor,
+              &synch_message_sending_in_progress_);
+          }
+        }
+      }
     }
+
+    template<typename ObjectType>
+    void IssueSending_(
+      boost::mpi::communicator &world,
+      boost::mpi::request &request,
+      ObjectType &object,
+      enum core::parallel::MessageTag::MessageTagType message_tag,
+      int object_id,
+      std::vector<int> *sending_in_progress_in) {
+
+
+      // If this is a new send, then update the list and lock the
+      // cache.
+      if(sending_in_progress_in != NULL) {
+        sending_in_progress_in->push_back(object_id);
+
+        // Lock the cache.
+        this->LockCache(
+          object_id, object.num_destinations());
+      }
+
+      request = world.isend(
+                  object.next_destination(world),
+                  message_tag, object);
+    }
+
+  public:
 
     /** @brief The default constructor.
      */
     TableExchange() {
       local_table_ = NULL;
-      num_cache_blocks_ = 0;
-      total_num_subtables_received_ = 0;
+      reached_max_stage_count_ = 0;
+      total_num_locks_ = 0;
     }
 
     /** @brief Tests whether the cache is empty or not.
      */
     bool is_empty() const {
-      return
-        free_slots_for_receiving_.size() == subtables_to_receive_.size() &&
-        free_slots_for_sending_.size() == subtables_to_send_.size();
+      return total_num_locks_ == 0;
     }
 
     void LockCache(int cache_id, int num_times) {
       if(cache_id >= 0) {
-        receive_cache_locks_[ cache_id ] += num_times;
+        subtable_locks_[ cache_id ] += num_times;
+        total_num_locks_ += num_times;
       }
     }
 
-    void ReleaseCache(int cache_id, int num_times) {
+    void ReleaseCache(int cache_id, int num_times, bool free_subtable = true) {
       if(cache_id >= 0) {
-        receive_cache_locks_[ cache_id ] -= num_times;
+        subtable_locks_[ cache_id ] -= num_times;
+        total_num_locks_ -= num_times;
 
-        // If the subtable is not needed, feel free to free it.
-        if(receive_cache_locks_[ cache_id ] == 0) {
+        // If the subtable is not needed, free it.
+        if(subtable_locks_[ cache_id ] == 0 && free_subtable &&
+            subtable_cache_[ cache_id ].first.object_is_valid()) {
 
           // This is a hack. See the assignment operator for SubTable.
           SubTableType safe_free =
-            subtables_to_receive_[cache_id].first.object();
-          free_slots_for_receiving_.push_back(cache_id);
+            subtable_cache_[cache_id].first.object();
         }
       }
     }
@@ -135,7 +227,7 @@ class TableExchange {
       SubTableType *returned_subtable = NULL;
       if(cache_id >= 0) {
         returned_subtable =
-          &(subtables_to_receive_[cache_id].first.object());
+          &(subtable_cache_[cache_id].first.object());
       }
       return returned_subtable;
     }
@@ -148,36 +240,29 @@ class TableExchange {
       TableType &local_table_in,
       int max_num_work_to_dequeue_per_stage_in) {
 
+      // Initialize the stage.
+      stage_ = 0;
+
+      // The maximum number of neighbors.
+      max_stage_ = static_cast<int>(log2(world.size()));
+
       // Set the local table.
       local_table_ = &local_table_in;
 
-      // Compute the number of cache blocks allocated per process.
-      num_cache_blocks_ = max_num_work_to_dequeue_per_stage_in;
-      num_cache_blocks_ = 1;
-
-      if(world.rank() == 0) {
-        printf(
-          "Number of cache blocks per process: %d\n",
-          num_cache_blocks_);
-      }
-
-      // Preallocate the send and receive caches.
-      subtables_to_receive_.resize(num_cache_blocks_ * world.size());
-      subtables_to_send_.resize(num_cache_blocks_);
-      for(unsigned int i = 0; i < subtables_to_send_.size(); i++) {
-        free_slots_for_sending_.push_back(i);
-      }
-      for(unsigned int i = 0; i < subtables_to_receive_.size(); i++) {
-        free_slots_for_receiving_.push_back(i);
-      }
+      // Preallocate the cache.
+      subtable_cache_.resize(world.size());
+      subtable_sending_in_progress_.resize(0);
+      synch_messages_.resize(world.size());
+      synch_message_sending_in_progress_.resize(0);
 
       // Initialize the locks.
-      receive_cache_locks_.resize(free_slots_for_receiving_.size());
+      subtable_locks_.resize(subtable_cache_.size());
       std::fill(
-        receive_cache_locks_.begin(), receive_cache_locks_.end(), 0);
+        subtable_locks_.begin(), subtable_locks_.end(), 0);
+      total_num_locks_ = 0;
 
-      printf(
-        "Process %d finished initializing the cache blocks.\n", world.rank());
+      // Used for synchronizing at the end of each phase.
+      reached_max_stage_count_ = world.size();
     }
 
     /** @brief Issue a set of asynchronous send and receive
@@ -188,7 +273,7 @@ class TableExchange {
     void AsynchSendReceive(
       boost::mpi::communicator &world,
       std::vector <
-      RouteRequestType > &hashed_essential_reference_subtrees_to_send,
+      SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send,
       std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids,
       int *num_completed_sends) {
 
@@ -201,191 +286,154 @@ class TableExchange {
       // Clear the list of received subtables in this round.
       received_subtable_ids->resize(0);
 
-      // Queue up send requests by transfering from the receive route
-      // requests.
-      for(int i = 0; i < static_cast<int>(
-            queue_up_for_sending_from_receive_slots_.size()) ; i++) {
+      // At the start of each phase (stage == 0), dequeue something
+      // from the hashed list.
+      if(stage_ == 0) {
 
-        // Examine the back of the route request list.
-        int cache_id = queue_up_for_sending_from_receive_slots_[i];
-        std::pair <
-        RouteRequestType, boost::mpi::request > &route_request_pair =
-          subtables_to_receive_[ cache_id ];
-        RouteRequestType &route_request = route_request_pair.first;
-
-        if(route_request_pair.second.test()) {
-
-          // Release from the cache number of times equal to the
-          // number of messages routed.
-          this->ReleaseCache(
-            cache_id, route_request_pair.first.num_routed());
-
-          // Remove from the queue up list, if done.
-          if(route_request.num_destinations() == 0) {
-            queue_up_for_sending_from_receive_slots_[i] =
-              queue_up_for_sending_from_receive_slots_.back();
-            queue_up_for_sending_from_receive_slots_.pop_back();
-            i--;
-          }
-
-          // Otherwise, queue up another send.
-          else {
-            route_request_pair.second =
-              world.isend(
-                route_request.next_destination(world),
-                core::parallel::MessageTag::ROUTE_SUBTABLE,
-                route_request) ;
-          }
+        // Wait for others before starting the stage.
+        if(reached_max_stage_count_ < world.size() ||
+            synch_message_sending_in_progress_.size() > 0 ||
+            total_num_locks_ > 0) {
+          AsynchBarrier_(world);
+          return;
         }
-      }
 
-      // Queue up send requests by dequeuing from the list of
-      // reference subtrees to send from the current process.
-      while(free_slots_for_sending_.size() > 0 &&
-            hashed_essential_reference_subtrees_to_send.size() > 0) {
+        // Reset the count once we have begun the 0-th stage.
+        reached_max_stage_count_ = 0;
 
-        // Examine the back of the route request list.
-        RouteRequestType &route_request =
-          hashed_essential_reference_subtrees_to_send.back();
+        // The status and the object to be copied onto.
+        boost::mpi::request &new_self_send_request =
+          subtable_cache_[ world.rank()].second;
+        SubTableRouteRequestType &new_self_send_request_object =
+          subtable_cache_[ world.rank()].first;
+        if(hashed_essential_reference_subtrees_to_send.size() > 0) {
 
-        // If the next destination is valid, then get a free slot and
-        // issue an asynchronous send.
-        if(route_request.num_destinations() > 0) {
-
-          // Get a free send slot.
-          int free_send_slot = free_slots_for_sending_.back();
-          free_slots_for_sending_.pop_back();
+          // Examine the back of the route request list.
+          SubTableRouteRequestType &route_request =
+            hashed_essential_reference_subtrees_to_send.back();
 
           // Prepare the initial subtable to send.
-          subtables_to_send_[
-            free_send_slot ].get<0>().Init(world, route_request);
+          new_self_send_request_object.Init(world, route_request);
 
-          // Add to the list of occupied slots.
-          sending_in_progress_.push_back(free_send_slot);
+          // Pop it from the route request list.
+          hashed_essential_reference_subtrees_to_send.pop_back();
+        }
+        else {
 
-          // Compute the next destination to send and issue the
-          // asynchronous send.
-          int next_destination =
-            subtables_to_send_[free_send_slot].get<0>().next_destination(world);
-          if(next_destination >= 0) {
-            subtables_to_send_[free_send_slot].get<1>() =
-              world.isend(
-                next_destination,
-                core::parallel::MessageTag::ROUTE_SUBTABLE,
-                subtables_to_send_[free_send_slot].get<0>());
-          }
+          // Prepare an empty message.
+          new_self_send_request_object.Init(world);
+          new_self_send_request_object.add_destinations(world);
         }
 
-        // Pop it from the list.
-        hashed_essential_reference_subtrees_to_send.pop_back();
+        // Issue an asynchronous send.
+        IssueSending_(
+          world, new_self_send_request,
+          new_self_send_request_object,
+          core::parallel::MessageTag::ROUTE_SUBTABLE,
+          world.rank(),
+          &subtable_sending_in_progress_);
+
+        // Increment the stage.
+        stage_++;
       }
 
-      // Check whether the send requests in progress can be advanced
-      // to the next state. If so, keep issuing asynchronous send.
-      for(int i = 0; i < static_cast<int>(sending_in_progress_.size()); i++) {
-        int send_subtable_to_test = sending_in_progress_[i];
-        boost::tuple < RouteRequestType,
-              boost::mpi::request > &route_request =
-                subtables_to_send_[ send_subtable_to_test ];
-        if(route_request.get<1>().test()) {
+      // Test whether the send issues are complete.
+      for(int i = 0;
+          i < static_cast<int>(subtable_sending_in_progress_.size()); i++) {
 
-          // Only count the number of sends if it is originating from
-          // the process.
-          if(route_request.get<0>().object().table()->rank() == world.rank()) {
-            (*num_completed_sends) += route_request.get<0>().num_routed();
+        int send_test_index = subtable_sending_in_progress_[i];
+        std::pair < SubTableRouteRequestType,
+            boost::mpi::request > &route_request_pair =
+              subtable_cache_[ send_test_index ];
+        if(route_request_pair.second.test()) {
+
+          // Release cache equal to the number of destinations routed.
+          this->ReleaseCache(
+            send_test_index, route_request_pair.first.num_routed());
+
+          // If more destinations left, then re-issue. Otherwise free.
+          if(route_request_pair.first.num_destinations() > 0) {
+            IssueSending_(
+              world, route_request_pair.second,
+              route_request_pair.first,
+              core::parallel::MessageTag::ROUTE_SUBTABLE,
+              send_test_index,
+              (std::vector<int> *) NULL);
           }
-
-          // Compute the next destination to send.
-          int next_destination = -1;
-          if(route_request.get<0>().num_destinations() > 0) {
-            next_destination =
-              route_request.get<0>().next_destination(world);
-          }
-
-          // If the next destination is valid, then issue another
-          // asynchronous send.
-          if(next_destination >= 0) {
-            route_request.get<1>() =
-              world.isend(
-                next_destination,
-                core::parallel::MessageTag::ROUTE_SUBTABLE,
-                route_request.get<0>());
-          }
-
-          // Otherwise, free up the send slot, if no more destinations
-          // are left.
-          else if(route_request.get<0>().num_destinations() == 0) {
-            sending_in_progress_[i] = sending_in_progress_.back();
-            sending_in_progress_.pop_back();
-            free_slots_for_sending_.push_back(send_subtable_to_test);
-
-            // Decrement so that the current index can be re-tested.
+          else {
+            subtable_sending_in_progress_[i] =
+              subtable_sending_in_progress_.back();
+            subtable_sending_in_progress_.pop_back();
             i--;
           }
-        } // end of testing whether the send is complete.
+        }
       }
 
-      // Queue incoming receives as long as there is a free slot.
-      for(int i = 0; i < static_cast<int>(log2(world.size())) &&
-          free_slots_for_receiving_.size() > 0; i++) {
-
-        // Probe whether there is an incoming reference subtable.
-        int source = world.rank() ^(1 << i);
+      // Send and receive from the partner of all log_2 P neighbors by
+      // IProbing.
+      for(int i = 0; i < max_stage_; i++) {
+        int neighbor = world.rank() ^(1 << i);
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
-                source,
+                neighbor,
                 core::parallel::MessageTag::ROUTE_SUBTABLE)) {
 
-          // Get a free cache block.
-          int free_receive_slot = free_slots_for_receiving_.back();
-          free_slots_for_receiving_.pop_back();
-
-          // Prepare the subtable to be received.
-          std::pair < RouteRequestType,
+          // Receive the subtable and increment the count.
+          std::pair < SubTableRouteRequestType,
               boost::mpi::request > &route_request_pair =
-                subtables_to_receive_[ free_receive_slot ];
-          RouteRequestType &route_request = route_request_pair.first;
-          route_request.object().Init(free_receive_slot, false);
+                subtable_cache_[ neighbor ];
+          SubTableRouteRequestType &route_request = route_request_pair.first;
+          route_request.object().Init(neighbor, false);
           world.recv(
-            source,
+            neighbor,
             core::parallel::MessageTag::ROUTE_SUBTABLE,
             route_request);
+          stage_++;
 
-          // If the messsage is empty, then return the slot.
-          if(route_request.num_destinations() == 0) {
-            free_slots_for_receiving_.push_back(free_receive_slot);
-            continue;
-          }
-
-          // Increment the number of subtables received if the
-          // destination matches the rank of the current process.
-          if(route_request.remove_from_destination_list(world.rank())) {
-            total_num_subtables_received_++;
+          // If this subtable is needed by the calling process, then
+          // update the list of subtables received.
+          if(route_request.remove_from_destination_list(world.rank()) &&
+              route_request.object_is_valid()) {
             received_subtable_ids->push_back(
               boost::make_tuple(
                 route_request.object().table()->rank(),
                 route_request.object().start_node()->begin(),
                 route_request.object().start_node()->count(),
-                free_receive_slot));
+                neighbor));
           }
 
-          // Queue up for sending from the receive slot, if there are
-          // additional destinations.
+          // If there are more destinations left for the received
+          // subtable, lock the cache appropriately and issue and
+          // asynchronous send.
           if(route_request.num_destinations() > 0) {
-
-            // Lock the received reference subtable equal to the
-            // number of additional destinations.
-            this->LockCache(
-              free_receive_slot, route_request.num_destinations());
-            route_request_pair.second =
-              world.isend(
-                route_request.next_destination(world),
-                core::parallel::MessageTag::ROUTE_SUBTABLE,
-                route_request) ;
-            queue_up_for_sending_from_receive_slots_.push_back(
-              free_receive_slot);
+            IssueSending_(
+              world, route_request_pair.second,
+              route_request,
+              core::parallel::MessageTag::ROUTE_SUBTABLE,
+              neighbor,
+              &subtable_sending_in_progress_);
           }
-        }
+        } // end of receiving a message.
+      }
+
+      // If at the end of phase, wait for others to reach this point.
+      if(stage_ == subtable_cache_.size() &&
+          subtable_sending_in_progress_.size() == 0 &&
+          total_num_locks_ == 0) {
+        stage_ = 0;
+        reached_max_stage_count_++;
+        std::pair < SynchRouteRequestType,
+            boost::mpi::request > &synch_request_pair =
+              synch_messages_[ world.rank()];
+        SynchRouteRequestType &synch_request = synch_request_pair.first;
+
+        // Reset the message and send.
+        synch_request.Init(world);
+        synch_request.add_destinations(world);
+        IssueSending_(
+          world, synch_request_pair.second, synch_request,
+          core::parallel::MessageTag::SYNCHRONIZE, world.rank(),
+          &synch_message_sending_in_progress_);
       }
     }
 };
