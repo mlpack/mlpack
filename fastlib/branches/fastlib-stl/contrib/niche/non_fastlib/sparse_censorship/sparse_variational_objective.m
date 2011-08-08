@@ -1,5 +1,6 @@
 function [f,g,h] = sparse_variational_objective(a, laplace_var, exp_param)
 
+disp(a);
 b = (1 + sqrt(1 + 8 * exp_param * laplace_var^2 * a / (a - 1))) ...
     / (4 * exp_param * a);
 
