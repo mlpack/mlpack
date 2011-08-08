@@ -425,7 +425,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
-  if(true || vm.count("random_generate") > 0) {
+  if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
