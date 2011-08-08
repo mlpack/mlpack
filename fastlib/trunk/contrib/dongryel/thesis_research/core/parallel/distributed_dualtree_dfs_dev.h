@@ -110,6 +110,8 @@ DistributedProblemType >::HashSendList_(
         reference_table_->local_table(),
         reference_table_->local_table()->get_tree()->FindByBeginCount(
           local_rnode_id.first, local_rnode_id.second), false);
+    (*hashed_essential_reference_subtrees)[
+      found_index].set_object_is_valid_flag();
   }
   (*hashed_essential_reference_subtrees)[
     found_index].add_destination(query_process_id);
@@ -441,14 +443,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       } // end of the master thread.
 
       // After enqueing, everyone else tries to dequeue the tasks. The
-      // master only dequeues only if it is the only one running or it
-      // has sent everything to every process.
-      bool quick_test = false;
-#pragma omp critical
-      {
-        quick_test = (num_reference_subtrees_to_send == num_completed_sends);
-      }
-      if(thread_id > 0 || omp_get_num_threads() == 1 || quick_test) {
+      // master only dequeues only if it is the only one running.
+      if(thread_id > 0 || omp_get_num_threads() == 1) {
         for(int i = 0; i < distributed_tasks.size(); i++) {
 
           // Index to probe.
@@ -522,8 +518,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
 #pragma omp critical
           {
-            // Otherwise, ask other threads to share the work.
-            distributed_tasks.set_split_subtree_flag();
+            // Otherwise, ask other threads to share the
+            // work. Currently, disabled for distributed setting.
+            if(world_->size() == 1) {
+              distributed_tasks.set_split_subtree_flag();
+            }
           }
         } // end of failing to find a task.
       } // end of attempting to deque a task.
