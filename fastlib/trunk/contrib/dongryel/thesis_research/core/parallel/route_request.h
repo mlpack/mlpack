@@ -52,7 +52,7 @@ class RouteRequest {
   private:
 
     void ComputeNextDestination_() {
-      next_destination_ = rank_ ^(1 << stage_);
+      next_destination_ = rank_ ^ (1 << stage_);
     }
 
   public:

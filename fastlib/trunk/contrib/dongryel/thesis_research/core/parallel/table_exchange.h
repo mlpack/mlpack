@@ -225,18 +225,26 @@ class TableExchange {
 
       if(stage_ < max_stage_) {
 
-        printf("Process %d on %d\n", world.rank(), stage_);
+        printf("Process %d on %d vs %d\n", world.rank(), stage_, max_stage_);
         // Exchange with the neighbors.
         int num_subtables_to_exchange = (1 << stage_);
-        int neighbor = world.rank() ^(1 << stage_);
-        int mask = (1 << stage_) & world.rank();
-        int lower_bound_on_send_index = mask << stage_;
+        int neighbor = world.rank() ^ (1 << stage_);
+        int lower_bound_on_send_index =
+          ((1 << stage_) & world.rank()) | world.rank();
         for(int i = 0; i < num_subtables_to_exchange; i++) {
-          int subtable_send_index = i + lower_bound_on_send_index;
+          int subtable_send_index;
+          if(world.rank() < neighbor) {
+            subtable_send_index = i + lower_bound_on_send_index;
+          }
+          else {
+            subtable_send_index = lower_bound_on_send_index - i;
+          }
           boost::mpi::request &send_request =
             subtable_send_request_[ i ];
           SubTableRouteRequestType &send_request_object =
             subtable_cache_[ subtable_send_index ];
+          printf("Process %d is sending %d to %d\n", world.rank(),
+                 subtable_send_index, neighbor);
 
           // For each subtable sent, we expect something from the neighbor.
           send_request =
@@ -263,9 +271,11 @@ class TableExchange {
             tmp_route_request.object().set_cache_block_id(cache_id);
             subtable_cache_[ cache_id ] = tmp_route_request;
             SubTableRouteRequestType &route_request = subtable_cache_[cache_id];
+            printf("Received a subtable from %d\n", cache_id);
 
             // If this subtable is needed by the calling process, then
             // update the list of subtables received.
+            num_subtables_received++;
             if(route_request.remove_from_destination_list(world.rank()) &&
                 route_request.object_is_valid()) {
               this->LockCache(cache_id, num_local_query_trees);
@@ -275,7 +285,6 @@ class TableExchange {
                   route_request.object().start_node()->begin(),
                   route_request.object().start_node()->count(),
                   cache_id));
-              num_subtables_received++;
             }
           }
         }
