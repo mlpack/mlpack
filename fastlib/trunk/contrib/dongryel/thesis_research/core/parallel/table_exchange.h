@@ -40,9 +40,11 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
-    typedef core::parallel::RouteRequest<bool> SynchRouteRequestType;
+    typedef core::parallel::RouteRequest<int> SynchRouteRequestType;
 
   private:
+
+    std::vector<int> cleanup_list_;
 
     /** @brief The pointer to the local table that is partcipating in
      *         the exchange.
@@ -97,11 +99,6 @@ class TableExchange {
             boost::mpi::request > &route_request_pair =
               synch_messages_[ send_test_index ];
         if(route_request_pair.second.test()) {
-
-          // Release the cache number of times equal to the number of
-          // destinations routed.
-          this->ReleaseCache(send_test_index, 1, false);
-
           // If more destinations left, then re-issue. Otherwise free.
           if(route_request_pair.first.num_destinations() > 0) {
             IssueSending_(
@@ -135,7 +132,7 @@ class TableExchange {
             neighbor,
             core::parallel::MessageTag::SYNCHRONIZE,
             tmp_route_request);
-          int cache_id = neighbor;
+          int cache_id = tmp_route_request.object();
           std::pair < SynchRouteRequestType,
               boost::mpi::request > &route_request_pair =
                 synch_messages_[ cache_id ];
@@ -171,14 +168,23 @@ class TableExchange {
       // cache.
       if(sending_in_progress_in != NULL) {
         sending_in_progress_in->push_back(object_id);
-
-        // Lock the cache.
-        this->LockCache(object_id, max_stage_ - object.stage());
       }
 
       request = world.isend(
                   object.next_destination(world),
                   message_tag, object);
+    }
+
+    void FreeCache_() {
+      for(int i = 0; i < static_cast<int>(cleanup_list_.size()); i++) {
+
+	// This is a hack. See the assignment operator for SubTable.
+	SubTableType safe_free =
+	  subtable_cache_[ cleanup_list_[i] ].first.object();
+	cleanup_list_[i] = cleanup_list_.back();
+	cleanup_list_.pop_back();
+	i--;
+      }
     }
 
   public:
@@ -201,7 +207,6 @@ class TableExchange {
       if(cache_id >= 0) {
         subtable_locks_[ cache_id ] += num_times;
         total_num_locks_ += num_times;
-        printf("Locking %d, %d times.\n", cache_id, num_times);
       }
     }
 
@@ -209,18 +214,14 @@ class TableExchange {
       if(cache_id >= 0) {
         subtable_locks_[ cache_id ] -= num_times;
         total_num_locks_ -= num_times;
-        printf("Unlocking: %d, %d times.\n", cache_id, num_times);
 
         // If the subtable is not needed, free it.
         if(subtable_locks_[ cache_id ] == 0 && free_subtable &&
-            subtable_cache_[ cache_id ].first.object_is_valid()) {
+            subtable_cache_[ cache_id ].first.object_is_valid() &&
+	   cache_id != local_table_->rank() ) {
 
-          // This is a hack. See the assignment operator for SubTable.
-          SubTableType safe_free =
-            subtable_cache_[cache_id].first.object();
-          printf("Evicting %d %d %d\n", safe_free.table()->rank(),
-                 safe_free.start_node()->begin(),
-                 safe_free.start_node()->count());
+	  // Clean up the list later.
+	  cleanup_list_.push_back( cache_id );
         }
       }
     }
@@ -243,6 +244,9 @@ class TableExchange {
       boost::mpi::communicator &world,
       TableType &local_table_in,
       int max_num_work_to_dequeue_per_stage_in) {
+
+      // Clean up list is empty.
+      cleanup_list_.resize( 0 );
 
       // Initialize the stage.
       stage_ = 0;
@@ -278,8 +282,8 @@ class TableExchange {
       boost::mpi::communicator &world,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send,
-      std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids,
-      int *num_completed_sends) {
+      int num_local_query_trees,
+      std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids) {
 
       // If the number of processes is only one, then don't bother
       // since there is nothing to exchange.
@@ -301,11 +305,6 @@ class TableExchange {
           AsynchBarrier_(world);
           return;
         }
-        printf("Starting %d...\n", total_num_locks_);
-        for(int i = 0; i < subtable_locks_.size(); i++) {
-          printf(" %d ", subtable_locks_[i]);
-        }
-        printf("\n");
 
         // Reset the count once we have begun the 0-th stage.
         reached_max_stage_count_ = 0;
@@ -356,11 +355,8 @@ class TableExchange {
               subtable_cache_[ send_test_index ];
         if(route_request_pair.second.test()) {
 
-          // Release cache equal to the number of destinations routed.
-          this->ReleaseCache(send_test_index, 1);
-
           // If more destinations left, then re-issue. Otherwise free.
-          if(route_request_pair.first.stage() < max_stage_) {
+          if(route_request_pair.first.num_destinations() > 0) {
             IssueSending_(
               world, route_request_pair.second,
               route_request_pair.first,
@@ -394,7 +390,7 @@ class TableExchange {
             core::parallel::MessageTag::ROUTE_SUBTABLE,
             tmp_route_request);
           int cache_id = tmp_route_request.object().table()->rank();
-          tmp_route_request.object().set_cache_block_id(cache_id);
+	  tmp_route_request.object().set_cache_block_id(cache_id);
           std::pair < SubTableRouteRequestType,
               boost::mpi::request > &route_request_pair =
                 subtable_cache_[ cache_id ];
@@ -405,12 +401,13 @@ class TableExchange {
           // update the list of subtables received.
           if(route_request_pair.first.remove_from_destination_list(world.rank()) &&
               route_request_pair.first.object_is_valid()) {
+	    this->LockCache( cache_id, num_local_query_trees );
             received_subtable_ids->push_back(
               boost::make_tuple(
                 route_request_pair.first.object().table()->rank(),
                 route_request_pair.first.object().start_node()->begin(),
                 route_request_pair.first.object().start_node()->count(),
-                cache_id));
+                cache_id ));
           }
 
           // If there are more destinations left for the received
@@ -424,6 +421,7 @@ class TableExchange {
               cache_id,
               &subtable_sending_in_progress_);
           }
+
         } // end of receiving a message.
       }
 
@@ -431,9 +429,12 @@ class TableExchange {
       if(stage_ == subtable_cache_.size() &&
           subtable_sending_in_progress_.size() == 0 &&
           total_num_locks_ == 0) {
-        printf("Reached a synch point.\n\n");
         stage_ = 0;
         reached_max_stage_count_++;
+
+	// Clean up the subtables.
+	FreeCache_();
+
         std::pair < SynchRouteRequestType,
             boost::mpi::request > &synch_request_pair =
               synch_messages_[ world.rank()];
@@ -442,6 +443,8 @@ class TableExchange {
         // Reset the message and send.
         synch_request.Init(world);
         synch_request.add_destinations(world);
+	synch_request.object() = world.rank();
+	synch_request.set_object_is_valid_flag( true );
         IssueSending_(
           world, synch_request_pair.second, synch_request,
           core::parallel::MessageTag::SYNCHRONIZE, world.rank(),
