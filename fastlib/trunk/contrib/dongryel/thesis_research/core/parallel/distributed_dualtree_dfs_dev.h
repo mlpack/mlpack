@@ -111,7 +111,7 @@ DistributedProblemType >::HashSendList_(
         reference_table_->local_table()->get_tree()->FindByBeginCount(
           local_rnode_id.first, local_rnode_id.second), false);
     (*hashed_essential_reference_subtrees)[
-      found_index].set_object_is_valid_flag();
+      found_index].set_object_is_valid_flag(true);
   }
   (*hashed_essential_reference_subtrees)[
     found_index].add_destination(query_process_id);
