@@ -49,7 +49,7 @@ class TableExchange {
      */
     TableType *local_table_;
 
-    int max_stage_;
+    unsigned int max_stage_;
 
     int reached_max_stage_count_;
 
@@ -100,8 +100,7 @@ class TableExchange {
 
           // Release the cache number of times equal to the number of
           // destinations routed.
-          this->ReleaseCache(
-            send_test_index, route_request_pair.first.num_routed(), false);
+          this->ReleaseCache(send_test_index, 1, false);
 
           // If more destinations left, then re-issue. Otherwise free.
           if(route_request_pair.first.num_destinations() > 0) {
@@ -123,7 +122,7 @@ class TableExchange {
 
       // Send and receive from the partner of all log_2 P neighbors by
       // IProbing.
-      for(int i = 0; i < max_stage_; i++) {
+      for(unsigned int i = 0; i < max_stage_; i++) {
         int neighbor = world.rank() ^(1 << i);
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
@@ -166,15 +165,13 @@ class TableExchange {
       int object_id,
       std::vector<int> *sending_in_progress_in) {
 
-
       // If this is a new send, then update the list and lock the
       // cache.
       if(sending_in_progress_in != NULL) {
         sending_in_progress_in->push_back(object_id);
 
         // Lock the cache.
-        this->LockCache(
-          object_id, object.num_destinations());
+        this->LockCache(object_id, max_stage_ - object.stage());
       }
 
       request = world.isend(
@@ -202,6 +199,7 @@ class TableExchange {
       if(cache_id >= 0) {
         subtable_locks_[ cache_id ] += num_times;
         total_num_locks_ += num_times;
+        printf("Locking %d, %d times.\n", cache_id, num_times);
       }
     }
 
@@ -209,6 +207,7 @@ class TableExchange {
       if(cache_id >= 0) {
         subtable_locks_[ cache_id ] -= num_times;
         total_num_locks_ -= num_times;
+        printf("Unlocking: %d, %d times.\n", cache_id, num_times);
 
         // If the subtable is not needed, free it.
         if(subtable_locks_[ cache_id ] == 0 && free_subtable &&
@@ -217,6 +216,9 @@ class TableExchange {
           // This is a hack. See the assignment operator for SubTable.
           SubTableType safe_free =
             subtable_cache_[cache_id].first.object();
+          printf("Evicting %d %d %d\n", safe_free.table()->rank(),
+                 safe_free.start_node()->begin(),
+                 safe_free.start_node()->count());
         }
       }
     }
@@ -244,7 +246,7 @@ class TableExchange {
       stage_ = 0;
 
       // The maximum number of neighbors.
-      max_stage_ = static_cast<int>(log2(world.size()));
+      max_stage_ = static_cast<unsigned int>(log2(world.size()));
 
       // Set the local table.
       local_table_ = &local_table_in;
@@ -297,6 +299,11 @@ class TableExchange {
           AsynchBarrier_(world);
           return;
         }
+        printf("Starting %d...\n", total_num_locks_);
+        for(int i = 0; i < subtable_locks_.size(); i++) {
+          printf(" %d ", subtable_locks_[i]);
+        }
+        printf("\n");
 
         // Reset the count once we have begun the 0-th stage.
         reached_max_stage_count_ = 0;
@@ -348,11 +355,10 @@ class TableExchange {
         if(route_request_pair.second.test()) {
 
           // Release cache equal to the number of destinations routed.
-          this->ReleaseCache(
-            send_test_index, route_request_pair.first.num_routed());
+          this->ReleaseCache(send_test_index, 1);
 
           // If more destinations left, then re-issue. Otherwise free.
-          if(route_request_pair.first.num_destinations() > 0) {
+          if(route_request_pair.first.stage() < max_stage_) {
             IssueSending_(
               world, route_request_pair.second,
               route_request_pair.first,
@@ -371,7 +377,7 @@ class TableExchange {
 
       // Send and receive from the partner of all log_2 P neighbors by
       // IProbing.
-      for(int i = 0; i < max_stage_; i++) {
+      for(unsigned int i = 0; i < max_stage_; i++) {
         int neighbor = world.rank() ^(1 << i);
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
@@ -405,7 +411,7 @@ class TableExchange {
           // If there are more destinations left for the received
           // subtable, lock the cache appropriately and issue and
           // asynchronous send.
-          if(route_request.num_destinations() > 0) {
+          if(route_request.stage() < max_stage_) {
             IssueSending_(
               world, route_request_pair.second,
               route_request,
@@ -420,6 +426,7 @@ class TableExchange {
       if(stage_ == subtable_cache_.size() &&
           subtable_sending_in_progress_.size() == 0 &&
           total_num_locks_ == 0) {
+        printf("Reached a synch point.\n\n");
         stage_ = 0;
         reached_max_stage_count_++;
         std::pair < SynchRouteRequestType,

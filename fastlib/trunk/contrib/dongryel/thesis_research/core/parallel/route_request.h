@@ -47,7 +47,7 @@ class RouteRequest {
 
     bool object_is_valid_;
 
-    int stage_;
+    unsigned int stage_;
 
   private:
 
@@ -57,15 +57,15 @@ class RouteRequest {
 
   public:
 
-    void set_object_is_valid_flag() {
-      object_is_valid_ = true;
+    void set_object_is_valid_flag(bool flag_in) {
+      object_is_valid_ = flag_in;
     }
 
     bool object_is_valid() const {
       return object_is_valid_;
     }
 
-    int stage() const {
+    unsigned int stage() const {
       return stage_;
     }
 
@@ -170,7 +170,7 @@ class RouteRequest {
       // Save the object, only if the number of routed messages is
       // at least 1.
       ar & object_is_valid_;
-      if(filtered.size() > 0 && object_is_valid_) {
+      if(object_is_valid_) {
         ar & object_;
       }
     }
@@ -191,7 +191,7 @@ class RouteRequest {
 
       // Load the object, if the message is not empty.
       ar & object_is_valid_;
-      if(size > 0 && object_is_valid_) {
+      if(object_is_valid_) {
         ar & object_;
       }
     }

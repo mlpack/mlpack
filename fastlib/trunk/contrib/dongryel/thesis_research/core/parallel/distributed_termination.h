@@ -149,7 +149,7 @@ class DistributedTermination {
         if(queued_up_completed_computation_.size() == 0) {
           MessageRouteRequestType new_route_request;
           new_route_request.Init(comm);
-          new_route_request.set_object_is_valid_flag();
+          new_route_request.set_object_is_valid_flag(true);
           new_route_request.object() = quantity_in;
           new_route_request.add_destinations(comm);
           queued_up_completed_computation_.push_back(new_route_request);
