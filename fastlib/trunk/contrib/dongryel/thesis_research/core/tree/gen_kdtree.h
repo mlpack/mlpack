@@ -116,14 +116,14 @@ class GenKdTree {
 
       int end = first + count;
 
-#pragma omp parallel
+      #pragma omp parallel
       {
         // Local variable for accumulating the bound information for a
         // thread.
         BoundType local_bound;
         local_bound.Init(bounds->dim());
 
-#pragma omp for
+        #pragma omp for
         for(int i = first; i < end; i++) {
           core::table::DensePoint col;
           matrix.MakeColumnVector(i, &col);
@@ -131,7 +131,7 @@ class GenKdTree {
         }
 
         // The final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           (*bounds) |= local_bound;
         } // end of omp critical.
@@ -206,7 +206,7 @@ class GenKdTree {
       left_membership->resize(end - first);
 
       // Build the bounds for the kd-tree.
-#pragma omp parallel
+      #pragma omp parallel
       {
         // The local accumulants.
         int local_left_count = 0;
@@ -215,7 +215,7 @@ class GenKdTree {
         local_left_bound.Init(left_bound.dim());
         local_right_bound.Init(right_bound.dim());
 
-#pragma omp for
+        #pragma omp for
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
@@ -235,7 +235,7 @@ class GenKdTree {
         } // end of for-loop.
 
         // Final reduction.
-#pragma omp critical
+        #pragma omp critical
         {
           (*left_count) += local_left_count;
           left_bound |= local_left_bound;
