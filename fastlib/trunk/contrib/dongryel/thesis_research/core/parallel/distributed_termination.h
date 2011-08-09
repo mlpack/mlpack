@@ -147,6 +147,7 @@ class DistributedTermination {
       // it can be passed to all the other processes.
       remaining_computation_ -= quantity_in;
       local_work_ -= quantity_in;
+      printf("Process %d left: %d\n", comm.rank(), local_work_);
       if(comm.size() > 1) {
         if(queued_up_completed_computation_.size() == 0) {
           MessageRouteRequestType new_route_request;
@@ -232,6 +233,7 @@ class DistributedTermination {
       if(world.size() == 1) {
         return;
       }
+      return;
 
       // At the start of each phase (stage == 0), dequeue something
       // from the hashed list.
