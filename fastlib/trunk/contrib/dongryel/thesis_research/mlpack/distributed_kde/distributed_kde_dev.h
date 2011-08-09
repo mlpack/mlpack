@@ -142,7 +142,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The number of work items to dequeue per process."
   )(
     "max_subtree_size_in",
-    boost::program_options::value<int>()->default_value(20),
+    boost::program_options::value<int>()->default_value(200),
     "The maximum size of the subtree to serialize at a given moment."
   )(
     "memory_mapped_file_size",
