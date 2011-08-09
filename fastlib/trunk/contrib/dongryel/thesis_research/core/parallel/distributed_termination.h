@@ -152,15 +152,15 @@ class DistributedTermination {
           MessageRouteRequestType new_route_request;
           new_route_request.Init(comm);
           new_route_request.set_object_is_valid_flag(true);
-          new_route_request.object() = 
-	    std::pair<int, unsigned long int>(comm.rank(), quantity_in);
+          new_route_request.object() =
+            std::pair<int, unsigned long int>(comm.rank(), quantity_in);
           new_route_request.add_destinations(comm);
           queued_up_completed_computation_.push_back(new_route_request);
         }
         else {
-          queued_up_completed_computation_.back().object().second = 
-	    queued_up_completed_computation_.back().object().second + 
-	    quantity_in;
+          queued_up_completed_computation_.back().object().second =
+            queued_up_completed_computation_.back().object().second +
+            quantity_in;
         }
       }
     }
@@ -268,9 +268,9 @@ class DistributedTermination {
 
           // Prepare an empty message.
           new_self_send_request_object.Init(world);
-	  new_self_send_request_object.object() = 
-	    std::pair<int, unsigned long int>( world.rank(), 0 );
-	  new_self_send_request_object.set_object_is_valid_flag( true );
+          new_self_send_request_object.object() =
+            std::pair<int, unsigned long int>(world.rank(), 0);
+          new_self_send_request_object.set_object_is_valid_flag(true);
           new_self_send_request_object.add_destinations(world);
         }
 
@@ -324,12 +324,12 @@ class DistributedTermination {
                 core::parallel::MessageTag::FINISHED_TUPLES)) {
 
           // Receive the subtable and increment the count.
-	  MessageRouteRequestType tmp_route_request;
-	  world.recv( 
+          MessageRouteRequestType tmp_route_request;
+          world.recv(
             neighbor,
-	    core::parallel::MessageTag::FINISHED_TUPLES,
-	    tmp_route_request );
-	  int cache_id = tmp_route_request.object().first;
+            core::parallel::MessageTag::FINISHED_TUPLES,
+            tmp_route_request);
+          int cache_id = tmp_route_request.object().first;
           std::pair < MessageRouteRequestType,
               boost::mpi::request > &route_request_pair =
                 message_cache_[ cache_id ];
@@ -370,8 +370,8 @@ class DistributedTermination {
         // Reset the message and send.
         synch_request.Init(world);
         synch_request.add_destinations(world);
-	synch_request.object() = world.rank();
-	synch_request.set_object_is_valid_flag( true );
+        synch_request.object() = world.rank();
+        synch_request.set_object_is_valid_flag(true);
         IssueSending_(
           world, synch_request_pair.second, synch_request,
           core::parallel::MessageTag::SYNCHRONIZE_IN_TERMINATION, world.rank(),
