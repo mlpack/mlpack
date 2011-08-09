@@ -130,26 +130,28 @@ class TableExchange {
                 core::parallel::MessageTag::SYNCHRONIZE)) {
 
           // Receive the message and increment the count.
-          std::pair < SynchRouteRequestType,
-              boost::mpi::request > &route_request_pair =
-                synch_messages_[ neighbor ];
-          SynchRouteRequestType &route_request = route_request_pair.first;
+          SynchRouteRequestType tmp_route_request;
           world.recv(
             neighbor,
             core::parallel::MessageTag::SYNCHRONIZE,
-            route_request);
+            tmp_route_request);
+          int cache_id = neighbor;
+          std::pair < SynchRouteRequestType,
+              boost::mpi::request > &route_request_pair =
+                synch_messages_[ cache_id ];
+          route_request_pair.first = tmp_route_request;
           reached_max_stage_count_++;
 
           // Remove self.
-          route_request.remove_from_destination_list(world.rank());
+          route_request_pair.first.remove_from_destination_list(world.rank());
 
           // Forward the barrier message.
-          if(route_request.num_destinations() > 0) {
+          if(route_request_pair.first.num_destinations() > 0) {
             IssueSending_(
               world, route_request_pair.second,
-              route_request,
+              route_request_pair.first,
               core::parallel::MessageTag::SYNCHRONIZE,
-              neighbor,
+              cache_id,
               &synch_message_sending_in_progress_);
           }
         }
@@ -385,38 +387,41 @@ class TableExchange {
                 core::parallel::MessageTag::ROUTE_SUBTABLE)) {
 
           // Receive the subtable and increment the count.
-          std::pair < SubTableRouteRequestType,
-              boost::mpi::request > &route_request_pair =
-                subtable_cache_[ neighbor ];
-          SubTableRouteRequestType &route_request = route_request_pair.first;
-          route_request.object().Init(neighbor, false);
+          SubTableRouteRequestType tmp_route_request;
+          tmp_route_request.object().Init(neighbor, false);
           world.recv(
             neighbor,
             core::parallel::MessageTag::ROUTE_SUBTABLE,
-            route_request);
+            tmp_route_request);
+          int cache_id = tmp_route_request.object().table()->rank();
+          tmp_route_request.object().set_cache_block_id(cache_id);
+          std::pair < SubTableRouteRequestType,
+              boost::mpi::request > &route_request_pair =
+                subtable_cache_[ cache_id ];
+          route_request_pair.first = tmp_route_request;
           stage_++;
 
           // If this subtable is needed by the calling process, then
           // update the list of subtables received.
-          if(route_request.remove_from_destination_list(world.rank()) &&
-              route_request.object_is_valid()) {
+          if(route_request_pair.first.remove_from_destination_list(world.rank()) &&
+              route_request_pair.first.object_is_valid()) {
             received_subtable_ids->push_back(
               boost::make_tuple(
-                route_request.object().table()->rank(),
-                route_request.object().start_node()->begin(),
-                route_request.object().start_node()->count(),
-                neighbor));
+                route_request_pair.first.object().table()->rank(),
+                route_request_pair.first.object().start_node()->begin(),
+                route_request_pair.first.object().start_node()->count(),
+                cache_id));
           }
 
           // If there are more destinations left for the received
           // subtable, lock the cache appropriately and issue and
           // asynchronous send.
-          if(route_request.stage() < max_stage_) {
+          if(route_request_pair.first.stage() < max_stage_) {
             IssueSending_(
               world, route_request_pair.second,
-              route_request,
+              route_request_pair.first,
               core::parallel::MessageTag::ROUTE_SUBTABLE,
-              neighbor,
+              cache_id,
               &subtable_sending_in_progress_);
           }
         } // end of receiving a message.

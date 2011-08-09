@@ -205,6 +205,10 @@ class SubTable {
       return serialize_new_from_old_mapping_;
     }
 
+    void set_cache_block_id(int cache_block_id_in) {
+      cache_block_id_ = cache_block_id_in;
+    }
+
     int cache_block_id() const {
       return cache_block_id_;
     }
