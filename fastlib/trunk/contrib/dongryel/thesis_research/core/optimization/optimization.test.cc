@@ -35,7 +35,7 @@ class ExtendedRosenbrockFunction {
 
       gradient->zeros();
       for(int k = 0; k < num_dimensions() - 1; k++) {
-        (*gradient)[k] = 400 * x[k] * (x[k] * x[k] - x[k+1]) + 2 * (x[k] - 1);
+        (*gradient)[k] = 400 * x[k] * (x[k] * x[k] - x[k + 1]) + 2 * (x[k] - 1);
         if(k > 0) {
           (*gradient)[k] = (*gradient)[k] + 200 * (x[k] - x[k - 1] * x[k - 1]);
         }
