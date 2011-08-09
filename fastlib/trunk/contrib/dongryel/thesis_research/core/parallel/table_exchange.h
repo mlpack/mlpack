@@ -53,6 +53,8 @@ class TableExchange {
 
     unsigned int max_stage_;
 
+    std::vector<int> received_subtable_ids_;
+
     unsigned int stage_;
 
     std::vector < SubTableRouteRequestType > subtable_cache_;
@@ -151,6 +153,7 @@ class TableExchange {
 
       // Clean up list is empty.
       cleanup_list_.resize(0);
+      received_subtable_ids_.resize(0);
 
       // Initialize the stage.
       stage_ = 0;
@@ -198,8 +201,6 @@ class TableExchange {
       // from the hashed list.
       if(stage_ == 0) {
 
-        printf("Starting again on %d\n", world.rank());
-
         // The status and the object to be copied onto.
         SubTableRouteRequestType &new_self_send_request_object =
           subtable_cache_[ world.rank()];
@@ -221,30 +222,20 @@ class TableExchange {
           new_self_send_request_object.Init(world);
           new_self_send_request_object.add_destinations(world);
         }
+        received_subtable_ids_.push_back(world.rank());
       }
 
       if(stage_ < max_stage_) {
 
-        printf("Process %d on %d vs %d\n", world.rank(), stage_, max_stage_);
         // Exchange with the neighbors.
         int num_subtables_to_exchange = (1 << stage_);
         int neighbor = world.rank() ^ (1 << stage_);
-        int lower_bound_on_send_index =
-          ((1 << stage_) & world.rank()) | world.rank();
         for(int i = 0; i < num_subtables_to_exchange; i++) {
-          int subtable_send_index;
-          if(world.rank() < neighbor) {
-            subtable_send_index = i + lower_bound_on_send_index;
-          }
-          else {
-            subtable_send_index = lower_bound_on_send_index - i;
-          }
+          int subtable_send_index = received_subtable_ids_[i];
           boost::mpi::request &send_request =
             subtable_send_request_[ i ];
           SubTableRouteRequestType &send_request_object =
             subtable_cache_[ subtable_send_index ];
-          printf("Process %d is sending %d to %d\n", world.rank(),
-                 subtable_send_index, neighbor);
 
           // For each subtable sent, we expect something from the neighbor.
           send_request =
@@ -271,7 +262,7 @@ class TableExchange {
             tmp_route_request.object().set_cache_block_id(cache_id);
             subtable_cache_[ cache_id ] = tmp_route_request;
             SubTableRouteRequestType &route_request = subtable_cache_[cache_id];
-            printf("Received a subtable from %d\n", cache_id);
+            received_subtable_ids_.push_back(cache_id);
 
             // If this subtable is needed by the calling process, then
             // update the list of subtables received.
@@ -301,9 +292,9 @@ class TableExchange {
       // If at the end of phase, wait for others to reach this point.
       else if(total_num_locks_ == 0) {
 
-        printf("Process %d is resetting.\n", world.rank());
         // Reset
         stage_ = 0;
+        received_subtable_ids_.resize(0);
 
         // Clean up the subtables.
         FreeCache_();
