@@ -146,11 +146,11 @@ class DistributedTable: public boost::noncopyable {
 
       // After building the tree, all processes send the root bound
       // primitive to the master process.
-      boost::scoped_array<
-        typename TreeType::BoundType> bounds( 
-          new typename TreeType::BoundType[ world.size() ] );
+      boost::scoped_array <
+      typename TreeType::BoundType > bounds(
+        new typename TreeType::BoundType[ world.size()]);
       boost::mpi::gather(
-	world, owned_table_->get_tree()->bound(), bounds.get(), 0);
+        world, owned_table_->get_tree()->bound(), bounds.get(), 0);
 
       if(world.rank() == 0) {
         AdjustBounds_(metric_in, bounds.get(), global_table_->get_tree());
