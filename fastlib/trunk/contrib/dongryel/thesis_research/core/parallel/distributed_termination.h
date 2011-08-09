@@ -82,7 +82,7 @@ class DistributedTermination {
       // Send and receive from the partner of all log_2 P neighbors by
       // IProbing.
       for(unsigned int i = 0; i < max_stage_; i++) {
-        int neighbor = world.rank() ^(1 << i);
+        int neighbor = world.rank() ^ (1 << i);
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
                 neighbor,
@@ -319,7 +319,7 @@ class DistributedTermination {
       // Send and receive from the partner of all log_2 P neighbors by
       // IProbing.
       for(unsigned int i = 0; i < max_stage_; i++) {
-        int neighbor = world.rank() ^(1 << i);
+        int neighbor = world.rank() ^ (1 << i);
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
                 neighbor,
