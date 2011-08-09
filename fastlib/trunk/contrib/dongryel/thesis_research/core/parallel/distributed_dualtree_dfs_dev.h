@@ -73,10 +73,6 @@ DistributedProblemType >::GenerateTasks_(
       distributed_tasks->PushTask(metric_in, j, reference_table_node_pair);
     }
 
-    // Assuming that each query subtree needs to lock on the reference
-    // subtree, do so.
-    table_exchange.LockCache(cache_id, distributed_tasks->size());
-
   } //end of looping over each reference subtree.
 }
 
@@ -402,10 +398,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     &distributed_tasks,
     &termination_check);
 
-  // The number of completed sends used for determining the
-  // termination condition.
-  int num_completed_sends = 0;
-
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
   // subtables).
@@ -429,9 +421,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 #pragma omp critical
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
-          table_exchange.AsynchSendReceive(
+	  table_exchange.AsynchSendReceive(
             *world_, hashed_essential_reference_subtrees_to_send,
-            &received_subtable_ids, &num_completed_sends);
+	    distributed_tasks.size(), &received_subtable_ids);
 
           // Propagate termination messages.
           termination_check.AsynchForwardTerminationMessages(*world_);

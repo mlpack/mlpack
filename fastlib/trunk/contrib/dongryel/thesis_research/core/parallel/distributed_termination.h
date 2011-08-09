@@ -17,9 +17,9 @@ namespace parallel {
 class DistributedTermination {
 
   public:
-    typedef core::parallel::RouteRequest<unsigned long int> MessageRouteRequestType;
+    typedef core::parallel::RouteRequest< std::pair<int, unsigned long int> > MessageRouteRequestType;
 
-    typedef core::parallel::RouteRequest<bool> SynchRouteRequestType;
+    typedef core::parallel::RouteRequest<int> SynchRouteRequestType;
 
   private:
 
@@ -89,26 +89,28 @@ class DistributedTermination {
                 core::parallel::MessageTag::SYNCHRONIZE_IN_TERMINATION)) {
 
           // Receive the message and increment the count.
-          std::pair < SynchRouteRequestType,
-              boost::mpi::request > &route_request_pair =
-                synch_messages_[ neighbor ];
-          SynchRouteRequestType &route_request = route_request_pair.first;
+          SynchRouteRequestType tmp_route_request;
           world.recv(
             neighbor,
             core::parallel::MessageTag::SYNCHRONIZE_IN_TERMINATION,
-            route_request);
+            tmp_route_request);
+          int cache_id = tmp_route_request.object();
+          std::pair < SynchRouteRequestType,
+              boost::mpi::request > &route_request_pair =
+                synch_messages_[ cache_id ];
+          route_request_pair.first = tmp_route_request;
           reached_max_stage_count_++;
 
           // Remove self.
-          route_request.remove_from_destination_list(world.rank());
+          route_request_pair.first.remove_from_destination_list(world.rank());
 
           // Forward the barrier message.
-          if(route_request.num_destinations() > 0) {
+          if(route_request_pair.first.num_destinations() > 0) {
             IssueSending_(
               world, route_request_pair.second,
-              route_request,
+              route_request_pair.first,
               core::parallel::MessageTag::SYNCHRONIZE_IN_TERMINATION,
-              neighbor,
+              cache_id,
               &synch_message_sending_in_progress_);
           }
         }
@@ -150,12 +152,15 @@ class DistributedTermination {
           MessageRouteRequestType new_route_request;
           new_route_request.Init(comm);
           new_route_request.set_object_is_valid_flag(true);
-          new_route_request.object() = quantity_in;
+          new_route_request.object() = 
+	    std::pair<int, unsigned long int>(comm.rank(), quantity_in);
           new_route_request.add_destinations(comm);
           queued_up_completed_computation_.push_back(new_route_request);
         }
         else {
-          queued_up_completed_computation_.back().object() += quantity_in;
+          queued_up_completed_computation_.back().object().second = 
+	    queued_up_completed_computation_.back().object().second + 
+	    quantity_in;
         }
       }
     }
@@ -218,7 +223,7 @@ class DistributedTermination {
       stage_ = 0;
 
       // The maximum number of neighbors.
-      max_stage_ = static_cast<int>(log2(world.size()));
+      max_stage_ = static_cast<unsigned int>(log2(world.size()));
     }
 
     void AsynchForwardTerminationMessages(boost::mpi::communicator &world) {
@@ -263,6 +268,9 @@ class DistributedTermination {
 
           // Prepare an empty message.
           new_self_send_request_object.Init(world);
+	  new_self_send_request_object.object() = 
+	    std::pair<int, unsigned long int>( world.rank(), 0 );
+	  new_self_send_request_object.set_object_is_valid_flag( true );
           new_self_send_request_object.add_destinations(world);
         }
 
@@ -316,30 +324,32 @@ class DistributedTermination {
                 core::parallel::MessageTag::FINISHED_TUPLES)) {
 
           // Receive the subtable and increment the count.
+	  MessageRouteRequestType tmp_route_request;
+	  world.recv( 
+            neighbor,
+	    core::parallel::MessageTag::FINISHED_TUPLES,
+	    tmp_route_request );
+	  int cache_id = tmp_route_request.object().first;
           std::pair < MessageRouteRequestType,
               boost::mpi::request > &route_request_pair =
-                message_cache_[ neighbor ];
-          MessageRouteRequestType &route_request = route_request_pair.first;
-          world.recv(
-            neighbor,
-            core::parallel::MessageTag::FINISHED_TUPLES,
-            route_request);
+                message_cache_[ cache_id ];
+          route_request_pair.first = tmp_route_request;
           stage_++;
 
           // If this subtable is needed by the calling process, then
           // update the list of subtables received.
-          if(route_request.remove_from_destination_list(world.rank()) &&
-              route_request.object_is_valid()) {
-            remaining_computation_ -= route_request.object();
+          if(route_request_pair.first.remove_from_destination_list(world.rank()) &&
+              route_request_pair.first.object_is_valid()) {
+            remaining_computation_ -= route_request_pair.first.object().second;
           }
 
           // If there are more destinations left for the received
           // subtable, lock the cache appropriately and issue and
           // asynchronous send.
-          if(route_request.num_destinations() > 0) {
+          if(route_request_pair.first.num_destinations() > 0) {
             IssueSending_(
               world, route_request_pair.second,
-              route_request,
+              route_request_pair.first,
               core::parallel::MessageTag::FINISHED_TUPLES,
               neighbor,
               &message_sending_in_progress_);
@@ -360,6 +370,8 @@ class DistributedTermination {
         // Reset the message and send.
         synch_request.Init(world);
         synch_request.add_destinations(world);
+	synch_request.object() = world.rank();
+	synch_request.set_object_is_valid_flag( true );
         IssueSending_(
           world, synch_request_pair.second, synch_request,
           core::parallel::MessageTag::SYNCHRONIZE_IN_TERMINATION, world.rank(),
