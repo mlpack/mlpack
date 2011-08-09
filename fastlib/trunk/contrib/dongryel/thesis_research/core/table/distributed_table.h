@@ -95,7 +95,7 @@ class DistributedTable: public boost::noncopyable {
     template<typename MetricType, typename BoundType>
     void AdjustBounds_(
       const MetricType &metric,
-      const std::vector<BoundType> &bounds, TreeType *node) {
+      const BoundType *bounds, TreeType *node) {
 
       if(node->is_leaf()) {
         typename TableType::TreeIterator node_it =
@@ -146,12 +146,14 @@ class DistributedTable: public boost::noncopyable {
 
       // After building the tree, all processes send the root bound
       // primitive to the master process.
-      std::vector<typename TreeType::BoundType> bounds;
+      boost::scoped_array<
+        typename TreeType::BoundType> bounds( 
+          new typename TreeType::BoundType[ world.size() ] );
       boost::mpi::gather(
-        world, owned_table_->get_tree()->bound(), bounds, 0);
+	world, owned_table_->get_tree()->bound(), bounds.get(), 0);
 
       if(world.rank() == 0) {
-        AdjustBounds_(metric_in, bounds, global_table_->get_tree());
+        AdjustBounds_(metric_in, bounds.get(), global_table_->get_tree());
       }
 
       // Broadcast the global tree.

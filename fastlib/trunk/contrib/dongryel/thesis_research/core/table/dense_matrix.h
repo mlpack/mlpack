@@ -396,6 +396,16 @@ static void DenseMatrixToArmaMat(
 }
 }
 
+namespace boost {
+  namespace serialization {
+    template<class Archive>
+    void serialize(Archive &ar, std::pair<int, unsigned long int> & t, unsigned int version) {
+      ar & t.first;
+      ar & t.second;
+    }
+  }
+}
+
 BOOST_SERIALIZATION_SPLIT_FREE(arma::mat)
 
 namespace boost {
