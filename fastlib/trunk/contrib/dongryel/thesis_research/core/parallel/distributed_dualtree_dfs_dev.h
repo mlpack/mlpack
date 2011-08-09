@@ -421,9 +421,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 #pragma omp critical
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
-	  table_exchange.AsynchSendReceive(
+          table_exchange.AsynchSendReceive(
             *world_, hashed_essential_reference_subtrees_to_send,
-	    distributed_tasks.size(), &received_subtable_ids);
+            distributed_tasks.size(), &received_subtable_ids);
 
           // Propagate termination messages.
           termination_check.AsynchForwardTerminationMessages(*world_);
