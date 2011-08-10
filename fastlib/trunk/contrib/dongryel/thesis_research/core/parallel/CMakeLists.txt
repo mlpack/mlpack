@@ -4,7 +4,6 @@ set(SOURCES
   distributed_dualtree_dfs_dev.h
   distributed_dualtree_dfs.h
   distributed_dualtree_task_queue.h
-  distributed_termination.h
   distributed_tree_util.h
   distributed_tripletree_dfs_dev.h
   distributed_tripletree_dfs.h
