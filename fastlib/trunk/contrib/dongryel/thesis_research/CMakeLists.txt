@@ -15,7 +15,7 @@ find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
 
 # include boost.
-set(Boost_ROOT "$ENV{HOME}/local/boost_1_46_1")
+set(Boost_ROOT "$ENV{HOME}/local/boost")
 set(Boost_LIB_DIR "${Boost_ROOT}/stage/lib")
 set(Boost_INCLUDE_DIRS "${Boost_ROOT}")
 set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR}/libboost_mpi.a;${Boost_LIB_DIR}/libboost_serialization.a;${Boost_LIB_DIR}/libboost_system.a;${Boost_LIB_DIR}/libboost_thread.a;${Boost_LIB_DIR}/libboost_unit_test_framework.a")
@@ -28,7 +28,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 #find_package(Trilinos REQUIRED)
 
 # Set the MPI compiler.
-set(MPI_COMPILER $ENV{HOME}/local/openmpi-1.4.3/bin/mpicxx)
+set(MPI_COMPILER /usr/bin/mpicxx)
 
 # find MPI
 find_package(MPI)
@@ -43,6 +43,8 @@ endif()
 # find CUDA
 set(CUDA_TOOLKIT_ROOT_DIR $ENV{HOME}/local/cuda)
 find_package(CUDA)
+link_directories($ENV{HOME}/local/cuda/lib64)
+set(CUDA_NVCC_FLAGS "-ccbin=/usr/bin/g++-4.4")
 
 # Add additional complie flags.
 set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
@@ -52,8 +54,8 @@ include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
 # for a local installation of armadillo
-include_directories($ENV{HOME}/local/armadillo-2.0.2/include)
-link_directories($ENV{HOME}/local/armadillo-2.0.2/lib64)
+include_directories($ENV{HOME}/local/armadillo/include)
+link_directories($ENV{HOME}/local/armadillo/lib64)
 
 # for a local installation of gsl
 include_directories($ENV{HOME}/local/gsl-1.9/include)
