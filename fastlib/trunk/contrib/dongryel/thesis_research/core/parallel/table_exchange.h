@@ -395,8 +395,6 @@ class TableExchange {
             int cache_id =
               tmp_route_request.originating_rank();
             tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
-            message_cache_[ cache_id ] = tmp_route_request;
-            MessageType &route_request = message_cache_[cache_id];
 
             // Add to the list of subtable in action.
             active_message_list_.push_back(cache_id);
@@ -405,8 +403,10 @@ class TableExchange {
             // update the list of subtables received.
             num_subtables_received++;
 
-            if(route_request.subtable_route().remove_from_destination_list(world.rank()) &&
-                route_request.subtable_route().object_is_valid()) {
+            if(tmp_route_request.subtable_route().remove_from_destination_list(world.rank()) &&
+                tmp_route_request.subtable_route().object_is_valid()) {
+              message_cache_[ cache_id ] = tmp_route_request;
+              MessageType &route_request = message_cache_[cache_id];
               this->LockCache(cache_id, num_local_query_trees);
               received_subtable_ids->push_back(
                 boost::make_tuple(
@@ -417,10 +417,10 @@ class TableExchange {
             }
 
             // Update the energy count.
-            if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
-                route_request.energy_route().object_is_valid()) {
+            if(tmp_route_request.energy_route().remove_from_destination_list(world.rank()) &&
+                tmp_route_request.energy_route().object_is_valid()) {
               remaining_global_computation_ -=
-                route_request.energy_route().object();
+                tmp_route_request.energy_route().object();
             }
           }
         }
