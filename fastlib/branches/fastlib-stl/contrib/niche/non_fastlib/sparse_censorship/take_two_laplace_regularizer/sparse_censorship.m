@@ -62,6 +62,7 @@ for d = 1:D
   inds_by_doc{d} = find(X(d,:)); 
 end
 
+
 exp_beta = exp(beta);
 exp_eta = exp(eta);
 for d = 1:D
@@ -69,13 +70,21 @@ for d = 1:D
   for k = 1:K
     sum_exp_beta_k = sum(exp_beta(:,k));
     sum_exp_eta_k_p = sum(exp_eta(:,k,p));
+    if isnan(sum_exp_beta_k)
+      fprintf('nan at sum_exp_beta_k: d = %d, k = %d\n', d, k);
+    end
+    if isnan(sum_exp_eta_k_p)
+      fprintf('nan at sum_exp_eta_k_p: d = %d, k = %d\n', d, k);
+    end
     for v = inds_by_doc{d}
       phi{d}(v,k) = ...
           (exp_beta(v,k) / sum_exp_beta_k) ...
           * (exp_eta(v,k,p) / sum_exp_eta_k_p);
     end
   end
-  phi{d} = phi{d} ./ repmat(sum(phi{d}, 2), 1, K);
+  phi{d}(inds_by_doc{d},:) = ...
+      phi{d}(inds_by_doc{d},:) ...
+      ./ repmat(sum(phi{d}(inds_by_doc{d},:), 2), 1, K);
 end
 
 
