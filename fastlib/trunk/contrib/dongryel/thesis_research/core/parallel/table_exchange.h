@@ -53,7 +53,7 @@ class TableExchange {
 
     unsigned int max_stage_;
 
-    std::vector<int> received_subtable_ids_;
+    std::vector<int> received_subtable_list_;
 
     unsigned int stage_;
 
@@ -153,7 +153,7 @@ class TableExchange {
 
       // Clean up list is empty.
       cleanup_list_.resize(0);
-      received_subtable_ids_.resize(0);
+      received_subtable_list_.resize(0);
 
       // Initialize the stage.
       stage_ = 0;
@@ -212,6 +212,7 @@ class TableExchange {
 
           // Prepare the initial subtable to send.
           new_self_send_request_object.Init(world, route_request);
+          new_self_send_request_object.set_object_is_valid_flag(true);
 
           // Pop it from the route request list.
           hashed_essential_reference_subtrees_to_send.pop_back();
@@ -222,7 +223,7 @@ class TableExchange {
           new_self_send_request_object.Init(world);
           new_self_send_request_object.add_destinations(world);
         }
-        received_subtable_ids_.push_back(world.rank());
+        received_subtable_list_.push_back(world.rank());
       }
 
       if(stage_ < max_stage_) {
@@ -231,7 +232,7 @@ class TableExchange {
         int num_subtables_to_exchange = (1 << stage_);
         int neighbor = world.rank() ^ (1 << stage_);
         for(int i = 0; i < num_subtables_to_exchange; i++) {
-          int subtable_send_index = received_subtable_ids_[i];
+          int subtable_send_index = received_subtable_list_[i];
           boost::mpi::request &send_request =
             subtable_send_request_[ i ];
           SubTableRouteRequestType &send_request_object =
@@ -262,7 +263,7 @@ class TableExchange {
             tmp_route_request.object().set_cache_block_id(cache_id);
             subtable_cache_[ cache_id ] = tmp_route_request;
             SubTableRouteRequestType &route_request = subtable_cache_[cache_id];
-            received_subtable_ids_.push_back(cache_id);
+            received_subtable_list_.push_back(cache_id);
 
             // If this subtable is needed by the calling process, then
             // update the list of subtables received.
@@ -283,7 +284,7 @@ class TableExchange {
         // Wait until all sends are done.
         boost::mpi::wait_all(
           subtable_send_request_.begin(),
-          subtable_send_request_.begin() +  num_subtables_to_exchange);
+          subtable_send_request_.begin() + num_subtables_to_exchange);
 
         // Increment the stage when done.
         stage_++;
@@ -292,9 +293,9 @@ class TableExchange {
       // If at the end of phase, wait for others to reach this point.
       else if(total_num_locks_ == 0) {
 
-        // Reset
+        // Reset and prepare for the next round.
         stage_ = 0;
-        received_subtable_ids_.resize(0);
+        received_subtable_list_.resize(0);
 
         // Clean up the subtables.
         FreeCache_();
