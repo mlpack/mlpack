@@ -243,10 +243,8 @@ DistributedProblemType >::InitialSetup_(
   std::vector <
   core::parallel::RouteRequest<SubTableType> >
   *hashed_essential_reference_subtress_to_send,
-  int *num_reference_subtrees_to_send,
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
-  int *num_reference_subtrees_to_receive,
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
 
@@ -269,7 +267,6 @@ DistributedProblemType >::InitialSetup_(
 
   // Fill out the prioritized send list.
   std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
-  *num_reference_subtrees_to_send = 0;
   for(int i = 0; i < world_->size(); i++) {
     for(unsigned int j = 0;
         j < (*essential_reference_subtrees_to_send)[i].size(); j++) {
@@ -283,11 +280,6 @@ DistributedProblemType >::InitialSetup_(
         // Reference subtables on the self are already available.
         received_subtable_ids.push_back(
           boost::make_tuple(i, reference_begin, reference_count, -1));
-      }
-      else {
-
-        // Increment the number of subtrees to send.
-        (*num_reference_subtrees_to_send)++;
       }
     }
   }
@@ -306,19 +298,6 @@ DistributedProblemType >::InitialSetup_(
     *world_, *send_priorities, *receive_priorities);
   boost::mpi::all_to_all(
     *world_, extrinsic_prunes_broadcast, extrinsic_prune_lists);
-
-  // Tally up the number of reference subtrees to receive for the
-  // current MPI process. Tally up the number of pruned reference
-  // subtrees.
-  *num_reference_subtrees_to_receive = 0;
-  for(int i = 0; i < static_cast<int>(reference_frontier_lists->size()); i++) {
-
-    // Exclude the reference subtrees from the self.
-    if(i != world_->rank()) {
-      (*num_reference_subtrees_to_receive) +=
-        ((*reference_frontier_lists)[i]).size();
-    }
-  }
 
   // Add up the initial pruned amounts and reseed it on the query
   // side.
@@ -366,8 +345,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     max_num_work_to_dequeue_per_stage_);
 
   // The number of reference subtrees to receive and to send in total.
-  int num_reference_subtrees_to_send;
-  int num_reference_subtrees_to_receive;
   std::vector <
   core::parallel::RouteRequest<SubTableType> >
   hashed_essential_reference_subtrees_to_send;
@@ -375,10 +352,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     metric, query_results, table_exchange,
     &reference_subtrees_to_send, &send_priorities,
     &hashed_essential_reference_subtrees_to_send,
-    &num_reference_subtrees_to_send,
     &reference_subtrees_to_receive,
     &receive_priorities,
-    &num_reference_subtrees_to_receive,
     &distributed_tasks);
 
   // OpenMP parallel region. The master thread is the only one that is
