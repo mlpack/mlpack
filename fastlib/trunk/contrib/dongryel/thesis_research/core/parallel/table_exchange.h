@@ -46,13 +46,15 @@ class TableExchange {
      */
     TableType *local_table_;
 
+    unsigned long int remaining_local_computation_;
+
     unsigned int max_stage_;
 
     std::vector<MessageRouteRequestType> queued_up_completed_computation_;
 
     std::vector<int> received_subtable_list_;
 
-    unsigned long int remaining_computation_;
+    unsigned long int remaining_global_computation_;
 
     unsigned int stage_;
 
@@ -100,7 +102,11 @@ class TableExchange {
 
       // Subtract from the self and queue up a route message so that
       // it can be passed to all the other processes.
-      remaining_computation_ -= quantity_in;
+      remaining_global_computation_ -= quantity_in;
+      remaining_local_computation_ -= quantity_in;
+      if(remaining_local_computation_ == 0) {
+        printf("Process %d is done locally.\n", comm.rank());
+      }
       if(comm.size() > 1) {
         if(queued_up_completed_computation_.size() == 0) {
           MessageRouteRequestType new_route_request;
@@ -123,7 +129,8 @@ class TableExchange {
      */
     TableExchange() {
       local_table_ = NULL;
-      remaining_computation_ = 0;
+      remaining_global_computation_ = 0;
+      remaining_local_computation_ = 0;
       total_num_locks_ = 0;
     }
 
@@ -203,8 +210,12 @@ class TableExchange {
       }
 
       // Initialize the remaining computation.
-      remaining_computation_ =
+      remaining_global_computation_ =
         static_cast<unsigned long int>(total_num_query_points) *
+        static_cast<unsigned long int>(total_num_reference_points);
+      remaining_local_computation_ =
+        static_cast<unsigned long int>(
+          query_table_in->local_table()->n_entries()) *
         static_cast<unsigned long int>(total_num_reference_points);
     }
 
