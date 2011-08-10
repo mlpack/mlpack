@@ -392,7 +392,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
   // subtables).
-  #pragma omp parallel
+#pragma omp parallel
   {
 
     // The thread ID.
@@ -409,7 +409,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       // The master thread routine.
       if(thread_id == 0) {
 
-        #pragma omp critical
+#pragma omp critical
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
           table_exchange.SendReceive(
@@ -430,7 +430,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           // Index to probe.
           int probe_index = (thread_id + i) % distributed_tasks.size();
 
-          #pragma omp critical
+#pragma omp critical
           {
             distributed_tasks.DequeueTask(probe_index, &found_task, true);
           } // end of pragma omp critical
@@ -472,7 +472,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           // Fire away the computation.
           sub_engine.Compute(metric, query_results, false);
 
-          #pragma omp critical
+#pragma omp critical
           {
             num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
             num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
@@ -496,7 +496,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         } // end of finding a task.
         else {
 
-          #pragma omp critical
+#pragma omp critical
           {
             // Otherwise, ask other threads to share the
             // work. Currently, disabled for distributed setting.
@@ -508,7 +508,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       } // end of attempting to deque a task.
 
       // Quit if all work is done.
-      #pragma omp critical
+#pragma omp critical
       {
         work_left_to_do = true;
       } // end of a critical section.
@@ -611,7 +611,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
 
   // Figure out each process's work using the global tree. Currently
   // only supports P = power of two. Fix this later.
-  if(!(world_->rank() ^ (world_->rank() - 1))) {
+  if(!(world_->rank() ^(world_->rank() - 1))) {
     std::cerr << "Re-run with the number of processes equal to a power of "
               << "two!\n";
     return;
