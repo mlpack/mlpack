@@ -17,7 +17,6 @@
 #include "core/parallel/distributed_dualtree_task.h"
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/route_request.h"
-#include "core/parallel/subtable_send_request.h"
 #include "core/parallel/table_exchange.h"
 #include "core/table/sub_table.h"
 #include <omp.h>
@@ -121,21 +120,6 @@ class DistributedDualtreeDfs {
 
   private:
 
-    /** @brief The class used for prioritizing a sending operation.
-     */
-    class PrioritizeSendTasks_:
-      public std::binary_function <
-      core::parallel::SubTableSendRequest &,
-      core::parallel::SubTableSendRequest &,
-        bool > {
-      public:
-        bool operator()(
-          const core::parallel::SubTableSendRequest &a,
-          const core::parallel::SubTableSendRequest &b) const {
-          return a.priority() < b.priority();
-        }
-    };
-
     /** @brief The class used for prioritizing a computation object
      *         (query, reference pair).
      */
@@ -149,15 +133,6 @@ class DistributedDualtreeDfs {
           return a.priority() < b.priority();
         }
     };
-
-    /** @brief The type of the priority queue used for prioritizing
-     *         the send operations.
-     */
-    typedef std::priority_queue <
-    core::parallel::SubTableSendRequest,
-         std::vector< core::parallel::SubTableSendRequest >,
-         PrioritizeSendTasks_ >
-         SendRequestPriorityQueueType;
 
     /** @brief The type of the priority queue that is used for
      *         prioritizing the fine-grained computations.
@@ -210,7 +185,6 @@ class DistributedDualtreeDfs {
       std::vector <
       core::parallel::RouteRequest<SubTableType> >
       *hashed_essential_reference_subtress_to_send,
-      std::vector< SendRequestPriorityQueueType > *prioritized_send_subtables,
       int *num_reference_subtrees_to_send,
       std::vector <
       std::vector< std::pair<int, int> > > *reference_frontier_lists,

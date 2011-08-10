@@ -243,7 +243,6 @@ DistributedProblemType >::InitialSetup_(
   std::vector <
   core::parallel::RouteRequest<SubTableType> >
   *hashed_essential_reference_subtress_to_send,
-  std::vector< SendRequestPriorityQueueType > *prioritized_send_subtables,
   int *num_reference_subtrees_to_send,
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
@@ -286,10 +285,6 @@ DistributedProblemType >::InitialSetup_(
           boost::make_tuple(i, reference_begin, reference_count, -1));
       }
       else {
-        (*prioritized_send_subtables)[i].push(
-          core::parallel::SubTableSendRequest(
-            i, reference_begin, reference_count,
-            - (*send_priorities)[i][j].mid()));
 
         // Increment the number of subtrees to send.
         (*num_reference_subtrees_to_send)++;
@@ -356,8 +351,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   std::vector <
   std::vector< core::math::Range> > send_priorities(world_->size());
   std::vector <
-  SendRequestPriorityQueueType > prioritized_send_subtables(world_->size());
-  std::vector <
   std::vector< std::pair<int, int> > > reference_subtrees_to_receive;
   std::vector< std::vector< core::math::Range> > receive_priorities;
 
@@ -382,7 +375,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     metric, query_results, table_exchange,
     &reference_subtrees_to_send, &send_priorities,
     &hashed_essential_reference_subtrees_to_send,
-    &prioritized_send_subtables,
     &num_reference_subtrees_to_send,
     &reference_subtrees_to_receive,
     &receive_priorities,
