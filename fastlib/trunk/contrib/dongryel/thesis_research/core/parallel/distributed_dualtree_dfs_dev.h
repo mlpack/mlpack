@@ -510,7 +510,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       // Quit if all work is done.
 #pragma omp critical
       {
-        work_left_to_do = true;
+        work_left_to_do = !(table_exchange.can_terminate() &&
+                            distributed_tasks.is_empty());
       } // end of a critical section.
     }
     while(work_left_to_do);
