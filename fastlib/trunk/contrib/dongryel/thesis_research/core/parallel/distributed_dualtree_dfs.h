@@ -185,11 +185,9 @@ class DistributedDualtreeDfs {
       std::vector <
       core::parallel::RouteRequest<SubTableType> >
       *hashed_essential_reference_subtress_to_send,
-      int *num_reference_subtrees_to_send,
       std::vector <
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
-      int *num_reference_subtrees_to_receive,
       core::parallel::DistributedDualtreeTaskQueue <
       DistributedTableType, FinePriorityQueueType > *distributed_tasks);
 
