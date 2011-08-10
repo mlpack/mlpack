@@ -170,8 +170,9 @@ class RouteRequest {
 
       // Save the object, only if the number of routed messages is
       // at least 1.
-      ar & object_is_valid_;
-      if(object_is_valid_) {
+      bool object_is_saved = object_is_valid_ && (filtered.size() > 0);
+      ar & object_is_saved;
+      if(object_is_saved) {
         ar & object_;
       }
     }
