@@ -108,6 +108,7 @@ class RouteRequest {
     }
 
     RouteRequest() {
+      destinations_.resize(0);
       num_routed_ = 0;
       next_destination_ = 0;
       object_is_valid_ = false;
