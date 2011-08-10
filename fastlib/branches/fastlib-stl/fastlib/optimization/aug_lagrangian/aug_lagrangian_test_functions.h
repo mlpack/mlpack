@@ -121,10 +121,13 @@ class LovaszThetaSDP {
                           const arma::mat& coordinates,
                           arma::mat& gradient);
 
-  const arma::mat GetInitialPoint();
+  const arma::mat& GetInitialPoint();
 
  private:
   arma::mat edges_;
+  int vertices_;
+
+  arma::mat initial_point_;
 };
 
 #endif
