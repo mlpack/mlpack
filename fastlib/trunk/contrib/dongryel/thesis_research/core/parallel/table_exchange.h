@@ -35,7 +35,30 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
-    typedef core::parallel::RouteRequest< std::pair<int, unsigned long int> > MessageRouteRequestType;
+    typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
+
+    class MessageType {
+      private:
+
+        // For serialization.
+        friend class boost::serialization::access;
+
+      private:
+        int originating_rank_;
+
+        SubTableRouteRequestType subtable_route_;
+
+        EnergyRouteRequestType energy_route_;
+
+      public:
+
+        template<class Archive>
+        void serialize(Archive &ar, const unsigned int version) {
+          ar & originating_rank_;
+          ar & subtable_route_;
+          ar & energy_route_;
+        }
+    };
 
   private:
 
@@ -50,7 +73,7 @@ class TableExchange {
 
     unsigned int max_stage_;
 
-    std::vector<MessageRouteRequestType> queued_up_completed_computation_;
+    std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
 
     std::vector<int> received_subtable_list_;
 
@@ -109,18 +132,15 @@ class TableExchange {
       }
       if(comm.size() > 1) {
         if(queued_up_completed_computation_.size() == 0) {
-          MessageRouteRequestType new_route_request;
+          EnergyRouteRequestType new_route_request;
           new_route_request.Init(comm);
           new_route_request.set_object_is_valid_flag(true);
-          new_route_request.object() =
-            std::pair<int, unsigned long int>(comm.rank(), quantity_in);
+          new_route_request.object() = quantity_in;
           new_route_request.add_destinations(comm);
           queued_up_completed_computation_.push_back(new_route_request);
         }
         else {
-          queued_up_completed_computation_.back().object().second =
-            queued_up_completed_computation_.back().object().second +
-            quantity_in;
+          queued_up_completed_computation_.back().object() += quantity_in;
         }
       }
     }
