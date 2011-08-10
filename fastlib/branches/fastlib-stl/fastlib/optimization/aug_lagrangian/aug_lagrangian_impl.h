@@ -32,7 +32,9 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
   double penalty_threshold = DBL_MAX; // Ensure we update lambda immediately.
 
   // Track the last objective to compare for convergence.
+  IO::Debug << "Evaluating objective." << std::endl;
   double last_objective = function_.Evaluate(coordinates);
+  IO::Debug << "Objective is " << last_objective << "." << std::endl;
 
   // First, we create an instance of the utility function class.
   AugLagrangianFunction f(function_, lambda, sigma);
@@ -86,8 +88,8 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
       // of 0.25 is taken from Burer and Monteiro (2002).
       penalty_threshold = 0.25 * penalty;
 
-      IO::Debug << "Updated lambda[0] to " << lambda[0] << std::endl;
-      IO::Debug << "Updated penalty threshold to " << penalty_threshold
+      IO::Warn << "Updated lambda[0] to " << lambda[0] << std::endl;
+      IO::Warn << "Updated penalty threshold to " << penalty_threshold
           << std::endl;
 
     } else {
@@ -97,7 +99,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
       sigma *= 10;
       f.sigma_ = sigma;
 
-      IO::Debug << "Updated sigma to " << sigma << std::endl;
+      IO::Warn << "Updated sigma to " << sigma << std::endl;
     }
   }
 
@@ -119,6 +121,7 @@ double AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Evaluate(
     const arma::mat& coordinates) {
   // The augmented Lagrangian is evaluated as
   //   f(x) + {-lambda_i * c_i(x) + (sigma / 2) c_i(x)^2} for all constraints
+  IO::Debug << "Evaluating augmented Lagrangian." << std::endl;
   double objective = function_.Evaluate(coordinates);
 
   // Now loop over constraints.
@@ -150,11 +153,13 @@ void AugLagrangian<LagrangianFunction>::AugLagrangianFunction::Gradient(
     tmp_gradient = ((-lambda_[i] + sigma_ *
         function_.EvaluateConstraint(i, coordinates)) * constraint_gradient);
     IO::Debug << "Gradient for constraint " << i << " (with lambda = "
-        << lambda_[i] << ") is " << tmp_gradient << std::endl;
+        << lambda_[i] << ") is " << std::endl;
+    std::cout << tmp_gradient;
     gradient += tmp_gradient;
   }
   IO::Debug << "Overall gradient norm is " << arma::norm(gradient, 2) << "."
       << std::endl;
+  std::cout << gradient << std::endl;
 }
 
 template<typename LagrangianFunction>
