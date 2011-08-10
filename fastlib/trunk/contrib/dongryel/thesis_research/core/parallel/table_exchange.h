@@ -116,13 +116,13 @@ class TableExchange {
       }
     }
 
-    void ReleaseCache(int cache_id, int num_times, bool free_subtable = true) {
+    void ReleaseCache(int cache_id, int num_times) {
       if(cache_id >= 0) {
         subtable_locks_[ cache_id ] -= num_times;
         total_num_locks_ -= num_times;
 
         // If the subtable is not needed, free it.
-        if(subtable_locks_[ cache_id ] == 0 && free_subtable &&
+        if(subtable_locks_[ cache_id ] == 0 &&
             subtable_cache_[ cache_id ].object_is_valid() &&
             cache_id != local_table_->rank()) {
 
@@ -237,6 +237,7 @@ class TableExchange {
             subtable_send_request_[ i ];
           SubTableRouteRequestType &send_request_object =
             subtable_cache_[ subtable_send_index ];
+          send_request_object.next_destination(world);
 
           // For each subtable sent, we expect something from the neighbor.
           send_request =
