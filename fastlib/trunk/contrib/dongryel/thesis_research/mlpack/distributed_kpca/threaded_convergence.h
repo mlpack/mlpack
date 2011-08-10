@@ -171,7 +171,7 @@ class ThreadedConvergence {
       int grain_size = query_table_in->n_entries() / num_threads;
 
       // OpenMP parallel region.
-#pragma omp parallel
+      #pragma omp parallel
       {
         int i = omp_get_thread_num();
         int begin = i * grain_size;
