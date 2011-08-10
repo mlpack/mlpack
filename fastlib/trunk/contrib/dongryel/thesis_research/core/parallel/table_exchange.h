@@ -403,24 +403,29 @@ class TableExchange {
             // update the list of subtables received.
             num_subtables_received++;
 
-            if(tmp_route_request.subtable_route().remove_from_destination_list(world.rank()) &&
-                tmp_route_request.subtable_route().object_is_valid()) {
-              message_cache_[ cache_id ] = tmp_route_request;
-              MessageType &route_request = message_cache_[cache_id];
-              this->LockCache(cache_id, num_local_query_trees);
-              received_subtable_ids->push_back(
-                boost::make_tuple(
-                  route_request.subtable_route().object().table()->rank(),
-                  route_request.subtable_route().object().start_node()->begin(),
-                  route_request.subtable_route().object().start_node()->count(),
-                  cache_id));
+            message_cache_[ cache_id ] = tmp_route_request;
+            MessageType &route_request = message_cache_[cache_id];
+
+            if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
+              if(route_request.subtable_route().object_is_valid()) {
+                this->LockCache(cache_id, num_local_query_trees);
+                received_subtable_ids->push_back(
+                  boost::make_tuple(
+                    route_request.subtable_route().object().table()->rank(),
+                    route_request.subtable_route().object().start_node()->begin(),
+                    route_request.subtable_route().object().start_node()->count(),
+                    cache_id));
+              }
+              else {
+                cleanup_list_.push_back(cache_id);
+              }
             }
 
             // Update the energy count.
-            if(tmp_route_request.energy_route().remove_from_destination_list(world.rank()) &&
-                tmp_route_request.energy_route().object_is_valid()) {
+            if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
+                route_request.energy_route().object_is_valid()) {
               remaining_global_computation_ -=
-                tmp_route_request.energy_route().object();
+                route_request.energy_route().object();
             }
           }
         }
