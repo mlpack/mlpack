@@ -273,7 +273,7 @@ class TableExchange {
 
         // Exchange with the neighbors.
         int num_subtables_to_exchange = (1 << stage_);
-        int neighbor = world.rank() ^ (1 << stage_);
+        int neighbor = world.rank() ^(1 << stage_);
         for(int i = 0; i < num_subtables_to_exchange; i++) {
           int subtable_send_index = received_subtable_list_[i];
           boost::mpi::request &send_request =

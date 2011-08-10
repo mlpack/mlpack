@@ -254,7 +254,7 @@ void TrustRegionUtil::TrustRadiusUpdate(
   if(rho < 0.25) {
     (*current_radius) = p_norm / 4.0;
   }
-  else if((rho > 0.75) && (p_norm > (0.99 * (*current_radius)))) {
+  else if((rho > 0.75) && (p_norm > (0.99 *(*current_radius)))) {
     (*current_radius) = std::min(2.0 * (*current_radius), max_radius);
   }
 }

@@ -204,13 +204,13 @@ class GenMetricTree {
       int end = begin + count;
       *furthest_distance = -1.0;
 
-      #pragma omp parallel
+#pragma omp parallel
       {
         // Local variables used for reduction.
         int local_furthest_index = -1;
         double local_furthest_distance = -1.0;
 
-        #pragma omp for
+#pragma omp for
         for(int i = begin; i < end; i++) {
           PointType point;
           matrix.MakeColumnVector(i, &point);
@@ -224,7 +224,7 @@ class GenMetricTree {
         } // end of for-loop.
 
         // Reduction.
-        #pragma omp critical
+#pragma omp critical
         {
           if(local_furthest_distance > (*furthest_distance)) {
             *furthest_distance = local_furthest_distance;
@@ -292,12 +292,12 @@ class GenMetricTree {
       arma::vec bound_ref;
       core::table::DensePointToArmaVec(bounds->center(), &bound_ref);
 
-      #pragma omp parallel
+#pragma omp parallel
       {
         arma::vec local_sum;
         local_sum.zeros(bound_ref.n_elem);
 
-        #pragma omp for
+#pragma omp for
         for(int i = begin; i < end; i++) {
           arma::vec col_point;
           matrix.MakeColumnVector(i, &col_point);
@@ -305,7 +305,7 @@ class GenMetricTree {
         }
 
         // Final reduction.
-        #pragma omp critical
+#pragma omp critical
         {
           bound_ref += local_sum;
         } // end omp critical.
@@ -359,11 +359,11 @@ class GenMetricTree {
 
       left_membership->resize(end - first);
 
-      #pragma omp parallel
+#pragma omp parallel
       {
         int local_left_count = 0;
 
-        #pragma omp for
+#pragma omp for
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
@@ -387,7 +387,7 @@ class GenMetricTree {
         }
 
         // Final reduction.
-        #pragma omp critical
+#pragma omp critical
         {
           (*left_count) += local_left_count;
         } // end of omp critical.

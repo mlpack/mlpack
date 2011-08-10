@@ -216,7 +216,7 @@ int main(int ac, char *av[]) {
     printf("Runtime = %g\n"
            "Calls = %d\n"
            "Time per call = %g us\n",
-           stop - start, count, 1e6 * (stop - start) / count);
+           stop - start, count, 1e6 *(stop - start) / count);
   }
 
   MPI_Finalize();
