@@ -33,14 +33,9 @@ class TableExchange {
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
-    /** @brief The old from new index type used in the exchange
-     *         process.
-     */
-    typedef typename TableType::OldFromNewIndexType OldFromNewIndexType;
-
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
-    typedef core::parallel::RouteRequest<int> SynchRouteRequestType;
+    typedef core::parallel::RouteRequest< std::pair<int, unsigned long int> > MessageRouteRequestType;
 
   private:
 
@@ -53,7 +48,11 @@ class TableExchange {
 
     unsigned int max_stage_;
 
+    std::vector<MessageRouteRequestType> queued_up_completed_computation_;
+
     std::vector<int> received_subtable_list_;
+
+    unsigned long int remaining_computation_;
 
     unsigned int stage_;
 
@@ -96,17 +95,36 @@ class TableExchange {
 
   public:
 
+    void push_completed_computation(
+      boost::mpi::communicator &comm, unsigned long int quantity_in) {
+
+      // Subtract from the self and queue up a route message so that
+      // it can be passed to all the other processes.
+      remaining_computation_ -= quantity_in;
+      if(comm.size() > 1) {
+        if(queued_up_completed_computation_.size() == 0) {
+          MessageRouteRequestType new_route_request;
+          new_route_request.Init(comm);
+          new_route_request.set_object_is_valid_flag(true);
+          new_route_request.object() =
+            std::pair<int, unsigned long int>(comm.rank(), quantity_in);
+          new_route_request.add_destinations(comm);
+          queued_up_completed_computation_.push_back(new_route_request);
+        }
+        else {
+          queued_up_completed_computation_.back().object().second =
+            queued_up_completed_computation_.back().object().second +
+            quantity_in;
+        }
+      }
+    }
+
     /** @brief The default constructor.
      */
     TableExchange() {
       local_table_ = NULL;
+      remaining_computation_ = 0;
       total_num_locks_ = 0;
-    }
-
-    /** @brief Tests whether the cache is empty or not.
-     */
-    bool is_empty() const {
-      return total_num_locks_ == 0;
     }
 
     void LockCache(int cache_id, int num_times) {
@@ -148,7 +166,8 @@ class TableExchange {
      */
     void Init(
       boost::mpi::communicator &world,
-      TableType &local_table_in,
+      DistributedTableType *query_table_in,
+      DistributedTableType *reference_table_in,
       int max_num_work_to_dequeue_per_stage_in) {
 
       // Clean up list is empty.
@@ -162,7 +181,7 @@ class TableExchange {
       max_stage_ = static_cast<unsigned int>(log2(world.size()));
 
       // Set the local table.
-      local_table_ = &local_table_in;
+      local_table_ = reference_table_in->local_table();
 
       // Preallocate the cache.
       subtable_cache_.resize(world.size());
@@ -174,6 +193,19 @@ class TableExchange {
       std::fill(
         subtable_locks_.begin(), subtable_locks_.end(), 0);
       total_num_locks_ = 0;
+
+      // Initialize the amount of remaining computation.
+      unsigned long int total_num_query_points = 0;
+      unsigned long int total_num_reference_points = 0;
+      for(int i = 0; i < world.size(); i++) {
+        total_num_query_points += query_table_in->local_n_entries(i);
+        total_num_reference_points += reference_table_in->local_n_entries(i);
+      }
+
+      // Initialize the remaining computation.
+      remaining_computation_ =
+        static_cast<unsigned long int>(total_num_query_points) *
+        static_cast<unsigned long int>(total_num_reference_points);
     }
 
     /** @brief Issue a set of asynchronous send and receive
