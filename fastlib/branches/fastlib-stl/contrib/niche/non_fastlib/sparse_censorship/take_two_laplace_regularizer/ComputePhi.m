@@ -1,5 +1,5 @@
-function phi = ComputePhi(theta, beta, eta, publishers)
-%function phi = ComputePhi(theta, beta, eta, publishers)
+function phi = ComputePhi(theta, beta, eta, publishers, inds_by_doc)
+%function phi = ComputePhi(theta, beta, eta, publishers, inds_by_doc)
 
 D = length(publishers);
 [V K] = size(beta);
