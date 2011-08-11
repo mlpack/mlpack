@@ -298,7 +298,7 @@ class GeneralBinarySpaceTree {
 
       while(static_cast<int>(queue.size()) +
             static_cast<int>(frontier_nodes->size()) <
-            max_num_nodes) {
+            max_num_nodes && queue.size() > 0) {
         TreeType *dequeued_node = const_cast<TreeType *>(queue.top());
         queue.pop();
         if(dequeued_node->is_leaf()) {
