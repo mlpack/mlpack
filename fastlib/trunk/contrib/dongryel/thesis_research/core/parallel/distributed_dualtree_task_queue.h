@@ -22,7 +22,7 @@ class DistributedDualtreeTaskQueue {
 
     typedef typename DistributedTableType::TreeType TreeType;
 
-    typedef core::parallel::TableExchange<DistributedTableType> TableExchangeType;
+    typedef core::parallel::TableExchange<DistributedTableType, TaskPriorityQueueType> TableExchangeType;
 
   private:
 
@@ -139,10 +139,7 @@ class DistributedDualtreeTaskQueue {
     }
 
     template<typename MetricType>
-    void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
-
-      // Unlock the query subtree.
-      local_query_subtree_locks_[ subtree_index ] = false;
+    void RedistributeAmongCores(const MetricType &metric_in) {
 
       // If the splitting was requested,
       if(split_subtree_after_unlocking_) {
@@ -164,6 +161,13 @@ class DistributedDualtreeTaskQueue {
         }
         split_subtree_after_unlocking_ = false;
       }
+    }
+
+    template<typename MetricType>
+    void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
+
+      // Unlock the query subtree.
+      local_query_subtree_locks_[ subtree_index ] = false;
     }
 
     void Init(
