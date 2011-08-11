@@ -1,7 +1,7 @@
 function [] = sparse_censorship(X, publishers, K)
 %function [] = sparse_censorship(X)
 %
-% X - word counts, stored as sparse (# docs) x (# vocab words)
+% X - word counts, stored as sparse (# vocab words) x (# docs)
 %     since X is sparse, storing the transpose instead may not matter
 % publishers - vector of length # docs where publishers_i indicates
 %              publisher id for document i, for publisher ids in
@@ -24,16 +24,16 @@ function [] = sparse_censorship(X, publishers, K)
 
 % D is the number of documents
 % V is the number of vocabulary words
-[D, V] = size(X);
+[V, D] = size(X);
 P = max(publishers);
 
 % set up some variables for convenience
 inds_by_doc = cell(D,1);
 for d = 1:D
-  inds_by_doc{d} = find(X(d,:)); 
+  inds_by_doc{d} = find(X(:,d)); 
 end
 
-
+counts_by_doc = sum(X);
 
 
 % 1) Initialize parameters
@@ -60,14 +60,31 @@ eta = zeros(V, K, P);
 phi = ComputePhi(theta, beta, eta, publishers, inds_by_doc);
 
 
-
-% Update variational distributions
-
 % Compute expectations needed for model parameter updates
 
 % 2 b) M-step
 
 % Update model parameters
+
+% Update theta
+
+for d = 1:D
+  fprintf('d = %d\n', d);
+  log_sum_exp_theta_d = logsumexp(theta(:,d));
+  % compute gradient and Hessian for minimization problem, excluding l_1 regularization term
+  
+  theta_d_probs = exp(theta(:,d) - repmat(log_sum_exp_theta_d, k, 1));
+  
+  grad = -phi{d}' * X(:,d) ...
+         + counts_by_doc(d) * theta_d_probs;
+  hessian = -counts_by_doc * (diag(theta_d_probs) ...
+                              + theta_d_probs * theta_d_probs');
+  disp(grad);
+  disp(hessian);
+  return;
+end
+
+
 
 % 2 c) Go back to E-Step
 
