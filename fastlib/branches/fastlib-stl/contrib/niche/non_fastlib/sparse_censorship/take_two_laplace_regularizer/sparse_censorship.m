@@ -27,6 +27,15 @@ function [] = sparse_censorship(X, publishers, K)
 [D, V] = size(X);
 P = max(publishers);
 
+% set up some variables for convenience
+inds_by_doc = cell(D,1);
+for d = 1:D
+  inds_by_doc{d} = find(X(d,:)); 
+end
+
+
+
+
 % 1) Initialize parameters
 
 % for now, just set up the sizes for the parameters. coding will happen later
@@ -46,46 +55,10 @@ eta = zeros(V, K, P);
 
 % 2 a) E-Step
 
-%given theta, update variational parameters for z
+% Given (theta, beta, eta), Update the variational parameters for z
 
-% phi_dvk will be sparse
-% may be useful to store non-zero set of word indices for each document
+phi = ComputePhi(theta, beta, eta, publishers);
 
-phi = cell(D, 1); % matlab doesn't do sparse tensors, so we use a
-                  % cell-array of sparse matrices
-for d = 1:D
-  phi{d} = sparse(V, K);
-end
-
-inds_by_doc = cell(D,1);
-for d = 1:D
-  inds_by_doc{d} = find(X(d,:)); 
-end
-
-
-exp_beta = exp(beta);
-exp_eta = exp(eta);
-for d = 1:D
-  p = publishers(d);
-  for k = 1:K
-    sum_exp_beta_k = sum(exp_beta(:,k));
-    sum_exp_eta_k_p = sum(exp_eta(:,k,p));
-    if isnan(sum_exp_beta_k)
-      fprintf('nan at sum_exp_beta_k: d = %d, k = %d\n', d, k);
-    end
-    if isnan(sum_exp_eta_k_p)
-      fprintf('nan at sum_exp_eta_k_p: d = %d, k = %d\n', d, k);
-    end
-    for v = inds_by_doc{d}
-      phi{d}(v,k) = ...
-          (exp_beta(v,k) / sum_exp_beta_k) ...
-          * (exp_eta(v,k,p) / sum_exp_eta_k_p);
-    end
-  end
-  phi{d}(inds_by_doc{d},:) = ...
-      phi{d}(inds_by_doc{d},:) ...
-      ./ repmat(sum(phi{d}(inds_by_doc{d},:), 2), 1, K);
-end
 
 
 % Update variational distributions
