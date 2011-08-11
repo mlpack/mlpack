@@ -307,6 +307,10 @@ class TableExchange {
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send,
       std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids) {
 
+      // At each stage, check whether a core asked for more work. If
+      // so, split a subtree.
+      task_queue_->RedistributeAmongCores(metric_in);
+
       // If the number of processes is only one, then don't bother
       // since there is nothing to exchange.
       if(world.size() == 1) {
@@ -450,10 +454,6 @@ class TableExchange {
 
         // Increment the stage when done.
         stage_++;
-
-        // At each stage, check whether a core asked for more work. If
-        // so, split a subtree.
-        task_queue_->RedistributeAmongCores(metric_in);
       }
 
       // If at the end of phase, wait for others to reach this point.
