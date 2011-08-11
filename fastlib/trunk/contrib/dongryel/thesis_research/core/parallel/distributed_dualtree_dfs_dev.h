@@ -255,7 +255,7 @@ DistributedProblemType >::InitialSetup_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    query_table_->local_table(), omp_get_max_threads(), table_exchange);
+    query_table_->local_table(), 4 * omp_get_max_threads(), table_exchange);
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -391,87 +391,84 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         }
       } // end of the master thread.
 
-      // After enqueing, everyone else tries to dequeue the tasks. The
-      // master only dequeues only if it is the only one running.
-      if(thread_id > 0 || omp_get_num_threads() == 1) {
-        for(int i = 0; i < distributed_tasks.size(); i++) {
+      // After enqueing, everyone else tries to dequeue the tasks.
+      for(int i = 0; i < distributed_tasks.size(); i++) {
 
-          // Index to probe.
-          int probe_index = (thread_id + i) % distributed_tasks.size();
+        // Index to probe.
+        int probe_index = (thread_id + i) % distributed_tasks.size();
 
 #pragma omp critical
-          {
-            distributed_tasks.DequeueTask(probe_index, &found_task, true);
-          } // end of pragma omp critical
+        {
+          distributed_tasks.DequeueTask(probe_index, &found_task, true);
+        } // end of pragma omp critical
 
-          if(found_task.second >= 0) {
-
-            // If something is found, then break.
-            break;
-          }
-        } // end of for-loop.
-
-        // If found something to run on, then call the serial dual-tree
-        // method.
         if(found_task.second >= 0) {
 
-          // Run a sub-dualtree algorithm on the computation object.
-          core::gnp::DualtreeDfs<ProblemType> sub_engine;
-          ProblemType sub_problem;
-          ArgumentType sub_argument;
-          TableType *task_reference_table =
-            found_task.first.reference_table();
-          TreeType *task_starting_rnode =
-            found_task.first.reference_start_node();
-          int task_reference_cache_id = found_task.first.cache_id();
+          // If something is found, then break.
+          break;
+        }
+      } // end of for-loop.
 
-          // Initialize the argument, the problem, and the engine.
-          sub_argument.Init(
-            task_reference_table,
-            query_table_->local_table(), problem_->global());
-          sub_problem.Init(sub_argument, &(problem_->global()));
-          sub_engine.Init(sub_problem);
+      // If found something to run on, then call the serial dual-tree
+      // method.
+      if(found_task.second >= 0) {
 
-          // Set the starting query node.
-          sub_engine.set_query_start_node(found_task.first.query_start_node());
+        // Run a sub-dualtree algorithm on the computation object.
+        core::gnp::DualtreeDfs<ProblemType> sub_engine;
+        ProblemType sub_problem;
+        ArgumentType sub_argument;
+        TableType *task_reference_table =
+          found_task.first.reference_table();
+        TreeType *task_starting_rnode =
+          found_task.first.reference_start_node();
+        int task_reference_cache_id = found_task.first.cache_id();
 
-          // Set the starting reference node.
-          sub_engine.set_reference_start_node(task_starting_rnode);
+        // Initialize the argument, the problem, and the engine.
+        sub_argument.Init(
+          task_reference_table,
+          query_table_->local_table(), problem_->global());
+        sub_problem.Init(sub_argument, &(problem_->global()));
+        sub_engine.Init(sub_problem);
 
-          // Fire away the computation.
-          sub_engine.Compute(metric, query_results, false);
+        // Set the starting query node.
+        sub_engine.set_query_start_node(found_task.first.query_start_node());
 
-#pragma omp critical
-          {
-            num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
-            num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
+        // Set the starting reference node.
+        sub_engine.set_reference_start_node(task_starting_rnode);
 
-            // Push in the completed amount of work.
-            unsigned long int completed_work =
-              static_cast<unsigned long int>(
-                found_task.first.query_start_node()->count()) *
-              static_cast<unsigned long int>(task_starting_rnode->count());
-            table_exchange.push_completed_computation(
-              * world_, completed_work);
-
-            // After finishing, the lock on the query subtree is released.
-            distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
-
-            // Release the reference subtable.
-            table_exchange.ReleaseCache(task_reference_cache_id, 1);
-
-          } // end of a critical section.
-
-        } // end of finding a task.
-        else {
+        // Fire away the computation.
+        sub_engine.Compute(metric, query_results, false);
 
 #pragma omp critical
-          {
-            // Otherwise, ask other threads to share the work.
-            distributed_tasks.set_split_subtree_flag();
-          }
-        } // end of failing to find a task.
-      } // end of attempting to deque a task.
+        {
+          num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
+          num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
+
+          // Push in the completed amount of work.
+          unsigned long int completed_work =
+            static_cast<unsigned long int>(
+              found_task.first.query_start_node()->count()) *
+            static_cast<unsigned long int>(task_starting_rnode->count());
+          table_exchange.push_completed_computation(
+            * world_, completed_work);
+
+          // After finishing, the lock on the query subtree is released.
+          distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
+
+          // Release the reference subtable.
+          table_exchange.ReleaseCache(task_reference_cache_id, 1);
+
+        } // end of a critical section.
+
+      } // end of finding a task.
+      else {
+
+#pragma omp critical
+        {
+          // Otherwise, ask other threads to share the work.
+          distributed_tasks.set_split_subtree_flag();
+        }
+      } // end of failing to find a task.
 
       // Quit if all work is done.
 #pragma omp critical

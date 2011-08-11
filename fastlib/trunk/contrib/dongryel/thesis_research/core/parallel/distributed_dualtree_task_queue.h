@@ -120,6 +120,10 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    int num_remaining_tasks() const {
+      return num_remaining_tasks_;
+    }
+
     bool is_empty() const {
       return num_remaining_tasks_ == 0;
     }
