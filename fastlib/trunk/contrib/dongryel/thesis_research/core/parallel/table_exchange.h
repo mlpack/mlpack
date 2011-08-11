@@ -301,11 +301,17 @@ class TableExchange {
      */
     template<typename MetricType>
     void SendReceive(
+      int thread_id,
       const MetricType &metric_in,
       boost::mpi::communicator &world,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send,
       std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids) {
+
+      // If not the master thread, return.
+      if(thread_id > 0) {
+        return;
+      }
 
       // At each stage, check whether a core asked for more work. If
       // so, split a subtree.
