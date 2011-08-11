@@ -36,52 +36,6 @@ int DistributedDualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
 }
 
 template<typename DistributedProblemType>
-template<typename MetricType>
-void DistributedDualtreeDfs <
-DistributedProblemType >::GenerateTasks_(
-  int thread_id,
-  const MetricType &metric_in,
-  core::parallel::TableExchange <
-  DistributedTableType, FinePriorityQueueType > &table_exchange,
-  const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
-  core::parallel::DistributedDualtreeTaskQueue <
-  DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
-
-  if(thread_id > 0) {
-    return;
-  }
-
-  for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
-
-    // Find the reference process ID and grab its subtable.
-    int reference_begin = received_subtable_ids[i].get<1>();
-    int reference_count = received_subtable_ids[i].get<2>();
-    int cache_id = received_subtable_ids[i].get<3>();
-    SubTableType *frontier_reference_subtable =
-      table_exchange.FindSubTable(cache_id);
-
-    // Find the table and the starting reference node.
-    TableType *frontier_reference_table =
-      (frontier_reference_subtable != NULL) ?
-      frontier_reference_subtable->table() : reference_table_->local_table();
-    TreeType *reference_starting_node =
-      (frontier_reference_subtable != NULL) ?
-      frontier_reference_subtable->table()->get_tree() :
-      reference_table_->local_table()->
-      get_tree()->FindByBeginCount(
-        reference_begin, reference_count);
-    boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-      frontier_reference_table, reference_starting_node, cache_id);
-
-    // For each query subtree, create a new task.
-    for(int j = 0; j < distributed_tasks->size(); j++) {
-      distributed_tasks->PushTask(metric_in, j, reference_table_node_pair);
-    }
-
-  } //end of looping over each reference subtree.
-}
-
-template<typename DistributedProblemType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::HashSendList_(
   const std::pair<int, int> &local_rnode_id,
@@ -293,9 +247,7 @@ DistributedProblemType >::InitialSetup_(
 
   // Fill out the initial task consisting of the reference trees on
   // the same process.
-  GenerateTasks_(
-    0,
-    metric, table_exchange, received_subtable_ids, distributed_tasks);
+  table_exchange.GenerateTasks(metric, received_subtable_ids);
 
   // Do an all to all to let each participating query process its
   // initial frontier.
@@ -383,16 +335,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
 #pragma omp critical
       {
-        std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
         table_exchange.SendReceive(
           thread_id,
-          metric, *world_, hashed_essential_reference_subtrees_to_send,
-          &received_subtable_ids);
-
-        // Generate the list of work and put it into the queue.
-        GenerateTasks_(
-          thread_id,
-          metric, table_exchange, received_subtable_ids, &distributed_tasks);
+          metric, *world_, hashed_essential_reference_subtrees_to_send);
       } // end of the critical section.
 
       // After enqueing, everyone else tries to dequeue the tasks.
