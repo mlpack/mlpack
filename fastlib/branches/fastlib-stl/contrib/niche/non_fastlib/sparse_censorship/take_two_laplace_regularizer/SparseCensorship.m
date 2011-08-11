@@ -1,5 +1,5 @@
-function [] = sparse_censorship(X, publishers, K, lambda)
-%function [] = sparse_censorship(X)
+function [] = SparseCensorship(X, publishers, K, lambda)
+%function [] = SparseCensorship(X, publishers, K, lambda)
 %
 % X - word counts, stored as sparse (# vocab words) x (# docs)
 %     since X is sparse, storing the transpose instead may not matter
