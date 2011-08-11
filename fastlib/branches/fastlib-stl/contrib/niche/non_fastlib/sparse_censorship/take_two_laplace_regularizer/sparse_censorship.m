@@ -57,7 +57,7 @@ eta = zeros(V, K, P);
 
 % Given (theta, beta, eta), Update the variational parameters for z
 
-phi = ComputePhi(theta, beta, eta, publishers);
+phi = ComputePhi(theta, beta, eta, publishers, inds_by_doc);
 
 
 
