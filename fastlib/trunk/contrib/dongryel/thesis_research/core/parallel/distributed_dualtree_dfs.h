@@ -167,6 +167,7 @@ class DistributedDualtreeDfs {
 
     template<typename MetricType>
     void GenerateTasks_(
+      int thread_id,
       const MetricType &metric_in,
       core::parallel::TableExchange <
       DistributedTableType, FinePriorityQueueType > &table_exchange,

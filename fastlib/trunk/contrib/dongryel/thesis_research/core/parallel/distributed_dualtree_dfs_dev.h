@@ -39,12 +39,17 @@ template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::GenerateTasks_(
+  int thread_id,
   const MetricType &metric_in,
   core::parallel::TableExchange <
   DistributedTableType, FinePriorityQueueType > &table_exchange,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
+
+  if(thread_id > 0) {
+    return;
+  }
 
   for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
 
@@ -289,6 +294,7 @@ DistributedProblemType >::InitialSetup_(
   // Fill out the initial task consisting of the reference trees on
   // the same process.
   GenerateTasks_(
+    0,
     metric, table_exchange, received_subtable_ids, distributed_tasks);
 
   // Do an all to all to let each participating query process its
@@ -375,21 +381,19 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       std::pair<FineFrontierObjectType, int> found_task;
       found_task.second = -1;
 
-      // The master thread routine.
-      if(thread_id == 0) {
-
 #pragma omp critical
-        {
-          std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
-          table_exchange.SendReceive(
-            metric, *world_, hashed_essential_reference_subtrees_to_send,
-            &received_subtable_ids);
+      {
+        std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
+        table_exchange.SendReceive(
+          thread_id,
+          metric, *world_, hashed_essential_reference_subtrees_to_send,
+          &received_subtable_ids);
 
-          // Generate the list of work and put it into the queue.
-          GenerateTasks_(
-            metric, table_exchange, received_subtable_ids, &distributed_tasks);
-        }
-      } // end of the master thread.
+        // Generate the list of work and put it into the queue.
+        GenerateTasks_(
+          thread_id,
+          metric, table_exchange, received_subtable_ids, &distributed_tasks);
+      } // end of the critical section.
 
       // After enqueing, everyone else tries to dequeue the tasks.
       for(int i = 0; i < distributed_tasks.size(); i++) {
