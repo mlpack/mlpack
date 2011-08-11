@@ -319,9 +319,8 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   // The initial gradient value.
   function_.Gradient(iterate, gradient);
 
-  // The boolean flag telling whether the line search succeeded at
-  // least once.
-  bool line_search_successful_at_least_once = false;
+  // The flag denoting whether or not the optimization has been successful.
+  bool success = false;
 
   // The main optimization loop.
   for(int it_num = 0; optimize_until_convergence || it_num < num_iterations;
@@ -331,6 +330,7 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
 
     // Break when the norm of the gradient becomes too small.
     if(GradientNormTooSmall_(gradient)) {
+      success = true; // We have found the minimum.
       IO::Info << "L-BFGS gradient norm too small (terminating)." << std::endl;
       break;
     }
@@ -348,20 +348,18 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
 
     // Do a line search and take a step.
     double step_size = 1.0;
-    bool search_is_success = LineSearch_(function_value, iterate, gradient,
-        search_direction, step_size);
+    success = LineSearch_(function_value, iterate, gradient, search_direction,
+        step_size);
 
-    if(!search_is_success)
-      break;
-
-    line_search_successful_at_least_once = search_is_success;
+    if(!success)
+      break; // The line search failed; nothing else to try.
 
     // Overwrite an old basis set.
     UpdateBasisSet_(it_num, iterate, old_iterate, gradient, old_gradient);
 
   } // end of the optimization loop.
 
-  return line_search_successful_at_least_once;
+  return success;
 }
 
 }; // namespace optimization
