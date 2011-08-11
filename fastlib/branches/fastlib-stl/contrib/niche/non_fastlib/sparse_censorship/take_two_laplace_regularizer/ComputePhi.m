@@ -2,7 +2,7 @@ function phi = ComputePhi(theta, beta, eta, publishers)
 %function phi = ComputePhi(theta, beta, eta, publishers)
 
 D = length(publishers);
-[V K] = Size(beta, 1);
+[V K] = size(beta, 1);
 
 phi = cell(D, 1); % matlab doesn't do sparse tensors, so we use a
                   % cell-array of sparse matrices
