@@ -166,22 +166,9 @@ class DistributedDualtreeDfs {
       std::vector<unsigned long int> *extrinsic_prunes);
 
     template<typename MetricType>
-    void GenerateTasks_(
-      int thread_id,
-      const MetricType &metric_in,
-      core::parallel::TableExchange <
-      DistributedTableType, FinePriorityQueueType > &table_exchange,
-      const std::vector <
-      boost::tuple<int, int, int, int> > &received_subtable_ids,
-      core::parallel::DistributedDualtreeTaskQueue <
-      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
-
-    template<typename MetricType>
     void InitialSetup_(
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results,
-      core::parallel::TableExchange <
-      DistributedTableType, FinePriorityQueueType > &table_exchange,
       std::vector< std::vector< std::pair<int, int> > > *
       essential_reference_subtrees_to_send,
       std::vector< std::vector< core::math::Range> > *send_priorities,

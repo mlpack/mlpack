@@ -18,7 +18,6 @@
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/gnp/dualtree_dfs_dev.h"
 #include "core/parallel/message_tag.h"
-#include "core/parallel/table_exchange.h"
 #include "core/table/table.h"
 #include "core/table/memory_mapped_file.h"
 
@@ -196,8 +195,6 @@ void DistributedDualtreeDfs <
 DistributedProblemType >::InitialSetup_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results,
-  core::parallel::TableExchange <
-  DistributedTableType,  FinePriorityQueueType > &table_exchange,
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
@@ -214,7 +211,7 @@ DistributedProblemType >::InitialSetup_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    query_table_->local_table(), 4 * omp_get_max_threads(), table_exchange);
+    *world_, query_table_, reference_table_, 4 * omp_get_max_threads());
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -247,7 +244,7 @@ DistributedProblemType >::InitialSetup_(
 
   // Fill out the initial task consisting of the reference trees on
   // the same process.
-  table_exchange.GenerateTasks(metric, received_subtable_ids);
+  distributed_tasks->GenerateTasks(metric, received_subtable_ids);
 
   // Do an all to all to let each participating query process its
   // initial frontier.
@@ -274,7 +271,7 @@ DistributedProblemType >::InitialSetup_(
   unsigned long int initial_completed_work =
     static_cast<unsigned long int>(query_table_->local_table()->n_entries()) *
     initial_pruned;
-  table_exchange.push_completed_computation(
+  distributed_tasks->push_completed_computation(
     *world_, initial_completed_work);
 }
 
@@ -298,19 +295,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType, FinePriorityQueueType > distributed_tasks;
 
-  // An abstract way of collaborative subtable exchanges.
-  core::parallel::TableExchange <
-  DistributedTableType, FinePriorityQueueType > table_exchange;
-  table_exchange.Init(
-    *world_, query_table_, reference_table_, &distributed_tasks);
-
   // The number of reference subtrees to receive and to send in total.
   std::vector <
   core::parallel::RouteRequest<SubTableType> >
   hashed_essential_reference_subtrees_to_send;
   InitialSetup_(
-    metric, query_results, table_exchange,
-    &reference_subtrees_to_send, &send_priorities,
+    metric, query_results, &reference_subtrees_to_send, &send_priorities,
     &hashed_essential_reference_subtrees_to_send,
     &reference_subtrees_to_receive,
     &receive_priorities,
@@ -335,7 +325,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
 #pragma omp critical
       {
-        table_exchange.SendReceive(
+        distributed_tasks.SendReceive(
           thread_id,
           metric, *world_, hashed_essential_reference_subtrees_to_send);
       } // end of the critical section.
@@ -398,14 +388,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
             static_cast<unsigned long int>(
               found_task.first.query_start_node()->count()) *
             static_cast<unsigned long int>(task_starting_rnode->count());
-          table_exchange.push_completed_computation(
+          distributed_tasks.push_completed_computation(
             * world_, completed_work);
 
           // After finishing, the lock on the query subtree is released.
           distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
           // Release the reference subtable.
-          table_exchange.ReleaseCache(task_reference_cache_id, 1);
+          distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
 
         } // end of a critical section.
 
@@ -422,8 +412,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       // Quit if all work is done.
 #pragma omp critical
       {
-        work_left_to_do = !(table_exchange.can_terminate() &&
-                            distributed_tasks.is_empty());
+        work_left_to_do = !(distributed_tasks.can_terminate());
       } // end of a critical section.
     }
     while(work_left_to_do);

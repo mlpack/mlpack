@@ -18,9 +18,17 @@ template<typename DistributedTableType, typename TaskPriorityQueueType>
 class DistributedDualtreeTaskQueue {
   public:
 
+    /** @brief The table type used in the exchange process.
+     */
     typedef typename DistributedTableType::TableType TableType;
 
-    typedef typename DistributedTableType::TreeType TreeType;
+    typedef typename TableType::TreeType TreeType;
+
+    /** @brief The subtable type used in the exchange process.
+     */
+    typedef core::table::SubTable<TableType> SubTableType;
+
+    typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
     typedef core::parallel::TableExchange<DistributedTableType, TaskPriorityQueueType> TableExchangeType;
 
@@ -34,7 +42,7 @@ class DistributedDualtreeTaskQueue {
 
     bool split_subtree_after_unlocking_;
 
-    TableExchangeType *table_exchange_;
+    TableExchangeType table_exchange_;
 
     int num_remaining_tasks_;
 
@@ -96,7 +104,7 @@ class DistributedDualtreeTaskQueue {
 
           // Lock three more times since the reference side is also
           // split.
-          table_exchange_->LockCache(prev_tasks[i].cache_id(), 3);
+          table_exchange_.LockCache(prev_tasks[i].cache_id(), 3);
         }
         else {
 
@@ -109,7 +117,7 @@ class DistributedDualtreeTaskQueue {
             reference_table_node_pair);
 
           // Lock only one time since only the query side is split.
-          table_exchange_->LockCache(prev_tasks[i].cache_id(), 1);
+          table_exchange_.LockCache(prev_tasks[i].cache_id(), 1);
         }
       }
     }
@@ -119,6 +127,66 @@ class DistributedDualtreeTaskQueue {
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
   public:
+
+    void ReleaseCache(int cache_id, int num_times) {
+      table_exchange_.ReleaseCache(cache_id, num_times);
+    }
+
+    template<typename MetricType>
+    void SendReceive(
+      int thread_id,
+      const MetricType &metric_in,
+      boost::mpi::communicator &world,
+      std::vector <
+      SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+      table_exchange_.SendReceive(
+        thread_id, metric_in, world,
+        hashed_essential_reference_subtrees_to_send);
+    }
+
+    template<typename MetricType>
+    void GenerateTasks(
+      const MetricType &metric_in,
+      const std::vector <
+      boost::tuple<int, int, int, int> > &received_subtable_ids) {
+      for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
+
+        // Find the reference process ID and grab its subtable.
+        int reference_begin = received_subtable_ids[i].get<1>();
+        int reference_count = received_subtable_ids[i].get<2>();
+        int cache_id = received_subtable_ids[i].get<3>();
+        SubTableType *frontier_reference_subtable =
+          table_exchange_.FindSubTable(cache_id);
+
+        // Find the table and the starting reference node.
+        TableType *frontier_reference_table =
+          (frontier_reference_subtable != NULL) ?
+          frontier_reference_subtable->table() :
+          table_exchange_.local_table();
+        TreeType *reference_starting_node =
+          (frontier_reference_subtable != NULL) ?
+          frontier_reference_subtable->table()->get_tree() :
+          table_exchange_.FindByBeginCount(
+            reference_begin, reference_count);
+        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
+          frontier_reference_table, reference_starting_node, cache_id);
+
+        // For each query subtree, create a new task.
+        for(int j = 0; j < this->size(); j++) {
+          this->PushTask(metric_in, j, reference_table_node_pair);
+        }
+
+      } //end of looping over each reference subtree.
+    }
+
+    bool can_terminate() const {
+      return table_exchange_.can_terminate();
+    }
+
+    void push_completed_computation(
+      boost::mpi::communicator &comm, unsigned long int quantity_in) {
+      table_exchange_.push_completed_computation(comm, quantity_in);
+    }
 
     int num_remaining_tasks() const {
       return num_remaining_tasks_;
@@ -134,7 +202,6 @@ class DistributedDualtreeTaskQueue {
 
     DistributedDualtreeTaskQueue() {
       num_remaining_tasks_ = 0;
-      table_exchange_ = NULL;
       split_subtree_after_unlocking_ = false;
     }
 
@@ -175,12 +242,14 @@ class DistributedDualtreeTaskQueue {
     }
 
     void Init(
-      TableType *local_query_table, int num_threads_in,
-      TableExchangeType &table_exchange_in) {
+      boost::mpi::communicator &world,
+      DistributedTableType *query_table_in,
+      DistributedTableType *reference_table_in,
+      int num_threads_in) {
 
       // For each process, break up the local query tree into a list of
       // subtree query lists.
-      local_query_table->get_frontier_nodes_bounded_by_number(
+      query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
         num_threads_in, &local_query_subtrees_);
 
       // Initialize the other member variables.
@@ -191,8 +260,8 @@ class DistributedDualtreeTaskQueue {
         local_query_subtree_locks_[i] = false;
       }
 
-      // Pointer to the exchange mechanism.
-      table_exchange_ = &table_exchange_in;
+      // Initialize the table exchange.
+      table_exchange_.Init(world, query_table_in, reference_table_in, this);
     }
 
     template<typename MetricType>

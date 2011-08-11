@@ -171,38 +171,8 @@ class TableExchange {
 
   public:
 
-    template<typename MetricType>
-    void GenerateTasks(
-      const MetricType &metric_in,
-      const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids) {
-
-      for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
-
-        // Find the reference process ID and grab its subtable.
-        int reference_begin = received_subtable_ids[i].get<1>();
-        int reference_count = received_subtable_ids[i].get<2>();
-        int cache_id = received_subtable_ids[i].get<3>();
-        SubTableType *frontier_reference_subtable =
-          this->FindSubTable(cache_id);
-
-        // Find the table and the starting reference node.
-        TableType *frontier_reference_table =
-          (frontier_reference_subtable != NULL) ?
-          frontier_reference_subtable->table() : local_table_;
-        TreeType *reference_starting_node =
-          (frontier_reference_subtable != NULL) ?
-          frontier_reference_subtable->table()->get_tree() :
-          local_table_->get_tree()->FindByBeginCount(
-            reference_begin, reference_count);
-        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-          frontier_reference_table, reference_starting_node, cache_id);
-
-        // For each query subtree, create a new task.
-        for(int j = 0; j < task_queue_->size(); j++) {
-          task_queue_->PushTask(metric_in, j, reference_table_node_pair);
-        }
-
-      } //end of looping over each reference subtree.
+    TableType *local_table() {
+      return local_table_;
     }
 
     bool can_terminate() const {
@@ -241,6 +211,10 @@ class TableExchange {
       remaining_local_computation_ = 0;
       task_queue_ = NULL;
       total_num_locks_ = 0;
+    }
+
+    TreeType *FindByBeginCount(int begin_in, int count_in) {
+      return local_table_->get_tree()->FindByBeginCount(begin_in, count_in);
     }
 
     void LockCache(int cache_id, int num_times) {
@@ -497,7 +471,7 @@ class TableExchange {
           message_send_request_.begin() + num_subtables_to_exchange);
 
         // Generate more tasks.
-        this->GenerateTasks(metric_in, received_subtable_ids);
+        task_queue_->GenerateTasks(metric_in, received_subtable_ids);
 
         // Increment the stage when done.
         stage_++;
