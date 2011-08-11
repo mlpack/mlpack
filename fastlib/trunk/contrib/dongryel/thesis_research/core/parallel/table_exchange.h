@@ -9,6 +9,7 @@
 #define CORE_PARALLEL_TABLE_EXCHANGE_H
 
 #include <boost/mpi.hpp>
+#include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/message_tag.h"
 #include "core/parallel/route_request.h"
 #include "core/table/memory_mapped_file.h"
@@ -18,10 +19,13 @@
 namespace core {
 namespace parallel {
 
+template<typename DistributedTableType, typename TaskPriorityQueueType>
+class DistributedDualtreeTaskQueue;
+
 /** @brief A class for performing an all-to-some exchange of subtrees
  *         among MPI processes.
  */
-template<typename DistributedTableType>
+template<typename DistributedTableType, typename TaskPriorityQueueType>
 class TableExchange {
   public:
 
@@ -36,6 +40,8 @@ class TableExchange {
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
     typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
+
+    typedef core::parallel::DistributedDualtreeTaskQueue< DistributedTableType, TaskPriorityQueueType > TaskQueueType;
 
     class MessageType {
       private:
@@ -130,6 +136,8 @@ class TableExchange {
 
     std::vector< int > message_locks_;
 
+    TaskQueueType *task_queue_;
+
     int total_num_locks_;
 
   private:
@@ -195,6 +203,7 @@ class TableExchange {
       local_table_ = NULL;
       remaining_global_computation_ = 0;
       remaining_local_computation_ = 0;
+      task_queue_ = NULL;
       total_num_locks_ = 0;
     }
 
@@ -239,7 +248,10 @@ class TableExchange {
       boost::mpi::communicator &world,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
-      int max_num_work_to_dequeue_per_stage_in) {
+      TaskQueueType *task_queue_in) {
+
+      // Set the pointer to the task queue.
+      task_queue_ = task_queue_in;
 
       // Clean up list is empty.
       cleanup_list_.resize(0);
@@ -287,11 +299,12 @@ class TableExchange {
      *
      *  @return received_subtables The list of received subtables.
      */
+    template<typename MetricType>
     void SendReceive(
+      const MetricType &metric_in,
       boost::mpi::communicator &world,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send,
-      int num_local_query_trees,
       std::vector< boost::tuple<int, int, int, int> > *received_subtable_ids) {
 
       // If the number of processes is only one, then don't bother
@@ -408,7 +421,7 @@ class TableExchange {
 
             if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
               if(route_request.subtable_route().object_is_valid()) {
-                this->LockCache(cache_id, num_local_query_trees);
+                this->LockCache(cache_id, task_queue_->size());
                 received_subtable_ids->push_back(
                   boost::make_tuple(
                     route_request.subtable_route().object().table()->rank(),
@@ -437,6 +450,10 @@ class TableExchange {
 
         // Increment the stage when done.
         stage_++;
+
+        // At each stage, check whether a core asked for more work. If
+        // so, split a subtree.
+        task_queue_->RedistributeAmongCores(metric_in);
       }
 
       // If at the end of phase, wait for others to reach this point.

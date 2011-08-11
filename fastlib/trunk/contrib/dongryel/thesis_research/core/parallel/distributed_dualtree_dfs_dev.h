@@ -40,7 +40,8 @@ template<typename MetricType>
 void DistributedDualtreeDfs <
 DistributedProblemType >::GenerateTasks_(
   const MetricType &metric_in,
-  core::parallel::TableExchange < DistributedTableType > &table_exchange,
+  core::parallel::TableExchange <
+  DistributedTableType, FinePriorityQueueType > &table_exchange,
   const std::vector< boost::tuple<int, int, int, int> > &received_subtable_ids,
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
@@ -236,7 +237,8 @@ void DistributedDualtreeDfs <
 DistributedProblemType >::InitialSetup_(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results,
-  core::parallel::TableExchange < DistributedTableType > &table_exchange,
+  core::parallel::TableExchange <
+  DistributedTableType,  FinePriorityQueueType > &table_exchange,
   std::vector< std::vector< std::pair<int, int> > > *
   essential_reference_subtrees_to_send,
   std::vector< std::vector< core::math::Range > > *send_priorities,
@@ -339,10 +341,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   DistributedTableType, FinePriorityQueueType > distributed_tasks;
 
   // An abstract way of collaborative subtable exchanges.
-  core::parallel::TableExchange < DistributedTableType > table_exchange;
+  core::parallel::TableExchange <
+  DistributedTableType, FinePriorityQueueType > table_exchange;
   table_exchange.Init(
-    *world_, query_table_, reference_table_,
-    max_num_work_to_dequeue_per_stage_);
+    *world_, query_table_, reference_table_, &distributed_tasks);
 
   // The number of reference subtrees to receive and to send in total.
   std::vector <
@@ -380,8 +382,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
           table_exchange.SendReceive(
-            *world_, hashed_essential_reference_subtrees_to_send,
-            distributed_tasks.size(), &received_subtable_ids);
+            metric, *world_, hashed_essential_reference_subtrees_to_send,
+            &received_subtable_ids);
 
           // Generate the list of work and put it into the queue.
           GenerateTasks_(
@@ -465,11 +467,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
 #pragma omp critical
           {
-            // Otherwise, ask other threads to share the
-            // work. Currently, disabled for distributed setting.
-            if(world_->size() == 1) {
-              distributed_tasks.set_split_subtree_flag();
-            }
+            // Otherwise, ask other threads to share the work.
+            distributed_tasks.set_split_subtree_flag();
           }
         } // end of failing to find a task.
       } // end of attempting to deque a task.
@@ -579,7 +578,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
 
   // Figure out each process's work using the global tree. Currently
   // only supports P = power of two. Fix this later.
-  if(!(world_->rank() ^(world_->rank() - 1))) {
+  if(!(world_->size() ^(world_->size() - 1))) {
     std::cerr << "Re-run with the number of processes equal to a power of "
               << "two!\n";
     return;
