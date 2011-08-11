@@ -1,4 +1,4 @@
-function [] = sparse_censorship(X, publishers, K)
+function [] = sparse_censorship(X, publishers, K, lambda)
 %function [] = sparse_censorship(X)
 %
 % X - word counts, stored as sparse (# vocab words) x (# docs)
@@ -6,6 +6,7 @@ function [] = sparse_censorship(X, publishers, K)
 % publishers - vector of length # docs where publishers_i indicates
 %              publisher id for document i, for publisher ids in
 %              [P] (each publisher id must be used at least once)
+% lambda - regularization parameter for l1-norm penalty on theta
 %
 % We use Empirical Bayes to estimate theta, beta, and eta.
 % [Note: Why Empirical Bayes for theta? So that we get a sparse
@@ -70,18 +71,11 @@ phi = ComputePhi(theta, beta, eta, publishers, inds_by_doc);
 
 for d = 1:D
   fprintf('d = %d\n', d);
-  log_sum_exp_theta_d = logsumexp(theta(:,d));
-  % compute gradient and Hessian for minimization problem, excluding l_1 regularization term
-  
-  theta_d_probs = exp(theta(:,d) - repmat(log_sum_exp_theta_d, k, 1));
-  
-  grad = -phi{d}' * X(:,d) ...
-         + counts_by_doc(d) * theta_d_probs;
-  hessian = -counts_by_doc * (diag(theta_d_probs) ...
-                              + theta_d_probs * theta_d_probs');
-  disp(grad);
-  disp(hessian);
-  return;
+  % cal optimizer
+  new_theta_d = ...
+      L1GeneralProjection(@(theta_d) ThetaObjective(theta_d, phi{d}, X(:,d), ...
+                                                    counts_by_doc(d)), ...
+                          theta(:,d), lambda); % also, can add an optional parameter for options
 end
 
 
