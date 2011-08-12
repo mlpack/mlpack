@@ -419,7 +419,6 @@ class TableExchange {
 
             if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
               if(route_request.subtable_route().object_is_valid()) {
-                this->LockCache(cache_id, task_queue_->size());
                 received_subtable_ids.push_back(
                   boost::make_tuple(
                     route_request.subtable_route().object().table()->rank(),
