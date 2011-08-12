@@ -49,7 +49,7 @@ endfunction()
 ## -----------------------------------------------------------------------------
 ## Check for the header files
 
-find_path (ARMADILLO_INCLUDES arma_ostream_proto.hpp
+find_path (ARMADILLO_INCLUDES Mat_meat.hpp
   PATHS 
   /usr/include
   /usr/local/include
