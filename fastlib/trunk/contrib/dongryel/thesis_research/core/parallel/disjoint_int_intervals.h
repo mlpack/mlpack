@@ -56,35 +56,41 @@ class DisjointIntIntervals {
       intervals_.clear();
     }
 
+    /** @brief Returns true if the test interval is not among the ones
+     *         already available.
+     */
     bool Insert(const ValueType &test_interval) {
       std::pair <
-      MapType::iterator,
-              MapType::iterator > intersecting_list =
-                intervals_.equal_range(test_interval);
-
+      typename MapType::iterator,
+               typename MapType::iterator > intersecting_list =
+                 intervals_.equal_range(test_interval);
+      bool does_not_exist = true;
       if(intersecting_list.first != intersecting_list.second) {
 
         // Merge with every interval that intersects the incoming one.
-        MapType::iterator current_it = intersecting_list.first;
+        typename MapType::iterator current_it = intersecting_list.first;
         std::pair<int, int> merged = test_interval;
         do {
+          if(current_it->first.first <= test_interval.first &&
+              test_interval.second <= current_it->first.second) {
+            does_not_exist = false;
+          }
           Merge_(current_it->first, &merged);
-          MapType::iterator next_it = current_it;
+          typename MapType::iterator next_it = current_it;
           next_it++;
           intervals_.erase(current_it);
           current_it = next_it;
         }
         while(current_it != intersecting_list.second);
         intervals_.insert(std::pair< KeyType, ValueType>(merged, merged));
-        return true;
       }
       else {
 
         // Otherwise, insert the incoming one.
         intervals_.insert(
           std::pair<KeyType, ValueType>(test_interval, test_interval));
-        return false;
       }
+      return does_not_exist;
     }
 };
 }
