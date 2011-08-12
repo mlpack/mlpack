@@ -30,7 +30,8 @@ class DistributedDualtreeTaskQueue {
 
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
-    typedef core::parallel::TableExchange<DistributedTableType, TaskPriorityQueueType> TableExchangeType;
+    typedef core::parallel::TableExchange <
+    DistributedTableType, TaskPriorityQueueType > TableExchangeType;
 
   private:
 
