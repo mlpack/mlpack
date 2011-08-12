@@ -200,6 +200,8 @@ class TableExchange {
      */
     TableExchange() {
       local_table_ = NULL;
+      max_stage_ = 0;
+      stage_ = 0;
       task_queue_ = NULL;
       total_num_locks_ = 0;
     }
