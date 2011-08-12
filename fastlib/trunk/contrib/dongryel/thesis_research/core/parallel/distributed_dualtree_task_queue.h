@@ -80,7 +80,7 @@ class DistributedDualtreeTaskQueue {
         this->DequeueTask(subtree_index, &task_pair, false);
         prev_tasks.push_back(task_pair.first);
       }
-      tasks_.resize(tasks_.size() + 1);
+      tasks_.push_back(new TaskPriorityQueueType());
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
 
         // If the previous query node is equal to the reference node,
