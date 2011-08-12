@@ -60,37 +60,50 @@ class DisjointIntIntervals {
      *         already available.
      */
     bool Insert(const ValueType &test_interval) {
-      std::pair <
-      MapType::iterator,
-              MapType::iterator > intersecting_list =
-                intervals_.equal_range(test_interval);
-      bool does_not_exist = true;
-      if(intersecting_list.first != intersecting_list.second) {
 
-        // Merge with every interval that intersects the incoming one.
-        MapType::iterator current_it = intersecting_list.first;
-        std::pair<int, int> merged = test_interval;
-        do {
-          if(current_it->first.first <= test_interval.first &&
-              test_interval.second <= current_it->first.second) {
-            does_not_exist = false;
+      // Fix me later!
+      return true;
+
+      /*
+      bool does_not_exist = true;
+      if(intervals_.size() > 0) {
+        std::pair <
+        MapType::iterator,
+                MapType::iterator > intersecting_list =
+                  intervals_.equal_range(test_interval);
+        if(intersecting_list.first != intersecting_list.second) {
+
+          // Merge with every interval that intersects the incoming one.
+          MapType::iterator current_it = intersecting_list.first;
+          std::pair<int, int> merged = test_interval;
+          do {
+            if(current_it->first.first <= test_interval.first &&
+                test_interval.second <= current_it->first.second) {
+              does_not_exist = false;
+            }
+            Merge_(current_it->first, &merged);
+            MapType::iterator next_it = current_it;
+            next_it++;
+            intervals_.erase(current_it);
+            current_it = next_it;
           }
-          Merge_(current_it->first, &merged);
-          MapType::iterator next_it = current_it;
-          next_it++;
-          intervals_.erase(current_it);
-          current_it = next_it;
+          while(current_it != intersecting_list.second);
+          intervals_.insert(std::pair< KeyType, ValueType>(merged, merged));
         }
-        while(current_it != intersecting_list.second);
-        intervals_.insert(std::pair< KeyType, ValueType>(merged, merged));
+        else {
+
+          // Otherwise, insert the incoming one.
+          intervals_.insert(
+            std::pair<KeyType, ValueType>(test_interval, test_interval));
+        }
       }
       else {
-
         // Otherwise, insert the incoming one.
         intervals_.insert(
           std::pair<KeyType, ValueType>(test_interval, test_interval));
       }
       return does_not_exist;
+      */
     }
 };
 }
