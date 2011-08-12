@@ -120,15 +120,11 @@ class TableExchange {
      */
     TableType *local_table_;
 
-    unsigned long int remaining_local_computation_;
-
     unsigned int max_stage_;
 
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
 
     std::vector<int> active_message_list_;
-
-    unsigned long int remaining_global_computation_;
 
     unsigned int stage_;
 
@@ -176,18 +172,15 @@ class TableExchange {
     }
 
     bool can_terminate() const {
-      return remaining_global_computation_ == 0 &&
-             queued_up_completed_computation_.size() == 0 &&
+      return queued_up_completed_computation_.size() == 0 &&
              active_message_list_.size() == 0;
     }
 
     void push_completed_computation(
       boost::mpi::communicator &comm, unsigned long int quantity_in) {
 
-      // Subtract from the self and queue up a route message so that
-      // it can be passed to all the other processes.
-      remaining_global_computation_ -= quantity_in;
-      remaining_local_computation_ -= quantity_in;
+      // Queue up a route message so that it can be passed to all the
+      // other processes.
       if(comm.size() > 1) {
         if(queued_up_completed_computation_.size() == 0) {
           EnergyRouteRequestType new_route_request;
@@ -207,8 +200,6 @@ class TableExchange {
      */
     TableExchange() {
       local_table_ = NULL;
-      remaining_global_computation_ = 0;
-      remaining_local_computation_ = 0;
       task_queue_ = NULL;
       total_num_locks_ = 0;
     }
@@ -285,23 +276,6 @@ class TableExchange {
       std::fill(
         message_locks_.begin(), message_locks_.end(), 0);
       total_num_locks_ = 0;
-
-      // Initialize the amount of remaining computation.
-      unsigned long int total_num_query_points = 0;
-      unsigned long int total_num_reference_points = 0;
-      for(int i = 0; i < world.size(); i++) {
-        total_num_query_points += query_table_in->local_n_entries(i);
-        total_num_reference_points += reference_table_in->local_n_entries(i);
-      }
-
-      // Initialize the remaining computation.
-      remaining_global_computation_ =
-        static_cast<unsigned long int>(total_num_query_points) *
-        static_cast<unsigned long int>(total_num_reference_points);
-      remaining_local_computation_ =
-        static_cast<unsigned long int>(
-          query_table_in->local_table()->n_entries()) *
-        static_cast<unsigned long int>(total_num_reference_points);
     }
 
     /** @brief Issue a set of asynchronous send and receive
@@ -459,7 +433,7 @@ class TableExchange {
             // Update the energy count.
             if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
                 route_request.energy_route().object_is_valid()) {
-              remaining_global_computation_ -=
+              task_queue_->remaining_global_computation() -=
                 route_request.energy_route().object();
             }
           }

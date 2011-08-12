@@ -513,7 +513,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
 
   // Figure out each process's work using the global tree. Currently
   // only supports P = power of two. Fix this later.
-  if(!(world_->size() ^(world_->size() - 1))) {
+  if(!(world_->size() &(world_->size() - 1))) {
     std::cerr << "Re-run with the number of processes equal to a power of "
               << "two!\n";
     return;

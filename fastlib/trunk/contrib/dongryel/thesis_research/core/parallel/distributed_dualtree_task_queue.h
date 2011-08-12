@@ -46,6 +46,10 @@ class DistributedDualtreeTaskQueue {
 
     int num_remaining_tasks_;
 
+    unsigned long int remaining_global_computation_;
+
+    unsigned long int remaining_local_computation_;
+
   private:
 
     template<typename MetricType>
@@ -128,6 +132,10 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    unsigned long int &remaining_global_computation() {
+      return remaining_global_computation_;
+    }
+
     void ReleaseCache(int cache_id, int num_times) {
       table_exchange_.ReleaseCache(cache_id, num_times);
     }
@@ -180,11 +188,16 @@ class DistributedDualtreeTaskQueue {
     }
 
     bool can_terminate() const {
-      return table_exchange_.can_terminate();
+      return remaining_global_computation_ == 0 &&
+             table_exchange_.can_terminate();
     }
 
     void push_completed_computation(
       boost::mpi::communicator &comm, unsigned long int quantity_in) {
+
+      // Subtract from the self and queue up a route message.
+      remaining_global_computation_ -= quantity_in;
+      remaining_local_computation_ -= quantity_in;
       table_exchange_.push_completed_computation(comm, quantity_in);
     }
 
@@ -202,6 +215,8 @@ class DistributedDualtreeTaskQueue {
 
     DistributedDualtreeTaskQueue() {
       num_remaining_tasks_ = 0;
+      remaining_global_computation_ = 0;
+      remaining_local_computation_ = 0;
       split_subtree_after_unlocking_ = false;
     }
 
@@ -262,6 +277,23 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the table exchange.
       table_exchange_.Init(world, query_table_in, reference_table_in, this);
+
+      // Initialize the amount of remaining computation.
+      unsigned long int total_num_query_points = 0;
+      unsigned long int total_num_reference_points = 0;
+      for(int i = 0; i < world.size(); i++) {
+        total_num_query_points += query_table_in->local_n_entries(i);
+        total_num_reference_points += reference_table_in->local_n_entries(i);
+      }
+
+      // Initialize the remaining computation.
+      remaining_global_computation_ =
+        static_cast<unsigned long int>(total_num_query_points) *
+        static_cast<unsigned long int>(total_num_reference_points);
+      remaining_local_computation_ =
+        static_cast<unsigned long int>(
+          query_table_in->local_table()->n_entries()) *
+        static_cast<unsigned long int>(total_num_reference_points);
     }
 
     template<typename MetricType>
