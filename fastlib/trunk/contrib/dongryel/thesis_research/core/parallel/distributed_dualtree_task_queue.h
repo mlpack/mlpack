@@ -9,6 +9,7 @@
 #include <deque>
 #include <vector>
 #include "core/math/range.h"
+#include "core/parallel/disjoint_int_intervals.h"
 #include "core/parallel/table_exchange.h"
 
 namespace core {
@@ -36,6 +37,8 @@ class DistributedDualtreeTaskQueue {
   private:
 
     std::vector< TreeType *> local_query_subtrees_;
+
+    std::vector< core::parallel::DisjointIntIntervals * > completed_work_;
 
     std::deque<bool> local_query_subtree_locks_;
 
@@ -132,6 +135,13 @@ class DistributedDualtreeTaskQueue {
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
   public:
+
+    ~DistributedDualtreeTaskQueue() {
+      for(unsigned int i = 0; i < completed_work_.size(); i++) {
+        delete completed_work_[i];
+      }
+      completed_work_.resize(0);
+    }
 
     unsigned long int &remaining_global_computation() {
       return remaining_global_computation_;
@@ -295,6 +305,13 @@ class DistributedDualtreeTaskQueue {
         static_cast<unsigned long int>(
           query_table_in->local_table()->n_entries()) *
         static_cast<unsigned long int>(total_num_reference_points);
+
+      // Initialize the completed computation grid for each query tree
+      // on this process.
+      completed_work_.resize(local_query_subtrees_.size()) ;
+      for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
+        completed_work_[i] = new core::parallel::DisjointIntIntervals();
+      }
     }
 
     template<typename MetricType>
