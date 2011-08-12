@@ -38,11 +38,11 @@ class DistributedDualtreeTaskQueue {
 
     std::vector< TreeType *> local_query_subtrees_;
 
-    std::vector< core::parallel::DisjointIntIntervals * > completed_work_;
+    std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
 
     std::deque<bool> local_query_subtree_locks_;
 
-    std::vector< TaskPriorityQueueType > tasks_;
+    std::vector<TaskPriorityQueueType *> tasks_;
 
     bool split_subtree_after_unlocking_;
 
@@ -75,7 +75,7 @@ class DistributedDualtreeTaskQueue {
 
       // Adjust the list of tasks.
       std::vector<TaskType> prev_tasks;
-      while(tasks_[subtree_index].size() > 0) {
+      while(tasks_[subtree_index]->size() > 0) {
         std::pair<TaskType, int> task_pair;
         this->DequeueTask(subtree_index, &task_pair, false);
         prev_tasks.push_back(task_pair.first);
@@ -136,11 +136,15 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    /** @brief The destructor.
+     */
     ~DistributedDualtreeTaskQueue() {
-      for(unsigned int i = 0; i < completed_work_.size(); i++) {
-        delete completed_work_[i];
+      for(unsigned int i = 0; i < assigned_work_.size(); i++) {
+        delete assigned_work_[i];
+        delete tasks_[i];
       }
-      completed_work_.resize(0);
+      assigned_work_.resize(0);
+      tasks_.resize(0);
     }
 
     unsigned long int &remaining_global_computation() {
@@ -190,9 +194,15 @@ class DistributedDualtreeTaskQueue {
         boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
           frontier_reference_table, reference_starting_node, cache_id);
 
-        // For each query subtree, create a new task.
+        // For each query subtree, create a new task if it has not
+        // already taken care of the incoming reference table.
         for(int j = 0; j < this->size(); j++) {
-          this->PushTask(metric_in, j, reference_table_node_pair);
+          if(assigned_work_[j]->Insert(
+                std::pair<int, int>(
+                  reference_begin, reference_begin + reference_count))) {
+            this->PushTask(metric_in, j, reference_table_node_pair);
+            table_exchange_.LockCache(cache_id, 1);
+          }
         }
 
       } //end of looping over each reference subtree.
@@ -224,6 +234,8 @@ class DistributedDualtreeTaskQueue {
       split_subtree_after_unlocking_ = true;
     }
 
+    /** @brief The constructor.
+     */
     DistributedDualtreeTaskQueue() {
       num_remaining_tasks_ = 0;
       remaining_global_computation_ = 0;
@@ -247,7 +259,7 @@ class DistributedDualtreeTaskQueue {
         for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
           if((! local_query_subtree_locks_[i]) &&
               (! local_query_subtrees_[i]->is_leaf()) &&
-              tasks_[i].size() > 0 &&
+              tasks_[i]->size() > 0 &&
               split_index_query_size < local_query_subtrees_[i]->count())  {
             split_index_query_size = local_query_subtrees_[i]->count();
             split_index = i;
@@ -257,6 +269,10 @@ class DistributedDualtreeTaskQueue {
           split_subtree_(metric_in, split_index);
         }
         split_subtree_after_unlocking_ = false;
+      }
+
+      // Cleanup completed query subtrees.
+      for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
       }
     }
 
@@ -284,6 +300,7 @@ class DistributedDualtreeTaskQueue {
       split_subtree_after_unlocking_ = false;
       for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
         local_query_subtree_locks_[i] = false;
+        tasks_[i] = new TaskPriorityQueueType();
       }
 
       // Initialize the table exchange.
@@ -308,9 +325,9 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the completed computation grid for each query tree
       // on this process.
-      completed_work_.resize(local_query_subtrees_.size()) ;
+      assigned_work_.resize(local_query_subtrees_.size()) ;
       for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
-        completed_work_[i] = new core::parallel::DisjointIntIntervals();
+        assigned_work_[i] = new core::parallel::DisjointIntIntervals();
       }
     }
 
@@ -330,12 +347,15 @@ class DistributedDualtreeTaskQueue {
         reference_table_node_pair.get<1>(),
         reference_table_node_pair.get<2>(),
         - squared_distance_range.mid());
-      tasks_[ push_index].push(new_task);
+      tasks_[ push_index]->push(new_task);
 
       // Increment the number of tasks.
       num_remaining_tasks_++;
     }
 
+    /** @brief Dequeues a task, optionally locking a query subtree
+     *         associated with it.
+     */
     void DequeueTask(
       int probe_index, std::pair<TaskType, int> *task_out,
       bool lock_query_subtree_in) {
@@ -343,16 +363,17 @@ class DistributedDualtreeTaskQueue {
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
       // iteration.
-      if(tasks_[probe_index].size() > 0) {
+      if(probe_index < static_cast<int>(tasks_.size()) &&
+          tasks_[probe_index]->size() > 0) {
         if(! local_query_subtree_locks_[ probe_index ]) {
 
           // Copy the task and the query subtree number.
-          task_out->first = tasks_[ probe_index ].top();
+          task_out->first = tasks_[ probe_index ]->top();
           task_out->second = probe_index;
 
           // Pop the task from the priority queue after copying and
           // put a lock on the query subtree.
-          tasks_[ probe_index ].pop();
+          tasks_[ probe_index ]->pop();
           local_query_subtree_locks_[ probe_index ] = lock_query_subtree_in;
 
           // Decrement the number of tasks.

@@ -63,6 +63,8 @@ class DisjointIntIntervals {
                 intervals_.equal_range(test_interval);
 
       if(intersecting_list.first != intersecting_list.second) {
+
+        // Merge with every interval that intersects the incoming one.
         MapType::iterator current_it = intersecting_list.first;
         std::pair<int, int> merged = test_interval;
         do {
@@ -77,6 +79,10 @@ class DisjointIntIntervals {
         return true;
       }
       else {
+
+        // Otherwise, insert the incoming one.
+        intervals_.insert(
+          std::pair<KeyType, ValueType>(test_interval, test_interval));
         return false;
       }
     }
