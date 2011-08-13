@@ -68,6 +68,23 @@ class DisjointIntIntervals {
       intervals_ = new MapType[ world.size()] ;
     }
 
+    template<typename DistributedTableType>
+    bool work_is_complete(
+      boost::mpi::communicator &world, DistributedTableType *table_in) {
+      bool completed = true;
+      for(int i = 0; completed && i < world.size(); i++) {
+        std::pair<int, int> key(0, table_in->local_n_entries(i));
+        if(intervals_[i].size() == 0) {
+          completed = false;
+          break;
+        }
+        typename MapType::iterator it = intervals_[i].find(key);
+        completed = (it->first.first == key.first &&
+                     it->first.second == key.second);
+      }
+      return completed;
+    }
+
     DisjointIntIntervals(
       boost::mpi::communicator &world,
       const DisjointIntIntervals &intervals_in) {

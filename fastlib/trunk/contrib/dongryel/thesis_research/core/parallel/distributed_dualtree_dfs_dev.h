@@ -272,7 +272,7 @@ DistributedProblemType >::InitialSetup_(
     static_cast<unsigned long int>(query_table_->local_table()->n_entries()) *
     initial_pruned;
   distributed_tasks->push_completed_computation(
-    *world_, initial_completed_work);
+    *world_, initial_pruned, initial_completed_work);
 }
 
 template<typename DistributedProblemType>
@@ -326,8 +326,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 #pragma omp critical
       {
         distributed_tasks.SendReceive(
-          thread_id,
-          metric, *world_, hashed_essential_reference_subtrees_to_send);
+          thread_id, metric, *world_, reference_table_,
+          hashed_essential_reference_subtrees_to_send);
       } // end of the critical section.
 
       // After enqueing, everyone else tries to dequeue the tasks.
@@ -389,7 +389,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
               found_task.first.query_start_node()->count()) *
             static_cast<unsigned long int>(task_starting_rnode->count());
           distributed_tasks.push_completed_computation(
-            * world_, completed_work);
+            boost::tuple<int, int, int>(
+              query_table_->local_table()->rank(),
+              found_task.first.query_start_node()->begin(),
+              found_task.first.query_start_node()->count()),
+            * world_, task_starting_rnode->count(), completed_work);
 
           // After finishing, the lock on the query subtree is released.
           distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
