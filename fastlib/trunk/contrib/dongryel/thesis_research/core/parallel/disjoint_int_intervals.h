@@ -37,7 +37,7 @@ class DisjointIntIntervals {
 
   private:
 
-    MapType intervals_;
+    MapType *intervals_;
 
   private:
 
@@ -52,58 +52,77 @@ class DisjointIntIntervals {
 
   public:
 
-    void Init() {
-      intervals_.clear();
+    const MapType &interval(int index) const {
+      return intervals_[index];
+    }
+
+    ~DisjointIntIntervals() {
+      delete[] intervals_;
+    }
+
+    DisjointIntIntervals() {
+      intervals_ = NULL;
+    }
+
+    void Init(boost::mpi::communicator &world) {
+      intervals_ = new MapType[ world.size()] ;
+    }
+
+    DisjointIntIntervals(
+      boost::mpi::communicator &world,
+      const DisjointIntIntervals &intervals_in) {
+      intervals_ = new MapType[ world.size()];
+      for(int i = 0; i < world.size(); i++) {
+        intervals_[i] = intervals_in.interval(i);
+      }
     }
 
     /** @brief Returns true if the test interval is not among the ones
      *         already available.
      */
-    bool Insert(const ValueType &test_interval) {
-
-      // Fix me later!
-      return true;
-
-      /*
+    bool Insert(const boost::tuple<int, int, int> &interval_in) {
       bool does_not_exist = true;
-      if(intervals_.size() > 0) {
+      int rank = interval_in.get<0>();
+      std::pair<int, int> test_interval(
+        interval_in.get<1>(), interval_in.get<2>());
+      if(intervals_[rank].size() > 0) {
         std::pair <
         MapType::iterator,
                 MapType::iterator > intersecting_list =
-                  intervals_.equal_range(test_interval);
+                  intervals_[rank].equal_range(test_interval);
         if(intersecting_list.first != intersecting_list.second) {
 
           // Merge with every interval that intersects the incoming one.
           MapType::iterator current_it = intersecting_list.first;
-          std::pair<int, int> merged = test_interval;
+          std::pair<int, int> merged(
+            test_interval.first, test_interval.second);
           do {
             if(current_it->first.first <= test_interval.first &&
                 test_interval.second <= current_it->first.second) {
               does_not_exist = false;
             }
             Merge_(current_it->first, &merged);
-            MapType::iterator next_it = current_it;
-            next_it++;
-            intervals_.erase(current_it);
-            current_it = next_it;
+            current_it++;
           }
           while(current_it != intersecting_list.second);
-          intervals_.insert(std::pair< KeyType, ValueType>(merged, merged));
+          intervals_[rank].erase(
+            intersecting_list.first, intersecting_list.second);
+          intervals_[rank].insert(
+            std::pair< KeyType, ValueType>(merged, merged));
         }
         else {
 
           // Otherwise, insert the incoming one.
-          intervals_.insert(
+          intervals_[rank].insert(
             std::pair<KeyType, ValueType>(test_interval, test_interval));
         }
       }
       else {
         // Otherwise, insert the incoming one.
-        intervals_.insert(
+        intervals_[rank].insert(
           std::pair<KeyType, ValueType>(test_interval, test_interval));
       }
       return does_not_exist;
-      */
     }
 };
 }
