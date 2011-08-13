@@ -318,6 +318,7 @@ class DistributedDualtreeTaskQueue {
         split_subtree_after_unlocking_ = false;
       }
 
+      /*
       // Cleanup completed query subtrees.
       for(int i = 0; i < static_cast<int>(query_subtrees_.size()); i++) {
         if(remaining_work_for_query_subtrees_[i] == 0) {
@@ -338,6 +339,7 @@ class DistributedDualtreeTaskQueue {
           i--;
         }
       }
+      */
     }
 
     template<typename MetricType>

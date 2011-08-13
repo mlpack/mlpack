@@ -430,11 +430,15 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
   starting_point.set_size(train_table_.num_parameters());
   starting_point.fill(1.0);
   if(arguments_in.initial_parameters_table_ != NULL) {
+    std::cerr << "The number of parameters read in: " <<
+              train_table_.num_parameters() << "\n";
     for(int i = 0; i < train_table_.num_parameters(); i++) {
       starting_point[i] =
         arguments_in.initial_parameters_table_->data().get(0, i);
     }
+    starting_point.print();
   }
+  exit(0);
 
   iterate->Init(
     &train_table_, starting_point,
