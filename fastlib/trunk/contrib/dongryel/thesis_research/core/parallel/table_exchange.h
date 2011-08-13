@@ -290,6 +290,7 @@ class TableExchange {
       int thread_id,
       const MetricType &metric_in,
       boost::mpi::communicator &world,
+      DistributedTableType *reference_table_in,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
 
@@ -303,7 +304,8 @@ class TableExchange {
 
       // At each stage, check whether a core asked for more work. If
       // so, split a subtree.
-      task_queue_->RedistributeAmongCores(world, metric_in);
+      task_queue_->RedistributeAmongCores(
+        world, reference_table_in, metric_in);
 
       // If the number of processes is only one, then don't bother
       // since there is nothing to exchange.
