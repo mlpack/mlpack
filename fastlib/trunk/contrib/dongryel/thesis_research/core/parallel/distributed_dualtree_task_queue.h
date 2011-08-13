@@ -57,7 +57,9 @@ class DistributedDualtreeTaskQueue {
   private:
 
     template<typename MetricType>
-    void split_subtree_(const MetricType &metric_in, int subtree_index) {
+    void split_subtree_(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in, int subtree_index) {
 
       // After splitting, the current index will have the left child
       // and the right child will be appended to the end of the list
@@ -81,6 +83,9 @@ class DistributedDualtreeTaskQueue {
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.push_back(new TaskPriorityQueueType());
+      assigned_work_.push_back(
+        new core::parallel::DisjointIntIntervals(
+          world, *(assigned_work_[subtree_index])));
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
 
         // If the previous query node is equal to the reference node,
@@ -198,8 +203,10 @@ class DistributedDualtreeTaskQueue {
         // already taken care of the incoming reference table.
         for(int j = 0; j < this->size(); j++) {
           if(assigned_work_[j]->Insert(
-                std::pair<int, int>(
-                  reference_begin, reference_begin + reference_count))) {
+                boost::tuple<int, int, int>(
+                  frontier_reference_table->rank(),
+                  reference_begin,
+                  reference_begin + reference_count))) {
             this->PushTask(metric_in, j, reference_table_node_pair);
             table_exchange_.LockCache(cache_id, 1);
           }
@@ -248,7 +255,9 @@ class DistributedDualtreeTaskQueue {
     }
 
     template<typename MetricType>
-    void RedistributeAmongCores(const MetricType &metric_in) {
+    void RedistributeAmongCores(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in) {
 
       // If the splitting was requested,
       if(split_subtree_after_unlocking_) {
@@ -266,7 +275,7 @@ class DistributedDualtreeTaskQueue {
           }
         }
         if(split_index >= 0) {
-          split_subtree_(metric_in, split_index);
+          split_subtree_(world, metric_in, split_index);
         }
         split_subtree_after_unlocking_ = false;
       }
@@ -328,6 +337,7 @@ class DistributedDualtreeTaskQueue {
       assigned_work_.resize(local_query_subtrees_.size()) ;
       for(unsigned int i = 0; i < local_query_subtrees_.size(); i++) {
         assigned_work_[i] = new core::parallel::DisjointIntIntervals();
+        assigned_work_[i]->Init(world);
       }
     }
 
