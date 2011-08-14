@@ -369,19 +369,20 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         }
 
         // Push in the completed amount of work.
+        boost::tuple<int, int, int> query_subtree_id(
+          query_table_->local_table()->rank(),
+          found_task.first.query_start_node()->begin(),
+          found_task.first.query_start_node()->count());
         unsigned long int completed_work =
           static_cast<unsigned long int>(
             found_task.first.query_start_node()->count()) *
           static_cast<unsigned long int>(task_starting_rnode->count());
         distributed_tasks.push_completed_computation(
-          boost::tuple<int, int, int>(
-            query_table_->local_table()->rank(),
-            found_task.first.query_start_node()->begin(),
-            found_task.first.query_start_node()->count()),
+          query_subtree_id,
           * world_, task_starting_rnode->count(), completed_work);
 
         // After finishing, the lock on the query subtree is released.
-        distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
+        distributed_tasks.UnlockQuerySubtree(query_subtree_id);
 
         // Release the reference subtable.
         distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
