@@ -8,6 +8,7 @@ set(SOURCES
   distributed_tree_util.h
   distributed_tripletree_dfs_dev.h
   distributed_tripletree_dfs.h
+  map_vector.h
   message_tag.h
   parallel_sample_sort.h
   route_request.h
