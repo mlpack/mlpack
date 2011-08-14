@@ -164,6 +164,19 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    int FindQuerySubtreeIndex_(
+      const boost::tuple<int, int, int> &query_node_id) {
+      int found_index = -1;
+      for(unsigned int i = 0;
+          found_index < 0 && i < query_subtrees_.size(); i++) {
+        if(query_node_id.get<1>() == query_subtrees_[i]->begin() &&
+            query_node_id.get<2>() == query_subtrees_[i]->count()) {
+          found_index = i;
+        }
+      }
+      return found_index;
+    }
+
   public:
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
@@ -280,14 +293,7 @@ class DistributedDualtreeTaskQueue {
 
       // Update the remaining work for the query tree. Maybe the
       // searching can be sped up later.
-      int found_index = -1;
-      for(unsigned int i = 0;
-          found_index < 0 && i < query_subtrees_.size(); i++) {
-        if(query_node_id.get<1>() == query_subtrees_[i]->begin() &&
-            query_node_id.get<2>() == query_subtrees_[i]->count()) {
-          found_index = i;
-        }
-      }
+      int found_index = this->FindQuerySubtreeIndex_(query_node_id);
       remaining_work_for_query_subtrees_[found_index] -= reference_count_in;
 
       omp_unset_nest_lock(&task_queue_lock_);
@@ -378,38 +384,16 @@ class DistributedDualtreeTaskQueue {
         }
         split_subtree_after_unlocking_ = false;
       }
-
-      /*
-      // Cleanup completed query subtrees.
-      for(int i = 0; i < static_cast<int>(query_subtrees_.size()); i++) {
-        if(remaining_work_for_query_subtrees_[i] == 0) {
-          delete assigned_work_[i];
-          delete tasks_[i];
-          query_subtrees_[i] = query_subtrees_.back();
-          assigned_work_[i] = assigned_work_.back();
-          remaining_work_for_query_subtrees_[i] =
-            remaining_work_for_query_subtrees_.back();
-          query_subtree_locks_[i] = query_subtree_locks_.back();
-          tasks_[i] = tasks_.back();
-
-          query_subtrees_.pop_back();
-          assigned_work_.pop_back();
-          remaining_work_for_query_subtrees_.pop_back();
-          query_subtree_locks_.pop_back();
-          tasks_.pop_back();
-          i--;
-        }
-      }
-      */
       omp_unset_nest_lock(&task_queue_lock_);
     }
 
-    template<typename MetricType>
-    void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
+    void UnlockQuerySubtree(
+      const boost::tuple<int, int, int> &query_subtree_id) {
 
       omp_set_nest_lock(&task_queue_lock_);
 
       // Unlock the query subtree.
+      int subtree_index = this->FindQuerySubtreeIndex_(query_subtree_id);
       query_subtree_locks_[ subtree_index ] = false;
 
       omp_unset_nest_lock(&task_queue_lock_);
@@ -481,7 +465,8 @@ class DistributedDualtreeTaskQueue {
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
       // iteration.
-      for(int probe_index = 0; probe_index < static_cast<int>(tasks_.size()); probe_index++) {
+      for(int probe_index = 0;
+          probe_index < static_cast<int>(tasks_.size()); probe_index++) {
         if(tasks_[probe_index]->size() > 0) {
           if(! query_subtree_locks_[ probe_index ]) {
 
@@ -498,6 +483,25 @@ class DistributedDualtreeTaskQueue {
             num_remaining_tasks_--;
             break;
           }
+        }
+
+        // Otherwise, determine whether the cleanup needs to be done.
+        else if(remaining_work_for_query_subtrees_[probe_index] == 0) {
+          delete assigned_work_[probe_index];
+          delete tasks_[probe_index];
+          query_subtrees_[probe_index] = query_subtrees_.back();
+          assigned_work_[probe_index] = assigned_work_.back();
+          remaining_work_for_query_subtrees_[probe_index] =
+            remaining_work_for_query_subtrees_.back();
+          query_subtree_locks_[probe_index] = query_subtree_locks_.back();
+          tasks_[probe_index] = tasks_.back();
+
+          query_subtrees_.pop_back();
+          assigned_work_.pop_back();
+          remaining_work_for_query_subtrees_.pop_back();
+          query_subtree_locks_.pop_back();
+          tasks_.pop_back();
+          probe_index--;
         }
       }
 
