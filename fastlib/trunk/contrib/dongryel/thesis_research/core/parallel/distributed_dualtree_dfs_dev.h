@@ -204,14 +204,16 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   core::parallel::DistributedDualtreeTaskQueue <
-  DistributedTableType, FinePriorityQueueType > *distributed_tasks) {
+  DistributedTableType,
+  FinePriorityQueueType, ResultType > *distributed_tasks) {
 
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    *world_, query_table_, reference_table_, 4 * omp_get_max_threads());
+    *world_, query_table_, reference_table_, query_results,
+    4 * omp_get_max_threads());
 
   // Each process needs to customize its reference set for each
   // participating query process.
@@ -293,7 +295,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The list of prioritized tasks this MPI process needs to take care
   // of.
   core::parallel::DistributedDualtreeTaskQueue <
-  DistributedTableType, FinePriorityQueueType > distributed_tasks;
+  DistributedTableType, FinePriorityQueueType, ResultType > distributed_tasks;
 
   // The number of reference subtrees to receive and to send in total.
   std::vector <
@@ -360,7 +362,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         sub_engine.set_reference_start_node(task_starting_rnode);
 
         // Fire away the computation.
-        sub_engine.Compute(metric, query_results, false);
+        sub_engine.Compute(
+          metric, found_task.first.query_result(), false);
 
 #pragma omp critical
         {
