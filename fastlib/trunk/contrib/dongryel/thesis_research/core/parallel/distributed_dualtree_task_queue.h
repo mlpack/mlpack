@@ -49,17 +49,43 @@ class DistributedDualtreeTaskQueue {
 
     std::vector<TaskPriorityQueueType *> tasks_;
 
-    bool split_subtree_after_unlocking_;
-
     TableExchangeType table_exchange_;
 
     int num_remaining_tasks_;
+
+    int num_threads_;
 
     unsigned long int remaining_global_computation_;
 
     unsigned long int remaining_local_computation_;
 
   private:
+
+    template<typename MetricType>
+    void RedistributeAmongCores_(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in) {
+
+      omp_set_nest_lock(&task_queue_lock_);
+
+      // Try to find a subtree to split.
+      int split_index_query_size = 0;
+      int split_index = -1;
+      for(unsigned int i = 0; i < query_subtrees_.size(); i++) {
+        if((! query_subtree_locks_[i]) &&
+            (! query_subtrees_[i]->is_leaf()) &&
+            tasks_[i]->size() > 0 &&
+            split_index_query_size < query_subtrees_[i]->count())  {
+          split_index_query_size = query_subtrees_[i]->count();
+          split_index = i;
+        }
+      }
+      if(split_index >= 0) {
+        split_subtree_(world, metric_in, split_index);
+      }
+
+      omp_unset_nest_lock(&task_queue_lock_);
+    }
 
     template<typename MetricType>
     void PushTask_(
@@ -334,19 +360,13 @@ class DistributedDualtreeTaskQueue {
       return result;
     }
 
-    void set_split_subtree_flag() {
-      omp_set_nest_lock(&task_queue_lock_);
-      split_subtree_after_unlocking_ = true;
-      omp_unset_nest_lock(&task_queue_lock_);
-    }
-
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
       num_remaining_tasks_ = 0;
+      num_threads_ = 1;
       remaining_global_computation_ = 0;
       remaining_local_computation_ = 0;
-      split_subtree_after_unlocking_ = false;
     }
 
     int size() const {
@@ -354,37 +374,6 @@ class DistributedDualtreeTaskQueue {
       int return_this = query_subtrees_.size();
       omp_unset_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
       return return_this;
-    }
-
-    template<typename MetricType>
-    void RedistributeAmongCores(
-      boost::mpi::communicator &world,
-      DistributedTableType *reference_table_in,
-      const MetricType &metric_in) {
-
-      omp_set_nest_lock(&task_queue_lock_);
-
-      // If the splitting was requested,
-      if(split_subtree_after_unlocking_) {
-
-        // Try to find a subtree to split.
-        int split_index_query_size = 0;
-        int split_index = -1;
-        for(unsigned int i = 0; i < query_subtrees_.size(); i++) {
-          if((! query_subtree_locks_[i]) &&
-              (! query_subtrees_[i]->is_leaf()) &&
-              tasks_[i]->size() > 0 &&
-              split_index_query_size < query_subtrees_[i]->count())  {
-            split_index_query_size = query_subtrees_[i]->count();
-            split_index = i;
-          }
-        }
-        if(split_index >= 0) {
-          split_subtree_(world, metric_in, split_index);
-        }
-        split_subtree_after_unlocking_ = false;
-      }
-      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     void UnlockQuerySubtree(
@@ -405,6 +394,9 @@ class DistributedDualtreeTaskQueue {
       DistributedTableType *reference_table_in,
       int num_threads_in) {
 
+      // Initialize the number of available threads.
+      num_threads_ = num_threads_in;
+
       // Initialize the lock.
       omp_init_nest_lock(&task_queue_lock_);
 
@@ -416,7 +408,6 @@ class DistributedDualtreeTaskQueue {
       // Initialize the other member variables.
       query_subtree_locks_.resize(query_subtrees_.size());
       tasks_.resize(query_subtrees_.size());
-      split_subtree_after_unlocking_ = false;
       for(unsigned int i = 0; i < query_subtrees_.size(); i++) {
         query_subtree_locks_[i] = false;
         tasks_[i] = new TaskPriorityQueueType();
@@ -456,11 +447,20 @@ class DistributedDualtreeTaskQueue {
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
      */
+    template<typename MetricType>
     void DequeueTask(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
       std::pair<TaskType, int> *task_out,
       bool lock_query_subtree_in) {
 
       omp_set_nest_lock(&task_queue_lock_);
+
+      // If the number of available task is less than the number of
+      // running threads, try to get one.
+      if(static_cast<int>(tasks_.size()) < num_threads_) {
+        this->RedistributeAmongCores_(world, metric_in);
+      }
 
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next

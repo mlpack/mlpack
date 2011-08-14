@@ -302,11 +302,6 @@ class TableExchange {
       // The ID of the received subtables.
       std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
 
-      // At each stage, check whether a core asked for more work. If
-      // so, split a subtree.
-      task_queue_->RedistributeAmongCores(
-        world, reference_table_in, metric_in);
-
       // If the number of processes is only one, then don't bother
       // since there is nothing to exchange.
       if(world.size() == 1) {
