@@ -330,7 +330,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       }
 
       // After enqueing, everyone else tries to dequeue the tasks.
-      distributed_tasks.DequeueTask(&found_task, true);
+      distributed_tasks.DequeueTask(*world_, metric, &found_task, true);
 
       // If found something to run on, then call the serial dual-tree
       // method.
@@ -388,11 +388,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
 
       } // end of finding a task.
-      else {
-
-        // Otherwise, ask other threads to share the work.
-        distributed_tasks.set_split_subtree_flag();
-      } // end of failing to find a task.
 
       // Quit if all work is done.
       work_left_to_do = !(distributed_tasks.can_terminate());
