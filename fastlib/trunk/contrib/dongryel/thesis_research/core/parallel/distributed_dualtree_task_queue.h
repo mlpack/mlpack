@@ -16,7 +16,9 @@
 namespace core {
 namespace parallel {
 
-template<typename DistributedTableType, typename TaskPriorityQueueType>
+template < typename DistributedTableType,
+         typename TaskPriorityQueueType,
+         typename ResultType >
 class DistributedDualtreeTaskQueue {
   public:
 
@@ -33,27 +35,31 @@ class DistributedDualtreeTaskQueue {
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
     typedef core::parallel::TableExchange <
-    DistributedTableType, TaskPriorityQueueType > TableExchangeType;
+    DistributedTableType, TaskPriorityQueueType, ResultType > TableExchangeType;
 
   private:
 
-    omp_nest_lock_t task_queue_lock_;
-
-    std::vector< TreeType *> query_subtrees_;
-
     std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
 
-    std::vector< unsigned long int > remaining_work_for_query_subtrees_;
+    ResultType *local_query_result_;
 
-    std::deque<bool> query_subtree_locks_;
-
-    std::vector<TaskPriorityQueueType *> tasks_;
-
-    TableExchangeType table_exchange_;
+    TableType *local_query_table_;
 
     int num_remaining_tasks_;
 
     int num_threads_;
+
+    std::vector< TreeType *> query_subtrees_;
+
+    std::deque<bool> query_subtree_locks_;
+
+    std::vector< unsigned long int > remaining_work_for_query_subtrees_;
+
+    TableExchangeType table_exchange_;
+
+    std::vector<TaskPriorityQueueType *> tasks_;
+
+    omp_nest_lock_t task_queue_lock_;
 
     unsigned long int remaining_global_computation_;
 
@@ -98,7 +104,9 @@ class DistributedDualtreeTaskQueue {
         query_subtrees_[push_index]->bound().RangeDistanceSq(
           metric_in, reference_table_node_pair.get<1>()->bound()));
       TaskType new_task(
+        local_query_table_,
         query_subtrees_[push_index],
+        local_query_result_,
         reference_table_node_pair.get<0>(),
         reference_table_node_pair.get<1>(),
         reference_table_node_pair.get<2>(),
@@ -363,6 +371,8 @@ class DistributedDualtreeTaskQueue {
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
+      local_query_result_ = NULL;
+      local_query_table_ = NULL;
       num_remaining_tasks_ = 0;
       num_threads_ = 1;
       remaining_global_computation_ = 0;
@@ -392,7 +402,14 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
+      ResultType *local_query_result_in,
       int num_threads_in) {
+
+      // Initialize the local query result.
+      local_query_result_ = local_query_result_in;
+
+      // Initialize the local query table.
+      local_query_table_ = query_table_in->local_table();
 
       // Initialize the number of available threads.
       num_threads_ = num_threads_in;

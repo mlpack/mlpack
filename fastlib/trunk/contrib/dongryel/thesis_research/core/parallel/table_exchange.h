@@ -19,13 +19,19 @@
 namespace core {
 namespace parallel {
 
-template<typename DistributedTableType, typename TaskPriorityQueueType>
+template <
+typename DistributedTableType,
+         typename TaskPriorityQueueType,
+         typename ResultType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief A class for performing an all-to-some exchange of subtrees
  *         among MPI processes.
  */
-template<typename DistributedTableType, typename TaskPriorityQueueType>
+template <
+typename DistributedTableType,
+         typename TaskPriorityQueueType,
+         typename ResultType >
 class TableExchange {
   public:
 
@@ -43,7 +49,7 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
 
-    typedef core::parallel::DistributedDualtreeTaskQueue< DistributedTableType, TaskPriorityQueueType > TaskQueueType;
+    typedef core::parallel::DistributedDualtreeTaskQueue< DistributedTableType, TaskPriorityQueueType, ResultType > TaskQueueType;
 
     class MessageType {
       private:
