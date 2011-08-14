@@ -7,6 +7,7 @@
 #define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
 
 #include <deque>
+#include <omp.h>
 #include <vector>
 #include "core/math/range.h"
 #include "core/parallel/disjoint_int_intervals.h"
@@ -36,6 +37,8 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
+    omp_nest_lock_t task_queue_lock_;
+
     std::vector< TreeType *> query_subtrees_;
 
     std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
@@ -57,6 +60,28 @@ class DistributedDualtreeTaskQueue {
     unsigned long int remaining_local_computation_;
 
   private:
+
+    template<typename MetricType>
+    void PushTask_(
+      const MetricType &metric_in,
+      int push_index,
+      boost::tuple<TableType *, TreeType *, int> &reference_table_node_pair) {
+
+      // Compute the priority and push in.
+      core::math::Range squared_distance_range(
+        query_subtrees_[push_index]->bound().RangeDistanceSq(
+          metric_in, reference_table_node_pair.get<1>()->bound()));
+      TaskType new_task(
+        query_subtrees_[push_index],
+        reference_table_node_pair.get<0>(),
+        reference_table_node_pair.get<1>(),
+        reference_table_node_pair.get<2>(),
+        - squared_distance_range.mid());
+      tasks_[ push_index]->push(new_task);
+
+      // Increment the number of tasks.
+      num_remaining_tasks_++;
+    }
 
     template<typename MetricType>
     void split_subtree_(
@@ -108,14 +133,14 @@ class DistributedDualtreeTaskQueue {
           TableType *, TreeType *, int > reference_table_right_node_pair(
             prev_tasks[i].reference_table(),
             reference_right_child, prev_tasks[i].cache_id());
-          this->PushTask(
+          this->PushTask_(
             metric_in, subtree_index, reference_table_left_node_pair);
-          this->PushTask(
+          this->PushTask_(
             metric_in, subtree_index, reference_table_right_node_pair);
-          this->PushTask(
+          this->PushTask_(
             metric_in, query_subtrees_.size() - 1,
             reference_table_left_node_pair);
-          this->PushTask(
+          this->PushTask_(
             metric_in, query_subtrees_.size() - 1,
             reference_table_right_node_pair);
 
@@ -128,8 +153,8 @@ class DistributedDualtreeTaskQueue {
           boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
             prev_tasks[i].reference_table(),
             prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
-          this->PushTask(metric_in, subtree_index, reference_table_node_pair);
-          this->PushTask(
+          this->PushTask_(metric_in, subtree_index, reference_table_node_pair);
+          this->PushTask_(
             metric_in, query_subtrees_.size() - 1,
             reference_table_node_pair);
 
@@ -154,6 +179,9 @@ class DistributedDualtreeTaskQueue {
       }
       assigned_work_.resize(0);
       tasks_.resize(0);
+
+      // Destroy the lock.
+      omp_destroy_nest_lock(&task_queue_lock_);
     }
 
     unsigned long int &remaining_global_computation() {
@@ -161,7 +189,9 @@ class DistributedDualtreeTaskQueue {
     }
 
     void ReleaseCache(int cache_id, int num_times) {
+      omp_set_nest_lock(&task_queue_lock_);
       table_exchange_.ReleaseCache(cache_id, num_times);
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     template<typename MetricType>
@@ -172,9 +202,11 @@ class DistributedDualtreeTaskQueue {
       DistributedTableType *reference_table_in,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+      omp_set_nest_lock(&task_queue_lock_);
       table_exchange_.SendReceive(
         thread_id, metric_in, world, reference_table_in,
         hashed_essential_reference_subtrees_to_send);
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     template<typename MetricType>
@@ -182,6 +214,9 @@ class DistributedDualtreeTaskQueue {
       const MetricType &metric_in,
       const std::vector <
       boost::tuple<int, int, int, int> > &received_subtable_ids) {
+
+      omp_set_nest_lock(&task_queue_lock_);
+
       for(unsigned int i = 0; i < received_subtable_ids.size(); i++) {
 
         // Find the reference process ID and grab its subtable.
@@ -212,17 +247,22 @@ class DistributedDualtreeTaskQueue {
                   frontier_reference_table->rank(),
                   reference_begin,
                   reference_begin + reference_count))) {
-            this->PushTask(metric_in, j, reference_table_node_pair);
+            this->PushTask_(metric_in, j, reference_table_node_pair);
             table_exchange_.LockCache(cache_id, 1);
           }
         }
 
       } //end of looping over each reference subtree.
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     bool can_terminate() const {
-      return remaining_global_computation_ == 0 &&
-             table_exchange_.can_terminate();
+      omp_set_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      bool result = (remaining_global_computation_ == 0 &&
+                     table_exchange_.can_terminate());
+      omp_unset_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      return result;
     }
 
     void push_completed_computation(
@@ -230,6 +270,8 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
       unsigned long int quantity_in) {
+
+      omp_set_nest_lock(&task_queue_lock_);
 
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
@@ -247,12 +289,16 @@ class DistributedDualtreeTaskQueue {
         }
       }
       remaining_work_for_query_subtrees_[found_index] -= reference_count_in;
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     void push_completed_computation(
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
       unsigned long int quantity_in) {
+
+      omp_set_nest_lock(&task_queue_lock_);
 
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
@@ -264,18 +310,28 @@ class DistributedDualtreeTaskQueue {
       for(unsigned int i = 0; i < query_subtrees_.size(); i++) {
         remaining_work_for_query_subtrees_[i] -= reference_count_in;
       }
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     int num_remaining_tasks() const {
-      return num_remaining_tasks_;
+      omp_set_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      int return_this = num_remaining_tasks_;
+      omp_unset_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      return return_this;
     }
 
     bool is_empty() const {
-      return num_remaining_tasks_ == 0;
+      omp_set_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      bool result = (num_remaining_tasks_ == 0);
+      omp_unset_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      return result;
     }
 
     void set_split_subtree_flag() {
+      omp_set_nest_lock(&task_queue_lock_);
       split_subtree_after_unlocking_ = true;
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     /** @brief The constructor.
@@ -288,7 +344,10 @@ class DistributedDualtreeTaskQueue {
     }
 
     int size() const {
-      return query_subtrees_.size();
+      omp_set_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_)) ;
+      int return_this = query_subtrees_.size();
+      omp_unset_nest_lock(const_cast< omp_nest_lock_t *>(&task_queue_lock_));
+      return return_this;
     }
 
     template<typename MetricType>
@@ -296,6 +355,8 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       DistributedTableType *reference_table_in,
       const MetricType &metric_in) {
+
+      omp_set_nest_lock(&task_queue_lock_);
 
       // If the splitting was requested,
       if(split_subtree_after_unlocking_) {
@@ -340,13 +401,18 @@ class DistributedDualtreeTaskQueue {
         }
       }
       */
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     template<typename MetricType>
     void UnlockQuerySubtree(const MetricType &metric_in, int subtree_index) {
 
+      omp_set_nest_lock(&task_queue_lock_);
+
       // Unlock the query subtree.
       query_subtree_locks_[ subtree_index ] = false;
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     void Init(
@@ -354,6 +420,9 @@ class DistributedDualtreeTaskQueue {
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       int num_threads_in) {
+
+      // Initialize the lock.
+      omp_init_nest_lock(&task_queue_lock_);
 
       // For each process, break up the local query tree into a list of
       // subtree query lists.
@@ -400,40 +469,55 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
-    template<typename MetricType>
-    void PushTask(
-      const MetricType &metric_in,
-      int push_index,
-      boost::tuple<TableType *, TreeType *, int> &reference_table_node_pair) {
+    /** @brief Dequeues a task, optionally locking a query subtree
+     *         associated with it.
+     */
+    void DequeueTask(
+      std::pair<TaskType, int> *task_out,
+      bool lock_query_subtree_in) {
 
-      // Compute the priority and push in.
-      core::math::Range squared_distance_range(
-        query_subtrees_[push_index]->bound().RangeDistanceSq(
-          metric_in, reference_table_node_pair.get<1>()->bound()));
-      TaskType new_task(
-        query_subtrees_[push_index],
-        reference_table_node_pair.get<0>(),
-        reference_table_node_pair.get<1>(),
-        reference_table_node_pair.get<2>(),
-        - squared_distance_range.mid());
-      tasks_[ push_index]->push(new_task);
+      omp_set_nest_lock(&task_queue_lock_);
 
-      // Increment the number of tasks.
-      num_remaining_tasks_++;
+      // Try to dequeue a task from the given query subtree if it is
+      // not locked yet. Otherwise, request it to be split in the next
+      // iteration.
+      for(int probe_index = 0; probe_index < static_cast<int>(tasks_.size()); probe_index++) {
+        if(tasks_[probe_index]->size() > 0) {
+          if(! query_subtree_locks_[ probe_index ]) {
+
+            // Copy the task and the query subtree number.
+            task_out->first = tasks_[ probe_index ]->top();
+            task_out->second = probe_index;
+
+            // Pop the task from the priority queue after copying and
+            // put a lock on the query subtree.
+            tasks_[ probe_index ]->pop();
+            query_subtree_locks_[ probe_index ] = lock_query_subtree_in;
+
+            // Decrement the number of tasks.
+            num_remaining_tasks_--;
+            break;
+          }
+        }
+      }
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
      */
     void DequeueTask(
-      int probe_index, std::pair<TaskType, int> *task_out,
+      int probe_index,
+      std::pair<TaskType, int> *task_out,
       bool lock_query_subtree_in) {
+
+      omp_set_nest_lock(&task_queue_lock_);
 
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
       // iteration.
-      if(probe_index < static_cast<int>(tasks_.size()) &&
-          tasks_[probe_index]->size() > 0) {
+      if(tasks_[probe_index]->size() > 0) {
         if(! query_subtree_locks_[ probe_index ]) {
 
           // Copy the task and the query subtree number.
@@ -449,6 +533,8 @@ class DistributedDualtreeTaskQueue {
           num_remaining_tasks_--;
         }
       }
+
+      omp_unset_nest_lock(&task_queue_lock_);
     }
 };
 }

@@ -323,30 +323,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       std::pair<FineFrontierObjectType, int> found_task;
       found_task.second = -1;
 
-#pragma omp critical
-      {
+      if(thread_id == 0) {
         distributed_tasks.SendReceive(
           thread_id, metric, *world_, reference_table_,
           hashed_essential_reference_subtrees_to_send);
-      } // end of the critical section.
+      }
 
       // After enqueing, everyone else tries to dequeue the tasks.
-      for(int i = 0; i < distributed_tasks.size(); i++) {
-
-        // Index to probe.
-        int probe_index = (thread_id + i) % distributed_tasks.size();
-
-#pragma omp critical
-        {
-          distributed_tasks.DequeueTask(probe_index, &found_task, true);
-        } // end of pragma omp critical
-
-        if(found_task.second >= 0) {
-
-          // If something is found, then break.
-          break;
-        }
-      } // end of for-loop.
+      distributed_tasks.DequeueTask(&found_task, true);
 
       // If found something to run on, then call the serial dual-tree
       // method.
@@ -382,42 +366,35 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
           num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
+        }
 
-          // Push in the completed amount of work.
-          unsigned long int completed_work =
-            static_cast<unsigned long int>(
-              found_task.first.query_start_node()->count()) *
-            static_cast<unsigned long int>(task_starting_rnode->count());
-          distributed_tasks.push_completed_computation(
-            boost::tuple<int, int, int>(
-              query_table_->local_table()->rank(),
-              found_task.first.query_start_node()->begin(),
-              found_task.first.query_start_node()->count()),
-            * world_, task_starting_rnode->count(), completed_work);
+        // Push in the completed amount of work.
+        unsigned long int completed_work =
+          static_cast<unsigned long int>(
+            found_task.first.query_start_node()->count()) *
+          static_cast<unsigned long int>(task_starting_rnode->count());
+        distributed_tasks.push_completed_computation(
+          boost::tuple<int, int, int>(
+            query_table_->local_table()->rank(),
+            found_task.first.query_start_node()->begin(),
+            found_task.first.query_start_node()->count()),
+          * world_, task_starting_rnode->count(), completed_work);
 
-          // After finishing, the lock on the query subtree is released.
-          distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
+        // After finishing, the lock on the query subtree is released.
+        distributed_tasks.UnlockQuerySubtree(metric, found_task.second);
 
-          // Release the reference subtable.
-          distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
-
-        } // end of a critical section.
+        // Release the reference subtable.
+        distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
 
       } // end of finding a task.
       else {
 
-#pragma omp critical
-        {
-          // Otherwise, ask other threads to share the work.
-          distributed_tasks.set_split_subtree_flag();
-        }
+        // Otherwise, ask other threads to share the work.
+        distributed_tasks.set_split_subtree_flag();
       } // end of failing to find a task.
 
       // Quit if all work is done.
-#pragma omp critical
-      {
-        work_left_to_do = !(distributed_tasks.can_terminate());
-      } // end of a critical section.
+      work_left_to_do = !(distributed_tasks.can_terminate());
     }
     while(work_left_to_do);
 
