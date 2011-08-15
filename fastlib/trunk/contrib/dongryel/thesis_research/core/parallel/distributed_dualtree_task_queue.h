@@ -264,16 +264,13 @@ class DistributedDualtreeTaskQueue {
 
     template<typename MetricType>
     void SendReceive(
-      int thread_id,
       const MetricType &metric_in,
       boost::mpi::communicator &world,
-      DistributedTableType *reference_table_in,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       table_exchange_.SendReceive(
-        thread_id, metric_in, world, reference_table_in,
-        hashed_essential_reference_subtrees_to_send);
+        metric_in, world, hashed_essential_reference_subtrees_to_send);
     }
 
     template<typename MetricType>
