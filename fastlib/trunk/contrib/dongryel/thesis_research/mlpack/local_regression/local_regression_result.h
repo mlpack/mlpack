@@ -8,6 +8,8 @@
 #ifndef MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_RESULT_H
 #define MLPACK_LOCAL_REGRESSION_LOCAL_REGRESSION_RESULT_H
 
+#include "core/parallel/map_vector.h"
+
 namespace mlpack {
 namespace local_regression {
 
@@ -44,101 +46,84 @@ class LocalRegressionResult {
      */
     arma::vec tmp_solution_;
 
-    /** @brief The number of query points.
-     */
-    int num_query_points_;
-
     /** @brief The final regression estimates.
      */
-    boost::scoped_array<double> regression_estimates_;
+    core::parallel::MapVector<double> regression_estimates_;
 
     /** @brief The lower bound on the left hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairMatrix > left_hand_side_l_;
 
     /** @brief The estimated left hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairMatrix > left_hand_side_e_;
 
     /** @brief The upper bound on the left hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairMatrix > left_hand_side_u_;
 
     /** @brief The lower bound on the right hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairVector > right_hand_side_l_;
 
     /** @brief The estimated right hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairVector > right_hand_side_e_;
 
     /** @brief The upper bound on the left hand side.
      */
-    boost::scoped_array <
+    core::parallel::MapVector <
     core::monte_carlo::MeanVariancePairVector > right_hand_side_u_;
 
     /** @brief The number of points pruned per each query.
      */
-    boost::scoped_array<double> pruned_;
+    core::parallel::MapVector<double> pruned_;
 
     /** @brief The amount of maximum error incurred per each query for
      *         the left hand side.
      */
-    boost::scoped_array<double> left_hand_side_used_error_;
+    core::parallel::MapVector<double> left_hand_side_used_error_;
 
     /** @brief The amount of maximum error incurred per each query for
      *         the right hand side.
      */
-    boost::scoped_array<double> right_hand_side_used_error_;
+    core::parallel::MapVector<double> right_hand_side_used_error_;
 
     /** @brief Saves the local regression result object.
      */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-      ar & num_query_points_;
-      for(unsigned int i = 0; i < num_query_points_; i++) {
-        ar & regression_estimates_[i];
-        ar & left_hand_side_l_[i];
-        ar & left_hand_side_e_[i];
-        ar & left_hand_side_u_[i];
-        ar & right_hand_side_l_[i];
-        ar & right_hand_side_e_[i];
-        ar & right_hand_side_u_[i];
-        ar & pruned_[i];
-        ar & left_hand_side_used_error_[i];
-        ar & right_hand_side_used_error_[i];
-      }
+      ar & regression_estimates_;
+      ar & left_hand_side_l_;
+      ar & left_hand_side_e_;
+      ar & left_hand_side_u_;
+      ar & right_hand_side_l_;
+      ar & right_hand_side_e_;
+      ar & right_hand_side_u_;
+      ar & pruned_;
+      ar & left_hand_side_used_error_;
+      ar & right_hand_side_used_error_;
     }
 
     /** @brief Loads the local regression result object.
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-
-      // Load the number of points.
-      ar & num_query_points_;
-
-      // Initialize the array.
-      this->Init(num_query_points_);
-
-      // Load.
-      for(int i = 0; i < num_query_points_; i++) {
-        ar & regression_estimates_[i];
-        ar & left_hand_side_l_[i];
-        ar & left_hand_side_e_[i];
-        ar & left_hand_side_u_[i];
-        ar & right_hand_side_l_[i];
-        ar & right_hand_side_e_[i];
-        ar & right_hand_side_u_[i];
-        ar & pruned_[i];
-        ar & left_hand_side_used_error_[i];
-        ar & right_hand_side_used_error_[i];
-      }
+      ar & regression_estimates_;
+      ar & left_hand_side_l_;
+      ar & left_hand_side_e_;
+      ar & left_hand_side_u_;
+      ar & right_hand_side_l_;
+      ar & right_hand_side_e_;
+      ar & right_hand_side_u_;
+      ar & pruned_;
+      ar & left_hand_side_used_error_;
+      ar & right_hand_side_used_error_;
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -146,19 +131,66 @@ class LocalRegressionResult {
       pruned_[qpoint_index] = initial_pruned_in;
     }
 
+    void SetZero() {
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_l_it = left_hand_side_l_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_e_it = left_hand_side_e_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_u_it = left_hand_side_u_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_l_it = right_hand_side_l_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_e_it = right_hand_side_e_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_u_it = right_hand_side_u_.get_iterator();
+      core::parallel::MapVector <double>::iterator
+      pruned_it = pruned_.get_iterator();
+      core::parallel::MapVector <double>::iterator
+      left_hand_side_used_error_it =
+        left_hand_side_used_error_.get_iterator();
+      core::parallel::MapVector <double>::iterator
+      right_hand_side_used_error_it =
+        right_hand_side_used_error_.get_iterator();
+
+      for(; left_hand_side_l_it.HasNext();
+          left_hand_side_l_it++, left_hand_side_e_it++, left_hand_side_u_it++,
+          right_hand_side_l_it++, right_hand_side_e_it++,
+          right_hand_side_u_it++, pruned_it++,
+          left_hand_side_used_error_it++, right_hand_side_used_error_it++) {
+        left_hand_side_l_it->SetZero();
+        left_hand_side_e_it->SetZero();
+        left_hand_side_u_it->SetZero();
+        right_hand_side_l_it->SetZero();
+        right_hand_side_e_it->SetZero();
+        right_hand_side_u_it->SetZero();
+        (*pruned_it) = 0.0;
+        (*left_hand_side_used_error_it) = 0.0;
+        (*right_hand_side_used_error_it) = 0.0;
+      }
+    }
+
     /** @brief The default constructor.
      */
     LocalRegressionResult() {
-      num_query_points_ = 0;
       SetZero();
     }
 
     template<typename GlobalType, typename TableType>
     void PostProcess(const GlobalType &global, TableType &query_table) {
-      for(int i = 0; i < num_query_points_; i++) {
+      typename TableType::TreeIterator it =
+        query_table.get_node_iterator(query_table.get_tree());
+      while(it.HasNext()) {
+        int qpoint_id;
         core::table::DensePoint qpoint;
-        query_table.get(i, &qpoint);
-        PostProcess(global, qpoint, i);
+        it.Next(&qpoint, &qpoint_id);
+        this->PostProcess(global, qpoint, qpoint_id);
       }
     }
 
@@ -218,11 +250,15 @@ class LocalRegressionResult {
       }
     }
 
-
     void Print(const std::string &file_name) const {
       FILE *file_output = fopen(file_name.c_str(), "w+");
-      for(int i = 0; i < num_query_points_; i++) {
-        fprintf(file_output, "%g %g\n", regression_estimates_[i], pruned_[i]);
+      core::parallel::MapVector<double>::iterator regression_estimates_it =
+        regression_estimates_.get_iterator();
+      core::parallel::MapVector<double>::iterator pruned_it =
+        pruned_.get_iterator();
+      for(; regression_estimates_it.HasNext(); regression_estimates_it++,
+          pruned_it++) {
+        fprintf(file_output, "%g %g\n", *regression_estimates_it, *pruned_it);
       }
       fclose(file_output);
     }
@@ -231,68 +267,33 @@ class LocalRegressionResult {
      */
     void Init(int num_points) {
 
-      // Sets the number of points.
-      num_query_points_ = num_points;
-
       // Initialize the array storing the final regression estimates.
-      boost::scoped_array<double> tmp_regression_estimates(
-        new double[num_query_points_]);
-      regression_estimates_.swap(tmp_regression_estimates);
+      regression_estimates_.Init(num_points);
 
       // Initialize the left hand side lower bound.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairMatrix >
-      tmp_left_hand_side_l(
-        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
-      left_hand_side_l_.swap(tmp_left_hand_side_l);
+      left_hand_side_l_.Init(num_points);
 
       // Initialize the left hand side estimate.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairMatrix >
-      tmp_left_hand_side_e(
-        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
-      left_hand_side_e_.swap(tmp_left_hand_side_e);
+      left_hand_side_e_.Init(num_points);
 
       // Initialize the left hand side upper bound.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairMatrix >
-      tmp_left_hand_side_u(
-        new core::monte_carlo::MeanVariancePairMatrix[num_query_points_]);
-      left_hand_side_u_.swap(tmp_left_hand_side_u);
+      left_hand_side_u_.Init(num_points);
 
       // Initialize the right hand side lower bound.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairVector >
-      tmp_right_hand_side_l(
-        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
-      right_hand_side_l_.swap(tmp_right_hand_side_l);
+      right_hand_side_l_.Init(num_points);
 
       // Initialize the right hand side estimate.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairVector >
-      tmp_right_hand_side_e(
-        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
-      right_hand_side_e_.swap(tmp_right_hand_side_e);
+      right_hand_side_e_.Init(num_points);
 
       // Initialize the right hand side upper bound.
-      boost::scoped_array <
-      core::monte_carlo::MeanVariancePairVector >
-      tmp_right_hand_side_u(
-        new core::monte_carlo::MeanVariancePairVector[num_query_points_]);
-      right_hand_side_u_.swap(tmp_right_hand_side_u);
+      right_hand_side_u_.Init(num_points);
 
       // Initialize the pruned quantities.
-      boost::scoped_array< double > tmp_pruned(
-        new double[num_query_points_]);
-      pruned_.swap(tmp_pruned);
+      pruned_.Init(num_points);
 
       // Initialize the used error quantities.
-      boost::scoped_array< double > tmp_left_hand_side_used_error(
-        new double[num_query_points_]);
-      left_hand_side_used_error_.swap(tmp_left_hand_side_used_error);
-      boost::scoped_array< double > tmp_right_hand_side_used_error(
-        new double[num_query_points_]);
-      right_hand_side_used_error_.swap(tmp_right_hand_side_used_error);
+      left_hand_side_used_error_.Init(num_points);
+      right_hand_side_used_error_.Init(num_points);
     }
 
     template<typename GlobalType>
@@ -302,37 +303,44 @@ class LocalRegressionResult {
       this->Init(num_points);
 
       // Allocate Monte Carlo results.
-      for(int i = 0; i < num_query_points_; i++) {
-        left_hand_side_l_[i].Init(
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_l_it = left_hand_side_l_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_e_it = left_hand_side_e_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairMatrix >::iterator
+      left_hand_side_u_it = left_hand_side_u_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_l_it = right_hand_side_l_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_e_it = right_hand_side_e_.get_iterator();
+      core::parallel::MapVector <
+      core::monte_carlo::MeanVariancePairVector >::iterator
+      right_hand_side_u_it = right_hand_side_u_.get_iterator();
+      for(; left_hand_side_l_it.HasNext();
+          left_hand_side_l_it++, left_hand_side_e_it++, left_hand_side_u_it++,
+          right_hand_side_l_it++, right_hand_side_e_it++,
+          right_hand_side_u_it++) {
+        left_hand_side_l_it->Init(
           global_in.problem_dimension() ,
           global_in.problem_dimension());
-        left_hand_side_e_[i].Init(
+        left_hand_side_e_it->Init(
           global_in.problem_dimension() ,
           global_in.problem_dimension());
-        left_hand_side_u_[i].Init(
+        left_hand_side_u_it->Init(
           global_in.problem_dimension() ,
           global_in.problem_dimension());
-        right_hand_side_l_[i].Init(global_in.problem_dimension());
-        right_hand_side_e_[i].Init(global_in.problem_dimension());
-        right_hand_side_u_[i].Init(global_in.problem_dimension());
+        right_hand_side_l_it->Init(global_in.problem_dimension());
+        right_hand_side_e_it->Init(global_in.problem_dimension());
+        right_hand_side_u_it->Init(global_in.problem_dimension());
       }
 
       // Set everything to zero.
       SetZero();
-    }
-
-    void SetZero() {
-      for(int i = 0; i < num_query_points_; i++) {
-        left_hand_side_l_[i].SetZero();
-        left_hand_side_e_[i].SetZero();
-        left_hand_side_u_[i].SetZero();
-        right_hand_side_l_[i].SetZero();
-        right_hand_side_e_[i].SetZero();
-        right_hand_side_u_[i].SetZero();
-        pruned_[i] = 0.0;
-        left_hand_side_used_error_[i] = 0.0;
-        right_hand_side_used_error_[i] = 0.0;
-      }
     }
 
     template<typename GlobalType, typename TreeType, typename DeltaType>
