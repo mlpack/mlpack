@@ -8,7 +8,7 @@
 
 #include <boost/scoped_array.hpp>
 #include <boost/serialization/serialization.hpp>
-#include <hash_map>
+#include <map>
 
 namespace core {
 namespace parallel {
@@ -21,13 +21,21 @@ class MapVector {
     friend class boost::serialization::access;
 
   private:
-    std::hash_map<int, int> id_to_position_map_;
+    std::map<int, int> id_to_position_map_;
 
     boost::scoped_array<T> vector_;
 
     std::vector<int> indices_to_save_;
 
   public:
+
+    unsigned int size() const {
+      return id_to_position_map_.size();
+    }
+
+    MapVector() {
+      indices_to_save_.resize(0);
+    }
 
     template<typename TreeIteratorType>
     void set_indices_to_save(TreeIteratorType &it) {
@@ -45,20 +53,39 @@ class MapVector {
 
       // The pointer to the modifiable self.
       core::parallel::MapVector<T> *modifiable_self =
-        const_cast< core::paralell::MapVector<T> * >(this);
+        const_cast< core::parallel::MapVector<T> * >(this);
 
       // Save the number of elements being saved.
       int num_elements_to_save = indices_to_save_.size();
       ar & num_elements_to_save;
 
+      // Save each element and its mapping.
+      for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
+        ar & vector_[ indices_to_save_[i] ];
+        ar & indices_to_save_[i];
+      }
+
       // Clear the indices to be saved after done.
-      modifiable_self->indices_to_save_.clear();
+      modifiable_self->indices_to_save_.resize(0);
     }
 
     /** @brief Load the object.
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
+      // Load the number of elements.
+      int num_elements;
+      ar & num_elements;
+
+      // Load each element and its mapping.
+      for(int i = 0; i < num_elements; i++) {
+        T element;
+        int original_index;
+        ar & element;
+        vector_.push_back(element);
+        id_to_position_map_[ original_index ] = i;
+      }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -72,7 +99,9 @@ class MapVector {
         return vector_[i];
       }
       else {
-        return vector_[ id_to_position_map_[i] ];
+        return vector_[
+                 const_cast<
+                 core::parallel::MapVector<T> * >(this)->id_to_position_map_[i] ];
       }
     }
 
