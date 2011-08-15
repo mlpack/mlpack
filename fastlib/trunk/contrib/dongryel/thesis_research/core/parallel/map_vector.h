@@ -31,6 +31,75 @@ class MapVector {
 
   public:
 
+    class iterator {
+      private:
+        T *ptr_;
+
+        int current_pos_;
+
+        int num_elements_;
+
+      public:
+
+        int num_elements() const {
+          return num_elements_;
+        }
+
+        int current_pos() const {
+          return current_pos_;
+        }
+
+        T *ptr() {
+          return ptr_;
+        }
+
+        T &operator*() {
+          return ptr_[current_pos_];
+        }
+
+        void operator=(const iterator &it_in) {
+          ptr_ = const_cast<iterator &>(it_in).ptr();
+          current_pos_ = const_cast<iterator &>(it_in).current_pos();
+          num_elements_ = const_cast<iterator &>(it_in).num_elements();
+        }
+
+        iterator(const iterator &it_in) {
+          this->operator=(it_in);
+        }
+
+        iterator(const T *ptr_in, int current_pos_in, int num_elements_in) {
+          ptr_ = const_cast<T *>(ptr_in);
+          current_pos_ = current_pos_in;
+          num_elements_ = num_elements_in;
+        }
+
+        iterator() {
+          ptr_ = NULL;
+          current_pos_ = 0;
+          num_elements_ = 0;
+        }
+
+        bool HasNext() const {
+          return current_pos_ < num_elements_;
+        }
+
+        void operator++(int) {
+          current_pos_++;
+        }
+
+        bool operator !=(const iterator &it_in) {
+          return ptr_ != it_in.ptr() ||
+                 current_pos_ != it_in.current_pos() ||
+                 num_elements_ != it_in.num_elements();
+        }
+    };
+
+  public:
+
+    iterator get_iterator() const {
+      return iterator(vector_.get(), 0, num_elements_);
+    }
+
     unsigned int size() const {
       return num_elements_;
     }
