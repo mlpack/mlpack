@@ -13,6 +13,7 @@ set(SOURCES
   parallel_sample_sort.h
   route_request.h
   sample_distributed_tree_builder.h
+  scoped_omp_lock.h
   table_exchange.h
   vanilla_distributed_tree_builder.h
 )
