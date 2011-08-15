@@ -82,10 +82,17 @@ class KdeResult {
      */
     template<typename GlobalType>
     void Normalize(const GlobalType &global) {
-      for(unsigned int q_index = 0; q_index < densities_l_.size(); q_index++) {
-        densities_l_[q_index] *= global.get_mult_const();
-        densities_[q_index] *= global.get_mult_const();
-        densities_u_[q_index] *= global.get_mult_const();
+      typename core::parallel::MapVector<double>::iterator densities_l_it =
+        densities_l_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_it =
+        densities_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_u_it =
+        densities_u_.get_iterator();
+      for(; densities_l_it.HasNext() ;
+          densities_l_it++, densities_it++, densities_u_it++) {
+        (*densities_l_it) *= global.get_mult_const();
+        (*densities_it) *= global.get_mult_const();
+        (*densities_u_it) *= global.get_mult_const();
       }
     }
 
@@ -106,9 +113,18 @@ class KdeResult {
 
     void Print(const std::string &file_name) const {
       FILE *file_output = fopen(file_name.c_str(), "w+");
-      for(unsigned int i = 0; i < densities_.size(); i++) {
-        fprintf(file_output, "%g %g %g %g\n", densities_l_[i],
-                densities_[i], densities_u_[i], pruned_[i]);
+      typename core::parallel::MapVector<double>::iterator densities_l_it =
+        densities_l_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_it =
+        densities_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_u_it =
+        densities_u_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator pruned_it =
+        pruned_.get_iterator();
+      for(; densities_it.HasNext(); densities_l_it++, densities_it++,
+          densities_u_it++, pruned_it++) {
+        fprintf(file_output, "%g %g %g %g\n", *densities_l_it,
+                *densities_it, *densities_u_it, *pruned_it);
       }
       fclose(file_output);
     }
@@ -158,12 +174,24 @@ class KdeResult {
     }
 
     void SetZero() {
-      for(int i = 0; i < static_cast<int>(densities_l_.size()); i++) {
-        densities_l_[i] = 0;
-        densities_[i] = 0;
-        densities_u_[i] = 0;
-        pruned_[i] = 0;
-        used_error_[i] = 0;
+      typename core::parallel::MapVector<double>::iterator densities_l_it =
+        densities_l_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_it =
+        densities_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator densities_u_it =
+        densities_u_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator pruned_it =
+        pruned_.get_iterator();
+      typename core::parallel::MapVector<double>::iterator used_error_it =
+        used_error_.get_iterator();
+      for(; used_error_it.HasNext() ;
+          densities_l_it++, densities_it++, densities_u_it++,
+          pruned_it++, used_error_it++) {
+        (*densities_l_it) = 0;
+        (*densities_it) = 0;
+        (*densities_u_it) = 0;
+        (*pruned_it) = 0;
+        (*used_error_it) = 0;
       }
       num_farfield_to_local_prunes_ = 0;
       num_farfield_prunes_ = 0;
