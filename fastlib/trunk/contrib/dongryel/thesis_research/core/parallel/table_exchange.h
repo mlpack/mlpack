@@ -437,8 +437,8 @@ class TableExchange {
             // Update the energy count.
             if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
                 route_request.energy_route().object_is_valid()) {
-              task_queue_->remaining_global_computation() -=
-                route_request.energy_route().object();
+              task_queue_->decrement_remaining_global_computation(
+                route_request.energy_route().object());
             }
           }
         }

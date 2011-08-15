@@ -239,9 +239,18 @@ class DistributedDualtreeTaskQueue {
       omp_destroy_nest_lock(&task_queue_lock_);
     }
 
-    unsigned long int &remaining_global_computation() {
+    unsigned long int remaining_local_computation() const {
+      return remaining_local_computation_;
+    }
+
+    unsigned long int remaining_global_computation() const {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return remaining_global_computation_;
+    }
+
+    void decrement_remaining_global_computation(unsigned long int decrement) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      remaining_global_computation_ -= decrement;
     }
 
     void ReleaseCache(int cache_id, int num_times) {
@@ -364,6 +373,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
+      load_balancing_trigger_level_ = 0;
       local_query_result_ = NULL;
       local_query_table_ = NULL;
       num_remaining_tasks_ = 0;
