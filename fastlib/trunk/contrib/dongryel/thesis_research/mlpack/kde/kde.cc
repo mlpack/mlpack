@@ -43,7 +43,7 @@ void StartComputation(boost::program_options::variables_map &vm) {
   // Compute the result.
   core::util::Timer compute_timer;
   compute_timer.Start();
-  mlpack::kde::KdeResult< std::vector<double> > kde_result;
+  mlpack::kde::KdeResult kde_result;
   kde_instance.Compute(kde_arguments, &kde_result);
   compute_timer.End();
   printf("%g seconds elapsed in computation...\n",

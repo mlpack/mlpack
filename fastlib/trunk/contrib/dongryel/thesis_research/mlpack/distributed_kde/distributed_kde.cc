@@ -41,7 +41,7 @@ void StartComputation(
   distributed_kde_instance.Init(world, distributed_kde_arguments);
 
   // Compute the result.
-  mlpack::kde::KdeResult< std::vector<double> > kde_result;
+  mlpack::kde::KdeResult kde_result;
   distributed_kde_instance.Compute(
     distributed_kde_arguments, &kde_result);
 

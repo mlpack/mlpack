@@ -64,7 +64,7 @@ class DistributedKde {
     typedef mlpack::kde::KdeGlobal <
     DistributedTableType, KernelAuxType > GlobalType;
 
-    typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
+    typedef mlpack::kde::KdeResult ResultType;
 
     typedef mlpack::kde::KdeDelta DeltaType;
 

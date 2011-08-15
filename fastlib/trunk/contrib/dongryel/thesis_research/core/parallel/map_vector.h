@@ -23,17 +23,20 @@ class MapVector {
   private:
     std::map<int, int> id_to_position_map_;
 
-    boost::scoped_array<T> vector_;
-
     std::vector<int> indices_to_save_;
+
+    unsigned int num_elements_;
+
+    boost::scoped_array<T> vector_;
 
   public:
 
     unsigned int size() const {
-      return id_to_position_map_.size();
+      return num_elements_;
     }
 
     MapVector() {
+      num_elements_ = 0;
       indices_to_save_.resize(0);
     }
 
@@ -56,7 +59,7 @@ class MapVector {
         const_cast< core::parallel::MapVector<T> * >(this);
 
       // Save the number of elements being saved.
-      int num_elements_to_save = indices_to_save_.size();
+      unsigned int num_elements_to_save = indices_to_save_.size();
       ar & num_elements_to_save;
 
       // Save each element and its mapping.
@@ -75,11 +78,10 @@ class MapVector {
     void load(Archive &ar, const unsigned int version) {
 
       // Load the number of elements.
-      int num_elements;
-      ar & num_elements;
+      ar & num_elements_;
 
       // Load each element and its mapping.
-      for(int i = 0; i < num_elements; i++) {
+      for(int i = 0; i < num_elements_; i++) {
         T element;
         int original_index;
         ar & element;
@@ -92,6 +94,7 @@ class MapVector {
     void Init(int num_elements_in) {
       boost::scoped_array<T> tmp_vector(new T[num_elements_in]);
       vector_.swap(tmp_vector);
+      num_elements_ = num_elements_in;
     }
 
     const T &operator[](int i) const {

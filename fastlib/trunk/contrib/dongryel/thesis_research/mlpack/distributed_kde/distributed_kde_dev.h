@@ -50,7 +50,7 @@ template<typename DistributedTableType, typename KernelAuxType>
 void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   const mlpack::distributed_kde::DistributedKdeArguments <
   DistributedTableType > &arguments_in,
-  mlpack::kde::KdeResult< std::vector<double> > *result_out) {
+  ResultType *result_out) {
 
   // Barrier so that every process is here.
   world_->barrier();

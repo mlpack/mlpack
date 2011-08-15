@@ -8,17 +8,20 @@
 #ifndef MLPACK_KDE_KDE_RESULT_H
 #define MLPACK_KDE_KDE_RESULT_H
 
+#include "core/parallel/map_vector.h"
+
 namespace mlpack {
 namespace kde {
 
 /** @brief Represents the storage of KDE computation results.
  */
-template<typename ContainerType>
 class KdeResult {
   private:
 
     // For BOOST serialization.
     friend class boost::serialization::access;
+
+    typedef core::parallel::MapVector<double> ContainerType;
 
   public:
 
@@ -146,11 +149,11 @@ class KdeResult {
     }
 
     void Init(int num_points) {
-      densities_l_.resize(num_points);
-      densities_.resize(num_points);
-      densities_u_.resize(num_points);
-      pruned_.resize(num_points);
-      used_error_.resize(num_points);
+      densities_l_.Init(num_points);
+      densities_.Init(num_points);
+      densities_u_.Init(num_points);
+      pruned_.Init(num_points);
+      used_error_.Init(num_points);
       SetZero();
     }
 

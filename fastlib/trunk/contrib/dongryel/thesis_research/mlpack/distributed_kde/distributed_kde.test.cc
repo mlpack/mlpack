@@ -120,12 +120,13 @@ class TestDistributed_Kde {
       }
     }
 
+    template<typename QueryResultType>
     bool CheckAccuracy_(
       boost::mpi::communicator &world,
       std::pair<int, std::pair<int, int> > *old_from_new,
       int n_entries,
       int *total_distribution,
-      const std::vector<double> &query_results,
+      const QueryResultType &query_results,
       const std::vector<double> &naive_query_results,
       double relative_error) {
 
@@ -325,8 +326,7 @@ class TestDistributed_Kde {
       distributed_kde_instance.Init(world, distributed_kde_arguments);
 
       // Compute the result.
-      mlpack::kde::KdeResult <
-      std::vector<double> > distributed_kde_result;
+      mlpack::kde::KdeResult distributed_kde_result;
       distributed_kde_instance.Compute(
         distributed_kde_arguments, &distributed_kde_result);
 
