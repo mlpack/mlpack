@@ -25,8 +25,9 @@ class TestLocalRegression {
 
   private:
 
+    template<typename QueryResultType>
     bool CheckAccuracy_(
-      const boost::scoped_array<double> &query_results,
+      const QueryResultType &query_results,
       const std::vector<double> &naive_query_results,
       double relative_error) {
 

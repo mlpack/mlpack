@@ -140,12 +140,13 @@ class TestDistributedLocalRegression {
       }
     }
 
+    template<typename QueryResultType>
     bool CheckAccuracy_(
       boost::mpi::communicator &world,
       std::pair<int, std::pair<int, int> > *old_from_new,
       int n_entries,
       int *total_distribution,
-      const boost::scoped_array<double> &query_results,
+      const QueryResultType &query_results,
       int local_num_queries,
       const std::vector<double> &naive_query_results,
       double relative_error) {
@@ -351,13 +352,12 @@ class TestDistributedLocalRegression {
       for(int i = 0; i < world.size(); i++) {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
-      for(int i = 0;
-          i < distributed_local_regression_result.num_query_points_; i++) {
-        if(distributed_local_regression_result.pruned_[i] !=
-            total_num_points - 1) {
+      typename core::parallel::MapVector<double>::iterator pruned_it =
+        distributed_local_regression_result.pruned_.get_iterator();
+      for(; pruned_it.HasNext(); pruned_it++) {
+        if((*pruned_it) != total_num_points - 1) {
           std::cerr << "Not all reference point have been accounted for.\n";
-          std::cerr << "Got " <<
-                    distributed_local_regression_result.pruned_[i] <<
+          std::cerr << "Got " << (*pruned_it) <<
                     " instead of " << total_num_points - 1 << "\n";
           exit(-1);
         }

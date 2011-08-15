@@ -57,6 +57,10 @@ class MapVector {
           return ptr_[current_pos_];
         }
 
+        T *operator->() {
+          return &(ptr_[current_pos_]);
+        }
+
         void operator=(const iterator &it_in) {
           ptr_ = const_cast<iterator &>(it_in).ptr();
           current_pos_ = const_cast<iterator &>(it_in).current_pos();
