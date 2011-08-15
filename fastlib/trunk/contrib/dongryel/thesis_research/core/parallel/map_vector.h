@@ -159,6 +159,7 @@ class MapVector {
         int original_index;
         ar & element;
         vector_.push_back(element);
+        ar & original_index;
         id_to_position_map_[ original_index ] = i;
       }
     }
