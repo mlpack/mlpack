@@ -24,8 +24,9 @@ class TestKde {
 
   private:
 
+    template<typename QueryResultType>
     bool CheckAccuracy_(
-      const std::vector<double> &query_results,
+      const QueryResultType &query_results,
       const std::vector<double> &naive_query_results,
       double relative_error) {
 
@@ -220,7 +221,7 @@ class TestKde {
          TableType, KernelAuxType >::GlobalType *) NULL);
 
       // Compute the result.
-      mlpack::kde::KdeResult< std::vector<double> > kde_result;
+      mlpack::kde::KdeResult kde_result;
       kde_instance.Compute(kde_arguments, &kde_result);
 
       // Call the ultra-naive.

@@ -59,7 +59,7 @@ class Kde {
 
     typedef mlpack::kde::KdeGlobal<TableType, KernelAuxType> GlobalType;
 
-    typedef mlpack::kde::KdeResult< std::vector<double> > ResultType;
+    typedef mlpack::kde::KdeResult ResultType;
 
     typedef mlpack::kde::KdeDelta DeltaType;
 

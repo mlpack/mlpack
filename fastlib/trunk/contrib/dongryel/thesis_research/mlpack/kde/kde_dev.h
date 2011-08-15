@@ -54,7 +54,7 @@ bool Kde<TableType, KernelAuxType>::is_monochromatic() const {
 template<typename TableType, typename KernelAuxType>
 void Kde<TableType, KernelAuxType>::Compute(
   const KdeArguments<TableType> &arguments_in,
-  KdeResult< std::vector<double> > *result_out) {
+  ResultType *result_out) {
 
   // Instantiate a dual-tree algorithm of the KDE.
   typedef Kde<TableType, KernelAuxType> ProblemType;
