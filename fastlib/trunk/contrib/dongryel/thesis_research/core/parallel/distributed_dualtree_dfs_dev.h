@@ -322,13 +322,14 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
     do {
 
+      // The task found in the current iteration.
       std::pair<FineFrontierObjectType, int> found_task;
       found_task.second = -1;
 
+      // Only the master thread makes MPI calls.
       if(thread_id == 0) {
         distributed_tasks.SendReceive(
-          thread_id, metric, *world_, reference_table_,
-          hashed_essential_reference_subtrees_to_send);
+          metric, *world_, hashed_essential_reference_subtrees_to_send);
       }
 
       // After enqueing, everyone else tries to dequeue the tasks.
