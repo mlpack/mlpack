@@ -225,6 +225,10 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    bool needs_load_balancing() const {
+      return remaining_local_computation_ <= load_balancing_trigger_level_;
+    }
+
     /** @brief The destructor.
      */
     ~DistributedDualtreeTaskQueue() {

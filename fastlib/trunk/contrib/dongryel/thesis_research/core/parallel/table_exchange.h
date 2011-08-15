@@ -146,6 +146,10 @@ class TableExchange {
 
   private:
 
+    void LoadBalance_(boost::mpi::communicator & world) {
+
+    }
+
     /** @brief Prints the existing subtables in the cache.
      */
     void PrintSubTables_(boost::mpi::communicator &world) {
@@ -293,17 +297,10 @@ class TableExchange {
      */
     template<typename MetricType>
     void SendReceive(
-      int thread_id,
       const MetricType &metric_in,
       boost::mpi::communicator &world,
-      DistributedTableType *reference_table_in,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
-
-      // If not the master thread, return.
-      if(thread_id > 0) {
-        return;
-      }
 
       // The ID of the received subtables.
       std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
@@ -447,6 +444,9 @@ class TableExchange {
         boost::mpi::wait_all(
           message_send_request_.begin(),
           message_send_request_.begin() + num_subtables_to_exchange);
+
+        // Now initiate load balancing.
+        LoadBalance_(world);
 
         // Generate more tasks.
         task_queue_->GenerateTasks(metric_in, received_subtable_ids);
