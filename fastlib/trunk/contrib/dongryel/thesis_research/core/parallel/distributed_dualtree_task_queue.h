@@ -362,7 +362,9 @@ class DistributedDualtreeTaskQueue {
     }
 
     int num_remaining_tasks() const {
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return num_remaining_tasks_;
     }
 
