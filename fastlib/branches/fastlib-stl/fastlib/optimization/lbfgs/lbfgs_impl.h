@@ -64,7 +64,6 @@ double L_BFGS<FunctionType>::ChooseScalingFactor_(int iteration_num,
 template<typename FunctionType>
 bool L_BFGS<FunctionType>::GradientNormTooSmall_(const arma::mat& gradient) {
   double norm = arma::norm(gradient, 2);
-  IO::Debug << "L-BFGS gradient norm is " << norm << "." << std::endl;
 
   return (norm < IO::GetParam<double>("lbfgs/min_gradient_norm"));
 }
@@ -122,30 +121,15 @@ bool L_BFGS<FunctionType>::LineSearch_(double& function_value,
     function_.Gradient(new_iterate_tmp_, gradient);
     num_iterations++;
 
-    IO::Info << "L-BFGS line search iteration " << (num_iterations - 1) <<
-        ": objective " << std::setprecision(10) << function_value << "." <<
-        std::endl;
-    IO::Info << "Current line search step size " << step_size << "."
-        << std::endl;
-    IO::Info << "Linear decrease requires the objective to be less than " <<
-        std::setprecision(10) <<
-        initial_function_value + step_size *
-        linear_approx_function_value_decrease << "." << std::endl;
-
     if(function_value > initial_function_value + step_size *
         linear_approx_function_value_decrease) {
       width = dec;
     } else {
       // Check Wolfe's condition.
-      IO::Info << "Checking Wolfe condition..." << std::endl;
       double search_direction_dot_gradient =
           arma::dot(gradient, search_direction);
       double wolfe = IO::GetParam<double>("lbfgs/wolfe");
 
-      IO::Info << "Search direction * gradient = " <<
-          search_direction_dot_gradient << "." << std::endl;
-      IO::Info << "Must be greater than " << wolfe *
-          initial_search_direction_dot_gradient << "." << std::endl;
       if(search_direction_dot_gradient < wolfe *
           initial_search_direction_dot_gradient) {
         width = inc;
@@ -325,13 +309,13 @@ bool L_BFGS<FunctionType>::Optimize(int num_iterations, arma::mat& iterate) {
   // The main optimization loop.
   for(int it_num = 0; optimize_until_convergence || it_num < num_iterations;
       it_num++) {
-    IO::Info << "Iteration " << it_num << "; objective " <<
+    IO::Debug << "L-BFGS iteration " << it_num << "; objective " <<
         function_.Evaluate(iterate) << "." << std::endl;
 
     // Break when the norm of the gradient becomes too small.
     if(GradientNormTooSmall_(gradient)) {
       success = true; // We have found the minimum.
-      IO::Info << "L-BFGS gradient norm too small (terminating)." << std::endl;
+      IO::Debug << "L-BFGS gradient norm too small (terminating)." << std::endl;
       break;
     }
 
