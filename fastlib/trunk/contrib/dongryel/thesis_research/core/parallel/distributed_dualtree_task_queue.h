@@ -45,13 +45,13 @@ class DistributedDualtreeTaskQueue {
 
     std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
 
-    ResultType *local_query_result_;
-
     TableType *local_query_table_;
 
     int num_remaining_tasks_;
 
     int num_threads_;
+
+    std::vector<ResultType *> query_results_;
 
     std::vector< TreeType *> query_subtrees_;
 
@@ -72,6 +72,25 @@ class DistributedDualtreeTaskQueue {
     unsigned long int load_balancing_trigger_level_;
 
   private:
+
+    void Evict_(int probe_index) {
+      delete assigned_work_[probe_index];
+      delete tasks_[probe_index];
+      query_results_[probe_index] = query_results_.back();
+      query_subtrees_[probe_index] = query_subtrees_.back();
+      assigned_work_[probe_index] = assigned_work_.back();
+      remaining_work_for_query_subtrees_[probe_index] =
+        remaining_work_for_query_subtrees_.back();
+      query_subtree_locks_[probe_index] = query_subtree_locks_.back();
+      tasks_[probe_index] = tasks_.back();
+
+      assigned_work_.pop_back();
+      query_results_.pop_back();
+      query_subtrees_.pop_back();
+      query_subtree_locks_.pop_back();
+      remaining_work_for_query_subtrees_.pop_back();
+      tasks_.pop_back();
+    }
 
     template<typename MetricType>
     void RedistributeAmongCores_(
@@ -111,8 +130,8 @@ class DistributedDualtreeTaskQueue {
           metric_in, reference_table_node_pair.get<1>()->bound()));
       TaskType new_task(
         local_query_table_,
-        query_subtrees_[push_index],
-        local_query_result_,
+        query_subtrees_[ push_index ],
+        query_results_[ push_index ],
         reference_table_node_pair.get<0>(),
         reference_table_node_pair.get<1>(),
         reference_table_node_pair.get<2>(),
@@ -141,6 +160,7 @@ class DistributedDualtreeTaskQueue {
       query_subtrees_[subtree_index] = left;
 
       // Grow the list of local query subtrees.
+      query_results_.push_back(query_results_[subtree_index]);
       query_subtrees_.push_back(right);
       query_subtree_locks_.push_back(false);
 
@@ -377,7 +397,6 @@ class DistributedDualtreeTaskQueue {
      */
     DistributedDualtreeTaskQueue() {
       load_balancing_trigger_level_ = 0;
-      local_query_result_ = NULL;
       local_query_table_ = NULL;
       num_remaining_tasks_ = 0;
       num_threads_ = 1;
@@ -413,9 +432,6 @@ class DistributedDualtreeTaskQueue {
       ResultType *local_query_result_in,
       int num_threads_in) {
 
-      // Initialize the local query result.
-      local_query_result_ = local_query_result_in;
-
       // Initialize the local query table.
       local_query_table_ = query_table_in->local_table();
 
@@ -431,9 +447,11 @@ class DistributedDualtreeTaskQueue {
         num_threads_in, &query_subtrees_);
 
       // Initialize the other member variables.
+      query_results_.resize(query_subtrees_.size());
       query_subtree_locks_.resize(query_subtrees_.size());
       tasks_.resize(query_subtrees_.size());
       for(unsigned int i = 0; i < query_subtrees_.size(); i++) {
+        query_results_[i] = local_query_result_in;
         query_subtree_locks_[i] = false;
         tasks_[i] = new TaskPriorityQueueType();
       }
@@ -517,20 +535,7 @@ class DistributedDualtreeTaskQueue {
 
         // Otherwise, determine whether the cleanup needs to be done.
         else if(remaining_work_for_query_subtrees_[probe_index] == 0) {
-          delete assigned_work_[probe_index];
-          delete tasks_[probe_index];
-          query_subtrees_[probe_index] = query_subtrees_.back();
-          assigned_work_[probe_index] = assigned_work_.back();
-          remaining_work_for_query_subtrees_[probe_index] =
-            remaining_work_for_query_subtrees_.back();
-          query_subtree_locks_[probe_index] = query_subtree_locks_.back();
-          tasks_[probe_index] = tasks_.back();
-
-          query_subtrees_.pop_back();
-          assigned_work_.pop_back();
-          remaining_work_for_query_subtrees_.pop_back();
-          query_subtree_locks_.pop_back();
-          tasks_.pop_back();
+          this->Evict_(probe_index);
           probe_index--;
         }
       }
