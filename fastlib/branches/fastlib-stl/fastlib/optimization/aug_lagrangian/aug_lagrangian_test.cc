@@ -59,8 +59,9 @@ BOOST_AUTO_TEST_CASE(gockenbach_function) {
 
 /***
  * Extremely simple test case for the Lovasz theta SDP.
- *
+ */
 BOOST_AUTO_TEST_CASE(extremely_simple_lovasz_theta_sdp) {
+  // Manually input the single edge.
   arma::mat edges = "0; 1";
 
   LovaszThetaSDP ltsdp(edges);
@@ -73,33 +74,28 @@ BOOST_AUTO_TEST_CASE(extremely_simple_lovasz_theta_sdp) {
 
   double final_value = ltsdp.Evaluate(coords);
 
-//  BOOST_REQUIRE_CLOSE(final_value, 1.0, 1e-5);
-
   arma::mat X = trans(coords) * coords;
+  
+  BOOST_CHECK_CLOSE(final_value, -1.0, 1e-5);
 
-  std::cout << X;
-
-  BOOST_REQUIRE_CLOSE(X(0, 0), 0.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(X(0, 1), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(X(1, 0), 0.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(X(1, 1), 0.5, 1e-5);
+  BOOST_CHECK_CLOSE(X(0, 0) + X(1, 1), 1.0, 1e-5);
+  BOOST_CHECK_SMALL(X(0, 1), 1e-8);
+  BOOST_CHECK_SMALL(X(1, 0), 1e-8);
 }
 
 /***
  * Tests the Augmented Lagrangian optimizer on the Lovasz theta SDP, using the
  * hamming_10_2 dataset, just like in the paper by Monteiro and Burer.
  *
-BOOST_AUTO_TEST_CASE(lovasz_theta_hamming_10_2) {
+BOOST_AUTO_TEST_CASE(lovasz_theta_johnson8_4_4) {
   arma::mat edges;
   // Hardcoded filename: bad!
-  data::Load("johnson8-4-4.csv", edges);
+  data::Load("MANN-a27.csv", edges);
 
   LovaszThetaSDP ltsdp(edges);
   AugLagrangian<LovaszThetaSDP> aug(ltsdp, 10);
 
   arma::mat coords = ltsdp.GetInitialPoint();
-
-  IO::Debug << "Optimizing..." << std::endl;
 
   if(!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
