@@ -9,6 +9,8 @@
 
 #include <armadillo>
 
+using namespace mlpack;
+
 /***
  * Specialized MakeBoundVector function written for arma::vec instead of
  * GenVector.
