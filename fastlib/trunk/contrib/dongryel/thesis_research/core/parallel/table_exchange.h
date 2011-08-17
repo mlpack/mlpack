@@ -341,11 +341,6 @@ class TableExchange {
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
 
-      for(int i = 0; i < world.size(); i++) {
-        printf("For %d, %d ranks: %d\n", world.rank(), i, process_rank(world, i));
-      }
-
-
       // The ID of the received subtables.
       std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
 
