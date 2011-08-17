@@ -204,14 +204,7 @@ class TableExchange {
 
       // Start from the most significant bit of the given process rank
       // and find the highest differing index.
-      unsigned int most_significant_bit_pos = 0;
-      unsigned test_rank = world.rank();
-      while(test_rank > 0) {
-        test_rank = test_rank >> 1;
-        if(test_rank > 0) {
-          most_significant_bit_pos++;
-        }
-      }
+      unsigned int most_significant_bit_pos = max_stage_;
       unsigned int differing_index = most_significant_bit_pos;
       for(int test_index = static_cast<int>(most_significant_bit_pos);
           test_index >= 0; test_index--) {
