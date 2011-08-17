@@ -23,6 +23,8 @@ class MapVector {
   private:
     std::map<int, int> id_to_position_map_;
 
+    std::map<int, int> position_to_id_map_;
+
     std::vector<int> indices_to_save_;
 
     unsigned int num_elements_;
@@ -35,11 +37,17 @@ class MapVector {
       private:
         T *ptr_;
 
+        std::map<int, int> *position_to_id_map_;
+
         int current_pos_;
 
         int num_elements_;
 
       public:
+
+        int current_id() const {
+          return ((*position_to_id_map_)[ current_pos_ ]);
+        }
 
         int num_elements() const {
           return num_elements_;
@@ -71,13 +79,18 @@ class MapVector {
           this->operator=(it_in);
         }
 
-        iterator(const T *ptr_in, int current_pos_in, int num_elements_in) {
+        iterator(
+          const T *ptr_in, const std::map<int, int> *position_to_id_map_in,
+          int current_pos_in, int num_elements_in) {
           ptr_ = const_cast<T *>(ptr_in);
+          position_to_id_map_ =
+            const_cast< std::map<int, int> * >(position_to_id_map_in);
           current_pos_ = current_pos_in;
           num_elements_ = num_elements_in;
         }
 
         iterator() {
+          position_to_id_map_ = NULL;
           ptr_ = NULL;
           current_pos_ = 0;
           num_elements_ = 0;
@@ -101,7 +114,7 @@ class MapVector {
   public:
 
     iterator get_iterator() const {
-      return iterator(vector_.get(), 0, num_elements_);
+      return iterator(vector_.get(), &position_to_id_map_, 0, num_elements_);
     }
 
     unsigned int size() const {
@@ -161,6 +174,7 @@ class MapVector {
         vector_.push_back(element);
         ar & original_index;
         id_to_position_map_[ original_index ] = i;
+        position_to_id_map_[ i ] = original_index;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
