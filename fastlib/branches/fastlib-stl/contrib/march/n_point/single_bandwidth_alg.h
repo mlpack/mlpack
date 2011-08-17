@@ -84,7 +84,7 @@ namespace npt {
                        arma::mat& random, arma::colvec rweights,
                        index_t leaf_size,
                        arma::mat& matcher_dists, double bandwidth) : 
-                       matcher_(matcher_dists, bandwidth),
+    matcher_(matcher_dists, bandwidth),
     num_tuples_(matcher_dists.n_cols + 1, 0),
     weighted_num_tuples_(matcher_dists.n_cols + 1, 0.0)
     {

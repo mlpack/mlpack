@@ -144,6 +144,8 @@ int main(int argc, char* argv[]) {
     Angle3ptAlg alg(data_mat, weights, random_mat, random_weights, leaf_size,
                     r1_vec, r2_multiplier, theta_vec, bin_thickness_factor);
     
+    alg.Compute();
+    
     // output the results
     IO::Info << "3pt Angle Results: \n";
     alg.OutputResults();
@@ -178,6 +180,8 @@ int main(int argc, char* argv[]) {
                                       random_weights,
                                       leaf_size, lower_bounds, upper_bounds);
   
+  
+        single_alg.ComputeCounts();
         
         IO::Info << "R1 = " << r1_vec[r1_ind] << ", ";
         IO::Info << "Theta = " << theta_vec[theta_ind] << ", ";
