@@ -91,7 +91,7 @@ namespace npt {
                  std::vector<double>& thetas, double bin_size) :
     short_sides_(short_sides), long_side_multiplier_(long_side), 
     thetas_(thetas), bin_thickness_factor_(bin_size),
-    r3_sides_(thetas.size()), long_sides_(short_sides.size()),
+    r3_sides_(short_sides.size()), long_sides_(short_sides.size()),
     r1_lower_sqr_(short_sides.size()), r1_upper_sqr_(short_sides.size()), 
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
     r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()) {
@@ -106,6 +106,9 @@ namespace npt {
       for (int i = 0; i < short_sides_.size(); i++) {
           
         r3_sides_[i].resize(thetas_.size());
+        r3_lower_sqr_[i].resize(thetas_.size());
+        r3_upper_sqr_[i].resize(thetas_.size());
+        
         long_sides_[i] = long_side_multiplier_ * short_sides_[i];
         
         r1_lower_sqr_[i] = ((1.0 - half_thickness) * short_sides_[i])
@@ -118,7 +121,7 @@ namespace npt {
         r2_upper_sqr_[i] = ((1.0 + half_thickness) * long_sides_[i])
         * ((1.0 + half_thickness) * long_sides_[i]);
         
-        for (int j = 0; i < thetas_.size(); j++) {
+        for (int j = 0; j < thetas_.size(); j++) {
           
           r3_sides_[i][j] = ComputeR3_(short_sides_[i], 
                                      long_sides_[i], 
@@ -136,17 +139,17 @@ namespace npt {
       double half_min_perimeter = (sqrt(r1_lower_sqr_[0]) 
                                    + sqrt(r2_lower_sqr_[0]) 
                                    + sqrt(r3_lower_sqr_[0][0])) / 2.0;
-      double half_max_perimeter = (sqrt(r1_upper_sqr_[2]) 
-                                   + sqrt(r2_upper_sqr_[2]) 
-                                   + sqrt(r3_upper_sqr_[2].back())) / 2.0;
+      double half_max_perimeter = (sqrt(r1_upper_sqr_.back()) 
+                                   + sqrt(r2_upper_sqr_.back()) 
+                                   + sqrt(r3_upper_sqr_.back().back())) / 2.0;
       min_area_sq_ = half_min_perimeter 
       * (half_min_perimeter - sqrt(r1_lower_sqr_[0])) 
             * (half_min_perimeter - sqrt(r2_lower_sqr_[0])) 
             * (half_min_perimeter - sqrt(r3_lower_sqr_[0][0]));
       max_area_sq_ = half_max_perimeter 
-      * (half_max_perimeter - sqrt(r1_upper_sqr_[2])) 
-      * (half_max_perimeter - sqrt(r2_upper_sqr_[2])) 
-      * (half_max_perimeter - sqrt(r3_upper_sqr_[2].back()));
+      * (half_max_perimeter - sqrt(r1_upper_sqr_.back())) 
+      * (half_max_perimeter - sqrt(r2_upper_sqr_.back())) 
+      * (half_max_perimeter - sqrt(r3_upper_sqr_.back().back()));
       
       num_min_area_prunes_ = 0;
       num_max_area_prunes_ = 0;

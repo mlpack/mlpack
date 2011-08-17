@@ -34,6 +34,8 @@ set(SOURCES
 	angle_3pt_alg.h
 	angle_3pt_alg.cc
 	n_point_angle_main.cc
+	angle_matcher_generation.h
+	angle_matcher_generation.cc
 )
 
 # add directory name to sources

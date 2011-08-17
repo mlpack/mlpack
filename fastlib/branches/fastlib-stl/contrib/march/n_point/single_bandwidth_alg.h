@@ -119,6 +119,47 @@ namespace npt {
       
     } // constructor
     
+    // angle constructor
+    SingleBandwidthAlg(arma::mat& data, arma::colvec weights,
+                       arma::mat& random, arma::colvec rweights,
+                       index_t leaf_size,
+                       arma::mat& lower_bounds, arma::mat& upper_bounds) : 
+    matcher_(lower_bounds, upper_bounds),
+    num_tuples_(lower_bounds.n_cols + 1, 0),
+    weighted_num_tuples_(lower_bounds.n_cols + 1, 0.0)
+    {
+      
+      data_points_ = data;
+      data_weights_ = weights;
+      
+      random_points_ = random;
+      random_weights_ = rweights;
+      
+      num_points_ = data_points_.n_cols;
+      tuple_size_ = lower_bounds.n_cols;
+      
+      // TODO: is it worth having a different leaf size for the random points
+      leaf_size_ = leaf_size;
+      
+      num_prunes_ = 0;
+      num_base_cases_ = 0;
+      
+      data_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
+                                                                leaf_size_, 
+                                                                old_from_new_index_data_);
+      
+      
+      random_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(random_points_,
+                                                                  leaf_size_,
+                                                                  old_from_new_index_random_);
+      
+      // IMPORTANT: need to permute the weights here
+      
+      
+      
+    } // constructor
+    
+    
     std::vector<int>& num_tuples() {
       return num_tuples_;
     } 

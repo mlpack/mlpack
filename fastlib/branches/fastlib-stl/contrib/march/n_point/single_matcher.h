@@ -54,9 +54,6 @@ namespace npt {
     
   public:
     
-    // Dummy empty constructor
-    //SingleMatcher() {}
-    
     // constructor
     SingleMatcher(arma::mat& matcher_dists, double bandwidth) :
     perms_(matcher_dists.n_cols), 
@@ -95,6 +92,36 @@ namespace npt {
       num_permutations_ = perms_.num_permutations();
       
     } // constructor
+    
+    // angle version of the constructor
+    SingleMatcher(arma::mat& lower_bounds, arma::mat& upper_bounds) :
+    perms_(lower_bounds.n_cols),
+    lower_bounds_sqr_(lower_bounds.n_rows, lower_bounds.n_cols),
+    upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols) {
+      
+      tuple_size_ = lower_bounds.n_cols;
+      
+      for (int i = 0; i < tuple_size_; i++) {
+        
+        lower_bounds_sqr_(i,i) = 0.0;
+        upper_bounds_sqr_(i,i) = 0.0;
+        
+        for (int j = i+1; j < tuple_size_; j++) {
+          
+          lower_bounds_sqr_(i,j) = lower_bounds(i,j) * lower_bounds(i,j);
+          lower_bounds_sqr_(j,i) = lower_bounds_sqr_(i,j);
+          
+          upper_bounds_sqr_(i,j) = upper_bounds(i,j) * upper_bounds(i,j);
+          upper_bounds_sqr_(j,i) = upper_bounds_sqr_(i,j);
+          
+        }
+        
+      }
+      
+      //lower_bounds_sqr_.print("lower bounds sqr");
+      //upper_bounds_sqr_.print("upper bounds sqr");
+      
+    } // angle constructor
     
     bool TestPointPair(double dist_sq, index_t tuple_ind_1, index_t tuple_ind_2,
                        std::vector<bool>& permutation_ok);
