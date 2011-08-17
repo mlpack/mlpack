@@ -28,9 +28,9 @@ namespace tree {
  *
  * @experimental
  */
-template<class TBound,
-         class TDataset,
-         class TStatistic = EmptyStatistic<TDataset> >
+template<typename TBound,
+         typename TDataset,
+         typename TStatistic = EmptyStatistic<TDataset> >
 class BinarySpaceTree {
  public:
   typedef TBound Bound;
