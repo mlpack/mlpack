@@ -160,11 +160,13 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   }
   // we can also prune if the largest values don't fit r3
   // Not sure if this is correct - using middle upper value
+  /*
   else if (sorted_lower_sq[2] > r3_upper_sqr_.back().back()
            || (sorted_upper_sq[1] < r3_lower_sqr_.front().front())) {
     possibly_valid = false;
     num_prunes_++;
   }
+   */
   // we can prune if r2 doesn't fit either
   // i.e. the smallest possible r2
   // Problem: can't assume that the middle value of sorted_lower_sq_ goes with

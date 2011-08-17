@@ -118,6 +118,8 @@ namespace npt {
         
       }
       
+      num_permutations_ = perms_.num_permutations();
+      
       //lower_bounds_sqr_.print("lower bounds sqr");
       //upper_bounds_sqr_.print("upper bounds sqr");
       

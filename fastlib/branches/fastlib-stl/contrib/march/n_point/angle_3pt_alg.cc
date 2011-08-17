@@ -73,8 +73,8 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
           
           for (int theta_ind = 0; theta_ind < valid_thetas.size() ; theta_ind++) {
             
-            results_[num_random_][valid_r1][theta_ind]++;
-            weighted_results_[num_random_][valid_r1][theta_ind]+= this_weight;
+            results_[num_random_][valid_r1][valid_thetas[theta_ind]]++;
+            weighted_results_[num_random_][valid_r1][valid_thetas[theta_ind]]+= this_weight;
              
           } // iterate over valid thetas
           
