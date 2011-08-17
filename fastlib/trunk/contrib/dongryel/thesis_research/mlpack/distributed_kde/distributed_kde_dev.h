@@ -175,7 +175,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
-    boost::program_options::value<int>()->default_value(10),
+    boost::program_options::value<int>()->default_value(100000),
     "Generate the datasets on the fly of the specified number of points."
   )(
     "random_seed_in",
@@ -425,7 +425,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // Parse the reference set and index the tree.
   std::string reference_file_name = vm["references_in"].as<std::string>();
-  if(true || vm.count("random_generate") > 0) {
+  if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
