@@ -438,7 +438,6 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     }
     starting_point.print();
   }
-  exit(0);
 
   iterate->Init(
     &train_table_, starting_point,
