@@ -43,7 +43,7 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
-    static const int process_rank_favor_factor_ = 1000;
+    static const int process_rank_favor_factor_ = 0;
 
   private:
 
