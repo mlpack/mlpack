@@ -196,6 +196,36 @@ class TableExchange {
 
   public:
 
+    /** @brief Used for prioritizing tasks, favoring subtables that
+     *         arrive earlier in the exchange process.
+     */
+    unsigned int process_rank(
+      boost::mpi::communicator &world, unsigned int test_process_rank) const {
+
+      // Start from the most significant bit of the given process rank
+      // and find the highest differing index.
+      unsigned int most_significant_bit_pos = 0;
+      unsigned test_rank = world.rank();
+      while(test_rank > 0) {
+        test_rank = test_rank >> 1;
+        if(test_rank > 0) {
+          most_significant_bit_pos++;
+        }
+      }
+      unsigned int differing_index = most_significant_bit_pos;
+      for(int test_index = static_cast<int>(most_significant_bit_pos);
+          test_index >= 0; test_index--) {
+        unsigned int mask = 1 << test_index;
+        unsigned int test_process_rank_bit = test_process_rank & mask;
+        unsigned int world_rank_bit = world.rank() & mask;
+        if(test_process_rank_bit != world_rank_bit) {
+          differing_index = test_index;
+          break;
+        }
+      }
+      return differing_index;
+    }
+
     TableType *local_table() {
       return local_table_;
     }
@@ -317,6 +347,11 @@ class TableExchange {
       boost::mpi::communicator &world,
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+
+      for(int i = 0; i < world.size(); i++) {
+        printf("For %d, %d ranks: %d\n", world.rank(), i, process_rank(world, i));
+      }
+
 
       // The ID of the received subtables.
       std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
@@ -476,7 +511,7 @@ class TableExchange {
         }
 
         // Generate more tasks.
-        task_queue_->GenerateTasks(metric_in, received_subtable_ids);
+        task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Initiate load balancing with the neighbor.
         LoadBalance_(world);

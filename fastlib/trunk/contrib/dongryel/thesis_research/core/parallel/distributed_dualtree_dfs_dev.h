@@ -246,7 +246,7 @@ DistributedProblemType >::InitialSetup_(
 
   // Fill out the initial task consisting of the reference trees on
   // the same process.
-  distributed_tasks->GenerateTasks(metric, received_subtable_ids);
+  distributed_tasks->GenerateTasks(* world_, metric, received_subtable_ids);
 
   // Do an all to all to let each participating query process its
   // initial frontier.
