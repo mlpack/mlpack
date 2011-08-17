@@ -43,6 +43,10 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
+    static const int process_rank_favor_factor_ = 1000;
+
+  private:
+
     std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
 
     TableType *local_query_table_;
@@ -118,6 +122,7 @@ class DistributedDualtreeTaskQueue {
 
     template<typename MetricType>
     void PushTask_(
+      boost::mpi::communicator &world,
       const MetricType &metric_in,
       int push_index,
       boost::tuple<TableType *, TreeType *, int> &reference_table_node_pair) {
@@ -128,6 +133,10 @@ class DistributedDualtreeTaskQueue {
       core::math::Range squared_distance_range(
         query_subtrees_[push_index]->bound().RangeDistanceSq(
           metric_in, reference_table_node_pair.get<1>()->bound()));
+      double priority = - squared_distance_range.mid() +
+                        process_rank_favor_factor_ *
+                        table_exchange_.process_rank(
+                          world, reference_table_node_pair.get<0>()->rank());
       TaskType new_task(
         local_query_table_,
         query_subtrees_[ push_index ],
@@ -135,7 +144,7 @@ class DistributedDualtreeTaskQueue {
         reference_table_node_pair.get<0>(),
         reference_table_node_pair.get<1>(),
         reference_table_node_pair.get<2>(),
-        - squared_distance_range.mid());
+        priority);
       tasks_[ push_index]->push(new_task);
 
       // Increment the number of tasks.
@@ -196,14 +205,14 @@ class DistributedDualtreeTaskQueue {
             prev_tasks[i].reference_table(),
             reference_right_child, prev_tasks[i].cache_id());
           this->PushTask_(
-            metric_in, subtree_index, reference_table_left_node_pair);
+            world, metric_in, subtree_index, reference_table_left_node_pair);
           this->PushTask_(
-            metric_in, subtree_index, reference_table_right_node_pair);
+            world, metric_in, subtree_index, reference_table_right_node_pair);
           this->PushTask_(
-            metric_in, query_subtrees_.size() - 1,
+            world, metric_in, query_subtrees_.size() - 1,
             reference_table_left_node_pair);
           this->PushTask_(
-            metric_in, query_subtrees_.size() - 1,
+            world, metric_in, query_subtrees_.size() - 1,
             reference_table_right_node_pair);
 
           // Lock three more times since the reference side is also
@@ -215,9 +224,10 @@ class DistributedDualtreeTaskQueue {
           boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
             prev_tasks[i].reference_table(),
             prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
-          this->PushTask_(metric_in, subtree_index, reference_table_node_pair);
           this->PushTask_(
-            metric_in, query_subtrees_.size() - 1,
+            world, metric_in, subtree_index, reference_table_node_pair);
+          this->PushTask_(
+            world, metric_in, query_subtrees_.size() - 1,
             reference_table_node_pair);
 
           // Lock only one time since only the query side is split.
@@ -295,6 +305,7 @@ class DistributedDualtreeTaskQueue {
 
     template<typename MetricType>
     void GenerateTasks(
+      boost::mpi::communicator &world,
       const MetricType &metric_in,
       const std::vector <
       boost::tuple<int, int, int, int> > &received_subtable_ids) {
@@ -329,7 +340,7 @@ class DistributedDualtreeTaskQueue {
                   frontier_reference_table->rank(),
                   reference_begin,
                   reference_begin + reference_count))) {
-            this->PushTask_(metric_in, j, reference_table_node_pair);
+            this->PushTask_(world, metric_in, j, reference_table_node_pair);
             table_exchange_.LockCache(cache_id, 1);
           }
         }
