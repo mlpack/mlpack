@@ -84,7 +84,7 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_2) {
 BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
   // Well, there's no easy way to make DHrectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
   arma::vec utility(1);
   utility[0] = 0;
 
@@ -93,7 +93,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
   utility[0] = 1;
   node_one.bound() |= utility;
 
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
   node_two.bound().SetSize(1);
 
   utility[0] = 5;
@@ -137,7 +137,7 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
   arma::vec utility(1);
   utility[0] = 0;
 
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node;
   node.bound().SetSize(1);
   node.bound() |= utility;
   utility[0] = 1;
@@ -233,13 +233,13 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
   arma::vec utility(1);
   utility[0] = 0;
 
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
   node_one.bound().SetSize(1);
   node_one.bound() |= utility;
   utility[0] = 1;
   node_one.bound() |= utility;
 
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
   node_two.bound().SetSize(1);
   utility[0] = 5;
   node_two.bound() |= utility;
@@ -282,7 +282,7 @@ BOOST_AUTO_TEST_CASE(fns_point_to_node_distance) {
   arma::vec utility(1);
   utility[0] = 0;
 
-  BinarySpaceTree<DHrectBound<2>, arma::mat> node;
+  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node;
   node.bound().SetSize(1);
   node.bound() |= utility;
   utility[0] = 1;
