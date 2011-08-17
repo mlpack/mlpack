@@ -94,6 +94,10 @@ class LocalRegressionResult {
      */
     core::parallel::MapVector<double> right_hand_side_used_error_;
 
+    void Copy(const LocalRegressionResult &result_in) {
+
+    }
+
     /** @brief Saves the local regression result object.
      */
     template<class Archive>

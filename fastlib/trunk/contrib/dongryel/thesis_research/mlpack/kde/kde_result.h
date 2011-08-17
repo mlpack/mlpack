@@ -57,6 +57,27 @@ class KdeResult {
      */
     int num_local_prunes_;
 
+    void Copy(const KdeResult & result_in) {
+      ContainerType::iterator densities_l_it =
+        result_in.densities_l_.get_iterator();
+      ContainerType::iterator densities_it =
+        result_in.densities_.get_iterator();
+      ContainerType::iterator densities_u_it =
+        result_in.densities_u_.get_iterator();
+      ContainerType::iterator pruned_it = result_in.pruned_.get_iterator();
+      ContainerType::iterator used_error_it =
+        result_in.used_error_.get_iterator();
+      for(; densities_l_it.HasNext() ; densities_l_it++, densities_it++,
+          densities_u_it++, pruned_it++, used_error_it++) {
+        int current_id = densities_l_it.current_id();
+        densities_l_[ current_id ] = (* densities_l_it);
+        densities_[ current_id ] = (* densities_it);
+        densities_u_[ current_id ] = (* densities_u_it);
+        pruned_[ current_id ] = (* pruned_it);
+        used_error_[ current_id ] = (* used_error_it);
+      }
+    }
+
     /** @brief Serialize the KDE result object.
      */
     template<class Archive>
