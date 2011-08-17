@@ -121,6 +121,8 @@ class TableExchange {
 
     bool enter_stage_;
 
+    int last_fail_index_;
+
     /** @brief The pointer to the local table that is partcipating in
      *         the exchange.
      */
@@ -155,10 +157,16 @@ class TableExchange {
       bool ready_flag = true;
 
       // Now, check that all the other receive buffers are empty.
-      for(unsigned int i = 0; ready_flag && i < num_test; i++) {
+      for(unsigned int i = last_fail_index_; ready_flag && i < num_test; i++) {
         ready_flag = (message_locks_[test_lower_bound + i] == 0);
+        if(! ready_flag) {
+          last_fail_index_ = i;
+        }
       }
       enter_stage_ = ready_flag;
+      if(enter_stage_) {
+        last_fail_index_ = 0;
+      }
       return ready_flag;
     }
 
@@ -220,6 +228,7 @@ class TableExchange {
      */
     TableExchange() {
       enter_stage_ = true;
+      last_fail_index_ = 0;
       local_table_ = NULL;
       max_stage_ = 0;
       stage_ = 0;
