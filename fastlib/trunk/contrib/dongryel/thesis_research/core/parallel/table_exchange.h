@@ -130,8 +130,6 @@ class TableExchange {
 
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
 
-    std::vector<int> active_message_list_;
-
     unsigned int stage_;
 
     std::vector < MessageType > message_cache_;
@@ -154,19 +152,13 @@ class TableExchange {
       unsigned int test_lower_bound = (neighbor >> stage_) << stage_;
 
       // This is the pre-req.
-      bool ready_flag = (message_locks_[ neighbor ] == 0);
+      bool ready_flag = true;
 
       // Now, check that all the other receive buffers are empty.
       for(unsigned int i = 0; ready_flag && i < num_test; i++) {
         ready_flag = (message_locks_[test_lower_bound + i] == 0);
       }
-
-      if(ready_flag) {
-        enter_stage_ = true;
-        if(stage_ == 0) {
-          active_message_list_.resize(0);
-        }
-      }
+      enter_stage_ = ready_flag;
       return ready_flag;
     }
 
@@ -201,8 +193,7 @@ class TableExchange {
     }
 
     bool can_terminate() const {
-      return queued_up_completed_computation_.size() == 0 &&
-             active_message_list_.size() == 0;
+      return queued_up_completed_computation_.size() == 0 && stage_ == 0;
     }
 
     void push_completed_computation(
@@ -285,9 +276,6 @@ class TableExchange {
 
       // Set the pointer to the task queue.
       task_queue_ = task_queue_in;
-
-      // Clean up list is empty.
-      active_message_list_.resize(0);
 
       // Initialize the stage.
       stage_ = 0;
@@ -387,117 +375,107 @@ class TableExchange {
           // Set the originating rank of the message.
           new_self_send_request_object.set_originating_rank(world.rank());
           new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-
-          // Push onto the list of subtables in action.
-          active_message_list_.push_back(world.rank());
         }
 
-        if(stage_ < max_stage_) {
+        // Exchange with the neighbors.
+        unsigned int num_subtables_to_exchange = (1 << stage_);
+        unsigned int neighbor = world.rank() ^(1 << stage_);
+        unsigned int lower_bound_send = (world.rank() >> stage_) << stage_;
+        for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
+          unsigned int subtable_send_index = i + lower_bound_send;
+          MessageType &send_request_object =
+            message_cache_[ subtable_send_index ];
+          send_request_object.next_destination(world);
 
-          // Exchange with the neighbors.
-          int num_subtables_to_exchange = (1 << stage_);
-          int neighbor = world.rank() ^(1 << stage_);
-          for(int i = 0; i < num_subtables_to_exchange; i++) {
-            int subtable_send_index = active_message_list_[i];
-            MessageType &send_request_object =
-              message_cache_[ subtable_send_index ];
-            send_request_object.next_destination(world);
-
-            // For each subtable sent, we expect something from the neighbor.
-            message_send_request_[i] =
-              world.isend(
-                neighbor, core::parallel::MessageTag::ROUTE_SUBTABLE,
-                send_request_object);
-          }
-
-          // Back up of the active list.
-          std::vector<int> prev_active_message_list = active_message_list_;
-
-          // Receive from the neighbor.
-          int num_subtables_received = 0;
-          while(num_subtables_received < num_subtables_to_exchange) {
-
-            if(boost::optional< boost::mpi::status > l_status =
-                  world.iprobe(
-                    neighbor,
-                    core::parallel::MessageTag::ROUTE_SUBTABLE)) {
-
-              // Receive the subtable.
-              MessageType tmp_route_request;
-              tmp_route_request.subtable_route().object().Init(neighbor, false);
-              world.recv(
-                neighbor,
-                core::parallel::MessageTag::ROUTE_SUBTABLE,
-                tmp_route_request);
-              int cache_id =
-                tmp_route_request.originating_rank();
-              tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
-
-              // Add to the list of subtable in action.
-              active_message_list_.push_back(cache_id);
-
-              // If this subtable is needed by the calling process, then
-              // update the list of subtables received.
-              num_subtables_received++;
-
-              message_cache_[ cache_id ] = tmp_route_request;
-              MessageType &route_request = message_cache_[cache_id];
-
-
-              if(route_request.subtable_route().object_is_valid()) {
-
-                // Lock the subtable equal to the number of remaining
-                // phases.
-                this->LockCache(cache_id, max_stage_ - stage_ - 1);
-
-                // If the subtable is needed by the process, then add
-                // it to its task list.
-                if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
-                  received_subtable_ids.push_back(
-                    boost::make_tuple(
-                      route_request.subtable_route().object().table()->rank(),
-                      route_request.subtable_route().object().start_node()->begin(),
-                      route_request.subtable_route().object().start_node()->count(),
-                      cache_id));
-                }
-              }
-              else {
-                this->EvictSubTable_(cache_id);
-              }
-
-              // Update the energy count.
-              if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
-                  route_request.energy_route().object_is_valid()) {
-                task_queue_->decrement_remaining_global_computation(
-                  route_request.energy_route().object());
-              }
-            }
-          }
-
-          // Wait until all sends are done.
-          boost::mpi::wait_all(
-            message_send_request_.begin(),
-            message_send_request_.begin() + num_subtables_to_exchange);
-
-          // For every valid send, unlock its cache.
-          for(unsigned int i = 0; i < prev_active_message_list.size(); i++) {
-            int process_rank = prev_active_message_list[i];
-            if(process_rank != world.rank() &&
-                message_cache_[process_rank].subtable_route().object_is_valid()) {
-              this->ReleaseCache(process_rank, 1);
-            }
-          }
-
-          // Generate more tasks.
-          task_queue_->GenerateTasks(metric_in, received_subtable_ids);
-
-          // Initiate load balancing with the neighbor.
-          LoadBalance_(world);
-
-          // Increment the stage when done, and turn off the stage flag.
-          stage_ = (stage_ + 1) % max_stage_;
-          enter_stage_ = false;
+          // For each subtable sent, we expect something from the neighbor.
+          message_send_request_[i] =
+            world.isend(
+              neighbor, core::parallel::MessageTag::ROUTE_SUBTABLE,
+              send_request_object);
         }
+
+        // Receive from the neighbor.
+        unsigned int num_subtables_received = 0;
+        while(num_subtables_received < num_subtables_to_exchange) {
+
+          if(boost::optional< boost::mpi::status > l_status =
+                world.iprobe(
+                  neighbor,
+                  core::parallel::MessageTag::ROUTE_SUBTABLE)) {
+
+            // Receive the subtable.
+            MessageType tmp_route_request;
+            tmp_route_request.subtable_route().object().Init(neighbor, false);
+            world.recv(
+              neighbor,
+              core::parallel::MessageTag::ROUTE_SUBTABLE,
+              tmp_route_request);
+            int cache_id =
+              tmp_route_request.originating_rank();
+            tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
+
+            // If this subtable is needed by the calling process, then
+            // update the list of subtables received.
+            num_subtables_received++;
+
+            message_cache_[ cache_id ] = tmp_route_request;
+            MessageType &route_request = message_cache_[cache_id];
+
+
+            if(route_request.subtable_route().object_is_valid()) {
+
+              // Lock the subtable equal to the number of remaining
+              // phases.
+              this->LockCache(cache_id, max_stage_ - stage_ - 1);
+
+              // If the subtable is needed by the process, then add
+              // it to its task list.
+              if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
+                received_subtable_ids.push_back(
+                  boost::make_tuple(
+                    route_request.subtable_route().object().table()->rank(),
+                    route_request.subtable_route().object().start_node()->begin(),
+                    route_request.subtable_route().object().start_node()->count(),
+                    cache_id));
+              }
+            }
+            else {
+              this->EvictSubTable_(cache_id);
+            }
+
+            // Update the energy count.
+            if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
+                route_request.energy_route().object_is_valid()) {
+              task_queue_->decrement_remaining_global_computation(
+                route_request.energy_route().object());
+            }
+          }
+        }
+
+        // Wait until all sends are done.
+        boost::mpi::wait_all(
+          message_send_request_.begin(),
+          message_send_request_.begin() + num_subtables_to_exchange);
+
+        // For every valid send, unlock its cache.
+        for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
+          unsigned int process_rank = i + lower_bound_send;
+          if(process_rank != static_cast<unsigned int>(world.rank()) &&
+              message_cache_[process_rank].subtable_route().object_is_valid()) {
+            this->ReleaseCache(process_rank, 1);
+          }
+        }
+
+        // Generate more tasks.
+        task_queue_->GenerateTasks(metric_in, received_subtable_ids);
+
+        // Initiate load balancing with the neighbor.
+        LoadBalance_(world);
+
+        // Increment the stage when done, and turn off the stage flag.
+        stage_ = (stage_ + 1) % max_stage_;
+        enter_stage_ = false;
+
       } // end of the case entering the stage.
 
       if(! enter_stage_) {
