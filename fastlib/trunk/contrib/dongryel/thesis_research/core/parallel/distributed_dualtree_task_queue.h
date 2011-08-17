@@ -133,7 +133,7 @@ class DistributedDualtreeTaskQueue {
       core::math::Range squared_distance_range(
         query_subtrees_[push_index]->bound().RangeDistanceSq(
           metric_in, reference_table_node_pair.get<1>()->bound()));
-      double priority = - squared_distance_range.mid() +
+      double priority = - squared_distance_range.mid() -
                         process_rank_favor_factor_ *
                         table_exchange_.process_rank(
                           world, reference_table_node_pair.get<0>()->rank());
