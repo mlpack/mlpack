@@ -193,9 +193,9 @@ void npt::Angle3ptAlg::OutputResults() {
     
     for (index_t j = 0; j < results_[i].size(); j++) {
       
-      mlpack::IO::Info << "Matcher: ";
       for (index_t k = 0; k < results_[i][j].size(); k++) {
         
+        mlpack::IO::Info << "Matcher: ";
         mlpack::IO::Info << "R1: " << r1_[j] << ", ";
         mlpack::IO::Info << "R2: " << (r1_[j] * r2_multiplier_) << ", ";
         mlpack::IO::Info << "theta: " << thetas_[k] << ": ";

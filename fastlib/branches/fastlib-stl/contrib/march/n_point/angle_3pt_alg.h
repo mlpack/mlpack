@@ -74,14 +74,14 @@ namespace npt {
                 std::vector<double>& theta_vec, double bin_fac) :
     matcher_(r1_vec, r2_mult, theta_vec, bin_fac),
     data_mat_(data), random_mat_(rdata), data_weights_(weights), 
-    random_weights_(rweights), results_(tuple_size_ + 1), 
-    weighted_results_(r1_vec.size()), r1_(r1_vec), r2_multiplier_(r2_mult),
+    random_weights_(rweights), results_(4), 
+    weighted_results_(4), r1_(r1_vec), r2_multiplier_(r2_mult),
     thetas_(theta_vec)
     {
       
       tuple_size_ = 3;
       
-      for (int i = 0; i < tuple_size_; i++) {
+      for (int i = 0; i <= tuple_size_; i++) {
         
         results_[i].resize(r1_.size());
         weighted_results_[i].resize(r1_.size());

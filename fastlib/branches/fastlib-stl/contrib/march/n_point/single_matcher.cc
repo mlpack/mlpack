@@ -50,8 +50,6 @@ bool npt::SingleMatcher::TestPointPair(double dist_sq, index_t tuple_ind_1,
     // This is because the ok permutation might get invalidated later, but we
     // could still end up believing that unchecked ones are ok for this pair
     
-    // I'm actually no longer sure about this
-    
   } // for i
   
   return any_matches;
