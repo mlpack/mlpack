@@ -26,6 +26,7 @@
 /**
  * Regular pointer-style trees (as opposed to THOR trees).
  */
+namespace mlpack {
 namespace tree {
   /**
    * Creates a KD tree from data, splitting on the midpoint.
@@ -262,9 +263,12 @@ namespace tree {
 
     return success;
   }
-}
+
 
 /** Basic KD tree structure. @experimental */
 typedef BinarySpaceTree<DHrectBound<2>, Matrix> BasicKdTree;
+
+}; // namespace tree
+}; // namespace mlpack
 
 #endif

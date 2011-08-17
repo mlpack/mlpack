@@ -13,7 +13,9 @@
 #include "statistic.h"
 
 #include <armadillo>
-#include "../base/arma_compat.h"
+
+namespace mlpack {
+namespace tree {
 
 /**
  * A binary space partitioning tree, such as KD or ball tree.
@@ -44,33 +46,7 @@ class BinarySpaceTree {
   Statistic stat_;
 
  public:
-  /*
-  BinarySpaceTree() {
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
-  }
-
-  ~BinarySpaceTree() {
-    if (!is_leaf()) {
-      delete left_;
-      delete right_;
-    }
-    DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
-  }
-  */
-
-  void Init(index_t begin_in, index_t count_in) {
-    //DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
-    begin_ = begin_in;
-    count_ = count_in;
-  }
+  void Init(index_t begin_in, index_t count_in);
 
   /**
    * Find a node in this tree by its begin and count.
@@ -83,20 +59,8 @@ class BinarySpaceTree {
    * @param count_q the count() of the node to find
    * @return the found node, or NULL
    */
-  const BinarySpaceTree* FindByBeginCount(
-      index_t begin_q, index_t count_q) const {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
-    if (begin_ == begin_q && count_ == count_q) {
-      return this;
-    } else if (unlikely(is_leaf())) {
-      return NULL;
-    } else if (begin_q < right_->begin_) {
-      return left_->FindByBeginCount(begin_q, count_q);
-    } else {
-      return right_->FindByBeginCount(begin_q, count_q);
-    }
-  }
+  const BinarySpaceTree* FindByBeginCount(index_t begin_q,
+                                          index_t count_q) const;
   
   /**
    * Find a node in this tree by its begin and count (const).
@@ -109,20 +73,7 @@ class BinarySpaceTree {
    * @param count_q the count() of the node to find
    * @return the found node, or NULL
    */
-  BinarySpaceTree* FindByBeginCount(
-      index_t begin_q, index_t count_q) {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
-    if (begin_ == begin_q && count_ == count_q) {
-      return this;
-    } else if (unlikely(is_leaf())) {
-      return NULL;
-    } else if (begin_q < right_->begin_) {
-      return left_->FindByBeginCount(begin_q, count_q);
-    } else {
-      return right_->FindByBeginCount(begin_q, count_q);
-    }
-  }
+  BinarySpaceTree* FindByBeginCount(index_t begin_q, index_t count_q);
   
   // TODO: Not const correct
   
@@ -130,85 +81,50 @@ class BinarySpaceTree {
    * Used only when constructing the tree.
    */
   void set_children(const TDataset& data,
-      BinarySpaceTree *left_in, BinarySpaceTree *right_in) {
-    left_ = left_in;
-    right_ = right_in;
-    if (!is_leaf()) {
-      stat_.Init(data, begin_, count_, left_->stat_, right_->stat_);
-      DEBUG_ASSERT(count_ == left_->count_ + right_->count_);
-      DEBUG_ASSERT(left_->begin_ == begin_);
-      DEBUG_ASSERT(right_->begin_ == begin_ + left_->count_);
-    } else {
-      stat_.Init(data, begin_, count_);
-    }
-  }
+                    BinarySpaceTree *left_in,
+                    BinarySpaceTree *right_in);
 
-  const Bound& bound() const {
-    return bound_;
-  }
+  const Bound& bound() const;
+  Bound& bound();
 
-  Bound& bound() {
-    return bound_;
-  }
+  const Statistic& stat() const;
+  Statistic& stat();
 
-  const Statistic& stat() const {
-    return stat_;
-  }
-
-  Statistic& stat() {
-    return stat_;
-  }
-
-  bool is_leaf() const {
-    return !left_;
-  }
+  bool is_leaf() const;
 
   /**
    * Gets the left branch of the tree.
    */
-  BinarySpaceTree *left() const {
-    // TODO: Const correctness
-    return left_;
-  }
+  BinarySpaceTree *left() const;
 
   /**
    * Gets the right branch.
    */
-  BinarySpaceTree *right() const {
-    // TODO: Const correctness
-    return right_;
-  }
+  BinarySpaceTree *right() const;
 
   /**
    * Gets the index of the begin point of this subset.
    */
-  index_t begin() const {
-    return begin_;
-  }
+  index_t begin() const;
 
   /**
    * Gets the index one beyond the last index in the series.
    */
-  index_t end() const {
-    return begin_ + count_;
-  }
+  index_t end() const;
   
   /**
    * Gets the number of points in this subset.
    */
-  index_t count() const {
-    return count_;
-  }
+  index_t count() const;
   
-  void Print() const {
-    printf("node: %d to %d: %d points total\n",
-       begin_, begin_ + count_ - 1, count_);
-    if (!is_leaf()) {
-      left_->Print();
-      right_->Print();
-    }
-  }
+  void Print() const;
 
 };
+
+}; // namespace tree
+}; // namespace mlpack
+
+// Include implementation.
+#include "spacetree_impl.h"
 
 #endif
