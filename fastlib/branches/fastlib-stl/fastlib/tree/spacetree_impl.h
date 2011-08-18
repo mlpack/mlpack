@@ -108,6 +108,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
 
 template<typename TBound, typename TDataset, typename TStatistic>
 BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree() :
+    left_(NULL),
+    right_(NULL),
     begin_(0),
     count_(0) {
   // Nothing to do.
