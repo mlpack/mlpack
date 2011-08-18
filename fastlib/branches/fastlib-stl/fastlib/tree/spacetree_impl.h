@@ -21,6 +21,8 @@ namespace tree {
 template<typename TBound, typename TDataset, typename TStatistic>
 BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
     index_t leaf_size) :
+    left_(NULL),
+    right_(NULL),
     begin_(0), /* This root node starts at index 0, */
     count_(data.n_cols), /* and spans all of the dataset. */
     bound_(data.n_rows) {
@@ -40,6 +42,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
     Dataset& data,
     index_t leaf_size,
     std::vector<index_t>& old_from_new) :
+    left_(NULL),
+    right_(NULL),
     begin_(0),
     count_(data.n_cols),
     bound_(data.n_rows) {
@@ -65,6 +69,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
     index_t leaf_size,
     std::vector<index_t>& old_from_new,
     std::vector<index_t>& new_from_old) :
+    left_(NULL),
+    right_(NULL),
     begin_(0),
     count_(data.n_cols),
     bound_(data.n_rows) {
@@ -93,6 +99,8 @@ template<typename TBound, typename TDataset, typename TStatistic>
 BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
     index_t begin_in,
     index_t count_in) :
+    left_(NULL),
+    right_(NULL),
     begin_(begin_in),
     count_(count_in) {
   // Nothing else to do.
