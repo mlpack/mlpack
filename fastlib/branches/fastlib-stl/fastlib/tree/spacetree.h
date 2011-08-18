@@ -37,12 +37,12 @@ class BinarySpaceTree {
   typedef TStatistic Statistic;
 
  private:
-  Bound bound_;
   BinarySpaceTree *left_;
   BinarySpaceTree *right_;
   index_t begin_;
   index_t count_;
   Statistic stat_;
+  Bound bound_;
 
  public:
   /***
