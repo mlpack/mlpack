@@ -113,6 +113,7 @@ int npt::AngleMatcher::TestPointTuple(arma::colvec& vec1, arma::colvec& vec2,
 // returns true if the tuple of nodes might contain a tuple of points that
 // satisfy one of the matchers
 // If false, then pruning is ok
+/*
 bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1, 
                                       const DHrectBound<2>& box2,
                                       const DHrectBound<2>& box3) {
@@ -153,29 +154,31 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   
   // if the smallest lower bound is larger than the largest value of r1, we prune
   // we can also prune if the smallest upper bound is too small to be r1
+  
+  // this is an r1 prune
   if (sorted_lower_sq[0] > r1_upper_sqr_.back()
       || sorted_upper_sq[0] < r1_lower_sqr_.front()) {
     possibly_valid = false;
-    num_prunes_++;
+    num_r1_prunes_++;
   }
   // we can also prune if the largest values don't fit r3
   // Not sure if this is correct - using middle upper value
-  /*
-  else if (sorted_lower_sq[2] > r3_upper_sqr_.back().back()
-           || (sorted_upper_sq[1] < r3_lower_sqr_.front().front())) {
+  // this is an r3 prune
+  else if (false) {
+  //else if (sorted_lower_sq[2] > r3_upper_sqr_.back().back()
+  //         || (sorted_upper_sq[1] < r3_lower_sqr_.front().front())) {
     possibly_valid = false;
-    num_prunes_++;
+    num_r3_prunes_++;
   }
-   */
+   
   // we can prune if r2 doesn't fit either
   // i.e. the smallest possible r2
   // Problem: can't assume that the middle value of sorted_lower_sq_ goes with
   // r2 -- it might go with r3
-  /*
+  
   else if (sorted_lower_sq_[1] > r2_upper_sq_[2]) {
     
   }
-   */
   else {
     
     double this_min_perimeter = (sqrt(d12_lower) 
@@ -215,4 +218,162 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   return possibly_valid;
   
 } // TestNodeTuple
+*/
+
+// Trying this again
+bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1, 
+                                      const DHrectBound<2>& box2,
+                                      const DHrectBound<2>& box3) {
+  
+  // pruning options: all three distances are shorter than the shortest r1
+  // or longer than the longest one
+  
+  bool possibly_valid = true;
+  
+  double d12_lower = box1.MinDistanceSq(box2);
+  double d12_upper = box1.MaxDistanceSq(box2);
+  
+  double d13_lower = box1.MinDistanceSq(box3);
+  double d13_upper = box1.MaxDistanceSq(box3);
+  
+  double d23_lower = box2.MinDistanceSq(box3);
+  double d23_upper = box2.MaxDistanceSq(box3);
+  
+  // find the valid r1's - the smallest upper bound needs to fit
+  // check that there is a valid r2/r3 for each
+  
+  std::vector<double> sorted_upper_sq(3);
+  std::vector<double> sorted_lower_sq(3);
+  
+  sorted_upper_sq[0] = d12_upper;
+  sorted_upper_sq[1] = d13_upper;
+  sorted_upper_sq[2] = d23_upper;
+  
+  sorted_lower_sq[0] = d12_lower;
+  sorted_lower_sq[1] = d13_lower;
+  sorted_lower_sq[2] = d23_lower;
+  
+  std::sort(sorted_upper_sq.begin(), sorted_upper_sq.end());
+  std::sort(sorted_lower_sq.begin(), sorted_lower_sq.end());
+
+  /////////
+  
+  // r1 is always the smallest part of the triangle
+  // r2 or r3 may be smaller, depending on whether we are using a value of 
+  // theta larger or smaller than 
+  
+  // IMPORTANT: remember that r1, r2, r3 are fixed, the permutation takes place
+  // in the sorting step above (i.e. in l1, l2, l3; u1, u2, u3)
+  
+  // if the smallest possible pairwise distance is larger than the largest 
+  // possible value of r1, we can prune
+  if (sorted_lower_sq.front() > r1_upper_sqr_.back()) {
+    possibly_valid = false;
+    num_large_r1_prunes_++;
+  }
+  // if the largest possible value of r1
+  else if (sorted_upper_sq.front() < r1_lower_sqr_.front()) {
+    possibly_valid = false;
+    num_small_r1_prunes_++;
+  }
+  // can check if the largest values don't fit too
+  else if (sorted_lower_sq.back() > r3_upper_sqr_.back().back()) {
+    possibly_valid = false;
+    num_large_r3_prunes_++;
+  }
+  // I could check for the longest pairwise distance being too short, but I 
+  // don't think that will happen very often
+  // check the structure of the triangle
+  else {
+    
+    //bool small_angle_valid = true;
+    //bool large_angle valid = true;
+    
+    double largest_r2, smallest_r2;
+    //double largest_r3, smallest_r3;
+    
+    // TODO: do I need to make these correspond more to the actual values?
+    
+    // check large angles (theta >= theta*)
+  
+    // compute largest and smallest r2
+    // TODO: is this correct
+    largest_r2 = long_side_multiplier_ * sorted_upper_sq.front();
+    smallest_r2 = long_side_multiplier_ * sorted_lower_sq.front();
+    
+    if (sorted_lower_sq[1] > largest_r2) {
+      //large_angle_valid = false;
+      possibly_valid = false;
+      num_large_r2_prunes_++;
+    }
+    else if (sorted_upper_sq[1] < smallest_r2) {
+      //large_angle_valid = false;
+      possibly_valid = false;
+      num_small_r2_prunes_++;
+    }
+
+    // IMPORTANT: do I need to check this? 
+    // The three distances (l1, l2, l3) etc. came from a real triangle
+    // so the third distance (up to differences in bounds) satisfies the 
+    // triangle inequality already
+    
+    // The only way to prune based on r3 is if the 'true' angle is too wide or
+    // too steep
+    // However, inputs tend to favor extremely large or small angles  
+    
+    // if we haven't pruned large angles, then compute and check r3
+    
+    /*
+    if (large_angle_valid) {
+      
+      // compute largest and smallest r3
+      
+      if (sorted_lower_sq.back() > largest_r3) {
+        large_angle_valid = false;
+      }
+      else if (sorted_upper_sq.back() < smallest_r3) {
+        large_angle_valid = false;
+      }
+    } // checking large angles
+     */  
+    
+    // check small angles
+
+    // I don't think I actually need two cases if I'm not worrying about r3
+    
+    /*
+    // recompute largest and smallest r3
+    if (sorted_lower_sq[1] > largest_r3) {
+      small_angle_valid = false;
+    }
+    else if (sorted_upper_sq[1] < smallest_r3) {
+      small_angle_valid = false;
+    }
+    
+    // if we havent pruned, check the third side
+    if (small_angle_valid) {
+     
+      // recompute smallest and largest r2
+      
+      if (sorted_lower_sq.back() > largest_r2) {
+        small_angle_valid = false;
+      }
+      else if (sorted_uper_sq.back() < smallest_r2) {
+        small_angle_valid = false;
+      }
+      
+    } // checking small angles
+    
+    // if either might work, we can' prune
+    possibly_valid = (small_angle_valid || large_angle_valid);
+    */
+    
+  } // cant prune on r1
+  
+  return possibly_valid;
+  
+} // TestNodeTuple
+
+
+
 

@@ -179,6 +179,11 @@ void npt::Angle3ptAlg::DepthFirstRecursion_(std::vector<NptNode*>& node_list) {
 
 void npt::Angle3ptAlg::OutputResults() {
   
+  matcher_.PrintNumPrunes();
+  
+  mlpack::IO::Info << "num prunes: " << num_prunes_ << "\n";
+  mlpack::IO::Info << "num base cases: " << num_base_cases_ << "\n";
+  
   std::string d_string(tuple_size_, 'D');
   std::string r_string(tuple_size_, 'R');
   std::string label_string;
