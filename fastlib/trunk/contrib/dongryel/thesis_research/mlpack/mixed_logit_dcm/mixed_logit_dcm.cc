@@ -51,6 +51,9 @@ int main(int argc, char *argv[]) {
   mlpack::mixed_logit_dcm::MixedLogitDCMArgumentParser::ParseArguments(
     argc, argv, &mixed_logit_dcm_arguments);
 
+  // Seed the random number.
+  core::math::global_random_number_state_.set_seed(time(NULL));
+
   if(mixed_logit_dcm_arguments.distribution_ == "constant") {
     BranchOnDistribution<mlpack::mixed_logit_dcm::ConstantDistribution>(
       mixed_logit_dcm_arguments);

@@ -103,6 +103,10 @@ class MixedLogitDCMArgumentParser {
           "densities_out.csv"),
         "OPTIONAL file to store the predicted discrete choices."
       )(
+        "random_seed_in",
+        boost::program_options::value<int>(),
+        "OPTIONAL The random seed to start with."
+      )(
         "test_attributes_in",
         boost::program_options::value<std::string>(),
         "OPTIONAL file containing the vector of attributes for the test set."
@@ -310,6 +314,13 @@ class MixedLogitDCMArgumentParser {
       // Parse the maximum trust region radius.
       arguments_out->max_trust_region_radius_ =
         vm[ "max_trust_region_radius" ].as<double>();
+
+      // Parse the random seed.
+      if(vm.count("random_seed_in") > 0) {
+        arguments_out->random_seed_ = vm["random_seed_in"].as<int>();
+        core::math::global_random_number_state_.set_seed(
+          arguments_out->random_seed_);
+      }
 
       // Parse how to perform the trust region search: cauchy, dogleg, steihaug
       if(vm[ "trust_region_search_method" ].as<std::string>() == "cauchy") {
