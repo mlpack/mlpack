@@ -17,11 +17,16 @@ namespace tree_kdtree_private {
                                  index_t first,
                                  index_t count, 
                                  TBound *bounds) {
-    index_t end = first + count;
+    index_t end = first + count; // Set index correctly for loop.
+    // Loop over each point this bound contains.
     for(index_t i = first; i < end; i++) {
-      if (split_dimensions.n_elem == matrix.n_rows){
+      // If we are using all dimensions to split on, widen the bound in all
+      // dimensions.
+      if (split_dimensions.n_elem == matrix.n_rows) {
 	*bounds |= matrix.col(i);
       } else {
+        // Otherwise, only use the dimensions specified in the split_dimensions
+        // vector.
         arma::vec sub_col(split_dimensions.n_elem);
 	MakeBoundVector(matrix.col(i), split_dimensions, sub_col);
 	*bounds |= sub_col;
@@ -49,7 +54,7 @@ namespace tree_kdtree_private {
                           index_t count,
                           TBound& left_bound,
                           TBound& right_bound,
-                          arma::Col<index_t>& old_from_new) {
+                          std::vector<index_t>& old_from_new) {
     // we will split dimensions in a very simple order: first dim first
     arma::uvec split_dimensions(matrix.n_rows);
     for(int i = 0; i < matrix.n_rows; i++)
@@ -166,7 +171,7 @@ namespace tree_kdtree_private {
                                 index_t count,
                                 TBound& left_bound,
                                 TBound& right_bound,
-                                arma::Col<index_t>& old_from_new) {
+                                std::vector<index_t>& old_from_new) {
     
     index_t left = first;
     index_t right = first + count - 1;
@@ -246,7 +251,7 @@ namespace tree_kdtree_private {
   void SplitKdTreeMidpoint(arma::Mat<T>& matrix,
                            TKdTree *node,
                            index_t leaf_size,
-                           arma::Col<T>& old_from_new) {
+                           std::vector<T>& old_from_new) {
 
     arma::uvec split_dimensions(matrix.n_rows);
     for(int i = 0; i < matrix.n_rows; i++)
@@ -274,7 +279,7 @@ namespace tree_kdtree_private {
                                  const arma::uvec& split_dimensions,
                                  TKdTree *node,
                                  index_t leaf_size, 
-                                 arma::Col<index_t>& old_from_new) {
+                                 std::vector<index_t>& old_from_new) {
   
     TKdTree *left = NULL;
     TKdTree *right = NULL;
@@ -409,11 +414,11 @@ template<typename TKdTree, typename T>
 TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix,
                                      const arma::uvec& split_dimensions,
                                      index_t leaf_size,
-                                     arma::Col<index_t>& old_from_new,
-                                     arma::Col<index_t>& new_from_old) {
+                                     std::vector<index_t>& old_from_new,
+                                     std::vector<index_t>& new_from_old) {
   TKdTree *node = new TKdTree();
    
-  old_from_new.set_size(matrix.n_cols);
+  old_from_new.resize(matrix.n_cols);
   for (index_t i = 0; i < matrix.n_cols; i++)
     old_from_new[i] = i;
    
@@ -426,7 +431,7 @@ TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix,
       node, leaf_size, old_from_new);
    
   if(new_from_old) {
-    new_from_old.set_size(matrix.n_cols);
+    new_from_old.resize(matrix.n_cols);
     for (index_t i = 0; i < matrix.n_cols; i++) {
       new_from_old[old_from_new[i]] = i;
     }
@@ -454,10 +459,10 @@ template<typename TKdTree, typename T>
 TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix,
                                      const arma::uvec& split_dimensions,
                                      index_t leaf_size,
-                                     arma::Col<index_t>& old_from_new) {
+                                     std::vector<index_t>& old_from_new) {
   TKdTree *node = new TKdTree();
 
-  old_from_new.set_size(matrix.n_cols);
+  old_from_new.resize(matrix.n_cols);
   for (index_t i = 0; i < matrix.n_cols; i++)
     old_from_new[i] = i;
 
@@ -505,8 +510,8 @@ TKdTree *MakeKdTreeMidpointSelective(arma::Mat<T>& matrix,
 template<typename TKdTree, typename T>
 TKdTree *MakeKdTreeMidpoint(arma::Mat<T>& matrix,
                             index_t leaf_size,
-                            arma::Col<index_t>& old_from_new,
-                            arma::Col<index_t>& new_from_old) {
+                            std::vector<index_t>& old_from_new,
+                            std::vector<index_t>& new_from_old) {
   // create vector of dimensions that we will split on
   // by default we'll just split the first dimension first, and so on
   arma::uvec split_dimensions(matrix.n_rows);
@@ -523,7 +528,7 @@ TKdTree *MakeKdTreeMidpoint(arma::Mat<T>& matrix,
 template<typename TKdTree, typename T>
 TKdTree *MakeKdTreeMidpoint(arma::Mat<T>& matrix,
                             index_t leaf_size,
-                            arma::Col<index_t>& old_from_new) {
+                            std::vector<index_t>& old_from_new) {
   // create vector of dimensions that we will split on
   // by default we'll just split the first dimension first, and so on
   arma::uvec split_dimensions(matrix.n_rows);

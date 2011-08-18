@@ -23,13 +23,12 @@ namespace tree {
  * This particular tree forbids you from having more children.
  *
  * @param TBound the bounding type of each child (TODO explain interface)
- * @param TDataset the data set type
+ * @param TDataset the data set type (must be arma::mat)
  * @param TStatistic extra data in the node
  *
  * @experimental
  */
-template<typename TBound,
-         typename TDataset,
+template<typename TBound, typename TDataset,
          typename TStatistic = EmptyStatistic<TDataset> >
 class BinarySpaceTree {
  public:
@@ -46,6 +45,32 @@ class BinarySpaceTree {
   Statistic stat_;
 
  public:
+  /***
+   * Construct this as the head node of a binary space tree using the given
+   * dataset.  This will modify the ordering of the points in the dataset!
+   *
+   * Optionally, pass in vectors which represent a mapping from the old
+   * dataset's point ordering to the new ordering, and vice versa.
+   *
+   * @param data Dataset to create tree from.
+   * @param old_from_new Vector which will be filled with the old positions for
+   *     each new point.
+   * @param new_from_old Vector which will be filled with the new positions for
+   *     each old point.
+   */
+  BinarySpaceTree(Dataset& data, index_t leaf_size);
+  BinarySpaceTree(Dataset& data,
+                  index_t leaf_size, 
+                  std::vector<index_t>& old_from_new);
+  BinarySpaceTree(Dataset& data,
+                  index_t leaf_size,
+                  std::vector<index_t>& old_from_new,
+                  std::vector<index_t>& new_from_old);
+
+  BinarySpaceTree(index_t begin_in, index_t count_in);
+ 
+  BinarySpaceTree(); 
+
   void Init(index_t begin_in, index_t count_in);
 
   /**
