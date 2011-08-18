@@ -16,6 +16,8 @@
 namespace mlpack {
 namespace tree {
 
+// Each of these overloads is kept as a separate function to keep the overhead
+// from the two std::vectors out, if possible.
 template<typename TBound, typename TDataset, typename TStatistic>
 BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
     index_t leaf_size) :
@@ -27,10 +29,6 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
   arma::uvec dims(data.n_rows);
   for (index_t i = 0; i < data.n_rows; i++)
     dims[i] = i;
-
-  // First, we have to set the bound of this node correctly.
-  tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
-      &bound_);
 
   // Now, do the actual splitting of this node.
   tree_kdtree_private::SelectSplitKdTreeMidpoint(data, dims, this,
@@ -56,10 +54,6 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   for (index_t i = 0; i < data.n_rows; i++)
     dims[i] = i;
 
-  // Set the bound of this node correctly.
-  tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
-      &bound_);
-
   // Now do the actual splitting.
   tree_kdtree_private::SelectSplitKdTreeMidpoint(data, dims, this,
       leaf_size /* leaf_size needs to be parameterizable */, old_from_new);
@@ -84,10 +78,6 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   arma::uvec dims(data.n_rows);
   for (index_t i = 0; i < data.n_rows; i++)
     dims[i] = i;
-
-  // Set the bound of this node correctly.
-  tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
-      &bound_);
 
   // Now do the actual splitting.
   tree_kdtree_private::SelectSplitKdTreeMidpoint(data, dims, this,
