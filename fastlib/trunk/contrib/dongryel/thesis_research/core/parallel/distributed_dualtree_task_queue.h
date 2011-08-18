@@ -48,7 +48,7 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
-    std::vector< core::parallel::DisjointIntIntervals * > assigned_work_;
+    std::vector< boost::shared_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
     int num_remaining_tasks_;
 
@@ -64,7 +64,7 @@ class DistributedDualtreeTaskQueue {
 
     TableExchangeType table_exchange_;
 
-    std::vector<TaskPriorityQueueType *> tasks_;
+    std::vector< boost::shared_ptr<TaskPriorityQueueType> > tasks_;
 
     omp_nest_lock_t task_queue_lock_;
 
@@ -77,8 +77,6 @@ class DistributedDualtreeTaskQueue {
   private:
 
     void Evict_(int probe_index) {
-      delete assigned_work_[probe_index];
-      delete tasks_[probe_index];
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       assigned_work_[probe_index] = assigned_work_.back();
@@ -183,10 +181,12 @@ class DistributedDualtreeTaskQueue {
         this->DequeueTask(subtree_index, &task_pair, false);
         prev_tasks.push_back(task_pair.first);
       }
-      tasks_.push_back(new TaskPriorityQueueType());
+      tasks_.push_back(
+        boost::shared_ptr<TaskPriorityQueueType>(new TaskPriorityQueueType()));
       assigned_work_.push_back(
-        new core::parallel::DisjointIntIntervals(
-          world, *(assigned_work_[subtree_index])));
+        boost::shared_ptr< core::parallel::DisjointIntIntervals > (
+          new core::parallel::DisjointIntIntervals(
+            world, *(assigned_work_[subtree_index]))));
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
@@ -267,11 +267,8 @@ class DistributedDualtreeTaskQueue {
     /** @brief The destructor.
      */
     ~DistributedDualtreeTaskQueue() {
-      for(unsigned int i = 0; i < assigned_work_.size(); i++) {
-        delete assigned_work_[i];
-        delete tasks_[i];
-      }
       assigned_work_.resize(0);
+      query_subtables_.resize(0);
       tasks_.resize(0);
 
       // Destroy the lock.
@@ -465,7 +462,8 @@ class DistributedDualtreeTaskQueue {
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         query_results_[i] = local_query_result_in;
         query_subtree_locks_[i] = false;
-        tasks_[i] = new TaskPriorityQueueType();
+        tasks_[i] = boost::shared_ptr <
+                    TaskPriorityQueueType > (new TaskPriorityQueueType());
       }
 
       // Initialize the table exchange.
@@ -493,7 +491,10 @@ class DistributedDualtreeTaskQueue {
       assigned_work_.resize(query_subtables_.size()) ;
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        assigned_work_[i] = new core::parallel::DisjointIntIntervals();
+        assigned_work_[i] =
+          boost::shared_ptr <
+          core::parallel::DisjointIntIntervals > (
+            new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
       }
