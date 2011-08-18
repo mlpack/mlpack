@@ -100,13 +100,21 @@ namespace tree_kdtree_private {
      *
      *   everything < left is correct
      *   everything > right is correct
+     *
+     * We want all the points on the left to be less than the splitvalue (in the
+     * splitting dimension) and on the right to be greater than or equal to
+     * splitvalue.
      */
     for (;;) {
-      while (matrix(dim, left) < splitvalue && likely(left <= right)) {
+      // See how many of the points on the left are correct.  When they are
+      // correct, increase the bound of the left node accordingly.  When we
+      // encounter one that isn't correct, move to the right side.
+      while (matrix(dim, left) < splitvalue && (left <= right)) {
 	arma::vec left_vector = matrix.col(left);
         if (split_dimensions.n_elem == matrix.n_rows) {
 	  left_bound |= left_vector;
 	} else {
+          // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_left_vector(split_dimensions.n_elem);
 	  MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
 	  left_bound |= sub_left_vector;
@@ -114,11 +122,15 @@ namespace tree_kdtree_private {
         left++;
       }
 
-      while (matrix(dim, right) >= splitvalue && likely(left <= right)) {
+      // See how many of the points on the right are correct.  When they are
+      // correct, increase the bound of the right node accordingly.  When we
+      // encounter one that isn't correct, move to the swapping.
+      while (matrix(dim, right) >= splitvalue && (left <= right)) {
         arma::vec right_vector = matrix.col(right);
 	if (split_dimensions.n_elem == matrix.n_rows) {
 	  right_bound |= right_vector;
 	} else {
+          // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_right_vector(split_dimensions.n_elem);
 	  MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
 	  right_bound |= sub_right_vector;
@@ -126,35 +138,15 @@ namespace tree_kdtree_private {
         right--;
       }
 
-      if (unlikely(left > right)) {
-        /* left == right + 1 */
+      if (left > right) {
+        // The procedure is finished.
         break;
       }
 
-      // swap left and right vector
+      // Swap left and right vector; both are wrong.
       matrix.swap_cols(left, right);
-
-      arma::vec left_vector = matrix.col(left);
-      arma::vec right_vector = matrix.col(right);
-
-      if (split_dimensions.n_elem == matrix.n_rows) {
-	left_bound |= left_vector;
-      } else {
-	arma::vec sub_left_vector(split_dimensions.n_elem);
-	MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
-	left_bound |= sub_left_vector;
-      }  
-
-      if (split_dimensions.n_elem == matrix.n_rows){
-	  right_bound |= right_vector;
-      } else {
-	arma::vec sub_right_vector(split_dimensions.n_elem);
-	MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
-	right_bound |= sub_right_vector;
-      }  
       
       DEBUG_ASSERT(left <= right);
-      right--;
     }
 
     DEBUG_ASSERT(left == right + 1);
@@ -206,7 +198,7 @@ namespace tree_kdtree_private {
         right--;
       }
 
-      if (unlikely(left > right)) {
+      if (left > right) {
         /* left == right + 1 */
         break;
       }
@@ -214,32 +206,12 @@ namespace tree_kdtree_private {
       // swap left and right vector
       matrix.swap_cols(left, right);
 
-      arma::vec left_vector = matrix.col(left);
-      arma::vec right_vector = matrix.col(right);
-
-      if (split_dimensions.n_elem == matrix.n_rows) {
-	left_bound |= left_vector;
-      } else {
-	arma::vec sub_left_vector(split_dimensions.n_elem);
-	MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
-	left_bound |= sub_left_vector;
-      }  
-
-      if (split_dimensions.n_elem == matrix.n_rows){
-	  right_bound |= right_vector;
-      } else {
-	arma::vec sub_right_vector(split_dimensions.n_elem);
-	MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
-	right_bound |= sub_right_vector;
-      }  
-      
       // update indices
       index_t t = old_from_new[left];
       old_from_new[left] = old_from_new[right];
       old_from_new[right] = t;
 
       DEBUG_ASSERT(left <= right);
-      right--;
     }
 
     DEBUG_ASSERT(left == right + 1);
@@ -339,14 +311,18 @@ namespace tree_kdtree_private {
                                  const arma::uvec& split_dimensions,
                                  TKdTree *node,
                                  index_t leaf_size) {
-  
+    // Set the children we will be assigning to NULL, for now.
     TKdTree *left = NULL;
     TKdTree *right = NULL;
     
+    // Set the bounds of the node we are working with correctly.
     SelectFindBoundFromMatrix(matrix, split_dimensions, node->begin(), 
 			      node->count(), &node->bound());
 
+    // If we have enough points to split, let's do that.
     if(node->count() > leaf_size) {
+      // Set up the split dimension.  We find the dimension with the largest
+      // width to split on.
       index_t split_dim = BIG_BAD_NUMBER;
       double max_width = -1;
 
@@ -359,34 +335,42 @@ namespace tree_kdtree_private {
         }
       }
 
+      // And we split in the middle of that dimension.
       double split_val = node->bound()[split_dim].mid();
 
       if (max_width == 0) {
         // Okay, we can't do any splitting, because all these points are the
         // same.  We have to give up.
       } else {
+        // Initialize the left node and set the dimension of its bound.
         left = new TKdTree();
         left->bound().SetSize(split_dimensions.n_elem);
 
+        // Initialize the right node and set the dimension of its bound.
         right = new TKdTree();
         right->bound().SetSize(split_dimensions.n_elem);
 
+        // Find the column we will be splitting on.
         index_t split_col = SelectMatrixPartition(matrix, split_dimensions, 
 	    (int) split_dimensions[split_dim], split_val,
             node->begin(), node->count(),
             left->bound(), right->bound());
         
+        // Set the sizes of the left and right children nodes correctly.
         left->Init(node->begin(), split_col - node->begin());
         right->Init(split_col, node->begin() + node->count() - split_col);
 
         // This should never happen if max_width > 0
         DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
 
+        // Recurse into setting those child nodes correctly.
         SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, leaf_size);
         SelectSplitKdTreeMidpoint(matrix, split_dimensions, right, leaf_size);
       }
     }
 
+    // Set the children of the main node (they may be NULL if we didn't or
+    // couldn't split).
     node->set_children(matrix, left, right);
   }
 
