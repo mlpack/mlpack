@@ -174,6 +174,14 @@ class SubTable {
       int level, bool add_serialize_points_per_terminal_node) const {
 
       if(node != NULL) {
+
+        // Currently assumes that everything is serialized under the
+        // start node.
+        if(parent_node_index < 0 && add_serialize_points_per_terminal_node) {
+          serialize_points_per_terminal_node_in->push_back(
+            PointSerializeFlagType(node->begin(), node->count()));
+        }
+
         sorted_nodes.push_back(
           std::pair<TreeType *, int>(node, parent_node_index));
 
@@ -188,13 +196,6 @@ class SubTable {
             node->right(), parent_node_index, sorted_nodes,
             serialize_points_per_terminal_node_in, level + 1,
             add_serialize_points_per_terminal_node);
-        }
-
-        // In case it is a leaf, we are always stuck, so we grab the
-        // points belonging to it as well.
-        else if(add_serialize_points_per_terminal_node) {
-          serialize_points_per_terminal_node_in->push_back(
-            PointSerializeFlagType(node->begin(), node->count()));
         }
       }
     }
