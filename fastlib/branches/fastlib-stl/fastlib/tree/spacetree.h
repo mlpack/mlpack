@@ -53,6 +53,7 @@ class BinarySpaceTree {
    * dataset's point ordering to the new ordering, and vice versa.
    *
    * @param data Dataset to create tree from.
+   * @param leaf_size Leaf size of the tree.
    * @param old_from_new Vector which will be filled with the old positions for
    *     each new point.
    * @param new_from_old Vector which will be filled with the new positions for
@@ -60,7 +61,7 @@ class BinarySpaceTree {
    */
   BinarySpaceTree(Dataset& data, index_t leaf_size);
   BinarySpaceTree(Dataset& data,
-                  index_t leaf_size, 
+                  index_t leaf_size,
                   std::vector<index_t>& old_from_new);
   BinarySpaceTree(Dataset& data,
                   index_t leaf_size,
@@ -143,7 +144,6 @@ class BinarySpaceTree {
   index_t count() const;
   
   void Print() const;
-
 };
 
 }; // namespace tree
