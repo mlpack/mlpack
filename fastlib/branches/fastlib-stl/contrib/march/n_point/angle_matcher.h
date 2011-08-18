@@ -51,6 +51,7 @@ namespace npt {
     // i.e. thetas_[theta_cutoff_index_] is the first theta where r3 > r2
     int theta_cutoff_index_;
     
+    double cos_theta_cutoff_;
     
     // upper and lower bound arrays
     // these include the half bandwidth added or subtracted
@@ -60,6 +61,7 @@ namespace npt {
     std::vector<double> r2_lower_sqr_;
     std::vector<double> r2_upper_sqr_;
     
+    // these are indexed by r1 value, then by angle/r3
     std::vector<std::vector<double> > r3_lower_sqr_;
     std::vector<std::vector<double> > r3_upper_sqr_;
     
@@ -74,12 +76,17 @@ namespace npt {
     double min_area_sq_;
     double max_area_sq_;
     
+    /*
     int num_min_area_prunes_;
     int num_max_area_prunes_;
     
-    int num_prunes_;
-    
-    
+    int num_r1_prunes_;
+    int num_r3_prunes_;
+    */
+    int num_large_r1_prunes_, num_small_r1_prunes_;
+    int num_large_r3_prunes_;
+    int num_large_r2_prunes_, num_small_r2_prunes_;
+     
     ////////////////////////////
     
     double ComputeR3_(double r1, double r2, double theta);
@@ -96,9 +103,13 @@ namespace npt {
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
     r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()) {
       
-      theta_cutoff_ = acos(1.0/(2.0 * long_side_multiplier_));
+
+      cos_theta_cutoff_ = 1.0 / (2.0 * long_side_multiplier_);
+      theta_cutoff_ = acos(cos_theta_cutoff_);
       theta_cutoff_index_ = std::lower_bound(thetas_.begin(), thetas_.end(), 
                                              theta_cutoff_) - thetas_.begin();
+      
+      
       
       double half_thickness = bin_thickness_factor_ / 2.0;
 
@@ -151,9 +162,18 @@ namespace npt {
       * (half_max_perimeter - sqrt(r2_upper_sqr_.back())) 
       * (half_max_perimeter - sqrt(r3_upper_sqr_.back().back()));
       
+      /*
       num_min_area_prunes_ = 0;
       num_max_area_prunes_ = 0;
-      num_prunes_ = 0;
+      num_r1_prunes_ = 0;
+      num_r3_prunes_ = 0;
+      */
+      
+      num_large_r1_prunes_ = 0;
+      num_small_r1_prunes_ = 0;
+      num_large_r3_prunes_ = 0;
+      num_large_r2_prunes_ = 0;
+      num_small_r2_prunes_ = 0;
       
       // IMPORTANT: I'm not sure the upper and lower sqr arrays are still sorted
       // especially for r3
@@ -173,6 +193,23 @@ namespace npt {
     bool TestNodeTuple(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
                        const DHrectBound<2>& box3);
     
+    
+    void PrintNumPrunes() {
+     
+      /*
+      mlpack::IO::Info << "Num r1 prunes: " << num_r1_prunes_ << "\n";
+      mlpack::IO::Info << "Num r3 prunes: " << num_r3_prunes_ << "\n";
+      mlpack::IO::Info << "Num min area prunes: " << num_min_area_prunes_ << "\n";
+      mlpack::IO::Info << "Num max area prunes: " << num_max_area_prunes_ << "\n";
+      */
+      
+      mlpack::IO::Info << "Num large r1 prunes: " << num_large_r1_prunes_ << "\n";
+      mlpack::IO::Info << "Num small r1 prunes: " << num_small_r1_prunes_ << "\n";
+      mlpack::IO::Info << "Num large r3 prunes: " << num_large_r3_prunes_ << "\n";
+      mlpack::IO::Info << "Num large r2 prunes: " << num_large_r2_prunes_ << "\n";
+      mlpack::IO::Info << "Num small r2 prunes: " << num_small_r2_prunes_ << "\n";
+      
+    }
     
     
   }; // AngleMatcher
