@@ -140,8 +140,8 @@ class NeighborSearch {
   TreeType* query_tree_;
 
   // A permutation of the indices for tree building.
-  arma::Col<index_t> old_from_new_queries_;
-  arma::Col<index_t> old_from_new_references_;
+  std::vector<index_t> old_from_new_queries_;
+  std::vector<index_t> old_from_new_references_;
 
   bool naive_;
   bool dual_mode_;

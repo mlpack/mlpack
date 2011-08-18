@@ -122,7 +122,7 @@ class DualTreeBoruvka {
   index_t leaf_size_;
   
   // lists
-  arma::Col<index_t> old_from_new_permutation_;
+  std::vector<index_t> old_from_new_permutation_;
   arma::Col<index_t> neighbors_in_component_;
   arma::Col<index_t> neighbors_out_component_;
   arma::vec neighbors_distances_;
@@ -561,14 +561,13 @@ class DualTreeBoruvka {
       
       IO::StartTimer("naive/tree_building");
 
-      tree_ = tree::MakeKdTreeMidpoint<DTBTree>
-          (data_points_, leaf_size_, old_from_new_permutation_);
+      tree_ = new DTBTree(data_points_, leaf_size_, old_from_new_permutation_);
       
       IO::StopTimer("naive/tree_building");
     }
     else {
       tree_ = NULL;
-      old_from_new_permutation_.set_size(0);
+      old_from_new_permutation_.resize(0);
     }
     
     number_of_points_ = data_points_.n_cols;

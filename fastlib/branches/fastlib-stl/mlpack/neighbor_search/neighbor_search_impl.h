@@ -52,14 +52,13 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
   if (dual_mode_)
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, leaf_size_,
-        old_from_new_queries_);
+    query_tree_ = new TreeType(queries_, leaf_size_, old_from_new_queries_);
   else
-    query_tree_ = tree::MakeKdTreeMidpoint<TreeType>(queries_, queries_.n_cols,
+    query_tree_ = new TreeType(queries_, queries_.n_cols,
         old_from_new_queries_);
 
-  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
-      leaf_size_, old_from_new_references_);
+  reference_tree_ = new TreeType(references_, leaf_size_,
+      old_from_new_references_);
 
   // Stop the timer we started above
   IO::StopTimer("neighbor_search/tree_building");
@@ -103,8 +102,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   // that record the permutation of the data points
   // Instead of NULL, it is possible to specify an array new_from_old_
   query_tree_ = NULL;
-  reference_tree_ = tree::MakeKdTreeMidpoint<TreeType>(references_,
-      leaf_size_, old_from_new_references_);
+  reference_tree_ = new TreeType(references_, leaf_size_,
+      old_from_new_references_);
 
   // Stop the timer we started above
   IO::StopTimer("neighbor_search/tree_building");
