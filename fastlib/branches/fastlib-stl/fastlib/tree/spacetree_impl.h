@@ -22,8 +22,11 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
     begin_(0), /* This root node starts at index 0, */
     count_(data.n_cols), /* and spans all of the dataset. */
     bound_(data.n_rows) {
-  // Make the vector of dimensions to split on.
-  arma::uvec dims = arma::linspace<arma::uvec>(0, data.n_rows - 1, data.n_rows);
+  // Make the vector of dimensions to split on.  Don't use linspace because it
+  // fails with just one dimension...
+  arma::uvec dims(data.n_rows);
+  for (index_t i = 0; i < data.n_rows; i++)
+    dims[i] = i;
 
   // First, we have to set the bound of this node correctly.
   tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
@@ -47,8 +50,11 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   for (index_t i = 0; i < data.n_cols; i++)
     old_from_new[i] = i; // Fill with unharmed indices.
 
-  // Make the vector of dimensions to split on.
-  arma::uvec dims = arma::linspace<arma::uvec>(0, data.n_rows - 1, data.n_rows);
+  // Make the vector of dimensions to split on.  Don't use linspace because it
+  // fails with just one dimension...
+  arma::uvec dims(data.n_rows);
+  for (index_t i = 0; i < data.n_rows; i++)
+    dims[i] = i;
 
   // Set the bound of this node correctly.
   tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
@@ -73,8 +79,11 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   for (index_t i = 0; i < data.n_cols; i++)
     old_from_new[i] = i; // Fill with unharmed indices.
 
-  // Make the vector of dimensions to split on.
-  arma::uvec dims = arma::linspace<arma::uvec>(0, data.n_rows - 1, data.n_rows);
+  // Make the vector of dimensions to split on.  Don't use linspace because it
+  // fails with just one dimension...
+  arma::uvec dims(data.n_rows);
+  for (index_t i = 0; i < data.n_rows; i++)
+    dims[i] = i;
 
   // Set the bound of this node correctly.
   tree_kdtree_private::SelectFindBoundFromMatrix(data, dims, begin_, count_,
