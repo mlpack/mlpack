@@ -12,8 +12,10 @@ class OGD : public Learner {
   vector<Svector> w_avg_pool_; // shared memory for averaged weight vec over iterations
   vector<Svector> m_pool_; // shared memory for messages
   vector<double>  b_pool_; // shared memory for bias term
+  vector<double>  sum_gdnorm_pool_;
+  vector<double>  max_gdnorm_pool_;
  private:
-  double eta0_, t_init_;
+  //double eta0_, t_init_;
   pthread_barrier_t barrier_msg_all_sent_;
   pthread_barrier_t barrier_msg_all_used_;
  public:

@@ -33,6 +33,7 @@ void* OGD::OgdThread(void *in_par) {
   T_IDX tid = par->id_;
   OGD* Lp = (OGD *)par->Lp_;
   Example* exs[Lp->mb_size_];
+  double update = 0.0;
   Svector uv; // update vector
   double ub = 0.0; // for bias
 
@@ -55,38 +56,79 @@ void* OGD::OgdThread(void *in_par) {
       Lp->t_n_it_[tid] = Lp->t_n_it_[tid] + 1;
 
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
+        /*
 	// calculate w_avg and make logs
 	Lp->w_avg_pool_[tid] *= (Lp->t_n_it_[tid] - 1.0);
 	Lp->w_avg_pool_[tid] += Lp->w_pool_[tid];
 	Lp->w_avg_pool_[tid] *= (1.0/Lp->t_n_it_[tid]);
-	//Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
+        */
+	Lp->w_avg_pool_[tid] = Lp->w_pool_[tid];
 	double pred_val = Lp->LinearPredictBias(Lp->w_avg_pool_[tid], 
 						*exs[b], Lp->b_pool_[tid]);
 	Lp->MakeLog(tid, exs[b], pred_val);
+
+        
+        double sq_gd_norm = 0.0;
+        update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
+        sq_gd_norm = update * update * exs[b]->SparseSqL2Norm();
+        //cout << sq_gd_norm << endl;
+        if (sq_gd_norm >= Lp->max_gdnorm_pool_[tid]) {
+          Lp->max_gdnorm_pool_[tid] = sq_gd_norm;
+        }
+        Lp->sum_gdnorm_pool_[tid] = Lp->sum_gdnorm_pool_[tid] + sq_gd_norm;
       }
 
-      //--- step size for SGD
+      //--- step sizes for SGD
       
+      /*
+      // Traditional SGD stepsizes
       if (Lp->reg_type_ == 2) {
-	//eta= 1.0 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
-	//eta= 1.0 / sqrt(Lp->t_n_it_[tid]);
+	eta= 0.02 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+        //cout << eta << endl;
       }
       else {
-	eta = 1.0 / sqrt(Lp->t_n_it_[tid]);
+	eta = 0.00001 / sqrt(Lp->t_n_it_[tid]);
+      }
+      */
+     
+      
+      // NASA
+      if (Lp->reg_type_ == 2) {
+        
+        // strongly convex
+        if (Lp->sum_gdnorm_pool_[tid] < 1.0) {
+          eta = 15 / Lp->reg_factor_;
+        }
+        else if (Lp->sum_gdnorm_pool_[tid] < Lp->t_n_it_[tid]) {
+          eta = 15 / (Lp->reg_factor_ * Lp->t_n_it_[tid]);
+        }
+        else {
+          eta = 15 / (Lp->reg_factor_ * Lp->sum_gdnorm_pool_[tid]);
+        }
+          
+        //eta = 0.02 * Lp->max_gdnorm_pool_[tid] / (Lp->reg_factor_ * Lp->sum_gdnorm_pool_[tid]);
+        //eta = 15 / (Lp->reg_factor_ * Lp->sum_gdnorm_pool_[tid]);
+      }
+      else {
+        // generally convex
+        eta = 0.03 / sqrt(Lp->sum_gdnorm_pool_[tid]);
       }
       
+      
+
       //--- constant step size
-      eta = 1.0/(60*Lp->reg_factor_);
+      //eta = 1.0/(60*Lp->reg_factor_);
 
       //--- local update: subgradient of loss function
       uv.Clear(); ub = 0.0;
       for (T_IDX b = 0; b<Lp->mb_size_; b++) {
-	double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
-						*exs[b], Lp->b_pool_[tid]);
-	double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
+	//double pred_val = Lp->LinearPredictBias(Lp->w_pool_[tid], 
+        //*exs[b], Lp->b_pool_[tid]);
+	//double update = Lp->LF_->GetUpdate(pred_val, (double)exs[b]->y_);
 	uv.SparseAddExpertOverwrite(update, *exs[b]);
         ub += update;
       }
+
       //--- local update: regularization part
       if (Lp->reg_type_ == 2) {
 	// [- \lambda \eta w_i^t],  L + \lambda/2 \|w\|^2 <=> CL + 1/2 \|w\|^2
@@ -131,19 +173,23 @@ void OGD::Learn() {
   pthread_barrier_init(&barrier_msg_all_sent_, NULL, n_thread_);
   pthread_barrier_init(&barrier_msg_all_used_, NULL, n_thread_);
   // init learning rate
-  eta0_ = sqrt(TR_->Size());
-  t_init_ = 1.0 / (eta0_ * reg_factor_);
+  //eta0_ = sqrt(TR_->Size());
+  //t_init_ = 1.0 / (eta0_ * reg_factor_);
   // init parameters
   w_pool_.resize(n_thread_);
   w_avg_pool_.resize(n_thread_);
   m_pool_.resize(n_thread_);
   b_pool_.resize(n_thread_);
+  sum_gdnorm_pool_.resize(n_thread_);
+  max_gdnorm_pool_.resize(n_thread_);
 
   thread_par pars[n_thread_];
   for (T_IDX t = 0; t < n_thread_; t++) {
     // init thread parameters and statistics
     pars[t].id_ = t;
     pars[t].Lp_ = this;
+    sum_gdnorm_pool_[t] = 0.0;
+    max_gdnorm_pool_[t] = 0.0;
     b_pool_[t] = 0.0;
     w_pool_[t].Clear();
     w_avg_pool_[t].Clear();
