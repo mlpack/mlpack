@@ -34,6 +34,8 @@ class MixedLogitDCMArguments {
      */
     TableType *num_alternatives_table_;
 
+    int random_seed_;
+
     /** @brief Stores the attribute vectors for each person (the test
      *         set).
      */
@@ -127,6 +129,7 @@ class MixedLogitDCMArguments {
       max_num_integration_samples_per_person_ = 0;
       integration_sample_error_threshold_ = 0;
       max_trust_region_radius_ = 0;
+      random_seed_ = 0;
     }
 
     /** @brief The destructor.
