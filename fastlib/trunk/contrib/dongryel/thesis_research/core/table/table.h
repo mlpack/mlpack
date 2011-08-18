@@ -11,6 +11,7 @@
 
 #include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
@@ -42,6 +43,8 @@ class Table {
     TreeSpecType, OldFromNewIndexType > TableType;
 
     typedef typename TreeSpecType::StatisticType StatisticType;
+
+    typedef core::table::SubTable<TableType> SubTableType;
 
   private:
 
@@ -336,7 +339,7 @@ class Table {
      */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
-      core::table::SubTable<TableType> sub_table;
+      SubTableType sub_table;
       TableType *this_table = const_cast<TableType *>(this);
       sub_table.Init(
         this_table, this_table->get_tree(), true);
@@ -347,7 +350,7 @@ class Table {
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-      core::table::SubTable<TableType> sub_table;
+      SubTableType sub_table;
       sub_table.Init(
         this, this->get_tree(), true);
       ar & sub_table;
@@ -646,10 +649,19 @@ class Table {
      *         specified number of nodes.
      */
     void get_frontier_nodes_bounded_by_number(
-      int max_num_nodes, std::vector<TreeType *> *frontier_nodes_out) const {
+      int max_num_nodes,
+      std::vector <
+      boost::shared_ptr<SubTableType> > *frontier_subtables_out) const {
 
+      std::vector<TreeType *> frontier_nodes_out;
       tree_->get_frontier_nodes_bounded_by_number(
-        max_num_nodes, frontier_nodes_out);
+        max_num_nodes, &frontier_nodes_out);
+      for(unsigned int i = 0; i < frontier_nodes_out.size(); i++) {
+        frontier_subtables_out->push_back(
+          boost::shared_ptr<SubTableType>(new SubTableType()));
+        ((*frontier_subtables_out)[i])->Init(
+          const_cast<TableType *>(this), frontier_nodes_out[i], false);
+      }
     }
 
     /** @brief Builds the tree with a specified metric and a leaf

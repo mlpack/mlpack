@@ -202,6 +202,13 @@ class SubTable {
 
   public:
 
+    void set_start_node(TreeType *start_node_in) {
+      start_node_ = start_node_in;
+      serialize_points_per_terminal_node_.resize(0);
+      serialize_points_per_terminal_node_.push_back(
+        PointSerializeFlagType(start_node_in->begin(), start_node_in->count()));
+    }
+
     bool serialize_new_from_old_mapping() const {
       return serialize_new_from_old_mapping_;
     }
