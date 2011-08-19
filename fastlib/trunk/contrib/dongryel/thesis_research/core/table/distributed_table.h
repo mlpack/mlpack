@@ -160,6 +160,21 @@ class DistributedTable: public boost::noncopyable {
       boost::mpi::broadcast(world, *global_table_, 0);
     }
 
+    void InitCommon_(boost::mpi::communicator &world) {
+
+      // Allocate the vector for storing the number of entries for all
+      // the tables in the world, and do an all-gather operation to
+      // find out all the sizes.
+      world_size_ = world.size();
+      local_n_entries_ = (core::table::global_m_file_) ?
+                         (int *) global_m_file_->ConstructArray<int>(
+                           world.size()) :
+                         new int[ world.size()];
+      boost::mpi::all_gather(
+        world, owned_table_->n_entries(),
+        local_n_entries_.get());
+    }
+
   public:
 
     /** @brief The default constructor.
@@ -278,6 +293,23 @@ class DistributedTable: public boost::noncopyable {
       return owned_table_->n_entries();
     }
 
+    /** @brief Attaches an already existing local table to the
+     *         distributed table.
+     */
+    void Init(
+      TableType *existing_local_table_in, boost::mpi::communicator &world) {
+
+      boost::mpi::timer distributed_table_init_timer;
+      owned_table_ = existing_local_table_in;
+      this->InitCommon_(world);
+
+      if(world.rank() == 0) {
+        std::cerr << "Took " <<
+                  distributed_table_init_timer.elapsed() << " seconds to attach " <<
+                  "each local table to the distributed table...\n";
+      }
+    }
+
     /** @brief Initializes a distributed table, reading in the local
      *         set of the data owned by the process. This is
      *         coordinated across all MPI processes.
@@ -296,18 +328,7 @@ class DistributedTable: public boost::noncopyable {
                        new TableType();
       }
       owned_table_->Init(file_name, world.rank(), weight_file_name);
-
-      // Allocate the vector for storing the number of entries for all
-      // the tables in the world, and do an all-gather operation to
-      // find out all the sizes.
-      world_size_ = world.size();
-      local_n_entries_ = (core::table::global_m_file_) ?
-                         (int *) global_m_file_->ConstructArray<int>(
-                           world.size()) :
-                         new int[ world.size()];
-      boost::mpi::all_gather(
-        world, owned_table_->n_entries(),
-        local_n_entries_.get());
+      this->InitCommon_(world);
 
       if(world.rank() == 0) {
         printf(
