@@ -379,29 +379,15 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
   return false;
 }
 
-template<typename TableType>
-void DistributedLocalRegressionArgumentParser::RandomGenerate(
-  boost::mpi::communicator &world,
-  const std::string &file_name,
-  const std::string *weight_file_name,
-  int num_dimensions,
-  int num_points,
-  const std::string &prescale_option) {
-
-  // Each process generates its own random data, dumps it to the file,
-  // and read its own file back into its own distributed table.
-  TableType random_dataset;
-  core::parallel::RandomDatasetGenerator::Generate(
-    num_dimensions, num_points, prescale_option, &random_dataset);
-  random_dataset.Save(file_name, weight_file_name);
-}
-
 template<typename DistributedTableType, typename MetricType>
 bool DistributedLocalRegressionArgumentParser::ParseArguments(
   boost::mpi::communicator &world,
   boost::program_options::variables_map &vm,
   mlpack::distributed_local_regression::DistributedLocalRegressionArguments <
   DistributedTableType, MetricType > *arguments_out) {
+
+  // Typedefine the table type.
+  typedef typename DistributedTableType::TableType TableType;
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =
@@ -439,6 +425,10 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   std::string reference_file_name = vm["references_in"].as<std::string>();
   std::string reference_targets_file_name =
     vm["reference_targets_in"].as<std::string>();
+  arguments_out->reference_table_ =
+    (core::table::global_m_file_) ?
+    core::table::global_m_file_->Construct<DistributedTableType>() :
+    new DistributedTableType();
   if(vm.count("random_generate") > 0) {
     std::stringstream reference_file_name_sstr;
     std::stringstream reference_targets_file_name_sstr;
@@ -448,23 +438,21 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
     reference_targets_file_name_sstr <<
                                      vm["reference_targets_in"].as<std::string>() << world.rank();
     reference_targets_file_name = reference_targets_file_name_sstr.str();
-
-    RandomGenerate<typename DistributedTableType::TableType>(
-      world, reference_file_name,
-      &reference_targets_file_name,
+    TableType *random_reference =
+      (core::table::global_m_file_) ?
+      core::table::global_m_file_->Construct<TableType>() : new TableType();
+    core::parallel::RandomDatasetGenerator::Generate(
       vm["random_generate_n_attributes"].as<int>(),
       vm["random_generate_n_entries"].as<int>(),
-      vm["prescale"].as<std::string>());
+      vm["prescale"].as<std::string>(), random_reference);
+    arguments_out->reference_table_->Init(random_reference, world);
   }
-
-  std::cout << "Reading in the reference set: " <<
-            reference_file_name << "\n";
-  arguments_out->reference_table_ =
-    (core::table::global_m_file_) ?
-    core::table::global_m_file_->Construct<DistributedTableType>() :
-    new DistributedTableType();
-  arguments_out->reference_table_->Init(
-    reference_file_name, world, &reference_targets_file_name);
+  else {
+    std::cout << "Reading in the reference set: " <<
+              reference_file_name << "\n";
+    arguments_out->reference_table_->Init(
+      reference_file_name, world, &reference_targets_file_name);
+  }
   arguments_out->reference_table_->IndexData(
     arguments_out->metric_, world, arguments_out->leaf_size_,
     arguments_out->top_tree_sample_probability_);
@@ -472,26 +460,30 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
     std::string query_file_name = vm["queries_in"].as<std::string>();
+    arguments_out->query_table_ =
+      (core::table::global_m_file_) ?
+      core::table::global_m_file_->Construct<DistributedTableType>() :
+      new DistributedTableType();
     if(vm.count("random_generate") > 0) {
       std::stringstream query_file_name_sstr;
       query_file_name_sstr << vm["queries_in"].as<std::string>() <<
                            world.rank();
       query_file_name = query_file_name_sstr.str();
-      RandomGenerate<typename DistributedTableType::TableType>(
-        world, query_file_name,
-        (const std::string *) NULL,
+      TableType *random_query =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() : new TableType();
+      core::parallel::RandomDatasetGenerator::Generate(
         vm["random_generate_n_attributes"].as<int>(),
         vm["random_generate_n_entries"].as<int>(),
-        vm["prescale"].as<std::string>());
+        vm["prescale"].as<std::string>(), random_query);
+      arguments_out->query_table_->Init(random_query, world);
     }
-    std::cout << "Reading in the query set: " <<
-              query_file_name << "\n";
-    arguments_out->query_table_ =
-      (core::table::global_m_file_) ?
-      core::table::global_m_file_->Construct<DistributedTableType>() :
-      new DistributedTableType();
-    arguments_out->query_table_->Init(query_file_name, world);
-    std::cout << "Finished reading in the query set.\n";
+    else {
+      std::cout << "Reading in the query set: " <<
+                query_file_name << "\n";
+      arguments_out->query_table_->Init(query_file_name, world);
+      std::cout << "Finished reading in the query set.\n";
+    }
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
       arguments_out->metric_, world, arguments_out->leaf_size_,
