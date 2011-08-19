@@ -9,6 +9,7 @@
 #define BOOST_TEST_MAIN
 
 #include "mlpack/local_regression/test_local_regression.h"
+#include <omp.h>
 #include <time.h>
 
 namespace mlpack {
@@ -24,6 +25,7 @@ BOOST_AUTO_TEST_SUITE(TestSuiteLocalRegression)
 BOOST_AUTO_TEST_CASE(TestCaseLocalRegression) {
 
   // Call the tests.
+  omp_set_num_threads(1);
   mlpack::local_regression::TestLocalRegression local_regression_test;
   local_regression_test.StressTestMain();
 

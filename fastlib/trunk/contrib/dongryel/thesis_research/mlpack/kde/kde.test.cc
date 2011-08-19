@@ -9,6 +9,7 @@
 #define BOOST_TEST_MAIN
 
 #include "mlpack/kde/test_kde.h"
+#include <omp.h>
 #include <time.h>
 
 namespace mlpack {
@@ -24,6 +25,7 @@ BOOST_AUTO_TEST_SUITE(TestSuiteKde)
 BOOST_AUTO_TEST_CASE(TestCaseKde) {
 
   // Call the tests.
+  omp_set_num_threads(1);
   mlpack::kde::TestKde kde_test;
   kde_test.StressTestMain();
 
