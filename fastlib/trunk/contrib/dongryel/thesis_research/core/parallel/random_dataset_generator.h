@@ -20,6 +20,8 @@ class RandomDatasetGenerator {
       int num_dimensions, int num_points,
       const std::string &prescale_option, TableType *random_dataset) {
 
+      std::cerr << "Generating " << num_points << " points of " <<
+                num_dimensions << " dimensionality...\n";
       random_dataset->Init(num_dimensions, num_points);
 
 #pragma omp parallel for
