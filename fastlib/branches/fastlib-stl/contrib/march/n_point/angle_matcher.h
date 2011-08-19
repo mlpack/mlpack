@@ -76,6 +76,9 @@ namespace npt {
     double min_area_sq_;
     double max_area_sq_;
     
+    double longest_possible_side_sqr_;
+    double shortest_possible_side_sqr_;
+    
     /*
     int num_min_area_prunes_;
     int num_max_area_prunes_;
@@ -169,6 +172,11 @@ namespace npt {
       num_r3_prunes_ = 0;
       */
       
+      longest_possible_side_sqr_ = max(r2_upper_sqr_.back(), 
+                                       r3_upper_sqr_.back().back());
+      shortest_possible_side_sqr_ = min(r1_lower_sqr_.front(), 
+                                        r3_lower_sqr_.front().front());
+      
       num_large_r1_prunes_ = 0;
       num_small_r1_prunes_ = 0;
       num_large_r3_prunes_ = 0;
@@ -177,6 +185,60 @@ namespace npt {
       
       // IMPORTANT: I'm not sure the upper and lower sqr arrays are still sorted
       // especially for r3
+      
+      
+      mlpack::IO::Info << "r1_lower_sqr_: ";
+      for (int i = 0; i < r1_lower_sqr_.size(); i++) {
+        
+        mlpack::IO::Info << r1_lower_sqr_[i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+
+      mlpack::IO::Info << "r1_upper_sqr_: ";
+      for (int i = 0; i < r1_upper_sqr_.size(); i++) {
+        
+        mlpack::IO::Info << r1_upper_sqr_[i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+      
+      
+      mlpack::IO::Info << "r2_lower_sqr_: ";
+      for (int i = 0; i < r2_lower_sqr_.size(); i++) {
+        
+        mlpack::IO::Info << r2_lower_sqr_[i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+      
+      mlpack::IO::Info << "r2_upper_sqr_: ";
+      for (int i = 0; i < r2_upper_sqr_.size(); i++) {
+        
+        mlpack::IO::Info << r2_upper_sqr_[i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+      
+      mlpack::IO::Info << "r3_lower_sqr_: ";
+      for (int i = 0; i < r3_lower_sqr_[0].size(); i++) {
+        
+        mlpack::IO::Info << r3_lower_sqr_[0][i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+      
+      mlpack::IO::Info << "r3_upper_sqr_: ";
+      for (int i = 0; i < r3_upper_sqr_[0].size(); i++) {
+        
+        mlpack::IO::Info << r3_upper_sqr_[0][i] << ", ";
+        
+      }
+      mlpack::IO::Info << "\n";
+      
+      
+      mlpack::IO::Info << "longest side: " << longest_possible_side_sqr_ << "\n";
+      mlpack::IO::Info << "shortest side: " << shortest_possible_side_sqr_ << "\n";
       
     } // constructor
     

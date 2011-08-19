@@ -272,12 +272,17 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     num_large_r1_prunes_++;
   }
   // if the largest possible value of r1
-  else if (sorted_upper_sq.front() < r1_lower_sqr_.front()) {
+  else if (sorted_upper_sq.front() < shortest_possible_side_sqr_) {
+  //else if (false) {
     possibly_valid = false;
     num_small_r1_prunes_++;
   }
   // can check if the largest values don't fit too
-  else if (sorted_lower_sq.back() > r3_upper_sqr_.back().back()) {
+  //else if (false) {
+  // IMPORTANT: this assumes the largest value of theta is greater than theta*
+  // if not, then the largest r2 value is truly the largest
+  // set this in the constructor
+  else if (sorted_lower_sq.back() > longest_possible_side_sqr_) {
     possibly_valid = false;
     num_large_r3_prunes_++;
   }
@@ -301,6 +306,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     largest_r2 = long_side_multiplier_ * sorted_upper_sq.front();
     smallest_r2 = long_side_multiplier_ * sorted_lower_sq.front();
     
+    //if (false) {
     if (sorted_lower_sq[1] > largest_r2) {
       //large_angle_valid = false;
       possibly_valid = false;
@@ -313,6 +319,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     }
 
     // IMPORTANT: do I need to check this? 
+    
     // The three distances (l1, l2, l3) etc. came from a real triangle
     // so the third distance (up to differences in bounds) satisfies the 
     // triangle inequality already

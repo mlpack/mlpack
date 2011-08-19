@@ -13,10 +13,13 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
   
   num_base_cases_++;
   
+  bool i_is_random = (num_random_ > 0);
+  bool j_is_random = (num_random_ > 1);
+  bool k_is_random = (num_random_ > 2);
+  
   // hard coding 3pt here
   for (index_t i = node_list[0]->begin(); i < node_list[0]->end(); i++) {
     
-    bool i_is_random = (num_random_ > 0);
     
     arma::colvec vec_i;
     if (i_is_random) {
@@ -32,11 +35,12 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
     int j_begin = (node_list[0] == node_list[1]) ? i+1 : node_list[1]->begin();
     int j_end = node_list[1]->end();
     
+    
     for (int j = j_begin; j < j_end; j++) {
       
-      bool j_is_random = (num_random_ > 1);
       
       arma::colvec vec_j;
+      
       if (j_is_random) {
         vec_j = random_mat_.col(j);
       }
@@ -44,12 +48,20 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
         vec_j = data_mat_.col(j);
       }
       
-      int k_begin = (node_list[1] == node_list[2]) ? j+1 : node_list[2]->begin();
+      // Is it possible for node_list[2] to be equal to node_list[0]?
+      //int k_begin = (node_list[1] == node_list[2]) ? j+1 : node_list[2]->begin();
+      
+      int k_begin;
+      if (j_is_random == k_is_random && node_list[1] == node_list[2]) {
+        k_begin = j+1;
+      }
+      else {
+        k_begin = node_list[2]->begin();
+      }
       int k_end = node_list[2]->end();
       
       for (int k = k_begin; k < k_end; k++) {
         
-        bool k_is_random = (num_random_ > 2);
         
         arma::colvec vec_k;
         if (k_is_random) {
@@ -65,6 +77,8 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
                                                valid_thetas);
         
         if (valid_r1 >= 0) {
+          
+          mlpack::IO::Info << "Found valid tuple\n";
           
           double weight_i = i_is_random ? random_weights_[i] : data_weights_[i];
           double weight_j = j_is_random ? random_weights_[j] : data_weights_[j];
@@ -101,6 +115,7 @@ bool npt::Angle3ptAlg::CanPrune_(std::vector<NptNode*>& node_list) {
 // true if the symmetry is valid, false if we shouldn't consider this list
 bool npt::Angle3ptAlg::CheckSymmetry_(std::vector<NptNode*>& node_list) {
   
+  
   for (index_t i = 0; i < tuple_size_; i++) {
     
     bool i_is_random = (i < num_random_);
@@ -117,6 +132,7 @@ bool npt::Angle3ptAlg::CheckSymmetry_(std::vector<NptNode*>& node_list) {
     }
     
   }
+   
   
   return true;
   
