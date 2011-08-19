@@ -58,7 +58,7 @@ class DistributedDualtreeTaskQueue {
 
     std::vector< boost::shared_ptr<SubTableType> > query_subtables_;
 
-    std::deque<bool> query_subtree_locks_;
+    std::deque<int> query_subtree_locks_;
 
     std::vector< unsigned long int > remaining_work_for_query_subtables_;
 
@@ -104,7 +104,7 @@ class DistributedDualtreeTaskQueue {
       int split_index_query_size = 0;
       int split_index = -1;
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        if((! query_subtree_locks_[i]) &&
+        if(query_subtree_locks_[i] < 0  &&
             (! query_subtables_[i]->start_node()->is_leaf()) &&
             tasks_[i]->size() > 0 &&
             split_index_query_size <
@@ -172,13 +172,13 @@ class DistributedDualtreeTaskQueue {
         boost::shared_ptr<SubTableType>(new SubTableType()));
       query_subtables_.back()->Alias(*(query_subtables_[subtree_index]));
       query_subtables_.back()->set_start_node(right);
-      query_subtree_locks_.push_back(false);
+      query_subtree_locks_.push_back(-1);
 
       // Adjust the list of tasks.
       std::vector<TaskType> prev_tasks;
       while(tasks_[subtree_index]->size() > 0) {
         std::pair<TaskType, int> task_pair;
-        this->DequeueTask(subtree_index, &task_pair, false);
+        this->DequeueTask(world, subtree_index, &task_pair, false);
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.push_back(
@@ -434,7 +434,7 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       // Unlock the query subtree.
       int subtree_index = this->FindQuerySubtreeIndex_(query_subtree_id);
-      query_subtree_locks_[ subtree_index ] = false;
+      query_subtree_locks_[ subtree_index ] = -1;
     }
 
     void Init(
@@ -461,7 +461,7 @@ class DistributedDualtreeTaskQueue {
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         query_results_[i] = local_query_result_in;
-        query_subtree_locks_[i] = false;
+        query_subtree_locks_[i] = -1;
         tasks_[i] = boost::shared_ptr <
                     TaskPriorityQueueType > (new TaskPriorityQueueType());
       }
@@ -528,47 +528,32 @@ class DistributedDualtreeTaskQueue {
       // iteration.
       for(int probe_index = 0;
           probe_index < static_cast<int>(tasks_.size()); probe_index++) {
-        if(tasks_[probe_index]->size() > 0) {
-          if(! query_subtree_locks_[ probe_index ]) {
 
-            // Copy the task and the query subtree number.
-            task_out->first = tasks_[ probe_index ]->top();
-            task_out->second = probe_index;
-
-            // Pop the task from the priority queue after copying and
-            // put a lock on the query subtree.
-            tasks_[ probe_index ]->pop();
-            query_subtree_locks_[ probe_index ] = lock_query_subtree_in;
-
-            // Decrement the number of tasks.
-            num_remaining_tasks_--;
-            break;
-          }
-        }
-
-        // Otherwise, determine whether the cleanup needs to be done.
-        else if(remaining_work_for_query_subtables_[probe_index] == 0) {
-          this->Evict_(probe_index);
+        if(this->DequeueTask(
+              world, probe_index, task_out, lock_query_subtree_in)) {
           probe_index--;
+        }
+        if(task_out->second >= 0) {
+          break;
         }
       }
     }
 
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
+     *
+     *  @return true if the given probe_index task queue is empty.
      */
-    void DequeueTask(
+    bool DequeueTask(
+      boost::mpi::communicator &world,
       int probe_index,
       std::pair<TaskType, int> *task_out,
       bool lock_query_subtree_in) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
-      // Try to dequeue a task from the given query subtree if it is
-      // not locked yet. Otherwise, request it to be split in the next
-      // iteration.
       if(tasks_[probe_index]->size() > 0) {
-        if(! query_subtree_locks_[ probe_index ]) {
+        if(query_subtree_locks_[ probe_index ] < 0) {
 
           // Copy the task and the query subtree number.
           task_out->first = tasks_[ probe_index ]->top();
@@ -577,12 +562,20 @@ class DistributedDualtreeTaskQueue {
           // Pop the task from the priority queue after copying and
           // put a lock on the query subtree.
           tasks_[ probe_index ]->pop();
-          query_subtree_locks_[ probe_index ] = lock_query_subtree_in;
+          query_subtree_locks_[ probe_index ] =
+            lock_query_subtree_in ? world.rank() : -1 ;
 
           // Decrement the number of tasks.
           num_remaining_tasks_--;
         }
       }
+
+      // Otherwise, determine whether the cleanup needs to be done.
+      else if(remaining_work_for_query_subtables_[probe_index] == 0) {
+        this->Evict_(probe_index);
+        return true;
+      }
+      return false;
     }
 };
 }
