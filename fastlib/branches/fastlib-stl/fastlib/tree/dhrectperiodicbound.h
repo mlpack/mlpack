@@ -1,16 +1,16 @@
 /**
- * @file tree/dhrectbound.h
+ * @file tree/dhrectperiodicbound.h
  *
  * Bounds that are useful for binary space partitioning trees.
  *
- * This file describes the interface for the DHrectBound policy, which
+ * This file describes the interface for the DHrectPeriodicBound policy, which
  * implements a hyperrectangle bound.
  *
  * @experimental
  */
 
-#ifndef TREE_DHRECTBOUND_H
-#define TREE_DHRECTBOUND_H
+#ifndef TREE_DHRECTPERIODICBOUND_H
+#define TREE_DHRECTPERIODICBOUND_H
 
 #include <armadillo>
 
@@ -20,7 +20,7 @@
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  */
 template<int t_pow = 2>
-class DHrectBound {
+class DHrectPeriodicBound {
 
   public:
     static const int PREFERRED_POWER = t_pow;
@@ -28,23 +28,34 @@ class DHrectBound {
   private:
     DRange *bounds_;
     index_t dim_;
+    vec& box_size__;
 
   public:
     /**
      * Empty constructor.
      */
-    DHrectBound();
+    DHrectPeriodicBound();
 
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    DHrectBound(index_t dimension);
+    DHrectPeriodicBound(index_t dimension);
 
     /**
      * Destructor: clean up memory.
      */
-    ~DHrectBound();
+    ~DHrectPeriodicBound();
+
+    /**
+     * Modifies the box_size__ to the desired dimenstions.
+     */
+    void SetBoxSize(vec& box);
+
+    /**
+     * Returns the box_size__ vector.
+     */
+    long GetBoxSize();    
 
     /**
      * Makes this (uninitialized) box the average of the two arguments, 
@@ -85,12 +96,6 @@ class DHrectBound {
 
     /** Calculates the midpoint of the range */
     void CalculateMidpoint(arma::vec& centroid) const;
-
-    /**
-     * Calculates minimum bound-to-bound squared distance, with
-     * an offset between their respective coordinate systems.
-     */
-    double MinDistanceSq(const DHrectBound& other, const arma::vec& offset) const;
 
     /**
      * Calculates minimum bound-to-point squared distance.
@@ -163,25 +168,25 @@ class DHrectBound {
     /**
      * Expands this region to include a new point.
      */
-    DHrectBound& operator|=(const arma::vec& vector);
+    DHrectPeriodicBound& operator|=(const arma::vec& vector);
 
     /**
      * Expands this region to encompass another bound.
      */
-    DHrectBound& operator|=(const DHrectBound& other);
+    DHrectPeriodicBound& operator|=(const DHrectBound& other);
 
     /**
      * Expand this bounding box to encompass another point. Done to 
      * minimize added volume in periodic coordinates.
      */
-    DHrectBound& Add(const arma::vec& other, const arma::vec& size);
+    DHrectPeriodicBound& Add(const arma::vec& other, const arma::vec& size);
 
     /**
      * Expand this bounding box in periodic coordinates, minimizing added volume.
      */
-    DHrectBound& Add(const DHrectBound& other, const arma::vec& size);
+    DHrectPeriodicBound& Add(const DHrectBound& other, const arma::vec& size);
 };
 
-#include "dhrectbound_impl.h"
+#include "dhrectperiodicbound_impl.h"
 
 #endif

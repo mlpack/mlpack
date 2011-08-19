@@ -1,5 +1,5 @@
 /**
- * @file tree/dhrectbound_impl.h
+ * @file tree/dhrectperiodicbound_impl.h
  *
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
@@ -7,8 +7,8 @@
  * @experimental
  */
 
-#ifndef TREE_DHRECTBOUND_IMPL_H
-#define TREE_DHRECTBOUND_IMPL_H
+#ifndef TREE_DHRECTPERIODICBOUND_IMPL_H
+#define TREE_DHRECTPERIODICBOUND_IMPL_H
 
 #include <math.h>
 
@@ -20,7 +20,7 @@ using arma::vec;
  * Empty constructor
  */
 template<int t_pow>
-DHrectBound<t_pow>::DHrectBound() {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() {
   bounds_ = NULL;
   dim_ = 0;
 }
@@ -30,7 +30,7 @@ DHrectBound<t_pow>::DHrectBound() {
  * set.
  */
 template<int t_pow>
-DHrectBound<t_pow>::DHrectBound(index_t dimension) {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) {
   //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
   bounds_ = new DRange[dimension];
 
@@ -42,10 +42,26 @@ DHrectBound<t_pow>::DHrectBound(index_t dimension) {
  * Destructor: clean up memory
  */
 template<int t_pow>
-DHrectBound<t_pow>::~DHrectBound() {
+DHrectPeriodicBound<t_pow>::~DHrectPeriodicbound() {
   if(bounds_)
     delete[] bounds_;
 }
+
+/**
+ * Modifies the box_size__ to the desired dimenstions.
+ */
+template<int t_pow>
+void DHrectPeriodicBound<t_pow>::SetBoxSize(vec& box) {
+  box_size__ = box; 
+}
+
+/**
+ * Returns the box_size__ vector.
+ */
+template<int t_pow>
+vec& DHrectPeriodicBound<t_pow>::GetBoxSize() {
+  return box_size__
+} 
 
 /**
  * Makes this (uninitialized) box the average of the two arguments, 
@@ -55,7 +71,7 @@ DHrectBound<t_pow>::~DHrectBound() {
  * Added by: Bill March, 5/7
  */
 template<int t_pow>
-void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
+void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
 
   dim_ = box1.dim();
   DEBUG_ASSERT(dim_ == box2.dim());
@@ -76,7 +92,7 @@ void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectB
  * Resets all dimensions to the empty set.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::Reset() {
+void DHrectPeriodicBound<t_pow>::Reset() {
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i].InitEmptySet();
   }
@@ -86,7 +102,7 @@ void DHrectBound<t_pow>::Reset() {
  * Sets the dimensionality.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::SetSize(index_t dim) {
+void DHrectPeriodicBound<t_pow>::SetSize(index_t dim) {
   if(bounds_)
     delete[] bounds_;
 
@@ -99,7 +115,7 @@ void DHrectBound<t_pow>::SetSize(index_t dim) {
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool DHrectBound<t_pow>::Contains(const vec& point) const {
+bool DHrectPeriodicBound<t_pow>::Contains(const vec& point) const {
   for (index_t i = 0; i < point.n_elem; i++) {
     if (!bounds_[i].Contains(point(i))) {
       return false;
@@ -113,7 +129,7 @@ bool DHrectBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectBound<t_pow>::operator[](index_t i) const {
+const DRange DHrectPeriodicBound<t_pow>::operator[](index_t i) const {
   return bounds_[i];
 }
 
@@ -121,7 +137,7 @@ const DRange DHrectBound<t_pow>::operator[](index_t i) const {
  * Calculates the maximum distance within the rectangle
  */
 template<int t_pow>
-double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
+double DHrectPeriodicBound<t_pow>::CalculateMaxDistanceSq() const {
   double max_distance = 0;
   for (index_t i = 0; i < dim_; i++)
     max_distance += pow(bounds_[i].width(), 2);
@@ -131,7 +147,7 @@ double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
 
 /** Calculates the midpoint of the range */
 template<int t_pow>
-void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
+void DHrectPeriodicBound<t_pow>::CalculateMidpoint(vec& centroid) const {
   // set size correctly if necessary
   if(!(centroid.n_elem == dim_))
     centroid.set_size(dim_);
@@ -142,56 +158,26 @@ void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
 }
 
 /**
- * Calcualtes minimum bound-to-bound squared distance, with
- * an offset between their respective coordinate systems.
- */
-template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other, const vec& offset) const {
-  double sum = 0;
-
-  DEBUG_SAME_SIZE(dim_, other.dim_);
-  //Add Debug for offset vector
-
-  for(index_t d = 0; d < dim_; d++) {
-    double v1 = other.bounds_[d].lo - offset[d] - bounds_[d].hi;
-    double v2 = bounds_[d].lo + offset[d] - other.bounds_[d].lo;
-
-    double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-    sum += pow(v, (double) t_pow);
-  } 
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
-}
-
-/**
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
-
+double DHrectPeriodicBound<t_pow>::MinDistanceSq(const vec& point) const {
   double sum = 0;
-  const DRange* mbound = bounds_;
 
-  double lower, higher;
-  for(index_t d = 0; d < dim_; d++) {
-    lower = mbound->lo - point[d]; // negative if point[d] > bounds_[d]
-    higher = point[d] - mbound->hi; // negative if point[d] < bounds_[d]
-
-    // since only one of 'lower' or 'higher' is negative, if we add each's
-    // absolute value to itself and then sum those two, our result is the
-    // nonnegative half of the equation times two; then we raise to power t_pow
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
-
-    // move bound pointer
-    mbound++;
+  for (index_t d = 0; d < dim_; d++){
+    double a = point[d];
+    double v = 0, bh;
+    bh = bounds_[d].hi - bounds_[d].lo;
+    bh = bh - floor(bh / box_size__[d]) * box_size__[d];
+    a = a - bounds_[d].lo;
+    a = a - floor(a / box_size__[d]) * box_size__[d];
+    if (bh > a)
+      v = min(a - bh, box_size__[d]-a);
+    
+    sum += pow(v, (double) t_pow);
   }
 
-  // now take the t_pow'th root (but make sure our result is squared); then
-  // divide by four to cancel out the constant of 2 (which has been squared now)
-  // that was introduced earlier
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 /**
@@ -200,27 +186,22 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
+  double sum = 0;
+
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  double sum = 0;
-  const DRange* mbound = bounds_;
-  const DRange* obound = other.bounds_;
-
-  double lower, higher;
-  for (index_t d = 0; d < dim_; d++) {
-    lower = obound->lo - mbound->hi;
-    higher = mbound->lo - obound->hi;
-    // We invoke the following:
-    //   x + fabs(x) = max(x * 2, 0)
-    //   (x * 2)^2 / 4 = x^2
-    sum += pow((lower + fabs(lower)) + (higher + fabs(higher)), (double) t_pow);
-
-    // move bound pointers
-    mbound++;
-    obound++;
+  for (index_t d = 0; d < dim_; d++){      
+    double v = 0, d1, d2, d3;
+    d1 = (bounds_[d].hi > bounds_[d].lo | other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
+    d2 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size__[d]);
+    d3 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
+      min(other.bounds_[d].lo - bounds_[d].hi + box_size__[d], bounds_[d].lo - other.bounds_[d].hi);
+    v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
+    sum += pow(v, (double) t_pow);
   }
-
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
@@ -228,18 +209,26 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
+double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const vec& point) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
-
   for (index_t d = 0; d < dim_; d++) {
-    double v = fabs(std::max(
-      point[d] - bounds_[d].lo,
-      bounds_[d].hi - point[d]));
-    sum += pow(v, (double) t_pow);
+    double b = point[d];
+    double v = box_size__[d] / 2.0;
+    double ah, al;
+    ah = bounds_[d].hi - b;
+    ah = ah - floor(ah / box_size__[d]) * box_size__[d];
+    if (ah < v) {
+      v = ah;
+    } else {
+      al = bounds_[d].lo - b;
+      al = al - floor(al / box_size__[d]) * box_size__[d];
+      if (al > v) {
+        v = (2 * v) - al;
+      }
+    }
+    sum += pow(fabs(v), (double) t_pow);
   }
-
   return pow(sum, 2.0 / (double) t_pow);
 }
 
@@ -264,26 +253,29 @@ double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
  * Computes maximum distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  double v;
-  for(index_t d = 0; d < dim_; d++) {
-    v = fabs(std::max(
-      other.bounds_[d].hi - bounds_[d].lo,
-      bounds_[d].hi - other.bounds_[d].lo));
-    sum += pow(v, (double) t_pow); // v is non-negative
-  }
+  for (index_t d = 0; d < dim_; d++){
+    double v = box_size__[d] / 2.0;
+    double dh, dl;
+    dh = bounds_[d].hi - other.bounds_[d].lo;
+    dh = dh - floor(dh / box_size__[d]) * box_size__[d];
+    dl = other.bounds_[d].hi - bounds_[d].lo;
+    dl = dl - floor(dl / box_size__[d]) * box_size__[d];
+    v = fabs(max(min(dh, v), min(dl, v)));
 
-  return pow(sum, 2.0 / (double) t_pow);
+    sum += pow(v, (double) t_pow);
+  }
+  return pow(sum, 2.0 / (double) t_pow); 
 }
 
 
 
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, int dim) const {
   double result = 0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -302,7 +294,7 @@ double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, 
 }
 
 template<int t_pow>
-double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, int dim) const {
   double result = -0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -324,7 +316,7 @@ double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, 
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
+DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -355,7 +347,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
+DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -394,7 +386,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
  * </code>
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
@@ -416,7 +408,7 @@ double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
  * Computes minimax distance, where the other node is trying to avoid me.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
@@ -436,7 +428,7 @@ double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
  * Calculates midpoint-to-midpoint bounding box distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   double sum = 0;
   const DRange *a = this->bounds_;
   const DRange *b = other.bounds_;
@@ -458,7 +450,7 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
  * Expands this region to include a new point.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const vec& vector) {
   DEBUG_SAME_SIZE(vector.n_elem, dim_);
 
   for (index_t i = 0; i < dim_; i++) {
@@ -472,7 +464,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
  * Expands this region to encompass another bound.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectBound& other) {
   DEBUG_SAME_SIZE(other.dim_, dim_);
 
   for (index_t i = 0; i < dim_; i++) {
@@ -488,7 +480,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other, const vec& size) {
   DEBUG_SAME_SIZE(other.n_elem, dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
@@ -518,7 +510,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
  * Expand this bounding box in periodic coordinates, minimizing added volume.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other, const vec& size){
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& other, const vec& size){
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];
