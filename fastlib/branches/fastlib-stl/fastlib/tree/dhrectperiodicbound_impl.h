@@ -71,7 +71,8 @@ vec& DHrectPeriodicBound<t_pow>::GetBoxSize() {
  * Added by: Bill March, 5/7
  */
 template<int t_pow>
-void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
+void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
+                                                  const DHrectBound& box2) {
 
   dim_ = box1.dim();
   DEBUG_ASSERT(dim_ == box2.dim());
@@ -275,7 +276,8 @@ double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const
 
 
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other, 
+                                            double box_width, int dim) const {
   double result = 0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -294,7 +296,8 @@ double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other, double box
 }
 
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectBound& other,
+                                            double box_width, int dim) const {
   double result = -0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -480,7 +483,8 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectB
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other, const vec& size) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other, 
+                                                            const vec& size) {
   DEBUG_SAME_SIZE(other.n_elem, dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
@@ -510,7 +514,8 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other, co
  * Expand this bounding box in periodic coordinates, minimizing added volume.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& other, const vec& size){
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& other,
+                                                            const vec& size){
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];
