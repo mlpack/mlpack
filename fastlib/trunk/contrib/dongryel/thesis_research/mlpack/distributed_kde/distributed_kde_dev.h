@@ -6,8 +6,10 @@
 #ifndef MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 
+#include <boost/thread.hpp>
 #include <omp.h>
 #include "core/parallel/distributed_dualtree_dfs_dev.h"
+#include "core/parallel/random_dataset_generator.h"
 #include "core/metric_kernels/lmetric.h"
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
@@ -352,27 +354,12 @@ void DistributedKdeArgumentParser::RandomGenerate(
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
   TableType random_dataset;
-  random_dataset.Init(num_dimensions, num_points);
-  for(int j = 0; j < num_points; j++) {
-    core::table::DensePoint point;
-    random_dataset.get(j, &point);
-    for(int i = 0; i < num_dimensions; i++) {
-      point[i] = core::math::Random(0.1, 1.0);
-    }
-  }
-  printf("Process %d generated %d points in %d dimensionality...\n",
-         world.rank(), num_points, num_dimensions);
-
-  // Scale the dataset.
-  if(prescale_option == "hypercube") {
-    core::table::UnitHypercube::Transform(&random_dataset);
-  }
-  else if(prescale_option == "standardize") {
-    core::table::Standardize::Transform(&random_dataset);
-  }
-  std::cout << "Scaled the dataset with the option: " <<
-            prescale_option << "\n";
-
+  int available_num_cores = boost::thread::hardware_concurrency();
+  std::cerr << "Available number of cores on thos node: " <<
+            available_num_cores << "\n";
+  core::parallel::RandomDatasetGenerator::Generate(
+    num_dimensions, num_points, prescale_option,
+    available_num_cores, &random_dataset);
   random_dataset.Save(file_name);
 }
 
