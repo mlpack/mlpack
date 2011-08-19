@@ -9,6 +9,8 @@
 #ifndef CORE_TABLE_TRANSFORM_H
 #define CORE_TABLE_TRANSFORM_H
 
+#include <omp.h>
+
 namespace core {
 namespace table {
 
