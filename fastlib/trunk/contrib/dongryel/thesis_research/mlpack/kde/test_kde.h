@@ -8,6 +8,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/parallel/random_dataset_generator.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/math/math_lib.h"
 #include "mlpack/kde/kde_dev.h"
@@ -46,23 +47,6 @@ class TestKde {
       std::cout <<
                 "Achieved a relative error of " << achieved_error << "\n";
       return achieved_error <= relative_error;
-    }
-
-    template<typename TableType>
-    void GenerateRandomDataset_(
-      int num_dimensions,
-      int num_points,
-      TableType *random_dataset) {
-
-      random_dataset->Init(num_dimensions, num_points);
-
-      for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
-        random_dataset->get(j, &point);
-        for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
-        }
-      }
     }
 
   public:
@@ -200,9 +184,10 @@ class TestKde {
 
       // Generate the random dataset and save it.
       TableType random_table;
-      GenerateRandomDataset_(
+      core::parallel::RandomDatasetGenerator::Generate(
         mlpack::kde::test_kde::num_dimensions_,
-        mlpack::kde::test_kde::num_points_, &random_table);
+        mlpack::kde::test_kde::num_points_, std::string("none"),
+        &random_table);
       random_table.Save(references_in);
 
       // Parse the KDE arguments.
