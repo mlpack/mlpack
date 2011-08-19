@@ -391,13 +391,9 @@ void DistributedLocalRegressionArgumentParser::RandomGenerate(
 
   // Each process generates its own random data, dumps it to the file,
   // and read its own file back into its own distributed table.
-  int available_num_cores = boost::thread::hardware_concurrency();
-  std::cerr << "Available number of cores on thos node: " <<
-            available_num_cores << "\n";
   TableType random_dataset;
   core::parallel::RandomDatasetGenerator::Generate(
-    num_dimensions, num_points, prescale_option,
-    available_num_cores, &random_dataset);
+    num_dimensions, num_points, prescale_option, &random_dataset);
   random_dataset.Save(file_name, weight_file_name);
 }
 

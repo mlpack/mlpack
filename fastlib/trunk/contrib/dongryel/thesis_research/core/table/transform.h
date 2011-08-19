@@ -19,11 +19,7 @@ class TranslateToNonnegative {
   public:
 
     template<typename TableType>
-    static void Transform(TableType *table_in, int num_threads_in = 1) {
-
-      // Set the number of threads for this routine.
-      int prev_num_threads = omp_get_max_threads();
-      omp_set_num_threads(num_threads_in);
+    static void Transform(TableType *table_in) {
 
       // Get the minimum coordinates of each dimension.
       std::vector<double> mins(
@@ -63,9 +59,6 @@ class TranslateToNonnegative {
           }
         }
       }
-
-      // Restore the number of threads.
-      omp_set_num_threads(prev_num_threads);
     }
 };
 
@@ -73,11 +66,7 @@ class Standardize {
   public:
 
     template<typename TableType>
-    static void Transform(TableType *table_in, int num_threads_in = 1) {
-
-      // Set the number of threads for this routine.
-      int prev_num_threads = omp_get_max_threads();
-      omp_set_num_threads(num_threads_in);
+    static void Transform(TableType *table_in) {
 
       // Means and standard deviations of each dimension.
       std::vector<double> means(table_in->n_attributes(), 0.0);
@@ -143,9 +132,6 @@ class Standardize {
           }
         }
       }
-
-      // Restore the number of threads.
-      omp_set_num_threads(prev_num_threads);
     }
 };
 
@@ -153,11 +139,7 @@ class UnitHypercube {
   public:
 
     template<typename TableType>
-    static void Transform(TableType *table_in, int num_threads_in = 1) {
-
-      // Set the number of threads for this routine.
-      int prev_num_threads = omp_get_max_threads();
-      omp_set_num_threads(num_threads_in);
+    static void Transform(TableType *table_in) {
 
       // The minimum and maximum values of each dimension.
       std::vector<double> minimums(
@@ -205,9 +187,6 @@ class UnitHypercube {
           }
         }
       }
-
-      // Restore the number of threads.
-      omp_set_num_threads(prev_num_threads);
     }
 };
 }

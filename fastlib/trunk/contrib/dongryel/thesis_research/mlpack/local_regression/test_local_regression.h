@@ -9,6 +9,7 @@
 #include <boost/scoped_array.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/gnp/dualtree_dfs_dev.h"
+#include "core/parallel/random_dataset_generator.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/math/math_lib.h"
 #include "mlpack/local_regression/local_regression_dev.h"
@@ -47,25 +48,6 @@ class TestLocalRegression {
       std::cout <<
                 "Achieved a relative error of " << achieved_error << "\n";
       return achieved_error <= relative_error;
-    }
-
-    template<typename TableType>
-    void GenerateRandomDataset_(
-      int num_dimensions,
-      int num_points,
-      TableType *random_dataset) {
-
-      random_dataset->Init(num_dimensions, num_points);
-
-      for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
-        random_dataset->get(j, &point);
-        for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
-        }
-
-        random_dataset->weights().set(0, j, core::math::Random(1.0, 5.0));
-      }
     }
 
   public:
@@ -249,9 +231,9 @@ class TestLocalRegression {
         // factors.
         TableType random_scales_table;
         std::string random_scales_file_name("random_scales.csv");
-        GenerateRandomDataset_(
+        core::parallel::RandomDatasetGenerator::Generate(
           1, mlpack::local_regression::test_local_regression::num_dimensions_,
-          &random_scales_table);
+          std::string("none"), &random_scales_table);
         random_scales_table.Save(random_scales_file_name);
         args.push_back(
           std::string("--metric_scales_in=") + random_scales_file_name);
@@ -287,9 +269,10 @@ class TestLocalRegression {
 
       // Generate the random dataset and save it.
       TableType random_table;
-      GenerateRandomDataset_(
+      core::parallel::RandomDatasetGenerator::Generate(
         mlpack::local_regression::test_local_regression::num_dimensions_,
         mlpack::local_regression::test_local_regression::num_points_,
+        std::string("none"),
         &random_table);
       random_table.Save(references_in, &reference_targets_in);
 
