@@ -6,7 +6,6 @@
 #ifndef MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 #define MLPACK_DISTRIBUTED_KDE_DISTRIBUTED_KDE_DEV_H
 
-#include <boost/thread.hpp>
 #include <omp.h>
 #include "core/parallel/distributed_dualtree_dfs_dev.h"
 #include "core/parallel/random_dataset_generator.h"
