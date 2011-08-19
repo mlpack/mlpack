@@ -15,9 +15,11 @@ namespace core {
 namespace parallel {
 class RandomDatasetGenerator {
   public:
+    template<typename TableType>
     static void Generate(
       int num_dimensions, int num_points,
-      const std::string &prescale_option, TableType *random_dataset) {
+      const std::string &prescale_option, int num_threads_in,
+      TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points);
 
@@ -36,15 +38,16 @@ class RandomDatasetGenerator {
 
       // Scale the dataset.
       if(prescale_option == "hypercube") {
-        core::table::UnitHypercube::Transform(&random_dataset);
+        core::table::UnitHypercube::Transform(random_dataset, num_threads_in);
       }
       else if(prescale_option == "standardize") {
-        core::table::Standardize::Transform(&random_dataset);
+        core::table::Standardize::Transform(random_dataset, num_threads_in);
       }
 
       // Now, make sure that all coordinates are non-negative.
       if(prescale_option != "hypercube") {
-        core::table::TranslateToNonnegative::Transform(&random_dataset);
+        core::table::TranslateToNonnegative::Transform(
+          random_dataset, num_threads_in);
       }
 
       std::cout << "Scaled the dataset with the option: " <<
