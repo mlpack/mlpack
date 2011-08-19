@@ -55,7 +55,8 @@ DHrectBound<t_pow>::~DHrectBound() {
  * Added by: Bill March, 5/7
  */
 template<int t_pow>
-void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2) {
+void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, 
+                                          const DHrectBound& box2) {
 
   dim_ = box1.dim();
   DEBUG_ASSERT(dim_ == box2.dim());
@@ -146,7 +147,8 @@ void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
  * an offset between their respective coordinate systems.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other, const vec& offset) const {
+double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
+                                         const vec& offset) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
@@ -283,7 +285,8 @@ double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
 
 
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, 
+                                    int dim) const {
   double result = 0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -302,7 +305,8 @@ double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, 
 }
 
 template<int t_pow>
-double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width, int dim) const {
+double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width,
+                                    int dim) const {
   double result = -0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
   temp = temp - floor(temp / box_width) * box_width;
@@ -446,7 +450,8 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
     // calculation speed) and subtract from each other, then raise to t_pow
-    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi - other.bounds_[d].lo), (double) t_pow);
+    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi - 
+          other.bounds_[d].lo), (double) t_pow);
   }
 
   // take t_pow/2'th root and divide by constant of 4 (leftover from previous
@@ -518,7 +523,8 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
  * Expand this bounding box in periodic coordinates, minimizing added volume.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other, const vec& size){
+DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
+                                            const vec& size){
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];

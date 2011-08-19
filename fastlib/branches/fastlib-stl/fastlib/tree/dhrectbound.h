@@ -177,7 +177,7 @@ class DHrectBound {
     DHrectBound& Add(const arma::vec& other, const arma::vec& size);
 
     /**
-     * Expand this bounding box in periodic coordinates, minimizing added volume.
+     * Expand this bounding box in periodic coordinates, minimizing added volume
      */
     DHrectBound& Add(const DHrectBound& other, const arma::vec& size);
 };
