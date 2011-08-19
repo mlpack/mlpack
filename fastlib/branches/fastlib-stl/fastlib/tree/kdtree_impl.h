@@ -110,13 +110,13 @@ namespace tree_kdtree_private {
       // correct, increase the bound of the left node accordingly.  When we
       // encounter one that isn't correct, move to the right side.
       while (matrix(dim, left) < splitvalue && (left <= right)) {
-	arma::vec left_vector = matrix.col(left);
         if (split_dimensions.n_elem == matrix.n_rows) {
-	  left_bound |= left_vector;
+	  left_bound |= matrix.unsafe_col(left);
 	} else {
           // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_left_vector(split_dimensions.n_elem);
-	  MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
+	  MakeBoundVector(matrix.unsafe_col(left), split_dimensions,
+              sub_left_vector);
 	  left_bound |= sub_left_vector;
 	}
         left++;
@@ -126,13 +126,13 @@ namespace tree_kdtree_private {
       // correct, increase the bound of the right node accordingly.  When we
       // encounter one that isn't correct, move to the swapping.
       while (matrix(dim, right) >= splitvalue && (left <= right)) {
-        arma::vec right_vector = matrix.col(right);
 	if (split_dimensions.n_elem == matrix.n_rows) {
-	  right_bound |= right_vector;
+	  right_bound |= matrix.unsafe_col(right);
 	} else {
           // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_right_vector(split_dimensions.n_elem);
-	  MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
+	  MakeBoundVector(matrix.unsafe_col(right), split_dimensions,
+              sub_right_vector);
 	  right_bound |= sub_right_vector;
 	}        
         right--;
@@ -172,41 +172,53 @@ namespace tree_kdtree_private {
      *
      *   everything < left is correct
      *   everything > right is correct
+     *
+     * We want all the points on the left to be less than the splitvalue (in the
+     * splitting dimension) and on the right to be greater than or equal to
+     * splitvalue.
      */
     for (;;) {
-      while (matrix(dim, left) < splitvalue && likely(left <= right)) {
-	arma::vec left_vector = matrix.col(left);
+      // See how many of the points on the left are correct.  When they are
+      // correct, increase the bound of the left node accordingly.  When we
+      // encounter one that isn't correct, move to the right side.
+      while (matrix(dim, left) < splitvalue && (left <= right)) {
         if (split_dimensions.n_elem == matrix.n_rows) {
-	  left_bound |= left_vector;
+	  left_bound |= matrix.unsafe_col(left);
 	} else {
+          // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_left_vector(split_dimensions.n_elem);
-	  MakeBoundVector(left_vector, split_dimensions, sub_left_vector);
+	  MakeBoundVector(matrix.unsafe_col(left), split_dimensions,
+              sub_left_vector);
 	  left_bound |= sub_left_vector;
 	}
         left++;
       }
 
+      // See how many of the points on the right are correct.  When they are
+      // correct, increase the bound of the right node accordingly.  When we
+      // encounter one that isn't correct, move to the swapping.
       while (matrix(dim, right) >= splitvalue && likely(left <= right)) {
-        arma::vec right_vector = matrix.col(right);
 	if (split_dimensions.n_elem == matrix.n_rows) {
-	  right_bound |= right_vector;
+	  right_bound |= matrix.unsafe_col(right);
 	} else {
+          // Ignore certain dimensions when updating the bound.
 	  arma::vec sub_right_vector(split_dimensions.n_elem);
-	  MakeBoundVector(right_vector, split_dimensions, sub_right_vector);
+	  MakeBoundVector(matrix.unsafe_col(right), split_dimensions,
+              sub_right_vector);
 	  right_bound |= sub_right_vector;
 	}        
         right--;
       }
 
       if (left > right) {
-        /* left == right + 1 */
+        // The procedure is done.
         break;
       }
 
-      // swap left and right vector
+      // Swap left and right vector.
       matrix.swap_cols(left, right);
 
-      // update indices
+      // Update indices for what we changed.
       index_t t = old_from_new[left];
       old_from_new[left] = old_from_new[right];
       old_from_new[right] = t;
