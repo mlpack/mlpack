@@ -35,55 +35,6 @@ namespace tree_kdtree_private {
   }
 
   template<typename TBound, typename T>
-  void FindBoundFromMatrix(const arma::Mat<T>& matrix,
-                           index_t first,
-                           index_t count,
-                           TBound *bounds) {
-    arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
-      split_dimensions[i] = i;
-    
-    SelectFindBoundFromMatrix(matrix, split_dimensions, first, count, bounds);
-  }
-
-  template<typename TBound>
-  index_t MatrixPartition(arma::mat& matrix,
-                          index_t dim,
-                          double splitvalue,
-                          index_t first,
-                          index_t count,
-                          TBound& left_bound,
-                          TBound& right_bound,
-                          std::vector<index_t>& old_from_new) {
-    // we will split dimensions in a very simple order: first dim first
-    arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
-      split_dimensions[i] = i;
-
-    index_t split_point = SelectMatrixPartition(matrix, split_dimensions, 
-        dim, splitvalue, first, count, left_bound, right_bound, old_from_new);
-    return split_point;
-  }
-  
-  template<typename TBound>
-  index_t MatrixPartition(arma::mat& matrix,
-                          index_t dim,
-                          double splitvalue,
-                          index_t first,
-                          index_t count,
-                          TBound& left_bound,
-                          TBound& right_bound) {
-    // we will split dimensions in a very simple order: first dim first
-    arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
-      split_dimensions[i] = i;
-
-    index_t split_point = SelectMatrixPartition(matrix, split_dimensions, 
-        dim, splitvalue, first, count, left_bound, right_bound);
-    return split_point;
-  }
-  
-  template<typename TBound, typename T>
   index_t SelectMatrixPartition(arma::Mat<T>& matrix, 
                                 const arma::uvec& split_dimensions,
                                 index_t dim,
@@ -229,33 +180,6 @@ namespace tree_kdtree_private {
     DEBUG_ASSERT(left == right + 1);
 
     return left;
-  }
-
-  template<typename TKdTree, typename T>
-  void SplitKdTreeMidpoint(arma::Mat<T>& matrix,
-                           TKdTree *node,
-                           index_t leaf_size,
-                           std::vector<T>& old_from_new) {
-
-    arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
-      split_dimensions[i] = i;
-
-    SelectSplitKdTreeMidpoint(matrix, split_dimensions, node, 
-			      leaf_size, old_from_new);
-  }
-  
-  template<typename TKdTree, typename T>
-  void SplitKdTreeMidpoint(arma::Mat<T>& matrix,
-                           TKdTree *node,
-                           index_t leaf_size) {
-
-    arma::uvec split_dimensions(matrix.n_rows);
-    for(int i = 0; i < matrix.n_rows; i++)
-      split_dimensions[i] = i;
-
-    SelectSplitKdTreeMidpoint(matrix, split_dimensions, node, 
-			      leaf_size);
   }
 
   template<typename TKdTree, typename T>
