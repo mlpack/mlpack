@@ -437,19 +437,17 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
     reference_targets_file_name_sstr <<
                                      vm["reference_targets_in"].as<std::string>() << world.rank();
     reference_targets_file_name = reference_targets_file_name_sstr.str();
-    TableType *random_reference_dataset = new TableType();
+    TableType random_reference_dataset;
     core::parallel::RandomDatasetGenerator::Generate(
       vm["random_generate_n_attributes"].as<int>(),
       vm["random_generate_n_entries"].as<int>(), world.rank(),
-      vm["prescale"].as<std::string>(), random_reference_dataset);
-    arguments_out->reference_table_->Init(random_reference_dataset, world);
+      vm["prescale"].as<std::string>(), &random_reference_dataset);
+    random_reference_dataset.Save(reference_file_name);
   }
-  else {
-    std::cout << "Reading in the reference set: " <<
-              reference_file_name << "\n";
-    arguments_out->reference_table_->Init(
-      reference_file_name, world, &reference_targets_file_name);
-  }
+  std::cout << "Reading in the reference set: " <<
+            reference_file_name << "\n";
+  arguments_out->reference_table_->Init(
+    reference_file_name, world, &reference_targets_file_name);
   arguments_out->reference_table_->IndexData(
     arguments_out->metric_, world, arguments_out->leaf_size_,
     arguments_out->top_tree_sample_probability_);
@@ -466,18 +464,16 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
       query_file_name_sstr << vm["queries_in"].as<std::string>() <<
                            world.rank();
       query_file_name = query_file_name_sstr.str();
-      TableType *random_query_dataset = new TableType();
+      TableType random_query_dataset;
       core::parallel::RandomDatasetGenerator::Generate(
         vm["random_generate_n_attributes"].as<int>(),
         vm["random_generate_n_entries"].as<int>(), world.rank(),
-        vm["prescale"].as<std::string>(), random_query_dataset);
-      arguments_out->query_table_->Init(random_query_dataset, world);
+        vm["prescale"].as<std::string>(), &random_query_dataset);
+      random_query_dataset.Save(query_file_name);
     }
-    else {
-      std::cout << "Reading in the query set: " <<
-                query_file_name << "\n";
-      arguments_out->query_table_->Init(query_file_name, world);
-    }
+    std::cout << "Reading in the query set: " <<
+              query_file_name << "\n";
+    arguments_out->query_table_->Init(query_file_name, world);
     std::cout << "Finished reading in the query set.\n";
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
