@@ -18,11 +18,9 @@ class RandomDatasetGenerator {
     template<typename TableType>
     static void Generate(
       int num_dimensions, int num_points,
-      const std::string &prescale_option, TableType *random_dataset) {
+      int rank, const std::string &prescale_option, TableType *random_dataset) {
 
-      std::cerr << "Generating " << num_points << " points of " <<
-                num_dimensions << " dimensionality...\n";
-      random_dataset->Init(num_dimensions, num_points);
+      random_dataset->Init(num_dimensions, num_points, rank);
 
 #pragma omp parallel for
       for(int j = 0; j < num_points; j++) {

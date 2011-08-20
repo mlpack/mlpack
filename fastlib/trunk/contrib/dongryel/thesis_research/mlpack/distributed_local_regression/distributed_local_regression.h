@@ -40,15 +40,6 @@ class DistributedLocalRegressionArgumentParser {
       int argc,
       char *argv[],
       boost::program_options::variables_map *vm);
-
-    template<typename TableType>
-    static void RandomGenerate(
-      boost::mpi::communicator &world,
-      const std::string &file_name,
-      const std::string *weight_file_name,
-      int num_dimensions,
-      int num_points,
-      const std::string &prescale_option);
 };
 
 template <
