@@ -9,6 +9,7 @@
 #include <omp.h>
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
+#include "core/parallel/random_dataset_generator.h"
 #include "core/table/distributed_table.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
@@ -22,23 +23,6 @@ template<typename DistributedTableType>
 class TestDistributedTree {
   public:
     typedef typename DistributedTableType::TableType TableType;
-
-  private:
-    void GenerateRandomDataset_(
-      int num_dimensions,
-      int num_points,
-      TableType *random_dataset) {
-
-      random_dataset->Init(num_dimensions, num_points);
-
-      for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
-        random_dataset->get(j, &point);
-        for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
-        }
-      }
-    }
 
   public:
 
@@ -74,8 +58,9 @@ class TestDistributedTree {
 
       // Generate the random dataset and save it.
       TableType random_table;
-      GenerateRandomDataset_(
-        num_dimensions, num_points, &random_table);
+      core::parallel::RandomDatasetGenerator::Generate(
+        num_dimensions, num_points, world.rank(),
+        std::string("none"), &random_table);
       random_table.Save(references_in);
 
       DistributedTableType distributed_table;
