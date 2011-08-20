@@ -186,7 +186,7 @@ class TestKde {
       TableType random_table;
       core::parallel::RandomDatasetGenerator::Generate(
         mlpack::kde::test_kde::num_dimensions_,
-        mlpack::kde::test_kde::num_points_, std::string("none"),
+        mlpack::kde::test_kde::num_points_, 0, std::string("none"),
         &random_table);
       random_table.Save(references_in);
 
