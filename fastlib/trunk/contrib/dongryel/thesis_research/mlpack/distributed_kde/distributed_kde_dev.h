@@ -412,7 +412,6 @@ bool DistributedKdeArgumentParser::ParseArguments(
       vm["random_generate_n_entries"].as<int>(), world.rank(),
       vm["prescale"].as<std::string>(), &random_reference_dataset);
     random_reference_dataset.Save(reference_file_name);
-    arguments_out->reference_table_->Init(random_reference_dataset, world);
   }
   std::cout << "Reading in the reference set: " <<
             reference_file_name << "\n";
