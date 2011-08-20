@@ -10,6 +10,7 @@
 
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
+#include "core/parallel/random_dataset_generator.h"
 #include "core/table/table.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/tree/gen_kdtree.h"
@@ -57,26 +58,6 @@ class TestTree {
       return true;
     }
 
-    void GenerateRandomDataset_(
-      int num_dimensions,
-      int num_points,
-      TableType *random_dataset) {
-
-      random_dataset->Init(num_dimensions, num_points);
-
-      for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
-        random_dataset->get(j, &point);
-        for(int i = 0; i < num_dimensions; i++) {
-          point[i] = core::math::Random(0.1, 1.0);
-        }
-
-        // Set the weight to the random one.
-        random_dataset->weights().set(
-          0, j, core::math::Random(1.0, 5.0));
-      }
-    }
-
   public:
 
     int StressTestMain() {
@@ -106,8 +87,8 @@ class TestTree {
 
       // Generate the random dataset and save it.
       TableType random_table;
-      GenerateRandomDataset_(
-        num_dimensions, num_points, &random_table);
+      core::parallel::RandomDatasetGenerator::Generate(
+        num_dimensions, num_points, 0, std::string("none"), &random_table);
       random_table.Save(references_in, &weights_in);
 
       // Reload the table twice and build the tree on one of them.
