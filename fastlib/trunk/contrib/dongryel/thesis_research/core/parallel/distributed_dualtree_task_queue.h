@@ -28,54 +28,109 @@ class DistributedDualtreeTaskQueue {
      */
     typedef typename DistributedTableType::TableType TableType;
 
+    /** @brief The tree type used in the exchange process.
+     */
     typedef typename TableType::TreeType TreeType;
 
     /** @brief The subtable type used in the exchange process.
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The routing request type.
+     */
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
+    /** @brief The table exchange type.
+     */
     typedef core::parallel::TableExchange <
     DistributedTableType, TaskPriorityQueueType, ResultType > TableExchangeType;
 
+    /** @brief The type of the distributed task queue.
+     */
     typedef core::parallel::DistributedDualtreeTaskQueue <
-    DistributedTableType, TaskPriorityQueueType, ResultType > DistributedDualtreeTaskQueueType;
+    DistributedTableType, TaskPriorityQueueType,
+                        ResultType > DistributedDualtreeTaskQueueType;
+
+    typedef typename TaskPriorityQueueType::value_type TaskType;
 
   private:
 
+    /** @brief Used for prioritizing tasks.
+     */
     static const int process_rank_favor_factor_ = 0;
 
   private:
 
-    std::vector< boost::shared_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
+    /** @brief Assigned work for each query subtable.
+     */
+    std::vector <
+    boost::shared_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
+    /** @brief The number of remaining tasks on the current MPI
+     *         process.
+     */
     int num_remaining_tasks_;
 
+    /** @brief The maximum number of working threads on the current
+     *         MPI process.
+     */
     int num_threads_;
 
+    /** @brief The query result objects that correspond to each query
+     *         subtable.
+     */
     std::vector<ResultType *> query_results_;
 
+    /** @brief The query subtable corresponding to the disjoint set of
+     *         work to do for the current MPI process.
+     */
     std::vector< boost::shared_ptr<SubTableType> > query_subtables_;
 
+    /** @brief The rank of the MPI process that has a lock on the
+     *         given query subtable.
+     */
     std::deque<int> query_subtree_locks_;
 
+    /** @brief The remaining global work for each query subtable.
+     */
     std::vector< unsigned long int > remaining_work_for_query_subtables_;
 
+    /** @brief The mechanism for exchanging data among all MPI
+     *         processes.
+     */
     TableExchangeType table_exchange_;
 
+    /** @brief The task queue for each query subtable.
+     */
     std::vector< boost::shared_ptr<TaskPriorityQueueType> > tasks_;
 
+    /** @brief The lock that must be acquired among the threads on the
+     *         same MPI process to access the queue.
+     */
     omp_nest_lock_t task_queue_lock_;
 
+    /** @brief The remaining global computation being kept track on
+     *         this MPI process. If this reaches zero, then this
+     *         process can exit the computation.
+     */
     unsigned long int remaining_global_computation_;
 
+    /** @brief The remaining local computation on this MPI
+     *         process. Used for dynamic load balancing.
+     */
     unsigned long int remaining_local_computation_;
 
+    /** @brief If the remaining local computation falls below this
+     *         level, then the MPI process tries to steal some work
+     *         from its neighbor.
+     */
     unsigned long int load_balancing_trigger_level_;
 
   private:
 
+    /** @brief Evicts a query subtable and its associated variables
+     *         from a given slot.
+     */
     void Evict_(int probe_index) {
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
@@ -93,6 +148,8 @@ class DistributedDualtreeTaskQueue {
       tasks_.pop_back();
     }
 
+    /** @brief Tries to find more work for an additional core.
+     */
     template<typename MetricType>
     void RedistributeAmongCores_(
       boost::mpi::communicator &world,
@@ -118,6 +175,9 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    /** @brief Pushes a given reference node onto a task list of the
+     *         given query subtable.
+     */
     template<typename MetricType>
     void PushTask_(
       boost::mpi::communicator &world,
@@ -149,6 +209,9 @@ class DistributedDualtreeTaskQueue {
       num_remaining_tasks_++;
     }
 
+    /** @brief Splits the given subtree, making an additional task
+     *         queue in process.
+     */
     template<typename MetricType>
     void split_subtree_(
       boost::mpi::communicator &world,
@@ -239,6 +302,8 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    /** @brief Finds the query subtable with the given index.
+     */
     int FindQuerySubtreeIndex_(
       const boost::tuple<int, int, int> &query_node_id) {
       int found_index = -1;
@@ -256,10 +321,9 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
-    typedef typename TaskPriorityQueueType::value_type TaskType;
-
-  public:
-
+    /** @brief Returns whether the current MPI process needs load
+     *         balancing.
+     */
     bool needs_load_balancing() const {
       return remaining_local_computation_ <= load_balancing_trigger_level_;
     }
@@ -275,25 +339,38 @@ class DistributedDualtreeTaskQueue {
       omp_destroy_nest_lock(&task_queue_lock_);
     }
 
+    /** @brief Returns the remaining amount of local computation.
+     */
     unsigned long int remaining_local_computation() const {
       return remaining_local_computation_;
     }
 
+    /** @brief Returns the remaining amount of global computation.
+     */
     unsigned long int remaining_global_computation() const {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return remaining_global_computation_;
     }
 
+    /** @brief Decrement the remaining amount of global computation.
+     */
     void decrement_remaining_global_computation(unsigned long int decrement) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       remaining_global_computation_ -= decrement;
     }
 
+    /** @brief Releases the given cache position for the given number
+     *         of times.
+     */
     void ReleaseCache(int cache_id, int num_times) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       table_exchange_.ReleaseCache(cache_id, num_times);
     }
 
+    /** @brief Routes the data among the MPI processes, which
+     *         indirectly generates tasks for the query subtables
+     *         owned by the MPI process.
+     */
     template<typename MetricType>
     void SendReceive(
       const MetricType &metric_in,
@@ -305,6 +382,9 @@ class DistributedDualtreeTaskQueue {
         metric_in, world, hashed_essential_reference_subtrees_to_send);
     }
 
+    /** @brief Generates extra tasks using the received reference
+     *         subtables.
+     */
     template<typename MetricType>
     void GenerateTasks(
       boost::mpi::communicator &world,
@@ -350,6 +430,8 @@ class DistributedDualtreeTaskQueue {
       } //end of looping over each reference subtree.
     }
 
+    /** @brief Determines whether the MPI process can terminate.
+     */
     bool can_terminate() const {
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
@@ -358,6 +440,9 @@ class DistributedDualtreeTaskQueue {
               table_exchange_.can_terminate());
     }
 
+    /** @brief Pushes the completed computation for the given query
+     *         subtable.
+     */
     void push_completed_computation(
       const boost::tuple<int, int, int> &query_node_id,
       boost::mpi::communicator &comm,
@@ -376,6 +461,9 @@ class DistributedDualtreeTaskQueue {
       remaining_work_for_query_subtables_[found_index] -= reference_count_in;
     }
 
+    /** @brief Pushes the completed computation for all query
+     *         subtables owned by the current MPI process.
+     */
     void push_completed_computation(
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
@@ -394,6 +482,9 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    /** @brief Returns the remaining number of tasks on the current
+     *         process.
+     */
     int num_remaining_tasks() const {
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
@@ -401,6 +492,9 @@ class DistributedDualtreeTaskQueue {
       return num_remaining_tasks_;
     }
 
+    /** @brief Determines whether there is any remaining local
+     *         computation on the current process.
+     */
     bool is_empty() const {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return (num_remaining_tasks_ == 0);
@@ -416,11 +510,15 @@ class DistributedDualtreeTaskQueue {
       remaining_local_computation_ = 0;
     }
 
+    /** @brief Returns the load balancing trigger level.
+     */
     unsigned long int load_balancing_trigger_level() const {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return load_balancing_trigger_level_;
     }
 
+    /** @brief Returns the number of query subtables.
+     */
     int size() const {
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
@@ -428,6 +526,8 @@ class DistributedDualtreeTaskQueue {
       return query_subtables_.size();
     }
 
+    /** @brief Returns the lock to the given query subtree.
+     */
     void UnlockQuerySubtree(
       const boost::tuple<int, int, int> &query_subtree_id) {
 
@@ -437,6 +537,8 @@ class DistributedDualtreeTaskQueue {
       query_subtree_locks_[ subtree_index ] = -1;
     }
 
+    /** @brief Initializes the task queue.
+     */
     void Init(
       boost::mpi::communicator &world,
       DistributedTableType *query_table_in,
@@ -542,7 +644,8 @@ class DistributedDualtreeTaskQueue {
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
      *
-     *  @return true if the given probe_index task queue is empty.
+     *  @return true if the work for the query subtree in the probing
+     *          index is empty.
      */
     bool DequeueTask(
       boost::mpi::communicator &world,
