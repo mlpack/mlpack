@@ -187,7 +187,7 @@ class TestKde {
       core::parallel::RandomDatasetGenerator::Generate(
         mlpack::kde::test_kde::num_dimensions_,
         mlpack::kde::test_kde::num_points_, 0, std::string("none"),
-        &random_table);
+        false, &random_table);
       random_table.Save(references_in);
 
       // Parse the KDE arguments.

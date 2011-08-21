@@ -18,7 +18,8 @@ class RandomDatasetGenerator {
     template<typename TableType>
     static void Generate(
       int num_dimensions, int num_points,
-      int rank, const std::string &prescale_option, TableType *random_dataset) {
+      int rank, const std::string &prescale_option,
+      bool generate_weights, TableType *random_dataset) {
 
       random_dataset->Init(num_dimensions, num_points, rank);
 
@@ -31,8 +32,10 @@ class RandomDatasetGenerator {
         }
 
         // Set the weight to the random one.
-        random_dataset->weights().set(
-          0, j, core::math::Random(1.0, 5.0));
+        if(generate_weights) {
+          random_dataset->weights().set(
+            0, j, core::math::Random(1.0, 5.0));
+        }
       }
 
       // Scale the dataset.

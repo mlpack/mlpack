@@ -88,7 +88,7 @@ class TestTree {
       // Generate the random dataset and save it.
       TableType random_table;
       core::parallel::RandomDatasetGenerator::Generate(
-        num_dimensions, num_points, 0, std::string("none"), &random_table);
+        num_dimensions, num_points, 0, std::string("none"), false, &random_table);
       random_table.Save(references_in, &weights_in);
 
       // Reload the table twice and build the tree on one of them.
