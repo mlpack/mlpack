@@ -379,10 +379,12 @@ class DistributedDualtreeTaskQueue {
         boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
           frontier_reference_table, reference_starting_node, cache_id);
 
-        // For each query subtree, create a new task if it has not
-        // already taken care of the incoming reference table.
+        // For each query subtree owned by the current process, create
+        // a new task if it has not already taken care of the incoming
+        // reference table.
         for(int j = 0; j < this->size(); j++) {
-          if(assigned_work_[j]->Insert(
+          if(query_subtables_[j]->table()->rank() == world.rank() &&
+              assigned_work_[j]->Insert(
                 boost::tuple<int, int, int>(
                   frontier_reference_table->rank(),
                   reference_begin,
