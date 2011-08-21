@@ -535,7 +535,7 @@ class DistributedDualtreeTaskQueue {
       // For each process, break up the local query tree into a list of
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
-        2 * num_threads_in, &query_subtables_);
+        4 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
       query_results_.resize(query_subtables_.size());
