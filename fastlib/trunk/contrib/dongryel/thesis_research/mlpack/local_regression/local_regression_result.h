@@ -95,7 +95,16 @@ class LocalRegressionResult {
     core::parallel::MapVector<double> right_hand_side_used_error_;
 
     void Copy(const LocalRegressionResult &result_in) {
-
+      regression_estimates_.Copy(result_in.regression_estimates_);
+      left_hand_side_l_.Copy(result_in.left_hand_side_l_);
+      left_hand_side_e_.Copy(result_in.left_hand_side_e_);
+      left_hand_side_u_.Copy(result_in.left_hand_side_u_);
+      right_hand_side_l_.Copy(result_in.right_hand_side_l_);
+      right_hand_side_e_.Copy(result_in.right_hand_side_e_);
+      right_hand_side_u_.Copy(result_in.right_hand_side_u_);
+      pruned_.Copy(result_in.pruned_);
+      left_hand_side_used_error_.Copy(result_in.left_hand_side_used_error_);
+      right_hand_side_used_error_.Copy(result_in.right_hand_side_used_error_);
     }
 
     /** @brief Saves the local regression result object.
