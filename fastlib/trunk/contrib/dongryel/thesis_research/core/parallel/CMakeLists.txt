@@ -4,6 +4,8 @@ set(SOURCES
   disjoint_int_intervals.h
   distributed_dualtree_dfs_dev.h
   distributed_dualtree_dfs.h
+  distributed_dualtree_task.h
+  distributed_dualtree_task_list.h
   distributed_dualtree_task_queue.h
   distributed_tree_util.h
   distributed_tripletree_dfs_dev.h

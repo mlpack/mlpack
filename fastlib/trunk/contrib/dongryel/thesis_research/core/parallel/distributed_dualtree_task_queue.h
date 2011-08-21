@@ -12,6 +12,7 @@
 #include <vector>
 #include "core/math/range.h"
 #include "core/parallel/disjoint_int_intervals.h"
+#include "core/parallel/distributed_dualtree_task_list.h"
 #include "core/parallel/scoped_omp_lock.h"
 #include "core/parallel/table_exchange.h"
 
@@ -52,6 +53,8 @@ class DistributedDualtreeTaskQueue {
                         ResultType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
+
+    typedef core::parallel::DistributedDualtreeTaskList< TaskType > TaskListType;
 
   private:
 
@@ -282,6 +285,15 @@ class DistributedDualtreeTaskQueue {
         }
       }
       return found_index;
+    }
+
+    /** @brief Receives a query subtable from the chosen MPI process,
+     *         synching with its local data optionally.
+     */
+    void ReceiveTaskList_(
+      boost::mpi::communicator &world, int source_rank) {
+
+
     }
 
   public:
