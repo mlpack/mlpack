@@ -233,7 +233,7 @@ class TestLocalRegression {
         std::string random_scales_file_name("random_scales.csv");
         core::parallel::RandomDatasetGenerator::Generate(
           1, mlpack::local_regression::test_local_regression::num_dimensions_,
-          0, std::string("none"), &random_scales_table);
+          0, std::string("none"), false, &random_scales_table);
         random_scales_table.Save(random_scales_file_name);
         args.push_back(
           std::string("--metric_scales_in=") + random_scales_file_name);
@@ -272,7 +272,7 @@ class TestLocalRegression {
       core::parallel::RandomDatasetGenerator::Generate(
         mlpack::local_regression::test_local_regression::num_dimensions_,
         mlpack::local_regression::test_local_regression::num_points_, 0,
-        std::string("none"), &random_table);
+        std::string("none"), true, &random_table);
       random_table.Save(references_in, &reference_targets_in);
 
       // Parse the local regression arguments.
