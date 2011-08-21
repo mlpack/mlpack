@@ -520,6 +520,7 @@ class DistributedDualtreeTaskQueue {
      */
     void Init(
       boost::mpi::communicator &world,
+      int max_subtree_size_in,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       ResultType *local_query_result_in,
@@ -534,7 +535,7 @@ class DistributedDualtreeTaskQueue {
       // For each process, break up the local query tree into a list of
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
-        num_threads_in, &query_subtables_);
+        2 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
       query_results_.resize(query_subtables_.size());
@@ -548,7 +549,8 @@ class DistributedDualtreeTaskQueue {
       }
 
       // Initialize the table exchange.
-      table_exchange_.Init(world, query_table_in, reference_table_in, this);
+      table_exchange_.Init(
+        world, max_subtree_size_in, query_table_in, reference_table_in, this);
 
       // Initialize the amount of remaining computation.
       unsigned long int total_num_query_points = 0;

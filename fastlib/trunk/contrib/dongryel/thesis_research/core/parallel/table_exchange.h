@@ -39,6 +39,8 @@ class TableExchange {
      */
     typedef typename DistributedTableType::TableType TableType;
 
+    /** @brief The tree type used in the exchange process.
+     */
     typedef typename TableType::TreeType TreeType;
 
     /** @brief The subtable type used in the exchange process.
@@ -119,8 +121,15 @@ class TableExchange {
 
   private:
 
+    /** @brief Whether the MPI process can enter the current exchange
+     *         phase.
+     */
     bool enter_stage_;
 
+    /** @brief The MPI process needs to start checking whether this
+     *         index of the cache is free before the current exchange
+     *         can begin.
+     */
     int last_fail_index_;
 
     /** @brief The pointer to the local table that is partcipating in
@@ -128,20 +137,37 @@ class TableExchange {
      */
     TableType *local_table_;
 
+    /** @brief The maximum number of stages, typically log_2 of the
+     *         number of MPI processes.
+     */
     unsigned int max_stage_;
 
+    /** @brief The queued-up termination messages held by the current
+     *         MPI process.
+     */
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
 
+    /** @brief The current stage in the exchange process.
+     */
     unsigned int stage_;
 
     std::vector < MessageType > message_cache_;
 
+    /** @brief The list of MPI requests that are tested for sending.
+     */
     std::vector< boost::mpi::request > message_send_request_;
 
+    /** @brief The number of locks applied to each cache position.
+     */
     std::vector< int > message_locks_;
 
+    /** @brief The task queue associated with the current MPI process.
+     */
     TaskQueueType *task_queue_;
 
+    /** @brief The total number of locks held by the current MPI
+     *         process.
+     */
     int total_num_locks_;
 
   private:
@@ -302,6 +328,7 @@ class TableExchange {
      */
     void Init(
       boost::mpi::communicator &world,
+      int max_subtree_size_in,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       TaskQueueType *task_queue_in) {
