@@ -67,7 +67,7 @@ class DistributedDualtreeDfs {
      *         scale).
      */
     typedef core::parallel::DistributedDualtreeTask <
-    TableType, TreeType, ResultType > FineFrontierObjectType;
+    TableType, ResultType > FineFrontierObjectType;
 
     /** @brief The type of the subtable in use.
      */

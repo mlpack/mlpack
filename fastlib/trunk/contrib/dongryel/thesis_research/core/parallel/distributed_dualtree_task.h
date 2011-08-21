@@ -9,8 +9,15 @@
 namespace core {
 namespace parallel {
 
-template<typename TableType, typename TreeType, typename QueryResultType>
+template<typename IncomingTableType, typename QueryResultType>
 class DistributedDualtreeTask {
+
+  public:
+
+    typedef IncomingTableType TableType;
+
+    typedef typename TableType::TreeType TreeType;
+
   private:
 
     TableType *query_table_;
