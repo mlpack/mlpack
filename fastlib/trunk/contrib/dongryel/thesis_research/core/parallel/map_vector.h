@@ -45,6 +45,10 @@ class MapVector {
 
       public:
 
+        std::map<int, int> *position_to_id_map() {
+          return position_to_id_map_;
+        }
+
         int current_id() const {
           return ((*position_to_id_map_)[ current_pos_ ]);
         }
@@ -71,6 +75,8 @@ class MapVector {
 
         void operator=(const iterator &it_in) {
           ptr_ = const_cast<iterator &>(it_in).ptr();
+          position_to_id_map_ =
+            const_cast<iterator &>(it_in).position_to_id_map();
           current_pos_ = const_cast<iterator &>(it_in).current_pos();
           num_elements_ = const_cast<iterator &>(it_in).num_elements();
         }
@@ -113,19 +119,29 @@ class MapVector {
 
   public:
 
+    /** @brief Gets an iterator of the current map vector object.
+     */
     iterator get_iterator() const {
       return iterator(vector_.get(), &position_to_id_map_, 0, num_elements_);
     }
 
+    /** @brief Returns the number of elements stored in the map
+     *         vector.
+     */
     unsigned int size() const {
       return num_elements_;
     }
 
+    /** @brief The default constructor.
+     */
     MapVector() {
       num_elements_ = 0;
       indices_to_save_.resize(0);
     }
 
+    /** @brief Call this function before serializing a subset of
+     *         vector.
+     */
     template<typename TreeIteratorType>
     void set_indices_to_save(TreeIteratorType &it) {
       while(it.HasNext()) {
@@ -150,7 +166,11 @@ class MapVector {
 
       // Save each element and its mapping.
       for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
-        ar & vector_[ indices_to_save_[i] ];
+        int translated_position = indices_to_save_[i];
+        if(id_to_position_map_.size() > 0) {
+          translated_position = id_to_position_map_[ translated_position ];
+        }
+        ar & vector_[ translated_position ];
         ar & indices_to_save_[i];
       }
 
@@ -165,13 +185,13 @@ class MapVector {
 
       // Load the number of elements.
       ar & num_elements_;
+      boost::scoped_array<T> tmp_array(new T[ num_elements_]);
+      vector_.swap(tmp_array);
 
       // Load each element and its mapping.
       for(int i = 0; i < num_elements_; i++) {
-        T element;
         int original_index;
-        ar & element;
-        vector_.push_back(element);
+        ar & vector_[i];
         ar & original_index;
         id_to_position_map_[ original_index ] = i;
         position_to_id_map_[ i ] = original_index;
@@ -179,23 +199,33 @@ class MapVector {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief Initializes the map vector for a given number of
+     *         elements.
+     */
     void Init(int num_elements_in) {
       boost::scoped_array<T> tmp_vector(new T[num_elements_in]);
       vector_.swap(tmp_vector);
       num_elements_ = num_elements_in;
     }
 
+    /** @brief Returns a const reference to the object with the given
+     *         ID.
+     */
     const T &operator[](int i) const {
       if(id_to_position_map_.size() == 0) {
         return vector_[i];
       }
       else {
-        return vector_[
-                 const_cast<
-                 core::parallel::MapVector<T> * >(this)->id_to_position_map_[i] ];
+        return
+          vector_[
+            const_cast<
+            core::parallel::MapVector<T> * >(this)->id_to_position_map_[i] ];
       }
     }
 
+    /** @brief Returns a modifiable reference to the object with the
+     *         given ID.
+     */
     T &operator[](int i) {
       if(id_to_position_map_.size() == 0) {
         return vector_[i];
