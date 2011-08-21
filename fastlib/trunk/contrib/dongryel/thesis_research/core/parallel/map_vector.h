@@ -119,6 +119,18 @@ class MapVector {
 
   public:
 
+    /** @brief Copies another map vector onto this vector. Assumes
+     *         that the mappings of the source and the destination are
+     *         the same.
+     */
+    void Copy(const core::parallel::MapVector<T> &source_in) {
+      iterator source_it = source_in.get_iterator();
+      while(source_it.HasNext()) {
+        vector_[ source_it.current_id()] = *source_it;
+        source_it++;
+      }
+    }
+
     /** @brief Gets an iterator of the current map vector object.
      */
     iterator get_iterator() const {
