@@ -151,6 +151,8 @@ class TableExchange {
      */
     unsigned int stage_;
 
+    /** @brief The messages involved in the exchange process.
+     */
     std::vector < MessageType > message_cache_;
 
     /** @brief The list of MPI requests that are tested for sending.
@@ -160,6 +162,11 @@ class TableExchange {
     /** @brief The number of locks applied to each cache position.
      */
     std::vector< int > message_locks_;
+
+    /** @brief Used for limiting the number of points cached in the
+     *         current MPI process.
+     */
+    int remaining_extra_points_to_hold_;
 
     /** @brief The task queue associated with the current MPI process.
      */
@@ -218,6 +225,9 @@ class TableExchange {
       // This is a hack. See the assignment operator for SubTable.
       SubTableType safe_free =
         message_cache_[ cache_id ].subtable_route().object();
+
+      // Release the number of points held by the subtable.
+      remaining_extra_points_to_hold_ += safe_free.start_node()->count();
     }
 
   public:
@@ -280,6 +290,7 @@ class TableExchange {
       last_fail_index_ = 0;
       local_table_ = NULL;
       max_stage_ = 0;
+      remaining_extra_points_to_hold_ = 0;
       stage_ = 0;
       task_queue_ = NULL;
       total_num_locks_ = 0;
@@ -332,6 +343,10 @@ class TableExchange {
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       TaskQueueType *task_queue_in) {
+
+      // The maximum number of points to hold at a given moment.
+      remaining_extra_points_to_hold_ =
+        max_subtree_size_in * (world.size() + 10);
 
       // Set the pointer to the task queue.
       task_queue_ = task_queue_in;
@@ -480,12 +495,16 @@ class TableExchange {
             message_cache_[ cache_id ] = tmp_route_request;
             MessageType &route_request = message_cache_[cache_id];
 
-
+            // If the received subtable is valid,
             if(route_request.subtable_route().object_is_valid()) {
 
               // Lock the subtable equal to the number of remaining
               // phases.
               this->LockCache(cache_id, max_stage_ - stage_ - 1);
+
+              // Decrement the number of available slots.
+              remaining_extra_points_to_hold_ -=
+                route_request.subtable_route().object().start_node()->count();
 
               // If the subtable is needed by the process, then add
               // it to its task list.
