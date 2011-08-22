@@ -16,7 +16,7 @@
 
 namespace npt {
 
-  typedef BinarySpaceTree<DHrectBound<2>, arma::mat> NptNode;
+  typedef mlpack::tree::BinarySpaceTree<DHrectBound<2>, arma::mat> NptNode;
   
   class NodeTuple { 
     

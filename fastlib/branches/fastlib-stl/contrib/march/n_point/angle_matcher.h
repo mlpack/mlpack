@@ -174,6 +174,7 @@ namespace npt {
       
       longest_possible_side_sqr_ = max(r2_upper_sqr_.back(), 
                                        r3_upper_sqr_.back().back());
+      // IMPORTANT: this assumes that r2 >= r1
       shortest_possible_side_sqr_ = min(r1_lower_sqr_.front(), 
                                         r3_lower_sqr_.front().front());
       
@@ -190,7 +191,7 @@ namespace npt {
       mlpack::IO::Info << "r1_lower_sqr_: ";
       for (int i = 0; i < r1_lower_sqr_.size(); i++) {
         
-        mlpack::IO::Info << r1_lower_sqr_[i] << ", ";
+        mlpack::IO::Info << sqrt(r1_lower_sqr_[i]) << ", ";
         
       }
       mlpack::IO::Info << "\n";
@@ -198,7 +199,7 @@ namespace npt {
       mlpack::IO::Info << "r1_upper_sqr_: ";
       for (int i = 0; i < r1_upper_sqr_.size(); i++) {
         
-        mlpack::IO::Info << r1_upper_sqr_[i] << ", ";
+        mlpack::IO::Info << sqrt(r1_upper_sqr_[i]) << ", ";
         
       }
       mlpack::IO::Info << "\n";
@@ -207,7 +208,7 @@ namespace npt {
       mlpack::IO::Info << "r2_lower_sqr_: ";
       for (int i = 0; i < r2_lower_sqr_.size(); i++) {
         
-        mlpack::IO::Info << r2_lower_sqr_[i] << ", ";
+        mlpack::IO::Info << sqrt(r2_lower_sqr_[i]) << ", ";
         
       }
       mlpack::IO::Info << "\n";
@@ -215,27 +216,32 @@ namespace npt {
       mlpack::IO::Info << "r2_upper_sqr_: ";
       for (int i = 0; i < r2_upper_sqr_.size(); i++) {
         
-        mlpack::IO::Info << r2_upper_sqr_[i] << ", ";
+        mlpack::IO::Info << sqrt(r2_upper_sqr_[i]) << ", ";
         
       }
       mlpack::IO::Info << "\n";
       
-      mlpack::IO::Info << "r3_lower_sqr_: ";
-      for (int i = 0; i < r3_lower_sqr_[0].size(); i++) {
-        
-        mlpack::IO::Info << r3_lower_sqr_[0][i] << ", ";
-        
+
+      for (int i = 0; i < r3_lower_sqr_.size(); i++) {
+        mlpack::IO::Info << "r3_lower_sqr_[" << i << "]: ";
+        for (int j = 0; j < r3_lower_sqr_[i].size(); j++) {
+          
+          mlpack::IO::Info << sqrt(r3_lower_sqr_[i][j]) << ", ";
+          
+        }
+        mlpack::IO::Info << "\n";
       }
-      mlpack::IO::Info << "\n";
+
       
-      mlpack::IO::Info << "r3_upper_sqr_: ";
-      for (int i = 0; i < r3_upper_sqr_[0].size(); i++) {
-        
-        mlpack::IO::Info << r3_upper_sqr_[0][i] << ", ";
-        
+      for (int i = 0; i < r3_upper_sqr_.size(); i++) {
+        mlpack::IO::Info << "r3_upper_sqr_[" << i << "]: ";
+        for (int j = 0; j < r3_upper_sqr_[i].size(); j++) {
+          
+          mlpack::IO::Info << sqrt(r3_upper_sqr_[i][j]) << ", ";
+          
+        }
+        mlpack::IO::Info << "\n";
       }
-      mlpack::IO::Info << "\n";
-      
       
       mlpack::IO::Info << "longest side: " << longest_possible_side_sqr_ << "\n";
       mlpack::IO::Info << "shortest side: " << shortest_possible_side_sqr_ << "\n";

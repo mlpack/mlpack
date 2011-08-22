@@ -49,10 +49,14 @@ namespace npt {
     int num_base_cases_;
     
     // define the tree
-    typedef BinarySpaceTree<DHrectBound<2>, arma::mat> SingleNode; 
+    typedef mlpack::tree::BinarySpaceTree<DHrectBound<2>, arma::mat> SingleNode; 
     
-    arma::Col<index_t> old_from_new_index_data_;
-    arma::Col<index_t> old_from_new_index_random_;
+    //arma::Col<index_t> old_from_new_index_data_;
+    //arma::Col<index_t> old_from_new_index_random_;
+    
+    std::vector<index_t> old_from_new_index_data_;
+    std::vector<index_t> old_from_new_index_random_;
+    
     
     SingleNode* data_tree_;
     SingleNode* random_tree_;
@@ -104,14 +108,22 @@ namespace npt {
       num_prunes_ = 0;
       num_base_cases_ = 0;
       
-      data_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
+      /*
+      data_tree_ = mlpack::tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
                                                                 leaf_size_, 
                                                                 old_from_new_index_data_);
         
       
-      random_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(random_points_,
+      random_tree_ = mlpack::tree::MakeKdTreeMidpoint<SingleNode, double>(random_points_,
                                                                   leaf_size_,
                                                                   old_from_new_index_random_);
+      */
+      
+      data_tree_ = new SingleNode(data_points_, leaf_size_, 
+                                  old_from_new_index_data_);
+      random_tree_ = new SingleNode(random_points_, leaf_size_, 
+                                    old_from_new_index_random_);
+      
       
       // IMPORTANT: need to permute the weights here
       
@@ -144,14 +156,19 @@ namespace npt {
       num_prunes_ = 0;
       num_base_cases_ = 0;
       
-      data_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
-                                                                leaf_size_, 
-                                                                old_from_new_index_data_);
+      //data_tree_ = mlpack::tree::MakeKdTreeMidpoint<SingleNode, double>(data_points_, 
+      //                                                          leaf_size_, 
+      //                                                          old_from_new_index_data_);
       
       
-      random_tree_ = tree::MakeKdTreeMidpoint<SingleNode, double>(random_points_,
-                                                                  leaf_size_,
-                                                                  old_from_new_index_random_);
+      //random_tree_ = mlpack::tree::MakeKdTreeMidpoint<SingleNode, double>(random_points_,
+      //                                                            leaf_size_,
+      //                                                           old_from_new_index_random_);
+      
+      data_tree_ = new SingleNode(data_points_, leaf_size_, 
+                               old_from_new_index_data_);
+      random_tree_ = new SingleNode(random_points_, leaf_size_, 
+                               old_from_new_index_random_);
       
       // IMPORTANT: need to permute the weights here
       

@@ -78,7 +78,7 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
         
         if (valid_r1 >= 0) {
           
-          mlpack::IO::Info << "Found valid tuple\n";
+          //mlpack::IO::Info << "Found valid tuple\n";
           
           double weight_i = i_is_random ? random_weights_[i] : data_weights_[i];
           double weight_j = j_is_random ? random_weights_[j] : data_weights_[j];
