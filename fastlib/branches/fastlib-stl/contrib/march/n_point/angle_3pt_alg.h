@@ -30,9 +30,10 @@ namespace npt {
     arma::colvec data_weights_;
     arma::colvec random_weights_;
     
-    arma::Col<index_t> old_from_new_index_data_;
-    arma::Col<index_t> old_from_new_index_random_;
-    
+    //arma::Col<index_t> old_from_new_index_data_;
+    //arma::Col<index_t> old_from_new_index_random_;
+    std::vector<index_t> old_from_new_index_data_;
+    std::vector<index_t> old_from_new_index_random_;
     
     // indexed by [num_random][r1][theta]
     std::vector<std::vector<std::vector<int> > > results_;
@@ -99,12 +100,16 @@ namespace npt {
       num_base_cases_ = 0;
       leaf_size_ = leaf_size;
       
-      data_tree_ = tree::MakeKdTreeMidpoint<NptNode, double>(data_mat_, leaf_size_,
-                                                             old_from_new_index_data_);
+      //data_tree_ = mlpack::tree::MakeKdTreeMidpoint<NptNode, double>(data_mat_, leaf_size_,
+      //                                                       old_from_new_index_data_);
       
-      random_tree_ = tree::MakeKdTreeMidpoint<NptNode, double>(random_mat_, leaf_size_,
-                                                               old_from_new_index_random_);
+      //random_tree_ = mlpack::tree::MakeKdTreeMidpoint<NptNode, double>(random_mat_, leaf_size_,
+      //                                                         old_from_new_index_random_);
 
+      data_tree_ = new NptNode(data_mat_, leaf_size_, old_from_new_index_data_);
+      random_tree_ = new NptNode(random_mat_, leaf_size,
+                                 old_from_new_index_random_);
+      
       // permute weights
       
     } // constructor

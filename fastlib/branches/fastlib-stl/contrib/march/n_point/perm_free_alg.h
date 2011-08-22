@@ -47,8 +47,11 @@ namespace npt {
     int num_prunes_;
     int num_base_cases_;
     
-    arma::Col<index_t> old_from_new_index_;
-    arma::Col<index_t> old_from_new_index_random_;
+    //arma::Col<index_t> old_from_new_index_;
+    //arma::Col<index_t> old_from_new_index_random_;
+    
+    std::vector<index_t> old_from_new_index_;
+    std::vector<index_t> old_from_new_index_random_;
     
     NptNode* tree_;
     NptNode* random_tree_;
@@ -95,13 +98,17 @@ namespace npt {
       num_prunes_ = 0;
       num_base_cases_ = 0;
       
-      tree_ = tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
-                                                         leaf_size_, 
-                                                         old_from_new_index_);
+      //tree_ = mlpack::tree::MakeKdTreeMidpoint<NptNode, double> (data_points_, 
+        //                                                 leaf_size_, 
+          //                                               old_from_new_index_);
       
-      random_tree_ = tree::MakeKdTreeMidpoint<NptNode, double>(random_points_,
-                                                               leaf_size_,
-                                                               old_from_new_index_random_);
+      //random_tree_ = mlpack::tree::MakeKdTreeMidpoint<NptNode, double>(random_points_,
+        //                                                       leaf_size_,
+          //                                                     old_from_new_index_random_);
+      
+      tree_ = new NptNode(data_points_, leaf_size_, old_from_new_index_);
+      random_tree_ = new NptNode(random_points_, leaf_size_, 
+                                 old_from_new_index_random_);
       
     } // constructor
     

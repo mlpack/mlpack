@@ -267,6 +267,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   
   // if the smallest possible pairwise distance is larger than the largest 
   // possible value of r1, we can prune
+  //if (false) {
   if (sorted_lower_sq.front() > r1_upper_sqr_.back()) {
     possibly_valid = false;
     num_large_r1_prunes_++;
@@ -278,10 +279,10 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     num_small_r1_prunes_++;
   }
   // can check if the largest values don't fit too
-  //else if (false) {
   // IMPORTANT: this assumes the largest value of theta is greater than theta*
   // if not, then the largest r2 value is truly the largest
   // set this in the constructor
+  //else if (false) {
   else if (sorted_lower_sq.back() > longest_possible_side_sqr_) {
     possibly_valid = false;
     num_large_r3_prunes_++;
@@ -302,17 +303,18 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     // check large angles (theta >= theta*)
   
     // compute largest and smallest r2
-    // TODO: is this correct
-    largest_r2 = long_side_multiplier_ * sorted_upper_sq.front();
-    smallest_r2 = long_side_multiplier_ * sorted_lower_sq.front();
+    // TODO: is this correct?
+    largest_r2 = long_side_multiplier_ * long_side_multiplier_ * sorted_upper_sq.front();
+    smallest_r2 = long_side_multiplier_ * long_side_multiplier_ * sorted_lower_sq.front();
     
-    //if (false) {
-    if (sorted_lower_sq[1] > largest_r2) {
+    if (false) {
+    //if (sorted_lower_sq[1] > largest_r2) {
       //large_angle_valid = false;
       possibly_valid = false;
       num_large_r2_prunes_++;
     }
-    else if (sorted_upper_sq[1] < smallest_r2) {
+    else if (false) {
+    //else if (sorted_upper_sq[1] < smallest_r2) {
       //large_angle_valid = false;
       possibly_valid = false;
       num_small_r2_prunes_++;
