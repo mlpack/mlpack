@@ -292,18 +292,21 @@ class DistributedDualtreeTaskQueue {
 
     void SendLoadBalanceRequest(
       boost::mpi::communicator &world, int neighbor,
+      core::parallel::DualtreeLoadBalanceRequest <
+      SubTableType > **load_balance_request,
       boost::mpi::request *send_request) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      core::parallel::DualtreeLoadBalanceRequest <
-      SubTableType > load_balance_request(
+      *load_balance_request =
+        new core::parallel::DualtreeLoadBalanceRequest <
+      SubTableType > (
         this->needs_load_balancing(),
         query_subtables_, remaining_local_computation_,
         table_exchange_.remaining_extra_points_to_hold());
       *send_request =
         world.isend(
           neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
-          load_balance_request);
+          **load_balance_request);
     }
 
     /** @brief Returns whether the current MPI process needs load

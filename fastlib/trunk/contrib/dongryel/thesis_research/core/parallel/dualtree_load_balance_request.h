@@ -28,6 +28,10 @@ class DualtreeLoadBalanceRequest {
 
   public:
 
+    bool needs_load_balancing() const {
+      return needs_load_balancing_;
+    }
+
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
@@ -55,14 +59,17 @@ class DualtreeLoadBalanceRequest {
 
       if(needs_load_balancing_) {
         ar & num_existing_query_subtables_;
-        boost::scoped_array <
-        boost::tuple<int, int, int> > tmp_array(
-          new boost::tuple<int, int, int>[
-            num_existing_query_subtables_]);
-        for(int i = 0; i < num_existing_query_subtables_; i++) {
-          ar & query_subtable_ids_[i].get<0>();
-          ar & query_subtable_ids_[i].get<1>();
-          ar & query_subtable_ids_[i].get<2>();
+        if(num_existing_query_subtables_ > 0) {
+          boost::scoped_array <
+          boost::tuple<int, int, int> > tmp_array(
+            new boost::tuple<int, int, int>[
+              num_existing_query_subtables_]);
+          query_subtable_ids_.swap(tmp_array);
+          for(int i = 0; i < num_existing_query_subtables_; i++) {
+            ar & query_subtable_ids_[i].get<0>();
+            ar & query_subtable_ids_[i].get<1>();
+            ar & query_subtable_ids_[i].get<2>();
+          }
         }
         ar & current_remaining_local_computation_;
         ar & remaining_extra_points_to_hold_;
@@ -90,17 +97,19 @@ class DualtreeLoadBalanceRequest {
 
         // Allocate the array.
         num_existing_query_subtables_ = query_subtables.size();
-        boost::scoped_array <
-        boost::tuple<int, int, int> > tmp_array(
-          new boost::tuple<int, int, int>[ num_existing_query_subtables_]);
-        query_subtable_ids_.swap(tmp_array);
+        if(num_existing_query_subtables_ > 0) {
+          boost::scoped_array <
+          boost::tuple<int, int, int> > tmp_array(
+            new boost::tuple<int, int, int>[ num_existing_query_subtables_]);
+          query_subtable_ids_.swap(tmp_array);
 
-        for(int i = 0; i < num_existing_query_subtables_ ; i++) {
-          int rank = query_subtables[i]->table()->rank();
-          int begin = query_subtables[i]->start_node()->begin();
-          int count = query_subtables[i]->start_node()->count();
-          query_subtable_ids_[i] =
-            boost::tuple<int, int, int>(rank, begin, count);
+          for(int i = 0; i < num_existing_query_subtables_ ; i++) {
+            int rank = query_subtables[i]->table()->rank();
+            int begin = query_subtables[i]->start_node()->begin();
+            int count = query_subtables[i]->start_node()->count();
+            query_subtable_ids_[i] =
+              boost::tuple<int, int, int>(rank, begin, count);
+          }
         }
 
         // Set the current estimated remaining local work.
