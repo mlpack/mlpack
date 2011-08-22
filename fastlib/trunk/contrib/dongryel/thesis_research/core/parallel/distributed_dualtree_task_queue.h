@@ -13,6 +13,7 @@
 #include "core/math/range.h"
 #include "core/parallel/disjoint_int_intervals.h"
 #include "core/parallel/distributed_dualtree_task_list.h"
+#include "core/parallel/dualtree_load_balance_request.h"
 #include "core/parallel/scoped_omp_lock.h"
 #include "core/parallel/table_exchange.h"
 
@@ -287,21 +288,31 @@ class DistributedDualtreeTaskQueue {
       return found_index;
     }
 
-    /** @brief Receives a query subtable from the chosen MPI process,
-     *         synching with its local data optionally.
-     */
-    void ReceiveTaskList_(
-      boost::mpi::communicator &world, int source_rank) {
-
-
-    }
-
   public:
+
+    void SendLoadBalanceRequest(
+      boost::mpi::communicator &world, int neighbor,
+      boost::mpi::request *send_request) {
+
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      core::parallel::DualtreeLoadBalanceRequest <
+      SubTableType > load_balance_request(
+        this->needs_load_balancing(),
+        query_subtables_, remaining_local_computation_,
+        table_exchange_.remaining_extra_points_to_hold());
+      *send_request =
+        world.isend(
+          neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
+          load_balance_request);
+    }
 
     /** @brief Returns whether the current MPI process needs load
      *         balancing.
      */
     bool needs_load_balancing() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return remaining_local_computation_ <= load_balancing_trigger_level_;
     }
 
@@ -319,13 +330,18 @@ class DistributedDualtreeTaskQueue {
     /** @brief Returns the remaining amount of local computation.
      */
     unsigned long int remaining_local_computation() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return remaining_local_computation_;
     }
 
     /** @brief Returns the remaining amount of global computation.
      */
     unsigned long int remaining_global_computation() const {
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return remaining_global_computation_;
     }
 

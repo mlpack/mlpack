@@ -166,7 +166,7 @@ class TableExchange {
     /** @brief Used for limiting the number of points cached in the
      *         current MPI process.
      */
-    int remaining_extra_points_to_hold_;
+    unsigned long int remaining_extra_points_to_hold_;
 
     /** @brief The task queue associated with the current MPI process.
      */
@@ -203,8 +203,17 @@ class TableExchange {
       return ready_flag;
     }
 
-    void LoadBalance_(boost::mpi::communicator & world) {
+    void LoadBalance_(boost::mpi::communicator & world, int neighbor) {
 
+      boost::mpi::request send_request;
+      task_queue_->SendLoadBalanceRequest(world, neighbor, &send_request);
+
+      // If the neighbor also initiated load balancing,
+      if(boost::optional< boost::mpi::status > l_status =
+            world.iprobe(
+              neighbor,
+              core::parallel::MessageTag::LOAD_BALANCE_REQUEST)) {
+      }
     }
 
     /** @brief Prints the existing subtables in the cache.
@@ -225,12 +234,13 @@ class TableExchange {
       // This is a hack. See the assignment operator for SubTable.
       SubTableType safe_free =
         message_cache_[ cache_id ].subtable_route().object();
-
-      // Release the number of points held by the subtable.
-      remaining_extra_points_to_hold_ += safe_free.start_node()->count();
     }
 
   public:
+
+    unsigned long int remaining_extra_points_to_hold() const {
+      return remaining_extra_points_to_hold_;
+    }
 
     /** @brief Used for prioritizing tasks, favoring subtables that
      *         arrive earlier in the exchange process.
@@ -346,7 +356,7 @@ class TableExchange {
 
       // The maximum number of points to hold at a given moment.
       remaining_extra_points_to_hold_ =
-        max_subtree_size_in * (world.size() + 10);
+        max_subtree_size_in * world.size();
 
       // Set the pointer to the task queue.
       task_queue_ = task_queue_in;
@@ -502,10 +512,6 @@ class TableExchange {
               // phases.
               this->LockCache(cache_id, max_stage_ - stage_ - 1);
 
-              // Decrement the number of available slots.
-              remaining_extra_points_to_hold_ -=
-                route_request.subtable_route().object().start_node()->count();
-
               // If the subtable is needed by the process, then add
               // it to its task list.
               if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
@@ -548,7 +554,7 @@ class TableExchange {
         task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Initiate load balancing with the neighbor.
-        LoadBalance_(world);
+        LoadBalance_(world, neighbor);
 
         // Increment the stage when done, and turn off the stage flag.
         stage_ = (stage_ + 1) % max_stage_;
