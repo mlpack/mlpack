@@ -205,15 +205,44 @@ class TableExchange {
 
     void LoadBalance_(boost::mpi::communicator & world, int neighbor) {
 
-      boost::mpi::request send_request;
-      task_queue_->SendLoadBalanceRequest(world, neighbor, &send_request);
+      printf("Process %d entering load balancing!\n", world.rank());
 
-      // If the neighbor also initiated load balancing,
-      if(boost::optional< boost::mpi::status > l_status =
-            world.iprobe(
-              neighbor,
-              core::parallel::MessageTag::LOAD_BALANCE_REQUEST)) {
+      // Send to the neighbor what the status is on the current MPI
+      // process.
+      boost::mpi::request send_request;
+      core::parallel::DualtreeLoadBalanceRequest <
+      SubTableType > *load_balance_request = NULL;
+      task_queue_->SendLoadBalanceRequest(
+        world, neighbor, &load_balance_request, &send_request);
+
+      // Wait until the message from the neighbor is received.
+      core::parallel::DualtreeLoadBalanceRequest <
+      SubTableType > neighbor_load_balance_request;
+      while(true) {
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::LOAD_BALANCE_REQUEST)) {
+          world.recv(
+            neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
+            neighbor_load_balance_request);
+          break;
+        }
       }
+
+      // Wait until the send request is completed.
+      send_request.wait();
+      delete load_balance_request;
+
+      // Now prepare the task list that must be sent to the neighbor.
+      if(neighbor_load_balance_request.needs_load_balancing()) {
+        printf("Process %d thinks %d needs load balancing!\n",
+               world.rank(), neighbor);
+      }
+      else {
+        printf("Process %d thinks %d is fine!\n", world.rank(), neighbor);
+      }
+      printf("Process %d exiting the load balancing...\n", world.rank());
     }
 
     /** @brief Prints the existing subtables in the cache.
