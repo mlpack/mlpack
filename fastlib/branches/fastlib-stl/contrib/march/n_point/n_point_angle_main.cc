@@ -48,9 +48,11 @@ int main(int argc, char* argv[]) {
     data_mat = arma::trans(data_in);
   }
   else {
+    // this is copying, right?
     data_mat = data_in;
   }
   // delete data_in
+  data_in.reset();
 
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
@@ -74,6 +76,7 @@ int main(int argc, char* argv[]) {
   else {
     random_mat = random_in;
   }
+  random_in.reset();
   
   //arma::mat data_out = arma::trans(data_mat);
   //data_out.save("3pt_test_data.csv", arma::raw_ascii);

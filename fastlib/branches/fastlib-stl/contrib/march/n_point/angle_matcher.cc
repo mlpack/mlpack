@@ -179,38 +179,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   else if (sorted_lower_sq_[1] > r2_upper_sq_[2]) {
     
   }
-  else {
     
-    double this_min_perimeter = (sqrt(d12_lower) 
-                                 + sqrt(d13_lower) 
-                                 + sqrt(d23_lower)) / 2.0;
-    double this_max_perimeter = (sqrt(d12_upper) 
-                                 + sqrt(d13_upper) 
-                                 + sqrt(d23_upper)) / 2.0;
-    
-    double this_max_area_sq;
-    double this_min_area_sq;
-  
-    this_min_area_sq = this_min_perimeter 
-    * (this_min_perimeter - sqrt(d12_lower)) 
-    * (this_min_perimeter - sqrt(d13_lower)) 
-    * (this_min_perimeter - sqrt(d23_lower));
-    this_max_area_sq = this_max_perimeter 
-    * (this_max_perimeter - sqrt(d12_upper)) 
-    * (this_max_perimeter - sqrt(d13_upper)) 
-    * (this_max_perimeter - sqrt(d23_upper));
-    
-    if (this_min_area_sq > max_area_sq_) {
-      num_min_area_prunes_++;
-      possibly_valid = false;
-    }
-    else if (this_max_area_sq < min_area_sq_) {
-      num_max_area_prunes_++;
-      possibly_valid = false;
-    }
-    
-  } // area pruning
-  
   
   // Want: another prune that takes into account the constraint on r2 once 
   // we've chosen an r1
@@ -290,7 +259,11 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   // I could check for the longest pairwise distance being too short, but I 
   // don't think that will happen very often
   // check the structure of the triangle
-  else {
+
+  
+  // Not doing any of these prunes right now
+  /*
+  else if (true) {
     
     //bool small_angle_valid = true;
     //bool large_angle valid = true;
@@ -332,7 +305,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     
     // if we haven't pruned large angles, then compute and check r3
     
-    /*
+    
     if (large_angle_valid) {
       
       // compute largest and smallest r3
@@ -344,13 +317,13 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
         large_angle_valid = false;
       }
     } // checking large angles
-     */  
+       
     
     // check small angles
 
     // I don't think I actually need two cases if I'm not worrying about r3
     
-    /*
+    
     // recompute largest and smallest r3
     if (sorted_lower_sq[1] > largest_r3) {
       small_angle_valid = false;
@@ -375,9 +348,42 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
     
     // if either might work, we can' prune
     possibly_valid = (small_angle_valid || large_angle_valid);
-    */
+    
     
   } // cant prune on r1
+  
+  else {
+    
+    double this_min_perimeter = (sqrt(d12_lower) 
+                                 + sqrt(d13_lower) 
+                                 + sqrt(d23_lower)) / 2.0;
+    double this_max_perimeter = (sqrt(d12_upper) 
+                                 + sqrt(d13_upper) 
+                                 + sqrt(d23_upper)) / 2.0;
+    
+    double this_max_area_sq;
+    double this_min_area_sq;
+    
+    this_min_area_sq = this_min_perimeter 
+    * (this_min_perimeter - sqrt(d12_lower)) 
+    * (this_min_perimeter - sqrt(d13_lower)) 
+    * (this_min_perimeter - sqrt(d23_lower));
+    this_max_area_sq = this_max_perimeter 
+    * (this_max_perimeter - sqrt(d12_upper)) 
+    * (this_max_perimeter - sqrt(d13_upper)) 
+    * (this_max_perimeter - sqrt(d23_upper));
+    
+    if (this_min_area_sq > max_area_sq_) {
+      num_min_area_prunes_++;
+      possibly_valid = false;
+    }
+    else if (this_max_area_sq < min_area_sq_) {
+      num_max_area_prunes_++;
+      possibly_valid = false;
+    }
+    
+  } // area pruning
+  */
   
   return possibly_valid;
   

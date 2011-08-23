@@ -149,7 +149,7 @@ namespace npt {
         } // for j
         
       } // for i
-      
+      /*
       double half_min_perimeter = (sqrt(r1_lower_sqr_[0]) 
                                    + sqrt(r2_lower_sqr_[0]) 
                                    + sqrt(r3_lower_sqr_[0][0])) / 2.0;
@@ -164,6 +164,8 @@ namespace npt {
       * (half_max_perimeter - sqrt(r1_upper_sqr_.back())) 
       * (half_max_perimeter - sqrt(r2_upper_sqr_.back())) 
       * (half_max_perimeter - sqrt(r3_upper_sqr_.back().back()));
+      */
+      
       
       /*
       num_min_area_prunes_ = 0;
@@ -188,6 +190,7 @@ namespace npt {
       // especially for r3
       
       
+      /*
       mlpack::IO::Info << "r1_lower_sqr_: ";
       for (int i = 0; i < r1_lower_sqr_.size(); i++) {
         
@@ -246,6 +249,8 @@ namespace npt {
       mlpack::IO::Info << "longest side: " << longest_possible_side_sqr_ << "\n";
       mlpack::IO::Info << "shortest side: " << shortest_possible_side_sqr_ << "\n";
       
+       */
+       
     } // constructor
     
     // returns the index of the value of r1 that is satisfied by the tuple
