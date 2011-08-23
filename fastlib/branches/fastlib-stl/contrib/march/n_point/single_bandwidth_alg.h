@@ -230,8 +230,8 @@ namespace npt {
         
         DepthFirstRecursion_(node_list);
         
-        std::cout << "Num prunes " << num_prunes_ << "\n";
-        std::cout << "Num base cases " << num_base_cases_ << "\n";
+        //mlpack::IO::Info << "Num prunes " << num_prunes_ << "\n";
+        //mlpack::IO::Info << "Num base cases " << num_base_cases_ << "\n";
         
       }
       

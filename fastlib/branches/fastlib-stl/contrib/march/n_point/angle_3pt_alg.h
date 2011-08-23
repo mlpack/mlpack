@@ -24,6 +24,10 @@ namespace npt {
     int tuple_size_;
     int num_random_;
     
+    bool i_is_random_;
+    bool j_is_random_;
+    bool k_is_random_;
+    
     arma::mat data_mat_;
     arma::mat random_mat_;
     
@@ -132,6 +136,10 @@ namespace npt {
           node_list[i] = data_tree_;
           
         }
+        
+        i_is_random_ = (num_random_ > 0);
+        j_is_random_ = (num_random_ > 1);
+        k_is_random_ = (num_random_ > 2);
         
         DepthFirstRecursion_(node_list);
         
