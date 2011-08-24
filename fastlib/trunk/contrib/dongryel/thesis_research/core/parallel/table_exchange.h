@@ -281,7 +281,8 @@ class TableExchange {
     }
 
     void ClearSubTable_(int cache_id) {
-      message_cache_[ cache_id ].subtable_route().object().Destruct();
+      SubTableType safe_free =
+        message_cache_[ cache_id ].subtable_route().object();
     }
 
   public:
