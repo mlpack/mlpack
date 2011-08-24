@@ -56,10 +56,14 @@ class DistributedDualtreeTask {
 
       query_subtable_.Init(
         query_subtable_in.table(), query_subtable_in.start_node(), false);
+      query_subtable_.set_cache_block_id(
+        query_subtable_in.cache_block_id());
       query_result_ = query_result_in;
       reference_subtable_.Init(
         reference_subtable_in.table(),
         reference_subtable_in.start_node(), false);
+      reference_subtable_.set_cache_block_id(
+        reference_subtable_in.cache_block_id());
       priority_ = priority_in;
     }
 

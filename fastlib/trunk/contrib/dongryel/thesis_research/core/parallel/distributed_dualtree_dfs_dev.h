@@ -343,6 +343,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         core::gnp::DualtreeDfs<ProblemType> sub_engine;
         ProblemType sub_problem;
         ArgumentType sub_argument;
+        TableType *task_query_table =
+          found_task.first.query_subtable().table();
         TableType *task_reference_table =
           found_task.first.reference_subtable().table();
         TreeType *task_starting_rnode =
@@ -352,8 +354,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
         // Initialize the argument, the problem, and the engine.
         sub_argument.Init(
-          task_reference_table,
-          query_table_->local_table(), problem_->global());
+          task_reference_table, task_query_table, problem_->global());
         sub_problem.Init(sub_argument, &(problem_->global()));
         sub_engine.Init(sub_problem);
 
@@ -376,7 +377,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
         // Push in the completed amount of work.
         boost::tuple<int, int, int> query_subtree_id(
-          query_table_->local_table()->rank(),
+          task_query_table->rank(),
           found_task.first.query_start_node()->begin(),
           found_task.first.query_start_node()->count());
         unsigned long int completed_work =

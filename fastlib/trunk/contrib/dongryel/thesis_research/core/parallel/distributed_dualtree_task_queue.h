@@ -409,6 +409,7 @@ class DistributedDualtreeTaskQueue {
             table_exchange_.local_table(),
             table_exchange_.FindByBeginCount(
               reference_begin, reference_count), false);
+          alias.set_cache_block_id(cache_id);
           frontier_reference_subtable = &alias;
         }
 
