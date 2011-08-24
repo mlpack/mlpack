@@ -238,13 +238,28 @@ class TableExchange {
 
       // Now prepare the task list that must be sent to the neighbor.
       if(neighbor_load_balance_request.needs_load_balancing()) {
-        printf("Process %d thinks %d needs load balancing!\n",
-               world.rank(), neighbor);
+
       }
-      else {
-        printf("Process %d thinks %d is fine!\n", world.rank(), neighbor);
+
+      // Asynchronously send the extra work to the neighbor.
+      //boost::mpi::request task_list_send =
+      //world.isend();
+
+      // Receive from the neighbor.
+      while(true) {
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::TASK_LIST)) {
+          world.recv(
+            neighbor, core::parallel::MessageTag::TASK_LIST,
+            neighbor_load_balance_request);
+          break;
+        }
       }
-      printf("Process %d exiting the load balancing...\n", world.rank());
+
+      // Wait until the send request is completed.
+      //task_list_send.wait();
     }
 
     /** @brief Prints the existing subtables in the cache.
