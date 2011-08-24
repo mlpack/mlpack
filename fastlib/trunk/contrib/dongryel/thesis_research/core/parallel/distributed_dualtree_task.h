@@ -54,9 +54,12 @@ class DistributedDualtreeTask {
       SubTableType &reference_subtable_in,
       double priority_in) {
 
-      query_subtable_.Alias(query_subtable_in);
+      query_subtable_.Init(
+        query_subtable_in.table(), query_subtable_in.start_node(), false);
       query_result_ = query_result_in;
-      reference_subtable_.Alias(reference_subtable_in);
+      reference_subtable_.Init(
+        reference_subtable_in.table(),
+        reference_subtable_in.start_node(), false);
       priority_ = priority_in;
     }
 
