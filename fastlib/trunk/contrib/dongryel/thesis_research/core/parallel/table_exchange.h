@@ -275,6 +275,9 @@ class TableExchange {
       }
     }
 
+    /** @brief Evicts an extra subtable received during load
+     *         balancing.
+     */
     void EvictSubTable_(int cache_id) {
       this->ClearSubTable_(cache_id);
       extra_receive_slots_.push_back(cache_id);
