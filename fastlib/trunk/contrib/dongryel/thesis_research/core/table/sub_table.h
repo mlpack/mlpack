@@ -229,6 +229,19 @@ class SubTable {
       return serialize_points_per_terminal_node_;
     }
 
+    /** @brief Manual destruction.
+     */
+    void Destruct() {
+      if(is_alias_ == false && table_ != NULL) {
+        if(core::table::global_m_file_) {
+          core::table::global_m_file_->DestroyPtr(table_);
+        }
+        else {
+          delete table_;
+        }
+      }
+    }
+
     /** @brief Returns whether the subtable is an alias of another
      *         subtable.
      */

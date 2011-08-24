@@ -281,10 +281,7 @@ class TableExchange {
     }
 
     void ClearSubTable_(int cache_id) {
-
-      // This is a hack. See the assignment operator for SubTable.
-      SubTableType safe_free =
-        message_cache_[ cache_id ].subtable_route().object();
+      message_cache_[ cache_id ].subtable_route().object().Destruct();
     }
 
   public:
