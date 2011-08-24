@@ -26,6 +26,7 @@ option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
 # should be changed to default off for a release
 
 option(DEBUG "Compile with debugging information" ON) # default to on for developers
+option(PROFILE "Compile with profiling information" ON) # default to on for developers
 
 if(WITH_SPARSE)
    set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
@@ -36,15 +37,20 @@ if(WITH_SPARSE)
 endif(WITH_SPARSE)
 
 if(DEBUG)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -pg -O0")
-  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -pg -O0")
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O0")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -g -Wall -O0")
   add_definitions(-DDEBUG)
 else()
   add_definitions(-DARMA_NO_DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -O2")
   set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -std=c99 -Wall -O2")
 endif(DEBUG)
+
+if(PROFILE)
+  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -pg")
+  set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -pg")
+  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -pg")
+endif(PROFILE)
 
 # For Boost testing framework (will have no effect on non-testing executables).
 # This specifies to Boost that we are dynamically linking to the Boost test
