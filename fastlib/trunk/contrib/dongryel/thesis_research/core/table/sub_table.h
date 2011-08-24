@@ -240,6 +240,8 @@ class SubTable {
           delete table_;
         }
       }
+      is_alias_ = true;
+      table_ = NULL;
     }
 
     /** @brief Returns whether the subtable is an alias of another
