@@ -15,7 +15,7 @@
 namespace core {
 namespace parallel {
 
-template<typename TaskPriorityQueueType>
+template<typename TaskPriorityQueueType, typename QueryResultType>
 class DistributedDualtreeTaskList {
 
   public:
