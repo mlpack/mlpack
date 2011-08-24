@@ -389,7 +389,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         distributed_tasks.UnlockQuerySubtree(query_subtree_id);
 
         // Release the reference subtable.
-        distributed_tasks.ReleaseCache(task_reference_cache_id, 1);
+        distributed_tasks.ReleaseCache(* world_, task_reference_cache_id, 1);
 
       } // end of finding a task.
 

@@ -126,6 +126,12 @@ class TableExchange {
      */
     bool enter_stage_;
 
+    /** @brief For query subtables received from other processes and
+     *         associated reference subtables with them, we store them
+     *         in the extra receive slots beyond [0, world.size() ).
+     */
+    std::vector<int> extra_receive_slots_;
+
     /** @brief The MPI process needs to start checking whether this
      *         index of the cache is free before the current exchange
      *         can begin.
@@ -186,10 +192,8 @@ class TableExchange {
       unsigned int neighbor = world.rank() ^ num_test;
       unsigned int test_lower_bound = (neighbor >> stage_) << stage_;
 
-      // This is the pre-req.
-      bool ready_flag = true;
-
       // Now, check that all the other receive buffers are empty.
+      bool ready_flag = true;
       for(unsigned int i = last_fail_index_; ready_flag && i < num_test; i++) {
         ready_flag = (message_locks_[test_lower_bound + i] == 0);
         if(! ready_flag) {
@@ -204,8 +208,6 @@ class TableExchange {
     }
 
     void LoadBalance_(boost::mpi::communicator & world, int neighbor) {
-
-      printf("Process %d entering load balancing!\n", world.rank());
 
       // Send to the neighbor what the status is on the current MPI
       // process.
@@ -259,6 +261,11 @@ class TableExchange {
     }
 
     void EvictSubTable_(int cache_id) {
+      this->ClearSubTable_(cache_id);
+      extra_receive_slots_.push_back(cache_id);
+    }
+
+    void ClearSubTable_(int cache_id) {
 
       // This is a hack. See the assignment operator for SubTable.
       SubTableType safe_free =
@@ -346,7 +353,8 @@ class TableExchange {
       }
     }
 
-    void ReleaseCache(int cache_id, int num_times) {
+    void ReleaseCache(
+      boost::mpi::communicator &world, int cache_id, int num_times) {
       if(cache_id >= 0) {
         message_locks_[ cache_id ] -= num_times;
         total_num_locks_ -= num_times;
@@ -356,8 +364,16 @@ class TableExchange {
             message_cache_[ cache_id ].subtable_route().object_is_valid() &&
             cache_id != local_table_->rank()) {
 
-          // Evict the subtable.
-          this->EvictSubTable_(cache_id);
+          if(cache_id < world.size()) {
+
+            // Clear the subtable.
+            this->ClearSubTable_(cache_id);
+          }
+          else {
+
+            // If it is among the extra subtables, then evict it.
+            this->EvictSubTable_(cache_id);
+          }
         }
       }
     }
@@ -553,7 +569,7 @@ class TableExchange {
               }
             }
             else {
-              this->EvictSubTable_(cache_id);
+              this->ClearSubTable_(cache_id);
             }
 
             // Update the energy count.
@@ -575,7 +591,7 @@ class TableExchange {
           unsigned int process_rank = i + lower_bound_send;
           if(process_rank != static_cast<unsigned int>(world.rank()) &&
               message_cache_[process_rank].subtable_route().object_is_valid()) {
-            this->ReleaseCache(process_rank, 1);
+            this->ReleaseCache(world, process_rank, 1);
           }
         }
 

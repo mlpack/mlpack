@@ -80,6 +80,13 @@ class DistributedDualtreeTaskQueue {
      */
     int num_threads_;
 
+    /** @brief The rank of the MPI process from which every query
+     *         subtable/query result is derived. If not equal to the
+     *         current MPI process rank, these must be written back
+     *         when the task queue runs out.
+     */
+    std::vector<int> originating_ranks_;
+
     /** @brief The query result objects that correspond to each query
      *         subtable.
      */
@@ -136,15 +143,17 @@ class DistributedDualtreeTaskQueue {
      *         from a given slot.
      */
     void Evict_(int probe_index) {
+      assigned_work_[probe_index] = assigned_work_.back();
+      originating_ranks_[probe_index] = originating_ranks_.back();
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
-      assigned_work_[probe_index] = assigned_work_.back();
+      query_subtree_locks_[probe_index] = query_subtree_locks_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
-      query_subtree_locks_[probe_index] = query_subtree_locks_.back();
       tasks_[probe_index] = tasks_.back();
 
       assigned_work_.pop_back();
+      originating_ranks_.pop_back();
       query_results_.pop_back();
       query_subtables_.pop_back();
       query_subtree_locks_.pop_back();
@@ -234,6 +243,7 @@ class DistributedDualtreeTaskQueue {
       query_subtables_[subtree_index]->set_start_node(left);
 
       // Grow the list of local query subtrees.
+      originating_ranks_.push_back(world.rank());
       query_results_.push_back(query_results_[subtree_index]);
       query_subtables_.push_back(
         boost::shared_ptr<SubTableType>(new SubTableType()));
@@ -358,9 +368,10 @@ class DistributedDualtreeTaskQueue {
     /** @brief Releases the given cache position for the given number
      *         of times.
      */
-    void ReleaseCache(int cache_id, int num_times) {
+    void ReleaseCache(
+      boost::mpi::communicator &world, int cache_id, int num_times) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      table_exchange_.ReleaseCache(cache_id, num_times);
+      table_exchange_.ReleaseCache(world, cache_id, num_times);
     }
 
     /** @brief Routes the data among the MPI processes, which
@@ -557,10 +568,12 @@ class DistributedDualtreeTaskQueue {
         4 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
+      originating_ranks_.resize(query_subtables_.size());
       query_results_.resize(query_subtables_.size());
       query_subtree_locks_.resize(query_subtables_.size());
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+        originating_ranks_[i] = world.rank();
         query_results_[i] = local_query_result_in;
         query_subtree_locks_[i] = -1;
         tasks_[i] = boost::shared_ptr <
