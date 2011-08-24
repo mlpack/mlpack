@@ -196,25 +196,22 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       int push_index,
-      boost::tuple<TableType *, TreeType *, int> &reference_table_node_pair) {
+      SubTableType &reference_subtable) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Compute the priority and push in.
       core::math::Range squared_distance_range(
         query_subtables_[push_index]->start_node()->bound().RangeDistanceSq(
-          metric_in, reference_table_node_pair.get<1>()->bound()));
+          metric_in, reference_subtable.start_node()->bound()));
       double priority = - squared_distance_range.mid() -
                         process_rank_favor_factor_ *
                         table_exchange_.process_rank(
-                          world, reference_table_node_pair.get<0>()->rank());
+                          world, reference_subtable.table()->rank());
       TaskType new_task(
-        query_subtables_[push_index]->table(),
-        query_subtables_[ push_index ]->start_node(),
+        *(query_subtables_[push_index]),
         query_results_[ push_index ],
-        reference_table_node_pair.get<0>(),
-        reference_table_node_pair.get<1>(),
-        reference_table_node_pair.get<2>(),
+        reference_subtable,
         priority);
       tasks_[ push_index]->push(new_task);
 
@@ -267,17 +264,16 @@ class DistributedDualtreeTaskQueue {
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
-        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-          prev_tasks[i].reference_table(),
-          prev_tasks[i].reference_start_node(), prev_tasks[i].cache_id());
         this->PushTask_(
-          world, metric_in, subtree_index, reference_table_node_pair);
+          world, metric_in, subtree_index,
+          prev_tasks[i].reference_subtable());
         this->PushTask_(
           world, metric_in, query_subtables_.size() - 1,
-          reference_table_node_pair);
+          prev_tasks[i].reference_subtable());
 
         // Lock only one time since only the query side is split.
-        table_exchange_.LockCache(prev_tasks[i].cache_id(), 1);
+        table_exchange_.LockCache(
+          prev_tasks[i].reference_subtable_cache_block_id(), 1);
       }
     }
 
@@ -407,19 +403,14 @@ class DistributedDualtreeTaskQueue {
         int cache_id = received_subtable_ids[i].get<3>();
         SubTableType *frontier_reference_subtable =
           table_exchange_.FindSubTable(cache_id);
-
-        // Find the table and the starting reference node.
-        TableType *frontier_reference_table =
-          (frontier_reference_subtable != NULL) ?
-          frontier_reference_subtable->table() :
-          table_exchange_.local_table();
-        TreeType *reference_starting_node =
-          (frontier_reference_subtable != NULL) ?
-          frontier_reference_subtable->table()->get_tree() :
-          table_exchange_.FindByBeginCount(
-            reference_begin, reference_count);
-        boost::tuple<TableType *, TreeType *, int> reference_table_node_pair(
-          frontier_reference_table, reference_starting_node, cache_id);
+        SubTableType alias;
+        if(frontier_reference_subtable == NULL) {
+          alias.Init(
+            table_exchange_.local_table(),
+            table_exchange_.FindByBeginCount(
+              reference_begin, reference_count), false);
+          frontier_reference_subtable = &alias;
+        }
 
         // For each query subtree owned by the current process, create
         // a new task if it has not already taken care of the incoming
@@ -428,10 +419,11 @@ class DistributedDualtreeTaskQueue {
           if(query_subtables_[j]->table()->rank() == world.rank() &&
               assigned_work_[j]->Insert(
                 boost::tuple<int, int, int>(
-                  frontier_reference_table->rank(),
+                  frontier_reference_subtable->table()->rank(),
                   reference_begin,
                   reference_begin + reference_count))) {
-            this->PushTask_(world, metric_in, j, reference_table_node_pair);
+            this->PushTask_(
+              world, metric_in, j, * frontier_reference_subtable);
             table_exchange_.LockCache(cache_id, 1);
           }
         }
