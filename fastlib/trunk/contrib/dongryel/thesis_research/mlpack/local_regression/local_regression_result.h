@@ -107,6 +107,14 @@ class LocalRegressionResult {
       right_hand_side_used_error_.Copy(result_in.right_hand_side_used_error_);
     }
 
+    LocalRegressionResult(const LocalRegressionResult &result_in) {
+      this->operator=(result_in);
+    }
+
+    void operator=(const LocalRegressionResult &result_in) {
+      this->Copy(result_in);
+    }
+
     /** @brief Saves the local regression result object.
      */
     template<class Archive>
