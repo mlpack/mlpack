@@ -67,6 +67,14 @@ class KdeResult {
       used_error_.Copy(result_in.used_error_);
     }
 
+    void operator=(const KdeResult &result_in) {
+      this->Copy(result_in);
+    }
+
+    KdeResult(const KdeResult &result_in) {
+      this->operator=(result_in);
+    }
+
     /** @brief Serialize the KDE result object.
      */
     template<class Archive>
