@@ -504,12 +504,22 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   }
 
   AllToAllIReduce_(metric, query_results);
-  std::cerr << "Process " << world_->rank() << " took " <<
-            timer.elapsed() << " seconds to compute.\n";
-  std::cerr << "  Deterministic prunes: " <<
-            this->num_deterministic_prunes() <<
-            " , probabilistic prunes: " <<
-            this->num_probabilistic_prunes() << "\n";
+  double elapsed_time = timer.elapsed();
+  std::vector<double> collected_elapsed_times;
+  boost::mpi::gather(*world_, elapsed_time, collected_elapsed_times, 0);
+  std::pair<int, int> num_prunes(
+    this->num_deterministic_prunes(), this->num_probabilistic_prunes());
+  std::vector< std::pair<int, int> > collected_num_prunes;
+  boost::mpi::gather(*world_, num_prunes, collected_num_prunes, 0);
+  if(world_->rank() == 0) {
+    for(int i = 0; i < world_->size(); i++) {
+      std::cerr << "Process " << i << " took " <<
+                collected_elapsed_times[i] << " seconds to compute.\n";
+      std::cerr << "  Deterministic prunes: " <<
+                collected_num_prunes[i].first << " , probabilistic prunes: " <<
+                collected_num_prunes[i].second << "\n";
+    }
+  }
   world_->barrier();
 }
 
