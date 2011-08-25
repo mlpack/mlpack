@@ -326,6 +326,12 @@ class DistributedDualtreeTaskQueue {
       return remaining_local_computation_ <= load_balancing_trigger_level_;
     }
 
+    /** @brief Returns the query subtable associated with the index.
+     */
+    SubTableType &query_subtable(int probe_index) {
+      return * (query_subtables_[probe_index]);
+    }
+
     /** @brief The destructor.
      */
     ~DistributedDualtreeTaskQueue() {
