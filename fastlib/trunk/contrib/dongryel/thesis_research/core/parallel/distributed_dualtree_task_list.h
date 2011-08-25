@@ -143,7 +143,7 @@ class DistributedDualtreeTaskList {
       /*
       // And its associated reference sets.
       while(empty_flag && query_subtree_task_queue.size() > 0) {
-      	std::pair<TaskType, int> test_task;
+        std::pair<TaskType, int> test_task;
         const TaskType &test_task = query_subtree_task_queue.top();
         if(this->push_back_(test_task.reference_subtable())) {
           empty_flag = false;
