@@ -104,7 +104,8 @@ class DistributedDualtreeTaskList {
         sub_tables_.resize(sub_tables_.size() + 1);
         sub_tables_.back().Alias(test_subtable_in);
         id_to_position_map_[subtable_id] = sub_tables_.size() - 1;
-        remaining_extra_points_to_hold_ -= test_start_node_in->count();
+        remaining_extra_points_to_hold_ -=
+          test_subtable_in.start_node()->count();
         return true;
       }
       return false;
