@@ -22,7 +22,7 @@ namespace parallel {
 template <
 typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ResultType >
+         typename QueryResultType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief A class for performing an all-to-some exchange of subtrees
@@ -31,7 +31,7 @@ class DistributedDualtreeTaskQueue;
 template <
 typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ResultType >
+         typename QueryResultType >
 class TableExchange {
   public:
 
@@ -51,7 +51,11 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
 
-    typedef core::parallel::DistributedDualtreeTaskQueue< DistributedTableType, TaskPriorityQueueType, ResultType > TaskQueueType;
+    typedef core::parallel::RouteRequest <
+    std::pair<SubTableType, QueryResultType> > QuerySubTableFlushRequestType;
+
+    typedef core::parallel::DistributedDualtreeTaskQueue <
+    DistributedTableType, TaskPriorityQueueType, QueryResultType > TaskQueueType;
 
     class MessageType {
       private:
@@ -66,6 +70,8 @@ class TableExchange {
 
         EnergyRouteRequestType energy_route_;
 
+        QuerySubTableFlushRequestType flush_route_;
+
       public:
 
         MessageType() {
@@ -76,6 +82,7 @@ class TableExchange {
           originating_rank_ = message_in.originating_rank();
           subtable_route_ = message_in.subtable_route();
           energy_route_ = message_in.energy_route();
+          flush_route_ = message_in.flush_route();
         }
 
         MessageType(const MessageType &message_in) {
@@ -84,7 +91,8 @@ class TableExchange {
 
         int next_destination(boost::mpi::communicator &comm) {
           subtable_route_.next_destination(comm);
-          return energy_route_.next_destination(comm);
+          energy_route_.next_destination(comm);
+          return flush_route_.next_destination(comm);
         }
 
         void set_originating_rank(int rank_in) {
@@ -93,6 +101,14 @@ class TableExchange {
 
         int originating_rank() const {
           return originating_rank_;
+        }
+
+        QuerySubTableFlushRequestType &flush_route() {
+          return flush_route_;
+        }
+
+        const QuerySubTableFlushRequestType &flush_route() const {
+          return flush_route_;
         }
 
         SubTableRouteRequestType &subtable_route() {
@@ -116,6 +132,7 @@ class TableExchange {
           ar & originating_rank_;
           ar & subtable_route_;
           ar & energy_route_;
+          ar & flush_route_;
         }
     };
 

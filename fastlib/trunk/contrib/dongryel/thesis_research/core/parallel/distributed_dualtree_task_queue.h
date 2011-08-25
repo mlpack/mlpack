@@ -22,7 +22,7 @@ namespace parallel {
 
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ResultType >
+         typename QueryResultType >
 class DistributedDualtreeTaskQueue {
   public:
 
@@ -45,17 +45,18 @@ class DistributedDualtreeTaskQueue {
     /** @brief The table exchange type.
      */
     typedef core::parallel::TableExchange <
-    DistributedTableType, TaskPriorityQueueType, ResultType > TableExchangeType;
+    DistributedTableType, TaskPriorityQueueType, QueryResultType > TableExchangeType;
 
     /** @brief The type of the distributed task queue.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType, TaskPriorityQueueType,
-                        ResultType > DistributedDualtreeTaskQueueType;
+                        QueryResultType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
-    typedef core::parallel::DistributedDualtreeTaskList< TaskType > TaskListType;
+    typedef core::parallel::DistributedDualtreeTaskList <
+    TaskPriorityQueueType, QueryResultType > TaskListType;
 
   private:
 
@@ -90,7 +91,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief The query result objects that correspond to each query
      *         subtable.
      */
-    std::vector<ResultType *> query_results_;
+    std::vector<QueryResultType *> query_results_;
 
     /** @brief The query subtable corresponding to the disjoint set of
      *         work to do for the current MPI process.
@@ -546,7 +547,7 @@ class DistributedDualtreeTaskQueue {
       int max_subtree_size_in,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
-      ResultType *local_query_result_in,
+      QueryResultType *local_query_result_in,
       int num_threads_in) {
 
       // Initialize the number of available threads.
