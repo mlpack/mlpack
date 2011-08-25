@@ -180,7 +180,8 @@ class MapVector {
       for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
         int translated_position = indices_to_save_[i];
         if(id_to_position_map_.size() > 0) {
-          translated_position = id_to_position_map_[ translated_position ];
+          translated_position =
+            modifiable_self->id_to_position_map_[ translated_position ];
         }
         ar & vector_[ translated_position ];
         ar & indices_to_save_[i];
@@ -201,7 +202,7 @@ class MapVector {
       vector_.swap(tmp_array);
 
       // Load each element and its mapping.
-      for(int i = 0; i < num_elements_; i++) {
+      for(unsigned int i = 0; i < num_elements_; i++) {
         int original_index;
         ar & vector_[i];
         ar & original_index;
