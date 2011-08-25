@@ -341,6 +341,12 @@ BOOST_SERIALIZATION_SPLIT_FREE(arma::vec)
 namespace boost {
 namespace serialization {
 
+template<class Archive, class T1, class T2>
+void serialize(Archive &ar, std::pair<T1, T2> &pair, unsigned int version) {
+  ar & pair.first;
+  ar & pair.second;
+}
+
 template<class Archive>
 void save(Archive & ar, const arma::vec & t, unsigned int version) {
 
