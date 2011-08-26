@@ -306,6 +306,15 @@ class TableExchange {
 
   public:
 
+    /** @brief Queues the query subtable and its result flush request.
+     */
+    void QueueFlushRequest(
+      SubTableType &query_subtable_in, QueryResultType &query_result_in,
+      int destination_rank_in) {
+
+
+    }
+
     unsigned long int remaining_extra_points_to_hold() const {
       return remaining_extra_points_to_hold_;
     }
