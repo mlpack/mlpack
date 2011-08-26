@@ -88,7 +88,8 @@ class DistributedDualtreeTaskList {
      */
     DistributedDualtreeTaskQueueType *distributed_task_queue_;
 
-    /** @brief The donated task list of (Q, R) pairs.
+    /** @brief The donated task list of (Q, R) pairs. Indexes the
+     *         subtable positions.
      */
     std::vector< std::pair<int, std::vector<int> > > donated_task_list_;
 
@@ -180,17 +181,17 @@ class DistributedDualtreeTaskList {
       }
     }
 
-    /** @brief Returns true if the subtable can be transferred within
-     *         the limit.
+    /** @brief Returns the assigned position of the subtable if it can
+     *         be transferred within the limit.
      */
-    bool push_back_(SubTableType &test_subtable_in, bool count_as_query) {
+    int push_back_(SubTableType &test_subtable_in, bool count_as_query) {
 
       // If already pushed, then return.
       KeyType subtable_id = test_subtable_in.subtable_id();
       int existing_position;
       if(this->FindSubTable_(subtable_id, &existing_position)) {
         sub_tables_[ existing_position ].get<2>()++;
-        return true;
+        return existing_position;
       }
 
       // Otherwise, try to see whether it can be stored.
@@ -207,9 +208,9 @@ class DistributedDualtreeTaskList {
         id_to_position_map_[subtable_id] = sub_tables_.size() - 1;
         remaining_extra_points_to_hold_ -=
           test_subtable_in.start_node()->count();
-        return true;
+        return sub_tables_.size() - 1;
       }
-      return false;
+      return -1;
     }
 
   public:
@@ -248,20 +249,23 @@ class DistributedDualtreeTaskList {
      */
     void push_back(boost::mpi::communicator &world, int probe_index) {
 
-      // The number of reference subtables packed.
-      int num_reference_subtables = 0;
-
       // First, we need to serialize the query subtree.
       SubTableType &query_subtable =
         distributed_task_queue_->query_subtable(probe_index);
-      if(! this->push_back_(query_subtable, true)) {
+      int query_subtable_position;
+      if((query_subtable_position =
+            this->push_back_(query_subtable, true)) < 0) {
         return;
       }
+      donated_task_list_.resize(donated_task_list_.size() + 1);
+      donated_task_list_.back().first = query_subtable_position;
 
       // And its associated reference sets.
       while(distributed_task_queue_->size(probe_index) > 0) {
         const TaskType &test_task = distributed_task_queue_->top(probe_index);
-        if(this->push_back_(test_task.reference_subtable(), false)) {
+        int reference_subtable_position;
+        if((reference_subtable_position =
+              this->push_back_(test_task.reference_subtable(), false)) >= 0) {
           break;
         }
         else {
@@ -269,14 +273,16 @@ class DistributedDualtreeTaskList {
           // Pop from the list. Releasing each reference subtable from
           // the cache is done in serialization.
           distributed_task_queue_->pop(probe_index);
-          num_reference_subtables++;
+          donated_task_list_.back().second.push_back(
+            reference_subtable_position);
         }
       }
 
       // If no reference subtable was pushed in, there is no point in
       // sending the query subtable.
-      if(num_reference_subtables == 0) {
+      if(donated_task_list_.back().second.size() == 0) {
         this->pop_(query_subtable.subtable_id(), true);
+        donated_task_list_.pop_back();
       }
       else {
 
@@ -307,6 +313,18 @@ class DistributedDualtreeTaskList {
               sub_tables_[i].get<0>().cache_block_id(),
               sub_tables_[i].get<2>());
         }
+
+        // Save the donated task lists.
+        int num_donated_lists = donated_task_list_.size();
+        ar & num_donated_lists;
+        for(int i = 0; i < num_donated_lists; i++) {
+          int sublist_size = donated_task_list_[i].second.size();
+          ar & donated_task_list_[i].first;
+          ar & sublist_size;
+          for(int j = 0; j < sublist_size; j++) {
+            ar & donated_task_list_[i].second[j];
+          }
+        }
       }
     }
 
@@ -328,6 +346,20 @@ class DistributedDualtreeTaskList {
           ar & sub_tables_[i].get<0>();
           sub_tables_[i].get<1>() = true;
           sub_tables_[i].get<2>() = 1;
+        }
+
+        // Load the donated task lists.
+        int num_donated_lists;
+        ar & num_donated_lists;
+        donated_task_list_.resize(num_donated_lists);
+        for(int i = 0; i < num_donated_lists; i++) {
+          int sublist_size;
+          ar & donated_task_list_[i].first;
+          ar & sublist_size;
+          donated_task_list_[i].second.resize(sublist_size);
+          for(int j = 0; j < sublist_size; j++) {
+            ar & donated_task_list_[i].second[j];
+          }
         }
       }
     }
