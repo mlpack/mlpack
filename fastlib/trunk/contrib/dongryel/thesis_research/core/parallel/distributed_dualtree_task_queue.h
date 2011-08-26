@@ -144,6 +144,16 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
+    /** @brief Flushes a query subtable to be written back to its
+     *         origin.
+     */
+    void Flush_(int probe_index) {
+      table_exchange_.QueueFlushRequest(
+        *(query_subtables_[probe_index]),
+        *(query_results_[probe_index]),
+        originating_ranks_[probe_index]);
+    }
+
     /** @brief Evicts a query subtable and its associated variables
      *         from a given slot.
      */
@@ -245,7 +255,7 @@ class DistributedDualtreeTaskQueue {
       query_subtables_[subtree_index]->set_start_node(left);
 
       // Grow the list of local query subtrees.
-      originating_ranks_.push_back(world.rank());
+      originating_ranks_.push_back(originating_ranks_[subtree_index]);
       query_results_.push_back(query_results_[subtree_index]);
       query_subtables_.push_back(
         boost::shared_ptr<SubTableType>(new SubTableType()));
@@ -704,10 +714,22 @@ class DistributedDualtreeTaskQueue {
       }
 
       // Otherwise, determine whether the cleanup needs to be done.
-      if(query_subtree_locks_[probe_index] < 0 &&
-          remaining_work_for_query_subtables_[probe_index] == 0) {
-        this->Evict_(probe_index);
-        return true;
+      if(query_subtree_locks_[probe_index] < 0) {
+
+        // If the query subtable is on the MPI process of its origin,
+        if(query_subtables_[probe_index]->table()->rank() == world.rank()) {
+          if(remaining_work_for_query_subtables_[probe_index] == 0) {
+            this->Evict_(probe_index);
+          }
+          return true;
+        }
+
+        // If the query subtable is not from the MPI process of its
+        // origin and it ran out of stuffs to do, flush.
+        else if(tasks_[probe_index]->size() == 0) {
+          this->Flush_(probe_index);
+          return true;
+        }
       }
       return false;
     }
