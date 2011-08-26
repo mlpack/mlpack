@@ -22,6 +22,10 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
   bool new_is_random = (split_ind < num_random_);
   int start_point, end_point;
   
+  // This uses the assumption that the symmetry was correct before
+  // Therefore, we only need to check the new node against the others
+  // We also can restrict our check to the nodes that come from the same set as
+  // the new one
   if (new_is_random) {
     start_point = 0;
     end_point = num_random_;
@@ -219,6 +223,8 @@ void npt::NodeTuple::UpdateSplitInd_() {
   
 } // UpdateSplitInd_
 
+/*
+
 void npt::NodeTuple::FillInSortedArrays_() {
   
   index_t next_insert = 0;
@@ -256,6 +262,6 @@ void npt::NodeTuple::FillInSortedArrays_() {
   std::sort(sorted_lower_.begin(), sorted_lower_.end());
   
 } // FillInSortedArrays
-
+*/
 
 

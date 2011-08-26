@@ -14,12 +14,22 @@
 #define SINGLE_MATCHER_H
 
 #include "permutations.h"
+#include "node_tuple.h"
 
 namespace npt {
   
   class SingleMatcher {
     
   private:
+    
+    
+    // the data and weights
+    arma::mat data_mat_;
+    arma::colvec data_weights_;
+    
+    arma::mat random_mat_;
+    arma::colvec random_weights_;
+    
     
     // stores the permutations, make sure to always reuse it instead of making
     // more
@@ -30,8 +40,15 @@ namespace npt {
     arma::mat lower_bounds_sqr_;
     arma::mat upper_bounds_sqr_;
     
+    std::vector<int> results_;
+    std::vector<double> weighted_results_;
+    
+    int num_random_;
+    
     // n
     index_t tuple_size_;
+    
+    int num_base_cases_;
     
     // n!
     index_t num_permutations_;
@@ -52,13 +69,33 @@ namespace npt {
     bool CheckDistances_(double dist_sq, index_t ind1, index_t ind2);
     
     
+    bool TestPointPair_(double dist_sq, index_t tuple_ind_1, index_t tuple_ind_2,
+                        std::vector<bool>& permutation_ok);
+    
+    bool TestHrectPair_(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
+                        index_t tuple_ind_1, index_t tuple_ind_2,
+                        std::vector<bool>& permutation_ok);
+    
+    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<bool>& permutation_ok,
+                         std::vector<index_t>& points_in_tuple,
+                         int k);
+    
+    
   public:
     
+    
     // constructor
-    SingleMatcher(arma::mat& matcher_dists, double bandwidth) :
+    SingleMatcher(arma::mat& data, arma::colvec& weights,
+                  arma::mat& random, arma::colvec& rweights,
+                  arma::mat& matcher_dists, double bandwidth) :
+    data_mat_(data), data_weights_(weights),
+    random_mat_(random), random_weights_(rweights),
     perms_(matcher_dists.n_cols), 
     lower_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
-    upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols)
+    upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
+    results_(matcher_dists.n_rows + 1, 0),
+    weighted_results_(matcher_dists.n_rows + 1, 0.0)
     {
       
       
@@ -94,10 +131,17 @@ namespace npt {
     } // constructor
     
     // angle version of the constructor
-    SingleMatcher(arma::mat& lower_bounds, arma::mat& upper_bounds) :
+    SingleMatcher(arma::mat& data, arma::colvec& weights,
+                  arma::mat& random, arma::colvec& rweights,
+                  arma::mat& lower_bounds, arma::mat& upper_bounds) :
     perms_(lower_bounds.n_cols),
+    data_mat_(data), data_weights_(weights),
+    random_mat_(random), random_weights_(rweights),
     lower_bounds_sqr_(lower_bounds.n_rows, lower_bounds.n_cols),
-    upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols) {
+    upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols),
+    results_(lower_bounds.n_rows + 1, 0),
+    weighted_results_(lower_bounds.n_rows + 1, 0.0)
+    {
       
       tuple_size_ = lower_bounds.n_cols;
       
@@ -125,16 +169,32 @@ namespace npt {
       
     } // angle constructor
     
-    bool TestPointPair(double dist_sq, index_t tuple_ind_1, index_t tuple_ind_2,
-                       std::vector<bool>& permutation_ok);
+    bool TestNodeTuple(NodeTuple& nodes);
     
-    bool TestHrectPair(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
-                       index_t tuple_ind_1, index_t tuple_ind_2,
-                       std::vector<bool>& permutation_ok);
+    void ComputeBaseCase(NodeTuple& nodes);
+    
+    std::vector<int>& results() {
+      return results_;
+    }
+
+    std::vector<double>& weighted_results() {
+      return weighted_results_;
+    }
+    
+    int tuple_size() {
+      return tuple_size_;
+    }
+    
+    void set_num_random(int n) {
+      num_random_ = n;
+    }
+    
     
     index_t num_permutations() {
       return num_permutations_;
     }
+    
+    void OutputResults();
     
     
   }; // class

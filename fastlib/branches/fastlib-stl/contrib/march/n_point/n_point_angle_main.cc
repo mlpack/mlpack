@@ -8,9 +8,10 @@
  */
 
 
-#include "angle_3pt_alg.h"
+#include "generic_npt_alg.h"
 #include "angle_matcher_generation.h"
-#include "single_bandwidth_alg.h"
+#include "angle_matcher.h"
+#include "single_matcher.h"
 #include "fastlib/fastlib.h"
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
@@ -37,8 +38,11 @@ using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
+  IO::Info << "parsing command line\n";
+  
   IO::ParseCommandLine(argc, argv);
   
+  IO::Info << "parsing complete\n";
   
   std::string data_filename = IO::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
@@ -91,6 +95,8 @@ int main(int argc, char* argv[]) {
     random_weights.fill(1.0);
   }
   
+  IO::Info << "Finished reading in data.\n";
+  
   double bin_thickness_factor = IO::GetParam<double>("bin_thickness_factor");
   double r2_multiplier = IO::GetParam<double>("r2_multiplier");
   
@@ -138,20 +144,49 @@ int main(int argc, char* argv[]) {
     theta_vec[0] = theta_min;
   }
   
+  IO::Info << "Finished setting up matchers, starting algorithm.\n";
+  
+  // The trees just get re-used over and over
+  
+  std::vector<index_t> old_from_new_data;
+  std::vector<index_t> old_from_new_random;
+  
+  NptNode* data_tree = new NptNode(data_mat, leaf_size, old_from_new_data);
+  NptNode* random_tree = new NptNode(random_mat, leaf_size,
+                                     old_from_new_random);
+  
+  // IMPORTANT: need to permute weights here
+
+  /////////////////////////////////////////////////////////////////////
+  /////////////////////// The algorithms //////////////////////////////
+  /////////////////////////////////////////////////////////////////////
   
   // do multi-angle alg
   if (IO::HasParam("do_angle")) {
   
     IO::StartTimer("angle_time");
     
-    Angle3ptAlg alg(data_mat, weights, random_mat, random_weights, leaf_size,
-                    r1_vec, r2_multiplier, theta_vec, bin_thickness_factor);
+    IO::Info << "initializing angle matcher.\n";
     
-    alg.Compute();
+    AngleMatcher angle_matcher(data_mat, weights, 
+                               random_mat, random_weights,
+                               r1_vec, r2_multiplier,
+                               theta_vec, bin_thickness_factor);
+    
+    IO::Info << "initializing angle alg.\n";
+    
+    GenericNptAlg<AngleMatcher> angle_alg(data_tree, random_tree, 
+                                          angle_matcher);
+    
+    IO::Info << "Computing angle alg.\n";
+    
+    angle_alg.Compute();
+    
+    //now, the matcher has the data
     
     // output the results
     IO::Info << "3pt Angle Results: \n";
-    alg.OutputResults();
+    angle_matcher.OutputResults();
     IO::Info << "\n\n";
     
     IO::StopTimer("angle_time");
@@ -168,6 +203,8 @@ int main(int argc, char* argv[]) {
     
     IO::StartTimer("single_bandwidth_time");
     
+    
+    
     // iterate over the matchers
     for (int r1_ind = 0; r1_ind < num_r1; r1_ind++) {
     
@@ -179,18 +216,25 @@ int main(int argc, char* argv[]) {
         //lower_bounds.print("lower bound mat");
         //upper_bounds.print("upper bound mat");
         
-        SingleBandwidthAlg single_alg(data_mat, weights, random_mat, 
-                                      random_weights,
-                                      leaf_size, lower_bounds, upper_bounds);
+        SingleMatcher single_matcher(data_mat, weights, random_mat, 
+                                     random_weights, lower_bounds,
+                                     upper_bounds);
+        
+        
+        
+        
+        GenericNptAlg<SingleMatcher> single_alg(data_tree, random_tree,
+                                                single_matcher);
   
   
-        single_alg.ComputeCounts();
+        single_alg.Compute();
         
         IO::Info << "R1 = " << r1_vec[r1_ind] << ", ";
         IO::Info << "Theta = " << theta_vec[theta_ind] << ", ";
-        IO::Info << "Single alg num_tuples: \n";
+        //IO::Info << "Single alg num_tuples: \n";
         
-        single_alg.print_num_tuples();
+        single_matcher.OutputResults();
+        single_alg.PrintStats();
         
         IO::Info << "\n";
         
@@ -208,4 +252,4 @@ int main(int argc, char* argv[]) {
   
   return 0;
   
-}
+}// main

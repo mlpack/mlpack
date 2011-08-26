@@ -23,15 +23,93 @@ double npt::AngleMatcher::ComputeR3_(double r1, double r2, double theta) {
 } 
 
 
+void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
+  
+  num_base_cases_++;
+  
+  for (int i = nodes.node_list(0)->begin(); 
+       i < nodes.node_list(0)->end(); i++) {
+    
+    arma::colvec vec_i;
+    if (i_is_random_) {
+      vec_i = random_mat_.col(i);
+    }
+    else {
+      vec_i = data_mat_.col(i);
+    }
+    
+    int j_begin = (nodes.node_list(0) == nodes.node_list(1)) ? i+1 : 
+                                            nodes.node_list(1)->begin();
+    int j_end = nodes.node_list(1)->end();
+    
+    for (int j = j_begin; j < j_end; j++) {
+     
+      arma::colvec vec_j;
+    
+      if (j_is_random_) {
+        vec_j = random_mat_.col(j);
+      }
+      else {
+        vec_j = data_mat_.col(j);
+      }
+      
+      int k_begin;
+      if (j_is_random_ == k_is_random_ 
+          && nodes.node_list(1) == nodes.node_list(2)) {
+        k_begin = j+1;
+      }
+      else {
+        k_begin = nodes.node_list(2)->begin();
+      }
+      int k_end = nodes.node_list(2)->end();
+
+      for (int k = k_begin; k < k_end; k++) {
+        
+        std::vector<int> valid_thetas;
+        
+        arma::colvec vec_k;
+        if (k_is_random_) {
+          vec_k = random_mat_.col(k);
+        }
+        else {
+          vec_k = data_mat_.col(k); 
+        }
+        
+        int valid_r1 = TestPointTuple_(vec_i, vec_j, vec_k, valid_thetas);
+        
+        if (valid_r1 >= 0) {
+          
+          double weight_i = i_is_random_ ? random_weights_[i] : data_weights_[i];
+          double weight_j = j_is_random_ ? random_weights_[j] : data_weights_[j];
+          double weight_k = k_is_random_ ? random_weights_[k] : data_weights_[k];
+          double this_weight = weight_i * weight_j * weight_k;
+          
+          for (int theta_ind = 0; theta_ind < valid_thetas.size() ; theta_ind++) {
+            
+            results_[num_random_][valid_r1][valid_thetas[theta_ind]]++;
+            weighted_results_[num_random_][valid_r1][valid_thetas[theta_ind]]+= this_weight;
+            
+          } // iterate over valid thetas
+          
+        } // found valid r1
+        
+      } // for k
+      
+    } // for j
+    
+  } // for i (first element of list)
+  
+} // ComputeBaseCase
+
 
 
 // returns the index of the value of r1 that is satisfied by the tuple
 // the list contains the indices of thetas_ that are satisfied by the tuple
 // assumes that valid_theta_indices is initialized and empty
 // Important: it is possible to have a tuple satisfy more than one matcher
-int npt::AngleMatcher::TestPointTuple(arma::colvec& vec1, arma::colvec& vec2, 
-                                      arma::colvec& vec3,
-                                      std::vector<int>& valid_theta_indices) {
+int npt::AngleMatcher::TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2, 
+                                       arma::colvec& vec3,
+                                       std::vector<int>& valid_theta_indices) {
   
   // TODO: profile this while optimized 
   
@@ -190,12 +268,13 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
 */
 
 // Trying this again
-bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1, 
-                                      const DHrectBound<2>& box2,
-                                      const DHrectBound<2>& box3) {
+bool npt::AngleMatcher::TestNodeTuple(NodeTuple& nodes) {
   
   // pruning options: all three distances are shorter than the shortest r1
   // or longer than the longest one
+  DHrectBound<2>& box1 = nodes.node_list(0)->bound(); 
+  DHrectBound<2>& box2 = nodes.node_list(1)->bound();
+  DHrectBound<2>& box3 = nodes.node_list(2)->bound();
   
   bool possibly_valid = true;
   
@@ -388,6 +467,44 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   return possibly_valid;
   
 } // TestNodeTuple
+
+void npt::AngleMatcher::OutputResults() {
+  
+  PrintNumPrunes();
+  
+  std::string d_string(tuple_size_, 'D');
+  std::string r_string(tuple_size_, 'R');
+  std::string label_string;
+  label_string+=d_string;
+  label_string+=r_string;
+  
+  for (int i = 0; i <= tuple_size_; i++) {
+    
+    // i is the number of random points in the tuple
+    std::string this_string(label_string, i, tuple_size_);
+    mlpack::IO::Info << this_string << "\n";
+    
+    for (index_t j = 0; j < results_[i].size(); j++) {
+      
+      for (index_t k = 0; k < results_[i][j].size(); k++) {
+        
+        mlpack::IO::Info << "Matcher: ";
+        mlpack::IO::Info << "R1: " << short_sides_[j] << ", ";
+        mlpack::IO::Info << "R2: " << (short_sides_[j] * long_side_multiplier_) << ", ";
+        mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
+        
+        mlpack::IO::Info << results_[i][j][k] << "\n";
+        
+      } // for k
+      
+    } // for j
+    
+    mlpack::IO::Info << "\n\n";
+    
+  } // for i
+  
+  
+} // OutputResults
 
 
 

@@ -27,10 +27,25 @@ namespace npt {
     
   private:
 
+    
+    arma::mat& data_mat_;
+    arma::colvec& data_weights_;
+    
+    arma::mat& random_mat_;
+    arma::colvec& random_weights_;
+    
+    
+    // first index: num_random_
+    // second index: matcher_ind_0 + num_bands[0]*matcher_ind_1 + . . .
+    std::vector<std::vector<int> > results_;
+    std::vector<std::vector<double> > weighted_results_;
+    
+    
     // for now, I'm assuming a single, global thickness for each dimension of 
     // the matcher
     double bandwidth_;
     double half_band_;
+    int total_matchers_;
     
     int tuple_size_;
     
@@ -60,6 +75,7 @@ namespace npt {
     
     Permutations perms_;
     int num_permutations_;
+    int num_random_;
     
     
     // We want the matcher dimension that is the distance between point i and j
@@ -69,6 +85,11 @@ namespace npt {
       return perms_.GetPermutation(perm_index, pt_index);
     } // GetPermIndex_
     
+    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<bool>& permutation_ok,
+                         std::vector<std::vector<index_t> >& perm_locations,
+                         std::vector<index_t>& points_in_tuple, int k);
+    
     
   public:
     
@@ -76,9 +97,20 @@ namespace npt {
                  const std::vector<double>& max_bands,
                  const std::vector<int>& num_bands, 
                  const double band, index_t tuple_size) : num_bands_(num_bands),
-    perms_(tuple_size), tuple_size_(tuple_size)
+    perms_(tuple_size), tuple_size_(tuple_size), results_(tuple_size+1),
+    weighted_results_(tuple_size+1)
     {
 
+      total_matchers_ = 1;
+      for (index_t i = 0; i < num_bands.size(); i++) {
+        total_matchers_ *= num_bands[i];
+      }
+      for (int i = 0; i <= tuple_size_; i++) {
+        results_[i].resize(total_matchers_, 0);
+        weighted_results_[i].resize(total_matchers_, 0.0);
+      }      
+      
+      
       bandwidth_ = band;
       half_band_ = bandwidth_ / 2.0;
       
@@ -141,6 +173,20 @@ namespace npt {
                        std::vector<std::vector<index_t> >&perm_locations);
     
     bool TestNodeTuple(NodeTuple& nodes);
+    
+    void BaseCase(NodeTuple& nodes);
+    
+    void set_num_random(int n) {
+      num_random_ = n;
+    }
+    
+    std::vector<std::vector<int> >& results() {
+      return results_;
+    }
+    
+    std::vector<std::vector<double> >& weighted_results() {
+      return weighted_results_;
+    }
     
     
     int num_permutations() {

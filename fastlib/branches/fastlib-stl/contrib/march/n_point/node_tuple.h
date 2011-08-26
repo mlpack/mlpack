@@ -18,6 +18,7 @@ namespace npt {
 
   typedef mlpack::tree::BinarySpaceTree<DHrectBound<2>, arma::mat> NptNode;
   
+  // this is now just responsible for checking symmetry
   class NodeTuple { 
     
   public:
@@ -30,8 +31,8 @@ namespace npt {
     index_t tuple_size_;
     
     // entry i, j is the distance bound for entries i and j in the list above
-    arma::mat upper_bounds_sq_;
-    arma::mat lower_bounds_sq_;
+    //arma::mat upper_bounds_sq_;
+    //arma::mat lower_bounds_sq_;
     
     // IMPORTANT: all the upper and lower bounds start off the same, 
     // so this doesn't matter
@@ -39,8 +40,8 @@ namespace npt {
     //arma::Mat<index_t> map_lower_to_sorted_;
     
     // sorted upper and lower node distances
-    std::vector<double> sorted_upper_;
-    std::vector<double> sorted_lower_;
+    //td::vector<double> sorted_upper_;
+    //std::vector<double> sorted_lower_;
     
     int num_random_;
     
@@ -66,7 +67,7 @@ namespace npt {
     //void UpdateIndices_(index_t split_ind, 
     //                    std::vector<index_t>& invalid_indices);
     
-    void FillInSortedArrays_();
+    //void FillInSortedArrays_();
 
     void UpdateSplitInd_();
 
@@ -79,10 +80,10 @@ namespace npt {
     // The copy constructor will be used for the others
     NodeTuple(std::vector<NptNode*>& list_in, int num_random) :
     tuple_size_(list_in.size()),
-    sorted_upper_((tuple_size_ * (tuple_size_ - 1)) / 2),
-    sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
-    upper_bounds_sq_(tuple_size_, tuple_size_),
-    lower_bounds_sq_(tuple_size_, tuple_size_),
+    //sorted_upper_((tuple_size_ * (tuple_size_ - 1)) / 2),
+    //sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
+    //upper_bounds_sq_(tuple_size_, tuple_size_),
+    //lower_bounds_sq_(tuple_size_, tuple_size_),
     num_random_(num_random)
     {
      
@@ -93,7 +94,7 @@ namespace npt {
      UpdateSplitInd_();
      
     
-     FillInSortedArrays_();
+     //FillInSortedArrays_();
       
       /*
       for (index_t i = 0; i < sorted_upper_.size(); i++) {
@@ -118,10 +119,10 @@ namespace npt {
     // use this constructor to make children in the recursion
     NodeTuple(NodeTuple& parent, bool is_left) : tuple_size_(parent.tuple_size()),
     node_list_(parent.get_node_list()),
-    sorted_upper_(parent.sorted_upper().size()), 
-    sorted_lower_(parent.sorted_lower().size()),
-    upper_bounds_sq_(tuple_size_, tuple_size_),
-    lower_bounds_sq_(tuple_size_, tuple_size_),
+    //sorted_upper_(parent.sorted_upper().size()), 
+    //sorted_lower_(parent.sorted_lower().size()),
+    //upper_bounds_sq_(tuple_size_, tuple_size_),
+    //lower_bounds_sq_(tuple_size_, tuple_size_),
     num_random_(parent.num_random())
     {
       
@@ -143,7 +144,7 @@ namespace npt {
       UpdateIndices_(ind_to_split_, invalid_inds);
       */
       UpdateSplitInd_();
-      FillInSortedArrays_();
+      //FillInSortedArrays_();
       
       
     } // constructor (children)
@@ -153,13 +154,14 @@ namespace npt {
       return node_list_;
     }
     
-    
+    /*
     const std::vector<double>& sorted_upper() const {
       return sorted_upper_;
     }
     const std::vector<double> sorted_lower() const {
       return sorted_lower_;
     }
+    */
     
     /*
     const std::vector<index_t>& input_to_upper() const {
@@ -175,7 +177,7 @@ namespace npt {
       return ranges_;
     }
      */
-    
+    /*
     double upper_bound(index_t i) {
       return sorted_upper_[i];
     }
@@ -191,6 +193,7 @@ namespace npt {
     double lower_mat(index_t i, index_t j) {
       return lower_bounds_sq_(i,j);
     }
+    */
     
     bool all_leaves() {
       return all_leaves_;

@@ -14,7 +14,7 @@
 #define ANGLE_MATCHER_H
 
 #include "fastlib/fastlib.h"
-
+#include "node_tuple.h"
 
 // Assumptions (for now):
 //
@@ -30,6 +30,19 @@ namespace npt {
   class AngleMatcher {
     
   private:
+    
+    arma::mat& data_mat_;
+    arma::colvec& data_weights_;
+    
+    arma::mat& random_mat_;
+    arma::colvec& random_weights_;
+    
+    int num_random_;
+    
+    // indexed by [num_random][r1][theta]
+    std::vector<std::vector<std::vector<int> > > results_;
+    std::vector<std::vector<std::vector<double> > > weighted_results_;
+    
     
     std::vector<double> short_sides_;
     // the long side is this times the short side
@@ -65,16 +78,22 @@ namespace npt {
     std::vector<std::vector<double> > r3_lower_sqr_;
     std::vector<std::vector<double> > r3_upper_sqr_;
     
+    bool i_is_random_;
+    bool j_is_random_;
+    bool k_is_random_;
     
-    
+    int tuple_size_;
+    int num_base_cases_;
     
     // This is 0.25 in the thesis (or maybe 0.1?)
     // Note that the bin thickness is this times the scale
     // Does this mean in each dimension?
     double bin_thickness_factor_;
     
+    /*
     double min_area_sq_;
     double max_area_sq_;
+    */
     
     double longest_possible_side_sqr_;
     double shortest_possible_side_sqr_;
@@ -94,18 +113,32 @@ namespace npt {
     
     double ComputeR3_(double r1, double r2, double theta);
     
+    int TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2, 
+                        arma::colvec& vec3,
+                        std::vector<int>& valid_theta_indices);
+    
     
   public:
     
-    AngleMatcher(std::vector<double>& short_sides, double long_side,
+    AngleMatcher(arma::mat& data_in, arma::colvec& weights_in,
+                 arma::mat& random_in, arma::colvec& rweights_in,
+                 std::vector<double>& short_sides, double long_side,
                  std::vector<double>& thetas, double bin_size) :
     short_sides_(short_sides), long_side_multiplier_(long_side), 
     thetas_(thetas), bin_thickness_factor_(bin_size),
     r3_sides_(short_sides.size()), long_sides_(short_sides.size()),
     r1_lower_sqr_(short_sides.size()), r1_upper_sqr_(short_sides.size()), 
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
-    r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()) {
+    r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()),
+    results_(4), weighted_results_(4),
+    data_mat_(data_in), data_weights_(weights_in), 
+    random_mat_(random_in), random_weights_(rweights_in)
+    {
       
+      mlpack::IO::Info << "Starting construction of angle matcher.\n";
+      
+      tuple_size_ = 3;
+      num_base_cases_ = 0;
 
       cos_theta_cutoff_ = 1.0 / (2.0 * long_side_multiplier_);
       theta_cutoff_ = acos(cos_theta_cutoff_);
@@ -190,6 +223,21 @@ namespace npt {
       // especially for r3
       
       
+      for (int i = 0; i <= tuple_size_; i++) {
+        
+        results_[i].resize(short_sides_.size());
+        weighted_results_[i].resize(short_sides_.size());
+        
+        for (int j = 0; j < short_sides_.size(); j++) {
+          
+          results_[i][j].resize(thetas_.size(), 0);
+          weighted_results_[i][j].resize(thetas_.size(), 0.0);
+          
+        } // for j
+        
+      } // for i
+      
+      
       /*
       mlpack::IO::Info << "r1_lower_sqr_: ";
       for (int i = 0; i < r1_lower_sqr_.size(); i++) {
@@ -256,16 +304,37 @@ namespace npt {
     // returns the index of the value of r1 that is satisfied by the tuple
     // the list contains the indices of thetas_ that are satisfied by the tuple
     // assumes that valid_theta_indices is initialized and empty
-    int TestPointTuple(arma::colvec& vec1, arma::colvec& vec2, 
-                       arma::colvec& vec3,
-                       std::vector<int>& valid_theta_indices);
+    
+    void set_num_random(int n) {
+      
+      num_random_ = n;
+      
+      i_is_random_ = (num_random_ > 0);
+      j_is_random_ = (num_random_ > 1);
+      k_is_random_ = (num_random_ > 2);
+
+    }
+    
+    int tuple_size() {
+      return tuple_size_;
+    }
+    
+    std::vector<std::vector<std::vector<int> > >& results() {
+      return results_;
+    }
+
+    std::vector<std::vector<std::vector<double> > >& weighted_results() {
+      return weighted_results_;
+    }
+    
+    void ComputeBaseCase(NodeTuple& nodes);
     
     // returns true if the tuple of nodes might contain a tuple of points that
     // satisfy one of the matchers
     // If false, then pruning is ok
-    bool TestNodeTuple(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
-                       const DHrectBound<2>& box3);
+    bool TestNodeTuple(NodeTuple& nodes);
     
+    void OutputResults();
     
     void PrintNumPrunes() {
      
@@ -281,13 +350,14 @@ namespace npt {
       mlpack::IO::Info << "Num large r3 prunes: " << num_large_r3_prunes_ << "\n";
       mlpack::IO::Info << "Num large r2 prunes: " << num_large_r2_prunes_ << "\n";
       mlpack::IO::Info << "Num small r2 prunes: " << num_small_r2_prunes_ << "\n";
+      mlpack::IO::Info << "Num base cases: " << num_base_cases_ << "\n";
       
     }
     
     
   }; // AngleMatcher
 
-}
+} // namespace
 
 
 #endif
