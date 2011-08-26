@@ -73,6 +73,10 @@ class DistributedDualtreeDfs {
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The type of the ID of subtables.
+     */
+    typedef typename SubTableType::SubTableIDType SubTableIDType;
+
   private:
 
     /** @brief The pointer to the boost communicator.

@@ -45,6 +45,10 @@ class SubTable {
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The ID type of the subtable.
+     */
+    typedef boost::tuple<int, int, int> SubTableIDType;
+
     /** @brief The class for indicating the node ID for which the
      *         points are serialized underneath.
      */
@@ -201,6 +205,14 @@ class SubTable {
     }
 
   public:
+
+    /** @brief Returns the identifier information of the
+     *         subtable. Currently (rank, begin, count) is the ID.
+     */
+    SubTableIDType subtable_id() const {
+      return SubTableIDType(
+               table_->rank(), start_node_->begin(), start_node_->count());
+    }
 
     void set_start_node(TreeType *start_node_in) {
       start_node_ = start_node_in;

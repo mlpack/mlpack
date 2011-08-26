@@ -376,10 +376,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         }
 
         // Push in the completed amount of work.
-        boost::tuple<int, int, int> query_subtree_id(
-          task_query_table->rank(),
-          found_task.first.query_start_node()->begin(),
-          found_task.first.query_start_node()->count());
+        SubTableIDType query_subtree_id =
+          found_task.first.query_subtable().subtable_id();
         unsigned long int completed_work =
           static_cast<unsigned long int>(
             found_task.first.query_start_node()->count()) *
