@@ -54,13 +54,16 @@ class DistributedDualtreeTaskQueue {
     /** @brief The type of the distributed task queue.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
-    DistributedTableType, TaskPriorityQueueType,
-                        QueryResultType > DistributedDualtreeTaskQueueType;
+    DistributedTableType,
+    TaskPriorityQueueType,
+    QueryResultType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
     typedef core::parallel::DistributedDualtreeTaskList <
-    TaskPriorityQueueType, QueryResultType > TaskListType;
+    DistributedTableType,
+    TaskPriorityQueueType,
+    QueryResultType > TaskListType;
 
   private:
 
