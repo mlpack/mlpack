@@ -34,7 +34,7 @@ class DistributedDualtreeTaskList {
 
     typedef typename TableType::TreeType TreeType;
 
-    typedef boost::tuple<int, int, int> ValueType;
+    typedef typename SubTableType::SubTableIDType ValueType;
 
     typedef ValueType KeyType;
 
@@ -72,6 +72,8 @@ class DistributedDualtreeTaskList {
 
   private:
 
+    int destination_rank_;
+
     MapType id_to_position_map_;
 
     unsigned long int remaining_extra_points_to_hold_;
@@ -80,9 +82,39 @@ class DistributedDualtreeTaskList {
 
   private:
 
-    bool FindSubTable_(const boost::tuple<int, int, int> &subtable_id) {
+    bool FindSubTable_(const KeyType &subtable_id) {
       return
         id_to_position_map_.find(subtable_id) != id_to_position_map_.end();
+    }
+
+    /** @brief Removes the subtable with the given ID.
+     */
+    void pop_(const KeyType &subtable_id) {
+
+      // Find the position in the subtable list.
+      ValueType last_subtable_id = sub_tables_.back().subtable_id();
+      typename MapType::iterator remove_position_it =
+        this->id_to_position_map_.find(subtable_id);
+      int remove_position = -1;
+      if(remove_position_it != id_to_position_map_.end()) {
+        remove_position = *remove_position_it;
+      }
+
+      if(remove_position >= 0) {
+
+        // Overwrite with the last subtable in the list and decrement.
+        remaining_extra_points_to_hold_ +=
+          sub_tables_[remove_position].start_node()->count();
+        id_to_position_map_.erase(sub_tables_[remove_position].subtable_id());
+        sub_tables_[ remove_position ].Alias(sub_tables_.back());
+        sub_tables_.pop_back();
+        if(sub_tables_.size() > 0) {
+          id_to_position_map_[ last_subtable_id ] = remove_position;
+        }
+        else {
+          id_to_position_map_.erase(last_subtable_id);
+        }
+      }
     }
 
     /** @brief Returns true if the subtable can be transferred within
@@ -91,10 +123,7 @@ class DistributedDualtreeTaskList {
     bool push_back_(SubTableType &test_subtable_in) {
 
       // If already pushed, then return.
-      boost::tuple<int, int, int> subtable_id(
-        test_subtable_in.table()->rank(),
-        test_subtable_in.start_node()->begin(),
-        test_subtable_in.start_node()->count());
+      KeyType subtable_id = test_subtable_in.subtable_id();
       if(FindSubTable_(subtable_id)) {
         return true;
       }
@@ -114,10 +143,14 @@ class DistributedDualtreeTaskList {
   public:
 
     DistributedDualtreeTaskList() {
+      destination_rank_ = 0;
       remaining_extra_points_to_hold_ = 0;
     }
 
-    void Init(unsigned long int remaining_extra_points_to_hold_in) {
+    void Init(
+      int destination_rank_in,
+      unsigned long int remaining_extra_points_to_hold_in) {
+      destination_rank_ = destination_rank_in;
       remaining_extra_points_to_hold_ = remaining_extra_points_to_hold_in;
     }
 
@@ -133,18 +166,19 @@ class DistributedDualtreeTaskList {
       int probe_index) {
 
       bool empty_flag = true;
+      int num_reference_subtables = 0;
 
       // First, we need to serialize the query subtree.
-      if(! this->push_back_(
-            distributed_task_queue_in.query_subtable(probe_index))) {
+      SubTableType &query_subtable =
+        distributed_task_queue_in.query_subtable(probe_index);
+      if(! this->push_back_(query_subtable)) {
         empty_flag = false;
       }
 
-      /*
       // And its associated reference sets.
-      while(empty_flag && query_subtree_task_queue.size() > 0) {
-        std::pair<TaskType, int> test_task;
-        const TaskType &test_task = query_subtree_task_queue.top();
+      while(empty_flag && distributed_task_queue_in.size(probe_index) > 0) {
+        const TaskType &test_task =
+          distributed_task_queue_in.top(probe_index);
         if(this->push_back_(test_task.reference_subtable())) {
           empty_flag = false;
         }
@@ -152,13 +186,24 @@ class DistributedDualtreeTaskList {
 
           // Pop from the list and we need to release it from the
           // cache.
-          table_exchange_in.ReleaseCache(
+          distributed_task_queue_in.ReleaseCache(
             world, test_task.reference_subtable().cache_block_id(), 1);
-          table_exchange_in.decrement;
-          query_subtree_task_queue.pop();
+          distributed_task_queue_in.pop(probe_index);
+          num_reference_subtables++;
         }
       }
-      */
+
+      // If no reference subtable was pushed in, there is no point in
+      // sending the query subtable.
+      if(num_reference_subtables == 0) {
+        this->pop_(query_subtable.subtable_id());
+      }
+      else {
+
+        // Otherwise, lock the query subtable.
+        distributed_task_queue_in.LockQuerySubtree(
+          probe_index, destination_rank_);
+      }
       return empty_flag;
     }
 

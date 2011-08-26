@@ -38,6 +38,10 @@ class DistributedDualtreeTaskQueue {
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The ID of subtables.
+     */
+    typedef typename SubTableType::SubTableIDType SubTableIDType;
+
     /** @brief The routing request type.
      */
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
@@ -280,8 +284,7 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief Finds the query subtable with the given index.
      */
-    int FindQuerySubtreeIndex_(
-      const boost::tuple<int, int, int> &query_node_id) {
+    int FindQuerySubtreeIndex_(const SubTableIDType &query_node_id) {
       int found_index = -1;
       for(unsigned int i = 0;
           found_index < 0 && i < query_subtables_.size(); i++) {
@@ -453,7 +456,7 @@ class DistributedDualtreeTaskQueue {
      *         subtable.
      */
     void push_completed_computation(
-      const boost::tuple<int, int, int> &query_node_id,
+      const SubTableIDType &query_node_id,
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
       unsigned long int quantity_in) {
@@ -535,10 +538,16 @@ class DistributedDualtreeTaskQueue {
       return query_subtables_.size();
     }
 
+    /** @brief Locks the given query subtree for the given MPI
+     *         process.
+     */
+    void LockQuerySubtree(int probe_index, int locking_mpi_rank) {
+      query_subtree_locks_[ probe_index ] = locking_mpi_rank;
+    }
+
     /** @brief Returns the lock to the given query subtree.
      */
-    void UnlockQuerySubtree(
-      const boost::tuple<int, int, int> &query_subtree_id) {
+    void UnlockQuerySubtree(const SubTableIDType &query_subtree_id) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       // Unlock the query subtree.
@@ -654,6 +663,14 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    const TaskType &top(int probe_index) const {
+      return tasks_[probe_index].top();
+    }
+
+    void pop(int probe_index) {
+      tasks_[probe_index].pop();
+    }
+
     /** @brief Dequeues a task, optionally locking a query subtree
      *         associated with it.
      *
@@ -687,7 +704,8 @@ class DistributedDualtreeTaskQueue {
       }
 
       // Otherwise, determine whether the cleanup needs to be done.
-      else if(remaining_work_for_query_subtables_[probe_index] == 0) {
+      if(query_subtree_locks_[probe_index] < 0 &&
+          remaining_work_for_query_subtables_[probe_index] == 0) {
         this->Evict_(probe_index);
         return true;
       }
