@@ -4,38 +4,39 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-#	n_point_main.cc
-	n_point_single_main.cc
-	n_point_multi_main.cc
+#	n_point_single_main.cc
+#	n_point_multi_main.cc
 	permutations.h
 	permutations.cc
 	single_matcher.h
 	single_matcher.cc
-	single_bandwidth_alg.h
-	single_bandwidth_alg.cc
-	naive_alg.h
-	naive_alg.cc
+#	single_bandwidth_alg.h
+#	single_bandwidth_alg.cc
+#	naive_alg.h
+#	naive_alg.cc
 	node_tuple.h
 	node_tuple.cc
 	#old_node_tuple.h
 	#old_node_tuple.cc
-	perm_free_matcher.h
-	perm_free_matcher.cc
-	perm_free_alg.h
-	perm_free_alg.cc
-	multi_bandwidth_alg.h
-	multi_bandwidth_alg.cc
-	multi_matcher.h
-	multi_matcher.cc
+#	perm_free_matcher.h
+#	perm_free_matcher.cc
+#	perm_free_alg.h
+#	perm_free_alg.cc
+#	multi_bandwidth_alg.h
+#	multi_bandwidth_alg.cc
+#	multi_matcher.h
+#	multi_matcher.cc
 	matcher_generation.h
 	matcher_generation.cc
 	angle_matcher.h
 	angle_matcher.cc
-	angle_3pt_alg.h
-	angle_3pt_alg.cc
+#	angle_3pt_alg.h
+#	angle_3pt_alg.cc
 	n_point_angle_main.cc
 	angle_matcher_generation.h
 	angle_matcher_generation.cc
+	generic_npt_alg.h
+	generic_npt_alg_impl.h
 )
 
 # add directory name to sources
@@ -59,25 +60,25 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #   mlpack_contrib
 #)
 
-add_executable(n_point_single_main
-   EXCLUDE_FROM_ALL
-   n_point_single_main.cc
-)
-target_link_libraries(n_point_single_main
-   fastlib
-   mlpack
-   mlpack_contrib
-)
+#add_executable(n_point_single_main
+#   EXCLUDE_FROM_ALL
+#   n_point_single_main.cc
+#)
+#target_link_libraries(n_point_single_main
+#   fastlib
+#   mlpack
+#   mlpack_contrib
+#)
 
-add_executable(n_point_multi_main
-   EXCLUDE_FROM_ALL
-   n_point_multi_main.cc
-)
-target_link_libraries(n_point_multi_main
-   fastlib
-   mlpack
-   mlpack_contrib
-)
+#add_executable(n_point_multi_main
+#   EXCLUDE_FROM_ALL
+#   n_point_multi_main.cc
+#)
+#target_link_libraries(n_point_multi_main
+#   fastlib
+#   mlpack
+#   mlpack_contrib
+#)
 
 add_executable(n_point_angle_main
    EXCLUDE_FROM_ALL

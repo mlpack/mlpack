@@ -36,13 +36,33 @@ index_t npt::MultiMatcher::IndexMatcherDim_(index_t i, index_t j) {
 
 bool npt::MultiMatcher::TestNodeTuple(NodeTuple& nodes) {
 
+  std::vector<double> node_lower_;
+  std::vector<double> node_upper_;
+  
+  for (int i = 0; i < nodes.tuple_size(); i++) {
+    
+    for (int j = i+1; j < nodes.tuple_size(); j++) {
+      
+      double lo = nodes.node_list(i).bound().MinDistanceSq(nodes.node_list(j));
+      double hi = nodes.node_list(i).bound().MaxDistanceSq(nodes.node_list(j));
+      
+      node_lower_.push_back(lo);
+      node_upper_.push_back(hi);
+      
+    }
+    
+  }
+
+  std::sort(node_lower_.begin(), node_lower_.end());
+  std::sort(node_upper_.begin(), node_upper_.end());
+
   for (index_t i = 0; i < upper_bounds_sq_.size(); i++) {
     
-    if (nodes.lower_bound(i) > upper_bounds_sq_[i]) {
+    if (node_lower_[i] > upper_bounds_sq_[i]) {
       return false;
     }
     
-    if (nodes.upper_bound(i) < lower_bounds_sq_[i]) {
+    if (node_upper_[i] < lower_bounds_sq_[i]) {
       return false;
     }
     
@@ -53,9 +73,9 @@ bool npt::MultiMatcher::TestNodeTuple(NodeTuple& nodes) {
 } // TestNodeTuple
 
 
-bool npt::MultiMatcher::TestPointPair(double dist_sq, index_t new_ind, index_t old_ind,
-                                 std::vector<bool>& permutation_ok,
-                                 std::vector<std::vector<index_t> >&perm_locations) {
+bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t old_ind,
+                                       std::vector<bool>& permutation_ok,
+                                       std::vector<std::vector<index_t> >&perm_locations) {
 
   bool any_matches = false;
   
@@ -156,6 +176,182 @@ bool npt::MultiMatcher::TestPointPair(double dist_sq, index_t new_ind, index_t o
   return any_matches;
   
 } // TestPointPair
+
+
+void npt::MultiBandwidthAlg::BaseCaseHelper_(
+                                             std::vector<std::vector<index_t> >& point_sets,
+                                             std::vector<bool>& permutation_ok,
+                                             std::vector<std::vector<index_t> >& perm_locations,
+                                             std::vector<index_t>& points_in_tuple,
+                                             int k) {
+  
+  
+  // perm_locations[i][j] = k means that in the ith permutation, that 
+  // matcher_dists_[j][k] is the current entry in the matcher that this tuple
+  // satisfies
+  
+  std::vector<bool> perm_ok_copy(permutation_ok);
+  std::vector<std::vector<index_t> > perm_locations_copy(perm_locations);
+  
+  bool bad_symmetry = false;
+  
+  // iterate over possible new points
+  for (index_t i = 0; i < point_sets[k].size(); i++) {
+    
+    index_t new_point_ind = point_sets[k][i];
+    bool this_point_works = true;
+    
+    bad_symmetry = false;
+    
+    bool i_is_random = (k < num_random_);
+    
+    arma::colvec new_point_vec;
+    
+    if (i_is_random) {
+      new_point_vec = random_mat_.col(new_point_ind);
+    } 
+    else {
+      new_point_vec = data_mat_.col(new_point_ind);
+    }
+    
+    // copy the permutation 
+    perm_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
+    
+    // TODO: check if I can accurately copy this more directly
+    for (index_t m = 0; m < perm_locations_copy.size(); m++) {
+      perm_locations_copy[m].assign(perm_locations[m].begin(), 
+                                    perm_locations[m].end());
+    } // for m
+    
+    // TODO: double check that I can exit on bad symmetry here
+    for (index_t j = 0; j < k && this_point_works && !bad_symmetry; j++) {
+      
+      index_t old_point_ind = points_in_tuple[j];
+      
+      bool j_is_random = (j < num_random_);
+      
+      bad_symmetry = (i_is_random == j_is_random) 
+      && (new_point_ind <= old_point_ind);
+      
+      // TODO: if bad_symmetry, can I break out of the loop?
+      if (!bad_symmetry) {
+        
+        arma::colvec old_point_vec;
+        if (j_is_random) {
+          old_point_vec = random_mat_.col(old_point_ind);
+        }
+        else {
+          old_point_vec = data_mat_.col(old_point_ind);
+        }
+        
+        double point_dist_sq = la::DistanceSqEuclidean(old_point_vec, 
+                                                       new_point_vec);
+        
+        this_point_works = TestPointPair_(point_dist_sq, j, k, 
+                                          perm_ok_copy,
+                                          perm_locations_copy);
+        // perm_locations_copy should now be filled in 
+        
+      } // check symmetry
+      
+    } // check existing points
+    
+    if (this_point_works && !bad_symmetry) {
+      
+      points_in_tuple[k] = new_point_ind;
+      
+      if (k == tuple_size_ - 1) {
+        
+        // fill in all the results that worked
+        
+        std::set<index_t> results_set;
+        
+        for (index_t n = 0; n < perm_locations_copy.size(); n++) {
+          
+          if (perm_ok_copy[n]) {
+            index_t results_ind = FindResultsInd_(perm_locations_copy[n]);
+            results_set.insert(results_ind);
+            //std::cout << "Inserting: " << results_ind << "\n";
+          }
+        } // for n
+        
+        // Now, iterate through all (distinct) results keys in the set and add
+        // them to the total
+        std::set<index_t>::iterator it;
+        
+        for (it = results_set.begin(); it != results_set.end(); it++) {
+          
+          results_[num_random_][*it]++;
+          
+        }
+        
+        double this_weight = 1.0;
+        for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
+          this_weight *= random_weights_(points_in_tuple[tuple_ind]);
+        }
+        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+             tuple_ind++) {
+          
+          this_weight *= data_weights_(points_in_tuple[tuple_ind]);
+          
+        } // iterate over the tuple
+        
+        for (it = results_set.begin(); it != results_set.end(); it++) {
+          weighted_results_[num_random_][*it] += this_weight;
+        } 
+        
+      }
+      else {
+        
+        BaseCaseHelper_(point_sets, perm_ok_copy, perm_locations_copy,
+                        points_in_tuple, k+1);
+        
+      }
+      
+    } // do we still need to work with these points?
+    
+  } // iterate over possible new points
+  
+  
+} // BaseCaseHelper_
+
+
+
+void npt::MultiMatcher::BaseCase(NodeTuple& nodes) {
+  
+  std::vector<std::vector<index_t> > point_sets(tuple_size_);
+  
+  for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
+    
+    point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
+    
+    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+      
+      point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
+      
+    } // for i
+    
+  } // for node_ind
+  
+  std::vector<bool> permutation_ok(num_permutations_, true);
+  
+  std::vector<index_t> points_in_tuple(tuple_size_, -1);
+  
+  std::vector<std::vector<index_t> > perm_locations(num_permutations_);
+  
+  for (index_t i = 0; i < perm_locations.size(); i++) {
+    perm_locations[i].resize(num_bands_.size(), INT_MAX);
+  }
+  
+  BaseCaseHelper_(point_sets, permutation_ok, perm_locations, 
+                  points_in_tuple, 0);
+  
+  
+  
+} // BaseCase
+
+
+
 
 
 

@@ -23,6 +23,17 @@ namespace npt {
     
   private:
     
+    // data
+    arma::mat data_mat_;
+    arma::colvec data_weights_;
+    
+    arma::mat random_mat_;
+    arma::colvec random_weights_;
+    
+    std::vector<int> results_;
+    std::vector<double> weighted_results_;
+    
+    
     arma::mat upper_bounds_sqr_mat_;
     arma::mat lower_bounds_sqr_mat_;
     
@@ -30,6 +41,8 @@ namespace npt {
     std::vector<double> lower_bounds_sqr_;
     
     index_t tuple_size_;
+    
+    int num_random_;
     
     // Still need this for exhaustive base cases
     Permutations perms_;
@@ -44,14 +57,29 @@ namespace npt {
       
     } // GetPermutation
     
+    bool TestPointPair_(double dist_sq, index_t tuple_index_1, 
+                        index_t tuple_index_2, 
+                        std::vector<bool>& permutation_ok);
+    
+    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<bool>& permutation_ok,
+                         std::vector<index_t>& points_in_tuple,
+                         int k);
+    
     
     
   public:
     
-    PermFreeMatcher(arma::mat& matcher_dists, double bandwidth) 
+    PermFreeMatcher(arma::mat& data, arma::colvec& weights,
+                    arma::mat& random, arma::colvec& rweights,
+                    arma::mat& matcher_dists, double bandwidth) 
     : perms_(matcher_dists.n_cols),
     lower_bounds_sqr_mat_(matcher_dists.n_rows, matcher_dists.n_cols),
-    upper_bounds_sqr_mat_(matcher_dists.n_rows, matcher_dists.n_cols)
+    upper_bounds_sqr_mat_(matcher_dists.n_rows, matcher_dists.n_cols),
+    data_mat_(data), data_weights_(weights),
+    random_mat_(random), random_weights_(rweights),
+    results_(matcher_dists.n_rows + 1),
+    weighted_results_(matcher_dists.n_rows + 1)
     {
       
       double half_band = bandwidth / 2.0;
@@ -112,12 +140,23 @@ namespace npt {
       return perms_.num_permutations();
     }
     
+    std::vector<int>& results() {
+     return results_ 
+    }
+
+    std::vector<double>& weighted_results() {
+      return weighted_results_ 
+    }
+    
+    void set_num_random(int n) {
+      num_random_ = n;
+    }
+    
+    
+    
     bool TestNodeTuple(NodeTuple& nodes);
     
-    bool TestPointPair(double dist_sq, index_t tuple_index_1, 
-                       index_t tuple_index_2, 
-                       std::vector<bool>& permutation_ok);
-    
+    void BaseCase(NodeTuple& nodes);
     
   }; // class
   

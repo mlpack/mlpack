@@ -10,10 +10,10 @@
 #include "fastlib/fastlib.h"
 #include <fastlib/fx/io.h>
 
-#include "single_bandwidth_alg.h"
+//#include "single_bandwidth_alg.h"
 #include "naive_alg.h"
-#include "perm_free_alg.h"
-#include "multi_bandwidth_alg.h"
+//#include "perm_free_alg.h"
+//#include "multi_bandwidth_alg.h"
 
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
@@ -135,6 +135,7 @@ int main(int argc, char* argv[]) {
     
   } // do naive
   
+  /*
   
   //index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
   index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
@@ -189,7 +190,7 @@ int main(int argc, char* argv[]) {
     
     
   } // perm free
-  
+  */
 
   //fx_done(NULL);
   
