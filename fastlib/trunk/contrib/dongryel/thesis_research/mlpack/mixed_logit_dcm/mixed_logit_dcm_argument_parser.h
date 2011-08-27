@@ -62,12 +62,12 @@ class MixedLogitDCMArgumentParser {
         "initial_dataset_sample_rate",
         boost::program_options::value<double>()->default_value(0.1),
         "OPTIONAL the rate at which to sample the entire dataset in the "
-        "beginning."
+        "beginning, $p_0^N$ in the paper."
       )(
         "initial_integration_sample_rate",
         boost::program_options::value<double>()->default_value(0.01),
         "OPTIONAL The percentage of the maximum average integration sample "
-        "to start with."
+        "to start with, $p_0^R$ in the paper."
       )(
         "initial_parameters_in",
         boost::program_options::value<std::string>(),
