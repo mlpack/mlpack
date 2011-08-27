@@ -313,6 +313,10 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    SubTableType *FindSubTable(int cache_id) {
+      return table_exchange_.FindSubTable(cache_id);
+    }
+
     void push_subtable(
       SubTableType &subtable_in, bool is_query_subtable,
       int num_referenced_as_reference_set) {
