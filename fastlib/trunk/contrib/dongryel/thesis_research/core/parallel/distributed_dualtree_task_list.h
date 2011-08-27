@@ -109,6 +109,12 @@ class DistributedDualtreeTaskList {
      */
     std::vector< boost::tuple<SubTableType, bool, int> > sub_tables_;
 
+    /** @brief The associated query result objects that must be
+     *         transferred. The second pair denotes the position of
+     *         the subtable list.
+     */
+    std::vector< std::pair<QueryResultType *, int> > query_results_;
+
     /** @brief The communicator for exchanging information.
      */
     boost::mpi::communicator *world_;
@@ -232,7 +238,7 @@ class DistributedDualtreeTaskList {
     /** @brief Exports the received task list to the distributed task
      *         queue.
      */
-    void Export() {
+    void Export(int source_rank_in) {
 
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
@@ -290,6 +296,14 @@ class DistributedDualtreeTaskList {
           distributed_task_queue_->pop(probe_index);
           donated_task_list_.back().second.push_back(
             reference_subtable_position);
+
+          // For each reference subtree stolen, the amount of local
+          // computation decreases.
+          unsigned long int stolen_local_computation =
+            query_subtable.start_node()->count() *
+            sub_tables_[ reference_subtable_position ].start_node()->count() ;
+          distributed_task_queue_->decrement_remaining_local_computation(
+            stolen_local_computation);
         }
       }
 
@@ -304,6 +318,12 @@ class DistributedDualtreeTaskList {
         // Otherwise, lock the query subtable.
         distributed_task_queue_->LockQuerySubtree(
           probe_index, destination_rank_);
+
+        // Push in the query result.
+        query_results_.resize(query_results_.size() + 1);
+        query_results_.back().first =
+          distributed_task_queue_->query_result(probe_index);
+        query_results_.back().second = query_subtable_position;
       }
     }
 
@@ -342,6 +362,14 @@ class DistributedDualtreeTaskList {
             ar & donated_task_list_[i].second[j];
           }
         }
+
+        // Save the associated query results.
+        int num_query_results = query_results_.size();
+        ar & num_query_results;
+        for(int i = 0; i < num_query_results; i++) {
+          ar & (*(query_results_[i].first));
+          ar & query_results_[i].second;
+        }
       }
     }
 
@@ -377,6 +405,15 @@ class DistributedDualtreeTaskList {
           for(int j = 0; j < sublist_size; j++) {
             ar & donated_task_list_[i].second[j];
           }
+        }
+
+        // Load the associated query results.
+        int num_query_results = query_results_.size();
+        ar & num_query_results;
+        for(int i = 0; i < num_query_results; i++) {
+          query_results_[i].first = new QueryResultType();
+          ar & (*(query_results_[i].first));
+          ar & query_results_[i].second;
         }
       }
     }

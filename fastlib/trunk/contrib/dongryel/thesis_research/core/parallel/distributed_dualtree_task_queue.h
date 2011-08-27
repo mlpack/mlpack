@@ -355,6 +355,12 @@ class DistributedDualtreeTaskQueue {
       return remaining_local_computation_ <= load_balancing_trigger_level_;
     }
 
+    /** @brief Returns the query result associated with the index.
+     */
+    QueryResultType *query_result(int probe_index) {
+      return query_results_[probe_index];
+    }
+
     /** @brief Returns the query subtable associated with the index.
      */
     SubTableType &query_subtable(int probe_index) {
@@ -388,6 +394,13 @@ class DistributedDualtreeTaskQueue {
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return remaining_global_computation_;
+    }
+
+    /** @brief Decrement the remaining amount of local computation.
+     */
+    void decrement_remaining_local_computation(unsigned long int decrement) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      remaining_local_computation_ -= decrement;
     }
 
     /** @brief Decrement the remaining amount of global computation.
