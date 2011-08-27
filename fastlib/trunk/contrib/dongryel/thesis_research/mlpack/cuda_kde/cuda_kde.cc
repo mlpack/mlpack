@@ -37,7 +37,7 @@ void StartComputation(boost::program_options::variables_map &vm) {
   }
 
   // KDE result.
-  mlpack::kde::KdeResult< std::vector<double> > kde_result;
+  mlpack::kde::KdeResult kde_result;
 
   // Invoke the CUDA kernel.
   float *kernel_sums_host =
