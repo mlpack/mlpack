@@ -311,8 +311,20 @@ class TableExchange {
 
       int receive_slot;
       if(extra_receive_slots_.size() > 0) {
-
+        receive_slot = extra_receive_slots_.back();
+        extra_receive_slots_.pop_back();
       }
+      else {
+        message_cache_.resize(message_cache_.size() + 1);
+        message_locks_.resize(message_locks_.size() + 1);
+        receive_slot = message_cache_.size() - 1;
+      }
+
+      // Steal the pointer owned by the incoming subtable.
+      message_cache_[receive_slot].subtable_route() = subtable_in;
+      message_cache_[
+        receive_slot].subtable_route().set_cache_block_id(receive_slot);
+      message_locks_[ receive_slot ] = num_referenced_as_reference_set;
     }
 
     /** @brief Queues the query subtable and its result flush request.

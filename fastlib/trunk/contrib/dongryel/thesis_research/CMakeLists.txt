@@ -15,12 +15,12 @@ find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 find_package(Pthreads REQUIRED)
 
 # include boost.
-set(Boost_ROOT "$ENV{HOME}/local/boost")
-set(Boost_LIB_DIR "${Boost_ROOT}/stage/lib")
-set(Boost_INCLUDE_DIRS "${Boost_ROOT}")
-set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR}/libboost_mpi.a;${Boost_LIB_DIR}/libboost_serialization.a;${Boost_LIB_DIR}/libboost_system.a;${Boost_LIB_DIR}/libboost_thread.a;${Boost_LIB_DIR}/libboost_unit_test_framework.a")
-#set(Boost_USE_STATIC_LIBS   ON)
-#find_package(Boost COMPONENTS program_options mpi serialization system thread unit_test_framework REQUIRED)
+#set(Boost_ROOT "$ENV{HOME}/local/boost")
+#set(Boost_LIB_DIR "${Boost_ROOT}/stage/lib")
+#set(Boost_INCLUDE_DIRS "${Boost_ROOT}")
+#set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR}/libboost_mpi.a;${Boost_LIB_DIR}/libboost_serialization.a;${Boost_LIB_DIR}/libboost_system.a;${Boost_LIB_DIR}/libboost_thread.a;${Boost_LIB_DIR}/libboost_unit_test_framework.a")
+set(Boost_USE_STATIC_LIBS   ON)
+find_package(Boost COMPONENTS program_options mpi serialization system thread unit_test_framework REQUIRED)
 include_directories(${Boost_INCLUDE_DIRS})
 
 # include trilinos.
@@ -28,7 +28,7 @@ include_directories(${Boost_INCLUDE_DIRS})
 #find_package(Trilinos REQUIRED)
 
 # Set the MPI compiler.
-set(MPI_COMPILER /usr/bin/mpicxx)
+set(MPI_COMPILER /home/dongryeol/local/openmpi-1.4.3/bin/mpicxx)
 
 # find MPI
 find_package(MPI)
