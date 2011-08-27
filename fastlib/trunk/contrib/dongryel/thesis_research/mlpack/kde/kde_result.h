@@ -57,6 +57,11 @@ class KdeResult {
      */
     int num_local_prunes_;
 
+    /** @brief Exports a subset of the result to another result.
+     */
+    void Export() {
+    }
+
     /** @brief Copies the given result back onto the result.
      */
     void Copy(const KdeResult & result_in) {
@@ -65,6 +70,9 @@ class KdeResult {
       densities_u_.Copy(result_in.densities_u_);
       pruned_.Copy(result_in.pruned_);
       used_error_.Copy(result_in.used_error_);
+      num_farfield_to_local_prunes_ += result_in.num_farfield_to_local_prunes_;
+      num_farfield_prunes_ += result_in.num_farfield_prunes_;
+      num_local_prunes_ += result_in.num_local_prunes_;
     }
 
     void operator=(const KdeResult &result_in) {
