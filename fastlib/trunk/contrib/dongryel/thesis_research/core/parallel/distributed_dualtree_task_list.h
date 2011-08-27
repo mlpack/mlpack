@@ -229,6 +229,21 @@ class DistributedDualtreeTaskList {
       world_ = NULL;
     }
 
+    /** @brief Exports the received task list to the distributed task
+     *         queue.
+     */
+    void Export() {
+
+      // Get a free slot for each subtable.
+      std::vector<int> assigned_cache_indices;
+      for(unsigned int i = 0; i < sub_tables_.size(); i++) {
+        assigned_cache_indices.push_back(
+          distributed_task_queue_->push_subtable(
+            sub_tables_[i].get<0>(), sub_tables_[i].get<1>(),
+            sub_tables_[i].get<2>()));
+      }
+    }
+
     /** @brief Initializes the task list.
      */
     void Init(
@@ -303,6 +318,8 @@ class DistributedDualtreeTaskList {
       if(num_subtables > 0) {
         for(int i = 0; i < num_subtables; i++) {
           ar & sub_tables_[i].get<0>();
+          ar & sub_tables_[i].get<1>();
+          ar & sub_tables_[i].get<2>();
 
           // If this is a reference subtable, then we need to release
           // it from the cache owned by the donating process.
@@ -342,10 +359,10 @@ class DistributedDualtreeTaskList {
         for(int i = 0; i < num_subtables; i++) {
 
           // Need to the cache block correction later.
-          sub_tables_[i].Init(i, false);
+          sub_tables_[i].get<0>().Init(i, false);
           ar & sub_tables_[i].get<0>();
-          sub_tables_[i].get<1>() = true;
-          sub_tables_[i].get<2>() = 1;
+          ar & sub_tables_[i].get<1>();
+          ar & sub_tables_[i].get<2>();
         }
 
         // Load the donated task lists.

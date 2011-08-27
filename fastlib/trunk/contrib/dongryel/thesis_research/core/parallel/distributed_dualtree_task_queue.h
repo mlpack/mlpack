@@ -313,6 +313,15 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    void push_subtable(
+      SubTableType &subtable_in, bool is_query_subtable,
+      int num_referenced_as_reference_set) {
+
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      table_exchange_.push_subtable(
+        subtable_in, num_referenced_as_reference_set);
+    }
+
     void SendLoadBalanceRequest(
       boost::mpi::communicator &world, int neighbor,
       core::parallel::DualtreeLoadBalanceRequest <

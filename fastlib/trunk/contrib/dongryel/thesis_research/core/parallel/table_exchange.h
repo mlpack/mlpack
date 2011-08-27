@@ -306,6 +306,15 @@ class TableExchange {
 
   public:
 
+    void push_subtable(
+      SubTableType &subtable_in, int num_referenced_as_reference_set) {
+
+      int receive_slot;
+      if(extra_receive_slots_.size() > 0) {
+
+      }
+    }
+
     /** @brief Queues the query subtable and its result flush request.
      */
     void QueueFlushRequest(
