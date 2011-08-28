@@ -749,8 +749,8 @@ class DistributedDualtreeTaskQueue {
         if(query_subtables_[probe_index]->table()->rank() == world.rank()) {
           if(remaining_work_for_query_subtables_[probe_index] == 0) {
             this->Evict_(probe_index);
+            return true;
           }
-          return true;
         }
 
         // If the query subtable is not from the MPI process of its
