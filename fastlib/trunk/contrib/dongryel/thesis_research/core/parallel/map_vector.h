@@ -120,6 +120,31 @@ class MapVector {
 
   public:
 
+    const boost::shared_ptr <
+    std::map<int, int> > &id_to_position_map() const {
+      return id_to_position_map_;
+    }
+
+    const boost::shared_ptr <
+    std::map<int, int> > &position_to_id_map() const {
+      return position_to_id_map_;
+    }
+
+    const boost::shared_array<T> &vector() const {
+      return vector_;
+    }
+
+    template<typename TreeIteratorType>
+    void Alias(
+      const core::parallel::MapVector<T> &source_in,
+      TreeIteratorType &it) {
+      id_to_position_map_ = source_in.id_to_position_map();
+      position_to_id_map_ = source_in.position_to_id_map();
+      num_elements_ = source_in.size();
+      vector_ = source_in.vector();
+      this->set_indices_to_save(it);
+    }
+
     /** @brief Copies another map vector onto this vector. Assumes
      *         that the mappings of the source and the destination are
      *         the same.
