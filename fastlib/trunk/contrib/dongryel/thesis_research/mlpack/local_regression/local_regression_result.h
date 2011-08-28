@@ -94,6 +94,25 @@ class LocalRegressionResult {
      */
     core::parallel::MapVector<double> right_hand_side_used_error_;
 
+    /** @brief Aliases a subset of the given result.
+     */
+    template<typename TreeIteratorType>
+    void Alias(
+      const LocalRegressionResult &result_in, TreeIteratorType &it) {
+      regression_estimates_.Alias(result_in.regression_estimates_, it);
+      left_hand_side_l_.Alias(result_in.left_hand_side_l_, it);
+      left_hand_side_e_.Alias(result_in.left_hand_side_e_, it);
+      left_hand_side_u_.Alias(result_in.left_hand_side_u_, it);
+      right_hand_side_l_.Alias(result_in.right_hand_side_l_, it);
+      right_hand_side_e_.Alias(result_in.right_hand_side_e_, it);
+      right_hand_side_u_.Alias(result_in.right_hand_side_u_, it);
+      pruned_.Alias(result_in.pruned_, it);
+      left_hand_side_used_error_.Alias(
+        result_in.left_hand_side_used_error_, it);
+      right_hand_side_used_error_.Alias(
+        result_in.right_hand_side_used_error_, it);
+    }
+
     void Copy(const LocalRegressionResult &result_in) {
       regression_estimates_.Copy(result_in.regression_estimates_);
       left_hand_side_l_.Copy(result_in.left_hand_side_l_);

@@ -57,9 +57,18 @@ class KdeResult {
      */
     int num_local_prunes_;
 
-    /** @brief Exports a subset of the result to another result.
+    /** @brief Aliases a subset of the given result.
      */
-    void Export() {
+    template<typename TreeIteratorType>
+    void Alias(const KdeResult &result_in, TreeIteratorType &it) {
+      densities_l_.Alias(result_in.densities_l_, it);
+      densities_.Alias(result_in.densities_, it);
+      densities_u_.Alias(result_in.densities_u_, it);
+      pruned_.Alias(result_in.pruned_, it);
+      used_error_.Alias(result_in.used_error_, it);
+      num_farfield_to_local_prunes_ = 0;
+      num_farfield_prunes_ = 0;
+      num_local_prunes_ = 0;
     }
 
     /** @brief Copies the given result back onto the result.
