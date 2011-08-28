@@ -136,7 +136,7 @@ class MapVector {
      */
     iterator get_iterator() const {
       return iterator(
-               vector_.get(), &(*position_to_id_map_), 0, num_elements_);
+               vector_.get(), position_to_id_map_.get(), 0, num_elements_);
     }
 
     /** @brief Returns the number of elements stored in the map
