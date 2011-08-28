@@ -75,7 +75,7 @@ class TestMixedLogitDCM {
 
     int StressTestMain() {
       for(int i = 0; i < 1; i++) {
-        for(int k = 0; k < 2; k++) {
+        for(int k = 0; k < 3; k++) {
 
           // Randomly choose the number of attributes and the number
           // of people and the number of discrete choices per each
@@ -93,12 +93,23 @@ class TestMixedLogitDCM {
             case 0:
 
               // Test the constant distribution.
-              StressTest<mlpack::mixed_logit_dcm::ConstantDistribution>();
+              StressTest <
+              mlpack::mixed_logit_dcm::ConstantDistribution > (
+                std::string("constant"));
               break;
             case 1:
 
-              // Test the Gaussian distribution.
-              StressTest<mlpack::mixed_logit_dcm::GaussianDistribution>();
+              // Test the diagonal Gaussian distribution.
+              StressTest <
+              mlpack::mixed_logit_dcm::DiagonalGaussianDistribution > (
+                std::string("diag_gaussian"));
+              break;
+            case 2:
+
+              // Test the full Gaussian distribution.
+              StressTest <
+              mlpack::mixed_logit_dcm::GaussianDistribution > (
+                std::string("full_gaussian"));
               break;
           }
         }
@@ -107,7 +118,7 @@ class TestMixedLogitDCM {
     }
 
     template<typename DistributionType>
-    int StressTest() {
+    int StressTest(const std::string &distribution_name) {
 
       typedef core::table::Table <
       core::tree::GenMetricTree <
@@ -115,6 +126,9 @@ class TestMixedLogitDCM {
 
       // The list of arguments.
       std::vector< std::string > args;
+
+      // Push in the distribution type.
+      args.push_back(std::string("--distribution_in=") + distribution_name);
 
       // Push in the reference dataset name.
       std::string attributes_in("random_attributes.csv");
