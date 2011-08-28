@@ -6,7 +6,8 @@
 #ifndef CORE_PARALLEL_MAP_VECTOR_H
 #define CORE_PARALLEL_MAP_VECTOR_H
 
-#include <boost/scoped_array.hpp>
+#include <boost/shared_array.hpp>
+#include <boost/shared_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <map>
 
@@ -21,15 +22,15 @@ class MapVector {
     friend class boost::serialization::access;
 
   private:
-    std::map<int, int> id_to_position_map_;
+    boost::shared_ptr< std::map<int, int> > id_to_position_map_;
 
-    std::map<int, int> position_to_id_map_;
+    boost::shared_ptr< std::map<int, int> > position_to_id_map_;
 
     std::vector<int> indices_to_save_;
 
     unsigned int num_elements_;
 
-    boost::scoped_array<T> vector_;
+    boost::shared_array<T> vector_;
 
   public:
 
@@ -134,7 +135,8 @@ class MapVector {
     /** @brief Gets an iterator of the current map vector object.
      */
     iterator get_iterator() const {
-      return iterator(vector_.get(), &position_to_id_map_, 0, num_elements_);
+      return iterator(
+               vector_.get(), &(*position_to_id_map_), 0, num_elements_);
     }
 
     /** @brief Returns the number of elements stored in the map
@@ -179,9 +181,9 @@ class MapVector {
       // Save each element and its mapping.
       for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
         int translated_position = indices_to_save_[i];
-        if(id_to_position_map_.size() > 0) {
+        if(id_to_position_map_->size() > 0) {
           translated_position =
-            modifiable_self->id_to_position_map_[ translated_position ];
+            (*modifiable_self->id_to_position_map_)[ translated_position ];
         }
         ar & vector_[ translated_position ];
         ar & indices_to_save_[i];
@@ -198,16 +200,22 @@ class MapVector {
 
       // Load the number of elements.
       ar & num_elements_;
-      boost::scoped_array<T> tmp_array(new T[ num_elements_]);
+      boost::shared_array<T> tmp_array(new T[ num_elements_]);
       vector_.swap(tmp_array);
+      boost::shared_ptr <
+      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
+      id_to_position_map_.swap(tmp_id_to_position_map);
+      boost::shared_ptr <
+      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
+      position_to_id_map_.swap(tmp_position_to_id_map);
 
       // Load each element and its mapping.
       for(unsigned int i = 0; i < num_elements_; i++) {
         int original_index;
         ar & vector_[i];
         ar & original_index;
-        id_to_position_map_[ original_index ] = i;
-        position_to_id_map_[ i ] = original_index;
+        (*id_to_position_map_)[ original_index ] = i;
+        (*position_to_id_map_)[ i ] = original_index;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -216,8 +224,14 @@ class MapVector {
      *         elements.
      */
     void Init(int num_elements_in) {
-      boost::scoped_array<T> tmp_vector(new T[num_elements_in]);
+      boost::shared_array<T> tmp_vector(new T[num_elements_in]);
       vector_.swap(tmp_vector);
+      boost::shared_ptr <
+      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
+      id_to_position_map_.swap(tmp_id_to_position_map);
+      boost::shared_ptr <
+      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
+      position_to_id_map_.swap(tmp_position_to_id_map);
       num_elements_ = num_elements_in;
     }
 
@@ -225,14 +239,15 @@ class MapVector {
      *         ID.
      */
     const T &operator[](int i) const {
-      if(id_to_position_map_.size() == 0) {
+      if(id_to_position_map_->size() == 0) {
         return vector_[i];
       }
       else {
+        core::parallel::MapVector<T> *modifiable_this =
+          const_cast< core::parallel::MapVector<T> * >(this);
         return
           vector_[
-            const_cast<
-            core::parallel::MapVector<T> * >(this)->id_to_position_map_[i] ];
+            (*(modifiable_this->id_to_position_map_))[i] ];
       }
     }
 
@@ -240,11 +255,11 @@ class MapVector {
      *         given ID.
      */
     T &operator[](int i) {
-      if(id_to_position_map_.size() == 0) {
+      if(id_to_position_map_->size() == 0) {
         return vector_[i];
       }
       else {
-        return vector_[ id_to_position_map_[i] ];
+        return vector_[(*id_to_position_map_)[i] ];
       }
     }
 };
