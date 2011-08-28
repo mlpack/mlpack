@@ -396,23 +396,8 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
       simulated_choice_probabilities.push_back(choice_probabilities);
     } // end of accumulating samples.
 
-    // Find the index with the maximum simulated choice probability
-    // and output it.
-    int max_index = 0;
-    double max_simulated_choice_probability =
-      simulated_choice_probabilities[0].sample_mean();
-    for(int j = 1; j < num_discrete_choices; j++) {
-      if(simulated_choice_probabilities[j].sample_mean() >
-          max_simulated_choice_probability) {
-        max_simulated_choice_probability =
-          simulated_choice_probabilities[j].sample_mean();
-        max_index = j;
-      }
-    } // end of looping over each discrete choice.
-
     // Write out the prediction for the current test person.
-    result_out->set_test_prediction(
-      i, max_index, max_simulated_choice_probability);
+    result_out->set_test_prediction(i, simulated_choice_probabilities);
 
   } // end of looping over each test person.
 }
