@@ -359,9 +359,12 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
   const ArgumentType &arguments_in,
   mlpack::mixed_logit_dcm::MixedLogitDCMResult *result_out) {
 
+  // Allocate the test predictions.
+  result_out->Init(test_table_.num_people());
+
   // Set up the distribution so that the samples can be drawn.
   test_table_.distribution().SetupDistribution(
-    result_out->trained_parameters_);
+    result_out->trained_parameters());
 
   // Loop over each test individual.
   for(int i = 0; i < test_table_.num_people(); i++) {
@@ -374,14 +377,15 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
     core::monte_carlo::MeanVariancePairVector simulated_choice_probabilities;
     simulated_choice_probabilities.Init(num_discrete_choices);
 
-    do {
+    for(int s = 0;
+        s < arguments_in.max_num_integration_samples_per_person_ ; s++) {
 
       // Draw a random beta from the distribution.
       arma::vec random_beta;
       test_table_.distribution().DrawBeta(
-        result_out->trained_parameters_, &random_beta);
+        result_out->trained_parameters(), &random_beta);
       test_table_.distribution().SamplingAccumulatePrecompute(
-        result_out->trained_parameters_, random_beta);
+        result_out->trained_parameters(), random_beta);
 
       // Given the beta vector, compute the choice probabilities.
       arma::vec choice_probabilities;
@@ -390,10 +394,27 @@ void MixedLogitDCM<TableType, DistributionType>::Test(
 
       // Accumulate the choice probabilities.
       simulated_choice_probabilities.push_back(choice_probabilities);
+    } // end of accumulating samples.
 
-    }
-    while(true);
-  }
+    // Find the index with the maximum simulated choice probability
+    // and output it.
+    int max_index = 0;
+    double max_simulated_choice_probability =
+      simulated_choice_probabilities[0].sample_mean();
+    for(int j = 1; j < num_discrete_choices; j++) {
+      if(simulated_choice_probabilities[j].sample_mean() >
+          max_simulated_choice_probability) {
+        max_simulated_choice_probability =
+          simulated_choice_probabilities[j].sample_mean();
+        max_index = j;
+      }
+    } // end of looping over each discrete choice.
+
+    // Write out the prediction for the current test person.
+    result_out->set_test_prediction(
+      i, max_index, max_simulated_choice_probability);
+
+  } // end of looping over each test person.
 }
 
 template<typename TableType, typename DistributionType>
@@ -663,7 +684,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
   iterate->parameters().print();
 
   // Copy the final iterate parameter values to the result.
-  result_out->trained_parameters_ = iterate->parameters();
+  result_out->set_trained_parameters(iterate->parameters());
 
   // Free the iterate.
   delete iterate;
