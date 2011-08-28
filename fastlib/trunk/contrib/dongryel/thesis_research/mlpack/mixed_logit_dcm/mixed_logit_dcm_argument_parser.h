@@ -100,7 +100,7 @@ class MixedLogitDCMArgumentParser {
       )(
         "predictions_out",
         boost::program_options::value<std::string>()->default_value(
-          "densities_out.csv"),
+          "predicted_discrete_choices_out.csv"),
         "OPTIONAL file to store the predicted discrete choices."
       )(
         "random_seed_in",

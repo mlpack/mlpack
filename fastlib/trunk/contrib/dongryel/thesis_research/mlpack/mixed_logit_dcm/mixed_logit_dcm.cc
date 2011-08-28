@@ -34,13 +34,13 @@ void BranchOnDistribution(
   if(mixed_logit_dcm_arguments.test_attribute_table_ != NULL) {
     mixed_logit_dcm_instance.Test(
       mixed_logit_dcm_arguments, &mixed_logit_dcm_result);
-  }
 
-  // Output the mixed logit discrete choice model result to the file.
-  std::cerr << "Writing the discrete choice predictions to the file: " <<
-            mixed_logit_dcm_arguments.predictions_out_ << "\n";
-  mixed_logit_dcm_result.PrintDebug(
-    mixed_logit_dcm_arguments.predictions_out_);
+    // Output the mixed logit discrete choice model result to the file.
+    std::cerr << "Writing the discrete choice predictions to the file: " <<
+              mixed_logit_dcm_arguments.predictions_out_ << "\n";
+    mixed_logit_dcm_result.Print(
+      mixed_logit_dcm_arguments.predictions_out_);
+  }
 }
 
 int main(int argc, char *argv[]) {
