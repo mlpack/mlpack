@@ -97,6 +97,22 @@ class LocalRegressionResult {
     /** @brief Aliases a subset of the given result.
      */
     template<typename TreeIteratorType>
+    void Alias(TreeIteratorType &it) {
+      regression_estimates_.set_indices_to_save(it);
+      left_hand_side_l_.set_indices_to_save(it);
+      left_hand_side_e_.set_indices_to_save(it);
+      left_hand_side_u_.set_indices_to_save(it);
+      right_hand_side_l_.set_indices_to_save(it);
+      right_hand_side_e_.set_indices_to_save(it);
+      right_hand_side_u_.set_indices_to_save(it);
+      pruned_.set_indices_to_save(it);
+      left_hand_side_used_error_.set_indices_to_save(it);
+      right_hand_side_used_error_.set_indices_to_save(it);
+    }
+
+    /** @brief Aliases a subset of the given result.
+     */
+    template<typename TreeIteratorType>
     void Alias(
       const LocalRegressionResult &result_in, TreeIteratorType &it) {
       regression_estimates_.Alias(result_in.regression_estimates_, it);

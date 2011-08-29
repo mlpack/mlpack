@@ -60,6 +60,17 @@ class KdeResult {
     /** @brief Aliases a subset of the given result.
      */
     template<typename TreeIteratorType>
+    void Alias(TreeIteratorType &it) {
+      densities_l_.set_indices_to_save(it);
+      densities_.set_indices_to_save(it);
+      densities_u_.set_indices_to_save(it);
+      pruned_.set_indices_to_save(it);
+      used_error_.set_indices_to_save(it);
+    }
+
+    /** @brief Aliases a subset of the given result.
+     */
+    template<typename TreeIteratorType>
     void Alias(const KdeResult &result_in, TreeIteratorType &it) {
       densities_l_.Alias(result_in.densities_l_, it);
       densities_.Alias(result_in.densities_, it);

@@ -30,6 +30,10 @@ class DistributedDualtreeTaskQueue {
      */
     typedef typename DistributedTableType::TableType TableType;
 
+    /** @brief The iterator type.
+     */
+    typedef typename TableType::TreeIterator TreeIteratorType;
+
     /** @brief The tree type used in the exchange process.
      */
     typedef typename TableType::TreeType TreeType;
@@ -98,7 +102,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief The query result objects that correspond to each query
      *         subtable.
      */
-    std::vector<QueryResultType *> query_results_;
+    std::vector< boost::shared_ptr<QueryResultType> > query_results_;
 
     /** @brief The query subtable corresponding to the disjoint set of
      *         work to do for the current MPI process.
@@ -228,7 +232,7 @@ class DistributedDualtreeTaskQueue {
                           world, reference_subtable.table()->rank());
       TaskType new_task(
         *(query_subtables_[push_index]),
-        query_results_[ push_index ],
+        query_results_[ push_index ].get(),
         reference_subtable,
         priority);
       tasks_[ push_index]->push(new_task);
@@ -252,14 +256,22 @@ class DistributedDualtreeTaskQueue {
       // of trees, plus duplicating the reference tasks along the way.
       TreeType *prev_qnode = query_subtables_[subtree_index]->start_node();
       TreeType *left = prev_qnode->left();
+      TreeIteratorType left_it =
+        query_subtables_[subtree_index]->table()->get_node_iterator(left);
       TreeType *right = prev_qnode->right();
+      TreeIteratorType right_it =
+        query_subtables_[subtree_index]->table()->get_node_iterator(right);
 
       // Overwrite with the left child.
       query_subtables_[subtree_index]->set_start_node(left);
+      query_results_[subtree_index]->Alias(left_it);
 
       // Grow the list of local query subtrees.
       originating_ranks_.push_back(originating_ranks_[subtree_index]);
-      query_results_.push_back(query_results_[subtree_index]);
+      query_results_.push_back(
+        boost::shared_ptr<QueryResultType>(new QueryResultType()));
+      query_results_.back()->Alias(
+        *(query_results_[subtree_index]), right_it);
       query_subtables_.push_back(
         boost::shared_ptr<SubTableType>(new SubTableType()));
       query_subtables_.back()->Alias(*(query_subtables_[subtree_index]));
@@ -622,7 +634,12 @@ class DistributedDualtreeTaskQueue {
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         originating_ranks_[i] = world.rank();
-        query_results_[i] = local_query_result_in;
+        query_results_[i] =
+          boost::shared_ptr< QueryResultType >(new QueryResultType());
+        TreeIteratorType qnode_it =
+          query_subtables_[i]->table()->get_node_iterator(
+            query_subtables_[i]->start_node());
+        query_results_[i]->Alias(* local_query_result_in, qnode_it);
         query_subtree_locks_[i] = -1;
         tasks_[i] = boost::shared_ptr <
                     TaskPriorityQueueType > (new TaskPriorityQueueType());

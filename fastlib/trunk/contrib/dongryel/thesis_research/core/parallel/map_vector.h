@@ -183,6 +183,14 @@ class MapVector {
      */
     template<typename TreeIteratorType>
     void set_indices_to_save(TreeIteratorType &it) {
+      indices_to_save_.resize(0);
+      this->add_indices_to_save(it);
+    }
+
+    /** @brief Adds an additional set of indices to save.
+     */
+    template<typename TreeIteratorType>
+    void add_indices_to_save(TreeIteratorType &it) {
       while(it.HasNext()) {
         int point_id;
         it.Next(&point_id);
