@@ -278,7 +278,32 @@ void BinarySpaceTree<TBound, TDataset, TStatistic>::Print() const {
     right_->Print();
   }
 }
+/*
+template<typename TBound, typename TDataset, typename TStatistic>
+void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(Dataset& data) {
+  // First, check if we need to split at all.
+  if (count_ < leaf_size)
+    return; // We can't split this.
 
+  // Figure out which dimension to split on.
+  index_t split_dim = dataset.n_rows; // Indicate invalid by max_dim + 1.
+  double max_width = -1;
+
+  // This should be a single function for TBound.
+  // We need to expand the bounds of this node properly.
+  for (index_t i = begin_; i < (begin_ + count_); i++)
+    bounds |= data.unsafe_col(i);
+
+  // 
+}
+
+template<typename TBound, typename TDataset, typename TStatistic>
+void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(
+    Dataset& data,
+    std::vector<index_t>& old_from_new) {
+
+}
+*/
 }; // namespace tree
 }; // namespace mlpack
 

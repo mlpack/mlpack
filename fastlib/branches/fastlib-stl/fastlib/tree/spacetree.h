@@ -40,7 +40,9 @@ class BinarySpaceTree {
   BinarySpaceTree *left_;
   BinarySpaceTree *right_;
   index_t begin_;
+ public:
   index_t count_;
+ private:
   Statistic stat_;
   Bound bound_;
 
@@ -144,6 +146,19 @@ class BinarySpaceTree {
   index_t count() const;
   
   void Print() const;
+
+ private:
+
+  /***
+   * Splits the current node, assigning its left and right children recursively.
+   *
+   * Optionally, return a list of the changed indices.
+   */
+//  void SplitNode(Dataset& data);
+//  void SplitNode(Dataset& data, std::vector<index_t>& old_from_new);
+
+//  index_t GetSplitIndex(Dataset& data, int split_dim);
+
 };
 
 }; // namespace tree
