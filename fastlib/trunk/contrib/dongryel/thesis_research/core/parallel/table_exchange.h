@@ -309,6 +309,8 @@ class TableExchange {
 
   public:
 
+    /** @brief Pushes subtables received from load-balancing.
+     */
     void push_subtable(
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
 
@@ -328,6 +330,9 @@ class TableExchange {
       message_cache_[
         receive_slot].subtable_route().set_cache_block_id(receive_slot);
       message_locks_[ receive_slot ] = num_referenced_as_reference_set;
+
+      // Decrement the number of extra points to receive.
+      remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
     }
 
     /** @brief Queues the query subtable and its result flush request.
@@ -339,6 +344,8 @@ class TableExchange {
 
     }
 
+    /** @brief Returns the number of extra points that can be held.
+     */
     unsigned long int remaining_extra_points_to_hold() const {
       return remaining_extra_points_to_hold_;
     }
