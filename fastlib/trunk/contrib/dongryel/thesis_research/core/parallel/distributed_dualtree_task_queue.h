@@ -308,7 +308,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Initializes a new query subtable queue with its query
      *         subresult.
      */
-    void PushNewQueue(
+    int PushNewQueue(
       int originating_rank_in, SubTableType &query_subtable_in,
       QueryResultType *query_subresult_in) {
 
@@ -321,6 +321,8 @@ class DistributedDualtreeTaskQueue {
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtree_locks_.back() = -1;
       remaining_work_for_query_subtables_.back() = 0;
+
+      return tasks_.size() - 1;
     }
 
     /** @brief Pushes a given reference node onto a task list of the
