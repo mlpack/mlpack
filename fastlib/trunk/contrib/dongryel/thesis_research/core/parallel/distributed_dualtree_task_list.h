@@ -107,7 +107,8 @@ class DistributedDualtreeTaskList {
      *         query. The third pair denotes the number of times the
      *         subtable is referenced as a reference set.
      */
-    std::vector< boost::tuple<SubTableType, bool, int> > sub_tables_;
+    std::vector <
+    boost::tuple< SubTableType, bool, int> > sub_tables_;
 
     /** @brief The associated query result objects that must be
      *         transferred. The second pair denotes the position of
@@ -170,7 +171,7 @@ class DistributedDualtreeTaskList {
             id_to_position_map_.erase(
               sub_tables_[remove_position].get<0>().subtable_id());
             sub_tables_[ remove_position ].get<0>().Alias(
-              sub_tables_.back().get<0>());
+              *(sub_tables_.back().get<0>()));
             sub_tables_[ remove_position ].get<1>() =
               sub_tables_.back().get<1>();
             sub_tables_[ remove_position ].get<2>() =
@@ -204,7 +205,7 @@ class DistributedDualtreeTaskList {
       else if(test_subtable_in.start_node()->count() <=
               remaining_extra_points_to_hold_) {
         sub_tables_.resize(sub_tables_.size() + 1);
-        sub_tables_.back().get<0>().Alias(test_subtable_in);
+        sub_tables_.back().get<0>()->Alias(test_subtable_in);
         if(count_as_query) {
           sub_tables_.back().get<1>() = true;
         }
@@ -245,8 +246,11 @@ class DistributedDualtreeTaskList {
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
-            sub_tables_[i].get<0>(), sub_tables_[i].get<1>(),
-            sub_tables_[i].get<2>()));
+            sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
+
+        // For each query subtable, initialize a new queue and its
+        // tasks.
+
       }
     }
 

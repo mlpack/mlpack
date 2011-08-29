@@ -151,6 +151,17 @@ class DistributedDualtreeTaskQueue {
 
   private:
 
+    void GrowSlots_() {
+      assigned_work_.resize(assigned_work_.size() + 1);
+      originating_ranks_.resize(originating_ranks_.size() + 1);
+      query_results_.resize(query_results_.size() + 1);
+      query_subtables_.resize(query_subtables_.size() + 1);
+      query_subtree_locks_.resize(query_subtree_locks_.size() + 1);
+      remaining_work_for_query_subtables_.resize(
+        remaining_work_for_query_subtables_.size() + 1);
+      tasks_.resize(tasks_.size() + 1);
+    }
+
     /** @brief Flushes a query subtable to be written back to its
      *         origin.
      */
@@ -210,37 +221,6 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
-    /** @brief Pushes a given reference node onto a task list of the
-     *         given query subtable.
-     */
-    template<typename MetricType>
-    void PushTask_(
-      boost::mpi::communicator &world,
-      const MetricType &metric_in,
-      int push_index,
-      SubTableType &reference_subtable) {
-
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-
-      // Compute the priority and push in.
-      core::math::Range squared_distance_range(
-        query_subtables_[push_index]->start_node()->bound().RangeDistanceSq(
-          metric_in, reference_subtable.start_node()->bound()));
-      double priority = - squared_distance_range.mid() -
-                        process_rank_favor_factor_ *
-                        table_exchange_.process_rank(
-                          world, reference_subtable.table()->rank());
-      TaskType new_task(
-        *(query_subtables_[push_index]),
-        query_results_[ push_index ].get(),
-        reference_subtable,
-        priority);
-      tasks_[ push_index]->push(new_task);
-
-      // Increment the number of tasks.
-      num_remaining_tasks_++;
-    }
-
     /** @brief Splits the given subtree, making an additional task
      *         queue in process.
      */
@@ -294,10 +274,10 @@ class DistributedDualtreeTaskQueue {
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
-        this->PushTask_(
+        this->PushTask(
           world, metric_in, subtree_index,
           prev_tasks[i].reference_subtable());
-        this->PushTask_(
+        this->PushTask(
           world, metric_in, query_subtables_.size() - 1,
           prev_tasks[i].reference_subtable());
 
@@ -325,13 +305,61 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    /** @brief Initializes a new query subtable queue with its query
+     *         subresult.
+     */
+    void PushNewQueue(
+      int originating_rank_in, SubTableType &query_subtable_in,
+      QueryResultType *query_subresult_in) {
+
+      // Get more slots.
+      this->GrowSlots_();
+      originating_ranks_.back() = originating_rank_in;
+      boost::shared_ptr< QueryResultType > tmp_query_result(
+        query_subresult_in);
+      query_results_.back().swap(tmp_query_result);
+      query_subtables_.back()->Alias(query_subtable_in);
+      query_subtree_locks_.back() = -1;
+      remaining_work_for_query_subtables_.back() = 0;
+    }
+
+    /** @brief Pushes a given reference node onto a task list of the
+     *         given query subtable.
+     */
+    template<typename MetricType>
+    void PushTask(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
+      int push_index,
+      SubTableType &reference_subtable) {
+
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // Compute the priority and push in.
+      core::math::Range squared_distance_range(
+        query_subtables_[push_index]->start_node()->bound().RangeDistanceSq(
+          metric_in, reference_subtable.start_node()->bound()));
+      double priority = - squared_distance_range.mid() -
+                        process_rank_favor_factor_ *
+                        table_exchange_.process_rank(
+                          world, reference_subtable.table()->rank());
+      TaskType new_task(
+        *(query_subtables_[push_index]),
+        query_results_[ push_index ].get(),
+        reference_subtable,
+        priority);
+      tasks_[ push_index]->push(new_task);
+
+      // Increment the number of tasks.
+      num_remaining_tasks_++;
+    }
+
     SubTableType *FindSubTable(int cache_id) {
       return table_exchange_.FindSubTable(cache_id);
     }
 
     void push_subtable(
-      SubTableType &subtable_in, bool is_query_subtable,
-      int num_referenced_as_reference_set) {
+      SubTableType &subtable_in, int num_referenced_as_reference_set) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       table_exchange_.push_subtable(
@@ -484,7 +512,7 @@ class DistributedDualtreeTaskQueue {
                   frontier_reference_subtable->table()->rank(),
                   reference_begin,
                   reference_begin + reference_count))) {
-            this->PushTask_(
+            this->PushTask(
               world, metric_in, j, * frontier_reference_subtable);
             table_exchange_.LockCache(cache_id, 1);
           }
@@ -719,12 +747,19 @@ class DistributedDualtreeTaskQueue {
       }
     }
 
+    /** @brief Examines the top task in the given task list.
+     */
     const TaskType &top(int probe_index) const {
       return tasks_[probe_index].top();
     }
 
+    /** @brief Removes the top task in the given task list.
+     */
     void pop(int probe_index) {
       tasks_[probe_index].pop();
+
+      // Decrement the number of tasks.
+      num_remaining_tasks_--;
     }
 
     /** @brief Dequeues a task, optionally locking a query subtree
