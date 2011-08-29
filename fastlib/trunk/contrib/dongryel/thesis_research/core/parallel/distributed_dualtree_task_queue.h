@@ -356,6 +356,7 @@ class DistributedDualtreeTaskQueue {
     void PrepareExtraTaskList(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
+      int neighbor_rank_in,
       unsigned long int neighbor_remaining_extra_points_to_hold_in,
       TaskListType *extra_task_list_out) {
 
@@ -363,7 +364,13 @@ class DistributedDualtreeTaskQueue {
 
       // Loop over every unlocked query subtable and try to pack as
       // many tasks as possible.
+      extra_task_list_out->Init(
+        world, neighbor_rank_in, neighbor_remaining_extra_points_to_hold_in,
+        *this);
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+        if(! query_subtables_[i]->is_locked()) {
+
+        }
       }
     }
 

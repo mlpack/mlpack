@@ -224,7 +224,10 @@ class TableExchange {
       return ready_flag;
     }
 
-    void LoadBalance_(boost::mpi::communicator & world, int neighbor) {
+    template<typename MetricType>
+    void LoadBalance_(
+      boost::mpi::communicator & world,
+      const MetricType &metric_in, int neighbor) {
 
       // Send to the neighbor what the status is on the current MPI
       // process.
@@ -263,6 +266,7 @@ class TableExchange {
       extra_task_list_sent.first = false;
       if(neighbor_load_balance_request.needs_load_balancing()) {
         task_queue_->PrepareExtraTaskList(
+          world, metric_in, neighbor,
           neighbor_load_balance_request.remaining_extra_points_to_hold(),
           & outgoing_extra_task_list);
         extra_task_list_sent.second =
@@ -278,9 +282,17 @@ class TableExchange {
         core::parallel::DistributedDualtreeTaskList <
         DistributedTableType, TaskPriorityQueueType,
                             QueryResultType > incoming_extra_task_list;
-        world.recv(
-          neighbor, core::parallel::MessageTag::TASK_LIST,
-          incoming_extra_task_list);
+        while(true) {
+          if(boost::optional< boost::mpi::status > l_status =
+                world.iprobe(
+                  neighbor,
+                  core::parallel::MessageTag::TASK_LIST)) {
+            world.recv(
+              neighbor, core::parallel::MessageTag::TASK_LIST,
+              incoming_extra_task_list);
+            break;
+          }
+        }
       }
 
       // Wait until the task list send request is completed.
@@ -677,7 +689,7 @@ class TableExchange {
         task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Initiate load balancing with the neighbor.
-        // LoadBalance_(world, neighbor);
+        LoadBalance_(world, metric_in, neighbor);
 
         // Increment the stage when done, and turn off the stage flag.
         stage_ = (stage_ + 1) % max_stage_;
