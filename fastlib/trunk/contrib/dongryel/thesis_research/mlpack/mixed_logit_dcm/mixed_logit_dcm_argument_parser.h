@@ -121,6 +121,11 @@ class MixedLogitDCMArgumentParser {
         "OPTIONAL The file containing the number of alternative per each "
         "person for the test set."
       )(
+        "true_parameters_in",
+        boost::program_options::value<std::string>(),
+        "OPTIONAL The file containing the true parameters, used for checking "
+        "(optionally) convergence against the current iterate."
+      )(
         "trust_region_search_method",
         boost::program_options::value<std::string>()->default_value("cauchy"),
         "OPTIONAL Trust region search method.  One of:\n"
@@ -320,6 +325,13 @@ class MixedLogitDCMArgumentParser {
         arguments_out->random_seed_ = vm["random_seed_in"].as<int>();
         core::math::global_random_number_state_.set_seed(
           arguments_out->random_seed_);
+      }
+
+      // Parse the true parameter values, if available.
+      if(vm.count("true_parameters_in") > 0) {
+        arguments_out->true_parameters_table_ = new TableType();
+        arguments_out->true_parameters_table_->Init(
+          vm["true_parameters_in"].as<std::string>());
       }
 
       // Parse how to perform the trust region search: cauchy, dogleg, steihaug
