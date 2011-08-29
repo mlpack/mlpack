@@ -758,6 +758,11 @@ class DistributedDualtreeTaskQueue {
     /** @brief Removes the top task in the given task list.
      */
     void pop(int probe_index) {
+
+      // Decrement the amount of local computation.
+      remaining_local_computation_ -= tasks_[probe_index].top().work();
+
+      // Pop.
       tasks_[probe_index].pop();
 
       // Decrement the number of tasks.
