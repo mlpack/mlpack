@@ -28,6 +28,10 @@ class DualtreeLoadBalanceRequest {
 
   public:
 
+    unsigned long int remaining_extra_points_to_hold() const {
+      return remaining_extra_points_to_hold_;
+    }
+
     bool needs_load_balancing() const {
       return needs_load_balancing_;
     }
@@ -84,7 +88,7 @@ class DualtreeLoadBalanceRequest {
       remaining_extra_points_to_hold_ = 0;
     }
 
-    DualtreeLoadBalanceRequest(
+    void Init(
       bool needs_load_balancing_in,
       std::vector< boost::shared_ptr<SubTableType> > &query_subtables,
       unsigned long int current_remaining_local_computation_in,
@@ -119,6 +123,18 @@ class DualtreeLoadBalanceRequest {
         // Set the maximum number of points to receive.
         remaining_extra_points_to_hold_ = remaining_extra_points_to_hold_in;
       }
+    }
+
+    DualtreeLoadBalanceRequest(
+      bool needs_load_balancing_in,
+      std::vector< boost::shared_ptr<SubTableType> > &query_subtables,
+      unsigned long int current_remaining_local_computation_in,
+      unsigned long int remaining_extra_points_to_hold_in) {
+
+      this->Init(
+        needs_load_balancing_in, query_subtables,
+        current_remaining_local_computation_in,
+        remaining_extra_points_to_hold_in);
     }
 };
 }

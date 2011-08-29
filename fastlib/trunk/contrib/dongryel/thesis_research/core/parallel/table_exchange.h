@@ -228,11 +228,14 @@ class TableExchange {
 
       // Send to the neighbor what the status is on the current MPI
       // process.
-      boost::mpi::request send_request;
       core::parallel::DualtreeLoadBalanceRequest <
-      SubTableType > *load_balance_request = NULL;
-      task_queue_->SendLoadBalanceRequest(
-        world, neighbor, &load_balance_request, &send_request);
+      SubTableType > load_balance_request;
+      task_queue_->PrepareLoadBalanceRequest(
+        world, neighbor, &load_balance_request);
+      boost::mpi::request send_request =
+        world.isend(
+          neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
+          load_balance_request);
 
       // Wait until the message from the neighbor is received.
       core::parallel::DualtreeLoadBalanceRequest <
@@ -253,8 +256,13 @@ class TableExchange {
       send_request.wait();
 
       // Now prepare the task list that must be sent to the neighbor.
+      core::parallel::DistributedDualtreeTaskList <
+      DistributedTableType, TaskPriorityQueueType,
+                          QueryResultType > extra_task_list;
       if(neighbor_load_balance_request.needs_load_balancing()) {
-
+        task_queue_->PrepareExtraTaskList(
+          neighbor_load_balance_request.remaining_extra_points_to_hold(),
+          &extra_task_list);
       }
 
       // Asynchronously send the extra work to the neighbor.
@@ -263,7 +271,7 @@ class TableExchange {
 
       // Receive from the neighbor the extra task list, if this
       // process needs work to do.
-      if(load_balance_request->needs_load_balancing()) {
+      if(load_balance_request.needs_load_balancing()) {
         while(true) {
           if(boost::optional< boost::mpi::status > l_status =
                 world.iprobe(
@@ -277,7 +285,6 @@ class TableExchange {
         }
       }
 
-      delete load_balance_request;
       // Wait until the send request is completed.
       //task_list_send.wait();
     }
