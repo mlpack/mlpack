@@ -259,9 +259,10 @@ class DistributedDualtreeTaskList {
       // For each query subresult, push in a new queue.
       for(unsigned int i = 0; i < query_results_.size(); i++) {
         int query_subtable_position = query_results_[i].second;
-        int new_position = distributed_task_queue_->PushNewQueue(
-                             source_rank_in, sub_tables_[ query_subtable_position ],
-                             query_results_[i].first);
+        int new_position =
+          distributed_task_queue_->PushNewQueue(
+            source_rank_in, sub_tables_[ query_subtable_position ],
+            query_results_[i].first);
         new_query_subtable_map[ query_subtable_position ] = new_position;
       }
 

@@ -356,10 +356,16 @@ class DistributedDualtreeTaskQueue {
       num_remaining_tasks_++;
     }
 
+    /** @brief Returns the subtable stored in the given position of
+     *         the cache.
+     */
     SubTableType *FindSubTable(int cache_id) {
       return table_exchange_.FindSubTable(cache_id);
     }
 
+    /** @brief Pushes a received subtable, locking the cache equal to
+     *         the given number of times.
+     */
     void push_subtable(
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
 
@@ -368,6 +374,9 @@ class DistributedDualtreeTaskQueue {
         subtable_in, num_referenced_as_reference_set);
     }
 
+    /** @brief Sends a load balancing request to the given MPI
+     *         process.
+     */
     void SendLoadBalanceRequest(
       boost::mpi::communicator &world, int neighbor,
       core::parallel::DualtreeLoadBalanceRequest <
