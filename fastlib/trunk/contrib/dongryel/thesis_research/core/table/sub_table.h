@@ -123,6 +123,11 @@ class SubTable {
      */
     int cache_block_id_;
 
+    /** @brief The MPI rank of the process holding the write lock on
+     *         this subtable.
+     */
+    int locked_mpi_rank_;
+
     /** @brief The table to be loaded/saved.
      */
     TableType *table_;
@@ -267,6 +272,7 @@ class SubTable {
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       cache_block_id_ = subtable_in.cache_block_id();
+      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
       data_ = const_cast<SubTableType &>(subtable_in).data();
@@ -285,6 +291,7 @@ class SubTable {
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       cache_block_id_ = subtable_in.cache_block_id();
+      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
       data_ = const_cast<SubTableType &>(subtable_in).data();
@@ -473,6 +480,7 @@ class SubTable {
     SubTable() {
       serialize_new_from_old_mapping_ = true;
       cache_block_id_ = 0;
+      locked_mpi_rank_ = -1;
       table_ = NULL;
       start_node_ = NULL;
       data_ = NULL;
@@ -494,6 +502,22 @@ class SubTable {
           delete table_;
         }
       }
+    }
+
+    int locked_mpi_rank() const {
+      return locked_mpi_rank_;
+    }
+
+    bool is_locked() const {
+      return locked_mpi_rank_ >= 0;
+    }
+
+    void Unlock() {
+      locked_mpi_rank_ = -1;
+    }
+
+    void Lock(int mpi_rank_in) {
+      locked_mpi_rank_ = mpi_rank_in;
     }
 
     /** @brief Returns the underlying table object.

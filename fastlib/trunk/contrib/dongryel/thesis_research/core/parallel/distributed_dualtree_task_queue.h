@@ -109,11 +109,6 @@ class DistributedDualtreeTaskQueue {
      */
     std::vector< boost::shared_ptr<SubTableType> > query_subtables_;
 
-    /** @brief The rank of the MPI process that has a lock on the
-     *         given query subtable.
-     */
-    std::deque<int> query_subtree_locks_;
-
     /** @brief The remaining global work for each query subtable.
      */
     std::vector< unsigned long int > remaining_work_for_query_subtables_;
@@ -156,7 +151,6 @@ class DistributedDualtreeTaskQueue {
       originating_ranks_.resize(originating_ranks_.size() + 1);
       query_results_.resize(query_results_.size() + 1);
       query_subtables_.resize(query_subtables_.size() + 1);
-      query_subtree_locks_.resize(query_subtree_locks_.size() + 1);
       remaining_work_for_query_subtables_.resize(
         remaining_work_for_query_subtables_.size() + 1);
       tasks_.resize(tasks_.size() + 1);
@@ -180,7 +174,6 @@ class DistributedDualtreeTaskQueue {
       originating_ranks_[probe_index] = originating_ranks_.back();
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
-      query_subtree_locks_[probe_index] = query_subtree_locks_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
       tasks_[probe_index] = tasks_.back();
@@ -189,7 +182,6 @@ class DistributedDualtreeTaskQueue {
       originating_ranks_.pop_back();
       query_results_.pop_back();
       query_subtables_.pop_back();
-      query_subtree_locks_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
       tasks_.pop_back();
     }
@@ -207,7 +199,7 @@ class DistributedDualtreeTaskQueue {
       int split_index_query_size = 0;
       int split_index = -1;
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        if(query_subtree_locks_[i] < 0  &&
+        if((! query_subtables_[i]->is_locked())  &&
             (! query_subtables_[i]->start_node()->is_leaf()) &&
             tasks_[i]->size() > 0 &&
             split_index_query_size <
@@ -256,7 +248,7 @@ class DistributedDualtreeTaskQueue {
         boost::shared_ptr<SubTableType>(new SubTableType()));
       query_subtables_.back()->Alias(*(query_subtables_[subtree_index]));
       query_subtables_.back()->set_start_node(right);
-      query_subtree_locks_.push_back(-1);
+      query_subtables_.back()->Unlock();
 
       // Adjust the list of tasks.
       std::vector<TaskType> prev_tasks;
@@ -319,9 +311,8 @@ class DistributedDualtreeTaskQueue {
         query_subresult_in);
       query_results_.back().swap(tmp_query_result);
       query_subtables_.back()->Alias(query_subtable_in);
-      query_subtree_locks_.back() = -1;
+      query_subtables_.back()->Unlock();
       remaining_work_for_query_subtables_.back() = 0;
-
       return tasks_.size() - 1;
     }
 
@@ -374,11 +365,19 @@ class DistributedDualtreeTaskQueue {
         subtable_in, num_referenced_as_reference_set);
     }
 
+    template<typename MetricType>
     void PrepareExtraTaskList(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
       unsigned long int neighbor_remaining_extra_points_to_hold_in,
       TaskListType *extra_task_list_out) {
 
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
+      // Loop over every unlocked query subtable and try to pack as
+      // many tasks as possible.
+      for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+      }
     }
 
     /** @brief Sends a load balancing request to the given MPI
@@ -632,7 +631,7 @@ class DistributedDualtreeTaskQueue {
      *         process.
      */
     void LockQuerySubtree(int probe_index, int locking_mpi_rank) {
-      query_subtree_locks_[ probe_index ] = locking_mpi_rank;
+      query_subtables_[ probe_index ]->Lock(locking_mpi_rank);
     }
 
     /** @brief Returns the lock to the given query subtree.
@@ -642,7 +641,7 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       // Unlock the query subtree.
       int subtree_index = this->FindQuerySubtreeIndex_(query_subtree_id);
-      query_subtree_locks_[ subtree_index ] = -1;
+      query_subtables_[ subtree_index ]->Unlock();
     }
 
     /** @brief Initializes the task queue.
@@ -669,7 +668,6 @@ class DistributedDualtreeTaskQueue {
       // Initialize the other member variables.
       originating_ranks_.resize(query_subtables_.size());
       query_results_.resize(query_subtables_.size());
-      query_subtree_locks_.resize(query_subtables_.size());
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         originating_ranks_[i] = world.rank();
@@ -679,7 +677,7 @@ class DistributedDualtreeTaskQueue {
           query_subtables_[i]->table()->get_node_iterator(
             query_subtables_[i]->start_node());
         query_results_[i]->Alias(* local_query_result_in, qnode_it);
-        query_subtree_locks_[i] = -1;
+        query_subtables_[i]->Unlock();
         tasks_[i] = boost::shared_ptr <
                     TaskPriorityQueueType > (new TaskPriorityQueueType());
       }
@@ -793,7 +791,7 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       if(tasks_[probe_index]->size() > 0) {
-        if(query_subtree_locks_[ probe_index ] < 0) {
+        if(! query_subtables_[ probe_index ]->is_locked()) {
 
           // Copy the task and the query subtree number.
           task_out->first = tasks_[ probe_index ]->top();
@@ -802,8 +800,8 @@ class DistributedDualtreeTaskQueue {
           // Pop the task from the priority queue after copying and
           // put a lock on the query subtree.
           tasks_[ probe_index ]->pop();
-          query_subtree_locks_[ probe_index ] =
-            lock_query_subtree_in ? world.rank() : -1 ;
+          query_subtables_[ probe_index ]->Lock(
+            lock_query_subtree_in ? world.rank() : -1);
 
           // Decrement the number of tasks.
           num_remaining_tasks_--;
@@ -811,7 +809,7 @@ class DistributedDualtreeTaskQueue {
       }
 
       // Otherwise, determine whether the cleanup needs to be done.
-      if(query_subtree_locks_[probe_index] < 0) {
+      if(! query_subtables_[probe_index]->is_locked()) {
 
         // If the query subtable is on the MPI process of its origin,
         if(query_subtables_[probe_index]->table()->rank() == world.rank()) {
