@@ -239,7 +239,10 @@ class DistributedDualtreeTaskList {
     /** @brief Exports the received task list to the distributed task
      *         queue.
      */
-    void Export(int source_rank_in) {
+    template<typename MetricType>
+    void Export(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in, int source_rank_in) {
 
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
@@ -247,11 +250,17 @@ class DistributedDualtreeTaskList {
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
             sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
-
-        // For each query subtable, initialize a new queue and its
-        // tasks.
-
       }
+
+      // For each query subresult, push in a new queue.
+      for(unsigned int i = 0; i < query_results_.size(); i++) {
+        distributed_task_queue_->PushNewQueue(
+          source_rank_in, sub_tables_[ query_results_[i].second ],
+          query_results_[i].first);
+      }
+
+      // Now push in the task list.
+
     }
 
     /** @brief Initializes the task list.
