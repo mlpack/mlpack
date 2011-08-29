@@ -8,6 +8,8 @@ set(SOURCES
   lmetric.cc
   mahalanobis_distance.h
   mahalanobis_distance_impl.h
+  cosine_distance.h
+  cosine_distance.cc
 )
 
 # add directory name to sources
@@ -25,5 +27,6 @@ add_executable(kernel_test
 )
 target_link_libraries(kernel_test
   fastlib
+  mlpack
   boost_unit_test_framework
 )
