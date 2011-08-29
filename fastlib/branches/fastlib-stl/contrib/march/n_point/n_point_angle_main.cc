@@ -16,7 +16,7 @@
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
 PARAM_STRING_REQ("random", "Poisson set coordinates.", NULL);
-PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL)
+PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL);
 PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
 PARAM_STRING("random_weights", "Optional weights on Poisson set.", NULL, "default_weights.csv");
 PARAM_STRING_REQ("matchers", "A 3 column, 2 row csv, row 1 is r1_min, r1_max, num_r1, row2 is the same for theta",
@@ -38,11 +38,11 @@ using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 
-  IO::Info << "parsing command line\n";
+  //IO::Info << "parsing command line\n";
   
   IO::ParseCommandLine(argc, argv);
   
-  IO::Info << "parsing complete\n";
+  //IO::Info << "parsing complete\n";
   
   std::string data_filename = IO::GetParam<std::string>("data");
   arma::mat data_in, data_mat;
@@ -156,7 +156,7 @@ int main(int argc, char* argv[]) {
                                      old_from_new_random);
   
   
-  mlpack::IO::Info << "trees built\n";
+  mlpack::IO::Info << "Trees built.\n";
   
   // IMPORTANT: need to permute weights here
 
@@ -176,7 +176,7 @@ int main(int argc, char* argv[]) {
                                r1_vec, r2_multiplier,
                                theta_vec, bin_thickness_factor);
     
-    IO::Info << "initializing angle alg.\n";
+    IO::Info << "Initializing angle alg.\n";
     
     GenericNptAlg<AngleMatcher> angle_alg(data_tree, random_tree, 
                                           angle_matcher);

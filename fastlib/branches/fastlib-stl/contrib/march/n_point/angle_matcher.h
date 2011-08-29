@@ -145,7 +145,7 @@ namespace npt {
     random_mat_(random_in), random_weights_(rweights_in)
     {
       
-      mlpack::IO::Info << "Starting construction of angle matcher.\n";
+      //mlpack::IO::Info << "Starting construction of angle matcher.\n";
       
       tuple_size_ = 3;
       num_base_cases_ = 0;
