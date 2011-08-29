@@ -47,14 +47,14 @@ namespace npt {
     
   public:
     
-    GenericNptAlg(NptNode* data, NptNode* random, TMatcher matcher_in) :
+    GenericNptAlg(NptNode* data, NptNode* random, TMatcher& matcher_in) :
     matcher_(matcher_in)
     {
       
       data_tree_root_ = data;
       random_tree_root_ = random;
       
-      mlpack::IO::Info << "generic alg constructor.\n";
+      //mlpack::IO::Info << "generic alg constructor.\n";
       
       num_prunes_ = 0;
       num_base_cases_ = 0;

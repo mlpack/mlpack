@@ -139,7 +139,7 @@ namespace npt {
       mlpack::IO::Info << node_list_[2] << "\n\n";
       */
       
-      
+      /*
       if (parent.node_list(0)->begin() == 0 &&
           parent.node_list(0)->count() == 48 &&
           parent.node_list(1)->begin() == 0 &&
@@ -150,6 +150,7 @@ namespace npt {
         mlpack::IO::Info << "found it.\n";
         
       }
+       */
       
       // TODO: make this more efficient
       // why wasnt the initialization list working?
