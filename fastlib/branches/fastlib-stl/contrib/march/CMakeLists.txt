@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 2.8)
 
 # we just want to recurse into the child directories here
 set(DIRS
-   emst_cover
-   error
+#   emst_cover
+#   error
 #   fock_matrix  ## awaiting resolution of #10 (requires libint)
 #   hf
-   npt
+#   npt
 #   scf  ## awaiting resolution of #10 (requires libint)
+   sandbox
+   n_point
 )
 
 foreach(dir ${DIRS})
