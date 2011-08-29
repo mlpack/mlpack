@@ -21,9 +21,6 @@ namespace npt {
   // this is now just responsible for checking symmetry
   class NodeTuple { 
     
-  public:
-    
-    
   private:
     
     std::vector<NptNode*> node_list_;
@@ -84,12 +81,15 @@ namespace npt {
     //sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
     //upper_bounds_sq_(tuple_size_, tuple_size_),
     //lower_bounds_sq_(tuple_size_, tuple_size_),
-    num_random_(num_random)
+    num_random_(num_random),
+    node_list_(list_in)
     {
      
+     /*
       for (index_t i = 0; i < tuple_size_; i++) {
         node_list_.push_back(list_in[i]);
-      } 
+      }
+      */
       
      UpdateSplitInd_();
      
@@ -117,14 +117,47 @@ namespace npt {
     } // constructor (init)
     
     // use this constructor to make children in the recursion
-    NodeTuple(NodeTuple& parent, bool is_left) : tuple_size_(parent.tuple_size()),
-    node_list_(parent.get_node_list()),
+    NodeTuple(NodeTuple& parent, bool is_left) : 
+    tuple_size_(parent.tuple_size()),
+    //node_list_(parent.get_node_list()),
+    node_list_(parent.tuple_size()),
     //sorted_upper_(parent.sorted_upper().size()), 
     //sorted_lower_(parent.sorted_lower().size()),
     //upper_bounds_sq_(tuple_size_, tuple_size_),
     //lower_bounds_sq_(tuple_size_, tuple_size_),
     num_random_(parent.num_random())
     {
+      
+      /*
+      mlpack::IO::Info << "constructing child.\n";
+      mlpack::IO::Info << "parent: " << parent.node_list(0);
+      mlpack::IO::Info << ", " << parent.node_list(1) << ", ";
+      mlpack::IO::Info << parent.node_list(2) << "\n";
+      
+      mlpack::IO::Info << "child (before update): " << node_list_[0];
+      mlpack::IO::Info << ", " << parent.node_list_[1] << ", ";
+      mlpack::IO::Info << node_list_[2] << "\n\n";
+      */
+      
+      
+      if (parent.node_list(0)->begin() == 0 &&
+          parent.node_list(0)->count() == 48 &&
+          parent.node_list(1)->begin() == 0 &&
+          parent.node_list(1)->count() == 93 &&
+          parent.node_list(2)->begin() == 0 &&
+          parent.node_list(2)->count() == 93) {
+        
+        mlpack::IO::Info << "found it.\n";
+        
+      }
+      
+      // TODO: make this more efficient
+      // why wasnt the initialization list working?
+      for (int i = 0; i < tuple_size_; i++) {
+        
+        node_list_[i] = parent.node_list(i);
+        
+      }
       
       ind_to_split_ = parent.ind_to_split();
       
@@ -143,7 +176,9 @@ namespace npt {
       
       UpdateIndices_(ind_to_split_, invalid_inds);
       */
+      
       UpdateSplitInd_();
+      
       //FillInSortedArrays_();
       
       
@@ -203,7 +238,7 @@ namespace npt {
       return ind_to_split_;
     }
     
-    NptNode* node_list(index_t i) {
+    NptNode*& node_list(index_t i) {
       return node_list_[i];
     }
     
