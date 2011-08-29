@@ -153,6 +153,13 @@ class SubTable {
      */
     boost::interprocess::offset_ptr<int> *new_from_old_;
 
+    /** @brief The rank of the MPI process from which every query
+     *         subtable/query result is derived. If not equal to the
+     *         current MPI process rank, these must be written back
+     *         when the task queue runs out.
+     */
+    int originating_rank_;
+
     /** @brief The pointer to the tree.
      */
     boost::interprocess::offset_ptr<TreeType> *tree_;
@@ -273,6 +280,7 @@ class SubTable {
         subtable_in.serialize_new_from_old_mapping();
       cache_block_id_ = subtable_in.cache_block_id();
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
+      originating_rank_ = subtable_in.originating_rank();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
       data_ = const_cast<SubTableType &>(subtable_in).data();
@@ -292,6 +300,7 @@ class SubTable {
         subtable_in.serialize_new_from_old_mapping();
       cache_block_id_ = subtable_in.cache_block_id();
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
+      originating_rank_ = subtable_in.originating_rank();
       table_ = const_cast< SubTableType &>(subtable_in).table();
       start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
       data_ = const_cast<SubTableType &>(subtable_in).data();
@@ -475,12 +484,17 @@ class SubTable {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    void set_originating_rank(int originating_rank_in) {
+      originating_rank_ = originating_rank_in;
+    }
+
     /** @brief The default constructor.
      */
     SubTable() {
       serialize_new_from_old_mapping_ = true;
       cache_block_id_ = 0;
       locked_mpi_rank_ = -1;
+      originating_rank_ = -1;
       table_ = NULL;
       start_node_ = NULL;
       data_ = NULL;
@@ -544,6 +558,10 @@ class SubTable {
       return data_;
     }
 
+    int originating_rank() const {
+      return originating_rank_;
+    }
+
     /** @brief Returns the old_from_new mapping.
      */
     boost::interprocess::offset_ptr <
@@ -601,6 +619,7 @@ class SubTable {
       serialize_new_from_old_mapping_ = serialize_new_from_old_mapping_in;
       table_ = table_in;
       is_alias_ = true;
+      originating_rank_ = table_->rank();
       start_node_ = start_node_in;
       data_ = &(table_in->data());
       weights_ = &(table_in->weights());

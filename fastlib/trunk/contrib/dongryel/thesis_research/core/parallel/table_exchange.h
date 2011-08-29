@@ -345,8 +345,7 @@ class TableExchange {
     /** @brief Queues the query subtable and its result flush request.
      */
     void QueueFlushRequest(
-      SubTableType &query_subtable_in, QueryResultType &query_result_in,
-      int destination_rank_in) {
+      SubTableType &query_subtable_in, QueryResultType &query_result_in) {
 
 
     }

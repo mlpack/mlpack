@@ -92,13 +92,6 @@ class DistributedDualtreeTaskQueue {
      */
     int num_threads_;
 
-    /** @brief The rank of the MPI process from which every query
-     *         subtable/query result is derived. If not equal to the
-     *         current MPI process rank, these must be written back
-     *         when the task queue runs out.
-     */
-    std::vector<int> originating_ranks_;
-
     /** @brief The query result objects that correspond to each query
      *         subtable.
      */
@@ -148,7 +141,6 @@ class DistributedDualtreeTaskQueue {
 
     void GrowSlots_() {
       assigned_work_.resize(assigned_work_.size() + 1);
-      originating_ranks_.resize(originating_ranks_.size() + 1);
       query_results_.resize(query_results_.size() + 1);
       query_subtables_.resize(query_subtables_.size() + 1);
       remaining_work_for_query_subtables_.resize(
@@ -161,9 +153,7 @@ class DistributedDualtreeTaskQueue {
      */
     void Flush_(int probe_index) {
       table_exchange_.QueueFlushRequest(
-        *(query_subtables_[probe_index]),
-        *(query_results_[probe_index]),
-        originating_ranks_[probe_index]);
+        *(query_subtables_[probe_index]), *(query_results_[probe_index]));
     }
 
     /** @brief Evicts a query subtable and its associated variables
@@ -171,7 +161,6 @@ class DistributedDualtreeTaskQueue {
      */
     void Evict_(int probe_index) {
       assigned_work_[probe_index] = assigned_work_.back();
-      originating_ranks_[probe_index] = originating_ranks_.back();
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
@@ -179,7 +168,6 @@ class DistributedDualtreeTaskQueue {
       tasks_[probe_index] = tasks_.back();
 
       assigned_work_.pop_back();
-      originating_ranks_.pop_back();
       query_results_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
@@ -239,7 +227,6 @@ class DistributedDualtreeTaskQueue {
       query_results_[subtree_index]->Alias(left_it);
 
       // Grow the list of local query subtrees.
-      originating_ranks_.push_back(originating_ranks_[subtree_index]);
       query_results_.push_back(
         boost::shared_ptr<QueryResultType>(new QueryResultType()));
       query_results_.back()->Alias(
@@ -306,12 +293,12 @@ class DistributedDualtreeTaskQueue {
 
       // Get more slots.
       this->GrowSlots_();
-      originating_ranks_.back() = originating_rank_in;
       boost::shared_ptr< QueryResultType > tmp_query_result(
         query_subresult_in);
       query_results_.back().swap(tmp_query_result);
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->Unlock();
+      query_subtables_.back()->set_originating_rank(originating_rank_in);
       remaining_work_for_query_subtables_.back() = 0;
       return tasks_.size() - 1;
     }
@@ -666,11 +653,9 @@ class DistributedDualtreeTaskQueue {
         4 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
-      originating_ranks_.resize(query_subtables_.size());
       query_results_.resize(query_subtables_.size());
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        originating_ranks_[i] = world.rank();
         query_results_[i] =
           boost::shared_ptr< QueryResultType >(new QueryResultType());
         TreeIteratorType qnode_it =
