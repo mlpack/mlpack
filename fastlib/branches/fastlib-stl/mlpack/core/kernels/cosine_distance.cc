@@ -12,5 +12,5 @@ using namespace arma;
 
 double CosineDistance::Evaluate(const arma::vec& a, const arma::vec& b) {
   // Since we are using the L2 inner product, this is easy.
-  return dot(a, b) / (norm(a, 2) * norm(b, 2));
+  return 1 - dot(a, b) / (norm(a, 2) * norm(b, 2));
 }

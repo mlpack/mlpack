@@ -16,7 +16,7 @@ namespace kernel {
 /***
  * The cosine distance (or cosine similarity).  It is defined by
  *
- *   d(a, b) = (a * b) / (|| a || * || b ||)
+ *   d(a, b) = 1 - (a * b) / (|| a || * || b ||)
  *
  * and this class assumes the standard L2 inner product.  In the future it may
  * support more...
