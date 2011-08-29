@@ -5,10 +5,15 @@
  */
 
 #include "bounds.h"
+#include "spacetree.h"
+#include "../../mlpack/core/kernels/lmetric.h"
 
 #define BOOST_TEST_MODULE Tree_Test
 #include <boost/test/unit_test.hpp>
 
+using namespace mlpack;
+using namespace mlpack::tree;
+using namespace mlpack::kernel;
 
 BOOST_AUTO_TEST_CASE(TestBallBound) {
   DBallBound<> b1;
@@ -59,8 +64,55 @@ BOOST_AUTO_TEST_CASE(TestBallBound) {
   BOOST_REQUIRE(b2.Contains(b2point));
 
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b1.center())), 0, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2.center())), 1-0.3, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1.center())), 1-0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1.center())), 1+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MaxDistanceSq(b2.center())), 1+0.3, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2.center())), 1 - 0.3, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1.center())), 1 - 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1.center())), 1 + 0.4, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b1.MaxDistanceSq(b2.center())), 1 + 0.3, 1e-5);
+}
+
+/***
+ * It seems as though Bill has stumbled across a bug where
+ * BinarySpaceTree<>::count() returns something different than
+ * BinarySpaceTree<>::count_.  So, let's build a simple tree and make sure they
+ * are the same.
+ */
+BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
+  arma::mat dataset = "2.0 5.0 9.0 4.0 8.0 7.0;"
+                      "3.0 4.0 6.0 7.0 1.0 2.0 ";
+
+  // Leaf size of 1.
+  BinarySpaceTree<DHrectBound<2>, arma::mat> root_node(dataset, 1);
+
+  BOOST_REQUIRE(root_node.count() == 6);
+  BOOST_REQUIRE(root_node.count_ == 6);
+
+  BOOST_REQUIRE(root_node.left()->count() == 3);
+  BOOST_REQUIRE(root_node.left()->count_ == 3);
+
+  BOOST_REQUIRE(root_node.left()->left()->count() == 2);
+  BOOST_REQUIRE(root_node.left()->left()->count_ == 2);
+
+  BOOST_REQUIRE(root_node.left()->left()->left()->count() == 1);
+  BOOST_REQUIRE(root_node.left()->left()->left()->count_ == 1);
+
+  BOOST_REQUIRE(root_node.left()->left()->right()->count() == 1);
+  BOOST_REQUIRE(root_node.left()->left()->right()->count_ == 1);
+
+  BOOST_REQUIRE(root_node.left()->right()->count() == 1);
+  BOOST_REQUIRE(root_node.left()->right()->count_ == 1);
+
+  BOOST_REQUIRE(root_node.right()->count() == 3);
+  BOOST_REQUIRE(root_node.right()->count_ == 3);
+
+  BOOST_REQUIRE(root_node.right()->left()->count() == 2);
+  BOOST_REQUIRE(root_node.right()->left()->count_ == 2);\
+
+  BOOST_REQUIRE(root_node.right()->left()->left()->count() == 1);
+  BOOST_REQUIRE(root_node.right()->left()->left()->count_ == 1);
+
+  BOOST_REQUIRE(root_node.right()->left()->right()->count() == 1);
+  BOOST_REQUIRE(root_node.right()->left()->right()->count_ == 1);
+
+  BOOST_REQUIRE(root_node.right()->right()->count() == 1);
+  BOOST_REQUIRE(root_node.right()->right()->count_ == 1);
 }
