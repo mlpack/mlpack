@@ -54,6 +54,8 @@ namespace npt {
       data_tree_root_ = data;
       random_tree_root_ = random;
       
+      mlpack::IO::Info << "generic alg constructor.\n";
+      
       num_prunes_ = 0;
       num_base_cases_ = 0;
       

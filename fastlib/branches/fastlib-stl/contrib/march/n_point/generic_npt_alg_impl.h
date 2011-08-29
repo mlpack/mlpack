@@ -48,29 +48,32 @@ void npt::GenericNptAlg<TMatcher>::DepthFirstRecursion_(NodeTuple& nodes) {
     if (nodes.CheckSymmetry(nodes.ind_to_split(), true)) {
       // do left recursion
       
-      mlpack::IO::Info << "recursing\n";
+      //mlpack::IO::Info << "recursing\n";
       
       NodeTuple left_child(nodes, true);
       DepthFirstRecursion_(left_child);
       
     }
     // TODO: should I count these
+    /*
     else {
       mlpack::IO::Info << "symmetry prune\n";
     }
+     */
     // right child
     if (nodes.CheckSymmetry(nodes.ind_to_split(), false)) {
       
-      mlpack::IO::Info << "recursing\n";
+      //mlpack::IO::Info << "recursing\n";
 
       NodeTuple right_child(nodes, false);
       DepthFirstRecursion_(right_child);
       
     }
-    
+    /*
     else {
       mlpack::IO::Info << "symmetry prune\n";
     }
+     */
   
   } // recurse 
   
@@ -95,6 +98,8 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
       node_list[i] = data_tree_root_;
       
     }
+    
+    mlpack::IO::Info << "filled in node_list\n";
     
     // matcher needs to know num_random_ too to store counts correctly
     NodeTuple nodes(node_list, num_random_);

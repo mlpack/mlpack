@@ -14,6 +14,7 @@
 #define ANGLE_MATCHER_H
 
 #include "fastlib/fastlib.h"
+#include "boost/multi_array.hpp"
 #include "node_tuple.h"
 
 // Assumptions (for now):
@@ -40,9 +41,11 @@ namespace npt {
     int num_random_;
     
     // indexed by [num_random][r1][theta]
-    std::vector<std::vector<std::vector<int> > > results_;
-    std::vector<std::vector<std::vector<double> > > weighted_results_;
+    //std::vector<std::vector<std::vector<int> > > results_;
+    //std::vector<std::vector<std::vector<double> > > weighted_results_;
     
+    boost::multi_array<int, 3> results_;
+    boost::multi_array<double, 3> weighted_results_;
     
     std::vector<double> short_sides_;
     // the long side is this times the short side
@@ -55,7 +58,8 @@ namespace npt {
     std::vector<double> thetas_;
     
     // indexed by [value of r1][value of theta]
-    std::vector<std::vector<double> > r3_sides_;
+    //std::vector<std::vector<double> > r3_sides_;
+    boost::multi_array<double, 2> r3_sides_;
     
     // this is the value of theta where r2 = r3
     // computed by arccos(1/2k) where k is long_side_multiplier_
@@ -75,8 +79,11 @@ namespace npt {
     std::vector<double> r2_upper_sqr_;
     
     // these are indexed by r1 value, then by angle/r3
-    std::vector<std::vector<double> > r3_lower_sqr_;
-    std::vector<std::vector<double> > r3_upper_sqr_;
+    //std::vector<std::vector<double> > r3_lower_sqr_;
+    //std::vector<std::vector<double> > r3_upper_sqr_;
+    
+    boost::multi_array<double, 2> r3_lower_sqr_;
+    boost::multi_array<double, 2> r3_upper_sqr_;
     
     bool i_is_random_;
     bool j_is_random_;
@@ -126,11 +133,14 @@ namespace npt {
                  std::vector<double>& thetas, double bin_size) :
     short_sides_(short_sides), long_side_multiplier_(long_side), 
     thetas_(thetas), bin_thickness_factor_(bin_size),
-    r3_sides_(short_sides.size()), long_sides_(short_sides.size()),
+    r3_sides_(boost::extents[short_sides.size()][thetas.size()]),
+    long_sides_(short_sides.size()),
     r1_lower_sqr_(short_sides.size()), r1_upper_sqr_(short_sides.size()), 
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
-    r3_lower_sqr_(short_sides.size()), r3_upper_sqr_(short_sides.size()),
-    results_(4), weighted_results_(4),
+    r3_lower_sqr_(boost::extents[short_sides.size()][thetas.size()]),
+    r3_upper_sqr_(boost::extents[short_sides.size()][thetas.size()]),
+    results_(boost::extents[4][short_sides.size()][thetas.size()]), 
+    weighted_results_(boost::extents[4][short_sides.size()][thetas.size()]),
     data_mat_(data_in), data_weights_(weights_in), 
     random_mat_(random_in), random_weights_(rweights_in)
     {
@@ -152,10 +162,6 @@ namespace npt {
       
       for (int i = 0; i < short_sides_.size(); i++) {
           
-        r3_sides_[i].resize(thetas_.size());
-        r3_lower_sqr_[i].resize(thetas_.size());
-        r3_upper_sqr_[i].resize(thetas_.size());
-        
         long_sides_[i] = long_side_multiplier_ * short_sides_[i];
         
         r1_lower_sqr_[i] = ((1.0 - half_thickness) * short_sides_[i])
@@ -207,11 +213,13 @@ namespace npt {
       num_r3_prunes_ = 0;
       */
       
+      int r3_last_index = short_sides_.size() - 1;
+      int r3_last_last_index = thetas_.size() - 1;
       longest_possible_side_sqr_ = max(r2_upper_sqr_.back(), 
-                                       r3_upper_sqr_.back().back());
+                                       r3_upper_sqr_[r3_last_index][r3_last_last_index]);
       // IMPORTANT: this assumes that r2 >= r1
       shortest_possible_side_sqr_ = min(r1_lower_sqr_.front(), 
-                                        r3_lower_sqr_.front().front());
+                                        r3_lower_sqr_[0][0]);
       
       num_large_r1_prunes_ = 0;
       num_small_r1_prunes_ = 0;
@@ -221,21 +229,6 @@ namespace npt {
       
       // IMPORTANT: I'm not sure the upper and lower sqr arrays are still sorted
       // especially for r3
-      
-      
-      for (int i = 0; i <= tuple_size_; i++) {
-        
-        results_[i].resize(short_sides_.size());
-        weighted_results_[i].resize(short_sides_.size());
-        
-        for (int j = 0; j < short_sides_.size(); j++) {
-          
-          results_[i][j].resize(thetas_.size(), 0);
-          weighted_results_[i][j].resize(thetas_.size(), 0.0);
-          
-        } // for j
-        
-      } // for i
       
       
       /*
@@ -319,11 +312,11 @@ namespace npt {
       return tuple_size_;
     }
     
-    std::vector<std::vector<std::vector<int> > >& results() {
+    boost::multi_array<int, 3>& results() {
       return results_;
     }
 
-    std::vector<std::vector<std::vector<double> > >& weighted_results() {
+    boost::multi_array<double, 3>& weighted_results() {
       return weighted_results_;
     }
     

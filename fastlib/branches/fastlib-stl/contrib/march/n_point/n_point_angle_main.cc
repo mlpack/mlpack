@@ -155,6 +155,9 @@ int main(int argc, char* argv[]) {
   NptNode* random_tree = new NptNode(random_mat, leaf_size,
                                      old_from_new_random);
   
+  
+  mlpack::IO::Info << "trees built\n";
+  
   // IMPORTANT: need to permute weights here
 
   /////////////////////////////////////////////////////////////////////
