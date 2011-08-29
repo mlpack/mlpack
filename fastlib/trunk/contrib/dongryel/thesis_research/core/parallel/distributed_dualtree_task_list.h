@@ -244,6 +244,10 @@ class DistributedDualtreeTaskList {
       boost::mpi::communicator &world,
       const MetricType &metric_in, int source_rank_in) {
 
+      // The map that maps the local position to the position in the
+      // queue for query subtables.
+      std::map<int, int> new_query_subtable_map;
+
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
@@ -254,13 +258,24 @@ class DistributedDualtreeTaskList {
 
       // For each query subresult, push in a new queue.
       for(unsigned int i = 0; i < query_results_.size(); i++) {
-        distributed_task_queue_->PushNewQueue(
-          source_rank_in, sub_tables_[ query_results_[i].second ],
-          query_results_[i].first);
+        int query_subtable_position = query_results_[i].second;
+        int new_position = distributed_task_queue_->PushNewQueue(
+                             source_rank_in, sub_tables_[ query_subtable_position ],
+                             query_results_[i].first);
+        new_query_subtable_map[ query_subtable_position ] = new_position;
       }
 
       // Now push in the task list.
-
+      for(unsigned int i = 0; i < donated_task_list_.size(); i++) {
+        int query_subtable_position = donated_task_list_[i].first;
+        for(unsigned int j = 0; j < donated_task_list_[i].second.size(); j++) {
+          int reference_subtable_position = donated_task_list_[i].second[j];
+          distributed_task_queue_->PushTask(
+            world, metric_in,
+            new_query_subtable_map[query_subtable_position],
+            sub_tables_[ reference_subtable_position ].get<0>());
+        }
+      }
     }
 
     /** @brief Initializes the task list.
