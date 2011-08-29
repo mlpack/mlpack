@@ -110,6 +110,10 @@ class MixedLogitDCMArguments {
      */
     std::string error_compute_method_;
 
+    /** @brief Stores the true parameter values.
+     */
+    TableType *true_parameters_table_;
+
   public:
 
     /** @brief The default constructor.
@@ -130,6 +134,7 @@ class MixedLogitDCMArguments {
       integration_sample_error_threshold_ = 0;
       max_trust_region_radius_ = 0;
       random_seed_ = 0;
+      true_parameters_table_ = NULL;
     }
 
     /** @brief The destructor.
@@ -141,6 +146,10 @@ class MixedLogitDCMArguments {
       decisions_table_ = NULL;
       delete num_alternatives_table_;
       num_alternatives_table_ = NULL;
+      if(true_parameters_table_ != NULL) {
+        delete true_parameters_table_;
+        true_parameters_table_ = NULL;
+      }
 
       if(test_attribute_table_ != NULL) {
         delete test_attribute_table_;
