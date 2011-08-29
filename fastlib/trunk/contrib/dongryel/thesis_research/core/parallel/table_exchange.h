@@ -251,7 +251,6 @@ class TableExchange {
 
       // Wait until the send request is completed.
       send_request.wait();
-      delete load_balance_request;
 
       // Now prepare the task list that must be sent to the neighbor.
       if(neighbor_load_balance_request.needs_load_balancing()) {
@@ -262,19 +261,23 @@ class TableExchange {
       //boost::mpi::request task_list_send =
       //world.isend();
 
-      // Receive from the neighbor.
-      while(true) {
-        if(boost::optional< boost::mpi::status > l_status =
-              world.iprobe(
-                neighbor,
-                core::parallel::MessageTag::TASK_LIST)) {
-          world.recv(
-            neighbor, core::parallel::MessageTag::TASK_LIST,
-            neighbor_load_balance_request);
-          break;
+      // Receive from the neighbor the extra task list, if this
+      // process needs work to do.
+      if(load_balance_request->needs_load_balancing()) {
+        while(true) {
+          if(boost::optional< boost::mpi::status > l_status =
+                world.iprobe(
+                  neighbor,
+                  core::parallel::MessageTag::TASK_LIST)) {
+            world.recv(
+              neighbor, core::parallel::MessageTag::TASK_LIST,
+              neighbor_load_balance_request);
+            break;
+          }
         }
       }
 
+      delete load_balance_request;
       // Wait until the send request is completed.
       //task_list_send.wait();
     }
