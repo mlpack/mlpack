@@ -561,11 +561,11 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     if(iterate_at_true_parameters != NULL) {
       std::cerr << "The current function value (with " <<
                 iterate->num_active_people() <<
-                " people using the true parameter: " <<
+                " people using the true parameter) : " <<
                 iterate_function_value_at_true_parameter << "; ";
     }
     std::cerr << "The current function value (with " <<
-              iterate->num_active_people() << " people: " <<
+              iterate->num_active_people() << " people) : " <<
               iterate_function_value << "; ";
     std::cerr << "The function value at the next iterate: " <<
               next_iterate_function_value << "; ";
