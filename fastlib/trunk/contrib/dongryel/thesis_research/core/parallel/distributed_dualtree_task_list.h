@@ -447,8 +447,9 @@ class DistributedDualtreeTaskList {
         }
 
         // Load the associated query results.
-        int num_query_results = query_results_.size();
+        int num_query_results;
         ar & num_query_results;
+        query_results_.resize(num_query_results);
         for(int i = 0; i < num_query_results; i++) {
           query_results_[i].first = new QueryResultType();
           ar & (*(query_results_[i].first));
