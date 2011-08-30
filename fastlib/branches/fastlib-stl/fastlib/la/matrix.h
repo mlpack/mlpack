@@ -64,8 +64,15 @@ class GenVector {
     DEBUG_ONLY(Uninitialize_());
     Copy(other);
   }
-  ASSIGN_VIA_COPY_CONSTRUCTION(GenVector);
   
+  const GenVector &operator=(const GenVector &src) { 
+    if (likely(this != &src)) { 
+      this->~GenVector(); 
+      new(this) GenVector(src); 
+    } 
+    return *this; 
+  }
+
   /**
    * Destroys the Vector, freeing the memory if this copy is not an alias.
    */
@@ -447,7 +454,14 @@ class GenMatrix {
     DEBUG_ONLY(Uninitialize_());
     Copy(other);
   }
-  ASSIGN_VIA_COPY_CONSTRUCTION(GenMatrix);
+  
+  const GenMatrix &operator=(const GenMatrix &src) { 
+    if (likely(this != &src)) { 
+      this->~GenMatrix(); 
+      new(this) GenMatrix(src); 
+    } 
+    return *this; 
+  }
 
   /**
    * Creates a matrix that can be initialized.

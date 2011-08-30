@@ -20,8 +20,6 @@ set(SOURCES
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
    base.h
-   cc.h
-   cc.cc
    common.h
    common.c
    compiler.h

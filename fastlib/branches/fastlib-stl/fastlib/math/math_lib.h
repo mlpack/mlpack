@@ -460,14 +460,19 @@ struct DRange {
   friend bool operator < (const DRange& a, const DRange& b) {
     return a.hi < b.lo;
   }
-  EXPAND_LESS_THAN(DRange);
+
+  friend bool operator>(DRange const &b, DRange const &a) {return a < b;} 
+  friend bool operator<=(DRange const &b, DRange const &a) {return !(a < b);} 
+  friend bool operator>=(DRange const &a, DRange const &b) {return !(a < b);}
+
   /**
    * Compares if this is STRICTLY equal to another range.
    */  
   friend bool operator == (const DRange& a, const DRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
-  EXPAND_EQUALS(DRange);
+
+  friend bool operator!=(DRange const &a, DRange const &b) {return !(a == b);}
   
   /**
    * Compares if this is STRICTLY less than a value.
@@ -475,14 +480,21 @@ struct DRange {
   friend bool operator < (const DRange& a, double b) {
     return a.hi < b;
   }
-  EXPAND_HETERO_LESS_THAN(DRange, double);
+
+  friend bool operator>(double const &b, DRange const &a) {return a < b;} 
+  friend bool operator<=(double const &b, DRange const &a) {return !(a < b);} 
+  friend bool operator>=(DRange const &a, double const &b) {return !(a < b);}
+
   /**
    * Compares if a value is STRICTLY less than this range.
    */  
   friend bool operator < (double a, const DRange& b) {
     return a < b.lo;
   }
-  EXPAND_HETERO_LESS_THAN(double, DRange);
+
+  friend bool operator>(DRange const &b, double const &a) {return a < b;} 
+  friend bool operator<=(DRange const &b, double const &a) {return !(a < b);} 
+  friend bool operator>=(double const &a, DRange const &b) {return !(a < b);}
 
   /**
    * Determines if a point is contained within the range.

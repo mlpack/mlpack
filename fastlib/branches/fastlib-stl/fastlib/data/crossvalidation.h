@@ -83,8 +83,6 @@
  */
 template<class TClassifier>
 class SimpleCrossValidator {
-  FORBID_ACCIDENTAL_COPIES(SimpleCrossValidator);
-  
  public:
   /** Typedef of internal classifier used. */
   typedef TClassifier Classifier;
@@ -368,9 +366,7 @@ void SimpleCrossValidator<TClassifier>::Run(bool randomized) {
  **/
 
 template<class TLearner>
-class GeneralCrossValidator {
-  FORBID_ACCIDENTAL_COPIES(GeneralCrossValidator);
-  
+class GeneralCrossValidator {  
  public:
   /** Typedef of internal learners used. */
   typedef TLearner Learner;

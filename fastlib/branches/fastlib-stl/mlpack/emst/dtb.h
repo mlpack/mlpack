@@ -337,7 +337,7 @@ class DualTreeBoruvka {
       
       // Update query_node's stat
       query_node->stat().set_max_neighbor_distance(
-          max(query_node->left()->stat().max_neighbor_distance(), 
+          std::max(query_node->left()->stat().max_neighbor_distance(), 
               query_node->right()->stat().max_neighbor_distance()));
       
     }
@@ -383,7 +383,7 @@ class DualTreeBoruvka {
       }
       
       query_node->stat().set_max_neighbor_distance(
-          max(query_node->left()->stat().max_neighbor_distance(), 
+          std::max(query_node->left()->stat().max_neighbor_distance(), 
               query_node->right()->stat().max_neighbor_distance()));
       
     }// end else

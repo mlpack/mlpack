@@ -14,6 +14,9 @@ int la::dgeqrf_block_size;
 int la::dorgqr_block_size;
 int la::dgeqrf_dorgqr_block_size;
 
+//No class to hide this inside off, make it global to this file
+const double DBL_NAN = std::numeric_limits<double>::quiet_NaN();
+
 namespace la {
 
   struct zzzLapackInit {

@@ -125,8 +125,8 @@ bool DualtreeKde<TKernelAux>::PrunableEnhanced_
       ka_.sea_.DirectLocalAccumulationCost(order_local) * (rnode->count());
   }
   
-  min_cost = min(cost_farfield_to_local, 
-		 min(cost_farfield, min(cost_local, cost_exhaustive)));
+  min_cost = std::min(cost_farfield_to_local, 
+		 std::min(cost_farfield, std::min(cost_local, cost_exhaustive)));
   
   if(cost_farfield_to_local == min_cost) {
     used_error = rnode->stat().farfield_expansion_.get_weight_sum() * 

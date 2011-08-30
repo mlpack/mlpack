@@ -32,7 +32,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
 
   // Get the leaf size; naive ensures that the entire tree is one node
   if(naive_)
-    leaf_size_ = max(queries_.n_cols, references_.n_cols);
+    leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
   else
     leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
 
@@ -81,7 +81,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
 
   // Get the leaf size from the module
   if(naive_)
-    leaf_size_ = max(queries_.n_cols, references_.n_cols);
+    leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
   else
     leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
 

@@ -52,7 +52,7 @@ class NNSMO
       dataset_ = dataset_in;
 
       n_data_ = dataset_.n_cols;
-      budget_ = min(budget_in, (index_t) n_data_);
+      budget_ = std::min(budget_in, (index_t) n_data_);
 
       alpha_.zeros(n_data_);
       sum_alpha_ = 0;

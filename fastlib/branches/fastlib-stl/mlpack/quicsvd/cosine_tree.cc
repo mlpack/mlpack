@@ -19,7 +19,8 @@ CosineNode::CosineNode(const Matrix& A) {
   origIndices_.resize(A_.n_cols());
    norms_.resize(A_.n_cols());
 
-   int newval = A_.n_cols();
+   //UNUSED, will remove if no one complains/starts using, mamidon
+   //int newval = A_.n_cols();
 
  
    for (index_t i_col = 0; i_col < A_.n_cols(); i_col++) {

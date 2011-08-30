@@ -348,7 +348,7 @@ class FGTKde {
 	double h = sidelengths[di];
 	index_t binnum = (index_t) floor((rset_(di, r) - mincoords[di]) / h);
       
-	binnum = max((index_t) 0, min(binnum, nside - 1));
+	binnum = std::max((index_t) 0, std::min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
       references_assigned[boxnum].push_back(r);
@@ -364,7 +364,7 @@ class FGTKde {
 	double h = sidelengths[di];
 	index_t binnum = (index_t) floor((qset_(di, r) - mincoords[di]) / h);
       
-	binnum = max((index_t) 0, min(binnum, nside - 1));
+	binnum = std::max((index_t) 0, std::min(binnum, nside - 1));
 	boxnum = boxnum * nside + binnum;
       }
       queries_assigned[boxnum].push_back(r);
