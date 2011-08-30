@@ -131,12 +131,6 @@ class DistributedDualtreeTaskQueue {
      */
     unsigned long int remaining_local_computation_;
 
-    /** @brief If the remaining local computation falls below this
-     *         level, then the MPI process tries to steal some work
-     *         from its neighbor.
-     */
-    unsigned long int load_balancing_trigger_level_;
-
   private:
 
     void GrowSlots_() {
@@ -332,6 +326,9 @@ class DistributedDualtreeTaskQueue {
 
       // Increment the number of tasks.
       num_remaining_tasks_++;
+
+      // Increment the available local computation.
+      remaining_local_computation_ += new_task.work();
     }
 
     /** @brief Returns the subtable stored in the given position of
@@ -384,19 +381,8 @@ class DistributedDualtreeTaskQueue {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       load_balance_request->Init(
-        this->needs_load_balancing(),
         query_subtables_, remaining_local_computation_,
         table_exchange_.remaining_extra_points_to_hold());
-    }
-
-    /** @brief Returns whether the current MPI process needs load
-     *         balancing.
-     */
-    bool needs_load_balancing() const {
-      core::parallel::scoped_omp_nest_lock lock(
-        &(const_cast <
-          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
-      return remaining_local_computation_ <= load_balancing_trigger_level_;
     }
 
     /** @brief Returns the query result associated with the index.
@@ -547,7 +533,6 @@ class DistributedDualtreeTaskQueue {
 
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
-      remaining_local_computation_ -= quantity_in;
       table_exchange_.push_completed_computation(comm, quantity_in);
 
       // Update the remaining work for the query tree. Maybe the
@@ -567,7 +552,6 @@ class DistributedDualtreeTaskQueue {
 
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
-      remaining_local_computation_ -= quantity_in;
       table_exchange_.push_completed_computation(comm, quantity_in);
 
       // Update the remaining work for all of the existing query
@@ -598,18 +582,10 @@ class DistributedDualtreeTaskQueue {
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
-      load_balancing_trigger_level_ = 0;
       num_remaining_tasks_ = 0;
       num_threads_ = 1;
       remaining_global_computation_ = 0;
       remaining_local_computation_ = 0;
-    }
-
-    /** @brief Returns the load balancing trigger level.
-     */
-    unsigned long int load_balancing_trigger_level() const {
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      return load_balancing_trigger_level_;
     }
 
     /** @brief Returns the number of tasks associated with the probing
@@ -699,10 +675,8 @@ class DistributedDualtreeTaskQueue {
       remaining_global_computation_ =
         static_cast<unsigned long int>(total_num_query_points) *
         static_cast<unsigned long int>(total_num_reference_points);
-      remaining_local_computation_ =
-        static_cast<unsigned long int>(
-          query_table_in->local_table()->n_entries()) *
-        static_cast<unsigned long int>(total_num_reference_points);
+      remaining_local_computation_ = 0;
+      num_remaining_tasks_ = 0;
 
       // Initialize the completed computation grid for each query tree
       // on this process.
@@ -716,11 +690,6 @@ class DistributedDualtreeTaskQueue {
         assigned_work_[i]->Init(world);
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
       }
-
-      // Load balancing trigger level is set at the half of the
-      // initial local remaining work.
-      load_balancing_trigger_level_ =
-        remaining_local_computation_ / 2;
     }
 
     /** @brief Dequeues a task, optionally locking a query subtree
@@ -806,6 +775,9 @@ class DistributedDualtreeTaskQueue {
 
           // Decrement the number of tasks.
           num_remaining_tasks_--;
+
+          // Decrement the remaining local computation.
+          remaining_local_computation_ -= task_out->first.work();
         }
       }
 

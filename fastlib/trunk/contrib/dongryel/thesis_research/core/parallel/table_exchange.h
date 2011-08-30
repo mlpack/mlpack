@@ -264,6 +264,18 @@ class TableExchange {
       // Wait until the send request is completed.
       send_request.wait();
 
+      // Find out how much this process needs.
+      /*
+      unsigned long int mid_point =
+        (task_queue_->remaining_local_computation() +
+         neighbor_load_balance_request.remaining_local_computation()) / 2;
+      printf("Mid level with %lu %lu %lu\n",
+             task_queue_->remaining_local_computation(),
+             neighbor_load_balance_request.remaining_local_computation(),
+             mid_point);
+      */
+
+      /*
       // Now prepare the task list that must be sent to the neighbor.
       core::parallel::DistributedDualtreeTaskList <
       DistributedTableType, TaskPriorityQueueType,
@@ -305,6 +317,7 @@ class TableExchange {
       if(extra_task_list_sent.first) {
         extra_task_list_sent.second.wait();
       }
+      */
     }
 
     /** @brief Prints the existing subtables in the cache.
