@@ -331,8 +331,8 @@ namespace la {
    * @param X the matrix to scale
    */
   inline void ScaleRows(const Matrix& d, Matrix *X) {
-    DEBUG_SAME_SIZE(min(d.n_cols(), d.n_rows()), 1);
-    DEBUG_SAME_SIZE(max(d.n_cols(), d.n_rows()), X->n_rows());
+    DEBUG_SAME_SIZE(std::min(d.n_cols(), d.n_rows()), 1);
+    DEBUG_SAME_SIZE(std::max(d.n_cols(), d.n_rows()), X->n_rows());
     ScaleRows(X->n_rows(), X->n_cols(), d.ptr(), X->ptr());
   }
   /**

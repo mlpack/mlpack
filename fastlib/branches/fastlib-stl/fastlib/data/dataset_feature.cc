@@ -18,6 +18,8 @@
 
 using namespace std;
 
+const double DatasetFeature::DBL_NAN = std::numeric_limits<double>::quiet_NaN();
+
 void DatasetFeature::Format(double value, string& result) const {
   if (unlikely(isnan(value))) {
     result = "?";

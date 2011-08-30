@@ -39,6 +39,7 @@ class DatasetFeature {
   std::string name_; /** Name of the feature. */
   Type type_; /** Type of data this feature represents. */
   std::vector<std::string> value_names_; /** If nominal, the names of each numbered value. */
+  static const double DBL_NAN; /** Redefinition for ease of use */
 
   /**
    * Initialization common to all features.

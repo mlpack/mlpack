@@ -185,7 +185,7 @@ class GaussianKernelMultAux {
       return -1;
     }
 
-    r = max(r, r2);
+    r = std::max(r, r2);
     two_r = 2.0 * r;
     one_minus_two_r = 1.0 - two_r;
     ret = 1.0 / pow(one_minus_two_r * one_minus_two_r, dim);

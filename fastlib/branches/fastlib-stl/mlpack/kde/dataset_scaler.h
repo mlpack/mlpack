@@ -52,8 +52,8 @@ class DatasetScaler {
     for(index_t i = 0; i < num_dims; i++) {
       DRange qset_range = qset_bound[i];
       DRange rset_range = rset_bound[i];
-      double min_coord = min(qset_range.lo, rset_range.lo);
-      double max_coord = max(qset_range.hi, rset_range.hi);
+      double min_coord = std::min(qset_range.lo, rset_range.lo);
+      double max_coord = std::max(qset_range.hi, rset_range.hi);
 
       printf("Dimension %"LI" range: [%g, %g]\n", i, min_coord, max_coord);
 

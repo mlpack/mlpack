@@ -408,7 +408,7 @@ class OriginalIFGT {
     
     double two_h_square = bandwidth_factor_ * bandwidth_factor_;
     
-    double r = min(max_diameter_of_the_datasets, 
+    double r = std::min(max_diameter_of_the_datasets, 
 		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
     
     index_t p_ul = 300;
@@ -420,7 +420,7 @@ class OriginalIFGT {
     index_t p = 0;
     while((error > epsilon_) & (p <= p_ul)) {
       p++;
-      double b = min(((rx + sqrt((rx_square) + (2 * p * two_h_square))) / 2),
+      double b = std::min(((rx + sqrt((rx_square) + (2 * p * two_h_square))) / 2),
 		     rx + r);
       double c = rx - b;
       temp = temp * (((2 * rx * b) / two_h_square) / p);
@@ -444,7 +444,7 @@ class OriginalIFGT {
     double two_h_square = bandwidth_factor_ * bandwidth_factor_;
 
     // The cut-off radius.
-    double r = min(max_diamater_of_the_datasets, 
+    double r = std::min(max_diamater_of_the_datasets, 
 		   bandwidth_factor_ * sqrt(log(1 / epsilon_)));
     
     // Upper limit on the truncation number.

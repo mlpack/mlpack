@@ -63,8 +63,6 @@ template <class T> inline void swap(T& x, T& y) { T t=x; x=y; y=t; }
 
 template<typename TKernel>
 class SMO {
-  FORBID_ACCIDENTAL_COPIES(SMO);
-
  public:
   typedef TKernel Kernel;
 
@@ -495,7 +493,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   grad_bar_.zeros();
 
   do_shrinking_ = mlpack::IO::GetParam<bool>("svm/shrink");
-  ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+  ct_shrinking_ = std::min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i=0; i<n_alpha_; i++) {
       for(j=0; j<n_alpha_; j++) {
@@ -521,7 +519,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     if (do_shrinking_) {
       if ( --ct_shrinking_ == 0) {
 	Shrinking_();
-	ct_shrinking_ = min(n_data_, SMO_NUM_FOR_SHRINKING);
+	ct_shrinking_ = std::min(n_data_, SMO_NUM_FOR_SHRINKING);
       }
     }
 
@@ -572,7 +570,7 @@ int SMO<TKernel>::SMOIterations_() {
     if (!do_shrinking_) { // no shrinking, optimality reached
       return 2;
     }
-    else if ( ct_iter_ >= min(n_data_, SMO_NUM_FOR_SHRINKING) ) { // shrinking has been carried out, need to calculate the true gap
+    else if ( ct_iter_ >= std::min(n_data_, SMO_NUM_FOR_SHRINKING) ) { // shrinking has been carried out, need to calculate the true gap
       ReconstructGradient_(); // restore the inactive alphas and reconstruct gradients
       n_active_ = n_alpha_;
       WorkingSetSelection_(i,j);
@@ -919,15 +917,15 @@ void SMO<TKernel>::CalcBias_() {
       
     if (IsUpperBounded(i)) { // bounded: alpha_i >= C
       if(y_[i] == 1)
-	lb = max(lb, yg);
+	lb = std::max(lb, yg);
       else
-	ub = min(ub, yg);
+	ub = std::min(ub, yg);
     }
     else if (IsLowerBounded(i)) { // bounded: alpha_i <= 0
       if(y_[i] == -1)
-	lb = max(lb, yg);
+	lb = std::max(lb, yg);
       else
-	ub = min(ub, yg);
+	ub = std::min(ub, yg);
     }
     else { // free: 0< alpha_i <C
       n_free_alpha++;

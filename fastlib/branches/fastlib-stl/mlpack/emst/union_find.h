@@ -22,8 +22,6 @@
  */
 class UnionFind {
   friend class TestUnionFind;
-  FORBID_ACCIDENTAL_COPIES(UnionFind);
-  
 private:
   
   arma::Col<index_t> parent_;

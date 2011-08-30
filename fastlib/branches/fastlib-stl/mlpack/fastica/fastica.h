@@ -846,7 +846,7 @@ class FastICA {
 	    converged = true;
 	}
 
-        mlpack::IO::Debug << "delta = " << min(delta1, delta2) << std::endl;
+        mlpack::IO::Debug << "delta = " << std::min(delta1, delta2) << std::endl;
 
 	if(converged) {
 	  if(fine_tuning_enabled & not_fine) {
@@ -1044,7 +1044,7 @@ class FastICA {
     }
     else if(percent_cut_ < 1) {
       if((percent_cut_ * n) < 1000) {
-	percent_cut_ = min(1000 / (double) n, (double) 1);
+	percent_cut_ = std::min(1000 / (double) n, (double) 1);
         mlpack::IO::Warn << "Setting percent_cut to " << std::setw(4) << percent_cut_
             << " (" << (index_t) floor(percent_cut_ * n) << " samples)."
             << std::endl;

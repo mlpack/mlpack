@@ -29,7 +29,6 @@
  * you may choose to close it yourself at no harm.
  */
 class TextLineReader {
-  FORBID_ACCIDENTAL_COPIES(TextLineReader);
   
  private:
   FILE *f_;
@@ -145,7 +144,6 @@ class TextLineReader {
  * @endcode
  */
 class TextTokenizer {
-  FORBID_ACCIDENTAL_COPIES(TextTokenizer);
  public:
   enum TokenType {
     INVALID = -1,
@@ -304,7 +302,6 @@ class TextTokenizer {
  * Helper for writing text fo a file.
  */
 class TextWriter {
-  FORBID_ACCIDENTAL_COPIES(TextWriter);
   
  private:
   FILE *f_;
