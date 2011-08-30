@@ -472,6 +472,15 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
 
+  if(world_->rank() == 0) {
+    if(do_load_balancing_) {
+      std::cerr << "Dynamic load-balancing option is turned ON.\n";
+    }
+    else {
+      std::cerr << "Dynamic load-balancing option is turned OFF.\n";
+    }
+  }
+
   // The MPI timer.
   boost::mpi::timer timer;
 
