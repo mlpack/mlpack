@@ -138,6 +138,10 @@ class TableExchange {
 
   private:
 
+    /** @brief Whether to do load balancing.
+     */
+    bool do_load_balancing_;
+
     /** @brief Whether the MPI process can enter the current exchange
      *         phase.
      */
@@ -224,6 +228,8 @@ class TableExchange {
       return ready_flag;
     }
 
+    /** @brief Load balance with a neighboring process.
+     */
     template<typename MetricType>
     void LoadBalance_(
       boost::mpi::communicator & world,
@@ -485,6 +491,7 @@ class TableExchange {
     void Init(
       boost::mpi::communicator &world,
       int max_subtree_size_in,
+      bool do_load_balancing_in,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       TaskQueueType *task_queue_in) {
@@ -492,6 +499,9 @@ class TableExchange {
       // The maximum number of points to hold at a given moment.
       remaining_extra_points_to_hold_ =
         max_subtree_size_in * world.size();
+
+      // Load balancing option.
+      do_load_balancing_ = do_load_balancing_in;
 
       // Set the pointer to the task queue.
       task_queue_ = task_queue_in;
@@ -689,7 +699,9 @@ class TableExchange {
         task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Initiate load balancing with the neighbor.
-        // LoadBalance_(world, metric_in, neighbor);
+        if(do_load_balancing_) {
+          LoadBalance_(world, metric_in, neighbor);
+        }
 
         // Increment the stage when done, and turn off the stage flag.
         stage_ = (stage_ + 1) % max_stage_;

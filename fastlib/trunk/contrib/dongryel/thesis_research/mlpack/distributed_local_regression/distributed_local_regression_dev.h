@@ -74,6 +74,7 @@ DistributedTableType, KernelType, MetricType >::Compute(
   distributed_dualtree_dfs.set_work_params(
     arguments_in.leaf_size_,
     arguments_in.max_subtree_size_,
+    arguments_in.do_load_balancing_,
     arguments_in.max_num_work_to_dequeue_per_stage_);
 
   // Compute the result and do post-normalize.
@@ -134,6 +135,9 @@ bool DistributedLocalRegressionArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<double>()->default_value(0.5),
     "OPTIONAL kernel bandwidth, if you set --bandwidth_selection flag, "
     "then the --bandwidth will be ignored."
+  )(
+    "do_load_balancing",
+    "Whether to do load balancing or not."
   )(
     "kernel",
     boost::program_options::value<std::string>()->default_value("epan"),
@@ -387,6 +391,9 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   DistributedTableType, MetricType > *arguments_out) {
 
   typedef typename DistributedTableType::TableType TableType;
+
+  // Determine whether to load balance or not.
+  arguments_out->do_load_balancing_ = (vm.count("do_load_balancing") > 0);
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =

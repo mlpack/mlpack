@@ -650,6 +650,7 @@ class DistributedDualtreeTaskQueue {
     void Init(
       boost::mpi::communicator &world,
       int max_subtree_size_in,
+      bool do_load_balancing_in,
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       QueryResultType *local_query_result_in,
@@ -683,7 +684,8 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the table exchange.
       table_exchange_.Init(
-        world, max_subtree_size_in, query_table_in, reference_table_in, this);
+        world, max_subtree_size_in, do_load_balancing_in,
+        query_table_in, reference_table_in, this);
 
       // Initialize the amount of remaining computation.
       unsigned long int total_num_query_points = 0;

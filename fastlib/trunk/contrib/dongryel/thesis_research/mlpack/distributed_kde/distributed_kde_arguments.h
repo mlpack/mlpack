@@ -26,6 +26,10 @@ class DistributedKdeArguments {
      */
     std::string densities_out_;
 
+    /** @brief Whether to do load balancing.
+     */
+    bool do_load_balancing_;
+
     /** @brief The size of each leaf node.
      */
     int leaf_size_;
@@ -88,6 +92,7 @@ class DistributedKdeArguments {
     /** @brief The default constructor.
      */
     DistributedKdeArguments() {
+      do_load_balancing_ = false;
       leaf_size_ = 0;
       reference_table_ = NULL;
       query_table_ = NULL;
