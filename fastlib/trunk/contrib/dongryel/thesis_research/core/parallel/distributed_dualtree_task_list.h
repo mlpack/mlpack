@@ -197,7 +197,12 @@ class DistributedDualtreeTaskList {
       KeyType subtable_id = test_subtable_in.subtable_id();
       int existing_position;
       if(this->FindSubTable_(subtable_id, &existing_position)) {
-        sub_tables_[ existing_position ].get<2>()++;
+        if(! count_as_query) {
+          sub_tables_[ existing_position ].get<2>()++;
+        }
+        else {
+          sub_tables_[ existing_position ].get<1>() = true;
+        }
         return existing_position;
       }
 
@@ -210,8 +215,10 @@ class DistributedDualtreeTaskList {
         sub_tables_.back().get<0>().Alias(test_subtable_in);
         if(count_as_query) {
           sub_tables_.back().get<1>() = true;
+          sub_tables_.back().get<2>() = 0;
         }
         else {
+          sub_tables_.back().get<1>() = false;
           sub_tables_.back().get<2>() = 1;
         }
         id_to_position_map_[subtable_id] = sub_tables_.size() - 1;
@@ -316,9 +323,12 @@ class DistributedDualtreeTaskList {
       while(distributed_task_queue_->size(probe_index) > 0) {
         TaskType &test_task =
           const_cast<TaskType &>(distributed_task_queue_->top(probe_index));
+        unsigned long int stolen_local_computation = test_task.work();
         int reference_subtable_position;
+
+        // If the reference subtable cannot be packed, break.
         if((reference_subtable_position =
-              this->push_back_(test_task.reference_subtable(), false)) >= 0) {
+              this->push_back_(test_task.reference_subtable(), false)) < 0) {
           break;
         }
         else {
@@ -331,14 +341,10 @@ class DistributedDualtreeTaskList {
 
           // For each reference subtree stolen, the amount of local
           // computation decreases.
-          unsigned long int stolen_local_computation =
-            query_subtable.start_node()->count() *
-            sub_tables_[
-              reference_subtable_position ].get<0>().start_node()->count() ;
           distributed_task_queue_->decrement_remaining_local_computation(
             stolen_local_computation);
         }
-      }
+      } // end of trying to empty out a query subtable list.
 
       // If no reference subtable was pushed in, there is no point in
       // sending the query subtable.
