@@ -41,11 +41,11 @@ class DistributedDualtreeTask {
              (this->reference_start_node()->count());
     }
 
-    TreeType *query_start_node() {
+    TreeType *query_start_node() const {
       return query_subtable_.start_node();
     }
 
-    TreeType *reference_start_node() {
+    TreeType *reference_start_node() const {
       return reference_subtable_.start_node();
     }
 

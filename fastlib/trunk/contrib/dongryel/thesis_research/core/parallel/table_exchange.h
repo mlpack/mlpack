@@ -689,7 +689,7 @@ class TableExchange {
         task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
 
         // Initiate load balancing with the neighbor.
-        LoadBalance_(world, metric_in, neighbor);
+        // LoadBalance_(world, metric_in, neighbor);
 
         // Increment the stage when done, and turn off the stage flag.
         stage_ = (stage_ + 1) % max_stage_;
