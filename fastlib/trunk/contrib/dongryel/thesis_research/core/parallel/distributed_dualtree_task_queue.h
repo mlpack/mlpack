@@ -381,7 +381,7 @@ class DistributedDualtreeTaskQueue {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       load_balance_request->Init(
-        query_subtables_, remaining_local_computation_,
+        remaining_local_computation_,
         table_exchange_.remaining_extra_points_to_hold());
     }
 
