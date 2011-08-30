@@ -212,7 +212,8 @@ DistributedProblemType >::InitialSetup_(
 
   // For each process, initialize the distributed task object.
   distributed_tasks->Init(
-    *world_, max_subtree_size_, query_table_, reference_table_, query_results,
+    *world_, max_subtree_size_, do_load_balancing_,
+    query_table_, reference_table_, query_results,
     omp_get_max_threads());
 
   // Each process needs to customize its reference set for each
@@ -428,6 +429,7 @@ DistributedProblemType >::ResetStatistic() {
 
 template<typename DistributedProblemType>
 DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
+  do_load_balancing_ = false;
   leaf_size_ = 0;
   max_subtree_size_ = 20000;
   max_num_work_to_dequeue_per_stage_ = 5;
@@ -440,10 +442,12 @@ template<typename DistributedProblemType>
 void DistributedDualtreeDfs<DistributedProblemType>::set_work_params(
   int leaf_size_in,
   int max_subtree_size_in,
+  bool do_load_balancing_in,
   int max_num_work_to_dequeue_per_stage_in) {
 
   leaf_size_ = leaf_size_in;
   max_subtree_size_ = max_subtree_size_in;
+  do_load_balancing_ = do_load_balancing_in;
   max_num_work_to_dequeue_per_stage_ = max_num_work_to_dequeue_per_stage_in;
 }
 

@@ -65,6 +65,7 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
   distributed_dualtree_dfs.set_work_params(
     arguments_in.leaf_size_,
     arguments_in.max_subtree_size_,
+    arguments_in.do_load_balancing_,
     arguments_in.max_num_work_to_dequeue_per_stage_);
 
   // Compute the result and do post-normalize.
@@ -128,6 +129,9 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     boost::program_options::value<std::string>()->default_value(
       "densities_out.csv"),
     "OPTIONAL file to store computed densities."
+  )(
+    "do_load_balancing",
+    "If present, do load balancing."
   )(
     "kernel",
     boost::program_options::value<std::string>()->default_value("gaussian"),
@@ -357,6 +361,9 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // A L2 metric to index the table to use.
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
+
+  // Parse the load balancing option.
+  arguments_out->do_load_balancing_ = (vm.count("do_load_balancing") > 0);
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =

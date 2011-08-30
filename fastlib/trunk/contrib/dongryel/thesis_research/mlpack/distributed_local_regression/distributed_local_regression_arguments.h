@@ -21,6 +21,10 @@ template<typename DistributedTableType, typename MetricType>
 class DistributedLocalRegressionArguments {
   public:
 
+    /** @brief Whether to do load balancing.
+     */
+    bool do_load_balancing_;
+
     /** @brief The name of the output file that will hold the
      *         regression estimates.
      */
@@ -106,6 +110,7 @@ class DistributedLocalRegressionArguments {
     /** @brief The default constructor.
      */
     DistributedLocalRegressionArguments() {
+      do_load_balancing_ = false;
       leaf_size_ = 0;
       reference_table_ = NULL;
       query_table_ = NULL;

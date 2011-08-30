@@ -79,6 +79,10 @@ class DistributedDualtreeDfs {
 
   private:
 
+    /** @brief Whether to perform load balancing.
+     */
+    bool do_load_balancing_;
+
     /** @brief The pointer to the boost communicator.
      */
     boost::mpi::communicator *world_;
@@ -227,6 +231,7 @@ class DistributedDualtreeDfs {
     void set_work_params(
       int leaf_size_in,
       int max_subtree_size_in,
+      bool do_load_balancing_in,
       int max_num_work_to_dequeue_per_stage_in);
 
     /** @brief The default constructor.
