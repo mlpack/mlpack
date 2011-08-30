@@ -499,6 +499,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
 
   // Enter the trust region loop.
   int num_iterations = 0;
+  int num_outer_iterations = 0;
   do {
 
     int min_num_samples;
@@ -506,8 +507,9 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     double avg_num_samples;
     double variance;
     std::cerr << "\n##########################################################\n";
-    std::cerr << "\nIteration #: " << num_iterations << "\n";
+    std::cerr << "\nIteration #: " << num_outer_iterations << "\n";
     std::cerr << "\n##########################################################\n";
+    num_outer_iterations++;
 
     iterate->num_integration_samples_stat(
       &min_num_samples, &max_num_samples, &avg_num_samples, &variance);
