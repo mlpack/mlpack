@@ -58,7 +58,8 @@ class MixedLogitDCM {
       double integration_sample_error,
       const arma::vec &integration_sample_error_per_person,
       const SamplingType &second_sample,
-      SamplingType *first_sample) const;
+      SamplingType *first_sample,
+      SamplingType *additional_sample) const;
 
     /** @brief Implements the stopping condition.
      */

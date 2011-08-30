@@ -280,7 +280,8 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
   double integration_sample_error,
   const arma::vec &integration_sample_error_per_person,
   const SamplingType &second_sample,
-  SamplingType *first_sample) const {
+  SamplingType *first_sample,
+  SamplingType *additional_sample) const {
 
   std::cerr << "    Updating the number of samples...\n";
 
@@ -331,6 +332,11 @@ void MixedLogitDCM<TableType, DistributionType>::UpdateSampleAllocation_(
     //std::cerr << "  Adding " << num_additional_samples << " to Person " <<
     //          person_index << "\n";
     first_sample->AddSamples(person_index, num_additional_samples);
+
+    // If provided optionally the second sample,
+    if(additional_sample != NULL) {
+      additional_sample->AddSamples(person_index, num_additional_samples);
+    }
   }
 }
 
@@ -430,6 +436,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
   arma::vec gradient;
   arma::mat hessian;
   SamplingType *iterate = new SamplingType();
+  SamplingType *iterate_at_true_parameters = NULL;
 
   // Copy the starting parameter values.
   arma::vec starting_point;
@@ -445,10 +452,25 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     starting_point.print();
   }
 
+  // Initiate the iterate based on the starting point and its
+  // gradient.
   iterate->Init(
     &train_table_, starting_point,
     initial_num_data_samples, initial_num_integration_samples);
   iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
+
+  // If available, initiate the iterate at the true parameter.
+  if(arguments_in.true_parameters_table_ != NULL) {
+    iterate_at_true_parameters = new SamplingType();
+    arma::vec true_parameters;
+    for(int i = 0; i < train_table_.num_parameters(); i++) {
+      true_parameters[i] =
+        arguments_in.true_parameters_table_->data().get(0, i);
+    }
+    iterate_at_true_parameters->Init(
+      &train_table_, true_parameters,
+      initial_num_data_samples, initial_num_integration_samples);
+  }
 
   // Depending on the selected Hessian update scheme, compute it
   // differently.
@@ -506,6 +528,9 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     SamplingType *next_iterate = new SamplingType();
     next_iterate->Init(*iterate, p);
     double iterate_function_value = iterate->NegativeSimulatedLogLikelihood();
+    double iterate_function_value_at_true_parameter =
+      (iterate_at_true_parameters != NULL) ?
+      iterate_at_true_parameters->NegativeSimulatedLogLikelihood() : 0.0 ;
     double next_iterate_function_value =
       next_iterate->NegativeSimulatedLogLikelihood();
     double decrease_predicted_by_model;
@@ -531,6 +556,13 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
       hessian = new_hessian;
     }
 
+    // Print the function value at the true parameter optionally.
+    if(iterate_at_true_parameters != NULL) {
+      std::cerr << "The current function value (with " <<
+                iterate->num_active_people() <<
+                " people using the true parameter: " <<
+                iterate_function_value_at_true_parameter << "; ";
+    }
     std::cerr << "The current function value (with " <<
               iterate->num_active_people() << " people: " <<
               iterate_function_value << "; ";
@@ -592,6 +624,12 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
       iterate->AddActivePeople(
         num_additional_people, initial_num_integration_samples);
 
+      // If true parameters provided,
+      if(iterate_at_true_parameters != NULL) {
+        iterate_at_true_parameters->AddActivePeople(
+          num_additional_people, initial_num_integration_samples);
+      }
+
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
 
@@ -614,7 +652,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
       UpdateSampleAllocation_(
         arguments_in, integration_sample_error,
         integration_sample_error_per_person,
-        *next_iterate, iterate);
+        *next_iterate, iterate, iterate_at_true_parameters);
 
       // Update the gradient and the hessian.
       iterate->NegativeSimulatedLogLikelihoodGradient(&gradient);
@@ -677,6 +715,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
 
   // Free the iterate.
   delete iterate;
+  delete iterate_at_true_parameters;
 }
 
 template<typename TableType, typename DistributionType>
