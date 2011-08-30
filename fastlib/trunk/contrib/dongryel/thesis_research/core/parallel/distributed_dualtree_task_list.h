@@ -36,14 +36,14 @@ class DistributedDualtreeTaskList {
 
     typedef typename TableType::TreeType TreeType;
 
-    typedef typename SubTableType::SubTableIDType ValueType;
+    typedef typename SubTableType::SubTableIDType KeyType;
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
     TaskPriorityQueueType,
     QueryResultType > DistributedDualtreeTaskQueueType;
 
-    typedef ValueType KeyType;
+    typedef int ValueType;
 
     struct ComparatorType {
       bool operator()(const KeyType &k1, const KeyType &k2) const {
@@ -128,7 +128,7 @@ class DistributedDualtreeTaskList {
       typename MapType::iterator it =
         id_to_position_map_.find(subtable_id);
       if(it != id_to_position_map_.end()) {
-        *position_out = *it;
+        *position_out = it->second;
         return true;
       }
       else {
@@ -144,12 +144,12 @@ class DistributedDualtreeTaskList {
       if(sub_tables_.size() > 0) {
 
         // Find the position in the subtable list.
-        ValueType last_subtable_id = sub_tables_.back().get<0>().subtable_id();
+        KeyType last_subtable_id = sub_tables_.back().get<0>().subtable_id();
         typename MapType::iterator remove_position_it =
           this->id_to_position_map_.find(subtable_id);
         int remove_position = -1;
         if(remove_position_it != id_to_position_map_.end()) {
-          remove_position = *remove_position_it;
+          remove_position = remove_position_it->second;
         }
 
         if(remove_position >= 0) {
@@ -171,7 +171,7 @@ class DistributedDualtreeTaskList {
             id_to_position_map_.erase(
               sub_tables_[remove_position].get<0>().subtable_id());
             sub_tables_[ remove_position ].get<0>().Alias(
-              *(sub_tables_.back().get<0>()));
+              sub_tables_.back().get<0>());
             sub_tables_[ remove_position ].get<1>() =
               sub_tables_.back().get<1>();
             sub_tables_[ remove_position ].get<2>() =
@@ -202,10 +202,12 @@ class DistributedDualtreeTaskList {
       }
 
       // Otherwise, try to see whether it can be stored.
-      else if(test_subtable_in.start_node()->count() <=
-              remaining_extra_points_to_hold_) {
+      else if(
+        static_cast <
+        unsigned long int >(test_subtable_in.start_node()->count()) <=
+        remaining_extra_points_to_hold_) {
         sub_tables_.resize(sub_tables_.size() + 1);
-        sub_tables_.back().get<0>()->Alias(test_subtable_in);
+        sub_tables_.back().get<0>().Alias(test_subtable_in);
         if(count_as_query) {
           sub_tables_.back().get<1>() = true;
         }
@@ -312,7 +314,8 @@ class DistributedDualtreeTaskList {
 
       // And its associated reference sets.
       while(distributed_task_queue_->size(probe_index) > 0) {
-        const TaskType &test_task = distributed_task_queue_->top(probe_index);
+        TaskType &test_task =
+          const_cast<TaskType &>(distributed_task_queue_->top(probe_index));
         int reference_subtable_position;
         if((reference_subtable_position =
               this->push_back_(test_task.reference_subtable(), false)) >= 0) {
@@ -330,7 +333,8 @@ class DistributedDualtreeTaskList {
           // computation decreases.
           unsigned long int stolen_local_computation =
             query_subtable.start_node()->count() *
-            sub_tables_[ reference_subtable_position ].start_node()->count() ;
+            sub_tables_[
+              reference_subtable_position ].get<0>().start_node()->count() ;
           distributed_task_queue_->decrement_remaining_local_computation(
             stolen_local_computation);
         }

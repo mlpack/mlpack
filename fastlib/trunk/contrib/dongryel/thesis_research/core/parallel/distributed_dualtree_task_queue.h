@@ -369,7 +369,7 @@ class DistributedDualtreeTaskQueue {
         *this);
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         if(! query_subtables_[i]->is_locked()) {
-
+          extra_task_list_out->push_back(world, i);
         }
       }
     }
@@ -402,7 +402,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Returns the query result associated with the index.
      */
     QueryResultType *query_result(int probe_index) {
-      return query_results_[probe_index];
+      return query_results_[probe_index].get();
     }
 
     /** @brief Returns the query subtable associated with the index.
@@ -612,6 +612,13 @@ class DistributedDualtreeTaskQueue {
       return load_balancing_trigger_level_;
     }
 
+    /** @brief Returns the number of tasks associated with the probing
+     *         index.
+     */
+    int size(int probe_index) {
+      return tasks_[probe_index]->size();
+    }
+
     /** @brief Returns the number of query subtables.
      */
     int size() const {
@@ -751,7 +758,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Examines the top task in the given task list.
      */
     const TaskType &top(int probe_index) const {
-      return tasks_[probe_index].top();
+      return tasks_[probe_index]->top();
     }
 
     /** @brief Removes the top task in the given task list.
@@ -759,10 +766,10 @@ class DistributedDualtreeTaskQueue {
     void pop(int probe_index) {
 
       // Decrement the amount of local computation.
-      remaining_local_computation_ -= tasks_[probe_index].top().work();
+      remaining_local_computation_ -= tasks_[probe_index]->top().work();
 
       // Pop.
-      tasks_[probe_index].pop();
+      tasks_[probe_index]->pop();
 
       // Decrement the number of tasks.
       num_remaining_tasks_--;
