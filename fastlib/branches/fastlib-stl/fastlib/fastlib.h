@@ -12,7 +12,6 @@
 #include "la/la.h"
 #include "la/matrix.h"
 #include "data/dataset.h"
-#include "data/crossvalidation.h"
 #include "math/math_lib.h"
 #include "file/textfile.h"
 #include "tree/spacetree.h"
