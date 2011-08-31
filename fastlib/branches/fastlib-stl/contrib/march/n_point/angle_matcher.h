@@ -32,20 +32,12 @@ namespace npt {
     
   private:
     
-    arma::mat& data_mat_;
-    arma::colvec& data_weights_;
+    std::vector<arma::mat&> data_mat_list_;
+    std::vector<arma::colvec&> data_weights_list_;
     
-    arma::mat& random_mat_;
-    arma::colvec& random_weights_;
-    
-    int num_random_;
-    
-    // indexed by [num_random][r1][theta]
-    //std::vector<std::vector<std::vector<int> > > results_;
-    //std::vector<std::vector<std::vector<double> > > weighted_results_;
-    
-    boost::multi_array<int, 3> results_;
-    boost::multi_array<double, 3> weighted_results_;
+    // indexed by [r1][theta]
+    boost::multi_array<int, 2> results_;
+    boost::multi_array<double, 2> weighted_results_;
     
     std::vector<double> short_sides_;
     // the long side is this times the short side
@@ -85,10 +77,6 @@ namespace npt {
     boost::multi_array<double, 2> r3_lower_sqr_;
     boost::multi_array<double, 2> r3_upper_sqr_;
     
-    bool i_is_random_;
-    bool j_is_random_;
-    bool k_is_random_;
-    
     int tuple_size_;
     int num_base_cases_;
     
@@ -127,8 +115,8 @@ namespace npt {
     
   public:
     
-    AngleMatcher(arma::mat& data_in, arma::colvec& weights_in,
-                 arma::mat& random_in, arma::colvec& rweights_in,
+    AngleMatcher(std::vector<arma::mat&>& data_in, 
+                 std::vector<arma::colvec&>& weights_in,
                  std::vector<double>& short_sides, double long_side,
                  std::vector<double>& thetas, double bin_size) :
     short_sides_(short_sides), long_side_multiplier_(long_side), 
@@ -139,10 +127,9 @@ namespace npt {
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
     r3_lower_sqr_(boost::extents[short_sides.size()][thetas.size()]),
     r3_upper_sqr_(boost::extents[short_sides.size()][thetas.size()]),
-    results_(boost::extents[4][short_sides.size()][thetas.size()]), 
-    weighted_results_(boost::extents[4][short_sides.size()][thetas.size()]),
-    data_mat_(data_in), data_weights_(weights_in), 
-    random_mat_(random_in), random_weights_(rweights_in)
+    results_(boost::extents[short_sides.size()][thetas.size()]), 
+    weighted_results_(boost::extents[short_sides.size()][thetas.size()]),
+    data_mat_list_(data_in), data_weights_list_(weights_in), 
     {
       
       //mlpack::IO::Info << "Starting construction of angle matcher.\n";
@@ -297,7 +284,8 @@ namespace npt {
     // returns the index of the value of r1 that is satisfied by the tuple
     // the list contains the indices of thetas_ that are satisfied by the tuple
     // assumes that valid_theta_indices is initialized and empty
-    
+
+    /*
     void set_num_random(int n) {
       
       num_random_ = n;
@@ -307,16 +295,17 @@ namespace npt {
       k_is_random_ = (num_random_ > 2);
 
     }
+     */
     
     int tuple_size() {
       return tuple_size_;
     }
     
-    boost::multi_array<int, 3>& results() {
+    boost::multi_array<int, 2>& results() {
       return results_;
     }
 
-    boost::multi_array<double, 3>& weighted_results() {
+    boost::multi_array<double, 2>& weighted_results() {
       return weighted_results_;
     }
     

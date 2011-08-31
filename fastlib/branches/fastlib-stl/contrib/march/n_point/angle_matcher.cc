@@ -27,16 +27,12 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
   
   num_base_cases_++;
   
+  // IMPORTANT: this assumes that the points are all leaves - i.e. that one
+  // of the nodes does not have another as a descendent
   for (int i = nodes.node_list(0)->begin(); 
        i < nodes.node_list(0)->end(); i++) {
     
-    arma::colvec vec_i;
-    if (i_is_random_) {
-      vec_i = random_mat_.col(i);
-    }
-    else {
-      vec_i = data_mat_.col(i);
-    }
+    arma::colvec vec_i = data_mat_list_[0].col(i);
     
     int j_begin = (nodes.node_list(0) == nodes.node_list(1)) ? i+1 : 
                                             nodes.node_list(1)->begin();
@@ -44,18 +40,10 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
     
     for (int j = j_begin; j < j_end; j++) {
      
-      arma::colvec vec_j;
+      arma::colvec vec_j = data_mat_list_[1].col(j);
     
-      if (j_is_random_) {
-        vec_j = random_mat_.col(j);
-      }
-      else {
-        vec_j = data_mat_.col(j);
-      }
-      
       int k_begin;
-      if (j_is_random_ == k_is_random_ 
-          && nodes.node_list(1) == nodes.node_list(2)) {
+      if (nodes.node_list(1) == nodes.node_list(2)) {
         k_begin = j+1;
       }
       else {
@@ -67,27 +55,21 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
         
         std::vector<int> valid_thetas;
         
-        arma::colvec vec_k;
-        if (k_is_random_) {
-          vec_k = random_mat_.col(k);
-        }
-        else {
-          vec_k = data_mat_.col(k); 
-        }
+        arma::colvec vec_k = data_mat_list_[2].col(k);
         
         int valid_r1 = TestPointTuple_(vec_i, vec_j, vec_k, valid_thetas);
         
         if (valid_r1 >= 0) {
           
-          double weight_i = i_is_random_ ? random_weights_[i] : data_weights_[i];
-          double weight_j = j_is_random_ ? random_weights_[j] : data_weights_[j];
-          double weight_k = k_is_random_ ? random_weights_[k] : data_weights_[k];
+          double weight_i = data_weights_list_[0](i);
+          double weight_j = data_weights_list_[1](j);
+          double weight_k = data_weights_list_[2](k);
           double this_weight = weight_i * weight_j * weight_k;
           
           for (int theta_ind = 0; theta_ind < valid_thetas.size() ; theta_ind++) {
             
-            results_[num_random_][valid_r1][valid_thetas[theta_ind]]++;
-            weighted_results_[num_random_][valid_r1][valid_thetas[theta_ind]]+= this_weight;
+            results_[valid_r1][valid_thetas[theta_ind]]++;
+            weighted_results_[valid_r1][valid_thetas[theta_ind]]+= this_weight;
             
           } // iterate over valid thetas
           
@@ -472,37 +454,25 @@ void npt::AngleMatcher::OutputResults() {
   
   PrintNumPrunes();
   
-  std::string d_string(tuple_size_, 'D');
-  std::string r_string(tuple_size_, 'R');
-  std::string label_string;
-  label_string+=d_string;
-  label_string+=r_string;
   
-  for (int i = 0; i <= tuple_size_; i++) {
+  for (index_t j = 0; j < results_.size(); j++) {
     
-    // i is the number of random points in the tuple
-    std::string this_string(label_string, i, tuple_size_);
-    mlpack::IO::Info << this_string << "\n";
-    
-    for (index_t j = 0; j < results_[i].size(); j++) {
+    for (index_t k = 0; k < results_[j].size(); k++) {
       
-      for (index_t k = 0; k < results_[i][j].size(); k++) {
-        
-        mlpack::IO::Info << "Matcher: ";
-        mlpack::IO::Info << "R1: " << short_sides_[j] << ", ";
-        mlpack::IO::Info << "R2: " << (short_sides_[j] * long_side_multiplier_) << ", ";
-        mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
-        
-        mlpack::IO::Info << results_[i][j][k] << "\n";
-        
-      } // for k
+      mlpack::IO::Info << "Matcher: ";
+      mlpack::IO::Info << "R1: " << short_sides_[j] << ", ";
+      mlpack::IO::Info << "R2: " << (short_sides_[j] * long_side_multiplier_) << ", ";
+      mlpack::IO::Info << "theta: " << thetas_[k] << ": ";
       
-    } // for j
+      mlpack::IO::Info << results_[j][k] << "\n";
+      
+    } // for k
     
-    mlpack::IO::Info << "\n\n";
-    
-  } // for i
+  } // for j
   
+  mlpack::IO::Info << "\n\n";
+  
+
   
 } // OutputResults
 
