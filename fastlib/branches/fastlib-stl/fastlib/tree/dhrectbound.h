@@ -47,9 +47,9 @@ class DHrectBound {
     ~DHrectBound();
 
     /**
-     * Makes this (uninitialized) box the average of the two arguments, 
-     * i.e. the max and min of each range is the average of the maxes and mins 
-     * of the arguments.  
+     * Makes this (uninitialized) box the average of the two arguments,
+     * i.e. the max and min of each range is the average of the maxes and mins
+     * of the arguments.
      *
      * Added by: Bill March, 5/7
      */
@@ -76,7 +76,7 @@ class DHrectBound {
     /**
      * Gets the range for a particular dimension.
      */
-    const DRange operator[](index_t i) const;
+    DRange operator[](index_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle
@@ -171,7 +171,7 @@ class DHrectBound {
     DHrectBound& operator|=(const DHrectBound& other);
 
     /**
-     * Expand this bounding box to encompass another point. Done to 
+     * Expand this bounding box to encompass another point. Done to
      * minimize added volume in periodic coordinates.
      */
     DHrectBound& Add(const arma::vec& other, const arma::vec& size);
