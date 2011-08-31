@@ -208,34 +208,8 @@ int main(int argc, char *argv[]) {
   
   // TODO: more kernels to be supported
 
-  /* Cross Validation Mode, need cross validation data */
-  if(mode == "cv") { 
-    fprintf(stderr, "SVM Cross Validation... \n");
-    
-    /* Load cross validation data */
-    Dataset cvset;
-    if (LoadData(&cvset, "cv_data") == 0)
-    return 1;
-    
-    if (kernel == "linear") {
-      GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator; 
-      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
-      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
-      /* k_cv folds cross validation; (true): do training set permutation */
-      cross_validator.Run(true);
-      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
-    }
-    else if (kernel == "gaussian") {
-      GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator; 
-      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
-      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
-      /* k_cv folds cross validation; (true): do training set permutation */
-      cross_validator.Run(true);
-      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
-    }
-  }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
-  else if (mode=="train" || mode=="train_test"){
+  if (mode=="train" || mode=="train_test"){
     fprintf(stderr, "SVM Training... \n");
 
     /* Load training data */

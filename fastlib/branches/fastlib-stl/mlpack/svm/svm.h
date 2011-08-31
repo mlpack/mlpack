@@ -51,7 +51,7 @@ PARAM_STRING_REQ("learner_name", "The name of the support vector learner,\
  values: 'svm_c' for classification, 'svm_r' for regression, 'svn_de'\
  for one class SVM", "svm");
 
-PARAM_STRING_REQ("mode", "The mode of svm_main, values: 'cv', 'train',\
+PARAM_STRING_REQ("mode", "The mode of svm_main, values: 'train',\
  'train_test', 'test'.", "svm");
 
 PARAM_STRING_REQ("kernel", "Kernel name, values: 'linear', 'gaussian'.", "svm");
