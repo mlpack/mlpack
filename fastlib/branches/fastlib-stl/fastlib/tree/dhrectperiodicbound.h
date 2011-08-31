@@ -28,7 +28,7 @@ class DHrectPeriodicBound {
   private:
     DRange *bounds_;
     index_t dim_;
-    vec& box_size__;
+    vec box_size_;
 
   public:
     /**
@@ -45,26 +45,26 @@ class DHrectPeriodicBound {
     /**
      * Destructor: clean up memory.
      */
-    ~DHrectPeriodicBound();
+//    ~DHrectPeriodicBound();
 
     /**
-     * Modifies the box_size__ to the desired dimenstions.
+     * Modifies the box_size_ to the desired dimenstions.
      */
     void SetBoxSize(vec& box);
 
     /**
-     * Returns the box_size__ vector.
+     * Returns the box_size_ vector.
      */
-    long GetBoxSize();    
+    vec& GetBoxSize();
 
     /**
-     * Makes this (uninitialized) box the average of the two arguments, 
-     * i.e. the max and min of each range is the average of the maxes and mins 
-     * of the arguments.  
+     * Makes this (uninitialized) box the average of the two arguments,
+     * i.e. the max and min of each range is the average of the maxes and mins
+     * of the arguments.
      *
      * Added by: Bill March, 5/7
      */
-    void AverageBoxesInit(const DHrectBound& box1, const DHrectBound& box2);
+    void AverageBoxesInit(const DHrectPeriodicBound& box1, const DHrectPeriodicBound& box2);
 
     /**
      * Resets all dimensions to the empty set.
@@ -87,7 +87,7 @@ class DHrectPeriodicBound {
     /**
      * Gets the range for a particular dimension.
      */
-    const DRange operator[](index_t i) const;
+    DRange operator[](index_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle
@@ -107,7 +107,7 @@ class DHrectPeriodicBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
-    double MinDistanceSq(const DHrectBound& other) const;
+    double MinDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Calculates maximum bound-to-point squared distance.
@@ -122,20 +122,20 @@ class DHrectPeriodicBound {
     /**
      * Computes maximum distance.
      */
-    double MaxDistanceSq(const DHrectBound& other) const;
+    double MaxDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Computes maximum distance with offset
      */
-    double MaxDistanceSq(const DHrectBound& other, const arma::vec& offset) const;
+    double MaxDistanceSq(const DHrectPeriodicBound& other, const arma::vec& offset) const;
 
-    double MaxDelta(const DHrectBound& other, double box_width, int dim) const;
-    double MinDelta(const DHrectBound& other, double box_width, int dim) const;
+    double MaxDelta(const DHrectPeriodicBound& other, double box_width, int dim) const;
+    double MinDelta(const DHrectPeriodicBound& other, double box_width, int dim) const;
 
     /**
      * Calculates minimum and maximum bound-to-bound squared distance.
      */
-    DRange RangeDistanceSq(const DHrectBound& other) const;
+    DRange RangeDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Calculates minimum and maximum bound-to-point squared distance.
@@ -153,17 +153,17 @@ class DHrectPeriodicBound {
      * return MinDistanceSqToPoint(other_midpoint)
      * </code>
      */
-    double MinToMidSq(const DHrectBound& other) const;
+    double MinToMidSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Computes minimax distance, where the other node is trying to avoid me.
      */
-    double MinimaxDistanceSq(const DHrectBound& other) const;
+    double MinimaxDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Calculates midpoint-to-midpoint bounding box distance.
      */
-    double MidDistanceSq(const DHrectBound& other) const;
+    double MidDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Expands this region to include a new point.
@@ -173,10 +173,10 @@ class DHrectPeriodicBound {
     /**
      * Expands this region to encompass another bound.
      */
-    DHrectPeriodicBound& operator|=(const DHrectBound& other);
+    DHrectPeriodicBound& operator|=(const DHrectPeriodicBound& other);
 
     /**
-     * Expand this bounding box to encompass another point. Done to 
+     * Expand this bounding box to encompass another point. Done to
      * minimize added volume in periodic coordinates.
      */
     DHrectPeriodicBound& Add(const arma::vec& other, const arma::vec& size);
@@ -184,7 +184,7 @@ class DHrectPeriodicBound {
     /**
      * Expand this bounding box in periodic coordinates, minimizing added volume
      */
-    DHrectPeriodicBound& Add(const DHrectBound& other, const arma::vec& size);
+    DHrectPeriodicBound& Add(const DHrectPeriodicBound& other, const arma::vec& size);
 };
 
 #include "dhrectperiodicbound_impl.h"
