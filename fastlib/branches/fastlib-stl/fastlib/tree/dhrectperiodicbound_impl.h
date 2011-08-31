@@ -20,7 +20,7 @@ using arma::vec;
  * Empty constructor
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() : box_size_(arma::vec(0.0)) {
   bounds_ = NULL;
   dim_ = 0;
 }
@@ -30,10 +30,9 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() {
  * set.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) : box_size_(arma::vec(0.0)) {
   //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
   bounds_ = new DRange[dimension];
-
   dim_ = dimension;
   Reset();
 }
@@ -41,38 +40,38 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) {
 /**
  * Destructor: clean up memory
  */
-template<int t_pow>
-DHrectPeriodicBound<t_pow>::~DHrectPeriodicbound() {
-  if(bounds_)
-    delete[] bounds_;
-}
+//template<int t_pow>
+//DHrectPeriodicBound<t_pow>::~DHrectPeriodicbound() {
+//  if(bounds_)
+//    delete[] bounds_;
+//}
 
 /**
- * Modifies the box_size__ to the desired dimenstions.
+ * Modifies the box_size_ to the desired dimenstions.
  */
 template<int t_pow>
 void DHrectPeriodicBound<t_pow>::SetBoxSize(vec& box) {
-  box_size__ = box; 
+  box_size_ = box;
 }
 
 /**
- * Returns the box_size__ vector.
+ * Returns the box_size_ vector.
  */
 template<int t_pow>
 vec& DHrectPeriodicBound<t_pow>::GetBoxSize() {
-  return box_size__
-} 
+  return box_size_;
+}
 
 /**
- * Makes this (uninitialized) box the average of the two arguments, 
- * i.e. the max and min of each range is the average of the maxes and mins 
- * of the arguments.  
+ * Makes this (uninitialized) box the average of the two arguments,
+ * i.e. the max and min of each range is the average of the maxes and mins
+ * of the arguments.
  *
  * Added by: Bill March, 5/7
  */
 template<int t_pow>
-void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
-                                                  const DHrectBound& box2) {
+void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectPeriodicBound& box1,
+                                                  const DHrectPeriodicBound& box2) {
 
   dim_ = box1.dim();
   DEBUG_ASSERT(dim_ == box2.dim());
@@ -130,7 +129,7 @@ bool DHrectPeriodicBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectPeriodicBound<t_pow>::operator[](index_t i) const {
+DRange DHrectPeriodicBound<t_pow>::operator[](index_t i) const {
   return bounds_[i];
 }
 
@@ -143,7 +142,7 @@ double DHrectPeriodicBound<t_pow>::CalculateMaxDistanceSq() const {
   for (index_t i = 0; i < dim_; i++)
     max_distance += pow(bounds_[i].width(), 2);
 
-  return max_distance;  
+  return max_distance;
 }
 
 /** Calculates the midpoint of the range */
@@ -169,12 +168,11 @@ double DHrectPeriodicBound<t_pow>::MinDistanceSq(const vec& point) const {
     double a = point[d];
     double v = 0, bh;
     bh = bounds_[d].hi - bounds_[d].lo;
-    bh = bh - floor(bh / box_size__[d]) * box_size__[d];
+    bh = bh - floor(bh / box_size_[d]) * box_size_[d];
     a = a - bounds_[d].lo;
-    a = a - floor(a / box_size__[d]) * box_size__[d];
+    a = a - floor(a / box_size_[d]) * box_size_[d];
     if (bh > a)
-      v = min(a - bh, box_size__[d]-a);
-    
+      v = min(a - bh, box_size_[d]-a);
     sum += pow(v, (double) t_pow);
   }
 
@@ -187,19 +185,19 @@ double DHrectPeriodicBound<t_pow>::MinDistanceSq(const vec& point) const {
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
-  for (index_t d = 0; d < dim_; d++){      
+  for (index_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
     d1 = (bounds_[d].hi > bounds_[d].lo | other.bounds_[d].hi > other.bounds_[d].lo) *
       min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
     d2 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
-      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size__[d]);
+      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size_[d]);
     d3 = (bounds_[d].hi > bounds_[d].lo & other.bounds_[d].hi > other.bounds_[d].lo) *
-      min(other.bounds_[d].lo - bounds_[d].hi + box_size__[d], bounds_[d].lo - other.bounds_[d].hi);
+      min(other.bounds_[d].lo - bounds_[d].hi + box_size_[d], bounds_[d].lo - other.bounds_[d].hi);
     v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
     sum += pow(v, (double) t_pow);
   }
@@ -215,15 +213,15 @@ double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const vec& point) const {
 
   for (index_t d = 0; d < dim_; d++) {
     double b = point[d];
-    double v = box_size__[d] / 2.0;
+    double v = box_size_[d] / 2.0;
     double ah, al;
     ah = bounds_[d].hi - b;
-    ah = ah - floor(ah / box_size__[d]) * box_size__[d];
+    ah = ah - floor(ah / box_size_[d]) * box_size_[d];
     if (ah < v) {
       v = ah;
     } else {
       al = bounds_[d].lo - b;
-      al = al - floor(al / box_size__[d]) * box_size__[d];
+      al = al - floor(al / box_size_[d]) * box_size_[d];
       if (al > v) {
         v = (2 * v) - al;
       }
@@ -234,49 +232,32 @@ double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const vec& point) const {
 }
 
 /**
- * Calculates maximum bound-to-point squared distance.
- */
-/*
-template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
-  double sum = 0;
-
-  for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-    sum += std::pow(v, t_pow); // v is non-negative
-  }
-
-  return std::pow(sum, 2.0 / (double) t_pow);
-}
-*/
-
-/**
  * Computes maximum distance.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
   for (index_t d = 0; d < dim_; d++){
-    double v = box_size__[d] / 2.0;
+    double v = box_size_[d] / 2.0;
     double dh, dl;
     dh = bounds_[d].hi - other.bounds_[d].lo;
-    dh = dh - floor(dh / box_size__[d]) * box_size__[d];
+    dh = dh - floor(dh / box_size_[d]) * box_size_[d];
     dl = other.bounds_[d].hi - bounds_[d].lo;
-    dl = dl - floor(dl / box_size__[d]) * box_size__[d];
+    dl = dl - floor(dl / box_size_[d]) * box_size_[d];
     v = fabs(max(min(dh, v), min(dl, v)));
 
     sum += pow(v, (double) t_pow);
   }
-  return pow(sum, 2.0 / (double) t_pow); 
+  return pow(sum, 2.0 / (double) t_pow);
 }
 
 
 
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other, 
+double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectPeriodicBound& other,
                                             double box_width, int dim) const {
   double result = 0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
@@ -296,7 +277,7 @@ double DHrectPeriodicBound<t_pow>::MaxDelta(const DHrectBound& other,
 }
 
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectBound& other,
+double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectPeriodicBound& other,
                                             double box_width, int dim) const {
   double result = -0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
@@ -319,7 +300,7 @@ double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectBound& other,
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
+DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -337,7 +318,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectBound& other) con
       v_hi = -v1; // make it nonnegative
       v_lo = (v2 > 0) ? v2 : 0; // force to be 0 if negative
     }
-    
+
     sum_lo += pow(v_lo, (double) t_pow);
     sum_hi += pow(v_hi, (double) t_pow);
   }
@@ -389,7 +370,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const vec& point) const {
  * </code>
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinToMidSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
@@ -411,7 +392,7 @@ double DHrectPeriodicBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
  * Computes minimax distance, where the other node is trying to avoid me.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MinimaxDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
@@ -431,7 +412,7 @@ double DHrectPeriodicBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) c
  * Calculates midpoint-to-midpoint bounding box distance.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
+double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
   const DRange *a = this->bounds_;
   const DRange *b = other.bounds_;
@@ -441,7 +422,8 @@ double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectBound& other) const
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
     // calculation speed) and subtract from each other, then raise to t_pow
-    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi - other.bounds_[d].lo), (double) t_pow);
+    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi -
+        other.bounds_[d].lo), (double) t_pow);
   }
 
   // take t_pow/2'th root and divide by constant of 4 (leftover from previous
@@ -467,7 +449,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const vec& ve
  * Expands this region to encompass another bound.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectBound& other) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectPeriodicBound& other) {
   DEBUG_SAME_SIZE(other.dim_, dim_);
 
   for (index_t i = 0; i < dim_; i++) {
@@ -479,11 +461,11 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectB
 
 
 /**
- * Expand this bounding box to encompass another point. Done to 
+ * Expand this bounding box to encompass another point. Done to
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other, 
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other,
                                                             const vec& size) {
   DEBUG_SAME_SIZE(other.n_elem, dim_);
   // Catch case of uninitialized bounds
@@ -514,7 +496,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other,
  * Expand this bounding box in periodic coordinates, minimizing added volume.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& other,
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectPeriodicBound& other,
                                                             const vec& size){
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
@@ -528,9 +510,9 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& o
     al = bounds_[i].lo;
     bh = other.bounds_[i].hi;
     bl = other.bounds_[i].lo;
-    ah = ah - al;    
+    ah = ah - al;
     bh = bh - al;
-    bl = bl - al;              
+    bl = bl - al;
     ah = ah - floor(ah / size[i]) * size[i];
     bh = bh - floor(bh / size[i]) * size[i];
     bl = bl - floor(bl / size[i]) * size[i];
@@ -542,7 +524,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectBound& o
 
     if (bl > ah && ((bl > bh) || (bh >= ah -bl + size[i]))){
       bounds_[i].lo = other.bounds_[i].lo;
-    }   
+    }
 
     if (unlikely(ah > bl & bl > bh)){
       bounds_[i].lo = 0;
