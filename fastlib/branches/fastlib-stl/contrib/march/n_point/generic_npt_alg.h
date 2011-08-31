@@ -25,12 +25,10 @@ namespace npt {
     // Matcher owns the data
     TMatcher& matcher_;
     
-    NptNode* data_tree_root_;
-    NptNode* random_tree_root_;
+    std::vector<NptNode*> trees_;
+    std::vector<int> multiplicities_;
     
     int tuple_size_;
-    
-    int num_random_;
     
     int num_prunes_;
     int num_base_cases_;
@@ -47,19 +45,23 @@ namespace npt {
     
   public:
     
-    GenericNptAlg(NptNode* data, NptNode* random, TMatcher& matcher_in) :
-    matcher_(matcher_in)
+    GenericNptAlg(std::vector<NptNode*>& trees_in, 
+                  std::vector<int>& multiplicities_in,
+                  TMatcher& matcher_in) :
+    matcher_(matcher_in), trees_(trees_in)
     {
-      
-      data_tree_root_ = data;
-      random_tree_root_ = random;
       
       //mlpack::IO::Info << "generic alg constructor.\n";
       
       num_prunes_ = 0;
       num_base_cases_ = 0;
       
-      tuple_size_ = matcher_.tuple_size();
+      tuple_size_ = 0;
+      for (int i = 0; i < multiplicities_.size(); i++) {
+        
+        tuple_size_ += multiplicities_[i];
+        
+      }
       
     } // constructor
     

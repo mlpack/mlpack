@@ -27,21 +27,7 @@ namespace npt {
     
     index_t tuple_size_;
     
-    // entry i, j is the distance bound for entries i and j in the list above
-    //arma::mat upper_bounds_sq_;
-    //arma::mat lower_bounds_sq_;
-    
-    // IMPORTANT: all the upper and lower bounds start off the same, 
-    // so this doesn't matter
-    //arma::Mat<index_t> map_upper_to_sorted_;
-    //arma::Mat<index_t> map_lower_to_sorted_;
-    
-    // sorted upper and lower node distances
-    //td::vector<double> sorted_upper_;
-    //std::vector<double> sorted_lower_;
-    
-    int num_random_;
-    
+    std::vector<int> same_nodes_;
     
     
     // this is the position of the node we should split next
@@ -52,37 +38,18 @@ namespace npt {
     
     //////////////// functions ///////////////////
     
-    //void SplitHelper_();
-    
-    
-    // given which node we're splitting, which elments of the index lists are 
-    // no longer valid
-    //void FindInvalidIndices_(std::vector<index_t>& inds);
-    
-    // after putting in a new node and getting the invalidated indices from
-    // FindInvalidIndices, call this to update the distance lists
-    //void UpdateIndices_(index_t split_ind, 
-    //                    std::vector<index_t>& invalid_indices);
-    
-    //void FillInSortedArrays_();
-
     void UpdateSplitInd_();
 
-    
     
   public:
     
     // constructor - only use this one to make the original node tuple
     // at the start of the algorithm
     // The copy constructor will be used for the others
-    NodeTuple(std::vector<NptNode*>& list_in, int num_random) :
-    tuple_size_(list_in.size()),
-    //sorted_upper_((tuple_size_ * (tuple_size_ - 1)) / 2),
-    //sorted_lower_((tuple_size_ * (tuple_size_ - 1)) / 2),
-    //upper_bounds_sq_(tuple_size_, tuple_size_),
-    //lower_bounds_sq_(tuple_size_, tuple_size_),
-    num_random_(num_random),
-    node_list_(list_in)
+    NodeTuple(std::vector<NptNode*>& list_in, 
+              std::vector<int>& same_in) :
+    node_list_(list_in),
+    same_nodes_(same_in), tuple_size_(list_in.size())
     {
      
      /*
@@ -92,40 +59,14 @@ namespace npt {
       */
       
      UpdateSplitInd_();
-     
-    
-     //FillInSortedArrays_();
-      
-      /*
-      for (index_t i = 0; i < sorted_upper_.size(); i++) {
-        std::cout << "sorted_upper[" << i << "]: (";
-        std::cout << sorted_upper_[i].first << ", " << sorted_upper_[i].second;
-        std::cout << ")\n";
-      } 
-
-      std::cout <<"\n";
-      
-      for (index_t i = 0; i < sorted_lower_.size(); i++) {
-        std::cout << "sorted_lower[" << i << "]: (";
-        std::cout << sorted_lower_[i].first << ", " << sorted_lower_[i].second;
-        std::cout << ")\n";
-      } 
-       */
-      
-      //printf("Finished\n");
       
     } // constructor (init)
     
     // use this constructor to make children in the recursion
     NodeTuple(NodeTuple& parent, bool is_left) : 
     tuple_size_(parent.tuple_size()),
-    //node_list_(parent.get_node_list()),
-    node_list_(parent.tuple_size()),
-    //sorted_upper_(parent.sorted_upper().size()), 
-    //sorted_lower_(parent.sorted_lower().size()),
-    //upper_bounds_sq_(tuple_size_, tuple_size_),
-    //lower_bounds_sq_(tuple_size_, tuple_size_),
-    num_random_(parent.num_random())
+    node_list_(parent.get_node_list()),
+    same_nodes_(parent.get_same_nodes())
     {
       
       /*
@@ -154,11 +95,13 @@ namespace npt {
       
       // TODO: make this more efficient
       // why wasnt the initialization list working?
+      /*
       for (int i = 0; i < tuple_size_; i++) {
         
         node_list_[i] = parent.node_list(i);
         
       }
+       */
       
       ind_to_split_ = parent.ind_to_split();
       
@@ -190,46 +133,9 @@ namespace npt {
       return node_list_;
     }
     
-    /*
-    const std::vector<double>& sorted_upper() const {
-      return sorted_upper_;
+    const std::vector<int>& get_same_nodes() const {
+      return same_nodes_;
     }
-    const std::vector<double> sorted_lower() const {
-      return sorted_lower_;
-    }
-    */
-    
-    /*
-    const std::vector<index_t>& input_to_upper() const {
-      return input_to_upper_;
-    }
-
-    const std::vector<index_t>& input_to_lower() const {
-      return input_to_lower_;
-    }
-     
-    
-    const std::vector<DRange>& ranges() const {
-      return ranges_;
-    }
-     */
-    /*
-    double upper_bound(index_t i) {
-      return sorted_upper_[i];
-    }
-    
-    double lower_bound(index_t i) {
-      return sorted_lower_[i];
-    }
-    
-    double upper_mat(index_t i, index_t j) {
-      return upper_bounds_sq_(i,j);
-    }
-
-    double lower_mat(index_t i, index_t j) {
-      return lower_bounds_sq_(i,j);
-    }
-    */
     
     bool all_leaves() {
       return all_leaves_;
