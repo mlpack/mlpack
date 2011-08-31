@@ -48,14 +48,14 @@ DHrectBound<t_pow>::~DHrectBound() {
 }
 
 /**
- * Makes this (uninitialized) box the average of the two arguments, 
- * i.e. the max and min of each range is the average of the maxes and mins 
- * of the arguments.  
+ * Makes this (uninitialized) box the average of the two arguments,
+ * i.e. the max and min of each range is the average of the maxes and mins
+ * of the arguments.
  *
  * Added by: Bill March, 5/7
  */
 template<int t_pow>
-void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1, 
+void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
                                           const DHrectBound& box2) {
 
   dim_ = box1.dim();
@@ -114,7 +114,7 @@ bool DHrectBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectBound<t_pow>::operator[](index_t i) const {
+DRange DHrectBound<t_pow>::operator[](index_t i) const {
   return bounds_[i];
 }
 
@@ -127,7 +127,7 @@ double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
   for (index_t i = 0; i < dim_; i++)
     max_distance += pow(bounds_[i].width(), 2);
 
-  return max_distance;  
+  return max_distance;
 }
 
 /** Calculates the midpoint of the range */
@@ -161,7 +161,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
     double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
 
     sum += pow(v, (double) t_pow);
-  } 
+  }
 
   return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
@@ -246,23 +246,6 @@ double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
 }
 
 /**
- * Calculates maximum bound-to-point squared distance.
- */
-/*
-template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const double *point) const {
-  double sum = 0;
-
-  for (index_t d = 0; d < dim_; d++) {
-    double v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
-    sum += std::pow(v, t_pow); // v is non-negative
-  }
-
-  return std::pow(sum, 2.0 / (double) t_pow);
-}
-*/
-
-/**
  * Computes maximum distance.
  */
 template<int t_pow>
@@ -285,7 +268,7 @@ double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
 
 
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width, 
+double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width,
                                     int dim) const {
   double result = 0.5 * box_width;
   double temp = other.bounds_[dim].hi - bounds_[dim].lo;
@@ -346,7 +329,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
       v_hi = -v1; // make it nonnegative
       v_lo = (v2 > 0) ? v2 : 0; // force to be 0 if negative
     }
-    
+
     sum_lo += pow(v_lo, (double) t_pow);
     sum_hi += pow(v_hi, (double) t_pow);
   }
@@ -450,7 +433,7 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
     // calculation speed) and subtract from each other, then raise to t_pow
-    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi - 
+    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi -
           other.bounds_[d].lo), (double) t_pow);
   }
 
@@ -489,7 +472,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
 
 
 /**
- * Expand this bounding box to encompass another point. Done to 
+ * Expand this bounding box to encompass another point. Done to
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
@@ -537,9 +520,9 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
     al = bounds_[i].lo;
     bh = other.bounds_[i].hi;
     bl = other.bounds_[i].lo;
-    ah = ah - al;    
+    ah = ah - al;
     bh = bh - al;
-    bl = bl - al;              
+    bl = bl - al;
     ah = ah - floor(ah / size[i]) * size[i];
     bh = bh - floor(bh / size[i]) * size[i];
     bl = bl - floor(bl / size[i]) * size[i];
@@ -551,7 +534,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
 
     if (bl > ah && ((bl > bh) || (bh >= ah -bl + size[i]))){
       bounds_[i].lo = other.bounds_[i].lo;
-    }   
+    }
 
     if (unlikely(ah > bl & bl > bh)){
       bounds_[i].lo = 0;
