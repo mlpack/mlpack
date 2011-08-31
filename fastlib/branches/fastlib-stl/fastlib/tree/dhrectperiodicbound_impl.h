@@ -20,7 +20,7 @@ using arma::vec;
  * Empty constructor
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() : box_size_(arma::vec(0.0)) {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec& box) : box_size_(box) {
   bounds_ = NULL;
   dim_ = 0;
 }
@@ -30,7 +30,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() : box_size_(arma::vec(0.0)) {
  * set.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) : box_size_(arma::vec(0.0)) {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension, vec& box) : box_size_(box) {
   //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
   bounds_ = new DRange[dimension];
   dim_ = dimension;
@@ -40,11 +40,11 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension) : box_size_(a
 /**
  * Destructor: clean up memory
  */
-//template<int t_pow>
-//DHrectPeriodicBound<t_pow>::~DHrectPeriodicbound() {
-//  if(bounds_)
-//    delete[] bounds_;
-//}
+template<int t_pow>
+DHrectPeriodicBound<t_pow>::~DHrectPeriodicBound() {
+  if(bounds_)
+    delete[] bounds_;
+}
 
 /**
  * Modifies the box_size_ to the desired dimenstions.
