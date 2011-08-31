@@ -28,24 +28,24 @@ class DHrectPeriodicBound {
   private:
     DRange *bounds_;
     index_t dim_;
-    vec box_size_;
+    vec& box_size_;
 
   public:
     /**
      * Empty constructor.
      */
-    DHrectPeriodicBound();
+    DHrectPeriodicBound(vec& box);
 
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    DHrectPeriodicBound(index_t dimension);
+    DHrectPeriodicBound(index_t dimension, vec& box);
 
     /**
      * Destructor: clean up memory.
      */
-//    ~DHrectPeriodicBound();
+    ~DHrectPeriodicBound();
 
     /**
      * Modifies the box_size_ to the desired dimenstions.
