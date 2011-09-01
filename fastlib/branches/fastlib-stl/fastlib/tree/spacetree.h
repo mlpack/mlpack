@@ -40,9 +40,7 @@ class BinarySpaceTree {
   BinarySpaceTree *left_;
   BinarySpaceTree *right_;
   index_t begin_;
- public:
   index_t count_;
- private:
   Statistic stat_;
   Bound bound_;
 

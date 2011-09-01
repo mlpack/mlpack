@@ -84,35 +84,14 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
   BinarySpaceTree<DHrectBound<2>, arma::mat> root_node(dataset, 1);
 
   BOOST_REQUIRE(root_node.count() == 6);
-  BOOST_REQUIRE(root_node.count_ == 6);
-
   BOOST_REQUIRE(root_node.left()->count() == 3);
-  BOOST_REQUIRE(root_node.left()->count_ == 3);
-
   BOOST_REQUIRE(root_node.left()->left()->count() == 2);
-  BOOST_REQUIRE(root_node.left()->left()->count_ == 2);
-
   BOOST_REQUIRE(root_node.left()->left()->left()->count() == 1);
-  BOOST_REQUIRE(root_node.left()->left()->left()->count_ == 1);
-
   BOOST_REQUIRE(root_node.left()->left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.left()->left()->right()->count_ == 1);
-
   BOOST_REQUIRE(root_node.left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.left()->right()->count_ == 1);
-
   BOOST_REQUIRE(root_node.right()->count() == 3);
-  BOOST_REQUIRE(root_node.right()->count_ == 3);
-
   BOOST_REQUIRE(root_node.right()->left()->count() == 2);
-  BOOST_REQUIRE(root_node.right()->left()->count_ == 2);\
-
   BOOST_REQUIRE(root_node.right()->left()->left()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->left()->left()->count_ == 1);
-
   BOOST_REQUIRE(root_node.right()->left()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->left()->right()->count_ == 1);
-
   BOOST_REQUIRE(root_node.right()->right()->count() == 1);
-  BOOST_REQUIRE(root_node.right()->right()->count_ == 1);
 }
