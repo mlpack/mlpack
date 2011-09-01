@@ -27,6 +27,37 @@ int npt::JackknifeResampling::GetRegionID_(std::vector<int>& ids) {
   
 }
 
+void npt::JackknifeResampling::ProcessResults_(boost::multi_array<double, 2>& this_result,
+                                               arma::col& this_region,
+                                               int num_random) {
+
+  for (int region_ind = 0; region_ind < num_resampling_regions_; 
+       region_ind++) {
+    
+    if (region_ind != this_region(0) 
+        && region_ind != this_region(1)
+        && region_ind != this_region(2)) {
+      
+      // this doesn't actually work, how do I do this?
+      
+      for (int r1_ind = 0; r1_ind < r1_vec_.size(); r1_ind++) {
+        
+        for (int theta_ind = 0; theta_ind < theta_vec_.size(); theta_ind++) {
+          
+          results_[region_ind][num_random][r1_ind][theta_ind] 
+              += this_result[r1_ind][theta_ind];
+          
+        } // for theta
+        
+      } // for r1
+      
+    } // writing to the correct samples 
+    
+  } // for regions
+  
+  
+} // ProcessResults
+
 void npt::JackknifeResampling::SplitData_() {
   
   // iterate through the points and add them to the appropriate region
@@ -36,6 +67,7 @@ void npt::JackknifeResampling::SplitData_() {
     arma::colvec& col_i = data_all_mat_.col(i);
     int region_id = FindRegion_(col_i);
     
+    // TODO: is this the most efficient way to do this?
     data_mats_[region_id].insert_cols(data_mats_[region_id].n_cols, col_i);
     data_weights_[region_id].insert_rows(data_weights_[region_id].n_rows, 
                                          data_all_weights_(i));
@@ -174,7 +206,6 @@ void npt::JackknifeResampling::Compute() {
                                         matcher);
         
         // run alg class
-        
         alg.Compute();
         
         // process and store results from the matcher
@@ -182,21 +213,8 @@ void npt::JackknifeResampling::Compute() {
         // indexed by [r1][theta]
         boost::multi_array<double, 2> this_result = matcher.results();
         
-        for (int region_ind = 0; region_ind < num_resampling_regions_; 
-             region_ind++) {
-        
-          if (region_ind != this_region(0) 
-              && region_ind != this_region(1)
-              && region_ind != this_region(2)) {
-            
-            // this doesn't actually work, how do I do this?
-            results_[region_ind][this_num_random] += this_result;
-            
-          }
-          
-        }
-        
         // loop over resampling regions that need to be written to
+        ProcessResults_(this_result, this_region, this_num_random);
       
       } // for k
     
@@ -206,3 +224,45 @@ void npt::JackknifeResampling::Compute() {
   
   
 } // Compute
+
+
+void npt::JackknifeResampling::PrintResults() {
+  
+  std::string d_string(tuple_size_, 'D');
+  std::string r_string(tuple_size_, 'R');
+  std::string label_string;
+  label_string+=d_string;
+  label_string+=r_string;
+  
+  mlpack::IO::Info << "Multi-angle Resampling Results: \n\n";
+  
+  for (int region_ind = 0; region_ind < num_resampling_regions_; region_ind++) {
+    
+    mlpack::IO::Info << "Resampling region " << region_ind << "\n";
+    
+    for (int num_random = 0; num_random <= tuple_size; num_random++) {
+      
+      std::string this_string(label_string, i, tuple_size_);
+      mlpack::IO::Info << this_string << ": \n";
+      
+      for (int r1_ind = 0; r1_ind < r1_vec_.size(); r1_ind++) {
+        
+        for (int theta_ind = 0; theta_ind < theta_vec_.size(); theta_ind++) {
+          
+          mlpack::IO::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
+          mlpack::IO::Info << theta_vec_[theta_ind] << ": ";
+          mlpack::IO::Info << results_[region_ind][num_random][r1_ind][theta_ind];
+          mlpack::IO::Info << "\n";
+          
+        } // for theta
+        
+      } // for r1_ind
+      
+      mlpack::IO::Info << "\n";
+      
+    } // for num_random
+    
+  } // for region_ind
+  
+  
+} // PrintResults

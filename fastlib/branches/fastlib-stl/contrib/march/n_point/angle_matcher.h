@@ -32,8 +32,8 @@ namespace npt {
     
   private:
     
-    std::vector<arma::mat&> data_mat_list_;
-    std::vector<arma::colvec&> data_weights_list_;
+    std::vector<arma::mat&>& data_mat_list_;
+    std::vector<arma::colvec&>& data_weights_list_;
     
     // indexed by [r1][theta]
     boost::multi_array<int, 2> results_;
@@ -129,7 +129,7 @@ namespace npt {
     r3_upper_sqr_(boost::extents[short_sides.size()][thetas.size()]),
     results_(boost::extents[short_sides.size()][thetas.size()]), 
     weighted_results_(boost::extents[short_sides.size()][thetas.size()]),
-    data_mat_list_(data_in), data_weights_list_(weights_in), 
+    data_mat_list_(data_in), data_weights_list_(weights_in) 
     {
       
       //mlpack::IO::Info << "Starting construction of angle matcher.\n";
