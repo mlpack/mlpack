@@ -37,6 +37,8 @@ set(SOURCES
 	angle_matcher_generation.cc
 	generic_npt_alg.h
 	generic_npt_alg_impl.h
+	jackknife_resampling.cc
+	jackknife_resampling.h
 )
 
 # add directory name to sources
@@ -80,13 +82,23 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 #   mlpack_contrib
 #)
 
-add_executable(n_point_angle_main
-   EXCLUDE_FROM_ALL
-   n_point_angle_main.cc
+#add_executable(n_point_angle_main
+#   EXCLUDE_FROM_ALL
+#   n_point_angle_main.cc
+#)
+#target_link_libraries(n_point_angle_main
+#   fastlib
+#   mlpack
+#   mlpack_contrib
+#)
+
+add_executable(n_point_jackknife_main
+    EXCLUDE_FROM_ALL
+    n_point_jackknife_main.cpp
 )
-target_link_libraries(n_point_angle_main
-   fastlib
-   mlpack
-   mlpack_contrib
+target_link_libraries(n_point_jackknife_main
+    fastlib
+    mlpack
+    mlpack_contrib
 )
 

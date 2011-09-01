@@ -35,8 +35,8 @@ namespace npt {
     
     std::vector<NptNode*> data_trees_;
     
-    std::vector<arma::mat&> data_mats_;
-    std::vector<arma::colvec&> data_weights_;
+    std::vector<arma::mat*> data_mats_;
+    std::vector<arma::colvec*> data_weights_;
     
     int leaf_size_;
     
@@ -57,6 +57,7 @@ namespace npt {
     
     // indexed by [resampling_region][num_random][r1][theta]
     boost::multi_array<int, 4> results_;
+    boost::multi_array<double, 4> weighted_results_;
     
     // matcher info
     std::vector<double> r1_vec_;
@@ -73,6 +74,10 @@ namespace npt {
     
     void BuildTrees_();
     
+    void ProcessResults_(boost::multi_array<double, 2>& this_result,
+                         arma::col& this_region,
+                         int num_random);
+      
     
   public:
     
@@ -82,11 +87,17 @@ namespace npt {
                         std::vector<double>& r1, double r2_mult,
                         std::vector<double>& thetas, double bin_width,
                         int leaf_size) :
-    data_all_mat_(data), data_all_weights_(weights),
-    random_mat_(random), random_weights_(rweights),
+    // trying to avoid copying data
+    data_all_mat_(data.memptr(), data.n_rows, data.n_cols, false), 
+    data_all_weights_(weights),
+    random_mat_(random.memptr(), random.n_rows, random.n_cols, false), 
+    random_weights_(rweights),
     num_resampling_regions_(num_regions), data_box_length_(box_length),
     data_trees_(num_regions),
-    results_(boost::extents[num_regions][4][r1.size()][thetas.size()]),
+    results_(boost::extents[num_regions][4][r1.size()][thetas.size()],
+             c_storage_order(), 0),
+    weighted_results_(boost::extents[num_regions][4][r1.size()][thetas.size()],
+                      c_storage_order(), 0.0),
     data_mats_(num_regions), leaf_size_(leaf_size),
     data_weights_(num_regions),
     r1_vec_(r1), r2_mult_(r2_mult), theta_vec_(thetas), bin_width_(bin_width)
@@ -125,14 +136,22 @@ namespace npt {
       
       SplitData_();
       
+      for (int i = 0; i < num_resampling_regions_; i++) {
+        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i].n_cols << "\n";
+      }
+      
       
       BuildTrees_();
+      
+      
       
       
     } // constructor
     
     
     void Compute();
+    
+    void PrintResults();
     
     
     

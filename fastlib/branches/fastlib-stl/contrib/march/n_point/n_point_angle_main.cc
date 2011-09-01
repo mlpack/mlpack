@@ -22,7 +22,7 @@ PARAM_STRING("random_weights", "Optional weights on Poisson set.", NULL, "defaul
 PARAM_STRING_REQ("matchers", "A 3 column, 2 row csv, row 1 is r1_min, r1_max, num_r1, row2 is the same for theta",
                  NULL);
 PARAM_DOUBLE("bin_thickness_factor", "The multiplier to determine the thickness of each bin.  Delta_r in the literature.", NULL,
-             1.0)
+             0.1)
 PARAM_DOUBLE("r2_multiplier", "How much larger is r2 than r1.", NULL, 2.0)
 PARAM_INT("leaf_size", "Max number of points in a leaf node", NULL, 
           1);

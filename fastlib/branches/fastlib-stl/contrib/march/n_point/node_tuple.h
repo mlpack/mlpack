@@ -153,9 +153,6 @@ namespace npt {
       return tuple_size_;
     }
     
-    int num_random() const {
-      return num_random_;
-    }
     
     
     
