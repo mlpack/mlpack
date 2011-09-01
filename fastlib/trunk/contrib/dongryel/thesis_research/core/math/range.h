@@ -298,7 +298,7 @@ class Range {
     /** @brief Determines if a point is contained within the range.
      */
     bool Contains(double d) const {
-      return d >= lo || d <= hi;
+      return d >= lo && d <= hi;
     }
 
     /** @brief Determines if another Range object is contained within
