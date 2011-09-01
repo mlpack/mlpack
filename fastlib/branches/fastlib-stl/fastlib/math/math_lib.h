@@ -65,7 +65,7 @@ namespace math {
   inline double ClampNonPositive(double d) {
     return (d - fabs(d)) / 2;
   }
-  
+
   /**
    * Clips a number between a particular range.
    *
@@ -78,19 +78,19 @@ namespace math {
     if (unlikely(value <= range_min)) {
       return range_min;
     } else if (unlikely(value >= range_max)) {
-      return range_max; 
+      return range_max;
     } else {
       return value;
     }
   }
-  
+
   /**
    * Generates a uniform random number between 0 and 1.
    */
   inline double Random() {
     return rand() * (1.0 / RAND_MAX);
   }
-  
+
   /**
    * Generates a uniform random number in the specified range.
    */
@@ -103,7 +103,7 @@ namespace math {
    */
   inline int RandInt(int hi_exclusive) {
     return rand() % hi_exclusive;
-  }  
+  }
   /**
    * Generates a uniform random integer.
    */
@@ -123,11 +123,11 @@ namespace math {
    * numerator and denominator are equal, this will not do anything, or in
    * the case where the denominator is one.
    */
-  template<int t_numerator, int t_denominator> 
+  template<int t_numerator, int t_denominator>
   inline double Pow(double d) {
     return math__private::ZPowImpl<t_numerator, t_denominator>::Calculate(d);
   }
-  
+
   /**
    * Calculates a small power of the absolute value of a number
    * using template metaprogramming.
@@ -137,7 +137,7 @@ namespace math {
    * the case where the denominator is one.  For even powers, this will
    * avoid calling the absolute value function.
    */
-  template<int t_numerator, int t_denominator> 
+  template<int t_numerator, int t_denominator>
   inline double PowAbs(double d) {
     // we specify whether it's an even function -- if so, we can sometimes
     // avoid the absolute value sign
@@ -187,7 +187,7 @@ class MinMaxVal {
       val = incoming_val;
     }
   }
-  
+
   /**
    * Efficiently performs this->val = min(this->val, incoming_val).
    *
@@ -237,7 +237,7 @@ struct DRange {
     lo = -DBL_MAX;
     hi = DBL_MAX;
   }
-  
+
   /** Initializes to a range of values. */
   void Init(double lo_in, double hi_in) {
     lo = lo_in;
@@ -257,18 +257,18 @@ struct DRange {
 
   /**
    * Gets the span of the range, hi - lo.
-   */  
+   */
   double width() const {
     return hi - lo;
   }
 
   /**
    * Gets the midpoint of this range.
-   */  
+   */
   double mid() const {
     return (hi + lo) / 2;
   }
-  
+
   /**
    * Interpolates (factor) * hi + (1 - factor) * lo.
    */
@@ -315,7 +315,7 @@ struct DRange {
     }
     return *this;
   }
-  
+
   /**
    * Shrinks range to be the overlap with another range, becoming an empty
    * set if there is no overlap.
@@ -334,7 +334,7 @@ struct DRange {
   friend DRange operator - (const DRange& r) {
     return DRange(-r.hi, -r.lo);
   }
-  
+
   /** Scales upper and lower bounds. */
   const DRange& operator *= (double d) {
     DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
@@ -354,14 +354,14 @@ struct DRange {
     DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return DRange(r.lo * d, r.hi * d);
   }
-  
+
   /** Sums the upper and lower independently. */
   const DRange& operator += (const DRange& other) {
     lo += other.lo;
     hi += other.hi;
     return *this;
   }
-  
+
   /** Subtracts from the upper and lower.
    * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
    * This is NOT an undo of the + operator.
@@ -371,14 +371,14 @@ struct DRange {
     hi -= other.lo;
     return *this;
   }
-  
+
   /** Adds to the upper and lower independently. */
   const DRange& operator += (double d) {
     lo += d;
     hi += d;
     return *this;
   }
-  
+
   /** Subtracts from the upper and lower independently. */
   const DRange& operator -= (double d) {
     lo -= d;
@@ -395,7 +395,7 @@ struct DRange {
     DRange result(a.lo - b.hi, a.hi - b.lo);
     return result;
   }
-  
+
   friend DRange operator + (const DRange& a, double b) {
     DRange result(a.lo + b, a.hi + b);
     return result;
@@ -417,7 +417,7 @@ struct DRange {
       hi = range.hi;
     }
   }
-  
+
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
@@ -441,7 +441,7 @@ struct DRange {
       }
     }
   }
-  
+
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
@@ -456,51 +456,51 @@ struct DRange {
 
   /**
    * Compares if this is STRICTLY less than another range.
-   */  
+   */
   friend bool operator < (const DRange& a, const DRange& b) {
     return a.hi < b.lo;
   }
 
-  friend bool operator>(DRange const &b, DRange const &a) {return a < b;} 
-  friend bool operator<=(DRange const &b, DRange const &a) {return !(a < b);} 
+  friend bool operator>(DRange const &b, DRange const &a) {return a < b;}
+  friend bool operator<=(DRange const &b, DRange const &a) {return !(a < b);}
   friend bool operator>=(DRange const &a, DRange const &b) {return !(a < b);}
 
   /**
    * Compares if this is STRICTLY equal to another range.
-   */  
+   */
   friend bool operator == (const DRange& a, const DRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
 
   friend bool operator!=(DRange const &a, DRange const &b) {return !(a == b);}
-  
+
   /**
    * Compares if this is STRICTLY less than a value.
-   */  
+   */
   friend bool operator < (const DRange& a, double b) {
     return a.hi < b;
   }
 
-  friend bool operator>(double const &b, DRange const &a) {return a < b;} 
-  friend bool operator<=(double const &b, DRange const &a) {return !(a < b);} 
+  friend bool operator>(double const &b, DRange const &a) {return a < b;}
+  friend bool operator<=(double const &b, DRange const &a) {return !(a < b);}
   friend bool operator>=(DRange const &a, double const &b) {return !(a < b);}
 
   /**
    * Compares if a value is STRICTLY less than this range.
-   */  
+   */
   friend bool operator < (double a, const DRange& b) {
     return a < b.lo;
   }
 
-  friend bool operator>(DRange const &b, double const &a) {return a < b;} 
-  friend bool operator<=(DRange const &b, double const &a) {return !(a < b);} 
+  friend bool operator>(DRange const &b, double const &a) {return a < b;}
+  friend bool operator<=(DRange const &b, double const &a) {return !(a < b);}
   friend bool operator>=(double const &a, DRange const &b) {return !(a < b);}
 
   /**
    * Determines if a point is contained within the range.
-   */  
+   */
   bool Contains(double d) const {
-    return d >= lo || d <= hi;
+    return d >= lo && d <= hi;
   }
 };
 
