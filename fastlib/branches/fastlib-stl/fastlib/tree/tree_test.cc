@@ -15,6 +15,79 @@ using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
 
+BOOST_AUTO_TEST_CASE(TestDHrectBound) {
+  DHrectBound<> r1(2);
+  DHrectBound<> r2(2);
+
+  //Two squares with length 2, with 1 distance apart along the x-axis.
+  r1[0].Init(0.0, 2.0);
+  r1[1].Init(0.0, 2.0);
+  r2[0].Init(3.0, 5.0);
+  r2[1].Init(0.0, 2.0);
+
+  //A point at (1,1)
+  arma::vec vector(2);
+  vector[0] = 1.0;
+  vector[1] = 1.0;
+
+  BOOST_REQUIRE(r1.Contains(vector));
+  BOOST_REQUIRE(!r2.Contains(vector));
+  BOOST_REQUIRE_CLOSE(r1.CalculateMaxDistanceSq(), 8.0, 1e-5);
+
+  r2.CalculateMidpoint(vector);
+  BOOST_REQUIRE_CLOSE(vector[0], 4, 1e-5);
+  BOOST_REQUIRE_CLOSE(vector[1], 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(r2), 1.0, 1e-5);
+
+  vector[0] = 4.0;
+  vector[1] = 2.0;
+  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(r2, vector), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(vector), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MaxDistanceSq(vector), 20.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MaxDistanceSq(r2), 29.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDelta(r2, 3.0, 0), -1.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MaxDelta(r2, 3.0, 0), 1.5, 1e-5);
+
+  DRange range = r1.RangeDistanceSq(r2);
+  BOOST_REQUIRE_CLOSE(range.lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(range.hi, 29.0, 1e-5);
+
+  range = r1.RangeDistanceSq(vector);
+  BOOST_REQUIRE_CLOSE(range.lo, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(range.hi, 20.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(r1.MinToMidSq(r2), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinimaxDistanceSq(r2), 9, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MidDistanceSq(r2), 9.0, 1e-5);
+
+  vector[0] = 6.0;
+  vector[1] = 3.0;
+  r2 |= vector;
+  r1 |= r2;
+  BOOST_REQUIRE(r2.Contains(vector));
+
+  vector[0] = 5.0;
+  vector[1] = 2.0;
+  BOOST_REQUIRE(r1.Contains(vector));
+
+  r1[0].Init(0.0, 2.0);
+  r1[1].Init(0.0, 2.0);
+  arma::vec size(2);
+  size[0] = 3.5;
+  size[1] = 2.0;
+  vector[0] = 3.0;
+  vector[1] = 1.0;
+
+  //Does not work yet.
+//  DHrectBound<> r3 = r1.Add(vector, size);
+//  BOOST_REQUIRE(r3.Contains(vector));
+
+//  DHrectBound<> r3 = r1.Add(r2, size);
+//  BOOST_REQUIRE(r3.Contains(vector));
+
+
+}
+
 BOOST_AUTO_TEST_CASE(TestBallBound) {
   DBallBound<> b1;
   DBallBound<> b2;

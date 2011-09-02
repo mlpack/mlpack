@@ -74,9 +74,10 @@ class DHrectBound {
     index_t dim() const { return dim_; }
 
     /**
-     * Gets the range for a particular dimension.
+     * Sets and gets the range for a particular dimension.
      */
-    DRange operator[](index_t i) const;
+    DRange& operator[](index_t i);
+    const DRange operator[](index_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle
