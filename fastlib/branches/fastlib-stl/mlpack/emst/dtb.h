@@ -17,7 +17,7 @@
 #include <fastlib/base/arma_compat.h>
 #include <fastlib/fx/io.h>
 
-PARAM(index_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
+
 
 using namespace mlpack;
 /*
@@ -622,5 +622,7 @@ class DualTreeBoruvka {
   } // ComputeMST
   
 }; //class DualTreeBoruvka
+
+PARAM(index_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
 
 #endif // inclusion guards
