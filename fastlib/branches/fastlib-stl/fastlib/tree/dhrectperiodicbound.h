@@ -28,19 +28,24 @@ class DHrectPeriodicBound {
   private:
     DRange *bounds_;
     index_t dim_;
-    vec& box_size_;
+    vec box_size_;
 
   public:
     /**
      * Empty constructor.
      */
-    DHrectPeriodicBound(vec& box);
+    DHrectPeriodicBound();
+
+    /**
+     *Specifies the box size, but not dimensionality.
+     */
+    DHrectPeriodicBound(vec box);
 
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    DHrectPeriodicBound(index_t dimension, vec& box);
+    DHrectPeriodicBound(index_t dimension, vec box);
 
     /**
      * Destructor: clean up memory.
@@ -50,12 +55,12 @@ class DHrectPeriodicBound {
     /**
      * Modifies the box_size_ to the desired dimenstions.
      */
-    void SetBoxSize(vec& box);
+    void SetBoxSize(vec box);
 
     /**
      * Returns the box_size_ vector.
      */
-    vec& GetBoxSize();
+    vec GetBoxSize();
 
     /**
      * Makes this (uninitialized) box the average of the two arguments,
@@ -84,10 +89,11 @@ class DHrectPeriodicBound {
     /** Gets the dimensionality */
     index_t dim() const { return dim_; }
 
-    /**
-     * Gets the range for a particular dimension.
+     /**
+     * Sets and gets the range for a particular dimension.
      */
-    DRange operator[](index_t i) const;
+    DRange& operator[](index_t i);
+    const DRange operator[](index_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle

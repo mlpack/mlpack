@@ -114,7 +114,15 @@ bool DHrectBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::operator[](index_t i) const {
+const DRange DHrectBound<t_pow>::operator[](index_t i) const {
+  return bounds_[i];
+}
+
+/**
+ * Sets the range for the given dimension.
+ */
+template<int t_pow>
+DRange& DHrectBound<t_pow>::operator[](index_t i) {
   return bounds_[i];
 }
 
@@ -425,8 +433,6 @@ double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
 template<int t_pow>
 double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   double sum = 0;
-  const DRange *a = this->bounds_;
-  const DRange *b = other.bounds_;
 
   DEBUG_SAME_SIZE(dim_, other.dim_);
 
@@ -527,8 +533,8 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
     bh = bh - floor(bh / size[i]) * size[i];
     bl = bl - floor(bl / size[i]) * size[i];
 
-    if (((bh > ah) & (bh < bl | ah > bl )) ||
-        (bh >= bl & bl > ah & bh < ah -bl + size[i])){
+    if (((bh > ah) & ((bh < bl) | (ah > bl))) ||
+        ((bh >= bl) & (bl > ah) & (bh < ah -bl + size[i]))){
       bounds_[i].hi = other.bounds_[i].hi;
     }
 
@@ -536,7 +542,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
       bounds_[i].lo = other.bounds_[i].lo;
     }
 
-    if (unlikely(ah > bl & bl > bh)){
+    if (unlikely((ah > bl) & (bl > bh))){
       bounds_[i].lo = 0;
       bounds_[i].hi = size[i];
     }
