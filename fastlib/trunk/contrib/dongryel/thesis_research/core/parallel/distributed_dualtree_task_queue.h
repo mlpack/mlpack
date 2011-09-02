@@ -375,7 +375,6 @@ class DistributedDualtreeTaskQueue {
      *         process.
      */
     void PrepareLoadBalanceRequest(
-      boost::mpi::communicator &world, int neighbor,
       core::parallel::DualtreeLoadBalanceRequest <
       SubTableType > *load_balance_request) {
 
