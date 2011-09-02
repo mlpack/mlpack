@@ -14,7 +14,6 @@
 
 #include "../math/math_lib.h"
 
-using arma::vec;
 
 /**
  * Empty constructor
@@ -191,7 +190,7 @@ double DHrectPeriodicBound<t_pow>::MinDistanceSq(const vec& point) const {
     a = a - bounds_[d].lo;
     a = a - floor(a / box_size_[d]) * box_size_[d];
     if (bh > a)
-      v = this->min( a - bh, box_size_[d]-a);
+      v = std::min( a - bh, box_size_[d]-a);
     sum += pow(v, (double) t_pow);
   }
 
@@ -266,7 +265,7 @@ double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectPeriodicBound& othe
     dh = dh - floor(dh / box_size_[d]) * box_size_[d];
     dl = other.bounds_[d].hi - bounds_[d].lo;
     dl = dl - floor(dl / box_size_[d]) * box_size_[d];
-    v = fabs(max(this->min(dh, v), this->min(dl, v)));
+    v = fabs(std::max(std::min(dh, v), std::min(dl, v)));
 
     sum += pow(v, (double) t_pow);
   }
