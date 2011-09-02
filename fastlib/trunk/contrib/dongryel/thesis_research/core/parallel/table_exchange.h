@@ -239,8 +239,7 @@ class TableExchange {
       // process.
       core::parallel::DualtreeLoadBalanceRequest <
       SubTableType > load_balance_request;
-      task_queue_->PrepareLoadBalanceRequest(
-        world, neighbor, &load_balance_request);
+      task_queue_->PrepareLoadBalanceRequest(&load_balance_request);
       boost::mpi::request send_request =
         world.isend(
           neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
@@ -264,19 +263,21 @@ class TableExchange {
       // Wait until the send request is completed.
       send_request.wait();
 
-      // Find out how much this process needs.
+      // Find out how much this process needs to send.
       unsigned long int mid_point =
         (task_queue_->remaining_local_computation() +
          neighbor_load_balance_request.remaining_local_computation()) / 2;
-      unsigned long int num_points_to_receive = 0;
-      if(mid_point >= task_queue_->remaining_local_computation()) {
-        num_points_to_receive =
-          mid_point - task_queue_->remaining_local_computation();
+      unsigned long int num_points_to_send = 0;
+      if(mid_point >=
+          neighbor_load_balance_request.remaining_local_computation()) {
+        num_points_to_send =
+          mid_point -
+          neighbor_load_balance_request.remaining_local_computation();
       }
-      num_points_to_receive =
-        std::min(num_points_to_receive, remaining_extra_points_to_hold_);
-      printf("Process %d needs to receive %lu from %d\n",
-             world.rank(), num_points_to_receive, neighbor);
+      num_points_to_send =
+        std::min(num_points_to_send, remaining_extra_points_to_hold_);
+      printf("Process %d needs to send %lu to %d\n",
+             world.rank(), num_points_to_send, neighbor);
 
 
       // Now prepare the task list that must be sent to the neighbor.
@@ -285,13 +286,12 @@ class TableExchange {
                           QueryResultType > outgoing_extra_task_list;
       boost::mpi::request extra_task_list_sent;
       task_queue_->PrepareExtraTaskList(
-        world, metric_in, neighbor,
-        neighbor_load_balance_request.remaining_extra_points_to_hold(),
-        & outgoing_extra_task_list);
+        world, metric_in, neighbor, num_points_to_send,
+        &outgoing_extra_task_list);
       extra_task_list_sent =
         world.isend(
           neighbor, core::parallel::MessageTag::TASK_LIST,
-          outgoing_extra_task_list) ;
+          outgoing_extra_task_list);
 
       // Receive from the neighbor the extra task list, if this
       // process needs work to do.
