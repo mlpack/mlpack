@@ -125,10 +125,10 @@ BOOST_AUTO_TEST_CASE(TestVectorDot) {
   MAKE_VECTOR(a, 4,    2, 1, 4, 5);
   MAKE_VECTOR(b, 4,    3, 0, 2, -1);
   
-  BOOST_REQUIRE_CLOSE(la::Dot(a, a), 4+1+16+25, 1e-5);
-  BOOST_REQUIRE_CLOSE(la::Dot(a, b), 6+0+8-5, 1e-5);
-  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(b), sqrt(9+0+4+1), 1.0e-8);
-  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(a), sqrt(4+1+16+25), 1.0e-8);
+  BOOST_REQUIRE_CLOSE(la::Dot(a, a), 4.0+1.0+16.0+25.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(la::Dot(a, b), 6.0+0.0+8.0-5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(b), sqrt(9.0+0.0+4.0+1.0), 1.0e-8);
+  BOOST_REQUIRE_CLOSE(la::LengthEuclidean(a), sqrt(4.0+1.0+16.0+25.0), 1.0e-8);
 }
 
 // ---- INCLUDED FROM ORIGINAL LA TEST -----
@@ -518,15 +518,15 @@ BOOST_AUTO_TEST_CASE(TestDeterminant) {
   
   int sign;
   
-  BOOST_REQUIRE_CLOSE(-90.0, la::Determinant(a), 1.0e-7);
+  BOOST_REQUIRE(la::Determinant(a) == -90.0);
   BOOST_REQUIRE_CLOSE(log(90.0), la::DeterminantLog(a, &sign), 1.0e-7);
   BOOST_REQUIRE(sign==-1);
 
-  BOOST_REQUIRE_CLOSE(-412.0, la::Determinant(b), 1.0e-7);
-  BOOST_REQUIRE_CLOSE(262.0, la::Determinant(c), 1.0e-7);
+  BOOST_REQUIRE(la::Determinant(b) == -412.0);
+  BOOST_REQUIRE(la::Determinant(c) == 262.0);
   BOOST_REQUIRE_CLOSE(log(262.0), la::DeterminantLog(c, &sign), 1.0e-7);
   BOOST_REQUIRE(sign == 1);
-  BOOST_REQUIRE_CLOSE(-8.3934e4, la::Determinant(d), 1.0e-7);
+  BOOST_REQUIRE_CLOSE((double) la::Determinant(d), -8.3934e4, 1.0e-7);
 }
 
 
