@@ -36,10 +36,10 @@ BOOST_AUTO_TEST_CASE(TestSplitTrainTest) {
   orig.SplitTrainTest(4, 1, permutation,
       train, test);
    
-   BOOST_REQUIRE_CLOSE(test.n_points(), 3.0, 1e-5); 
-   BOOST_REQUIRE_CLOSE(train.n_points(), 9.0, 1e-5);
+   BOOST_REQUIRE(test.n_points() == 3); 
+   BOOST_REQUIRE(train.n_points() == 9);
 
-   BOOST_REQUIRE_CLOSE(test.get(0,0), 1.0, 1e-5);
+   BOOST_REQUIRE_CLOSE(test.get(0, 0), 1.0, 1e-5);
    BOOST_REQUIRE_CLOSE(test.get(0, 1), 5.0, 1e-5);
    BOOST_REQUIRE_CLOSE(test.get(0, 2), 9.0, 1e-5);
 
