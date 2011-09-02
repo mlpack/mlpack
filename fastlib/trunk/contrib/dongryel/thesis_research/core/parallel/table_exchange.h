@@ -265,59 +265,53 @@ class TableExchange {
       send_request.wait();
 
       // Find out how much this process needs.
-      /*
       unsigned long int mid_point =
         (task_queue_->remaining_local_computation() +
          neighbor_load_balance_request.remaining_local_computation()) / 2;
-      printf("Mid level with %lu %lu %lu\n",
-             task_queue_->remaining_local_computation(),
-             neighbor_load_balance_request.remaining_local_computation(),
-             mid_point);
-      */
+      unsigned long int num_points_to_receive = 0;
+      if(mid_point >= task_queue_->remaining_local_computation()) {
+        num_points_to_receive =
+          mid_point - task_queue_->remaining_local_computation();
+      }
+      num_points_to_receive =
+        std::min(num_points_to_receive, remaining_extra_points_to_hold_);
+      printf("Process %d needs to receive %lu from %d\n",
+             world.rank(), num_points_to_receive, neighbor);
 
-      /*
+
       // Now prepare the task list that must be sent to the neighbor.
       core::parallel::DistributedDualtreeTaskList <
       DistributedTableType, TaskPriorityQueueType,
                           QueryResultType > outgoing_extra_task_list;
-      std::pair< bool, boost::mpi::request > extra_task_list_sent;
-      extra_task_list_sent.first = false;
-      if(neighbor_load_balance_request.needs_load_balancing()) {
-        task_queue_->PrepareExtraTaskList(
-          world, metric_in, neighbor,
-          neighbor_load_balance_request.remaining_extra_points_to_hold(),
-          & outgoing_extra_task_list);
-        extra_task_list_sent.second =
-          world.isend(
-            neighbor, core::parallel::MessageTag::TASK_LIST,
-            outgoing_extra_task_list) ;
-        extra_task_list_sent.first = true;
-      }
+      boost::mpi::request extra_task_list_sent;
+      task_queue_->PrepareExtraTaskList(
+        world, metric_in, neighbor,
+        neighbor_load_balance_request.remaining_extra_points_to_hold(),
+        & outgoing_extra_task_list);
+      extra_task_list_sent =
+        world.isend(
+          neighbor, core::parallel::MessageTag::TASK_LIST,
+          outgoing_extra_task_list) ;
 
       // Receive from the neighbor the extra task list, if this
       // process needs work to do.
-      if(load_balance_request.needs_load_balancing()) {
-        core::parallel::DistributedDualtreeTaskList <
-        DistributedTableType, TaskPriorityQueueType,
-                            QueryResultType > incoming_extra_task_list;
-        while(true) {
-          if(boost::optional< boost::mpi::status > l_status =
-                world.iprobe(
-                  neighbor,
-                  core::parallel::MessageTag::TASK_LIST)) {
-            world.recv(
-              neighbor, core::parallel::MessageTag::TASK_LIST,
-              incoming_extra_task_list);
-            break;
-          }
+      core::parallel::DistributedDualtreeTaskList <
+      DistributedTableType, TaskPriorityQueueType,
+                          QueryResultType > incoming_extra_task_list;
+      while(true) {
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::TASK_LIST)) {
+          world.recv(
+            neighbor, core::parallel::MessageTag::TASK_LIST,
+            incoming_extra_task_list);
+          break;
         }
       }
 
       // Wait until the task list send request is completed.
-      if(extra_task_list_sent.first) {
-        extra_task_list_sent.second.wait();
-      }
-      */
+      extra_task_list_sent.wait();
     }
 
     /** @brief Prints the existing subtables in the cache.
