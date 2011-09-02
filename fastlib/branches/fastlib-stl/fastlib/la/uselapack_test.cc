@@ -522,8 +522,8 @@ BOOST_AUTO_TEST_CASE(TestDeterminant) {
   BOOST_REQUIRE_CLOSE(log(90.0), la::DeterminantLog(a, &sign), 1.0e-7);
   BOOST_REQUIRE(sign==-1);
 
-  BOOST_REQUIRE(la::Determinant(b) == -412.0);
-  BOOST_REQUIRE(la::Determinant(c) == 262.0);
+  BOOST_REQUIRE_CLOSE((double) la::Determinant(b), -412.0, 1e-7);
+  BOOST_REQUIRE_CLOSE((double) la::Determinant(c), 262.0, 1e-7);
   BOOST_REQUIRE_CLOSE(log(262.0), la::DeterminantLog(c, &sign), 1.0e-7);
   BOOST_REQUIRE(sign == 1);
   BOOST_REQUIRE_CLOSE((double) la::Determinant(d), -8.3934e4, 1.0e-7);
