@@ -293,8 +293,8 @@ class TableExchange {
           neighbor, core::parallel::MessageTag::TASK_LIST,
           outgoing_extra_task_list);
 
-      // Receive from the neighbor the extra task list, if this
-      // process needs work to do.
+      // Receive from the neighbor the extra task list, and push into
+      // the current process.
       core::parallel::DistributedDualtreeTaskList <
       DistributedTableType, TaskPriorityQueueType,
                           QueryResultType > incoming_extra_task_list;
@@ -309,6 +309,7 @@ class TableExchange {
           break;
         }
       }
+      incoming_extra_task_list.Export(world, metric_in, neighbor);
 
       // Wait until the task list send request is completed.
       extra_task_list_sent.wait();
@@ -343,7 +344,7 @@ class TableExchange {
 
     /** @brief Pushes subtables received from load-balancing.
      */
-    void push_subtable(
+    int push_subtable(
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
 
       int receive_slot;
@@ -358,13 +359,15 @@ class TableExchange {
       }
 
       // Steal the pointer owned by the incoming subtable.
-      message_cache_[receive_slot].subtable_route() = subtable_in;
+      message_cache_[receive_slot].subtable_route().object() = subtable_in;
       message_cache_[
-        receive_slot].subtable_route().set_cache_block_id(receive_slot);
+        receive_slot].subtable_route().object().set_cache_block_id(receive_slot);
       message_locks_[ receive_slot ] = num_referenced_as_reference_set;
 
       // Decrement the number of extra points to receive.
       remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
+
+      return receive_slot;
     }
 
     /** @brief Queues the query subtable and its result flush request.
