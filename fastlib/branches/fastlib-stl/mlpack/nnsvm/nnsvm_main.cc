@@ -66,8 +66,8 @@ int main(int argc, char *argv[])
   std::cerr << "made it to " << __LINE__ << "\n";
 
       nnsvm.InitTrain(dataSet, 2,
-          IO::GetParam<double>("nnsvm/c"),
-          IO::GetParam<double>("nnsvm/b"),
+          (int) IO::GetParam<double>("nnsvm/c"),
+          (int) IO::GetParam<double>("nnsvm/b"),
           IO::GetParam<double>("nnsvm/eps"),
           IO::GetParam<int>("nnsvm/max_iter"));
   std::cerr << "made it to " << __LINE__ << "\n";
