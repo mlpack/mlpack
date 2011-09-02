@@ -341,12 +341,12 @@ class DistributedDualtreeTaskQueue {
     /** @brief Pushes a received subtable, locking the cache equal to
      *         the given number of times.
      */
-    void push_subtable(
+    int push_subtable(
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      table_exchange_.push_subtable(
-        subtable_in, num_referenced_as_reference_set);
+      return table_exchange_.push_subtable(
+               subtable_in, num_referenced_as_reference_set);
     }
 
     template<typename MetricType>
