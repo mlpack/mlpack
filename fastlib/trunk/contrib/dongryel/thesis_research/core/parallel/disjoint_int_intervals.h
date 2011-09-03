@@ -21,15 +21,7 @@ class DisjointIntIntervals {
 
     struct ComparatorType {
       bool operator()(const KeyType &k1, const KeyType &k2) const {
-        if(k1.second < k2.first) {
-          return -1;
-        }
-        else if(k2.second < k1.first) {
-          return 1;
-        }
-        else {
-          return 0;
-        }
+        return k1.second < k2.first || k2.second < k1.first;
       }
     };
 

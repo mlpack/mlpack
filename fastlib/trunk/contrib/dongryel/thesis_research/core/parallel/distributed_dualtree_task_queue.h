@@ -364,11 +364,28 @@ class DistributedDualtreeTaskQueue {
       extra_task_list_out->Init(
         world, neighbor_rank_in, neighbor_remaining_extra_points_to_hold_in,
         *this);
-      for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        if(! query_subtables_[i]->is_locked()) {
+      for(unsigned int i = 0;
+          extra_task_list_out->remaining_extra_points_to_hold() > 0 &&
+          i < query_subtables_.size(); i++) {
+        if(!  query_subtables_[i]->is_locked()) {
+          printf("Attempting to steal tasks from %d %d %d\n",
+                 query_subtables_[i]->subtable_id().get<0>(),
+                 query_subtables_[i]->subtable_id().get<1>(),
+                 query_subtables_[i]->subtable_id().get<2>());
           extra_task_list_out->push_back(world, i);
+
+          if(query_subtables_[i]->is_locked()) {
+            printf("Stolen and locked %d %d %d\n\n",
+                   query_subtables_[i]->subtable_id().get<0>(),
+                   query_subtables_[i]->subtable_id().get<1>(),
+                   query_subtables_[i]->subtable_id().get<2>());
+          }
+          else {
+            printf("Failed to steal\n\n");
+          }
         }
       }
+      printf("Finished packing....\n\n\n");
     }
 
     /** @brief Sends a load balancing request to the given MPI
@@ -590,7 +607,10 @@ class DistributedDualtreeTaskQueue {
     /** @brief Returns the number of tasks associated with the probing
      *         index.
      */
-    int size(int probe_index) {
+    int size(int probe_index) const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return tasks_[probe_index]->size();
     }
 
@@ -607,6 +627,7 @@ class DistributedDualtreeTaskQueue {
      *         process.
      */
     void LockQuerySubtree(int probe_index, int locking_mpi_rank) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       query_subtables_[ probe_index ]->Lock(locking_mpi_rank);
     }
 
@@ -728,12 +749,17 @@ class DistributedDualtreeTaskQueue {
     /** @brief Examines the top task in the given task list.
      */
     const TaskType &top(int probe_index) const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return tasks_[probe_index]->top();
     }
 
     /** @brief Removes the top task in the given task list.
      */
     void pop(int probe_index) {
+
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Decrement the amount of local computation.
       remaining_local_computation_ -= tasks_[probe_index]->top().work();
