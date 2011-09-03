@@ -309,7 +309,9 @@ class TableExchange {
           break;
         }
       }
+      printf("Before exporting: %d\n", extra_receive_slots_.size());
       incoming_extra_task_list.Export(world, metric_in, neighbor);
+      printf("After exporting: %d\n", extra_receive_slots_.size());
 
       // Wait until the task list send request is completed.
       extra_task_list_sent.wait();
@@ -334,6 +336,7 @@ class TableExchange {
     void EvictSubTable_(int cache_id) {
       this->ClearSubTable_(cache_id);
       extra_receive_slots_.push_back(cache_id);
+      printf("   Returned %d to extra receive slots.\n", cache_id);
     }
 
     void ClearSubTable_(int cache_id) {
@@ -351,11 +354,13 @@ class TableExchange {
       if(extra_receive_slots_.size() > 0) {
         receive_slot = extra_receive_slots_.back();
         extra_receive_slots_.pop_back();
+        printf("Giving %d for extra slot.\n", receive_slot);
       }
       else {
         message_cache_.resize(message_cache_.size() + 1);
         message_locks_.resize(message_locks_.size() + 1);
         receive_slot = message_cache_.size() - 1;
+        printf("Allocating %d for extra slot.\n", receive_slot);
       }
 
       // Steal the pointer owned by the incoming subtable.
@@ -528,6 +533,7 @@ class TableExchange {
       // Preallocate the cache.
       message_cache_.resize(world.size());
       message_send_request_.resize(world.size());
+      extra_receive_slots_.resize(0);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());

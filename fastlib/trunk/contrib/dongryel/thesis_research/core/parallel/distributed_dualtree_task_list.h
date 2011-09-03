@@ -47,31 +47,10 @@ class DistributedDualtreeTaskList {
 
     struct ComparatorType {
       bool operator()(const KeyType &k1, const KeyType &k2) const {
-        if(k1.get<0>() < k2.get<0>()) {
-          return -1;
-        }
-        else if(k1.get<0>() > k2.get<0>()) {
-          return 1;
-        }
-        else {
-          if(k1.get<1>() < k2.get<1>()) {
-            return -1;
-          }
-          else if(k1.get<1>() > k2.get<1>()) {
-            return 1;
-          }
-          else {
-            if(k1.get<2>() < k2.get<2>()) {
-              return -1;
-            }
-            else if(k1.get<2>() > k2.get<2>()) {
-              return 1;
-            }
-            else {
-              return 0;
-            }
-          }
-        }
+        return k1.get<0>() < k2.get<0>() ||
+               (k1.get<0>() == k2.get<0>() && k1.get<1>() < k2.get<1>()) ||
+               (k1.get<0>() == k2.get<0>() && k1.get<1>() == k2.get<1>() &&
+                k1.get<2>() < k2.get<2>()) ;
       }
     };
 
@@ -147,12 +126,16 @@ class DistributedDualtreeTaskList {
     bool FindSubTable_(const KeyType &subtable_id, int *position_out) {
       typename MapType::iterator it =
         id_to_position_map_.find(subtable_id);
+      printf("Finding %d %d %d\n", subtable_id.get<0>(),
+             subtable_id.get<1>(), subtable_id.get<2>());
       if(it != id_to_position_map_.end()) {
         *position_out = it->second;
+        printf("Found %d\n", it->second);
         return true;
       }
       else {
         *position_out = -1;
+        printf("Not found!\n");
         return false;
       }
     }
@@ -220,9 +203,15 @@ class DistributedDualtreeTaskList {
       int existing_position;
       if(this->FindSubTable_(subtable_id, &existing_position)) {
         if(! count_as_query) {
+          printf("Found %d %d %d as a reference table at %d.\n",
+                 subtable_id.get<0>(), subtable_id.get<1>(),
+                 subtable_id.get<2>(), existing_position);
           sub_tables_[ existing_position ].get<2>()++;
         }
         else {
+          printf("Found %d %d %d as a query table at %d.\n",
+                 subtable_id.get<0>(), subtable_id.get<1>(),
+                 subtable_id.get<2>(), existing_position);
           sub_tables_[ existing_position ].get<1>() = true;
         }
         return existing_position;
@@ -244,10 +233,14 @@ class DistributedDualtreeTaskList {
           sub_tables_.back().get<2>() = 1;
         }
         id_to_position_map_[subtable_id] = sub_tables_.size() - 1;
+
+        printf("Fit in within %lu.\n", remaining_extra_points_to_hold_);
         remaining_extra_points_to_hold_ -=
           test_subtable_in.start_node()->count();
         return sub_tables_.size() - 1;
       }
+      printf("Could not fit in within %lu.\n",
+             remaining_extra_points_to_hold_);
       return -1;
     }
 
@@ -291,7 +284,7 @@ class DistributedDualtreeTaskList {
           distributed_task_queue_->push_subtable(
             sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
         sub_tables_[i].get<0>().set_cache_block_id(assigned_cache_indices[i]);
-        printf("   Assigned the cache block id: %d\n",
+        printf("Assigned the cache block id: %d\n",
                assigned_cache_indices[i]);
       }
 
@@ -344,6 +337,7 @@ class DistributedDualtreeTaskList {
       int query_subtable_position;
       if((query_subtable_position =
             this->push_back_(query_subtable, true)) < 0) {
+        printf("Could not push in the query subtable within the limit.\n");
         return;
       }
       donated_task_list_.resize(donated_task_list_.size() + 1);
@@ -380,6 +374,8 @@ class DistributedDualtreeTaskList {
       // sending the query subtable.
       if(donated_task_list_.back().second.size() == 0) {
         this->pop_(query_subtable.subtable_id(), true);
+        printf("Popping back the query subtable... because the reference");
+        printf(" could not fit in.\n");
         donated_task_list_.pop_back();
       }
       else {
@@ -401,9 +397,12 @@ class DistributedDualtreeTaskList {
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
 
+      this->Print_();
+
       // Save the number of subtables transferred.
       int num_subtables = sub_tables_.size();
       ar & num_subtables;
+      printf("Saving %d subtables.\n", num_subtables);
       if(num_subtables > 0) {
         for(int i = 0; i < num_subtables; i++) {
           ar & sub_tables_[i].get<0>();
@@ -450,7 +449,7 @@ class DistributedDualtreeTaskList {
       // Load the number of subtables transferred.
       int num_subtables;
       ar & num_subtables;
-
+      printf("Loading %d subtables.\n", num_subtables);
       if(num_subtables > 0) {
         sub_tables_.resize(num_subtables);
         for(int i = 0; i < num_subtables; i++) {
