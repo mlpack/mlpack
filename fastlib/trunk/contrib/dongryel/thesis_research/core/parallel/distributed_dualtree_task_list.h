@@ -122,6 +122,26 @@ class DistributedDualtreeTaskList {
 
   private:
 
+    void Print_() const {
+
+      // Print out the mapping.
+      typename MapType::const_iterator it = id_to_position_map_.begin();
+      printf("Mapping from subtable IDs to position:\n");
+      for(; it != id_to_position_map_.end(); it++) {
+        printf(
+          "(%d %d %d) -> %d\n",
+          it->first.get<0>(), it->first.get<1>(), it->first.get<2>(),
+          it->second);
+      }
+
+      // Print out the subtables.
+      for(unsigned int i = 0; i < sub_tables_.size(); i++) {
+        KeyType subtable_id = sub_tables_[i].get<0>().subtable_id();
+        printf("%d: (%d %d %d)\n", i, subtable_id.get<0>(),
+               subtable_id.get<1>(), subtable_id.get<2>());
+      }
+    }
+
     /** @brief Returns the position of the subtable.
      */
     bool FindSubTable_(const KeyType &subtable_id, int *position_out) {
@@ -144,45 +164,47 @@ class DistributedDualtreeTaskList {
       if(sub_tables_.size() > 0) {
 
         // Find the position in the subtable list.
-        KeyType last_subtable_id = sub_tables_.back().get<0>().subtable_id();
         typename MapType::iterator remove_position_it =
           this->id_to_position_map_.find(subtable_id);
-        int remove_position = -1;
-        if(remove_position_it != id_to_position_map_.end()) {
-          remove_position = remove_position_it->second;
+
+        // This position should be valid, if there is at least one
+        // subtable.
+        int remove_position = remove_position_it->second;
+
+        // Remove as a query table.
+        if(count_as_query) {
+          sub_tables_[remove_position].get<1>() = false;
         }
 
-        if(remove_position >= 0) {
+        // Otherwise, remove as a reference table by decrementing the
+        // reference count.
+        else {
+          sub_tables_[remove_position].get<2>()--;
+        }
 
-          if(count_as_query) {
-            sub_tables_[remove_position].get<1>() = false;
+        // If the subtable is no longer is referenced, we have to
+        // remove it.
+        if((! sub_tables_[remove_position].get<1>()) &&
+            sub_tables_[remove_position].get<2>() == 0) {
+
+          // Overwrite with the last subtable in the list and decrement.
+          KeyType last_subtable_id = sub_tables_.back().get<0>().subtable_id();
+          remaining_extra_points_to_hold_ +=
+            sub_tables_[remove_position].get<0>().start_node()->count();
+          id_to_position_map_.erase(
+            sub_tables_[remove_position].get<0>().subtable_id());
+          sub_tables_[ remove_position ].get<0>().Alias(
+            sub_tables_.back().get<0>());
+          sub_tables_[ remove_position ].get<1>() =
+            sub_tables_.back().get<1>();
+          sub_tables_[ remove_position ].get<2>() =
+            sub_tables_.back().get<2>();
+          sub_tables_.pop_back();
+          if(sub_tables_.size() > 0) {
+            id_to_position_map_[ last_subtable_id ] = remove_position;
           }
           else {
-            // Decrement the reference count.
-            sub_tables_[remove_position].get<2>()--;
-          }
-
-          if((! sub_tables_[remove_position].get<1>()) &&
-              sub_tables_[remove_position].get<2>() == 0) {
-
-            // Overwrite with the last subtable in the list and decrement.
-            remaining_extra_points_to_hold_ +=
-              sub_tables_[remove_position].get<0>().start_node()->count();
-            id_to_position_map_.erase(
-              sub_tables_[remove_position].get<0>().subtable_id());
-            sub_tables_[ remove_position ].get<0>().Alias(
-              sub_tables_.back().get<0>());
-            sub_tables_[ remove_position ].get<1>() =
-              sub_tables_.back().get<1>();
-            sub_tables_[ remove_position ].get<2>() =
-              sub_tables_.back().get<2>();
-            sub_tables_.pop_back();
-            if(sub_tables_.size() > 0) {
-              id_to_position_map_[ last_subtable_id ] = remove_position;
-            }
-            else {
-              id_to_position_map_.erase(last_subtable_id);
-            }
+            id_to_position_map_.erase(last_subtable_id);
           }
         }
       }
@@ -260,9 +282,17 @@ class DistributedDualtreeTaskList {
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
+        KeyType subtable_id = sub_tables_[i].get<0>().subtable_id();
+        printf("Received %d %d %d: %d %d\n", subtable_id.get<0>(),
+               subtable_id.get<1>(), subtable_id.get<2>(),
+               sub_tables_[i].get<1>(), sub_tables_[i].get<2>());
+
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
             sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
+        sub_tables_[i].get<0>().set_cache_block_id(assigned_cache_indices[i]);
+        printf("   Assigned the cache block id: %d\n",
+               assigned_cache_indices[i]);
       }
 
       // For each query subresult, push in a new queue.
