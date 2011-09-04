@@ -14,7 +14,6 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
-#include "core/parallel/subtable_route_request.h"
 #include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
 #include "core/table/distributed_table.h"
