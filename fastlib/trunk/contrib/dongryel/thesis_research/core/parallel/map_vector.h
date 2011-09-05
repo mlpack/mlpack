@@ -6,8 +6,8 @@
 #ifndef CORE_PARALLEL_MAP_VECTOR_H
 #define CORE_PARALLEL_MAP_VECTOR_H
 
-#include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <map>
 
@@ -21,16 +21,96 @@ class MapVector {
     // For BOOST serialization.
     friend class boost::serialization::access;
 
-  private:
-    boost::shared_ptr< std::map<int, int> > id_to_position_map_;
+    class Internal {
+      private:
 
-    boost::shared_ptr< std::map<int, int> > position_to_id_map_;
+        int num_elements_;
+
+        long num_references_;
+
+        std::map<int, int> id_to_position_map_;
+
+        std::map<int, int> position_to_id_map_;
+
+        boost::scoped_array<T> vector_;
+
+      private:
+
+        friend void intrusive_ptr_add_ref(Internal *ptr) {
+          ptr->num_references_++;
+        }
+
+        friend void intrusive_ptr_release(Internal *ptr) {
+          ptr->num_references_--;
+          if(ptr->num_references_ == 0) {
+            if(core::table::global_m_file_) {
+              core::table::global_m_file_->DestroyPtr(ptr);
+            }
+            else {
+              delete ptr;
+            }
+          }
+        }
+
+      public:
+
+        std::map<int, int> &id_to_position_map() {
+          return id_to_position_map_;
+        }
+
+        std::map<int, int> &position_to_id_map() {
+          return position_to_id_map_;
+        }
+
+        T *vector() {
+          return vector_.get();
+        }
+
+        int size() const {
+          return num_elements_;
+        }
+
+        Internal() {
+          num_elements_ = 0;
+          num_references_ = 0;
+        }
+
+        void Init(int num_elements_in) {
+          num_elements_ = num_elements_in;
+          boost::scoped_array<T> tmp_vector(new T[num_elements_]);
+          vector_.swap(tmp_vector);
+        }
+
+        /** @brief Returns a const reference to the object with the given
+         *         ID.
+         */
+        const T &operator[](int i) const {
+          int translated_index = i;
+          if(id_to_position_map_.size() > 0) {
+            translated_index =
+              id_to_position_map_.find(translated_index)->second;
+          }
+          return  vector_[ translated_index ];
+        }
+
+        /** @brief Returns a modifiable reference to the object with the
+         *         given ID.
+         */
+        T &operator[](int i) {
+          int translated_index = i;
+          if(id_to_position_map_.size() > 0) {
+            translated_index =
+              id_to_position_map_.find(translated_index)->second;
+          }
+          return  vector_[ translated_index ];
+        }
+    };
+
+  private:
 
     std::vector<int> indices_to_save_;
 
-    unsigned int num_elements_;
-
-    boost::shared_array<T> vector_;
+    boost::intrusive_ptr<Internal> internal_;
 
   public:
 
@@ -120,28 +200,15 @@ class MapVector {
 
   public:
 
-    const boost::shared_ptr <
-    std::map<int, int> > &id_to_position_map() const {
-      return id_to_position_map_;
-    }
-
-    const boost::shared_ptr <
-    std::map<int, int> > &position_to_id_map() const {
-      return position_to_id_map_;
-    }
-
-    const boost::shared_array<T> &vector() const {
-      return vector_;
+    const boost::intrusive_ptr<Internal> &internal() const {
+      return internal_;
     }
 
     template<typename TreeIteratorType>
     void Alias(
       const core::parallel::MapVector<T> &source_in,
       TreeIteratorType &it) {
-      id_to_position_map_ = source_in.id_to_position_map();
-      position_to_id_map_ = source_in.position_to_id_map();
-      num_elements_ = source_in.size();
-      vector_ = source_in.vector();
+      internal_ = source_in.internal();
       this->set_indices_to_save(it);
     }
 
@@ -152,7 +219,7 @@ class MapVector {
     void Copy(const core::parallel::MapVector<T> &source_in) {
       iterator source_it = source_in.get_iterator();
       while(source_it.HasNext()) {
-        vector_[ source_it.current_id()] = *source_it;
+        this->operator[](source_it.current_id()) = *source_it;
         source_it++;
       }
     }
@@ -160,21 +227,26 @@ class MapVector {
     /** @brief Gets an iterator of the current map vector object.
      */
     iterator get_iterator() const {
-      return iterator(
-               vector_.get(), position_to_id_map_.get(), 0, num_elements_);
+      if(internal_ != NULL) {
+        return iterator(
+                 internal_->vector(),
+                 &(internal_->position_to_id_map()), 0, internal_->size());
+      }
+      else {
+        return iterator();
+      }
     }
 
     /** @brief Returns the number of elements stored in the map
      *         vector.
      */
-    unsigned int size() const {
-      return num_elements_;
+    int size() const {
+      return internal_->size();
     }
 
     /** @brief The default constructor.
      */
     MapVector() {
-      num_elements_ = 0;
       indices_to_save_.resize(0);
     }
 
@@ -228,23 +300,21 @@ class MapVector {
     void load(Archive &ar, const unsigned int version) {
 
       // Load the number of elements.
-      ar & num_elements_;
-      boost::shared_array<T> tmp_array(new T[ num_elements_]);
-      vector_.swap(tmp_array);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
-      id_to_position_map_.swap(tmp_id_to_position_map);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
-      position_to_id_map_.swap(tmp_position_to_id_map);
+      int num_elements;
+      ar & num_elements;
+      this->Init(num_elements);
+      std::map<int, int> &id_to_position_map =
+        internal_->id_to_position_map();
+      std::map<int, int> &position_to_id_map =
+        internal_->position_to_id_map();
 
       // Load each element and its mapping.
-      for(unsigned int i = 0; i < num_elements_; i++) {
+      for(int i = 0; i < num_elements; i++) {
         int original_index;
-        ar & vector_[i];
+        ar & (this->operator[](i));
         ar & original_index;
-        (*id_to_position_map_)[ original_index ] = i;
-        (*position_to_id_map_)[ i ] = original_index;
+        id_to_position_map[ original_index ] = i;
+        position_to_id_map[ i ] = original_index;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -253,37 +323,23 @@ class MapVector {
      *         elements.
      */
     void Init(int num_elements_in) {
-      boost::shared_array<T> tmp_vector(new T[num_elements_in]);
-      vector_.swap(tmp_vector);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
-      id_to_position_map_.swap(tmp_id_to_position_map);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
-      position_to_id_map_.swap(tmp_position_to_id_map);
-      num_elements_ = num_elements_in;
+      boost::intrusive_ptr<Internal> tmp_internal(new Internal());
+      internal_.swap(tmp_internal);
+      internal_->Init(num_elements_in);
     }
 
     /** @brief Returns a const reference to the object with the given
      *         ID.
      */
     const T &operator[](int i) const {
-      int translated_index = i;
-      if(id_to_position_map_->size() > 0) {
-        translated_index = id_to_position_map_->find(translated_index)->second;
-      }
-      return  vector_[ translated_index ];
+      return internal_->operator[](i);
     }
 
     /** @brief Returns a modifiable reference to the object with the
      *         given ID.
      */
     T &operator[](int i) {
-      int translated_index = i;
-      if(id_to_position_map_->size() > 0) {
-        translated_index = id_to_position_map_->find(translated_index)->second;
-      }
-      return  vector_[ translated_index ];
+      return internal_->operator[](i);
     }
 };
 }

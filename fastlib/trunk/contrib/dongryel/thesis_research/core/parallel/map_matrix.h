@@ -21,7 +21,28 @@ class MapMatrix {
     // For BOOST serialization.
     friend class boost::serialization::access;
 
+    class Internal {
+      private:
+
+        long reference_count_;
+
+        std::map<int, int> id_to_position_map_;
+
+        std::map<int, int> position_to_id_map_;
+
+        T *matrix_;
+
+        int num_rows_;
+
+        int num_cols_;
+
+      public:
+    };
+
   private:
+
+    boost::intrusive_ptr<Internal> internal_;
+
     boost::shared_ptr< std::map<int, int> > id_to_position_map_;
 
     boost::shared_ptr< std::map<int, int> > position_to_id_map_;

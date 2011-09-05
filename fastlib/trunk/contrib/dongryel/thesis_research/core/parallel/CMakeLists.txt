@@ -11,6 +11,7 @@ set(SOURCES
   distributed_tripletree_dfs_dev.h
   distributed_tripletree_dfs.h
   dualtree_load_balance_request.h
+  map_matrix.h
   map_vector.h
   message_tag.h
   parallel_sample_sort.h
