@@ -51,7 +51,7 @@ class MapVector {
         }
 
         int current_id() const {
-          return ((*position_to_id_map_)[ current_pos_ ]);
+          return position_to_id_map_->find(current_pos_)->second;
         }
 
         int num_elements() const {
@@ -214,11 +214,7 @@ class MapVector {
       // Save each element and its mapping.
       for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
         int translated_position = indices_to_save_[i];
-        if(id_to_position_map_->size() > 0) {
-          translated_position =
-            (*modifiable_self->id_to_position_map_)[ translated_position ];
-        }
-        ar & vector_[ translated_position ];
+        ar & (this->operator[](translated_position));
         ar & indices_to_save_[i];
       }
 
@@ -272,28 +268,22 @@ class MapVector {
      *         ID.
      */
     const T &operator[](int i) const {
-      if(id_to_position_map_->size() == 0) {
-        return vector_[i];
+      int translated_index = i;
+      if(id_to_position_map_->size() > 0) {
+        translated_index = id_to_position_map_->find(translated_index)->second;
       }
-      else {
-        core::parallel::MapVector<T> *modifiable_this =
-          const_cast< core::parallel::MapVector<T> * >(this);
-        return
-          vector_[
-            (*(modifiable_this->id_to_position_map_))[i] ];
-      }
+      return  vector_[ translated_index ];
     }
 
     /** @brief Returns a modifiable reference to the object with the
      *         given ID.
      */
     T &operator[](int i) {
-      if(id_to_position_map_->size() == 0) {
-        return vector_[i];
+      int translated_index = i;
+      if(id_to_position_map_->size() > 0) {
+        translated_index = id_to_position_map_->find(translated_index)->second;
       }
-      else {
-        return vector_[(*id_to_position_map_)[i] ];
-      }
+      return  vector_[ translated_index ];
     }
 };
 }
