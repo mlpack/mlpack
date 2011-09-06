@@ -138,7 +138,7 @@ class TestDistributed_Kde {
 
       // Compute the collective L1 norm of the products.
       double achieved_error = 0;
-      for(unsigned int j = 0; j < query_results.size(); j++) {
+      for(int j = 0; j < query_results.size(); j++) {
         int process_index = 0;
         int point_index = 0;
         FindOriginalIndices_(
@@ -338,7 +338,7 @@ class TestDistributed_Kde {
       for(int i = 0; i < world.size(); i++) {
         total_num_points += distributed_reference_table->local_n_entries(i);
       }
-      for(unsigned int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
+      for(int i = 0; i < distributed_kde_result.pruned_.size(); i++) {
         if(distributed_kde_result.pruned_[i] != total_num_points - 1) {
           std::cerr << "Not all reference point have been accounted for.\n";
           std::cerr << "Got " << distributed_kde_result.pruned_[i] <<
