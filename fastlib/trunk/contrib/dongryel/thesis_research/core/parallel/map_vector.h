@@ -305,7 +305,9 @@ class MapVector {
      *         elements.
      */
     void Init(int num_elements_in) {
-      boost::intrusive_ptr< boost::MapVectorInternal<T> > tmp_internal(new boost::MapVectorInternal<T>());
+      boost::intrusive_ptr <
+      boost::MapVectorInternal<T> > tmp_internal(
+        new boost::MapVectorInternal<T>());
       internal_.swap(tmp_internal);
       internal_->Init(num_elements_in);
     }

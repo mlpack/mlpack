@@ -6,10 +6,89 @@
 #ifndef CORE_PARALLEL_MAP_MATRIX_H
 #define CORE_PARALLEL_MAP_MATRIX_H
 
-#include <boost/shared_array.hpp>
-#include <boost/shared_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
+#include <boost/scoped_array.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <map>
+
+namespace boost {
+template<typename T>
+class MapMatrixInternal {
+  private:
+
+    int n_rows_;
+
+    int n_cols_;
+
+    std::map<int, int> id_to_position_map_;
+
+    std::map<int, int> position_to_id_map_;
+
+    boost::scoped_array<T> matrix_;
+
+  public:
+    long num_references_;
+
+  public:
+
+    std::map<int, int> &id_to_position_map() {
+      return id_to_position_map_;
+    }
+
+    std::map<int, int> &position_to_id_map() {
+      return position_to_id_map_;
+    }
+
+    T *matrix() {
+      return matrix_.get();
+    }
+
+    int n_rows() const {
+      return n_rows_;
+    }
+
+    int n_cols() const {
+      return n_cols_;
+    }
+
+    MapMatrixInternal() {
+      n_rows_ = 0;
+      n_cols_ = 0;
+      num_references_ = 0;
+    }
+
+    void Init(int num_rows_in, int num_cols_in) {
+      n_rows_ = num_rows_in;
+      n_cols_ = num_cols_in;
+      boost::scoped_array<T> tmp_matrix(new T[n_rows_ * n_cols_]);
+      matrix_.swap(tmp_matrix);
+    }
+
+    /** @brief Returns a const pointer to the object with the given ID
+     *         for the column.
+     */
+    const T *col(int i) const {
+      int col_start = i;
+      if(id_to_position_map_->size() > 0) {
+        col_start = (id_to_position_map_->find(col_start)->second);
+      }
+      col_start *= n_rows_;
+      return matrix_.get() + col_start;
+    }
+
+    /** @brief Returns a modifiable reference to the object with the
+     *         given ID.
+     */
+    T *col(int i) {
+      int col_start = i;
+      if(id_to_position_map_->size() > 0) {
+        col_start = (id_to_position_map_->find(col_start)->second);
+      }
+      col_start *= n_rows_;
+      return matrix_.get() + col_start;
+    }
+};
+}
 
 namespace core {
 namespace parallel {
@@ -21,39 +100,11 @@ class MapMatrix {
     // For BOOST serialization.
     friend class boost::serialization::access;
 
-    class Internal {
-      private:
-
-        long reference_count_;
-
-        std::map<int, int> id_to_position_map_;
-
-        std::map<int, int> position_to_id_map_;
-
-        T *matrix_;
-
-        int num_rows_;
-
-        int num_cols_;
-
-      public:
-    };
-
   private:
 
-    boost::intrusive_ptr<Internal> internal_;
-
-    boost::shared_ptr< std::map<int, int> > id_to_position_map_;
-
-    boost::shared_ptr< std::map<int, int> > position_to_id_map_;
+    boost::intrusive_ptr< boost::MapMatrixInternal<T> > internal_;
 
     std::vector<int> indices_to_save_;
-
-    int num_cols_;
-
-    int num_rows_;
-
-    boost::shared_array<T> matrix_;
 
   public:
 
@@ -153,29 +204,11 @@ class MapMatrix {
 
   public:
 
-    const boost::shared_ptr <
-    std::map<int, int> > &id_to_position_map() const {
-      return id_to_position_map_;
-    }
-
-    const boost::shared_ptr <
-    std::map<int, int> > &position_to_id_map() const {
-      return position_to_id_map_;
-    }
-
-    const boost::shared_array<T> &matrix() const {
-      return matrix_;
-    }
-
     template<typename TreeIteratorType>
     void Alias(
       const core::parallel::MapMatrix<T> &source_in,
       TreeIteratorType &it) {
-      id_to_position_map_ = source_in.id_to_position_map();
-      position_to_id_map_ = source_in.position_to_id_map();
-      num_rows_ = source_in.num_rows();
-      num_cols_ = source_in.num_cols();
-      matrix_ = source_in.matrix();
+      internal_ = source_in.internal();
       this->set_indices_to_save(it);
     }
 
@@ -249,7 +282,8 @@ class MapMatrix {
     void save(Archive &ar, const unsigned int version) const {
 
       // Save the number of rows/columns being saved.
-      ar & num_rows_;
+      int num_rows = internal_->num_rows();
+      ar & num_rows;
       int num_columns_to_save = indices_to_save_.size();
       ar & num_columns_to_save;
 
@@ -272,14 +306,11 @@ class MapMatrix {
       // Load the number of rows/columns.
       ar & num_rows_;
       ar & num_cols_;
-      boost::shared_array<T> tmp_array(new T[ num_rows_ * num_cols_ ]);
-      matrix_.swap(tmp_array);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
-      id_to_position_map_.swap(tmp_id_to_position_map);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
-      position_to_id_map_.swap(tmp_position_to_id_map);
+      this->Init(num_rows_, num_cols_);
+      std::map<int, int> &id_to_position_map =
+        internal_->id_to_position_map();
+      std::map<int, int> &position_to_id_map =
+        internal_->position_to_id_map();
 
       // Load each element and its mapping.
       T * column = matrix_.get();
@@ -289,8 +320,8 @@ class MapMatrix {
           ar & column[j];
         }
         ar & original_index;
-        (*id_to_position_map_)[ original_index ] = i;
-        (*position_to_id_map_)[ i ] = original_index;
+        id_to_position_map[ original_index ] = i;
+        position_to_id_map[ i ] = original_index;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
@@ -299,42 +330,47 @@ class MapMatrix {
      *         and columns.
      */
     void Init(int num_rows_in, int num_cols_in) {
-      boost::shared_array<T> tmp_vector(new T[num_rows_in * num_cols_in]);
-      matrix_.swap(tmp_vector);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_id_to_position_map(new std::map<int, int>());
-      id_to_position_map_.swap(tmp_id_to_position_map);
-      boost::shared_ptr <
-      std::map<int, int> > tmp_position_to_id_map(new std::map<int, int>());
-      position_to_id_map_.swap(tmp_position_to_id_map);
-      num_rows_ = num_rows_in;
-      num_cols_ = num_cols_in;
+      boost::intrusive_ptr <
+      boost::MapMatrixInternal<T> > tmp_internal(
+        new boost::mapMatrixInternal<T>());
+      internal_.swap(tmp_internal);
+      internal_->Init(num_rows_in, num_cols_in);
     }
 
     /** @brief Returns a const pointer to the object with the given ID
      *         for the column.
      */
     const T *col(int i) const {
-      int col_start = i;
-      if(id_to_position_map_->size() > 0) {
-        col_start = (id_to_position_map_->find(col_start)->second);
-      }
-      col_start *= n_rows_;
-      return matrix_.get() + col_start;
+      return internal_->col(i);
     }
 
     /** @brief Returns a modifiable reference to the object with the
      *         given ID.
      */
     T *col(int i) {
-      int col_start = i;
-      if(id_to_position_map_->size() > 0) {
-        col_start = (id_to_position_map_->find(col_start)->second);
-      }
-      col_start *= n_rows_;
-      return matrix_.get() + col_start;
+      return internal_->col(i);
     }
 };
+}
+}
+
+namespace boost {
+template<typename T>
+inline void intrusive_ptr_add_ref(boost::MapMatrixInternal<T> *ptr) {
+  ptr->num_references_++;
+}
+
+template<typename T>
+inline void intrusive_ptr_release(boost::MapMatrixInternal<T> *ptr) {
+  ptr->num_references_--;
+  if(ptr->num_references_ == 0) {
+    if(core::table::global_m_file_) {
+      core::table::global_m_file_->DestroyPtr(ptr);
+    }
+    else {
+      delete ptr;
+    }
+  }
 }
 }
 
