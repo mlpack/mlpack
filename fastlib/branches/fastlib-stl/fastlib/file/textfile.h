@@ -13,7 +13,7 @@
 #ifndef FILE_TEXTFILE_H
 #define FILE_TEXTFILE_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 #include "../fx/io.h"
 
 #include <cstdio>

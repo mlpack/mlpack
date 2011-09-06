@@ -9,7 +9,7 @@
 #ifndef COMPRESSED_MATRIX_H
 #define COMPRESSED_MATRIX_H
 
-#include "fastlib/base/base.h"
+#include "fastlib/base/common.h"
 
 #include <stdlib.h>
 #include <string.h>

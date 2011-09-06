@@ -19,7 +19,6 @@ set(SOURCES
    arma_extend/promote_type.hpp
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
-   base.h
    common.h
    common.c
    compiler.h

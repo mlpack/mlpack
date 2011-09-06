@@ -12,7 +12,7 @@
 #ifndef TREE_KDTREE_H
 #define TREE_KDTREE_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 
 #include "spacetree.h"
 #include "bounds.h"

@@ -7,7 +7,7 @@
  *
  * This file should be included before all built-in libraries because
  * it includes the _REENTRANT definition needed for thread-safety.
- * Files base.h or fastlib.h include this file first and may serve as
+ * Files common.h or fastlib.h include this file first and may serve as
  * surrogates.
  *
  * @see compiler.h

@@ -8,7 +8,7 @@
 #define FASTLIB_FASTLIB_H
 
 #include <cmath>
-#include "base/base.h"
+#include "base/common.h"
 #include "la/la.h"
 #include "la/matrix.h"
 #include "data/dataset.h"
