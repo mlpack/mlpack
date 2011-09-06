@@ -1,6 +1,7 @@
 #ifndef NNSMO_IMPL_H
 #define NNSMO_IMPL_H
 
+#include "fastlib/fx/io.h"
 // return the support vector, the support alpha vector and the weight vector of the trained NNSVM
 template<typename TKernel>
 void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
@@ -157,7 +158,7 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
   //2. compute L, H of alpha_j
   if (s < 0)
   {
-    DEBUG_ASSERT(s == -1);
+    mlpack::IO::Assert(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
   }
   else
@@ -236,7 +237,7 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   //2. compute L, H of alpha_j
   if (s < 0)
   {
-    DEBUG_ASSERT(s == -1);
+    mlpack::IO::Assert(s == -1);
     r = alpha_j - alpha_i; // target values are not equal
   }
   else
@@ -259,7 +260,7 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
   double eta = +2*kij - kii - kjj;
 
   // calculate alpha_j^{new}
-  if (likely(eta < 0))
+  if (eta < 0)
   {
     alpha_j = alpha_[j] - yj * (error_i - error_j) / eta;
     alpha_j = FixAlpha_(math::ClampRange(alpha_j, l, u));

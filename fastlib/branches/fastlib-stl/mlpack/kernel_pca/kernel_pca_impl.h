@@ -86,7 +86,7 @@ void KernelPCA::SaveToTextFile(std::string file,
   std::string lam_file(file);
   lam_file.append(".lambdas");
   FILE *fp = fopen(vec_file.c_str(), "w");  
-  if (unlikely(fp==NULL)) {
+  if (fp==NULL) {
     IO::Fatal << "Unable to open file " << vec_file.c_str() 
 	      << ", error: " << strerrer(errno) << std::endl;
   }
@@ -98,7 +98,7 @@ void KernelPCA::SaveToTextFile(std::string file,
   }
   fclose(fp);
   fp = fopen(lam_file.c_str(), "w");  
-  if (unlikely(fp==NULL)) {
+  if (fp==NULL) {
     IO::Fatal << "Unable to open file " << lam_file.c_str()
 	      << ", error: " << strerror(errno) << std::endl;
   }
@@ -110,7 +110,7 @@ void KernelPCA::SaveToTextFile(std::string file,
 
 void KernelPCA::EstimateBandwidth(double *bandwidth) {
   FILE *fp=fopen("allnn.txt", "r");
-  if unlikely(fp==NULL) {
+  if (fp==NULL) {
      IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64 p1, p2;
@@ -132,7 +132,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
                            arma::mat *eigen_vectors,
                            arma::vec *eigen_values) {
   FILE *fp=fopen("allnn.txt", "r");
-  if unlikely(fp==NULL) {
+  if (fp==NULL) {
      IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
   uint64 p1, p2;

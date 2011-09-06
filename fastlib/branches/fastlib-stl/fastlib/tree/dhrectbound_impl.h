@@ -31,7 +31,7 @@ DHrectBound<t_pow>::DHrectBound() {
  */
 template<int t_pow>
 DHrectBound<t_pow>::DHrectBound(index_t dimension) {
-  //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
+  mlpack::IO::AssertMessage(dim_ == ~((index_t)0), "Already initialized");
   bounds_ = new DRange[dimension];
 
   dim_ = dimension;
@@ -59,7 +59,7 @@ void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
                                           const DHrectBound& box2) {
 
   dim_ = box1.dim();
-  DEBUG_ASSERT(dim_ == box2.dim());
+  mlpack::IO::Assert(dim_ == box2.dim());
 
   if(bounds_)
     delete[] bounds_;
@@ -159,7 +159,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
                                          const vec& offset) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
   //Add Debug for offset vector
 
   for(index_t d = 0; d < dim_; d++) {
@@ -179,7 +179,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
  */
 template<int t_pow>
 double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
+  mlpack::IO::Assert(point.n_elem == dim_);
 
   double sum = 0;
   const DRange* mbound = bounds_;
@@ -211,7 +211,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
  */
 template<int t_pow>
 double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   double sum = 0;
   const DRange* mbound = bounds_;
@@ -241,7 +241,7 @@ template<int t_pow>
 double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
+  mlpack::IO::Assert(point.n_elem == dim_);
 
   for (index_t d = 0; d < dim_; d++) {
     double v = fabs(std::max(
@@ -260,7 +260,7 @@ template<int t_pow>
 double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   double v;
   for(index_t d = 0; d < dim_; d++) {
@@ -323,7 +323,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
   for (index_t d = 0; d < dim_; d++) {
@@ -354,7 +354,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
+  mlpack::IO::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
   for(index_t d = 0; d < dim_; d++) {
@@ -392,7 +392,7 @@ template<int t_pow>
 double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
     double v = other.bounds_[d].mid();
@@ -414,7 +414,7 @@ template<int t_pow>
 double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for(index_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].hi - bounds_[d].hi;
@@ -434,7 +434,7 @@ template<int t_pow>
 double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
@@ -453,7 +453,7 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
  */
 template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
-  DEBUG_SAME_SIZE(vector.n_elem, dim_);
+  mlpack::IO::Assert(vector.n_elem == dim_);
 
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i] |= vector[i];
@@ -467,7 +467,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
  */
 template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
-  DEBUG_SAME_SIZE(other.dim_, dim_);
+  mlpack::IO::Assert(other.dim_ == dim_);
 
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i] |= other.bounds_[i];
@@ -483,7 +483,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
  */
 template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
-  DEBUG_SAME_SIZE(other.n_elem, dim_);
+  mlpack::IO::Assert(other.n_elem == dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
@@ -542,7 +542,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
       bounds_[i].lo = other.bounds_[i].lo;
     }
 
-    if (unlikely((ah > bl) & (bl > bh))){
+    if ((ah > bl) & (bl > bh)){
       bounds_[i].lo = 0;
       bounds_[i].hi = size[i];
     }

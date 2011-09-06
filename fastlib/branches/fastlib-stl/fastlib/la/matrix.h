@@ -15,6 +15,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <math.h>
+#include "../fx/io.h"
+
 
 /**
  * Double-precision vector for use with LAPACK.
@@ -49,24 +51,33 @@ class GenVector {
   /** Whether this should be freed, i.e. it is not an alias. */
   bool should_free_;
   
+  void DebugBounds(index_t index, index_t bound) const {
+    if( index >= bound )
+      mlpack::IO::Debug << "DebugBounds failed, " << index 
+      << " is not within [0," << bound << "]." << std::endl;
+  }
  public:
   /**
    * Creates a completely uninitialized Vector which must be initialized.
    */
   GenVector() {
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
   }
   
   /**
    * Copy constructor -- for use in collections.
    */
   GenVector(const GenVector& other) {
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
     Copy(other);
   }
   
   const GenVector &operator=(const GenVector &src) { 
-    if (likely(this != &src)) { 
+    if ((this != &src)) { 
       this->~GenVector(); 
       new(this) GenVector(src); 
     } 
@@ -84,15 +95,17 @@ class GenVector {
    * Uninitializes so that you can call another initializer.
    */
   void Destruct() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
+    mlpack::IO::AssertMessage(ptr_ != NULL,
        "You forgot to initialize a Vector before it got automatically freed.");
     
     /* mark slow case as "unlikely" even if it might be the likely case */
-    if (unlikely(should_free_)) {
+    if (should_free_) {
       delete[] ptr_;
     }
     
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
   }
 
   /**
@@ -151,7 +164,9 @@ class GenVector {
    * @param in_length the number of doubles in the array
    */
   void Copy(const T *doubles, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = new T[in_length];
     memcpy(ptr_, doubles, in_length * sizeof(T));
@@ -178,7 +193,9 @@ class GenVector {
    */
   void StaticCopy(const T *doubles, index_t in_length) {
 #ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>(in_length);
     mem::Copy<T, T, T>(ptr_, doubles, in_length);
@@ -193,7 +210,9 @@ class GenVector {
    * Alias a particular memory region of doubles.
    */
   void Alias(T *in_ptr, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = in_ptr;
     length_ = in_length;
@@ -228,7 +247,7 @@ class GenVector {
   void Own(GenVector* other) {
     Own(other->ptr_, other->length());
     
-    DEBUG_ASSERT(other->should_free_);
+    mlpack::IO::Assert(other->should_free_);
     other->should_free_ = false;
   }
   
@@ -237,7 +256,9 @@ class GenVector {
    * with mem::Alloc<double>.
    */
   void Own(T *in_ptr, index_t in_length) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = in_ptr;
     length_ = in_length;
@@ -266,7 +287,9 @@ class GenVector {
    */
   void StaticOwn(T *in_ptr, index_t in_length) {
 #ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = in_ptr;
     length_ = in_length;
@@ -285,8 +308,8 @@ class GenVector {
    * @param dest an UNINITIALIZED vector to use
    */
   void MakeSubvector(index_t start_index, index_t len, GenVector* dest) {
-    DEBUG_BOUNDS(start_index, length_);
-    DEBUG_BOUNDS(start_index + len, length_ + 1);
+    DebugBounds(start_index, length_);
+    DebugBounds(start_index + len, length_ + 1);
     
     dest->Alias(ptr_ + start_index, len);
   }
@@ -300,7 +323,7 @@ class GenVector {
    * @param other an identically sized vector to swap values with
    */
   void SwapValues(GenVector* other) {
-    DEBUG_ASSERT(length() == other->length());
+    mlpack::IO::Assert(length() == other->length());
     for (index_t i = 0; i < length_; i++) {
       T tmp = ptr_[i];
       ptr_[i] = other->ptr_[i];
@@ -314,7 +337,7 @@ class GenVector {
    * @param other the vector to copy from
    */
   void CopyValues(const GenVector& other) {
-    DEBUG_ASSERT(length() == other.length());
+    mlpack::IO::Assert(length() == other.length());
     memcpy(ptr_, other.ptr_, length_ * sizeof(T));
   }
 
@@ -366,7 +389,7 @@ class GenVector {
    * Gets the i'th element of this vector.
    */
   T operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, length_);
+    DebugBounds(i, length_);
     return ptr_[i];
   }
   
@@ -374,7 +397,7 @@ class GenVector {
    * Gets a mutable reference to the i'th element of this vector.
    */
   T &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, length_);
+    DebugBounds(i, length_);
     return ptr_[i];
   }
   
@@ -392,22 +415,24 @@ class GenVector {
    * @endcode
    */
   T get(index_t i) const {
-    DEBUG_BOUNDS(i, length_);
+    DebugBounds(i, length_);
     return ptr_[i];
   }
   
  private:
   void AssertUninitialized_() const {
-    DEBUG_ASSERT_MSG(length_ == BIG_BAD_NUMBER, "Cannot re-init vectors.");
+    mlpack::IO::AssertMessage(length_ == (uint32_t)~0, "Cannot re-init vectors.");
   }
   
   void Uninitialize_() {
-    DEBUG_ONLY(ptr_ = BIG_BAD_POINTER(T));
-    DEBUG_ONLY(length_ = BIG_BAD_NUMBER);
+#ifdef DEBUG
+    ptr_ = NULL;
+    length_ = ~0;
+#endif
   }
   
   void AssertInitialized_() {
-    DEBUG_ASSERT_MSG(ptr_ != BIG_BAD_POINTER(T),
+    mlpack::IO::AssertMessage(ptr_ != NULL, 
         "Vector was not initialized.");
   }
 };
@@ -438,12 +463,20 @@ class GenMatrix {
   /** Whether I am a strong copy (not an alias). */
   bool should_free_;
 
+  void DebugBounds(index_t index, index_t bound) const {
+    if( index >= bound )
+      mlpack::IO::Debug << "DebugBounds failed, " << index 
+      << " is not within [0," << bound << "]." << std::endl;
+  }
+
  public:
   /**
    * Creates a Matrix with uninitialized elements of the specified size.
    */
   GenMatrix(index_t in_rows, index_t in_cols) {
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
     Init(in_rows, in_cols);
   }
 
@@ -451,12 +484,14 @@ class GenMatrix {
    * Copy constructor -- for use in collections.
    */
   GenMatrix(const GenMatrix<T>& other) {
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
     Copy(other);
   }
   
   const GenMatrix &operator=(const GenMatrix &src) { 
-    if (likely(this != &src)) { 
+    if (this != &src) { 
       this->~GenMatrix(); 
       new(this) GenMatrix(src); 
     } 
@@ -467,7 +502,9 @@ class GenMatrix {
    * Creates a matrix that can be initialized.
    */
   GenMatrix() {
-    DEBUG_ONLY(Uninitialize_());
+#ifdef DEBUG
+    Uninitialize_();
+#endif
   }
 
   /**
@@ -487,22 +524,24 @@ class GenMatrix {
        "You forgot to initialize a Matrix before it got automatically freed.");
   */
    
-    if (unlikely(should_free_)) {
+    if (should_free_) {
       delete[] ptr_;
-    //  DEBUG_ONLY(Uninitialize_());
     }
     
-    DEBUG_POISON_PTR(ptr_);
-    DEBUG_ONLY(n_rows_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
-
+    ptr_ = NULL;
+#ifdef DEBUG
+    n_rows_ = ~0;
+    n_cols_ = ~0;
+#endif 
  }
 
   /**
    * Creates a Matrix with uninitialized elements of the specified size.
    */
   void Init(index_t in_rows, index_t in_cols) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif 
     ptr_ = new T[in_rows * in_cols];
     n_rows_ = in_rows;
     n_cols_ = in_cols;
@@ -523,7 +562,9 @@ class GenMatrix {
    */
   void StaticInit(index_t in_rows, index_t in_cols) {
 #ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+	AssertUninitialized_();
+#endif 
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
       (in_rows * in_cols);
     n_rows_ = in_rows;
@@ -563,8 +604,8 @@ class GenMatrix {
    * Makes this a diagonal matrix whose diagonals are the values in v.
    */
   void SetDiagonal(const GenVector<T>& v) {
-    DEBUG_ASSERT(n_rows() == v.length());
-    DEBUG_ASSERT(n_cols() == v.length());
+    mlpack::IO::Assert(n_rows() == v.length());
+    mlpack::IO::Assert(n_cols() == v.length());
     SetZero();
     index_t n = v.length();
     for (index_t i = 0; i < n; i++) {
@@ -589,7 +630,9 @@ class GenMatrix {
    * @param n_cols_in the number of columns
    */
   void Copy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = new T[n_rows_in * n_cols_in];
     for (index_t i = 0; i < n_rows_in * n_cols_in; i++)
@@ -620,7 +663,9 @@ class GenMatrix {
    */
   void StaticCopy(const T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
 #ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
 
     ptr_ = mmapmm::MemoryManager<false>::allocator_->Alloc<T>
       (n_rows_in * n_cols_in);
@@ -654,7 +699,9 @@ class GenMatrix {
    * @param n_cols_in the number of columns
    */
   void Alias(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
@@ -701,7 +748,7 @@ class GenMatrix {
   void Own(GenMatrix* other) {
     Own(other->ptr(), other->n_rows(), other->n_cols());
     
-    DEBUG_ASSERT(other->should_free_);
+    mlpack::IO::Assert(other->should_free_);
     other->should_free_ = false;
   }
   
@@ -715,7 +762,9 @@ class GenMatrix {
    * @param n_cols_in the number of columns
    */
   void Own(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
@@ -751,7 +800,9 @@ class GenMatrix {
    */
   void StaticOwn(T *ptr_in, index_t n_rows_in, index_t n_cols_in) {
 #ifndef DISABLE_DISK_MATRIX
-    DEBUG_ONLY(AssertUninitialized_());
+#ifdef DEBUG
+    AssertUninitialized_();
+#endif
     
     ptr_ = ptr_in;
     n_rows_ = n_rows_in;
@@ -771,8 +822,8 @@ class GenMatrix {
    */
   void MakeColumnSlice(index_t start_col, index_t n_cols_new,
       GenMatrix *dest) const {
-    DEBUG_BOUNDS(start_col, n_cols_);
-    DEBUG_BOUNDS(start_col + n_cols_new, n_cols_ + 1);
+    DebugBounds(start_col, n_cols_);
+    DebugBounds(start_col + n_cols_new, n_cols_ + 1);
     dest->Alias(ptr_ + start_col * n_rows_,
         n_rows_, n_cols_new);
   }
@@ -799,7 +850,7 @@ class GenMatrix {
    */
   void MakeReshaped(index_t n_rows_in, index_t n_cols_in,
       GenMatrix *dest) const {
-    DEBUG_ASSERT(n_rows_in * n_cols_in == n_rows() * n_cols());
+    mlpack::IO::Assert(n_rows_in * n_cols_in == n_rows() * n_cols());
     dest->Alias(ptr_, n_rows_in, n_cols_in);
   }
   
@@ -811,7 +862,7 @@ class GenMatrix {
    *        initialized as an alias to the particular column
    */
   void MakeColumnVector(index_t col, GenVector<T> *dest) const {
-    DEBUG_BOUNDS(col, n_cols_);
+    DebugBounds(col, n_cols_);
     dest->Alias(n_rows_ * col + ptr_, n_rows_);
   }
   
@@ -826,9 +877,9 @@ class GenMatrix {
    */
   void MakeColumnSubvector(index_t col, index_t start_row, index_t n_rows_new,
       GenVector<T> *dest) const {
-    DEBUG_BOUNDS(col, n_cols_);
-    DEBUG_BOUNDS(start_row, n_rows_);
-    DEBUG_BOUNDS(start_row + n_rows_new, n_rows_ + 1);
+    DebugBounds(col, n_cols_);
+    DebugBounds(start_row, n_rows_);
+    DebugBounds(start_row + n_rows_new, n_rows_ + 1);
     dest->Alias(n_rows_ * col + start_row + ptr_, n_rows_new);
   }
   
@@ -841,7 +892,7 @@ class GenMatrix {
    *         particular column
    */
   T *GetColumnPtr(index_t col) {
-    DEBUG_BOUNDS(col, n_cols_);
+    DebugBounds(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -854,7 +905,7 @@ class GenMatrix {
    *         particular column
    */
   const T *GetColumnPtr(index_t col) const {
-    DEBUG_BOUNDS(col, n_cols_);
+    DebugBounds(col, n_cols_);
     return n_rows_ * col + ptr_;
   }
   
@@ -866,9 +917,9 @@ class GenMatrix {
    * @return nothing
    */  
    void CopyColumnFromMat(index_t col1, index_t col2, GenMatrix<T> &mat) {
-     DEBUG_BOUNDS(col1, n_cols_);
-     DEBUG_BOUNDS(col2, mat.n_cols());
-     DEBUG_ASSERT(n_rows_==mat.n_rows());
+     DebugBounds(col1, n_cols_);
+     DebugBounds(col2, mat.n_cols());
+     mlpack::IO::Assert(n_rows_==mat.n_rows());
      memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), n_rows_*sizeof(T));
    }
   /**
@@ -880,11 +931,11 @@ class GenMatrix {
    * @return nothing
    */  
    void CopyColumnFromMat(index_t col1, index_t col2, index_t ncols, GenMatrix<T> &mat) {
-     DEBUG_BOUNDS(col1, n_cols_);
-     DEBUG_BOUNDS(col2, mat.n_cols());
-     DEBUG_BOUNDS(col1+ncols-1, n_cols_);
-     DEBUG_BOUNDS(col2+ncols-1, mat.n_cols());
-     DEBUG_ASSERT(n_rows_==mat.n_rows());
+     DebugBounds(col1, n_cols_);
+     DebugBounds(col2, mat.n_cols());
+     DebugBounds(col1+ncols-1, n_cols_);
+     DebugBounds(col2+ncols-1, mat.n_cols());
+     mlpack::IO::Assert(n_rows_==mat.n_rows());
      memcpy(ptr_ + n_rows_ * col1, mat.GetColumnPtr(col2), ncols*n_rows_*sizeof(T));
    }
 
@@ -894,7 +945,7 @@ class GenMatrix {
    * @return nothing
    */  
    void CopyVectorToColumn(index_t col, GenVector<T> &vec) {
-     DEBUG_BOUNDS(col, n_cols_);
+     DebugBounds(col, n_cols_);
      memcpy(ptr_ + n_rows_ * col, vec.ptr(), n_rows_*sizeof(T));
    }
  
@@ -907,7 +958,7 @@ class GenMatrix {
    * @param new_n_cols the new number of columns
    */
   void ResizeNoalias(index_t new_n_cols) {
-    DEBUG_ASSERT(should_free_); // the best assert we can do
+    mlpack::IO::Assert(should_free_); // the best assert we can do
     n_cols_ = new_n_cols;
     
     // reimplementation of mem::Realloc()
@@ -926,8 +977,8 @@ class GenMatrix {
    * @param other an identically sized vector to swap values with
    */
   void SwapValues(GenMatrix* other) {
-    DEBUG_ASSERT(n_cols() == other->n_cols());
-    DEBUG_ASSERT(n_rows() == other->n_rows());
+    mlpack::IO::Assert(n_cols() == other->n_cols());
+    mlpack::IO::Assert(n_rows() == other->n_rows());
 
     for (index_t i = 0; i < n_elements(); i++) {
       T tmp = ptr_[i];
@@ -942,8 +993,8 @@ class GenMatrix {
    * @param other the vector to copy from
    */
   void CopyValues(const GenMatrix& other) {
-    DEBUG_ASSERT(n_rows() == other.n_rows());
-    DEBUG_ASSERT(n_cols() == other.n_cols());
+    mlpack::IO::Assert(n_rows() == other.n_rows());
+    mlpack::IO::Assert(n_cols() == other.n_cols());
     memcpy(ptr_, other.ptr_, n_elements() * sizeof(T));
   }
 
@@ -991,8 +1042,8 @@ class GenMatrix {
    * @param c the column number
    */
   T get(index_t r, index_t c) const {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DebugBounds(r, n_rows_);
+    DebugBounds(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
  
@@ -1004,8 +1055,8 @@ class GenMatrix {
    * @param v the value to set
    */ 
   void set(index_t r, index_t c, T v) {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DebugBounds(r, n_rows_);
+    DebugBounds(c, n_cols_);
     ptr_[c * n_rows_ + r] = v;
   }
   
@@ -1017,8 +1068,8 @@ class GenMatrix {
    * subsections.
    */
   T &ref(index_t r, index_t c) {
-    DEBUG_BOUNDS(r, n_rows_);
-    DEBUG_BOUNDS(c, n_cols_);
+    DebugBounds(r, n_rows_);
+    DebugBounds(c, n_cols_);
     return ptr_[c * n_rows_ + r];
   }
   
@@ -1047,13 +1098,15 @@ class GenMatrix {
   
  private:
   void AssertUninitialized_() const {
-    DEBUG_ASSERT_MSG(n_rows_ == BIG_BAD_NUMBER, "Cannot re-init matrices.");
+    mlpack::IO::AssertMessage(n_rows_ == (unsigned int32_t)~0, "Cannot re-init matrices.");
   }
   
   void Uninitialize_() {
-    DEBUG_POISON_PTR(ptr_);
-    DEBUG_ONLY(n_rows_ = BIG_BAD_NUMBER);
-    DEBUG_ONLY(n_cols_ = BIG_BAD_NUMBER);
+    ptr_ = NULL;
+#ifdef DEBUG
+    n_rows_ = ~0;
+    n_cols_ = ~0;
+#endif
   } 
 
 };
@@ -1066,6 +1119,12 @@ class SmallVector : public Vector {
  private:
   double array_[t_length];
   
+  void DebugBounds(index_t index, index_t bound) const {
+    if( index >= bound )
+      mlpack::IO::Debug << "DebugBounds failed, " << index 
+      << " is not within [0," << bound << "]." << std::endl;
+  }
+
  public:
   SmallVector() {
     Alias(array_, t_length);
@@ -1086,17 +1145,17 @@ class SmallVector : public Vector {
   }
   
   double operator [] (index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
+    DebugBounds(i, t_length);
     return array_[i];
   }
   
   double &operator [] (index_t i) {
-    DEBUG_BOUNDS(i, t_length);
+    DebugBounds(i, t_length);
     return array_[i];
   }
   
   double get(index_t i) const {
-    DEBUG_BOUNDS(i, t_length);
+    DebugBounds(i, t_length);
     return array_[i];
   }
 };
@@ -1112,6 +1171,12 @@ template<int t_rows, int t_cols>
 class SmallMatrix : public Matrix {
  private:
   double array_[t_cols][t_rows];
+
+  void DebugBounds(index_t index, index_t bound) const {
+    if( index >= bound )
+      mlpack::IO::Debug << "DebugBounds failed, " << index 
+      << " is not within [0," << bound << "]." << std::endl;
+  }
 
  public:
   SmallMatrix() {
@@ -1129,20 +1194,20 @@ class SmallMatrix : public Matrix {
   }
 
   double get(index_t r, index_t c) const {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DebugBounds(r, t_rows);
+    DebugBounds(c, t_cols);
     return array_[c][r];
   }
 
   void set(index_t r, index_t c, double v) {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DebugBounds(r, t_rows);
+    DebugBounds(c, t_cols);
     array_[c][r] = v;
   }
 
   double &ref(index_t r, index_t c) {
-    DEBUG_BOUNDS(r, t_rows);
-    DEBUG_BOUNDS(c, t_cols);
+    DebugBounds(r, t_rows);
+    DebugBounds(c, t_cols);
     return array_[c][r];
   }
 
@@ -1162,14 +1227,16 @@ class SmallMatrix : public Matrix {
   }
 
   double *GetColumnPtr(index_t col) {
-    DEBUG_BOUNDS(col, t_cols);
+    DebugBounds(col, t_cols);
     return array_[col];
   }
 
   const double *GetColumnPtr(index_t col) const {
-    DEBUG_BOUNDS(col, t_cols);
+    DebugBounds(col, t_cols);
     return array_[col];
   }
 };
+
+
 
 #endif

@@ -181,6 +181,20 @@ class IO {
                       const char* description,
                       const char* parent);
                  
+  /*
+   * Checks if the specified condition is true.
+   * If not, halts program execution and prints a standard error message.
+   * Does nothing in non-debug mode.
+   */
+  static void Assert(bool condition);
+
+  /*
+   * Checks if the specified condition is true.
+   * If not, halts program execution and prints a custom error message.
+   * Does nothing in non-debug mode.
+   */
+  static void AssertMessage(bool condition, const char* message);
+  
   /* 
    * See if the specified flag was found while parsing. 
    * 

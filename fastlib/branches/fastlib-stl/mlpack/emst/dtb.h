@@ -164,13 +164,11 @@ class DualTreeBoruvka {
   void AddEdge_(index_t e1, index_t e2, double distance) {
     
     //EdgePair edge;
-    DEBUG_ASSERT_MSG((e1 != e2), 
-        "Indices are equal in DualTreeBoruvka.add_edge(%"LI", %"LI", %f)\n", 
-        e1, e2, distance);
+    mlpack::IO::AssertMessage((e1 != e2), 
+        "Indices are equal in DualTreeBoruvka.add_edge(...)");
     
-    DEBUG_ASSERT_MSG((distance >= 0.0), 
-        "Negative distance input in DualTreeBoruvka.add_edge(%"LI", %"LI", %f)\n", 
-        e1, e2, distance);
+    mlpack::IO::AssertMessage((distance >= 0.0), 
+        "Negative distance input in DualTreeBoruvka.add_edge(...)");
     
     if (e1 < e2) {
       edges_[number_of_edges_].Init(e1, e2, distance);
@@ -238,7 +236,7 @@ class DualTreeBoruvka {
           
           if (distance < neighbors_distances_[query_component_index]) {
             
-            DEBUG_ASSERT(query_index != reference_index);
+            mlpack::IO::Assert(query_index != reference_index);
             
             neighbors_distances_[query_component_index] = distance;
             neighbors_in_component_[query_component_index] = query_index;
@@ -257,7 +255,7 @@ class DualTreeBoruvka {
       
     } // for query_index
     
-    DEBUG_ASSERT(new_upper_bound >= 0.0);
+    mlpack::IO::Assert(new_upper_bound >= 0.0);
     return new_upper_bound;
     
   } // ComputeBaseCase_
@@ -280,7 +278,7 @@ class DualTreeBoruvka {
                  reference_node->stat().component_membership())) {
       //pruned by component membership
       
-      DEBUG_ASSERT(reference_node->stat().component_membership() >= 0);
+      mlpack::IO::Assert(reference_node->stat().component_membership() >= 0);
       
       number_component_prunes_++;
     }
@@ -295,7 +293,7 @@ class DualTreeBoruvka {
       
     }
     // Other recursive calls
-    else if unlikely(query_node->is_leaf()) {
+    else if (query_node->is_leaf()) {
       //recurse on reference_node only 
       number_r_recursions_++;
       
@@ -303,8 +301,8 @@ class DualTreeBoruvka {
         query_node->bound().MinDistanceSq(reference_node->left()->bound());
       double right_dist = 
         query_node->bound().MinDistanceSq(reference_node->right()->bound());
-      DEBUG_ASSERT(left_dist >= 0.0);
-      DEBUG_ASSERT(right_dist >= 0.0);
+      mlpack::IO::Assert(left_dist >= 0.0);
+      mlpack::IO::Assert(right_dist >= 0.0);
       
       if (left_dist < right_dist) {
         ComputeNeighborsRecursion_(query_node, 
@@ -320,7 +318,7 @@ class DualTreeBoruvka {
       }
       
     }
-    else if unlikely(reference_node->is_leaf()) {
+    else if (reference_node->is_leaf()) {
       //recurse on query_node only
       
       number_q_recursions_++;
@@ -426,7 +424,7 @@ class DualTreeBoruvka {
     
     SortEdges_();
     
-    DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
+    mlpack::IO::Assert(number_of_edges_ == number_of_points_ - 1);
     results.set_size(3, number_of_edges_);
     
     if (!do_naive_) {
@@ -484,7 +482,7 @@ class DualTreeBoruvka {
       for (index_t i = tree->begin(); i < tree->end(); i++) {
         if (new_membership != connections_.Find(i)) {
           new_membership = -1;
-          DEBUG_ASSERT(tree->stat().component_membership() < 0);
+          mlpack::IO::Assert(tree->stat().component_membership() < 0);
           return;
         }
       }
@@ -501,8 +499,8 @@ class DualTreeBoruvka {
     
     for (index_t i = 0; i < number_of_points_; i++) {
       neighbors_distances_[i] = DBL_MAX;
-      DEBUG_ONLY(neighbors_in_component_[i] = BIG_BAD_NUMBER);
-      DEBUG_ONLY(neighbors_out_component_[i] = BIG_BAD_NUMBER);
+      //DEBUG_ONLY(neighbors_in_component_[i] = BIG_BAD_NUMBER);
+      //DEBUG_ONLY(neighbors_out_component_[i] = BIG_BAD_NUMBER);
     }
     number_of_loops_++;
     
@@ -527,7 +525,16 @@ class DualTreeBoruvka {
     fx_result_int(module_, "number_r_recursions", number_r_recursions_);
     fx_result_int(module_, "number_both_recursions", number_both_recursions_);*/
     // TODO, not sure how I missed this last time.
-    
+    mlpack::IO::Info << "total_squared_length" << total_dist_ << std::endl;
+    mlpack::IO::Info << "number_of_points" << number_of_points_ << std::endl;
+    mlpack::IO::Info << "dimension" << data_points_.n_rows << std::endl;
+    mlpack::IO::Info << "number_of_loops" << std::endl;
+    mlpack::IO::Info << "number_distance_prunes" << std::endl;
+    mlpack::IO::Info << "number_component_prunes" << std::endl;
+    mlpack::IO::Info << "number_leaf_computations" << std::endl;
+    mlpack::IO::Info << "number_q_recursions" << std::endl;
+    mlpack::IO::Info << "number_r_recursions" << std::endl;
+    mlpack::IO::Info << "number_both_recursions" << std::endl;
   } // OutputResults_
   
   /////////// Public Functions ///////////////////

@@ -4,6 +4,7 @@
 #define TREE_KDTREE_IMPL_H
 
 #include "../base/arma_compat.h"
+#include "../fx/io.h"
 
 namespace mlpack {
 namespace tree_kdtree_private {
@@ -97,10 +98,10 @@ namespace tree_kdtree_private {
       // Swap left and right vector; both are wrong.
       matrix.swap_cols(left, right);
       
-      DEBUG_ASSERT(left <= right);
+      mlpack::IO::Assert(left <= right);
     }
 
-    DEBUG_ASSERT(left == right + 1);
+    mlpack::IO::Assert(left == right + 1);
 
     return left;
   }
@@ -148,7 +149,7 @@ namespace tree_kdtree_private {
       // See how many of the points on the right are correct.  When they are
       // correct, increase the bound of the right node accordingly.  When we
       // encounter one that isn't correct, move to the swapping.
-      while (matrix(dim, right) >= splitvalue && likely(left <= right)) {
+      while (matrix(dim, right) >= splitvalue && (left <= right)) {
 	if (split_dimensions.n_elem == matrix.n_rows) {
 	  right_bound |= matrix.unsafe_col(right);
 	} else {
@@ -174,10 +175,10 @@ namespace tree_kdtree_private {
       old_from_new[left] = old_from_new[right];
       old_from_new[right] = t;
 
-      DEBUG_ASSERT(left <= right);
+      mlpack::IO::Assert(left <= right);
     }
 
-    DEBUG_ASSERT(left == right + 1);
+    mlpack::IO::Assert(left == right + 1);
 
     return left;
   }
@@ -196,7 +197,7 @@ namespace tree_kdtree_private {
 			      node->count(), &node->bound());
 
     if(node->count() > leaf_size) {
-      index_t split_dim = BIG_BAD_NUMBER;
+      index_t split_dim = (index_t)~0;
       double max_width = -1;
 
       for (index_t d = 0; d < split_dimensions.n_elem; d++) {
@@ -230,7 +231,7 @@ namespace tree_kdtree_private {
         right->Init(split_col, node->begin() + node->count() - split_col);
 
         // This should never happen if max_width > 0
-        DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
+        mlpack::IO::Assert(left->count() != 0 && right->count() != 0);
 
         SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, leaf_size, 
 				  old_from_new);
@@ -259,7 +260,7 @@ namespace tree_kdtree_private {
     if(node->count() > leaf_size) {
       // Set up the split dimension.  We find the dimension with the largest
       // width to split on.
-      index_t split_dim = BIG_BAD_NUMBER;
+      index_t split_dim = (index_t)~0;
       double max_width = -1;
 
       for (index_t d = 0; d < split_dimensions.n_elem; d++) {
@@ -297,7 +298,7 @@ namespace tree_kdtree_private {
         right->Init(split_col, node->begin() + node->count() - split_col);
 
         // This should never happen if max_width > 0
-        DEBUG_ASSERT(left->count() != 0 && right->count() != 0);
+        mlpack::IO::Assert(left->count() != 0 && right->count() != 0);
 
         // Recurse into setting those child nodes correctly.
         SelectSplitKdTreeMidpoint(matrix, split_dimensions, left, leaf_size);

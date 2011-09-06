@@ -73,13 +73,13 @@ int main(int argc, char *argv[]) {
       data::Save(unmixing_filename, trans(W));
       data::Save(ic_filename, Y);
       success_status = SUCCESS_PASS;
-      VERBOSE_ONLY( std::cout << W );
+      mlpack::IO::Debug << W << std::endl;
     }
   }
   
 
   if(success_status == SUCCESS_FAIL) {
-    VERBOSE_ONLY( printf("FAILED!\n") );
+    mlpack::IO::Debug << "FAILED!" << std::endl;
   }
 
   return success_status;

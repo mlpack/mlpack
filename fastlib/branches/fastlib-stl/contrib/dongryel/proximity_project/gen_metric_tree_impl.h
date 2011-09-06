@@ -8,6 +8,9 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
+
+#include "../../../fastlib/fx/io.h"
+
 namespace tree_gen_metric_tree_private {
 
   // This function assumes that we have points embedded in Euclidean
@@ -96,11 +99,11 @@ namespace tree_gen_metric_tree_private {
         old_from_new[right] = t;
       }
       
-      DEBUG_ASSERT(left <= right);
+      mlpack::IO::Assert(left <= right);
       right--;
     }
     
-    DEBUG_ASSERT(left == right + 1);
+    mlpack::IO::Assert(left == right + 1);
 
     return left_count;
   }

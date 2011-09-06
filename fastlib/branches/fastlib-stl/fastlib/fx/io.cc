@@ -6,8 +6,14 @@
 #include <boost/scoped_ptr.hpp>
 #include <iostream>
 #include <string>
-#include <sys/time.h>
 #include <execinfo.h>
+
+#ifndef _WIN32
+  #include <sys/time.h> //linux
+#else
+  #include <winsock.h> //timeval on windows
+//gettimeofday has no equivalent will need to write extra code for that.
+#endif //_WIN32
 
 #include "option.h"
 
@@ -141,6 +147,17 @@ void IO::AddFlag(const char* identifier,
   //Add the option to boost program_options
   desc.add_options()
     (path.c_str(), po::value<bool>()->implicit_value(true) ,description);
+}
+
+void IO::Assert(bool condition) {
+  AssertMessage(condition, "Assert failed.");
+}
+
+void IO::AssertMessage(bool condition, const char* message) {
+  if(!condition) {
+    IO::Debug << message << std::endl;
+    exit(1);
+  }
 }
 
 /* 

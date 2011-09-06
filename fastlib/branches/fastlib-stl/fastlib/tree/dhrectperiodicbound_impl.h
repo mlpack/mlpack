@@ -13,7 +13,7 @@
 #include <math.h>
 
 #include "../math/math_lib.h"
-
+#include "fastlib/fx/io.h"
 
 /**
  * Empty constructor
@@ -39,7 +39,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) : box_size_(box) {
  */
 template<int t_pow>
 DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension, vec box) : box_size_(box) {
-  //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
+  mlpack::IO::AssertMessage(dim_ == ~((index_t)0), "Already initialized");
   bounds_ = new DRange[dimension];
   dim_ = dimension;
   Reset();
@@ -82,7 +82,7 @@ void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectPeriodicBound& box
                                                   const DHrectPeriodicBound& box2) {
 
   dim_ = box1.dim();
-  DEBUG_ASSERT(dim_ == box2.dim());
+  mlpack::IO::Assert(dim_ == box2.dim());
 
   if(bounds_)
     delete[] bounds_;
@@ -206,7 +206,7 @@ template<int t_pow>
 double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for (index_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
@@ -256,7 +256,7 @@ template<int t_pow>
 double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for (index_t d = 0; d < dim_; d++){
     double v = box_size_[d] / 2.0;
@@ -322,7 +322,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& ot
   double sum_lo = 0;
   double sum_hi = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
   for (index_t d = 0; d < dim_; d++) {
@@ -353,7 +353,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  DEBUG_SAME_SIZE(point.n_elem, dim_);
+  mlpack::IO::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
   for(index_t d = 0; d < dim_; d++) {
@@ -391,7 +391,7 @@ template<int t_pow>
 double DHrectPeriodicBound<t_pow>::MinToMidSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for (index_t d = 0; d < dim_; d++) {
     double v = other.bounds_[d].mid();
@@ -413,7 +413,7 @@ template<int t_pow>
 double DHrectPeriodicBound<t_pow>::MinimaxDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
 
   for(index_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].hi - bounds_[d].hi;
@@ -433,7 +433,8 @@ template<int t_pow>
 double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectPeriodicBound& other) const {
   double sum = 0;
 
-  DEBUG_SAME_SIZE(dim_, other.dim_);
+  mlpack::IO::Assert(dim_ == other.dim_);
+  
 
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
@@ -452,7 +453,7 @@ double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectPeriodicBound& othe
  */
 template<int t_pow>
 DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const vec& vector) {
-  DEBUG_SAME_SIZE(vector.n_elem, dim_);
+  mlpack::IO::Assert(vector.n_elem == dim_);
 
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i] |= vector[i];
@@ -466,7 +467,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const vec& ve
  */
 template<int t_pow>
 DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectPeriodicBound& other) {
-  DEBUG_SAME_SIZE(other.dim_, dim_);
+  mlpack::IO::Assert(other.dim_ == dim_);
 
   for (index_t i = 0; i < dim_; i++) {
     bounds_[i] |= other.bounds_[i];
@@ -483,7 +484,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectP
 template<int t_pow>
 DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other,
                                                             const vec& size) {
-  DEBUG_SAME_SIZE(other.n_elem, dim_);
+  mlpack::IO::Assert(other.n_elem == dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
     for (index_t i = 0; i < dim_; i++){
@@ -542,7 +543,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectPeriodic
       bounds_[i].lo = other.bounds_[i].lo;
     }
 
-    if (unlikely((ah > bl) & (bl > bh))){
+    if ((ah > bl) & (bl > bh)){
       bounds_[i].lo = 0;
       bounds_[i].hi = size[i];
     }

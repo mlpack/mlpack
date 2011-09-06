@@ -116,8 +116,8 @@ success_t generate_mixture() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -165,8 +165,8 @@ success_t generate_gaussian() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 
@@ -212,8 +212,8 @@ success_t generate_discrete() {
   const char* seqout = IO::GetParam<std::string>("hmm/seqfile").c_str();
   const char* stateout = IO::GetParam<std::string>("hmm/statefile").c_str();
 
-  DEBUG_ASSERT_MSG(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
-  DEBUG_ASSERT_MSG(numseq > 0, "NUMSEQ must be positive");
+  IO::AssertMessage(seqlen <= seqlmax, "LENMAX must bigger than LENGTH");
+  IO::AssertMessage(numseq > 0, "NUMSEQ must be positive");
 
   double step = (double) (seqlmax - seqlen) / numseq;
 

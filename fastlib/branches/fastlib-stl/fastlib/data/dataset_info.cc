@@ -43,7 +43,7 @@ index_t DatasetInfo::SkipSpace_(string& s) {
     i++;
   }
 
-  if (unlikely(s[i] == '%') || unlikely(s[i] == '\0')) {
+  if ((s[i] == '%') || (s[i] == '\0')) {
     return s.length();
   }
 
@@ -51,10 +51,10 @@ index_t DatasetInfo::SkipSpace_(string& s) {
 }
 
 char *DatasetInfo::SkipNonspace_(char *s) {
-  while (likely(*s != '\0')
-      && likely(*s != '%')
-      && likely(*s != ' ')
-      && likely(*s != '\t')) {
+  while ((*s != '\0')
+      && (*s != '%')
+      && (*s != ' ')
+      && (*s != '\t')) {
     s++;
   }
 
@@ -263,7 +263,7 @@ success_t DatasetInfo::ReadPoint(TextLineReader& reader, arma::mat::col_iterator
       pos++;
     }
 
-    if (unlikely(*pos == '%')) {
+    if (*pos == '%') {
       reader.Gobble();
     } else {
       break;

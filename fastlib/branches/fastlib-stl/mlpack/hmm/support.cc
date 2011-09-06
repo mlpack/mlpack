@@ -1,5 +1,6 @@
 #include "fastlib/fastlib.h"
 #include "support.h"
+#include "fastlib/fx/io.h"
 
 namespace hmm_support {
 
@@ -83,7 +84,7 @@ namespace hmm_support {
   double MyMulExpert(const arma::vec& x, const arma::mat& A, const arma::vec& y) {
     index_t M = A.n_rows;
     index_t N = A.n_cols;
-    DEBUG_ASSERT_MSG((M == x.n_elem && N == y.n_elem), "MyMulExpert: sizes do not match");
+    mlpack::IO::AssertMessage((M == x.n_elem && N == y.n_elem), "MyMulExpert: sizes do not match");
 
     double s = 0;
     for (index_t i = 0; i < M; i++)
@@ -306,7 +307,7 @@ namespace hmm_support {
         tokenizeString(reader.Peek(), ", \t", num_str);
 //       reader.Peek().Split(", \t", &num_str);
 
-        DEBUG_ASSERT(num_str.size() == n_cols);
+        mlpack::IO::Assert(num_str.size() == n_cols);
 
         std::istringstream is;
         for (index_t i = 0; i < n_cols; i++) {

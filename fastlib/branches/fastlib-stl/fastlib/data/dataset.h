@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 
+#include "fastlib/fx/io.h"
 #include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
@@ -138,7 +139,7 @@ class Dataset {
   int get_int(index_t feature, index_t point) const {
     double d = get(feature, point);
     int i = int(d);
-    DEBUG_ASSERT(d == double(i));
+    mlpack::IO::Assert(d == double(i));
     return i;
   }
 

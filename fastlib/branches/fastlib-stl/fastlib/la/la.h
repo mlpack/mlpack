@@ -39,7 +39,7 @@ namespace la {
    * Finds the Euclidean distance squared between two vectors.
    */
   inline double DistanceSqEuclidean(const Vector& x, const Vector& y) {
-    DEBUG_SAME_SIZE(x.length(), y.length());
+    mlpack::IO::Assert(x.length() == y.length());
     return DistanceSqEuclidean(x.length(), x.ptr(), y.ptr());
   }
   inline double DistanceSqEuclidean(const arma::vec& x, const arma::vec& y) {
@@ -84,7 +84,7 @@ namespace la {
    */
   inline double Trace(Matrix &a) {
     // trace has meaning only for square matrices
-    DEBUG_SAME_SIZE(a.n_cols(), a.n_rows());
+    mlpack::IO::Assert(a.n_cols() == a.n_rows());
     double trace=0;
     for(index_t i=0; i<a.n_cols(); i++) {
       trace+=a.get(i, i);
@@ -100,14 +100,14 @@ namespace la {
    *  a should not be initialized
    */
   inline success_t LeastSquareFit(Vector &y, Matrix &x, Vector *a) {
-    DEBUG_SAME_SIZE(y.length(), x.n_rows());
-    DEBUG_ASSERT(x.n_rows() >= x.n_cols());
+    mlpack::IO::Assert(y.length() == x.n_rows());
+    mlpack::IO::Assert(x.n_rows() >= x.n_cols());
     Vector r_xy_vec;
     Matrix r_xx_mat;
     la::MulTransAInit(x, x, &r_xx_mat);
     la::MulInit(y, x, &r_xy_vec);
     success_t status = la::SolveInit(r_xx_mat, r_xy_vec, a);
-    if unlikely(status != SUCCESS_PASS) {
+    if (status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {
@@ -125,14 +125,14 @@ namespace la {
    *  a should not be initialized
    */
   inline success_t LeastSquareFit(Matrix &y, Matrix &x, Matrix *a) {
-    DEBUG_SAME_SIZE(y.n_rows(), x.n_rows());
-    DEBUG_ASSERT(x.n_rows() >= x.n_cols());
+    mlpack::IO::Assert(y.n_rows() == x.n_rows());
+    mlpack::IO::Assert(x.n_rows() >= x.n_cols());
     Matrix r_xy_mat;
     Matrix r_xx_mat;
     la::MulTransAInit(x, x, &r_xx_mat);
     la::MulTransAInit(x, y, &r_xy_mat);
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
-    if unlikely(status != SUCCESS_PASS) {
+    if (status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {
@@ -150,14 +150,14 @@ namespace la {
    *  a should not be initialized
    */
   inline success_t LeastSquareFitTrans(Matrix &y, Matrix &x, Matrix *a) {
-    DEBUG_SAME_SIZE(y.n_rows(), x.n_cols());
-    DEBUG_ASSERT(x.n_cols() >= x.n_rows());
+    mlpack::IO::Assert(y.n_rows() == x.n_cols());
+    mlpack::IO::Assert(x.n_cols() >= x.n_rows());
     Matrix r_xy_mat;
     Matrix r_xx_mat;
     la::MulTransBInit(x, x, &r_xx_mat);
     la::MulInit(x, y, &r_xy_mat);
     success_t status = la::SolveInit(r_xx_mat, r_xy_mat, a);
-    if unlikely(status != SUCCESS_PASS) {
+    if (status != SUCCESS_PASS) {
       if (status==SUCCESS_FAIL) {
         mlpack::IO::Fatal << "Least square fit failed " << std::endl;
       } else {

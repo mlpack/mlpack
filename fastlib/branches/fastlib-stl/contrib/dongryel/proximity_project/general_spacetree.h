@@ -62,9 +62,9 @@ class GeneralBinarySpaceTree {
   */
   
   void Init(index_t begin_in, index_t count_in) {
-    DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
-    DEBUG_POISON_PTR(left_);
-    DEBUG_POISON_PTR(right_);
+    mlpack::IO::Assert(begin_ == ~((index_t)0));
+    left_ = NULL;
+    right_ = NULL;
     begin_ = begin_in;
     count_ = count_in;
   }
@@ -82,8 +82,8 @@ class GeneralBinarySpaceTree {
    */
   const GeneralBinarySpaceTree* FindByBeginCount
   (index_t begin_q, index_t count_q) const {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
+    mlpack::IO::Assert(begin_q >= begin_);
+    mlpack::IO::Assert(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {
@@ -108,8 +108,8 @@ class GeneralBinarySpaceTree {
    */
   GeneralBinarySpaceTree* FindByBeginCount
   (index_t begin_q, index_t count_q) {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
+    mlpack::IO::Assert(begin_q >= begin_);
+    mlpack::IO::Assert(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {

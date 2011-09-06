@@ -34,7 +34,7 @@ int main(int argc, char* argv[]) {
   bool using_thor = IO::GetParam<bool>("emst/using_thor");
   
   
-  if unlikely(using_thor) {
+  if (using_thor) {
     IO::Warn << "thor is not yet supported" << std::endl;
   }
   else {

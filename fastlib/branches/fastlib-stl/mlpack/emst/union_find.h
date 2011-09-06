@@ -88,7 +88,7 @@ public:
     if (x_root == y_root) {
       return;    
     }
-    else if unlikely(rank_[x_root] == rank_[y_root]) {
+    else if (rank_[x_root] == rank_[y_root]) {
       parent_[y_root] = parent_[x_root];
       rank_[x_root] = rank_[x_root] + 1;
     }

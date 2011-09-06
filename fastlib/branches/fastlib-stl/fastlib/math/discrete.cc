@@ -5,7 +5,7 @@
  */
 
 #include "discrete.h"
-//#include "discrete.h"
+#include "fastlib/fx/io.h"
 
 #include <stdlib.h>
 
@@ -33,7 +33,7 @@ double math::BinomialCoefficient(int n, int k) {
 double math::Factorial(int d) {
   double v = 1;
   
-  DEBUG_ASSERT(d >= 0);
+  mlpack::IO::Assert(d >= 0);
   
   for (int i = 2; i <= d; i++) {
     v *= i;
@@ -59,7 +59,7 @@ void math::MakeRandomPermutation(index_t size, index_t *array) {
   // This is cache inefficient for large sizes; large caches might
   // warrant a more sophisticated blocked algorithm.
   
-  if (unlikely(size == 0)) {
+  if (size == 0) {
     return;
   }
   

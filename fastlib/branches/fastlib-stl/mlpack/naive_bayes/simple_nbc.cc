@@ -13,6 +13,7 @@
 #include <fastlib/fx/io.h>
 #include "simple_nbc.h"
 #include "phi.h"
+#include "fastlib/fx/io.h"
 
 using namespace mlpack;
 
@@ -76,7 +77,7 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 
   // Checking that the number of features in the test data is same
   // as in the training data
-  DEBUG_ASSERT(test_data.n_rows - 1 == means_.n_rows);
+  IO::Assert(test_data.n_rows - 1 == means_.n_rows);
 
   arma::vec tmp_vals(number_of_classes_);
   index_t number_features = test_data.n_rows - 1;

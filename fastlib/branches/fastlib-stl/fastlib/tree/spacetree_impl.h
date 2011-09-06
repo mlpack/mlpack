@@ -12,6 +12,7 @@
 // In case it wasn't included already for some reason.
 #include "spacetree.h"
 #include "kdtree_impl.h"
+#include "../fx/io.h"
 
 namespace mlpack {
 namespace tree {
@@ -139,8 +140,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
     index_t begin_q,
     index_t count_q) const {
 
-  DEBUG_ASSERT(begin_q >= begin_);
-  DEBUG_ASSERT(count_q <= count_);
+  mlpack::IO::Assert(begin_q >= begin_);
+  mlpack::IO::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
     return this;
   else if (is_leaf())
@@ -168,8 +169,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
     index_t begin_q,
     index_t count_q) {
 
-  DEBUG_ASSERT(begin_q >= begin_);
-  DEBUG_ASSERT(count_q <= count_);
+  mlpack::IO::Assert(begin_q >= begin_);
+  mlpack::IO::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
     return this;
   else if (unlikely(is_leaf()))
@@ -192,9 +193,9 @@ void BinarySpaceTree<TBound, TDataset, TStatistic>::set_children(
   right_ = right_in;
   if (!is_leaf()) {
     stat_.Init(data, begin_, count_, left_->stat_, right_->stat_);
-    DEBUG_ASSERT(count_ == left_->count_ + right_->count_);
-    DEBUG_ASSERT(left_->begin_ == begin_);
-    DEBUG_ASSERT(right_->begin_ == begin_ + left_->count_);
+    mlpack::IO::Assert(count_ == left_->count_ + right_->count_);
+    mlpack::IO::Assert(left_->begin_ == begin_);
+    mlpack::IO::Assert(right_->begin_ == begin_ + left_->count_);
   } else {
     stat_.Init(data, begin_, count_);
   }

@@ -1,4 +1,5 @@
 #include "series_expansion_aux.h"
+#include "fastlib/fx/io.h"
 
 const arma::vec& SeriesExpansionAux::get_inv_multiindex_factorials() const {
   return inv_multiindex_factorials_;
@@ -176,7 +177,7 @@ void SeriesExpansionAux::PrintDebug(const char *name, FILE *stream) const {
   fprintf(stream, "Multiindex mapping: ");
   for (index_t i = 0; i < multiindex_mapping_.size(); i++) {
 
-    DEBUG_ASSERT_MSG(ComputeMultiindexPosition(multiindex_mapping_[i]) == i,
+    mlpack::IO::AssertMessage(ComputeMultiindexPosition(multiindex_mapping_[i]) == i,
 		     "REIMPLEMENT ComputeMultiindexPosition function!");
     fprintf(stream, "( ");
     for(index_t j = 0; j < dim_; j++) {
