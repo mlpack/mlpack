@@ -7,7 +7,7 @@
 #ifndef MATH_DISCRETE_H
 #define MATH_DISCRETE_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 #include "fastlib/fx/io.h"
 
 #include <vector>

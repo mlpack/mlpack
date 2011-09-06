@@ -7,7 +7,7 @@
 #ifndef MATH_STATISTICS_H
 #define MATH_STATISTICS_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 #include "../la/matrix.h"
 #include <math.h>
 

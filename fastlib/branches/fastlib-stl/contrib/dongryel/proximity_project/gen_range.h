@@ -9,7 +9,7 @@
 #ifndef GEN_RANGE_H
 #define GEN_RANGE_H
 
-#include "fastlib/base/base.h"
+#include "fastlib/base/common.h"
 
 #include <math.h>
 

@@ -7,7 +7,7 @@
 #ifndef MATH_MATH_LIB_H
 #define MATH_MATH_LIB_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 #include "fastlib/fx/io.h"
 
 #include <math.h>

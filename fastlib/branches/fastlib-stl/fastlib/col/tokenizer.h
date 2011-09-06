@@ -8,7 +8,7 @@
 #ifndef COLLECTIONS_TOKENIZESTRING_H
 #define COLLECTIONS_TOKENIZESTRING_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 
 #include <string>
 #include <vector>

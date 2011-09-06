@@ -7,7 +7,7 @@
 #ifndef LA_MATRIX_H
 #define LA_MATRIX_H
 
-#include "../base/base.h"
+#include "../base/common.h"
 #ifndef DISABLE_DISK_MATRIX
 #include "../mmanager/memory_manager.h"
 #endif
