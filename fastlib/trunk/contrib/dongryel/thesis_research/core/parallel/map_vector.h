@@ -11,6 +11,77 @@
 #include <boost/serialization/serialization.hpp>
 #include <map>
 
+namespace boost {
+template<typename T>
+class MapVectorInternal {
+  private:
+
+    int num_elements_;
+
+    std::map<int, int> id_to_position_map_;
+
+    std::map<int, int> position_to_id_map_;
+
+    boost::scoped_array<T> vector_;
+
+  public:
+    long num_references_;
+
+  public:
+
+    std::map<int, int> &id_to_position_map() {
+      return id_to_position_map_;
+    }
+
+    std::map<int, int> &position_to_id_map() {
+      return position_to_id_map_;
+    }
+
+    T *vector() {
+      return vector_.get();
+    }
+
+    int size() const {
+      return num_elements_;
+    }
+
+    MapVectorInternal() {
+      num_elements_ = 0;
+      num_references_ = 0;
+    }
+
+    void Init(int num_elements_in) {
+      num_elements_ = num_elements_in;
+      boost::scoped_array<T> tmp_vector(new T[num_elements_]);
+      vector_.swap(tmp_vector);
+    }
+
+    /** @brief Returns a const reference to the object with the given
+     *         ID.
+     */
+    const T &operator[](int i) const {
+      int translated_index = i;
+      if(id_to_position_map_.size() > 0) {
+        translated_index =
+          id_to_position_map_.find(translated_index)->second;
+      }
+      return  vector_[ translated_index ];
+    }
+
+    /** @brief Returns a modifiable reference to the object with the
+     *         given ID.
+     */
+    T &operator[](int i) {
+      int translated_index = i;
+      if(id_to_position_map_.size() > 0) {
+        translated_index =
+          id_to_position_map_.find(translated_index)->second;
+      }
+      return  vector_[ translated_index ];
+    }
+};
+}
+
 namespace core {
 namespace parallel {
 
@@ -18,101 +89,12 @@ template<typename T>
 class MapVector {
   private:
 
-    // For BOOST serialization.
-    friend class boost::serialization::access;
-
-    class Internal {
-      private:
-
-        int num_elements_;
-
-        long num_references_;
-
-        std::map<int, int> id_to_position_map_;
-
-        std::map<int, int> position_to_id_map_;
-
-        boost::scoped_array<T> vector_;
-
-      private:
-
-        friend void intrusive_ptr_add_ref(Internal *ptr) {
-          ptr->num_references_++;
-        }
-
-        friend void intrusive_ptr_release(Internal *ptr) {
-          ptr->num_references_--;
-          if(ptr->num_references_ == 0) {
-            if(core::table::global_m_file_) {
-              core::table::global_m_file_->DestroyPtr(ptr);
-            }
-            else {
-              delete ptr;
-            }
-          }
-        }
-
-      public:
-
-        std::map<int, int> &id_to_position_map() {
-          return id_to_position_map_;
-        }
-
-        std::map<int, int> &position_to_id_map() {
-          return position_to_id_map_;
-        }
-
-        T *vector() {
-          return vector_.get();
-        }
-
-        int size() const {
-          return num_elements_;
-        }
-
-        Internal() {
-          num_elements_ = 0;
-          num_references_ = 0;
-        }
-
-        void Init(int num_elements_in) {
-          num_elements_ = num_elements_in;
-          boost::scoped_array<T> tmp_vector(new T[num_elements_]);
-          vector_.swap(tmp_vector);
-        }
-
-        /** @brief Returns a const reference to the object with the given
-         *         ID.
-         */
-        const T &operator[](int i) const {
-          int translated_index = i;
-          if(id_to_position_map_.size() > 0) {
-            translated_index =
-              id_to_position_map_.find(translated_index)->second;
-          }
-          return  vector_[ translated_index ];
-        }
-
-        /** @brief Returns a modifiable reference to the object with the
-         *         given ID.
-         */
-        T &operator[](int i) {
-          int translated_index = i;
-          if(id_to_position_map_.size() > 0) {
-            translated_index =
-              id_to_position_map_.find(translated_index)->second;
-          }
-          return  vector_[ translated_index ];
-        }
-    };
-
-  private:
-
     std::vector<int> indices_to_save_;
 
-    boost::intrusive_ptr<Internal> internal_;
+    boost::intrusive_ptr< boost::MapVectorInternal<T> > internal_;
 
   public:
+
 
     class iterator {
       private:
@@ -200,7 +182,7 @@ class MapVector {
 
   public:
 
-    const boost::intrusive_ptr<Internal> &internal() const {
+    const boost::intrusive_ptr< boost::MapVectorInternal<T> > &internal() const {
       return internal_;
     }
 
@@ -323,7 +305,7 @@ class MapVector {
      *         elements.
      */
     void Init(int num_elements_in) {
-      boost::intrusive_ptr<Internal> tmp_internal(new Internal());
+      boost::intrusive_ptr< boost::MapVectorInternal<T> > tmp_internal(new boost::MapVectorInternal<T>());
       internal_.swap(tmp_internal);
       internal_->Init(num_elements_in);
     }
@@ -342,6 +324,26 @@ class MapVector {
       return internal_->operator[](i);
     }
 };
+}
+}
+
+namespace boost {
+template<typename T>
+inline void intrusive_ptr_add_ref(boost::MapVectorInternal<T> *ptr) {
+  ptr->num_references_++;
+}
+
+template<typename T>
+inline void intrusive_ptr_release(boost::MapVectorInternal<T> *ptr) {
+  ptr->num_references_--;
+  if(ptr->num_references_ == 0) {
+    if(core::table::global_m_file_) {
+      core::table::global_m_file_->DestroyPtr(ptr);
+    }
+    else {
+      delete ptr;
+    }
+  }
 }
 }
 
