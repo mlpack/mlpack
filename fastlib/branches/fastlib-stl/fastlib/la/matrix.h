@@ -17,7 +17,7 @@
 #include <math.h>
 #include "../fx/io.h"
 
-
+#define BIG_NUMBER ~((uint64_t)0) 
 /**
  * Double-precision vector for use with LAPACK.
  *
@@ -41,6 +41,8 @@
  * assert(orig[4] == 9);
  * @endcode
  */
+
+
 template<typename T>
 class GenVector {
  private:
@@ -421,7 +423,7 @@ class GenVector {
   
  private:
   void AssertUninitialized_() const {
-    mlpack::IO::AssertMessage(length_ == (uint32_t)~0, "Cannot re-init vectors.");
+    mlpack::IO::AssertMessage(length_ == BIG_NUMBER, "Cannot re-init vectors.");
   }
   
   void Uninitialize_() {
@@ -1098,7 +1100,7 @@ class GenMatrix {
   
  private:
   void AssertUninitialized_() const {
-    mlpack::IO::AssertMessage(n_rows_ == (unsigned int32_t)~0, "Cannot re-init matrices.");
+    mlpack::IO::AssertMessage(n_rows_ == BIG_NUMBER, "Cannot re-init matrices.");
   }
   
   void Uninitialize_() {
