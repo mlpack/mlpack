@@ -33,7 +33,7 @@ class TestKde {
 
       // Compute the collective L1 norm of the products.
       double achieved_error = 0;
-      for(unsigned int j = 0; j < query_results.size(); j++) {
+      for(int j = 0; j < query_results.size(); j++) {
         double per_relative_error =
           fabs(naive_query_results[j] - query_results[j]) /
           fabs(naive_query_results[j]);
