@@ -31,7 +31,6 @@ DHrectBound<t_pow>::DHrectBound() {
  */
 template<int t_pow>
 DHrectBound<t_pow>::DHrectBound(index_t dimension) {
-  mlpack::IO::AssertMessage(dim_ == ~((index_t)0), "Already initialized");
   bounds_ = new DRange[dimension];
 
   dim_ = dimension;
