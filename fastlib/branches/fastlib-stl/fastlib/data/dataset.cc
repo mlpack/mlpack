@@ -10,6 +10,7 @@
  */
 
 #include "../base/base.h"
+#include "fastlib/fx/io.h"
 
 #include "dataset.h"
 
@@ -204,8 +205,8 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
         sizeof(double) * n_features());
   }
 
-  DEBUG_ASSERT(i_train == train.n_points());
-  DEBUG_ASSERT(i_test == test.n_points());
+  mlpack::IO::Assert(i_train == train.n_points());
+  mlpack::IO::Assert(i_test == test.n_points());
 }
 
 success_t data::Load(const char *fname, arma::mat& matrix) {
@@ -256,7 +257,7 @@ success_t data::Save(const char *fname, const arma::Col<index_t>& index_vector,
   // in fact, I'm not even doing this anywhere near similarly to the other way
 
   // ensure our vectors are the same size
-  DEBUG_ASSERT(index_vector.n_elem == data_vector.n_elem);
+  mlpack::IO::Assert(index_vector.n_elem == data_vector.n_elem);
 
   // open our output file
   std::ofstream out;

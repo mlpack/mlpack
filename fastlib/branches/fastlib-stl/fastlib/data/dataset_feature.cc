@@ -15,13 +15,14 @@
 
 #include <sstream>
 #include <iostream>
+#include <limits>
 
 using namespace std;
 
 const double DatasetFeature::DBL_NAN = std::numeric_limits<double>::quiet_NaN();
 
 void DatasetFeature::Format(double value, string& result) const {
-  if (unlikely(isnan(value))) {
+  if (isnan(value)) {
     result = "?";
     return;
   }
@@ -48,7 +49,7 @@ void DatasetFeature::Format(double value, string& result) const {
 }
 
 success_t DatasetFeature::Parse(const std::string& str, double& d) const {
-  if (unlikely(str[0] == '?') && unlikely(str[1] == '\0')) {
+  if ((str[0] == '?') && (str[1] == '\0')) {
     d = DBL_NAN;
     return SUCCESS_PASS;
   }

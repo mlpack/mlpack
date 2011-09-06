@@ -7,17 +7,18 @@
 #ifndef LA_USELAPACK_H
 #define LA_USELAPACK_H
 
+#include "fastlib/fx/io.h"
+
 #include "matrix.h"
-//#include "matrix.h"
 #include <vector>
 
 #define DEBUG_VECSIZE(a, b) \
-    DEBUG_SAME_SIZE((a).length(), (b).length())
+  mlpack::IO::Assert((a).length() == (b).length());
 #define DEBUG_MATSIZE(a, b) \
-    DEBUG_SAME_SIZE((a).n_rows(), (b).n_rows());\
-    DEBUG_SAME_SIZE((a).n_cols(), (b).n_cols())
+    mlpack::IO::Assert((a).n_rows() == (b).n_rows());\
+    mlpack::IO::Assert((a).n_cols() == (b).n_cols());
 #define DEBUG_MATSQUARE(a) \
-    DEBUG_SAME_SIZE((a).n_rows(), (a).n_cols())
+    mlpack::IO::Assert((a).n_rows() == (a).n_cols())
 
 /*
  * TODO: this could an overhaul; LAPACK failures may mean either input
@@ -26,7 +27,7 @@
  * Perhaps extend success_t?
  */
 #define SUCCESS_FROM_LAPACK(info) \
-    (likely((info) == 0) ? SUCCESS_PASS : SUCCESS_FAIL)
+    (((info) == 0) ? SUCCESS_PASS : SUCCESS_FAIL)
 
 #ifndef NO_LAPACK
 #define USE_LAPACK
@@ -279,7 +280,7 @@ namespace la {
    * (\f$\vec{x} \cdot \vec{y}\f$).
    */
   inline double Dot(const Vector &x, const Vector &y) {
-    DEBUG_SAME_SIZE(x.length(), y.length());
+    mlpack::IO::Assert(x.length() == y.length());
     return Dot(x.length(), x.ptr(), y.ptr());
   }
   /**
@@ -289,8 +290,8 @@ namespace la {
    * (\f$ X \bullet Y\f$).
    */
   inline double Dot(const Matrix &x, const Matrix &y) {
-    DEBUG_SAME_SIZE(x.n_rows(), y.n_rows());
-    DEBUG_SAME_SIZE(x.n_cols(), y.n_cols());
+    mlpack::IO::Assert(x.n_rows() == y.n_rows());
+    mlpack::IO::Assert(x.n_cols() == y.n_cols());
     return Dot(x.n_elements(), x.ptr(), y.ptr());
   }
 
@@ -319,7 +320,7 @@ namespace la {
    * @param X the matrix to scale
    */
   inline void ScaleRows(const Vector& d, Matrix *X) {
-    DEBUG_SAME_SIZE(d.length(), X->n_rows());
+    mlpack::IO::Assert(d.length() == X->n_rows());
     ScaleRows(d.length(), X->n_cols(), d.ptr(), X->ptr());
   }
   /**
@@ -331,8 +332,8 @@ namespace la {
    * @param X the matrix to scale
    */
   inline void ScaleRows(const Matrix& d, Matrix *X) {
-    DEBUG_SAME_SIZE(std::min(d.n_cols(), d.n_rows()), 1);
-    DEBUG_SAME_SIZE(std::max(d.n_cols(), d.n_rows()), X->n_rows());
+    mlpack::IO::Assert(std::min(d.n_cols(), d.n_rows()) == 1);
+    mlpack::IO::Assert(std::max(d.n_cols(), d.n_rows()) == X->n_rows());
     ScaleRows(X->n_rows(), X->n_cols(), d.ptr(), X->ptr());
   }
   /**
@@ -340,7 +341,7 @@ namespace la {
    * (\f$\vec{y} \gets \alpha \vec{x}\f$).
    */
   inline void ScaleOverwrite(double alpha, const Vector &x, Vector *y) {
-    DEBUG_SAME_SIZE(x.length(), y->length());
+    mlpack::IO::Assert(x.length() == y->length());
     ScaleOverwrite(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -348,8 +349,8 @@ namespace la {
    * (\f$Y \gets \alpha X\f$).
    */
   inline void ScaleOverwrite(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y->n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y->n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y->n_cols());
     ScaleOverwrite(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -377,7 +378,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \alpha \vec{x}\f$).
    */
   inline void AddExpert(double alpha, const Vector &x, Vector *y) {
-    DEBUG_SAME_SIZE(x.length(), y->length());
+    mlpack::IO::Assert(x.length() == y->length());
     AddExpert(x.length(), alpha, x.ptr(), y->ptr());
   }
   /**
@@ -385,8 +386,8 @@ namespace la {
    * (\f$Y \gets Y + \alpha X\f$).
    */
   inline void AddExpert(double alpha, const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y->n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y->n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y->n_cols());
     AddExpert(X.n_elements(), alpha, X.ptr(), Y->ptr());
   }
 
@@ -397,7 +398,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} + \vec{x}\f$);
    */
   inline void AddTo(const Vector &x, Vector *y) {
-    DEBUG_SAME_SIZE(x.length(), y->length());
+    mlpack::IO::Assert(x.length() == y->length());
     AddTo(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -405,8 +406,8 @@ namespace la {
    * (\f$Y \gets Y + X\f$);
    */
   inline void AddTo(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y->n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y->n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y->n_cols());
     AddTo(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -415,8 +416,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} + \vec{x}\f$).
    */
   inline void AddOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_SAME_SIZE(x.length(), y.length());
-    DEBUG_SAME_SIZE(z->length(), y.length());
+    mlpack::IO::Assert(x.length() == y.length());
+    mlpack::IO::Assert(z->length() == y.length());
     AddOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -424,10 +425,10 @@ namespace la {
    * (\f$Z \gets Y + X\f$).
    */
   inline void AddOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y.n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y.n_cols());
-    DEBUG_SAME_SIZE(Z->n_rows(), Y.n_rows());
-    DEBUG_SAME_SIZE(Z->n_cols(), Y.n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y.n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y.n_cols());
+    mlpack::IO::Assert(Z->n_rows() == Y.n_rows());
+    mlpack::IO::Assert(Z->n_cols() == Y.n_cols());
     AddOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -455,7 +456,7 @@ namespace la {
    * (\f$\vec{y} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubFrom(const Vector &x, Vector *y) {
-    DEBUG_SAME_SIZE(x.length(), y->length());
+    mlpack::IO::Assert(x.length() == y->length());
     SubFrom(x.length(), x.ptr(), y->ptr());
   }
   /**
@@ -463,8 +464,8 @@ namespace la {
    * (\f$Y \gets Y - X\f$).
    */
   inline void SubFrom(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y->n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y->n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y->n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y->n_cols());
     SubFrom(X.n_elements(), X.ptr(), Y->ptr());
   }
 
@@ -473,8 +474,8 @@ namespace la {
    * (\f$\vec{z} \gets \vec{y} - \vec{x}\f$).
    */
   inline void SubOverwrite(const Vector &x, const Vector &y, Vector *z) {
-    DEBUG_SAME_SIZE(x.length(), y.length());
-    DEBUG_SAME_SIZE(z->length(), y.length());
+    mlpack::IO::Assert(x.length() == y.length());
+    mlpack::IO::Assert(z->length() == y.length());
     SubOverwrite(x.length(), x.ptr(), y.ptr(), z->ptr());
   }
   /**
@@ -482,10 +483,10 @@ namespace la {
    * (\f$Z \gets Y - X\f$).
    */
   inline void SubOverwrite(const Matrix &X, const Matrix &Y, Matrix *Z) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y.n_rows());
-    DEBUG_SAME_SIZE(X.n_cols(), Y.n_cols());
-    DEBUG_SAME_SIZE(Z->n_rows(), Y.n_rows());
-    DEBUG_SAME_SIZE(Z->n_cols(), Y.n_cols());
+    mlpack::IO::Assert(X.n_rows() == Y.n_rows());
+    mlpack::IO::Assert(X.n_cols() == Y.n_cols());
+    mlpack::IO::Assert(Z->n_rows() == Y.n_rows());
+    mlpack::IO::Assert(Z->n_cols() == Y.n_cols());
     SubOverwrite(X.n_elements(), X.ptr(), Y.ptr(), Z->ptr());
   }
 
@@ -534,8 +535,8 @@ namespace la {
    * (\f$Y \gets X'\f$).
    */
   inline void TransposeOverwrite(const Matrix &X, Matrix *Y) {
-    DEBUG_SAME_SIZE(X.n_rows(), Y->n_cols());
-    DEBUG_SAME_SIZE(X.n_cols(), Y->n_rows());
+    mlpack::IO::Assert(X.n_rows() == Y->n_cols());
+    mlpack::IO::Assert(X.n_cols() == Y->n_rows());
     index_t nr = X.n_rows();
     index_t nc = X.n_cols();
     for (index_t r = 0; r < nr; r++) {
@@ -571,9 +572,9 @@ namespace la {
   inline void MulExpert(
       double alpha, const Matrix &A, const Vector &x,
       double beta, Vector *y) {
-    DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_SAME_SIZE(A.n_cols(), x.length());
-    DEBUG_SAME_SIZE(A.n_rows(), y->length());
+    mlpack::IO::Assert(x.ptr() != y->ptr());
+    mlpack::IO::Assert(A.n_cols() == x.length());
+    mlpack::IO::Assert(A.n_rows() == y->length());
     F77_FUNC(dgemv)("N", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -630,9 +631,9 @@ namespace la {
   inline void MulExpert(
       double alpha, const Vector &x, const Matrix &A,
       double beta, Vector *y) {
-    DEBUG_ASSERT(x.ptr() != y->ptr());
-    DEBUG_SAME_SIZE(A.n_rows(), x.length());
-    DEBUG_SAME_SIZE(A.n_cols(), y->length());
+    mlpack::IO::Assert(x.ptr() != y->ptr());
+    mlpack::IO::Assert(A.n_rows() == x.length());
+    mlpack::IO::Assert(A.n_cols() == y->length());
     F77_FUNC(dgemv)("T", A.n_rows(), A.n_cols(),
         alpha, A.ptr(), A.n_rows(), x.ptr(), 1,
         beta, y->ptr(), 1);
@@ -684,12 +685,12 @@ namespace la {
       bool trans_A, const Matrix &A,
       bool trans_B, const Matrix &B,
       double beta, Matrix *C) {
-    DEBUG_ASSERT(A.ptr() != C->ptr());
-    DEBUG_ASSERT(B.ptr() != C->ptr());
-    DEBUG_SAME_SIZE(trans_A ? A.n_rows() : A.n_cols(),
+    mlpack::IO::Assert(A.ptr() != C->ptr());
+    mlpack::IO::Assert(B.ptr() != C->ptr());
+    mlpack::IO::Assert(trans_A ? A.n_rows() : A.n_cols() ==
                    trans_B ? B.n_cols() : B.n_rows());
-    DEBUG_SAME_SIZE(trans_A ? A.n_cols() : A.n_rows(), C->n_rows());
-    DEBUG_SAME_SIZE(trans_B ? B.n_rows() : B.n_cols(), C->n_cols());
+    mlpack::IO::Assert(trans_A ? A.n_cols() : A.n_rows() == C->n_rows());
+    mlpack::IO::Assert(trans_B ? B.n_rows() : B.n_cols() == C->n_cols());
     F77_FUNC(dgemm)(trans_A ? "T" : "N", trans_B ? "T" : "N",
         C->n_rows(), C->n_cols(), trans_A ? A.n_rows() : A.n_cols(),
         alpha, A.ptr(), A.n_rows(), B.ptr(), B.n_rows(),
@@ -981,7 +982,7 @@ namespace la {
    */
   inline success_t SolveInit(const Matrix &A, const Matrix &B, Matrix *X) {
     DEBUG_MATSQUARE(A);
-    DEBUG_SAME_SIZE(A.n_rows(), B.n_rows());
+    mlpack::IO::Assert(A.n_rows() == B.n_rows());
     Matrix tmp;
     index_t n = B.n_rows();
     f77_integer pivots[n];
@@ -1014,7 +1015,7 @@ namespace la {
    */
   inline success_t SolveInit(const Matrix &A, const Vector &b, Vector *x) {
     DEBUG_MATSQUARE(A);
-    DEBUG_SAME_SIZE(A.n_rows(), b.length());
+    mlpack::IO::Assert(A.n_rows() == b.length());
     Matrix tmp;
     index_t n = b.length();
     f77_integer pivots[n];

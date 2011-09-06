@@ -1,5 +1,6 @@
 
 #include "tokenizer.h"
+#include <limits>
 
 using namespace std;
 

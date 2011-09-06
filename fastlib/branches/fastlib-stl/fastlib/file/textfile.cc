@@ -11,6 +11,7 @@
 
 #include "textfile.h"
 
+#include "fastlib/fx/io.h"
 #include <ctype.h>
 #include <iostream>
 
@@ -25,15 +26,15 @@ char *TextTokenizer::ReadLine() {
   for (;;) {
     c = getc(f_);
     
-    if (unlikely(c == '\r')) {
+    if (c == '\r') {
       c = getc(f_);
       if (c != '\n') {
         ungetc(c, f_);
       }
       break;
-    } else if (unlikely(c == '\n')) {
+    } else if ((c == '\n') {
       break;
-    } else if (unlikely(c == EOF)) {
+    } else if (c == EOF) {
       if (len == 0) {
         return NULL;
       } else {
@@ -81,7 +82,7 @@ success_t TextLineReader::Open(const char *fname) {
   line_num_ = 0;
   has_line_ = false;
   
-  if (unlikely(f_ == NULL)) {
+  if (f_ == NULL) {
     return SUCCESS_FAIL;
   } else {
     Gobble();
@@ -92,7 +93,7 @@ success_t TextLineReader::Open(const char *fname) {
 bool TextLineReader::Gobble() {
   char *ptr = ReadLine_();
   
-  if (likely(ptr != NULL)) {
+  if (ptr != NULL) {
     line_ = ptr;
     has_line_ = true;
     line_num_++;
@@ -175,7 +176,7 @@ success_t TextTokenizer::Open(const char *fname,
   
   f_ = fopen(fname, "r");
   
-  if (unlikely(f_ == NULL)) {
+  if (f_ == NULL) {
     return SUCCESS_FAIL;
   } else {
     Gobble();
@@ -186,13 +187,13 @@ success_t TextTokenizer::Open(const char *fname,
 char TextTokenizer::NextChar_() {
   int c = GetChar_();
   
-  if (c != EOF && unlikely(strchr(comment_start_, c) != NULL)) {
+  if (c != EOF && (strchr(comment_start_, c) != NULL)) {
     do {
       c = GetChar_();
-    } while (likely(c != EOF) && likely(c != '\r') && likely(c != '\n'));
+    } while (c != EOF && c != '\r' && c != '\n');
   }
   
-  if (unlikely(c == EOF)) {
+  if (c == EOF) {
     c = 0;
   }
   
@@ -291,17 +292,17 @@ void TextTokenizer::ScanNumber_(char c, std::vector<char>& token) {
   bool floating = false;
   
   while (1) {
-    if (unlikely(c == '.')) {
+    if (c == '.') {
       /* handle a period */
-      if (unlikely(dot)) {
+      if (dot) {
         Error_("Multiple decimal points in a float", token);
         return;
       }
       dot = true;
       floating = true;
-    } else if (likely(isdigit(c))) {
+    } else if (isdigit(c)) {
       /* keep on processing digits */
-    } else if (unlikely(c == 'e' || c == 'E')) {
+    } else if (c == 'e' || c == 'E') {
       /* exponent - read exponent and finish */
       c = NextChar_(token);
       if (c == '+' || c == '-') {
@@ -399,7 +400,7 @@ void TextTokenizer::Gobble() {
 
   next_ = &token.front();
 
-  DEBUG_ASSERT(next_.length() == strlen(next_.c_str()));
+  mlpack::IO::Assert(next_.length() == strlen(next_.c_str()));
 }
 
 success_t TextWriter::Printf(const char *format, ...) {

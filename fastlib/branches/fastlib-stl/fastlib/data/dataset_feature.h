@@ -15,6 +15,7 @@
 #include <string>
 #include <vector>
 
+#include "fastlib/fx/io.h"
 #include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
@@ -137,7 +138,7 @@ class DatasetFeature {
    * @param value the number of the value
    */
   const std::string& value_name(int value) const {
-    DEBUG_ASSERT(type_ == NOMINAL);
+    mlpack::IO::Assert(type_ == NOMINAL);
     return value_names_[value];
   }
 

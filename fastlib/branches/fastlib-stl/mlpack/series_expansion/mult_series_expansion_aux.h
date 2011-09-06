@@ -5,6 +5,7 @@
 #define MULT_SERIES_EXPANSION_AUX_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include <armadillo>
 
 /**
@@ -373,7 +374,7 @@ class MultSeriesExpansionAux {
     fprintf(stream, "Multiindex mapping: ");
     for (index_t i = 0; i < multiindex_mapping_.size(); i++) {
 
-      DEBUG_ASSERT_MSG(ComputeMultiindexPosition(multiindex_mapping_[i]) == i,
+      mlpack::IO::AssertMessage(ComputeMultiindexPosition(multiindex_mapping_[i]) == i,
 		       "REIMPLEMENT ComputeMultiindexPosition function!");
       fprintf(stream, "( ");
       for(index_t j = 0; j < dim_; j++) {

@@ -5,6 +5,7 @@
  */
 
 #include <fastlib/fastlib.h>
+#include "fastlib/fx/io.h"
 #include "support.h"
 #include "mixgaussHMM.h"
 #include "gaussianHMM.h"
@@ -13,8 +14,8 @@ using namespace hmm_support;
 
 void MixtureofGaussianHMM::setModel(const arma::mat& transmission,
 				    const std::vector<MixtureGauss>& list_mixture_gauss) {
-  DEBUG_ASSERT(transmission.n_rows == transmission.n_cols);
-  DEBUG_ASSERT(transmission.n_rows == list_mixture_gauss.size());
+  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::IO::Assert(transmission.n_rows == list_mixture_gauss.size());
 
   transmission_ = transmission;
   list_mixture_gauss_ = list_mixture_gauss;
@@ -142,7 +143,7 @@ success_t MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& tran
         std::endl;
     return SUCCESS_FAIL;
   }
-  DEBUG_ASSERT(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
+  mlpack::IO::Assert(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
   trans = matlst[0];
   index_t M = trans.n_rows; // num of states
   index_t N = matlst[2].n_rows; // dimension
@@ -150,7 +151,7 @@ success_t MixtureofGaussianHMM::LoadProfile(const char* profile, arma::mat& tran
   for (index_t i = 0; i < M; i++) {
     index_t K = matlst[p].n_rows; // num of clusters
     //DEBUG: printf("load p=%d K=%d\n", p, K);
-    DEBUG_ASSERT(matlst.size() > p + 2 * K);
+    mlpack::IO::Assert(matlst.size() > p + 2 * K);
     MixtureGauss mix;
     mix.InitFromProfile(matlst, p, N);
     mixs.push_back(mix);
@@ -186,7 +187,7 @@ success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const arma::mat
 }
 
 void MixtureofGaussianHMM::GenerateInit(index_t L, const arma::mat& trans, const std::vector<MixtureGauss>& mixs, arma::mat& seq, arma::vec& states){
-  DEBUG_ASSERT_MSG((trans.n_rows == trans.n_cols && trans.n_rows == mixs.size()),
+  mlpack::IO::AssertMessage((trans.n_rows == trans.n_cols && trans.n_rows == mixs.size()),
       "MixtureOfGaussianHMM::GenerateInit(): matrices sizes do not match");
 
   arma::mat trsum;
@@ -229,7 +230,7 @@ void MixtureofGaussianHMM::GenerateInit(index_t L, const arma::mat& trans, const
 }
 
 void MixtureofGaussianHMM::EstimateInit(index_t numStates, index_t numClusters, const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
-  DEBUG_ASSERT_MSG((seq.n_cols == states.n_elem),
+  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem),
       "MixtureOfGaussianHMM::EstimateInit(): sequence and states length must be the same");
   
   index_t N = seq.n_rows; // emission vector length
@@ -294,7 +295,7 @@ void MixtureofGaussianHMM::EstimateInit(index_t numStates, index_t numClusters, 
 }
 
 void MixtureofGaussianHMM::EstimateInit(index_t NumClusters, const arma::mat& seq, const arma::vec& states, arma::mat& trans, std::vector<MixtureGauss>& mixs) {
-  DEBUG_ASSERT_MSG((seq.n_cols == states.n_elem),
+  mlpack::IO::AssertMessage((seq.n_cols == states.n_elem),
       "MixtureofGaussianHMM::EstimateInit(): sequence and states length must be the same");
 
   index_t M = 0;
@@ -345,7 +346,7 @@ void MixtureofGaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& 
   index_t L = -1;
   index_t M = guessTR.n_rows;
 
-  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessMG.size()),
+  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessMG.size()),
       "MixtureofGaussianHMM::Train(): sizes do not match");
   
   for (index_t i = 0; i < seqs.size(); i++) {
@@ -448,7 +449,7 @@ void MixtureofGaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& 
 void MixtureofGaussianHMM::TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR, std::vector<MixtureGauss>& guessMG, index_t max_iter, double tol) {
   index_t L = -1;
   index_t M = guessTR.n_rows;
-  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessMG.size()),
+  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessMG.size()),
       "MixtureofGaussianHMM::TrainViterbi(): sizes do not match");
   
   for (index_t i = 0; i < seqs.size(); i++)

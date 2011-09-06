@@ -108,12 +108,12 @@ void fl_print_progress(const char *desc, int prec)
   static const char *prev_desc = NULL;
 
   if (isatty(0)) {
-    if (unlikely(prec != prev_prec || desc != prev_desc)) {
+    if (prec != prev_prec || desc != prev_desc) {
       char buf[BAR_LEN + 1];
       int pos = prec * BAR_LEN / 100;
       int i = 0;
 
-      pos = unlikely(pos > BAR_LEN) ? BAR_LEN : unlikely(pos < 0) ? 0 : pos;
+      pos = (pos > BAR_LEN) ? BAR_LEN : (pos < 0) ? 0 : pos;
 
       for (; i < pos; ++i) {
         buf[i] = '#';

@@ -25,46 +25,6 @@
 #endif
 
 /**
- * Optimize compilation for a condition being true.
- *
- * Example:
- * @code
- *   if (likely(i < size)) {
- *     ...
- *   }
- * @endcode
- *
- * Note that this normalizes the result of cond to 1 or 0, which is
- * always fine for use with if-statements and loops.
- *
- * @param cond the condition to test
- * @returns the boolean result of cond
- *
- * @see unlikely, expect
- */
-#define likely(cond) expect(!!(cond), 1)
-
-/**
- * Optimize compilation for a condition being false.
- *
- * Example:
- * @code
- *   if (unlikely(error != 0)) {
- *     ...
- *   }
- * @endcode
- *
- * Note that this normalizes the result of cond to 1 or 0, which is
- * always fine for use with if-statements and loops.
- *
- * @param cond the condition to test
- * @returns the boolean result of cond
- *
- * @see likely, expect
- */
-#define unlikely(cond) expect(!!(cond), 0)
-
-/**
  * Define __attribute__(( )) as nothing on compilers that don't support it.
  */
 #ifndef __GNUC__

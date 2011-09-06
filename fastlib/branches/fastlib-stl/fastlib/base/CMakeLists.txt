@@ -23,8 +23,6 @@ set(SOURCES
    common.h
    common.c
    compiler.h
-   debug.h
-   debug.c
    fortran.h
 )
 

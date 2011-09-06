@@ -8,6 +8,7 @@
 #define MATH_MATH_LIB_H
 
 #include "../base/base.h"
+#include "fastlib/fx/io.h"
 
 #include <math.h>
 
@@ -75,9 +76,9 @@ namespace math {
    * @return max(range_min, min(range_max, d))
    */
   inline double ClampRange(double value, double range_min, double range_max) {
-    if (unlikely(value <= range_min)) {
+    if (value <= range_min) {
       return range_min;
-    } else if (unlikely(value >= range_max)) {
+    } else if (value >= range_max) {
       return range_max;
     } else {
       return value;
@@ -183,7 +184,7 @@ class MinMaxVal {
    * value to be the new minimum.
    */
   void MinWith(Value incoming_val) {
-    if (unlikely(incoming_val < val)) {
+    if (incoming_val < val) {
       val = incoming_val;
     }
   }
@@ -195,7 +196,7 @@ class MinMaxVal {
    * value to be the new maximum.
    */
   void MaxWith(Value incoming_val) {
-    if (unlikely(incoming_val > val)) {
+    if (incoming_val > val) {
       val = incoming_val;
     }
   }
@@ -277,13 +278,13 @@ struct DRange {
   }
 
   /**
-   * Simulate an union by growing the range if necessary.
+   * Simulate a union by growing the range if necessary.
    */
   const DRange& operator |= (double d) {
-    if (unlikely(d < lo)) {
+    if (d < lo) {
       lo = d;
     }
-    if (unlikely(d > hi)) {
+    if (d > hi) {
       hi = d;
     }
     return *this;
@@ -294,10 +295,10 @@ struct DRange {
    * becomes an empty set if the range does not contain the number.
    */
   const DRange& operator &= (double d) {
-    if (likely(d > lo)) {
+    if (d > lo) {
       lo = d;
     }
-    if (likely(d < hi)) {
+    if (d < hi) {
       hi = d;
     }
     return *this;
@@ -307,10 +308,10 @@ struct DRange {
    * Expands range to include the other range.
    */
   const DRange& operator |= (const DRange& other) {
-    if (unlikely(other.lo < lo)) {
+    if (other.lo < lo) {
       lo = other.lo;
     }
-    if (unlikely(other.hi > hi)) {
+    if (other.hi > hi) {
       hi = other.hi;
     }
     return *this;
@@ -321,10 +322,10 @@ struct DRange {
    * set if there is no overlap.
    */
   const DRange& operator &= (const DRange& other) {
-    if (unlikely(other.lo > lo)) {
+    if (other.lo > lo) {
       lo = other.lo;
     }
-    if (unlikely(other.hi < hi)) {
+    if (other.hi < hi) {
       hi = other.hi;
     }
     return *this;
@@ -337,7 +338,7 @@ struct DRange {
 
   /** Scales upper and lower bounds. */
   const DRange& operator *= (double d) {
-    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
+    mlpack::IO::AssertMessage(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     lo *= d;
     hi *= d;
     return *this;
@@ -345,13 +346,13 @@ struct DRange {
 
   /** Scales upper and lower bounds. */
   friend DRange operator * (const DRange& r, double d) {
-    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
+    mlpack::IO::AssertMessage(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return DRange(r.lo * d, r.hi * d);
   }
 
   /** Scales upper and lower bounds. */
   friend DRange operator * (double d, const DRange& r) {
-    DEBUG_ASSERT_MSG(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
+    mlpack::IO::AssertMessage(d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return DRange(r.lo * d, r.hi * d);
   }
 
@@ -410,10 +411,10 @@ struct DRange {
    * Takes the maximum of upper and lower bounds independently.
    */
   void MaxWith(const DRange& range) {
-    if (unlikely(range.lo > lo)) {
+    if (range.lo > lo) {
       lo = range.lo;
     }
-    if (unlikely(range.hi > hi)) {
+    if (range.hi > hi) {
       hi = range.hi;
     }
   }
@@ -422,10 +423,10 @@ struct DRange {
    * Takes the minimum of upper and lower bounds independently.
    */
   void MinWith(const DRange& range) {
-    if (unlikely(range.lo < lo)) {
+    if (range.lo < lo) {
       lo = range.lo;
     }
-    if (unlikely(range.hi < hi)) {
+    if (range.hi < hi) {
       hi = range.hi;
     }
   }
@@ -434,9 +435,9 @@ struct DRange {
    * Takes the maximum of upper and lower bounds independently.
    */
   void MaxWith(double v) {
-    if (unlikely(v > lo)) {
+    if (v > lo) {
       lo = v;
-      if (unlikely(v > hi)) {
+      if (v > hi) {
         hi = v;
       }
     }
@@ -446,9 +447,9 @@ struct DRange {
    * Takes the minimum of upper and lower bounds independently.
    */
   void MinWith(double v) {
-    if (unlikely(v < hi)) {
+    if (v < hi) {
       hi = v;
-      if (unlikely(v < lo)) {
+      if (v < lo) {
         lo = v;
       }
     }

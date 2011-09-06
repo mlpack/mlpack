@@ -111,7 +111,7 @@ success_t la::Inverse(Matrix *A) {
 success_t la::InverseOverwrite(const Matrix &A, Matrix *B) {
   f77_integer pivots[A.n_rows()];
 
-  if (likely(A.ptr() != B->ptr())) {
+  if (A.ptr() != B->ptr()) {
     B->CopyValues(A);
   }
   success_t success = PLUExpert(pivots, B);
@@ -335,7 +335,7 @@ success_t la::EigenvaluesInit(const Matrix &A, Vector *w) {
   }
 
   for (index_t j = 0; j < (index_t) n; j++) {
-    if (unlikely(w_imag[j] != 0.0)) {
+    if (w_imag[j] != 0.0) {
       (*w)[j] = DBL_NAN;
     }
   }
@@ -363,7 +363,7 @@ success_t la::EigenvectorsInit(const Matrix &A,
 
   V_imag->SetZero();
   for (index_t j = 0; j < n; j++) {
-    if (unlikely(w_imag->get(j) != 0.0)) {
+    if (w_imag->get(j) != 0.0) {
       double *r_cur = V_real->GetColumnPtr(j);
       double *r_next = V_real->GetColumnPtr(j+1);
       double *i_cur = V_imag->GetColumnPtr(j);
@@ -397,7 +397,7 @@ success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
   }
 
   for (index_t j = 0; j < n; j++) {
-    if (unlikely(w_imag[j] != 0.0)) {
+    if (w_imag[j] != 0.0) {
       (*w)[j] = DBL_NAN;
     }
   }
@@ -408,7 +408,7 @@ success_t la::EigenvectorsInit(const Matrix &A, Vector *w, Matrix *V) {
 success_t la::GenEigenSymmetric(int itype, Matrix *A_eigenvec, Matrix *B_chol, double *w) {
   DEBUG_MATSQUARE(*A_eigenvec);
   DEBUG_MATSQUARE(*B_chol);
-  DEBUG_ASSERT(A_eigenvec->n_rows()==B_chol->n_rows());
+  mlpack::IO::Assert(A_eigenvec->n_rows()==B_chol->n_rows());
   f77_integer itype_f77 = itype;
   f77_integer info;
   f77_integer n = A_eigenvec->n_rows();
@@ -432,7 +432,7 @@ success_t la::GenEigenNonSymmetric(Matrix *A_garbage, Matrix *B_garbage,
     double *alpha_real, double *alpha_imag, double *beta, double *V_raw) {
   DEBUG_MATSQUARE(*A_garbage);
   DEBUG_MATSQUARE(*B_garbage);
-  DEBUG_ASSERT(A_garbage->n_rows()==B_garbage->n_rows());
+  mlpack::IO::Assert(A_garbage->n_rows()==B_garbage->n_rows());
   f77_integer info;
   f77_integer n = A_garbage->n_rows();
   const char *job = V_raw ? "V" : "N";
@@ -479,7 +479,7 @@ success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
 */
 
 success_t la::SVDExpert(Matrix* A_garbage, double *s, double *U, double *VT) {
-  DEBUG_ASSERT_MSG((U == NULL) == (VT == NULL),
+  mlpack::IO::AssertMessage((U == NULL) == (VT == NULL),
                    "You must fill both U and VT or neither.");
   f77_integer info;
   f77_integer m = A_garbage->n_rows();

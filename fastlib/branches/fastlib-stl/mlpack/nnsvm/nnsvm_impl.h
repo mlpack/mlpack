@@ -58,7 +58,7 @@ void NNSVM<TKernel>::InitTrain(
   Init(dataset, n_classes, c, b, eps, max_iter);
   /* # of features = # of rows in data matrix - 1, as last row is for labels*/
   num_features_ = dataset.n_rows - 1;
-  DEBUG_ASSERT_MSG(n_classes == 2, "SVM is only a binary classifier");
+  mlpack::IO::AssertMessage(n_classes == 2, "SVM is only a binary classifier");
   mlpack::IO::GetParam<std::string>("kernel_type") = typeid(TKernel).name();
 
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
@@ -74,10 +74,10 @@ void NNSVM<TKernel>::InitTrain(
   /* Get the trained bi-class model */
   nnsmo.GetNNSVM(support_vectors_, model_.sv_coef_, model_.w_);
   std::cerr << "the NUMBER of elements in sv_coef_ is " << model_.sv_coef_.n_elem << "\n";
-  DEBUG_ASSERT(model_.sv_coef_.n_elem != 0);
+  mlpack::IO::Assert(model_.sv_coef_.n_elem != 0);
   model_.num_sv_ = support_vectors_.n_cols;
   model_.thresh_ = nnsmo.threshold();
-  DEBUG_ONLY(fprintf(stderr, "THRESHOLD: %f\n", model_.thresh_));
+  //DEBUG_ONLY(fprintf(stderr, "THRESHOLD: %f\n", model_.thresh_));
 
   /* Save models to file "nnsvm_model" */
   SaveModel("nnsvm_model"); // TODO: param_req

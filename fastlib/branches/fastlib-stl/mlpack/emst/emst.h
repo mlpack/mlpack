@@ -11,6 +11,7 @@
 #define EMST_H
 
 #include <fastlib/fastlib.h>
+#include <fastlib/fx/io.h>
 #include "union_find.h"
 
 /**
@@ -35,9 +36,8 @@ public:
      */
     void Init(index_t lesser, index_t greater, double dist) {
       
-      DEBUG_ASSERT_MSG(lesser != greater, 
-          "indices equal when creating EdgePair, lesser = %"LI", distance = %f\n",
-                                                 lesser, dist);
+      mlpack::IO::AssertMessage(lesser != greater, 
+          "indices equal when creating EdgePair, lesser == greater");
       lesser_index_ = lesser;
       greater_index_ = greater;
       distance_ = dist;

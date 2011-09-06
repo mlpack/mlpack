@@ -7,12 +7,12 @@
 #include <fastlib/fastlib.h>
 #include "support.h"
 #include "discreteHMM.h"
-
+#include "fastlib/fx/io.h"
 using namespace hmm_support;
 
 void DiscreteHMM::setModel(const arma::mat& transmission, const arma::mat& emission) {
-  DEBUG_ASSERT(transmission.n_rows == transmission.n_cols);
-  DEBUG_ASSERT(transmission.n_rows == emission.n_rows);
+  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::IO::Assert(transmission.n_rows == emission.n_rows);
   
   transmission_ = transmission;
   emission_ = emission;
@@ -22,8 +22,8 @@ void DiscreteHMM::Init(const arma::mat& transmission, const arma::mat& emission)
   transmission_ = transmission;
   emission_ = emission;
 
-  DEBUG_ASSERT(transmission.n_rows == transmission.n_cols);
-  DEBUG_ASSERT(transmission.n_rows == emission.n_rows);
+  mlpack::IO::Assert(transmission.n_rows == transmission.n_cols);
+  mlpack::IO::Assert(transmission.n_rows == emission.n_rows);
 }
 
 void DiscreteHMM::InitFromFile(const char* profile) {
@@ -39,8 +39,8 @@ void DiscreteHMM::InitFromFile(const char* profile) {
   transmission_ = list_mat[0];
   emission_ = list_mat[1];
 
-  DEBUG_ASSERT(transmission_.n_rows == transmission_.n_cols);
-  DEBUG_ASSERT(transmission_.n_rows == emission_.n_rows);
+  mlpack::IO::Assert(transmission_.n_rows == transmission_.n_cols);
+  mlpack::IO::Assert(transmission_.n_rows == emission_.n_rows);
 }
 
 void DiscreteHMM::InitFromData(const std::vector<arma::vec>& list_data_seq, index_t numstate) {
@@ -165,7 +165,7 @@ void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& list_data_seq, inde
 }
 
 void DiscreteHMM::GenerateInit(index_t L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states) {
-  DEBUG_ASSERT_MSG((trans.n_rows == trans.n_cols && trans.n_rows == emis.n_rows),
+  mlpack::IO::AssertMessage((trans.n_rows == trans.n_cols && trans.n_rows == emis.n_rows),
     "DiscreteHMM::GenerateInit(): matrix sizes do not match");
 
   arma::mat trsum, esum;
@@ -216,7 +216,7 @@ void DiscreteHMM::GenerateInit(index_t L, const arma::mat& trans, const arma::ma
 }
 
 void DiscreteHMM::EstimateInit(const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis) {
-  DEBUG_ASSERT_MSG((seq.n_elem == states.n_elem),
+  mlpack::IO::AssertMessage((seq.n_elem == states.n_elem),
       "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
 
   index_t M = 0;
@@ -236,7 +236,7 @@ void DiscreteHMM::EstimateInit(const arma::vec& seq, const arma::vec& states, ar
 }
 
 void DiscreteHMM::EstimateInit(index_t numSymbols, index_t numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis){
-  DEBUG_ASSERT_MSG((seq.n_elem == states.n_elem),
+  mlpack::IO::AssertMessage((seq.n_elem == states.n_elem),
     "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
 
   index_t N = numSymbols;
@@ -335,7 +335,7 @@ double DiscreteHMM::Decode(const arma::vec& seq, const arma::mat& trans, const a
   index_t L = seq.n_elem;
   index_t M = trans.n_rows;
 
-  DEBUG_ASSERT_MSG((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols && 
+  mlpack::IO::AssertMessage((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols && 
 		    M == trans.n_cols    && M == emis.n_rows),
                     "DiscreteHMM::Decode(): sizes do not match");
   
@@ -364,7 +364,7 @@ double DiscreteHMM::ViterbiInit(index_t L, const arma::vec& seq, const arma::mat
   index_t M = trans.n_rows;
   index_t N = emis.n_cols;
 
-  DEBUG_ASSERT_MSG((M == trans.n_cols && M == emis.n_rows),
+  mlpack::IO::AssertMessage((M == trans.n_cols && M == emis.n_rows),
       "DiscreteHMM::ViterbiInit(): sizes do not match");
   
   states.set_size(L);
@@ -428,7 +428,7 @@ void DiscreteHMM::Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, 
   index_t M = guessTR.n_rows;
   index_t N = guessEM.n_cols;
 
-  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessEM.n_rows),
+  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessEM.n_rows),
       "DiscreteHMM::Train(): sizes do not match");
   
   for (index_t i = 0; i < seqs.size(); i++) {
@@ -504,7 +504,7 @@ void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& gu
   index_t M = guessTR.n_rows;
   index_t N = guessEM.n_cols;
 
-  DEBUG_ASSERT_MSG((M == guessTR.n_cols && M == guessEM.n_rows),
+  mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessEM.n_rows),
       "DiscreteHMM::TrainViterbi(): sizes do not match");
   
   for (index_t i = 0; i < seqs.size(); i++) {
