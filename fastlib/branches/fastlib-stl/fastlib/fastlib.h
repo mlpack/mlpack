@@ -17,7 +17,6 @@
 #include "tree/spacetree.h"
 #include "tree/bounds.h"
 #include "tree/statistic.h"
-#include "tree/kdtree.h"
 #include "fx/io.h"
 
 #include "base/arma_extend.h"
