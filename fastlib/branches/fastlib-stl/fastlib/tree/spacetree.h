@@ -86,6 +86,13 @@ class BinarySpaceTree {
  
   BinarySpaceTree();
 
+  /***
+   * Deletes this node, deallocating the memory for the children and calling
+   * their destructors in turn.  This will invalidate any pointers or references
+   * to any nodes which are children of this one.
+   */
+  ~BinarySpaceTree();
+
   /**
    * Find a node in this tree by its begin and count.
    *

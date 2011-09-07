@@ -158,6 +158,19 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree() :
   // Nothing to do.
 }
 
+/***
+ * Deletes this node, deallocating the memory for the children and calling their
+ * destructors in turn.  This will invalidate any pointers or references to any
+ * nodes which are children of this one.
+ */
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::~BinarySpaceTree() {
+  if (left_)
+    delete left_;
+  if (right_)
+    delete right_;
+}
+
 /**
  * Find a node in this tree by its begin and count.
  *
