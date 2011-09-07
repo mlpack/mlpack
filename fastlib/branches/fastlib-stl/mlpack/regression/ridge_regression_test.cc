@@ -19,7 +19,6 @@
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 #define BOOST_TEST_MODULE RidgeRegressionTest
 #include <boost/test/unit_test.hpp>

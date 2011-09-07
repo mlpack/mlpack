@@ -2,7 +2,6 @@
 #define RIDGE_REGRESSION_H_
 
 #include "fastlib/fastlib.h"
-#include "mlpack/quicsvd/quicsvd.h"
 #include "ridge_regression_util.h"
 
 class RidgeRegression {
