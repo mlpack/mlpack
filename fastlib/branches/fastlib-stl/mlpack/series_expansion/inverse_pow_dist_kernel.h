@@ -18,7 +18,10 @@ class InversePowDistGradientKernel {
   }
 
   double EvalUnnorm(const double *point) const {
-    double sqdist = la::Dot(dimension_, point, point);
+    double sqdist = 0;
+    for (index_t i = 0; i < dimension_; i++)
+      sqdist += point[i] * point[i];
+    
     return point[dimension_] / pow(sqdist, lambda_ / 2.0);
   }
   
@@ -51,7 +54,9 @@ class InversePowDistKernel {
   }
 
   double EvalUnnorm(const double *point) const {
-    double sqdist = la::Dot(dimension_, point, point);
+    double sqdist = 0;
+    for (index_t i = 0; i < dimension_; i++)
+      sqdist += point[i] * point[i];
 
     if(lambda_ > 0) {
       return 1.0 / pow(sqdist, lambda_ / 2.0);

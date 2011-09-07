@@ -88,9 +88,8 @@ class bounds_aux {
     furthest_point_in_bound1 = bound1.center();
     furthest_point_in_bound1 += bound1.radius() * unit_vector;
     
-    furthest_dsqd = std::pow(la::RawLMetric<t_pow>(bound2_centroid.n_elem,
-			     furthest_point_in_bound1.memptr(), 
-			     bound2_centroid.memptr()), 2.0 / (double) t_pow);
+    furthest_dsqd = std::pow(mlpack::kernel::LMetric<t_pow, false>::Evaluate(
+        furthest_point_in_bound1, bound2_centroid), 2.0 / (double) t_pow);
   }
 
   /** @brief Returns the maximum side length of the bounding box that

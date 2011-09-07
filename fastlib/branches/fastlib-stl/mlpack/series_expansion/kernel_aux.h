@@ -11,7 +11,8 @@
 #ifndef KERNEL_AUX
 #define KERNEL_AUX
 
-#include "fastlib/fastlib.h"
+#include <fastlib/fastlib.h>
+#include <mlpack/core/kernels/lmetric.h>
 
 #include "bounds_aux.h"
 #include "farfield_expansion.h"
@@ -361,10 +362,10 @@ class GaussianKernelAux {
 				 double *actual_error) const {
     
     double squared_distance_between_two_centroids =
-      la::DistanceSqEuclidean(far_field_region_centroid,
-			      local_field_region_centroid);
-    double frontfactor = 
-      exp(-squared_distance_between_two_centroids / 
+        mlpack::kernel::LMetric<2>::Evaluate(far_field_region_centroid,
+        local_field_region_centroid);
+    
+    double frontfactor = exp(-squared_distance_between_two_centroids / 
 	  (4 * kernel_.bandwidth_sq()));
     index_t max_order = sea_.get_max_order();
     
