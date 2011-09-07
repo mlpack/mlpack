@@ -41,8 +41,8 @@ class BinarySpaceTree {
   BinarySpaceTree *right_;
   index_t begin_;
   index_t count_;
-  Statistic stat_;
   Bound bound_;
+  Statistic stat_;
 
  public:
   /***
@@ -68,7 +68,21 @@ class BinarySpaceTree {
                   std::vector<index_t>& old_from_new,
                   std::vector<index_t>& new_from_old);
 
-  BinarySpaceTree(index_t begin_in, index_t count_in);
+  BinarySpaceTree(Dataset& data,
+                  index_t leaf_size,
+                  index_t begin_in,
+                  index_t count_in);
+  BinarySpaceTree(Dataset& data,
+                  index_t leaf_size,
+                  index_t begin_in,
+                  index_t count_in,
+                  std::vector<index_t>& old_from_new);
+  BinarySpaceTree(Dataset& data,
+                  index_t leaf_size,
+                  index_t begin_in,
+                  index_t count_in,
+                  std::vector<index_t>& old_from_new,
+                  std::vector<index_t>& new_from_old);
  
   BinarySpaceTree(); 
 
@@ -152,10 +166,13 @@ class BinarySpaceTree {
    *
    * Optionally, return a list of the changed indices.
    */
-//  void SplitNode(Dataset& data);
-//  void SplitNode(Dataset& data, std::vector<index_t>& old_from_new);
+  void SplitNode(Dataset& data, index_t leaf_size);
+  void SplitNode(Dataset& data, index_t leaf_size,
+      std::vector<index_t>& old_from_new);
 
-//  index_t GetSplitIndex(Dataset& data, int split_dim);
+  index_t GetSplitIndex(Dataset& data, int split_dim, double split_val);
+  index_t GetSplitIndex(Dataset& data, int split_dim, double split_val,
+      std::vector<index_t>& old_from_new);
 
 };
 
