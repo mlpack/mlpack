@@ -9,7 +9,7 @@
 
 #include "friedman_bentley.h"
 
-void FriedmanBentley::FindNeighbor_(FBTree* tree, const Vector& point, 
+void FriedmanBentley::FindNeighbor_(FBTree* tree, const arma::colvec& point, 
                                     index_t point_index,
                                     index_t* cand, double* dist) {
 
@@ -19,9 +19,8 @@ void FriedmanBentley::FindNeighbor_(FBTree* tree, const Vector& point,
       
       if (connections_.Find(i) != connections_.Find(point_index)) {
         
-        Vector point_i;
+        arma::colvec point_i = data_points_.col(i);
 
-        data_points_.MakeColumnVector(i, &point_i);
         double this_dist = la::DistanceSqEuclidean(point, point_i);
         
         if (this_dist < *dist) {
@@ -140,8 +139,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
   index_t cand = -1;
   double cand_dist = DBL_MAX;
   
-  Vector point;
-  data_points_.MakeColumnVector(0, &point);
+  arma::colvec point = data_points_.col(0);
   
   // find the neighbor of point 0 to start the fragment
   FindNeighbor_(tree_, point, 0, &cand, &cand_dist);
@@ -162,8 +160,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
     if (connections_.Find(point_in_fragment) 
         == connections_.Find(point_out_fragment)) {
       
-      Vector point_vec;
-      data_points_.MakeColumnVector(point_in_fragment, &point_vec);
+      arma::colvec point_vec = data_points_.col(point_in_fragment);
       
       index_t new_point = -1;
       double new_dist = DBL_MAX;
@@ -184,8 +181,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
       UpdateMemberships_(tree_, point_in_fragment);
       UpdateMemberships_(tree_, point_out_fragment);
       
-      Vector point_out_vec;
-      data_points_.MakeColumnVector(point_out_fragment, &point_out_vec);
+      arma::colvec point_out_vec = data_points_.col(point_out_fragment);
       
       index_t new_point = -1;
       double new_dist = DBL_MAX;
@@ -195,8 +191,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
       
       heap_.Put(new_dist, point_out_fragment);
       
-      Vector point_in_vec;
-      data_points_.MakeColumnVector(point_in_fragment, &point_in_vec);
+      arma::colvec point_in_vec = data_points_.col(point_in_fragment);
       
       new_point = -1;
       new_dist = DBL_MAX;
