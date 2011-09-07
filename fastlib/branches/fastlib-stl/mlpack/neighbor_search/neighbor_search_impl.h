@@ -128,7 +128,6 @@ template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
       TreeType* query_node,
       TreeType* reference_node) {
-
   // Used to find the query node's new upper bound
   double query_worst_distance = SortPolicy::BestDistance();
 
@@ -321,7 +320,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
         // If the reference point is better than any of the current candidates,
         // insert it into the list correctly.
         arma::vec query_dist = neighbor_distances_.unsafe_col(point_id);
-        index_t insert_position =  SortPolicy::SortDistance(query_dist,
+        index_t insert_position = SortPolicy::SortDistance(query_dist,
             distance);
 
         if (insert_position != (index_t() - 1))
