@@ -21,11 +21,9 @@
  */
 
 #include "svm.h"
-#include <fastlib/math/statistics.h>
 #include <fastlib/fx/io.h>
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 using std::string;
 using std::vector;
@@ -106,7 +104,7 @@ void DoSvmNormalize(Dataset* dataset) {
 * @param: the dataset to be generated
 */
 void GenerateArtificialDataset(Dataset* dataset){
-  Matrix m;
+  arma::mat m;
   index_t n = IO::GetParam<int>("svm/n") = 30;
   double offset = IO::GetParam<double>("svm/offset") = 0.0;
   double range = IO::GetParam<double>("svm/range") = 1.0;
@@ -116,35 +114,33 @@ void GenerateArtificialDataset(Dataset* dataset){
   double intercept = IO::GetParam<double>("svm/intercept") = 0.0;
     
   // 2 dimensional dataset, size n, 3 classes
-  m.Init(3, n);
+  m.set_size(3, n);
   for (index_t i = 0; i < n; i += 3) {
     double x;
     double y;
     
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i, x);
-    m.set(1, i, x*slope + y + intercept);
-    m.set(2, i, 0); // labels
+    m(0, i) = x;
+    m(1, i) = x*slope + y + intercept;
+    m(2, i) = 0; // labels
     
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+1, 10*x);
-    m.set(1, i+1, x*slope + y + intercept);
-    m.set(2, i+1, 1); // labels
+    m(0, i + 1) = 10 * x;
+    m(1, i + 1) = x*slope + y + intercept;
+    m(2, i + 1) = 1; // labels
     
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
-    m.set(0, i+2, 20*x);
-    m.set(1, i+2, x*slope + y + intercept);
-    m.set(2, i+2, 2); // labels
+    m(0, i + 2) = 20 * x;
+    m(1, i + 2) = x*slope + y + intercept;
+    m(2, i + 2) = 2; // labels
   }
 
-  arma::mat tmp;
-  arma_compat::matrixToArma(m, tmp);
-  data::Save("artificialdata.csv", tmp); // TODO, for training, for testing
+  data::Save("artificialdata.csv", m); // TODO, for training, for testing
   // this is a bad way to do this
-  dataset->CopyMatrix(tmp);
+  dataset->CopyMatrix(m);
 }
 
 /**
