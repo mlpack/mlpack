@@ -10,9 +10,6 @@
 #ifndef TREE_DBALLBOUND_H
 #define TREE_DBALLBOUND_H
 
-#include "../la/matrix.h"
-#include "../la/la.h"
-
 #include "../math/math_lib.h"
 
 // Awaiting transition
