@@ -86,8 +86,6 @@ class BinarySpaceTree {
  
   BinarySpaceTree(); 
 
-  void Init(index_t begin_in, index_t count_in);
-
   /**
    * Find a node in this tree by its begin and count.
    *
@@ -117,13 +115,6 @@ class BinarySpaceTree {
   
   // TODO: Not const correct
   
-  /**
-   * Used only when constructing the tree.
-   */
-  void set_children(const TDataset& data,
-                    BinarySpaceTree *left_in,
-                    BinarySpaceTree *right_in);
-
   const Bound& bound() const;
   Bound& bound();
 
