@@ -16,6 +16,6 @@
 #include "../../mlpack/core/kernels/lmetric.h"
 #include "dhrectbound.h"
 #include "dballbound.h"
-#include"dhrectperiodicbound.h"
+#include "dhrectperiodicbound.h"
 
 #endif // TREE_BOUNDS_H
