@@ -104,20 +104,9 @@ class NeighborSearch {
      * a leaf node.  For allnn, needs no additional information
      * at the time of tree building.
      */
-    void Init(const arma::mat& matrix, index_t start, index_t count) {
+    QueryStat() {
       // The bound starts at the worst possible distance.
       bound_ = SortPolicy::WorstDistance();
-    }
-
-    /**
-     * Initialization function used in tree-building when initializing a
-     * non-leaf node.  For other algorithms, node statistics can be built using
-     * information from the children.
-     */
-    void Init(const arma::mat& matrix, index_t start, index_t count,
-        const QueryStat& left, const QueryStat& right) {
-      // For allknn, non-leaves can be initialized in the same way as leaves
-      Init(matrix, start, count);
     }
 
   }; //class QueryStat
