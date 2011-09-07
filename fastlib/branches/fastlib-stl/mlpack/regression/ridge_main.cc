@@ -22,7 +22,6 @@
 #include "ridge_regression_util.h"
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 using namespace mlpack;
 
