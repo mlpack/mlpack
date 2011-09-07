@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
 
