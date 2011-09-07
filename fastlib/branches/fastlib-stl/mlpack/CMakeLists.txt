@@ -49,7 +49,6 @@ set(DIRS
     naive_bayes
     neighbor_search
     nnsvm
-    quicsvd
     # range_search  ##! uses contrib code
     regression
     series_expansion
