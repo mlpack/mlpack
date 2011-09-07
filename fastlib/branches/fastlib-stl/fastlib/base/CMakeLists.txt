@@ -5,8 +5,6 @@ cmake_minimum_required(VERSION 2.8)
 # Do not include test programs here
 set(SOURCES
    ansi_colors.h
-   arma_compat.h
-   arma_compat.cc
    arma_extend.h
    arma_extend/arma_ostream_prefixed_bones.hpp
    arma_extend/arma_ostream_prefixed_meat.hpp
