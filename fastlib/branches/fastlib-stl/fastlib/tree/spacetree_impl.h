@@ -18,9 +18,9 @@ namespace tree {
 
 // Each of these overloads is kept as a separate function to keep the overhead
 // from the two std::vectors out, if possible.
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
-    index_t leaf_size) :
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data,
+                                                   index_t leaf_size) :
     left_(NULL),
     right_(NULL),
     begin_(0), /* This root node starts at index 0, */
@@ -31,9 +31,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(Dataset& data,
   SplitNode(data, leaf_size);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
+    arma::mat& data,
     index_t leaf_size,
     std::vector<index_t>& old_from_new) :
     left_(NULL),
@@ -51,9 +51,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   SplitNode(data, leaf_size, old_from_new);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
+    arma::mat& data,
     index_t leaf_size,
     std::vector<index_t>& old_from_new,
     std::vector<index_t>& new_from_old) :
@@ -83,9 +83,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   IO::Debug << std::endl;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
+    arma::mat& data,
     index_t leaf_size,
     index_t begin_in,
     index_t count_in) :
@@ -99,9 +99,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   SplitNode(data, leaf_size);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
+    arma::mat& data,
     index_t leaf_size,
     index_t begin_in,
     index_t count_in,
@@ -120,9 +120,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
   SplitNode(data, leaf_size, old_from_new);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
+    arma::mat& data,
     index_t leaf_size,
     index_t begin_in,
     index_t count_in,
@@ -147,8 +147,8 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree(
     new_from_old[old_from_new[i]] = i;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree() :
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree() :
     left_(NULL),
     right_(NULL),
     begin_(0),
@@ -169,11 +169,10 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree() :
  * @param count_q the count() of the node to find
  * @return the found node, or NULL
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-const BinarySpaceTree<TBound, TDataset, TStatistic>*
-BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
-    index_t begin_q,
-    index_t count_q) const {
+template<typename Bound, typename Statistic>
+const BinarySpaceTree<Bound, Statistic>*
+BinarySpaceTree<Bound, Statistic>::FindByBeginCount(index_t begin_q,
+                                                    index_t count_q) const {
 
   mlpack::IO::Assert(begin_q >= begin_);
   mlpack::IO::Assert(count_q <= count_);
@@ -198,11 +197,10 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
  * @param count_q the count() of the node to find
  * @return the found node, or NULL
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>*
-BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
-    index_t begin_q,
-    index_t count_q) {
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>*
+BinarySpaceTree<Bound, Statistic>::FindByBeginCount(index_t begin_q,
+                                                    index_t count_q) {
 
   mlpack::IO::Assert(begin_q >= begin_);
   mlpack::IO::Assert(count_q <= count_);
@@ -216,37 +214,37 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
     return right_->FindByBeginCount(begin_q, count_q);
 }
   
-template<typename TBound, typename TDataset, typename TStatistic>
-const TBound& BinarySpaceTree<TBound, TDataset, TStatistic>::bound() const {
+template<typename Bound, typename Statistic>
+const Bound& BinarySpaceTree<Bound, Statistic>::bound() const {
   return bound_;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-TBound& BinarySpaceTree<TBound, TDataset, TStatistic>::bound() {
+template<typename Bound, typename Statistic>
+Bound& BinarySpaceTree<Bound, Statistic>::bound() {
   return bound_;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-const TStatistic& BinarySpaceTree<TBound, TDataset, TStatistic>::stat() const {
+template<typename Bound, typename Statistic>
+const Statistic& BinarySpaceTree<Bound, Statistic>::stat() const {
   return stat_;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-TStatistic& BinarySpaceTree<TBound, TDataset, TStatistic>::stat() {
+template<typename Bound, typename Statistic>
+Statistic& BinarySpaceTree<Bound, Statistic>::stat() {
   return stat_;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-bool BinarySpaceTree<TBound, TDataset, TStatistic>::is_leaf() const {
+template<typename Bound, typename Statistic>
+bool BinarySpaceTree<Bound, Statistic>::is_leaf() const {
   return !left_;
 }
 
 /**
  * Gets the left branch of the tree.
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>* 
-BinarySpaceTree<TBound, TDataset, TStatistic>::left() const {
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>* 
+BinarySpaceTree<Bound, Statistic>::left() const {
   // TODO: Const correctness
   return left_;
 }
@@ -254,9 +252,9 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::left() const {
 /**
  * Gets the right branch.
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-BinarySpaceTree<TBound, TDataset, TStatistic>*
-BinarySpaceTree<TBound, TDataset, TStatistic>::right() const {
+template<typename Bound, typename Statistic>
+BinarySpaceTree<Bound, Statistic>*
+BinarySpaceTree<Bound, Statistic>::right() const {
   // TODO: Const correctness
   return right_;
 }
@@ -264,39 +262,39 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::right() const {
 /**
  * Gets the index of the begin point of this subset.
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-index_t BinarySpaceTree<TBound, TDataset, TStatistic>::begin() const {
+template<typename Bound, typename Statistic>
+index_t BinarySpaceTree<Bound, Statistic>::begin() const {
   return begin_;
 }
 
 /**
  * Gets the index one beyond the last index in the series.
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-index_t BinarySpaceTree<TBound, TDataset, TStatistic>::end() const {
+template<typename Bound, typename Statistic>
+index_t BinarySpaceTree<Bound, Statistic>::end() const {
   return begin_ + count_;
 }
   
 /**
  * Gets the number of points in this subset.
  */
-template<typename TBound, typename TDataset, typename TStatistic>
-index_t BinarySpaceTree<TBound, TDataset, TStatistic>::count() const {
+template<typename Bound, typename Statistic>
+index_t BinarySpaceTree<Bound, Statistic>::count() const {
   return count_;
 }
   
-template<typename TBound, typename TDataset, typename TStatistic>
-void BinarySpaceTree<TBound, TDataset, TStatistic>::Print() const {
+template<typename Bound, typename Statistic>
+void BinarySpaceTree<Bound, Statistic>::Print() const {
   printf("node: %d to %d: %d points total\n",
-     begin_, begin_ + count_ - 1, count_);
+      begin_, begin_ + count_ - 1, count_);
   if (!is_leaf()) {
     left_->Print();
     right_->Print();
   }
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(Dataset& data,
+template<typename Bound, typename Statistic>
+void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data,
     index_t leaf_size) {
   // This should be a single function for TBound.
   // We need to expand the bounds of this node properly.
@@ -335,15 +333,15 @@ void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(Dataset& data,
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left_ = new BinarySpaceTree<TBound, TDataset, TStatistic>(data, leaf_size,
-      begin_, split_col - begin_);
-  right_ = new BinarySpaceTree<TBound, TDataset, TStatistic>(data, leaf_size,
-      split_col, begin_ + count_ - split_col);
+  left_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, begin_,
+      split_col - begin_);
+  right_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, split_col,
+      begin_ + count_ - split_col);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+void BinarySpaceTree<Bound, Statistic>::SplitNode(
+    arma::mat& data,
     index_t leaf_size,
     std::vector<index_t>& old_from_new) {
   // This should be a single function for TBound.
@@ -383,15 +381,15 @@ void BinarySpaceTree<TBound, TDataset, TStatistic>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left_ = new BinarySpaceTree<TBound, TDataset, TStatistic>(data, leaf_size,
-      begin_, split_col - begin_, old_from_new);
-  right_ = new BinarySpaceTree<TBound, TDataset, TStatistic>(data, leaf_size,
-      split_col, begin_ + count_ - split_col, old_from_new);
+  left_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, begin_,
+      split_col - begin_, old_from_new);
+  right_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, split_col,
+      begin_ + count_ - split_col, old_from_new);
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-index_t BinarySpaceTree<TBound, TDataset, TStatistic>::GetSplitIndex(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
+    arma::mat& data,
     int split_dim,
     double split_val) {
   // This method modifies the input dataset.  We loop both from the left and
@@ -431,9 +429,9 @@ index_t BinarySpaceTree<TBound, TDataset, TStatistic>::GetSplitIndex(
   return left;
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-index_t BinarySpaceTree<TBound, TDataset, TStatistic>::GetSplitIndex(
-    Dataset& data,
+template<typename Bound, typename Statistic>
+index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
+    arma::mat& data,
     int split_dim,
     double split_val,
     std::vector<index_t>& old_from_new) {

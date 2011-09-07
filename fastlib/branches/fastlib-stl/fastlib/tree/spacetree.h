@@ -33,14 +33,9 @@ namespace tree {
  * @tparam TStatistic Extra data contained in the node.  See statistic.h for
  *     the necessary skeleton interface. 
  */
-template<typename TBound, typename TDataset,
-         typename TStatistic = EmptyStatistic<TDataset> >
+template<typename Bound,
+         typename Statistic = EmptyStatistic>
 class BinarySpaceTree {
- public:
-  typedef TBound Bound; //< The bound type.
-  typedef TDataset Dataset; //< The dataset we are using.
-  typedef TStatistic Statistic; //< The statistic we are using.
-
  private:
   BinarySpaceTree *left_; //< The left child node.
   BinarySpaceTree *right_; //< The right child node.
@@ -64,32 +59,32 @@ class BinarySpaceTree {
    * @param new_from_old Vector which will be filled with the new positions for
    *     each old point.
    */
-  BinarySpaceTree(Dataset& data, index_t leaf_size);
-  BinarySpaceTree(Dataset& data,
+  BinarySpaceTree(arma::mat& data, index_t leaf_size);
+  BinarySpaceTree(arma::mat& data,
                   index_t leaf_size,
                   std::vector<index_t>& old_from_new);
-  BinarySpaceTree(Dataset& data,
+  BinarySpaceTree(arma::mat& data,
                   index_t leaf_size,
                   std::vector<index_t>& old_from_new,
                   std::vector<index_t>& new_from_old);
 
-  BinarySpaceTree(Dataset& data,
+  BinarySpaceTree(arma::mat& data,
                   index_t leaf_size,
                   index_t begin_in,
                   index_t count_in);
-  BinarySpaceTree(Dataset& data,
+  BinarySpaceTree(arma::mat& data,
                   index_t leaf_size,
                   index_t begin_in,
                   index_t count_in,
                   std::vector<index_t>& old_from_new);
-  BinarySpaceTree(Dataset& data,
+  BinarySpaceTree(arma::mat& data,
                   index_t leaf_size,
                   index_t begin_in,
                   index_t count_in,
                   std::vector<index_t>& old_from_new,
                   std::vector<index_t>& new_from_old);
  
-  BinarySpaceTree(); 
+  BinarySpaceTree();
 
   /**
    * Find a node in this tree by its begin and count.
@@ -166,8 +161,8 @@ class BinarySpaceTree {
    * @param leaf_size Leaf size to split with.
    * @param old_from_new Vector holding permuted indices.
    */
-  void SplitNode(Dataset& data, index_t leaf_size);
-  void SplitNode(Dataset& data, index_t leaf_size,
+  void SplitNode(arma::mat& data, index_t leaf_size);
+  void SplitNode(arma::mat& data, index_t leaf_size,
       std::vector<index_t>& old_from_new);
 
   /***
@@ -181,8 +176,8 @@ class BinarySpaceTree {
    * @param split_val Value to split on, in the given split dimension.
    * @param old_from_new Vector holding permuted indices.
    */
-  index_t GetSplitIndex(Dataset& data, int split_dim, double split_val);
-  index_t GetSplitIndex(Dataset& data, int split_dim, double split_val,
+  index_t GetSplitIndex(arma::mat& data, int split_dim, double split_val);
+  index_t GetSplitIndex(arma::mat& data, int split_dim, double split_val,
       std::vector<index_t>& old_from_new);
 
 };

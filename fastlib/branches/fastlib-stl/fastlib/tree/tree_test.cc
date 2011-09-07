@@ -154,7 +154,7 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
                       "3.0 4.0 6.0 7.0 1.0 2.0 ";
 
   // Leaf size of 1.
-  BinarySpaceTree<DHrectBound<2>, arma::mat> root_node(dataset, 1);
+  BinarySpaceTree<DHrectBound<2> > root_node(dataset, 1);
 
   BOOST_REQUIRE(root_node.count() == 6);
   BOOST_REQUIRE(root_node.left()->count() == 3);
