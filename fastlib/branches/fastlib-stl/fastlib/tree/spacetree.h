@@ -17,6 +17,8 @@
 namespace mlpack {
 namespace tree {
 
+PARAM_INT("leaf_size", "Leaf size used during tree construction.", "tree", 20);
+
 /**
  * A binary space partitioning tree, such as a KD-tree or a ball tree.  Once the
  * bound and type of dataset is defined, the tree will construct itself.  Call
@@ -26,6 +28,14 @@ namespace tree {
  * This particular tree does not allow growth, so you cannot add or delete nodes
  * from it.  If you need to add or delete a node, the better procedure is to
  * rebuild the tree entirely.
+ *
+ * This tree does take one command line parameter, which is the leaf size to be
+ * used.  You can set this at runtime with --tree/leaf_size [leaf_size].  You
+ * can also set it in your program using IO:
+ *
+ * @code
+ *   IO::GetParam<int>("tree/leaf_size") = target_leaf_size;
+ * @endcode
  *
  * @tparam TBound The bound used for each node.  The valid types of bounds and
  *     the necessary skeleton interface for this class can be found in bounds/.
@@ -59,26 +69,20 @@ class BinarySpaceTree {
    * @param new_from_old Vector which will be filled with the new positions for
    *     each old point.
    */
-  BinarySpaceTree(arma::mat& data, index_t leaf_size);
+  BinarySpaceTree(arma::mat& data);
+  BinarySpaceTree(arma::mat& data, std::vector<index_t>& old_from_new);
   BinarySpaceTree(arma::mat& data,
-                  index_t leaf_size,
-                  std::vector<index_t>& old_from_new);
-  BinarySpaceTree(arma::mat& data,
-                  index_t leaf_size,
                   std::vector<index_t>& old_from_new,
                   std::vector<index_t>& new_from_old);
 
   BinarySpaceTree(arma::mat& data,
-                  index_t leaf_size,
                   index_t begin_in,
                   index_t count_in);
   BinarySpaceTree(arma::mat& data,
-                  index_t leaf_size,
                   index_t begin_in,
                   index_t count_in,
                   std::vector<index_t>& old_from_new);
   BinarySpaceTree(arma::mat& data,
-                  index_t leaf_size,
                   index_t begin_in,
                   index_t count_in,
                   std::vector<index_t>& old_from_new,
@@ -168,9 +172,8 @@ class BinarySpaceTree {
    * @param leaf_size Leaf size to split with.
    * @param old_from_new Vector holding permuted indices.
    */
-  void SplitNode(arma::mat& data, index_t leaf_size);
-  void SplitNode(arma::mat& data, index_t leaf_size,
-      std::vector<index_t>& old_from_new);
+  void SplitNode(arma::mat& data);
+  void SplitNode(arma::mat& data, std::vector<index_t>& old_from_new);
 
   /***
    * Find the index to split on for this node, given that we are splitting in

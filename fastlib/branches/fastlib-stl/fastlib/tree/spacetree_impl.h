@@ -19,8 +19,7 @@ namespace tree {
 // Each of these overloads is kept as a separate function to keep the overhead
 // from the two std::vectors out, if possible.
 template<typename Bound, typename Statistic>
-BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data,
-                                                   index_t leaf_size) :
+BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data) :
     left_(NULL),
     right_(NULL),
     begin_(0), /* This root node starts at index 0, */
@@ -28,13 +27,12 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data,
     bound_(data.n_rows),
     stat_() {
   // Do the actual splitting of this node.
-  SplitNode(data, leaf_size);
+  SplitNode(data);
 }
 
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t leaf_size,
     std::vector<index_t>& old_from_new) :
     left_(NULL),
     right_(NULL),
@@ -48,13 +46,12 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     old_from_new[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
-  SplitNode(data, leaf_size, old_from_new);
+  SplitNode(data, old_from_new);
 }
 
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t leaf_size,
     std::vector<index_t>& old_from_new,
     std::vector<index_t>& new_from_old) :
     left_(NULL),
@@ -69,7 +66,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     old_from_new[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
-  SplitNode(data, leaf_size, old_from_new);
+  SplitNode(data, old_from_new);
 
   // Map the new_from_old indices correctly.
   new_from_old.resize(data.n_cols);
@@ -86,7 +83,6 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t leaf_size,
     index_t begin_in,
     index_t count_in) :
     left_(NULL),
@@ -96,13 +92,12 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     bound_(data.n_rows),
     stat_() {
   // Perform the actual splitting.
-  SplitNode(data, leaf_size);
+  SplitNode(data);
 }
 
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t leaf_size,
     index_t begin_in,
     index_t count_in,
     std::vector<index_t>& old_from_new) :
@@ -117,13 +112,12 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
   assert(old_from_new.size() == data.n_cols);
 
   // Perform the actual splitting.
-  SplitNode(data, leaf_size, old_from_new);
+  SplitNode(data, old_from_new);
 }
 
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t leaf_size,
     index_t begin_in,
     index_t count_in,
     std::vector<index_t>& old_from_new,
@@ -139,7 +133,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
   assert(old_from_new.size() == data.n_cols);
 
   // Perform the actual splitting.
-  SplitNode(data, leaf_size, old_from_new);
+  SplitNode(data, old_from_new);
 
   // Map the new_from_old indices correctly.
   new_from_old.resize(data.n_cols);
@@ -307,15 +301,14 @@ void BinarySpaceTree<Bound, Statistic>::Print() const {
 }
 
 template<typename Bound, typename Statistic>
-void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data,
-    index_t leaf_size) {
-  // This should be a single function for TBound.
+void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
+  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   for (index_t i = begin_; i < (begin_ + count_); i++)
     bound_ |= data.unsafe_col(i);
 
   // Now, check if we need to split at all.
-  if (count_ <= leaf_size)
+  if (count_ <= (index_t) IO::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.
@@ -346,24 +339,23 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data,
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, begin_,
+  left_ = new BinarySpaceTree<Bound, Statistic>(data, begin_,
       split_col - begin_);
-  right_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, split_col,
+  right_ = new BinarySpaceTree<Bound, Statistic>(data, split_col,
       begin_ + count_ - split_col);
 }
 
 template<typename Bound, typename Statistic>
 void BinarySpaceTree<Bound, Statistic>::SplitNode(
     arma::mat& data,
-    index_t leaf_size,
     std::vector<index_t>& old_from_new) {
-  // This should be a single function for TBound.
+  // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
   for (index_t i = begin_; i < (begin_ + count_); i++)
     bound_ |= data.unsafe_col(i);
 
   // First, check if we need to split at all.
-  if (count_ <= leaf_size)
+  if (count_ <= (index_t) IO::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.
@@ -394,9 +386,9 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
-  left_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, begin_,
+  left_ = new BinarySpaceTree<Bound, Statistic>(data, begin_,
       split_col - begin_, old_from_new);
-  right_ = new BinarySpaceTree<Bound, Statistic>(data, leaf_size, split_col,
+  right_ = new BinarySpaceTree<Bound, Statistic>(data, split_col,
       begin_ + count_ - split_col, old_from_new);
 }
 
