@@ -15,6 +15,9 @@
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
+namespace mlpack {
+namespace emst {
+
 /**
  * @class UnionFind
  *
@@ -100,8 +103,10 @@ public:
     }
     
   }
-
   
 }; //class UnionFind
+
+}; // namespace emst
+}; // namespace mlpack
 
 #endif

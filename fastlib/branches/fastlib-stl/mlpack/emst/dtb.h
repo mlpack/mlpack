@@ -14,12 +14,12 @@
 #include "emst.h"
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 #include <fastlib/fx/io.h>
+#include <mlpack/core/kernels/lmetric.h>
 
+namespace mlpack {
+namespace emst {
 
-
-using namespace mlpack;
 /*
 const fx_submodule_doc dtb_submodules[] = {
 FX_SUBMODULE_DOC_DONE
@@ -62,7 +62,7 @@ class DTBStat {
   /** 
     * A generic initializer.
     */
-  void Init() {
+  DTBStat() {
     set_max_neighbor_distance(DBL_MAX);
     set_component_membership(-1);
   }
@@ -70,26 +70,28 @@ class DTBStat {
   /**
     * An initializer for leaves.
    */
-  void Init(const arma::mat& dataset, index_t start, index_t count) {
-    
+  DTBStat(const arma::mat& dataset, index_t start, index_t count) {
     if (count == 1) {
       set_component_membership(start);
       set_max_neighbor_distance(DBL_MAX);
+    } else {
+      set_max_neighbor_distance(DBL_MAX);
+      set_component_membership(-1);
     }
-    else {
-      Init();
-    }
-    
   }
   
   /**
     * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
-  void Init(const arma::mat& dataset, index_t start, index_t count,
-            const DTBStat& left_stat, const DTBStat& right_stat) {
-    
-    Init(dataset, start, count);
-    
+  DTBStat(const arma::mat& dataset, index_t start, index_t count,
+          const DTBStat& left_stat, const DTBStat& right_stat) {
+    if (count == 1) {
+      set_component_membership(start);
+      set_max_neighbor_distance(DBL_MAX);
+    } else {
+      set_max_neighbor_distance(DBL_MAX);
+      set_component_membership(-1);
+    }
   }
   
 }; // class DTBStat
@@ -231,8 +233,8 @@ class DualTreeBoruvka {
           
           arma::vec reference_point = data_points_.col(reference_index);
           
-          double distance = 
-            la::DistanceSqEuclidean(query_point, reference_point);
+          double distance = mlpack::kernel::LMetric<2>::Evaluate(query_point,
+              reference_point);
           
           if (distance < neighbors_distances_[query_component_index]) {
             
@@ -629,6 +631,9 @@ class DualTreeBoruvka {
   } // ComputeMST
   
 }; //class DualTreeBoruvka
+
+}; // namespace emst
+}; // namespace mlpack
 
 PARAM(index_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
 

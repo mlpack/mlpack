@@ -11,7 +11,6 @@
 #include "dtb.h"
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 #include <fastlib/fx/io.h>
 
 PARAM_FLAG("using_thor", "For when an implementation of thor is around", 
@@ -26,6 +25,7 @@ PARAM_STRING("output_file", "Naive data output file.", "naive",
 PARAM(double, "total_squared_length", "Calculation result.", "dtb", 0.0, false);
 
 using namespace mlpack;
+using namespace mlpack::emst;
 
 int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
