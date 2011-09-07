@@ -42,7 +42,6 @@
 #include <fastlib/fastlib.h>
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 // maximum # of interations for SMO training
 const index_t MAX_NUM_ITER_SMO = 10000000;

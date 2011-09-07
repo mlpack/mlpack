@@ -14,8 +14,7 @@
 
 #include "opt_smo.h"
 
-#include "fastlib/fastlib.h"
-#include "fastlib/fx/io.h"
+#include <fastlib/fastlib.h>
 
 #include <string>
 #include <typeinfo>
