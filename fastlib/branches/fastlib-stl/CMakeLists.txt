@@ -19,7 +19,6 @@ set(Boost_ADDITIONAL_VERSIONS "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0"
 find_package(Boost COMPONENTS math_c99 program_options unit_test_framework REQUIRED) # may require math_tr1?
 
 option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
-option(WITH_SPARSE "Include sparse matrix code - requires Trilinos." OFF)
 option(SCALE_NORMAL "Compile with supported indices up to native int type" OFF)
 option(SCALE_LARGE "Support indices up to the maximum the machine's architecture can support" OFF)
 option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
@@ -27,14 +26,6 @@ option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
 
 option(DEBUG "Compile with debugging information" ON) # default to on for developers
 option(PROFILE "Compile with profiling information" ON) # default to on for developers
-
-if(WITH_SPARSE)
-   set(TRILINOS_REQUIRED_LIBS epetra anasazi aztecoo ifpack teuchos)
-   find_package(Trilinos REQUIRED)
-
-   include_directories(${TRILINOS_INCLUDE_DIR})
-   include_directories(${MPI_INCLUDE_DIR})
-endif(WITH_SPARSE)
 
 if(DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O0")
