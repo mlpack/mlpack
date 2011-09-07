@@ -54,12 +54,6 @@ set(DIRS
     svm
 )
 
-if(WITH_SPARSE)
-#   Don't compile this because sparse support in this branch is not really
-#   existent
-#   set(DIRS ${DIRS} kernel_pca)
-endif()
-
 if(WITH_OPTIMIZERS)
 #  set(DIRS ${DIRS} mvu)
 endif()
@@ -77,12 +71,6 @@ target_link_libraries(mlpack
   lapack
   blas
 )
-
-if(WITH_SPARSE)
-   target_link_libraries(mlpack
-      ${TRILINOS_LIBS}
-   )
-endif()
 
 # move header files to the right directory
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
