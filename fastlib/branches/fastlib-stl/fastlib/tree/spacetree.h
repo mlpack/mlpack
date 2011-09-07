@@ -18,31 +18,36 @@ namespace mlpack {
 namespace tree {
 
 /**
- * A binary space partitioning tree, such as KD or ball tree.
+ * A binary space partitioning tree, such as a KD-tree or a ball tree.  Once the
+ * bound and type of dataset is defined, the tree will construct itself.  Call
+ * the constructor with the dataset to build the tree on, and the entire tree
+ * will be built.
  *
- * This particular tree forbids you from having more children.
+ * This particular tree does not allow growth, so you cannot add or delete nodes
+ * from it.  If you need to add or delete a node, the better procedure is to
+ * rebuild the tree entirely.
  *
- * @param TBound the bounding type of each child (TODO explain interface)
- * @param TDataset the data set type (must be arma::mat)
- * @param TStatistic extra data in the node
- *
- * @experimental
+ * @tparam TBound The bound used for each node.  The valid types of bounds and
+ *     the necessary skeleton interface for this class can be found in bounds/.
+ * @tparam TDataset The type of dataset (forced to be arma::mat for now).
+ * @tparam TStatistic Extra data contained in the node.  See statistic.h for
+ *     the necessary skeleton interface. 
  */
 template<typename TBound, typename TDataset,
          typename TStatistic = EmptyStatistic<TDataset> >
 class BinarySpaceTree {
  public:
-  typedef TBound Bound;
-  typedef TDataset Dataset;
-  typedef TStatistic Statistic;
+  typedef TBound Bound; //< The bound type.
+  typedef TDataset Dataset; //< The dataset we are using.
+  typedef TStatistic Statistic; //< The statistic we are using.
 
  private:
-  BinarySpaceTree *left_;
-  BinarySpaceTree *right_;
-  index_t begin_;
-  index_t count_;
-  Bound bound_;
-  Statistic stat_;
+  BinarySpaceTree *left_; //< The left child node.
+  BinarySpaceTree *right_; //< The right child node.
+  index_t begin_; //< The first point in the dataset contained in this node.
+  index_t count_; //< The count of points in the dataset contained in this node.
+  Bound bound_; //< The bound object for this node.
+  Statistic stat_; //< The extra data contained in the node.
 
  public:
   /***
@@ -156,11 +161,26 @@ class BinarySpaceTree {
    * Splits the current node, assigning its left and right children recursively.
    *
    * Optionally, return a list of the changed indices.
+   *
+   * @param data Dataset which we are using.
+   * @param leaf_size Leaf size to split with.
+   * @param old_from_new Vector holding permuted indices.
    */
   void SplitNode(Dataset& data, index_t leaf_size);
   void SplitNode(Dataset& data, index_t leaf_size,
       std::vector<index_t>& old_from_new);
 
+  /***
+   * Find the index to split on for this node, given that we are splitting in
+   * the given split dimension on the specified split value.
+   *
+   * Optionally, return a list of the changed indices.
+   *
+   * @param data Dataset which we are using.
+   * @param split_dim Dimension of dataset to split on.
+   * @param split_val Value to split on, in the given split dimension.
+   * @param old_from_new Vector holding permuted indices.
+   */
   index_t GetSplitIndex(Dataset& data, int split_dim, double split_val);
   index_t GetSplitIndex(Dataset& data, int split_dim, double split_val,
       std::vector<index_t>& old_from_new);
