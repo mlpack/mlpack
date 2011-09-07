@@ -1,15 +1,15 @@
-function [f, g, H] = ThetaObjective(theta_d, phi_d, X_d, counts_d) 
+function [f, g, H] = ThetaObjective(theta_bar, theta_d, phi_d, X_d, counts_d) 
 
 % compute gradient and Hessian for minimization problem, excluding l_1 regularization term
 
 K = length(theta_d);
 
-log_sum_exp_theta_d = logsumexp(theta_d);
+log_sum_exp_theta_d = logsumexp(theta_bar + theta_d);
 
-theta_d_probs = exp(theta_d - repmat(log_sum_exp_theta_d, K, 1));
+theta_d_probs = exp(theta_bar + theta_d - repmat(log_sum_exp_theta_d, K, 1));
 
 f = -dot(theta_d, phi_d' * X_d) ...
-    + counts_d * logsumexp(theta_d)
+    + counts_d * logsumexp(theta_bar + theta_d)
 
 g = -phi_d' * X_d ...
     + counts_d * theta_d_probs;
