@@ -565,11 +565,12 @@ class DualTreeBoruvka {
       // Default leaf size is 1
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
-      leaf_size_ = IO::GetParam<index_t>("naive/leaf_size");
+      IO::GetParam<int>("tree/leaf_size") =
+          IO::GetParam<index_t>("naive/leaf_size");
       
       IO::StartTimer("naive/tree_building");
 
-      tree_ = new DTBTree(data_points_, leaf_size_, old_from_new_permutation_);
+      tree_ = new DTBTree(data_points_, old_from_new_permutation_);
       
       IO::StopTimer("naive/tree_building");
     }

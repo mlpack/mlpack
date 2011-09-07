@@ -32,9 +32,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
 
   // Get the leaf size; naive ensures that the entire tree is one node
   if(naive_)
-    leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
-  else
-    leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
+    IO::GetParam<int>("tree/leaf_size") =
+        std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
   knns_ = IO::GetParam<int>("neighbor_search/k");
@@ -51,14 +50,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& queries_in,
 
   // This call makes each tree from a matrix, leaf size, and two arrays
   // that record the permutation of the data points
-  if (dual_mode_)
-    query_tree_ = new TreeType(queries_, leaf_size_, old_from_new_queries_);
-  else
-    query_tree_ = new TreeType(queries_, queries_.n_cols,
-        old_from_new_queries_);
-
-  reference_tree_ = new TreeType(references_, leaf_size_,
-      old_from_new_references_);
+  query_tree_ = new TreeType(queries_, old_from_new_queries_);
+  reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
   IO::StopTimer("neighbor_search/tree_building");
@@ -81,9 +74,8 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
 
   // Get the leaf size from the module
   if(naive_)
-    leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
-  else
-    leaf_size_ = IO::GetParam<int>("neighbor_search/leaf_size");
+    IO::GetParam<int>("tree/leaf_size") =
+        std::max(queries_.n_cols, references_.n_cols);
 
   // K-nearest neighbors initialization
   knns_ = IO::GetParam<int>("neighbor_search/k");
@@ -102,8 +94,7 @@ NeighborSearch<Kernel, SortPolicy>::NeighborSearch(arma::mat& references_in,
   // that record the permutation of the data points
   // Instead of NULL, it is possible to specify an array new_from_old_
   query_tree_ = NULL;
-  reference_tree_ = new TreeType(references_, leaf_size_,
-      old_from_new_references_);
+  reference_tree_ = new TreeType(references_, old_from_new_references_);
 
   // Stop the timer we started above
   IO::StopTimer("neighbor_search/tree_building");

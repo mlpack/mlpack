@@ -19,7 +19,6 @@
 PARAM_MODULE("neighbor_search",
     "Parameters for the distance-based neighbor search.");
 PARAM_INT("k", "Number of neighbors to search for.", "neighbor_search", 5);
-PARAM_INT("leaf_size", "Leaf size for tree-building.", "neighbor_search", 20);
 PARAM_FLAG("single_mode", "If set, use single-tree mode (instead of "
     "dual-tree).", "neighbor_search");
 PARAM_FLAG("naive_mode", "If set, use naive computations (no trees).  This "
