@@ -6,7 +6,6 @@
 
 #include <fastlib/fastlib.h>
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 #include "fastlib/fx/io.h"
 #include "support.h"
 #include "mixtureDST.h"
