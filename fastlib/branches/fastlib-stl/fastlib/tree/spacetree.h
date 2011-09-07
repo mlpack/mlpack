@@ -17,6 +17,7 @@
 namespace mlpack {
 namespace tree {
 
+PARAM_MODULE("tree", "Parameters for the binary space partitioning tree.");
 PARAM_INT("leaf_size", "Leaf size used during tree construction.", "tree", 20);
 
 /**
