@@ -15,6 +15,9 @@
 #include "fastlib/fastlib.h"
 #include "mlpack/emst/union_find.h"
 #include "emst_cover.h"
+#include <armadillo>
+#include <fastlib/base/arma_compat.h>
+
 
 
 const fx_entry_doc fb_entries[] = {
@@ -93,23 +96,23 @@ private:
   typedef BinarySpaceTree<DHrectBound<2>, Matrix, FBStat> FBTree;
   
   FBTree* tree_;
-  ArrayList<EdgePair> edges_;
+  std::vector<EdgePair> edges_;
   
   fx_module* mod_;
   
   index_t number_of_points_;
   index_t number_of_edges_;
   UnionFind connections_;
-  Matrix data_points_;
+  arma::mat data_points_;
   
-  ArrayList<index_t> old_from_new_permutation_;
+  std::vector<index_t> old_from_new_permutation_;
   
   double total_dist_;
   
   // is this the right type?
   MinHeap<double, index_t> heap_;
   
-  ArrayList<index_t> candidate_neighbors_;
+  std::vector<index_t> candidate_neighbors_;
   
   /////////////// functions ///////////////////
   
@@ -137,7 +140,8 @@ private:
   } // AddEdge_
 
   
-  void FindNeighbor_(FBTree* tree, const Vector& point, index_t point_index, 
+  void FindNeighbor_(FBTree* tree, const arma::colvec& point, 
+                     index_t point_index, 
                      index_t* cand, double* dist);
   
   void UpdateMemberships_(FBTree* tree, index_t point_index);
@@ -200,12 +204,12 @@ public:
     fx_timer_stop(mod_, "tree_building");
     
     number_of_points_ = data_points_.n_cols();
-    edges_.Init(number_of_points_ - 1);
+    edges_((int)(number_of_points_ - 1));
     connections_.Init(number_of_points_);
     
     total_dist_ = 0.0;
     
-    candidate_neighbors_.Init(number_of_points_);
+    candidate_neighbors_((int)number_of_points_, -1);
     //candidate_neighbors_.SetAll(-1);
     
     heap_.Init();
