@@ -158,13 +158,6 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::BinarySpaceTree() :
   // Nothing to do.
 }
 
-template<typename TBound, typename TDataset, typename TStatistic>
-void BinarySpaceTree<TBound, TDataset, TStatistic>::Init(index_t begin_in,
-                                                         index_t count_in) {
-  begin_ = begin_in;
-  count_ = count_in;
-}
-
 /**
  * Find a node in this tree by its begin and count.
  *
@@ -223,26 +216,6 @@ BinarySpaceTree<TBound, TDataset, TStatistic>::FindByBeginCount(
     return right_->FindByBeginCount(begin_q, count_q);
 }
   
-/**
- * Used only when constructing the tree.
- */
-template<typename TBound, typename TDataset, typename TStatistic>
-void BinarySpaceTree<TBound, TDataset, TStatistic>::set_children(
-    const TDataset& data,
-    BinarySpaceTree *left_in,
-    BinarySpaceTree *right_in) {
-  left_ = left_in;
-  right_ = right_in;
-  if (!is_leaf()) {
-    stat_.Init(data, begin_, count_, left_->stat_, right_->stat_);
-    mlpack::IO::Assert(count_ == left_->count_ + right_->count_);
-    mlpack::IO::Assert(left_->begin_ == begin_);
-    mlpack::IO::Assert(right_->begin_ == begin_ + left_->count_);
-  } else {
-    stat_.Init(data, begin_, count_);
-  }
-}
-
 template<typename TBound, typename TDataset, typename TStatistic>
 const TBound& BinarySpaceTree<TBound, TDataset, TStatistic>::bound() const {
   return bound_;
