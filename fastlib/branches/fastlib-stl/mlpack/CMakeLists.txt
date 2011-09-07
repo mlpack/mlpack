@@ -41,12 +41,10 @@ set(DIRS
     fastica
     hmm
     infomax_ica
-#    isonmf  ## nothing here yet
     kde
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
     methods/nca
-#    mlpackdemo  ## matlab routines
     #mvu # requires optimization
     naive_bayes
     neighbor_search
