@@ -30,7 +30,6 @@
 
 #include <armadillo>
 #include <fastlib/data/dataset.h> 
-#include <fastlib/base/arma_compat.h>
 
 
 /*const fx_entry_doc parm_nbc_main_entries[] = {
