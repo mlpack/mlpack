@@ -42,7 +42,6 @@ set(DIRS
     hmm
     infomax_ica
 #    isonmf  ## nothing here yet
-    kalman
     kde
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
