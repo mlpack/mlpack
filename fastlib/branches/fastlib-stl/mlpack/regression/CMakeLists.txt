@@ -37,12 +37,3 @@ target_link_libraries(ridge_regression
    mlpack
    fastlib
 )
-
-# dataset preprocessing
-add_executable(dataset_preprocess
-   dataset_preprocess.cc
-)
-target_link_libraries(dataset_preprocess
-   mlpack
-   fastlib
-)
