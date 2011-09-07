@@ -41,7 +41,6 @@ set(DIRS
     fastica
     hmm
     infomax_ica
-    kde
 #    kernel_pca  # requires sparse 
     #mog # requires optimization
     methods/nca
