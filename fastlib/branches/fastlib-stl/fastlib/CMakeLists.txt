@@ -25,16 +25,11 @@ set(DIRS
    fx
    math
    tree
-#   sparse
-)  #!!
+)
 
 if(WITH_OPTIMIZERS)
    set(DIRS ${DIRS} optimization)
 endif(WITH_OPTIMIZERS)
-
-if(WITH_SPARSE)
-   set(DIRS ${DIRS} sparse)
-endif(WITH_SPARSE)
 
 foreach(dir ${DIRS})
   add_subdirectory( ${dir} )
