@@ -12,7 +12,6 @@
 #include <fastlib/fastlib.h>
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 #include <fastlib/base/arma_extend.h>
 #include <cmath>
 

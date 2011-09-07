@@ -10,7 +10,6 @@
 #include "fastica.h"
 
 #include <armadillo>
-#include <fastlib/base/arma_compat.h>
 
 /**
  * Here are usage instructions for this implementation of FastICA. Default values are given 
