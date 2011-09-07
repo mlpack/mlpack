@@ -1,6 +1,7 @@
 #include "fastlib/fastlib.h"
 #include "support.h"
 #include "fastlib/fx/io.h"
+#include "../core/kernels/lmetric.h"
 
 namespace hmm_support {
 
@@ -151,7 +152,8 @@ namespace hmm_support {
           arma::vec data_i_Vec = data[t].unsafe_col(k);
 
           for (j = 0; j < num_clusters; j++) {
-            double distance = la::DistanceSqEuclidean(data_i_Vec, centroids_[j]);
+            double distance = 
+                mlpack::kernel::LMetric<2>::Evaluate(data_i_Vec, centroids_[j]);
 
             if (distance < min_distance) {
               labels_[i] = j;
@@ -224,7 +226,8 @@ namespace hmm_support {
         arma::vec data_i_Vec = data.unsafe_col(i);
        
         for (j = 0; j < num_clusters; j++) {
-	  double distance = la::DistanceSqEuclidean(data_i_Vec, centroids_[j]);
+	  double distance =
+              mlpack::kernel::LMetric<2>::Evaluate(data_i_Vec, centroids_[j]);
           if (distance < min_distance) {
 	    labels_[i] = j;
 	    min_distance = distance;
