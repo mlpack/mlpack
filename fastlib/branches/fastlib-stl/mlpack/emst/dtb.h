@@ -108,8 +108,7 @@ class DualTreeBoruvka {
   // For now, everything is in Euclidean space
   static const index_t metric = 2;
 
-  typedef tree::BinarySpaceTree<DHrectBound<metric>, arma::mat, DTBStat>
-      DTBTree;
+  typedef tree::BinarySpaceTree<DHrectBound<metric>, DTBStat> DTBTree;
   
   //////// Member Variables /////////////////////
   

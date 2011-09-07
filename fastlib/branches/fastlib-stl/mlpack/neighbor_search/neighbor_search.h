@@ -114,7 +114,7 @@ class NeighborSearch {
   // TreeType are BinarySpaceTrees where the data are bounded by
   // Euclidean bounding boxes, the data are stored in a Matrix,
   // and each node has a QueryStat for its bound.
-  typedef tree::BinarySpaceTree<DHrectBound<2>, arma::mat, QueryStat> TreeType;
+  typedef tree::BinarySpaceTree<DHrectBound<2>, QueryStat> TreeType;
 
  private:
   // These will store our data sets.
