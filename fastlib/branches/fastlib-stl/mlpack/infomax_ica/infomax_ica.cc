@@ -94,14 +94,13 @@ void InfomaxICA::evaluateICA() {
 void InfomaxICA::sphere(arma::mat& data) {
   arma::mat sample_covariance = sampleCovariance(data);
   arma::mat wz = sqrtm(sample_covariance);
-  arma::mat wz_inverse(wz.n_rows, wz.n_cols);
   arma::mat data_sub_means = subMeans(data);
 
-  if (arma::inv(wz_inverse, wz)) {
-    // Not tested.
-    wz_inverse *= 2.0;
-    data = wz_inverse * data_sub_means;
-  }
+  arma::mat wz_inverse = inv(wz);
+  
+  // Not tested.
+  wz_inverse *= 2.0;
+  data = wz_inverse * data_sub_means;
 }
 
 // Covariance matrix.
