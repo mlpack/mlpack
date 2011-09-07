@@ -9,9 +9,6 @@ set(SOURCES
    dhrectbound_impl.h
    dballbound.h
    dballbound_impl.h
-   kdtree.h
-   kdtree_impl.h
-   kdtree_impl.cc
    spacetree.h
    statistic.h
 )
@@ -21,19 +18,9 @@ set(DIR_SRCS)
 foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
-# append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
+# append sources (with directory name) to list of all FASTLIB sources (used at
+# the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-#add_library(tree ${SOURCES})
-# link dependencies of tree
-#target_link_libraries(tree
-#   base
-#   col
-#   data
-#   file
-#   fx
-#   la
-#)
 
 # test executable
 add_executable(tree_test
