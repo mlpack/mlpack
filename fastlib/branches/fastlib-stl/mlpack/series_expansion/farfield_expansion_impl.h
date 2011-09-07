@@ -352,7 +352,8 @@ double FarFieldExpansion<TKernelAux>::MixField(const arma::mat &data,
       arma::vec j_col = data.unsafe_col(j);
       
       exhaustive_ij(i - node1_begin, j - node2_begin) =
-	 kernel_->EvalUnnormOnSq(la::DistanceSqEuclidean(i_col, j_col));
+          kernel_->EvalUnnormOnSq(mlpack::kernel::LMetric<2>::Evaluate(i_col,
+          j_col));
     }
   }
 

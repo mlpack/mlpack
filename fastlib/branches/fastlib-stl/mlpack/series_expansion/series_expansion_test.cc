@@ -4,6 +4,7 @@
 #include "fourier_expansion.h"
 #include "fourier_series_expansion_aux.h"
 #include "fourier_kernel_aux.h"
+#include <mlpack/core/kernels/lmetric.h>
 
 using namespace mlpack;
 
@@ -19,8 +20,8 @@ class SeriesExpansionTest {
     double sum = 0.0;
     
     for(index_t i = 0; i < reference_set.n_cols; i++) {
-      double squared_distance = 
-	la::DistanceSqEuclidean(query_point, reference_set.unsafe_col(i));
+      double squared_distance = kernel::LMetric<2>::Evaluate(query_point,
+          reference_set.unsafe_col(i));
       printf("Got distance: %g\n", squared_distance);
       sum += kernel_aux.kernel_.EvalUnnormOnSq(squared_distance);
     }
