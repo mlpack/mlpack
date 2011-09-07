@@ -62,22 +62,22 @@ class InfomaxICA {
  public:
   InfomaxICA();
   InfomaxICA(double lambda, index_t B, double epsilon);
-  void applyICA(const Matrix &dataset);
+  void applyICA(const arma::mat& dataset);
   void evaluateICA();
-  void displayMatrix(const Matrix &m);
-  void displayVector(const Vector &m);
-  void getUnmixing(Matrix &w);
-  void getSources(const Matrix &dataset, Matrix &s);
+  void displayMatrix(const arma::mat& m);
+  void displayVector(const arma::vec& m);
+  void getUnmixing(arma::mat& w);
+  void getSources(const arma::mat& dataset, arma::mat& s);
   void setLambda(const double lambda);
   void setB(const index_t b);
   void setEpsilon(const double epsilon);
   
-  Matrix sampleCovariance(const Matrix &m);
-  Matrix sqrtm(const Matrix &m);
+  arma::mat sampleCovariance(const arma::mat& m);
+  arma::mat sqrtm(const arma::mat& m);
 
  private:
-  Matrix w_;
-  Matrix data_;
+  arma::mat w_;
+  arma::mat data_;
   // learning rate 
   double lambda_;
   // block size
@@ -85,17 +85,10 @@ class InfomaxICA {
   // epsilon for convergence
   double epsilon_;
   // utility functions
-  void expM(Matrix &m);
-  void addOne(Matrix &m);
-  void invertVals(Matrix &m);
-  void vectorize(const Matrix &m, Vector &v);
-  Matrix eye(index_t dim,double diagVal);
- // Matrix sqrtm(const Matrix &m);
-  void sphere(Matrix &m);
-  Matrix subMeans(const Matrix &m);
-  Vector rowMean(const Matrix &m);
-  //Matrix sampleCovariance(const Matrix &m);
-  double w_delta(const Matrix &w_prev, const Matrix &w_pres);
+  void sphere(arma::mat& m);
+  arma::mat subMeans(const arma::mat& m);
+  arma::vec rowMean(const arma::mat& m);
+  double w_delta(const arma::mat& w_prev, const arma::mat& w_pres);
 };
 
 #endif

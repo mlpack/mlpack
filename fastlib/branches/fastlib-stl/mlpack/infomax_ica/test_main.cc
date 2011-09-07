@@ -3,85 +3,59 @@
  *
  * Test driver for our infomax ICA method.
  */
-
+#include <fastlib/fastlib.h>
 #include <fastlib/fx/io.h>
 #include "infomax_ica.h"
-#include "fastlib/fastlib.h"
-
 
 using namespace mlpack;
-
 
 #define BOOST_TEST_MODULE TestInfomaxICA 
 #include <boost/test/unit_test.hpp> 
 
-
-
-
-void testSQRTM(InfomaxICA &icab_, Matrix &m) { 
-   icab_.sqrtm(m);
+void testSQRTM(InfomaxICA& icab_, arma::mat& m) { 
+  icab_.sqrtm(m);
 }
 BOOST_AUTO_TEST_CASE(SqrtM) { 
-    Matrix testdatab_;
-    double lambdab_;
-    int bb_;
-    double epsilonb_;
+  arma::mat testdatab_;
+  double lambdab_ = 0.001;
+  int bb_ = 5;
+  double epsilonb_ = 0.001;
 
-    arma::mat tmpdatab;
-    data::Load("fake.arff", tmpdatab);
-    arma_compat::armaToMatrix(tmpdatab, testdatab_);
-    lambdab_=0.001;
-    bb_=5;
-    epsilonb_=0.001;
-    InfomaxICA icab_(lambdab_, bb_, epsilonb_);
+  data::Load("fake.arff", testdatab_);
+    
+  InfomaxICA icab_(lambdab_, bb_, epsilonb_);
 
-    Matrix intermediateb = icab_.sampleCovariance(testdatab_);
-    testSQRTM(icab_, intermediateb);   
+  arma::mat intermediateb = icab_.sampleCovariance(testdatab_);
+  testSQRTM(icab_, intermediateb);   
 }
 
-
 BOOST_AUTO_TEST_CASE(TestCov) {
+  arma::mat testdata_;
 
-    Matrix testdata_;
+  double lambda_ = 0.001;
+  int b_ = 5;
+  double epsilon_ = 0.001;
 
-    double lambda_;
-    int b_;
-    double epsilon_;
-    // load some test data that has been verified using the matlab
-    // implementation of infomax
-    arma::mat tmpdata;
-    data::Load("fake.arff", tmpdata);
-    arma_compat::armaToMatrix(tmpdata, testdata_);
-    lambda_=0.001;
-    b_=5;
-    epsilon_=0.001;
+  // load some test data that has been verified using the matlab
+  // implementation of infomax
+  data::Load("fake.arff", testdata_);
 
-    InfomaxICA ica_(lambda_,b_,epsilon_);
-    ica_.sampleCovariance(testdata_);
-
+  InfomaxICA ica_(lambda_, b_, epsilon_);
+  ica_.sampleCovariance(testdata_);
 }
 
 BOOST_AUTO_TEST_CASE(TestICA) {
+  arma::mat testdata_;
+  double lambda_ = 0.001;
+  int b_ = 5;
+  double epsilon_ = 0.001;
 
-    Matrix testdata_;
-    double lambda_;
-    int b_;
-    double epsilon_;
+  // load some test data that has been verified using the matlab
+  // implementation of infomax
+  data::Load("fake.arff", testdata_);
 
-    // load some test data that has been verified using the matlab
-    // implementation of infomax
-    arma::mat tmpdata;
-    data::Load("fake.arff", tmpdata);
-    arma_compat::armaToMatrix(tmpdata, testdata_);
-    lambda_=0.001;
-    b_=5;
-    epsilon_=0.001;
-
-
-    InfomaxICA ica_(lambda_,b_,epsilon_);
-    Matrix unmixing;
-    ica_.applyICA(testdata_);
-    ica_.getUnmixing(unmixing);
-    ica_.displayMatrix(unmixing);
- }
-
+  InfomaxICA ica_(lambda_, b_, epsilon_);
+  arma::mat unmixing;
+  ica_.applyICA(testdata_);
+  ica_.getUnmixing(unmixing);
+}
