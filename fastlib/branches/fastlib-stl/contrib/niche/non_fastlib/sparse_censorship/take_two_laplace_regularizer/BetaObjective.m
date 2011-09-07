@@ -11,18 +11,26 @@ for p = 1:P
   probs(:,p) = exp(beta_k + eta(:,k,p) - logsumexp(beta_k + eta(:,k,p)));
 end
 
+f = ???;
+
 sum_weighted_counts = zeros(d, 1);
 g = zeros(V, 1);
 for d = 1:D
   weighted_count = X(:,d) .* phi{d}(:,k);
   sum_weighted_counts(d) = sum(weighted_count);
-  g = g + weighted_count - sum_weighted_counts(d) * probs(:,publishers(d))
+  g = g - weighted_count + sum_weighted_counts(d) * probs(:,publishers(d))
 end
 
 H = zeros(V, V);
+
+sum_weighted_counts_by_publisher = zeros(P, 1);
 for d = 1:D
-  p = publishers(d);
-  H = H + sum_weighted_counts(d) ...
-      * diag(probs(:,d) + probs(:,d) * probs(:,d)'; % note, this will be a massive, dense V by V matrix, so we should not create this explicitly!
+  p_d = publishers(d);
+  sum_weighted_counts_py_publisher(p_d) = ...
+      sum_weighted_counts_by_publisher(p_d) + sum_weighted_counts(d);
 end
 
+for p = 1:P
+  H = H + sum_weighted_counts_by_publisher(p) ...
+      * (diag(probs(:,p)) - probs(:,p) * probs(:,p)'; % note, this will be a massive, dense V by V matrix, so we should
+end
