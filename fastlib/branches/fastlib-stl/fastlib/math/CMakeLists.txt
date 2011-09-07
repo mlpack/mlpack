@@ -11,8 +11,6 @@ set(SOURCES
    kernel.h
    math_lib.h
    math_lib_impl.h
-   statistics.h
-   statistics.cc
 )
 
 # add directory name to sources

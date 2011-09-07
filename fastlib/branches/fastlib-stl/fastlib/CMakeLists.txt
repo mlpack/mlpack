@@ -23,7 +23,6 @@ set(DIRS
    data
    file
    fx
-   la
    math
    tree
 #   sparse

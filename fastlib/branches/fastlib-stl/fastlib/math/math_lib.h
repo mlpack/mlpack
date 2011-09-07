@@ -508,8 +508,5 @@ struct DRange {
 #include "discrete.h"
 #include "kernel.h"
 #include "geometry.h"
-//#include "discrete.h"
-//#include "kernel.h"
-//#include "geometry.h"
 
 #endif

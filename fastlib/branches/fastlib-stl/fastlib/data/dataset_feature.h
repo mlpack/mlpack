@@ -16,7 +16,6 @@
 #include <vector>
 
 #include "fastlib/fx/io.h"
-#include "../la/matrix.h"
 #include "../math/discrete.h"
 #include "../file/textfile.h"
 

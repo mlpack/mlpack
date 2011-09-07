@@ -9,8 +9,6 @@
 
 #include <cmath>
 #include "base/common.h"
-#include "la/la.h"
-#include "la/matrix.h"
 #include "data/dataset.h"
 #include "math/math_lib.h"
 #include "file/textfile.h"
