@@ -42,7 +42,7 @@ class GeneralBinarySpaceTree {
   Statistic stat_;
   
   public:
-  /*
+  
   GeneralBinarySpaceTree() {
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
@@ -60,8 +60,7 @@ class GeneralBinarySpaceTree {
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
   }
-  */
-  
+    
   void Init(size_t begin_in, size_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);

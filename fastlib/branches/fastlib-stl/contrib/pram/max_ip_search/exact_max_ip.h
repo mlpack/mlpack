@@ -9,7 +9,6 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <armadillo>
-// #include <math.h>
 #include "general_spacetree.h"
 #include "gen_metric_tree.h"
 
@@ -71,6 +70,7 @@ private:
   arma::mat references_;
   // This will store the query index for the single tree run
   size_t query_;
+  double query_norm_;
   // Pointers to the roots of the two trees.
   TreeType* reference_tree_;
   // The total number of prunes.
@@ -132,7 +132,8 @@ private:
 
     double rad = reference_node->bound().radius();
 
-    return (arma::dot(q, centroid) + rad);
+    // return (arma::dot(q, centroid) + (query_norm_ * rad));
+    return (query_norm_ * (arma::norm(centroid, 2) + std::sqrt(rad)));
   } 
 
 
@@ -143,12 +144,13 @@ private:
    
     // Check that the pointers are not NULL
     DEBUG_ASSERT(reference_node != NULL);
+    // DEBUG_ASSERT(reference_node->is_leaf());
 
     DEBUG_ASSERT(query_ >= 0);
     DEBUG_ASSERT(query_ < (index_t) queries_.n_cols);
 
-    // Check that we really should be in the base case
-    DEBUG_WARN_IF(!reference_node->is_leaf());
+//     // Check that we really should be in the base case
+//     DEBUG_WARN_IF(!reference_node->is_leaf());
 
     // Used to find the query node's new upper bound
     // query_min_ip = DBL_MAX;
@@ -221,6 +223,8 @@ private:
     if (upper_bound_ip < max_ips_((query_*knns_) + knns_ -1)) { 
       // Pruned by distance
       number_of_prunes_++;
+//       IO::Info << "Current best: " << max_ips_((query_ * knns_) + knns_ -1)
+// 	       << std::endl << "Node best: " << upper_bound_ip << std::endl;
     }
 //     // node->is_leaf() works as one would expect
 //     else if (query_node->is_leaf() && reference_node->is_leaf()) {
@@ -502,6 +506,14 @@ public:
 // 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
+
+      query_norm_ = arma::norm(queries_.col(query_), 2);
+//       double query_norm_test = std::sqrt(arma::dot(queries_.col(query_), 
+// 						   queries_.col(query_)));
+
+//       IO::Info << "Arma val: " << query_norm_ << std::endl
+// 	       << "Crude val: " << query_norm_test << std::endl;
+
       ComputeNeighborsRecursion_(reference_tree_, 
 				 MaxNodeIP_(reference_tree_));
     }
