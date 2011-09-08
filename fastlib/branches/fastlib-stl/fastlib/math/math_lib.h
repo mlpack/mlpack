@@ -229,7 +229,7 @@ struct DRange {
   /** Initialize to an empty set, where lo > hi. */
   void InitEmptySet() {
     lo = DBL_MAX;
-    hi = DBL_MAX;
+    hi = -DBL_MAX;
   }
 
   /** Initializes to -infinity to infinity. */
