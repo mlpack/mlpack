@@ -4,12 +4,22 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-  node_tuple.h
-  node_tuple.cc
-  generic_npt_alg.h
-  generic_npt_alg_impl.h
+  angle_driver.h
+  angle_driver.cc
   angle_matcher.h
   angle_matcher.cc
+  angle_results.h
+  angle_results.cc  
+  efficient_resampling.h
+  efficient_resampling.cc
+  generic_npt_alg.h
+  generic_npt_alg_impl.h
+  node_tuple.h
+  node_tuple.cc
+  single_matcher.h
+  single_matcher.cc
+  single_results.h
+  single_results.cc
 )
 # IMPORTANT: do I need the mains here?
 

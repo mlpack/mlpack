@@ -73,8 +73,7 @@ namespace npt {
     // in the correct place
     // note that region_ids.size() + num_random = tuple_size
     void ProcessResults(std::vector<int> region_ids, int num_random,
-                        AngleMatcher& matcher,
-                        int r1_ind = -1, int theta_ind = -1);
+                        AngleMatcher& matcher);
     
     void PrintResults();
     

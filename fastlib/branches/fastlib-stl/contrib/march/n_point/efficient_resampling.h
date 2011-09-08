@@ -1,5 +1,5 @@
 /*
- *  jackknife_resampling.h
+ *  efficient_resampling.h
  *  
  *
  *  Created by William March on 8/24/11.
@@ -18,13 +18,9 @@ namespace npt {
   
   // TODO: figure out how to permute the weights after building trees
   
-  template <class TDriver>
   class EfficientResampling {
     
   private:
-    
-    // this is passed in or constructed here?
-    TDriver driver_;
     
     arma::mat data_all_mat_;
     arma::colvec data_all_weights_;
@@ -37,6 +33,7 @@ namespace npt {
     std::vector<NptNode*> data_trees_;
 
     // TODO: what's the right way to handle this?
+    // convention: last one is the random
     std::vector<arma::mat*> data_mats_;
     std::vector<arma::colvec*> data_weights_;
     
@@ -57,17 +54,6 @@ namespace npt {
     // IMPORTANT: assuming the data live in a cube
     double data_box_length_;
     
-    // indexed by [resampling_region][num_random][r1][theta]
-    boost::multi_array<int, 4> results_;
-    boost::multi_array<double, 4> weighted_results_;
-    
-    // matcher info
-    std::vector<double> r1_vec_;
-    double r2_mult_;
-    std::vector<double> theta_vec_;
-    double bin_width_;
-
-    
     ///////////////// functions ////////////////////////
     int FindRegion_(arma::colvec& col);
 
@@ -79,11 +65,9 @@ namespace npt {
     
   public:
     
-    JackknifeResampling(arma::mat& data, arma::colvec& weights,
+    EfficientResampling(arma::mat& data, arma::colvec& weights,
                         arma::mat& random, arma::colvec& rweights,
                         int num_regions, double box_length,
-                        std::vector<double>& r1, double r2_mult,
-                        std::vector<double>& thetas, double bin_width,
                         int leaf_size) :
     // trying to avoid copying data
     data_all_mat_(data.memptr(), data.n_rows, data.n_cols, false), 
@@ -92,13 +76,8 @@ namespace npt {
     random_weights_(rweights),
     num_resampling_regions_(num_regions), data_box_length_(box_length),
     data_trees_(num_regions),
-    results_(boost::extents[num_regions][4][r1.size()][thetas.size()],
-             c_storage_order(), 0),
-    weighted_results_(boost::extents[num_regions][4][r1.size()][thetas.size()],
-                      c_storage_order(), 0.0),
     data_mats_(num_regions), leaf_size_(leaf_size),
     data_weights_(num_regions),
-    r1_vec_(r1), r2_mult_(r2_mult), theta_vec_(thetas), bin_width_(bin_width)
     {
       
       tuple_size_ = 3;
@@ -135,7 +114,8 @@ namespace npt {
       SplitData_();
       
       for (int i = 0; i < num_resampling_regions_; i++) {
-        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i].n_cols << "\n";
+        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i].n_cols;
+        mlpack::IO::Info << " points.\n";
       }
       
       
@@ -147,10 +127,42 @@ namespace npt {
     } // constructor
     
     
-    void Compute();
+    std::vector<arma::mat*>& data_mats() {
+      return data_mats_;
+    }
     
-    void PrintResults();
+    // TODO: decide on pointers vs. references vs. whatever
+    arma::mat& data_mat(int i) {
+      return data_mats_[i];
+    }
+
+    std::vector<arma::colvec*>& data_weights() {
+      return data_weights_;
+    }
     
+    arma::covec& data_weight(int i) {
+      return data_weights_[i];
+    }
+    
+    arma::mat& random_mat() {
+      return random_mat_;
+    }
+    
+    arma::colvec& random_weights() {
+      return random_weights_;
+    }
+    
+    NptNode* random_tree() {
+      return random_tree_;
+    }
+    
+    std::vector<NptNode*>& data_trees() {
+      return data_trees_;
+    }
+    
+    NptNode* data_tree(int i) {
+      return data_trees_[i];
+    }
     
     
   }; // class
