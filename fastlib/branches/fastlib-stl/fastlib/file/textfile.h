@@ -324,7 +324,7 @@ class TextWriter {
    */
   ~TextWriter() {
     if (f_) {
-      //MUST_PASS(SUCCESS_FROM_C(::fclose(f_)));
+      mlpack::IO::Assert(fclose(f_) >= 0);
       mlpack::IO::AssertMessage(fclose(f_) >= 0, "File close failed!");
     }
     f_ = NULL;
