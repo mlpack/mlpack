@@ -27,7 +27,7 @@
  */
 template<class TBound,
          class TDataset,
-         class TStatistic = EmptyStatistic<TDataset> >
+         class TStatistic = EmptyStatistic>
 class GeneralBinarySpaceTree {
   public:
   typedef TBound Bound;

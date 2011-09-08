@@ -26,6 +26,9 @@ PARAM_DOUBLE("alpha", "The error probability", "maxip", 0.95);
 PARAM_INT("leaf_size", "The leaf size for the ball-tree", 
 	  "maxip", 20);
 
+PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
+	   " pruning using the angles as well", "maxip");
+
 
 //   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
 //    " The timer to record the time taken to build" 
@@ -60,7 +63,8 @@ class MaxIP {
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound< kernel::LMetric<2>, arma::vec>, arma::mat> TreeType;
+  // typedef GeneralBinarySpaceTree<DBallBound< kernel::LMetric<2>, arma::vec>, arma::mat> TreeType;
+  typedef GeneralBinarySpaceTree<DBallBound, arma::mat> TreeType;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -129,11 +133,44 @@ private:
     // fix this to compute distance between a point and a ball tree
     arma::vec q = queries_.col(query_);
     arma::vec centroid = reference_node->bound().center();
+    double c_norm = arma::norm(centroid, 2);
 
-    double rad = reference_node->bound().radius();
+    double rad = std::sqrt(reference_node->bound().radius());
 
-    // return (arma::dot(q, centroid) + (query_norm_ * rad));
-    return (query_norm_ * (arma::norm(centroid, 2) + std::sqrt(rad)));
+    double max_cos_qr = 1.0;
+
+    if (IO::HasParam("maxip/angle_prune")) { 
+      // tighter bound of \max_{r \in B_p^R} <q,r> 
+      //    = |q| \max_{r \in B_p^R} |r| cos <qr 
+      //    \leq |q| \max_{r \in B_p^R} |r| \max_{r \in B_p^R} cos <qr 
+      //    \leq |q| (|p|+R) if <qp \leq \max_r <pr
+      //    \leq |q| (|p|+R) cos( <qp - \max_r <pr ) otherwise
+
+      if (rad <= c_norm) {
+	double cos_qp = arma::dot(q, centroid) 
+	  / (query_norm_ * c_norm);
+	double sin_qp = std::sqrt(1 - cos_qp^2);
+
+	double max_sin_pr = rad / c_norm;
+	double min_cos_pr = std::sqrt(1 - max_sin_pr^2);
+
+	if (min_cos_pr > cos_qp) { // <qp \geq \max_r <pr
+	  // cos( <qp - <pr ) = cos <qp * cos <pr + sin <qp * sin <pr
+	  double cos_qp_max_pr = (cos_qp * min_cos_pr) 
+	    + (sin_qp * max_sin_pr);
+
+	  max_cos_qr = std::max(cos_qp_max_pr, 0);
+	}
+      }
+
+    }
+
+    // Otherwise :
+    // simple bound of \max_{r \in B_p^R} <q,r> 
+    //    = |q| \max_{r \in B_p^R} |r| cos <qr 
+    //    \leq |q| \max_{r \in B_p^R} |r| \leq |q| (|p|+R)
+
+    return (query_norm_ * (c_norm + rad) * max_cos_qr);
   } 
 
 
@@ -441,6 +478,8 @@ public:
     queries_ = queries_in;
     references_ = references_in;
     
+    // track the number of prunes
+    number_of_prunes_ = 0;
     
     // The data sets need to have the same number of dimensions
     DEBUG_ASSERT(queries_.n_rows == references_.n_rows);
@@ -528,6 +567,9 @@ public:
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
 
+    IO::Info << "Tree-based Search - Number of prunes: " 
+	     << number_of_prunes_ << std::endl;
+
 //     NOTIFY("Tdc = %zu"d, Tmc = %zu"d, adc = %lg, amc = %lg",
 // 	   dc, mc, (float)dc/(float)query_trees_.size(), 
 // 	   (float)mc/(float)query_trees_.size());
@@ -557,6 +599,8 @@ public:
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
     
+    IO::Info << "Brute-force Search - Number of prunes: " 
+	     << number_of_prunes_ << std::endl;
 //     // Start on the root of each tree
 //     // the index of the query in the queries_ matrix
 //     query_ = 0;
