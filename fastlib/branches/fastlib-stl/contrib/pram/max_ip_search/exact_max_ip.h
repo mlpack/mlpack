@@ -37,6 +37,7 @@ PARAM_INT("leaf_size", "The leaf size for the ball-tree",
 //   {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
 //    " The timer to compute the sample sizes.\n"},
 
+using namespace mlpack;
 
 /**
  * Performs all-nearest-neighbors.  This class will build the trees and 
@@ -45,18 +46,22 @@ PARAM_INT("leaf_size", "The leaf size for the ball-tree",
 class MaxIP {
   
 //   //////////////////////////// Nested Classes /////////////////////////
-  class QueryStat {
-  private:
-    index_t test_;
+//   class QueryStat {
+//   private:
+//     index_t test_;
 
-  public:
-    index_t test() { return test_; }
-  } // QueryStat
+//   public:
+//     index_t test() { return test_; }
+
+//     void Init() {
+//       test_ = 0;
+//     }
+//   }; // QueryStat
 
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound< mlpack::kernel::LMetric<2>, arma::vec>, arma::mat, QueryStat> TreeType;
+  typedef GeneralBinarySpaceTree<DBallBound< kernel::LMetric<2>, arma::vec>, arma::mat> TreeType;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -87,7 +92,7 @@ private:
   
   // Add this at the beginning of a class to prevent accidentally
   // calling the copy constructor
-  FORBID_ACCIDENTAL_COPIES(MaxIP);
+  // FORBID_ACCIDENTAL_COPIES(MaxIP);
   
 public:
   /**
@@ -139,7 +144,8 @@ private:
     // Check that the pointers are not NULL
     DEBUG_ASSERT(reference_node != NULL);
 
-    DEBUG_ASSERT(query_ > -1 && query_ < queries_.n_cols);
+    DEBUG_ASSERT(query_ >= 0);
+    DEBUG_ASSERT(query_ < (index_t) queries_.n_cols);
 
     // Check that we really should be in the base case
     DEBUG_WARN_IF(!reference_node->is_leaf());
@@ -345,7 +351,7 @@ public:
     number_of_prunes_ = 0;
     
     // Get the leaf size from the module
-    leaf_size_ = *(IO::GetParam<int>("leaf_size"));
+    leaf_size_ = IO::GetParam<int>("maxip/leaf_size");
     // Make sure the leaf size is valid
     DEBUG_ASSERT(leaf_size_ > 0);
     
@@ -357,7 +363,7 @@ public:
     DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
     
     // K-nearest neighbors initialization
-    knns_ = *(IO::GetParam<int>("knns"));
+    knns_ = IO::GetParam<int>("maxip/knns");
   
     // Initialize the list of nearest neighbor candidates
     max_ip_indices_ 
@@ -436,7 +442,7 @@ public:
     DEBUG_ASSERT(queries_.n_rows == references_.n_rows);
     
     // K-nearest neighbors initialization
-    knns_ = IO::GetParam<int>("knns");
+    knns_ = IO::GetParam<int>("maxip/knns");
   
     // Initialize the list of nearest neighbor candidates
     max_ip_indices_
@@ -448,7 +454,7 @@ public:
 
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
-    leaf_size_ = std::max(queries_.n_cols(), references_.n_cols());
+    leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
 
     // We'll time tree building
     IO::StartTimer("tree_building");

@@ -2,31 +2,31 @@
 #include <string>
 #include "exact_max_ip.h"
 
-// PROGRAM_INFO("Maximum Inner Product", "This program "
-// 	     "returns the maximum inner product for a "
-// 	     "given query over a set of points (references).");
+PROGRAM_INFO("Maximum Inner Product", "This program "
+ 	     "returns the maximum inner product for a "
+ 	     "given query over a set of points (references).", 
+	     "maxip");
 
-PARAM_MODULE("maxip_main", "Parameters for the main "
-	     "file to compute the maximum inner product "
-	     "for a given query over a given set of "
-	     "references.");
+// PARAM_MODULE("maxip_main", "Parameters for the main "
+// 	     "file to compute the maximum inner product "
+// 	     "for a given query over a given set of "
+// 	     "references.");
 
-PARAM_STRING_REQ("r", "The reference set", "maxip_main");
-PARAM_STRING_REQ("q", "The set of queries", "maxip_main");
+PARAM_STRING_REQ("r", "The reference set", "");
+PARAM_STRING_REQ("q", "The set of queries", "");
 
 PARAM_FLAG("donaive", "The flag to trigger the naive "
-	   "computation", "maxip_main");
+	   "computation", "");
 PARAM_FLAG("dofastexact", "The flag to trigger the tree-based"
-	   " search algorithm", "maxip_main");
+	   " search algorithm", "");
 PARAM_FLAG("dofastapprox", "The flag to trigger the "
 	   "tree-based rank-approximate search algorithm",
-	   "maxip_main");
+	   "");
 
-PARAM_STRING("result_file", "The file where the output "
-	     "will be written into", "maxip_main",
-	     "results.txt");
+PARAM_STRING("maxip_file", "The file where the output "
+	     "will be written into", "", "results.txt");
 PARAM_FLAG("print_results", "The flag to trigger the "
-	   "printing of the output", "maxip_main");
+	   "printing of the output", "");
 
 /**
  * This function checks if the neighbors computed 
@@ -37,6 +37,8 @@ PARAM_FLAG("print_results", "The flag to trigger the "
 
 // void count_mismatched_neighbors(arma::Col<index_t>*, arma::vec*, 
 // 				arma::Col<index_t>*, arma::vec*);
+
+using namespace mlpack;
 
 int main (int argc, char *argv[]) {
 
