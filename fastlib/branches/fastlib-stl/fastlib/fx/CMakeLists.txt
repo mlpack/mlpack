@@ -18,6 +18,7 @@ set(SOURCES
    nulloutstream.cc 
    prefixedoutstream.h
    prefixedoutstream.cc
+   prefixedoutstream_impl.h
 )
 
 # add directory name to sources
