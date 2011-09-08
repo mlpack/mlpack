@@ -6,14 +6,11 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
    ansi_colors.h
    arma_extend.h
-   arma_extend/arma_ostream_prefixed_bones.hpp
-   arma_extend/arma_ostream_prefixed_meat.hpp
    arma_extend/fn_ccov.hpp
    arma_extend/glue_ccov_meat.hpp
    arma_extend/glue_ccov_proto.hpp
    arma_extend/op_ccov_meat.hpp
    arma_extend/op_ccov_proto.hpp
-   arma_extend/operator_ostream.hpp
    arma_extend/promote_type.hpp
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
