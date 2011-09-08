@@ -114,6 +114,8 @@ class MapMatrix {
 
         std::map<int, int> *position_to_id_map_;
 
+        int current_index_;
+
         int current_pos_;
 
         int num_rows_;
@@ -127,7 +129,7 @@ class MapMatrix {
         }
 
         int current_id() const {
-          return position_to_id_map_->find(current_pos_)->second;
+          return position_to_id_map_->find(current_index_)->second;
         }
 
         int n_cols() const {
@@ -136,6 +138,10 @@ class MapMatrix {
 
         int n_rows() const {
           return num_rows_;
+        }
+
+        int current_index() const {
+          return current_index_;
         }
 
         int current_pos() const {
@@ -158,9 +164,10 @@ class MapMatrix {
           ptr_ = const_cast<iterator &>(it_in).ptr();
           position_to_id_map_ =
             const_cast<iterator &>(it_in).position_to_id_map();
-          current_pos_ = const_cast<iterator &>(it_in).current_pos();
-          num_rows_ = const_cast<iterator &>(it_in).n_rows();
-          num_cols_ = const_cast<iterator &>(it_in).n_cols();
+          current_index_ = it_in.current_index();
+          current_pos_ = it_in.current_pos();
+          num_rows_ = it_in.n_rows();
+          num_cols_ = it_in.n_cols();
         }
 
         iterator(const iterator &it_in) {
@@ -169,11 +176,12 @@ class MapMatrix {
 
         iterator(
           const T *ptr_in, const std::map<int, int> *position_to_id_map_in,
-          int current_pos_in, int num_rows_in, int num_cols_in) {
+          int num_rows_in, int num_cols_in) {
           ptr_ = const_cast<T *>(ptr_in);
           position_to_id_map_ =
             const_cast< std::map<int, int> * >(position_to_id_map_in);
-          current_pos_ = current_pos_in;
+          current_index_ = 0;
+          current_pos_ = 0;
           num_rows_ = num_rows_in;
           num_cols_ = num_cols_in;
         }
@@ -181,16 +189,18 @@ class MapMatrix {
         iterator() {
           position_to_id_map_ = NULL;
           ptr_ = NULL;
+          current_index_ = 0;
           current_pos_ = 0;
           num_rows_ = 0;
           num_cols_ = 0;
         }
 
         bool HasNext() const {
-          return current_pos_ < num_cols_;
+          return current_index_ < num_cols_;
         }
 
         void operator++(int) {
+          current_index_++;
           current_pos_ += num_rows_;
         }
 
@@ -232,8 +242,7 @@ class MapMatrix {
      */
     iterator get_iterator() const {
       return iterator(
-               matrix_.get(), position_to_id_map_.get(), 0,
-               num_rows_, num_cols_);
+               matrix_.get(), position_to_id_map_.get(), num_rows_, num_cols_);
     }
 
     /** @brief Returns the number of rows stored in the map matrix.
@@ -251,8 +260,6 @@ class MapMatrix {
     /** @brief The default constructor.
      */
     MapMatrix() {
-      num_rows_ = 0;
-      num_cols_ = 0;
       indices_to_save_.resize(0);
     }
 
