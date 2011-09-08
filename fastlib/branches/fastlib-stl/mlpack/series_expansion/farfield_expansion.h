@@ -45,7 +45,7 @@ class FarFieldExpansion {
   arma::vec coeffs_;
 
   /** @brief The order of the expansion. */
-  index_t order_;
+  size_t order_;
   
   /** @brief The pointer to the auxilirary methods for the kernel
    *         (derivative, truncation error bound).
@@ -92,13 +92,13 @@ class FarFieldExpansion {
    *
    *  @return The integer representing the current approximation order.
    */
-  index_t get_order() const { return order_; }
+  size_t get_order() const { return order_; }
   
   /** @brief Gets the maximum possible approximation order.
    *
    *  @return The maximum allowable approximation order.
    */
-  index_t get_max_order() const { return sea_->get_max_order(); }
+  size_t get_max_order() const { return sea_->get_max_order(); }
 
   /** @brief Gets the weight sum.
    */
@@ -108,7 +108,7 @@ class FarFieldExpansion {
    *
    *  @param new_order The desired new order of the approximation.
    */
-  void set_order(index_t new_order) { order_ = new_order; }
+  void set_order(size_t new_order) { order_ = new_order; }
   
   /** @brief Set the center of the expansion - assumes that the center
    *         has been initialized before...
@@ -143,7 +143,7 @@ class FarFieldExpansion {
    *  @param order The order up to which the far-field moments should be 
    *               accumulated up to.
    */
-  void Accumulate(const arma::vec& reference_point, double weight, index_t order);
+  void Accumulate(const arma::vec& reference_point, double weight, size_t order);
 
   /** @brief Accumulates the far field moment represented by the given
    *         reference data into the coefficients.
@@ -171,37 +171,37 @@ class FarFieldExpansion {
    *               accumulated up to.
    */
   void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
-			index_t begin, index_t end, index_t order);
+			size_t begin, size_t end, size_t order);
 
   /** @brief Refine the far field moment that has been computed before
    *         up to a new order.
    */
   void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
-		    index_t begin, index_t end, index_t order);
+		    size_t begin, size_t end, size_t order);
   
   /** @brief Evaluates the far-field coefficients at the given point.
    */
-  double EvaluateField(const arma::mat& data, index_t row_num, index_t order) const;
-  double EvaluateField(const double *x_q, index_t order) const;
+  double EvaluateField(const arma::mat& data, size_t row_num, size_t order) const;
+  double EvaluateField(const double *x_q, size_t order) const;
 
   /** @brief Evaluates the two-way convolution mixed with exhaustive
    *         computations with two other far field expansions.
    */
-  double MixField(const arma::mat& data, index_t node1_begin, index_t node1_end, 
-		  index_t node2_begin, index_t node2_end, const FarFieldExpansion &fe2,
-		  const FarFieldExpansion &fe3, index_t order2, index_t order3) const;
+  double MixField(const arma::mat& data, size_t node1_begin, size_t node1_end, 
+		  size_t node2_begin, size_t node2_end, const FarFieldExpansion &fe2,
+		  const FarFieldExpansion &fe3, size_t order2, size_t order3) const;
 
   /** @brief Evaluates the convolution with the other farfield
    *         expansion.
    */
-  double ConvolveField(const FarFieldExpansion &fe, index_t order) const;
+  double ConvolveField(const FarFieldExpansion &fe, size_t order) const;
 
   /** @brief Evaluates the three-way convolution with two other far
    *         field expansions.
    */
   double ConvolveField(const FarFieldExpansion &fe2,
 		       const FarFieldExpansion &fe3,
-		       index_t order1, index_t order2, index_t order3) const;
+		       size_t order1, size_t order2, size_t order3) const;
 
   /** @brief Initializes the current far field expansion object with
    *         the given center.
@@ -210,7 +210,7 @@ class FarFieldExpansion {
   void Init(const TKernelAux &ka);
 
   template<typename TBound>
-  index_t OrderForConvolving(const TBound &far_field_region,
+  size_t OrderForConvolving(const TBound &far_field_region,
 			 const arma::vec &far_field_region_centroid,
 			 const TBound &local_field_region,
 			 const arma::vec &local_field_region_centroid,
@@ -223,7 +223,7 @@ class FarFieldExpansion {
    *         for a given bound.
    */
   template<typename TBound>
-  index_t OrderForEvaluating(const TBound &far_field_region,
+  size_t OrderForEvaluating(const TBound &far_field_region,
 			 const TBound &local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,
@@ -239,7 +239,7 @@ class FarFieldExpansion {
    *          -1 if approximation up to the maximum order is not possible.
    */
   template<typename TBound>
-  index_t OrderForConvertingToLocal(const TBound &far_field_region,
+  size_t OrderForConvertingToLocal(const TBound &far_field_region,
 				const TBound &local_field_region, 
 				double min_dist_sqd_regions, 
 				double max_dist_sqd_regions,
@@ -260,7 +260,7 @@ class FarFieldExpansion {
    *         coefficients are added up to the passed-in local
    *         expansion coefficients.
    */
-  void TranslateToLocal(LocalExpansion<TKernelAux> &se, index_t truncation_order);
+  void TranslateToLocal(LocalExpansion<TKernelAux> &se, size_t truncation_order);
 
 };
 

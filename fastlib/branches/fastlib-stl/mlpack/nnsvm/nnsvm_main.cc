@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     std::string trainFile = IO::GetParam<std::string>("nnsvm/train_data");
     // Load training data
     arma::mat dataSet;
-    if (data::Load(trainFile.c_str(), dataSet) == SUCCESS_FAIL) // TODO:param_req
+    if (data::Load(trainFile.c_str(), dataSet) == false) // TODO:param_req
     {
       /* TODO: eventually, we need better exception handling */
       IO::Debug << "Could not open " << trainFile << " for reading" << std::endl;
@@ -81,7 +81,7 @@ int main(int argc, char *argv[])
         /* Load testing data */
         std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
         arma::mat testset;
-        if (data::Load(testFile.c_str(), testset) == SUCCESS_FAIL) // TODO:param_req
+        if (data::Load(testFile.c_str(), testset) == false) // TODO:param_req
         {
           /* TODO: eventually, we need better exception handling */
           IO::Debug << "Could not open " << testFile << " for reading" <<

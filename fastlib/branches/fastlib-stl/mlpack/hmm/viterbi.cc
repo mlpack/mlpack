@@ -20,9 +20,9 @@
 
 using namespace hmm_support;
 
-success_t viterbi_discrete();
-success_t viterbi_gaussian();
-success_t viterbi_mixture();
+bool viterbi_discrete();
+bool viterbi_gaussian();
+bool viterbi_mixture();
 void usage();
 
 /* const fx_entry_doc hmm_viterbi_main_entries[] = {
@@ -58,7 +58,7 @@ using namespace mlpack;
 int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (IO::HasParam("hmm/type")) {
     const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete") == 0)
@@ -69,14 +69,14 @@ int main(int argc, char* argv[]) {
       s = viterbi_mixture();
     else {
       IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!" << std::endl;
-      s = SUCCESS_FAIL;
+      s = false;
     }
   }
   else {
     IO::Warn << "Unrecognized type: must be: discrete | gaussian | mixture!";
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
 }
 
 void usage() {
@@ -88,10 +88,10 @@ void usage() {
   IO::Warn << "  --statefile=file : output file for state sequences" << std::endl;
 }
 
-success_t viterbi_mixture() {
+bool viterbi_mixture() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.mix.out");
@@ -104,28 +104,28 @@ success_t viterbi_mixture() {
   load_matrix_list(seqin, seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  for (index_t i = 0; i < seqs.size(); i++) {
+  for (size_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
 
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %"LI"", i);
+    sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t viterbi_gaussian() {
+bool viterbi_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.gauss.out");
@@ -138,27 +138,27 @@ success_t viterbi_gaussian() {
   load_matrix_list(seqin, seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  for (index_t i = 0; i < seqs.size(); i++) {
+  for (size_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %"LI"", i);
+    sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t viterbi_discrete() {
+bool viterbi_discrete() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); //"seq.out");
@@ -172,20 +172,20 @@ success_t viterbi_discrete() {
   load_vector_list(seqin, seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  for (index_t i = 0; i < seqs.size(); i++) {
+  for (size_t i = 0; i < seqs.size(); i++) {
     arma::vec states;
     char s[100];
     
     hmm.ComputeViterbiStateSequence(seqs[i], states);
     
-    sprintf(s, "%% viterbi state sequence %"LI"", i);
+    sprintf(s, "%% viterbi state sequence %zu", i);
     print_vector(w_state, states, s, "%.0f,");
   }
 
-  return SUCCESS_PASS;
+  return true;
 }

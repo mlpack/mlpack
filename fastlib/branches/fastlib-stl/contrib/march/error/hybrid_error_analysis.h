@@ -13,7 +13,7 @@ private:
   struct datanode* kernel_mod_;
   struct datanode* naive_mod_;
   
-  index_t num_points_;
+  size_t num_points_;
   
   void TotalError_() {
   
@@ -36,7 +36,7 @@ private:
     printf("\n");
     */
     
-    for (index_t i = 0; i < num_points_; i++) { 
+    for (size_t i = 0; i < num_points_; i++) { 
     
       double naive_val = naive_vec_[i];
       

@@ -39,8 +39,8 @@ PARAM(double, "wss", "Working set selection scheme.  1 for 1st order\
 PARAM(double, "accuracy", "The minimum accuracy required to stop the optimization\
  algorithm. Default 1e-4.", "svm", 1e-4, false);
 
-PARAM(index_t, "hinge", "Value for hinge loss. Default 1.", "svm", 1, false);
-PARAM(index_t, "n_iter", "Maximum number of iterations. Default 100000000.",
+PARAM(size_t, "hinge", "Value for hinge loss. Default 1.", "svm", 1, false);
+PARAM(size_t, "n_iter", "Maximum number of iterations. Default 100000000.",
  "svm", 100000000, false);
 
 PARAM(std::string, "opt", "The optimization algorithm to use. A the moment\
@@ -86,11 +86,11 @@ class SVMLinearKernel {
     kname = "linear";
   }
   /* Get an type ID for kernel */
-  index_t GetTypeId() {
+  size_t GetTypeId() {
     return ID_LINEAR;
   }
   /* Kernel value evaluation */
-  double Eval(const arma::vec& a, const arma::vec b, index_t n_features) const {
+  double Eval(const arma::vec& a, const arma::vec b, size_t n_features) const {
     return dot(a.rows(0,n_features-1),b.rows(0,n_features-1));
   }
   /* Save kernel parameters to file */
@@ -115,11 +115,11 @@ class SVMRBFKernel {
     kname = "gaussian";
   }
   /* Get an type ID for kernel */
-  index_t GetTypeId() {
+  size_t GetTypeId() {
     return ID_GAUSSIAN;
   }
   /* Kernel value evaluation */
-  double Eval(const arma::vec& a, const arma::vec& b, index_t n_features) const {
+  double Eval(const arma::vec& a, const arma::vec& b, size_t n_features) const {
     double distance_squared = arma::norm(a.subvec(0,n_features-1)-b.subvec(0,n_features-1),2);
     //double distance_squared = arma::norm(a-b,2);
     return exp(kpara_[1] * distance_squared);
@@ -145,7 +145,7 @@ class SVM {
    *  2:One class SVM (svm_de);
    * Developers may add more learner types if necessary
    */
-  index_t learner_typeid_;
+  size_t learner_typeid_;
   // Optimization method: smo
   std::string opt_method_;
   /* array of models for storage of the 2-class(binary) classifiers 
@@ -162,11 +162,11 @@ class SVM {
      e.g. [0.0,1.0,2.0] for a 3-class dataset */
   std::vector<double> train_labels_list_;
   /* array of label indices, after grouping. e.g. [c1[0,5,6,7,10,13,17],c2[1,2,4,8,9],c3[...]]*/
-  std::vector<index_t> train_labels_index_;
+  std::vector<size_t> train_labels_index_;
   /* counted number of label for each class. e.g. [7,5,8]*/
-  std::vector<index_t> train_labels_ct_;
+  std::vector<size_t> train_labels_ct_;
   /* start positions of each classes in the training label list. e.g. [0,7,12] */
-  std::vector<index_t> train_labels_startpos_;
+  std::vector<size_t> train_labels_startpos_;
   
   /* total set of support vectors and their coefficients */
   arma::mat sv_;
@@ -174,20 +174,20 @@ class SVM {
   std::vector<bool> trainset_sv_indicator_;
 
   /* total number of support vectors */
-  index_t total_num_sv_;
+  size_t total_num_sv_;
   /* support vector list to store the indices (in the training set) of support vectors */
-  std::vector<index_t> sv_index_;
+  std::vector<size_t> sv_index_;
   /* start positions of each class of support vectors, in the support vector list */
-  std::vector<index_t> sv_list_startpos_;
+  std::vector<size_t> sv_list_startpos_;
   /* counted number of support vectors for each class */
-  std::vector<index_t> sv_list_ct_;
+  std::vector<size_t> sv_list_ct_;
 
   /* SVM parameters */
   struct PARAMETERS {
     TKernel kernel_;
     std::string kernelname_;
-    index_t kerneltypeid_;
-    index_t b_;
+    size_t kerneltypeid_;
+    size_t b_;
     double C_;
     // for SVM_C of unbalanced data
     double Cp_; // C for y==1
@@ -197,42 +197,42 @@ class SVM {
     // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
     double wss_;
     // whether do L1-SVM (1) or L2-SVM (2)
-    index_t hinge_sqhinge_; // L1-SVM uses hinge loss, L2-SVM uses squared hinge loss
+    size_t hinge_sqhinge_; // L1-SVM uses hinge loss, L2-SVM uses squared hinge loss
     // accuracy for the optimization stopping creterion
     double accuracy_;
     // number of iterations
-    index_t n_iter_;
+    size_t n_iter_;
   } param_;
   
   /* number of data samples */
-  index_t n_data_; 
+  size_t n_data_; 
   /* number of classes in the training set */
-  index_t num_classes_;
+  size_t num_classes_;
   /* number of binary models to be trained, i.e. num_classes_*(num_classes_-1)/2 */
-  index_t num_models_;
-  index_t num_features_;
+  size_t num_models_;
+  size_t num_features_;
 
  public:
   typedef TKernel Kernel;
   class SMO<Kernel>;
 
-  void Init(index_t learner_typeid, const Dataset& dataset);
-  void InitTrain(index_t learner_typeid, const Dataset& dataset);
+  void Init(size_t learner_typeid, const Dataset& dataset);
+  void InitTrain(size_t learner_typeid, const Dataset& dataset);
 
-  double Predict(index_t learner_typeid, const arma::vec& vector);
-  void BatchPredict(index_t learner_typeid, Dataset& testset, std::string predictedvalue_filename);
-  void LoadModelBatchPredict(index_t learner_typeid, Dataset& testset, std::string model_filename, std::string predictedvalue_filename);
+  double Predict(size_t learner_typeid, const arma::vec& vector);
+  void BatchPredict(size_t learner_typeid, Dataset& testset, std::string predictedvalue_filename);
+  void LoadModelBatchPredict(size_t learner_typeid, Dataset& testset, std::string model_filename, std::string predictedvalue_filename);
 
  private:
-  void SVM_C_Train_(index_t learner_typeid, const Dataset& dataset);
-  void SVM_R_Train_(index_t learner_typeid, const Dataset& dataset);
-  void SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset);
+  void SVM_C_Train_(size_t learner_typeid, const Dataset& dataset);
+  void SVM_R_Train_(size_t learner_typeid, const Dataset& dataset);
+  void SVM_DE_Train_(size_t learner_typeid, const Dataset& dataset);
   double SVM_C_Predict_(const arma::vec& vector);
   double SVM_R_Predict_(const arma::vec& vector);
   double SVM_DE_Predict_(const arma::vec& vector);
 
-  void SaveModel_(index_t learner_typeid, std::string model_filename);
-  void LoadModel_(index_t learner_typeid, std::string model_filename);
+  void SaveModel_(size_t learner_typeid, std::string model_filename);
+  void LoadModel_(size_t learner_typeid, std::string model_filename);
 };
 
 /**
@@ -243,7 +243,7 @@ class SVM {
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
+void SVM<TKernel>::Init(size_t learner_typeid, const Dataset& dataset){
   learner_typeid_ = learner_typeid;
 
   opt_method_ = mlpack::IO::GetParam<std::string>("svm/opt"); //Default "smo" optimization method: default using SMO
@@ -276,13 +276,13 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
   // working set selection scheme. default: 1st order expansion
   param_.wss_ = mlpack::IO::GetParam<double>("svm/wss");
   // whether do L1-SVM(1) or L2-SVM (2)
-  param_.hinge_sqhinge_ = mlpack::IO::GetParam<index_t>("svm/hinge");//Default value 1
+  param_.hinge_sqhinge_ = mlpack::IO::GetParam<size_t>("svm/hinge");//Default value 1
   param_.hinge_sqhinge_ = 1;
 
   // accuracy for optimization
   param_.accuracy_ = mlpack::IO::GetParam<double>("svm/accuracy");//Default value 1e-4
   // number of iterations
-  param_.n_iter_ = mlpack::IO::GetParam<index_t>("svm/n_iter");//Default value 100000000
+  param_.n_iter_ = mlpack::IO::GetParam<size_t>("svm/n_iter");//Default value 100000000
 
   // tradeoff parameter for C-SV
   param_.C_ = mlpack::IO::GetParam<double>("svm/c"); 
@@ -306,7 +306,7 @@ void SVM<TKernel>::Init(index_t learner_typeid, const Dataset& dataset){
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset) {
+void SVM<TKernel>::InitTrain(size_t learner_typeid, const Dataset& dataset) {
   Init(learner_typeid, dataset);
   
   if (learner_typeid == 0) { // Multiclass SVM Clssification
@@ -334,14 +334,14 @@ void SVM<TKernel>::InitTrain(index_t learner_typeid, const Dataset& dataset) {
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) {
+void SVM<TKernel>::SVM_C_Train_(size_t learner_typeid, const Dataset& dataset) {
   num_classes_ = dataset.n_labels();
   /* Group labels, split the training dataset for training bi-class SVM classifiers */
   dataset.GetLabels(train_labels_list_, train_labels_index_, train_labels_ct_, train_labels_startpos_);
 
   /* Train num_classes*(num_classes-1)/2 binary class(labels:-1, 1) models */
-  index_t ct = 0;
-  index_t i, j;
+  size_t ct = 0;
+  size_t i, j;
   // Reserve space for everything in one go.
   {
     SVM_MODELS n;
@@ -356,15 +356,15 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) 
       dataset_bi.InitBlank();
       dataset_bi.info().Init();
       dataset_bi.matrix().set_size(num_features_+1, train_labels_ct_[i]+train_labels_ct_[j]);
-      std::vector<index_t> dataset_bi_index;
+      std::vector<size_t> dataset_bi_index;
       dataset_bi_index.reserve(train_labels_ct_[i]+train_labels_ct_[j]);
-      for (index_t m = 0; m < train_labels_ct_[i]; m++) {
+      for (size_t m = 0; m < train_labels_ct_[i]; m++) {
 	dataset_bi.matrix().col(m) = dataset.matrix().col(train_labels_index_[train_labels_startpos_[i] + m]);
 	/* last row for labels 1 */
 	dataset_bi.matrix()(num_features_, m) = 1;
 	dataset_bi_index[m] = train_labels_index_[train_labels_startpos_[i]+m];
       }
-      for (index_t n = 0; n < train_labels_ct_[j]; n++) {
+      for (size_t n = 0; n < train_labels_ct_[j]; n++) {
 	dataset_bi.matrix().col(n + train_labels_ct_[i]) = dataset.matrix().col(train_labels_index_[train_labels_startpos_[j] + n]);
 	/* last row for labels -1 */
 	dataset_bi.matrix()(num_features_, n+train_labels_ct_[i]) = -1;
@@ -395,7 +395,7 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) 
   }
   
   /* Get total set of SVs from all the binary models */
-  index_t k;
+  size_t k;
   sv_list_startpos_[0] = 0;
 
   for (i = 0; i < num_classes_; i++) {
@@ -414,13 +414,13 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) 
   sv_.set_size(num_features_, total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
     /* last row of dataset is for labels */
-    for(index_t j = 0; j < num_features_; j++)
+    for(size_t j = 0; j < num_features_; j++)
 	 	sv_(j,i) = dataset.matrix()(j,sv_index_[i]);
   }
   /* Get the matrix sv_coef_ which stores the coefficients of all sets of SVs */
   /* i.e. models_[x].coef_ -> sv_coef_ */
-  index_t ct_model = 0;
-  index_t p;
+  size_t ct_model = 0;
+  size_t p;
   sv_coef_.set_size(num_classes_-1, total_num_sv_);
   sv_coef_.zeros();
   for (i = 0; i < num_classes_; i++) {
@@ -450,9 +450,9 @@ void SVM<TKernel>::SVM_C_Train_(index_t learner_typeid, const Dataset& dataset) 
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset) {
-  index_t i;
-  std::vector<index_t> dataset_index;
+void SVM<TKernel>::SVM_R_Train_(size_t learner_typeid, const Dataset& dataset) {
+  size_t i;
+  std::vector<size_t> dataset_index;
   dataset_index.reserve(n_data_);
   models_.reserve(models_.size() + n_data_);
   for (i=0; i<n_data_; i++)
@@ -489,7 +489,7 @@ void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset) 
   sv_.set_size(num_features_, total_num_sv_);
   for (i = 0; i < total_num_sv_; i++) {
     /* last row of dataset is for labels */
-    for(index_t j = 0; j < num_features_; j++)
+    for(size_t j = 0; j < num_features_; j++)
       sv_(j, i)= dataset.matrix()(j, sv_index_[i]);
   }
   sv_coef_.set_size(1, total_num_sv_);
@@ -507,7 +507,7 @@ void SVM<TKernel>::SVM_R_Train_(index_t learner_typeid, const Dataset& dataset) 
 * @param: module name
 */
 template<typename TKernel>
-void SVM<TKernel>::SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset) {
+void SVM<TKernel>::SVM_DE_Train_(size_t learner_typeid, const Dataset& dataset) {
   // TODO
 }
 
@@ -521,7 +521,7 @@ void SVM<TKernel>::SVM_DE_Train_(index_t learner_typeid, const Dataset& dataset)
 * @return: predited value
 */
 template<typename TKernel>
-double SVM<TKernel>::Predict(index_t learner_typeid, const arma::vec& datum) {
+double SVM<TKernel>::Predict(size_t learner_typeid, const arma::vec& datum) {
   double predicted_value = INFINITY;
   if (learner_typeid == 0) { // Multiclass SVM Clssification
     predicted_value = SVM_C_Predict_(datum);
@@ -544,7 +544,7 @@ double SVM<TKernel>::Predict(index_t learner_typeid, const arma::vec& datum) {
 */
 template<typename TKernel>
 double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
-  index_t i, j, k;
+  size_t i, j, k;
   std::vector<double> keval;
   keval.resize(total_num_sv_,0);
   for (i = 0; i < total_num_sv_; i++) {
@@ -552,7 +552,7 @@ double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
   }
   std::vector<double> values;
   values.resize(num_models_,0);
-  index_t ct = 0;
+  size_t ct = 0;
   double sum = 0.0;
   for (i = 0; i < num_classes_; i++) {
     for (j = i+1; j < num_classes_; j++) {
@@ -571,7 +571,7 @@ double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
     }
   }
 
-  std::vector<index_t> vote;
+  std::vector<size_t> vote;
   vote.resize(num_classes_,0);
   ct = 0;
   for (i = 0; i < num_classes_; i++) {
@@ -585,7 +585,7 @@ double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
       ct++;
     }
   }
-  index_t vote_max_idx = 0;
+  size_t vote_max_idx = 0;
   for (i = 1; i < num_classes_; i++) {
     if (vote[i] >= vote[vote_max_idx]) {
       vote_max_idx = i;
@@ -603,7 +603,7 @@ double SVM<TKernel>::SVM_C_Predict_(const arma::vec& datum) {
 */
 template<typename TKernel>
 double SVM<TKernel>::SVM_R_Predict_(const arma::vec& datum) {
-  index_t i;
+  size_t i;
   double sum = 0.0;
   if (opt_method_== "smo") {
     for (i = 0; i < total_num_sv_; i++) {
@@ -641,15 +641,15 @@ double SVM<TKernel>::SVM_DE_Predict_(const arma::vec& datum) {
 * @param: file name of the testing data
 */
 template<typename TKernel>
-void SVM<TKernel>::BatchPredict(index_t learner_typeid, Dataset& testset, std::string predictedvalue_filename) {
+void SVM<TKernel>::BatchPredict(size_t learner_typeid, Dataset& testset, std::string predictedvalue_filename) {
   FILE *fp = fopen(predictedvalue_filename.c_str(), "w");
   if (fp == NULL) {
     std::cerr << "Cannot save predicted values to file!\n";
     return;
   }
-  index_t err_ct = 0;
+  size_t err_ct = 0;
   num_features_ = testset.n_features()-1;
-  for (index_t i = 0; i < testset.n_points(); i++) {
+  for (size_t i = 0; i < testset.n_points(); i++) {
     arma::vec testvec = testset.matrix().col(i);
 
     double predictedvalue = Predict(learner_typeid, testvec);
@@ -660,7 +660,7 @@ void SVM<TKernel>::BatchPredict(index_t learner_typeid, Dataset& testset, std::s
   }
   fclose(fp);
   /* calculate testing error */
-  printf( "\n*** %"LI" out of %"LI" misclassified ***\n", err_ct, testset.n_points() );
+  printf( "\n*** %zu out of %zu misclassified ***\n", err_ct, testset.n_points() );
   printf( "*** Testing error is %f, accuracy is %f. ***\n", double(err_ct)/double(testset.n_points()), 1- double(err_ct)/double(testset.n_points()) );
   //fprintf( stderr, "*** Results are save in \"%s\" ***\n\n", predictedvalue_filename.c_str());
 }
@@ -674,7 +674,7 @@ void SVM<TKernel>::BatchPredict(index_t learner_typeid, Dataset& testset, std::s
 * @param: name of the file to store classified labels
 */
 template<typename TKernel>
-void SVM<TKernel>::LoadModelBatchPredict(index_t learner_typeid, Dataset& testset, std::string model_filename, std::string predictedvalue_filename) {
+void SVM<TKernel>::LoadModelBatchPredict(size_t learner_typeid, Dataset& testset, std::string model_filename, std::string predictedvalue_filename) {
   LoadModel_(learner_typeid, model_filename);
   BatchPredict(learner_typeid, testset, predictedvalue_filename);
 }
@@ -687,14 +687,14 @@ void SVM<TKernel>::LoadModelBatchPredict(index_t learner_typeid, Dataset& testse
 * @param: name of the model file
 */
 template<typename TKernel>
-void SVM<TKernel>::SaveModel_(index_t learner_typeid, std::string model_filename) {
+void SVM<TKernel>::SaveModel_(size_t learner_typeid, std::string model_filename) {
   std::ofstream f(model_filename.c_str());
 
   if (!f.is_open())
     mlpack::IO::Fatal << "Cannot save trained SVM model to file " <<
         model_filename << "!" << std::endl;
 
-  index_t i, j;
+  size_t i, j;
 
   if (learner_typeid == 0) { // for SVM_C
     f << "svm_type SVM_C" << std::endl;
@@ -773,7 +773,7 @@ void SVM<TKernel>::SaveModel_(index_t learner_typeid, std::string model_filename
 */
 // TODO: use XML
 template<typename TKernel>
-void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename) {
+void SVM<TKernel>::LoadModel_(size_t learner_typeid, std::string model_filename) {
   if (learner_typeid == 0) {// SVM_C
     train_labels_list_.clear();
     train_labels_list_.reserve(num_classes_); // get labels list from the model file
@@ -786,7 +786,7 @@ void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename
     return;
   }
   char cmd[80]; 
-  index_t i, j; index_t temp_d; double temp_f;
+  size_t i, j; size_t temp_d; double temp_f;
   models_.reserve(num_models_+models_.size());
   for (i = 0; i < num_models_; i++) {
 	models_.push_back(*new SVM_MODELS);
@@ -803,11 +803,11 @@ void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename
 	learner_typeid_ = 2;
     }
     else if (strcmp(cmd, "total_num_sv")==0) {
-      fscanf(fp,"%"LI,&total_num_sv_);
+      fscanf(fp,"%zu",&total_num_sv_);
     }
     // for SVM_C
     else if (strcmp(cmd, "num_classes")==0) {
-      fscanf(fp,"%"LI,&num_classes_);
+      fscanf(fp,"%zu",&num_classes_);
     }
     else if (strcmp(cmd, "labels")==0) {
       for (i=0; i<num_classes_; i++) {
@@ -817,20 +817,20 @@ void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename
     }
     else if (strcmp(cmd, "sv_list_startpos")==0) {
       for ( i= 0; i < num_classes_; i++) {
-	fscanf(fp,"%"LI,&temp_d);
+	fscanf(fp,"%zu",&temp_d);
 	sv_list_startpos_[i]= temp_d;
       }
     }
     else if (strcmp(cmd, "sv_list_ct")==0) {
       for ( i= 0; i < num_classes_; i++) {
-	fscanf(fp,"%"LI,&temp_d); 
+	fscanf(fp,"%zu",&temp_d); 
 	sv_list_ct_[i]= temp_d;
       }
     }
     // for SVM_R
     else if (strcmp(cmd, "sv_index")==0) {
       for ( i= 0; i < total_num_sv_; i++) {
-	fscanf(fp,"%"LI,&temp_d); 
+	fscanf(fp,"%zu",&temp_d); 
 	sv_index_.push_back(temp_d);
       }
     }
@@ -842,7 +842,7 @@ void SVM<TKernel>::LoadModel_(index_t learner_typeid, std::string model_filename
       param_.kernelname_ = in;
     }
     else if (strcmp(cmd, "kernel_typeid")==0) {
-      fscanf(fp,"%"LI,&param_.kerneltypeid_);
+      fscanf(fp,"%zu",&param_.kerneltypeid_);
     }
     else if (strcmp(cmd, "sigma")==0) {
       fscanf(fp,"%lf",&param_.kernel_.kpara_[0]); /* for gaussian kernels only */

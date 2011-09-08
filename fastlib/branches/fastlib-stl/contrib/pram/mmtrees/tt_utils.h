@@ -75,8 +75,8 @@ namespace tt_utils {
   void PermuteMatrix(const Matrix& input, const Vector& y,
 		     Matrix *output, Vector * oy) {
 
-    ArrayList<index_t> perm_array;
-    index_t size = input.n_cols();
+    ArrayList<size_t> perm_array;
+    size_t size = input.n_cols();
     Matrix perm_mat;
     perm_mat.Init(size, size);
     perm_mat.SetAll(0.0);
@@ -85,7 +85,7 @@ namespace tt_utils {
 
     oy->Init(size);
 
-    for(index_t i = 0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
       perm_mat.set(perm_array[i], i, 1.0);
       (*oy)[i] = y[perm_array[i]];
     }
@@ -96,19 +96,19 @@ namespace tt_utils {
 //   void PrintLeafMembership(TTree *ttree,
 // 			   const Matrix& data,
 // 			   const Matrix& labels,
-// 			   index_t num_classes) {
+// 			   size_t num_classes) {
 
-//     index_t num_leaves = ttree->TagTree(0);
+//     size_t num_leaves = ttree->TagTree(0);
 //     ttree->WriteTree(0, stdout);printf("\n");fflush(NULL);
 //     Matrix table;
 //     table.Init(num_leaves, num_classes);
 //     table.SetZero();
-//     for (index_t i = 0; i < data.n_cols(); i++) {
+//     for (size_t i = 0; i < data.n_cols(); i++) {
 //       Vector test_p;
 //       data.MakeColumnVector(i, &test_p);
-//       index_t leaf_tag = ttree->FindBucket(test_p);
-//       index_t label = (index_t) labels.get(0, i);
-//       //      printf("%"LI"d,%"LI"d - %lg\n", leaf_tag, label, 
+//       size_t leaf_tag = ttree->FindBucket(test_p);
+//       size_t label = (size_t) labels.get(0, i);
+//       //      printf("%zu"d,%zu"d - %lg\n", leaf_tag, label, 
 //       // 	    table.get(leaf_tag, label));
 //       table.set(leaf_tag, label, 
 // 		table.get(leaf_tag, label) + 1.0);
@@ -120,20 +120,20 @@ namespace tt_utils {
 //   }
 
   void PrintVariableImportance(TTree *ttree,
-			       index_t dims, FILE *fp) {
+			       size_t dims, FILE *fp) {
     ArrayList<long double> *imps = new ArrayList<long double>();
     imps->Init(dims);
-    for (index_t i = 0; i < imps->size(); i++)
+    for (size_t i = 0; i < imps->size(); i++)
       (*imps)[i] = 0.0;
     
     ttree->ComputeVariableImportance(imps);
     long double max = 0.0;
-    for (index_t i = 0; i < imps->size(); i++)
+    for (size_t i = 0; i < imps->size(); i++)
       if ((*imps)[i] > max)
 	max = (*imps)[i];
     printf("Max: %Lg\n", max); fflush(NULL);
 
-    for (index_t i = 0; i < imps->size() -1; i++)
+    for (size_t i = 0; i < imps->size() -1; i++)
       fprintf(fp, "%Lg,", (*imps)[i]);
 
     fprintf(fp, "%Lg\n", (*imps)[imps->size() -1]);
@@ -143,7 +143,7 @@ namespace tt_utils {
 
   TTree *Trainer(const Matrix& x, 
 		 const Vector& y,
-		 index_t folds, 
+		 size_t folds, 
 		 datanode* ttree_mod) {
 
 
@@ -155,7 +155,7 @@ namespace tt_utils {
     Matrix temp_d;
     la::TransposeInit(x, &temp_d);
 
-    for (index_t i = 0; i < temp_d.n_cols(); i++) {
+    for (size_t i = 0; i < temp_d.n_cols(); i++) {
       // if (dim_type[i] != NOMINAL) {
       Vector dim_vals;
       temp_d.MakeColumnVector(i, &dim_vals);
@@ -184,9 +184,9 @@ namespace tt_utils {
     ttree->Init(max_vals, min_vals,
 		x.n_cols(), new_y, ttree_mod);
     // Getting ready to grow the tree
-    ArrayList<index_t> old_from_new;
+    ArrayList<size_t> old_from_new;
     old_from_new.Init(x.n_cols());
-    for (index_t i = 0; i < old_from_new.size(); i++) {
+    for (size_t i = 0; i < old_from_new.size(); i++) {
       old_from_new[i] = i;
     }
 
@@ -198,7 +198,7 @@ namespace tt_utils {
     // double new_f = ttree->st_estimate();
     // double old_f = new_f;
 
-    NOTIFY("%"LI"d leaf nodes in this tree, min_alpha: %Lg",
+    NOTIFY("%zu"d leaf nodes in this tree, min_alpha: %Lg",
 	   ttree->subtree_leaves(), alpha);
 
     // computing densities for the train points in the
@@ -208,7 +208,7 @@ namespace tt_utils {
 	fopen(fx_param_str_req(tt_util_module,
 			       "train_unpruned_output"), "w");
       if (fp != NULL) {
-	for (index_t i = 0; i < x.n_cols(); i++) {
+	for (size_t i = 0; i < x.n_cols(); i++) {
 	  Vector test_p;
 	  x.MakeColumnVector(i, &test_p);
 	  double f = ttree->ComputeValue(test_p, false);
@@ -236,7 +236,7 @@ namespace tt_utils {
       alpha = ttree->PruneAndUpdate(old_alpha);
 //       new_f = ttree->st_estimate();
       DEBUG_ASSERT_MSG((alpha < LDBL_MAX)||(ttree->subtree_leaves() == 1),
-		       "old_alpha:%Lg, alpha:%Lg, tree size:%"LI"d",
+		       "old_alpha:%Lg, alpha:%Lg, tree size:%zu"d",
 		       old_alpha, alpha, ttree->subtree_leaves());
       DEBUG_ASSERT(alpha > old_alpha);
 //       DEBUG_ASSERT(ttree->subtree_leaves_error() >= -1.0 * tree_seq.second);
@@ -250,8 +250,8 @@ namespace tt_utils {
     // buff_error_vec.push_back(tmp_pair);
 //     change_in_estimate.push_back(fabs(new_f - old_f));
 
-    NOTIFY("%"LI"d trees in the sequence, max_alpha:%Lg.\n",
-	   (index_t) pruned_sequence.size(), old_alpha);
+    NOTIFY("%zu"d trees in the sequence, max_alpha:%Lg.\n",
+	   (size_t) pruned_sequence.size(), old_alpha);
 
     
     // exit(0);
@@ -276,16 +276,16 @@ namespace tt_utils {
 
     // PermuteMatrix(x, y, &pdata, &py);
 
-    index_t test_size = x.n_cols() / folds;
+    size_t test_size = x.n_cols() / folds;
 
     // Go through each fold
-    for (index_t fold = 0; fold < folds; fold++) {
-      // NOTIFY("Fold %"LI"d...", fold+1);
+    for (size_t fold = 0; fold < folds; fold++) {
+      // NOTIFY("Fold %zu"d...", fold+1);
 
       // break up data into train and test set
       Matrix test;
       Vector test_y;
-      index_t start = fold * test_size,
+      size_t start = fold * test_size,
 	end = min ((fold + 1) * test_size,x.n_cols());
       pdata.MakeColumnSlice(start, end - start, &test);
       py.MakeSubvector(start, end - start, &test_y);
@@ -293,8 +293,8 @@ namespace tt_utils {
       Vector train_y;
       train.Init(pdata.n_rows(), pdata.n_cols() - (end - start));
       train_y.Init(pdata.n_cols() - (end - start));
-      index_t k = 0;
-      for (index_t j = 0; j < pdata.n_cols(); j++) {
+      size_t k = 0;
+      for (size_t j = 0; j < pdata.n_cols(); j++) {
 	if (j < start || j >= end) {
 	  train_y[k] = py[j];
 
@@ -315,7 +315,7 @@ namespace tt_utils {
       Matrix temp_t;
       la::TransposeInit(train, &temp_t);
 
-      for (index_t i = 0; i < temp_t.n_cols(); i++) {
+      for (size_t i = 0; i < temp_t.n_cols(); i++) {
 	Vector dim_vals;
 	temp_t.MakeColumnVector(i, &dim_vals);
 
@@ -332,9 +332,9 @@ namespace tt_utils {
       ttree_cv->Init(max_vals_cv, min_vals_cv,
 		     train.n_cols(), train_y, ttree_mod);
       // Getting ready to grow the tree
-      ArrayList<index_t> old_from_new_cv;
+      ArrayList<size_t> old_from_new_cv;
       old_from_new_cv.Init(train.n_cols());
-      for (index_t i = 0; i < old_from_new_cv.size(); i++) {
+      for (size_t i = 0; i < old_from_new_cv.size(); i++) {
 	old_from_new_cv[i] = i;
       }
 
@@ -354,7 +354,7 @@ namespace tt_utils {
 	// long double val_cv = 0.0;
 	double buff = 0.0;
 	int error = 0;
-	for (index_t i = 0; i < test.n_cols(); i++) {
+	for (size_t i = 0; i < test.n_cols(); i++) {
 	  Vector test_point;
 	  test.MakeColumnVector(i, &test_point);
 	  double val = ttree_cv->ComputeValue(test_point, false);
@@ -376,7 +376,7 @@ namespace tt_utils {
       // compute test values for this state of the tree
       double buff = 0.0;
       int error = 0;
-      for (index_t i = 0; i < test.n_cols(); i++) {
+      for (size_t i = 0; i < test.n_cols(); i++) {
 	Vector test_point;
 	test.MakeColumnVector(i, &test_point);
 	double val = ttree_cv->ComputeValue(test_point, false);
@@ -413,13 +413,13 @@ namespace tt_utils {
     std::vector<double>::iterator it;
     std::vector<std::pair<double, int> >::iterator jt
       = buff_error_vec.begin();
-    index_t i = 0;
+    size_t i = 0;
 
     for (it = pruned_sequence.begin();
 	 it < pruned_sequence.end() -1; ++it, ++jt) {
 
       i++;
-      printf("%"LI"d: %lg,%lg,%d\n",i, (*it), jt->first, jt->second);
+      printf("%zu"d: %lg,%lg,%d\n",i, (*it), jt->first, jt->second);
 
       if ((best_error == -1) || (jt->second < best_error)) {
 	best_error = jt->second;
@@ -444,16 +444,16 @@ namespace tt_utils {
 		    x.n_cols(),
 		    new_y, ttree_mod);
     // Getting ready to grow the tree
-    for (index_t i = 0; i < old_from_new.size(); i++) {
+    for (size_t i = 0; i < old_from_new.size(); i++) {
       old_from_new[i] = i;
     }
 
     // Growing the tree
     old_alpha = 0.0;
     alpha = ttree_opt->Grow(new_x, new_y, &old_from_new);
-    NOTIFY("%"LI"d leaf nodes in this tree\n opt_alpha:%lg",
+    NOTIFY("%zu"d leaf nodes in this tree\n opt_alpha:%lg",
 	   ttree_opt->subtree_leaves(), optimal_alpha);
-    //   printf("%"LI"d leaf nodes in this tree\n opt_alpha:%Lg\n",
+    //   printf("%zu"d leaf nodes in this tree\n opt_alpha:%Lg\n",
     // 	 ttree_opt->subtree_leaves(), optimal_alpha);
 
     // Pruning with optimal alpha
@@ -461,12 +461,12 @@ namespace tt_utils {
       old_alpha = alpha;
       alpha = ttree_opt->PruneAndUpdate(old_alpha);
       DEBUG_ASSERT_MSG((alpha < DBL_MAX)||(ttree->subtree_leaves() == 1),
-		       "old_alpha:%Lg, alpha:%Lg, tree size:%"LI"d",
+		       "old_alpha:%Lg, alpha:%Lg, tree size:%zu"d",
 		       old_alpha, alpha, ttree->subtree_leaves());
       DEBUG_ASSERT(alpha > old_alpha);
     } // end while
 
-    NOTIFY("%"LI"d leaf nodes in this tree\n old_alpha:%Lg",
+    NOTIFY("%zu"d leaf nodes in this tree\n old_alpha:%Lg",
 	   ttree_opt->subtree_leaves(), old_alpha);
 
     return ttree_opt;
@@ -492,7 +492,7 @@ namespace tt_utils {
     Vector y;
     y.Init(y_mat.n_cols());
 
-    for (index_t i = 0; i < y_mat.n_cols(); i++)
+    for (size_t i = 0; i < y_mat.n_cols(); i++)
       y[i] = y_mat.get(0, i);
 
 
@@ -500,7 +500,7 @@ namespace tt_utils {
 
 
 
-    NOTIFY("%"LI"d points in %"LI"d dims.",
+    NOTIFY("%zu"d points in %zu"d dims.",
 	   x.n_cols(), x.n_rows());
 
     //   // getting information about the feature type
@@ -508,7 +508,7 @@ namespace tt_utils {
     //   // enum ... don't know how to use it though.
     //   ArrayList<enum> dim_type;
     //   dim_type.Init(x.n_rows());
-    //   for (index_t i = 0; i < dim_type.size(); i++) {
+    //   for (size_t i = 0; i < dim_type.size(); i++) {
     //     // assign dim type somehow
     //   } // end for
 
@@ -516,12 +516,12 @@ namespace tt_utils {
     fx_timer_start(tt_util_module, "train_time");
 
     // cross-validation here
-    index_t folds = fx_param_int(tt_util_module, "folds", 10);
+    size_t folds = fx_param_int(tt_util_module, "folds", 10);
     if (folds == 0) {
       folds = x.n_cols();
       NOTIFY("Starting Leave-One-Out Cross validation");
     } else 
-      NOTIFY("Starting %"LI"d-fold Cross validation", folds);
+      NOTIFY("Starting %zu"d-fold Cross validation", folds);
 
 
     // stopping the training timer
@@ -551,7 +551,7 @@ namespace tt_utils {
 	fp = fopen(train_density_file.c_str(), "w");
       }
 
-      for (index_t i = 0; i < x.n_cols(); i++) {
+      for (size_t i = 0; i < x.n_cols(); i++) {
 	Vector test_p;
 	x.MakeColumnVector(i, &test_p);
 	double f = ttree_opt->ComputeValue(test_p, false);
@@ -571,7 +571,7 @@ namespace tt_utils {
       NOTIFY("Loading test data...\n");
       data::Load(test_file.c_str(), &test_set);
 
-      NOTIFY("%"LI"d points in %"LI"d dims.", test_set.n_cols(),
+      NOTIFY("%zu"d points in %zu"d dims.", test_set.n_cols(),
 	     test_set.n_rows());
 
       FILE *fp;
@@ -583,7 +583,7 @@ namespace tt_utils {
 	fp = fopen(test_density_file.c_str(), "w");
       }
 
-      for (index_t i = 0; i < test_set.n_cols(); i++) {
+      for (size_t i = 0; i < test_set.n_cols(); i++) {
 	Vector test_p;
 	test_set.MakeColumnVector(i, &test_p);
 	double f = ttree_opt->ComputeValue(test_p, false);
@@ -621,7 +621,7 @@ namespace tt_utils {
 //       Matrix labels;
 //       NOTIFY("loading labels.\n");
 //       data::Load(labels_file.c_str(), &labels);
-//       index_t num_classes = fx_param_int_req(tt_util_module, "num_classes");
+//       size_t num_classes = fx_param_int_req(tt_util_module, "num_classes");
 
 //       DEBUG_ASSERT(x.n_cols() == labels.n_cols());
 //       DEBUG_ASSERT(labels.n_rows() == 1);

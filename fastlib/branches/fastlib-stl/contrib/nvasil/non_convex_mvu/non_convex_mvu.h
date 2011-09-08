@@ -62,17 +62,17 @@ class NonConvexMVU {
   void ComputeLocalOptimumBFGS();
   TEMPLATE_TAG_
   void ComputeLocalOptimumSGD();
-  void set_knns(index_t knns);
-  void set_kfns(index_t kfns);
-  void set_leaf_size(index_t leaf_size);
+  void set_knns(size_t knns);
+  void set_kfns(size_t kfns);
+  void set_leaf_size(size_t leaf_size);
   // eta < 1
   void set_eta(double eta);
   // gamma > 1
   void set_gamma(double gamma);
   void set_sigma(double sigma);
   void set_step_size(double step_size);
-  void set_max_iterations(index_t max_iterations);
-  void set_new_dimension(index_t new_dimension);
+  void set_max_iterations(size_t max_iterations);
+  void set_new_dimension(size_t new_dimension);
   void set_distance_tolerance(double tolerance); 
   /**
    *  sigma1 and sigma2 for wolfe rule somewhere between 1e-5 to 1e-1
@@ -86,26 +86,26 @@ class NonConvexMVU {
   /**
    * Set the memory for the BFGS method
    */
-  void set_mem_bfgs(index_t mem_bfgs);
+  void set_mem_bfgs(size_t mem_bfgs);
   Matrix &coordinates();
   std::string result_summary();
  
  private:
   AllkNN allknn_;
   AllkFN allkfn_;
-  index_t leaf_size_;
-  index_t num_of_points_;
-  index_t dimension_;
-  index_t knns_;  //  k nearest neighbors
-  index_t kfns_;   //  k furthest neighbors 
+  size_t leaf_size_;
+  size_t num_of_points_;
+  size_t dimension_;
+  size_t knns_;  //  k nearest neighbors
+  size_t kfns_;   //  k furthest neighbors 
   // the nearest neighbor pairs for the constraints
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
-  ArrayList<index_t> nearest_neighbors_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
+  ArrayList<size_t> nearest_neighbors_;
   ArrayList<double> nearest_distances_;
-  index_t num_of_nearest_pairs_;
-  ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
-  ArrayList<index_t> furthest_neighbors_;
-  index_t num_of_furthest_pairs_;
+  size_t num_of_nearest_pairs_;
+  ArrayList<std::pair<size_t, size_t> > furthest_neighbor_pairs_;
+  ArrayList<size_t> furthest_neighbors_;
+  size_t num_of_furthest_pairs_;
   ArrayList<double> furthest_distances_;
   
   // Lagrange multipliers for distance constraints
@@ -120,8 +120,8 @@ class NonConvexMVU {
   double wolfe_sigma2_;
   double wolfe_beta_;
   double max_violation_of_distance_constraint_;
-  index_t max_iterations_;
-  index_t new_dimension_;
+  size_t max_iterations_;
+  size_t new_dimension_;
   Matrix coordinates_;
   Matrix gradient_;
   Matrix data_;
@@ -130,13 +130,13 @@ class NonConvexMVU {
   //ro_k = 1/(y^T * s)
   Vector ro_bfgs_; 
   // the memory of bfgs 
-  index_t mem_bfgs_;
+  size_t mem_bfgs_;
   // s_k = x_{k+1}-x_{k};
   ArrayList<Matrix> s_bfgs_;
   // y_k = g_{k+1} -g_k (g is the gradient)
   ArrayList<Matrix> y_bfgs_;
   // 
-  index_t index_bfgs_;
+  size_t index_bfgs_;
   // previous gradient
   Matrix previous_gradient_;
   // previous coordinates
@@ -150,10 +150,10 @@ class NonConvexMVU {
   TEMPLATE_TAG_
   void LocalSearch_(double *step, Matrix &direction);
   TEMPLATE_TAG_
-  void ComputeBFGS_(double *step, Matrix &grad, index_t memory);
+  void ComputeBFGS_(double *step, Matrix &grad, size_t memory);
   void InitBFGS();
   void UpdateBFGS_();
-  void UpdateBFGS_(index_t index_bfgs);
+  void UpdateBFGS_(size_t index_bfgs);
   TEMPLATE_TAG_
   double ComputeLagrangian_(Matrix &coordinates);
   TEMPLATE_TAG_
@@ -164,19 +164,19 @@ class NonConvexMVU {
   TEMPLATE_TAG_
   void ComputeGradient_(Matrix &coord, Matrix *grad);
   TEMPLATE_TAG_
-  void ComputePairGradient_(index_t p1, index_t chosen_neighbor, 
+  void ComputePairGradient_(size_t p1, size_t chosen_neighbor, 
     Matrix &coord, Vector *gradient1, Vector *gradient2);
  
   TEMPLATE_TAG_
   double ComputeObjective_(Matrix &coord);
   void Variance_(Matrix &coord, Vector *variance);
   void RemoveMean_(Matrix &mat);
-  void ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
+  void ConsolidateNeighbors_(ArrayList<size_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,
-      index_t num_of_neighbors,
-      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
+      size_t num_of_neighbors,
+      ArrayList<std::pair<size_t, size_t> > *neighbor_pairs,
       ArrayList<double> *distances,
-      index_t *num_of_pairs);
+      size_t *num_of_pairs);
 };
 
 #include "non_convex_mvu_impl.h"

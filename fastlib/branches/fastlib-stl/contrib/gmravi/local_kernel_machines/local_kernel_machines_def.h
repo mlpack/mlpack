@@ -27,11 +27,11 @@ class LocalKernelMachines{
 
   Vector test_labels_vector_;
 
-  index_t num_train_points_;
+  size_t num_train_points_;
 
-  index_t num_test_points_;
+  size_t num_test_points_;
 
-  index_t num_dims_;
+  size_t num_dims_;
 
   struct datanode *module_;
 
@@ -40,7 +40,7 @@ class LocalKernelMachines{
   Dataset dset_;
 
   // Useful for crossvalidation
-  ArrayList <index_t> random_permutation_array_list_;
+  ArrayList <size_t> random_permutation_array_list_;
  
 
   // The regularization constant
@@ -60,25 +60,25 @@ class LocalKernelMachines{
 
   // Indication of the kernels being used
 
-  index_t smoothing_kernel_;
-  index_t svm_kernel_;
+  size_t smoothing_kernel_;
+  size_t svm_kernel_;
 
   // Indication of what parameters to cv for
 
-  index_t cv_lambda_flag_;
-  index_t cv_svm_kernel_bandwidth_flag_;
-  index_t cv_smoothing_kernel_bandwidth_flag_;
+  size_t cv_lambda_flag_;
+  size_t cv_svm_kernel_bandwidth_flag_;
+  size_t cv_smoothing_kernel_bandwidth_flag_;
 
 
   // Number of folds of crossvalidation
 
-  index_t k_folds_;
+  size_t k_folds_;
   
   void  SolveLocalSVMProblem_(Matrix &local_train_data, Matrix &local_test_data, 
 			      Vector &local_train_data_labels, Vector local_test_data_labels);
   
   void GetTheFold_(Dataset &cv_train_data,Dataset &cv_test_data,
-		   Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num);
+		   Vector &cv_train_labels, Vector &cv_test_labels,size_t fold_num);
   
   void  GenerateLambdaVectorForCV_(Vector &);
   void GenerateSmoothingBandwidthVectorForCV_(Vector &);  
@@ -104,7 +104,7 @@ class LocalKernelMachines{
 				 ArrayList< ArrayList <double> > &,
 				 ArrayList< ArrayList <int> > &);
     
-  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <index_t>&, 
+  void FindPointsInNeighbourhood_(Matrix &, double *,ArrayList <size_t>&, 
 				  ArrayList<double> &,double);
   
   

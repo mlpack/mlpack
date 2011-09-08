@@ -58,7 +58,7 @@ int main(int argc, char* argv[]) {
 
   fx_done();
 
-  return SUCCESS_PASS;
+  return true;
 
 }
 

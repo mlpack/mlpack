@@ -505,7 +505,7 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -629,7 +629,7 @@ void TestHMMLatMMK2ClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -788,7 +788,7 @@ void TestHMMLatMMKClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -921,7 +921,7 @@ void TestHMMLatMMK2ClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -1137,7 +1137,7 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -1229,7 +1229,7 @@ void TestHMMFisherKernelClassificationKFold(int n_folds,
   n_correct_class0_results.SetZero();
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   datanode* svm_module = fx_submodule(fx_root, "svm");
@@ -1318,7 +1318,7 @@ void TestHMMBayesClassificationKFold(int n_folds,
   int n_introns_correct = 0;
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   printf("n_sequences = %d\n", n_sequences);
@@ -1394,7 +1394,7 @@ void TestHMMBayesClassificationKFold(int n_folds,
   int n_class0_correct = 0;
 
   int n_sequences = sequences.size();
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   printf("n_sequences = %d\n", n_sequences);
@@ -1506,7 +1506,7 @@ void TestMarkovMMKClassification(const ArrayList<GenMatrix<double> > &sequences,
 
 int EvalKFoldSVM(double c, int n_points,
 		 int n_folds,
-		 const ArrayList<index_t> &permutation, const Dataset& cv_set,
+		 const ArrayList<size_t> &permutation, const Dataset& cv_set,
 		 datanode* svm_module, const Matrix &kernel_matrix,
 		 int* p_n_correct_class1, int* p_n_correct_class0) {
   int n_correct_class1 = *p_n_correct_class1;
@@ -1567,7 +1567,7 @@ void SVMKFoldCV(const Matrix &id_label_pairs,
 
   int n_points = id_label_pairs.n_cols();
 
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_points, &permutation);
 
 

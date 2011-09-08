@@ -41,16 +41,16 @@ class PEGASOS {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual  */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_alpha_; /* number of lagrangian multipliers in the dual  */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -64,8 +64,8 @@ class PEGASOS {
   double epsilon_; // for SVM_R
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
@@ -73,7 +73,7 @@ class PEGASOS {
   bool do_scale_; // whether do scaling on w. default: original pegasos do scaling
   bool do_projection_; // whether do projection on w. default: original pegasos do projection
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
 
  public:
   PEGASOS() {}
@@ -87,8 +87,8 @@ class PEGASOS {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_epochs_ = (index_t)param_[3];
-      n_iter_ = (index_t)param_[4];
+      n_epochs_ = (size_t)param_[3];
+      n_iter_ = (size_t)param_[4];
       accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -111,7 +111,7 @@ class PEGASOS {
   }
   */
 
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  //void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -170,14 +170,14 @@ class PEGASOS {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
       i = i >= n_data_ ? (i-n_data_) : i;
@@ -209,7 +209,7 @@ class PEGASOS {
  */
 template<typename TKernel>
 void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -258,7 +258,7 @@ void PEGASOS<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
 
   do_scale_ = fx_param_int(NULL, "wscaling", 1);
   do_projection_ = fx_param_int(NULL, "wprojection", 1);
@@ -286,7 +286,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   LearnersInit_(learner_typeid);
   old_from_new_.Init(n_data_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin Pegasos iterations */
   if (b_linear_) { // linear SVM, output: w, bias
@@ -389,7 +389,7 @@ void PEGASOS<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 */
 /*
 template<typename TKernel>
-void PEGASOS<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void PEGASOS<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   // TODO
 }
 */

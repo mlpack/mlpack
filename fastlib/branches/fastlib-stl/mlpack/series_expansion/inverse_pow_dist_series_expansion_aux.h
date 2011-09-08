@@ -68,7 +68,7 @@ class InversePowDistSeriesExpansionAux {
 			    (a_constants_.size() + 1) / 2);
     double *previous = a_constants_block_.ptr();
 
-    for(index_t n = 0; n < a_constants_.size(); n++) {
+    for(size_t n = 0; n < a_constants_.size(); n++) {
       
       // Allocate $(n + 1)$ by $2 * max_order_ + 1$ matrix.
       a_constants_[n].Alias(previous, n + 1, 2 * max_order_ + 1);
@@ -78,9 +78,9 @@ class InversePowDistSeriesExpansionAux {
       // The reference to the matrix.
       Matrix &n_th_order_matrix = a_constants_[n];
 
-      for(index_t m = 0; m < a_constants_[n].n_rows(); m++) {
+      for(size_t m = 0; m < a_constants_[n].n_rows(); m++) {
 
-	for(index_t lambda_index = 0; lambda_index < a_constants_[n].n_cols(); 
+	for(size_t lambda_index = 0; lambda_index < a_constants_[n].n_cols(); 
 	    lambda_index++) {
 	  n_th_order_matrix.set
 	    (m, lambda_index, Factorial_(n - m) * pow(2, m) * 
@@ -99,8 +99,8 @@ class InversePowDistSeriesExpansionAux {
     t_constants_.Init(2 * (max_order_ + 1), 2 * (max_order_ + 1));
     t_constants_.SetZero();
 
-    for(index_t m = 0; m < t_constants_.n_rows(); m++) {
-      for(index_t k = 0; k <= m; k++) {
+    for(size_t m = 0; m < t_constants_.n_rows(); m++) {
+      for(size_t k = 0; k <= m; k++) {
 
 	t_constants_.set(m, k, PochammerValue(lambda_ - 1, 2 * k) *
 			 math::BinomialCoefficient(m, k));
@@ -115,7 +115,7 @@ class InversePowDistSeriesExpansionAux {
 
     factorials_.Init(2 * (max_order_ + 1));
     factorials_[0] = 1;
-    for(index_t i = 1; i < factorials_.length(); i++) {
+    for(size_t i = 1; i < factorials_.length(); i++) {
       factorials_[i] = factorials_[i - 1] * i;      
     }
   }
@@ -129,7 +129,7 @@ class InversePowDistSeriesExpansionAux {
        (2 * multiplicative_constants_.size() + 1) / 6);
     double *previous_index = multiplicative_constants_block_.ptr();
 
-    for(index_t n = 0; n < multiplicative_constants_.size(); n++) {
+    for(size_t n = 0; n < multiplicative_constants_.size(); n++) {
       
       // Allocate $(n + 1)$ by $(n + 1)$ matrix.
       multiplicative_constants_[n].Alias
@@ -140,9 +140,9 @@ class InversePowDistSeriesExpansionAux {
       // The reference to the matrix.
       Matrix &n_th_order_matrix = multiplicative_constants_[n];
 
-      for(index_t a = 0; a <= n; a++) {
+      for(size_t a = 0; a <= n; a++) {
 
-	for(index_t b = 0; b <= a; b++) {
+	for(size_t b = 0; b <= a; b++) {
 	  n_th_order_matrix.set(a, b, math::BinomialCoefficient(n, a) * 
 				math::BinomialCoefficient(a, b) / 
 				(pow(2, a) * factorials_[n]));
@@ -198,7 +198,7 @@ class InversePowDistSeriesExpansionAux {
     
     double result = 1.0;
 
-    for(index_t i = 0; i < index; i++) {
+    for(size_t i = 0; i < index; i++) {
       result *= (base + i);
     }
     return result;
@@ -218,7 +218,7 @@ class InversePowDistSeriesExpansionAux {
     evaluated_polynomials.SetZero();
 
     // lambda_index = lambda / 2 + 1, ...
-    for(index_t lambda_index = 0; lambda_index < 
+    for(size_t lambda_index = 0; lambda_index < 
 	  evaluated_polynomials.n_cols(); lambda_index++) {
       
       double effective_lambda = lambda_ / 2.0 + lambda_index;
@@ -227,7 +227,7 @@ class InversePowDistSeriesExpansionAux {
 				argument);
 
       // Apply the recurrence.
-      for(index_t n = 2; n < evaluated_polynomials.n_rows(); n++) {
+      for(size_t n = 2; n < evaluated_polynomials.n_rows(); n++) {
 	evaluated_polynomials.set
 	  (n, lambda_index, 
 	   (2 * (n + effective_lambda - 1) * argument *
@@ -295,7 +295,7 @@ class InversePowDistSeriesExpansionAux {
     std::complex<double> tmp;
     result.real() = result.imag() = 0;
 
-    for(index_t k = 0; k <= m; k++) {
+    for(size_t k = 0; k <= m; k++) {
       double common_factor = t_constants_.get(m, k) * 
 	a_constants_[n - 2 * k].get(abs(a - 2 * b), k);
       int sign = 2 * b - a;

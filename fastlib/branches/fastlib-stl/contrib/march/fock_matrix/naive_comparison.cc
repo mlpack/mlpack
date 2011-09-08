@@ -17,7 +17,7 @@ int main(int argc, char* argv[]) {
   mom.Init(centers.n_cols());
   mom.SetAll(0);
   
-  index_t mat_size;
+  size_t mat_size;
   mat_size = centers.n_cols() + 2*la::Dot(mom, mom);
   
   Matrix density;

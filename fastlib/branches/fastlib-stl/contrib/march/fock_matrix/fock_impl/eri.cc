@@ -26,7 +26,7 @@ namespace eri {
     double_factorial[1] = 1.0;
     factorial[0] = 1.0;
     factorial[1] = 1.0;
-    for (index_t i = 2; i < MAX_FAC; i++) {
+    for (size_t i = 2; i < MAX_FAC; i++) {
       
       double_factorial[i] = (double)i * double_factorial[i-2];
       factorial[i] = (double)i * factorial[i-1];
@@ -44,7 +44,7 @@ namespace eri {
   
   ////////////// Helpers ///////////////////////////
   
-  index_t NumFunctions(int momentum) {
+  size_t NumFunctions(int momentum) {
     
     if (momentum == 0) {
       return 1;
@@ -506,7 +506,7 @@ namespace eri {
     
     double retval = 0.0;
     
-    for (index_t i = 0; i <= total_momentum/2; i++) {
+    for (size_t i = 0; i <= total_momentum/2; i++) {
       
       double this_val = GPTCoefficient(2*i, l1, l2, PA_x, PB_x);
       this_val /= pow(2.0 * gamma, (double)i);
@@ -531,7 +531,7 @@ namespace eri {
                                const BasisShell& shellB, 
                                Vector* integrals) {
     
-    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    size_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
     //double* integrals = (double*)malloc(num_integrals * sizeof(double));
     integrals->Init(num_integrals);
@@ -551,26 +551,26 @@ namespace eri {
     // iterate over the basis functions, compute their I_x, I_y, I_z factors
     // multiply them by the prefactor and write to the array
     
-    index_t integral_index = 0;
-    index_t a_ind = 0;
+    size_t integral_index = 0;
+    size_t a_ind = 0;
     
-    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+    for (size_t ai = 0; ai <= shellA.total_momentum(); ai++) {
       int l1 = shellA.total_momentum() - ai;
       
-      for (index_t aj = 0; aj <= ai; aj ++) {
+      for (size_t aj = 0; aj <= ai; aj ++) {
         
         int m1 = ai - aj;
         int n1 = aj;
         
-        index_t b_ind = 0;
+        size_t b_ind = 0;
         
-        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+        for (size_t bi = 0; bi <= shellB.total_momentum(); bi++) {
           
           int l2 = shellB.total_momentum() - bi;
           
           double I_x = OverlapCartesianFactor(l1, l2, PA[0], PB[0], gamma);
           
-          for (index_t bj = 0; bj <= bi; bj++) {
+          for (size_t bj = 0; bj <= bi; bj++) {
             
             int m2 = bi - bj;
             int n2 = bj;
@@ -642,7 +642,7 @@ namespace eri {
                                const BasisShell& shellB,
                                Vector* integrals) {
     
-    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    size_t num_integrals = shellA.num_functions() * shellB.num_functions();
     
     //double* integrals = (double*)malloc(num_integrals * sizeof(double));
     integrals->Init(num_integrals);
@@ -659,25 +659,25 @@ namespace eri {
     Vector PB;
     la::SubInit(shellB.center(), p_vec, &PB);
     
-    index_t integral_index = 0;
-    index_t a_ind = 0;
+    size_t integral_index = 0;
+    size_t a_ind = 0;
     
-    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+    for (size_t ai = 0; ai <= shellA.total_momentum(); ai++) {
       int l1 = shellA.total_momentum() - ai;
       
-      for (index_t aj = 0; aj <= ai; aj ++) {
+      for (size_t aj = 0; aj <= ai; aj ++) {
         
         int m1 = ai - aj;
         int n1 = aj;
         
-        index_t b_ind = 0;
+        size_t b_ind = 0;
         
-        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+        for (size_t bi = 0; bi <= shellB.total_momentum(); bi++) {
           
           int l2 = shellB.total_momentum() - bi;
           
           
-          for (index_t bj = 0; bj <= bi; bj++) {
+          for (size_t bj = 0; bj <= bi; bj++) {
             
             int m2 = bi - bj;
             int n2 = bj;
@@ -793,7 +793,7 @@ namespace eri {
                                const Vector& Cvec, int nuclear_charge,
                                Vector* integrals) {
 
-    index_t num_integrals = shellA.num_functions() * shellB.num_functions();
+    size_t num_integrals = shellA.num_functions() * shellB.num_functions();
     //printf("num_integrals: %d\n", num_integrals);
 
     
@@ -831,24 +831,24 @@ namespace eri {
     mem::Free(F_m);
     //F_m_vec.PrintDebug("F_m");
     
-    index_t integral_index = 0;
-    index_t a_ind = 0;
+    size_t integral_index = 0;
+    size_t a_ind = 0;
     
-    for (index_t ai = 0; ai <= shellA.total_momentum(); ai++) {
+    for (size_t ai = 0; ai <= shellA.total_momentum(); ai++) {
       int l1 = shellA.total_momentum() - ai;
       
-      for (index_t aj = 0; aj <= ai; aj ++) {
+      for (size_t aj = 0; aj <= ai; aj ++) {
         
         int m1 = ai - aj;
         int n1 = aj;
         
-        index_t b_ind = 0;
+        size_t b_ind = 0;
         
-        for (index_t bi = 0; bi <= shellB.total_momentum(); bi++) {
+        for (size_t bi = 0; bi <= shellB.total_momentum(); bi++) {
           
           int l2 = shellB.total_momentum() - bi;
           
-          for (index_t bj = 0; bj <= bi; bj++) {
+          for (size_t bj = 0; bj <= bi; bj++) {
             
             int m2 = bi - bj;
             int n2 = bj;
@@ -996,7 +996,7 @@ namespace eri {
    */
 
   // need to templatize these
-  void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm) {
+  void ArrayListSwap(size_t ind1, size_t ind2, ArrayList<size_t>* perm) {
     
     DEBUG_ASSERT(ind1 < perm->size());
     DEBUG_ASSERT(ind2 < perm->size());
@@ -1004,13 +1004,13 @@ namespace eri {
     DEBUG_ASSERT(ind1 >= 0);
     DEBUG_ASSERT(ind2 >= 0);
     
-    index_t ind2_temp = (*perm)[ind2];
+    size_t ind2_temp = (*perm)[ind2];
     (*perm)[ind2] = (*perm)[ind1];
     (*perm)[ind1] = ind2_temp;
     
   } // ArrayListSwap
   
-  void ArrayListSwapPointers(index_t ind1, index_t ind2, 
+  void ArrayListSwapPointers(size_t ind1, size_t ind2, 
                              ArrayList<BasisShell*>* list) {
     
     DEBUG_ASSERT(ind1 < list->size());
@@ -1027,36 +1027,36 @@ namespace eri {
   
   
   // a_ind needs to be the first index after the permutation for 
-  index_t IntegralIndex(ArrayList<index_t> indices, ArrayList<index_t> momenta) {
+  size_t IntegralIndex(ArrayList<size_t> indices, ArrayList<size_t> momenta) {
     
-    index_t a_ind = indices[0];
-    index_t b_ind = indices[1];
-    index_t c_ind = indices[2];
-    index_t d_ind = indices[3];
+    size_t a_ind = indices[0];
+    size_t b_ind = indices[1];
+    size_t c_ind = indices[2];
+    size_t d_ind = indices[3];
     
-    index_t B_mom = momenta[1];
-    index_t C_mom = momenta[2];
-    index_t D_mom = momenta[3];
+    size_t B_mom = momenta[1];
+    size_t C_mom = momenta[2];
+    size_t D_mom = momenta[3];
     
-    index_t numB = NumFunctions(B_mom);
-    index_t numC = NumFunctions(C_mom);
-    index_t numD = NumFunctions(D_mom);
+    size_t numB = NumFunctions(B_mom);
+    size_t numC = NumFunctions(C_mom);
+    size_t numD = NumFunctions(D_mom);
     
     
-    index_t result = ((a_ind * numB + b_ind) * numC + c_ind) * numD + d_ind;
+    size_t result = ((a_ind * numB + b_ind) * numC + c_ind) * numD + d_ind;
     
     return result;
     
   } // IntegralIndex
   
-  index_t IntegralIndex(index_t a_ind, int A_mom, index_t b_ind, int B_mom,
-                        index_t c_ind, int C_mom, index_t d_ind, int D_mom) {
+  size_t IntegralIndex(size_t a_ind, int A_mom, size_t b_ind, int B_mom,
+                        size_t c_ind, int C_mom, size_t d_ind, int D_mom) {
     
-    index_t numB = NumFunctions(B_mom);
-    index_t numC = NumFunctions(C_mom);
-    index_t numD = NumFunctions(D_mom);
+    size_t numB = NumFunctions(B_mom);
+    size_t numC = NumFunctions(C_mom);
+    size_t numD = NumFunctions(D_mom);
     
-    index_t result = ((a_ind * numB + b_ind) * numC + c_ind) * numD + d_ind;
+    size_t result = ((a_ind * numB + b_ind) * numC + c_ind) * numD + d_ind;
     
     return result;
     
@@ -1065,14 +1065,14 @@ namespace eri {
    
    // IMPORTANT: currently assumes the rows and columns are contiguous
   // could rewrite with two for loops to get rid of this assumption
-  void AddSubmatrix(const ArrayList<index_t>& rows,
-                    const ArrayList<index_t>& cols,
+  void AddSubmatrix(const ArrayList<size_t>& rows,
+                    const ArrayList<size_t>& cols,
                     const Matrix& submat, Matrix* out_mat) {
     
     Matrix col_slice;
     out_mat->MakeColumnSlice(cols[0], cols.size(), &col_slice);
     
-    for (index_t i = 0; i < cols.size(); i++) {
+    for (size_t i = 0; i < cols.size(); i++) {
       // for each column, make the subvector and do the addition
       
       Vector out_row;
@@ -1087,14 +1087,14 @@ namespace eri {
     
   } // AddSubmatrix
   
-  void AddSubmatrix(index_t row_begin, index_t row_count,
-                    index_t col_begin, index_t col_count,
+  void AddSubmatrix(size_t row_begin, size_t row_count,
+                    size_t col_begin, size_t col_count,
                     const Matrix& submat, Matrix* out_mat) {
     
     Matrix col_slice;
     out_mat->MakeColumnSlice(col_begin, col_count, &col_slice);
     
-    for (index_t i = 0; i < col_count; i++) {
+    for (size_t i = 0; i < col_count; i++) {
       // for each column, make the subvector and do the addition
       
       Vector out_row;
@@ -1115,16 +1115,16 @@ namespace eri {
     
     double density_bound = max(A_pair.density_bound(), B_pair.density_bound());
     
-    for (index_t k_ind = 0; k_ind < B_pair.M_Shell()->num_functions(); k_ind++) {
+    for (size_t k_ind = 0; k_ind < B_pair.M_Shell()->num_functions(); k_ind++) {
       
-      for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+      for (size_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
         
         density_bound = max(density_bound, 
                             0.25 * fabs(density.get(k_ind, i_ind)));
         
       } // i_ind
       
-      for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+      for (size_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
         
         density_bound = max(density_bound, 
                             0.25 * fabs(density.get(k_ind, j_ind)));
@@ -1134,16 +1134,16 @@ namespace eri {
     } // for k_ind
     
     // should wrap this in a check to see if k and l are different to save time
-    for (index_t l_ind = 0; l_ind < B_pair.N_Shell()->num_functions(); l_ind++) {
+    for (size_t l_ind = 0; l_ind < B_pair.N_Shell()->num_functions(); l_ind++) {
       
-      for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+      for (size_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
         
         density_bound = max(density_bound, 
                             0.25 * fabs(density.get(l_ind, i_ind)));
         
       } // i_ind
       
-      for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+      for (size_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
         
         density_bound = max(density_bound, 
                             0.25 * fabs(density.get(l_ind, j_ind)));
@@ -1161,9 +1161,9 @@ namespace eri {
     
     double density_bound = -DBL_MAX;
     
-    for (index_t a = 0; a < A_shell.num_functions(); a++) {
+    for (size_t a = 0; a < A_shell.num_functions(); a++) {
       
-      for (index_t b = 0; b < B_shell.num_functions(); b++) {
+      for (size_t b = 0; b < B_shell.num_functions(); b++) {
         
         density_bound = max(density_bound, 
                             fabs(density.get(A_shell.matrix_index(a), 
@@ -1241,7 +1241,7 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     
     // should this come in initialized or be initialized here
     // this is new from old
-    ArrayList<index_t> perm;
+    ArrayList<size_t> perm;
     perm.Init(4);
     perm[0] = 0;
     perm[1] = 1;
@@ -1251,10 +1251,10 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
         
     // determine the permutation
     
-    index_t momA = shells[0]->total_momentum();
-    index_t momB = shells[1]->total_momentum();
-    index_t momC = shells[2]->total_momentum();
-    index_t momD = shells[3]->total_momentum();
+    size_t momA = shells[0]->total_momentum();
+    size_t momB = shells[1]->total_momentum();
+    size_t momC = shells[2]->total_momentum();
+    size_t momD = shells[3]->total_momentum();
     
     int anti_perm = 0;
     if (momA < momB) {
@@ -1279,10 +1279,10 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
       
     }
     
-    //ArrayList<index_t> anti_perm;
+    //ArrayList<size_t> anti_perm;
     //anti_perm.Init(4);
     /*
-    for (index_t i = 0; i < 4; i++) {
+    for (size_t i = 0; i < 4; i++) {
       anti_perm[perm[i]] = i;
     }
     */
@@ -1369,68 +1369,68 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
                                  C_vec, C_exp, C_mom, D_vec, D_exp, D_mom,
                                  aux_fac, &tester);
     
-    index_t num_funs_a = NumFunctions(A_mom);
-    index_t num_funs_b = NumFunctions(B_mom);
-    index_t num_funs_c = NumFunctions(C_mom);
-    index_t num_funs_d = NumFunctions(D_mom);
+    size_t num_funs_a = NumFunctions(A_mom);
+    size_t num_funs_b = NumFunctions(B_mom);
+    size_t num_funs_c = NumFunctions(C_mom);
+    size_t num_funs_d = NumFunctions(D_mom);
     
     
     
     //printf("results: %p\n", results);
     
-    index_t a = 0;
-    for (index_t a_ind = 0; a_ind <= A_mom; a_ind++) {
+    size_t a = 0;
+    for (size_t a_ind = 0; a_ind <= A_mom; a_ind++) {
       
-      index_t a_x = A_mom - a_ind;
+      size_t a_x = A_mom - a_ind;
       
-      for (index_t a_ind2 = 0; a_ind2 <= a_ind; a_ind2++) {
+      for (size_t a_ind2 = 0; a_ind2 <= a_ind; a_ind2++) {
         
-        index_t a_y = a_ind - a_ind2;
-        index_t a_z = a_ind2;
+        size_t a_y = a_ind - a_ind2;
+        size_t a_z = a_ind2;
         
         double A_norm = eri::ComputeNormalization(A_exp, a_x, a_y, a_z);
         
-        index_t b = 0;
+        size_t b = 0;
         
-        for (index_t b_ind = 0; b_ind <= B_mom; b_ind++) {
+        for (size_t b_ind = 0; b_ind <= B_mom; b_ind++) {
           
-          index_t b_x = B_mom - b_ind;
+          size_t b_x = B_mom - b_ind;
           
-          for (index_t b_ind2 = 0; b_ind2 <= b_ind; b_ind2++) {
+          for (size_t b_ind2 = 0; b_ind2 <= b_ind; b_ind2++) {
             
-            index_t b_y = b_ind - b_ind2;
-            index_t b_z = b_ind2;
+            size_t b_y = b_ind - b_ind2;
+            size_t b_z = b_ind2;
             
             double B_norm = eri::ComputeNormalization(B_exp, b_x, b_y, b_z);
             
-            index_t c = 0;
+            size_t c = 0;
             
-            for (index_t c_ind = 0; c_ind <= C_mom; c_ind++) {
+            for (size_t c_ind = 0; c_ind <= C_mom; c_ind++) {
               
-              index_t c_x = C_mom - c_ind;
+              size_t c_x = C_mom - c_ind;
               
-              for (index_t c_ind2 = 0; c_ind2 <= c_ind; c_ind2++) {
+              for (size_t c_ind2 = 0; c_ind2 <= c_ind; c_ind2++) {
                 
-                index_t c_y = c_ind - c_ind2;
-                index_t c_z = c_ind2;
+                size_t c_y = c_ind - c_ind2;
+                size_t c_z = c_ind2;
                 
                 double C_norm = eri::ComputeNormalization(C_exp, c_x, c_y, c_z);
                 
-                index_t d = 0;
+                size_t d = 0;
                 
-                for (index_t d_ind = 0; d_ind <= D_mom; d_ind++) {
+                for (size_t d_ind = 0; d_ind <= D_mom; d_ind++) {
                   
-                  index_t d_x = D_mom - d_ind;
+                  size_t d_x = D_mom - d_ind;
                   
                   
-                  for (index_t d_ind2 = 0; d_ind2 <= d_ind; d_ind2++) {
+                  for (size_t d_ind2 = 0; d_ind2 <= d_ind; d_ind2++) {
                     
-                    index_t d_y = d_ind - d_ind2;
-                    index_t d_z = d_ind2;
+                    size_t d_y = d_ind - d_ind2;
+                    size_t d_z = d_ind2;
                     
                     double D_norm = eri::ComputeNormalization(D_exp, d_x, d_y, d_z);
                     
-                    index_t integral_ind = IntegralIndex(a, A_mom, 
+                    size_t integral_ind = IntegralIndex(a, A_mom, 
                                                          b, B_mom, 
                                                          c, C_mom, 
                                                          d, D_mom);
@@ -1475,13 +1475,13 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
     free_libint(&tester);
     
     /*
-    for (index_t a = 0; a < integrals->dim_a(); a++) {
+    for (size_t a = 0; a < integrals->dim_a(); a++) {
       
-      for (index_t b = 0; b < integrals->dim_b(); b++) {
+      for (size_t b = 0; b < integrals->dim_b(); b++) {
         
-        for (index_t c = 0; c < integrals->dim_c(); c++) {
+        for (size_t c = 0; c < integrals->dim_c(); c++) {
           
-          for (index_t d = 0; d < integrals->dim_d(); d++) {
+          for (size_t d = 0; d < integrals->dim_d(); d++) {
             
             printf("integrals[%d, %d, %d, %d] = %g\n", a, b, c, d, 
                    integrals->ref(a, b, c, d));
@@ -1626,14 +1626,14 @@ double SchwartzBound(BasisShell& i_shell, BasisShell& j_shell) {
   
   ////////////// Creating shells and shell pairs ///////////////////////
   
-index_t CreateShells(const Matrix& centers, const Vector& exponents, 
+size_t CreateShells(const Matrix& centers, const Vector& exponents, 
                      const Vector& momenta, ArrayList<BasisShell>* shells_out) {
   
-  index_t num_functions = 0;
+  size_t num_functions = 0;
   
   shells_out->Init(centers.n_cols());
   
-  for (index_t i = 0; i < centers.n_cols(); i++) {
+  for (size_t i = 0; i < centers.n_cols(); i++) {
     
     Vector new_cent;
     centers.MakeColumnVector(i, &new_cent);
@@ -1651,22 +1651,22 @@ index_t CreateShells(const Matrix& centers, const Vector& exponents,
   
 
 
-index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+size_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, const Matrix& density) {
 
-  index_t num_shells = shells_in.size();
+  size_t num_shells = shells_in.size();
   
-  index_t num_shell_pairs = 0;
+  size_t num_shell_pairs = 0;
   
   // What size to init to? 
   shell_pairs->Init();
   
-  for (index_t i = 0; i < num_shells; i++) {
+  for (size_t i = 0; i < num_shells; i++) {
   
     //BasisShell i_shell = shells_in[i];
     
-    for (index_t j = i; j < num_shells; j++) {
+    for (size_t j = i; j < num_shells; j++) {
     
       //BasisShell j_shell = shells_in[j];
       
@@ -1685,8 +1685,8 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
       // doesn't work
       /*
       double max_density = -DBL_MAX;
-      for (index_t k = 0; k < shells_in[i].num_functions(); k++) {
-       for (index_t l = 0; l < shells_in[j].num_functions(); l++) {
+      for (size_t k = 0; k < shells_in[i].num_functions(); k++) {
+       for (size_t l = 0; l < shells_in[j].num_functions(); l++) {
          max_density = max(max_density, 
                            fabs(density.get(shells_in[i].matrix_index(k),
                                             shells_in[j].matrix_index(l))));
@@ -1733,16 +1733,16 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 }
 
 // this version is for link
-index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+size_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                           ArrayList<BasisShell>& shells_in, 
                           double shell_pair_cutoff, Vector* shell_max, 
                           ShellPair**** sigma_for_nu, 
-                          ArrayList<index_t>* num_sigma_for_nu, 
+                          ArrayList<size_t>* num_sigma_for_nu, 
                           const Matrix& density) {
     
-  index_t num_shells = shells_in.size();
+  size_t num_shells = shells_in.size();
   
-  index_t num_shell_pairs = 0;
+  size_t num_shell_pairs = 0;
   
   //num_per_shell->Init(num_shells);
   
@@ -1750,24 +1750,24 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
   //shell_pairs->Init(num_shells);
   shell_pairs->Init();
 
-  ArrayList<ArrayList<index_t> > significant_sig_index;
+  ArrayList<ArrayList<size_t> > significant_sig_index;
   significant_sig_index.Init(num_shells);
 
   DEBUG_ASSERT(shell_max != NULL);
   shell_max->Init(num_shells);
   
-  for (index_t i = 0; i < num_shells; i++) {
+  for (size_t i = 0; i < num_shells; i++) {
     
     BasisShell& i_shell = shells_in[i];
-    index_t num_for_i = 0;
+    size_t num_for_i = 0;
     
     
     double i_max = -DBL_MAX;
     
-    //ArrayList<index_t> significant_sig_index;
+    //ArrayList<size_t> significant_sig_index;
     significant_sig_index[i].Init(num_shells);
     
-    for (index_t j = i; j < num_shells; j++) {
+    for (size_t j = i; j < num_shells; j++) {
       
       BasisShell& j_shell = shells_in[j];
       
@@ -1811,13 +1811,13 @@ index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs,
 
   // do two loops to avoid invalidating the pointers into shell pair list when 
   // calling PushBack
-  for (index_t i = 0; i < num_shells; i++) {
+  for (size_t i = 0; i < num_shells; i++) {
 
-    index_t num_for_i = (*num_sigma_for_nu)[i];
+    size_t num_for_i = (*num_sigma_for_nu)[i];
     
     (*sigma_for_nu)[i] = (ShellPair**)malloc(num_for_i * sizeof(ShellPair**));
 
-    for (index_t k = 0; k < num_for_i; k++) {
+    for (size_t k = 0; k < num_for_i; k++) {
     
       (*sigma_for_nu)[i][k] = shell_pairs->begin() + significant_sig_index[i][k];
     

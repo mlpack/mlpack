@@ -48,11 +48,11 @@ namespace neighbor {
  * class SortPolicy {
  *  public:
  *   // Return the index in the list where the new distance should be inserted,
- *   // or index_t() - 1 if it should not be inserted (i.e. if it is not any
+ *   // or size_t() - 1 if it should not be inserted (i.e. if it is not any
  *   // better than any of the existing points in the list).  The list is sorted
  *   // such that the best point is first in the list.  The actual insertion is
  *   // not performed.
- *   static index_t SortDistance(arma::vec& list, double new_distance);
+ *   static size_t SortDistance(arma::vec& list, double new_distance);
  *
  *   // Return whether or not value is "better" than ref.
  *   static inline bool IsBetter(const double value, const double ref);
@@ -128,26 +128,26 @@ class NeighborSearch {
   TreeType* query_tree_;
 
   // A permutation of the indices for tree building.
-  std::vector<index_t> old_from_new_queries_;
-  std::vector<index_t> old_from_new_references_;
+  std::vector<size_t> old_from_new_queries_;
+  std::vector<size_t> old_from_new_references_;
 
   bool naive_;
   bool dual_mode_;
 
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
 
   // number of nearest neighbrs
-  index_t knns_;
+  size_t knns_;
 
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
 
   // The distance to the candidate nearest neighbor for each query
   arma::mat neighbor_distances_;
 
   // The indices of the candidate nearest neighbor for each query
-  arma::Mat<index_t> neighbor_indices_;
+  arma::Mat<size_t> neighbor_indices_;
 
  public:
   /**
@@ -183,7 +183,7 @@ class NeighborSearch {
    * @param resulting_neighbors List of nearest neighbors
    * @param distances Distance of nearest neighbors
    */
-  void ComputeNeighbors(arma::Mat<index_t>& resulting_neighbors,
+  void ComputeNeighbors(arma::Mat<size_t>& resulting_neighbors,
                         arma::mat& distances);
 
  private:
@@ -207,7 +207,7 @@ class NeighborSearch {
    * Perform a recursion only on the reference tree; the query point is given.
    * This method is similar to ComputeBaseCase_().
    */
-  void ComputeSingleNeighborsRecursion_(index_t point_id, arma::vec& point,
+  void ComputeSingleNeighborsRecursion_(size_t point_id, arma::vec& point,
                                         TreeType* reference_node,
                                         double& best_dist_so_far);
 
@@ -220,7 +220,7 @@ class NeighborSearch {
    * @param neighbor Index of reference point which is being inserted.
    * @param distance Distance from query point to reference point.
    */
-  void InsertNeighbor(index_t query_index, index_t pos, index_t neighbor,
+  void InsertNeighbor(size_t query_index, size_t pos, size_t neighbor,
                       double distance);
 
 }; // class NeighborSearch

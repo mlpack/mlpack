@@ -70,22 +70,22 @@ private:
   arma::mat queries_;
   arma::mat references_;
   // This will store the query index for the single tree run
-  index_t query_;
+  size_t query_;
   // Pointers to the roots of the two trees.
   TreeType* reference_tree_;
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  // ArrayList<index_t> old_from_new_queries_;
-  arma::Col<index_t> old_from_new_references_;
+  // ArrayList<size_t> old_from_new_queries_;
+  arma::Col<size_t> old_from_new_references_;
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
   arma::vec max_ips_;
   // The indices of the candidate nearest neighbor for each query
-  arma::Col<index_t> max_ip_indices_;
+  arma::Col<size_t> max_ip_indices_;
   // number of nearest neighbrs
-  index_t knns_; 
+  size_t knns_; 
 
 
   /////////////////////////////// Constructors ////////////////////////
@@ -153,18 +153,18 @@ private:
     // Used to find the query node's new upper bound
     // query_min_ip = DBL_MAX;
     
-    std::vector<std::pair<double, index_t> > candidates(knns_);
+    std::vector<std::pair<double, size_t> > candidates(knns_);
 
     // Get the query point from the matrix
     arma::vec q = queries_.col(query_); 
 
-    index_t ind = query_*knns_;
-    for(index_t i = 0; i < knns_; i++)
+    size_t ind = query_*knns_;
+    for(size_t i = 0; i < knns_; i++)
       candidates[i] = std::make_pair(max_ips_(ind+i),
 				     max_ip_indices_(ind+i));
     
     // We'll do the same for the references
-    for (index_t reference_index = reference_node->begin(); 
+    for (size_t reference_index = reference_node->begin(); 
 	 reference_index < reference_node->end(); reference_index++) {
 
       // Confirm that points do not identify themselves as neighbors
@@ -182,7 +182,7 @@ private:
 
     std::sort(candidates.begin(), candidates.end());
     std::reverse(candidates.begin(), candidates.end());
-    for(index_t i = 0; i < knns_; i++) {
+    for(size_t i = 0; i < knns_; i++) {
       max_ips_(ind+i) = candidates[i].first;
       max_ip_indices_(ind+i) = candidates[i].second;
     }
@@ -367,7 +367,7 @@ public:
   
     // Initialize the list of nearest neighbor candidates
     max_ip_indices_ 
-      = -1 * arma::ones<arma::Col<index_t> >(queries_.n_cols * knns_, 1);
+      = -1 * arma::ones<arma::Col<size_t> >(queries_.n_cols * knns_, 1);
     
     // Initialize the vector of upper bounds for each point.
     // We do not consider negative values for inner products.
@@ -382,7 +382,7 @@ public:
 
 //     // Here we need to change the query tree into N single-point
 //     // query trees
-//     for (index_t i = 0; i < queries_.n_cols(); i++) {
+//     for (size_t i = 0; i < queries_.n_cols(); i++) {
 //       Matrix query;
 //       queries_.MakeColumnSlice(i, 1, &query);
 //       TreeType *single_point_tree
@@ -446,7 +446,7 @@ public:
   
     // Initialize the list of nearest neighbor candidates
     max_ip_indices_
-      = -1 * arma::ones<arma::Col<index_t> >(queries_.n_cols * knns_, 1);
+      = -1 * arma::ones<arma::Col<size_t> >(queries_.n_cols * knns_, 1);
     
     // Initialize the vector of upper bounds for each point.
     // We do not consider negative values for inner products.
@@ -462,7 +462,7 @@ public:
 
     // Here we need to change the query tree into N single-point
     // query trees
-//     for (index_t i = 0; i < queries_.n_cols(); i++) {
+//     for (size_t i = 0; i < queries_.n_cols(); i++) {
 //       Matrix query;
 //       queries_.MakeColumnSlice(i, 1, &query);
 //       TreeType *single_point_tree
@@ -491,13 +491,13 @@ public:
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(arma::Col<index_t>* resulting_neighbors,
+  void ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
                         arma::vec* ips) {
 
     // Start on the root of each tree
     // the index of the query in the queries_ matrix
     // query_ = 0;
-    // DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+    // DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
 //     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 // 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -509,14 +509,14 @@ public:
     resulting_neighbors->set_size(max_ips_.n_elem);
     ips->set_size(max_ips_.n_elem);
 
-    for (index_t i = 0; i < max_ips_.n_elem; i++) {
-      index_t query = i/knns_;
+    for (size_t i = 0; i < max_ips_.n_elem; i++) {
+      size_t query = i/knns_;
       (*resulting_neighbors)(query*knns_+ i%knns_)
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
 
-//     NOTIFY("Tdc = %"LI"d, Tmc = %"LI"d, adc = %lg, amc = %lg",
+//     NOTIFY("Tdc = %zu"d, Tmc = %zu"d, adc = %lg, amc = %lg",
 // 	   dc, mc, (float)dc/(float)query_trees_.size(), 
 // 	   (float)mc/(float)query_trees_.size());
   } // ComputeNeighbors
@@ -525,9 +525,9 @@ public:
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(arma::Col<index_t>* resulting_neighbors,
+  void ComputeNaive(arma::Col<size_t>* resulting_neighbors,
                         arma::vec* ips) {
-//   void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
+//   void ComputeNaive(ArrayList<size_t>* resulting_neighbors,
 //                     ArrayList<double>*  distances) {
 
 
@@ -538,8 +538,8 @@ public:
     resulting_neighbors->set_size(max_ips_.n_elem);
     ips->set_size(max_ips_.n_elem);
 
-    for (index_t i = 0; i < max_ips_.n_elem; i++) {
-      index_t query = i/knns_;
+    for (size_t i = 0; i < max_ips_.n_elem; i++) {
+      size_t query = i/knns_;
       (*resulting_neighbors)(query*knns_+ i%knns_)
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
@@ -548,14 +548,14 @@ public:
 //     // Start on the root of each tree
 //     // the index of the query in the queries_ matrix
 //     query_ = 0;
-//     DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+//     DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
 //     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 // 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
 //       ComputeBaseCase_(*query_tree, reference_tree_);
 //     }
-//     for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-//       index_t query = i/knns_;
+//     for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+//       size_t query = i/knns_;
 //       (*resulting_neighbors)[query*knns_+ i%knns_]
 // 	= old_from_new_references_[neighbor_indices_[i]];
 //       (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];

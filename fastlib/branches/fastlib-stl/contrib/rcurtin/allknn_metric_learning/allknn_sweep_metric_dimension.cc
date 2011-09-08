@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
   fx_module* root = fx_init(argc, argv, &allnn_timit_doc);
 
   const char* inputfile = fx_param_str_req(NULL, "input_file");
-  index_t knns = fx_param_int_req(root, "k");
+  size_t knns = fx_param_int_req(root, "k");
   int dim = fx_param_int_req(root, "dim");
   double step = fx_param_double(root, "step", 0.01);
   double spread = fx_param_double(root, "spread", 0.5);
@@ -60,7 +60,7 @@ int main(int argc, char* argv[]) {
     input = diag * input_preserved;
 
     // initialize AllkNN object
-    arma::Col<index_t> neighbors;
+    arma::Col<size_t> neighbors;
     arma::vec distances;
     
     // get five times as many neighbors and we will re-evaluate them after

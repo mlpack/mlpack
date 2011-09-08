@@ -25,7 +25,7 @@ long double phi(Vector& x , Vector& mean , Matrix& cov) {
 	
   long double det, f;
   double exponent;
-  index_t dim;
+  size_t dim;
   Matrix inv;
   Vector diff, tmp;
 	
@@ -91,7 +91,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
 	
   long double det, f;
   double exponent;
-  index_t dim;
+  size_t dim;
   Matrix inv;
   Vector diff, tmp;
 	
@@ -124,7 +124,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
   // Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector
   double *g_cov_tmp;
   g_cov_tmp = (double*)malloc(d_cov.size()*sizeof(double));
-  for(index_t i = 0; i < d_cov.size(); i++){
+  for(size_t i = 0; i < d_cov.size(); i++){
     Vector tmp_d;
     Matrix inv_d;
     long double tmp_d_cov_d_r;
@@ -132,7 +132,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
     la::MulInit(d_cov[i],tmp,&tmp_d);
     tmp_d_cov_d_r = la::Dot(tmp_d,tmp);
     la::MulInit(inv,d_cov[i],&inv_d);
-    for(index_t j = 0; j < dim; j++)
+    for(size_t j = 0; j < dim; j++)
       tmp_d_cov_d_r += inv_d.get(j,j);
     g_cov_tmp[i] = f*tmp_d_cov_d_r/2;
   }

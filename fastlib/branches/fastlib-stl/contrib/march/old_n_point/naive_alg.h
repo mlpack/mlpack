@@ -27,9 +27,9 @@ namespace npt {
     // Does this exist?
     arma::colvec random_weights_;
     
-    index_t num_points_;
+    size_t num_points_;
     int num_random_points_;
-    index_t tuple_size_;
+    size_t tuple_size_;
     
     // These are organized in order of increasing number of random points in 
     // the tuple
@@ -41,7 +41,7 @@ namespace npt {
     int num_random_;
     
     void ComputeCountsHelper_(std::vector<bool>& permutation_ok, 
-                              std::vector<index_t>& points_in_tuple, int k);
+                              std::vector<size_t>& points_in_tuple, int k);
       
     
     

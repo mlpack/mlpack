@@ -8,18 +8,18 @@ class InversePowDistGradientKernel {
  public:
   double lambda_;
   
-  index_t dimension_;
+  size_t dimension_;
 
  public:
   
-  void Init(double lambda_in, index_t dimension_in) {
+  void Init(double lambda_in, size_t dimension_in) {
     lambda_ = lambda_in;
     dimension_ = dimension_in;
   }
 
   double EvalUnnorm(const double *point) const {
     double sqdist = 0;
-    for (index_t i = 0; i < dimension_; i++)
+    for (size_t i = 0; i < dimension_; i++)
       sqdist += point[i] * point[i];
     
     return point[dimension_] / pow(sqdist, lambda_ / 2.0);
@@ -44,18 +44,18 @@ class InversePowDistKernel {
  public:
   double lambda_;
   
-  index_t dimension_;
+  size_t dimension_;
 
  public:
 
-  void Init(double lambda_in, index_t dimension_in) {
+  void Init(double lambda_in, size_t dimension_in) {
     lambda_ = lambda_in;
     dimension_ = dimension_in;
   }
 
   double EvalUnnorm(const double *point) const {
     double sqdist = 0;
-    for (index_t i = 0; i < dimension_; i++)
+    for (size_t i = 0; i < dimension_; i++)
       sqdist += point[i] * point[i];
 
     if(lambda_ > 0) {

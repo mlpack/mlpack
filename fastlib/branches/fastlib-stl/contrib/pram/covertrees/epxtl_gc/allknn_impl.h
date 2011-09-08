@@ -85,9 +85,9 @@ void AllKNN<T>::reset_leaf_nodes_(ArrayList<TreeType*> *leaf_nodes) {
 
 template<typename T>
 void AllKNN<T>::reset_cover_sets_(ArrayList<ArrayList<TreeType*> > *cover_sets,
-				  index_t current_scale, index_t max_scale) {
+				  size_t current_scale, size_t max_scale) {
   
-  for (index_t i = current_scale; i <= max_scale; i++) {
+  for (size_t i = current_scale; i <= max_scale; i++) {
     
     TreeType **begin = (*cover_sets)[i].begin();
     TreeType **end = (*cover_sets)[i].end();
@@ -146,20 +146,20 @@ void AllKNN<T>::CopyCoverSets_(TreeType *query,
 			       ArrayList<T> *upper_bounds, 
 			       ArrayList<ArrayList<TreeType*> > *cover_sets, 
 			       ArrayList<ArrayList<TreeType*> > *new_cover_sets, 
-			       index_t current_scale, index_t max_scale) {
+			       size_t current_scale, size_t max_scale) {
   GenVector<T> q_point;
   T *query_upper_bound = &((*upper_bounds)[query->point() * knns_]);
   T query_max_dist = query->max_dist_to_grandchild();
   T query_parent_dist = query->dist_to_parent();
 
   new_cover_sets->Init(101);
-  for (index_t i = 0; i < 101; i++) {
+  for (size_t i = 0; i < 101; i++) {
     (*new_cover_sets)[i].Init(0);
   }
   queries_.MakeColumnVector(query->point(), &q_point);
 
 
-  for (index_t i = current_scale; i <= max_scale; i++) {
+  for (size_t i = current_scale; i <= max_scale; i++) {
 
     TreeType **begin = (*cover_sets)[i].begin();
     TreeType **end = (*cover_sets)[i].end();
@@ -203,7 +203,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 				   ArrayList<T> *upper_bounds, 
 				   ArrayList<ArrayList<TreeType*> > *cover_sets,
 				   ArrayList<TreeType*> *leaf_nodes,
-				   index_t current_scale, index_t *max_scale) {
+				   size_t current_scale, size_t *max_scale) {
 
   TreeType **begin = (*cover_sets)[current_scale].begin();
   TreeType **end = (*cover_sets)[current_scale].end();
@@ -213,11 +213,11 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 
   GenVector<T> q_point;
   queries_.MakeColumnVector(query->point(), &q_point);
-  //  NOTIFY("descend start at %"LI"d, max_scale now = %"LI"d, size: %"LI"d",
+  //  NOTIFY("descend start at %zu"d, max_scale now = %zu"d, size: %zu"d",
   // current_scale, *max_scale, (*cover_sets)[current_scale].size());
-  index_t i = 0;
+  size_t i = 0;
   for (; begin != end; begin++, i++) {
-    //NOTIFY("Iteration %"LI"d", i);
+    //NOTIFY("Iteration %zu"d", i);
     DEBUG_WARN_MSG_IF(current_scale != (*begin)->scale_depth(), 
 		      "scales don't mathc, no good");
 
@@ -225,7 +225,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
     T upper_bound = *query_upper_bound 
       + query_max_dist + query_max_dist;
     // NOTIFY("LO");
-    // NOTIFY("%"LI"d", (*begin)->point());
+    // NOTIFY("%zu"d", (*begin)->point());
     T present_upper_dist = (*begin)->stat().distance_to_qnode();
     // NOTIFY("here");
     // pruning a reference node if it is no longer a 
@@ -250,7 +250,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 
 	  (*child)->stat().set_distance_to_qnode(present_upper_dist);
 	  (*cover_sets)[(*child)->scale_depth()].PushBackCopy(*child);
-	  //  NOTIFY("%"LI"d chosen at scale %"LI"d",
+	  //  NOTIFY("%zu"d chosen at scale %zu"d",
 	  // (*child)->point(), (*child)->scale_depth());
 	}
 	// otherwise add it to the leaf set
@@ -263,10 +263,10 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 	}
       }
       //   NOTIFY("!!");
-      index_t j = 0;
+      size_t j = 0;
       TreeType **child_end = (*begin)->children()->end();
       for (++child; child != child_end; child++, j++) {
-	//	NOTIFY("sub-iteration: %"LI"d", j);
+	//	NOTIFY("sub-iteration: %zu"d", j);
 
 	T new_upper_bound = *query_upper_bound 
 	  + (*child)->max_dist_to_grandchild() 
@@ -294,7 +294,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 	      }
 	      (*child)->stat().set_distance_to_qnode(d);
 	      (*cover_sets)[(*child)->scale_depth()].PushBackCopy(*child);
-	      //    NOTIFY("%"LI"d child chosen for cover_sets at scale : %"LI"d", 
+	      //    NOTIFY("%zu"d child chosen for cover_sets at scale : %zu"d", 
 	      //     (*child)->point(), (*child)->scale_depth());
 	    }
 	    else {
@@ -302,7 +302,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 		  (*child)->max_dist_to_grandchild()) {
 		(*child)->stat().set_distance_to_qnode(d);
 		leaf_nodes->PushBackCopy(*child);
-		//NOTIFY("%"LI"d chosen for leaf sets",
+		//NOTIFY("%zu"d chosen for leaf sets",
 		//     (*child)->point());
 		DEBUG_ASSERT((*child)->scale_depth() == 100);
 	      }
@@ -315,7 +315,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
     }
     //  NOTIFY("lo");
   }
-  //  NOTIFY("Descend end at current scale:%"LI"d, max scale now:%"LI"d",
+  //  NOTIFY("Descend end at current scale:%zu"d, max scale now:%zu"d",
   // current_scale, *max_scale);
   //  NOTIFY("bye");
 }
@@ -324,7 +324,7 @@ template<typename T>
 void AllKNN<T>::ComputeBaseCase_(TreeType *query, 
 				 ArrayList<T> *upper_bounds,
 				 ArrayList<TreeType*> *leaf_nodes, 
-				 ArrayList<index_t> *neighbor_indices) {
+				 ArrayList<size_t> *neighbor_indices) {
   
   // If this is not a leaf level of the query nodes, 
   // we traverse down the query nodes
@@ -369,20 +369,20 @@ void AllKNN<T>::ComputeBaseCase_(TreeType *query,
     TreeType **end_nn = leaf_nodes->end();
     T *begin = upper_bounds->begin() + query->point() * knns_;
     T *end = upper_bounds->begin() + query->point() * knns_ + knns_ ;
-    index_t *indices = neighbor_indices->begin() + query->point() * knns_;
+    size_t *indices = neighbor_indices->begin() + query->point() * knns_;
     ArrayList<bool> flags;
 
     flags.Init(knns_);
-    for (index_t i = 0; i < knns_; i++) {
+    for (size_t i = 0; i < knns_; i++) {
       flags[i] = 0;
     }
 
     // Here we sort so as to store the NN in the ascending order
     // instead of descending
-    for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
+    for (size_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
       if ((*begin_nn)->stat().distance_to_qnode() <= *begin) {
 	  
-	index_t k = 0;
+	size_t k = 0;
 	while ((*begin_nn)->stat().distance_to_qnode() > *(end - k- 1)) { 
 	  k++;
 	}
@@ -404,8 +404,8 @@ void AllKNN<T>::ComputeNeighborRecursion_(TreeType *query,
 					  ArrayList<T> *upper_bounds, 
 					  ArrayList<ArrayList<TreeType*> > *cover_sets,
 					  ArrayList<TreeType*> *leaf_nodes,
-					  index_t current_scale, index_t max_scale,
-					  ArrayList<index_t> *neighbor_indices) {
+					  size_t current_scale, size_t max_scale,
+					  ArrayList<size_t> *neighbor_indices) {
     
   // if there is no more reference nodes to descend
   // we just do base case where we just descend down 
@@ -531,7 +531,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
     // the traditional base case
     // though later
  
-    //NOTIFY("leaf node for Point %"LI"d %"LI"d",
+    //NOTIFY("leaf node for Point %zu"d %zu"d",
     //	     query->point()+1, reference->point()+1);
     if (reference_query_dist <= *query_upper_bound){
       LeafNodes leaf; 
@@ -545,7 +545,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
     // descending the query tree
 
     TreeType **qchild = query->children()->begin();
-    //NOTIFY("Ref leaf: self child point %"LI"d %"LI"d",
+    //NOTIFY("Ref leaf: self child point %zu"d %zu"d",
     //     (*qchild)->point()+1, reference->point()+1);
     DepthFirst_(*qchild, reference, 
 		neighbors, upper_bounds);
@@ -575,7 +575,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 				 (*qchild)->point(), d);
 	  }
 	  reference->stat().set_distance_to_qnode(d);
-	  //NOTIFY("Ref leaf: child point %"LI"d %"LI"d",
+	  //NOTIFY("Ref leaf: child point %zu"d %zu"d",
 	  //	   (*qchild)->point()+1, reference->point()+1);
 	  DepthFirst_(*qchild, reference, 
 		      neighbors, upper_bounds);
@@ -606,7 +606,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 
     T present_upper_dist = reference_query_dist;
 
-    //NOTIFY("q=%"LI"d r=%"LI"d", 
+    //NOTIFY("q=%zu"d r=%zu"d", 
     //     query->point()+1, reference->point()+1);
 
     if (present_upper_dist <= upper_bound 
@@ -620,7 +620,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 	// NOTIFY("self child selected!!");
 	(*rchild)->stat().set_distance_to_qnode(present_upper_dist);
 	ref_set.PushBackCopy(*rchild);
-	//printf("%"LI"d ", (*rchild)->point()+1);
+	//printf("%zu"d ", (*rchild)->point()+1);
       }
 
       TreeType **child_end = reference->children()->end();
@@ -653,7 +653,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 	     
 	    (*rchild)->stat().set_distance_to_qnode(d);
 	    ref_set.PushBackCopy(*rchild);
-	    //   printf("%"LI"d ", (*rchild)->point()+1);
+	    //   printf("%zu"d ", (*rchild)->point()+1);
 	  }
 	}
       }
@@ -673,7 +673,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
       for (TreeType **begin = rbegin; begin != rend; begin++) {
 	if ((*begin)->stat().distance_to_qnode() <= *query_upper_bound
 	    + (*begin)->max_dist_to_grandchild()) {
-	  //NOTIFY("Query leaf: point %"LI"d %"LI"d", 
+	  //NOTIFY("Query leaf: point %zu"d %zu"d", 
 	  // query->point()+1, (*begin)->point()+1);
 	  DepthFirst_(query, *begin, 
 		      neighbors, upper_bounds);
@@ -689,7 +689,7 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 // 	if ((*begin)->stat().distance_to_qnode() <= *query_upper_bound 
 // 	    + (*begin)->max_dist_to_grandchild() 
 // 	    + (*qchild)->max_dist_to_grandchild()){
-	  //NOTIFY("Query: self child point %"LI"d %"LI"d",
+	  //NOTIFY("Query: self child point %zu"d %zu"d",
 	  //	   (*qchild)->point()+1, (*begin)->point()+1);
 	DepthFirst_(*qchild, *begin, 
 		    neighbors, upper_bounds);
@@ -708,13 +708,13 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 	T qchild_parent_dist = (*qchild)->dist_to_parent();
 
 	// add equivalent here
-	//NOTIFY("ref set %"LI"d", ref_set.size());
+	//NOTIFY("ref set %zu"d", ref_set.size());
 	for (TreeType **begin = rbegin; begin != rend; begin++) {
 	  T new_upper_bound = *qchild_ub + qchild_max_dist 
 	    + qchild_max_dist 
 	    + (*begin)->max_dist_to_grandchild();
 
-	  //NOTIFY("%"LI"d -> %"LI"d", 
+	  //NOTIFY("%zu"d -> %zu"d", 
 	  //	   (*qchild)->point()+1, (*begin)->point()+1);
 	  if ((*begin)->stat().distance_to_qnode() 
 	      - qchild_parent_dist <= new_upper_bound) {
@@ -730,14 +730,14 @@ void AllKNN<T>::DepthFirst_(TreeType *query, TreeType *reference,
 				     (*qchild)->point(), d);
 	      }
 	      (*begin)->stat().set_distance_to_qnode(d);
-	      //NOTIFY("Query: child point %"LI"d %"LI"d",
+	      //NOTIFY("Query: child point %zu"d %zu"d",
 	      //     (*qchild)->point()+1, (*begin)->point()+1);
 	      DepthFirst_(*qchild, *begin, 
 			  neighbors, upper_bounds);
 	      // &new_leaf_nodes);
 	      //	reset_new_leaf_nodes(&new_leaf_nodes);
 	      (*begin)->stat().pop_last_distance();
-	      //NOTIFY("return %"LI"d", (*qchild)->point()+1);
+	      //NOTIFY("return %zu"d", (*qchild)->point()+1);
 	    }
 	  }
 	  //NOTIFY("loop end");

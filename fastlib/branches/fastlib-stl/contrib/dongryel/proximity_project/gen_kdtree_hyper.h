@@ -47,17 +47,17 @@ namespace proximity {
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
   TKdTree *MakeGenKdTree(GenMatrix<T>& lower_limit_matrix, 
 			 GenMatrix<T>& upper_limit_matrix,
-			 index_t leaf_size,
-			 ArrayList<index_t> *old_from_new = NULL,
-			 ArrayList<index_t> *new_from_old = NULL) {
+			 size_t leaf_size,
+			 ArrayList<size_t> *old_from_new = NULL,
+			 ArrayList<size_t> *new_from_old = NULL) {
     
     TKdTree *node = new TKdTree();
-    index_t *old_from_new_ptr;
+    size_t *old_from_new_ptr;
     
     if (old_from_new) {
       old_from_new->Init(lower_limit_matrix.n_cols());
       
-      for (index_t i = 0; i < lower_limit_matrix.n_cols(); i++) {
+      for (size_t i = 0; i < lower_limit_matrix.n_cols(); i++) {
         (*old_from_new)[i] = i;
       }
       
@@ -79,7 +79,7 @@ namespace proximity {
     
     if (new_from_old) {
       new_from_old->Init(lower_limit_matrix.n_cols());
-      for (index_t i = 0; i < lower_limit_matrix.n_cols(); i++) {
+      for (size_t i = 0; i < lower_limit_matrix.n_cols(); i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
     }

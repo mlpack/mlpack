@@ -9,8 +9,8 @@ void Graph::InitFromFile(const char* f, double threshold) {
 }
 
 void Graph::ThresholdEdges(double threshold) {
-  for (index_t i = 0; i < n_nodes(); i++)
-    for (index_t j = 0; j < n_nodes(); j++)
+  for (size_t i = 0; i < n_nodes(); i++)
+    for (size_t j = 0; j < n_nodes(); j++)
       adjacent.ref(i, j) = weight.get(i, j) > threshold;
   //ot::Print(weight);
   //ot::Print(adjacent);

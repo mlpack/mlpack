@@ -10,9 +10,9 @@
 #include "integral_tensor.h"
 
 
-void IntegralTensor::Swap_(index_t* i, index_t* j) {
+void IntegralTensor::Swap_(size_t* i, size_t* j) {
   
-  index_t temp = *i;
+  size_t temp = *i;
   *i = *j;
   *j = temp;
   
@@ -31,16 +31,16 @@ void IntegralTensor::Swap01_() {
   Vector temp_ptr;
   temp_ptr.Copy(ptr_);
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
-          index_t new_ind = ((b * dim_a_ + a) * dim_c_ + c) * dim_d_ + d;
+          size_t new_ind = ((b * dim_a_ + a) * dim_c_ + c) * dim_d_ + d;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -58,17 +58,17 @@ void IntegralTensor::Swap02_() {
   Vector temp_ptr;
   temp_ptr.Copy(ptr_);
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
           // ((a * dim_b_ + b) * dim_c_ + c) * dim_d_ + d
-          index_t new_ind = ((c * dim_b_ + b) * dim_a_ + a) * dim_d_ + d;
+          size_t new_ind = ((c * dim_b_ + b) * dim_a_ + a) * dim_d_ + d;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -86,17 +86,17 @@ void IntegralTensor::Swap03_() {
   Vector temp_ptr;
   temp_ptr.Copy(ptr_);
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
           // ((a * dim_b_ + b) * dim_c_ + c) * dim_d_ + d
-          index_t new_ind = ((d * dim_b_ + b) * dim_c_ + c) * dim_a_ + a;
+          size_t new_ind = ((d * dim_b_ + b) * dim_c_ + c) * dim_a_ + a;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -114,17 +114,17 @@ void IntegralTensor::Swap12_() {
   Vector temp_ptr;
   temp_ptr.Copy(ptr_);
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
           // ((a * dim_b_ + b) * dim_c_ + c) * dim_d_ + d
-          index_t new_ind = ((a * dim_c_ + c) * dim_b_ + b) * dim_d_ + d;
+          size_t new_ind = ((a * dim_c_ + c) * dim_b_ + b) * dim_d_ + d;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -142,17 +142,17 @@ void IntegralTensor::Swap13_() {
   Vector temp_ptr;
   temp_ptr.Copy(ptr_);
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
           // ((a * dim_b_ + b) * dim_c_ + c) * dim_d_ + d
-          index_t new_ind = ((a * dim_d_ + d) * dim_c_ + c) * dim_b_ + b;
+          size_t new_ind = ((a * dim_d_ + d) * dim_c_ + c) * dim_b_ + b;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -170,17 +170,17 @@ void IntegralTensor::Swap23_() {
   Vector temp_ptr;
   temp_ptr.Init(ptr_.length());
   
-  for (index_t a = 0; a < dim_a_; a++) {
-    for (index_t b = 0; b < dim_b_; b++) {
-      for (index_t c = 0; c < dim_c_; c++) {
-        for (index_t d = 0; d < dim_d_; d++) {
+  for (size_t a = 0; a < dim_a_; a++) {
+    for (size_t b = 0; b < dim_b_; b++) {
+      for (size_t c = 0; c < dim_c_; c++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
           // this does the swap in place, but that isn't correct
           // how to do this efficiently otherwise?
           // don't want to have to index into a temporary array
           
           // ((a * dim_b_ + b) * dim_c_ + c) * dim_d_ + d
-          index_t new_ind = ((a * dim_b_ + b) * dim_d_ + d) * dim_c_ + c;
+          size_t new_ind = ((a * dim_b_ + b) * dim_d_ + d) * dim_c_ + c;
           temp_ptr[new_ind] = ref(a, b, c, d);
           
         }
@@ -193,7 +193,7 @@ void IntegralTensor::Swap23_() {
   
 }
 
-void IntegralTensor::SwapIndices_(index_t ind1, index_t ind2) {
+void IntegralTensor::SwapIndices_(size_t ind1, size_t ind2) {
 
   DEBUG_ASSERT(ind1 >= 0 && ind1 < 4);
   DEBUG_ASSERT(ind2 >= 0 && ind2 < 4);
@@ -262,7 +262,7 @@ void IntegralTensor::SwapIndices_(index_t ind1, index_t ind2) {
   // ind1 == 3, but then they're the same
 } // SwapIndices()
   
-void IntegralTensor::set(index_t a, index_t b, index_t c, index_t d, 
+void IntegralTensor::set(size_t a, size_t b, size_t c, size_t d, 
                          double val) {
   
   DEBUG_ASSERT(a < dim_a_);
@@ -274,7 +274,7 @@ void IntegralTensor::set(index_t a, index_t b, index_t c, index_t d,
   
 }
 
-double IntegralTensor::ref(index_t a, index_t b, index_t c, index_t d) {
+double IntegralTensor::ref(size_t a, size_t b, size_t c, size_t d) {
 
   DEBUG_ASSERT(a < dim_a_);
   DEBUG_ASSERT(b < dim_b_);
@@ -285,8 +285,8 @@ double IntegralTensor::ref(index_t a, index_t b, index_t c, index_t d) {
   
 }
 
-void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
-                                     const ArrayList<index_t>& sigma_ind, 
+void IntegralTensor::ContractCoulomb(const ArrayList<size_t>& rho_ind,
+                                     const ArrayList<size_t>& sigma_ind, 
                                      const Matrix& density, Matrix* coulomb, 
                                      bool same_ref) {
   
@@ -300,19 +300,19 @@ void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
   
   //bool same_ref = (rho_ind[0] == sigma_ind[0]) && (rho_ind.back() == sigma_ind.back());
 
-  for (index_t a = 0; a < dim_a_; a++) {
+  for (size_t a = 0; a < dim_a_; a++) {
     
-    for (index_t b = 0; b < dim_b_; b++) {
+    for (size_t b = 0; b < dim_b_; b++) {
       
       double ab_entry = coulomb->ref(a, b);
       
-      for (index_t c = 0; c < dim_c_; c++) {
+      for (size_t c = 0; c < dim_c_; c++) {
         
-        index_t c_ind = rho_ind[c];
+        size_t c_ind = rho_ind[c];
         
-        for (index_t d = 0; d < dim_d_; d++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
-          index_t d_ind = sigma_ind[d];
+          size_t d_ind = sigma_ind[d];
           
           double this_entry = density.get(c_ind, d_ind) * ref(a, b, c, d);
           
@@ -338,10 +338,10 @@ void IntegralTensor::ContractCoulomb(const ArrayList<index_t>& rho_ind,
   
 } // ContractCoulomb
 
-void IntegralTensor::ContractExchange(const ArrayList<index_t>& mu_ind,
-                                      const ArrayList<index_t>& nu_ind,
-                                      const ArrayList<index_t>& rho_ind,
-                                      const ArrayList<index_t>& sigma_ind, 
+void IntegralTensor::ContractExchange(const ArrayList<size_t>& mu_ind,
+                                      const ArrayList<size_t>& nu_ind,
+                                      const ArrayList<size_t>& rho_ind,
+                                      const ArrayList<size_t>& sigma_ind, 
                                       const Matrix& density, Matrix* exchange_ik,
                                       Matrix* exchange_jk, Matrix* exchange_il,
                                       Matrix* exchange_jl) {
@@ -353,21 +353,21 @@ void IntegralTensor::ContractExchange(const ArrayList<index_t>& mu_ind,
       // not true - will get to them anyway
   
     
-  for (index_t a = 0; a < dim_a_; a++) {
+  for (size_t a = 0; a < dim_a_; a++) {
     
-    index_t a_ind = mu_ind[a];
+    size_t a_ind = mu_ind[a];
     
-    for (index_t b = 0; b < dim_b_; b++) {
+    for (size_t b = 0; b < dim_b_; b++) {
       
-      index_t b_ind = nu_ind[b];
+      size_t b_ind = nu_ind[b];
       
-      for (index_t c = 0; c < dim_c_; c++) {
+      for (size_t c = 0; c < dim_c_; c++) {
         
-        index_t c_ind = rho_ind[c];
+        size_t c_ind = rho_ind[c];
         
-        for (index_t d = 0; d < dim_d_; d++) {
+        for (size_t d = 0; d < dim_d_; d++) {
           
-          index_t d_ind = sigma_ind[d];
+          size_t d_ind = sigma_ind[d];
           
           double this_int = ref(a, b, c, d);
           

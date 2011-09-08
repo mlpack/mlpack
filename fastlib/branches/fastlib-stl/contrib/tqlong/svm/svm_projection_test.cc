@@ -57,10 +57,10 @@ int main(int argc, char** argv) {
   }
   else {
     Matrix A;
-    index_t n = fx_param_int(NULL, "n", 10);
+    size_t n = fx_param_int(NULL, "n", 10);
     A.Init(n, n);
-    for (index_t i = 0; i < n; i++)
-      for (index_t j = 0; j < n; j++) A.ref(i, j) = math::Random();
+    for (size_t i = 0; i < n; i++)
+      for (size_t j = 0; j < n; j++) A.ref(i, j) = math::Random();
     la::MulTransAInit(A, A, &Q);
     //Q.Init(n,n); Q.SetZero();
     //for (int i = 0; i < n; i++) Q.ref(i,i) = 1.0;

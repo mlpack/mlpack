@@ -74,7 +74,7 @@ void StartComputation(const Matrix &queries, const Matrix &references,
     // The maximum relative error.
     double max_relative_error = 0;
     int within_limit = 0;
-    for(index_t i = 0; i < queries.n_cols(); i++) {
+    for(size_t i = 0; i < queries.n_cols(); i++) {
       double relative_error =
         (naive_query_results.final_results[i] ==
          query_results.final_results[i]) ?

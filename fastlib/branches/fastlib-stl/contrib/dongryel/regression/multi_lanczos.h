@@ -48,8 +48,8 @@ private:
 			       current_solutions, residuals);
 
     // Compute the residuals by subtracting from b in Ax = b.
-    for(index_t i = 0; i < residuals.n_cols(); i++) {
-      for(index_t j = 0; j < residuals.n_rows(); j++) {
+    for(size_t i = 0; i < residuals.n_cols(); i++) {
+      for(size_t j = 0; j < residuals.n_rows(); j++) {
 	residuals.set(j, i, right_hand_sides.get(j, i) - residuals.get(j, i));
       }
     }
@@ -112,7 +112,7 @@ private:
    const Matrix &expansion_residuals, Vector &expansion_residual_norms, 
    Vector &expansion_scaled_residual_norms, Vector &expansion_r_z_dots) {
 
-    for(index_t q = 0; q < right_hand_sides.n_cols(); q++) {
+    for(size_t q = 0; q < right_hand_sides.n_cols(); q++) {
       residual_norms[q] = la::LengthEuclidean(row_length_,
 					      residuals.GetColumnPtr(q));
       scaled_residual_norms[q] = residual_norms[q] /
@@ -167,7 +167,7 @@ private:
     // not (each for three different systems we are solving).
     ArrayList<bool> query_in_cg_loop;
     query_in_cg_loop.Init(solutions.n_cols());
-    for(index_t i = 0; i < solutions.n_cols(); i++) {
+    for(size_t i = 0; i < solutions.n_cols(); i++) {
       query_in_cg_loop[i] = true;
     }
     
@@ -355,7 +355,7 @@ private:
       previous_loo_residuals->CopyValues(*loo_right_hand_sides);
     }
     previous_expansion_residuals.CopyValues(query_expansions);
-    for(index_t q = 0; q < solutions.n_cols(); q++) {
+    for(size_t q = 0; q < solutions.n_cols(); q++) {
       previous_beta_vec[q] =
 	la::LengthEuclidean(row_length_, previous_residuals.GetColumnPtr(q));
       if(loo_solutions != NULL) {
@@ -369,14 +369,14 @@ private:
     }
 
     // Start the main loop of the Lanczos iteration.
-    for(index_t iter = 1; iter <= row_length_ && 
+    for(size_t iter = 1; iter <= row_length_ && 
 	  num_queries_in_lanczos_loop > 0; iter++) {
       
       printf("%d queries are in the Lanczos loop...\n", 
 	     num_queries_in_lanczos_loop);
 
       // Compute q_j = r_{j-1} / beta_{j-1}
-      for(index_t q = 0; q < q_vecs.n_cols(); q++) {
+      for(size_t q = 0; q < q_vecs.n_cols(); q++) {
 
 	// For the linear system (B^T W(q) B)^{-1} B^T W(q) Y.
 	la::ScaleOverwrite(row_length_, 1.0 / previous_beta_vec[q], 
@@ -406,7 +406,7 @@ private:
       
 
       // iterate over each query point.
-      for(index_t q = 0; q < q_vecs.n_cols(); q++) {
+      for(size_t q = 0; q < q_vecs.n_cols(); q++) {
 
 	// If the current query has converged, then skip it.
 	if(!query_in_cg_loop[q]) {

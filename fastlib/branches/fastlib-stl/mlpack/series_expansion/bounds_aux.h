@@ -13,10 +13,10 @@ class bounds_aux {
 			    arma::vec& furthest_point_in_bound1,
 			    double& furthest_dsqd) {
     
-    index_t dim = furthest_point_in_bound1.n_elem;
+    size_t dim = furthest_point_in_bound1.n_elem;
     furthest_dsqd = 0;
 
-    for (index_t d = 0; d < dim; d++) {
+    for (size_t d = 0; d < dim; d++) {
       
       const DRange &bound1_range = bound1.get(d);
       const DRange &bound2_range = bound2.get(d);
@@ -44,10 +44,10 @@ class bounds_aux {
 			    arma::vec& furthest_point_in_bound1,
 			    double &furthest_dsqd) {
 		       
-    index_t dim = furthest_point_in_bound1.n_elem;
+    size_t dim = furthest_point_in_bound1.n_elem;
     furthest_dsqd = 0;
 
-    for (index_t d = 0; d < dim; d++) {
+    for (size_t d = 0; d < dim; d++) {
       
       const DRange &bound1_range = bound1.get(d);
       
@@ -111,7 +111,7 @@ class bounds_aux {
 
     double max_length = 0;
 
-    for(index_t d = 0; d < bound.dim(); d++) {
+    for(size_t d = 0; d < bound.dim(); d++) {
       const DRange &range = bound.get(d);
       max_length = std::max(max_length, range.width());
     }
@@ -125,13 +125,13 @@ class bounds_aux {
   static double MaxL1Distance
   (const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &ball_bound1,
    const DBallBound < mlpack::kernel::LMetric<t_pow>, TVector > &ball_bound2,
-   index_t *dimension) {
+   size_t *dimension) {
     
     const arma::vec& center1 = ball_bound1.center();
     const arma::vec& center2 = ball_bound2.center();
-    index_t dim = ball_bound1.center().n_elem;
+    size_t dim = ball_bound1.center().n_elem;
     double l1_distance = 0;
-    for(index_t d = 0; d < dim; d++) {
+    for(size_t d = 0; d < dim; d++) {
       l1_distance += fabs(center1[d] - center2[d]);
     }
     l1_distance += ball_bound1.radius() + ball_bound2.radius();
@@ -144,10 +144,10 @@ class bounds_aux {
    */
   template<int t_pow>
   static double MaxL1Distance(const DHrectBound<t_pow> &bound1,
-			      const DHrectBound<t_pow> &bound2, index_t *dimension) {
+			      const DHrectBound<t_pow> &bound2, size_t *dimension) {
 
     double farthest_distance_manhattan = 0;
-    for(index_t d = 0; d < bound1.dim(); d++) {
+    for(size_t d = 0; d < bound1.dim(); d++) {
       const DRange &range1 = bound1.get(d);
       const DRange &range2 = bound2.get(d);
       double bound1_centroid_coord = range1.lo + range1.width() / 2;

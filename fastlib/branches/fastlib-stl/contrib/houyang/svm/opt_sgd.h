@@ -50,15 +50,15 @@ class SGD {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_alpha_; /* number of lagrangian multipliers in the dual */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -72,14 +72,14 @@ class SGD {
   double epsilon_; // for SVM_R
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
-  //ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
+  //ArrayList<size_t> new_from_old_; // for generating a random sequence of training data
 
   double rho_;// for soft margin nonlinear SGD SVM
 
@@ -95,8 +95,8 @@ class SGD {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_epochs_ = (index_t)param_[3];
-      n_iter_ = (index_t)param_[4];
+      n_epochs_ = (size_t)param_[3];
+      n_iter_ = (size_t)param_[4];
       accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -121,7 +121,7 @@ class SGD {
     return scale_w_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -180,14 +180,14 @@ class SGD {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
       i = i >= n_data_ ? (i-n_data_) : i;
@@ -219,7 +219,7 @@ class SGD {
  */
 template<typename TKernel>
 void SGD<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   rho_ = fx_param_double(NULL, "rho", 1.0); // specify the soft margin. default value 1.0: hard margin
   
@@ -269,7 +269,7 @@ void SGD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -293,7 +293,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   LearnersInit_(learner_typeid);
   old_from_new_.Init(n_data_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin SGD iterations */
   if (b_linear_) { // linear SVM, output: w, bias
@@ -378,7 +378,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	}
       }
       // round small w_i to 0
-      index_t w_ct = 0;
+      size_t w_ct = 0;
       double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
       double round_thd = wi_abs_max / round_factor;
       for (i=0; i<n_features_; i++) {
@@ -398,7 +398,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     double delta;
     double yt, yt_hat, yy_hat;
     double one_minus_eta_lambda;
-    index_t n_real_epo, n_data_res;
+    size_t n_real_epo, n_data_res;
     double kernel_value;
     
     Vector b_calc_kernel;
@@ -432,7 +432,7 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
       yt = y_[work_idx_old];
       yt_hat = 0.0;
       
-      n_real_epo = index_t(ceil(ct/n_data_));
+      n_real_epo = size_t(ceil(ct/n_data_));
       n_data_res = ct - n_real_epo * n_data_;
       if (n_real_epo > 0) {
 	for (i=0; i<ct; i++) {
@@ -521,10 +521,10 @@ void SGD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 *
 */
 template<typename TKernel>
-void SGD<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void SGD<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   n_sv_ = 0;
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (fabs(coef_[i]) >= SGD_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = coef_[i];
 	sv_indicator[dataset_index[i]] = true;
@@ -539,7 +539,7 @@ void SGD<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
   else if (learner_typeid_ == 1) {// SVM_R
     // TODO
     /*
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       double alpha_diff = -alpha_[i] + alpha_[i+n_data_]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SGD_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = alpha_diff; 

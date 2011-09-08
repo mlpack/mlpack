@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
 	ArrayList<Matrix> current_added_unknown_x_past;
 	current_added_unknown_x_past.Init();
 
-	ArrayList<index_t> current_added_first_stage_y;
+	ArrayList<size_t> current_added_first_stage_y;
 	current_added_first_stage_y.Init();
 
 	int sampling_count=0;
@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
 					&current_added_second_stage_x, &current_added_unknown_x_past, 
 					&current_added_first_stage_y);
 		//current_percent_added_sample=percent_added_sample;
-		//index_t current_num_selected_people=current_percent_added_sample.size();
+		//size_t current_num_selected_people=current_percent_added_sample.size();
 		objective.Init3(sample_size,
 									 current_added_first_stage_x,
 									 current_added_second_stage_x,
@@ -102,7 +102,7 @@ int main(int argc, char *argv[]) {
 		objective.ComputeGradient(current_parameter, &current_gradient);
 		//printf("The objective is %g", dummy_objective);
 		cout<<"Gradient vector: ";
-		for (index_t i=0; i<current_gradient.length(); i++)
+		for (size_t i=0; i<current_gradient.length(); i++)
 		{
 			cout<<current_gradient[i]<<" ";
 		}
@@ -116,8 +116,8 @@ int main(int argc, char *argv[]) {
 		objective.ComputeHessian(current_parameter, &current_hessian);
 		cout<<"Hessian matrix: "<<endl;
 
-		for (index_t j=0; j<current_hessian.n_rows(); j++){
-			for (index_t k=0; k<current_hessian.n_cols(); k++){
+		for (size_t j=0; j<current_hessian.n_rows(); j++){
+			for (size_t k=0; k<current_hessian.n_cols(); k++){
 				cout<<current_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
 																				&next_p1,
 																				&next_delta_m1);
 		cout<<"p="<<" ";
-		for(index_t i=0; i<next_p1.length(); i++){
+		for(size_t i=0; i<next_p1.length(); i++){
 			cout<<next_p1[i]<<" ";
 		}
 		cout<<endl;
@@ -148,7 +148,7 @@ int main(int argc, char *argv[]) {
 																&next_delta_m2);
 
 		cout<<"p2="<<" ";
-		for(index_t i=0; i<next_p2.length(); i++){
+		for(size_t i=0; i<next_p2.length(); i++){
 			cout<<next_p2[i]<<" ";
 		}
 		cout<<endl;
@@ -158,7 +158,7 @@ int main(int argc, char *argv[]) {
 
 		la::AddTo(next_p1, &current_parameter);
 		cout<<"new_parameter=";
-		for(index_t i=0; i<current_parameter.length(); i++){
+		for(size_t i=0; i<current_parameter.length(); i++){
 			cout<<current_parameter[i]<<" ";
 		}
 		cout<<endl;

@@ -28,7 +28,7 @@ int main(int argc, char* argv[]) {
   Matrix density;
   const char* density_name = fx_param_str(NULL, "density", "");
   
-  if (SUCCESS_PASS != data::Load(density_name, &density)) {
+  if (true != data::Load(density_name, &density)) {
     density.Destruct();
     density.Init(centers.n_cols(), centers.n_cols());
     density.SetAll(1.0);

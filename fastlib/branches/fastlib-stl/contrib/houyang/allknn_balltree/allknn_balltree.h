@@ -72,7 +72,7 @@ class AllkNNBallTree {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
     } 
@@ -81,7 +81,7 @@ class AllkNNBallTree {
      * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
         const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -113,22 +113,22 @@ class AllkNNBallTree {
   std::vector<TreeType*> query_tree_vec_;  // use it for single tree, a vector of single-point-trees
   TreeType* reference_tree_; // use it for dual tree and signle tree
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_references_;
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  ArrayList<size_t> neighbor_indices_;
   // number of nearest neighbrs
-  index_t knns_; 
+  size_t knns_; 
    // The module containing the parameters for this computation. 
   struct datanode* module_;
   // Query index for single tree
-  index_t query_index_single_;
+  size_t query_index_single_;
   // The mode of trees: dual tree==2, single tree==1
   int tree_dual_single_;
   // Whether need to learn a tree: learning tree==1, no learning==0
@@ -143,7 +143,7 @@ class AllkNNBallTree {
 
  public:
 
-  index_t ct_dist_comp;
+  size_t ct_dist_comp;
 
   /**
   * Constructors are generally very simple in FASTlib; most of the work is done by Init().  This is only
@@ -203,7 +203,7 @@ class AllkNNBallTree {
    * brute force nearest neighbor search between two leaves (base case)
    *****************************************/
   void ComputeBaseCase_(TreeType* query_node, TreeType* reference_node) {
-    index_t ind=0;
+    size_t ind=0;
     // Check that the pointers are not NULL
     DEBUG_ASSERT(query_node != NULL);
     DEBUG_ASSERT(reference_node != NULL);
@@ -213,12 +213,12 @@ class AllkNNBallTree {
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
+    std::vector<std::pair<double, size_t> > neighbors(knns_);
 
     //// Brute Force Search
     // node->begin() is the index of the first point in the node, 
     // node->end is one past the last index
-    for (index_t query_index = query_node->begin(); query_index < query_node->end(); query_index++) {
+    for (size_t query_index = query_node->begin(); query_index < query_node->end(); query_index++) {
       // Get the query point from the matrix
       Vector query_point;
       
@@ -230,11 +230,11 @@ class AllkNNBallTree {
 	queries_.MakeColumnVector(query_index_single_, &query_point);
 	ind = query_index_single_*knns_;
       }
-      for(index_t i=0; i<knns_; i++)
+      for(size_t i=0; i<knns_; i++)
         neighbors[i]=std::make_pair(neighbor_distances_[ind+i], neighbor_indices_[ind+i]);
 
       // We'll do the same for the references
-      for (index_t reference_index = reference_node->begin(); reference_index < reference_node->end(); reference_index++) {
+      for (size_t reference_index = reference_node->begin(); reference_index < reference_node->end(); reference_index++) {
 	// Confirm that points do not identify themselves as neighbors in the monochromatic case
         if (likely(reference_node != query_node || reference_index != query_index)) {
 	  Vector reference_point;
@@ -247,9 +247,9 @@ class AllkNNBallTree {
 	    neighbors.push_back(std::make_pair(distance, reference_index));
 	}
       } // for reference_index
-      // if ((index_t)neighbors.size()>knns_) {
+      // if ((size_t)neighbors.size()>knns_) {
       std::sort(neighbors.begin(), neighbors.end());
-      for(index_t i=0; i<knns_; i++) {
+      for(size_t i=0; i<knns_; i++) {
         neighbor_distances_[ind+i] = neighbors[i].first;
         neighbor_indices_[ind+i]  = neighbors[i].second;
       }
@@ -365,7 +365,7 @@ class AllkNNBallTree {
    * using the learnt hyperplane p
    ****************************************************************************************************/
   bool LeftRightDetermineHyperPlane(TreeType* query_node, TreeType* reference_node) {
-    index_t d = query_node->bound().center().length();
+    size_t d = query_node->bound().center().length();
     Vector p_sub;
     reference_node->p_.MakeSubvector(0, d, &p_sub);
     double y= la::Dot(query_node->bound().center(), p_sub) + reference_node->p_[d];
@@ -449,7 +449,7 @@ class AllkNNBallTree {
   /******************************************
    * Computes the ball-tree based k-nearest neighbors search and stores them in results
    *****************************************/
-  void TreeAllkNN(ArrayList<index_t>* resulting_neighbors, ArrayList<double>* distances, bool learn_flag) {
+  void TreeAllkNN(ArrayList<size_t>* resulting_neighbors, ArrayList<double>* distances, bool learn_flag) {
     // initialize the results list before filling it
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
@@ -463,7 +463,7 @@ class AllkNNBallTree {
       DualTreeNeighborsRecursion_(query_tree_, reference_tree_, 
 				  MinNodeDistSq_(query_tree_, reference_tree_));
       // get results
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
 	(*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]= old_from_new_references_[neighbor_indices_[i]];
 	(*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]= neighbor_distances_[i];
       }
@@ -485,8 +485,8 @@ class AllkNNBallTree {
 	  LearnSingleTreeNeighborsRecursion_(*ct, reference_tree_, MinNodeDistSq_(*ct, reference_tree_));
 	}
       // get results	
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-	index_t q = i/knns_;
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+	size_t q = i/knns_;
 	(*resulting_neighbors)[q*knns_+ i%knns_]= old_from_new_references_[neighbor_indices_[i]];
 	(*distances)[q*knns_+ i%knns_] = neighbor_distances_[i];
       }
@@ -502,13 +502,13 @@ class AllkNNBallTree {
   /******************************************
    * Does the brute force k-nearest neighbors search and stores them in results
    *****************************************/
-  void BruteForceAllkNN(ArrayList<index_t>* resulting_neighbors, ArrayList<double>*  distances) {
+  void BruteForceAllkNN(ArrayList<size_t>* resulting_neighbors, ArrayList<double>*  distances) {
     resulting_neighbors->Init(neighbor_indices_.size());
     distances->Init(neighbor_distances_.length());
     
     ComputeBaseCase_(query_tree_, reference_tree_);
     // map the indices back from how they have been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_references_[i/knns_]*knns_+ i%knns_]= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]= neighbor_distances_[i];
     }
@@ -521,8 +521,8 @@ class AllkNNBallTree {
   *****************************************/
 
   /******* Do not use Modules for input parameters.******/
-  //  void TreeInit(const Matrix& queries_in, const Matrix& references_in, const Matrix& queries_train_in, index_t leaf_size, index_t knns) {
-  void TreeInit(const Matrix& queries_in, const Matrix& references_in, index_t leaf_size, index_t knns) {
+  //  void TreeInit(const Matrix& queries_in, const Matrix& references_in, const Matrix& queries_train_in, size_t leaf_size, size_t knns) {
+  void TreeInit(const Matrix& queries_in, const Matrix& references_in, size_t leaf_size, size_t knns) {
     // track the number of prunes
     number_of_prunes_ = 0;
     
@@ -560,7 +560,7 @@ class AllkNNBallTree {
     }
     // construct single tree for reference data, while store query data in a vector of single point trees
     else if (tree_dual_single_ == 1 ) {
-      for (index_t i = 0; i < queries_in.n_cols(); i++) {
+      for (size_t i = 0; i < queries_in.n_cols(); i++) {
 	Matrix query_point;
 	queries_.MakeColumnSlice(i, 1, &query_point);
 	TreeType *single_point_tree = learntrees::MakeGenMetricTree<TreeType>(query_point, leaf_size_, 
@@ -589,7 +589,7 @@ class AllkNNBallTree {
 	String aff_matrix_filename = fx_param_str_req(NULL, "aff_fn");
 	data::Load(aff_matrix_filename, &Aff_);
 
-	ArrayList<index_t> new_from_old;
+	ArrayList<size_t> new_from_old;
 	reference_tree_ = learntrees::LearnGenMetricTree<TreeType>(references_, leaf_size_, knns_, D_diag_, Adj_, Aff_, &old_from_new_references_, &new_from_old);
       }
       else { // no learning, just construct the normal reference tree
@@ -608,7 +608,7 @@ class AllkNNBallTree {
    * Initializes the AllNN structure for brute force NN search
    * This means that we simply ignore all the tree building.
    */
-  void BruteForceInit(const Matrix& queries_in, const Matrix& references_in, index_t knns){
+  void BruteForceInit(const Matrix& queries_in, const Matrix& references_in, size_t knns){
     
     queries_.Copy(queries_in);
     references_.Copy(references_in);

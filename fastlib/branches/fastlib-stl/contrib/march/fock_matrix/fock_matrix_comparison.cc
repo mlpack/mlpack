@@ -17,9 +17,9 @@ void FockMatrixComparison::ComputeCoreMatrices_() {
   
   // iterate over list, compute integrals, and sum them into matrix
   
-  for (index_t i = 0; i < shells.size(); i++) {
+  for (size_t i = 0; i < shells.size(); i++) {
     
-    for (index_t j = 0; j < i; j++) {
+    for (size_t j = 0; j < i; j++) {
       
       // compute overlap
       Vector overlap; 
@@ -54,7 +54,7 @@ void FockMatrixComparison::ComputeCoreMatrices_() {
       eri::AddSubmatrix(shells[j].matrix_indices(), shells[i].matrix_indices(),
                         kinetic_trans, &kinetic_energy_integrals);
       
-      for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+      for (size_t k = 0; k < nuclear_centers_.n_cols(); k++) {
         
         // compute nuclear
         Vector c_vec;
@@ -103,7 +103,7 @@ void FockMatrixComparison::ComputeCoreMatrices_() {
     eri::AddSubmatrix(shells[i].matrix_indices(), shells[i].matrix_indices(),
                       kinetic_mat, &kinetic_energy_integrals);
     
-    for (index_t k = 0; k < nuclear_centers_.n_cols(); k++) {
+    for (size_t k = 0; k < nuclear_centers_.n_cols(); k++) {
       
       // compute nuclear
       Vector c_vec;
@@ -144,12 +144,12 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
   
   //overlap_matrix_.PrintDebug("Overlap matrix");
   
-  success_t eigenval_success = la::SVDInit(overlap_matrix_, &eigenvalues, 
+  bool eigenval_success = la::SVDInit(overlap_matrix_, &eigenvalues, 
                                            &left_vectors, &right_vectors_trans);
   
   //eigenvalues.PrintDebug("eigenvalues");
   
-  if (eigenval_success == SUCCESS_FAIL) {
+  if (eigenval_success == false) {
     FATAL("Unable to Compute Eigenvalues of Overlap Matrix");
   }
   
@@ -164,7 +164,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
   
   //eigenvalues.PrintDebug("eigenvalues");
   
-  for (index_t i = 0; i < eigenvalues.length(); i++) {
+  for (size_t i = 0; i < eigenvalues.length(); i++) {
     DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                      "Complex eigenvalue in diagonalizing overlap matrix.\n");
     
@@ -186,7 +186,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
     */
     
     /*
-    for (index_t j = i+1; j < eigenvalues.length(); j++) {
+    for (size_t j = i+1; j < eigenvalues.length(); j++) {
       
       Vector eigenvec2;
       left_vectors.MakeColumnVector(j, &eigenvec2);
@@ -200,7 +200,7 @@ void FockMatrixComparison::ComputeChangeOfBasisMatrix_() {
   
 #endif
   
-  for (index_t i = 0; i < eigenvalues.length(); i++) {
+  for (size_t i = 0; i < eigenvalues.length(); i++) {
     DEBUG_ASSERT(eigenvalues[i] > 0.0);
     eigenvalues[i] = 1.0/sqrt(eigenvalues[i]);
   }
@@ -232,7 +232,7 @@ void FockMatrixComparison::DiagonalizeFockMatrix_() {
               &naive_right_vectors_trans);
   
   
-  for (index_t i = 0; i < num_entries_; i++) {
+  for (size_t i = 0; i < num_entries_; i++) {
     
     // if the left and right vector don't have equal signs the eigenvector 
     // is negative
@@ -273,7 +273,7 @@ void FockMatrixComparison::CompareEigenvalues_() {
   naive_total_energy_ = 0.0;
   comp_total_energy_ = 0.0;
   
-  for (index_t i = 0; i < num_entries_; i++) {
+  for (size_t i = 0; i < num_entries_; i++) {
     
     naive_total_energy_ += density_.ref(i, i) * 
         (core_hamiltonian_.ref(i,i) + naive_fock_mat_.ref(i,i));
@@ -281,7 +281,7 @@ void FockMatrixComparison::CompareEigenvalues_() {
     comp_total_energy_ += density_.ref(i,i) * 
         (core_hamiltonian_.ref(i,i) + fock_mat_.ref(i,i));
     
-    for (index_t j = i; j < num_entries_; j++) {
+    for (size_t j = i; j < num_entries_; j++) {
       
       naive_total_energy_ += 2 * density_.ref(i, j) * 
           (core_hamiltonian_.ref(i,j) + naive_fock_mat_.ref(i,j));
@@ -400,9 +400,9 @@ void FockMatrixComparison::Compare() {
 
   printf("====== Comparing Matrices ======\n");
 
-  for (index_t i = 0; i < num_entries_; i++) {
+  for (size_t i = 0; i < num_entries_; i++) {
   
-    for (index_t j = i; j < num_entries_; j++) {
+    for (size_t j = i; j < num_entries_; j++) {
     
       if (compare_fock_) {
       
@@ -518,12 +518,12 @@ void FockMatrixComparison::Compare() {
     // centers
     
     bool matrices_loaded = true;
-    if (data::Load(core_file, &core_hamiltonian_) == SUCCESS_FAIL) {
+    if (data::Load(core_file, &core_hamiltonian_) == false) {
       core_hamiltonian_.Destruct();
       matrices_loaded = false;
     }
     if (matrices_loaded && 
-        (data::Load(change_file, &change_of_basis_matrix_) == SUCCESS_FAIL)) {
+        (data::Load(change_file, &change_of_basis_matrix_) == false)) {
       change_of_basis_matrix_.Destruct();
       matrices_loaded = false;
     }

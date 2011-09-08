@@ -13,7 +13,7 @@ namespace kernel {
 template<>
 double LMetric<1, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += fabs(a[i] - b[i]);
 
   return sum;
@@ -22,7 +22,7 @@ double LMetric<1, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
 template<>
 double LMetric<1, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += fabs(a[i] - b[i]);
 
   return sum;
@@ -32,7 +32,7 @@ double LMetric<1, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
 template<>
 double LMetric<2, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(a[i] - b[i], 2.0); // fabs() not necessary when squaring.
 
   return sqrt(sum);
@@ -41,7 +41,7 @@ double LMetric<2, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
 template<>
 double LMetric<2, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(a[i] - b[i], 2.0);
 
   return sum;
@@ -51,7 +51,7 @@ double LMetric<2, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
 template<>
 double LMetric<3, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), 3.0);
 
   return pow(sum, 1.0 / 3.0);
@@ -60,7 +60,7 @@ double LMetric<3, true>::Evaluate(const arma::vec& a, const arma::vec& b) {
 template<>
 double LMetric<3, false>::Evaluate(const arma::vec& a, const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), 3.0);
 
   return sum;

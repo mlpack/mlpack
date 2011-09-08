@@ -62,7 +62,7 @@ PARAM(double, "infeasibility_tolerance", "Undocumented value.", "optfun", 0.01,
 
 class MaxVariance {
  public:
-  static const index_t MAX_KNNS = 30;
+  static const size_t MAX_KNNS = 30;
 
   void Init(fx_module* module, arma::mat& data);
   void Init(fx_module* module);
@@ -83,30 +83,30 @@ class MaxVariance {
   bool IsIntermediateStepOver(const arma::mat& coordinates, arma::mat& gradient, double step) { return true; }
 
   void GiveInitMatrix(arma::mat& init_data);
-  index_t num_of_points();
+  size_t num_of_points();
 
  private:
   datanode *module_;
 
   mlpack::allknn::AllkNN allknn_;
-  index_t knns_;
-  index_t leaf_size_;
+  size_t knns_;
+  size_t leaf_size_;
 
-  std::vector<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  std::vector<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   std::vector<double> nearest_distances_;
 
   arma::vec eq_lagrange_mult_;
 
-  index_t num_of_nearest_pairs_;
+  size_t num_of_nearest_pairs_;
   double sigma_;
   double sum_of_furthest_distances_;
-  index_t num_of_points_;
-  index_t new_dimension_;
+  size_t num_of_points_;
+  size_t new_dimension_;
 };
 
 class MaxFurthestNeighbors {
  public:
-  static const index_t MAX_KNNS = 30;
+  static const size_t MAX_KNNS = 30;
 
   void Init(fx_module *module, arma::mat& data);
   void Init(fx_module *module);
@@ -127,7 +127,7 @@ class MaxFurthestNeighbors {
   bool IsOptimizationOver(arma::mat& coordinates, arma::mat& gradient, double step);
   bool IsIntermediateStepOver(arma::mat& coordinates, arma::mat& gradient, double step);
 
-  index_t num_of_points();
+  size_t num_of_points();
   void GiveInitMatrix(arma::mat& init_data);
 
  private:
@@ -136,23 +136,23 @@ class MaxFurthestNeighbors {
   mlpack::allknn::AllkNN allknn_;
   AllkFN allkfn_;
 
-  index_t knns_;
-  index_t leaf_size_;
+  size_t knns_;
+  size_t leaf_size_;
 
-  std::vector<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  std::vector<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   std::vector<double> nearest_distances_;
 
   arma::vec eq_lagrange_mult_;
-  index_t num_of_nearest_pairs_;
-  index_t num_of_furthest_pairs_;
+  size_t num_of_nearest_pairs_;
+  size_t num_of_furthest_pairs_;
 
-  std::vector<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  std::vector<std::pair<size_t, size_t> > furthest_neighbor_pairs_;
   std::vector<double> furthest_distances_;
 
   double sum_of_furthest_distances_;
   double sigma_;
-  index_t num_of_points_;
-  index_t new_dimension_;
+  size_t num_of_points_;
+  size_t new_dimension_;
   double infeasibility1_;
   double previous_infeasibility1_;
   double desired_feasibility_error_;
@@ -163,20 +163,20 @@ class MaxFurthestNeighbors {
 
 class MaxVarianceUtils {
  public:
-  static void ConsolidateNeighbors(const arma::Col<index_t>& from_tree_ind,
+  static void ConsolidateNeighbors(const arma::Col<size_t>& from_tree_ind,
                                    const arma::vec&          from_tree_dist,
-                                   index_t num_of_neighbors,
-                                   index_t chosen_neighbors,
-                                   std::vector<std::pair<index_t, index_t> >& neighbor_pairs,
+                                   size_t num_of_neighbors,
+                                   size_t chosen_neighbors,
+                                   std::vector<std::pair<size_t, size_t> >& neighbor_pairs,
                                    std::vector<double>& distances,
-                                   index_t& num_of_pairs);
+                                   size_t& num_of_pairs);
 
-  static void EstimateKnns(const arma::Col<index_t>& nearest_neighbors,
+  static void EstimateKnns(const arma::Col<size_t>& nearest_neighbors,
                            const arma::vec&          nearest_distances,
-                           index_t maximum_knns, 
-                           index_t num_of_points,
-                           index_t dimension,
-                           index_t& optimum_knns); 
+                           size_t maximum_knns, 
+                           size_t num_of_points,
+                           size_t dimension,
+                           size_t& optimum_knns); 
 };
 
 #include "mvu_objectives_impl.h"

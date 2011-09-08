@@ -21,15 +21,15 @@ void InversePowDistLocalExpansion::Accumulate(const double *v,
     sea_->get_multiplicative_constants();
 
   // Iterate and add the contribution given by the current point.
-  for(index_t n = 0; n <= order; n++) {
+  for(size_t n = 0; n <= order; n++) {
 
     // Reference to the n-th matrix.
     GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
     const Matrix &n_th_multiplicative_constants = 
       (*multiplicative_constants)[n];
 
-    for(index_t a = 0; a <= n; a++) {
-      for(index_t b = 0; b <= a; b++) {
+    for(size_t a = 0; a <= n; a++) {
+      for(size_t b = 0; b <= a; b++) {
 	sea_->ComputePartialDerivativeFactor(n, a, b, radius, theta, phi, 
 					     evaluated_polynomials,
 					     partial_derivative);
@@ -50,7 +50,7 @@ void InversePowDistLocalExpansion::AccumulateCoeffs(const Matrix& data,
 						    const Vector& weights, 
 						    int begin, int end, 
 						    int order) {
-  for(index_t p = begin; p < end; p++) {
+  for(size_t p = begin; p < end; p++) {
     Accumulate(data.GetColumnPtr(p), weights[begin], order);
   }
 }
@@ -79,16 +79,16 @@ double InversePowDistLocalExpansion::EvaluateField(const double *v,
   std::complex<double> power_of_eta(0.0, 0.0);
   std::complex<double> power_of_xi(0.0, 0.0);
     
-  for(index_t n = 0; n <= order; n++) {
+  for(size_t n = 0; n <= order; n++) {
     
     const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
 
-    for(index_t a = 0; a <= n; a++) {
+    for(size_t a = 0; a <= n; a++) {
 
       // $(z_i)^{n - a}$
       double power_of_z_coord = pow(z_diff, n - a);
 
-      for(index_t b = 0; b <= a; b++) {
+      for(size_t b = 0; b <= a; b++) {
 	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
 	  (eta, b, power_of_eta);
 
@@ -139,10 +139,10 @@ void InversePowDistLocalExpansion::Init
 
   // Allocate the space for storing the coefficients.
   coeffs_.Init(sea_->get_max_order() + 1);
-  for(index_t n = 0; n <= sea_->get_max_order(); n++) {
+  for(size_t n = 0; n <= sea_->get_max_order(); n++) {
     coeffs_[n].Init(n + 1, n + 1);
-    for(index_t j = 0; j <= n; j++) {
-      for(index_t k = 0; k <= n; k++) {
+    for(size_t j = 0; j <= n; j++) {
+      for(size_t k = 0; k <= n; k++) {
 	coeffs_[n].set(j, k, std::complex<double>(0, 0));
       }
     }
@@ -187,7 +187,7 @@ void InversePowDistLocalExpansion::TranslateToLocal
   std::complex<double> power_of_xi(0.0, 0.0);
   std::complex<double> contribution(0.0, 0.0);
 
-  for(index_t n_prime = 0; n_prime <= order_; n_prime++) {
+  for(size_t n_prime = 0; n_prime <= order_; n_prime++) {
 
     // Get the matrix reference to the coefficients to be stored.
     GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix =
@@ -197,9 +197,9 @@ void InversePowDistLocalExpansion::TranslateToLocal
     const Matrix &n_prime_th_order_multiplicative_constants =
       (*multiplicative_constants)[n_prime];
 
-    for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
-      for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
-        for(index_t n = n_prime; n <= order_; n++) {
+    for(size_t a_prime = 0; a_prime <= n_prime; a_prime++) {
+      for(size_t b_prime = 0; b_prime <= a_prime; b_prime++) {
+        for(size_t n = n_prime; n <= order_; n++) {
 
           // Get the matrix reference to the coefficients to be
           // translated.
@@ -212,12 +212,12 @@ void InversePowDistLocalExpansion::TranslateToLocal
 	  const Matrix &n_th_order_multiplicative_constants =
 	    (*multiplicative_constants)[n];
 
-          for(index_t a = a_prime; a <= n - n_prime + a_prime; a++) {
+          for(size_t a = a_prime; a <= n - n_prime + a_prime; a++) {
 
             // $(z_i)^{n - n' - a + a'}$
             double power_of_z_coord = pow(z_diff, n - n_prime - a + a_prime);
 
-            for(index_t b = b_prime; b <= a - a_prime + b_prime; b++) {
+            for(size_t b = b_prime; b <= a - a_prime + b_prime; b++) {
 
 	      InversePowDistSeriesExpansionAux::PowWithRootOfUnity
                 (eta, b - b_prime, power_of_eta);

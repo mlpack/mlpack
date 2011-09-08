@@ -16,18 +16,18 @@ int main (int argc, char *argv[]) {
   FILE *pfile = fopen(ofile.c_str(), "w");
 
   NOTIFY("File loaded...");
-  NOTIFY("Data has %"LI"d points in %"LI"d dimensions.",
+  NOTIFY("Data has %zud points in %zud dimensions.",
 	 data.n_cols(), data.n_rows());
 
-  index_t num_points = data.n_cols();
+  size_t num_points = data.n_cols();
 	
   /** Obtaining the distance matrix **/
   // distances.Init(num_points, num_points);
-  for (index_t i = 0; i < num_points; i++) {
+  for (size_t i = 0; i < num_points; i++) {
     Vector p;
     data.MakeColumnVector(i, &p);
     // distances.set(i, i, 0.0);
-    for (index_t j = 0; j < num_points; j++) {
+    for (size_t j = 0; j < num_points; j++) {
       Vector q;
       data.MakeColumnVector(j, &q);
 
@@ -46,8 +46,8 @@ int main (int argc, char *argv[]) {
 	
   NOTIFY("DISTANCES COMPUTED! OUTPUTTING ......");
 
-//   for (index_t i = 0; i < num_points; i++) {
-//     for (index_t j = 0; j < num_points; j++)
+//   for (size_t i = 0; i < num_points; i++) {
+//     for (size_t j = 0; j < num_points; j++)
 //       if (pfile != NULL)
 // 	fprintf(pfile, "%lg,", distances.get(i,j));
 //     fprintf(pfile, "\b\n");

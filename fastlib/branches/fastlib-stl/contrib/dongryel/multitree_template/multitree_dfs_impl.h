@@ -15,7 +15,7 @@ double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
   int numerator = current_node->count();
   int denominator = 1;
   double total_num_tuples = numerator;
-  for(index_t i = 1; i < MultiTreeProblem::order; i++) {
+  for(size_t i = 1; i < MultiTreeProblem::order; i++) {
     if(current_node == nodes[i]) {
       if(numerator == 1) {
 	total_num_tuples = 0;
@@ -35,10 +35,10 @@ double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
     }
   }
 
-  for(index_t i = 0; i < MultiTreeProblem::order; i++) {
+  for(size_t i = 0; i < MultiTreeProblem::order; i++) {
     int numerator = nodes[i]->count();
     int equal_count = 0;
-    for(index_t j = i; j >= 0; j--) {
+    for(size_t j = i; j >= 0; j--) {
       if(nodes[j] == nodes[i]) {
 	equal_count++;
       }
@@ -46,7 +46,7 @@ double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
 	break;
       }
     }
-    for(index_t j = i + 1; j < MultiTreeProblem::order; j++) {
+    for(size_t j = i + 1; j < MultiTreeProblem::order; j++) {
       if(nodes[j] == nodes[i]) {
 	equal_count++;
       }
@@ -63,11 +63,11 @@ double MultiTreeDepthFirst<MultiTreeProblem>::LeaveOneOutTuplesBase_
 
 template<typename MultiTreeProblem>
 double MultiTreeDepthFirst<MultiTreeProblem>::RecursiveLeaveOneOutTuples_
-(ArrayList<HybridTree *> &nodes, index_t examine_index_start) {
+(ArrayList<HybridTree *> &nodes, size_t examine_index_start) {
   
   // Test if all the nodes are equal or disjoint.
   bool equal_or_disjoint_flag = true;
-  for(index_t i = examine_index_start + 1; i < MultiTreeProblem::order; i++) {
+  for(size_t i = examine_index_start + 1; i < MultiTreeProblem::order; i++) {
 
     // If there is a conflict, then return immediately.
     if(nodes[i]->end() <= nodes[i - 1]->begin()) {
@@ -168,7 +168,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
 
   // Add the postponed information to each point, without causing any
   // duplicate information transmission for each "hybrid" node.
-  for(index_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {
+  for(size_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {
     if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
       continue;
     }
@@ -179,7 +179,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     // we can refine it to better bounds.
     qnode->stat().summary.StartReaccumulate();
 
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Apply postponed to each point.
       query_results.ApplyPostponed(qnode->stat().postponed, q);
@@ -201,7 +201,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
   
   // Add the postponed information to each point for each "query"
   // node.
-  for(index_t i = 0; i < MultiTreeProblem::num_query_sets; i++) {
+  for(size_t i = 0; i < MultiTreeProblem::num_query_sets; i++) {
     
     QueryTree *qnode = query_nodes[i];
 
@@ -209,7 +209,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::MultiTreeDepthFirstBase_
     // we can refine it to better bounds.
     qnode->stat().summary.StartReaccumulate();
 
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Apply postponed to each point.
       query_results.ApplyPostponed(qnode->stat().postponed, q);
@@ -290,7 +290,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTreeMonochromatic_
   qnode->stat().summary.StartReaccumulate();
 
   if(qnode->is_leaf()) {   
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
       qnode->stat().summary.Accumulate(results, q);
     }
   }
@@ -322,7 +322,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessQueryTreeMonochromatic_
 template<typename MultiTreeProblem>
 template<typename Tree>
 void MultiTreeDepthFirst<MultiTreeProblem>::PreProcessReferenceTree_
-(Tree *node, index_t reference_tree_index) {
+(Tree *node, size_t reference_tree_index) {
 
   if(node->is_leaf()) {
 
@@ -346,7 +346,7 @@ void MultiTreeDepthFirst<MultiTreeProblem>::PostProcessTree_
  typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
   
   if(node->is_leaf()) {
-    for(index_t i = node->begin(); i < node->end(); i++) {
+    for(size_t i = node->begin(); i < node->end(); i++) {
       query_results.FinalPush(qset, node->stat(), i);
       query_results.PostProcess(globals_, i);
     }

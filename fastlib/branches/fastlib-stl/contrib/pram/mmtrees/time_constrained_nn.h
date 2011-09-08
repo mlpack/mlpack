@@ -89,7 +89,7 @@ class TCNN {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
     } 
@@ -99,7 +99,7 @@ class TCNN {
      * initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
 	      const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -120,7 +120,7 @@ private:
   Matrix references_;
 
   // This will store the query index for the single tree run
-  index_t query_;
+  size_t query_;
 
   // Pointers to the roots of the two trees.
   std::vector<TreeType*> query_trees_;
@@ -128,39 +128,39 @@ private:
 
   // the rank matrix for the queries on this reference set
   Matrix rank_matrix_;
-  GenVector<index_t> rank_vec_;
+  GenVector<size_t> rank_vec_;
   bool rank_file_too_big_;
   FILE *rank_fp_;
 
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
 
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_references_;
 
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
 
   // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  ArrayList<size_t> neighbor_indices_;
 
 //   Vector ann_dist_;
-//   ArrayList<index_t> ann_ind_;
+//   ArrayList<size_t> ann_ind_;
 
-  ArrayList<index_t> nn_mc_;
-  ArrayList<index_t> nn_dc_;
+  ArrayList<size_t> nn_mc_;
+  ArrayList<size_t> nn_dc_;
 
   // setting up the list of errors for subsequent number of leaves
-  std::vector<std::vector<index_t>* > *error_list_;
-  std::vector<std::vector<index_t>* > *nn_dc_list_;
+  std::vector<std::vector<size_t>* > *error_list_;
+  std::vector<std::vector<size_t>* > *nn_dc_list_;
 
-  index_t number_of_leaves_;
+  size_t number_of_leaves_;
 
   // number of nearest neighbrs
-  index_t knns_; 
+  size_t knns_; 
   // The module containing the parameters for this computation. 
   struct datanode* module_;
   /////////////////////////////// Constructors ////////////////////////
@@ -268,8 +268,8 @@ public:
 
   void ComputeNeighborsSequential(ArrayList<double> *means,
 				  ArrayList<double> *stds,
-				  ArrayList<index_t> *maxs,
-				  ArrayList<index_t> *mins);  
+				  ArrayList<size_t> *maxs,
+				  ArrayList<size_t> *mins);  
 }; //class TCNN
 
 

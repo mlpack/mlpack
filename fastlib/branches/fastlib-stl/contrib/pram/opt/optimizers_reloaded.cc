@@ -4,8 +4,8 @@
 
 void QuasiNewton::Eval(double *pt){
 
-  index_t n = dimension(), iters;
-  index_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",500);
+  size_t n = dimension(), iters;
+  size_t i, its, MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",500);
   long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
     maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
   Vector dgrad, grad, hdgrad, xi;
@@ -135,7 +135,7 @@ void QuasiNewton::LineSearch_(Vector pold, long double fold, Vector *grad,
 			      Vector *xi, Vector *pnew, long double *f_min,
 			      long double maximum_step_length){
   
-  index_t i, n = dimension();
+  size_t i, n = dimension();
   long double a, step_length, previous_step_length = 0.0, 
     minimum_step_length, b, disc, previous_f_value = 0.0,
     rhs1, rhs2, slope, sum, temp, test, temp_step_length,
@@ -217,14 +217,14 @@ void QuasiNewton::LineSearch_(Vector pold, long double fold, Vector *grad,
 
 void GradientDescent::Eval(double *pt){
 
-  index_t iters;
-  index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t iters;
+  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
   double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
   fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
   double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
   // double MAX_STEP_SIZE = fx_param_double(opt_module_, 
   //					   "MAX_STEP_SIZE", 100.0);
-  index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+  size_t dim = fx_param_int_req(opt_module_, "param_space_dim");
   Vector pold, pnew, grad;
   long double f_old, f_new;
   double scale, alpha = 0.1, gamma;
@@ -266,7 +266,7 @@ void GradientDescent::Eval(double *pt){
     if (((f_tol < EPSILON) && (p_tol < TOLERANCE)) || (scale < EPSILON)) {
       fx_format_result(opt_module_, "iters", "%d", iters+1);
       fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
-      for (index_t i = 0; i < dim; i++) {
+      for (size_t i = 0; i < dim; i++) {
 	pt[i] = pold.get(i);
       }
       return;
@@ -278,31 +278,31 @@ void GradientDescent::Eval(double *pt){
 
   NOTIFY("Too many iterations in Gradient Descent\n");
   fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     printf("%lf, ", pold.get(i));
   }
-  printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n", f_old, p_tol, f_tol, iters);
+  printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %zud\n", f_old, p_tol, f_tol, iters);
   return;
 }
 
 
 void SGD::Eval(double *pt){
 
-  index_t iters;
-  index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t iters;
+  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
   double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-5);
   fx_format_param(opt_module_, "TOLERANCE", "%lf", 0.001);
   double TOLERANCE = fx_param_double_req(opt_module_, "TOLERANCE");
   // double MAX_STEP_SIZE = fx_param_double(opt_module_, 
   //					   "MAX_STEP_SIZE", 100.0);
-  index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
-  index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
+  size_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+  size_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
   Vector pold, pnew, grad;
   long double f_old, f_new;
   double scale, alpha = 0.1, gamma;
   long double p_tol = 0.0, f_tol = 0.0;
   Matrix data_batched;
-  index_t batch_size = data().n_cols() / num_batch;
+  size_t batch_size = data().n_cols() / num_batch;
 
   // have to decide what to assign alpha value as 
   // step lengths are crucial because this is 
@@ -326,7 +326,7 @@ void SGD::Eval(double *pt){
   for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
 
     // Now going through the data batchwise
-    for (index_t in = 0; in < num_batch; in++) {
+    for (size_t in = 0; in < num_batch; in++) {
 
       scale = sqrt(la::Dot(grad, grad));
       gamma = - alpha / scale;
@@ -340,7 +340,7 @@ void SGD::Eval(double *pt){
 
       // using a batch
       Matrix single_batch;
-      index_t st_pt = in * batch_size;
+      size_t st_pt = in * batch_size;
       data_batched.MakeColumnSlice(st_pt, batch_size, &single_batch);
       f_new = (*func_ptr_)(pnew, single_batch, &grad);
       f_tol = fabs(f_new - f_old);
@@ -348,10 +348,10 @@ void SGD::Eval(double *pt){
       if ((f_tol < EPSILON) && (p_tol < TOLERANCE)) {
 	fx_format_result(opt_module_, "iters", "%d", iters+1);
 	fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
-	for (index_t i = 0; i < dim; i++) {
+	for (size_t i = 0; i < dim; i++) {
 	  pt[i] = pold.get(i);
 	}
-	printf("iters: %"LI"d, min: %Lf\n", iters, f_old);
+	printf("iters: %zud, min: %Lf\n", iters, f_old);
 	return;
       }
 
@@ -368,11 +368,11 @@ void SGD::Eval(double *pt){
 
   NOTIFY("Too many iterations in Stochastic Gradient Descent\n");
   fx_format_result(opt_module_,"min_obtained","%Lf", f_old);
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     printf("%lf, ", pold.get(i));
   }
   long double f_final = (*func_ptr_)(pold, data(), &grad);
-  printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %"LI"d\n",
+  printf("\nfinal val: %Lf\n p_tol : %Lf, f_tol : %Lf, iters : %zud\n",
 	 f_final, p_tol, f_tol, iters);
   return;
 }
@@ -381,12 +381,12 @@ void SGD::Eval(double *pt){
 
 void SMD::Eval(double *pt){
 
-  index_t iters;
-  index_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
+  size_t iters;
+  size_t MAXIMUM_ITERATIONS = fx_param_int(opt_module_,"MAX_ITERS",100);
   // double EPSILON = fx_param_double(opt_module_, "EPSILON", 1.0e-2);
   double TOLERANCE = fx_param_double(opt_module_, "TOLERANCE", 1.0e-2);
-  index_t dim = fx_param_int_req(opt_module_, "param_space_dim");
-  index_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
+  size_t dim = fx_param_int_req(opt_module_, "param_space_dim");
+  size_t num_batch = fx_param_int(opt_module_, "BATCHES",50);
   Vector pold, pnew, eta, grad, v_vec, one_vec;
   long double f;//f_new;
   //double scale, scale_prev, gamma;
@@ -394,7 +394,7 @@ void SMD::Eval(double *pt){
   // double lambda = fx_param_double(opt_module_, "LAMBDA", 0.99);
   double p_tol = 0.0;//, f_tol = 0.0;
   Matrix data_batched, single_batch;
-  index_t batch_size = fx_param_int(opt_module_,"BATCH_SIZE",
+  size_t batch_size = fx_param_int(opt_module_,"BATCH_SIZE",
 				    data().n_cols() / num_batch);
 
   //    fx_clear_param(opt_module_,"BATCHES");
@@ -436,7 +436,7 @@ void SMD::Eval(double *pt){
   for (iters = 0; iters < MAXIMUM_ITERATIONS; iters++) {
 
     // Now going through the data batchwise
-    for (index_t in = 0; in < num_batch; in++) {
+    for (size_t in = 0; in < num_batch; in++) {
 
       // Terminating conditions
       // ||p_t+1 - p_t|| < TOL
@@ -459,15 +459,15 @@ void SMD::Eval(double *pt){
 
 	fx_format_result(opt_module_, "iters", "%d", iters+1);
 	fx_format_result(opt_module_,"min_obtained","%Lf", f_final);
-	for (index_t i = 0; i < dim; i++) {
+	for (size_t i = 0; i < dim; i++) {
 	  pt[i] = pold.get(i);
 	}
-	// printf("iters: %"LI"d\n", iters); 
-	// for(index_t i = 0; i < dim; i++) {
+	// printf("iters: %zud\n", iters); 
+	// for(size_t i = 0; i < dim; i++) {
 	//   printf("%lf, ", pold.get(i));
 	// }
 	printf("\nfinal val: %Lf\n", f_final);
-	printf("p_tol : %lf, iters : %"LI"d, batch_number : %"LI"d\n", 
+	printf("p_tol : %lf, iters : %zud, batch_number : %zud\n", 
 	       p_tol, iters, in);
 	    
 	return;
@@ -475,7 +475,7 @@ void SMD::Eval(double *pt){
       }
 
       // x_t+1
-      index_t st_pt = in * batch_size;
+      size_t st_pt = in * batch_size;
       single_batch.Destruct();
       data_batched.MakeColumnSlice(st_pt, batch_size, &single_batch);
       
@@ -498,7 +498,7 @@ void SMD::Eval(double *pt){
       la::AddTo(one_vec, &one_mu_grad_v);
 
       max_half_one_mu_grad_v.Copy(one_mu_grad_v);
-      for (index_t j = 0; j < max_half_one_mu_grad_v.length(); j++) {
+      for (size_t j = 0; j < max_half_one_mu_grad_v.length(); j++) {
 	if (max_half_one_mu_grad_v.get(j) < 0.5) {
 	  max_half_one_mu_grad_v.ptr()[j] = 0.5;
 	}
@@ -552,12 +552,12 @@ void SMD::Eval(double *pt){
   fflush(NULL);
   NOTIFY("Too many iterations in Stochastic Meta Descent");
   pt = pold.ptr();
-  //  for(index_t i = 0; i < dim; i++) {
+  //  for(size_t i = 0; i < dim; i++) {
   //     pt[i] = pold.get(i);
   //   }
   long double f_final = (*func_ptr_)(pold, data(), &grad);
   // scale = sqrt(la::Dot(grad, grad));
-  printf("\nfinal val: %Lf, p_tol : %lf, iters : %"LI"d\n",
+  printf("\nfinal val: %Lf, p_tol : %lf, iters : %zud\n",
 	 f_final, p_tol, iters);
   fx_format_result(opt_module_,"min_obtained","%Lf", f_final);
    

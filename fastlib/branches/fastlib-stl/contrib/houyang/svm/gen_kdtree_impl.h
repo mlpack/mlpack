@@ -6,10 +6,10 @@ namespace tree_gen_kdtree_private {
 
   template<typename T, typename TBound>
   void FindBoundFromMatrix(const GenMatrix<T>& matrix,
-			   index_t first, index_t count, TBound *bounds) {
+			   size_t first, size_t count, TBound *bounds) {
     
-    index_t end = first + count;
-    for (index_t i = first; i < end; i++) {
+    size_t end = first + count;
+    for (size_t i = first; i < end; i++) {
       GenVector<T> col;
       
       matrix.MakeColumnVector(i, &col);
@@ -18,12 +18,12 @@ namespace tree_gen_kdtree_private {
   }
   
   template<typename T, typename TBound>
-  index_t MatrixPartition(GenMatrix<T>& matrix, index_t dim, double splitvalue,
-			  index_t first, index_t count, TBound* left_bound, 
-			  TBound* right_bound, index_t *old_from_new) {
+  size_t MatrixPartition(GenMatrix<T>& matrix, size_t dim, double splitvalue,
+			  size_t first, size_t count, TBound* left_bound, 
+			  TBound* right_bound, size_t *old_from_new) {
     
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -62,7 +62,7 @@ namespace tree_gen_kdtree_private {
       *right_bound |= right_vector;
       
       if (old_from_new) {
-        index_t t = old_from_new[left];
+        size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
@@ -78,9 +78,9 @@ namespace tree_gen_kdtree_private {
 
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
   void SplitGenKdTree(GenMatrix<T>& matrix, TKdTree *node, 
-		      index_t leaf_size, index_t *old_from_new,
-		      ArrayList< GenVector<index_t> > &o_f_n_maps,
-		      index_t &node_id) {
+		      size_t leaf_size, size_t *old_from_new,
+		      ArrayList< GenVector<size_t> > &o_f_n_maps,
+		      size_t &node_id) {
 
     o_f_n_maps.PushBack();
     o_f_n_maps[node_id].Init(matrix.n_cols());
@@ -88,7 +88,7 @@ namespace tree_gen_kdtree_private {
 
     /*
     printf("%d\n", node_id);
-    for (index_t i=0; i<50; i++)
+    for (size_t i=0; i<50; i++)
       printf("%d_ ", (o_f_n_maps[node_id])[i]);
     printf("\n");
     printf("begin=%d count=%d\n", node->begin(), node->count());
@@ -100,10 +100,10 @@ namespace tree_gen_kdtree_private {
     TKdTree *right = NULL;
 
     if (node->count() > leaf_size) {
-      index_t split_dim = BIG_BAD_NUMBER;
+      size_t split_dim = BIG_BAD_NUMBER;
       T max_width = -1;
       
-      for (index_t d = 0; d < matrix.n_rows(); d++) {
+      for (size_t d = 0; d < matrix.n_rows(); d++) {
         T w = node->bound().get(d).width();
 	
         if (unlikely(w > max_width)) {
@@ -127,7 +127,7 @@ namespace tree_gen_kdtree_private {
         right = new TKdTree();
         right->bound().Init(matrix.n_rows());
 
-        index_t split_col = MatrixPartition(matrix, split_dim, split_val,
+        size_t split_col = MatrixPartition(matrix, split_dim, split_val,
 					    node->begin(), node->count(),
 					    &left->bound(), &right->bound(),
 					    old_from_new);
@@ -169,22 +169,22 @@ namespace tree_gen_kdtree_private {
   }
 
   template<typename T, typename TBound>
-  index_t BalancedMatrixPartition(GenMatrix<T>& matrix, index_t dim, double splitvalue,
-			  index_t first, index_t count, TBound* left_bound, 
-			  TBound* right_bound, ArrayList<index_t> &old_from_new) {
+  size_t BalancedMatrixPartition(GenMatrix<T>& matrix, size_t dim, double splitvalue,
+			  size_t first, size_t count, TBound* left_bound, 
+			  TBound* right_bound, ArrayList<size_t> &old_from_new) {
     /*
     // qsort samples according to values in split_dim and take the median sample as splitting one
     Matrix m_sort;
-    //index_t n_cols = matrix.n_cols();
+    //size_t n_cols = matrix.n_cols();
     m_sort.Init(2, count);
-    for (index_t i=0; i<count; i++) {
+    for (size_t i=0; i<count; i++) {
       m_sort.set(0, i, matrix.get(dim, first+i));
       m_sort.set(1, i, old_from_new[first+i]);
     }
     qsort(m_sort.prt(), count, 2*sizeof(double), SplitDimCompare);
 
     // read back the partial-shuffled old_from_new
-    for (index_t i=0; i<count; i++) {
+    for (size_t i=0; i<count; i++) {
       old_from_new[fist+i] = m_sort.get(1, i);
     }
 
@@ -193,11 +193,11 @@ namespace tree_gen_kdtree_private {
     m_temp.Copy(matrix.GetColumnPtr(first), matrix.n_rows(), count);
     matrix.set(TODO);
 
-    return index_t(first + count / 2);
+    return size_t(first + count / 2);
     */
 
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -237,7 +237,7 @@ namespace tree_gen_kdtree_private {
       *right_bound |= right_vector;
       
       //if (old_from_new) {
-        index_t t = old_from_new[left];
+        size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
 	//}
@@ -246,7 +246,7 @@ namespace tree_gen_kdtree_private {
       right--;
     }
     /*
-    for (index_t i=first ; i<index_t(first+ count / 2); i++) {
+    for (size_t i=first ; i<size_t(first+ count / 2); i++) {
       GenVector<T> left_vector;
 
       matrix.MakeColumnVector(left, &left_vector);
@@ -254,7 +254,7 @@ namespace tree_gen_kdtree_private {
       *left_bound |= left_vector;
     }
 
-    for (index_t  i=index_t(first+ count / 2); i<first+ count; i++) {
+    for (size_t  i=size_t(first+ count / 2); i<first+ count; i++) {
       GenVector<T> right_vector;
       
       matrix.MakeColumnVector(right, &right_vector);
@@ -266,21 +266,21 @@ namespace tree_gen_kdtree_private {
     DEBUG_ASSERT(left == right + 1);
 
     //return left;
-    return index_t(first + count / 2);
+    return size_t(first + count / 2);
     
   }
 
 
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
   void SplitBalancedGenKdTree(GenMatrix<T>& matrix, TKdTree *node, 
-		      index_t leaf_size, ArrayList<index_t> &old_from_new,
-		      ArrayList< GenVector<index_t> > &o_f_n_maps,
-		      index_t &node_id) {
+		      size_t leaf_size, ArrayList<size_t> &old_from_new,
+		      ArrayList< GenVector<size_t> > &o_f_n_maps,
+		      size_t &node_id) {
 
     //printf("node_id=%d, count=%d\n", node_id, node->count());
     /*
     printf("%d\n", node_id);
-    for (index_t i=0; i<50; i++)
+    for (size_t i=0; i<50; i++)
       printf("%d_ ", (o_f_n_maps[node_id])[i]);
     printf("\n");
     printf("begin=%d count=%d\n", node->begin(), node->count());
@@ -291,10 +291,10 @@ namespace tree_gen_kdtree_private {
     
     // Try splitting
     if (node->count() > leaf_size) { // can split this node
-      index_t split_dim = BIG_BAD_NUMBER;
+      size_t split_dim = BIG_BAD_NUMBER;
       T max_width = -1;
       
-      for (index_t d = 0; d < matrix.n_rows(); d++) {
+      for (size_t d = 0; d < matrix.n_rows(); d++) {
         T w = node->bound().get(d).width();
 	//printf("lo=%f, hi=%f, d=%d, w=%f\n",node->bound().get(d).lo, node->bound().get(d).hi, d, w);
 	
@@ -321,7 +321,7 @@ namespace tree_gen_kdtree_private {
 
         // Sort data vectors and divide into two parts.
 	// This returned split_col is a index in the new shuffled index set.
-	index_t split_col_new = BalancedMatrixPartition(matrix, split_dim, split_val,
+	size_t split_col_new = BalancedMatrixPartition(matrix, split_dim, split_val,
 						    node->begin(), node->count(),
 						    &left->bound(), &right->bound(),
 						    old_from_new);

@@ -76,12 +76,12 @@ class FastMultipoleMethod {
   /** @brief The permutation mapping indices of the particle indices
    *         to original order.
    */
-  ArrayList< ArrayList<index_t> > old_from_new_index_;
+  ArrayList< ArrayList<size_t> > old_from_new_index_;
 
   /** @brief The permutation mapping indices of the shuffled indices
    *         from the original order.
    */
-  ArrayList< ArrayList<index_t> > new_from_old_index_;
+  ArrayList< ArrayList<size_t> > new_from_old_index_;
 
   /** @brief The accumulated potential for each query particle.
    */
@@ -91,7 +91,7 @@ class FastMultipoleMethod {
 
   void ReshuffleResults_(Vector &to_be_reshuffled) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
@@ -100,11 +100,11 @@ class FastMultipoleMethod {
     Vector tmp_results;
     tmp_results.Init(to_be_reshuffled.length());
     
-    for(index_t i = 0; i < tmp_results.length(); i++) {
+    for(size_t i = 0; i < tmp_results.length(); i++) {
       tmp_results[old_from_new_index_[query_point_indexing][i]] =
 	to_be_reshuffled[i];
     }
-    for(index_t i = 0; i < tmp_results.length(); i++) {
+    for(size_t i = 0; i < tmp_results.length(); i++) {
       to_be_reshuffled[i] = tmp_results[i];
     }
   }
@@ -116,19 +116,19 @@ class FastMultipoleMethod {
 
     // Start from the most bottom level, and work your way up to the
     // direct children of the root node.
-    for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
+    for(size_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
 
       // The references to the nodes on the current level.
       ArrayList<proximity::GenHypercubeTree<FmmStat> *> 
 	&nodes_on_current_level = nodes_in_each_level_[level];
 
       // Iterate over each node in the list.
-      for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
+      for(size_t n = 0; n < nodes_on_current_level.size(); n++) {
 	
 	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
 	
 	// Compute the node center.
-	for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
+	for(size_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
 	    i++) {
 	  node_center[i] = 0.5 * (node->bound().get(i).lo +
 				  node->bound().get(i).hi);
@@ -153,7 +153,7 @@ class FastMultipoleMethod {
 	// Otherwise, translate the moments owned by the children in a
 	// bottom-up fashion.
 	else {
-	  for(index_t child = 0; child < node->num_children(); child++) {
+	  for(size_t child = 0; child < node->num_children(); child++) {
 	    node->stat().farfield_expansion_.TranslateFromFarField
 	      (node->get_child(child)->stat().farfield_expansion_);
 	  }
@@ -166,11 +166,11 @@ class FastMultipoleMethod {
   (proximity::GenHypercubeTree<FmmStat> *query_node, 
    proximity::GenHypercubeTree<FmmStat> *reference_node) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
       
       potentials_[q] += 
@@ -183,17 +183,17 @@ class FastMultipoleMethod {
 		 proximity::GenHypercubeTree<FmmStat> *reference_node,
 		 Vector &potentials) {
     
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
       
       // Get the query point.
       const double *q_col = shuffled_query_particle_set_.GetColumnPtr(q);
 
-      for(index_t r = reference_node->begin(0); r < reference_node->end(0);
+      for(size_t r = reference_node->begin(0); r < reference_node->end(0);
 	  r++) {
 	
 	// Compute the pairwise distance, if the query and the
@@ -215,11 +215,11 @@ class FastMultipoleMethod {
   void EvaluateLocalExpansion_
   (proximity::GenHypercubeTree<FmmStat> *query_node) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
 
       // Evaluate the local expansion at the current query point.
@@ -232,7 +232,7 @@ class FastMultipoleMethod {
   void TransmitLocalExpansionToChildren_
   (proximity::GenHypercubeTree<FmmStat> *query_node) {
     
-    for(index_t c = 0; c < query_node->num_children(); c++) {
+    for(size_t c = 0; c < query_node->num_children(); c++) {
       
       // Query child.
       proximity::GenHypercubeTree<FmmStat> *query_child_node =
@@ -245,19 +245,19 @@ class FastMultipoleMethod {
 
   void DownwardPass_() {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() ==
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
     // Start from the top level and descend down the tree.
-    for(index_t level = 1; level < nodes_in_each_level_.size(); level++) {
+    for(size_t level = 1; level < nodes_in_each_level_.size(); level++) {
       
       // Retrieve the nodes on the current level.
       const ArrayList<proximity::GenHypercubeTree<FmmStat> * > 
 	&nodes_on_current_level = nodes_in_each_level_[level];
       
       // Iterate over each node in this level.
-      for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
+      for(size_t n = 0; n < nodes_on_current_level.size(); n++) {
 
 	// The pointer to the current query node.
 	proximity::GenHypercubeTree<FmmStat> *node = nodes_on_current_level[n];
@@ -277,7 +277,7 @@ class FastMultipoleMethod {
 	   &colleagues);
 
 	// Perform far-to-local translation for the colleague nodes.
-	for(index_t c = 0; c < colleagues.size(); c++) {
+	for(size_t c = 0; c < colleagues.size(); c++) {
 
 	  proximity::GenHypercubeTree<FmmStat> *colleague_node = colleagues[c];
 
@@ -304,7 +304,7 @@ class FastMultipoleMethod {
 
 	  // Iterate over each node in List 1 and directly compute the
 	  // contribution.
-	  for(index_t adjacent = 0; adjacent < adjacent_leaves.size(); 
+	  for(size_t adjacent = 0; adjacent < adjacent_leaves.size(); 
 	      adjacent++) {
 	    
 	    proximity::GenHypercubeTree<FmmStat> *reference_leaf_node =
@@ -319,7 +319,7 @@ class FastMultipoleMethod {
 
 	  // Iterate over each node in List 3 and directly evaluate
 	  // its far-field expansion.
-	  for(index_t non_adjacent = 0; non_adjacent < 
+	  for(size_t non_adjacent = 0; non_adjacent < 
 		non_adjacent_children.size(); non_adjacent++) {
 	    proximity::GenHypercubeTree<FmmStat> *reference_node =
 	      non_adjacent_children[non_adjacent];
@@ -355,7 +355,7 @@ class FastMultipoleMethod {
 	
 	// Directly accumulate the contribution of each reference node
 	// in List 4.
-	for(index_t direct_accum = 0; direct_accum < fourth_list.size();
+	for(size_t direct_accum = 0; direct_accum < fourth_list.size();
 	    direct_accum++) {
 	  
 	  proximity::GenHypercubeTree<FmmStat> *reference_node =
@@ -406,7 +406,7 @@ class FastMultipoleMethod {
   void OutputResultsToFile_(const Vector &results, const char *fname) {
 
     FILE *stream = fopen(fname, "w+");
-    for(index_t q = 0; q < results.length(); q++) {
+    for(size_t q = 0; q < results.length(); q++) {
       fprintf(stream, "%g\n", results[q]);
     }    
     fclose(stream);
@@ -514,7 +514,7 @@ class FastMultipoleMethod {
 
     // Copy over the reference charge set.
     shuffled_reference_particle_charge_set_.Init(rset_weights.n_cols());
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+    for(size_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
     }
 

@@ -11,7 +11,7 @@ namespace SVM_Projection {
 		    const SV_index& SVs) {
     DEBUG_ASSERT(A.n_rows() == x.length() &&
 		 A.n_rows() == y->length());
-    for (index_t i = 0; i < A.n_rows(); i++) {
+    for (size_t i = 0; i < A.n_rows(); i++) {
       (*y)[i] = 0.0;
       for (SV_index::const_iterator it = SVs.begin(); it != SVs.end(); it++)
 	(*y)[i] += A.get(i, *it) * x[*it];
@@ -20,7 +20,7 @@ namespace SVM_Projection {
 
   void OptimizeQuadraticOnSimplex(const Matrix& Q, Vector* x, SV_index* SVs) {
     DEBUG_ASSERT(Q.n_rows() == Q.n_cols());
-    index_t n = Q.n_rows();
+    size_t n = Q.n_rows();
     Vector& _x = *x;
     Vector a, w, dx;
     SV_index& _SVs = *SVs;
@@ -29,11 +29,11 @@ namespace SVM_Projection {
     _x.SetZero(); _x[0] = 1;
     a.Init(n); w.Init(n); dx.Init(n);
     _SVs.clear(); _SVs.push_back(0);
-    //for (index_t i = 0; i < n; i++) _SVs.push_back(i);
+    //for (size_t i = 0; i < n; i++) _SVs.push_back(i);
     
     double L = 1;
     double change = 1;
-    index_t iter = 0;
+    size_t iter = 0;
     double tol = 1e-6;
     //printf("^^^^^\n");
     //ot::Print(_x);
@@ -67,7 +67,7 @@ namespace SVM_Projection {
 
   void OptimQuadratic(const Matrix& Q, Vector* x, SV_index* SVs) {
     DEBUG_ASSERT(Q.n_rows() == Q.n_cols());
-    index_t n = Q.n_rows();
+    size_t n = Q.n_rows();
     Vector& _x = *x;
     //Vector a, w, dx;
     SV_index& _SVs = *SVs;
@@ -83,7 +83,7 @@ namespace SVM_Projection {
     bSV[0] = 1;
 
     int o_idx = 0; int o_inc = 1;
-    index_t n_s = fx_param_int(NULL, "ns", 2);
+    size_t n_s = fx_param_int(NULL, "ns", 2);
     Vector c, y;
     c.Init(n_s); y.Init(n_s);
     SV_index SVs_y;
@@ -102,10 +102,10 @@ namespace SVM_Projection {
 	s_change = 0;
       }
       // choose a subset of variables
-      ArrayList<index_t> idx; idx.Init();
+      ArrayList<size_t> idx; idx.Init();
       bool process = false;
-      for (index_t i = 0; i < n_s; i++) {
-	index_t j = (o_idx+i*o_inc)%n;
+      for (size_t i = 0; i < n_s; i++) {
+	size_t j = (o_idx+i*o_inc)%n;
 	idx.PushBackCopy(j);
 	if (bSV[i] != 0) process = true;
       }
@@ -119,15 +119,15 @@ namespace SVM_Projection {
       //for (int i = 0; i < n_s; i++) printf("%f,",_x[idx[i]]); printf("\n");
       // compute the sum of variables (need to be fixed)
       double alpha = 0;
-      for (index_t i = 0; i < n_s; i++) alpha += _x[idx[i]];
+      for (size_t i = 0; i < n_s; i++) alpha += _x[idx[i]];
       if (alpha <= 1e-12) continue;
       
       // compute gamma
       double g = 0;
       double s = 0;
-      for (index_t i = 0; i < n_s; i++) {
+      for (size_t i = 0; i < n_s; i++) {
 	double t = 0;
-	for (index_t j = 0; j < n_s; j++)
+	for (size_t j = 0; j < n_s; j++)
 	  t += Q.get(idx[i], idx[j])* _x[idx[i]];
 	g += t*t;
 	s += _x[idx[i]]*_x[idx[i]];
@@ -140,8 +140,8 @@ namespace SVM_Projection {
       //printf("alpha = %f, gamma=%f\n", alpha,gamma);
 
       // compute c: point to be projected
-      for (index_t i = 0; i < n_s; i++) {
-	index_t ii = idx[i];
+      for (size_t i = 0; i < n_s; i++) {
+	size_t ii = idx[i];
 	c[i] = 0;
 	for (SV_index::iterator it = _SVs.begin(); it != _SVs.end(); it++)
 	  c[i] += Q.get(ii, (*it)) * _x[*it];
@@ -155,8 +155,8 @@ namespace SVM_Projection {
 
       // collect result
       double change = 0;
-      for (index_t i = 0; i < n_s; i++) {
-	index_t ii = idx[i];
+      for (size_t i = 0; i < n_s; i++) {
+	size_t ii = idx[i];
 	change += (_x[ii] - alpha * y[i]) * (_x[ii] - alpha * y[i]);
 	_x[ii] = alpha * y[i];
 	bSV[ii] = 0;
@@ -169,7 +169,7 @@ namespace SVM_Projection {
       // sync SVs
       SV_index::iterator it = _SVs.begin();
       do {
-	index_t i = *it;
+	size_t i = *it;
 	if (bSV[i] == 0) // not a SV anymore
 	  it = _SVs.erase(it); 
 	else {
@@ -178,8 +178,8 @@ namespace SVM_Projection {
 	}
       } while (it != _SVs.end());
       
-      for (index_t i = 0; i < n_s; i++) {
-	index_t ii = idx[i];
+      for (size_t i = 0; i < n_s; i++) {
+	size_t ii = idx[i];
 	if (bSV[ii] == 2) { // add new SV
 	  _SVs.push_back(ii);
 	  bSV[ii] = 1;

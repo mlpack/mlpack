@@ -34,10 +34,10 @@ namespace npt {
     arma::colvec data_weights_;
     arma::colvec random_weights_;
     
-    //arma::Col<index_t> old_from_new_index_data_;
-    //arma::Col<index_t> old_from_new_index_random_;
-    std::vector<index_t> old_from_new_index_data_;
-    std::vector<index_t> old_from_new_index_random_;
+    //arma::Col<size_t> old_from_new_index_data_;
+    //arma::Col<size_t> old_from_new_index_random_;
+    std::vector<size_t> old_from_new_index_data_;
+    std::vector<size_t> old_from_new_index_random_;
     
     // indexed by [num_random][r1][theta]
     std::vector<std::vector<std::vector<int> > > results_;
@@ -126,12 +126,12 @@ namespace npt {
         
         std::vector<NptNode*> node_list(tuple_size_);
         
-        for (index_t i = 0; i < num_random_; i++) {
+        for (size_t i = 0; i < num_random_; i++) {
           
           node_list[i] = random_tree_;
           
         }
-        for (index_t i = num_random_; i < tuple_size_; i++) {
+        for (size_t i = num_random_; i < tuple_size_; i++) {
           
           node_list[i] = data_tree_;
           

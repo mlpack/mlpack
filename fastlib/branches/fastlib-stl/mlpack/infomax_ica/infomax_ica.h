@@ -61,7 +61,7 @@ class InfomaxICA {
   
  public:
   InfomaxICA();
-  InfomaxICA(double lambda, index_t B, double epsilon);
+  InfomaxICA(double lambda, size_t B, double epsilon);
   void applyICA(const arma::mat& dataset);
   void evaluateICA();
   void displayMatrix(const arma::mat& m);
@@ -69,7 +69,7 @@ class InfomaxICA {
   void getUnmixing(arma::mat& w);
   void getSources(const arma::mat& dataset, arma::mat& s);
   void setLambda(const double lambda);
-  void setB(const index_t b);
+  void setB(const size_t b);
   void setEpsilon(const double epsilon);
   
   arma::mat sampleCovariance(const arma::mat& m);
@@ -81,7 +81,7 @@ class InfomaxICA {
   // learning rate 
   double lambda_;
   // block size
-  index_t b_;
+  size_t b_;
   // epsilon for convergence
   double epsilon_;
   // utility functions

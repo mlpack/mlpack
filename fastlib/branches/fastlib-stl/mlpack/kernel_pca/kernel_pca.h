@@ -109,8 +109,8 @@ class KernelPCA {
    * leaf_size: maximun number of points on a leaf
    *            
    */
-  void Init(std::string data_file, index_t knns, 
-      index_t leaf_size);
+  void Init(std::string data_file, size_t knns, 
+      size_t leaf_size);
   void Destruct();
   /**
    * Generates the neighborhoods with the dual tree all nearest 
@@ -143,47 +143,47 @@ class KernelPCA {
    */
   template<typename DISTANCEKERNEL>    
   void ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
-                               index_t num_of_eigenvalues,
+                               size_t num_of_eigenvalues,
                                arma::mat *eigen_vectors,
                                arma::vec *eigen_values);
   /**
    * Not implemented yet
    */
-  void ComputeIsomap(index_t num_of_eigenvalues);
+  void ComputeIsomap(size_t num_of_eigenvalues);
   /**
    * Local Linear Embedding. Note that you have to call first
    * ComputeNeighborhoods and then Load Affinity Matrix
    */
-  void ComputeLLE(index_t num_of_eigenvalues,
+  void ComputeLLE(size_t num_of_eigenvalues,
                   arma::mat *eigen_vectors,
                   arma::vec *eigen_values);
   /**
    * Not implemented yet
    */
   template<typename DISTANCEKERNEL>
-  void ComputeDiffusionMaps(DISTANCEKERNEL kernel, index_t num_of_eigenvalues);
+  void ComputeDiffusionMaps(DISTANCEKERNEL kernel, size_t num_of_eigenvalues);
   /**
    * Not implemented yet
    */
-  void ComputeLaplacialnEigenmaps(index_t);
+  void ComputeLaplacialnEigenmaps(size_t);
   /**
    * Spectral Regression 
-   * std::map<index_t, index_t> &data_label: For some data points
+   * std::map<size_t, size_t> &data_label: For some data points
    * it assign numerical labels
    */
   template<typename DISTANCEKERNEL>
   void ComputeSpectralRegression(DISTANCEKERNEL kernel,
-                                 std::map<index_t, index_t> &data_label,
+                                 std::map<size_t, size_t> &data_label,
                                  arma::mat *embedded_coordinates, 
                                  arma::vec *eigenvalues);
     
  private:
   mlpack::allknn::AllkNN allknn_;
-  index_t knns_;
+  size_t knns_;
   arma::mat data_;
   SparseMatrix kernel_matrix_;  
   SparseMatrix affinity_matrix_;
-  index_t dimension_;
+  size_t dimension_;
 };
 
 #include "kernel_pca_impl.h"

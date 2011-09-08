@@ -10,15 +10,15 @@
 #include "multi_bandwidth_alg.h"
 
 
-index_t npt::MultiBandwidthAlg::FindResultsInd_(
-               const std::vector<index_t>& perm_locations) {
+size_t npt::MultiBandwidthAlg::FindResultsInd_(
+               const std::vector<size_t>& perm_locations) {
   
   //std::cout << "Finding results ind\n";
   
-  index_t result = 0;
-  index_t num_previous_bands = 1;
+  size_t result = 0;
+  size_t num_previous_bands = 1;
   
-  for (index_t i = 0; i < perm_locations.size(); i++) {
+  for (size_t i = 0; i < perm_locations.size(); i++) {
    
     result += perm_locations[i] * num_previous_bands;
     num_previous_bands *= num_bands_[i];
@@ -30,16 +30,16 @@ index_t npt::MultiBandwidthAlg::FindResultsInd_(
 } // FindResultsInd
 
 // this is the inverse of the function above
-void npt::MultiBandwidthAlg::FindMatcherInd_(index_t loc,
-                                             std::vector<index_t>& result) {
+void npt::MultiBandwidthAlg::FindMatcherInd_(size_t loc,
+                                             std::vector<size_t>& result) {
   
-  //std::vector<index_t> result(num_bands_.size());
+  //std::vector<size_t> result(num_bands_.size());
 
-  index_t new_loc = loc;
+  size_t new_loc = loc;
 
-  index_t mod_fac = 1;
+  size_t mod_fac = 1;
   
-  for (index_t i = 0; i < num_bands_.size(); i++) {
+  for (size_t i = 0; i < num_bands_.size(); i++) {
     mod_fac *= num_bands_[i];
   }
   
@@ -57,9 +57,9 @@ void npt::MultiBandwidthAlg::FindMatcherInd_(index_t loc,
 
   mod_fac = num_bands_[0];
   
-  for (index_t i = 1; i < result.size(); i++) {
+  for (size_t i = 1; i < result.size(); i++) {
     
-    for (index_t j = 0; j < i; j++) {
+    for (size_t j = 0; j < i; j++) {
     
       result[i] = result[i] - result[j];
     
@@ -75,10 +75,10 @@ void npt::MultiBandwidthAlg::FindMatcherInd_(index_t loc,
 
 
 void npt::MultiBandwidthAlg::BaseCaseHelper_(
-                         std::vector<std::vector<index_t> >& point_sets,
+                         std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<std::vector<index_t> >& perm_locations,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<std::vector<size_t> >& perm_locations,
+                         std::vector<size_t>& points_in_tuple,
                          int k) {
   
   
@@ -87,14 +87,14 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
   // satisfies
   
   std::vector<bool> perm_ok_copy(permutation_ok);
-  std::vector<std::vector<index_t> > perm_locations_copy(perm_locations);
+  std::vector<std::vector<size_t> > perm_locations_copy(perm_locations);
 
   bool bad_symmetry = false;
   
   // iterate over possible new points
-  for (index_t i = 0; i < point_sets[k].size(); i++) {
+  for (size_t i = 0; i < point_sets[k].size(); i++) {
     
-    index_t new_point_ind = point_sets[k][i];
+    size_t new_point_ind = point_sets[k][i];
     bool this_point_works = true;
     
     bad_symmetry = false;
@@ -114,15 +114,15 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
     perm_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // TODO: check if I can accurately copy this more directly
-    for (index_t m = 0; m < perm_locations_copy.size(); m++) {
+    for (size_t m = 0; m < perm_locations_copy.size(); m++) {
       perm_locations_copy[m].assign(perm_locations[m].begin(), 
                                     perm_locations[m].end());
     } // for m
     
     // TODO: double check that I can exit on bad symmetry here
-    for (index_t j = 0; j < k && this_point_works && !bad_symmetry; j++) {
+    for (size_t j = 0; j < k && this_point_works && !bad_symmetry; j++) {
       
-      index_t old_point_ind = points_in_tuple[j];
+      size_t old_point_ind = points_in_tuple[j];
       
       bool j_is_random = (j < num_random_);
       
@@ -160,12 +160,12 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         // fill in all the results that worked
         
-        std::set<index_t> results_set;
+        std::set<size_t> results_set;
         
-        for (index_t n = 0; n < perm_locations_copy.size(); n++) {
+        for (size_t n = 0; n < perm_locations_copy.size(); n++) {
           
           if (perm_ok_copy[n]) {
-            index_t results_ind = FindResultsInd_(perm_locations_copy[n]);
+            size_t results_ind = FindResultsInd_(perm_locations_copy[n]);
             results_set.insert(results_ind);
             //std::cout << "Inserting: " << results_ind << "\n";
           }
@@ -173,7 +173,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         // Now, iterate through all (distinct) results keys in the set and add
         // them to the total
-        std::set<index_t>::iterator it;
+        std::set<size_t>::iterator it;
         
         for (it = results_set.begin(); it != results_set.end(); it++) {
           
@@ -185,7 +185,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
           this_weight *= random_weights_(points_in_tuple[tuple_ind]);
         }
-        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+        for (size_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
              tuple_ind++) {
           
           this_weight *= data_weights_(points_in_tuple[tuple_ind]);
@@ -213,13 +213,13 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
 
 void npt::MultiBandwidthAlg::BaseCase_(NodeTuple& nodes) {
   
-  std::vector<std::vector<index_t> > point_sets(tuple_size_);
+  std::vector<std::vector<size_t> > point_sets(tuple_size_);
   
-  for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
+  for (size_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
     point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
     
-    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+    for (size_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
       
       point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
       
@@ -229,11 +229,11 @@ void npt::MultiBandwidthAlg::BaseCase_(NodeTuple& nodes) {
   
   std::vector<bool> permutation_ok(matcher_.num_permutations(), true);
   
-  std::vector<index_t> points_in_tuple(tuple_size_, -1);
+  std::vector<size_t> points_in_tuple(tuple_size_, -1);
   
-  std::vector<std::vector<index_t> > perm_locations(num_permutations_);
+  std::vector<std::vector<size_t> > perm_locations(num_permutations_);
 
-  for (index_t i = 0; i < perm_locations.size(); i++) {
+  for (size_t i = 0; i < perm_locations.size(); i++) {
     perm_locations[i].resize(num_bands_.size(), INT_MAX);
   }
   
@@ -303,13 +303,13 @@ void npt::MultiBandwidthAlg::OutputResults() {
     std::string this_string(label_string, i, tuple_size_);
     mlpack::IO::Info << this_string << "\n";
     
-    for (index_t j = 0; j < results_[i].size(); j++) {
+    for (size_t j = 0; j < results_[i].size(); j++) {
       
-      std::vector<index_t> matcher_ind(num_bands_.size());
+      std::vector<size_t> matcher_ind(num_bands_.size());
       FindMatcherInd_(j, matcher_ind);
       
       mlpack::IO::Info << "Matcher: ";
-      for (index_t k = 0; k < matcher_ind.size(); k++) {
+      for (size_t k = 0; k < matcher_ind.size(); k++) {
         
         mlpack::IO::Info << matcher_.matcher_dists(k, matcher_ind[k]) << ", ";
         

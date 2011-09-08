@@ -44,7 +44,7 @@ void GaussianHMM::Init(const Matrix& transmission,  const ArrayList<Vector>& lis
 }
 
 void GaussianHMM::InitFromFile(const char* profile) {
-  if (!PASSED(GaussianHMM::LoadProfile(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
+  if (!(GaussianHMM::LoadProfile(profile, &transmission_, &list_mean_vec_, &list_covariance_mat_)))
     FATAL("Couldn't open '%s' for reading.", profile);
   list_inverse_cov_mat_.InitCopy(list_covariance_mat_);
   gauss_const_vec_.Init(list_covariance_mat_.size());
@@ -186,10 +186,10 @@ void GaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, int max_i
   CalculateInverse();
 }
 
-success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
+bool GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<Vector>* means, ArrayList<Matrix>* covs) {
   ArrayList<Matrix> matlst;
-  if (!PASSED(load_matrix_list(profile, &matlst)))
-    return SUCCESS_FAIL;
+  if (!(load_matrix_list(profile, &matlst)))
+    return false;
 
   DEBUG_ASSERT(matlst.size() > 0);
   trans->Copy(matlst[0]);
@@ -206,14 +206,14 @@ success_t GaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList
     means->PushBackCopy(m);
     covs->PushBackCopy(matlst[i+1]);
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
+bool GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs) {
   TextWriter w_pro;
-  if (!PASSED(w_pro.Open(profile))) {
+  if (!(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
-    return SUCCESS_FAIL;
+    return false;
   }
   int M = trans.n_rows(); // num of states
   DEBUG_ASSERT(means.size() == M && covs.size() == M);
@@ -228,7 +228,7 @@ success_t GaussianHMM::SaveProfile(const char* profile, const Matrix& trans, con
     sprintf(s, "%% covariance - state%d", i);
     print_matrix(w_pro, covs[i], s, "%f,");    
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
 void GaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<Vector>& means, const ArrayList<Matrix>& covs, Matrix* seq, Vector* states){

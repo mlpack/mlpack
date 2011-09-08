@@ -54,7 +54,7 @@ private:
   int start_, stop_;
   
   // The split dim
-  index_t split_dim_;
+  size_t split_dim_;
 
 //   // split dim types
 //   ArrayList<enum> dim_types_;
@@ -72,12 +72,12 @@ private:
   long double subtree_leaves_error_;
 
   // number of leaves of the subtree
-  index_t subtree_leaves_;
+  size_t subtree_leaves_;
 
   // flag to indicate if this is the root node
   // used to check whether the query point is 
   // within the range
-  index_t root_;
+  size_t root_;
 
   // ratio of number of points in the node
   double ratio_;
@@ -102,7 +102,7 @@ private:
   ArrayList<double> min_vals_;
 
   // the tag for the leaf used for hashing points
-  index_t bucket_tag_;
+  size_t bucket_tag_;
 
   // The children
   DTree *left_;
@@ -132,11 +132,11 @@ public:
   }
 
   ////////////////////// Getters and Setters //////////////////////////////////
-  index_t start() { return start_; }
+  size_t start() { return start_; }
 
-  index_t stop() { return stop_; }
+  size_t stop() { return stop_; }
 
-  index_t split_dim() { return split_dim_; }
+  size_t split_dim() { return split_dim_; }
 
   double split_value() { return split_value_; }
 
@@ -144,7 +144,7 @@ public:
 
   long double subtree_leaves_error() { return subtree_leaves_error_; }
 
-  index_t subtree_leaves() { return subtree_leaves_; }
+  size_t subtree_leaves() { return subtree_leaves_; }
 
   double ratio() { return ratio_; }
 
@@ -157,7 +157,7 @@ public:
   DTree* left_child() { return left_; }
   DTree* right_child() { return right_; }
 
-  index_t root() { return root_; }
+  size_t root() { return root_; }
 
   ////////////////////// Private Functions ////////////////////////////////////
  private:
@@ -165,15 +165,15 @@ public:
   void SampleSetWithReplacement_(std::vector<double> &dim_vals,
 				 std::vector<double> *bs_dim_vals);
 
-  long double ComputeNodeError_(index_t total_points);
+  long double ComputeNodeError_(size_t total_points);
   
-  bool FindSplit_(Matrix& data, index_t total_n,
-		  index_t *split_dim, index_t *split_ind,
+  bool FindSplit_(Matrix& data, size_t total_n,
+		  size_t *split_dim, size_t *split_ind,
 		  long double *left_error, long double *right_error);
 
-  void SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
+  void SplitData_(Matrix& data, size_t split_dim, size_t split_ind,
 		  Matrix *data_l, Matrix *data_r, 
-		  ArrayList<index_t> *old_from_new, 
+		  ArrayList<size_t> *old_from_new, 
 		  double *split_val,
 		  double *lsplit_val, double *rsplit_val);
 
@@ -186,7 +186,7 @@ public:
   // Root node initializer
   void Init(ArrayList<double>& max_vals,
 	    ArrayList<double>& min_vals,
-	    index_t total_points, datanode* module) {
+	    size_t total_points, datanode* module) {
     start_ = 0;
     stop_ = total_points;
     max_vals_.InitCopy(max_vals);
@@ -204,7 +204,7 @@ public:
   // Non-root node initializer
   void Init(ArrayList<double>& max_vals,
 	    ArrayList<double>& min_vals,
-	    index_t start, index_t stop,
+	    size_t start, size_t stop,
 	    long double error, datanode* module){
     start_ = start;
     stop_ = stop;
@@ -223,7 +223,7 @@ public:
   /**
    * Expand tree
    */
-  long double Grow(Matrix& data, ArrayList<index_t> *old_from_new) {    
+  long double Grow(Matrix& data, ArrayList<size_t> *old_from_new) {    
 
     DEBUG_ASSERT(data.n_cols() == stop_ - start_);
     DEBUG_ASSERT(data.n_rows() == max_vals_.size());
@@ -237,7 +237,7 @@ public:
     // computing the v_t_inv:
     // the inverse of the volume of the node
     v_t_inv_ = 1.0;
-    for (index_t i = 0; i < max_vals_.size(); i++)
+    for (size_t i = 0; i < max_vals_.size(); i++)
       if (max_vals_[i] - min_vals_[i] > 0.0) 
 	v_t_inv_ /= (long double) (max_vals_[i] - min_vals_[i]);
       else {
@@ -249,7 +249,7 @@ public:
     if ((stop_ - start_) > fx_param_int(module_, "max_leaf_size", 30)) {
 
       // find the split
-      index_t dim, split_ind;
+      size_t dim, split_ind;
       long double left_error, right_error;
       if (FindSplit_(data, old_from_new->size(),
 		     &dim, &split_ind,
@@ -349,7 +349,7 @@ public:
 		       >= fx_param_int(module_,
 				       "min_leaf_size",
 				       15),
-		       "%"LI"d points", stop_ - start_);
+		       "%zu"d points", stop_ - start_);
       subtree_leaves_ = 1;
       subtree_leaves_error_ = error_;
       subtree_leaves_v_t_inv_ = v_t_inv_;
@@ -428,7 +428,7 @@ public:
 	}
 
 	DEBUG_ASSERT(g_t < LDBL_MAX);
-// 			 "g:%lg, rt:%lg, rtt:%lg, l:%"LI"d",
+// 			 "g:%lg, rt:%lg, rtt:%lg, l:%zu"d",
 // 			 g_t, error_, subtree_leaves_error_,
 // 			 subtree_leaves_);
 	//printf("%lg:Return:%lg\n", old_alpha, min(min(left_g, right_g), g_t));
@@ -492,7 +492,7 @@ public:
   // both sides
   bool WithinRange_(Vector& query) {
 
-    for (index_t i = 0; i < query.length(); i++)
+    for (size_t i = 0; i < query.length(); i++)
       if ((query[i] < min_vals_[i]) || (query[i] > max_vals_[i]))
 	return false;
 
@@ -502,8 +502,8 @@ public:
   long double ComputeValue(Vector& query, bool printer) {
 
     DEBUG_ASSERT_MSG(query.length() == max_vals_.size(),
-		     "dim = %"LI"d, maxval size= %"LI"d"
-		     ", sl=%"LI"d",
+		     "dim = %zu"d, maxval size= %zu"d"
+		     ", sl=%zu"d",
 		     query.length(), max_vals_.size(),
 		     subtree_leaves_);
     DEBUG_ASSERT(query.length() == min_vals_.size());
@@ -528,10 +528,10 @@ public:
     // end root if
   } // ComputeValue  
 
-  void WriteTree(index_t level, FILE *fp){
+  void WriteTree(size_t level, FILE *fp){
     if (likely(left_ != NULL)){
       fprintf(fp, "\n");
-      for (index_t i = 0; i < level; i++){
+      for (size_t i = 0; i < level; i++){
 	fprintf(fp, "|\t");
       }
 //       long double g_t = (error_ - subtree_leaves_error_)
@@ -539,23 +539,23 @@ public:
 //       long double g_t = (error_ - subtree_leaves_error_)
 // 	/ (subtree_leaves_v_t_inv_ - v_t_inv_);
 
-      fprintf(fp, "Var. %"LI"d > %lg",
+      fprintf(fp, "Var. %zu"d > %lg",
 	     split_dim_, split_value_);
       right_->WriteTree(level+1, fp);
       fprintf(fp, "\n");
-      for (index_t i = 0; i < level; i++){
+      for (size_t i = 0; i < level; i++){
 	fprintf(fp, "|\t");
       }      
-      fprintf(fp, "Var. %"LI"d <= %lg ", split_dim_, split_value_);
+      fprintf(fp, "Var. %zu"d <= %lg ", split_dim_, split_value_);
       left_->WriteTree(level+1, fp);
     } else {
       fprintf(fp, ": f(x)=%Lg", (long double) ratio_ * v_t_inv_);
       if (bucket_tag_ != -1) 
-	fprintf(fp, " BT:%"LI"d", bucket_tag_);
+	fprintf(fp, " BT:%zu"d", bucket_tag_);
     }  
   }
 
-  index_t TagTree(index_t tag) {
+  size_t TagTree(size_t tag) {
     if (subtree_leaves_ == 1) {
       bucket_tag_ = tag;
       return (tag+1);
@@ -564,10 +564,10 @@ public:
     }
   }
 
-  index_t FindBucket(Vector& query) {
+  size_t FindBucket(Vector& query) {
     DEBUG_ASSERT_MSG(query.length() == max_vals_.size(),
-		     "dim = %"LI"d, maxval size= %"LI"d"
-		     ", sl=%"LI"d",
+		     "dim = %zu"d, maxval size= %zu"d"
+		     ", sl=%zu"d",
 		     query.length(), max_vals_.size(),
 		     subtree_leaves_);
     DEBUG_ASSERT(query.length() == min_vals_.size());

@@ -82,7 +82,7 @@ class Nbc {
   /** Point data includes class (referencs) and prior (queries). */
   class NbcPoint {
    private:
-    index_t index_;
+    size_t index_;
     Vector vec_;
     /** The point's class (if reference). */
     bool is_pos_;
@@ -98,7 +98,7 @@ class Nbc {
     /**
      * Gets the index.
      */
-    index_t index() const {
+    size_t index() const {
       return index_;
     }
     /**
@@ -153,7 +153,7 @@ class Nbc {
      * @param data the vector data read from file
      */
     template<typename Param>
-    void Set(const Param& param, index_t index, const Vector& data) {
+    void Set(const Param& param, size_t index, const Vector& data) {
       index_ = index;
       mem::BitCopy(vec_.ptr(), data.ptr(), vec_.length());
       if (param.no_labels) {
@@ -193,19 +193,19 @@ class Nbc {
   struct Param {
    public:
     /** The dimensionality of the data sets. */
-    index_t dim;
+    size_t dim;
     /** Number of reference points. */
-    index_t count_all;
+    size_t count_all;
     /** Number of positive reference points. Similar for _neg. */
-    index_t count_pos;
-    index_t count_neg;
+    size_t count_pos;
+    size_t count_neg;
     /** The specified threshold for certainty of positive class. */
     double threshold;
     /** If set, will be used as prior for all data. */
     double prior_override;
     /** Number of positive kernels to test. Similar for _neg. */
-    index_t count_kernel_pos;
-    index_t count_kernel_neg;
+    size_t count_kernel_pos;
+    size_t count_kernel_neg;
     /** The kernels for positive points. Similar for _neg. */
     ArrayList<Kernel> kernel_pos;
     ArrayList<Kernel> kernel_neg;
@@ -296,7 +296,7 @@ class Nbc {
      *
      * Note: called *after* reading all data.
      */
-    void SetDimensions(index_t vector_dimension, index_t n_points) {
+    void SetDimensions(size_t vector_dimension, size_t n_points) {
       dim = vector_dimension; // last two cols already trimmed
       count_all = n_points;
     }
@@ -310,8 +310,8 @@ class Nbc {
       count_pos = count_pos_in;
       count_neg = count_neg_in;
 
-      index_t count_pos_loo = loo ? count_pos - 1 : count_pos;
-      index_t count_neg_loo = loo ? count_neg - 1 : count_neg;
+      size_t count_pos_loo = loo ? count_pos - 1 : count_pos;
+      size_t count_neg_loo = loo ? count_neg - 1 : count_neg;
 
       for (i = 0; i < count_kernel_pos; i++) {
 	double norm_pos = kernel_pos[i].CalcNormConstant(dim);
@@ -340,7 +340,7 @@ class Nbc {
    public:
     Vector mass;
     double sumsq;
-    index_t count;
+    size_t count;
 
     OT_DEF_BASIC(MomentInfo) {
       OT_MY_OBJECT(mass);
@@ -361,7 +361,7 @@ class Nbc {
       count = 0;
     }
 
-    void Add(index_t count_in, const Vector& mass_in, double sumsq_in) {
+    void Add(size_t count_in, const Vector& mass_in, double sumsq_in) {
       if (unlikely(count_in != 0)) {
         la::AddTo(mass_in, &mass);
         sumsq += sumsq_in;
@@ -442,8 +442,8 @@ class Nbc {
     Bound bound_pos;
     Bound bound_neg;
     /** Number of positive points. Similar for _neg. */
-    index_t count_pos;
-    index_t count_neg;
+    size_t count_pos;
+    size_t count_neg;
     /** Bounds for query priors. Similar for _neg. */
     DRange pi_pos;
     DRange pi_neg;
@@ -497,7 +497,7 @@ class Nbc {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param,
-        const NbcStat& stat, const Bound& bound, index_t n) {
+        const NbcStat& stat, const Bound& bound, size_t n) {
       moment_info_pos.Add(stat.moment_info_pos);
       moment_info_neg.Add(stat.moment_info_neg);
       bound_pos |= stat.bound_pos;
@@ -512,7 +512,7 @@ class Nbc {
      * Finish accumulating data; for instance, for mean, divide by the
      * number of points.
      */
-    void Postprocess(const Param& param, const Bound& bound, index_t n) {
+    void Postprocess(const Param& param, const Bound& bound, size_t n) {
     }
   };
   typedef NbcStat RStat;
@@ -537,8 +537,8 @@ class Nbc {
   struct MultiLabel {
    public:
     /** Size of the label matrix. Similar for j_. */
-    index_t i_size;
-    index_t j_size;
+    size_t i_size;
+    size_t j_size;
     /** The labels, stored column-major. */
     ArrayList<int> label;
     /** Ranges for unlabeled portion. Similar for _hi and j_.
@@ -550,10 +550,10 @@ class Nbc {
      * Thus, no further work is necessary for kernels outside the
      * lo-hi range.
      */
-    index_t i_lo;
-    index_t i_hi;
-    index_t j_lo;
-    index_t j_hi;
+    size_t i_lo;
+    size_t i_hi;
+    size_t j_lo;
+    size_t j_hi;
 
     OT_DEF(MultiLabel) {
       OT_MY_OBJECT(i_size);
@@ -566,7 +566,7 @@ class Nbc {
     }
 
    public:
-    void Init(index_t i_size_in, index_t j_size_in) {
+    void Init(size_t i_size_in, size_t j_size_in) {
       i_size = i_size_in;
       j_size = j_size_in;
       label.Init(i_size * j_size);
@@ -602,24 +602,24 @@ class Nbc {
       j_hi = other.j_hi;
     }
 
-    int& at(index_t i, index_t j) {
+    int& at(size_t i, size_t j) {
       return label[i + j * i_size];
     }
 
-    const int& at(index_t i, index_t j) const {
+    const int& at(size_t i, size_t j) const {
       return label[i + j * i_size];
     }
 
     MultiLabel& operator&= (const MultiLabel& other) {
       DEBUG_SAME_SIZE(label.size(), other.label.size());
 
-      index_t next_i_lo = i_size;
-      index_t next_i_hi = 0;
-      index_t next_j_lo = j_size;
-      index_t next_j_hi = 0;
+      size_t next_i_lo = i_size;
+      size_t next_i_hi = 0;
+      size_t next_j_lo = j_size;
+      size_t next_j_hi = 0;
 
-      for (index_t j = 0; j < j_size; j++) {
-	for (index_t i = 0; i < i_size; i++) {
+      for (size_t j = 0; j < j_size; j++) {
+	for (size_t i = 0; i < i_size; i++) {
 	  at(i,j) &= other.at(i,j);
 	  DEBUG_ASSERT_MSG(at(i,j) != LAB_NEITHER, "Conflicting labels?");
 
@@ -643,13 +643,13 @@ class Nbc {
     MultiLabel& operator|= (const MultiLabel& other) {
       DEBUG_SAME_SIZE(label.size(), other.label.size());
 
-      index_t next_i_lo = i_size;
-      index_t next_i_hi = 0;
-      index_t next_j_lo = j_size;
-      index_t next_j_hi = 0;
+      size_t next_i_lo = i_size;
+      size_t next_i_hi = 0;
+      size_t next_j_lo = j_size;
+      size_t next_j_hi = 0;
 
-      for (index_t j = 0; j < j_size; j++) {
-	for (index_t i = 0; i < i_size; i++) {
+      for (size_t j = 0; j < j_size; j++) {
+	for (size_t i = 0; i < i_size; i++) {
 	  at(i,j) |= other.at(i,j);
 
 	  if (at(i,j) == LAB_EITHER) {
@@ -692,11 +692,11 @@ class Nbc {
       label.Init(param.count_kernel_pos, param.count_kernel_neg);
 
       moment_info_pos.Init(param.count_kernel_pos);
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	moment_info_pos[i].Init(param);
       }
       moment_info_neg.Init(param.count_kernel_neg);
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	moment_info_neg[j].Init(param);
       }
 
@@ -705,10 +705,10 @@ class Nbc {
     void Reset(const Param& param) {
       label.Reset();
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	moment_info_pos[i].Reset();
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	moment_info_neg[j].Reset();
       }
     }
@@ -718,10 +718,10 @@ class Nbc {
       label &= other.label;
 
       // Update moments for all indices; perhaps should be unlabeled
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	moment_info_pos[i].Add(other.moment_info_pos[i]);
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	moment_info_neg[j].Add(other.moment_info_neg[j]);
       }
     }
@@ -741,10 +741,10 @@ class Nbc {
      * query-reference combination (intrinsically or terminally,
      * though terminal prunes are represented elsewhere, too).
      */
-    index_t i_lo;
-    index_t i_hi;
-    index_t j_lo;
-    index_t j_hi;
+    size_t i_lo;
+    size_t i_hi;
+    size_t j_lo;
+    size_t j_hi;
 
     OT_DEF(Delta) {
       OT_MY_OBJECT(d_density_pos);
@@ -791,11 +791,11 @@ class Nbc {
       label.Init(param.count_kernel_pos, param.count_kernel_neg);
 
       density_pos.Init(param.count_kernel_pos);
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i] = 0;
       }
       density_neg.Init(param.count_kernel_neg);
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j] = 0;
       }
     }
@@ -803,11 +803,11 @@ class Nbc {
     void Seed(const Param& param, const QPoint& q) {
       if (param.loo) {
 	if (q.is_pos()) {
-	  for (index_t i = 0; i < param.count_kernel_pos; i++) {
+	  for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	    density_pos[i] -= param.kernel_pos[i].EvalUnnormOnSq(0);
 	  }
 	} else {
-	  for (index_t j = 0; j < param.count_kernel_neg; j++) {
+	  for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	    density_neg[j] -= param.kernel_neg[j].EvalUnnormOnSq(0);
 	  }
 	}
@@ -816,10 +816,10 @@ class Nbc {
 
     // Why does this have a q_index and r_root?  RR
     void Postprocess(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_root) {
-      for (index_t j = label.j_lo; j < label.j_hi; j++) {
-	for (index_t i = label.i_lo; i < label.i_hi; i++) {
+      for (size_t j = label.j_lo; j < label.j_hi; j++) {
+	for (size_t i = label.i_lo; i < label.i_hi; i++) {
 	  if (label.at(i,j) == LAB_EITHER) {
 	    // Use proper coeffs for q; branches are equiv if not LOO
 	    if (q.is_pos()) {
@@ -846,16 +846,16 @@ class Nbc {
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q, index_t q_index) {
+        const QPoint& q, size_t q_index) {
       label &= postponed.label;
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	if (!postponed.moment_info_pos[i].is_empty()) {
 	  density_pos[i] += postponed.moment_info_pos[i].ComputeKernelSum(
               param.kernel_pos[i], q.vec());
 	}
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	if (!postponed.moment_info_neg[j].is_empty()) {
 	  density_neg[j] += postponed.moment_info_neg[j].ComputeKernelSum(
               param.kernel_neg[j], q.vec());
@@ -884,11 +884,11 @@ class Nbc {
       label.Init(param.count_kernel_pos, param.count_kernel_neg);
 
       density_pos.Init(param.count_kernel_pos);
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i].Init(0, 0);
       }
       density_neg.Init(param.count_kernel_neg);
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j].Init(0, 0);
       }
     }
@@ -896,21 +896,21 @@ class Nbc {
     void Seed(const Param& param, const QNode& q_node) {
       if (param.loo) {
 	if (q_node.stat().count_pos > 0) {
-	  for (index_t i = label.i_lo; i < label.i_hi; i++) {
+	  for (size_t i = label.i_lo; i < label.i_hi; i++) {
 	    density_pos[i].lo -= param.kernel_pos[i].EvalUnnormOnSq(0);
 	  }
 	} else {
-	  for (index_t j = label.j_lo; j < label.j_hi; j++) {
+	  for (size_t j = label.j_lo; j < label.j_hi; j++) {
 	    density_neg[j].hi -= param.kernel_neg[j].EvalUnnormOnSq(0);
 	  }
 	}
 
 	if (q_node.stat().count_neg > 0) {
-	  for (index_t j = label.j_lo; j < label.j_hi; j++) {
+	  for (size_t j = label.j_lo; j < label.j_hi; j++) {
 	    density_neg[j].lo -= param.kernel_neg[j].EvalUnnormOnSq(0);
 	  }
 	} else {
-	  for (index_t i = label.i_lo; i < label.i_hi; i++) {
+	  for (size_t i = label.i_lo; i < label.i_hi; i++) {
 	    density_pos[i].hi -= param.kernel_pos[i].EvalUnnormOnSq(0);
 	  }
 	}
@@ -922,10 +922,10 @@ class Nbc {
       /* vertical init */
       label.SetAll(LAB_NEITHER);
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i].InitEmptySet();
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j].InitEmptySet();
       }
     }
@@ -933,22 +933,22 @@ class Nbc {
     void Accumulate(const Param& param, const QResult& result) {
       label |= result.label;
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i] |= result.density_pos[i];
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j] |= result.density_neg[j];
       }
     }
 
     void Accumulate(const Param& param,
-        const QSummaryResult& result, index_t n_points) {
+        const QSummaryResult& result, size_t n_points) {
       label |= result.label;
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i] |= result.density_pos[i];
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j] |= result.density_neg[j];
       }
     }
@@ -963,20 +963,20 @@ class Nbc {
         const QSummaryResult& summary_result) {
       label &= summary_result.label;
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	density_pos[i] += summary_result.density_pos[i];
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	density_neg[j] += summary_result.density_neg[j];
       }
     }
 
     void ApplyDelta(const Param& param,
         const Delta& delta) {
-      for (index_t i = delta.i_lo; i < delta.i_hi; i++) {
+      for (size_t i = delta.i_lo; i < delta.i_hi; i++) {
 	density_pos[i] += delta.d_density_pos[i];
       }
-      for (index_t j = delta.j_lo; j < delta.j_hi; j++) {
+      for (size_t j = delta.j_lo; j < delta.j_hi; j++) {
 	density_neg[j] += delta.d_density_neg[j];
       }
     }
@@ -985,13 +985,13 @@ class Nbc {
         const QPostponed& postponed, const QNode& q_node) {
       label &= postponed.label;
 
-      for (index_t i = 0; i < param.count_kernel_pos; i++) {
+      for (size_t i = 0; i < param.count_kernel_pos; i++) {
 	if (!postponed.moment_info_pos[i].is_empty()) {
 	  density_pos[i] += postponed.moment_info_pos[i].ComputeKernelSumRange(
               param.kernel_pos[i], q_node.bound());
 	}
       }
-      for (index_t j = 0; j < param.count_kernel_neg; j++) {
+      for (size_t j = 0; j < param.count_kernel_neg; j++) {
 	if (!postponed.moment_info_neg[j].is_empty()) {
 	  density_neg[j] += postponed.moment_info_neg[j].ComputeKernelSumRange(
               param.kernel_neg[j], q_node.bound());
@@ -1007,18 +1007,18 @@ class Nbc {
   struct GlobalResult {
    public:
     /** Size of the results matrix. Similar for j_. */
-    index_t i_size;
-    index_t j_size;
+    size_t i_size;
+    size_t j_size;
     /** Identified pos points, stored column-major. Similar for _neg. */
-    ArrayList<index_t> count_pos;
-    ArrayList<index_t> count_neg;
+    ArrayList<size_t> count_pos;
+    ArrayList<size_t> count_neg;
     /** Number of points that couldn't be classified. */
-    ArrayList<index_t> count_unknown;
+    ArrayList<size_t> count_unknown;
     /** Correct pos points, stored column-major. Similar for _neg. */
-    ArrayList<index_t> count_correct_pos;
-    ArrayList<index_t> count_correct_neg;
-    index_t count_true_pos;
-    index_t count_true_neg;
+    ArrayList<size_t> count_correct_pos;
+    ArrayList<size_t> count_correct_neg;
+    size_t count_true_pos;
+    size_t count_true_neg;
 
     OT_DEF(GlobalResult) {
       OT_MY_OBJECT(i_size);
@@ -1077,11 +1077,11 @@ class Nbc {
 	double best_eff_neg = 0;
 	double best_cov_pos = 0;
 	double best_cov_neg = 0;
-	index_t best_i = -1;
-	index_t best_j = -1;
+	size_t best_i = -1;
+	size_t best_j = -1;
 
-	for (index_t j = 0; j < j_size; j++) {
-	  for (index_t i = 0; i < i_size; i++) {
+	for (size_t j = 0; j < j_size; j++) {
+	  for (size_t i = 0; i < i_size; i++) {
 	    double eff_pos =
 	        count_correct_pos[i+j*i_size] / (double)count_pos[i+j*i_size];
 	    double eff_neg =
@@ -1124,7 +1124,7 @@ class Nbc {
     }
 
     void ApplyResult(const Param& param,
-        const QPoint& q_point, index_t q_i,
+        const QPoint& q_point, size_t q_i,
         const QResult& q_result) {
       for (int i = 0; i < count_pos.size(); ++i) {
 	if (q_result.label.label[i] == LAB_POS) {
@@ -1159,10 +1159,10 @@ class Nbc {
    public:
     ArrayList<double> d_density_pos;
     ArrayList<double> d_density_neg;
-    index_t i_lo;
-    index_t i_hi;
-    index_t j_lo;
-    index_t j_hi;
+    size_t i_lo;
+    size_t i_hi;
+    size_t j_lo;
+    size_t j_hi;
 
    public:
     void Init(const Param& param) {
@@ -1174,7 +1174,7 @@ class Nbc {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_node,
 	const Delta& delta,
         const QSummaryResult& unapplied_summary_results,
@@ -1236,11 +1236,11 @@ class Nbc {
 	return false;
       }
 
-      for (index_t i = i_lo; i < i_hi; i++) {
+      for (size_t i = i_lo; i < i_hi; i++) {
 	d_density_pos[i] = 0;
       }
 
-      for (index_t j = j_lo; j < j_hi; j++) {
+      for (size_t j = j_lo; j < j_hi; j++) {
 	d_density_neg[j] = 0;
       }
 
@@ -1248,28 +1248,28 @@ class Nbc {
     }
 
     void VisitPair(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RPoint& r, index_t r_index) {
+        const QPoint& q, size_t q_index,
+        const RPoint& r, size_t r_index) {
       double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
       if (r.is_pos()) {
-	for (index_t i = i_lo; i < i_hi; i++) {
+	for (size_t i = i_lo; i < i_hi; i++) {
 	  d_density_pos[i] += param.kernel_pos[i].EvalUnnormOnSq(distance);
 	}
       } else {
-	for (index_t j = j_lo; j < j_hi; j++) {
+	for (size_t j = j_lo; j < j_hi; j++) {
 	  d_density_neg[j] += param.kernel_neg[j].EvalUnnormOnSq(distance);
 	}
       }
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_node,
         const QSummaryResult& unapplied,
         QResult* q_result,
         GlobalResult* global_result) {
-      index_t i;
-      index_t j;
+      size_t i;
+      size_t j;
 
       for (i = i_lo; i < i_hi; i++) {
 	q_result->density_pos[i] += d_density_pos[i];
@@ -1278,10 +1278,10 @@ class Nbc {
 	q_result->density_neg[j] += d_density_neg[j];
       }
 
-      index_t next_i_lo = q_result->label.i_hi - 1;
-      index_t next_i_hi = q_result->label.i_lo;
-      index_t next_j_lo = q_result->label.j_hi - 1;
-      index_t next_j_hi = q_result->label.j_lo;
+      size_t next_i_lo = q_result->label.i_hi - 1;
+      size_t next_i_hi = q_result->label.i_lo;
+      size_t next_j_lo = q_result->label.j_hi - 1;
+      size_t next_j_hi = q_result->label.j_lo;
 
       // Intentionally wider ranges than above
       // - to perform classifications for pervious intrinsic prunes
@@ -1338,10 +1338,10 @@ class Nbc {
         Delta* delta,
         GlobalResult* global_result,
         QPostponed* q_postponed) {
-      index_t i_lo;
-      index_t i_hi;
-      index_t j_lo;
-      index_t j_hi;
+      size_t i_lo;
+      size_t i_hi;
+      size_t j_lo;
+      size_t j_hi;
 
       // Restrict computation to things not already pruned for this pair
 
@@ -1433,14 +1433,14 @@ class Nbc {
 	return false;
       }
 
-      index_t next_i_lo = q_summary_result.label.i_hi + 1;
-      index_t next_i_hi = q_summary_result.label.i_lo;
-      index_t next_j_lo = q_summary_result.label.j_hi + 1;
-      index_t next_j_hi = q_summary_result.label.j_lo;
+      size_t next_i_lo = q_summary_result.label.i_hi + 1;
+      size_t next_i_hi = q_summary_result.label.i_lo;
+      size_t next_j_lo = q_summary_result.label.j_hi + 1;
+      size_t next_j_hi = q_summary_result.label.j_lo;
 
-      for (index_t j = q_summary_result.label.j_lo;
+      for (size_t j = q_summary_result.label.j_lo;
 	   j < q_summary_result.label.j_hi; j++) {
-	for (index_t i = q_summary_result.label.i_lo;
+	for (size_t i = q_summary_result.label.i_lo;
 	     i < q_summary_result.label.i_hi; i++) {
 	  if (q_summary_result.label.at(i,j) == LAB_EITHER) {
 	    // const_pos.lo <= const_pos_loo.lo, etc.; if !param.loo, ==
@@ -1515,8 +1515,8 @@ void NbcMain(datanode *module) {
   double results_megs = fx_param_double(module, "results/megs", 1000);
   DistributedCache *q_points_cache;
   DistributedCache *r_points_cache;
-  index_t n_q_points;
-  index_t n_r_points;
+  size_t n_q_points;
+  size_t n_r_points;
   ThorTree<Nbc::Param, Nbc::QPoint, Nbc::QNode> *q_tree;
   ThorTree<Nbc::Param, Nbc::RPoint, Nbc::RNode> *r_tree;
   DistributedCache q_results;
@@ -1603,7 +1603,7 @@ void NbcMain(datanode *module) {
       points_array.Init(q_points_cache, BlockDevice::M_READ);
       CacheReadIter<Nbc::QResult> result_iter(&result_array, 0);
       CacheReadIter<Nbc::QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < n_q_points; i++,
+      for (size_t i = 0; i < n_q_points; i++,
 	     result_iter.Next(), points_iter.Next()) {
 	classifications.set(0, (*points_iter).index(),
 			    2 - (*result_iter).label.at(0,0));

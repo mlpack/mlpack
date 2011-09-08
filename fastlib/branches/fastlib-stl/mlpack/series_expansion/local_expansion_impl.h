@@ -9,14 +9,14 @@
 template<typename TKernelAux>
 void LocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data, 
 						  const arma::vec& weights, 
-						  index_t begin, index_t end, 
-						  index_t order) {
+						  size_t begin, size_t end, 
+						  size_t order) {
 
   if(order > order_)
     order_ = order;
 
-  index_t dim = sea_->get_dimension();
-  index_t total_num_coeffs = sea_->get_total_num_coeffs(order);
+  size_t dim = sea_->get_dimension();
+  size_t total_num_coeffs = sea_->get_total_num_coeffs(order);
   
   // get inverse factorials (precomputed)
   // TODO: this is supposed to be an alias (just get it compiling for now)
@@ -33,10 +33,10 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data,
   double bandwidth_factor = ka_->BandwidthFactor(kernel_->bandwidth_sq());
   
   // for each data point,
-  for(index_t r = begin; r < end; r++) {
+  for(size_t r = begin; r < end; r++) {
     
     // calculate x_r - x_Q
-    for(index_t d = 0; d < dim; d++) {
+    for(size_t d = 0; d < dim; d++) {
       x_r_minus_x_Q[d] = (center_[d] - data(d, r)) / 
 	bandwidth_factor;
     }
@@ -45,12 +45,12 @@ void LocalExpansion<TKernelAux>::AccumulateCoeffs(const arma::mat& data,
     ka_->ComputeDirectionalDerivatives(x_r_minus_x_Q, derivative_map, order);
     
     // compute h_{beta}((x_r - x_Q) / sqrt(2h^2))
-    for(index_t j = 0; j < total_num_coeffs; j++) {
-      const std::vector<index_t>& mapping = sea_->get_multiindex(j);
+    for(size_t j = 0; j < total_num_coeffs; j++) {
+      const std::vector<size_t>& mapping = sea_->get_multiindex(j);
       arrtmp[j] = ka_->ComputePartialDerivative(derivative_map, mapping);
     }
 
-    for(index_t j = 0; j < total_num_coeffs; j++) {
+    for(size_t j = 0; j < total_num_coeffs; j++) {
       coeffs_[j] += neg_inv_multiindex_factorials[j] * weights[r] * 
           arrtmp[j];
     }
@@ -61,31 +61,31 @@ template<typename TKernelAux>
 void LocalExpansion<TKernelAux>::PrintDebug(const char *name, 
 					    FILE *stream) const {
   
-  index_t dim = sea_->get_dimension();
-  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  size_t dim = sea_->get_dimension();
+  size_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   fprintf(stream, "----- SERIESEXPANSION %s ------\n", name);
   fprintf(stream, "Local expansion\n");
   fprintf(stream, "Center: ");
   
-  for (index_t i = 0; i < center_.n_elem; i++) {
+  for (size_t i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
   
   fprintf(stream, "f(");
-  for(index_t d = 0; d < dim; d++) {
+  for(size_t d = 0; d < dim; d++) {
     fprintf(stream, "x_q%d", d);
     if(d < dim - 1)
       fprintf(stream, ",");
   }
   fprintf(stream, ") = \\sum\\limits_{x_r \\in R} K(||x_q - x_r||) = ");
   
-  for (index_t i = 0; i < total_num_coeffs; i++) {
-    const std::vector<index_t>& mapping = sea_->get_multiindex(i);
+  for (size_t i = 0; i < total_num_coeffs; i++) {
+    const std::vector<size_t>& mapping = sea_->get_multiindex(i);
     fprintf(stream, "%g", coeffs_[i]);
     
-    for(index_t d = 0; d < dim; d++) {
+    for(size_t d = 0; d < dim; d++) {
       fprintf(stream, "(x_q%d - (%g))^%d ", d, center_[d], mapping[d]);
     }
 
@@ -98,7 +98,7 @@ void LocalExpansion<TKernelAux>::PrintDebug(const char *name,
 
 template<typename TKernelAux>
 double LocalExpansion<TKernelAux>::EvaluateField(const arma::mat& data, 
-						 index_t row_num) const {
+						 size_t row_num) const {
   return EvaluateField(data.colptr(row_num));
 }
 
@@ -109,13 +109,13 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
   if(order_ < 0)
     return 0;
 
-  index_t k, t, tail;
+  size_t k, t, tail;
   
   // total number of coefficient
-  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  size_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
 
   // number of dimensions
-  index_t dim = sea_->get_dimension();
+  size_t dim = sea_->get_dimension();
 
   // evaluated sum to be returned
   double sum = 0;
@@ -125,15 +125,15 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
 
   // temporary variable
   arma::vec x_Q_to_x_q(dim), tmp(total_num_coeffs);
-  std::vector<index_t> heads;
+  std::vector<size_t> heads;
   heads.reserve(dim + 1);
   
   // compute (x_q - x_Q) / (sqrt(2h^2))
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     x_Q_to_x_q[i] = (x_q[i] - center_[i]) / bandwidth_factor;
   }
   
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     heads[i] = 0;
   }
   heads[dim] = UINT_MAX;
@@ -142,17 +142,17 @@ double LocalExpansion<TKernelAux>::EvaluateField(const double *x_q) const {
 
   for(k = 1, t = 1, tail = 1; k <= order_; k++, tail = t) {
 
-    for(index_t i = 0; i < dim; i++) {
-      index_t head = heads[i];
+    for(size_t i = 0; i < dim; i++) {
+      size_t head = heads[i];
       heads[i] = t;
 
-      for(index_t j = head; j < tail; j++, t++) {
+      for(size_t j = head; j < tail; j++, t++) {
         tmp[t] = tmp[j] * x_Q_to_x_q[i];
       }
     }
   }
 
-  for(index_t i = 0; i < total_num_coeffs; i++) {
+  for(size_t i = 0; i < total_num_coeffs; i++) {
     sum += coeffs_[i] * tmp[i];
   }
 
@@ -190,7 +190,7 @@ void LocalExpansion<TKernelAux>::Init(const TKernelAux &ka) {
 
 template<typename TKernelAux>
 template<typename TBound>
-index_t LocalExpansion<TKernelAux>::OrderForEvaluating
+size_t LocalExpansion<TKernelAux>::OrderForEvaluating
 (const TBound &far_field_region, 
  const TBound &local_field_region, double min_dist_sqd_regions,
  double max_dist_sqd_regions, double max_error, double *actual_error) const {
@@ -209,12 +209,12 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   arma::mat derivative_map;
   arma::vec cent_diff;
 
-  index_t dimension = sea_->get_dimension();
+  size_t dimension = sea_->get_dimension();
   ka_->AllocateDerivativeMap(dimension, 2 * order_, derivative_map);
 
-  index_t far_order = se.get_order();
-  index_t total_num_coeffs = sea_->get_total_num_coeffs(far_order);
-  index_t limit;
+  size_t far_order = se.get_order();
+  size_t total_num_coeffs = sea_->get_total_num_coeffs(far_order);
+  size_t limit;
   double bandwidth_factor = ka_->BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
@@ -233,24 +233,24 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   neg_arrtmp.set_size(total_num_coeffs);
 
   // compute center difference divided by bw_times_sqrt_two;
-  for(index_t j = 0; j < dimension; j++) {
+  for(size_t j = 0; j < dimension; j++) {
     cent_diff[j] = (center_[j] - far_center[j]) / bandwidth_factor;
   }
 
   // compute required partial derivatives
   ka_->ComputeDirectionalDerivatives(cent_diff, derivative_map, 2 * order_);
-  std::vector<index_t> beta_plus_alpha;
+  std::vector<size_t> beta_plus_alpha;
   beta_plus_alpha.reserve(dimension);
 
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(size_t j = 0; j < total_num_coeffs; j++) {
 
-    const std::vector<index_t>& beta_mapping = sea_->get_multiindex(j);
+    const std::vector<size_t>& beta_mapping = sea_->get_multiindex(j);
     pos_arrtmp[j] = neg_arrtmp[j] = 0;
 
-    for(index_t k = 0; k < total_num_coeffs; k++) {
+    for(size_t k = 0; k < total_num_coeffs; k++) {
 
-      const std::vector<index_t>& alpha_mapping = sea_->get_multiindex(k);
-      for(index_t d = 0; d < dimension; d++) {
+      const std::vector<size_t>& alpha_mapping = sea_->get_multiindex(k);
+      for(size_t d = 0; d < dimension; d++) {
 	beta_plus_alpha[d] = beta_mapping[d] + alpha_mapping[d];
       }
       double derivative_factor =
@@ -266,7 +266,7 @@ void LocalExpansion<TKernelAux>::TranslateFromFarField
   } // end of j-loop
 
   arma::vec& C_k_neg = sea_->get_neg_inv_multiindex_factorials();
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(size_t j = 0; j < total_num_coeffs; j++) {
     coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
   }
 }
@@ -283,17 +283,17 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   // the expansion we are translating from. Also get coefficients we
   // are translating
   const arma::vec& new_center = se.get_center();
-  index_t prev_order = se.get_order();
-  index_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
-  const std::vector<std::vector<index_t> >& upper_mapping_index = 
+  size_t prev_order = se.get_order();
+  size_t total_num_coeffs = sea_->get_total_num_coeffs(order_);
+  const std::vector<std::vector<size_t> >& upper_mapping_index = 
     sea_->get_upper_mapping_index();
   arma::vec& new_coeffs = se.get_coeffs();
 
   // dimension
-  index_t dim = sea_->get_dimension();
+  size_t dim = sea_->get_dimension();
 
   // temporary variable
-  std::vector<index_t> tmp_storage;
+  std::vector<size_t> tmp_storage;
   tmp_storage.reserve(dim);
 
   // sqrt two times bandwidth
@@ -301,7 +301,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
 
   // center difference between the old center and the new one
   arma::vec center_diff(dim);
-  for(index_t d = 0; d < dim; d++) {
+  for(size_t d = 0; d < dim; d++) {
     center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
   }
 
@@ -315,26 +315,26 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
   //const arma::vec& C_k = sea_->get_inv_multiindex_factorials();
 
   // do the actual translation
-  for(index_t j = 0; j < total_num_coeffs; j++) {
+  for(size_t j = 0; j < total_num_coeffs; j++) {
 
-    const std::vector<index_t>& alpha_mapping = sea_->get_multiindex(j);
-    const std::vector<index_t>& upper_mappings_for_alpha =
+    const std::vector<size_t>& alpha_mapping = sea_->get_multiindex(j);
+    const std::vector<size_t>& upper_mappings_for_alpha =
         upper_mapping_index[j];
     double pos_coeffs = 0;
     double neg_coeffs = 0;
 
-    for(index_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
+    for(size_t k = 0; k < upper_mappings_for_alpha.size(); k++) {
 
       if(upper_mappings_for_alpha[k] >= total_num_coeffs) {
 	break;
       }
 
-      const std::vector<index_t>& beta_mapping =
+      const std::vector<size_t>& beta_mapping =
 	sea_->get_multiindex(upper_mappings_for_alpha[k]);
-      index_t flag = 0;
+      size_t flag = 0;
       double diff1 = 1.0;
 
-      for(index_t l = 0; l < dim; l++) {
+      for(size_t l = 0; l < dim; l++) {
 	tmp_storage[l] = beta_mapping[l] - alpha_mapping[l];
 
 	if(tmp_storage[l] < 0) {
@@ -346,7 +346,7 @@ void LocalExpansion<TKernelAux>::TranslateToLocal(LocalExpansion &se) {
       if(flag)
 	continue;
 
-      for(index_t l = 0; l < dim; l++) {
+      for(size_t l = 0; l < dim; l++) {
 	diff1 *= pow(center_diff[l], tmp_storage[l]);
       }
 

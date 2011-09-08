@@ -18,13 +18,13 @@
 #include "fastlib/base/test.h"
 
 // maximum # of iterations for FW training
-const index_t MAX_NUM_ITER_FW = 100000000;
+const size_t MAX_NUM_ITER_FW = 100000000;
 // threshold that determines whether an alpha is a SV or not
 const double FW_ALPHA_ZERO = 1.0e-7;
 // for inv_C
 const double FW_ZERO = 1.0e-12;
 // after # of iterations to do shrinking
-//const index_t FW_NUM_FOR_SHRINKING = 1000;
+//const size_t FW_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 //const double FW_UNSHRINKING_FACTOR = 10;
 
@@ -38,29 +38,29 @@ class FW {
 
  private:
   int learner_typeid_;
-  index_t ct_iter_; /* counter for the number of iterations */
-  //index_t ct_shrinking_; /* counter for doing shrinking  */
+  size_t ct_iter_; /* counter for the number of iterations */
+  //size_t ct_shrinking_; /* counter for doing shrinking  */
 
   //bool unshrinked_; /* indicator: where unshrinking has be carried out  */
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the matrix of all data, including last label row */
   
   Vector alpha_; /* the alphas, to be optimized */
 
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
 
   double q_;
   double r_;
   double lambda_; // optimal step length
-  index_t p_; // optimal index of the subgradient
+  size_t p_; // optimal index of the subgradient
 
-  index_t n_alpha_; /* number of variables to be optimized */
-  index_t n_active_; /* number of samples in the active set */
+  size_t n_alpha_; /* number of variables to be optimized */
+  size_t n_active_; /* number of samples in the active set */
   // n_active + n_inactive == n_alpha;
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas */
+  ArrayList<size_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas */
 
   ArrayList<int> y_; /* list that stores "labels" */
 
@@ -80,7 +80,7 @@ class FW {
   double inv_two_C_; // 1/2C
   
   //double epsilon_; // for SVM_R
-  index_t n_iter_; // number of iterations
+  size_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping criterion
   double gap_;  // for stopping criterion
 
@@ -117,7 +117,7 @@ class FW {
       inv_two_C_ = 0.5;
       inv_C_ = 1;
     }
-    n_iter_ = (index_t) param_[1];
+    n_iter_ = (size_t) param_[1];
     n_iter_ = n_iter_ < MAX_NUM_ITER_FW ? n_iter_: MAX_NUM_ITER_FW;
     accuracy_ = param_[2];
     if (learner_typeid == 0) { // SVM_C
@@ -139,7 +139,7 @@ class FW {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -158,7 +158,7 @@ class FW {
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     // for SVM_R where max_n_alpha_==2*n_data_
     /*
     if (learner_typeid_ == 1) {
@@ -195,7 +195,7 @@ void FW<TKernel>::Shrinking_() {
   // Determine whether need to do Unshrinking
   double max_grad_inact = -INFINITY; // for optimiality check
   double min_gradinvCalpha_act = INFINITY; // for optimiality check
-  index_t k,op_pos;
+  size_t k,op_pos;
   for (k=n_active_; k<n_alpha_; k++) {
     op_pos = active_set_[k];
     if (grad_[op_pos] > max_grad_inact) {
@@ -229,7 +229,7 @@ void FW<TKernel>::Shrinking_() {
  */
 template<typename TKernel>
 void FW<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -326,7 +326,7 @@ void FW<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   ct_iter_ = 0;
   int stop_condition = 0;
   while (1) {
-    //for(index_t i=0; i<n_alpha_; i++)
+    //for(size_t i=0; i<n_alpha_; i++)
     //  printf("%f.\n", y_[i]*alpha_[i]);
     //printf("\n\n");
 
@@ -396,11 +396,11 @@ int FW<TKernel>::FWIterations_() {
 template<typename TKernel>
 bool FW<TKernel>::GreedyVectorSelection_() {
   double grad_max = -INFINITY;
-  index_t idx_i_grad_max = -1;
+  size_t idx_i_grad_max = -1;
   
   // Find working vector using greedy search: idx_i = argmax_k(grad_k), k = 1...N
-  index_t k, op_pos;
-  index_t p_po_act = -1; // p's position in active set
+  size_t k, op_pos;
+  size_t p_po_act = -1; // p's position in active set
 
   double max_grad_inact = -INFINITY; // for optimiality check
   double min_gradinvCalpha_act = INFINITY; // for optimiality check
@@ -408,7 +408,7 @@ bool FW<TKernel>::GreedyVectorSelection_() {
 
   // Working harder over the current active set (shrinking)
   /*
-  index_t start_pos, end_pos;
+  size_t start_pos, end_pos;
   if (cur_work_finished_) { // look for a new sample
     start_pos = n_active_;
     end_pos = n_alpha_;
@@ -477,7 +477,7 @@ bool FW<TKernel>::GreedyVectorSelection_() {
 */
 template<typename TKernel>
 void FW<TKernel>::UpdateGradientAlpha_() {
-  index_t i, op_pos;
+  size_t i, op_pos;
   double one_m_lambda;
   double App = CalcKernelValue_(p_, p_) + 1 + inv_two_C_;
   
@@ -541,9 +541,9 @@ void FW<TKernel>::UpdateGradientAlpha_() {
 */
 template<typename TKernel>
 void FW<TKernel>::CalcBias_() {
-  index_t op_pos;
+  size_t op_pos;
   bias_ = 0;
-  for (index_t i=0; i<n_active_; i++) {
+  for (size_t i=0; i<n_active_; i++) {
     op_pos = active_set_[i];
     bias_ = bias_ + y_[op_pos] * alpha_[op_pos];
   }
@@ -557,10 +557,10 @@ void FW<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void FW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void FW<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
 
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (alpha_[i] >= FW_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];

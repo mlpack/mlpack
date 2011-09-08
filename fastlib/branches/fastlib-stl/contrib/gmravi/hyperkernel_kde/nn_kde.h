@@ -29,15 +29,15 @@ class NNKDE{
 
   //A flag to tell if the true density file is present
 
-  index_t true_density_file_present_;
+  size_t true_density_file_present_;
 
   //The number of train and test points
 
-  index_t num_train_points_;
-  index_t num_test_points_;
+  size_t num_train_points_;
+  size_t num_test_points_;
 
   //The dimensionality of the dataset
-  index_t num_dims_;
+  size_t num_dims_;
 
   //The vector of densities at different test points
 
@@ -49,13 +49,13 @@ class NNKDE{
 
   //Flag to say if the test file is present or not
 
-  index_t test_file_present_;
+  size_t test_file_present_;
 
   //Gaussian kernel that we shall use everywhere in the code
 
   GaussianKernel gk_;
 
-  index_t num_of_neighbours_;
+  size_t num_of_neighbours_;
   
   //Vector of bandwidths of test points
 
@@ -69,7 +69,7 @@ class NNKDE{
   /*This function calculates the rmse iff true test densities are known */
   double get_rmse(){
     
-    index_t len=true_test_densities_.n_cols();
+    size_t len=true_test_densities_.n_cols();
     
     if(len==0){
       
@@ -78,7 +78,7 @@ class NNKDE{
     
     double diff=0;
     double total_sqd_diff=0;
-    for(index_t i=0;i<len;i++){
+    for(size_t i=0;i<len;i++){
       
       diff=test_densities_[i]-true_test_densities_.get(0,i);
       total_sqd_diff+=diff*diff;
@@ -109,7 +109,7 @@ class NNKDE{
 
     fx_set_param_int(module_,"knns", num_of_neighbours_);
     AllkNN all_knn;
-    ArrayList<index_t> resulting_neighbors;
+    ArrayList<size_t> resulting_neighbors;
     ArrayList<double> squared_distances; 
        
 
@@ -119,7 +119,7 @@ class NNKDE{
     printf("Computed neighbours of all points..\n");
     
     printf("length of squared distances is %d..\n",squared_distances.size());
-    for(index_t i = 0; i < squared_distances.size(); i += num_of_neighbours_) 
+    for(size_t i = 0; i < squared_distances.size(); i += num_of_neighbours_) 
       {
 	
 	
@@ -136,7 +136,7 @@ class NNKDE{
 
   void PerformNaiveKDE_(){
     
-    for(index_t q = 0; q <num_test_points_;q++) {
+    for(size_t q = 0; q <num_test_points_;q++) {
       
       //Get the test point
       const double *q_col = test_data_.GetColumnPtr(q);
@@ -147,7 +147,7 @@ class NNKDE{
       gk_.Init(bandwidth_test_points_[q]);
       
       // Compute unnormalized sum first.
-      for(index_t r = 0; r < train_data_.n_cols(); r++) {
+      for(size_t r = 0; r < train_data_.n_cols(); r++) {
 	
 	//Get the reference point
 	const double *r_col = train_data_.GetColumnPtr(r);

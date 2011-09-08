@@ -155,7 +155,7 @@ int main(int argc, char* argv[]) {
     int n_points = training_data.n_cols();
     n_test_points = n_points;
 
-    ArrayList<index_t> permutation;
+    ArrayList<size_t> permutation;
     math::MakeIdentityPermutation(n_points, &permutation);
 
 

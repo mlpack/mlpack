@@ -270,7 +270,7 @@ int main(int argc, char *argv[]){
 
     //Format is 
     //point local-poly local-likelihodd kde-density true density
-    for(index_t i=0;i<query.n_cols();i++){
+    for(size_t i=0;i<query.n_cols();i++){
      
       fprintf(fp,"%f,%f,%f,%f,%f\n",query.get(0,i),
 	      naive_kde_lp_results[i],

@@ -57,7 +57,7 @@ class TextLineReader {
    *
    * @return success value
    */
-  success_t Open(const char *fname);
+  bool Open(const char *fname);
   
   /**
    * Closes the file.
@@ -182,7 +182,7 @@ class TextTokenizer {
     f_ = NULL;
   }
   
-  success_t Open(const char *fname,
+  bool Open(const char *fname,
       const char *comment_chars = "", const char *ident_extra = "",
       int features = 0);
 
@@ -335,52 +335,52 @@ class TextWriter {
    *
    * @return success or failure
    */
-  success_t Open(const char *fname) {
+  bool Open(const char *fname) {
     f_ = ::fopen(fname, "w");
-    return (!f_) ? SUCCESS_FAIL : SUCCESS_PASS;
+    return (!f_) ? false : true;
   }
   
   /**
    * Explicitly closes the file.
    */
-  success_t Close() {
+  bool Close() {
     int rv = fclose(f_);
     f_ = NULL;
-    return (rv < 0) ? SUCCESS_FAIL : SUCCESS_PASS;
+    return (rv < 0) ? false : true;
   }
   
-  success_t Printf(const char *format, ...);
+  bool Printf(const char *format, ...);
   
-  success_t Write(const char *s) {
-    return SUCCESS_FROM_C(fputs(s, f_));
+  bool Write(const char *s) {
+    return (fputs(s, f_) > 0);
   }
   
-  success_t Write(int i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%d", i));
+  bool Write(int i) {
+    return (fprintf(f_, "%d", i) > 0);
   }
   
-  success_t Write(unsigned int i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%u", i));
+  bool Write(unsigned int i) {
+    return (fprintf(f_, "%u", i) > 0);
   }
 
-  success_t Write(long i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%ld", i));
+  bool Write(long i) {
+    return (fprintf(f_, "%ld", i) > 0);
   }
   
-  success_t Write(unsigned long i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%lu", i));
+  bool Write(unsigned long i) {
+    return (fprintf(f_, "%lu", i) > 0);
   }
   
-  success_t Write(long long i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%lld", i));
+  bool Write(long long i) {
+    return (fprintf(f_, "%lld", i) > 0);
   }
   
-  success_t Write(unsigned long long i) {
-    return SUCCESS_FROM_C(fprintf(f_, "%llu", i));
+  bool Write(unsigned long long i) {
+    return (fprintf(f_, "%llu", i) > 0);
   }
   
-  success_t Write(double d) {
-    return SUCCESS_FROM_C(fprintf(f_, "%.15e", d));
+  bool Write(double d) {
+    return (fprintf(f_, "%.15e", d) > 0);
   }
 };
 

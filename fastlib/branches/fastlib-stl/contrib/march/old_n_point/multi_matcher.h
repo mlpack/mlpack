@@ -79,16 +79,16 @@ namespace npt {
     
     
     // We want the matcher dimension that is the distance between point i and j
-    index_t IndexMatcherDim_(index_t i, index_t j);
+    size_t IndexMatcherDim_(size_t i, size_t j);
     
-    index_t GetPermIndex_(index_t perm_index, index_t pt_index) {
+    size_t GetPermIndex_(size_t perm_index, size_t pt_index) {
       return perms_.GetPermutation(perm_index, pt_index);
     } // GetPermIndex_
     
-    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+    void BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<std::vector<index_t> >& perm_locations,
-                         std::vector<index_t>& points_in_tuple, int k);
+                         std::vector<std::vector<size_t> >& perm_locations,
+                         std::vector<size_t>& points_in_tuple, int k);
     
     
   public:
@@ -96,13 +96,13 @@ namespace npt {
     MultiMatcher(const std::vector<double>& min_bands, 
                  const std::vector<double>& max_bands,
                  const std::vector<int>& num_bands, 
-                 const double band, index_t tuple_size) : num_bands_(num_bands),
+                 const double band, size_t tuple_size) : num_bands_(num_bands),
     perms_(tuple_size), tuple_size_(tuple_size), results_(tuple_size+1),
     weighted_results_(tuple_size+1)
     {
 
       total_matchers_ = 1;
-      for (index_t i = 0; i < num_bands.size(); i++) {
+      for (size_t i = 0; i < num_bands.size(); i++) {
         total_matchers_ *= num_bands[i];
       }
       for (int i = 0; i <= tuple_size_; i++) {
@@ -120,7 +120,7 @@ namespace npt {
       upper_bounds_sq_.resize(min_bands.size());
       lower_bounds_sq_.resize(max_bands.size());
       
-      for (index_t i = 0; i < max_bands.size(); i++) {
+      for (size_t i = 0; i < max_bands.size(); i++) {
         
         min_bands_sq_[i] = min_bands[i] * min_bands[i];
         max_bands_sq_[i] = max_bands[i] * max_bands[i];
@@ -144,14 +144,14 @@ namespace npt {
       n_choose_2_ = num_bands_.size();
       matcher_dists_.resize(n_choose_2_);
       
-      for (index_t i = 0; i < n_choose_2_; i++) {
+      for (size_t i = 0; i < n_choose_2_; i++) {
         
         double band_step = (max_bands[i] - min_bands[i]) / ((double)num_bands_[i] - 1.0);
         
         matcher_dists_[i].resize(num_bands_[i]);
         
         if (num_bands_[i] > 1) {
-          for (index_t j = 0; j < num_bands_[i]; j++) {
+          for (size_t j = 0; j < num_bands_[i]; j++) {
             
             matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
             
@@ -168,9 +168,9 @@ namespace npt {
     } // constructor
     
     
-    bool TestPointPair(double dist_sq, index_t new_ind, index_t old_ind,
+    bool TestPointPair(double dist_sq, size_t new_ind, size_t old_ind,
                        std::vector<bool>& permutation_ok,
-                       std::vector<std::vector<index_t> >&perm_locations);
+                       std::vector<std::vector<size_t> >&perm_locations);
     
     bool TestNodeTuple(NodeTuple& nodes);
     
@@ -193,7 +193,7 @@ namespace npt {
       return perms_.num_permutations(); 
     }
     
-    double matcher_dists(index_t i, index_t j) {
+    double matcher_dists(size_t i, size_t j) {
       return (matcher_dists_[i][j]);
     }
     

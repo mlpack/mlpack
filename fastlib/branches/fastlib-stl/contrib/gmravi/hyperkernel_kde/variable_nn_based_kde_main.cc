@@ -32,7 +32,7 @@ int main(int argc, char *argv[]){
 
   FILE *fp=fopen("./mog3_multi/mog3_multi_rect_variable_nn.txt","w");
   
-  for(index_t i=0;i<result.length();i++){
+  for(size_t i=0;i<result.length();i++){
     
     fprintf(fp,"%f\n",result[i]);
   }

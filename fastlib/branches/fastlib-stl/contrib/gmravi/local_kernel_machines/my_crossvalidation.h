@@ -14,7 +14,7 @@ GenerateSmoothingBandwidthVectorForCV_(Vector &smoothing_bandwidth_vector){
    double low=0.005;
    double hi=0.8;
    double gap=(hi-low)/num_smoothing_bandwidth;
-  for(index_t i=0; i<num_smoothing_bandwidth;i++){
+  for(size_t i=0; i<num_smoothing_bandwidth;i++){
     smoothing_bandwidth_vector[i]=low+gap*i;
   }
   printf("Crossvalidating over smoothing kernel bandwidth....\n");
@@ -27,7 +27,7 @@ GenerateLambdaVectorForCV_(Vector &lambda_vector){
   int num_lambda=8;
   double low=pow(10,-4);
   lambda_vector.Init(num_lambda);
-  for(index_t i=0; i<num_lambda;i++){
+  for(size_t i=0; i<num_lambda;i++){
 
      lambda_vector[i]=0.5+0.5*i;
     //lambda_vector[i]=low*pow(10,i);
@@ -41,7 +41,7 @@ GenerateLambdaVectorForCV_(Vector &lambda_vector){
  
 template <typename TKernel> void  LocalKernelMachines <TKernel>:: 
 GetTheFold_(Dataset &cv_train_data_appended,Dataset &cv_test_data_appended,
-	    Vector &cv_train_labels, Vector &cv_test_labels,index_t fold_num)
+	    Vector &cv_train_labels, Vector &cv_test_labels,size_t fold_num)
 {
   
   // The crossvalidation folds
@@ -66,26 +66,26 @@ CrossValidateOverSmoothingKernelBandwidthAndLambda_(){
   GenerateSmoothingBandwidthVectorForCV_(smoothing_kernel_bandwidth_vector);
   GenerateLambdaVectorForCV_(lambda_vector);
   
-  index_t smoothing_kernel_bandwidth_vector_length=
+  size_t smoothing_kernel_bandwidth_vector_length=
     smoothing_kernel_bandwidth_vector.length();
   
-  index_t lambda_vector_length=
+  size_t lambda_vector_length=
     lambda_vector.length();
   
    double optimal_error_rate=1.0;
   
-  for(index_t i=0;i<smoothing_kernel_bandwidth_vector_length;i++){
+  for(size_t i=0;i<smoothing_kernel_bandwidth_vector_length;i++){
     
     double smoothing_kernel_bandwidth=
       smoothing_kernel_bandwidth_vector[i];
     
-    for(index_t j=0;j<lambda_vector_length;j++){
+    for(size_t j=0;j<lambda_vector_length;j++){
       
       double lambda=lambda_vector[j];
 
       double average_error_rate=0.0;
 	
-      for(index_t fold_num=0;fold_num<k_folds_;fold_num++){
+      for(size_t fold_num=0;fold_num<k_folds_;fold_num++){
 	
 
 	Dataset cv_train_data_appended,cv_test_data_appended;
@@ -147,11 +147,11 @@ PrepareForCrossValidation_(Matrix &train_data_appended, Matrix &test_data_append
 				stiched_train_data_appended);
   
   void *random_permutation;
-  random_permutation=(void *)malloc(num_train_points_*sizeof(index_t));
+  random_permutation=(void *)malloc(num_train_points_*sizeof(size_t));
   math::MakeRandomPermutation(num_train_points_,
-			      (index_t *) random_permutation);
+			      (size_t *) random_permutation);
   
-  // Lets typecast random_permutation as ArrayList <index_t>
+  // Lets typecast random_permutation as ArrayList <size_t>
   
   random_permutation_array_list_.Copy((int *)random_permutation,
 					   num_train_points_);

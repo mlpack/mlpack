@@ -38,9 +38,9 @@ int main(int argc, char* argv[]) {
   ////// SPARSE PRINCIPAL COMPONENT ANALYSIS //////
 
   datanode *spca_module = fx_submodule(NULL, "spca", "spca");
-  index_t number_of_components = fx_param_int(spca_module, "K", 1);
-  index_t dimension = fx_param_int(spca_module, "D", dataset.n_rows());
-  index_t n = fx_param_int(spca_module, "N", dataset.n_cols());  
+  size_t number_of_components = fx_param_int(spca_module, "K", 1);
+  size_t dimension = fx_param_int(spca_module, "D", dataset.n_rows());
+  size_t n = fx_param_int(spca_module, "N", dataset.n_cols());  
 
   DEBUG_ASSERT_MSG(number_of_components <= dimension, 
 		   "The number of principal components > data dimension\n");
@@ -49,7 +49,7 @@ int main(int argc, char* argv[]) {
   ArrayList<double> lambda_1;
 
   lambda_1.Init(number_of_components);
-  for (index_t i = 0; i < number_of_components; i++) {
+  for (size_t i = 0; i < number_of_components; i++) {
     lambda_1[i] = 0.01;
   }
 
@@ -87,9 +87,9 @@ int main(int argc, char* argv[]) {
 	  percent_variance_explained);
   fprintf(output_file, "@ Sparse Loadings\n");
 
-  index_t rows = sparse_loadings.n_rows(), cols = sparse_loadings.n_cols();
-  for (index_t i = 0; i < rows; i++) {
-    for (index_t j = 0; j < cols; j++) {
+  size_t rows = sparse_loadings.n_rows(), cols = sparse_loadings.n_cols();
+  for (size_t i = 0; i < rows; i++) {
+    for (size_t j = 0; j < cols; j++) {
       fprintf(output_file, "%f,", sparse_loadings.get(i, j));
     }
     fprintf(output_file, "\b\n");

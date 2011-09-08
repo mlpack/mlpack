@@ -32,11 +32,11 @@ PARAM_FLAG("print_results", "The flag to trigger the "
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
-// void compare_neighbors(arma::Col<index_t>*, arma::vec*, 
-//                        arma::Col<index_t>*, arma::vec*);
+// void compare_neighbors(arma::Col<size_t>*, arma::vec*, 
+//                        arma::Col<size_t>*, arma::vec*);
 
-// void count_mismatched_neighbors(arma::Col<index_t>*, arma::vec*, 
-// 				arma::Col<index_t>*, arma::vec*);
+// void count_mismatched_neighbors(arma::Col<size_t>*, arma::vec*, 
+// 				arma::Col<size_t>*, arma::vec*);
 
 using namespace mlpack;
 
@@ -56,10 +56,10 @@ int main (int argc, char *argv[]) {
 	   << ")" << std::endl;
 
 
-  arma::Col<index_t> nac, exc;
+  arma::Col<size_t> nac, exc;
   arma::vec din, die;
 
-  index_t knns = IO::GetParam<int>("maxip/knns");
+  size_t knns = IO::GetParam<int>("maxip/knns");
 
   // Naive computation
   if (IO::HasParam("donaive")) {
@@ -85,10 +85,10 @@ int main (int argc, char *argv[]) {
 		  << IO::GetParam<char *>("result_file") 
 		  << "..." << strerror(errno);
 
-      for(index_t i = 0 ; i < nac.n_elem / knns ; i++) {
-        fprintf(fp, "%"LI"d", i);
-        for(index_t j = 0; j < knns; j++)
-          fprintf(fp, ",%"LI"d,%lg", 
+      for(size_t i = 0 ; i < nac.n_elem / knns ; i++) {
+        fprintf(fp, "%zud", i);
+        for(size_t j = 0; j < knns; j++)
+          fprintf(fp, ",%zud,%lg", 
                   nac(i*knns+j), din(i*knns+j));
         fprintf(fp, "\n");
       }
@@ -120,10 +120,10 @@ int main (int argc, char *argv[]) {
 		  << IO::GetParam<char *>("result_file") 
 		  << "..." << strerror(errno);
 
-      for(index_t i = 0 ; i < exc.n_elem / knns ; i++) {
-        fprintf(fp, "%"LI"d", i);
-        for(index_t j = 0; j < knns; j++)
-          fprintf(fp, ",%"LI"d,%lg", 
+      for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
+        fprintf(fp, "%zud", i);
+        for(size_t j = 0; j < knns; j++)
+          fprintf(fp, ",%zud,%lg", 
                   exc(i*knns+j), die(i*knns+j));
         fprintf(fp, "\n");
       }
@@ -135,40 +135,40 @@ int main (int argc, char *argv[]) {
   //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
 }
 
-// void compare_neighbors(arma::Col<index_t> *a, 
+// void compare_neighbors(arma::Col<size_t> *a, 
 //                        arma::vec *da,
-//                        arma::Col<index_t> *b, 
+//                        arma::Col<size_t> *b, 
 //                        arma::vec *db) {
   
-//   IO::Info << "Comparing results for %"LI"d queries", a->size());
+//   IO::Info << "Comparing results for %zud queries", a->size());
 //   DEBUG_SAME_SIZE(a->size(), b->size());
-//   index_t *x = a->begin();
-//   index_t *y = a->end();
-//   index_t *z = b->begin();
+//   size_t *x = a->begin();
+//   size_t *y = a->end();
+//   size_t *z = b->begin();
 
-//   for(index_t i = 0; x != y; x++, z++, i++) {
+//   for(size_t i = 0; x != y; x++, z++, i++) {
 //     DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
-//                       "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+//                       "point %zud brute: %zud:%lf fast: %zud:%lf",
 //                       i, *z, (*db)[i], *x, (*da)[i]);
 //   }
 // }
 
-// void count_mismatched_neighbors(arma::Col<index_t> *a, 
+// void count_mismatched_neighbors(arma::Col<size_t> *a, 
 // 				arma::vec *da,
-// 				arma::Col<index_t> *b, 
+// 				arma::Col<size_t> *b, 
 // 				arma::vec *db) {
 
-//   IO::Info << "Comparing results for %"LI"d queries", a->size());
+//   IO::Info << "Comparing results for %zud queries", a->size());
 //   DEBUG_SAME_SIZE(a->size(), b->size());
-//   index_t *x = a->begin();
-//   index_t *y = a->end();
-//   index_t *z = b->begin();
-//   index_t count_mismatched = 0;
+//   size_t *x = a->begin();
+//   size_t *y = a->end();
+//   size_t *z = b->begin();
+//   size_t count_mismatched = 0;
 
-//   for(index_t i = 0; x != y; x++, z++, i++) {
+//   for(size_t i = 0; x != y; x++, z++, i++) {
 //     if (*x != *z || (*da)[i] != (*db)[i]) {
 //       ++count_mismatched;
 //     }
 //   }
-//   IO::Info << "%"LI"d/%"LI"d errors", count_mismatched, a->size());
+//   IO::Info << "%zud/%zud errors", count_mismatched, a->size());
 // }

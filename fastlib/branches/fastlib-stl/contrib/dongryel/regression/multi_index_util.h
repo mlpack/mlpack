@@ -22,17 +22,17 @@ class MultiIndexUtil {
       // Temporary variables for multiindex looping
       ArrayList<int> heads;
       heads.Init(dimension + 1);
-      for(index_t i = 0; i < dimension; i++) {
+      for(size_t i = 0; i < dimension; i++) {
         heads[i] = 0;
       }
       heads[dimension] = INT_MAX;
       
       point_expansion[0] = 1.0;
-      for(index_t k = 1, t = 1, tail = 1; k <= lpr_order; k++, tail = t) {
-	for(index_t i = 0; i < dimension; i++) {
+      for(size_t k = 1, t = 1, tail = 1; k <= lpr_order; k++, tail = t) {
+	for(size_t i = 0; i < dimension; i++) {
 	  int head = (int) heads[i];
 	  heads[i] = t;
-	  for(index_t j = head; j < tail; j++, t++) {	  
+	  for(size_t j = head; j < tail; j++, t++) {	  
 	    point_expansion[t] = point_expansion[j] * point[i];
 	  }
 	}
@@ -44,7 +44,7 @@ class MultiIndexUtil {
 						   const Matrix &points,
 						   Matrix &point_expansions) {
       
-      for(index_t i = 0; i < points.n_cols(); i++) {
+      for(size_t i = 0; i < points.n_cols(); i++) {
 	ComputePointMultivariatePolynomial(dimension, lpr_order,
 					   points.GetColumnPtr(i),
 					   point_expansions.GetColumnPtr(i));

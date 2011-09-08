@@ -21,18 +21,18 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     DEBUG_ASSERT(hv == NULL);
   }
   
-  index_t dim = data.n_rows(), n = data.n_cols();
+  size_t dim = data.n_rows(), n = data.n_cols();
   Matrix sigma, r_lower, r_upper;
   ArrayList<Matrix> d_sigma;
   Vector mu;
   double s_min = 0.01; 
   double *temp_mu;
-  index_t sigma_params = dim*(dim+1)/2;
+  size_t sigma_params = dim*(dim+1)/2;
 
   // obtaining the mu values
   temp_mu = (double*)malloc(dim * sizeof(double));
 
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     temp_mu[i] = theta.get(i);
   }
   mu.Copy(temp_mu, dim);
@@ -43,8 +43,8 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
   // the sigma values
   r_lower.Init(dim, dim);
   r_lower.SetAll(0.0);
-  for(index_t i = 0; i < dim; i++) { 
-    for(index_t j = 0; j < i; j++) {
+  for(size_t i = 0; i < dim; i++) { 
+    for(size_t j = 0; j < i; j++) {
       r_lower.set(i, j, theta[dim + i*(i+1)/2 + j]);
     }
     // adding small value to the diagonal of the 
@@ -75,7 +75,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
 
     Vector v_vec_mu;
     v_vec_mu.Init(dim);
-    for (index_t i = 0; i < dim; i++) {
+    for (size_t i = 0; i < dim; i++) {
       v_vec_mu.ptr()[i] = (*v)[i];
       DEBUG_ASSERT(v_vec_mu[i] == (*v)[i]);
     }
@@ -84,8 +84,8 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     Matrix v_sig_upper, v_sig_lower;
     v_sig_upper.Init(dim, dim);
     v_sig_upper.SetZero();
-    for (index_t i = 0; i < dim; i++) {
-      for (index_t j = 0; j < i+1; j++) {
+    for (size_t i = 0; i < dim; i++) {
+      for (size_t j = 0; j < i+1; j++) {
 	v_sig_upper.set(j, i, (*v)[dim + i*(i+1)/2 + j]);
       }
     }
@@ -102,8 +102,8 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     temp_mat_a.Init(dim, dim);
     temp_mat_b.Init(dim, dim);
 
-    for(index_t i = 0; i < dim; i++) {
-      for(index_t j = 0; j < i+1; j++) {
+    for(size_t i = 0; i < dim; i++) {
+      for(size_t j = 0; j < i+1; j++) {
 	d_sigma_d_r.SetAll(0.0);
 	d_sigma_d_r.set(i, j, 1.0);
 	//la::TransposeOverwrite(d_sigma_d_r, &d_sigma_d_r_t);
@@ -156,7 +156,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     inv_s_d_dr_d_s_inv_s.Init(sigma_params);
     inv_s_d_s_d_rv_inv_s_d_s.Init(sigma_params);
 
-    for (index_t i = 0; i < sigma_params; i++) {
+    for (size_t i = 0; i < sigma_params; i++) {
       la::MulInit(inv_sigma, d_sigma[i], &inv_s_ds_dr_ij[i]);
       la::MulInit(d_sigma[i], inv_sigma, &ds_dr_ij_inv_s[i]);
       la::MulInit(inv_s_ds_dr_ij[i], inv_sigma, &inv_s_ds_dr_ij_inv_s[i]);
@@ -169,14 +169,14 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     Vector trace_r;
     trace_r.Init(sigma_params);
 
-    for (index_t i = 0; i < sigma_params; i++) {
+    for (size_t i = 0; i < sigma_params; i++) {
       Matrix temp;
       la::AddInit(inv_s_d_s_d_rv_inv_s_d_s[i], inv_s_d_dr_d_s[i], &temp);
 
       DEBUG_ASSERT(temp.n_cols() == dim);
       DEBUG_ASSERT(temp.n_rows() == dim);
       double trace = 0.0;
-      for (index_t j = 0; j < dim; j++) {
+      for (size_t j = 0; j < dim; j++) {
 	trace += temp.get(j, j);
       }
       trace_r.ptr()[i] = trace;
@@ -197,7 +197,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     // l_theta = \sum_{i=1}^N  f_theta(x_i);
     // g_l_theta = grad = \sum_{i=1}^N [g_mu(x_i) g_sigma(x_i)]
 
-     for(index_t i = 0; i < n; i++) {
+     for(size_t i = 0; i < n; i++) {
       Vector d_phi_d_mu, d_phi_d_sigma;
       x.CopyValues(data.GetColumnPtr(i));
       tmp_val = phi(x, mu, sigma, d_sigma, 
@@ -227,7 +227,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
       temp_vec.Init(dim);
       temp_mat.Init(dim, dim);
 
-      for (index_t i = 0; i < sigma_params; i++) {
+      for (size_t i = 0; i < sigma_params; i++) {
 
 	double hv_sig_r_ij;
 
@@ -258,12 +258,12 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     // forming hv_theta
     hv->Init(dim + sigma_params);
   
-    for (index_t i = 0; i < dim; i++) {
+    for (size_t i = 0; i < dim; i++) {
       hv->ptr()[i] = hv_mu[i];
       DEBUG_ASSERT(hv->get(i) == hv_mu[i]);
     }
   
-    for (index_t i = 0; i < sigma_params; i++) {
+    for (size_t i = 0; i < sigma_params; i++) {
       hv->ptr()[dim + i] = hv_sigma[i];
       DEBUG_ASSERT(hv->get(dim + i) == hv_sigma[i]);
     }
@@ -278,8 +278,8 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     //d_sigma_d_r_t.Init(dim, dim);
     temp_mat_a.Init(dim, dim);
 
-    for(index_t i = 0; i < dim; i++) {
-      for(index_t j = 0; j < i+1; j++) {
+    for(size_t i = 0; i < dim; i++) {
+      for(size_t j = 0; j < i+1; j++) {
 	d_sigma_d_r.SetAll(0.0);
 	d_sigma_d_r.set(i, j, 1.0);
 	//la::TransposeOverwrite(d_sigma_d_r, &d_sigma_d_r_t);
@@ -302,7 +302,7 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
     // l_theta = \sum_{i=1}^N  f_theta(x_i);
     // g_l_theta = grad = \sum_{i=1}^N [g_mu(x_i) g_sigma(x_i)]
 
-    for(index_t i = 0; i < n; i++) {
+    for(size_t i = 0; i < n; i++) {
       Vector d_phi_d_mu, d_phi_d_sigma;
       x.CopyValues(data.GetColumnPtr(i));
       tmp_val = phi(x, mu, sigma, d_sigma, 
@@ -320,11 +320,11 @@ long double test_function(Vector& theta, const Matrix& data, Vector* grad,
   // forming the gradient grad
   double *temp_grad;
   temp_grad = (double*)malloc(theta.length() * sizeof(double));
-  for(index_t i = 0; i < dim; i++) {
+  for(size_t i = 0; i < dim; i++) {
     temp_grad[i] = g_mu.get(i);
   }
 
-  for(index_t i = 0; i < sigma_params; i++) {
+  for(size_t i = 0; i < sigma_params; i++) {
     temp_grad[dim+i] = g_sigma.get(i);
   }
   grad->CopyValues(temp_grad);
@@ -349,10 +349,10 @@ int main(int argc, char* argv[]) {
   double *real_theta_array;
   //long double function_val = 4607.5;
   Vector real_theta, grad;
-  index_t len = 5;
+  size_t len = 5;
 
   real_theta_array = (double*)malloc(5 * sizeof(double));
-  for(index_t i = 0; i < 5; i++) {
+  for(size_t i = 0; i < 5; i++) {
     real_theta_array[i] = temp_array[i];
   }
   real_theta.Copy(real_theta_array, len);
@@ -374,7 +374,7 @@ int main(int argc, char* argv[]) {
   double *pt;
   double p[] = {1, 2, 3, 1, 6};
   pt = (double*)malloc(5 * sizeof(double));
-  for(index_t i = 0; i < 5; i++) {
+  for(size_t i = 0; i < 5; i++) {
     pt[i] = p[i];
   }
   fx_timer_start(opt_module,"opt_time");
@@ -382,7 +382,7 @@ int main(int argc, char* argv[]) {
   fx_timer_stop(opt_module,"opt_time");
 
   printf("theta : [");
-  for(index_t i = 0; i < 5; i++) {
+  for(size_t i = 0; i < 5; i++) {
   printf(" %lf,",pt[i]);
   }
   printf("\b ]\n");

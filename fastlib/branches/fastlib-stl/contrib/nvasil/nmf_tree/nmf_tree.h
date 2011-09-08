@@ -26,8 +26,8 @@ class NmfTreeConstructor {
  public:
 
   void Init(fx_module *module, 
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
+            ArrayList<size_t> &rows,
+            ArrayList<size_t> &columns,
             ArrayList<double> &values); 
   void MakeNmfTree();   
   void MakeNmfTreeMidpointSelective(TKdTree *node);  
@@ -43,14 +43,14 @@ class NmfTreeConstructor {
   GenMatrix<T> h_matrix_;
   GenMatrix<T> lower_bound_;
   GenMatrix<T> upper_bound_;
-  index_t leaf_size_;
-  index_t w_offset_;
-  index_t h_offset_;
-  GenVector<index_t> old_from_new_w_; 
-  GenVector<index_t> old_from_new_h_; 
-  GenVector<index_t> new_from_old_;
-  ArrayList<index_t> &rows_;
-  ArrayList<index_t> &columns_;
+  size_t leaf_size_;
+  size_t w_offset_;
+  size_t h_offset_;
+  GenVector<size_t> old_from_new_w_; 
+  GenVector<size_t> old_from_new_h_; 
+  GenVector<size_t> new_from_old_;
+  ArrayList<size_t> &rows_;
+  ArrayList<size_t> &columns_;
   ArrayList<double> &values_;  
   TKdTree *parent_w_;
   TKdTree *parent_h_;

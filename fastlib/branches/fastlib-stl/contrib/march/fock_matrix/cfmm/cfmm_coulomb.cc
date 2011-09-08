@@ -3,20 +3,20 @@
 void CFMMCoulomb::ComputeCharges_() {
   
   // this loop should be combined with the one above
-  for (index_t i = 0; i < num_shell_pairs_; i++) {
+  for (size_t i = 0; i < num_shell_pairs_; i++) {
     
     // Needs to become the sum of the relevant density entries for the shell
     // pair, then the charge is the charge of the entire ShellPair treated 
     // as a single point charge.  
     /*
-    index_t m_ind = shell_pairs_[i].M_index();
-    index_t n_ind = shell_pairs_[i].N_index();
+    size_t m_ind = shell_pairs_[i].M_index();
+    size_t n_ind = shell_pairs_[i].N_index();
     double new_charge = density_.ref(m_ind, n_ind);
     */
     
     double new_charge = 0.0;
-    for (index_t a = 0; a < shell_pairs_[i].M_Shell()->num_functions(); a++) {
-      for (index_t b = 0; b < shell_pairs_[i].N_Shell()->num_functions(); b++) {
+    for (size_t a = 0; a < shell_pairs_[i].M_Shell()->num_functions(); a++) {
+      for (size_t b = 0; b < shell_pairs_[i].N_Shell()->num_functions(); b++) {
         new_charge += density_.ref(shell_pairs_[i].M_Shell()->matrix_index(a),
                                    shell_pairs_[i].N_Shell()->matrix_index(b))
                       * shell_pairs_[i].M_Shell()->normalization_constant(a)
@@ -56,7 +56,7 @@ void CFMMCoulomb::ScreenCharges_() {
   charge_centers_.Init(3, num_shell_pairs_);
   charge_exponents_.Init(1, num_shell_pairs_);
 
-  for (index_t i = 0; i < num_shell_pairs_; i++) {
+  for (size_t i = 0; i < num_shell_pairs_; i++) {
     
     // add to output matrix
     charge_centers_.CopyVectorToColumn(i, shell_pairs_[i].center());
@@ -134,14 +134,14 @@ void CFMMCoulomb::NaiveComputation_() {
   
   //printf("doing naive\n");
   
-  for(index_t q = 0; q < num_shell_pairs_; q++) {
+  for(size_t q = 0; q < num_shell_pairs_; q++) {
   
     Vector q_col;
     charge_centers_.MakeColumnVector(q, &q_col);
     
     double q_band = charge_exponents_.ref(0, q);
   
-    for (index_t r = 0; r < num_shell_pairs_; r++) {
+    for (size_t r = 0; r < num_shell_pairs_; r++) {
     
       Vector r_col;
       charge_centers_.MakeColumnVector(r, &r_col);
@@ -163,10 +163,10 @@ void CFMMCoulomb::MultipoleCleanup_() {
 
   //coulomb_mat_.PrintDebug("J (before far field)");
   
-  for (index_t i = 0; i < num_shell_pairs_; i++) {
+  for (size_t i = 0; i < num_shell_pairs_; i++) {
     
-    //index_t m_ind = shell_pairs_[i].M_index();
-    //index_t n_ind = shell_pairs_[i].N_index();
+    //size_t m_ind = shell_pairs_[i].M_index();
+    //size_t n_ind = shell_pairs_[i].N_index();
     
     // multiply by prefactors and such
     
@@ -186,8 +186,8 @@ void CFMMCoulomb::MultipoleCleanup_() {
     this_mat.Init(shell_pairs_[i].M_Shell()->num_functions(),
                   shell_pairs_[i].N_Shell()->num_functions());
     
-    for (index_t a = 0; a < shell_pairs_[i].M_Shell()->num_functions(); a++) {
-      for (index_t b = 0; b < shell_pairs_[i].N_Shell()->num_functions(); b++) {
+    for (size_t a = 0; a < shell_pairs_[i].M_Shell()->num_functions(); a++) {
+      for (size_t b = 0; b < shell_pairs_[i].N_Shell()->num_functions(); b++) {
         
         this_mat.set(a, b, coulomb_entry 
                            * shell_pairs_[i].M_Shell()->normalization_constant(a) 

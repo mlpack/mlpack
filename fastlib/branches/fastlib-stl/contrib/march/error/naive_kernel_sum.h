@@ -15,13 +15,13 @@ class NaiveKernelSum {
   
   double bandwidth_;
   
-  index_t num_points_;
+  size_t num_points_;
   
-  index_t dimension_;
+  size_t dimension_;
   
   struct datanode* module_;
   
-  double ComputeGaussian_(index_t i, index_t j) {
+  double ComputeGaussian_(size_t i, size_t j) {
   
     Vector i_vec;
     centers_.MakeColumnVector(i, &i_vec);
@@ -63,11 +63,11 @@ class NaiveKernelSum {
   
     fx_timer_start(module_, "naive_time");
   
-    for (index_t i = 0; i < num_points_; i++) {
+    for (size_t i = 0; i < num_points_; i++) {
     
       double this_result = results_[i];
   
-      for (index_t j = i; j < num_points_; j++) { // for symmetry
+      for (size_t j = i; j < num_points_; j++) { // for symmetry
       
         double this_kernel = ComputeGaussian_(i, j);
         this_result = this_result + this_kernel;

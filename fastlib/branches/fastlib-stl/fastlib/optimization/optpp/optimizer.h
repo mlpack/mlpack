@@ -128,7 +128,7 @@ enum ConstraintType {
  *      public:
  *       // returns the dimensionality of the optimization
  *       //   also known as the number of the optimization variable
- *       index_t dimension(); 
+ *       size_t dimension(); 
  *       
  *       // fills the vector with initial value
  *       void GiveInit(Vector *vec); 
@@ -165,7 +165,7 @@ enum ConstraintType {
  *        the one  you don't care.
  *    @code   
  *       // Returns the number of nonlinear equalities
- *       index_t num_of_non_linear_equalities()    
+ *       size_t num_of_non_linear_equalities()    
  *
  *       // Writes on vecc the evaluation of nonlinear equality constraints on
  *       // vecx
@@ -176,7 +176,7 @@ enum ConstraintType {
  *       void ComputeNonLinearEqualityConstraintsJacobian(Vector &vecx, Matrix *cjacob);
  *       
  *       // Returns the number of nonlinear inequalities
- *       index_t num_of_non_linear_inequalities()    
+ *       size_t num_of_non_linear_inequalities()    
  *       
  *       // Writes on vecc the evaluation of nonlinear inequality constraints on
  *       // vecx
@@ -365,7 +365,7 @@ class BoundConstraintTrait<Method, Objective, true> {
  public:
   static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
-    index_t dimension = objective->dimension();
+    size_t dimension = objective->dimension();
     OPTPP::Constraint bc;
     Vector lower_bound;
     Vector upper_bound;
@@ -432,7 +432,7 @@ class LinearEqualityTrait<Method, Objective, true> {
  public:
    static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
-     index_t dimension = objective->dimension();
+     size_t dimension = objective->dimension();
      Matrix a_mat;
      Vector b_vec;
      objective->GetLinearEquality(&a_mat, &b_vec);
@@ -476,7 +476,7 @@ class LinearInequalityTrait<Method, Objective, true> {
  public:
   static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {  
-    index_t dimension = objective->dimension();
+    size_t dimension = objective->dimension();
     OPTPP::Constraint lineq;
     Matrix a_mat;
     Vector left_b;
@@ -534,7 +534,7 @@ class NonLinearEqualityTrait<Method, Objective, true> {
  public:
   static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
-    index_t dimension = objective->dimension();
+    size_t dimension = objective->dimension();
     OPTPP::NLP *nlp = new OPTPP::NLP(
         new typename OptimizationTrait<Method>::NlpType(
           StaticOptppOptimizer<Method, Objective>::
@@ -579,7 +579,7 @@ class NonLinearInequalityTrait<Method, Objective, true> {
  public: 
     static void UpdateConstraints(Objective *objective, 
        OPTPP::OptppArray<OPTPP::Constraint> *constraint_array) {
-    index_t dimension = objective->dimension();
+    size_t dimension = objective->dimension();
     OPTPP::NLP *nlp = new OPTPP::NLP(
         new typename OptimizationTrait<Method>::NlpType(
           StaticOptppOptimizer<Method, Objective>::
@@ -722,7 +722,7 @@ class StaticOptppOptimizer {
   OPTPP::CompoundConstraint *compound_constraint_;
 
   Method *method_; 
-  index_t dimension_;
+  size_t dimension_;
   
   static void Initialize(int ndim, NEWMAT::ColumnVector &x) {
     Vector vec;  

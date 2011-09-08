@@ -17,10 +17,10 @@ int main(int argc, char *argv[]) {
 
   // Minimum size of the leaf node, if smaller than this, do not split the node
   // default: 20
-  index_t LEAF_SIZE= fx_param_int(NULL,"leaf_size", 20); 
+  size_t LEAF_SIZE= fx_param_int(NULL,"leaf_size", 20); 
 
   // the k of kNN; default: 1-nearest neighbor
-  index_t K_NN= fx_param_int(NULL, "k_nn", 1);
+  size_t K_NN= fx_param_int(NULL, "k_nn", 1);
 
   // Whether use dual tree or single tree for ball trees. 2: dual tree, 1: single tree
   // default: use dual tree
@@ -52,11 +52,11 @@ int main(int argc, char *argv[]) {
   // Whether need to check the correctness of MCT ball tree and non-learning ball tree; default: do not check
   bool check_bt_correctness = fx_param_bool(NULL, "check_correct", 0);
 
-  ArrayList<index_t> resulting_neighbors_tree_learn;
+  ArrayList<size_t> resulting_neighbors_tree_learn;
   ArrayList<double> distances_tree_learn;
-  ArrayList<index_t> resulting_neighbors_tree_ball;
+  ArrayList<size_t> resulting_neighbors_tree_ball;
   ArrayList<double> distances_tree_ball;
-  ArrayList<index_t> resulting_neighbors_bf;
+  ArrayList<size_t> resulting_neighbors_bf;
   ArrayList<double> distances_bf;
   
 
@@ -110,7 +110,7 @@ int main(int argc, char *argv[]) {
 
   if (check_bt_correctness && tree_name == "bt") {
     // Check correctness of Non-learning Ball Tree results  
-    for(index_t i=0; i<resulting_neighbors_tree_ball.size(); i++) {
+    for(size_t i=0; i<resulting_neighbors_tree_ball.size(); i++) {
       TEST_ASSERT(resulting_neighbors_tree_ball[i] == resulting_neighbors_bf[i]);
       TEST_DOUBLE_APPROX(distances_tree_ball[i], distances_bf[i], 1e-5);
     }
@@ -118,7 +118,7 @@ int main(int argc, char *argv[]) {
   }
   else if (check_bt_correctness && tree_name == "MCT_bt") {
     // Check correctness of MCT Ball Tree results  
-    for(index_t i=0; i<resulting_neighbors_tree_learn.size(); i++) {
+    for(size_t i=0; i<resulting_neighbors_tree_learn.size(); i++) {
       TEST_ASSERT(resulting_neighbors_tree_learn[i] == resulting_neighbors_bf[i]);
       TEST_DOUBLE_APPROX(distances_tree_learn[i], distances_bf[i], 1e-5);
     }

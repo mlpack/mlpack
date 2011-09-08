@@ -48,8 +48,8 @@ private:
 			       current_solutions, residuals);
 
     // Compute the residuals by subtracting from b in Ax = b.
-    for(index_t i = 0; i < residuals.n_cols(); i++) {
-      for(index_t j = 0; j < residuals.n_rows(); j++) {
+    for(size_t i = 0; i < residuals.n_cols(); i++) {
+      for(size_t j = 0; j < residuals.n_rows(); j++) {
 	residuals.set(j, i, right_hand_sides.get(j, i) - residuals.get(j, i));
       }
     }
@@ -112,7 +112,7 @@ private:
    const Matrix &expansion_residuals, Vector &expansion_residual_norms, 
    Vector &expansion_scaled_residual_norms, Vector &expansion_r_z_dots) {
 
-    for(index_t q = 0; q < right_hand_sides.n_cols(); q++) {
+    for(size_t q = 0; q < right_hand_sides.n_cols(); q++) {
       residual_norms[q] = la::LengthEuclidean(row_length_,
 					      residuals.GetColumnPtr(q));
       scaled_residual_norms[q] = residual_norms[q] /
@@ -170,7 +170,7 @@ private:
     query_in_cg_loop.Init(solutions.n_cols());
     expansion_query_in_cg_loop.Init(solutions.n_cols());
     int num_queries_in_cg_loop = solutions.n_cols();
-    for(index_t q = 0; q < solutions.n_cols(); q++) {
+    for(size_t q = 0; q < solutions.n_cols(); q++) {
       query_in_cg_loop[q] = expansion_query_in_cg_loop[q] = true;
     }
     
@@ -229,7 +229,7 @@ private:
     if(loo_right_hand_sides != NULL) {
       loo_query_in_cg_loop = new ArrayList<bool>();
       loo_query_in_cg_loop->Init(right_hand_sides.n_cols());
-      for(index_t i = 0; i < right_hand_sides.n_cols(); i++) {
+      for(size_t i = 0; i < right_hand_sides.n_cols(); i++) {
 	(*loo_query_in_cg_loop)[i] = true;
       }
       loo_brkdown_tol = new Vector();
@@ -301,13 +301,13 @@ private:
 			  expansion_scaled_residual_norms, expansion_r_z_dots);
 
     // Start the main loop of the CG iteration.
-    for(index_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
+    for(size_t iter = 1; iter <= row_length_ && num_queries_in_cg_loop > 0; 
 	iter++) {
       
       printf("%d queries are in the CG loop...\n", num_queries_in_cg_loop);
 
       // p  = z + beta * p
-      for(index_t q = 0; q < p_vecs.n_cols(); q++) {
+      for(size_t q = 0; q < p_vecs.n_cols(); q++) {
 	// p = beta * p
 	la::Scale(row_length_, beta_vec[q], p_vecs.GetColumnPtr(q));
 	la::Scale(row_length_, expansion_beta_vec[q],
@@ -333,7 +333,7 @@ private:
 	 linear_transformed_expansion_p_vecs);
       
       // Now loop over each query point.
-      for(index_t q = 0; q < solutions.n_cols(); q++) {
+      for(size_t q = 0; q < solutions.n_cols(); q++) {
 
 	// If the current query has finished, skip it.
 	if(!query_in_cg_loop[q]) {

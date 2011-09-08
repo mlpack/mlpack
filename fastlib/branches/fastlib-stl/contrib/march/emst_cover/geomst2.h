@@ -58,13 +58,13 @@ private:
     
   public:
     
-    void Init(const Matrix& dataset, index_t start, index_t count) {
+    void Init(const Matrix& dataset, size_t start, size_t count) {
       
       width_ = -1.0;
       
     } // leaf init
     
-    void Init(const Matrix& dataset, index_t start, index_t count,
+    void Init(const Matrix& dataset, size_t start, size_t count,
               const GeoMSTStat& left_stat, const GeoMSTStat& right_stat) {
       
       Init(dataset, start, count);
@@ -95,8 +95,8 @@ private:
     double dist_;
     
     // the closest pair from the two nodes
-    index_t pt1_;
-    index_t pt2_;
+    size_t pt1_;
+    size_t pt2_;
     
     bool bcp_done_;
     
@@ -124,15 +124,15 @@ private:
       return node2_;
     }
     
-    index_t pt1() const {
+    size_t pt1() const {
       return pt1_;
     }
     
-    index_t pt2() const {
+    size_t pt2() const {
       return pt2_;
     }
     
-    void set_points(index_t p1, index_t p2) {
+    void set_points(size_t p1, size_t p2) {
       pt1_ = p1;
       pt2_ = p2;
     }
@@ -149,7 +149,7 @@ private:
       
     }
     
-    void set_pair(index_t point1, index_t point2, double dist) {
+    void set_pair(size_t point1, size_t point2, double dist) {
       
       pt1_ = point1;
       pt2_ = point2;
@@ -168,16 +168,16 @@ private:
   
   GeoMSTTree* tree_;
   ArrayList<EdgePair> edges_;
-  index_t number_of_points_;
-  index_t number_of_edges_;
+  size_t number_of_points_;
+  size_t number_of_edges_;
   fx_module* mod_;
   UnionFind connections_;
   Matrix data_points_;
-  index_t number_of_bcp_;
+  size_t number_of_bcp_;
   
   ArrayList<NodePair> wspd_;
   
-  ArrayList<index_t> old_from_new_permutation_;
+  ArrayList<size_t> old_from_new_permutation_;
   
   double total_dist_;
   
@@ -237,7 +237,7 @@ private:
     
   } // FindPairs_()
   
-  void AddEdge_(index_t e1, index_t e2, double distance) {
+  void AddEdge_(size_t e1, size_t e2, double distance) {
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
@@ -260,8 +260,8 @@ private:
     
   } // AddEdge_
   
-  void FindClosestPair_(GeoMSTTree* n1, GeoMSTTree* n2, index_t* pt1, 
-                        index_t* pt2, double* dist) {
+  void FindClosestPair_(GeoMSTTree* n1, GeoMSTTree* n2, size_t* pt1, 
+                        size_t* pt2, double* dist) {
     
     
     if (n1->is_leaf() && n2->is_leaf()) {
@@ -391,7 +391,7 @@ private:
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
     
-    for (index_t i = 0; i < (number_of_points_ - 1); i++) {
+    for (size_t i = 0; i < (number_of_points_ - 1); i++) {
       
       edges_[i].set_lesser_index(old_from_new_permutation_[edges_[i]
                                                            .lesser_index()]);
@@ -471,7 +471,7 @@ public:
     // make sheap, read from it, add edges as found
     
     // add some stuff to the heap
-    for (index_t i = 0; i < wspd_.size(); i++) {
+    for (size_t i = 0; i < wspd_.size(); i++) {
       
       heap_.Put(wspd_[i].dist(), &(wspd_[i]));
       
@@ -506,7 +506,7 @@ public:
           // find the closest pair and re-insert in the heap
           
           double cp_dist = DBL_MAX;
-          index_t point1, point2;
+          size_t point1, point2;
           FindClosestPair_(this_pair->node1(), this_pair->node2(), &point1, 
                            &point2, &cp_dist);
           number_of_bcp_++;

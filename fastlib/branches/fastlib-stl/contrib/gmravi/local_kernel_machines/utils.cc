@@ -42,7 +42,7 @@ void AppendVectorToMatrixAsLastRow(Vector &vec,Matrix &mat,Matrix &stiched){
   // Now populate the last column
   
   
-  for(index_t i=0;i<mat_trans.n_rows();i++){
+  for(size_t i=0;i<mat_trans.n_rows();i++){
     temp.set(i,mat_trans.n_cols(),vec[i]);
   }
   

@@ -43,13 +43,13 @@ class DualTreeIntegrals {
    private:
    
     // The node's index in a pre-order depth-first traversal of the tree
-    index_t node_index_;
+    size_t node_index_;
     
     // I might need some notion of bandwidths
     double min_bandwidth_;
     double max_bandwidth_;
     
-    index_t height_;
+    size_t height_;
     
     double density_upper_bound_;
     double density_lower_bound_;
@@ -63,14 +63,14 @@ class DualTreeIntegrals {
       
     } // Init
     
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       
       Init();
       height_ = 0;
       
     } // Init (leaves)
     
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
               const IntegralStat& left, const IntegralStat& right) {
     
       Init();
@@ -78,20 +78,20 @@ class DualTreeIntegrals {
       
     } // Init (non-leaves)
     
-    index_t height() const {
+    size_t height() const {
       return height_;
     } // height()
     
-    void set_height(index_t new_height) {
+    void set_height(size_t new_height) {
       height_ = new_height;
     } // set_height
     
     
-    index_t node_index() const {
+    size_t node_index() const {
       return node_index_;
     } // node_index
     
-    void set_node_index(index_t new_index) {
+    void set_node_index(size_t new_index) {
       node_index_ =  new_index;
     } // set_node_index
     
@@ -197,12 +197,12 @@ class DualTreeIntegrals {
   Matrix density_matrix_;
   
   // The total number of basis functions
-  index_t number_of_basis_functions_;
+  size_t number_of_basis_functions_;
   
-  index_t traversal_index_;
+  size_t traversal_index_;
   
   // Stores the permutation used in tree-building
-  ArrayList<index_t> old_from_new_centers_;
+  ArrayList<size_t> old_from_new_centers_;
   
   // Size of leaves in the tree
   int leaf_size_;
@@ -210,8 +210,8 @@ class DualTreeIntegrals {
   // The normalization constant to the fourth power
   double normalization_constant_fourth_;
   
-  index_t num_absolute_prunes_;
-  index_t num_relative_prunes_;
+  size_t num_absolute_prunes_;
+  size_t num_relative_prunes_;
   
 
   /////////////////////// Functions ///////////////////////////////////
@@ -259,7 +259,7 @@ class DualTreeIntegrals {
   
   } // ComputeLowerBound_()
   
-  index_t CountOnDiagonal_(SquareIntegralTree* rho_sigma);
+  size_t CountOnDiagonal_(SquareIntegralTree* rho_sigma);
     
   /**
    * Determines if the integral among the four nodes can be approximated
@@ -343,8 +343,8 @@ class DualTreeIntegrals {
                                                
     // Need to make this work with on diagonal non-square boxes
     if (RectangleOnDiagonal_(rho, sigma)) {
-      index_t on_diagonal = CountOnDiagonal_(rho_sigma);
-      index_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
+      size_t on_diagonal = CountOnDiagonal_(rho_sigma);
+      size_t off_diagonal = (rho->count() * sigma->count()) - on_diagonal;
       up_bound = (on_diagonal * up_bound) + (2 * off_diagonal * up_bound);
       // These two were missing, I think they needed to be here
       low_bound = (on_diagonal * low_bound) + (2 * off_diagonal * low_bound);
@@ -665,16 +665,16 @@ class DualTreeIntegrals {
     DEBUG_ASSERT(mu->end() > nu->begin());
     DEBUG_ASSERT(rho->end() > sigma->begin());
     
-    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+    for (size_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
      
-      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      for (size_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
        
         double integral_value = coulomb_matrix_.ref(mu_index, nu_index);
         
-        for (index_t rho_index = rho->begin(); rho_index < rho->end();
+        for (size_t rho_index = rho->begin(); rho_index < rho->end();
              rho_index++) {
          
-          for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
+          for (size_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
                sigma_index++) {
             
             Vector mu_vec;
@@ -727,7 +727,7 @@ class DualTreeIntegrals {
     mu_nu->stat().set_entry_upper_bound(max_entry);
     mu_nu->stat().set_entry_lower_bound(min_entry);
     
-    index_t new_refs = rho->count() * sigma->count();
+    size_t new_refs = rho->count() * sigma->count();
     
    if (rho != sigma) {
       new_refs = 2 * new_refs;
@@ -767,16 +767,16 @@ class DualTreeIntegrals {
     DEBUG_ASSERT(mu->end() > nu->begin());
     DEBUG_ASSERT(rho->end() > sigma->begin());
     
-    for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+    for (size_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
       
-      for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+      for (size_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
         
         double integral_value = exchange_matrix_.ref(mu_index, nu_index);
         
-        for (index_t rho_index = rho->begin(); rho_index < rho->end();
+        for (size_t rho_index = rho->begin(); rho_index < rho->end();
              rho_index++) {
           
-          for (index_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
+          for (size_t sigma_index = sigma->begin(); sigma_index < sigma->end(); 
                sigma_index++) {
             
             
@@ -837,7 +837,7 @@ class DualTreeIntegrals {
     mu_nu->stat().set_entry_upper_bound(max_entry);
     mu_nu->stat().set_entry_lower_bound(min_entry);
     
-    index_t new_refs = rho->count() * sigma->count();
+    size_t new_refs = rho->count() * sigma->count();
     if (rho != sigma) {
       new_refs = 2 * new_refs;
     }
@@ -922,9 +922,9 @@ class DualTreeIntegrals {
     else {
   
     
-      for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+      for (size_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
         
-        for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+        for (size_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
           
           double new_value = coulomb_matrix_.ref(mu_index, nu_index) + 
               integral_approximation;
@@ -945,7 +945,7 @@ class DualTreeIntegrals {
       mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
                                           integral_approximation);
                                           
-      index_t new_refs = rho->count() * sigma->count();
+      size_t new_refs = rho->count() * sigma->count();
       
       if (rho != sigma) {
         DEBUG_ASSERT(!((rho->begin() <= sigma->begin()) && 
@@ -1011,9 +1011,9 @@ class DualTreeIntegrals {
     }
     else {
     
-      for (index_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
+      for (size_t mu_index = mu->begin(); mu_index < mu->end(); mu_index++) {
         
-        for (index_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
+        for (size_t nu_index = nu->begin(); nu_index < nu->end(); nu_index++) {
           
           double new_value = exchange_matrix_.ref(mu_index, nu_index) + 
           integral_approximation;
@@ -1036,7 +1036,7 @@ class DualTreeIntegrals {
       mu_nu->stat().set_entry_lower_bound(mu_nu->stat().entry_lower_bound() + 
                                           integral_approximation);
       
-      index_t new_refs = rho->count() * sigma->count();
+      size_t new_refs = rho->count() * sigma->count();
       if (rho != sigma) {
         new_refs = 2 * new_refs;
       }
@@ -1319,10 +1319,10 @@ class DualTreeIntegrals {
       max_density = -DBL_INF;
       min_density = DBL_INF;
       
-      for (index_t i = root->query1()->begin(); i < root->query1()->end(); 
+      for (size_t i = root->query1()->begin(); i < root->query1()->end(); 
            i++) {
       
-        for (index_t j = root->query2()->begin(); j < root->query2()->end(); 
+        for (size_t j = root->query2()->begin(); j < root->query2()->end(); 
              j++) {
         
           double this_density = density_matrix_.ref(i, j);
@@ -1445,7 +1445,7 @@ public:
   /** 
    * Returns the permutation of the basis centers
    */
-  void GetPermutation(ArrayList<index_t>* perm) {
+  void GetPermutation(ArrayList<size_t>* perm) {
   
     perm->Copy(old_from_new_centers_);
   
@@ -1526,7 +1526,7 @@ public:
    */
   void OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
                         Matrix* exchange_out, 
-                        ArrayList<index_t>* old_from_new) {
+                        ArrayList<size_t>* old_from_new) {
   
     //printf("number_of_approximations_ = %d\n", number_of_approximations_);
     //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);

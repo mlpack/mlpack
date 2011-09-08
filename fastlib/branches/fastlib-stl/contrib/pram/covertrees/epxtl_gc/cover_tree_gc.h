@@ -10,12 +10,12 @@ class CoverTreeNode {
   typedef TStatistic Statistic;
 
  private:
-  index_t point_;
+  size_t point_;
   T max_dist_to_grandchild_;
   T dist_to_parent_;
   ArrayList<CoverTreeNode*> children_;
-  index_t num_of_children_;
-  index_t scale_depth_; // depth of the node in terms of scale
+  size_t num_of_children_;
+  size_t scale_depth_; // depth of the node in terms of scale
   Statistic stat_;
 
  public:
@@ -26,12 +26,12 @@ class CoverTreeNode {
   }
 
   ~CoverTreeNode() {
-    for (index_t i = 0; i < num_of_children_; i++) {
+    for (size_t i = 0; i < num_of_children_; i++) {
       delete children_[i];
     }
   }
 
-  void set_point(index_t point) {
+  void set_point(size_t point) {
     point_ = point;
   }
 
@@ -45,17 +45,17 @@ class CoverTreeNode {
     return;
   }
 
-  void set_num_of_children(index_t n) {
+  void set_num_of_children(size_t n) {
      num_of_children_ = n;
     return;
   }
 
-  void set_scale_depth(index_t scale_depth) {
+  void set_scale_depth(size_t scale_depth) {
     scale_depth_ = scale_depth;
     return;
   }
 
-  index_t point() {
+  size_t point() {
     return point_;
   }
 
@@ -71,15 +71,15 @@ class CoverTreeNode {
     return &children_;
   }
 
-  CoverTreeNode *child(index_t i) {
+  CoverTreeNode *child(size_t i) {
     return children_[i];
   }
 
-  index_t num_of_children() {
+  size_t num_of_children() {
     return num_of_children_;
   }
 
-  index_t scale_depth() {
+  size_t scale_depth() {
     return scale_depth_;
   }
 
@@ -87,14 +87,14 @@ class CoverTreeNode {
     return stat_;
   }
 
-  void MakeNode(index_t point) {
+  void MakeNode(size_t point) {
     point_ = point;
     //stat_.Init();
     return;
   }
 
-  void MakeNode(index_t point, T max_dist, 
-		index_t scale_depth, 
+  void MakeNode(size_t point, T max_dist, 
+		size_t scale_depth, 
 		ArrayList<CoverTreeNode*> *children) {
 
     point_ = point;
@@ -108,7 +108,7 @@ class CoverTreeNode {
     return;
   }
 
-  void MakeLeafNode(index_t point) {
+  void MakeLeafNode(size_t point) {
     
     point_ = point;
     max_dist_to_grandchild_ = 0.0;

@@ -89,7 +89,7 @@ void SetToRange(int x[], int start, int end);
 
 void RandPerm(int x[], int length);
 
-int eval_loocv_svm(double c, int n_points, const ArrayList<index_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0);
+int eval_loocv_svm(double c, int n_points, const ArrayList<size_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0);
 
 void DoMMFBaumWelch(const ArrayList<Vector> &sequences, DiscreteHMM* p_augmented_learned_hmm,
 		    int n_states, int n_symbols,
@@ -494,7 +494,7 @@ void RandPerm(int x[], int length) {
 
 template<typename T>
 void WriteOut(const T &object, FILE* file) {
-  index_t size = ot::FrozenSize(object);
+  size_t size = ot::FrozenSize(object);
   char* buf = mem::Alloc<char>(size);
   ot::Freeze(buf, object);
   fwrite(&size, sizeof(size), 1, file);
@@ -504,7 +504,7 @@ void WriteOut(const T &object, FILE* file) {
 
 template<typename T>
 void ReadIn(T* object, FILE* file) {
-  index_t size;
+  size_t size;
   fread(&size, sizeof(size), 1, file);
   char* buf = mem::Alloc<char>(size);
   fread(buf, 1, size, file);
@@ -745,7 +745,7 @@ void ObtainDataLearnHMMs(ArrayList<Vector> *p_initial_probs_vectors,
 
 
 
-int eval_kfold_svm(double c, int n_points, const ArrayList<index_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0) {
+int eval_kfold_svm(double c, int n_points, const ArrayList<size_t> &permutation, const Dataset& cv_set, datanode* svm_module, const Matrix &kernel_matrix, int *n_correct_class1, int *n_correct_class0) {
   printf("10-FOLD SVM Training and Testing... \n");
 
   fx_set_param_double(svm_module, "c", c);

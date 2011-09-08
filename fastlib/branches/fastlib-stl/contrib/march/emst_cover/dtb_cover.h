@@ -67,8 +67,8 @@ class DTBCoverStat {
 private:
   
   //double max_candidate_distance_;
-  index_t component_membership_;
-  //index_t candidate_ref_;
+  size_t component_membership_;
+  //size_t candidate_ref_;
   //double distance_to_qnode_;
   ArrayList<double> distance_to_qnode_;
   
@@ -85,11 +85,11 @@ public:
     
   }
 
-  void set_component_membership(index_t membership) {
+  void set_component_membership(size_t membership) {
     component_membership_ = membership;
   }
   
-  index_t component_membership() const {
+  size_t component_membership() const {
     return component_membership_; 
   }
 
@@ -127,7 +127,7 @@ public:
   /**
     * An initializer for leaves.
    */
-  void Init(const Matrix& dataset, index_t start, index_t count) {
+  void Init(const Matrix& dataset, size_t start, size_t count) {
     
     if (count == 1) {
       set_component_membership(start);
@@ -144,7 +144,7 @@ public:
   /**
     * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
-  void Init(const Matrix& dataset, index_t start, index_t count,
+  void Init(const Matrix& dataset, size_t start, size_t count,
             const DTBCoverStat& left_stat, const DTBCoverStat& right_stat) {
     
     Init(dataset, start, count);
@@ -164,7 +164,7 @@ class DualCoverTreeBoruvka {
  public:
   
   // For now, everything is in Euclidean space
-  static const index_t metric = 2;
+  static const size_t metric = 2;
 
   //typedef BinarySpaceTree<DHrectBound<metric>, Matrix, DTBCoverStat> DTBTree;
   typedef CoverTreeNode<DTBCoverStat, double> DTBTree;
@@ -173,37 +173,37 @@ class DualCoverTreeBoruvka {
   
  private:
   
-  index_t number_of_edges_;
+  size_t number_of_edges_;
   ArrayList<EdgePair> edges_;
-  index_t number_of_points_;
+  size_t number_of_points_;
   UnionFind connections_;
   struct datanode* module_;
   Matrix data_points_;
   double base_;
   
   // edges to be added
-  ArrayList<index_t> neighbors_in_component_;
-  ArrayList<index_t> neighbors_out_component_;
+  ArrayList<size_t> neighbors_in_component_;
+  ArrayList<size_t> neighbors_out_component_;
   ArrayList<double> neighbors_distances_;
   
   // bounds - these are indexed by component index
   ArrayList<double> candidate_dists_;
   // this stores the component of the candidate reference
-  ArrayList<index_t> candidate_refs_;
+  ArrayList<size_t> candidate_refs_;
   
   // used to eliminate pruning in debugging
   double prune_factor_;
   
   // output info
   double total_dist_;
-  index_t number_of_loops_;
+  size_t number_of_loops_;
   /*
-  index_t number_distance_prunes_;
-  index_t number_component_prunes_;
-  index_t number_leaf_computations_;
-  index_t number_q_recursions_;
-  index_t number_r_recursions_;
-  index_t number_both_recursions_;
+  size_t number_distance_prunes_;
+  size_t number_component_prunes_;
+  size_t number_leaf_computations_;
+  size_t number_q_recursions_;
+  size_t number_r_recursions_;
+  size_t number_both_recursions_;
   */
   int do_naive_;
   
@@ -231,7 +231,7 @@ class DualCoverTreeBoruvka {
   /**
   * Adds a single edge to the edge list
    */
-  void AddEdge_(index_t e1, index_t e2, double distance) {
+  void AddEdge_(size_t e1, size_t e2, double distance) {
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
@@ -259,11 +259,11 @@ class DualCoverTreeBoruvka {
    */
   void AddAllEdges_() {
     
-    for (index_t i = 0; i < number_of_points_; i++) {
-      index_t component_i = connections_.Find(i);
+    for (size_t i = 0; i < number_of_points_; i++) {
+      size_t component_i = connections_.Find(i);
       
-      index_t in_edge_i = neighbors_in_component_[component_i];
-      index_t out_edge_i = neighbors_out_component_[component_i];
+      size_t in_edge_i = neighbors_in_component_[component_i];
+      size_t out_edge_i = neighbors_out_component_[component_i];
       if (connections_.Find(in_edge_i) != connections_.Find(out_edge_i)) {
         double dist = neighbors_distances_[component_i];
         total_dist_ = total_dist_ + dist;
@@ -350,7 +350,7 @@ class DualCoverTreeBoruvka {
    * Determines if the bound for the parent is also valid for the child
    * Is not valid if the child is connected to the candidate for the parent
    */
-  bool ValidBound_(index_t parent, index_t child) {
+  bool ValidBound_(size_t parent, size_t child) {
     
     return !(child == candidate_refs_[parent]);
     
@@ -368,9 +368,9 @@ class DualCoverTreeBoruvka {
   } // reset_leaf_nodes ()
   
   void reset_cover_sets_(ArrayList<ArrayList<DTBTree*> > *cover_set, 
-                         index_t current_scale, index_t max_scale) {
+                         size_t current_scale, size_t max_scale) {
     
-    for (index_t i = current_scale; i <= max_scale; i++) {
+    for (size_t i = current_scale; i <= max_scale; i++) {
       
       DTBTree** begin = (*cover_set)[i].begin();
       DTBTree** end = (*cover_set)[i].end();
@@ -414,13 +414,13 @@ class DualCoverTreeBoruvka {
       
       //printf("query: %d\n", query->point());
       
-      index_t query_comp = connections_.Find(query->point());
+      size_t query_comp = connections_.Find(query->point());
       
-      for (index_t i = 0; i < leaves->size(); i++) {
+      for (size_t i = 0; i < leaves->size(); i++) {
         
         DTBTree* leaf = (*leaves)[i];
         
-        index_t ref_comp = connections_.Find(leaf->point());
+        size_t ref_comp = connections_.Find(leaf->point());
         
         //printf("Considering query: %d, leaf: %d\n", query->point(), leaf->point());
         /*
@@ -501,16 +501,16 @@ class DualCoverTreeBoruvka {
   
  
   void DescendRefSet_(DTBTree* query, ArrayList<ArrayList<DTBTree*> > *cover,
-                      ArrayList<DTBTree*> *leaf_nodes, index_t current_scale, 
-                      index_t *max_scale) {
+                      ArrayList<DTBTree*> *leaf_nodes, size_t current_scale, 
+                      size_t *max_scale) {
     
     DTBTree** begin = (*cover)[current_scale].begin();
     DTBTree** end = (*cover)[current_scale].end();
     
-    index_t query_comp = connections_.Find(query->point());
+    size_t query_comp = connections_.Find(query->point());
     DEBUG_ASSERT(query_comp == connections_.Find(query->point()));
     double query_bound = candidate_dists_[query_comp];
-    index_t ref_comp = candidate_refs_[query_comp];
+    size_t ref_comp = candidate_refs_[query_comp];
     
     Vector q_vec;
     data_points_.MakeColumnVector(query->point(), &q_vec);
@@ -718,7 +718,7 @@ class DualCoverTreeBoruvka {
     Vector q_vec;
     data_points_.MakeColumnVector(query->point(), &q_vec);
     
-    index_t q_comp = connections_.Find(query->point());
+    size_t q_comp = connections_.Find(query->point());
     
     double upper_bound = candidate_dists_[q_comp];
     
@@ -765,23 +765,23 @@ class DualCoverTreeBoruvka {
   void CopyCoverSets_(DTBTree* query, 
                       ArrayList<ArrayList<DTBTree*> >* old_cover,
                       ArrayList<ArrayList<DTBTree*> >* new_cover, 
-                      index_t current_scale, index_t max_scale) {
+                      size_t current_scale, size_t max_scale) {
     
     
     new_cover->Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       (*new_cover)[i].Init(0);
     }
     
     Vector q_vec;
     data_points_.MakeColumnVector(query->point(), &q_vec);
     
-    index_t q_comp = connections_.Find(query->point());
+    size_t q_comp = connections_.Find(query->point());
     
     double upper_bound = candidate_dists_[q_comp];
-    //index_t cand_ref = candidate_refs_[q_comp];
+    //size_t cand_ref = candidate_refs_[q_comp];
     
-    for (index_t scale = current_scale; scale <= max_scale; scale++) {
+    for (size_t scale = current_scale; scale <= max_scale; scale++) {
       
       DTBTree** begin = (*old_cover)[scale].begin();
       DTBTree** end = (*old_cover)[scale].end();
@@ -857,10 +857,10 @@ class DualCoverTreeBoruvka {
    */
   void HybridExpansion_(DTBTree* query, 
                         ArrayList<ArrayList<DTBTree*> > *ref_cover, 
-                        ArrayList<DTBTree*> *leaf_nodes, index_t current_scale,
-                        index_t max_scale) {
+                        ArrayList<DTBTree*> *leaf_nodes, size_t current_scale,
+                        size_t max_scale) {
     
-    //index_t query_comp_index = connections_.Find(query->point());
+    //size_t query_comp_index = connections_.Find(query->point());
     
     if (current_scale > max_scale) {
       // base case
@@ -888,7 +888,7 @@ class DualCoverTreeBoruvka {
         ArrayList<DTBTree*> new_leaf;
         ArrayList<ArrayList<DTBTree*> > new_cover;
         
-        //index_t child_comp_index = connections_.Find((*child)->point());
+        //size_t child_comp_index = connections_.Find((*child)->point());
         
         // I don't think I need to pass bounds down
         // if the child doesn't already have a bound, then it will be able to 
@@ -922,9 +922,9 @@ class DualCoverTreeBoruvka {
       
       //printf("Reference Tree Descend, query = %d\n", query->point());
       
-      index_t new_max = max_scale;
+      size_t new_max = max_scale;
       DescendRefSet_(query, ref_cover, leaf_nodes, current_scale, &new_max);
-      index_t new_current = current_scale + 1;
+      size_t new_current = current_scale + 1;
       HybridExpansion_(query, ref_cover, leaf_nodes, new_current, new_max);
       
     } // descend references
@@ -945,7 +945,7 @@ class DualCoverTreeBoruvka {
      */ 
      ArrayList<ArrayList<DTBTree*> > cover;
       cover.Init(101);
-      for (index_t i = 0; i < 101; i++) {
+      for (size_t i = 0; i < 101; i++) {
         cover[i].Init(0);
       }
       ArrayList<DTBTree*> leaves;
@@ -995,7 +995,7 @@ class DualCoverTreeBoruvka {
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
     
-    for (index_t i = 0; i < number_of_edges_; i++) {
+    for (size_t i = 0; i < number_of_edges_; i++) {
       results->set(0, i, edges_[i].lesser_index());
       results->set(1, i, edges_[i].greater_index());
       results->set(2, i, edges_[i].distance());
@@ -1016,12 +1016,12 @@ class DualCoverTreeBoruvka {
       
       // iterate over children
       CleanupHelper_(tree->child(0));
-      index_t comp = tree->child(0)->stat().component_membership();
+      size_t comp = tree->child(0)->stat().component_membership();
       
-      for (index_t i = 1; i < tree->num_of_children(); i++) {
+      for (size_t i = 1; i < tree->num_of_children(); i++) {
         
         CleanupHelper_(tree->child(i));
-        index_t this_comp = tree->child(i)->stat().component_membership();
+        size_t this_comp = tree->child(i)->stat().component_membership();
         if (comp != this_comp) {
           comp = -1;
         }
@@ -1049,7 +1049,7 @@ class DualCoverTreeBoruvka {
     
     //printf("Cleanup called\n");
     
-    for (index_t i = 0; i < number_of_points_; i++) {
+    for (size_t i = 0; i < number_of_points_; i++) {
       
       neighbors_distances_[i] = DBL_MAX;
       DEBUG_ONLY(neighbors_in_component_[i] = -2);
@@ -1099,7 +1099,7 @@ class DualCoverTreeBoruvka {
   
  public: 
     
-  index_t number_of_edges() {
+  size_t number_of_edges() {
     return number_of_edges_;
   }
 
@@ -1148,7 +1148,7 @@ class DualCoverTreeBoruvka {
     candidate_dists_.Init(number_of_points_);
     candidate_refs_.Init(number_of_points_);
     
-    for (index_t i = 0; i < number_of_points_; i++) {
+    for (size_t i = 0; i < number_of_points_; i++) {
       candidate_dists_[i] = DBL_MAX;
       candidate_refs_[i] = -1;
       neighbors_in_component_[i] = -1;

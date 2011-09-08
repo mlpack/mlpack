@@ -27,7 +27,7 @@ int main(int argc, char *argv[]){
 
   FILE *fp=fopen("mog_new/mog_new_nn_kde_multi.txt","w");
 
-  for(index_t i=0;i<test_densities.length();i++){
+  for(size_t i=0;i<test_densities.length();i++){
     if(i!=test_densities.length()-1){
       fprintf(fp,"%f\n",test_densities[i]);
     }

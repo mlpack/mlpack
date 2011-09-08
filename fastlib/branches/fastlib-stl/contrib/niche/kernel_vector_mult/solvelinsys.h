@@ -358,7 +358,7 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   // Define the linear problem.
   Epetra_MultiVector solution_e(blockmap, 1, true);
   Epetra_MultiVector right_hand_side_e(blockmap, 1, false);
-  for(index_t j = 0; j < row_length; j++) {
+  for(size_t j = 0; j < row_length; j++) {
     (*(right_hand_side_e(0)))[j] = rhs[j];
   }
 
@@ -406,7 +406,7 @@ void SolveLinearSystem(Matrix references, Vector rhs, double bandwidth, double s
   
   
   solution -> Init(row_length);
-  for(index_t j = 0; j < row_length; j++) {
+  for(size_t j = 0; j < row_length; j++) {
     (*solution)[j] = solution_e.Pointers()[0][j];
   }
 

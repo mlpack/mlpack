@@ -9,16 +9,16 @@ GaussianDistribution::GaussianDistribution(
   setMeanCov(mean, cov);
 }
 
-GaussianDistribution::GaussianDistribution(index_t dim) {
+GaussianDistribution::GaussianDistribution(size_t dim) {
   InitMeanCov(dim);
   Vector m; m.Init(dim);
   Matrix cov; cov.Init(dim, dim);
 	
-  for (index_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; i++)
     m[i] = math::Random(-1, 1);
 		
   cov.SetZero();
-  for (index_t i = 0; i < dim; i++)
+  for (size_t i = 0; i < dim; i++)
     cov.ref(i, i) = math::Random(1, 4);
 	
   setMeanCov(m, cov);
@@ -42,8 +42,8 @@ double GaussianDistribution::logP(const Vector& x) {
 }
 
 void GaussianDistribution::createFromCols(
-					  const Matrix& src, index_t col, GaussianDistribution* tmp) {
-  index_t dim = src.n_rows();
+					  const Matrix& src, size_t col, GaussianDistribution* tmp) {
+  size_t dim = src.n_rows();
   Vector mean;
   Matrix covariance;
   src.MakeColumnVector(col, &mean);
@@ -82,7 +82,7 @@ void GaussianDistribution::Save(FILE* f) {
   printMatrix(f, covariance);
 }
 
-void GaussianDistribution::InitMeanCov(index_t dim) {
+void GaussianDistribution::InitMeanCov(size_t dim) {
   mean.Init(dim);
   covariance.Init(dim, dim);
 	

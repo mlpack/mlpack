@@ -74,7 +74,7 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_2) {
   BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 0.76) == 1);
   BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 0.99) == 2);
   BOOST_REQUIRE(NearestNeighborSort::SortDistance(list, 1.22) ==
-      (index_t() - 1));
+      (size_t() - 1));
 }
 
 /***
@@ -220,7 +220,7 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_2) {
   BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.93) == 1);
   BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.68) == 2);
   BOOST_REQUIRE(FurthestNeighborSort::SortDistance(list, 0.62) ==
-      (index_t() - 1));
+      (size_t() - 1));
 }
 
 /***

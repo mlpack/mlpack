@@ -5,15 +5,15 @@
 using namespace std;
 
 void tokenizeString( const string& str, const string& delimiters,
-    vector<string>& result, index_t pos,
-    const string& stopon, index_t stopat, bool save_last ) {
+    vector<string>& result, size_t pos,
+    const string& stopon, size_t stopat, bool save_last ) {
   result.reserve(stopat);
 
   size_t last = pos;
 
-  // When "unlimited" tokens desired, allow for numeric_limits<index_t>::max()
+  // When "unlimited" tokens desired, allow for numeric_limits<size_t>::max()
   if( !stopat )
-    stopat = numeric_limits<index_t>::max();
+    stopat = numeric_limits<size_t>::max();
 
   // loop through each character
   for( ; pos < str.length() && stopat; ++pos ) {

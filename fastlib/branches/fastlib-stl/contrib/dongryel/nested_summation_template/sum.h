@@ -9,20 +9,20 @@ class Sum: public Operator {
 
  public:
 
-  double NaiveCompute(std::map<index_t, index_t> &constant_dataset_indices) {
+  double NaiveCompute(std::map<size_t, size_t> &constant_dataset_indices) {
 
     double sum_result = 0;
  
     // Get the list of restrictions associated with the current
     // dataset index.
-    std::map<index_t, std::vector<int> >::iterator restriction = 
+    std::map<size_t, std::vector<int> >::iterator restriction = 
       restrictions_->find(dataset_index_);
   
     // The current dataset that is involved.
     const Matrix *dataset = (*datasets_)[dataset_index_];
 
     // Loop over all indices of the current operator.
-    for(index_t n = 0; n < dataset->n_cols(); n++) {
+    for(size_t n = 0; n < dataset->n_cols(); n++) {
 
       if(restriction != restrictions_->end() &&
 	 CheckViolation_(constant_dataset_indices, (*restriction).second, n)) {
@@ -33,7 +33,7 @@ class Sum: public Operator {
       constant_dataset_indices[dataset_index_] = n;
 
       // Recursively evaluate the operators and add them up.
-      for(index_t i = 0; i < operators_.size(); i++) {
+      for(size_t i = 0; i < operators_.size(); i++) {
 	sum_result += operators_[i]->NaiveCompute(constant_dataset_indices);
       }      
     }
@@ -42,7 +42,7 @@ class Sum: public Operator {
 
   double MonteCarloCompute
   (ArrayList<Strata> &list_of_strata,
-   std::map<index_t, index_t> &constant_dataset_indices,
+   std::map<size_t, size_t> &constant_dataset_indices,
    double relative_error, double probability) {
 
     double sum_result = 0;
@@ -59,16 +59,16 @@ class Sum: public Operator {
       NestedSumUtility::OptimalAllocation(list_of_strata[dataset_index_],
 					  total_num_samples_needed);
 
-      for(index_t strata_index = 0;
+      for(size_t strata_index = 0;
 	  strata_index < list_of_strata[dataset_index_].total_num_stratum;
 	  strata_index++) {
 
-	for(index_t s = 0; s < total_num_samples_needed; s++) {
+	for(size_t s = 0; s < total_num_samples_needed; s++) {
 	  
 	  ChoosePointIndex_(constant_dataset_indices);
 	  
 	  // Recursively evaluate the operators and add them up.
-	  for(index_t i = 0; i < operators_.size(); i++) {
+	  for(size_t i = 0; i < operators_.size(); i++) {
 	    sum_result += operators_[i]->MonteCarloCompute
 	      (list_of_strata, constant_dataset_indices, relative_error,
 	       probability);

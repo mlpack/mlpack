@@ -165,7 +165,7 @@ double LovaszThetaSDP::Evaluate(const arma::mat& coordinates) {
 //  std::cout << (trans(coordinates) * coordinates) << std::endl;
  
   double obj = 0;
-  for (index_t i = 0; i < coordinates.n_cols; i++)
+  for (size_t i = 0; i < coordinates.n_cols; i++)
     obj -= dot(coordinates.col(i), coordinates.col(i));
 
 //  IO::Debug << "Objective function is " << obj << "." << std::endl;
@@ -202,8 +202,8 @@ double LovaszThetaSDP::EvaluateConstraint(int index,
     return sum;
   } 
 
-  index_t i = edges_(0, index - 1);
-  index_t j = edges_(1, index - 1);
+  size_t i = edges_(0, index - 1);
+  size_t j = edges_(1, index - 1);
 
 //  IO::Debug << "Constraint " << index << " evaluates to " <<
 //    dot(coordinates.col(i), coordinates.col(j)) << "." << std::endl;
@@ -223,8 +223,8 @@ void LovaszThetaSDP::GradientConstraint(int index,
   }
 
 //  IO::Debug << "Evaluating gradient of constraint " << index << " with ";
-  index_t i = edges_(0, index - 1);
-  index_t j = edges_(1, index - 1);
+  size_t i = edges_(0, index - 1);
+  size_t j = edges_(1, index - 1);
 //  IO::Debug << "i = " << i << " and j = " << j << "." << std::endl;
 
   // Since the constraint is (R^T R)_ij, the gradient for (x, y) will be (I
@@ -275,8 +275,8 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint() {
 
   // Now we set the entries of the initial matrix according to the formula given
   // in Section 4 of Monteiro and Burer.
-  for (index_t i = 0; i < r; i++) {
-    for (index_t j = 0; j < vertices_; j++) {
+  for (size_t i = 0; i < r; i++) {
+    for (size_t j = 0; j < vertices_; j++) {
       if (i == j)
         initial_point_(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices_ * m));
       else

@@ -270,7 +270,7 @@ class TwoBody{
     return 1;
   }
 
-  index_t n_terms() const{
+  size_t n_terms() const{
     return powers_.length();
   }
   

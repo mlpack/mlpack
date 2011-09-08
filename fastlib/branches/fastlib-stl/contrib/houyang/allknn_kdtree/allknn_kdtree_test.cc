@@ -13,10 +13,10 @@ int main(int argc, char *argv[]) {
 
   // Minimum size of the leaf node, if smaller than this, do not split the node
   // default: 20
-  index_t LEAF_SIZE= fx_param_int(NULL,"leaf_size", 20); 
+  size_t LEAF_SIZE= fx_param_int(NULL,"leaf_size", 20); 
   
   // the k of kNN; default: 1-nearest neighbor
-  index_t K_NN= fx_param_int(NULL, "k_nn", 1);
+  size_t K_NN= fx_param_int(NULL, "k_nn", 1);
 
   // Whether use dual tree or single tree for kd tree. 2: dual tree, 1: single tree
   // default: use dual tree
@@ -49,9 +49,9 @@ int main(int argc, char *argv[]) {
   bool check_kd_correctness = fx_param_bool(NULL, "check_correct", 0);
 
 
-  ArrayList<index_t> resulting_neighbors_kd;
+  ArrayList<size_t> resulting_neighbors_kd;
   ArrayList<double> distances_kd;
-  ArrayList<index_t> resulting_neighbors_bf;
+  ArrayList<size_t> resulting_neighbors_bf;
   ArrayList<double> distances_bf;
 
 
@@ -91,7 +91,7 @@ int main(int argc, char *argv[]) {
   
   // Check correctness of kd tree's results
   if (check_kd_correctness) {
-    for(index_t i=0; i<resulting_neighbors_kd.size(); i++) {
+    for(size_t i=0; i<resulting_neighbors_kd.size(); i++) {
       TEST_ASSERT(resulting_neighbors_kd[i] == resulting_neighbors_bf[i]);
       TEST_DOUBLE_APPROX(distances_kd[i], distances_bf[i], 1e-5);
     }

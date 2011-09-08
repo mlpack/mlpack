@@ -34,10 +34,10 @@ template <typename MyTKernel> class NaiveKdeLP{
   //the vector diff
 
 
-  void GetVectorDifference_(double *vec1, double *vec2,index_t length,
+  void GetVectorDifference_(double *vec1, double *vec2,size_t length,
 			   Vector &diff){
     
-    for(index_t l=0;l<length;l++){
+    for(size_t l=0;l<length;l++){
 
       diff[l]=vec1[l]-vec2[l]; 
     }
@@ -81,7 +81,7 @@ template <typename MyTKernel> class NaiveKdeLP{
    //Calculate the sample variance of the reference set
 
    double sum=0;
-   for(index_t i=0;i<rset_.n_cols();i++){
+   for(size_t i=0;i<rset_.n_cols();i++){
 
      sum+=rset_.get(0,i);
    }
@@ -91,7 +91,7 @@ template <typename MyTKernel> class NaiveKdeLP{
    //Now calculate the variance
 
    double sqd_diff=0;
-   for(index_t i=0;i<rset_.n_cols();i++){
+   for(size_t i=0;i<rset_.n_cols();i++){
 
      sqd_diff+=pow(rset_.get(0,i)-mean,2);
    }
@@ -107,7 +107,7 @@ template <typename MyTKernel> class NaiveKdeLP{
 
  bool IsSamePoint_(Vector &diff){
 
-   for(index_t i=0;i<diff.length();i++){
+   for(size_t i=0;i<diff.length();i++){
      if(fabs(diff[i])>EPSILON){
 
        return false;
@@ -128,9 +128,9 @@ template <typename MyTKernel> class NaiveKdeLP{
    
    double mean_sqd_error=0.0;
    double boundary_mean_sqd_error=0;
-   index_t number_of_boundary_points=0;
+   size_t number_of_boundary_points=0;
    
-   for(index_t q=0;q<qset_.n_cols();q++){
+   for(size_t q=0;q<qset_.n_cols();q++){
      
      mean_sqd_error+=pow(density.get(0,q)-densities_[q],2);
      
@@ -182,15 +182,15 @@ template <typename MyTKernel> class NaiveKdeLP{
    diff.Init(rset_.n_rows());
    double density_val=0;
    
-   for(index_t q=0;q<qset_.n_cols();q++){ //for each query point
+   for(size_t q=0;q<qset_.n_cols();q++){ //for each query point
      
      //get the query point
      double *q_col=qset_.GetColumnPtr(q);
 
      density_val=0;
-     index_t number_of_contributions=0;
+     size_t number_of_contributions=0;
      
-     for(index_t r=0;r<rset_.n_cols();r++){ //for each reference point
+     for(size_t r=0;r<rset_.n_cols();r++){ //for each reference point
        
        //Get the reference point
        double *r_col=rset_.GetColumnPtr(r);
@@ -215,7 +215,7 @@ template <typename MyTKernel> class NaiveKdeLP{
    }
  }
 
- void Init(Matrix &query_set,Matrix &ref_set,double *bwidth,index_t len){
+ void Init(Matrix &query_set,Matrix &ref_set,double *bwidth,size_t len){
 
    printf("Came to initi function od naive kde local polynomial..\n");
 

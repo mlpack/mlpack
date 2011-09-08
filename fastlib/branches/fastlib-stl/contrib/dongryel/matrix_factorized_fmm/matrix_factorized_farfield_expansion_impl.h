@@ -30,12 +30,12 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   int num_reference_samples = end - begin;
   int num_query_samples = query_leaf_nodes->size();
 
-  ArrayList<index_t> tmp_outgoing_skeleton;
+  ArrayList<size_t> tmp_outgoing_skeleton;
   tmp_outgoing_skeleton.Init(num_reference_samples);
 
   // The temporary outgoing skeleton includes all of the reference
   // points.
-  for(index_t r = 0; r < num_reference_samples; r++) {
+  for(size_t r = 0; r < num_reference_samples; r++) {
     tmp_outgoing_skeleton[r] = begin + r;
   }
   num_reference_samples = tmp_outgoing_skeleton.size();
@@ -44,16 +44,16 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   // allocate the space for the sample kernel matrix to be computed.
   sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
 
-  for(index_t r = 0; r < num_reference_samples; r++) {
+  for(size_t r = 0; r < num_reference_samples; r++) {
 
     // The reference point...
     const double *reference_point =
       reference_set.GetColumnPtr(tmp_outgoing_skeleton[r]);
 
-    for(index_t c = 0; c < query_leaf_nodes->size(); c++) {
+    for(size_t c = 0; c < query_leaf_nodes->size(); c++) {
       
       // Choose a random query point from the current query strata...
-      index_t random_query_point_index =
+      size_t random_query_point_index =
 	math::RandInt(((*query_leaf_nodes)[c])->begin(),
 		      ((*query_leaf_nodes)[c])->end());
 
@@ -73,7 +73,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
 
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
-  ArrayList<index_t> column_indices, row_indices;
+  ArrayList<size_t> column_indices, row_indices;
   CURDecomposition::Compute(sample_kernel_matrix,
 			    &c_mat, &u_mat, &r_mat,
 			    &column_indices, &row_indices);
@@ -86,10 +86,10 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   la::MulInit(c_mat, u_mat, &intermediate_matrix);
   reconstruction_error.Copy(sample_kernel_matrix);
   la::MulExpert(-1.0, intermediate_matrix, r_mat, 1.0, &reconstruction_error);
-  for(index_t i = 0; i < reconstruction_error.n_rows(); i++) {
+  for(size_t i = 0; i < reconstruction_error.n_rows(); i++) {
     
     double row_sum = 0;
-    for(index_t j = 0; j < reconstruction_error.n_cols(); j++) {
+    for(size_t j = 0; j < reconstruction_error.n_cols(); j++) {
       row_sum += reconstruction_error.get(i, j) * weights[begin + j];
     }
 
@@ -101,7 +101,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   // The out-going skeleton is constructed from the sampled columns in
   // the matrix factorization.
   outgoing_skeleton_.Init(column_indices.size());
-  for(index_t s = 0; s < column_indices.size(); s++) {
+  for(size_t s = 0; s < column_indices.size(); s++) {
     outgoing_skeleton_[s] = tmp_outgoing_skeleton[column_indices[s]];
   }
 
@@ -110,13 +110,13 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   Matrix projection_operator;
   
   la::MulInit(u_mat, r_mat, &projection_operator);
-  for(index_t i = 0; i < c_mat.n_cols(); i++) {
+  for(size_t i = 0; i < c_mat.n_cols(); i++) {
     
     double scaling_factor = 
       (sample_kernel_matrix.get(0, column_indices[i]) < DBL_EPSILON) ?
       0:c_mat.get(0, i) / sample_kernel_matrix.get(0, column_indices[i]);
 
-    for(index_t j = 0; j < projection_operator.n_cols(); j++) {
+    for(size_t j = 0; j < projection_operator.n_cols(); j++) {
       projection_operator.set
 	(i, j, projection_operator.get(i, j) * scaling_factor);
     }
@@ -127,7 +127,7 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::AccumulateCoeffs
   outgoing_representation_.Init(outgoing_skeleton_.size());
   outgoing_representation_.SetZero();
 
-  for(index_t i = 0; i < end - begin; i++) {
+  for(size_t i = 0; i < end - begin; i++) {
 
     // Get the weight corresponding to the (i + begin)-th reference
     // point.
@@ -149,20 +149,20 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::CombineBasisFunctions
     farfield_expansion1.outgoing_representation();
   const Vector &outgoing_representation2 =
     farfield_expansion2.outgoing_representation();
-  const ArrayList<index_t> &outgoing_skeleton1 =
+  const ArrayList<size_t> &outgoing_skeleton1 =
     farfield_expansion1.outgoing_skeleton();
-  const ArrayList<index_t> &outgoing_skeleton2 =
+  const ArrayList<size_t> &outgoing_skeleton2 =
     farfield_expansion2.outgoing_skeleton();
 
   outgoing_representation_.Init(outgoing_representation1.length() + 
 				outgoing_representation2.length());
   outgoing_skeleton_.Init(outgoing_skeleton1.size() + 
 			  outgoing_skeleton2.size());
-  for(index_t i = 0; i < outgoing_representation1.length(); i++) {
+  for(size_t i = 0; i < outgoing_representation1.length(); i++) {
     outgoing_representation_[i] = outgoing_representation1[i];
     outgoing_skeleton_[i] = outgoing_skeleton1[i];
   }
-  for(index_t i = outgoing_representation1.length(); i < 
+  for(size_t i = outgoing_representation1.length(); i < 
 	outgoing_representation_.length(); i++) {
     outgoing_representation_[i] = 
       outgoing_representation2[i - outgoing_representation1.length()];
@@ -267,15 +267,15 @@ void MatrixFactorizedFarFieldExpansion<TKernelAux>::TranslateToLocal
   // that constitute the incoming skeleton and the outgoing skeleton
   // and multiplying the outgoing representation of the current
   // object.
-  const ArrayList<index_t> &incoming_skeleton = se.incoming_skeleton();
+  const ArrayList<size_t> &incoming_skeleton = se.incoming_skeleton();
   Vector &local_moments = se.coeffs();
 
-  for(index_t q = 0; q < incoming_skeleton.size(); q++) {
-    index_t query_point_id = incoming_skeleton[q];
+  for(size_t q = 0; q < incoming_skeleton.size(); q++) {
+    size_t query_point_id = incoming_skeleton[q];
     const double *query_point = query_set->GetColumnPtr(query_point_id);
 
-    for(index_t r = 0; r < outgoing_skeleton_.size(); r++) {
-      index_t reference_point_id = outgoing_skeleton_[r];
+    for(size_t r = 0; r < outgoing_skeleton_.size(); r++) {
+      size_t reference_point_id = outgoing_skeleton_[r];
       const double *reference_point = 
 	reference_set->GetColumnPtr(reference_point_id);
       double squared_distance = 

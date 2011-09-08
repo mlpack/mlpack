@@ -33,13 +33,13 @@ double SchwartzPrescreening::ComputeSchwartzIntegral_(BasisShell& mu,
 double SchwartzPrescreening::SchwartzBound_(BasisShell &mu, 
                                             BasisShell &nu) {
                                  
-  index_t i_funs = mu.num_functions();
-  index_t j_funs = nu.num_functions();
+  size_t i_funs = mu.num_functions();
+  size_t j_funs = nu.num_functions();
                                                                   
   double Q_mu_nu = -DBL_MAX;
-  for (index_t i = 0; i < i_funs; i++) {
+  for (size_t i = 0; i < i_funs; i++) {
   
-    for (index_t j = 0; j < j_funs; j++) {
+    for (size_t j = 0; j < j_funs; j++) {
       
       double this_Q = ComputeSchwartzIntegral_(mu, nu);
       
@@ -83,7 +83,7 @@ void SchwartzPrescreening::Compute() {
   fx_timer_start(module_, "prescreening_time");
   
   fx_timer_start(module_, "integral_time");
-  for (index_t a = 0; a < num_shell_pairs_; a++) {
+  for (size_t a = 0; a < num_shell_pairs_; a++) {
   
     ShellPair& A_pair = shell_pair_list_[a];
     
@@ -92,7 +92,7 @@ void SchwartzPrescreening::Compute() {
                     A_pair.N_Shell()->num_functions());
     coulomb_ij.SetZero();
   
-    for (index_t b = 0; b < num_shell_pairs_; b++) {
+    for (size_t b = 0; b < num_shell_pairs_; b++) {
     
       ShellPair& B_pair = shell_pair_list_[b];
 
@@ -103,16 +103,16 @@ void SchwartzPrescreening::Compute() {
       double density_bound = max(A_pair.density_bound(), B_pair.density_bound());
       printf("density_bound: %g\n", density_bound);
       
-      for (index_t k_ind = 0; k_ind < B_pair.M_Shell()->num_functions(); k_ind++) {
+      for (size_t k_ind = 0; k_ind < B_pair.M_Shell()->num_functions(); k_ind++) {
         
-        for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+        for (size_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
           
           density_bound = max(density_bound, 
                               0.25 * fabs(density_matrix_.ref(k_ind, i_ind)));
           
         } // i_ind
         
-        for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+        for (size_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
           
           density_bound = max(density_bound, 
                               0.25 * fabs(density_matrix_.ref(k_ind, j_ind)));
@@ -122,16 +122,16 @@ void SchwartzPrescreening::Compute() {
       } // for k_ind
       
       // should wrap this in a check to see if k and l are different to save time
-      for (index_t l_ind = 0; l_ind < B_pair.N_Shell()->num_functions(); l_ind++) {
+      for (size_t l_ind = 0; l_ind < B_pair.N_Shell()->num_functions(); l_ind++) {
         
-        for (index_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
+        for (size_t i_ind = 0; i_ind < A_pair.M_Shell()->num_functions(); i_ind++) {
           
           density_bound = max(density_bound, 
                               0.25 * fabs(density_matrix_.ref(l_ind, i_ind)));
           
         } // i_ind
         
-        for (index_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
+        for (size_t j_ind = 0; j_ind < A_pair.N_Shell()->num_functions(); j_ind++) {
           
           density_bound = max(density_bound, 
                               0.25 * fabs(density_matrix_.ref(l_ind, j_ind)));

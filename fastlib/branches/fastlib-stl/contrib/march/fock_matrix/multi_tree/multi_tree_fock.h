@@ -87,7 +87,7 @@ class MultiTreeFock {
   int num_coulomb_approximations_;
   int num_exchange_approximations_;
   
-  index_t num_integrals_computed_;
+  size_t num_integrals_computed_;
   
   // The number of times the base case is called
   int num_coulomb_base_cases_;
@@ -108,10 +108,10 @@ class MultiTreeFock {
   
   // The total number of basis functions
   // this is the dimensionality of the density matrix
-  index_t number_of_basis_functions_;
+  size_t number_of_basis_functions_;
   
   // Stores the permutation used in tree-building
-  ArrayList<index_t> old_from_new_shells_;
+  ArrayList<size_t> old_from_new_shells_;
   
   // Size of leaves in the tree
   int leaf_size_;
@@ -123,7 +123,7 @@ class MultiTreeFock {
   double bounds_cutoff_;
   
   // the number of times the schwartz bound works for a prune
-  index_t num_schwartz_prunes_;
+  size_t num_schwartz_prunes_;
   
   ArrayList<BasisShell> shell_list_;
   ArrayList<BasisShell*> shell_ptr_list_;
@@ -174,13 +174,13 @@ class MultiTreeFock {
    * PermuteMatrices and vectors
    */
   /*
-  void ApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
+  void ApplyPermutation(ArrayList<size_t>& old_from_new, Matrix* mat);
 
-  void ApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
+  void ApplyPermutation(ArrayList<size_t>& old_from_new, Vector* vec);
    
-  void UnApplyPermutation(ArrayList<index_t>& old_from_new, Matrix* mat);
+  void UnApplyPermutation(ArrayList<size_t>& old_from_new, Matrix* mat);
 
-  void UnApplyPermutation(ArrayList<index_t>& old_from_new, Vector* vec);
+  void UnApplyPermutation(ArrayList<size_t>& old_from_new, Vector* vec);
    */
 
   
@@ -216,7 +216,7 @@ class MultiTreeFock {
     fx_result_int(module_, "N", number_of_basis_functions_);
     
     shell_ptr_list_.Init(shell_list_.size());
-    for (index_t i = 0; i < shell_list_.size(); i++) {
+    for (size_t i = 0; i < shell_list_.size(); i++) {
       shell_ptr_list_[i] = &(shell_list_[i]);
     }
     
@@ -285,7 +285,7 @@ class MultiTreeFock {
   } // Destruct()
   
   // Should see how CFMM code unpermutes and use that
-  void GetPermutation(ArrayList<index_t>* perm) {
+  void GetPermutation(ArrayList<size_t>* perm) {
     perm->InitCopy(old_from_new_shells_);
   } // GetPermutation()
   
@@ -306,7 +306,7 @@ class MultiTreeFock {
    */
   void OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
                         Matrix* exchange_out, 
-                        ArrayList<index_t>* old_from_new);
+                        ArrayList<size_t>* old_from_new);
   
   void OutputCoulomb(Matrix* coulomb_out);
   

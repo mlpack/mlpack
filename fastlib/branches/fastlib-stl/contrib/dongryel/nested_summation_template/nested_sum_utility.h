@@ -7,7 +7,7 @@ class NestedSumUtility {
 
  public:
 
-  static double ComputeVariance(const Strata &strata, index_t stratum_number) {
+  static double ComputeVariance(const Strata &strata, size_t stratum_number) {
 
     /*
     // For each column, the zero-th row is the sum, and the first row
@@ -25,13 +25,13 @@ class NestedSumUtility {
   }
 
   static void OptimalAllocation(Strata &strata,
-				index_t total_num_samples_to_allocate) {
+				size_t total_num_samples_to_allocate) {
 
     /*
     // If this is the first time sampling the strata, then assign the
     // same number of samples.
     if(strata.total_num_samples_so_far == 0) {
-      for(index_t i = 0; i < strata.total_num_stratum; i++) {
+      for(size_t i = 0; i < strata.total_num_stratum; i++) {
 	strata.output_allocation_for_each_stratum[i] =
 	  total_samples_to_allocate;
       }
@@ -43,15 +43,15 @@ class NestedSumUtility {
     else {
       
       double denom = 0.0;
-      for(index_t i = 0; i < strata.total_num_stratum; i++) {
+      for(size_t i = 0; i < strata.total_num_stratum; i++) {
 	double variance_for_current_stratum = ComputeVariance(strata, i);
 	denom += strata.percentage_of_terms_in_each_stratum[i] *
 	  sqrt(variance_for_current_stratum);
       }
-      for(index_t i = 0; i < strata.total_num_stratum; i++) {
+      for(size_t i = 0; i < strata.total_num_stratum; i++) {
 	double variance_for_current_stratum = ComputeVariance(strata, i);
 	strata.output_allocation_for_each_stratum[i] = 
-	  std::min(1, (index_t) 
+	  std::min(1, (size_t) 
 		   ceil(total_num_samples_to_allocate * 
 			strata.percentage_of_terms_in_each_stratum[i] *
 			sqrt(variance_for_current_stratum) / denom));

@@ -72,7 +72,7 @@ void StartComputation(const Matrix &queries, const Matrix &references,
     // The maximum relative error.
     double max_relative_error = 0;
     int within_limit = 0;
-    for(index_t i = 0; i < queries.n_cols(); i++) {
+    for(size_t i = 0; i < queries.n_cols(); i++) {
       double relative_error =
         (naive_query_results.final_results[i] ==
          query_results.final_results[i]) ?
@@ -150,8 +150,8 @@ int main(int argc, char *argv[]) {
   reference_targets_transposed.Init(reference_targets.n_cols(),
 				    reference_targets.n_rows() * 2);
   
-  for(index_t r = 0; r < reference_targets.n_rows(); r++) {
-    for(index_t c = 0; c < reference_targets.n_cols(); c++) {
+  for(size_t r = 0; r < reference_targets.n_rows(); r++) {
+    for(size_t c = 0; c < reference_targets.n_cols(); c++) {
       
       reference_targets_transposed.set(c, r, reference_targets.get(r, c));
       reference_targets_transposed.set(c, 2 * r + 1, 1.0);

@@ -143,7 +143,7 @@ class NaiveLpr {
 
     // Compute unnormalized sum for the numerator vector and the
     // denominator matrix.
-    for(index_t q = 0; q < queries.n_cols(); q++) {
+    for(size_t q = 0; q < queries.n_cols(); q++) {
 
       // Initialize the temporary variables holding the sum.
       numerator.SetZero();
@@ -152,7 +152,7 @@ class NaiveLpr {
 
       // Get the query point.
       const double *q_col = queries.GetColumnPtr(q);
-      for(index_t r = 0; r < rset_.n_cols(); r++) {
+      for(size_t r = 0; r < rset_.n_cols(); r++) {
 
 	// Get the reference point and the reference target training
 	// value.
@@ -168,13 +168,13 @@ class NaiveLpr {
 	double kernel_value = kernels_[r].EvalUnnormOnSq(dsqd) / 
 	  kernels_[r].CalcNormConstant(dimension_);
 
-	for(index_t i = 0; i < total_num_coeffs_; i++) {
+	for(size_t i = 0; i < total_num_coeffs_; i++) {
 
 	  // Compute each component of the numerator matrix.
 	  numerator[i] += r_target * kernel_value * point_expansion[i];
 	  
 	  // Here, compute each component of the denominator matrix.
-	  for(index_t j = 0; j < total_num_coeffs_; j++) {
+	  for(size_t j = 0; j < total_num_coeffs_; j++) {
 	    denominator.set(j, i, denominator.get(j, i) +
 			    point_expansion[j] * point_expansion[i] * 
 			    kernel_value);
@@ -236,8 +236,8 @@ class NaiveLpr {
 	la::AddExpert(-rset_targets_[q] / norm_constant,
 		      point_expansion, &numerator);
 	
-	for(index_t j = 0; j < total_num_coeffs_; j++) {
-	  for(index_t i = 0; i < total_num_coeffs_; i++) {
+	for(size_t j = 0; j < total_num_coeffs_; j++) {
+	  for(size_t i = 0; i < total_num_coeffs_; i++) {
 	    denominator.set(i, j, denominator.get(i, j) -
 			    1.0 / norm_constant * point_expansion[i] *
 			    point_expansion[j]);
@@ -265,7 +265,7 @@ class NaiveLpr {
   void ComputeRootMeanSquareDeviation_() {
     
     root_mean_square_deviation_ = 0;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       
       double diff_regression = rset_targets_[i] - 
 	leave_one_out_rset_regression_estimates_[i];
@@ -284,7 +284,7 @@ class NaiveLpr {
     // Initialize the storage for the confidene bands.
     query_confidence_bands->Init(queries.n_cols());
     
-    for(index_t q = 0; q < queries.n_cols(); q++) {
+    for(size_t q = 0; q < queries.n_cols(); q++) {
       DRange &q_confidence_band = (*query_confidence_bands)[q];
       double spread;
       
@@ -312,7 +312,7 @@ class NaiveLpr {
     // magnitudes of the weight diagram vectors at each reference
     // point.
     rset_first_degree_of_freedom_ = rset_second_degree_of_freedom_ = 0;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       rset_first_degree_of_freedom_ += rset_influence_values_[i];
       rset_second_degree_of_freedom_ += rset_magnitude_weight_diagrams_[i] * 
 	rset_magnitude_weight_diagrams_[i];
@@ -322,7 +322,7 @@ class NaiveLpr {
     rset_variance_ = 0;
 
     // Loop over each reference point and add up the residual.
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       double prediction_error = rset_targets_[i] - 
 	rset_regression_estimates_[i];
       rset_variance_ += prediction_error * prediction_error;
@@ -393,7 +393,7 @@ class NaiveLpr {
       printf("Using the fixed bandwidth method...\n");
 
       double bandwidth = fx_param_double_req(NULL, "bandwidth");
-      for(index_t i = 0; i < kernels_.size(); i++) {	
+      for(size_t i = 0; i < kernels_.size(); i++) {	
 	kernels_[i].Init(bandwidth);
       }
     }
@@ -405,12 +405,12 @@ class NaiveLpr {
       printf("Each reference point will look for %d nearest neighbors...\n",
 	     knns);
       all_knn.Init(rset_, 20, knns);
-      ArrayList<index_t> resulting_neighbors;
+      ArrayList<size_t> resulting_neighbors;
       ArrayList<double> distances;
       
       all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
 
-      for(index_t i = 0; i < distances.size(); i += knns) {
+      for(size_t i = 0; i < distances.size(); i += knns) {
 	kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
       }
     }
@@ -550,7 +550,7 @@ class NaiveLpr {
     // Open the file stream for writing.
     stream = fopen(fname.c_str(), "w+");
 
-    for(index_t r = 0; r < rset_.n_cols(); r++) {
+    for(size_t r = 0; r < rset_.n_cols(); r++) {
       fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[r].lo,
 	      rset_regression_estimates_[r], rset_confidence_bands_[r].hi,
 	      leave_one_out_rset_regression_estimates_[r],

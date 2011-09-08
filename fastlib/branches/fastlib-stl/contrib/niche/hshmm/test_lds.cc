@@ -6,7 +6,7 @@ int main(int argc, char *argv[]) {
 
   if(argc < 3) {
     printf("USAGE: testlds suffix1 suffix2\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 
   
@@ -33,5 +33,5 @@ int main(int argc, char *argv[]) {
   fx_done(root);
   
 
-  return SUCCESS_PASS;
+  return true;
 }

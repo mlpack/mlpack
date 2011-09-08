@@ -26,7 +26,7 @@ int main(int argc, char *argv[]) {
   //Reguired input file
   const char* quadratic_term_file = fx_param_str_req(fx_root, "qdata");
   const char* linear_term_file = fx_param_str_req(fx_root, "ldata");
-  //index_t problem_id = fx_param_int_req(fx_root, "problem_id");
+  //size_t problem_id = fx_param_int_req(fx_root, "problem_id");
 
   Vector initial_x;
   Matrix quadratic_term;
@@ -34,11 +34,11 @@ int main(int argc, char *argv[]) {
   
   //fastlib only load data as Matrix
   Matrix initial_x_mat;
-  if (data::Load(initial_solution_file, &initial_x_mat)==SUCCESS_FAIL) {
+  if (data::Load(initial_solution_file, &initial_x_mat)==false) {
     FATAL("File %s not found", initial_solution_file);
   };  
   initial_x_mat.MakeColumnVector(0, &initial_x);
-  if (data::Load(quadratic_term_file, &quadratic_term)==SUCCESS_FAIL) {
+  if (data::Load(quadratic_term_file, &quadratic_term)==false) {
     FATAL("File %s not found", quadratic_term_file);
   } 
   Matrix linear_term_mat;

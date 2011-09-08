@@ -22,12 +22,12 @@ namespace proximity {
 
     /** @brief The beginning index of the point for each dataset.
      */
-    ArrayList<index_t> begin_;
+    ArrayList<size_t> begin_;
 
     /** @brief The number of points contained in this node for each
      *         dataset.
      */
-    ArrayList<index_t> count_;
+    ArrayList<size_t> count_;
 
     /** @brief The well-separated index for each dataset, i.e. the
      *         maximum WS index for the points for each group.
@@ -36,7 +36,7 @@ namespace proximity {
     
     /** @brief The total number of points for all the datasets.
      */
-    index_t total_count_;
+    size_t total_count_;
 
     bool init_flag_;
 
@@ -60,33 +60,33 @@ namespace proximity {
 
     ~CFmmWellSeparatedTree() {
       if(children_.size() > 0) {
-	for(index_t i = 0; i < children_.size(); i++) {
+	for(size_t i = 0; i < children_.size(); i++) {
 	  delete children_[i];
 	}
       }
     }
 
-    index_t num_children() const {
+    size_t num_children() const {
       return children_.size();
     }
 
     /** @brief Gets the index of the begin point of this subset.
      */
-    index_t begin(index_t particle_set_number) const {
+    size_t begin(size_t particle_set_number) const {
       return begin_[particle_set_number];
     }
     
     /** @brief Gets the index one beyond the last index in the series.
      */
-    index_t end(index_t particle_set_number) const {
+    size_t end(size_t particle_set_number) const {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
 
-    index_t count(index_t particle_set_number) const {
+    size_t count(size_t particle_set_number) const {
       return count_[particle_set_number];
     }
 
-    index_t count() const {
+    size_t count() const {
       return total_count_;
     }
 
@@ -100,7 +100,7 @@ namespace proximity {
       return children_.size() == 0;      
     }
 
-    void Init(index_t number_of_particle_sets, index_t dimension, 
+    void Init(size_t number_of_particle_sets, size_t dimension, 
 	      CFmmTree<TStatistics> *parent_in) {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
@@ -112,16 +112,16 @@ namespace proximity {
       init_flag_ = false;
     }
 
-    void Init(index_t particle_set_number, index_t begin_in, 
-	      index_t count_in) {
+    void Init(size_t particle_set_number, size_t begin_in, 
+	      size_t count_in) {
 
       begin_[particle_set_number] = begin_in;
       count_[particle_set_number] = count_in;
       total_count_ += count_in;
     }
     
-    CFmmTree<TStatistics> *AllocateNewChild(index_t number_of_particle_sets,
-					    index_t dimension, 
+    CFmmTree<TStatistics> *AllocateNewChild(size_t number_of_particle_sets,
+					    size_t dimension, 
 					    unsigned int node_index_in) {
       
       CFmmTree<TStatistics> *new_node = new CFmmTree<TStatistics>();
@@ -136,17 +136,17 @@ namespace proximity {
     void Print() const {
       if (!is_leaf()) {
 	printf("internal node: %d points total\n", total_count_);
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
-	for(index_t c = 0; c < children_.size(); c++) {
+	for(size_t c = 0; c < children_.size(); c++) {
 	  children_[c]->Print();
 	}
       }
       else {
 	printf("leaf node: %d points total\n", total_count_);
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
@@ -177,12 +177,12 @@ namespace proximity {
 
     /** @brief The beginning index of the point for each dataset.
      */
-    ArrayList<index_t> begin_;
+    ArrayList<size_t> begin_;
 
     /** @brief The number of points contained in this node for each
      *         dataset.
      */
-    ArrayList<index_t> count_;
+    ArrayList<size_t> count_;
 
     /** @brief The well-separated index for each dataset, i.e. the
      *         maximum WS index for the points for each group.
@@ -191,11 +191,11 @@ namespace proximity {
     
     /** @brief The total number of points for all the datasets.
      */
-    index_t total_count_;
+    size_t total_count_;
 
     /** @brief The current level of the tree.
      */
-    index_t level_;
+    size_t level_;
 
     /** @brief The global index of the node.
      */
@@ -227,7 +227,7 @@ namespace proximity {
     ~CFmmTree() {
       if(partitions_based_on_ws_indices_.size() > 0) {
 
-        for(index_t i = 0; i < partitions_based_on_ws_indices_.size(); i++) {
+        for(size_t i = 0; i < partitions_based_on_ws_indices_.size(); i++) {
           delete partitions_based_on_ws_indices_[i];
         }
       }
@@ -248,7 +248,7 @@ namespace proximity {
     bool is_leaf() const {
       if(partitions_based_on_ws_indices_.size() > 0) {
 	bool flag = true;
-	for(index_t i = 0; i < partitions_based_on_ws_indices_.size() && flag;
+	for(size_t i = 0; i < partitions_based_on_ws_indices_.size() && flag;
 	    i++) {	  
 	  flag = flag && (partitions_based_on_ws_indices_[i]->is_leaf());
 	}
@@ -259,7 +259,7 @@ namespace proximity {
       }
     }
 
-    void Init(index_t number_of_particle_sets, index_t dimension,
+    void Init(size_t number_of_particle_sets, size_t dimension,
 	      CFmmWellSeparatedTree<Statistics> *parent_in) {
 
       begin_.Init(number_of_particle_sets);
@@ -273,8 +273,8 @@ namespace proximity {
       init_flag_ = false;
     }
 
-    void Init(index_t particle_set_number, index_t begin_in, 
-	      index_t count_in) {
+    void Init(size_t particle_set_number, size_t begin_in, 
+	      size_t count_in) {
 
       begin_[particle_set_number] = begin_in;
       count_[particle_set_number] = count_in;
@@ -297,14 +297,14 @@ namespace proximity {
     /**
      * Gets the index of the begin point of this subset.
      */
-    index_t begin(index_t particle_set_number) const {
+    size_t begin(size_t particle_set_number) const {
       return begin_[particle_set_number];
     }
     
     /**
      * Gets the index one beyond the last index in the series.
      */
-    index_t end(index_t particle_set_number) const {
+    size_t end(size_t particle_set_number) const {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
 
@@ -312,22 +312,22 @@ namespace proximity {
       return node_index_;
     }
 
-    void set_level(index_t level) {
+    void set_level(size_t level) {
       level_ = level;
     }
 
-    index_t level() {
+    size_t level() {
       return level_;
     }
 
     /**
      * Gets the number of points in this subset.
      */
-    index_t count(index_t particle_set_number) const {
+    size_t count(size_t particle_set_number) const {
       return count_[particle_set_number];
     }
 
-    index_t count() const {
+    size_t count() const {
       return total_count_;
     }
 
@@ -346,14 +346,14 @@ namespace proximity {
 	printf("internal node: %d points total on level %d\n", total_count_,
 	       level_);
 	printf("  bound:\n");
-	for(index_t i = 0; i < bound_.dim(); i++) {
+	for(size_t i = 0; i < bound_.dim(); i++) {
 	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
 	}
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
-	for(index_t c = 0; c < partitions_based_on_ws_indices_.size(); c++) {
+	for(size_t c = 0; c < partitions_based_on_ws_indices_.size(); c++) {
 	  partitions_based_on_ws_indices_[c]->Print();
 	}
       }
@@ -361,10 +361,10 @@ namespace proximity {
 	printf("leaf node: %d points total on level %d\n", total_count_,
 	       level_);
 	printf("  bound:\n");
-	for(index_t i = 0; i < bound_.dim(); i++) {
+	for(size_t i = 0; i < bound_.dim(); i++) {
 	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
 	}
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
@@ -406,21 +406,21 @@ namespace proximity {
   template<typename TStatistic>
   CFmmTree<TStatistic> *MakeCFmmTree
   (ArrayList<Matrix *> &matrices, ArrayList<Vector *> &targets,
-   index_t leaf_size, index_t min_required_ws_index, index_t max_tree_depth,
+   size_t leaf_size, size_t min_required_ws_index, size_t max_tree_depth,
    ArrayList< ArrayList<CFmmTree<TStatistic> *> > 
    *nodes_in_each_level,
-   ArrayList< ArrayList<index_t> > *old_from_new = NULL,
-   ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
+   ArrayList< ArrayList<size_t> > *old_from_new = NULL,
+   ArrayList< ArrayList<size_t> > *new_from_old = NULL) {
 
   
     proximity::CFmmTree<TStatistic> *node = new proximity::CFmmTree<TStatistic>();
     if (old_from_new) {
       old_from_new->Init(matrices.size());
 
-      for(index_t j = 0; j < matrices.size(); j++) {
+      for(size_t j = 0; j < matrices.size(); j++) {
 	(*old_from_new)[j].Init(matrices[j]->n_cols());
 	
-	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	for (size_t i = 0; i < matrices[j]->n_cols(); i++) {
 	  (*old_from_new)[j][i] = i;
 	}
       }
@@ -428,7 +428,7 @@ namespace proximity {
     
     // Initialize the global list of nodes.
     nodes_in_each_level->Init(max_tree_depth + 1);
-    for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
+    for(size_t i = 0; i < nodes_in_each_level->size(); i++) {
       ((*nodes_in_each_level)[i]).Init();
     }
 
@@ -436,7 +436,7 @@ namespace proximity {
     node->Init(matrices.size(), matrices[0]->n_rows(), 
 	       (proximity::CFmmWellSeparatedTree<TStatistic> *) NULL);
     node->set_level(0);
-    for(index_t i = 0; i < matrices.size(); i++) {
+    for(size_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
     }
     
@@ -455,9 +455,9 @@ namespace proximity {
     if (new_from_old) {
       new_from_old->Init(matrices.size());
 
-      for(index_t j = 0; j < matrices.size(); j++) {
+      for(size_t j = 0; j < matrices.size(); j++) {
 	(*new_from_old)[j].Init(matrices[j]->n_cols());
-	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	for (size_t i = 0; i < matrices[j]->n_cols(); i++) {
 	  (*new_from_old)[j][(*old_from_new)[j][i]] = i;
 	}
       }

@@ -10,7 +10,7 @@
 #include "naive_alg.h"
 
 void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok, 
-                                         std::vector<index_t>& points_in_tuple,
+                                         std::vector<size_t>& points_in_tuple,
                                          int k) {
  
   std::vector<bool> permutation_ok_copy(permutation_ok);
@@ -57,9 +57,9 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
       permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
       
       // loop over points already in the tuple
-      for (index_t j = 0; this_point_works && j < k; j++) {
+      for (size_t j = 0; this_point_works && j < k; j++) {
         
-        index_t old_point = points_in_tuple[j];
+        size_t old_point = points_in_tuple[j];
         
         arma::colvec old_point_vec;
         if (j < num_random_) {
@@ -88,7 +88,7 @@ void npt::NaiveAlg::ComputeCountsHelper_(std::vector<bool>& permutation_ok,
           num_tuples_[num_random_]++;
           double this_weight = 1.0;
           
-          for (index_t tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
+          for (size_t tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
             
             this_weight *= random_weights_(points_in_tuple[tuple_ind]);
             
@@ -125,7 +125,7 @@ void npt::NaiveAlg::ComputeCounts() {
     
     std::vector<bool> permutation_ok(matcher_.num_permutations(), true);
     
-    std::vector<index_t> points_in_tuple(tuple_size_, -1);
+    std::vector<size_t> points_in_tuple(tuple_size_, -1);
     
     ComputeCountsHelper_(permutation_ok, points_in_tuple, 0);
         

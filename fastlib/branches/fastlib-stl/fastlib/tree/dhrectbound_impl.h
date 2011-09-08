@@ -30,7 +30,7 @@ DHrectBound<t_pow>::DHrectBound() {
  * set.
  */
 template<int t_pow>
-DHrectBound<t_pow>::DHrectBound(index_t dimension) {
+DHrectBound<t_pow>::DHrectBound(size_t dimension) {
   bounds_ = new DRange[dimension];
 
   dim_ = dimension;
@@ -64,7 +64,7 @@ void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
     delete[] bounds_;
   bounds_ = new DRange[dim_];
 
-  for (index_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++) {
     DRange range;
     range = box1.get(i) +  box2.get(i);
     range *= 0.5;
@@ -77,7 +77,7 @@ void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
  */
 template<int t_pow>
 void DHrectBound<t_pow>::Reset() {
-  for (index_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++) {
     bounds_[i].InitEmptySet();
   }
 }
@@ -86,7 +86,7 @@ void DHrectBound<t_pow>::Reset() {
  * Sets the dimensionality.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::SetSize(index_t dim) {
+void DHrectBound<t_pow>::SetSize(size_t dim) {
   if(bounds_)
     delete[] bounds_;
 
@@ -100,7 +100,7 @@ void DHrectBound<t_pow>::SetSize(index_t dim) {
  */
 template<int t_pow>
 bool DHrectBound<t_pow>::Contains(const vec& point) const {
-  for (index_t i = 0; i < point.n_elem; i++) {
+  for (size_t i = 0; i < point.n_elem; i++) {
     if (!bounds_[i].Contains(point(i))) {
       return false;
     }
@@ -113,7 +113,7 @@ bool DHrectBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectBound<t_pow>::operator[](index_t i) const {
+const DRange DHrectBound<t_pow>::operator[](size_t i) const {
   return bounds_[i];
 }
 
@@ -121,7 +121,7 @@ const DRange DHrectBound<t_pow>::operator[](index_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-DRange& DHrectBound<t_pow>::operator[](index_t i) {
+DRange& DHrectBound<t_pow>::operator[](size_t i) {
   return bounds_[i];
 }
 
@@ -131,7 +131,7 @@ DRange& DHrectBound<t_pow>::operator[](index_t i) {
 template<int t_pow>
 double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
   double max_distance = 0;
-  for (index_t i = 0; i < dim_; i++)
+  for (size_t i = 0; i < dim_; i++)
     max_distance += pow(bounds_[i].width(), 2);
 
   return max_distance;
@@ -144,7 +144,7 @@ void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
   if(!(centroid.n_elem == dim_))
     centroid.set_size(dim_);
 
-  for(index_t i = 0; i < dim_; i++) {
+  for(size_t i = 0; i < dim_; i++) {
     centroid(i) = bounds_[i].mid();
   }
 }
@@ -161,7 +161,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
   mlpack::IO::Assert(dim_ == other.dim_);
   //Add Debug for offset vector
 
-  for(index_t d = 0; d < dim_; d++) {
+  for(size_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].lo - offset[d] - bounds_[d].hi;
     double v2 = bounds_[d].lo + offset[d] - other.bounds_[d].lo;
 
@@ -184,7 +184,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
   const DRange* mbound = bounds_;
 
   double lower, higher;
-  for(index_t d = 0; d < dim_; d++) {
+  for(size_t d = 0; d < dim_; d++) {
     lower = mbound->lo - point[d]; // negative if point[d] > bounds_[d]
     higher = point[d] - mbound->hi; // negative if point[d] < bounds_[d]
 
@@ -217,7 +217,7 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
   const DRange* obound = other.bounds_;
 
   double lower, higher;
-  for (index_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++) {
     lower = obound->lo - mbound->hi;
     higher = mbound->lo - obound->hi;
     // We invoke the following:
@@ -242,7 +242,7 @@ double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
 
   mlpack::IO::Assert(point.n_elem == dim_);
 
-  for (index_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++) {
     double v = fabs(std::max(
       point[d] - bounds_[d].lo,
       bounds_[d].hi - point[d]));
@@ -262,7 +262,7 @@ double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
   mlpack::IO::Assert(dim_ == other.dim_);
 
   double v;
-  for(index_t d = 0; d < dim_; d++) {
+  for(size_t d = 0; d < dim_; d++) {
     v = fabs(std::max(
       other.bounds_[d].hi - bounds_[d].lo,
       bounds_[d].hi - other.bounds_[d].lo));
@@ -325,7 +325,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
   mlpack::IO::Assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
-  for (index_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++) {
     v1 = other.bounds_[d].lo - bounds_[d].hi;
     v2 = bounds_[d].lo - other.bounds_[d].hi;
     // one of v1 or v2 is negative
@@ -356,7 +356,7 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
   mlpack::IO::Assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
-  for(index_t d = 0; d < dim_; d++) {
+  for(size_t d = 0; d < dim_; d++) {
     v1 = bounds_[d].lo - point[d];
     v2 = point[d] - bounds_[d].hi;
     // one of v1 or v2 is negative
@@ -393,7 +393,7 @@ double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
 
   mlpack::IO::Assert(dim_ == other.dim_);
 
-  for (index_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++) {
     double v = other.bounds_[d].mid();
     double v1 = bounds_[d].lo - v;
     double v2 = v - bounds_[d].hi;
@@ -415,7 +415,7 @@ double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
 
   mlpack::IO::Assert(dim_ == other.dim_);
 
-  for(index_t d = 0; d < dim_; d++) {
+  for(size_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].hi - bounds_[d].hi;
     double v2 = bounds_[d].lo - other.bounds_[d].lo;
     double v = std::max(v1, v2);
@@ -435,7 +435,7 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
 
   mlpack::IO::Assert(dim_ == other.dim_);
 
-  for (index_t d = 0; d < dim_; d++) {
+  for (size_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
     // calculation speed) and subtract from each other, then raise to t_pow
     sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi -
@@ -454,7 +454,7 @@ template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
   mlpack::IO::Assert(vector.n_elem == dim_);
 
-  for (index_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++) {
     bounds_[i] |= vector[i];
   }
 
@@ -468,7 +468,7 @@ template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
   mlpack::IO::Assert(other.dim_ == dim_);
 
-  for (index_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++) {
     bounds_[i] |= other.bounds_[i];
   }
 
@@ -485,12 +485,12 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
   mlpack::IO::Assert(other.n_elem == dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
-    for (index_t i = 0; i < dim_; i++){
+    for (size_t i = 0; i < dim_; i++){
       bounds_[i] |= other[i];
     }
   }
 
-  for (index_t i= 0; i < dim_; i++){
+  for (size_t i= 0; i < dim_; i++){
     double ah, al;
     ah = bounds_[i].hi - other[i];
     al = bounds_[i].lo - other[i];
@@ -514,12 +514,12 @@ template<int t_pow>
 DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
                                             const vec& size){
   if (bounds_[0].hi < 0){
-    for (index_t i = 0; i < dim_; i++){
+    for (size_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];
     }
   }
 
-  for (index_t i = 0; i < dim_; i++) {
+  for (size_t i = 0; i < dim_; i++) {
     double ah, al, bh, bl;
     ah = bounds_[i].hi;
     al = bounds_[i].lo;

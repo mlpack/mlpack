@@ -14,12 +14,12 @@ class MultiTreeUtility {
 
   /** @brief Implements Knuth's random combination selector algorithm.
    */
-  static void RandomCombination(index_t begin_inclusive, 
-				index_t end_exclusive, index_t num_times, 
-				index_t *output) {
+  static void RandomCombination(size_t begin_inclusive, 
+				size_t end_exclusive, size_t num_times, 
+				size_t *output) {
     
-    index_t t = 0, m = 0;
-    index_t range = end_exclusive - begin_inclusive;
+    size_t t = 0, m = 0;
+    size_t range = end_exclusive - begin_inclusive;
 
     do {
       double u = math::Random();
@@ -40,12 +40,12 @@ class MultiTreeUtility {
 
   template<typename Tree>
   static void RandomTuple(const ArrayList<Tree *> &nodes,
-			  ArrayList<index_t> &random_permutation) {
+			  ArrayList<size_t> &random_permutation) {
 
-    for(index_t block_pointer = 0; block_pointer < nodes.size(); ) {
+    for(size_t block_pointer = 0; block_pointer < nodes.size(); ) {
       
       // Figure out how many blocks of nodes are equal.
-      index_t saved_block_pointer = block_pointer;
+      size_t saved_block_pointer = block_pointer;
       do {
 	block_pointer++;
       } while(nodes[block_pointer] == nodes[saved_block_pointer]);
@@ -59,11 +59,11 @@ class MultiTreeUtility {
   }
 
   static void ShuffleAccordingToQueryPermutation
-  (Matrix &v, const ArrayList<index_t> &permutation) {
+  (Matrix &v, const ArrayList<size_t> &permutation) {
     
     Matrix v_tmp;
     la::TransposeInit(v, &v_tmp);
-    for(index_t i = 0; i < v.n_rows(); i++) {
+    for(size_t i = 0; i < v.n_rows(); i++) {
       Vector column_vector;
       v_tmp.MakeColumnVector(i, &column_vector);
       ShuffleAccordingToQueryPermutation(column_vector, permutation);
@@ -77,22 +77,22 @@ class MultiTreeUtility {
    *  @param permutation The permutation.
    */
   static void ShuffleAccordingToPermutation
-  (Vector &v, const ArrayList<index_t> &permutation) {
+  (Vector &v, const ArrayList<size_t> &permutation) {
     
     Vector v_tmp;
     v_tmp.Init(v.length());
-    for(index_t i = 0; i < v_tmp.length(); i++) {
+    for(size_t i = 0; i < v_tmp.length(); i++) {
       v_tmp[i] = v[permutation[i]];
     }
     v.CopyValues(v_tmp);
   }
 
   static void ShuffleAccordingToQueryPermutation
-  (Vector &v, const ArrayList<index_t> &permutation) {
+  (Vector &v, const ArrayList<size_t> &permutation) {
     
     Vector v_tmp;
     v_tmp.Init(v.length());
-    for(index_t i = 0; i < v_tmp.length(); i++) {
+    for(size_t i = 0; i < v_tmp.length(); i++) {
       v_tmp[permutation[i]] = v[i];
     }
     v.CopyValues(v_tmp);
@@ -104,9 +104,9 @@ class MultiTreeUtility {
    *  @param permutation The permutation.
    */
   static void ShuffleAccordingToPermutation
-  (Matrix &v, const ArrayList<index_t> &permutation) {
+  (Matrix &v, const ArrayList<size_t> &permutation) {
     
-    for(index_t c = 0; c < v.n_cols(); c++) {
+    for(size_t c = 0; c < v.n_cols(); c++) {
       Vector column_vector;
       v.MakeColumnVector(c, &column_vector);
       ShuffleAccordingToPermutation(column_vector, permutation);

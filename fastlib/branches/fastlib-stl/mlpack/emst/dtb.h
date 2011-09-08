@@ -40,7 +40,7 @@ FX_SUBMODULE_DOC_DONE
 class DTBStat { 
  private:
   double max_neighbor_distance_;
-  index_t component_membership_;
+  size_t component_membership_;
   
  public:
   void set_max_neighbor_distance(double distance) {
@@ -51,11 +51,11 @@ class DTBStat {
     return max_neighbor_distance_;
   }
   
-  void set_component_membership(index_t membership) {
+  void set_component_membership(size_t membership) {
     component_membership_ = membership;
   }
   
-  index_t component_membership() {
+  size_t component_membership() {
     return component_membership_; 
   }
   
@@ -70,7 +70,7 @@ class DTBStat {
   /**
     * An initializer for leaves.
    */
-  DTBStat(const arma::mat& dataset, index_t start, index_t count) {
+  DTBStat(const arma::mat& dataset, size_t start, size_t count) {
     if (count == 1) {
       set_component_membership(start);
       set_max_neighbor_distance(DBL_MAX);
@@ -83,7 +83,7 @@ class DTBStat {
   /**
     * An initializer for non-leaves.  Simply calls the leaf initializer.
    */
-  DTBStat(const arma::mat& dataset, index_t start, index_t count,
+  DTBStat(const arma::mat& dataset, size_t start, size_t count,
           const DTBStat& left_stat, const DTBStat& right_stat) {
     if (count == 1) {
       set_component_membership(start);
@@ -106,7 +106,7 @@ class DualTreeBoruvka {
   
  public:
   // For now, everything is in Euclidean space
-  static const index_t metric = 2;
+  static const size_t metric = 2;
 
   typedef tree::BinarySpaceTree<DHrectBound<metric>, DTBStat> DTBTree;
   
@@ -114,29 +114,29 @@ class DualTreeBoruvka {
   
  private:
   
-  index_t number_of_edges_;
+  size_t number_of_edges_;
   std::vector<EdgePair> edges_; // must use vector with non-numerical types
-  index_t number_of_points_;
+  size_t number_of_points_;
   UnionFind connections_;
   struct datanode* module_;
   arma::mat data_points_;
-  index_t leaf_size_;
+  size_t leaf_size_;
   
   // lists
-  std::vector<index_t> old_from_new_permutation_;
-  arma::Col<index_t> neighbors_in_component_;
-  arma::Col<index_t> neighbors_out_component_;
+  std::vector<size_t> old_from_new_permutation_;
+  arma::Col<size_t> neighbors_in_component_;
+  arma::Col<size_t> neighbors_out_component_;
   arma::vec neighbors_distances_;
 
   // output info
   double total_dist_;
-  index_t number_of_loops_;
-  index_t number_distance_prunes_;
-  index_t number_component_prunes_;
-  index_t number_leaf_computations_;
-  index_t number_q_recursions_;
-  index_t number_r_recursions_;
-  index_t number_both_recursions_;
+  size_t number_of_loops_;
+  size_t number_distance_prunes_;
+  size_t number_component_prunes_;
+  size_t number_leaf_computations_;
+  size_t number_q_recursions_;
+  size_t number_r_recursions_;
+  size_t number_both_recursions_;
   
   int do_naive_;
   
@@ -162,7 +162,7 @@ class DualTreeBoruvka {
   /**
   * Adds a single edge to the edge list
    */
-  void AddEdge_(index_t e1, index_t e2, double distance) {
+  void AddEdge_(size_t e1, size_t e2, double distance) {
     
     //EdgePair edge;
     mlpack::IO::AssertMessage((e1 != e2), 
@@ -188,10 +188,10 @@ class DualTreeBoruvka {
    */
   void AddAllEdges_() {
     
-    for (index_t i = 0; i < number_of_points_; i++) {
-      index_t component_i = connections_.Find(i);
-      index_t in_edge_i = neighbors_in_component_[component_i];
-      index_t out_edge_i = neighbors_out_component_[component_i];
+    for (size_t i = 0; i < number_of_points_; i++) {
+      size_t component_i = connections_.Find(i);
+      size_t in_edge_i = neighbors_in_component_[component_i];
+      size_t out_edge_i = neighbors_out_component_[component_i];
       if (connections_.Find(in_edge_i) != connections_.Find(out_edge_i)) {
         double dist = neighbors_distances_[component_i];
         //total_dist_ = total_dist_ + dist;
@@ -208,25 +208,25 @@ class DualTreeBoruvka {
   /** 
     * Handles the base case computation.  Also called by naive.
   */
-  double ComputeBaseCase_(index_t query_start, index_t query_end, 
-                          index_t reference_start, index_t reference_end) {
+  double ComputeBaseCase_(size_t query_start, size_t query_end, 
+                          size_t reference_start, size_t reference_end) {
     
     number_leaf_computations_++;
     
     double new_upper_bound = -1.0;
     
-    for (index_t query_index = query_start; query_index < query_end;
+    for (size_t query_index = query_start; query_index < query_end;
          query_index++) {
       
       // Find the index of the component the query is in
-      index_t query_component_index = connections_.Find(query_index);
+      size_t query_component_index = connections_.Find(query_index);
       
       arma::vec query_point = data_points_.col(query_index);
       
-      for (index_t reference_index = reference_start; 
+      for (size_t reference_index = reference_start; 
            reference_index < reference_end; reference_index++) {
         
-        index_t reference_component_index = connections_.Find(reference_index);
+        size_t reference_component_index = connections_.Find(reference_index);
         
         if (query_component_index != reference_component_index) {
           
@@ -429,7 +429,7 @@ class DualTreeBoruvka {
     results.set_size(3, number_of_edges_);
     
     if (!do_naive_) {
-      for (index_t i = 0; i < (number_of_points_ - 1); i++) {
+      for (size_t i = 0; i < (number_of_points_ - 1); i++) {
         
         edges_[i].set_lesser_index(old_from_new_permutation_[edges_[i]
           .lesser_index()]);
@@ -445,7 +445,7 @@ class DualTreeBoruvka {
     }
     else {
       
-      for (index_t i = 0; i < number_of_edges_; i++) {
+      for (size_t i = 0; i < number_of_edges_; i++) {
         results(0, i) = edges_[i].lesser_index();
         results(1, i) = edges_[i].greater_index();
         results(2, i) = sqrt(edges_[i].distance());
@@ -478,9 +478,9 @@ class DualTreeBoruvka {
     }
     else {
       
-      index_t new_membership = connections_.Find(tree->begin());
+      size_t new_membership = connections_.Find(tree->begin());
       
-      for (index_t i = tree->begin(); i < tree->end(); i++) {
+      for (size_t i = tree->begin(); i < tree->end(); i++) {
         if (new_membership != connections_.Find(i)) {
           new_membership = -1;
           mlpack::IO::Assert(tree->stat().component_membership() < 0);
@@ -498,7 +498,7 @@ class DualTreeBoruvka {
    */
   void Cleanup_() {
     
-    for (index_t i = 0; i < number_of_points_; i++) {
+    for (size_t i = 0; i < number_of_points_; i++) {
       neighbors_distances_[i] = DBL_MAX;
       //DEBUG_ONLY(neighbors_in_component_[i] = BIG_BAD_NUMBER);
       //DEBUG_ONLY(neighbors_out_component_[i] = BIG_BAD_NUMBER);
@@ -542,7 +542,7 @@ class DualTreeBoruvka {
   
  public: 
     
-  index_t number_of_edges() {
+  size_t number_of_edges() {
     return number_of_edges_;
   }
 
@@ -566,7 +566,7 @@ class DualTreeBoruvka {
       // This gives best pruning empirically
       // Use leaf_size=1 unless space is a big concern
       IO::GetParam<int>("tree/leaf_size") =
-          IO::GetParam<index_t>("naive/leaf_size");
+          IO::GetParam<size_t>("naive/leaf_size");
       
       IO::StartTimer("naive/tree_building");
 
@@ -635,6 +635,6 @@ class DualTreeBoruvka {
 }; // namespace emst
 }; // namespace mlpack
 
-PARAM(index_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
+PARAM(size_t, "leaf_size", "Size of the leaves.", "naive", 1, false);
 
 #endif // inclusion guards

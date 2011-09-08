@@ -11,7 +11,7 @@
 
 // TODO: try a reference?
 void npt::Permutations::GeneratePermutations_(int k, int* perm_index,
-                                              arma::Col<index_t>& trial_perm) {
+                                              arma::Col<size_t>& trial_perm) {
 
   // simple bounds check
   if (*perm_index >= num_perms_) {
@@ -19,12 +19,12 @@ void npt::Permutations::GeneratePermutations_(int k, int* perm_index,
   } 
 
   // Iterate over all points (i.e. everything that might be in the permutation)
-  for (index_t i = 0; i < tuple_size_; i++) {
+  for (size_t i = 0; i < tuple_size_; i++) {
     
     bool perm_ok = true;
     
     // Iterate over everything already in trial_perm
-    for (index_t j = 0; perm_ok && j < k; j++) {
+    for (size_t j = 0; perm_ok && j < k; j++) {
       
       // Did we already use j in this one?  Then don't use it again.
       if (trial_perm[j] == i) {

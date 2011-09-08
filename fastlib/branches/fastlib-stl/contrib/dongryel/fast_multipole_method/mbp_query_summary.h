@@ -36,7 +36,7 @@ class MultiTreeQuerySummary {
   }
 
   template<typename TQueryResult>
-  void Accumulate(const TQueryResult &query_results, index_t q_index) {
+  void Accumulate(const TQueryResult &query_results, size_t q_index) {
     negative_potential_bound |= query_results.
       negative_potential_bound[q_index];
     positive_potential_bound |= query_results.
@@ -47,51 +47,51 @@ class MultiTreeQuerySummary {
 
   template<typename TGlobal, typename TQueryResult>
   void PostAccumulate(TGlobal &globals, const TQueryResult &query_results,
-		      index_t first, index_t count) {
+		      size_t first, size_t count) {
 
     // Sort the negative potentials and get something in the upper
     // quantile.
-    for(index_t i = first; i < first + count; i++) {
+    for(size_t i = first; i < first + count; i++) {
       globals.tmp_space[i] = query_results.negative_potential_bound[i].hi;
     }
     qsort(globals.tmp_space.ptr() + first, count, sizeof(double), 
 	  &qsort_compar);
     negative_potential_bound.hi = 
-      globals.tmp_space[std::max(first, (index_t) 
+      globals.tmp_space[std::max(first, (size_t) 
 				 (first + count - 1 - 
 				  globals.percentile * count))];
 
     // Sort the positive potentials and get something in the lower
     // quantile.
-    for(index_t i = first; i < first + count; i++) {
+    for(size_t i = first; i < first + count; i++) {
       globals.tmp_space[i] = query_results.positive_potential_bound[i].lo;
     }
     qsort(globals.tmp_space.ptr() + first, count, sizeof(double), 
 	  &qsort_compar);
     positive_potential_bound.lo = 
-      globals.tmp_space[std::min((index_t)
+      globals.tmp_space[std::min((size_t)
 				 (first + globals.percentile * count),
 				  first + count - 1)];
 
     // Sort the pruned counts and get something in the lower quantile.
-    for(index_t i = first; i < first + count; i++) {
+    for(size_t i = first; i < first + count; i++) {
       globals.tmp_space[i] = query_results.n_pruned[i];
     }
     qsort(globals.tmp_space.ptr() + first, count, sizeof(double),
 	  &qsort_compar);
     n_pruned_l = 
-      globals.tmp_space[std::min((index_t)
+      globals.tmp_space[std::min((size_t)
 				 (first + globals.percentile * count),
 				 first + count - 1)];
 
     // Sort the used error and get something in the upper quantile.
-    for(index_t i = first; i < first + count; i++) {
+    for(size_t i = first; i < first + count; i++) {
       globals.tmp_space[i] = query_results.used_error[i];
     }
     qsort(globals.tmp_space.ptr() + first, count, sizeof(double),
 	  &qsort_compar);
     used_error_u = globals.tmp_space[std::max(first, 
-					      (index_t)
+					      (size_t)
 					      (first + count - 1 -
 					       globals.percentile * count))];
   }
@@ -103,7 +103,7 @@ class MultiTreeQuerySummary {
     used_error_u = 0;
   }
     
-  void ApplyDelta(const MultiTreeDelta &delta_in, index_t delta_index) {
+  void ApplyDelta(const MultiTreeDelta &delta_in, size_t delta_index) {
     negative_potential_bound += 
       delta_in.negative_potential_bound[delta_index];
     positive_potential_bound +=

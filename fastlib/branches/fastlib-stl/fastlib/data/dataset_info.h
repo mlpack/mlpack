@@ -39,12 +39,12 @@ class DatasetInfo {
   }
 
   /** Gets information about a particular feature. */
-  const DatasetFeature& feature(index_t attrib_num) const {
+  const DatasetFeature& feature(size_t attrib_num) const {
     return features_[attrib_num];
   }
 
   /** Gets the number of features. */
-  index_t n_features() const {
+  size_t n_features() const {
     return features_.size();
   }
 
@@ -69,7 +69,7 @@ class DatasetInfo {
    * @param n_features the number of continuous features
    * @param name_in the dataset title
    */
-  void InitContinuous(index_t n_features, 
+  void InitContinuous(size_t n_features, 
                       const std::string& name_in = "dataset");
 
   /**
@@ -124,7 +124,7 @@ class DatasetInfo {
    * This will read only the header information and leave the reader at the
    * first line of data.
    */
-  success_t InitFromArff(TextLineReader& reader,
+  bool InitFromArff(TextLineReader& reader,
       const std::string& filename = "dataset");
 
   /**
@@ -134,7 +134,7 @@ class DatasetInfo {
    *
    * InitFromFile will automatically detect this.
    */
-  success_t InitFromCsv(TextLineReader& reader,
+  bool InitFromCsv(TextLineReader& reader,
       const std::string& filename = "dataset");
 
   /**
@@ -144,7 +144,7 @@ class DatasetInfo {
    * left at the first line of actual data.
    * You can then read the data with matrix.
    */
-  success_t InitFromFile(TextLineReader& reader,
+  bool InitFromFile(TextLineReader& reader,
       const std::string& filename = "dataset");
 
   /**
@@ -156,7 +156,7 @@ class DatasetInfo {
    * @param reader the reader to get lines from
    * @param matrix the matrix to store text into
    */
-  success_t ReadMatrix(TextLineReader& reader, arma::mat& matrix) const;
+  bool ReadMatrix(TextLineReader& reader, arma::mat& matrix) const;
 
   /**
    * Reads a single vector.
@@ -169,11 +169,11 @@ class DatasetInfo {
    *        function returns failure!
    * @return whether reading the line was successful
    */
-  success_t ReadPoint(TextLineReader& reader, arma::mat::col_iterator col,
+  bool ReadPoint(TextLineReader& reader, arma::mat::col_iterator col,
       bool& is_done) const;
 
  private:
-  index_t SkipSpace_(std::string& s);
+  size_t SkipSpace_(std::string& s);
   char *SkipNonspace_(char *s);
   void SkipBlanks_(TextLineReader& reader);
 };

@@ -114,7 +114,7 @@ int main(int argc, char* argv[]) {
   
   Matrix naive_results_mat;
   
-  if (data::Load(output, &naive_results_mat) == SUCCESS_FAIL) {
+  if (data::Load(output, &naive_results_mat) == false) {
     // printf("failed to load");
     
     NaiveKernelSum naive;

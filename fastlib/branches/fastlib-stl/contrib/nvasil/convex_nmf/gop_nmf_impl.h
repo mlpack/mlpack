@@ -36,10 +36,10 @@ const fx_module_doc gop_nmf_engine_doc = {
 
 
 
-void RelaxedNmf::Init(ArrayList<index_t> &rows,
-    ArrayList<index_t> &columns,
+void RelaxedNmf::Init(ArrayList<size_t> &rows,
+    ArrayList<size_t> &columns,
     ArrayList<double> &values,
-    index_t new_dim,
+    size_t new_dim,
     double grad_tolerance,
     Matrix &x_lower_bound,
     Matrix &x_upper_bound) {
@@ -62,13 +62,13 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
   // and compute the soft lower bound
   a_linear_term_.Init(new_dimension_*values_.size());
   b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_[new_dimension_*i+j]=
@@ -85,8 +85,8 @@ void RelaxedNmf::Init(ArrayList<index_t> &rows,
   }
 }
 void RelaxedNmf::Init(fx_module *module,
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
+            ArrayList<size_t> &rows,
+            ArrayList<size_t> &columns,
             ArrayList<double> &values,
             Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
             Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
@@ -117,17 +117,17 @@ void RelaxedNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   fx_timer_start(NULL, "gradient");
   gradient->SetAll(0.0);
   // gradient from the objective
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
      // convex_part+=ComputeExpTaylorApproximation(coordinates.get(j, w)+coordinates.get(j, h), 10);
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*b_linear_term_[new_dimension_*i+j];
@@ -141,13 +141,13 @@ void RelaxedNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 void RelaxedNmf::ComputeObjective(Matrix &coordinates, double *objective) {
   fx_timer_start(NULL, "objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       *objective+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
                                 +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -164,30 +164,30 @@ void RelaxedNmf::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
   } 
   // for debuging
 /*  double dummy_objective=0;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double error=values_[i];
     Vector temp1;
     Vector temp2;
     temp1.Init(new_dimension_);
     temp2.Init(new_dimension_);
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       temp1[j]=exp(coordinates.get(j, w));
       temp2[j]=exp(coordinates.get(j, h));
     }
@@ -222,8 +222,8 @@ void RelaxedNmf::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmf::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+  for(size_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(size_t j=0; j<x_lower_bound_.n_cols(); j++) {
       if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
         coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
@@ -242,8 +242,8 @@ void RelaxedNmf::set_sigma(double sigma) {
 
 void RelaxedNmf::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -310,11 +310,11 @@ bool RelaxedNmf::IsInfeasible() {
   return false;
 }
 
-inline double RelaxedNmf::ComputeExpTaylorApproximation(double x, index_t order) {
+inline double RelaxedNmf::ComputeExpTaylorApproximation(double x, size_t order) {
   double value=1.0;
   double factorial=1.0;
   double power=1.0;
-  for(index_t i=0; i<order; i++) {
+  for(size_t i=0; i<order; i++) {
     power*=power;
     factorial*=i;
     value+=power/factorial; 
@@ -325,8 +325,8 @@ inline double RelaxedNmf::ComputeExpTaylorApproximation(double x, index_t order)
 ///////////////////////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////
 void RelaxedRescaledNmfL1::Init(fx_module *module,
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
+            ArrayList<size_t> &rows,
+            ArrayList<size_t> &columns,
             ArrayList<double> &values,
             Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
             Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
@@ -354,9 +354,9 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
   a_linear_term_exp_.Init(new_dimension_*(num_of_rows_+num_of_columns_));
   b_linear_term_exp_.Init(new_dimension_*(num_of_rows_+num_of_columns_));
   // relaxations for exp(w_i) terms 
-  for(index_t i=0; i<num_of_columns_; i++) {
-    index_t w=w_offset_+i;
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
+    size_t w=w_offset_+i;
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w);
       double y_upper=x_upper_bound_.get(j, w);      
       a_linear_term_exp_[w*new_dimension_+j]=     
@@ -366,9 +366,9 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
     }
   }
   // relaxations for exp(h_i) terms
-  for(index_t i=0; i<num_of_rows_; i++) {
-    index_t h=h_offset_+i;
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_rows_; i++) {
+    size_t h=h_offset_+i;
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, h);      
       a_linear_term_exp_[h*new_dimension_+j]=     
@@ -378,14 +378,14 @@ void RelaxedRescaledNmfL1::Init(fx_module *module,
     }
   }
   // relaxations for exp(w_i+h_i) terms plus soft lower bound computation
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double left_ineq=0;
     double right_ineq=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_dot_prod_[new_dimension_*i+j]=
@@ -444,14 +444,14 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
   grad_epsilons.Alias(gradient->GetColumnPtr(e_offset_), values_.size());
   grad_epsilons.SetAll(sigma_);
   // gradient from the objective
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double left_ineq=0;
     double right_ineq=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       right_ineq+=+a_linear_term_dot_prod_[i*new_dimension_+j]
                    +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(coordinates.get(j, w) + coordinates.get(j, h))
@@ -476,7 +476,7 @@ void RelaxedRescaledNmfL1::ComputeGradient(Matrix &coordinates, Matrix *gradient
     DEBUG_ASSERT_MSG(left_ineq>0, "Something is wrong we are out of the interior");
     DEBUG_ASSERT_MSG(right_ineq>0, "Something is wrong we are out of the interior");
 
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad_w=math::Sqr(SCALE_FACTOR)*(
                     (-b_linear_term_dot_prod_[i*new_dimension_+j]
                       +LOWER_BOUND*exp(coordinates.get(j, w)))/right_ineq
@@ -503,7 +503,7 @@ void RelaxedRescaledNmfL1::ComputeObjective(Matrix &coordinates, double *objecti
   *objective=0.0;
   Vector epsilons;
   epsilons.Alias(coordinates.GetColumnPtr(e_offset_), values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     *objective+=epsilons[i];
   } 
   fx_timer_stop(NULL, "objective");
@@ -513,13 +513,13 @@ void RelaxedRescaledNmfL1::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double ineq=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       ineq+=exp(coordinates.get(j, w) + coordinates.get(j, h))
             -LOWER_BOUND*(exp(coordinates.get(j, w)) + exp(coordinates.get(j, h)));
 
@@ -545,14 +545,14 @@ double RelaxedRescaledNmfL1::ComputeLagrangian(Matrix &coordinates) {
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double dot_prod=1.0;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double left_ineq=0;
     double right_ineq=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       right_ineq+= +a_linear_term_dot_prod_[i*new_dimension_+j]
                    +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(coordinates.get(j, w) + coordinates.get(j, h))
@@ -590,8 +590,8 @@ void RelaxedRescaledNmfL1::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       if (coordinates->get(j, i) < x_lower_bound_.get(j, i)) {
         coordinates->set(j, i, x_lower_bound_.get(j, i));
       } else {
@@ -603,7 +603,7 @@ void RelaxedRescaledNmfL1::Project(Matrix *coordinates) {
   }
 /*  Vector epsilons;
   epsilons.Alias(coordinates->GetColumnPtr(e_offset_), values_.size());
-  for(index_t i=0; i<epsilons.length(); i++) {
+  for(size_t i=0; i<epsilons.length(); i++) {
     if (epsilons[i]<0) {
       epsilons[i]=0;
     }
@@ -617,13 +617,13 @@ void RelaxedRescaledNmfL1::set_sigma(double sigma) {
 }
 
 void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
-  index_t epsilon_columns=values_.size()/new_dimension_+1;
+  size_t epsilon_columns=values_.size()/new_dimension_+1;
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_+epsilon_columns);
   // very important there are some epsilons in the end that are not used
   // and they are initialized with nan , that crashes everything
   init_data->SetAll(0.0);
-  for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       init_data->set(j, i, 
           (x_lower_bound_.get(j, i) + x_upper_bound_.get(j, i))/2);
     }
@@ -631,14 +631,14 @@ void RelaxedRescaledNmfL1::GiveInitMatrix(Matrix *init_data) {
   Vector epsilons;
   epsilons.Alias(init_data->GetColumnPtr(e_offset_), values_.size());
 
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double left_ineq=0;
     double right_ineq=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       right_ineq+= -(+a_linear_term_dot_prod_[i*new_dimension_+j]
                      +b_linear_term_dot_prod_[i*new_dimension_+j]
                       *(init_data->get(j, w) + init_data->get(j, h)))
@@ -724,10 +724,10 @@ bool RelaxedRescaledNmfL1::IsInfeasible() {
 
 /////////////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////////
-void RelaxedNmf1::Init(ArrayList<index_t> &rows,
-    ArrayList<index_t> &columns,
+void RelaxedNmf1::Init(ArrayList<size_t> &rows,
+    ArrayList<size_t> &columns,
     ArrayList<double> &values,
-    index_t new_dim,
+    size_t new_dim,
     double grad_tolerance,
     Matrix &x_lower_bound,
     Matrix &x_upper_bound) {
@@ -749,13 +749,13 @@ void RelaxedNmf1::Init(ArrayList<index_t> &rows,
   // and compute the soft lower bound
   a_linear_term_.Init(new_dimension_*values_.size());
   b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_[new_dimension_*i+j]=
@@ -792,16 +792,16 @@ void RelaxedNmf1::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   fx_timer_start(NULL, "gradient");
   gradient->SetAll(0.0);
   // gradient from the objective
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*b_linear_term_[new_dimension_*i+j];
@@ -811,8 +811,8 @@ void RelaxedNmf1::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   }
   la::Scale(sigma_, gradient); 
   // gradient for the bound constraints
-  for(index_t i=0; i<gradient->n_cols(); i++) {
-    for(index_t j=0; j<gradient->n_rows(); j++) {
+  for(size_t i=0; i<gradient->n_cols(); i++) {
+    for(size_t j=0; j<gradient->n_rows(); j++) {
       double denominator1=coordinates.get(j, i)-x_lower_bound_.get(j, i);
       double denominator2=x_upper_bound_.get(j, i)-coordinates.get(j, i);
       gradient->set(j, i,-1.0/denominator1+1.0/denominator2 
@@ -826,13 +826,13 @@ void RelaxedNmf1::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 void RelaxedNmf1::ComputeObjective(Matrix &coordinates, double *objective) {
   fx_timer_start(NULL, "objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       *objective+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
                                 +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -848,13 +848,13 @@ void RelaxedNmf1::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -874,8 +874,8 @@ double RelaxedNmf1::ComputeLagrangian(Matrix &coordinates) {
   lagrangian*=sigma_;
   // penalty for the bounds
   double temp_product=1;
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    for(index_t j=0; j<coordinates.n_rows(); j++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
+    for(size_t j=0; j<coordinates.n_rows(); j++) {
       double denominator1=coordinates.get(j, i)-x_lower_bound_.get(j, i);
       double denominator2=x_upper_bound_.get(j, i)-coordinates.get(j, i);
       if (denominator1<=0 || denominator2<=0) {
@@ -907,8 +907,8 @@ void RelaxedNmf1::set_sigma(double sigma) {
 
 void RelaxedNmf1::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -922,7 +922,7 @@ bool RelaxedNmf1::IsDiverging(double objective) {
 bool RelaxedNmf1::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
   
-  index_t num_of_constraints=2*coordinates.n_elements();
+  size_t num_of_constraints=2*coordinates.n_elements();
   if (sigma_/num_of_constraints > 10) {
     return true;
   } else {
@@ -949,8 +949,8 @@ double RelaxedNmf1::GetSoftLowerBound() {
 ///////////////////////////////////////////////////////////////////////
 ////////RelaxedNmfIsometric////////////////////////////////////////////
 void RelaxedNmfIsometric::Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Matrix &x_lower_bound, 
                       Matrix &x_upper_bound) {
@@ -973,13 +973,13 @@ void RelaxedNmfIsometric::Init(fx_module *module,
   // and compute the soft lower bound
   objective_a_linear_term_.Init(new_dimension_*values_.size());
   objective_b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       objective_a_linear_term_[new_dimension_*i+j]=
@@ -1001,19 +1001,19 @@ void RelaxedNmfIsometric::Init(fx_module *module,
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
 
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
-  index_t knns = fx_param_int(module_, "knns", 3);
-  index_t leaf_size = fx_param_int(module_, "leaf_size", 20);
+  size_t knns = fx_param_int(module_, "knns", 3);
+  size_t leaf_size = fx_param_int(module_, "leaf_size", 20);
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allknn_.Init(data_mat, leaf_size, knns); 
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -1030,11 +1030,11 @@ void RelaxedNmfIsometric::Init(fx_module *module,
   constraint_a_linear_term_.Init(new_dimension_ * num_of_nearest_pairs_);
   constraint_b_linear_term_.Init(new_dimension_ * num_of_nearest_pairs_);
  
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
     double soft_lower_bound=0.0;
-    for(index_t j=0; j<new_dimension_; j++) {
-      index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-      index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+    for(size_t j=0; j<new_dimension_; j++) {
+      size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+      size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
       double y_lower=x_lower_bound_.get(j, n1) + x_lower_bound_.get(j, n2);
       double y_upper=x_upper_bound_.get(j, n1) + x_upper_bound_.get(j, n2);      
       constraint_a_linear_term_[new_dimension_*i+j]=
@@ -1078,16 +1078,16 @@ void RelaxedNmfIsometric::ComputeGradient(Matrix &coordinates, Matrix *gradient)
   gradient->SetAll(0.0);
  
   
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w= col + w_offset_;
-    index_t h= row + h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w= col + w_offset_;
+    size_t h= row + h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*objective_b_linear_term_[new_dimension_*i+j];
@@ -1099,11 +1099,11 @@ void RelaxedNmfIsometric::ComputeGradient(Matrix &coordinates, Matrix *gradient)
 
  
   // gradient from the distance constraints
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -1112,7 +1112,7 @@ void RelaxedNmfIsometric::ComputeGradient(Matrix &coordinates, Matrix *gradient)
     double denominator=nearest_distances_[i]-distance;
     DEBUG_ASSERT_MSG(denominator>0,
        "Something is wrong, solution out of the interior");
-    for(index_t j=0; j<new_dimension_; j++){
+    for(size_t j=0; j<new_dimension_; j++){
       double nominator=-2*constraint_b_linear_term_[new_dimension_*i+j]
                          *(coordinates.get(j, n1)+coordinates.get(j, n2));
       gradient->set(j, n1, gradient->get(j, n1) 
@@ -1129,13 +1129,13 @@ void RelaxedNmfIsometric::ComputeGradient(Matrix &coordinates, Matrix *gradient)
 void RelaxedNmfIsometric::ComputeObjective(Matrix &coordinates, double *objective) {
   fx_timer_start(NULL, "objective");
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row = rows_[i];
-    index_t col = columns_[i];
-    index_t w = col +w_offset_;
-    index_t h= row + h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row = rows_[i];
+    size_t col = columns_[i];
+    size_t w = col +w_offset_;
+    size_t h= row + h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(objective_a_linear_term_[new_dimension_*i+j]
                                 +objective_b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -1153,13 +1153,13 @@ void RelaxedNmfIsometric::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row = rows_[i];
-    index_t col = columns_[i];
-    index_t w = col + w_offset_;
-    index_t h= row + h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row = rows_[i];
+    size_t col = columns_[i];
+    size_t w = col + w_offset_;
+    size_t h= row + h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -1178,11 +1178,11 @@ double RelaxedNmfIsometric::ComputeLagrangian(Matrix &coordinates) {
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double prod=1.0;
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -1208,8 +1208,8 @@ void RelaxedNmfIsometric::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmfIsometric::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+  for(size_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(size_t j=0; j<x_lower_bound_.n_cols(); j++) {
       if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
         coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
@@ -1228,8 +1228,8 @@ void RelaxedNmfIsometric::set_sigma(double sigma) {
 
 void RelaxedNmfIsometric::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -1243,7 +1243,7 @@ bool RelaxedNmfIsometric::IsDiverging(double objective) {
 bool RelaxedNmfIsometric::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  index_t num_of_constraints=1+num_of_nearest_pairs_;
+  size_t num_of_constraints=1+num_of_nearest_pairs_;
   if (num_of_constraints/sigma_ < desired_duality_gap_) {
     return true;
   } else {
@@ -1302,8 +1302,8 @@ bool RelaxedNmfIsometric::IsInfeasible() {
 //
 
 void RelaxedNmfScaled::Init(fx_module *module,
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
+            ArrayList<size_t> &rows,
+            ArrayList<size_t> &columns,
             ArrayList<double> &values,
             Matrix &x_lower_bound, // the initial lower bound for x (optimization variable)
             Matrix &x_upper_bound  // the initial upper bound for x (optimization variable)
@@ -1332,9 +1332,9 @@ void RelaxedNmfScaled::Init(fx_module *module,
   b_linear_term_dot_prod_.Init(new_dimension_*values_.size());
   a_linear_term_lin_.Init(new_dimension_*(num_of_rows_+num_of_columns_));
   b_linear_term_lin_.Init(new_dimension_*(num_of_rows_+num_of_columns_));
-  for(index_t i=0; i<num_of_rows_; i++) {
-    index_t h=h_offset_+i;
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_rows_; i++) {
+    size_t h=h_offset_+i;
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, h);      
       a_linear_term_lin_[h*new_dimension_+j] =
@@ -1344,9 +1344,9 @@ void RelaxedNmfScaled::Init(fx_module *module,
       DEBUG_ASSERT(b_linear_term_lin_[h*new_dimension_+j]>=0);      
     }
   }
-  for(index_t i=0; i<num_of_columns_; i++) {
-    index_t w=w_offset_+i;
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
+    size_t w=w_offset_+i;
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w);
       double y_upper=x_upper_bound_.get(j, w);      
       a_linear_term_lin_[w*new_dimension_+j] =
@@ -1358,13 +1358,13 @@ void RelaxedNmfScaled::Init(fx_module *module,
   }
 
     
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_dot_prod_[new_dimension_*i+j]=
@@ -1388,7 +1388,7 @@ void RelaxedNmfScaled::Init(fx_module *module,
     soft_lower_bound_+=convex_part*convex_part 
         -2*values_[i]*new_dimension_*math::Sqr(epsilon_)*math::Sqr((1-scale_factor_));
   }
-/*  for(index_t i=0; i<b_linear_term_lin_.length(); i++) {
+/*  for(size_t i=0; i<b_linear_term_lin_.length(); i++) {
      printf("a:%lg b:%lg\n", a_linear_term_dot_prod_[i], 
          b_linear_term_dot_prod_[i]);
   }
@@ -1419,17 +1419,17 @@ void RelaxedNmfScaled::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   fx_timer_start(module_, "gradient");
   gradient->SetAll(0.0);
   // gradient from the objective
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=(epsilon_*(1.0-scale_factor_) + scale_factor_*exp(coordinates.get(j, w)))
                    *(epsilon_*(1.0-scale_factor_)+ scale_factor_*exp(coordinates.get(j, h)));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad_w=2*convex_part
           *(math::Sqr(scale_factor_)*exp(coordinates.get(j, w)+coordinates.get(j, h))
             +scale_factor_*(1-scale_factor_)*epsilon_*exp(coordinates.get(j, w)))
@@ -1451,16 +1451,16 @@ void RelaxedNmfScaled::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 void RelaxedNmfScaled::ComputeObjective(Matrix &coordinates, double *objective) {
   fx_timer_start(module_, "objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
     double linear_part=0;
     double lp_part1=0;
     double lp_part2=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=(epsilon_*(1.0-scale_factor_) + scale_factor_*exp(coordinates.get(j, w)))
                    *(epsilon_*(1.0-scale_factor_)+ scale_factor_*exp(coordinates.get(j, h)));
       linear_part+=  -2*values_[i]
@@ -1506,13 +1506,13 @@ void RelaxedNmfScaled::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(module_, "non_relaxed_objective");
   *objective=0;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double error=values_[i];
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       error+=-((1-scale_factor_)*epsilon_ + scale_factor_*exp(coordinates.get(j, w)))
              *((1-scale_factor_)*epsilon_ + scale_factor_*exp(coordinates.get(j, h)));
     }
@@ -1539,8 +1539,8 @@ void RelaxedNmfScaled::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmfScaled::Project(Matrix *coordinates) {
   fx_timer_start(module_, "project");
-  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+  for(size_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(size_t j=0; j<x_lower_bound_.n_cols(); j++) {
       if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
         coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
@@ -1559,8 +1559,8 @@ void RelaxedNmfScaled::set_sigma(double sigma) {
 
 void RelaxedNmfScaled::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -1655,7 +1655,7 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
   hard_prunes_=0;
 //  double norm_values=la::Dot(values_.size(), values_.begin(), values_.begin());
   double norm_values=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     norm_values+=values_[i];
   }
   NOTIFY("Values norm:%lg", norm_values);
@@ -1716,7 +1716,7 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
   lower_solution_.insert(
       std::make_pair(new_lower_global_optimum,pack));
 */
-  index_t evil_counter=0;
+  size_t evil_counter=0;
   bool evil_flag=false;
   iteration_=0;
   NOTIFY("iteration:%i upper_global_optimum:%lg lower_global_optimum:%lg",
@@ -1734,7 +1734,7 @@ void GopNmfEngine<SplitterClass, Objective>::ComputeGlobalOptimum() {
     
     if (splitter_->Split(lower_bound, upper_bound, 
                          &left_lower_bound, &left_upper_bound,
-                         &right_lower_bound, &right_upper_bound)==SUCCESS_PASS) {
+                         &right_lower_bound, &right_upper_bound)==true) {
 
       lower_optimizer.Destruct();
       opt_fun_.Destruct();
@@ -1903,8 +1903,8 @@ void GopNmfEngine<SplitterClass, Objective>::PreprocessData(Matrix &data_mat) {
   values_.Init();
 	rows_.Init();
 	columns_.Init();
-	for(index_t i=0; i<data_mat.n_rows(); i++) {
-  	for(index_t j=0; j<data_mat.n_cols(); j++) {
+	for(size_t i=0; i<data_mat.n_rows(); i++) {
+  	for(size_t j=0; j<data_mat.n_cols(); j++) {
 		  values_.PushBackCopy(data_mat.get(i, j));
 			rows_.PushBackCopy(i);
 			columns_.PushBackCopy(j);
@@ -1919,8 +1919,8 @@ void GopNmfEngine<SplitterClass, Objective>::PreprocessData(Matrix &data_mat) {
   Vector l1_norms;
   l1_norms.Init(num_of_columns_);
   l1_norms.SetAll(0.0);
-  for(index_t i=0; i<num_of_columns_; i++) {
-    for(index_t j=0; j<num_of_rows_; j++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
+    for(size_t j=0; j<num_of_rows_; j++) {
       l1_norms[i]+=data_mat.get(j, i);
     }
   }
@@ -1937,8 +1937,8 @@ double GopNmfEngine<SplitterClass, Objective>::ComputeVolume(Matrix &lower_bound
   DEBUG_ASSERT(lower_bound.n_rows()==upper_bound.n_rows());
   DEBUG_ASSERT(lower_bound.n_cols()==upper_bound.n_cols());
 
-  for(index_t i=0; i<lower_bound.n_rows(); i++) {
-    for(index_t j=0; j<lower_bound.n_cols(); j++){
+  for(size_t i=0; i<lower_bound.n_rows(); i++) {
+    for(size_t j=0; j<lower_bound.n_cols(); j++){
       DEBUG_ASSERT(lower_bound.get(i, j) <= upper_bound.get(i,j));
       volume*=upper_bound.get(i, j)-lower_bound.get(i,j);
     }

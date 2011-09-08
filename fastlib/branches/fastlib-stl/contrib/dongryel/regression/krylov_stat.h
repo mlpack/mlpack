@@ -66,7 +66,7 @@ class KrylovLprRStat {
     min_bandwidth_kernel.Init(DBL_MAX);
     max_bandwidth_kernel.Init(0);
 
-    for(index_t j = 0; j < target_weighted_data_far_field_expansion_.size(); 
+    for(size_t j = 0; j < target_weighted_data_far_field_expansion_.size(); 
 	j++) {
       target_weighted_data_far_field_expansion_[j].Reset();
     }
@@ -87,7 +87,7 @@ class KrylovLprRStat {
     sum_target_weighted_data_.Init(matrix_dimension);
     target_weighted_data_far_field_expansion_.Init(matrix_dimension);
 
-    for(index_t j = 0; j < matrix_dimension; j++) {
+    for(size_t j = 0; j < matrix_dimension; j++) {
       target_weighted_data_far_field_expansion_[j].Init(dimension);
     }
   }
@@ -95,13 +95,13 @@ class KrylovLprRStat {
   /** @brief Computing the statistics for a leaf node involves
    *         explicitly running over the points owned by the node.
    */
-  void Init(const Matrix &dataset, index_t start, index_t count) {
+  void Init(const Matrix &dataset, size_t start, size_t count) {
 
     // Allocate all memory required for the statistics.
     AllocateMemory(dataset.n_rows());
   }
 
-  void Init(const Matrix &dataset, index_t start, index_t count,
+  void Init(const Matrix &dataset, size_t start, size_t count,
 	    const KrylovLprRStat &left_stat,
 	    const KrylovLprRStat &right_stat) {
 
@@ -195,7 +195,7 @@ public:
     postponed_ll_vector_n_pruned_ = 0;
     effective_count_ = 0;
 
-    for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
+    for(size_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Reset();
     }
   }
@@ -215,7 +215,7 @@ public:
     postponed_ll_vector_l_.Init(matrix_dimension);
     postponed_ll_vector_e_.Init(matrix_dimension);
     postponed_moment_ll_vector_e_.Init(matrix_dimension);
-    for(index_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
+    for(size_t i = 0; i < postponed_moment_ll_vector_e_.size(); i++) {
       postponed_moment_ll_vector_e_[i].Init(dimension);
     }
 
@@ -226,13 +226,13 @@ public:
   /** @brief Computing the statistics for a leaf node involves
    *         explicitly running over the points owned by the node.
    */
-  void Init(const Matrix &dataset, index_t start, index_t count) {
+  void Init(const Matrix &dataset, size_t start, size_t count) {
 
     // Allocate all memory required for the statistics.
     AllocateMemory(dataset.n_rows());
   }
 
-  void Init(const Matrix &dataset, index_t start, index_t count,
+  void Init(const Matrix &dataset, size_t start, size_t count,
 	    const KrylovLprQStat &left_stat,
 	    const KrylovLprQStat &right_stat) {
 

@@ -29,7 +29,7 @@ class BasisSetReader {
   
   ArrayList<char> atom_types;
   
-  index_t num_atoms;
+  size_t num_atoms;
   
 
 }; // class BasisSetReader

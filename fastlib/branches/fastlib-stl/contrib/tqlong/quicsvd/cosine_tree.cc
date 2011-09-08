@@ -1,7 +1,7 @@
 #include "cosine_tree.h"
 
 // L2 norm of a specific column in a matrix
-double columnNormL2(const Matrix& A, index_t i_col) {
+double columnNormL2(const Matrix& A, size_t i_col) {
   Vector col;
   A.MakeColumnVector(i_col, &col);
   return la::LengthEuclidean(col);
@@ -60,7 +60,7 @@ void CosineNode::CalStats() {
 
   // Calculate mean vector
   mean_.Init(A_.n_rows()); mean_.SetZero();
-  for (index_t i_col = 0; i_col < n_cols(); i_col++) {
+  for (size_t i_col = 0; i_col < n_cols(); i_col++) {
     Vector col;
     GetColumn(i_col, &col);
     la::AddTo(col, &mean_);
@@ -70,7 +70,7 @@ void CosineNode::CalStats() {
 
 void CosineNode::ChooseCenter(Vector* center) {
   double r = (double)rand()/RAND_MAX * cum_norms_[n_cols()-1];
-  index_t i_col;
+  size_t i_col;
   for (i_col = 0; i_col < n_cols(); i_col++)
     if (cum_norms_[i_col] >= r) break;
   GetColumn(i_col, center);
@@ -80,7 +80,7 @@ void CosineNode::CalCosines(const Vector& center,
 			    ArrayList<double>* cosines) {
   cosines->Init(n_cols());
   double centerL2 = la::LengthEuclidean(center);
-  for (index_t i_col = 0; i_col < n_cols(); i_col++) 
+  for (size_t i_col = 0; i_col < n_cols(); i_col++) 
     // if col is a zero vector then push it to the left node
     if (isZero(norms_[i_col]))
       (*cosines)[i_col] = 2;
@@ -95,32 +95,32 @@ void CosineNode::CalCosines(const Vector& center,
 
 void CosineNode::CreateIndices(ArrayList<int>* indices) {
   indices->Init(n_cols());
-  for (index_t i_col = 0; i_col < n_cols(); i_col++)
+  for (size_t i_col = 0; i_col < n_cols(); i_col++)
     (*indices)[i_col] = i_col;
 }
 
 // Quicksort partitioning procedure
-index_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
-		index_t left, index_t right) {
-  index_t j = left;
+size_t qpartition(ArrayList<double>& key, ArrayList<int>& data,
+		size_t left, size_t right) {
+  size_t j = left;
   double x = key[left];
-  for (index_t i = left+1; i <= right; i++)
+  for (size_t i = left+1; i <= right; i++)
     if (key[i] >= x) {
       j++;
       double tmp_d = key[i]; key[i] = key[j]; key[j] = tmp_d;
-      index_t tmp_i = data[i]; data[i] = data[j]; data[j] = tmp_i;
+      size_t tmp_i = data[i]; data[i] = data[j]; data[j] = tmp_i;
     }
   double tmp_d = key[left]; key[left] = key[j]; key[j] = tmp_d;
-  index_t tmp_i = data[left]; data[left] = data[j]; data[j] = tmp_i;
+  size_t tmp_i = data[left]; data[left] = data[j]; data[j] = tmp_i;
   return j;
 }
 
 
 // Quicksort on the cosine values
 void qsort(ArrayList<double>& key, ArrayList<int>& data,
-	   index_t left, index_t right) {
+	   size_t left, size_t right) {
   if (left >= right) return;
-  index_t middle = qpartition(key, data, left, right);
+  size_t middle = qpartition(key, data, left, right);
   qsort(key, data, left, middle-1);
   qsort(key, data, middle+1, right);
 }
@@ -131,20 +131,20 @@ void Sort(ArrayList<double>& key, ArrayList<int>& data) {
 
 // Calculate the split point where the cosines values are closer
 // to the minimum cosine value than the maximum cosine value
-index_t calSplitPoint(const ArrayList<double>& key) {
+size_t calSplitPoint(const ArrayList<double>& key) {
   double leftKey = key[0];
   double rightKey = key[key.size()-1];
-  index_t i = 0;
+  size_t i = 0;
   while (leftKey - key[i] <= key[i] - rightKey && i < key.size()) i++;
   //printf("i = %d\n", i);
   return i;
 }
 
 // Init a subcopy of an array list
-void InitSubCopy(const ArrayList<int>& src, index_t pos, index_t size,
+void InitSubCopy(const ArrayList<int>& src, size_t pos, size_t size,
 		 ArrayList<int>* dst) {
   dst->Init(size);
-  for (index_t i = 0; i < size; i++)
+  for (size_t i = 0; i < size; i++)
     (*dst)[i] = src[pos+i];
 }
 
@@ -178,7 +178,7 @@ void CosineNode::Split() {
   //ot::Print(cosines, "cosines", stdout);
   //ot::Print(indices, "indices", stdout);
 
-  index_t leftSize = calSplitPoint(cosines);
+  size_t leftSize = calSplitPoint(cosines);
 
   if (leftSize == n_cols() || leftSize == 0) return;
   

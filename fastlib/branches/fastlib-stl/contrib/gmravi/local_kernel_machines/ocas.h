@@ -31,7 +31,7 @@ private:
   
   // The indices that are in the bandwidth range.
 
-  ArrayList <index_t> indices_in_range_;
+  ArrayList <size_t> indices_in_range_;
 
   // The kernel value of the points which are in the range.
 
@@ -41,15 +41,15 @@ private:
   // This is the dimension of the appended dataset. Hence it will be 1 more 
   // than the actual dimensions.
 
-  index_t num_dims_appended_;
+  size_t num_dims_appended_;
 
   // The number of train points
 
-  index_t num_train_points_;
+  size_t num_train_points_;
 
   // The number of points in the range 
 
-  index_t num_points_in_range_;
+  size_t num_points_in_range_;
 
   // The train labels
 
@@ -70,7 +70,7 @@ private:
   
   // Number of subgradients available
 
-  index_t num_subgradients_available_;
+  size_t num_subgradients_available_;
   
 
  
@@ -89,7 +89,7 @@ private:
     
   void Optimize();  
   void Init(double *, Matrix &,Vector&,
-	    ArrayList <index_t> &, 
+	    ArrayList <size_t> &, 
 	    ArrayList <double> &, double bw, 
 	    double lambda_reg_const);
   

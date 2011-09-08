@@ -47,11 +47,11 @@ class SCFSolver {
   
   Vector energy_vector_; // The diagonal matrix of eigenvalues of F/F'
   
-  index_t number_of_basis_functions_; // N
-  index_t number_of_electrons_; // K
-  index_t number_of_nuclei_;
+  size_t number_of_basis_functions_; // N
+  size_t number_of_electrons_; // K
+  size_t number_of_nuclei_;
   // Number of orbitals to fill, i.e. K/2 
-  index_t number_to_fill_; 
+  size_t number_to_fill_; 
   
   double nuclear_repulsion_energy_;
   
@@ -61,7 +61,7 @@ class SCFSolver {
   // The total energy in each iteration
   ArrayList<double> total_energy_;
   
-  index_t current_iteration_;
+  size_t current_iteration_;
   
   // The density matrix error norms for use in DIIS
   Matrix density_matrix_norms_;
@@ -74,9 +74,9 @@ class SCFSolver {
   ArrayList<Matrix> density_matrix_errors_;
   
   // The total number of matrices to store for DIIS
-  index_t diis_count_;
+  size_t diis_count_;
   // The current position in the DIIS arrays
-  index_t diis_index_;
+  size_t diis_index_;
   
   // The right hand side of the linear system for the DIIS solution
   Vector diis_rhs_;
@@ -84,7 +84,7 @@ class SCFSolver {
   Vector basis_energies_;
   
   // Initial size of the density norm and total energy arrays
-  static const index_t expected_number_of_iterations_ = 20;
+  static const size_t expected_number_of_iterations_ = 20;
   
   // Convergence tolerances
   double density_convergence_;
@@ -101,9 +101,9 @@ class SCFSolver {
   
   bool do_naive_;
   
-  ArrayList<index_t> occupied_indices_;
+  ArrayList<size_t> occupied_indices_;
   
-  ArrayList<index_t> old_from_new_centers_;
+  ArrayList<size_t> old_from_new_centers_;
   
   double bandwidth_;
   
@@ -127,7 +127,7 @@ class SCFSolver {
   ~SCFSolver() {}
   
 
-  void Init(struct datanode* mod, index_t num_electrons, 
+  void Init(struct datanode* mod, size_t num_electrons, 
             const Matrix& basis_centers, const Matrix& density, 
             const Matrix& nuclear, const Vector& nuclear_mass) {
     
@@ -192,7 +192,7 @@ class SCFSolver {
     
     number_of_nuclei_ = nuclear_centers_.n_cols();
     
-    number_to_fill_ = (index_t)ceil((double)number_of_electrons_/2);
+    number_to_fill_ = (size_t)ceil((double)number_of_electrons_/2);
     occupied_indices_.Init(number_to_fill_);
     
     DEBUG_ASSERT(number_of_nuclei_ == nuclear_masses_.length());
@@ -200,7 +200,7 @@ class SCFSolver {
     
     number_of_basis_functions_ = basis_centers_.n_cols();
     
-    for (index_t i = 0; i < diis_count_; i++) {
+    for (size_t i = 0; i < diis_count_; i++) {
       
       density_matrices_[i].Init(number_of_basis_functions_, 
                                 number_of_basis_functions_);
@@ -260,7 +260,7 @@ class SCFSolver {
   double ComputeKineticIntegral_(double dist);
   
   double ComputeNuclearIntegral_(const Vector& nuclear_position, 
-                                 index_t nuclear_index, 
+                                 size_t nuclear_index, 
                                  const Vector& mu, const Vector& nu);
     
   /**
@@ -268,14 +268,14 @@ class SCFSolver {
    * matrix is written to the uninitialized matrix new_mat
    */                               
   void PermuteMatrix_(const Matrix& old_mat, Matrix* new_mat, 
-                      const ArrayList<index_t>& perm) {
+                      const ArrayList<size_t>& perm) {
   
-    index_t num_cols = old_mat.n_cols();
+    size_t num_cols = old_mat.n_cols();
     DEBUG_ASSERT(num_cols == perm.size());
     
     new_mat->Init(old_mat.n_rows(), num_cols);
     
-    for (index_t i = 0; i < num_cols; i++) {
+    for (size_t i = 0; i < num_cols; i++) {
       
       Vector old_vec;
       old_mat.MakeColumnVector(perm[i], &old_vec);
@@ -324,7 +324,7 @@ class SCFSolver {
 
     eigenvalues.PrintDebug();
     
-    for (index_t i = 0; i < eigenvalues.length(); i++) {
+    for (size_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                        "Complex eigenvalue in diagonalizing overlap matrix.\n");
                        
@@ -336,7 +336,7 @@ class SCFSolver {
       double len = la::LengthEuclidean(eigenvec);
       DEBUG_APPROX_DOUBLE(len, 1.0, 0.001);
       
-      for (index_t j = i+1; j < eigenvalues.length(); j++) {
+      for (size_t j = i+1; j < eigenvalues.length(); j++) {
         
         Vector eigenvec2;
         left_vectors.MakeColumnVector(j, &eigenvec2);
@@ -349,7 +349,7 @@ class SCFSolver {
     
 #endif
 
-    for (index_t i = 0; i < eigenvalues.length(); i++) {
+    for (size_t i = 0; i < eigenvalues.length(); i++) {
       DEBUG_ASSERT(eigenvalues[i] > 0.0);
       eigenvalues[i] = 1/sqrt(eigenvalues[i]);
     }
@@ -387,16 +387,16 @@ class SCFSolver {
     density_matrix_frobenius_norm_ = 0.0;
     
     // Rows of density_matrix
-    for (index_t density_row = 0; density_row < number_of_basis_functions_;
+    for (size_t density_row = 0; density_row < number_of_basis_functions_;
          density_row++) {
       
       // Columns of density matrix
-      for (index_t density_column = 0; 
+      for (size_t density_column = 0; 
            density_column < number_of_basis_functions_; density_column++) {
         
         // Occupied orbitals
         double this_sum = 0.0;
-        for (index_t occupied_index = 0; 
+        for (size_t occupied_index = 0; 
              occupied_index < number_to_fill_; occupied_index++) {
           
           this_sum = this_sum + (
@@ -447,17 +447,17 @@ class SCFSolver {
     //density_matrix_norms_.SetZero();
     
     // Rows of density_matrix
-    for (index_t density_row = 0; density_row < number_of_basis_functions_;
+    for (size_t density_row = 0; density_row < number_of_basis_functions_;
          density_row++) {
       
       // Columns of density matrix
-      for (index_t density_column = 0; 
+      for (size_t density_column = 0; 
            density_column < number_of_basis_functions_; density_column++) {
         
         // Occupied orbitals
         double this_sum = 0.0;
         
-        for (index_t occupied_index = 0; 
+        for (size_t occupied_index = 0; 
              occupied_index < number_to_fill_; occupied_index++) {
           
           this_sum = this_sum + (coefficient_matrix_.ref(density_row, 
@@ -485,9 +485,9 @@ class SCFSolver {
     
     const double* err_ptr = density_matrix_errors_[diis_index_].ptr();
     
-    index_t len = number_of_basis_functions_ * number_of_basis_functions_;
+    size_t len = number_of_basis_functions_ * number_of_basis_functions_;
     
-    for (index_t i = 0; i < diis_count_; i++) {
+    for (size_t i = 0; i < diis_count_; i++) {
     
       const double* this_err_ptr = density_matrix_errors_[i].ptr();
       
@@ -532,7 +532,7 @@ class SCFSolver {
     
       density_matrix_.SetZero();
     
-      for (index_t i = 0; i < diis_count_; i++) {
+      for (size_t i = 0; i < diis_count_; i++) {
         
         // Should scale density_matrices_[i] by the right value and add to 
         // the overall density matrix
@@ -601,12 +601,12 @@ class SCFSolver {
     energy_vector_.PrintDebug();
     */
     
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (size_t i = 0; i < number_of_basis_functions_; i++) {
     
       Vector i_vec;
       coefficients_prime.MakeColumnVector(i, &i_vec);
     
-      for (index_t j = 0; j < number_of_basis_functions_; j++) {
+      for (size_t j = 0; j < number_of_basis_functions_; j++) {
         
         Vector j_vec;
         right_vectors.MakeColumnVector(j, &j_vec);
@@ -623,7 +623,7 @@ class SCFSolver {
 #endif
     
     
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (size_t i = 0; i < number_of_basis_functions_; i++) {
     
       // if the left and right vector don't have equal signs the eigenvector 
       // is negative
@@ -655,7 +655,7 @@ class SCFSolver {
     
 #ifdef DEBUG
     
-    for (index_t i = 0; i < energy_vector_.length(); i++) {
+    for (size_t i = 0; i < energy_vector_.length(); i++) {
       DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
           "Complex eigenvalue in diagonalizing Fock matrix.\n");
     }
@@ -689,9 +689,9 @@ class SCFSolver {
   void FillOrbitals_() {
     
     double max_energy_kept = -DBL_INF;
-    index_t next_to_go = 0;
+    size_t next_to_go = 0;
     
-    for (index_t i = 0; i < number_to_fill_; i++) {
+    for (size_t i = 0; i < number_to_fill_; i++) {
       
       occupied_indices_[i] = i;
       if (energy_vector_[i] > max_energy_kept) {
@@ -702,7 +702,7 @@ class SCFSolver {
     }
     
     
-    for (index_t i = number_to_fill_; i < number_of_basis_functions_; i++) {    
+    for (size_t i = number_to_fill_; i < number_of_basis_functions_; i++) {    
       
       double this_energy = energy_vector_[i];
       if (this_energy < max_energy_kept) {
@@ -711,7 +711,7 @@ class SCFSolver {
         // Find the new index to throw out
         double new_max = -DBL_INF;
         next_to_go = -1;
-        for (index_t j = 0; j < number_to_fill_; j++) {
+        for (size_t j = 0; j < number_to_fill_; j++) {
           if (energy_vector_[occupied_indices_[j]] > new_max) {
             new_max = energy_vector_[occupied_indices_[j]];
             next_to_go = j;
@@ -748,7 +748,7 @@ class SCFSolver {
     density_max_ = -DBL_INF;
     density_min_ = DBL_INF;
     
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (size_t i = 0; i < number_of_basis_functions_; i++) {
       
       // for the diagonal entries
       one_electron_energy_ += density_matrix_.ref(i,i) * core_matrix_.ref(i,i);
@@ -776,7 +776,7 @@ class SCFSolver {
       } 
       */
       
-      for (index_t j = i+1; j < number_of_basis_functions_; j++) {
+      for (size_t j = i+1; j < number_of_basis_functions_; j++) {
       
         // multiply by 2 to get the lower triangle
         one_electron_energy_ += 2 * density_matrix_.ref(i,j) * 
@@ -1013,7 +1013,7 @@ class SCFSolver {
     
     const char* energy_file = fx_param_str(module_, "Etot", "total_energy.csv");
     FILE* energy_pointer = fopen(energy_file, "w");
-    for (index_t i = 0; i < current_iteration_; i++) {
+    for (size_t i = 0; i < current_iteration_; i++) {
      
       fprintf(energy_pointer, "Iteration %d:\t %f\n", i, total_energy_[i]);
       
@@ -1067,9 +1067,9 @@ class SCFSolver {
     
     integrals_.OutputFockMatrix(NULL, &coulomb_out, &exchange_out, NULL);
     
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (size_t i = 0; i < number_of_basis_functions_; i++) {
     
-      for (index_t j = i; j < number_of_basis_functions_; j++) {
+      for (size_t j = i; j < number_of_basis_functions_; j++) {
       
         if (coulomb_out.ref(i,j) > coulomb_max_) {
           coulomb_max_ = coulomb_out.ref(i,j);

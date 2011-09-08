@@ -45,28 +45,28 @@ class DualManifoldEngine {
    */
   void Init(datanode *module, 
     // index pairs to consider from the matrix (row,column) pairs
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     // The values of the (row, column) values, also known as the dot products
     ArrayList<double> &dot_prod_values);
   void Destruct();
   void ComputeLocalOptimum(); 
   double ComputeEvaluationTest(
-      ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+      ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
       ArrayList<double> &dot_prod_values);
   double ComputeRandomEvaluationTest(
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     ArrayList<double> &dot_prod_values);
   Matrix *DualManifoldEngine<OptimizedFunction>::Matrix1();
   Matrix *DualManifoldEngine<OptimizedFunction>::Matrix2();
   
  private:
   double norm_grad_tolerance_;
-  index_t iterations_;
-  index_t max_iterations_;
+  size_t iterations_;
+  size_t max_iterations_;
   double desired_feasibility_;
   double feasibility_tolerance_;
   datanode *module_;
-  index_t num_of_components_;
+  size_t num_of_components_;
     
   LBfgs<OptimizedFunction> l_bfgs1_;
   LBfgs<OptimizedFunction> l_bfgs2_;

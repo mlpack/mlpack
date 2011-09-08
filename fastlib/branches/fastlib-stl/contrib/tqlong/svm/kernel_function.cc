@@ -36,7 +36,7 @@ double KernelFunction::operator() (const Vector& x, const Vector& y) {
     return s*pow(s+1, d-1);
     break;
   case RBF:
-    for (index_t i = 0; i < x.length(); i++) s += (y[i]-x[i])*(y[i]-x[i]);
+    for (size_t i = 0; i < x.length(); i++) s += (y[i]-x[i])*(y[i]-x[i]);
     return exp(s*sigma2);
     break;
   case CUSTOM:

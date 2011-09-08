@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
 
 	      
    
-	for(index_t i=0; i<opt_x.length(); i++){
+	for(size_t i=0; i<opt_x.length(); i++){
 		cout<<opt_x[i]<<" ";
 	}
 	cout<<endl;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	ArrayList<Matrix> current_added_unknown_x_past;
 	current_added_unknown_x_past.Init();
 
-	ArrayList<index_t> current_added_first_stage_y;
+	ArrayList<size_t> current_added_first_stage_y;
 	current_added_first_stage_y.Init();
 
 	

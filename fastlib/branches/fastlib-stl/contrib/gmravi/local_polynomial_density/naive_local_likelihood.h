@@ -31,10 +31,10 @@ template <typename TKernel> class NaiveLocalLikelihood{
   // Get the vector difference between vec1 and vec2 and return the
   // result in the vector diff
   
-  void GetVectorDifference_(double *vec1, double *vec2,index_t length,
+  void GetVectorDifference_(double *vec1, double *vec2,size_t length,
 			    Vector &diff){
     
-    for(index_t l=0;l<length;l++){
+    for(size_t l=0;l<length;l++){
       
       diff[l]=vec1[l]-vec2[l]; 
     }
@@ -71,7 +71,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
 
   bool IsSamePoint_(Vector &diff){
 
-    for(index_t i=0;i<diff.length();i++){
+    for(size_t i=0;i<diff.length();i++){
 
       if(fabs(diff[i])>EPSILON){
 	return false;
@@ -92,9 +92,9 @@ template <typename TKernel> class NaiveLocalLikelihood{
 
     double mean_sqd_error=0;
     double boundary_mean_sqd_error=0;
-    index_t number_of_boundary_points=0;
+    size_t number_of_boundary_points=0;
 
-    for(index_t q=0;q<qset_.n_cols();q++){
+    for(size_t q=0;q<qset_.n_cols();q++){
 
       mean_sqd_error+=pow(densities_[q]-foreign_density.get(0,q),2);
 
@@ -133,7 +133,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
   
   bool IsSame_(Vector &diff){
 
-    for(index_t i=0;i<diff.length();i++){
+    for(size_t i=0;i<diff.length();i++){
 
       if(fabs(diff[i])>EPSILON){
 
@@ -153,7 +153,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
     printf("In local likelihood calculations with bw=%f...\n",bandwidth_[0]);
 
 
-    for(index_t q=0;q<qset_.n_cols();q++){//pick a query point
+    for(size_t q=0;q<qset_.n_cols();q++){//pick a query point
 
       double *q_col=qset_.GetColumnPtr(q);
       double exponential_term=0;
@@ -163,9 +163,9 @@ template <typename TKernel> class NaiveLocalLikelihood{
 
       double kernel_contrib=0;  
 
-      index_t number_of_contributions=0;
+      size_t number_of_contributions=0;
 
-      for(index_t k=0;k<bandwidth_.length();k++){
+      for(size_t k=0;k<bandwidth_.length();k++){
 
 	number_of_contributions=0;
 	
@@ -174,7 +174,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
 
 	kernel_contrib=0;
 	
-	for(index_t i=0;i<rset_.n_cols();i++){ //For each reference point
+	for(size_t i=0;i<rset_.n_cols();i++){ //For each reference point
     
 	  double *r_col=rset_.GetColumnPtr(i); //Extract the ith reference point
 	  
@@ -250,7 +250,7 @@ template <typename TKernel> class NaiveLocalLikelihood{
     }
   }
 
-  void Init(Matrix &query, Matrix &references, double *bwidth,index_t len){
+  void Init(Matrix &query, Matrix &references, double *bwidth,size_t len){
 
     qset_.Init(query.n_rows(),query.n_cols());
     rset_.Init(references.n_rows(),references.n_cols());

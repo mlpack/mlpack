@@ -297,10 +297,10 @@ namespace hmm_support {
     return true;
   }
 
- success_t read_matrix(TextLineReader& reader, Matrix* matrix) {
+ bool read_matrix(TextLineReader& reader, Matrix* matrix) {
    if (!skip_blank(reader)) { // EOF ?
      matrix->Init(0,0);
-     return SUCCESS_FAIL;
+     return false;
    }
    else {
      int n_rows = 0;
@@ -350,16 +350,16 @@ namespace hmm_support {
        if (is_done) {
 	 num_double.Trim();
 	 matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
-	 return SUCCESS_PASS;
+	 return true;
        }
      }
    }
  }
 
-  success_t read_vector(TextLineReader& reader, Vector* vec) {
+  bool read_vector(TextLineReader& reader, Vector* vec) {
     if (!skip_blank(reader)) { // EOF ?
       vec->Init(0);
-      return SUCCESS_FAIL;
+      return false;
     }
     else {
       ArrayList<double> num_double;
@@ -399,37 +399,37 @@ namespace hmm_support {
 	  num_double.Trim();
 	  int length = num_double.size();
 	  vec->Own(num_double.ReleasePtr(), length);
-	  return SUCCESS_PASS;
+	  return true;
 	}
       }
     }
   }
 
-  success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst) {
+  bool load_matrix_list(const char* filename, ArrayList<Matrix> *matlst) {
     TextLineReader reader;
     matlst->Init();
-    if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
+    if (!(reader.Open(filename))) return false;
     do {
       Matrix tmp;
-      if (read_matrix(reader, &tmp) == SUCCESS_PASS) {
+      if (read_matrix(reader, &tmp) == true) {
 	matlst->PushBackCopy(tmp);
       }
       else break;
     } while (1);
-    return SUCCESS_PASS;
+    return true;
   }
 
-  success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst) {
+  bool load_vector_list(const char* filename, ArrayList<Vector> *veclst) {
     TextLineReader reader;
     veclst->Init();
-    if (!PASSED(reader.Open(filename))) return SUCCESS_FAIL;
+    if (!(reader.Open(filename))) return false;
     do {
       Vector vec;
-      if (read_vector(reader, &vec) == SUCCESS_PASS) {
+      if (read_vector(reader, &vec) == true) {
 	veclst->PushBackCopy(vec);
       }
       else break;
     } while (1);
-    return SUCCESS_PASS;
+    return true;
   }
 } // end namespace

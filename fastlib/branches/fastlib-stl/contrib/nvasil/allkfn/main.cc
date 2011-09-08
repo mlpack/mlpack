@@ -26,9 +26,9 @@ int main(int argc, char *argv[]) {
   std::string result_file = fx_param_str(module, "result_file", "result.txt");
   std::string reference_file = fx_param_str_req(module, "reference_file");
   Matrix reference_data;
-  ArrayList<index_t> neighbors;
+  ArrayList<size_t> neighbors;
   ArrayList<double> distances;
-  if (data::Load(reference_file.c_str(), &reference_data)==SUCCESS_FAIL) {
+  if (data::Load(reference_file.c_str(), &reference_data)==false) {
     FATAL("Reference file %s not found", reference_file.c_str());
   }
   NOTIFY("Loaded reference data from file %s", reference_file.c_str());
@@ -37,7 +37,7 @@ int main(int argc, char *argv[]) {
   if (fx_param_exists(module, "query_file")) {
     std::string query_file=fx_param_str_req(module, "query_file");
     Matrix query_data;
-    if (data::Load(query_file.c_str(), &query_data)==SUCCESS_FAIL) {
+    if (data::Load(query_file.c_str(), &query_data)==false) {
       FATAL("Query file %s not found", query_file.c_str());
     }
     NOTIFY("Query data loaded from %s", query_file.c_str());
@@ -48,8 +48,8 @@ int main(int argc, char *argv[]) {
     allkfn.Init(reference_data, module);
   }
   NOTIFY("Tree(s) built");
-  index_t kfns=fx_param_int_req(module, "kfns");
-  NOTIFY("Computing %"LI"d furthest neighbors", kfns);
+  size_t kfns=fx_param_int_req(module, "kfns");
+  NOTIFY("Computing %zud furthest neighbors", kfns);
   allkfn.ComputeNeighbors(&neighbors, &distances);
   NOTIFY("Neighbors computed");
   NOTIFY("Exporting results");
@@ -58,9 +58,9 @@ int main(int argc, char *argv[]) {
     FATAL("Error while opening %s...%s", result_file.c_str(),
         strerror(errno));
   }
-  for(index_t i=0 ; i < neighbors.size()/kfns ; i++) {
-    for(index_t j=0; j<kfns; j++) {
-      fprintf(fp, "%"LI"d %"LI"d %lg\n", i, neighbors[i*kfns+j], distances[i*kfns+j]);
+  for(size_t i=0 ; i < neighbors.size()/kfns ; i++) {
+    for(size_t j=0; j<kfns; j++) {
+      fprintf(fp, "%zud %zud %lg\n", i, neighbors[i*kfns+j], distances[i*kfns+j]);
     }
   }
   fclose(fp);

@@ -115,7 +115,7 @@ int main(int argc, char* argv[]) {
   std::vector<double> max_bands(matcher_mat.n_rows);
   std::vector<int> num_bands(matcher_mat.n_rows);
   
-  for (index_t i = 0; i < matcher_mat.n_rows; i++) {
+  for (size_t i = 0; i < matcher_mat.n_rows; i++) {
    
     min_bands[i] = matcher_mat.at(i, 0);
     max_bands[i] = matcher_mat.at(i, 1);
@@ -140,7 +140,7 @@ int main(int argc, char* argv[]) {
     IO::StartTimer("naive_time");
     
     
-    for (index_t i = 0; i < generator.num_matchers(); i++) {
+    for (size_t i = 0; i < generator.num_matchers(); i++) {
       
       NaiveAlg naive_alg(data_mat, weights, random_mat, random_weights, 
                          generator.matcher(i), bandwidth);
@@ -161,7 +161,7 @@ int main(int argc, char* argv[]) {
   } // do naive
   
   
-  index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
+  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
   
   
   if (IO::HasParam("do_single_bandwidth")) {
@@ -171,7 +171,7 @@ int main(int argc, char* argv[]) {
     IO::StartTimer("single_bandwidth_time");
     
     
-    for (index_t i = 0; i < generator.num_matchers(); i++) {
+    for (size_t i = 0; i < generator.num_matchers(); i++) {
       
       
     
@@ -205,7 +205,7 @@ int main(int argc, char* argv[]) {
 
     IO::StartTimer("perm_free_time");
     
-    for (index_t i = 0; i < generator.num_matchers(); i++) {
+    for (size_t i = 0; i < generator.num_matchers(); i++) {
       
       PermFreeAlg alg(data_mat, weights, random_mat, random_weights, 
                       leaf_size, generator.matcher(i), 

@@ -26,7 +26,7 @@ using namespace mlpack;
  */
 InfomaxICA::InfomaxICA() { }
 
-InfomaxICA::InfomaxICA(double lambda, index_t b, double epsilon) :
+InfomaxICA::InfomaxICA(double lambda, size_t b, double epsilon) :
     lambda_(lambda),
     b_(b),
     epsilon_(epsilon) { }
@@ -70,7 +70,7 @@ void InfomaxICA::evaluateICA() {
   arma::mat icv2(w_.n_rows, w_.n_cols);
   arma::mat icv4(w_.n_rows, w_.n_cols);
 
-  for (index_t i = 0; i < data_.n_cols; i += b_) {
+  for (size_t i = 0; i < data_.n_cols; i += b_) {
     if ((i + b_) < data_.n_cols) {
       // This is not tested.
       icv = -2.0 * arma::pow(arma::exp(
@@ -126,7 +126,7 @@ arma::mat InfomaxICA::subMeans(const arma::mat& m){
   arma::mat output(m);
   arma::vec row_means = rowMean(output);
 
-  for (index_t j = 0; j < output.n_cols; j++) {
+  for (size_t j = 0; j < output.n_cols; j++) {
     output.col(j) -= row_means;
   }
 
@@ -140,7 +140,7 @@ arma::vec InfomaxICA::rowMean(const arma::mat& m){
   arma::vec row_means(m.n_rows);
   row_means.zeros();
 
-  for (index_t j = 0; j < m.n_cols; j++) {
+  for (size_t j = 0; j < m.n_cols; j++) {
     row_means += m.col(j);
   }
 
@@ -206,7 +206,7 @@ void InfomaxICA::setLambda(const double lambda) {
   lambda_ = lambda;
 }
 
-void InfomaxICA::setB(const index_t b) {
+void InfomaxICA::setB(const size_t b) {
   b_ = b;
 }
 

@@ -55,8 +55,8 @@ const fx_module_doc approx_nn_main_dual_doc = {
 };
 
 void compute_classification_error(Matrix& lrdata, Matrix& lqdata,
-				  ArrayList<index_t>& neighbors,
-				  index_t knns, FILE* fout);
+				  ArrayList<size_t>& neighbors,
+				  size_t knns, FILE* fout);
 
 int main (int argc, char *argv[]) {
 
@@ -102,9 +102,9 @@ int main (int argc, char *argv[]) {
   struct datanode *ann_module
     = fx_submodule(root, "ann");
 
-  ArrayList<index_t> nac, exc, apc, ap_nt_c;
+  ArrayList<size_t> nac, exc, apc, ap_nt_c;
   ArrayList<double> din, die, dia, di_nt_a;
-  index_t knns = fx_param_int(ann_module, "knns", 1);
+  size_t knns = fx_param_int(ann_module, "knns", 1);
   std::string result_file = fx_param_str(root, "result_file", "result.txt");
 
 
@@ -134,10 +134,10 @@ int main (int argc, char *argv[]) {
 	FATAL("Error while opening %s...%s", result_file.c_str(),
 	      strerror(errno));
 
-      for(index_t i=0 ; i < nac.size()/knns ; i++) {
-	fprintf(fp, "%"LI"d", i);
-	for(index_t j=0; j<knns; j++)
-	  fprintf(fp, ",%"LI"d,%lg", 
+      for(size_t i=0 ; i < nac.size()/knns ; i++) {
+	fprintf(fp, "%zud", i);
+	for(size_t j=0; j<knns; j++)
+	  fprintf(fp, ",%zud,%lg", 
 		  nac[i*knns+j], din[i*knns+j]);
 	fprintf(fp, "\n");
       }
@@ -171,10 +171,10 @@ int main (int argc, char *argv[]) {
 	FATAL("Error while opening %s...%s", result_file.c_str(),
 	      strerror(errno));
 
-      for(index_t i=0 ; i < exc.size()/knns ; i++) {
-	fprintf(fp, "%"LI"d", i);
-	for(index_t j=0; j<knns; j++)
-	  fprintf(fp, ",%"LI"d,%lg",
+      for(size_t i=0 ; i < exc.size()/knns ; i++) {
+	fprintf(fp, "%zud", i);
+	for(size_t j=0; j<knns; j++)
+	  fprintf(fp, ",%zud,%lg",
 		  exc[i*knns+j], die[i*knns+j]);
 	fprintf(fp, "\n");
       }
@@ -219,10 +219,10 @@ int main (int argc, char *argv[]) {
 	FATAL("Error while opening %s...%s", result_file.c_str(),
 	      strerror(errno));
       
-      for(index_t i=0 ; i < apc.size()/knns ; i++) {
-	fprintf(fp, "%"LI"d", i);
-	for(index_t j=0; j<knns; j++)
-	  fprintf(fp, ",%"LI"d,%lg", 
+      for(size_t i=0 ; i < apc.size()/knns ; i++) {
+	fprintf(fp, "%zud", i);
+	for(size_t j=0; j<knns; j++)
+	  fprintf(fp, ",%zud,%lg", 
 		  apc[i*knns+j], dia[i*knns+j]);
 	fprintf(fp, "\n");
       }
@@ -246,7 +246,7 @@ int main (int argc, char *argv[]) {
      * Must provide the file containing the rank matrix 
      */
     if (fx_param_bool(root, "compute_error", false)) {
-      GenMatrix<index_t> rank_matrix;
+      GenMatrix<size_t> rank_matrix;
       Matrix temp;
       bool ranks_given = false;
       if (fx_param_exists(root, "rank_matrix")) {
@@ -257,9 +257,9 @@ int main (int argc, char *argv[]) {
 	
 	rank_matrix.Init(temp.n_rows(), temp.n_cols());
       
-	for (index_t i = 0; i < temp.n_cols(); i++)
-	  for (index_t j = 0; j < temp.n_rows(); j++)
-	    rank_matrix.set(j, i, (index_t) temp.get(j, i));
+	for (size_t i = 0; i < temp.n_cols(); i++)
+	  for (size_t j = 0; j < temp.n_rows(); j++)
+	    rank_matrix.set(j, i, (size_t) temp.get(j, i));
 
 	NOTIFY("Done loading Rank file");
       } else {
@@ -269,24 +269,24 @@ int main (int argc, char *argv[]) {
 
       double epsilon
 	= fx_param_double_req(ann_module, "epsilon");
-      index_t rank_error
-	= (index_t) (epsilon * (double) rdata.n_cols() / 100);
+      size_t rank_error
+	= (size_t) (epsilon * (double) rdata.n_cols() / 100);
       double alpha
 	= fx_param_double_req(ann_module, "alpha");
       
-      index_t avg_rank_error = 0,
+      size_t avg_rank_error = 0,
 	max_rank = -1, min_rank = rdata.n_cols(),
 	max_k_rank = -1, min_k_rank = rdata.n_cols();
 
-      for (index_t i = 0; i < apc.size() / knns ; i++) {
+      for (size_t i = 0; i < apc.size() / knns ; i++) {
 
 	if (i % 1000 == 0) 
 	  if (ranks_given && !fx_param_exists(root, "q")) 
 	    DEBUG_ASSERT(rank_matrix.get(i,i) == 0);
 				
-	for (index_t j = 0; j < knns; j++) {
+	for (size_t j = 0; j < knns; j++) {
 	  if (ranks_given) {
-	    index_t knn_rank = rank_matrix.get(apc[i*knns+j], i);
+	    size_t knn_rank = rank_matrix.get(apc[i*knns+j], i);
 	    avg_rank_error += knn_rank - (j+1);
 						
 	    if (j == 0) {
@@ -306,9 +306,9 @@ int main (int argc, char *argv[]) {
 	}
       }
 			
-      NOTIFY("Rank Error: %"LI"d", rank_error);
+      NOTIFY("Rank Error: %zud", rank_error);
       if (ranks_given) {
-	NOTIFY("XR: %"LI"d NR: %"LI"d XKR: %"LI"d NKR: %"LI"d",
+	NOTIFY("XR: %zud NR: %zud XKR: %zud NKR: %zud",
 	       max_rank, min_rank, max_k_rank, min_k_rank);
 	NOTIFY("ARE: %lg", (double) avg_rank_error 
 	       / (double) (knns * qdata.n_cols()));
@@ -316,9 +316,9 @@ int main (int argc, char *argv[]) {
 
       // computing average rank error
       // and probability of failure
-      index_t re = 0, failed = 0;
-      index_t max_er = 0, min_er = rdata.n_cols();
-      for (index_t i = 0; i < apc.size() / knns; i++) {
+      size_t re = 0, failed = 0;
+      size_t max_er = 0, min_er = rdata.n_cols();
+      for (size_t i = 0; i < apc.size() / knns; i++) {
 	if (rank_matrix.get(apc[(i+1)*knns -1], i) > max_er)
 	  max_er = rank_matrix.get(apc[(i+1)*knns -1], i) -1;
 	
@@ -334,7 +334,7 @@ int main (int argc, char *argv[]) {
       double success_prob = (double) (qdata.n_cols() - failed)
 					/ (double) qdata.n_cols();
       
-      NOTIFY("Required rank error: %"LI"d,"
+      NOTIFY("Required rank error: %zud,"
 	     " Required success Prob = %1.2lf",
 	     rank_error, alpha);
 
@@ -342,8 +342,8 @@ int main (int argc, char *argv[]) {
 	     " True success prob = %1.2lf,",
 	     avg_rank, success_prob);
       
-      NOTIFY("Max error: %"LI"d,"
-	     " Min error: %"LI"d",
+      NOTIFY("Max error: %zud,"
+	     " Min error: %zud",
 	     max_er, min_er);
     } // compute_error
   } // doapprox
@@ -356,35 +356,35 @@ int main (int argc, char *argv[]) {
  * computing the kNN classification error 
  * if the labels are provided */ 
 void compute_classification_error(Matrix& lrdata, Matrix& lqdata,
-				  ArrayList<index_t>& neighbors,
-				  index_t knns, FILE* fout) {
+				  ArrayList<size_t>& neighbors,
+				  size_t knns, FILE* fout) {
  
   DEBUG_ASSERT(neighbors.size() / knns == lqdata.n_cols());
   
   NOTIFY("Outputting Labels & Computing Error");
 
-  index_t error = 0;
-  index_t no_maj = 0;
+  size_t error = 0;
+  size_t no_maj = 0;
   
-  for (index_t i = 0; i < neighbors.size() / knns ; i++) {
-    index_t true_l = (index_t) lqdata.get(0, i);
+  for (size_t i = 0; i < neighbors.size() / knns ; i++) {
+    size_t true_l = (size_t) lqdata.get(0, i);
 	
-    ArrayList<index_t> knn_l;
+    ArrayList<size_t> knn_l;
     knn_l.Init(knns);
-    fprintf(fout, "%"LI"d L%"LI"d", i, true_l);
+    fprintf(fout, "%zud L%zud", i, true_l);
 	
-    for (index_t j = 0; j < knns; j++) {
-      knn_l[j] = (index_t) lrdata.get(0, neighbors[i*knns + j]);
-      fprintf(fout, ",%"LI"d L%"LI"d", neighbors[i*knns+j], knn_l[j]);
+    for (size_t j = 0; j < knns; j++) {
+      knn_l[j] = (size_t) lrdata.get(0, neighbors[i*knns + j]);
+      fprintf(fout, ",%zud L%zud", neighbors[i*knns+j], knn_l[j]);
     }
 	
     fprintf(fout, "\n");
 	
-    index_t maj_l = -1, maj_n = 0, temp_n = 0;
-    for (index_t j = 0; j < knns; j++) {
+    size_t maj_l = -1, maj_n = 0, temp_n = 0;
+    for (size_t j = 0; j < knns; j++) {
       if (maj_l != knn_l[j]) {
 	temp_n = 0;
-	for (index_t k = 0; k < knns; k++) {
+	for (size_t k = 0; k < knns; k++) {
 	  if (knn_l[j] == knn_l[k] && j!= k)
 	    temp_n++;
 	}
@@ -402,9 +402,9 @@ void compute_classification_error(Matrix& lrdata, Matrix& lqdata,
       no_maj++;
   }
 			
-  NOTIFY("Error: %"LI"d / %"LI"d, NM:%"LI"d",
+  NOTIFY("Error: %zud / %zud, NM:%zud",
 	 error, lqdata.n_cols(), no_maj);
-  printf("Error: %"LI"d/ %"LI"d\n, NM:%"LI"d",
+  printf("Error: %zud/ %zud\n, NM:%zud",
 	 error, lqdata.n_cols(), no_maj);
   fclose(fout);
 }

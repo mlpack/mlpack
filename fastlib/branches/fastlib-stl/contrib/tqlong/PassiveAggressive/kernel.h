@@ -25,10 +25,10 @@ public:
 };
 
 struct PolynomialKernel : KernelFunction {
-  index_t m_iPolyOrder;
+  size_t m_iPolyOrder;
   bool m_bHomogeneous;
 public:
-  PolynomialKernel(index_t order, bool homogeneous = true) :
+  PolynomialKernel(size_t order, bool homogeneous = true) :
     KernelFunction(POLYNOMIAL_KERNEL) {
     m_iPolyOrder = order;
     m_bHomogeneous = homogeneous;

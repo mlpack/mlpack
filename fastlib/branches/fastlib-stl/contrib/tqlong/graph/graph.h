@@ -8,16 +8,16 @@ class Graph {
   AdjacentMatrix adjacent;
   Matrix weight;
  public:
-  bool isEdge(index_t i, index_t j) const { return adjacent.get(i, j); }
-  double getW(index_t i, index_t j) const { return weight.get(i, j); }
+  bool isEdge(size_t i, size_t j) const { return adjacent.get(i, j); }
+  double getW(size_t i, size_t j) const { return weight.get(i, j); }
   const Matrix& getW() const { return weight; }
 
-  bool& refEdge(index_t i, index_t j) { return adjacent.ref(i, j); }
-  double& refW(index_t i, index_t j) { return weight.ref(i, j); }
+  bool& refEdge(size_t i, size_t j) { return adjacent.ref(i, j); }
+  double& refW(size_t i, size_t j) { return weight.ref(i, j); }
 
-  index_t n_nodes() const { return adjacent.n_rows(); }
+  size_t n_nodes() const { return adjacent.n_rows(); }
 
-  void Init(index_t n) {
+  void Init(size_t n) {
     adjacent.Init(n, n);
     weight.Init(n, n);
   }
@@ -26,14 +26,14 @@ class Graph {
   void ThresholdEdges(double threshold);
 };
 
-typedef ArrayList<index_t> Path;
+typedef ArrayList<size_t> Path;
 
 // Need isEdge() & n_nodes() functions
 template <class Graph>
-void BreadthFirstSearch(index_t s, index_t t, const Graph& g, Path* p) {
-  std::queue<index_t> q;
+void BreadthFirstSearch(size_t s, size_t t, const Graph& g, Path* p) {
+  std::queue<size_t> q;
   GenVector<bool> visited;
-  GenVector<index_t> previous;
+  GenVector<size_t> previous;
 
   visited.Init(g.n_nodes());
   previous.Init(g.n_nodes());
@@ -44,7 +44,7 @@ void BreadthFirstSearch(index_t s, index_t t, const Graph& g, Path* p) {
   q.push(t); visited[t] = true;
   while (!q.empty() && !visited[s]) {
     int v = q.front(); q.pop();
-    for (index_t u = 0; u < g.n_nodes(); u++)
+    for (size_t u = 0; u < g.n_nodes(); u++)
       if (g.isEdge(u, v) && !visited[u]) {
 	      q.push(u); 
 	      previous[u] = v;
@@ -71,14 +71,14 @@ class MaxFlowAugmentedGraph {
     c.Alias(c_);
     f.Alias(f_);
   }
-  bool isEdge(index_t i, index_t j) const {
+  bool isEdge(size_t i, size_t j) const {
     return (g.isEdge(i, j) && f.get(i, j) < c.get(i, j)) ||
       (g.isEdge(j, i) && f.get(j, i) > 0);
   }
   
-  index_t n_nodes() const { return g.n_nodes(); }
+  size_t n_nodes() const { return g.n_nodes(); }
   
-  void ComputeMaxFlow(index_t s, index_t t) {
+  void ComputeMaxFlow(size_t s, size_t t) {
     while (1) {
       Path p;
       BreadthFirstSearch(s, t, *this, &p);
@@ -92,8 +92,8 @@ class MaxFlowAugmentedGraph {
   double CalAugmentValue(const Path& p) {
     printf("Augment path\n");
     double augmentValue = INFINITY;
-    for (index_t k = 0; k < p.size()-1; k++) {
-      index_t i = p[k], j = p[k+1];
+    for (size_t k = 0; k < p.size()-1; k++) {
+      size_t i = p[k], j = p[k+1];
       double val;
       if (g.isEdge(i, j) && f.get(i, j) < c.get(i, j)) // forward
         val = c.get(i, j) - f.get(i, j);
@@ -106,8 +106,8 @@ class MaxFlowAugmentedGraph {
   }
   
   void AugmentPath(const Path& p, double val) {
-    for (index_t k = 0; k < p.size()-1; k++) {
-      index_t i = p[k], j = p[k+1];
+    for (size_t k = 0; k < p.size()-1; k++) {
+      size_t i = p[k], j = p[k+1];
       if (g.isEdge(i, j) && f.get(i, j) < c.get(i, j)) // forward
         f.ref(i, j) += val;
       else // backward
@@ -119,7 +119,7 @@ class MaxFlowAugmentedGraph {
 // Max flow from a correctly initialized flow (e.g. the zero flow)
 // Need isEdge() and n_nodes() function for class Graph
 template <class Graph>
-void MaxFlow(index_t s, index_t t, const Graph& g, 
+void MaxFlow(size_t s, size_t t, const Graph& g, 
   const Matrix& c, Matrix* f) {
   MaxFlowAugmentedGraph<Graph> ag(g, c, *f);
   ag.ComputeMaxFlow(s, t);

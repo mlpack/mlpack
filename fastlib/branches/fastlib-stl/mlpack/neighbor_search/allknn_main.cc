@@ -49,17 +49,17 @@ int main(int argc, char *argv[]) {
 
   arma::mat reference_data;
 
-  arma::Mat<index_t> neighbors;
+  arma::Mat<size_t> neighbors;
   arma::mat distances;
 
-  if (data::Load(reference_file.c_str(), reference_data) == SUCCESS_FAIL)
+  if (data::Load(reference_file.c_str(), reference_data) == false)
     IO::Fatal << "Reference file " << reference_file << " not found." << endl;
   
   IO::Info << "Loaded reference data from " << reference_file << endl;
   
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
-  index_t k = IO::GetParam<int>("neighbor_search/k");
+  size_t k = IO::GetParam<int>("neighbor_search/k");
   if ((k <= 0) || (k >= reference_data.n_cols)) {
     IO::Fatal << "Invalid k: " << k << "; must be greater than 0 and less ";
     IO::Fatal << "than the number of reference points (";
@@ -78,7 +78,7 @@ int main(int argc, char *argv[]) {
     string query_file = IO::GetParam<string>("query_file");
     arma::mat query_data;
 
-    if (data::Load(query_file.c_str(), query_data) == SUCCESS_FAIL)
+    if (data::Load(query_file.c_str(), query_data) == false)
       IO::Fatal << "Query file " << query_file << " not found" << endl;
     
     IO::Info << "Query data loaded from " << query_file << endl;
@@ -104,9 +104,9 @@ int main(int argc, char *argv[]) {
   try {
     ofstream out(output_file.c_str());
 
-    for (index_t col = 0; col < neighbors.n_cols; col++) {
+    for (size_t col = 0; col < neighbors.n_cols; col++) {
       out << col << ", ";
-      for (index_t j = 0; j < (k - 1) /* last is special case */; j++) {
+      for (size_t j = 0; j < (k - 1) /* last is special case */; j++) {
         out << neighbors(j, col) << ", " << distances(j, col) << ", ";
       }
       out << neighbors((k - 1), col) << ", " << distances((k - 1), col) << endl;

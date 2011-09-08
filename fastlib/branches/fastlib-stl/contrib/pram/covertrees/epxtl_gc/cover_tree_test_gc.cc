@@ -56,16 +56,16 @@ const fx_module_doc cover_tree_main_doc = {
  * their k-NN and distance to them
  */
 template<typename T>
-void print_results(index_t, index_t, 
-		   ArrayList<index_t>*, 
+void print_results(size_t, size_t, 
+		   ArrayList<size_t>*, 
 		   ArrayList<T>*);
 
 /**
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
-void compare_neighbors(ArrayList<index_t>*, ArrayList<float>*, 
-		       ArrayList<index_t>*, ArrayList<float>*);
+void compare_neighbors(ArrayList<size_t>*, ArrayList<float>*, 
+		       ArrayList<size_t>*, ArrayList<float>*);
 
 /**
  * This is the main function which creates an object 
@@ -94,14 +94,14 @@ int main(int argc, char *argv[]) {
   queries.Init(qrs.n_rows(), qrs.n_cols());
   references.Init(refs.n_rows(), refs.n_cols());
 
-  for (index_t i = 0; i < qrs.n_cols(); i++) {
-    for(index_t j = 0; j < qrs.n_rows(); j++) {
+  for (size_t i = 0; i < qrs.n_cols(); i++) {
+    for(size_t j = 0; j < qrs.n_rows(); j++) {
       queries.set(j, i, (float) qrs.get(j, i));
     }
   }
 
-  for (index_t i = 0; i < refs.n_cols(); i++) {
-    for(index_t j = 0; j < refs.n_rows(); j++) {
+  for (size_t i = 0; i < refs.n_cols(); i++) {
+    for(size_t j = 0; j < refs.n_rows(); j++) {
       references.set(j, i, (float) refs.get(j, i));
     }
   }
@@ -110,21 +110,21 @@ int main(int argc, char *argv[]) {
  
   AllKNN<float> allknn;
   ArrayList<float> rbfs_dist, dfs_dist, brute_dist;
-  ArrayList<index_t> rbfs_ind, dfs_ind, brute_ind;
+  ArrayList<size_t> rbfs_ind, dfs_ind, brute_ind;
 
   datanode *allknn_module = fx_submodule(root, "allknn");
 
-  index_t knn = fx_param_int(allknn_module, "knns",1);
-  index_t dim = fx_param_int(allknn_module, "dim", 
+  size_t knn = fx_param_int(allknn_module, "knns",1);
+  size_t dim = fx_param_int(allknn_module, "dim", 
 			     queries.n_rows());
-  index_t rsize = fx_param_int(allknn_module, "rsize", 
+  size_t rsize = fx_param_int(allknn_module, "rsize", 
 			       references.n_cols());
-  index_t qsize = fx_param_int(allknn_module, "qsize", 
+  size_t qsize = fx_param_int(allknn_module, "qsize", 
 			       queries.n_cols());
 
   printf("%s\n", rfile);
-  printf("|R| = %"LI"d , |Q| = %"LI"d\n", rsize, qsize);
-  printf("%"LI"d dimensional space\n", dim);
+  printf("|R| = %zud , |Q| = %zud\n", rsize, qsize);
+  printf("%zud dimensional space\n", dim);
   fflush(NULL);
   
   // Initializing the AllKNN object
@@ -212,36 +212,36 @@ int main(int argc, char *argv[]) {
 }
 
 template<typename T>
-void print_results(index_t num_points, index_t knn, 
-		   ArrayList<index_t> *ind, 
+void print_results(size_t num_points, size_t knn, 
+		   ArrayList<size_t> *ind, 
 		   ArrayList<T> *dist) {
 
   DEBUG_ASSERT(num_points * knn == ind->size());
   DEBUG_ASSERT(ind->size() == dist->size());
 
-  for (index_t i = 0; i < num_points; i++) {
-    NOTIFY("%"LI"d :", i+1);
-    for(index_t j = 0; j < knn; j++) {
-      NOTIFY("\t%"LI"d : %lf", 
+  for (size_t i = 0; i < num_points; i++) {
+    NOTIFY("%zud :", i+1);
+    for(size_t j = 0; j < knn; j++) {
+      NOTIFY("\t%zud : %lf", 
 	     (*ind)[knn*i+j]+1,
 	     (*dist)[i*knn+knn-1-j]);
     }
   }
 }
 
-void compare_neighbors(ArrayList<index_t> *a, 
+void compare_neighbors(ArrayList<size_t> *a, 
 		       ArrayList<float> *da,
-		       ArrayList<index_t> *b, 
+		       ArrayList<size_t> *b, 
 		       ArrayList<float> *db) {
   
   DEBUG_SAME_SIZE(a->size(), b->size());
-  index_t *x = a->begin();
-  index_t *y = a->end();
-  index_t *z = b->begin();
+  size_t *x = a->begin();
+  size_t *y = a->end();
+  size_t *z = b->begin();
 
-  for(index_t i = 0; x != y; x++, z++, i++) {
+  for(size_t i = 0; x != y; x++, z++, i++) {
     if (*x != *z) { 
-      printf("point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+      printf("point %zud brute: %zud:%lf fast: %zud:%lf",
 	     i, *z, (*db)[i], *x, (*da)[i]);
       if ((*db)[i] != (*da)[i]) {
 	printf(" --->BAD\n");

@@ -32,16 +32,16 @@ class RIVANOV {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual  */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_alpha_; /* number of lagrangian multipliers in the dual  */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -55,15 +55,15 @@ class RIVANOV {
   double epsilon_; // for SVM_R
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
   bool is_constant_step_size_; // whether use constant step size (default) or not
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
 
  public:
   RIVANOV() {}
@@ -77,8 +77,8 @@ class RIVANOV {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_epochs_ = (index_t)param_[3];
-      n_iter_ = (index_t)param_[4];
+      n_epochs_ = (size_t)param_[3];
+      n_iter_ = (size_t)param_[4];
       accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -101,7 +101,7 @@ class RIVANOV {
   }
   */
 
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  //void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -160,7 +160,7 @@ class RIVANOV {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
@@ -174,7 +174,7 @@ class RIVANOV {
  */
 template<typename TKernel>
 void RIVANOV<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -223,9 +223,9 @@ void RIVANOV<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void RIVANOV<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
 
-  index_t total_n_iter;
+  size_t total_n_iter;
   double DX, M, x_sq_sup;
   double cons_step, eta_sum;
 
@@ -272,7 +272,7 @@ void RIVANOV<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   Vector eta_w_sum;
   eta_w_sum.Init(n_features_bias_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin Robust Ivanov iterations */
   if (b_linear_) { // linear SVM, output: w, bias

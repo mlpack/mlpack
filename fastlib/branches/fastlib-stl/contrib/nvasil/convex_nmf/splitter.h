@@ -29,14 +29,14 @@ class SimpleSplitter {
  
   }
   
-  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
+  bool Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     double widest_range=0;
-    index_t widest_range_i=-1;
-    index_t widest_range_j=-1;
-    for(index_t i=0; i<lower_bound.n_rows(); i++) {
-      for(index_t j=0; j<lower_bound.n_cols(); j++) {
+    size_t widest_range_i=-1;
+    size_t widest_range_j=-1;
+    for(size_t i=0; i<lower_bound.n_rows(); i++) {
+      for(size_t j=0; j<lower_bound.n_cols(); j++) {
         DEBUG_ASSERT(upper_bound.get(i, j) >= lower_bound.get(i,j));
         if (upper_bound.get(i, j) - lower_bound.get(i, j) > widest_range) {
           widest_range=upper_bound.get(i, j) - lower_bound.get(i, j);
@@ -54,11 +54,11 @@ class SimpleSplitter {
 
     left_upper_bound->set(widest_range_i, widest_range_j, split_value);
     right_lower_bound->set(widest_range_i, widest_range_j, split_value); 
-    return SUCCESS_PASS;
+    return true;
   }
   
-  success_t ChangeState(SolutionPack &solution) {
-    return SUCCESS_PASS;
+  bool ChangeState(SolutionPack &solution) {
+    return true;
   }
   bool CanSplitMore() {
     return false;
@@ -115,7 +115,7 @@ class TreeOnWandTreeOnHSplitter {
     rehash_w_=true;
   }
   
-  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
+  bool Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     if (split_on_w_==true && w_too_small_to_be_split_ == false) {
@@ -125,7 +125,7 @@ class TreeOnWandTreeOnHSplitter {
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound) == SUCCESS_FAIL) {
+                  right_lower_bound, right_upper_bound) == false) {
         
         w_too_small_to_be_split_=true;
       }
@@ -143,7 +143,7 @@ class TreeOnWandTreeOnHSplitter {
                         h_point_nodes_,
                         h_offset_, 
                         left_lower_bound, left_upper_bound,
-                        right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+                        right_lower_bound, right_upper_bound)==false) {
         
           h_too_small_to_be_split_=true;
         }
@@ -155,14 +155,14 @@ class TreeOnWandTreeOnHSplitter {
       }
     }
     if (w_too_small_to_be_split_ && h_too_small_to_be_split_) {
-        return SUCCESS_FAIL;
+        return false;
     }
-    return SUCCESS_PASS; 
+    return true; 
   }
   
   
   // if it returns false it means that no further optimization can be done
-  success_t ChangeState(SolutionPack &solution) {
+  bool ChangeState(SolutionPack &solution) {
       Matrix opt_points;
     opt_points.Alias(solution.solution_);
 
@@ -183,7 +183,7 @@ class TreeOnWandTreeOnHSplitter {
         GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
       }
 //    }
-    return SUCCESS_PASS;
+    return true;
   }
 
   bool CanSplitMore() {
@@ -196,22 +196,22 @@ class TreeOnWandTreeOnHSplitter {
   
  private:
   fx_module *module_;
-  index_t w_offset_;
-  index_t h_offset_; 
+  size_t w_offset_;
+  size_t h_offset_; 
   TreeType *w_tree_;
   TreeType *h_tree_;
-  index_t w_leaf_size_;
-  index_t h_leaf_size_;
-  ArrayList<index_t> w_old_from_new_points_;
-  ArrayList<index_t> h_old_from_new_points_;
-  index_t w_current_depth_;
-  index_t h_current_depth_;
-  index_t w_tree_max_depth_;
-  index_t h_tree_max_depth_;
-  index_t h_length_;
+  size_t w_leaf_size_;
+  size_t h_leaf_size_;
+  ArrayList<size_t> w_old_from_new_points_;
+  ArrayList<size_t> h_old_from_new_points_;
+  size_t w_current_depth_;
+  size_t h_current_depth_;
+  size_t w_tree_max_depth_;
+  size_t h_tree_max_depth_;
+  size_t h_length_;
   // here we have the grouping of points 
-  ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
-  ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  w_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  h_point_nodes_;
   bool split_on_w_;
   bool split_on_h_;
   bool rehash_w_; 
@@ -219,14 +219,14 @@ class TreeOnWandTreeOnHSplitter {
   bool h_too_small_to_be_split_;
   double minimum_interval_length_;
   
-  void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
+  void ComputeTreeDepth_(TreeType *tree_node, size_t *depth) {
     *depth=-1;
     ComputeTreeDepthRecursion_(tree_node, -1, depth);
   }
 
   void ComputeTreeDepthRecursion_(TreeType *tree_node, 
-                                  index_t depth, 
-                                  index_t *max_depth) {
+                                  size_t depth, 
+                                  size_t *max_depth) {
      
      depth+=1; 
      if (tree_node->is_leaf()==false) {
@@ -246,8 +246,8 @@ class TreeOnWandTreeOnHSplitter {
   }
   
   void GoDownToDepth_(TreeType *tree_node, 
-                      index_t desired_depth, 
-                      ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                      size_t desired_depth, 
+                      ArrayList<std::pair<size_t, size_t> > *point_nodes) {
     point_nodes->Init();
     GoDownToDepthRecursion_(tree_node, 
                             -1,
@@ -256,9 +256,9 @@ class TreeOnWandTreeOnHSplitter {
   }
  
   void GoDownToDepthRecursion_(TreeType *tree_node, 
-                               index_t current_depth,
-                               index_t desired_depth, 
-                               ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                               size_t current_depth,
+                               size_t desired_depth, 
+                               ArrayList<std::pair<size_t, size_t> > *point_nodes) {
 
     current_depth+=1;
     if (tree_node->is_leaf()==false 
@@ -274,7 +274,7 @@ class TreeOnWandTreeOnHSplitter {
 
       
     } else {
-      std::pair<index_t, index_t> *ptr;
+      std::pair<size_t, size_t> *ptr;
       ptr = point_nodes->PushBackRaw();
       ptr->first=tree_node->begin();
       ptr->second=tree_node->end();
@@ -282,19 +282,19 @@ class TreeOnWandTreeOnHSplitter {
     
   }
  
-  success_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
-          ArrayList<index_t> &old_from_new_points, 
-          ArrayList<std::pair<index_t, index_t> > &point_nodes,
-          index_t offset, 
+  bool SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+          ArrayList<size_t> &old_from_new_points, 
+          ArrayList<std::pair<size_t, size_t> > &point_nodes,
+          size_t offset, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
    
     double widest_range=0;
-    index_t widest_range_i=-1;
-    index_t widest_range_j=-1;
-    for(index_t i=0; i< point_nodes.size(); i++) {
-      index_t p=offset+old_from_new_points[point_nodes[i].first];
-      for(index_t j=0; j<lower_bound.n_rows(); j++) {
+    size_t widest_range_i=-1;
+    size_t widest_range_j=-1;
+    for(size_t i=0; i< point_nodes.size(); i++) {
+      size_t p=offset+old_from_new_points[point_nodes[i].first];
+      for(size_t j=0; j<lower_bound.n_rows(); j++) {
         if (upper_bound.get(j, p) - lower_bound.get(j, p) > widest_range) {
           widest_range=upper_bound.get(j, p) - lower_bound.get(j, p);
           widest_range_i=i;
@@ -307,22 +307,22 @@ class TreeOnWandTreeOnHSplitter {
     left_upper_bound->Copy(upper_bound);
     right_lower_bound->Copy(lower_bound);
     right_upper_bound->Copy(upper_bound);
-    index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
+    size_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
     double interval_length=split_value - lower_bound.get(widest_range_j, p);
     if (interval_length < minimum_interval_length_) {
-      return SUCCESS_FAIL;
+      return false;
     }
     
     NOTIFY("interval length:%lg w_depth:%i h_depth:%i", 
         interval_length, w_current_depth_, h_current_depth_);
-    for(index_t i=point_nodes[widest_range_i].first; 
+    for(size_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
       right_lower_bound->set(widest_range_j, offset+old_from_new_points[i], split_value); 
     }
-    return SUCCESS_PASS;
+    return true;
   }
 };
 
@@ -362,7 +362,7 @@ class TreeOnWandBuildTreeOnHSplitter {
     h_point_nodes_.Init();
     h_point_nodes_.PushBackCopy(std::make_pair(0, data_points.n_rows()));
     h_old_from_new_points_.Init();
-    for(index_t i=0; i<data_points.n_rows(); i++) {
+    for(size_t i=0; i<data_points.n_rows(); i++) {
       h_old_from_new_points_.PushBackCopy(i);
     } 
     w_too_small_to_be_split_=false;
@@ -372,7 +372,7 @@ class TreeOnWandBuildTreeOnHSplitter {
     rehash_w_=true;
   }
   
-  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
+  bool Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     if (split_on_w_==true && w_too_small_to_be_split_ == false) {
@@ -382,7 +382,7 @@ class TreeOnWandBuildTreeOnHSplitter {
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound) == SUCCESS_FAIL) {
+                  right_lower_bound, right_upper_bound) == false) {
         
         w_too_small_to_be_split_=true;
       }
@@ -400,7 +400,7 @@ class TreeOnWandBuildTreeOnHSplitter {
                         h_point_nodes_,
                         h_offset_, 
                         left_lower_bound, left_upper_bound,
-                        right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+                        right_lower_bound, right_upper_bound)==false) {
         
           h_too_small_to_be_split_=true;
         }
@@ -412,14 +412,14 @@ class TreeOnWandBuildTreeOnHSplitter {
       }
     }
     if (w_too_small_to_be_split_ && h_too_small_to_be_split_) {
-        return SUCCESS_FAIL;
+        return false;
     }
-    return SUCCESS_PASS; 
+    return true; 
   }
   
   
   // if it returns false it means that no further optimization can be done
-  success_t ChangeState(SolutionPack &solution) {
+  bool ChangeState(SolutionPack &solution) {
       Matrix opt_points;
     opt_points.Alias(solution.solution_);
 
@@ -435,8 +435,8 @@ class TreeOnWandBuildTreeOnHSplitter {
       Matrix h_points;
       h_points.Copy(solution.solution_.GetColumnPtr(h_offset_), 
                     solution.solution_.n_rows(), h_length_);
-      for(index_t i=0; i<h_points.n_rows(); i++) {
-        for(index_t j=0; j<h_points.n_cols(); j++) {
+      for(size_t i=0; i<h_points.n_rows(); i++) {
+        for(size_t j=0; j<h_points.n_cols(); j++) {
           h_points.set(i, j, exp(h_points.get(i, j)));
         }
       }
@@ -458,7 +458,7 @@ class TreeOnWandBuildTreeOnHSplitter {
         GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
       }
    // }
-    return SUCCESS_PASS;
+    return true;
   }
 
   bool CanSplitMore() {
@@ -471,22 +471,22 @@ class TreeOnWandBuildTreeOnHSplitter {
   
  private:
   fx_module *module_;
-  index_t w_offset_;
-  index_t h_offset_; 
+  size_t w_offset_;
+  size_t h_offset_; 
   TreeType *w_tree_;
   TreeType *h_tree_;
-  index_t w_leaf_size_;
-  index_t h_leaf_size_;
-  ArrayList<index_t> w_old_from_new_points_;
-  ArrayList<index_t> h_old_from_new_points_;
-  index_t w_current_depth_;
-  index_t h_current_depth_;
-  index_t w_tree_max_depth_;
-  index_t h_tree_max_depth_;
-  index_t h_length_;
+  size_t w_leaf_size_;
+  size_t h_leaf_size_;
+  ArrayList<size_t> w_old_from_new_points_;
+  ArrayList<size_t> h_old_from_new_points_;
+  size_t w_current_depth_;
+  size_t h_current_depth_;
+  size_t w_tree_max_depth_;
+  size_t h_tree_max_depth_;
+  size_t h_length_;
   // here we have the grouping of points 
-  ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
-  ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  w_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  h_point_nodes_;
   bool split_on_w_;
   bool split_on_h_;
   bool rehash_w_; 
@@ -494,14 +494,14 @@ class TreeOnWandBuildTreeOnHSplitter {
   bool h_too_small_to_be_split_;
   double minimum_interval_length_;
   
-  void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
+  void ComputeTreeDepth_(TreeType *tree_node, size_t *depth) {
     *depth=-1;
     ComputeTreeDepthRecursion_(tree_node, -1, depth);
   }
 
   void ComputeTreeDepthRecursion_(TreeType *tree_node, 
-                                  index_t depth, 
-                                  index_t *max_depth) {
+                                  size_t depth, 
+                                  size_t *max_depth) {
      
      depth+=1; 
      if (tree_node->is_leaf()==false) {
@@ -521,8 +521,8 @@ class TreeOnWandBuildTreeOnHSplitter {
   }
   
   void GoDownToDepth_(TreeType *tree_node, 
-                      index_t desired_depth, 
-                      ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                      size_t desired_depth, 
+                      ArrayList<std::pair<size_t, size_t> > *point_nodes) {
     point_nodes->Init();
     GoDownToDepthRecursion_(tree_node, 
                             -1,
@@ -531,9 +531,9 @@ class TreeOnWandBuildTreeOnHSplitter {
   }
  
   void GoDownToDepthRecursion_(TreeType *tree_node, 
-                               index_t current_depth,
-                               index_t desired_depth, 
-                               ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                               size_t current_depth,
+                               size_t desired_depth, 
+                               ArrayList<std::pair<size_t, size_t> > *point_nodes) {
 
     current_depth+=1;
     if (tree_node->is_leaf()==false 
@@ -549,7 +549,7 @@ class TreeOnWandBuildTreeOnHSplitter {
 
       
     } else {
-      std::pair<index_t, index_t> *ptr;
+      std::pair<size_t, size_t> *ptr;
       ptr = point_nodes->PushBackRaw();
       ptr->first=tree_node->begin();
       ptr->second=tree_node->end();
@@ -557,19 +557,19 @@ class TreeOnWandBuildTreeOnHSplitter {
     
   }
  
-  success_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
-          ArrayList<index_t> &old_from_new_points, 
-          ArrayList<std::pair<index_t, index_t> > &point_nodes,
-          index_t offset, 
+  bool SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+          ArrayList<size_t> &old_from_new_points, 
+          ArrayList<std::pair<size_t, size_t> > &point_nodes,
+          size_t offset, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
    
     double widest_range=0;
-    index_t widest_range_i=-1;
-    index_t widest_range_j=-1;
-    for(index_t i=0; i< point_nodes.size(); i++) {
-      index_t p=offset+old_from_new_points[point_nodes[i].first];
-      for(index_t j=0; j<lower_bound.n_rows(); j++) {
+    size_t widest_range_i=-1;
+    size_t widest_range_j=-1;
+    for(size_t i=0; i< point_nodes.size(); i++) {
+      size_t p=offset+old_from_new_points[point_nodes[i].first];
+      for(size_t j=0; j<lower_bound.n_rows(); j++) {
         if (upper_bound.get(j, p) - lower_bound.get(j, p) > widest_range) {
           widest_range=upper_bound.get(j, p) - lower_bound.get(j, p);
           widest_range_i=i;
@@ -582,22 +582,22 @@ class TreeOnWandBuildTreeOnHSplitter {
     left_upper_bound->Copy(upper_bound);
     right_lower_bound->Copy(lower_bound);
     right_upper_bound->Copy(upper_bound);
-    index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
+    size_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
     double interval_length=split_value - lower_bound.get(widest_range_j, p);
     if (interval_length < minimum_interval_length_) {
-      return SUCCESS_FAIL;
+      return false;
     }
     
     NOTIFY("interval length:%lg w_depth:%i h_depth:%i", 
         interval_length, w_current_depth_, h_current_depth_);
-    for(index_t i=point_nodes[widest_range_i].first; 
+    for(size_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
       right_lower_bound->set(widest_range_j, offset+old_from_new_points[i], split_value); 
     }
-    return SUCCESS_PASS;
+    return true;
   }
 };
 
@@ -626,7 +626,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     w_point_nodes_.Init();
     w_point_nodes_.PushBackCopy(std::make_pair(0, data_points.n_cols()));
     w_old_from_new_points_.Init();
-    for(index_t i=0; i<data_points.n_cols(); i++) {
+    for(size_t i=0; i<data_points.n_cols(); i++) {
      w_old_from_new_points_.PushBackCopy(i);
     } 
     
@@ -635,7 +635,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     h_point_nodes_.Init();
     h_point_nodes_.PushBackCopy(std::make_pair(0, data_points.n_rows()));
     h_old_from_new_points_.Init();
-    for(index_t i=0; i<data_points.n_rows(); i++) {
+    for(size_t i=0; i<data_points.n_rows(); i++) {
       h_old_from_new_points_.PushBackCopy(i);
     } 
     w_too_small_to_be_split_=false;
@@ -645,7 +645,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     rehash_w_=true;
   }
   
-  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
+  bool Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     if (split_on_w_==true && w_too_small_to_be_split_ == false) {
@@ -655,7 +655,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound) == SUCCESS_FAIL) {
+                  right_lower_bound, right_upper_bound) == false) {
         
         w_too_small_to_be_split_=true;
       }
@@ -673,7 +673,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
                         h_point_nodes_,
                         h_offset_, 
                         left_lower_bound, left_upper_bound,
-                        right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+                        right_lower_bound, right_upper_bound)==false) {
         
           h_too_small_to_be_split_=true;
         }
@@ -685,14 +685,14 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
       }
     }
     if (w_too_small_to_be_split_ && h_too_small_to_be_split_) {
-        return SUCCESS_FAIL;
+        return false;
     }
-    return SUCCESS_PASS; 
+    return true; 
   }
   
   
   // if it returns false it means that no further optimization can be done
-  success_t ChangeState(SolutionPack &solution) {
+  bool ChangeState(SolutionPack &solution) {
     w_too_small_to_be_split_=false;
     h_too_small_to_be_split_=false;
    // if (rehash_w_==false){
@@ -705,8 +705,8 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
       Matrix h_points;
       h_points.Copy(solution.solution_.GetColumnPtr(h_offset_), 
                     solution.solution_.n_rows(), h_length_);
-      for(index_t i=0; i<h_points.n_rows(); i++) {
-        for(index_t j=0; j<h_points.n_cols(); j++) {
+      for(size_t i=0; i<h_points.n_rows(); i++) {
+        for(size_t j=0; j<h_points.n_cols(); j++) {
           h_points.set(i, j, exp(h_points.get(i, j)));
         }
       }
@@ -731,8 +731,8 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
       Matrix w_points;
       w_points.Copy(solution.solution_.GetColumnPtr(w_offset_), 
                     solution.solution_.n_rows(), w_length_);
-      for(index_t i=0; i<w_points.n_rows(); i++) {
-        for(index_t j=0; j<w_points.n_cols(); j++) {
+      for(size_t i=0; i<w_points.n_rows(); i++) {
+        for(size_t j=0; j<w_points.n_cols(); j++) {
           w_points.set(i, j, exp(w_points.get(i, j)));
         }
       }
@@ -748,7 +748,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
         GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
       }
     // }
-    return SUCCESS_PASS;
+    return true;
   }
 
   bool CanSplitMore() {
@@ -761,23 +761,23 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
   
  private:
   fx_module *module_;
-  index_t w_offset_;
-  index_t h_offset_; 
+  size_t w_offset_;
+  size_t h_offset_; 
   TreeType *w_tree_;
   TreeType *h_tree_;
-  index_t w_leaf_size_;
-  index_t h_leaf_size_;
-  ArrayList<index_t> w_old_from_new_points_;
-  ArrayList<index_t> h_old_from_new_points_;
-  index_t w_current_depth_;
-  index_t h_current_depth_;
-  index_t w_tree_max_depth_;
-  index_t h_tree_max_depth_;
-  index_t h_length_;
-  index_t w_length_;
+  size_t w_leaf_size_;
+  size_t h_leaf_size_;
+  ArrayList<size_t> w_old_from_new_points_;
+  ArrayList<size_t> h_old_from_new_points_;
+  size_t w_current_depth_;
+  size_t h_current_depth_;
+  size_t w_tree_max_depth_;
+  size_t h_tree_max_depth_;
+  size_t h_length_;
+  size_t w_length_;
   // here we have the grouping of points 
-  ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
-  ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  w_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  h_point_nodes_;
   bool split_on_w_;
   bool split_on_h_;
   bool rehash_w_; 
@@ -785,14 +785,14 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
   bool h_too_small_to_be_split_;
   double minimum_interval_length_;
   
-  void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
+  void ComputeTreeDepth_(TreeType *tree_node, size_t *depth) {
     *depth=-1;
     ComputeTreeDepthRecursion_(tree_node, -1, depth);
   }
 
   void ComputeTreeDepthRecursion_(TreeType *tree_node, 
-                                  index_t depth, 
-                                  index_t *max_depth) {
+                                  size_t depth, 
+                                  size_t *max_depth) {
      
      depth+=1; 
      if (tree_node->is_leaf()==false) {
@@ -812,8 +812,8 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
   }
   
   void GoDownToDepth_(TreeType *tree_node, 
-                      index_t desired_depth, 
-                      ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                      size_t desired_depth, 
+                      ArrayList<std::pair<size_t, size_t> > *point_nodes) {
     point_nodes->Init();
     GoDownToDepthRecursion_(tree_node, 
                             -1,
@@ -822,9 +822,9 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
   }
  
   void GoDownToDepthRecursion_(TreeType *tree_node, 
-                               index_t current_depth,
-                               index_t desired_depth, 
-                               ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                               size_t current_depth,
+                               size_t desired_depth, 
+                               ArrayList<std::pair<size_t, size_t> > *point_nodes) {
 
     current_depth+=1;
     if (tree_node->is_leaf()==false 
@@ -840,7 +840,7 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
 
       
     } else {
-      std::pair<index_t, index_t> *ptr;
+      std::pair<size_t, size_t> *ptr;
       ptr = point_nodes->PushBackRaw();
       ptr->first=tree_node->begin();
       ptr->second=tree_node->end();
@@ -848,19 +848,19 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     
   }
  
-  success_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
-          ArrayList<index_t> &old_from_new_points, 
-          ArrayList<std::pair<index_t, index_t> > &point_nodes,
-          index_t offset, 
+  bool SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+          ArrayList<size_t> &old_from_new_points, 
+          ArrayList<std::pair<size_t, size_t> > &point_nodes,
+          size_t offset, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
    
     double widest_range=0;
-    index_t widest_range_i=-1;
-    index_t widest_range_j=-1;
-    for(index_t i=0; i< point_nodes.size(); i++) {
-      index_t p=offset+old_from_new_points[point_nodes[i].first];
-      for(index_t j=0; j<lower_bound.n_rows(); j++) {
+    size_t widest_range_i=-1;
+    size_t widest_range_j=-1;
+    for(size_t i=0; i< point_nodes.size(); i++) {
+      size_t p=offset+old_from_new_points[point_nodes[i].first];
+      for(size_t j=0; j<lower_bound.n_rows(); j++) {
         if (upper_bound.get(j, p) - lower_bound.get(j, p) > widest_range) {
           widest_range=upper_bound.get(j, p) - lower_bound.get(j, p);
           widest_range_i=i;
@@ -873,22 +873,22 @@ class BuildTreeOnWandBuildTreeOnHSplitter {
     left_upper_bound->Copy(upper_bound);
     right_lower_bound->Copy(lower_bound);
     right_upper_bound->Copy(upper_bound);
-    index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
+    size_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
     double interval_length=split_value - lower_bound.get(widest_range_j, p);
     if (interval_length < minimum_interval_length_) {
-      return SUCCESS_FAIL;
+      return false;
     }
     
     NOTIFY("interval length:%lg w_depth:%i h_depth:%i", 
         interval_length, w_current_depth_, h_current_depth_);
-    for(index_t i=point_nodes[widest_range_i].first; 
+    for(size_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
       right_lower_bound->set(widest_range_j, offset+old_from_new_points[i], split_value); 
     }
-    return SUCCESS_PASS;
+    return true;
   }
 };
 
@@ -940,7 +940,7 @@ class TreeSplitterDemo {
     rehash_w_=true;
   }
   
-  success_t Split(Matrix &lower_bound, Matrix &upper_bound, 
+  bool Split(Matrix &lower_bound, Matrix &upper_bound, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
     if (split_on_w_==true && w_too_small_to_be_split_ == false) {
@@ -950,7 +950,7 @@ class TreeSplitterDemo {
                   w_point_nodes_,
                   w_offset_, 
                   left_lower_bound, left_upper_bound,
-                  right_lower_bound, right_upper_bound) == SUCCESS_FAIL) {
+                  right_lower_bound, right_upper_bound) == false) {
         
         w_too_small_to_be_split_=true;
       }
@@ -968,7 +968,7 @@ class TreeSplitterDemo {
                         h_point_nodes_,
                         h_offset_, 
                         left_lower_bound, left_upper_bound,
-                        right_lower_bound, right_upper_bound)==SUCCESS_FAIL) {
+                        right_lower_bound, right_upper_bound)==false) {
         
           h_too_small_to_be_split_=true;
         }
@@ -980,14 +980,14 @@ class TreeSplitterDemo {
       }
     }
     if (w_too_small_to_be_split_ && h_too_small_to_be_split_) {
-        return SUCCESS_FAIL;
+        return false;
     }
-    return SUCCESS_PASS; 
+    return true; 
   }
   
   
   // if it returns false it means that no further optimization can be done
-  success_t ChangeState(SolutionPack &solution) {
+  bool ChangeState(SolutionPack &solution) {
     w_too_small_to_be_split_=false;
     h_too_small_to_be_split_=false;
    // if (rehash_w_==false){
@@ -1005,7 +1005,7 @@ class TreeSplitterDemo {
         GoDownToDepth_(w_tree_, w_current_depth_, &w_point_nodes_);
       }
     // }
-    return SUCCESS_PASS;
+    return true;
   }
 
   bool CanSplitMore() {
@@ -1018,23 +1018,23 @@ class TreeSplitterDemo {
   
  private:
   fx_module *module_;
-  index_t w_offset_;
-  index_t h_offset_; 
+  size_t w_offset_;
+  size_t h_offset_; 
   TreeType *w_tree_;
   TreeType *h_tree_;
-  index_t w_leaf_size_;
-  index_t h_leaf_size_;
-  ArrayList<index_t> w_old_from_new_points_;
-  ArrayList<index_t> h_old_from_new_points_;
-  index_t w_current_depth_;
-  index_t h_current_depth_;
-  index_t w_tree_max_depth_;
-  index_t h_tree_max_depth_;
-  index_t h_length_;
-  index_t w_length_;
+  size_t w_leaf_size_;
+  size_t h_leaf_size_;
+  ArrayList<size_t> w_old_from_new_points_;
+  ArrayList<size_t> h_old_from_new_points_;
+  size_t w_current_depth_;
+  size_t h_current_depth_;
+  size_t w_tree_max_depth_;
+  size_t h_tree_max_depth_;
+  size_t h_length_;
+  size_t w_length_;
   // here we have the grouping of points 
-  ArrayList<std::pair<index_t, index_t> >  w_point_nodes_;
-  ArrayList<std::pair<index_t, index_t> >  h_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  w_point_nodes_;
+  ArrayList<std::pair<size_t, size_t> >  h_point_nodes_;
   bool split_on_w_;
   bool split_on_h_;
   bool rehash_w_; 
@@ -1045,14 +1045,14 @@ class TreeSplitterDemo {
   Matrix w_solution_;
   Matrix h_solution_;
   
-  void ComputeTreeDepth_(TreeType *tree_node, index_t *depth) {
+  void ComputeTreeDepth_(TreeType *tree_node, size_t *depth) {
     *depth=-1;
     ComputeTreeDepthRecursion_(tree_node, -1, depth);
   }
 
   void ComputeTreeDepthRecursion_(TreeType *tree_node, 
-                                  index_t depth, 
-                                  index_t *max_depth) {
+                                  size_t depth, 
+                                  size_t *max_depth) {
      
      depth+=1; 
      if (tree_node->is_leaf()==false) {
@@ -1072,8 +1072,8 @@ class TreeSplitterDemo {
   }
   
   void GoDownToDepth_(TreeType *tree_node, 
-                      index_t desired_depth, 
-                      ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                      size_t desired_depth, 
+                      ArrayList<std::pair<size_t, size_t> > *point_nodes) {
     point_nodes->Init();
     GoDownToDepthRecursion_(tree_node, 
                             -1,
@@ -1082,9 +1082,9 @@ class TreeSplitterDemo {
   }
  
   void GoDownToDepthRecursion_(TreeType *tree_node, 
-                               index_t current_depth,
-                               index_t desired_depth, 
-                               ArrayList<std::pair<index_t, index_t> > *point_nodes) {
+                               size_t current_depth,
+                               size_t desired_depth, 
+                               ArrayList<std::pair<size_t, size_t> > *point_nodes) {
 
     current_depth+=1;
     if (tree_node->is_leaf()==false 
@@ -1100,7 +1100,7 @@ class TreeSplitterDemo {
 
       
     } else {
-      std::pair<index_t, index_t> *ptr;
+      std::pair<size_t, size_t> *ptr;
       ptr = point_nodes->PushBackRaw();
       ptr->first=tree_node->begin();
       ptr->second=tree_node->end();
@@ -1108,19 +1108,19 @@ class TreeSplitterDemo {
     
   }
  
-  success_t SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
-          ArrayList<index_t> &old_from_new_points, 
-          ArrayList<std::pair<index_t, index_t> > &point_nodes,
-          index_t offset, 
+  bool SpitMatrix_(Matrix &lower_bound, Matrix &upper_bound, 
+          ArrayList<size_t> &old_from_new_points, 
+          ArrayList<std::pair<size_t, size_t> > &point_nodes,
+          size_t offset, 
           Matrix *left_lower_bound, Matrix *left_upper_bound,
           Matrix *right_lower_bound, Matrix *right_upper_bound) {
    
     double widest_range=0;
-    index_t widest_range_i=-1;
-    index_t widest_range_j=-1;
-    for(index_t i=0; i< point_nodes.size(); i++) {
-      index_t p=offset+old_from_new_points[point_nodes[i].first];
-      for(index_t j=0; j<lower_bound.n_rows(); j++) {
+    size_t widest_range_i=-1;
+    size_t widest_range_j=-1;
+    for(size_t i=0; i< point_nodes.size(); i++) {
+      size_t p=offset+old_from_new_points[point_nodes[i].first];
+      for(size_t j=0; j<lower_bound.n_rows(); j++) {
         if (upper_bound.get(j, p) - lower_bound.get(j, p) > widest_range) {
           widest_range=upper_bound.get(j, p) - lower_bound.get(j, p);
           widest_range_i=i;
@@ -1133,22 +1133,22 @@ class TreeSplitterDemo {
     left_upper_bound->Copy(upper_bound);
     right_lower_bound->Copy(lower_bound);
     right_upper_bound->Copy(upper_bound);
-    index_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
+    size_t p=offset+old_from_new_points[point_nodes[widest_range_i].first];
     double split_value=(upper_bound.get(widest_range_j, p)
         +lower_bound.get(widest_range_j, p))/2; 
     double interval_length=split_value - lower_bound.get(widest_range_j, p);
     if (interval_length < minimum_interval_length_) {
-      return SUCCESS_FAIL;
+      return false;
     }
     
     NOTIFY("interval length:%lg w_depth:%i h_depth:%i", 
         interval_length, w_current_depth_, h_current_depth_);
-    for(index_t i=point_nodes[widest_range_i].first; 
+    for(size_t i=point_nodes[widest_range_i].first; 
         i<point_nodes[widest_range_i].second; i++) {
       left_upper_bound->set(widest_range_j, offset+old_from_new_points[i], split_value);
       right_lower_bound->set(widest_range_j, offset+old_from_new_points[i], split_value); 
     }
-    return SUCCESS_PASS;
+    return true;
   }
 };
 

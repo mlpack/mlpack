@@ -41,12 +41,12 @@ class GopTightNmfEngine {
   LBfgs<ClassicNmfObjective> classic_nmf_optimizer_;
   GopNmfEngine gop_nmf_engine_;
   Matrix *current_solution_;
-  ArrayList<index_t> rows_;
-  ArrayList<index_t> columns_;
+  ArrayList<size_t> rows_;
+  ArrayList<size_t> columns_;
   ArrayList<double> values_;
-  index_t num_of_rows_;
-  index_t num_of_columns_;
-  index_t new_dimension_;
+  size_t num_of_rows_;
+  size_t num_of_columns_;
+  size_t new_dimension_;
   Vector lower_box_;
   Vector upper_box_;
   double  objective_minimum_upper_bound_;

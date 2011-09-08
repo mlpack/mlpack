@@ -119,9 +119,9 @@ void Run_Kernelized_PA(fx_module* module, DataGenerator& data, KernelizedWeight&
 }
 
 void CrossValidation(fx_module* module, DataGenerator& dg) {
-  ArrayList<index_t> vIdx;
+  ArrayList<size_t> vIdx;
   // LOOCV
-  index_t n_samples = fx_param_int(module, "N", 99);
+  size_t n_samples = fx_param_int(module, "N", 99);
   CrossValidationGenerator::createLOOCVindex(vIdx, n_samples);
 
   CrossValidationGenerator cvdg(dg, vIdx);
@@ -135,7 +135,7 @@ void CrossValidation(fx_module* module, DataGenerator& dg) {
   DEBUG_ASSERT(update_func != NULL);
 
   double cv_error = 0;
-  for (index_t i_vSet = 0; i_vSet < cvdg.n_sets(); i_vSet++) {
+  for (size_t i_vSet = 0; i_vSet < cvdg.n_sets(); i_vSet++) {
     // training
     cvdg.setValidationSet(i_vSet, false);
     Vector w;
@@ -183,9 +183,9 @@ void CrossValidation(fx_module* module, DataGenerator& dg) {
  */ 
 void KernelizedCrossValidation(fx_module* module, KernelFunction& kernel, 
 			       DataGenerator& dg) {
-  ArrayList<index_t> vIdx;
+  ArrayList<size_t> vIdx;
   // LOOCV
-  index_t n_samples = fx_param_int(module, "N", 99);
+  size_t n_samples = fx_param_int(module, "N", 99);
   CrossValidationGenerator::createLOOCVindex(vIdx, n_samples);
 
   CrossValidationGenerator cvdg(dg, vIdx);
@@ -199,7 +199,7 @@ void KernelizedCrossValidation(fx_module* module, KernelFunction& kernel,
   DEBUG_ASSERT(update_func != NULL);
 
   double cv_error = 0;
-  for (index_t i_vSet = 0; i_vSet < cvdg.n_sets(); i_vSet++) {
+  for (size_t i_vSet = 0; i_vSet < cvdg.n_sets(); i_vSet++) {
     // training
     cvdg.setValidationSet(i_vSet, false);
     KernelizedWeight w(cvdg.n_features(), kernel);
@@ -243,7 +243,7 @@ int main(int argc, char** argv) {
   fx_module *root = fx_init(argc, argv, &patest_doc);  
   
   const char* filename = fx_param_str_req(root, "data");
-  index_t n_laps = fx_param_int(root, "laps", 1);
+  size_t n_laps = fx_param_int(root, "laps", 1);
   
   DatasetGenerator dg(filename, n_laps);
   //FileRowGenerator dg(filename, 1);
@@ -258,7 +258,7 @@ int main(int argc, char** argv) {
     const char* kernelName = fx_param_str(root, "kernel", "linear");
     if (strcmp(kernelName, "linear")==0) kernel = new LinearKernel();
     else if (strcmp(kernelName, "poly")==0) {
-      index_t order = fx_param_int(root, "order", 2);
+      size_t order = fx_param_int(root, "order", 2);
       bool homogeneous = fx_param_int(root, "homogeneous", 0) == 1;
       kernel = new PolynomialKernel(order, homogeneous);
     }

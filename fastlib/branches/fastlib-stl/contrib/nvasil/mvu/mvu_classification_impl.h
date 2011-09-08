@@ -46,7 +46,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -80,7 +80,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
         &num_of_nearest_pairs_);
   }
   sum_of_nearest_distances_=0;
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
    sum_of_nearest_distances_+=std::sqrt(nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
@@ -107,7 +107,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module, Matrix &labeled
       &furthest_distances_,
       &num_of_furthest_pairs_);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -132,7 +132,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module) {
   nearest_distances_.Init();
   num_of_points_=0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -155,7 +155,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module) {
   furthest_neighbor_pairs_.Init();
   furthest_distances_.Init();
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     furthest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -166,7 +166,7 @@ void MaxFurthestNeighborsSemiSupervised::Init(fx_module *module) {
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -188,13 +188,13 @@ void MaxFurthestNeighborsSemiSupervised::Destruct() {
 }
 
 void MaxFurthestNeighborsSemiSupervised::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   gradient->SetAll(0.0);
   // objective
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     la::SubOverwrite(dimension, point2, point1, a_i_r);
@@ -205,10 +205,10 @@ void MaxFurthestNeighborsSemiSupervised::ComputeGradient(Matrix &coordinates, Ma
         gradient->GetColumnPtr(n2));
   }
   // equality constraints
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -229,10 +229,10 @@ void MaxFurthestNeighborsSemiSupervised::ComputeGradient(Matrix &coordinates, Ma
 void MaxFurthestNeighborsSemiSupervised::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double diff = la::DistanceSqEuclidean(dimension, point1, point2);
@@ -241,11 +241,11 @@ void MaxFurthestNeighborsSemiSupervised::ComputeObjective(Matrix &coordinates,
 }
 
 void MaxFurthestNeighborsSemiSupervised::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, 
@@ -257,12 +257,12 @@ void MaxFurthestNeighborsSemiSupervised::ComputeFeasibilityError(Matrix &coordin
 }
 
 double MaxFurthestNeighborsSemiSupervised::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -274,10 +274,10 @@ double MaxFurthestNeighborsSemiSupervised::ComputeLagrangian(Matrix &coordinates
 }
 
 void MaxFurthestNeighborsSemiSupervised::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -339,14 +339,14 @@ bool MaxFurthestNeighborsSemiSupervised::IsIntermediateStepOver(
 
 void MaxFurthestNeighborsSemiSupervised::GiveInitMatrix(Matrix *init_matrix) {
   init_matrix->Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_points_; i++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       init_matrix->set(j, i, math::Random(0.0, 1.0));
     }
   }
 }
 
-index_t  MaxFurthestNeighborsSemiSupervised::num_of_points() {
+size_t  MaxFurthestNeighborsSemiSupervised::num_of_points() {
   return num_of_points_;
 }
 
@@ -373,19 +373,19 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
   // get the number of classes
-  num_of_classes_ = index_t(*std::max_element(labels.ptr(), 
+  num_of_classes_ = size_t(*std::max_element(labels.ptr(), 
                      labels.ptr()+labels.n_cols()));
   svm_signs_.Init(num_of_classes_, labels.n_cols());
   anchors_.Init(num_of_classes_);
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     double *p = std::find(labels.ptr(), labels.ptr()+labels.n_cols(), double(i));
     anchors_[i] = ptrdiff_t(p - labels.ptr());
   }
   
   ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
   ineq_lagrange_mult_.SetAll(1);
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<labels.n_cols(); j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<labels.n_cols(); j++) {
       if (labels.get(0, j)==labels.get(0, anchors_[i])) {
         svm_signs_.set(i, j ,1.0);
       } else {
@@ -410,7 +410,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -444,7 +444,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
         &num_of_nearest_pairs_);
   }
   sum_of_nearest_distances_=0;
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
    sum_of_nearest_distances_+=std::sqrt(nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
@@ -471,7 +471,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
       &furthest_distances_,
       &num_of_furthest_pairs_);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -496,18 +496,18 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
   // get the number of classes
-  num_of_classes_ = index_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
+  num_of_classes_ = size_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
   svm_signs_.Init(num_of_classes_, labels.n_cols());
   anchors_.Init(num_of_classes_);
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     double *p = std::find(labels.ptr(), labels.ptr()+labels.n_cols(), double(i));
     anchors_[i] = ptrdiff_t(p - labels.ptr());
   }
   
   ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
   ineq_lagrange_mult_.SetAll(100);
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<labels.n_cols(); j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<labels.n_cols(); j++) {
       if (labels.get(0, j)==labels.get(0, anchors_[i])) {
         svm_signs_.set(i, j ,1.0);
       } else {
@@ -528,7 +528,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   nearest_distances_.Init();
   num_of_points_=0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -547,7 +547,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::Init(fx_module *module,
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -571,13 +571,13 @@ void MaxFurthestNeighborsSvmSemiSupervised::Destruct() {
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   gradient->SetAll(0.0);
   // objective
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     la::SubOverwrite(dimension, point2, point1, a_i_r);
@@ -589,7 +589,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
   }
   
   // maximize the margin too
-/*  for(index_t i=0; i<num_of_classes_; i++) {
+/*  for(size_t i=0; i<num_of_classes_; i++) {
     la::AddExpert(dimension, 2*regularizer_, 
                   coordinates.GetColumnPtr(anchors_[i]),
                   gradient->GetColumnPtr(anchors_[i]));
@@ -597,10 +597,10 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
 */  
   
   // equality constraints
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -618,8 +618,8 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
   }
   
   // inequality constraints
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double *p1=coordinates.GetColumnPtr(anchors_[i]);
       double *p2=coordinates.GetColumnPtr(j);
       double dot_prod=la::Dot(dimension,
@@ -641,10 +641,10 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeGradient(Matrix &coordinates,
 void MaxFurthestNeighborsSvmSemiSupervised::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double diff = la::DistanceSqEuclidean(dimension, point1, point2);
@@ -652,7 +652,7 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeObjective(Matrix &coordinates
   }
 
 // Maximize the margin  
-/*  for(index_t i=0; i<num_of_classes_; i++) {
+/*  for(size_t i=0; i<num_of_classes_; i++) {
     *objective+=regularizer_ * 
                  la::Dot(dimension, coordinates.GetColumnPtr(anchors_[i]),
                          coordinates.GetColumnPtr(anchors_[i]));
@@ -661,11 +661,11 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeObjective(Matrix &coordinates
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, 
@@ -676,8 +676,8 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coor
   *error = *error *100.0/sum_of_nearest_distances_;
   NOTIFY("Feasibility error:%lg", *error);
   double error1=0;
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j)) ; 
@@ -692,14 +692,14 @@ void MaxFurthestNeighborsSvmSemiSupervised::ComputeFeasibilityError(Matrix &coor
 }
 
 double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
   //Equality constraints
  
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -709,8 +709,8 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
   }
 
   // inequality constraint
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j)); 
@@ -727,10 +727,10 @@ double MaxFurthestNeighborsSvmSemiSupervised::ComputeLagrangian(Matrix &coordina
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -738,8 +738,8 @@ void MaxFurthestNeighborsSvmSemiSupervised::UpdateLagrangeMult(Matrix &coordinat
     eq_lagrange_mult_[i]-=sigma_*dist_diff;
   }
   
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j));
@@ -803,19 +803,19 @@ bool MaxFurthestNeighborsSvmSemiSupervised::IsIntermediateStepOver(
 
 void MaxFurthestNeighborsSvmSemiSupervised::GiveInitMatrix(Matrix *init_matrix) {
   init_matrix->Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_points_; i++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       init_matrix->set(j, i, math::Random(0.0, 1.0));
     }
   }
 }
 
-index_t  MaxFurthestNeighborsSvmSemiSupervised::num_of_points() {
+size_t  MaxFurthestNeighborsSvmSemiSupervised::num_of_points() {
   return num_of_points_;
 }
 
-void MaxFurthestNeighborsSvmSemiSupervised::anchors(ArrayList<index_t> *anch) {
-  for(index_t i=0; i<num_of_classes_; i++) {
+void MaxFurthestNeighborsSvmSemiSupervised::anchors(ArrayList<size_t> *anch) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     anch->PushBackCopy(anchors_[i]);
   }
 }
@@ -841,18 +841,18 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
   // get the number of classes
-  num_of_classes_ = index_t(*std::max_element(labels.ptr(), 
+  num_of_classes_ = size_t(*std::max_element(labels.ptr(), 
                      labels.ptr()+labels.n_cols()));
   svm_signs_.Init(num_of_classes_, labels.n_cols());
   anchors_.Init(num_of_classes_);
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     anchors_[i] = num_of_points_+i;
   }
   
   ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
   ineq_lagrange_mult_.SetAll(1);
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<labels.n_cols(); j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<labels.n_cols(); j++) {
       if (labels.get(0, j)==i) {
         svm_signs_.set(i, j ,1.0);
       } else {
@@ -877,7 +877,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -911,7 +911,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
         &num_of_nearest_pairs_);
   }
   sum_of_nearest_distances_=0;
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
    sum_of_nearest_distances_+=std::sqrt(nearest_distances_[i]);
   }
   NOTIFY("Sum of all nearest distances:%lg", sum_of_nearest_distances_);
@@ -938,7 +938,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
       &furthest_distances_,
       &num_of_furthest_pairs_);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -963,18 +963,18 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   labeled_offset_=0;
   unlabeled_offset_=num_of_labeled_;
   // get the number of classes
-  num_of_classes_ = index_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
+  num_of_classes_ = size_t(*std::max_element(labels.ptr(), labels.ptr()+labels.n_cols()))+1;
   svm_signs_.Init(num_of_classes_, labels.n_cols());
   anchors_.Init(num_of_classes_);
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     double *p = std::find(labels.ptr(), labels.ptr()+labels.n_cols(), double(i));
     anchors_[i] = ptrdiff_t(p - labels.ptr());
   }
   
   ineq_lagrange_mult_.Init(num_of_classes_ *  num_of_labeled_);
   ineq_lagrange_mult_.SetAll(100);
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<labels.n_cols(); j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<labels.n_cols(); j++) {
       if (labels.get(0, j)==labels.get(0, anchors_[i])) {
         svm_signs_.set(i, j ,1.0);
       } else {
@@ -995,7 +995,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   nearest_distances_.Init();
   num_of_points_=0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -1014,7 +1014,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Init(fx_module *module,
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -1038,13 +1038,13 @@ void MaxFurthestNeighborsSvmSemiSupervised1::Destruct() {
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised1::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   gradient->SetAll(0.0);
   // objective
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     la::SubOverwrite(dimension, point2, point1, a_i_r);
@@ -1056,7 +1056,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeGradient(Matrix &coordinates
   }
   
   // maximize the margin too
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     la::AddExpert(dimension, 2*regularizer_, 
                   coordinates.GetColumnPtr(anchors_[i]),
                   gradient->GetColumnPtr(anchors_[i]));
@@ -1064,10 +1064,10 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeGradient(Matrix &coordinates
   
   
   // equality constraints
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -1085,8 +1085,8 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeGradient(Matrix &coordinates
   }
   
   // inequality constraints
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double *p1=coordinates.GetColumnPtr(anchors_[i]);
       double *p2=coordinates.GetColumnPtr(j);
       double dot_prod=la::Dot(dimension,
@@ -1108,10 +1108,10 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeGradient(Matrix &coordinates
 void MaxFurthestNeighborsSvmSemiSupervised1::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double diff = la::DistanceSqEuclidean(dimension, point1, point2);
@@ -1119,7 +1119,7 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeObjective(Matrix &coordinate
   }
 
 // Maximize the margin  
-  for(index_t i=0; i<num_of_classes_; i++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     *objective+=regularizer_ * 
                  la::Dot(dimension, coordinates.GetColumnPtr(anchors_[i]),
                          coordinates.GetColumnPtr(anchors_[i]));
@@ -1128,11 +1128,11 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeObjective(Matrix &coordinate
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised1::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, 
@@ -1143,8 +1143,8 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeFeasibilityError(Matrix &coo
   *error = *error *100.0/sum_of_nearest_distances_;
   NOTIFY("Feasibility error:%lg", *error);
   double error1=0;
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j)) ; 
@@ -1159,14 +1159,14 @@ void MaxFurthestNeighborsSvmSemiSupervised1::ComputeFeasibilityError(Matrix &coo
 }
 
 double MaxFurthestNeighborsSvmSemiSupervised1::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
   //Equality constraints
  
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -1176,8 +1176,8 @@ double MaxFurthestNeighborsSvmSemiSupervised1::ComputeLagrangian(Matrix &coordin
   }
 
   // inequality constraint
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j)); 
@@ -1194,10 +1194,10 @@ double MaxFurthestNeighborsSvmSemiSupervised1::ComputeLagrangian(Matrix &coordin
 }
 
 void MaxFurthestNeighborsSvmSemiSupervised1::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -1205,8 +1205,8 @@ void MaxFurthestNeighborsSvmSemiSupervised1::UpdateLagrangeMult(Matrix &coordina
     eq_lagrange_mult_[i]-=sigma_*dist_diff;
   }
   
-  for(index_t i=0; i<num_of_classes_; i++) {
-    for(index_t j=0; j<num_of_labeled_; j++) {
+  for(size_t i=0; i<num_of_classes_; i++) {
+    for(size_t j=0; j<num_of_labeled_; j++) {
       double dot_prod=la::Dot(dimension,
                               coordinates.GetColumnPtr(anchors_[i]),
                               coordinates.GetColumnPtr(j));
@@ -1270,19 +1270,19 @@ bool MaxFurthestNeighborsSvmSemiSupervised1::IsIntermediateStepOver(
 
 void MaxFurthestNeighborsSvmSemiSupervised1::GiveInitMatrix(Matrix *init_matrix) {
   init_matrix->Init(new_dimension_, num_of_points_+num_of_classes_);
-  for(index_t i=0; i<num_of_points_+num_of_classes_; i++) {
-    for(index_t j=0; j<new_dimension_; j++) {
+  for(size_t i=0; i<num_of_points_+num_of_classes_; i++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       init_matrix->set(j, i, math::Random(0.0, 1.0));
     }
   }
 }
 
-index_t  MaxFurthestNeighborsSvmSemiSupervised1::num_of_points() {
+size_t  MaxFurthestNeighborsSvmSemiSupervised1::num_of_points() {
   return num_of_points_;
 }
 
-void MaxFurthestNeighborsSvmSemiSupervised1::anchors(ArrayList<index_t> *anch) {
-  for(index_t i=0; i<num_of_classes_; i++) {
+void MaxFurthestNeighborsSvmSemiSupervised1::anchors(ArrayList<size_t> *anch) {
+  for(size_t i=0; i<num_of_classes_; i++) {
     anch->PushBackCopy(anchors_[i]);
   }
 }

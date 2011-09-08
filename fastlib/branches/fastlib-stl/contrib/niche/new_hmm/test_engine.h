@@ -81,7 +81,7 @@ void TestMarkovMMKClassification(int n_symbols,
 
 int EvalKFoldSVM(double c, int n_points,
 		 int n_folds,
-		 const ArrayList<index_t> &permutation, const Dataset& cv_set,
+		 const ArrayList<size_t> &permutation, const Dataset& cv_set,
 		 datanode* svm_module, const Matrix &kernel_matrix,
 		 int *n_correct_class1, int *n_correct_class0);
 

@@ -28,12 +28,12 @@ class GeometricNmf {
  public:
   GeometricNmf();
   void Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values);
   void Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values,
       Matrix &lower_bound,
       Matrix &upper_bound);
@@ -55,26 +55,26 @@ class GeometricNmf {
   fx_module *module_;
   double sigma_;
   //AllkNN allknn_;
-  index_t leaf_size_;
+  size_t leaf_size_;
  // ArrayList<double> nearest_dot_products_;
  // ArrayList<double> nearest_distances_;
- //  ArrayList<std::pair<index_t, index_t> >  nearest_neighbor_pairs_;
- // index_t num_of_nearest_pairs_;
-  index_t knns_;
-	index_t num_of_columns_;
-	index_t num_of_rows_;
-	index_t new_dim_;
-	index_t offset_h_;
-  index_t num_of_logs_;
+ //  ArrayList<std::pair<size_t, size_t> >  nearest_neighbor_pairs_;
+ // size_t num_of_nearest_pairs_;
+  size_t knns_;
+	size_t num_of_columns_;
+	size_t num_of_rows_;
+	size_t new_dim_;
+	size_t offset_h_;
+  size_t num_of_logs_;
   // epsilon are the auxiliary variables that bring the data
   // in the feasible domain. We add it in the inequalities
-  index_t offset_epsilon_; 
-	ArrayList<index_t> rows_;
-	ArrayList<index_t> columns_;
+  size_t offset_epsilon_; 
+	ArrayList<size_t> rows_;
+	ArrayList<size_t> columns_;
   ArrayList<double>  values_;
   Matrix *lower_bound_;
   Matrix *upper_bound_;
-  index_t number_of_constraints_;
+  size_t number_of_constraints_;
   double desired_duality_gap_;
   double gradient_tolerance_;
   double v_accuracy_;

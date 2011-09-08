@@ -37,13 +37,13 @@ class TestAllCentroidkNN {
     NOTIFY("Computing centroids...\n");
     engine_->ComputeCentroids(&centroids);
     NOTIFY("Centroids computed...\n");
-    ArrayList<index_t> centroid_ids;
+    ArrayList<size_t> centroid_ids;
     Matrix features;
     features.Init(points.n_rows(), points.n_cols());
     NOTIFY("Retrieving centroids ...");
     engine_->RetrieveCentroids(8, &centroid_ids, &features);
     NOTIFY("Centroids retrieved...");
-    ArrayList<index_t> resulting_neighbors;
+    ArrayList<size_t> resulting_neighbors;
     NOTIFY("Computing all k centroid distances");
     ArrayList<double> distances;
     engine_->AllkCentroids(centroids, centroid_ids, &resulting_neighbors, 

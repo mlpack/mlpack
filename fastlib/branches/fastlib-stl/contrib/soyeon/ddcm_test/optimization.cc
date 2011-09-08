@@ -23,7 +23,7 @@ void Optimization::ComputeDoglegDirection(double radius,
 	la::Scale(-1.0, &gradient);
 
 	Matrix inverse_hessian;
-	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
+	if( !(la::InverseInit(hessian, &inverse_hessian)) ) {
 
 		cout<<"Hessian matrix is not invertible"<<endl;
 		cout<<"Find Cauchy Point..."<<endl;
@@ -84,8 +84,8 @@ void Optimization::ComputeDoglegDirection(double radius,
 			/*
 			//check whether hessian is symmetric
 			double cnt=0;
-			for(index_t i=0; i<hessian.n_rows(); i++) {
-				for(index_t j=0; j<hessian.n_cols(); j++) {
+			for(size_t i=0; i<hessian.n_rows(); i++) {
+				for(size_t j=0; j<hessian.n_cols(); j++) {
 					if(hessian.get(i,j) != transpose_hessian.get(i,j)){
 						cnt+=1;
 					}	//if
@@ -226,7 +226,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 	la::Scale(-1.0, &gradient);
 	//check positive definiteness of the hessian
 	Matrix inverse_hessian;
-	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
+	if( !(la::InverseInit(hessian, &inverse_hessian)) ) {
 
 		cout<<"Hessian matrix is not invertible"<<endl;
 		cout<<"Find Cauchy Point..."<<endl;
@@ -282,8 +282,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			/*
 			//check whether hessian is symmetric
 			double cnt=0;
-			for(index_t i=0; i<hessian.n_rows(); i++) {
-				for(index_t j=0; j<hessian.n_cols(); j++) {
+			for(size_t i=0; i<hessian.n_rows(); i++) {
+				for(size_t j=0; j<hessian.n_cols(); j++) {
 					if(hessian.get(i,j) != transpose_hessian.get(i,j)){
 						cnt+=1;
 					}	//if
@@ -295,7 +295,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			*/
 /*
 			Matrix current_inverse_hessian;
-			if( !PASSED(la::InverseInit(hessian, &current_inverse_hessian)) ) {
+			if( !(la::InverseInit(hessian, &current_inverse_hessian)) ) {
 				NOTIFY("Current hessian matrix is not invertible!");
 			}
 		
@@ -437,7 +437,7 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 	
 
 	/*
-	if( !PASSED(la::InverseInit(hessian, &inverse_hessian)) ) {
+	if( !(la::InverseInit(hessian, &inverse_hessian)) ) {
 
 		//scale
 			
@@ -512,8 +512,8 @@ void Optimization::ComputeScaledDoglegDirection(double radius,
 			/*
 			//check whether hessian is symmetric
 			double cnt=0;
-			for(index_t i=0; i<hessian.n_rows(); i++) {
-				for(index_t j=0; j<hessian.n_cols(); j++) {
+			for(size_t i=0; i<hessian.n_rows(); i++) {
+				for(size_t j=0; j<hessian.n_cols(); j++) {
 					if(hessian.get(i,j) != transpose_hessian.get(i,j)){
 						cnt+=1;
 					}	//if
@@ -838,7 +838,7 @@ void Optimization::ComputeDerectionUnderConstraints(double radius,
 		
 		//else{
 		//	cout<<"Diagonal of inverse hessian: ";
-		//	for(index_t i=0; i<current_inverse_hessian.n_rows(); i++){
+		//	for(size_t i=0; i<current_inverse_hessian.n_rows(); i++){
 		//		cout<<current_inverse_hessian.get(i,i)<<" ";
 		//	}
 		//	cout<<endl;
@@ -854,7 +854,7 @@ void Optimization::ComputeDerectionUnderConstraints(double radius,
 
 			
 			//cout<<"p="<<" ";
-			//for(index_t i=0; i<current_p.length(); i++){
+			//for(size_t i=0; i<current_p.length(); i++){
 			//	cout<<current_p[i]<<" ";
 			//}
 			//cout<<endl;
@@ -876,7 +876,7 @@ void Optimization::ComputeDerectionUnderConstraints(double radius,
 			}
 			else{
 			cout<<"bed_new_parameter=";
-			for(index_t i=0; i<candidate_next_parameter.length(); i++){
+			for(size_t i=0; i<candidate_next_parameter.length(); i++){
 				cout<<candidate_next_parameter[i]<<" ";
 			}
 			cout<<endl;
@@ -922,7 +922,7 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 		
 		//else{
 		//	cout<<"Diagonal of inverse hessian: ";
-		//	for(index_t i=0; i<current_inverse_hessian.n_rows(); i++){
+		//	for(size_t i=0; i<current_inverse_hessian.n_rows(); i++){
 		//		cout<<current_inverse_hessian.get(i,i)<<" ";
 		//	}
 		//	cout<<endl;
@@ -938,7 +938,7 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 
 			
 			//cout<<"p="<<" ";
-			//for(index_t i=0; i<current_p.length(); i++){
+			//for(size_t i=0; i<current_p.length(); i++){
 			//	cout<<current_p[i]<<" ";
 			//}
 			//cout<<endl;
@@ -961,7 +961,7 @@ void Optimization::ComputeScaledDerectionUnderConstraints(double radius,
 			}
 			else{
 			cout<<"bed_new_parameter=";
-			for(index_t i=0; i<candidate_next_parameter.length(); i++){
+			for(size_t i=0; i<candidate_next_parameter.length(); i++){
 				cout<<candidate_next_parameter[i]<<" ";
 			}
 			cout<<endl;
@@ -1011,7 +1011,7 @@ void Optimization::ComputeDerectionNoConstraints(double radius,
 
 			
 			//cout<<"p="<<" ";
-			//for(index_t i=0; i<current_p.length(); i++){
+			//for(size_t i=0; i<current_p.length(); i++){
 			//	cout<<current_p[i]<<" ";
 			//}
 			//cout<<endl;

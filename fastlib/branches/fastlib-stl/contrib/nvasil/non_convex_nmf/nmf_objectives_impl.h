@@ -1,7 +1,7 @@
 
 void BigSdpNmfObjectiveMaxVar::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
@@ -28,9 +28,9 @@ void BigSdpNmfObjectiveMaxVar::ComputeGradient(Matrix &coordinates, Matrix *grad
   gradient->CopyValues(coordinates);
 	la::Scale(-2.0, gradient);
   // Gradient on the equalities and inequalities  
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -43,7 +43,7 @@ void BigSdpNmfObjectiveMaxVar::ComputeGradient(Matrix &coordinates, Matrix *grad
 
 void BigSdpNmfObjectiveMaxVar::ComputeObjective(Matrix &coordinates, double *objective) {
   *objective=0;	
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
 	   *objective-=la::Dot(coordinates.n_rows(), 
 				 coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
 	}
@@ -51,9 +51,9 @@ void BigSdpNmfObjectiveMaxVar::ComputeObjective(Matrix &coordinates, double *obj
 
 void BigSdpNmfObjectiveMaxVar::ComputeFeasibilityError(Matrix &coordinates, double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -64,10 +64,10 @@ void BigSdpNmfObjectiveMaxVar::ComputeFeasibilityError(Matrix &coordinates, doub
 double BigSdpNmfObjectiveMaxVar::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -77,9 +77,9 @@ double BigSdpNmfObjectiveMaxVar::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void BigSdpNmfObjectiveMaxVar::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     // equalities
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
@@ -98,8 +98,8 @@ void BigSdpNmfObjectiveMaxVar::set_sigma(double sigma) {
 
 void BigSdpNmfObjectiveMaxVar::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(rank_, (num_of_rows_+num_of_columns_)*new_dim_);
-	for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+	for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random());
 		}
 	}
@@ -113,8 +113,8 @@ bool BigSdpNmfObjectiveMaxVar::IsDiverging(double objective) {
 ///////////////////////////////////////////////////////////////////////////
 
 void BigSdpNmfObjectiveMinVar::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
@@ -142,9 +142,9 @@ void BigSdpNmfObjectiveMinVar::ComputeGradient(Matrix &coordinates,
   gradient->CopyValues(coordinates);
 	la::Scale(2.0, gradient);
   // Gradient on the equalities and inequalities  
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -158,7 +158,7 @@ void BigSdpNmfObjectiveMinVar::ComputeGradient(Matrix &coordinates,
 void BigSdpNmfObjectiveMinVar::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
 	   *objective+=la::Dot(coordinates.n_rows(), 
 				 coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
 	}
@@ -167,9 +167,9 @@ void BigSdpNmfObjectiveMinVar::ComputeObjective(Matrix &coordinates,
 void BigSdpNmfObjectiveMinVar::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -180,10 +180,10 @@ void BigSdpNmfObjectiveMinVar::ComputeFeasibilityError(Matrix &coordinates,
 double BigSdpNmfObjectiveMinVar::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -193,9 +193,9 @@ double BigSdpNmfObjectiveMinVar::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void BigSdpNmfObjectiveMinVar::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     // equalities
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
@@ -214,8 +214,8 @@ void BigSdpNmfObjectiveMinVar::set_sigma(double sigma) {
 
 void BigSdpNmfObjectiveMinVar::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(rank_, (num_of_rows_+num_of_columns_)*new_dim_);
-	for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+	for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random());
 		}
 	}
@@ -228,8 +228,8 @@ bool BigSdpNmfObjectiveMinVar::IsDiverging(double objective) {
 
 ///////////////////////////////////////////////////////////////////////////////
 void BigSdpNmfObjectiveMinVarIneq::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
@@ -257,9 +257,9 @@ void BigSdpNmfObjectiveMinVarIneq::ComputeGradient(Matrix &coordinates,
   gradient->CopyValues(coordinates);
 	la::Scale(2.0, gradient);
   // Gradient on the equalities and inequalities  
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -275,7 +275,7 @@ void BigSdpNmfObjectiveMinVarIneq::ComputeGradient(Matrix &coordinates,
 void BigSdpNmfObjectiveMinVarIneq::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
 	   *objective+=la::Dot(coordinates.n_rows(), 
 				 coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
 	}
@@ -284,9 +284,9 @@ void BigSdpNmfObjectiveMinVarIneq::ComputeObjective(Matrix &coordinates,
 void BigSdpNmfObjectiveMinVarIneq::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -300,10 +300,10 @@ void BigSdpNmfObjectiveMinVarIneq::ComputeFeasibilityError(Matrix &coordinates,
 double BigSdpNmfObjectiveMinVarIneq::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // inequalities
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -317,9 +317,9 @@ double BigSdpNmfObjectiveMinVarIneq::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void BigSdpNmfObjectiveMinVarIneq::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i]*new_dim_;
-    index_t h =offset_h_+columns_[i]*new_dim_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i]*new_dim_;
+    size_t h =offset_h_+columns_[i]*new_dim_;
     // inequalities
     double diff=la::Dot(rank_*new_dim_,
 				                coordinates.GetColumnPtr(w),
@@ -339,12 +339,12 @@ void BigSdpNmfObjectiveMinVarIneq::set_sigma(double sigma) {
 void BigSdpNmfObjectiveMinVarIneq::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(rank_, (num_of_rows_+num_of_columns_)*new_dim_);
   double	mean_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     mean_value+=values_[i];
   }
   mean_value/=values_.size();
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, 1e-5));
 		}
 	}
@@ -357,8 +357,8 @@ bool BigSdpNmfObjectiveMinVarIneq::IsDiverging(double objective) {
 
 ////////////////////////////////////////////////////////////////////////
 void BigSdpNmfObjectiveMinVarDiagonalDominance::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
@@ -391,9 +391,9 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeGradient(Matrix &coordina
 	la::Scale(2.0, gradient);
   // Gradient on the equalities and inequalities  
 
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i];
-    index_t h =offset_h_+columns_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i];
+    size_t h =offset_h_+columns_[i];
     double diff=la::Dot(new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -414,7 +414,7 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeGradient(Matrix &coordina
   Matrix augmented_gradient;
   augmented_gradient.Init(coordinates.n_rows(), coordinates.n_cols());
   augmented_gradient.SetAll(0.0);
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
     double diagonal_element=la::Dot(new_dim_, 
         coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
     double diff=2*diagonal_element-sums2.get(i, 0);
@@ -430,8 +430,8 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeGradient(Matrix &coordina
   }
   
   //  for the non-negativity
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    for(index_t j=0; j<coordinates.n_rows(); j++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
+    for(size_t j=0; j<coordinates.n_rows(); j++) {
       double diff=coordinates.get(j, i);
       if (sigma2_*diff <= ineq_lagrange_mult1_[i*new_dim_+j]) {
         augmented_gradient.set(j, i, 
@@ -449,7 +449,7 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeObjective(Matrix &coordin
   Vector ones;
   ones.Init(new_dim_);
   ones.SetAll(1.0);
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
 	   *objective+=la::Dot(coordinates.n_rows(), 
 				 coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
 	}
@@ -459,9 +459,9 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeObjective(Matrix &coordin
 void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i];
-    index_t h =offset_h_+columns_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i];
+    size_t h =offset_h_+columns_[i];
     double diff=la::Dot(new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -477,7 +477,7 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeFeasibilityError(Matrix &
   Matrix  sums2;
   la::MulTransAInit(coordinates, sums1, &sums2);
   double diagonal_element;
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
     diagonal_element=la::Dot(new_dim_, 
         coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
     double diff=2*diagonal_element-sums2.get(i, 0);
@@ -486,8 +486,8 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeFeasibilityError(Matrix &
     }
   }	
   // for non-negativity
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    for(index_t j=0; j<coordinates.n_rows(); j++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
+    for(size_t j=0; j<coordinates.n_rows(); j++) {
       double diff=coordinates.get(j, i);
       if (diff<0) {
         *error+=diff*diff;
@@ -503,10 +503,10 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
   
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w =rows_[i];
-    index_t h =offset_h_+columns_[i];
+    size_t w =rows_[i];
+    size_t h =offset_h_+columns_[i];
     double diff=la::Dot(new_dim_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -522,7 +522,7 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
   Matrix  sums2;
   la::MulTransAInit(coordinates, sums1, &sums2);
   double diagonal_element;
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
     diagonal_element=la::Dot(new_dim_, 
         coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
     double diff=2*diagonal_element-sums2.get(i, 0);
@@ -534,8 +534,8 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
   }
   
   // for non-negativity
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    for(index_t j=0; j<coordinates.n_rows(); j++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
+    for(size_t j=0; j<coordinates.n_rows(); j++) {
       double diff=coordinates.get(j, i);
       if (sigma2_*diff < ineq_lagrange_mult1_[i*new_dim_+j]) {
         lagrangian+=(sigma2_*diff-ineq_lagrange_mult1_[i*new_dim_+j])*diff;
@@ -549,9 +549,9 @@ double BigSdpNmfObjectiveMinVarDiagonalDominance::ComputeLagrangian(Matrix &coor
 }
 
 void BigSdpNmfObjectiveMinVarDiagonalDominance::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =rows_[i];
-    index_t h =offset_h_+columns_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =rows_[i];
+    size_t h =offset_h_+columns_[i];
     // equalities
     double diff=la::Dot(new_dim_,
 				                coordinates.GetColumnPtr(w),
@@ -566,7 +566,7 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::UpdateLagrangeMult(Matrix &coord
   la::MulInit(coordinates, ones, &sums1);
   Matrix sums2;
   la::MulTransAInit(coordinates, sums1, &sums2);
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
     double diagonal_element=la::Dot(new_dim_, 
         coordinates.GetColumnPtr(i), coordinates.GetColumnPtr(i));
     double diff=2*diagonal_element-sums2.get(i, 0);
@@ -574,8 +574,8 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::UpdateLagrangeMult(Matrix &coord
     //ineq_lagrange_mult_[i]=ineq_lagrange_mult_[i]-sigma2_*diff;
   }
   // for non-negativity
-  for(index_t i=0; i<coordinates.n_cols(); i++) {
-    for(index_t j=0; j<coordinates.n_rows(); j++) {
+  for(size_t i=0; i<coordinates.n_cols(); i++) {
+    for(size_t j=0; j<coordinates.n_rows(); j++) {
       double diff=coordinates.get(j, i);
       ineq_lagrange_mult_[i]=
         std::max(ineq_lagrange_mult1_[i*new_dim_+j]-sigma2_*diff, 0.0);
@@ -595,14 +595,14 @@ void BigSdpNmfObjectiveMinVarDiagonalDominance::set_sigma(double sigma) {
 void BigSdpNmfObjectiveMinVarDiagonalDominance::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dim_, num_of_rows_+num_of_columns_);
   double	max_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     if (max_value<values_[i]) {
       max_value=values_[i];
     }
   }
 
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, max_value));
 		}
 	}
@@ -624,8 +624,8 @@ bool BigSdpNmfObjectiveMinVarDiagonalDominance::IsIntermediateStepOver(
 
 ////////////////////////////////////////////////////////////////////////
 void BigSdpNmfObjectiveMaxVarIsometric::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dimension_=fx_param_int(module_, "new_dimension", 5); 
@@ -648,7 +648,7 @@ void BigSdpNmfObjectiveMaxVarIsometric::Init(fx_module *module,
   
   // compute the norm of values
   v_norm_=0;
-  for(index_t i=0; i<values.size(); i++) {
+  for(size_t i=0; i<values.size(); i++) {
     v_norm_+=values[i]*values[i];    
   }
   
@@ -657,15 +657,15 @@ void BigSdpNmfObjectiveMaxVarIsometric::Init(fx_module *module,
   Matrix data_mat;
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
-/*  index_t count=0;
- 	for(index_t i=0; i<data_mat.n_rows(); i++) {
-		for(index_t j=0; j< data_mat.n_cols(); j++) {
+/*  size_t count=0;
+ 	for(size_t i=0; i<data_mat.n_rows(); i++) {
+		for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  data_mat.set(i, j, values[count]);
         count++;
 		}
 	}
 */
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
@@ -681,7 +681,7 @@ void BigSdpNmfObjectiveMaxVarIsometric::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -717,14 +717,14 @@ void BigSdpNmfObjectiveMaxVarIsometric::Init(fx_module *module,
  
   // compute the sum of all distances 
   sum_all_distances_=0; 
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
     sum_all_distances_+=nearest_distances_[i]*nearest_distances_[i];
   }
   
   eq_lagrange_mult2_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult2_.SetAll(0.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -752,9 +752,9 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeGradient(Matrix &coordinates,
 	la::Scale(-2.0, gradient);
   
   // Gradient on the dot_product equalities  
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_+columns_[i];
-    index_t h = h_offset_+rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_+columns_[i];
+    size_t h = h_offset_+rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -764,10 +764,10 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeGradient(Matrix &coordinates,
 				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
   }	
   // Gradient on the local isometries
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[new_dimension_];
-    index_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
+    size_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -788,7 +788,7 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeGradient(Matrix &coordinates,
 void BigSdpNmfObjectiveMaxVarIsometric::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-  for(index_t i=0; i<num_of_columns_; i++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
 	   *objective+=la::Dot(coordinates.n_rows(), 
 				 coordinates.GetColumnPtr(w_offset_+i), coordinates.GetColumnPtr(w_offset_+i));
 	}
@@ -798,9 +798,9 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeObjective(Matrix &coordinates,
 void BigSdpNmfObjectiveMaxVarIsometric::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -810,9 +810,9 @@ void BigSdpNmfObjectiveMaxVarIsometric::ComputeFeasibilityError(Matrix &coordina
   printf("dot_infeasibility:%lg%% ", std::sqrt(*error/v_norm_)*100); ;
   // local isometry
   double error2=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
@@ -834,19 +834,19 @@ double BigSdpNmfObjectiveMaxVarIsometric::ComputeLagrangian(Matrix &coordinates)
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
  // dot products 
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
     lagrangian+=(sigma_*diff/2-eq_lagrange_mult1_[i])*diff;
   }
   
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -858,18 +858,18 @@ double BigSdpNmfObjectiveMaxVarIsometric::ComputeLagrangian(Matrix &coordinates)
 }
 
 void BigSdpNmfObjectiveMaxVarIsometric::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =w_offset_ + columns_[i];
-    index_t h =h_offset_ + rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =w_offset_ + columns_[i];
+    size_t h =h_offset_ + rows_[i];
     // equalities
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
 		eq_lagrange_mult1_[i]-=sigma_*diff;
  	}
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -902,13 +902,13 @@ void BigSdpNmfObjectiveMaxVarIsometric::set_sigma(double sigma) {
 void BigSdpNmfObjectiveMaxVarIsometric::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_+num_of_columns_);
   double	max_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     if (max_value<values_[i]) {
       max_value=values_[i];
     }
   }
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, max_value));
 		}
 	}
@@ -954,8 +954,8 @@ bool BigSdpNmfObjectiveMaxVarIsometric::IsIntermediateStepOver(
 
 ////////////////////////////////////////////////////////////////////////
 void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dimension_=fx_param_int(module_, "new_dimension", 5); 
@@ -977,7 +977,7 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::Init(fx_module *module,
   
   // compute the norm of values
   v_norm_=0;
-  for(index_t i=0; i<values.size(); i++) {
+  for(size_t i=0; i<values.size(); i++) {
     v_norm_+=values[i]*values[i];    
   }
   
@@ -986,15 +986,15 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::Init(fx_module *module,
   Matrix data_mat;
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
-/*  index_t count=0;
- 	for(index_t i=0; i<data_mat.n_rows(); i++) {
-		for(index_t j=0; j< data_mat.n_cols(); j++) {
+/*  size_t count=0;
+ 	for(size_t i=0; i<data_mat.n_rows(); i++) {
+		for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  data_mat.set(i, j, values[count]);
         count++;
 		}
 	}
 */
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
@@ -1010,7 +1010,7 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -1046,14 +1046,14 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::Init(fx_module *module,
  
   // compute the sum of all distances 
   sum_all_distances_=0; 
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
     sum_all_distances_+=nearest_distances_[i]*nearest_distances_[i];
   }
   
   eq_lagrange_mult2_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult2_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -1082,14 +1082,14 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeGradient(Matrix &coordi
   mean.Init(coordinates.n_rows());
   mean.SetAll(0.0);
   
-  for(index_t i=0; i<num_of_columns_; i++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
     la::AddTo(coordinates.n_rows(), 
               coordinates.GetColumnPtr(w_offset_+i),
               mean.ptr());
   }
   la::Scale(-1.0/num_of_columns_, &mean);
   gradient->CopyColumnFromMat(w_offset_, w_offset_, num_of_columns_, coordinates);
-  for(index_t i=0; i<num_of_columns_; i++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
     la::AddTo(coordinates.n_rows(),
                mean.ptr(),
                gradient->GetColumnPtr(w_offset_+i));
@@ -1097,9 +1097,9 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeGradient(Matrix &coordi
 	la::Scale(-2.0*(num_of_columns_-1)/num_of_columns_, gradient);
   
   // Gradient on the dot_product equalities  
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_+columns_[i];
-    index_t h = h_offset_+rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_+columns_[i];
+    size_t h = h_offset_+rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1109,10 +1109,10 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeGradient(Matrix &coordi
 				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
   }	
   // Gradient on the local isometries
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[new_dimension_];
-    index_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
+    size_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1138,13 +1138,13 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeObjective(Matrix &coord
   mean.Init(coordinates.n_rows());
   mean.SetAll(0.0);
   
-  for(index_t i=0; i<num_of_columns_; i++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
     la::AddTo(coordinates.n_rows(), 
               coordinates.GetColumnPtr(w_offset_+i),
               mean.ptr());
   }
   la::Scale(-1.0/num_of_columns_, &mean);
-  for(index_t i=0; i<num_of_columns_; i++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
      la::AddOverwrite(coordinates.n_rows(), mean.ptr(), 
                       coordinates.GetColumnPtr(w_offset_+i),
                       temp); 
@@ -1157,9 +1157,9 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeObjective(Matrix &coord
 void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1169,9 +1169,9 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeFeasibilityError(Matrix
   printf("dot_infeasibility:%lg%% ", infeasibility1_); ;
   // local isometry
   double error2=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
@@ -1191,19 +1191,19 @@ double BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeLagrangian(Matrix &co
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
  // dot products 
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
     lagrangian+=(sigma_*diff/2-eq_lagrange_mult1_[i])*diff;
   }
   
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1215,18 +1215,18 @@ double BigSdpNmfObjectiveMaxVarIsometricRemoveMean::ComputeLagrangian(Matrix &co
 }
 
 void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =w_offset_ + columns_[i];
-    index_t h =h_offset_ + rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =w_offset_ + columns_[i];
+    size_t h =h_offset_ + rows_[i];
     // equalities
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
 		eq_lagrange_mult1_[i]-=sigma_*diff;
  	}
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1259,14 +1259,14 @@ void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::set_sigma(double sigma) {
 void BigSdpNmfObjectiveMaxVarIsometricRemoveMean::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_+num_of_columns_);
   double	max_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     if (max_value<values_[i]) {
       max_value=values_[i];
     }
   }
 
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, max_value));
 		}
 	}
@@ -1306,8 +1306,8 @@ bool BigSdpNmfObjectiveMaxVarIsometricRemoveMean::IsIntermediateStepOver(
 
 ////////////////////////////////////////////////////////////////////////
 void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dimension_=fx_param_int(module_, "new_dimension", 5); 
@@ -1330,7 +1330,7 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module,
   
   // compute the norm of values
   v_norm_=0;
-  for(index_t i=0; i<values.size(); i++) {
+  for(size_t i=0; i<values.size(); i++) {
     v_norm_+=values[i]*values[i];    
   }
   
@@ -1339,15 +1339,15 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module,
   Matrix data_mat;
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
-/*  index_t count=0;
- 	for(index_t i=0; i<data_mat.n_rows(); i++) {
-		for(index_t j=0; j< data_mat.n_cols(); j++) {
+/*  size_t count=0;
+ 	for(size_t i=0; i<data_mat.n_rows(); i++) {
+		for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  data_mat.set(i, j, values[count]);
         count++;
 		}
 	}
 */
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
@@ -1363,7 +1363,7 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -1415,14 +1415,14 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::Init(fx_module *module,
 
   // compute the sum of all distances 
   sum_all_distances_=0; 
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
     sum_all_distances_+=nearest_distances_[i]*nearest_distances_[i];
   }
   
   eq_lagrange_mult2_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult2_.SetAll(0.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -1446,9 +1446,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeGradient(Matrix &coordinates
     Matrix *gradient) {
   // gradient of the variance
   gradient->SetAll(0.0);
-  for(index_t i=0; i<furthest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + furthest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + furthest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<furthest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + furthest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + furthest_neighbor_pairs_[i].second;
 	  double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double a_i_r[new_dimension_];
@@ -1466,9 +1466,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeGradient(Matrix &coordinates
 	la::Scale(-2.0, gradient);
   
   // Gradient on the dot_product equalities  
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_+columns_[i];
-    index_t h = h_offset_+rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_+columns_[i];
+    size_t h = h_offset_+rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1478,10 +1478,10 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeGradient(Matrix &coordinates
 				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
   }	
   // Gradient on the local isometries
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[new_dimension_];
-    index_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
+    size_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1502,9 +1502,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeGradient(Matrix &coordinates
 void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-  for(index_t i=0; i<furthest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + furthest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + furthest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<furthest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + furthest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + furthest_neighbor_pairs_[i].second;
 	  double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *objective +=la::DistanceSqEuclidean(new_dimension_, point1, point2); 
@@ -1515,9 +1515,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeObjective(Matrix &coordinate
 void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1526,9 +1526,9 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::ComputeFeasibilityError(Matrix &coo
   infeasibility1_=std::sqrt(*error/v_norm_)*100;
   // local isometry
   double error2=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
@@ -1551,19 +1551,19 @@ double BigSdpNmfObjectiveMaxFurthestIsometric::ComputeLagrangian(Matrix &coordin
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
  // dot products 
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     // equalities
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
     lagrangian+=(sigma_*diff/2-eq_lagrange_mult1_[i])*diff;
   }
   
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1575,18 +1575,18 @@ double BigSdpNmfObjectiveMaxFurthestIsometric::ComputeLagrangian(Matrix &coordin
 }
 
 void BigSdpNmfObjectiveMaxFurthestIsometric::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w =w_offset_ + columns_[i];
-    index_t h =h_offset_ + rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w =w_offset_ + columns_[i];
+    size_t h =h_offset_ + rows_[i];
     // equalities
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
 		eq_lagrange_mult1_[i]-=sigma_*diff;
  	}
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1619,13 +1619,13 @@ void BigSdpNmfObjectiveMaxFurthestIsometric::set_sigma(double sigma) {
 void BigSdpNmfObjectiveMaxFurthestIsometric::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_+num_of_columns_);
   double	max_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     if (max_value<values_[i]) {
       max_value=values_[i];
     }
   }
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, max_value));
 		}
 	}
@@ -1671,8 +1671,8 @@ bool BigSdpNmfObjectiveMaxFurthestIsometric::IsIntermediateStepOver(
 
 ////////////////////////////////////////////////////////////////////////
 void NmfObjectiveIsometric::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dimension_=fx_param_int(module_, "new_dimension", 5); 
@@ -1692,7 +1692,7 @@ void NmfObjectiveIsometric::Init(fx_module *module,
   
   // compute the norm of values
   v_norm_=0;
-  for(index_t i=0; i<values.size(); i++) {
+  for(size_t i=0; i<values.size(); i++) {
     v_norm_+=values[i]*values[i];    
   }
   
@@ -1701,15 +1701,15 @@ void NmfObjectiveIsometric::Init(fx_module *module,
   Matrix data_mat;
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
-/*  index_t count=0;
- 	for(index_t i=0; i<data_mat.n_rows(); i++) {
-		for(index_t j=0; j< data_mat.n_cols(); j++) {
+/*  size_t count=0;
+ 	for(size_t i=0; i<data_mat.n_rows(); i++) {
+		for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  data_mat.set(i, j, values[count]);
         count++;
 		}
 	}
 */
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
@@ -1725,7 +1725,7 @@ void NmfObjectiveIsometric::Init(fx_module *module,
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -1761,14 +1761,14 @@ void NmfObjectiveIsometric::Init(fx_module *module,
  
   // compute the sum of all distances 
   sum_all_distances_=0; 
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
     sum_all_distances_+=nearest_distances_[i]*nearest_distances_[i];
   }
   
   eq_lagrange_mult2_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult2_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -1793,9 +1793,9 @@ void NmfObjectiveIsometric::ComputeGradient(Matrix &coordinates,
   gradient->SetAll(0.0);
   
   // Gradient on the dot_product equalities  
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_+columns_[i];
-    index_t h = h_offset_+rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_+columns_[i];
+    size_t h = h_offset_+rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1805,10 +1805,10 @@ void NmfObjectiveIsometric::ComputeGradient(Matrix &coordinates,
 				coordinates.GetColumnPtr(h), gradient->GetColumnPtr(w));
   }	
   // Gradient on the local isometries
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[new_dimension_];
-    index_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
+    size_t n1=w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2=w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1829,9 +1829,9 @@ void NmfObjectiveIsometric::ComputeGradient(Matrix &coordinates,
 void NmfObjectiveIsometric::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_+columns_[i];
-    index_t h = h_offset_+rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_+columns_[i];
+    size_t h = h_offset_+rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1842,9 +1842,9 @@ void NmfObjectiveIsometric::ComputeObjective(Matrix &coordinates,
 void NmfObjectiveIsometric::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(new_dimension_, 
@@ -1864,9 +1864,9 @@ double NmfObjectiveIsometric::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
  
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1878,9 +1878,9 @@ double NmfObjectiveIsometric::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void NmfObjectiveIsometric::UpdateLagrangeMult(Matrix &coordinates) {
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1= w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2= w_offset_ + nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -1900,13 +1900,13 @@ void NmfObjectiveIsometric::set_sigma(double sigma) {
 void NmfObjectiveIsometric::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_+num_of_columns_);
   double	max_value=0.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     if (max_value<values_[i]) {
       max_value=values_[i];
     }
   }
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, max_value));
 		}
 	}
@@ -1950,8 +1950,8 @@ bool NmfObjectiveIsometric::IsIntermediateStepOver(
 
 ////////////////////////////////////////////////////////////////////////
 void ClassicNmfObjective::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dimension_=fx_param_int(module_, "new_dimension", 5); 
@@ -1975,9 +1975,9 @@ void ClassicNmfObjective::ComputeGradient(Matrix &coordinates,
     Matrix *gradient) {
   // Gradient on the objective  
 	gradient->SetAll(0.0);
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -1996,9 +1996,9 @@ void ClassicNmfObjective::ComputeGradient(Matrix &coordinates,
 void ClassicNmfObjective::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;	
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -2009,9 +2009,9 @@ void ClassicNmfObjective::ComputeObjective(Matrix &coordinates,
 void ClassicNmfObjective::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
   *error=0;
-	for(index_t i=0; i<values_.size(); i++) {
-    index_t w = w_offset_ + columns_[i];
-    index_t h = h_offset_ + rows_[i];
+	for(size_t i=0; i<values_.size(); i++) {
+    size_t w = w_offset_ + columns_[i];
+    size_t h = h_offset_ + rows_[i];
     double diff=la::Dot(new_dimension_,
 				                coordinates.GetColumnPtr(w),
 												coordinates.GetColumnPtr(h))-values_[i];
@@ -2039,8 +2039,8 @@ void ClassicNmfObjective::set_sigma(double sigma) {
 
 void ClassicNmfObjective::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, (num_of_rows_+num_of_columns_));
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-	  for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+	  for(size_t j=0; j<init_data->n_cols(); j++) {
 		  init_data->set(i, j, math::Random(0, 0.1));
 		}
 	}

@@ -33,7 +33,7 @@ int main(int argc, char *argv[]){
 
   
   FILE *fp=fopen("./mog3_multi/mog3_multi_rect_adaptive.txt","w");
-  for(index_t i=0;i<test_densities.length();i++){
+  for(size_t i=0;i<test_densities.length();i++){
      
      fprintf(fp,"%f\n",test_densities[i]);
    }

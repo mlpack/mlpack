@@ -72,7 +72,7 @@ void DiscreteHMM::LoadProfile(const char* profile) {
 
 void DiscreteHMM::SaveProfile(const char* profile) const {
   TextWriter w_pro;
-  if (!PASSED(w_pro.Open(profile))) {
+  if (!(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
     return;
   }

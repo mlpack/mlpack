@@ -42,17 +42,17 @@ namespace proximity {
    *        original indexes to new indices
    */
   template<typename TMetricTree>
-  TMetricTree *MakeGenMetricTree(arma::mat& matrix, index_t leaf_size,
-				 arma::Col<index_t> *old_from_new = NULL,
-				 arma::Col<index_t> *new_from_old = NULL) {
+  TMetricTree *MakeGenMetricTree(arma::mat& matrix, size_t leaf_size,
+				 arma::Col<size_t> *old_from_new = NULL,
+				 arma::Col<size_t> *new_from_old = NULL) {
 
     TMetricTree *node = new TMetricTree();
-    index_t *old_from_new_ptr;
+    size_t *old_from_new_ptr;
 
     if (old_from_new) {
       old_from_new->set_size(matrix.n_cols);
       
-      for (index_t i = 0; i < matrix.n_cols; i++) {
+      for (size_t i = 0; i < matrix.n_cols; i++) {
         (*old_from_new)[i] = i;
       }
       
@@ -68,7 +68,7 @@ namespace proximity {
     
     if (new_from_old) {
       new_from_old->set_size(matrix.n_cols);
-      for (index_t i = 0; i < matrix.n_cols; i++) {
+      for (size_t i = 0; i < matrix.n_cols; i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
     }

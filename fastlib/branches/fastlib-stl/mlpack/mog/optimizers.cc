@@ -13,14 +13,14 @@ using namespace mlpack;
 
 void NelderMead::Eval(double **pts) {
 
-  index_t dim = dimension(), num_func_eval;
-  index_t i, j, ihi, ilo, inhi,mpts = dim + 1;
+  size_t dim = dimension(), num_func_eval;
+  size_t i, j, ihi, ilo, inhi,mpts = dim + 1;
   double sum, swap, *psum;
   long double swap_y, rtol, ytry, ysave, TINY = 1.0e-10;
   long double *y;
   Vector param_passed;
   long double tol = IO::GetParam<double>("opt/tolerance"); // Default value, 1.0e-5
-  index_t NMAX = IO::GetParam<int>("opt/MAX_FUNC_EVAL"); //Default value 50000
+  size_t NMAX = IO::GetParam<int>("opt/MAX_FUNC_EVAL"); //Default value 50000
 
   param_passed.Init(dim);
   psum = (double*)malloc(dim * sizeof(double));
@@ -115,10 +115,10 @@ void NelderMead::Eval(double **pts) {
 }
 
 long double NelderMead::ModSimplex_(double **pts, long double *y,
-				    double *psum, index_t ihi,
+				    double *psum, size_t ihi,
 				    float fac) {
 
-  index_t j, dim = dimension();
+  size_t j, dim = dimension();
   long double ytry;
   double *ptry;
   Vector param_passed;
@@ -141,8 +141,8 @@ long double NelderMead::ModSimplex_(double **pts, long double *y,
 
 void QuasiNewton::Eval(double *pt) {
 
-  index_t n = dimension(), iters;
-  index_t i, its, MAXIMUM_ITERATIONS = IO::GetParam<int>("opt/MAX_ITERS"); //Default value, 200
+  size_t n = dimension(), iters;
+  size_t i, its, MAXIMUM_ITERATIONS = IO::GetParam<int>("opt/MAX_ITERS"); //Default value, 200
   long double temp_1, temp_2, temp_3, temp_4, f_previous, f_min, 
     maximum_step_length, sum = 0.0, sumdg, sumxi, temp, test;
   Vector dgrad, grad, hdgrad, xi;
@@ -269,7 +269,7 @@ void QuasiNewton::LineSearch_(Vector pold, long double fold,
 			      Vector *pnew, long double *f_min,
 			      long double maximum_step_length) {
 
-  index_t i, n = dimension();
+  size_t i, n = dimension();
   long double a, step_length, previous_step_length = 0.0, 
     minimum_step_length, b, disc, previous_f_value = 0.0,
     rhs1, rhs2, slope, sum, temp, test, temp_step_length,

@@ -108,7 +108,7 @@ public:
     (*ub_vec)[1] = 0.5;
   }
 
-  index_t num_of_non_linear_equalities() {
+  size_t num_of_non_linear_equalities() {
 
   }
 
@@ -120,7 +120,7 @@ public:
 
   }
 
-  index_t num_of_non_linear_inequalities() {
+  size_t num_of_non_linear_inequalities() {
 
   }
 
@@ -136,12 +136,12 @@ public:
 
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   } 
 
 private:
-  index_t dimension_;
+  size_t dimension_;
   Vector initval_;
     
 };
@@ -161,9 +161,9 @@ public:
     optimizer_LBFGS_.Init(module_, &rosen);
     Vector result;
     optimizer_LBFGS_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "LBFGS:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "LBFGS:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }
@@ -199,9 +199,9 @@ public:
     optimizer_CG_.Init(module_, &rosen);
     Vector result;
     optimizer_CG_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "CG:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "CG:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }
@@ -210,9 +210,9 @@ public:
     optimizer_QNewton_.Init( module_, &rosen );
     Vector result;
     optimizer_QNewton_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "QNewton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "QNewton:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }
@@ -221,9 +221,9 @@ public:
     optimizer_BFGS_.Init(module_, &rosen);
     Vector result;
     optimizer_BFGS_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "BFGS:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "BFGS:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }
@@ -232,9 +232,9 @@ public:
     optimizer_FDNewton_.Init(module_, &rosen);
     Vector result;
     optimizer_FDNewton_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "FDNewton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "FDNewton:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }
@@ -243,9 +243,9 @@ public:
     optimizer_Newton_.Init(module_, &rosen);
     Vector result;
     optimizer_Newton_.Optimize(&result);  
-    for (index_t i = 0; i < trueval_.length(); i++) {
+    for (size_t i = 0; i < trueval_.length(); i++) {
       DEBUG_WARNING_MSG_IF(fabs(result[i] - trueval_[i]) > EPSILON,
-			   "Newton:True %"LI"d:%lg, Computed %"LI"d:%lg",
+			   "Newton:True %zud:%lg, Computed %zud:%lg",
 			   i,trueval_[i], i,result[i]);
     }
   }

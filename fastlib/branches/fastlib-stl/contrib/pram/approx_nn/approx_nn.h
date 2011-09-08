@@ -63,8 +63,8 @@ const fx_module_doc approx_nn_doc = {
 };
 
 
-index_t dc = 0;
-index_t mc = 0;
+size_t dc = 0;
+size_t mc = 0;
 
 
 
@@ -96,9 +96,9 @@ class ApproxNN {
     // The upper bound on the node's nearest neighbor distances.
     double max_distance_so_far_;
     // Number of points considered
-    index_t total_points_;
+    size_t total_points_;
     // Number of points sampled
-    index_t samples_;
+    size_t samples_;
     
   public:
     // getters
@@ -106,11 +106,11 @@ class ApproxNN {
       return max_distance_so_far_; 
     } 
 
-    index_t total_points() {
+    size_t total_points() {
       return total_points_;
     }
 
-    index_t samples() {
+    size_t samples() {
       return samples_;
     }
 
@@ -119,19 +119,19 @@ class ApproxNN {
       max_distance_so_far_ = new_dist; 
     } 
 
-    void set_total_points(index_t points) {
+    void set_total_points(size_t points) {
       total_points_ = points;
     }
 
-    void add_total_points(index_t points) {
+    void add_total_points(size_t points) {
       total_points_ += points;
     }
 
-    void set_samples(index_t points) {
+    void set_samples(size_t points) {
       samples_ = points;
     }
 
-    void add_samples(index_t points) {
+    void add_samples(size_t points) {
       samples_ += points;
     }
     
@@ -144,7 +144,7 @@ class ApproxNN {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
       // The points considered starts at zero
@@ -158,7 +158,7 @@ class ApproxNN {
      * initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
 	      const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -178,36 +178,36 @@ private:
   Matrix queries_;
   Matrix references_;
   // This will store the query index for the single tree run
-  index_t query_;
+  size_t query_;
   // Pointers to the roots of the two trees.
   std::vector<TreeType*> query_trees_;
   TreeType* reference_tree_;
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_references_;
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  ArrayList<size_t> neighbor_indices_;
   // number of nearest neighbrs
-  index_t knns_; 
+  size_t knns_; 
   // The module containing the parameters for this computation. 
   struct datanode* module_;
   // The array containing the sample sizes for the corresponding
   // set sizes
-  ArrayList<index_t> sample_sizes_;
+  ArrayList<size_t> sample_sizes_;
   // The rank approximation
-  index_t rank_approx_;
+  size_t rank_approx_;
   double epsilon_;
   // The maximum number of points to be sampled
-  index_t sample_limit_;
+  size_t sample_limit_;
   // Minimum number of samples required for each query
   // to maintain the probability bound for the error
-  index_t min_samples_per_q_;  
+  size_t min_samples_per_q_;  
   
   /////////////////////////////// Constructors ////////////////////////
   
@@ -261,9 +261,9 @@ private:
    * a particular quantile given the set and sample sizes
    * Computes P(d_(1) <= d_(1+rank_approx))
    */
-  double ComputeProbability_(index_t set_size,
-			     index_t sample_size,
-			     index_t rank_approx) {
+  double ComputeProbability_(size_t set_size,
+			     size_t sample_size,
+			     size_t rank_approx) {
     double sum;
     Vector temp_a, temp_b;
 
@@ -273,7 +273,7 @@ private:
 
     // calculating the temp_b
     temp_b[rank_approx] = 1;
-    index_t i, j = 1;
+    size_t i, j = 1;
     for (i = rank_approx-1; i > -1; i--, j++) {
       double frac = (double)(set_size-(sample_size-1)-j)
 	/ (double)(set_size - j);
@@ -297,12 +297,12 @@ private:
    * required to obtain the approximate rank with
    * a given probability (1-alpha).
    * 
-   * It assumes that the ArrayList<index_t> *samples
+   * It assumes that the ArrayList<size_t> *samples
    * has been initialized to length N.
    */
-  void ComputeSampleSizes_(index_t rank_approx, double alpha,
-			   ArrayList<index_t> *samples) {
-    index_t set_size = samples->size(),
+  void ComputeSampleSizes_(size_t rank_approx, double alpha,
+			   ArrayList<size_t> *samples) {
+    size_t set_size = samples->size(),
       n = rank_approx + 1000;
     
     double prob;
@@ -317,7 +317,7 @@ private:
       / (double) (rank_approx + 1000);
 
     while (set_size > rank_approx) {
-      (*samples)[set_size -1] = (index_t)(beta * (double) set_size);
+      (*samples)[set_size -1] = (size_t)(beta * (double) set_size);
       set_size--;
     }
     while (set_size > 0) {
@@ -344,21 +344,21 @@ private:
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
-    for (index_t query_index = query_node->begin(); 
+    std::vector<std::pair<double, size_t> > neighbors(knns_);
+    for (size_t query_index = query_node->begin(); 
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
       Vector query_point;
       queries_.MakeColumnVector(query_, &query_point);
       
-      index_t ind = query_*knns_;
-      for(index_t i=0; i<knns_; i++) {
+      size_t ind = query_*knns_;
+      for(size_t i=0; i<knns_; i++) {
 	neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				    neighbor_indices_[ind+i]);
       }
       // We'll do the same for the references
-      for (index_t reference_index = reference_node->begin(); 
+      for (size_t reference_index = reference_node->begin(); 
            reference_index < reference_node->end(); reference_index++) {
 
 	// Confirm that points do not identify themselves as neighbors
@@ -379,7 +379,7 @@ private:
       } // for reference_index
 
       std::sort(neighbors.begin(), neighbors.end());
-      for(index_t i=0; i<knns_; i++) {
+      for(size_t i=0; i<knns_; i++) {
 	neighbor_distances_[ind+i] = neighbors[i].first;
 	neighbor_indices_[ind+i]  = neighbors[i].second;
       }
@@ -530,14 +530,14 @@ private:
 		 - query_node->begin() == 1);
     
     // Obtain the number of samples to be obtained
-    index_t set_size
+    size_t set_size
       = reference_node->end() - reference_node->begin();
-    index_t sample_size = sample_sizes_[set_size - 1];
+    size_t sample_size = sample_sizes_[set_size - 1];
     DEBUG_ASSERT_MSG(sample_size <= set_size,
-		     "n = %"LI"d, N = %"LI"d",
+		     "n = %zu"d, N = %zu"d",
 		     sample_size, set_size);
 
-    index_t query_samples_needed
+    size_t query_samples_needed
       = min_samples_per_q_ - query_node->stat().samples();
 
     sample_size = min(sample_size, query_samples_needed);
@@ -545,17 +545,17 @@ private:
 
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
+    std::vector<std::pair<double, size_t> > neighbors(knns_);
 
-    for (index_t query_index = query_node->begin(); 
+    for (size_t query_index = query_node->begin(); 
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
       Vector query_point;
       queries_.MakeColumnVector(query_, &query_point);
       
-      index_t ind = query_*knns_;
-      for(index_t i=0; i<knns_; i++) {
+      size_t ind = query_*knns_;
+      for(size_t i=0; i<knns_; i++) {
 	neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				    neighbor_indices_[ind+i]);
       }
@@ -563,8 +563,8 @@ private:
       // but on the sample size number of points
 
       // Here we need to permute the reference set randomly
-      for (index_t i = 0; i < sample_size; i++) {
-	index_t reference_index = reference_node->begin()
+      for (size_t i = 0; i < sample_size; i++) {
+	size_t reference_index = reference_node->begin()
 	  + math::RandInt(set_size);
 	DEBUG_ASSERT(reference_index < reference_node->end());
 
@@ -586,7 +586,7 @@ private:
       } // for reference_index
 
       std::sort(neighbors.begin(), neighbors.end());
-      for(index_t i=0; i<knns_; i++) {
+      for(size_t i=0; i<knns_; i++) {
 	neighbor_distances_[ind+i] = neighbors[i].first;
 	neighbor_indices_[ind+i]  = neighbors[i].second;
       }
@@ -662,7 +662,7 @@ private:
 
       // since we pruned this node, we can say that we encountered
       // all the points in that node
-      index_t reference_size
+      size_t reference_size
 	= reference_node->end() - reference_node->begin();
       query_node->stat().add_total_points(reference_size);
       query_node->stat().add_samples(reference_size);
@@ -672,7 +672,7 @@ private:
       // first check if we can do exact. If so then we do so
       // and add the number of samples encountered.
       ComputeBaseCase_(query_node, reference_node);
-      index_t reference_size
+      size_t reference_size
 	= reference_node->end() - reference_node->begin();
       query_node->stat().add_total_points(reference_size);
       query_node->stat().add_samples(reference_size);
@@ -692,7 +692,7 @@ private:
 		       "encountered the same number of points.");
       // if the parent has encountered extra points, pass
       // that information down to the children.
-      index_t extra_points_encountered
+      size_t extra_points_encountered
 	= query_node->stat().total_points()
 	- query_node->left()->stat().total_points();
       DEBUG_ASSERT(extra_points_encountered > -1);
@@ -700,7 +700,7 @@ private:
       if (extra_points_encountered > 0) {
 	query_node->left()->stat().add_total_points(extra_points_encountered);
 	query_node->right()->stat().add_total_points(extra_points_encountered);
-	index_t extra_points_sampled
+	size_t extra_points_sampled
 	  = query_node->stat().samples()
 	  - min(query_node->left()->stat().samples(),
 		query_node->right()->stat().samples());
@@ -790,7 +790,7 @@ private:
 		       "encountered the same number of points.");
       // if the parent has encountered extra points, pass
       // that information down to the children.
-      index_t extra_points_encountered
+      size_t extra_points_encountered
 	= query_node->stat().total_points()
 	- query_node->left()->stat().total_points();
       DEBUG_ASSERT(extra_points_encountered > -1);
@@ -798,7 +798,7 @@ private:
       if (extra_points_encountered > 0) {
 	query_node->left()->stat().add_total_points(extra_points_encountered);
 	query_node->right()->stat().add_total_points(extra_points_encountered);
-	index_t extra_points_sampled
+	size_t extra_points_sampled
 	  = query_node->stat().samples()
 	  - min(query_node->left()->stat().samples(),
 		query_node->right()->stat().samples());
@@ -919,7 +919,7 @@ public:
 
     // Here we need to change the query tree into N single-point
     // query trees
-    for (index_t i = 0; i < queries_.n_cols(); i++) {
+    for (size_t i = 0; i < queries_.n_cols(); i++) {
       Matrix query;
       queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
@@ -969,7 +969,7 @@ public:
    */
   void InitNaive(const Matrix& queries_in, 
 		 const Matrix& references_in,
-		 index_t knns){
+		 size_t knns){
     
     queries_.Copy(queries_in);
     references_.Copy(references_in);
@@ -987,7 +987,7 @@ public:
 
     // Here we need to change the query tree into N single-point
     // query trees
-    for (index_t i = 0; i < queries_.n_cols(); i++) {
+    for (size_t i = 0; i < queries_.n_cols(); i++) {
       Matrix query;
       queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
@@ -1062,7 +1062,7 @@ public:
 
     // Here we need to change the query tree into N single-point
     // query trees
-    for (index_t i = 0; i < queries_.n_cols(); i++) {
+    for (size_t i = 0; i < queries_.n_cols(); i++) {
       Matrix query;
       queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
@@ -1091,11 +1091,11 @@ public:
 
     // compute the sample sizes
     epsilon_ = fx_param_double(module_, "epsilon", 0.0);
-    rank_approx_ = (index_t) (epsilon_
+    rank_approx_ = (size_t) (epsilon_
 			      * (double) references_.n_cols()
 			      / 100.0);
 
-    NOTIFY("Rank Approximation: %2.3f%% or %"LI"d"
+    NOTIFY("Rank Approximation: %2.3f%% or %zu"d"
 	   " with Probability:%1.2f",
 	   epsilon_, rank_approx_, alpha);
 
@@ -1112,7 +1112,7 @@ public:
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNeighbors(ArrayList<size_t>* resulting_neighbors,
                         ArrayList<double>* distances) {
 
     // We need to initialize the results list before filling it
@@ -1122,7 +1122,7 @@ public:
     // Start on the root of each tree
     // the index of the query in the queries_ matrix
     query_ = 0;
-    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+    DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -1130,14 +1130,14 @@ public:
 				 MinNodeDistSq_(*query_tree,
 						reference_tree_));
     }
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      index_t query = i/knns_;
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+      size_t query = i/knns_;
       (*resulting_neighbors)[query*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
     }
 
-    NOTIFY("Tdc = %"LI"d, Tmc = %"LI"d, adc = %lg, amc = %lg",
+    NOTIFY("Tdc = %zu"d, Tmc = %zu"d, adc = %lg, amc = %lg",
 	   dc, mc, (float)dc/(float)query_trees_.size(), 
 	   (float)mc/(float)query_trees_.size());
   } // ComputeNeighbors
@@ -1146,7 +1146,7 @@ public:
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNaive(ArrayList<size_t>* resulting_neighbors,
                     ArrayList<double>*  distances) {
 
     // We need to initialize the results list before filling it
@@ -1156,14 +1156,14 @@ public:
     // Start on the root of each tree
     // the index of the query in the queries_ matrix
     query_ = 0;
-    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+    DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
       ComputeBaseCase_(*query_tree, reference_tree_);
     }
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      index_t query = i/knns_;
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+      size_t query = i/knns_;
       (*resulting_neighbors)[query*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];
@@ -1174,7 +1174,7 @@ public:
    * Does the entire computation to find the approximate
    * rank NN
    */
-  void ComputeApprox(ArrayList<index_t>* resulting_neighbors,
+  void ComputeApprox(ArrayList<size_t>* resulting_neighbors,
 		     ArrayList<double>*  distances) {
 
     // We need to initialize the results list before filling it
@@ -1184,7 +1184,7 @@ public:
     // Start on the root of each tree
     // the index of the query in the queries_ matrix
     query_ = 0;
-    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+    DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -1192,8 +1192,8 @@ public:
 			      MinNodeDistSq_(*query_tree,
 					     reference_tree_));
     }
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-      index_t query = i/knns_;
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+      size_t query = i/knns_;
       (*resulting_neighbors)[query*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[query*knns_+ i%knns_] = neighbor_distances_[i];

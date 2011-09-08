@@ -5,23 +5,23 @@
 void Normalize(Vector* p_ts) {
   Vector &ts = *p_ts;
 
-  index_t n_times = ts.length();
+  size_t n_times = ts.length();
 
   // compute mean over time
   double mean = 0;
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     mean += ts[t];
   }
   mean /= ((double) n_times);
   
   // center using temporal mean
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     ts[t] -= mean;
   }
   
   // compute variance
   double variance = 0;
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     variance += ts[t] * ts[t];
   }
   variance /= ((double)(n_times - 1));
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
   Matrix data_with_labels;
   data::Load(data_filename, &data_with_labels);
 
-  index_t n_points = data_with_labels.n_cols();
+  size_t n_points = data_with_labels.n_cols();
 
   printf("%d\n", n_points);
 
@@ -53,12 +53,12 @@ int main(int argc, char* argv[]) {
   if(temp != round(temp)) {
     FATAL("problem with dimensions of data\n");
   }
-  index_t n_times = (int) temp;
+  size_t n_times = (int) temp;
 
   printf("n_times = %d\n", n_times);
 
   for(int k = 0; k < n_features; k++) {
-    for(index_t i = 0; i < n_points; i++) {
+    for(size_t i = 0; i < n_points; i++) {
       Vector ts_i;
       data_with_labels.MakeColumnSubvector(i,
 					   (k * n_times) + 1,

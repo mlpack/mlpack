@@ -59,14 +59,14 @@ int main (int argc, char *argv[]) {
   }
 
   NOTIFY("Files loaded...");
-  NOTIFY("R(%"LI"d, %"LI"d), Q(%"LI"d, %"LI"d)",
+  NOTIFY("R(%zud, %zud), Q(%zud, %zud)",
 	 rdata.n_rows(), rdata.n_cols(), 
 	 qdata.n_rows(), qdata.n_cols());
   if (!fx_param_bool(root, "rank_file_too_big", false)) {
-    NOTIFY("Rank Matrix: %"LI"d x %"LI"d",
+    NOTIFY("Rank Matrix: %zud x %zud",
 	   rank_mat.n_rows(), rank_mat.n_cols());
   }
-    // NOTIFY("Test Q(%"LI"d, %"LI"d)",
+    // NOTIFY("Test Q(%zud, %zud)",
     //  test_qdata.n_rows(), test_qdata.n_cols());
 
   // exit(1);
@@ -74,7 +74,7 @@ int main (int argc, char *argv[]) {
   struct datanode *nn_module
     = fx_submodule(root, "tc_nn");
 
-  ArrayList<index_t> max_error, min_error;
+  ArrayList<size_t> max_error, min_error;
   ArrayList<double> mean_error, std_error;
 
   // Exact computation
@@ -115,8 +115,8 @@ int main (int argc, char *argv[]) {
     std::string result_file = fx_param_str_req(root, "result");
     FILE *fp = fopen(result_file.c_str(), "w");
 
-    for (index_t i = 0; i < mean_error.size(); i++) 
-      fprintf(fp, "%lg,%lg,%"LI"d,%"LI"d\n", mean_error[i],
+    for (size_t i = 0; i < mean_error.size(); i++) 
+      fprintf(fp, "%lg,%lg,%zud,%zud\n", mean_error[i],
 	      std_error[i], min_error[i], max_error[i]);
 
     fclose(fp);

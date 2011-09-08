@@ -20,16 +20,16 @@ struct KernelizedWeight {
   ArrayList<Vector> m_lSupportVectors;
   ArrayList<double> m_lCoefficients;
   KernelFunction& m_fKernel;
-  index_t m_iDim;
+  size_t m_iDim;
 public:
-  KernelizedWeight(index_t dim, KernelFunction& func) : m_fKernel(func) {
+  KernelizedWeight(size_t dim, KernelFunction& func) : m_fKernel(func) {
     m_lSupportVectors.Init();
     m_lCoefficients.Init();
     //m_fKernel = func;
     m_iDim = dim;
   }
-  index_t n_vectors() const { return m_lSupportVectors.size(); }
-  index_t n_dim() const { return m_iDim; }
+  size_t n_vectors() const { return m_lSupportVectors.size(); }
+  size_t n_dim() const { return m_iDim; }
   void AddSupportVector(const Vector& x, double coeff) {
     DEBUG_ASSERT(m_iDim == x.length());
     m_lSupportVectors.PushBackCopy(x);

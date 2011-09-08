@@ -3,7 +3,7 @@
 
 namespace SVMLib {
 
-IndexSet::IndexSet(index_t n) {
+IndexSet::IndexSet(size_t n) {
   n_total = n;
   n_set = 0;
   index_set.Init(n);
@@ -12,11 +12,11 @@ IndexSet::IndexSet(index_t n) {
 }
 
 void IndexSet::InitEmpty() {
-  for (index_t i = 0; i < n_total; i++) set_index[i] = -1;
+  for (size_t i = 0; i < n_total; i++) set_index[i] = -1;
   //index_set.Clear();
 }
  
-void IndexSet::addremove(index_t i, bool b) {
+void IndexSet::addremove(size_t i, bool b) {
   DEBUG_ASSERT(i < n_total);
   // adding
   if (b && set_index[i] == -1) {
@@ -26,7 +26,7 @@ void IndexSet::addremove(index_t i, bool b) {
   }
   // removing
   if (!b && set_index[i] != -1) {
-    index_t index = set_index[i];
+    size_t index = set_index[i];
     set_index[i] = -1;
     if (index < n_set-1) {
       index_set[index] = index_set[n_set-1]; // move the last point to index position
@@ -37,14 +37,14 @@ void IndexSet::addremove(index_t i, bool b) {
 }
 
 void IndexSet::print() { 
-  for (index_t i = 0; i < n_set; i++)
+  for (size_t i = 0; i < n_set; i++)
     printf("%16d", index_set[i]);
   printf("\n");
 }
 
 void IndexSet::print(const Vector& x) {
   DEBUG_ASSERT(x.length() == n_total);
-  for (index_t i = 0; i < n_set; i++)
+  for (size_t i = 0; i < n_set; i++)
     printf("%5d:%11f", index_set[i],x[index_set[i]]);
   printf("\n");
 }

@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   const char* inputfile = fx_param_str_req(root, "input_file");
   const char* outputfile = fx_param_str_req(root, "output_file");
 
-  index_t knns = fx_param_int_req(root, "k");
+  size_t knns = fx_param_int_req(root, "k");
   double alpha = fx_param_double(root, "alpha", 0.7);
   double beta = fx_param_double(root, "beta", 0.95);
   double perturbation = fx_param_double(root, "perturbation", 0.05);
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
     input = diag * input_preserved;
 
     // initialize AllkNN object
-    arma::Col<index_t> neighbors;
+    arma::Col<size_t> neighbors;
     arma::vec distances;
 
     // We will get five times as many neighbors and we will re-evaluate them

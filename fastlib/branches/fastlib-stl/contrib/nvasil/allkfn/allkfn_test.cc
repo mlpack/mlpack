@@ -26,15 +26,15 @@ class TestAllkFN {
     allkfn_->Init(*data_for_tree_, *data_for_tree_, 20, 5);
     naive_->InitNaive(*data_for_tree_, *data_for_tree_, 5);
  
-    ArrayList<index_t> resulting_neighbors_tree;
+    ArrayList<size_t> resulting_neighbors_tree;
     ArrayList<double> distances_tree;
     allkfn_->ComputeNeighbors(&resulting_neighbors_tree,
                               &distances_tree);
-    ArrayList<index_t> resulting_neighbors_naive;
+    ArrayList<size_t> resulting_neighbors_naive;
     ArrayList<double> distances_naive;
     naive_->ComputeNaive(&resulting_neighbors_naive,
                          &distances_naive);
-    for(index_t i=0; i<resulting_neighbors_tree.size(); i++) {
+    for(size_t i=0; i<resulting_neighbors_tree.size(); i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }
@@ -46,15 +46,15 @@ class TestAllkFN {
     allkfn_->Init(*data_for_tree_, 20, 5);
     naive_->InitNaive(*data_for_tree_, 5);
 
-    ArrayList<index_t> resulting_neighbors_tree;
+    ArrayList<size_t> resulting_neighbors_tree;
     ArrayList<double> distances_tree;
     allkfn_->ComputeNeighbors(&resulting_neighbors_tree,
                               &distances_tree);
-    ArrayList<index_t> resulting_neighbors_naive;
+    ArrayList<size_t> resulting_neighbors_naive;
     ArrayList<double> distances_naive;
     naive_->ComputeNaive(&resulting_neighbors_naive,
                          &distances_naive);
-    for(index_t i=0; i<resulting_neighbors_tree.size(); i++) {
+    for(size_t i=0; i<resulting_neighbors_tree.size(); i++) {
       TEST_ASSERT(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
       TEST_DOUBLE_APPROX(distances_tree[i], distances_naive[i], 1e-5);
     }

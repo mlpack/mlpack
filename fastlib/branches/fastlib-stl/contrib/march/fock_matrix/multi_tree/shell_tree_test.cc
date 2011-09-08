@@ -44,7 +44,7 @@ int main (int argc, char* argv[]) {
   mom_vec.Copy(momenta.ptr(), centers.n_cols());
   
   ArrayList<BasisShell> shells;
-  index_t num_functions = eri::CreateShells(centers, exponents, mom_vec, &shells);
+  size_t num_functions = eri::CreateShells(centers, exponents, mom_vec, &shells);
   
   ArrayList<BasisShell*> shell_ptrs;
   shell_ptrs.Init(shells.size());
@@ -52,7 +52,7 @@ int main (int argc, char* argv[]) {
     shell_ptrs[i] = &(shells[i]);
   }
   
-  ArrayList<index_t> old_from_new;
+  ArrayList<size_t> old_from_new;
   BasisShellTree* tree = shell_tree_impl::CreateShellTree(shell_ptrs, 1, 
                                                           &old_from_new,
                                                           NULL);

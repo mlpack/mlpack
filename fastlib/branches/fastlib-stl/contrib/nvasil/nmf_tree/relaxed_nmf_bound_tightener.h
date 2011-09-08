@@ -23,17 +23,17 @@
 class RelaxedNmfBoundTightener {
  public:
   void Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Matrix &x_lower_bound, 
                       Matrix &x_upper_bound,  
-                      index_t opt_var_row,
-                      index_t opt_var_column,
-                      index_t opt_var_sign,
+                      size_t opt_var_row,
+                      size_t opt_var_column,
+                      size_t opt_var_sign,
                       double function_upper_bound);
   void Destruct();
-  void SetOptVarRowColumn(index_t row, index_t column);
+  void SetOptVarRowColumn(size_t row, size_t column);
   void SetOptVarSign(double sign);
   // The following are required by LBFGS
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -58,23 +58,23 @@ class RelaxedNmfBoundTightener {
   // holds all the info
   fx_module *module_;
   // number of rows of the original matrix
-  index_t num_of_rows_;
+  size_t num_of_rows_;
   // number of columns of the original matrix
-  index_t num_of_columns_;
+  size_t num_of_columns_;
   // offset of the H matrix on the coordinate variable
-  index_t h_offset_;
-  index_t w_offset_;
+  size_t h_offset_;
+  size_t w_offset_;
   double values_sq_norm_;
-  index_t new_dimension_;
+  size_t new_dimension_;
   // constant term for the LP relaxation part
   Vector a_linear_term_;
   // linear term for the LP relaxation part
   Vector b_linear_term_;
-  ArrayList<index_t> rows_;
-  ArrayList<index_t> columns_;
+  ArrayList<size_t> rows_;
+  ArrayList<size_t> columns_;
   ArrayList<double> values_;
-  index_t opt_var_row_;
-  index_t opt_var_column_;
+  size_t opt_var_row_;
+  size_t opt_var_column_;
   double opt_var_sign_;
   double function_upper_bound_;
   // lower bound for the optimization variable
@@ -92,17 +92,17 @@ class RelaxedNmfBoundTightener {
 class RelaxedNmfIsometricBoundTightener {
  public:
   void Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Matrix &x_lower_bound, 
                       Matrix &x_upper_bound,  
-                      index_t opt_var_row,
-                      index_t opt_var_column,
-                      index_t opt_var_sign,
+                      size_t opt_var_row,
+                      size_t opt_var_column,
+                      size_t opt_var_sign,
                       double function_upper_bound);
   void Destruct();
-  void SetOptVarRowColumn(index_t row, index_t column);
+  void SetOptVarRowColumn(size_t row, size_t column);
   void SetOptVarSign(double sign);
   // The following are required by LBFGS
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -128,18 +128,18 @@ class RelaxedNmfIsometricBoundTightener {
   // holds all the info
   fx_module *module_;
   // number of rows of the original matrix
-  index_t num_of_rows_;
+  size_t num_of_rows_;
   // number of columns of the original matrix
-  index_t num_of_columns_;
+  size_t num_of_columns_;
   // offset of the H matrix on the coordinate variable
-  index_t h_offset_;
-  index_t w_offset_;
+  size_t h_offset_;
+  size_t w_offset_;
   double values_sq_norm_;
-  index_t new_dimension_;
+  size_t new_dimension_;
   double desired_duality_gap_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
-  index_t num_of_nearest_pairs_;
+  size_t num_of_nearest_pairs_;
   // constant term for the LP relaxation part of the objective
   Vector objective_a_linear_term_;
   // linear term for the LP relaxation part of the objective
@@ -151,11 +151,11 @@ class RelaxedNmfIsometricBoundTightener {
   AllkNN allknn_;
   bool is_infeasible_;
   
-  ArrayList<index_t> rows_;
-  ArrayList<index_t> columns_;
+  ArrayList<size_t> rows_;
+  ArrayList<size_t> columns_;
   ArrayList<double> values_;
-  index_t opt_var_row_;
-  index_t opt_var_column_;
+  size_t opt_var_row_;
+  size_t opt_var_column_;
   double opt_var_sign_;
   double function_upper_bound_;
   // lower bound for the optimization variable
@@ -172,12 +172,12 @@ class RelaxedNmfIsometricBoundTightener {
 class RelaxedNmfIsometricBoxTightener {
  public:
   void Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Vector &x_lower_bound, 
                       Vector &x_upper_bound,  
-                      index_t opt_var_sign,
+                      size_t opt_var_sign,
                       double function_upper_bound);
   void Destruct();
   void SetOptVarSign(double sign);
@@ -205,18 +205,18 @@ class RelaxedNmfIsometricBoxTightener {
   // holds all the info
   fx_module *module_;
   // number of rows of the original matrix
-  index_t num_of_rows_;
+  size_t num_of_rows_;
   // number of columns of the original matrix
-  index_t num_of_columns_;
+  size_t num_of_columns_;
   // offset of the H matrix on the coordinate variable
-  index_t h_offset_;
-  index_t w_offset_;
+  size_t h_offset_;
+  size_t w_offset_;
   double values_sq_norm_;
-  index_t new_dimension_;
+  size_t new_dimension_;
   double desired_duality_gap_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
-  index_t num_of_nearest_pairs_;
+  size_t num_of_nearest_pairs_;
   // constant term for the LP relaxation part of the objective
   Vector objective_a_linear_term_;
   // linear term for the LP relaxation part of the objective
@@ -228,8 +228,8 @@ class RelaxedNmfIsometricBoxTightener {
   AllkNN allknn_;
   bool is_infeasible_;
   
-  ArrayList<index_t> rows_;
-  ArrayList<index_t> columns_;
+  ArrayList<size_t> rows_;
+  ArrayList<size_t> columns_;
   ArrayList<double> values_;
   double opt_var_sign_;
   double function_upper_bound_;

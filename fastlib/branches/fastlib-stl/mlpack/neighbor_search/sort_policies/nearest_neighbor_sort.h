@@ -23,7 +23,7 @@ class NearestNeighborSort {
  public:
   /***
    * Return the index in the vector where the new distance should be inserted,
-   * or index_t() - 1 if it should not be inserted (i.e. if it is not any better
+   * or size_t() - 1 if it should not be inserted (i.e. if it is not any better
    * than any of the existing points in the list).  The list should be sorted
    * such that the best point is the first in the list.  The actual insertion is
    * not performed.
@@ -31,10 +31,10 @@ class NearestNeighborSort {
    * @param list Vector of existing distance points
    * @param new_distance Distance to try to insert
    *
-   * @return index_t containing the position to insert into, or (index_t() - 1)
+   * @return size_t containing the position to insert into, or (size_t() - 1)
    *     if the new distance should not be inserted.
    */
-  static index_t SortDistance(arma::vec& list, double new_distance);
+  static size_t SortDistance(arma::vec& list, double new_distance);
 
   /***
    * Return whether or not value is "better" than ref.  In this case, that means

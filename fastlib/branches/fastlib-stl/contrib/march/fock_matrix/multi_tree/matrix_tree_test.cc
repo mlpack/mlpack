@@ -48,7 +48,7 @@ int main(int argc, char* argv[]) {
   Matrix density;
   
   ArrayList<BasisShell> shells;
-  index_t num_functions = eri::CreateShells(centers, exponents, mom_vec, &shells);
+  size_t num_functions = eri::CreateShells(centers, exponents, mom_vec, &shells);
   
   if (fx_param_exists(root_mod, "density")) {
     
@@ -85,7 +85,7 @@ int main(int argc, char* argv[]) {
     shell_ptrs[i] = &(shells[i]);
   }
   
-  ArrayList<index_t> old_from_new;
+  ArrayList<size_t> old_from_new;
   BasisShellTree* tree = shell_tree_impl::CreateShellTree(shell_ptrs, 1, 
                                                           &old_from_new,
                                                           NULL);

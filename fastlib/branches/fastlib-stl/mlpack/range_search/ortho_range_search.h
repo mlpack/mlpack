@@ -77,8 +77,8 @@ class OrthoRangeSearch {
     // Allocate space for storing candidate points found during
     // search.
     candidate_points->Init(data_.n_cols(), set_of_low_coord_limits.n_cols());
-    for(index_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
-      for(index_t i = 0; i < data_.n_cols(); i++) {
+    for(size_t j = 0; j < set_of_low_coord_limits.n_cols(); j++) {
+      for(size_t i = 0; i < data_.n_cols(); i++) {
 	(*candidate_points).set(i, j, false);
       }
     }
@@ -86,8 +86,8 @@ class OrthoRangeSearch {
     mlpack::IO::StartTimer("range/tree_range_search");
 
     // First build a tree out of the set of range windows.
-    ArrayList<index_t> old_from_new_windows;
-    ArrayList<index_t> new_from_old_windows;
+    ArrayList<size_t> old_from_new_windows;
+    ArrayList<size_t> new_from_old_windows;
 
     Tree *tree_of_windows = 
       proximity::MakeGenKdTree<T, Tree, proximity::GenKdTreeMedianSplitter>
@@ -108,7 +108,7 @@ class OrthoRangeSearch {
     GenMatrix<T> tmp_matrix;
     tmp_matrix.Init(set_of_low_coord_limits.n_rows(),
 		    set_of_low_coord_limits.n_cols());
-    for(index_t i = 0; i < tmp_matrix.n_cols(); i++) {
+    for(size_t i = 0; i < tmp_matrix.n_cols(); i++) {
       GenVector<T> dest;
       GenVector<T> src;
       tmp_matrix.MakeColumnVector(old_from_new_windows[i], &dest);
@@ -117,7 +117,7 @@ class OrthoRangeSearch {
     }
     set_of_low_coord_limits.CopyValues(tmp_matrix);
 
-    for(index_t i = 0; i < tmp_matrix.n_cols(); i++) {
+    for(size_t i = 0; i < tmp_matrix.n_cols(); i++) {
       GenVector<T> dest;
       GenVector<T> src;
       tmp_matrix.MakeColumnVector(old_from_new_windows[i], &dest);
@@ -155,7 +155,7 @@ class OrthoRangeSearch {
     int old_from_new_size = ot::FrozenSize(old_from_new_);
     int new_from_old_size = ot::FrozenSize(new_from_old_);
     char *tmp_array = 
-      (char *) mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
+      (char *) mem::AllocBytes<ArrayList<size_t> >(old_from_new_size);
 
     fwrite((const void *) &old_from_new_size, sizeof(int), 1, output);    
     ot::Freeze(tmp_array, old_from_new_);
@@ -224,17 +224,17 @@ class OrthoRangeSearch {
   GenMatrix<T> data_;
 
   /** @brief Buffer for loading up old_from_new mapping. */
-  ArrayList<index_t> *old_from_new_buffer_;
+  ArrayList<size_t> *old_from_new_buffer_;
 
   /** @brief Buffer for loading up new_from_old mapping. */
-  ArrayList<index_t> *new_from_old_buffer_;
+  ArrayList<size_t> *new_from_old_buffer_;
 
   /** @brief Temporary pointer used for loading the tree from a file. */
   Tree *tree_buffer_;
 
-  ArrayList<index_t> old_from_new_;
+  ArrayList<size_t> old_from_new_;
   
-  ArrayList<index_t> new_from_old_;
+  ArrayList<size_t> new_from_old_;
 
   /** @brief The root of the tree */
   Tree *root_;
@@ -264,17 +264,17 @@ class OrthoRangeSearch {
     // read old_from_new
     fread((void *) &old_from_new_size, sizeof(int), 1, input);
     old_from_new_buffer_ = 
-    mem::AllocBytes<ArrayList<index_t> >(old_from_new_size);
+    mem::AllocBytes<ArrayList<size_t> >(old_from_new_size);
     fread((void *) old_from_new_buffer_, old_from_new_size, 1, input);
-    old_from_new_.InitCopy(*(ot::SemiThaw<ArrayList<index_t> >
+    old_from_new_.InitCopy(*(ot::SemiThaw<ArrayList<size_t> >
 			     ((char *) old_from_new_buffer_)));
 
     // read new_from_old
     fread((void *) &new_from_old_size, sizeof(int), 1, input);
     new_from_old_buffer_ = 
-    mem::AllocBytes<ArrayList<index_t> >(new_from_old_size);
+    mem::AllocBytes<ArrayList<size_t> >(new_from_old_size);
     fread((void *) new_from_old_buffer_, new_from_old_size, 1, input);
-    new_from_old_.InitCopy(*(ot::SemiThaw<ArrayList<index_t> >
+    new_from_old_.InitCopy(*(ot::SemiThaw<ArrayList<size_t> >
 			     ((char *) new_from_old_buffer_)));
 
     mlpack::IO::Info << "Tree has been loaded..." << std::endl;
@@ -283,7 +283,7 @@ class OrthoRangeSearch {
     GenMatrix<T> tmp_data;
     tmp_data.Init(data_.n_rows(), data_.n_cols());
 
-    for(index_t i = 0; i < data_.n_cols(); i++) {
+    for(size_t i = 0; i < data_.n_cols(); i++) {
       GenVector<T> source, dest;
       data_.MakeColumnVector(i, &source);
       tmp_data.MakeColumnVector(new_from_old_[i], &dest);
@@ -310,24 +310,24 @@ class OrthoRangeSearch {
   void ortho_slow_range_search(Tree *search_window_node,
 			       GenMatrix<T> &low_coord_limits,
 			       GenMatrix<T> &high_coord_limits,
-			       const ArrayList<index_t> &old_from_new_windows,
-			       const ArrayList<index_t> &new_from_old_windows,
+			       const ArrayList<size_t> &old_from_new_windows,
+			       const ArrayList<size_t> &new_from_old_windows,
 			       Tree *reference_node, 
-			       index_t start_dim, index_t end_dim,
+			       size_t start_dim, size_t end_dim,
 			       GenMatrix<bool> &candidate_points) {
     PruneStatus prune_flag;
 
     // Loop over each search window...
-    for(index_t window = search_window_node->begin();
+    for(size_t window = search_window_node->begin();
 	window < search_window_node->end(); window++) {
 
       // Loop over each reference point...
-      for(index_t row = reference_node->begin(); row < reference_node->end(); 
+      for(size_t row = reference_node->begin(); row < reference_node->end(); 
 	  row++) {
 	prune_flag = SUBSUME;
 	
 	// loop over each dimension...
-	for(index_t d = start_dim; d <= end_dim; d++) {
+	for(size_t d = start_dim; d <= end_dim; d++) {
 	  // determine which one of the two cases we have: EXCLUDE,
 	  // SUBSUME.
 	  
@@ -368,17 +368,17 @@ class OrthoRangeSearch {
   void ortho_range_search(Tree *search_window_node, 
 			  GenMatrix<T> &low_coord_limits, 
 			  GenMatrix<T> &high_coord_limits,
-			  const ArrayList<index_t> &old_from_new_windows,
-			  const ArrayList<index_t> &new_from_old_windows,
-			  Tree *reference_node, index_t start_dim,
-			  index_t end_dim, GenMatrix<bool> &candidate_points) {
+			  const ArrayList<size_t> &old_from_new_windows,
+			  const ArrayList<size_t> &new_from_old_windows,
+			  Tree *reference_node, size_t start_dim,
+			  size_t end_dim, GenMatrix<bool> &candidate_points) {
 
     PruneStatus prune_flag = SUBSUME;
     
     // loop over each dimension to determine inclusion/exclusion by
     // determining the lower and the upper bound distance per each
     // dimension for the given reference node, kn
-    for(index_t d = start_dim; d <= end_dim; d++) {
+    for(size_t d = start_dim; d <= end_dim; d++) {
 
       const GenRange<T> &reference_node_dir_range = 
 	reference_node->bound().get(d);
@@ -413,9 +413,9 @@ class OrthoRangeSearch {
     // candidates - note that subsume prunes cannot be performed
     // always in batch query.
     if(search_window_node->count() == 1 && prune_flag == SUBSUME) {
-      for(index_t j = search_window_node->begin(); 
+      for(size_t j = search_window_node->begin(); 
 	  j < search_window_node->end(); j++) {
-	for(index_t i = reference_node->begin(); 
+	for(size_t i = reference_node->begin(); 
 	    i < reference_node->end(); i++) {
 	  candidate_points.set(old_from_new_[i], old_from_new_windows[j],
 			       true);

@@ -55,19 +55,19 @@ namespace npt {
     double weighted_results_;
     
     // n
-    index_t tuple_size_;
+    size_t tuple_size_;
     
     int num_base_cases_;
     
     // n!
-    index_t num_permutations_;
+    size_t num_permutations_;
     
     /////////////////// functions ////////////////////////
     
     /**
      * Just accesses the Permutations class
      */
-    index_t GetPermIndex_(index_t perm_index, index_t pt_index) {
+    size_t GetPermIndex_(size_t perm_index, size_t pt_index) {
       return perms_.GetPermutation(perm_index, pt_index);
     } // GetPermIndex_
     
@@ -75,19 +75,19 @@ namespace npt {
     /**
      * Helper function for checking points or bounds.
      */
-    bool CheckDistances_(double dist_sq, index_t ind1, index_t ind2);
+    bool CheckDistances_(double dist_sq, size_t ind1, size_t ind2);
     
     
-    bool TestPointPair_(double dist_sq, index_t tuple_ind_1, index_t tuple_ind_2,
+    bool TestPointPair_(double dist_sq, size_t tuple_ind_1, size_t tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     
     bool TestHrectPair_(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
-                        index_t tuple_ind_1, index_t tuple_ind_2,
+                        size_t tuple_ind_1, size_t tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     
     void BaseCaseHelper_(const NodeTuple& nodes,
                          std::vector<bool>& permutation_ok,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<size_t>& points_in_tuple,
                          int k);
     
     
@@ -111,12 +111,12 @@ namespace npt {
       
       double half_band = bandwidth / 2.0;
       
-      for (index_t i = 0; i < tuple_size_; i++) {
+      for (size_t i = 0; i < tuple_size_; i++) {
         
         lower_bounds_sqr_(i,i) = 0.0;
         upper_bounds_sqr_(i,i) = 0.0;
         
-        for (index_t j = i+1; j < tuple_size_; j++) {
+        for (size_t j = i+1; j < tuple_size_; j++) {
          
           lower_bounds_sqr_(i,j) = (matcher_dists(i,j) - half_band)
                                     * (matcher_dists(i,j) - half_band);
@@ -193,7 +193,7 @@ namespace npt {
       return tuple_size_;
     }
     
-    index_t num_permutations() {
+    size_t num_permutations() {
       return num_permutations_;
     }
     

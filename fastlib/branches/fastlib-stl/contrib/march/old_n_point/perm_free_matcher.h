@@ -40,7 +40,7 @@ namespace npt {
     std::vector<double> upper_bounds_sqr_;
     std::vector<double> lower_bounds_sqr_;
     
-    index_t tuple_size_;
+    size_t tuple_size_;
     
     int num_random_;
     
@@ -50,20 +50,20 @@ namespace npt {
     
     ///////////// functions ////////////////////
     
-    index_t GetPermutationIndex_(index_t perm_index, index_t pt_index) {
+    size_t GetPermutationIndex_(size_t perm_index, size_t pt_index) {
       
       // these needed to be swapped to match matcher code
       return perms_.GetPermutation(perm_index, pt_index);
       
     } // GetPermutation
     
-    bool TestPointPair_(double dist_sq, index_t tuple_index_1, 
-                        index_t tuple_index_2, 
+    bool TestPointPair_(double dist_sq, size_t tuple_index_1, 
+                        size_t tuple_index_2, 
                         std::vector<bool>& permutation_ok);
     
-    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+    void BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<size_t>& points_in_tuple,
                          int k);
     
     
@@ -90,12 +90,12 @@ namespace npt {
       
       //matcher_dists.print("matcher dists");
       
-      for (index_t i = 0; i < tuple_size_; i++) {
+      for (size_t i = 0; i < tuple_size_; i++) {
         
         lower_bounds_sqr_mat_(i,i) = 0.0;
         upper_bounds_sqr_mat_(i,i) = 0.0;
         
-        for (index_t j = i+1; j < tuple_size_; j++) {
+        for (size_t j = i+1; j < tuple_size_; j++) {
           
           lower_bounds_sqr_mat_(i,j) = (matcher_dists(i,j) - half_band)
           * (matcher_dists(i,j) - half_band);
@@ -119,8 +119,8 @@ namespace npt {
       //upper_bounds_sqr_mat_.print("Upper");
       
       
-      for (index_t i = 0; i < tuple_size_; i++) {
-        for (index_t j = i+1; j < tuple_size_; j++) {
+      for (size_t i = 0; i < tuple_size_; i++) {
+        for (size_t j = i+1; j < tuple_size_; j++) {
       
           upper_bounds_sqr_.push_back(upper_bounds_sqr_mat_(i,j));
           lower_bounds_sqr_.push_back(lower_bounds_sqr_mat_(i,j));

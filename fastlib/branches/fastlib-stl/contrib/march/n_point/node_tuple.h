@@ -36,13 +36,13 @@ namespace npt {
     
     std::vector<NptNode*> node_list_;
     
-    index_t tuple_size_;
+    size_t tuple_size_;
     
     std::vector<int> same_nodes_;
     
     
     // this is the position of the node we should split next
-    index_t ind_to_split_;
+    size_t ind_to_split_;
     
     bool all_leaves_;
     
@@ -64,7 +64,7 @@ namespace npt {
     {
      
      /*
-      for (index_t i = 0; i < tuple_size_; i++) {
+      for (size_t i = 0; i < tuple_size_; i++) {
         node_list_.push_back(list_in[i]);
       }
       */
@@ -126,7 +126,7 @@ namespace npt {
       
       // Not sure if this works, if not I should just call these outside
       /*
-      std::vector<index_t> invalid_inds;
+      std::vector<size_t> invalid_inds;
       FindInvalidIndices_(invalid_inds);
       
       UpdateIndices_(ind_to_split_, invalid_inds);
@@ -152,15 +152,15 @@ namespace npt {
       return all_leaves_;
     }
     
-    index_t ind_to_split() const {
+    size_t ind_to_split() const {
       return ind_to_split_;
     }
     
-    NptNode*& node_list(index_t i) {
+    NptNode*& node_list(size_t i) {
       return node_list_[i];
     }
     
-    index_t tuple_size() const {
+    size_t tuple_size() const {
       return tuple_size_;
     }
     
@@ -168,7 +168,7 @@ namespace npt {
     
     
 
-    bool CheckSymmetry(index_t split_ind, bool is_left);
+    bool CheckSymmetry(size_t split_ind, bool is_left);
 
     
   }; // class

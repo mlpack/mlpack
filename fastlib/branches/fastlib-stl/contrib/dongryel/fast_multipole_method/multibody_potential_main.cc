@@ -13,7 +13,7 @@ class MultibodyPotentialComputer {
     // Instantiate a multi-tree problem...
     ArrayList<const Matrix *> sets;
     sets.Init(MultibodyPotentialProblem<TKernel>::order);
-    for(index_t i = 0; 
+    for(size_t i = 0; 
 	i < MultibodyPotentialProblem<TKernel>::order; i++) {
       sets[i] = &references;
     }

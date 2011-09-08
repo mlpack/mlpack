@@ -21,26 +21,26 @@ namespace shell_tree_impl {
    *
    * In kdtree_impl, this sets up the child bounds as well.  
    */
-  index_t SelectListPartition(ArrayList<BasisShell*>& shells, double split_val, 
-                              int split_dim, index_t begin, index_t count,
+  size_t SelectListPartition(ArrayList<BasisShell*>& shells, double split_val, 
+                              int split_dim, size_t begin, size_t count,
                               DHrectBound<2>* left_space, DRange* left_exp, 
                               DRange* left_mom, DHrectBound<2>* right_space, 
                               DRange* right_exp, DRange* right_mom, 
                               DRange* left_norms, DRange* right_norms,
-                              ArrayList<index_t>* perm);
+                              ArrayList<size_t>* perm);
   
   /**
    * Picks which dimension to split and does it
    */
   void SelectSplit(ArrayList<BasisShell*>& shells, BasisShellTree* node, 
-                   index_t leaf_size);
+                   size_t leaf_size);
   
   /**
    * Use this to create the shell tree
    */
-  BasisShellTree* CreateShellTree(ArrayList<BasisShell*>& shells, index_t leaf_size,
-                                  ArrayList<index_t> *old_from_new,
-                                  ArrayList<index_t> *new_from_old);
+  BasisShellTree* CreateShellTree(ArrayList<BasisShell*>& shells, size_t leaf_size,
+                                  ArrayList<size_t> *old_from_new,
+                                  ArrayList<size_t> *new_from_old);
   
   
   

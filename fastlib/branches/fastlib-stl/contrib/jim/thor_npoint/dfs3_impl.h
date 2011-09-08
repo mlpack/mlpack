@@ -12,8 +12,8 @@ ThreeTreeDepthFirst<GNP>::~ThreeTreeDepthFirst() {
 template<typename GNP>
 void ThreeTreeDepthFirst<GNP>::Doit(
     const typename GNP::Param& param_in,
-    index_t q_root_index,
-    index_t q_end_index,
+    size_t q_root_index,
+    size_t q_end_index,
     DistributedCache *q_points,
     DistributedCache *q_nodes,
     DistributedCache *r_points,
@@ -69,7 +69,7 @@ void ThreeTreeDepthFirst<GNP>::Doit(
 }
 
 template<typename GNP>
-void ThreeTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
+void ThreeTreeDepthFirst<GNP>::Begin_(size_t q_root_index) {
   typename GNP::Delta delta;
   typename GNP::Delta empty_delta;
   CacheRead<typename GNP::QNode> q_root(&q_nodes_, q_root_index);
@@ -102,11 +102,11 @@ void ThreeTreeDepthFirst<GNP>::Begin_(index_t q_root_index) {
 
 template<typename GNP>
 void ThreeTreeDepthFirst<GNP>::PushDownPostprocess_(
-    index_t q_node_i, QMutables *q_node_mut) {
+    size_t q_node_i, QMutables *q_node_mut) {
   CacheRead<typename GNP::QNode> q_node(&q_nodes_, q_node_i);
 
   if (q_node->is_leaf()) {
-    index_t q_i = q_node->begin();
+    size_t q_i = q_node->begin();
     CacheWriteIter<typename GNP::QResult> q_result(&q_results_, q_i);
     CacheReadIter<typename GNP::QPoint> q_point(&q_points_, q_i);
     
@@ -116,8 +116,8 @@ void ThreeTreeDepthFirst<GNP>::PushDownPostprocess_(
       global_result_.ApplyResult(param_, *q_point, q_i, *q_result);
     }
   } else {
-    for (index_t k = 0; k < 2; k++) {
-      index_t q_child_i = q_node->child(k);
+    for (size_t k = 0; k < 2; k++) {
+      size_t q_child_i = q_node->child(k);
       QMutables *q_child_mut = &q_mutables_[q_child_i];
 
       q_child_mut->postponed.ApplyPostponed(param_, q_node_mut->postponed);
@@ -163,9 +163,9 @@ void ThreeTreeDepthFirst<GNP>::Triple_(
       // Phase 2: Explore children, and reincorporate their results.
       q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
       
-      for (index_t k = 0; k < 2; k++) {
+      for (size_t k = 0; k < 2; k++) {
 	typename GNP::Delta child_delta;
-	index_t q_child_i = q_node->child(k);
+	size_t q_child_i = q_node->child(k);
 	CacheRead<typename GNP::QNode> q_child(&q_nodes_, q_child_i);
 	QMutables *q_child_mut = &q_mutables_[q_child_i];
 	
@@ -310,9 +310,9 @@ void ThreeTreeDepthFirst<GNP>::Pair_(
       // Phase 2: Explore children, and reincorporate their results.
       q_node_mut->summary_result.StartReaccumulate(param_, *q_node);
 
-      for (index_t k = 0; k < 2; k++) {
+      for (size_t k = 0; k < 2; k++) {
         typename GNP::Delta child_delta;
-        index_t q_child_i = q_node->child(k);
+        size_t q_child_i = q_node->child(k);
         CacheRead<typename GNP::QNode> q_child(&q_nodes_, q_child_i);
         QMutables *q_child_mut = &q_mutables_[q_child_i];
 
@@ -430,23 +430,23 @@ void ThreeTreeDepthFirst<GNP>::BaseCase_(
   size_t q_point_stride = q_points_.n_elem_bytes();
   size_t q_result_stride = q_results_.n_elem_bytes();
   size_t r_point_stride = r_points_.n_elem_bytes();
-  index_t q_end = q_node->end();
+  size_t q_end = q_node->end();
   const typename GNP::QPoint *q_point = first_q_point;
   typename GNP::QResult *q_result = first_q_result;
 
-  for (index_t q_i = q_node->begin(); q_i < q_end; ++q_i) {
+  for (size_t q_i = q_node->begin(); q_i < q_end; ++q_i) {
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node1,			
       *r_node2, delta, unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r1_point = first_r1_point;     
-      index_t r1_i = r_node1->begin();   
-      index_t r1_left = r_node1->count();  
+      size_t r1_i = r_node1->begin();   
+      size_t r1_left = r_node1->count();  
 
       for (;;) {    
 	const typename GNP::RPoint *r2_point = first_r2_point;
-	index_t r2_i = r_node2->begin();
-	index_t r2_left = r_node2->count();
+	size_t r2_i = r_node2->begin();
+	size_t r2_left = r_node2->count();
 	for (;;){	   		  
 	  visitor.VisitTriple(param_, *q_point, q_i, *r1_point, r1_i,
 			      *r2_point, r2_i);
@@ -507,21 +507,21 @@ void ThreeTreeDepthFirst<GNP>::BaseCase_(
   size_t q_point_stride = q_points_.n_elem_bytes();
   size_t q_result_stride = q_results_.n_elem_bytes();
   size_t r_point_stride = r_points_.n_elem_bytes();
-  index_t q_end = q_node->end();
+  size_t q_end = q_node->end();
   const typename GNP::QPoint *q_point = first_q_point;
   typename GNP::QResult *q_result = first_q_result;
 
-  for (index_t q_i = q_node->begin(); q_i < q_end; ++q_i) {
+  for (size_t q_i = q_node->begin(); q_i < q_end; ++q_i) {
     q_result->ApplyPostponed(param_, q_node_mut->postponed, *q_point, q_i);
 
     if (visitor.StartVisitingQueryPoint(param_, *q_point, q_i, *r_node,
           delta, unvisited, q_result, &global_result_)) {
       const typename GNP::RPoint *r_point = first_r_point;
       const typename GNP::RPoint *r2_point;
-      index_t r_i = r_node->begin();
-      index_t r2_i;
-      index_t r_left = r_node->count();
-      index_t r2_left;
+      size_t r_i = r_node->begin();
+      size_t r2_i;
+      size_t r_left = r_node->count();
+      size_t r2_left;
 
       for (;;) {
         visitor.VisitPair(param_, *q_point, q_i, *r_point, r_i);

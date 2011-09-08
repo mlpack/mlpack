@@ -30,11 +30,11 @@ namespace SVMLib {
 
   /* Implement a set of indices, O(1) read, write */
   class IndexSet {
-    index_t n_total, n_set; // number of points
-    ArrayList<index_t> index_set; // index subset, size n_set
-    ArrayList<index_t> set_index; // index of points in the index_set, size n_total
+    size_t n_total, n_set; // number of points
+    ArrayList<size_t> index_set; // index subset, size n_set
+    ArrayList<size_t> set_index; // index of points in the index_set, size n_total
   public:
-    IndexSet(index_t n);
+    IndexSet(size_t n);
     IndexSet(const IndexSet& ind) {
       n_total = ind.n_total; n_set = ind.n_set;
       index_set.InitCopy(ind.index_set); set_index.InitCopy(ind.set_index);
@@ -48,16 +48,16 @@ namespace SVMLib {
 
     void InitEmpty();
 
-    void addremove(index_t i, bool b = true);
+    void addremove(size_t i, bool b = true);
 
-    index_t get_n() const { return n_set; }
-    index_t get_n_total() const { return n_total; }
-    const ArrayList<index_t>& get_index() const { return index_set; }
-    bool is_set(index_t i) const { 
+    size_t get_n() const { return n_set; }
+    size_t get_n_total() const { return n_total; }
+    const ArrayList<size_t>& get_index() const { return index_set; }
+    bool is_set(size_t i) const { 
       DEBUG_ASSERT(i < n_total);
       return set_index[i] != -1; 
     }
-    int operator[] (index_t i) const {
+    int operator[] (size_t i) const {
       DEBUG_ASSERT(i < n_set);
       return index_set[i];
     }
@@ -77,17 +77,17 @@ namespace SVMLib {
     Matrix full_kernel;
 
     Matrix sub_kernel;
-    ArrayList<index_t> col_index;
-    ArrayList<index_t> lru_col;
-    index_t n_cols, lru_ptr;
-    index_t n_loads;
+    ArrayList<size_t> col_index;
+    ArrayList<size_t> lru_col;
+    size_t n_cols, lru_ptr;
+    size_t n_loads;
   public:
     Kernel(const KernelFunction& kfunc, const Matrix& X);
 
-    void get_element(index_t i, index_t j, 
+    void get_element(size_t i, size_t j, 
 		     double& Kii, double& Kjj, double& Kij);
 
-    double get_element(index_t i, index_t j) {
+    double get_element(size_t i, size_t j) {
       if (kernel_stored)
 	return full_kernel.get(i, j);
       else
@@ -100,17 +100,17 @@ namespace SVMLib {
     }
 
     /** Get a kernel matrix column, col_i must be uninitialized */
-    void get_column(index_t i, Vector* col_i);
+    void get_column(size_t i, Vector* col_i);
     
     /** Get the diagonal of the kernel matrix, diag must be uninitialized*/
     void get_diag(Vector* diag);
 
     /** Number of load columns */
-    index_t n_load() { return n_loads; }
-    index_t n_point() { return n_points; }
+    size_t n_load() { return n_loads; }
+    size_t n_point() { return n_points; }
   private:
-    double kernel_call(index_t i, index_t j);
-    index_t loadColumn(index_t i);
+    double kernel_call(size_t i, size_t j);
+    size_t loadColumn(size_t i);
   };
 
   /** SMO main function
@@ -123,11 +123,11 @@ namespace SVMLib {
 		Kernel& kernel, SMOOptions options,
 		Vector& alpha, IndexSet& SVindex, double& offset);
 
-  double svm_output_on_sample(index_t i, Kernel& kernel, 
+  double svm_output_on_sample(size_t i, Kernel& kernel, 
 			      const Vector& y, const Vector& alpha, 
 			      const IndexSet& SVindex, double offset);
 
-  index_t svm_total_error(Kernel& kernel, 
+  size_t svm_total_error(Kernel& kernel, 
 			  const Vector& y, const Vector& alpha, 
 			  const IndexSet& SVindex, double offset);
 

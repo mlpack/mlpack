@@ -19,15 +19,15 @@
 template<typename OptimizedFunction>
 void DualManifoldEngine<OptimizedFunction>::Init(datanode *module, 
     // index pairs to consider from the matrix (row,column) pairs
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     // The values of the (row, column) values, also known as the dot products
     ArrayList<double> &dot_prod_values) {
   
   // From this matrix we deduce the size of the matrix D we are trying to decompose
   // We want to find out how many rows and columns he has
-  index_t num_of_rows=0;
-  index_t num_of_cols=0;
-  for (index_t i=0; i<pairs_to_consider.size(); i++) {
+  size_t num_of_rows=0;
+  size_t num_of_cols=0;
+  for (size_t i=0; i<pairs_to_consider.size(); i++) {
     if (pairs_to_consider[i].first > num_of_rows) {
       num_of_rows=pairs_to_consider[i].first;
     }
@@ -66,7 +66,7 @@ void DualManifoldEngine<OptimizedFunction>::Init(datanode *module,
       pairs_to_consider,
       dot_prod_values);
 
-  for(index_t i=0; i<pairs_to_consider.size(); i++) {
+  for(size_t i=0; i<pairs_to_consider.size(); i++) {
     std::swap(pairs_to_consider[i].first, pairs_to_consider[i].second);
   }
   optimized_function2_.Init(fx_param_node(module_, "opt2"), 
@@ -89,7 +89,7 @@ void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
   optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), 
       &old_feasibility_error);
   double feasibility_error=DBL_MAX;
-  for(index_t i=0; i<max_iterations_; i++) {
+  for(size_t i=0; i<max_iterations_; i++) {
     NOTIFY("Optimizing for W...");
     l_bfgs1_.ComputeLocalOptimumBFGS();
     optimized_function1_.ComputeFeasibilityError(*l_bfgs1_.coordinates(), &feasibility_error);
@@ -114,15 +114,15 @@ void DualManifoldEngine<OptimizedFunction>::ComputeLocalOptimum() {
 
 template<typename OptimizedFunction>
 double DualManifoldEngine<OptimizedFunction>::ComputeEvaluationTest(
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     ArrayList<double> &dot_prod_values) {
  
   double error=0;
   Matrix *w_mat = l_bfgs1_.coordinates();
   Matrix *h_mat = l_bfgs2_.coordinates();
-  for(index_t i=0; i<pairs_to_consider.size(); i++) {
-    index_t ind1=pairs_to_consider[i].first;
-    index_t ind2=pairs_to_consider[i].second;
+  for(size_t i=0; i<pairs_to_consider.size(); i++) {
+    size_t ind1=pairs_to_consider[i].first;
+    size_t ind2=pairs_to_consider[i].second;
     double eval=fabs(la::Dot(num_of_components_, 
         w_mat->GetColumnPtr(ind1),
         h_mat->GetColumnPtr(ind2)) - dot_prod_values[i]);
@@ -144,11 +144,11 @@ double DualManifoldEngine<OptimizedFunction>::ComputeEvaluationTest(
 
 template<typename OptimizedFunction>
 double DualManifoldEngine<OptimizedFunction>::ComputeRandomEvaluationTest(
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     ArrayList<double> &dot_prod_values) {
  
   double error=0;
- for(index_t i=0; i<pairs_to_consider.size(); i++) {
+ for(size_t i=0; i<pairs_to_consider.size(); i++) {
    double eval=fabs(math::RandInt(1, 6)- dot_prod_values[i]);
 /*    if (eval<1) {
       eval=1;

@@ -15,8 +15,8 @@ class ShellPair {
   ~ShellPair() {}
   
   // add list index here
-  void Init(index_t M_index, index_t N_index, BasisShell* M_shell, 
-            BasisShell* N_shell, index_t list_ind, const Matrix& density) {
+  void Init(size_t M_index, size_t N_index, BasisShell* M_shell, 
+            BasisShell* N_shell, size_t list_ind, const Matrix& density) {
     
     DEBUG_ASSERT(M_index <= N_index);
     M_index_ = M_index;
@@ -38,8 +38,8 @@ class ShellPair {
     overlap_ = eri::ComputeShellOverlap(*M_shell_, *N_shell_);
     
     density_bound_ = -DBL_MAX;
-    for (index_t i = 0; i < M_shell_->num_functions(); i++) {
-      for (index_t j = 0; j < N_shell_->num_functions(); j++) {
+    for (size_t i = 0; i < M_shell_->num_functions(); i++) {
+      for (size_t j = 0; j < N_shell_->num_functions(); j++) {
         
         double density_val = density.get(M_shell_->matrix_index(i), 
                                          N_shell_->matrix_index(j));
@@ -51,10 +51,10 @@ class ShellPair {
     
   } // Init()         
             
-  index_t M_index() const {
+  size_t M_index() const {
     return M_index_;
   }
-  index_t N_index() const {
+  size_t N_index() const {
     return N_index_;
   }
   
@@ -75,7 +75,7 @@ class ShellPair {
   }
   
   
-  void set_indices(index_t M_index, index_t N_index) {
+  void set_indices(size_t M_index, size_t N_index) {
   
     DEBUG_ASSERT(M_index <= N_index);
     M_index_ = M_index;
@@ -99,11 +99,11 @@ class ShellPair {
     schwartz_factor_ = fac;
   }
   
-  void set_list_index(index_t ind) {
+  void set_list_index(size_t ind) {
     list_index_ = ind;
   }
   
-  index_t list_index() const {
+  size_t list_index() const {
     return list_index_;
   }
   
@@ -135,16 +135,16 @@ class ShellPair {
   double integral_lower_bound_;
   
   // The indices of the two shells that make up the pair in the list of shells
-  index_t M_index_;
-  index_t N_index_;
+  size_t M_index_;
+  size_t N_index_;
   
   BasisShell* M_shell_;
   BasisShell* N_shell_;
   
-  index_t num_prunes_;
+  size_t num_prunes_;
   
   // this shell pair's position in the master list of shell_pairs
-  index_t list_index_;
+  size_t list_index_;
   
   // gamma
   double exponent_;

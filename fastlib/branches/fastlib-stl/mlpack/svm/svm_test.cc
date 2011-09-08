@@ -46,7 +46,7 @@ void setup() {
   IO::GetParam<double>("svm/epsilon") = .1;
   IO::GetParam<double>("svm/sigma") = 1;
   // Protect the test from taking forever
-  IO::GetParam<index_t>("svm/n_iter") = 10000;
+  IO::GetParam<size_t>("svm/n_iter") = 10000;
 
   matrix <<
     7.19906628001437787e-01 << 1.83250823399634477e+00 << 0 << arma::endr <<
@@ -83,8 +83,8 @@ void setup() {
  *  @param: svm The SVM class instance that has been trained for this data, et al.
  */
 template<typename T>
-void verify(index_t learner_typeid, Dataset& data, SVM<T>& svm) {
-  for(index_t i = 0; i < data.n_points(); i++) {
+void verify(size_t learner_typeid, Dataset& data, SVM<T>& svm) {
+  for(size_t i = 0; i < data.n_points(); i++) {
     arma::vec testvec = data.matrix().col(i);
 
     double predictedvalue = svm.Predict(learner_typeid, testvec);

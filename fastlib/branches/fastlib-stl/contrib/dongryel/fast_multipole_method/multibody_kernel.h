@@ -340,7 +340,7 @@ class AxilrodTellerForceKernelAux {
 
     DRange negative_contributions, positive_contributions;
 
-    for(index_t p = 0; p < order_; p++) {
+    for(size_t p = 0; p < order_; p++) {
 
       double *min_positive_contribution =
 	lower_bound_positive_contributions_.GetColumnPtr(p);
@@ -421,7 +421,7 @@ class AxilrodTellerForceKernelAux {
 	upper_bound_squared_distances.get(second_index[p], third_index[p]) *
 	distance_second_third_pow_three.hi;
 
-      for(index_t counter = 0; counter < dimension_; counter++) {
+      for(size_t counter = 0; counter < dimension_; counter++) {
 	AxilrodTellerForceKernelPositiveEvaluate
 	  (counter, first_bound, second_bound,
 	   distance_first_second,
@@ -488,14 +488,14 @@ class AxilrodTellerForceKernelAux {
   }
 
   void PairwiseEvaluateLoop(const ArrayList<Matrix *> &sets,
-			    const ArrayList<index_t> &indices,
+			    const ArrayList<size_t> &indices,
 			    Matrix &squared_distances) {
     
     // Evaluate the squared distance between (first_index, start).
-    for(index_t first_index = 0; first_index < order_ - 1; first_index++) {
+    for(size_t first_index = 0; first_index < order_ - 1; first_index++) {
       const Matrix *first_set = sets[first_index];
       
-      for(index_t second_index = first_index + 1; second_index < order_;
+      for(size_t second_index = first_index + 1; second_index < order_;
 	  second_index++) {
 	
 	const Matrix *second_set = sets[second_index];
@@ -520,8 +520,8 @@ class AxilrodTellerForceKernelAux {
 				Matrix &upper_bound_squared_distances) {
     
     // Evaluate the squared distance between (first_index, start).
-    for(index_t first_index = 0; first_index < order_ - 1; first_index++) {
-      for(index_t second_index = first_index + 1; second_index < order_;
+    for(size_t first_index = 0; first_index < order_ - 1; first_index++) {
+      for(size_t second_index = first_index + 1; second_index < order_;
 	  second_index++) {
 
 	double min_squared_distance =
@@ -601,7 +601,7 @@ class AxilrodTellerForceKernelAux {
     double *positive_force_vector_u_third = positive_force_vector_u.
       GetColumnPtr(2);
 
-    for(index_t i = 0; i < dimension_; i++) {
+    for(size_t i = 0; i < dimension_; i++) {
       
       // Error for positive contributions...
       {
@@ -753,7 +753,7 @@ class AxilrodTellerForceKernelAux {
 
     // Scale the error and delta contributions by the number of (n -
     // 1) tuples for each node.
-    for(index_t i = 0; i < order_; i++) {
+    for(size_t i = 0; i < order_; i++) {
       if(i == 0 || nodes[i] != nodes[i - 1]) {
 	double *negative_force_vector_l_column =
 	  negative_force_vector_l.GetColumnPtr(i);
@@ -850,11 +850,11 @@ class AxilrodTellerForceKernelAux {
     const int num_samples = 30;
     const double z_score = 1.65;
 
-    for(index_t i = 0; i < num_samples; i++) {
+    for(size_t i = 0; i < num_samples; i++) {
       
       // Randomly choose a 3-tuple...
       do {
-	for(index_t i = 0; i < order_; i++) {
+	for(size_t i = 0; i < order_; i++) {
 	  globals.hybrid_node_chosen_indices[i] = 
 	    math::RandInt(nodes[i]->begin(), nodes[i]->end());
 	}
@@ -908,7 +908,7 @@ class AxilrodTellerForceKernelAux {
 
     // I think at this point, used_error should not contain
     // anything...
-    for(index_t i = 0; i < dimension_; i++) {
+    for(size_t i = 0; i < dimension_; i++) {
       
       // Copy over the Monte Carlo estimates.
       negative_force_vector_e.set(i, 0, total_n_minus_one_tuples[0] *
@@ -1051,14 +1051,14 @@ class AxilrodTellerForceKernelAux {
     }
   }
 
-  void AddIfNotNull(double *pointer, index_t position, double increment) {
+  void AddIfNotNull(double *pointer, size_t position, double increment) {
     if(pointer != NULL) {
       pointer[position] += increment;
     }
   }
 
   void ExtractContribution
-  (const ArrayList<Matrix *> &sets, const ArrayList<index_t> &indices,
+  (const ArrayList<Matrix *> &sets, const ArrayList<size_t> &indices,
    const Matrix &squared_distances,
    double *negative_force_vector_l_first_particle,
    double *negative_force_vector_first_particle,
@@ -1134,7 +1134,7 @@ class AxilrodTellerForceKernelAux {
       squared_distance_between_j_and_k *
       pow_squared_distance_between_j_and_k_2_5;
     
-    for(index_t d = 0; d < dimension_; d++) {
+    for(size_t d = 0; d < dimension_; d++) {
 
       double positive_contribution1 =
 	AxilrodTellerForceKernelPositiveEvaluate

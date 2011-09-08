@@ -6,9 +6,9 @@ int main(int argc, char *argv[]) {
 
   CompressedVector<double, 100000000> cv;
   Vector v;
-  index_t length_of_vector = 300000000;
+  size_t length_of_vector = 300000000;
   v.Init(length_of_vector);
-  for(index_t i = 0; i < length_of_vector; i++) {
+  for(size_t i = 0; i < length_of_vector; i++) {
     v[i] = i;
   }
 
@@ -19,7 +19,7 @@ int main(int argc, char *argv[]) {
   // Measure the time for the uncompressed vector.
   //fx_timer_start(fx_root, "uncompressed_vector_dot_product");
   //dot_product = 0;
-  //for(index_t i = 0; i < length_of_vector; i +=1000) {
+  //for(size_t i = 0; i < length_of_vector; i +=1000) {
   //dot_product += math::Sqr(v[i]);
   //}
   //fx_timer_stop(fx_root, "uncompressed_vector_dot_product");
@@ -28,7 +28,7 @@ int main(int argc, char *argv[]) {
   // Measure the time for the compressed vector.
   fx_timer_start(fx_root, "compressed_vector_dot_product");
   double dot_product = 0;
-  for(index_t i = 0; i < length_of_vector; i += 1000) {
+  for(size_t i = 0; i < length_of_vector; i += 1000) {
     dot_product += math::Sqr(cv[i]);
   }
   fx_timer_stop(fx_root, "compressed_vector_dot_product");

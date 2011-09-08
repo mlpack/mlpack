@@ -188,7 +188,7 @@ class NaiveFockMatrix {
                                              "/dev/null/blah");
     
     
-    if (data::Load(coulomb_file, &coulomb_matrix_) == SUCCESS_FAIL) {
+    if (data::Load(coulomb_file, &coulomb_matrix_) == false) {
     
       coulomb_matrix_.Destruct();
       coulomb_matrix_.Init(number_of_basis_functions_, 
@@ -269,9 +269,9 @@ class NaiveFockMatrix {
                        Matrix* exchange_out) {
   /*
     double average_value = 0.0;
-    for (index_t i = 0; i < number_of_basis_functions_; i++) {
+    for (size_t i = 0; i < number_of_basis_functions_; i++) {
      
-      for (index_t j = 0; j < number_of_basis_functions_; j++) {
+      for (size_t j = 0; j < number_of_basis_functions_; j++) {
       
         average_value = average_value + fock_matrix_.ref(i, j);
       

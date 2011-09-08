@@ -39,7 +39,7 @@ void MaxVariance::Init(arma::mat& data) {
 
   mlpack::IO::Info << "Computing neighborhoods..." << std::endl;
 
-  arma::Col<index_t> from_tree_neighbors;
+  arma::Col<size_t> from_tree_neighbors;
   arma::vec          from_tree_distances;
   allknn_.ComputeNeighbors(from_tree_neighbors,
                            from_tree_distances);
@@ -82,7 +82,7 @@ void MaxVariance::Init(arma::mat& data) {
   eq_lagrange_mult_.ones(num_of_nearest_pairs_);
   double max_nearest_distance = 0;
 
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     max_nearest_distance = std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_ = -max_nearest_distance * std::pow(data.n_cols, 2);
@@ -109,7 +109,7 @@ void MaxVariance::Init() {
   nearest_distances_.clear();
   num_of_points_ = 0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp, "%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.push_back(std::make_pair(n1, n2));
@@ -128,7 +128,7 @@ void MaxVariance::Init() {
 
   eq_lagrange_mult_.ones(num_of_nearest_pairs_);
   double max_nearest_distance = 0;
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_ = -max_nearest_distance * std::pow(num_of_points_, 2);
@@ -149,11 +149,11 @@ void MaxVariance::ComputeGradient(const arma::mat& coordinates, arma::mat& gradi
   gradient = -coordinates; // copy values and negate (we need to use -CRR^T
   // because we want to maximize CRR^T
 
-  index_t dimension = coordinates.n_rows;
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  size_t dimension = coordinates.n_rows;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     arma::vec a_i_r(dimension);
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     const arma::vec point1 = coordinates.unsafe_col(n1);
     const arma::vec point2 = coordinates.unsafe_col(n2);
     double dist_diff = la::DistanceSqEuclidean(point1, point2) - nearest_distances_[i];
@@ -170,8 +170,8 @@ void MaxVariance::ComputeGradient(const arma::mat& coordinates, arma::mat& gradi
 void MaxVariance::ComputeObjective(const arma::mat& coordinates, double& objective) {
   objective = 0;
 
-  index_t dimension = coordinates.n_rows;
-  for(index_t i = 0; i < coordinates.n_cols; i++) {
+  size_t dimension = coordinates.n_rows;
+  for(size_t i = 0; i < coordinates.n_cols; i++) {
     // could this be done more efficiently?
     objective -= dot(coordinates.unsafe_col(i), coordinates.unsafe_col(i));
   }
@@ -180,10 +180,10 @@ void MaxVariance::ComputeObjective(const arma::mat& coordinates, double& objecti
 void MaxVariance::ComputeFeasibilityError(const arma::mat& coordinates, double& error) {
   error = 0;
 
-  index_t dimension = coordinates.n_rows;
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  size_t dimension = coordinates.n_rows;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double distance = la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2));
@@ -193,14 +193,14 @@ void MaxVariance::ComputeFeasibilityError(const arma::mat& coordinates, double& 
 }
 
 double MaxVariance::ComputeLagrangian(const arma::mat& coordinates) {
-  index_t dimension = coordinates.n_rows;
+  size_t dimension = coordinates.n_rows;
 
   double lagrangian = 0;
   ComputeObjective(coordinates, lagrangian);
 
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double dist_diff = la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2)) - nearest_distances_[i];
@@ -213,11 +213,11 @@ double MaxVariance::ComputeLagrangian(const arma::mat& coordinates) {
 }
 
 void MaxVariance::UpdateLagrangeMult(const arma::mat& coordinates) {
-  index_t dimension = coordinates.n_rows;
+  size_t dimension = coordinates.n_rows;
 
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double dist_diff =la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2)) - nearest_distances_[i];
@@ -245,7 +245,7 @@ void MaxVariance::Project(arma::mat& coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-index_t MaxVariance::num_of_points() {
+size_t MaxVariance::num_of_points() {
   return num_of_points_;
 }
 
@@ -282,7 +282,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
   mlpack::IO::Info << "Tree built ..." << std::endl;
   mlpack::IO::Info << "Computing neighborhoods ..." << std::endl
 
-  arma::Col<index_t> from_tree_neighbors;
+  arma::Col<size_t> from_tree_neighbors;
   arma::vec from_tree_distances;
   allknn_.ComputeNeighbors(from_tree_neighbors,
                            from_tree_distances);
@@ -355,7 +355,7 @@ void MaxFurthestNeighbors::Init(arma::mat& data) {
                                          num_of_furthest_pairs_);
 
   double max_nearest_distance = 0;
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     max_nearest_distance = std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_ = -(max_nearest_distance * data.n_cols * num_of_furthest_pairs_);
@@ -388,7 +388,7 @@ void MaxFurthestNeighbors::Init() {
   }
   num_of_points_ = 0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp, "%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.push_back(std::make_pair(n1, n2));
@@ -415,7 +415,7 @@ void MaxFurthestNeighbors::Init() {
   }
   
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp, "%i %i %lg", &n1, &n2, &distance);
     furthest_neighbor_pairs_.push_back(std::make_pair(n1, n2));
@@ -426,7 +426,7 @@ void MaxFurthestNeighbors::Init() {
 
   eq_lagrange_mult_.ones(num_of_nearest_pairs_);
   double max_nearest_distance = 0;
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     max_nearest_distance = std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_ = -(max_nearest_distance * num_of_points_ * num_of_points_);
@@ -445,10 +445,10 @@ void MaxFurthestNeighbors::Destruct() {
 void MaxFurthestNeighbors::ComputeGradient(const arma::mat& coordinates, arma::mat& gradient) {
   gradient.zeros();
   // objective
-  for(index_t i = 0; i < num_of_furthest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_furthest_pairs_; i++) {
     arma::vec a_i_r(coordinates.n_rows);
-    index_t n1 = furthest_neighbor_pairs_[i].first;
-    index_t n2 = furthest_neighbor_pairs_[i].second;
+    size_t n1 = furthest_neighbor_pairs_[i].first;
+    size_t n2 = furthest_neighbor_pairs_[i].second;
     
     a_i_r = coordinates.unsafe_col(n2) - coordinates.unsafe_col(n1);
 
@@ -456,11 +456,11 @@ void MaxFurthestNeighbors::ComputeGradient(const arma::mat& coordinates, arma::m
     gradient.col(n2) += a_i_r;
   }
   // equality constraints
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
     arma::vec a_i_r(coordinates.n_rows);
 
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     arma::vec point1 = coordinates.unsafe_col(n1);
     arma::vec point2 = coordinates.unsafe_col(n2);
     double dist_diff = la::DistanceSqEuclidean(point1, point2) -
@@ -477,9 +477,9 @@ void MaxFurthestNeighbors::ComputeGradient(const arma::mat& coordinates, arma::m
 void MaxFurthestNeighbors::ComputeObjective(const arma::mat& coordinates, double& objective) {
   objective = 0;
   
-  for(index_t i = 0; i < num_of_furthest_pairs_; i++) {
-    index_t n1 = furthest_neighbor_pairs_[i].first;
-    index_t n2 = furthest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_furthest_pairs_; i++) {
+    size_t n1 = furthest_neighbor_pairs_[i].first;
+    size_t n2 = furthest_neighbor_pairs_[i].second;
     
     objective -= la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2));
@@ -489,9 +489,9 @@ void MaxFurthestNeighbors::ComputeObjective(const arma::mat& coordinates, double
 void MaxFurthestNeighbors::ComputeFeasibilityError(const arma::mat& coordinates, double& error) {
   error = 0;
 
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double dist_diff = la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2)) - nearest_distances_[i];
@@ -506,9 +506,9 @@ double MaxFurthestNeighbors::ComputeLagrangian(const arma::mat& coordinates) {
   double lagrangian = 0;
   ComputeObjective(coordinates, lagrangian);
 
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double dist_diff = la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2)) - nearest_distances_[i];
@@ -521,9 +521,9 @@ double MaxFurthestNeighbors::ComputeLagrangian(const arma::mat& coordinates) {
 }
 
 void MaxFurthestNeighbors::UpdateLagrangeMult(const arma::mat& coordinates) {
-  for(index_t i = 0; i < num_of_nearest_pairs_; i++) {
-    index_t n1 = nearest_neighbor_pairs_[i].first;
-    index_t n2 = nearest_neighbor_pairs_[i].second;
+  for(size_t i = 0; i < num_of_nearest_pairs_; i++) {
+    size_t n1 = nearest_neighbor_pairs_[i].first;
+    size_t n2 = nearest_neighbor_pairs_[i].second;
     
     double dist_diff =la::DistanceSqEuclidean(coordinates.unsafe_col(n1),
         coordinates.unsafe_col(n2)) - nearest_distances_[i];
@@ -555,7 +555,7 @@ void MaxFurthestNeighbors::Project(arma::mat& coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-index_t MaxFurthestNeighbors::num_of_points() {
+size_t MaxFurthestNeighbors::num_of_points() {
   return num_of_points_;
 }
 
@@ -590,28 +590,28 @@ bool MaxFurthestNeighbors::IsIntermediateStepOver(arma::mat& coordinates,
 
 
 ///////////////////////////////////////////////////////////////
-void MaxVarianceUtils::ConsolidateNeighbors(const arma::Col<index_t>& from_tree_ind,
+void MaxVarianceUtils::ConsolidateNeighbors(const arma::Col<size_t>& from_tree_ind,
                                             const arma::vec&  from_tree_dist,
-                                            index_t num_of_neighbors,
-                                            index_t chosen_neighbors,
-                                            std::vector<std::pair<index_t, index_t> >& neighbor_pairs,
+                                            size_t num_of_neighbors,
+                                            size_t chosen_neighbors,
+                                            std::vector<std::pair<size_t, size_t> >& neighbor_pairs,
                                             std::vector<double>& distances,
-                                            index_t& num_of_pairs) {
+                                            size_t& num_of_pairs) {
   
   num_of_pairs = 0;
-  index_t num_of_points = from_tree_ind.n_elem / num_of_neighbors;
+  size_t num_of_points = from_tree_ind.n_elem / num_of_neighbors;
 
   // just in case they aren't clear already
   neighbor_pairs.clear();
   distances.clear();
 
   bool skip = false;
-  for(index_t i = 0; i < num_of_points; i++) {
-    for(index_t k = 0; k < chosen_neighbors; k++) {  
-      index_t n1 = i; // neighbor 1
-      index_t n2 = from_tree_ind[(i * num_of_neighbors) + k]; // neighbor 2
+  for(size_t i = 0; i < num_of_points; i++) {
+    for(size_t k = 0; k < chosen_neighbors; k++) {  
+      size_t n1 = i; // neighbor 1
+      size_t n2 = from_tree_ind[(i * num_of_neighbors) + k]; // neighbor 2
       if(n1 > n2) {
-        for(index_t n = 0; n < chosen_neighbors; n++) {
+        for(size_t n = 0; n < chosen_neighbors; n++) {
           if(from_tree_ind[(n2 * num_of_neighbors) + n] == n1) {
             skip = true;
             break;
@@ -628,26 +628,26 @@ void MaxVarianceUtils::ConsolidateNeighbors(const arma::Col<index_t>& from_tree_
   }
 }
 
-void MaxVarianceUtils::EstimateKnns(const arma::Col<index_t>& nearest_neighbors,
+void MaxVarianceUtils::EstimateKnns(const arma::Col<size_t>& nearest_neighbors,
                                     const arma::vec& nearest_distances,
-                                    index_t maximum_knns,
-                                    index_t num_of_points,
-                                    index_t dimension,
-                                    index_t& optimum_knns) {
+                                    size_t maximum_knns,
+                                    size_t num_of_points,
+                                    size_t dimension,
+                                    size_t& optimum_knns) {
   double max_loocv_score = -DBL_MAX;
   double loocv_score = 0;
   // double unit_sphere_volume = math::SphereVolume(1.0, dimension);
 
   optimum_knns = 0;
 
-  for(index_t k = 2; k < maximum_knns; k++) {
+  for(size_t k = 2; k < maximum_knns; k++) {
     loocv_score = 0.0;
     double mean_band = 0.0;
-    for(index_t i = 0; i < num_of_points; i++) {
+    for(size_t i = 0; i < num_of_points; i++) {
       double scale_factor = std::pow(nearest_distances[(i * maximum_knns) + k], (double) dimension / 2.0);
       double probability = 0;
 
-      for(index_t j = 0; j < k; j++) {
+      for(size_t j = 0; j < k; j++) {
         probability += exp(-nearest_distances[(i * maximum_knns) + j] /
             (2 * std::pow(nearest_distances[(i * maximum_knns) + k], 0.5))) / scale_factor;
       }

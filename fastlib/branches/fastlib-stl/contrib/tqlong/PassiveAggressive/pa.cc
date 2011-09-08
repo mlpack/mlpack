@@ -5,7 +5,7 @@
 namespace la {
   double Dot(const KernelizedWeight& weight, const Vector& x) {
     double s = 0;
-    for (index_t i_vec = 0; i_vec < weight.n_vectors(); i_vec++) {
+    for (size_t i_vec = 0; i_vec < weight.n_vectors(); i_vec++) {
       s += weight.m_lCoefficients[i_vec] *
         weight.m_fKernel(weight.m_lSupportVectors[i_vec], x);
     }
@@ -15,7 +15,7 @@ namespace la {
 
 double LengthEuclideanSquare(const Vector& x) {
   double s = 0;
-  for (index_t i = 0; i < x.length(); i++)
+  for (size_t i = 0; i < x.length(); i++)
     s += x[i]*x[i];
   return s;
 }
@@ -39,7 +39,7 @@ double PA_Update(fx_module* module, const Vector& w_t,
 
 double PA_Update(fx_module* module, const Vector& w_t,
                  double* x_t, double y_t, Vector& w_out) {
-  index_t n = w_t.length();
+  size_t n = w_t.length();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return PA_Update(module, w_t, X_t, y_t, w_out);
@@ -59,7 +59,7 @@ double PA_I_Update(fx_module* module, const Vector& w_t,
 
 double PA_I_Update(fx_module* module, const Vector& w_t,
                    double* x_t, double y_t, Vector& w_out) {
-  index_t n = w_t.length();
+  size_t n = w_t.length();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return PA_I_Update(module, w_t, X_t, y_t, w_out);
@@ -78,7 +78,7 @@ double PA_II_Update(fx_module* module, const Vector& w_t,
 
 double PA_II_Update(fx_module* module, const Vector& w_t,
                     double* x_t, double y_t, Vector& w_out) {
-  index_t n = w_t.length();
+  size_t n = w_t.length();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return PA_II_Update(module, w_t, X_t, y_t, w_out);
@@ -95,7 +95,7 @@ double Kernelized_PA_Update(fx_module* module, KernelizedWeight& w_t,
 
 double Kernelized_PA_Update(fx_module* module, KernelizedWeight& w_t,
                             double* x_t, double y_t) {
-  index_t n = w_t.n_dim();
+  size_t n = w_t.n_dim();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return Kernelized_PA_Update(module, w_t, X_t, y_t);
@@ -115,7 +115,7 @@ double Kernelized_PA_I_Update(fx_module* module, KernelizedWeight& w_t,
 
 double Kernelized_PA_I_Update(fx_module* module, KernelizedWeight& w_t,
                               double* x_t, double y_t) {
-  index_t n = w_t.n_dim();
+  size_t n = w_t.n_dim();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return Kernelized_PA_I_Update(module, w_t, X_t, y_t);
@@ -134,7 +134,7 @@ double Kernelized_PA_II_Update(fx_module* module, KernelizedWeight& w_t,
 
 double Kernelized_PA_II_Update(fx_module* module, KernelizedWeight& w_t,
                                double* x_t, double y_t) {
-  index_t n = w_t.n_dim();
+  size_t n = w_t.n_dim();
   Vector X_t; 
   X_t.Alias(x_t, n);
   return Kernelized_PA_II_Update(module, w_t, X_t, y_t);

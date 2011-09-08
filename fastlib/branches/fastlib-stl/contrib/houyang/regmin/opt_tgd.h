@@ -28,13 +28,13 @@ class TGD {
 
   Kernel kernel_;
   const Dataset_sl *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  //  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  //  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
 
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
 
-  index_t w_nnz_;
+  size_t w_nnz_;
 
   double round_thd_;
   
@@ -47,14 +47,14 @@ class TGD {
   // parameters
   double C_; // \|w\|_1^1 \leq C
   double g_; // regularization parameter in Langford's paper. g = 1/C
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/sqrt(t)
   double t_;
-  index_t k_; // perform truncation every k iterations
+  size_t k_; // perform truncation every k iterations
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
 
  public:
   TGD() {}
@@ -67,8 +67,8 @@ class TGD {
     // init parameters
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
-      n_epochs_ = (index_t)param_[2];
-      n_iter_ = (index_t)param_[3];
+      n_epochs_ = (size_t)param_[2];
+      n_iter_ = (size_t)param_[3];
       accuracy_ = param_[4];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -82,10 +82,10 @@ class TGD {
   }
 
   void GetW(ArrayList<NZ_entry> &w_out) {
-    index_t w_size = w_.size();
-    index_t ct_nz = 0;
+    size_t w_size = w_.size();
+    size_t ct_nz = 0;
     w_out.Init(w_nnz_);
-    for (index_t i=0; i<w_size; i++) {
+    for (size_t i=0; i<w_size; i++) {
       if (fabs(w_[i].value) >= round_thd_ ) {
 	w_out[ct_nz].index = w_[i].index;
 	w_out[ct_nz].value = w_[i].value;
@@ -98,7 +98,7 @@ class TGD {
     return scale_w_;
   }
 
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  //void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -166,7 +166,7 @@ class TGD {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
@@ -180,7 +180,7 @@ class TGD {
  */
 template<typename TKernel>
 void TGD<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   
   learner_typeid_ = learner_typeid;
   
@@ -205,9 +205,9 @@ void TGD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void TGD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
-  index_t i, j, epo, ct, ct_k;
+  size_t i, j, epo, ct, ct_k;
 
-  index_t total_n_iter;
+  size_t total_n_iter;
 
   k_ = fx_param_int(NULL, "k", 1);
   g_ = 1.0 / C_;
@@ -232,7 +232,7 @@ void TGD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
   LearnersInit_(learner_typeid);
   old_from_new_.Init(n_data_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin training iterations */
   double yt, yt_hat, yy_hat;
@@ -337,7 +337,7 @@ void TGD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
   }
 
   // round small w_i to 0
-  index_t w_ct = 0;
+  size_t w_ct = 0;
   double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
   double round_thd = wi_abs_max / round_factor;
   for (i=0; i<w_.size(); i++) {
@@ -353,7 +353,7 @@ void TGD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
   */
 
   // rounding w
-  index_t w_size = w_.size();
+  size_t w_size = w_.size();
   round_thd_ = fx_param_double(NULL, "thd", 1.0e-5);
   w_nnz_ = 0;
   for (ct=0; ct<w_size; ct++) {

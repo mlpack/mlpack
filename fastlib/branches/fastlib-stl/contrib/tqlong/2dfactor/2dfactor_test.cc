@@ -41,12 +41,12 @@ namespace data {
   void Append(const char* fname, const Vector& vector, bool append = true);
   void Append(const char* fname, const Matrix& matrix, bool append = true);
   void Append(const char* fname, const char* str, bool append = true);
-  void Append(const char* fname, index_t num, bool append = true);
+  void Append(const char* fname, size_t num, bool append = true);
   void Append(const char* fname, double num, bool append = true);
-  void Load(FILE* f, Vector* vector, index_t length);
-  void Load(FILE* f, Matrix* matrix, index_t n_rows, index_t n_cols);
+  void Load(FILE* f, Vector* vector, size_t length);
+  void Load(FILE* f, Matrix* matrix, size_t n_rows, size_t n_cols);
   void Load(FILE* f, const char* str); // check point
-  void Load(FILE* f, index_t* num);
+  void Load(FILE* f, size_t* num);
   void Load(FILE* f, double* num);
 };
 
@@ -74,7 +74,7 @@ void LoadResult(Vector& rowEigenValues, Matrix& rowBasis,
 		Vector& colEigenValues, Matrix& colBasis, 
 		Matrix& mean) {
   char filename[] = "2dPCA40sub10inst.txt";
-  index_t n_rows, n_cols;
+  size_t n_rows, n_cols;
   FILE *f = fopen(filename, "r");
   data::Load(f, "n_rows=");
   data::Load(f, &n_rows); //ot::Print(n_rows);
@@ -168,14 +168,14 @@ void projectAllORLimages(const ArrayList<Matrix>& imageList,
 namespace data {
   void Append(const char* fname, const Vector& vector, bool append) {    
     FILE* f = fopen(fname, append? "a":"w");
-    for (index_t i = 0; i < vector.length(); i++)
+    for (size_t i = 0; i < vector.length(); i++)
       fprintf(f, "%e\n", vector[i]);
     fclose(f);
   }
   void Append(const char* fname, const Matrix& matrix, bool append) {
     FILE* f = fopen(fname, append? "a":"w");
-    for (index_t j = 0; j < matrix.n_cols(); j++) { // column wise
-      for (index_t i = 0; i < matrix.n_rows(); i++)
+    for (size_t j = 0; j < matrix.n_cols(); j++) { // column wise
+      for (size_t i = 0; i < matrix.n_rows(); i++)
 	fprintf(f, "%e ", matrix.get(i, j));
       fprintf(f, "\n");
     }
@@ -186,7 +186,7 @@ namespace data {
     fprintf(f, "%s\n", str);
     fclose(f);    
   }
-  void Append(const char* fname, index_t num, bool append) {
+  void Append(const char* fname, size_t num, bool append) {
     FILE* f = fopen(fname, append? "a":"w");
     fprintf(f, "%d\n", num);
     fclose(f);    
@@ -197,19 +197,19 @@ namespace data {
     fclose(f);    
   }
 
-  void Load(FILE* f, Vector* vector, index_t length) {
+  void Load(FILE* f, Vector* vector, size_t length) {
     double tmp;
     vector->Init(length);
-    for (index_t i = 0; i < length; i++) {
+    for (size_t i = 0; i < length; i++) {
       fscanf(f, "%lg\n", &tmp);
       (*vector)[i] = tmp;
     }
   }
-  void Load(FILE* f, Matrix* matrix, index_t n_rows, index_t n_cols) {
+  void Load(FILE* f, Matrix* matrix, size_t n_rows, size_t n_cols) {
     double tmp;
     matrix->Init(n_rows, n_cols);
-    for (index_t j = 0; j < n_cols; j++) { // column wise
-      for (index_t i = 0; i < n_rows; i++) {
+    for (size_t j = 0; j < n_cols; j++) { // column wise
+      for (size_t i = 0; i < n_rows; i++) {
 	fscanf(f, "%lg ", &tmp);
 	matrix->ref(i, j) = tmp;
       }
@@ -225,7 +225,7 @@ namespace data {
     
     DEBUG_ASSERT(strcmp(s, str) == 0);
   }
-  void Load(FILE* f, index_t* num) {
+  void Load(FILE* f, size_t* num) {
     fscanf(f, "%d\n", num);
   }
   void Load(FILE* f, double* num) {

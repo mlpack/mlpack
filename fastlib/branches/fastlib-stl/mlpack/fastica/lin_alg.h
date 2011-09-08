@@ -49,7 +49,7 @@ namespace linalg__private {
    * ignored in the power operation and then re-added.  Useful for eigenvalues.
    */
   void VectorPower(arma::vec& vec, double power) {
-    for(index_t i = 0; i < vec.n_elem; i++) {
+    for(size_t i = 0; i < vec.n_elem; i++) {
         if(std::abs(vec(i)) > 1e-12)
           vec(i) = (vec(i) > 0) ? std::pow(vec(i), (double) power) : -std::pow(-vec(i), (double) power);
         else
@@ -70,7 +70,7 @@ namespace linalg__private {
     row_vector_sum /= X.n_cols; // scale
  
     X_centered.set_size(X.n_rows, X.n_cols);
-    for(index_t i = 0; i < X.n_rows; i++)
+    for(size_t i = 0; i < X.n_rows; i++)
       X_centered.row(i) = X.row(i) - row_vector_sum(i);
   }
 
@@ -88,7 +88,7 @@ namespace linalg__private {
  
     svd(U, S_vector, V, cov_X);
   
-    index_t d = S_vector.n_elem;
+    size_t d = S_vector.n_elem;
     inv_S_matrix.zeros(d, d);
     inv_S_matrix.diag() = 1 / sqrt(S_vector);
 
@@ -127,7 +127,7 @@ namespace linalg__private {
   void RandVector(arma::vec &v) {
     v.zeros();
   
-    for(index_t i = 0; i + 1 < v.n_elem; i+=2) {
+    for(size_t i = 0; i + 1 < v.n_elem; i+=2) {
       double a = drand48();
       double b = drand48();
       double first_term = sqrt(-2 * log(a));
@@ -146,10 +146,10 @@ namespace linalg__private {
   /**
    * Inits a matrix to random normally distributed entries from N(0,1)
    */
-  void RandNormalInit(index_t d, index_t n, arma::mat& A) {
-    index_t num_elements = d * n;
+  void RandNormalInit(size_t d, size_t n, arma::mat& A) {
+    size_t num_elements = d * n;
 
-    for(index_t i = 0; i + 1 < num_elements; i += 2) {
+    for(size_t i = 0; i + 1 < num_elements; i += 2) {
       double a = drand48();
       double b = drand48();
       double first_term = sqrt(-2 * log(a));

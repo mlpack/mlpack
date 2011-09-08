@@ -32,9 +32,9 @@ namespace npt {
     arma::colvec random_weights_;
 
     // input params
-    index_t num_points_;
-    index_t tuple_size_;
-    index_t leaf_size_;
+    size_t num_points_;
+    size_t tuple_size_;
+    size_t leaf_size_;
     
     // the matcher
     SingleMatcher matcher_;
@@ -51,11 +51,11 @@ namespace npt {
     // define the tree
     typedef mlpack::tree::BinarySpaceTree<DHrectBound<2>, arma::mat> SingleNode; 
     
-    //arma::Col<index_t> old_from_new_index_data_;
-    //arma::Col<index_t> old_from_new_index_random_;
+    //arma::Col<size_t> old_from_new_index_data_;
+    //arma::Col<size_t> old_from_new_index_random_;
     
-    std::vector<index_t> old_from_new_index_data_;
-    std::vector<index_t> old_from_new_index_random_;
+    std::vector<size_t> old_from_new_index_data_;
+    std::vector<size_t> old_from_new_index_random_;
     
     
     SingleNode* data_tree_;
@@ -69,9 +69,9 @@ namespace npt {
     
     bool CheckNodeList_(std::vector<SingleNode*>& nodes);
     
-    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+    void BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<size_t>& points_in_tuple,
                          int k);
     
     void BaseCase_(std::vector<SingleNode*>& nodes);
@@ -86,7 +86,7 @@ namespace npt {
      */
     SingleBandwidthAlg(arma::mat& data, arma::colvec weights,
                        arma::mat& random, arma::colvec rweights,
-                       index_t leaf_size,
+                       size_t leaf_size,
                        arma::mat& matcher_dists, double bandwidth) : 
     matcher_(matcher_dists, bandwidth),
     num_tuples_(matcher_dists.n_cols + 1, 0),
@@ -134,7 +134,7 @@ namespace npt {
     // angle constructor
     SingleBandwidthAlg(arma::mat& data, arma::colvec weights,
                        arma::mat& random, arma::colvec rweights,
-                       index_t leaf_size,
+                       size_t leaf_size,
                        arma::mat& lower_bounds, arma::mat& upper_bounds) : 
     matcher_(lower_bounds, upper_bounds),
     num_tuples_(lower_bounds.n_cols + 1, 0),
@@ -217,12 +217,12 @@ namespace npt {
       
         std::vector<SingleNode*> node_list(tuple_size_);
         
-        for (index_t i = 0; i < num_random_; i++) {
+        for (size_t i = 0; i < num_random_; i++) {
           
           node_list[i] = random_tree_;
           
         }
-        for (index_t i = num_random_; i < tuple_size_; i++) {
+        for (size_t i = num_random_; i < tuple_size_; i++) {
           
           node_list[i] = data_tree_;
           

@@ -76,17 +76,17 @@ void TextLineReader::Error(const char *format, ...) {
   fprintf(stderr, "\n");
 }
 
-success_t TextLineReader::Open(const char *fname) {
+bool TextLineReader::Open(const char *fname) {
   f_ = fopen(fname, "r");
   fname_ = fname;
   line_num_ = 0;
   has_line_ = false;
   
   if (f_ == NULL) {
-    return SUCCESS_FAIL;
+    return false;
   } else {
     Gobble();
-    return SUCCESS_PASS;
+    return true;
   }
 }  
 
@@ -162,7 +162,7 @@ char *TextLineReader::ReadLine_() {
   }
 }
 
-success_t TextTokenizer::Open(const char *fname,
+bool TextTokenizer::Open(const char *fname,
     const char *comment_chars_in, const char *ident_extra_in,
     int features_in) {
   next_ = "";
@@ -177,10 +177,10 @@ success_t TextTokenizer::Open(const char *fname,
   f_ = fopen(fname, "r");
   
   if (f_ == NULL) {
-    return SUCCESS_FAIL;
+    return false;
   } else {
     Gobble();
-    return SUCCESS_PASS;
+    return true;
   }
 }
 
@@ -247,7 +247,7 @@ void TextTokenizer::UndoNextChar_(std::vector<char>& token) {
 }
 
 void Sanitize(const std::string& src, std::string& dest) {
-  for (index_t i = 0; i < src.length(); i++) {
+  for (size_t i = 0; i < src.length(); i++) {
     char c = src[i];
     
     if (isgraph(c) || c == ' ' || c == '\t') {
@@ -282,7 +282,7 @@ void TextTokenizer::Error(const char *format, ...) {
 void TextTokenizer::Error_(const char *msg, const std::vector<char>& token) {
   next_type_ = INVALID;
   
-  printf("size is %"LI", token[0] = %d\n", token.size(), token[0]);
+  printf("size is %li, token[0] = %d\n", token.size(), token[0]);
   Error("%s", msg);
   next_.clear();
 }
@@ -403,7 +403,7 @@ void TextTokenizer::Gobble() {
   mlpack::IO::Assert(next_.length() == strlen(next_.c_str()));
 }
 
-success_t TextWriter::Printf(const char *format, ...) {
+bool TextWriter::Printf(const char *format, ...) {
   int rv;
   
   va_list vl;
@@ -412,6 +412,6 @@ success_t TextWriter::Printf(const char *format, ...) {
   rv = vfprintf(f_, format, vl);
   va_end(vl);
   
-  return SUCCESS_FROM_C(rv);
+  return (rv > 0);
 }
 

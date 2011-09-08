@@ -16,7 +16,7 @@ void TCNN::ComputeBaseCase_(TreeType* query_node,
     
   // Used to find the query node's new upper bound
   double query_max_neighbor_distance = -1.0;
-  std::vector<std::pair<double, index_t> > neighbors(knns_);
+  std::vector<std::pair<double, size_t> > neighbors(knns_);
 
   // Get the query point from the matrix
   Vector query_point;
@@ -25,14 +25,14 @@ void TCNN::ComputeBaseCase_(TreeType* query_node,
   queries_.MakeColumnVector(query_, &query_point);
       
   // FIX HERE: query_ -> test_query_
-  index_t ind = query_*knns_;
-  for(index_t i=0; i<knns_; i++) {
+  size_t ind = query_*knns_;
+  for(size_t i=0; i<knns_; i++) {
     neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				neighbor_indices_[ind+i]);
   }
 
   // We'll do the same for the references
-  for (index_t reference_index = reference_node->begin(); 
+  for (size_t reference_index = reference_node->begin(); 
        reference_index < reference_node->end(); reference_index++) {
 
     Vector reference_point;
@@ -53,7 +53,7 @@ void TCNN::ComputeBaseCase_(TreeType* query_node,
   } // for reference_index
 
   std::sort(neighbors.begin(), neighbors.end());
-  for(index_t i=0; i<knns_; i++) {
+  for(size_t i=0; i<knns_; i++) {
     neighbor_distances_[ind+i] = neighbors[i].first;
     neighbor_indices_[ind+i]  = neighbors[i].second;
   }
@@ -72,12 +72,12 @@ void TCNN::ComputeBaseCase_(TreeType* query_node,
 
   // update the rank error obtained on this leaf
   number_of_leaves_++;
-  index_t ref_ind
+  size_t ref_ind
     = old_from_new_references_[neighbor_indices_[query_]];
-  index_t rank_error;
+  size_t rank_error;
 
   if (!rank_file_too_big_)
-    rank_error = (index_t) rank_matrix_.get(ref_ind, query_) - 1;
+    rank_error = (size_t) rank_matrix_.get(ref_ind, query_) - 1;
   else
     rank_error = rank_vec_[ref_ind] - 1;
 
@@ -206,13 +206,13 @@ void TCNN::InitQueries(const Matrix& queries,
   nn_dc_.Init(queries_.n_cols());
   nn_mc_.Init(queries_.n_cols());
 
-  error_list_ = new std::vector<std::vector<index_t>* >();
-  nn_dc_list_ = new std::vector<std::vector<index_t>* >();
+  error_list_ = new std::vector<std::vector<size_t>* >();
+  nn_dc_list_ = new std::vector<std::vector<size_t>* >();
 
 
   // Here we need to change the query tree into N single-point
   // query trees
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     Matrix query;
     queries_.MakeColumnSlice(i, 1, &query);
     TreeType *single_point_tree
@@ -259,13 +259,13 @@ void TCNN::InitQueries(const Matrix& queries,
   nn_dc_.Init(queries_.n_cols());
   nn_mc_.Init(queries_.n_cols());
 
-  error_list_ = new std::vector<std::vector<index_t>* >();
-  nn_dc_list_ = new std::vector<std::vector<index_t>* >();
+  error_list_ = new std::vector<std::vector<size_t>* >();
+  nn_dc_list_ = new std::vector<std::vector<size_t>* >();
 
 
   // Here we need to change the query tree into N single-point
   // query trees
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     Matrix query;
     queries_.MakeColumnSlice(i, 1, &query);
     TreeType *single_point_tree
@@ -283,22 +283,22 @@ void TCNN::InitQueries(const Matrix& queries,
 
 void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
 				      ArrayList<double> *stds,
-				      ArrayList<index_t> *maxs,
-				      ArrayList<index_t> *mins) {
+				      ArrayList<size_t> *maxs,
+				      ArrayList<size_t> *mins) {
 
   // initialize the dc, mc for all the queries for every round
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     nn_dc_[i] = 0;
     nn_mc_[i] = 0;
   }
   // initialize neighbor distances
   neighbor_distances_.SetAll(DBL_MAX);
 
-  DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+  DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
 
   // doing a single tree search for each of the queries one by one
   query_ = 0;
-  index_t max_num_of_leaves = 0;
+  size_t max_num_of_leaves = 0;
   double perc_done = 10;
   double done_sky = 1;
 
@@ -308,11 +308,11 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
 
     // initialize the number of leaves visited
     number_of_leaves_ = 0;
-    std::vector<index_t> *q_error_list
-      = new std::vector<index_t>();
+    std::vector<size_t> *q_error_list
+      = new std::vector<size_t>();
     error_list_->push_back(q_error_list);
-    std::vector<index_t> *q_nn_dc_list
-      = new std::vector<index_t>();
+    std::vector<size_t> *q_nn_dc_list
+      = new std::vector<size_t>();
     nn_dc_list_->push_back(q_nn_dc_list);
 
 
@@ -326,7 +326,7 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
       getline(&line, &len, rank_fp_);
 
       char *pch = strtok(line, ",\n");
-      index_t rank_index = 0;
+      size_t rank_index = 0;
       while (pch != NULL) {
 	rank_vec_[rank_index++] = atoi(pch);
 	pch = strtok(NULL, ",\n");
@@ -352,9 +352,9 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
 
     if (pdone >= done_sky * perc_done) {
       if (done_sky > 1) {
-	printf("\b\b\b=%"LI"d%%", (index_t) pdone); fflush(NULL); 
+	printf("\b\b\b=%zud%%", (size_t) pdone); fflush(NULL); 
       } else {
-	printf("=%"LI"d%%", (index_t) pdone); fflush(NULL);
+	printf("=%zud%%", (size_t) pdone); fflush(NULL);
       }
       done_sky++;
     }
@@ -364,9 +364,9 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
 
   if (pdone >= done_sky * perc_done) {
     if (done_sky > 1) {
-      printf("\b\b\b=%"LI"d%%", (index_t) pdone); fflush(NULL); 
+      printf("\b\b\b=%zud%%", (size_t) pdone); fflush(NULL); 
     } else {
-      printf("=%"LI"d%%", (index_t) pdone); fflush(NULL);
+      printf("=%zud%%", (size_t) pdone); fflush(NULL);
     }
     done_sky++;
   }
@@ -379,7 +379,7 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
 
 
   double avg_dc = 0.0, avg_mc = 0.0;
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     avg_dc += nn_dc_[i];
     avg_mc += nn_mc_[i];
   }
@@ -388,7 +388,7 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
   avg_mc /= (double) queries_.n_cols();
       
   NOTIFY("NN: Avg. DC: %lg, Avg. MC: %lg", avg_dc, avg_mc);
-  NOTIFY("Max. Leaves: %"LI"d", max_num_of_leaves);
+  NOTIFY("Max. Leaves: %zud", max_num_of_leaves);
 
   // computing the time constrained search errors
   // the mean, std, max, min
@@ -399,7 +399,7 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
   maxs->Init(max_num_of_leaves);
   mins->Init(max_num_of_leaves);
 
-  for (index_t i = 0; i < max_num_of_leaves; i++) {
+  for (size_t i = 0; i < max_num_of_leaves; i++) {
     (*means)[i] = 0;
     (*stds)[i] = 0;
     (*maxs)[i] = -1;
@@ -407,12 +407,12 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
   }
 
   // looping over every query
-  for (index_t i = 0; i < query_; i++) {
-    std::vector<index_t> *q_error_list
+  for (size_t i = 0; i < query_; i++) {
+    std::vector<size_t> *q_error_list
       = (*error_list_)[i];
 
     // looping over the leaves visited
-    for (index_t j = 0; j < (index_t) q_error_list->size(); j++) {
+    for (size_t j = 0; j < (size_t) q_error_list->size(); j++) {
       (*means)[j] += (*q_error_list)[j];
       (*stds)[j] += ((*q_error_list)[j] * (*q_error_list)[j]);
 
@@ -425,7 +425,7 @@ void TCNN::ComputeNeighborsSequential(ArrayList<double> *means,
   } // queries loop
 
   // final fixes on the mean and std vectors
-  for(index_t i = 0; i < max_num_of_leaves; i++) {
+  for(size_t i = 0; i < max_num_of_leaves; i++) {
     (*stds)[i] = sqrt((query_ * (*stds)[i]) - ((*means)[i] * (*means)[i]))
       / query_;
     (*means)[i] /= query_;

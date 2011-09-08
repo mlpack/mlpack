@@ -23,7 +23,7 @@ class KdeCV {
 
   /** @brief The restrictions associated with the operation.
    */
-  std::map<index_t, std::vector<index_t> > restrictions_;
+  std::map<size_t, std::vector<size_t> > restrictions_;
 
   /** @brief The list of datasets associated with the operation.
    */
@@ -49,7 +49,7 @@ class KdeCV {
     reference_set_.Copy(reference_set_in);
     data_root_ = proximity::MakeGenKdTree<double, TreeType,
       proximity::GenKdTreeMedianSplitter>(reference_set_, 40, 
-					  (ArrayList<index_t> *) NULL, NULL);
+					  (ArrayList<size_t> *) NULL, NULL);
 
     // Push in the pointer twice for the dataset since the query
     // equals the reference...
@@ -83,7 +83,7 @@ class KdeCV {
     /*
     // Set of dataset indices that have been chosen throughout the
     // computation; this acts as a stack of arguments.
-    std::map<index_t, index_t> constant_dataset_indices;
+    std::map<size_t, size_t> constant_dataset_indices;
 
     return operator_root_->MonteCarloCompute(constant_dataset_indices);   
     */
@@ -94,7 +94,7 @@ class KdeCV {
     
     // Set of dataset indices that have been chosen throughout the
     // computation; this acts as a stack of arguments.
-    std::map<index_t, index_t> constant_dataset_indices;
+    std::map<size_t, size_t> constant_dataset_indices;
 
     return operator_root_->NaiveCompute(constant_dataset_indices);
   }
@@ -105,9 +105,9 @@ class KdeCV {
     TKernel kernel;
     kernel.Init(0.1);
     const Matrix &references = *(datasets_[0]);
-    for(index_t i = 0; i < references.n_cols(); i++) {
+    for(size_t i = 0; i < references.n_cols(); i++) {
       const double *point_i = references.GetColumnPtr(i);
-      for(index_t j = 0; j < references.n_cols(); j++) {
+      for(size_t j = 0; j < references.n_cols(); j++) {
 	const double *point_j = references.GetColumnPtr(j);
 	int dimension = references.n_rows();
 	

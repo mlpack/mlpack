@@ -19,7 +19,7 @@ BOOST_AUTO_TEST_CASE(MainTest) {
 
     const char *filename_train_, *filename_test_;
     const char *train_result_, *test_result_;
-    index_t number_of_classes_;
+    size_t number_of_classes_;
 
     filename_train_ = train_datab;
     filename_test_ = test_datab;
@@ -34,21 +34,21 @@ BOOST_AUTO_TEST_CASE(MainTest) {
     IO::GetParam<int>("nbc/classes") = number_of_classes_;
     SimpleNaiveBayesClassifier nbc_test_(train_data);
 
-    index_t number_of_features = nbc_test_.means_.n_rows;
+    size_t number_of_features = nbc_test_.means_.n_rows;
     calc_mat.zeros(2*number_of_features + 1, number_of_classes_);
 
-    for(index_t i = 0; i < number_of_features; i++) {
-     for(index_t j = 0; j < number_of_classes_; j++) {
+    for(size_t i = 0; i < number_of_features; i++) {
+     for(size_t j = 0; j < number_of_classes_; j++) {
         calc_mat(i, j) = nbc_test_.means_(i, j);
         calc_mat(i + number_of_features, j) = nbc_test_.variances_(i, j);
       }
     }
-    for(index_t i = 0; i < number_of_classes_; i++) {
+    for(size_t i = 0; i < number_of_classes_; i++) {
       calc_mat(2 * number_of_features, i) = nbc_test_.class_probabilities_(i);
     }
 
-    for(index_t i = 0; i < calc_mat.n_rows; i++) {
-      for(index_t j = 0; j < number_of_classes_; j++) {
+    for(size_t i = 0; i < calc_mat.n_rows; i++) {
+      for(size_t j = 0; j < number_of_classes_; j++) {
         BOOST_REQUIRE_CLOSE(train_res(i, j) + .00001, calc_mat(i, j), .01);
        }
     }
@@ -60,10 +60,10 @@ BOOST_AUTO_TEST_CASE(MainTest) {
 
     nbc_test_.Classify(test_data, calc_vec);
 
-    index_t number_of_datum = test_data.n_cols;
+    size_t number_of_datum = test_data.n_cols;
     test_res_vec = test_res.col(0);
 
-    for(index_t i = 0; i < number_of_datum; i++) {
+    for(size_t i = 0; i < number_of_datum; i++) {
       assert(test_res_vec(i) == calc_vec(i));
     }
 

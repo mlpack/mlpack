@@ -9,7 +9,7 @@
 
 #include "matcher_generation.h"
 
-index_t npt::MatcherGenerator::FindWhichMatcher_(index_t i, index_t j) {
+size_t npt::MatcherGenerator::FindWhichMatcher_(size_t i, size_t j) {
   
   if (i > j) {
     std::swap(i, j);
@@ -17,10 +17,10 @@ index_t npt::MatcherGenerator::FindWhichMatcher_(index_t i, index_t j) {
   
   assert(i != j);
   
-  index_t res = 0;
+  size_t res = 0;
   
   if (i > 0) {
-    for (index_t k = 0; k < i; k++) {
+    for (size_t k = 0; k < i; k++) {
       res += (tuple_size_ - k - 1);
     }
   }
@@ -31,14 +31,14 @@ index_t npt::MatcherGenerator::FindWhichMatcher_(index_t i, index_t j) {
   
 } 
 
-void npt::MatcherGenerator::FillInMatchers_(std::vector<index_t>& matcher_ind, 
+void npt::MatcherGenerator::FillInMatchers_(std::vector<size_t>& matcher_ind, 
                                             int k) {
 
   // we're filling in the kth spot in matcher ind
   
-  std::vector<index_t>& matcher_ind_copy(matcher_ind);
+  std::vector<size_t>& matcher_ind_copy(matcher_ind);
   
-  for (index_t i = 0; i < num_bands_[k]; i++) {
+  for (size_t i = 0; i < num_bands_[k]; i++) {
     
     // Do I need to copy it again here?
     
@@ -49,13 +49,13 @@ void npt::MatcherGenerator::FillInMatchers_(std::vector<index_t>& matcher_ind,
       
       arma::mat matcher(tuple_size_, tuple_size_);
       
-      for (index_t m = 0; m < tuple_size_; m++) {
+      for (size_t m = 0; m < tuple_size_; m++) {
         
         matcher(m,m) = 0.0;
         
-        for (index_t n = m+1; n < tuple_size_; n++) {
+        for (size_t n = m+1; n < tuple_size_; n++) {
           
-          index_t which_matcher = FindWhichMatcher_(m, n);
+          size_t which_matcher = FindWhichMatcher_(m, n);
           
           //matcher(m,n) = matcher_dists_[which_matcher][matcher_ind[which_matcher]];
           matcher(m,n) = matcher_dists_[which_matcher][matcher_ind_copy[which_matcher]];

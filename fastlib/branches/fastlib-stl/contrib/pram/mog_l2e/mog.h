@@ -48,8 +48,8 @@ class MoGL2E {
   ArrayList<Vector> mu_;
   ArrayList<Matrix> sigma_;
   Vector omega_;
-  index_t number_of_gaussians_;
-  index_t dimension_;
+  size_t number_of_gaussians_;
+  size_t dimension_;
   
   // The differential for the paramterization
   // for optimization
@@ -68,7 +68,7 @@ class MoGL2E {
   ~MoGL2E() {
   }
 
-  void Init(index_t num_gauss, index_t dimension) {
+  void Init(size_t num_gauss, size_t dimension) {
 
     // Destruct everything to initialize afresh
     mu_.Clear();
@@ -85,7 +85,7 @@ class MoGL2E {
 
   void Resize_d_sigma_() {
     d_sigma_.Resize(number_of_gaussians());
-    for(index_t i =0; i < number_of_gaussians(); i++) {
+    for(size_t i =0; i < number_of_gaussians(); i++) {
       d_sigma_[i].Init(dimension()*(dimension()+1)/2);
     }
   }
@@ -106,7 +106,7 @@ class MoGL2E {
    * @endcode
    */
 
-  void MakeModel(index_t num_mods, index_t dimension, double* theta) {
+  void MakeModel(size_t num_mods, size_t dimension, double* theta) {
     double *temp_mu; 
     Matrix lower_triangle_matrix, upper_triangle_matrix;
     double sum, s_min = 0.01;
@@ -120,7 +120,7 @@ class MoGL2E {
     sum = 0;
     double *temp_array;
     temp_array = (double*) malloc (num_mods * sizeof(double));
-    for(index_t i = 0; i < num_mods - 1; i++) {
+    for(size_t i = 0; i < num_mods - 1; i++) {
       temp_array[i] = exp(theta[i]) ;
       sum += temp_array[i] ;
     }
@@ -130,8 +130,8 @@ class MoGL2E {
     set_omega(dimension, temp_array);
 
     // calculating the mu values
-    for(index_t k = 0; k < num_mods; k++) {
-      for(index_t j = 0; j < dimension; j++) {
+    for(size_t k = 0; k < num_mods; k++) {
+      for(size_t j = 0; j < dimension; j++) {
 	temp_mu[j] = theta[num_mods + k*dimension + j - 1];
       }
       set_mu(k, dimension, temp_mu);
@@ -142,10 +142,10 @@ class MoGL2E {
     // to obtain a positive definite symmetric matrix
     Matrix sigma_temp;
     sigma_temp.Init(dimension, dimension);
-    for(index_t k = 0; k < num_mods; k++) {
+    for(size_t k = 0; k < num_mods; k++) {
       lower_triangle_matrix.SetAll(0.0);
-      for(index_t j = 0; j < dimension; j++) {
-	for(index_t i = 0; i < j; i++) {
+      for(size_t j = 0; j < dimension; j++) {
+	for(size_t i = 0; i < j; i++) {
 	  lower_triangle_matrix.set(j, i, 
 				    theta[(num_mods - 1) 
 					  + num_mods*dimension 
@@ -166,8 +166,8 @@ class MoGL2E {
   }			
 
   void MakeModel(datanode *mog_l2e_module, double* theta) {
-    index_t num_gauss = fx_param_int_req(mog_l2e_module, "K");
-    index_t dimension = fx_param_int_req(mog_l2e_module, "D");
+    size_t num_gauss = fx_param_int_req(mog_l2e_module, "K");
+    size_t dimension = fx_param_int_req(mog_l2e_module, "D");
     MakeModel(num_gauss, dimension, theta);
   }
 
@@ -187,7 +187,7 @@ class MoGL2E {
    * @endcode
    */
 
-  void MakeModelWithGradients(index_t num_mods, index_t dimension, double* theta) {
+  void MakeModelWithGradients(size_t num_mods, size_t dimension, double* theta) {
     double *temp_mu;
     Matrix lower_triangle_matrix, upper_triangle_matrix;
     double sum, s_min = 0.01;
@@ -201,7 +201,7 @@ class MoGL2E {
     sum = 0;
     double *temp_array;
     temp_array = (double*) malloc (num_mods * sizeof(double));
-    for(index_t i = 0; i < num_mods - 1; i++) {
+    for(size_t i = 0; i < num_mods - 1; i++) {
       temp_array[i] = exp(theta[i]) ;
       sum += temp_array[i] ;
     }
@@ -214,21 +214,21 @@ class MoGL2E {
     Matrix d_omega_temp;
     d_omega_temp.Init(num_mods - 1, num_mods);
     d_omega_temp.SetAll(0.0);
-    for(index_t i = 0; i < num_mods - 1; i++) {
-      for(index_t j = 0; j < i; j++) {
+    for(size_t i = 0; i < num_mods - 1; i++) {
+      for(size_t j = 0; j < i; j++) {
 	d_omega_temp.set(i,j,-(omega(i)*omega(j)));
 	d_omega_temp.set(j,i,-(omega(i)*omega(j)));
       }
       d_omega_temp.set(i,i,omega(i)*(1-omega(i)));
     }
-    for(index_t i = 0; i < num_mods - 1; i++) {
+    for(size_t i = 0; i < num_mods - 1; i++) {
       d_omega_temp.set(i, num_mods - 1, -(omega(i)*omega(num_mods - 1)));
     }
     set_d_omega(d_omega_temp);
     			
     // calculating the mu values
-    for(index_t k = 0; k < num_mods; k++) {
-      for(index_t j = 0; j < dimension; j++) {
+    for(size_t k = 0; k < num_mods; k++) {
+      for(size_t j = 0; j < dimension; j++) {
 	temp_mu[j] = theta[num_mods + k*dimension + j - 1];
       }
       set_mu(k, dimension, temp_mu);
@@ -248,10 +248,10 @@ class MoGL2E {
     // calculating the sigma values
     Matrix sigma_temp;
     sigma_temp.Init(dimension, dimension);
-    for(index_t k = 0; k < num_mods; k++) {
+    for(size_t k = 0; k < num_mods; k++) {
       lower_triangle_matrix.SetAll(0.0);
-      for(index_t j = 0; j < dimension; j++) {
-	for(index_t i = 0; i < j; i++) {
+      for(size_t j = 0; j < dimension; j++) {
+	for(size_t i = 0; i < j; i++) {
 	  lower_triangle_matrix.set( j, i, 
 				     theta[(num_mods - 1) 
 					   + num_mods*dimension 
@@ -269,8 +269,8 @@ class MoGL2E {
       set_sigma(k, sigma_temp);
 				
       // calculating the d_sigma values
-      for(index_t i = 0; i < dimension; i++){
-	for(index_t in = 0; in < i+1; in++){
+      for(size_t i = 0; i < dimension; i++){
+	for(size_t in = 0; in < i+1; in++){
 	  Matrix d_sigma_d_r,d_sigma_d_r_t,temp_matrix_1,temp_matrix_2;
 	  d_sigma_d_r.Init(dimension, dimension);
 	  d_sigma_d_r_t.Init(dimension, dimension);
@@ -301,23 +301,23 @@ class MoGL2E {
     return omega_;
   }
 		
-  index_t number_of_gaussians() {
+  size_t number_of_gaussians() {
     return number_of_gaussians_;
   }			
 		
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 		
-  Vector& mu(index_t i) {
+  Vector& mu(size_t i) {
     return mu_[i] ;
   }
 		
-  Matrix& sigma(index_t i) {
+  Matrix& sigma(size_t i) {
     return sigma_[i];
   }
 		
-  double omega(index_t i) {
+  double omega(size_t i) {
     return omega_.get(i);
   }
   		
@@ -329,27 +329,27 @@ class MoGL2E {
     return d_sigma_;
   }
 		
-  ArrayList<Matrix>& d_sigma(index_t i){
+  ArrayList<Matrix>& d_sigma(size_t i){
     return d_sigma_[i];
   }
 
   ////// THE SET FUNCTIONS //////
 
-  void set_mu(index_t i, Vector& mu) {
+  void set_mu(size_t i, Vector& mu) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(mu.length() == dimension()); 
     mu_[i].Copy(mu);
     return;
   }
 
-  void set_mu(index_t i, index_t length, const double *mu) {
+  void set_mu(size_t i, size_t length, const double *mu) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(length == dimension());
     mu_[i].Copy(mu, length);
     return;
   }
 
-  void set_sigma(index_t i, Matrix& sigma) {
+  void set_sigma(size_t i, Matrix& sigma) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(sigma.n_rows() == dimension());
     DEBUG_ASSERT(sigma.n_cols() == dimension());
@@ -363,7 +363,7 @@ class MoGL2E {
     return;
   }
 
-  void set_omega(index_t length, const double *omega) {
+  void set_omega(size_t length, const double *omega) {
     DEBUG_ASSERT(length == number_of_gaussians());
     omega_.Copy(omega, length);
     return;
@@ -375,7 +375,7 @@ class MoGL2E {
     return;
   }
 
-  void set_d_sigma(index_t i, index_t j, Matrix& d_sigma_i_j) {
+  void set_d_sigma(size_t i, size_t j, Matrix& d_sigma_i_j) {
     d_sigma_[i][j].Copy(d_sigma_i_j);
     return;
   }
@@ -395,11 +395,11 @@ class MoGL2E {
     (*results).Init(number_of_gaussians_ * (1 + dimension_*(1 + dimension_)));
 
     // Copy values to the array from the private variables of the class
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       (*results)[i] = omega(i);
-      for (index_t j = 0; j < dimension_; j++) {
+      for (size_t j = 0; j < dimension_; j++) {
 	(*results)[number_of_gaussians_ + i*dimension_ + j] = mu(i).get(j);
-	for (index_t k = 0; k < dimension_; k++) {
+	for (size_t k = 0; k < dimension_; k++) {
 	  (*results)[number_of_gaussians_*(1 + dimension_) 
 		   + i*dimension_*dimension_ + j*dimension_ 
 		   + k] = sigma(i).get(j, k);
@@ -419,13 +419,13 @@ class MoGL2E {
 
     // Output the model parameters as the omega, mu and sigma			
     printf(" Omega : [ ");
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       printf("%lf ", omega(i));
     }
     printf("]\n");
     printf(" Mu : \n[");
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
-      for (index_t j = 0; j < dimension_ ; j++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
+      for (size_t j = 0; j < dimension_ ; j++) {
 	printf("%lf ", mu(i).get(j));
       }
       printf(";");
@@ -434,10 +434,10 @@ class MoGL2E {
       }
     }
     printf("Sigma : ");
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       printf("\n[");
-      for (index_t j = 0; j < dimension_ ; j++) {
-	for(index_t k = 0; k < dimension_ ; k++) {
+      for (size_t j = 0; j < dimension_ ; j++) {
+	for(size_t k = 0; k < dimension_ ; k++) {
 	  printf("%lf ",sigma(i).get(j, k));
 	}
 	printf(";");
@@ -459,7 +459,7 @@ class MoGL2E {
    * @code
    * const Matrix data;
    * MoGL2E mog;
-   * index_t num_gauss, dimension;
+   * size_t num_gauss, dimension;
    * double *params; // get the parameters
    * 
    * mog.MakeModel(num_gauss, dimension, params);
@@ -495,14 +495,14 @@ class MoGL2E {
    * Example use:
    * @code
    * double **p;
-   * index_t n, num_gauss;
+   * size_t n, num_gauss;
    * const Matrix data;
    * 
    * MoGL2E::MultiplePointsGeneratot(p, n, data, num_gauss);
    * @endcode
    */
-  static void MultiplePointsGenerator(double**, index_t, 
-				      const Matrix&, index_t);
+  static void MultiplePointsGenerator(double**, size_t, 
+				      const Matrix&, size_t);
 
   /** 
    * This function parameterizes the starting point obtained
@@ -512,13 +512,13 @@ class MoGL2E {
    * Example use:
    * @code
    * double *p;
-   * index_t num_gauss;
+   * size_t num_gauss;
    * const Matrix data;
    * 
    * MoGL2E::InitialPointGeneratot(p, data, num_gauss);
    * @endcode
    */
-  static void InitialPointGenerator(double*, const Matrix&, index_t);
+  static void InitialPointGenerator(double*, const Matrix&, size_t);
 
   /**
    * This function computes the k-means of the data and stores
@@ -536,20 +536,20 @@ class MoGL2E {
    * ArrayList<Vector> *means;
    * ArrayList<Matrix> *covars;
    * Vector *weights;
-   * index_t num_gauss;
+   * size_t num_gauss;
    * 
    * ...
    * MoGL2E::KMeans(data, means, covars, weights, num_gauss);
    *@endcode 
    */
   static void KMeans_(const Matrix&, ArrayList<Vector>*,
-		      ArrayList<Matrix>*, Vector*, index_t);
+		      ArrayList<Matrix>*, Vector*, size_t);
 
   /**
    * This function returns the indices of the minimum
    * element in each row of a matrix
    */
-  static void min_element(Matrix&, index_t*);
+  static void min_element(Matrix&, size_t*);
 
   /**
    * This is the function which would be used for 
@@ -564,8 +564,8 @@ class MoGL2E {
 				   Vector *gradient) {
 
     MoGL2E model;
-    index_t dimension = data.n_rows();
-    index_t num_gauss;
+    size_t dimension = data.n_rows();
+    size_t num_gauss;
 
     num_gauss = (params.length() + 1)*2 / ((dimension+1)*(dimension+2));
     // This check added here to see if 

@@ -15,7 +15,7 @@ namespace hmm_support {
   double RAND_NORMAL_01();
 
   /** Generate normal (Gaussian) random vector N(0, 1) */
-  void RAND_NORMAL_01_INIT(index_t N, arma::vec& v);
+  void RAND_NORMAL_01_INIT(size_t N, arma::vec& v);
 
   /** Generate normal (Gaussian) random vector N(mean, cov^2) */
   void RAND_NORMAL_INIT(const arma::vec& mean, const arma::mat& cov, arma::vec& v);
@@ -39,31 +39,31 @@ namespace hmm_support {
   void print_vector(TextWriter& writer, const arma::vec& a, const char* msg, const char* format = "%f,");
 
   /** Compute the centroids and label the samples by K-means algorithm */
-  bool kmeans(const std::vector<arma::mat>& data, index_t num_clusters, 
-	      std::vector<index_t>& labels_, std::vector<arma::vec>& centroids_, 
-	      index_t max_iter = 1000, double error_thresh = 1e-3);
+  bool kmeans(const std::vector<arma::mat>& data, size_t num_clusters, 
+	      std::vector<size_t>& labels_, std::vector<arma::vec>& centroids_, 
+	      size_t max_iter = 1000, double error_thresh = 1e-3);
 
-  bool kmeans(const arma::mat &data, index_t num_clusters, 
-	      std::vector<index_t>& labels_, std::vector<arma::vec>& centroids_, 
-	      index_t max_iter = 1000, double error_thresh = 1e-04);
+  bool kmeans(const arma::mat &data, size_t num_clusters, 
+	      std::vector<size_t>& labels_, std::vector<arma::vec>& centroids_, 
+	      size_t max_iter = 1000, double error_thresh = 1e-04);
 
   /** Convert a matrix in to an array list of vectors of its column */
   void mat2arrlst(arma::mat& a, std::vector<arma::vec>& seqs);
   
   /** Convert a matrix in to an array list of matrices of slice of its columns */
-  void mat2arrlstmat(index_t N, arma::mat& a, std::vector<arma::mat>& seqs);
+  void mat2arrlstmat(size_t N, arma::mat& a, std::vector<arma::mat>& seqs);
 
   /**
    * Load an array list of matrices from file where the matrices
    * are seperated by a line start with %
    */
-  success_t load_matrix_list(const char* filename, std::vector<arma::mat>& matlst);
+  bool load_matrix_list(const char* filename, std::vector<arma::mat>& matlst);
 
   /** 
    * Load an array list of vectors from file where the vectors
    * are seperated by a line start with %
    */
-  success_t load_vector_list(const char* filename, std::vector<arma::vec>& veclst);
+  bool load_vector_list(const char* filename, std::vector<arma::vec>& veclst);
 };
 
 #endif

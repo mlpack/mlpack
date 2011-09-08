@@ -101,13 +101,13 @@ class SchwartzPrescreening {
     fock_matrix_.SetZero();
     
     /*
-    for (index_t i = 0; i < num_shells_; i++) {
+    for (size_t i = 0; i < num_shells_; i++) {
     
       Vector new_cent;
       basis_centers_.MakeColumnVector(i, &new_cent);
       
       basis_list_[i].Init(new_cent, basis_exponents_[i], 
-                          (index_t)basis_momenta_[i], i);
+                          (size_t)basis_momenta_[i], i);
     
     } // for i
     */
@@ -161,15 +161,15 @@ class SchwartzPrescreening {
   
   ArrayList<ShellPair> shell_pair_list_;
   
-  index_t num_shells_;
-  index_t num_shell_pairs_;
-  index_t num_functions_;
+  size_t num_shells_;
+  size_t num_shell_pairs_;
+  size_t num_functions_;
   
-  index_t num_prunes_;
+  size_t num_prunes_;
   
-  index_t matrix_size_;
+  size_t matrix_size_;
   
-  index_t num_integrals_computed_;
+  size_t num_integrals_computed_;
   
   // used for resetting during SCF iterations
   bool first_computation_;

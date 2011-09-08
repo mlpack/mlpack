@@ -11,22 +11,22 @@ class Function: public Operator {
   /** @brief The dataset indices that should be used to evaluate the
    *         function.
    */
-  ArrayList<index_t> involved_dataset_indices_;
+  ArrayList<size_t> involved_dataset_indices_;
 
   /** @brief Returns a pairwise squared distance between two points.
    */
   double SquaredDistance_
-  (std::map<index_t, index_t> &constant_dataset_indices) {
+  (std::map<size_t, size_t> &constant_dataset_indices) {
 
     // Look up the point indices involved with the function and
     // compute the pairwise distance.
-    std::map<index_t, index_t>::iterator first_point_index_iterator = 
+    std::map<size_t, size_t>::iterator first_point_index_iterator = 
       constant_dataset_indices.find(involved_dataset_indices_[0]);
-    std::map<index_t, index_t>::iterator second_point_index_iterator =
+    std::map<size_t, size_t>::iterator second_point_index_iterator =
       constant_dataset_indices.find(involved_dataset_indices_[1]);
-    index_t first_point_index = (*first_point_index_iterator).second;
-    index_t second_point_index = (*second_point_index_iterator).second;
-    index_t dimension = ((*datasets_)[involved_dataset_indices_[0]])->n_rows();
+    size_t first_point_index = (*first_point_index_iterator).second;
+    size_t second_point_index = (*second_point_index_iterator).second;
+    size_t dimension = ((*datasets_)[involved_dataset_indices_[0]])->n_rows();
     const double *first_point = 
       ((*datasets_)[involved_dataset_indices_[0]])->GetColumnPtr
       (first_point_index);
@@ -48,8 +48,8 @@ class KernelFunction: public Function {
 
  public:
 
-  void InitKernelFunction(index_t first_dataset_index,
-			  index_t second_dataset_index, double bandwidth_in) {
+  void InitKernelFunction(size_t first_dataset_index,
+			  size_t second_dataset_index, double bandwidth_in) {
 
     involved_dataset_indices_.Init(2);
     involved_dataset_indices_[0] = first_dataset_index;
@@ -57,7 +57,7 @@ class KernelFunction: public Function {
     kernel_.Init(bandwidth_in);
   }
   
-  double NaiveCompute(std::map<index_t, index_t> &constant_dataset_indices) {
+  double NaiveCompute(std::map<size_t, size_t> &constant_dataset_indices) {
 
     double sqdist = SquaredDistance_(constant_dataset_indices);
     return kernel_.EvalUnnormOnSq(sqdist);
@@ -68,7 +68,7 @@ class KernelFunction: public Function {
    */
   double MonteCarloCompute
   (ArrayList<Strata> &list_of_strata,
-   std::map<index_t, index_t> &constant_dataset_indices,
+   std::map<size_t, size_t> &constant_dataset_indices,
    double relative_error, double probability) {
     
     return NaiveCompute(constant_dataset_indices);

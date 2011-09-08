@@ -36,8 +36,8 @@ class MatrixFactorizedFarFieldExpansion {
    */
   static int qsort_compar_(const void *a, const void *b) {
     
-    index_t a_dereferenced = *((index_t *) a);
-    index_t b_dereferenced = *((index_t *) b);
+    size_t a_dereferenced = *((size_t *) a);
+    size_t b_dereferenced = *((size_t *) b);
     
     if(a_dereferenced < b_dereferenced) {
       return -1;
@@ -52,9 +52,9 @@ class MatrixFactorizedFarFieldExpansion {
 
   /** @brief Removes duplicate elements in a sorted array.
    */
-  static void remove_duplicates_in_sorted_array_(ArrayList<index_t> &array) {
+  static void remove_duplicates_in_sorted_array_(ArrayList<size_t> &array) {
 
-    index_t i, k = 0;
+    size_t i, k = 0;
     
     for(i = 1; i < array.size(); i++) {
       if(array[k] != array[i]) {
@@ -76,7 +76,7 @@ class MatrixFactorizedFarFieldExpansion {
    *         skeleton, the pseudo-points that represent the reference
    *         point distribution.
    */
-  ArrayList<index_t> outgoing_skeleton_;
+  ArrayList<size_t> outgoing_skeleton_;
 
   /** @brief The pointer to the auxilirary methods for the kernel
    *         (derivative, truncation error bound).
@@ -118,7 +118,7 @@ class MatrixFactorizedFarFieldExpansion {
   
   /** @brief Gets the outgoing skeleton.
    */
-  const ArrayList<index_t> &outgoing_skeleton() const {
+  const ArrayList<size_t> &outgoing_skeleton() const {
     return outgoing_skeleton_;
   }
 

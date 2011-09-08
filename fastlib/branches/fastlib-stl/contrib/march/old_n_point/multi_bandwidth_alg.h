@@ -29,12 +29,12 @@ namespace npt {
     arma::colvec random_weights_;
     
     // general parameters
-    index_t num_points_;
-    index_t tuple_size_;
+    size_t num_points_;
+    size_t tuple_size_;
     
     int num_random_;
     
-    index_t leaf_size_;
+    size_t leaf_size_;
     int num_permutations_;
     
     std::vector<int> num_bands_;
@@ -46,11 +46,11 @@ namespace npt {
     int num_base_cases_;
     
     
-    //arma::Col<index_t> old_from_new_index_;
-    //arma::Col<index_t> old_from_new_index_random_;
+    //arma::Col<size_t> old_from_new_index_;
+    //arma::Col<size_t> old_from_new_index_random_;
     
-    std::vector<index_t> old_from_new_index_;
-    std::vector<index_t> old_from_new_index_random_;
+    std::vector<size_t> old_from_new_index_;
+    std::vector<size_t> old_from_new_index_random_;
     
     
     NptNode* tree_;
@@ -70,15 +70,15 @@ namespace npt {
     
     ////////////////////// functions //////////////////////////
     
-    index_t FindResultsInd_(const std::vector<index_t>& perm_locations);
+    size_t FindResultsInd_(const std::vector<size_t>& perm_locations);
     
-    void FindMatcherInd_(index_t loc, std::vector<index_t>& result);
+    void FindMatcherInd_(size_t loc, std::vector<size_t>& result);
 
     
-    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+    void BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<std::vector<index_t> >& perm_locations,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<std::vector<size_t> >& perm_locations,
+                         std::vector<size_t>& points_in_tuple,
                          int k);
     
     void BaseCase_(NodeTuple& nodes);
@@ -138,7 +138,7 @@ namespace npt {
       random_tree_ = new NptNode(random_points_, leaf_size, old_from_new_index_random_);
       
       total_matchers_ = 1;
-      for (index_t i = 0; i < num_bands.size(); i++) {
+      for (size_t i = 0; i < num_bands.size(); i++) {
         total_matchers_ *= num_bands[i];
       }
       for (int i = 0; i <= tuple_size_; i++) {

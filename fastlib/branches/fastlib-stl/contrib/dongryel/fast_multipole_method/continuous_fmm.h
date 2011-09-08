@@ -127,12 +127,12 @@ class ContinuousFmm {
   /** @brief The permutation mapping indices of the particle indices
    *         to original order.
    */
-  ArrayList< ArrayList<index_t> > old_from_new_index_;
+  ArrayList< ArrayList<size_t> > old_from_new_index_;
 
   /** @brief The permutation mapping indices of the shuffled indices
    *         from the original order.
    */
-  ArrayList< ArrayList<index_t> > new_from_old_index_;
+  ArrayList< ArrayList<size_t> > new_from_old_index_;
 
   /** @brief The accumulated potential for each query particle.
    */
@@ -164,7 +164,7 @@ class ContinuousFmm {
 
   void ReshuffleResults_(Vector &to_be_reshuffled) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
@@ -173,18 +173,18 @@ class ContinuousFmm {
     Vector tmp_results;
     tmp_results.Init(to_be_reshuffled.length());
     
-    for(index_t i = 0; i < tmp_results.length(); i++) {
+    for(size_t i = 0; i < tmp_results.length(); i++) {
       tmp_results[old_from_new_index_[query_point_indexing][i]] =
 	to_be_reshuffled[i];
     }
-    for(index_t i = 0; i < tmp_results.length(); i++) {
+    for(size_t i = 0; i < tmp_results.length(); i++) {
       to_be_reshuffled[i] = tmp_results[i];
     }
   }
   
   // Lame way to do this - added by BM, 8/18/09
   void ShuffleShellPairList(ArrayList<ShellPair*>& pairs, 
-                            const ArrayList<index_t>& permutation) {
+                            const ArrayList<size_t>& permutation) {
     
     ArrayList<ShellPair*> temp;
     temp.Init(pairs.size());
@@ -203,19 +203,19 @@ class ContinuousFmm {
 
     // Start from the most bottom level, and work your way up to the
     // direct children of the root node.
-    for(index_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
+    for(size_t level = nodes_in_each_level_.size() - 1; level >= 0; level--) {
 
       // The references to the nodes on the current level.
       ArrayList<proximity::CFmmTree<FmmStat> *> 
 	&nodes_on_current_level = nodes_in_each_level_[level];
 
       // Iterate over each node in the list.
-      for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
+      for(size_t n = 0; n < nodes_on_current_level.size(); n++) {
 	
 	proximity::CFmmTree<FmmStat> *node = nodes_on_current_level[n];
 	
 	// Compute the node center.
-	for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
+	for(size_t i = 0; i < shuffled_reference_particle_set_.n_rows(); 
 	    i++) {
 	  node_center[i] = node->bound().get(i).mid();
 	}
@@ -239,7 +239,7 @@ class ContinuousFmm {
 	
 	// Otherwise, translate the moments owned by the partitions...
 	else {
-	  for(index_t p = 0; p < node->partitions_based_on_ws_indices_.size();
+	  for(size_t p = 0; p < node->partitions_based_on_ws_indices_.size();
 	      p++) {
 
 	    node->stat().farfield_expansion_.TranslateFromFarField
@@ -255,7 +255,7 @@ class ContinuousFmm {
 
 	  // The node center is the node that owns the partition, so
 	  // it's the parent's parent...
-	  for(index_t i = 0; i < shuffled_reference_particle_set_.n_rows();
+	  for(size_t i = 0; i < shuffled_reference_particle_set_.n_rows();
 	      i++) {
 	    node_center[i] = (node->parent_->parent_->bound()).get(i).mid();
 	  }
@@ -277,11 +277,11 @@ class ContinuousFmm {
   (proximity::CFmmTree<FmmStat> *query_node, 
    proximity::CFmmTree<FmmStat> *reference_node) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
       
       potentials_[q] += 
@@ -295,12 +295,12 @@ class ContinuousFmm {
                  Vector &potentials) {
     
     
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
     (shuffled_reference_particle_set_.ptr() == 
      shuffled_query_particle_set_.ptr()) ? 0:1;
     
     
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
         q < query_node->end(query_point_indexing); q++) {
       
       // q and r should be able to index into shell_pairs_ as well
@@ -314,7 +314,7 @@ class ContinuousFmm {
                          query->N_Shell()->num_functions());
       query_results.SetZero();
       
-      for(index_t r = reference_node->begin(0); r < reference_node->end(0);
+      for(size_t r = reference_node->begin(0); r < reference_node->end(0);
           r++) {
         
         ShellPair* reference = shell_pairs_[r];
@@ -396,11 +396,11 @@ class ContinuousFmm {
 
   void EvaluateLocalExpansion_(proximity::CFmmTree<FmmStat> *query_node) {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() == 
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
-    for(index_t q = query_node->begin(query_point_indexing); 
+    for(size_t q = query_node->begin(query_point_indexing); 
 	q < query_node->end(query_point_indexing); q++) {
 
       // Evaluate the local expansion at the current query point.
@@ -417,14 +417,14 @@ class ContinuousFmm {
     // current query node to each local expansion of the two
     // partitions, then for each partition, transmit to its children.
 
-    for(index_t p = 0; p < query_node->partitions_based_on_ws_indices_.size();
+    for(size_t p = 0; p < query_node->partitions_based_on_ws_indices_.size();
 	p++) {
       
       query_node->stat().local_expansion_.TranslateToLocal
 	(query_node->partitions_based_on_ws_indices_[p]->stat_.
 	 local_expansion_);
 
-      for(index_t c = 0; c < query_node->partitions_based_on_ws_indices_[p]
+      for(size_t c = 0; c < query_node->partitions_based_on_ws_indices_[p]
 	    ->num_children(); c++) {
 	
 	// Query child.
@@ -440,12 +440,12 @@ class ContinuousFmm {
 
   void DownwardPass_() {
 
-    index_t query_point_indexing = 
+    size_t query_point_indexing = 
       (shuffled_reference_particle_set_.ptr() ==
        shuffled_query_particle_set_.ptr()) ? 0:1;
 
     // Start from the top level and descend down the tree.
-    for(index_t level = 1; level < nodes_in_each_level_.size(); level++) {
+    for(size_t level = 1; level < nodes_in_each_level_.size(); level++) {
       
       // Retrieve the nodes on the current level and the level above.
       const ArrayList<proximity::CFmmTree<FmmStat> * > 
@@ -454,7 +454,7 @@ class ContinuousFmm {
 	&nodes_on_previous_level = nodes_in_each_level_[level - 1];
 
       // Iterate over each query node in this level.
-      for(index_t n = 0; n < nodes_on_current_level.size(); n++) {
+      for(size_t n = 0; n < nodes_on_current_level.size(); n++) {
 
 	// The pointer to the current query node.
 	proximity::CFmmTree<FmmStat> *node = nodes_on_current_level[n];
@@ -470,7 +470,7 @@ class ContinuousFmm {
 	
 	// For each parent, get its nearest neighbors and
 	// subsequently the children under it.
-	for(index_t i = 0; i < nodes_on_previous_level.size(); i++) {
+	for(size_t i = 0; i < nodes_on_previous_level.size(); i++) {
 	  
 	  proximity::CFmmTree<FmmStat> *possible_nn_of_parent =
 	    nodes_on_previous_level[i];
@@ -481,13 +481,13 @@ class ContinuousFmm {
 	  // Consider the children under the nearest neighbor of
 	  // parent.
 	  if(min_dist == 0) {
-	    for(index_t p = 0; p < possible_nn_of_parent->
+	    for(size_t p = 0; p < possible_nn_of_parent->
 		  partitions_based_on_ws_indices_.size(); p++) {
 	      
 	      proximity::CFmmWellSeparatedTree<FmmStat> *partition = 
 		possible_nn_of_parent->partitions_based_on_ws_indices_[p];
 
-	      for(index_t c = 0; c < partition->num_children(); c++) {
+	      for(size_t c = 0; c < partition->num_children(); c++) {
 		
 		// The current child.
 		proximity::CFmmTree<FmmStat> *current_reference_child =
@@ -510,7 +510,7 @@ class ContinuousFmm {
 		  // The required WS index for the query and the
 		  // reference to be approximated using F2L
 		  // translation.
-		  index_t required_ws_index = -1;
+		  size_t required_ws_index = -1;
 
 		  // Test whether the query and the reference are
 		  // under the same branch of CFMM tree.
@@ -584,7 +584,7 @@ class ContinuousFmm {
   void OutputResultsToFile_(const Vector &results, const char *fname) {
 
     FILE *stream = fopen(fname, "w+");
-    for(index_t q = 0; q < results.length(); q++) {
+    for(size_t q = 0; q < results.length(); q++) {
       fprintf(stream, "%g\n", results[q]);
     }    
     fclose(stream);
@@ -654,7 +654,7 @@ class ContinuousFmm {
   /*
   void Update(const Matrix &rset_weights) {
    
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+    for(size_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
     }
     
@@ -709,7 +709,7 @@ class ContinuousFmm {
   
   void Reset(const Matrix& new_charges) {
     
-    for(index_t i = 0; i < new_charges.n_cols(); i++) {
+    for(size_t i = 0; i < new_charges.n_cols(); i++) {
       shuffled_reference_particle_charge_set_[i] = new_charges.get(0, i);
     }
     
@@ -761,7 +761,7 @@ class ContinuousFmm {
 
     // Copy over the reference charge set.
     shuffled_reference_particle_charge_set_.Init(rset_weights.n_cols());
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+    for(size_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_charge_set_[i] = rset_weights.get(0, i);
     }
 
@@ -769,7 +769,7 @@ class ContinuousFmm {
     // for each particle.
     shuffled_reference_particle_bandwidth_set_.Init(rset_weights.n_cols());
     shuffled_reference_particle_extent_set_.Init(rset_weights.n_cols());
-    for(index_t i = 0; i < rset_weights.n_cols(); i++) {
+    for(size_t i = 0; i < rset_weights.n_cols(); i++) {
       shuffled_reference_particle_bandwidth_set_[i] = 
 	rset_bandwidths.get(0, i);
       shuffled_reference_particle_extent_set_[i] = 

@@ -45,7 +45,7 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
   engine_.factors(&factors);
   svd_engine.factors(&svd_factors);
 
-  for(index_t i=0; i<factors.n_rows; i++) {
+  for(size_t i=0; i<factors.n_rows; i++) {
     BOOST_REQUIRE_CLOSE(factors(i, 0), svd_factors(i, 0), 1e-5);
   }
 }
@@ -60,16 +60,16 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
   arma::mat synthetic_data_target_training_values;
   synthetic_data.zeros(4, 5);
   synthetic_data_target_training_values.zeros(1, 5);
-  for(index_t i = 0; i < 5; i++) {
+  for(size_t i = 0; i < 5; i++) {
     synthetic_data(0, i) = i;
     synthetic_data(1, i) = 3 * i + 1;
     synthetic_data(2, i) = 4;
     synthetic_data(3, i) = 5;
     synthetic_data_target_training_values(0, i) = i;
   }
-  arma::Col<index_t> predictor_indices;
-  arma::Col<index_t> prune_predictor_indices;
-  arma::Col<index_t> output_predictor_indices;
+  arma::Col<size_t> predictor_indices;
+  arma::Col<size_t> prune_predictor_indices;
+  arma::Col<size_t> output_predictor_indices;
   predictor_indices.zeros(4);
   predictor_indices[0] = 0;
   predictor_indices[1] = 1;
@@ -83,8 +83,8 @@ BOOST_AUTO_TEST_CASE(TestVIFBasedFeatureSelection) {
                                     synthetic_data_target_training_values,
                                     &output_predictor_indices);
   printf("Output indices: ");
-  for(index_t i = 0; i < output_predictor_indices.n_elem; i++) {
-    printf(" %"LI" ", output_predictor_indices[i]);
+  for(size_t i = 0; i < output_predictor_indices.n_elem; i++) {
+    printf(" %zu ", output_predictor_indices[i]);
   }
   printf("\n");
 }

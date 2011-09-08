@@ -17,7 +17,7 @@ class GenericErrorStat {
 
  protected:
  
-  index_t remaining_references_;
+  size_t remaining_references_;
   
   // This isn't right as a global max error bound, since it should apply to each
   // query separately
@@ -34,14 +34,14 @@ public:
     
   virtual ~GenericErrorStat() {}
     
-  void Init(const Matrix& matrix, index_t start, index_t count) {
+  void Init(const Matrix& matrix, size_t start, size_t count) {
       
     //query_count_ = -1;
     error_incurred_ = 0.0;
       
   } // Init() (leaves)
   
-  void Init(const Matrix& matrix, index_t start, index_t count, 
+  void Init(const Matrix& matrix, size_t start, size_t count, 
             const GenericErrorStat& left, const GenericErrorStat& right) {
     
     //query_count_ = -1;
@@ -50,7 +50,7 @@ public:
   } // Init() (non-leaves)
   
   bool CanPrune(double q_upper_bound, double q_lower_bound, 
-                index_t reference_count) {
+                size_t reference_count) {
     
     bool prune = false;
     
@@ -81,7 +81,7 @@ public:
     
   } // CanPrune()  
   
-  void set_remaining_references(index_t new_count) {
+  void set_remaining_references(size_t new_count) {
   
     remaining_references_ = new_count;
     
@@ -89,7 +89,7 @@ public:
   
   } // set_query_count()
   
-  index_t remaining_references() {
+  size_t remaining_references() {
   
     return remaining_references_;
   

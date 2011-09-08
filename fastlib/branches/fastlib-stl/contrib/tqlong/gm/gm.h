@@ -15,7 +15,7 @@
 
 class Node {
  public:
-  typedef index_t RangeType;
+  typedef size_t RangeType;
   typedef String SymbolType;
 
  private:
@@ -28,18 +28,18 @@ class Node {
 
  public:
   /** Initialize the set of symbols */
-  void Init(const SymbolType* symbols, index_t n_syms) {
+  void Init(const SymbolType* symbols, size_t n_syms) {
     symbols_.InitCopy(symbols, n_syms);
   }
 
   /** Get a symbol string */
-  SymbolType GetSymbol(index_t i) {
+  SymbolType GetSymbol(size_t i) {
     DEBUG_ASSERT(i < symbols_.size());
     return symbols_[i];
   }
 
   /** Set a symbol string */
-  void SetSymbol(index_t i, const SymbolType& sym) {
+  void SetSymbol(size_t i, const SymbolType& sym) {
     DEBUG_ASSERT(i < symbols_.size());    
     symbols_[i] = sym;
   }
@@ -60,7 +60,7 @@ class Node {
 
 class Factor {
  public:
-  typedef index_t RangeType;
+  typedef size_t RangeType;
 
  private:
   /** The ranges of each variable of the factor 
@@ -88,7 +88,7 @@ class Factor {
   void Init(const ArrayList<RangeType>& ranges, const Vector& vals);
 
   /** Initialize the factor with ranges and probabilities/values specified */
-  void Init(const index_t* ranges, index_t n_nodes, const double* vals);
+  void Init(const size_t* ranges, size_t n_nodes, const double* vals);
 
   /** Get the number of arguments */
   RangeType n_args() const {
@@ -98,11 +98,11 @@ class Factor {
   /** Calculate index from position which is stored 
    *  in column-wise manner
    */
-  index_t GetIndex(const ArrayList<index_t>& pos);
+  size_t GetIndex(const ArrayList<size_t>& pos);
 
   /** Get probability/value at a position in the table */
   double GetVal(const ArrayList<RangeType>& args) {
-    index_t rpos = GetIndex(args);
+    size_t rpos = GetIndex(args);
     return vals_[rpos];
   }
 
@@ -111,37 +111,37 @@ class Factor {
   }
 
   /** Get probability/value from index in the table */
-  double GetVal(index_t pos) {
+  double GetVal(size_t pos) {
     return vals_[pos];
   }
 
   /** Set probability/value at a position in the table */
-  void SetVal(const ArrayList<index_t>& pos, double val) {
-    index_t rpos = GetIndex(pos);
+  void SetVal(const ArrayList<size_t>& pos, double val) {
+    size_t rpos = GetIndex(pos);
     vals_[rpos] = val;
   }
 
   /** Set probability/val from index in the table */
-  void SetVal(index_t pos, double val) {
+  void SetVal(size_t pos, double val) {
     vals_[pos] = val;
   }
 
   /** Get the range of an argument which will be compared to the 
    *  corresponding node's range
    */
-  RangeType GetRange(index_t i_arg) {
+  RangeType GetRange(size_t i_arg) {
     DEBUG_ASSERT(i_arg < n_args());
     return ranges_[i_arg];
   }
 
   /** Get an argument */
-  RangeType GetArg(index_t i_arg) {
+  RangeType GetArg(size_t i_arg) {
     DEBUG_ASSERT(i_arg < n_args());
     return args_[i_arg];
   }
 
   /** Set an argument */
-  void SetArg(index_t i_arg, RangeType val) {
+  void SetArg(size_t i_arg, RangeType val) {
     DEBUG_ASSERT(i_arg < n_args());
     args_[i_arg] = val;
   }
@@ -162,33 +162,33 @@ class SumProductPassingAlgorithm {
 
  private:
   /** Get the first end of an edge in the list */
-  inline index_t GetOrderEdgeFirst(index_t i_order) {
+  inline size_t GetOrderEdgeFirst(size_t i_order) {
     DEBUG_ASSERT(i_order < n_orderedges());
     return order_[i_order].first;
   }
 
   /** Get the second end of an edge in the list */
-  inline index_t GetOrderEdgeSecond(index_t i_order) {
+  inline size_t GetOrderEdgeSecond(size_t i_order) {
     DEBUG_ASSERT(i_order < n_orderedges());
     return order_[i_order].second;
   }
 
   /** Get the number of edges in the list */
-  inline index_t n_orderedges() {
+  inline size_t n_orderedges() {
     return order_.size();
   }
 
   /** Message passing from node to factor */
-  void PassMessageNode2Factor(FactorGraphType& fg, index_t i_node, index_t i_edge);
+  void PassMessageNode2Factor(FactorGraphType& fg, size_t i_node, size_t i_edge);
 
   /** Message passing from factor to node */
-  void PassMessageFactor2Node(FactorGraphType& fg, index_t i_factor, index_t i_edge);
+  void PassMessageFactor2Node(FactorGraphType& fg, size_t i_factor, size_t i_edge);
 
   /** Recursive procedure to calculate the message from
    *  factor to node
    */
-  void VisitFactorArg(FactorGraphType& fg, index_t i_factor, index_t i_edge, 
-		      index_t i, double term, double& sum);
+  void VisitFactorArg(FactorGraphType& fg, size_t i_factor, size_t i_edge, 
+		      size_t i, double term, double& sum);
 
  public:
   void Init() {
@@ -213,7 +213,7 @@ class SumProductPassingAlgorithm {
    *  return constant Z
    */
 
-  double NodeMarginalSum(FactorGraphType& fg, index_t i_node, ArrayList<double>* sum);
+  double NodeMarginalSum(FactorGraphType& fg, size_t i_node, ArrayList<double>* sum);
 };
 
 #endif

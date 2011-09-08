@@ -15,7 +15,7 @@ void SCFSolver::FormChangeOfBasisMatrix_() {
   
   eigenvalues.PrintDebug();
   
-  for (index_t i = 0; i < eigenvalues.length(); i++) {
+  for (size_t i = 0; i < eigenvalues.length(); i++) {
     DEBUG_ASSERT_MSG(!isnan(eigenvalues[i]), 
                      "Complex eigenvalue in diagonalizing overlap matrix.\n");
     
@@ -27,7 +27,7 @@ void SCFSolver::FormChangeOfBasisMatrix_() {
     double len = la::LengthEuclidean(eigenvec);
     DEBUG_APPROX_DOUBLE(len, 1.0, 0.001);
     
-    for (index_t j = i+1; j < eigenvalues.length(); j++) {
+    for (size_t j = i+1; j < eigenvalues.length(); j++) {
       
       Vector eigenvec2;
       left_vectors.MakeColumnVector(j, &eigenvec2);
@@ -40,7 +40,7 @@ void SCFSolver::FormChangeOfBasisMatrix_() {
   
 #endif
   
-  for (index_t i = 0; i < eigenvalues.length(); i++) {
+  for (size_t i = 0; i < eigenvalues.length(); i++) {
     DEBUG_ASSERT(eigenvalues[i] > 0.0);
     eigenvalues[i] = 1/sqrt(eigenvalues[i]);
   }
@@ -74,16 +74,16 @@ void SCFSolver::ComputeDensityMatrix_() {
   density_matrix_frobenius_norm_ = 0.0;
   
   // Rows of density_matrix
-  for (index_t density_row = 0; density_row < number_of_basis_functions_;
+  for (size_t density_row = 0; density_row < number_of_basis_functions_;
        density_row++) {
     
     // Columns of density matrix
-    for (index_t density_column = 0; 
+    for (size_t density_column = 0; 
          density_column < number_of_basis_functions_; density_column++) {
       
       // Occupied orbitals
       double this_sum = 0.0;
-      for (index_t occupied_index = 0; 
+      for (size_t occupied_index = 0; 
            occupied_index < number_to_fill_; occupied_index++) {
         
         this_sum = this_sum + (
@@ -129,17 +129,17 @@ void SCFSolver::ComputeDensityMatrixDIIS_() {
   //density_matrix_norms_.SetZero();
   
   // Rows of density_matrix
-  for (index_t density_row = 0; density_row < number_of_basis_functions_;
+  for (size_t density_row = 0; density_row < number_of_basis_functions_;
        density_row++) {
     
     // Columns of density matrix
-    for (index_t density_column = 0; 
+    for (size_t density_column = 0; 
          density_column < number_of_basis_functions_; density_column++) {
       
       // Occupied orbitals
       double this_sum = 0.0;
       
-      for (index_t occupied_index = 0; 
+      for (size_t occupied_index = 0; 
            occupied_index < number_to_fill_; occupied_index++) {
         
         this_sum = this_sum + (coefficient_matrix_.ref(density_row, 
@@ -167,9 +167,9 @@ void SCFSolver::ComputeDensityMatrixDIIS_() {
   
   const double* err_ptr = density_matrix_errors_[diis_index_].ptr();
   
-  index_t len = number_of_basis_functions_ * number_of_basis_functions_;
+  size_t len = number_of_basis_functions_ * number_of_basis_functions_;
   
-  for (index_t i = 0; i < diis_count_; i++) {
+  for (size_t i = 0; i < diis_count_; i++) {
     
     const double* this_err_ptr = density_matrix_errors_[i].ptr();
     
@@ -212,7 +212,7 @@ void SCFSolver::DIISSolver_() {
     
     density_matrix_.SetZero();
     
-    for (index_t i = 0; i < diis_count_; i++) {
+    for (size_t i = 0; i < diis_count_; i++) {
       
       // Should scale density_matrices_[i] by the right value and add to 
       // the overall density matrix
@@ -259,7 +259,7 @@ void SCFSolver::DiagonalizeFockMatrix_() {
               &right_vectors_trans);
   
   
-  for (index_t i = 0; i < number_of_basis_functions_; i++) {
+  for (size_t i = 0; i < number_of_basis_functions_; i++) {
     
     // if the left and right vector don't have equal signs the eigenvector 
     // is negative
@@ -291,7 +291,7 @@ void SCFSolver::DiagonalizeFockMatrix_() {
   
 #ifdef DEBUG
   
-  for (index_t i = 0; i < energy_vector_.length(); i++) {
+  for (size_t i = 0; i < energy_vector_.length(); i++) {
     DEBUG_ASSERT_MSG(!isnan(energy_vector_[i]), 
                      "Complex eigenvalue in diagonalizing Fock matrix.\n");
   }
@@ -309,10 +309,10 @@ void SCFSolver::DiagonalizeFockMatrix_() {
 template <class CoulombAlg, class ExchangeAlg>
 void SCFSolver::ComputeOneElectronMatrices_() {
   
-  for (index_t row_index = 0; row_index < number_of_basis_functions_; 
+  for (size_t row_index = 0; row_index < number_of_basis_functions_; 
        row_index++) {
     
-    for (index_t col_index = row_index; col_index < number_of_basis_functions_; 
+    for (size_t col_index = row_index; col_index < number_of_basis_functions_; 
          col_index++) {
       
       Vector row_vec;
@@ -326,7 +326,7 @@ void SCFSolver::ComputeOneElectronMatrices_() {
       double overlap_integral = ComputeOverlapIntegral_(dist);
       
       double nuclear_integral = 0.0;
-      for (index_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
+      for (size_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
            nuclear_index++) {
         
         Vector nuclear_position;
@@ -364,9 +364,9 @@ double SCFSolver::ComputeNuclearRepulsion_() {
   
   double nuclear_energy = 0.0;
   
-  for (index_t a = 0; a < number_of_nuclei_; a++) {
+  for (size_t a = 0; a < number_of_nuclei_; a++) {
     
-    for (index_t b = a+1; b < number_of_nuclei_; b++) {
+    for (size_t b = a+1; b < number_of_nuclei_; b++) {
       
       Vector a_vec; 
       nuclear_centers_.MakeColumnVector(a, &a_vec);

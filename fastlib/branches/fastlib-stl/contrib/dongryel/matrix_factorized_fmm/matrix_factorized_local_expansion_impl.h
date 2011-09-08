@@ -18,17 +18,17 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::CombineBasisFunctions
   
   // The incoming skeleton for an internal node is formed by
   // concatenating the incoming skeleton of its children.
-  const ArrayList<index_t> &incoming_skeleton1 =
+  const ArrayList<size_t> &incoming_skeleton1 =
     local_expansion1.incoming_skeleton();
-  const ArrayList<index_t> &incoming_skeleton2 =
+  const ArrayList<size_t> &incoming_skeleton2 =
     local_expansion2.incoming_skeleton();
 
   incoming_skeleton_.Init(incoming_skeleton1.size() + 
 			  incoming_skeleton2.size());
-  for(index_t i = 0; i < incoming_skeleton1.size(); i++) {
+  for(size_t i = 0; i < incoming_skeleton1.size(); i++) {
     incoming_skeleton_[i] = incoming_skeleton1[i];
   }
-  for(index_t i = incoming_skeleton1.size(); i < incoming_skeleton_.size();
+  for(size_t i = incoming_skeleton1.size(); i < incoming_skeleton_.size();
       i++) {
     incoming_skeleton_[i] = incoming_skeleton2[i - incoming_skeleton1.size()];
   }
@@ -62,7 +62,7 @@ double MatrixFactorizedLocalExpansion<TKernelAux>::EvaluateField
   // the evaluation operator.
   double dot_product = 0;
 
-  for(index_t i = 0; i < evaluation_operator_->n_cols(); i++) {
+  for(size_t i = 0; i < evaluation_operator_->n_cols(); i++) {
     dot_product += 
       evaluation_operator_->get(row_num - begin_row_num, i) * coeffs_[i];
   }
@@ -142,9 +142,9 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
   // Allocate a temporary space for holding the indices of the query
   // points, from which the incoming skeleton will be chosen.
-  ArrayList<index_t> tmp_incoming_skeleton;
+  ArrayList<size_t> tmp_incoming_skeleton;
   tmp_incoming_skeleton.Init(num_query_samples);
-  for(index_t q = 0; q < num_query_samples; q++) {
+  for(size_t q = 0; q < num_query_samples; q++) {
 
     // Choose a random query point and record its index.
     tmp_incoming_skeleton[q] = q + begin;
@@ -155,16 +155,16 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   // allocate the space for the sample kernel matrix to be computed.
   sample_kernel_matrix.Init(num_query_samples, num_reference_samples);
   
-  for(index_t r = 0; r < reference_leaf_nodes->size(); r++) {
+  for(size_t r = 0; r < reference_leaf_nodes->size(); r++) {
 
     // Choose a random reference point from the current reference strata...
-    index_t random_reference_point_index =
+    size_t random_reference_point_index =
       math::RandInt(((*reference_leaf_nodes)[r])->begin(),
 		    ((*reference_leaf_nodes)[r])->end());
     const double *reference_point =
       reference_set->GetColumnPtr(random_reference_point_index);
 
-    for(index_t c = 0; c < num_query_samples; c++) {
+    for(size_t c = 0; c < num_query_samples; c++) {
       
       // The current query point
       const double *query_point = 
@@ -184,10 +184,10 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   // Get the estimate on the minimum kernel sum for the query
   // points. This code is not currently correct for weighted kernel
   // sum.
-  for(index_t c = 0; c < num_query_samples; c++) {
+  for(size_t c = 0; c < num_query_samples; c++) {
     double kernel_sum = 0;
 
-    for(index_t r = 0; r < sample_kernel_matrix.n_cols(); r++) {
+    for(size_t r = 0; r < sample_kernel_matrix.n_cols(); r++) {
       kernel_sum += sample_kernel_matrix.get(c, r);
     }
     estimated_min_kernel_sum_l_ = std::min(estimated_min_kernel_sum_l_, 
@@ -196,14 +196,14 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
 
   // CUR-decompose the sample kernel matrix.
   Matrix c_mat, u_mat, r_mat;
-  ArrayList<index_t> column_indices, row_indices;
+  ArrayList<size_t> column_indices, row_indices;
   CURDecomposition::Compute(sample_kernel_matrix, &c_mat, &u_mat, &r_mat,
 			    &column_indices, &row_indices);
   
   // The incoming skeleton is constructed from the sampled rows in the
   // matrix factorization.
   incoming_skeleton_.Init(row_indices.size());
-  for(index_t s = 0; s < row_indices.size(); s++) {
+  for(size_t s = 0; s < row_indices.size(); s++) {
     incoming_skeleton_[s] = tmp_incoming_skeleton[row_indices[s]];
   }
 
@@ -211,12 +211,12 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TrainBasisFunctions
   // and the U factor appropriately scaled by the row scaled R factor.
   evaluation_operator_ = new Matrix();
   la::MulInit(c_mat, u_mat, evaluation_operator_);
-  for(index_t i = 0; i < r_mat.n_rows(); i++) {
+  for(size_t i = 0; i < r_mat.n_rows(); i++) {
     double scaling_factor =
       (sample_kernel_matrix.get(row_indices[i], 0) < DBL_EPSILON) ?
       0:r_mat.get(i, 0) / sample_kernel_matrix.get(row_indices[i], 0);
 
-    for(index_t j = 0; j < evaluation_operator_->n_rows(); j++) {
+    for(size_t j = 0; j < evaluation_operator_->n_rows(); j++) {
       evaluation_operator_->set
 	(j, i, evaluation_operator_->get(j, i) * scaling_factor);
     }
@@ -234,13 +234,13 @@ void MatrixFactorizedLocalExpansion<TKernelAux>::TranslateToLocal
   // Local-to-local translation involves determining the indices of
   // the query points that belong to the local moment to be
   // translated.
-  index_t beginning_index = se.local_to_local_translation_begin();
-  index_t count = se.local_to_local_translation_count();
+  size_t beginning_index = se.local_to_local_translation_begin();
+  size_t count = se.local_to_local_translation_count();
   
   // Reference to the destination coefficients.
   Vector &destination_coeffs = se.coeffs();
 
-  for(index_t i = 0; i < count; i++) {
+  for(size_t i = 0; i < count; i++) {
     destination_coeffs[i] += coeffs_[i + beginning_index];
   }
 }

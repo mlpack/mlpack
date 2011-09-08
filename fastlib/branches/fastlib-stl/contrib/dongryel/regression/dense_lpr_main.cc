@@ -109,13 +109,13 @@ int main(int argc, char *argv[]) {
     fast_lpr.Compute(queries, &query_regression_estimates,
 		     &query_confidence_bands, &query_magnitude_weight_diagrams);
     
-    index_t queries_length = queries.n_cols();
+    size_t queries_length = queries.n_cols();
     
     const char* query_debugfile_name = 
       fx_param_str(fx_root, "query_estimate_output_file", "query_estimates");
     FILE  *fp;
     fp = fopen(query_debugfile_name, "w");
-    for(index_t i = 0; i < query_regression_estimates.length(); i++) {
+    for(size_t i = 0; i < query_regression_estimates.length(); i++) {
       fprintf(fp, "%g\n", query_regression_estimates[i]);
     }
     fclose(fp);

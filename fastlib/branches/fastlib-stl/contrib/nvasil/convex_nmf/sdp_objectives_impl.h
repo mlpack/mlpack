@@ -17,8 +17,8 @@
  */
 
 void SmallSdpNmf::Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values) {
   module_=module;
 	new_dim_=fx_param_int(module_, "new_dim", 5); 
@@ -40,33 +40,33 @@ void SmallSdpNmf::Init(fx_module *module,
   objective_factor_.Init(new_dim_,  2*(num_of_rows_+num_of_columns_)+values_.size());
   objective_factor_.SetAll(1.0);
   // W
-  for(index_t i=0; i<num_of_rows_; i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<num_of_rows_; i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       objective_factor_.set(j, i, -1.0);
     }
   }
   // H
-  for(index_t i=offset_h_; i<offset_h_+num_of_columns_; i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=offset_h_; i<offset_h_+num_of_columns_; i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       objective_factor_.set(j, i, -1.0);
     }
   }
   // tw
-  for(index_t i=offset_tw_; i<offset_tw_+num_of_rows_; i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=offset_tw_; i<offset_tw_+num_of_rows_; i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       objective_factor_.set(j, i, 1.0);
     }
   }
   // th
-  for(index_t i=offset_th_; i<offset_th_+num_of_rows_; i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=offset_th_; i<offset_th_+num_of_rows_; i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       objective_factor_.set(j, i, 1.0);
     }
   }
  
   // v
-  for(index_t i=offset_v_; i<offset_v_+values_.size(); i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=offset_v_; i<offset_v_+values_.size(); i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       objective_factor_.set(j, i, 0.0);
     }
   }
@@ -80,10 +80,10 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
    
   // super objective starts here
 
-  for(index_t i=0; i<num_of_rows_; i++) {
-    index_t w_i=i;
-    index_t t1_i=offset_tw_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<num_of_rows_; i++) {
+    size_t w_i=i;
+    size_t t1_i=offset_tw_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       //double w=coordinates.get(j, w_i);
       double t1=coordinates.get(j, t1_i);
       double dw=-1.0;
@@ -93,10 +93,10 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     }
   }
   
-   for(index_t i=0; i<num_of_columns_; i++) {
-    index_t h_i=offset_h_+i;
-    index_t t2_i=offset_th_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+   for(size_t i=0; i<num_of_columns_; i++) {
+    size_t h_i=offset_h_+i;
+    size_t t2_i=offset_th_+i;
+    for(size_t j=0; j<new_dim_; j++) {
      // double h=coordinates.get(j, h_i);
       double t2=coordinates.get(j, t2_i);
       double dh=-1.0;
@@ -106,29 +106,29 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
     }
   }
 
-    for(index_t i=0; i< new_dim_*values_.size(); i++) {
+    for(size_t i=0; i< new_dim_*values_.size(); i++) {
       gradient->GetColumnPtr(offset_v_)[i]=0;
     }
   la::Scale(sigma_, gradient);
   
  // end of the super objective 
  // from the LP cones
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t v_i=offset_v_+i;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t v_i=offset_v_+i;
     double diff=0;
-    for(index_t j=0; j<new_dim_; j++) {
+    for(size_t j=0; j<new_dim_; j++) {
       diff+=coordinates.get(j, v_i);
     }
     double diff1=diff-(values_[i]-v_accuracy_);
     double diff2=-diff+(values_[i]+v_accuracy_);
     //NOTIFY("diff:%lg", diff);
     if (diff1<=0 || diff2<=0) {
-      for(index_t j=0; j<new_dim_; j++) {
+      for(size_t j=0; j<new_dim_; j++) {
         gradient->set(j, v_i, DBL_MAX);
       }
       return;
     } else {    
-      for(index_t j=0; j<new_dim_; j++) {
+      for(size_t j=0; j<new_dim_; j++) {
         gradient->set(j, v_i, gradient->get(j, v_i)-1.0/diff1+1.0/diff2);
       }
     }     
@@ -140,13 +140,13 @@ void SmallSdpNmf::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   // dt1=t2-h*h;
   // dt2=t1-w*w;
   // dv=+2*(w*h-v);
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w_i=rows_[i];
-    index_t h_i=offset_h_+columns_[i];
-    index_t t1_i=offset_tw_+rows_[i];
-    index_t t2_i=offset_th_+columns_[i];
-    index_t v_i=offset_v_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w_i=rows_[i];
+    size_t h_i=offset_h_+columns_[i];
+    size_t t1_i=offset_tw_+rows_[i];
+    size_t t2_i=offset_th_+columns_[i];
+    size_t v_i=offset_v_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       double w=coordinates.get(j, w_i);
       double h=coordinates.get(j, h_i);
       double t1=coordinates.get(j, t1_i);
@@ -189,19 +189,19 @@ void SmallSdpNmf::ComputeObjective(Matrix &coordinates, double *objective) {
   
   //super objective starts here
   *objective=0.0;
-  for(index_t i=0; i<num_of_rows_; i++) {
-    index_t w_i=i;
-    index_t t1_i=offset_tw_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<num_of_rows_; i++) {
+    size_t w_i=i;
+    size_t t1_i=offset_tw_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       double w=coordinates.get(j, w_i);
       double t1=coordinates.get(j, t1_i);
       *objective+=std::sqrt(t1)-w;
     }
   }
-  for(index_t i=0; i<num_of_columns_; i++) {
-    index_t h_i=offset_h_+i;
-    index_t t2_i=offset_th_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<num_of_columns_; i++) {
+    size_t h_i=offset_h_+i;
+    size_t t2_i=offset_th_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       double h=coordinates.get(j, h_i);
       double t2=coordinates.get(j, t2_i);
       *objective+=std::sqrt(t2)-h;
@@ -232,11 +232,11 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
   lagrangian*=sigma_;
   // from the LP cones
   double temp_prod=1.0;
-  for(index_t i=0; i<values_.size(); i++) {
+  for(size_t i=0; i<values_.size(); i++) {
     
-    index_t v_i=offset_v_+i;
+    size_t v_i=offset_v_+i;
     double diff=0;
-    for(index_t j=0; j<new_dim_; j++) {
+    for(size_t j=0; j<new_dim_; j++) {
       diff+=coordinates.get(j, v_i);
     }
     double diff1=diff-(values_[i]-v_accuracy_);
@@ -251,13 +251,13 @@ double SmallSdpNmf::ComputeLagrangian(Matrix &coordinates) {
   // from the SDP cones
   // determinant=(t1-w*w)*(t2-h*h)-(w*h-v)*(w*h-v);
   temp_prod=1.0;
- for(index_t i=0; i<values_.size(); i++) {
-    index_t w_i=rows_[i];
-    index_t h_i=offset_h_+columns_[i];
-    index_t t1_i=offset_tw_+rows_[i];
-    index_t t2_i=offset_th_+columns_[i];
-    index_t v_i=offset_v_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+ for(size_t i=0; i<values_.size(); i++) {
+    size_t w_i=rows_[i];
+    size_t h_i=offset_h_+columns_[i];
+    size_t t1_i=offset_tw_+rows_[i];
+    size_t t2_i=offset_th_+columns_[i];
+    size_t v_i=offset_v_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       double w=coordinates.get(j, w_i);
       double h=coordinates.get(j, h_i);
       double t1=coordinates.get(j, t1_i);
@@ -301,18 +301,18 @@ void SmallSdpNmf::set_sigma(double sigma) {
 void SmallSdpNmf::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dim_, 
       2*(num_of_rows_+num_of_columns_)+values_.size());
-  for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+    for(size_t j=0; j<new_dim_; j++) {
       init_data->set(j, i, 0.1);
     }
   }
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t w_i=rows_[i];
-    index_t h_i=offset_h_+columns_[i];
-    index_t t1_i=offset_tw_+rows_[i];
-    index_t t2_i=offset_th_+columns_[i];
-    index_t v_i=offset_v_+i;
-    for(index_t j=0; j<new_dim_; j++) {
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t w_i=rows_[i];
+    size_t h_i=offset_h_+columns_[i];
+    size_t t1_i=offset_tw_+rows_[i];
+    size_t t2_i=offset_th_+columns_[i];
+    size_t v_i=offset_v_+i;
+    for(size_t j=0; j<new_dim_; j++) {
       double w=init_data->get(j, w_i);
       double h=init_data->get(j, h_i);
      

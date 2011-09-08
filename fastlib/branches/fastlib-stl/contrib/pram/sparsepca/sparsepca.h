@@ -131,7 +131,7 @@ class SparsePCA {
 
   void set_lambda_L1(ArrayList<double>& list) {
     lambda_L1_.Resize(list.size());
-    for (index_t i = 0; i < list.size(); i++) {
+    for (size_t i = 0; i < list.size(); i++) {
       lambda_L1_[i] = list[i];
     }
     return;
@@ -169,7 +169,7 @@ class SparsePCA {
     return lambda_quad_;
   }
 
-  double lambda_L1(index_t in) {
+  double lambda_L1(size_t in) {
     return lambda_L1_[in];
   }
 
@@ -197,7 +197,7 @@ class SparsePCA {
    */
   void Center_(const Matrix& mat, Matrix *centered_mat) {
 
-    index_t c = mat.n_cols();
+    size_t c = mat.n_cols();
     double factor = 1.0 / c;
     
     if (c < sqrt(BIG_BAD_NUMBER)) {
@@ -220,7 +220,7 @@ class SparsePCA {
 
       centered_mat->Init(mat.n_rows(), mat.n_cols());
  
-      for (index_t i = 0; i < c; i++) {
+      for (size_t i = 0; i < c; i++) {
 	Vector centered_col_vec, mat_col_vec;
 	centered_mat->MakeColumnVector(i, &centered_col_vec);
 	mat_col_vec.Copy(mat.GetColumnPtr(i), mat.n_rows());
@@ -245,8 +245,8 @@ class SparsePCA {
     set_lambda_quad(lambda_2);
     set_lambda_L1(lambda_1);
 
-    index_t dim = fx_param_int_req(spca_module_, "D");
-    index_t n = fx_param_int_req(spca_module_, "N");
+    size_t dim = fx_param_int_req(spca_module_, "D");
+    size_t n = fx_param_int_req(spca_module_, "N");
 
     // centering the data matrix to so that 
     // the column means of X are all zero.
@@ -283,14 +283,14 @@ class SparsePCA {
 
       DEBUG_ASSERT(eigenvalues_vec.length() == dim);
       eigenvalues_abs_vec.Init(dim);
-      for (index_t i = 0; i < dim; i++) {
+      for (size_t i = 0; i < dim; i++) {
 	eigenvalues_abs_vec.ptr()[i] = fabs(eigenvalues_vec.get(i));
       }
 
       la::AddTo(eigenvalues_abs_vec, &eigenvalues_vec);
       la::Scale(0.5, &eigenvalues_vec);
 
-      for (index_t i = 0; i < dim; i++) {
+      for (size_t i = 0; i < dim; i++) {
 	eigenvalues_vec.ptr()[i] = sqrt(eigenvalues_vec.get(i));
       }
 
@@ -317,8 +317,8 @@ class SparsePCA {
     Matrix u_mat, v_t_mat, x_trans_mat;
 
     la::TransposeInit(x_centered(), &x_trans_mat);
-    success_t svd_op = la::SVDInit(x_trans_mat, &s_vec, &u_mat, &v_t_mat);
-    DEBUG_ASSERT_MSG(svd_op == SUCCESS_PASS, 
+    bool svd_op = la::SVDInit(x_trans_mat, &s_vec, &u_mat, &v_t_mat);
+    DEBUG_ASSERT_MSG(svd_op == true, 
 		     "SVD of dataset not successful\n");
 
     // storing the value of V, the standard PCA loadings
@@ -328,7 +328,7 @@ class SparsePCA {
 
     // calculating the value of the total variance
     double var = 0;
-    for (index_t i = 0; i < dim; i++) {
+    for (size_t i = 0; i < dim; i++) {
       double temp = s_vec.get(i);
       var += temp*temp;
     }
@@ -387,7 +387,7 @@ class SparsePCA {
    * in the active set by adding a column and 
    * hence increasing its rank
    */
-  void UpdateR_(Vector&, Matrix&, double, index_t*, Matrix*);
+  void UpdateR_(Vector&, Matrix&, double, size_t*, Matrix*);
 
   /**
    * This function downdates the same upper triangular 
@@ -396,7 +396,7 @@ class SparsePCA {
    * corresponding column, and adjusting the following 
    * columns to maintain the upper triangularity.
    */
-  void DowndateR_(Matrix*, index_t);
+  void DowndateR_(Matrix*, size_t);
 
   /**
    * This function returns the maximum absolute 
@@ -414,14 +414,14 @@ class SparsePCA {
    * This function returns the maximum absolute 
    * value in a vector along with its index
    */
-  double MaxAbsValue_(Vector&, index_t*);
+  double MaxAbsValue_(Vector&, size_t*);
 
   /**
    * This function calculates the number of occurrence of a 
    * particular marker in an array (used for calculating the 
    * cardinality of the active, ignored and inactive sets)
    */
-  index_t SubsetLength_(index_t*, index_t, index_t);
+  size_t SubsetLength_(size_t*, size_t, size_t);
     
   /**
    * This function makes a subvector out of a vector
@@ -430,7 +430,7 @@ class SparsePCA {
    * inactive parts of the $\beta$ vector 
    * and the sign vector)
    */
-  void MakeSubvector_(Vector&, index_t*, index_t, Vector*);
+  void MakeSubvector_(Vector&, size_t*, size_t, Vector*);
 
   /**
    * This function makes a subvector out of a vector
@@ -440,7 +440,7 @@ class SparsePCA {
    * the $\beta$ vector and the sign vector in the 
    * proper sequence of their entrance in the active set)
    */
-  void MakeSubvector_(Vector&, ArrayList<index_t>&, Vector*);
+  void MakeSubvector_(Vector&, ArrayList<size_t>&, Vector*);
 
  /**
    * This function makes a submatrix out of a matrix
@@ -449,7 +449,7 @@ class SparsePCA {
    * (used for obtaining the inactive part of 
    * the data matrix)
    */
-  void MakeSubmatrix_(Matrix&, index_t*, index_t, Matrix*);
+  void MakeSubmatrix_(Matrix&, size_t*, size_t, Matrix*);
 
   /**
    * This function makes a submatrix out of a matrix
@@ -459,7 +459,7 @@ class SparsePCA {
    * the dataset in the proper sequence 
    * of their entrance in the active set)
    */
-  void MakeSubmatrix_(Matrix&, ArrayList<index_t>&, Matrix*);
+  void MakeSubmatrix_(Matrix&, ArrayList<size_t>&, Matrix*);
 
 };
 

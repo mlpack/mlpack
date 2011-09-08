@@ -2,19 +2,19 @@
 #pragma once
 
 class MyFun {
-  index_t dim;
+  size_t dim;
 public:
   MyFun() : dim(2) { }
 
-  index_t n_dim() {
+  size_t n_dim() {
     return dim;
   }
 
-  index_t n_con() {
+  size_t n_con() {
     return dim;
   }
 
-  index_t n_eq() {
+  size_t n_eq() {
     return 0;
   }
 
@@ -28,23 +28,23 @@ public:
     la::ScaleOverwrite(2, x, g);
   }
   
-  double cValue(index_t i, const Vector& x) {
+  double cValue(size_t i, const Vector& x) {
     DEBUG_ASSERT(i < n_con());
     return -0.4*(i+1)-x[i];
   }
 
-  void cGradient(index_t i, const Vector& x, Vector* gc) {
+  void cGradient(size_t i, const Vector& x, Vector* gc) {
     DEBUG_ASSERT(i < n_con());
     gc->SetAll(0.0);
     (*gc)[i] = -1.0;
   }
 
-  double eqValue(index_t i, const Vector& x) {
+  double eqValue(size_t i, const Vector& x) {
     DEBUG_ASSERT(i < n_eq());
     return INFINITY;
   }
 
-  void eqGradient(index_t i, const Vector& x, Vector* gc) {
+  void eqGradient(size_t i, const Vector& x, Vector* gc) {
     DEBUG_ASSERT(i < n_eq());
   }
 
@@ -78,19 +78,19 @@ public:
 };
 
 class MyFun1 {
-  index_t dim;
+  size_t dim;
 public:
-  MyFun1(index_t d) : dim(d) { }
+  MyFun1(size_t d) : dim(d) { }
 
-  index_t n_dim() {
+  size_t n_dim() {
     return dim;
   }
 
-  index_t n_con() {
+  size_t n_con() {
     return dim;
   }
 
-  index_t n_eq() {
+  size_t n_eq() {
     return 0;
   }
 
@@ -111,23 +111,23 @@ public:
       (*g)[i] = exp(x[i])/s;
   }
   
-  double cValue(index_t i, const Vector& x) {
+  double cValue(size_t i, const Vector& x) {
     DEBUG_ASSERT(i < n_con());
     return -0.4*(i+1)-x[i];
   }
 
-  void cGradient(index_t i, const Vector& x, Vector* gc) {
+  void cGradient(size_t i, const Vector& x, Vector* gc) {
     DEBUG_ASSERT(i < n_con());
     gc->SetAll(0.0);
     (*gc)[i] = -1.0;
   }
 
-  double eqValue(index_t i, const Vector& x) {
+  double eqValue(size_t i, const Vector& x) {
     DEBUG_ASSERT(i < n_eq());
     return INFINITY;
   }
 
-  void eqGradient(index_t i, const Vector& x, Vector* gc) {
+  void eqGradient(size_t i, const Vector& x, Vector* gc) {
     DEBUG_ASSERT(i < n_eq());
   }
 

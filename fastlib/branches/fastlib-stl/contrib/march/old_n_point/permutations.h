@@ -25,20 +25,20 @@ namespace npt {
     
     
     // permutation_indices_(i, j) is the location of point i in permutation j
-    arma::Mat<index_t> permutation_indices_;
+    arma::Mat<size_t> permutation_indices_;
     
     // the value of n being considered
-    index_t tuple_size_;
+    size_t tuple_size_;
     
     // tuple_size_!
-    index_t num_perms_;
+    size_t num_perms_;
     
     
     //////////////// functions //////////////////
     
     // helper function at startup, actually forms all the permutations
     void GeneratePermutations_(int k, int* perm_index,
-                               arma::Col<index_t>& trial_perm);
+                               arma::Col<size_t>& trial_perm);
     
     
     
@@ -49,18 +49,18 @@ namespace npt {
     Permutations() {}
     
     // The constructor needs to fill in permuation_indices_
-    Permutations(index_t n) {
+    Permutations(size_t n) {
 
       tuple_size_ = n;
       
       // compute the factorial
       num_perms_ = 1;
-      for (index_t i = 2; i <= tuple_size_; i++) {
+      for (size_t i = 2; i <= tuple_size_; i++) {
         num_perms_ = num_perms_ * i;
       } // for i
       
       // make the trial permutation
-      arma::Col<index_t> trial_perm(tuple_size_);
+      arma::Col<size_t> trial_perm(tuple_size_);
       trial_perm.fill(-1);
       
       // allocate the matrix
@@ -83,7 +83,7 @@ namespace npt {
     }
     
     // just accesses elements of permutation_indices_
-    index_t GetPermutation(index_t perm_index, index_t point_index) const {
+    size_t GetPermutation(size_t perm_index, size_t point_index) const {
       
       // note that these are backward from how they're input
       // the old code does it this way and I don't want to get confused

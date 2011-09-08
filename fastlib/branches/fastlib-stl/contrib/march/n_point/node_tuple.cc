@@ -20,7 +20,7 @@
 
 // NOTE: this assumes that nodes from the same data set are in consecutive 
 // order in the node_list
-bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
+bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
   
   
   int start_point;
@@ -50,7 +50,7 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
   
   // only check the new node for symmetry with respect to the others
   if (is_left) {
-    for (index_t i = start_point; i < split_ind; i++) {
+    for (size_t i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->left()->end() <= node_list_[i]->begin()) {
         return false;
@@ -58,7 +58,7 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
       
     } // for i
     
-    for (index_t i = split_ind; i < end_point; i++) {
+    for (size_t i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->left()->begin()) {
         return false;
@@ -69,7 +69,7 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
   }
   else { // is right
 
-    for (index_t i = start_point; i < split_ind; i++) {
+    for (size_t i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->right()->end() <= node_list_[i]->begin()) {
         return false;
@@ -77,7 +77,7 @@ bool npt::NodeTuple::CheckSymmetry(index_t split_ind, bool is_left) {
       
     } // for i
     
-    for (index_t i = split_ind; i < end_point; i++) {
+    for (size_t i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->right()->begin()) {
         return false;
@@ -98,7 +98,7 @@ void npt::NodeTuple::UpdateSplitInd_() {
   
   all_leaves_ = true;
   
-  for (index_t i = 0; i < tuple_size_; i++) {
+  for (size_t i = 0; i < tuple_size_; i++) {
     
     if (!(node_list_[i]->is_leaf())) {
       

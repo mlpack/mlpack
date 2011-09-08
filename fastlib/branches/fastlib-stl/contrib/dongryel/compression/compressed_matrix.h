@@ -25,7 +25,7 @@ class CompressedVector {
   Bytef *ptr_;
   
   /** The number of bytes used for compression. */
-  index_t internal_length_;
+  size_t internal_length_;
 
   /** @brief The offsets required to access each block of elements in
    *         the compressed sream.
@@ -35,11 +35,11 @@ class CompressedVector {
   int num_blocks_;
 
   /** The number of elements in the vector. */
-  index_t length_;
+  size_t length_;
 
   /** The currently decompressed block number.
    */
-  index_t current_decompressed_block_;
+  size_t current_decompressed_block_;
 
   /** @brief The cache of decompressed block of elements.
    */
@@ -80,7 +80,7 @@ class CompressedVector {
    */
   void Copy(const GenVector<T> &uncompressed_vector) {
 
-    index_t uncompressed_block_size = block_size * sizeof(T);
+    size_t uncompressed_block_size = block_size * sizeof(T);
     num_blocks_ = (int) 
       ceilf(((double)uncompressed_vector.length()) / ((double) block_size));
 
@@ -97,7 +97,7 @@ class CompressedVector {
     // starting byte for each.
     uLongf remaining_buffer_size = buffer_size;
     uLongf total_bytes_chewed = 0;
-    for(index_t i = 0; i < num_blocks_; i++) {
+    for(size_t i = 0; i < num_blocks_; i++) {
       int success_flag = compress(tmp_buffer + total_bytes_chewed, 
 				  &remaining_buffer_size, 
 				  (const Bytef *) uncompressed_vector.ptr() +
@@ -130,18 +130,18 @@ class CompressedVector {
   }
 
   /** The number of elements in this vector. */
-  index_t length() const {
+  size_t length() const {
     return length_;
   }
   
   /**
    * Gets the i'th element of this vector.
    */
-  T operator [] (index_t i) {
+  T operator [] (size_t i) {
     DEBUG_BOUNDS(i, length_);
 
     // Compute the block that contains this element.
-    index_t block_index = i / block_size;
+    size_t block_index = i / block_size;
 
     // If the current block is not in the cache, then fetch the block.
     if(block_index != current_decompressed_block_) {

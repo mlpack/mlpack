@@ -23,8 +23,8 @@
 class SmallSdpNmf {
  public:
   void Init(fx_module *module, 
-			ArrayList<index_t> &rows,
-			ArrayList<index_t> &columns,
+			ArrayList<size_t> &rows,
+			ArrayList<size_t> &columns,
       ArrayList<double>  &values);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -42,18 +42,18 @@ class SmallSdpNmf {
  private:
   fx_module *module_;
   double sigma_;
-	index_t num_of_columns_;
-	index_t num_of_rows_;
-	index_t new_dim_;
-	index_t offset_h_;
-  index_t offset_tw_;
-  index_t offset_th_;
-  index_t offset_v_; 
-	ArrayList<index_t> rows_;
-	ArrayList<index_t> columns_;
+	size_t num_of_columns_;
+	size_t num_of_rows_;
+	size_t new_dim_;
+	size_t offset_h_;
+  size_t offset_tw_;
+  size_t offset_th_;
+  size_t offset_v_; 
+	ArrayList<size_t> rows_;
+	ArrayList<size_t> columns_;
   ArrayList<double>  values_;
   Matrix objective_factor_;
-  index_t number_of_cones_;
+  size_t number_of_cones_;
   double desired_duality_gap_;
   double gradient_tolerance_;
   double v_accuracy_;

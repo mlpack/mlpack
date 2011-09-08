@@ -45,8 +45,8 @@ namespace math {
   /**
    * Rounds a double-precision to an integer, casting it too.
    */
-  inline int64 RoundInt(double d) {
-    return int64(nearbyint(d));
+  inline int64_t RoundInt(double d) {
+    return int64_t(nearbyint(d));
   }
 
   /**

@@ -56,13 +56,13 @@ namespace hmm_support {
    * Load an array list of matrices from file where the matrices
    * are seperated by a line start with %
    */
-  success_t load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
+  bool load_matrix_list(const char* filename, ArrayList<Matrix> *matlst);
 
   /** 
    * Load an array list of vectors from file where the vectors
    * are seperated by a line start with %
    */
-  success_t load_vector_list(const char* filename, ArrayList<Vector> *veclst);
+  bool load_vector_list(const char* filename, ArrayList<Vector> *veclst);
 };
 
 #endif

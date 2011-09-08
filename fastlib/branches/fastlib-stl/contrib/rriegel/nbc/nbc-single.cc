@@ -68,7 +68,7 @@ class Nbc {
   /** Point data includes class (referencs) and prior (queries). */
   class NbcPoint {
    private:
-    index_t index_;
+    size_t index_;
     Vector vec_;
     /** The point's class (if reference). */
     bool is_pos_;
@@ -84,7 +84,7 @@ class Nbc {
     /**
      * Gets the index.
      */
-    index_t index() const {
+    size_t index() const {
       return index_;
     }
     /**
@@ -139,7 +139,7 @@ class Nbc {
      * @param data the vector data read from file
      */
     template<typename Param>
-    void Set(const Param& param, index_t index, const Vector& data) {
+    void Set(const Param& param, size_t index, const Vector& data) {
       index_ = index;
       mem::Copy(vec_.ptr(), data.ptr(), vec_.length());
       if (param.no_labels) {
@@ -190,12 +190,12 @@ class Nbc {
     double coeff_pos_loo;
     double coeff_neg_loo;
     /** The dimensionality of the data sets. */
-    index_t dim;
+    size_t dim;
     /** Number of reference points. */
-    index_t count_all;
+    size_t count_all;
     /** Number of positive reference points. Similar for _neg. */
-    index_t count_pos;
-    index_t count_neg;
+    size_t count_pos;
+    size_t count_neg;
     /** The specified threshold for certainty of positive class. */
     double threshold;
     /** If set, will be used as prior for all data. */
@@ -255,7 +255,7 @@ class Nbc {
      *
      * Note: called *after* reading all data.
      */
-    void SetDimensions(index_t vector_dimension, index_t n_points) {
+    void SetDimensions(size_t vector_dimension, size_t n_points) {
       dim = vector_dimension; // last two cols already trimmed
       count_all = n_points;
       peak_pos = kernel_pos.EvalUnnormOnSq(0);
@@ -297,8 +297,8 @@ class Nbc {
       double norm_pos = kernel_pos.CalcNormConstant(dim);
       double norm_neg = kernel_neg.CalcNormConstant(dim);
 
-      index_t count_pos_loo = loo ? count_pos - 1 : count_pos;
-      index_t count_neg_loo = loo ? count_neg - 1 : count_neg;
+      size_t count_pos_loo = loo ? count_pos - 1 : count_pos;
+      size_t count_neg_loo = loo ? count_neg - 1 : count_neg;
 
       coeff_pos = (1 - threshold - epsilon) * norm_neg * count_neg_loo
 	  / ((threshold + epsilon) * norm_pos * count_pos);
@@ -324,7 +324,7 @@ class Nbc {
    public:
     Vector mass;
     double sumsq;
-    index_t count;
+    size_t count;
 
     OT_DEF_BASIC(MomentInfo) {
       OT_MY_OBJECT(mass);
@@ -345,7 +345,7 @@ class Nbc {
       count = 0;
     }
 
-    void Add(index_t count_in, const Vector& mass_in, double sumsq_in) {
+    void Add(size_t count_in, const Vector& mass_in, double sumsq_in) {
       if (unlikely(count_in != 0)) {
         la::AddTo(mass_in, &mass);
         sumsq += sumsq_in;
@@ -426,8 +426,8 @@ class Nbc {
     Bound bound_pos;
     Bound bound_neg;
     /** Number of positive points. Similar for _neg. */
-    index_t count_pos;
-    index_t count_neg;
+    size_t count_pos;
+    size_t count_neg;
     /** Bounds for query priors. Similar for _neg. */
     DRange pi_pos;
     DRange pi_neg;
@@ -481,7 +481,7 @@ class Nbc {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param,
-        const NbcStat& stat, const Bound& bound, index_t n) {
+        const NbcStat& stat, const Bound& bound, size_t n) {
       moment_info_pos.Add(stat.moment_info_pos);
       moment_info_neg.Add(stat.moment_info_neg);
       bound_pos |= stat.bound_pos;
@@ -496,7 +496,7 @@ class Nbc {
      * Finish accumulating data; for instance, for mean, divide by the
      * number of points.
      */
-    void Postprocess(const Param& param, const Bound& bound, index_t n) {
+    void Postprocess(const Param& param, const Bound& bound, size_t n) {
     }
   };
   typedef NbcStat RStat;
@@ -607,7 +607,7 @@ class Nbc {
 
     // Why does this have a q_index and r_root?  RR
     void Postprocess(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_root) {
       if (label == LAB_EITHER) {
 	if (param.loo) {
@@ -650,7 +650,7 @@ class Nbc {
 
     void ApplyPostponed(const Param& param,
         const QPostponed& postponed,
-        const QPoint& q, index_t q_index) {
+        const QPoint& q, size_t q_index) {
       label &= postponed.label;
       DEBUG_ASSERT(label != LAB_NEITHER);
 
@@ -719,7 +719,7 @@ class Nbc {
     }
 
     void Accumulate(const Param& param,
-        const QSummaryResult& result, index_t n_points) {
+        const QSummaryResult& result, size_t n_points) {
       density_pos |= result.density_pos;
       density_neg |= result.density_neg;
       label |= result.label;
@@ -767,13 +767,13 @@ class Nbc {
    */
   struct GlobalResult {
    public:
-    index_t count_pos;
-    index_t count_neg;
-    index_t count_unknown;
-    index_t count_correct_pos;
-    index_t count_correct_neg;
-    index_t count_true_pos;
-    index_t count_true_neg;
+    size_t count_pos;
+    size_t count_neg;
+    size_t count_unknown;
+    size_t count_correct_pos;
+    size_t count_correct_neg;
+    size_t count_true_pos;
+    size_t count_true_neg;
     
     OT_DEF_BASIC(GlobalResult) {
       OT_MY_OBJECT(count_pos);
@@ -836,7 +836,7 @@ class Nbc {
       fx_result_double(datanode, "cov_neg", cov_neg);
     }
     void ApplyResult(const Param& param,
-        const QPoint& q_point, index_t q_i,
+        const QPoint& q_point, size_t q_i,
         const QResult& q_result) {
       if (q_result.label == LAB_POS) {
 	++count_pos;
@@ -877,7 +877,7 @@ class Nbc {
     // - this function must assume that global_result is incomplete (which is
     // reasonable in allnn)
     bool StartVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_node,
 	const Delta& delta,
         const QSummaryResult& unapplied_summary_results,
@@ -916,8 +916,8 @@ class Nbc {
     }
 
     void VisitPair(const Param& param,
-        const QPoint& q, index_t q_index,
-        const RPoint& r, index_t r_index) {
+        const QPoint& q, size_t q_index,
+        const RPoint& r, size_t r_index) {
       double distance = la::DistanceSqEuclidean(q.vec(), r.vec());
       if (r.is_pos()) {
 	density_pos += param.kernel_pos.EvalUnnormOnSq(distance);
@@ -927,7 +927,7 @@ class Nbc {
     }
 
     void FinishVisitingQueryPoint(const Param& param,
-        const QPoint& q, index_t q_index,
+        const QPoint& q, size_t q_index,
         const RNode& r_node,
         const QSummaryResult& unapplied_summary_results,
         QResult* q_result,
@@ -1094,8 +1094,8 @@ void NbcMain(datanode *module) {
   double results_megs = fx_param_double(module, "results/megs", 1000);
   DistributedCache *q_points_cache;
   DistributedCache *r_points_cache;
-  index_t n_q_points;
-  index_t n_r_points;
+  size_t n_q_points;
+  size_t n_r_points;
   ThorTree<Nbc::Param, Nbc::QPoint, Nbc::QNode> *q_tree;
   ThorTree<Nbc::Param, Nbc::RPoint, Nbc::RNode> *r_tree;
   DistributedCache q_results;
@@ -1182,7 +1182,7 @@ void NbcMain(datanode *module) {
       points_array.Init(q_points_cache, BlockDevice::M_READ);
       CacheReadIter<Nbc::QResult> result_iter(&result_array, 0);
       CacheReadIter<Nbc::QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < n_q_points; i++,
+      for (size_t i = 0; i < n_q_points; i++,
 	     result_iter.Next(), points_iter.Next()) {
 	classifications.set(0, (*points_iter).index(),
 			    2 - (*result_iter).label);

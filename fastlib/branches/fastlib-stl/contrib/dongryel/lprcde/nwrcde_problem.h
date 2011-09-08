@@ -424,8 +424,8 @@ class NWRCdeProblem {
       const Matrix &reference_targets = *(targets[0]);
       rset_target_sum.Init(reference_targets.n_cols());
       rset_target_sum.SetZero();
-      for(index_t c = 0; c < reference_targets.n_cols(); c++) {	
-	for(index_t r = 0; r < reference_targets.n_rows(); r++) {
+      for(size_t c = 0; c < reference_targets.n_cols(); c++) {	
+	for(size_t r = 0; r < reference_targets.n_rows(); r++) {
 	  rset_target_sum[c] += reference_targets.get(r, c);
 	}
       }
@@ -484,7 +484,7 @@ class NWRCdeProblem {
    public:
 
     void Finalize(const MultiTreeGlobal &globals, 
-		  const ArrayList<index_t> &mapping) {
+		  const ArrayList<size_t> &mapping) {
       
       MultiTreeUtility::ShuffleAccordingToQueryPermutation(final_results,
 							   mapping);
@@ -492,7 +492,7 @@ class NWRCdeProblem {
 
     template<typename TQueryStat>
     void FinalPush(const Matrix &qset, const TQueryStat &query_stat,
-		   index_t q_index) {
+		   size_t q_index) {
       
       ApplyPostponed(query_stat.postponed, q_index);
       
@@ -506,7 +506,7 @@ class NWRCdeProblem {
     
     template<typename TQueryPostponed>
     void ApplyPostponed(const TQueryPostponed &postponed_in,
-			index_t q_index) {
+			size_t q_index) {
       
       nwr_numerator_sum_l[q_index] += postponed_in.nwr_numerator_sum_l;
       nwr_numerator_sum_e[q_index] += postponed_in.nwr_numerator_sum_e;
@@ -523,7 +523,7 @@ class NWRCdeProblem {
 
     template<typename ReferenceTree>
     void UpdatePrunedComponents(const ArrayList <ReferenceTree *> &rnodes,
-				index_t q_index) {
+				size_t q_index) {
       nwr_numerator_n_pruned[q_index] += rnodes[0]->stat().
 	sum_of_target_values;
       nwr_denominator_n_pruned[q_index] += rnodes[0]->count();
@@ -548,7 +548,7 @@ class NWRCdeProblem {
     }
     
     template<typename MultiTreeGlobal>
-    void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
+    void PostProcess(const MultiTreeGlobal &globals, size_t q_index) {
       
       if(nwr_denominator_sum_e[q_index] == 0 &&
 	 nwr_numerator_sum_e[q_index] == 0) {
@@ -563,7 +563,7 @@ class NWRCdeProblem {
     void PrintDebug(const char *output_file_name) const {
       FILE *stream = fopen(output_file_name, "w+");
       
-      for(index_t q = 0; q < final_results.length(); q++) {
+      for(size_t q = 0; q < final_results.length(); q++) {
 	fprintf(stream, "%g %g %g\n", final_results[q],
 		nwr_numerator_n_pruned[q], nwr_denominator_n_pruned[q]);
       }
@@ -684,7 +684,7 @@ class NWRCdeProblem {
     }
     
     template<typename TQueryResult>
-    void Accumulate(const TQueryResult &query_results, index_t q_index) {
+    void Accumulate(const TQueryResult &query_results, size_t q_index) {
       nwr_numerator_sum_l = 
 	std::min(nwr_numerator_sum_l,
 		 query_results.nwr_numerator_sum_l[q_index]);
@@ -795,10 +795,10 @@ class NWRCdeProblem {
       summary.SetZero();
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count) {
+    void Init(const Matrix& dataset, size_t &start, size_t &count) {
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count,
+    void Init(const Matrix& dataset, size_t &start, size_t &count,
 	      const MultiTreeQueryStat& left_stat,
 	      const MultiTreeQueryStat& right_stat) {
     }
@@ -850,10 +850,10 @@ class NWRCdeProblem {
     
    public:
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count) {
+    void Init(const Matrix& dataset, size_t &start, size_t &count) {
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count,
+    void Init(const Matrix& dataset, size_t &start, size_t &count,
 	      const MultiTreeReferenceStat& left_stat,
 	      const MultiTreeReferenceStat& right_stat) {
       
@@ -883,7 +883,7 @@ class NWRCdeProblem {
 		  const TKernelAux &kernel_aux_in,
 		  const ArrayList<Matrix *> &reference_sets,
 		  const ArrayList<Matrix *> &targets,
-		  index_t start, index_t count) {
+		  size_t start, size_t count) {
       
       PostInitCommon(bounding_primitive, kernel_aux_in);
       
@@ -902,7 +902,7 @@ class NWRCdeProblem {
 	 kernel_aux_in.sea_.get_max_order());
       
       sum_of_target_values = 0;
-      for(index_t i = start; i < start + count; i++) {
+      for(size_t i = start; i < start + count; i++) {
 	sum_of_target_values += nwr_numerator_weights_alias[i];	
       }
     }
@@ -915,7 +915,7 @@ class NWRCdeProblem {
 		  const TKernelAux &kernel_aux_in,
 		  const ArrayList<Matrix *> &reference_sets,
 		  const ArrayList<Matrix *> &targets,
-		  index_t start, index_t count,
+		  size_t start, size_t count,
 		  const MultiTreeReferenceStat& left_stat,
 		  const MultiTreeReferenceStat& right_stat) {
       
@@ -962,7 +962,7 @@ class NWRCdeProblem {
 	break;
       case TDelta::DIRECT_FARFIELD:
 	DEBUG_ASSERT(delta.nwr_numerator.order_farfield >= 0);
-	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 	  query_results.nwr_numerator_sum_e[q] += 
 	    rnode->stat().nwr_numerator_farfield_expansion.EvaluateField
 	    (qset, q, delta.nwr_numerator.order_farfield);
@@ -989,7 +989,7 @@ class NWRCdeProblem {
 	break;
       case TDelta::DIRECT_FARFIELD:
 	DEBUG_ASSERT(delta.nwr_denominator.order_farfield >= 0);
-	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 	  query_results.nwr_denominator_sum_e[q] += 
 	    rnode->stat().nwr_denominator_farfield_expansion.EvaluateField
 	    (qset, q, delta.nwr_denominator.order_farfield);
@@ -1116,8 +1116,8 @@ class NWRCdeProblem {
 					MultiTreeQueryResult &query_results) {
     
     // Compute pairwise contributions...
-    index_t q_index = globals.query_node_chosen_indices[0];
-    index_t r_index = globals.reference_node_chosen_indices[0];
+    size_t q_index = globals.query_node_chosen_indices[0];
+    size_t r_index = globals.reference_node_chosen_indices[0];
 
     double squared_distance =
       la::DistanceSqEuclidean(globals.dimension,

@@ -8,7 +8,7 @@ class MLObjective {
 	void Init2(int count_init2);
 	void Init3(int sample_size,
 						ArrayList<Matrix> &added_first_stage_x,
-						ArrayList<index_t> &added_first_stage_y);
+						ArrayList<size_t> &added_first_stage_y);
 						
 						
 
@@ -41,7 +41,7 @@ class MLObjective {
 	
 	void ComputePredictionError(double current_sample, 
 									  Vector &current_parameter,
-										ArrayList<index_t> &true_decision,
+										ArrayList<size_t> &true_decision,
 										double *postponed_prediction_error,
 										double *choice_prediction_error);
 										
@@ -53,12 +53,12 @@ class MLObjective {
 
 	ArrayList<Matrix> first_stage_x_; 
 	 
-  ArrayList<index_t>  first_stage_y_;
+  ArrayList<size_t>  first_stage_y_;
 	// If the value is -1 then it corresponds
   // to all zeros in y
   // If it is greter than zero then it corresponds to 
   // the non zero element index
-	//ArrayList<index_t> second_stage_y_;
+	//ArrayList<size_t> second_stage_y_;
 	//1 then it corresponds to all one in y^post
 	
 	//it corresponds to the unknown attributes index in unk_x_past file
@@ -68,14 +68,14 @@ class MLObjective {
 	ArrayList<double> exp_betas_times_x1_;
 		
 
-	//ArrayList<index_t> exp_betas_times_x2_tilde_;
+	//ArrayList<size_t> exp_betas_times_x2_tilde_;
 	
 	//max num of choices among all
 	//unk_x_past_.size==max_number_alternatives_
 	//int max_number_alternatives_;
 	//number of positive elements in ind_unk_x
 	//int num_unknown_x_;
-  index_t num_of_betas_;	
+  size_t num_of_betas_;	
 	
 
   double ComputeTerm1_(Vector &betas);

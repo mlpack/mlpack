@@ -18,9 +18,9 @@
 
 using namespace hmm_support;
 
-success_t generate_discrete();
-success_t generate_gaussian();
-success_t generate_mixture();
+bool generate_discrete();
+bool generate_gaussian();
+bool generate_mixture();
 void usage();
 
 const fx_entry_doc hmm_generate_main_entries[] = {
@@ -52,7 +52,7 @@ const fx_module_doc hmm_generate_main_doc = {
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, &hmm_generate_main_doc );
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (fx_param_exists(NULL,"type")) {
     const char* type = fx_param_str_req(NULL, "type");
     if (strcmp(type, "discrete")==0)
@@ -63,14 +63,14 @@ int main(int argc, char* argv[]) {
       s = generate_mixture();
     else {
       printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-      return SUCCESS_PASS;
+      return true;
     }
   }
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
 
   fx_done(NULL);
 }
@@ -87,10 +87,10 @@ void usage() {
   printf("  --statefile=file : output file for generated state sequences\n");
 }
 
-success_t generate_mixture() {
+bool generate_mixture() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
@@ -108,14 +108,14 @@ success_t generate_mixture() {
   hmm.InitFromFile(profile);
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     NONFATAL("Couldn't open '%s' for writing.", seqout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -133,13 +133,13 @@ success_t generate_mixture() {
   }
 
   //printf("---END---");
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t generate_gaussian() {
+bool generate_gaussian() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
@@ -157,14 +157,14 @@ success_t generate_gaussian() {
   hmm.InitFromFile(profile);
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     NONFATAL("Couldn't open '%s' for writing.", seqout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -180,13 +180,13 @@ success_t generate_gaussian() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");    
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t generate_discrete() {
+bool generate_discrete() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const int seqlen = fx_param_int(NULL, "length", 10);
@@ -204,14 +204,14 @@ success_t generate_discrete() {
   hmm.InitFromFile(profile);
 
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     NONFATAL("Couldn't open '%s' for writing.", seqout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -226,5 +226,5 @@ success_t generate_discrete() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");    
   }
-  return SUCCESS_PASS;
+  return true;
 }

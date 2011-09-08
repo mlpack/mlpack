@@ -42,7 +42,7 @@ namespace npt {
       tensor_rank_ = num_bandwidths_.size();
       
       total_num_bandwidths_ = 0;
-      for (index_t i = 0; i < num_bandwidths_.size(); i++) {
+      for (size_t i = 0; i < num_bandwidths_.size(); i++) {
         total_num_bandwidths_ += num_bandwidths_[i];
       }
       
@@ -54,7 +54,7 @@ namespace npt {
       results_.resize(result_size);
       weighted_results_.resize(result_size);
       
-      for (index_t i = 0; i < tensor_rank_; i++) {
+      for (size_t i = 0; i < tensor_rank_; i++) {
         
         double band_step_i = (max_bands[i] - min_bands[i]) 
                                 / (double)num_bandwidths_[i];

@@ -29,13 +29,13 @@ int main(int argc, char *argv[]){
   l_bfgs_node=fx_submodule(fx_root, "opts/l_bfgs");
   optfun_node=fx_submodule(fx_root, "opts/optfun");
   // this is sort of a hack and it has to be eliminated in the final version
-  index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
+  size_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
   fx_set_param_int(optfun_node, "new_dimension", new_dimension); 
   
   if (!fx_param_exists(fx_root, "opts/optfun/nearest_neighbor_file")) {
     Matrix data_mat;
     std::string data_file=fx_param_str_req(NULL, "opts/data_file");
-    if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
+    if (data::Load(data_file.c_str(), &data_mat)==false) {
       FATAL("Didn't manage to load %s", data_file.c_str());
     }
     NOTIFY("Removing the mean., centering data...");
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]){
   
  
     bool pca_preprocess=fx_param_bool(fx_root, "opts/pca_pre", false);
-    index_t pca_dimension=fx_param_int(fx_root, "opts/pca_dim", 5);
+    size_t pca_dimension=fx_param_int(fx_root, "opts/pca_dim", 5);
     bool pca_init=fx_param_bool(fx_root, "opts/pca_init", false);
     Matrix *initial_data=NULL;
     if (pca_preprocess==true) {
@@ -56,7 +56,7 @@ int main(int argc, char *argv[]){
     if (pca_init==true) {
       NOTIFY("Preprocessing with pca");
       initial_data = new Matrix();
-      index_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
+      size_t new_dimension=fx_param_int(l_bfgs_node, "new_dimension", 2);
       OptUtils::SVDTransform(data_mat, initial_data, new_dimension);
     }
   
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
         engine.set_coordinates(*initial_data);
       }
       engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
+      if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
       done=true;
@@ -88,7 +88,7 @@ int main(int argc, char *argv[]){
         engine.set_coordinates(*initial_data);
       }
       engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
+      if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
       done=true;
@@ -105,7 +105,7 @@ int main(int argc, char *argv[]){
         engine.set_coordinates(*initial_data);
       }
       engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
+      if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
       done=true;
@@ -134,7 +134,7 @@ int main(int argc, char *argv[]){
       LBfgs<MaxVariance> engine;
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
+      if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
       done=true;
@@ -149,7 +149,7 @@ int main(int argc, char *argv[]){
       LBfgs<MaxFurthestNeighbors> engine;
       engine.Init(&opt_function, l_bfgs_node);
       engine.ComputeLocalOptimumBFGS();
-      if (data::Save(result_file.c_str(), *engine.coordinates())==SUCCESS_FAIL) {
+      if (data::Save(result_file.c_str(), *engine.coordinates())==false) {
         FATAL("Didn't manage to save %s", result_file.c_str());
       }
       done=true;

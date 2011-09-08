@@ -21,14 +21,14 @@
 #include "mvu_dot_prod_objective.h"
 
 void LoadFile(std::string filename, 
-    ArrayList<std::pair<index_t, index_t> > &pairs,
+    ArrayList<std::pair<size_t, size_t> > &pairs,
     ArrayList<double> &values);
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv);
   DualManifoldEngine<MVUDotProdObjective> engine;
   std::string train_file=fx_param_str_req(NULL, "train_file"); 
-  ArrayList<std::pair<index_t, index_t> > train_pairs_to_consider;
+  ArrayList<std::pair<size_t, size_t> > train_pairs_to_consider;
   ArrayList<double> train_dot_prods;
   NOTIFY("Loading data from file %s ...\n", train_file.c_str());
   fx_timer_start(NULL, "data_loading");
@@ -41,7 +41,7 @@ int main(int argc, char* argv[]) {
   engine.ComputeLocalOptimum();
   fx_timer_stop(NULL, "optimization");
   NOTIFY("Optimization completed...\n");
-  ArrayList<std::pair<index_t, index_t> > test_pairs_to_consider;
+  ArrayList<std::pair<size_t, size_t> > test_pairs_to_consider;
   ArrayList<double> test_dot_prods;
   std::string test_file=fx_param_str_req(NULL, "test_file"); 
   NOTIFY("Evaulating test file %s ...\n", test_file.c_str());
@@ -56,10 +56,10 @@ int main(int argc, char* argv[]) {
   result_w.append("_w.csv");
   result_h.append("_v.csv");
   NOTIFY("Saving results ...\n");
-  if (data::Save(result_w.c_str(),*engine.Matrix1())==SUCCESS_FAIL) {
+  if (data::Save(result_w.c_str(),*engine.Matrix1())==false) {
     NONFATAL("Failed to save matrix1 on %s", result_w.c_str());
   }
-  if (data::Save(result_h.c_str(),*engine.Matrix2())==SUCCESS_FAIL) {
+  if (data::Save(result_h.c_str(),*engine.Matrix2())==false) {
     NONFATAL("Failed to save matrix2 on %s", result_h.c_str());
   }
   engine.Destruct();
@@ -67,7 +67,7 @@ int main(int argc, char* argv[]) {
 }
 
 void LoadFile(std::string filename, 
-    ArrayList<std::pair<index_t, index_t> > &pairs,
+    ArrayList<std::pair<size_t, size_t> > &pairs,
     ArrayList<double> &values) {
   pairs.Init();
   values.Init();
@@ -77,10 +77,10 @@ void LoadFile(std::string filename,
          strerror(errno));
   }
   while (!feof(fp)) {
-    index_t user_id;
-    index_t movie_id;
+    size_t user_id;
+    size_t movie_id;
     double rating;
-    index_t timestamp;
+    size_t timestamp;
     fscanf(fp, "%i %i %lg %i", &user_id, &movie_id, &rating, &timestamp);
     pairs.PushBackCopy(std::make_pair(user_id-1, 
           movie_id-1));

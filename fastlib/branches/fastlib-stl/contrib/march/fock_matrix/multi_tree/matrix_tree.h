@@ -30,8 +30,8 @@ private:
   // I also need an invariant on whether to use the upper or lower triangle of 
   // the matrix, and which underlying BasisShellTree node corresponts to the rows
   // and which to the columns.
-  ArrayList<index_t> row_indices_;
-  ArrayList<index_t> col_indices_;
+  ArrayList<size_t> row_indices_;
+  ArrayList<size_t> col_indices_;
   
   /**
    * @brief Any approximations that need to be added to all matrix entries in 
@@ -84,11 +84,11 @@ private:
     
 public:
   
-  ArrayList<index_t>& row_indices() {
+  ArrayList<size_t>& row_indices() {
     return row_indices_;
   }
   
-  ArrayList<index_t>& col_indices() {
+  ArrayList<size_t>& col_indices() {
     return col_indices_;
   }
   
@@ -267,20 +267,20 @@ public:
     DEBUG_ASSERT(row_shells_->end() > col_shells_->begin());
     
     row_indices_.Init();
-    for (index_t i = row_shells_->begin(); i < row_shells_->end(); i++) {
+    for (size_t i = row_shells_->begin(); i < row_shells_->end(); i++) {
       row_indices_.AppendCopy(shells[i]->matrix_indices());
     }
     DEBUG_ASSERT(row_indices_.size() > 0);
     
     col_indices_.Init();
-    for (index_t i = col_shells_->begin(); i < col_shells_->end(); i++) {
+    for (size_t i = col_shells_->begin(); i < col_shells_->end(); i++) {
       col_indices_.AppendCopy(shells[i]->matrix_indices());
     }
     DEBUG_ASSERT(col_indices_.size() > 0);
 
     density_bounds_.InitEmptySet();
-    for (index_t i = 0; i < row_indices_.size(); i++) {
-      for (index_t j = 0; j < col_indices_.size(); j++) {
+    for (size_t i = 0; i < row_indices_.size(); i++) {
+      for (size_t j = 0; j < col_indices_.size(); j++) {
         density_bounds_ |= density.get(row_indices_[i], col_indices_[j]);
       }
     }

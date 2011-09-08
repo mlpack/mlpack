@@ -29,8 +29,8 @@
  *         stopon character
  */
 void tokenizeString( const std::string& str, const std::string& delimiters,
-    std::vector<std::string>& result, index_t pos = 0,
-    const std::string& stopon = "", index_t stopat = 0, bool save_last = false );
+    std::vector<std::string>& result, size_t pos = 0,
+    const std::string& stopon = "", size_t stopat = 0, bool save_last = false );
 
 
 #endif

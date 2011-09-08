@@ -71,7 +71,7 @@ namespace proximity {
       //printf("split_dim=%d, begin=%d, end=%d, count=%d\n", split_dim, node->begin(), node->end(), node->count());
       GenVector<T> coordinate_vals;
       coordinate_vals.Init(node->count());
-      for(index_t i = node->begin(); i < node->end(); i++) {
+      for(size_t i = node->begin(); i < node->end(); i++) {
 	coordinate_vals[i - node->begin()] = matrix.get(split_dim, i);
       }
 
@@ -96,7 +96,7 @@ namespace proximity {
 
       GenVector<T> coordinate_vals;
       coordinate_vals.Init(node->count());
-      for(index_t i = node->begin(); i < node->end(); i++) {
+      for(size_t i = node->begin(); i < node->end(); i++) {
         coordinate_vals[i - node->begin()] = 
 	  lower_limit_matrix.get(split_dim, i);
       }
@@ -132,17 +132,17 @@ namespace proximity {
    *        original indexes to new indices
    */
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
-  TKdTree *MakeGenKdTree(GenMatrix<T>& matrix, index_t leaf_size,
-			 ArrayList<index_t> &old_from_new,
-			 ArrayList<index_t> &new_from_old,
-			 ArrayList< GenVector<index_t> > &o_f_n_maps) {
+  TKdTree *MakeGenKdTree(GenMatrix<T>& matrix, size_t leaf_size,
+			 ArrayList<size_t> &old_from_new,
+			 ArrayList<size_t> &new_from_old,
+			 ArrayList< GenVector<size_t> > &o_f_n_maps) {
     
     TKdTree *node = new TKdTree();
-    //index_t *old_from_new_ptr;
+    //size_t *old_from_new_ptr;
    
     //if (old_from_new) {
       old_from_new.Init(matrix.n_cols());
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      for (size_t i = 0; i < matrix.n_cols(); i++) {
         //(*old_from_new)[i] = i;
 	old_from_new[i] = i;
       }
@@ -154,7 +154,7 @@ namespace proximity {
     
     o_f_n_maps.Init();
 
-    index_t node_id = 0; // the root node
+    size_t node_id = 0; // the root node
     
     o_f_n_maps.PushBack();
     o_f_n_maps[node_id].Init(matrix.n_cols());
@@ -173,7 +173,7 @@ namespace proximity {
     
     //if (new_from_old) {
       new_from_old.Init(matrix.n_cols());
-      for (index_t i = 0; i < matrix.n_cols(); i++) {
+      for (size_t i = 0; i < matrix.n_cols(); i++) {
         //(*new_from_old)[(*old_from_new)[i]] = i;
 	new_from_old[old_from_new[i]] = i;
       }

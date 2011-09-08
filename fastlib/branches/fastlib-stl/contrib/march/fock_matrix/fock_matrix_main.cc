@@ -303,7 +303,7 @@ int main(int argc, char* argv[]) {
 
       // try to load them
       // assuming that all will load or none will
-      if (data::Load(prescreening_fock_file, &prescreening_fock) == SUCCESS_FAIL) {
+      if (data::Load(prescreening_fock_file, &prescreening_fock) == false) {
        
         // destruct them if they didn't load
         prescreening_fock.Destruct();

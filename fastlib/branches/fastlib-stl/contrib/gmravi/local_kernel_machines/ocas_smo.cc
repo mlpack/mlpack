@@ -146,7 +146,7 @@ int OCASSMO::CheckIfInI1_(int position){
     // This means there are no elements. Hence return -1
     return -1;
   }
-  for(index_t i=0;i<I1_indices_.size();i++){
+  for(size_t i=0;i<I1_indices_.size();i++){
     
     if(I1_indices_[i]==position){
       
@@ -167,7 +167,7 @@ int OCASSMO::CheckIfInI2_(int position){
     // This means there are no elements. Hence return -1
     return -1;
   }
-  for(index_t i=0;i<I2_indices_.size();i++){
+  for(size_t i=0;i<I2_indices_.size();i++){
     
     if(I2_indices_[i]==position){
       
@@ -194,7 +194,7 @@ int OCASSMO::CheckIfInI0_(int position){
     // This means there are no elements. Hence return -1
     return -1;
   }
-  for(index_t i=0;i<I0_indices_.size();i++){
+  for(size_t i=0;i<I0_indices_.size();i++){
     
     if(I0_indices_[i]==position){
       
@@ -249,7 +249,7 @@ void OCASSMO::UpdateFiForI0_(double alpha_i_new,double alpha_j_new){
   //ArrayList<double> temp;
   //temp.Init(Fi_for_I0_.size());
 
-  for(index_t z=0;z<Fi_for_I0_.size();z++){
+  for(size_t z=0;z<Fi_for_I0_.size();z++){
    
     Vector a_z;
     int pos_in_subgrad_matrix=I0_indices_[z];

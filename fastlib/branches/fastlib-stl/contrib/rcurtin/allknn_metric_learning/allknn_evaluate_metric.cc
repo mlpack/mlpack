@@ -26,7 +26,7 @@ int main(int argc, char* argv[]) {
   const char* query_file = fx_param_str_req(NULL, "query_file");
   const char* weights_file = fx_param_str_req(NULL, "weights_file");
   const char* output_file = fx_param_str_req(NULL, "output_file");
-  index_t knns = fx_param_int_req(root, "k");
+  size_t knns = fx_param_int_req(root, "k");
 
   arma::mat references;
   data::Load(reference_file, references);
@@ -65,7 +65,7 @@ int main(int argc, char* argv[]) {
   // Now we need to actually run the k-nearest neighbors computation.
   AllkNN allknn(queries, references, 20, knns); // Don't alias the matrix.
   
-  arma::Col<index_t> neighbors;
+  arma::Col<size_t> neighbors;
   arma::vec distances;
 
   NOTIFY("Computing neighbors...");

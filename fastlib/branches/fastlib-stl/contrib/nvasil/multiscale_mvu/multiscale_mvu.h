@@ -50,15 +50,15 @@ class MultiscaleMVU {
     // get all the centroids from the tree
     Matrix centroids;
     scaler_.ComputeCentroids(&centroids); 
-    index_t num_of_centroids=centroids.n_cols();
+    size_t num_of_centroids=centroids.n_cols();
     // for all the scales do the optimization
-    ArrayList<index_t> centroid_ids;
+    ArrayList<size_t> centroid_ids;
     // This will store the results of the optimization in the intermediate
     // steps for the centroids
     Matrix result;
     result.Init(new_dimension_, num_of_centroids);
-    for(index_t i=0; i<result.n_cols(); i++) {
-      for(index_t j=0; j<result.n_rows(); j++) {
+    for(size_t i=0; i<result.n_cols(); i++) {
+      for(size_t j=0; j<result.n_rows(); j++) {
         result.set(j, i, math::Random(0,1));
       }
     }
@@ -66,7 +66,7 @@ class MultiscaleMVU {
     double last_sigma=fx_param_double(l_bfgs_node, "sigma", 10);
     // First you finish for all inermidiate steps
  
-    for(index_t level=start_scale_; level<=end_scale_; level+=step_scale_) {
+    for(size_t level=start_scale_; level<=end_scale_; level+=step_scale_) {
       LBfgs<OptimizedFunction> l_bfgs;
       OptimizedFunction optfun;
       // This will keep the results that also serve as initializations for the
@@ -82,7 +82,7 @@ class MultiscaleMVU {
       interim_data.Init(dimension_, centroid_ids.size());
       // These coordinates will be used as a starting point for optimization
       init_data.Init(new_dimension_, centroid_ids.size());
-      for(index_t j=0; j<centroid_ids.size(); j++) {
+      for(size_t j=0; j<centroid_ids.size(); j++) {
         init_data.CopyColumnFromMat(j, centroid_ids[j], result);
         interim_data.CopyColumnFromMat(j, centroid_ids[j], centroids);
       }
@@ -104,7 +104,7 @@ class MultiscaleMVU {
       // Now put the results back to interim data
       init_data.Destruct();
       l_bfgs.GetResults(&init_data);
-      for(index_t j=0; j<centroid_ids.size(); j++) {
+      for(size_t j=0; j<centroid_ids.size(); j++) {
         result.CopyColumnFromMat(centroid_ids[j], j, init_data);
       }
 
@@ -140,13 +140,13 @@ class MultiscaleMVU {
   FORBID_ACCIDENTAL_COPIES(MultiscaleMVU<OptimizedFunction>);
   datanode *module_;
   AllCentroidkNN  scaler_;
-  index_t start_scale_;
-  index_t end_scale_;
-  index_t step_scale_;
+  size_t start_scale_;
+  size_t end_scale_;
+  size_t step_scale_;
   Matrix points_;
-  index_t num_of_points_;
-  index_t dimension_;
-  index_t new_dimension_;
+  size_t num_of_points_;
+  size_t dimension_;
+  size_t new_dimension_;
 };
 
 #endif

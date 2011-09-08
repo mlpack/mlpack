@@ -42,11 +42,11 @@ class Rosen {
      (*gx)[0]=-400.*f1*x1-2.*f2;
      (*gx)[1]=200.*f1;
    }
-   index_t dimension() {
+   size_t dimension() {
      return dimension_;
    } 
  private:
-  index_t dimension_;
+  size_t dimension_;
     
 };
 

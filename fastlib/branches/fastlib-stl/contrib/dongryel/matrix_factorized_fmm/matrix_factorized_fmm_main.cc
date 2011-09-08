@@ -60,7 +60,7 @@ int main(int argc, char *argv[]) {
     fast_kde.Compute(queries, &fast_kde_results);
     
     FILE *fast_kde_output = fopen("fast_kde_output.txt", "w+");
-    for(index_t q = 0; q < fast_kde_results.length(); q++) {
+    for(size_t q = 0; q < fast_kde_results.length(); q++) {
       fprintf(fast_kde_output, "%g\n", fast_kde_results[q]);
     }
     fclose(fast_kde_output);
@@ -81,7 +81,7 @@ int main(int argc, char *argv[]) {
     fast_kde.Compute(queries, &fast_kde_results);
 
     FILE *fast_kde_output = fopen("w+", "fast_kde_output.txt");
-    for(index_t q = 0; q < fast_kde_results.length(); q++) {
+    for(size_t q = 0; q < fast_kde_results.length(); q++) {
       fprintf(fast_kde_output, "%g\n", fast_kde_results[q]);
     }
     fclose(fast_kde_output);

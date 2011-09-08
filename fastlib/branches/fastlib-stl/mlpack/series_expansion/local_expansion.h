@@ -34,7 +34,7 @@ class LocalExpansion {
   arma::vec coeffs_;
   
   /** order */
-  index_t order_;
+  size_t order_;
   
   /** auxiliary methods for the kernel (derivative, truncation error bound) */
   const TKernelAux *ka_;
@@ -61,13 +61,13 @@ class LocalExpansion {
   const arma::vec& get_coeffs() const { return coeffs_; }
   
   /** Get the approximation order */
-  index_t get_order() const { return order_; }
+  size_t get_order() const { return order_; }
 
   /** Get the maximum possible approximation order */
-  index_t get_max_order() const { return sea_->get_max_order(); }
+  size_t get_max_order() const { return sea_->get_max_order(); }
 
   /** Set the approximation order */
-  void set_order(index_t new_order) { order_ = new_order; }
+  void set_order(size_t new_order) { order_ = new_order; }
 
   // interesting functions...
   
@@ -76,18 +76,18 @@ class LocalExpansion {
    * data into the coefficients
    */
   void AccumulateCoeffs(const arma::mat& data, const arma::vec& weights,
-			index_t begin, index_t end, index_t order);
+			size_t begin, size_t end, size_t order);
 
   /**
    * This does not apply for local coefficients.
    */
   void RefineCoeffs(const arma::mat& data, const arma::vec& weights,
-		    index_t begin, index_t end, index_t order) { }
+		    size_t begin, size_t end, size_t order) { }
   
   /**
    * Evaluates the local coefficients at the given point
    */
-  double EvaluateField(const arma::mat& data, index_t row_num) const;
+  double EvaluateField(const arma::mat& data, size_t row_num) const;
   double EvaluateField(const double *x_q) const;
   
   /**
@@ -102,7 +102,7 @@ class LocalExpansion {
    * for any query point within the specified region for a given bound.
    */
   template<typename TBound>
-  index_t OrderForEvaluating(const TBound &far_field_region,
+  size_t OrderForEvaluating(const TBound &far_field_region,
 			 const TBound &local_field_region,
 			 double min_dist_sqd_regions,
 			 double max_dist_sqd_regions,

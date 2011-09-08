@@ -32,7 +32,7 @@ public:
   
   bool Compare() {
     
-    index_t num_edges = tree1_.n_cols();
+    size_t num_edges = tree1_.n_cols();
     
     if (tree2_.n_cols() != num_edges) {
       printf("Trees are not the same size.\n");
@@ -46,7 +46,7 @@ public:
     
     bool ret_val = true;
     
-    for (index_t i = 0; i < num_edges; i++) {
+    for (size_t i = 0; i < num_edges; i++) {
       
       if (tree1_.ref(2, i) - tree2_.ref(2, i) > 0.0001) {
         printf("Distances not equal in position %d.\n", i);

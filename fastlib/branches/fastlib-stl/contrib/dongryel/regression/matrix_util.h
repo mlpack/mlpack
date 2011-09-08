@@ -10,11 +10,11 @@ class MatrixUtil {
   static double L1Norm(const Matrix &m_mat) {
 
     double l1_norm = 0;
-    for(index_t j = 0; j < m_mat.n_cols(); j++) {
+    for(size_t j = 0; j < m_mat.n_cols(); j++) {
       const double *m_mat_column = m_mat.GetColumnPtr(j);
       double tmp_l1_norm = 0;
 
-      for(index_t i = 0; i < m_mat.n_rows(); i++) {
+      for(size_t i = 0; i < m_mat.n_rows(); i++) {
 	tmp_l1_norm += fabs(m_mat_column[i]);
       }
       l1_norm = std::max(l1_norm, tmp_l1_norm);
@@ -25,7 +25,7 @@ class MatrixUtil {
   static double L1Norm(const Vector &v_vec) {
       
     double l1_norm = 0;
-    for(index_t d = 0; d < v_vec.length(); d++) {
+    for(size_t d = 0; d < v_vec.length(); d++) {
       l1_norm += fabs(v_vec[d]);
     }
       
@@ -35,10 +35,10 @@ class MatrixUtil {
   static double EntrywiseLpNorm(const Matrix &m_mat, int p) {
 
     double lp_norm = 0;
-    for(index_t j = 0; j < m_mat.n_cols(); j++) {
+    for(size_t j = 0; j < m_mat.n_cols(); j++) {
       const double *m_mat_column = m_mat.GetColumnPtr(j);
 
-      for(index_t i = 0; i < m_mat.n_rows(); i++) {
+      for(size_t i = 0; i < m_mat.n_rows(); i++) {
 	lp_norm += pow(fabs(m_mat_column[i]), p);
       }
     }
@@ -47,7 +47,7 @@ class MatrixUtil {
 
   static double EntrywiseLpNorm(int length, const double *v_arr, int p) {
     double lp_norm = 0;
-    for(index_t d = 0; d < length; d++) {
+    for(size_t d = 0; d < length; d++) {
       lp_norm += pow(fabs(v_arr[d]), p);
     }
       
@@ -57,7 +57,7 @@ class MatrixUtil {
   static double EntrywiseLpNorm(const Vector &v_vec, int p) {
       
     double lp_norm = 0;
-    for(index_t d = 0; d < v_vec.length(); d++) {
+    for(size_t d = 0; d < v_vec.length(); d++) {
       lp_norm += pow(fabs(v_vec[d]), p);
     }
       
@@ -87,7 +87,7 @@ class MatrixUtil {
     ro_s_inv.SetZero();
       
     // initialize the diagonal by the inverse of ro_s
-    for(index_t i = 0; i < ro_s.length(); i++) {
+    for(size_t i = 0; i < ro_s.length(); i++) {
       if(ro_s[i] > 0.01 * ro_s[0]) {
 	ro_s_inv.set(i, i, 1.0 / ro_s[i]);
       }
@@ -105,8 +105,8 @@ class MatrixUtil {
 					int p) {
     double norm_diff = 0;
 
-    for(index_t j = 0; j < a_mat.n_cols(); j++) {
-      for(index_t i = 0; i < a_mat.n_rows(); i++) {
+    for(size_t j = 0; j < a_mat.n_cols(); j++) {
+      for(size_t i = 0; i < a_mat.n_rows(); i++) {
 	norm_diff += pow(a_mat.get(i, j) - b_mat.get(i, j), p);
       }
     }
@@ -117,7 +117,7 @@ class MatrixUtil {
 					const Vector &b_vec, int p) {
     double norm_diff = 0;
 
-    for(index_t j = 0; j < a_vec.length(); j++) {
+    for(size_t j = 0; j < a_vec.length(); j++) {
       norm_diff += pow(fabs(a_vec[j] - b_vec[j]), p);
     }
     return norm_diff;
@@ -130,7 +130,7 @@ class MatrixUtil {
     DRange avg_relative_error;
     avg_relative_error.lo = avg_relative_error.hi = 0;
 
-    for(index_t d = 0; d < true_results.size(); d++) {
+    for(size_t d = 0; d < true_results.size(); d++) {
 
       if(isnan(approx_results[d].lo) || isinf(approx_results[d].lo) ||
 	 isnan(true_results[d].lo) || isinf(true_results[d].lo) ||
@@ -157,7 +157,7 @@ class MatrixUtil {
     DRange max_relative_error;
     max_relative_error.lo = max_relative_error.hi = 0;
 
-    for(index_t d = 0; d < true_results.size(); d++) {
+    for(size_t d = 0; d < true_results.size(); d++) {
 
       if(isnan(approx_results[d].lo) || isinf(approx_results[d].lo) ||
 	 isnan(true_results[d].lo) || isinf(true_results[d].lo) ||
@@ -184,7 +184,7 @@ class MatrixUtil {
 
     double avg_relative_error = 0;
 
-    for(index_t d = 0; d < true_results.length(); d++) {
+    for(size_t d = 0; d < true_results.length(); d++) {
 
       if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
 	 isnan(true_results[d]) || isinf(true_results[d])) {
@@ -201,7 +201,7 @@ class MatrixUtil {
 
     double max_relative_error = 0;
 
-    for(index_t d = 0; d < true_results.length(); d++) {
+    for(size_t d = 0; d < true_results.length(); d++) {
 
       if(isnan(approx_results[d]) || isinf(approx_results[d]) ||
 	 isnan(true_results[d]) || isinf(true_results[d])) {
@@ -237,7 +237,7 @@ class MatrixUtil {
     // Initialize the orthonormal basis to be zero.
     orthonormal_basis.SetZero();
 
-    for(index_t i = 0; i < orthonormal_basis.n_cols(); i++) {
+    for(size_t i = 0; i < orthonormal_basis.n_cols(); i++) {
       
       Vector input_matrix_column;
       input_matrix.MakeColumnVector(i, &input_matrix_column);
@@ -246,7 +246,7 @@ class MatrixUtil {
       orthonormal_basis.MakeColumnVector(i, &column_copy);
       column_copy.CopyValues(input_matrix_column);
 
-      for(index_t j = 0; j < i; j++) {
+      for(size_t j = 0; j < i; j++) {
 	double dot_product = 
 	  la::Dot(input_matrix.n_rows(), column_copy.ptr(), 
 		  orthonormal_basis.GetColumnPtr(j));

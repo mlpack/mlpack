@@ -117,7 +117,7 @@ int main(int argc, char* argv[]) {
   B.Init(A.n_rows(), A.n_cols());
   B.SetZero();
 
-  for (index_t i = 0; i < s.length(); i++) {
+  for (size_t i = 0; i < s.length(); i++) {
     Vector ucol, vcol;
     U.MakeColumnVector(i, &ucol);
     V.MakeColumnVector(i, &vcol);

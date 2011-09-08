@@ -65,8 +65,8 @@ void LogMatrixMultiplyOverwrite(const Matrix &A,
   Matrix At;
   la::TransposeInit(A, &At);
 
-  index_t n_At_cols = At.n_cols();
-  index_t n_B_cols = B.n_cols();
+  size_t n_At_cols = At.n_cols();
+  size_t n_B_cols = B.n_cols();
 
   for(int i = 0; i < n_At_cols; i++) {
     Vector A_i;
@@ -86,7 +86,7 @@ void LogMatrixMultiplyATransOverwrite(const Matrix &At,
 				      Vector* p_y) {
   Matrix& y = *p_y;
 
-  index_t n_At_cols = At.n_cols();
+  size_t n_At_cols = At.n_cols();
 
   for(int i = 0; i < n_At_cols; i++) {
     Vector A_i;
@@ -102,7 +102,7 @@ void LogMatrixMultiplyOverwrite(const Vector &x,
 				Vector* p_y) {
   Matrix& y = *p_y;
   
-  index_t n_B_cols = B.n_cols();
+  size_t n_B_cols = B.n_cols();
   
   for(int k = 0; k < n_B_cols; k++) {
     Vector B_k;

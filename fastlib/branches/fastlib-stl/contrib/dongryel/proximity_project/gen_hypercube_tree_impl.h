@@ -3,13 +3,13 @@
 class tree_gen_hypercube_tree_private {
 
  public:
-  static index_t MatrixPartition
-  (index_t particle_set_number, ArrayList<Matrix *> &matrices, index_t dim, 
-   double splitvalue, index_t first, index_t count, 
-   ArrayList< ArrayList<index_t> > *old_from_new) {
+  static size_t MatrixPartition
+  (size_t particle_set_number, ArrayList<Matrix *> &matrices, size_t dim, 
+   double splitvalue, size_t first, size_t count, 
+   ArrayList< ArrayList<size_t> > *old_from_new) {
     
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -45,7 +45,7 @@ class tree_gen_hypercube_tree_private {
       left_vector.SwapValues(&right_vector);
       
       if (old_from_new) {
-        index_t t = (*old_from_new)[particle_set_number][left];
+        size_t t = (*old_from_new)[particle_set_number][left];
         (*old_from_new)[particle_set_number][left] = 
 	  (*old_from_new)[particle_set_number][right];
         (*old_from_new)[particle_set_number][right] = t;
@@ -63,10 +63,10 @@ class tree_gen_hypercube_tree_private {
   template<typename THypercubeTree>
   static bool RecursiveMatrixPartition
   (ArrayList<Matrix *> &matrices,
-   THypercubeTree *node, index_t count,
-   ArrayList<index_t> &child_begin, ArrayList<index_t> &child_count,
+   THypercubeTree *node, size_t count,
+   ArrayList<size_t> &child_begin, ArrayList<size_t> &child_count,
    ArrayList< ArrayList<THypercubeTree *> > *nodes_in_each_level,
-   ArrayList< ArrayList<index_t> > *old_from_new, const int level, 
+   ArrayList< ArrayList<size_t> > *old_from_new, const int level, 
    int recursion_level, unsigned int code) {
     
     if(recursion_level < matrices[0]->n_rows()) {
@@ -76,22 +76,22 @@ class tree_gen_hypercube_tree_private {
 				  range_in_this_dimension.hi);
       
       // Partition based on the current dimension.
-      index_t total_left_count = 0;
-      index_t total_right_count = 0;
+      size_t total_left_count = 0;
+      size_t total_right_count = 0;
 
       // Temporary ArrayList for passing in the indices owned by the
       // children.
-      ArrayList<index_t> left_child_begin;
-      ArrayList<index_t> left_child_count;
-      ArrayList<index_t> right_child_begin;
-      ArrayList<index_t> right_child_count;
+      ArrayList<size_t> left_child_begin;
+      ArrayList<size_t> left_child_count;
+      ArrayList<size_t> right_child_begin;
+      ArrayList<size_t> right_child_count;
       left_child_begin.Init(matrices.size());
       left_child_count.Init(matrices.size());
       right_child_begin.Init(matrices.size());
       right_child_count.Init(matrices.size());
 
       // Divide each particle set.
-      for(index_t particle_set_number = 0; 
+      for(size_t particle_set_number = 0; 
 	  particle_set_number < matrices.size(); particle_set_number++) {
 
 	// If there is nothing to divide for the current particle set,
@@ -104,13 +104,13 @@ class tree_gen_hypercube_tree_private {
 	  continue;
 	}
 
-	index_t left_count = MatrixPartition(particle_set_number, matrices, 
+	size_t left_count = MatrixPartition(particle_set_number, matrices, 
 					     recursion_level, split_value, 
 					     child_begin[particle_set_number],
 					     child_count[particle_set_number],
 					     old_from_new) - 
 	  child_begin[particle_set_number];
-	index_t right_count = child_count[particle_set_number] - left_count;
+	size_t right_count = child_count[particle_set_number] - left_count;
 
 	// Divide into two sets.
 	left_child_count[particle_set_number] = left_count;
@@ -167,7 +167,7 @@ class tree_gen_hypercube_tree_private {
       new_child->set_level(node->level() + 1);
 
       // Appropriately set the membership in each particle set.
-      for(index_t p = 0; p < matrices.size(); p++) {
+      for(size_t p = 0; p < matrices.size(); p++) {
 	new_child->Init(p, child_begin[p], child_count[p]);
       }
 
@@ -179,7 +179,7 @@ class tree_gen_hypercube_tree_private {
       lower_coord.Init(matrices[0]->n_rows());
       upper_coord.Init(matrices[0]->n_rows());
 
-      for(index_t d = matrices[0]->n_rows() - 1; d >= 0; d--) {
+      for(size_t d = matrices[0]->n_rows() - 1; d >= 0; d--) {
 	const DRange &range_in_this_dimension = 
 	  node->bound().get(matrices[0]->n_rows() - 1 - d);
 
@@ -212,8 +212,8 @@ class tree_gen_hypercube_tree_private {
 
     // Iterate over each point owned by the node and compute its
     // bounding hypercube.
-    for(index_t n = 0; n < matrices.size(); n++) {
-      for(index_t i = node->begin(n); i < node->end(n); i++) {
+    for(size_t n = 0; n < matrices.size(); n++) {
+      for(size_t i = node->begin(n); i < node->end(n); i++) {
 	Vector point;
 	matrices[n]->MakeColumnVector(i, &point);
 	node->bound() |= point;
@@ -223,7 +223,7 @@ class tree_gen_hypercube_tree_private {
     // Compute the longest side and correct the maximum coordinate of
     // the bounding box accordingly.
     double max_side_length = 0;
-    for(index_t d = 0; d < matrices[0]->n_rows(); d++) {
+    for(size_t d = 0; d < matrices[0]->n_rows(); d++) {
       const DRange &range_in_this_dimension = node->bound().get(d);
       double side_length = range_in_this_dimension.hi -
 	range_in_this_dimension.lo;
@@ -231,7 +231,7 @@ class tree_gen_hypercube_tree_private {
     }
     Vector new_upper_coordinate;
     new_upper_coordinate.Init(matrices[0]->n_rows());
-    for(index_t d = 0; d < matrices[0]->n_rows(); d++) {
+    for(size_t d = 0; d < matrices[0]->n_rows(); d++) {
       const DRange &range_in_this_dimension = node->bound().get(d);
       new_upper_coordinate[d] = range_in_this_dimension.lo + 
 	max_side_length;
@@ -242,9 +242,9 @@ class tree_gen_hypercube_tree_private {
   template<typename THypercubeTree>
   static void SplitGenHypercubeTree
   (ArrayList<Matrix *> &matrices, THypercubeTree *node, 
-   index_t leaf_size, index_t max_tree_depth,
+   size_t leaf_size, size_t max_tree_depth,
    ArrayList< ArrayList<THypercubeTree *> > *nodes_in_each_level,
-   ArrayList< ArrayList<index_t> > *old_from_new, index_t level) {
+   ArrayList< ArrayList<size_t> > *old_from_new, size_t level) {
 
     // If the node is just too small, then do not split.
     if(node->count() <= leaf_size || node->level() >= max_tree_depth) {
@@ -255,11 +255,11 @@ class tree_gen_hypercube_tree_private {
 
       // Recursively split each dimension.
       unsigned int code = 0;
-      ArrayList<index_t> child_begin;
-      ArrayList<index_t> child_count;
+      ArrayList<size_t> child_begin;
+      ArrayList<size_t> child_count;
       child_begin.Init(matrices.size());
       child_count.Init(matrices.size());
-      for(index_t i = 0; i < matrices.size(); i++) {
+      for(size_t i = 0; i < matrices.size(); i++) {
 	child_begin[i] = node->begin(i);
 	child_count[i] = node->count(i);
       }
@@ -270,7 +270,7 @@ class tree_gen_hypercube_tree_private {
 	 nodes_in_each_level, old_from_new, level, 0, code);
 
       if(can_cut) {
-	for(index_t i = 0; i < node->num_children(); i++) {
+	for(size_t i = 0; i < node->num_children(); i++) {
 	  THypercubeTree *child_node = node->get_child(i);
 	  SplitGenHypercubeTree(matrices, child_node, leaf_size, 
 				max_tree_depth, nodes_in_each_level, 

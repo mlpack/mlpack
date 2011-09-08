@@ -45,13 +45,13 @@ void DoSvmNormalize(Dataset* dataset) {
   m.zeros(dataset->n_features(), dataset->n_points());
   sums.zeros(dataset->n_features());
 
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     m.col(i) = dataset->matrix().col(i);
     dataset->matrix().col(i) += sums;
   }
   
   sums = (-1.0/dataset->n_points())*sums;
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     m.col(i) += sums;
   }
   
@@ -63,12 +63,12 @@ void DoSvmNormalize(Dataset* dataset) {
   arma::mat u; // eigenvectors
   arma::mat ui; // the inverse of eigenvectors
 
-  //PASSED(la::EigenvectorsInit(cov, &d, &u));
+  //(la::EigenvectorsInit(cov, &d, &u));
   arma::eig_sym(d, u, cov); // find eigenvector
   //la::TransposeInit(u, &ui);
   ui = arma::trans(u);
 
-  for (index_t i = 0; i < d.n_rows; i++) {
+  for (size_t i = 0; i < d.n_rows; i++) {
     d[i] = 1.0 / sqrt(d[i] / (dataset->n_points() - 1));
   }
 
@@ -83,7 +83,7 @@ void DoSvmNormalize(Dataset* dataset) {
   //la::MulInit(cov_inv_half, m, &final);
   final = cov_inv_half*m;
 
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     arma::vec s;
 
     //final.MakeColumnVector(i, &s);
@@ -105,7 +105,7 @@ void DoSvmNormalize(Dataset* dataset) {
 */
 void GenerateArtificialDataset(Dataset* dataset){
   arma::mat m;
-  index_t n = IO::GetParam<int>("svm/n") = 30;
+  size_t n = IO::GetParam<int>("svm/n") = 30;
   double offset = IO::GetParam<double>("svm/offset") = 0.0;
   double range = IO::GetParam<double>("svm/range") = 1.0;
   double slope = IO::GetParam<double>("svm/slope") = 1.0;
@@ -115,7 +115,7 @@ void GenerateArtificialDataset(Dataset* dataset){
     
   // 2 dimensional dataset, size n, 3 classes
   m.set_size(3, n);
-  for (index_t i = 0; i < n; i += 3) {
+  for (size_t i = 0; i < n; i += 3) {
     double x;
     double y;
     
@@ -150,10 +150,10 @@ void GenerateArtificialDataset(Dataset* dataset){
 * @param: the dataset
 * @param: name of the data file to be loaded
 */
-index_t LoadData(Dataset* dataset, string datafilename){
+size_t LoadData(Dataset* dataset, string datafilename){
   if (IO::HasParam(datafilename.c_str())) {
     // when a data file is specified, use it.
-    if ( !PASSED(dataset->InitFromFile( IO::GetParam<std::string>(datafilename.c_str()).c_str() )) ) {
+    if ( !(dataset->InitFromFile( IO::GetParam<std::string>(datafilename.c_str()).c_str() )) ) {
     fprintf(stderr, "Couldn't open the data file.\n");
     return 0;
     }
@@ -186,7 +186,7 @@ int main(int argc, char *argv[]) {
   string mode = IO::GetParam<std::string>("svm/mode");
   string kernel = IO::GetParam<std::string>("svm/kernel");
   string learner_name = IO::GetParam<std::string>("svm/learner_name");
-  index_t learner_typeid;
+  size_t learner_typeid;
   
   if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;
