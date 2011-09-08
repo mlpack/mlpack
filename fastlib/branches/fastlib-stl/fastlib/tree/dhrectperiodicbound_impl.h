@@ -19,18 +19,20 @@
  * Empty constructor
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() : box_size_(0) {
-  bounds_ = NULL;
-  dim_ = 0;
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() :
+      box_size_(0),
+      bounds_(NULL),
+      dim_(0) {
 }
 
 /**
  *Specifies the box size, but not dimensionality.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) : box_size_(box) {
-  bounds_ = NULL;
-  dim_ = box.n_cols;
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) :
+      bounds_(new DRange[box.n_rows]),
+      dim_(box.n_rows),
+      box_size_(box) {
 }
 
 /**
@@ -38,10 +40,11 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) : box_size_(box) {
  * set and a box with said dimensionality.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension, vec box) : box_size_(box) {
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(index_t dimension, vec box) :
+      box_size_(box),
+      bounds_(new DRange[dimension]),
+      dim_(dimension) {
   mlpack::IO::AssertMessage(dim_ == ~((index_t)0), "Already initialized");
-  bounds_ = new DRange[dimension];
-  dim_ = dimension;
   Reset();
 }
 
@@ -211,11 +214,11 @@ double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectPeriodicBound& othe
   for (index_t d = 0; d < dim_; d++){
     double v = 0, d1, d2, d3;
     d1 = ((bounds_[d].hi > bounds_[d].lo) | (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
+      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
     d2 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size_[d]);
+      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size_[d]);
     d3 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      min(other.bounds_[d].lo - bounds_[d].hi + box_size_[d], bounds_[d].lo - other.bounds_[d].hi);
+      std::min(other.bounds_[d].lo - bounds_[d].hi + box_size_[d], bounds_[d].lo - other.bounds_[d].hi);
     v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
     sum += pow(v, (double) t_pow);
   }
@@ -434,7 +437,7 @@ double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectPeriodicBound& othe
   double sum = 0;
 
   mlpack::IO::Assert(dim_ == other.dim_);
-  
+
 
   for (index_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
