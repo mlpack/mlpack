@@ -1,48 +1,59 @@
+/***
+ * @file io_test.cc
+ * @author Matthew Amidon, Ryan Curtin
+ *
+ * Test for the IO input parameter system.
+ */
 #include "optionshierarchy.h"
 #include "io.h"
+
 #include <string>
 #include <iostream>
+#include <sstream>
+#include <limits>
 #include <sys/time.h>
 #include <typeinfo>
+#include <armadillo>
+#include <fastlib/base/arma_extend.h>
+
 #define DEFAULT_INT 42
+
 #define BOOST_TEST_MODULE IO_Test
 #include <boost/test/unit_test.hpp>
+
+#define BASH_RED "\033[0;31m"
+#define BASH_GREEN "\033[0;32m"
+#define BASH_YELLOW "\033[0;33m"
+#define BASH_CYAN "\033[0;36m"
+#define BASH_CLEAR "\033[0m"
+
 using namespace mlpack;
 using namespace mlpack::io;
-/*
-PROGRAM_INFO("MLPACK IO Test",
-  "This is a simple test of the IO framework for input options and timers.  "
-  "This particular text can be seen if you type --help.")
-PARAM(int, "gint", "global desc", "global", 42, false);
-PARAM(int, "req", "required", "global", 23, true);
-PARAM_INT("something_long_long_long", "A particularly long and needlessly "
-  "verbose description ensures that my line hyphenator is working correctly "
-  "but to test we need a "
-  "really_really_really_long_long_long_long_long_long_long_long_word.", "",
-  10);
-*/
-/**
-* @brief Tests that inserting elements into an OptionsHierarchy
-*   properly updates the tree.
-*
-* @return True indicating all is well with OptionsHierarchy
-*/
+
+/***
+ * @brief Tests that inserting elements into an OptionsHierarchy
+ *   properly updates the tree.
+ *
+ * @return True indicating all is well with OptionsHierarchy
+ */
 BOOST_AUTO_TEST_CASE(TestHierarchy) {
   OptionsHierarchy tmp = OptionsHierarchy("UTest");
   std::string testName = std::string("UTest/test");
   std::string testDesc = std::string("Test description.");
   std::string testTID = TYPENAME(int);
-  //Check that the hierarchy is properly named.
+
+  // Check that the hierarchy is properly named.
   std::string str = std::string("UTest");
   OptionsData node = tmp.GetNodeData();
  
   BOOST_REQUIRE_EQUAL(str.compare(node.node), 0);
-  //Check that inserting a node actually inserts the node.
+  // Check that inserting a node actually inserts the node.
   // Note, that since all versions of append simply call the most qualified
   //    overload, we will only test that one.
   tmp.AppendNode(testName, testTID, testDesc); 
   BOOST_REQUIRE(tmp.FindNode(testName) != NULL);
-  //Now check that the inserted node has the correct data.
+
+  // Now check that the inserted node has the correct data.
   OptionsHierarchy* testHierarchy = tmp.FindNode(testName);
   OptionsData testData;
   if (testHierarchy != NULL) {
@@ -53,38 +64,36 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
     BOOST_REQUIRE(testTID.compare(node.tname) == 0);
   }
 }
-/**
-* @brief Tests that IO works as intended, namely that IO::Add
-*   propogates successfully.
-*
-* @return True indicating all is well with IO, false otherwise.
-*/
+
+/***
+ * @brief Tests that IO works as intended, namely that IO::Add
+ *   propagates successfully.
+ *
+ * @return True indicating all is well with IO, false otherwise.
+ */
 BOOST_AUTO_TEST_CASE(TestIO) {
-  //  BOOST_REQUIRE_CLOSE(IO::GetParam<int>("global/gint") + 1e-6,
-  //   DEFAULT_INT + 1e-6, 1e-5);
- 
-  //Check that the IO::HasParam returns false if no value has been specified
-  //On the commandline or programmatically.
+  // Check that the IO::HasParam returns false if no value has been specified
+  // on the commandline or programmatically.
   IO::Add<bool>("bool", "True or False", "global");
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), false);
   IO::GetParam<bool>("global/bool") = true;
-  //IO::HasParam should return true now.
+  // IO::HasParam should return true now.
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), true);
  
   BOOST_REQUIRE_EQUAL(IO::GetDescription("global/bool").compare(
-                              std::string("True or False")) , 0);
-  //Check that SanitizeString is sanitary.
+      std::string("True or False")) , 0);
+  // Check that SanitizeString is sanitary.
   std::string tmp = IO::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
  
-  //Test the output of IO.  We will pass bogus input
-  //Such that nothing will be printed to screen, only currentLine will
-  //Hold our 'output'.
+  // Test the output of IO.  We will pass bogus input such that nothing will be
+  // printed to the screen, only currentLine will hold our 'output'.
   IO::Info.ignoreInput = true;
   IO::Info << "This shouldn't break anything" << std::endl;
   BOOST_REQUIRE_EQUAL(
-    IO::Info.currentLine.compare("This shouldn't break anything"), 0);
-  //Now lets test the output functions.  Will have to eyeball it manually.
+      IO::Info.currentLine.compare("This shouldn't break anything"), 0);
+
+  // Now let's test the output functions.  Will have to eyeball it manually.
   IO::Info << "Test the new lines...";
   IO::Info << "shouldn't get 'Info' here." << std::endl;
   BOOST_REQUIRE_EQUAL(
@@ -94,20 +103,69 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   IO::Info << ""; 
   BOOST_REQUIRE_EQUAL(IO::Info.currentLine.compare(""), 0);
 }
+
 /**
-* @brief Tests that the various PARAM_* macros work properly
-* @return True indicating that all is well with IO & Options.
-*/
+ * @brief Tests that the various PARAM_* macros work properly
+ * @return True indicating that all is well with IO & Options.
+ */
 BOOST_AUTO_TEST_CASE(TestOption) {
-  //This test will involve creating an option, and making sure IO reflects this.
+  // This test will involve creating an option, and making sure IO reflects
+  // this.
   PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
  
-  //Does IO reflect this?
+  // Does IO reflect this?
   BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/test"), true);
    
   std::string desc = std::string("test desc");
  
-  BOOST_REQUIRE(desc.compare(IO::GetDescription("test_parent/test"))==0);
+  BOOST_REQUIRE(desc.compare(IO::GetDescription("test_parent/test")) == 0);
   BOOST_REQUIRE(IO::GetParam<int>("test_parent/test") == DEFAULT_INT);
 }
 
+
+/***
+ * Test that we can correctly output Armadillo objects to PrefixedOutStream
+ * objects.
+ */
+BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream) {
+  // We will test this with both a vector and a matrix.
+  arma::vec test("1.0 1.5 2.0 2.5 3.0 3.5 4.0");
+
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
+
+  pss << test;
+  // This should result in nothing being on the current line (since it clears
+  // it).
+  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   1.5000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   2.0000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   3.0000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   3.5000\n"
+                                BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000\n");
+
+  ss.str("");
+  pss << trans(test);
+  // This should result in there being stuff on the line.
+  BOOST_REQUIRE_EQUAL(ss.str(), BASH_GREEN "[INFO ] " BASH_CLEAR
+      "   1.0000   1.5000   2.0000   2.5000   3.0000   3.5000   4.0000\n");
+
+  arma::mat test2("1.0 1.5 2.0; 2.5 3.0 3.5; 4.0 4.5 4.99999");
+  ss.str("");
+  pss << test2;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   1.0000   1.5000   2.0000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
+
+  // Try and throw a curveball by not clearing the line before outputting
+  // something else.  The PrefixedOutStream should not force Armadillo objects
+  // onto their own lines.
+  ss.str("");
+  pss << "hello" << test2;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
+}

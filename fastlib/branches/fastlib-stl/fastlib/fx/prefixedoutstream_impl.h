@@ -10,27 +10,55 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
-  //Maintain the debug buffer.
+  // Maintain the debug buffer.
   if (carriageReturned && ignoreInput) { 
     currentLine = "";
     carriageReturned = false;
   }
 
-  try { 
+  try {
+    size_t currentPos = currentLine.length();
     currentLine += boost::lexical_cast<std::string>(val);
-  } catch(boost::bad_lexical_cast &e) {};
 
-  //Cancel output operation?
-  if (ignoreInput)
-    return; 
+    // Having added to our line, we need to check for any newlines.  If we find
+    // one, output the line, then output the newline and the prefix and continue
+    // looking.
+    size_t newlinePos;
+    while ((newlinePos = currentLine.find('\n', currentPos)) !=
+        std::string::npos) {
+      // Don't output if we are told to ignore input for debugging.
+      if (!ignoreInput) {
+        if (carriageReturned)
+          destination << prefix;
 
-  if (carriageReturned) {
-    currentLine = "";
-    destination << prefix << val;
-    carriageReturned = false;
+        destination << currentLine.substr(currentPos, newlinePos - currentPos);
+
+        destination << std::endl;
+        carriageReturned = true;
+      }
+      currentPos = newlinePos + 1;
+    }
+
+    if (currentPos == currentLine.length()) {
+      carriageReturned = true;
+      currentLine = "";
+    } else {
+      // Display the rest of the output, if we want to.
+      if (!ignoreInput) {
+        if (carriageReturned)
+          destination << prefix;
+
+        destination << currentLine.substr(currentPos);
+        carriageReturned = false;
+      }
+    }
+
+  } catch (boost::bad_lexical_cast &e) {
+    // Warn the user, if we are allowed to give output.
+    if (!ignoreInput)
+      destination << "Failed lexical_cast<std::string>(T) for output; output"
+          " not shown." << std::endl;
   }
-  else
-    destination << val;
 }
 
 #endif //MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H
