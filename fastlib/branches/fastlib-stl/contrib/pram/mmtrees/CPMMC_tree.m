@@ -1,6 +1,5 @@
-function [T, done, kdSplit, totalSplits, numLeaves, leafSizes] = ...
-    CPMMC_tree(data, C, initVal, done, kdSplit, totalSplits, ...
-	       numLeaves, leafSizes, indices)
+function [T, done, treeInfo] = ...
+    CPMMC_tree(data, C, initVal, done, treeInfo, indices)
 % Using CPMMC to hiearchically splitting the data
 % forming it into a tree.
 %
@@ -13,10 +12,12 @@ if nargin < 4
   fprintf(1, 'Building tree with %d points:   ', ...
 	  length(indices));
   done = 0;
-  kdSplit = 0;
-  numLeaves = 0;
-  totalSplits = 0;
-  leafSizes = 0;
+  treeInfo.numKdSplits = 0;
+  treeInfo.totalSplits = 0;
+  treeInfo.numLeaves = 0;
+  treeInfo.leafSizes = 0;
+  treeInfo.kdSplitWts = 0;
+  treeInfo.totalWts = 0;
 end
 
 %l_init = 0.001 * size(data,2);
@@ -36,8 +37,8 @@ temp_initVal = initVal;
 if length(indices) <= 30
   T.leaf = 1;
   done = done + length(indices);
-  numLeaves = numLeaves + 1;
-  leafSizes = leafSizes + length(indices);
+  treeInfo.numLeaves = treeInfo.numLeaves + 1;
+  treeInfo.leafSizes = treeInfo.leafSizes + length(indices);
   
 % Step 1: Find the best split
 % Step 2: Partition the data using the split
@@ -53,7 +54,7 @@ else
   right_ind = [];
   time = 0;
   
-  while (b_param == 0 & numTries < 25)
+  while (b_param == 0 & numTries < 10)
     numTries = numTries + 1;
     [omega, b, time] = CPMMC_split(nodeData, C0, l, initVal);
     %[omega, b, time] = CP_CCCP_split(nodeData, C0, l, initVal);
@@ -120,7 +121,8 @@ else
     %display(sprintf('KDTree splits...'));
     %keyboard;
     
-    kdSplit = kdSplit + 1;
+    treeInfo.kdSplitWts = treeInfo.kdSplitWts + length(indices);
+    treeInfo.numKdSplits = treeInfo.numKdSplits + 1;
   end
 
 
@@ -133,7 +135,8 @@ else
   T.b = b;
   T.time = time;
   
-  totalSplits = totalSplits + 1;
+  treeInfo.totalSplits = treeInfo.totalSplits + 1; 
+  treeInfo.totalWts = treeInfo.totalWts + length(indices);
   
   %display(sprintf('%d : %d / %d, %0.3f, %d, Numtries:%d',...
 	%	  length(indices), length(left_indices),...
@@ -157,10 +160,9 @@ else
   %	    T.left_min, T.right_min));
   initVal = temp_initVal;
     
-  [T.left, done, kdSplit, totalSplits, numLeaves, leafSizes]...
+  [T.left, done, treeInfo]...
       = CPMMC_tree(data, C, initVal, done, ...
-		   kdSplit, totalSplits, numLeaves, ...
-		   leafSizes, left_indices);
+		   treeInfo, left_indices);
   
   pdone = floor(done * 100 / size(data,2));
   if pdone < 10
@@ -169,10 +171,9 @@ else
     fprintf(1, '\b\b\b%d%%', pdone);
   end
   
-  [T.right, done, kdSplit, totalSplits, numLeaves, leafSizes]...
+  [T.right, done, treeInfo]...
       = CPMMC_tree(data, C, initVal, done, ...
-		   kdSplit, totalSplits, numLeaves, ...
-		   leafSizes, right_indices);
+		   treeInfo, right_indices);
   
 %end
     
@@ -181,7 +182,11 @@ end
 if nargin < 4
   fprintf(1, '\n');
   fprintf(1, 'Number of Leaves: %d, Avg. Leaf Size: %f\n',...
-	  numLeaves, leafSizes / numLeaves);
-  fprintf(1, '%% kd-tree Splits: %f\n', ...
-	  kdSplit * 100 / totalSplits);
+	  treeInfo.numLeaves, ...
+	  treeInfo.leafSizes / treeInfo.numLeaves);
+  fprintf(1, 'Total number of splits: %d, %% kd-splits: %f\n', ...
+	  treeInfo.totalSplits, treeInfo.numKdSplits * 100 / ...
+	  treeInfo.totalSplits);
+  fprintf(1, 'Weighted %% kd-tree Splits: %f\n', ...
+	  treeInfo.kdSplitWts * 100 / treeInfo.totalWts);
 end

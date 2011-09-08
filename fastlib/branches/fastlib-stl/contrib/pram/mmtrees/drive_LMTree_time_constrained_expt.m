@@ -22,7 +22,7 @@ function [ann_c] = drive_LMTree_time_constrained_expt(C_vals, ...
     
     % build the tree for this c value
     display(sprintf('Building tree for %f....', C_vals(i))); 
-    T = CPMMC_tree(R, C_vals(i), 1e-6, 0);
+    T = CPMMC_tree(R, C_vals(i), 1e-8);
     
     % run the time constrained algorithm
     display(sprintf('Running the search algorithm...'))
