@@ -213,7 +213,7 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
   mlpack::IO::Assert(count_q <= count_);
   if (begin_ == begin_q && count_ == count_q)
     return this;
-  else if (unlikely(is_leaf()))
+  else if (is_leaf())
     return NULL;
   else if (begin_q < right_->begin_)
     return left_->FindByBeginCount(begin_q, count_q);
