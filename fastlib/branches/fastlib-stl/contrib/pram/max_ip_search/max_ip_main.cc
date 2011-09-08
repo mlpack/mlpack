@@ -28,32 +28,42 @@ PARAM_STRING("maxip_file", "The file where the output "
 PARAM_FLAG("print_results", "The flag to trigger the "
 	   "printing of the output", "");
 
+
+using namespace mlpack;
+using namespace std;
+
 /**
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
+void count_mismatched_neighbors(arma::Col<size_t>, arma::vec, 
+ 				arma::Col<size_t>, arma::vec);
+
 // void compare_neighbors(arma::Col<size_t>*, arma::vec*, 
 //                        arma::Col<size_t>*, arma::vec*);
 
-// void count_mismatched_neighbors(arma::Col<size_t>*, arma::vec*, 
-// 				arma::Col<size_t>*, arma::vec*);
 
-using namespace mlpack;
 
 int main (int argc, char *argv[]) {
 
   IO::ParseCommandLine(argc, argv);
 
   arma::mat rdata, qdata;
+  string rfile = IO::GetParam<string>("r");
+  string qfile = IO::GetParam<string>("q");
 
-  IO::Info << "Loading files..." << std::endl;
-  data::Load(IO::GetParam<char *>("r"), rdata);
-  data::Load(IO::GetParam<char *>("q"), qdata);
-  IO::Info << "File loaded..." << std::endl;
+  IO::Info << "Loading files..." << endl;
+  if (data::Load(rfile.c_str(), rdata) == SUCCESS_FAIL)
+    IO::Fatal << "Reference file "<< rfile << " not found." << endl;
+
+  if (data::Load(qfile.c_str(), qdata) == SUCCESS_FAIL) 
+    IO::Fatal << "Query file " << qfile << " not found." << endl;
+
+  IO::Info << "File loaded..." << endl;
   
   IO::Info << "R(" << rdata.n_rows << ", " << rdata.n_cols 
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
-	   << ")" << std::endl;
+	   << ")" << endl;
 
 
   arma::Col<size_t> nac, exc;
@@ -61,63 +71,69 @@ int main (int argc, char *argv[]) {
 
   size_t knns = IO::GetParam<int>("maxip/knns");
 
+
+  // exit(0);
   // Naive computation
   if (IO::HasParam("donaive")) {
     MaxIP naive;
-    IO::Info << "Brute computation" << std::endl;
-    IO::Info << "Initializing...." << std::endl;
+    IO::Info << "Brute computation" << endl;
+    IO::Info << "Initializing...." << endl;
 
     IO::StartTimer("naive_init");
     naive.InitNaive(qdata, rdata);
     IO::StopTimer("naive_init");
-    IO::Info << "Initialized." << std::endl;
+    IO::Info << "Initialized." << endl;
 
-    IO::Info << "Computing Max IP....." << std::endl;
+    IO::Info << "Computing Max IP....." << endl;
     IO::StartTimer("naive_search");
     naive.ComputeNaive(&nac, &din);
     IO::StopTimer("naive_search");
-    IO::Info << "Max IP Computed." << std::endl;
+    IO::Info << "Max IP Computed." << endl;
 
     if (IO::HasParam("print_results")) {
-      FILE *fp=fopen(IO::GetParam<char *>("result_file"), "w");
+      FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
 	IO::Fatal << "Error while opening " 
-		  << IO::GetParam<char *>("result_file") 
+		  << IO::GetParam<string>("maxip_file") 
 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < nac.n_elem / knns ; i++) {
         fprintf(fp, "%zud", i);
         for(size_t j = 0; j < knns; j++)
-          fprintf(fp, ",%zud,%lg", 
+          fprintf(fp, ", %zud, %lg", 
                   nac(i*knns+j), din(i*knns+j));
         fprintf(fp, "\n");
       }
       fclose(fp);
-    }
+    }  
+
+    //IO::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
   }
+
+  //IO::Info << "Comparing results for " << nac.n_elem << " queries." << endl;
 
   // Exact computation
   if (IO::HasParam("dofastexact")) {
     MaxIP fast_exact;
-    IO::Info << "Tree-based computation" << std::endl;
-    IO::Info << "Initializing...." << std::endl;
+    IO::Info << "Tree-based computation" << endl;
+    IO::Info << "Initializing...." << endl;
 
     IO::StartTimer("fast_init");
     fast_exact.Init(qdata, rdata);
     IO::StopTimer("fast_init");
-    IO::Info << "Initialized." << std::endl;
+    IO::Info << "Initialized." << endl;
 
-    IO::Info << "Computing tree-based Max IP....." << std::endl;
+    IO::Info << "Computing tree-based Max IP....." << endl;
     IO::StartTimer("fast_search");
     fast_exact.ComputeNeighbors(&exc, &die);
     IO::StopTimer("fast_search");
-    IO::Info << "Tree-based Max IP Computed." << std::endl;
+    IO::Info << "Tree-based Max IP Computed." << endl;
 
     if (IO::HasParam("print_results")) {
-      FILE *fp=fopen(IO::GetParam<char *>("result_file"), "w");
+      FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
 	IO::Fatal << "Error while opening " 
-		  << IO::GetParam<char *>("result_file") 
+		  << IO::GetParam<string>("maxip_file") 
 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
@@ -132,7 +148,9 @@ int main (int argc, char *argv[]) {
   }
 
   //   compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
-  //  count_mismatched_neighbors(&exc, &die, &apc, &dia);
+
+  if (IO::HasParam("donaive") && IO::HasParam("dofastexact"))
+    count_mismatched_neighbors(nac, din, exc, die);
 }
 
 // void compare_neighbors(arma::Col<size_t> *a, 
@@ -153,22 +171,20 @@ int main (int argc, char *argv[]) {
 //   }
 // }
 
-// void count_mismatched_neighbors(arma::Col<size_t> *a, 
-// 				arma::vec *da,
-// 				arma::Col<size_t> *b, 
-// 				arma::vec *db) {
+void count_mismatched_neighbors(arma::Col<size_t> *a, 
+ 				arma::vec *da,
+ 				arma::Col<size_t> *b, 
+ 				arma::vec *db) {
+  IO::Info << "Comparing results for " << a.n_elem << " queries." << endl;
+  DEBUG_SAME_SIZE(a.n_elem, b.n_elem);
+  index_t count_mismatched = 0;
 
-//   IO::Info << "Comparing results for %zud queries", a->size());
-//   DEBUG_SAME_SIZE(a->size(), b->size());
-//   size_t *x = a->begin();
-//   size_t *y = a->end();
-//   size_t *z = b->begin();
-//   size_t count_mismatched = 0;
+  for(size_t i = 0; i < a.n_elem;  i++) {
+    if (a(i) != b(i) || da(i) != db(i))
+      ++count_mismatched;
+  }
 
-//   for(size_t i = 0; x != y; x++, z++, i++) {
-//     if (*x != *z || (*da)[i] != (*db)[i]) {
-//       ++count_mismatched;
-//     }
-//   }
-//   IO::Info << "%zud/%zud errors", count_mismatched, a->size());
-// }
+  IO::Info << count_mismatched << " / " << a.n_elem
+	   << " errors." << endl;
+
+}
