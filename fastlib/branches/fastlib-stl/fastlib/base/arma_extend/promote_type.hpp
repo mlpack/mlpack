@@ -1,9 +1,10 @@
 // Extra promote_type definitions until 64-bit index support is added to
 // Armadillo.  The syntax was changed for 2.1.91, so we need to be careful about
 // how we do that.
-#if (ARMA_VERSION_MAJOR >= 2) && \
-    (ARMA_VERSION_MINOR >= 1) && \
-    (ARMA_VERSION_PATCH >= 91)
+#if ((ARMA_VERSION_MAJOR > 2)) || \
+    ((ARMA_VERSION_MAJOR == 2) && (ARMA_VERSION_MINOR > 1)) || \
+    ((ARMA_VERSION_MAJOR == 2) && (ARMA_VERSION_MINOR == 1) && \
+     (ARMA_VERSION_PATCH >= 91))
 // The new syntax changed the name of 'promote_type' to 'is_promotable'.  We
 // have to update accordingly...
 template<typename T> struct is_promotable<std::complex<T>, s64> : public is_promotable_ok { typedef std::complex<T> result };

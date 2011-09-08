@@ -1,13 +1,12 @@
 // Extensions to typedef u64 and s64 until that support is added into
-// Armadillo.  We only need to typedef s64 on Armadillo >= 1.2.0
+// Armadillo.  We only need to typedef s64 on Armadillo > 1.2.0.
 
-#if   (ARMA_VERSION_MAJOR >= 1) && \
-      (ARMA_VERSION_MINOR >= 2) && \
-      (ARMA_VERSION_PATCH >= 0)
+#if   ((ARMA_VERSION_MAJOR > 1)) || \
+      ((ARMA_VERSION_MAJOR == 1) && (ARMA_VERSION_MINOR > 2)) || \
+      ((ARMA_VERSION_MAJOR == 1) && (ARMA_VERSION_MINOR == 2) && \
+       (ARMA_VERSION_PATCH > 0))
   // An unincluded header file typedefs u64 for us.
-  namespace arma {
-    #include <armadillo_bits/typedef_u64.hpp>
-  };
+  #include <armadillo_bits/typedef_u64.hpp>
 
   // We only need to typedef s64.
   #if   ULONG_MAX >= 0xffffffffffffffff
