@@ -7,7 +7,6 @@
 #ifndef MATH_GEOMETRY_H
 #define MATH_GEOMETRY_H
 
-#include "../base/common.h"
 
 #include <math.h>
 

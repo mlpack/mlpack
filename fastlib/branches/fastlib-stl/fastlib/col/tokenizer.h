@@ -8,7 +8,6 @@
 #ifndef COLLECTIONS_TOKENIZESTRING_H
 #define COLLECTIONS_TOKENIZESTRING_H
 
-#include "../base/common.h"
 
 #include <string>
 #include <vector>

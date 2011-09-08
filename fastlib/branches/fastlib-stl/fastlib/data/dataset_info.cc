@@ -9,7 +9,6 @@
  *
  */
 
-#include "../base/common.h"
 #include "../col/tokenizer.h"
 
 #include "dataset_info.h"

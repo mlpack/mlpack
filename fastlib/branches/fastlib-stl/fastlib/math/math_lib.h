@@ -7,11 +7,10 @@
 #ifndef MATH_MATH_LIB_H
 #define MATH_MATH_LIB_H
 
-#include "../base/common.h"
 #include "fastlib/fx/io.h"
 
 #include <math.h>
-
+#include <float.h>
 /**
  * Math routines.
  *
@@ -230,7 +229,7 @@ struct DRange {
   /** Initialize to an empty set, where lo > hi. */
   void InitEmptySet() {
     lo = DBL_MAX;
-    hi = -DBL_MAX;
+    hi = DBL_MAX;
   }
 
   /** Initializes to -infinity to infinity. */
