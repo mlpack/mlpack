@@ -17,7 +17,6 @@ set(SOURCES
    arma_extend/promote_type.hpp
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
-   common.h
    compiler.h
    fortran.h
 )

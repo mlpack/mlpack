@@ -9,7 +9,6 @@
 #ifndef TREE_SPACETREE_H
 #define TREE_SPACETREE_H
 
-#include "../base/common.h"
 #include "statistic.h"
 
 #include <armadillo>
