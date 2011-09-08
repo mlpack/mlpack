@@ -40,7 +40,7 @@ int main(int argc, char* argv[]) {
   const char* outTR = fx_param_str(fx_root, "outTR", "tr.out");
   const char* outE = fx_param_str(fx_root, "outE", "e.out");
   double tolerance = fx_param_double(fx_root, "tol", 1e-5);
-  index_t maxIteration = fx_param_int(fx_root, "maxiter", 500);
+  size_t maxIteration = fx_param_int(fx_root, "maxiter", 500);
   
   TextLineReader f;
   f.Open(fileSEQ);

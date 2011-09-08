@@ -24,7 +24,7 @@ class MVUDotProdObjective {
  public:
   void Init(datanode *module,
       Matrix *auxiliary_mat, 
-      ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+      ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
       // The values of the (row, column) values, also known as the dot products
       ArrayList<double> &dot_prod_values);
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -39,18 +39,18 @@ class MVUDotProdObjective {
  private:
   datanode *module_;
   Matrix *auxiliary_mat_;
-  ArrayList<std::pair<index_t, index_t> > pairs_to_consider_; 
+  ArrayList<std::pair<size_t, size_t> > pairs_to_consider_; 
   ArrayList<double> dot_prod_values_;
   Vector eq_lagrange_mult_;
   double sigma_;
-  index_t num_of_constraints_;
+  size_t num_of_constraints_;
 };
 
 class MVUDotProdObjectiveBounded {
  public:
   void Init(datanode *module,
       Matrix *auxiliary_mat, 
-      ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+      ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
       // The values of the (row, column) values, also known as the dot products
       ArrayList<double> &dot_prod_values);
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -65,14 +65,14 @@ class MVUDotProdObjectiveBounded {
  private:
   datanode *module_;
   Matrix *auxiliary_mat_;
-  ArrayList<std::pair<index_t, index_t> > pairs_to_consider_; 
+  ArrayList<std::pair<size_t, size_t> > pairs_to_consider_; 
   ArrayList<double> dot_prod_values_;
   Vector ineq_low_lagrange_mult_;
   Vector ineq_high_lagrange_mult_;
   Vector low_bound_;
   Vector high_bound_;
   double sigma_;
-  index_t num_of_constraints_;
+  size_t num_of_constraints_;
 };
 #include "mvu_dot_prod_objective_impl.h"
 #endif // MVU_DOT_PROD_OBJECTIVE_H_

@@ -43,25 +43,25 @@ void DiscreteHMM::InitFromFile(const char* profile) {
   mlpack::IO::Assert(transmission_.n_rows == emission_.n_rows);
 }
 
-void DiscreteHMM::InitFromData(const std::vector<arma::vec>& list_data_seq, index_t numstate) {
-  index_t numsymbol = 0;
-  index_t maxseq = 0;
+void DiscreteHMM::InitFromData(const std::vector<arma::vec>& list_data_seq, size_t numstate) {
+  size_t numsymbol = 0;
+  size_t maxseq = 0;
 
-  for (index_t i = 0; i < list_data_seq.size(); i++) {
+  for (size_t i = 0; i < list_data_seq.size(); i++) {
     if (list_data_seq[i].n_elem > list_data_seq[maxseq].n_elem)
       maxseq = i;
   }
 
-  for (index_t i = 0; i < list_data_seq[maxseq].n_elem; i++) {
+  for (size_t i = 0; i < list_data_seq[maxseq].n_elem; i++) {
     if (list_data_seq[maxseq][i] > numsymbol)
-      numsymbol = (index_t) list_data_seq[maxseq][i];
+      numsymbol = (size_t) list_data_seq[maxseq][i];
   }
   numsymbol++;
 
   arma::vec states;
-  index_t L = list_data_seq[maxseq].n_elem;
+  size_t L = list_data_seq[maxseq].n_elem;
   states.set_size(L);
-  for (index_t i = 0; i < L; i++)
+  for (size_t i = 0; i < L; i++)
     states[i] = rand() % numstate;
 
   DiscreteHMM::EstimateInit(numsymbol, numstate, list_data_seq[maxseq], states, transmission_, emission_);
@@ -73,7 +73,7 @@ void DiscreteHMM::LoadProfile(const char* profile) {
 
 void DiscreteHMM::SaveProfile(const char* profile) const {
   TextWriter w_pro;
-  if (!PASSED(w_pro.Open(profile))) {
+  if (!(w_pro.Open(profile))) {
     mlpack::IO::Warn << "Couldn't open " << profile << " for writing." <<
         std::endl;
     return;
@@ -83,7 +83,7 @@ void DiscreteHMM::SaveProfile(const char* profile) const {
   print_matrix(w_pro, emission_, "%% emission", "%f,");
 }
 
-void DiscreteHMM::GenerateSequence(index_t length, arma::vec& data_seq, arma::vec& state_seq) const {
+void DiscreteHMM::GenerateSequence(size_t length, arma::vec& data_seq, arma::vec& state_seq) const {
   DiscreteHMM::GenerateInit(length, transmission_, emission_, data_seq, state_seq);
 }
 
@@ -91,7 +91,7 @@ void DiscreteHMM::EstimateModel(const arma::vec& data_seq, const arma::vec& stat
   DiscreteHMM::EstimateInit(data_seq, state_seq, transmission_, emission_);
 }
 
-void DiscreteHMM::EstimateModel(index_t numstate, index_t numsymbol, const arma::vec& data_seq, const arma::vec& state_seq) {
+void DiscreteHMM::EstimateModel(size_t numstate, size_t numsymbol, const arma::vec& data_seq, const arma::vec& state_seq) {
   DiscreteHMM::EstimateInit(numsymbol, numstate, data_seq, state_seq, transmission_, emission_);
 }
 
@@ -100,8 +100,8 @@ void DiscreteHMM::DecodeOverwrite(const arma::vec& data_seq, arma::mat& state_pr
 }
 
 void DiscreteHMM::DecodeInit(const arma::vec& data_seq, arma::mat& state_prob_mat, arma::mat& forward_prob_mat, arma::mat& backward_prob_mat, arma::vec& scale_vec) const {
-  index_t M = transmission_.n_rows;
-  index_t L = data_seq.n_elem;
+  size_t M = transmission_.n_rows;
+  size_t L = data_seq.n_elem;
 
   state_prob_mat.set_size(M, L);
   forward_prob_mat.set_size(M, L);
@@ -114,8 +114,8 @@ void DiscreteHMM::DecodeInit(const arma::vec& data_seq, arma::mat& state_prob_ma
 void forward_procedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& scales, arma::mat& fs);
 
 double DiscreteHMM::ComputeLogLikelihood(const arma::vec& data_seq) const {
-  index_t L = data_seq.n_elem;
-  index_t M = transmission_.n_rows;
+  size_t L = data_seq.n_elem;
+  size_t M = transmission_.n_rows;
 
   arma::mat fs(M, L);
   arma::vec sc(L);
@@ -123,29 +123,29 @@ double DiscreteHMM::ComputeLogLikelihood(const arma::vec& data_seq) const {
   DiscreteHMM::ForwardProcedure(data_seq, transmission_, emission_, sc, fs);
 
   double loglik = 0;
-  for (index_t t = 0; t < L; t++)
+  for (size_t t = 0; t < L; t++)
     loglik += log(sc[t]);
   return loglik;
 }
 
 void DiscreteHMM::ComputeLogLikelihood(const std::vector<arma::vec>& list_data_seq, std::vector<double>& list_likelihood) const {
-  index_t L = 0;
-  for (index_t i = 0; i < list_data_seq.size(); i++) {
+  size_t L = 0;
+  for (size_t i = 0; i < list_data_seq.size(); i++) {
     if (list_data_seq[i].n_elem > L)
       L = list_data_seq[i].n_elem;
   }
 
-  index_t M = transmission_.n_rows;
+  size_t M = transmission_.n_rows;
 
   arma::mat fs(M, L);
   arma::vec sc(L);
   
-  for (index_t i = 0; i < list_data_seq.size(); i++) {
+  for (size_t i = 0; i < list_data_seq.size(); i++) {
     DiscreteHMM::ForwardProcedure(list_data_seq[i], transmission_, emission_, sc, fs);
 
-    index_t L = list_data_seq[i].n_elem;
+    size_t L = list_data_seq[i].n_elem;
     double loglik = 0;
-    for (index_t t = 0; t < L; t++)
+    for (size_t t = 0; t < L; t++)
       loglik += log(sc[t]);
 
     list_likelihood.push_back(loglik);
@@ -156,22 +156,22 @@ void DiscreteHMM::ComputeViterbiStateSequence(const arma::vec& data_seq, arma::v
   DiscreteHMM::ViterbiInit(data_seq, transmission_, emission_, state_seq);
 }
 
-void DiscreteHMM::TrainBaumWelch(const std::vector<arma::vec>& list_data_seq, index_t max_iteration, double tolerance) {
+void DiscreteHMM::TrainBaumWelch(const std::vector<arma::vec>& list_data_seq, size_t max_iteration, double tolerance) {
   DiscreteHMM::Train(list_data_seq, transmission_, emission_, max_iteration, tolerance);
 }
 
-void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& list_data_seq, index_t max_iteration, double tolerance) {
+void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& list_data_seq, size_t max_iteration, double tolerance) {
   DiscreteHMM::TrainViterbi(list_data_seq, transmission_, emission_, max_iteration, tolerance);
 }
 
-void DiscreteHMM::GenerateInit(index_t L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states) {
+void DiscreteHMM::GenerateInit(size_t L, const arma::mat& trans, const arma::mat& emis, arma::vec& seq, arma::vec& states) {
   mlpack::IO::AssertMessage((trans.n_rows == trans.n_cols && trans.n_rows == emis.n_rows),
     "DiscreteHMM::GenerateInit(): matrix sizes do not match");
 
   arma::mat trsum, esum;
   
-  index_t M, N;
-  index_t cur_state;
+  size_t M, N;
+  size_t cur_state;
 
   M = trans.n_rows;
   N = emis.n_cols;
@@ -179,10 +179,10 @@ void DiscreteHMM::GenerateInit(index_t L, const arma::mat& trans, const arma::ma
   trsum = trans;
   esum = emis;
 
-  for (index_t i = 0; i < M; i++) {
-    for (index_t j = 1; j < M; j++)
+  for (size_t i = 0; i < M; i++) {
+    for (size_t j = 1; j < M; j++)
       trsum(i, j) += trsum(i, j - 1);
-    for (index_t j = 1; j < N; j++) 
+    for (size_t j = 1; j < N; j++) 
       esum(i, j) += esum(i, j - 1);
   }
 
@@ -191,8 +191,8 @@ void DiscreteHMM::GenerateInit(index_t L, const arma::mat& trans, const arma::ma
 
   cur_state = 0; // starting state is 0
   
-  for (index_t i = 0; i < L; i++) {
-    index_t j;
+  for (size_t i = 0; i < L; i++) {
+    size_t j;
     double r;
 
     // next state
@@ -219,14 +219,14 @@ void DiscreteHMM::EstimateInit(const arma::vec& seq, const arma::vec& states, ar
   mlpack::IO::AssertMessage((seq.n_elem == states.n_elem),
       "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
 
-  index_t M = 0;
-  index_t N = 0;
+  size_t M = 0;
+  size_t N = 0;
 
-  for (index_t i = 0; i < seq.n_elem; i++) {
+  for (size_t i = 0; i < seq.n_elem; i++) {
     if (seq[i] > N)
-      N = (index_t) seq[i];
+      N = (size_t) seq[i];
     if (states[i] > M)
-      M = (index_t) states[i];
+      M = (size_t) states[i];
   }
 
   M++;
@@ -235,13 +235,13 @@ void DiscreteHMM::EstimateInit(const arma::vec& seq, const arma::vec& states, ar
   DiscreteHMM::EstimateInit(N, M, seq, states, trans, emis);
 }
 
-void DiscreteHMM::EstimateInit(index_t numSymbols, index_t numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis){
+void DiscreteHMM::EstimateInit(size_t numSymbols, size_t numStates, const arma::vec& seq, const arma::vec& states, arma::mat& trans, arma::mat& emis){
   mlpack::IO::AssertMessage((seq.n_elem == states.n_elem),
     "DiscreteHMM::EstimateInit(): sequence and states length must be the same");
 
-  index_t N = numSymbols;
-  index_t M = numStates;
-  index_t L = seq.n_elem;
+  size_t N = numSymbols;
+  size_t M = numStates;
+  size_t L = seq.n_elem;
   
   arma::vec stateSum;
 
@@ -249,82 +249,82 @@ void DiscreteHMM::EstimateInit(index_t numSymbols, index_t numStates, const arma
   emis.zeros(M, N);
   stateSum.zeros(M);
 
-  for (index_t i = 0; i < L - 1; i++) {
-    index_t state = (index_t) states[i];
-    index_t next_state = (index_t) states[i + 1];
+  for (size_t i = 0; i < L - 1; i++) {
+    size_t state = (size_t) states[i];
+    size_t next_state = (size_t) states[i + 1];
     stateSum[state]++;
     trans(state, next_state)++;
   }
 
-  for (index_t i = 0; i < M; i++) {
+  for (size_t i = 0; i < M; i++) {
     if (stateSum[i] == 0)
       stateSum[i] = -INFINITY;
 
-    for (index_t j = 0; j < M; j++)
+    for (size_t j = 0; j < M; j++)
       trans(i, j) /= stateSum[i];
   }
 
   stateSum.zeros();
 
-  for (index_t i = 0; i < L; i++) {
-    index_t state = (index_t) states[i];
-    index_t emission = (index_t) seq[i];
+  for (size_t i = 0; i < L; i++) {
+    size_t state = (size_t) states[i];
+    size_t emission = (size_t) seq[i];
     stateSum[state]++;
     emis(state, emission)++;
   }
 
-  for (index_t i = 0; i < M; i++) {
+  for (size_t i = 0; i < M; i++) {
     if (stateSum[i] == 0)
       stateSum[i] = -INFINITY;
-    for (index_t j = 0; j < N; j++)
+    for (size_t j = 0; j < N; j++)
       emis(i, j) /= stateSum[i];
   }
 }
 
 void DiscreteHMM::ForwardProcedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& scales, arma::mat& fs) {
-  index_t L = seq.n_elem;
-  index_t M = trans.n_rows;
+  size_t L = seq.n_elem;
+  size_t M = trans.n_rows;
 
   fs.zeros();
   scales.zeros();
 
   // NOTE: start state is 0
   // time t = 0
-  index_t e = (index_t) seq[0];
-  for (index_t i = 0; i < M; i++) {
+  size_t e = (size_t) seq[0];
+  for (size_t i = 0; i < M; i++) {
     fs(i, 0) = trans(0, i) * emis(i, e);
     scales[0] += fs(i, 0);
   }
-  for (index_t i = 0; i < M; i++)
+  for (size_t i = 0; i < M; i++)
     fs(i, 0) /= scales[0];
 
   // time t = 1 -> L-1
-  for (index_t t = 1; t < L; t++) {
-    e = (index_t) seq[t];
-    for (index_t j = 0; j < M; j++) {
-      for (index_t i = 0; i < M; i++)
+  for (size_t t = 1; t < L; t++) {
+    e = (size_t) seq[t];
+    for (size_t j = 0; j < M; j++) {
+      for (size_t i = 0; i < M; i++)
 	fs(j, t) += fs(i, t - 1) * trans(i, j);
       fs(j, t) *= emis(j, e);
       scales[t] += fs(j, t);
     }
-    for (index_t j = 0; j < M; j++)
+    for (size_t j = 0; j < M; j++)
       fs(j, t) /= scales[t];
   }
 }
 
 void DiscreteHMM::BackwardProcedure(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, const arma::vec& scales, arma::mat& bs) {
-  index_t L = seq.n_elem;
-  index_t M = trans.n_rows;
+  size_t L = seq.n_elem;
+  size_t M = trans.n_rows;
 
   bs.zeros();
 
-  for (index_t i = 0; i < M; i++)
+  for (size_t i = 0; i < M; i++)
     bs(i, L - 1) = 1.0;
 
-  for (index_t t = L - 2; t >= 0; t--) {
-    index_t e = (index_t) seq[t + 1];
-    for (index_t i = 0; i < M; i++) {
-      for (index_t j = 0; j < M; j++)
+  for (size_t t = L - 2; t >= 0; t--) {
+    size_t e = (size_t) seq[t + 1];
+    for (size_t i = 0; i < M; i++) {
+      for (size_t j = 0; j < M; j++)
 	bs(i, t) += trans(i, j) * bs(j, t + 1) * emis(j, e);
       bs(i, t) /= scales[t + 1];
     }
@@ -332,8 +332,8 @@ void DiscreteHMM::BackwardProcedure(const arma::vec& seq, const arma::mat& trans
 }
 
 double DiscreteHMM::Decode(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::mat& pstates, arma::mat& fs, arma::mat& bs, arma::vec& scales) {
-  index_t L = seq.n_elem;
-  index_t M = trans.n_rows;
+  size_t L = seq.n_elem;
+  size_t M = trans.n_rows;
 
   mlpack::IO::AssertMessage((L == pstates.n_cols && L == fs.n_cols && L == bs.n_cols && 
 		    M == trans.n_cols    && M == emis.n_rows),
@@ -342,27 +342,27 @@ double DiscreteHMM::Decode(const arma::vec& seq, const arma::mat& trans, const a
   DiscreteHMM::ForwardProcedure(seq, trans, emis, scales, fs);
   DiscreteHMM::BackwardProcedure(seq, trans, emis, scales, bs);
 
-  for (index_t i = 0; i < M; i++) {
-    for (index_t t = 0; t < L; t++)
+  for (size_t i = 0; i < M; i++) {
+    for (size_t t = 0; t < L; t++)
       pstates(i, t) = fs(i,t) * bs(i,t);
   }
 
   double logpseq = 0;
-  for (index_t t = 0; t < L; t++) 
+  for (size_t t = 0; t < L; t++) 
     logpseq += log(scales[t]);
 
   return logpseq;
 }
 
 double DiscreteHMM::ViterbiInit(const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states) {
-  index_t L = seq.n_elem;
+  size_t L = seq.n_elem;
 
   return DiscreteHMM::ViterbiInit(L, seq, trans, emis, states);
 }
 
-double DiscreteHMM::ViterbiInit(index_t L, const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states) {
-  index_t M = trans.n_rows;
-  index_t N = emis.n_cols;
+double DiscreteHMM::ViterbiInit(size_t L, const arma::vec& seq, const arma::mat& trans, const arma::mat& emis, arma::vec& states) {
+  size_t M = trans.n_rows;
+  size_t N = emis.n_cols;
 
   mlpack::IO::AssertMessage((M == trans.n_cols && M == emis.n_rows),
       "DiscreteHMM::ViterbiInit(): sizes do not match");
@@ -379,22 +379,22 @@ double DiscreteHMM::ViterbiInit(index_t L, const arma::vec& seq, const arma::mat
 
   arma::mat logtrans(M, M), logemis(M, N);
 
-  for (index_t i = 0; i < M; i++) {
-    for (index_t j = 0; j < M; j++)
+  for (size_t i = 0; i < M; i++) {
+    for (size_t j = 0; j < M; j++)
       logtrans(i, j) = log(trans(i, j));
 
-    for (index_t j = 0; j < N; j++)
+    for (size_t j = 0; j < N; j++)
       logemis(i, j) = log(emis(i, j));
   }
 
-  for (index_t t = 0; t < L; t++) {
-    index_t e = (index_t) seq[t];
+  for (size_t t = 0; t < L; t++) {
+    size_t e = (size_t) seq[t];
 
-    for (index_t j = 0; j < M; j++) {
+    for (size_t j = 0; j < M; j++) {
       double bestVal = -INFINITY;
       double bestPtr = -1;
 
-      for (index_t i = 0; i < M; i++) {
+      for (size_t i = 0; i < M; i++) {
 	double val = v_old[i] + logtrans(i, j);
 	if (val > bestVal) {
 	  bestVal = val;
@@ -410,28 +410,28 @@ double DiscreteHMM::ViterbiInit(index_t L, const arma::vec& seq, const arma::mat
   double bestVal = -INFINITY;
   double bestPtr = -1;
 
-  for (index_t i = 0; i < M; i++)
+  for (size_t i = 0; i < M; i++)
     if (v[i] > bestVal) {
       bestVal = v[i];
       bestPtr = i;
     }
   
   states[L - 1] = bestPtr;
-  for (index_t t = L - 2; t >= 0; t--)
-    states[t] = w((index_t) states[t + 1], t + 1);
+  for (size_t t = L - 2; t >= 0; t--)
+    states[t] = w((size_t) states[t + 1], t + 1);
 
   return bestVal;
 }
 
-void DiscreteHMM::Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, index_t max_iter, double tol) {
-  index_t L = -1;
-  index_t M = guessTR.n_rows;
-  index_t N = guessEM.n_cols;
+void DiscreteHMM::Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, size_t max_iter, double tol) {
+  size_t L = -1;
+  size_t M = guessTR.n_rows;
+  size_t N = guessEM.n_cols;
 
   mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessEM.n_rows),
       "DiscreteHMM::Train(): sizes do not match");
   
-  for (index_t i = 0; i < seqs.size(); i++) {
+  for (size_t i = 0; i < seqs.size(); i++) {
     if (seqs[i].n_elem > L)
       L = seqs[i].n_elem;
   }
@@ -443,71 +443,71 @@ void DiscreteHMM::Train(const std::vector<arma::vec>& seqs, arma::mat& guessTR, 
   
   double loglik = 0, oldlog;
 
-  for (index_t iter = 0; iter < max_iter; iter++) {
+  for (size_t iter = 0; iter < max_iter; iter++) {
     oldlog = loglik;
     loglik = 0;
 
     TR.zeros();
     EM.zeros();
-    for (index_t idx = 0; idx < seqs.size(); idx++) {
+    for (size_t idx = 0; idx < seqs.size(); idx++) {
       L = seqs[idx].n_elem;
       loglik += DiscreteHMM::Decode(seqs[idx], guessTR, guessEM, ps, fs, bs, s);
       
-      for (index_t t = 0; t < L - 1; t++) {
-	index_t e = (index_t) seqs[idx][t + 1];
-	for (index_t i = 0; i < M; i++) {
-	  for (index_t j = 0; j < M; j++)
+      for (size_t t = 0; t < L - 1; t++) {
+	size_t e = (size_t) seqs[idx][t + 1];
+	for (size_t i = 0; i < M; i++) {
+	  for (size_t j = 0; j < M; j++)
 	    TR(i, j) += fs(i, t) * guessTR(i, j) * guessEM(j, e) * bs(j, t + 1) / s[t + 1];
         }
       }
       
-      for (index_t t = 0; t < L; t++) {
-	index_t e = (index_t) seqs[idx][t];
-	for (index_t i = 0; i < M; i++)
+      for (size_t t = 0; t < L; t++) {
+	size_t e = (size_t) seqs[idx][t];
+	for (size_t i = 0; i < M; i++)
 	  EM(i, e) += ps(i, t);
       }
     }
 
     double s;
-    for (index_t i = 0; i < M; i++) {
+    for (size_t i = 0; i < M; i++) {
       s = 0;
-      for (index_t j = 0; j < M; j++)
+      for (size_t j = 0; j < M; j++)
         s += TR(i, j);
       if (s == 0) {
-	for (index_t j = 0; j < M; j++)
+	for (size_t j = 0; j < M; j++)
           guessTR(i, j) = 0;
 	guessTR(i, i) = 1;
       }
       else {
-	for (index_t j = 0; j < M; j++)
+	for (size_t j = 0; j < M; j++)
           guessTR(i, j) = TR(i, j) / s;
       }
       
       s = 0;
-      for (index_t j = 0; j < N; j++)
+      for (size_t j = 0; j < N; j++)
         s += EM(i, j);
-      for (index_t j = 0; j < N; j++)
+      for (size_t j = 0; j < N; j++)
         guessEM(i, j) = EM(i, j) / s;
     }
 
-    printf("Iter = %"LI" Loglik = %8.4f\n", iter, loglik);
+    printf("Iter = %zu Loglik = %8.4f\n", iter, loglik);
     if (fabs(oldlog - loglik) < tol) {
-      printf("\nConverged after %"LI" iterations\n", iter);
+      printf("\nConverged after %zu iterations\n", iter);
       break;
     }
     oldlog = loglik;
   }
 }
 
-void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, index_t max_iter, double tol) {
-  index_t L = -1;
-  index_t M = guessTR.n_rows;
-  index_t N = guessEM.n_cols;
+void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, size_t max_iter, double tol) {
+  size_t L = -1;
+  size_t M = guessTR.n_rows;
+  size_t N = guessEM.n_cols;
 
   mlpack::IO::AssertMessage((M == guessTR.n_cols && M == guessEM.n_rows),
       "DiscreteHMM::TrainViterbi(): sizes do not match");
   
-  for (index_t i = 0; i < seqs.size(); i++) {
+  for (size_t i = 0; i < seqs.size(); i++) {
     if (seqs[i].n_elem > L)
       L = seqs[i].n_elem;
   }
@@ -515,56 +515,56 @@ void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& gu
   arma::mat TR(M, M), EM(M, N); // guess transition and emission matrix
 
   double loglik = 0, oldlog;
-  for (index_t iter = 0; iter < max_iter; iter++) {
+  for (size_t iter = 0; iter < max_iter; iter++) {
     oldlog = loglik;
     loglik = 0;
 
     TR.fill(1e-4);
     EM.fill(1e-4);
-    for (index_t idx = 0; idx < seqs.size(); idx++) {
+    for (size_t idx = 0; idx < seqs.size(); idx++) {
       arma::vec states;
       L = seqs[idx].n_elem;
       loglik += DiscreteHMM::ViterbiInit(L, seqs[idx], guessTR, guessEM, states);
       
-      for (index_t t = 0; t < L-1; t++) {
-	index_t i = (index_t) states[t];
-	index_t j = (index_t) states[t + 1];
+      for (size_t t = 0; t < L-1; t++) {
+	size_t i = (size_t) states[t];
+	size_t j = (size_t) states[t + 1];
 	TR(i, j)++;
       }
       
-      for (index_t t = 0; t < L; t++) {
-	index_t e = (index_t) seqs[idx][t];
-	index_t i = (index_t) states[t];
+      for (size_t t = 0; t < L; t++) {
+	size_t e = (size_t) seqs[idx][t];
+	size_t i = (size_t) states[t];
 	EM(i, e)++;
       }
     }
 
     double s;
     print_matrix(TR, "TR");
-    for (index_t i = 0; i < M; i++) {
+    for (size_t i = 0; i < M; i++) {
       s = 0;
-      for (index_t j = 0; j < M; j++)
+      for (size_t j = 0; j < M; j++)
         s += TR(i, j);
 
       if (s == 0) {
-	for (index_t j = 0; j < M; j++)
+	for (size_t j = 0; j < M; j++)
           guessTR(i, j) = 0;
 	guessTR(i, i) = 1;
       } else {
-	for (index_t j = 0; j < M; j++)
+	for (size_t j = 0; j < M; j++)
           guessTR(i, j) = TR(i, j) / s;
       }
       
       s = 0;
-      for (index_t j = 0; j < N; j++)
+      for (size_t j = 0; j < N; j++)
         s += EM(i, j);
-      for (index_t j = 0; j < N; j++)
+      for (size_t j = 0; j < N; j++)
         guessEM(i, j) = EM(i, j) / s;
     }
 
-    printf("Iter = %"LI" Loglik = %8.4f\n", iter, loglik);
+    printf("Iter = %zu Loglik = %8.4f\n", iter, loglik);
     if (fabs(oldlog - loglik) < tol) {
-      printf("\nConverged after %"LI" iterations\n", iter);
+      printf("\nConverged after %zu iterations\n", iter);
       break;
     }
     oldlog = loglik;

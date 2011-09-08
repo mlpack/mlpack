@@ -44,11 +44,11 @@ class SubspaceStat {
 		  residual_basis);
 
     // Loop over each residual basis...
-    for(index_t i = 0; i < residual_basis->n_cols(); i++) {
+    for(size_t i = 0; i < residual_basis->n_cols(); i++) {
       
       double *column_vector = residual_basis->GetColumnPtr(i);
 
-      for(index_t j = 0; j < i; j++) {
+      for(size_t j = 0; j < i; j++) {
 	double dot_product = la::Dot(residual_basis->n_rows(), column_vector,
 				     residual_basis->GetColumnPtr(j));
 	la::AddExpert(residual_basis->n_rows(), -dot_product,
@@ -68,13 +68,13 @@ class SubspaceStat {
     } // end of looping over each residual basis...
   }
 
-  static void ComputeColumnMean_(const Matrix &data, index_t start, 
-				 index_t count, Vector *mean) {
+  static void ComputeColumnMean_(const Matrix &data, size_t start, 
+				 size_t count, Vector *mean) {
 
     mean->Init(data.n_rows());
     mean->SetZero();
     
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       Vector data_col;
       data.MakeColumnVector(i, &data_col);
       la::AddTo(data_col, mean);
@@ -82,14 +82,14 @@ class SubspaceStat {
     la::Scale(1.0 / ((double) count), mean);    
   }
   
-  static void ColumnMeanCenter_(const Matrix &data, index_t start, 
-				index_t count, const Vector &mean, 
+  static void ColumnMeanCenter_(const Matrix &data, size_t start, 
+				size_t count, const Vector &mean, 
 				Matrix *data_copy) {
     
     data_copy->Init(data.n_rows(), count);
     
     // Subtract the mean vector from each column of the matrix.
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       Vector data_copy_col, data_col;
       data_copy->MakeColumnVector(i - start, &data_copy_col);
       data.MakeColumnVector(i, &data_col);
@@ -98,15 +98,15 @@ class SubspaceStat {
     }
   }
   
-  static void ColumnMeanCenterTranspose_(const Matrix &data, index_t start, 
-					 index_t count, const Vector &mean, 
+  static void ColumnMeanCenterTranspose_(const Matrix &data, size_t start, 
+					 size_t count, const Vector &mean, 
 					 Matrix *data_copy) {
     
     data_copy->Init(count, data.n_rows());
     
     // Subtract the mean vector from each column of the matrix.
-    for(index_t i = start; i < start + count; i++) {
-      for(index_t j = 0; j < data.n_rows(); j++) {
+    for(size_t i = start; i < start + count; i++) {
+      for(size_t j = 0; j < data.n_rows(); j++) {
 	data_copy->set(i - start, j, data.get(j, i) - mean[j]);
       }
     }
@@ -120,16 +120,16 @@ class SubspaceStat {
     (*dest)[0] = src[0];
     (*total) += src[0];
     
-    for(index_t i = 1; i < src.length(); i++) {
+    for(size_t i = 1; i < src.length(); i++) {
       (*dest)[i] = (*dest)[i - 1] + src[i];
       (*total) += src[i];
     }
   }
 
-  static index_t FindBinNumber_(const Vector &cumulative_distribution, 
+  static size_t FindBinNumber_(const Vector &cumulative_distribution, 
 				double random_number) {
 
-    for(index_t i = 0; i < cumulative_distribution.length(); i++) {
+    for(size_t i = 0; i < cumulative_distribution.length(); i++) {
       if(random_number < cumulative_distribution[i]) {
 	return i;
       }
@@ -145,7 +145,7 @@ class SubspaceStat {
     // First determine the column length-squared distribution...
     Vector squared_lengths;
     squared_lengths.Init(mean_centered.n_cols());
-    for(index_t i = 0; i < mean_centered.n_cols(); i++) {
+    for(size_t i = 0; i < mean_centered.n_cols(); i++) {
       squared_lengths[i] = 
 	la::Dot(mean_centered.n_rows(), mean_centered.GetColumnPtr(i),
 		mean_centered.GetColumnPtr(i));
@@ -159,24 +159,24 @@ class SubspaceStat {
        &total_squared_lengths);
     
     // The number of samples...
-    index_t num_samples = std::max((index_t) sqrt(mean_centered.n_cols()), (index_t) 1);
+    size_t num_samples = std::max((size_t) sqrt(mean_centered.n_cols()), (size_t) 1);
     Matrix sampled_columns;
     sampled_columns.Init(mean_centered.n_rows(), num_samples);
 
     // Commence sampling...
-    for(index_t s = 0; s < num_samples; s++) {
+    for(size_t s = 0; s < num_samples; s++) {
       
       // Generate random number between 0 and total_squared_lengths
       // and find out which column is picked.
       double random_number = math::Random(0, total_squared_lengths);
-      index_t sample_number = 
+      size_t sample_number = 
 	FindBinNumber_(normalized_cumulative_squared_lengths, random_number);
       
       // Normalize proportion to squared length and the number of
       // samples.
       double probability =
 	squared_lengths[sample_number] / total_squared_lengths;
-      for(index_t j = 0; j < mean_centered.n_rows(); j++) {
+      for(size_t j = 0; j < mean_centered.n_rows(); j++) {
 	sampled_columns.set(j, s, mean_centered.get(j, sample_number) /
 			    sqrt(num_samples * probability));
       }
@@ -191,8 +191,8 @@ class SubspaceStat {
 		&tmp_right_singular_vectors, &tmp_vectors);
 
     // Cut off small eigen values...
-    index_t eigen_count = 0;
-    for(index_t i = 0; i < tmp_eigen_values.length(); i++) {
+    size_t eigen_count = 0;
+    for(size_t i = 0; i < tmp_eigen_values.length(); i++) {
       if(tmp_eigen_values[i] >= 0 &&
 	 tmp_eigen_values[i] >= epsilon_ * tmp_eigen_values[0]) {
 	eigen_count++;
@@ -209,7 +209,7 @@ class SubspaceStat {
       la::MulInit(sampled_columns, aliased_right_singular_vectors,
 		  &right_singular_vectors_arg);
       singular_values_arg.Init(eigen_count);
-      for(index_t i = 0; i < eigen_count; i++) {
+      for(size_t i = 0; i < eigen_count; i++) {
 	singular_values_arg[i] = sqrt(tmp_eigen_values[i]);
 	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_arg[i],
 		  right_singular_vectors_arg.GetColumnPtr(i));
@@ -219,7 +219,7 @@ class SubspaceStat {
       // vectors.
       la::MulTransAInit(mean_centered, right_singular_vectors_arg,
 			&left_singular_vectors_arg);
-      for(index_t i = 0; i < left_singular_vectors_arg.n_cols(); i++) {
+      for(size_t i = 0; i < left_singular_vectors_arg.n_cols(); i++) {
 	double length = 
 	  la::LengthEuclidean(left_singular_vectors_arg.n_rows(),
 			      left_singular_vectors_arg.GetColumnPtr(i));
@@ -233,7 +233,7 @@ class SubspaceStat {
       la::MulInit(sampled_columns, aliased_right_singular_vectors,
 		  &left_singular_vectors_arg);
       singular_values_arg.Init(eigen_count);
-      for(index_t i = 0; i < eigen_count; i++) {
+      for(size_t i = 0; i < eigen_count; i++) {
 	singular_values_arg[i] = sqrt(tmp_eigen_values[i]);
 	la::Scale(mean_centered.n_rows(), 1.0 / singular_values_arg[i],
 		  left_singular_vectors_arg.GetColumnPtr(i));
@@ -243,7 +243,7 @@ class SubspaceStat {
       // vectors.
       la::MulTransAInit(mean_centered, left_singular_vectors_arg,
 			&right_singular_vectors_arg);
-      for(index_t i = 0; i < right_singular_vectors_arg.n_cols(); i++) {
+      for(size_t i = 0; i < right_singular_vectors_arg.n_cols(); i++) {
 	double length = 
 	  la::LengthEuclidean(right_singular_vectors_arg.n_rows(),
 			      right_singular_vectors_arg.GetColumnPtr(i));
@@ -260,12 +260,12 @@ class SubspaceStat {
   /** @brief The starting index of the points owned by the current
    *         statistics object.
    */
-  index_t start_;
+  size_t start_;
   
   /** @brief The number of points owned by the current statistics
    *         object.
    */
-  index_t count_;
+  size_t count_;
   
   /** @brief The mean of the points owned by the current statistics
    *         object.
@@ -301,7 +301,7 @@ class SubspaceStat {
     dimension_reduced_data_.Init(left_singular_vectors_.n_cols(), count_);
 
     max_l2_norm_reconstruction_error_ = 0;
-    for(index_t i = start_; i < start_ + count_; i++) {
+    for(size_t i = start_; i < start_ + count_; i++) {
       
       // Get the reference to the projected vector to be computed.
       Vector proj_vector;
@@ -325,7 +325,7 @@ class SubspaceStat {
 
   /** @brief Compute PCA exhaustively for leaf nodes.
    */
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count) {
 
     // Set the start and count info before anything else...
     start_ = start;
@@ -356,15 +356,15 @@ class SubspaceStat {
     
     // Take square root of the returned values so that the proper
     // singular values can be computed.
-    index_t subspace_count = 0;
-    for(index_t i = 0; i < tmp_singular_values.length(); i++) {
+    size_t subspace_count = 0;
+    for(size_t i = 0; i < tmp_singular_values.length(); i++) {
       tmp_singular_values[i] = sqrt(tmp_singular_values[i]);
       if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
 	subspace_count++;
       }
     }
     singular_values_.Init(subspace_count);
-    for(index_t i = 0; i < subspace_count; i++) {
+    for(size_t i = 0; i < subspace_count; i++) {
       singular_values_[i] = tmp_singular_values[i];
     }
     left_singular_vectors_.Copy(tmp_left_singular_vectors.GetColumnPtr(0), 
@@ -401,7 +401,7 @@ class SubspaceStat {
 
   /** @brief Merge two eigenspaces into one.
    */
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const Matrix& dataset, size_t &start, size_t &count,
 	    const SubspaceStat& left_stat, const SubspaceStat& right_stat) {
 
     // Set the starting index and the count...
@@ -429,7 +429,7 @@ class SubspaceStat {
     // Now we setup the eigenproblem to be solved for stitching two
     // PCA models together.
     Matrix merging_problem;
-    index_t dimension_merging_problem = left_stat.singular_values_.length() +
+    size_t dimension_merging_problem = left_stat.singular_values_.length() +
       right_stat.singular_values_.length();
     merging_problem.Init(dimension_merging_problem, dimension_merging_problem);
     merging_problem.SetZero();
@@ -444,18 +444,18 @@ class SubspaceStat {
     // of the matrix-matrix product.
     //
     // Remember that eigenvalues are squared singular values!!
-    for(index_t j = 0; j < left_stat.singular_values_.length(); j++) {
+    for(size_t j = 0; j < left_stat.singular_values_.length(); j++) {
       merging_problem.set(j, j, factor1 * left_stat.singular_values_[j] *
 			  left_stat.singular_values_[j] / 
 			  ((double) left_stat.count_));
     }
 
-    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+    for(size_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
       const double *column_vector = subspace_projection.GetColumnPtr(j);
 
       // Now loop over each component of the upper left submatrix.
-      for(index_t i = 0; i < left_stat.singular_values_.length(); i++) {
-	for(index_t k = 0; k < left_stat.singular_values_.length(); k++) {
+      for(size_t i = 0; i < left_stat.singular_values_.length(); i++) {
+	for(size_t k = 0; k < left_stat.singular_values_.length(); k++) {
 
 	  if(j < right_stat.singular_values_.length()) {
 	    merging_problem.set(k, i, merging_problem.get(k, i) + factor2 *
@@ -484,16 +484,16 @@ class SubspaceStat {
 
     // Set up the top right block...also using the outer-product
     // formulation of the matrix-matrix product.
-    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+    for(size_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
       const double *column_vector = subspace_projection.GetColumnPtr(j);
       const double *column_vector2 = 
 	(j < right_stat.singular_values_.length()) ?
 	projection_right_basis.GetColumnPtr(j):projection_mean_diff.ptr();
 
       // Now loop over each component of the upper right submatrix.
-      for(index_t i = left_stat.singular_values_.length(); 
+      for(size_t i = left_stat.singular_values_.length(); 
 	  i < dimension_merging_problem; i++) {
-	for(index_t k = 0; k < left_stat.singular_values_.length(); k++) {
+	for(size_t k = 0; k < left_stat.singular_values_.length(); k++) {
 
 	  if(j < right_stat.singular_values_.length()) {
 	    merging_problem.set
@@ -515,23 +515,23 @@ class SubspaceStat {
     
     // Set up the lower left block... This is basically a tranpose of
     // the upper right block.
-    for(index_t i = 0; i < left_stat.singular_values_.length(); i++) {
-      for(index_t j = left_stat.singular_values_.length();
+    for(size_t i = 0; i < left_stat.singular_values_.length(); i++) {
+      for(size_t j = left_stat.singular_values_.length();
 	  j < dimension_merging_problem; j++) {
 	merging_problem.set(j, i, merging_problem.get(i, j));
       }
     }
     // Set up the lower right block... also using the outer-product
     // formulation of the matrix-matrix product.
-    for(index_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
+    for(size_t j = 0; j < right_stat.singular_values_.length() + 1; j++) {
       const double *column_vector = 
 	(j < right_stat.singular_values_.length()) ?
 	projection_right_basis.GetColumnPtr(j):projection_mean_diff.ptr();
       
       // Now loop over each component of the upper left submatrix.
-      for(index_t i = left_stat.singular_values_.length(); 
+      for(size_t i = left_stat.singular_values_.length(); 
 	  i < dimension_merging_problem; i++) {
-	for(index_t k = left_stat.singular_values_.length(); 
+	for(size_t k = left_stat.singular_values_.length(); 
 	    k < dimension_merging_problem; k++) {
 
 	  if(j < right_stat.singular_values_.length()) {
@@ -558,8 +558,8 @@ class SubspaceStat {
 
     la::SVDInit(merging_problem, &tmp_singular_values,
 		&tmp_left_singular_vectors, &tmp_right_singular_vectors);
-    index_t eigen_count = 0;
-    for(index_t i = 0; i < tmp_singular_values.length(); i++) {
+    size_t eigen_count = 0;
+    for(size_t i = 0; i < tmp_singular_values.length(); i++) {
       if(tmp_singular_values[i] >= epsilon_ * tmp_singular_values[0]) {
 	eigen_count++;
       }
@@ -569,15 +569,15 @@ class SubspaceStat {
     left_singular_vectors_.Init(dataset.n_rows(), eigen_count);
     left_singular_vectors_.SetZero();
 
-    for(index_t i = 0; i < tmp_left_singular_vectors.n_cols(); i++) {
+    for(size_t i = 0; i < tmp_left_singular_vectors.n_cols(); i++) {
       const double *column_vector =
 	(i < left_stat.left_singular_vectors_.n_cols()) ?
 	left_stat.left_singular_vectors_.GetColumnPtr(i):
 	subspace_projection_reconstruction_error.GetColumnPtr
 	(i - left_stat.left_singular_vectors_.n_cols());
 
-      for(index_t j = 0; j < eigen_count; j++) {
-	for(index_t k = 0; k < dataset.n_rows(); k++) {
+      for(size_t j = 0; j < eigen_count; j++) {
+	for(size_t k = 0; k < dataset.n_rows(); k++) {
 	  left_singular_vectors_.set
 	    (k, j, left_singular_vectors_.get(k, j) +
 	     column_vector[k] * tmp_left_singular_vectors.get(i, j));
@@ -587,7 +587,7 @@ class SubspaceStat {
     
     // Copy over the singular values...
     singular_values_.Init(eigen_count);
-    for(index_t i = 0; i < eigen_count; i++) {
+    for(size_t i = 0; i < eigen_count; i++) {
       singular_values_[i] = sqrt(tmp_singular_values[i] * count_);
     }
 

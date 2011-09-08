@@ -27,7 +27,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   int leaflen = fx_param_int(module_, "leaflen", 40);
   
   // Construct the query tree.
-  ArrayList<index_t> old_from_new_queries;
+  ArrayList<size_t> old_from_new_queries;
   QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
     (qset, leaflen, &old_from_new_queries, NULL);
       
@@ -42,7 +42,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   numerator_n_pruned.Init(queries.n_cols());
   denominator_l.Init(queries.n_cols());
   denominator_e.Init(queries.n_cols());
-  for(index_t i = 0; i < queries.n_cols(); i++) {
+  for(size_t i = 0; i < queries.n_cols(); i++) {
     denominator_l[i].Init(row_length_, row_length_);
     denominator_e[i].Init(row_length_, row_length_);
   }
@@ -52,7 +52,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   Vector weight_diagram_used_error;
   weight_diagram_numerator_l.Init(queries.n_cols());
   weight_diagram_numerator_e.Init(queries.n_cols());
-  for(index_t i = 0; i < queries.n_cols(); i++) {
+  for(size_t i = 0; i < queries.n_cols(); i++) {
     weight_diagram_numerator_l[i].Init(row_length_, row_length_);
     weight_diagram_numerator_e[i].Init(row_length_, row_length_);
   }
@@ -101,28 +101,28 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeDualTree_
   Vector tmp_q_results;
   tmp_q_results.Init(query_regression_estimates->length());
   
-  for(index_t i = 0; i < tmp_q_results.length(); i++) {
+  for(size_t i = 0; i < tmp_q_results.length(); i++) {
     tmp_q_results[old_from_new_queries[i]] = 
       (*query_regression_estimates)[i];
   }
   query_regression_estimates->CopyValues(tmp_q_results);
 
   if(leave_one_out_query_regression_estimates != NULL) {
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(size_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] = 
 	(*leave_one_out_query_regression_estimates)[i];
     }
     leave_one_out_query_regression_estimates->CopyValues(tmp_q_results);
   }
   if(query_magnitude_weight_diagrams != NULL) {
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(size_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] = 
 	(*query_magnitude_weight_diagrams)[i];
     }
     query_magnitude_weight_diagrams->CopyValues(tmp_q_results);
   }
   if(query_influence_values != NULL) {
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(size_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] = 
 	(*query_influence_values)[i];
     }
@@ -155,7 +155,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   numerator_n_pruned.Init(1);
   denominator_l.Init(1);
   denominator_e.Init(1);
-  for(index_t i = 0; i < 1; i++) {
+  for(size_t i = 0; i < 1; i++) {
     denominator_l[i].Init(row_length_, row_length_);
     denominator_e[i].Init(row_length_, row_length_);
   }
@@ -165,7 +165,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   Vector weight_diagram_used_error;
   weight_diagram_numerator_l.Init(1);
   weight_diagram_numerator_e.Init(1);
-  for(index_t i = 0; i < 1; i++) {
+  for(size_t i = 0; i < 1; i++) {
     weight_diagram_numerator_l[i].Init(row_length_, row_length_);
     weight_diagram_numerator_e[i].Init(row_length_, row_length_);
   }
@@ -182,7 +182,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
   }
 
   // iterate over each query point.
-  for(index_t q = 0; q < queries.n_cols(); q++) {
+  for(size_t q = 0; q < queries.n_cols(); q++) {
 
     // Make each column query vector as the whole dataset.
     Vector q_col;
@@ -209,7 +209,7 @@ void DenseLpr<TKernel, TPruneRule>::BasicComputeSingleTree_
 
     // Construct the query tree.
     QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
-      (qset, leaflen, (ArrayList<index_t> *) NULL, (ArrayList<index_t> *) NULL);
+      (qset, leaflen, (ArrayList<size_t> *) NULL, (ArrayList<size_t> *) NULL);
     
     // Three steps: initialize the query tree, then call dualtree,
     // then final postprocess.
@@ -293,7 +293,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
     // sum statistics owned by the reference node.
-    for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+    for(size_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the pointer to the current reference point.
       Vector r_col;
@@ -320,12 +320,12 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       // reference vector and the outerproduct. The outer loop
       // iterates over each column and the inner iterates over each
       // row.
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
 	  Add(r_target_weighted_by_coordinates[j] / norm_constant, 
 	      kernels_[r].bandwidth_sq(), r_col);
 
-	for(index_t i = 0; i < row_length_; i++) {
+	for(size_t i = 0; i < row_length_; i++) {
 	  rnode->stat().data_outer_products_far_field_expansion_[j][i].
 	    Add(reference_point_expansion[j] * reference_point_expansion[i] /
 		norm_constant, kernels_[r].bandwidth_sq(), r_col);
@@ -401,7 +401,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_data_outer_products_, 1);
     
     // Translate far-field moments of the child to form the parent.
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
 	Add(rnode->left()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
@@ -409,7 +409,7 @@ InitializeReferenceStatistics_(ReferenceTree *rnode) {
 	Add(rnode->right()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
       
-      for(index_t i = 0; i < row_length_; i++) {
+      for(size_t i = 0; i < row_length_; i++) {
 
 	// First the far field moments of outer product using the bandwidth
 	rnode->stat().data_outer_products_far_field_expansion_[j][i].
@@ -458,7 +458,7 @@ InitializeQueryTree_(QueryTree *qnode, Matrix &numerator_l,
   // If the query node is a leaf, then initialize the corresponding
   // bound quantities for each query point.
   if(qnode->is_leaf()) {
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Reset the bounds corresponding to the particular query point.
       ResetQuery_(q, numerator_l, numerator_e, numerator_used_error,
@@ -515,7 +515,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
   qnode->stat().weight_diagram_numerator_used_error_ = 0;
   
   // Iterate over each query point.
-  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+  for(size_t q = qnode->begin(); q < qnode->end(); q++) {
     
     // Get the query point.
     const double *q_col = qset.GetColumnPtr(q);
@@ -544,7 +544,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       qnode->stat().postponed_weight_diagram_numerator_used_error_;
 
     // Iterate over each reference point.
-    for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+    for(size_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the reference point and its training value.
       const double *r_col = rset_.GetColumnPtr(r);
@@ -561,7 +561,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
       double target_weighted_kernel_value = rset_targets_[r] * kernel_value;
       
       // Loop over each column of the matrix to be updated.
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 
 	// Tally the sum up for the numerator vector B^T W(q) Y.
 	q_numerator_l[j] += target_weighted_kernel_value * 
@@ -570,7 +570,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprBase_
 	  reference_point_expansion[j];
 	
 	// Loop over each row of the matrix to be updated.
-	for(index_t i = 0; i < row_length_; i++) {
+	for(size_t i = 0; i < row_length_; i++) {
 	  
 	  // Tally the sum up for the denominator matrix B^T W(q) B.
 	  denominator_l[q].set(i, j, denominator_l[q].get(i, j) +
@@ -728,7 +728,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
   if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
      rnode->count() > dimension_ * dimension_) {
 
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       
       qnode->stat().postponed_numerator_l_[j] += 
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
@@ -736,7 +736,7 @@ void DenseLpr<TKernel, TPruneRule>::DualtreeLprCanonical_
       qnode->stat().postponed_moment_numerator_e_[j].
 	Add(rnode->stat().target_weighted_data_far_field_expansion_[j]);
 
-      for(index_t i = 0; i < row_length_; i++) {
+      for(size_t i = 0; i < row_length_; i++) {
 
 	qnode->stat().postponed_denominator_l_.set
 	  (j, i, qnode->stat().postponed_denominator_l_.get(j, i) +
@@ -993,7 +993,7 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
     Vector query_point_expansion;
     query_point_expansion.Init(row_length_);
 
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // Get the query point.
       Vector q_col;
@@ -1021,11 +1021,11 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 
       // Incorporate the postponed estimates using the Epanechnikov
       // series expansion.
-      for(index_t i = 0; i < row_length_; i++) {
+      for(size_t i = 0; i < row_length_; i++) {
 	q_numerator_e[i] += 
 	  qnode->stat().postponed_moment_numerator_e_[i].
 	  ComputeKernelSum(q_col);
-	for(index_t j = 0; j < row_length_; j++) {
+	for(size_t j = 0; j < row_length_; j++) {
 	  denominator_e[q].set
 	    (j, i, denominator_e[q].get(j, i) +
 	     qnode->stat().postponed_moment_denominator_e_[j][i].
@@ -1089,8 +1089,8 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	la::AddExpert(-rset_targets_[q] / norm_constant,
 		      query_point_expansion, &q_numerator_e);
 	
-	for(index_t j = 0; j < row_length_; j++) {
-	  for(index_t i = 0; i < row_length_; i++) {
+	for(size_t j = 0; j < row_length_; j++) {
+	  for(size_t i = 0; i < row_length_; i++) {
 	    denominator_e[q].set
 	      (i, j, denominator_e[q].get(i, j) -
 	       query_point_expansion[i] *
@@ -1149,13 +1149,13 @@ FinalizeQueryTree_(QueryTree *qnode, const Matrix &qset,
 	      &(q_right_stat.postponed_weight_diagram_numerator_e_));
 
     // Push down Epanechnikov series expansion pruning.
-    for(index_t i = 0; i < row_length_; i++) {
+    for(size_t i = 0; i < row_length_; i++) {
       q_left_stat.postponed_moment_numerator_e_[i].Add
 	(q_stat.postponed_moment_numerator_e_[i]);
       q_right_stat.postponed_moment_numerator_e_[i].Add
 	(q_stat.postponed_moment_numerator_e_[i]);
 
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	q_left_stat.postponed_moment_denominator_e_[i][j].Add
 	  (q_stat.postponed_moment_denominator_e_[i][j]);
 	q_right_stat.postponed_moment_denominator_e_[i][j].Add

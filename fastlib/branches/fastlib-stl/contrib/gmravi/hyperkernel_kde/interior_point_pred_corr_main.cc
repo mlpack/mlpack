@@ -19,7 +19,7 @@ int main(int argc, char *argv[]){
   
   //Train data file is a reuqirement
   const char *train_file=fx_param_str_req(ipc,"train");
-  index_t num_train_points;  
+  size_t num_train_points;  
   Matrix train_data;
 
   
@@ -33,9 +33,9 @@ int main(int argc, char *argv[]){
 
   //Variables concerning test set
 
-  index_t num_test_points=0;
-  index_t test_file_present=0;
-  index_t true_density_file_present=0;
+  size_t num_test_points=0;
+  size_t test_file_present=0;
+  size_t true_density_file_present=0;
   Matrix test_data;
 
   //Check for the existence of a test set and accordingly read data
@@ -55,7 +55,7 @@ int main(int argc, char *argv[]){
     num_test_points=0;
   }
  
-  index_t num_dims=test_data.n_rows();
+  size_t num_dims=test_data.n_rows();
 
   /** Whiten the dataset only if it is multidimensional **/
 
@@ -185,9 +185,9 @@ int main(int argc, char *argv[]){
   if(fx_param_exists(ipc,"true")){
     
     double rmse=0;
-    index_t num_test_points=true_test_densities.n_cols();
+    size_t num_test_points=true_test_densities.n_cols();
     
-    for(index_t i=0;i<num_test_points;i++){
+    for(size_t i=0;i<num_test_points;i++){
       
       double diff=
 	naive_kde_test_densities[i]-true_test_densities.get(0,i);
@@ -213,9 +213,9 @@ int main(int argc, char *argv[]){
 
    //Number of parameteres for crossvalidation
 
-   index_t num_sigma=1;
-   index_t num_sigma_h=1;
-   index_t num_lambda=1;
+   size_t num_sigma=1;
+   size_t num_sigma_h=1;
+   size_t num_lambda=1;
 
 
    Vector sigma_vec;
@@ -239,7 +239,7 @@ int main(int argc, char *argv[]){
 
    // double gap=(max_sigma-min_sigma)/num_sigma;
    
-   for(index_t i=0;i<num_sigma;i++){
+   for(size_t i=0;i<num_sigma;i++){
      
      sigma_vec[i]=min_sigma;
    }
@@ -255,8 +255,8 @@ int main(int argc, char *argv[]){
    printf("Sigma vector is ...\n");
    sigma_vec.PrintDebug();
    
-   index_t num_defaulters=0;      
-   index_t num_err=0;
+   size_t num_defaulters=0;      
+   size_t num_err=0;
    
    double sigma_opt,sigma_h_opt,lambda_opt;
    
@@ -267,7 +267,7 @@ int main(int argc, char *argv[]){
    
    Vector test_densities_hkde_opt;
    
-   for(index_t i=0;i<num_sigma;i++){
+   for(size_t i=0;i<num_sigma;i++){
      
      //Initialize a $\sigma_h$ vector
      
@@ -276,7 +276,7 @@ int main(int argc, char *argv[]){
      
      //Set up sigma_h as per the $\sigma$ vector
      
-     for(index_t count=0;count<num_sigma_h;count++){
+     for(size_t count=0;count<num_sigma_h;count++){
        
        sigma_h_vec[count]=3.5*sigma_vec[0];     
      } 
@@ -285,9 +285,9 @@ int main(int argc, char *argv[]){
      sigma_h_vec.PrintDebug();
      
      
-     for(index_t j=0;j<num_sigma_h;j++){
+     for(size_t j=0;j<num_sigma_h;j++){
        
-       for(index_t k=0;k<num_lambda;k++){
+       for(size_t k=0;k<num_lambda;k++){
 	 
 	printf("ITERATION:i=%d,j=%d,k=%d..\n",i,j,k);
 	printf("sigma=%f,sigma_h=%f...\n",sigma_vec[i],sigma_h_vec[j]);
@@ -298,7 +298,7 @@ int main(int argc, char *argv[]){
 	
 	HKInteriorPointPredictorCorrector hk_ippc; 
 	hk_ippc.Init(train_data,test_data,ipc);
-	index_t ret_val=hk_ippc.ComputeOptimalSolution();
+	size_t ret_val=hk_ippc.ComputeOptimalSolution();
 	printf("Return value is=%d..\n",ret_val);
 
 	
@@ -359,7 +359,7 @@ int main(int argc, char *argv[]){
    //test_densities_hkde_opt.PrintDebug();
   
   FILE *fp=fopen("mog3_multi/mog3_multi_rect_hkde.txt","w+");
-  for(index_t i=0;i<num_test_points;i++){
+  for(size_t i=0;i<num_test_points;i++){
     if(i<num_test_points-1){
       
       fprintf(fp,"%f\n",test_densities_hkde_opt[i]);
@@ -381,7 +381,7 @@ int main(int argc, char *argv[]){
     if(true_density_file_present==1){
       
       double rmse=0;
-      for(index_t i=0;i<num_test_points;i++){
+      for(size_t i=0;i<num_test_points;i++){
 	
 	//printf("Actual density is %f..\n",true_test_densities.get(0,i));
       //printf("Calculated density is %f..\n",test_densities_hkde_opt[i]);

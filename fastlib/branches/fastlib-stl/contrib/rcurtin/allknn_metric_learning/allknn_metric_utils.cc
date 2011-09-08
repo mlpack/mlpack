@@ -81,7 +81,7 @@ int mlpack::allknn::metric::ClassifyKNN(arma::vec& neighbors) {
  * @return Number of correctly classified points
  */
 int mlpack::allknn::metric::EstimateScores(arma::mat& input,
-                                           arma::Col<index_t>& neighbors,
+                                           arma::Col<size_t>& neighbors,
                                            arma::vec& labels,
                                            int knns,
                                            int score) {
@@ -99,7 +99,7 @@ int mlpack::allknn::metric::EstimateScores(arma::mat& input,
 
     // Now sort our new vector by distance (since the order has likely changed).
     std::sort(local_neighbors.begin(), local_neighbors.end(), sortPairedVector);
-    arma::Col<index_t> tmp(local_neighbors.size());
+    arma::Col<size_t> tmp(local_neighbors.size());
     for (int j = 0; j < local_neighbors.size(); j++)
       tmp(j) = local_neighbors.at(j).first;
 
@@ -120,7 +120,7 @@ int mlpack::allknn::metric::EstimateScores(arma::mat& input,
  * @param labels List of correct classes of points (length n_points)
  * @return Number of correctly classified points
  */
-int mlpack::allknn::metric::EvaluateCorrect(arma::Col<index_t>& neighbors,
+int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
                                             int knns,
                                             int score,
                                             arma::vec& labels) {
@@ -152,7 +152,7 @@ int mlpack::allknn::metric::EvaluateCorrect(arma::Col<index_t>& neighbors,
  * @param labels List of correct classes of points (length n_points)
  * @return 1 if correctly classified, 0 otherwise.
  */
-int mlpack::allknn::metric::EvaluateCorrect(arma::Col<index_t>& neighbors,
+int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
                                             int knns,
                                             int score,
                                             arma::vec& labels,
@@ -184,7 +184,7 @@ int mlpack::allknn::metric::EvaluateCorrect(arma::Col<index_t>& neighbors,
  * @return Number of correctly classified points
  */
 int mlpack::allknn::metric::EvaluateClassCorrect(
-      const arma::Col<index_t>& neighbors,
+      const arma::Col<size_t>& neighbors,
       int knns,
       const arma::vec& ref_labels,
       const arma::vec& query_labels,

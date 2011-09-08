@@ -20,7 +20,7 @@ class SCFSolverTest {
 public:
   
   
-  static const index_t num_electrons = 2;
+  static const size_t num_electrons = 2;
   static const double eps = 0.01;
   
   void Init() {
@@ -47,8 +47,8 @@ public:
     solver_->Init(nuclear_energy, overlap, kinetic, potential, two_electron, 
                  num_electrons);
     
-    for (index_t i = 0; i < core.n_rows(); i++) {
-      for (index_t j = 0; j < core.n_cols(); j++) {
+    for (size_t i = 0; i < core.n_rows(); i++) {
+      for (size_t j = 0; j < core.n_cols(); j++) {
         TEST_DOUBLE_APPROX(core.ref(i, j), 
                            solver_->one_electron_integrals_.ref(i, j), eps);
       }
@@ -73,8 +73,8 @@ public:
     
     // Is the change-of-basis matrix unique with respect to negaives on the 
     // diagonal?  If not, I need to add absolute values here.
-    for (index_t i = 0; i < true_orthogonal.n_rows(); i++) {
-      for (index_t j = 0; j < true_orthogonal.n_cols(); j++) {
+    for (size_t i = 0; i < true_orthogonal.n_rows(); i++) {
+      for (size_t j = 0; j < true_orthogonal.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_orthogonal.ref(i, j), 
                            solver_->overlap_matrix_.ref(i, j), eps); 
       }
@@ -97,8 +97,8 @@ public:
     Matrix true_density;
     data::Load("density_test.csv", &true_density);
     
-    for (index_t i = 0; i < true_density.n_rows(); i++) {
-      for (index_t j = 0; j < true_density.n_cols(); j++) {
+    for (size_t i = 0; i < true_density.n_rows(); i++) {
+      for (size_t j = 0; j < true_density.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_density.ref(i, j), 
                            solver_->density_matrix_.ref(i, j), eps);
       }
@@ -132,7 +132,7 @@ public:
     
     solver_->energy_vector_ = test_energy_vector;
     
-    ArrayList<index_t> test_indices;
+    ArrayList<size_t> test_indices;
     solver_->FillOrbitals_(&test_indices);
     
     TEST_ASSERT((test_indices[0] == 0) && (test_indices[1] == 5) 
@@ -148,15 +148,15 @@ public:
   
   void TestFindIntegralIndex() {
     
-    index_t test1 = solver_->FindIntegralIndexHelper_(1, 0);
+    size_t test1 = solver_->FindIntegralIndexHelper_(1, 0);
     
-    index_t test2 = solver_->FindIntegralIndexHelper_(5, 4);
+    size_t test2 = solver_->FindIntegralIndexHelper_(5, 4);
     
-    index_t test3 = solver_->FindIntegralIndex_(0, 0, 0, 0);
+    size_t test3 = solver_->FindIntegralIndex_(0, 0, 0, 0);
     
-    index_t test4 = solver_->FindIntegralIndex_(1, 1, 0, 0);
+    size_t test4 = solver_->FindIntegralIndex_(1, 1, 0, 0);
     
-    index_t test5 = solver_->FindIntegralIndex_(1, 0, 1, 0);
+    size_t test5 = solver_->FindIntegralIndex_(1, 0, 1, 0);
     
     TEST_ASSERT(test1 == 1);
     TEST_ASSERT(test2 == 19);

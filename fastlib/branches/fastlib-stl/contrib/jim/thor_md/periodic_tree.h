@@ -10,7 +10,7 @@ namespace prdc {
 			      const DHrectBound<2>& ref,
 			      const Vector& box_size){
    double sum = 0;
-   for (index_t d = 0; d < ref.dim(); d++){   
+   for (size_t d = 0; d < ref.dim(); d++){   
      DRange a = query.get(d);
      DRange b = ref.get(d);
      double v = 0, L = box_size[d];
@@ -29,7 +29,7 @@ namespace prdc {
 			      const Vector& query, const Vector& box_size){
    double sum = 0;  
         
-   for (index_t d = 0; d < ref.dim(); d++){
+   for (size_t d = 0; d < ref.dim(); d++){
      double v = 0, a = query[d], L = box_size[d];
      double d1, d2;
      const DRange b = ref.get(d);  
@@ -45,7 +45,7 @@ namespace prdc {
 				  const DHrectBound<2>& query, 
 				  const Vector& box_size){
     double sum = 0;
-    for (index_t d = 0; d < ref.dim(); d++){       
+    for (size_t d = 0; d < ref.dim(); d++){       
       const DRange a = query.get(d);
       const DRange b = ref.get(d);
       
@@ -63,7 +63,7 @@ namespace prdc {
 				  const Vector& query, const Vector& box_size){
    double sum = 0;  
          
-   for (index_t d = 0; d < ref.dim(); d++){
+   for (size_t d = 0; d < ref.dim(); d++){
      const DRange b = ref.get(d);
      double a = query[d];
      double v = 0, bh;
@@ -92,7 +92,7 @@ namespace prdc {
      (*this) |= other;    
    }
 
-   for (index_t i= 0; i < this->dim(); i++){
+   for (size_t i= 0; i < this->dim(); i++){
      double ah, al;
      ah = (this->get(i)).hi - other[i];
      al = (this->get(i)).lo - other[i];
@@ -125,7 +125,7 @@ namespace prdc {
  const {
    double sum = 0;
    const DRange *a = this->bounds_;  
-   for (index_t d = 0; d < dim_; d++){
+   for (size_t d = 0; d < dim_; d++){
      double b = point[d];
      double v = box_size[d] / 2.0;
      double ah, al;
@@ -149,7 +149,7 @@ namespace prdc {
  const {
    double sum = 0;
    const DRange *a = this->bounds_;  
-   for (index_t d = 0; d < dim_; d++){
+   for (size_t d = 0; d < dim_; d++){
      double b = point[d];
      double v = box_size[d] / 2.0;
      double ah, al;
@@ -178,7 +178,7 @@ namespace prdc {
    
    DEBUG_SAME_SIZE(dim_, other.dim_);
    
-   for (index_t d = 0; d < dim_; d++){
+   for (size_t d = 0; d < dim_; d++){
      double v = box_size[d] / 2.0;
      double dh, dl;
      dh = a[d].hi - b[d].lo;

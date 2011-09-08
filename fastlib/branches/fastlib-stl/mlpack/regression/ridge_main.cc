@@ -74,12 +74,12 @@ int main(int argc, char** argv) {
   std::string predictions_file = IO::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
-  if (data::Load(predictors_file.c_str(), predictors) == SUCCESS_FAIL) {
+  if (data::Load(predictors_file.c_str(), predictors) == false) {
     IO::Fatal << "Unable to open file " << predictors_file.c_str() << std::endl;
   }
 
   arma::mat predictions;
-  if (data::Load(predictions_file.c_str(), predictions) == SUCCESS_FAIL) {
+  if (data::Load(predictions_file.c_str(), predictions) == false) {
     IO::Fatal << "Unable to open file " << predictions_file.c_str() << std::endl;
   }
 
@@ -116,16 +116,16 @@ int main(int argc, char** argv) {
     std::string prune_predictor_indices_file = 
       IO::GetParam<std::string>("ridge/prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(), 
-	  predictor_indices_intermediate) == SUCCESS_FAIL) {
+	  predictor_indices_intermediate) == false) {
       IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
     }
     if(data::Load(prune_predictor_indices_file.c_str(),
-	  prune_predictor_indices_intermediate) == SUCCESS_FAIL) {
+	  prune_predictor_indices_intermediate) == false) {
       IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
     }
 
-    arma::Col<index_t> predictor_indices;
-    arma::Col<index_t> prune_predictor_indices;
+    arma::Col<size_t> predictor_indices;
+    arma::Col<size_t> prune_predictor_indices;
     predictor_indices.zeros(predictor_indices_intermediate.n_cols);
     prune_predictor_indices.zeros
       (prune_predictor_indices_intermediate.n_cols);
@@ -133,18 +133,18 @@ int main(int argc, char** argv) {
     // This is a pretty retarded way of copying from a double-matrix
     // to an int vector. This can be simplified only if there were a
     // way to read integer-based dataset directly without typecasting.
-    for(index_t i = 0; i < predictor_indices_intermediate.n_cols; i++) {
+    for(size_t i = 0; i < predictor_indices_intermediate.n_cols; i++) {
       predictor_indices[i] =
-	(index_t) predictor_indices_intermediate(0, i);
+	(size_t) predictor_indices_intermediate(0, i);
     }
-    for(index_t i = 0; i < prune_predictor_indices_intermediate.n_cols;
+    for(size_t i = 0; i < prune_predictor_indices_intermediate.n_cols;
 	i++) {
-      prune_predictor_indices[i] = (index_t)
+      prune_predictor_indices[i] = (size_t)
 	prune_predictor_indices_intermediate(0, i);
     }
     
     // Run the feature selection.
-    arma::Col<index_t> output_predictor_indices;
+    arma::Col<size_t> output_predictor_indices;
     engine.Init(predictors, predictor_indices, predictions,
 		!strcmp(IO::GetParam<std::string>("ridge/inversion_method").c_str(), "normalsvd"));
     engine.FeatureSelectedRegression(predictor_indices,

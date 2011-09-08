@@ -5,7 +5,7 @@ int main(int argc, char *argv[]) {
 
 	fx_module *fx_root = fx_init(argc, argv, NULL);
 
-	index_t num_points_t = fx_param_int_req(fx_root, "number of points for t");
+	size_t num_points_t = fx_param_int_req(fx_root, "number of points for t");
 
 	ObjectGradientHessian my_objective;
 	my_objective.Init(num_points_t);

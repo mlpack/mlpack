@@ -14,7 +14,7 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
 	const char *info_file1=fx_param_str_req(module_, "info1");
 	Matrix x;
 	data::Load(data_file1, &x);
-	index_t num_of_betas=x.n_rows();
+	size_t num_of_betas=x.n_rows();
 	
   Matrix info1;
   data::Load(info_file1, &info1);
@@ -25,20 +25,20 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
 	
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
-	index_t start_col=0;
-  for(index_t i=0; i<num_of_people_; i++) {
-    population_first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
+	size_t start_col=0;
+  for(size_t i=0; i<num_of_people_; i++) {
+    population_first_stage_x_[i].Init(x.n_rows(), (size_t)info1.get(0, i));
     population_first_stage_x_[i].CopyColumnFromMat(0, start_col, 
-										(index_t)info1.get(0,i), x);
-    start_col+=(index_t)info1.get(0, i);
+										(size_t)info1.get(0,i), x);
+    start_col+=(size_t)info1.get(0, i);
   }
 
 	/*
 	cout<<"data file 1:";
-	for(index_t i=0; i<num_of_people_; i++) {
+	for(size_t i=0; i<num_of_people_; i++) {
 		cout<<"population_first_stage_x["<<i<<"]"<<endl;
-		for(index_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
-			for(index_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
+		for(size_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
+			for(size_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
 				cout<<population_first_stage_x_[i].get(j,k)<<" ";
 			}
 			cout<<endl;
@@ -52,15 +52,15 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
   Matrix info_y;
   data::Load(info_y_file, &info_y);
   population_first_stage_y_.Init(num_of_people_);
-  for(index_t i=0; i<num_of_people_; i++) {
-	  population_first_stage_y_[i]=(index_t)info_y.get(0,i);
+  for(size_t i=0; i<num_of_people_; i++) {
+	  population_first_stage_y_[i]=(size_t)info_y.get(0,i);
   }
 
 	
 	if (fx_param_exists(module_, "starting_points")) {
 		const char *initial_parameter_file=fx_param_str_req(module_,"starting_points");
 		Matrix mtx_initial_parameter;
-		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==SUCCESS_FAIL) {
+		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==false) {
 			FATAL("File %s not found", initial_parameter_file);
 		}
 		else{
@@ -82,7 +82,7 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
 				mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
 				/*
 				cout<<"Starting points are:   ";
-				for(index_t i=0; i<initial_parameter->length(); i++){
+				for(size_t i=0; i<initial_parameter->length(); i++){
 					cout<<(*initial_parameter)[i]<<" ";
 				}
 				cout<<endl;
@@ -116,7 +116,7 @@ void MLPSampling::Init(fx_module *module, int *num_of_people,
 
 		/*
 		cout<<"Starting points are:   ";
-		for(index_t i=0; i<initial_parameter->length(); i++){
+		for(size_t i=0; i<initial_parameter->length(); i++){
 			cout<<(*initial_parameter)[i]<<" ";
 		}
 		cout<<endl;
@@ -195,7 +195,7 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 	
 	x.Destruct();
 	la::TransposeInit(x3, &x); 
-	index_t num_of_betas=x.n_rows();
+	size_t num_of_betas=x.n_rows();
 
 	Matrix xcheck;
 	la::MulTransBInit(x, x, &xcheck);
@@ -222,20 +222,20 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 	
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
-	index_t start_col=0;
-  for(index_t i=0; i<num_of_people_; i++) {
-    population_first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
+	size_t start_col=0;
+  for(size_t i=0; i<num_of_people_; i++) {
+    population_first_stage_x_[i].Init(x.n_rows(), (size_t)info1.get(0, i));
     population_first_stage_x_[i].CopyColumnFromMat(0, start_col, 
-										(index_t)info1.get(0,i), x);
-    start_col+=(index_t)info1.get(0, i);
+										(size_t)info1.get(0,i), x);
+    start_col+=(size_t)info1.get(0, i);
   }
 
 	/*
 	cout<<"data file 1:";
-	for(index_t i=0; i<num_of_people_; i++) {
+	for(size_t i=0; i<num_of_people_; i++) {
 		cout<<"population_first_stage_x["<<i<<"]"<<endl;
-		for(index_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
-			for(index_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
+		for(size_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
+			for(size_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
 				cout<<population_first_stage_x_[i].get(j,k)<<" ";
 			}
 			cout<<endl;
@@ -248,15 +248,15 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
   Matrix info_y;
   data::Load(info_y_file, &info_y);
   population_first_stage_y_.Init(num_of_people_);
-  for(index_t i=0; i<num_of_people_; i++) {
-	  population_first_stage_y_[i]=(index_t)info_y.get(0,i);
+  for(size_t i=0; i<num_of_people_; i++) {
+	  population_first_stage_y_[i]=(size_t)info_y.get(0,i);
   }
 
   	
 	if (fx_param_exists(module_, "starting_points")) {
 		const char *initial_parameter_file=fx_param_str_req(module_,"starting_points");
 		Matrix mtx_initial_parameter;
-		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==SUCCESS_FAIL) {
+		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==false) {
 			FATAL("File %s not found", initial_parameter_file);
 		}
 		else{
@@ -278,7 +278,7 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 				mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
 				/*
 				cout<<"Starting points are:   ";
-				for(index_t i=0; i<initial_parameter->length(); i++){
+				for(size_t i=0; i<initial_parameter->length(); i++){
 					cout<<(*initial_parameter)[i]<<" ";
 				}
 				cout<<endl;
@@ -321,7 +321,7 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 
 		/*
 		cout<<"Starting points are:   ";
-		for(index_t i=0; i<initial_parameter->length(); i++){
+		for(size_t i=0; i<initial_parameter->length(); i++){
 			cout<<(*initial_parameter)[i]<<" ";
 		}
 		cout<<endl;
@@ -383,7 +383,7 @@ void MLPSampling::Init2(fx_module *module, int *num_of_people,
 void MLPSampling::Shuffle() {
 	//check - can be done in initilization
 	int random =0;
-	for(index_t i=0; i<num_of_people_; i++){
+	for(size_t i=0; i<num_of_people_; i++){
 		shuffled_array_[i]=i;
 	}	//i
 
@@ -393,7 +393,7 @@ void MLPSampling::Shuffle() {
 		
    
 	//Shuffle elements by randomly exchanging each with one other.
-	for(index_t j=0; j<num_of_people_-1; j++){
+	for(size_t j=0; j<num_of_people_-1; j++){
 		//random number for remaining position
 		random = j+(rand() % (num_of_people_-j));	
 		//shuffle
@@ -402,7 +402,7 @@ void MLPSampling::Shuffle() {
 
 	
 	//cout<<"shuffled_array :";
-	//for(index_t i=0; i<num_of_people_; i++){
+	//for(size_t i=0; i<num_of_people_; i++){
 	//	cout<<shuffled_array_[i] <<" ";
 	//}
 	cout<<endl;
@@ -441,7 +441,7 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 	
 	x.Destruct();
 	la::TransposeInit(x3, &x); 
-	index_t num_of_betas=x.n_rows();
+	size_t num_of_betas=x.n_rows();
 
 	Matrix xcheck;
 	la::MulTransBInit(x, x, &xcheck);
@@ -468,20 +468,20 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 	
 	*num_of_people=num_of_people_;
   population_first_stage_x_.Init(num_of_people_);
-	index_t start_col=0;
-  for(index_t i=0; i<num_of_people_; i++) {
-    population_first_stage_x_[i].Init(x.n_rows(), (index_t)info1.get(0, i));
+	size_t start_col=0;
+  for(size_t i=0; i<num_of_people_; i++) {
+    population_first_stage_x_[i].Init(x.n_rows(), (size_t)info1.get(0, i));
     population_first_stage_x_[i].CopyColumnFromMat(0, start_col, 
-										(index_t)info1.get(0,i), x);
-    start_col+=(index_t)info1.get(0, i);
+										(size_t)info1.get(0,i), x);
+    start_col+=(size_t)info1.get(0, i);
   }
 
 	/*
 	cout<<"data file 1:";
-	for(index_t i=0; i<num_of_people_; i++) {
+	for(size_t i=0; i<num_of_people_; i++) {
 		cout<<"population_first_stage_x["<<i<<"]"<<endl;
-		for(index_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
-			for(index_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
+		for(size_t j=0; j<population_first_stage_x_[i].n_rows(); j++){
+			for(size_t k=0; k<population_first_stage_x_[i].n_cols(); k++) {
 				cout<<population_first_stage_x_[i].get(j,k)<<" ";
 			}
 			cout<<endl;
@@ -494,15 +494,15 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
   Matrix info_y;
   data::Load(info_y_file, &info_y);
   population_first_stage_y_.Init(num_of_people_);
-  for(index_t i=0; i<num_of_people_; i++) {
-	  population_first_stage_y_[i]=(index_t)info_y.get(0,i);
+  for(size_t i=0; i<num_of_people_; i++) {
+	  population_first_stage_y_[i]=(size_t)info_y.get(0,i);
   }
 
   	
 	if (fx_param_exists(module_, "starting_points")) {
 		const char *initial_parameter_file=fx_param_str_req(module_,"starting_points");
 		Matrix mtx_initial_parameter;
-		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==SUCCESS_FAIL) {
+		if(data::Load(initial_parameter_file, &mtx_initial_parameter)==false) {
 			FATAL("File %s not found", initial_parameter_file);
 		}
 		else{
@@ -524,7 +524,7 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 				mtx_initial_parameter.MakeColumnVector(0, initial_parameter);
 				/*
 				cout<<"Starting points are:   ";
-				for(index_t i=0; i<initial_parameter->length(); i++){
+				for(size_t i=0; i<initial_parameter->length(); i++){
 					cout<<(*initial_parameter)[i]<<" ";
 				}
 				cout<<endl;
@@ -565,7 +565,7 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 
 		/*
 		cout<<"Starting points are:   ";
-		for(index_t i=0; i<initial_parameter->length(); i++){
+		for(size_t i=0; i<initial_parameter->length(); i++){
 			cout<<(*initial_parameter)[i]<<" ";
 		}
 		cout<<endl;
@@ -625,7 +625,7 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 	Vector temp_opt_x;
 	temp_opt_x.Init(mtx_opt_x.n_cols());
 
-	for(index_t i=0; i<mtx_opt_x.n_cols(); i++){
+	for(size_t i=0; i<mtx_opt_x.n_cols(); i++){
 		temp_opt_x[i]=mtx_opt_x.get(0,i);
 	}
 	  
@@ -649,7 +649,7 @@ void MLPSampling::Init3(fx_module *module, int *num_of_people,
 void MLPSampling::Shuffle() {
 	//check - can be done in initilization
 	int random =0;
-	for(index_t i=0; i<num_of_people_; i++){
+	for(size_t i=0; i<num_of_people_; i++){
 		shuffled_array_[i]=i;
 	}	//i
 
@@ -659,7 +659,7 @@ void MLPSampling::Shuffle() {
 		
    
 	//Shuffle elements by randomly exchanging each with one other.
-	for(index_t j=0; j<num_of_people_-1; j++){
+	for(size_t j=0; j<num_of_people_-1; j++){
 		//random number for remaining position
 		random = j+(rand() % (num_of_people_-j));	
 		//shuffle
@@ -668,7 +668,7 @@ void MLPSampling::Shuffle() {
 
 	/*
 	cout<<"shuffled_array :";
-	for(index_t i=0; i<num_of_people_; i++){
+	for(size_t i=0; i<num_of_people_; i++){
 		cout<<shuffled_array_[i] <<" ";
 	}
 	cout<<endl;
@@ -686,7 +686,7 @@ void MLPSampling::Shuffle() {
 void MLPSampling::Shuffle2() {
 	//check - can be done in initilization
 	int random =0;
-	for(index_t i=0; i<num_of_people_; i++){
+	for(size_t i=0; i<num_of_people_; i++){
 		shuffled_array_[i]=i;
 	}	//i
 
@@ -696,7 +696,7 @@ void MLPSampling::Shuffle2() {
 		
    
 	//Shuffle elements by randomly exchanging each with one other.
-	for(index_t j=0; j<num_of_people_-1; j++){
+	for(size_t j=0; j<num_of_people_-1; j++){
 		//random number for remaining position
 		random = j+(rand() % (num_of_people_-j));	
 		//shuffle
@@ -705,7 +705,7 @@ void MLPSampling::Shuffle2() {
 
 	/*
 	cout<<"shuffled_array :";
-	for(index_t i=0; i<num_of_people_; i++){
+	for(size_t i=0; i<num_of_people_; i++){
 		cout<<shuffled_array_[i] <<" ";
 	}
 	cout<<endl;
@@ -719,11 +719,11 @@ void MLPSampling::Shuffle2() {
 
 /*void Sampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x, 
 											 ArrayList<Matrix> *added_second_stage_x, ArrayList<Matrix> *added_unknown_x_past, 
-											 ArrayList<index_t> *added_first_stage_y, Vector *ind_unknown_x) {
+											 ArrayList<size_t> *added_first_stage_y, Vector *ind_unknown_x) {
 												 */
 
 void MLPSampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *added_first_stage_x,  
-											 ArrayList<index_t> *added_first_stage_y) {
+											 ArrayList<size_t> *added_first_stage_y) {
 	
 	int num_added_sample=0;
 	
@@ -773,7 +773,7 @@ void MLPSampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *a
 
 
 	if(num_added_sample+num_of_selected_sample_ >= num_of_people_){
-		for(index_t i=num_of_selected_sample_; i<num_of_people_; i++){
+		for(size_t i=num_of_selected_sample_; i<num_of_people_; i++){
 			added_first_stage_x->PushBackCopy(population_first_stage_x_[shuffled_array_[i]]);
 			added_first_stage_y->PushBackCopy(population_first_stage_y_[shuffled_array_[i]]);
 		}		//i	
@@ -781,7 +781,7 @@ void MLPSampling::ExpandSubset(double percent_added_sample, ArrayList<Matrix> *a
 		//NOTIFY("All data are used");
 		
 	} else {
-		for(index_t i=num_of_selected_sample_; i<(num_of_selected_sample_+num_added_sample); i++){
+		for(size_t i=num_of_selected_sample_; i<(num_of_selected_sample_+num_added_sample); i++){
 			added_first_stage_x->PushBackCopy(population_first_stage_x_[shuffled_array_[i]]);
 			added_first_stage_y->PushBackCopy(population_first_stage_y_[shuffled_array_[i]]);			
 		}	//i

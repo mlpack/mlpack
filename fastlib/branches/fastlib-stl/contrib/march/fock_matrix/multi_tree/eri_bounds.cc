@@ -67,7 +67,7 @@ namespace eri_bounds {
                               const DHrectBound<2>& bound2) {
     
     double retval = -DBL_MAX;
-    for (index_t i = 0; i < 3; i++) {
+    for (size_t i = 0; i < 3; i++) {
       
       double this_val = max(fabs(bound1.get(i).hi - bound2.get(i).lo),
                             fabs(bound2.get(i).hi - bound1.get(i).lo));

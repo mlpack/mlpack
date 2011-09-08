@@ -33,7 +33,7 @@
  * @code
  *   KernelVectorMult kernel_vector_mult;
  *   struct datanode* kernel_vector_mult_module;
- *   ArrayList<index_t> results;
+ *   ArrayList<size_t> results;
  *
  *   kernel_vector_mult_module = fx_submodule(NULL, "kernel_vector_mult");
  *   kernel_vector_mult.Init(query_set, reference_set, kernel_vector_mult_module);
@@ -78,7 +78,7 @@ class KernelVectorMult {
      * Kernel matrix vector multiplication fills statistics during computation, but
      * we must set it to an appropriate starting value here.
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // nothing to do here
     }
 
@@ -88,7 +88,7 @@ class KernelVectorMult {
      *
      * For all-nearest-neighbors, we reuse initialization for leaves.
      */
-    void Init(const Matrix& matrix, index_t start, index_t count,
+    void Init(const Matrix& matrix, size_t start, size_t count,
 	      const QueryStat& left, const QueryStat& right) {
       Init(matrix, start, count);
     }
@@ -122,12 +122,12 @@ class KernelVectorMult {
   ReferenceTree* reference_tree_;
 
   /** Maximum number of points in either tree's leaves. */
-  index_t leaf_size_;
+  size_t leaf_size_;
 
   /** Permutation mapping indices of queries_ to original order. */
-  ArrayList<index_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_queries_;
   /** Permutation mapping indices of references_ to original order. */
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_references_;
 
 
   // kernel function
@@ -150,7 +150,7 @@ class KernelVectorMult {
   Vector weights_;
 
   /** Number of node-pairs pruned by the dual-tree algorithm. */
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
 
   /** Debug-mode test whether an AllNN object is initialized. */
   bool initialized_;
@@ -244,7 +244,7 @@ class KernelVectorMult {
     // Trees don't store their points, but instead give index ranges.
     // To make this feasible, they have to rearrange their input
     // matrices, which is why we were sure to make copies.
-    for (index_t query_index = query_node->begin();
+    for (size_t query_index = query_node->begin();
         query_index < query_node->end(); query_index++) {
 
       // MakeColumnVector aliases (i.e. points to but does not copy) a
@@ -265,7 +265,7 @@ class KernelVectorMult {
 
       /* TODO: try pruning query points vs reference node */
 
-      for (index_t reference_index = reference_node->begin();
+      for (size_t reference_index = reference_node->begin();
           reference_index < reference_node->end(); reference_index++) {
 
         Vector reference_point;
@@ -490,7 +490,7 @@ class KernelVectorMult {
     DEBUG_ONLY(already_used_ = true);
 
     // permute weights around to match the new reference point ordering
-    for (index_t i = 0; i < weights_.length(); i++) {
+    for (size_t i = 0; i < weights_.length(); i++) {
       weights_[i] = weights_in[old_from_new_references_[i]];
     }
 
@@ -558,7 +558,7 @@ class KernelVectorMult {
     DEBUG_ASSERT(initialized_ == true);
 
     /* Map the indices back from how they have been permuted. */
-    for (index_t i = 0; i < weighted_sums_.length(); i++) {
+    for (size_t i = 0; i < weighted_sums_.length(); i++) {
 
       (*results)[old_from_new_queries_[i]] = weighted_sums_[i];
     }

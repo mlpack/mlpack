@@ -29,7 +29,7 @@ void Link::PrescreeningLoop_() {
   
   //shell_max_.PrintDebug("shell_max_");
   /*
-  for (index_t i = 0; i < num_shells_; i++) {
+  for (size_t i = 0; i < num_shells_; i++) {
     printf("num_significant_sigma_for_nu_[%d] = %d\n", i, 
            num_significant_sigma_for_nu_[i]);
   }
@@ -45,24 +45,24 @@ void Link::PrescreeningLoop_() {
   // all nu in significant ket shell pairs
   // Maybe I should just loop over the shells themselves and assume that each
   // shell appears in at least one significant shell pair
-  for (index_t i = 0; i < num_shells_; i++) {
+  for (size_t i = 0; i < num_shells_; i++) {
     
     current_mu_ = i;
     
-    index_t next_ind = 0;
+    size_t next_ind = 0;
     
-    ArrayList<index_t> significant_nu_index;
+    ArrayList<size_t> significant_nu_index;
     significant_nu_index.Init(num_shells_);
     
-    for (index_t j = 0; j < num_shells_; j++) {
+    for (size_t j = 0; j < num_shells_; j++) {
       
       // I think this threshold should be the same as the others 
       // Not sure if this is the right density matrix entry
       // TODO: should this check all the density entries and take the max?
       /*
       double density_bound = -DBL_MAX;
-      for (index_t a = 0; a < shell_list_[i].num_functions(); a++) {
-        for (index_t b = 0; b < shell_list_[j].num_functions(); b++) {
+      for (size_t a = 0; a < shell_list_[i].num_functions(); a++) {
+        for (size_t b = 0; b < shell_list_[j].num_functions(); b++) {
           
           density_bound = max(density_bound, 
                               fabs(density.ref(shell_list_[i].matrix_index(a), 
@@ -104,7 +104,7 @@ void Link::PrescreeningLoop_() {
                                                     sizeof(BasisShell**)); 
     //BasisShell** significant_mu_pairs_[i] = significant_mu_pairs_[i];
     
-    for (index_t k = 0; k < next_ind; k++) {
+    for (size_t k = 0; k < next_ind; k++) {
       
       significant_nu_for_mu_[i][k] = shell_list_.begin() + 
           significant_nu_index[k];
@@ -148,7 +148,7 @@ void Link::Compute() {
   fx_timer_start(module_, "integrals");
   // loop over bra shell pairs
   
-  for (index_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
+  for (size_t shell_pair_ind = 0; shell_pair_ind < num_shell_pairs_; 
        shell_pair_ind++) {
        
     ShellPair& mu_lambda = shell_pair_list_[shell_pair_ind];
@@ -156,38 +156,38 @@ void Link::Compute() {
     // these are the indices into the shell list
     // they're correct, just need to make sure they're not used to access
     // the density matrix
-    index_t mu_ind = mu_lambda.M_index();
-    index_t lambda_ind = mu_lambda.N_index();
+    size_t mu_ind = mu_lambda.M_index();
+    size_t lambda_ind = mu_lambda.N_index();
     
     //printf("mu_ind: %d, lambda_ind: %d\n", mu_ind, lambda_ind);
     
-    index_t num_mu_integrals = 0;
-    index_t num_lambda_integrals = 0;
-    ArrayList<index_t> mu_integrals;
-    ArrayList<index_t> lambda_integrals;
+    size_t num_mu_integrals = 0;
+    size_t num_lambda_integrals = 0;
+    ArrayList<size_t> mu_integrals;
+    ArrayList<size_t> lambda_integrals;
     
     mu_integrals.Init();
     lambda_integrals.Init();
   
     // loop over nu corresponding to mu
     // what is num_nu? 
-    index_t num_nu = num_significant_nu_for_mu_[mu_ind];
+    size_t num_nu = num_significant_nu_for_mu_[mu_ind];
     //printf("num_nu: %d\n", num_nu);
-    for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
+    for (size_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
     
-      index_t significant_sigmas = 0;
+      size_t significant_sigmas = 0;
       
       // need to get this from the first sorted list
       BasisShell* nu_shell = significant_nu_for_mu_[mu_ind][sorted_nu_ind];
       
       // this doesn't exist anymore - what was it for?
-      index_t nu_ind = nu_shell->list_index();
+      size_t nu_ind = nu_shell->list_index();
     
-      index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
+      size_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
 
       //printf("num_sigma: %d\n", num_sigma);
       
-      for (index_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
+      for (size_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
            sorted_sigma_ind++) {
       
         ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
@@ -204,7 +204,7 @@ void Link::Compute() {
       
           // store or compute the eri
           // need to change this to storing it so I can merge the lists later
-          // create a list of index_t, list[i] = j, where shell_pairs_[j] has
+          // create a list of size_t, list[i] = j, where shell_pairs_[j] has
           // significant integrals relative to mu_lambda
           // this list will need to be sorted, then I can use std::set_union
           
@@ -248,9 +248,9 @@ void Link::Compute() {
       //printf("lambda loop\n");
       num_nu = num_significant_nu_for_mu_[lambda_ind];
       
-      for (index_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
+      for (size_t sorted_nu_ind = 0; sorted_nu_ind < num_nu; sorted_nu_ind++) {
         
-        index_t significant_sigmas = 0;
+        size_t significant_sigmas = 0;
         
         // need to get this from the first sorted list
         // should this be lambda?
@@ -258,16 +258,16 @@ void Link::Compute() {
         // seems to be okay, tested on the first three equilibrated helium sets
         BasisShell* nu_shell = significant_nu_for_mu_[lambda_ind][sorted_nu_ind];
         
-        index_t nu_ind = nu_shell->list_index();
+        size_t nu_ind = nu_shell->list_index();
         
-        index_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
+        size_t num_sigma = num_significant_sigma_for_nu_[nu_ind];
         
-        for (index_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
+        for (size_t sorted_sigma_ind = 0; sorted_sigma_ind < num_sigma; 
              sorted_sigma_ind++) {
           
           ShellPair* nu_sigma = significant_sigma_for_nu_[nu_ind][sorted_sigma_ind];
           
-          //index_t sigma_ind = nu_sigma->N_index();
+          //size_t sigma_ind = nu_sigma->N_index();
           
           // shouldn't this involve lambda?
           //double density_bound = fabs(density_matrix_.ref(mu_ind, nu_ind));
@@ -322,8 +322,8 @@ void Link::Compute() {
     std::sort(lambda_integrals.begin(), 
               lambda_integrals.begin() + num_lambda_integrals);
 
-    index_t* end_integrals;
-    ArrayList<index_t> integral_list;
+    size_t* end_integrals;
+    ArrayList<size_t> integral_list;
     integral_list.Init(num_shell_pairs_);
     
     end_integrals = std::set_union(mu_integrals.begin(), 
@@ -332,12 +332,12 @@ void Link::Compute() {
                                    lambda_integrals.begin() + num_lambda_integrals, 
                                    integral_list.begin());
                                    
-    index_t num_integrals = end_integrals - integral_list.begin();
+    size_t num_integrals = end_integrals - integral_list.begin();
     //printf("num_integrals = %d\n", num_integrals);
     
     // compute the integrals
     
-    for (index_t int_ind = 0; int_ind < num_integrals; int_ind++) {
+    for (size_t int_ind = 0; int_ind < num_integrals; int_ind++) {
     
       ShellPair nu_sigma = shell_pair_list_[integral_list[int_ind]];
       
@@ -479,16 +479,16 @@ void Link::UpdateDensity(const Matrix& new_density) {
   density_matrix_.CopyValues(new_density);
   
   if (!first_computation) {
-    for (index_t i = 0; i < num_shells_; i++) {
-      /*for (index_t j = 0; j < num_significant_nu_for_mu_[i]; j++) {
+    for (size_t i = 0; i < num_shells_; i++) {
+      /*for (size_t j = 0; j < num_significant_nu_for_mu_[i]; j++) {
         free(significant_nu_for_mu_[i][j]);
       }*/
       free(significant_nu_for_mu_[i]);
     }
     free(significant_nu_for_mu_);
     
-    for (index_t i = 0; i < num_shells_; i++) {
-      /*for (index_t j = 0; j < num_significant_sigma_for_nu_[i]; j++) {
+    for (size_t i = 0; i < num_shells_; i++) {
+      /*for (size_t j = 0; j < num_significant_sigma_for_nu_[i]; j++) {
         free(significant_sigma_for_nu_[i][j]);
       }*/
       free(significant_sigma_for_nu_[i]);

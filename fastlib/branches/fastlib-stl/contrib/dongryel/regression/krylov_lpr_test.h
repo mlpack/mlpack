@@ -8,7 +8,7 @@ template<typename TKernel, typename TPruneRule>
 void KrylovLpr<TKernel, TPruneRule>::TestDualtreeComputation_
 (const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
  const bool confidence_band_computation_phase,
- const Vector &reference_weights, index_t column_index,
+ const Vector &reference_weights, size_t column_index,
  const Matrix &approximated) {
 
   // temporary space for storing reference point expansion
@@ -20,7 +20,7 @@ void KrylovLpr<TKernel, TPruneRule>::TestDualtreeComputation_
   exact_vector_e.SetZero();
   double max_relative_error = 0;
 
-  for(index_t q = 0; q < qset.n_cols(); q++) {
+  for(size_t q = 0; q < qset.n_cols(); q++) {
     
     if(query_in_cg_loop != NULL && !((*query_in_cg_loop)[q])) {
       continue;
@@ -34,7 +34,7 @@ void KrylovLpr<TKernel, TPruneRule>::TestDualtreeComputation_
     exact_vector_e.MakeColumnVector(q, &exact_vector_e_column);
     approximated.MakeColumnVector(q, &approx_column);
 
-    for(index_t r = 0; r < rset_.n_cols(); r++) {
+    for(size_t r = 0; r < rset_.n_cols(); r++) {
     
       // get the column vector corresponding to the current reference point.
       const double *r_col = rset_.GetColumnPtr(r);

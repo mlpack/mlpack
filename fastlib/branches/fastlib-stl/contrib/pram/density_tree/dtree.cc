@@ -10,11 +10,11 @@
 
 void DTree::SampleSetWithReplacement_(std::vector<double> &dim_vals,
 				      std::vector<double> *bs_dim_vals) {
-  index_t size = dim_vals.size();
+  size_t size = dim_vals.size();
   srand(time(NULL));
-  for (index_t i = 0; i < size; i++) {
+  for (size_t i = 0; i < size; i++) {
     // pick a random number between [0, size)
-    index_t ind = rand() % size;
+    size_t ind = rand() % size;
     bs_dim_vals->push_back(dim_vals[ind]);
   }
   // sorting the bootstrap vector
@@ -22,12 +22,12 @@ void DTree::SampleSetWithReplacement_(std::vector<double> &dim_vals,
   return;
 }
 
-long double DTree::ComputeNodeError_(index_t total_points) {
+long double DTree::ComputeNodeError_(size_t total_points) {
   long double range = 1.0;
-  index_t node_size = stop_ - start_;
+  size_t node_size = stop_ - start_;
 
   DEBUG_ASSERT(max_vals_.size() == min_vals_.size());
-  for (index_t i = 0; i < max_vals_.size(); i++) {
+  for (size_t i = 0; i < max_vals_.size(); i++) {
     // if no variation in a dimension, we do not care
     // about that dimension
     if (max_vals_[i] - min_vals_[i] > 0.0) {
@@ -44,24 +44,24 @@ long double DTree::ComputeNodeError_(index_t total_points) {
   return error;
 }
 
-bool DTree::FindSplit_(Matrix& data, index_t total_n,
-		       index_t *split_dim, index_t *split_ind,
+bool DTree::FindSplit_(Matrix& data, size_t total_n,
+		       size_t *split_dim, size_t *split_ind,
 		       long double *left_error, long double *right_error) {
 
   DEBUG_ASSERT(data.n_cols() == stop_ - start_);
   DEBUG_ASSERT(data.n_rows() == max_vals_.size());
   DEBUG_ASSERT(data.n_rows() == min_vals_.size());
-  index_t n_t = data.n_cols();
+  size_t n_t = data.n_cols();
   long double min_error = error_;
   bool some_split_found = false;
-  index_t point_mass_in_dim = 0;
-  index_t min_leaf_size = fx_param_int(module_, "min_leaf_size", 15),
+  size_t point_mass_in_dim = 0;
+  size_t min_leaf_size = fx_param_int(module_, "min_leaf_size", 15),
     max_leaf_size = fx_param_int(module_, "max_leaf_size", 30);
 
   // printf("In FindSplit %Lg\n", error_);fflush(NULL);
 
   // loop through each dimension
-  for (index_t dim = 0; dim < max_vals_.size(); dim++) {
+  for (size_t dim = 0; dim < max_vals_.size(); dim++) {
     // have to deal with REAL, INTEGER, NOMINAL data
     // differently so have to think of how to do that.
     // Till them experiment with comparisons with kde
@@ -78,10 +78,10 @@ bool DTree::FindSplit_(Matrix& data, index_t total_n,
       bool dim_split_found = false;
       long double min_dim_error = min_error,
 	temp_lval = 0.0, temp_rval = 0.0;
-      index_t dim_split_ind = -1;
+      size_t dim_split_ind = -1;
 
       long double range = 1.0;
-      for (index_t i = 0; i < max_vals_.size(); i++) {
+      for (size_t i = 0; i < max_vals_.size(); i++) {
 	// 	if (dim_type_[i] == REAL) {
 	if (max_vals_[i] -min_vals_[i] > 0.0 && i != dim) {
 	  range *= max_vals_[i] - min_vals_[i];
@@ -93,7 +93,7 @@ bool DTree::FindSplit_(Matrix& data, index_t total_n,
 
       // get the values for the dimension
       std::vector<double> dim_val_vec;
-      for (index_t i = 0; i < n_t; i++) {
+      for (size_t i = 0; i < n_t; i++) {
 	dim_val_vec.push_back (data.get(dim, i));
       }
       // sort the values in ascending order
@@ -107,7 +107,7 @@ bool DTree::FindSplit_(Matrix& data, index_t total_n,
 
       // one way of doing it is only considering splits resulting
       // in sizes > MIN_LEAF_SIZE
-      index_t left_child_size = min_leaf_size -1, right_child_size;
+      size_t left_child_size = min_leaf_size -1, right_child_size;
 
       // finding the best split for this dimension
       // need to figure out why there are spikes if 
@@ -125,7 +125,7 @@ bool DTree::FindSplit_(Matrix& data, index_t total_n,
 	  // 	  split = *it;
 	  // 	}
 	  if (split - min > 0.0 && max - split > 0.0) {
-	    // 	  printf("potential split %lg on dim %"LI"d\n",
+	    // 	  printf("potential split %lg on dim %zud\n",
 	    // 		 split, dim);fflush(NULL);
 	    long double temp_l
 	      = -1.0 * ((double)(left_child_size+1)/(double)total_n)
@@ -175,25 +175,25 @@ bool DTree::FindSplit_(Matrix& data, index_t total_n,
   // deal with it
   // DEBUG_ASSERT(point_mass_in_dim != max_vals_.size());
 
-  // printf("%"LI"d point mass dims.\n", point_mass_in_dim);fflush(NULL);
+  // printf("%zud point mass dims.\n", point_mass_in_dim);fflush(NULL);
 
   return some_split_found;
 //   DEBUG_ASSERT_MSG(some_split_found,
 // 		   "Weird - no split found"
-// 		   " %"LI"d points, %"LI"d %lg %"LI"d\n",
+// 		   " %zud points, %zud %lg %zud\n",
 // 		   data.n_cols(), total_n, min_error, point_mass_in_dim);
 } // end FindSplit_
 
 
-void DTree::SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
+void DTree::SplitData_(Matrix& data, size_t split_dim, size_t split_ind,
 		       Matrix *data_l, Matrix *data_r, 
-		       ArrayList<index_t> *old_from_new, 
+		       ArrayList<size_t> *old_from_new, 
 		       double *split_val,
 		       double *lsplit_val, double *rsplit_val) {
 
   // get the values for the split dim
   std::vector<double> dim_val_vec;
-  for (index_t i = 0; i < data.n_cols(); i++) {
+  for (size_t i = 0; i < data.n_cols(); i++) {
     dim_val_vec.push_back(data.get(split_dim, i));
   } // end for
 
@@ -204,7 +204,7 @@ void DTree::SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
   *rsplit_val =  *(dim_val_vec.begin() + split_ind + 1);
   *split_val = (*lsplit_val + *rsplit_val) / 2 ;
 
-  index_t i = split_ind, j = split_ind + 1;
+  size_t i = split_ind, j = split_ind + 1;
   while ( i > -1 && j < data.n_cols()) {
     while (i > -1 && data.get(split_dim, i) < *split_val)
       i--;
@@ -219,7 +219,7 @@ void DTree::SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
       data.MakeColumnVector(j, &vec2);
       vec1.SwapValues(&vec2);
 
-      index_t temp = (*old_from_new)[start_ + i];
+      size_t temp = (*old_from_new)[start_ + i];
       (*old_from_new)[start_ +i] = (*old_from_new)[start_ +j];
       (*old_from_new)[start_ +j] = temp;
 
@@ -229,7 +229,7 @@ void DTree::SplitData_(Matrix& data, index_t split_dim, index_t split_ind,
   }
 
   DEBUG_ASSERT_MSG((i==-1)||(j==data.n_cols()),
-		   "i = %"LI"d, j = %"LI"d N = %"LI"d",
+		   "i = %zud, j = %zud N = %zud",
 		   i, j, data.n_cols());
 
   data.MakeColumnSlice(0, split_ind+1, data_l);
@@ -243,7 +243,7 @@ void DTree::GetMaxMinVals_(Matrix& data, ArrayList<double> *max_vals,
   min_vals->Init(data.n_rows());
   Matrix temp_d;
   la::TransposeInit(data, &temp_d);
-  for (index_t i = 0; i < temp_d.n_cols(); i++) {
+  for (size_t i = 0; i < temp_d.n_cols(); i++) {
     // if (dim_type[i] != NOMINAL) {
     Vector dim_vals;
     temp_d.MakeColumnVector(i, &dim_vals);
@@ -268,11 +268,11 @@ void DTree::GetMaxMinVals_(Matrix& data, ArrayList<double> *max_vals,
 // 	// NOTIFY("Bootstrapping");
 // 	// the original value is the min_dim_error
 // 	double mde_b_sq = 0.0, mde_b = 0.0;
-// 	index_t successful_b_steps = 0;
+// 	size_t successful_b_steps = 0;
 
 // 	std::vector<double> rie_vec;
 
-// 	for (index_t b = 0; b < fx_param_int(module_, "b", 20); b++) {
+// 	for (size_t b = 0; b < fx_param_int(module_, "b", 20); b++) {
 // 	  // do each of the bootstrap step
 
 // 	  // picking up a bootstrap sample
@@ -354,7 +354,7 @@ void DTree::GetMaxMinVals_(Matrix& data, ArrayList<double> *max_vals,
 // 	// alternate computation of se
 // 	double b_mean = mde_b / (double) successful_b_steps;
 // 	double alt_se = 0.0;
-// 	for (index_t i = 0; i < rie_vec.size(); i++) {
+// 	for (size_t i = 0; i < rie_vec.size(); i++) {
 // 	  double diff = rie_vec[i] - b_mean;
 // 	  alt_se += (diff * diff);
 // 	}
@@ -369,7 +369,7 @@ void DTree::GetMaxMinVals_(Matrix& data, ArrayList<double> *max_vals,
 // 	} else {
 // 	  // the split is insignificant, hence return from here
 // 	  // printf("High variance split...%lg\n", z_stat);
-// 	  // printf("zstat = %lg, steps = %"LI"d,"
+// 	  // printf("zstat = %lg, steps = %zud,"
 // // 		 " alt_se = %lg, (b_mean - mde) = %lg\n",
 // // 		 z_stat, successful_b_steps, sqrt(alt_se),
 // // 		 (b_mean - min_dim_error));

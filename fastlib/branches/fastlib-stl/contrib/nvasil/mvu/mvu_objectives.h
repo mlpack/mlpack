@@ -25,7 +25,7 @@
 
 class MaxVariance {
  public:
-  static const index_t MAX_KNNS=30;
+  static const size_t MAX_KNNS=30;
   void Init(fx_module *module, Matrix &data);
   void Init(fx_module *module);
   void Destruct();
@@ -42,26 +42,26 @@ class MaxVariance {
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step) {return false;}
   void GiveInitMatrix(Matrix *init_data);
- index_t num_of_points();
+ size_t num_of_points();
 
  private:
   datanode *module_;
   AllkNN allknn_;
-  index_t knns_;
-  index_t leaf_size_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  size_t knns_;
+  size_t leaf_size_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
   Vector eq_lagrange_mult_;
-  index_t num_of_nearest_pairs_;
+  size_t num_of_nearest_pairs_;
   double sigma_;
   double sum_of_furthest_distances_;
-  index_t num_of_points_;
-  index_t new_dimension_;
+  size_t num_of_points_;
+  size_t new_dimension_;
 };
 
 class MaxVarianceInequalityOnFurthest {
  public:
-  static const index_t MAX_KNNS=30;
+  static const size_t MAX_KNNS=30;
   void Init(datanode *module, Matrix &data);
   void Destruct();
   void ComputeGradient(Matrix &coordinates, Matrix *gradient);
@@ -82,24 +82,24 @@ class MaxVarianceInequalityOnFurthest {
   datanode *module_;
   AllkNN allknn_;
   AllkFN allkfn_;
-  index_t knns_;
-  index_t leaf_size_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  size_t knns_;
+  size_t leaf_size_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
   Vector eq_lagrange_mult_;
   Vector ineq_lagrange_mult_;
-  index_t num_of_nearest_pairs_;
-  index_t num_of_furthest_pairs_;
-  ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  size_t num_of_nearest_pairs_;
+  size_t num_of_furthest_pairs_;
+  ArrayList<std::pair<size_t, size_t> > furthest_neighbor_pairs_;
   ArrayList<double> furthest_distances_;
   double sigma_;
   double sum_of_furthest_distances_;
-  index_t new_dimension_;
+  size_t new_dimension_;
 };
 
 class MaxFurthestNeighbors {
 public:
-  static const index_t MAX_KNNS=30;
+  static const size_t MAX_KNNS=30;
   void Init(fx_module *module, Matrix &data);
   void Init(fx_module *module);
   void Destruct();
@@ -116,26 +116,26 @@ public:
       Matrix &gradient, double step) ;
   bool IsIntermediateStepOver(Matrix &coordinates, 
       Matrix &gradient, double step); 
-  index_t num_of_points();
+  size_t num_of_points();
   void GiveInitMatrix(Matrix *init_data);
 
 private:
   datanode *module_;
   AllkNN allknn_;
   AllkFN allkfn_;
-  index_t knns_;
-  index_t leaf_size_;
-  ArrayList<std::pair<index_t, index_t> > nearest_neighbor_pairs_;
+  size_t knns_;
+  size_t leaf_size_;
+  ArrayList<std::pair<size_t, size_t> > nearest_neighbor_pairs_;
   ArrayList<double> nearest_distances_;
   Vector eq_lagrange_mult_;
-  index_t num_of_nearest_pairs_;
-  index_t num_of_furthest_pairs_;
-  ArrayList<std::pair<index_t, index_t> > furthest_neighbor_pairs_;
+  size_t num_of_nearest_pairs_;
+  size_t num_of_furthest_pairs_;
+  ArrayList<std::pair<size_t, size_t> > furthest_neighbor_pairs_;
   ArrayList<double> furthest_distances_;
   double sum_of_furthest_distances_;
   double sigma_;
-  index_t num_of_points_;
-  index_t new_dimension_;
+  size_t num_of_points_;
+  size_t new_dimension_;
   double infeasibility1_;
   double previous_infeasibility1_;
   double desired_feasibility_error_;
@@ -146,19 +146,19 @@ private:
 
 class MaxVarianceUtils {
  public:
-  static void ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
+  static void ConsolidateNeighbors(ArrayList<size_t> &from_tree_ind,
       ArrayList<double>  &from_tree_dist,
-      index_t num_of_neighbors,
-      index_t chosen_neighbors,
-      ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
+      size_t num_of_neighbors,
+      size_t chosen_neighbors,
+      ArrayList<std::pair<size_t, size_t> > *neighbor_pairs,
       ArrayList<double> *distances,
-      index_t *num_of_pairs);
-  static void EstimateKnns(ArrayList<index_t> &neares_neighbors,
+      size_t *num_of_pairs);
+  static void EstimateKnns(ArrayList<size_t> &neares_neighbors,
                                        ArrayList<double> &nearest_distances,
-                                       index_t maximum_knns, 
-                                       index_t num_of_points,
-                                       index_t dimension,
-                                       index_t *optimum_knns); 
+                                       size_t maximum_knns, 
+                                       size_t num_of_points,
+                                       size_t dimension,
+                                       size_t *optimum_knns); 
 };
 
 #include "mvu_objectives_impl.h"

@@ -19,7 +19,7 @@ void MLObjective::Init2(int count_init2) {
 	exp_betas_times_x1_.Init();
   ///exp_betas_times_x2_.Init();
 	///postponed_probability_.Init();
-	//for(index_t i=0; i<postponed_probability_.size(); i++) {
+	//for(size_t i=0; i<postponed_probability_.size(); i++) {
   //  postponed_probability_[i]=0;
   //}
 
@@ -33,7 +33,7 @@ void MLObjective::Init2(int count_init2) {
 	first_stage_dot_logit_.Init();
 	first_stage_ddot_logit_.Init();
 
-	//for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+	//for(size_t i=0; i<first_stage_dot_logit_.size(); i++) {
     //exp_betas_times_x1_[i]=0;
 		//first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		//first_stage_dot_logit_[i].SetZero();
@@ -46,7 +46,7 @@ void MLObjective::Init2(int count_init2) {
 	///second_stage_dot_logit_.Init();
 	///second_stage_ddot_logit_.Init();
 
-	//for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+	//for(size_t i=0; i<second_stage_dot_logit_.size(); i++) {
     //exp_betas_times_x2_[i]=0;
 		//second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		//second_stage_dot_logit_[i].SetZero();
@@ -60,7 +60,7 @@ void MLObjective::Init2(int count_init2) {
 	
 
 
-	//for(index_t i=0; i<first_stage_x_.size(); i++) {
+	//for(size_t i=0; i<first_stage_x_.size(); i++) {
 		//sum_first_derivative_p_beta_fn_[i]=0;
 		//sum_second_derivative_p_beta_fn_[i]=0;
 		//sum_first_derivative_q_beta_fn_[i]=0;
@@ -85,13 +85,13 @@ void MLObjective::Init2(int count_init2) {
 
 void MLObjective::Init3(int sample_size,
 						ArrayList<Matrix> &added_first_stage_x,
-						ArrayList<index_t> &added_first_stage_y) {
+						ArrayList<size_t> &added_first_stage_y) {
 
 	
 	num_of_betas_=added_first_stage_x[0].n_rows();
 	int num_selected_people=added_first_stage_x.size();
 
-	for(index_t i=sample_size; i<num_selected_people; i++){
+	for(size_t i=sample_size; i<num_selected_people; i++){
 		first_stage_x_.PushBackCopy(added_first_stage_x[i]);
 		first_stage_y_.PushBackCopy(added_first_stage_y[i]);
 
@@ -106,7 +106,7 @@ void MLObjective::Init3(int sample_size,
 	first_stage_ddot_logit_.Destruct();
 	first_stage_ddot_logit_.Init(num_selected_people);
 
-	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+	for(size_t i=0; i<first_stage_dot_logit_.size(); i++) {
     exp_betas_times_x1_[i]=0;
 		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		first_stage_dot_logit_[i].SetZero();
@@ -208,14 +208,14 @@ void MLObjective::ComputeGradient(double current_sample,
 	
 	/*
 	cout<<"dummy_beta_term1="<<endl;
-	for(index_t i=0; i<dummy_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_beta_term1.length(); i++){
 		cout<<dummy_beta_term1[i]<<" "<<endl;
 	}
 	*/
 
 	/*
 	cout<<"dummy_beta_term2="<<endl;
-	for(index_t i=0; i<dummy_beta_term2.length(); i++){
+	for(size_t i=0; i<dummy_beta_term2.length(); i++){
 		cout<<dummy_beta_term2[i]<<" "<<endl;
 	}
 	*/
@@ -223,7 +223,7 @@ void MLObjective::ComputeGradient(double current_sample,
 
 	/*
 	cout<<"dummy_beta_term3="<<endl;
-	for(index_t i=0; i<dummy_beta_term3.length(); i++){
+	for(size_t i=0; i<dummy_beta_term3.length(); i++){
 		cout<<dummy_beta_term3[i]<<" "<<endl;
 	}
 	*/
@@ -233,7 +233,7 @@ void MLObjective::ComputeGradient(double current_sample,
 	dummy_gradient.Init(num_of_betas_);
 	dummy_gradient.SetZero();
 
-	for(index_t i=0; i<num_of_betas_; i++){
+	for(size_t i=0; i<num_of_betas_; i++){
 		dummy_gradient[i]=dummy_beta_term1[i];
 	}
 	
@@ -277,27 +277,27 @@ void MLObjective::ComputeHessian(double current_sample,
 	
 	/*
 	cout<<"p_beta_term1"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<dummy_p_beta_term1[i]<<" ";
 	}
 	cout<<endl;
 
 	
 	cout<<"p_beta_term2"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<dummy_p_beta_term2[i]<<" ";
 	}
 	cout<<endl;
   
   cout<<"p_beta_term3"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term3.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term3.length(); i++){
 		cout<<dummy_p_beta_term3[i]<<" ";
 	}
 	cout<<endl;
 
-	//index_t i=
+	//size_t i=
 	cout<<"p_beta_term: "<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<( (dummy_p_beta_term1[i])+(dummy_p_beta_term2[i])+(dummy_p_beta_term2[i]) )<<" ";
 	}
 	cout<<endl;
@@ -313,8 +313,8 @@ void MLObjective::ComputeHessian(double current_sample,
 	 
 	/*
   cout<<"Hessian matrix beta"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian_beta.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -322,8 +322,8 @@ void MLObjective::ComputeHessian(double current_sample,
 	*/
 
 
-	for(index_t i=0; i<num_of_betas_; i++){
-		for(index_t j=0; j<num_of_betas_; j++){
+	for(size_t i=0; i<num_of_betas_; i++){
+		for(size_t j=0; j<num_of_betas_; j++){
 
 			dummy_hessian.set(i,j, dummy_second_beta_term1.get(i,j));
 				
@@ -333,24 +333,24 @@ void MLObjective::ComputeHessian(double current_sample,
 
 	/*
 	cout<<"Hessian matrix beta1"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
 				cout<<dummy_second_beta_term1.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
 
 	cout<<"Hessian matrix beta2"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
 				cout<<dummy_second_beta_term2.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
 
 	cout<<"Hessian matrix beta3"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -359,8 +359,8 @@ void MLObjective::ComputeHessian(double current_sample,
 
 	/*
 	cout<<"Hessian matrix part1"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -371,8 +371,8 @@ void MLObjective::ComputeHessian(double current_sample,
 		
 	//la::Scale(-1.0/current_sample, &dummy_hessian);
 	cout<<"Hessian matrix before correction"<<endl;	
-	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -390,14 +390,14 @@ void MLObjective::ComputeHessian(double current_sample,
 
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -409,7 +409,7 @@ void MLObjective::ComputeHessian(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
 		}
 	}
@@ -425,8 +425,8 @@ void MLObjective::ComputeHessian(double current_sample,
 	la::Scale(+1.0/current_sample, &dummy_hessian);
 
 	cout<<"Modified Hessian matrix"<<endl;	
-	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -455,7 +455,7 @@ void MLObjective::ComputeChoiceProbability(Vector &current_parameter,
 	ComputeExpBetasTimesX1_(betas);
 
 	
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
 			//(*choice_probability)[n]=log(postponed_probability_[n]);
 			(*choice_probability)[n]=0;
@@ -482,7 +482,7 @@ void MLObjective::ComputeChoiceProbability(Vector &current_parameter,
 
 double MLObjective::ComputeTerm1_(Vector &betas) {
   double term1=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
       continue;
@@ -517,9 +517,9 @@ double MLObjective::ComputeTerm1_(Vector &betas) {
 void MLObjective::ComputeExpBetasTimesX1_(Vector &betas) {
   
   //double sum=0;
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		exp_betas_times_x1_[n]=0;
-		for(index_t j=0; j<first_stage_x_[n].n_cols(); j++) {
+		for(size_t j=0; j<first_stage_x_[n].n_cols(); j++) {
 			exp_betas_times_x1_[n]+=exp(la::Dot(betas.length(), 
 															betas.ptr(), 
 															first_stage_x_[n].GetColumnPtr(j)));
@@ -535,7 +535,7 @@ void MLObjective::ComputeExpBetasTimesX1_(Vector &betas) {
 //Compute dot_logit
 void MLObjective::ComputeDotLogit_(Vector &betas) {
 
-	/*for(index_t n=0; n<first_stage_dot_logit_.size(); n++) {
+	/*for(size_t n=0; n<first_stage_dot_logit_.size(); n++) {
 		first_stage_dot_logit_[n].Init(first_stage_x_[n].n_cols());
     first_stage_dot_logit_[n].SetZero();
   }
@@ -543,9 +543,9 @@ void MLObjective::ComputeDotLogit_(Vector &betas) {
 
 
 	//cout<<"test "<<first_stage_dot_logit_[1][1]<<endl;
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		first_stage_dot_logit_[n].SetZero();
-		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+		for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
 																				 first_stage_x_[n].GetColumnPtr(i) )))/
 																				 exp_betas_times_x1_[n];
@@ -555,7 +555,7 @@ void MLObjective::ComputeDotLogit_(Vector &betas) {
 	
 
 	/*cout<<"first_stage_dot_logit_[1]="<<endl;
-	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
+	for(size_t i=0; i<first_stage_x_[1].n_cols(); i++){
 		cout<<first_stage_dot_logit_[1][i]<<" ";
 		}	//i
 	cout<<endl;
@@ -568,32 +568,32 @@ void MLObjective::ComputeDotLogit_(Vector &betas) {
 
 
 void MLObjective::ComputeDDotLogit_() {
-	/*for(index_t n=0; n<first_stage_ddot_logit_.size(); n++) {
+	/*for(size_t n=0; n<first_stage_ddot_logit_.size(); n++) {
 		first_stage_ddot_logit_[n].Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
 		first_stage_ddot_logit_[n].SetZero();
 	}
 	*/
 
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
-		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
+		for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n][i]);
 		}	//i
-		//for(index_t j=0; i<second_stage_x_.n_cols(); j++){
+		//for(size_t j=0; i<second_stage_x_.n_cols(); j++){
 		//	second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
 		//}	//j
 	}	//n
 
 	/*
-	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
+	for(size_t i=0; i<first_stage_x_[1].n_cols(); i++){
 			cout<<first_stage_ddot_logit_[1].get(i, i)<<" ";
 	}	//i
 	*/
 
 	/*
 	cout<<"first_stage_ddot_logit[0]"<<endl;
-	for(index_t i=0; i<first_stage_ddot_logit_[0].n_rows(); i++){
-		for(index_t j=0; j<first_stage_ddot_logit_[0].n_cols(); j++){
+	for(size_t i=0; i<first_stage_ddot_logit_[0].n_rows(); i++){
+		for(size_t j=0; j<first_stage_ddot_logit_[0].n_cols(); j++){
 			cout<<first_stage_ddot_logit_[0].get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -620,7 +620,7 @@ void MLObjective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	temp3.Init(num_of_betas_);
 	temp3.SetZero();
 
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
 		
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
@@ -672,7 +672,7 @@ void MLObjective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 	Matrix temp4;
 	temp4.Init(num_of_betas_, num_of_betas_);
 
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
 
 		Matrix temp3;		
 		temp3.Init(num_of_betas_, first_stage_x_[n].n_cols());
@@ -726,8 +726,8 @@ void MLObjective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
   //return second_derivative_beta_term1;
 	/*
 	cout<<"second_derivative_beta_term1:"<<endl;
-	for(index_t i=0; i<second_derivative_beta_term1.n_rows(); i++){
-		for(index_t j=0; j<second_derivative_beta_term1.n_cols(); j++){
+	for(size_t i=0; i<second_derivative_beta_term1.n_rows(); i++){
+		for(size_t j=0; j<second_derivative_beta_term1.n_cols(); j++){
 			cout<<second_derivative_beta_term1.get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -772,13 +772,13 @@ void MLObjective::CheckGradient(double current_sample,
 	dummy_approx_gradient.Init(num_of_betas_+2);
 	dummy_approx_gradient.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_+2); i++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
 		e.SetZero();
 		e[i]=1.0;
 		la::Scale(epsilon, &e);
 		/*
 		cout<<"e="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<e[i]<<" ";
 		}
 		cout<<endl;
@@ -789,13 +789,13 @@ void MLObjective::CheckGradient(double current_sample,
 		
 		/*
 		cout<<"u1="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<u1[i]<<" ";
 		}
 		cout<<endl;
 
 		cout<<"u2="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<u2[i]<<" ";
 		}
 		cout<<endl;
@@ -894,7 +894,7 @@ void MLObjective::CheckHessian(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_, num_of_betas_);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_); i++){
+	for(size_t i=0; i<(num_of_betas_); i++){
 		ei.SetZero();
 		ei[i]=1.0;
 		la::Scale(epsilon, &ei);
@@ -917,7 +917,7 @@ void MLObjective::CheckHessian(double current_sample,
 		//dummy_approx_gradient[i]=(u1_objective-u2_objective)/(2*epsilon);
 		
 
-		for(index_t j=0; j<(num_of_betas_); j++){
+		for(size_t j=0; j<(num_of_betas_); j++){
 			ej.SetZero();
 			ej[j]=1.0;
 			la::Scale(epsilon, &ej);
@@ -948,8 +948,8 @@ void MLObjective::CheckHessian(double current_sample,
 
 	/*
 	cout<<"dummy_hessian_nonsymmetric"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -958,8 +958,8 @@ void MLObjective::CheckHessian(double current_sample,
 
 
 	//Make hessian symmetric
-	for(index_t i=0; i<(num_of_betas_); i++){
-		for(index_t j=0; j<(num_of_betas_); j++){
+	for(size_t i=0; i<(num_of_betas_); i++){
+		for(size_t j=0; j<(num_of_betas_); j++){
 
 			double temp2=0;
 			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
@@ -975,14 +975,14 @@ void MLObjective::CheckHessian(double current_sample,
 	
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -994,7 +994,7 @@ void MLObjective::CheckHessian(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			//dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen+0.5)));
 			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen*1.1)));
 		}
@@ -1009,15 +1009,15 @@ void MLObjective::CheckHessian(double current_sample,
 
 	cout<<"eigen values of updated hessian"<<endl;
 
-	for(index_t i=0; i<eigen_hessian2.length(); i++){
+	for(size_t i=0; i<eigen_hessian2.length(); i++){
 		cout<<eigen_hessian2[i]<<" ";
 	}
 	cout<<endl;
 	cout<<endl;
 
 	cout<<"eigen vectors of updated hessian"<<endl;
-  for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+  for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<eigenvec_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -1041,7 +1041,7 @@ void MLObjective::CheckHessian3(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_, num_of_betas_);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_); i++){
+	for(size_t i=0; i<(num_of_betas_); i++){
 		dummy_approx_hessian.set(i,i,-1);
 	}
 
@@ -1049,8 +1049,8 @@ void MLObjective::CheckHessian3(double current_sample,
 
 /*
 	cout<<"hessian0"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -1096,7 +1096,7 @@ void MLObjective::CheckHessian2(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_, num_of_betas_);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_); i++){
+	for(size_t i=0; i<(num_of_betas_); i++){
 		ei.SetZero();
 		ei[i]=1.0;
 		la::Scale(epsilon, &ei);
@@ -1113,7 +1113,7 @@ void MLObjective::CheckHessian2(double current_sample,
 		ComputeObjective(current_sample, current_parameter, &fourth_term);
 		fourth_term=-1*fourth_term;
 		
-		for(index_t j=0; j<(num_of_betas_); j++){
+		for(size_t j=0; j<(num_of_betas_); j++){
 			ej.SetZero();
 			ej[i]=1.0;
 			la::Scale(epsilon, &ej);
@@ -1134,8 +1134,8 @@ void MLObjective::CheckHessian2(double current_sample,
 	}
 
 	//Make hessian symmetric
-	for(index_t i=0; i<(num_of_betas_); i++){
-		for(index_t j=0; j<(num_of_betas_); j++){
+	for(size_t i=0; i<(num_of_betas_); i++){
+		for(size_t j=0; j<(num_of_betas_); j++){
 
 			double temp2=0;
 			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
@@ -1145,8 +1145,8 @@ void MLObjective::CheckHessian2(double current_sample,
 	}
 
 	cout<<"dummy_hessian2"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -1158,14 +1158,14 @@ void MLObjective::CheckHessian2(double current_sample,
 
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -1177,7 +1177,7 @@ void MLObjective::CheckHessian2(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-max_eigen*(1.01)));
 		}
 	}
@@ -1197,7 +1197,7 @@ void MLObjective::CheckHessian2(double current_sample,
 
 void MLObjective::ComputePredictionError(double current_sample, 
 									  Vector &current_parameter,
-										ArrayList<index_t> &true_decision,
+										ArrayList<size_t> &true_decision,
 										double *postponed_prediction_error,
 										double *choice_prediction_error){
 
@@ -1213,11 +1213,11 @@ void MLObjective::ComputePredictionError(double current_sample,
   //predicted_postponed_probability.Init(true_decision.length());
 	//predicted_postponed_probability=postponed_probability_[n]
 
-	index_t number_of_test=true_decision.size();
+	size_t number_of_test=true_decision.size();
 
 	ArrayList<Vector> predicted_choice_probability_all;
   predicted_choice_probability_all.Init(number_of_test);
-	for(index_t n=0; n<predicted_choice_probability_all.size(); n++){
+	for(size_t n=0; n<predicted_choice_probability_all.size(); n++){
 		predicted_choice_probability_all[n].Init(first_stage_x_[n].n_cols());
     predicted_choice_probability_all[n].SetZero();
 	}
@@ -1234,17 +1234,17 @@ void MLObjective::ComputePredictionError(double current_sample,
   predicted_decision.Init(number_of_test);
   predicted_decision.SetAll(-1.0);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		double max_choice_probability=0;
-		index_t index_chosen_alternative=-100;
-		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+		size_t index_chosen_alternative=-100;
+		for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				Vector temp;
 				first_stage_x_[n].MakeColumnVector(i, &temp);
 				predicted_choice_probability_all[n][i]=
 					exp(la::Dot(betas, temp))/exp_betas_times_x1_[n];
 			
 			//find the alternative with maximum choice_prob.
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				if(max_choice_probability<predicted_choice_probability_all[n][i]){
 						index_chosen_alternative=i;
 						//cout<<"n="<<n<<"index_chosen_alternative"<<index_chosen_alternative<<endl;
@@ -1262,14 +1262,14 @@ void MLObjective::ComputePredictionError(double current_sample,
 	Matrix mtx_predicted_decision;
   mtx_predicted_decision.Init(number_of_test,1);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		mtx_predicted_decision.set(n,0, predicted_decision[n]);
 	}
 
   Matrix mtx_predicted_choice_probability;
   mtx_predicted_choice_probability.Init(number_of_test,1);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		mtx_predicted_choice_probability.set(n,0, predicted_choice_probability[n]);
 	}
 
@@ -1290,7 +1290,7 @@ void MLObjective::ComputePredictionError(double current_sample,
 	double count_correct_postponed=0;
 	double count_correct_choice=0;
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		//if(true_decision[n]==-1 &&predicted_decision[n]==-1){
 	  
 		//if(true_decision[n]*predicted_decision[n]>0){
@@ -1321,7 +1321,7 @@ void MLObjective::ComputePredictionError(double current_sample,
 	double count_true_postponed=0;
 	double count_predicted_postponed=0;
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		if(true_decision[n]<0) {
 			count_true_postponed+=1;
 			predicted_prob_of_n_choose_i[n]=0;
@@ -1346,7 +1346,7 @@ void MLObjective::ComputePredictionError(double current_sample,
 	//double temp_postponed_prediction_error_prob=0;
 	double temp_choice_prediction_error_prob=0;
 	double temp_postpone_prediction_error_prob=0;
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 
 		if(true_decision[n]<0) {
 			temp_choice_prediction_error_prob+=(1-0);
@@ -1367,7 +1367,7 @@ void MLObjective::ComputePredictionError(double current_sample,
 
 	
 	//cout<<"predicted_decision"<<endl;
-	//for(index_t n=0; n<number_of_test; n++){
+	//for(size_t n=0; n<number_of_test; n++){
 	//	cout<<predicted_decision[n]<<" ";
 	//}
 	//cout<<endl;

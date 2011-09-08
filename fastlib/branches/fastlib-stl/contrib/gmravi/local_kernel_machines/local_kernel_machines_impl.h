@@ -35,7 +35,7 @@ RunLocalKernelMachines_(Matrix &train_data_local,
 
   //printf("Range search completed...\n");
   
-  for(index_t i=0;i<test_data_local.n_cols();i++){
+  for(size_t i=0;i<test_data_local.n_cols();i++){
      
     // The label local svm will predict
     
@@ -108,9 +108,9 @@ FindPointsInNeighbourhood_( Matrix &ref_data, double *q_point,
   
   EpanKernel ek; 
   ek.Init(smoothing_kernel_bandwidth); 
-  index_t length=0; 
+  size_t length=0; 
   
-  for(index_t i=0;i<ref_data.n_cols();i++){ 
+  for(size_t i=0;i<ref_data.n_cols();i++){ 
     
     double sqd_distance= 
       la::DistanceSqEuclidean(num_dims_,ref_data.GetColumnPtr(i),q_point); 

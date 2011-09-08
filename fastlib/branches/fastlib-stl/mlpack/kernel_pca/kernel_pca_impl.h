@@ -20,8 +20,8 @@
 
 using namespace mlpack;
 
-void KernelPCA::Init(std::string data_file, index_t knns, 
-    index_t leaf_size) {
+void KernelPCA::Init(std::string data_file, size_t knns, 
+    size_t leaf_size) {
   arma::mat tmp;
   data::Load(data_file.c_str(), tmp);
 //  arma_compat::armaToMatrix(tmp, data_);
@@ -37,7 +37,7 @@ void KernelPCA::Destruct() {
 void KernelPCA::ComputeNeighborhoods() {
   IO::Info << "Building tree..." << std::endl;
   fflush(stdout);
-  arma::Col<index_t> resulting_neighbors;
+  arma::Col<size_t> resulting_neighbors;
   arma::vec  distances;
   IO::Info << "Computing Neighborhoods" << std::endl;
   allknn_.ComputeNeighbors(resulting_neighbors,
@@ -47,7 +47,7 @@ void KernelPCA::ComputeNeighborhoods() {
     IO::Fatal << "Unable to open allnn for exporting the results, error " 
 		<< strerror(errno) << std::endl; 
  }
-  for(index_t i=0; i<resulting_neighbors.n_rows; i++) {
+  for(size_t i=0; i<resulting_neighbors.n_rows; i++) {
     fprintf(fp, "%lli %lli %lg\n", i / knns_, resulting_neighbors[i],
         distances[i]);
   }
@@ -56,7 +56,7 @@ void KernelPCA::ComputeNeighborhoods() {
 
 template<typename DISTANCEKERNEL>
 void KernelPCA::ComputeGeneralKernelPCA(DISTANCEKERNEL kernel,
-                                        index_t num_of_eigenvalues,
+                                        size_t num_of_eigenvalues,
                                         arma::mat *eigen_vectors,
                                         arma::vec *eigen_values){
   kernel_matrix_.Copy(affinity_matrix_);
@@ -90,8 +90,8 @@ void KernelPCA::SaveToTextFile(std::string file,
     IO::Fatal << "Unable to open file " << vec_file.c_str() 
 	      << ", error: " << strerrer(errno) << std::endl;
   }
-  for(index_t i=0; i<eigen_vectors.n_rows; i++) {
-    for(index_t j=0; j<eigen_vectors.n_cols; j++) {
+  for(size_t i=0; i<eigen_vectors.n_rows; i++) {
+    for(size_t j=0; j<eigen_vectors.n_cols; j++) {
        fprintf(fp, "%lg\t", eigen_vectors(i, j));
     }
     fprintf(fp, "\n");
@@ -102,7 +102,7 @@ void KernelPCA::SaveToTextFile(std::string file,
     IO::Fatal << "Unable to open file " << lam_file.c_str()
 	      << ", error: " << strerror(errno) << std::endl;
   }
-  for(index_t i=0; i<(index_t)eigen_values.n_rows; i++) {
+  for(size_t i=0; i<(size_t)eigen_values.n_rows; i++) {
     fprintf(fp, "%lg\n", eigen_values[i]);
   }
   fclose(fp);
@@ -113,10 +113,10 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
   if (fp==NULL) {
      IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
-  uint64 p1, p2;
+  uint64_t_t p1, p2;
   double dist;
   double mean=0;
-  uint64 count=0;
+  uint64_t_t count=0;
   while (!feof(fp)) {
     fscanf(fp, "%llu %llu %lg", &p1, &p2, &dist);
     mean+=dist;
@@ -128,16 +128,16 @@ void KernelPCA::EstimateBandwidth(double *bandwidth) {
 // 0 distance. It is highly likely in cases where the query tree and the reference tree
 // come from different structures that refer to the same dataset. We take care about
 // that in this function. 
-void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
+void KernelPCA::ComputeLLE(size_t num_of_eigenvalues,
                            arma::mat *eigen_vectors,
                            arma::vec *eigen_values) {
   FILE *fp=fopen("allnn.txt", "r");
   if (fp==NULL) {
      IO::Fatal << "Unable to open allnn.txt, error " << strerror(errno) << std::endl;
   }
-  uint64 p1, p2;
+  uint64_t_t p1, p2;
   double dist;
-  uint64 last_point=numeric_limits<uint64>::max();
+  uint64_t_t last_point=numeric_limits<uint64_t_t>::max();
   arma::vec point;
   point.set_size(dimension_);
   arma::mat neighbor_vals;
@@ -150,8 +150,8 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   ones.set_size(knns_-1);
   ones.fill(1);
   arma::vec weights;
-  index_t neighbors[knns_];
-  index_t i=0;
+  size_t neighbors[knns_];
+  size_t i=0;
   kernel_matrix_.Init(data_.n_cols,
                       data_.n_cols,
                       knns_);
@@ -161,7 +161,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
   arma::mat covariance_regularizer;
   covariance_regularizer.set_size(knns_-1, knns_-1);
   covariance_regularizer.zeros();
-  for(index_t j=0; j<knns_-1; j++) {
+  for(size_t j=0; j<knns_-1; j++) {
     covariance_regularizer(j, j) = 1;
   }  
     
@@ -176,16 +176,16 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
       la::MulTransAOverwrite(neighbor_vals, neighbor_vals, &covariance);
       // calculate the covariance matrix trace
       double trace=0;
-      for (index_t k=0; k<i; k++) {
+      for (size_t k=0; k<i; k++) {
         trace+=covariance(k,k);
       }
       la::AddExpert(1e-3*trace, covariance_regularizer, &covariance);
       la::SolveInit(covariance, ones, &weights);
       double sum_weights=0;
-      for(index_t k=0; k<weights.n_rows; k++) {
+      for(size_t k=0; k<weights.n_rows; k++) {
         sum_weights+=weights[k];
       }
-      for(index_t k=0; k<weights.n_rows; k++) {
+      for(size_t k=0; k<weights.n_rows; k++) {
         weights[k]/=sum_weights;
       }
       kernel_matrix_.LoadRow(p1, i, neighbors, weights.memptr());
@@ -213,7 +213,7 @@ void KernelPCA::ComputeLLE(index_t num_of_eigenvalues,
 }
 template<typename DISTANCEKERNEL>
 void KernelPCA::ComputeSpectralRegression(DISTANCEKERNEL kernel,
-                                 std::map<index_t, index_t> &data_label,
+                                 std::map<size_t, size_t> &data_label,
                                  arma::mat *embedded_coordinates, 
                                  arma::vec *eigenvalues) {
   // labels has the label of every point, it is not necessary
@@ -221,11 +221,11 @@ void KernelPCA::ComputeSpectralRegression(DISTANCEKERNEL kernel,
   // a vector
   
   // This map has the classes and the points
-  std::map<index_t, std::vector<index_t> > classes;
-  std::vector<index_t> default_bin;
+  std::map<size_t, std::vector<size_t> > classes;
+  std::vector<size_t> default_bin;
   // find how many classes we have
-  index_t num_of_classes=0;
-  std::map<index_t, index_t>::iterator it;
+  size_t num_of_classes=0;
+  std::map<size_t, size_t>::iterator it;
   for(it=data_label.begin(); it!=data_label.end(); it++) {
     if (classes.find(it->second)!=classes.end()) {
       classes[it->second].push_back(it->first);
@@ -248,10 +248,10 @@ void KernelPCA::ComputeSpectralRegression(DISTANCEKERNEL kernel,
   d_sr_mat_diag.set_size(data_.n_cols());
   d_sr_mat_diag.fill(0);
   // Now put the label information
-  std::map<index_t, std::vector<index_t> >::iterator it1;
+  std::map<size_t, std::vector<size_t> >::iterator it1;
   for(it1=classes.begin(); it1!=classes.end(); it1++) {
-    for(index_t i=0; i<(index_t)it1->second.size(); i++) {
-      for(index_t j=i+1; j<(index_t)it1->second.size(); j++) {
+    for(size_t i=0; i<(size_t)it1->second.size(); i++) {
+      for(size_t j=i+1; j<(size_t)it1->second.size(); j++) {
         d_sr_mat_diag[it1->second[i]]+=1.0/(it1->first+1);
         d_sr_mat_diag[it1->second[j]]+=1.0/(it1->first+1);
         kernel_matrix_.set(it1->second[i], it1->second[j], 1.0);

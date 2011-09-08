@@ -15,7 +15,7 @@ class Pca {
     Vector new_basis_copy;    
     new_basis_copy.Copy(new_basis);
     
-    for(index_t i = 0; i < num_current_components; i++) {
+    for(size_t i = 0; i < num_current_components; i++) {
      
       // Get a pointer to the i-th previous basis.
       Vector previous_basis;
@@ -44,9 +44,9 @@ class Pca {
     covariance->Init(data.n_rows(), data.n_rows());
     covariance->SetZero();
     
-    for(index_t i = 0; i < data.n_cols(); i++) {
-      for(index_t c = 0; c < data.n_rows(); c++) {
-	for(index_t r = 0; r < data.n_rows(); r++) {	  
+    for(size_t i = 0; i < data.n_cols(); i++) {
+      for(size_t c = 0; c < data.n_rows(); c++) {
+	for(size_t r = 0; r < data.n_rows(); r++) {	  
 	  covariance->set(r, c, covariance->get(r, c) + 
 			  (data.get(c, i) - mean[c]) * 
 			  (data.get(r, i) - mean[r]));
@@ -60,7 +60,7 @@ class Pca {
     mean->Init(data.n_rows());
     mean->SetZero();
 
-    for(index_t i = 0; i < data.n_cols(); i++) {
+    for(size_t i = 0; i < data.n_cols(); i++) {
       Vector data_col;
       data.MakeColumnVector(i, &data_col);
       la::AddTo(data_col, mean);
@@ -68,12 +68,12 @@ class Pca {
     la::Scale(1.0 / ((double) data.n_cols()), mean);    
   }
 
-  static void ComputeMean(const Matrix &data, index_t start, index_t count,
+  static void ComputeMean(const Matrix &data, size_t start, size_t count,
 			  Vector *mean) {
     mean->Init(data.n_rows());
     mean->SetZero();
 
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       Vector data_col;
       data.MakeColumnVector(i, &data_col);
       la::AddTo(data_col, mean);
@@ -88,7 +88,7 @@ class Pca {
 
     while(!done) {
 
-      for(index_t i = 0; i < random_unit_vector.length(); i++) {
+      for(size_t i = 0; i < random_unit_vector.length(); i++) {
 	random_unit_vector[i] = -1 + 2 * math::Random();
       }
       if((length = la::LengthEuclidean(random_unit_vector)) < 1 &&
@@ -109,7 +109,7 @@ class Pca {
     data_copy->Init(data.n_rows(), data.n_cols());
     
     // Subtract the mean vector from each column of the matrix.
-    for(index_t i = 0; i < data.n_cols(); i++) {
+    for(size_t i = 0; i < data.n_cols(); i++) {
       Vector data_copy_col, data_col;
       data_copy->MakeColumnVector(i, &data_copy_col);
       data.MakeColumnVector(i, &data_col);
@@ -124,7 +124,7 @@ class Pca {
     data_copy->Init(data.n_rows(), data.n_cols());
     
     // Subtract the mean vector from each column of the matrix.
-    for(index_t i = 0; i < data.n_cols(); i++) {
+    for(size_t i = 0; i < data.n_cols(); i++) {
       Vector data_copy_col, data_col;
       data_copy->MakeColumnVector(i, &data_copy_col);
       data.MakeColumnVector(i, &data_col);
@@ -133,13 +133,13 @@ class Pca {
     }
   }
 
-  static void MeanCenter(const Matrix &data, index_t start, index_t count,
+  static void MeanCenter(const Matrix &data, size_t start, size_t count,
 			 const Vector &mean, Matrix *data_copy) {
     
     data_copy->Init(data.n_rows(), count);
     
     // Subtract the mean vector from each column of the matrix.
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       Vector data_copy_col, data_col;
       data_copy->MakeColumnVector(i - start, &data_copy_col);
       data.MakeColumnVector(i, &data_col);
@@ -189,7 +189,7 @@ class Pca {
     
     la::SVDInit(mean_centered, eigen_values, principal_components,
 		&right_singular_vectors);
-    for(index_t i = 0; i < eigen_values->length(); i++) {
+    for(size_t i = 0; i < eigen_values->length(); i++) {
       (*eigen_values)[i] = ((*eigen_values)[i] * (*eigen_values)[i]) / 
 	((double) data.n_cols());
     }    
@@ -239,7 +239,7 @@ class Pca {
     Vector product;
     product.Init(data.n_rows());
 
-    for(index_t c = 0; c < num_components_desired; c++) {
+    for(size_t c = 0; c < num_components_desired; c++) {
       
       Vector previous_iteration_current_basis;
       Vector current_basis;

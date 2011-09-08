@@ -42,9 +42,9 @@
 #include "fastlib/fastlib.h"
 
 // maximum # of interations for SMO training
-const index_t MAX_NUM_ITER_SMO = 10000000;
+const size_t MAX_NUM_ITER_SMO = 10000000;
 // after # of iterations to do shrinking
-const index_t SMO_NUM_FOR_SHRINKING = 1000;
+const size_t SMO_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 const double SMO_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
@@ -69,25 +69,25 @@ class SMO {
   int learner_typeid_;
   int hinge_sqhinge_; // do L2-SVM or L1-SVM, default: L1
 
-  index_t ct_iter_; /* counter for the number of iterations */
-  index_t ct_shrinking_; /* counter for doing shrinking  */
+  size_t ct_iter_; /* counter for the number of iterations */
+  size_t ct_shrinking_; /* counter for doing shrinking  */
   bool do_shrinking_; // 1(default): do shrinking after 1000 iterations; 0: don't do shrinking
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the data matrix, including labels in the last row */
   //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
   Vector alpha_; /* the alphas, to be optimized */
   Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t n_alpha_; /* number of variables to be optimized */
-  index_t n_active_; /* number of samples in the active set */
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
+  size_t n_alpha_; /* number of variables to be optimized */
+  size_t n_active_; /* number of samples in the active set */
+  ArrayList<size_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
   bool reconstructed_; /* indicator: where unshrinking has been carried out  */
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -105,7 +105,7 @@ class SMO {
   double inv_two_C_; // 1/2C
   double epsilon_; // for SVM_R
   int wss_; // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
-  index_t n_iter_; // number of iterations
+  size_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
   double gap_; // for stopping criterion
 
@@ -120,7 +120,7 @@ class SMO {
     // init parameters
     wss_ = (int) param_[3];
     hinge_sqhinge_ = (int) param_[2];
-    n_iter_ = (index_t) param_[4];
+    n_iter_ = (size_t) param_[4];
     n_iter_ = n_iter_ < MAX_NUM_ITER_SMO ? n_iter_: MAX_NUM_ITER_SMO;
     accuracy_ = param_[5];
     if (learner_typeid == 0) { // SVM_C
@@ -152,7 +152,7 @@ class SMO {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -161,17 +161,17 @@ class SMO {
 
   void ReconstructGradient_();
   
-  bool TestShrink_(index_t i, double y_grad_max, double y_grad_min);
+  bool TestShrink_(size_t i, double y_grad_max, double y_grad_min);
 
   void Shrinking_();
 
-  bool WorkingSetSelection_(index_t &i, index_t &j);
+  bool WorkingSetSelection_(size_t &i, size_t &j);
 
-  void UpdateGradientAlpha_(index_t i, index_t j);
+  void UpdateGradientAlpha_(size_t i, size_t j);
 
   void CalcBias_();
 
-  /*  void GetVector_(index_t i, Vector *v) const {
+  /*  void GetVector_(size_t i, Vector *v) const {
     datamatrix_.MakeColumnSubvector(i, 0, datamatrix_.n_rows()-1, v);
   }
   */
@@ -179,11 +179,11 @@ class SMO {
   /**
    * Instead of C, we use C_+ and C_- to handle unbalanced data
    */
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return (y_[i] > 0 ? Cp_ : Cn_);
   }
 
-  void UpdateAlphaStatus_(index_t i) {
+  void UpdateAlphaStatus_(size_t i) {
     if (alpha_[i] >= GetC_(i)) {
       alpha_status_[i] = SMO_ID_UPPER_BOUNDED;
     }
@@ -195,20 +195,20 @@ class SMO {
     }
   }
 
-  bool IsUpperBounded(index_t i) {
+  bool IsUpperBounded(size_t i) {
     return alpha_status_[i] == SMO_ID_UPPER_BOUNDED;
   }
-  bool IsLowerBounded(index_t i) {
+  bool IsLowerBounded(size_t i) {
     return alpha_status_[i] == SMO_ID_LOWER_BOUNDED;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t ii, index_t jj) {
+  double CalcKernelValue_(size_t ii, size_t jj) {
     // the indices have been swaped in the shrinking processes
-    index_t i = active_set_[ii]; // ii/jj: index in the new permuted set
-    index_t j = active_set_[jj]; // i/j: index in the old set
+    size_t i = active_set_[ii]; // ii/jj: index in the new permuted set
+    size_t j = active_set_[jj]; // i/j: index in the old set
 
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
@@ -250,7 +250,7 @@ class SMO {
 */
 template<typename TKernel>
 void SMO<TKernel>::ReconstructGradient_() {
-  index_t i, j;
+  size_t i, j;
   if (n_active_ == n_alpha_)
     return;
   if (learner_typeid_ == 0) { // SVM_C
@@ -280,7 +280,7 @@ void SMO<TKernel>::ReconstructGradient_() {
  * 
  */
 template<typename TKernel>
-bool SMO<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) {
+bool SMO<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
   if (IsUpperBounded(i)) { // alpha_[i] = C
     if (y_[i] == 1) {
       return (grad_[i] > y_grad_max);
@@ -309,7 +309,7 @@ bool SMO<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) 
  */
 template<typename TKernel>
 void SMO<TKernel>::Shrinking_() {
-  index_t t;
+  size_t t;
 
   // Find m(a) == y_grad_max(i\in I_up) and M(a) == y_grad_min(j\in I_down)
   double y_grad_max = -INFINITY;
@@ -403,7 +403,7 @@ void SMO<TKernel>::Shrinking_() {
  */
 template<typename TKernel>
 void SMO<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -451,7 +451,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i,j;
+  size_t i,j;
   // Load data
   datamatrix_.Alias(dataset_in->matrix());
   n_data_ = datamatrix_.n_cols();
@@ -514,7 +514,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
   int stop_condition = 0;
   while (1) {
-    //for(index_t i=0; i<n_alpha_; i++)
+    //for(size_t i=0; i<n_alpha_; i++)
     //  printf("%f.\n", y_[i]*alpha_[i]);
     //printf("\n\n");
       
@@ -552,7 +552,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 template<typename TKernel>
 int SMO<TKernel>::SMOIterations_() {
   ct_iter_ ++;
-  index_t i,j;
+  size_t i,j;
   if (WorkingSetSelection_(i,j) == true) {
     if (!do_shrinking_) { // no shrinking, optimality reached
       return 1;
@@ -598,14 +598,14 @@ int SMO<TKernel>::SMOIterations_() {
 * @return: working set (i, j); indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
-bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
+bool SMO<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
   double y_grad_max = -INFINITY;
   double y_grad_min =  INFINITY;
   int idx_i = -1;
   int idx_j = -1;
   
   // Find i using maximal violating pair scheme
-  index_t t;
+  size_t t;
   for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
     if (y_[t] == 1) {
       if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] < C
@@ -721,8 +721,8 @@ bool SMO<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
-  index_t t;
+void SMO<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
+  size_t t;
 
   double a_i = alpha_[i]; // old alphas
   double a_j = alpha_[j];
@@ -912,10 +912,10 @@ void SMO<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
 template<typename TKernel>
 void SMO<TKernel>::CalcBias_() {
   double b;
-  index_t n_free_alpha = 0;
+  size_t n_free_alpha = 0;
   double ub = INFINITY, lb = -INFINITY, sum_free_yg = 0.0;
   
-  for (index_t i=0; i<n_active_; i++){
+  for (size_t i=0; i<n_active_; i++){
     double yg = y_[i] * grad_[i];
       
     if (IsUpperBounded(i)) { // bounded: alpha_i >= C
@@ -952,15 +952,15 @@ void SMO<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  ArrayList<index_t> new_from_old; // it's used to retrieve the permuted new index from old index
+void SMO<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+  ArrayList<size_t> new_from_old; // it's used to retrieve the permuted new index from old index
   new_from_old.Init(n_alpha_);
-  for (index_t i = 0; i < n_alpha_; i++) {
+  for (size_t i = 0; i < n_alpha_; i++) {
     new_from_old[active_set_[i]] = i;
   }
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t ii = 0; ii < n_data_; ii++) {
-      index_t i = new_from_old[ii]; // retrive the index of permuted vector
+    for (size_t ii = 0; ii < n_data_; ii++) {
+      size_t i = new_from_old[ii]; // retrive the index of permuted vector
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];
@@ -974,9 +974,9 @@ void SMO<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
     //printf("Number of SVs: %d\n", n_sv_);
   }
   else if (learner_typeid_ == 1) {// SVM_R
-    for (index_t ii = 0; ii < n_data_; ii++) {
-      index_t i = new_from_old[ii]; // retrive the index of permuted vector
-      index_t iplusn = new_from_old[ii+n_data_];
+    for (size_t ii = 0; ii < n_data_; ii++) {
+      size_t i = new_from_old[ii]; // retrive the index of permuted vector
+      size_t iplusn = new_from_old[ii+n_data_];
       double alpha_diff = -alpha_[i] + alpha_[iplusn]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SMO_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = alpha_diff; 

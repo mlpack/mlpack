@@ -20,9 +20,9 @@
 #include "gen_kdtree.h"
 
 // max imum # of iterations for HCY training
-const index_t MAX_NUM_ITER_HCY = 1000000;
+const size_t MAX_NUM_ITER_HCY = 1000000;
 // after # of iterations to do shrinking
-const index_t HCY_NUM_FOR_SHRINKING = 1000;
+const size_t HCY_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 const double HCY_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
@@ -78,7 +78,7 @@ class HCY {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
     } 
@@ -87,7 +87,7 @@ class HCY {
      * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
         const StatkdTree& left, const StatkdTree& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -101,39 +101,39 @@ class HCY {
 
  private:
   int learner_typeid_;
-  index_t ct_iter_; /* counter for the number of iterations */
-  index_t ct_shrinking_; /* counter for doing shrinking  */
+  size_t ct_iter_; /* counter for the number of iterations */
+  size_t ct_shrinking_; /* counter for doing shrinking  */
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the matrix of all data, including last label row */
   
-  index_t n_data_pos_; /* number of samples with label 1 */
-  index_t n_data_neg_; /* number of samples with label -1 */
+  size_t n_data_pos_; /* number of samples with label 1 */
+  size_t n_data_neg_; /* number of samples with label -1 */
 
   Vector alpha_; /* the alphas, to be optimized */
   Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
 
   //Vector alpha_pos_; /* the alphas for class 1, to be optimized; same order as reordered positive dataset*/
   //Vector alpha_status_pos_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
   //Vector alpha_neg_; /* the alphas for class -1, to be optimized; same order as reordered negative dataset*/
   //Vector alpha_status_neg_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
 
-  index_t max_n_alpha_; /* max number of alphas == n_data(SVC) or 2*n_data(SVR) */
-  index_t n_used_alpha_; /* number of samples used in this level == number of variables to optimize in this level*/
-  index_t n_active_; /* number of samples in the active set (not been shrinked) of this level */
+  size_t max_n_alpha_; /* max number of alphas == n_data(SVC) or 2*n_data(SVR) */
+  size_t n_used_alpha_; /* number of samples used in this level == number of variables to optimize in this level*/
+  size_t n_active_; /* number of samples in the active set (not been shrinked) of this level */
   // n_active + n_inactive == n_used_alpha;
 
-  ArrayList<index_t> active_set_; /* list that stores the indices of active alphas. == old_from_new*/
-  ArrayList<index_t> new_from_old_;
+  ArrayList<size_t> active_set_; /* list that stores the indices of active alphas. == old_from_new*/
+  ArrayList<size_t> new_from_old_;
 
-  ArrayList< GenVector<index_t> > kdtree_o_f_n_maps_pos_;
-  ArrayList< GenVector<index_t> > kdtree_o_f_n_maps_neg_;
+  ArrayList< GenVector<size_t> > kdtree_o_f_n_maps_pos_;
+  ArrayList< GenVector<size_t> > kdtree_o_f_n_maps_neg_;
 
   bool unshrinked_; /* indicator: where unshrinking has be carried out  */
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -143,7 +143,7 @@ class HCY {
   Vector grad_; /* gradient value */
   Vector grad_bar_; /* gradient value when treat free variables as 0 */
 
-  index_t leaf_size_;
+  size_t leaf_size_;
   TreeType* tree_pos_; /* tree for the positive class 1 */
   TreeType* tree_neg_; /* tree for the negative class -1 */
 
@@ -155,7 +155,7 @@ class HCY {
   double Cn_; // C_-, for SVM_C, y==-1
   double epsilon_; // for SVM_R
   int wss_; // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
-  index_t n_iter_; // number of iterations
+  size_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
 
  public:
@@ -169,10 +169,10 @@ class HCY {
     // init parameters
     budget_ = (int)param_[0];
     wss_ = (int) param_[3];
-    n_iter_ = (index_t) param_[4];
+    n_iter_ = (size_t) param_[4];
     n_iter_ = n_iter_ < MAX_NUM_ITER_HCY ? n_iter_: MAX_NUM_ITER_HCY;
     accuracy_ = param_[5];
-    n_data_pos_ = (index_t)param_[6];
+    n_data_pos_ = (size_t)param_[6];
     if (learner_typeid == 0) { // SVM_C
       Cp_ = param_[1];
       Cn_ = param_[2];
@@ -192,79 +192,79 @@ class HCY {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
 
-  void SwapValues(index_t idx_1, index_t idx_2);
+  void SwapValues(size_t idx_1, size_t idx_2);
 
   void LearnersInit_(int learner_typeid);
 
   void TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, ArrayList<TreeType*> &node_pool_neg,
-			     index_t n_samples_for_opt,
-			     index_t n_splitted_node_pos, index_t n_splitted_node_neg,
-			     index_t n_leaf_node_pos, index_t n_leaf_node_neg,
-			     index_t n_not_splitted_node_pos, index_t n_not_splitted_node_neg,
-			     ArrayList<index_t> &idx_not_splitted_node_pos, ArrayList<index_t> &new_idx_not_splitted_node_pos,
-			     ArrayList<index_t> &idx_not_splitted_node_neg, ArrayList<index_t> &new_idx_not_splitted_node_neg,
-			     ArrayList<index_t> &idx_leaf_node_pos, ArrayList<index_t> &idx_leaf_node_neg);
+			     size_t n_samples_for_opt,
+			     size_t n_splitted_node_pos, size_t n_splitted_node_neg,
+			     size_t n_leaf_node_pos, size_t n_leaf_node_neg,
+			     size_t n_not_splitted_node_pos, size_t n_not_splitted_node_neg,
+			     ArrayList<size_t> &idx_not_splitted_node_pos, ArrayList<size_t> &new_idx_not_splitted_node_pos,
+			     ArrayList<size_t> &idx_not_splitted_node_neg, ArrayList<size_t> &new_idx_not_splitted_node_neg,
+			     ArrayList<size_t> &idx_leaf_node_pos, ArrayList<size_t> &idx_leaf_node_neg);
 
   void SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
-			      index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-			      index_t &n_splitted_node, index_t &new_n_splitted_node,
-			      index_t &n_leaf_node, index_t &new_n_leaf_node,
-			      index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-			      ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-			      ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node);
+			      size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+			      size_t &n_splitted_node, size_t &new_n_splitted_node,
+			      size_t &n_leaf_node, size_t &new_n_leaf_node,
+			      size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+			      ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+			      ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node);
   
   void SplitNodePropagateNeg_(ArrayList<TreeType*> &node_pool,
-			   index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-			   index_t &n_splitted_node, index_t &new_n_splitted_node,
-			   index_t &n_leaf_node, index_t &new_n_leaf_node,
-			   index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-			   ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-			   ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node);
+			   size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+			   size_t &n_splitted_node, size_t &new_n_splitted_node,
+			   size_t &n_leaf_node, size_t &new_n_leaf_node,
+			   size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+			   ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+			   ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node);
   
   double DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
-			  index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-			  index_t &n_splitted_node, index_t &new_n_splitted_node,
-			  index_t &n_leaf_node, index_t &new_n_leaf_node,
-			  index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-			  ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-			  ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node,
-			  ArrayList<index_t> &idx_leaf_node);
+			  size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+			  size_t &n_splitted_node, size_t &new_n_splitted_node,
+			  size_t &n_leaf_node, size_t &new_n_leaf_node,
+			  size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+			  ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+			  ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node,
+			  ArrayList<size_t> &idx_leaf_node);
 
   double DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
-			  index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-			  index_t &n_splitted_node, index_t &new_n_splitted_node,
-			  index_t &n_leaf_node, index_t &new_n_leaf_node,
-			  index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-			  ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-			  ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node,
-			  ArrayList<index_t> &idx_leaf_node);
+			  size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+			  size_t &n_splitted_node, size_t &new_n_splitted_node,
+			  size_t &n_leaf_node, size_t &new_n_leaf_node,
+			  size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+			  ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+			  ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node,
+			  ArrayList<size_t> &idx_leaf_node);
 
   int TrainIteration_();
 
   void ReconstructGradient_(int learner_typeid);
   
-  bool TestShrink_(index_t i, double y_grad_max, double y_grad_min);
+  bool TestShrink_(size_t i, double y_grad_max, double y_grad_min);
 
   void Shrinking_();
 
-  bool WorkingSetSelection_(index_t &i, index_t &j);
+  bool WorkingSetSelection_(size_t &i, size_t &j);
 
-  void UpdateGradientAlpha_(index_t i, index_t j);
+  void UpdateGradientAlpha_(size_t i, size_t j);
 
   void CalcBias_();
 
   /**
    * Instead of C, we use C_+ and C_- to handle unbalanced data
    */
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return (y_[i] > 0 ? Cp_ : Cn_);
   }
 
-  void UpdateAlphaStatus_(index_t i) {
+  void UpdateAlphaStatus_(size_t i) {
     if (alpha_[i] >= GetC_(i)) {
       alpha_status_[i] = HCY_ID_UPPER_BOUNDED;
     }
@@ -276,19 +276,19 @@ class HCY {
     }
   }
 
-  bool IsUpperBounded(index_t i) {
+  bool IsUpperBounded(size_t i) {
     return alpha_status_[i] == HCY_ID_UPPER_BOUNDED;
   }
-  bool IsLowerBounded(index_t i) {
+  bool IsLowerBounded(size_t i) {
     return alpha_status_[i] == HCY_ID_LOWER_BOUNDED;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t ii, index_t jj) {
-    index_t i = active_set_[ii]; // ii/jj: index in the new permuted set
-    index_t j = active_set_[jj]; // i/j: index in the old set
+  double CalcKernelValue_(size_t ii, size_t jj) {
+    size_t i = active_set_[ii]; // ii/jj: index in the new permuted set
+    size_t j = active_set_[jj]; // i/j: index in the old set
 
     // for SVM_R where max_n_alpha_==2*n_data_
     /*
@@ -316,7 +316,7 @@ class HCY {
 
 
 template<typename TKernel>
-void HCY<TKernel>::SwapValues(index_t idx_1, index_t idx_2) {
+void HCY<TKernel>::SwapValues(size_t idx_1, size_t idx_2) {
   if (idx_1 != idx_2) {
     swap(new_from_old_[active_set_[idx_1]], new_from_old_[active_set_[idx_2]]);
     swap(active_set_[idx_1], active_set_[idx_2]);
@@ -337,7 +337,7 @@ void HCY<TKernel>::SwapValues(index_t idx_1, index_t idx_2) {
 */
 template<typename TKernel>
 void HCY<TKernel>::ReconstructGradient_(int learner_typeid) {
-  index_t i, j;
+  size_t i, j;
   if (n_active_ == n_used_alpha_)
     return;
   if (learner_typeid == 0) { // SVM_C
@@ -366,7 +366,7 @@ void HCY<TKernel>::ReconstructGradient_(int learner_typeid) {
  * 
  */
 template<typename TKernel>
-bool HCY<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) {
+bool HCY<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
   if (IsUpperBounded(i)) { // alpha_[i] = C
     if (y_[i] == 1) {
       return (grad_[i] > y_grad_max);
@@ -395,7 +395,7 @@ bool HCY<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) 
  */
 template<typename TKernel>
 void HCY<TKernel>::Shrinking_() {
-  index_t t;
+  size_t t;
 
   // Find m(a) == y_grad_max(i\in I_up) and M(a) == y_grad_min(j\in I_down)
   double y_grad_max = -INFINITY;
@@ -476,7 +476,7 @@ void HCY<TKernel>::Shrinking_() {
  */
 template<typename TKernel>
 void HCY<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -511,7 +511,7 @@ void HCY<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j;
+  size_t i, j;
   // Load data
   datamatrix_.Alias(dataset_in->matrix());
   n_data_ = datamatrix_.n_cols();
@@ -524,7 +524,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // General learner-independent initializations
   bias_ = 0.0;
   // minimum size of the leaf node, if smaller than this, do not split the node
-  leaf_size_= fx_param_int(NULL,"leaf_size", min(10, index_t(n_data_/2)-1)); 
+  leaf_size_= fx_param_int(NULL,"leaf_size", min(10, size_t(n_data_/2)-1)); 
 
   active_set_.Init(max_n_alpha_); // it is actually old_from_new
   new_from_old_.Init(max_n_alpha_);
@@ -545,10 +545,10 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // CAUTION: THESE 2 DATA MATRICES of the bi-classes dataset_in WILL BE REARRANGED AFTER BUILDING TREES
   Matrix datamatrix_pos; // alias for the data matrix of the positive class 1, excluding last label row
   Matrix datamatrix_neg; // alias for the data matrix of the negative class -1, excluding last label row
-  ArrayList<index_t> kdtree_old_from_new_pos; // not used
-  ArrayList<index_t> kdtree_new_from_old_pos;
-  ArrayList<index_t> kdtree_old_from_new_neg;
-  ArrayList<index_t> kdtree_new_from_old_neg;
+  ArrayList<size_t> kdtree_old_from_new_pos; // not used
+  ArrayList<size_t> kdtree_new_from_old_pos;
+  ArrayList<size_t> kdtree_old_from_new_neg;
+  ArrayList<size_t> kdtree_new_from_old_neg;
 
   // copy data. TODO: avoid these memory allocations
   datamatrix_pos.Copy(dataset_in->matrix().ptr(), n_features_, n_data_pos_);
@@ -571,7 +571,7 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   node_pool_pos.PushBack() = tree_pos_; // the top level only contains one node (sample)
   node_pool_neg.PushBack() = tree_neg_;
   
-  index_t idx_tmp;
+  size_t idx_tmp;
   idx_tmp = tree_pos_->get_split_point_idx_old(); // index in the original dataset
   idx_tmp = new_from_old_[idx_tmp];
   SwapValues(0, idx_tmp);
@@ -587,12 +587,12 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   n_used_alpha_ = 2;
   n_active_ = 2;
 
-  ArrayList<index_t> idx_not_splitted_node_pos; // stores the indices in the node_pool_pos of the non_splitted node
-  ArrayList<index_t> new_idx_not_splitted_node_pos;
-  ArrayList<index_t> idx_not_splitted_node_neg; // stores the indices in the node_pool_neg of the non_splitted node
-  ArrayList<index_t> new_idx_not_splitted_node_neg;
-  ArrayList<index_t> idx_leaf_node_pos;
-  ArrayList<index_t> idx_leaf_node_neg;
+  ArrayList<size_t> idx_not_splitted_node_pos; // stores the indices in the node_pool_pos of the non_splitted node
+  ArrayList<size_t> new_idx_not_splitted_node_pos;
+  ArrayList<size_t> idx_not_splitted_node_neg; // stores the indices in the node_pool_neg of the non_splitted node
+  ArrayList<size_t> new_idx_not_splitted_node_neg;
+  ArrayList<size_t> idx_leaf_node_pos;
+  ArrayList<size_t> idx_leaf_node_neg;
   idx_not_splitted_node_pos.Init(1);
   idx_not_splitted_node_pos[0] = 0;
   new_idx_not_splitted_node_pos.Init();
@@ -643,21 +643,21 @@ void HCY<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
    */
 template<typename TKernel>
 void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
-				       index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-				       index_t &n_splitted_node, index_t &new_n_splitted_node,
-				       index_t &n_leaf_node, index_t &new_n_leaf_node,
-				       index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-				       ArrayList<double> &changed_values,  ArrayList<index_t> &changed_idx_old,
-				       ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node) {
+				       size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+				       size_t &n_splitted_node, size_t &new_n_splitted_node,
+				       size_t &n_leaf_node, size_t &new_n_leaf_node,
+				       size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+				       ArrayList<double> &changed_values,  ArrayList<size_t> &changed_idx_old,
+				       ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node) {
   
   double alpha_tmp, two_alpha_tmp;
-  index_t old_idx_tmp, new_idx_tmp;
-  index_t leaf_node_id;
+  size_t old_idx_tmp, new_idx_tmp;
+  size_t leaf_node_id;
 
   /**** Handle not-splitted nodes of the new level ****/
-  //for (index_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
-  for (index_t i=0; i<n_not_splitted_node; i++) {
-    index_t k = idx_not_splitted_node[i];
+  //for (size_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
+  for (size_t i=0; i<n_not_splitted_node; i++) {
+    size_t k = idx_not_splitted_node[i];
     new_n_splitted_node ++;
     TreeType *left_node, *right_node;
     left_node = node_pool[k]->left();
@@ -729,7 +729,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	// only left child has a splitting sample; right child is a leaf node
 	else {
 	  // Number of samples in the right child
-	  index_t n_samples_leaf = node_pool[k]->right()->count();
+	  size_t n_samples_leaf = node_pool[k]->right()->count();
 	  //printf("right_n_sample_leaf=%d\n", n_samples_leaf);
 	  // divide alpha into (2+#leaf) and propagate
 	  old_idx_tmp = node_pool[k]->get_split_point_idx_old();
@@ -765,7 +765,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	  new_n_samples_for_opt += n_samples_leaf;
 	  node_pool.PushBack() = node_pool[k]->right();
 	  leaf_node_id = node_pool[k]->right()->node_id();
-	  for (index_t t=0; t<n_samples_leaf; t++) {
+	  for (size_t t=0; t<n_samples_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->right()->begin() + t];
 	    //printf("r_leaf_old_idx_tmp=%d\n", old_idx_tmp);
@@ -784,7 +784,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	}
 
 	/*printf("intrim\n");
-      for (index_t i=0; i<n_used_alpha_; i++)
+      for (size_t i=0; i<n_used_alpha_; i++)
 	printf("%f.\n", y_[i]*alpha_[i]);
       printf("\n\n");
 	*/
@@ -799,7 +799,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	new_n_samples_for_opt ++;
 	
 	// Number of samples in the left child;
-	index_t n_samples_leaf = node_pool[k]->left()->count();
+	size_t n_samples_leaf = node_pool[k]->left()->count();
 	//printf("left_n_sample_leaf=%d\n", n_samples_leaf);
 	// divide alpha into (2+#leaf) and propagate
 	old_idx_tmp = node_pool[k]->get_split_point_idx_old();
@@ -833,7 +833,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	new_n_samples_for_opt += n_samples_leaf;
 	node_pool.PushBack() = node_pool[k]->left();
 	leaf_node_id = node_pool[k]->left()->node_id();
-	for (index_t t=0; t<n_samples_leaf; t++) {
+	for (size_t t=0; t<n_samples_leaf; t++) {
 	  // update alpha
 	  old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->left()->begin() + t];
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -855,8 +855,8 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	  node_pool.PushBack() = node_pool[k]->left();
 	  node_pool.PushBack() = node_pool[k]->right();
 
-	  index_t n_samples_left_leaf = node_pool[k]->left()->count();
-	  index_t n_samples_right_leaf = node_pool[k]->right()->count();
+	  size_t n_samples_left_leaf = node_pool[k]->left()->count();
+	  size_t n_samples_right_leaf = node_pool[k]->right()->count();
 	  //printf("both_node_idx=%d\n",node_pool[k]->get_split_point_idx_old());
 	  //printf("both_n_sample_left_leaf=%d\n", n_samples_left_leaf);
 	  //printf("both_n_sample_right_leaf=%d\n", n_samples_right_leaf);
@@ -879,7 +879,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	  /* left child (a leaf node) */
 	  new_n_leaf_node ++;
 	  leaf_node_id = node_pool[k]->left()->node_id();
-	  for (index_t t=0; t<n_samples_left_leaf; t++) {
+	  for (size_t t=0; t<n_samples_left_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->left()->begin() + t];
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -896,7 +896,7 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 	  /* right child (a leaf node) */
 	  new_n_leaf_node ++;
 	  leaf_node_id = node_pool[k]->right()->node_id();
-	  for (index_t t=0; t<n_samples_right_leaf; t++) {
+	  for (size_t t=0; t<n_samples_right_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->right()->begin() + t];
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -922,21 +922,21 @@ void HCY<TKernel>::SplitNodePropagatePos_(ArrayList<TreeType*> &node_pool,
 
 template<typename TKernel>
 void HCY<TKernel>::SplitNodePropagateNeg_(ArrayList<TreeType*> &node_pool,
-				       index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-				       index_t &n_splitted_node, index_t &new_n_splitted_node,
-				       index_t &n_leaf_node, index_t &new_n_leaf_node,
-				       index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-				       ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-				       ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node) {
+				       size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+				       size_t &n_splitted_node, size_t &new_n_splitted_node,
+				       size_t &n_leaf_node, size_t &new_n_leaf_node,
+				       size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+				       ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+				       ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node) {
   
   double alpha_tmp, two_alpha_tmp;
-  index_t old_idx_tmp, new_idx_tmp;
-  index_t leaf_node_id;
+  size_t old_idx_tmp, new_idx_tmp;
+  size_t leaf_node_id;
 
   /**** Handle not-splitted nodes of the new level ****/
-  //for (index_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
-  for (index_t i=0; i<n_not_splitted_node; i++) {
-    index_t k = idx_not_splitted_node[i];
+  //for (size_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
+  for (size_t i=0; i<n_not_splitted_node; i++) {
+    size_t k = idx_not_splitted_node[i];
     new_n_splitted_node ++;
     TreeType *left_node, *right_node;
     left_node = node_pool[k]->left();
@@ -1003,7 +1003,7 @@ void HCY<TKernel>::SplitNodePropagateNeg_(ArrayList<TreeType*> &node_pool,
 
 	  /*
 printf("intrim\n");
-      for (index_t i=0; i<n_used_alpha_; i++)
+      for (size_t i=0; i<n_used_alpha_; i++)
 	printf("%f.\n", y_[i]*alpha_[i]);
       printf("\n\n");
 	  */
@@ -1012,7 +1012,7 @@ printf("intrim\n");
 	// only left child has a splitting sample; right child is a leaf node
 	else {
 	  // Number of samples in the right child
-	  index_t n_samples_leaf = node_pool[k]->right()->count();
+	  size_t n_samples_leaf = node_pool[k]->right()->count();
 	  //printf("right_n_sample_leaf=%d\n", n_samples_leaf);
 	  // divide alpha into (2+#leaf) and propagate
 	  old_idx_tmp = node_pool[k]->get_split_point_idx_old()+ n_data_pos_;
@@ -1046,7 +1046,7 @@ printf("intrim\n");
 	  new_n_samples_for_opt += n_samples_leaf;
 	  node_pool.PushBack() = node_pool[k]->right();
 	  leaf_node_id = node_pool[k]->right()->node_id();
-	  for (index_t t=0; t<n_samples_leaf; t++) {
+	  for (size_t t=0; t<n_samples_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->right()->begin() + t] + n_data_pos_;
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1072,7 +1072,7 @@ printf("intrim\n");
 	new_n_samples_for_opt ++;
 	
 	// Number of samples in the left child;
-	index_t n_samples_leaf = node_pool[k]->left()->count();
+	size_t n_samples_leaf = node_pool[k]->left()->count();
 	//printf("left_n_sample_leaf=%d\n", n_samples_leaf);
 	// divide alpha into (2+#leaf) and propagate
 	old_idx_tmp = node_pool[k]->get_split_point_idx_old()+ n_data_pos_;
@@ -1106,7 +1106,7 @@ printf("intrim\n");
 	new_n_samples_for_opt += n_samples_leaf;
 	node_pool.PushBack() = node_pool[k]->left();
 	leaf_node_id = node_pool[k]->left()->node_id();
-	for (index_t t=0; t<n_samples_leaf; t++) {
+	for (size_t t=0; t<n_samples_leaf; t++) {
 	  // update alpha
 	  old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->left()->begin() + t] + n_data_pos_;
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1128,8 +1128,8 @@ printf("intrim\n");
 	  node_pool.PushBack() = node_pool[k]->left();
 	  node_pool.PushBack() = node_pool[k]->right();
 
-	  index_t n_samples_left_leaf = node_pool[k]->left()->count();
-	  index_t n_samples_right_leaf = node_pool[k]->right()->count();
+	  size_t n_samples_left_leaf = node_pool[k]->left()->count();
+	  size_t n_samples_right_leaf = node_pool[k]->right()->count();
 	  //printf("both_node_idx=%d\n",node_pool[k]->get_split_point_idx_old());
 	  //printf("both_n_sample_left_leaf=%d\n", n_samples_left_leaf);
 	  //printf("both_n_sample_right_leaf=%d\n", n_samples_right_leaf);
@@ -1152,7 +1152,7 @@ printf("intrim\n");
 	  /* left child (a leaf node) */
 	  new_n_leaf_node ++;
 	  leaf_node_id = node_pool[k]->left()->node_id();
-	  for (index_t t=0; t<n_samples_left_leaf; t++) {
+	  for (size_t t=0; t<n_samples_left_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->left()->begin() + t] + n_data_pos_;
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1169,7 +1169,7 @@ printf("intrim\n");
 	  /* right child (a leaf node) */
 	  new_n_leaf_node ++;
 	  leaf_node_id = node_pool[k]->right()->node_id();
-	  for (index_t t=0; t<n_samples_right_leaf; t++) {
+	  for (size_t t=0; t<n_samples_right_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->right()->begin() + t] + n_data_pos_;
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1195,23 +1195,23 @@ printf("intrim\n");
 /**** Handle not-splitted nodes of the positive tree ****/
 template<typename TKernel>
 double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
-				      index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-				      index_t &n_splitted_node, index_t &new_n_splitted_node,
-				      index_t &n_leaf_node, index_t &new_n_leaf_node,
-				      index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-				      ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-				      ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node,
-				      ArrayList<index_t> &idx_leaf_node) {
+				      size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+				      size_t &n_splitted_node, size_t &new_n_splitted_node,
+				      size_t &n_leaf_node, size_t &new_n_leaf_node,
+				      size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+				      ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+				      ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node,
+				      ArrayList<size_t> &idx_leaf_node) {
   
   double alpha_tmp;
-  index_t old_idx_tmp, new_idx_tmp;
-  index_t leaf_node_id;
+  size_t old_idx_tmp, new_idx_tmp;
+  size_t leaf_node_id;
 
   //printf("begin_n_active=%d\n",n_active_);
   /**** Handle not-splitted nodes of the tree ****/
-  //for (index_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
-  for (index_t i=0; i<n_not_splitted_node; i++) {
-    index_t k = idx_not_splitted_node[i];
+  //for (size_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
+  for (size_t i=0; i<n_not_splitted_node; i++) {
+    size_t k = idx_not_splitted_node[i];
 
     old_idx_tmp = node_pool[k]->get_split_point_idx_old();
     new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1281,7 +1281,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	  // only left child has a splitting sample; right child is a leaf node
 	  else {
 	    // Number of samples in the right child
-	    index_t n_samples_leaf = node_pool[k]->right()->count();
+	    size_t n_samples_leaf = node_pool[k]->right()->count();
 	    // direct propagation
 	    old_idx_tmp = node_pool[k]->get_split_point_idx_old();
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1313,7 +1313,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	    idx_leaf_node.PushBack() = node_pool.size();
 	    node_pool.PushBack() = node_pool[k]->right();
 	    leaf_node_id = node_pool[k]->right()->node_id();
-	    for (index_t t=0; t<n_samples_leaf; t++) {
+	    for (size_t t=0; t<n_samples_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->right()->begin() + t];
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1337,7 +1337,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	  new_n_samples_for_opt ++;
 	  
 	  // Number of samples in the left child;
-	  index_t n_samples_leaf = node_pool[k]->left()->count();
+	  size_t n_samples_leaf = node_pool[k]->left()->count();
 	  //printf("n_sample_leaf=%d\n", n_samples_leaf);
 	  // direct propagation
 	  old_idx_tmp = node_pool[k]->get_split_point_idx_old();
@@ -1370,7 +1370,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	  idx_leaf_node.PushBack() = node_pool.size();
 	  node_pool.PushBack() = node_pool[k]->left();
 	  leaf_node_id = node_pool[k]->left()->node_id();
-	  for (index_t t=0; t<n_samples_leaf; t++) {
+	  for (size_t t=0; t<n_samples_leaf; t++) {
 	  // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->left()->begin() + t];
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1393,8 +1393,8 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	    idx_leaf_node.PushBack() = node_pool.size();
 	    node_pool.PushBack() = node_pool[k]->right();
 	    
-	    index_t n_samples_left_leaf = node_pool[k]->left()->count();
-	    index_t n_samples_right_leaf = node_pool[k]->right()->count();
+	    size_t n_samples_left_leaf = node_pool[k]->left()->count();
+	    size_t n_samples_right_leaf = node_pool[k]->right()->count();
 	    //printf("idx=%d\n",node_pool[k]->get_split_point_idx_old());
 	    //printf("n_sample_left_leaf=%d\n", n_samples_left_leaf);
 	    //printf("n_sample_right_leaf=%d\n", n_samples_right_leaf);
@@ -1416,7 +1416,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	    /* left child (a leaf node) */
 	    new_n_leaf_node ++;
 	    leaf_node_id = node_pool[k]->left()->node_id();
-	    for (index_t t=0; t<n_samples_left_leaf; t++) {
+	    for (size_t t=0; t<n_samples_left_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->left()->begin() + t];
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1432,7 +1432,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 	    /* right child (a leaf node) */
 	    new_n_leaf_node ++;
 	    leaf_node_id = node_pool[k]->right()->node_id();
-	    for (index_t t=0; t<n_samples_right_leaf; t++) {
+	    for (size_t t=0; t<n_samples_right_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[k]->right()->begin() + t];
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1466,8 +1466,8 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
   double alphas_sum = 0.0;
   
   if (idx_leaf_node.size() > 0) { // there exist leaf nodes
-    index_t leaf_i = 0;
-    for (index_t i=0; i<node_pool.size(); i++) {
+    size_t leaf_i = 0;
+    for (size_t i=0; i<node_pool.size(); i++) {
       if (i != idx_leaf_node[leaf_i]) { // not a leaf node
 	old_idx_tmp = node_pool[i]->get_split_point_idx_old();
 	new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1476,7 +1476,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
       }
       else { // leaf node
 	leaf_node_id = node_pool[i]->node_id();
-	for (index_t t=0; t<node_pool[i]->count(); t++) {
+	for (size_t t=0; t<node_pool[i]->count(); t++) {
 	  old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool[i]->begin() + t];
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
 	  //printf("+a%f*_lf\n", alpha_[new_idx_tmp]);
@@ -1487,7 +1487,7 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
     }
   }
   else { // no leaf node exists
-    for (index_t i=0; i<node_pool.size(); i++) {
+    for (size_t i=0; i<node_pool.size(); i++) {
       old_idx_tmp = node_pool[i]->get_split_point_idx_old();
       new_idx_tmp = new_from_old_[old_idx_tmp];
       //printf("+a%f\n", alpha_[new_idx_tmp]);
@@ -1504,23 +1504,23 @@ double HCY<TKernel>::DirectPropagatePos_(ArrayList<TreeType*> &node_pool,
 /**** Handle not-splitted nodes of the negative tree ****/
 template<typename TKernel>
 double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
-				      index_t &n_samples_for_opt, index_t &new_n_samples_for_opt,
-				      index_t &n_splitted_node, index_t &new_n_splitted_node,
-				      index_t &n_leaf_node, index_t &new_n_leaf_node,
-				      index_t &n_not_splitted_node, index_t &new_n_not_splitted_node,
-				      ArrayList<double> &changed_values, ArrayList<index_t> &changed_idx_old,
-				      ArrayList<index_t> &idx_not_splitted_node, ArrayList<index_t> &new_idx_not_splitted_node,
-				      ArrayList<index_t> &idx_leaf_node) {
+				      size_t &n_samples_for_opt, size_t &new_n_samples_for_opt,
+				      size_t &n_splitted_node, size_t &new_n_splitted_node,
+				      size_t &n_leaf_node, size_t &new_n_leaf_node,
+				      size_t &n_not_splitted_node, size_t &new_n_not_splitted_node,
+				      ArrayList<double> &changed_values, ArrayList<size_t> &changed_idx_old,
+				      ArrayList<size_t> &idx_not_splitted_node, ArrayList<size_t> &new_idx_not_splitted_node,
+				      ArrayList<size_t> &idx_leaf_node) {
   
   double alpha_tmp;
-  index_t old_idx_tmp, new_idx_tmp;
-  index_t leaf_node_id;
+  size_t old_idx_tmp, new_idx_tmp;
+  size_t leaf_node_id;
 
   //printf("begin_n_active=%d\n",n_active_);
   /**** Handle not-splitted nodes of the tree ****/
-  //for (index_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
-  for (index_t i=0; i<n_not_splitted_node; i++) {
-    index_t k = idx_not_splitted_node[i];
+  //for (size_t k=n_splitted_node; k<n_splitted_node+n_not_splitted_node; k++) {
+  for (size_t i=0; i<n_not_splitted_node; i++) {
+    size_t k = idx_not_splitted_node[i];
 
     old_idx_tmp = node_pool[k]->get_split_point_idx_old()+ n_data_pos_;
     new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1590,7 +1590,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	  // only left child has a splitting sample; right child is a leaf node
 	  else {
 	    // Number of samples in the right child
-	    index_t n_samples_leaf = node_pool[k]->right()->count();
+	    size_t n_samples_leaf = node_pool[k]->right()->count();
 	    // direct propagation
 	    old_idx_tmp = node_pool[k]->get_split_point_idx_old()+ n_data_pos_;
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1622,7 +1622,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	    idx_leaf_node.PushBack() = node_pool.size();
 	    node_pool.PushBack() = node_pool[k]->right();
 	    leaf_node_id = node_pool[k]->right()->node_id();
-	    for (index_t t=0; t<n_samples_leaf; t++) {
+	    for (size_t t=0; t<n_samples_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->right()->begin() + t] + n_data_pos_;
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1646,7 +1646,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	  new_n_samples_for_opt ++;
 	  
 	  // Number of samples in the left child;
-	  index_t n_samples_leaf = node_pool[k]->left()->count();
+	  size_t n_samples_leaf = node_pool[k]->left()->count();
 	  //printf("n_sample_leaf=%d\n", n_samples_leaf);
 	  // direct propagation
 	  old_idx_tmp = node_pool[k]->get_split_point_idx_old()+ n_data_pos_;
@@ -1679,7 +1679,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	  idx_leaf_node.PushBack() = node_pool.size();
 	  node_pool.PushBack() = node_pool[k]->left();
 	  leaf_node_id = node_pool[k]->left()->node_id();
-	  for (index_t t=0; t<n_samples_leaf; t++) {
+	  for (size_t t=0; t<n_samples_leaf; t++) {
 	    // update alpha
 	    old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->left()->begin() + t] + n_data_pos_;
 	    new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1702,8 +1702,8 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	    idx_leaf_node.PushBack() = node_pool.size();
 	    node_pool.PushBack() = node_pool[k]->right();
 	    
-	    index_t n_samples_left_leaf = node_pool[k]->left()->count();
-	    index_t n_samples_right_leaf = node_pool[k]->right()->count();
+	    size_t n_samples_left_leaf = node_pool[k]->left()->count();
+	    size_t n_samples_right_leaf = node_pool[k]->right()->count();
 	    //printf("idx=%d\n",node_pool[k]->get_split_point_idx_old());
 	    //printf("n_sample_left_leaf=%d\n", n_samples_left_leaf);
 	    //printf("n_sample_right_leaf=%d\n", n_samples_right_leaf);
@@ -1725,7 +1725,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	    /* left child (a leaf node) */
 	    new_n_leaf_node ++;
 	    leaf_node_id = node_pool[k]->left()->node_id();
-	    for (index_t t=0; t<n_samples_left_leaf; t++) {
+	    for (size_t t=0; t<n_samples_left_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->left()->begin() + t] + n_data_pos_;
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1741,7 +1741,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 	    /* right child (a leaf node) */
 	    new_n_leaf_node ++;
 	    leaf_node_id = node_pool[k]->right()->node_id();
-	    for (index_t t=0; t<n_samples_right_leaf; t++) {
+	    for (size_t t=0; t<n_samples_right_leaf; t++) {
 	      // update alpha
 	      old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[k]->right()->begin() + t] + n_data_pos_;
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1775,8 +1775,8 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
   double alphas_sum = 0.0;
   
   if (idx_leaf_node.size() > 0) { // there exist leaf nodes
-    index_t leaf_i = 0;
-    for (index_t i=0; i<node_pool.size(); i++) {
+    size_t leaf_i = 0;
+    for (size_t i=0; i<node_pool.size(); i++) {
       if (i != idx_leaf_node[leaf_i]) { // not a leaf node
 	old_idx_tmp = node_pool[i]->get_split_point_idx_old()+ n_data_pos_;
 	new_idx_tmp = new_from_old_[old_idx_tmp];
@@ -1785,7 +1785,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
       }
       else { // leaf node
 	leaf_node_id = node_pool[i]->node_id();
-	for (index_t t=0; t<node_pool[i]->count(); t++) {
+	for (size_t t=0; t<node_pool[i]->count(); t++) {
 	  old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool[i]->begin() + t] + n_data_pos_;
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
 	  //printf("-a%f*_lf\n", alpha_[new_idx_tmp]);
@@ -1796,7 +1796,7 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
     }
   }
   else { // no leaf node exists
-    for (index_t i=0; i<node_pool.size(); i++) {
+    for (size_t i=0; i<node_pool.size(); i++) {
       old_idx_tmp = node_pool[i]->get_split_point_idx_old()+ n_data_pos_;
       new_idx_tmp = new_from_old_[old_idx_tmp];
       //printf("-a%f\n", alpha_[new_idx_tmp]);
@@ -1817,19 +1817,19 @@ double HCY<TKernel>::DirectPropagateNeg_(ArrayList<TreeType*> &node_pool,
 
 template<typename TKernel>
 void HCY<TKernel>::TreeDescentRecursion_(ArrayList<TreeType*> &node_pool_pos, ArrayList<TreeType*> &node_pool_neg,
-					 index_t n_samples_for_opt,
-					 index_t n_splitted_node_pos, index_t n_splitted_node_neg,
-					 index_t n_leaf_node_pos, index_t n_leaf_node_neg,
-					 index_t n_not_splitted_node_pos, index_t n_not_splitted_node_neg,
-					 ArrayList<index_t> &idx_not_splitted_node_pos, ArrayList<index_t> &new_idx_not_splitted_node_pos,
-					 ArrayList<index_t> &idx_not_splitted_node_neg, ArrayList<index_t> &new_idx_not_splitted_node_neg,
-					 ArrayList<index_t> &idx_leaf_node_pos, ArrayList<index_t> &idx_leaf_node_neg) {
+					 size_t n_samples_for_opt,
+					 size_t n_splitted_node_pos, size_t n_splitted_node_neg,
+					 size_t n_leaf_node_pos, size_t n_leaf_node_neg,
+					 size_t n_not_splitted_node_pos, size_t n_not_splitted_node_neg,
+					 ArrayList<size_t> &idx_not_splitted_node_pos, ArrayList<size_t> &new_idx_not_splitted_node_pos,
+					 ArrayList<size_t> &idx_not_splitted_node_neg, ArrayList<size_t> &new_idx_not_splitted_node_neg,
+					 ArrayList<size_t> &idx_leaf_node_pos, ArrayList<size_t> &idx_leaf_node_neg) {
   printf("iteration %d\n", ct_iter_);
 
-  index_t i, j;
+  size_t i, j;
 
-  index_t n_node_pos = node_pool_pos.size();
-  index_t n_node_neg = node_pool_neg.size();
+  size_t n_node_pos = node_pool_pos.size();
+  size_t n_node_neg = node_pool_neg.size();
   //printf("n_node_pos=%d, n_node_neg=%d\n", n_node_pos, n_node_neg);
 
   DEBUG_ASSERT_MSG( (n_splitted_node_pos+n_leaf_node_pos+n_not_splitted_node_pos)== n_node_pos, 
@@ -1963,8 +1963,8 @@ fx_timer_stop(NULL, "hcy_smo");
 
   ArrayList<double> changed_values_pos;
   ArrayList<double> changed_values_neg;
-  ArrayList<index_t> changed_idx_old_pos;
-  ArrayList<index_t> changed_idx_old_neg;
+  ArrayList<size_t> changed_idx_old_pos;
+  ArrayList<size_t> changed_idx_old_neg;
   changed_values_pos.Init();
   changed_values_neg.Init();
   changed_idx_old_pos.Init();
@@ -1972,16 +1972,16 @@ fx_timer_stop(NULL, "hcy_smo");
 
   // alphas of already splitted nodes of this level (either active or inactive) will be re-optimized in the next level;
   // besides, all new alphas will be used
-  index_t new_n_samples_for_opt = n_samples_for_opt;
+  size_t new_n_samples_for_opt = n_samples_for_opt;
   //printf("---new_n_samples_for_opt=%d\n", new_n_samples_for_opt);
-  index_t new_n_splitted_node_pos = n_splitted_node_pos; // only contain the splitting sample
-  index_t new_n_splitted_node_neg = n_splitted_node_neg;
-  index_t new_n_leaf_node_pos = n_leaf_node_pos; // contains a bunch of samples
-  index_t new_n_leaf_node_neg = n_leaf_node_neg;
-  index_t new_n_not_splitted_node_pos = 0; // only contain the splitting sample
-  index_t new_n_not_splitted_node_neg = 0;
+  size_t new_n_splitted_node_pos = n_splitted_node_pos; // only contain the splitting sample
+  size_t new_n_splitted_node_neg = n_splitted_node_neg;
+  size_t new_n_leaf_node_pos = n_leaf_node_pos; // contains a bunch of samples
+  size_t new_n_leaf_node_neg = n_leaf_node_neg;
+  size_t new_n_not_splitted_node_pos = 0; // only contain the splitting sample
+  size_t new_n_not_splitted_node_neg = 0;
 
-  index_t leaf_node_id;
+  size_t leaf_node_id;
 
 
   int pm= fx_param_int(NULL,"pm", 1);  // alpha propagation method:
@@ -2044,10 +2044,10 @@ fx_timer_stop(NULL, "hcy_smo");
     eta = alphas_sum_pos / alphas_sum_neg;
     printf("eta=%f\n", eta);
 
-    index_t old_idx_tmp, new_idx_tmp;
+    size_t old_idx_tmp, new_idx_tmp;
     if (eta > 1) { // scale pos
       if (idx_leaf_node_pos.size() > 0) { // there exist leaf nodes
-	index_t leaf_i = 0;
+	size_t leaf_i = 0;
 	for (i=0; i<node_pool_pos.size(); i++) {
 	  if (i != idx_leaf_node_pos[leaf_i]) { // not a leaf node
 	    old_idx_tmp = node_pool_pos[i]->get_split_point_idx_old();
@@ -2056,7 +2056,7 @@ fx_timer_stop(NULL, "hcy_smo");
 	  }
 	  else { // leaf node
 	    leaf_node_id = node_pool_pos[i]->node_id();
-	    for (index_t t=0; t<node_pool_pos[i]->count(); t++) {
+	    for (size_t t=0; t<node_pool_pos[i]->count(); t++) {
 	      old_idx_tmp = (kdtree_o_f_n_maps_pos_[leaf_node_id])[node_pool_pos[i]->begin() + t];
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
 	      alpha_[new_idx_tmp] = alpha_[new_idx_tmp] / eta;
@@ -2066,7 +2066,7 @@ fx_timer_stop(NULL, "hcy_smo");
 	}
       }
       else { // no leaf node exists
-	for (index_t i=0; i<node_pool_pos.size(); i++) {
+	for (size_t i=0; i<node_pool_pos.size(); i++) {
 	  old_idx_tmp = node_pool_pos[i]->get_split_point_idx_old();
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
 	  alpha_[new_idx_tmp] = alpha_[new_idx_tmp] / eta;
@@ -2079,7 +2079,7 @@ fx_timer_stop(NULL, "hcy_smo");
     }
     else if (eta < 1) { // scale neg
       if (idx_leaf_node_neg.size() > 0) { // there exist leaf nodes
-	index_t leaf_i = 0;
+	size_t leaf_i = 0;
 	for (i=0; i<node_pool_neg.size(); i++) {
 	  if (i != idx_leaf_node_neg[leaf_i]) { // not a leaf node
 	    old_idx_tmp = node_pool_neg[i]->get_split_point_idx_old()+ n_data_pos_;
@@ -2088,7 +2088,7 @@ fx_timer_stop(NULL, "hcy_smo");
 	  }
 	  else { // leaf node
 	    leaf_node_id = node_pool_neg[i]->node_id();
-	    for (index_t t=0; t<node_pool_neg[i]->count(); t++) {
+	    for (size_t t=0; t<node_pool_neg[i]->count(); t++) {
 	      old_idx_tmp = (kdtree_o_f_n_maps_neg_[leaf_node_id])[node_pool_neg[i]->begin() + t] + n_data_pos_;
 	      new_idx_tmp = new_from_old_[old_idx_tmp];
 	      alpha_[new_idx_tmp] = alpha_[new_idx_tmp] * eta;
@@ -2098,7 +2098,7 @@ fx_timer_stop(NULL, "hcy_smo");
 	}
       }
       else { // no leaf node exists
-	for (index_t i=0; i<node_pool_neg.size(); i++) {
+	for (size_t i=0; i<node_pool_neg.size(); i++) {
 	  old_idx_tmp = node_pool_neg[i]->get_split_point_idx_old()+ n_data_pos_;
 	  new_idx_tmp = new_from_old_[old_idx_tmp];
 	  alpha_[new_idx_tmp] = alpha_[new_idx_tmp] * eta;
@@ -2123,11 +2123,11 @@ fx_timer_start(NULL, "alpha_propagate");
   /* Update and propagate gradients
    */
   //printf("+++new_n_samples_for_opt=%d\n", new_n_samples_for_opt);
-  for(index_t nl=0; nl<new_n_samples_for_opt; nl++) {
-    for (index_t nl_p=0; nl_p<changed_values_pos.size(); nl_p++) {
+  for(size_t nl=0; nl<new_n_samples_for_opt; nl++) {
+    for (size_t nl_p=0; nl_p<changed_values_pos.size(); nl_p++) {
       grad_[nl] = grad_[nl] + y_[nl] * changed_values_pos[nl_p] * CalcKernelValue_(new_from_old_[changed_idx_old_pos[nl_p]], nl);
     }
-    for (index_t nl_p=0; nl_p<changed_values_neg.size(); nl_p++) {
+    for (size_t nl_p=0; nl_p<changed_values_neg.size(); nl_p++) {
       grad_[nl] = grad_[nl] + y_[nl] * changed_values_neg[nl_p] * CalcKernelValue_(new_from_old_[changed_idx_old_neg[nl_p]], nl);
     }
   }
@@ -2157,14 +2157,14 @@ fx_timer_stop(NULL, "alpha_propagate");
 * @return: indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
-bool HCY<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
+bool HCY<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
   double y_grad_max = -INFINITY;
   double y_grad_min =  INFINITY;
   int idx_i = -1;
   int idx_j = -1;
   
   // Find i using maximal violating pair scheme
-  index_t t;
+  size_t t;
   for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
     if (y_[t] == 1) {
       if (!IsUpperBounded(t)) // t\in I_up, y==1: y[t]alpha[t] < C
@@ -2275,8 +2275,8 @@ bool HCY<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 *
 */
 template<typename TKernel>
-void HCY<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
-  index_t t;
+void HCY<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
+  size_t t;
 
   double a_i = alpha_[i]; // old alphas
   double a_j = alpha_[j];
@@ -2462,10 +2462,10 @@ void HCY<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
 template<typename TKernel>
 void HCY<TKernel>::CalcBias_() {
   double b;
-  index_t n_free_alpha = 0;
+  size_t n_free_alpha = 0;
   double ub = INFINITY, lb = -INFINITY, sum_free_yg = 0.0;
   
-  for (index_t i=0; i<n_active_; i++){
+  for (size_t i=0; i<n_active_; i++){
     double yg = y_[i] * grad_[i];
       
     if (IsUpperBounded(i)) { // bounded: alpha_i >= C
@@ -2502,15 +2502,15 @@ void HCY<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void HCY<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
-  ArrayList<index_t> new_from_old; // it's used to retrieve the permuted new index from old index
+void HCY<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+  ArrayList<size_t> new_from_old; // it's used to retrieve the permuted new index from old index
   new_from_old.Init(max_n_alpha_);
-  for (index_t i = 0; i < max_n_alpha_; i++) {
+  for (size_t i = 0; i < max_n_alpha_; i++) {
     new_from_old[active_set_[i]] = i;
   }
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t ii = 0; ii < n_data_; ii++) {
-      index_t i = new_from_old[ii]; // retrive the index of permuted vector
+    for (size_t ii = 0; ii < n_data_; ii++) {
+      size_t i = new_from_old[ii]; // retrive the index of permuted vector
       if (alpha_[i] >= SMO_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n",alpha_[i] );
 	coef.PushBack() = alpha_[i] * y_[i];
@@ -2524,7 +2524,7 @@ void HCY<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &c
   }
   /*
   else if (learner_typeid_ == 1) {// SVM_R
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       double alpha_diff = -alpha_[i] + alpha_[i+n_data_]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= HCY_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = alpha_diff; 

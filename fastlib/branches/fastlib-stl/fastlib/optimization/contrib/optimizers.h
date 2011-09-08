@@ -69,10 +69,10 @@ const fx_module_doc opt_doc = {
  *
  * @code
  * double init_pts[d+1][d];
- * index_t number_of_function_evaluations;
+ * size_t number_of_function_evaluations;
  * struct datanode *opt_module = fx_submodule(NULL,"NelderMead","opt_module");
  * Matrix data;
- * index_t dim_param_space;
+ * size_t dim_param_space;
  *
  * ...
  * NelderMead opt;
@@ -86,7 +86,7 @@ const fx_module_doc opt_doc = {
 class NelderMead {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   long double (*func_ptr_)(Vector&, const Matrix&);
   datanode *opt_module_;
@@ -111,13 +111,13 @@ class NelderMead {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 
   void Eval(double **pts);
   long double ModSimplex_(double **pts, long double *y,
-			  double *psum, index_t ihi, float fac); 
+			  double *psum, size_t ihi, float fac); 
 };
 
 /**
@@ -133,10 +133,10 @@ class NelderMead {
  *
  * @code
  * double init_pt[d];
- * index_t number_of_iters;
+ * size_t number_of_iters;
  * struct datanode *opt_module = fx_submodule(NULL,"QuasiNewton","opt_module");
  * Matrix data;
- * index_t dim_param_space;
+ * size_t dim_param_space;
  *
  * ...
  * QuasiNewton opt;
@@ -151,7 +151,7 @@ class NelderMead {
 class QuasiNewton {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
   datanode *opt_module_;
@@ -177,7 +177,7 @@ class QuasiNewton {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 

@@ -10,20 +10,20 @@ namespace gc {
   double EC = 1.3;
 
   template<typename T> 
-  inline index_t scale_of_distance(T distance) {
-    return (index_t) ceil(log(distance) / log((T)EC));
+  inline size_t scale_of_distance(T distance) {
+    return (size_t) ceil(log(distance) / log((T)EC));
   }
 
   template<typename T>
   class Point {
   
   private:
-    index_t point_;
+    size_t point_;
     T alpha_k_;
-    index_t center_present_;
-    index_t center_1_;
-    index_t center_2_;
-    index_t center_at_last_level_;
+    size_t center_present_;
+    size_t center_1_;
+    size_t center_2_;
+    size_t center_at_last_level_;
     T dist_at_last_level_;
   
   public:
@@ -37,17 +37,17 @@ namespace gc {
       alpha_k_ = alpha_k;
     }
 
-    void set_center(index_t center) {
+    void set_center(size_t center) {
       center_2_ = center_1_;
       center_1_ = center_present_;
       center_present_ = center;
     }
 
-    void set_point(index_t point) {
+    void set_point(size_t point) {
       point_ = point;
     }
 
-    void set_center_at_last_level(index_t center) {
+    void set_center_at_last_level(size_t center) {
       center_at_last_level_ = center;
     }
 
@@ -55,11 +55,11 @@ namespace gc {
       dist_at_last_level_ = dist;
     }
 
-    index_t center() {
+    size_t center() {
       return center_present_;
     }
 
-    index_t center_2() {
+    size_t center_2() {
       return center_2_;
     }
 
@@ -67,11 +67,11 @@ namespace gc {
       return alpha_k_;
     }
 
-    index_t point() {
+    size_t point() {
       return point_;
     }
 
-    index_t center_at_last_level() {
+    size_t center_at_last_level() {
       return center_at_last_level_;
     }
 
@@ -79,7 +79,7 @@ namespace gc {
       return dist_at_last_level_;
     }
 
-    void Init(index_t point, T alpha_k, index_t center) {
+    void Init(size_t point, T alpha_k, size_t center) {
       point_ = point;
       alpha_k_ = alpha_k;
       center_present_ = center;
@@ -93,17 +93,17 @@ namespace gc {
   class Center {
 
   private:
-    index_t point_;
-    index_t index_;
+    size_t point_;
+    size_t index_;
     ArrayList<Center*> friends_list_;
     ArrayList<T> friends_list_distances_;
     T r_i_;
     T r_k_;
     T radius_;
-    index_t farthest_;
-    index_t num_points_;
+    size_t farthest_;
+    size_t num_points_;
     ArrayList<Point<T> *> points_served_;
-    index_t parent_;
+    size_t parent_;
     T distance_to_parent_;
 
   public:
@@ -126,7 +126,7 @@ namespace gc {
       r_k_ = r_k;
     }
 
-    void set_farthest(index_t farthest) {
+    void set_farthest(size_t farthest) {
       farthest_ = farthest;
     }
 
@@ -135,15 +135,15 @@ namespace gc {
       friends_list_distances_.PushBackCopy(friend_distance);
     }
 
-    void set_num_points(index_t num_points) {
+    void set_num_points(size_t num_points) {
       num_points_ = num_points;
     }
 
-    void set_point(index_t point) {
+    void set_point(size_t point) {
       point_ = point;
     }
 
-    void set_index(index_t index) {
+    void set_index(size_t index) {
       index_ = index;
     }
 
@@ -151,7 +151,7 @@ namespace gc {
       radius_ = radius;
     }
 
-    void set_parent(index_t parent) {
+    void set_parent(size_t parent) {
       parent_ = parent;
     }
 
@@ -171,7 +171,7 @@ namespace gc {
       return &points_served_;
     }
 
-    Point<T> *points_served(index_t i) {
+    Point<T> *points_served(size_t i) {
       return points_served_[i];
     }
 
@@ -187,23 +187,23 @@ namespace gc {
       return radius_;
     }
 
-    index_t num_points() {
+    size_t num_points() {
       return num_points_;
     }
 
-    index_t farthest() {
+    size_t farthest() {
       return farthest_;
     }
 
-    index_t point() {
+    size_t point() {
       return point_;
     }
 
-    index_t index() {
+    size_t index() {
       return index_;
     }
 
-    index_t parent() {
+    size_t parent() {
       return parent_;
     }
 
@@ -211,7 +211,7 @@ namespace gc {
       return distance_to_parent_;
     }
 
-    void Init(index_t point, T radius, index_t index) {
+    void Init(size_t point, T radius, size_t index) {
       point_ = point;
       r_i_ = radius;
       r_k_ = radius;
@@ -226,12 +226,12 @@ namespace gc {
   // according to it being a member of the new cluster 
   // or the old one
   template<typename T> 
-  void split(Point<T> *p, index_t center_index,
+  void split(Point<T> *p, size_t center_index,
 	     ArrayList<Point<T> *> *set, 
 	     ArrayList<Point<T> *> *new_set, 
 	     GenMatrix<T>& data, T upper_bound) {
 
-    index_t initial_size = new_set->size();
+    size_t initial_size = new_set->size();
     ArrayList<Point<T> *> far;
     far.Init(0);
 
@@ -277,9 +277,9 @@ namespace gc {
       Point<T> **begin = c->points_served()->begin();
       Point<T> **end = c->points_served()->end();
       T max = 0;
-      index_t max_index = -1;
+      size_t max_index = -1;
 
-      for(index_t i = 0; begin != end; begin++, i++) {
+      for(size_t i = 0; begin != end; begin++, i++) {
 	if ((*begin)->alpha_k() >= max) {
 	  max = (*begin)->alpha_k();
 	  max_index = i;
@@ -343,7 +343,7 @@ namespace gc {
   // the helper function
   template<typename T, typename TreeType>
   T FindMaxDistGrandChild(TreeType *root, 
-			  ArrayList<index_t> *point,
+			  ArrayList<size_t> *point,
 			  GenMatrix<T>& data) {
 
     if (root->is_leaf()) {
@@ -352,8 +352,8 @@ namespace gc {
       return 0;
     }
     else {
-      index_t node_point = root->point();
-      ArrayList<index_t> subtree;
+      size_t node_point = root->point();
+      ArrayList<size_t> subtree;
       subtree.Init(0);
       T max = 0.0;
       TreeType **begin = root->children()->begin();
@@ -364,7 +364,7 @@ namespace gc {
       for (; begin != end; begin++) {
 	T child_max = FindMaxDistGrandChild(*begin, &subtree, data);
 	if (max < child_max + (*begin)->dist_to_parent()) {
-	  for (index_t *b = subtree.begin(), *e = subtree.end();
+	  for (size_t *b = subtree.begin(), *e = subtree.end();
 	       b != e; b++) { 
 	    GenVector<T> q;
 	    data.MakeColumnVector(*b, &q);
@@ -384,16 +384,16 @@ namespace gc {
   } 
 					     
   template<typename T, typename TreeType>
-  void update_scale(TreeType *root, index_t max_scale, 
-		    index_t current_scale) {
+  void update_scale(TreeType *root, size_t max_scale, 
+		    size_t current_scale) {
 
     if (root->is_leaf()) {
       root->set_scale_depth(100);
     }
     else {
-      index_t next_scale = min(current_scale - 1, 
+      size_t next_scale = min(current_scale - 1, 
 			       scale_of_distance<T>(root->max_dist_to_grandchild()));
-      if (next_scale == ((index_t) log(0.0))) {
+      if (next_scale == ((size_t) log(0.0))) {
 	next_scale = max_scale - 100;
       }
 
@@ -413,19 +413,19 @@ namespace gc {
   template<typename T, typename TreeType>
   void update_tree(TreeType *root, 
 		   GenMatrix<T>& data) { 
-    ArrayList<index_t> points_subtree;
+    ArrayList<size_t> points_subtree;
     points_subtree.Init(0);
     FindMaxDistGrandChild(root, &points_subtree, data);
   }
 
   // Gonzalez algorithm
   template<typename T, typename TreeType>
-  TreeType* Gonzalez(GenMatrix<T>& dataset, index_t k,
+  TreeType* Gonzalez(GenMatrix<T>& dataset, size_t k,
 		     ArrayList<Center<T> *> *centers) {
 
     ArrayList<Point<T> *> points;
     ArrayList<Point<T> *> farthest_set;
-    index_t n = dataset.n_cols();
+    size_t n = dataset.n_cols();
     ArrayList<TreeType *> tree;
 
     centers->Init(0);
@@ -438,9 +438,9 @@ namespace gc {
     dataset.MakeColumnVector(0, &p);
 
     T max = 0.0;
-    index_t max_ind = -1;
+    size_t max_ind = -1;
 
-    for (index_t i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
       GenVector<T> q;
       dataset.MakeColumnVector(i, &q);
 
@@ -456,7 +456,7 @@ namespace gc {
 
     DEBUG_ASSERT(points.size() == n - 1);
 
-    index_t max_scale = scale_of_distance<T>(max);
+    size_t max_scale = scale_of_distance<T>(max);
 
     farthest_set.PushBackCopy(points[max_ind]);
 
@@ -479,13 +479,13 @@ namespace gc {
 
       if ((r_k_1 <= r_0/j) || (centers->size() == k)) {
 
-	index_t initial_size = tree.size();
+	size_t initial_size = tree.size();
 	j *= (T)EC;
 
 	Center<T> **begin = centers->begin();
 	Center<T> **end = centers->end();
 
-	for (index_t i = 0; begin != end; begin++, i++) {
+	for (size_t i = 0; begin != end; begin++, i++) {
 	  set_parents(*begin);
 	  TreeType *node = new TreeType();
 	  if (initial_size == 0) {
@@ -523,7 +523,7 @@ namespace gc {
 		  
 		  DEBUG_ASSERT_MSG(tree.size() - 1 
 				   == (*begin)->index(), 
-				   "tree:%"LI"d center index:%"LI"d",
+				   "tree:%zu"d center index:%zu"d",
 				   tree.size(), (*begin)->index());
 		  
 		}
@@ -534,7 +534,7 @@ namespace gc {
 		if ((*begin)->parent() == (*begin)->index()) {
 		  // forming self child
 		  DEBUG_ASSERT_MSG(tree[(*begin)->index()]->point() 
-				   == (*begin)->point(), "%"LI"d -> %"LI"d",
+				   == (*begin)->point(), "%zu"d -> %zu"d",
 				   tree[(*begin)->index()]->point(),
 				   (*begin)->point());
 		  node->set_dist_to_parent(0.0);
@@ -549,7 +549,7 @@ namespace gc {
 		  
 		  DEBUG_ASSERT_MSG(tree.size() - 1 
 				   == (*begin)->index(), 
-				   "tree:%"LI"d center index:%"LI"d",
+				   "tree:%zu"d center index:%zu"d",
 				   tree.size(), (*begin)->index());
 		  // ending it with making its new parent itself
 		  tree[(*begin)->parent()]->children()->PushBackCopy(node);
@@ -561,8 +561,8 @@ namespace gc {
 	}
 
 
-	for (index_t j = 0; j < initial_size; j++) {
-	  index_t child_size = tree[j]->children()->size();
+	for (size_t j = 0; j < initial_size; j++) {
+	  size_t child_size = tree[j]->children()->size();
 	  if (child_size == 0) {
 	    DEBUG_ASSERT(tree[j]->is_leaf());
 	  }
@@ -580,7 +580,7 @@ namespace gc {
 	  }
 	}
 	if (centers->size() == k) {
-	  for (index_t j = 0; j < centers->size(); j++) {
+	  for (size_t j = 0; j < centers->size(); j++) {
 	    DEBUG_ASSERT((*centers)[j]->num_points() == 0);
 	  }
 	  break;
@@ -707,7 +707,7 @@ namespace gc {
       for (; begin != end; begin++) {
 	T bound = min(4 * (*begin)->r_i(), 8 * r_k);
 	(*begin)->set_r_k(r_k);
-	for (index_t i = 0; i < (*begin)->friends_list()->size();) {
+	for (size_t i = 0; i < (*begin)->friends_list()->size();) {
 	  if ((*((*begin)->friends_list_distances()))[i] > bound) {
 	    (*begin)->friends_list_distances()->Remove(i);
 	    (*begin)->friends_list()->Remove(i);
@@ -721,9 +721,9 @@ namespace gc {
       // forming the new center now
       Center<T> *new_node = new Center<T>();
       T r_i = 0.0;
-      index_t r_i_max = -1;
+      size_t r_i_max = -1;
 
-      for (index_t i = 0; i < new_points_served.size(); i++) {
+      for (size_t i = 0; i < new_points_served.size(); i++) {
 	if (new_points_served[i]->alpha_k() >= r_i) {
 	  r_i = new_points_served[i]->alpha_k();
 	  r_i_max = i;
@@ -756,7 +756,7 @@ namespace gc {
       centers->PushBackCopy(new_node);
     }
     
-    for (index_t i = 0; i < root->num_of_children(); i++) {
+    for (size_t i = 0; i < root->num_of_children(); i++) {
       update_tree(root->child(i), dataset);
     }
 
@@ -769,7 +769,7 @@ namespace gc {
 
     EC = (double)base;
     ArrayList<Center<T>*> centers;
-    index_t k = dataset.n_cols();
+    size_t k = dataset.n_cols();
     TreeType *root 
       = Gonzalez<T, TreeType>(dataset, k, &centers);
     

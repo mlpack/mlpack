@@ -7,9 +7,9 @@
  * a particular quantile given the set and sample sizes
  * Computes P(d_(1) <= d_(1+rank_approx))
  */
-double ApproxNN::ComputeProbability_(index_t set_size,
-				     index_t sample_size,
-				     index_t rank_approx) {
+double ApproxNN::ComputeProbability_(size_t set_size,
+				     size_t sample_size,
+				     size_t rank_approx) {
   double sum;
   Vector temp_a, temp_b;
 
@@ -19,7 +19,7 @@ double ApproxNN::ComputeProbability_(index_t set_size,
 
   // calculating the temp_b
   temp_b[rank_approx] = 1;
-  index_t i, j = 1;
+  size_t i, j = 1;
   for (i = rank_approx-1; i > -1; i--, j++) {
     double frac = (double)(set_size-(sample_size-1)-j)
       / (double)(set_size - j);
@@ -43,23 +43,23 @@ double ApproxNN::ComputeProbability_(index_t set_size,
  * a particular quantile given the set and sample sizes
  * Computes P(d_(k) <= d_(rank_approx))
  */
-double ApproxNN::ComputeProbability_(index_t set_size,
-				     index_t sample_size,
-				     index_t k,
-				     index_t rank_approx) {
+double ApproxNN::ComputeProbability_(size_t set_size,
+				     size_t sample_size,
+				     size_t k,
+				     size_t rank_approx) {
 							
   double gamma, sum, prod1, prod2;
   gamma = (double) (sample_size - k + 1) 
     / (double) (set_size - k + 1);
   sum = 0.0;
 		
-  for (index_t i = 0; i < (rank_approx - k +1); i++) {
+  for (size_t i = 0; i < (rank_approx - k +1); i++) {
     prod1 = 1.0; prod2 = 1.0;
-    for (index_t j = 0; j < (k - 1); j++)
+    for (size_t j = 0; j < (k - 1); j++)
       prod1 *= (double) ((rank_approx - i - 1 -j)*(sample_size -j))
 	/ (double) ((k - 1 -j)*(set_size -j));
 			
-    for (index_t j = 0; j < (sample_size - k); j++)
+    for (size_t j = 0; j < (sample_size - k); j++)
       prod2 *= (double) (set_size - rank_approx + i -j)
 	/ (double) (set_size - k -j);
 			
@@ -74,14 +74,14 @@ double ApproxNN::ComputeProbability_(index_t set_size,
  * required to obtain the approximate rank with
  * a given probability (alpha).
  * 
- * It assumes that the ArrayList<index_t> *samples
+ * It assumes that the ArrayList<size_t> *samples
  * has been initialized to length N.
  */
-void ApproxNN::ComputeSampleSizes_(index_t rank_approx,
+void ApproxNN::ComputeSampleSizes_(size_t rank_approx,
 				   double alpha,
-				   ArrayList<index_t> *samples) {
+				   ArrayList<size_t> *samples) {
 
-  index_t set_size = samples->size(),
+  size_t set_size = samples->size(),
     n = samples->size();
 
   double prob;
@@ -103,7 +103,7 @@ void ApproxNN::ComputeSampleSizes_(index_t rank_approx,
   // set the sample sizes for every node size for fast-access
   // during the algorithm
   do {
-    n = (index_t) (beta * (double)(set_size)) +1;
+    n = (size_t) (beta * (double)(set_size)) +1;
     (*samples)[--set_size] = n;
   } while (set_size > rank_approx);
   
@@ -118,17 +118,17 @@ void ApproxNN::ComputeSampleSizes_(index_t rank_approx,
  * a given probability (alpha) and for the kNN version
  * of the problem.
  * 
- * It assumes that the ArrayList<index_t> *samples
+ * It assumes that the ArrayList<size_t> *samples
  * has been initialized to length N.
  */
-void ApproxNN::ComputeSampleSizes_(index_t rank_approx,
+void ApproxNN::ComputeSampleSizes_(size_t rank_approx,
 				   double alpha,
-				   index_t k,
-				   ArrayList<index_t> *samples) {
+				   size_t k,
+				   ArrayList<size_t> *samples) {
 
-  index_t set_size = samples->size();
-  index_t ub = set_size, lb = k;
-  index_t n = lb;
+  size_t set_size = samples->size();
+  size_t ub = set_size, lb = k;
+  size_t n = lb;
 
   if (rank_approx > k) {
     bool done = false;
@@ -168,7 +168,7 @@ void ApproxNN::ComputeSampleSizes_(index_t rank_approx,
     // set the sample sizes for every node size for fast-access
     // during the algorithm
     do {
-      n = (index_t) (beta * (double)(set_size)) +1;
+      n = (size_t) (beta * (double)(set_size)) +1;
       (*samples)[--set_size] = n;
     } while (set_size > rank_approx);
 			
@@ -227,15 +227,15 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
     
   // Used to find the query node's new upper bound
   double query_max_neighbor_distance = -1.0;
-  std::vector<std::pair<double, index_t> > neighbors(knns_);
+  std::vector<std::pair<double, size_t> > neighbors(knns_);
 
   // cycle through each query in the leaf node individually
-  for (index_t query_index = query_node->begin(); 
+  for (size_t query_index = query_node->begin(); 
        query_index < query_node->end(); query_index++) {
        
     // Get the query point from the matrix
     Vector query_point;
-    index_t ind;
+    size_t ind;
     if (fx_param_bool(module_, "dual_tree", true)) {
       queries_.MakeColumnVector(query_index, &query_point);
       ind = query_index * knns_;
@@ -246,13 +246,13 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
   
     // setting up the bounds for the k potential 
     // nearest neighbors.
-    for(index_t i=0; i<knns_; i++) {
+    for(size_t i=0; i<knns_; i++) {
       neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				  neighbor_indices_[ind+i]);
     }
     // We'll do the same for the references
     // cycle through the reference nodes
-    for (index_t reference_index = reference_node->begin(); 
+    for (size_t reference_index = reference_node->begin(); 
 	 reference_index < reference_node->end();
 	 reference_index++) {
       
@@ -279,7 +279,7 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
  
     // sort the list to select the current top k potential neighbors
     std::sort(neighbors.begin(), neighbors.end());
-    for(index_t i=0; i<knns_; i++) {
+    for(size_t i=0; i<knns_; i++) {
       neighbor_distances_[ind+i] = neighbors[i].first;
       neighbor_indices_[ind+i]  = neighbors[i].second;
     }
@@ -430,14 +430,14 @@ void ApproxNN::ComputeApproxBaseCase_(TreeType* query_node,
   DEBUG_ASSERT(reference_node != NULL);
 
   // Obtain the number of samples to be obtained
-  index_t set_size
+  size_t set_size
     = reference_node->end() - reference_node->begin();
-  index_t sample_size = sample_sizes_[set_size - 1];
+  size_t sample_size = sample_sizes_[set_size - 1];
   DEBUG_ASSERT_MSG(sample_size <= set_size,
-		   "n = %"LI"d, N = %"LI"d",
+		   "n = %zud, N = %zud",
 		   sample_size, set_size);
 
-  index_t query_samples_needed
+  size_t query_samples_needed
     = min_samples_per_q_ - query_node->stat().samples();
 
   sample_size = min(sample_size, query_samples_needed);
@@ -450,13 +450,13 @@ void ApproxNN::ComputeApproxBaseCase_(TreeType* query_node,
 
   // Used to find the query node's new upper bound
   double query_max_neighbor_distance = -1.0;
-  std::vector<std::pair<double, index_t> > neighbors(knns_);
-  for (index_t query_index = query_node->begin(); 
+  std::vector<std::pair<double, size_t> > neighbors(knns_);
+  for (size_t query_index = query_node->begin(); 
        query_index < query_node->end(); query_index++) {
        
     // Get the query point from the matrix
     Vector query_point;
-    index_t ind;
+    size_t ind;
     if (fx_param_bool(module_, "dual_tree", true)) {
       queries_.MakeColumnVector(query_index, &query_point);
       ind = query_index * knns_;
@@ -465,7 +465,7 @@ void ApproxNN::ComputeApproxBaseCase_(TreeType* query_node,
       ind = query_ * knns_;
     }
   
-    for(index_t i=0; i<knns_; i++) {
+    for(size_t i=0; i<knns_; i++) {
       neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				  neighbor_indices_[ind+i]);
     }
@@ -473,9 +473,9 @@ void ApproxNN::ComputeApproxBaseCase_(TreeType* query_node,
     // but on the sample size number of points
 
     // Here we need to permute the reference set randomly
-    for (index_t i = 0; i < sample_size; i++) {				
+    for (size_t i = 0; i < sample_size; i++) {				
       // pick a random reference point
-      index_t reference_index = reference_node->begin()
+      size_t reference_index = reference_node->begin()
 	+ math::RandInt(set_size);
       DEBUG_ASSERT(reference_index < reference_node->end());
 
@@ -506,7 +506,7 @@ void ApproxNN::ComputeApproxBaseCase_(TreeType* query_node,
     }
 
     std::sort(neighbors.begin(), neighbors.end());
-    for(index_t i=0; i<knns_; i++) {
+    for(size_t i=0; i<knns_; i++) {
       neighbor_distances_[ind+i] = neighbors[i].first;
       neighbor_indices_[ind+i]  = neighbors[i].second;
     }
@@ -549,7 +549,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
 
     // since we pruned this node, we can say that we summarized
     // this node exactly
-    index_t reference_size
+    size_t reference_size
       = reference_node->end() - reference_node->begin();
     query_node->stat().add_total_points(reference_size);
     // query_node->stat().add_samples(reference_size);
@@ -563,7 +563,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     // first check if we can do exact. If so then we do so
     // and add the number of samples encountered.
     ComputeBaseCase_(query_node, reference_node);
-    index_t reference_size
+    size_t reference_size
       = reference_node->end() - reference_node->begin();
     query_node->stat().add_total_points(reference_size);
     query_node->stat().add_samples(reference_size);
@@ -579,13 +579,13 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     // encountered some pruning earlier
     DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
 		     == query_node->right()->stat().total_points(),
-		     "While getting: Left:%"LI"d, Right:%"LI"d",
+		     "While getting: Left:%zud, Right:%zud",
 		     query_node->left()->stat().total_points(),
 		     query_node->right()->stat().total_points());
 
     // if the parent has encountered extra points, pass
     // that information down to the children.
-    index_t extra_points_encountered
+    size_t extra_points_encountered
       = query_node->stat().total_points()
       - query_node->left()->stat().total_points();
     DEBUG_ASSERT(extra_points_encountered > -1);
@@ -593,7 +593,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     if (extra_points_encountered > 0) {
       query_node->left()->stat().add_total_points(extra_points_encountered);
       query_node->right()->stat().add_total_points(extra_points_encountered);
-      index_t extra_points_sampled
+      size_t extra_points_sampled
 	= query_node->stat().samples()
 	- min(query_node->left()->stat().samples(),
 	      query_node->right()->stat().samples());
@@ -622,7 +622,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     // that.
     DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
 		     == query_node->right()->stat().total_points(),
-		     "While setting: Left:%"LI"d, Right:%"LI"d",
+		     "While setting: Left:%zud, Right:%zud",
 		     query_node->left()->stat().total_points(),
 		     query_node->right()->stat().total_points());
 
@@ -684,13 +684,13 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     // encountered some pruning earlier
     DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
 		     == query_node->right()->stat().total_points(),
-		     "While getting: Left:%"LI"d, Right:%"LI"d",
+		     "While getting: Left:%zud, Right:%zud",
 		     query_node->left()->stat().total_points(),
 		     query_node->right()->stat().total_points());
 
     // if the parent has encountered extra points, pass
     // that information down to the children.
-    index_t extra_points_encountered
+    size_t extra_points_encountered
       = query_node->stat().total_points()
       - query_node->left()->stat().total_points();
     DEBUG_ASSERT(extra_points_encountered > -1);
@@ -698,7 +698,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     if (extra_points_encountered > 0) {
       query_node->left()->stat().add_total_points(extra_points_encountered);
       query_node->right()->stat().add_total_points(extra_points_encountered);
-      index_t extra_points_sampled
+      size_t extra_points_sampled
 	= query_node->stat().samples()
 	- min(query_node->left()->stat().samples(),
 	      query_node->right()->stat().samples());
@@ -754,7 +754,7 @@ void ApproxNN::ComputeApproxRecursion_(TreeType* query_node,
     // that.
     DEBUG_ASSERT_MSG(query_node->left()->stat().total_points()
 		     == query_node->right()->stat().total_points(),
-		     "While setting: Left:%"LI"d, Right:%"LI"d",
+		     "While setting: Left:%zud, Right:%zud",
 		     query_node->left()->stat().total_points(),
 		     query_node->right()->stat().total_points());
 
@@ -833,7 +833,7 @@ void ApproxNN::Init(const Matrix& queries_in,
 					   &old_from_new_queries_,
 					   NULL);
   } else {
-    for (index_t i = 0; i < queries_.n_cols(); i++) {
+    for (size_t i = 0; i < queries_.n_cols(); i++) {
       Matrix query;
       queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
@@ -924,7 +924,7 @@ void ApproxNN::Init(const Matrix& references_in,
  */
 void ApproxNN::InitNaive(const Matrix& queries_in, 
 			 const Matrix& references_in,
-			 index_t knns){
+			 size_t knns){
   
   queries_.Copy(queries_in);
   references_.Copy(references_in);
@@ -959,7 +959,7 @@ void ApproxNN::InitNaive(const Matrix& queries_in,
 // Initializing for the naive computation for a
 // monochromatic dataset
 void ApproxNN::InitNaive(const Matrix& references_in,
-			 index_t knns){
+			 size_t knns){
     
   references_.Copy(references_in);
   queries_.Alias(references_);
@@ -1037,7 +1037,7 @@ void ApproxNN::InitApprox(const Matrix& queries_in,
 					   NULL);
   } else {
     NOTIFY("Doing single tree so making one point trees.\n");
-    for (index_t i = 0; i < queries_.n_cols(); i++) {
+    for (size_t i = 0; i < queries_.n_cols(); i++) {
       Matrix query;
       queries_.MakeColumnSlice(i, 1, &query);
       TreeType *single_point_tree
@@ -1070,7 +1070,7 @@ void ApproxNN::InitApprox(const Matrix& queries_in,
 
   // resetting the number of distance computations
   nn_dc_.Init(queries_.n_cols());
-  for (index_t i = 0; i < queries_.n_cols(); i++)
+  for (size_t i = 0; i < queries_.n_cols(); i++)
     nn_dc_[i] = 0;
 
   sample_sizes_.Init();
@@ -1093,10 +1093,10 @@ void ApproxNN::InitSampleSizes() {
 
   // compute the sample sizes
   epsilon_ = fx_param_double(module_, "epsilon", 0.0);
-  rank_approx_ = (index_t) (epsilon_
+  rank_approx_ = (size_t) (epsilon_
 			    * (double) references_.n_cols()
 			    / 100.0);
-  NOTIFY("Rank Approximation: %2.3f%% or %"LI"d"
+  NOTIFY("Rank Approximation: %2.3f%% or %zud"
 	 " with Probability:%1.2f",
 	 epsilon_, rank_approx_, alpha);
 
@@ -1105,7 +1105,7 @@ void ApproxNN::InitSampleSizes() {
   else
     ComputeSampleSizes_(rank_approx_, alpha, knns_, &sample_sizes_);
 
-  NOTIFY("n: %"LI"d", sample_sizes_[references_.n_cols() -1]);
+  NOTIFY("n: %zud", sample_sizes_[references_.n_cols() -1]);
   fx_timer_stop(module_, "computing_sample_sizes");    
 
   // initializing the minimum samples required per
@@ -1180,10 +1180,10 @@ void ApproxNN::InitApprox(const Matrix& references_in,
 
   // compute the sample sizes
   epsilon_ = fx_param_double(module_, "epsilon", 0.0);
-  rank_approx_ = (index_t) (epsilon_
+  rank_approx_ = (size_t) (epsilon_
 			    * (double) references_.n_cols()
 			    / 100.0);
-  NOTIFY("Rank Approximation: %2.3f%% or %"LI"d"
+  NOTIFY("Rank Approximation: %2.3f%% or %zud"
 	 " with Probability:%1.2f",
 	 epsilon_, rank_approx_, alpha);
   if (knns_ == 1)
@@ -1218,7 +1218,7 @@ void ApproxNN::QuickCleanUp() {
 
   // resetting the number of distance computations
   // nn_dc_.Init(queries_.n_cols());
-  for (index_t i = 0; i < queries_.n_cols(); i++)
+  for (size_t i = 0; i < queries_.n_cols(); i++)
     nn_dc_[i] = 0;
 
   // resetting the number of prunes made
@@ -1249,7 +1249,7 @@ void ApproxNN::QuickCleanUp() {
 /**
  * Computes the exact nearest neighbors and stores them in *results
  */
-void ApproxNN::ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
+void ApproxNN::ComputeNeighbors(ArrayList<size_t>* resulting_neighbors,
 				ArrayList<double>* distances) {
 
   // Start on the root of each tree
@@ -1260,7 +1260,7 @@ void ApproxNN::ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
 						reference_tree_));
     } else {
       query_ = 0;
-      DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+      DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
       for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 	   query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -1283,14 +1283,14 @@ void ApproxNN::ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
   // We need to map the indices back from how they have 
   // been permuted
   if (query_tree_ != NULL) {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= neighbor_distances_[i];
     }
   } else {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_references_[i/knns_]
 			     *knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
@@ -1306,7 +1306,7 @@ void ApproxNN::ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
  * Does the entire computation naively computing the exact
  * nearest neighbors
  */
-void ApproxNN::ComputeNaive(ArrayList<index_t>* resulting_neighbors,
+void ApproxNN::ComputeNaive(ArrayList<size_t>* resulting_neighbors,
 			    ArrayList<double>*  distances) {
 
   if (query_tree_!=NULL) {
@@ -1322,14 +1322,14 @@ void ApproxNN::ComputeNaive(ArrayList<index_t>* resulting_neighbors,
   // We need to map the indices back from how they have 
   // been permuted
   if (query_tree_ != NULL) {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= neighbor_distances_[i];
     }
   } else {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_references_[i/knns_]
 			     *knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
@@ -1344,7 +1344,7 @@ void ApproxNN::ComputeNaive(ArrayList<index_t>* resulting_neighbors,
  * Does the entire computation to find the rank-approximate
  * nearest neighbors
  */
-void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
+void ApproxNN::ComputeApprox(ArrayList<size_t>* resulting_neighbors,
 			     ArrayList<double>*  distances) {
 
   // Start on the root of each tree
@@ -1354,14 +1354,14 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
 			      MinNodeDistSq_(query_tree_,
 					     reference_tree_));
       DEBUG_ASSERT_MSG(query_tree_->stat().total_points()
-		       == references_.n_cols(),"N':%"LI"d, N:%"LI"d",
+		       == references_.n_cols(),"N':%zud, N:%zud",
 		       query_tree_->stat().total_points(),
 		       references_.n_cols());
       DEBUG_ASSERT_MSG(query_tree_->stat().samples()
-		       >= min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
+		       >= min_samples_per_q_,"n':%zud, n:%zud",
 		       query_tree_->stat().samples(),
 		       min_samples_per_q_);
-      NOTIFY("n:%"LI"d, N:%"LI"d", query_tree_->stat().samples(),
+      NOTIFY("n:%zud, N:%zud", query_tree_->stat().samples(),
 	     query_tree_->stat().total_points());
     } else {
 
@@ -1373,7 +1373,7 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
     // NOTIFY("Doing single tree individual queries.\n");
 
     query_ = 0;
-    DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+    DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -1382,11 +1382,11 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
 			      MinNodeDistSq_(*query_tree,
 					     reference_tree_));
       DEBUG_ASSERT_MSG((*query_tree)->stat().total_points()
-		       == references_.n_cols(),"N':%"LI"d, N:%"LI"d",
+		       == references_.n_cols(),"N':%zud, N:%zud",
 		       (*query_tree)->stat().total_points(),
 		       references_.n_cols());
       DEBUG_ASSERT_MSG((*query_tree)->stat().samples()
-		       >= min_samples_per_q_,"n':%"LI"d, n:%"LI"d",
+		       >= min_samples_per_q_,"n':%zud, n:%zud",
 		       (*query_tree)->stat().samples(),
 		       min_samples_per_q_);
     }
@@ -1394,7 +1394,7 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
     // NOTIFY("Done with single tree queries.");
   }
 
-  // NOTIFY("Number of prunes: %"LI"d", number_of_prunes_);
+  // NOTIFY("Number of prunes: %zud", number_of_prunes_);
  
   // We need to initialize the results list before filling it
   resulting_neighbors->Init(neighbor_indices_.size());
@@ -1404,14 +1404,14 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
   // been permuted
   if (fx_param_bool(module_, "dual_tree", true)) {
     if (query_tree_ != NULL) {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
 	(*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	  = old_from_new_references_[neighbor_indices_[i]];
 	(*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	  = neighbor_distances_[i];
       }
     } else {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
 	(*resulting_neighbors)[old_from_new_references_[i/knns_]
 			       *knns_+ i%knns_]
 	  = old_from_new_references_[neighbor_indices_[i]];
@@ -1420,15 +1420,15 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
       }
     }
   } else {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[i]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[i] = neighbor_distances_[i];
     }
   }
 
-  index_t sum = 0;
-  for (index_t i = 0; i < nn_dc_.size(); i++)
+  size_t sum = 0;
+  for (size_t i = 0; i < nn_dc_.size(); i++)
     sum += nn_dc_[i];
 
   //NOTIFY("Avg. NN DC: %lg", (double) sum / (double) nn_dc_.size());
@@ -1440,7 +1440,7 @@ void ApproxNN::ComputeApprox(ArrayList<index_t>* resulting_neighbors,
  * Does the entire computation naively on the sample 
  * (no reference tree).
  */
-void ApproxNN::ComputeApproxNoTree(ArrayList<index_t>* resulting_neighbors,
+void ApproxNN::ComputeApproxNoTree(ArrayList<size_t>* resulting_neighbors,
 				   ArrayList<double>*  distances) {
   if (query_tree_!=NULL) {
     ComputeApproxBaseCase_(query_tree_, reference_tree_);
@@ -1455,14 +1455,14 @@ void ApproxNN::ComputeApproxNoTree(ArrayList<index_t>* resulting_neighbors,
   // We need to map the indices back from how they have 
   // been permuted
   if (query_tree_ != NULL) {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= old_from_new_references_[neighbor_indices_[i]];
       (*distances)[old_from_new_queries_[i/knns_]*knns_+ i%knns_]
 	= neighbor_distances_[i];
     }
   } else {
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[old_from_new_references_[i/knns_]
 			     *knns_+ i%knns_] = old_from_new_references_[neighbor_indices_[i]];
       (*distances)[old_from_new_references_[i/knns_]*knns_+ i%knns_]
@@ -1470,8 +1470,8 @@ void ApproxNN::ComputeApproxNoTree(ArrayList<index_t>* resulting_neighbors,
     }
   }
 
-  index_t sum = 0;
-  for (index_t i = 0; i < nn_dc_.size(); i++)
+  size_t sum = 0;
+  for (size_t i = 0; i < nn_dc_.size(); i++)
     sum += nn_dc_[i];
 
   NOTIFY("Avg. NN DC: %lg", (double) sum / (double) nn_dc_.size());

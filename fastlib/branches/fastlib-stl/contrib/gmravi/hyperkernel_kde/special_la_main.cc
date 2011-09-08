@@ -85,7 +85,7 @@ int main(int argc, char *argv[]){
   L_mat.set(1,0,2);
   L_mat.set(2,0,3);
 
-  ArrayList <index_t> perm;
+  ArrayList <size_t> perm;
  
 
   Vector diag;
@@ -112,7 +112,7 @@ int main(int argc, char *argv[]){
   chol_factor.set(1,0,3);
   chol_factor.set(2,0,1);
 
-  ArrayList <index_t > perm_mat;
+  ArrayList <size_t > perm_mat;
   perm_mat.Init(3);
   perm_mat[0]=2;
   perm_mat[1]=0;

@@ -9,8 +9,8 @@
 
 #include "single_matcher.h"
 
-bool npt::SingleMatcher::CheckDistances_(double dist_sq, index_t ind1, 
-                                         index_t ind2) {
+bool npt::SingleMatcher::CheckDistances_(double dist_sq, size_t ind1, 
+                                         size_t ind2) {
   
   return (dist_sq <= upper_bounds_sqr_(ind1, ind2) && 
           dist_sq >= lower_bounds_sqr_(ind1, ind2));
@@ -19,22 +19,22 @@ bool npt::SingleMatcher::CheckDistances_(double dist_sq, index_t ind1,
 
 
 // note that this assumes that the points have been checked for symmetry
-bool npt::SingleMatcher::TestPointPair_(double dist_sq, index_t tuple_ind_1, 
-                                        index_t tuple_ind_2,
+bool npt::SingleMatcher::TestPointPair_(double dist_sq, size_t tuple_ind_1, 
+                                        size_t tuple_ind_2,
                                         std::vector<bool>& permutation_ok) {
 
   bool any_matches = false;
   
   // iterate over all the permutations
-  for (index_t i = 0; i < num_permutations_; i++) {
+  for (size_t i = 0; i < num_permutations_; i++) {
     
     // did we already invalidate this one?
     if (!(permutation_ok[i])) {
       continue;
     }
     
-    index_t template_index_1 = GetPermIndex_(i, tuple_ind_1);
-    index_t template_index_2 = GetPermIndex_(i, tuple_ind_2);
+    size_t template_index_1 = GetPermIndex_(i, tuple_ind_1);
+    size_t template_index_2 = GetPermIndex_(i, tuple_ind_2);
     
     //std::cout << "template_indices_checked\n";
     
@@ -61,7 +61,7 @@ bool npt::SingleMatcher::TestPointPair_(double dist_sq, index_t tuple_ind_1,
 // This returns true if the pair might satisfy the matcher
 bool npt::SingleMatcher::TestHrectPair_(const DHrectBound<2>& box1, 
                                         const DHrectBound<2>& box2,
-                                        index_t tuple_ind_1, index_t tuple_ind_2,
+                                        size_t tuple_ind_1, size_t tuple_ind_2,
                                         std::vector<bool>& permutation_ok) {
   
   bool any_matches = false;
@@ -70,15 +70,15 @@ bool npt::SingleMatcher::TestHrectPair_(const DHrectBound<2>& box1,
   double min_dist_sq = box1.MinDistanceSq(box2);
   
   // iterate over all the permutations
-  for (index_t i = 0; i < num_permutations_; i++) {
+  for (size_t i = 0; i < num_permutations_; i++) {
     
     // did we already invalidate this one?
     if (!(permutation_ok[i])) {
       continue;
     }
     
-    index_t template_index_1 = GetPermIndex_(i, tuple_ind_1);
-    index_t template_index_2 = GetPermIndex_(i, tuple_ind_2);
+    size_t template_index_1 = GetPermIndex_(i, tuple_ind_1);
+    size_t template_index_2 = GetPermIndex_(i, tuple_ind_2);
     
     double upper_bound_sqr = upper_bounds_sqr_(template_index_1, 
                                                template_index_2);
@@ -124,14 +124,14 @@ bool npt::SingleMatcher::TestNodeTuple(NodeTuple& nodes) {
   // iterate over all nodes
   // IMPORTANT: right now, I'm exiting when I can prune
   // I need to double check that this works
-  for (index_t i = 0; possibly_valid && i < tuple_size_; i++) {
+  for (size_t i = 0; possibly_valid && i < tuple_size_; i++) {
     
     bool i_is_random = i < num_random_;
     
     NptNode* node_i = nodes.node_list(i);
     
     // iterate over all nodes > i
-    for (index_t j = i+1; possibly_valid && j < tuple_size_; j++) {
+    for (size_t j = i+1; possibly_valid && j < tuple_size_; j++) {
       
       bool j_is_random = j < num_random_;
       
@@ -159,9 +159,9 @@ bool npt::SingleMatcher::TestNodeTuple(NodeTuple& nodes) {
   
 } // TestNodeTuple
 
-void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                                          std::vector<bool>& permutation_ok,
-                                         std::vector<index_t>& points_in_tuple,
+                                         std::vector<size_t>& points_in_tuple,
                                          int k) {
   
   
@@ -169,12 +169,12 @@ void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<index_t> >& poi
   
   bool bad_symmetry = false;
   
-  std::vector<index_t>& k_rows = point_sets[k];
+  std::vector<size_t>& k_rows = point_sets[k];
   
   // iterate over possible kth members of the tuple
-  for (index_t i = 0; i < k_rows.size(); i++) {
+  for (size_t i = 0; i < k_rows.size(); i++) {
     
-    index_t point_i_index = k_rows[i];
+    size_t point_i_index = k_rows[i];
     bool this_point_works = true;
     
     bool i_is_random = (k < num_random_);
@@ -193,11 +193,11 @@ void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<index_t> >& poi
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // loop over points already in the tuple and check against them
-    for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
+    for (size_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
       
       
       bool j_is_random = (j < num_random_);
-      index_t point_j_index = points_in_tuple[j];
+      size_t point_j_index = points_in_tuple[j];
       
       // Need to change this so it only checks if they came from the same sets
       // j comes before i in the tuple, so it should have a lower index
@@ -237,7 +237,7 @@ void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<index_t> >& poi
         
         double this_weight = 1.0;
         
-        for (index_t tuple_ind = 0; tuple_ind < tuple_size_; tuple_ind++) {
+        for (size_t tuple_ind = 0; tuple_ind < tuple_size_; tuple_ind++) {
           
           this_weight *= data_weights_(points_in_tuple[tuple_ind]);
           
@@ -260,13 +260,13 @@ void npt::SingleMatcher::BaseCaseHelper_(std::vector<std::vector<index_t> >& poi
 
 void npt::SingleMatcher::ComputeBaseCase(NodeTuple& nodes) {
   
-  std::vector<std::vector<index_t> > point_sets(tuple_size_);
+  std::vector<std::vector<size_t> > point_sets(tuple_size_);
   
   // TODO: can this be done more efficiently?
   
   // Make a 2D array of the points in the nodes 
   // iterate over nodes
-  for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
+  for (size_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
     //printf("point_sets[%d].size() = %d\n", node_ind, point_sets[node_ind].size());
     
@@ -275,7 +275,7 @@ void npt::SingleMatcher::ComputeBaseCase(NodeTuple& nodes) {
     //printf("point_sets[%d].size() = %d\n", node_ind, point_sets[node_ind].size());
     
     // fill in points in the node
-    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+    for (size_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
       
       point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
       
@@ -285,7 +285,7 @@ void npt::SingleMatcher::ComputeBaseCase(NodeTuple& nodes) {
   
   std::vector<bool> permutation_ok(num_permutations_, true);
   
-  std::vector<index_t> points_in_tuple(tuple_size_, -1);
+  std::vector<size_t> points_in_tuple(tuple_size_, -1);
   
   BaseCaseHelper_(point_sets, permutation_ok, points_in_tuple, 0);
   

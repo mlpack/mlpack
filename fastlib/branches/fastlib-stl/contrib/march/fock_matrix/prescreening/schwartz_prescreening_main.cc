@@ -80,9 +80,9 @@ int main(int argc, char* argv[]) {
   mom.SetAll(0);
   
   // is equal to n_cols + 2*sum(mom) for only s and p-type
-  index_t mat_size;
+  size_t mat_size;
   // The dot product only works for momenta 1 
-  mat_size = centers.n_cols() + (index_t)2*la::Dot(mom, mom);
+  mat_size = centers.n_cols() + (size_t)2*la::Dot(mom, mom);
   
   Matrix density;
   if (fx_param_exists(root_mod, "density")) {

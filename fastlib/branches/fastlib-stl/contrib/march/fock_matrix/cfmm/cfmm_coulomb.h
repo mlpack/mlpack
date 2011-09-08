@@ -59,9 +59,9 @@ class CFMMCoulomb {
   
   ArrayList<ShellPair> shell_pairs_;
   
-  index_t num_shells_;
-  index_t num_funs_;
-  index_t num_shell_pairs_;
+  size_t num_shells_;
+  size_t num_funs_;
+  size_t num_shell_pairs_;
   
   // the output
   Matrix coulomb_mat_;

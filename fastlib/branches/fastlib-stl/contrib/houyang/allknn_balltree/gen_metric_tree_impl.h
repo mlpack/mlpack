@@ -14,7 +14,7 @@ namespace learntrees_private {
    */
   template<typename TBound>
   void MakeLeafMetricTreeNode(const Matrix& matrix,
-			      index_t begin, index_t count, TBound *bounds) {
+			      size_t begin, size_t count, TBound *bounds) {
     if (count==1) {
       Vector tmp;
       matrix.MakeColumnVector(0, &tmp);
@@ -24,8 +24,8 @@ namespace learntrees_private {
     else {
       bounds->center().SetZero();
       
-      index_t end = begin + count;
-      for (index_t i = begin; i < end; i++) {
+      size_t end = begin + count;
+      for (size_t i = begin; i < end; i++) {
 	Vector col;      
 	matrix.MakeColumnVector(i, &col);
 	la::AddTo(col, &(bounds->center()));
@@ -40,12 +40,12 @@ namespace learntrees_private {
 
   template<typename TBound>
   void LearnMakeLeafMetricTreeNode(const Matrix& matrix,
-			      index_t begin, index_t count, TBound *bounds, index_t *old_from_new) {
+			      size_t begin, size_t count, TBound *bounds, size_t *old_from_new) {
 
     bounds->center().SetZero();
 
-    index_t end = begin + count;
-    for (index_t i = begin; i < end; i++) {
+    size_t end = begin + count;
+    for (size_t i = begin; i < end; i++) {
       Vector col;      
       matrix.MakeColumnVector(old_from_new[i], &col);
       la::AddTo(col, &(bounds->center()));
@@ -62,17 +62,17 @@ namespace learntrees_private {
    * Split the matrix into 2 using bounds
    */
   template<typename TBound>
-  index_t MatrixPartition(Matrix& matrix, index_t first, index_t count,
+  size_t MatrixPartition(Matrix& matrix, size_t first, size_t count,
 			  TBound &left_bound, TBound &right_bound,
-			  index_t *old_from_new, index_t *new_from_old) {
+			  size_t *old_from_new, size_t *new_from_old) {
     
-    index_t end = first + count;
-    index_t left_count = 0;
+    size_t end = first + count;
+    size_t left_count = 0;
 
     ArrayList<bool> left_membership;
     left_membership.Init(count);
     
-    for (index_t left = first; left < end; left++) {
+    for (size_t left = first; left < end; left++) {
 
       // Make alias of the current point.
       Vector point;
@@ -94,8 +94,8 @@ namespace learntrees_private {
       }
     }
 
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -130,13 +130,13 @@ namespace learntrees_private {
       
       // Rearrange new_from_old
       if (new_from_old && old_from_new) {
-	index_t t = new_from_old[old_from_new[left]];
+	size_t t = new_from_old[old_from_new[left]];
         new_from_old[old_from_new[left]] = new_from_old[old_from_new[right]];
         new_from_old[old_from_new[right]] = t;
       }
       // Rearrange old_from_new
       if (old_from_new) {
-        index_t t = old_from_new[left];
+        size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
@@ -156,13 +156,13 @@ namespace learntrees_private {
    * Split the matrix into 2 using seperating hyperplane P; For Learning ball trees
    */
   template<typename TBound>
-  void LearnMatrixPartition(Matrix& matrix, index_t first, index_t count, Vector& p, 
-	  index_t *old_from_new, index_t *new_from_old, index_t *counts, const Matrix& Adj, const Matrix& Aff) {
-    index_t d = matrix.n_rows();
-    index_t N = matrix.n_cols();
-    index_t d_plus_one = d+1;
+  void LearnMatrixPartition(Matrix& matrix, size_t first, size_t count, Vector& p, 
+	  size_t *old_from_new, size_t *new_from_old, size_t *counts, const Matrix& Adj, const Matrix& Aff) {
+    size_t d = matrix.n_rows();
+    size_t N = matrix.n_cols();
+    size_t d_plus_one = d+1;
 
-    index_t end = first+ count- 1 ;
+    size_t end = first+ count- 1 ;
     
     ArrayList<bool> left_membership; // point belong to left or right side
     left_membership.Init(N);
@@ -173,8 +173,8 @@ namespace learntrees_private {
     double y; // predicted value y=P^Tx
     Vector x;
     x.Init(d_plus_one);
-    for (index_t left_idx = first; left_idx <= end; left_idx++) {
-      for (index_t i=0; i<d; i++)
+    for (size_t left_idx = first; left_idx <= end; left_idx++) {
+      for (size_t i=0; i<d; i++)
 	x[i] = matrix.get(i, left_idx);
       x[d] = 1.0;
       y = la::Dot(p, x);
@@ -185,7 +185,7 @@ namespace learntrees_private {
     }
     /*
     // Determine on-cut/not-on-cut membership
-    index_t cut_idx;
+    size_t cut_idx;
     // Points that are already on-cut in their ancestor nodes, or points that are not in [first end] region remain on-cut
     //for (cut_idx = first+count_noncut; cut_idx <= end; cut_idx++)
     for (cut_idx = 0; cut_idx < N; cut_idx++)
@@ -193,14 +193,14 @@ namespace learntrees_private {
     // Points that are in [first end] region and  not-on-cuts in their ancestor nodes remain not-on-cut
     for (cut_idx = first; cut_idx < first+count_noncut; cut_idx++)
       cut_membership[cut_idx]= false;
-    index_t idx_data, opt_pos;
-    for (index_t left_idx = first; left_idx <= end; left_idx++) {
+    size_t idx_data, opt_pos;
+    for (size_t left_idx = first; left_idx <= end; left_idx++) {
       idx_data = old_from_new[left_idx];
-      for (index_t k=0; k<(index_t)Adj.get(0, idx_data); k++) {
-	opt_pos = (index_t)Adj.get(1, idx_data)+ k;
-	if ( !cut_membership[ new_from_old[(index_t)Aff.get(1,opt_pos)] ] ) {
-	  if (left_membership[ new_from_old[(index_t)Aff.get(0,opt_pos)] ] != 
-	      left_membership[ new_from_old[(index_t)Aff.get(1,opt_pos)] ])
+      for (size_t k=0; k<(size_t)Adj.get(0, idx_data); k++) {
+	opt_pos = (size_t)Adj.get(1, idx_data)+ k;
+	if ( !cut_membership[ new_from_old[(size_t)Aff.get(1,opt_pos)] ] ) {
+	  if (left_membership[ new_from_old[(size_t)Aff.get(0,opt_pos)] ] != 
+	      left_membership[ new_from_old[(size_t)Aff.get(1,opt_pos)] ])
 	    // two neighboring points are on different sides, i.e. they're on-cut
 	    cut_membership[left_idx] = true;
 	  else
@@ -215,9 +215,9 @@ namespace learntrees_private {
     */
     // Fill-in the output ''counts'' info:
     // counts[0]==left_count; counts[1]==right_count
-    for (index_t i=0; i<2; i++)
+    for (size_t i=0; i<2; i++)
       counts[i]=0;
-    for (index_t left_idx = first; left_idx <= end; left_idx++) {
+    for (size_t left_idx = first; left_idx <= end; left_idx++) {
       if (left_membership[left_idx]) // left side
 	  counts[0] = counts[0] + 1;
       else // right side
@@ -225,7 +225,7 @@ namespace learntrees_private {
     }
 
     // Rearrange old_from_new, new_from_old index vectors according to left/right membership
-    index_t l= first, r=end;
+    size_t l= first, r=end;
     for (;;) {
       while (left_membership[l] && likely(l <= r) && likely(l<end)) {
         l++;
@@ -245,7 +245,7 @@ namespace learntrees_private {
       bool tmp = left_membership[l];
       left_membership[l] = left_membership[r];
       left_membership[r] = tmp;
-      index_t t;
+      size_t t;
       if (new_from_old && old_from_new) {
 	t = new_from_old[old_from_new[l]];
         new_from_old[old_from_new[l]] = new_from_old[old_from_new[r]];
@@ -286,7 +286,7 @@ namespace learntrees_private {
       bool tmp = cut_membership[l];
       cut_membership[l] = cut_membership[r];
       cut_membership[r] = tmp;
-      index_t t;
+      size_t t;
       if (new_from_old && old_from_new) {
 	t = new_from_old[old_from_new[l]];
         new_from_old[old_from_new[l]] = new_from_old[old_from_new[r]];
@@ -302,7 +302,7 @@ namespace learntrees_private {
     }
     //DEBUG_ASSERT(l == r+1);
     // Right side
-    index_t start= first+ counts[0]+ counts[1];
+    size_t start= first+ counts[0]+ counts[1];
     l= start; r=end;
     for (;;) {
       while (!cut_membership[l] && likely(l <= r)) {
@@ -324,7 +324,7 @@ namespace learntrees_private {
       bool tmp = cut_membership[l];
       cut_membership[l] = cut_membership[r];
       cut_membership[r] = tmp;
-      index_t t;
+      size_t t;
       if (new_from_old && old_from_new) {
 	t = new_from_old[old_from_new[l]];
         new_from_old[old_from_new[l]] = new_from_old[old_from_new[r]];
@@ -345,15 +345,15 @@ namespace learntrees_private {
 
 
 	
-  index_t FurthestColumnIndex(const Vector &pivot, const Matrix &matrix, 
-			      index_t begin, index_t count,
+  size_t FurthestColumnIndex(const Vector &pivot, const Matrix &matrix, 
+			      size_t begin, size_t count,
 			      double *furthest_distance) {
     
-    index_t furthest_index = -1;
-    index_t end = begin + count;
+    size_t furthest_index = -1;
+    size_t end = begin + count;
     *furthest_distance = -1.0;
 
-    for(index_t i = begin; i < end; i++) {
+    for(size_t i = begin; i < end; i++) {
       Vector point;
       matrix.MakeColumnVector(i, &point);
       double distance_between_center_and_point = 
@@ -369,15 +369,15 @@ namespace learntrees_private {
   }
 
   
-  index_t LearnFurthestColumnIndex(const Vector &pivot, const Matrix &matrix, 
-			      index_t begin, index_t count,
-			      double *furthest_distance, index_t *old_from_new) {
+  size_t LearnFurthestColumnIndex(const Vector &pivot, const Matrix &matrix, 
+			      size_t begin, size_t count,
+			      double *furthest_distance, size_t *old_from_new) {
     
-    index_t furthest_index = -1;
-    index_t end = begin + count;
+    size_t furthest_index = -1;
+    size_t end = begin + count;
     *furthest_distance = -1.0;
 
-    for(index_t i = begin; i < end; i++) {
+    for(size_t i = begin; i < end; i++) {
       Vector point;
       matrix.MakeColumnVector(old_from_new[i], &point);
       double distance_between_center_and_point = LMetric<2>::Distance(pivot, point);
@@ -423,7 +423,7 @@ namespace learntrees_private {
    */
   template<typename TMetricTree>
   void SplitGenMetricTree(Matrix& matrix, TMetricTree *node,
-			  index_t leaf_size, index_t *old_from_new, index_t *new_from_old) {
+			  size_t leaf_size, size_t *old_from_new, size_t *new_from_old) {
     TMetricTree *left = NULL;
     TMetricTree *right = NULL;
 
@@ -459,15 +459,15 @@ namespace learntrees_private {
    */
   template<typename TMetricTree>
   bool AttemptSplitting(Matrix& matrix, TMetricTree *node, TMetricTree **left, 
-			TMetricTree **right, index_t leaf_size,
-			index_t *old_from_new, index_t *new_from_old) {
+			TMetricTree **right, size_t leaf_size,
+			size_t *old_from_new, size_t *new_from_old) {
     // DEBUG: check the correctness of old_from_new and new_from_old
     if (old_from_new && new_from_old)
-      for (index_t i=0; i<matrix.n_cols(); i++)
+      for (size_t i=0; i<matrix.n_cols(); i++)
 	DEBUG_ASSERT(old_from_new[new_from_old[i]] == i);
 
     // Pick a random row.
-    index_t random_row = math::RandInt(node->begin(), node->begin() +
+    size_t random_row = math::RandInt(node->begin(), node->begin() +
 				       node->count());
     random_row = node->begin();
     Vector random_row_vec;
@@ -475,7 +475,7 @@ namespace learntrees_private {
 
     // Now figure out the furthest point from the random row picked above.
     double furthest_distance;
-    index_t furthest_from_random_row =
+    size_t furthest_from_random_row =
       FurthestColumnIndex(random_row_vec, matrix, node->begin(), node->count(),
 			  &furthest_distance);
     Vector furthest_from_random_row_vec;
@@ -483,7 +483,7 @@ namespace learntrees_private {
 			    &furthest_from_random_row_vec);
     // Then figure out the furthest point from the furthest point.
     double furthest_from_furthest_distance;
-    index_t furthest_from_furthest_random_row =
+    size_t furthest_from_furthest_random_row =
       FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin(),
 			  node->count(), &furthest_from_furthest_distance);
     Vector furthest_from_furthest_random_row_vec;
@@ -502,7 +502,7 @@ namespace learntrees_private {
       ((*left)->bound().center()).CopyValues(furthest_from_random_row_vec);
       ((*right)->bound().center()).CopyValues(furthest_from_furthest_random_row_vec);
       // Split node into left and right children
-      index_t left_count = MatrixPartition(matrix, node->begin(), node->count(),
+      size_t left_count = MatrixPartition(matrix, node->begin(), node->count(),
 	 (*left)->bound(), (*right)->bound(), old_from_new, new_from_old);
 
       (*left)->Init(node->begin(), left_count, matrix.n_rows());
@@ -518,8 +518,8 @@ namespace learntrees_private {
    */
   template<typename TMetricTree>
   void LearnSplitGenMetricTree(Matrix& matrix, TMetricTree *node,
-       index_t leaf_size, index_t *old_from_new, index_t *new_from_old, 
-       index_t knns, const Vector& D, const Matrix& Adj, const Matrix& Aff) {
+       size_t leaf_size, size_t *old_from_new, size_t *new_from_old, 
+       size_t knns, const Vector& D, const Matrix& Adj, const Matrix& Aff) {
     TMetricTree *left = NULL;
     TMetricTree *right = NULL;
 
@@ -592,23 +592,23 @@ namespace learntrees_private {
    */
   template<typename TMetricTree>
   int LearnAttemptSplitting(Matrix& matrix, TMetricTree *node, TMetricTree **left, TMetricTree **right, 
-			index_t leaf_size, index_t *old_from_new, index_t *new_from_old, 
-			index_t knns, const Vector& D, const Matrix& Adj, const Matrix& Aff) {
-    index_t i, j, k, n;
-    index_t d = matrix.n_rows();
-    index_t N = matrix.n_cols();
-    index_t d_plus_one = d+1;
+			size_t leaf_size, size_t *old_from_new, size_t *new_from_old, 
+			size_t knns, const Vector& D, const Matrix& Adj, const Matrix& Aff) {
+    size_t i, j, k, n;
+    size_t d = matrix.n_rows();
+    size_t N = matrix.n_cols();
+    size_t d_plus_one = d+1;
     double dbl_tmp = 0.0;
     // Number of data that will be used to do matrix multiplication: node->count_noncut_
     // The rest: node->count_cut_ will NOT be used for matrix multiplication
-    //index_t num_data_noncut = node->count_noncut(); 
-    index_t num_data_node = node->count(); // number of all data in current node
-    index_t first = node->begin();
-    index_t end = first + node->count() - 1;
+    //size_t num_data_noncut = node->count_noncut(); 
+    size_t num_data_node = node->count(); // number of all data in current node
+    size_t first = node->begin();
+    size_t end = first + node->count() - 1;
 
-    index_t idx_data;
-    index_t opt_pos; // operating position(col) in Aff
-    index_t aff_pos; // the position of the affinite sample to opt_pos
+    size_t idx_data;
+    size_t opt_pos; // operating position(col) in Aff
+    size_t aff_pos; // the position of the affinite sample to opt_pos
     
     /*for(i=0;i<node->count();i++)
       //printf("first=%d, num_data_noncut=%d, num_data_cut=%d\n", first,num_data_noncut, node->count_cut());
@@ -625,14 +625,14 @@ namespace learntrees_private {
     non_in_node_aff_membership.Init(N);
     for (n=0; n<N; n++)
       non_in_node_aff_membership[n] = false;
-    index_t num_non_in_node_aff = 0; // number of samples in the current node that do not have in-node affinities
+    size_t num_non_in_node_aff = 0; // number of samples in the current node that do not have in-node affinities
     for (n=0; n<num_data_node; n++) { // N'
       idx_data = old_from_new[first+n];
-      index_t non_in_node_aff_ct= 0;
-      index_t num_aff= (index_t)Adj.get(0, idx_data);
+      size_t non_in_node_aff_ct= 0;
+      size_t num_aff= (size_t)Adj.get(0, idx_data);
       for (k=0; k<num_aff; k++) { //k
-	opt_pos = (index_t)Adj.get(1, idx_data) + k;
-	aff_pos =(index_t)Aff.get(1, opt_pos);
+	opt_pos = (size_t)Adj.get(1, idx_data) + k;
+	aff_pos =(size_t)Aff.get(1, opt_pos);
 	// affinite sample to the current sample in a node is NOT within this node
 	if (new_from_old[aff_pos]<first || new_from_old[aff_pos]>end)
 	  non_in_node_aff_ct++;
@@ -649,7 +649,7 @@ namespace learntrees_private {
       return 1;
     }
     // Rearrange old_from_new, new_from_old index vectors according to non_in_node_aff_membership
-    index_t l= first, r=end;
+    size_t l= first, r=end;
     for (;;) {
       while (!non_in_node_aff_membership[l] && likely(l <= r) && likely(l<end)) {
         l++;
@@ -669,7 +669,7 @@ namespace learntrees_private {
       bool tmp = non_in_node_aff_membership[l];
       non_in_node_aff_membership[l] = non_in_node_aff_membership[r];
       non_in_node_aff_membership[r] = tmp;
-      index_t t;
+      size_t t;
       if (new_from_old && old_from_new) {
 	t = new_from_old[old_from_new[l]];
         new_from_old[old_from_new[l]] = new_from_old[old_from_new[r]];
@@ -685,7 +685,7 @@ namespace learntrees_private {
     }
     // number of samples in the current node that have in-node affinities
     // these number of samples will be used for the following normalized min-cut
-    index_t num_in_node_aff= num_data_node- num_non_in_node_aff;
+    size_t num_in_node_aff= num_data_node- num_non_in_node_aff;
     
     // 1.Calculate d+1-by-d+1 matrices XDX^T and XLX^T, where L==D-A, d==matrix.n_rows().
     //   Do the multiplications by hand, since D and A are both very sparse and highly structured.
@@ -705,9 +705,9 @@ namespace learntrees_private {
       for (n=0; n<num_in_node_aff; n++) { // N'
 	idx_data = old_from_new[first+n];
 	double D_diag_tmp= D[idx_data];
-	for (k=0; k<(index_t)Adj.get(0, idx_data); k++) { //k
-	  opt_pos = (index_t)Adj.get(1, idx_data) + k;
-	  aff_pos =(index_t)Aff.get(1, opt_pos);
+	for (k=0; k<(size_t)Adj.get(0, idx_data); k++) { //k
+	  opt_pos = (size_t)Adj.get(1, idx_data) + k;
+	  aff_pos =(size_t)Aff.get(1, opt_pos);
 	  // if affinite sample to the current sample in a node is NOT within this node, decrease the degree of this current sample
 	  if (new_from_old[aff_pos]<first || new_from_old[aff_pos]>end)
 	    D_diag_tmp = D_diag_tmp- Aff.get(2,opt_pos);
@@ -744,9 +744,9 @@ namespace learntrees_private {
       XD_XA_row.SetZero();
       for (n=0; n<num_in_node_aff; n++) { // N'
 	idx_data = old_from_new[first+n];
-	for (k=0; k<(index_t)Adj.get(0, idx_data); k++) { // k
-	  opt_pos = (index_t)Adj.get(1, idx_data)+ k;
-	  aff_pos =(index_t)Aff.get(1, opt_pos);
+	for (k=0; k<(size_t)Adj.get(0, idx_data); k++) { // k
+	  opt_pos = (size_t)Adj.get(1, idx_data)+ k;
+	  aff_pos =(size_t)Aff.get(1, opt_pos);
 	  // if affinite sample to the current sample in a node is within this node, count it, otherwise dicard it
 	  if (new_from_old[aff_pos]>=first && new_from_old[aff_pos]<=end)
 	    XD_XA_row[n] = XD_XA_row[n] + matrix.get(i, new_from_old[aff_pos]) * Aff.get(2, opt_pos);
@@ -766,9 +766,9 @@ namespace learntrees_private {
     XD_XA_last_row.SetZero();
     for (n=0; n<num_in_node_aff; n++){
       idx_data = old_from_new[first+n];
-      for (k=0; k<(index_t)Adj.get(0, idx_data); k++) {
-	opt_pos = (index_t)Adj.get(1, idx_data) + k;
-	aff_pos =(index_t)Aff.get(1, opt_pos);
+      for (k=0; k<(size_t)Adj.get(0, idx_data); k++) {
+	opt_pos = (size_t)Adj.get(1, idx_data) + k;
+	aff_pos =(size_t)Aff.get(1, opt_pos);
 	  if (new_from_old[aff_pos]>=first && new_from_old[aff_pos]<=end)
 	    XD_XA_last_row[n] = XD_XA_last_row[n] + Aff.get(2, opt_pos);
       }
@@ -871,7 +871,7 @@ namespace learntrees_private {
     //  if (eigens_for_sort.get(0,k)>1e-4 )
     //	break;
     //printf("k=%d\n",k);
-    //if (k>=(index_t)d_plus_one/2)
+    //if (k>=(size_t)d_plus_one/2)
     //  return false;
     for (i=0; i<d_plus_one; i++){
       p[i]= eigens_for_sort.get(i+1, 1);
@@ -880,7 +880,7 @@ namespace learntrees_private {
     //printf("\n");
 
     // 3.Do node partition.
-    ArrayList<index_t> counts;
+    ArrayList<size_t> counts;
     counts.Init(2);
     // counts[0]==left_count; counts[1]==right_count;
     LearnMatrixPartition<TMetricTree>(matrix, first, node->count(), 
@@ -897,8 +897,8 @@ namespace learntrees_private {
       (*right)->Init(first+counts[0], counts[1], d);
 
       // 4.Calculate centroids of left and right children
-      index_t num_data_left = counts[0];
-      index_t num_data_right = counts[1];
+      size_t num_data_left = counts[0];
+      size_t num_data_right = counts[1];
       Vector left_centroid;
       left_centroid.Init(d);
       left_centroid.SetZero();
@@ -955,7 +955,7 @@ namespace learntrees_private {
   /*
   template<typename TMetricTree>
   void NormalSplitGenMetricTree(Matrix& matrix, TMetricTree *node,
-			  index_t leaf_size, index_t *old_from_new, index_t *new_from_old) {
+			  size_t leaf_size, size_t *old_from_new, size_t *new_from_old) {
     TMetricTree *left = NULL;
     TMetricTree *right = NULL;
 

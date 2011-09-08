@@ -455,9 +455,9 @@ void npt::AngleMatcher::OutputResults() {
   PrintNumPrunes();
   
   
-  for (index_t j = 0; j < results_.size(); j++) {
+  for (size_t j = 0; j < results_.size(); j++) {
     
-    for (index_t k = 0; k < results_[j].size(); k++) {
+    for (size_t k = 0; k < results_[j].size(); k++) {
       
       mlpack::IO::Info << "Matcher: ";
       mlpack::IO::Info << "R1: " << short_sides_[j] << ", ";

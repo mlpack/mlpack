@@ -124,7 +124,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
 
   // node->begin() is the index of the first point in the node,
   // node->end is one past the last index
-  for (index_t query_index = query_node->begin();
+  for (size_t query_index = query_node->begin();
       query_index < query_node->end(); query_index++) {
 
     // Get the query point from the matrix
@@ -136,7 +136,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
     if (SortPolicy::IsBetter(query_to_node_distance,
         neighbor_distances_(knns_ - 1, query_index))) {
       // We'll do the same for the references
-      for (index_t reference_index = reference_node->begin();
+      for (size_t reference_index = reference_node->begin();
           reference_index < reference_node->end(); reference_index++) {
 
         // Confirm that points do not identify themselves as neighbors
@@ -149,10 +149,10 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeBaseCase_(
           // If the reference point is closer than any of the current
           // candidates, add it to the list.
           arma::vec query_dist = neighbor_distances_.unsafe_col(query_index);
-          index_t insert_position =  SortPolicy::SortDistance(query_dist,
+          size_t insert_position =  SortPolicy::SortDistance(query_dist,
               distance);
 
-          if (insert_position != (index_t() - 1)) {
+          if (insert_position != (size_t() - 1)) {
             InsertNeighbor(query_index, insert_position, reference_index,
                 distance);
           }
@@ -290,7 +290,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeDualNeighborsRecursion_(
 
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
-      index_t point_id,
+      size_t point_id,
       arma::vec& point,
       TreeType* reference_node,
       double& best_dist_so_far) {
@@ -298,7 +298,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
   if (reference_node->is_leaf()) {
     // Base case: reference node is a leaf
     
-    for (index_t reference_index = reference_node->begin();
+    for (size_t reference_index = reference_node->begin();
         reference_index < reference_node->end(); reference_index++) {
       // Confirm that points do not identify themselves as neighbors
       // in the monochromatic case
@@ -311,10 +311,10 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
         // If the reference point is better than any of the current candidates,
         // insert it into the list correctly.
         arma::vec query_dist = neighbor_distances_.unsafe_col(point_id);
-        index_t insert_position = SortPolicy::SortDistance(query_dist,
+        size_t insert_position = SortPolicy::SortDistance(query_dist,
             distance);
 
-        if (insert_position != (index_t() - 1))
+        if (insert_position != (size_t() - 1))
           InsertNeighbor(point_id, insert_position, reference_index, distance);
       }
     } // for reference_index
@@ -363,7 +363,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
  */
 template<typename Kernel, typename SortPolicy>
 void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
-      arma::Mat<index_t>& resulting_neighbors,
+      arma::Mat<size_t>& resulting_neighbors,
       arma::mat& distances) {
 
   IO::StartTimer("neighbor_search/computing_neighbors");
@@ -385,18 +385,18 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
             reference_tree_));
       }
     } else {
-      index_t chunk = queries_.n_cols / 10;
+      size_t chunk = queries_.n_cols / 10;
 
-      for(index_t i = 0; i < 10; i++) {
-        for(index_t j = 0; j < chunk; j++) {
+      for(size_t i = 0; i < 10; i++) {
+        for(size_t j = 0; j < chunk; j++) {
           arma::vec point = queries_.unsafe_col(i * chunk + j);
           double best_dist_so_far = SortPolicy::WorstDistance();
           ComputeSingleNeighborsRecursion_(i * chunk + j, point,
               reference_tree_, best_dist_so_far);
         }
       }
-      for(index_t i = 0; i < queries_.n_cols % 10; i++) {
-        index_t ind = (queries_.n_cols / 10) * 10 + i;
+      for(size_t i = 0; i < queries_.n_cols % 10; i++) {
+        size_t ind = (queries_.n_cols / 10) * 10 + i;
         arma::vec point = queries_.unsafe_col(ind);
         double best_dist_so_far = SortPolicy::WorstDistance();
         ComputeSingleNeighborsRecursion_(ind, point, reference_tree_,
@@ -414,16 +414,16 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
 
   // We need to map the indices back from how they have been permuted
   if (query_tree_ != NULL) {
-    for (index_t i = 0; i < neighbor_indices_.n_cols; i++) {
-      for (index_t k = 0; k < neighbor_indices_.n_rows; k++) {
+    for (size_t i = 0; i < neighbor_indices_.n_cols; i++) {
+      for (size_t k = 0; k < neighbor_indices_.n_rows; k++) {
         resulting_neighbors(k, old_from_new_queries_[i]) =
             old_from_new_references_[neighbor_indices_(k, i)];
         distances(k, old_from_new_queries_[i]) = neighbor_distances_(k, i);
       }
     }
   } else {
-    for (index_t i = 0; i < neighbor_indices_.n_cols; i++) {
-      for (index_t k = 0; k < neighbor_indices_.n_rows; k++) {
+    for (size_t i = 0; i < neighbor_indices_.n_cols; i++) {
+      for (size_t k = 0; k < neighbor_indices_.n_rows; k++) {
         resulting_neighbors(k, old_from_new_references_[i]) =
             old_from_new_references_[neighbor_indices_(k, i)];
         distances(k, old_from_new_references_[i]) = neighbor_distances_(k, i);
@@ -441,9 +441,9 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeNeighbors(
  * @param distance Distance from query point to reference point.
  */
 template<typename Kernel, typename SortPolicy>
-void NeighborSearch<Kernel, SortPolicy>::InsertNeighbor(index_t query_index,
-                                                        index_t pos,
-                                                        index_t neighbor,
+void NeighborSearch<Kernel, SortPolicy>::InsertNeighbor(size_t query_index,
+                                                        size_t pos,
+                                                        size_t neighbor,
                                                         double distance) {
   // We only memmove() if there is actually a need to shift something.
   if (pos < (knns_ - 1)) {
@@ -453,7 +453,7 @@ void NeighborSearch<Kernel, SortPolicy>::InsertNeighbor(index_t query_index,
         sizeof(double) * len);
     memmove(neighbor_indices_.colptr(query_index) + (pos + 1),
         neighbor_indices_.colptr(query_index) + pos,
-        sizeof(index_t) * len);
+        sizeof(size_t) * len);
   }
 
   // Now put the new information in the right index.

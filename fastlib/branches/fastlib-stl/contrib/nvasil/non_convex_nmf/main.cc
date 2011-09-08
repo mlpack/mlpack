@@ -12,10 +12,10 @@
 template<typename Engine>
 void Execute(fx_module *module); 
 void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum);
-void ComputeNeighborhoodErrors(ArrayList<std::pair<index_t, index_t> > &neighbor_pairs, 
+void ComputeNeighborhoodErrors(ArrayList<std::pair<size_t, size_t> > &neighbor_pairs, 
                                ArrayList<double> &distances,
                                Matrix &new_points,
-                               index_t knns,
+                               size_t knns,
                                double *error);
 
 
@@ -40,7 +40,7 @@ int main(int argc, char *argv[]) {
 template<typename Engine>
 void Execute(fx_module *module) {
   fx_module *nmf_module=fx_submodule(module, "/engine");
-  index_t num_of_restarts=fx_param_int(module, "/engine/num_of_restarts",1);
+  size_t num_of_restarts=fx_param_int(module, "/engine/num_of_restarts",1);
   Engine *engine;
 /*	fx_set_param_int(nmf_module, "sdp_rank", 3);
   fx_set_param_int(nmf_module, "new_dimension", 2);
@@ -58,15 +58,15 @@ void Execute(fx_module *module) {
   AllkNN allknn;
   Matrix data_mat;
   data::Load(fx_param_str_req(module, "/engine/data_file"), &data_mat);
-  index_t knns=fx_param_int(module, "/engine/knns", 3);
+  size_t knns=fx_param_int(module, "/engine/knns", 3);
   allknn.Init(data_mat, fx_submodule(module, "/engine"));
-  ArrayList<index_t> neighbors;
+  ArrayList<size_t> neighbors;
   ArrayList<double> distances;
   allknn.ComputeNeighbors(&neighbors,
                           &distances);
-  ArrayList<std::pair<index_t, index_t> > neighbor_pairs;
+  ArrayList<std::pair<size_t, size_t> > neighbor_pairs;
   ArrayList<double> neighbor_distances;
-  index_t num_of_pairs;
+  size_t num_of_pairs;
   MaxVarianceUtils::ConsolidateNeighbors(neighbors,
       distances,
       knns,
@@ -78,7 +78,7 @@ void Execute(fx_module *module) {
 
   double resulting_score[num_of_restarts];
   double resulting_neighborhood_error[num_of_restarts]; 
-  for(index_t i=0; i<num_of_restarts; i++) {
+  for(size_t i=0; i<num_of_restarts; i++) {
     engine = new Engine();
     engine->Init(nmf_module);
     engine->ComputeNmf();
@@ -114,20 +114,20 @@ void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
   spectrum->Init(w_mat.n_rows(), 1);
   spectrum->SetAll(0.0);
   double total_sum=0;
-  for(index_t i=0; i<w_mat.n_rows(); i++) {
-    for(index_t j=0; j<w_mat.n_cols(); j++) {
+  for(size_t i=0; i<w_mat.n_rows(); i++) {
+    for(size_t j=0; j<w_mat.n_cols(); j++) {
       spectrum->set(i, 0, spectrum->get(i, 0)+std::pow(w_mat.get(i, j),2));
     }
   }
   Matrix h_norms;
   h_norms.Init(h_mat.n_rows(), 1);
   h_norms.SetAll(0.0);
-  for(index_t i=0; i<h_mat.n_rows(); i++) {
-    for(index_t j=0; j<h_mat.n_cols(); j++) {
+  for(size_t i=0; i<h_mat.n_rows(); i++) {
+    for(size_t j=0; j<h_mat.n_cols(); j++) {
       h_norms.set(i, 0, h_norms.get(i, 0) + math::Sqr(h_mat.get(i, j)));
     }
   }
-  for(index_t i=0; i<h_norms.n_rows(); i++) {
+  for(size_t i=0; i<h_norms.n_rows(); i++) {
     spectrum->set(i, 0, spectrum->get(i, 0)/std::sqrt(h_norms.get(i,0)));
   }
   std::sort(spectrum->ptr(), 
@@ -135,16 +135,16 @@ void ComputeSpectrum(Matrix &w_mat, Matrix &h_mat, Matrix *spectrum) {
             std::greater<double>());
 }
 
-void ComputeNeighborhoodErrors(ArrayList<std::pair<index_t, index_t> > &neighbor_pairs, 
+void ComputeNeighborhoodErrors(ArrayList<std::pair<size_t, size_t> > &neighbor_pairs, 
                                ArrayList<double> &distances,
                                Matrix &new_points,
-                               index_t knns,
+                               size_t knns,
                                double *error) {
   *error=0;
   double total_distances=0;
-  for(index_t i=0; i<neighbor_pairs.size(); i++) {
-    index_t n1=neighbor_pairs[i].first;
-    index_t n2=neighbor_pairs[i].second;
+  for(size_t i=0; i<neighbor_pairs.size(); i++) {
+    size_t n1=neighbor_pairs[i].first;
+    size_t n2=neighbor_pairs[i].second;
     *error += std::pow(la::DistanceSqEuclidean(new_points.n_rows(), 
                                      new_points.GetColumnPtr(n1),
                                      new_points.GetColumnPtr(n2))

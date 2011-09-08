@@ -19,9 +19,9 @@
 
 using namespace hmm_support;
 
-success_t viterbi_discrete();
-success_t viterbi_gaussian();
-success_t viterbi_mixture();
+bool viterbi_discrete();
+bool viterbi_gaussian();
+bool viterbi_mixture();
 void usage();
 
 const fx_entry_doc hmm_viterbi_main_entries[] = {
@@ -48,7 +48,7 @@ const fx_module_doc hmm_viterbi_main_doc = {
 
 int main(int argc, char* argv[]) {
   fx_init(argc, argv, &hmm_viterbi_main_doc);
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (fx_param_exists(NULL,"type")) {
     const char* type = fx_param_str_req(NULL, "type");
     if (strcmp(type, "discrete")==0)
@@ -59,14 +59,14 @@ int main(int argc, char* argv[]) {
       s = viterbi_mixture();
     else {
       printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-      s = SUCCESS_FAIL;
+      s = false;
     }
   }
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture  !!!\n");
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
   fx_done(NULL);
 }
 
@@ -81,10 +81,10 @@ void usage() {
 	 );
 }
 
-success_t viterbi_mixture() {
+bool viterbi_mixture() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.mix.out");
@@ -97,9 +97,9 @@ success_t viterbi_mixture() {
   load_matrix_list(seqin, &seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   for (int i = 0; i < seqs.size(); i++) {
@@ -111,13 +111,13 @@ success_t viterbi_mixture() {
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t viterbi_gaussian() {
+bool viterbi_gaussian() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.gauss.out");
@@ -129,9 +129,9 @@ success_t viterbi_gaussian() {
   load_matrix_list(seqin, &seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   for (int i = 0; i < seqs.size(); i++) {
@@ -142,13 +142,13 @@ success_t viterbi_gaussian() {
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t viterbi_discrete() {
+bool viterbi_discrete() {
   if (!fx_param_exists(NULL, "profile")) {
     printf("--profile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = fx_param_str_req(NULL, "profile");
   const char* seqin = fx_param_str(NULL, "seqfile", "seq.out");
@@ -162,9 +162,9 @@ success_t viterbi_discrete() {
   load_vector_list(seqin, &seqs);
 
   TextWriter w_state;
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     NONFATAL("Couldn't open '%s' for writing.", stateout);
-    return SUCCESS_FAIL;
+    return false;
   }
 
   for (int i = 0; i < seqs.size(); i++) {
@@ -176,5 +176,5 @@ success_t viterbi_discrete() {
     sprintf(s, "%% viterbi state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");
   }
-  return SUCCESS_PASS;
+  return true;
 }

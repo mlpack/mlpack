@@ -48,38 +48,38 @@ void DatasetFeature::Format(double value, string& result) const {
   result = o.str();
 }
 
-success_t DatasetFeature::Parse(const std::string& str, double& d) const {
+bool DatasetFeature::Parse(const std::string& str, double& d) const {
   if ((str[0] == '?') && (str[1] == '\0')) {
     d = DBL_NAN;
-    return SUCCESS_PASS;
+    return true;
   }
   switch (type_) {
     case CONTINUOUS:
       {
         istringstream is(str);
         if((is >> d).fail())
-          return SUCCESS_FAIL;
-        return SUCCESS_PASS;
+          return false;
+        return true;
       }
     case INTEGER:
       {
         int i;
         istringstream is(str);
         if((is >> i).fail())
-          return SUCCESS_FAIL;
+          return false;
         d = i;
-        return SUCCESS_PASS;
+        return true;
       }
     case NOMINAL: {
-      index_t i;
+      size_t i;
       for (i = 0; i < value_names_.size(); i++) {
         if (value_names_[i] == str) {
           d = i;
-          return SUCCESS_PASS;
+          return true;
         }
       }
       d = DBL_NAN;
-      return SUCCESS_FAIL;
+      return false;
     }
     default: abort();
   }

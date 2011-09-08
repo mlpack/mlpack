@@ -47,7 +47,7 @@ bool FileRowGenerator::generateNextPoint(Vector& X_out, double& y_out) {
   else {                                          // read the sample and
     X_out.Init(m_iNFeatures);                     // its label
     X_out[0] = tmp;
-    for (index_t i = 1; i < m_iNFeatures; i++) {
+    for (size_t i = 1; i < m_iNFeatures; i++) {
       DEBUG_ASSERT(!feof(m_fFile));
       fscanf(m_fFile, "%lf", &tmp);
       X_out[i] = tmp;
@@ -59,10 +59,10 @@ bool FileRowGenerator::generateNextPoint(Vector& X_out, double& y_out) {
 }
 
 CrossValidationGenerator::CrossValidationGenerator
-  (DataGenerator& dg, const ArrayList<index_t>& validation_index) : 
+  (DataGenerator& dg, const ArrayList<size_t>& validation_index) : 
     m_dData(dg), m_liValidationIndex(validation_index) {
   m_iNSets = 0;
-  for (index_t i = 0; i < validation_index.size(); i++)
+  for (size_t i = 0; i < validation_index.size(); i++)
     if (validation_index[i] > m_iNSets) m_iNSets = validation_index[i];
 }
 

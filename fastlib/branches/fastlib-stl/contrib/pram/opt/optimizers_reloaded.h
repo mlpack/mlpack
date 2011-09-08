@@ -24,10 +24,10 @@
  *
  * @code
  * double init_pt[d];
- * index_t number_of_iters;
+ * size_t number_of_iters;
  * struct datanode *opt_module = fx_submodule(NULL,"QuasiNewton","opt_module");
  * Matrix data;
- * index_t dim_param_space;
+ * size_t dim_param_space;
  *
  * ...
  * QuasiNewton opt;
@@ -42,7 +42,7 @@
 class QuasiNewton {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
   //long double (*func_ptr_)(Vector&, const Matrix&, Vector*, Vector*, Vector*) ;
@@ -70,7 +70,7 @@ class QuasiNewton {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 
@@ -91,7 +91,7 @@ class QuasiNewton {
 class GradientDescent {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
   datanode *opt_module_;
@@ -117,7 +117,7 @@ class GradientDescent {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 
@@ -134,7 +134,7 @@ class GradientDescent {
 class SGD {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
   datanode *opt_module_;
@@ -160,7 +160,7 @@ class SGD {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 
@@ -168,15 +168,15 @@ class SGD {
 
   void PermuteMatrix_(const Matrix& input, Matrix *output) {
   
-    ArrayList<index_t> perm_array;
-    index_t size = input.n_cols();
+    ArrayList<size_t> perm_array;
+    size_t size = input.n_cols();
     Matrix perm_mat;
 
     perm_mat.Init(size, size);
     perm_mat.SetAll(0.0);
 
     math::MakeRandomPermutation(size, &perm_array);
-    for(index_t i = 0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
       perm_mat.set(perm_array[i], i, 1.0);
     }
 
@@ -197,7 +197,7 @@ class SGD {
 class SMD {
 
  private:
-  index_t dimension_;
+  size_t dimension_;
   Matrix data_;
   // This is the original way of calling the function
   long double (*func_ptr_)(Vector&, const Matrix&, Vector*);
@@ -208,7 +208,7 @@ class SMD {
 
   // But since the L2 function is pretty awesome, we need 
   // to make the calling a little diff
-  // long double (*func_ptr_stoc_)(Vector&, const Matrix&, Vector*, index_t);
+  // long double (*func_ptr_stoc_)(Vector&, const Matrix&, Vector*, size_t);
   datanode *opt_module_;
 
  public:
@@ -221,7 +221,7 @@ class SMD {
 
   void Init(long double (*fun)(Vector&, const Matrix&, Vector*), 
 	    // long double (*fun)(Vector&, const Matrix&, Vector*, Vector&, Vector*)
-	   //long double (*fun_stoc)(Vector&, const Matrix&, Vector*, index_t),
+	   //long double (*fun_stoc)(Vector&, const Matrix&, Vector*, size_t),
 	    Matrix& data, datanode *opt_module){
 	  
     data_.Copy(data);
@@ -240,7 +240,7 @@ class SMD {
     return data_;
   }
 
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 
@@ -248,15 +248,15 @@ class SMD {
 
   void PermuteMatrix_(const Matrix& input, Matrix *output) {
   
-    ArrayList<index_t> perm_array;
-    index_t size = input.n_cols();
+    ArrayList<size_t> perm_array;
+    size_t size = input.n_cols();
     Matrix perm_mat;
 
     perm_mat.Init(size, size);
     perm_mat.SetAll(0.0);
 
     math::MakeRandomPermutation(size, &perm_array);
-    for(index_t i = 0; i < size; i++) {
+    for(size_t i = 0; i < size; i++) {
       perm_mat.set(perm_array[i], i, 1.0);
     }
 
@@ -269,7 +269,7 @@ class SMD {
     DEBUG_SAME_SIZE(a.length(), prod->length());
     double *x = a.ptr();
     double *y = b.ptr();
-    index_t length = a.length();
+    size_t length = a.length();
     double *z = prod->ptr();
 
     do {

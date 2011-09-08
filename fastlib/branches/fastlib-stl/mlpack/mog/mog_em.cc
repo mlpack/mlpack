@@ -14,8 +14,8 @@
 void MoGEM::ExpectationMaximization(Matrix& data_points) {
 
   // Declaration of the variables */
-  index_t num_points;
-  index_t dim, num_gauss;
+  size_t num_points;
+  size_t dim, num_gauss;
   double sum, tmp; 	
   ArrayList<Vector> mu_temp, mu;
   ArrayList<Matrix> sigma_temp, sigma;
@@ -39,7 +39,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
   
   // Allocating size to the vectors and matrices 
   // according to the dimensionality of the data
-  for(index_t i = 0; i < num_gauss; i++) {
+  for(size_t i = 0; i < num_gauss; i++) {
     mu_temp[i].Init(dim);
     mu[i].Init(dim);
     sigma_temp[i].Init(dim, dim);    
@@ -49,7 +49,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
   cond_prob.Init(num_gauss, num_points);
   
   best_l = -INFTY;
-  index_t restarts = 0;
+  size_t restarts = 0;
   // performing 5 restarts and choosing the best from them
   while (restarts < 5) { 
 
@@ -68,15 +68,15 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
       // calculating the conditional probabilities 
       // of choosing a particular gaussian given 
       // the data and the present theta value   
-      for (index_t j = 0; j < num_points; j++) {
+      for (size_t j = 0; j < num_points; j++) {
 	x.CopyValues(data_points.GetColumnPtr(j));
 	sum = 0;
-	for (index_t i = 0; i < num_gauss; i++) {
+	for (size_t i = 0; i < num_gauss; i++) {
 	  tmp = phi(x, mu_temp[i], sigma_temp[i]) * omega_temp.get(i);
 	  cond_prob.set(i, j, tmp);
 	  sum += tmp;	  
 	}
-	for (index_t i = 0; i < num_gauss; i++) {
+	for (size_t i = 0; i < num_gauss; i++) {
 	  tmp = cond_prob.get(i, j);
 	  cond_prob.set(i, j, tmp / sum); 
 	}
@@ -84,10 +84,10 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
 			
       // calculating the new value of the mu 
       // using the updated conditional probabilities
-      for (index_t i = 0; i < num_gauss; i++) {
+      for (size_t i = 0; i < num_gauss; i++) {
 	sum = 0;
 	mu_temp[i].SetZero();
-	for (index_t j = 0; j < num_points; j++) {
+	for (size_t j = 0; j < num_points; j++) {
 	  x.CopyValues(data_points.GetColumnPtr(j));
 	  la::AddExpert(cond_prob.get(i, j), x, &mu_temp[i]);
 	  sum += cond_prob.get(i, j); 
@@ -98,10 +98,10 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
       // calculating the new value of the sig 
       // using the updated conditional probabilities 
       // and the updated mu
-      for (index_t i = 0; i < num_gauss; i++) {
+      for (size_t i = 0; i < num_gauss; i++) {
 	sum = 0;
 	sigma_temp[i].SetZero();
-	for (index_t j = 0; j < num_points; j++) {
+	for (size_t j = 0; j < num_points; j++) {
 	  Matrix co, ro, c;
 	  c.Init(dim, dim);
 	  x.CopyValues(data_points.GetColumnPtr(j));
@@ -129,7 +129,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
     // putting a check to see if the best one is chosen
     if(l > best_l){
       best_l = l;
-      for (index_t i = 0; i < num_gauss; i++) {
+      for (size_t i = 0; i < num_gauss; i++) {
 	mu[i].CopyValues(mu_temp[i]);
 	sigma[i].CopyValues(sigma_temp[i]);
       }
@@ -138,7 +138,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
     restarts++;
   }	
 
-  for (index_t i = 0; i < num_gauss; i++) {
+  for (size_t i = 0; i < num_gauss; i++) {
     set_mu(i, mu[i]);
     set_sigma(i, sigma[i]);
   }
@@ -151,7 +151,7 @@ void MoGEM::ExpectationMaximization(Matrix& data_points) {
 long double MoGEM::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 			       ArrayList<Matrix>& covars, Vector& weights) {
 	
-  index_t i, j;
+  size_t i, j;
   Vector x;
   long double likelihood, loglikelihood = 0;
 	
@@ -169,17 +169,17 @@ long double MoGEM::Loglikelihood(Matrix& data_points, ArrayList<Vector>& means,
 }
 
 void MoGEM::KMeans(Matrix& data, ArrayList<Vector> *means,
-		 ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k){
+		 ArrayList<Matrix> *covars, Vector *weights, size_t value_of_k){
 
 	
   ArrayList<Vector> mu, mu_old;
   double* tmpssq;
   double* sig;
   double* sig_best;
-  index_t *y;
+  size_t *y;
   Vector x, diff;
   Matrix ssq;
-  index_t i, j, k, n, t, dim;
+  size_t i, j, k, n, t, dim;
   double score, score_old, sum;
 	
   n = data.n_cols();
@@ -196,7 +196,7 @@ void MoGEM::KMeans(Matrix& data, ArrayList<Vector> *means,
     mu_old[i].Init(dim);
   }
   x.Init(dim);
-  y = (index_t*)malloc(n * sizeof(index_t));
+  y = (size_t*)malloc(n * sizeof(size_t));
   diff.Init(dim);
 	
   score_old = 999999;
@@ -221,7 +221,7 @@ void MoGEM::KMeans(Matrix& data, ArrayList<Vector> *means,
       }
 			
       for(k = 0; k < value_of_k; k++){
-	index_t p = 0;
+	size_t p = 0;
 	mu[k].SetZero();
 	for(j = 0; j < n; j++){
 	  x.CopyValues(data.GetColumnPtr(j));
@@ -254,7 +254,7 @@ void MoGEM::KMeans(Matrix& data, ArrayList<Vector> *means,
     }while(sum != 0);
 		
     for(k = 0; k < value_of_k; k++){
-      index_t p = 0;
+      size_t p = 0;
       tmpssq[k] = 0;
       for(j = 0; j < n; j++){
 	if(y[j] == k){

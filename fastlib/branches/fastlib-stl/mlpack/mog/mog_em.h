@@ -68,8 +68,8 @@ class MoGEM {
   ArrayList<Vector> mu_;
   ArrayList<Matrix> sigma_;
   Vector omega_;
-  index_t number_of_gaussians_;
-  index_t dimension_;
+  size_t number_of_gaussians_;
+  size_t dimension_;
 
  public:
 
@@ -81,7 +81,7 @@ class MoGEM {
   ~MoGEM() {
   }
 
-  void Init(index_t num_gauss, index_t dimension) {
+  void Init(size_t num_gauss, size_t dimension) {
 
     // Initialize the private variables
     number_of_gaussians_ = num_gauss;
@@ -94,8 +94,8 @@ class MoGEM {
 
   void Init(datanode *mog_em_module) {
     
-    index_t num_gauss = fx_param_int_req(mog_em_module, "K");
-    index_t dim = fx_param_int_req(mog_em_module, "D");
+    size_t num_gauss = fx_param_int_req(mog_em_module, "K");
+    size_t dim = fx_param_int_req(mog_em_module, "D");
     Init(num_gauss, dim);
   }
   // The get functions
@@ -112,43 +112,43 @@ class MoGEM {
     return omega_;
   }
 		
-  index_t number_of_gaussians() {
+  size_t number_of_gaussians() {
     return number_of_gaussians_;
   }			
 		
-  index_t dimension() {
+  size_t dimension() {
     return dimension_;
   }
 		
-  Vector& mu(index_t i) {
+  Vector& mu(size_t i) {
     return mu_[i] ;
   }
 		
-  Matrix& sigma(index_t i) {
+  Matrix& sigma(size_t i) {
     return sigma_[i];
   }
 		
-  double omega(index_t i) {
+  double omega(size_t i) {
     return omega_.get(i);
   }
 
   // The set functions
 
-  void set_mu(index_t i, Vector& mu) {
+  void set_mu(size_t i, Vector& mu) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(mu.length() == dimension()); 
     mu_[i].Copy(mu);
     return;
   }
 
-  void set_mu(index_t i, index_t length, const double *mu) {
+  void set_mu(size_t i, size_t length, const double *mu) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(length == dimension());
     mu_[i].Copy(mu, length);
     return;
   }
 
-  void set_sigma(index_t i, Matrix& sigma) {
+  void set_sigma(size_t i, Matrix& sigma) {
     DEBUG_ASSERT(i < number_of_gaussians());
     DEBUG_ASSERT(sigma.n_rows() == dimension());
     DEBUG_ASSERT(sigma.n_cols() == dimension());
@@ -162,7 +162,7 @@ class MoGEM {
     return;
   }
 
-  void set_omega(index_t length, const double *omega) {
+  void set_omega(size_t length, const double *omega) {
     DEBUG_ASSERT(length == number_of_gaussians());
     omega_.Copy(omega, length);
     return;
@@ -184,11 +184,11 @@ class MoGEM {
     (*results).Init(number_of_gaussians_ * (1 + dimension_*(1 + dimension_)));
 
     // Copy values to the array from the private variables of the class
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       (*results)[i] = omega(i);
-      for (index_t j = 0; j < dimension_; j++) {
+      for (size_t j = 0; j < dimension_; j++) {
 	(*results)[number_of_gaussians_ + i*dimension_ + j] = mu(i).get(j);
-	for (index_t k = 0; k < dimension_; k++) {
+	for (size_t k = 0; k < dimension_; k++) {
 	  (*results)[number_of_gaussians_*(1 + dimension_) 
 		   + i*dimension_*dimension_ + j*dimension_ 
 		   + k] = sigma(i).get(j, k);
@@ -208,14 +208,14 @@ class MoGEM {
 
     // Output the model parameters as the omega, mu and sigma			
     IO::Info << " Omega : [ "; 
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       IO::Info << omega(i) << " ";
     }
     IO::Info << "]" << std::endl;
 
     IO::Info << " Mu : " << std::endl << "[";
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
-      for (index_t j = 0; j < dimension_ ; j++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
+      for (size_t j = 0; j < dimension_ ; j++) {
 	IO::Info << mu(i).get(j);
       }
       IO::Info << ";");
@@ -224,10 +224,10 @@ class MoGEM {
       }
     }
     IO::Info << "Sigma : ";
-    for (index_t i = 0; i < number_of_gaussians_; i++) {
+    for (size_t i = 0; i < number_of_gaussians_; i++) {
       IO::Info << std::endl << "[";
-      for (index_t j = 0; j < dimension_ ; j++) {
-	for(index_t k = 0; k < dimension_ ; k++) {
+      for (size_t j = 0; j < dimension_ ; j++) {
+	for(size_t k = 0; k < dimension_ ; k++) {
 	  IO::Info << sigma(i).get(j, k));
 	}
 	IO::Info << ";";
@@ -270,7 +270,7 @@ class MoGEM {
    * the optimization
    */
   void KMeans(Matrix& data, ArrayList<Vector> *means,
-	      ArrayList<Matrix> *covars, Vector *weights, index_t value_of_k);
+	      ArrayList<Matrix> *covars, Vector *weights, size_t value_of_k);
 };
 
 #endif

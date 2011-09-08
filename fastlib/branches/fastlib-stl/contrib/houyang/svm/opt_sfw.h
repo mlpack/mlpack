@@ -18,7 +18,7 @@
 #include "fastlib/base/test.h"
 
 // maximum # of iterations for SFW training
-const index_t MAX_NUM_ITER_SFW = 100000000;
+const size_t MAX_NUM_ITER_SFW = 100000000;
 // threshold that determines whether an alpha is a SV or not
 const double SFW_ALPHA_ZERO = 1.0e-7;
 // for inv_mu
@@ -33,30 +33,30 @@ class SFW {
 
  private:
   int learner_typeid_;
-  index_t ct_iter_; /* counter for the number of iterations */
+  size_t ct_iter_; /* counter for the number of iterations */
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_data_pos_; /* number of data samples with label +1 */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_data_pos_; /* number of data samples with label +1 */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the matrix of all data, including last label row */
   
   Vector alpha_; /* the alphas, to be optimized */
 
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
 
   double q_;
   double lambda_; // optimal step length
-  index_t p_; // optimal index of the subgradient
+  size_t p_; // optimal index of the subgradient
 
-  index_t n_alpha_; /* number of variables to be optimized */
+  size_t n_alpha_; /* number of variables to be optimized */
 
-  index_t n_working_pos_; /* number of samples in the working set with label +1 */
-  index_t n_working_neg_; /* number of samples in the working set with label -1 */
+  size_t n_working_pos_; /* number of samples in the working set with label +1 */
+  size_t n_working_neg_; /* number of samples in the working set with label -1 */
 
   // List that stores the old indices of working alphas followed by nonworking alphas;
   // 1st half for +1 class, 2nd half for -1 class: [working_+1, nonworking_+1, working_-1, nonworking_-1]
-  ArrayList<index_t> old_from_new_;
+  ArrayList<size_t> old_from_new_;
 
   ArrayList<int> y_; /* list that stores "labels" */
 
@@ -79,12 +79,12 @@ class SFW {
   double inv_two_C_; // 1/2C
   
   //double epsilon_; // for SVM_R
-  index_t n_iter_; // number of iterations
+  size_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
 
   int step_type_; // 1: Toward Step; -1: Away Step
   bool b_away_; // whether use both toward and away steps
-  index_t n_away_steps_;
+  size_t n_away_steps_;
 
   // indicator for balanced sampling
   bool sample_pos_;
@@ -119,10 +119,10 @@ class SFW {
       inv_two_C_ = 0.5;
       inv_C_ = 1;
     }
-    n_iter_ = (index_t) param_[2];
+    n_iter_ = (size_t) param_[2];
     n_iter_ = n_iter_ < MAX_NUM_ITER_SFW ? n_iter_: MAX_NUM_ITER_SFW;
     accuracy_ = param_[3];
-    n_data_pos_ = (index_t)param_[4];
+    n_data_pos_ = (size_t)param_[4];
     if (learner_typeid == 0) { // SVM_C
       //Cp_ = param_[1];
       //Cn_ = param_[2];
@@ -142,7 +142,7 @@ class SFW {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -158,7 +158,7 @@ class SFW {
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     // for SVM_R where max_n_alpha_==2*n_data_
     /*
     if (learner_typeid_ == 1) {
@@ -187,7 +187,7 @@ class SFW {
  */
 template<typename TKernel>
 void SFW<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -324,20 +324,20 @@ template<typename TKernel>
 int SFW<TKernel>::GreedyVectorSelection_() {
   double grad_max = -INFINITY;
   double grad_min =  INFINITY;
-  index_t idx_grad_max_o = -1;
-  index_t idx_grad_min_o = -1;
+  size_t idx_grad_max_o = -1;
+  size_t idx_grad_min_o = -1;
 
-  index_t k, op_pos, neg_tmp;
+  size_t k, op_pos, neg_tmp;
 
   double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
 
   //double max_grad_inact = -INFINITY; // for optimiality check
   //double min_gradinvCalpha_act = INFINITY; // for optimiality check
 
-  index_t p_rnd, p_rnd_o;
+  size_t p_rnd, p_rnd_o;
 
   // balanced sampling (for unbalanced classes)
-  index_t n_nonworking_pos, n_nonworking_neg;
+  size_t n_nonworking_pos, n_nonworking_neg;
   if (sample_pos_) { // last sample is +1, this sample should be -1
     n_nonworking_neg = n_alpha_ - n_data_pos_ - n_working_neg_;
     if (n_nonworking_neg >0) {
@@ -533,7 +533,7 @@ int SFW<TKernel>::GreedyVectorSelection_() {
 */
 template<typename TKernel>
 void SFW<TKernel>::UpdateGradientAlpha_() {
-  index_t i, op_pos, neg_tmp;
+  size_t i, op_pos, neg_tmp;
   double one_m_lambda, one_p_lambda, two_lambda;
   double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
   double App = CalcKernelValue_(p_, p_) + 1 + inv_two_C_;
@@ -671,7 +671,7 @@ void SFW<TKernel>::UpdateGradientAlpha_() {
 */
 template<typename TKernel>
 void SFW<TKernel>::CalcBias_() {
-  index_t i, op_pos, neg_tmp;
+  size_t i, op_pos, neg_tmp;
   
   bias_ = 0;
   for (i=0; i<n_working_pos_; i++) {
@@ -694,11 +694,11 @@ void SFW<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void SFW<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void SFW<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   n_sv_ = 0;
   double alpha_zero_scaled = SFW_ALPHA_ZERO / alpha_scale_;
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (alpha_[i] > alpha_zero_scaled) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];

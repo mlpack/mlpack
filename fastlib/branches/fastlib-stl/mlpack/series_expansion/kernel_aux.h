@@ -46,7 +46,7 @@ class GaussianKernelMultAux {
 
  public:
 
-  void Init(double bandwidth, index_t max_order, index_t dim) {
+  void Init(double bandwidth, size_t max_order, size_t dim) {
     kernel_.Init(bandwidth);
     sea_.Init(max_order, dim);
   }
@@ -55,18 +55,18 @@ class GaussianKernelMultAux {
     return sqrt(2 * bandwidth_sq);
   }
 
-  void AllocateDerivativeMap(index_t dim, index_t order, 
+  void AllocateDerivativeMap(size_t dim, size_t order, 
 			     arma::mat& derivative_map) const {
     derivative_map.set_size(dim, order + 1);
   }
 
   void ComputeDirectionalDerivatives(const arma::vec &x, 
-				     arma::mat& derivative_map, index_t order) const {
+				     arma::mat& derivative_map, size_t order) const {
 
-    index_t dim = x.n_elem;
+    size_t dim = x.n_elem;
     
     // precompute necessary Hermite polynomials based on coordinate difference
-    for(index_t d = 0; d < dim; d++) {
+    for(size_t d = 0; d < dim; d++) {
       
       double coord_div_band = x[d];
       double d2 = 2 * coord_div_band;
@@ -79,8 +79,8 @@ class GaussianKernelMultAux {
 	derivative_map(d, 1) = d2 * facj;
 	
 	if(order > 1) {
-	  for(index_t k = 1; k < order; k++) {
-	    index_t k2 = k * 2;
+	  for(size_t k = 1; k < order; k++) {
+	    size_t k2 = k * 2;
 	    derivative_map(d, k + 1) = d2 * derivative_map(d, k) -
 				k2 * derivative_map(d, k - 1);
 	  }
@@ -90,18 +90,18 @@ class GaussianKernelMultAux {
   }
 
   double ComputePartialDerivative(const arma::mat& derivative_map,
-				  const std::vector<index_t>& mapping) const {
+				  const std::vector<size_t>& mapping) const {
 
     double partial_derivative = 1.0;
 
-    for(index_t d = 0; d < mapping.size(); d++) {
+    for(size_t d = 0; d < mapping.size(); d++) {
       partial_derivative *= derivative_map(d, mapping[d]);
     }
     return partial_derivative;
   }
 
   template<typename TBound>
-  index_t OrderForEvaluatingFarField
+  size_t OrderForEvaluatingFarField
     (const TBound &far_field_region, const TBound &local_field_region,
      double min_dist_sqd_regions, double max_dist_sqd_regions,
      double max_error, double *actual_error) const {
@@ -114,10 +114,10 @@ class GaussianKernelMultAux {
     double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r = max_far_field_length / two_times_bandwidth;
 
-    index_t dim = sea_.get_dimension();
+    size_t dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
     double factorialvalue = 1.0;
     double first_factor, second_factor;
     double one_minus_r;
@@ -156,7 +156,7 @@ class GaussianKernelMultAux {
   }
 
   template<typename TBound>
-  index_t OrderForConvertingFromFarFieldToLocal
+  size_t OrderForConvertingFromFarFieldToLocal
   (const TBound &far_field_region,
    const TBound &local_field_region, double min_dist_sqd_regions, 
    double max_dist_sqd_regions, double max_error, 
@@ -173,10 +173,10 @@ class GaussianKernelMultAux {
     double r = max_far_field_length / two_times_bandwidth;
     double r2 = max_local_field_length / two_times_bandwidth;
 
-    index_t dim = sea_.get_dimension();
+    size_t dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
     double factorialvalue = 1.0;
     double first_factor, second_factor;
     double one_minus_two_r, two_r;
@@ -220,7 +220,7 @@ class GaussianKernelMultAux {
   }
 
   template<typename TBound>
-  index_t OrderForEvaluatingLocal(const TBound &far_field_region,
+  size_t OrderForEvaluatingLocal(const TBound &far_field_region,
 			      const TBound &local_field_region,
 			      double min_dist_sqd_regions,
 			      double max_dist_sqd_regions, double max_error,
@@ -233,10 +233,10 @@ class GaussianKernelMultAux {
     double two_times_bandwidth = sqrt(kernel_.bandwidth_sq()) * 2;
     double r = max_local_field_length / two_times_bandwidth;
 
-    index_t dim = sea_.get_dimension();
+    size_t dim = sea_.get_dimension();
     double r_raised_to_p_alpha = 1.0;
     double ret, ret2;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
     double factorialvalue = 1.0;
     double first_factor, second_factor;
     double one_minus_r;
@@ -297,7 +297,7 @@ class GaussianKernelAux {
 
  public:
 
-  void Init(double bandwidth, index_t max_order, index_t dim) {
+  void Init(double bandwidth, size_t max_order, size_t dim) {
     kernel_.Init(bandwidth);
     sea_.Init(max_order, dim);
   }
@@ -306,18 +306,18 @@ class GaussianKernelAux {
     return sqrt(2 * bandwidth_sq);
   }
 
-  void AllocateDerivativeMap(index_t dim, index_t order, 
+  void AllocateDerivativeMap(size_t dim, size_t order, 
 			     arma::mat& derivative_map) const {
     derivative_map.set_size(dim, order + 1);
   }
 
   void ComputeDirectionalDerivatives(const arma::vec& x, 
-				     arma::mat& derivative_map, index_t order) const {
+				     arma::mat& derivative_map, size_t order) const {
     
-    index_t dim = x.n_elem;
+    size_t dim = x.n_elem;
     
     // precompute necessary Hermite polynomials based on coordinate difference
-    for(index_t d = 0; d < dim; d++) {
+    for(size_t d = 0; d < dim; d++) {
       
       double coord_div_band = x[d];
       double d2 = 2 * coord_div_band;
@@ -330,8 +330,8 @@ class GaussianKernelAux {
 	derivative_map(d, 1) = d2 * facj;
 	
 	if(order > 1) {
-	  for(index_t k = 1; k < order; k++) {
-	    index_t k2 = k * 2;
+	  for(size_t k = 1; k < order; k++) {
+	    size_t k2 = k * 2;
 	    derivative_map(d, k + 1) = d2 * derivative_map(d, k) -
 				k2 * derivative_map(d, k - 1);
 	  }
@@ -341,18 +341,18 @@ class GaussianKernelAux {
   }
 
   double ComputePartialDerivative(const arma::mat& derivative_map,
-				  const std::vector<index_t>& mapping) const {
+				  const std::vector<size_t>& mapping) const {
     
     double partial_derivative = 1.0;
     
-    for(index_t d = 0; d < mapping.size(); d++) {
+    for(size_t d = 0; d < mapping.size(); d++) {
       partial_derivative *= derivative_map(d, mapping[d]);
     }
     return partial_derivative;
   }
 
   template<typename TBound>
-  index_t OrderForConvolvingFarField(const TBound &far_field_region, 
+  size_t OrderForConvolvingFarField(const TBound &far_field_region, 
 				 const arma::vec &far_field_region_centroid,
 				 const TBound &local_field_region, 
 				 const arma::vec &local_field_region_centroid,
@@ -367,7 +367,7 @@ class GaussianKernelAux {
     
     double frontfactor = exp(-squared_distance_between_two_centroids / 
 	  (4 * kernel_.bandwidth_sq()));
-    index_t max_order = sea_.get_max_order();
+    size_t max_order = sea_.get_max_order();
     
     // Find out the widest dimension of the far-field region and its
     // length.
@@ -382,7 +382,7 @@ class GaussianKernelAux {
     
     double r_raised_to_p_alpha = 1.0;
     double ret;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
     
     do {
       
@@ -408,7 +408,7 @@ class GaussianKernelAux {
   }
 
   template<typename TBound>
-  index_t OrderForEvaluatingFarField(const TBound &far_field_region, 
+  size_t OrderForEvaluatingFarField(const TBound &far_field_region, 
 				 const TBound &local_field_region, 
 				 double min_dist_sqd_regions,
 				 double max_dist_sqd_regions, 
@@ -417,7 +417,7 @@ class GaussianKernelAux {
 
     double frontfactor = 
       exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-    index_t max_order = sea_.get_max_order();
+    size_t max_order = sea_.get_max_order();
 
     // Find out the widest dimension of the far-field region and its
     // length.
@@ -429,7 +429,7 @@ class GaussianKernelAux {
 
     double r_raised_to_p_alpha = 1.0;
     double ret;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
 
     do {
 
@@ -455,7 +455,7 @@ class GaussianKernelAux {
   }
 
   template<typename TBound>
-  index_t OrderForConvertingFromFarFieldToLocal
+  size_t OrderForConvertingFromFarFieldToLocal
   (const TBound &far_field_region, const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error, 
    double *actual_error) const {
@@ -471,7 +471,7 @@ class GaussianKernelAux {
     double r_R = max_ref_length / two_times_bandwidth;
     double r_Q = max_query_length / two_times_bandwidth;
 
-    index_t p_alpha = -1;
+    size_t p_alpha = -1;
     double r_Q_raised_to_p = 1.0;
     double r_R_raised_to_p = 1.0;
     double ret2;
@@ -510,14 +510,14 @@ class GaussianKernelAux {
   }
 
   template<typename TBound>
-  index_t OrderForEvaluatingLocal
+  size_t OrderForEvaluatingLocal
   (const TBound &far_field_region, const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error, 
    double *actual_error) const {
     
     double frontfactor =
       exp(-min_dist_sqd_regions / (4 * kernel_.bandwidth_sq()));
-    index_t max_order = sea_.get_max_order();
+    size_t max_order = sea_.get_max_order();
   
     // Find out the widest dimension of the local field region and its
     // length.
@@ -529,7 +529,7 @@ class GaussianKernelAux {
 
     double r_raised_to_p_alpha = 1.0;
     double ret;
-    index_t p_alpha = 0;
+    size_t p_alpha = 0;
   
     do {
     
@@ -578,7 +578,7 @@ class EpanKernelAux {
 
  public:
 
-  void Init(double bandwidth, index_t max_order, index_t dim) {
+  void Init(double bandwidth, size_t max_order, size_t dim) {
     kernel_.Init(bandwidth);
     sea_.Init(max_order, dim);
 
@@ -590,13 +590,13 @@ class EpanKernelAux {
     return sqrt(bandwidth_sq);
   }
 
-  void AllocateDerivativeMap(index_t dim, index_t order, 
+  void AllocateDerivativeMap(size_t dim, size_t order, 
 			     arma::mat& derivative_map) const {
     derivative_map.set_size(sea_.get_total_num_coeffs(order), 1);
   }
 
   void ComputeDirectionalDerivatives(const arma::vec& x, 
-				     arma::mat& derivative_map, index_t order) const {
+				     arma::mat& derivative_map, size_t order) const {
     
     // Compute the derivatives for $||x||^2$ and negate it. Then, add
     // $(1, 0, 0, ... 0)$ to it.
@@ -607,13 +607,13 @@ class EpanKernelAux {
   }
 
   double ComputePartialDerivative(const arma::mat& derivative_map,
-				  const std::vector<index_t>& mapping) const {
+				  const std::vector<size_t>& mapping) const {
 
     return derivative_map(sea_.ComputeMultiindexPosition(mapping), 0);
   }
 
   template<typename TBound>
-  index_t OrderForEvaluatingFarField
+  size_t OrderForEvaluatingFarField
   (const TBound &far_field_region, const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, 
    double max_error, double *actual_error) const {
@@ -631,7 +631,7 @@ class EpanKernelAux {
   
     // Find out the max distance between query and reference region in L1
     // sense
-    index_t dim;
+    size_t dim;
     double farthest_distance_manhattan =
       bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
 
@@ -661,7 +661,7 @@ class EpanKernelAux {
   }
 
   template<typename TBound>
-  index_t OrderForConvertingFromFarFieldToLocal
+  size_t OrderForConvertingFromFarFieldToLocal
   (const TBound &far_field_region, const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, double max_error, 
    double *actual_error) const {
@@ -679,7 +679,7 @@ class EpanKernelAux {
   }
   
   template<typename TBound>
-  index_t OrderForEvaluatingLocal
+  size_t OrderForEvaluatingLocal
   (const TBound &far_field_region, 
    const TBound &local_field_region, 
    double min_dist_sqd_regions, double max_dist_sqd_regions, 
@@ -698,7 +698,7 @@ class EpanKernelAux {
   
     // Find out the max distance between query and reference region in L1
     // sense
-    index_t dim;
+    size_t dim;
     double farthest_distance_manhattan =
       bounds_aux::MaxL1Distance(far_field_region, local_field_region, &dim);
 

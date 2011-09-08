@@ -22,7 +22,7 @@
 * An nonzero entry(dimension) of a data point
 */
 struct NZ_entry {
-  index_t index;
+  size_t index;
   double value;
 };
 
@@ -30,9 +30,9 @@ struct NZ_entry {
 * Sparse labeled dataset
 */
 struct Dataset_sl {
-  index_t n_features;
-  index_t n_points;
-  index_t n_classes;
+  size_t n_features;
+  size_t n_points;
+  size_t n_classes;
   double *y; // labels of data points
   struct NZ_entry **x; // data points
   //ArrayList<NZ_entry> *x; // TODO
@@ -156,7 +156,7 @@ void SparseScale(double scale, ArrayList<NZ_entry> &w) {
     w.ShrinkTo(0);
   }
   else {
-    for (index_t i=0; i<w.size(); i++) {
+    for (size_t i=0; i<w.size(); i++) {
       w[i].value = w[i].value * scale;
     }
   }
@@ -167,8 +167,8 @@ void SparseScale(double scale, ArrayList<NZ_entry> &w) {
  */
 double SparseDot(ArrayList<NZ_entry> &w, NZ_entry *x) {
   double dv = 0.0;
-  index_t w_nz = w.size();
-  index_t ct = 0;
+  size_t w_nz = w.size();
+  size_t ct = 0;
   if (w_nz == 0 || x->index == -1) {
     return 0.0;
   }
@@ -196,7 +196,7 @@ double SparseDot(ArrayList<NZ_entry> &w, NZ_entry *x) {
  * Sparse vector scaled add: w<= w+ scale * x
  */
 void SparseAddExpert(double scale, NZ_entry *x, ArrayList<NZ_entry> &w) {
-  index_t ct = 0;
+  size_t ct = 0;
   NZ_entry nz_tmp;
 
   if (x->index == -1 || scale == 0) { // x: all zeros or scale ==0
@@ -257,18 +257,18 @@ void SparseAddExpert(double scale, NZ_entry *x, ArrayList<NZ_entry> &w) {
  * Sparse vector subtraction: z <= y-x
  */
 void SparseSub(ArrayList<NZ_entry> &x,ArrayList<NZ_entry> &y, ArrayList<NZ_entry> &z) {
-  index_t x_size, y_size;
-  index_t i, ct_x, ct_y;
+  size_t x_size, y_size;
+  size_t i, ct_x, ct_y;
   x_size = x.size();
   y_size = y.size();
   ct_x = 0; ct_y = 0;
   NZ_entry nz_tmp;
  
   /*
-  for (index_t i=0; i<y.size(); i++) {
+  for (size_t i=0; i<y.size(); i++) {
     printf("y[%d].index=%d,.value=%f\n", i, y[i].index, y[i].value);
   }
-  for (index_t i=0; i<x.size(); i++) {
+  for (size_t i=0; i<x.size(); i++) {
     printf("x[%d].index=%d,.value=%f\n", i, x[i].index, x[i].value);
   }
   */
@@ -326,7 +326,7 @@ void SparseSub(ArrayList<NZ_entry> &x,ArrayList<NZ_entry> &y, ArrayList<NZ_entry
   }
   
   /*
-  for (index_t i=0; i<z.size(); i++) {
+  for (size_t i=0; i<z.size(); i++) {
     printf("z[%d].index=%d,.value=%f\n", i, z[i].index, z[i].value);
   }
   */
@@ -340,8 +340,8 @@ void SparseSub(ArrayList<NZ_entry> &x,ArrayList<NZ_entry> &y, ArrayList<NZ_entry
  * Sparse vector subtraction: y <= y-x
  */
 void SparseSubOverwrite(ArrayList<NZ_entry> &x,ArrayList<NZ_entry> &y) {
-  index_t x_size;
-  index_t i, ct_x, ct_y;
+  size_t x_size;
+  size_t i, ct_x, ct_y;
   x_size = x.size();
   ct_x = 0; ct_y = 0;
   NZ_entry nz_tmp;
@@ -399,8 +399,8 @@ void SparseSubOverwrite(ArrayList<NZ_entry> &x,ArrayList<NZ_entry> &y) {
  * Sparse element-wise multiplication of vectors: y <= y .* x
  */
 void SparseElementMulOverwrite(ArrayList<NZ_entry> &y, ArrayList<NZ_entry> &x) {
-  index_t ct_x = 0;
-  index_t ct_y = 0;
+  size_t ct_x = 0;
+  size_t ct_y = 0;
 
   if (y.size() == 0) { // y: all zeros
     // y remains unchanged

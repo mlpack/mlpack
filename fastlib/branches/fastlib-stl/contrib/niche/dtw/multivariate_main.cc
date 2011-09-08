@@ -3,8 +3,8 @@
 
 
 void GetPointAsMatrix(Matrix data_with_labels,
-		      index_t ind, index_t n_times, index_t n_features,
-		      index_t prod_n_times_n_features, Matrix* p_point_mat) {
+		      size_t ind, size_t n_times, size_t n_features,
+		      size_t prod_n_times_n_features, Matrix* p_point_mat) {
   Vector point_vec;
   Matrix point_skinny_mat;
     
@@ -21,23 +21,23 @@ void GetPointAsMatrix(Matrix data_with_labels,
 void Normalize(Vector* p_ts) {
   Vector &ts = *p_ts;
 
-  index_t n_times = ts.length();
+  size_t n_times = ts.length();
 
   // compute mean over time
   double mean = 0;
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     mean += ts[t];
   }
   mean /= ((double) n_times);
   
   // center using temporal mean
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     ts[t] -= mean;
   }
   
   // compute variance
   double variance = 0;
-  for(index_t t = 0; t < n_times; t++) {
+  for(size_t t = 0; t < n_times; t++) {
     variance += ts[t] * ts[t];
   }
   variance /= ((double)(n_times - 1));
@@ -91,8 +91,8 @@ int main(int argc, char* argv[]) {
   Matrix test_data_with_labels;
   data::Load(test_data_filename, &test_data_with_labels);
 
-  index_t n_training_points = training_data_with_labels.n_cols();
-  index_t n_test_points = test_data_with_labels.n_cols();
+  size_t n_training_points = training_data_with_labels.n_cols();
+  size_t n_test_points = test_data_with_labels.n_cols();
 
   printf("%d %d\n", n_training_points, n_test_points);
 
@@ -110,12 +110,12 @@ int main(int argc, char* argv[]) {
   else if(((int)temp1) != ((int)temp2)) {
     FATAL("training data dimensions do not match test data dimensions\n");
   }
-  index_t n_times = (int) temp1;
+  size_t n_times = (int) temp1;
 
   printf("n_times = %d\n", n_times);
 
   for(int k = 0; k < n_features; k++) {
-    for(index_t i = 0; i < n_training_points; i++) {
+    for(size_t i = 0; i < n_training_points; i++) {
       Vector ts_i;
       training_data_with_labels.MakeColumnSubvector(i,
 						    (k * n_times) + 1,
@@ -123,7 +123,7 @@ int main(int argc, char* argv[]) {
       Normalize(&ts_i);
     }
     
-    for(index_t j = 0; j < n_test_points; j++) {
+    for(size_t j = 0; j < n_test_points; j++) {
       Vector ts_j;
       test_data_with_labels.MakeColumnSubvector(j,
 						(k * n_times) + 1,
@@ -147,7 +147,7 @@ int main(int argc, char* argv[]) {
   GenVector<int> predicted_labels;
   predicted_labels.Init(n_test_points);
 
-  index_t prod_n_times_n_features = n_times * n_features;
+  size_t prod_n_times_n_features = n_times * n_features;
 
   for(int j = 0; j < n_test_points; j++) {
     scores.SetZero();
@@ -191,7 +191,7 @@ int main(int argc, char* argv[]) {
     printf("test point %d\n", j);
     scores.PrintDebug("scores");
     
-    index_t argmin = 0;
+    size_t argmin = 0;
     double min = scores[0];
     for(int i = 1; i < n_training_points; i++) {
       if(scores[i] < min) {

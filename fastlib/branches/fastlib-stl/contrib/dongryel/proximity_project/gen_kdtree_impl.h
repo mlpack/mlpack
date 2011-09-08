@@ -6,10 +6,10 @@ namespace tree_gen_kdtree_private {
 
   template<typename T, typename TBound>
   void FindBoundFromMatrix(const GenMatrix<T>& matrix,
-			   index_t first, index_t count, TBound *bounds) {
+			   size_t first, size_t count, TBound *bounds) {
     
-    index_t end = first + count;
-    for (index_t i = first; i < end; i++) {
+    size_t end = first + count;
+    for (size_t i = first; i < end; i++) {
       GenVector<T> col;
       
       matrix.MakeColumnVector(i, &col);
@@ -18,12 +18,12 @@ namespace tree_gen_kdtree_private {
   }
   
   template<typename T, typename TBound>
-  index_t MatrixPartition(GenMatrix<T>& matrix, index_t dim, double splitvalue,
-			  index_t first, index_t count, TBound* left_bound, 
-			  TBound* right_bound, index_t *old_from_new) {
+  size_t MatrixPartition(GenMatrix<T>& matrix, size_t dim, double splitvalue,
+			  size_t first, size_t count, TBound* left_bound, 
+			  TBound* right_bound, size_t *old_from_new) {
     
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -62,7 +62,7 @@ namespace tree_gen_kdtree_private {
       *right_bound |= right_vector;
       
       if (old_from_new) {
-        index_t t = old_from_new[left];
+        size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
@@ -78,16 +78,16 @@ namespace tree_gen_kdtree_private {
 
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
   void SplitGenKdTree(GenMatrix<T>& matrix, TKdTree *node, 
-		      index_t leaf_size, index_t *old_from_new) {
+		      size_t leaf_size, size_t *old_from_new) {
 
     TKdTree *left = NULL;
     TKdTree *right = NULL;
 
     if (node->count() > leaf_size) {
-      index_t split_dim = BIG_BAD_NUMBER;
+      size_t split_dim = BIG_BAD_NUMBER;
       T max_width = -1;
       
-      for (index_t d = 0; d < matrix.n_rows(); d++) {
+      for (size_t d = 0; d < matrix.n_rows(); d++) {
         T w = node->bound().get(d).width();
 	
         if (unlikely(w > max_width)) {
@@ -111,7 +111,7 @@ namespace tree_gen_kdtree_private {
         right = new TKdTree();
         right->bound().Init(matrix.n_rows());
 
-        index_t split_col = MatrixPartition(matrix, split_dim, split_val,
+        size_t split_col = MatrixPartition(matrix, split_dim, split_val,
 					    node->begin(), node->count(),
 					    &left->bound(), &right->bound(),
 					    old_from_new);

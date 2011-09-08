@@ -32,12 +32,12 @@ namespace ctree {
   // This is the lower bound on the lowest scale we 
   // can go to. This means distance between two points 
   // is zero
-  const index_t NEG_INF = (int) log(0);
+  const size_t NEG_INF = (int) log(0);
 
   // This returns the distance with respect to this 
   //scale
   template<typename T>
-  inline T scaled_distance(index_t scale) {
+  inline T scaled_distance(size_t scale) {
     return pow(BASE<T>(), scale);
   }
 
@@ -45,8 +45,8 @@ namespace ctree {
   // Using this we can compute the scale of a particular 
   // node
   template<typename T>
-  inline index_t scale_of_distance(T distance) {
-    return (index_t) ceil(log(distance)*inverse_log_base<T>());
+  inline size_t scale_of_distance(T distance) {
+    return (size_t) ceil(log(distance)*inverse_log_base<T>());
   }
 
   // This class stores a point and its distance to all 
@@ -57,7 +57,7 @@ namespace ctree {
     
   private:
     // the point (index in the data matrix)
-    index_t point_;
+    size_t point_;
     // The array which stores the distances to all the 
     // nodes which have taken this point as a 
     // potential descendant in a stack
@@ -72,7 +72,7 @@ namespace ctree {
     ~NodeDistances() {
     }
 
-    index_t point() {
+    size_t point() {
       return point_;
     }
 
@@ -80,7 +80,7 @@ namespace ctree {
       return &distances_;
     }
 
-    T distances(index_t in) {
+    T distances(size_t in) {
       return distances_[in];
     }
 
@@ -89,7 +89,7 @@ namespace ctree {
       return;
     }
 
-    void Init(index_t point, T dist) {
+    void Init(size_t point, T dist) {
       point_ = point;
       distances_.PushBackCopy(dist);
       return;
@@ -102,7 +102,7 @@ namespace ctree {
   // to any descendant and also to decide the next 
   // scale in the explicit representation
   template<typename T>
-  T max_set(ArrayList<NodeDistances<T>*>*, index_t*);
+  T max_set(ArrayList<NodeDistances<T>*>*, size_t*);
 
   template<typename T>
   T max_set(ArrayList<NodeDistances<T>*> *set) {
@@ -111,12 +111,12 @@ namespace ctree {
 
 
   // used for printing purposes
-  void print_space(index_t);
+  void print_space(size_t);
 
   // This function traverses down the tree in a depth first 
   // fashion, printing the nodes
   template<typename TCoverTreeNode>
-  void print_tree(index_t, TCoverTreeNode*);
+  void print_tree(size_t, TCoverTreeNode*);
 
   /**
    * This public function prints the sub-tree 
@@ -130,7 +130,7 @@ namespace ctree {
    */
   template<typename TCoverTreeNode>
   void PrintTree(TCoverTreeNode *top_node) {
-    index_t depth = 0;
+    size_t depth = 0;
     print_tree(depth, top_node);
     return;
   }
@@ -144,7 +144,7 @@ namespace ctree {
   template<typename T>
   void split_far(ArrayList<NodeDistances<T>*>*, 
 		 ArrayList<NodeDistances<T>*>*,
-		 index_t);
+		 size_t);
 
   // This function splits a set of NodeDistances
   // into set of points which can be possible 
@@ -152,10 +152,10 @@ namespace ctree {
   // and points which wouldn't be possible descendants
   // of that child
   template<typename T>
-  void split_near(index_t, const GenMatrix<T>&,
+  void split_near(size_t, const GenMatrix<T>&,
 		  ArrayList<NodeDistances<T>*>*,
 		  ArrayList<NodeDistances<T>*>*,
-		  index_t);
+		  size_t);
 
   // This function makes the tree given a particular point.
   // It makes a node out of the point and also forms the 
@@ -163,8 +163,8 @@ namespace ctree {
   // fashion. The points which are not yet consumed 
   // are put in a set and the one consumed put in another
   template<typename TCoverTreeNode, typename T>
-  TCoverTreeNode *private_make_tree(index_t, const GenMatrix<T>&,
-				    index_t, index_t, 
+  TCoverTreeNode *private_make_tree(size_t, const GenMatrix<T>&,
+				    size_t, size_t, 
 				    ArrayList<NodeDistances<T>*>*,
 				    ArrayList<NodeDistances<T>*>*);
 
@@ -186,7 +186,7 @@ namespace ctree {
 
     // setting the expansion constant here    
     EC = (double)base;
-    index_t n = dataset.n_cols();
+    size_t n = dataset.n_cols();
     DEBUG_ASSERT(n > 0);
     ArrayList<NodeDistances<T>*> point_set, consumed_set;
     GenVector<T> root_point;
@@ -199,7 +199,7 @@ namespace ctree {
 
     // here we create the set of NodeDistances which 
     // would be used throughout the making of the tree.
-    for (index_t i = 1; i < n; i++) {
+    for (size_t i = 1; i < n; i++) {
       NodeDistances<T> *node_distances = new NodeDistances<T>();
       GenVector<T> point;
       T dist;
@@ -215,7 +215,7 @@ namespace ctree {
     // Setting the maximum scale of the explicit 
     // representation
     T max_dist = max_set(&point_set);
-    index_t max_scale = scale_of_distance(max_dist);
+    size_t max_scale = scale_of_distance(max_dist);
     
     
     TCoverTreeNode *root_node = 

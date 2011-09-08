@@ -39,16 +39,16 @@ void MultiTreeFock::PassBoundsDown_(MatrixTree* query) {
 void MultiTreeFock::ComputeBaseCaseCoulomb(MatrixTree* query, 
                                            MatrixTree* reference) {
   
-  index_t internal_row_index = 0;
+  size_t internal_row_index = 0;
   
-  for (index_t i = query->row_shells()->begin(); i < query->row_shells()->end();
+  for (size_t i = query->row_shells()->begin(); i < query->row_shells()->end();
        i++) {
     
     BasisShell* i_shell = shell_ptr_list_[i];
     
-    index_t internal_col_index = 0;
+    size_t internal_col_index = 0;
     
-    for (index_t j = query->col_shells()->begin(); j < query->col_shells()->end(); 
+    for (size_t j = query->col_shells()->begin(); j < query->col_shells()->end(); 
          j++) {
       
       BasisShell* j_shell = shell_ptr_list_[j];
@@ -57,12 +57,12 @@ void MultiTreeFock::ComputeBaseCaseCoulomb(MatrixTree* query,
       coulomb_ij.Init(i_shell->num_functions(), j_shell->num_functions());
       coulomb_ij.SetZero();
       
-      for (index_t k = reference->row_shells()->begin(); 
+      for (size_t k = reference->row_shells()->begin(); 
            k < reference->row_shells()->end(); k++) {
 
         BasisShell* k_shell = shell_ptr_list_[k];
 
-        for (index_t l = reference->col_shells()->begin(); 
+        for (size_t l = reference->col_shells()->begin(); 
              l < reference->col_shells()->end(); l++) {
           
           BasisShell* l_shell = shell_ptr_list_[l];
@@ -118,26 +118,26 @@ void MultiTreeFock::ComputeBaseCaseCoulomb(MatrixTree* query,
 void MultiTreeFock::ComputeBaseCaseExchange(MatrixTree* query, 
                                             MatrixTree* reference) {
   
-  index_t internal_row_index = 0;
+  size_t internal_row_index = 0;
   
-  for (index_t i = query->row_shells()->begin(); i < query->row_shells()->end();
+  for (size_t i = query->row_shells()->begin(); i < query->row_shells()->end();
        i++) {
     
     BasisShell* i_shell = shell_ptr_list_[i];
     
-    index_t internal_col_index = 0;
+    size_t internal_col_index = 0;
     
-    for (index_t j = query->col_shells()->begin(); j < query->col_shells()->end(); 
+    for (size_t j = query->col_shells()->begin(); j < query->col_shells()->end(); 
          j++) {
       
       BasisShell* j_shell = shell_ptr_list_[j];
       
-      for (index_t k = reference->row_shells()->begin(); 
+      for (size_t k = reference->row_shells()->begin(); 
            k < reference->row_shells()->end(); k++) {
         
         BasisShell* k_shell = shell_ptr_list_[k];
         
-        for (index_t l = reference->col_shells()->begin(); 
+        for (size_t l = reference->col_shells()->begin(); 
              l < reference->col_shells()->end(); l++) {
           
           BasisShell* l_shell = shell_ptr_list_[l];
@@ -590,7 +590,7 @@ void MultiTreeFock::DepthFirstRecursionCoulomb(MatrixTree* query,
     else if (SplitQuery(query, reference)) {
      
       // make split call
-      success_t split;
+      bool split;
       if (!(query->left())) {
         // the node hasn't been split
         split = matrix_tree_impl::SplitMatrixTree(query, shell_ptr_list_, 
@@ -600,12 +600,12 @@ void MultiTreeFock::DepthFirstRecursionCoulomb(MatrixTree* query,
       }
       else {
         
-        split = SUCCESS_PASS;
+        split = true;
         
       }
       // don't forget to handle the internal bounds too
       
-      if (split == SUCCESS_PASS) {
+      if (split == true) {
         
         PassBoundsDown_(query);
         
@@ -627,7 +627,7 @@ void MultiTreeFock::DepthFirstRecursionCoulomb(MatrixTree* query,
     else {
       
       // split the reference
-      success_t split;
+      bool split;
       if (!(reference->left())) {
         // node hasn't been split
         split = matrix_tree_impl::SplitMatrixTree(reference, shell_ptr_list_,
@@ -635,13 +635,13 @@ void MultiTreeFock::DepthFirstRecursionCoulomb(MatrixTree* query,
         
       }
       else {
-        split = SUCCESS_PASS;
+        split = true;
       }
       //don't need to pass info down
       // TODO: need to pass info back up for this case?
 
       // may want to prioritize these somehow
-      if (split == SUCCESS_PASS) {
+      if (split == true) {
         DepthFirstRecursionCoulomb(query, reference->left());
         DepthFirstRecursionCoulomb(query, reference->right());
       }
@@ -688,7 +688,7 @@ void MultiTreeFock::DepthFirstRecursionExchange(MatrixTree* query,
     else if (SplitQuery(query, reference)) {
       
       // make split call
-      success_t split;
+      bool split;
       if (!(query->left())) {
         // the node hasn't been split
         split = matrix_tree_impl::SplitMatrixTree(query, shell_ptr_list_, 
@@ -698,12 +698,12 @@ void MultiTreeFock::DepthFirstRecursionExchange(MatrixTree* query,
       }
       else {
         
-        split = SUCCESS_PASS;
+        split = true;
         
       }
       // don't forget to handle the internal bounds too
       
-      if (split == SUCCESS_PASS) {
+      if (split == true) {
         
         PassBoundsDown_(query);
         
@@ -725,7 +725,7 @@ void MultiTreeFock::DepthFirstRecursionExchange(MatrixTree* query,
     else {
       
       // split the reference
-      success_t split;
+      bool split;
       if (!(reference->left())) {
         // node hasn't been split
         split = matrix_tree_impl::SplitMatrixTree(reference, shell_ptr_list_,
@@ -733,13 +733,13 @@ void MultiTreeFock::DepthFirstRecursionExchange(MatrixTree* query,
         
       }
       else {
-        split = SUCCESS_PASS;
+        split = true;
       }
       //don't need to pass info down
       // TODO: need to pass info back up for this case?
       
       // may want to prioritize these somehow
-      if (split == SUCCESS_PASS) {
+      if (split == true) {
         DepthFirstRecursionExchange(query, reference->left());
         DepthFirstRecursionExchange(query, reference->right());
       }
@@ -842,7 +842,7 @@ void MultiTreeFock::UpdateDensity(const Matrix& new_density) {
 
 void MultiTreeFock::OutputFockMatrix(Matrix* fock_out, Matrix* coulomb_out, 
                                      Matrix* exchange_out, 
-                                     ArrayList<index_t>* old_from_new) {
+                                     ArrayList<size_t>* old_from_new) {
   
   //printf("number_of_approximations_ = %d\n", number_of_approximations_);
   //printf("number_of_base_cases_ = %d\n\n", number_of_base_cases_);

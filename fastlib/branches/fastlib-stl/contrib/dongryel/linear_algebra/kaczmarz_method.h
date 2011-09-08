@@ -10,7 +10,7 @@ class KaczmarzMethod {
 			const Vector &current_solution,
 			Vector *residual) {
 
-    for(index_t i = 0; i < linear_system.n_rows(); i++) {
+    for(size_t i = 0; i < linear_system.n_rows(); i++) {
       double dot_product = 
 	la::Dot(linear_system.n_rows(), linear_system.GetColumnPtr(i),
 		current_solution.ptr());
@@ -37,8 +37,8 @@ class KaczmarzMethod {
     bool done_flag = false;
     
     // The current iteration number.
-    index_t iteration_number = 0;
-    index_t current_index = 0;
+    size_t iteration_number = 0;
+    size_t current_index = 0;
 
     do {
 

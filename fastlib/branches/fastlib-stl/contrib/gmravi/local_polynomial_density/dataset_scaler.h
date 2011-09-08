@@ -46,10 +46,10 @@ class DatasetScaler{
     points.Init(number_of_points);
   
 
-    for(index_t i=0;i<num_dimensions;i++){
+    for(size_t i=0;i<num_dimensions;i++){
       
       
-      for(index_t j=0;j<number_of_points;j++){
+      for(size_t j=0;j<number_of_points;j++){
 	
 	points[j]= dataset.get(i,j);
       }
@@ -59,7 +59,7 @@ class DatasetScaler{
       double min_value=DBL_MAX;
       double max_value=DBL_MIN;
 
-      for(index_t z=0;z<number_of_points;z++){
+      for(size_t z=0;z<number_of_points;z++){
 	if(min_value>points[z]){
 	  min_value=points[z];
 	}
@@ -88,18 +88,18 @@ class DatasetScaler{
     rset_bound.Init(qset.n_rows());
 
     // go through each query/reference point to find out the bounds
-    for(index_t r = 0; r < rset.n_cols(); r++) {
+    for(size_t r = 0; r < rset.n_cols(); r++) {
       Vector ref_vector;
       rset.MakeColumnVector(r, &ref_vector);
       rset_bound |= ref_vector;
     }
-    for(index_t q = 0; q < qset.n_cols(); q++) {
+    for(size_t q = 0; q < qset.n_cols(); q++) {
       Vector query_vector;
       qset.MakeColumnVector(q, &query_vector);
       qset_bound |= query_vector;
     }
 
-    for(index_t i = 0; i < num_dims; i++) {
+    for(size_t i = 0; i < num_dims; i++) {
       DRange qset_range = qset_bound.get(i);
       DRange rset_range = rset_bound.get(i);
       double min_coord = min(qset_range.lo, rset_range.lo);
@@ -108,13 +108,13 @@ class DatasetScaler{
 
       printf("Dimension %d range: [%g, %g]\n", i, min_coord, max_coord);
 
-      for(index_t j = 0; j < rset.n_cols(); j++) {
+      for(size_t j = 0; j < rset.n_cols(); j++) {
 	rset.set(i, j, (rset.get(i, j) - min_coord) / width);
       }
 
       if(!queries_equal_references) {
 	printf("Came here as the query and reference set are different...\n");
-	for(index_t j = 0; j < qset.n_cols(); j++) {
+	for(size_t j = 0; j < qset.n_cols(); j++) {
 	  qset.set(i, j, (qset.get(i, j) - min_coord) / width);
 	}
       }

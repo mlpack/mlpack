@@ -154,7 +154,7 @@ class AxilrodTellerForceProblem {
 
     double probabilistic_used_error;
 
-    void ApplyDelta(const MultiTreeDelta &delta_in, index_t node_index) {
+    void ApplyDelta(const MultiTreeDelta &delta_in, size_t node_index) {
       la::AddTo(3, delta_in.negative_force_vector_l.GetColumnPtr(node_index),
 		negative_force_vector_l.ptr());
       la::AddTo(3, delta_in.negative_force_vector_e.GetColumnPtr(node_index),
@@ -255,7 +255,7 @@ class AxilrodTellerForceProblem {
    public:
 
     template<typename TQueryResult>
-    void Accumulate(const TQueryResult &query_results, index_t q_index) {
+    void Accumulate(const TQueryResult &query_results, size_t q_index) {
       l1_norm_negative_force_vector_u =
 	std::min(l1_norm_negative_force_vector_u,
 		 fabs(query_results.negative_force_vector_e.get(0, q_index) +
@@ -277,7 +277,7 @@ class AxilrodTellerForceProblem {
     
     template<typename TGlobal, typename TQueryResult>
     void PostAccumulate(TGlobal &globals, const TQueryResult &query_results,
-			index_t first, index_t count) {
+			size_t first, size_t count) {
 
     }
 
@@ -289,7 +289,7 @@ class AxilrodTellerForceProblem {
       probabilistic_used_error_u = 0;
     }
     
-    void ApplyDelta(const MultiTreeDelta &delta_in, index_t delta_index) {
+    void ApplyDelta(const MultiTreeDelta &delta_in, size_t delta_index) {
       
       l1_norm_negative_force_vector_u +=
 	delta_in.l1_norm_negative_force_vector_u[delta_index];
@@ -345,7 +345,7 @@ class AxilrodTellerForceProblem {
     
     Vector mean;
     
-    index_t count;
+    size_t count;
     
     bool in_strata;
 
@@ -364,12 +364,12 @@ class AxilrodTellerForceProblem {
    public:
 
     double SumOfPerDimensionVariances
-    (const Matrix &dataset, index_t &start, index_t &count) {
+    (const Matrix &dataset, size_t &start, size_t &count) {
 
       double total_variance = 0;
-      for(index_t i = start; i < start + count; i++) {
+      for(size_t i = start; i < start + count; i++) {
 	const double *point = dataset.GetColumnPtr(i);
-	for(index_t d = 0; d < 3; d++) {
+	for(size_t d = 0; d < 3; d++) {
 	  total_variance += math::Sqr(point[d] - mean[d]);
 	}
       }
@@ -390,14 +390,14 @@ class AxilrodTellerForceProblem {
       num_precomputed_tuples = 0;
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count_in) {
+    void Init(const Matrix& dataset, size_t &start, size_t &count_in) {
       postponed.Init();
       mean.Init(3);
       SetZero();
       count = count_in;
 
       // Compute the mean vector.
-      for(index_t i = start; i < start + count; i++) {
+      for(size_t i = start; i < start + count; i++) {
 	const double *point = dataset.GetColumnPtr(i);
 	la::AddTo(3, point, mean.ptr());
       }
@@ -410,7 +410,7 @@ class AxilrodTellerForceProblem {
       priority = count * sum_of_per_dimension_variances;
     }
     
-    void Init(const Matrix& dataset, index_t &start, index_t &count_in,
+    void Init(const Matrix& dataset, size_t &start, size_t &count_in,
 	      const MultiTreeQueryStat& left_stat, 
 	      const MultiTreeQueryStat& right_stat) {
       postponed.Init();
@@ -533,9 +533,9 @@ class AxilrodTellerForceProblem {
 
       // Number of approximated force vectors within the relative
       // error.
-      index_t within_relative_error = 0;
+      size_t within_relative_error = 0;
 
-      for(index_t i = 0; i < used_error.length(); i++) {
+      for(size_t i = 0; i < used_error.length(); i++) {
 
 	// Add up the net force...
 	la::AddTo(3, final_results.GetColumnPtr(i), net_force.ptr());
@@ -548,7 +548,7 @@ class AxilrodTellerForceProblem {
 			    other_results.final_results.GetColumnPtr(i));
 	double l1_norm_exact = 0;
 	const double *exact_vector = final_results.GetColumnPtr(i);
-	for(index_t d = 0; d < final_results.n_rows(); d++) {
+	for(size_t d = 0; d < final_results.n_rows(); d++) {
 	  l1_norm_exact += fabs(exact_vector[d]);
 	}
 	
@@ -575,7 +575,7 @@ class AxilrodTellerForceProblem {
         double positive_l1_norm_exact = 0;
         const double *positive_exact_vector = 
 	  positive_force_vector_e.GetColumnPtr(i);
-        for(index_t d = 0; d < positive_force_vector_e.n_rows(); d++) {
+        for(size_t d = 0; d < positive_force_vector_e.n_rows(); d++) {
           positive_l1_norm_exact += fabs(positive_exact_vector[d]);
         }
 	
@@ -587,7 +587,7 @@ class AxilrodTellerForceProblem {
 	double negative_l1_norm_exact = 0;
         const double *negative_exact_vector =
           negative_force_vector_e.GetColumnPtr(i);
-        for(index_t d = 0; d < negative_force_vector_e.n_rows(); d++) {
+        for(size_t d = 0; d < negative_force_vector_e.n_rows(); d++) {
           negative_l1_norm_exact += fabs(negative_exact_vector[d]);
         }
 
@@ -612,17 +612,17 @@ class AxilrodTellerForceProblem {
 
     template<typename Tree>
     void UpdatePrunedComponents(const ArrayList<Tree *> &reference_nodes,
-				index_t q_index) {
+				size_t q_index) {
     }
 
     void FinalPush(const Matrix &qset, 
-		   const MultiTreeQueryStat &stat_in, index_t q_index) {
+		   const MultiTreeQueryStat &stat_in, size_t q_index) {
       
       ApplyPostponed(stat_in.postponed, q_index);
     }
 
     void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in, 
-			index_t q_index) {
+			size_t q_index) {
       
       l1_norm_positive_force_vector_l[q_index] += 
 	postponed_in.l1_norm_positive_force_vector_l;
@@ -668,7 +668,7 @@ class AxilrodTellerForceProblem {
     }
 
     template<typename MultiTreeGlobal>
-    void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
+    void PostProcess(const MultiTreeGlobal &globals, size_t q_index) {
 
       la::AddOverwrite(3, positive_force_vector_l.GetColumnPtr(q_index),
 		       negative_force_vector_l.GetColumnPtr(q_index),
@@ -683,7 +683,7 @@ class AxilrodTellerForceProblem {
 
     template<typename MultiTreeGlobal>
     void Finalize(const MultiTreeGlobal &globals,
-		  const ArrayList<index_t> &mapping) {
+		  const ArrayList<size_t> &mapping) {
       MultiTreeUtility::ShuffleAccordingToQueryPermutation
 	(final_results_l, mapping);
       MultiTreeUtility::ShuffleAccordingToQueryPermutation
@@ -694,7 +694,7 @@ class AxilrodTellerForceProblem {
       // Check whether each particle satisfies the relative error
       // bound (roughly in the probabilistic sense) by examining the
       // lower and the upper bounds in each dimension.
-      for(index_t i = 0; i < final_results_l.n_cols(); i++) {
+      for(size_t i = 0; i < final_results_l.n_cols(); i++) {
 	
 	// The lower bound column vector and the upper bound column
 	// vector.
@@ -725,7 +725,7 @@ class AxilrodTellerForceProblem {
 	fopen("relative_error_satisfied_guess.txt", "w+");
       int relative_error_satisfied_guess = 0;
 
-      for(index_t q = 0; q < final_results.n_cols(); q++) {
+      for(size_t q = 0; q < final_results.n_cols(); q++) {
 
 	const double *force_vector_l_column =
 	  final_results_l.GetColumnPtr(q);
@@ -736,17 +736,17 @@ class AxilrodTellerForceProblem {
 
 	// Print the lower bound on the coordinate force vector.
 	fprintf(stream, "[ ");
-	for(index_t d = 0; d < 3; d++) {
+	for(size_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_l_column[d]);
 	}
 	fprintf(stream, " ] [ ");
 	// Print the estimates on the coordinate force vector.
-	for(index_t d = 0; d < 3; d++) {
+	for(size_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_e_column[d]);
 	}
 	fprintf(stream, " ] [ ");
 	// Print the upper bound on the coordinate force vector.
-	for(index_t d = 0; d < 3; d++) {
+	for(size_t d = 0; d < 3; d++) {
 	  fprintf(stream, "%g ", force_vector_u_column[d]);
 	}
 	fprintf(stream, " ] ");
@@ -807,11 +807,11 @@ class AxilrodTellerForceProblem {
 
     /** @brief The chosen indices.
      */
-    ArrayList<index_t> hybrid_node_chosen_indices;
+    ArrayList<size_t> hybrid_node_chosen_indices;
 
-    ArrayList<index_t> query_node_chosen_indices;
+    ArrayList<size_t> query_node_chosen_indices;
     
-    ArrayList<index_t> reference_node_chosen_indices;
+    ArrayList<size_t> reference_node_chosen_indices;
 
     /** @brief The total number of 3-tuples that contain a particular
      *         particle.
@@ -820,7 +820,7 @@ class AxilrodTellerForceProblem {
 
    public:
 
-    void Init(index_t total_num_particles, index_t dimension_in,
+    void Init(size_t total_num_particles, size_t dimension_in,
 	      const ArrayList<Matrix *> &reference_targets,
 	      struct datanode *module_in) {
 
@@ -868,7 +868,7 @@ class AxilrodTellerForceProblem {
     if(hybrid_nodes[0] == hybrid_nodes[1] && 
        hybrid_nodes[1] == hybrid_nodes[2]) {
 
-      for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+      for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 	total_n_minus_one_tuples[i] -= 
 	  (hybrid_nodes[i]->stat().num_precomputed_tuples);
       }
@@ -888,7 +888,7 @@ class AxilrodTellerForceProblem {
     }
     
     // Consider each node in turn whether it can be pruned or not.
-    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+    for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
       // Refine the summary statistics from the new info...
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
@@ -936,7 +936,7 @@ class AxilrodTellerForceProblem {
 
     // In this case, add the delta contributions to the postponed
     // slots of each node.
-    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+    for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(delta, i);
       }
@@ -970,7 +970,7 @@ class AxilrodTellerForceProblem {
 				     total_n_minus_one_tuples);
 
     // Consider each node in turn whether it can be pruned or not.
-    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+    for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
 
       // Refine the summary statistics from the new info...
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
@@ -1003,7 +1003,7 @@ class AxilrodTellerForceProblem {
 
     // In this case, add the delta contributions to the postponed
     // slots of each node.
-    for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+    for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(delta, i);
       }

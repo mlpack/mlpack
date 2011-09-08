@@ -94,9 +94,9 @@ class NaiveKde {
     
     double mean_sqd_error=0;
     double boundary_mean_sqd_error=0;
-    index_t number_of_boundary_points=0;
+    size_t number_of_boundary_points=0;
     
-    for(index_t q=0;q<qset_.n_cols();q++){
+    for(size_t q=0;q<qset_.n_cols();q++){
       
       mean_sqd_error+=pow(densities_[q]-foreign_density.get(0,q),2);
       
@@ -134,12 +134,12 @@ class NaiveKde {
     //fx_timer_start(module_, "naive_kde_compute");
 
     // compute unnormalized sum
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols(); q++) {
       
       const double *q_col = qset_.GetColumnPtr(q);
-      index_t number_of_contributions=0;
+      size_t number_of_contributions=0;
 
-      for(index_t r = 0; r < rset_.n_cols(); r++) {
+      for(size_t r = 0; r < rset_.n_cols(); r++) {
 	const double *r_col = rset_.GetColumnPtr(r);
 	
 	double dsqd = la::DistanceSqEuclidean(qset_.n_rows(), q_col, r_col);
@@ -225,7 +225,7 @@ class NaiveKde {
       fname = fx_param_str(module_, "naive_kde_output", NULL);
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < qset_.n_cols(); q++) {
+    for(size_t q = 0; q < qset_.n_cols(); q++) {
       fprintf(stream, "%g\n", densities_[q]);
     }
     
@@ -246,7 +246,7 @@ class NaiveKde {
   void ComputeMaximumRelativeError(const Vector &density_estimates) {
     
     double max_rel_err = 0;
-    for(index_t q = 0; q < densities_.length(); q++) {
+    for(size_t q = 0; q < densities_.length(); q++) {
       double rel_err = fabs(density_estimates[q] - densities_[q]) / 
 	densities_[q];
 

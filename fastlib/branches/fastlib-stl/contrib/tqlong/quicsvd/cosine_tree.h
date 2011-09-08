@@ -59,7 +59,7 @@ class CosineNode {
   }
 
   /** Return number of columns in this node */
-  index_t n_cols() const {
+  size_t n_cols() const {
     return origIndices_.size();
   }
 
@@ -81,7 +81,7 @@ class CosineNode {
   }
 
   /** Get the original index of certain column */
-  index_t getOrigIndex(index_t i_col) const {
+  size_t getOrigIndex(size_t i_col) const {
     return origIndices_[i_col];
   }
 

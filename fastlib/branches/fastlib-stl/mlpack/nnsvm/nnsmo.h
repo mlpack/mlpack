@@ -20,20 +20,20 @@ class NNSMO
   private:
     arma::mat kernel_cache_sign_;
     Kernel kernel_;
-    index_t n_data_; // number of data samples
+    size_t n_data_; // number of data samples
     arma::mat dataset_; // alias for the data matrix
     arma::vec alpha_; // the alphas, to be optimized
     arma::vec error_; // the error cache
     double thresh_; // negation of the intercept
     double c_;
-    index_t budget_;
+    size_t budget_;
     double sum_alpha_;
 
-    index_t n_feature_; // number of data features
+    size_t n_feature_; // number of data features
     double w_square_sum_; // square sum of the weight vector
     arma::vec VTA_; //
     double eps_; // the tolerace of progress on alpha values
-    index_t max_iter_; // the maximum iteration, termination criteria
+    size_t max_iter_; // the maximum iteration, termination criteria
 
   public:
     NNSMO() {}
@@ -44,21 +44,21 @@ class NNSMO
      *
      * You must initialize separately the kernel.
      */
-    void Init(const arma::mat& dataset_in, double c_in, index_t budget_in,
-              double eps_in, index_t max_iter_in)
+    void Init(const arma::mat& dataset_in, double c_in, size_t budget_in,
+              double eps_in, size_t max_iter_in)
     {
       c_ = c_in;
 
       dataset_ = dataset_in;
 
       n_data_ = dataset_.n_cols;
-      budget_ = std::min(budget_in, (index_t) n_data_);
+      budget_ = std::min(budget_in, (size_t) n_data_);
 
       alpha_.zeros(n_data_);
       sum_alpha_ = 0;
 
       error_.zeros(n_data_);
-      for(index_t i = 0; i < n_data_; i++)
+      for(size_t i = 0; i < n_data_; i++)
       {
         error_[i] -= GetLabelSign_(i);
       }
@@ -91,13 +91,13 @@ class NNSMO
     void GetNNSVM(arma::mat& support_vectors, arma::vec& alpha, arma::vec& w) const;
 
   private:
-    index_t TrainIteration_(bool examine_all);
+    size_t TrainIteration_(bool examine_all);
 
-    bool TryChange_(index_t j);
+    bool TryChange_(size_t j);
 
-    double CalculateDF_(index_t i, index_t j, double error_j);
+    double CalculateDF_(size_t i, size_t j, double error_j);
 
-    bool TakeStep_(index_t i, index_t j, double error_j);
+    bool TakeStep_(size_t i, size_t j, double error_j);
 
     double FixAlpha_(double alpha) const
     {
@@ -118,24 +118,24 @@ class NNSMO
     }
 
    // labels: the last row of the data matrix, 0 or 1
-    int GetLabelSign_(index_t i) const
+    int GetLabelSign_(size_t i) const
     {
       return (dataset_(dataset_.n_rows - 1, i) != 0) ? 1 : -1;
     }
 
-    void GetVector_(index_t i, arma::vec& v) const
+    void GetVector_(size_t i, arma::vec& v) const
     {
       v = arma::vec((double*) dataset_.colptr(i), dataset_.n_rows - 1, false, true); // manual ugly constructor
     }
 
-    double Error_(index_t i) const
+    double Error_(size_t i) const
     {
       return error_[i];
     }
 
-    double Evaluate_(index_t i) const;
+    double Evaluate_(size_t i) const;
 
-    double EvalKernel_(index_t i, index_t j) const
+    double EvalKernel_(size_t i, size_t j) const
     {
       return kernel_cache_sign_(i, j) * (GetLabelSign_(i) * GetLabelSign_(j));
     }
@@ -144,9 +144,9 @@ class NNSMO
     {
       kernel_cache_sign_.set_size(n_data_, n_data_);
       fprintf(stderr, "Kernel Start\n");
-      for (index_t i = 0; i < n_data_; i++)
+      for (size_t i = 0; i < n_data_; i++)
       {
-        for (index_t j = 0; j < n_data_; j++)
+        for (size_t j = 0; j < n_data_; j++)
         {
           arma::vec v_i;
           GetVector_(i, v_i);

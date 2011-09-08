@@ -24,7 +24,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
   // Initialize the multivector to zero.
   linear_transformed_query_expansion_solution_vectors.SetZero();
 
-  for(index_t d = 0; d < row_length_; d++) {
+  for(size_t d = 0; d < row_length_; d++) {
 
     // Compute the current column linear operator.
     ComputeWeightedVectorSum_
@@ -38,9 +38,9 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperatorConfidenceBand
 
     // Accumulate the product between the computed vector and each
     // scalar component of the X.
-    for(index_t q = 0; q < qset.n_cols(); q++) {
+    for(size_t q = 0; q < qset.n_cols(); q++) {
 
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	linear_transformed_query_expansion_solution_vectors.set
 	  (j, q, 
 	   linear_transformed_query_expansion_solution_vectors.get(j, q) +
@@ -76,7 +76,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
   linear_transformed_vectors.SetZero();
   linear_transformed_expansion_vectors.SetZero();
     
-  for(index_t d = 0; d < row_length_; d++) {
+  for(size_t d = 0; d < row_length_; d++) {
 
     // Compute the current column linear operator.
     ComputeWeightedVectorSum_
@@ -91,7 +91,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 
     // Accumulate the product between the computed vector and each
     // scalar component of the X.
-    for(index_t q = 0; q < qset.n_cols(); q++) {
+    for(size_t q = 0; q < qset.n_cols(); q++) {
 
       // If the current query is not in the CG loop, we don't have to
       // update the vector components for it!
@@ -99,7 +99,7 @@ void KrylovLpr<TKernel, TPruneRule>::LinearOperator
 	continue;
       }
 
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	linear_transformed_vectors.set
 	  (j, q, linear_transformed_vectors.get(j, q) +
 	   original_vectors.get(d, q) * vector_e.get(j, q));

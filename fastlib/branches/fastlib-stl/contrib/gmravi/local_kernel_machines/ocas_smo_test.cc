@@ -97,7 +97,7 @@ public:
 	   ocas_smo.num_subgradients_available_);
 
     printf("The subgradients are...\n");
-    for(index_t i=0;i<ocas_smo.num_subgradients_available_;i++){
+    for(size_t i=0;i<ocas_smo.num_subgradients_available_;i++){
 
       ocas_smo.subgradients_mat_[i].PrintDebug();
       printf("intercept:%f....\n",ocas_smo.intercepts_vec_[i]); 
@@ -109,20 +109,20 @@ public:
     /*printf("The alpha vector is ..\n");
   
     printf("I0 indices are ....\n");
-    for(index_t i=0;i<ocas_smo.I0_indices_.size();i++){
+    for(size_t i=0;i<ocas_smo.I0_indices_.size();i++){
      
       printf("%d,",ocas_smo.I0_indices_[i]);
     }
     printf("I1 indices are....\n");
     
-    for(index_t i=0;i<ocas_smo.I1_indices_.size();i++){
+    for(size_t i=0;i<ocas_smo.I1_indices_.size();i++){
      
       printf("%d,",ocas_smo.I1_indices_[i]);
     }
 
     printf("There are %d I2 indices ...\n",ocas_smo.I2_indices_.size());
 
-    for(index_t i=0;i<ocas_smo.I2_indices_.size();i++){
+    for(size_t i=0;i<ocas_smo.I2_indices_.size();i++){
       
       printf("%d,",ocas_smo.I2_indices_[i]);
       }*/

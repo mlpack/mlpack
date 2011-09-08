@@ -65,12 +65,12 @@ void MultibodyBruteForce(const Matrix &particle_set) {
   netforce.Init(3);
   netforce.SetZero();
 
-  for(index_t i = 0; i < particle_set.n_cols() - 2; i++) {
+  for(size_t i = 0; i < particle_set.n_cols() - 2; i++) {
 
     const double *first_point = particle_set.GetColumnPtr(i);
     double *first_point_force_vector = short_bruteforce.GetColumnPtr(i);
 
-    for(index_t j = i + 1; j < particle_set.n_cols() - 1; j++) {
+    for(size_t j = i + 1; j < particle_set.n_cols() - 1; j++) {
 
       const double *second_point = particle_set.GetColumnPtr(j);
       double *second_point_force_vector = short_bruteforce.GetColumnPtr(j);
@@ -89,7 +89,7 @@ void MultibodyBruteForce(const Matrix &particle_set) {
 	pow_squared_distance_between_i_and_j_2_5;
       
 
-      for(index_t k = j + 1; k < particle_set.n_cols(); k++) {
+      for(size_t k = j + 1; k < particle_set.n_cols(); k++) {
 
 	const double *third_point = particle_set.GetColumnPtr(k);
 	double *third_point_force_vector = short_bruteforce.GetColumnPtr(k);
@@ -122,7 +122,7 @@ void MultibodyBruteForce(const Matrix &particle_set) {
 	  squared_distance_between_j_and_k *
 	  pow_squared_distance_between_j_and_k_2_5;
 
-	for(index_t d = 0; d < 3; d++) {
+	for(size_t d = 0; d < 3; d++) {
 
 	  double positive_contribution1 =
 	    AxilrodTellerForceKernelPositiveEvaluate
@@ -228,9 +228,9 @@ void MultibodyBruteForce(const Matrix &particle_set) {
   }
 
   FILE *foutput = fopen("short_bruteforce.txt", "w+");
-  for(index_t i = 0; i < particle_set.n_cols(); i++) {
+  for(size_t i = 0; i < particle_set.n_cols(); i++) {
 
-    for(index_t d = 0; d < 3; d++) {
+    for(size_t d = 0; d < 3; d++) {
       fprintf(foutput, "%g ", short_bruteforce.get(d, i));
     }
     la::AddTo(3, short_bruteforce.GetColumnPtr(i),
@@ -270,7 +270,7 @@ int main(int argc, char *argv[]) {
   // Instantiate a multi-tree problem...
   ArrayList<const Matrix *> sets;
   sets.Init(AxilrodTellerForceProblem::order);
-  for(index_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
+  for(size_t i = 0; i < AxilrodTellerForceProblem::order; i++) {
     sets[i] = &references;
   }
 

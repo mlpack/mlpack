@@ -54,7 +54,7 @@ class MultiTreeQueryResult {
       fx_param_str(fx_root, "error_output", "error.txt");
     FILE *error_output = fopen(error_output_filename, "w+");
 
-    for(index_t i = 0; i < final_results.length(); i++) {
+    for(size_t i = 0; i < final_results.length(); i++) {
       
       double relative_error, negative_relative_error, positive_relative_error;
       
@@ -107,17 +107,17 @@ class MultiTreeQueryResult {
 
   template<typename Tree>
   void UpdatePrunedComponents(const ArrayList<Tree *> &reference_nodes,
-			      index_t q_index) {
+			      size_t q_index) {
   }
 
   void FinalPush(const Matrix &qset, 
-		 const MultiTreeQueryStat &stat_in, index_t q_index) {
+		 const MultiTreeQueryStat &stat_in, size_t q_index) {
       
     ApplyPostponed(stat_in.postponed, q_index);
   }
 
   void ApplyPostponed(const MultiTreeQueryPostponed &postponed_in, 
-		      index_t q_index) {
+		      size_t q_index) {
 
     negative_potential_bound[q_index] += 
       postponed_in.negative_potential_bound;
@@ -142,7 +142,7 @@ class MultiTreeQueryResult {
   }
 
   template<typename MultiTreeGlobal>
-  void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
+  void PostProcess(const MultiTreeGlobal &globals, size_t q_index) {
 
     final_results[q_index] = negative_potential_e[q_index] +
       positive_potential_e[q_index];
@@ -150,7 +150,7 @@ class MultiTreeQueryResult {
 
   template<typename MultiTreeGlobal>
   void Finalize(const MultiTreeGlobal &globals,
-		const ArrayList<index_t> &mapping) {
+		const ArrayList<size_t> &mapping) {
 
     MultiTreeUtility::ShuffleAccordingToQueryPermutation(positive_potential_e,
 							 mapping);
@@ -164,7 +164,7 @@ class MultiTreeQueryResult {
 
     FILE *output_file = fopen(output_file_name, "w+");
     
-    for(index_t i = 0; i < final_results.length(); i++) {
+    for(size_t i = 0; i < final_results.length(); i++) {
       fprintf(output_file, "%g %g\n", final_results[i], n_pruned[i]);
     }
     fclose(output_file);
@@ -172,7 +172,7 @@ class MultiTreeQueryResult {
 
   void SetZero() {
 
-    for(index_t i = 0; i < negative_potential_bound.size(); i++) {
+    for(size_t i = 0; i < negative_potential_bound.size(); i++) {
       negative_potential_bound[i].Init(0, 0);
       positive_potential_bound[i].Init(0, 0);
     }

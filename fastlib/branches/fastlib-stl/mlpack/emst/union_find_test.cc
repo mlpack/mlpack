@@ -16,11 +16,11 @@ using namespace mlpack;
 using namespace mlpack::emst;
 
 BOOST_AUTO_TEST_CASE(TestFind) {     
-  static const index_t test_size_ = 10;  
+  static const size_t test_size_ = 10;  
   UnionFind test_union_find_;
   test_union_find_.Init(test_size_);
 
-  for (index_t i = 0; i < test_size_; i++) {
+  for (size_t i = 0; i < test_size_; i++) {
     BOOST_REQUIRE(test_union_find_.Find(i) == i); 
   }
   test_union_find_.Union(0,1);
@@ -31,7 +31,7 @@ BOOST_AUTO_TEST_CASE(TestFind) {
 }
 
 BOOST_AUTO_TEST_CASE(TestUnion) { 
-  static const index_t test_size_ = 10;
+  static const size_t test_size_ = 10;
   UnionFind test_union_find_;
   test_union_find_.Init(test_size_);
 

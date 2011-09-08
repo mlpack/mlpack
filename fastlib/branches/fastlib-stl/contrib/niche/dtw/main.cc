@@ -17,10 +17,10 @@ int main(int argc, char* argv[]) {
   Matrix test_data_with_labels;
   data::Load(test_data_filename, &test_data_with_labels);
 
-  index_t n_training_points = training_data_with_labels.n_cols();
-  index_t n_test_points = test_data_with_labels.n_cols();
+  size_t n_training_points = training_data_with_labels.n_cols();
+  size_t n_test_points = test_data_with_labels.n_cols();
 
-  index_t n_dims = training_data_with_labels.n_rows() - 1;
+  size_t n_dims = training_data_with_labels.n_rows() - 1;
 
   GenVector<int> predicted_labels;
   predicted_labels.Init(n_test_points);

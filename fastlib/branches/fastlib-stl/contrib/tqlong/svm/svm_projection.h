@@ -5,7 +5,7 @@
 #include <list>
 
 namespace SVM_Projection {
-  typedef std::list<index_t> SV_index;
+  typedef std::list<size_t> SV_index;
 
   void OptimizeQuadraticOnSimplex(const Matrix& Q, Vector* x, SV_index* SVs);
 

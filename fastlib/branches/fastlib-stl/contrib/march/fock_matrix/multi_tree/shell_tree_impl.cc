@@ -13,20 +13,20 @@
 namespace shell_tree_impl {
   
   // this rearranges the list and returns the index of the midpoint
-  index_t SelectListPartition(ArrayList<BasisShell*>& shells, double split_val, 
-                              int split_dim, index_t begin, index_t count,
+  size_t SelectListPartition(ArrayList<BasisShell*>& shells, double split_val, 
+                              int split_dim, size_t begin, size_t count,
                               DHrectBound<2>* left_space, DRange* left_exp, 
                               DRange* left_mom, DHrectBound<2>* right_space, 
                               DRange* right_exp, DRange* right_mom, 
                               DRange* left_norms, DRange* right_norms,
-                              ArrayList<index_t>* perm) {
+                              ArrayList<size_t>* perm) {
     
     DEBUG_ASSERT(split_dim >= 0);
     DEBUG_ASSERT(split_dim <= 4);
     DEBUG_ASSERT(count >= 1);
     
-    index_t left = begin;
-    index_t right = begin + count - 1;
+    size_t left = begin;
+    size_t right = begin + count - 1;
     
     for(;;) {
       
@@ -52,7 +52,7 @@ namespace shell_tree_impl {
         *left_exp |= shells[left]->exp();
         *left_mom |= shells[left]->total_momentum();  
         
-        for (index_t j = 0; j < shells[left]->num_functions(); j++) {
+        for (size_t j = 0; j < shells[left]->num_functions(); j++) {
           *left_norms |= shells[left]->normalization_constant(j);
         }
         
@@ -97,7 +97,7 @@ namespace shell_tree_impl {
         *right_exp |= shells[right]->exp();
         *right_mom |= shells[right]->total_momentum();    
         
-        for (index_t j = 0; j < shells[right]->num_functions(); j++) {
+        for (size_t j = 0; j < shells[right]->num_functions(); j++) {
           *right_norms |= shells[right]->normalization_constant(j);
         }
         
@@ -131,7 +131,7 @@ namespace shell_tree_impl {
       *left_exp |= shells[left]->exp();
       *left_mom |= shells[left]->total_momentum();
       
-      for (index_t j = 0; j < shells[left]->num_functions(); j++) {
+      for (size_t j = 0; j < shells[left]->num_functions(); j++) {
         *left_norms |= shells[left]->normalization_constant(j);
       }
       
@@ -139,7 +139,7 @@ namespace shell_tree_impl {
       *right_exp |= shells[right]->exp();
       *right_mom |= shells[right]->total_momentum();
       
-      for (index_t j = 0; j < shells[right]->num_functions(); j++) {
+      for (size_t j = 0; j < shells[right]->num_functions(); j++) {
         *right_norms |= shells[right]->normalization_constant(j);
       }
       
@@ -163,13 +163,13 @@ namespace shell_tree_impl {
   
 
   void SelectSplit(ArrayList<BasisShell*>& shells, BasisShellTree* node, 
-                   index_t leaf_size, ArrayList<index_t>* old_from_new) {
+                   size_t leaf_size, ArrayList<size_t>* old_from_new) {
     
     BasisShellTree* left = NULL;
     BasisShellTree* right = NULL;
     
     double max_width = -1;
-    index_t split_dim = BIG_BAD_NUMBER;
+    size_t split_dim = BIG_BAD_NUMBER;
     double w;
     
     // are there different momenta?  
@@ -188,7 +188,7 @@ namespace shell_tree_impl {
       max_width = node->exponents().width();
       split_dim = 3;
       
-      for (index_t d = 0; d < 3; d++) {
+      for (size_t d = 0; d < 3; d++) {
         w = node->bound().get(d).width();
         if (w > max_width) {
           max_width = w;
@@ -225,7 +225,7 @@ namespace shell_tree_impl {
       right->normalizations().InitEmptySet();
       
       // shells get rearranged here
-      index_t split_col = SelectListPartition(shells, split_val, split_dim,
+      size_t split_col = SelectListPartition(shells, split_val, split_dim,
                                               node->begin(), node->count(),
                                               &(left->bound()), &(left->exponents()),
                                               &(left->momenta()), &(right->bound()),
@@ -237,7 +237,7 @@ namespace shell_tree_impl {
       right->Init(split_col, node->begin() + node->count() - split_col);
       
       /*
-      for (index_t i = 0; i < shells.size(); i++) {
+      for (size_t i = 0; i < shells.size(); i++) {
         printf("momentum: %d\n", shells[i]->total_momentum());
       }
       */
@@ -253,14 +253,14 @@ namespace shell_tree_impl {
   
   
   BasisShellTree* CreateShellTree(ArrayList<BasisShell*>& shells, 
-                                  index_t leaf_size,
-                                  ArrayList<index_t> *old_from_new,
-                                  ArrayList<index_t> *new_from_old) {
+                                  size_t leaf_size,
+                                  ArrayList<size_t> *old_from_new,
+                                  ArrayList<size_t> *new_from_old) {
     
     if (old_from_new) {
       old_from_new->Init(shells.size());
       
-      for (index_t i = 0; i < shells.size(); i++) {
+      for (size_t i = 0; i < shells.size(); i++) {
         (*old_from_new)[i] = i;
       }
       
@@ -273,13 +273,13 @@ namespace shell_tree_impl {
     node->normalizations().InitEmptySet();
     
     // need to iniut these to right ranges
-    for (index_t i = 0; i < shells.size(); i++) {
+    for (size_t i = 0; i < shells.size(); i++) {
       
       node->bound() |= shells[i]->center();
       node->exponents() |= shells[i]->exp();
       node->momenta() |= shells[i]->total_momentum();
       
-      for (index_t j = 0; j < shells[i]->num_functions(); j++) {
+      for (size_t j = 0; j < shells[i]->num_functions(); j++) {
         node->normalizations() |= shells[i]->normalization_constant(j);
       }
       
@@ -293,7 +293,7 @@ namespace shell_tree_impl {
     if (new_from_old) {
      
       new_from_old->Init(shells.size());
-      for (index_t i = 0; i < shells.size(); i++) {
+      for (size_t i = 0; i < shells.size(); i++) {
         (*new_from_old)[(*old_from_new)[i]] = i;
       }
       

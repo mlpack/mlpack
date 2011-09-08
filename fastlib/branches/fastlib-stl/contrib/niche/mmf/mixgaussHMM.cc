@@ -22,7 +22,7 @@ void MixtureofGaussianHMM::setModel(const Matrix& transmission,
 }
 
 void MixtureofGaussianHMM::InitFromFile(const char* profile) {
-  if (!PASSED(MixtureofGaussianHMM::LoadProfile(profile, &transmission_, &list_mixture_gauss_)))
+  if (!(MixtureofGaussianHMM::LoadProfile(profile, &transmission_, &list_mixture_gauss_)))
     FATAL("Couldn't open '%s' for reading.", profile);
 }
 
@@ -135,11 +135,11 @@ void MixtureofGaussianHMM::TrainViterbi(const ArrayList<Matrix>& list_data_seq, 
   MixtureofGaussianHMM::TrainViterbi(list_data_seq, &transmission_, &list_mixture_gauss_, max_iteration, tolerance);
 }
 
-success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
+bool MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs) {
   ArrayList<Matrix> matlst;
-  if (!PASSED(load_matrix_list(profile, &matlst))) {
+  if (!(load_matrix_list(profile, &matlst))) {
     NONFATAL("Couldn't open '%s' for reading.", profile);
-    return SUCCESS_FAIL;
+    return false;
   }
   DEBUG_ASSERT(matlst.size() >= 4); // at least 1 trans, 1 prior, 1 mean, 1 cov
   trans->Copy(matlst[0]);
@@ -156,14 +156,14 @@ success_t MixtureofGaussianHMM::LoadProfile(const char* profile, Matrix* trans, 
     mixs->PushBackCopy(mix);
     p += 2*K+1;
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
+bool MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs) {
   TextWriter w_pro;
-  if (!PASSED(w_pro.Open(profile))) {
+  if (!(w_pro.Open(profile))) {
     NONFATAL("Couldn't open '%s' for writing.", profile);
-    return SUCCESS_FAIL;
+    return false;
   }
   int M = trans.n_rows(); // num of states
   print_matrix(w_pro, trans, "% transmission", "%E,");
@@ -179,7 +179,7 @@ success_t MixtureofGaussianHMM::SaveProfile(const char* profile, const Matrix& t
       print_matrix(w_pro, mixs[i].get_cov(k), s, "%E,");
     }
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
 void MixtureofGaussianHMM::GenerateInit(int L, const Matrix& trans, const ArrayList<MixtureGauss>& mixs, Matrix* seq, Vector* states){

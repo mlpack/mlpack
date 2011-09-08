@@ -17,7 +17,7 @@
  * Example use:
  * @code
  * Matrix& mat;
- * index_t indices[mat.n_rows()];
+ * size_t indices[mat.n_rows()];
  *
  * ...
  * 
@@ -25,11 +25,11 @@
  * @endcode
  */
 
-void min_element(Matrix& element, index_t *indices) {
+void min_element(Matrix& element, size_t *indices) {
 	
-	index_t last = element.n_cols() - 1;
-	index_t first, lowest;
-	index_t i;
+	size_t last = element.n_cols() - 1;
+	size_t first, lowest;
+	size_t i;
 	
 	for (i = 0; i < element.n_rows(); i++) {
 		
@@ -53,7 +53,7 @@ void min_element(Matrix& element, index_t *indices) {
  *
  * Example use:
  * @code
- * index_t length, index;
+ * size_t length, index;
  * float array[length];
  * ...
  * index = max_element_index(array, length);
@@ -82,7 +82,7 @@ int max_element_index(float *array, int length) {
  *
  * Example use:
  * @code
- * index_t index;
+ * size_t index;
  * ArrayList<float> array;
  * ...
  * index = max_element_index(array);
@@ -111,7 +111,7 @@ int max_element_index(ArrayList<float>& array){
  *
  * Example use:
  * @code
- * index_t index;
+ * size_t index;
  * ArrayList<double> array;
  * ...
  * index = max_element_index(array);

@@ -26,8 +26,8 @@ class EdgePair {
   }
   
 private:
-  index_t lesser_index_;
-  index_t greater_index_;
+  size_t lesser_index_;
+  size_t greater_index_;
   double distance_;
   
 public:
@@ -39,7 +39,7 @@ public:
      * Init.  However, this is not necessary for functionality; it is just a way
      * to keep the edge list organized in other code.
      */
-    void Init(index_t lesser, index_t greater, double dist) {
+    void Init(size_t lesser, size_t greater, double dist) {
       
       DEBUG_ASSERT_MSG(lesser != greater, 
           "indices equal when creating EdgePair, lesser = %d, distance = %f\n",
@@ -50,19 +50,19 @@ public:
       
     }
   
-  index_t lesser_index() {
+  size_t lesser_index() {
     return lesser_index_;
   }
   
-  void set_lesser_index(index_t index) {
+  void set_lesser_index(size_t index) {
     lesser_index_ = index;
   }
   
-  index_t greater_index() {
+  size_t greater_index() {
     return greater_index_;
   }
   
-  void set_greater_index(index_t index) {
+  void set_greater_index(size_t index) {
     greater_index_ = index;
   }
   

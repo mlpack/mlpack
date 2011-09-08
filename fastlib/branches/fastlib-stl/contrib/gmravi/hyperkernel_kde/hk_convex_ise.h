@@ -50,10 +50,10 @@ class HkConvexIse{
 
   //The number of train points
 
-  index_t num_train_points_;
+  size_t num_train_points_;
 
   //The dimensionality of dataset
-  index_t num_dims_;
+  size_t num_dims_;
 
   //The linear constraint
 
@@ -149,13 +149,13 @@ class HkConvexIse{
     gpq.Init(sigma_*sqrt(2),num_dims_);
 
     //Iterations begin from here...................
-    for(index_t p=0;p<num_train_points_;p++){
+    for(size_t p=0;p<num_train_points_;p++){
 
       double *x_p=train_set_.GetColumnPtr(p);
       Vector vec_x_p;
       vec_x_p.Alias(x_p,num_dims_);
 
-      for(index_t q=p;q<num_train_points_;q++){
+      for(size_t q=p;q<num_train_points_;q++){
 
 	double sum_of_row=0;
 	double  *x_q=train_set_.GetColumnPtr(q);
@@ -165,13 +165,13 @@ class HkConvexIse{
 	double sqd_dist=la::DistanceSqEuclidean(vec_x_p,vec_x_q);
 	double gpq_unnorm_val=gpq.EvalUnnormOnSq(sqd_dist);
 
-	for(index_t r=0;r<num_train_points_;r++){
+	for(size_t r=0;r<num_train_points_;r++){
 
 	  double *x_r=train_set_.GetColumnPtr(r);
 	  Vector vec_x_r;
 	  vec_x_r.Alias(x_r,num_dims_);
 
-	  for(index_t s=r+1;s<num_train_points_;s++){
+	  for(size_t s=r+1;s<num_train_points_;s++){
 
 	    double *x_s=train_set_.GetColumnPtr(s);
 	    Vector vec_x_s;
@@ -199,7 +199,7 @@ class HkConvexIse{
 	  -total_sum_of_elem_row;
       }
     }
-    index_t sqd_num_train_points=num_train_points_*num_train_points_;
+    size_t sqd_num_train_points=num_train_points_*num_train_points_;
 
     printf("Sqd number of train points  are...%d\n",sqd_num_train_points);
 
@@ -210,7 +210,7 @@ class HkConvexIse{
 
   //Linear Constraints and the corresponding helper functions
   
-  void DualTreeEvaluationOfLinearConstraint_(index_t p,Vector &row_p){
+  void DualTreeEvaluationOfLinearConstraint_(size_t p,Vector &row_p){
 
     //bw=sqrt(6\sigma^2+4\sigma_h^2)
 
@@ -236,7 +236,7 @@ class HkConvexIse{
     Matrix rset_temp;
     la::ScaleInit(2,train_set_,&rset_temp); //temp <-2x_i
 
-    for(index_t i=0;i<rset_temp.n_cols();i++){
+    for(size_t i=0;i<rset_temp.n_cols();i++){
 
       Vector vec;      
       double *col_ptr=rset_temp.GetColumnPtr(i); //gets a column of the vector
@@ -255,7 +255,7 @@ class HkConvexIse{
     double norm_const=gk.CalcNormConstant(num_dims_);
 
     //Having go the estimates multiply with <x_p,x_q>_{2\sigm,a^2}
-    for(index_t q=p;q<num_train_points_;q++){
+    for(size_t q=p;q<num_train_points_;q++){
       
       double *x_q=train_set_.GetColumnPtr(q);
       Vector vec_x_q;
@@ -278,7 +278,7 @@ class HkConvexIse{
 
     //Fix p and let q vary from q>=p
     
-    for(index_t p=0;p<num_train_points_;p++){ ///THIS HAS TO CHANGE........................
+    for(size_t p=0;p<num_train_points_;p++){ ///THIS HAS TO CHANGE........................
       
       //Lets evaluate the pth row using dual tree computations
 
@@ -288,13 +288,13 @@ class HkConvexIse{
 
       //Having got the row_p evaluations store them
      
-      for(index_t q=p;q<num_train_points_;q++){
+      for(size_t q=p;q<num_train_points_;q++){
 
-	index_t row_num1=p*num_train_points_+q;
+	size_t row_num1=p*num_train_points_+q;
 	At_linear_constraint_[row_num1]=row_p[q-p];
 
 	//By symmetry 
-	index_t row_num2=q*num_train_points_+p;
+	size_t row_num2=q*num_train_points_+p;
 	At_linear_constraint_[row_num2]=row_p[q-p];
       }
     }
@@ -317,13 +317,13 @@ class HkConvexIse{
   Matrix temp;
   temp.Init(num_train_points_,num_train_points_);
 
-  for(index_t p=0;p<train_set_.n_cols();p++){
+  for(size_t p=0;p<train_set_.n_cols();p++){
 
   double *x_p=train_set_.GetColumnPtr(p);
   Vector vec_x_p;
   vec_x_p.Alias(x_p,num_dims_);
 
-  for(index_t q=0;q<train_set_.n_cols();q++){
+  for(size_t q=0;q<train_set_.n_cols();q++){
 	
   double *x_q=train_set_.GetColumnPtr(q);
   Vector vec_x_q;
@@ -335,7 +335,7 @@ class HkConvexIse{
   gk.Init(bandwidth); 
   double kernel_contrib=0;
 
-  for(index_t i=0;i<train_set_.n_cols();i++){
+  for(size_t i=0;i<train_set_.n_cols();i++){
 
   double *x_i=train_set_.GetColumnPtr(i);
   Vector vec_x_i;
@@ -374,11 +374,11 @@ class HkConvexIse{
   //printf("comparing the errors by comparing the naive estimates...\n");
   double max_diff=DBL_MIN;
   double diff=0;
-  for(index_t p=0;p<num_train_points_;p++){
+  for(size_t p=0;p<num_train_points_;p++){
 
-  for(index_t q=0;q<num_train_points_;q++){
+  for(size_t q=0;q<num_train_points_;q++){
 
-  index_t row_num=p*num_train_points_+q;
+  size_t row_num=p*num_train_points_+q;
   
   if(fabs(At_linear_constraint_[row_num])>EPSILON && 
      fabs(temp.get(p,q))>EPSILON){
@@ -581,7 +581,7 @@ class HkConvexIse{
     
     At_linear_constraint_.Init(num_train_points_*num_train_points_+2);
 
-    index_t len_linear=num_train_points_*num_train_points_+2;
+    size_t len_linear=num_train_points_*num_train_points_+2;
 
     At_linear_objective_.Init(len_linear);
   }

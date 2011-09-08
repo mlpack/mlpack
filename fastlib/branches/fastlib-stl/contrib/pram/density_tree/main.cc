@@ -54,7 +54,7 @@ const fx_module_doc dtree_main_doc = {
 
 void PermuteMatrix(const Matrix&, Matrix*);
 void DoFunkyStuff(DTree *dtree, const Matrix& data,
-		  const Matrix& labels, index_t num_classes);
+		  const Matrix& labels, size_t num_classes);
 
 
 int main(int argc, char *argv[]){
@@ -66,7 +66,7 @@ int main(int argc, char *argv[]){
   NOTIFY("Loading data file...\n");
   data::Load(data_file.c_str(), &dataset);
 
-  NOTIFY("%"LI"d points in %"LI"d dims.", dataset.n_cols(),
+  NOTIFY("%zud points in %zud dims.", dataset.n_cols(),
 	 dataset.n_rows());
 
 //   // getting information about the feature type
@@ -74,7 +74,7 @@ int main(int argc, char *argv[]){
 //   // enum ... don't know how to use it though.
 //   ArrayList<enum> dim_type;
 //   dim_type.Init(dataset.n_rows());
-//   for (index_t i = 0; i < dim_type.size(); i++) {
+//   for (size_t i = 0; i < dim_type.size(); i++) {
 //     // assign dim type somehow
 //   } // end for
 
@@ -86,7 +86,7 @@ int main(int argc, char *argv[]){
   Matrix temp_d;
   la::TransposeInit(dataset, &temp_d);
 
-  for (index_t i = 0; i < temp_d.n_cols(); i++) {
+  for (size_t i = 0; i < temp_d.n_cols(); i++) {
     // if (dim_type[i] != NOMINAL) {
     Vector dim_vals;
     temp_d.MakeColumnVector(i, &dim_vals);
@@ -103,9 +103,9 @@ int main(int argc, char *argv[]){
   DTree *dtree = new DTree();
   dtree->Init(max_vals, min_vals, dataset.n_cols());
   // Getting ready to grow the tree
-  ArrayList<index_t> old_from_new;
+  ArrayList<size_t> old_from_new;
   old_from_new.Init(dataset.n_cols());
-  for (index_t i = 0; i < old_from_new.size(); i++) {
+  for (size_t i = 0; i < old_from_new.size(); i++) {
     old_from_new[i] = i;
   }
 
@@ -122,7 +122,7 @@ int main(int argc, char *argv[]){
   double new_f = dtree->st_estimate();
   double old_f = new_f;
 
-  NOTIFY("%"LI"d leaf nodes in this tree, min_alpha: %Lg",
+  NOTIFY("%zud leaf nodes in this tree, min_alpha: %Lg",
 	 dtree->subtree_leaves(), alpha);
 
   // computing densities for the train points in the
@@ -131,7 +131,7 @@ int main(int argc, char *argv[]){
     FILE *fp = 
       fopen(fx_param_str_req(root, "train_full_tree_density_file"), "w");
     if (fp != NULL) {
-      for (index_t i = 0; i < dataset.n_cols(); i++) {
+      for (size_t i = 0; i < dataset.n_cols(); i++) {
 	Vector test_p;
 	dataset.MakeColumnVector(i, &test_p);
 	double f = dtree->ComputeValue(test_p, false);
@@ -156,7 +156,7 @@ int main(int argc, char *argv[]){
     alpha = dtree->PruneAndUpdate(old_alpha);
     new_f = dtree->st_estimate();
     DEBUG_ASSERT_MSG((alpha < LDBL_MAX)||(dtree->subtree_leaves() == 1),
-		     "old_alpha:%Lg, alpha:%Lg, tree size:%"LI"d",
+		     "old_alpha:%Lg, alpha:%Lg, tree size:%zud",
 		     old_alpha, alpha, dtree->subtree_leaves());
     DEBUG_ASSERT(alpha > old_alpha);
   } // end while
@@ -165,40 +165,40 @@ int main(int argc, char *argv[]){
   pruned_sequence.push_back(tree_seq);
   change_in_estimate.push_back(fabs(new_f - old_f));
 
-  NOTIFY("%"LI"d trees in the sequence, max_alpha:%Lg.\n",
-	 (index_t) pruned_sequence.size(), old_alpha);
+  NOTIFY("%zud trees in the sequence, max_alpha:%Lg.\n",
+	 (size_t) pruned_sequence.size(), old_alpha);
 
 
   // exit(0);
 
   // cross-validation here
-  index_t folds = fx_param_int(root, "folds", 10);
+  size_t folds = fx_param_int(root, "folds", 10);
   if (folds == 0) {
     folds = dataset.n_cols();
     NOTIFY("Starting Leave-One-Out Cross validation");
   } else 
-    NOTIFY("Starting %"LI"d-fold Cross validation", folds);
+    NOTIFY("Starting %zud-fold Cross validation", folds);
 
   // Permute the dataset once just for keeps
   Matrix pdata;
   //  PermuteMatrix(dataset, &pdata);
   pdata.Copy(dataset);
   //  pdata.PrintDebug("Per");
-  index_t test_size = dataset.n_cols() / folds;
+  size_t test_size = dataset.n_cols() / folds;
 
   // Go through each fold
-  for (index_t fold = 0; fold < folds; fold++) {
-    // NOTIFY("Fold %"LI"d...", fold+1);
+  for (size_t fold = 0; fold < folds; fold++) {
+    // NOTIFY("Fold %zud...", fold+1);
 
     // break up data into train and test set
     Matrix test;
-    index_t start = fold * test_size,
+    size_t start = fold * test_size,
       end = min ((fold + 1) * test_size,dataset.n_cols());
     pdata.MakeColumnSlice(start, end - start, &test);
     Matrix train;
     train.Init(pdata.n_rows(), pdata.n_cols() - (end - start));
-    index_t k = 0;
-    for (index_t j = 0; j < pdata.n_cols(); j++) {
+    size_t k = 0;
+    for (size_t j = 0; j < pdata.n_cols(); j++) {
       if (j < start || j >= end) {
 	Vector temp_vec;
 	pdata.MakeColumnVector(j, &temp_vec);
@@ -216,7 +216,7 @@ int main(int argc, char *argv[]){
     Matrix temp_t;
     la::TransposeInit(train, &temp_t);
 
-    for (index_t i = 0; i < temp_t.n_cols(); i++) {
+    for (size_t i = 0; i < temp_t.n_cols(); i++) {
       Vector dim_vals;
       temp_t.MakeColumnVector(i, &dim_vals);
 
@@ -232,9 +232,9 @@ int main(int argc, char *argv[]){
     DTree *dtree_cv = new DTree();
     dtree_cv->Init(max_vals_cv, min_vals_cv, train.n_cols());
     // Getting ready to grow the tree
-    ArrayList<index_t> old_from_new_cv;
+    ArrayList<size_t> old_from_new_cv;
     old_from_new_cv.Init(train.n_cols());
-    for (index_t i = 0; i < old_from_new_cv.size(); i++) {
+    for (size_t i = 0; i < old_from_new_cv.size(); i++) {
       old_from_new_cv[i] = i;
     }
 
@@ -250,7 +250,7 @@ int main(int argc, char *argv[]){
       
       // compute test values for this state of the tree
       long double val_cv = 0.0;
-      for (index_t i = 0; i < test.n_cols(); i++) {
+      for (size_t i = 0; i < test.n_cols(); i++) {
 	Vector test_point;
 	test.MakeColumnVector(i, &test_point);
 	val_cv += dtree_cv->ComputeValue(test_point, false);
@@ -266,7 +266,7 @@ int main(int argc, char *argv[]){
 
     // compute test values for this state of the tree
     long double val_cv = 0.0;
-    for (index_t i = 0; i < test.n_cols(); i++) {
+    for (size_t i = 0; i < test.n_cols(); i++) {
       Vector test_point;
       test.MakeColumnVector(i, &test_point);
       val_cv += dtree_cv->ComputeValue(test_point, false);
@@ -293,7 +293,7 @@ int main(int argc, char *argv[]){
   DTree *dtree_opt = new DTree();
   dtree_opt->Init(max_vals, min_vals, dataset.n_cols());
   // Getting ready to grow the tree
-  for (index_t i = 0; i < old_from_new.size(); i++) {
+  for (size_t i = 0; i < old_from_new.size(); i++) {
     old_from_new[i] = i;
   }
 
@@ -305,9 +305,9 @@ int main(int argc, char *argv[]){
   // Growing the tree
   old_alpha = 0.0;
   alpha = dtree_opt->Grow(new_dataset, &old_from_new);
-  NOTIFY("%"LI"d leaf nodes in this tree\n opt_alpha:%Lg",
+  NOTIFY("%zud leaf nodes in this tree\n opt_alpha:%Lg",
 	 dtree_opt->subtree_leaves(), optimal_alpha);
-//   printf("%"LI"d leaf nodes in this tree\n opt_alpha:%Lg\n",
+//   printf("%zud leaf nodes in this tree\n opt_alpha:%Lg\n",
 // 	 dtree_opt->subtree_leaves(), optimal_alpha);
 
   // BS hack for optimal alpha
@@ -318,12 +318,12 @@ int main(int argc, char *argv[]){
     old_alpha = alpha;
     alpha = dtree_opt->PruneAndUpdate(old_alpha);
     DEBUG_ASSERT_MSG((alpha < DBL_MAX)||(dtree->subtree_leaves() == 1),
-		     "old_alpha:%Lg, alpha:%Lg, tree size:%"LI"d",
+		     "old_alpha:%Lg, alpha:%Lg, tree size:%zud",
 		     old_alpha, alpha, dtree->subtree_leaves());
     DEBUG_ASSERT(alpha > old_alpha);
   } // end while
 
-  NOTIFY("%"LI"d leaf nodes in this tree\n old_alpha:%Lg",
+  NOTIFY("%zud leaf nodes in this tree\n old_alpha:%Lg",
 	 dtree_opt->subtree_leaves(), old_alpha);
 
   // stopping the training timer
@@ -348,7 +348,7 @@ int main(int argc, char *argv[]){
     fp = fopen(train_density_file.c_str(), "w");
   }
   if (fx_param_bool(root, "compute_training", 0)) {
-    for (index_t i = 0; i < dataset.n_cols(); i++) {
+    for (size_t i = 0; i < dataset.n_cols(); i++) {
       Vector test_p;
       dataset.MakeColumnVector(i, &test_p);
       double f = dtree_opt->ComputeValue(test_p, true);
@@ -370,14 +370,14 @@ int main(int argc, char *argv[]){
     NOTIFY("Loading test data...\n");
     data::Load(test_file.c_str(), &test_set);
 
-    NOTIFY("%"LI"d points in %"LI"d dims.", test_set.n_cols(),
+    NOTIFY("%zud points in %zud dims.", test_set.n_cols(),
 	   test_set.n_rows());
 
     std::string test_density_file
       = fx_param_str_req(root, "test_density_file");
     FILE *fp = fopen(test_density_file.c_str(), "w");
     if (fp != NULL) {
-      for (index_t i = 0; i < test_set.n_cols(); i++) {
+      for (size_t i = 0; i < test_set.n_cols(); i++) {
 	Vector test_p;
 	test_set.MakeColumnVector(i, &test_p);
 	double f = dtree_opt->ComputeValue(test_p, false);
@@ -397,7 +397,7 @@ int main(int argc, char *argv[]){
     Matrix labels;
     NOTIFY("loading labels.\n");
     data::Load(labels_file.c_str(), &labels);
-    index_t num_classes = fx_param_int_req(root, "num_classes");
+    size_t num_classes = fx_param_int_req(root, "num_classes");
 
     DEBUG_ASSERT(dataset.n_cols() == labels.n_cols());
     DEBUG_ASSERT(labels.n_rows() == 1);
@@ -408,23 +408,23 @@ int main(int argc, char *argv[]){
   if(fx_param_bool(root, "print_vi", false)) {
     ArrayList<long double> *imps = new ArrayList<long double>();
     imps->Init(dataset.n_rows());
-    for (index_t i = 0; i < imps->size(); i++) {
+    for (size_t i = 0; i < imps->size(); i++) {
       (*imps)[i] = 0.0;
     }
 
     dtree_opt->ComputeVariableImportance(imps);
     long double max = 0.0;
-    for (index_t i = 0; i < imps->size(); i++)
+    for (size_t i = 0; i < imps->size(); i++)
       if ((*imps)[i] > max)
 	max = (*imps)[i];
     printf("Max: %Lg\n", max); fflush(NULL);
 
-    for (index_t i = 0; i < imps->size(); i++)
+    for (size_t i = 0; i < imps->size(); i++)
       printf("%Lg,", (*imps)[i]);
 
     printf("\b\n ------------------------------- \n\n");fflush(NULL);
 
-    for (index_t i = 0; i < imps->size(); i++)
+    for (size_t i = 0; i < imps->size(); i++)
       if ((*imps)[i] > 0.0) 
 	printf("256,");
       else
@@ -439,14 +439,14 @@ int main(int argc, char *argv[]){
 
 void PermuteMatrix(const Matrix& input, Matrix *output) {
 
-  ArrayList<index_t> perm_array;
-  index_t size = input.n_cols();
+  ArrayList<size_t> perm_array;
+  size_t size = input.n_cols();
   Matrix perm_mat;
   perm_mat.Init(size, size);
   perm_mat.SetAll(0.0);
   srand( time(NULL));
   math::MakeRandomPermutation(size, &perm_array);
-  for(index_t i = 0; i < size; i++) {
+  for(size_t i = 0; i < size; i++) {
     perm_mat.set(perm_array[i], i, 1.0);
   }
   la::MulInit(input, perm_mat, output);
@@ -454,19 +454,19 @@ void PermuteMatrix(const Matrix& input, Matrix *output) {
 }
 
  void DoFunkyStuff(DTree *dtree, const Matrix& data,
-		   const Matrix& labels, index_t num_classes) {
+		   const Matrix& labels, size_t num_classes) {
 
-   index_t num_leaves = dtree->TagTree(0);
+   size_t num_leaves = dtree->TagTree(0);
    dtree->WriteTree(0);printf("\n");fflush(NULL);
    Matrix table;
    table.Init(num_leaves, num_classes);
    table.SetZero();
-   for (index_t i = 0; i < data.n_cols(); i++) {
+   for (size_t i = 0; i < data.n_cols(); i++) {
      Vector test_p;
      data.MakeColumnVector(i, &test_p);
-     index_t leaf_tag = dtree->FindBucket(test_p);
-     index_t label = (index_t) labels.get(0, i);
-//      printf("%"LI"d,%"LI"d - %lg\n", leaf_tag, label, 
+     size_t leaf_tag = dtree->FindBucket(test_p);
+     size_t label = (size_t) labels.get(0, i);
+//      printf("%zud,%zud - %lg\n", leaf_tag, label, 
 // 	    table.get(leaf_tag, label));
      table.set(leaf_tag, label, 
 	       table.get(leaf_tag, label) + 1.0);

@@ -36,13 +36,13 @@ class GeneralBinarySpaceTree {
   Bound bound_;
   GeneralBinarySpaceTree *left_;
   GeneralBinarySpaceTree *right_;
-  index_t begin_;
-  index_t count_;
-  index_t node_id_; // the id of this node in the tree
+  size_t begin_;
+  size_t count_;
+  size_t node_id_; // the id of this node in the tree
   Statistic stat_;
 
   // index of the splitting point in the old dataset
-  index_t split_point_idx_old_;
+  size_t split_point_idx_old_;
   
   OT_DEF(GeneralBinarySpaceTree) {
     OT_MY_OBJECT(bound_);
@@ -74,7 +74,7 @@ class GeneralBinarySpaceTree {
   }
   */
   
-  void Init(index_t begin_in, index_t count_in, index_t node_id_in) {
+  void Init(size_t begin_in, size_t count_in, size_t node_id_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
@@ -96,7 +96,7 @@ class GeneralBinarySpaceTree {
    * @return the found node, or NULL
    */
   const GeneralBinarySpaceTree* FindByBeginCount
-  (index_t begin_q, index_t count_q) const {
+  (size_t begin_q, size_t count_q) const {
     DEBUG_ASSERT(begin_q >= begin_);
     DEBUG_ASSERT(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
@@ -122,7 +122,7 @@ class GeneralBinarySpaceTree {
    * @return the found node, or NULL
    */
   GeneralBinarySpaceTree* FindByBeginCount
-  (index_t begin_q, index_t count_q) {
+  (size_t begin_q, size_t count_q) {
     DEBUG_ASSERT(begin_q >= begin_);
     DEBUG_ASSERT(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
@@ -193,28 +193,28 @@ class GeneralBinarySpaceTree {
   /**
    * Gets the index of the begin point of this subset.
    */
-  index_t begin() const {
+  size_t begin() const {
     return begin_;
   }
 
   /**
    * Gets the index one beyond the last index in the series.
    */
-  index_t end() const {
+  size_t end() const {
     return begin_ + count_;
   }
   
   /**
    * Gets the number of points in this subset.
    */
-  index_t count() const {
+  size_t count() const {
     return count_;
   }
 
   /**
    * Gets the id of this node
    */
-  index_t node_id() const {
+  size_t node_id() const {
     return node_id_;
   }
   
@@ -237,12 +237,12 @@ class GeneralBinarySpaceTree {
   /**
    * save the index(in the old dataset) of the splitting point for this node
    */
-  void set_split_point_idx_old(index_t idx_in) {
+  void set_split_point_idx_old(size_t idx_in) {
     //printf("s_point:%d\n", idx_in);
     split_point_idx_old_ = idx_in;
   }
 
-  index_t get_split_point_idx_old() {
+  size_t get_split_point_idx_old() {
     return split_point_idx_old_;
   }
   

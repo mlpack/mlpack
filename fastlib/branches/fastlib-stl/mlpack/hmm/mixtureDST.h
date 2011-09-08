@@ -56,13 +56,13 @@ class MixtureGauss {
    * start with the prior vector, follows by the mean and covariance
    * of each cluster.
    */
-  void InitFromProfile(const std::vector<arma::mat>& matlst, index_t start, index_t N);
+  void InitFromProfile(const std::vector<arma::mat>& matlst, size_t start, size_t N);
 
   /** Init with K clusters and dimension N */
-  void Init(index_t K, index_t N);
+  void Init(size_t K, size_t N);
 
   /** Init with K clusters and the data with label */
-  void Init(index_t K, const arma::mat& data, const std::vector<index_t>& labels);
+  void Init(size_t K, const arma::mat& data, const std::vector<size_t>& labels);
 
   /** Print the mixture to stdout for debugging */
   void print_mixture(const char* s) const;
@@ -74,28 +74,28 @@ class MixtureGauss {
   double getPDF(const arma::vec& v) const;
 
   /** Get the value of density funtion of each cluster at a given point */  
-  double getPDF(index_t cluster, const arma::vec& v) const;
+  double getPDF(size_t cluster, const arma::vec& v) const;
 
   /** Get the prior probabilities vector */
   const arma::vec& get_prior() const { return prior; }
 
   /** Get the mean of certain cluster */
-  const arma::vec& get_mean(index_t k) const { return means[k]; }
+  const arma::vec& get_mean(size_t k) const { return means[k]; }
 
   /** Get the covariance of certain cluster */
-  const arma::mat& get_cov(index_t k) const { return covs[k]; }
+  const arma::mat& get_cov(size_t k) const { return covs[k]; }
 
   /** Get the number of cluster */
-  index_t n_clusters() const { return means.size(); }
+  size_t n_clusters() const { return means.size(); }
   
   /** Get the dimension */
-  index_t v_length() const { return means[0].n_elem; }
+  size_t v_length() const { return means[0].n_elem; }
 
   
   /** Start accumulate by setting accumulate variable to zero */
   void start_accumulate() {
     total = 0;
-    for (index_t i = 0; i < means.size(); i++) {
+    for (size_t i = 0; i < means.size(); i++) {
       ACC_means[i].zeros();
       ACC_covs[i].zeros();
       ACC_prior.zeros();
@@ -105,7 +105,7 @@ class MixtureGauss {
   /** Accumulate a vector v */
   void accumulate(const arma::vec& v) {
     double s = getPDF(v);
-    for (index_t i = 0; i < means.size(); i++) {
+    for (size_t i = 0; i < means.size(); i++) {
       double p = getPDF(i, v) / s;
       ACC_prior[i] += p;
       ACC_means[i] += p * v;
@@ -116,7 +116,7 @@ class MixtureGauss {
   }
 
   /** Accumulate a vector into certain cluster */
-  void accumulate_cluster(index_t i, const arma::vec& v) {
+  void accumulate_cluster(size_t i, const arma::vec& v) {
     ACC_means[i] += v;
     ACC_covs[i] += v * trans(v);
     ACC_prior[i]++;
@@ -124,7 +124,7 @@ class MixtureGauss {
   }
 
   /** Accumulate a vector into certain cluster with weight */
-  void accumulate(double p, index_t i, const arma::vec& v) {
+  void accumulate(double p, size_t i, const arma::vec& v) {
     ACC_means[i] += p * v;
     ACC_covs[i] += p * (v * trans(v));
     ACC_prior[i] += p;
@@ -133,7 +133,7 @@ class MixtureGauss {
 
   /** End the accumulate, calculate the new mean, covariance and prior */
   void end_accumulate_cluster() {
-    for (index_t i = 0; i < means.size(); i++) 
+    for (size_t i = 0; i < means.size(); i++) 
       if (ACC_prior[i] != 0) {
         means[i] = ACC_means[i] / ACC_prior[i];
 
@@ -149,7 +149,7 @@ class MixtureGauss {
 
   /** End the accumulate, calculate the new mean, covariance and prior */  
   void end_accumulate() {
-    for (index_t i = 0; i < means.size(); i++) {
+    for (size_t i = 0; i < means.size(); i++) {
       if (ACC_prior[i] != 0) {
         ACC_covs[i] /= ACC_prior[i];
         ACC_covs[i] -= means[i] * trans(means[i]);

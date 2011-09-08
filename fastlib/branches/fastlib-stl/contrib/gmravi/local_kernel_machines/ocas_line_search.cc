@@ -531,7 +531,7 @@ void OCASLineSearch ::Init(Matrix &train_data_appended,
 			   Vector &train_labels, 
 			   Vector &query_point_appended, 
 			   double lambda_reg_const, 
-			   ArrayList<index_t> &indices_in_range,
+			   ArrayList<size_t> &indices_in_range,
 			   ArrayList <double> &smoothing_kernel_values_in_range,
 			   int num_points_in_range, int num_train_points,
 			   Vector &w_1,Vector &w_2){

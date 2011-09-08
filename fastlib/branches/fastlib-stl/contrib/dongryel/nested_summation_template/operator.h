@@ -12,7 +12,7 @@ class Operator {
   /** @brief The minimum number of samples to achieve approximate
    *         asymptotic normality.
    */
-  static const index_t min_num_samples_ = 25;
+  static const size_t min_num_samples_ = 25;
 
   /** @brief The nested operators under this operator.
    */
@@ -20,12 +20,12 @@ class Operator {
 
   /** @brief The dataset index that must be set for this operator.
    */
-  index_t dataset_index_;
+  size_t dataset_index_;
 
   /** @brief The list of restrictions for each dataset index. This is
    *         a global pointer
    */
-  std::map<index_t, std::vector<index_t> > *restrictions_;
+  std::map<size_t, std::vector<size_t> > *restrictions_;
 
   /** @brief The ordered list of datasets. This is a global list of
    *         datasets.
@@ -43,10 +43,10 @@ class Operator {
   bool should_be_inverted_;
 
   bool CheckViolation_
-  (const std::map<index_t, index_t> &previous_constant_dataset_indices,
-   const std::vector<index_t> &restriction_vector, index_t new_point_index) {
+  (const std::map<size_t, size_t> &previous_constant_dataset_indices,
+   const std::vector<size_t> &restriction_vector, size_t new_point_index) {
 
-    for(index_t n = 0; n < (index_t) restriction_vector.size(); n++) {
+    for(size_t n = 0; n < (size_t) restriction_vector.size(); n++) {
       
       if(previous_constant_dataset_indices.find(new_point_index) !=
 	 previous_constant_dataset_indices.end()) {
@@ -57,17 +57,17 @@ class Operator {
   }
 
   void ChoosePointIndex_
-  (std::map<index_t, index_t> &previous_constant_dataset_indices) {
+  (std::map<size_t, size_t> &previous_constant_dataset_indices) {
     
     // Choose a new point index subject to the existing restrictions...
-    index_t new_point_index;
+    size_t new_point_index;
     bool done_flag = true;
 
     // Get the list of restrictions associated with the current
     // dataset index.
-    std::map<index_t, std::vector<int> >::iterator restriction = 
+    std::map<size_t, std::vector<int> >::iterator restriction = 
       restrictions_->find(dataset_index_);
-    const std::vector<index_t> &restriction_vector = (*restriction).second;
+    const std::vector<size_t> &restriction_vector = (*restriction).second;
 
     // The pointer to the current dataset.
     const Matrix *current_dataset = (*datasets_)[dataset_index_];
@@ -96,7 +96,7 @@ class Operator {
     previous_constant_dataset_indices[dataset_index_] = new_point_index;
   }
 
-  double PostProcess_(std::map<index_t, index_t> &constant_dataset_indices,
+  double PostProcess_(std::map<size_t, size_t> &constant_dataset_indices,
 		      double sub_result) {
 
     double result = sub_result;
@@ -119,7 +119,7 @@ class Operator {
   virtual ~Operator() {
   }
   
-  const std::map<index_t, std::vector<index_t> > *restrictions() {
+  const std::map<size_t, std::vector<size_t> > *restrictions() {
     return restrictions_;
   }
 
@@ -146,18 +146,18 @@ class Operator {
    */
   virtual double MonteCarloCompute
   (ArrayList<Strata> &list_of_strata,
-   std::map<index_t, index_t> &constant_dataset_indices,
+   std::map<size_t, size_t> &constant_dataset_indices,
    double relative_error, double probability) = 0;
 
   /** @brief Evaluate the operator exactly.
    */
   virtual double NaiveCompute
-  (std::map<index_t, index_t> &constant_dataset_indices) = 0;
+  (std::map<size_t, size_t> &constant_dataset_indices) = 0;
 
   /** @brief Initialize.
    */
-  void Init(index_t dataset_index_in,
-	    std::map<index_t, std::vector<index_t> > *restrictions_in, 
+  void Init(size_t dataset_index_in,
+	    std::map<size_t, std::vector<size_t> > *restrictions_in, 
 	    ArrayList<Matrix *> *datasets_in, bool is_positive_in,
 	    bool should_be_inverted_in) {
 

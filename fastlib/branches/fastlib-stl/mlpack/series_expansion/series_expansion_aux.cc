@@ -5,25 +5,25 @@ const arma::vec& SeriesExpansionAux::get_inv_multiindex_factorials() const {
   return inv_multiindex_factorials_;
 }
 
-index_t SeriesExpansionAux::get_max_total_num_coeffs() const {
+size_t SeriesExpansionAux::get_max_total_num_coeffs() const {
   return list_total_num_coeffs_[max_order_];
 }
 
-const std::vector < std::vector<index_t> >& SeriesExpansionAux::get_lower_mapping_index() 
+const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_lower_mapping_index() 
   const {
   return lower_mapping_index_;
 }
 
-index_t SeriesExpansionAux::get_max_order() const {
+size_t SeriesExpansionAux::get_max_order() const {
   return max_order_;
 }
 
-const std::vector < index_t > &SeriesExpansionAux::get_multiindex(index_t pos) 
+const std::vector < size_t > &SeriesExpansionAux::get_multiindex(size_t pos) 
   const {
   return multiindex_mapping_[pos];
 }
 
-const std::vector < std::vector<index_t> >& SeriesExpansionAux::get_multiindex_mapping() 
+const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_multiindex_mapping() 
   const {
   return multiindex_mapping_;
 }
@@ -32,33 +32,33 @@ const arma::vec& SeriesExpansionAux::get_neg_inv_multiindex_factorials() const {
   return neg_inv_multiindex_factorials_;
 }
 
-double SeriesExpansionAux::get_n_choose_k(index_t n, index_t k) const {
-  return n_choose_k_(n, (index_t) math::ClampNonNegative(k));
+double SeriesExpansionAux::get_n_choose_k(size_t n, size_t k) const {
+  return n_choose_k_(n, (size_t) math::ClampNonNegative(k));
 }
 
-double SeriesExpansionAux::get_n_multichoose_k_by_pos(index_t n, index_t k) const {
+double SeriesExpansionAux::get_n_multichoose_k_by_pos(size_t n, size_t k) const {
   return multiindex_combination_(n, k);
 }
 
-index_t SeriesExpansionAux::get_total_num_coeffs(index_t order) const {
+size_t SeriesExpansionAux::get_total_num_coeffs(size_t order) const {
 
   return list_total_num_coeffs_[order];
 }
 
-const std::vector < std::vector< index_t > >& SeriesExpansionAux::get_upper_mapping_index() 
+const std::vector < std::vector< size_t > >& SeriesExpansionAux::get_upper_mapping_index() 
   const {
 
   return upper_mapping_index_;
 }
 
-index_t SeriesExpansionAux::ComputeMultiindexPosition
-(const std::vector<index_t> &multiindex) const {
+size_t SeriesExpansionAux::ComputeMultiindexPosition
+(const std::vector<size_t> &multiindex) const {
 
-  index_t dim = multiindex.size();
-  index_t mapping_sum = 0;
-  index_t index = 0;
+  size_t dim = multiindex.size();
+  size_t mapping_sum = 0;
+  size_t index = 0;
 
-  for(index_t j = 0; j < dim; j++) {
+  for(size_t j = 0; j < dim; j++) {
 
     // If any of the index is negative, then it does not exist!
     if(multiindex[j] < 0) {
@@ -69,8 +69,8 @@ index_t SeriesExpansionAux::ComputeMultiindexPosition
     mapping_sum += multiindex[j];
   }
   if(index >= 0) {
-    for(index_t j = 0; j < dim; j++) {
-      index += (index_t) get_n_choose_k(mapping_sum + dim - j - 1, dim - j);
+    for(size_t j = 0; j < dim; j++) {
+      index += (size_t) get_n_choose_k(mapping_sum + dim - j - 1, dim - j);
       mapping_sum -= multiindex[j];
     }
   }
@@ -78,33 +78,33 @@ index_t SeriesExpansionAux::ComputeMultiindexPosition
   return index;
 }
 
-double SeriesExpansionAux::FarFieldEvaluationCost(index_t order) const {
+double SeriesExpansionAux::FarFieldEvaluationCost(size_t order) const {
   return pow(dim_, order + 1);
 }
 
-double SeriesExpansionAux::FarFieldToLocalTranslationCost(index_t order) const {
+double SeriesExpansionAux::FarFieldToLocalTranslationCost(size_t order) const {
   return pow(dim_, 2 * order + 1);
 }
 
-double SeriesExpansionAux::DirectLocalAccumulationCost(index_t order) const {
+double SeriesExpansionAux::DirectLocalAccumulationCost(size_t order) const {
   return pow(dim_, order + 1);
 }
 
-void SeriesExpansionAux::Init(index_t max_order, index_t dim) {
+void SeriesExpansionAux::Init(size_t max_order, size_t dim) {
 
-  index_t p, k, t, tail, i, j;
-  std::vector<index_t> heads;
-  std::vector<index_t> cinds;
+  size_t p, k, t, tail, i, j;
+  std::vector<size_t> heads;
+  std::vector<size_t> cinds;
 
   // initialize max order and dimension
   dim_ = dim;
   max_order_ = max_order;
   
   // compute the list of total number of coefficients for p-th order expansion
-  index_t limit = 2 * max_order + 1;
+  size_t limit = 2 * max_order + 1;
   list_total_num_coeffs_.reserve(limit);
   for(p = 0; p < limit; p++) {
-    list_total_num_coeffs_[p] = (index_t) math::BinomialCoefficient(p + dim, dim);
+    list_total_num_coeffs_[p] = (size_t) math::BinomialCoefficient(p + dim, dim);
   }
 
   // compute factorials
@@ -138,7 +138,7 @@ void SeriesExpansionAux::Init(index_t max_order, index_t dim) {
   neg_inv_multiindex_factorials_[0] = 1.0;
   for(k = 1, t = 1, tail = 1; k <= 2 * max_order_; k++, tail = t) {
     for(i = 0; i < dim; i++) {
-      index_t head = (index_t) heads[i];
+      size_t head = (size_t) heads[i];
       heads[i] = t;
       for(j = head; j < tail; j++, t++) {
 	cinds[t] = (j < heads[i + 1]) ? cinds[j] + 1 : 1;
@@ -172,16 +172,16 @@ void SeriesExpansionAux::Init(index_t max_order, index_t dim) {
 void SeriesExpansionAux::PrintDebug(const char *name, FILE *stream) const {
 
   fprintf(stream, "----- SERIESEXPANSIONAUX %s ------\n", name);
-  fprintf(stream, "Max order: %"LI", dimension: %"LI"\n", max_order_, dim_);
+  fprintf(stream, "Max order: %zu, dimension: %zu\n", max_order_, dim_);
 
   fprintf(stream, "Multiindex mapping: ");
-  for (index_t i = 0; i < multiindex_mapping_.size(); i++) {
+  for (size_t i = 0; i < multiindex_mapping_.size(); i++) {
 
     mlpack::IO::AssertMessage(ComputeMultiindexPosition(multiindex_mapping_[i]) == i,
 		     "REIMPLEMENT ComputeMultiindexPosition function!");
     fprintf(stream, "( ");
-    for(index_t j = 0; j < dim_; j++) {
-      fprintf(stream, "%"LI" ", multiindex_mapping_[i][j]);
+    for(size_t j = 0; j < dim_; j++) {
+      fprintf(stream, "%zu ", multiindex_mapping_[i][j]);
     }
     fprintf(stream, "): %g %g ", inv_multiindex_factorials_[i],
 	    neg_inv_multiindex_factorials_[i]);

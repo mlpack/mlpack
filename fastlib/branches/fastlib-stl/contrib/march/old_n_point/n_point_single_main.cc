@@ -137,8 +137,8 @@ int main(int argc, char* argv[]) {
   
   /*
   
-  //index_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
-  index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
+  //size_t leaf_size = fx_param_int(NULL, "leaf_size", 1);
+  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
   
   //if (fx_param_exists(NULL, "do_single_bandwidth")) {
   if (IO::HasParam("do_single_bandwidth")) {

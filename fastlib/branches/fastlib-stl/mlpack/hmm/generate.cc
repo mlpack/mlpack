@@ -19,9 +19,9 @@
 
 using namespace hmm_support;
 
-success_t generate_discrete();
-success_t generate_gaussian();
-success_t generate_mixture();
+bool generate_discrete();
+bool generate_gaussian();
+bool generate_mixture();
 void usage();
 
 /*const fx_entry_doc hmm_generate_main_entries[] = {
@@ -68,7 +68,7 @@ using namespace mlpack;
 int main(int argc, char* argv[]) {
 
   IO::ParseCommandLine(argc, argv);
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (IO::HasParam("hmm/type")) {
     const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
@@ -80,15 +80,15 @@ int main(int argc, char* argv[]) {
     else {
       IO::Fatal << "Unrecognized type: must be: " << 
 		"discrete | gaussian | mixture !!!" << std::endl;
-      return SUCCESS_PASS;
+      return true;
     }
   }
   else {
     IO::Fatal << "Unrecognized type: must be: " << 
 		"discrete | gaussian | mixture  !!!" << std::endl;
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
 
 }
 
@@ -104,10 +104,10 @@ void usage() {
   IO::Info << "  --hmm/statefile=file : output file for generated state sequences" << std::endl;
 }
 
-success_t generate_mixture() {
+bool generate_mixture() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const int seqlen = IO::GetParam<int>("hmm/length");
@@ -125,14 +125,14 @@ success_t generate_mixture() {
   hmm.InitFromFile(profile);
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -150,13 +150,13 @@ success_t generate_mixture() {
   }
 
   //printf("---END---");
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t generate_gaussian() {
+bool generate_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const int seqlen = IO::GetParam<int>("hmm/length");
@@ -174,14 +174,14 @@ success_t generate_gaussian() {
   hmm.InitFromFile(profile);
   
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -197,13 +197,13 @@ success_t generate_gaussian() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");    
   }
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t generate_discrete() {
+bool generate_discrete() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Fatal << "--hmm/profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const int seqlen = IO::GetParam<int>("hmm/length");
@@ -221,14 +221,14 @@ success_t generate_discrete() {
   hmm.InitFromFile(profile);
 
   TextWriter w_seq, w_state;
-  if (!PASSED(w_seq.Open(seqout))) {
+  if (!(w_seq.Open(seqout))) {
     IO::Warn << "Couldn't open '" << seqout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
-  if (!PASSED(w_state.Open(stateout))) {
+  if (!(w_state.Open(stateout))) {
     IO::Warn << "Couldn't open '" << stateout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   double L = seqlen;
@@ -243,5 +243,5 @@ success_t generate_discrete() {
     sprintf(s, "%% state sequence %d", i);
     print_vector(w_state, states, s, "%.0f,");    
   }
-  return SUCCESS_PASS;
+  return true;
 }

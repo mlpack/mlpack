@@ -43,11 +43,11 @@ const fx_module_doc approx_nn_main_doc = {
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
-void compare_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
-                       ArrayList<index_t>*, ArrayList<double>*);
+void compare_neighbors(ArrayList<size_t>*, ArrayList<double>*, 
+                       ArrayList<size_t>*, ArrayList<double>*);
 
-void count_mismatched_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
-				  ArrayList<index_t>*, ArrayList<double>*);
+void count_mismatched_neighbors(ArrayList<size_t>*, ArrayList<double>*, 
+				  ArrayList<size_t>*, ArrayList<double>*);
 
 int main (int argc, char *argv[]) {
   fx_module *root
@@ -66,12 +66,12 @@ int main (int argc, char *argv[]) {
   }
 
   NOTIFY("File loaded...");
-  NOTIFY("R(%"LI"d, %"LI"d), Q(%"LI"d, %"LI"d)",
+  NOTIFY("R(%zud, %zud), Q(%zud, %zud)",
 	 rdata.n_rows(), rdata.n_cols(), 
 	 qdata.n_rows(), qdata.n_cols());
 
 //   AllkNN allknn;
-//   ArrayList<index_t> neighbor_indices;
+//   ArrayList<size_t> neighbor_indices;
 //   ArrayList<double> dist_sq;
 //   fx_timer_start(root, "Init");
 //   allknn.Init(qdata, rdata, 20, 4);
@@ -83,7 +83,7 @@ int main (int argc, char *argv[]) {
   struct datanode *ann_module
     = fx_submodule(root, "ann");
 
-  ArrayList<index_t> nac, exc, apc;
+  ArrayList<size_t> nac, exc, apc;
   ArrayList<double> din, die, dia;
 
   // Naive computation
@@ -120,8 +120,8 @@ int main (int argc, char *argv[]) {
     NOTIFY("Neighbors Computed.");
 
     FILE *fp = fopen("svmtree/nn_results.txt","w");
-    for (index_t i = 0; i < exc.size(); i++) {
-      fprintf(fp,"%"LI"d,%"LI"d,%lg\n", i, exc[i], die[i]);
+    for (size_t i = 0; i < exc.size(); i++) {
+      fprintf(fp,"%zud,%zud,%lg\n", i, exc[i], die[i]);
     }
     fclose(fp);
   }
@@ -150,40 +150,40 @@ int main (int argc, char *argv[]) {
   fx_done(fx_root);
 }
 
-void compare_neighbors(ArrayList<index_t> *a, 
+void compare_neighbors(ArrayList<size_t> *a, 
                        ArrayList<double> *da,
-                       ArrayList<index_t> *b, 
+                       ArrayList<size_t> *b, 
                        ArrayList<double> *db) {
   
-  NOTIFY("Comparing results for %"LI"d queries", a->size());
+  NOTIFY("Comparing results for %zud queries", a->size());
   DEBUG_SAME_SIZE(a->size(), b->size());
-  index_t *x = a->begin();
-  index_t *y = a->end();
-  index_t *z = b->begin();
+  size_t *x = a->begin();
+  size_t *y = a->end();
+  size_t *z = b->begin();
 
-  for(index_t i = 0; x != y; x++, z++, i++) {
+  for(size_t i = 0; x != y; x++, z++, i++) {
     DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
-                      "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+                      "point %zud brute: %zud:%lf fast: %zud:%lf",
                       i, *z, (*db)[i], *x, (*da)[i]);
   }
 }
 
-void count_mismatched_neighbors(ArrayList<index_t> *a, 
+void count_mismatched_neighbors(ArrayList<size_t> *a, 
 				ArrayList<double> *da,
-				ArrayList<index_t> *b, 
+				ArrayList<size_t> *b, 
 				ArrayList<double> *db) {
 
-  NOTIFY("Comparing results for %"LI"d queries", a->size());
+  NOTIFY("Comparing results for %zud queries", a->size());
   DEBUG_SAME_SIZE(a->size(), b->size());
-  index_t *x = a->begin();
-  index_t *y = a->end();
-  index_t *z = b->begin();
-  index_t count_mismatched = 0;
+  size_t *x = a->begin();
+  size_t *y = a->end();
+  size_t *z = b->begin();
+  size_t count_mismatched = 0;
 
-  for(index_t i = 0; x != y; x++, z++, i++) {
+  for(size_t i = 0; x != y; x++, z++, i++) {
     if (*x != *z || (*da)[i] != (*db)[i]) {
       ++count_mismatched;
     }
   }
-  NOTIFY("%"LI"d/%"LI"d errors", count_mismatched, a->size());
+  NOTIFY("%zud/%zud errors", count_mismatched, a->size());
 }

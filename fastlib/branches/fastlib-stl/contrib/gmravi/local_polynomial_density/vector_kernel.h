@@ -33,7 +33,7 @@ class ErfDiffKernel{
     //fuctions along each and every direction
     
     double product=1.0;
-    for(index_t i=0;i<diff.length();i++){
+    for(size_t i=0;i<diff.length();i++){
 
       //Find erf(((x_id-x_d)/h sqrt(2)+1/2 sqrt(2)) - 
       //((x_id-x_d)/h sqrt(2)-1/2sqrt(2)))
@@ -56,7 +56,7 @@ class ErfDiffKernel{
   double EvalNormConstant(){
     
     double norm_const=1.0;
-    for(index_t i=0;i<bwidth_.length();i++){
+    for(size_t i=0;i<bwidth_.length();i++){
       
      
       norm_const*=bwidth_[i]*2;
@@ -93,7 +93,7 @@ class GaussianVectorKernel{
 
     double kernel_value=1.0;
 
-    for(index_t i=0;i<diff.length();i++){
+    for(size_t i=0;i<diff.length();i++){
       
       kernel.Init(bwidth_[i]);
       kernel_value*=kernel.EvalUnnormOnSq(diff[i]*diff[i]);
@@ -101,10 +101,10 @@ class GaussianVectorKernel{
     return kernel_value;
   }
 
- double EvalNormConstant(index_t number_of_dimensions){
+ double EvalNormConstant(size_t number_of_dimensions){
 
    double norm_const=1.0;
-   for(index_t dim=0;dim<number_of_dimensions;dim++){
+   for(size_t dim=0;dim<number_of_dimensions;dim++){
      
      norm_const*=sqrt(2*math::PI)*bwidth_[dim];
    }

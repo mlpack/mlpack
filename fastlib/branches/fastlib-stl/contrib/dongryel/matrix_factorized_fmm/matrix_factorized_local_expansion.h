@@ -24,8 +24,8 @@ class MatrixFactorizedLocalExpansion {
    */
   static int qsort_compar_(const void *a, const void *b) {
     
-    index_t a_dereferenced = *((index_t *) a);
-    index_t b_dereferenced = *((index_t *) b);
+    size_t a_dereferenced = *((size_t *) a);
+    size_t b_dereferenced = *((size_t *) b);
     
     if(a_dereferenced < b_dereferenced) {
       return -1;
@@ -40,9 +40,9 @@ class MatrixFactorizedLocalExpansion {
 
   /** @brief Removes duplicate elements in a sorted array.
    */
-  static void remove_duplicates_in_sorted_array_(ArrayList<index_t> &array) {
+  static void remove_duplicates_in_sorted_array_(ArrayList<size_t> &array) {
 
-    index_t i, k = 0;
+    size_t i, k = 0;
     
     for(i = 1; i < array.size(); i++) {
       if(array[k] != array[i]) {
@@ -67,19 +67,19 @@ class MatrixFactorizedLocalExpansion {
    *         the pseudo-points that represent the query point
    *         distribution.
    */
-  ArrayList<index_t> incoming_skeleton_;
+  ArrayList<size_t> incoming_skeleton_;
 
   /** @brief The first half of the local-to-local translation
    *         operator, which basically states the beginning index of
    *         the parent coefficients to take.
    */
-  index_t local_to_local_translation_begin_;
+  size_t local_to_local_translation_begin_;
   
   /** @brief Another half of the local-to-local translation operator,
    *         which basically states the number of coefficients to take
    *         starting from the index begin_.
    */
-  index_t local_to_local_translation_count_;
+  size_t local_to_local_translation_count_;
 
   /** @brief The estimated lower bound on the kernel sum.
    */
@@ -132,35 +132,35 @@ class MatrixFactorizedLocalExpansion {
 
   /** @brief Gets the incoming skeleton.
    */
-  const ArrayList<index_t> &incoming_skeleton() const {
+  const ArrayList<size_t> &incoming_skeleton() const {
     return incoming_skeleton_;
   }
 
   /** @brief Gets the beginning index of the local-to-local
    *         translation operator.
    */
-  index_t local_to_local_translation_begin() const {
+  size_t local_to_local_translation_begin() const {
     return local_to_local_translation_begin_;
   }
 
   /** @brief Sets the beginning index of the local-to-local
    *         translation operator.
    */
-  void set_local_to_local_translation_begin(index_t begin) {
+  void set_local_to_local_translation_begin(size_t begin) {
     local_to_local_translation_begin_ = begin;
   }
   
   /** @brief Sets the count of the local-to-local translation
    *         operator.
    */
-  void set_local_to_local_translation_count(index_t count) {
+  void set_local_to_local_translation_count(size_t count) {
     local_to_local_translation_count_ = count;
   }
 
   /** @brief Gets the count of the local-to-local translation
    *         operator.
    */
-  index_t local_to_local_translation_count() const {
+  size_t local_to_local_translation_count() const {
     return local_to_local_translation_count_;
   }
   

@@ -53,8 +53,8 @@ int main(int argc, char* argv[]) {
   // values and not inputting anything from the command line
 
   datanode *lle_module = fx_submodule(NULL, "lle", "lle");
-  index_t lower_dimension = fx_param_int(lle_module, "d", 2);
-  index_t dimension = fx_param_int(lle_module, "D", dataset.n_rows());
+  size_t lower_dimension = fx_param_int(lle_module, "d", 2);
+  size_t dimension = fx_param_int(lle_module, "D", dataset.n_rows());
   fx_param_int(lle_module, "N", dataset.n_cols());  
 
   DEBUG_ASSERT_MSG(lower_dimension <= dimension, 
@@ -96,7 +96,7 @@ int main(int argc, char* argv[]) {
 
   actual_output_mat.PrintDebug("Lower Dimensional Embedding",
 			       output_file);
-  NOTIFY("Lower dimensional embeddings of %"LI"d points in  %"LI"d dimensions obtained\n",
+  NOTIFY("Lower dimensional embeddings of %zud points in  %zud dimensions obtained\n",
 	 lower_dimensional_embedding.n_cols(),
 	 lower_dimensional_embedding.n_rows());
 

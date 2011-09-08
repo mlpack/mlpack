@@ -5,7 +5,7 @@ class GaussianHyperKernel{
  private:
   double  sigma_h_; 
   double sigma_;
-  index_t num_dims_;
+  size_t num_dims_;
   GaussianKernel gk_inter_;
   GaussianKernel gk_intra_;
 
@@ -62,8 +62,8 @@ class GaussianHyperKernel{
   double EvalUnnorm(Vector &x_p, Vector &x_q,Vector &x_r,Vector &x_s){
     
     //THIS WILL Handle even multi-dimensional case
-    index_t flagpq=0;
-    index_t flagrs=0;
+    size_t flagpq=0;
+    size_t flagrs=0;
     double unnorm_val1;
     double unnorm_val2;
     double unnorm_val3;
@@ -122,7 +122,7 @@ class GaussianHyperKernel{
     return -1; //error statement
   }
 
-  double EvalUnnorm(index_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
+  double EvalUnnorm(size_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
     
     Vector vec_x_p;
     Vector vec_x_q;
@@ -186,7 +186,7 @@ class GaussianHyperKernel{
   }
 
 
-  double EvalUnnormPartial1(index_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
+  double EvalUnnormPartial1(size_t num_dim,double *x_p, double *x_q,double *x_r,double *x_s){
     
     Vector vec_x_p;
     Vector vec_x_q;

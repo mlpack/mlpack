@@ -65,8 +65,8 @@ BOOST_AUTO_TEST_CASE (TestSpectralRegression) {
     engine_.EstimateBandwidth(&bandwidth);
     kernel_.set(bandwidth);
     engine_.LoadAffinityMatrix();
-    std::map<index_t, index_t> data_label;
-    for(index_t i=0; i<20; i++) {
+    std::map<size_t, size_t> data_label;
+    for(size_t i=0; i<20; i++) {
       data_label[math::RandInt(0, engine_->data_.n_cols())] =
         math::RandInt(0 ,2);
     }

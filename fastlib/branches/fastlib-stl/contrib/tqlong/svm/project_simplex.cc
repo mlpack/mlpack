@@ -18,12 +18,12 @@ void ProjectOnSimplex(const Vector& c, Vector* x,
   SV_index& _SVs = *SVs;
 
   double s = 0;
-  index_t n = c.length();
-  index_t n_SV = c.length();
+  size_t n = c.length();
+  size_t n_SV = c.length();
 
   _SVs.clear();
   _x.CopyValues(c);
-  for (index_t i = 0; i < n; i++) {
+  for (size_t i = 0; i < n; i++) {
     s += _x[i];
     _SVs.push_back(i);
   }

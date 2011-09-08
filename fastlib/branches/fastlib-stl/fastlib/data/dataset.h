@@ -72,7 +72,7 @@ class Dataset {
    *
    * @return the number of features, or variables, in the dataset
    */
-  index_t n_features() const {
+  size_t n_features() const {
     return matrix_.n_rows;
   }
 
@@ -83,7 +83,7 @@ class Dataset {
    *
    * @return the number of points in the dataset
    */
-  index_t n_points() const {
+  size_t n_points() const {
     return matrix_.n_cols;
   }
 
@@ -95,7 +95,7 @@ class Dataset {
    *
    * @return the number of labels in the dataset
    */
-  index_t n_labels() const;
+  size_t n_labels() const;
 
   /**
    * Gets a list and indicies of labels in a labeled dataset.
@@ -118,9 +118,9 @@ class Dataset {
    *        labels_index. e.g. [0,7,12]                                                                                                                            
    */
   void GetLabels(std::vector<double> &labels_list,
-      std::vector<index_t> &labels_index,
-      std::vector<index_t> &labels_ct,
-      std::vector<index_t> &labels_startpos) const;
+      std::vector<size_t> &labels_index,
+      std::vector<size_t> &labels_ct,
+      std::vector<size_t> &labels_startpos) const;
 
   /**
    * Gets the numeric value of a particular feature and point.
@@ -128,14 +128,14 @@ class Dataset {
    * @param feature the feature index
    * @param point the point index
    */
-  double get(index_t feature, index_t point) const {
+  double get(size_t feature, size_t point) const {
     return matrix_(feature, point);
   }
 
   /**
    * Gets the integer value of a particular feature and point.
    */
-  int get_int(index_t feature, index_t point) const {
+  int get_int(size_t feature, size_t point) const {
     double d = get(feature, point);
     int i = int(d);
     mlpack::IO::Assert(d == double(i));
@@ -149,7 +149,7 @@ class Dataset {
    * @param point the point index
    * @param d the numeric value to set it to
    */
-  void set(index_t feature, index_t point, double d) {
+  void set(size_t feature, size_t point, double d) {
     matrix_(feature, point) = d;
   }
 
@@ -158,7 +158,7 @@ class Dataset {
    *
    * @return a C-like array of the values of a particular point
    */
-  const arma::rowvec point(index_t point) const {
+  const arma::rowvec point(size_t point) const {
     return matrix_.row(point);
   }
   /**
@@ -166,7 +166,7 @@ class Dataset {
    *
    * @return a C-like array of the values of a particular point
    */
-  arma::rowvec point(index_t point) {
+  arma::rowvec point(size_t point) {
     return matrix_.row(point);
   }
 
@@ -191,7 +191,7 @@ class Dataset {
    * @param point the point index
    * @param result string that will be initialized to the formatted text
    */
-  void Format(index_t feature, index_t point, std::string& result) const {
+  void Format(size_t feature, size_t point, std::string& result) const {
     info_.feature(feature).Format(matrix_(feature, point), result);
   }
 
@@ -212,7 +212,7 @@ class Dataset {
    *
    * @param fname the name of an ARFF, CSV, or whitespace-separated
    */
-  success_t InitFromFile(const char *fname);
+  bool InitFromFile(const char *fname);
 
   /**
    * Reads in an ARFF or CSV/WSV file.
@@ -224,7 +224,7 @@ class Dataset {
    * @param filename a title given to this data set, doesn't necessarily
    *        need to be anything significant
    */
-  success_t InitFromFile(TextLineReader& reader,
+  bool InitFromFile(TextLineReader& reader,
       const char *filename = "dataset");
 
   /**
@@ -234,14 +234,14 @@ class Dataset {
    * @param header whether to include a first line which is the titles of the
    *               data
    */
-  success_t WriteCsv(std::string fname, bool header = false) const;
+  bool WriteCsv(std::string fname, bool header = false) const;
 
   /**
    * Writes to an ARFF file.
    *
    * @param fname name of the file
    */
-  success_t WriteArff(std::string fname) const;
+  bool WriteArff(std::string fname) const;
 
   /**
    * Initializes from a matrix copying all contents, assuming all features
@@ -307,7 +307,7 @@ class Dataset {
    * @param test the test set
    */
   void SplitTrainTest(int folds, int fold_number,
-      const std::vector<index_t>& permutation,
+      const std::vector<size_t>& permutation,
       Dataset& train, Dataset& test) const;
 };
 
@@ -329,7 +329,7 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  success_t Load(const char *fname, arma::mat& matrix);
+  bool Load(const char *fname, arma::mat& matrix);
 
   /**
    * Loads a matrix from a file.
@@ -346,16 +346,16 @@ namespace data {
    * @param matrix a pointer to an uninitialized matrix to load
    */
   template<typename Precision>
-  success_t LargeLoad(const char *fname, arma::Mat<Precision>& matrix) {
+  bool LargeLoad(const char *fname, arma::Mat<Precision>& matrix) {
     // open our file
     TextLineReader *reader = new TextLineReader();
-    if (reader->Open(fname) == SUCCESS_FAIL) {
+    if (reader->Open(fname) == false) {
       reader->Error("Couldn't open %s", fname);
-      return SUCCESS_FAIL;
+      return false;
     }
 
     // find dimensionality
-    index_t dimension = 0;
+    size_t dimension = 0;
     std::string line = reader->Peek();
     std::vector<std::string> result;
     tokenizeString(line, ",", result);
@@ -380,14 +380,14 @@ namespace data {
       std::vector<std::string> result;
 
       tokenizeString(line, ",", result);
-      for(index_t i = 0; i < result.size(); i++) {
+      for(size_t i = 0; i < result.size(); i++) {
         Precision num;
         sscanf(result[i].c_str(), "%lf", &num);
         matrix(i, reader->line_num() - 1) = (Precision) num;
       }
     } while(reader->Gobble()); // break when we can't read more
     
-    return SUCCESS_PASS;  
+    return true;  
   }
 
   /**
@@ -404,8 +404,8 @@ namespace data {
    * @param fname the file name to load
    * @param matrix a pointer to an uninitialized matrix to load
    */
-  success_t Save(const char *fname, const arma::mat& matrix);
-  success_t Save(const char *fname, const arma::Col<index_t>& index_vector,
+  bool Save(const char *fname, const arma::mat& matrix);
+  bool Save(const char *fname, const arma::Col<size_t>& index_vector,
       const arma::vec& data_vector);
 };
 

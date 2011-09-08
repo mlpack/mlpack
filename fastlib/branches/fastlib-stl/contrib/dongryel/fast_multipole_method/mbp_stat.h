@@ -10,7 +10,7 @@ class MultiTreeQueryStat {
     
   Vector mean;
     
-  index_t count;
+  size_t count;
     
   bool in_strata;
 
@@ -29,12 +29,12 @@ class MultiTreeQueryStat {
  public:
 
   double SumOfPerDimensionVariances
-  (const Matrix &dataset, index_t &start, index_t &count) {
+  (const Matrix &dataset, size_t &start, size_t &count) {
 
     double total_variance = 0;
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       const double *point = dataset.GetColumnPtr(i);
-      for(index_t d = 0; d < 3; d++) {
+      for(size_t d = 0; d < 3; d++) {
 	total_variance += math::Sqr(point[d] - mean[d]);
       }
     }
@@ -55,14 +55,14 @@ class MultiTreeQueryStat {
     num_precomputed_tuples = 0;
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count_in) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count_in) {
     postponed.Init();
     mean.Init(3);
     SetZero();
     count = count_in;
 
     // Compute the mean vector.
-    for(index_t i = start; i < start + count; i++) {
+    for(size_t i = start; i < start + count; i++) {
       const double *point = dataset.GetColumnPtr(i);
       la::AddTo(3, point, mean.ptr());
     }
@@ -75,7 +75,7 @@ class MultiTreeQueryStat {
     priority = count * sum_of_per_dimension_variances;
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count_in,
+  void Init(const Matrix& dataset, size_t &start, size_t &count_in,
 	    const MultiTreeQueryStat& left_stat, 
 	    const MultiTreeQueryStat& right_stat) {
     postponed.Init();

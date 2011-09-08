@@ -18,7 +18,7 @@ int main(int argc, char* argv[]) {
   A_Shell.Init(A_vec, A_exp, A_mom, 1);
   
   /*
-  for (index_t i = 0; i < A_Shell.num_functions(); i++) {
+  for (size_t i = 0; i < A_Shell.num_functions(); i++) {
     printf("Ashell norms[%d]: %g\n", i, A_Shell.normalization_constant(i));
   }
    */
@@ -35,7 +35,7 @@ int main(int argc, char* argv[]) {
   B_Shell.Init(B_vec, B_exp, B_mom, 0);
 
   /*
-  for (index_t i = 0; i < B_Shell.num_functions(); i++) {
+  for (size_t i = 0; i < B_Shell.num_functions(); i++) {
     printf("Bshell norms[%d]: %g\n", i, B_Shell.normalization_constant(i));
   }
   */
@@ -70,7 +70,7 @@ int main(int argc, char* argv[]) {
   
   double* integrals = eri::ComputeNuclearIntegrals(A_Shell, B_Shell, C_vec);
   
-  for (index_t i = 0; i < num_integrals; i++) {
+  for (size_t i = 0; i < num_integrals; i++) {
    
     printf("integrals[%d] = %g\n", i, integrals[i]);
     

@@ -8,19 +8,19 @@
  * It implements the Recursive breadth first search with 
  * the function:
  *
- * void RecursiveBreadthFirstSearch(ArrayList<index_t> *ind,
+ * void RecursiveBreadthFirstSearch(ArrayList<size_t> *ind,
  *                                  ArrayList<T> *dist);
  *
  * It implements the Depth first search with 
  * the function:
  *
- * void DepthFirstSearch(ArrayList<index_t> *ind,
+ * void DepthFirstSearch(ArrayList<size_t> *ind,
  *                       ArrayList<T> *dist);
  *
  * It implements the brute search with 
  * the function:
  *
- * void BruteNeighbors(ArrayList<index_t> *ind,
+ * void BruteNeighbors(ArrayList<size_t> *ind,
  *                     ArrayList<T> *dist);
  *
  */
@@ -138,7 +138,7 @@ class AllKNN {
   class LeafNodes {
   private:
     // The reference point
-    index_t point_;
+    size_t point_;
     // the distance between the query and the 
     // reference node
     T dist_;
@@ -150,7 +150,7 @@ class AllKNN {
     ~LeafNodes() {
     }
 
-    void set_point(index_t point) {
+    void set_point(size_t point) {
       point_ = point;
     }
 
@@ -158,7 +158,7 @@ class AllKNN {
       dist_ = dist;
     }
 
-    index_t point() {
+    size_t point() {
       return point_;
     }
 
@@ -166,7 +166,7 @@ class AllKNN {
       return dist_;
     }
 
-    void Init(index_t point, T dist) {
+    void Init(size_t point, T dist) {
       set_point(point);
       set_dist(dist);
     }
@@ -184,19 +184,19 @@ private:
   TreeType *reference_tree_;
   // The number of query points and 
   // the number of reference points
-  index_t num_queries_, num_refs_;
+  size_t num_queries_, num_refs_;
 
   //TreeType *cquery_tree_;
 
   //TreeType *creference_tree_;
 
-  //index_t ref_root_node_index_, query_root_node_index_;
+  //size_t ref_root_node_index_, query_root_node_index_;
 
   //ArrayList<T> neighbor_distances_;
 
-  //ArrayList<index_t> neighbor_indices_;
+  //ArrayList<size_t> neighbor_indices_;
   // The number of nearest neighbors to be computed
-  index_t knns_;
+  size_t knns_;
   // The datanode to store parameters for the object
   // of this class
   struct datanode *module_;
@@ -262,10 +262,10 @@ private:
   // parent of this node can give an upper bound on 
   // the NN candidates of this node
   inline void set_upper_bounds_(ArrayList<T> *upper_bounds, 
-				index_t query_index,
+				size_t query_index,
 				T d) {
 
-    index_t start = query_index * knns_;
+    size_t start = query_index * knns_;
     T *begin = upper_bounds->begin() + start;
     T *end = begin + knns_;
 
@@ -279,10 +279,10 @@ private:
   // upper bound when we encounter points which are lesser 
   // the upper bound
   inline void update_upper_bounds_(ArrayList<T> *upper_bounds, 
-				   index_t query_index,
+				   size_t query_index,
 				   T d) {
 
-    index_t start = query_index * knns_;
+    size_t start = query_index * knns_;
     T *begin = upper_bounds->begin() + start;
     T *end = begin + knns_ - 1;
  
@@ -309,9 +309,9 @@ private:
   // is less than the present upper_bound of query node
   // presently
   inline void set_update_upper_bounds_(ArrayList<T> *upper_bounds, 
-				       index_t query_index,
+				       size_t query_index,
 				       T d){
-    index_t start = query_index * knns_;
+    size_t start = query_index * knns_;
     T *begin = upper_bounds->begin() + start;
     T *end = begin + knns_;
  
@@ -338,7 +338,7 @@ private:
   // is done for all the scales which were not pruned 
   // by the previous query node at this level
   void reset_cover_sets_(ArrayList<ArrayList<TreeType*> >*, 
-			 index_t, index_t);
+			 size_t, size_t);
 
   // This function copy all the reference leaf nodes which are 
   // within the upper bound of a particular query node
@@ -368,7 +368,7 @@ private:
 		      ArrayList<T>*, 
 		      ArrayList<ArrayList<TreeType*> >*, 
 		      ArrayList<ArrayList<TreeType*> >*, 
-		      index_t, index_t);
+		      size_t, size_t);
 
   // This function takes the present cover set of a query 
   // node and descends the reference nodes and keeps those 
@@ -385,7 +385,7 @@ private:
 			  ArrayList<T>*, 
 			  ArrayList<ArrayList<TreeType*> >*, 
 			  ArrayList<TreeType*>*,
-			  index_t, index_t*);
+			  size_t, size_t*);
 
   // This function descends the query tree when we have reached
   // the leaf level of the reference tree.
@@ -395,7 +395,7 @@ private:
   void ComputeBaseCase_(TreeType*, 
 			ArrayList<T>*,
 			ArrayList<TreeType*>*, 
-			ArrayList<index_t>*);
+			ArrayList<size_t>*);
 
   // This function perform the whole recursive 
   // breadth first recursion
@@ -403,27 +403,27 @@ private:
 				 ArrayList<T>*, 
 				 ArrayList<ArrayList<TreeType*> >*,
 				 ArrayList<TreeType*>*,
-				 index_t, index_t,
-				 ArrayList<index_t>*);
+				 size_t, size_t,
+				 ArrayList<size_t>*);
 
 public:
-  void RecursiveBreadthFirstSearch(ArrayList<index_t> *neighbor_indices, 
+  void RecursiveBreadthFirstSearch(ArrayList<size_t> *neighbor_indices, 
 				   ArrayList<T> *neighbor_distances) {
 
     GenVector<T> q_root, r_root;
     ArrayList<ArrayList<TreeType*> > cover_sets;
     ArrayList<TreeType*> leaf_nodes;
-    index_t current_scale = 0, max_scale = 0;
+    size_t current_scale = 0, max_scale = 0;
 
     queries_.MakeColumnVector(query_tree_->point(), &q_root);
     references_.MakeColumnVector(reference_tree_->point(), &r_root);
     neighbor_indices->Init(knns_* num_queries_);
-    for (index_t i = 0; i < neighbor_indices->size(); i++) {
+    for (size_t i = 0; i < neighbor_indices->size(); i++) {
       (*neighbor_indices)[i] = -1;
     }
     neighbor_distances->Init(knns_ * num_queries_);
     cover_sets.Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       cover_sets[i].Init(0);
     }
     leaf_nodes.Init(0);
@@ -455,14 +455,14 @@ private:
 		   ArrayList<T>*); 
   
 public:
-  void DepthFirstSearch(ArrayList<index_t> *neighbor_indices, 
+  void DepthFirstSearch(ArrayList<size_t> *neighbor_indices, 
 			ArrayList<T> *neighbor_distances) {
     
     GenVector<T> q_root, r_root;
     ArrayList<ArrayList<LeafNodes> > neighbors;
     
     neighbors.Init(num_queries_);
-    for (index_t i = 0; i < neighbors.size(); i++) {
+    for (size_t i = 0; i < neighbors.size(); i++) {
       neighbors[i].Init(0);
     }
     
@@ -471,7 +471,7 @@ public:
     neighbor_indices->Init(knns_* num_queries_);
     neighbor_distances->Init(knns_ * num_queries_);
 
-    for (index_t i = 0; i < num_queries_; i++) {
+    for (size_t i = 0; i < num_queries_; i++) {
       set_upper_bounds_(neighbor_distances, i, DBL_MAX);
     }
     
@@ -484,28 +484,28 @@ public:
     DepthFirst_(query_tree_, reference_tree_, 
 		&neighbors, neighbor_distances);
 
-    for (index_t i = 0; i < num_queries_; i++) {
+    for (size_t i = 0; i < num_queries_; i++) {
       T *query_ub = neighbor_distances->begin() + i * knns_;
       DEBUG_ASSERT_MSG(neighbors[i].size() >= knns_, 
-		       "%"LI"d neighbors candidates found for point %"LI"d",
+		       "%zu"d neighbors candidates found for point %zu"d",
 		       neighbors[i].size(), i+1);
       
       LeafNodes *begin_nn = neighbors[i].begin();
       LeafNodes *end_nn = neighbors[i].end();
       T *end = query_ub + knns_;
-      index_t *indices = neighbor_indices->begin() + i * knns_;
+      size_t *indices = neighbor_indices->begin() + i * knns_;
       ArrayList<bool> flags;
 
       flags.Init(knns_);
-      for (index_t in = 0; in < knns_; in++) {
+      for (size_t in = 0; in < knns_; in++) {
 	flags[in] = 0;
       }
 
-      for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
+      for (size_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
 	if (begin_nn->dist() <= *query_ub) {
-	  //NOTIFY("%"LI"d %"LI"d -> %lf, ub = %lf", 
+	  //NOTIFY("%zu"d %zu"d -> %lf, ub = %lf", 
 	  //i+1, begin_nn->point()+1, begin_nn->dist(), *query_ub);
-	  index_t k = 0;
+	  size_t k = 0;
 	  while (begin_nn->dist() > *(end - k- 1)) { 
 	    k++;
 	  }
@@ -522,14 +522,14 @@ public:
     }
   }
 
-  void BruteNeighbors(ArrayList<index_t> *neighbor_indices, 
+  void BruteNeighbors(ArrayList<size_t> *neighbor_indices, 
 		      ArrayList<T> *neighbor_distances) {
 
     ArrayList<LeafNodes> neighbors;
     neighbor_indices->Init(num_queries_ * knns_);
     neighbor_distances->Init(num_queries_ * knns_);
 
-    for (index_t i = 0; i < num_queries_; i++) {
+    for (size_t i = 0; i < num_queries_; i++) {
       set_upper_bounds_(neighbor_distances, i, DBL_MAX);
       GenVector<T> q;
       T *query_upper_bound = neighbor_distances->begin() 
@@ -537,7 +537,7 @@ public:
       neighbors.Init(0);
 
       queries_.MakeColumnVector(i, &q);
-      for (index_t j = 0; j < num_refs_; j++) {
+      for (size_t j = 0; j < num_refs_; j++) {
 	GenVector<T> r;
 	references_.MakeColumnVector(j, &r);
 
@@ -552,25 +552,25 @@ public:
       }
 
       DEBUG_ASSERT_MSG(neighbors.size() >= knns_, 
-		       "%"LI"d neighbors candidates found for point %"LI"d",
+		       "%zu"d neighbors candidates found for point %zu"d",
 		       neighbors.size(), i+1);
       
       LeafNodes *begin_nn = neighbors.begin();
       LeafNodes *end_nn = neighbors.end();
       T *end = query_upper_bound + knns_;
-      index_t *indices = neighbor_indices->begin() + i * knns_;
+      size_t *indices = neighbor_indices->begin() + i * knns_;
       ArrayList<bool> flags;
 
       flags.Init(knns_);
-      for (index_t in = 0; in < knns_; in++) {
+      for (size_t in = 0; in < knns_; in++) {
 	flags[in] = 0;
       }
 
-      for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
+      for (size_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
 	if (begin_nn->dist() <= *query_upper_bound) {
-	  //NOTIFY("%"LI"d %"LI"d -> %lf, ub = %lf", 
+	  //NOTIFY("%zu"d %zu"d -> %lf, ub = %lf", 
 	  //i+1, begin_nn->point()+1, begin_nn->dist(), *query_ub);
-	  index_t k = 0;
+	  size_t k = 0;
 	  while (begin_nn->dist() > *(end - k- 1)) { 
 	    k++;
 	  }

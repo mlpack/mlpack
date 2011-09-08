@@ -39,7 +39,7 @@ int main(int argc, char* argv[]) {
   }
   
   // WARNING: this is a hack for now
-  index_t num_funs = centers.n_cols() + 2 * (index_t)la::Dot(momenta, momenta);
+  size_t num_funs = centers.n_cols() + 2 * (size_t)la::Dot(momenta, momenta);
   
   
   std::string density_str;

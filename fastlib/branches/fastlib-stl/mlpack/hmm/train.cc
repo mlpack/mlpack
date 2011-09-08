@@ -21,8 +21,8 @@
 
 using namespace hmm_support;
 
-success_t train_baumwelch();
-success_t train_viterbi();
+bool train_baumwelch();
+bool train_viterbi();
 void usage();
 
 /* const fx_entry_doc hmm_train_main_entries[] = {
@@ -90,7 +90,7 @@ void usage() {
 int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (IO::HasParam("hmm/type")) {
     const char* algorithm = IO::GetParam<std::string>("hmm/algorithm").c_str();
     if (strcmp(algorithm,"baumwelch") == 0)
@@ -99,21 +99,21 @@ int main(int argc, char* argv[]) {
       s = train_viterbi();
     else {
       IO::Fatal << "Unrecognized algorithm: must be baumwelch or viterbi!";
-      s = SUCCESS_FAIL;
+      s = false;
     }
   }
   else {
     IO::Fatal << "Unrecognized type: must be: discrete | gaussian | mixture!";
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
 }
 
-success_t train_baumwelch_discrete();
-success_t train_baumwelch_gaussian();
-success_t train_baumwelch_mixture();
+bool train_baumwelch_discrete();
+bool train_baumwelch_gaussian();
+bool train_baumwelch_mixture();
 
-success_t train_baumwelch() {
+bool train_baumwelch() {
   const char* type = IO::GetParam<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_baumwelch_discrete();
@@ -123,15 +123,15 @@ success_t train_baumwelch() {
     return train_baumwelch_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture!\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 }
 
-success_t train_viterbi_discrete();
-success_t train_viterbi_gaussian();
-success_t train_viterbi_mixture();
+bool train_viterbi_discrete();
+bool train_viterbi_gaussian();
+bool train_viterbi_mixture();
 
-success_t train_viterbi() {
+bool train_viterbi() {
   const char* type = IO::GetParam<std::string>("hmm/type").c_str();
   if (strcmp(type, "discrete")==0)
     return train_viterbi_discrete();
@@ -141,14 +141,14 @@ success_t train_viterbi() {
     return train_viterbi_mixture();
   else {
     printf("Unrecognized type: must be: discrete | gaussian | mixture !!!\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 }
 
-success_t train_baumwelch_mixture() {
+bool train_baumwelch_mixture() {
   if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 
   MixtureofGaussianHMM hmm;
@@ -167,7 +167,7 @@ success_t train_baumwelch_mixture() {
   else {
     hmm.Init();
     IO::Fatal <<"Automatic initialization not supported !!!";
-    return SUCCESS_FAIL;
+    return false;
   }
 
   int maxiter = IO::GetParam<int>("hmm/maxiter");
@@ -177,13 +177,13 @@ success_t train_baumwelch_mixture() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t train_baumwelch_gaussian() {
+bool train_baumwelch_gaussian() {
   if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   GaussianHMM hmm;
   std::vector<arma::mat> seqs;
@@ -214,13 +214,13 @@ success_t train_baumwelch_gaussian() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t train_baumwelch_discrete() {
+bool train_baumwelch_discrete() {
   if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str();
@@ -249,13 +249,13 @@ success_t train_baumwelch_discrete() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t train_viterbi_mixture() {
+bool train_viterbi_mixture() {
   if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
   
   MixtureofGaussianHMM hmm;
@@ -273,7 +273,7 @@ success_t train_viterbi_mixture() {
   } else {
     hmm.Init();
     IO::Info << "Automatic initialization not supported !!!" << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   int maxiter = IO::GetParam<int>("hmm/maxiter");
@@ -283,13 +283,13 @@ success_t train_viterbi_mixture() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t train_viterbi_gaussian() {
+bool train_viterbi_gaussian() {
   if (!IO::HasParam("hmm/seqfile")) {
     IO::Fatal << "--seqfile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   
   GaussianHMM hmm;
@@ -318,13 +318,13 @@ success_t train_viterbi_gaussian() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t train_viterbi_discrete() {
+bool train_viterbi_discrete() {
   if (!IO::HasParam("hmm/seqfile")) {
     printf("--seqfile must be defined.\n");
-    return SUCCESS_FAIL;
+    return false;
   }
 
   DiscreteHMM hmm;
@@ -354,5 +354,5 @@ success_t train_viterbi_discrete() {
 
   hmm.SaveProfile(proout);
 
-  return SUCCESS_PASS;
+  return true;
 }

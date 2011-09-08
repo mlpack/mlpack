@@ -15,8 +15,8 @@ namespace hmm_support {
 
   void print_matrix(const arma::mat& a, const char* msg) {
     printf("%s - Matrix (%d x %d) = \n", msg, a.n_rows, a.n_cols);
-    for (index_t i = 0; i < a.n_rows; i++) {
-      for (index_t j = 0; j < a.n_cols; j++)
+    for (size_t i = 0; i < a.n_rows; i++) {
+      for (size_t j = 0; j < a.n_cols; j++)
 	printf("%8.4f", a(i, j));
 
       printf("\n");
@@ -25,8 +25,8 @@ namespace hmm_support {
 
   void print_matrix(TextWriter& writer, const arma::mat& a, const char* msg, const char* format) {
     writer.Printf("%s - Matrix (%d x %d) = \n", msg, a.n_rows, a.n_cols);
-    for (index_t j = 0; j < a.n_cols; j++) {
-      for (index_t i = 0; i < a.n_rows; i++)
+    for (size_t j = 0; j < a.n_cols; j++) {
+      for (size_t i = 0; i < a.n_rows; i++)
 	writer.Printf(format, a(i, j));
 
       writer.Printf("\n");
@@ -35,14 +35,14 @@ namespace hmm_support {
 
   void print_vector(const arma::vec& a, const char* msg) {
     printf("%s - Vector (%d) = \n", msg, a.n_elem);
-    for (index_t i = 0; i < a.n_elem; i++)
+    for (size_t i = 0; i < a.n_elem; i++)
       printf("%8.4f", a[i]);
     printf("\n");
   }
 
   void print_vector(TextWriter& writer, const arma::vec& a, const char* msg, const char* format) {
     writer.Printf("%s - Vector (%d) = \n", msg, a.n_elem);
-    for (index_t i = 0; i < a.n_elem; i++)
+    for (size_t i = 0; i < a.n_elem; i++)
       writer.Printf(format, a[i]);
     writer.Printf("\n");
   }
@@ -57,10 +57,10 @@ namespace hmm_support {
     return sqrt(-2 * log(r) / r) * u;
   }
 
-  void RAND_NORMAL_01_INIT(index_t N, arma::vec& v) {
+  void RAND_NORMAL_01_INIT(size_t N, arma::vec& v) {
     double r, u, t;
     v.set_size(N);
-    for (index_t i = 0; i < N; i+=2) {
+    for (size_t i = 0; i < N; i+=2) {
       r = 2;
       while (r > 1) {
 	u = RAND_UNIFORM(-1, 1);
@@ -74,7 +74,7 @@ namespace hmm_support {
   }
 
   void RAND_NORMAL_INIT(const arma::vec& mean, const arma::mat& cov, arma::vec& v) {
-    index_t N = mean.n_elem;
+    size_t N = mean.n_elem;
     arma::vec v01;
     RAND_NORMAL_01_INIT(N, v01);
     v = cov * v01;
@@ -83,13 +83,13 @@ namespace hmm_support {
 
   // return x'Ay
   double MyMulExpert(const arma::vec& x, const arma::mat& A, const arma::vec& y) {
-    index_t M = A.n_rows;
-    index_t N = A.n_cols;
+    size_t M = A.n_rows;
+    size_t N = A.n_cols;
     mlpack::IO::AssertMessage((M == x.n_elem && N == y.n_elem), "MyMulExpert: sizes do not match");
 
     double s = 0;
-    for (index_t i = 0; i < M; i++)
-      for (index_t j = 0; j < N; j++)
+    for (size_t i = 0; i < M; i++)
+      for (size_t j = 0; j < N; j++)
 	s += x[i] * A(i, j) * y[j];
 
     return s;
@@ -100,18 +100,18 @@ namespace hmm_support {
     return det_cov * exp(-0.5 * MyMulExpert(d, inv_cov, d));
   }
 
-  bool kmeans(const std::vector<arma::mat>& data, index_t num_clusters, 
-	      std::vector<index_t>& labels_, std::vector<arma::vec>& centroids_, 
-	      index_t max_iter, double error_thresh)
+  bool kmeans(const std::vector<arma::mat>& data, size_t num_clusters, 
+	      std::vector<size_t>& labels_, std::vector<arma::vec>& centroids_, 
+	      size_t max_iter, double error_thresh)
   {
-    std::vector<index_t> counts; //number of points in each cluster
+    std::vector<size_t> counts; //number of points in each cluster
     std::vector<arma::vec> tmp_centroids;
-    index_t num_points, num_dims;
-    index_t i, j, num_iter = 0;
+    size_t num_points, num_dims;
+    size_t i, j, num_iter = 0;
     double error, old_error;
 
     num_points = 0;
-    for (index_t i = 0; i < data.size(); i++)
+    for (size_t i = 0; i < data.size(); i++)
       num_points += data[i].n_cols;
 
     if (num_points < num_clusters) 
@@ -127,8 +127,8 @@ namespace hmm_support {
 
     //Initialize the clusters to k points
     for (j = 0; j < num_clusters; j++) {
-      index_t i = (index_t) math::Random(0, data.size() - 0.5);
-      index_t k = (index_t) math::Random(0, data[i].n_cols - 0.5);
+      size_t i = (size_t) math::Random(0, data.size() - 0.5);
+      size_t k = (size_t) math::Random(0, data[i].n_cols - 0.5);
 
       arma::vec temp_vector = data[i].unsafe_col(k);
       centroids_[j] = temp_vector;
@@ -145,8 +145,8 @@ namespace hmm_support {
         counts[i] = 0;
       }
       i = 0;
-      for (index_t t = 0, i = 0; t < data.size(); t++) {
-        for (index_t k = 0; k < data[t].n_cols; k++, i++) {
+      for (size_t t = 0, i = 0; t < data.size(); t++) {
+        for (size_t k = 0; k < data[t].n_cols; k++, i++) {
           // Find the cluster closest to this point and update its label
           double min_distance = DBL_MAX;
           arma::vec data_i_Vec = data[t].unsafe_col(k);
@@ -168,7 +168,7 @@ namespace hmm_support {
         }
 
         // Now update all the centroids
-        for (index_t j = 0; j < num_clusters; j++) {
+        for (size_t j = 0; j < num_clusters; j++) {
           if (counts[j] > 0)
             centroids_[j] = tmp_centroids[j] / (double) counts[j];
         }
@@ -181,14 +181,14 @@ namespace hmm_support {
     return true;
   }
 
-  bool kmeans(const arma::mat& data, index_t num_clusters, 
-	      std::vector<index_t>& labels_, std::vector<arma::vec>& centroids_, 
-	      index_t max_iter, double error_thresh)
+  bool kmeans(const arma::mat& data, size_t num_clusters, 
+	      std::vector<size_t>& labels_, std::vector<arma::vec>& centroids_, 
+	      size_t max_iter, double error_thresh)
   {
-    std::vector<index_t> counts; //number of points in each cluster
+    std::vector<size_t> counts; //number of points in each cluster
     std::vector<arma::vec> tmp_centroids;
-    index_t num_points, num_dims;
-    index_t i, j, num_iter = 0;
+    size_t num_points, num_dims;
+    size_t i, j, num_iter = 0;
     double error, old_error;
     
     if (data.n_cols < num_clusters) 
@@ -241,7 +241,7 @@ namespace hmm_support {
       }
      
       // Now update all the centroids
-      for (index_t j = 0; j < num_clusters; j++) {
+      for (size_t j = 0; j < num_clusters; j++) {
         if (counts[j] > 0)
           centroids_[j] = tmp_centroids[j] / (double) counts[j];
       }
@@ -254,16 +254,16 @@ namespace hmm_support {
   }
   
   void mat2arrlst(arma::mat& a, std::vector<arma::vec>& seqs) {
-    index_t n = a.n_cols;
-    for (index_t i = 0; i < n; i++) {
+    size_t n = a.n_cols;
+    for (size_t i = 0; i < n; i++) {
       arma::vec seq = a.unsafe_col(i);
       seqs.push_back(seq);
     }
   }
 
-  void mat2arrlstmat(index_t N, arma::mat& a, std::vector<arma::mat>& seqs) {
-    index_t n = a.n_cols;
-    for (index_t i = 0; i < n; i+=N) {
+  void mat2arrlstmat(size_t N, arma::mat& a, std::vector<arma::mat>& seqs) {
+    size_t n = a.n_cols;
+    for (size_t i = 0; i < n; i+=N) {
       arma::mat b = a.cols(i, i + N);
       seqs.push_back(b);
     }
@@ -287,13 +287,13 @@ namespace hmm_support {
     return true;
   }
 
-  success_t read_matrix(TextLineReader& reader, arma::mat& matrix) {
+  bool read_matrix(TextLineReader& reader, arma::mat& matrix) {
     if (!skip_blank(reader)) { // EOF ?
       matrix.set_size(0, 0);
-      return SUCCESS_FAIL;
+      return false;
     } else {
-      index_t n_rows = 0;
-      index_t n_cols = 0;
+      size_t n_rows = 0;
+      size_t n_cols = 0;
       bool is_done;
      
       // How many columns ?
@@ -313,7 +313,7 @@ namespace hmm_support {
         mlpack::IO::Assert(num_str.size() == n_cols);
 
         std::istringstream is;
-        for (index_t i = 0; i < n_cols; i++) {
+        for (size_t i = 0; i < n_cols; i++) {
           double d;
           is.str(num_str[i]);
           if( !(is >> d ) )
@@ -352,16 +352,16 @@ namespace hmm_support {
           //FIXME
 //	  matrix->Own(num_double.ReleasePtr(), n_cols, n_rows);
 	 
-          return SUCCESS_PASS;
+          return true;
         }
       }
     }
   }
 
-  success_t read_vector(TextLineReader& reader, arma::vec& vec) {
+  bool read_vector(TextLineReader& reader, arma::vec& vec) {
     if (!skip_blank(reader)) { // EOF ?
       vec.set_size(0);
-      return SUCCESS_FAIL;
+      return false;
     }
     
     std::vector<double> num_double;
@@ -375,7 +375,7 @@ namespace hmm_support {
       // deprecated: double* point = num_double.AddBack(num_str.size());
       
       std::istringstream is;
-      for (index_t i = 0; i < num_str.size(); i++) {
+      for (size_t i = 0; i < num_str.size(); i++) {
         double d;
         is.str(num_str[i]);
         if( !(is >> d) )
@@ -406,39 +406,39 @@ namespace hmm_support {
         // FIXME
 //	vec->Own(num_double.ReleasePtr(), length);
 	
-        return SUCCESS_PASS;
+        return true;
       }
     }
   }
 
-  success_t load_matrix_list(const char* filename, std::vector<arma::mat>& matlst) {
+  bool load_matrix_list(const char* filename, std::vector<arma::mat>& matlst) {
     TextLineReader reader;
-    if (!PASSED(reader.Open(filename)))
-      return SUCCESS_FAIL;
+    if (!(reader.Open(filename)))
+      return false;
     do {
       arma::mat tmp;
-      if (read_matrix(reader, tmp) == SUCCESS_PASS)
+      if (read_matrix(reader, tmp) == true)
 	matlst.push_back(tmp);
       else
         break;
     } while (1);
 
-    return SUCCESS_PASS;
+    return true;
   }
 
-  success_t load_vector_list(const char* filename, std::vector<arma::vec>& veclst) {
+  bool load_vector_list(const char* filename, std::vector<arma::vec>& veclst) {
     TextLineReader reader;
-    if (!PASSED(reader.Open(filename)))
-      return SUCCESS_FAIL;
+    if (!(reader.Open(filename)))
+      return false;
 
     do {
       arma::vec vec;
-      if (read_vector(reader, vec) == SUCCESS_PASS)
+      if (read_vector(reader, vec) == true)
 	veclst.push_back(vec);
       else
         break;
     } while (1);
 
-    return SUCCESS_PASS;
+    return true;
   }
 } // end namespace

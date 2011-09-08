@@ -6,10 +6,10 @@
 template<typename TKernel>
 void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alpha, arma::vec& w) const
 {
-  index_t n_support = 0;
-  index_t i_support = 0;
+  size_t n_support = 0;
+  size_t i_support = 0;
 
-  for (index_t i = 0; i < n_data_; i++)
+  for (size_t i = 0; i < n_data_; i++)
   {
     if (alpha_[i] != 0)
     {
@@ -20,7 +20,7 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
   support_vectors.set_size(dataset_.n_rows - 1, n_support);
   support_alpha.set_size(n_support);
 
-  for (index_t i = 0; i < n_data_; i++)
+  for (size_t i = 0; i < n_data_; i++)
   {
     if (alpha_[i] != 0)
     {
@@ -35,7 +35,7 @@ void NNSMO<TKernel>::GetNNSVM(arma::mat& support_vectors, arma::vec& support_alp
   }
 
   w.set_size(n_feature_);
-  for(index_t s = 0; s < n_feature_; s++)
+  for(size_t s = 0; s < n_feature_; s++)
     w[s] = math::ClampNonNegative(VTA_[s]);
 }
 
@@ -44,9 +44,9 @@ template<typename TKernel>
 void NNSMO<TKernel>::Train()
 {
   bool examine_all = true;
-  index_t num_changed = 0;
-  index_t n_iter = 0;
-  index_t counter = 1000;
+  size_t num_changed = 0;
+  size_t n_iter = 0;
+  size_t counter = 1000;
   if (counter > n_data_)
     counter = n_data_;
 
@@ -80,16 +80,16 @@ void NNSMO<TKernel>::Train()
 
   //compute the final objective value
   double obj = sum_alpha_ - w_square_sum_/2;
-  fprintf(stderr, "iter=%"LI", %"LI", %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
+  fprintf(stderr, "iter=%zu, %zu, %f, %f, %f, obj=%f \n", n_iter, num_changed, thresh_, sum_alpha_, w_square_sum_, obj);
 }
 
 //NNSMO training iteration
 template<typename TKernel>
-index_t NNSMO<TKernel>::TrainIteration_(bool examine_all)
+size_t NNSMO<TKernel>::TrainIteration_(bool examine_all)
 {
-  index_t num_changed = 0;
+  size_t num_changed = 0;
 
-  for (index_t i = 0; i < n_data_; i++)
+  for (size_t i = 0; i < n_data_; i++)
   {
     if ((examine_all || !IsBound_(alpha_[i])) && TryChange_(i))
     {
@@ -103,7 +103,7 @@ index_t NNSMO<TKernel>::TrainIteration_(bool examine_all)
 //	outer loop: alpha_j, KKT violation
 //	inner loop: alpha_i, maximum objective value increase with respective to alpha_i, j
 template<typename TKernel>
-bool NNSMO<TKernel>::TryChange_(index_t j)
+bool NNSMO<TKernel>::TryChange_(size_t j)
 {
   double error_j = Error_(j);
   double rj = error_j * GetLabelSign_(j);
@@ -116,9 +116,9 @@ bool NNSMO<TKernel>::TryChange_(index_t j)
   }
 
   // first try the one we suspect to have the largest yield
-  index_t i = -1;
+  size_t i = -1;
   double df_max = 0;
-  for (index_t k = 0; k < n_data_; k++)
+  for (size_t k = 0; k < n_data_; k++)
   {
     double df_k = CalculateDF_(k, j, error_j);
     if (df_k > df_max)
@@ -127,7 +127,7 @@ bool NNSMO<TKernel>::TryChange_(index_t j)
       i = k;
     }
   }
-  if (i != (index_t) -1 && TakeStep_(i, j, error_j))
+  if (i != (size_t) -1 && TakeStep_(i, j, error_j))
   {
     return true;
   }
@@ -138,7 +138,7 @@ bool NNSMO<TKernel>::TryChange_(index_t j)
 
 //compute the increase of objective value with respect to updating of alpha_i, alpha_j
 template<typename TKernel>
-double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
+double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
 {
   //1. check i,j
   if (i == j)
@@ -201,7 +201,7 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
 
   //4. compute increase of objective value
   arma::vec w(n_feature_);
-  for (index_t s = 0; s < n_feature_; s++)
+  for (size_t s = 0; s < n_feature_; s++)
   {
     double VTdA_s = (dataset_(s, j) - dataset_(s, i)) * yj * delta_alpha_j;
     w[s] = math::ClampNonNegative(VTA_[s] + VTdA_s);
@@ -216,7 +216,7 @@ double NNSMO<TKernel>::CalculateDF_(index_t i, index_t j, double error_j)
 
 // update alpha_i, alpha_j, as well as the VTA_, negation of intercept: thresh_ and the error cache: error_
 template<typename TKernel>
-bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
+bool NNSMO<TKernel>::TakeStep_(size_t i, size_t j, double error_j)
 {
   //1. check i,j
   if (i == j)
@@ -296,7 +296,7 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
 
   //4. update VTA_, w_square_sum_
   arma::vec w(n_feature_);
-  for (index_t s = 0; s < n_feature_; s++)
+  for (size_t s = 0; s < n_feature_; s++)
   {
     double VTdA_s = dataset_(s, i) * yi * delta_alpha_i + dataset_(s, j) * yj * delta_alpha_j;
     VTA_[s] += VTdA_s;
@@ -311,8 +311,8 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
 
   // update error cache and threshold
   double thresh_sum = 0;
-  index_t nb_count = 0;
-  for (index_t k = 0; k < n_data_ ; k++)
+  size_t nb_count = 0;
+  for (size_t k = 0; k < n_data_ ; k++)
   {
     arma::vec x_k;
     GetVector_(k, x_k);
@@ -327,7 +327,7 @@ bool NNSMO<TKernel>::TakeStep_(index_t i, index_t j, double error_j)
     thresh_ = thresh_sum/nb_count;
 
   // update error cache using the new threshold
-  for (index_t k = 0; k < n_data_ ; k++)
+  for (size_t k = 0; k < n_data_ ; k++)
   {
     error_[k] -= thresh_;
   }

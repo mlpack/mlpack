@@ -35,14 +35,14 @@ class AdaptiveKDE{
 
   //Number of training points
 
-  index_t num_train_points_;
+  size_t num_train_points_;
 
   //Number of test points
-  index_t num_test_points_;
+  size_t num_test_points_;
 
-  index_t num_dims_;
+  size_t num_dims_;
 
-  index_t classification_flag_;
+  size_t classification_flag_;
 
   double plugin_bandwidth_;
 
@@ -69,7 +69,7 @@ class AdaptiveKDE{
   void get_rmse_and_hellinger_distance(double *rmse_adaptive_kde,
 				       double *hellinger_adaptive_kde){
     
-    index_t len=true_test_density_data_.n_cols();
+    size_t len=true_test_density_data_.n_cols();
 
     if(len==0){
 
@@ -81,7 +81,7 @@ class AdaptiveKDE{
     double diff=0;
     double total_sqd_diff=0;
     double sum_ratio=0;
-    for(index_t i=0;i<len;i++){
+    for(size_t i=0;i<len;i++){
 
       diff=test_densities_[i]-true_test_density_data_.get(0,i);
       total_sqd_diff+=(diff*diff);
@@ -104,11 +104,11 @@ class AdaptiveKDE{
 
   void CalculateMean_(Matrix &data,Vector &mean){
 
-    index_t num_points=data.n_cols();
-    index_t num_dim=data.n_rows();
+    size_t num_points=data.n_cols();
+    size_t num_dim=data.n_rows();
     mean.SetZero();
 
-    for(index_t i=0;i<num_points;i++){
+    for(size_t i=0;i<num_points;i++){
 
       //Get the present data point
       double *data_point=data.GetColumnPtr(i);
@@ -126,7 +126,7 @@ class AdaptiveKDE{
 
   void GetSquaredVector_(Vector &vec){
     
-    for(index_t i=0;i<num_dims_;i++){
+    for(size_t i=0;i<num_dims_;i++){
 
       double elem=vec[i];
       vec[i]=elem*elem;
@@ -153,7 +153,7 @@ class AdaptiveKDE{
 
     Vector diff;
     diff.Init(num_dims_);
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
 
       double *present_point_ptr;
       present_point_ptr=data.GetColumnPtr(i);
@@ -169,7 +169,7 @@ class AdaptiveKDE{
     la::Scale(1.0/num_train_points_,&sum);
 
     double total_val=0;
-    for(index_t i=0;i<num_dims_;i++){
+    for(size_t i=0;i<num_dims_;i++){
 
       total_val+=sum[i];
     }
@@ -209,7 +209,7 @@ class AdaptiveKDE{
 
     double const1=1.0/((num_train_points_-1)*norm_const);
 
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
       
       double initial_density=train_densities[i];
       train_densities[i]=
@@ -246,7 +246,7 @@ class AdaptiveKDE{
     
     printf("Train densities are..\n");
     train_densities.PrintDebug();
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
 
       likelihood*=train_densities[i];
       
@@ -264,7 +264,7 @@ class AdaptiveKDE{
   
   void CalculateLocalBandwidths_(Vector &train_densities){
 
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
       
       double lambda=pow(train_densities[i]/geometric_mean_,-alpha_);
       //   printf("lambda is %f...\n",lambda);
@@ -291,12 +291,12 @@ class AdaptiveKDE{
     
     GaussianKernel gk;
     
-    for(index_t i=0;i<num_test_points_;i++){
+    for(size_t i=0;i<num_test_points_;i++){
     
       double *test_point=test_data_.GetColumnPtr(i);
       double total_contrib=0;
       
-      for(index_t j=0;j<num_train_points_;j++){  
+      for(size_t j=0;j<num_train_points_;j++){  
 
 	//get the contribution of the jth trg point
 	gk.Init(bandwidth_train_points_[j]);
@@ -325,12 +325,12 @@ class AdaptiveKDE{
 
     GaussianKernel gk;
     
-    index_t num_correctly_classified=0;
-    for(index_t i=0;i<num_test_points_;i++){
+    size_t num_correctly_classified=0;
+    for(size_t i=0;i<num_test_points_;i++){
     
       double *test_point=test_data_.GetColumnPtr(i);
       double classification_contrib=0;
-      for(index_t j=0;j<num_train_points_;j++){  
+      for(size_t j=0;j<num_train_points_;j++){  
 
 	//get the contribution of the jth trg point
 	gk.Init(bandwidth_train_points_[j]);
@@ -360,7 +360,7 @@ class AdaptiveKDE{
       Matrix whitening_matrix_train;
       Matrix whitening_matrix_test;
       
-      index_t num_dims=train_data_.n_rows();
+      size_t num_dims=train_data_.n_rows();
       if(num_dims>1){
 	
 	//Whiten the data. This allows us to use a single bandiwdth
@@ -384,19 +384,19 @@ class AdaptiveKDE{
 	printf("Num dims =%d\n",test_data_.n_rows());
 	printf("Num points=%d..\n",test_data_.n_cols());
 	FILE *fp=fopen("/net/hc295/gmravi/home/research/qp_and_boosted_kde/banana/banana_whitened_test.txt","w+");
-	index_t num_points=test_data_.n_cols();
-	index_t num_dims=test_data_.n_rows();
+	size_t num_points=test_data_.n_cols();
+	size_t num_dims=test_data_.n_rows();
 
-	for(index_t n=0;n<num_points;n++){
+	for(size_t n=0;n<num_points;n++){
 
 	  fprintf(fp,"%f,%f\n",test_data_whitened.get(0,n),test_data_whitened.get(1,n));
 	}
 	
 
 	FILE *gp=fopen("/net/hc295/gmravi/home/research/qp_and_boosted_kde/banana/banana_whitened_train.txt","w+");
-	index_t num_train_points=train_data_.n_cols();
+	size_t num_train_points=train_data_.n_cols();
 	
-	for(index_t n=0;n<num_train_points;n++){
+	for(size_t n=0;n<num_train_points;n++){
 
 	  fprintf(gp,"%f,%f\n",train_data_whitened.get(0,n),train_data_whitened.get(1,n));
 	}
@@ -422,9 +422,9 @@ class AdaptiveKDE{
     double int_f_hat_sqd=0;
     GaussianKernel gk;
     
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
       
-      for(index_t j=i;j<num_train_points_;j++){
+      for(size_t j=i;j<num_train_points_;j++){
 	
 	double bw_i=bandwidth_train_points_[i];
 	double bw_j=bandwidth_train_points_[j];
@@ -466,9 +466,9 @@ class AdaptiveKDE{
     double integral_f_f_hat=0;
     GaussianKernel gk;
     
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
       
-      for(index_t j=0;j<num_train_points_;j++){
+      for(size_t j=0;j<num_train_points_;j++){
 	
 	if(j!=i){
 

@@ -9,19 +9,19 @@
 
 using namespace mlpack::neighbor;
 
-index_t NearestNeighborSort::SortDistance(arma::vec& list,
+size_t NearestNeighborSort::SortDistance(arma::vec& list,
                                           double new_distance) {
   // The first element in the list is the nearest neighbor.  We only want to
   // insert if the new distance is less than the last element in the list.
   if (new_distance > list[list.n_elem - 1])
-    return (index_t() - 1); // Do not insert.
+    return (size_t() - 1); // Do not insert.
 
   // Search from the beginning.  This may not be the best way.
-  for (index_t i = 0; i < list.n_elem; i++) {
+  for (size_t i = 0; i < list.n_elem; i++) {
     if (new_distance <= list[i])
       return i;
   }
 
   // Control should never reach here.
-  return (index_t() - 1);
+  return (size_t() - 1);
 }

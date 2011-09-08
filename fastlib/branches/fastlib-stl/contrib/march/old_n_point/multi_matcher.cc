@@ -12,7 +12,7 @@
 // Todo: think about whether it's worth keeping up with what we pruned before
 
 
-index_t npt::MultiMatcher::IndexMatcherDim_(index_t i, index_t j) {
+size_t npt::MultiMatcher::IndexMatcherDim_(size_t i, size_t j) {
   
   if (i > j) {
     std::swap(i, j);
@@ -20,10 +20,10 @@ index_t npt::MultiMatcher::IndexMatcherDim_(index_t i, index_t j) {
   
   assert(i != j);
   
-  index_t res = 0;
+  size_t res = 0;
   
   if (i > 0) {
-    for (index_t k = 0; k < i; k++) {
+    for (size_t k = 0; k < i; k++) {
       res += (tuple_size_ - k - 1);
     }
   }
@@ -56,7 +56,7 @@ bool npt::MultiMatcher::TestNodeTuple(NodeTuple& nodes) {
   std::sort(node_lower_.begin(), node_lower_.end());
   std::sort(node_upper_.begin(), node_upper_.end());
 
-  for (index_t i = 0; i < upper_bounds_sq_.size(); i++) {
+  for (size_t i = 0; i < upper_bounds_sq_.size(); i++) {
     
     if (node_lower_[i] > upper_bounds_sq_[i]) {
       return false;
@@ -73,20 +73,20 @@ bool npt::MultiMatcher::TestNodeTuple(NodeTuple& nodes) {
 } // TestNodeTuple
 
 
-bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t old_ind,
+bool npt::MultiMatcher::TestPointPair_(double dist_sq, size_t new_ind, size_t old_ind,
                                        std::vector<bool>& permutation_ok,
-                                       std::vector<std::vector<index_t> >&perm_locations) {
+                                       std::vector<std::vector<size_t> >&perm_locations) {
 
   bool any_matches = false;
   
-  for (index_t perm_ind = 0; perm_ind < num_permutations_; perm_ind++) {
+  for (size_t perm_ind = 0; perm_ind < num_permutations_; perm_ind++) {
     
     if (!permutation_ok[perm_ind]) {
       continue;
     }
     
-    index_t template_index_1 = GetPermIndex_(perm_ind, new_ind);
-    index_t template_index_2 = GetPermIndex_(perm_ind, old_ind);
+    size_t template_index_1 = GetPermIndex_(perm_ind, new_ind);
+    size_t template_index_2 = GetPermIndex_(perm_ind, old_ind);
     
     std::vector<double>::iterator lo;
     //std::vector<double>::iterator hi;
@@ -102,7 +102,7 @@ bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t 
     
     // which of the (n choose 2) dimensions of the results tensor are we 
     // dealing with in the current permutation
-    index_t matcher_ind = IndexMatcherDim_(template_index_1, template_index_2);
+    size_t matcher_ind = IndexMatcherDim_(template_index_1, template_index_2);
     
     // TODO: double check where these are putting me
     lo = std::lower_bound(matcher_dists_[matcher_ind].begin(),
@@ -111,7 +111,7 @@ bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t 
     //                      matcher_dists_[matcher_ind].end(), dist_sq);
     
     double closest_matcher;
-    index_t closest_ind;
+    size_t closest_ind;
     
     if (lo == matcher_dists_[matcher_ind].end()) {
       closest_matcher = matcher_dists_[matcher_ind].back();
@@ -123,7 +123,7 @@ bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t 
     }
     else {
       
-      index_t low_ind = lo - matcher_dists_[matcher_ind].begin();
+      size_t low_ind = lo - matcher_dists_[matcher_ind].begin();
       
       double high_dist = matcher_dists_[matcher_ind][low_ind] - dist;
       double low_dist = dist  - matcher_dists_[matcher_ind][low_ind - 1];
@@ -179,10 +179,10 @@ bool npt::MultiMatcher::TestPointPair_(double dist_sq, index_t new_ind, index_t 
 
 
 void npt::MultiBandwidthAlg::BaseCaseHelper_(
-                                             std::vector<std::vector<index_t> >& point_sets,
+                                             std::vector<std::vector<size_t> >& point_sets,
                                              std::vector<bool>& permutation_ok,
-                                             std::vector<std::vector<index_t> >& perm_locations,
-                                             std::vector<index_t>& points_in_tuple,
+                                             std::vector<std::vector<size_t> >& perm_locations,
+                                             std::vector<size_t>& points_in_tuple,
                                              int k) {
   
   
@@ -191,14 +191,14 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
   // satisfies
   
   std::vector<bool> perm_ok_copy(permutation_ok);
-  std::vector<std::vector<index_t> > perm_locations_copy(perm_locations);
+  std::vector<std::vector<size_t> > perm_locations_copy(perm_locations);
   
   bool bad_symmetry = false;
   
   // iterate over possible new points
-  for (index_t i = 0; i < point_sets[k].size(); i++) {
+  for (size_t i = 0; i < point_sets[k].size(); i++) {
     
-    index_t new_point_ind = point_sets[k][i];
+    size_t new_point_ind = point_sets[k][i];
     bool this_point_works = true;
     
     bad_symmetry = false;
@@ -218,15 +218,15 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
     perm_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // TODO: check if I can accurately copy this more directly
-    for (index_t m = 0; m < perm_locations_copy.size(); m++) {
+    for (size_t m = 0; m < perm_locations_copy.size(); m++) {
       perm_locations_copy[m].assign(perm_locations[m].begin(), 
                                     perm_locations[m].end());
     } // for m
     
     // TODO: double check that I can exit on bad symmetry here
-    for (index_t j = 0; j < k && this_point_works && !bad_symmetry; j++) {
+    for (size_t j = 0; j < k && this_point_works && !bad_symmetry; j++) {
       
-      index_t old_point_ind = points_in_tuple[j];
+      size_t old_point_ind = points_in_tuple[j];
       
       bool j_is_random = (j < num_random_);
       
@@ -264,12 +264,12 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         // fill in all the results that worked
         
-        std::set<index_t> results_set;
+        std::set<size_t> results_set;
         
-        for (index_t n = 0; n < perm_locations_copy.size(); n++) {
+        for (size_t n = 0; n < perm_locations_copy.size(); n++) {
           
           if (perm_ok_copy[n]) {
-            index_t results_ind = FindResultsInd_(perm_locations_copy[n]);
+            size_t results_ind = FindResultsInd_(perm_locations_copy[n]);
             results_set.insert(results_ind);
             //std::cout << "Inserting: " << results_ind << "\n";
           }
@@ -277,7 +277,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         
         // Now, iterate through all (distinct) results keys in the set and add
         // them to the total
-        std::set<index_t>::iterator it;
+        std::set<size_t>::iterator it;
         
         for (it = results_set.begin(); it != results_set.end(); it++) {
           
@@ -289,7 +289,7 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
         for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
           this_weight *= random_weights_(points_in_tuple[tuple_ind]);
         }
-        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+        for (size_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
              tuple_ind++) {
           
           this_weight *= data_weights_(points_in_tuple[tuple_ind]);
@@ -319,13 +319,13 @@ void npt::MultiBandwidthAlg::BaseCaseHelper_(
 
 void npt::MultiMatcher::BaseCase(NodeTuple& nodes) {
   
-  std::vector<std::vector<index_t> > point_sets(tuple_size_);
+  std::vector<std::vector<size_t> > point_sets(tuple_size_);
   
-  for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
+  for (size_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
     point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
     
-    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+    for (size_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
       
       point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
       
@@ -335,11 +335,11 @@ void npt::MultiMatcher::BaseCase(NodeTuple& nodes) {
   
   std::vector<bool> permutation_ok(num_permutations_, true);
   
-  std::vector<index_t> points_in_tuple(tuple_size_, -1);
+  std::vector<size_t> points_in_tuple(tuple_size_, -1);
   
-  std::vector<std::vector<index_t> > perm_locations(num_permutations_);
+  std::vector<std::vector<size_t> > perm_locations(num_permutations_);
   
-  for (index_t i = 0; i < perm_locations.size(); i++) {
+  for (size_t i = 0; i < perm_locations.size(); i++) {
     perm_locations[i].resize(num_bands_.size(), INT_MAX);
   }
   

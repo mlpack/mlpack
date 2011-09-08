@@ -30,7 +30,7 @@ private:
   
   // The number of reference PAIRS that haven't been accounted for by either
   // approximation or a base case
-  index_t remaining_references_;
+  size_t remaining_references_;
   
   // The value of an approximation performed on this node
   // If no approximation has been done, this value is 0
@@ -57,16 +57,16 @@ public:
     
   } // void Init (2 children)
   
-  void Init(index_t start1, index_t end1, index_t start2, index_t end2, 
-            index_t num_funs) {
+  void Init(size_t start1, size_t end1, size_t start2, size_t end2, 
+            size_t num_funs) {
     
     /*
     double min_density = DBL_MAX;
     double max_density = -DBL_MAX;
     
-    for (index_t i = start1; i < end1; i++) {
+    for (size_t i = start1; i < end1; i++) {
       
-      for (index_t j = start2; j < end2; j++) {
+      for (size_t j = start2; j < end2; j++) {
         
         double this_density = density.get(i, j);
         if (this_density < min_density) {
@@ -131,12 +131,12 @@ public:
     return entry_upper_bound_;
   }
   
-  void set_remaining_references(index_t ref) {
+  void set_remaining_references(size_t ref) {
     DEBUG_ASSERT_MSG(ref >= 0, "Negative remaining references\n");
     remaining_references_ = ref;
   }
   
-  index_t remaining_references() const {
+  size_t remaining_references() const {
     return remaining_references_;
   }
   
@@ -196,13 +196,13 @@ class SquareTree {
    *  greater than that of q2
    */
   void Init(QueryTree1* query1_root, QueryTree2* query2_root, 
-            index_t num_funs) {
+            size_t num_funs) {
   
     query1_ = query1_root;
     query2_ = query2_root;
   
-    index_t q1_height = query1_->stat().height();
-    index_t q2_height = query2_->stat().height();
+    size_t q1_height = query1_->stat().height();
+    size_t q2_height = query2_->stat().height();
     
     DEBUG_ASSERT(query1_root->end() > query2_root->begin());
   

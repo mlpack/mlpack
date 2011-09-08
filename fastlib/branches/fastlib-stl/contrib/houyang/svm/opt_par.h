@@ -4,9 +4,9 @@
 #include "fastlib/fastlib.h"
 
 // maximum # of interations for PAR training
-const index_t MAX_NUM_ITER_PAR = 10000000;
+const size_t MAX_NUM_ITER_PAR = 10000000;
 // after # of iterations to do shrinking
-const index_t PAR_NUM_FOR_SHRINKING = 1000;
+const size_t PAR_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 const double PAR_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
@@ -23,25 +23,25 @@ class PAR {
   int learner_typeid_;
   int regularization_; // do L2-SVM or L1-SVM, default: L1
 
-  index_t ct_iter_; /* counter for the number of iterations */
-  index_t ct_shrinking_; /* counter for doing shrinking  */
+  size_t ct_iter_; /* counter for the number of iterations */
+  size_t ct_shrinking_; /* counter for doing shrinking  */
   bool do_shrinking_; // 1(default): do shrinking after 1000 iterations; 0: don't do shrinking
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the data matrix, including labels in the last row */
   //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
   Vector alpha_; /* the alphas, to be optimized */
-  index_t n_sv_; /* number of support vectors */
-  //index_t n_pos_alpha_;
+  size_t n_sv_; /* number of support vectors */
+  //size_t n_pos_alpha_;
   
-  index_t n_alpha_; /* number of variables to be optimized */
-  index_t n_active_; /* number of samples in the active set */
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
+  size_t n_alpha_; /* number of variables to be optimized */
+  size_t n_active_; /* number of samples in the active set */
+  ArrayList<size_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
   bool reconstructed_; /* indicator: where unshrinking has been carried out  */
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -59,7 +59,7 @@ class PAR {
   double inv_two_C_; // 1/2C
   double epsilon_; // for SVM_R
   int wss_; // working set selection scheme, 1 for 1st order expansion; 2 for 2nd order expansion
-  index_t n_iter_; // number of iterations
+  size_t n_iter_; // number of iterations
   double accuracy_; // accuracy for stopping creterion
   double gap_; // for stopping criterion
 
@@ -74,7 +74,7 @@ class PAR {
     // init parameters
     wss_ = (int) param_[4];
     regularization_ = (int) param_[3];
-    n_iter_ = (index_t) param_[5];
+    n_iter_ = (size_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_PAR ? n_iter_: MAX_NUM_ITER_PAR;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
@@ -107,7 +107,7 @@ class PAR {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -116,17 +116,17 @@ class PAR {
 
   void ReconstructGradient_(int learner_typeid);
   
-  bool TestShrink_(index_t i, double y_grad_max, double y_grad_min);
+  bool TestShrink_(size_t i, double y_grad_max, double y_grad_min);
 
   void Shrinking_();
 
-  bool WorkingSetSelection_(index_t &i, index_t &j);
+  bool WorkingSetSelection_(size_t &i, size_t &j);
 
-  void UpdateGradientAlpha_(index_t i, index_t j);
+  void UpdateGradientAlpha_(size_t i, size_t j);
 
   void CalcBias_();
 
-  /*  void GetVector_(index_t i, Vector *v) const {
+  /*  void GetVector_(size_t i, Vector *v) const {
     datamatrix_.MakeColumnSubvector(i, 0, datamatrix_.n_rows()-1, v);
   }
   */
@@ -134,7 +134,7 @@ class PAR {
   /**
    * Instead of C, we use C_+ and C_- to handle unbalanced data
    */
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     if (regularization_ == 2) { // L2-SVM
       return C_;
     }
@@ -146,7 +146,7 @@ class PAR {
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     double *v_i, *v_j;
     v_i = datamatrix_.GetColumnPtr(i);
     v_j = datamatrix_.GetColumnPtr(j);
@@ -164,7 +164,7 @@ class PAR {
 /*
 template<typename TKernel>
 void PAR<TKernel>::ReconstructGradient_(int learner_typeid) {
-  index_t i, j;
+  size_t i, j;
   if (n_active_ == n_alpha_)
     return;
   if (learner_typeid == 0) { // SVM_C
@@ -191,7 +191,7 @@ void PAR<TKernel>::ReconstructGradient_(int learner_typeid) {
 
 
 template<typename TKernel>
-bool PAR<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) {
+bool PAR<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
   if (IsUpperBounded(i)) { // alpha_[i] = C
     if (y_[i] == 1) {
       return (grad_[i] > y_grad_max);
@@ -215,7 +215,7 @@ bool PAR<TKernel>::TestShrink_(index_t i, double y_grad_max, double y_grad_min) 
 
 template<typename TKernel>
 void PAR<TKernel>::Shrinking_() {
-  index_t t;
+  size_t t;
 
   // Find m(a) == y_grad_max(i\in I_up) and M(a) == y_grad_min(j\in I_down)
   double y_grad_max = -INFINITY;
@@ -311,7 +311,7 @@ void PAR<TKernel>::Shrinking_() {
  */
 template<typename TKernel>
 void PAR<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -331,7 +331,7 @@ void PAR<TKernel>::LearnersInit_(int learner_typeid) {
     alpha_.SetZero();
     //    n_pos_alpha_ = 0;
     // randomly choose a point as initial feasible solution
-    index_t p = fx_param_int(NULL, "p_rand", rand() % n_alpha_);
+    size_t p = fx_param_int(NULL, "p_rand", rand() % n_alpha_);
     p = p>n_data_ ? (rand() % n_alpha_): p;
     alpha_[p] = 1;
     //swap(active_set_[p], active_set_[n_pos_alpha_]);
@@ -391,7 +391,7 @@ void PAR<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   ct_iter_ = 0;
   int stop_condition = 0;
   while (1) {
-    //for(index_t i=0; i<n_alpha_; i++)
+    //for(size_t i=0; i<n_alpha_; i++)
     //  printf("%f.\n", y_[i]*alpha_[i]);
     //printf("\n\n");
       
@@ -431,7 +431,7 @@ void PAR<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 template<typename TKernel>
 int PAR<TKernel>::PARIterations_() {
   ct_iter_ ++;
-  index_t i,j;
+  size_t i,j;
   if (WorkingSetSelection_(i,j) == true) {
     if (!do_shrinking_) { // no shrinking, optimality reached
       return 1;
@@ -481,7 +481,7 @@ int PAR<TKernel>::PARIterations_() {
 * @return: working set (i, j); indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
-bool PAR<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
+bool PAR<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
   double grad_max = -INFINITY; // for wss
   double grad_min =  INFINITY;
   int idx_i = -1;
@@ -490,7 +490,7 @@ bool PAR<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
   double min_gradinvCalpha_pos = INFINITY; // for l2-svm optimiality check
   
   // Find i using maximal violating pair scheme
-  index_t t;
+  size_t t;
   for (t=0; t<n_active_; t++) { // find argmax(grad)
     if (grad_[t] > grad_max) {
       grad_max = grad_[t];
@@ -539,8 +539,8 @@ bool PAR<TKernel>::WorkingSetSelection_(index_t &out_i, index_t &out_j) {
 *
 */
 template<typename TKernel>
-void PAR<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
-  index_t t;
+void PAR<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
+  size_t t;
 
   double a_i = alpha_[i]; // old alphas
   double a_j = alpha_[j];
@@ -749,9 +749,9 @@ void PAR<TKernel>::UpdateGradientAlpha_(index_t i, index_t j) {
 */
 template<typename TKernel>
 void PAR<TKernel>::CalcBias_() {
-  index_t op_pot;
+  size_t op_pot;
   bias_ = 0;
-  for (index_t i=0; i<n_alpha_; i++) {
+  for (size_t i=0; i<n_alpha_; i++) {
     op_pot = active_set_[i];
     bias_ = bias_ + y_[op_pot] * alpha_[op_pot];
   }
@@ -765,9 +765,9 @@ void PAR<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void PAR<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void PAR<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (alpha_[i] >= FW_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];

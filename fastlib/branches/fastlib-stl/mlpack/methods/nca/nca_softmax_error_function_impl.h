@@ -50,8 +50,8 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
   //     (p_i p_ik + p_k p_ki) x_ik x_ik^T
   arma::mat sum;
   sum.zeros(stretched_dataset_.n_rows, stretched_dataset_.n_rows);
-  for (index_t i = 0; i < stretched_dataset_.n_cols; i++) {
-    for (index_t k = (i + 1); k < stretched_dataset_.n_cols; k++) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
+    for (size_t k = (i + 1); k < stretched_dataset_.n_cols; k++) {
       // Calculate p_ik and p_ki first.
       double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
                                           stretched_dataset_.unsafe_col(k)));
@@ -97,8 +97,8 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   // order of O((n * (n + 1)) / 2), which really isn't all that great.
   p_.zeros(stretched_dataset_.n_cols);
   denominators_.zeros(stretched_dataset_.n_cols);
-  for (index_t i = 0; i < stretched_dataset_.n_cols; i++) {
-    for (index_t j = (i + 1); j < stretched_dataset_.n_cols; j++) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
+    for (size_t j = (i + 1); j < stretched_dataset_.n_cols; j++) {
       // Evaluate exp(-K(x_i, x_j)).
       double eval = exp(-kernel_.Evaluate(stretched_dataset_.unsafe_col(i),
                                           stretched_dataset_.unsafe_col(j)));
@@ -119,7 +119,7 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
   p_ /= denominators_;
 
   // Clean up any bad values.
-  for (index_t i = 0; i < stretched_dataset_.n_cols; i++) {
+  for (size_t i = 0; i < stretched_dataset_.n_cols; i++) {
     if (denominators_[i] == 0.0) {
       IO::Debug << "Denominator of p_{" << i << ", j} is 0." << std::endl;
 

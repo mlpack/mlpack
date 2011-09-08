@@ -27,7 +27,7 @@ class DHrectBound {
 
   private:
     DRange *bounds_;
-    index_t dim_;
+    size_t dim_;
 
   public:
     /**
@@ -39,7 +39,7 @@ class DHrectBound {
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    DHrectBound(index_t dimension);
+    DHrectBound(size_t dimension);
 
     /**
      * Destructor: clean up memory.
@@ -63,7 +63,7 @@ class DHrectBound {
     /**
      * Sets the dimensionality of the bound.
      */
-    void SetSize(index_t dim);
+    void SetSize(size_t dim);
 
     /**
      * Determines if a point is within this bound.
@@ -71,13 +71,13 @@ class DHrectBound {
     bool Contains(const arma::vec& point) const;
 
     /** Gets the dimensionality */
-    index_t dim() const { return dim_; }
+    size_t dim() const { return dim_; }
 
     /**
      * Sets and gets the range for a particular dimension.
      */
-    DRange& operator[](index_t i);
-    const DRange operator[](index_t i) const;
+    DRange& operator[](size_t i);
+    const DRange operator[](size_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle

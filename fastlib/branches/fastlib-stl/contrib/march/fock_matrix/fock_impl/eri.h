@@ -38,7 +38,7 @@ namespace eri {
   /**
    * Computes the number of functions in a shell of the given momentum.
    */
-  index_t NumFunctions(int momentum);
+  size_t NumFunctions(int momentum);
   
   /**
    * Normalization function for higher momenta
@@ -137,33 +137,33 @@ namespace eri {
    *
    * This should really go in the ArrayList class.
    */
-  void ArrayListSwap(index_t ind1, index_t ind2, ArrayList<index_t>* perm);
+  void ArrayListSwap(size_t ind1, size_t ind2, ArrayList<size_t>* perm);
   
-  void ArrayListSwapPointers(index_t ind1, index_t ind2, 
+  void ArrayListSwapPointers(size_t ind1, size_t ind2, 
                              ArrayList<BasisShell*>* list);
   
   /**
    * Returns the index of the given integral in the array returned from LIBINT.
    * indices holds the a, b, c, d indices and momenta holds the momenta
    */
-  index_t IntegralIndex(ArrayList<index_t> indices, ArrayList<index_t> momenta);
+  size_t IntegralIndex(ArrayList<size_t> indices, ArrayList<size_t> momenta);
   
-  index_t IntegralIndex(index_t a_ind, int A_mom, index_t b_ind, int B_mom,
-                        index_t c_ind, int C_mom, index_t d_ind, int D_mom);
+  size_t IntegralIndex(size_t a_ind, int A_mom, size_t b_ind, int B_mom,
+                        size_t c_ind, int C_mom, size_t d_ind, int D_mom);
   
   
   /**
    * For the given Libint index and total momentum, 
    * returns the x y and z momenta
    */
-  //void BasisMomenta(index_t ind, index_t momentum, int* x_mom, int* y_mom, 
+  //void BasisMomenta(size_t ind, size_t momentum, int* x_mom, int* y_mom, 
   //                  int* z_mom);
   
   /**
    * For the given Cartesian momenta, returns this functions index in 
    * the Libint order
    */
-  //index_t BasisIndex(int x_mom, int y_mom, int z_mom, index_t total_mom);
+  //size_t BasisIndex(int x_mom, int y_mom, int z_mom, size_t total_mom);
   
   
     // not sure what this is for
@@ -175,12 +175,12 @@ namespace eri {
   /**
    * Used to add the contracted integrals into the global matrix
    */
-  void AddSubmatrix(const ArrayList<index_t>& rows,
-                    const ArrayList<index_t>& cols,
+  void AddSubmatrix(const ArrayList<size_t>& rows,
+                    const ArrayList<size_t>& cols,
                     const Matrix& submat, Matrix* out_mat);
 
-  void AddSubmatrix(index_t row_begin, index_t row_count,
-                    index_t col_begin, index_t col_count,
+  void AddSubmatrix(size_t row_begin, size_t row_count,
+                    size_t col_begin, size_t col_count,
                     const Matrix& submat, Matrix* out_mat);
   
 
@@ -244,7 +244,7 @@ namespace eri {
    *
    * Returns the total number of basis functions
    */
-  index_t CreateShells(const Matrix& centers, const Vector& exponents, 
+  size_t CreateShells(const Matrix& centers, const Vector& exponents, 
                     const Vector& momenta, ArrayList<BasisShell>* shells_out);
                             
   /**
@@ -253,7 +253,7 @@ namespace eri {
    * Currently, shell pairs are screened by the size of their Schwartz factor, 
    * but some implementations may use overlap screening.   
    */
-  index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+  size_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                             ArrayList<BasisShell>& shells_in, 
                             double shell_pair_cutoff, const Matrix& density);
 
@@ -265,11 +265,11 @@ namespace eri {
    * Currently, shell pairs are screened by the size of their Schwartz factor, 
    * but some implementations may use overlap screening.   
    */
-  index_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
+  size_t ComputeShellPairs(ArrayList<ShellPair>* shell_pairs, 
                             ArrayList<BasisShell>& shells_in, 
                             double shell_pair_cutoff, Vector* shell_max, 
                             ShellPair**** sigma_for_nu, 
-                            ArrayList<index_t>* num_per_shell, 
+                            ArrayList<size_t>* num_per_shell, 
                             const Matrix& density);
   
 

@@ -23,16 +23,16 @@ class SGDWB {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_alpha_; /* number of lagrangian multipliers in the dual */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
+  size_t i_cache_, j_cache_; /* indices for the most recently cached kernel value */
   double cached_kernel_value_; /* cache */
 
   ArrayList<int> y_; /* list that stores "labels" */
@@ -45,14 +45,14 @@ class SGDWB {
   double epsilon_; // for SVM_R
   bool b_linear_; // whether it's a linear SVM
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
-  //ArrayList<index_t> new_from_old_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
+  //ArrayList<size_t> new_from_old_; // for generating a random sequence of training data
 
   double rho_;// for soft margin nonlinear SGDWB SVM
 
@@ -68,8 +68,8 @@ class SGDWB {
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
       b_linear_ = param_[2]>0.0 ? false: true; // whether it's a linear learner
-      n_epochs_ = (index_t)param_[3];
-      n_iter_ = (index_t)param_[4];
+      n_epochs_ = (size_t)param_[3];
+      n_iter_ = (size_t)param_[4];
       accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -90,7 +90,7 @@ class SGDWB {
     return scale_w_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -149,14 +149,14 @@ class SGDWB {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i, index_t j) {
+  double CalcKernelValue_(size_t i, size_t j) {
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
       i = i >= n_data_ ? (i-n_data_) : i;
@@ -188,7 +188,7 @@ class SGDWB {
  */
 template<typename TKernel>
 void SGDWB<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   rho_ = fx_param_double(NULL, "rho", 1.0); // specify the soft margin. default value 1.0: hard margin
   
@@ -238,7 +238,7 @@ void SGDWB<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
   
   /* general learner-independent initializations */
   dataset_ = dataset_in;
@@ -262,7 +262,7 @@ void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   LearnersInit_(learner_typeid);
   old_from_new_.Init(n_data_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin SGDWB iterations */
   if (b_linear_) { // linear SVM, output: w, bias
@@ -347,7 +347,7 @@ void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 	}
       }
       // round small w_i to 0
-      index_t w_ct = 0;
+      size_t w_ct = 0;
       double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
       double round_thd = wi_abs_max / round_factor;
       for (i=0; i<n_features_; i++) {
@@ -376,10 +376,10 @@ void SGDWB<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 *
 */
 template<typename TKernel>
-void SGDWB<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void SGDWB<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
   n_sv_ = 0;
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (fabs(coef_[i]) >= SGDWB_ALPHA_ZERO) { // support vectors found
 	coef.PushBack() = coef_[i];
 	sv_indicator[dataset_index[i]] = true;

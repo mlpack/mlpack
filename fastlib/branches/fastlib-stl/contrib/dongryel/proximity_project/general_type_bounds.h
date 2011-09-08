@@ -33,7 +33,7 @@ class GenHrectBound {
 
  private:
   GenRange<T> *bounds_;
-  index_t dim_;
+  size_t dim_;
 
   OT_DEF(GenHrectBound) {
     OT_MY_OBJECT(dim_);
@@ -45,7 +45,7 @@ class GenHrectBound {
    * Initializes to specified dimensionality with each dimension the empty
    * set.
    */
-  void Init(index_t dimension) {
+  void Init(size_t dimension) {
     //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     bounds_ = mem::Alloc<GenRange<T> >(dimension);
 
@@ -57,7 +57,7 @@ class GenHrectBound {
    * Initializes to specified dimensionality with each dimension the empty
    * set statically.
    */
-  void StaticInit(index_t dimension) {
+  void StaticInit(size_t dimension) {
     //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
     bounds_ = 
       mmapmm::MemoryManager<false>::allocator_->Alloc<GenRange<T> >(dimension);
@@ -70,7 +70,7 @@ class GenHrectBound {
    * Resets all dimensions to the empty set.
    */
   void Reset() {
-    for (index_t i = 0; i < dim_; i++) {
+    for (size_t i = 0; i < dim_; i++) {
       bounds_[i].InitEmptySet();
     }
   }
@@ -79,7 +79,7 @@ class GenHrectBound {
    * Determines if a point is within this bound.
    */
   bool Contains(const GenVector<T>& point) const {
-    for (index_t i = 0; i < point.length(); i++) {
+    for (size_t i = 0; i < point.length(); i++) {
       if (!bounds_[i].Contains(point[i])) {
         return false;
       }
@@ -89,14 +89,14 @@ class GenHrectBound {
   }
 
   /** Gets the dimensionality */
-  index_t dim() const {
+  size_t dim() const {
     return dim_;
   }
 
   /**
    * Gets the range for a particular dimension.
    */
-  const GenRange<T>& get(index_t i) const {
+  const GenRange<T>& get(size_t i) const {
     DEBUG_BOUNDS(i, dim_);
     return bounds_[i];
   }
@@ -104,7 +104,7 @@ class GenHrectBound {
   /** Calculates the midpoint of the range */
   void CalculateMidpoint(GenVector<T> *centroid) const {
     centroid->Init(dim_);
-    for (index_t i = 0; i < dim_; i++) {
+    for (size_t i = 0; i < dim_; i++) {
       (*centroid)[i] = bounds_[i].mid();
     }
   }
@@ -116,7 +116,7 @@ class GenHrectBound {
     double sum = 0;
     const GenRange<T> *mbound = bounds_;
 
-    index_t d = dim_;
+    size_t d = dim_;
 
     do {
       T v = *mpoint;
@@ -151,11 +151,11 @@ class GenHrectBound {
     double sum = 0;
     const GenRange<T> *a = this->bounds_;
     const GenRange<T> *b = other.bounds_;
-    index_t mdim = dim_;
+    size_t mdim = dim_;
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < mdim; d++) {
+    for (size_t d = 0; d < mdim; d++) {
       T v1 = b[d].lo - a[d].hi;
       T v2 = a[d].lo - b[d].hi;
       // We invoke the following:
@@ -177,7 +177,7 @@ class GenHrectBound {
 
     DEBUG_SAME_SIZE(point.length(), dim_);
 
-    for (index_t d = 0; d < dim_; d++) {
+    for (size_t d = 0; d < dim_; d++) {
       T v = std::max(point[d] - bounds_[d].lo, bounds_[d].hi - point[d]);
       sum += std::pow(v,t_pow); // v is non-negative
     }
@@ -195,7 +195,7 @@ class GenHrectBound {
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < dim_; d++) {
+    for (size_t d = 0; d < dim_; d++) {
       T v = std::max(b[d].hi - a[d].lo, a[d].hi - b[d].lo);
       sum += std::pow(v,t_pow); // v is non-negative
     }
@@ -211,11 +211,11 @@ class GenHrectBound {
     double sum_hi = 0;
     const GenRange<T> *a = this->bounds_;
     const GenRange<T> *b = other.bounds_;
-    index_t mdim = dim_;
+    size_t mdim = dim_;
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < mdim; d++) {
+    for (size_t d = 0; d < mdim; d++) {
       T v1 = b[d].lo - a[d].hi;
       T v2 = a[d].lo - b[d].hi;
       // We invoke the following:
@@ -243,7 +243,7 @@ class GenHrectBound {
 
     DEBUG_SAME_SIZE(point.length(), dim_);
 
-    index_t d = dim_;
+    size_t d = dim_;
     do {
       T v = *mpoint;
       T v1 = mbound->lo - v;
@@ -278,7 +278,7 @@ class GenHrectBound {
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < dim_; d++) {
+    for (size_t d = 0; d < dim_; d++) {
       T v = b->mid();
       T v1 = a->lo - v;
       T v2 = v - a->hi;
@@ -301,11 +301,11 @@ class GenHrectBound {
     double sum = 0;
     const GenRange<T> *a = this->bounds_;
     const GenRange<T> *b = other.bounds_;
-    index_t mdim = dim_;
+    size_t mdim = dim_;
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < mdim; d++) {
+    for (size_t d = 0; d < mdim; d++) {
       T v1 = b[d].hi - a[d].hi;
       T v2 = a[d].lo - b[d].lo;
       T v = std::max(v1, v2);
@@ -326,7 +326,7 @@ class GenHrectBound {
 
     DEBUG_SAME_SIZE(dim_, other.dim_);
 
-    for (index_t d = 0; d < dim_; d++) {
+    for (size_t d = 0; d < dim_; d++) {
       sum += std::pow(a[d].hi + a[d].lo - b[d].hi - b[d].lo, t_pow);
     }
 
@@ -339,7 +339,7 @@ class GenHrectBound {
   GenHrectBound& operator |= (const GenVector<T>& vector) {
     DEBUG_SAME_SIZE(vector.length(), dim_);
 
-    for (index_t i = 0; i < dim_; i++) {
+    for (size_t i = 0; i < dim_; i++) {
       bounds_[i] |= vector[i];
     }
 
@@ -352,7 +352,7 @@ class GenHrectBound {
   GenHrectBound& operator |= (const GenHrectBound<T>& other) {
     DEBUG_SAME_SIZE(other.dim_, dim_);
 
-    for (index_t i = 0; i < dim_; i++) {
+    for (size_t i = 0; i < dim_; i++) {
       bounds_[i] |= other.bounds_[i];
     }
 

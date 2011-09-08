@@ -67,8 +67,8 @@ class Thor2PC {
   class Param {
   public:
    
-    index_t query_count_;
-    index_t reference_count_; 
+    size_t query_count_;
+    size_t reference_count_; 
 	double redshift_val_;
     int redshift_;
     int cartesian_;
@@ -130,7 +130,7 @@ class Thor2PC {
     
     /** the point's position */
     Vector pos_;
-    index_t old_index_;
+    size_t old_index_;
     double weight_;
     OT_DEF(Thor2PCPoint) {    
       OT_MY_OBJECT(pos_);
@@ -162,7 +162,7 @@ class Thor2PC {
      * sets contents assuming all space has been allocated.
      * Any attempt to allocate memory here will lead to a core dump.
      */
-    void Set(const Param& param, index_t index, Vector& data) {          
+    void Set(const Param& param, size_t index, Vector& data) {          
       for (int i = 0; i < pos_.length(); i++){
 	pos_[i] = data[i];
       }     
@@ -215,7 +215,7 @@ class Thor2PC {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param, const Thor2PCStat& child_stat, 
-		    const Bound& bound, index_t child_n_points) {  
+		    const Bound& bound, size_t child_n_points) {  
       weight_ = weight_ + child_stat.weight_;
    
     }
@@ -224,7 +224,7 @@ class Thor2PC {
      * Finish accumulating data; for instance, for mean, divide by the
      * number of points.
      */
-    void Postprocess(const Param& param, const Bound& bound, index_t n) {     
+    void Postprocess(const Param& param, const Bound& bound, size_t n) {     
     }
   };
   
@@ -289,14 +289,14 @@ class Thor2PC {
    
 
     // Apply accelration to query point, and reset velocity.
-    void Postprocess(const Param& param, const QPoint& q, index_t q_index,
+    void Postprocess(const Param& param, const QPoint& q, size_t q_index,
 		     const RNode& r_root) {    
     }   
   
 
     /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
-			const QPoint& q, index_t q_index) {
+			const QPoint& q, size_t q_index) {
      
     }
   };
@@ -337,7 +337,7 @@ class Thor2PC {
      * results based on the summary results owned by the given child
      */
     void Accumulate(const Param& param,
-		    const QSummaryResult& result, index_t n_points) {
+		    const QSummaryResult& result, size_t n_points) {
      
     }
 
@@ -396,7 +396,7 @@ class Thor2PC {
 
     void Report(const Param& param, datanode *datanode) {
     }
-    void ApplyResult(const Param& param, const QPoint& q_point, index_t q_i,
+    void ApplyResult(const Param& param, const QPoint& q_point, size_t q_i,
 		     const QResult& result) {    
     }
   };
@@ -420,7 +420,7 @@ class Thor2PC {
     /** apply single-tree based pruning by iterating over each query point
      */
     bool StartVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const Delta& delta,
        const QSummaryResult& unapplied_summary_results, QResult* q_result,
        GlobalResult* global_result) {         
@@ -455,8 +455,8 @@ class Thor2PC {
 
     /** exhaustive computation between a query point and a reference point
      */
-    void VisitPair(const Param& param, const QPoint& q, index_t q_index,
-		   const RPoint& r, index_t r_index) {   
+    void VisitPair(const Param& param, const QPoint& q, size_t q_index,
+		   const RPoint& r, size_t r_index) {   
       if (unlikely((q_index == r_index) && param.Auto() )){
 	return;
       }
@@ -477,7 +477,7 @@ class Thor2PC {
     /** pass back the accumulated result into the query result
      */
     void FinishVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {      
       global_result->two_point_.Merge(local_two_);     
@@ -574,13 +574,13 @@ class Thor2PC {
    TwoPoint naive_two;
    naive_two.Init(parameters_.bounds_);
 
-   index_t q_end = (q_tree_->root()).end();
-   index_t r_end = (r_tree_->root()).end();
-   for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
+   size_t q_end = (q_tree_->root()).end();
+   size_t r_end = (r_tree_->root()).end();
+   for(size_t q = (q_tree_->root()).begin(); q < q_end; q++) {
      
      CacheRead<QPoint> q_point(&q_points_cache_array, q);
      
-     for(index_t r = (r_tree_->root()).begin(); r < r_end; r++) {
+     for(size_t r = (r_tree_->root()).begin(); r < r_end; r++) {
        if (likely((r != q) || !parameters_.Auto())){
 	 CacheRead<RPoint> r_point(&r_points_cache_array, r);
 	 

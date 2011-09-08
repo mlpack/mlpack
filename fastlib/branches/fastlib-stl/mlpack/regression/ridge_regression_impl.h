@@ -20,7 +20,7 @@
 #else
 
 void RidgeRegression::BuildCovariance_
-(const arma::mat &input_data, const arma::Col<index_t> *predictor_indices,
+(const arma::mat &input_data, const arma::Col<size_t> *predictor_indices,
  const arma::mat& predictions_in) {
   
   //mlpack::IO::Info << "RidgeRegression::BuildCovariance_:starting." << std::endl;
@@ -44,7 +44,7 @@ void RidgeRegression::BuildCovariance_
   }
   
   // Loop over each column point.
-  for(index_t i = 0; i < input_data.n_cols; i++) {
+  for(size_t i = 0; i < input_data.n_cols; i++) {
     
     // Copy over the training target values.
     predictions_(i, 0)= predictions_in[i];
@@ -96,10 +96,10 @@ void RidgeRegression::BuildCovariance_
 }
 
 void RidgeRegression::ExtractDesignMatrixSubset_
-(const arma::Col<index_t> *loo_current_predictor_indices,
+(const arma::Col<size_t> *loo_current_predictor_indices,
  arma::mat *extracted_design_matrix_subset) {
 
-  index_t num_features = 0;
+  size_t num_features = 0;
   
   if(loo_current_predictor_indices == NULL) {
     num_features = predictors_->n_rows;
@@ -111,12 +111,12 @@ void RidgeRegression::ExtractDesignMatrixSubset_
   // You have to add 1 to take the constant term into account.
   extracted_design_matrix_subset->zeros(predictors_->n_cols, num_features + 1);
   
-  for(index_t i = 0; i < predictors_->n_cols; i++) {
+  for(size_t i = 0; i < predictors_->n_cols; i++) {
     
     // Set the zero-th column of every row to 1.
     (*extracted_design_matrix_subset)(i, 0) = 1.0;
     
-    for(index_t j = 0; j < num_features; j++) {
+    for(size_t j = 0; j < num_features; j++) {
       
       if(loo_current_predictor_indices != NULL) {
 	(*extracted_design_matrix_subset)(i, j + 1) = 
@@ -132,7 +132,7 @@ void RidgeRegression::ExtractDesignMatrixSubset_
 
 void RidgeRegression::ExtractCovarianceSubset_
 (const arma::mat &precomputed_covariance,
- const arma::Col<index_t> *loo_current_predictor_indices,
+ const arma::Col<size_t> *loo_current_predictor_indices,
  arma::mat *precomputed_covariance_subset) {
 
   // If no indices are specified, then copy over the entire thing.
@@ -145,12 +145,12 @@ void RidgeRegression::ExtractCovarianceSubset_
       (loo_current_predictor_indices->n_elem + 1,
        loo_current_predictor_indices->n_elem + 1);
     
-    for(index_t i = 0; i-1 < loo_current_predictor_indices->n_elem; i++) {
-      index_t column_position = (i == 0) ? 
+    for(size_t i = 0; i-1 < loo_current_predictor_indices->n_elem; i++) {
+      size_t column_position = (i == 0) ? 
 	0:(*loo_current_predictor_indices)[i-1] + 1;
       
-      for(index_t j = 0; j-1 < loo_current_predictor_indices->n_elem; j++) {
-	index_t row_position = (j == 0) ? 
+      for(size_t j = 0; j-1 < loo_current_predictor_indices->n_elem; j++) {
+	size_t row_position = (j == 0) ? 
 	  0:(*loo_current_predictor_indices)[j-1] + 1;
 	
 	// ???
@@ -193,8 +193,8 @@ void RidgeRegression::Init(const arma::mat &predictors,
 }
 
 void RidgeRegression::Init(const arma::mat &input_data, 
-                           const arma::Col<index_t> &predictor_indices,
-                           index_t &prediction_index,
+                           const arma::Col<size_t> &predictor_indices,
+                           size_t &prediction_index,
 			   bool use_normal_equation_method) {
   
   if(use_normal_equation_method) {
@@ -217,7 +217,7 @@ void RidgeRegression::Init(const arma::mat &input_data,
 }
 
 void RidgeRegression::Init(const arma::mat &input_data, 
-                           const arma::Col<index_t> &predictor_indices,
+                           const arma::Col<size_t> &predictor_indices,
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
 
@@ -239,23 +239,23 @@ void RidgeRegression::Init(const arma::mat &input_data,
 }
 
 void RidgeRegression::ReInitTargetValues(const arma::mat &input_data,
-					 index_t target_value_index) {
+					 size_t target_value_index) {
 
-  for(index_t i = 0; i < predictions_.n_rows; i++) {
+  for(size_t i = 0; i < predictions_.n_rows; i++) {
     predictions_(i, 0) = input_data(target_value_index, i);
   }
 }
 
 void RidgeRegression::ReInitTargetValues(const arma::mat &target_values_in) {
 
-  for(index_t i = 0; i < predictions_.n_rows; i++) {
+  for(size_t i = 0; i < predictions_.n_rows; i++) {
     predictions_(i, 0) = target_values_in(0, i);
   }
 }
 
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
 (const arma::mat &input_data, const arma::mat& predictions,
- const arma::Col<index_t> *predictor_indices) {
+ const arma::Col<size_t> *predictor_indices) {
 
   // We just have an alias to the input data, and copy the training
   // values.
@@ -263,14 +263,14 @@ void RidgeRegression::BuildDesignMatrixFromIndexSet_
 //  predictions_.Init(input_data.n_cols, 1);
   predictions_.zeros(input_data.n_cols, 1);
 
-  for(index_t i = 0; i < input_data.n_cols; i++) {
+  for(size_t i = 0; i < input_data.n_cols; i++) {
     predictions_(i, 0) = predictions[i];
   }
 }
 
 void RidgeRegression::ComputeLinearModel_
 (double lambda_sq, const arma::vec &singular_values, 
- const arma::mat &u, const arma::mat &v_t, index_t num_features) {
+ const arma::mat &u, const arma::mat &v_t, size_t num_features) {
 
   std::cout << "lambda " << lambda_sq <<
     "\nsingular_values\n" << singular_values <<
@@ -281,7 +281,7 @@ void RidgeRegression::ComputeLinearModel_
 //  factors_.reset();
   factors_.zeros(num_features + 1, 1);
 
-  for(index_t i = 0; i < singular_values.n_elem; i++) {
+  for(size_t i = 0; i < singular_values.n_elem; i++) {
     double s_sq = math::Sqr(singular_values[i]);
     double alpha = singular_values[i] / (lambda_sq + s_sq) * 
       //la::Dot(u.n_rows, u.GetColumnPtr(i), predictions_.ptr());
@@ -289,7 +289,7 @@ void RidgeRegression::ComputeLinearModel_
 
     // Scale each row vector of V^T and add to the factor.
     std::cout << num_features << std::endl;
-    for(index_t j = 0; j < v_t.n_cols; j++) {
+    for(size_t j = 0; j < v_t.n_cols; j++) {
       std::cout <<i << "," << j <<":\n" << factors_ << "--\n" << v_t << "--." << std::endl;
       factors_(j, 0) = factors_(j, 0) + alpha * v_t(i, j);
     }
@@ -297,7 +297,7 @@ void RidgeRegression::ComputeLinearModel_
 }
 
 void RidgeRegression::QRRegress
-(double lambda, const arma::Col<index_t> *predictor_indices) {
+(double lambda, const arma::Col<size_t> *predictor_indices) {
   
   // THIS FUNCTION DOES NOT TAKE lambda into ACCOUNT YET! FIX ME!
   //mlpack::IO::Info << "QRRegress: starting." << std::endl;
@@ -326,7 +326,7 @@ void RidgeRegression::QRRegress
 }
 
 void RidgeRegression::SVDRegress
-(double lambda, const arma::Col<index_t> *predictor_indices) {
+(double lambda, const arma::Col<size_t> *predictor_indices) {
 
   //mlpack::IO::Info << "SVDRegress: starting." << std::endl;
 
@@ -346,7 +346,7 @@ void RidgeRegression::SVDRegress
 
 void RidgeRegression::ExtractSubspace_
 (arma::mat& u, arma::vec& singular_values, arma::mat& v_t,
- const arma::Col<index_t> *predictor_indices) {
+ const arma::Col<size_t> *predictor_indices) {
 
   if(covariance_.n_rows > 0) {
 
@@ -358,7 +358,7 @@ void RidgeRegression::ExtractSubspace_
     
     // Take the square root of each eigenvalue to get the singular
     // values.
-    for(index_t i = 0; i < singular_values.n_elem; i++) {
+    for(size_t i = 0; i < singular_values.n_elem; i++) {
       singular_values(i) = sqrt(singular_values(i));
     }
     
@@ -372,10 +372,10 @@ void RidgeRegression::ExtractSubspace_
       limit = predictor_indices->n_elem;
     }
     
-    for(index_t i = 0; i < predictors_->n_cols; i++) {
+    for(size_t i = 0; i < predictors_->n_cols; i++) {
       
       const arma::vec& point = predictors_->col(i);
-      for(index_t j = 0; j < eigen_v.n_cols; j++) {
+      for(size_t j = 0; j < eigen_v.n_cols; j++) {
 	
 	const arma::vec& eigen_v_column = eigen_v.col(j);
 	double dot_product = eigen_v_column(0);
@@ -393,7 +393,7 @@ void RidgeRegression::ExtractSubspace_
       }
     }
     
-    for(index_t i = 0; i < u.n_cols; i++) {
+    for(size_t i = 0; i < u.n_cols; i++) {
       //arma::vec& u_column = u->col(i);
       if(singular_values(i) > 0) {
 	u.col(i) *= 1.0/singular_values(i);
@@ -407,7 +407,7 @@ void RidgeRegression::ExtractSubspace_
 
 void RidgeRegression::CrossValidatedRegression(double lambda_min, 
 					       double lambda_max,
-					       index_t num) {
+					       size_t num) {
   if (lambda_min > lambda_max)
     mlpack::IO::Fatal << "lambda_max (" << lambda_max << ") must be larger than"
         " lambda_min (" << lambda_min << ")." << std::endl;
@@ -423,7 +423,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   // Square the singular values and store it.
   arma::vec singular_values_sq;
   singular_values_sq = singular_values;
-  for(index_t i = 0; i < singular_values.n_elem; i++) {
+  for(size_t i = 0; i < singular_values.n_elem; i++) {
     singular_values_sq[i] = math::Sqr(singular_values[i]);
   }
 
@@ -433,14 +433,14 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   arma::mat u_x_b;
   u_x_b = arma::trans(u) * predictions_;
   double min_score = DBL_MAX;
-  index_t min_index = -1;
+  size_t min_index = -1;
 
   arma::mat error;
   error.zeros(1, predictors_->n_cols);
 
   // Try different values of lambda and choose the best one that
   // minimizes the loss function.
-  for(index_t i = 0; i < num; i++) {
+  for(size_t i = 0; i < num; i++) {
     double lambda = lambda_min + i * step;
     double lambda_sq = math::Sqr(lambda);
 
@@ -451,7 +451,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
     // because we append a column of 1's at the start to the
     // dimensionality of the problem.
     double tau = predictors_->n_cols - 1;
-    for(index_t j = 0; j < singular_values_sq.n_elem; j++) {
+    for(size_t j = 0; j < singular_values_sq.n_elem; j++) {
       double alpha = lambda_sq / (singular_values_sq[j] + lambda_sq);
 //      la::AddExpert(error.n_cols, alpha * u_x_b(j, 0), 
 //                    u.GetColumnPtr(j), error.ptr());
@@ -463,10 +463,10 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 
     // Here we need to add to residual squared error the squared error
     // of the predictions.
-    for(index_t j = 0; j < predictions_.n_rows; j++) {
+    for(size_t j = 0; j < predictions_.n_rows; j++) {
       double accumulant = predictions_(j, 0);
       
-      for(index_t k = 0; k < singular_values_sq.n_elem; k++) {
+      for(size_t k = 0; k < singular_values_sq.n_elem; k++) {
 	accumulant -= u_x_b(k, 0) * u(j, k);
       }
       rss += math::Sqr(accumulant);
@@ -491,10 +491,10 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 }
 
 void RidgeRegression::FeatureSelectedRegression
-(const arma::Col<index_t> &predictor_indices, 
- const arma::Col<index_t> &prune_predictor_indices,
+(const arma::Col<size_t> &predictor_indices, 
+ const arma::Col<size_t> &prune_predictor_indices,
  const arma::mat &original_target_training_values,
- arma::Col<index_t> *output_predictor_indices) {
+ arma::Col<size_t> *output_predictor_indices) {
   
   //mlpack::IO::Info << "Starting VIF-based feature selection." << std::endl;
   
@@ -502,9 +502,9 @@ void RidgeRegression::FeatureSelectedRegression
   double variance_inflation_factor_threshold = 
     mlpack::IO::GetParam<double>("ridge/vif_threshold"); //Default value, 8.0;
   bool done_flag = false;
-  arma::Col<index_t> *current_predictor_indices = new arma::Col<index_t>();
-  arma::Col<index_t> *current_prune_predictor_indices = new 
-    arma::Col<index_t>();
+  arma::Col<size_t> *current_predictor_indices = new arma::Col<size_t>();
+  arma::Col<size_t> *current_prune_predictor_indices = new 
+    arma::Col<size_t>();
   (*current_predictor_indices) = predictor_indices;
   (*current_prune_predictor_indices) = prune_predictor_indices;
   
@@ -513,7 +513,7 @@ void RidgeRegression::FeatureSelectedRegression
     // The maximum variance inflation factor and the index that
     // achieved it.
     double max_variance_inflation_factor = 0.0;
-    index_t index_of_max_variance_inflation_factor = -1;
+    size_t index_of_max_variance_inflation_factor = -1;
     
     // Reset the flag to be true.
     done_flag = true;
@@ -521,12 +521,12 @@ void RidgeRegression::FeatureSelectedRegression
     // For each of the features in the current list, regress the
     // i-th feature versus the rest of the features and compute its
     // variance inflation factor.
-    for(index_t i = 0; i < current_prune_predictor_indices->n_elem; i++) {
+    for(size_t i = 0; i < current_prune_predictor_indices->n_elem; i++) {
       
       // Take out the current dimension being regressed against from
       // the predictor list to form the leave-one-out predictor
 	// list.
-      arma::Col<index_t> loo_current_predictor_indices;
+      arma::Col<size_t> loo_current_predictor_indices;
       RidgeRegressionUtil::CopyVectorExceptOneIndex_
 	(*current_predictor_indices, (*current_prune_predictor_indices)[i],
 	 &loo_current_predictor_indices);
@@ -537,7 +537,7 @@ void RidgeRegression::FeatureSelectedRegression
       ReInitTargetValues
 	(*predictors_, (*current_prune_predictor_indices)[i]);
       
-      printf("Current leave one out index: %"LI"\n",
+      printf("Current leave one out index: %zu\n",
 	     (*current_prune_predictor_indices)[i]);
 
       // Do the regression.
@@ -551,14 +551,14 @@ void RidgeRegression::FeatureSelectedRegression
       // compute the variance inflation factor.
       arma::vec loo_feature;
       loo_feature.zeros(predictors_->n_cols);
-      for(index_t j = 0; j < predictors_->n_cols; j++) {
+      for(size_t j = 0; j < predictors_->n_cols; j++) {
 	loo_feature[j] = (*predictors_)
 	  ((*current_prune_predictor_indices)[i], j);
       }
       double variance_inflation_factor = 
 	RidgeRegressionUtil::VarianceInflationFactor(loo_feature,
 						     loo_predictions);
-     // NOTIFY("The %"LI"-th dimension has a variance inflation factor of %g.\n",
+     // NOTIFY("The %zu"-th dimension has a variance inflation factor of %g.\n",
 //	     (*current_prune_predictor_indices)[i], 
 //	     variance_inflation_factor);
       
@@ -576,14 +576,14 @@ void RidgeRegression::FeatureSelectedRegression
     // features, and the do-while loop repeats.
     if(max_variance_inflation_factor > variance_inflation_factor_threshold) {
       
-      arma::Col<index_t> *new_predictor_indices = new arma::Col<index_t>();
+      arma::Col<size_t> *new_predictor_indices = new arma::Col<size_t>();
       RidgeRegressionUtil::CopyVectorExceptOneIndex_
 	(*current_predictor_indices, index_of_max_variance_inflation_factor,
 	 new_predictor_indices);
       delete current_predictor_indices;
       current_predictor_indices = new_predictor_indices;
       
-      arma::Col<index_t> *new_prune_indices = new arma::Col<index_t>();
+      arma::Col<size_t> *new_prune_indices = new arma::Col<size_t>();
       RidgeRegressionUtil::CopyVectorExceptOneIndex_
 	(*current_prune_predictor_indices, 
 	 index_of_max_variance_inflation_factor, new_prune_indices);
@@ -612,11 +612,11 @@ double RidgeRegression::ComputeSquareError() {
 
   arma::mat error;
   error.zeros(predictors_->n_cols, 1);
-  for(index_t i = 0; i < predictors_->n_cols; i++) {
+  for(size_t i = 0; i < predictors_->n_cols; i++) {
     const arma::vec& point = predictors_->col(i);
     error(i, 0) = factors_(0, 0);
 
-    for(index_t j = 0; j < predictors_->n_rows; j++) {
+    for(size_t j = 0; j < predictors_->n_rows; j++) {
       error(i, 0) =  error(i, 0) + factors_(j + 1, 0) * point[j];
     }
   }
@@ -626,7 +626,7 @@ double RidgeRegression::ComputeSquareError() {
 }
 
 void RidgeRegression::Predict(const arma::mat &dataset, 
-			      const arma::Col<index_t> &predictor_indices,
+			      const arma::Col<size_t> &predictor_indices,
 			      arma::vec *new_predictions) {
 
   // (Roughly) take each column of the dataset and compute the
@@ -640,10 +640,10 @@ void RidgeRegression::Predict(const arma::mat &dataset,
     return;
   }
 
-  for(index_t i = 0; i < dataset.n_cols; i++) {
+  for(size_t i = 0; i < dataset.n_cols; i++) {
     (*new_predictions)[i] = factors_(0, 0);
 
-    for(index_t j = 0; j < predictor_indices.n_elem; j++) {
+    for(size_t j = 0; j < predictor_indices.n_elem; j++) {
       (*new_predictions)[i] += factors_(j + 1, 0) * 
 	dataset(predictor_indices[j], i);
     }
@@ -657,10 +657,10 @@ void RidgeRegression::Predict(const arma::mat &dataset, arma::vec *new_predictio
   // also need to take care of the intercept part of the coefficients.
   new_predictions->zeros(dataset.n_cols);
 
-  for(index_t i = 0; i < dataset.n_cols; i++) {
+  for(size_t i = 0; i < dataset.n_cols; i++) {
     (*new_predictions)[i] = factors_(0, 0);
 
-    for(index_t j = 0; j < dataset.n_rows; j++) {
+    for(size_t j = 0; j < dataset.n_rows; j++) {
       (*new_predictions)[i] += factors_(j + 1, 0) * dataset(j, i);
     }
   }

@@ -31,8 +31,8 @@ const fx_module_doc hmm_generate_main_doc = {
   "This is a program generating sequences from HMM models.\n"
 };
 
-void printSEQ(FILE* f, const ArrayList<index_t>& seq) {
-  for (index_t i = 0; i < seq.size(); i++)
+void printSEQ(FILE* f, const ArrayList<size_t>& seq) {
+  for (size_t i = 0; i < seq.size(); i++)
     fprintf(f, "%d,", seq[i]);
   fprintf(f, "\n");
 }
@@ -54,7 +54,7 @@ int main(int argc, char* argv[]) {
     hmm.LoadEmission(fileE);
   	
     for (int i_seq = 0; i_seq < numseq; i_seq++) {
-      ArrayList<index_t> seq;
+      ArrayList<size_t> seq;
       int len = (length >= lenmax)?length:rand()%(lenmax-length)+length;
       hmm.Generate(len, &seq, NULL);
       printSEQ(f, seq);

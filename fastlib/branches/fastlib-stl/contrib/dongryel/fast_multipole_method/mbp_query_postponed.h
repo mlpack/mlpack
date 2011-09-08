@@ -14,7 +14,7 @@ class MultiTreeQueryPostponed {
   
   double used_error;
   
-  void ApplyDelta(const MultiTreeDelta &delta_in, index_t node_index) {
+  void ApplyDelta(const MultiTreeDelta &delta_in, size_t node_index) {
     
     negative_potential_bound +=
       delta_in.negative_potential_bound[node_index];

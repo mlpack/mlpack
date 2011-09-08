@@ -27,7 +27,7 @@ bool MGS(const ArrayList<Vector>& basis, const Vector& newVec,
   //ot::Print(basis, "basis", stdout);
   //ot::Print(newVec, "newVec", stdout);
   newBasisVec->Copy(newVec);
-  for (index_t i = 0; i < basis.size(); i++) {
+  for (size_t i = 0; i < basis.size(); i++) {
     double prod = - la::Dot(basis[i], *newBasisVec);
     la::AddExpert(prod, basis[i], newBasisVec);
   }
@@ -52,7 +52,7 @@ void QuicSVD::addBasisFrom(const CosineNode& node) {
     basis_.PushBackCopy(nodeBasis);  // add to the basis
     la::MulInit(nodeBasis, A_, &av); // calculate projection of A
     UTA_.PushBackCopy(av);           // on the new basis vector and save
-    for (index_t i_col = 0; i_col < n_cols(); i_col++) {
+    for (size_t i_col = 0; i_col < n_cols(); i_col++) {
       double magSq = math::Sqr(av[i_col]);  // magnitude square of the i-th
       projMagSq_[i_col] += magSq;           // column of A in the new subspace
       sumProjMagSq_ += magSq;               // spanned by the basis is increased
@@ -78,7 +78,7 @@ void QuicSVD::addToQueue(CosineNode* node) {
 double QuicSVD::calL2Err(const CosineNode& node) {
   double nodeSumL2 = node.getSumL2();
   double nodeSumProjL2 = 0;
-  for (index_t i_col = 0; i_col < node.n_cols(); i_col++)
+  for (size_t i_col = 0; i_col < node.n_cols(); i_col++)
     nodeSumProjL2 += projMagSq_[node.getOrigIndex(i_col)];
   return nodeSumL2 - nodeSumProjL2;
 }
@@ -131,14 +131,14 @@ void createUTA2(const ArrayList<Vector>& UTA, Matrix* UTA2) {
 // C = AB
 void MulInit(const ArrayList<Vector>& A, const Matrix& B,
 	     Matrix* C) {
-  index_t m = A[0].length();
-  index_t n = A.size();
-  index_t p = B.n_cols();
+  size_t m = A[0].length();
+  size_t n = A.size();
+  size_t p = B.n_cols();
   C->Init(m, p);
-  for (index_t i = 0; i < m; i++)
-    for (index_t j = 0; j < p; j++) {
+  for (size_t i = 0; i < m; i++)
+    for (size_t j = 0; j < p; j++) {
       C->ref(i, j) = 0;
-      for (index_t k = 0; k < n; k++) 
+      for (size_t k = 0; k < n; k++) 
 	C->ref(i, j) += A[k][i] * B.get(k, j);
     }
 }
@@ -146,22 +146,22 @@ void MulInit(const ArrayList<Vector>& A, const Matrix& B,
 // Matrix multiplication C = B' A'
 void MulTransCInit(const ArrayList<Vector>& A, const Matrix& B,
 		   Matrix* C) {
-  index_t m = A[0].length();
-  index_t n = A.size();
-  index_t p = B.n_cols();
+  size_t m = A[0].length();
+  size_t n = A.size();
+  size_t p = B.n_cols();
   C->Init(p, m);
-  for (index_t i = 0; i < m; i++)
-    for (index_t j = 0; j < p; j++) {
+  for (size_t i = 0; i < m; i++)
+    for (size_t j = 0; j < p; j++) {
       C->ref(j, i) = 0;
-      for (index_t k = 0; k < n; k++) 
+      for (size_t k = 0; k < n; k++) 
 	C->ref(j, i) += A[k][i] * B.get(k, j);
     }
 }
 
 // Inverse scale the rows of a matrix
 void InverseRowScale(const Vector& s, Matrix* A) {
-  for (index_t i = 0; i < A->n_rows(); i++)
-    for (index_t j = 0; j < A->n_cols(); j++)
+  for (size_t i = 0; i < A->n_rows(); i++)
+    for (size_t j = 0; j < A->n_cols(); j++)
       A->ref(i, j) /= s[i];
 }
 
@@ -181,7 +181,7 @@ void QuicSVD::extractSVD(Vector* s, Matrix* U, Matrix* VT) {
   la::SVDInit(UTA2, &sprime, &Uprime, &VprimeT);
   
   s->Init(sprime.length());
-  for (index_t i = 0; i < sprime.length(); i++)
+  for (size_t i = 0; i < sprime.length(); i++)
     (*s)[i] = sqrt(sprime[i]); // the original singular values are square roots
                                // of that of UTA2
   

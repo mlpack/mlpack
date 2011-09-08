@@ -50,8 +50,8 @@ class BinarySpaceTree {
  private:
   BinarySpaceTree *left_; //< The left child node.
   BinarySpaceTree *right_; //< The right child node.
-  index_t begin_; //< The first point in the dataset contained in this node.
-  index_t count_; //< The count of points in the dataset contained in this node.
+  size_t begin_; //< The first point in the dataset contained in this node.
+  size_t count_; //< The count of points in the dataset contained in this node.
   Bound bound_; //< The bound object for this node.
   Statistic stat_; //< The extra data contained in the node.
 
@@ -71,23 +71,23 @@ class BinarySpaceTree {
    *     each old point.
    */
   BinarySpaceTree(arma::mat& data);
-  BinarySpaceTree(arma::mat& data, std::vector<index_t>& old_from_new);
+  BinarySpaceTree(arma::mat& data, std::vector<size_t>& old_from_new);
   BinarySpaceTree(arma::mat& data,
-                  std::vector<index_t>& old_from_new,
-                  std::vector<index_t>& new_from_old);
+                  std::vector<size_t>& old_from_new,
+                  std::vector<size_t>& new_from_old);
 
   BinarySpaceTree(arma::mat& data,
-                  index_t begin_in,
-                  index_t count_in);
+                  size_t begin_in,
+                  size_t count_in);
   BinarySpaceTree(arma::mat& data,
-                  index_t begin_in,
-                  index_t count_in,
-                  std::vector<index_t>& old_from_new);
+                  size_t begin_in,
+                  size_t count_in,
+                  std::vector<size_t>& old_from_new);
   BinarySpaceTree(arma::mat& data,
-                  index_t begin_in,
-                  index_t count_in,
-                  std::vector<index_t>& old_from_new,
-                  std::vector<index_t>& new_from_old);
+                  size_t begin_in,
+                  size_t count_in,
+                  std::vector<size_t>& old_from_new,
+                  std::vector<size_t>& new_from_old);
  
   BinarySpaceTree();
 
@@ -109,8 +109,8 @@ class BinarySpaceTree {
    * @param count_q the count() of the node to find
    * @return the found node, or NULL
    */
-  const BinarySpaceTree* FindByBeginCount(index_t begin_q,
-                                          index_t count_q) const;
+  const BinarySpaceTree* FindByBeginCount(size_t begin_q,
+                                          size_t count_q) const;
   
   /**
    * Find a node in this tree by its begin and count (const).
@@ -123,7 +123,7 @@ class BinarySpaceTree {
    * @param count_q the count() of the node to find
    * @return the found node, or NULL
    */
-  BinarySpaceTree* FindByBeginCount(index_t begin_q, index_t count_q);
+  BinarySpaceTree* FindByBeginCount(size_t begin_q, size_t count_q);
   
   // TODO: Not const correct
   
@@ -148,17 +148,17 @@ class BinarySpaceTree {
   /**
    * Gets the index of the begin point of this subset.
    */
-  index_t begin() const;
+  size_t begin() const;
 
   /**
    * Gets the index one beyond the last index in the series.
    */
-  index_t end() const;
+  size_t end() const;
   
   /**
    * Gets the number of points in this subset.
    */
-  index_t count() const;
+  size_t count() const;
   
   void Print() const;
 
@@ -174,7 +174,7 @@ class BinarySpaceTree {
    * @param old_from_new Vector holding permuted indices.
    */
   void SplitNode(arma::mat& data);
-  void SplitNode(arma::mat& data, std::vector<index_t>& old_from_new);
+  void SplitNode(arma::mat& data, std::vector<size_t>& old_from_new);
 
   /***
    * Find the index to split on for this node, given that we are splitting in
@@ -187,9 +187,9 @@ class BinarySpaceTree {
    * @param split_val Value to split on, in the given split dimension.
    * @param old_from_new Vector holding permuted indices.
    */
-  index_t GetSplitIndex(arma::mat& data, int split_dim, double split_val);
-  index_t GetSplitIndex(arma::mat& data, int split_dim, double split_val,
-      std::vector<index_t>& old_from_new);
+  size_t GetSplitIndex(arma::mat& data, int split_dim, double split_val);
+  size_t GetSplitIndex(arma::mat& data, int split_dim, double split_val,
+      std::vector<size_t>& old_from_new);
 
 };
 

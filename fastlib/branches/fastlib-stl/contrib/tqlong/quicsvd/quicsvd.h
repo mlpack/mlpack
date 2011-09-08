@@ -63,7 +63,7 @@ class QuicSVD {
    *  The method is implelemented in column-wise manner
    *  as in FASTLib, this is more convenient and efficient.
    */
-  index_t n_cols() {
+  size_t n_cols() {
     return A_.n_cols();
   }
 

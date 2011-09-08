@@ -35,9 +35,9 @@ template <typename TKernel> class CrossValidation{
   double max_local_likelihood_cvs_;
   double min_naive_kde_lp_score_;
 
-  index_t naive_kde_bandwidth_;
-  index_t naive_kde_lp_bandwidth_;
-  index_t likelihood_bandwidth_;
+  size_t naive_kde_bandwidth_;
+  size_t naive_kde_lp_bandwidth_;
+  size_t likelihood_bandwidth_;
 
   //Store the cross validation scores in a vector so that we can plot
   //the graphs of them
@@ -48,7 +48,7 @@ template <typename TKernel> class CrossValidation{
 
   //Get the local likelihood cross validation score
   
-  void GetLikelihoodCrossValidationScore_(index_t b){
+  void GetLikelihoodCrossValidationScore_(size_t b){
 
     //The result of local likelihood density calculations
     Vector local_likelihood_density_results;
@@ -81,7 +81,7 @@ template <typename TKernel> class CrossValidation{
     //printf("Local likelihood density results are...\n");
     //local_likelihood_density_results.PrintDebug();
 
-    for(index_t i=0;i<local_likelihood_density_results.length();i++){
+    for(size_t i=0;i<local_likelihood_density_results.length();i++){
      
       likelihood_cvs+=log(local_likelihood_density_results[i]);
     }
@@ -103,7 +103,7 @@ template <typename TKernel> class CrossValidation{
 
   //THis is the cross validation function for local least squares
 
-  void GetCrossValidationScoreForLocalLeastSquares_(index_t b){
+  void GetCrossValidationScoreForLocalLeastSquares_(size_t b){
 
     //do this to get the local least squares density estimates
     naive_kde_lp_.InitBandwidth(bandwidth_.GetColumnPtr(b));
@@ -123,14 +123,14 @@ template <typename TKernel> class CrossValidation{
     double bw=bandwidth_.get(0,b);
     double total_value=0;
 
-    for(index_t i=0;i<rset_.n_cols();i++){
+    for(size_t i=0;i<rset_.n_cols();i++){
 
       double *point_i=rset_.GetColumnPtr(i);
       
       //This is only for the 1-d case
       double x_i=point_i[0];
       
-      for(index_t j=0;j<rset_.n_cols();j++){
+      for(size_t j=0;j<rset_.n_cols();j++){
 	
 	double *point_j=rset_.GetColumnPtr(j);
 	
@@ -189,7 +189,7 @@ template <typename TKernel> class CrossValidation{
 
   //This function does crossvalidation for KDE 
 
-  void GetCrossValidationScoreForKDE_(index_t b){
+  void GetCrossValidationScoreForKDE_(size_t b){
     
     double bw=bandwidth_.get(0,b);
 
@@ -208,9 +208,9 @@ template <typename TKernel> class CrossValidation{
     //THIS IS TRUE ONLY FOR A GAUSSIAN KERNEL
     kernel_.Init(2*bw);
 
-    for(index_t i=0;i<rset_.n_cols();i++){
+    for(size_t i=0;i<rset_.n_cols();i++){
 
-      for(index_t j=0;j<rset_.n_cols();j++){
+      for(size_t j=0;j<rset_.n_cols();j++){
 	
 	
 	//Lets find the crossvalidation score for Naive KDE first....
@@ -229,7 +229,7 @@ template <typename TKernel> class CrossValidation{
       int_f_hat+=results[i];
     }
 
-    index_t n=rset_.n_cols();
+    size_t n=rset_.n_cols();
    
     //compute cross validation score
     double  cross_validation_score_naive_kde=bw*int_f_hat_sqd/(n*n)-2*int_f_hat/n;
@@ -253,7 +253,7 @@ template <typename TKernel> class CrossValidation{
   void PrintToFile_(){
     FILE *fp;
     fp=fopen("scores.txt","w+");
-    for(index_t i=0;i<bandwidth_.n_cols();i++){
+    for(size_t i=0;i<bandwidth_.n_cols();i++){
       
       //The cvs for local likelihood is being divided by 1000 so as to
       //maintain the scales
@@ -280,7 +280,7 @@ template <typename TKernel> class CrossValidation{
     printf("Number of points in reference set are %d\n",rset_.n_cols());
     
     //For each bandwidth
-    for(index_t b=0;b<bandwidth_.n_cols();b++){
+    for(size_t b=0;b<bandwidth_.n_cols();b++){
 
       printf("Bandwidth is:%f........\n",bandwidth_.get(0,b));
       

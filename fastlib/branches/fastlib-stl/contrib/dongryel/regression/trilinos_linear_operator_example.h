@@ -86,14 +86,14 @@ class KrylovLinearOperator: public virtual Epetra_Operator {
     // Initialize the multivector to zero.
     Y.PutScalar(0);
 
-    for(index_t d = 0; d < row_length_; d++) {
+    for(size_t d = 0; d < row_length_; d++) {
       krylov_lpr_->ComputeWeightedVectorSum_
 	(qroot_, qset_, rset_inv_norm_consts_, d,
 	 vector_l, vector_e, vector_used_error, vector_n_pruned);
 
       // Accumulate the product between the computed vector and each
       // scalar component of the X.
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	Y.Pointers()[0][j] += X.Pointers()[0][d] * vector_e.get(j, 0);
       }
     } // end of iterating over each component.
@@ -155,7 +155,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
   Epetra_BlockMap blockmap(1, row_length_, 0, comm);
     
   // Solve the linear systems for each query point.
-  for(index_t q = 0; q < qset.n_cols(); q++) {
+  for(size_t q = 0; q < qset.n_cols(); q++) {
 
     // Make each column query vector as the whole dataset.
     Vector q_col;
@@ -179,7 +179,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
     // Define the linear problem.
     Epetra_MultiVector solution(blockmap, 1, true);
     Epetra_MultiVector right_hand_side(blockmap, 1, false);
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       (*(right_hand_side(0)))[j] = right_hand_sides_e.get(j, q);
     }
 
@@ -213,7 +213,7 @@ void KrylovLpr<TKernel, TPruneRule>::SolveLinearProblems_
     delete qroot;
 
     // Copy the solution.
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       solution_vectors_e.set(j, q, (*(solution(0)))[j]);
     }
   }

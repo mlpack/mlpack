@@ -58,7 +58,7 @@ class MatrixFactorizedFMM {
   /** @brief The permutation mapping indices of reference_set_ to its
    *         original order.
    */
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_references_;
 
   /** @brief The relative error accuracy requirement.
    */
@@ -74,7 +74,7 @@ class MatrixFactorizedFMM {
    *         contributions to the given set of query points.
    */
   void BaseCase_(const Matrix &query_set, 
-		 const ArrayList<index_t> &query_index_permutation,
+		 const ArrayList<size_t> &query_index_permutation,
 		 QueryTree *query_node, const ReferenceTree *reference_node, 
 		 Vector &query_kernel_sums) const;
   
@@ -83,7 +83,7 @@ class MatrixFactorizedFMM {
    *         dual-tree algorithm.
    */
   void CanonicalCase_(const Matrix &query_set,
-		      const ArrayList<index_t> &query_index_permutation,
+		      const ArrayList<size_t> &query_index_permutation,
 		      QueryTree *query_node, ReferenceTree *reference_node,
 		      Vector &query_kernel_sums);
 
@@ -109,7 +109,7 @@ class MatrixFactorizedFMM {
    *         unclaimed kernel sums are incorporated.
    */
   void PostProcessQueryTree_(const Matrix &query_set, 
-			     const ArrayList<index_t> &query_index_permutation,
+			     const ArrayList<size_t> &query_index_permutation,
 			     QueryTree *query_node,
 			     Vector &query_kernel_sums) const;
 

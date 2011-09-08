@@ -21,7 +21,7 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
     
     // Used to find the query node's new upper bound
     double query_max_neighbor_distance = -1.0;
-    std::vector<std::pair<double, index_t> > neighbors(knns_);
+    std::vector<std::pair<double, size_t> > neighbors(knns_);
 
     // Get the query point from the matrix
     Vector query_point;
@@ -30,14 +30,14 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
     queries_.MakeColumnVector(query_, &query_point);
       
     // FIX HERE: query_ -> test_query_
-    index_t ind = query_*knns_;
-    for(index_t i=0; i<knns_; i++) {
+    size_t ind = query_*knns_;
+    for(size_t i=0; i<knns_; i++) {
       neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
 				  neighbor_indices_[ind+i]);
     }
 
     // We'll do the same for the references
-    for (index_t reference_index = reference_node->begin(); 
+    for (size_t reference_index = reference_node->begin(); 
 	 reference_index < reference_node->end(); reference_index++) {
 
       Vector reference_point;
@@ -58,7 +58,7 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
     } // for reference_index
 
     std::sort(neighbors.begin(), neighbors.end());
-    for(index_t i=0; i<knns_; i++) {
+    for(size_t i=0; i<knns_; i++) {
       neighbor_distances_[ind+i] = neighbors[i].first;
       neighbor_indices_[ind+i]  = neighbors[i].second;
     }
@@ -80,7 +80,7 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
     // which is also considered the ann......
     if (train_nn_ == 1) { // first leaf encountered
 
-      //       for(index_t i=0; i<knns_; i++) {
+      //       for(size_t i=0; i<knns_; i++) {
 
       // 	ann_dist_[ind+i] = neighbor_distances_[ind+i];
       // 	ann_ind_[ind+i]  = neighbor_indices_[ind+i];
@@ -90,13 +90,13 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
       //       ann_dc_[query_] = nn_dc_[query_];
 
       //     if (query_ == 449)
-      // 	NOTIFY("here %"LI"d, %"LI"d", ind, number_of_leaves_);
+      // 	NOTIFY("here %zud, %zud", ind, number_of_leaves_);
 
 
       ///// BIG FIX HERE: generalize for knns
 
       // updating the u_q value for this query
-      DEBUG_ASSERT(query_ == (index_t) u_q_->size() - 1);
+      DEBUG_ASSERT(query_ == (size_t) u_q_->size() - 1);
 
       // storing the u_q value
       // IMP: for u_q_ to work with all different kinds of errors
@@ -111,11 +111,11 @@ void ApproxNN::ComputeBaseCase_(TreeType* query_node,
 	(*u_q_)[query_] = number_of_leaves_ + 1;
 
 
-      DEBUG_ASSERT((index_t)error_list_->size() >= number_of_leaves_);
+      DEBUG_ASSERT((size_t)error_list_->size() >= number_of_leaves_);
 
-      if ((index_t)error_list_->size() <= number_of_leaves_) {
+      if ((size_t)error_list_->size() <= number_of_leaves_) {
 
-	DEBUG_ASSERT((index_t)error_list_->size() == number_of_leaves_);
+	DEBUG_ASSERT((size_t)error_list_->size() == number_of_leaves_);
 
 
 	// have to add an element at the end of the vector
@@ -212,7 +212,7 @@ void ApproxNN::InitTrain(const Matrix& queries_in,
   nn_dc_.Init(queries_.n_cols());
   nn_mc_.Init(queries_.n_cols());
 
-  error_list_ = new std::vector<index_t>();
+  error_list_ = new std::vector<size_t>();
   dist_error_list_ = new std::vector<double>();
   sq_dist_error_list_ = new std::vector<double>();
   max_dist_error_list_ = new std::vector<double>();
@@ -241,7 +241,7 @@ void ApproxNN::InitTrain(const Matrix& queries_in,
 
   // Here we need to change the query tree into N single-point
   // query trees
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     Matrix query;
     queries_.MakeColumnSlice(i, 1, &query);
     TreeType *single_point_tree
@@ -295,7 +295,7 @@ void ApproxNN::InitTest(const Matrix& queries_in) {
   nn_mc_.Renew();
   nn_mc_.Init(queries_.n_cols());
 
-//   error_list_ = new std::vector<index_t>();
+//   error_list_ = new std::vector<size_t>();
 //   dist_error_list_ = new std::vector<double>();
 //   sq_dist_error_list_ = new std::vector<double>();
 //   max_dist_error_list_ = new std::vector<double>();
@@ -327,7 +327,7 @@ void ApproxNN::InitTest(const Matrix& queries_in) {
   // Here we need to change the query tree into N single-point
   // query trees
   query_trees_.clear();
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     Matrix query;
     queries_.MakeColumnSlice(i, 1, &query);
     TreeType *single_point_tree
@@ -345,8 +345,8 @@ void ApproxNN::InitTest(const Matrix& queries_in) {
 
 inline double ConstrFun(std::vector<int> *data, int thres) {
 
-  index_t num_over = 0;
-  for (index_t i = 0; i < (index_t) data->size(); i++)
+  size_t num_over = 0;
+  for (size_t i = 0; i < (size_t) data->size(); i++)
     if ((*data)[i] > thres)
       num_over++;
 
@@ -356,7 +356,7 @@ inline double ConstrFun(std::vector<int> *data, int thres) {
 inline double ObjFun(std::vector<int> *data, int thres) {
 
   int saved = 0;
-  for (index_t i = 0; i < (index_t) data->size(); i++)
+  for (size_t i = 0; i < (size_t) data->size(); i++)
     if ((*data)[i] <= thres)
       saved += (thres - (*data)[i]);
 
@@ -386,7 +386,7 @@ void ApproxNN::TrainNeighbors() {
   }
 
   // initialize the dc, mc for all the queries for every round
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     nn_dc_[i] = 0;
     nn_mc_[i] = 0;
     // 	ann_dc_[i] = 0;
@@ -415,7 +415,7 @@ void ApproxNN::TrainNeighbors() {
   test_ann_ = 0;
 
   query_ = 0;
-  DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+  DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
   for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
        query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -425,12 +425,12 @@ void ApproxNN::TrainNeighbors() {
   }
 
 
-  for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+  for (size_t i = 0; i < neighbor_indices_.size(); i++) {
     calc_nn_dists_[i] = neighbor_distances_[i];
   }
 
   double avg_dc = 0.0, avg_mc = 0.0;
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     avg_dc += nn_dc_[i];
     avg_mc += nn_mc_[i];
   }
@@ -443,7 +443,7 @@ void ApproxNN::TrainNeighbors() {
   // computing the anns progressively
   neighbor_distances_.SetAll(DBL_MAX);
   NOTIFY("Training Starting....");
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     nn_dc_[i] = 0;
     nn_mc_[i] = 0;
   }
@@ -454,10 +454,10 @@ void ApproxNN::TrainNeighbors() {
  
   last_mc_val_sum_ = 0;
 
-  index_t num_queries =  queries_.n_cols();
+  size_t num_queries =  queries_.n_cols();
 
   query_ = 0;
-  DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+  DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
   for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
        query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -470,7 +470,7 @@ void ApproxNN::TrainNeighbors() {
 
     v_q_->push_back(number_of_leaves_);
 
-    while (number_of_leaves_ < (index_t)error_list_->size()) {
+    while (number_of_leaves_ < (size_t)error_list_->size()) {
       (*ann_dc_)[number_of_leaves_] += nn_dc_[query_];
       (*sq_ann_dc_)[number_of_leaves_] 
 	+= (nn_dc_[query_] * nn_dc_[query_]);
@@ -493,8 +493,8 @@ void ApproxNN::TrainNeighbors() {
   DEBUG_ASSERT(error_list_->size() == ann_mc_->size());
 
 
-  for (index_t i = 0; i < (index_t)error_list_->size(); i++) {
-    // 	NOTIFY("%"LI"d: E:%"LI"d/%"LI"d, Avg. DC: %lg, Avg. MC: %lg",
+  for (size_t i = 0; i < (size_t)error_list_->size(); i++) {
+    // 	NOTIFY("%zud: E:%zud/%zud, Avg. DC: %lg, Avg. MC: %lg",
     // 	       i+1, (*error_list_)[i], queries_.n_cols(),
     // 	       (double) (*ann_dc_)[i] / (double) queries_.n_cols(),
     // 	       (double) (*ann_mc_)[i] / (double) queries_.n_cols());
@@ -533,7 +533,7 @@ void ApproxNN::TrainNeighbors() {
   }
 
   int g_min = -1, g_max = 0;
-  for (index_t i = 0; i < num_queries; i++) {
+  for (size_t i = 0; i < num_queries; i++) {
     if (fp1 != NULL)
       fprintf(fp1, "%d,%d\n", (*u_q_)[i], (*v_q_)[i]);
 
@@ -546,7 +546,7 @@ void ApproxNN::TrainNeighbors() {
 
   // here you compute the gamma = max_leaves_ value using 
   // the u_q values
-  DEBUG_ASSERT((index_t)u_q_->size() == num_queries);
+  DEBUG_ASSERT((size_t)u_q_->size() == num_queries);
 
   int gamma = g_max;
   int min_gam = gamma;
@@ -569,7 +569,7 @@ void ApproxNN::TrainNeighbors() {
     double test_fail = (double) (*error_list_)[gamma -1]
       / (double) num_queries;
     DEBUG_ASSERT_MSG(test_fail == ConstrFun(u_q_, gamma), 
-		     "ELE:%lg, ConsFun:%lg, gamma:%"LI"d",
+		     "ELE:%lg, ConsFun:%lg, gamma:%zud",
 		     test_fail, ConstrFun(u_q_, gamma), gamma);
 
     gamma--;
@@ -588,7 +588,7 @@ void ApproxNN::TrainNeighbors() {
 
   //       error = 0;
   //       double max_eps = -1.0, avg_eps = 0.0;
-  //       for (index_t i = 0; i < nn_dist->size(); i++) {
+  //       for (size_t i = 0; i < nn_dist->size(); i++) {
   // 	if ((*nn_dist)[i] < ann_dist_[i]) {
   // 	  error++;
   // 	  double epsilon = (ann_dist_[i] / (*nn_dist)[i]) - 1;
@@ -599,11 +599,11 @@ void ApproxNN::TrainNeighbors() {
   //       }
   //       avg_eps /= (double) queries_.n_cols();
 
-  //       NOTIFY("%"LI"d: E:%"LI"d/%"LI"d, AEps:%lg, MEps:%lg",
+  //       NOTIFY("%zud: E:%zud/%zud, AEps:%lg, MEps:%lg",
   // 	     numLeaves, error, queries_.n_cols(), avg_eps, max_eps); 
 
   //       double avg_dc = 0.0, avg_mc = 0.0;
-  //       for (index_t i = 0; i < queries_.n_cols(); i++) {
+  //       for (size_t i = 0; i < queries_.n_cols(); i++) {
   // 	avg_dc += ann_dc_[i];
   // 	avg_mc += ann_mc_[i];
   //       }
@@ -616,7 +616,7 @@ void ApproxNN::TrainNeighbors() {
   //       numLeaves++;
 
   //       if (fp != NULL) 
-  // 	fprintf(fp, "%"LI"d,%lg,%lg\n", error, avg_dc, avg_mc);
+  // 	fprintf(fp, "%zud,%lg,%lg\n", error, avg_dc, avg_mc);
 
   //     } while (error > 0);
 
@@ -633,9 +633,9 @@ void ApproxNN::TrainNeighbors() {
 
 
 // should be called after calling InitTest
-void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
+void ApproxNN::TestNeighbors(ArrayList<size_t>* nn_ind,
 			     ArrayList<double>* nn_dist, 
-			     ArrayList<index_t>* ann_ind,
+			     ArrayList<size_t>* ann_ind,
 			     ArrayList<double>* ann_dist) {
 
 
@@ -648,7 +648,7 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
 
 
   // initialize the dc, mc for all the queries for every round
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     nn_dc_[i] = 0;
     nn_mc_[i] = 0;
   }
@@ -661,7 +661,7 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
   test_ann_ = 0;
 
   query_ = 0;
-  DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+  DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
   for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
        query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -670,8 +670,8 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
 					      reference_tree_));
   }
 
-  for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-    index_t query = i/knns_;
+  for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+    size_t query = i/knns_;
     (*nn_ind)[query*knns_+ i%knns_]
       = old_from_new_references_[neighbor_indices_[i]];
     (*nn_dist)[query*knns_+ i%knns_] = neighbor_distances_[i];
@@ -684,7 +684,7 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
   }
 
   double avg_dc = 0.0, avg_mc = 0.0;
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     avg_dc += nn_dc_[i];
     avg_mc += nn_mc_[i];
   }
@@ -697,16 +697,16 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
 
   // computing the anns progressively
   neighbor_distances_.SetAll(DBL_MAX);
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     nn_dc_[i] = 0;
     nn_mc_[i] = 0;
   }
 
   test_ann_ = 1;
-  index_t num_queries =  queries_.n_cols();
+  size_t num_queries =  queries_.n_cols();
 
   query_ = 0;
-  DEBUG_ASSERT((index_t)query_trees_.size() == queries_.n_cols());
+  DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
   for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
        query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -716,9 +716,9 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
 					      reference_tree_));
   }
 
-  index_t error = 0;
-  for (index_t i = 0; i < neighbor_indices_.size(); i++) {
-    index_t query = i/knns_;
+  size_t error = 0;
+  for (size_t i = 0; i < neighbor_indices_.size(); i++) {
+    size_t query = i/knns_;
 
     (*ann_ind)[query*knns_+ i%knns_]
       = old_from_new_references_[neighbor_indices_[i]];
@@ -734,7 +734,7 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
 
   avg_dc = 0.0;
   avg_mc = 0.0;
-  for (index_t i = 0; i < queries_.n_cols(); i++) {
+  for (size_t i = 0; i < queries_.n_cols(); i++) {
     avg_dc += nn_dc_[i];
     avg_mc += nn_mc_[i];
   }
@@ -743,7 +743,7 @@ void ApproxNN::TestNeighbors(ArrayList<index_t>* nn_ind,
   avg_mc /= (double) queries_.n_cols();
       
   NOTIFY("Test ANN: Avg. DC: %lg, Avg. MC: %lg", avg_dc, avg_mc);
-  NOTIFY("Error: %"LI"d / %"LI"d = %lg",
+  NOTIFY("Error: %zud / %zud = %lg",
 	 error, num_queries, (double)error / (double) num_queries);
 
 

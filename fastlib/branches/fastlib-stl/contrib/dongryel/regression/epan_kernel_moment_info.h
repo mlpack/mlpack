@@ -53,7 +53,7 @@ public:
   
   ~EpanKernelMomentInfo() {}
   
-  void Init(index_t length) {
+  void Init(size_t length) {
     weighted_mass.Init(length);
     weighted_mass_divided_by_bandwidth_quartic_pow.Init(length);
     weighted_outer_product.Init(length, length);
@@ -95,8 +95,8 @@ public:
     weighted_sumsq_divided_by_bandwidth_quartic_pow +=
       factor_div_bandwidth_quart * reference_point_squared_length;
 	  
-    for(index_t j = 0; j < weighted_outer_product.n_cols(); j++) {
-      for(index_t i = 0; i < weighted_outer_product.n_rows(); i++) {
+    for(size_t j = 0; j < weighted_outer_product.n_cols(); j++) {
+      for(size_t i = 0; i < weighted_outer_product.n_rows(); i++) {
 	weighted_outer_product.set
 	  (i, j, weighted_outer_product.get(i, j) +
 	   factor_div_bandwidth_quart * reference_point[i] *
@@ -150,8 +150,8 @@ public:
       (q, magnitude_weighted_mass_divided_by_bandwidth_quartic_pow) +
       weighted_sumquartic;
 	  
-    for(index_t j = 0; j < weighted_outer_product.n_cols(); j++) {
-      for(index_t i = 0; i < weighted_outer_product.n_rows(); i++) {
+    for(size_t j = 0; j < weighted_outer_product.n_cols(); j++) {
+      for(size_t i = 0; i < weighted_outer_product.n_rows(); i++) {
 	correction_term += 4 * q[j] * q[i] * 
 	  weighted_outer_product.get(i, j);
       }

@@ -23,10 +23,10 @@ class MatrixFactorizedFMMReferenceNodeStat {
     farfield_expansion_.Init(ka);
   }
   
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count) {
   }
   
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const Matrix& dataset, size_t &start, size_t &count,
 	    const MatrixFactorizedFMMReferenceNodeStat& left_stat,
 	    const MatrixFactorizedFMMReferenceNodeStat& right_stat) {
   }
@@ -59,10 +59,10 @@ class MatrixFactorizedFMMQueryNodeStat {
     local_expansion_.Init(ka);
   }
   
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count) {
   }
   
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const Matrix& dataset, size_t &start, size_t &count,
 	    const MatrixFactorizedFMMQueryNodeStat& left_stat,
 	    const MatrixFactorizedFMMQueryNodeStat& right_stat) {
   }  

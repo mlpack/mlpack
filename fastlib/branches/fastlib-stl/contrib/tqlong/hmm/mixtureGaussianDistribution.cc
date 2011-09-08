@@ -4,20 +4,20 @@
 
 using namespace supportHMM;
 
-MixtureGaussianDistribution::GaussianDistribution(index_t n_mixs, index_t dim) {
+MixtureGaussianDistribution::GaussianDistribution(size_t n_mixs, size_t dim) {
   pMixtures.Init();
   gDistributions.Init();
 
   double s = 0.0;
-  for (index_t i = 0; i < n_mixs; i++) {
+  for (size_t i = 0; i < n_mixs; i++) {
     double r = math::Random(0, 1);
     s += r;
     pMixtures.PushBackCopy(r);
   }
-  for (index_t i = 0; i < n_mixs; i++)
+  for (size_t i = 0; i < n_mixs; i++)
     pMixtures[i] /= s;
 
-  for (index_t i = 0; i < n_mixs; i++) {
+  for (size_t i = 0; i < n_mixs; i++) {
     GaussianDistribution gd(dim);
     gDistributions.PushBackCopy(gd);
   }
@@ -30,15 +30,15 @@ MixtureGaussianDistribution::MixtureGaussianDistribution(const MixtureGaussianDi
 
 double MixtureGaussianDistribution::logP(const Vector& x) {
   double s = 0;
-  for (index_t i = 0; i < n_mixs(); i++) 
+  for (size_t i = 0; i < n_mixs(); i++) 
     s += pMixtures[i] * exp(gDistributions[i].logP(x));
   return log(s);
 }
 
 void MixtureGaussianDistribution::createFromFile(
     TextLineReader& f, MixtureGaussianDistribution* tmp) {
-  index_t dim = src.n_rows();
-  for (index_t i = 0; i < n_mixs; i++) {
+  size_t dim = src.n_rows();
+  for (size_t i = 0; i < n_mixs; i++) {
   }
 }
 
@@ -73,7 +73,7 @@ void GaussianDistribution::Save(FILE* f) {
   printMatrix(f, covariance);
 }
 
-void GaussianDistribution::InitMeanCov(index_t dim) {
+void GaussianDistribution::InitMeanCov(size_t dim) {
   mean.Init(dim);
   covariance.Init(dim, dim);
 	

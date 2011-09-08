@@ -19,10 +19,10 @@ namespace proximity {
     
     Bound bound_;
     ArrayList<GenHypercubeTree *> children_;
-    ArrayList<index_t> begin_;
-    ArrayList<index_t> count_;
-    index_t total_count_;
-    index_t level_;
+    ArrayList<size_t> begin_;
+    ArrayList<size_t> count_;
+    size_t total_count_;
+    size_t level_;
     unsigned int node_index_;
     Statistic stat_;
     
@@ -34,7 +34,7 @@ namespace proximity {
 
     ~GenHypercubeTree() {
       if(children_.size() > 0) {
-	for(index_t i = 0; i < children_.size(); i++) {
+	for(size_t i = 0; i < children_.size(); i++) {
 	  delete children_[i];
 	}
       }      
@@ -57,7 +57,7 @@ namespace proximity {
       return children_.size() == 0;
     }
 
-    void Init(index_t number_of_particle_sets, index_t dimension) {
+    void Init(size_t number_of_particle_sets, size_t dimension) {
       begin_.Init(number_of_particle_sets);
       count_.Init(number_of_particle_sets);
       total_count_ = 0;
@@ -65,8 +65,8 @@ namespace proximity {
       children_.Init();
     }
 
-    void Init(index_t particle_set_number, index_t begin_in, 
-	      index_t count_in) {
+    void Init(size_t particle_set_number, size_t begin_in, 
+	      size_t count_in) {
 
       begin_[particle_set_number] = begin_in;
       count_[particle_set_number] = count_in;
@@ -90,12 +90,12 @@ namespace proximity {
       return children_[index];
     }
 
-    void set_level(index_t level) {
+    void set_level(size_t level) {
       level_ = level;
     }
 
-    GenHypercubeTree *AllocateNewChild(index_t number_of_particle_sets,
-				       index_t dimension,
+    GenHypercubeTree *AllocateNewChild(size_t number_of_particle_sets,
+				       size_t dimension,
 				       unsigned int node_index_in) {
       
       GenHypercubeTree *new_node = new GenHypercubeTree();
@@ -110,14 +110,14 @@ namespace proximity {
     /**
      * Gets the index of the begin point of this subset.
      */
-    index_t begin(index_t particle_set_number) const {
+    size_t begin(size_t particle_set_number) const {
       return begin_[particle_set_number];
     }
     
     /**
      * Gets the index one beyond the last index in the series.
      */
-    index_t end(index_t particle_set_number) const {
+    size_t end(size_t particle_set_number) const {
       return begin_[particle_set_number] + count_[particle_set_number];
     }
     
@@ -128,22 +128,22 @@ namespace proximity {
     /**
      * Gets the number of points in this subset.
      */
-    index_t count(index_t particle_set_number) const {
+    size_t count(size_t particle_set_number) const {
       return count_[particle_set_number];
     }
 
-    index_t count() const {
+    size_t count() const {
       return total_count_;
     }
 
-    index_t level() const {
+    size_t level() const {
       return level_;
     }
 
     /**
      * Gets the number of children.
      */
-    index_t num_children() const {
+    size_t num_children() const {
       return children_.size();
     }
 
@@ -152,14 +152,14 @@ namespace proximity {
 	printf("internal node: %d points total on level %d\n", total_count_,
 	       level_);
 	printf("  bound:\n");
-	for(index_t i = 0; i < bound_.dim(); i++) {
+	for(size_t i = 0; i < bound_.dim(); i++) {
 	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
 	}
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
-	for(index_t c = 0; c < children_.size(); c++) {
+	for(size_t c = 0; c < children_.size(); c++) {
 	  children_[c]->Print();
 	}
       }
@@ -167,10 +167,10 @@ namespace proximity {
 	printf("leaf node: %d points total on level %d\n", total_count_,
 	       level_);
 	printf("  bound:\n");
-	for(index_t i = 0; i < bound_.dim(); i++) {
+	for(size_t i = 0; i < bound_.dim(); i++) {
 	  printf("%g %g\n", bound_.get(i).lo, bound_.get(i).hi);
 	}
-	for(index_t i = 0; i < begin_.size(); i++) {
+	for(size_t i = 0; i < begin_.size(); i++) {
 	  printf("   set %d: %d to %d: %d points total\n", i, 
 		 begin_[i], begin_[i] + count_[i] - 1, count_[i]);	  
 	}
@@ -203,20 +203,20 @@ namespace proximity {
    */
   template<typename TStatistic>
   GenHypercubeTree<TStatistic> *MakeGenHypercubeTree
-  (ArrayList<Matrix *> &matrices, index_t leaf_size, index_t max_tree_depth,
+  (ArrayList<Matrix *> &matrices, size_t leaf_size, size_t max_tree_depth,
    ArrayList< ArrayList<GenHypercubeTree<TStatistic> *> > *nodes_in_each_level,
-   ArrayList< ArrayList<index_t> > *old_from_new = NULL,
-   ArrayList< ArrayList<index_t> > *new_from_old = NULL) {
+   ArrayList< ArrayList<size_t> > *old_from_new = NULL,
+   ArrayList< ArrayList<size_t> > *new_from_old = NULL) {
     
     GenHypercubeTree<TStatistic> *node = new GenHypercubeTree<TStatistic>();
     
     if (old_from_new) {
       old_from_new->Init(matrices.size());
 
-      for(index_t j = 0; j < matrices.size(); j++) {
+      for(size_t j = 0; j < matrices.size(); j++) {
 	(*old_from_new)[j].Init(matrices[j]->n_cols());
 	
-	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	for (size_t i = 0; i < matrices[j]->n_cols(); i++) {
 	  (*old_from_new)[j][i] = i;
 	}
       }
@@ -224,14 +224,14 @@ namespace proximity {
     
     // Initialize the global list of nodes.
     nodes_in_each_level->Init(max_tree_depth + 1);
-    for(index_t i = 0; i < nodes_in_each_level->size(); i++) {
+    for(size_t i = 0; i < nodes_in_each_level->size(); i++) {
       ((*nodes_in_each_level)[i]).Init();
     }
 
     // Initialize the root node.
     node->Init(matrices.size(), matrices[0]->n_rows());
     node->set_level(0);
-    for(index_t i = 0; i < matrices.size(); i++) {
+    for(size_t i = 0; i < matrices.size(); i++) {
       node->Init(i, 0, matrices[i]->n_cols());
     }
     
@@ -250,9 +250,9 @@ namespace proximity {
     if (new_from_old) {
       new_from_old->Init(matrices.size());
 
-      for(index_t j = 0; j < matrices.size(); j++) {
+      for(size_t j = 0; j < matrices.size(); j++) {
 	(*new_from_old)[j].Init(matrices[j]->n_cols());
-	for (index_t i = 0; i < matrices[j]->n_cols(); i++) {
+	for (size_t i = 0; i < matrices[j]->n_cols(); i++) {
 	  (*new_from_old)[j][(*old_from_new)[j][i]] = i;
 	}
       }

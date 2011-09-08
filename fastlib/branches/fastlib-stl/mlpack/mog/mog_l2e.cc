@@ -13,7 +13,7 @@
 long double MoGL2E::L2Error(const Matrix& data, Vector *gradients) {
 
   long double reg, fit, l2e;
-  index_t number_of_points = data.n_cols();
+  size_t number_of_points = data.n_cols();
 
 
   if (gradients != NULL) {
@@ -40,7 +40,7 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
   Matrix phi_mu, sum_covar;
   Vector x, y;
   long double reg, tmpVal;
-  index_t num_gauss, dim;
+  size_t num_gauss, dim;
 
   Vector df_dw, g_omega;
   ArrayList<Vector> g_mu, g_sigma;
@@ -59,7 +59,7 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
     g_sigma.Init(num_gauss);
     dp_d_mu.Init(num_gauss);
     dp_d_sigma.Init(num_gauss);
-    for(index_t k = 0; k < num_gauss; k++){
+    for(size_t k = 0; k < num_gauss; k++){
       dp_d_mu[k].Init(num_gauss);
       dp_d_sigma[k].Init(num_gauss);
     }
@@ -73,8 +73,8 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
     g_omega.Init(0);
   }
 
-  for(index_t k = 1; k < num_gauss; k++) {
-    for(index_t j = 0; j < k; j++) {
+  for(size_t k = 1; k < num_gauss; k++) {
+    for(size_t j = 0; j < k; j++) {
       la::AddOverwrite(sigma(k), sigma(j), &sum_covar);
 			
       if (g_reg != NULL) {
@@ -82,7 +82,7 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
 	Vector tmp_dp_d_sigma;
       
 	tmp_d_cov.Init(dim*(dim+1));
-	for(index_t i = 0; i < (dim*(dim + 1) / 2); i++){
+	for(size_t i = 0; i < (dim*(dim + 1) / 2); i++){
 	  tmp_d_cov[i].Copy(d_sigma(k)[i]);
 	  tmp_d_cov[(dim*(dim+1)/2)+i].Copy(d_sigma(j)[i]);
 	}
@@ -99,7 +99,7 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
 	tmp_dp = tmp_dp_d_sigma.ptr();
 	tmp_dp_1 = (double*)malloc((tmp_dp_d_sigma.length()/2) * sizeof(double));
 	tmp_dp_2 = (double*)malloc((tmp_dp_d_sigma.length()/2) * sizeof(double));
-	for(index_t i = 0; i < (tmp_dp_d_sigma.length()/2); i++){
+	for(size_t i = 0; i < (tmp_dp_d_sigma.length()/2); i++){
 	  tmp_dp_1[i] = tmp_dp[i];
 	  tmp_dp_2[i] = tmp_dp[(dim*(dim + 1) / 2) + i];
 	}
@@ -114,7 +114,7 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
     }
   }
 	
-  for(index_t k = 0; k < num_gauss; k++) {
+  for(size_t k = 0; k < num_gauss; k++) {
     la::ScaleOverwrite(2, sigma(k), &sum_covar);
 
     if (g_reg != NULL) {
@@ -142,19 +142,19 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
     la::MulInit(d_omega(),df_dw,&g_omega);
 	
     // Calculating the g_mu values - K vectors of size D
-    for(index_t k = 0; k < num_gauss; k++){
+    for(size_t k = 0; k < num_gauss; k++){
       g_mu[k].Init(dim);
       g_mu[k].SetZero();
-      for(index_t j = 0; j < num_gauss; j++)
+      for(size_t j = 0; j < num_gauss; j++)
 	la::AddExpert(x.get(j), dp_d_mu[j][k], &g_mu[k]);
       la::Scale((2.0 * x.get(k)), &g_mu[k]);
     }
 	
     // Calculating the g_sigma values - K vectors of size D(D+1)/2
-    for(index_t k = 0; k < num_gauss; k++){
+    for(size_t k = 0; k < num_gauss; k++){
       g_sigma[k].Init((dim*(dim + 1)) / 2);
       g_sigma[k].SetZero();
-      for(index_t j = 0; j < num_gauss; j++)
+      for(size_t j = 0; j < num_gauss; j++)
 	la::AddExpert(x.get(j), dp_d_sigma[j][k], &g_sigma[k]);
       la::Scale((2.0 * x.get(k)), &g_sigma[k]);
     }
@@ -163,15 +163,15 @@ long double MoGL2E::RegularizationTerm_(Vector *g_reg){
     double *tmp_g_reg;
     tmp_g_reg = (double*)malloc(((num_gauss*(dim + 1)*(dim + 2) / 2) - 1)
 				*sizeof(double));
-    index_t j = 0;
-    for(index_t k = 0; k < g_omega.length(); k++)
+    size_t j = 0;
+    for(size_t k = 0; k < g_omega.length(); k++)
       tmp_g_reg[k] = g_omega.get(k);
     j = g_omega.length();
-    for(index_t k = 0; k < num_gauss; k++){
-      for(index_t i = 0; i < dim; i++){
+    for(size_t k = 0; k < num_gauss; k++){
+      for(size_t i = 0; i < dim; i++){
 	tmp_g_reg[j + k*(dim) + i] = g_mu[k].get(i);
       }
-      for(index_t i = 0; i < (dim*(dim+1)/2); i++){
+      for(size_t i = 0; i < (dim*(dim+1)/2); i++){
 	tmp_g_reg[j + num_gauss*dim 
 		  + k*(dim*(dim+1) / 2) 
 		  + i] = g_sigma[k].get(i);
@@ -187,7 +187,7 @@ long double MoGL2E::GoodnessOfFitTerm_(const Matrix& data, Vector *g_fit) {
   long double fit;
   Matrix phi_x;
   Vector weights, x, y, identity_vector;
-  index_t num_gauss, num_points, dim;
+  size_t num_gauss, num_points, dim;
   long double tmpVal;
   Vector g_omega,tmp_g_omega;
   ArrayList<Vector> g_mu, g_sigma;
@@ -212,14 +212,14 @@ long double MoGL2E::GoodnessOfFitTerm_(const Matrix& data, Vector *g_fit) {
     tmp_g_omega.Init(0);
   }
 	
-  for(index_t k = 0; k < num_gauss; k++) {
+  for(size_t k = 0; k < num_gauss; k++) {
     if (g_fit != NULL) {
       g_mu[k].Init(dim);
       g_mu[k].SetZero();
       g_sigma[k].Init((dim * (dim+1) / 2));
       g_sigma[k].SetZero();
     }
-    for(index_t i = 0; i < num_points; i++) {
+    for(size_t i = 0; i < num_points; i++) {
       if (g_fit != NULL) {
 	Vector tmp_g_mu, tmp_g_sigma;
 	x.CopyValues(data.GetColumnPtr(i));
@@ -252,15 +252,15 @@ long double MoGL2E::GoodnessOfFitTerm_(const Matrix& data, Vector *g_fit) {
     double *tmp_g_fit;
     tmp_g_fit = (double*)malloc(((num_gauss * (dim+1)*(dim+2) / 2) - 1)
 				*sizeof(double));
-    index_t j = 0;
-    for(index_t k = 0; k < g_omega.length(); k++)
+    size_t j = 0;
+    for(size_t k = 0; k < g_omega.length(); k++)
       tmp_g_fit[k] = g_omega.get(k);
     j = g_omega.length();
-    for(index_t k = 0; k < num_gauss; k++){
-      for(index_t i = 0; i < dim; i++){
+    for(size_t k = 0; k < num_gauss; k++){
+      for(size_t i = 0; i < dim; i++){
 	tmp_g_fit[j + k*dim + i] = g_mu[k].get(i);
       }
-      for(index_t i = 0; i < (dim * (dim+1) / 2); i++){
+      for(size_t i = 0; i < (dim * (dim+1) / 2); i++){
 	tmp_g_fit[j + num_gauss*dim 
 		  + k*(dim * (dim+1) / 2) 
 		  + i] = g_sigma[k].get(i);
@@ -272,11 +272,11 @@ long double MoGL2E::GoodnessOfFitTerm_(const Matrix& data, Vector *g_fit) {
 }
 
 void MoGL2E::MultiplePointsGenerator(double **points,
-				     index_t number_of_points,
+				     size_t number_of_points,
 				     const Matrix& d,
-				     index_t number_of_components) {
+				     size_t number_of_components) {
 
-  index_t dim, n, i, j, x;
+  size_t dim, n, i, j, x;
   
   dim = d.n_rows();
   n = d.n_cols();
@@ -307,40 +307,40 @@ void MoGL2E::MultiplePointsGenerator(double **points,
 }
 
 void MoGL2E::InitialPointGenerator(double *theta, const Matrix& data,
-				   index_t k_comp) {
+				   size_t k_comp) {
 
   ArrayList<Vector> means;
   ArrayList<Matrix> covars;
   Vector weights;
   double temp, noise;
-  index_t dim;
+  size_t dim;
 
   weights.Init(k_comp);
   means.Init(k_comp);
   covars.Init(k_comp);
   dim = data.n_rows();
 
-  for (index_t i = 0; i < k_comp; i++) {
+  for (size_t i = 0; i < k_comp; i++) {
     means[i].Init(dim);
     covars[i].Init(dim, dim);
   }
 
   KMeans_(data, &means, &covars, &weights, k_comp);
 
-  for(index_t k = 0; k < k_comp - 1; k++){
+  for(size_t k = 0; k < k_comp - 1; k++){
     temp = weights[k] / weights[k_comp - 1];
     noise = (double)(rand() % 10000) / (double)1000;
     theta[k] = noise - 5;
   }
-  for(index_t k = 0; k < k_comp; k++){
-    for(index_t j = 0; j < dim; j++)
+  for(size_t k = 0; k < k_comp; k++){
+    for(size_t j = 0; j < dim; j++)
       theta[k_comp - 1 + k * dim + j] = means[k].get(j);
 
     Matrix U, U_tran;
     la::CholeskyInit(covars[k], &U);
     la::TransposeInit(U, &U_tran);
-    for(index_t j = 0; j < dim; j++) {
-      for(index_t i = 0; i < j + 1; i++) {
+    for(size_t j = 0; j < dim; j++) {
+      for(size_t i = 0; i < j + 1; i++) {
 	noise = (rand() % 501) / 100;
 	theta[k_comp - 1 + k_comp * dim 
 	      + k * dim * (dim + 1) / 2 
@@ -353,16 +353,16 @@ void MoGL2E::InitialPointGenerator(double *theta, const Matrix& data,
 
 void MoGL2E::KMeans_(const Matrix& data, ArrayList<Vector> *means,
 		     ArrayList<Matrix> *covars, Vector *weights, 
-		     index_t value_of_k){
+		     size_t value_of_k){
   
   ArrayList<Vector> mu, mu_old;
   double* tmpssq;
   double* sig;
   double* sig_best;
-  index_t *y;
+  size_t *y;
   Vector x, diff;
   Matrix ssq;
-  index_t i, j, k, n, t, dim;
+  size_t i, j, k, n, t, dim;
   double score, score_old, sum;
 	
   n = data.n_cols();
@@ -379,7 +379,7 @@ void MoGL2E::KMeans_(const Matrix& data, ArrayList<Vector> *means,
     mu_old[i].Init(dim);
   }
   x.Init(dim);
-  y = (index_t*)malloc(n * sizeof(index_t));
+  y = (size_t*)malloc(n * sizeof(size_t));
   diff.Init(dim);
 	
   score_old = 999999;
@@ -404,7 +404,7 @@ void MoGL2E::KMeans_(const Matrix& data, ArrayList<Vector> *means,
       }
 			
       for(k = 0; k < value_of_k; k++){
-	index_t p = 0;
+	size_t p = 0;
 	mu[k].SetZero();
 	for(j = 0; j < n; j++){
 	  x.CopyValues(data.GetColumnPtr(j));
@@ -437,7 +437,7 @@ void MoGL2E::KMeans_(const Matrix& data, ArrayList<Vector> *means,
     }while(sum != 0);
 		
     for(k = 0; k < value_of_k; k++){
-      index_t p = 0;
+      size_t p = 0;
       tmpssq[k] = 0;
       for(j = 0; j < n; j++){
 	if(y[j] == k){
@@ -472,11 +472,11 @@ void MoGL2E::KMeans_(const Matrix& data, ArrayList<Vector> *means,
   return;
 }
 
-void MoGL2E::min_element( Matrix& element, index_t *indices ){
+void MoGL2E::min_element( Matrix& element, size_t *indices ){
 	
-  index_t last = element.n_cols() - 1;
-  index_t first, lowest;
-  index_t i;
+  size_t last = element.n_cols() - 1;
+  size_t first, lowest;
+  size_t i;
 	
   for( i = 0; i < element.n_rows(); i++ ){
 		

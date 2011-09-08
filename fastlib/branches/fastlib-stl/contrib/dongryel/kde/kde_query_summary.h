@@ -33,7 +33,7 @@ class MultiTreeQuerySummary {
   }
     
   template<typename TQueryResult>
-  void Init(const TQueryResult &query_results, index_t q_index) {
+  void Init(const TQueryResult &query_results, size_t q_index) {
     sum_l = query_results.sum_l[q_index];
     n_pruned_l = query_results.n_pruned[q_index];
     n_pruned_u = query_results.n_pruned[q_index];
@@ -43,7 +43,7 @@ class MultiTreeQuerySummary {
   }
 
   template<typename TQueryResult>
-  void Accumulate(const TQueryResult &query_results, index_t q_index) {
+  void Accumulate(const TQueryResult &query_results, size_t q_index) {
 
     sum_l = std::min(sum_l, query_results.sum_l[q_index]);
     n_pruned_l = std::min(n_pruned_l, query_results.n_pruned[q_index]);

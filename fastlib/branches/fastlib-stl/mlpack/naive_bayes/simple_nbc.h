@@ -102,7 +102,7 @@ class SimpleNaiveBayesClassifier {
 
   // The variable keeping the information about the
   // number of classes present
-  index_t number_of_classes_;
+  size_t number_of_classes_;
  
  /**
   * Initializes the classifier as per the input and then trains it

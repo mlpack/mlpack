@@ -38,10 +38,10 @@ class MultiTreeQueryStat {
     summary.SetZero();
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count) {
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const Matrix& dataset, size_t &start, size_t &count,
 	    const MultiTreeQueryStat& left_stat,
 	    const MultiTreeQueryStat& right_stat) {
   }
@@ -84,10 +84,10 @@ class MultiTreeReferenceStat {
     return farfield_expansion.get_weight_sum();
   }
   
-  void Init(const Matrix& dataset, index_t &start, index_t &count) {
+  void Init(const Matrix& dataset, size_t &start, size_t &count) {
   }
     
-  void Init(const Matrix& dataset, index_t &start, index_t &count,
+  void Init(const Matrix& dataset, size_t &start, size_t &count,
 	    const MultiTreeReferenceStat& left_stat,
 	    const MultiTreeReferenceStat& right_stat) {
       
@@ -113,7 +113,7 @@ class MultiTreeReferenceStat {
 		const TKernelAux &kernel_aux_in,
 		const ArrayList<Matrix *> &reference_sets,
 		const ArrayList<Matrix *> &targets,
-		index_t start, index_t count) {
+		size_t start, size_t count) {
       
     PostInitCommon(bounding_primitive, kernel_aux_in);
       
@@ -136,7 +136,7 @@ class MultiTreeReferenceStat {
 		const TKernelAux &kernel_aux_in,
 		const ArrayList<Matrix *> &reference_sets,
 		const ArrayList<Matrix *> &targets,
-		index_t start, index_t count,
+		size_t start, size_t count,
 		const MultiTreeReferenceStat& left_stat,
 		const MultiTreeReferenceStat& right_stat) {
       

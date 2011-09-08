@@ -32,13 +32,13 @@ class MultiTreeDepthFirst {
 
   ArrayList<ReferenceTree *> reference_trees_;
 
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_references_;
 
   ArrayList<HybridTree *> hybrid_trees_;
 
-  ArrayList<index_t> old_from_new_hybrids_;
+  ArrayList<size_t> old_from_new_hybrids_;
 
-  ArrayList<index_t> new_from_old_hybrids_;
+  ArrayList<size_t> new_from_old_hybrids_;
 
   typename MultiTreeProblem::MultiTreeGlobal globals_;
 
@@ -60,8 +60,8 @@ class MultiTreeDepthFirst {
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
       
-      index_t starting_point_index = 0;
-      index_t ending_point_index = hybrid_nodes[start]->end();
+      size_t starting_point_index = 0;
+      size_t ending_point_index = hybrid_nodes[start]->end();
       if(start == 0) {
 	starting_point_index = hybrid_nodes[start]->begin();
       }
@@ -75,7 +75,7 @@ class MultiTreeDepthFirst {
 	}
       }
 
-      for(index_t i = starting_point_index; i < ending_point_index; i++) {
+      for(size_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.hybrid_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::HybridNodeNestedLoop
 	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
@@ -92,10 +92,10 @@ class MultiTreeDepthFirst {
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
       
-      index_t starting_point_index = query_nodes[start]->begin();
-      index_t ending_point_index = query_nodes[start]->end();
+      size_t starting_point_index = query_nodes[start]->begin();
+      size_t ending_point_index = query_nodes[start]->end();
 
-      for(index_t i = starting_point_index; i < ending_point_index; i++) {
+      for(size_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.query_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::QueryNodeNestedLoop
 	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
@@ -112,10 +112,10 @@ class MultiTreeDepthFirst {
      ArrayList<ReferenceTree *> &reference_nodes,
      typename MultiTreeProblem::MultiTreeQueryResult &query_results) {
       
-      index_t starting_point_index = reference_nodes[start]->begin();
-      index_t ending_point_index = reference_nodes[start]->end();
+      size_t starting_point_index = reference_nodes[start]->begin();
+      size_t ending_point_index = reference_nodes[start]->end();
 
-      for(index_t i = starting_point_index; i < ending_point_index; i++) {
+      for(size_t i = starting_point_index; i < ending_point_index; i++) {
 	globals.reference_node_chosen_indices[start] = i;
 	MultiTreeHelper_<start + 1, end>::ReferenceNodeNestedLoop
 	  (globals, query_sets, sets, targets, hybrid_nodes, query_nodes,
@@ -497,7 +497,7 @@ class MultiTreeDepthFirst {
     }
     else {
       double product_reference_node_count = 1.0;
-      for(index_t i = 0; i < reference_nodes.size(); i++) {
+      for(size_t i = 0; i < reference_nodes.size(); i++) {
 	product_reference_node_count *= reference_nodes[i]->count();
       }
       return product_reference_node_count;
@@ -531,7 +531,7 @@ class MultiTreeDepthFirst {
    &results);
 
   template<typename Tree>
-  void PreProcessReferenceTree_(Tree *node, index_t reference_tree_index);
+  void PreProcessReferenceTree_(Tree *node, size_t reference_tree_index);
 
   template<typename Tree>
   void PostProcessTree_
@@ -554,14 +554,14 @@ class MultiTreeDepthFirst {
     }
 
     if(reference_trees_.size() > 0) {
-      for(index_t i = 0; i < reference_trees_.size(); i++) {
+      for(size_t i = 0; i < reference_trees_.size(); i++) {
 	delete reference_trees_[i];
 	delete sets_[i];
       }
     }
     
     if(targets_.size() > 0) {
-      for(index_t i = 0; i < targets_.size(); i++) {
+      for(size_t i = 0; i < targets_.size(); i++) {
 	delete targets_[i];
       }
     }
@@ -573,15 +573,15 @@ class MultiTreeDepthFirst {
 
     ArrayList<Matrix *> query_sets;
     ArrayList<QueryTree *> query_trees;
-    ArrayList<index_t> old_from_new_queries;
-    ArrayList<index_t> new_from_old_queries;
+    ArrayList<size_t> old_from_new_queries;
+    ArrayList<size_t> new_from_old_queries;
     
     // Build the query tree.
     if(query_sets_in != NULL) {
       query_sets.Init(query_sets_in->size());
       query_trees.Init(query_sets_in->size());
 
-      for(index_t i = 0; i < query_sets.size(); i++) {
+      for(size_t i = 0; i < query_sets.size(); i++) {
 	query_sets[i] = new Matrix();
 	query_sets[i]->Copy(*((*query_sets_in)[i]));
 	query_trees[i] = proximity::MakeGenKdTree<double, QueryTree,
@@ -623,13 +623,13 @@ class MultiTreeDepthFirst {
       // Save the root nodes before doing the trick...
       ArrayList<HybridTree *> saved_nodes;
       saved_nodes.Init(hybrid_trees_.size());
-      for(index_t i = 0; i < hybrid_trees_.size(); i++) {
+      for(size_t i = 0; i < hybrid_trees_.size(); i++) {
 	saved_nodes[i] = hybrid_trees_[i];
       }
 
-      for(index_t i = 0; i < frontier.total_num_stratum; i++) {
+      for(size_t i = 0; i < frontier.total_num_stratum; i++) {
 	
-	for(index_t j = 0; j < hybrid_trees_.size(); j++) {
+	for(size_t j = 0; j < hybrid_trees_.size(); j++) {
 	  hybrid_trees_[j] = frontier.node_list[i];
 	}
 
@@ -641,7 +641,7 @@ class MultiTreeDepthFirst {
 				 query_trees, reference_trees_, *query_results,
 				 total_num_tuples);
       }
-      for(index_t i = 0; i < hybrid_trees_.size(); i++) {
+      for(size_t i = 0; i < hybrid_trees_.size(); i++) {
         hybrid_trees_[i] = saved_nodes[i];
       }
 
@@ -666,7 +666,7 @@ class MultiTreeDepthFirst {
     // query results and free memory.
     if(query_sets_in != NULL) {
       PostProcessTree_(*(query_sets[0]), query_trees[0], *query_results);
-      for(index_t i = 0; i < query_sets.size(); i++) {
+      for(size_t i = 0; i < query_sets.size(); i++) {
         delete query_trees[i];
         delete query_sets[i];
       }
@@ -689,15 +689,15 @@ class MultiTreeDepthFirst {
 
     ArrayList<QueryTree *> query_trees;
     ArrayList<Matrix *> query_sets;
-    ArrayList<index_t> old_from_new_queries;
-    ArrayList<index_t> new_from_old_queries;
+    ArrayList<size_t> old_from_new_queries;
+    ArrayList<size_t> new_from_old_queries;
 
     // Build the query tree.
     if(query_sets_in != NULL) {
       query_sets.Init(query_sets_in->size());
       query_trees.Init(query_sets_in->size());
 
-      for(index_t i = 0; i < query_sets_in->size(); i++) {
+      for(size_t i = 0; i < query_sets_in->size(); i++) {
 	query_sets[i] = new Matrix();
 	query_sets[i]->Copy(*((*query_sets_in)[i]));
 	query_trees[i] = proximity::MakeGenKdTree<double,
@@ -741,7 +741,7 @@ class MultiTreeDepthFirst {
     if(query_sets_in != NULL) {
       PostProcessTree_(*(query_sets[0]), query_trees[0], *query_results);
 
-      for(index_t i = 0; i < query_sets.size(); i++) {
+      for(size_t i = 0; i < query_sets.size(); i++) {
 	delete query_trees[i];
 	delete query_sets[i];
       }
@@ -769,7 +769,7 @@ class MultiTreeDepthFirst {
     sets_.Init(MultiTreeProblem::num_reference_sets);
     targets_.Init(MultiTreeProblem::num_reference_sets);
     reference_trees_.Init(MultiTreeProblem::num_reference_sets);
-    for(index_t i = 0; i < MultiTreeProblem::num_reference_sets; i++) {
+    for(size_t i = 0; i < MultiTreeProblem::num_reference_sets; i++) {
       sets_[i] = new Matrix();
       sets_[i]->Copy((*sets[i]));
       if(targets != NULL) {
@@ -788,7 +788,7 @@ class MultiTreeDepthFirst {
       proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 40, 
 					  &old_from_new_references_, NULL);
     PreProcessReferenceTree_(reference_trees_[0], 0);
-    for(index_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
+    for(size_t i = 1; i < MultiTreeProblem::num_reference_sets; i++) {
       reference_trees_[i] = reference_trees_[0];
     }
 
@@ -815,7 +815,7 @@ class MultiTreeDepthFirst {
     sets_.Init(MultiTreeProblem::num_hybrid_sets);
     targets_.Init(MultiTreeProblem::num_hybrid_sets);
     hybrid_trees_.Init(MultiTreeProblem::num_hybrid_sets);
-    for(index_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {
+    for(size_t i = 0; i < MultiTreeProblem::num_hybrid_sets; i++) {
       if(i == 0) {
 	sets_[i] = new Matrix();
 	sets_[i]->Copy((*sets[i]));
@@ -843,7 +843,7 @@ class MultiTreeDepthFirst {
       proximity::GenKdTreeMedianSplitter>(*(sets_[0]), 20, 
 					  &old_from_new_hybrids_,
 					  &new_from_old_hybrids_);
-    for(index_t i = 1; i < MultiTreeProblem::num_hybrid_sets; i++) {
+    for(size_t i = 1; i < MultiTreeProblem::num_hybrid_sets; i++) {
       hybrid_trees_[i] = hybrid_trees_[0];
     }
     

@@ -23,12 +23,12 @@ private:
   BasisShellTree* right_;
   
   // size of contents
-  index_t num_shells_;
-  index_t num_functions_;
+  size_t num_shells_;
+  size_t num_functions_;
   
   // the start index in the master list of shells
   // these will be permuted to be in order - like the columns of the matrix
-  index_t start_index_;
+  size_t start_index_;
   
   // bounds
   // first three dimensions are spatial, next two are exponents and momenta
@@ -48,11 +48,11 @@ private:
   bool single_momentum_;
   
   // used in MatrixTree construction
-  index_t height_;
+  size_t height_;
   
 public:
   
-  void Init(index_t begin, index_t count) { 
+  void Init(size_t begin, size_t count) { 
     
     DEBUG_ASSERT(count > 0);
     DEBUG_ASSERT(begin >= 0);
@@ -64,15 +64,15 @@ public:
     
   } // Init()
   
-  index_t count() {
+  size_t count() {
     return num_shells_;
   }
   
-  index_t begin() {
+  size_t begin() {
     return start_index_;
   }
   
-  index_t end() const {
+  size_t end() const {
     return(start_index_ + num_shells_);
   }
   
@@ -100,7 +100,7 @@ public:
     return (left_ == NULL);
   }
   
-  index_t height() const {
+  size_t height() const {
     return height_; 
   }
   
@@ -113,7 +113,7 @@ public:
   }
   
   /*
-  void set_height(index_t new_height) {
+  void set_height(size_t new_height) {
     DEBUG_ASSERT(new_height >= 0);
     height_ = new_height;
   }

@@ -17,12 +17,12 @@ namespace tree_gen_metric_tree_private {
   // space.
   template<typename TBound>
   void MakeLeafMetricTreeNode(const arma::mat& matrix,
-			      index_t begin, index_t count, TBound *bounds) {
+			      size_t begin, size_t count, TBound *bounds) {
 
     bounds->center().zeros();
 
-    index_t end = begin + count;
-    for (index_t i = begin; i < end; i++) {
+    size_t end = begin + count;
+    for (size_t i = begin; i < end; i++) {
       bounds->center() += matrix.unsafe_col(i);
     }
     bounds->center() /= (double) count;
@@ -34,17 +34,17 @@ namespace tree_gen_metric_tree_private {
   }
   
   template<typename TBound>
-  index_t MatrixPartition(arma::mat& matrix, index_t first, index_t count,
+  size_t MatrixPartition(arma::mat& matrix, size_t first, size_t count,
 			  TBound &left_bound, TBound &right_bound,
-			  index_t *old_from_new) {
+			  size_t *old_from_new) {
     
-    index_t end = first + count;
-    index_t left_count = 0;
+    size_t end = first + count;
+    size_t left_count = 0;
 
     std::vector<bool> left_membership;
     left_membership.reserve(count);
     
-    for (index_t left = first; left < end; left++) {
+    for (size_t left = first; left < end; left++) {
 
       // Make alias of the current point.
       arma::vec point = matrix.unsafe_col(left);
@@ -64,8 +64,8 @@ namespace tree_gen_metric_tree_private {
       }
     }
 
-    index_t left = first;
-    index_t right = first + count - 1;
+    size_t left = first;
+    size_t right = first + count - 1;
     
     /* At any point:
      *
@@ -94,7 +94,7 @@ namespace tree_gen_metric_tree_private {
       left_membership[right - first] = tmp;
       
       if (old_from_new) {
-        index_t t = old_from_new[left];
+        size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
@@ -108,15 +108,15 @@ namespace tree_gen_metric_tree_private {
     return left_count;
   }
 	
-  index_t FurthestColumnIndex(const arma::vec& pivot, const arma::mat& matrix, 
-			      index_t begin, index_t count,
+  size_t FurthestColumnIndex(const arma::vec& pivot, const arma::mat& matrix, 
+			      size_t begin, size_t count,
 			      double *furthest_distance) {
     
-    index_t furthest_index = -1;
-    index_t end = begin + count;
+    size_t furthest_index = -1;
+    size_t end = begin + count;
     *furthest_distance = -1.0;
 
-    for(index_t i = begin; i < end; i++) {
+    for(size_t i = begin; i < end; i++) {
       double distance_between_center_and_point = 
 	mlpack::kernel::SquaredEuclideanDistance::Evaluate(pivot, matrix.unsafe_col(i));
       
@@ -131,11 +131,11 @@ namespace tree_gen_metric_tree_private {
 
   template<typename TMetricTree>
   bool AttemptSplitting(arma::mat& matrix, TMetricTree *node, TMetricTree **left, 
-			TMetricTree **right, index_t leaf_size,
-			index_t *old_from_new) {
+			TMetricTree **right, size_t leaf_size,
+			size_t *old_from_new) {
 
     // Pick a random row.
-    index_t random_row = math::RandInt(node->begin(), node->begin() +
+    size_t random_row = math::RandInt(node->begin(), node->begin() +
 				       node->count());
     random_row = node->begin();
     arma::vec random_row_vec = matrix.unsafe_col(random_row);
@@ -143,14 +143,14 @@ namespace tree_gen_metric_tree_private {
     // Now figure out the furthest point from the random row picked
     // above.
     double furthest_distance;
-    index_t furthest_from_random_row =
+    size_t furthest_from_random_row =
       FurthestColumnIndex(random_row_vec, matrix, node->begin(), node->count(),
 			  &furthest_distance);
     arma::vec furthest_from_random_row_vec = matrix.unsafe_col(furthest_from_random_row);
 
     // Then figure out the furthest point from the furthest point.
     double furthest_from_furthest_distance;
-    index_t furthest_from_furthest_random_row =
+    size_t furthest_from_furthest_random_row =
       FurthestColumnIndex(furthest_from_random_row_vec, matrix, node->begin(),
 			  node->count(), &furthest_from_furthest_distance);
     arma::vec furthest_from_furthest_random_row_vec =
@@ -169,7 +169,7 @@ namespace tree_gen_metric_tree_private {
       ((*left)->bound().center()) = furthest_from_random_row_vec;
       ((*right)->bound().center()) = furthest_from_furthest_random_row_vec;
 
-      index_t left_count = MatrixPartition
+      size_t left_count = MatrixPartition
 	(matrix, node->begin(), node->count(),
 	 (*left)->bound(), (*right)->bound(), old_from_new);
 
@@ -202,7 +202,7 @@ namespace tree_gen_metric_tree_private {
 
   template<typename TMetricTree>
   void SplitGenMetricTree(arma::mat& matrix, TMetricTree *node,
-			  index_t leaf_size, index_t *old_from_new) {
+			  size_t leaf_size, size_t *old_from_new) {
     
     TMetricTree *left = NULL;
     TMetricTree *right = NULL;

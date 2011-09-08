@@ -83,9 +83,9 @@ void AllKNN<T>::reset_leaf_nodes_(ArrayList<TreeType*> *leaf_nodes) {
 
 template<typename T>
 void AllKNN<T>::reset_cover_sets_(ArrayList<ArrayList<TreeType*> > *cover_sets,
-				  index_t current_scale, index_t max_scale) {
+				  size_t current_scale, size_t max_scale) {
   
-  for (index_t i = current_scale; i <= max_scale; i++) {
+  for (size_t i = current_scale; i <= max_scale; i++) {
     
     TreeType **begin = (*cover_sets)[i].begin();
     TreeType **end = (*cover_sets)[i].end();
@@ -144,20 +144,20 @@ void AllKNN<T>::CopyCoverSets_(TreeType *query,
 			       ArrayList<T> *upper_bounds, 
 			       ArrayList<ArrayList<TreeType*> > *cover_sets, 
 			       ArrayList<ArrayList<TreeType*> > *new_cover_sets, 
-			       index_t current_scale, index_t max_scale) {
+			       size_t current_scale, size_t max_scale) {
   GenVector<T> q_point;
   T *query_upper_bound = &((*upper_bounds)[query->point() * knns_]);
   T query_max_dist = query->max_dist_to_grandchild();
   T query_parent_dist = query->dist_to_parent();
 
   new_cover_sets->Init(101);
-  for (index_t i = 0; i < 101; i++) {
+  for (size_t i = 0; i < 101; i++) {
     (*new_cover_sets)[i].Init(0);
   }
   queries_.MakeColumnVector(query->point(), &q_point);
 
 
-  for (index_t i = current_scale; i <= max_scale; i++) {
+  for (size_t i = current_scale; i <= max_scale; i++) {
 
     TreeType **begin = (*cover_sets)[i].begin();
     TreeType **end = (*cover_sets)[i].end();
@@ -201,7 +201,7 @@ void AllKNN<T>::DescendTheRefTree_(TreeType *query,
 				   ArrayList<T> *upper_bounds, 
 				   ArrayList<ArrayList<TreeType*> > *cover_sets,
 				   ArrayList<TreeType*> *leaf_nodes,
-				   index_t current_scale, index_t *max_scale) {
+				   size_t current_scale, size_t *max_scale) {
 
   TreeType **begin = (*cover_sets)[current_scale].begin();
   TreeType **end = (*cover_sets)[current_scale].end();
@@ -307,7 +307,7 @@ template<typename T>
 void AllKNN<T>::ComputeBaseCase_(TreeType *query, 
 				 ArrayList<T> *upper_bounds,
 				 ArrayList<TreeType*> *leaf_nodes, 
-				 ArrayList<index_t> *neighbor_indices) {
+				 ArrayList<size_t> *neighbor_indices) {
   
   // If this is not a leaf level of the query nodes, 
   // we traverse down the query nodes
@@ -349,20 +349,20 @@ void AllKNN<T>::ComputeBaseCase_(TreeType *query,
     TreeType **end_nn = leaf_nodes->end();
     T *begin = upper_bounds->begin() + query->point() * knns_;
     T *end = upper_bounds->begin() + query->point() * knns_ + knns_ ;
-    index_t *indices = neighbor_indices->begin() + query->point() * knns_;
+    size_t *indices = neighbor_indices->begin() + query->point() * knns_;
     ArrayList<bool> flags;
 
     flags.Init(knns_);
-    for (index_t i = 0; i < knns_; i++) {
+    for (size_t i = 0; i < knns_; i++) {
       flags[i] = 0;
     }
 
     // Here we sort so as to store the NN in the ascending order
     // instead of descending
-    for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
+    for (size_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
       if ((*begin_nn)->stat().distance_to_qnode() <= *begin) {
 	  
-	index_t k = 0;
+	size_t k = 0;
 	while ((*begin_nn)->stat().distance_to_qnode() > *(end - k- 1)) { 
 	  k++;
 	}
@@ -384,8 +384,8 @@ void AllKNN<T>::ComputeNeighborRecursion_(TreeType *query,
 					  ArrayList<T> *upper_bounds, 
 					  ArrayList<ArrayList<TreeType*> > *cover_sets,
 					  ArrayList<TreeType*> *leaf_nodes,
-					  index_t current_scale, index_t max_scale,
-					  ArrayList<index_t> *neighbor_indices) {
+					  size_t current_scale, size_t max_scale,
+					  ArrayList<size_t> *neighbor_indices) {
     
   // if there is no more reference nodes to descend
   // we just do base case where we just descend down 

@@ -192,7 +192,7 @@ void SaveKFoldHMMs(int n_folds) {
   Dataset cv_set;
   cv_set.CopyMatrix(id_label_pairs);
 
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
 

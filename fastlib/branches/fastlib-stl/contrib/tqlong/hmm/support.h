@@ -9,9 +9,9 @@ namespace supportHMM {
   double randUniform();
   double VectorSum(const Vector& v);
   void ScaleVector(Vector* v, double s);
-  double NormalizeColumn(Matrix* A, index_t j);
-  double ColumnSum(const Matrix& A, index_t j);
-  void ScaleColumn(Matrix* A, index_t j, double s);
+  double NormalizeColumn(Matrix* A, size_t j);
+  double ColumnSum(const Matrix& A, size_t j);
+  void ScaleColumn(Matrix* A, size_t j, double s);
   void CopyLog(const Matrix& A, Matrix* B);
   double normDiff(const Matrix& A, const Matrix& B);
   double multxAy(const Vector& x, const Matrix& A, const Vector& y);

@@ -27,9 +27,9 @@ class UnionFind {
   friend class TestUnionFind;
 private:
   
-  arma::Col<index_t> parent_;
+  arma::Col<size_t> parent_;
   arma::ivec rank_;
-  index_t number_of_elements_;
+  size_t number_of_elements_;
   
 public:
   
@@ -44,12 +44,12 @@ public:
    * @param size The number of elements to be tracked.  
    */
   
-  void Init(index_t size) {
+  void Init(size_t size) {
     
     number_of_elements_ = size;
     parent_.set_size(number_of_elements_);
     rank_.set_size(number_of_elements_);
-    for (index_t i = 0; i < number_of_elements_; i++) {
+    for (size_t i = 0; i < number_of_elements_; i++) {
       parent_[i] = i;
       rank_[i] = 0;
     }
@@ -62,7 +62,7 @@ public:
    * @param x the component to be found
    * @return The index of the component containing x
    */
-  index_t Find(index_t x) {
+  size_t Find(size_t x) {
     
     if (parent_[x] == x) {
       return x; 
@@ -83,10 +83,10 @@ public:
    * @param x one component
    * @param y the other component
    */
-  void Union(index_t x, index_t y) {
+  void Union(size_t x, size_t y) {
     
-    index_t x_root = Find(x);
-    index_t y_root = Find(y);
+    size_t x_root = Find(x);
+    size_t y_root = Find(y);
     
     if (x_root == y_root) {
       return;    

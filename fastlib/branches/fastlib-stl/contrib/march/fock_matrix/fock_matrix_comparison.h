@@ -33,17 +33,17 @@ class FockMatrixComparison {
   double rms_K_;
   
   // The row and column index of the maximum difference
-  index_t max_index_row_F_;
-  index_t max_index_col_F_;
+  size_t max_index_row_F_;
+  size_t max_index_col_F_;
 
-  index_t max_index_row_J_;
-  index_t max_index_col_J_;
+  size_t max_index_row_J_;
+  size_t max_index_col_J_;
 
-  index_t max_index_row_K_;
-  index_t max_index_col_K_;
+  size_t max_index_row_K_;
+  size_t max_index_col_K_;
   
-  index_t max_abs_index_row_J_;
-  index_t max_abs_index_col_J_;
+  size_t max_abs_index_row_J_;
+  size_t max_abs_index_col_J_;
 
   
   bool compare_fock_;
@@ -85,7 +85,7 @@ class FockMatrixComparison {
   fx_module* approx_mod_;
   fx_module* naive_mod_;
   
-  index_t num_entries_;
+  size_t num_entries_;
   
   std::string core_string_;
   std::string change_string_;

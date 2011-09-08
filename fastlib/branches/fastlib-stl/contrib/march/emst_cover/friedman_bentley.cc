@@ -10,12 +10,12 @@
 #include "friedman_bentley.h"
 
 void FriedmanBentley::FindNeighbor_(FBTree* tree, const arma::colvec& point, 
-                                    index_t point_index,
-                                    index_t* cand, double* dist) {
+                                    size_t point_index,
+                                    size_t* cand, double* dist) {
 
   if (tree->is_leaf()) {
     
-    for (index_t i = tree->begin(); i < tree->end(); i++) {
+    for (size_t i = tree->begin(); i < tree->end(); i++) {
       
       if (connections_.Find(i) != connections_.Find(point_index)) {
         
@@ -89,13 +89,13 @@ void FriedmanBentley::FindNeighbor_(FBTree* tree, const arma::colvec& point,
   
 } // FindNeighbor_
 
-void FriedmanBentley::UpdateMemberships_(FBTree* tree, index_t point_index) {
+void FriedmanBentley::UpdateMemberships_(FBTree* tree, size_t point_index) {
   
   if (tree->is_leaf()) {
 
-    index_t comp_index = connections_.Find(point_index);
+    size_t comp_index = connections_.Find(point_index);
 
-    for (index_t i = tree->begin(); i < tree->end(); i++) {
+    for (size_t i = tree->begin(); i < tree->end(); i++) {
      
       if (comp_index != connections_.Find(i)) {
         comp_index = -1;
@@ -136,7 +136,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
 
   fx_timer_start(mod_, "MST_computation");
   
-  index_t cand = -1;
+  size_t cand = -1;
   double cand_dist = DBL_MAX;
   
   arma::colvec point = data_points_.col(0);
@@ -153,8 +153,8 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
     DEBUG_ASSERT(heap_.size() == number_of_edges_ + 1);
     
     double dist = heap_.top_key();
-    index_t point_in_fragment = heap_.Pop();
-    index_t point_out_fragment = candidate_neighbors_[point_in_fragment];
+    size_t point_in_fragment = heap_.Pop();
+    size_t point_out_fragment = candidate_neighbors_[point_in_fragment];
     
     // if the link is not real
     if (connections_.Find(point_in_fragment) 
@@ -162,7 +162,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
       
       arma::colvec point_vec = data_points_.col(point_in_fragment);
       
-      index_t new_point = -1;
+      size_t new_point = -1;
       double new_dist = DBL_MAX;
       
       FindNeighbor_(tree_, point_vec, point_in_fragment, &new_point, &new_dist);
@@ -183,7 +183,7 @@ void FriedmanBentley::ComputeMST(Matrix* results) {
       
       arma::colvec point_out_vec = data_points_.col(point_out_fragment);
       
-      index_t new_point = -1;
+      size_t new_point = -1;
       double new_dist = DBL_MAX;
       
       FindNeighbor_(tree_, point_out_vec, point_out_fragment, &new_point, &new_dist);

@@ -53,7 +53,7 @@ int ClassifyKNN(arma::vec& neighbor_labels);
  * @return Number of correctly classified points
  */
 int EstimateScores(arma::mat& input,
-                   arma::Col<index_t>& neighbors,
+                   arma::Col<size_t>& neighbors,
                    arma::vec& labels,
                    int knns,
                    int score);
@@ -69,7 +69,7 @@ int EstimateScores(arma::mat& input,
  * @param labels List of correct classes of points (length n_points)
  * @return Number of correctly classified points
  */
-int EvaluateCorrect(arma::Col<index_t>& neighbors,
+int EvaluateCorrect(arma::Col<size_t>& neighbors,
                     int knns,
                     int score,
                     arma::vec& labels);
@@ -86,7 +86,7 @@ int EvaluateCorrect(arma::Col<index_t>& neighbors,
  * @param index Index of point to evaluate
  * @return Number of correctly classified points
  */
-int EvaluateCorrect(arma::Col<index_t>& neighbors,
+int EvaluateCorrect(arma::Col<size_t>& neighbors,
                     int knns,
                     int score,
                     arma::vec& labels,
@@ -108,7 +108,7 @@ int EvaluateCorrect(arma::Col<index_t>& neighbors,
  *            classified points in each class
  * @return Number of correctly classified points
  */
-int EvaluateClassCorrect(const arma::Col<index_t>& neighbors,
+int EvaluateClassCorrect(const arma::Col<size_t>& neighbors,
                          int knns,
                          const arma::vec& ref_labels,
                          const arma::vec& query_labels,

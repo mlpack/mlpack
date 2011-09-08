@@ -51,13 +51,13 @@ const fx_module_doc approx_nn_main_doc = {
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
-void compare_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
-                       ArrayList<index_t>*, ArrayList<double>*);
+void compare_neighbors(ArrayList<size_t>*, ArrayList<double>*, 
+                       ArrayList<size_t>*, ArrayList<double>*);
 
-void count_mismatched_neighbors(ArrayList<index_t>*, ArrayList<double>*, 
-				  ArrayList<index_t>*, ArrayList<double>*);
+void count_mismatched_neighbors(ArrayList<size_t>*, ArrayList<double>*, 
+				  ArrayList<size_t>*, ArrayList<double>*);
 
-void make_train_subset_from_ref(Matrix &ref, index_t perc_ref,
+void make_train_subset_from_ref(Matrix &ref, size_t perc_ref,
 				Matrix *train_q);
 
 int main (int argc, char *argv[]) {
@@ -73,7 +73,7 @@ int main (int argc, char *argv[]) {
     std::string qfile = fx_param_str_req(root, "tq");
     data::Load(qfile.c_str(), &train_qdata);
   } else {
-    index_t perc_ref = fx_param_int(root, "perc_ref", 100);
+    size_t perc_ref = fx_param_int(root, "perc_ref", 100);
     if (perc_ref == 100) 
       train_qdata.Copy(rdata);
     else
@@ -88,14 +88,14 @@ int main (int argc, char *argv[]) {
   }
 
   NOTIFY("File loaded...");
-  NOTIFY("R(%"LI"d, %"LI"d), Train Q(%"LI"d, %"LI"d)",
+  NOTIFY("R(%zud, %zud), Train Q(%zud, %zud)",
 	 rdata.n_rows(), rdata.n_cols(), 
 	 train_qdata.n_rows(), train_qdata.n_cols());
-  NOTIFY("Test Q(%"LI"d, %"LI"d)", test_qdata.n_rows(), test_qdata.n_cols());
+  NOTIFY("Test Q(%zud, %zud)", test_qdata.n_rows(), test_qdata.n_cols());
 
   // exit(0);
 //   AllkNN allknn;
-//   ArrayList<index_t> neighbor_indices;
+//   ArrayList<size_t> neighbor_indices;
 //   ArrayList<double> dist_sq;
 //   fx_timer_start(root, "Init");
 //   allknn.Init(qdata, rdata, 20, 4);
@@ -107,7 +107,7 @@ int main (int argc, char *argv[]) {
   struct datanode *nn_module
     = fx_submodule(root, "ann");
 
-  ArrayList<index_t> exc, apc;
+  ArrayList<size_t> exc, apc;
   ArrayList<double> die, dia;
 
   // Exact computation
@@ -143,8 +143,8 @@ int main (int argc, char *argv[]) {
 
 //     std::string result_file = fx_param_str(root, "result", "result.txt");
 //     FILE *fp = fopen(result_file.c_str(), "w");
-//     for (index_t i = 0; i < exc.size(); i++) {
-//       fprintf(fp,"%"LI"d,%lg,", //%"LI"d,%lg\n",
+//     for (size_t i = 0; i < exc.size(); i++) {
+//       fprintf(fp,"%zud,%lg,", //%zud,%lg\n",
 // 	      exc[i], die[i]); //, apc[i], dia[i]);
 //     }
 //     fclose(fp);
@@ -174,16 +174,16 @@ int main (int argc, char *argv[]) {
   fx_done(fx_root);
 }
 
-void make_train_subset_from_ref(Matrix &ref, index_t perc_ref,
+void make_train_subset_from_ref(Matrix &ref, size_t perc_ref,
 				Matrix *train_q) {
-  index_t num_points = ref.n_cols();
-  index_t num_train = (num_points * perc_ref) / 100;
-  index_t step = num_points / num_train;
+  size_t num_points = ref.n_cols();
+  size_t num_train = (num_points * perc_ref) / 100;
+  size_t step = num_points / num_train;
 
   train_q->Init(ref.n_rows(), num_train);
-  index_t j = 0;
+  size_t j = 0;
 
-  for (index_t i = 0; i < num_points; i = i+step, j++) {
+  for (size_t i = 0; i < num_points; i = i+step, j++) {
     Vector a, b;
     ref.MakeColumnVector(i, &a);
     train_q->MakeColumnVector(j, &b);
@@ -201,40 +201,40 @@ void make_train_subset_from_ref(Matrix &ref, index_t perc_ref,
 
 
 
-void compare_neighbors(ArrayList<index_t> *a, 
+void compare_neighbors(ArrayList<size_t> *a, 
                        ArrayList<double> *da,
-                       ArrayList<index_t> *b, 
+                       ArrayList<size_t> *b, 
                        ArrayList<double> *db) {
   
-  NOTIFY("Comparing results for %"LI"d queries", a->size());
+  NOTIFY("Comparing results for %zud queries", a->size());
   DEBUG_SAME_SIZE(a->size(), b->size());
-  index_t *x = a->begin();
-  index_t *y = a->end();
-  index_t *z = b->begin();
+  size_t *x = a->begin();
+  size_t *y = a->end();
+  size_t *z = b->begin();
 
-  for(index_t i = 0; x != y; x++, z++, i++) {
+  for(size_t i = 0; x != y; x++, z++, i++) {
     DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
-                      "point %"LI"d brute: %"LI"d:%lf fast: %"LI"d:%lf",
+                      "point %zud brute: %zud:%lf fast: %zud:%lf",
                       i, *z, (*db)[i], *x, (*da)[i]);
   }
 }
 
-void count_mismatched_neighbors(ArrayList<index_t> *a, 
+void count_mismatched_neighbors(ArrayList<size_t> *a, 
 				ArrayList<double> *da,
-				ArrayList<index_t> *b, 
+				ArrayList<size_t> *b, 
 				ArrayList<double> *db) {
 
-  NOTIFY("Comparing results for %"LI"d queries", a->size());
+  NOTIFY("Comparing results for %zud queries", a->size());
   DEBUG_SAME_SIZE(a->size(), b->size());
-  index_t *x = a->begin();
-  index_t *y = a->end();
-  index_t *z = b->begin();
-  index_t count_mismatched = 0;
+  size_t *x = a->begin();
+  size_t *y = a->end();
+  size_t *z = b->begin();
+  size_t count_mismatched = 0;
 
-  for(index_t i = 0; x != y; x++, z++, i++) {
+  for(size_t i = 0; x != y; x++, z++, i++) {
     if (*x != *z || (*da)[i] != (*db)[i]) {
       ++count_mismatched;
     }
   }
-  NOTIFY("%"LI"d/%"LI"d errors", count_mismatched, a->size());
+  NOTIFY("%zud/%zud errors", count_mismatched, a->size());
 }

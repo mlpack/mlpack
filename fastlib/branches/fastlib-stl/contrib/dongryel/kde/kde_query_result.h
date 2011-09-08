@@ -41,7 +41,7 @@ class MultiTreeQueryResult {
  public:
 
   void Finalize(const MultiTreeGlobal &globals, 
-		const ArrayList<index_t> &mapping) {
+		const ArrayList<size_t> &mapping) {
 
     MultiTreeUtility::ShuffleAccordingToQueryPermutation(final_results,
 							 mapping);
@@ -49,7 +49,7 @@ class MultiTreeQueryResult {
 
   template<typename TQueryStat>
   void FinalPush(const Matrix &qset, const TQueryStat &query_stat,
-		 index_t q_index) {
+		 size_t q_index) {
       
     ApplyPostponed(query_stat.postponed, q_index);
       
@@ -59,7 +59,7 @@ class MultiTreeQueryResult {
   }
     
   template<typename TDelta>
-  void ApplyDelta(const TDelta &delta_in, index_t q_index) {
+  void ApplyDelta(const TDelta &delta_in, size_t q_index) {
     sum_l[q_index] += delta_in.kde_approximation.sum_l;
     sum_e[q_index] += delta_in.kde_approximation.sum_e;
     n_pruned[q_index] += delta_in.kde_approximation.n_pruned;
@@ -71,7 +71,7 @@ class MultiTreeQueryResult {
 
   template<typename TQueryPostponed>
   void ApplyPostponed(const TQueryPostponed &postponed_in,
-		      index_t q_index) {
+		      size_t q_index) {
       
     sum_l[q_index] += postponed_in.sum_l;
     sum_e[q_index] += postponed_in.sum_e;
@@ -84,7 +84,7 @@ class MultiTreeQueryResult {
 
   template<typename ReferenceTree>
   void UpdatePrunedComponents(const ArrayList <ReferenceTree *> &rnodes,
-			      index_t q_index) {
+			      size_t q_index) {
     n_pruned[q_index] += rnodes[0]->count();
   }
 
@@ -102,14 +102,14 @@ class MultiTreeQueryResult {
     SetZero();
   }
     
-  void PostProcess(const MultiTreeGlobal &globals, index_t q_index) {
+  void PostProcess(const MultiTreeGlobal &globals, size_t q_index) {
     final_results[q_index] = sum_e[q_index] / globals.normalizing_constant;
   }
     
   void PrintDebug(const char *output_file_name) const {
     FILE *stream = fopen(output_file_name, "w+");
       
-    for(index_t q = 0; q < final_results.length(); q++) {
+    for(size_t q = 0; q < final_results.length(); q++) {
       fprintf(stream, "%g\n", final_results[q]);
     }
       

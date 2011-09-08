@@ -55,11 +55,11 @@ private:
     
   private:
     
-    index_t component_membership_;
+    size_t component_membership_;
     
   public:
     
-    void Init(const Matrix& dataset, index_t start, index_t count) {
+    void Init(const Matrix& dataset, size_t start, size_t count) {
       
       if (count == 1) {
        
@@ -74,18 +74,18 @@ private:
       
     } // leaf init
     
-    void Init(const Matrix& dataset, index_t start, index_t count,
+    void Init(const Matrix& dataset, size_t start, size_t count,
               const FBStat& left_stat, const FBStat& right_stat) {
       
       Init(dataset, start, count);
       
     } // non leaf Init() 
     
-    void set_component_membership(index_t membership) {
+    void set_component_membership(size_t membership) {
       component_membership_ = membership;
     }
     
-    index_t component_membership() {
+    size_t component_membership() {
       return component_membership_; 
     }
     
@@ -100,23 +100,23 @@ private:
   
   fx_module* mod_;
   
-  index_t number_of_points_;
-  index_t number_of_edges_;
+  size_t number_of_points_;
+  size_t number_of_edges_;
   UnionFind connections_;
   arma::mat data_points_;
   
-  std::vector<index_t> old_from_new_permutation_;
+  std::vector<size_t> old_from_new_permutation_;
   
   double total_dist_;
   
   // is this the right type?
-  MinHeap<double, index_t> heap_;
+  MinHeap<double, size_t> heap_;
   
-  std::vector<index_t> candidate_neighbors_;
+  std::vector<size_t> candidate_neighbors_;
   
   /////////////// functions ///////////////////
   
-  void AddEdge_(index_t e1, index_t e2, double distance) {
+  void AddEdge_(size_t e1, size_t e2, double distance) {
     
     //EdgePair edge;
     DEBUG_ASSERT_MSG((e1 != e2), 
@@ -141,10 +141,10 @@ private:
 
   
   void FindNeighbor_(FBTree* tree, const arma::colvec& point, 
-                     index_t point_index, 
-                     index_t* cand, double* dist);
+                     size_t point_index, 
+                     size_t* cand, double* dist);
   
-  void UpdateMemberships_(FBTree* tree, index_t point_index);
+  void UpdateMemberships_(FBTree* tree, size_t point_index);
   
   
   struct SortEdgesHelper_ {
@@ -167,7 +167,7 @@ private:
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
     
-    for (index_t i = 0; i < (number_of_points_ - 1); i++) {
+    for (size_t i = 0; i < (number_of_points_ - 1); i++) {
       
       edges_[i].set_lesser_index(old_from_new_permutation_[edges_[i]
                                                            .lesser_index()]);
@@ -196,7 +196,7 @@ public:
     
     fx_timer_start(mod_, "tree_building");
     
-    index_t leaf_size = fx_param_int(mod_, "leaf_size", 1);
+    size_t leaf_size = fx_param_int(mod_, "leaf_size", 1);
     
     tree_ = tree::MakeKdTreeMidpoint<FBTree>
     (data_points_, leaf_size, &old_from_new_permutation_, NULL);

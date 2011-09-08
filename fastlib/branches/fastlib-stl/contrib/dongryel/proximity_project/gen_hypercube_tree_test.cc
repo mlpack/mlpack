@@ -16,14 +16,14 @@ int BitInterleaving(const GenVector<unsigned int> &indices) {
   
   do {
     unsigned int sum = 0;
-    for(index_t d = 0; d < indices_copy.length(); d++) {
+    for(size_t d = 0; d < indices_copy.length(); d++) {
       sum += indices_copy[d];
     }
     if(sum == 0) {
       break;
     }
     
-    for(index_t d = 0; d < indices_copy.length(); d++) {
+    for(size_t d = 0; d < indices_copy.length(); d++) {
       result += (indices_copy[d] % 2) << 
 	(indices_copy.length() - d - 1 + offset);
       indices_copy[d] = indices_copy[d] >> 1;
@@ -38,12 +38,12 @@ int BitInterleaving(const GenVector<unsigned int> &indices) {
 void BitDeinterleaving(unsigned int index, unsigned int level,
 		       GenVector<unsigned int> &indices) {
   
-  for(index_t d = 0; d < indices.length(); d++) {
+  for(size_t d = 0; d < indices.length(); d++) {
     indices[d] = 0;
   }
   unsigned int loop = 0;
   while(index > 0 || level > 0) {
-    for(index_t d = indices.length() - 1; d >= 0; d--) {
+    for(size_t d = indices.length() - 1; d >= 0; d--) {
       indices[d] = (1 << loop) * (index % 2) + indices[d];
       index = index >> 1;
     }      
@@ -93,7 +93,7 @@ void RecursivelyChooseIndex(const GenVector<unsigned int> &lower_limit,
 }
 
 void FindNeighborsInNonAdaptiveGenHypercubeTree
-(unsigned int index, index_t level, index_t dimension, 
+(unsigned int index, size_t level, size_t dimension, 
  ArrayList<unsigned int> &neighbor_indices) {
   
   // First, de-interleave the box index.
@@ -103,7 +103,7 @@ void FindNeighborsInNonAdaptiveGenHypercubeTree
   upper_limit.Init(dimension);
   BitDeinterleaving(index, level, tmp_vector);
   
-  for(index_t d = 0; d < dimension; d++) {
+  for(size_t d = 0; d < dimension; d++) {
     lower_limit[d] = std::max(tmp_vector[d] - 1, (unsigned int) 0);
     upper_limit[d] = std::min(tmp_vector[d] + 1, 
 			      (unsigned int) ((1 << level) - 1));
@@ -133,7 +133,7 @@ int main(int argc, char *argv[]) {
   matrices.Init();
   matrices.PushBackCopy(&dataset);
 
-  ArrayList< ArrayList<index_t> > old_from_new;
+  ArrayList< ArrayList<size_t> > old_from_new;
   ArrayList< ArrayList<proximity::GenHypercubeTree< EmptyStatistic<Matrix> > *> > nodes_in_each_level;
   proximity::GenHypercubeTree<EmptyStatistic<Matrix> > *root;
   root = proximity::MakeGenHypercubeTree
@@ -141,8 +141,8 @@ int main(int argc, char *argv[]) {
   
   fx_timer_stop(NULL, "generalized_hypercube_tree_build");
 
-  for(index_t i = 0; i < nodes_in_each_level.size(); i++) {
-    for(index_t j = 0; j < nodes_in_each_level[i].size(); j++) {
+  for(size_t i = 0; i < nodes_in_each_level.size(); i++) {
+    for(size_t j = 0; j < nodes_in_each_level[i].size(); j++) {
       printf("%u ", (nodes_in_each_level[i][j])->node_index());
     }
     printf("\n");

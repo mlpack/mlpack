@@ -41,7 +41,7 @@ namespace math {
    * @param size the number of elements in the permutation
    * @param array a place to store the permutation
    */
-  void MakeIdentityPermutation(index_t size, index_t *array);
+  void MakeIdentityPermutation(size_t size, size_t *array);
   
   /**
    * Creates an identity permutation where the element i equals i.
@@ -52,7 +52,7 @@ namespace math {
    * @param result will be initialized to the identity permutation
    */
   void MakeIdentityPermutation(
-      index_t size, std::vector<index_t>& result);
+      size_t size, std::vector<size_t>& result);
   
   /**
    * Creates a random permutation and stores it in an existing C array
@@ -63,7 +63,7 @@ namespace math {
    * @param size the number of elements
    * @param array the array to store a permutation in
    */
-  void MakeRandomPermutation(index_t size, index_t* array);
+  void MakeRandomPermutation(size_t size, size_t* array);
   
   /**
    * Creates a random permutation over integers 0 throush size - 1.
@@ -72,7 +72,7 @@ namespace math {
    * @param result will be initialized to a permutation array
    */
   inline void MakeRandomPermutation(
-      index_t size, std::vector<index_t>& result) {
+      size_t size, std::vector<size_t>& result) {
     result.resize(size,0);
     MakeRandomPermutation(size, &result.front());
   }
@@ -80,14 +80,14 @@ namespace math {
   /**
    * Inverts or transposes an existing permutation.
    */
-  void MakeInversePermutation(index_t size,
-      const index_t* original, index_t* reverse);
+  void MakeInversePermutation(size_t size,
+      const size_t* original, size_t* reverse);
 
   /**
    * Inverts or transposes an existing permutation.
    */
   inline void MakeInversePermutation(
-      const std::vector<index_t>& original, std::vector<index_t>& reverse) {
+      const std::vector<size_t>& original, std::vector<size_t>& reverse) {
     reverse.resize(original.size(),0);
     MakeInversePermutation(original.size(), &original.front(), &reverse.front());
   }

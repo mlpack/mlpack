@@ -56,7 +56,7 @@ void NonConvexMVU::Init(Matrix &data) {
   allknn_.Init(data_, leaf_size_, knns_);
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -119,27 +119,27 @@ void NonConvexMVU::ComputeLocalOptimumSGD() {
   Vector gradient2;
   gradient1.Init(new_dimension_);
   gradient2.Init(new_dimension_);
-  index_t it1;
+  size_t it1;
   double step0=1.0e0;
   double step;
   double total_distances=0.0;
   double objective=0;
   double feasibility_error=0;
-  for(index_t i=0; i<nearest_distances_.size(); i++) {
+  for(size_t i=0; i<nearest_distances_.size(); i++) {
     total_distances+=nearest_distances_[i]*nearest_distances_[i];
   }
     
   NOTIFY("Optimization with Stochastic Gradient Descent Started\n");
   double prev_feas=DBL_MAX;
-  index_t exterior_points=0;
-  for(index_t kk=0; kk<3; kk++) {
+  size_t exterior_points=0;
+  for(size_t kk=0; kk<3; kk++) {
   for(it1=0; it1<100; it1++) {  
     step=std::sqrt(step0/(it1+1));
-    for(index_t it2=0; it2<max_iterations_; it2++) {
-      for(index_t i=0; i<num_of_points_; i++) {
-        for(index_t k=0; k<kfns_; k++) {
-          index_t current_index = i;
-          index_t furthest_index = furthest_neighbors_[i*kfns_+k];
+    for(size_t it2=0; it2<max_iterations_; it2++) {
+      for(size_t i=0; i<num_of_points_; i++) {
+        for(size_t k=0; k<kfns_; k++) {
+          size_t current_index = i;
+          size_t furthest_index = furthest_neighbors_[i*kfns_+k];
           //printf("%i  %i\n", current_index, nearest_index);
           double *point1=coordinates_.GetColumnPtr(current_index);
           double *point2=coordinates_.GetColumnPtr(furthest_index);
@@ -160,9 +160,9 @@ void NonConvexMVU::ComputeLocalOptimumSGD() {
                           point2);
           }
         }
-        for(index_t k=0; k<knns_; k++) {
-          index_t current_index = i;
-          index_t nearest_index = nearest_neighbors_[i*knns_ + k];
+        for(size_t k=0; k<knns_; k++) {
+          size_t current_index = i;
+          size_t nearest_index = nearest_neighbors_[i*knns_ + k];
           //printf("%i  %i\n", current_index, nearest_index);
           double *point1=coordinates_.GetColumnPtr(current_index);
           double *point2=coordinates_.GetColumnPtr(nearest_index);
@@ -190,7 +190,7 @@ void NonConvexMVU::ComputeLocalOptimumSGD() {
     } else{
       prev_feas=feasibility_error;
     }
-    NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error: %lg\n"
+    NOTIFY("Iteration: %zu"d : %zu"d, feasibility error: %lg\n"
            "    stress     : %lg\n"
            "    exteriors  : %i\n"
            "    step       : %lg\n"
@@ -238,7 +238,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   y_bfgs_.Init(mem_bfgs_);
   ro_bfgs_.Init(mem_bfgs_);
   ro_bfgs_.SetAll(0.0);
-  for(index_t i=0; i<mem_bfgs_; i++) {
+  for(size_t i=0; i<mem_bfgs_; i++) {
     s_bfgs_[i].Init(new_dimension_, num_of_points_);
     y_bfgs_[i].Init(new_dimension_, num_of_points_);
   } 
@@ -258,7 +258,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   la::SubOverwrite(previous_gradient_, gradient_, &y_bfgs_[0]);
   ro_bfgs_[0] = la::Dot(s_bfgs_[0].n_elements(), 
       s_bfgs_[0].ptr(), y_bfgs_[0].ptr());
-  for(index_t i=0; i<mem_bfgs_; i++) {
+  for(size_t i=0; i<mem_bfgs_; i++) {
     ComputeBFGS_<OPT_PARAM_>(&step, gradient_, i);
     ComputeGradient_<OPT_PARAM_>(coordinates_, &gradient_);
     UpdateBFGS_();
@@ -272,8 +272,8 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
   NOTIFY("Now starting optimizing with BFGS...\n");
   ComputeFeasibilityError_<OPT_PARAM_>(&distance_constraint, &centering_constraint);
   double old_distance_constraint = distance_constraint;
-  for(index_t it1=0; it1<max_iterations_; it1++) {  
-    for(index_t it2=0; it2<max_iterations_; it2++) {
+  for(size_t it1=0; it1<max_iterations_; it1++) {  
+    for(size_t it2=0; it2<max_iterations_; it2++) {
       ComputeBFGS_<OPT_PARAM_>(&step, gradient_, mem_bfgs_);
       ComputeGradient_<OPT_PARAM_>(coordinates_, &gradient_);
       ComputeFeasibilityError_<OPT_PARAM_>(&distance_constraint, 
@@ -282,7 +282,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
                                                  gradient_.ptr());
       double augmented_lagrangian=ComputeLagrangian_<OPT_PARAM_>(coordinates_);
       double objective =ComputeObjective_<OPT_PARAM_>(coordinates_);
-      NOTIFY("Iteration: %"LI"d : %"LI"d, feasibility error (dist)): %lg\n"
+      NOTIFY("Iteration: %zu"d : %zu"d, feasibility error (dist)): %lg\n"
              "    feasibility error (center): %lg \n"
              "    objective  : %lg\n"
              "    grad       : %lg\n"
@@ -325,7 +325,7 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
       Vector var;
       Variance_(coordinates_, &var);
       printf("Variance: ");
-      for(index_t i=0; i<new_dimension_; i++) {
+      for(size_t i=0; i<new_dimension_; i++) {
         printf("%lg ", var[i]);
       }
       printf("\n");
@@ -346,21 +346,21 @@ void NonConvexMVU::ComputeLocalOptimumBFGS() {
     Vector var;
     Variance_(coordinates_, &var);
 
-    for(index_t i=0; i<new_dimension_; i++) {
+    for(size_t i=0; i<new_dimension_; i++) {
       printf("%lg ", var[i]);
     }
     printf("\n");
 }
 
-void NonConvexMVU::set_knns(index_t knns) {
+void NonConvexMVU::set_knns(size_t knns) {
  knns_=knns;
 }
 
-void NonConvexMVU::set_kfns(index_t kfns) {
+void NonConvexMVU::set_kfns(size_t kfns) {
   kfns_=kfns;
 }
 
-void NonConvexMVU::set_leaf_size(index_t leaf_size) {
+void NonConvexMVU::set_leaf_size(size_t leaf_size) {
   leaf_size_ =leaf_size;
 }
  
@@ -380,11 +380,11 @@ void NonConvexMVU::set_step_size(double step_size) {
   step_size_ = step_size;
 }
 
-void NonConvexMVU::set_max_iterations(index_t max_iterations) {
+void NonConvexMVU::set_max_iterations(size_t max_iterations) {
   max_iterations_ = max_iterations;
 }
 
-void NonConvexMVU::set_new_dimension(index_t new_dimension) {
+void NonConvexMVU::set_new_dimension(size_t new_dimension) {
   new_dimension_ = new_dimension;
 }
 
@@ -409,7 +409,7 @@ void NonConvexMVU::set_wolfe_beta(double wolfe_beta) {
   wolfe_beta_ = wolfe_beta;
 }
 
-void NonConvexMVU::set_mem_bfgs(index_t mem_bfgs) {
+void NonConvexMVU::set_mem_bfgs(size_t mem_bfgs) {
   mem_bfgs_ = mem_bfgs;
 }
 
@@ -431,8 +431,8 @@ void NonConvexMVU::InitOptimization_() {
   if (gradient_mode==DeterministicGrad) {
     gradient_.Init(new_dimension_, num_of_points_);
   }
-  for(index_t i=0; i< coordinates_.n_rows(); i++) {
-    for(index_t j=0; j<coordinates_.n_cols(); j++) {
+  for(size_t i=0; i< coordinates_.n_rows(); i++) {
+    for(size_t j=0; j<coordinates_.n_cols(); j++) {
       coordinates_.set(i, j, data_.get(i,j));
     }
   }
@@ -444,12 +444,12 @@ void NonConvexMVU::InitOptimization_() {
     lagrange_mult_.Init(knns_ * num_of_points_);
   }
   if (constraints_mode==EqualityOnNearest) {
-    for(index_t i=0; i<lagrange_mult_.length(); i++) {
+    for(size_t i=0; i<lagrange_mult_.length(); i++) {
       lagrange_mult_[i]=math::Random(0.1, 1.0)-0.5; 
     }
   } 
   if (constraints_mode == InequalityOnNearest) {
-    for(index_t i=0; i<lagrange_mult_.length(); i++) {
+    for(size_t i=0; i<lagrange_mult_.length(); i++) {
       lagrange_mult_[i]=math::Random(0.1, 1.0);
     }
   } 
@@ -469,9 +469,9 @@ void NonConvexMVU::UpdateLagrangeMult_() {
   double feasibility_error = distance_constraint + centering_constraint;
   if (feasibility_error< eta_ * previous_feasibility_error_) {
     if (gradient_mode==DeterministicGrad) {
-      for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-        index_t n1=nearest_neighbor_pairs_[i].first;
-        index_t n2=nearest_neighbor_pairs_[i].second;
+      for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+        size_t n1=nearest_neighbor_pairs_[i].first;
+        size_t n2=nearest_neighbor_pairs_[i].second;
         double *point1 = coordinates_.GetColumnPtr(n1);
         double *point2 = coordinates_.GetColumnPtr(n2);
         double dist_diff =la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -488,10 +488,10 @@ void NonConvexMVU::UpdateLagrangeMult_() {
       }
     } 
     if (gradient_mode==StochasticGrad) {
-      for(index_t i=0; i<num_of_points_; i++) {
-        for(index_t k=0; k<knns_; k++) {
-          index_t n1=i;
-          index_t n2=nearest_neighbors_[i*knns_+k];
+      for(size_t i=0; i<num_of_points_; i++) {
+        for(size_t k=0; k<knns_; k++) {
+          size_t n1=i;
+          size_t n2=nearest_neighbors_[i*knns_+k];
           double *point1 = coordinates_.GetColumnPtr(n1);
           double *point2 = coordinates_.GetColumnPtr(n2);
           double dist_diff =la::DistanceSqEuclidean(new_dimension_, 
@@ -532,7 +532,7 @@ void NonConvexMVU::LocalSearch_(double *step, Matrix &direction) {
                                gradient_.ptr(),
                                direction.ptr());
   double wolfe_factor =  dot_product * wolfe_sigma1_ * wolfe_beta_ * step_size_;
-  for(index_t i=0; beta>1e-100; i++) { 
+  for(size_t i=0; beta>1e-100; i++) { 
     temp_coordinates.CopyValues(coordinates_);
     la::AddExpert(-step_size_*beta, direction, &temp_coordinates);
     lagrangian2 =  ComputeLagrangian_<OPT_PARAM_>(temp_coordinates);
@@ -557,14 +557,14 @@ void NonConvexMVU::LocalSearch_(double *step, Matrix &direction) {
 }
 
 TEMPLATE_TAG_
-void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
+void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, size_t memory) {
   Vector alpha;
   alpha.Init(mem_bfgs_);
   Matrix scaled_y;
   scaled_y.Init(new_dimension_, num_of_points_);
-  index_t num=0;
+  size_t num=0;
   Matrix temp_direction(grad);
-  for(index_t i=index_bfgs_, num=0; num<memory; i=(i+1+mem_bfgs_)%mem_bfgs_, num++) {
+  for(size_t i=index_bfgs_, num=0; num<memory; i=(i+1+mem_bfgs_)%mem_bfgs_, num++) {
    // printf("i:%i  index_bfgs_:%i\n", i, index_bfgs_);
     alpha[i] = la::Dot(new_dimension_ * num_of_points_,
                        s_bfgs_[i].ptr(), 
@@ -590,7 +590,7 @@ void NonConvexMVU::ComputeBFGS_(double *step, Matrix &grad, index_t memory) {
   double beta;
   scaled_s.Init(new_dimension_, num_of_points_);
   num=0;
-  for(index_t j=(index_bfgs_+memory-1)%mem_bfgs_, num=0; num<memory; 
+  for(size_t j=(index_bfgs_+memory-1)%mem_bfgs_, num=0; num<memory; 
       num++, j=(j-1+mem_bfgs_)%mem_bfgs_) {
    // printf("j:%i  index_bfgs_:%i\n", j, index_bfgs_);
 
@@ -621,7 +621,7 @@ void NonConvexMVU::UpdateBFGS_() {
   UpdateBFGS_(index_bfgs_);
 }
 
-void NonConvexMVU::UpdateBFGS_(index_t index_bfgs) {
+void NonConvexMVU::UpdateBFGS_(size_t index_bfgs) {
   // shift all values
   la::SubOverwrite(previous_coordinates_, coordinates_, &s_bfgs_[index_bfgs]);
   la::SubOverwrite(previous_gradient_, gradient_, &y_bfgs_[index_bfgs]);
@@ -647,7 +647,7 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   double lagrangian=0;
 
   if (objective_mode == MaxVariance) {
-    for(index_t i=0; i<coord.n_cols(); i++) {
+    for(size_t i=0; i<coord.n_cols(); i++) {
       // we are maximizing the trace or minimize the -trace(RR^T)
       // we dont need it for the feasibility problem
       lagrangian -= la::Dot(new_dimension_, 
@@ -656,7 +656,7 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
     }
   }
   if (objective_mode == MinVariance) {
-    for(index_t i=0; i<coord.n_cols(); i++) {
+    for(size_t i=0; i<coord.n_cols(); i++) {
       // we are minimizing the trace  -trace(RR^T)
       lagrangian += la::Dot(new_dimension_, 
                             coord.GetColumnPtr(i),
@@ -665,20 +665,20 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
   }
   if (objective_mode ==MaxFurthestNeighbors) {
     if (gradient_mode==DeterministicGrad) {
-      for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+      for(size_t i=0; i<num_of_furthest_pairs_; i++) {
         // we are maximizing the distances of the furthest neighbors
-        index_t n1=furthest_neighbor_pairs_[i].first;
-        index_t n2=furthest_neighbor_pairs_[i].second;
+        size_t n1=furthest_neighbor_pairs_[i].first;
+        size_t n2=furthest_neighbor_pairs_[i].second;
         lagrangian -= la::DistanceSqEuclidean(new_dimension_,
                           coord.GetColumnPtr(n1),
                           coord.GetColumnPtr(n2)); 
       }
     }
     if (gradient_mode==StochasticGrad) {
-      for(index_t i=0; i<num_of_points_; i++) {
-        for(index_t k=0; k<kfns_; k++) {
-          index_t p1=i;
-          index_t p2=furthest_neighbors_[p1*kfns_+k];
+      for(size_t i=0; i<num_of_points_; i++) {
+        for(size_t k=0; k<kfns_; k++) {
+          size_t p1=i;
+          size_t p2=furthest_neighbors_[p1*kfns_+k];
           lagrangian -= la::DistanceSqEuclidean(new_dimension_,
                           coord.GetColumnPtr(p1),
                           coord.GetColumnPtr(p2));         
@@ -687,9 +687,9 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
     }
   }
   if (gradient_mode==DeterministicGrad) { 
-    for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-      index_t n1=nearest_neighbor_pairs_[i].first;
-      index_t n2=nearest_neighbor_pairs_[i].second;
+    for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+      size_t n1=nearest_neighbor_pairs_[i].first;
+      size_t n2=nearest_neighbor_pairs_[i].second;
       double *point1 = coord.GetColumnPtr(n1);
       double *point2 = coord.GetColumnPtr(n2);
       double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -710,10 +710,10 @@ double NonConvexMVU::ComputeLagrangian_(Matrix &coord) {
     }
   }
   if (gradient_mode==StochasticGrad) { 
-    for(index_t i=0; i<num_of_points_; i++) {
-      for(index_t k=0; k<knns_; k++) {
-        index_t n1=i;
-        index_t n2=nearest_neighbors_[i*knns_+k];
+    for(size_t i=0; i<num_of_points_; i++) {
+      for(size_t k=0; k<knns_; k++) {
+        size_t n1=i;
+        size_t n2=nearest_neighbors_[i*knns_+k];
         double *point1 = coord.GetColumnPtr(n1);
         double *point2 = coord.GetColumnPtr(n2);
         double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -751,9 +751,9 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
   *distance_constraint=0;
   *centering_constraint=0;
   if (gradient_mode==DeterministicGrad) {
-    for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-      index_t n1=nearest_neighbor_pairs_[i].first;
-      index_t n2=nearest_neighbor_pairs_[i].second;
+    for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+      size_t n1=nearest_neighbor_pairs_[i].first;
+      size_t n2=nearest_neighbor_pairs_[i].second;
       double *point1 = coordinates_.GetColumnPtr(n1);
       double *point2 = coordinates_.GetColumnPtr(n2);
       if (constraints_mode == EqualityOnNearest) {
@@ -772,9 +772,9 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
     }
   } 
   if (gradient_mode==StochasticGrad) {
-    for(index_t i=0; i<num_of_points_; i++) {
+    for(size_t i=0; i<num_of_points_; i++) {
       double *point1=coordinates_.GetColumnPtr(i);
-      for(index_t k=0; k<knns_; k++) {
+      for(size_t k=0; k<knns_; k++) {
         double *point2 = coordinates_.GetColumnPtr(nearest_neighbors_[i*knns_+k]);
         if (constraints_mode == EqualityOnNearest) {
           *distance_constraint += 
@@ -793,13 +793,13 @@ void NonConvexMVU::ComputeFeasibilityError_(double *distance_constraint,
       }
     }
   }  
-  for(index_t i=0; i<num_of_points_; i++) { 
-    for(index_t k=0; k<new_dimension_; k++) {
+  for(size_t i=0; i<num_of_points_; i++) { 
+    for(size_t k=0; k<new_dimension_; k++) {
       deviations[k] += coordinates_.get(k, i);
     }
   }
  
-  for(index_t k=0; k<new_dimension_; k++) {
+  for(size_t k=0; k<new_dimension_; k++) {
     *centering_constraint += deviations[k] * deviations[k];
   }
 }
@@ -837,10 +837,10 @@ void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
   }
   if (objective_mode == MaxFurthestNeighbors) {
     grad->SetAll(0.0);
-    for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+    for(size_t i=0; i<num_of_furthest_pairs_; i++) {
       // we are maximizing the distances of the furthest neighbors
-      index_t n1=furthest_neighbor_pairs_[i].first;
-      index_t n2=furthest_neighbor_pairs_[i].second;
+      size_t n1=furthest_neighbor_pairs_[i].first;
+      size_t n2=furthest_neighbor_pairs_[i].second;
       double diff[new_dimension_];
       la::SubOverwrite(new_dimension_,
                        coord.GetColumnPtr(n2), 
@@ -851,10 +851,10 @@ void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
     }
   }
  
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[new_dimension_];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coord.GetColumnPtr(n1);
     double *point2 = coord.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(new_dimension_, point1, point2) 
@@ -900,10 +900,10 @@ void NonConvexMVU::ComputeGradient_(Matrix &coord, Matrix *grad) {
 }
 
 TEMPLATE_TAG_
-void NonConvexMVU::ComputePairGradient_(index_t p1, index_t chosen_neighbor, 
+void NonConvexMVU::ComputePairGradient_(size_t p1, size_t chosen_neighbor, 
     Matrix &coord, Vector *gradient1, Vector *gradient2) {
   
-  index_t p2=nearest_neighbors_[p1*knns_+chosen_neighbor];
+  size_t p2=nearest_neighbors_[p1*knns_+chosen_neighbor];
   double p1_p2_dist = nearest_distances_[p1*knns_+chosen_neighbor]; 
   Vector point1, point2;
   coord.MakeColumnVector(p1, &point1);
@@ -926,8 +926,8 @@ void NonConvexMVU::ComputePairGradient_(index_t p1, index_t chosen_neighbor,
   }
   if (objective_mode == MaxFurthestNeighbors) {
     // we are maximizing the distances of the furthest neighbors
-    index_t n1=furthest_neighbors_[p1*kfns_];
-    index_t n2=furthest_neighbors_[p2*kfns_];
+    size_t n1=furthest_neighbors_[p1*kfns_];
+    size_t n2=furthest_neighbors_[p2*kfns_];
     la::SubOverwrite(new_dimension_,
                      point1.ptr(), 
                      coord.GetColumnPtr(n1),
@@ -985,24 +985,24 @@ TEMPLATE_TAG_
 double NonConvexMVU::ComputeObjective_(Matrix &coord) {
   double variance=0;
   if (objective_mode==MaxVariance) {
-    for(index_t i=0; i< coord.n_cols(); i++) {
+    for(size_t i=0; i< coord.n_cols(); i++) {
       variance-=la::Dot(new_dimension_, 
                         coord.GetColumnPtr(i),
                         coord.GetColumnPtr(i));
     }
   }
   if (objective_mode==MinVariance) {
-    for(index_t i=0; i< coord.n_cols(); i++) {
+    for(size_t i=0; i< coord.n_cols(); i++) {
       variance+=la::Dot(new_dimension_, 
                         coord.GetColumnPtr(i),
                         coord.GetColumnPtr(i));
     }
   }
   if (objective_mode==MaxFurthestNeighbors) {
-    for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+    for(size_t i=0; i<num_of_furthest_pairs_; i++) {
       // we are maximizing the distances of the furthest neighbors
-      index_t n1=furthest_neighbor_pairs_[i].first;
-      index_t n2=furthest_neighbor_pairs_[i].second;
+      size_t n1=furthest_neighbor_pairs_[i].first;
+      size_t n2=furthest_neighbor_pairs_[i].second;
       variance -= la::DistanceSqEuclidean(new_dimension_,
                         coord.GetColumnPtr(n1),
                         coord.GetColumnPtr(n2)); 
@@ -1016,7 +1016,7 @@ double NonConvexMVU::ComputeObjective_(Matrix &coord) {
 // variance should not be initialized
 void NonConvexMVU::Variance_(Matrix &coord, Vector *variance) {
   variance->Init(coord.n_rows());
-  for(index_t i=0; i<new_dimension_; i++) {
+  for(size_t i=0; i<new_dimension_; i++) {
     (*variance)[i]=la::LengthEuclidean(new_dimension_, 
                                        coord.GetColumnPtr(i))/num_of_points_;
   }
@@ -1026,33 +1026,33 @@ void NonConvexMVU::RemoveMean_(Matrix &mat) {
   Vector dimension_sums;
   dimension_sums.Init(mat.n_rows());
   dimension_sums.SetAll(0.0);
-  for(index_t i=0; i<mat.n_cols(); i++) {
+  for(size_t i=0; i<mat.n_cols(); i++) {
     la::AddTo(mat.n_rows(), mat.GetColumnPtr(i), dimension_sums.ptr());
   }
-  for(index_t i=0; i<mat.n_cols(); i++)  {
+  for(size_t i=0; i<mat.n_cols(); i++)  {
     la::AddExpert(mat.n_rows(), -1.0/mat.n_cols(), 
         dimension_sums.ptr(), 
         mat.GetColumnPtr(i));
   }
 }
 
-void NonConvexMVU::ConsolidateNeighbors_(ArrayList<index_t> &from_tree_ind,
+void NonConvexMVU::ConsolidateNeighbors_(ArrayList<size_t> &from_tree_ind,
     ArrayList<double>  &from_tree_dist,
-    index_t num_of_neighbors,
-    ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
+    size_t num_of_neighbors,
+    ArrayList<std::pair<size_t, size_t> > *neighbor_pairs,
     ArrayList<double> *distances,
-    index_t *num_of_pairs) {
+    size_t *num_of_pairs) {
   
   *num_of_pairs=0;
   neighbor_pairs->Init();
   distances->Init();
   bool skip=false;
-  for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t k=0; k<num_of_neighbors; k++) {  
-      index_t n1=i;                         //neighbor 1
-      index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
+  for(size_t i=0; i<num_of_points_; i++) {
+    for(size_t k=0; k<num_of_neighbors; k++) {  
+      size_t n1=i;                         //neighbor 1
+      size_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
       if (n1 > n2) {
-        for(index_t n=0; n<num_of_neighbors; n++) {
+        for(size_t n=0; n<num_of_neighbors; n++) {
           if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
             skip=true;
             break;

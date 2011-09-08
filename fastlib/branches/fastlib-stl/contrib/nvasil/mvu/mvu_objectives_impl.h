@@ -32,7 +32,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -69,7 +69,7 @@ void MaxVariance::Init(datanode *module, Matrix &data) {
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -97,7 +97,7 @@ void MaxVariance::Init(fx_module *module) {
   nearest_distances_.Init();
   num_of_points_=0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -115,7 +115,7 @@ void MaxVariance::Init(fx_module *module) {
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -138,11 +138,11 @@ void MaxVariance::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
   gradient->CopyValues(coordinates);
   // we need to use -CRR^T because we want to maximize CRR^T
   la::Scale(-1.0, gradient);
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -163,8 +163,8 @@ void MaxVariance::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
 
 void MaxVariance::ComputeObjective(Matrix &coordinates, double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i< coordinates.n_cols(); i++) {
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i< coordinates.n_cols(); i++) {
      *objective-=la::Dot(dimension, 
                         coordinates.GetColumnPtr(i),
                         coordinates.GetColumnPtr(i));
@@ -172,11 +172,11 @@ void MaxVariance::ComputeObjective(Matrix &coordinates, double *objective) {
 }
 
 void MaxVariance::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(dimension, 
@@ -186,12 +186,12 @@ void MaxVariance::ComputeFeasibilityError(Matrix &coordinates, double *error) {
 }
 
 double MaxVariance::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -203,10 +203,10 @@ double MaxVariance::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void MaxVariance::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -233,14 +233,14 @@ void MaxVariance::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-index_t  MaxVariance::num_of_points() {
+size_t  MaxVariance::num_of_points() {
   return num_of_points_;
 }
 
 void MaxVariance::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t j=0; j<new_dimension_ ; j++) {
+  for(size_t i=0; i<num_of_points_; i++) {
+    for(size_t j=0; j<new_dimension_ ; j++) {
       init_data->set(j, i,math::Random(0, 1) );
     }
   }
@@ -263,7 +263,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -319,7 +319,7 @@ void MaxVarianceInequalityOnFurthest::Init(datanode *module, Matrix &data) {
   ineq_lagrange_mult_.Init(num_of_furthest_pairs_);
   ineq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -345,13 +345,13 @@ void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates,
   gradient->CopyValues(coordinates);
     // we need to use -CRR^T because we want to maximize CRR^T
     la::Scale(-1.0, gradient);
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
 
   // equality constraints
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -369,10 +369,10 @@ void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates,
   }
 
   // inequality constraints
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -394,8 +394,8 @@ void MaxVarianceInequalityOnFurthest::ComputeGradient(Matrix &coordinates,
 void MaxVarianceInequalityOnFurthest::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i< coordinates.n_cols(); i++) {
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i< coordinates.n_cols(); i++) {
      *objective-=la::Dot(dimension, 
                         coordinates.GetColumnPtr(i),
                         coordinates.GetColumnPtr(i));
@@ -404,20 +404,20 @@ void MaxVarianceInequalityOnFurthest::ComputeObjective(Matrix &coordinates,
 
 void MaxVarianceInequalityOnFurthest::ComputeFeasibilityError(Matrix &coordinates, 
     double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     *error += math::Sqr(la::DistanceSqEuclidean(dimension, 
                                                point1, point2) 
                                           -nearest_distances_[i]);
   }
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff=math::Sqr(la::DistanceSqEuclidean(dimension, 
@@ -430,12 +430,12 @@ void MaxVarianceInequalityOnFurthest::ComputeFeasibilityError(Matrix &coordinate
 }
 
 double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -443,9 +443,9 @@ double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
     lagrangian+=dist_diff*dist_diff*sigma_/2
        -eq_lagrange_mult_[i]*dist_diff;
   }
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff=math::Sqr(la::DistanceSqEuclidean(dimension, 
@@ -462,19 +462,19 @@ double MaxVarianceInequalityOnFurthest::ComputeLagrangian(Matrix &coordinates) {
 
 
 void MaxVarianceInequalityOnFurthest::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
                             -nearest_distances_[i];
     eq_lagrange_mult_[i]-=sigma_*dist_diff;
   }
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -531,7 +531,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
   }
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -588,7 +588,7 @@ void MaxFurthestNeighbors::Init(datanode *module, Matrix &data) {
       &furthest_distances_,
       &num_of_furthest_pairs_);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -619,7 +619,7 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   nearest_distances_.Init();
   num_of_points_=0;
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     nearest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -645,7 +645,7 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   furthest_neighbor_pairs_.Init();
   furthest_distances_.Init();
   while(!feof(fp)) {
-    index_t n1, n2;
+    size_t n1, n2;
     double distance;
     fscanf(fp,"%i %i %lg", &n1, &n2, &distance);
     furthest_neighbor_pairs_.PushBackCopy(std::make_pair(n1, n2));
@@ -656,7 +656,7 @@ void MaxFurthestNeighbors::Init(fx_module *module) {
   eq_lagrange_mult_.Init(num_of_nearest_pairs_);
   eq_lagrange_mult_.SetAll(1.0);
   double max_nearest_distance=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     max_nearest_distance=std::max(nearest_distances_[i], max_nearest_distance);
   }
   sum_of_furthest_distances_=-max_nearest_distance*
@@ -678,13 +678,13 @@ void MaxFurthestNeighbors::Destruct() {
 }
 
 void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   gradient->SetAll(0.0);
   // objective
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     la::SubOverwrite(dimension, point2, point1, a_i_r);
@@ -695,10 +695,10 @@ void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient
         gradient->GetColumnPtr(n2));
   }
   // equality constraints
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
     double a_i_r[dimension];
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -719,10 +719,10 @@ void MaxFurthestNeighbors::ComputeGradient(Matrix &coordinates, Matrix *gradient
 void MaxFurthestNeighbors::ComputeObjective(Matrix &coordinates, 
     double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i<num_of_furthest_pairs_; i++) {
-    index_t n1=furthest_neighbor_pairs_[i].first;
-    index_t n2=furthest_neighbor_pairs_[i].second;
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i<num_of_furthest_pairs_; i++) {
+    size_t n1=furthest_neighbor_pairs_[i].first;
+    size_t n2=furthest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double diff = la::DistanceSqEuclidean(dimension, point1, point2);
@@ -731,11 +731,11 @@ void MaxFurthestNeighbors::ComputeObjective(Matrix &coordinates,
 }
 
 void MaxFurthestNeighbors::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, 
@@ -747,12 +747,12 @@ void MaxFurthestNeighbors::ComputeFeasibilityError(Matrix &coordinates, double *
 }
 
 double MaxFurthestNeighbors::ComputeLagrangian(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
+  size_t dimension=coordinates.n_rows();
   double lagrangian=0;
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff = la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -764,10 +764,10 @@ double MaxFurthestNeighbors::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void MaxFurthestNeighbors::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_nearest_pairs_; i++) {
-    index_t n1=nearest_neighbor_pairs_[i].first;
-    index_t n2=nearest_neighbor_pairs_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_nearest_pairs_; i++) {
+    size_t n1=nearest_neighbor_pairs_[i].first;
+    size_t n2=nearest_neighbor_pairs_[i].second;
     double *point1 = coordinates.GetColumnPtr(n1);
     double *point2 = coordinates.GetColumnPtr(n2);
     double dist_diff =la::DistanceSqEuclidean(dimension, point1, point2) 
@@ -797,14 +797,14 @@ void MaxFurthestNeighbors::Project(Matrix *coordinates) {
   OptUtils::RemoveMean(coordinates);
 }
 
-index_t MaxFurthestNeighbors::num_of_points() {
+size_t MaxFurthestNeighbors::num_of_points() {
   return num_of_points_;
 }
 
 void MaxFurthestNeighbors::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_points_);
-  for(index_t i=0; i<num_of_points_; i++) {
-    for(index_t j=0; j<new_dimension_ ; j++) {
+  for(size_t i=0; i<num_of_points_; i++) {
+    for(size_t j=0; j<new_dimension_ ; j++) {
       init_data->set(j, i,math::Random(0, 1) );
     }
   }
@@ -841,25 +841,25 @@ bool MaxFurthestNeighbors::IsIntermediateStepOver(Matrix &coordinates,
 
 
 ///////////////////////////////////////////////////////////////
-void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
+void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<size_t> &from_tree_ind,
    ArrayList<double>  &from_tree_dist,
-    index_t num_of_neighbors,
-    index_t chosen_neighbors,
-    ArrayList<std::pair<index_t, index_t> > *neighbor_pairs,
+    size_t num_of_neighbors,
+    size_t chosen_neighbors,
+    ArrayList<std::pair<size_t, size_t> > *neighbor_pairs,
     ArrayList<double> *distances,
-    index_t *num_of_pairs) {
+    size_t *num_of_pairs) {
   
   *num_of_pairs=0;
-  index_t num_of_points=from_tree_ind.size()/num_of_neighbors;
+  size_t num_of_points=from_tree_ind.size()/num_of_neighbors;
   neighbor_pairs->Init();
   distances->Init();
   bool skip=false;
-  for(index_t i=0; i<num_of_points; i++) {
-    for(index_t k=0; k<chosen_neighbors; k++) {  
-      index_t n1=i;                         //neighbor 1
-      index_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
+  for(size_t i=0; i<num_of_points; i++) {
+    for(size_t k=0; k<chosen_neighbors; k++) {  
+      size_t n1=i;                         //neighbor 1
+      size_t n2=from_tree_ind[i*num_of_neighbors+k];  //neighbor 2
       if (n1 > n2) {
-        for(index_t n=0; n<chosen_neighbors; n++) {
+        for(size_t n=0; n<chosen_neighbors; n++) {
           if (from_tree_ind[n2*num_of_neighbors+n] == n1) {
             skip=true;
             break;
@@ -876,23 +876,23 @@ void MaxVarianceUtils::ConsolidateNeighbors(ArrayList<index_t> &from_tree_ind,
   }
 }
 
-void MaxVarianceUtils::EstimateKnns(ArrayList<index_t> &neares_neighbors,
+void MaxVarianceUtils::EstimateKnns(ArrayList<size_t> &neares_neighbors,
                                     ArrayList<double> &nearest_distances,
-                                    index_t maximum_knns, 
-                                    index_t num_of_points,
-                                    index_t dimension,
-                                    index_t *optimum_knns) {
+                                    size_t maximum_knns, 
+                                    size_t num_of_points,
+                                    size_t dimension,
+                                    size_t *optimum_knns) {
   double max_loocv_score=-DBL_MAX;
   double loocv_score=0;
   //double unit_sphere_volume=math::SphereVolume(1.0, dimension);
   *optimum_knns=0;
-  for(index_t k=2; k<maximum_knns; k++) {
+  for(size_t k=2; k<maximum_knns; k++) {
     loocv_score=0.0;
     double mean_band=0.0;
-    for(index_t i=0; i<num_of_points; i++){
+    for(size_t i=0; i<num_of_points; i++){
       double scale_factor=pow(nearest_distances[i*maximum_knns+k], dimension/2);
       double probability=0;
-      for(index_t j=0; j<k; j++) {
+      for(size_t j=0; j<k; j++) {
         probability+=exp(-nearest_distances[i*maximum_knns+j]
             /(2*std::sqrt(nearest_distances[i*maximum_knns+k])))/scale_factor;
       }

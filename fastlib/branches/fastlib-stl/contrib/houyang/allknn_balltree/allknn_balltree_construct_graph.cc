@@ -12,7 +12,7 @@
 // Parameters
 const bool TREE_LEARNING= false; // true: learning tree, false: no learning, just normal tree
 const int TREE_DUAL_SINGLE= 2; // 2: dual tree, 1: single tree
-const index_t K_NN= 1; // want to find the K_NN th nearest neighbor, excluding the point itself
+const size_t K_NN= 1; // want to find the K_NN th nearest neighbor, excluding the point itself
 
 
 // compare the order of two 3-by-1 columns according to the first two rows
@@ -36,10 +36,10 @@ int ColumnCompare(const void *col_a, const void *col_b) {
 int main(int argc, char *argv[]) {
   fx_init(argc, argv, NULL);
   // ConstructTreeGraph
-  ArrayList<index_t> result_neighbors;
+  ArrayList<size_t> result_neighbors;
   ArrayList<double> result_distances;
 
-  index_t n_data, i, j, n_pair;
+  size_t n_data, i, j, n_pair;
   Matrix degree; // Diagonal of the degree matrix D, dimension; n_data-by-1
   Matrix affinity; // Sparse (also symmetric) affinity matrix A
   // 1st row: adjacency[0 i]: for sample i, how many other samples are adjacent to it;
@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
   //data::Load("UCI_magic_sorted_merged.csv", &data_for_tree_);
   
   // Minimum size of the leaf node, if small than this, do not split the node
-  index_t LEAF_SIZE= fx_param_int_req(NULL,"leaf_size");
+  size_t LEAF_SIZE= fx_param_int_req(NULL,"leaf_size");
   data::Load(fx_param_str_req(NULL, "ref_data"), &data_for_tree_);
   
 
@@ -89,7 +89,7 @@ fx_timer_stop(NULL, "construct_all_kNN_graph");
   matrix_knn.Init(n_data, K_NN);
   
   // Consturct all-kNN graph
-  index_t idx;
+  size_t idx;
   for (i=0; i<n_data; i++) {
     for (j=0; j<K_NN; j++) {
       // NN relationship
@@ -113,7 +113,7 @@ fx_timer_stop(NULL, "construct_all_kNN_graph");
   */
   
   // List the 2kN affinity relations; set each column as [col#; row#; aff_value], O(kN)
-  index_t tmp_idx;
+  size_t tmp_idx;
   for (i=0; i<n_data; i++) {
     for (j=0; j<K_NN; j++) {
       tmp_idx = result_neighbors[i*(K_NN+1)+ j + 1]; // skip the first NN which is the data sample itself
@@ -129,7 +129,7 @@ fx_timer_stop(NULL, "construct_all_kNN_graph");
 
   // Fill in degree info
   for (i=0; i<n_pair; i++){
-    index_t s= (index_t)affinity.get(0,i);
+    size_t s= (size_t)affinity.get(0,i);
     degree.set(s, 0, degree.get(s,0)+1.0);
   }
   // Store digonal of degrees matrix D
@@ -139,9 +139,9 @@ fx_timer_stop(NULL, "construct_all_kNN_graph");
   qsort(affinity.ptr(), n_pair, 3*sizeof(double), ColumnCompare);
   
   // Combine affinity relations and fill the sparse A, O(kN); Get adjacency info
-  index_t idx_ct = 0;
-  index_t idx_adj = 0;
-  index_t n_adj_ct = 1;
+  size_t idx_ct = 0;
+  size_t idx_adj = 0;
+  size_t n_adj_ct = 1;
   for (i=0; i<n_pair-1; i++) {
     if (affinity.get(0,i) == affinity.get(0,i+1)){
       if (affinity.get(1,i) == affinity.get(1,i+1)) {
@@ -202,18 +202,18 @@ fx_timer_stop(NULL, "construct_all_kNN_graph");
   affinity_part.Alias(affinity.ptr(), 3, idx_ct);
 
   /*  // check whether A is symmetric
-  index_t opt_pos;
+  size_t opt_pos;
   for (i=0; i<idx_ct; i++){
-    index_t left= (index_t)affinity_part.get(0,i);
-    index_t right= (index_t)affinity_part.get(1,i);
+    size_t left= (size_t)affinity_part.get(0,i);
+    size_t right= (size_t)affinity_part.get(1,i);
     double value= affinity_part.get(2,i);
-    index_t left_chk;
+    size_t left_chk;
     double value_chk;
 
-    for (index_t k=0; k<(index_t)adjacency.get(0, right); k++) {
-      opt_pos = (index_t)adjacency.get(1, right) + k;
-      if((index_t)affinity.get(1,opt_pos) == left){
-	left_chk = (index_t)affinity.get(1,opt_pos);
+    for (size_t k=0; k<(size_t)adjacency.get(0, right); k++) {
+      opt_pos = (size_t)adjacency.get(1, right) + k;
+      if((size_t)affinity.get(1,opt_pos) == left){
+	left_chk = (size_t)affinity.get(1,opt_pos);
 	value_chk = affinity.get(2,opt_pos);
 	break;
       }

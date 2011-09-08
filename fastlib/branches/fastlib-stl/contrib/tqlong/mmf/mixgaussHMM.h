@@ -106,8 +106,8 @@ class MixtureofGaussianHMM {
 
 
   ////////// Static helper functions ///////////////////////////////////////
-  static success_t LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs);
-  static success_t SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs);
+  static bool LoadProfile(const char* profile, Matrix* trans, ArrayList<MixtureGauss>* mixs);
+  static bool SaveProfile(const char* profile, const Matrix& trans, const ArrayList<MixtureGauss>& mixs);
 
   /**
    * Generating a sequence and states using transition and emission probabilities.

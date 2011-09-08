@@ -74,21 +74,21 @@ int main(int argc, char* argv[]) {
       // Loop over the naive edge list
       int is_correct = 1;
       /*
-      for (index_t naive_index = 0; naive_index < results.size(); 
+      for (size_t naive_index = 0; naive_index < results.size(); 
            naive_index++) {
        
         int this_loop_correct = 0;
-        index_t naive_lesser_index = results[naive_index].lesser_index();
-        index_t naive_greater_index = results[naive_index].greater_index();
+        size_t naive_lesser_index = results[naive_index].lesser_index();
+        size_t naive_greater_index = results[naive_index].greater_index();
         double naive_distance = results[naive_index].distance();
         
         // Loop over the DTB edge list and compare against naive
         // Break when an edge is found that matches the current naive edge
-        for (index_t dual_index = 0; dual_index < naive_results.size();
+        for (size_t dual_index = 0; dual_index < naive_results.size();
              dual_index++) {
           
-          index_t dual_lesser_index = results[dual_index].lesser_index();
-          index_t dual_greater_index = results[dual_index].greater_index();
+          size_t dual_lesser_index = results[dual_index].lesser_index();
+          size_t dual_greater_index = results[dual_index].greater_index();
           double dual_distance = results[dual_index].distance();
           
           if (naive_lesser_index == dual_lesser_index) {

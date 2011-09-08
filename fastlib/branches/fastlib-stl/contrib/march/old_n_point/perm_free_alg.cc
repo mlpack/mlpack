@@ -10,21 +10,21 @@
 #include "perm_free_alg.h"
 
 
-void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                                        std::vector<bool>& permutation_ok,
-                                       std::vector<index_t>& points_in_tuple,
+                                       std::vector<size_t>& points_in_tuple,
                                        int k) {
   
   std::vector<bool> permutation_ok_copy(permutation_ok);
   
   bool bad_symmetry = false;
   
-  std::vector<index_t>& k_rows = point_sets[k];
+  std::vector<size_t>& k_rows = point_sets[k];
   
   // iterate over possible kth members of the tuple
-  for (index_t i = 0; i < k_rows.size(); i++) {
+  for (size_t i = 0; i < k_rows.size(); i++) {
     
-    index_t point_i_index = k_rows[i];
+    size_t point_i_index = k_rows[i];
     bool this_point_works = true;
     
     bad_symmetry = false;
@@ -43,9 +43,9 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
     permutation_ok_copy.assign(permutation_ok.begin(), permutation_ok.end());
     
     // loop over points already in the tuple and check against them
-    for (index_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
+    for (size_t j = 0; !bad_symmetry && this_point_works && j < k; j++) {
       
-      index_t point_j_index = points_in_tuple[j];
+      size_t point_j_index = points_in_tuple[j];
       
       // j comes before i in the tuple, so it should have a lower index
       bool j_is_random = (j < num_random_);
@@ -87,7 +87,7 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
         for (int tuple_ind = 0; tuple_ind < num_random_; tuple_ind++) {
           this_weight *= random_weights_(points_in_tuple[tuple_ind]);
         }
-        for (index_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
+        for (size_t tuple_ind = num_random_; tuple_ind < tuple_size_; 
              tuple_ind++) {
           
           this_weight *= data_weights_(points_in_tuple[tuple_ind]);
@@ -111,26 +111,26 @@ void npt::PermFreeAlg::BaseCaseHelper_(std::vector<std::vector<index_t> >& point
 
 void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
 
-  std::vector<std::vector<index_t> > point_sets(tuple_size_);
+  std::vector<std::vector<size_t> > point_sets(tuple_size_);
   
   // TODO: can this be done more efficiently?
   
   // Make a 2D array of the points in the nodes 
   // iterate over nodes
-  for (index_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
+  for (size_t node_ind = 0; node_ind < tuple_size_; node_ind++) {
     
     point_sets[node_ind].resize(nodes.node_list(node_ind)->count());
     
     // fill in poilnts in the node
     /*
-    for (index_t point_ind = nodes.node_list(node_ind)->begin(); 
+    for (size_t point_ind = nodes.node_list(node_ind)->begin(); 
          point_ind < nodes.node_list(node_ind)->end(); point_ind++) {
       
       point_sets[node_ind][point_ind] = point_ind;
       
     } // points
     */
-    for (index_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
+    for (size_t i = 0; i < nodes.node_list(node_ind)->count(); i++) {
       
       point_sets[node_ind][i] = i + nodes.node_list(node_ind)->begin();
       
@@ -140,7 +140,7 @@ void npt::PermFreeAlg::BaseCase_(NodeTuple& nodes) {
   
   std::vector<bool> permutation_ok(num_permutations_, true);
   
-  std::vector<index_t> points_in_tuple(tuple_size_, -1);
+  std::vector<size_t> points_in_tuple(tuple_size_, -1);
   
   BaseCaseHelper_(point_sets, permutation_ok, points_in_tuple, 0);
   

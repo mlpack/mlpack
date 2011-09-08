@@ -126,9 +126,9 @@ class GaussianHMM {
 
   ////////// Static helper functions ///////////////////////////////////////
 
-  static success_t LoadProfile(const char* profile, Matrix* trans, 
+  static bool LoadProfile(const char* profile, Matrix* trans, 
 			       ArrayList<Vector>* means, ArrayList<Matrix>* covs);
-  static success_t SaveProfile(const char* profile, const Matrix& trans, 
+  static bool SaveProfile(const char* profile, const Matrix& trans, 
 			       const ArrayList<Vector>& means, 
 			       const ArrayList<Matrix>& covs);
   /**

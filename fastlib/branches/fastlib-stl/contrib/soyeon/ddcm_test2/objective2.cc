@@ -11,21 +11,21 @@ using namespace std;
 void Objective::Init(ArrayList<Matrix> &added_first_stage_x, 
 										 ArrayList<Matrix> &added_second_stage_x, 
 										 ArrayList<Matrix> &added_unknown_x_past, 
-										 ArrayList<index_t> &added_first_stage_y,
+										 ArrayList<size_t> &added_first_stage_y,
 										 Vector &ind_unknown_x) {
 
 
-	index_t previous_num_selected_people=0;
+	size_t previous_num_selected_people=0;
 	//current_num_selected_people
 	num_of_betas_=added_first_stage_x[0].n_rows();
-	index_t num_selected_people=added_first_stage_x.size();
+	size_t num_selected_people=added_first_stage_x.size();
 
 	
 
 	
 	//first_stage_x_.Init(num_selected_people);
 	//first_stage_x_.PushBackCopy(added_first_stage_x);
-	//for(index_t i=0; i<num_selected_people; i++) {
+	//for(size_t i=0; i<num_selected_people; i++) {
     //first_stage_x_[i].Init(added_first_stage_x[i].n_rows(), added_first_stage_x[i].n_cols());
     //first_stage_x_[i].PushBackCopy(added_first_stage_x[i]);
     
@@ -54,7 +54,7 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 	exp_betas_times_x1_.Init(num_selected_people);
   exp_betas_times_x2_.Init(num_selected_people);
 	postponed_probability_.Init(num_selected_people);
-	for(index_t i=0; i<postponed_probability_.size(); i++) {
+	for(size_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
 
@@ -68,7 +68,7 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 	first_stage_dot_logit_.Init(num_selected_people);
 	first_stage_ddot_logit_.Init(num_selected_people, num_selected_people);
 
-	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+	for(size_t i=0; i<first_stage_dot_logit_.size(); i++) {
     exp_betas_times_x1_[i]=0;
 		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		first_stage_dot_logit_[i].SetZero();
@@ -80,7 +80,7 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 	second_stage_dot_logit_.Init(num_selected_people);
 	second_stage_ddot_logit_.Init(num_selected_people, num_selected_people);
 
-	for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+	for(size_t i=0; i<second_stage_dot_logit_.size(); i++) {
     exp_betas_times_x2_[i]=0;
 		second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		second_stage_dot_logit_[i].SetZero();
@@ -92,7 +92,7 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 	sum_first_derivative_conditional_postpond_prob_.Init(num_selected_people);
 	sum_second_derivative_conditional_postpond_prob_.Init(num_selected_people);
 
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
 		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
 		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 		sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
@@ -109,7 +109,7 @@ void Objective::Init(ArrayList<Matrix> &added_first_stage_x,
 	sum_second_derivative_conditionl_postponed_q_.Init(num_selected_people);
 
 
-	for(index_t i=0; i<first_stage_x_.size(); i++) {
+	for(size_t i=0; i<first_stage_x_.size(); i++) {
 		sum_first_derivative_p_beta_fn_[i]=0;
 		sum_second_derivative_p_beta_fn_[i]=0;
 		sum_first_derivative_q_beta_fn_[i]=0;
@@ -150,7 +150,7 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	exp_betas_times_x1_.Init();
   exp_betas_times_x2_.Init();
 	postponed_probability_.Init();
-	//for(index_t i=0; i<postponed_probability_.size(); i++) {
+	//for(size_t i=0; i<postponed_probability_.size(); i++) {
   //  postponed_probability_[i]=0;
   //}
 
@@ -164,7 +164,7 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	first_stage_dot_logit_.Init();
 	first_stage_ddot_logit_.Init();
 
-	//for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+	//for(size_t i=0; i<first_stage_dot_logit_.size(); i++) {
     //exp_betas_times_x1_[i]=0;
 		//first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		//first_stage_dot_logit_[i].SetZero();
@@ -177,7 +177,7 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	second_stage_dot_logit_.Init();
 	second_stage_ddot_logit_.Init();
 
-	//for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+	//for(size_t i=0; i<second_stage_dot_logit_.size(); i++) {
     //exp_betas_times_x2_[i]=0;
 		//second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		//second_stage_dot_logit_[i].SetZero();
@@ -189,7 +189,7 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	sum_first_derivative_conditional_postpond_prob_.Init();
 	sum_second_derivative_conditional_postpond_prob_.Init();
 
-	//for(index_t n=0; n<first_stage_x_.size(); n++) {
+	//for(size_t n=0; n<first_stage_x_.size(); n++) {
 		//sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
 		//sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 		//sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
@@ -207,7 +207,7 @@ void Objective::Init2(Vector &ind_unknown_x, int count_init2) {
 	sum_second_derivative_conditionl_postponed_q_.Init();
 
 
-	//for(index_t i=0; i<first_stage_x_.size(); i++) {
+	//for(size_t i=0; i<first_stage_x_.size(); i++) {
 		//sum_first_derivative_p_beta_fn_[i]=0;
 		//sum_second_derivative_p_beta_fn_[i]=0;
 		//sum_first_derivative_q_beta_fn_[i]=0;
@@ -234,13 +234,13 @@ void Objective::Init3(int sample_size,
 						ArrayList<Matrix> &added_first_stage_x,
 						ArrayList<Matrix> &added_second_stage_x, 
 						ArrayList<Matrix> &added_unknown_x_past, 
-						ArrayList<index_t> &added_first_stage_y) {
+						ArrayList<size_t> &added_first_stage_y) {
 
 	
 	num_of_betas_=added_first_stage_x[0].n_rows();
 	int num_selected_people=added_first_stage_x.size();
 
-	for(index_t i=sample_size; i<num_selected_people; i++){
+	for(size_t i=sample_size; i<num_selected_people; i++){
 		first_stage_x_.PushBackCopy(added_first_stage_x[i]);
 		second_stage_x_.PushBackCopy(added_second_stage_x[i]);
 		unknown_x_past_.PushBackCopy(added_unknown_x_past[i]);
@@ -255,7 +255,7 @@ void Objective::Init3(int sample_size,
 
 	postponed_probability_.Destruct();
 	postponed_probability_.Init(num_selected_people);
-	for(index_t i=0; i<postponed_probability_.size(); i++) {
+	for(size_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
 
@@ -267,7 +267,7 @@ void Objective::Init3(int sample_size,
 	first_stage_ddot_logit_.Destruct();
 	first_stage_ddot_logit_.Init(num_selected_people);
 
-	for(index_t i=0; i<first_stage_dot_logit_.size(); i++) {
+	for(size_t i=0; i<first_stage_dot_logit_.size(); i++) {
     exp_betas_times_x1_[i]=0;
 		first_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		first_stage_dot_logit_[i].SetZero();
@@ -281,7 +281,7 @@ void Objective::Init3(int sample_size,
 	second_stage_ddot_logit_.Destruct();
 	second_stage_ddot_logit_.Init(num_selected_people);
 
-	for(index_t i=0; i<second_stage_dot_logit_.size(); i++) {
+	for(size_t i=0; i<second_stage_dot_logit_.size(); i++) {
     exp_betas_times_x2_[i]=0;
 		second_stage_dot_logit_[i].Init(first_stage_x_[i].n_cols());
 		second_stage_dot_logit_[i].SetZero();
@@ -295,7 +295,7 @@ void Objective::Init3(int sample_size,
 	sum_second_derivative_conditional_postpond_prob_.Destruct();
 	sum_second_derivative_conditional_postpond_prob_.Init(num_selected_people);
 
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
 		sum_first_derivative_conditional_postpond_prob_[n].Init(num_of_betas_);
 		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 		sum_second_derivative_conditional_postpond_prob_[n].Init(num_of_betas_, num_of_betas_);
@@ -321,7 +321,7 @@ void Objective::Init3(int sample_size,
 	sum_second_derivative_conditionl_postponed_q_.Init(num_selected_people);
 
 
-	for(index_t i=0; i<first_stage_x_.size(); i++) {
+	for(size_t i=0; i<first_stage_x_.size(); i++) {
 		sum_first_derivative_p_beta_fn_[i]=0;
 		sum_second_derivative_p_beta_fn_[i]=0;
 		sum_first_derivative_q_beta_fn_[i]=0;
@@ -447,14 +447,14 @@ void Objective::ComputeGradient(double current_sample,
 	
 	/*
 	cout<<"dummy_beta_term1="<<endl;
-	for(index_t i=0; i<dummy_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_beta_term1.length(); i++){
 		cout<<dummy_beta_term1[i]<<" "<<endl;
 	}
 	*/
 
 	/*
 	cout<<"dummy_beta_term2="<<endl;
-	for(index_t i=0; i<dummy_beta_term2.length(); i++){
+	for(size_t i=0; i<dummy_beta_term2.length(); i++){
 		cout<<dummy_beta_term2[i]<<" "<<endl;
 	}
 	*/
@@ -462,7 +462,7 @@ void Objective::ComputeGradient(double current_sample,
 
 	/*
 	cout<<"dummy_beta_term3="<<endl;
-	for(index_t i=0; i<dummy_beta_term3.length(); i++){
+	for(size_t i=0; i<dummy_beta_term3.length(); i++){
 		cout<<dummy_beta_term3[i]<<" "<<endl;
 	}
 	*/
@@ -478,7 +478,7 @@ void Objective::ComputeGradient(double current_sample,
 	dummy_gradient.Init(num_of_betas_+2);
 	dummy_gradient.SetZero();
 
-	for(index_t i=0; i<num_of_betas_; i++){
+	for(size_t i=0; i<num_of_betas_; i++){
 		dummy_gradient[i]=dummy_beta_term1[i]+dummy_beta_term2[i]+dummy_beta_term3[i];
 	}
 	
@@ -523,7 +523,7 @@ void Objective::ComputeGradient(double current_sample,
 
 
   cout<<"dummy gradient"<<endl;
-	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+	for(size_t i=0; i<dummy_gradient.n_rows(); i++){
 		cout<<dummy_gradient.get(i,0)<<" ";
 	}
 	cout<<endl;
@@ -531,12 +531,12 @@ void Objective::ComputeGradient(double current_sample,
 
 
 
-	for(index_t i=0; i<num_of_betas_; i++){
+	for(size_t i=0; i<num_of_betas_; i++){
 		dummy_gradient.set(i,0, (dummy_beta_term1[i]+dummy_beta_term2[i]+dummy_beta_term3[i]));
 	}
 	
   cout<<"dummy gradient 2"<<endl;
-	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+	for(size_t i=0; i<dummy_gradient.n_rows(); i++){
 		cout<<dummy_gradient.get(i,0)<<" ";
 	}
 	cout<<endl;
@@ -545,7 +545,7 @@ void Objective::ComputeGradient(double current_sample,
 	dummy_gradient.set(num_of_betas_+1, 0, (ComputeDerivativeQTerm2_()+ComputeDerivativeQTerm3_()));
 
 	cout<<"dummy gradient 3"<<endl;
-	for(index_t i=0; i<dummy_gradient.n_rows(); i++){
+	for(size_t i=0; i<dummy_gradient.n_rows(); i++){
 		cout<<dummy_gradient.get(i,0)<<" ";
 	}
 	cout<<endl;
@@ -639,27 +639,27 @@ void Objective::ComputeHessian(double current_sample,
   
 	/*
 	cout<<"p_beta_term1"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<dummy_p_beta_term1[i]<<" ";
 	}
 	cout<<endl;
 
 	
 	cout<<"p_beta_term2"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<dummy_p_beta_term2[i]<<" ";
 	}
 	cout<<endl;
   
   cout<<"p_beta_term3"<<endl;
-	for(index_t i=0; i<dummy_p_beta_term3.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term3.length(); i++){
 		cout<<dummy_p_beta_term3[i]<<" ";
 	}
 	cout<<endl;
 
-	//index_t i=
+	//size_t i=
 	cout<<"p_beta_term: "<<endl;
-	for(index_t i=0; i<dummy_p_beta_term1.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term1.length(); i++){
 		cout<<( (dummy_p_beta_term1[i])+(dummy_p_beta_term2[i])+(dummy_p_beta_term2[i]) )<<" ";
 	}
 	cout<<endl;
@@ -672,7 +672,7 @@ void Objective::ComputeHessian(double current_sample,
 
 	/*
 	cout<<"p_beta_term: "<<endl;
-	for(index_t i=0; i<dummy_p_beta_term.length(); i++){
+	for(size_t i=0; i<dummy_p_beta_term.length(); i++){
 		cout<<dummy_p_beta_term[i]<<" ";
 	}
 	cout<<endl;
@@ -699,8 +699,8 @@ void Objective::ComputeHessian(double current_sample,
 	 
 	/*
   cout<<"Hessian matrix beta"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian_beta.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -708,8 +708,8 @@ void Objective::ComputeHessian(double current_sample,
 	*/
 
 
-	for(index_t i=0; i<num_of_betas_+2; i++){
-		for(index_t j=0; j<num_of_betas_+2; j++){
+	for(size_t i=0; i<num_of_betas_+2; i++){
+		for(size_t j=0; j<num_of_betas_+2; j++){
 
 			if(i<num_of_betas_ && j<num_of_betas_){
 				//dummy_hessian.set(i,j, (dummy_second_beta_term1.get(i,j)
@@ -751,24 +751,24 @@ void Objective::ComputeHessian(double current_sample,
 
 	/*
 	cout<<"Hessian matrix beta1"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
 				cout<<dummy_second_beta_term1.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
 
 	cout<<"Hessian matrix beta2"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term1.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term1.n_cols(); k++){
 				cout<<dummy_second_beta_term2.get(j,k) <<"  ";
 		}
 		cout<<endl;
 	}
 
 	cout<<"Hessian matrix beta3"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -777,8 +777,8 @@ void Objective::ComputeHessian(double current_sample,
 
 	/*
 	cout<<"Hessian matrix part1"<<endl;	
-	for (index_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
-		for (index_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
+	for (size_t j=0; j<dummy_second_beta_term3.n_rows(); j++){
+		for (size_t k=0; k<dummy_second_beta_term3.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -809,8 +809,8 @@ void Objective::ComputeHessian(double current_sample,
 	
 	//la::Scale(-1.0/current_sample, &dummy_hessian);
 	cout<<"Hessian matrix before correction"<<endl;	
-	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -828,14 +828,14 @@ void Objective::ComputeHessian(double current_sample,
 
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -847,7 +847,7 @@ void Objective::ComputeHessian(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			dummy_hessian.set(i,i,(dummy_hessian.get(i,i)-max_eigen*(1.01)));
 		}
 	}
@@ -863,8 +863,8 @@ void Objective::ComputeHessian(double current_sample,
 	la::Scale(+1.0/current_sample, &dummy_hessian);
 
 	cout<<"Modified Hessian matrix"<<endl;	
-	for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -903,7 +903,7 @@ void Objective::ComputeChoiceProbability(Vector &current_parameter,
                                p, 
                                q);
 
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
 			(*choice_probability)[n]=log(postponed_probability_[n]);
 			//(*choice_probability)[n]=(postponed_probability_[n]);
@@ -929,7 +929,7 @@ void Objective::ComputeChoiceProbability(Vector &current_parameter,
 
 double Objective::ComputeTerm1_(Vector &betas) {
   double term1=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
       continue;
@@ -959,7 +959,7 @@ double Objective::ComputeTerm1_(Vector &betas) {
 
 double Objective::ComputeTerm2_() {
   double term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -975,7 +975,7 @@ double Objective::ComputeTerm2_() {
 
 double Objective::ComputeTerm3_() {
   double term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -1000,15 +1000,15 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	alpha_weight_=(double)1/num_of_alphas_;
 	double exponential_temp=0;
 	//double exp_betas_times_x2=0;
-  /*for(index_t i=0; i<postponed_probability_.size(); i++) {
+  /*for(size_t i=0; i<postponed_probability_.size(); i++) {
     postponed_probability_[i]=0;
   }
 	*/
   
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		exp_betas_times_x2_[n]=0;
 		postponed_probability_[n]=0;
-		for(index_t l=0; l<num_of_alphas_-1; l++){
+		for(size_t l=0; l<num_of_alphas_-1; l++){
 			double alpha_temp;
 	    double beta_function_temp;
       alpha_temp=(l+1)*(alpha_weight_);
@@ -1022,7 +1022,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			//int count=0;
 			double j=ind_unknown_x_[0];
 
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				
 				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
@@ -1031,7 +1031,7 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 				//count+=first_stage_x_[n].n_cols();
 				
 
-				/*for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
+				/*for(size_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
@@ -1044,11 +1044,11 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 			
 
 
-		  for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+		  for(size_t i=0; i<exp_betas_times_x2_.size(); i++) {
 			  exp_betas_times_x2_[i]=0;
 		  }
 
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				//exp_betas_times_x2_[n]=0;
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
@@ -1074,21 +1074,21 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 	}	//n
 
 		/*cout<<"second_stage_x:"<<endl;
-		for(index_t i=0; i<second_stage_x_[2].n_cols(); i++){
+		for(size_t i=0; i<second_stage_x_[2].n_cols(); i++){
 			cout<<second_stage_x_[2].get(2,i)<<" ";
 		}
 		cout<<endl;
 		*/
 	/*
 	cout<<"exp_betas_times_x2_[n] part1:"<<endl;
-	for(index_t n=0; n<exp_betas_times_x2_.size(); n++){
+	for(size_t n=0; n<exp_betas_times_x2_.size(); n++){
 		cout<<exp_betas_times_x2_[n]<<" ";
 	}
 	cout<<endl;
 	
 		
 	cout<<"postponed_probability_"<<endl;
-	for(index_t i=0; i<postponed_probability_.size(); i++){
+	for(size_t i=0; i<postponed_probability_.size(); i++){
 		cout<<postponed_probability_[i]<<" ";
 	}
 	cout<<endl;
@@ -1101,9 +1101,9 @@ void Objective::ComputePostponedProbability_(Vector &betas,
 void Objective::ComputeExpBetasTimesX1_(Vector &betas) {
   
   //double sum=0;
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		exp_betas_times_x1_[n]=0;
-		for(index_t j=0; j<first_stage_x_[n].n_cols(); j++) {
+		for(size_t j=0; j<first_stage_x_[n].n_cols(); j++) {
 			exp_betas_times_x1_[n]+=exp(la::Dot(betas.length(), 
 															betas.ptr(), 
 															first_stage_x_[n].GetColumnPtr(j)));
@@ -1118,7 +1118,7 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 	//num_of_t_beta_fn_=10;
 	t_weight_=(double)1/(num_of_t_beta_fn_);
 	double t_temp;
-	for(index_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
+	for(size_t tnum=0; tnum<num_of_t_beta_fn_-1; tnum++){
 		t_temp=(tnum+1)*(t_weight_);
 		
 		
@@ -1140,7 +1140,7 @@ void Objective::ComputeDeumeratorBetaFunction_(double p, double q) {
 //Compute dot_logit
 void Objective::ComputeDotLogit_(Vector &betas) {
 
-	/*for(index_t n=0; n<first_stage_dot_logit_.size(); n++) {
+	/*for(size_t n=0; n<first_stage_dot_logit_.size(); n++) {
 		first_stage_dot_logit_[n].Init(first_stage_x_[n].n_cols());
     first_stage_dot_logit_[n].SetZero();
   }
@@ -1148,9 +1148,9 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 
 
 	//cout<<"test "<<first_stage_dot_logit_[1][1]<<endl;
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		first_stage_dot_logit_[n].SetZero();
-		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+		for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_dot_logit_[n][i]=(exp(la::Dot( betas.length(), betas.ptr(),
 																				 first_stage_x_[n].GetColumnPtr(i) )))/
 																				 exp_betas_times_x1_[n];
@@ -1160,7 +1160,7 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 	
 
 	/*cout<<"first_stage_dot_logit_[1]="<<endl;
-	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
+	for(size_t i=0; i<first_stage_x_[1].n_cols(); i++){
 		cout<<first_stage_dot_logit_[1][i]<<" ";
 		}	//i
 	cout<<endl;
@@ -1173,32 +1173,32 @@ void Objective::ComputeDotLogit_(Vector &betas) {
 
 
 void Objective::ComputeDDotLogit_() {
-	/*for(index_t n=0; n<first_stage_ddot_logit_.size(); n++) {
+	/*for(size_t n=0; n<first_stage_ddot_logit_.size(); n++) {
 		first_stage_ddot_logit_[n].Init(first_stage_x_[n].n_cols(), first_stage_x_[n].n_cols());
 		first_stage_ddot_logit_[n].SetZero();
 	}
 	*/
 
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
-		for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
+		for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 			first_stage_ddot_logit_[n].set(i, i, first_stage_dot_logit_[n][i]);
 		}	//i
-		//for(index_t j=0; i<second_stage_x_.n_cols(); j++){
+		//for(size_t j=0; i<second_stage_x_.n_cols(); j++){
 		//	second_stage_ddot_logit_[n].set(j, j, second_stage_dot_logit_[n].get(j,1));
 		//}	//j
 	}	//n
 
 	/*
-	for(index_t i=0; i<first_stage_x_[1].n_cols(); i++){
+	for(size_t i=0; i<first_stage_x_[1].n_cols(); i++){
 			cout<<first_stage_ddot_logit_[1].get(i, i)<<" ";
 	}	//i
 	*/
 
 	/*
 	cout<<"first_stage_ddot_logit[0]"<<endl;
-	for(index_t i=0; i<first_stage_ddot_logit_[0].n_rows(); i++){
-		for(index_t j=0; j<first_stage_ddot_logit_[0].n_cols(); j++){
+	for(size_t i=0; i<first_stage_ddot_logit_[0].n_rows(); i++){
+		for(size_t j=0; j<first_stage_ddot_logit_[0].n_cols(); j++){
 			cout<<first_stage_ddot_logit_[0].get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -1225,7 +1225,7 @@ void Objective::ComputeDerivativeBetaTerm1_(Vector *beta_term1) {
 	temp3.Init(num_of_betas_);
 	temp3.SetZero();
 
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
 		
     if (first_stage_y_[n]<0) { 
 			//first_stage_y_[n]=-1 if all==zero, j_i is n chose j_i
@@ -1310,7 +1310,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 	conditional_postponed_prob.SetZero();
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 
 		sum_first_derivative_conditional_postpond_prob_[n].SetZero();
 		sum_second_derivative_conditional_postpond_prob_[n].SetZero();
@@ -1370,8 +1370,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 		
 		/*
 		cout<<"temp10"<<endl;
-		for(index_t i=0; i<temp10.n_rows(); i++){
-			for(index_t j=0; j<temp10.n_cols(); j++){
+		for(size_t i=0; i<temp10.n_rows(); i++){
+			for(size_t j=0; j<temp10.n_cols(); j++){
 				cout<<temp10.get(i,j)<<" ";
 			}
 			cout<<endl;
@@ -1382,7 +1382,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 		
 		
 
-		for(index_t l=0; l<num_of_alphas_-1; l++){
+		for(size_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);
 		
 			beta_function_temp=pow(alpha_temp, p-1)*pow((1-alpha_temp), q-1)/denumerator_beta_function_;
@@ -1391,7 +1391,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			//int count=0;
 			double j=ind_unknown_x_[0];
 
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				
 				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
@@ -1400,7 +1400,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 				//count+=first_stage_x_[n].n_cols();
 				
 
-				/*for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
+				/*for(size_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
@@ -1412,14 +1412,14 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			}	//i
 			
 
-			for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			for(size_t i=0; i<exp_betas_times_x2_.size(); i++) {
 			  exp_betas_times_x2_[i]=0;
 				//sum_first_derivative_conditional_postpond_prob_[i].SetZero();
 				//sum_second_derivative_conditional_postpond_prob_[i].SetZero();
 		  }
 		  
 
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				//exp_betas_times_x2_[n]=0;
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
@@ -1431,7 +1431,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			//int count=0;
 			double j=ind_unknown_x_[0];
 
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				
 				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
@@ -1445,7 +1445,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			
 			
 
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), betas.ptr(),
 											 second_stage_x_[n].GetColumnPtr(i) ));
 			}	//i
@@ -1454,7 +1454,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 
 
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				//Calculate second_stage_dot_logit_
 				second_stage_dot_logit_[n][i]=((exp(la::Dot(betas.length(), betas.ptr(),
 																				 second_stage_x_[n].GetColumnPtr(i))))/
@@ -1465,7 +1465,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 			/*
 			cout<<"second_stage_dot_logit[0]"<<endl;
-			for(index_t i=0; i<second_stage_dot_logit_[0].length(); i++){
+			for(size_t i=0; i<second_stage_dot_logit_[0].length(); i++){
 				cout<<second_stage_dot_logit_[0][i]<<" ";
 			}
 			cout<<endl;
@@ -1478,7 +1478,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			la::SubOverwrite(temp1, temp2, &first_derivative_conditional_postpond_prob);
 			/*
 			cout<<"n="<<n<<"first_derivative_conditional_postpond_prob middle"<<endl;
-			for(index_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
+			for(size_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
 				cout<<first_derivative_conditional_postpond_prob[i]<<" ";
 			}
 			cout<<endl;
@@ -1509,8 +1509,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 								&first_term_temp);
 			/*
 			cout<<"n="<<n<<" "<<"first_term_temp"<<endl;
-			for(index_t i=0; i<first_term_temp.n_rows(); i++){
-					for(index_t j=0; j<first_term_temp.n_cols(); j++){
+			for(size_t i=0; i<first_term_temp.n_rows(); i++){
+					for(size_t j=0; j<first_term_temp.n_cols(); j++){
 						cout<<first_term_temp.get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1550,8 +1550,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			/*
 			if(n==0){
 				cout<<"temp4"<<endl;
-				for(index_t i=0; i<temp4.n_rows(); i++){
-					for(index_t j=0; j<temp4.n_cols(); j++){
+				for(size_t i=0; i<temp4.n_rows(); i++){
+					for(size_t j=0; j<temp4.n_cols(); j++){
 						cout<<temp4.get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1573,8 +1573,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			/*
 			if(n==0){
 				cout<<"temp6"<<endl;
-				for(index_t i=0; i<temp6.n_rows(); i++){
-					for(index_t j=0; j<temp6.n_cols(); j++){
+				for(size_t i=0; i<temp6.n_rows(); i++){
+					for(size_t j=0; j<temp6.n_cols(); j++){
 						cout<<temp6.get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1591,8 +1591,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 			/*
 			if(n==0){
 				cout<<"first_term_temp"<<endl;
-				for(index_t i=0; i<first_term_temp.n_rows(); i++){
-					for(index_t j=0; j<first_term_temp.n_cols(); j++){
+				for(size_t i=0; i<first_term_temp.n_rows(); i++){
+					for(size_t j=0; j<first_term_temp.n_cols(); j++){
 						cout<<first_term_temp.get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1606,8 +1606,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 				
 
 				cout<<"second_term_temp"<<endl;
-				for(index_t i=0; i<second_term_temp.n_rows(); i++){
-					for(index_t j=0; j<second_term_temp.n_cols(); j++){
+				for(size_t i=0; i<second_term_temp.n_rows(); i++){
+					for(size_t j=0; j<second_term_temp.n_cols(); j++){
 						cout<<second_term_temp.get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1655,7 +1655,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 		//test
 		/*
 		cout<<"first_derivative_conditional_postpond_prob"<<endl;
-		for(index_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
+		for(size_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
 			cout<<first_derivative_conditional_postpond_prob[i]<<" ";
 		}
 		cout<<endl;
@@ -1704,13 +1704,13 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 	
 	/*
 	cout<<"exp_betas_times_x2_[n]:"<<endl;
-	for(index_t n=0; n<exp_betas_times_x2_.size(); n++){
+	for(size_t n=0; n<exp_betas_times_x2_.size(); n++){
 		cout<<exp_betas_times_x2_[n]<<" ";
 	}
 	cout<<endl;
 
 	cout<<"conditional_postponed_prob="<<endl;
-	for(index_t n=0; n<conditional_postponed_prob.length(); n++){
+	for(size_t n=0; n<conditional_postponed_prob.length(); n++){
 		cout<<conditional_postponed_prob[n]<<" ";
 	}
 	cout<<endl;
@@ -1720,7 +1720,7 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
   /*
 	cout<<"sum_first_derivative_conditional_postpond_prob_[0]"<<endl;
-	for(index_t i=0; i<sum_first_derivative_conditional_postpond_prob_[0].length(); i++){
+	for(size_t i=0; i<sum_first_derivative_conditional_postpond_prob_[0].length(); i++){
 		cout<<sum_first_derivative_conditional_postpond_prob_[0][i]<<" ";
 	}
 	cout<<endl;
@@ -1728,8 +1728,8 @@ void Objective::ComputeSumDerivativeConditionalPostpondProb_(Vector &betas, doub
 
 	/*
 	cout<<"sum_second_derivative_conditional_postpond_prob_[0]"<<endl;
-	for(index_t i=0; i<sum_second_derivative_conditional_postpond_prob_[0].n_rows(); i++){
-		for(index_t j=0; j<sum_second_derivative_conditional_postpond_prob_[0].n_cols(); j++){
+	for(size_t i=0; i<sum_second_derivative_conditional_postpond_prob_[0].n_rows(); i++){
+		for(size_t j=0; j<sum_second_derivative_conditional_postpond_prob_[0].n_cols(); j++){
 			cout<<sum_second_derivative_conditional_postpond_prob_[0].get(i,j)<<" ";
 		}
 	cout<<endl;
@@ -1756,7 +1756,7 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 	temp2.Init(num_of_betas_);
 	temp2.SetZero();
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -1777,20 +1777,20 @@ void Objective::ComputeDerivativeBetaTerm2_(Vector *beta_term2) {
 	beta_term2->Copy(temp2);
 	/*
 	cout<<"derivative beta term2="<<endl;
-	for(index_t i=0; i<num_of_betas_; i++){
+	for(size_t i=0; i<num_of_betas_; i++){
 		cout<<temp2[i]<<" ";
 	}
 	cout<<endl;
 
 	
 	cout<<"postponed_probability="<<endl;
-	for(index_t i=0; i<5; i++){
+	for(size_t i=0; i<5; i++){
 		cout<<postponed_probability_[i]<<" ";
 	}
 	cout<<endl;
 	
 	cout<<"sum_first_derivative_conditional_postpond_prob_="<<endl;
-	for(index_t i=0; i<sum_first_derivative_conditional_postpond_prob_[1].length(); i++){
+	for(size_t i=0; i<sum_first_derivative_conditional_postpond_prob_[1].length(); i++){
 		cout<<sum_first_derivative_conditional_postpond_prob_[1][i]<<" ";
 	}
 	cout<<endl;
@@ -1824,7 +1824,7 @@ void Objective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
 	Matrix temp4;
 	temp4.Init(num_of_betas_, num_of_betas_);
 
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
 
 		Matrix temp3;		
 		temp3.Init(num_of_betas_, first_stage_x_[n].n_cols());
@@ -1878,8 +1878,8 @@ void Objective::ComputeSecondDerivativeBetaTerm1_(Matrix *second_beta_term1) {
   //return second_derivative_beta_term1;
 	/*
 	cout<<"second_derivative_beta_term1:"<<endl;
-	for(index_t i=0; i<second_derivative_beta_term1.n_rows(); i++){
-		for(index_t j=0; j<second_derivative_beta_term1.n_cols(); j++){
+	for(size_t i=0; i<second_derivative_beta_term1.n_rows(); i++){
+		for(size_t j=0; j<second_derivative_beta_term1.n_cols(); j++){
 			cout<<second_derivative_beta_term1.get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -1910,14 +1910,14 @@ void Objective::ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2) {
 
 	
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		  if (first_stage_y_[n]<0) { 
 				continue;
 			} else {
 				/*
 				cout<<"sum_second_derivative_conditional_postpond_prob_[n]"<<endl;
-				for(index_t i=0; i<sum_second_derivative_conditional_postpond_prob_[n].n_rows(); i++){
-					for(index_t j=0; j<sum_second_derivative_conditional_postpond_prob_[n].n_cols(); j++){
+				for(size_t i=0; i<sum_second_derivative_conditional_postpond_prob_[n].n_rows(); i++){
+					for(size_t j=0; j<sum_second_derivative_conditional_postpond_prob_[n].n_cols(); j++){
 						cout<<sum_second_derivative_conditional_postpond_prob_[n].get(i,j)<<" ";
 					}
 					cout<<endl;
@@ -1967,8 +1967,8 @@ void Objective::ComputeSecondDerivativeBetaTerm2_(Matrix *second_beta_term2) {
 
 	/*
 	cout<<"second_derivative_beta_term2:"<<endl;
-	for(index_t i=0; i<second_derivative_beta_term2.n_rows(); i++){
-		for(index_t j=0; j<second_derivative_beta_term2.n_cols(); j++){
+	for(size_t i=0; i<second_derivative_beta_term2.n_rows(); i++){
+		for(size_t j=0; j<second_derivative_beta_term2.n_cols(); j++){
 			cout<<second_derivative_beta_term2.get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -1993,7 +1993,7 @@ void Objective::ComputeDerivativeBetaTerm3_(Vector *beta_term3) {
 	temp2.Init(num_of_betas_);
 	temp2.SetZero();
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2033,7 +2033,7 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 	second_derivative_beta_temp.Init(num_of_betas_, num_of_betas_);
 
 	
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		  if (first_stage_y_[n]>0) { 
 				continue;
 			} else {
@@ -2082,8 +2082,8 @@ void Objective::ComputeSecondDerivativeBetaTerm3_(Matrix *second_beta_term3) {
 
 	/*
 	cout<<"second_derivative_beta_term3:"<<endl;
-	for(index_t i=0; i<second_derivative_beta_term3.n_rows(); i++){
-		for(index_t j=0; j<second_derivative_beta_term3.n_cols(); j++){
+	for(size_t i=0; i<second_derivative_beta_term3.n_rows(); i++){
+		for(size_t j=0; j<second_derivative_beta_term3.n_cols(); j++){
 			cout<<second_derivative_beta_term3.get(i,j)<<" ";
 		}
 		cout<<endl;
@@ -2139,7 +2139,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	alpha_weight_=(double)1/num_of_alphas_;
 	t_weight_=(double)1/num_of_t_beta_fn_;
 	
-	/*for(index_t i=0; i<sum_first_derivative_p_beta_fn_.size(); i++) {
+	/*for(size_t i=0; i<sum_first_derivative_p_beta_fn_.size(); i++) {
 		sum_first_derivative_p_beta_fn_[i]=0;
 		sum_second_derivative_p_beta_fn_[i]=0;
 		sum_first_derivative_q_beta_fn_[i]=0;
@@ -2185,7 +2185,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	beta_fn_temp1=(double)1/denumerator_beta_function_;
 	
-	for(index_t m=0; m<num_of_t_beta_fn_-1; m++){
+	for(size_t m=0; m<num_of_t_beta_fn_-1; m++){
 		t_temp=(m+1)*(t_weight_);
 		//cout<<"t_temp="<<t_temp<<endl;
 		beta_fn_temp2+=(pow(t_temp, p-1)*pow(1-t_temp, q-1)*log(t_temp));
@@ -2213,7 +2213,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 
 	
-	for(index_t i=0; i<first_stage_x_.size(); i++) {
+	for(size_t i=0; i<first_stage_x_.size(); i++) {
 		sum_first_derivative_p_beta_fn_[i]=0;
 		sum_second_derivative_p_beta_fn_[i]=0;
 		sum_first_derivative_q_beta_fn_[i]=0;
@@ -2229,19 +2229,19 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	
 
 
-	for(index_t n=0; n<first_stage_x_.size(); n++){
+	for(size_t n=0; n<first_stage_x_.size(); n++){
 		//exp_betas_times_x2_[n]=0;
 		
 
 		la::MulOverwrite(first_stage_x_[n], first_stage_dot_logit_[n], &temp1);
-		for(index_t l=0; l<num_of_alphas_-1; l++){
+		for(size_t l=0; l<num_of_alphas_-1; l++){
 			alpha_temp=(l+1)*(alpha_weight_);
 
 			//Calculate x^2_{ni}(alpha_l)
 			//int count=0;
 			double j=ind_unknown_x_[0];
 
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				
 				exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
@@ -2250,7 +2250,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 				//count+=first_stage_x_[n].n_cols();
 				
 
-				/*for(index_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
+				/*for(size_t j=ind_unknown_x_[0]; j<=ind_unknown_x_[ind_unknown_x_.length()-1]; j++){
 					exponential_temp=alpha_temp*first_stage_x_[n].get(j-1, i)
 													+(alpha_temp)*(1-alpha_temp)*unknown_x_past_[n].get(0, i)
 													+(alpha_temp)*pow((1-alpha_temp),2)*unknown_x_past_[n].get(1,i);
@@ -2262,12 +2262,12 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			}	//i
 			
 
-			for(index_t i=0; i<exp_betas_times_x2_.size(); i++) {
+			for(size_t i=0; i<exp_betas_times_x2_.size(); i++) {
 			  exp_betas_times_x2_[i]=0;
 		  }
 		  
 
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				//exp_betas_times_x2_[n]=0;
 				exp_betas_times_x2_[n]+=exp(la::Dot(betas.length(), 
 																betas.ptr(),
@@ -2275,7 +2275,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			}
 	
 			//cout<<"exp_betas_times_x2_a="<<exp_betas_times_x2_[0]<<endl;
-			for(index_t i=0; i<second_stage_x_[n].n_cols(); i++) {
+			for(size_t i=0; i<second_stage_x_[n].n_cols(); i++) {
 				//Calculate second_stage_dot_logit_
 				second_stage_dot_logit_[n][i]=((exp(la::Dot(betas.length(), betas.ptr(),
 																				 second_stage_x_[n].GetColumnPtr(i))))/
@@ -2291,7 +2291,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 			la::Scale( (conditional_postponed_prob[n]*(1-conditional_postponed_prob[n])), &first_derivative_conditional_postpond_prob);
 			/*
 			cout<<"n="<<n<<"first_derivative_conditional_postpond_prob="<<endl;
-			for(index_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
+			for(size_t i=0; i<first_derivative_conditional_postpond_prob.length(); i++){
 				cout<<first_derivative_conditional_postpond_prob[i]<<" ";
 			}
 			cout<<endl;
@@ -2370,7 +2370,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 	//cout<<"conditional_postponed_prob[0]="<<conditional_postponed_prob[0]<<endl;
 	/*
 	cout<<"sum_first_derivative_p_beta_fn_"<<endl;
-	for(index_t i=0; i<sum_first_derivative_p_beta_fn_.size(); i++){
+	for(size_t i=0; i<sum_first_derivative_p_beta_fn_.size(); i++){
 		cout<<sum_first_derivative_p_beta_fn_[i]<<" ";
 	}
 	cout<<endl;
@@ -2378,7 +2378,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 	/*
 	cout<<"sum_second_derivative_p_beta_fn_"<<endl;
-	for(index_t i=0; i<sum_second_derivative_p_beta_fn_.size(); i++){
+	for(size_t i=0; i<sum_second_derivative_p_beta_fn_.size(); i++){
 		cout<<sum_second_derivative_p_beta_fn_[i]<<" ";
 	}
 	cout<<endl;
@@ -2391,7 +2391,7 @@ void Objective::ComputeSumDerivativeBetaFunction_(Vector &betas, double p, doubl
 
 double Objective::ComputeDerivativePTerm2_() {
 	double derivative_p_term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
 		
     if (first_stage_y_[n]<0) {
       continue;
@@ -2411,7 +2411,7 @@ double Objective::ComputeDerivativePTerm2_() {
 
 double Objective::ComputeDerivativePTerm3_() {
 	double derivative_p_term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2425,7 +2425,7 @@ double Objective::ComputeDerivativePTerm3_() {
 
 double Objective::ComputeSecondDerivativePTerm2_() {
 	double second_derivative_p_term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2443,7 +2443,7 @@ double Objective::ComputeSecondDerivativePTerm2_() {
 
 double Objective::ComputeSecondDerivativePTerm3_() {
 	double second_derivative_p_term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2459,7 +2459,7 @@ double Objective::ComputeSecondDerivativePTerm3_() {
 
 double Objective::ComputeDerivativeQTerm2_() {
 	double derivative_q_term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2474,7 +2474,7 @@ double Objective::ComputeDerivativeQTerm2_() {
 
 double Objective::ComputeDerivativeQTerm3_() {
 	double derivative_q_term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2490,7 +2490,7 @@ double Objective::ComputeDerivativeQTerm3_() {
 
 double Objective::ComputeSecondDerivativeQTerm2_(){
 	double second_derivative_q_term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2507,7 +2507,7 @@ double Objective::ComputeSecondDerivativeQTerm2_(){
 
 double Objective::ComputeSecondDerivativeQTerm3_() {
 	double second_derivative_q_term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2552,7 +2552,7 @@ void Objective::ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2) {
 
 
 	//second_derivative_p_beta_term2.SetZero();
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2569,19 +2569,19 @@ void Objective::ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2) {
 			cout<<"n="<<n<<" "<<"postponed_probability_[n]"<<postponed_probability_[n]<<endl;
 
 			cout<<"temp2"<<endl;
-			for(index_t i=0; i<temp2.length(); i++){
+			for(size_t i=0; i<temp2.length(); i++){
 				cout<<temp2[i]<<" ";
 			}
 			cout<<endl;
 
 			cout<<"temp1"<<endl;
-			for(index_t i=0; i<temp1.length(); i++){
+			for(size_t i=0; i<temp1.length(); i++){
 				cout<<temp1[i]<<" ";
 			}
 			cout<<endl;
 
 			cout<<"n="<<n<<" "<<"sum_second_derivative_conditionl_postponed_p_"<<endl;
-			for(index_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
+			for(size_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
 				cout<<sum_second_derivative_conditionl_postponed_p_[n][i]<<" ";
 			}
 			cout<<endl;
@@ -2594,14 +2594,14 @@ void Objective::ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2) {
       //second_derivative_p_beta_term2+=(sum_first_derivative_q_beta_fn_[n]/(1-postponed_probability_[n]));
 			/*
 			cout<<"sum_second_derivative_conditionl_postponed_p_"<<endl;
-			for(index_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
+			for(size_t i=0; i<sum_second_derivative_conditionl_postponed_p_[n].length(); i++){
 				cout<<sum_second_derivative_conditionl_postponed_p_[n][i]<<" ";
 			}
 			cout<<endl;
 			
 
 			cout<<"second_derivative_p_beta_term2"<<endl;
-			for(index_t i=0; i<second_derivative_p_beta_term2.length(); i++){
+			for(size_t i=0; i<second_derivative_p_beta_term2.length(); i++){
 				cout<<second_derivative_p_beta_term2[i]<<" ";
 			}
 			cout<<endl;
@@ -2614,7 +2614,7 @@ void Objective::ComputeSecondDerivativePBetaTerm2_(Vector *p_beta_term2) {
 	
 	/*
 	cout<<"second_derivative_p_beta_term2"<<endl;
-	for(index_t i=0; i<second_derivative_p_beta_term2.length(); i++){
+	for(size_t i=0; i<second_derivative_p_beta_term2.length(); i++){
 		cout<<second_derivative_p_beta_term2[i]<<" ";
 	}
 	cout<<endl;
@@ -2642,7 +2642,7 @@ void Objective::ComputeSecondDerivativePBetaTerm3_(Vector *p_beta_term3) {
 
 
 	//second_derivative_p_beta_term2.SetZero();
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2663,7 +2663,7 @@ void Objective::ComputeSecondDerivativePBetaTerm3_(Vector *p_beta_term3) {
 
 	/*
 	cout<<"second_derivative_p_beta_term3"<<endl;
-	for(index_t i=0; i<second_derivative_p_beta_term3.length(); i++){
+	for(size_t i=0; i<second_derivative_p_beta_term3.length(); i++){
 		cout<<second_derivative_p_beta_term3[i]<<" ";
 	}
 	cout<<endl;
@@ -2698,7 +2698,7 @@ void Objective::ComputeSecondDerivativeQBetaTerm2_(Vector *q_beta_term2) {
 
 
 	//second_derivative_p_beta_term2.SetZero();
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2719,7 +2719,7 @@ void Objective::ComputeSecondDerivativeQBetaTerm2_(Vector *q_beta_term2) {
 
 	/*
 	cout<<"second_derivative_q_beta_term2"<<endl;
-	for(index_t i=0; i<second_derivative_q_beta_term2.length(); i++){
+	for(size_t i=0; i<second_derivative_q_beta_term2.length(); i++){
 		cout<<second_derivative_q_beta_term2[i]<<" ";
 	}
 	cout<<endl;
@@ -2747,7 +2747,7 @@ void Objective::ComputeSecondDerivativeQBetaTerm3_(Vector *q_beta_term3) {
 
 
 	//second_derivative_p_beta_term2.SetZero();
-	for(index_t n=0; n<first_stage_x_.size(); n++) {
+	for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2767,7 +2767,7 @@ void Objective::ComputeSecondDerivativeQBetaTerm3_(Vector *q_beta_term3) {
 
 	/*
 	cout<<"second_derivative_q_beta_term3"<<endl;
-	for(index_t i=0; i<second_derivative_q_beta_term3.length(); i++){
+	for(size_t i=0; i<second_derivative_q_beta_term3.length(); i++){
 		cout<<second_derivative_q_beta_term3[i]<<" ";
 	}
 	cout<<endl;
@@ -2788,7 +2788,7 @@ double Objective::ComputeSecondDerivativePQTerm1_() {
 
 double Objective::ComputeSecondDerivativePQTerm2_() {
 	double second_derivative_p_q_term2=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]<0) {
       continue;
     } else {
@@ -2807,7 +2807,7 @@ double Objective::ComputeSecondDerivativePQTerm2_() {
 
 double Objective::ComputeSecondDerivativePQTerm3_() {
 	double second_derivative_p_q_term3=0;
-  for(index_t n=0; n<first_stage_x_.size(); n++) {
+  for(size_t n=0; n<first_stage_x_.size(); n++) {
     if (first_stage_y_[n]>0) {
       continue;
     } else {
@@ -2852,13 +2852,13 @@ void Objective::CheckGradient(double current_sample,
 	dummy_approx_gradient.Init(num_of_betas_+2);
 	dummy_approx_gradient.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_+2); i++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
 		e.SetZero();
 		e[i]=1.0;
 		la::Scale(epsilon, &e);
 		/*
 		cout<<"e="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<e[i]<<" ";
 		}
 		cout<<endl;
@@ -2869,13 +2869,13 @@ void Objective::CheckGradient(double current_sample,
 		
 		/*
 		cout<<"u1="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<u1[i]<<" ";
 		}
 		cout<<endl;
 
 		cout<<"u2="<<endl;
-		for(index_t i=0; i<e.length(); i++){
+		for(size_t i=0; i<e.length(); i++){
 			cout<<u2[i]<<" ";
 		}
 		cout<<endl;
@@ -2974,7 +2974,7 @@ void Objective::CheckHessian(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_+2, num_of_betas_+2);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_+2); i++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
 		ei.SetZero();
 		ei[i]=1.0;
 		la::Scale(epsilon, &ei);
@@ -2997,7 +2997,7 @@ void Objective::CheckHessian(double current_sample,
 		//dummy_approx_gradient[i]=(u1_objective-u2_objective)/(2*epsilon);
 		
 
-		for(index_t j=0; j<(num_of_betas_+2); j++){
+		for(size_t j=0; j<(num_of_betas_+2); j++){
 			ej.SetZero();
 			ej[j]=1.0;
 			la::Scale(epsilon, &ej);
@@ -3028,8 +3028,8 @@ void Objective::CheckHessian(double current_sample,
 
 	/*
 	cout<<"dummy_hessian_nonsymmetric"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -3038,8 +3038,8 @@ void Objective::CheckHessian(double current_sample,
 
 
 	//Make hessian symmetric
-	for(index_t i=0; i<(num_of_betas_+2); i++){
-		for(index_t j=0; j<(num_of_betas_+2); j++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
+		for(size_t j=0; j<(num_of_betas_+2); j++){
 
 			double temp2=0;
 			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
@@ -3055,14 +3055,14 @@ void Objective::CheckHessian(double current_sample,
 	
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -3074,7 +3074,7 @@ void Objective::CheckHessian(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			//dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen+0.5)));
 			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-(max_eigen*1.1)));
 		}
@@ -3089,15 +3089,15 @@ void Objective::CheckHessian(double current_sample,
 
 	cout<<"eigen values of updated hessian"<<endl;
 
-	for(index_t i=0; i<eigen_hessian2.length(); i++){
+	for(size_t i=0; i<eigen_hessian2.length(); i++){
 		cout<<eigen_hessian2[i]<<" ";
 	}
 	cout<<endl;
 	cout<<endl;
 
 	cout<<"eigen vectors of updated hessian"<<endl;
-  for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+  for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<eigenvec_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -3121,7 +3121,7 @@ void Objective::CheckHessian3(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_+2, num_of_betas_+2);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_+2); i++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
 		dummy_approx_hessian.set(i,i,-1);
 	}
 
@@ -3129,8 +3129,8 @@ void Objective::CheckHessian3(double current_sample,
 
 /*
 	cout<<"hessian0"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -3176,7 +3176,7 @@ void Objective::CheckHessian2(double current_sample,
 	dummy_approx_hessian.Init(num_of_betas_+2, num_of_betas_+2);
 	dummy_approx_hessian.SetZero();
 
-	for(index_t i=0; i<(num_of_betas_+2); i++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
 		ei.SetZero();
 		ei[i]=1.0;
 		la::Scale(epsilon, &ei);
@@ -3193,7 +3193,7 @@ void Objective::CheckHessian2(double current_sample,
 		ComputeObjective(current_sample, current_parameter, &fourth_term);
 		fourth_term=-1*fourth_term;
 		
-		for(index_t j=0; j<(num_of_betas_+2); j++){
+		for(size_t j=0; j<(num_of_betas_+2); j++){
 			ej.SetZero();
 			ej[i]=1.0;
 			la::Scale(epsilon, &ej);
@@ -3214,8 +3214,8 @@ void Objective::CheckHessian2(double current_sample,
 	}
 
 	//Make hessian symmetric
-	for(index_t i=0; i<(num_of_betas_+2); i++){
-		for(index_t j=0; j<(num_of_betas_+2); j++){
+	for(size_t i=0; i<(num_of_betas_+2); i++){
+		for(size_t j=0; j<(num_of_betas_+2); j++){
 
 			double temp2=0;
 			temp2=(dummy_approx_hessian.get(i,j)+dummy_approx_hessian.get(j,i))/(2.0);
@@ -3225,8 +3225,8 @@ void Objective::CheckHessian2(double current_sample,
 	}
 
 	cout<<"dummy_hessian2"<<endl;
-	for (index_t j=0; j<dummy_approx_hessian.n_rows(); j++){
-		for (index_t k=0; k<dummy_approx_hessian.n_cols(); k++){
+	for (size_t j=0; j<dummy_approx_hessian.n_rows(); j++){
+		for (size_t k=0; k<dummy_approx_hessian.n_cols(); k++){
 			cout<<dummy_approx_hessian.get(j,k) <<"  ";
 		}
 		cout<<endl;
@@ -3238,14 +3238,14 @@ void Objective::CheckHessian2(double current_sample,
 
 	cout<<"eigen values"<<endl;
 
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		cout<<eigen_hessian[i]<<" ";
 	}
 	cout<<endl;
 
 	double max_eigen=0;
 	//cout<<"eigen_value:"<<endl;
-	for(index_t i=0; i<eigen_hessian.length(); i++){
+	for(size_t i=0; i<eigen_hessian.length(); i++){
 		//cout<<eigen_hessian[i]<<" ";
 		if(eigen_hessian[i]>max_eigen){
 			max_eigen=eigen_hessian[i];
@@ -3257,7 +3257,7 @@ void Objective::CheckHessian2(double current_sample,
 
 	if(max_eigen>0){
 		NOTIFY("Hessian is not Negative definite..Modify...");
-		for(index_t i=0; i<eigen_hessian.length(); i++){
+		for(size_t i=0; i<eigen_hessian.length(); i++){
 			dummy_approx_hessian.set(i,i,(dummy_approx_hessian.get(i,i)-max_eigen*(1.01)));
 		}
 	}
@@ -3276,7 +3276,7 @@ void Objective::CheckHessian2(double current_sample,
 
 void Objective::ComputePredictionError(double current_sample, 
 									  Vector &current_parameter,
-										ArrayList<index_t> &true_decision,
+										ArrayList<size_t> &true_decision,
 										double *postponed_prediction_error,
 										double *choice_prediction_error){
 
@@ -3299,11 +3299,11 @@ void Objective::ComputePredictionError(double current_sample,
   //predicted_postponed_probability.Init(true_decision.length());
 	//predicted_postponed_probability=postponed_probability_[n]
 
-	index_t number_of_test=true_decision.size();
+	size_t number_of_test=true_decision.size();
 
 	ArrayList<Vector> predicted_choice_probability_all;
   predicted_choice_probability_all.Init(number_of_test);
-	for(index_t n=0; n<predicted_choice_probability_all.size(); n++){
+	for(size_t n=0; n<predicted_choice_probability_all.size(); n++){
 		predicted_choice_probability_all[n].Init(first_stage_x_[n].n_cols());
     predicted_choice_probability_all[n].SetZero();
 	}
@@ -3320,12 +3320,12 @@ void Objective::ComputePredictionError(double current_sample,
   predicted_decision.Init(number_of_test);
   predicted_decision.SetAll(-1.0);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		if(postponed_probability_[n]>=0.5) {
 			predicted_decision[n]=-1;
 			predicted_choice_probability[n]=postponed_probability_[n];
 		} else {
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				Vector temp;
 				first_stage_x_[n].MakeColumnVector(i, &temp);
 				predicted_choice_probability_all[n][i]=
@@ -3333,9 +3333,9 @@ void Objective::ComputePredictionError(double current_sample,
 					*(1-postponed_probability_[n]);
 			}
 			//find the alternative with maximum choice_prob.
-			index_t index_chosen_alternative=0;
+			size_t index_chosen_alternative=0;
 			double max_choce_probability=-100;
-			for(index_t i=0; i<first_stage_x_[n].n_cols(); i++){
+			for(size_t i=0; i<first_stage_x_[n].n_cols(); i++){
 				if(postponed_probability_[n]<0.5){
 					if(max_choce_probability<predicted_choice_probability_all[n][i]){
 						index_chosen_alternative=i;
@@ -3353,14 +3353,14 @@ void Objective::ComputePredictionError(double current_sample,
 	Matrix mtx_predicted_decision;
   mtx_predicted_decision.Init(number_of_test,1);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		mtx_predicted_decision.set(n,0, predicted_decision[n]);
 	}
 
   Matrix mtx_predicted_choice_probability;
   mtx_predicted_choice_probability.Init(number_of_test,1);
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		mtx_predicted_choice_probability.set(n,0, predicted_choice_probability[n]);
 	}
 
@@ -3382,7 +3382,7 @@ void Objective::ComputePredictionError(double current_sample,
 	double count_correct_postponed=0;
 	double count_correct_choice=0;
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		//if(true_decision[n]==-1 &&predicted_decision[n]==-1){
 	  if(true_decision[n]*predicted_decision[n]>0){
 			count_correct_postponed=count_correct_postponed+1;
@@ -3412,7 +3412,7 @@ void Objective::ComputePredictionError(double current_sample,
 	double count_true_postponed=0;
 	double count_predicted_postponed=0;
 
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		if(true_decision[n]<0) {
 			count_true_postponed+=1;
 			predicted_prob_of_n_choose_i[n]=postponed_probability_[n];
@@ -3437,7 +3437,7 @@ void Objective::ComputePredictionError(double current_sample,
 	//double temp_postponed_prediction_error_prob=0;
 	double temp_choice_prediction_error_prob=0;
 	double temp_postpone_prediction_error_prob=0;
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		//temp_choice_prediction_error_prob+=(1-predicted_prob_of_n_choose_i[n]);
 		if(true_decision[n]<0) {
 			temp_choice_prediction_error_prob+=(1-postponed_probability_[n]);
@@ -3458,7 +3458,7 @@ void Objective::ComputePredictionError(double current_sample,
 
 	/*
 	cout<<"predicted_decision"<<endl;
-	for(index_t n=0; n<number_of_test; n++){
+	for(size_t n=0; n<number_of_test; n++){
 		cout<<predicted_decision[n]<<" ";
 	}
 	cout<<endl;

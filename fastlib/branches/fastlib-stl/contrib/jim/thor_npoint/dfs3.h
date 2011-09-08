@@ -58,8 +58,8 @@ class ThreeTreeDepthFirst {
    */
   void Doit(
       const typename GNP::Param& param_in,
-      index_t q_root_index,
-      index_t q_node_end_index,
+      size_t q_root_index,
+      size_t q_node_end_index,
       DistributedCache *q_points,
       DistributedCache *q_nodes,
       DistributedCache *r_points,
@@ -78,7 +78,7 @@ class ThreeTreeDepthFirst {
   }
 
  private:
-  __attribute__((noinline)) void Begin_(index_t q_root_index);
+  __attribute__((noinline)) void Begin_(size_t q_root_index);
   __attribute__((noinline)) void Pair_(
       const typename GNP::QNode *q_node,
       const typename GNP::RNode *r_node,
@@ -108,7 +108,7 @@ class ThreeTreeDepthFirst {
   /**
    * Postprocesses results and pushes down any postponed prunes.
    */
-  void PushDownPostprocess_(index_t q_node_i, QMutables *q_node_mut);
+  void PushDownPostprocess_(size_t q_node_i, QMutables *q_node_mut);
 };
 
 #include "dfs3_impl.h"

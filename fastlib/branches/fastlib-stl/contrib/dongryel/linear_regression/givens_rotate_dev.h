@@ -9,7 +9,7 @@ void GivensRotate::ApplyToRow(double cosine_value, double sine_value,
                               int second_row_index,
                               MatrixType &matrix) {
 
-  for (index_t j = 0; j < matrix.n_cols(); j++) {
+  for (size_t j = 0; j < matrix.n_cols(); j++) {
     double first_row_number = matrix.get(first_row_index, j);
     double second_row_number = matrix.get(second_row_index, j);
     double first_new_number =
@@ -27,7 +27,7 @@ void GivensRotate::ApplyToColumn(double cosine_value, double sine_value,
                                  int second_column_index,
                                  MatrixType &matrix) {
 
-  for (index_t j = 0; j < matrix.n_rows(); j++) {
+  for (size_t j = 0; j < matrix.n_rows(); j++) {
     double first_column_number = matrix.get(j, first_column_index);
     double second_column_number = matrix.get(j, second_column_index);
     double first_new_number =

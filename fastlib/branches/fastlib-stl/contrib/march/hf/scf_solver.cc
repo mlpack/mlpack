@@ -30,7 +30,7 @@ double SCFSolver::ComputeKineticIntegral_(double dist) {
 
 
 double SCFSolver::ComputeNuclearIntegral_(const Vector& nuclear_position, 
-                                          index_t nuclear_index,
+                                          size_t nuclear_index,
                                           const Vector& mu, const Vector& nu) {
 
   double integral = math::PI/bandwidth_;
@@ -57,10 +57,10 @@ double SCFSolver::ComputeNuclearIntegral_(const Vector& nuclear_position,
 
 void SCFSolver::ComputeOneElectronMatrices_() {
   
-  for (index_t row_index = 0; row_index < number_of_basis_functions_; 
+  for (size_t row_index = 0; row_index < number_of_basis_functions_; 
        row_index++) {
     
-    for (index_t col_index = row_index; col_index < number_of_basis_functions_; 
+    for (size_t col_index = row_index; col_index < number_of_basis_functions_; 
          col_index++) {
       
       Vector row_vec;
@@ -74,7 +74,7 @@ void SCFSolver::ComputeOneElectronMatrices_() {
       double overlap_integral = ComputeOverlapIntegral_(dist);
       
       double nuclear_integral = 0.0;
-      for (index_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
+      for (size_t nuclear_index = 0; nuclear_index < number_of_nuclei_; 
            nuclear_index++) {
         
         Vector nuclear_position;
@@ -111,9 +111,9 @@ double SCFSolver::ComputeNuclearRepulsion_() {
   
   double nuclear_energy = 0.0;
   
-  for (index_t a = 0; a < number_of_nuclei_; a++) {
+  for (size_t a = 0; a < number_of_nuclei_; a++) {
     
-    for (index_t b = a+1; b < number_of_nuclei_; b++) {
+    for (size_t b = a+1; b < number_of_nuclei_; b++) {
       
       Vector a_vec; 
       nuclear_centers_.MakeColumnVector(a, &a_vec);

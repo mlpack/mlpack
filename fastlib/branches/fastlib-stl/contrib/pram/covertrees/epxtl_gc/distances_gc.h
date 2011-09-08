@@ -12,11 +12,11 @@ namespace pdc {
     DEBUG_SAME_SIZE(x.length(), y.length());
     T *vx = x.ptr();
     T *vy = y.ptr();
-    index_t length = x.length();
+    size_t length = x.length();
     T s = 0;
-    index_t batch = 120;
-    index_t t =(index_t) ((T) length / (T) batch);
-    index_t t1 = t;
+    size_t batch = 120;
+    size_t t =(size_t) ((T) length / (T) batch);
+    size_t t1 = t;
 
     upper_bound *= upper_bound;
 

@@ -71,7 +71,7 @@ class AllkFN {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at zero
       min_distance_so_far_ = 0;
     } 
@@ -80,7 +80,7 @@ class AllkFN {
      * Initialization function used in tree-building when initializing a non-leaf node.  For other algorithms,
      * node statistics can be built using information from the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
         const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the same way as leaves
       Init(matrix, start, count);
@@ -103,18 +103,18 @@ class AllkFN {
   TreeType* query_tree_;
   TreeType* reference_tree_;
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_references_;
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  ArrayList<size_t> neighbor_indices_;
   // number of nearest neighbrs
-  index_t kfns_; 
+  size_t kfns_; 
    // The module containing the parameters for this computation. 
   struct datanode* module_;
   
@@ -178,23 +178,23 @@ class AllkFN {
     
     // Used to find the query node's new upper bound
     double query_min_neighbor_distance = DBL_MAX;
-    std::vector<std::pair<double, index_t> > neighbors(kfns_);
+    std::vector<std::pair<double, size_t> > neighbors(kfns_);
     // node->begin() is the index of the first point in the node, 
     // node->end is one past the last index
-    for (index_t query_index = query_node->begin(); 
+    for (size_t query_index = query_node->begin(); 
          query_index < query_node->end(); query_index++) {
        
       // Get the query point from the matrix
       Vector query_point;
       queries_.MakeColumnVector(query_index, &query_point);
       
-      index_t ind = query_index*kfns_;
-      for(index_t i=0; i<kfns_; i++) {
+      size_t ind = query_index*kfns_;
+      for(size_t i=0; i<kfns_; i++) {
         neighbors[i]=std::make_pair(neighbor_distances_[ind+i],
                                     neighbor_indices_[ind+i]);
       }
       // We'll do the same for the references
-      for (index_t reference_index = reference_node->begin(); 
+      for (size_t reference_index = reference_node->begin(); 
            reference_index < reference_node->end(); reference_index++) {
 
 	      // Confirm that points do not identify themselves as neighbors
@@ -214,8 +214,8 @@ class AllkFN {
 	      }
 	    } // for reference_index
       std::sort(neighbors.begin(), neighbors.end(),
-         std::greater<std::pair<double, index_t> >());
-      for(index_t i=0; i<kfns_; i++) {
+         std::greater<std::pair<double, size_t> >());
+      for(size_t i=0; i<kfns_; i++) {
         neighbor_distances_[ind+i] = neighbors[i].first;
         neighbor_indices_[ind+i]  = neighbors[i].second;
       }
@@ -442,7 +442,7 @@ class AllkFN {
 
   }
   void Init(const Matrix& queries_in, const Matrix& references_in, 
-      index_t leaf_size, index_t kfns) {
+      size_t leaf_size, size_t kfns) {
     
     // track the number of prunes
     number_of_prunes_ = 0;
@@ -480,7 +480,7 @@ class AllkFN {
 
   } // Init
 
-  void Init(const Matrix& references_in, index_t leaf_size, index_t kfns) {
+  void Init(const Matrix& references_in, size_t leaf_size, size_t kfns) {
     // track the number of prunes
     number_of_prunes_ = 0;
     
@@ -535,7 +535,7 @@ class AllkFN {
    * This means that we simply ignore the tree building.
    */
   void InitNaive(const Matrix& queries_in, 
-      const Matrix& references_in, index_t kfns){
+      const Matrix& references_in, size_t kfns){
     
     queries_.Copy(queries_in);
     references_.Copy(references_in);
@@ -558,7 +558,7 @@ class AllkFN {
         
   } // InitNaive
   
-   void InitNaive(const Matrix& references_in, index_t kfns){
+   void InitNaive(const Matrix& references_in, size_t kfns){
     
     references_.Copy(references_in);
     queries_.Alias(references_);
@@ -582,7 +582,7 @@ class AllkFN {
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNeighbors(ArrayList<size_t>* resulting_neighbors,
                         ArrayList<double>* distances) {
     
     // Start on the root of each tree
@@ -600,7 +600,7 @@ class AllkFN {
     // We need to map the indices back from how they have 
     // been permuted
     if (query_tree_ != NULL) {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
           old_from_new_queries_[i/kfns_]*kfns_+ i%kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
@@ -609,7 +609,7 @@ class AllkFN {
           neighbor_distances_[i];
       }
     } else {
-      for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+      for (size_t i = 0; i < neighbor_indices_.size(); i++) {
         (*resulting_neighbors)[
           old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
           old_from_new_references_[neighbor_indices_[i]];
@@ -624,7 +624,7 @@ class AllkFN {
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNaive(ArrayList<size_t>* resulting_neighbors,
                     ArrayList<double>*  distances) {
     if (query_tree_!=NULL) {
       ComputeBaseCase_(query_tree_, reference_tree_);
@@ -637,7 +637,7 @@ class AllkFN {
     distances->Init(neighbor_distances_.length());
     // We need to map the indices back from how they have 
     // been permuted
-    for (index_t i = 0; i < neighbor_indices_.size(); i++) {
+    for (size_t i = 0; i < neighbor_indices_.size(); i++) {
       (*resulting_neighbors)[
         old_from_new_references_[i/kfns_]*kfns_+ i%kfns_] = 
         old_from_new_references_[neighbor_indices_[i]];

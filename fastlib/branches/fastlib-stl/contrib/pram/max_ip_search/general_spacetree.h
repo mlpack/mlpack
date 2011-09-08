@@ -37,8 +37,8 @@ class GeneralBinarySpaceTree {
   Bound bound_;
   GeneralBinarySpaceTree *left_;
   GeneralBinarySpaceTree *right_;
-  index_t begin_;
-  index_t count_;
+  size_t begin_;
+  size_t count_;
   Statistic stat_;
   
   public:
@@ -62,7 +62,7 @@ class GeneralBinarySpaceTree {
   }
   */
   
-  void Init(index_t begin_in, index_t count_in) {
+  void Init(size_t begin_in, size_t count_in) {
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
@@ -82,7 +82,7 @@ class GeneralBinarySpaceTree {
    * @return the found node, or NULL
    */
   const GeneralBinarySpaceTree* FindByBeginCount
-  (index_t begin_q, index_t count_q) const {
+  (size_t begin_q, size_t count_q) const {
     DEBUG_ASSERT(begin_q >= begin_);
     DEBUG_ASSERT(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
@@ -108,7 +108,7 @@ class GeneralBinarySpaceTree {
    * @return the found node, or NULL
    */
   GeneralBinarySpaceTree* FindByBeginCount
-  (index_t begin_q, index_t count_q) {
+  (size_t begin_q, size_t count_q) {
     DEBUG_ASSERT(begin_q >= begin_);
     DEBUG_ASSERT(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
@@ -179,21 +179,21 @@ class GeneralBinarySpaceTree {
   /**
    * Gets the index of the begin point of this subset.
    */
-  index_t begin() const {
+  size_t begin() const {
     return begin_;
   }
 
   /**
    * Gets the index one beyond the last index in the series.
    */
-  index_t end() const {
+  size_t end() const {
     return begin_ + count_;
   }
   
   /**
    * Gets the number of points in this subset.
    */
-  index_t count() const {
+  size_t count() const {
     return count_;
   }
   

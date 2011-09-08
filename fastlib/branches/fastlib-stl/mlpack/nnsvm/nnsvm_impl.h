@@ -13,12 +13,12 @@ using namespace mlpack::nnsvm;
 * @param: module name
 */
 template<typename TKernel>
-void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes)
+void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes)
 {
   Init(dataset, n_classes, 10, dataset.n_rows, 1.0e-6, 1000);
 }
 template<typename TKernel>
-void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter)
+void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter)
 {
   param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
@@ -34,7 +34,7 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, index_t c
   param_.eps_ = eps;
   //max iterations: max_iter, default: 1000
   param_.max_iter_ = max_iter;
-  fprintf(stderr, "c=%f, eps=%g, max_iter=%"LI" \n", param_.c_, param_.eps_, param_.max_iter_);
+  fprintf(stderr, "c=%f, eps=%g, max_iter=%zu \n", param_.c_, param_.eps_, param_.max_iter_);
 }
 
 /**
@@ -46,13 +46,13 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, index_t n_classes, index_t c
 */
 template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
-    const arma::mat& dataset, index_t n_classes)
+    const arma::mat& dataset, size_t n_classes)
 {
   InitTrain(dataset, n_classes, 10, dataset.n_rows, 1.0e-6, 1000);
 }
 template<typename TKernel>
 void NNSVM<TKernel>::InitTrain(
-    const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter)
+    const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter)
 {
   std::cerr << "made it to " << __LINE__ << " in "__FILE__"\n";
   Init(dataset, n_classes, c, b, eps, max_iter);
@@ -100,20 +100,20 @@ void NNSVM<TKernel>::SaveModel(std::string modelfilename)
 
   fprintf(fp, "svm_type svm_c\n"); // TODO: svm-mu, svm-regression...
   fprintf(fp, "kernel_name %s\n", param_.kernelname_.c_str());
-  fprintf(fp, "kernel_typeid %"LI"\n", param_.kerneltypeid_);
+  fprintf(fp, "kernel_typeid %zu\n", param_.kerneltypeid_);
   // save kernel parameters
   param_.kernel_.SaveParam(fp);
-  fprintf(fp, "total_num_sv %"LI"\n", model_.num_sv_);
+  fprintf(fp, "total_num_sv %zu\n", model_.num_sv_);
   fprintf(fp, "threshold %g\n", model_.thresh_);
   fprintf(fp, "weights");
-  index_t len = model_.w_.n_elem;
-  for(index_t s = 0; s < len; s++)
+  size_t len = model_.w_.n_elem;
+  for(size_t s = 0; s < len; s++)
     fprintf(fp, " %f", model_.w_[s]);
   fprintf(fp, "\nsvs\n");
-  for(index_t i=0; i < model_.num_sv_; i++)
+  for(size_t i=0; i < model_.num_sv_; i++)
   {
      fprintf(fp, "%f ", model_.sv_coef_[i]);
-     for(index_t s=0; s < num_features_; s++)
+     for(size_t s=0; s < num_features_; s++)
      {
        fprintf(fp, "%f ", support_vectors_(s, i));
      }
@@ -144,7 +144,7 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
     return;
   }
   char cmd[80];
-  index_t i, j;
+  size_t i, j;
   double temp_f;
   char kernel_name[1024];
   while (1)
@@ -165,11 +165,11 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
     }
     else if (strcmp(cmd, "kernel_typeid") == 0)
     {
-      fscanf(fp, "%"LI, &param_.kerneltypeid_);
+      fscanf(fp, "%zu", &param_.kerneltypeid_);
     }
     else if (strcmp(cmd, "total_num_sv") == 0)
     {
-      fscanf(fp, "%"LI, &model_.num_sv_);
+      fscanf(fp, "%zu", &model_.num_sv_);
     }
     else if (strcmp(cmd, "threshold") == 0)
     {
@@ -177,7 +177,7 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
     }
     else if (strcmp(cmd, "weights")==0)
     {
-      for (index_t s= 0; s < num_features_; s++)
+      for (size_t s= 0; s < num_features_; s++)
       {
         fscanf(fp, "%lf", &temp_f);
         model_.w_[s] = temp_f;
@@ -218,7 +218,7 @@ void NNSVM<TKernel>::LoadModel(arma::mat& testset, std::string modelfilename)
 */
 
 template<typename TKernel>
-index_t NNSVM<TKernel>::Classify(const arma::vec& datum)
+size_t NNSVM<TKernel>::Classify(const arma::vec& datum)
 {
   double summation = dot(model_.w_, datum);
 
@@ -247,15 +247,15 @@ void NNSVM<TKernel>::BatchClassify(arma::mat& testset, std::string testlablefile
     return;
   }
   num_features_ = testset.n_cols - 1;
-  for (index_t i = 0; i < testset.n_rows; i++)
+  for (size_t i = 0; i < testset.n_rows; i++)
   {
     arma::vec testvec(num_features_);
-    for(index_t j = 0; j < num_features_; j++)
+    for(size_t j = 0; j < num_features_; j++)
     {
       testvec[j] = testset(j, i);
     }
-    index_t testlabel = Classify(testvec);
-    fprintf(fp, "%"LI"\n", testlabel);
+    size_t testlabel = Classify(testvec);
+    fprintf(fp, "%zu\n", testlabel);
   }
   fclose(fp);
 }

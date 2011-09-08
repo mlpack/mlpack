@@ -33,7 +33,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(arma::mat& data) :
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    std::vector<index_t>& old_from_new) :
+    std::vector<size_t>& old_from_new) :
     left_(NULL),
     right_(NULL),
     begin_(0),
@@ -42,7 +42,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     stat_() {
   // Initialize old_from_new correctly.
   old_from_new.resize(data.n_cols);
-  for (index_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
     old_from_new[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -52,8 +52,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    std::vector<index_t>& old_from_new,
-    std::vector<index_t>& new_from_old) :
+    std::vector<size_t>& old_from_new,
+    std::vector<size_t>& new_from_old) :
     left_(NULL),
     right_(NULL),
     begin_(0),
@@ -62,7 +62,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     stat_() {
   // Initialize the old_from_new vector correctly.
   old_from_new.resize(data.n_cols);
-  for (index_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
     old_from_new[i] = i; // Fill with unharmed indices.
 
   // Now do the actual splitting.
@@ -70,11 +70,11 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 
   // Map the new_from_old indices correctly.
   new_from_old.resize(data.n_cols);
-  for (index_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
     new_from_old[old_from_new[i]] = i;
 
   IO::Debug << "old from new is " << std::endl;
-  for (index_t i = 0; i < data.n_cols; i++) {
+  for (size_t i = 0; i < data.n_cols; i++) {
     IO::Debug << old_from_new[i] << " ";
   }
   IO::Debug << std::endl;
@@ -83,8 +83,8 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t begin_in,
-    index_t count_in) :
+    size_t begin_in,
+    size_t count_in) :
     left_(NULL),
     right_(NULL),
     begin_(begin_in),
@@ -98,9 +98,9 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t begin_in,
-    index_t count_in,
-    std::vector<index_t>& old_from_new) :
+    size_t begin_in,
+    size_t count_in,
+    std::vector<size_t>& old_from_new) :
     left_(NULL),
     right_(NULL),
     begin_(begin_in),
@@ -118,10 +118,10 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
     arma::mat& data,
-    index_t begin_in,
-    index_t count_in,
-    std::vector<index_t>& old_from_new,
-    std::vector<index_t>& new_from_old) :
+    size_t begin_in,
+    size_t count_in,
+    std::vector<size_t>& old_from_new,
+    std::vector<size_t>& new_from_old) :
     left_(NULL),
     right_(NULL),
     begin_(begin_in),
@@ -137,7 +137,7 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
 
   // Map the new_from_old indices correctly.
   new_from_old.resize(data.n_cols);
-  for (index_t i = 0; i < data.n_cols; i++)
+  for (size_t i = 0; i < data.n_cols; i++)
     new_from_old[old_from_new[i]] = i;
 }
 
@@ -178,8 +178,8 @@ BinarySpaceTree<Bound, Statistic>::~BinarySpaceTree() {
  */
 template<typename Bound, typename Statistic>
 const BinarySpaceTree<Bound, Statistic>*
-BinarySpaceTree<Bound, Statistic>::FindByBeginCount(index_t begin_q,
-                                                    index_t count_q) const {
+BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
+                                                    size_t count_q) const {
 
   mlpack::IO::Assert(begin_q >= begin_);
   mlpack::IO::Assert(count_q <= count_);
@@ -206,8 +206,8 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(index_t begin_q,
  */
 template<typename Bound, typename Statistic>
 BinarySpaceTree<Bound, Statistic>*
-BinarySpaceTree<Bound, Statistic>::FindByBeginCount(index_t begin_q,
-                                                    index_t count_q) {
+BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
+                                                    size_t count_q) {
 
   mlpack::IO::Assert(begin_q >= begin_);
   mlpack::IO::Assert(count_q <= count_);
@@ -270,7 +270,7 @@ BinarySpaceTree<Bound, Statistic>::right() const {
  * Gets the index of the begin point of this subset.
  */
 template<typename Bound, typename Statistic>
-index_t BinarySpaceTree<Bound, Statistic>::begin() const {
+size_t BinarySpaceTree<Bound, Statistic>::begin() const {
   return begin_;
 }
 
@@ -278,7 +278,7 @@ index_t BinarySpaceTree<Bound, Statistic>::begin() const {
  * Gets the index one beyond the last index in the series.
  */
 template<typename Bound, typename Statistic>
-index_t BinarySpaceTree<Bound, Statistic>::end() const {
+size_t BinarySpaceTree<Bound, Statistic>::end() const {
   return begin_ + count_;
 }
   
@@ -286,7 +286,7 @@ index_t BinarySpaceTree<Bound, Statistic>::end() const {
  * Gets the number of points in this subset.
  */
 template<typename Bound, typename Statistic>
-index_t BinarySpaceTree<Bound, Statistic>::count() const {
+size_t BinarySpaceTree<Bound, Statistic>::count() const {
   return count_;
 }
   
@@ -304,19 +304,19 @@ template<typename Bound, typename Statistic>
 void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  for (index_t i = begin_; i < (begin_ + count_); i++)
+  for (size_t i = begin_; i < (begin_ + count_); i++)
     bound_ |= data.unsafe_col(i);
 
   // Now, check if we need to split at all.
-  if (count_ <= (index_t) IO::GetParam<int>("tree/leaf_size"))
+  if (count_ <= (size_t) IO::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.
-  index_t split_dim = data.n_rows; // Indicate invalid by max_dim + 1.
+  size_t split_dim = data.n_rows; // Indicate invalid by max_dim + 1.
   double max_width = -1;
 
   // Find the split dimension.
-  for (index_t d = 0; d < data.n_rows; d++) {
+  for (size_t d = 0; d < data.n_rows; d++) {
     double width = bound_[d].width();
 
     if (width > max_width) {
@@ -335,7 +335,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
   // with value in dimension split_dim less than or equal to split_val are on
   // the left of split_col, and points with value in dimension split_dim greater
   // than split_val are on the right side of split_col.
-  index_t split_col = GetSplitIndex(data, split_dim, split_val);
+  size_t split_col = GetSplitIndex(data, split_dim, split_val);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -348,22 +348,22 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(arma::mat& data) {
 template<typename Bound, typename Statistic>
 void BinarySpaceTree<Bound, Statistic>::SplitNode(
     arma::mat& data,
-    std::vector<index_t>& old_from_new) {
+    std::vector<size_t>& old_from_new) {
   // This should be a single function for Bound.
   // We need to expand the bounds of this node properly.
-  for (index_t i = begin_; i < (begin_ + count_); i++)
+  for (size_t i = begin_; i < (begin_ + count_); i++)
     bound_ |= data.unsafe_col(i);
 
   // First, check if we need to split at all.
-  if (count_ <= (index_t) IO::GetParam<int>("tree/leaf_size"))
+  if (count_ <= (size_t) IO::GetParam<int>("tree/leaf_size"))
     return; // We can't split this.
 
   // Figure out which dimension to split on.
-  index_t split_dim = data.n_rows; // Indicate invalid by max_dim + 1.
+  size_t split_dim = data.n_rows; // Indicate invalid by max_dim + 1.
   double max_width = -1;
 
   // Find the split dimension.
-  for (index_t d = 0; d < data.n_rows; d++) {
+  for (size_t d = 0; d < data.n_rows; d++) {
     double width = bound_[d].width();
 
     if (width > max_width) {
@@ -382,7 +382,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
   // with value in dimension split_dim less than or equal to split_val are on
   // the left of split_col, and points with value in dimension split_dim greater
   // than split_val are on the right side of split_col.
-  index_t split_col = GetSplitIndex(data, split_dim, split_val, old_from_new);
+  size_t split_col = GetSplitIndex(data, split_dim, split_val, old_from_new);
 
   // Now that we know the split column, we will recursively split the children
   // by calling their constructors (which perform this splitting process).
@@ -393,7 +393,7 @@ void BinarySpaceTree<Bound, Statistic>::SplitNode(
 }
 
 template<typename Bound, typename Statistic>
-index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
+size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
     arma::mat& data,
     int split_dim,
     double split_val) {
@@ -401,8 +401,8 @@ index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
   // right sides of the points contained in this node.  The points less than
   // split_val should be on the left side of the matrix, and the points greater
   // than split_val should be on the right side of the matrix.
-  index_t left = begin_;
-  index_t right = begin_ + count_ - 1;
+  size_t left = begin_;
+  size_t right = begin_ + count_ - 1;
 
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle.
@@ -435,17 +435,17 @@ index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
 }
 
 template<typename Bound, typename Statistic>
-index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
+size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
     arma::mat& data,
     int split_dim,
     double split_val,
-    std::vector<index_t>& old_from_new) {
+    std::vector<size_t>& old_from_new) {
   // This method modifies the input dataset.  We loop both from the left and
   // right sides of the points contained in this node.  The points less than
   // split_val should be on the left side of the matrix, and the points greater
   // than split_val should be on the right side of the matrix.
-  index_t left = begin_;
-  index_t right = begin_ + count_ -1;
+  size_t left = begin_;
+  size_t right = begin_ + count_ -1;
 
   // First half-iteration of the loop is out here because the termination
   // condition is in the middle. 
@@ -459,7 +459,7 @@ index_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
     data.swap_cols(left, right);
 
     // Update the indices for what we changed.
-    index_t t = old_from_new[left];
+    size_t t = old_from_new[left];
     old_from_new[left] = old_from_new[right];
     old_from_new[right] = t;
 

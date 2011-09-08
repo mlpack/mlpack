@@ -26,8 +26,8 @@ int main(int argc, char *argv[]) {
   float b, f;
   GenMatrix<float> queries, references;
   Matrix r_set, q_set;
-  index_t flag = 1;
-  index_t knn;
+  size_t flag = 1;
+  size_t knn;
 
   NOTIFY("-------------------------DATASET %s------------------------", ref_data_0);
   data::Load(ref_data_0, &r_set);
@@ -38,26 +38,26 @@ int main(int argc, char *argv[]) {
   references.Init(r_set.n_rows(), r_set.n_cols());
 
   fx_timer_start(NULL, "conversion_to_float");
-  for (index_t i = 0; i < q_set.n_cols(); i++) {
-    for(index_t j = 0; j < q_set.n_rows(); j++) {
+  for (size_t i = 0; i < q_set.n_cols(); i++) {
+    for(size_t j = 0; j < q_set.n_rows(); j++) {
       queries.set(j, i, (float) q_set.get(j, i));
     }
   }
 
-  for (index_t i = 0; i < r_set.n_cols(); i++) {
-    for(index_t j = 0; j < r_set.n_rows(); j++) {
+  for (size_t i = 0; i < r_set.n_cols(); i++) {
+    for(size_t j = 0; j < r_set.n_rows(); j++) {
       references.set(j, i, (float) r_set.get(j, i));
     }
   }
   fx_timer_stop(NULL, "conversion_to_float");
 
-  //NOTIFY("%"LI"d , %"LI"d", q_set.n_rows(), q_set.n_cols());
-  NOTIFY("D = %"LI"d", q_set.n_rows());
-  NOTIFY("|R| = %"LI"d, |Q| = %"LI"d", r_set.n_cols(), q_set.n_cols());
+  //NOTIFY("%zud , %zud", q_set.n_rows(), q_set.n_cols());
+  NOTIFY("D = %zud", q_set.n_rows());
+  NOTIFY("|R| = %zud, |Q| = %zud", r_set.n_cols(), q_set.n_cols());
   AllKNN<float> allknn_normal, allknn_cluster;
   ArrayList<float> neighbor_distances_n, neighbor_distances_n_c, 
     neighbor_distances_c, neighbor_distances_c_c;
-  ArrayList<index_t> neighbor_indices_n, neighbor_indices_n_c, 
+  ArrayList<size_t> neighbor_indices_n, neighbor_indices_n_c, 
     neighbor_indices_c, neighbor_indices_c_c;
 
   datanode *allknn_module_n = fx_submodule(NULL, "allknn_n", "allknn_n");
@@ -176,26 +176,26 @@ int main(int argc, char *argv[]) {
   references.Init(r_set.n_rows(), r_set.n_cols());
 
   fx_timer_start(NULL, "conversion_to_float");
-  for (index_t i = 0; i < q_set.n_cols(); i++) {
-    for(index_t j = 0; j < q_set.n_rows(); j++) {
+  for (size_t i = 0; i < q_set.n_cols(); i++) {
+    for(size_t j = 0; j < q_set.n_rows(); j++) {
       queries.set(j, i, (float) q_set.get(j, i));
     }
   }
 
-  for (index_t i = 0; i < r_set.n_cols(); i++) {
-    for(index_t j = 0; j < r_set.n_rows(); j++) {
+  for (size_t i = 0; i < r_set.n_cols(); i++) {
+    for(size_t j = 0; j < r_set.n_rows(); j++) {
       references.set(j, i, (float) r_set.get(j, i));
     }
   }
   fx_timer_stop(NULL, "conversion_to_float");
 
-  //NOTIFY("%"LI"d , %"LI"d", q_set.n_rows(), q_set.n_cols());
-  NOTIFY("D = %"LI"d", q_set.n_rows());
-  NOTIFY("|R| = %"LI"d, |Q| = %"LI"d", r_set.n_cols(), q_set.n_cols());
+  //NOTIFY("%zud , %zud", q_set.n_rows(), q_set.n_cols());
+  NOTIFY("D = %zud", q_set.n_rows());
+  NOTIFY("|R| = %zud, |Q| = %zud", r_set.n_cols(), q_set.n_cols());
   AllKNN<float> allknn_normal1, allknn_cluster1;
   ArrayList<float> neighbor_distances_n1, neighbor_distances_n1_c, 
     neighbor_distances_c1, neighbor_distances_c1_c;
-  ArrayList<index_t> neighbor_indices_n1, neighbor_indices_n1_c, 
+  ArrayList<size_t> neighbor_indices_n1, neighbor_indices_n1_c, 
     neighbor_indices_c1, neighbor_indices_c1_c;
 
   datanode *allknn_module_n1 = fx_submodule(NULL, "allknn_n1", "allknn_n1");
@@ -315,26 +315,26 @@ int main(int argc, char *argv[]) {
   references.Init(r_set.n_rows(), r_set.n_cols());
 
   fx_timer_start(NULL, "conversion_to_float");
-  for (index_t i = 0; i < q_set.n_cols(); i++) {
-    for(index_t j = 0; j < q_set.n_rows(); j++) {
+  for (size_t i = 0; i < q_set.n_cols(); i++) {
+    for(size_t j = 0; j < q_set.n_rows(); j++) {
       queries.set(j, i, (float) q_set.get(j, i));
     }
   }
 
-  for (index_t i = 0; i < r_set.n_cols(); i++) {
-    for(index_t j = 0; j < r_set.n_rows(); j++) {
+  for (size_t i = 0; i < r_set.n_cols(); i++) {
+    for(size_t j = 0; j < r_set.n_rows(); j++) {
       references.set(j, i, (float) r_set.get(j, i));
     }
   }
   fx_timer_stop(NULL, "conversion_to_float");
 
-  //NOTIFY("%"LI"d , %"LI"d", q_set.n_rows(), q_set.n_cols());
-  NOTIFY("D = %"LI"d", q_set.n_rows());
-  NOTIFY("|R| = %"LI"d, |Q| = %"LI"d", r_set.n_cols(), q_set.n_cols());
+  //NOTIFY("%zud , %zud", q_set.n_rows(), q_set.n_cols());
+  NOTIFY("D = %zud", q_set.n_rows());
+  NOTIFY("|R| = %zud, |Q| = %zud", r_set.n_cols(), q_set.n_cols());
   AllKNN<float> allknn_normal2, allknn_cluster2;
   ArrayList<float> neighbor_distances_n2, neighbor_distances_n2_c, 
     neighbor_distances_c2, neighbor_distances_c2_c;
-  ArrayList<index_t> neighbor_indices_n2, neighbor_indices_n2_c, 
+  ArrayList<size_t> neighbor_indices_n2, neighbor_indices_n2_c, 
     neighbor_indices_c2, neighbor_indices_c2_c;
 
   datanode *allknn_module_n2 = fx_submodule(NULL, "allknn_n2", "allknn_n2");
@@ -455,26 +455,26 @@ int main(int argc, char *argv[]) {
   references.Init(r_set.n_rows(), r_set.n_cols());
 
   fx_timer_start(NULL, "conversion_to_float");
-  for (index_t i = 0; i < q_set.n_cols(); i++) {
-    for(index_t j = 0; j < q_set.n_rows(); j++) {
+  for (size_t i = 0; i < q_set.n_cols(); i++) {
+    for(size_t j = 0; j < q_set.n_rows(); j++) {
       queries.set(j, i, (float) q_set.get(j, i));
     }
   }
 
-  for (index_t i = 0; i < r_set.n_cols(); i++) {
-    for(index_t j = 0; j < r_set.n_rows(); j++) {
+  for (size_t i = 0; i < r_set.n_cols(); i++) {
+    for(size_t j = 0; j < r_set.n_rows(); j++) {
       references.set(j, i, (float) r_set.get(j, i));
     }
   }
   fx_timer_stop(NULL, "conversion_to_float");
 
-  //NOTIFY("%"LI"d , %"LI"d", q_set.n_rows(), q_set.n_cols());
-  NOTIFY("D = %"LI"d", q_set.n_rows());
-  NOTIFY("|R| = %"LI"d, |Q| = %"LI"d", r_set.n_cols(), q_set.n_cols());
+  //NOTIFY("%zud , %zud", q_set.n_rows(), q_set.n_cols());
+  NOTIFY("D = %zud", q_set.n_rows());
+  NOTIFY("|R| = %zud, |Q| = %zud", r_set.n_cols(), q_set.n_cols());
   AllKNN<float> allknn_normal3, allknn_cluster3;
   ArrayList<float> neighbor_distances_n3, neighbor_distances_n3_c, 
     neighbor_distances_c3, neighbor_distances_c3_c;
-  ArrayList<index_t> neighbor_indices_n3, neighbor_indices_n3_c, 
+  ArrayList<size_t> neighbor_indices_n3, neighbor_indices_n3_c, 
     neighbor_indices_c3, neighbor_indices_c3_c;
 
   datanode *allknn_module_n3 = fx_submodule(NULL, "allknn_n3", "allknn_n3");
@@ -583,10 +583,10 @@ int main(int argc, char *argv[]) {
   NOTIFY("done");
   /*
   DEBUG_ASSERT(q_set.n_cols() * knn == neighbor_indices.size());
-  for (index_t i = 0; i < q_set.n_cols(); i++) {
-    NOTIFY("%"LI"d :", i);
-    for(index_t j = 0; j < knn; j++) {
-      NOTIFY("\t%"LI"d : %lf", 
+  for (size_t i = 0; i < q_set.n_cols(); i++) {
+    NOTIFY("%zud :", i);
+    for(size_t j = 0; j < knn; j++) {
+      NOTIFY("\t%zud : %lf", 
 	     neighbor_indices[knn*i+j], neighbor_distances[i*knn
 							   +knn-1
 							   -j]);

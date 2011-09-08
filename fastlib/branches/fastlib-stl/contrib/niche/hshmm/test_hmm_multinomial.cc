@@ -284,7 +284,7 @@ int main(int argc, char *argv[]) {
 
   fx_done(root);
 
-  return SUCCESS_PASS;
+  return true;
 }
 */
 

@@ -48,7 +48,7 @@ class MultiTreeDelta {
 
     double positive_error, negative_error;
 
-    for(index_t i = 0; i < positive_potential_e.length(); i++) {
+    for(size_t i = 0; i < positive_potential_e.length(); i++) {
       if(initialized) {	
 	positive_potential_e[i] = positive_potential_avg * n_pruned[i];
 	negative_potential_e[i] = negative_potential_avg * n_pruned[i];
@@ -113,7 +113,7 @@ class MultiTreeDelta {
   }
   
   void SetZero() {
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
       negative_potential_bound[i].Init(0, 0);
       positive_potential_bound[i].Init(0, 0);
     }

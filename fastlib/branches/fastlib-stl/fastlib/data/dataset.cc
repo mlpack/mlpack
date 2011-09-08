@@ -19,10 +19,10 @@
 #include "../fx/io.h"
 
 
-index_t Dataset::n_labels() const {
-  index_t i = 0;
-  index_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
-  index_t n_labels = 0;
+size_t Dataset::n_labels() const {
+  size_t i = 0;
+  size_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
+  size_t n_labels = 0;
 
   double current_label;
   
@@ -32,7 +32,7 @@ index_t Dataset::n_labels() const {
 
   for(i = 1; i < matrix_.n_cols; i++) {
     current_label = matrix_(label_row_idx, i);
-    index_t j = 0;
+    size_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
         break;
@@ -48,13 +48,13 @@ index_t Dataset::n_labels() const {
 }
 
 void Dataset::GetLabels(std::vector<double> &labels_list,
-                        std::vector<index_t> &labels_index,
-                        std::vector<index_t> &labels_ct,
-                        std::vector<index_t> &labels_startpos) const {
-  index_t i = 0;
-  index_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
-  index_t n_points = matrix_.n_cols;
-  index_t n_labels = 0;
+                        std::vector<size_t> &labels_index,
+                        std::vector<size_t> &labels_ct,
+                        std::vector<size_t> &labels_startpos) const {
+  size_t i = 0;
+  size_t label_row_idx = matrix_.n_rows - 1; // the last row is for labels
+  size_t n_points = matrix_.n_cols;
+  size_t n_labels = 0;
 
   double current_label;
 
@@ -65,7 +65,7 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 
   labels_index.reserve(n_points);
 
-  std::vector<index_t> labels_temp;
+  std::vector<size_t> labels_temp;
   labels_temp.reserve(n_points);
   labels_temp.push_back(0);
 
@@ -75,7 +75,7 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 
   for (i = 1; i < n_points; i++) {
     current_label = matrix_(label_row_idx, i);
-    index_t j = 0;
+    size_t j = 0;
     for (j = 0; j < n_labels; j++) {
       if (current_label == labels_list[j]) {
         labels_ct[j]++;
@@ -107,25 +107,25 @@ void Dataset::GetLabels(std::vector<double> &labels_list,
 }
 
 
-success_t Dataset::InitFromFile(const char *fname) {
+bool Dataset::InitFromFile(const char *fname) {
   TextLineReader reader;
 
-  if (PASSED(reader.Open(fname))) {
+  if ((reader.Open(fname))) {
     return InitFromFile(reader, fname);
   } else {
     matrix_ = 0.0; // 0x0 matrix
     info_.Init();
     mlpack::IO::Warn << " Could not open file " << fname << " for reading. " << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 }
 
-success_t Dataset::InitFromFile(TextLineReader& reader,
+bool Dataset::InitFromFile(TextLineReader& reader,
     const char *filename) {
-  success_t result;
+  bool result;
 
   result = info_.InitFromFile(reader, filename);
-  if (PASSED(result)) {
+  if ((result)) {
     result = info_.ReadMatrix(reader, matrix_);
   } else {
     matrix_ = 0.0; // 0x0 matrix
@@ -135,12 +135,12 @@ success_t Dataset::InitFromFile(TextLineReader& reader,
 }
 
 
-success_t Dataset::WriteCsv(std::string fname, bool header) const {
+bool Dataset::WriteCsv(std::string fname, bool header) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname.c_str()))) {
+  if (!(writer.Open(fname.c_str()))) {
     mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   } else {
     if (header) {
       info_.WriteCsvHeader(",\t", writer);
@@ -150,12 +150,12 @@ success_t Dataset::WriteCsv(std::string fname, bool header) const {
   }
 }
 
-success_t Dataset::WriteArff(std::string fname) const {
+bool Dataset::WriteArff(std::string fname) const {
   TextWriter writer;
 
-  if (!PASSED(writer.Open(fname.c_str()))) {
+  if (!(writer.Open(fname.c_str()))) {
     mlpack::IO::Warn << "Couldn't open " << fname.c_str() << " for writing. " << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   } else {
     info_.WriteArffHeader(writer);
     info_.WriteMatrix(matrix_, ",", writer);
@@ -164,11 +164,11 @@ success_t Dataset::WriteArff(std::string fname) const {
 }
 
 void Dataset::SplitTrainTest(int folds, int fold_number,
-    const std::vector<index_t>& permutation,
+    const std::vector<size_t>& permutation,
     Dataset& train, Dataset& test) const {
   // determine number of points in test and training sets
-  index_t n_test = (n_points() + folds - fold_number - 1) / folds;
-  index_t n_train = n_points() - n_test;
+  size_t n_test = (n_points() + folds - fold_number - 1) / folds;
+  size_t n_train = n_points() - n_test;
 
   // initialize blank training data set
   train.InitBlank();
@@ -182,9 +182,9 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   train.matrix().set_size(n_features(), n_train);
   test.matrix().set_size(n_features(), n_test);
 
-  index_t i_train = 0;
-  index_t i_test = 0;
-  index_t i_orig = 0;
+  size_t i_train = 0;
+  size_t i_test = 0;
+  size_t i_orig = 0;
 
   for (i_orig = 0; i_orig < n_points(); i_orig++) {
     double *dest;
@@ -209,45 +209,45 @@ void Dataset::SplitTrainTest(int folds, int fold_number,
   mlpack::IO::Assert(i_test == test.n_points());
 }
 
-success_t data::Load(const char *fname, arma::mat& matrix) {
+bool data::Load(const char *fname, arma::mat& matrix) {
   TextLineReader reader;
   DatasetInfo info; // we will ignore this, but it reads our matrix
-  success_t result;
+  bool result;
 
   // clear our matrix
   matrix.reset();
 
-  if (PASSED(reader.Open(fname))) {
+  if ((reader.Open(fname))) {
     // read our file, since it has successfully opened
     result = info.InitFromFile(reader, fname);
-    if (PASSED(result)) {
+    if ((result)) {
       result = info.ReadMatrix(reader, matrix);
     }
   } else {
     mlpack::IO::Warn << "Could not open file " << fname << " for reading." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   return result;
 }
 
-success_t data::Save(const char *fname, const arma::mat& matrix) {
+bool data::Save(const char *fname, const arma::mat& matrix) {
   TextWriter writer;
 
   // temporary info object that will help write our CSV
   DatasetInfo info;
   info.InitContinuous(matrix.n_rows);
 
-  if (!PASSED(writer.Open(fname))) {
+  if (!(writer.Open(fname))) {
     mlpack::IO::Warn << "Couldn't open " << fname << " for writing. " << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   info.WriteMatrix(matrix, ",\t", writer);
   return writer.Close();
 }
 
-success_t data::Save(const char *fname, const arma::Col<index_t>& index_vector,
+bool data::Save(const char *fname, const arma::Col<size_t>& index_vector,
                      const arma::vec& data_vector) {
   // we need to reimplement dataset.WriteCsv with our own modifications
   // this whole thing needs to be re-done at some point to make more sense in
@@ -263,12 +263,12 @@ success_t data::Save(const char *fname, const arma::Col<index_t>& index_vector,
   std::ofstream out;
   out.open(fname);
   if(!out.is_open())
-    return SUCCESS_FAIL;
+    return false;
 
-  for(index_t i = 0; i < index_vector.n_elem; i++)
+  for(size_t i = 0; i < index_vector.n_elem; i++)
     out << index_vector[i] << ", " << data_vector[i] << std::endl;
 
   out.close();
 
-  return SUCCESS_PASS;
+  return true;
 }

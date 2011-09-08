@@ -33,7 +33,7 @@ class VariableNNKDE{
 
   //The value of k_opt
 
-  index_t k_opt_;
+  size_t k_opt_;
 
   //The universal smoothing factor
 
@@ -46,15 +46,15 @@ class VariableNNKDE{
 
   //A flag to tell if the true density file is present
 
-  index_t true_density_file_present_;
+  size_t true_density_file_present_;
 
   //The number of train and test points
 
-  index_t num_train_points_;
-  index_t num_test_points_;
+  size_t num_train_points_;
+  size_t num_test_points_;
 
   //The dimensionality of the dataset
-  index_t num_dims_;
+  size_t num_dims_;
 
   //The vector of densities at different test points
 
@@ -66,7 +66,7 @@ class VariableNNKDE{
 
   //Flag to say if the test file is present or not
 
-  index_t test_file_present_;
+  size_t test_file_present_;
 
   //Gaussian kernel that we shall use everywhere in the code
 
@@ -74,11 +74,11 @@ class VariableNNKDE{
 
   //Max number of nearest neighbours to be considered
 
-  index_t  max_number_of_neighbours_;
+  size_t  max_number_of_neighbours_;
     
   //Similarily number of global smoothing values to be considered
     
-  index_t number_of_global_smoothing_values_;
+  size_t number_of_global_smoothing_values_;
 
 
  public:
@@ -87,7 +87,7 @@ class VariableNNKDE{
   /*This function calculates the rmse iff true test densities are known */
   void get_rmse_and_hellinger_distance(double *rmse,double *hellinger_distance){
     
-    index_t len=true_test_densities_.n_cols();
+    size_t len=true_test_densities_.n_cols();
     
     if(len==0){
       
@@ -98,7 +98,7 @@ class VariableNNKDE{
     double diff=0;
     double total_sqd_diff=0;
     double sum_ratio=0;
-    for(index_t i=0;i<len;i++){
+    for(size_t i=0;i<len;i++){
       
       diff=test_densities_[i]-true_test_densities_.get(0,i);
       total_sqd_diff+=diff*diff;
@@ -131,18 +131,18 @@ class VariableNNKDE{
 
   //The param $h$ measures the global smoothing and 
 
-  void FillVectorOfBandwidths_(double h,index_t k){
+  void FillVectorOfBandwidths_(double h,size_t k){
     
     // Initialize the kernels for each reference point.
     
     AllkNN all_knn;
     all_knn.Init(train_data_,LEAF_SIZE,k);
-    ArrayList<index_t> resulting_neighbors;
+    ArrayList<size_t> resulting_neighbors;
     ArrayList<double> squared_distances;    
     
     all_knn.ComputeNeighbors(&resulting_neighbors, &squared_distances);
 
-    for(index_t i = 0; i < squared_distances.size(); i += k) 
+    for(size_t i = 0; i < squared_distances.size(); i += k) 
       {
 	
 	bandwidth_train_points_[i / k]=
@@ -153,11 +153,11 @@ class VariableNNKDE{
 
   void CalculateMean_(Matrix &data,Vector &mean){
     
-    index_t num_points=data.n_cols();
-    index_t num_dim=data.n_rows();
+    size_t num_points=data.n_cols();
+    size_t num_dim=data.n_rows();
     mean.SetZero();
     
-    for(index_t i=0;i<num_points;i++){
+    for(size_t i=0;i<num_points;i++){
       
       //Get the present data point
       double *data_point=data.GetColumnPtr(i);
@@ -175,7 +175,7 @@ class VariableNNKDE{
 
   void GetSquaredVector_(Vector &vec){
     
-    for(index_t i=0;i<num_dims_;i++){
+    for(size_t i=0;i<num_dims_;i++){
 
       double elem=vec[i];
       vec[i]=elem*elem;
@@ -202,7 +202,7 @@ class VariableNNKDE{
 
     Vector diff;
     diff.Init(num_dims_);
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
 
       double *present_point_ptr;
       present_point_ptr=data.GetColumnPtr(i);
@@ -218,7 +218,7 @@ class VariableNNKDE{
     la::Scale(1.0/num_train_points_,&sum);
 
     double total_val=0;
-    for(index_t i=0;i<num_dims_;i++){
+    for(size_t i=0;i<num_dims_;i++){
 
       total_val+=sum[i];
     }
@@ -256,9 +256,9 @@ class VariableNNKDE{
     double int_f_hat_sqd=0;
     GaussianKernel gk;
     
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
 
-      for(index_t j=i;j<num_train_points_;j++){
+      for(size_t j=i;j<num_train_points_;j++){
 	
 	double bw_i=bandwidth_train_points_[i];
 	double bw_j=bandwidth_train_points_[j];
@@ -302,9 +302,9 @@ class VariableNNKDE{
     double integral_f_f_hat=0;
     GaussianKernel gk;
     
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
       
-      for(index_t j=0;j<num_train_points_;j++){
+      for(size_t j=0;j<num_train_points_;j++){
 	
 	if(j!=i){
 
@@ -352,7 +352,7 @@ class VariableNNKDE{
     double max_bw=5*h_plugin_;
     double gap=(max_bw-min_bw)/number_of_global_smoothing_values_;
     
-    for(index_t i=0;i<number_of_global_smoothing_values_;i++){
+    for(size_t i=0;i<number_of_global_smoothing_values_;i++){
       
       global_smoothing_vec[i]=min_bw+i*gap;
     }
@@ -367,7 +367,7 @@ void WhitenData_(){
       Matrix whitening_matrix_train;
       Matrix whitening_matrix_test;
       
-      index_t num_dims=train_data_.n_rows();
+      size_t num_dims=train_data_.n_rows();
       if(num_dims>1){
 	
 	//Whiten the data. This allows us to use a single bandiwdth
@@ -387,10 +387,10 @@ void WhitenData_(){
 	printf("Num dims =%d\n",test_data_.n_rows());
 	printf("Num points=%d..\n",test_data_.n_cols());
 	FILE *fp=fopen("old_faithful_whitened_test.txt","w+");
-	index_t num_points=test_data_.n_cols();
-	index_t num_dims=test_data_.n_rows();
+	size_t num_points=test_data_.n_cols();
+	size_t num_dims=test_data_.n_rows();
 
-	for(index_t n=0;n<num_points;n++){
+	for(size_t n=0;n<num_points;n++){
 
 	  fprintf(fp,"%f,%f\n",test_data_.get(0,n),test_data_.get(1,n));
 	}
@@ -419,9 +419,9 @@ void WhitenData_(){
 
    Matrix rset_weights; 
    rset_weights.Init(1,num_test_points_); 
-   for(index_t i=0;i<rset_weights.n_rows();i++){ 
+   for(size_t i=0;i<rset_weights.n_rows();i++){ 
      
-     for(index_t j=0;j<rset_weights.n_cols();j++){ 
+     for(size_t j=0;j<rset_weights.n_cols();j++){ 
        
        rset_weights.set(i,j,1); 
      } 
@@ -464,9 +464,9 @@ void WhitenData_(){
     //This step fills a vector of bandwidths to be used for all the
     //train points
        
-    for(index_t k=3;k<=max_number_of_neighbours_;k++){
+    for(size_t k=3;k<=max_number_of_neighbours_;k++){
       
-      for(index_t j=0;j<global_smoothing_vec.length();j++){
+      for(size_t j=0;j<global_smoothing_vec.length();j++){
 	
 	FillVectorOfBandwidths_(global_smoothing_vec[j],k);
 	

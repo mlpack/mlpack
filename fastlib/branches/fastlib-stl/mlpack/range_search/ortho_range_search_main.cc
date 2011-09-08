@@ -17,8 +17,8 @@ void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
   
   FILE *file_pointer = fopen(file_name, "w+");
 
-  for(index_t r = 0; r < search_results.n_rows(); r++) {
-    for(index_t c = 0; c < search_results.n_cols(); c++) {
+  for(size_t r = 0; r < search_results.n_rows(); r++) {
+    for(size_t c = 0; c < search_results.n_cols(); c++) {
 
       if(search_results.get(r, c)) {
 	fprintf(file_pointer, "1 ");
@@ -168,8 +168,8 @@ int main(int argc, char *argv[]) {
     search.Compute(low_coord_limits, high_coord_limits, &naive_search_results);
     bool flag = true;
 
-    for(index_t i = 0; i < fast_search_results.n_cols(); i++) {
-      for(index_t j = 0; j < dataset.n_cols(); j++) {	
+    for(size_t i = 0; i < fast_search_results.n_cols(); i++) {
+      for(size_t j = 0; j < dataset.n_cols(); j++) {	
 	if(fast_search_results.get(j, i) != naive_search_results.get(j, i)) {
 	  flag = false;
 	  IO::Info << "Differ on (" << i << ", " << j << ")" << std::endl;

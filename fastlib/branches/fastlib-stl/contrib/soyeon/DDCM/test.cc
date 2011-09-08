@@ -12,7 +12,7 @@ class ObjectiveTest {
 
 		Vector current_parameter;
 		current_parameter.Init(5);
-		for(index_t i=0; i<5; i++){
+		for(size_t i=0; i<5; i++){
 		current_parameter[i]=0.1+i;
 		}
 
@@ -29,7 +29,7 @@ class ObjectiveTest {
 		objective.ComputeGradient(current_parameter, &dummy_gradient);
 		//printf("The objective is %g", dummy_objective);
 		cout<<"Gradient vector: ";
-		for (index_t i=0; i<dummy_gradient.length(); i++)
+		for (size_t i=0; i<dummy_gradient.length(); i++)
 		{
 			cout<<dummy_gradient[i]<<" ";
 		}
@@ -42,8 +42,8 @@ class ObjectiveTest {
 		objective.ComputeHessian(current_parameter, &dummy_hessian);
 		cout<<"Hessian matrix: "<<endl;
 
-		for (index_t j=0; j<dummy_hessian.n_rows(); j++){
-			for (index_t k=0; k<dummy_hessian.n_cols(); k++){
+		for (size_t j=0; j<dummy_hessian.n_rows(); j++){
+			for (size_t k=0; k<dummy_hessian.n_cols(); k++){
 				cout<<dummy_hessian.get(j,k) <<"  ";
 			}
 			cout<<endl;

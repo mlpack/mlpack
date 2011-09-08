@@ -65,7 +65,7 @@ class KdeProblem {
 	break;
       case TDelta::DIRECT_FARFIELD:
 	DEBUG_ASSERT(delta.kde_approximation.order_farfield >= 0);
-	for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 	  query_results.sum_e[q] += 
 	    rnode->stat().farfield_expansion.EvaluateField
 	    (qset, q, delta.kde_approximation.order_farfield);
@@ -155,7 +155,7 @@ class KdeProblem {
 	  const Matrix &query_set = *(query_sets[0]);
 	  qnode->stat().summary.StartReaccumulate();
 	  
-	  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+	  for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
 	    query_results.ApplyPostponed(qnode->stat().postponed, q);
 	    const double *query_point = query_set.GetColumnPtr(q);
@@ -166,7 +166,7 @@ class KdeProblem {
 						rnode);
 
 	    if(delta.kde_approximation.used_error > allowed_error.error) {
-	      for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+	      for(size_t r = rnode->begin(); r < rnode->end(); r++) {
 
 		double squared_distance =
 		  la::DistanceSqEuclidean(globals.dimension,
@@ -258,11 +258,11 @@ class KdeProblem {
       int num_samples = 25;
       int total_samples = 0;
 
-      for(index_t s = 0; s < num_samples; s++) {
+      for(size_t s = 0; s < num_samples; s++) {
 	
-	index_t random_query_point_index =
+	size_t random_query_point_index =
 	  math::RandInt(qnode->begin(), qnode->end());
-	index_t random_reference_point_index =
+	size_t random_reference_point_index =
 	  math::RandInt(rnode->begin(), rnode->end());
 	
 	// Get the pointer to the current query point.
@@ -352,8 +352,8 @@ class KdeProblem {
 					MultiTreeQueryResult &query_results) {
     
     // Compute pairwise contributions...
-    index_t q_index = globals.query_node_chosen_indices[0];
-    index_t r_index = globals.reference_node_chosen_indices[0];
+    size_t q_index = globals.query_node_chosen_indices[0];
+    size_t r_index = globals.reference_node_chosen_indices[0];
 
     double squared_distance =
       la::DistanceSqEuclidean(globals.dimension,

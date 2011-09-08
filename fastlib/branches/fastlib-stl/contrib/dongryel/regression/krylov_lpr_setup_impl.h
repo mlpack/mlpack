@@ -22,7 +22,7 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeQueryTree_
   // determine whether it should remain in the tree or not.
   if(qnode->is_leaf()) {
 
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
       if(query_in_cg_loop == NULL || (*query_in_cg_loop)[q]) {
 	Vector q_col;
 	qset.MakeColumnVector(q, &q_col);
@@ -60,7 +60,7 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
     // For a leaf reference node, iterate over each reference point
     // and compute the weighted vector and tally these up for the
     // sum statistics owned by the reference node.
-    for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+    for(size_t r = rnode->begin(); r < rnode->end(); r++) {
       
       // Get the pointer to the current reference point.
       Vector r_col;
@@ -81,7 +81,7 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
 
       // Accumulate the far field coefficient for the target weighted
       // reference vector and the outerproduct.
-      for(index_t j = 0; j < row_length_; j++) {
+      for(size_t j = 0; j < row_length_; j++) {
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
 	  Add(r_target_weighted_by_coordinates[j], kernels_[r].bandwidth_sq(),
 	      r_col);
@@ -122,7 +122,7 @@ void KrylovLpr<TKernel, TPruneRule>::InitializeReferenceStatistics_
       MatrixUtil::EntrywiseLpNorm(rnode->stat().sum_target_weighted_data_, 1);
 
     // Translate far-field moments of the child to form the parent.
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       rnode->stat().target_weighted_data_far_field_expansion_[j].
 	Add(rnode->left()->stat().
 	    target_weighted_data_far_field_expansion_[j]);
@@ -159,7 +159,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
   qnode->stat().ll_vector_n_pruned_ = DBL_MAX;
   
   // for each query point
-  for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+  for(size_t q = qnode->begin(); q < qnode->end(); q++) {
  
     // If the function is called within CG iteration and this query
     // has finished, then skip it.
@@ -183,7 +183,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumBase_
       qnode->stat().postponed_ll_vector_n_pruned_;
 
     // for each reference point
-    for(index_t r = rnode->begin(); r < rnode->end(); r++) {
+    for(size_t r = rnode->begin(); r < rnode->end(); r++) {
 
       // get reference point.
       const double *r_col = rset_.GetColumnPtr(r);
@@ -286,7 +286,7 @@ void KrylovLpr<TKernel, TPruneRule>::DualtreeWeightedVectorSumCanonical_
   if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
      0 && rnode->count() > dimension_ * dimension_) {
 
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
       
       qnode->stat().postponed_ll_vector_l_[j] += 
 	rnode->stat().target_weighted_data_far_field_expansion_[j].
@@ -448,7 +448,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
   }
 
   if(qnode->is_leaf()) {
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
 
       // If the current query point has exited the CG loop, then skip
       // it.
@@ -474,7 +474,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
 
       // Incorporate the postponed estimates using the Epanechnikov
       // series expansion.
-      for(index_t i = 0; i < row_length_; i++) {
+      for(size_t i = 0; i < row_length_; i++) {
 
 	if(!confidence_band_computation_phase) {
 	  q_right_hand_sides_e[i] += 
@@ -524,7 +524,7 @@ void KrylovLpr<TKernel, TPruneRule>::FinalizeQueryTree_
       q_stat.postponed_ll_vector_n_pruned_;
 
     // Push down Epanechnikov series expansion pruning.
-    for(index_t i = 0; i < row_length_; i++) {
+    for(size_t i = 0; i < row_length_; i++) {
       q_left_stat.postponed_moment_ll_vector_e_[i].Add
 	(q_stat.postponed_moment_ll_vector_e_[i]);
       q_right_stat.postponed_moment_ll_vector_e_[i].Add
@@ -595,7 +595,7 @@ void KrylovLpr<TKernel, TPruneRule>::DecideComputationMethod_
   if(rnode->stat().min_bandwidth_kernel.bandwidth_sq() >= dsqd_range.hi && 
      0 && rnode->count() > dimension_ * dimension_) {
     
-    for(index_t j = 0; j < row_length_; j++) {
+    for(size_t j = 0; j < row_length_; j++) {
 
       if(!confidence_band_computation_phase) {
 	qnode->stat().postponed_ll_vector_l_[j] += 
@@ -636,7 +636,7 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
   if(qnode->is_leaf()) {
 
     // Go through the exhaustively computed list first.
-    for(index_t r = 0; r < qnode->stat().exhaustive_reference_nodes_.size() +
+    for(size_t r = 0; r < qnode->stat().exhaustive_reference_nodes_.size() +
 	  qnode->stat().pruned_reference_nodes_.size();	r++) {
 
       // Point to the current reference node.
@@ -665,7 +665,7 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
     
     // After all computation is finished, go through each query point and
     // refine bounds.
-    for(index_t q = qnode->begin(); q < qnode->end(); q++) {
+    for(size_t q = qnode->begin(); q < qnode->end(); q++) {
       
       // If the current query point is not in the CG loop, then skip
       // it.
@@ -762,7 +762,7 @@ void KrylovLpr<TKernel, TPruneRule>::StratifiedComputation_
     // internal query node by the structure of our 4-way recursion.
 
     // Go through the pruned list first.
-    for(index_t r = 0; r < qnode->stat().pruned_reference_nodes_.size(); r++) {
+    for(size_t r = 0; r < qnode->stat().pruned_reference_nodes_.size(); r++) {
   
       ReferenceTree *rnode = qnode->stat().pruned_reference_nodes_[r];
       

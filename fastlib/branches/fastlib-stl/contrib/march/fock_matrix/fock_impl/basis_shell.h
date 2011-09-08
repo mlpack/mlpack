@@ -30,8 +30,8 @@ class BasisShell {
   // then this number is the dimensionality of the matrices that can be 
   // used to init them / check that this matches the size of the input density
   // matrix
-  void Init(const Vector& cent, double exp, index_t mom, index_t ind, 
-            index_t list_ind) {
+  void Init(const Vector& cent, double exp, size_t mom, size_t ind, 
+            size_t list_ind) {
   
     DEBUG_ASSERT(mom >= 0);
     DEBUG_ASSERT(ind >= 0);
@@ -46,7 +46,7 @@ class BasisShell {
     num_functions_ = eri::NumFunctions(total_momentum_);
     
     matrix_indices_.Init(num_functions_);
-    for (index_t i = 0; i < num_functions_; i++) {
+    for (size_t i = 0; i < num_functions_; i++) {
       matrix_indices_[i] = ind + i;
     }
     
@@ -75,13 +75,13 @@ class BasisShell {
     
     normalization_constants_.Init(num_functions_);
     
-    index_t fun_index = 0;
+    size_t fun_index = 0;
     
-    for (index_t i = 0; i <= total_momentum_; i++) {
+    for (size_t i = 0; i <= total_momentum_; i++) {
       
       int nx = total_momentum_ - i;
       
-      for (index_t j = 0; j <= i; j++) {
+      for (size_t j = 0; j <= i; j++) {
         
         int ny = i - j;
         int nz = j;
@@ -106,11 +106,11 @@ class BasisShell {
     return center_;
   }
   
-  index_t num_functions() const {
+  size_t num_functions() const {
     return num_functions_;
   }
   
-  index_t total_momentum() const {
+  size_t total_momentum() const {
     return total_momentum_;
   }
   
@@ -118,11 +118,11 @@ class BasisShell {
     return normalization_constants_;
   }
   
-  const ArrayList<index_t>& matrix_indices() const {
+  const ArrayList<size_t>& matrix_indices() const {
     return matrix_indices_; 
   }
   
-  double normalization_constant(index_t i) const {
+  double normalization_constant(size_t i) const {
     
     DEBUG_ASSERT(i < num_functions_);
     DEBUG_ASSERT(i >= 0);
@@ -131,7 +131,7 @@ class BasisShell {
     
   }
   
-  index_t matrix_index(index_t i) const {
+  size_t matrix_index(size_t i) const {
 
     DEBUG_ASSERT(i < num_functions_);
     DEBUG_ASSERT(i >= 0);
@@ -143,11 +143,11 @@ class BasisShell {
   
   // these functions are all for LinK
   
-  index_t current_mu() {
+  size_t current_mu() {
     return current_mu_;
   }
   
-  void set_current_mu(index_t mu_in) {
+  void set_current_mu(size_t mu_in) {
     current_mu_ = mu_in;
   }
   
@@ -167,23 +167,23 @@ class BasisShell {
     current_density_entry_ = entry;
   }
   
-  index_t list_index() const {
+  size_t list_index() const {
     return list_index_;
   }
     
 
  private:
 
-  index_t total_momentum_;
+  size_t total_momentum_;
 
   // number of basis functions in the shell, depends on the momentum
-  index_t num_functions_;
+  size_t num_functions_;
   
   // need to be able to index the density and Fock matrix for each function
   // these are accessed in the libint order
   // i.e. p_x, p_y, p_z
   // see the Libint programmer's manual for more info
-  ArrayList<index_t> matrix_indices_;
+  ArrayList<size_t> matrix_indices_;
 
   Vector center_;
   
@@ -193,12 +193,12 @@ class BasisShell {
   
   // this shell's location in the master list of shells
   // used in LinK
-  index_t list_index_;
+  size_t list_index_;
   
   // used in sorting for LinK
   // is it really necessary to have these?
   // could I handle LinK some other way?
-  index_t current_mu_;
+  size_t current_mu_;
   double current_density_entry_;
   
   // (mu_max|mu_max)^1/2 from LinK paper

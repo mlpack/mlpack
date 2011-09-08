@@ -21,14 +21,14 @@
 #define RELAXED_NMF_BOUND_IMPL_TIGHTENER_H_
 
 void RelaxedNmfBoundTightener::Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Matrix &x_lower_bound, 
                       Matrix &x_upper_bound,  
-                      index_t opt_var_row,
-                      index_t opt_var_column,
-                      index_t opt_var_sign,
+                      size_t opt_var_row,
+                      size_t opt_var_column,
+                      size_t opt_var_sign,
                       double function_upper_bound) {
   module_=module;
   rows_.InitAlias(rows);
@@ -53,13 +53,13 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
   // and compute the soft lower bound
   a_linear_term_.Init(new_dimension_*values_.size());
   b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       a_linear_term_[new_dimension_*i+j]=
@@ -76,7 +76,7 @@ void RelaxedNmfBoundTightener::Init(fx_module *module,
   }
 }
 
-void RelaxedNmfBoundTightener::SetOptVarRowColumn(index_t row, index_t column) {
+void RelaxedNmfBoundTightener::SetOptVarRowColumn(size_t row, size_t column) {
   opt_var_row_=row;
   opt_var_column_=column;
 }
@@ -104,13 +104,13 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
   gradient->SetAll(0.0);
  
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
                                 +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -123,16 +123,16 @@ void RelaxedNmfBoundTightener::ComputeGradient(Matrix &coordinates, Matrix *grad
                    "Something is wrong, solution out of the interior!"); 
   
   
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*b_linear_term_[new_dimension_*i+j];
@@ -161,13 +161,13 @@ void RelaxedNmfBoundTightener::ComputeNonRelaxedObjective(Matrix &coordinates,
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -186,13 +186,13 @@ double RelaxedNmfBoundTightener::ComputeLagrangian(Matrix &coordinates) {
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=row+w_offset_;
-    index_t h=col+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=row+w_offset_;
+    size_t h=col+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(a_linear_term_[new_dimension_*i+j]
                                 +b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -214,8 +214,8 @@ void RelaxedNmfBoundTightener::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmfBoundTightener::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+  for(size_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(size_t j=0; j<x_lower_bound_.n_cols(); j++) {
       if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
         coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
@@ -234,8 +234,8 @@ void RelaxedNmfBoundTightener::set_sigma(double sigma) {
 
 void RelaxedNmfBoundTightener::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -249,7 +249,7 @@ bool RelaxedNmfBoundTightener::IsDiverging(double objective) {
 bool RelaxedNmfBoundTightener::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  index_t num_of_constraints=1;
+  size_t num_of_constraints=1;
   if (num_of_constraints/sigma_ < desired_duality_gap_) {
     return true;
   } else {
@@ -302,14 +302,14 @@ double RelaxedNmfBoundTightener::GetSoftLowerBound() {
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 void RelaxedNmfIsometricBoundTightener::Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Matrix &x_lower_bound, 
                       Matrix &x_upper_bound,  
-                      index_t opt_var_row,
-                      index_t opt_var_column,
-                      index_t opt_var_sign,
+                      size_t opt_var_row,
+                      size_t opt_var_column,
+                      size_t opt_var_sign,
                       double function_upper_bound) {
   module_=module;
   rows_.InitAlias(rows);
@@ -334,13 +334,13 @@ void RelaxedNmfIsometricBoundTightener::Init(fx_module *module,
   // and compute the soft lower bound
   objective_a_linear_term_.Init(new_dimension_*values_.size());
   objective_b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_.get(j, w) + x_lower_bound_.get(j, h);
       double y_upper=x_upper_bound_.get(j, w) + x_upper_bound_.get(j, h);      
       objective_a_linear_term_[new_dimension_*i+j]=
@@ -362,19 +362,19 @@ void RelaxedNmfIsometricBoundTightener::Init(fx_module *module,
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
 
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
-  index_t knns = fx_param_int(module_, "knns", 3);
-  index_t leaf_size = fx_param_int(module_, "leaf_size", 20);
+  size_t knns = fx_param_int(module_, "knns", 3);
+  size_t leaf_size = fx_param_int(module_, "leaf_size", 20);
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allknn_.Init(data_mat, leaf_size, knns); 
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -390,11 +390,11 @@ void RelaxedNmfIsometricBoundTightener::Init(fx_module *module,
   is_infeasible_=false; 
   constraint_a_linear_term_.Init(new_dimension_*num_of_nearest_pairs_);
   constraint_b_linear_term_.Init(new_dimension_*num_of_nearest_pairs_);
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
     double soft_lower_bound=0.0;
-    for(index_t j=0; j<new_dimension_; j++) {
-      index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-      index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+    for(size_t j=0; j<new_dimension_; j++) {
+      size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+      size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
       double y_lower=x_lower_bound_.get(j, n1) + x_lower_bound_.get(j, n2);
       double y_upper=x_upper_bound_.get(j, n1) + x_upper_bound_.get(j, n2);      
       constraint_a_linear_term_[new_dimension_*i+j]=
@@ -415,7 +415,7 @@ void RelaxedNmfIsometricBoundTightener::Init(fx_module *module,
   }  
 }
 
-void RelaxedNmfIsometricBoundTightener::SetOptVarRowColumn(index_t row, index_t column) {
+void RelaxedNmfIsometricBoundTightener::SetOptVarRowColumn(size_t row, size_t column) {
   opt_var_row_=row;
   opt_var_column_=column;
 }
@@ -446,13 +446,13 @@ void RelaxedNmfIsometricBoundTightener::ComputeGradient(Matrix &coordinates, Mat
   gradient->SetAll(0.0);
  
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(objective_a_linear_term_[new_dimension_*i+j]
                                 +objective_b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -465,16 +465,16 @@ void RelaxedNmfIsometricBoundTightener::ComputeGradient(Matrix &coordinates, Mat
                    "Something is wrong, solution out of the interior!"); 
   
   
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*objective_b_linear_term_[new_dimension_*i+j];
@@ -486,11 +486,11 @@ void RelaxedNmfIsometricBoundTightener::ComputeGradient(Matrix &coordinates, Mat
  
   la::Scale(1.0/(function_upper_bound_-norm_error), gradient);
   // gradient from the distance constraints
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -499,7 +499,7 @@ void RelaxedNmfIsometricBoundTightener::ComputeGradient(Matrix &coordinates, Mat
     double denominator=nearest_distances_[i]-distance;
     DEBUG_ASSERT_MSG(denominator>0,
        "Something is wrong, solution out of the interior");
-    for(index_t j=0; j<new_dimension_; j++){
+    for(size_t j=0; j<new_dimension_; j++){
       double nominator=-2*constraint_b_linear_term_[new_dimension_*i+j];
       gradient->set(j, n1, gradient->get(j, n1) 
           +(nominator+2*exp(2*coordinates.get(j, n1)))/denominator);
@@ -529,13 +529,13 @@ void RelaxedNmfIsometricBoundTightener::ComputeNonRelaxedObjective(Matrix &coord
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -554,13 +554,13 @@ double RelaxedNmfIsometricBoundTightener::ComputeLagrangian(Matrix &coordinates)
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(objective_a_linear_term_[new_dimension_*i+j]
                                 +objective_b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -574,11 +574,11 @@ double RelaxedNmfIsometricBoundTightener::ComputeLagrangian(Matrix &coordinates)
   }
   lagrangian+=-log(function_upper_bound_-norm_error);
   double prod=1.0;
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -604,8 +604,8 @@ void RelaxedNmfIsometricBoundTightener::UpdateLagrangeMult(Matrix &coordinates) 
 
 void RelaxedNmfIsometricBoundTightener::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<x_lower_bound_.n_rows(); i++) {
-    for(index_t j=0; j<x_lower_bound_.n_cols(); j++) {
+  for(size_t i=0; i<x_lower_bound_.n_rows(); i++) {
+    for(size_t j=0; j<x_lower_bound_.n_cols(); j++) {
       if (coordinates->get(i, j) < x_lower_bound_.get(i, j)) {
         coordinates->set(i, j, x_lower_bound_.get(i, j));
       } else {
@@ -624,8 +624,8 @@ void RelaxedNmfIsometricBoundTightener::set_sigma(double sigma) {
 
 void RelaxedNmfIsometricBoundTightener::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_rows(); i++) {
-    for(index_t j=0; j<init_data->n_cols(); j++) {
+  for(size_t i=0; i<init_data->n_rows(); i++) {
+    for(size_t j=0; j<init_data->n_cols(); j++) {
       init_data->set(i, j, 
           (x_lower_bound_.get(i, j) + x_upper_bound_.get(i, j))/2);
     }
@@ -639,7 +639,7 @@ bool RelaxedNmfIsometricBoundTightener::IsDiverging(double objective) {
 bool RelaxedNmfIsometricBoundTightener::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  index_t num_of_constraints=1+num_of_nearest_pairs_;
+  size_t num_of_constraints=1+num_of_nearest_pairs_;
   if (num_of_constraints/sigma_ < desired_duality_gap_) {
     return true;
   } else {
@@ -697,12 +697,12 @@ bool RelaxedNmfIsometricBoundTightener::IsInfeasible() {
 /////////////////////////////////////////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////
 void RelaxedNmfIsometricBoxTightener::Init(fx_module *module,
-                      ArrayList<index_t> &rows,
-                      ArrayList<index_t> &columns,
+                      ArrayList<size_t> &rows,
+                      ArrayList<size_t> &columns,
                       ArrayList<double> &values,
                       Vector &x_lower_bound, 
                       Vector &x_upper_bound,  
-                      index_t opt_var_sign,
+                      size_t opt_var_sign,
                       double function_upper_bound) {
   module_=module;
   rows_.InitAlias(rows);
@@ -725,13 +725,13 @@ void RelaxedNmfIsometricBoxTightener::Init(fx_module *module,
   // and compute the soft lower bound
   objective_a_linear_term_.Init(new_dimension_*values_.size());
   objective_b_linear_term_.Init(new_dimension_*values_.size());
-  for(index_t i=0; i<values_.size(); i++) {
-//    index_t row=rows_[i];
-//    index_t col=columns_[i];
-//    index_t w=col+w_offset_;
-//    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+//    size_t row=rows_[i];
+//    size_t col=columns_[i];
+//    size_t w=col+w_offset_;
+//    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double y_lower=x_lower_bound_[j] + x_lower_bound_[j];
       double y_upper=x_upper_bound_[j] + x_upper_bound_[j];      
       objective_a_linear_term_[new_dimension_*i+j]=
@@ -753,19 +753,19 @@ void RelaxedNmfIsometricBoxTightener::Init(fx_module *module,
   data_mat.Init(num_of_rows_, num_of_columns_);
   data_mat.SetAll(0.0);
 
-  for(index_t i=0; i<rows_.size(); i++) {
+  for(size_t i=0; i<rows_.size(); i++) {
     data_mat.set(rows_[i], columns_[i], values_[i]);
   }
   // Initializations for the local isometries
-  index_t knns = fx_param_int(module_, "knns", 3);
-  index_t leaf_size = fx_param_int(module_, "leaf_size", 20);
+  size_t knns = fx_param_int(module_, "knns", 3);
+  size_t leaf_size = fx_param_int(module_, "leaf_size", 20);
   NOTIFY("Data loaded ...\n");
   NOTIFY("Nearest neighbor constraints ...\n");
   NOTIFY("Building tree with data ...\n");
   allknn_.Init(data_mat, leaf_size, knns); 
   NOTIFY("Tree built ...\n");
   NOTIFY("Computing neighborhoods ...\n");
-  ArrayList<index_t> from_tree_neighbors;
+  ArrayList<size_t> from_tree_neighbors;
   ArrayList<double>  from_tree_distances;
   allknn_.ComputeNeighbors(&from_tree_neighbors,
                            &from_tree_distances);
@@ -781,11 +781,11 @@ void RelaxedNmfIsometricBoxTightener::Init(fx_module *module,
   is_infeasible_=false; 
   constraint_a_linear_term_.Init(new_dimension_*num_of_nearest_pairs_);
   constraint_b_linear_term_.Init(new_dimension_*num_of_nearest_pairs_);
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
     double soft_lower_bound=0.0;
-    for(index_t j=0; j<new_dimension_; j++) {
-//      index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-//      index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+    for(size_t j=0; j<new_dimension_; j++) {
+//      size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+//      size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
       double y_lower=x_lower_bound_[j] + x_lower_bound_[j];
       double y_upper=x_upper_bound_[j] + x_upper_bound_[j];      
       constraint_a_linear_term_[new_dimension_*i+j]=
@@ -832,13 +832,13 @@ void RelaxedNmfIsometricBoxTightener::ComputeGradient(Matrix &coordinates, Matri
   gradient->SetAll(0.0);
  
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(objective_a_linear_term_[new_dimension_*i+j]
                                 +objective_b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -851,16 +851,16 @@ void RelaxedNmfIsometricBoxTightener::ComputeGradient(Matrix &coordinates, Matri
                    "Something is wrong, solution out of the interior!"); 
   
   
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       double grad=2*convex_part*exp(coordinates.get(j, w)
                                     +coordinates.get(j, h))
                       -2*values_[i]*objective_b_linear_term_[new_dimension_*i+j];
@@ -872,11 +872,11 @@ void RelaxedNmfIsometricBoxTightener::ComputeGradient(Matrix &coordinates, Matri
  
   la::Scale(1.0/(function_upper_bound_-norm_error), gradient);
   // gradient from the distance constraints
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -885,7 +885,7 @@ void RelaxedNmfIsometricBoxTightener::ComputeGradient(Matrix &coordinates, Matri
     double denominator=nearest_distances_[i]-distance;
     DEBUG_ASSERT_MSG(denominator>0,
        "Something is wrong, solution out of the interior");
-    for(index_t j=0; j<new_dimension_; j++){
+    for(size_t j=0; j<new_dimension_; j++){
       double nominator=-2*constraint_b_linear_term_[new_dimension_*i+j];
       gradient->set(j, n1, gradient->get(j, n1) 
           +(nominator+2*exp(2*coordinates.get(j, n1)))/denominator);
@@ -919,13 +919,13 @@ void RelaxedNmfIsometricBoxTightener::ComputeNonRelaxedObjective(Matrix &coordin
                                             double *objective) {
   fx_timer_start(NULL, "non_relaxed_objective");
   *objective=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       convex_part+=exp(coordinates.get(j, w)+coordinates.get(j, h));
     }
     *objective+=convex_part*(convex_part-2*values_[i]);
@@ -944,13 +944,13 @@ double RelaxedNmfIsometricBoxTightener::ComputeLagrangian(Matrix &coordinates) {
   ComputeObjective(coordinates, &lagrangian);
   lagrangian*=sigma_;
   double norm_error=values_sq_norm_;
-  for(index_t i=0; i<values_.size(); i++) {
-    index_t row=rows_[i];
-    index_t col=columns_[i];
-    index_t w=col+w_offset_;
-    index_t h=row+h_offset_;
+  for(size_t i=0; i<values_.size(); i++) {
+    size_t row=rows_[i];
+    size_t col=columns_[i];
+    size_t w=col+w_offset_;
+    size_t h=row+h_offset_;
     double convex_part=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       norm_error+=-2*values_[i]*(objective_a_linear_term_[new_dimension_*i+j]
                                 +objective_b_linear_term_[new_dimension_*i+j]
                                  *(coordinates.get(j, w)+coordinates.get(j, h)));
@@ -964,11 +964,11 @@ double RelaxedNmfIsometricBoxTightener::ComputeLagrangian(Matrix &coordinates) {
   }
   lagrangian+=-log(function_upper_bound_-norm_error);
   double prod=1.0;
-  for(index_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
-    index_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
-    index_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
+  for(size_t i=0; i<nearest_neighbor_pairs_.size(); i++) {
+    size_t n1 = w_offset_ + nearest_neighbor_pairs_[i].first;
+    size_t n2 = w_offset_ + nearest_neighbor_pairs_[i].second; 
     double distance=0;
-    for(index_t j=0; j<new_dimension_; j++) {
+    for(size_t j=0; j<new_dimension_; j++) {
       distance+=exp(2*coordinates.get(j, n1))+exp(2*coordinates.get(j, n2));
       distance+=-2*(constraint_a_linear_term_[new_dimension_*i+j]
                     +constraint_b_linear_term_[new_dimension_*i+j]
@@ -994,8 +994,8 @@ void RelaxedNmfIsometricBoxTightener::UpdateLagrangeMult(Matrix &coordinates) {
 
 void RelaxedNmfIsometricBoxTightener::Project(Matrix *coordinates) {
   fx_timer_start(NULL, "project");
-  for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-    for(index_t j=0; j<x_lower_bound_.length(); j++) {
+  for(size_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+    for(size_t j=0; j<x_lower_bound_.length(); j++) {
       if (coordinates->get(j, i) < x_lower_bound_[j]) {
         coordinates->set(j, i, x_lower_bound_[j]);
       } else {
@@ -1014,8 +1014,8 @@ void RelaxedNmfIsometricBoxTightener::set_sigma(double sigma) {
 
 void RelaxedNmfIsometricBoxTightener::GiveInitMatrix(Matrix *init_data) {
   init_data->Init(new_dimension_, num_of_rows_ + num_of_columns_);
-  for(index_t i=0; i<init_data->n_cols(); i++) {
-    for(index_t j=0; j<init_data->n_rows(); j++) {
+  for(size_t i=0; i<init_data->n_cols(); i++) {
+    for(size_t j=0; j<init_data->n_rows(); j++) {
       init_data->set(j, i, 
           (x_lower_bound_[j] + x_upper_bound_[j])/2);
     }
@@ -1029,7 +1029,7 @@ bool RelaxedNmfIsometricBoxTightener::IsDiverging(double objective) {
 bool RelaxedNmfIsometricBoxTightener::IsOptimizationOver(Matrix &coordinates, 
                                     Matrix &gradient, double step) {
 
-  index_t num_of_constraints=1+num_of_nearest_pairs_;
+  size_t num_of_constraints=1+num_of_nearest_pairs_;
   if (num_of_constraints/sigma_ < desired_duality_gap_) {
     return true;
   } else {

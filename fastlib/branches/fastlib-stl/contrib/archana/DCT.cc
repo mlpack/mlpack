@@ -11,9 +11,9 @@ int main()
 	cosine_coeffs.Init(1,input_values.n_cols()); /*Initialize the matrix - the matrix generated is 256 point dataset*/
 	cosine_coeffs.SetZero();
 	/*Computing DCT -2 where N=256*/
-	for(index_t k=0;k<256;++i)
+	for(size_t k=0;k<256;++i)
 	{
-		for(index_t n=0;n<256;++n)
+		for(size_t n=0;n<256;++n)
 		{
 			cosine_coeffs.set(0,k)+=input_values(0,n)*cos((pi*(n+0.5)*k )/256);
 		}

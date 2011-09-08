@@ -71,7 +71,7 @@ int main(int argc, char* argv[]) {
   cv_set.CopyMatrix(cv_data);
 
 
-  ArrayList<index_t> permutation;
+  ArrayList<size_t> permutation;
   math::MakeIdentityPermutation(n_sequences, &permutation);
 
   printf("sequences.size() = %d\n", sequences.size());

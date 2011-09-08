@@ -23,7 +23,7 @@
 #include "regmin.h"
 
 char *line = NULL;
-index_t max_line_length; // buffer size for read a line
+size_t max_line_length; // buffer size for read a line
 
 Dataset_sl train_set;
 NZ_entry *train_nz_pool; // a pool for all non-zero entries in the training set
@@ -32,14 +32,14 @@ NZ_entry *test_nz_pool; // a pool for all non-zero entries in the testing set
 
 
 static char *ReadLine(FILE *fp_in) {
-  index_t length;
+  size_t length;
   if ( fgets(line, max_line_length, fp_in)==NULL ) {
     return NULL;
   }
   while ( strrchr(line,'\n')==NULL ) {
     max_line_length *= 2;
     line = (char *) realloc(line, max_line_length);
-    length = (index_t) strlen(line);
+    length = (size_t) strlen(line);
     if ( fgets(line+length, max_line_length-length, fp_in)==NULL ) {
       break;
     }
@@ -48,7 +48,7 @@ static char *ReadLine(FILE *fp_in) {
 }
 
 int ReadData(Dataset_sl &dataset, struct NZ_entry *nz_pool, FILE *fp) {
-  index_t max_index, inst_max_index, i, j;
+  size_t max_index, inst_max_index, i, j;
   char *endptr, *label, *index, *value;
   
   max_index = 0;
@@ -71,7 +71,7 @@ int ReadData(Dataset_sl &dataset, struct NZ_entry *nz_pool, FILE *fp) {
       }
       errno = 0;
       // in svmlight's data format, feature index begins from 1, not 0
-      nz_pool[j].index = (index_t) strtol(index, &endptr, 10) - 1;
+      nz_pool[j].index = (size_t) strtol(index, &endptr, 10) - 1;
       if (endptr == index || errno !=0 || *endptr !='\0' || nz_pool[j].index<=inst_max_index) {
 	printf("No values found for a data point at line %d\n", i+1);
 	return 0;
@@ -111,7 +111,7 @@ int InitTrainsetFromFile(String param) {
       return 0;
     }
     else {
-      index_t num_nz_entries = 0;
+      size_t num_nz_entries = 0;
       train_set.n_points= 0;
       
       // count # of data points, # of non-zero entries
@@ -170,7 +170,7 @@ int InitTestsetFromFile(String param) {
       return 0;
     }
     else {
-      index_t num_nz_entries = 0;
+      size_t num_nz_entries = 0;
       test_set.n_points= 0;
       
       // count # of data points, # of non-zero entries

@@ -7,14 +7,14 @@ class FockMatrixTest {
 public:
   
   void PermuteMatrix(const Matrix& old_mat, Matrix* new_mat, 
-                      const ArrayList<index_t>& perm) {
+                      const ArrayList<size_t>& perm) {
     
-    index_t num_cols = old_mat.n_cols();
+    size_t num_cols = old_mat.n_cols();
     DEBUG_ASSERT(num_cols == perm.size());
     
     new_mat->Init(old_mat.n_rows(), num_cols);
     
-    for (index_t i = 0; i < num_cols; i++) {
+    for (size_t i = 0; i < num_cols; i++) {
       
       Vector old_vec;
       old_mat.MakeColumnVector(perm[i], &old_vec);
@@ -38,9 +38,9 @@ public:
     Matrix test_density;
     data::Load(density_name, &test_density);
     
-    for (index_t i = 0; i < test_density.n_rows(); i++) {
+    for (size_t i = 0; i < test_density.n_rows(); i++) {
     
-      for (index_t j = 0; j < test_density.n_cols(); j++) {
+      for (size_t j = 0; j < test_density.n_cols(); j++) {
       
         DEBUG_ASSERT(test_density.ref(i,j) == test_density.ref(j,i));
       
@@ -110,12 +110,12 @@ public:
     printf("\n\n");
     */
     
-    index_t num_rows = multi_exchange.n_rows();
+    size_t num_rows = multi_exchange.n_rows();
     //printf("num_rows: %d\n", num_rows);
     
-    for (index_t i = 0; i < num_rows; i++) {
+    for (size_t i = 0; i < num_rows; i++) {
       
-      for (index_t j = 0; j < num_rows; j++) {
+      for (size_t j = 0; j < num_rows; j++) {
         
         double this_val;
         double this_naive;
@@ -405,7 +405,7 @@ private:
   
   NaiveFockMatrix* naive_;
   
-  ArrayList<index_t> old_from_new;
+  ArrayList<size_t> old_from_new;
   
 }; //class FockMatrixTest
 

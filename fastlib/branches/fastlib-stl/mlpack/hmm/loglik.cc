@@ -19,9 +19,9 @@
 
 using namespace hmm_support;
 
-success_t loglik_discrete();
-success_t loglik_gaussian();
-success_t loglik_mixture();
+bool loglik_discrete();
+bool loglik_gaussian();
+bool loglik_mixture();
 void usage();
 
 /*const fx_entry_doc hmm_loglik_main_entries[] = {
@@ -60,7 +60,7 @@ using namespace mlpack;
 int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
-  success_t s = SUCCESS_PASS;
+  bool s = true;
   if (IO::HasParam("hmm/type")) {
     const char* type = IO::GetParam<std::string>("hmm/type").c_str();
     if (strcmp(type, "discrete")==0)
@@ -71,14 +71,14 @@ int main(int argc, char* argv[]) {
       s = loglik_mixture();
     else {
       IO::Info << "Unrecognized type: must be: discrete | gaussian | mixture !!!";
-      s = SUCCESS_FAIL;
+      s = false;
     }
   }
   else {
     IO::Info << "Unrecognized type: must be: discrete | gaussian | mixture  !!!";
-    s = SUCCESS_FAIL;
+    s = false;
   }
-  if (!PASSED(s)) usage();
+  if (!(s)) usage();
 }
 
 void usage() {
@@ -91,10 +91,10 @@ void usage() {
   IO::Warn << "  --logfile==file   : output file for log-likelihood of the sequences" << std::endl;
 }
 
-success_t loglik_mixture() {
+bool loglik_mixture() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
@@ -107,24 +107,24 @@ success_t loglik_mixture() {
   load_matrix_list(seqin, seqs);
 
   TextWriter w_log;
-  if (!PASSED(w_log.Open(logout))) {
+  if (!(w_log.Open(logout))) {
     IO::Warn << "Couldn't open '" << logout << "' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (index_t i = 0; i < seqs.size(); i++)
+  for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
   
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t loglik_gaussian() {
+bool loglik_gaussian() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
@@ -137,24 +137,24 @@ success_t loglik_gaussian() {
   load_matrix_list(seqin, seqs);
 
   TextWriter w_log;
-  if (!PASSED(w_log.Open(logout))) {
+  if (!(w_log.Open(logout))) {
     IO::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (index_t i = 0; i < seqs.size(); i++)
+  for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
   
-  return SUCCESS_PASS;
+  return true;
 }
 
-success_t loglik_discrete() {
+bool loglik_discrete() {
   if (!IO::HasParam("hmm/profile")) {
     IO::Warn << "--profile must be defined." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
   const char* profile = IO::GetParam<std::string>("hmm/profile").c_str();
   const char* seqin = IO::GetParam<std::string>("hmm/seqfile").c_str(); 
@@ -167,16 +167,16 @@ success_t loglik_discrete() {
   load_vector_list(seqin, seqs);
 
   TextWriter w_log;
-  if (!PASSED(w_log.Open(logout))) {
+  if (!(w_log.Open(logout))) {
     IO::Warn << "Couldn't open '"<< logout <<"' for writing." << std::endl;
-    return SUCCESS_FAIL;
+    return false;
   }
 
   std::vector<double> list_loglik;
   hmm.ComputeLogLikelihood(seqs, list_loglik);
 
-  for (index_t i = 0; i < seqs.size(); i++)
+  for (size_t i = 0; i < seqs.size(); i++)
     w_log.Printf("%f\n", list_loglik[i]);
 
-  return SUCCESS_PASS;
+  return true;
 }

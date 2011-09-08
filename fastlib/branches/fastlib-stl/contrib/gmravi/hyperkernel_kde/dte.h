@@ -48,31 +48,31 @@ template<typename TKernel> class DTreeEvaluation{
     }
     
     // This is the leaf node
-    void Init(const Matrix &dataset, index_t start, index_t count){
+    void Init(const Matrix &dataset, size_t start, size_t count){
       
       
     }
     
     //This is the internal node
-    void Init(const Matrix &dataset, index_t start, index_t count, 
+    void Init(const Matrix &dataset, size_t start, size_t count, 
 	      const DTreeStat &left_stat, DTreeStat &right_stat){
       
     }
 
     /*//This is the leaf node
       
-    void Init(const Matrix &dataset, index_t start, index_t end){
+    void Init(const Matrix &dataset, size_t start, size_t end){
     
     }
 
     // This is the leaf node
-    void Init(const Matrix &dataset, index_t start, index_t count){
+    void Init(const Matrix &dataset, size_t start, size_t count){
     
     
     }
     
     //This is the internal node
-    void Init(const Matrix &dataset, index_t start, index_t count, 
+    void Init(const Matrix &dataset, size_t start, size_t count, 
     const DTreeStat &left_stat, const DTreeStat &right_stat){
     
     }*/
@@ -100,13 +100,13 @@ template<typename TKernel> class DTreeEvaluation{
   double tau_;
   
   //Permutation of the Query set
-  ArrayList <index_t> old_from_new_q_;
-  ArrayList <index_t> new_from_old_q_;
+  ArrayList <size_t> old_from_new_q_;
+  ArrayList <size_t> new_from_old_q_;
 
   
   //Permutation of the reference set
-  ArrayList <index_t> old_from_new_r_;
-  ArrayList <index_t> new_from_old_r_;
+  ArrayList <size_t> old_from_new_r_;
+  ArrayList <size_t> new_from_old_r_;
 
   //Vector of estimates. Since these estimates are like density
   //calculations, I shall call these estimates as density estimates
@@ -117,7 +117,7 @@ template<typename TKernel> class DTreeEvaluation{
   
   //The number of prunes
   
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   
   //Bandwdth of the kernel being use
   
@@ -211,7 +211,7 @@ template<typename TKernel> class DTreeEvaluation{
     return;
   }
 
-  index_t Prunable_(Tree *qnode, Tree *rnode, double *dl,double *du){
+  size_t Prunable_(Tree *qnode, Tree *rnode, double *dl,double *du){
 
     //Get maximum and minimum bounding distance
     double min_dist=qnode->bound().MinDistanceSq(rnode->bound());
@@ -224,7 +224,7 @@ template<typename TKernel> class DTreeEvaluation{
 
     //The new lower bound after incorporating the change
 
-    index_t num_points_rnode=rnode->end()-rnode->begin();
+    size_t num_points_rnode=rnode->end()-rnode->begin();
 
     *dl=min_kernel_value*num_points_rnode;
     *du=num_points_rnode*(-1+max_kernel_value);
@@ -233,7 +233,7 @@ template<typename TKernel> class DTreeEvaluation{
 
     double m=0.5*(max_kernel_value-min_kernel_value);
     double total_error=m*num_points_rnode;
-    index_t total_num_of_points=rroot_->end()-rroot_->begin();
+    size_t total_num_of_points=rroot_->end()-rroot_->begin();
 
    
     double allowed_error=
@@ -384,14 +384,14 @@ template<typename TKernel> class DTreeEvaluation{
 
   ///Getters and setters
 
-  void GetEstimatesInitialized(index_t p, Vector &row_p){
+  void GetEstimatesInitialized(size_t p, Vector &row_p){
 
     //depermute them before sending
 
     Vector temp;
     temp.Init(qset_.n_cols());
 
-    for(index_t q=0;q<qset_.n_cols();q++){
+    for(size_t q=0;q<qset_.n_cols();q++){
 
       temp[q]=density_estimates_e_[new_from_old_q_[q]];
     }
@@ -410,7 +410,7 @@ template<typename TKernel> class DTreeEvaluation{
     UpdateBounds_(qnode,qnode->stat().owed_l,qnode->stat().owed_u);
 
     if(qnode->is_leaf()){
-      for(index_t i=qnode->begin();i<qnode->end();i++){
+      for(size_t i=qnode->begin();i<qnode->end();i++){
 	
 	density_estimates_e_[i]=
 	  (density_estimates_l_[i]+qnode->stat().more_l
@@ -427,15 +427,15 @@ template<typename TKernel> class DTreeEvaluation{
     
     //This module has to be written
     
-    index_t num_points_rnode=rnode->end()-rnode->begin();
+    size_t num_points_rnode=rnode->end()-rnode->begin();
     qnode->stat().more_u-=num_points_rnode;
-    for(index_t q=qnode->begin();q<qnode->end();q++){
+    for(size_t q=qnode->begin();q<qnode->end();q++){
       
       double *point1=qset_.GetColumnPtr(q);
       double total_kernel_contrib=0;
       
       //Sum up contribution due to all reference points
-      for(index_t r=rnode->begin();r<rnode->end();r++){
+      for(size_t r=rnode->begin();r<rnode->end();r++){
 	
 	double *point2=rset_.GetColumnPtr(r);
 	
@@ -453,7 +453,7 @@ template<typename TKernel> class DTreeEvaluation{
     //Tighten the bounds
     double min_l=DBL_MAX;
     double max_u=DBL_MIN;
-      for(index_t i=qnode->begin();i<qnode->end();i++){
+      for(size_t i=qnode->begin();i<qnode->end();i++){
 
 	if(min_l>density_estimates_l_[i]){
 

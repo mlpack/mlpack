@@ -18,7 +18,7 @@
 
 void MVUDotProdObjective::Init(datanode *module,
     Matrix *auxiliary_mat, 
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     // The values of the (row, column) values, also known as the dot products
     ArrayList<double> &dot_prod_values) {
   
@@ -36,10 +36,10 @@ void MVUDotProdObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient)
   gradient->CopyValues(coordinates);
   la::Scale(-1.0, gradient);
   gradient->SetAll(0.0);
-  index_t dimension=auxiliary_mat_->n_rows();
-  for (index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  size_t dimension=auxiliary_mat_->n_rows();
+  for (size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -53,8 +53,8 @@ void MVUDotProdObjective::ComputeGradient(Matrix &coordinates, Matrix *gradient)
 
 void MVUDotProdObjective::ComputeObjective(Matrix &coordinates, double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i< coordinates.n_cols(); i++) {
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i< coordinates.n_cols(); i++) {
      *objective-=la::Dot(dimension, 
                         coordinates.GetColumnPtr(i),
                         coordinates.GetColumnPtr(i));
@@ -63,11 +63,11 @@ void MVUDotProdObjective::ComputeObjective(Matrix &coordinates, double *objectiv
 }
 
 void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension = coordinates.n_rows();
+  size_t dimension = coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -79,11 +79,11 @@ void MVUDotProdObjective::ComputeFeasibilityError(Matrix &coordinates, double *e
 
 double MVUDotProdObjective::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
-  index_t dimension = coordinates.n_rows();
+  size_t dimension = coordinates.n_rows();
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -94,10 +94,10 @@ double MVUDotProdObjective::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void MVUDotProdObjective::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -124,7 +124,7 @@ bool MVUDotProdObjective::IsDiverging(double objective) {
 
 void MVUDotProdObjectiveBounded::Init(datanode *module,
     Matrix *auxiliary_mat, 
-    ArrayList<std::pair<index_t, index_t> > &pairs_to_consider, 
+    ArrayList<std::pair<size_t, size_t> > &pairs_to_consider, 
     // The values of the (row, column) values, also known as the dot products
     ArrayList<double> &dot_prod_values) {
   
@@ -144,10 +144,10 @@ void MVUDotProdObjectiveBounded::ComputeGradient(Matrix &coordinates, Matrix *gr
   gradient->CopyValues(coordinates);
   la::Scale(-1.0, gradient);
   gradient->SetAll(0.0);
-  index_t dimension=auxiliary_mat_->n_rows();
-  for (index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  size_t dimension=auxiliary_mat_->n_rows();
+  for (size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -161,8 +161,8 @@ void MVUDotProdObjectiveBounded::ComputeGradient(Matrix &coordinates, Matrix *gr
 
 void MVUDotProdObjectiveBounded::ComputeObjective(Matrix &coordinates, double *objective) {
   *objective=0;
-  index_t dimension = coordinates.n_rows();
-  for(index_t i=0; i< coordinates.n_cols(); i++) {
+  size_t dimension = coordinates.n_rows();
+  for(size_t i=0; i< coordinates.n_cols(); i++) {
      *objective-=la::Dot(dimension, 
                         coordinates.GetColumnPtr(i),
                         coordinates.GetColumnPtr(i));
@@ -171,11 +171,11 @@ void MVUDotProdObjectiveBounded::ComputeObjective(Matrix &coordinates, double *o
 }
 
 void MVUDotProdObjectiveBounded::ComputeFeasibilityError(Matrix &coordinates, double *error) {
-  index_t dimension = coordinates.n_rows();
+  size_t dimension = coordinates.n_rows();
   *error=0;
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -187,11 +187,11 @@ void MVUDotProdObjectiveBounded::ComputeFeasibilityError(Matrix &coordinates, do
 
 double MVUDotProdObjectiveBounded::ComputeLagrangian(Matrix &coordinates) {
   double lagrangian=0;
-  index_t dimension = coordinates.n_rows();
+  size_t dimension = coordinates.n_rows();
   ComputeObjective(coordinates, &lagrangian);
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);
@@ -202,10 +202,10 @@ double MVUDotProdObjectiveBounded::ComputeLagrangian(Matrix &coordinates) {
 }
 
 void MVUDotProdObjectiveBounded::UpdateLagrangeMult(Matrix &coordinates) {
-  index_t dimension=coordinates.n_rows();
-  for(index_t i=0; i<num_of_constraints_; i++) {
-    index_t ind1=pairs_to_consider_[i].first; 
-    index_t ind2=pairs_to_consider_[i].second;
+  size_t dimension=coordinates.n_rows();
+  for(size_t i=0; i<num_of_constraints_; i++) {
+    size_t ind1=pairs_to_consider_[i].first; 
+    size_t ind2=pairs_to_consider_[i].second;
     double *p1=coordinates.GetColumnPtr(ind1);
     double *p2=auxiliary_mat_->GetColumnPtr(ind2);
     double dot_prod =la::Dot(dimension, p1, p2);

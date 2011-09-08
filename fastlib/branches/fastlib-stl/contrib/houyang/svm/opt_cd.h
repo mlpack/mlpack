@@ -40,15 +40,15 @@ class CD {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
   Vector alpha_; /* the Lagrangian multipliers */
 
   Vector coef_; /* alpha*y, to be optimized */
-  index_t n_alpha_; /* number of lagrangian multipliers in the dual */
+  size_t n_alpha_; /* number of lagrangian multipliers in the dual */
   
   ArrayList<int> y_; /* list that stores "labels" */
 
@@ -61,8 +61,8 @@ class CD {
   double epsilon_; // for SVM_R
 
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double t_;
 
@@ -81,8 +81,8 @@ class CD {
       DEBUG_ASSERT(Cp_ != 0);
       DEBUG_ASSERT(Cn_ != 0);
       hinge_ = (int) param_[2];
-      n_epochs_ = (index_t)param_[3];
-      n_iter_ = (index_t)param_[4];
+      n_epochs_ = (size_t)param_[3];
+      n_iter_ = (size_t)param_[4];
       accuracy_ = param_[5];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -105,7 +105,7 @@ class CD {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
@@ -119,7 +119,7 @@ class CD {
  */
 template<typename TKernel>
 void CD<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -155,7 +155,7 @@ void CD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, t, wi;
+  size_t i, j, epo, t, wi;
   int yi;
   double G, C, diff, gap;
   int stopping_condition = 0;
@@ -210,7 +210,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     n_epochs_ = 1; // not exactly one epoch, just use it for one loop
   }
   
-  ArrayList<index_t> old_from_new;
+  ArrayList<size_t> old_from_new;
   old_from_new.Init(n_data_);
 
   /* Begin CD outer iterations */
@@ -337,7 +337,7 @@ void CD<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   int objvalue = fx_param_int(NULL, "objvalue", 0);
   if (objvalue > 0) {
     double v = 0.0, hinge_loss = 0.0, loss_sum= 0.0;
-    index_t n_sv = 0;
+    size_t n_sv = 0;
 
     // primal objective value
     for (i=0; i< n_data_; i++) {

@@ -61,7 +61,7 @@ class OCASLineSearch{
 
   // The indices that are in the bandwidth range
   
-  ArrayList <index_t> indices_in_range_;
+  ArrayList <size_t> indices_in_range_;
 
 
   // The kernel value of the points which are in the range.
@@ -72,14 +72,14 @@ class OCASLineSearch{
   // This is the dimension of the appended dataset. Hence it will be 1 more 
   // than the actual dimensions.
 
-  index_t num_dims_appended_;
+  size_t num_dims_appended_;
   
   // The number of points in the range 
   
-  index_t num_points_in_range_;
+  size_t num_points_in_range_;
 
   // The total number of points
-  index_t num_train_points_;
+  size_t num_train_points_;
 
 
  
@@ -134,7 +134,7 @@ class OCASLineSearch{
  public:
   void Init(Matrix &train_data_appended,Vector &train_labels, 
 	    Vector &query_point_appended, double lambda_reg_const, 
-	    ArrayList<index_t> &indices_in_range,
+	    ArrayList<size_t> &indices_in_range,
 	    ArrayList <double> &smoothing_kernel_values_in_range, 
 	    int num_points_in_range, int num_points, Vector &w_1,Vector &w_2);
   

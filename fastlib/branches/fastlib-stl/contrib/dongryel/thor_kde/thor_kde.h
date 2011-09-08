@@ -68,13 +68,13 @@ class ThorKde {
     typename TKernelAux::TSeriesExpansionAux sea_;
     
     /** the dimensionality of the datasets */
-    index_t dimension_;
+    size_t dimension_;
     
     /** number of query points */
-    index_t query_count_;
+    size_t query_count_;
     
     /** number of reference points */
-    index_t reference_count_;
+    size_t reference_count_;
     
     /** the global relative error allowed */
     double relative_error_;
@@ -178,7 +178,7 @@ class ThorKde {
      * sets contents assuming all space has been allocated.
      * Any attempt to allocate memory here will lead to a core dump.
      */
-    void Set(const Param& param, index_t index, Vector& data) {
+    void Set(const Param& param, size_t index, Vector& data) {
       Vector tmp;
       data.MakeSubvector(0, v_.length(), &tmp);
       v_.CopyValues(tmp);
@@ -220,14 +220,14 @@ class ThorKde {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param, const ThorKdeStat& child_stat, 
-		    const Bound& bound, index_t child_n_points) {
+		    const Bound& bound, size_t child_n_points) {
     }
     
     /**
      * Finish accumulating data; for instance, for mean, divide by the
      * number of points.
      */
-    void Postprocess(const Param& param, const Bound&bound, index_t n) {
+    void Postprocess(const Param& param, const Bound&bound, size_t n) {
     }
   };
   
@@ -311,7 +311,7 @@ class ThorKde {
     double used_error_;
 
     /** number of reference points taken care for this query point */
-    index_t n_pruned_;
+    size_t n_pruned_;
 
     OT_DEF_BASIC(QResult) {
       OT_MY_OBJECT(density_);
@@ -330,14 +330,14 @@ class ThorKde {
     }
 
     /** divide each density by the normalization constant */
-    void Postprocess(const Param& param, const QPoint& q, index_t q_index,
+    void Postprocess(const Param& param, const QPoint& q, size_t q_index,
 		     const RNode& r_root) {
       density_ *= param.mul_constant_;
     }
 
     /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
-			const QPoint& q, index_t q_index) {
+			const QPoint& q, size_t q_index) {
       density_ += postponed.d_density_;
       used_error_ += postponed.used_error_;
       n_pruned_ += postponed.n_pruned_;
@@ -357,7 +357,7 @@ class ThorKde {
      * minimum bound on the portion of the reference dataset that has been
      * taken care of.
      */
-    index_t n_pruned_;
+    size_t n_pruned_;
 
     OT_DEF_BASIC(QSummaryResult) {
       OT_MY_OBJECT(density_);
@@ -399,7 +399,7 @@ class ThorKde {
      * results based on the summary results owned by the given child
      */
     void Accumulate(const Param& param,
-		    const QSummaryResult& result, index_t n_points) {
+		    const QSummaryResult& result, size_t n_points) {
       density_ |= result.density_;
       used_error_ += result.used_error_;
       n_pruned_ = min(n_pruned_, result.n_pruned_);
@@ -454,7 +454,7 @@ class ThorKde {
     void Report(const Param& param, datanode *datanode) {
     }
     void ApplyResult(const Param& param,
-		     const QPoint& q_point, index_t q_i,
+		     const QPoint& q_point, size_t q_i,
 		     const QResult& result) {
     }
   };
@@ -473,7 +473,7 @@ class ThorKde {
     /** apply single-tree based pruning by iterating over each query point
      */
     bool StartVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const Delta& delta,
        const QSummaryResult& unapplied_summary_results, QResult* q_result,
        GlobalResult* global_result) {
@@ -513,8 +513,8 @@ class ThorKde {
 
     /** exhaustive computation between a query point and a reference point
      */
-    void VisitPair(const Param& param, const QPoint& q, index_t q_index,
-		   const RPoint& r, index_t r_index) {
+    void VisitPair(const Param& param, const QPoint& q, size_t q_index,
+		   const RPoint& r, size_t r_index) {
       double distance_sq = la::DistanceSqEuclidean(q.vec(), r.vec());
       density_ += param.kernel_.EvalUnnormOnSq(distance_sq);
     }
@@ -522,7 +522,7 @@ class ThorKde {
     /** pass back the accumulated result into the query result
      */
     void FinishVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
       
@@ -631,9 +631,9 @@ class ThorKde {
     // maximum relative error
     double max_rel_err = 0;
 
-    index_t q_end = (q_tree_->root()).end();
+    size_t q_end = (q_tree_->root()).end();
 
-    for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
+    for(size_t q = (q_tree_->root()).begin(); q < q_end; q++) {
 
       // create cache reader for each result
       CacheRead<QResult> q_fast_result(&q_fast_results_cache_array, q);
@@ -661,9 +661,9 @@ class ThorKde {
     q_points_cache_array.Init(q_points_cache_, BlockDevice::M_READ);
     r_points_cache_array.Init(r_points_cache_, BlockDevice::M_READ);
     
-    index_t q_end = (q_tree_->root()).end();
-    index_t r_end = (r_tree_->root()).end();
-    for(index_t q = (q_tree_->root()).begin(); q < q_end; q++) {
+    size_t q_end = (q_tree_->root()).end();
+    size_t r_end = (r_tree_->root()).end();
+    for(size_t q = (q_tree_->root()).begin(); q < q_end; q++) {
       
       CacheRead<QPoint> q_point(&q_points_cache_array, q);
 
@@ -671,7 +671,7 @@ class ThorKde {
 	printf("Problem with %d!\n", q);
       }
 
-      for(index_t r = (r_tree_->root()).begin(); r < r_end; r++) {
+      for(size_t r = (r_tree_->root()).begin(); r < r_end; r++) {
 
 	CacheRead<RPoint> r_point(&r_points_cache_array, r);
 

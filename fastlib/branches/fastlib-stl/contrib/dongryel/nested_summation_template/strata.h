@@ -9,17 +9,17 @@ class Strata {
 
  public:
 
-  index_t total_num_stratum;
+  size_t total_num_stratum;
 
-  index_t total_num_terms;
+  size_t total_num_terms;
 
   ArrayList<DRange> node_list;
 
   Matrix statistics_for_each_stratum;
 
-  index_t total_num_samples_so_far;
+  size_t total_num_samples_so_far;
 
-  ArrayList<index_t> output_allocation_for_each_stratum;
+  ArrayList<size_t> output_allocation_for_each_stratum;
 
   template<typename TreeType>
   class CompareTreeType {
@@ -34,7 +34,7 @@ class Strata {
    *         of per-dimension variance heuristic.
    */
   template<typename TreeType>
-  void Init(TreeType *root_in, index_t num_stratum_desired) {
+  void Init(TreeType *root_in, size_t num_stratum_desired) {
 
     // Set the total number of terms.
     node_list.Init();
@@ -70,8 +70,8 @@ class Strata {
 
     // Fill up the rest of the remaining strata by popping the
     // priority queue.
-    index_t remaining_count = num_stratum_desired - total_num_stratum;
-    for(index_t c = 0; c < remaining_count; c++) {
+    size_t remaining_count = num_stratum_desired - total_num_stratum;
+    for(size_t c = 0; c < remaining_count; c++) {
       TreeType *popped_node = frontier.top();
       frontier.pop();
       node_list.PushBackRaw();
@@ -97,7 +97,7 @@ class Strata {
    *         points times sum of per-dimension variance heuristic.
    */
   template<typename TreeType>
-  void Init(TreeType *root_in, index_t num_times_replicated,
+  void Init(TreeType *root_in, size_t num_times_replicated,
 	    double fraction_desired) {
 
     // Set the total number of terms.
@@ -168,7 +168,7 @@ class Strata {
   /** @brief Clear all the samples and start over.
    */
   void Reset() {
-    for(index_t i = 0; i < total_num_stratum; i++) {
+    for(size_t i = 0; i < total_num_stratum; i++) {
       //num_samples_for_each_stratum = 0;
       output_allocation_for_each_stratum[i] = 0;
     }

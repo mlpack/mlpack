@@ -30,9 +30,9 @@ namespace npt {
     arma::colvec random_weights_;
     
     // general parameters
-    index_t num_points_;
-    index_t tuple_size_;
-    index_t leaf_size_;
+    size_t num_points_;
+    size_t tuple_size_;
+    size_t leaf_size_;
     int num_permutations_;
     
     int num_random_;
@@ -47,20 +47,20 @@ namespace npt {
     int num_prunes_;
     int num_base_cases_;
     
-    //arma::Col<index_t> old_from_new_index_;
-    //arma::Col<index_t> old_from_new_index_random_;
+    //arma::Col<size_t> old_from_new_index_;
+    //arma::Col<size_t> old_from_new_index_random_;
     
-    std::vector<index_t> old_from_new_index_;
-    std::vector<index_t> old_from_new_index_random_;
+    std::vector<size_t> old_from_new_index_;
+    std::vector<size_t> old_from_new_index_random_;
     
     NptNode* tree_;
     NptNode* random_tree_;
     
     //////////////// functions //////////////////
     
-    void BaseCaseHelper_(std::vector<std::vector<index_t> >& point_sets,
+    void BaseCaseHelper_(std::vector<std::vector<size_t> >& point_sets,
                          std::vector<bool>& permutation_ok,
-                         std::vector<index_t>& points_in_tuple,
+                         std::vector<size_t>& points_in_tuple,
                          int k);
     
     void BaseCase_(NodeTuple& nodes);

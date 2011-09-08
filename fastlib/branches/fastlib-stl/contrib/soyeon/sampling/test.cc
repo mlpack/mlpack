@@ -28,7 +28,7 @@ class SamplingTest {
 			ArrayList<Matrix> current_added_unknown_x_past;
 			current_added_unknown_x_past.Init();
 
-			ArrayList<index_t> current_added_first_stage_y;
+			ArrayList<size_t> current_added_first_stage_y;
 			current_added_first_stage_y.Init();
 
 			int count=0;
@@ -64,10 +64,10 @@ class SamplingTest {
 							&current_added_first_stage_y);
 			*/
 			/*cout<<"sampling result 1:";
-			for(index_t i=0; i<current_added_first_stage_x.size(); i++) {
+			for(size_t i=0; i<current_added_first_stage_x.size(); i++) {
 			cout<<"current_added_first_stage_x["<<i<<"]"<<endl;
-				for(index_t j=0; j<current_added_first_stage_x[i].n_rows(); j++){
-					for(index_t k=0; k<current_added_first_stage_x[i].n_cols(); k++) {
+				for(size_t j=0; j<current_added_first_stage_x[i].n_rows(); j++){
+					for(size_t k=0; k<current_added_first_stage_x[i].n_cols(); k++) {
 						cout<<current_added_first_stage_x[i].get(j,k)<<" ";
 					}
 					cout<<endl;
@@ -75,10 +75,10 @@ class SamplingTest {
 				cout<<endl;		
 			}
 
-			for(index_t i=0; i<current_added_second_stage_x.size(); i++) {
+			for(size_t i=0; i<current_added_second_stage_x.size(); i++) {
 			cout<<"current_added_second_stage_x["<<i<<"]"<<endl;
-				for(index_t j=0; j<current_added_second_stage_x[i].n_rows(); j++){
-					for(index_t k=0; k<current_added_second_stage_x[i].n_cols(); k++) {
+				for(size_t j=0; j<current_added_second_stage_x[i].n_rows(); j++){
+					for(size_t k=0; k<current_added_second_stage_x[i].n_cols(); k++) {
 						cout<<current_added_second_stage_x[i].get(j,k)<<" ";
 					}
 					cout<<endl;
@@ -93,10 +93,10 @@ class SamplingTest {
 							&current_added_first_stage_y);
 
 			cout<<"sampling result 2:";
-			for(index_t i=0; i<current_added_first_stage_x.size(); i++) {
+			for(size_t i=0; i<current_added_first_stage_x.size(); i++) {
 			cout<<"current_added_first_stage_x["<<i<<"]"<<endl;
-				for(index_t j=0; j<current_added_first_stage_x[i].n_rows(); j++){
-					for(index_t k=0; k<current_added_first_stage_x[i].n_cols(); k++) {
+				for(size_t j=0; j<current_added_first_stage_x[i].n_rows(); j++){
+					for(size_t k=0; k<current_added_first_stage_x[i].n_cols(); k++) {
 						cout<<current_added_first_stage_x[i].get(j,k)<<" ";
 					}
 					cout<<endl;
@@ -104,10 +104,10 @@ class SamplingTest {
 				cout<<endl;		
 			}
 
-			for(index_t i=0; i<current_added_second_stage_x.size(); i++) {
+			for(size_t i=0; i<current_added_second_stage_x.size(); i++) {
 			cout<<"current_added_second_stage_x["<<i<<"]"<<endl;
-				for(index_t j=0; j<current_added_second_stage_x[i].n_rows(); j++){
-					for(index_t k=0; k<current_added_second_stage_x[i].n_cols(); k++) {
+				for(size_t j=0; j<current_added_second_stage_x[i].n_rows(); j++){
+					for(size_t k=0; k<current_added_second_stage_x[i].n_cols(); k++) {
 						cout<<current_added_second_stage_x[i].get(j,k)<<" ";
 					}
 					cout<<endl;

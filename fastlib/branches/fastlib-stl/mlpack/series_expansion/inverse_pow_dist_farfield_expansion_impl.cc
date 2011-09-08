@@ -21,17 +21,17 @@ void InversePowDistFarFieldExpansion::Accumulate(const double *v,
   std::complex<double> power_of_xi(0.0, 0.0);
   std::complex<double> contribution(0.0, 0.0);
 
-  for(index_t n = 0; n <= order; n++) {
+  for(size_t n = 0; n <= order; n++) {
     
     // Reference to the matrix to be updated.
     GenMatrix<std::complex<double> > &n_th_order_matrix = coeffs_[n];
 
-    for(index_t a = 0; a <= n; a++) {
+    for(size_t a = 0; a <= n; a++) {
       
       // $(z_i)^{n - a}$
       double power_of_z_coord = pow(z_coord, n - a);
 
-      for(index_t b = 0; b <= a; b++) {
+      for(size_t b = 0; b <= a; b++) {
 
 	InversePowDistSeriesExpansionAux::PowWithRootOfUnity
 	  (eta, b, power_of_eta);
@@ -56,7 +56,7 @@ void InversePowDistFarFieldExpansion::Accumulate(const double *v,
 void InversePowDistFarFieldExpansion::AccumulateCoeffs
 (const Matrix& data, const Vector& weights, int begin, int end, int order) {
 
-  for(index_t p = begin; p < end; p++) {
+  for(size_t p = begin; p < end; p++) {
     Accumulate(data.GetColumnPtr(p), weights[begin], order);
   }
 }
@@ -87,14 +87,14 @@ double InversePowDistFarFieldExpansion::EvaluateField(const double *v,
     (x_diff, y_diff, z_diff, &radius, &theta, &phi);
   sea_->GegenbauerPolynomials(cos(theta), evaluated_polynomials);
     
-  for(index_t n = 0; n <= order; n++) {
+  for(size_t n = 0; n <= order; n++) {
     
     const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
     const Matrix &n_th_multiplicative_constants = 
       (*multiplicative_constants)[n];
 
-    for(index_t a = 0; a <= n; a++) {
-      for(index_t b = 0; b <= a; b++) {
+    for(size_t a = 0; a <= n; a++) {
+      for(size_t b = 0; b <= a; b++) {
 	sea_->ComputePartialDerivativeFactor(n, a, b, radius, theta, phi, 
 					     evaluated_polynomials,
 					     partial_derivative);
@@ -129,10 +129,10 @@ void InversePowDistFarFieldExpansion::Init
 
   // Allocate the space for storing the coefficients.
   coeffs_.Init(sea_->get_max_order() + 1);
-  for(index_t n = 0; n <= sea_->get_max_order(); n++) {
+  for(size_t n = 0; n <= sea_->get_max_order(); n++) {
     coeffs_[n].Init(n + 1, n + 1);
-    for(index_t j = 0; j <= n; j++) {
-      for(index_t k = 0; k <= n; k++) {
+    for(size_t j = 0; j <= n; j++) {
+      for(size_t k = 0; k <= n; k++) {
 	coeffs_[n].set(j, k, std::complex<double>(0, 0));
       }
     }
@@ -146,17 +146,17 @@ void InversePowDistFarFieldExpansion::PrintDebug
   fprintf(stream, "Far field expansion\n");
   fprintf(stream, "Center: ");
   
-  for (index_t i = 0; i < center_.length(); i++) {
+  for (size_t i = 0; i < center_.length(); i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
 
-  for(index_t n = 0; n <= order_; n++) {
+  for(size_t n = 0; n <= order_; n++) {
 
     const GenMatrix< std::complex<double> > &n_th_order_matrix = coeffs_[n];
     
-    for(index_t a = 0; a <= n; a++) {
-      for(index_t b = 0; b <= n; b++) {
+    for(size_t a = 0; a <= n; a++) {
+      for(size_t b = 0; b <= n; b++) {
 	std::cout << n_th_order_matrix.get(a, b) << " ";
       }
       std::cout << "\n";
@@ -192,15 +192,15 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   // coefficients.
   if(fabs(x_diff) < DBL_EPSILON && fabs(y_diff) < DBL_EPSILON &&
      fabs(z_diff) < DBL_EPSILON) {
-    for(index_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
+    for(size_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
       // Get the matrix reference to the coefficients to be stored.
       GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix =
 	coeffs_[n_prime];
 
-      for(index_t j = 0; j < nprime_th_order_destination_matrix.n_cols();
+      for(size_t j = 0; j < nprime_th_order_destination_matrix.n_cols();
 	  j++) {
 
-	for(index_t i = 0; i < nprime_th_order_destination_matrix.n_rows();
+	for(size_t i = 0; i < nprime_th_order_destination_matrix.n_rows();
 	    i++) {
 	  nprime_th_order_destination_matrix.set
 	    (i, j,
@@ -223,7 +223,7 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
   std::complex<double> power_of_xi(0.0, 0.0);
   std::complex<double> contribution(0.0, 0.0);
   
-  for(index_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
+  for(size_t n_prime = 0; n_prime <= se.get_order(); n_prime++) {
 
     // Get the matrix reference to the coefficients to be stored.
     GenMatrix<std::complex<double> > &nprime_th_order_destination_matrix = 
@@ -233,12 +233,12 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
     const Matrix &n_prime_th_order_multiplicative_constants =
       (*multiplicative_constants)[n_prime];
 
-    for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
-      for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
-	for(index_t n = 0; n <= n_prime; n++) {
+    for(size_t a_prime = 0; a_prime <= n_prime; a_prime++) {
+      for(size_t b_prime = 0; b_prime <= a_prime; b_prime++) {
+	for(size_t n = 0; n <= n_prime; n++) {
 	  
-	  index_t l_a = std::max(0, a_prime + n - n_prime);
-	  index_t u_a = std::min(n, a_prime);
+	  size_t l_a = std::max(0, a_prime + n - n_prime);
+	  size_t u_a = std::min(n, a_prime);
 
 	  // Get the matrix reference to the coefficients to be
 	  // translated.
@@ -253,15 +253,15 @@ void InversePowDistFarFieldExpansion::TranslateFromFarField
 	  const Matrix &nprime_minus_n_th_order_multiplicative_constants =
 	    (*multiplicative_constants)[n_prime - n];
 
-	  for(index_t a = l_a; a <= u_a; a++) {
+	  for(size_t a = l_a; a <= u_a; a++) {
 
 	    // $(z_i)^{n' - n - a' + a}$
 	    double power_of_z_coord = pow(z_diff, n_prime - n - a_prime + a);
 
-	    index_t l_b = std::max(0, b_prime + a - a_prime);
-	    index_t u_b = std::min(a, b_prime);
+	    size_t l_b = std::max(0, b_prime + a - a_prime);
+	    size_t u_b = std::min(a, b_prime);
 
-	    for(index_t b = l_b; b <= u_b; b++) {
+	    for(size_t b = l_b; b <= u_b; b++) {
 
 	      InversePowDistSeriesExpansionAux::PowWithRootOfUnity
 		(eta, b_prime - b, power_of_eta);
@@ -331,7 +331,7 @@ void InversePowDistFarFieldExpansion::TranslateToLocal
   // Temporary variable storing the partial derivative.
   std::complex<double> partial_derivative;
 
-  for(index_t n_prime = 0; n_prime <= truncation_order; n_prime++) {
+  for(size_t n_prime = 0; n_prime <= truncation_order; n_prime++) {
     
     // Reference to the n-th order matrix of the local moments.
     GenMatrix<std::complex<double> > &local_n_th_order_matrix =
@@ -342,10 +342,10 @@ void InversePowDistFarFieldExpansion::TranslateToLocal
     const Matrix &local_n_th_multiplicative_constants = 
       (*multiplicative_constants)[n_prime];
     
-    for(index_t a_prime = 0; a_prime <= n_prime; a_prime++) {
-      for(index_t b_prime = 0; b_prime <= a_prime; b_prime++) {
+    for(size_t a_prime = 0; a_prime <= n_prime; a_prime++) {
+      for(size_t b_prime = 0; b_prime <= a_prime; b_prime++) {
 	
-	for(index_t n = 0; n <= truncation_order; n++) {
+	for(size_t n = 0; n <= truncation_order; n++) {
 
 	  // Reference to the n-th order matrix of the far-field
 	  // moments.
@@ -357,8 +357,8 @@ void InversePowDistFarFieldExpansion::TranslateToLocal
 	  const Matrix &farfield_n_th_multiplicative_constants =
 	    (*multiplicative_constants)[n];
 
-	  for(index_t a = 0; a <= n; a++) {
-	    for(index_t b = 0; b <= a; b++) {
+	  for(size_t a = 0; a <= n; a++) {
+	    for(size_t b = 0; b <= a; b++) {
 
 	      sea_->ComputePartialDerivativeFactor
 		(n + n_prime, a + a_prime, b + b_prime, radius, theta, phi,

@@ -59,7 +59,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     }
 
     // Now perform the actual calculation.
-    arma::Mat<index_t> neighbors;
+    arma::Mat<size_t> neighbors;
     arma::mat distances;
     allknn->ComputeNeighbors(neighbors, distances);
 
@@ -325,7 +325,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   arma::mat data_for_tree_;
 
   // Hard-coded filename: bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with.
@@ -344,15 +344,15 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkNN naive_(naive_query, naive_references);
  
-  arma::Mat<index_t> resulting_neighbors_tree;
+  arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
   allknn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
 
-  arma::Mat<index_t> resulting_neighbors_naive;
+  arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
   naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
 
-  for (index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
+  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
     BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
     BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
   }
@@ -369,7 +369,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
@@ -385,15 +385,15 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkNN naive_(naive_query);
 
-  arma::Mat<index_t> resulting_neighbors_tree;
+  arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
   allknn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
 
-  arma::Mat<index_t> resulting_neighbors_naive;
+  arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
   naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
 
-  for (index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
+  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
     BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
     BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
   }
@@ -410,7 +410,7 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
 
   // Hard-coded filename: bad!
   // Code duplication: also bad!
-  if (data::Load("test_data_3_1000.csv", data_for_tree_) != SUCCESS_PASS)
+  if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)
     BOOST_FAIL("Cannot load test dataset test_data_3_1000.csv!");
 
   // Set up matrices to work with (may not be necessary with no ALIAS_MATRIX?).
@@ -427,15 +427,15 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkNN naive_(naive_query);
 
-  arma::Mat<index_t> resulting_neighbors_tree;
+  arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
   allknn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
 
-  arma::Mat<index_t> resulting_neighbors_naive;
+  arma::Mat<size_t> resulting_neighbors_naive;
   arma::mat distances_naive;
   naive_.ComputeNeighbors(resulting_neighbors_naive, distances_naive);
 
-  for (index_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
+  for (size_t i = 0; i < resulting_neighbors_tree.n_elem; i++) {
     BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
     BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
   }

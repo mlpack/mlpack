@@ -26,8 +26,8 @@ class MultibodyPotentialKernel {
   bool ComputePairwiseDistances(const Global &globals, 
 				const ArrayList<Tree *> &nodes) {
     
-    for(index_t first_index = 0; first_index < nodes.size(); first_index++) {
-      for(index_t second_index = first_index + 1; second_index < nodes.size(); 
+    for(size_t first_index = 0; first_index < nodes.size(); first_index++) {
+      for(size_t second_index = first_index + 1; second_index < nodes.size(); 
 	  second_index++) {
 	
 	double min_squared_distance =
@@ -57,12 +57,12 @@ class MultibodyPotentialKernel {
   template<typename Global>
   void ComputePairwiseDistances(const Global &globals, 
 				const ArrayList<Matrix *> &sets,
-				const ArrayList<index_t> &indices) {
+				const ArrayList<size_t> &indices) {
     
-    for(index_t first_index = 0; first_index < sets.size(); first_index++) {
+    for(size_t first_index = 0; first_index < sets.size(); first_index++) {
       const Matrix *first_set = sets[first_index];
       
-      for(index_t second_index = first_index + 1; second_index < sets.size(); 
+      for(size_t second_index = first_index + 1; second_index < sets.size(); 
 	  second_index++) {
 	const Matrix *second_set = sets[second_index];
 
@@ -123,14 +123,14 @@ class MultibodyPotentialKernel {
 
   virtual double Gradient(double distance) = 0;
 
-  double PositiveEvaluate(const ArrayList<index_t> &indices,
+  double PositiveEvaluate(const ArrayList<size_t> &indices,
 			  const ArrayList<Matrix *> &sets) {
 
     double positive_potential = PositiveEvaluateCommon_(min_squared_distances);
     return positive_potential;
   }
 
-  double NegativeEvaluate(const ArrayList<index_t> &indices,
+  double NegativeEvaluate(const ArrayList<size_t> &indices,
 			  const ArrayList<Matrix *> &sets) {
 
     double negative_potential = NegativeEvaluateCommon_(min_squared_distances);
@@ -138,26 +138,26 @@ class MultibodyPotentialKernel {
   }
 
   template<typename QueryResult>
-  void PositiveEvaluate(const ArrayList<index_t> &indices,
+  void PositiveEvaluate(const ArrayList<size_t> &indices,
 			const ArrayList<Matrix *> &sets, 
 			QueryResult &results) {
 
     double positive_potential = PositiveEvaluateCommon_(min_squared_distances);
     
-    for(index_t i = 0; i < sets.size(); i++) {
+    for(size_t i = 0; i < sets.size(); i++) {
       results.positive_potential_bound[indices[i]] += positive_potential;
       results.positive_potential_e[indices[i]] += positive_potential;
     }
   }
 
   template<typename QueryResult>
-  void NegativeEvaluate(const ArrayList<index_t> &indices,
+  void NegativeEvaluate(const ArrayList<size_t> &indices,
 			const ArrayList<Matrix *> &sets,
 			QueryResult &results) {
 
     double negative_potential = NegativeEvaluateCommon_(min_squared_distances);
     
-    for(index_t i = 0; i < sets.size(); i++) {
+    for(size_t i = 0; i < sets.size(); i++) {
       results.negative_potential_bound[indices[i]] += negative_potential;
       results.negative_potential_e[indices[i]] += negative_potential;
     }
@@ -180,7 +180,7 @@ class MultibodyPotentialKernel {
       return false;
     }
 
-    for(index_t i = 0; i < nodes.size(); i++) {
+    for(size_t i = 0; i < nodes.size(); i++) {
       delta.positive_potential_bound[i].Init
 	(delta.n_pruned[i] * min_positive_potential, 
 	 delta.n_pruned[i] * max_positive_potential);
@@ -209,7 +209,7 @@ class MultibodyPotentialKernel {
       return false;
     }
 
-    for(index_t i = 0; i < nodes.size(); i++) {
+    for(size_t i = 0; i < nodes.size(); i++) {
       delta.negative_potential_bound[i].Init
 	(delta.n_pruned[i] * min_negative_potential,
 	 delta.n_pruned[i] * max_negative_potential);

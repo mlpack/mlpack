@@ -50,7 +50,7 @@ int main(int argc, char* argv[]) {
   double thresh;
   thresh = fx_param_double(root_mod, "threshold", 10e-10);
   
-  index_t num_shells = centers.n_cols();
+  size_t num_shells = centers.n_cols();
   ArrayList<BasisShell> shells;
   shells.Init(num_shells);
 
@@ -61,7 +61,7 @@ int main(int argc, char* argv[]) {
   printf("exp: cols: %d, rows %d\n", exp_mat.n_cols(), exp_mat.n_rows());
   */
 
-  for (index_t i = 0; i < num_shells; i++) {
+  for (size_t i = 0; i < num_shells; i++) {
   
     Vector new_cent;
     centers.MakeColumnVector(i, &new_cent);
@@ -87,7 +87,7 @@ int main(int argc, char* argv[]) {
   fx_timer_start(root_mod, "cfmm_time");
   
   fx_timer_start(root_mod, "prescreening_time");
-  index_t num_shell_pairs = eri::ComputeShellPairs(&shell_pairs, shells, 
+  size_t num_shell_pairs = eri::ComputeShellPairs(&shell_pairs, shells, 
                                                    thresh);
                                                    
                 
@@ -99,7 +99,7 @@ int main(int argc, char* argv[]) {
   charge_exponents.Init(1,num_shell_pairs);
 
 
-  for (index_t i = 0; i < num_shell_pairs; i++) {
+  for (size_t i = 0; i < num_shell_pairs; i++) {
   
     Vector cent_vec;
     double new_exp = eri::ComputeGPTCenter(shell_pairs[i].M_Shell().center(), 
@@ -120,10 +120,10 @@ int main(int argc, char* argv[]) {
   Matrix densities;
   densities.Init(1,num_shell_pairs);
   
-  for (index_t i = 0; i < num_shell_pairs; i++) {
+  for (size_t i = 0; i < num_shell_pairs; i++) {
   
-    index_t m_ind = shell_pairs[i].M_index();
-    index_t n_ind = shell_pairs[i].N_index();
+    size_t m_ind = shell_pairs[i].M_index();
+    size_t n_ind = shell_pairs[i].N_index();
     double new_density = density_mat.ref(m_ind, n_ind);
     
     // Lumping the coefficients of the integral into the charges
@@ -174,10 +174,10 @@ int main(int argc, char* argv[]) {
   Matrix cfmm_fock;
   cfmm_fock.Init(num_shells, num_shells);
   
-  for (index_t i = 0; i < num_shell_pairs; i++) {
+  for (size_t i = 0; i < num_shell_pairs; i++) {
   
-    index_t m_ind = shell_pairs[i].M_index();
-    index_t n_ind = shell_pairs[i].N_index();
+    size_t m_ind = shell_pairs[i].M_index();
+    size_t n_ind = shell_pairs[i].N_index();
     
     // multiply by prefactors and such
     
@@ -215,10 +215,10 @@ int main(int argc, char* argv[]) {
     Matrix naive_cfmm_fock;
     naive_cfmm_fock.Init(num_shells, num_shells);
     
-    for (index_t i = 0; i < num_shell_pairs; i++) {
+    for (size_t i = 0; i < num_shell_pairs; i++) {
       
-      index_t m_ind = shell_pairs[i].M_index();
-      index_t n_ind = shell_pairs[i].N_index();
+      size_t m_ind = shell_pairs[i].M_index();
+      size_t n_ind = shell_pairs[i].N_index();
       
       // multiply by prefactors and such
       

@@ -14,7 +14,7 @@ void npt::Angle3ptAlg::BaseCase_(std::vector<NptNode*>& node_list) {
   num_base_cases_++;
   
   // hard coding 3pt here
-  for (index_t i = node_list[0]->begin(); i < node_list[0]->end(); i++) {
+  for (size_t i = node_list[0]->begin(); i < node_list[0]->end(); i++) {
     
     
     arma::colvec vec_i;
@@ -112,11 +112,11 @@ bool npt::Angle3ptAlg::CanPrune_(std::vector<NptNode*>& node_list) {
 bool npt::Angle3ptAlg::CheckSymmetry_(std::vector<NptNode*>& node_list) {
   
   // IMPORTANT: i_is_random is not the same as the global one - fix this
-  for (index_t i = 0; i < tuple_size_; i++) {
+  for (size_t i = 0; i < tuple_size_; i++) {
     
     bool i_is_random = (i < num_random_);
     
-    for (index_t j = i+1; j < tuple_size_; j++) {
+    for (size_t j = i+1; j < tuple_size_; j++) {
       
       bool j_is_random = (j < num_random_);
       
@@ -207,9 +207,9 @@ void npt::Angle3ptAlg::OutputResults() {
     std::string this_string(label_string, i, tuple_size_);
     mlpack::IO::Info << this_string << "\n";
     
-    for (index_t j = 0; j < results_[i].size(); j++) {
+    for (size_t j = 0; j < results_[i].size(); j++) {
       
-      for (index_t k = 0; k < results_[i][j].size(); k++) {
+      for (size_t k = 0; k < results_[i][j].size(); k++) {
         
         mlpack::IO::Info << "Matcher: ";
         mlpack::IO::Info << "R1: " << r1_[j] << ", ";

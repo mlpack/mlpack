@@ -10,12 +10,12 @@ class RangeSearch{
   /* class TreeStat{
     
   public:
-  void Init(const Matrix& matrix, index_t start, index_t count) {
+  void Init(const Matrix& matrix, size_t start, size_t count) {
   
   }
   
   
-  void Init(const Matrix& matrix, index_t start, index_t count,
+  void Init(const Matrix& matrix, size_t start, size_t count,
   const TreeStat& left, const TreeStat& right) {
   
   Init(matrix, start, count);

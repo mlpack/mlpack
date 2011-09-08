@@ -11,10 +11,10 @@
 
 namespace chem_reader {
   
-  success_t ReadQChemDensity(const char* filename, Matrix* mat, 
-                             index_t mat_size) {
+  bool ReadQChemDensity(const char* filename, Matrix* mat, 
+                             size_t mat_size) {
    
-    success_t retval = SUCCESS_PASS;
+    bool retval = true;
     
 
     const char* delimiters = " ,";
@@ -22,8 +22,8 @@ namespace chem_reader {
     mat->Init(mat_size, mat_size);
     mat->SetAll(-999.99);
     
-    index_t col_ind = 0;
-    index_t master_col_ind = col_ind;
+    size_t col_ind = 0;
+    size_t master_col_ind = col_ind;
     
     TextLineReader reader;
     reader.Open(filename);
@@ -33,7 +33,7 @@ namespace chem_reader {
     
     while (master_col_ind < mat_size) {
       
-      for (index_t row_ind = 0; row_ind < mat_size; row_ind++) {
+      for (size_t row_ind = 0; row_ind < mat_size; row_ind++) {
       
         // not sure if I need this
         reader.Gobble();
@@ -47,7 +47,7 @@ namespace chem_reader {
         
         this_row.Split(delimiters, &split);
         
-        for (index_t i = 1; i < split.size(); i++) {
+        for (size_t i = 1; i < split.size(); i++) {
           
           // convert to double
           double new_val = atof(split[i]);

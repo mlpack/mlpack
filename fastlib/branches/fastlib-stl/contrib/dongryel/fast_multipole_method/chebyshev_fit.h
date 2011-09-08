@@ -38,7 +38,7 @@ class ChebyshevFit {
     transformed_interval.lo = 0.5 * (interval_in.hi - interval_in.lo);
     transformed_interval.hi = 0.5 * (interval_in.hi + interval_in.lo);
 
-    for(index_t k = 0; k < order; k++) {
+    for(size_t k = 0; k < order; k++) {
       double grid_val = cos(pi_ * (k + 0.5) / ((double) order));
       tmp_vector[k] = 
 	kernel->EvalUnnorm(grid_val * transformed_interval.lo +
@@ -46,9 +46,9 @@ class ChebyshevFit {
     }
 
     double factor = 2.0 / ((double) order);
-    for(index_t j = 0; j < order; j++) {
+    for(size_t j = 0; j < order; j++) {
       double sum = 0.0;
-      for(index_t k = 0; k < order; k++) {
+      for(size_t k = 0; k < order; k++) {
 	sum += tmp_vector[k] * cos(pi_ * j * (k + 0.5) / ((double) order));
       }
       coefficients_[j] = factor * sum;
@@ -71,7 +71,7 @@ class ChebyshevFit {
       (approximation_interval_.hi - approximation_interval_.lo);
     double y2 = 2.0 * y;
 
-    for(index_t j = order - 1; j > 0; j--) {
+    for(size_t j = order - 1; j > 0; j--) {
       sv = d;
       d = y2 * d - dd + coefficients_[j];
       dd = sv;
@@ -90,8 +90,8 @@ class ChebyshevFit {
     double sv;
     ((*result)[0]) = coefficients_[order - 1];
     
-    for(index_t j = order - 2; j > 0; j--) {
-      for(index_t k = order - j; k > 0; k--) {
+    for(size_t j = order - 2; j > 0; j--) {
+      for(size_t k = order - j; k > 0; k--) {
 	sv = ((*result)[k]);
 	((*result)[k]) = 2.0 * ((*result)[k - 1]) - dd[k];
 	dd[k] = sv;
@@ -101,7 +101,7 @@ class ChebyshevFit {
       dd[0] = sv;
     }
 
-    for(index_t j = order - 1; j > 0; j--) {
+    for(size_t j = order - 1; j > 0; j--) {
       ((*result)[j]) = ((*result)[j - 1]) - dd[j];
     }
     ((*result)[0]) = -dd[0] + 0.5 * coefficients_[0];    
@@ -113,14 +113,14 @@ class ChebyshevFit {
 
     double cnst = 2.0 / approximation_interval_.width();
     double fac = cnst;
-    for(index_t j = 1; j < result->length(); j++) {
+    for(size_t j = 1; j < result->length(); j++) {
       ((*result)[j]) *= fac;
       fac *= cnst;
     }
     cnst = approximation_interval_.mid();
     
-    for(index_t j = 0; j <= result->length() - 2; j++) {
-      for(index_t k = result->length() - 2; k >= j; k--) {
+    for(size_t j = 0; j <= result->length() - 2; j++) {
+      for(size_t k = result->length() - 2; k >= j; k--) {
 	((*result)[k]) -= cnst * ((*result)[k + 1]);
       }
     }
@@ -133,7 +133,7 @@ class ChebyshevFit {
 
     double error = 0;
 
-    for(index_t m = order + 1; m < coefficients_.length(); m++) {
+    for(size_t m = order + 1; m < coefficients_.length(); m++) {
 
       error += fabs(coefficients_[m]);
     }

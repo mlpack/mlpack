@@ -32,11 +32,11 @@ class NaiveFockMatrix {
 
   ArrayList<BasisShell> shells_;
   
-  index_t num_funs_;
+  size_t num_funs_;
   
-  index_t num_shells_;
+  size_t num_shells_;
   
-  index_t num_integrals_computed_;
+  size_t num_integrals_computed_;
   
   fx_module* mod_;
   
@@ -64,7 +64,7 @@ class NaiveFockMatrix {
     density_.Copy(density);
     
     // This only works for s and p type functions
-    //num_funs_ = centers_.n_cols() + (index_t)2*la::Dot(momenta_, momenta_);
+    //num_funs_ = centers_.n_cols() + (size_t)2*la::Dot(momenta_, momenta_);
     
     num_funs_ = eri::CreateShells(centers_, exponents_, momenta_, &shells_);
     fx_result_int(mod_, "N", num_funs_);
@@ -98,17 +98,17 @@ class NaiveFockMatrix {
     
     //printf("num_shells: %d\n", num_shells_);
     
-    for (index_t i = 0; i < num_shells_; i++) {
+    for (size_t i = 0; i < num_shells_; i++) {
     
-      for (index_t j = 0; j <= i; j++) {
+      for (size_t j = 0; j <= i; j++) {
       
         Matrix coulomb_ij;
         coulomb_ij.Init(shells_[i].num_functions(), shells_[j].num_functions());
         coulomb_ij.SetZero();
       
-        for (index_t k = 0; k < num_shells_; k++) {
+        for (size_t k = 0; k < num_shells_; k++) {
         
-          for (index_t l = 0; l <= k; l++) {
+          for (size_t l = 0; l <= k; l++) {
             
             IntegralTensor integrals;
             eri::ComputeShellIntegrals(shells_[i], shells_[j], 

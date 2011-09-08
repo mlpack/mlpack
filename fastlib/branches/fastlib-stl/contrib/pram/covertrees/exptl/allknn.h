@@ -57,13 +57,13 @@ class AllKNN {
 
   TreeType *creference_tree_;
 
-  index_t ref_root_node_index_, query_root_node_index_;
+  size_t ref_root_node_index_, query_root_node_index_;
 
   //ArrayList<T> neighbor_distances_;
 
-  //ArrayList<index_t> neighbor_indices_;
+  //ArrayList<size_t> neighbor_indices_;
 
-  index_t knns_;
+  size_t knns_;
 
   struct datanode *module_;
 
@@ -169,9 +169,9 @@ class AllKNN {
 
   
   inline void set_neighbor_distances(ArrayList<T> *neighbor_distances, 
-				     index_t query_index, T dist) {
+				     size_t query_index, T dist) {
 
-    index_t start = query_index * knns_;
+    size_t start = query_index * knns_;
     T *begin = neighbor_distances->begin() + start;
     T *end = begin + knns_;
 
@@ -182,9 +182,9 @@ class AllKNN {
   }
 
   inline void update_neighbor_distances(ArrayList<T> *neighbor_distances, 
-					index_t query_index, T dist) {
+					size_t query_index, T dist) {
 
-    index_t start = query_index * knns_;
+    size_t start = query_index * knns_;
     T *begin = neighbor_distances->begin() + start;
     T *end = begin + knns_ - 1;
  
@@ -217,9 +217,9 @@ class AllKNN {
   }
 
   inline void reset_new_cover_sets(ArrayList<ArrayList<TreeType*> > *new_cover_sets, 
-				   index_t current_scale, index_t max_scale) {
+				   size_t current_scale, size_t max_scale) {
 
-    for (index_t i = current_scale; i <= max_scale; i++) {
+    for (size_t i = current_scale; i <= max_scale; i++) {
 
       TreeType **begin = (*new_cover_sets)[i].begin();
       TreeType **end = (*new_cover_sets)[i].end();
@@ -277,20 +277,20 @@ class AllKNN {
 			    ArrayList<T> *neighbor_distances, 
 			    ArrayList<ArrayList<TreeType*> > *cover_sets, 
 			    ArrayList<ArrayList<TreeType*> > *new_cover_sets, 
-			    index_t current_scale, index_t max_scale) {
+			    size_t current_scale, size_t max_scale) {
     GenVector<T> q_point;
     T *query_upper_bound = &((*neighbor_distances)[query->point() * knns_]);
     T query_max_dist = query->max_dist_to_grandchild();
     T query_parent_dist = query->dist_to_parent();
 
     new_cover_sets->Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       (*new_cover_sets)[i].Init(0);
     }
     queries_.MakeColumnVector(query->point(), &q_point);
 
 
-    for (index_t i = current_scale; i <= max_scale; i++) {
+    for (size_t i = current_scale; i <= max_scale; i++) {
 
       TreeType **begin = (*cover_sets)[i].begin();
       TreeType **end = (*cover_sets)[i].end();
@@ -330,7 +330,7 @@ class AllKNN {
 				ArrayList<T> *neighbor_distances, 
 				ArrayList<ArrayList<TreeType*> > *cover_sets, 
 				ArrayList<TreeType*> *leaf_nodes,
-				index_t current_scale, index_t *max_scale) {
+				size_t current_scale, size_t *max_scale) {
 
     TreeType **begin = (*cover_sets)[current_scale].begin();
     TreeType **end = (*cover_sets)[current_scale].end();
@@ -420,7 +420,7 @@ class AllKNN {
   void ComputeBaseCase(TreeType *query, 
 		       ArrayList<T> *neighbor_distances,
 		       ArrayList<TreeType*> *leaf_nodes, 
-		       ArrayList<index_t> *neighbor_indices) {
+		       ArrayList<size_t> *neighbor_indices) {
     if (query->num_of_children() > 0) {
 
       TreeType **self_child = query->children()->begin();
@@ -448,19 +448,19 @@ class AllKNN {
       TreeType **end_nn = leaf_nodes->end();
       T *begin = neighbor_distances->begin() + query->point() * knns_;
       T *end = neighbor_distances->begin() + query->point() * knns_ + knns_ ;
-      index_t *indices = neighbor_indices->begin() + query->point() * knns_;
+      size_t *indices = neighbor_indices->begin() + query->point() * knns_;
       ArrayList<bool> flags;
 
       flags.Init(knns_);
-      for (index_t i = 0; i < knns_; i++) {
+      for (size_t i = 0; i < knns_; i++) {
 	flags[i] = 0;
       }
 
       begin = neighbor_distances->begin() + query->point() * knns_;
-      for (index_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
+      for (size_t j = 0; j < knns_ && begin_nn != end_nn; begin_nn++) {
 	if ((*begin_nn)->stat().distance_to_qnode() <= *begin) {
 	  
-	  index_t k = 0;
+	  size_t k = 0;
 	  while ((*begin_nn)->stat().distance_to_qnode() > *(end - k- 1)) { 
 	    k++;
 	  }
@@ -482,8 +482,8 @@ class AllKNN {
 				ArrayList<T> *neighbor_distances, 
 				ArrayList<ArrayList<TreeType*> > *cover_sets,
 				ArrayList<TreeType*> *leaf_nodes,
-				index_t current_scale, index_t max_scale,
-				ArrayList<index_t> *neighbor_indices) {
+				size_t current_scale, size_t max_scale,
+				ArrayList<size_t> *neighbor_indices) {
 
     if (current_scale > max_scale) {
       ComputeBaseCase(query, neighbor_distances, leaf_nodes, neighbor_indices);
@@ -534,20 +534,20 @@ class AllKNN {
 
   }
 
-  void ComputeNeighbors(ArrayList<index_t> *neighbor_indices, 
+  void ComputeNeighbors(ArrayList<size_t> *neighbor_indices, 
 			ArrayList<T> *neighbor_distances) {
 
     GenVector<T> q_root, r_root;
     ArrayList<ArrayList<TreeType*> > cover_sets;
     ArrayList<TreeType*> leaf_nodes;
-    index_t current_scale = 0, max_scale = 0;
+    size_t current_scale = 0, max_scale = 0;
 
     queries_.MakeColumnVector(query_tree_->point(), &q_root);
     references_.MakeColumnVector(reference_tree_->point(), &r_root);
     neighbor_indices->Init(knns_* queries_.n_cols());
     neighbor_distances->Init(knns_ * queries_.n_cols());
     cover_sets.Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       cover_sets[i].Init(0);
     }
     leaf_nodes.Init(0);
@@ -571,7 +571,7 @@ class AllKNN {
 
   void Init(const GenMatrix<T>& queries, 
 	    const GenMatrix<T>& references, 
-	    struct datanode *module, index_t *flag = NULL) {
+	    struct datanode *module, size_t *flag = NULL) {
 
     module_ = module;
     queries_.Copy(queries);
@@ -604,13 +604,13 @@ class AllKNN {
 
   void MakeCentroidRootTree(GenMatrix<T> data, 
 			    TreeType *data_tree, 
-			    index_t *root_node_index, 
+			    size_t *root_node_index, 
 			    TreeType **cdata_tree, 
-			    index_t *flag = NULL) {
+			    size_t *flag = NULL) {
 
     GenMatrix<T> single_point;
     GenVector<T> centroid;
-    ArrayList<index_t> neighbor_index;
+    ArrayList<size_t> neighbor_index;
     ArrayList<T> neighbor_distance;
 
     centroid.Init(data.n_rows());
@@ -623,14 +623,14 @@ class AllKNN {
     GenVector<T> q_root, r_root;
     ArrayList<ArrayList<TreeType*> > cover_sets;
     ArrayList<TreeType*> leaf_nodes;
-    index_t current_scale = 0, max_scale = 0;
+    size_t current_scale = 0, max_scale = 0;
 
     single_point.MakeColumnVector(temp_query->point(), &q_root);
     data.MakeColumnVector(data_tree->point(), &r_root);
     neighbor_index.Init(1);
     neighbor_distance.Init(1);
     cover_sets.Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       cover_sets[i].Init(0);
     }
     leaf_nodes.Init(0);
@@ -651,7 +651,7 @@ class AllKNN {
 			     &neighbor_index);
 
     *root_node_index = neighbor_index[0];
-    //NOTIFY("%"LI"d,%lf", neighbor_index[0], neighbor_distance[0]);
+    //NOTIFY("%zu"d,%lf", neighbor_index[0], neighbor_distance[0]);
     GenVector<T> root_node, first_point, temp_point;
     data.MakeColumnVector(neighbor_index[0], &root_node);
     //root_node.PrintDebug("root");
@@ -673,13 +673,13 @@ class AllKNN {
   void GetCentroid_(GenMatrix<T> data, GenVector<T> *centroid) {
 
     DEBUG_ASSERT(centroid->length() == data.n_rows());
-    index_t size = data.n_cols();
+    size_t size = data.n_cols();
 
     centroid->SetZero();
-    for (index_t i = 0; i < data.n_cols(); i++) {
+    for (size_t i = 0; i < data.n_cols(); i++) {
       GenVector<T> point;
       data.MakeColumnVector(i, &point);
-      index_t length =  point.length();
+      size_t length =  point.length();
       T *vx = centroid->ptr();
       T *vy = point.ptr();
 
@@ -693,7 +693,7 @@ class AllKNN {
     return;
   }
 
-  void MakeCCoverTrees(index_t *flag = NULL) {
+  void MakeCCoverTrees(size_t *flag = NULL) {
 
     //fx_timer_start(module_, "centroid_tree_building");
     if (flag != NULL) {
@@ -728,20 +728,20 @@ class AllKNN {
     return;
   }
 
-  void ComputeNeighborsNew(ArrayList<index_t> *neighbor_indices, 
+  void ComputeNeighborsNew(ArrayList<size_t> *neighbor_indices, 
 			   ArrayList<T> *neighbor_distances) {
 
     GenVector<T> q_root, r_root;
     ArrayList<ArrayList<TreeType*> > cover_sets;
     ArrayList<TreeType*> leaf_nodes;
-    index_t current_scale = 0, max_scale = 0;
+    size_t current_scale = 0, max_scale = 0;
 
     queries_.MakeColumnVector(cquery_tree_->point(), &q_root);
     references_.MakeColumnVector(creference_tree_->point(), &r_root);
     neighbor_indices->Init(knns_* queries_.n_cols());
     neighbor_distances->Init(knns_ * queries_.n_cols());
     cover_sets.Init(101);
-    for (index_t i = 0; i < 101; i++) {
+    for (size_t i = 0; i < 101; i++) {
       cover_sets[i].Init(0);
     }
     leaf_nodes.Init(0);
@@ -763,8 +763,8 @@ class AllKNN {
     //fx_timer_stop(module_, "jhinchak_neighbors");
 
     T distance;
-    index_t index;
-    for (index_t i = 0; i < knns_; i++) {
+    size_t index;
+    for (size_t i = 0; i < knns_; i++) {
       index = (*neighbor_indices)[0 + i];
       distance = (*neighbor_distances)[0 + i];
       (*neighbor_indices)[0 + i] = (*neighbor_indices)[knns_ * query_root_node_index_ + i];
@@ -773,7 +773,7 @@ class AllKNN {
       (*neighbor_distances)[knns_ * query_root_node_index_ + i] = distance;
     }
 
-    for (index_t i = 0; i < neighbor_indices->size(); i++) {
+    for (size_t i = 0; i < neighbor_indices->size(); i++) {
       if ((*neighbor_indices)[i] == 0) {
 	(*neighbor_indices)[i] = ref_root_node_index_;
       }

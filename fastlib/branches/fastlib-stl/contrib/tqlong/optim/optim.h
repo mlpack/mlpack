@@ -102,7 +102,7 @@ namespace optim {
   double BFGSDescent(F& fun,
 		     const FArg& x0, FArg* x,
 		     int maxIter, double fTol, double gTol) {
-    index_t dim = fun.n_dim();
+    size_t dim = fun.n_dim();
     DEBUG_ASSERT(dim == x0.length());
     DEBUG_ASSERT(dim == x->length());
 
@@ -121,11 +121,11 @@ namespace optim {
     Matrix H;
     H.Init(dim, dim);
     H.SetZero();
-    for (index_t i = 0; i < dim; i++) H.ref(i, i) = 1.0;
+    for (size_t i = 0; i < dim; i++) H.ref(i, i) = 1.0;
 
     double f = fun.fValue(*xk);
     fun.fGradient(*xk, gk);
-    for (index_t k = 0; k < maxIter; k++) {
+    for (size_t k = 0; k < maxIter; k++) {
       double gNorm = sqrt(fun.Dot(*gk, *gk));
       if (gNorm < gTol) {
 	printf("Gradient too small.\n");
@@ -152,12 +152,12 @@ namespace optim {
 
       // BFGS_Update_H_InPlace(&H, rhok, sk, yk); //O(n^2)
       fun.MulOverwrite(H, yk, &Hv);
-      for (index_t i = 0; i < dim; i++)
-	for (index_t j = 0; j < dim; j++)
+      for (size_t i = 0; i < dim; i++)
+	for (size_t j = 0; j < dim; j++)
 	  H.ref(i, j) += -rhok*Hv[i]*sk[j];
       fun.MulOverwrite(yk, H, &Hv);
-      for (index_t i = 0; i < dim; i++)
-	for (index_t j = 0; j < dim; j++)
+      for (size_t i = 0; i < dim; i++)
+	for (size_t j = 0; j < dim; j++)
 	  H.ref(i, j) += -rhok*sk[i]*Hv[j]+rhok*sk[i]*sk[j];
             
       FArg *tmp; // swap the pointers to avoid copying
@@ -179,9 +179,9 @@ namespace optim {
   template <class F, class FArg>
   double L_BFGSDescent(F& fun,
 		       const FArg& x0, FArg* x,
-		       int maxIter, double fTol, double gTol, index_t mem_size,
+		       int maxIter, double fTol, double gTol, size_t mem_size,
 		       int* nIter = NULL) {
-    index_t dim = fun.n_dim();
+    size_t dim = fun.n_dim();
     DEBUG_ASSERT(dim == x0.length());
     DEBUG_ASSERT(dim == x->length());
 
@@ -204,7 +204,7 @@ namespace optim {
 
     double f = fun.fValue(*xk);
     fun.fGradient(*xk, gk);
-    index_t k;
+    size_t k;
     for (k = 0; k < maxIter; k++) {
       double gNorm = sqrt(fun.Dot(*gk, *gk));
       if (gNorm < gTol) {
@@ -214,14 +214,14 @@ namespace optim {
 
       // Compute search direction (L-BFGS two loop recursion)
       fun.ScaleOverwrite(-1.0, *gk, &dir);
-      for (index_t i = k-1; i >= 0; i--) {
-	index_t id = i%mem_size;
+      for (size_t i = k-1; i >= 0; i--) {
+	size_t id = i%mem_size;
 	alpha[id] = rho[id]*fun.Dot(s[id], dir);
 	fun.AddExpert(-alpha[id], y[id], &dir);
       }
       fun.Scale(gamma, &dir);
-      for (index_t i = (k-mem_size>=0?k-mem_size:0); i < k; i++) {
-	index_t id = i%mem_size;
+      for (size_t i = (k-mem_size>=0?k-mem_size:0); i < k; i++) {
+	size_t id = i%mem_size;
 	double beta = rho[id]*fun.Dot(y[id], dir);
 	fun.AddExpert(alpha[id]-beta, s[id], &dir);
       }
@@ -277,10 +277,10 @@ namespace optim {
     Barrier(F& f) { this->pf = &f; }
     void setT(double t) { this->t = t; }
 
-    index_t n_dim() { return pf->n_dim(); }
+    size_t n_dim() { return pf->n_dim(); }
     double fValue(const FArg& x) {
       double fval = t*pf->fValue(x);
-      for (index_t i = 0; i < pf->n_con(); i++) {
+      for (size_t i = 0; i < pf->n_con(); i++) {
 	double c = pf->cValue(i, x);
 	if (c >= 0) return INFINITY;
 	fval += -log(-c);
@@ -293,7 +293,7 @@ namespace optim {
       pf->Scale(t, g);
       FArg cGrad;
       cGrad.Init(n_dim());
-      for (index_t i = 0; i < pf->n_con(); i++) {
+      for (size_t i = 0; i < pf->n_con(); i++) {
 	pf->cGradient(i, x, &cGrad);
 	pf->AddExpert(-1.0/pf->cValue(i, x), cGrad, g);
       }

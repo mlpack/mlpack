@@ -49,8 +49,8 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   values_.Init();
 	rows_.Init();
 	columns_.Init();
-	for(index_t i=0; i<data_matrix.n_rows(); i++) {
-  	for(index_t j=0; j<data_matrix.n_cols(); j++) {
+	for(size_t i=0; i<data_matrix.n_rows(); i++) {
+  	for(size_t j=0; j<data_matrix.n_cols(); j++) {
 		  values_.PushBackCopy(data_matrix.get(i, j));
 			rows_.PushBackCopy(i);
 			columns_.PushBackCopy(j);
@@ -100,8 +100,8 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
   classic_nmf_objective_.ComputeObjective(*current_solution_, &objective_minimum_upper_box_);
   
   // we need to convert it to logs
-  for(index_t i=0; i<current_solution_->n_cols(); i++) {
-    for(index_t j=0; j<current_solution_->n_rows(); j++) {
+  for(size_t i=0; i<current_solution_->n_cols(); i++) {
+    for(size_t j=0; j<current_solution_->n_rows(); j++) {
       current_solution_->set(j, i, log(std::max(current_solution_->get(j, i), 1e-6)));
     }
   }
@@ -120,8 +120,8 @@ void  GopTightNmfEngine::Init(fx_module *module, Matrix &data_matrix) {
 }
 
 void GopTightNmfEngine::TightenBounds() {
-/*  for(index_t i=0; i< lower_box_.n_rows(); i++) {
-    for(index_t j=0; j<lower_box_.n_cols(); j++) {
+/*  for(size_t i=0; i< lower_box_.n_rows(); i++) {
+    for(size_t j=0; j<lower_box_.n_cols(); j++) {
       // find the lower box for the i, j variable
       relaxed_nmf_box_tightener_.SetOptVarRowColumn(i, j);
       relaxed_nmf_box_tightener_.SetOptVarSign(1.0);
@@ -147,9 +147,9 @@ void GopTightNmfEngine::TightenBounds() {
   box_tightener_optimizer_.Reset();
   box_tightener_optimizer_.ComputeLocalOptimumBFGS();
   current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
-  for(index_t j=0; j<current_solution_->n_rows(); j++) {
+  for(size_t j=0; j<current_solution_->n_rows(); j++) {
     double min_value=DBL_MAX;
-    for(index_t i=0; i<current_solution_->n_cols(); i++) {
+    for(size_t i=0; i<current_solution_->n_cols(); i++) {
        if (current_solution_->get(j, i)<min_value) {
          min_value = current_solution_->get(j, i);
        }
@@ -166,9 +166,9 @@ void GopTightNmfEngine::TightenBounds() {
   current_solution_->CopyValues(*box_tightener_optimizer_.coordinates());
   // upper box update
   // upper_box_;
-   for(index_t j=0; j<current_solution_->n_rows(); j++) {
+   for(size_t j=0; j<current_solution_->n_rows(); j++) {
     double max_value=-DBL_MAX;
-    for(index_t i=0; i<current_solution_->n_cols(); i++) {
+    for(size_t i=0; i<current_solution_->n_cols(); i++) {
        if (current_solution_->get(j, i)>max_value) {
          max_value = current_solution_->get(j, i);
        }

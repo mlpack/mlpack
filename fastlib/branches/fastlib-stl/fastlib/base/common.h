@@ -31,114 +31,28 @@
 #include <math.h>
 #include <limits.h>
 #include <float.h>
+#include <stdint.h>
 
 
-#ifdef __cplusplus
-extern "C" {
-#endif
-
-
-/** A no-op used in some macros. */
-#define NOP ((void)0)
-
-/** Potentially useful for nasty macro expansion. */
-#define COMMA ,
-
-
-
-/* Types and definitions to assist managment of problem scale. */
-
-/* Ensure that one and only one problem scale is selected. */
-#if defined(SCALE_MASSIVE)
-#if defined(SCALE_LARGE) || defined(SCALE_NORMAL)
-#error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
-#endif
-#elif defined(SCALE_LARGE)
-#if defined(SCALE_NORMAL)
-#error Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL may be defined.
-#endif
-#elif !defined(SCALE_NORMAL)
-#define SCALE_NORMAL
-#endif
-
-/**
- * Index type used in FASTlib for array sizes, etc.
- *
- * Define one of the following (default SCALE_NORMAL):
- *
- * SCALE_NORMAL - Problems are as large can be indexed with your
- *   machine's standard integers.  As of 2007, this is 32 bits.
- *
- * SCALE_LARGE - Problems are as large as your machine's architecture
- *   can support.  Unless you have more than 2 billion data points,
- *   this will waste some space and reduce cache efficiency.
- *
- * SCALE_MASSIVE - Problems are 64-bit indexed even on 32-bit
- *   machines, rendering them larger than RAM.
- *
- * Values are signed to allow uninitialized indices of -1 as well as
- * consideration of potentially negative differences between indices.
- */
-
-/**
- * Length modifier for emitting index_t with printf; presumably,
- *   adoption of cout and cerr will obviate this check and tag
- *
- * Example:
- * @code
- *   index_t i = 42;
- *   printf("%"LI"\n", i);
- * @endcode
- */
-
-#include <inttypes.h>
-
+/*
 #ifdef __USE_ISOC99
-typedef size_t index_t;
+typedef size_t size_t;
 #else
 #  error "Wrong C standard; size_t not defined"
-#endif
+#endif*/
 
+/*
 #if __WORDSIZE == 64
-# ifdef __USE_ISOC99 /* presumably, these macros are the same */
+# ifdef __USE_ISOC99  presumably, these macros are the same 
 //# if __STDC_VERSION__ >= 199901L
 #  define LI "zu"
 # else
-  /* using an older version of C */
+   using an older version of C 
 #  define LI "lu"
 # endif
 #else
 # define LI "u"
 #endif
-
-typedef enum {
-  /** Upper-bound value indicating failed operation. */
-  SUCCESS_FAIL = 1,
-  /** A generic warning value. */
-  SUCCESS_WARN = 2,
-  /** Lower-bound value indicating successful operation. */
-  SUCCESS_PASS = 0
-} success_t;
-
-/**
- * True on SUCCESS_PASS or greater; false otherwise.
- *
- * Distinct from !FAILED(x).  Optimized for the passing case.
- */
-#define PASSED(x) (((x) == SUCCESS_PASS))
-
-/**
- * True on SUCCESS_FAIL or less; false otherwise.
- *
- * Distinct from !PASSED(x).  Optimized for the non-failing case.
- */
-#define FAILED(x) (((x) == SUCCESS_FAIL))
-
-/** Converts C library non-negative success into a success_t. */
-#define SUCCESS_FROM_C(x) (((x) < 0) ? SUCCESS_FAIL : SUCCESS_PASS)
-
-#ifdef __cplusplus
-}; /* extern "C" */
-#endif
+*/
 
 #endif /* BASE_COMMON_H */

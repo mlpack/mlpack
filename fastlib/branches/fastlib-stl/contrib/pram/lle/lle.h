@@ -36,7 +36,7 @@
  * @code
  * LLE lle;
  * Matrix dataset;
- * index_t knn;
+ * size_t knn;
  * datanode *lle_module;
  * ...........
  * fx_param_int(lle_module,"knn",knn);
@@ -65,10 +65,10 @@ class LLE {
 
     DEBUG_ASSERT_MSG(mat.n_cols() == mat.n_rows(),
 		     "Trace: matrix must be square\n");
-    index_t n = mat.n_cols();
+    size_t n = mat.n_cols();
     double trace = 0.0;
 
-    for (index_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
       trace += mat.get(i,i);
     }
 
@@ -101,8 +101,8 @@ class LLE {
   
   // As per fastlib coding style, getters are not supposed to have 
   // 'get' in the beginning of the function name....
-  // For a private variable: 'index_t private_variable_;'
-  // the getter function should be: 'index_t private_variable();'
+  // For a private variable: 'size_t private_variable_;'
+  // the getter function should be: 'size_t private_variable();'
 
   const Matrix& x() {
     return x_mat_;
@@ -128,10 +128,10 @@ class LLE {
 
     double tolerance;
     Vector one_vec;
-    index_t n = fx_param_int_req(lle_module_, "N");
-    index_t knns = fx_param_int_req(lle_module_, "knn");
-    index_t dim = fx_param_int_req(lle_module_, "D");
-    index_t lower_dim = fx_param_int_req(lle_module_, "d");
+    size_t n = fx_param_int_req(lle_module_, "N");
+    size_t knns = fx_param_int_req(lle_module_, "knn");
+    size_t dim = fx_param_int_req(lle_module_, "D");
+    size_t lower_dim = fx_param_int_req(lle_module_, "d");
     Matrix weights_mat, complete_weights_mat;
 
     one_vec.Init(knns);
@@ -144,10 +144,10 @@ class LLE {
     // STEP 1: Finding the K-NN of each point
 
     AllkNN allknn;
-    ArrayList<index_t> neighbor_indices;
+    ArrayList<size_t> neighbor_indices;
     ArrayList<double> dist_sq;
 
-    NOTIFY("Finding %"LI"d nearest neighbors of %"LI"d points\n",
+    NOTIFY("Finding %zu"d nearest neighbors of %zu"d points\n",
 	   knns, n);
 
     // changed as per review
@@ -165,7 +165,7 @@ class LLE {
       tolerance = 0.0;
     }
 
-    for (index_t i = 0; i < n; i++) {
+    for (size_t i = 0; i < n; i++) {
 
       Matrix centered_neighbors_mat, temp_trans_mat, local_covariance_mat;
       Vector x_i_vec, w_i_vec;
@@ -173,7 +173,7 @@ class LLE {
       centered_neighbors_mat.Init(dim, knns);
       x_mat_.MakeColumnVector(i, &x_i_vec);
 
-      for (index_t j = 0; j < knns; j++) {
+      for (size_t j = 0; j < knns; j++) {
 	Vector tmp_vec;
 	centered_neighbors_mat.MakeColumnVector(j, &tmp_vec);
 	tmp_vec.CopyValues(x_mat_.GetColumnPtr(neighbor_indices[(knns+1) * i 
@@ -204,9 +204,9 @@ class LLE {
       // solving Cw = 1
 
       Vector temp_solve_vec;
-      success_t solve_op = la::SolveInit(local_covariance_mat, one_vec,
+      bool solve_op = la::SolveInit(local_covariance_mat, one_vec,
 					 &temp_solve_vec);
-      DEBUG_ASSERT_MSG(solve_op == SUCCESS_PASS, "Solving Cw = 1 failed\n");
+      DEBUG_ASSERT_MSG(solve_op == true, "Solving Cw = 1 failed\n");
  
       // enforcing sum(w) = 1
       double total_weight = la::Dot(temp_solve_vec, one_vec);
@@ -216,8 +216,8 @@ class LLE {
 
     NOTIFY("Weights computed\n");
 
-    for (index_t i = 0; i < n; i++) {
-      for (index_t j = 0; j < knns; j++) {
+    for (size_t i = 0; i < n; i++) {
+      for (size_t j = 0; j < knns; j++) {
 	complete_weights_mat.set(i, neighbor_indices[(knns+1) * i + j + 1], 
 				 weights_mat.get(j, i)); 
       }
@@ -245,9 +245,9 @@ class LLE {
     la::TransposeInit(cost_mat, &cost_trans_mat);
     la::MulInit(cost_trans_mat, cost_mat, &temp_mat);
 
-    success_t svd_op = la::SVDInit(temp_mat, &s_vec, 
+    bool svd_op = la::SVDInit(temp_mat, &s_vec, 
 				    &u_mat, &v_trans_mat);
-    DEBUG_ASSERT_MSG(svd_op == SUCCESS_PASS, "SVD(M'M) failed miserably\n");
+    DEBUG_ASSERT_MSG(svd_op == true, "SVD(M'M) failed miserably\n");
 
     la::TransposeInit(v_trans_mat, &v_mat);
 

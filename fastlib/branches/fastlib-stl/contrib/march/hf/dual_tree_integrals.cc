@@ -126,9 +126,9 @@ bool DualTreeIntegrals::RectangleOnDiagonal_(IntegralTree* mu,
 } // RectangleOnDiagonal_()
 
 
-index_t DualTreeIntegrals::CountOnDiagonal_(SquareIntegralTree* rho_sigma) {
+size_t DualTreeIntegrals::CountOnDiagonal_(SquareIntegralTree* rho_sigma) {
                                             
-  index_t on_diagonal;
+  size_t on_diagonal;
   
   // one of these should be square, which one?
   SquareIntegralTree* left_child = rho_sigma->left();

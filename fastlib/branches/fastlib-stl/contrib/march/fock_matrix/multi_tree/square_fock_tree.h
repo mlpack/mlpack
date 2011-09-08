@@ -35,7 +35,7 @@ class SquareFockTree {
     
     // The number of reference PAIRS that haven't been accounted for by either
     // approximation or a base case
-    index_t remaining_references_;
+    size_t remaining_references_;
     
     // The value of an approximation performed on this node
     // If no approximation has been done, this value is 0
@@ -78,8 +78,8 @@ class SquareFockTree {
      
     } // void Init (2 children)
   
-    void Init(index_t start1, index_t end1, index_t start2, index_t end2, 
-              index_t num_funs) {
+    void Init(size_t start1, size_t end1, size_t start2, size_t end2, 
+              size_t num_funs) {
       
       density_upper_bound_ = DBL_MAX;
       density_lower_bound_ = -DBL_MAX;
@@ -149,12 +149,12 @@ class SquareFockTree {
       return relative_error_bound_;
     }
     
-    void set_remaining_references(index_t ref) {
+    void set_remaining_references(size_t ref) {
       DEBUG_ASSERT_MSG(ref >= 0, "Negative remaining references\n");
       remaining_references_ = ref;
     }
     
-    index_t remaining_references() const {
+    size_t remaining_references() const {
       return remaining_references_;
     }
     
@@ -260,13 +260,13 @@ class SquareFockTree {
      *  greater than that of q2
      */
     void Init(QueryTree* query1_root, QueryTree* query2_root, 
-              index_t num_funs, const Matrix& points, const Vector& exp) {
+              size_t num_funs, const Matrix& points, const Vector& exp) {
       
       query1_ = query1_root;
       query2_ = query2_root;
       
-      index_t q1_height = query1_->stat().height();
-      index_t q2_height = query2_->stat().height();
+      size_t q1_height = query1_->stat().height();
+      size_t q2_height = query2_->stat().height();
       
       
       DEBUG_ASSERT(query1_root->end() > query2_root->begin());
@@ -463,13 +463,13 @@ class SquareFockTree {
       // need access to bandwidths to do this correctly
       bound_.Init(3);
       
-      for (index_t i = query1_->begin(); i < query1_->end(); i++) {
+      for (size_t i = query1_->begin(); i < query1_->end(); i++) {
         
         Vector i_vec;
         i_vec.Copy(points.GetColumnPtr(i), 3);
         la::Scale(exponents[i], &i_vec);
         
-        for (index_t j = query2_->begin(); j < query2_->end(); j++) {
+        for (size_t j = query2_->begin(); j < query2_->end(); j++) {
           
           Vector j_vec;
           j_vec.Copy(points.GetColumnPtr(j), 3);

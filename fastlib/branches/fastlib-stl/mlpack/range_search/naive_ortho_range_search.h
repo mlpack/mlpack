@@ -77,8 +77,8 @@ class NaiveOrthoRangeSearch {
 
     // Start the search.
     mlpack::IO::StartTimer("range/naive_search");
-    for(index_t j = 0; j < low_coord_limits.n_cols(); j++) {
-      for(index_t i = 0; i < data_.n_cols(); i++) {	
+    for(size_t j = 0; j < low_coord_limits.n_cols(); j++) {
+      for(size_t i = 0; i < data_.n_cols(); i++) {	
 	GenVector<T> pt;
 	bool flag = true;
 	data_.MakeColumnVector(i, &pt);
@@ -87,7 +87,7 @@ class NaiveOrthoRangeSearch {
 	// first the EXCLUDE case: when dist is above the upper bound distance
 	// of this dimension, or dist is below the lower bound distance of
 	// this dimension
-	for(index_t d = 0; d < data_.n_rows(); d++) {
+	for(size_t d = 0; d < data_.n_rows(); d++) {
 	  if(pt[d] < low_coord_limits.get(d, j) || 
 	     pt[d] > high_coord_limits.get(d, j)) {
 	    flag = false;

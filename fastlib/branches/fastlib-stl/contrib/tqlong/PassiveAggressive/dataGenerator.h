@@ -7,9 +7,9 @@
  * Implement n_features() and generateNextPoint() at child classes
  */
 struct DataGenerator {
-  index_t m_iPoints;
-  index_t m_iPositives;
-  index_t m_iNegatives;
+  size_t m_iPoints;
+  size_t m_iPositives;
+  size_t m_iNegatives;
 public:
   DataGenerator() : m_iPoints(0), m_iPositives(0), m_iNegatives(0) {}
   virtual ~DataGenerator() {}
@@ -41,20 +41,20 @@ public:
 
 /** Online generating a Dataset */
 struct DatasetGenerator : DataGenerator {
-  index_t m_iLaps;
-  index_t m_iCurrentPoint;
+  size_t m_iLaps;
+  size_t m_iCurrentPoint;
   Dataset* m_dpData;
   bool m_bFromFile;
 public:
-  DatasetGenerator(Dataset& data, index_t n_laps = 1) {
+  DatasetGenerator(Dataset& data, size_t n_laps = 1) {
     m_iLaps = n_laps;
     m_iCurrentPoint = 0;
     m_dpData = &data;
     m_bFromFile = false;
   }
-  DatasetGenerator(const char* filename, index_t n_laps = 1) {
+  DatasetGenerator(const char* filename, size_t n_laps = 1) {
     m_dpData = new Dataset;
-    if ( m_dpData->InitFromFile(filename) != SUCCESS_PASS )
+    if ( m_dpData->InitFromFile(filename) != true )
       DEBUG_ASSERT(0);
     m_iLaps = n_laps;
     m_iCurrentPoint = 0;
@@ -81,12 +81,12 @@ public:
  */
 struct FileRowGenerator : DataGenerator {
   const char* m_sFileName;
-  index_t m_iLaps;
+  size_t m_iLaps;
   FILE* m_fFile;
-  index_t m_iNFeatures;
-  index_t m_iCurrentLap;
+  size_t m_iNFeatures;
+  size_t m_iCurrentLap;
 public:
-  FileRowGenerator(const char* filename, index_t n_laps = 1)
+  FileRowGenerator(const char* filename, size_t n_laps = 1)
     : m_sFileName(filename), m_iLaps(n_laps) {
     CalculateNFeatures();
     m_fFile = fopen(m_sFileName, "r");
@@ -98,7 +98,7 @@ public:
   void CalculateNFeatures();
   
   // virtual methods
-  index_t n_features() { return m_iNFeatures; }
+  size_t n_features() { return m_iNFeatures; }
   bool generateNextPoint(Vector& X_out, double& y_out);
 };
 
@@ -107,16 +107,16 @@ public:
  */
 struct CrossValidationGenerator : DataGenerator {
   DataGenerator& m_dData;
-  const ArrayList<index_t>& m_liValidationIndex;
-  index_t m_iCurrentSet;
-  index_t m_iCurrentPoint;
-  index_t m_iNSets;
+  const ArrayList<size_t>& m_liValidationIndex;
+  size_t m_iCurrentSet;
+  size_t m_iCurrentPoint;
+  size_t m_iNSets;
   bool m_bTesting;
 public:
-  CrossValidationGenerator(DataGenerator&, const ArrayList<index_t>&);
+  CrossValidationGenerator(DataGenerator&, const ArrayList<size_t>&);
 
   /** Start a validation */
-  void setValidationSet(index_t idx, bool testing = false) { 
+  void setValidationSet(size_t idx, bool testing = false) { 
     m_iCurrentSet = idx; 
     m_iCurrentPoint = -1;
     m_bTesting = testing;
@@ -127,16 +127,16 @@ public:
     DEBUG_ASSERT(restart_able);
   }
   
-  index_t n_sets() { return m_iNSets; }
+  size_t n_sets() { return m_iNSets; }
   
   // virtual methods
   int n_features() { return m_dData.n_features(); }
   bool generateNextPoint(Vector& X_out, double& y_out);
 
   // static helpers
-  static void createLOOCVindex(ArrayList<index_t>& vIdx, index_t N) {
+  static void createLOOCVindex(ArrayList<size_t>& vIdx, size_t N) {
     vIdx.Init(N);
-    for (index_t i = 0; i < N; i++) vIdx[i] = i;
+    for (size_t i = 0; i < N; i++) vIdx[i] = i;
   }
 };
 

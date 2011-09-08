@@ -29,9 +29,9 @@ namespace npt {
     
     std::vector<std::vector<double> > matcher_dists_;
     
-    void FillInMatchers_(std::vector<index_t>& matcher_ind, int k);
+    void FillInMatchers_(std::vector<size_t>& matcher_ind, int k);
     
-    index_t FindWhichMatcher_(index_t i, index_t j);
+    size_t FindWhichMatcher_(size_t i, size_t j);
     
   public: 
     
@@ -46,14 +46,14 @@ namespace npt {
       
       matcher_dists_.resize(num_bands.size());
       
-      for (index_t i = 0; i < num_bands.size(); i++) {
+      for (size_t i = 0; i < num_bands.size(); i++) {
         
         double band_step = (max_bands[i] - min_bands[i]) / ((double)num_bands[i] - 1.0);
         
         matcher_dists_[i].resize(num_bands[i]);
         
         if (num_bands[i] > 1) {
-          for (index_t j = 0; j < num_bands[i]; j++) {
+          for (size_t j = 0; j < num_bands[i]; j++) {
             
             matcher_dists_[i][j] = min_bands[i] + (double)j * band_step;
             
@@ -67,13 +67,13 @@ namespace npt {
         
       } // for i
       
-      std::vector<index_t> matcher_ind(num_bands.size());
+      std::vector<size_t> matcher_ind(num_bands.size());
       
       FillInMatchers_(matcher_ind, 0);
       
     } // constructor
     
-    arma::mat& matcher(index_t i) {
+    arma::mat& matcher(size_t i) {
       return matchers_[i];
     }
     
@@ -83,7 +83,7 @@ namespace npt {
     
     void print() {
       
-      for (index_t i = 0; i < matchers_.size(); i++) {
+      for (size_t i = 0; i < matchers_.size(); i++) {
         
         matchers_[i].print("Matcher: ");
         std::cout << "\n";

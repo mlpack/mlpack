@@ -25,13 +25,13 @@ namespace matrix_tree_impl {
     else if (node->entries()){
       
       // Iterate over the fock_entries matrix
-      for (index_t i = 0; i < node->row_indices().size(); i++) {
+      for (size_t i = 0; i < node->row_indices().size(); i++) {
         
-        index_t row_ind = node->row_indices()[i];
+        size_t row_ind = node->row_indices()[i];
         
-        for (index_t j = 0; j < node->col_indices().size(); j++) {
+        for (size_t j = 0; j < node->col_indices().size(); j++) {
           
-          index_t col_ind = node->col_indices()[j];
+          size_t col_ind = node->col_indices()[j];
           double val = mat_out->get(row_ind, col_ind) + this_approx 
                        + node->entries()->get(i,j);
           
@@ -50,13 +50,13 @@ namespace matrix_tree_impl {
       // no base case matrix
       
       // Iterate over the fock_entries matrix
-      for (index_t i = 0; i < node->row_indices().size(); i++) {
+      for (size_t i = 0; i < node->row_indices().size(); i++) {
         
-        index_t row_ind = node->row_indices()[i];
+        size_t row_ind = node->row_indices()[i];
         
-        for (index_t j = 0; j < node->col_indices().size(); j++) {
+        for (size_t j = 0; j < node->col_indices().size(); j++) {
           
-          index_t col_ind = node->col_indices()[j];
+          size_t col_ind = node->col_indices()[j];
           double val = mat_out->get(row_ind, col_ind) + this_approx;
 
           mat_out->set(row_ind, col_ind, val);
@@ -96,7 +96,7 @@ namespace matrix_tree_impl {
     
   } // CreateMatrixTree()
   
-  success_t SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
+  bool SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
                             const Matrix& density) {
     
     DEBUG_ASSERT(!node->is_leaf());
@@ -128,12 +128,12 @@ namespace matrix_tree_impl {
         //printf("Making leaf\n");
         node->set_rows(rows->right());
         node->row_indices().Clear();
-        for (index_t i = node->row_shells()->begin(); 
+        for (size_t i = node->row_shells()->begin(); 
              i < node->row_shells()->end(); i++) {
             node->row_indices().AppendCopy(shells[i]->matrix_indices());
         }
         node->make_leaf();
-        return SUCCESS_FAIL;
+        return false;
         
       }
       else {
@@ -168,12 +168,12 @@ namespace matrix_tree_impl {
         //printf("Making leaf\n");
         node->set_cols(cols->left());
         node->col_indices().Clear();
-        for (index_t i = node->col_shells()->begin(); 
+        for (size_t i = node->col_shells()->begin(); 
              i < node->col_shells()->end(); i++) {
             node->col_indices().AppendCopy(shells[i]->matrix_indices());
         }
         node->make_leaf();
-        return SUCCESS_FAIL;
+        return false;
         
       }
       else {
@@ -245,7 +245,7 @@ namespace matrix_tree_impl {
     DEBUG_ASSERT(node->num_pairs() == left_child->num_pairs() + right_child->num_pairs());
     node->set_children(left_child, right_child);
     
-    return SUCCESS_PASS;
+    return true;
     
   } // SplitMatrixTree()
   

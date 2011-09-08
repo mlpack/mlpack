@@ -100,7 +100,7 @@ int main(int argc, char* argv[]) {
   double bin_thickness_factor = IO::GetParam<double>("bin_thickness_factor");
   double r2_multiplier = IO::GetParam<double>("r2_multiplier");
   
-  index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
+  size_t leaf_size = (size_t)IO::GetParam<int>("leaf_size");
   
   std::string matcher_filename = IO::GetParam<std::string>("matchers");
   arma::mat matcher_mat;
@@ -148,8 +148,8 @@ int main(int argc, char* argv[]) {
   
   // The trees just get re-used over and over
   
-  std::vector<index_t> old_from_new_data;
-  std::vector<index_t> old_from_new_random;
+  std::vector<size_t> old_from_new_data;
+  std::vector<size_t> old_from_new_random;
   
   NptNode* data_tree = new NptNode(data_mat, leaf_size, old_from_new_data);
   NptNode* random_tree = new NptNode(random_mat, leaf_size,

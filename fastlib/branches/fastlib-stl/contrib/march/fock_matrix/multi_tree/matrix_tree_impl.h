@@ -23,7 +23,7 @@ namespace matrix_tree_impl {
                                const ArrayList<BasisShell*>& shells,
                                const Matrix& density);
   
-  success_t SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
+  bool SplitMatrixTree(MatrixTree* node, const ArrayList<BasisShell*>& shells,
                        const Matrix& density);
   
 }; // namespace matrix_tree_impl

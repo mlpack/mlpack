@@ -31,7 +31,7 @@ class DualManifoldEngineTest {
      FATAL("Unable to open file %s, error %s\n", filename.c_str(),
          strerror(errno));
     }
-    ArrayList<std::pair<index_t, index_t> > pairs_to_consider;
+    ArrayList<std::pair<size_t, size_t> > pairs_to_consider;
     pairs_to_consider.Init();
     ArrayList<double> dot_prods;
     dot_prods.Init();
@@ -40,8 +40,8 @@ class DualManifoldEngineTest {
       double id2;
       double rating;
       fscanf(fp, "%lg %lg %lg", &id1, &id2, &rating);
-      pairs_to_consider.PushBackCopy(std::make_pair((index_t)id1-1, 
-            (index_t)id2-1));
+      pairs_to_consider.PushBackCopy(std::make_pair((size_t)id1-1, 
+            (size_t)id2-1));
       dot_prods.PushBackCopy(rating);
     }
     fclose(fp);
@@ -63,15 +63,15 @@ class DualManifoldEngineTest {
      FATAL("Unable to open file %s, error %s\n", filename.c_str(),
          strerror(errno));
     }
-    ArrayList<std::pair<index_t, index_t> > pairs_to_consider;
+    ArrayList<std::pair<size_t, size_t> > pairs_to_consider;
     pairs_to_consider.Init();
     ArrayList<double> dot_prods;
     dot_prods.Init();
     while (!feof(fp)) {
-      index_t user_id;
-      index_t movie_id;
+      size_t user_id;
+      size_t movie_id;
       double rating;
-      index_t timestamp;
+      size_t timestamp;
       fscanf(fp, "%i %i %lg %i", &user_id, &movie_id, &rating, &timestamp);
       pairs_to_consider.PushBackCopy(std::make_pair(user_id-1, 
             movie_id-1));

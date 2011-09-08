@@ -65,19 +65,19 @@ int main(int argc, char *argv[]) {
 
   FastICA fastica;
 
-  int success_status = SUCCESS_FAIL;
-  if(fastica.Init(X) == SUCCESS_PASS) {
+  int success_status = false;
+  if(fastica.Init(X) == true) {
     arma::mat W, Y;
-    if(fastica.DoFastICA(W, Y) == SUCCESS_PASS) {
+    if(fastica.DoFastICA(W, Y) == true) {
       data::Save(unmixing_filename, trans(W));
       data::Save(ic_filename, Y);
-      success_status = SUCCESS_PASS;
+      success_status = true;
       mlpack::IO::Debug << W << std::endl;
     }
   }
   
 
-  if(success_status == SUCCESS_FAIL) {
+  if(success_status == false) {
     mlpack::IO::Debug << "FAILED!" << std::endl;
   }
 

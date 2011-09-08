@@ -25,14 +25,14 @@ class EmptyStatistic {
     /**
      * Initializes by taking statistics on raw data.
      */
-    void Init(const arma::mat& dataset, index_t start, index_t count) { }
+    void Init(const arma::mat& dataset, size_t start, size_t count) { }
 
     /**
      * Initializes by combining statistics of two partitions.
      *
      * This lets you build fast bottom-up statistics when building trees.
      */
-    void Init(const arma::mat& dataset, index_t start, index_t count,
+    void Init(const arma::mat& dataset, size_t start, size_t count,
         const EmptyStatistic& left_stat, const EmptyStatistic& right_stat) { }
 };
 

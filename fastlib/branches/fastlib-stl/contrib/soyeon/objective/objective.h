@@ -21,24 +21,24 @@ class Objective {
 	
 	
   
-  ArrayList<index_t>  first_stage_y_;
+  ArrayList<size_t>  first_stage_y_;
 	// If the value is -1 then it corresponds
   // to all zeros in y
   // If it is greter than zero then it corresponds to 
   // the non zero element index
-	ArrayList<index_t> second_stage_y_;
+	ArrayList<size_t> second_stage_y_;
 	//1 then it corresponds to all one in y^post
 	
 	//it corresponds to the unknown attributes index in unk_x_past file
 	//(eg. 7th attribute(price) is unknown 
-	ArrayList<index_t> ind_unk_x_;
+	ArrayList<size_t> ind_unk_x_;
 
 
-	ArrayList<index_t> exp_betas_times_x1_;
-	ArrayList<index_t> exp_betas_times_x2_;
-	//ArrayList<index_t> exp_betas_times_x2_tilde_;
-	ArrayList<index_t> postponed_probability_;
-	//ArrayList<index_t> conditional_postponed_probability_;
+	ArrayList<size_t> exp_betas_times_x1_;
+	ArrayList<size_t> exp_betas_times_x2_;
+	//ArrayList<size_t> exp_betas_times_x2_tilde_;
+	ArrayList<size_t> postponed_probability_;
+	//ArrayList<size_t> conditional_postponed_probability_;
 
 	//max num of choices among all
 	//unk_x_past_.size==max_number_alternatives_

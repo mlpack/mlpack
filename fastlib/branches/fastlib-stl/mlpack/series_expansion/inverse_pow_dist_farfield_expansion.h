@@ -82,7 +82,7 @@ class InversePowDistFarFieldExpansion {
    */
   void set_center(const Vector &center) {
     
-    for(index_t i = 0; i < center.length(); i++) {
+    for(size_t i = 0; i < center.length(); i++) {
       center_[i] = center[i];
     }
   }

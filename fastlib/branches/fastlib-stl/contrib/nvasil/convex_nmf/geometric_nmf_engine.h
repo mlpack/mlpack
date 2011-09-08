@@ -36,7 +36,7 @@ class GeometricNmfEngine {
 	   std::string data_file=fx_param_str_req(module_, "data_file");
 		 new_dim_=fx_param_int(module_, "new_dim", 3);
 		 Matrix data_mat;
-		 if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
+		 if (data::Load(data_file.c_str(), &data_mat)==false) {
        FATAL("Terminating...");
      }
      NOTIFY("Factoring a %i x %i matrix in %i x %i and %i x %i\n",
@@ -74,8 +74,8 @@ class GeometricNmfEngine {
      engine_->GetResults(&result);
      delete engine_;
         
-		 for(index_t i=0; i<num_of_rows_+num_of_columns_; i++) {
-       for(index_t j=0; j<result.n_rows(); j++) {
+		 for(size_t i=0; i<num_of_rows_+num_of_columns_; i++) {
+       for(size_t j=0; j<result.n_rows(); j++) {
          result.set(j, i, exp(result.get(j, i)));
        }
      }
@@ -92,9 +92,9 @@ class GeometricNmfEngine {
    
      double error=0;
      double v_sum=0;
-     for(index_t i=0; i<values_.size(); i++) {
-       index_t r=rows_[i];
-       index_t c=columns_[i];
+     for(size_t i=0; i<values_.size(); i++) {
+       size_t r=rows_[i];
+       size_t c=columns_[i];
        error+=fabs(v_rec.get(r, c)-values_[i]);
        v_sum+=values_[i];
      }
@@ -113,21 +113,21 @@ class GeometricNmfEngine {
   fx_module *l_bfgs_module_;
   LBfgs<GeometricNmfObjective> *engine_;
 	GeometricNmfObjective  opt_function_;
-	ArrayList<index_t> rows_;
-	ArrayList<index_t> columns_;
+	ArrayList<size_t> rows_;
+	ArrayList<size_t> columns_;
 	ArrayList<double> values_;
-	index_t new_dim_;
+	size_t new_dim_;
 	Matrix w_mat_;
 	Matrix h_mat_;
-	index_t num_of_rows_; // number of unique rows, otherwise the size of W
-	index_t num_of_columns_; // number of unique columns, otherwise the size of H
+	size_t num_of_rows_; // number of unique rows, otherwise the size of W
+	size_t num_of_columns_; // number of unique columns, otherwise the size of H
  
 	void PreprocessData(Matrix &data_mat) {
 	  values_.Init();
 		rows_.Init();
 		columns_.Init();
-		for(index_t i=0; i<data_mat.n_rows(); i++) {
-		  for(index_t j=0; j< data_mat.n_cols(); j++) {
+		for(size_t i=0; i<data_mat.n_rows(); i++) {
+		  for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  values_.PushBackCopy(data_mat.get(i, j));
 				rows_.PushBackCopy(i);
 				columns_.PushBackCopy(j);

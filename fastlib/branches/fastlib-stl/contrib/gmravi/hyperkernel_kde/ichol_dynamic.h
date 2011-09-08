@@ -26,14 +26,14 @@ class ICholDynamic{
   double lambda_;
 
   //The number of train points
-  index_t num_train_points_;
+  size_t num_train_points_;
 
 
   //Number of dimensions of the train data
-  index_t num_dims_;
+  size_t num_dims_;
 
   //Hyperkernels are m^2 x m^2
-  index_t sqd_num_train_points_;
+  size_t sqd_num_train_points_;
 
   //The threshold. This determines when to stop
   double epsilon_;
@@ -58,13 +58,13 @@ class ICholDynamic{
 
   //Permutation vector. 
 
-  ArrayList <index_t> perm_;
+  ArrayList <size_t> perm_;
 
   void ComputeDiagonalElements_(){
     
-    index_t row=0;
-    for(index_t p=0;p<num_train_points_;p++){
-      for(index_t q=0;q<num_train_points_;q++){
+    size_t row=0;
+    for(size_t p=0;p<num_train_points_;p++){
+      for(size_t q=0;q<num_train_points_;q++){
 	
 	double val_diag=ComputeElementOfMMatrix_(p,q,p,q); //r=p,s=q
 	diagonal_elements_[row]=val_diag;
@@ -86,25 +86,25 @@ class ICholDynamic{
   }
 
   //Getters
-  double get_element_of_m_matrix(index_t p,index_t q,index_t r,index_t s){
+  double get_element_of_m_matrix(size_t p,size_t q,size_t r,size_t s){
 
     return ComputeElementOfMMatrix_(p,q,r,s);
   }
 
  private:
   
-  void  CreateSquaredVectorFromCholFactor_(index_t start_row,
-					   index_t end_col,
+  void  CreateSquaredVectorFromCholFactor_(size_t start_row,
+					   size_t end_col,
 					   Vector &squared_vector){
-    index_t end_row=sqd_num_train_points_;
-    index_t start_col=0;
-    index_t i;
+    size_t end_row=sqd_num_train_points_;
+    size_t start_col=0;
+    size_t i;
     i=0;
 
-    for(index_t row=start_row;row<end_row;row++){
+    for(size_t row=start_row;row<end_row;row++){
       
       double sum_of_rows=0;
-      for(index_t col=start_col;col<end_col;col++){
+      for(size_t col=start_col;col<end_col;col++){
 	
 	double val=chol_factor_dynamic_[col][row];
 	sum_of_rows+=val*val;
@@ -114,28 +114,28 @@ class ICholDynamic{
     }
   }
   
-  void  ExtractRowOfOriginalMatrix_(index_t row,index_t start_index_of_perm_vector,Vector &temp){
+  void  ExtractRowOfOriginalMatrix_(size_t row,size_t start_index_of_perm_vector,Vector &temp){
     
     //This function forms a vector by accessing the original elements ie we neeed
 
     //We should probably make use of a caching scheme to make it more efficient
-    index_t i=0;
+    size_t i=0;
     row=perm_[row];
-    for(index_t j=start_index_of_perm_vector;j<sqd_num_train_points_;j++){
+    for(size_t j=start_index_of_perm_vector;j<sqd_num_train_points_;j++){
       
-      index_t col=perm_[j];
+      size_t col=perm_[j];
       
       //Having got the row and column number find p,q,r,s
-      index_t p=row/num_train_points_;
-      index_t q=row%num_train_points_;
-      index_t r=col/num_train_points_;
-      index_t s=col%num_train_points_;
+      size_t p=row/num_train_points_;
+      size_t q=row%num_train_points_;
+      size_t r=col/num_train_points_;
+      size_t s=col%num_train_points_;
       temp[i]=ComputeElementOfMMatrix_(p,q,r,s);
       i++;
     }
   }
 
-  double ComputeElementOfMMatrix_(index_t p, index_t q,index_t r,index_t s){
+  double ComputeElementOfMMatrix_(size_t p, size_t q,size_t r,size_t s){
     
     //$M(p,q,r,s)=K'/m^2 +\lambda K$
     
@@ -231,12 +231,12 @@ class ICholDynamic{
 
     double temp=16*sigma_2*(sigma_2+sigma_h_2)*(3*sigma_2+2*sigma_h_2);
     double k_prime_val=0;
-    for(index_t i=0;i<num_train_points_;i++){
+    for(size_t i=0;i<num_train_points_;i++){
 
       double *x_i=train_set_.GetColumnPtr(i);
       Vector vec_x_i;
       vec_x_i.Alias(x_i,num_dims_);
-      for(index_t j=0;j<num_train_points_;j++){
+      for(size_t j=0;j<num_train_points_;j++){
 
 	double *x_j=train_set_.GetColumnPtr(j);
 	Vector vec_x_j;
@@ -245,7 +245,7 @@ class ICholDynamic{
 	//Having got $x_i,x_j$ calculate the following parameters
 
 	double theta_x=0;
-	for(index_t d=0;d<num_dims_;d++){
+	for(size_t d=0;d<num_dims_;d++){
 	  
 	  double c1=7*x_p[d]+ 7*x_q[d]+ x_r[d]+ x_s[d];
 	  double c2=5*(x_p[d]*x_p[d]+ x_q[d]*x_q[d]+ x_r[d]*x_r[d]+ x_s[d]*x_s[d]);
@@ -309,11 +309,11 @@ class ICholDynamic{
     return m_val;
   }
 
-  double SumOfDiagonalElementsOfCholFactor_(index_t start_row){
+  double SumOfDiagonalElementsOfCholFactor_(size_t start_row){
     
     double sum_diag_elem=0;
     
-    for(index_t i=start_row;i<sqd_num_train_points_;i++){
+    for(size_t i=start_row;i<sqd_num_train_points_;i++){
       
       sum_diag_elem+=diagonal_elements_chol_factor_[i];
     }
@@ -326,12 +326,12 @@ class ICholDynamic{
   void GetFirstColOfMMatrix_(Vector &first_col){
     
     
-    for(index_t p=0;p<num_train_points_;p++){
+    for(size_t p=0;p<num_train_points_;p++){
       
-      for(index_t q=p;q<num_train_points_;q++){
+      for(size_t q=p;q<num_train_points_;q++){
 	
-	index_t row1=p*num_train_points_+q;
-	index_t row2=q*num_train_points_+p;
+	size_t row1=p*num_train_points_+q;
+	size_t row2=q*num_train_points_+p;
 	double val=ComputeElementOfMMatrix_(p,q,0,0);
 	
 	first_col[row1]=val;
@@ -340,7 +340,7 @@ class ICholDynamic{
     }     
   } 
   
-  /*index_t CheckIfLastColumnIsZeros_(index_t rank){
+  /*size_t CheckIfLastColumnIsZeros_(size_t rank){
     
     double  epsilon;
     epsilon=pow(10,-6);
@@ -355,7 +355,7 @@ class ICholDynamic{
     printf("The last column is...\n");
     v.PrintDebug();
     
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    for(size_t i=0;i<sqd_num_train_points_;i++){
       
       if(fabs(v[i])>epsilon){
 	
@@ -368,11 +368,11 @@ class ICholDynamic{
     }*/
   
 
-  void SwapRowsOfCholFactor_(index_t row1,index_t row2,index_t tillcol){
+  void SwapRowsOfCholFactor_(size_t row1,size_t row2,size_t tillcol){
     
     //Get row1 
     double temp;
-    for(index_t i=0;i<tillcol;i++){
+    for(size_t i=0;i<tillcol;i++){
       
       temp=chol_factor_dynamic_[i][row1]; //These are elements from ith col row=row1
 
@@ -383,8 +383,8 @@ class ICholDynamic{
     }
   }
  
-  void FindMaxDiagonalElementInCholFactor_(index_t start_row,
-					   index_t *max_index,
+  void FindMaxDiagonalElementInCholFactor_(size_t start_row,
+					   size_t *max_index,
 					   double *max_value){
     
     *max_value=-INFINITY;
@@ -392,7 +392,7 @@ class ICholDynamic{
 
     //printf("Diagonal elements at this point are..\n");
   
-    for(index_t i=start_row;i<sqd_num_train_points_;i++){
+    for(size_t i=start_row;i<sqd_num_train_points_;i++){
       
       double val=diagonal_elements_chol_factor_[i];
       if(val>*max_value){
@@ -404,20 +404,20 @@ class ICholDynamic{
   }
   
 
-  void ExtractSubMatrixOfCholFactor_(index_t start_row,index_t end_row,
-				     index_t start_col,index_t end_col, 
+  void ExtractSubMatrixOfCholFactor_(size_t start_row,size_t end_row,
+				     size_t start_col,size_t end_col, 
 				     Matrix &temp_mat){
     
-    index_t i=0;
-    index_t j=0;
+    size_t i=0;
+    size_t j=0;
     
     if(start_row==end_row ||start_col==end_col){
       temp_mat.SetAll(0);
       return;
     }
-    for(index_t row=start_row;row<end_row;row++){
+    for(size_t row=start_row;row<end_row;row++){
       j=0;
-      for(index_t col=start_col;col<end_col;col++){
+      for(size_t col=start_col;col<end_col;col++){
 	
 	temp_mat.set(i,j,chol_factor_dynamic_[col][row]);
 	j++;
@@ -433,9 +433,9 @@ class ICholDynamic{
 
     Matrix temp;
     temp.Init(sqd_num_train_points_,chol_factor_dynamic_.size());
-    for(index_t i=0;i<chol_factor_dynamic_.size();i++){
+    for(size_t i=0;i<chol_factor_dynamic_.size();i++){
       
-      for(index_t j=0;j<sqd_num_train_points_;j++){
+      for(size_t j=0;j<sqd_num_train_points_;j++){
 	
 	temp.set(j,i,chol_factor_dynamic_[i][j]);	  
       }
@@ -447,7 +447,7 @@ class ICholDynamic{
   
   
   void ComputeIncompleteCholeskyDynamically_(Matrix &chol_factor_in,
-					     ArrayList<index_t> &perm_in){
+					     ArrayList<size_t> &perm_in){
     
     
     //The algorithms requires that we store the diagonal elements of
@@ -468,7 +468,7 @@ class ICholDynamic{
     
     //Set the first column
     
-    index_t i;
+    size_t i;
     
     Vector new_column_to_be_formed;
     new_column_to_be_formed.Copy(first_col);
@@ -483,7 +483,7 @@ class ICholDynamic{
 	//start from the i-1 th row and go till column i-1(including)
 	CreateSquaredVectorFromCholFactor_(i,i,squared_vector);
 	
-	for(index_t j=i;j<sqd_num_train_points_;j++){
+	for(size_t j=i;j<sqd_num_train_points_;j++){
 	  
 	  diagonal_elements_chol_factor_[j]=diagonal_elements_[perm_[j]]-squared_vector[j-i];
 	}
@@ -513,7 +513,7 @@ class ICholDynamic{
 	
 	//Find the maximum diagonal element from i to m
 	
-	index_t max_index;
+	size_t max_index;
 	double max_value;
 	FindMaxDiagonalElementInCholFactor_(i,&max_index,&max_value);
 	
@@ -523,7 +523,7 @@ class ICholDynamic{
 	//printf("Will swap %d and %d..\n",perm_[i],perm_[max_index]);
 	//printf("max_index is %d..\n",max_index);
 	
-	index_t  temp=perm_[i];
+	size_t  temp=perm_[i];
 	perm_[i]=perm_[max_index];
 	perm_[max_index]=temp;
 	
@@ -531,9 +531,9 @@ class ICholDynamic{
 	//0:i-1(including) Which is basically the lower traingle of the
 	//row i
 	
-	index_t row1=i;
-	index_t row2=max_index;
-	index_t tillcol=i;
+	size_t row1=i;
+	size_t row2=max_index;
+	size_t tillcol=i;
 
 	//printf("For swapping row1=%d,row2=%d,tillcol=%d...\n",
 	//row1,row2,tillcol);
@@ -556,9 +556,9 @@ class ICholDynamic{
 	Vector temp1;
 	temp1.Init(sqd_num_train_points_-i-1);
 	
-	index_t start_index_of_perm_vector=i+1;
+	size_t start_index_of_perm_vector=i+1;
 	//printf("Permutation matrix at this point is..\n");
-	/*for(index_t q=i;q<sqd_num_train_points_;q++){
+	/*for(size_t q=i;q<sqd_num_train_points_;q++){
 	  
 	printf("Permutation[%d]=%d",q,perm_[q]);
 	}*/
@@ -566,10 +566,10 @@ class ICholDynamic{
 	ExtractRowOfOriginalMatrix_(i,start_index_of_perm_vector,temp1);
 	
 	if(i>=1){
-	  index_t start_row=i+1;
-	  index_t end_row=sqd_num_train_points_;
-	  index_t start_col=0;
-	  index_t end_col=i;
+	  size_t start_row=i+1;
+	  size_t end_row=sqd_num_train_points_;
+	  size_t start_col=0;
+	  size_t end_col=i;
 	  
 	  Matrix temp_mat;
 	  temp_mat.Init(end_row-start_row,end_col-start_col);
@@ -581,7 +581,7 @@ class ICholDynamic{
 	  temp2.Init(i);
 	  
 	  
-	  for(index_t j=0;j<i;j++){
+	  for(size_t j=0;j<i;j++){
 	    
 	    temp2[j]=chol_factor_dynamic_[j][i];
 	  }
@@ -598,10 +598,10 @@ class ICholDynamic{
 	    //temp3_prod.PrintDebug();
 	  
 	    //L(i+1:m,i)*L(i,1:i-1) <- temp4
-	    index_t k=0;
+	    size_t k=0;
 	  
 	    //printf("Doing final stuff on chol factor ...\n");
-	    for(index_t row=i+1;row<sqd_num_train_points_;row++){
+	    for(size_t row=i+1;row<sqd_num_train_points_;row++){
 	    
 	      new_column_to_be_formed[row]=(temp4[k]/max_value);
 	      k++;	   
@@ -613,8 +613,8 @@ class ICholDynamic{
 	
 	  else{
 	  
-	    index_t k=0;
-	    for(index_t row=i+1;row<sqd_num_train_points_;row++){
+	    size_t k=0;
+	    for(size_t row=i+1;row<sqd_num_train_points_;row++){
 	    
 	      new_column_to_be_formed[row]=(temp1[k]/max_value);
 	      k++;	   
@@ -626,9 +626,9 @@ class ICholDynamic{
 	  //printf("Max value is %f\n",max_value);
 	
 	  //Fill this up
-	  index_t k=0;
+	  size_t k=0;
 	
-	  for(index_t row=i+1;row<sqd_num_train_points_;row++){
+	  for(size_t row=i+1;row<sqd_num_train_points_;row++){
 	  
 	  
 	    new_column_to_be_formed[row]=temp1[k]/max_value;
@@ -649,7 +649,7 @@ class ICholDynamic{
 
     //Determine the rank of the matrix
     
-    index_t rank;
+    size_t rank;
 
     printf("i is %d..\n",i);
     if(i<=sqd_num_train_points_-1){
@@ -667,9 +667,9 @@ class ICholDynamic{
     chol_factor_in.Init(sqd_num_train_points_,rank);
     //Copy the cholesky factor which is an arraylist into a matrix
 
-    for(index_t i=0;i<rank;i++){
+    for(size_t i=0;i<rank;i++){
       
-      for(index_t j=0;j<sqd_num_train_points_;j++){
+      for(size_t j=0;j<sqd_num_train_points_;j++){
 	
 	double val=chol_factor_dynamic_[i][j];
 	chol_factor_in.set(j,i,val);	  
@@ -680,14 +680,14 @@ class ICholDynamic{
     //Similariy copy permutation matrix
     
 
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    for(size_t i=0;i<sqd_num_train_points_;i++){
       perm_in[i]=perm_[i];
     }
   }
   
  public:
   
-  void Compute(Matrix &chol_factor_in,ArrayList <index_t> &perm_in){
+  void Compute(Matrix &chol_factor_in,ArrayList <size_t> &perm_in){
     
     /*  Matrix M_mat_;
     M_mat_.Init(sqd_num_train_points_,sqd_num_train_points_);
@@ -695,19 +695,19 @@ class ICholDynamic{
     printf("Wil do incomplete cholesky now...\n");
     
     
-    for(index_t p=0;p<num_train_points_;p++){
+    for(size_t p=0;p<num_train_points_;p++){
       
-      for(index_t q=0;q<num_train_points_;q++){
+      for(size_t q=0;q<num_train_points_;q++){
 	
-	index_t row_num1=p*num_train_points_+q;
-	index_t row_num2=q*num_train_points_+p;
+	size_t row_num1=p*num_train_points_+q;
+	size_t row_num2=q*num_train_points_+p;
 	
-	for(index_t r=0;r<num_train_points_;r++){
+	for(size_t r=0;r<num_train_points_;r++){
 	  
-	  for(index_t s=0;s<num_train_points_;s++){
+	  for(size_t s=0;s<num_train_points_;s++){
 	    
-	    index_t col_num1=r*num_train_points_+s;
-	    index_t col_num2=s*num_train_points_+r;
+	    size_t col_num1=r*num_train_points_+s;
+	    size_t col_num2=s*num_train_points_+r;
 	    
 	    double val=ComputeElementOfMMatrix_(p,q,r,s);
 	    
@@ -768,7 +768,7 @@ class ICholDynamic{
     
     perm_.Init(sqd_num_train_points_);
     
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    for(size_t i=0;i<sqd_num_train_points_;i++){
       
       perm_[i]=i;      
     }

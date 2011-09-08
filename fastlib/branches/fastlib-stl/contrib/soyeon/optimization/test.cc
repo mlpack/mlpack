@@ -38,7 +38,7 @@ public:
 																&dummy_p,
 																&dummy_delta_m);
 		cout<<"p="<<" ";
-		for(index_t i=0; i<dummy_p.length(); i++){
+		for(size_t i=0; i<dummy_p.length(); i++){
 			cout<<dummy_p[i]<<" ";
 		}
 		cout<<endl;
@@ -54,7 +54,7 @@ public:
 																&dummy_delta_m2);
 
 		cout<<"p2="<<" ";
-		for(index_t i=0; i<dummy_p2.length(); i++){
+		for(size_t i=0; i<dummy_p2.length(); i++){
 			cout<<dummy_p2[i]<<" ";
 		}
 		cout<<endl;

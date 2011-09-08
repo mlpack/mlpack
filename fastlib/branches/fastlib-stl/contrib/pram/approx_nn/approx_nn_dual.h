@@ -83,9 +83,9 @@ class ApproxNN {
     // The upper bound on the node's nearest neighbor distances.
     double max_distance_so_far_;
     // Number of points considered
-    index_t total_points_;
+    size_t total_points_;
     // Number of points sampled
-    index_t samples_;
+    size_t samples_;
     
   public:
     // getters
@@ -93,11 +93,11 @@ class ApproxNN {
       return max_distance_so_far_; 
     } 
 
-    index_t total_points() {
+    size_t total_points() {
       return total_points_;
     }
 
-    index_t samples() {
+    size_t samples() {
       return samples_;
     }
 
@@ -106,19 +106,19 @@ class ApproxNN {
       max_distance_so_far_ = new_dist; 
     } 
 
-    void set_total_points(index_t points) {
+    void set_total_points(size_t points) {
       total_points_ = points;
     }
 
-    void add_total_points(index_t points) {
+    void add_total_points(size_t points) {
       total_points_ += points;
     }
 
-    void set_samples(index_t points) {
+    void set_samples(size_t points) {
       samples_ = points;
     }
 
-    void add_samples(index_t points) {
+    void add_samples(size_t points) {
       samples_ += points;
     }
     
@@ -127,7 +127,7 @@ class ApproxNN {
      * a leaf node.  For allnn, needs no additional information 
      * at the time of tree building.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count) {
+    void Init(const Matrix& matrix, size_t start, size_t count) {
       // The bound starts at infinity
       max_distance_so_far_ = DBL_MAX;
       // The points considered starts at zero
@@ -142,7 +142,7 @@ class ApproxNN {
      * node statistics can be built using information from
      * the children.  
      */
-    void Init(const Matrix& matrix, index_t start, index_t count, 
+    void Init(const Matrix& matrix, size_t start, size_t count, 
 	      const QueryStat& left, const QueryStat& right) {
       // For allnn, non-leaves can be initialized in the
       // same way as leaves
@@ -166,31 +166,31 @@ private:
   TreeType *query_tree_;
   TreeType* reference_tree_;
   // The total number of prunes.
-  index_t number_of_prunes_;
+  size_t number_of_prunes_;
   // A permutation of the indices for tree building.
-  ArrayList<index_t> old_from_new_queries_;
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_queries_;
+  ArrayList<size_t> old_from_new_references_;
   // The number of points in a leaf
-  index_t leaf_size_;
+  size_t leaf_size_;
   // The distance to the candidate nearest neighbor for each query
   Vector neighbor_distances_;
   // The indices of the candidate nearest neighbor for each query
-  ArrayList<index_t> neighbor_indices_;
+  ArrayList<size_t> neighbor_indices_;
   // number of nearest neighbrs
-  index_t knns_; 
+  size_t knns_; 
   // The module containing the parameters for this computation. 
   struct datanode* module_;
   // The array containing the sample sizes for the corresponding
   // set sizes
-  ArrayList<index_t> sample_sizes_;
+  ArrayList<size_t> sample_sizes_;
   // The rank approximation
-  index_t rank_approx_;
+  size_t rank_approx_;
   double epsilon_;
   // The maximum number of points to be sampled
-  index_t sample_limit_;
+  size_t sample_limit_;
   // Minimum number of samples required for each query
   // to maintain the probability bound for the error
-  index_t min_samples_per_q_;  
+  size_t min_samples_per_q_;  
   
   /////////////////////////////// Constructors ////////////////////////
   
@@ -242,32 +242,32 @@ private:
    * a particular quantile given the set and sample sizes
    * Computes P(d_(1) <= d_(1+rank_approx))
    */
-  double ComputeProbability_(index_t set_size,
-			     index_t sample_size,
-			     index_t rank_approx);
+  double ComputeProbability_(size_t set_size,
+			     size_t sample_size,
+			     size_t rank_approx);
 
   /**
    * This function computes the probability of
    * a particular quantile given the set and sample sizes
    * Computes P(d_(k) <= d_(rank_approx))
    */
-  double ComputeProbability_(index_t set_size,
-			     index_t sample_size, index_t k,
-			     index_t rank_approx);
+  double ComputeProbability_(size_t set_size,
+			     size_t sample_size, size_t k,
+			     size_t rank_approx);
 											 	
   /**
    * This function computes the minimum sample sizes
    * required to obtain the approximate rank with
    * a given probability (alpha).
    * 
-   * It assumes that the ArrayList<index_t> *samples
+   * It assumes that the ArrayList<size_t> *samples
    * has been initialized to length N.
    */
-  void ComputeSampleSizes_(index_t rank_approx, double alpha,
-			   ArrayList<index_t> *samples);
+  void ComputeSampleSizes_(size_t rank_approx, double alpha,
+			   ArrayList<size_t> *samples);
 
-  void ComputeSampleSizes_(index_t rank_approx, double alpha,
-			   index_t k, ArrayList<index_t> *samples);
+  void ComputeSampleSizes_(size_t rank_approx, double alpha,
+			   size_t k, ArrayList<size_t> *samples);
 
 
   /**
@@ -370,12 +370,12 @@ public:
    */
   void InitNaive(const Matrix& queries_in, 
 		 const Matrix& references_in,
-		 index_t knns);
+		 size_t knns);
 
 
   // Initializing for the naive computation for a
   // monochromatic dataset
-  void InitNaive(const Matrix& references_in, index_t knns);
+  void InitNaive(const Matrix& references_in, size_t knns);
 
 
   /**
@@ -395,14 +395,14 @@ public:
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNeighbors(ArrayList<size_t>* resulting_neighbors,
                         ArrayList<double>* distances);
   
   
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(ArrayList<index_t>* resulting_neighbors,
+  void ComputeNaive(ArrayList<size_t>* resulting_neighbors,
                     ArrayList<double>*  distances);
 
 
@@ -410,7 +410,7 @@ public:
    * Does the entire computation to find the approximate
    * rank NN
    */
-  void ComputeApprox(ArrayList<index_t>* resulting_neighbors,
+  void ComputeApprox(ArrayList<size_t>* resulting_neighbors,
 		     ArrayList<double>*  distances);
 
 	
@@ -418,7 +418,7 @@ public:
    * Does the entire computation naively on the sample 
    * (no reference tree).
    */
-  void ComputeApproxNoTree(ArrayList<index_t>* resulting_neighbors,
+  void ComputeApproxNoTree(ArrayList<size_t>* resulting_neighbors,
 			   ArrayList<double>*  distances);
 
 }; //class AllkNN

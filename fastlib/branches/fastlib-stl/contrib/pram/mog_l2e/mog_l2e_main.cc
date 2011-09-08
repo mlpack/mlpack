@@ -39,18 +39,18 @@ int main(int argc, char* argv[]) {
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
   datanode *mog_l2e_module = fx_submodule(NULL, "mog_l2e");
-  index_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);
+  size_t number_of_gaussians = fx_param_int(mog_l2e_module, "K", 1);
   fx_format_param(mog_l2e_module, "D", "%d", data_points.n_rows());
-  index_t dimension = fx_param_int_req(mog_l2e_module, "D");;
+  size_t dimension = fx_param_int_req(mog_l2e_module, "D");;
   
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
   datanode *opt_module = fx_submodule(NULL, "opt");
   const char *opt_method = fx_param_str(opt_module, "method", "QuasiNewton");
-  index_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
+  size_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
   fx_param_int(opt_module, "param_space_dim", param_dim);
 
-  index_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
+  size_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
 
   
@@ -68,7 +68,7 @@ int main(int argc, char* argv[]) {
     ////// Getting starting points for the optimization //////
     double **pts;
     pts = (double**)malloc((param_dim+1)*sizeof(double*));
-    for(index_t i = 0; i < param_dim+1; i++) {
+    for(size_t i = 0; i < param_dim+1; i++) {
       pts[i] = (double*)malloc(param_dim*sizeof(double));
     }
 

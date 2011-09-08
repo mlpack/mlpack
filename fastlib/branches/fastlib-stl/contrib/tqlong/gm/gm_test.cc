@@ -19,9 +19,9 @@ FactorGraphType constructExampleFactorGraph() {
   ArrayList<Node> nodes_list;
   nodes_list.InitCopy(nodes, 4);
 
-  index_t f0ranges[] = {3, 2};
-  index_t f1ranges[] = {2, 2};  
-  index_t f2ranges[] = {2, 4};
+  size_t f0ranges[] = {3, 2};
+  size_t f1ranges[] = {2, 2};  
+  size_t f2ranges[] = {2, 4};
 
   double f0vals[] = {1,2,3,4,5,6};
   double f1vals[] = {2,4,6,8};
@@ -35,16 +35,16 @@ FactorGraphType constructExampleFactorGraph() {
   ArrayList<Factor> factors_list;
   factors_list.InitCopy(factors, 3);
 
-  index_t f0nodes[] = {0, 1};
-  index_t f1nodes[] = {1, 2};
-  index_t f2nodes[] = {1, 3};
+  size_t f0nodes[] = {0, 1};
+  size_t f1nodes[] = {1, 2};
+  size_t f2nodes[] = {1, 3};
 
-  ArrayList<index_t> factor2node[3];
+  ArrayList<size_t> factor2node[3];
   factor2node[0].InitCopy(f0nodes, 2);
   factor2node[1].InitCopy(f1nodes, 2);
   factor2node[2].InitCopy(f2nodes, 2);
 
-  ArrayList<ArrayList<index_t> > factor2node_list;
+  ArrayList<ArrayList<size_t> > factor2node_list;
   factor2node_list.InitCopy(factor2node,3);
 
   FactorGraphType fg;
@@ -64,7 +64,7 @@ FactorGraphType constructExampleFactorGraph1() {
   ArrayList<Node> nodes_list;
   nodes_list.InitCopy(nodes, 2);
 
-  index_t f0ranges[] = {3, 2};
+  size_t f0ranges[] = {3, 2};
 
   double f0vals[] = {1,2,3,4,5,6};
 
@@ -74,12 +74,12 @@ FactorGraphType constructExampleFactorGraph1() {
   ArrayList<Factor> factors_list;
   factors_list.InitCopy(factors, 1);
 
-  index_t f0nodes[] = {0, 1};
+  size_t f0nodes[] = {0, 1};
 
-  ArrayList<index_t> factor2node[1];
+  ArrayList<size_t> factor2node[1];
   factor2node[0].InitCopy(f0nodes, 2);
 
-  ArrayList<ArrayList<index_t> > factor2node_list;
+  ArrayList<ArrayList<size_t> > factor2node_list;
   factor2node_list.InitCopy(factor2node,1);
 
   FactorGraphType fg;

@@ -88,8 +88,8 @@ class ThorMD {
     TwoBody<QNode, RNode, ThorMdPoint> potential_;
     ThreeBody<QNode, RNode, ThorMdPoint> axilrod_;
     Vector box_size_;
-    index_t query_count_;
-    index_t reference_count_;
+    size_t query_count_;
+    size_t reference_count_;
     int bound_type_, prune_type_;
     double prune_value_, prune_value2_;
     bool no_three_body_;
@@ -161,7 +161,7 @@ class ThorMD {
     Vector pos_, vel_, crossing_;
     Vector coefs_, axilrod_;
     double mass_;
-    index_t old_index_;
+    size_t old_index_;
     OT_DEF(ThorMdPoint) {
       OT_MY_OBJECT(coefs_);
       OT_MY_OBJECT(axilrod_);
@@ -195,7 +195,7 @@ class ThorMD {
      * sets contents assuming all space has been allocated.
      * Any attempt to allocate memory here will lead to a core dump.
      */
-    void Set(const Param& param, index_t index, Vector& data) {
+    void Set(const Param& param, size_t index, Vector& data) {
       int i;      
       for (i = 0; i < 3; i++){
 	pos_[i] = data[i];
@@ -320,7 +320,7 @@ class ThorMD {
      * Accumulate data from one of your children (Req THOR).
      */
     void Accumulate(const Param& param, const ThorMdStat& child_stat, 
-		    const Bound& bound, index_t child_n_points) {
+		    const Bound& bound, size_t child_n_points) {
       la::AddTo(child_stat.axilrod_, &axilrod_);
       la::AddTo(child_stat.coefs_, &coefs_);
       mass_ = mass_ + child_stat.mass_;
@@ -331,7 +331,7 @@ class ThorMD {
      * Finish accumulating data; for instance, for mean, divide by the
      * number of points.
      */
-    void Postprocess(const Param& param, const Bound& bound, index_t n) {
+    void Postprocess(const Param& param, const Bound& bound, size_t n) {
       la::Scale(1.0 / mass_, &centroid_);      
     }
   };
@@ -433,7 +433,7 @@ class ThorMD {
     }
 
     // Apply accelration to query point, and reset velocity.
-    void Postprocess(const Param& param, const QPoint& q, index_t q_index,
+    void Postprocess(const Param& param, const QPoint& q, size_t q_index,
 		     const RNode& r_root) {
       old_acceleration_.CopyValues(acceleration_);
       acceleration_.SetZero();
@@ -445,7 +445,7 @@ class ThorMD {
 
     /** apply left over postponed contributions */
     void ApplyPostponed(const Param& param, const QPostponed& postponed,
-			const QPoint& q, index_t q_index) {
+			const QPoint& q, size_t q_index) {
       la::AddTo(postponed.acceleration_, &acceleration_);
     }
   };
@@ -486,7 +486,7 @@ class ThorMD {
      * results based on the summary results owned by the given child
      */
     void Accumulate(const Param& param,
-		    const QSummaryResult& result, index_t n_points) {
+		    const QSummaryResult& result, size_t n_points) {
      
     }
 
@@ -560,7 +560,7 @@ class ThorMD {
 
     void Report(const Param& param, datanode *datanode) {
     }
-    void ApplyResult(const Param& param, const QPoint& q_point, index_t q_i,
+    void ApplyResult(const Param& param, const QPoint& q_point, size_t q_i,
 		     const QResult& result) {
       Vector vel_;
       la::AddInit(result.old_acceleration_, q_point.vel_, &vel_);      
@@ -591,7 +591,7 @@ class ThorMD {
     /** apply single-tree based pruning by iterating over each query point
      */
     bool StartVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const Delta& delta,
        const QSummaryResult& unapplied_summary_results, QResult* q_result,
        GlobalResult* global_result) {         
@@ -635,8 +635,8 @@ class ThorMD {
 
     /** exhaustive computation between a query point and a reference point
      */
-    void VisitPair(const Param& param, const QPoint& q, index_t q_index,
-		   const RPoint& r, index_t r_index) {
+    void VisitPair(const Param& param, const QPoint& q, size_t q_index,
+		   const RPoint& r, size_t r_index) {
      if (unlikely(q_index == r_index)){
 	return;
      }    
@@ -649,9 +649,9 @@ class ThorMD {
      la::AddTo(force, &acceleration_);
     }
     
-    void VisitTriple(const Param& param, const QPoint& q, index_t q_index,
-		     const RPoint& r1, index_t r1_index,
-		     const RPoint& r2, index_t r2_index) {
+    void VisitTriple(const Param& param, const QPoint& q, size_t q_index,
+		     const RPoint& r1, size_t r1_index,
+		     const RPoint& r2, size_t r2_index) {
       if (unlikely((q_index == r1_index) || (q_index == r2_index))){
 	return;
       }            
@@ -677,7 +677,7 @@ class ThorMD {
     /** pass back the accumulated result into the query result
      */
     void FinishVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node, const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
       q_result->AddVelocity(acceleration_);
@@ -704,7 +704,7 @@ class ThorMD {
     /** apply single-tree based pruning by iterating over each query point
      */
     bool StartVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node1, const RNode& r_node2, const Delta& delta,
        const QSummaryResult& unapplied_summary_results, QResult* q_result,
        GlobalResult* global_result) {
@@ -760,9 +760,9 @@ class ThorMD {
 
     /** exhaustive computation between a query point and a reference point
      */    
-    void VisitTriple(const Param& param, const QPoint& q, index_t q_index,
-		     const RPoint& r1, index_t r1_index,
-		     const RPoint& r2, index_t r2_index) {
+    void VisitTriple(const Param& param, const QPoint& q, size_t q_index,
+		     const RPoint& r1, size_t r1_index,
+		     const RPoint& r2, size_t r2_index) {
       // We've screened for r1 != r2, but r1 or r1 might equal q.
       if (unlikely((q_index == r1_index) || (q_index == r2_index))){
 	return;
@@ -792,7 +792,7 @@ class ThorMD {
     /** pass back the accumulated result into the query result
      */
     void FinishVisitingQueryPoint
-      (const Param& param, const QPoint& q, index_t q_index,
+      (const Param& param, const QPoint& q, size_t q_index,
        const RNode& r_node1, const RNode& rnode2, 
        const QSummaryResult& unapplied_summary_results,
        QResult* q_result, GlobalResult* global_result) {
@@ -1110,11 +1110,11 @@ class ThorMD {
       CacheArray<QPoint> points_array;
       points_array.Init(q_points_cache_, BlockDevice::M_READ);
       CacheReadIter<QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < parameters_.query_count_; i++,
+      for (size_t i = 0; i < parameters_.query_count_; i++,
 	     points_iter.Next()){
 	Vector point;
 	int k = (*points_iter).GetPositionVector(&point);
-	for (index_t j = 0; j < 3; j++){
+	for (size_t j = 0; j < 3; j++){
 	  diff = diff + (point[j] - positions.get(j, k))*
 	    (point[j] - positions.get(j, k));
 	}
@@ -1135,7 +1135,7 @@ class ThorMD {
       points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);
       CacheReadIter<QResult> result_iter(&result_array, 0);
       CacheWriteIter<QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < parameters_.query_count_; i++,
+      for (size_t i = 0; i < parameters_.query_count_; i++,
 	     result_iter.Next(), points_iter.Next()) {
 	(*points_iter).Accelerate((*result_iter).old_acceleration_, time_step);
 	if (parameters_.bound_type_ ==PERIODIC){
@@ -1152,7 +1152,7 @@ class ThorMD {
       CacheArray<QPoint> points_array;   
       points_array.Init(q_points_cache_, BlockDevice::M_OVERWRITE);   
       CacheWriteIter<QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < parameters_.query_count_; i++, 
+      for (size_t i = 0; i < parameters_.query_count_; i++, 
 	     points_iter.Next()) {
 	(*points_iter).ScaleVelocity(ratio);    
       }   
@@ -1173,11 +1173,11 @@ class ThorMD {
       CacheArray<QPoint> points_array;
       points_array.Init(q_points_cache_, BlockDevice::M_READ);
       CacheReadIter<QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < parameters_.query_count_; i++,
+      for (size_t i = 0; i < parameters_.query_count_; i++,
 	     points_iter.Next()){
 	Vector out_point;
 	int k = (*points_iter).GetPositionVector(&out_point);
-	for (index_t j = 0; j < 3; j++){
+	for (size_t j = 0; j < 3; j++){
 	  out_positions->set(j, k, out_point[j]);
 	}
       }
@@ -1195,11 +1195,11 @@ class ThorMD {
       CacheArray<QPoint> points_array;
       points_array.Init(q_points_cache_, BlockDevice::M_READ);
       CacheReadIter<QPoint> points_iter(&points_array, 0);
-      for (index_t i = 0; i < parameters_.query_count_; i++,
+      for (size_t i = 0; i < parameters_.query_count_; i++,
 	     points_iter.Next()){
 	Vector out_point;
 	int k = (*points_iter).GetFullVector(&out_point);
-	for (index_t j = 0; j < out_point.length(); j++){
+	for (size_t j = 0; j < out_point.length(); j++){
 	  out_positions->set(j, k, out_point[j]);
 	}
       }

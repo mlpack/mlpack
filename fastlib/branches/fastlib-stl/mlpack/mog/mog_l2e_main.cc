@@ -77,17 +77,17 @@ int main(int argc, char* argv[]) {
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
 
-  index_t number_of_gaussians = IO::GetParam<int>("mog_l2e/K");
+  size_t number_of_gaussians = IO::GetParam<int>("mog_l2e/K");
   IO::GetParam<int>("mog_l2e/D") = data_points.n_rows());
-  index_t dimension = IO::GetParam<int>("mog_l2e/D");
+  size_t dimension = IO::GetParam<int>("mog_l2e/D");
   
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
   const char *opt_method = IO::GetParam<std::string>("opt/method");
-  index_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
+  size_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
   IO::GetParam<int>("opt/param_space_dim") = param_dim;
 
-  index_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
+  size_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
 
   if (optim_flag == 1) {
@@ -104,7 +104,7 @@ int main(int argc, char* argv[]) {
     ////// Getting starting points for the optimization //////
     double **pts;
     pts = (double**)malloc((param_dim+1)*sizeof(double*));
-    for(index_t i = 0; i < param_dim+1; i++) {
+    for(size_t i = 0; i < param_dim+1; i++) {
       pts[i] = (double*)malloc(param_dim*sizeof(double));
     }
 

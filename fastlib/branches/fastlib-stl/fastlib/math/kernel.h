@@ -32,7 +32,7 @@ class GaussianKernel {
     return bandwidth_sq_;
   }
 
-  void Init(double bandwidth_in, index_t dims) {
+  void Init(double bandwidth_in, size_t dims) {
     Init(bandwidth_in);
   }
 
@@ -78,7 +78,7 @@ class GaussianKernel {
   /**
    * Divide by this constant when you're done.
    */
-  double CalcNormConstant(index_t dims) const {
+  double CalcNormConstant(size_t dims) const {
     // Changed because * faster than / and 2 * math::PI opt out.  RR
     //return pow((-math::PI/neg_inv_bandwidth_2sq_), dims/2.0);
     return pow(2 * math::PI * bandwidth_sq_, dims / 2.0);
@@ -110,7 +110,7 @@ class GaussianStarKernel {
    *
    * @param bandwidth_in the standard deviation sigma
    */
-  void Init(double bandwidth_in, index_t dims) {
+  void Init(double bandwidth_in, size_t dims) {
     bandwidth_sq_ = bandwidth_in * bandwidth_in;
     neg_inv_bandwidth_2sq_ = -1.0 / (2.0 * bandwidth_sq_);
     factor_ = pow(2.0, -dims / 2.0 - 1);
@@ -159,14 +159,14 @@ class GaussianStarKernel {
    *
    * @deprecated -- this function is very confusing
    */
-  double CalcNormConstant(index_t dims) const {
+  double CalcNormConstant(size_t dims) const {
     return pow(math::PI_2*bandwidth_sq_, dims / 2) / 2;
   }
   
   /**
    * Multiply densities by this value.
    */
-  double CalcMultiplicativeNormConstant(index_t dims) const {
+  double CalcMultiplicativeNormConstant(size_t dims) const {
     return 1.0 / CalcNormConstant(dims);
   }
 };
@@ -186,7 +186,7 @@ class EpanKernel {
   static const bool HAS_CUTOFF = true;
   
  public:
-  void Init(double bandwidth_in, index_t dims) {
+  void Init(double bandwidth_in, size_t dims) {
     Init(bandwidth_in);
   }
 
@@ -234,7 +234,7 @@ class EpanKernel {
   /**
    * Divide by this constant when you're done.
    */
-  double CalcNormConstant(index_t dims) const {
+  double CalcNormConstant(size_t dims) const {
     return 2.0 * math::SphereVolume(sqrt(bandwidth_sq_), dims)
         / (dims + 2.0);
   }

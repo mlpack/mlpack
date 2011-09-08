@@ -53,10 +53,10 @@ class HKInteriorPointPredictorCorrector{
   
   //The number of train points
   
-  index_t num_train_points_;
+  size_t num_train_points_;
   
   //The dimensionality of dataset
-  index_t num_dims_;
+  size_t num_dims_;
   
   //Variables involved in the optimization process(both primal and dual)
 
@@ -87,7 +87,7 @@ class HKInteriorPointPredictorCorrector{
   Matrix chol_factor_;
 
   //The permutation matrix stored as an array of integers
-  ArrayList<index_t> perm_mat_;
+  ArrayList<size_t> perm_mat_;
 
   //The permuted Cholesky factor. This is PL
 
@@ -116,15 +116,15 @@ class HKInteriorPointPredictorCorrector{
 
   //Keep a tab on the number of iterations
 
-  index_t num_iterations_;
+  size_t num_iterations_;
 
   //We shall use the square of the number of train points at lots of
   //places. hence it is better to evaluate it for once and all
 
-  index_t sqd_num_train_points_;
+  size_t sqd_num_train_points_;
 
   //Number of test points
-  index_t num_test_points_;
+  size_t num_test_points_;
 
   //Vector of computed_test_densities
   Vector computed_test_densities_;
@@ -189,7 +189,7 @@ class HKInteriorPointPredictorCorrector{
     double ise_train_set;
     ICholDynamic ichol_dynamic;
     Matrix chol_factor_K_prime_matrix;
-    ArrayList <index_t> perm_mat_K_prime_matrix;
+    ArrayList <size_t> perm_mat_K_prime_matrix;
     
     ichol_dynamic.Init(train_set_,sigma_h_hk_,sigma_hk_,0); //lambda =0
     perm_mat_K_prime_matrix.Init(sqd_num_train_points_);
@@ -225,7 +225,7 @@ class HKInteriorPointPredictorCorrector{
   double get_negative_log_likelihood_test(){
     
     double likelihood=1;
-    for(index_t i=0;i<num_test_points_;i++){
+    for(size_t i=0;i<num_test_points_;i++){
       
       likelihood*=computed_test_densities_[i];      
     }
@@ -266,13 +266,13 @@ class HKInteriorPointPredictorCorrector{
     gpq.Init(sigma_hk_*sqrt(2),num_dims_);
     
     //Iterations begin from here...................
-    for(index_t p=0;p<num_train_points_;p++){
+    for(size_t p=0;p<num_train_points_;p++){
       
       double *x_p=train_set_.GetColumnPtr(p);
       Vector vec_x_p;
       vec_x_p.Alias(x_p,num_dims_);
 	
-      for(index_t q=p;q<num_train_points_;q++){
+      for(size_t q=p;q<num_train_points_;q++){
 	
 	double sum_of_row=0;
 	double  *x_q=train_set_.GetColumnPtr(q);
@@ -282,13 +282,13 @@ class HKInteriorPointPredictorCorrector{
 	double sqd_dist=la::DistanceSqEuclidean(vec_x_p,vec_x_q);
 	double gpq_unnorm_val=gpq.EvalUnnormOnSq(sqd_dist);
 	
-	for(index_t r=0;r<num_train_points_;r++){
+	for(size_t r=0;r<num_train_points_;r++){
 	  
 	  double *x_r=train_set_.GetColumnPtr(r);
 	  Vector vec_x_r;
 	  vec_x_r.Alias(x_r,num_dims_);
 	  
-	  for(index_t s=r+1;s<num_train_points_;s++){
+	  for(size_t s=r+1;s<num_train_points_;s++){
 	    
 	    double *x_s=train_set_.GetColumnPtr(s);
 	    Vector vec_x_s;
@@ -321,7 +321,7 @@ class HKInteriorPointPredictorCorrector{
 
   //Linear Constraints and the corresponding helper functions
   
-  void DualTreeEvaluationOfLinearConstraint_(index_t p,Vector &row_p){
+  void DualTreeEvaluationOfLinearConstraint_(size_t p,Vector &row_p){
     
     //bw=sqrt(6\sigma^2+4\sigma_h^2)
     
@@ -347,7 +347,7 @@ class HKInteriorPointPredictorCorrector{
     Matrix rset_temp;
     la::ScaleInit(2,train_set_,&rset_temp); //temp <-2x_i
 
-    for(index_t i=0;i<rset_temp.n_cols();i++){
+    for(size_t i=0;i<rset_temp.n_cols();i++){
 
       Vector vec;      
       double *col_ptr=rset_temp.GetColumnPtr(i); //gets a column of the vector
@@ -367,7 +367,7 @@ class HKInteriorPointPredictorCorrector{
     double norm_const=gk.CalcNormConstant(num_dims_);
 
     //Having got the estimates multiply with <x_p,x_q>_{2\sigm,a^2}
-    for(index_t q=p;q<num_train_points_;q++){
+    for(size_t q=p;q<num_train_points_;q++){
       
       double *x_q=train_set_.GetColumnPtr(q);
       Vector vec_x_q;
@@ -388,7 +388,7 @@ class HKInteriorPointPredictorCorrector{
     
     //Fix p and let q vary from q>=p
     
-    for(index_t p=0;p<num_train_points_;p++){
+    for(size_t p=0;p<num_train_points_;p++){
 
       //Lets evaluate the pth row using dual tree computations
       
@@ -398,13 +398,13 @@ class HKInteriorPointPredictorCorrector{
 
       //Having got the row_p evaluations store them
       
-      for(index_t q=p;q<num_train_points_;q++){
+      for(size_t q=p;q<num_train_points_;q++){
 	
-	index_t row_num1=p*num_train_points_+q;
+	size_t row_num1=p*num_train_points_+q;
 	v_vector_[row_num1]=row_p[q-p];
 	
 	//By symmetry 
-	index_t row_num2=q*num_train_points_+p;
+	size_t row_num2=q*num_train_points_+p;
 	v_vector_[row_num2]=row_p[q-p];
       }
     }
@@ -420,7 +420,7 @@ class HKInteriorPointPredictorCorrector{
   void ComputeTestDensities_(){
 
     //Number miscalssified
-    index_t num_misclassified=0;
+    size_t num_misclassified=0;
 
 
     //printf("beta vector is...\n");
@@ -445,7 +445,7 @@ class HKInteriorPointPredictorCorrector{
 
     //printf("Number of test points are %d..\n",num_test_points_);
 
-    for(index_t test_pt=0;test_pt<num_test_points_;test_pt++){
+    for(size_t test_pt=0;test_pt<num_test_points_;test_pt++){
       
       //Compute density for each test point
       
@@ -456,7 +456,7 @@ class HKInteriorPointPredictorCorrector{
       double total_contrib=0;
       double total_signed_contrib=0;
 
-      for(index_t i=0;i<num_train_points_;i++){
+      for(size_t i=0;i<num_train_points_;i++){
 	
 	double *x_i=train_set_.GetColumnPtr(i);
 	double sqd_dist_x_x_i=la::DistanceSqEuclidean (num_dims_,x,x_i);
@@ -464,13 +464,13 @@ class HKInteriorPointPredictorCorrector{
 	double contrib_due_to_x_i=0;           
 	//Contribution due to x_i
 
-	for(index_t p=0;p<num_train_points_;p++){
+	for(size_t p=0;p<num_train_points_;p++){
 
 	  double *x_p=train_set_.GetColumnPtr(p);
 	  
-	  for(index_t q=0;q<num_train_points_;q++){
+	  for(size_t q=0;q<num_train_points_;q++){
 	  
-	    index_t counter=p*num_train_points_+q;
+	    size_t counter=p*num_train_points_+q;
 	    
 	    double *x_q=train_set_.GetColumnPtr(q);
 	    
@@ -501,7 +501,7 @@ class HKInteriorPointPredictorCorrector{
 	total_contrib/num_train_points_;
       
       if(classification_task_flag_==1){
-	index_t predicted_class=signum_(total_signed_contrib);
+	size_t predicted_class=signum_(total_signed_contrib);
 	if(predicted_class!=(int)test_set_classes_.get(test_pt,0)){
 	  num_misclassified++;      
 	}
@@ -533,8 +533,8 @@ class HKInteriorPointPredictorCorrector{
 
   int CheckIfVectorIsCloseToZero_(Vector &a){
 
-    index_t len=a.length();
-    for(index_t i=0;i<len;i++){
+    size_t len=a.length();
+    for(size_t i=0;i<len;i++){
       if(fabs(a[i])>EPSILON){
 	printf("This particular component is %f..\n",fabs(a[i]));
 	return -1;
@@ -610,7 +610,7 @@ class HKInteriorPointPredictorCorrector{
 
   void FormVectorv2CorrectorStep_(){
     
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    for(size_t i=0;i<sqd_num_train_points_;i++){
       
       double val1=(sigma_pred_corr_*mu_-
 		   ((delta_beta_pred_vector_[i]*delta_gamma_pred_vector_[i])));
@@ -626,7 +626,7 @@ class HKInteriorPointPredictorCorrector{
   //solves a linear system of equations, having neglected the delta
   //terms
 
-  double EvaluateDeltaPsi_(double *denominator_delta_psi,index_t flag){
+  double EvaluateDeltaPsi_(double *denominator_delta_psi,size_t flag){
 
     double delta_psi;
     
@@ -717,7 +717,7 @@ class HKInteriorPointPredictorCorrector{
 
     
     //Add identity matrix to A^TDA
-    for(index_t i=0;i<A_tDA.n_rows();i++){
+    for(size_t i=0;i<A_tDA.n_rows();i++){
 
       double val=A_tDA.get(i,i);
       A_tDA.set(i,i,val+1);
@@ -725,10 +725,10 @@ class HKInteriorPointPredictorCorrector{
 
     //We invert this matrix. Remember this is an in-place inversion 
 
-    index_t flag=
+    size_t flag=
       la::Inverse(&A_tDA);
 
-    if(flag==SUCCESS_PASS){
+    if(flag==true){
 
       //printf("Matrix A_tDA has been successfully inverted..\n");
    
@@ -878,7 +878,7 @@ class HKInteriorPointPredictorCorrector{
      v2_vector_.SetZero(); 
      D_vector_.SetAll(3); 
      
-     index_t flag=NOT_CALCULATED;
+     size_t flag=NOT_CALCULATED;
      
      double denominator_delta_psi=0;//I dont care abt this value as 
                                     //far as obtaining a starting 
@@ -895,7 +895,7 @@ class HKInteriorPointPredictorCorrector{
      
      //To enforce strict positivity we shall set \beta=\max(\beta,1), \gamma=\max(\gamma,1) 
       
-     for(index_t i=0;i<sqd_num_train_points_;i++){ 
+     for(size_t i=0;i<sqd_num_train_points_;i++){ 
        
        beta_vector_[i]=max(delta_beta_vector[i],1.0); 
        gamma_vector_[i]=max(delta_gamma_vector[i],1.0); 
@@ -918,9 +918,9 @@ class HKInteriorPointPredictorCorrector{
      
      //D_vector is \frac{\beta_i}{\gamma_i}
      
-     index_t len=D_vector_.length();
+     size_t len=D_vector_.length();
      
-     for(index_t i=0;i<len;i++){
+     for(size_t i=0;i<len;i++){
        
        double val=
 	 beta_vector_[i]/gamma_vector_[i];
@@ -928,7 +928,7 @@ class HKInteriorPointPredictorCorrector{
      } 
    }
    
-   void TakePredictorStep_(double *denominator_delta_psi,index_t flag){
+   void TakePredictorStep_(double *denominator_delta_psi,size_t flag){
 
 
      //Temporary Primal Dual Variables
@@ -972,7 +972,7 @@ class HKInteriorPointPredictorCorrector{
      }
    }
    
-   void TakeCorrectorStep_(double *denominator_delta_psi,index_t flag){
+   void TakeCorrectorStep_(double *denominator_delta_psi,size_t flag){
      
      
      //Set vectors v1,v2, and scalar s1
@@ -998,11 +998,11 @@ class HKInteriorPointPredictorCorrector{
 
      //first lets calculate the primal step length
      
-     index_t len=beta_vector_.length();
+     size_t len=beta_vector_.length();
     
      primal_step_length_=dual_step_length_=1.0;
 
-     for(index_t i=0;i<len;i++){
+     for(size_t i=0;i<len;i++){
        
        //Positive values for \delta\beta and \delta\gamma admit any
        //amount of step length. Hence it is enough to iterate over
@@ -1309,9 +1309,9 @@ class HKInteriorPointPredictorCorrector{
 
   int CheckIfPositive_(){
 
-    index_t beta_counter=0;
-    index_t gamma_counter=0;
-    for(index_t i=0;i<sqd_num_train_points_;i++){
+    size_t beta_counter=0;
+    size_t gamma_counter=0;
+    for(size_t i=0;i<sqd_num_train_points_;i++){
       
       if(beta_vector_[i]<0){
 	
@@ -1394,7 +1394,7 @@ class HKInteriorPointPredictorCorrector{
      return 1;
   }
 
-  index_t PredictorCorrectorSteps_(){
+  size_t PredictorCorrectorSteps_(){
 
     
     //Get the starting values for \beta, \gamma and \psi
@@ -1402,11 +1402,11 @@ class HKInteriorPointPredictorCorrector{
     GetTheStartPoint_();
     
     printf("Got the start point..\n");
-    index_t flag;
+    size_t flag;
     
     double gap;
     double gap_ratio=DBL_MAX;
-    index_t status=-1;
+    size_t status=-1;
     while(status==-1&&num_iterations_<MAX_NUM_ITERATIONS){ 
 
       //With the current values for $\beta,\gamma$ calculate $\mu
@@ -1548,7 +1548,7 @@ class HKInteriorPointPredictorCorrector{
  public:
   
   //This function drives the whole algorithm
-  index_t ComputeOptimalSolution(){
+  size_t ComputeOptimalSolution(){
     
     
     //The algorithm solves a QP which involves a linar term in the
@@ -1571,7 +1571,7 @@ class HKInteriorPointPredictorCorrector{
     //predictor step and followed by a corrector step
     
     fx_timer_start(NULL,"opt");
-    index_t success=PredictorCorrectorSteps_();
+    size_t success=PredictorCorrectorSteps_();
     fx_timer_stop(NULL,"opt");
 
     if(success==-1){

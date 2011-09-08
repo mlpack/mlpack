@@ -20,7 +20,7 @@ class SCFSolverTest {
 public:
   
   
-  static const index_t num_electrons = 2;
+  static const size_t num_electrons = 2;
   static const double eps = 0.01;
   
   void Setup() {
@@ -64,8 +64,8 @@ public:
     Matrix true_overlap;
     data::Load("test_overlap.csv", &true_overlap);
     
-    for (index_t i = 0; i < true_overlap.n_rows(); i++) {
-      for (index_t j = 0; j < true_overlap.n_cols(); j++) {
+    for (size_t i = 0; i < true_overlap.n_rows(); i++) {
+      for (size_t j = 0; j < true_overlap.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_overlap.ref(i, j), 
                            solver_->overlap_matrix_.ref(i, j), eps); 
       }
@@ -74,8 +74,8 @@ public:
     Matrix true_change_basis;
     data::Load("test_change_basis.csv", &true_change_basis);
     
-    for (index_t i = 0; i < true_change_basis.n_rows(); i++) {
-      for (index_t j = 0; j < true_change_basis.n_cols(); j++) {
+    for (size_t i = 0; i < true_change_basis.n_rows(); i++) {
+      for (size_t j = 0; j < true_change_basis.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_change_basis.ref(i, j), 
                            solver_->change_of_basis_matrix_.ref(i, j), eps); 
       }
@@ -116,8 +116,8 @@ public:
     Matrix true_density;
     data::Load("density_test.csv", &true_density);
     
-    for (index_t i = 0; i < true_density.n_rows(); i++) {
-      for (index_t j = 0; j < true_density.n_cols(); j++) {
+    for (size_t i = 0; i < true_density.n_rows(); i++) {
+      for (size_t j = 0; j < true_density.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_density.ref(i, j), 
                            solver_->density_matrix_.ref(i, j), eps);
       }
@@ -244,7 +244,7 @@ public:
     permute_me.set(0, 4, 2);
     permute_me.set(1, 4, 2);
     
-    ArrayList<index_t> perm;
+    ArrayList<size_t> perm;
     perm.Init(5);
     perm[0] = 0;
     perm[1] = 1;
@@ -257,7 +257,7 @@ public:
     
     solver_->PermuteMatrix_(permute_me, &unpermuted, perm);
     
-    for (index_t i = 0; i < 5; i++) {
+    for (size_t i = 0; i < 5; i++) {
       TEST_ASSERT(unpermuted.ref(0, i) == i);
     }
     
@@ -292,8 +292,8 @@ public:
     Matrix true_kinetic;
     data::Load("test_kinetic.csv", &true_kinetic);
     
-    for (index_t i = 0; i < true_kinetic.n_rows(); i++) {
-      for (index_t j = 0; j < true_kinetic.n_cols(); j++) {
+    for (size_t i = 0; i < true_kinetic.n_rows(); i++) {
+      for (size_t j = 0; j < true_kinetic.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_kinetic.ref(i, j), 
                            solver_->kinetic_energy_integrals_.ref(i, j), eps); 
       }
@@ -302,8 +302,8 @@ public:
     Matrix true_nuclear;
     data::Load("test_nuclear_integrals.csv", &true_nuclear);
     
-    for (index_t i = 0; i < true_nuclear.n_rows(); i++) {
-      for (index_t j = 0; j < true_nuclear.n_cols(); j++) {
+    for (size_t i = 0; i < true_nuclear.n_rows(); i++) {
+      for (size_t j = 0; j < true_nuclear.n_cols(); j++) {
         TEST_DOUBLE_APPROX(true_nuclear.ref(i, j), 
                            solver_->potential_energy_integrals_.ref(i, j), eps); 
       }

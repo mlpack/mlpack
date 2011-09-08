@@ -23,8 +23,8 @@
 #ifdef NMF_TREE_H_ 
 template<typename TKdTree, typename T>
 void NmfTreeConstructor<TKdTree, T>::Init(fx_module *module, 
-            ArrayList<index_t> &rows,
-            ArrayList<index_t> &columns,
+            ArrayList<size_t> &rows,
+            ArrayList<size_t> &columns,
             ArrayList<double> &values) {
     
   module_=fx_submodule(module, "tree");;
@@ -33,8 +33,8 @@ void NmfTreeConstructor<TKdTree, T>::Init(fx_module *module,
   rows_.Copy(rows);
   columns_.Copy(columns);
   values_.Copy(values);
-  index_t num_of_rows=*std::max_element(rows_.begin(), rows_.end())+1;
-  index_t num_of_columns=*std::max_element(columns_.begin(), columns_.end())+1;
+  size_t num_of_rows=*std::max_element(rows_.begin(), rows_.end())+1;
+  size_t num_of_columns=*std::max_element(columns_.begin(), columns_.end())+1;
   new_dimension_ = fx_param_int(module, "new_dimension", 5);
   data_matrix_.Init(new_dimension_, num_of_rows+num_of_columns);
   w_matrix_.Alias(data_matrix_.ptr(), new_dimension_, num_of_rows_);
@@ -56,11 +56,11 @@ void NmfTreeConstructor<TKdTree, T>::Init(fx_module *module,
   leaf_size_=fx_param_int(module, "leaf_size", 20);
    
   old_from_new_h_.Init(num_of_columns_);
-  for (index_t i = 0; i < num_of_rows_; i++) {
+  for (size_t i = 0; i < num_of_rows_; i++) {
     old_from_new_h_[i] = i;
   } 
   old_from_new_w_.Init(num_of_rows_);
-  for (index_t i = 0; i < num_of_columns_; i++) {
+  for (size_t i = 0; i < num_of_columns_; i++) {
     old_from_new_w_[i] = i;
   } 
  
@@ -129,9 +129,9 @@ template<typename TBound, typename T>
 void NmfTreeConstructor<TKdTree, T>::SplitAndBound(TKdTree *node,
     GenMatrix<T> *data_matrix,
     GenVector<T> &split_dimensions) {
-  index_t split_dim = BIG_BAD_NUMBER;
+  size_t split_dim = BIG_BAD_NUMBER;
   double max_width = -1;
-  for (index_t d = 0; d < split_dimensions.length(); d++) {
+  for (size_t d = 0; d < split_dimensions.length(); d++) {
     double w = node->bound().get(d).width();
     if (w > max_width) {	
       max_width = w;
@@ -147,7 +147,7 @@ void NmfTreeConstructor<TKdTree, T>::SplitAndBound(TKdTree *node,
     node->left->bound().Init(split_dimensions.length());
     node->right = new TKdTree();
     node->right->bound().Init(split_dimensions.length());
-    index_t split_col = tree_kdtree_private::SelectMatrixPartition(data_matrix, 
+    size_t split_col = tree_kdtree_private::SelectMatrixPartition(data_matrix, 
         split_dimensions, 
        (int)split_dimensions[split_dim], split_val,
         node->begin(), node->count(),
@@ -169,12 +169,12 @@ void NmfTreeConstructor<TKdTree, T>::SplitAndBound(TKdTree *node,
 }
 
 template<typename TBound, typename T>
-index_t NmfTreeConstructor<TKdTree, T>::SelectMatrixPartition(GenMatrix<T>& matrix, 
-  const Vector& split_dimensions, index_t dim, double splitvalue,
-  index_t first, index_t count, TBound* left_bound, TBound* right_bound) {
+size_t NmfTreeConstructor<TKdTree, T>::SelectMatrixPartition(GenMatrix<T>& matrix, 
+  const Vector& split_dimensions, size_t dim, double splitvalue,
+  size_t first, size_t count, TBound* left_bound, TBound* right_bound) {
     
-  index_t left = first;
-  index_t right = first + count - 1;
+  size_t left = first;
+  size_t right = first + count - 1;
     
   /* At any point:
    *
@@ -238,7 +238,7 @@ index_t NmfTreeConstructor<TKdTree, T>::SelectMatrixPartition(GenMatrix<T>& matr
 	    *right_bound |= sub_right_vector;
     }   
       
-    index_t t = old_from_new[left];
+    size_t t = old_from_new[left];
     old_from_new[left] = old_from_new[right];
     old_from_new[right] = t;
     DEBUG_ASSERT(left <= right);

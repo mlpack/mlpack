@@ -12,10 +12,10 @@ Kernel::Kernel(const KernelFunction& kfunc, const Matrix& X) : X_(X) {
   kernel_diag.Init(n_points);
   if (kernel_stored) {
     full_kernel.Init(n_points, n_points);
-    for (index_t i = 0; i < n_points; i++)
-      for (index_t j = 0; j < n_points; j++)
+    for (size_t i = 0; i < n_points; i++)
+      for (size_t j = 0; j < n_points; j++)
 	full_kernel.ref(i, j) = kernel_call(i, j);
-    for (index_t i = 0; i < n_points; i++)
+    for (size_t i = 0; i < n_points; i++)
       kernel_diag[i] = full_kernel.get(i, i);
     //ot::Print(full_kernel);
     sub_kernel.Init(0, 0);
@@ -27,16 +27,16 @@ Kernel::Kernel(const KernelFunction& kfunc, const Matrix& X) : X_(X) {
     sub_kernel.Init(n_points, n_cols);
     col_index.Init(n_points);
     lru_col.Init(n_cols);
-    for (index_t i = 0; i < n_points; i++) col_index[i] = -1;
-    for (index_t i = 0; i < n_cols; i++) lru_col[i] = -1;
-    for (index_t i = 0; i < n_points; i++) kernel_diag[i] = kernel_call(i, i);
+    for (size_t i = 0; i < n_points; i++) col_index[i] = -1;
+    for (size_t i = 0; i < n_cols; i++) lru_col[i] = -1;
+    for (size_t i = 0; i < n_points; i++) kernel_diag[i] = kernel_call(i, i);
     full_kernel.Init(0, 0);
     lru_ptr = 0;
   }
   n_loads = 0;
 }
   
-void Kernel::get_element(index_t i, index_t j, 
+void Kernel::get_element(size_t i, size_t j, 
 			 double& Kii, double& Kjj, double& Kij) {
   DEBUG_ASSERT(i >= 0 && i < X_.n_cols() && j >= 0 && j < X_.n_cols());
   Kii = kernel_diag[i];
@@ -54,7 +54,7 @@ void Kernel::get_element(index_t i, index_t j,
   }
 }
   
-void Kernel::get_column(index_t i, Vector* col_i) {
+void Kernel::get_column(size_t i, Vector* col_i) {
   if (kernel_stored) {
     full_kernel.MakeColumnVector(i, col_i);
   }
@@ -70,7 +70,7 @@ void Kernel::get_diag(Vector* diag) {
   diag->Alias(kernel_diag);
 }
 
-double Kernel::kernel_call(index_t i, index_t j) {
+double Kernel::kernel_call(size_t i, size_t j) {
   Vector col_i;
   Vector col_j;
   X_.MakeColumnVector(i, &col_i);
@@ -78,10 +78,10 @@ double Kernel::kernel_call(index_t i, index_t j) {
   return kfunc_(col_i, col_j);
 }
 
-index_t Kernel::loadColumn(index_t i) {
+size_t Kernel::loadColumn(size_t i) {
   if (col_index[i] >= 0) return col_index[i];
   n_loads++;
-  index_t delete_col = lru_col[lru_ptr], sub_index;
+  size_t delete_col = lru_col[lru_ptr], sub_index;
   if (delete_col == -1) { // not full --> find an empty column
     sub_index = lru_ptr;
   }
@@ -91,7 +91,7 @@ index_t Kernel::loadColumn(index_t i) {
   }
   col_index[i] = sub_index;
 
-  for (index_t j = 0; j < n_points; j++)
+  for (size_t j = 0; j < n_points; j++)
     sub_kernel.ref(j, sub_index) = kernel_call(j, i);
   
   lru_col[lru_ptr] = i;

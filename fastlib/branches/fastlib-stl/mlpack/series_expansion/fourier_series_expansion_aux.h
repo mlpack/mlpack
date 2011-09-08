@@ -17,29 +17,29 @@ class FourierSeriesExpansionAux {
 
  public:
 
-  index_t dim_;
+  size_t dim_;
 
-  index_t max_order_;
+  size_t max_order_;
 
   double integral_truncation_limit_;
 
-  std::vector<index_t> list_total_num_coeffs_;
+  std::vector<size_t> list_total_num_coeffs_;
 
   arma::Col<T> precomputed_constants_;
 
   T final_scaling_factor_;
 
-  std::vector< std::vector<index_t> > multiindex_mapping_;
+  std::vector< std::vector<size_t> > multiindex_mapping_;
 
  public:
 
-  index_t get_dimension() const { return dim_; }
+  size_t get_dimension() const { return dim_; }
 
-  index_t get_total_num_coeffs(index_t order) const { 
+  size_t get_total_num_coeffs(size_t order) const { 
     return list_total_num_coeffs_[order]; 
   }
 
-  index_t get_max_total_num_coeffs() const { 
+  size_t get_max_total_num_coeffs() const { 
     return list_total_num_coeffs_[max_order_]; 
   }
 
@@ -47,7 +47,7 @@ class FourierSeriesExpansionAux {
     return integral_truncation_limit_;
   }
 
-  index_t get_max_order() const {
+  size_t get_max_order() const {
     return max_order_;
   }
 
@@ -55,11 +55,11 @@ class FourierSeriesExpansionAux {
     integral_truncation_limit_ = integral_truncation_limit_in;
   }
 
-  const std::vector<index_t>& get_multiindex(index_t pos) const {
+  const std::vector<size_t>& get_multiindex(size_t pos) const {
     return multiindex_mapping_[pos];
   }
 
-  const std::vector<std::vector<index_t> >& get_multiindex_mapping() const {
+  const std::vector<std::vector<size_t> >& get_multiindex_mapping() const {
     return multiindex_mapping_.begin();
   }
 
@@ -68,11 +68,11 @@ class FourierSeriesExpansionAux {
   /**
    * Computes the position of the given multiindex
    */
-  index_t ComputeMultiindexPosition(const std::vector<index_t> &multiindex) const {
-    index_t index = 0;
+  size_t ComputeMultiindexPosition(const std::vector<size_t> &multiindex) const {
+    size_t index = 0;
     
     // using Horner's rule
-    for(index_t i = 0; i < dim_; i++) {
+    for(size_t i = 0; i < dim_; i++) {
       index *= (2 * max_order_ + 1);
       index += multiindex[i];
     }
@@ -82,21 +82,21 @@ class FourierSeriesExpansionAux {
   /** @brief Computes the computational cost of evaluating a far-field
    *         expansion of order p at a single query point.
    */
-  double FarFieldEvaluationCost(index_t order) const {
+  double FarFieldEvaluationCost(size_t order) const {
     return pow(2 * order + 1, dim_);
   }
 
   /** @brief Computes the compuational cost of translating a far-field
    *         moment of order p into a local moment of the same order.
    */
-  double FarFieldToLocalTranslationCost(index_t order) const {
+  double FarFieldToLocalTranslationCost(size_t order) const {
     return pow(2 * order + 1, dim_);
   }
 
   /** @brief Computes the computational cost of directly accumulating
    *         a single reference point into a local moment of order p.
    */
-  double DirectLocalAccumulationCost(index_t order) const {
+  double DirectLocalAccumulationCost(size_t order) const {
     return pow(2 * order + 1, dim_);
   }
 
@@ -104,7 +104,7 @@ class FourierSeriesExpansionAux {
    *         quantities for order up to max_order for the given
    *         dimensionality.
    */
-  void Init(index_t max_order, index_t dim) {
+  void Init(size_t max_order, size_t dim) {
 
     // Set the integral truncation limit. This perhaps should be set
     // to a user-defined level.
@@ -116,20 +116,20 @@ class FourierSeriesExpansionAux {
   
     // Compute the list of total number of coefficients for p-th order
     // expansion
-    index_t limit = max_order_;
+    size_t limit = max_order_;
     list_total_num_coeffs_.reserve(limit + 1);
-    for(index_t p = 0; p <= limit; p++) {
-      list_total_num_coeffs_[p] = (index_t) pow(2 * p + 1, dim);
+    for(size_t p = 0; p <= limit; p++) {
+      list_total_num_coeffs_[p] = (size_t) pow(2 * p + 1, dim);
     }
 
     // Compute the multiindex mappings...
     multiindex_mapping_.reserve(list_total_num_coeffs_[limit]);
     multiindex_mapping_[0].reserve(dim_);
-    for(index_t j = 0; j < dim; j++) {
+    for(size_t j = 0; j < dim; j++) {
       (multiindex_mapping_[0])[j] = -max_order;
     }
     if(max_order > 0) {
-      index_t boundary, i, k, step;
+      size_t boundary, i, k, step;
 
       for(boundary = list_total_num_coeffs_[limit], k = 0, 
 	    step = list_total_num_coeffs_[limit] / (2 * limit + 1);
@@ -137,8 +137,8 @@ class FourierSeriesExpansionAux {
 	    boundary /= (2 * limit + 1), k++) {
 
 	for(i = 0; i < list_total_num_coeffs_[limit]; ) {
-	  index_t inner_limit = i + boundary;
-	  index_t div = 1;
+	  size_t inner_limit = i + boundary;
+	  size_t div = 1;
 	  
 	  i += step;
 	  
@@ -159,12 +159,12 @@ class FourierSeriesExpansionAux {
     final_scaling_factor_ = 
       pow(integral_truncation_limit_ / 
 	  (2.0 * max_order_ * sqrt(2.0 * acos(0))), dim_);
-    for(index_t j = 0; j < multiindex_mapping_.size(); j++) {
-      const std::vector<index_t> &mapping = multiindex_mapping_[j];
+    for(size_t j = 0; j < multiindex_mapping_.size(); j++) {
+      const std::vector<size_t> &mapping = multiindex_mapping_[j];
 
       // The squared length of the multiindex mapping.
       double squared_length_mapping = 0;
-      for(index_t k = 0; k < dim_; k++) {
+      for(size_t k = 0; k < dim_; k++) {
 	squared_length_mapping += pow(mapping[k], 2.0);
       }
       
@@ -179,13 +179,13 @@ class FourierSeriesExpansionAux {
    */
   void PrintDebug(const char *name="", FILE *stream=stderr) const {
     fprintf(stream, "----- SERIESEXPANSIONAUX %s ------\n", name);
-    fprintf(stream, "Max order: %"LI", dimension: %"LI"\n", max_order_, dim_);
+    fprintf(stream, "Max order: %zu, dimension: %zu\n", max_order_, dim_);
 
     fprintf(stream, "Multiindex mapping: ");
-    for (index_t i = 0; i < multiindex_mapping_.size(); i++) {
+    for (size_t i = 0; i < multiindex_mapping_.size(); i++) {
       fprintf(stream, "( ");
-      for(index_t j = 0; j < dim_; j++) {
-	fprintf(stream, "%"LI" ", multiindex_mapping_[i][j]);
+      for(size_t j = 0; j < dim_; j++) {
+	fprintf(stream, "%zu", multiindex_mapping_[i][j]);
       }
       fprintf(stream, ") ");
     }
@@ -198,7 +198,7 @@ class FourierSeriesExpansionAux {
   template<typename SourceExpansion, typename DestinationExpansion>
   void TranslationOperator
   (const SourceExpansion &source_expansion,
-   DestinationExpansion &destination_expansion, index_t truncation_order) const {
+   DestinationExpansion &destination_expansion, size_t truncation_order) const {
     
     // Get the coefficients to be translated and its center of
     // expansion.
@@ -209,16 +209,16 @@ class FourierSeriesExpansionAux {
     arma::Col<T> &coeffs_destination = destination_expansion.get_coeffs();
     
     // Loop over each coefficient.
-    index_t num_coefficients = list_total_num_coeffs_[truncation_order];
-    for(index_t i = 0; i < num_coefficients; i++) {
+    size_t num_coefficients = list_total_num_coeffs_[truncation_order];
+    for(size_t i = 0; i < num_coefficients; i++) {
       
       // Get the current multi-index.
-      const std::vector<index_t> &mapping = get_multiindex(i);
+      const std::vector<size_t> &mapping = get_multiindex(i);
       
       // Dot product between the multiindex and the center
       // differences.
       double dot_product = 0;
-      for(index_t j = 0; j < mapping.size(); j++) {
+      for(size_t j = 0; j < mapping.size(); j++) {
 	dot_product += mapping[j] * (destination_center[j] - source_center[j]);
       }
       
@@ -240,11 +240,11 @@ class FourierSeriesExpansionAux {
   template<typename TExpansion>
   typename TExpansion::data_type EvaluationOperator
   (const TExpansion &expansion, const typename TExpansion::data_type *x_q, 
-   index_t order) const {
+   size_t order) const {
     
     typedef typename TExpansion::data_type T;
     std::complex<typename TExpansion::data_type> result = 0;
-    index_t num_coefficients = list_total_num_coeffs_[order];
+    size_t num_coefficients = list_total_num_coeffs_[order];
 
     // The coefficients to be evaluated.
     const arma::Col<std::complex<typename TExpansion::data_type> > &coeffs = 
@@ -252,15 +252,15 @@ class FourierSeriesExpansionAux {
     const arma::Col<typename TExpansion::data_type> &source_center =
       expansion.get_center();
     
-    for(index_t i = 0; i < num_coefficients; i++) {
+    for(size_t i = 0; i < num_coefficients; i++) {
       
       // Get the current multi-index.
-      const std::vector<index_t> &mapping = get_multiindex(i);
+      const std::vector<size_t> &mapping = get_multiindex(i);
       
       // Dot product between the multiindex and the center
       // differences.
       double dot_product = 0;
-      for(index_t j = 0; j < mapping.size(); j++) {
+      for(size_t j = 0; j < mapping.size(); j++) {
 	dot_product += mapping[j] * (x_q[j] - source_center[j]);
       }
 

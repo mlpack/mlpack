@@ -24,9 +24,9 @@
 #include "fastlib/fastlib.h"
 
 // maximum # of interations for LASVM training
-const index_t MAX_NUM_ITER_LASVM = 10000000;
+const size_t MAX_NUM_ITER_LASVM = 10000000;
 // after # of iterations to do shrinking
-const index_t LASVM_NUM_FOR_SHRINKING = 1000;
+const size_t LASVM_NUM_FOR_SHRINKING = 1000;
 // threshold that determines whether need to do unshrinking
 const double LASVM_UNSHRINKING_FACTOR = 10;
 // threshold that determines whether an alpha is a SV or not
@@ -47,26 +47,26 @@ class LASVM {
   int learner_typeid_;
   int hinge_; // do L2-SVM or L1-SVM, default: L1
 
-  index_t ct_iter_; /* counter for the number of iterations (per epoch) */
-  index_t ct_epo_; /* counter for the number of epochs */
-  index_t ct_shrinking_; /* counter for doing shrinking  */
+  size_t ct_iter_; /* counter for the number of iterations (per epoch) */
+  size_t ct_epo_; /* counter for the number of epochs */
+  size_t ct_shrinking_; /* counter for doing shrinking  */
   bool do_shrinking_; // 1(default): do shrinking after 1000 iterations; 0: don't do shrinking
   bool do_finishing_; // optimize to the specified accuracy when # of epochs and iterations reached
 
   Kernel kernel_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
   Matrix datamatrix_; /* alias for the data matrix, including labels in the last row */
   //Matrix datamatrix_samples_only_; /* alias for the data matrix excluding labels */
 
   Vector alpha_; /* the alphas, to be optimized */
   Vector alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
   
-  index_t n_alpha_; /* number of variables to be optimized: n_alpha_ == n_acitve + n_inactive */
-  index_t n_active_; /* number of samples in the active set: n_active_ = n_active_sv + n_active_non_sv */
-  index_t n_active_sv_; /* number of samples in the active set that have positive alpha values */
-  ArrayList<index_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas; == old_from_new*/
+  size_t n_alpha_; /* number of variables to be optimized: n_alpha_ == n_acitve + n_inactive */
+  size_t n_active_; /* number of samples in the active set: n_active_ = n_active_sv + n_active_non_sv */
+  size_t n_active_sv_; /* number of samples in the active set that have positive alpha values */
+  ArrayList<size_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas; == old_from_new*/
   // active_set == [active, non_active] == [active_sv, active_non_sv, non_active]
 
 
@@ -85,8 +85,8 @@ class LASVM {
   double inv_two_C_; // 1/2C
   double epsilon_; // for SVM_R
   int wss_; // working set selection scheme, 1: Random 2: Gradient 3: Margin
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // numver of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // numver of epochs
   double accuracy_; // accuracy for stopping creterion
   double gap_; // for stopping criterion
   double yg_max_; // max(y*grad) s.t. y*alpha<B
@@ -103,8 +103,8 @@ class LASVM {
     // init parameters
     hinge_ = (int) param_[2];
     wss_ = (int) param_[3];
-    n_epochs_ = (index_t) param_[4];
-    n_iter_ = (index_t) param_[5];
+    n_epochs_ = (size_t) param_[4];
+    n_iter_ = (size_t) param_[5];
     n_iter_ = n_iter_ < MAX_NUM_ITER_LASVM ? n_iter_: MAX_NUM_ITER_LASVM;
     accuracy_ = param_[6];
     if (learner_typeid == 0) { // SVM_C
@@ -134,7 +134,7 @@ class LASVM {
     return bias_;
   }
 
-  void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   void LearnersInit_(int learner_typeid);
@@ -143,28 +143,28 @@ class LASVM {
 
   void ReconstructGradient_();
   
-  bool TestShrink_(index_t i_o, double y_grad_max, double y_grad_min);
+  bool TestShrink_(size_t i_o, double y_grad_max, double y_grad_min);
 
   void Shrinking_();
 
-  int Process_(index_t k_o);
+  int Process_(size_t k_o);
   
   int Reprocess_();
 
-  void WorkingSetSelection_(index_t k_n, index_t &i_n, index_t &j_n, double &yg_max, double &yg_min);
+  void WorkingSetSelection_(size_t k_n, size_t &i_n, size_t &j_n, double &yg_max, double &yg_min);
 
-  void UpdateGradientAlpha_(index_t i_n, index_t j_n);
+  void UpdateGradientAlpha_(size_t i_n, size_t j_n);
 
   void CalcBias_();
 
   /**
    * Instead of C, we use C_+ and C_- to handle unbalanced data
    */
-  double GetC_(index_t i_o) {
+  double GetC_(size_t i_o) {
     return (y_[i_o] > 0 ? Cp_ : Cn_);
   }
 
-  void UpdateAlphaStatus_(index_t i_o) {
+  void UpdateAlphaStatus_(size_t i_o) {
     if (alpha_[i_o] >= GetC_(i_o)) {
       alpha_status_[i_o] = LASVM_ID_UPPER_BOUNDED;
     }
@@ -176,17 +176,17 @@ class LASVM {
     }
   }
 
-  bool IsUpperBounded(index_t i_o) {
+  bool IsUpperBounded(size_t i_o) {
     return alpha_status_[i_o] == LASVM_ID_UPPER_BOUNDED;
   }
-  bool IsLowerBounded(index_t i_o) {
+  bool IsLowerBounded(size_t i_o) {
     return alpha_status_[i_o] == LASVM_ID_LOWER_BOUNDED;
   }
 
   /**
    * Calculate kernel values
    */
-  double CalcKernelValue_(index_t i_o, index_t j_o) {
+  double CalcKernelValue_(size_t i_o, size_t j_o) {
     // for SVM_R where n_alpha_==2*n_data_
     if (learner_typeid_ == 1) {
       i_o = i_o >= n_data_ ? (i_o - n_data_) : i_o;
@@ -228,7 +228,7 @@ class LASVM {
 */
 template<typename TKernel>
 void LASVM<TKernel>::ReconstructGradient_() {
-  index_t i_o, j_o, i_n, j_n;
+  size_t i_o, j_o, i_n, j_n;
   if (n_active_ == n_alpha_)
     return;
   if (learner_typeid_ == 0) { // SVM_C
@@ -259,7 +259,7 @@ void LASVM<TKernel>::ReconstructGradient_() {
  * 
  */
 template<typename TKernel>
-bool LASVM<TKernel>::TestShrink_(index_t i_o, double y_grad_max, double y_grad_min) {
+bool LASVM<TKernel>::TestShrink_(size_t i_o, double y_grad_max, double y_grad_min) {
   if ( IsUpperBounded(i_o) ) { // alpha_[i] = C
     if (y_[i_o] == 1) {
       return ( grad_[i_o] > y_grad_max );
@@ -288,7 +288,7 @@ bool LASVM<TKernel>::TestShrink_(index_t i_o, double y_grad_max, double y_grad_m
  */
 template<typename TKernel>
 void LASVM<TKernel>::Shrinking_() {
-  index_t t_n;
+  size_t t_n;
 
   // Find the alpha to be shrunk
   printf("Shrinking...\n");
@@ -316,7 +316,7 @@ void LASVM<TKernel>::Shrinking_() {
  */
 template<typename TKernel>
 void LASVM<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i; // i_o
+  size_t i; // i_o
   learner_typeid_ = learner_typeid;
   
   if (learner_typeid_ == 0) { // SVM_C
@@ -364,7 +364,7 @@ void LASVM<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i_o, i_n;
+  size_t i_o, i_n;
   int stop_condition = 0;
 
   // Load data
@@ -427,8 +427,8 @@ void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   // Begin LASVM iterations
   for (ct_epo_ = 0; ct_epo_ < n_epochs_; ct_epo_++) {
     // In each epoch, random permute the active_non_sv samples to mimic the online setting
-    for (index_t i=n_active_sv_; i<n_active_; i++) {
-      index_t j = rand() % (n_active_ - n_active_sv_);
+    for (size_t i=n_active_sv_; i<n_active_; i++) {
+      size_t j = rand() % (n_active_ - n_active_sv_);
       swap( active_set_[i], active_set_[n_active_sv_+j] );
     }
     ct_iter_ = 0;
@@ -459,7 +459,7 @@ void LASVM<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 */
 template<typename TKernel>
 int LASVM<TKernel>::LASVMIterations_() {
-  index_t k_n = -1;
+  size_t k_n = -1;
   ct_iter_++;
   //printf("epo=%d, iter=%d\n", ct_epo_, ct_iter_);
 
@@ -543,8 +543,8 @@ int LASVM<TKernel>::LASVMIterations_() {
 * @return: 0: bailed out; 1: gradient and alpha updated
 */
 template<typename TKernel>
-int LASVM<TKernel>::Process_(index_t k_n) {
-  index_t i_n, j_n, t_n, t_o, k_o;
+int LASVM<TKernel>::Process_(size_t k_n) {
+  size_t i_n, j_n, t_n, t_o, k_o;
 
   //printf("Process: epo:%d, iter:%d, k_n=%d, n_active_sv_=%d, n_active_=%d\n", ct_epo_, ct_iter_, k_n, n_active_sv_, n_active_);
 
@@ -584,7 +584,7 @@ int LASVM<TKernel>::Process_(index_t k_n) {
 */
 template<typename TKernel>
 int LASVM<TKernel>::Reprocess_() {
-  index_t i_n, j_n, t_n, t_o;
+  size_t i_n, j_n, t_n, t_o;
   
   WorkingSetSelection_(-2, i_n, j_n, yg_max_, yg_min_);
   //printf("REProcess: epo:%d, iter:%d, n_active_sv_=%d, gap=%f\n", ct_epo_, ct_iter_, n_active_sv_, yg_max_ - yg_min_);
@@ -628,9 +628,9 @@ int LASVM<TKernel>::Reprocess_() {
 * @return: working set (i, j); indicator of whether the optimal solution is reached (true:reached)
 */
 template<typename TKernel>
-void LASVM<TKernel>::WorkingSetSelection_(index_t k_n, index_t &out_i_n, index_t &out_j_n, double &out_yg_max, double &out_yg_min) {
-  index_t t_n, t_o, k_o;
-  index_t i_n = -1, j_n = -1;
+void LASVM<TKernel>::WorkingSetSelection_(size_t k_n, size_t &out_i_n, size_t &out_j_n, double &out_yg_max, double &out_yg_min) {
+  size_t t_n, t_o, k_o;
+  size_t i_n = -1, j_n = -1;
   double y_grad_max = -INFINITY;
   double y_grad_min =  INFINITY;
 
@@ -742,10 +742,10 @@ void LASVM<TKernel>::WorkingSetSelection_(index_t k_n, index_t &out_i_n, index_t
 *
 */
 template<typename TKernel>
-void LASVM<TKernel>::UpdateGradientAlpha_(index_t i_n, index_t j_n) {
-  index_t i_o = active_set_[i_n];
-  index_t j_o = active_set_[j_n];
-  index_t t_n, t_o;
+void LASVM<TKernel>::UpdateGradientAlpha_(size_t i_n, size_t j_n) {
+  size_t i_o = active_set_[i_n];
+  size_t j_o = active_set_[j_n];
+  size_t t_n, t_o;
 
   double a_i = alpha_[i_o]; // old alphas
   double a_j = alpha_[j_o];
@@ -811,10 +811,10 @@ void LASVM<TKernel>::UpdateGradientAlpha_(index_t i_n, index_t j_n) {
 template<typename TKernel>
 void LASVM<TKernel>::CalcBias_() {
   double b;
-  index_t i, n_free_alpha = 0;
+  size_t i, n_free_alpha = 0;
   double ub = INFINITY, lb = -INFINITY, sum_free_yg = 0.0;
   
-  for (index_t i_n=0; i_n<n_active_; i_n++){
+  for (size_t i_n=0; i_n<n_active_; i_n++){
     i = active_set_[i_n];
     double yg = y_[i] * grad_[i];
       
@@ -852,10 +852,10 @@ void LASVM<TKernel>::CalcBias_() {
 *
 */
 template<typename TKernel>
-void LASVM<TKernel>::GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
+void LASVM<TKernel>::GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator) {
 
   if (learner_typeid_ == 0) {// SVM_C
-    for (index_t i = 0; i < n_data_; i++) {
+    for (size_t i = 0; i < n_data_; i++) {
       if (alpha_[i] >= LASVM_ALPHA_ZERO) { // support vectors found
 	//printf("%f\n", alpha_[i] * y_[i]);
 	coef.PushBack() = alpha_[i] * y_[i];

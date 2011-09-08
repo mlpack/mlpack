@@ -16,16 +16,16 @@ class special_la{
   
   //This function appends the matrix m1 to m2
   
-  static index_t AppendMatrixInit(Matrix &m1, Matrix &m2, Matrix *m3){
+  static size_t AppendMatrixInit(Matrix &m1, Matrix &m2, Matrix *m3){
     
     
-    index_t num_rows1=m1.n_rows();
-    index_t num_rows2=m2.n_rows();
+    size_t num_rows1=m1.n_rows();
+    size_t num_rows2=m2.n_rows();
     
-    index_t num_cols1=m1.n_cols();
-    index_t num_cols2=m2.n_cols();
+    size_t num_cols1=m1.n_cols();
+    size_t num_cols2=m2.n_cols();
 
-    index_t total_num_cols=
+    size_t total_num_cols=
       num_cols1+num_cols2;
 
     if(num_rows1!=num_rows2){
@@ -35,16 +35,16 @@ class special_la{
     }
     m3->Init(num_rows1,total_num_cols);
 
-    for(index_t i=0;i<num_rows1;i++){
+    for(size_t i=0;i<num_rows1;i++){
 
-      index_t j;
+      size_t j;
       for(j=0;j<num_cols1;j++){
 	
 	m3->set(i,j,m1.get(i,j));
 
       }
 
-      for(index_t k=0;k<num_cols2;k++){
+      for(size_t k=0;k<num_cols2;k++){
 
 	m3->set(i,j+k,m2.get(i,k));
       }
@@ -55,29 +55,29 @@ class special_la{
    }
    
    static void AppendMatrixWithZerosInit(Matrix &m1, 
-					 index_t num_zeros, 
+					 size_t num_zeros, 
 					 Matrix *m3){
      
      
-     index_t num_rows1=m1.n_rows();
+     size_t num_rows1=m1.n_rows();
           
-     index_t num_cols1=m1.n_cols();
+     size_t num_cols1=m1.n_cols();
 
-     index_t total_num_cols=
+     size_t total_num_cols=
        num_cols1+num_zeros;
      
      m3->Init(num_rows1,total_num_cols);
      
-     for(index_t i=0;i<num_rows1;i++){
+     for(size_t i=0;i<num_rows1;i++){
        
-       index_t j;
+       size_t j;
        for(j=0;j<num_cols1;j++){
 	 
 	 m3->set(i,j,m1.get(i,j));
 	 
        }
 
-       for(index_t k=0;k<num_zeros;k++){
+       for(size_t k=0;k<num_zeros;k++){
 	 
 	 m3->set(i,j+k,0);
        }
@@ -85,13 +85,13 @@ class special_la{
      }
    }
 
-   static index_t StackMatrixMatrixInit(Matrix m1,Matrix m2,Matrix *m3){
+   static size_t StackMatrixMatrixInit(Matrix m1,Matrix m2,Matrix *m3){
 
      printf("Will stack matrices...\n");
 
     
-     index_t num_cols1=m1.n_cols();
-     index_t num_cols2=m2.n_cols();
+     size_t num_cols1=m1.n_cols();
+     size_t num_cols2=m2.n_cols();
 
      if(num_cols1!=num_cols2){
 
@@ -100,21 +100,21 @@ class special_la{
        return FAILURE;
      }
 
-     index_t num_rows1=m1.n_rows();
-     index_t num_rows2=m2.n_rows();
+     size_t num_rows1=m1.n_rows();
+     size_t num_rows2=m2.n_rows();
 
      m3->Init(num_rows1+num_rows2,num_cols1);
 
-     index_t i=0;
+     size_t i=0;
      for(i=0;i<num_rows1;i++){
 
-       for(index_t j=0;j<num_cols1;j++){
+       for(size_t j=0;j<num_cols1;j++){
 
 	 m3->set(i,j,m1.get(i,j));
        }
      }
-     for(index_t k=0;k<num_rows2;k++){
-       for(index_t j=0;j<num_cols2;j++){
+     for(size_t k=0;k<num_rows2;k++){
+       for(size_t j=0;j<num_cols2;j++){
 	 
 	 m3->set(i+k,j,m2.get(k,j));
        }
@@ -122,11 +122,11 @@ class special_la{
      return SUCCESS;
    }
 
- static index_t StackVectorVectorInit(Vector v1,Vector v2,Matrix *m3){
+ static size_t StackVectorVectorInit(Vector v1,Vector v2,Matrix *m3){
 
     
-     index_t num_cols1=v1.length();
-     index_t num_cols2=v2.length();
+     size_t num_cols1=v1.length();
+     size_t num_cols2=v2.length();
 
      if(num_cols1!=num_cols2){
        
@@ -135,23 +135,23 @@ class special_la{
 
      //Initialize m3
      m3->Init(2,num_cols1);
-     for(index_t j=0;j<num_cols1;j++){
+     for(size_t j=0;j<num_cols1;j++){
        
        m3->set(0,j,v1[j]);
      }
      
-     for(index_t k=0;k<num_cols1;k++){
+     for(size_t k=0;k<num_cols1;k++){
        
        m3->set(1,k,v2[k]);
      }
      return SUCCESS;
  }
  
- static index_t StackMatrixVectorInit(Matrix m1,Vector v2,Matrix *m3){
+ static size_t StackMatrixVectorInit(Matrix m1,Vector v2,Matrix *m3){
    
    printf("Came to matrix vector stacking...\n");
-   index_t num_cols1=m1.n_cols();
-   index_t num_cols2=v2.length();
+   size_t num_cols1=m1.n_cols();
+   size_t num_cols2=v2.length();
    
    if(num_cols1!=num_cols2){
      
@@ -161,31 +161,31 @@ class special_la{
    }
    
    printf("Passed the test...\n");
-   index_t num_rows1=m1.n_rows();
+   size_t num_rows1=m1.n_rows();
    
    m3->Init(num_rows1+1,num_cols1);
    
-   index_t i=0;
+   size_t i=0;
    for(i=0;i<num_rows1;i++){
      
-     for(index_t j=0;j<num_cols1;j++){
+     for(size_t j=0;j<num_cols1;j++){
        
        m3->set(i,j,m1.get(i,j));
      }
    }
 
-   for(index_t j=0;j<num_cols2;j++){
+   for(size_t j=0;j<num_cols2;j++){
      
      m3->set(i,j,v2[j]);
    }
    return SUCCESS;
  }
 
- static index_t StackVectorMatrixInit(Vector v1,Matrix m1,Matrix *m2){
+ static size_t StackVectorMatrixInit(Vector v1,Matrix m1,Matrix *m2){
    
    
-   index_t num_cols1=m1.n_cols();
-   index_t num_cols2=v1.length();
+   size_t num_cols1=m1.n_cols();
+   size_t num_cols2=v1.length();
    
    if(num_cols1!=num_cols2){
      
@@ -194,18 +194,18 @@ class special_la{
      return FAILURE;
    }
    
-   index_t num_rows1=m1.n_rows();
+   size_t num_rows1=m1.n_rows();
    m2->Init(num_rows1+1,num_cols1);
   
 
-   index_t i=0;
-   for(index_t j=0;j<num_cols2;j++){
+   size_t i=0;
+   for(size_t j=0;j<num_cols2;j++){
      
      m2->set(i,j,v1[j]);
    }
-   for(index_t i=1;i<=num_rows1;i++){
+   for(size_t i=1;i<=num_rows1;i++){
      
-     for(index_t j=0;j<num_cols1;j++){
+     for(size_t j=0;j<num_cols1;j++){
        
        m2->set(i,j,m1.get(i-1,j));
      }
@@ -221,9 +221,9 @@ class special_la{
 
    //Make a check to make sure that the multiplication is feasible
    
-   index_t num_cols1=mat1.n_cols();
+   size_t num_cols1=mat1.n_cols();
 
-   index_t num_rows2=diag_elem.length();
+   size_t num_rows2=diag_elem.length();
 
 
    if(num_cols1!=num_rows2){
@@ -257,10 +257,10 @@ class special_la{
    
    //Make a check to make sure that the multiplication is feasible
    
-   index_t num_rows1=mat1.n_rows();
-   index_t num_cols1=mat1.n_cols();
+   size_t num_rows1=mat1.n_rows();
+   size_t num_cols1=mat1.n_cols();
    
-   index_t num_rows2=diag_elem.length();
+   size_t num_rows2=diag_elem.length();
   
    
    if(num_cols1!=num_rows2){
@@ -280,21 +280,21 @@ class special_la{
 
  
  static void PostMultiplyMatrixWithVectorGivenCholesky(Matrix &chol_factor,
-						       ArrayList <index_t> 
+						       ArrayList <size_t> 
 						       &perm_mat,
 						       Vector &beta,
 						       Vector *res){
    //First make a compatibility check
    
-   index_t length_beta=beta.length();
-   index_t size_of_matrix=perm_mat.size();
+   size_t length_beta=beta.length();
+   size_t size_of_matrix=perm_mat.size();
    
    if(length_beta!=size_of_matrix){
      
      printf("Post Multiply with matrix: Sizes are incompatible..\n");
    }
    
-   ArrayList <index_t> perm_mat_trans;
+   ArrayList <size_t> perm_mat_trans;
 
    //The tranpose of the permutation matrix is the same as its inverse
    PermutationMatrixTransposeInit(perm_mat,&perm_mat_trans);
@@ -319,14 +319,14 @@ class special_la{
  //This function does M\beta where M=PLL^TP^T
 
  static void PostMultiplyMatrixWithVectorGivenCholeskyInit(Matrix &chol_factor,
-						       ArrayList <index_t> 
+						       ArrayList <size_t> 
 						       &perm_mat,
 						       Vector &beta,
 						       Vector *res){
    //First make a compatibility check
 
-   index_t length_beta=beta.length();
-   index_t size_of_matrix=perm_mat.size();
+   size_t length_beta=beta.length();
+   size_t size_of_matrix=perm_mat.size();
 
    if(length_beta!=size_of_matrix){
 
@@ -346,22 +346,22 @@ class special_la{
      printf("Came to this function\n");
   //$a_ij=\sum_k a_ik a_kj$
 
-   index_t num_rows1=lower_triang.n_rows();
-   index_t num_cols1=lower_triang.n_cols();
+   size_t num_rows1=lower_triang.n_rows();
+   size_t num_cols1=lower_triang.n_cols();
 
-   index_t num_rows2=mat.n_rows();
-   index_t num_cols2=mat.n_cols();
+   size_t num_rows2=mat.n_rows();
+   size_t num_cols2=mat.n_cols();
 
    printf("num_rows1=%d num_rows2=%d..\n",num_rows1,num_rows2);
    
    printf("num_cols1=%d num_cols2=%d..\n",num_cols1,num_cols2);
-   for(index_t i=0;i<num_rows1;i++){
+   for(size_t i=0;i<num_rows1;i++){
      
-     for(index_t j=0;j<num_cols2;j++){
+     for(size_t j=0;j<num_cols2;j++){
        
        double val=0;
        
-       for(index_t k=0;k<=min(i,num_cols1-1);k++){
+       for(size_t k=0;k<=min(i,num_cols1-1);k++){
 	 printf("i is %d and j is %d and k=%d.....\n",i,j,k);
 	 val+=lower_triang.get(i,k)*mat.get(k,j);
        }
@@ -376,8 +376,8 @@ class special_la{
  static void PreMultiplyVectorWithDiagonalMatrix(Vector &vec, Vector &diag, 
 						 Vector *res){
 
-   index_t length_diag=diag.length();
-   index_t length_vec=vec.length();
+   size_t length_diag=diag.length();
+   size_t length_vec=vec.length();
    //make a compatibility check
 
    if(length_vec!=length_diag){
@@ -386,7 +386,7 @@ class special_la{
      return;
    }
 
-   for(index_t i=0;i<length_vec;i++){
+   for(size_t i=0;i<length_vec;i++){
 
      (*res)[i]=diag[i]*vec[i];
    }
@@ -396,8 +396,8 @@ class special_la{
 						      Vector *res){
    
    //Make A compatibility check
-   index_t length_diag=diag.length();
-   index_t length_vec=vec.length();
+   size_t length_diag=diag.length();
+   size_t length_vec=vec.length();
    
    if(length_vec!=length_diag){
 
@@ -417,11 +417,11 @@ class special_la{
  static void PreMultiplyLowerTriangMatrixInit(Matrix &lower_triang,
 					     Matrix &mat,Matrix *res){
    
-   index_t num_rows1=lower_triang.n_rows();
-   index_t num_cols1=lower_triang.n_cols();
+   size_t num_rows1=lower_triang.n_rows();
+   size_t num_cols1=lower_triang.n_cols();
 
-   index_t num_rows2=mat.n_rows();
-   index_t num_cols2=mat.n_cols();
+   size_t num_rows2=mat.n_rows();
+   size_t num_cols2=mat.n_cols();
 
    if(num_cols1!=num_rows2){
 
@@ -438,10 +438,10 @@ class special_la{
  static void SubtractFromDiagonalMatrix(Vector &diag, Matrix &mat,Matrix *res){
 
 
-   index_t num_rows1=diag.length();
+   size_t num_rows1=diag.length();
 
-   index_t num_rows2=mat.n_rows();
-   index_t num_cols2=mat.n_cols();
+   size_t num_rows2=mat.n_rows();
+   size_t num_cols2=mat.n_cols();
 
    if(num_rows1!=num_rows2 || num_rows2!=num_cols2){
 
@@ -455,7 +455,7 @@ class special_la{
    
    //Now add the diagonal elements of the diagonal matrix to the matrix mat   
    
-   for(index_t i=0;i<num_rows1;i++){
+   for(size_t i=0;i<num_rows1;i++){
      
      res->set(i,i,diag[i]+res->get(i,i)); 
    }
@@ -465,10 +465,10 @@ class special_la{
  static void SubtractFromDiagonalMatrixInit(Vector &diag,Matrix &mat, 
 					    Matrix *res){
    
-   index_t num_rows1=diag.length();
+   size_t num_rows1=diag.length();
 
-   index_t num_rows2=mat.n_rows();
-   index_t num_cols2=mat.n_cols();
+   size_t num_rows2=mat.n_rows();
+   size_t num_cols2=mat.n_cols();
 
    if(num_rows1!=num_rows2 || num_rows2!=num_cols2){
 
@@ -488,11 +488,11 @@ class special_la{
    //First make a check to see if the matrices are compatible for
    //multiplication
 
-   index_t num_rows1=mat.n_rows();
-   index_t num_cols1=mat.n_cols();
+   size_t num_rows1=mat.n_rows();
+   size_t num_cols1=mat.n_cols();
 
-   index_t num_rows2=lower_triang.n_rows();
-   index_t num_cols2=lower_triang.n_cols();
+   size_t num_rows2=lower_triang.n_rows();
+   size_t num_cols2=lower_triang.n_cols();
 
    if(num_cols1!=num_rows2){
 
@@ -500,13 +500,13 @@ class special_la{
      return;
    }
 
-   for(index_t i=0;i<num_rows1;i++){
+   for(size_t i=0;i<num_rows1;i++){
      
-     for(index_t j=0;j<num_cols2;j++){
+     for(size_t j=0;j<num_cols2;j++){
        
        double val=0;
 
-       for(index_t k=j;k<num_cols1;k++){
+       for(size_t k=j;k<num_cols1;k++){
 
 	 val+=mat.get(i,k)*lower_triang.get(k,j);
 
@@ -518,15 +518,15 @@ class special_la{
  }
 
 static void  PostMultiplyMatrixWithPermutationMatrix(Matrix &mat,
-						     ArrayList <index_t> &perm_mat,
+						     ArrayList <size_t> &perm_mat,
 						     Matrix *res){
 
   //This will permute the columns of the matrix
 
-  index_t num_cols=mat.n_cols(); //n number of columns
-  index_t num_rows=mat.n_rows();  //r number of rows
+  size_t num_cols=mat.n_cols(); //n number of columns
+  size_t num_rows=mat.n_rows();  //r number of rows
 
-  index_t size_perm_mat=perm_mat.size();
+  size_t size_perm_mat=perm_mat.size();
   
   if(num_cols!=size_perm_mat){
     
@@ -536,16 +536,16 @@ static void  PostMultiplyMatrixWithPermutationMatrix(Matrix &mat,
   //Get the transpose of the permutation matrix and then permnute the
   //columns accordingly
 
-  ArrayList<index_t> perm_mat_trans;
+  ArrayList<size_t> perm_mat_trans;
   PermutationMatrixTransposeInit(perm_mat,&perm_mat_trans);
 
   //permute the columns of the matrix according to permutation matrix
   //transpose
 
   
-  for(index_t i=0;i<size_perm_mat;i++){
+  for(size_t i=0;i<size_perm_mat;i++){
 
-    index_t j=perm_mat_trans[i];
+    size_t j=perm_mat_trans[i];
     
     //Get the jth column
 
@@ -553,17 +553,17 @@ static void  PostMultiplyMatrixWithPermutationMatrix(Matrix &mat,
    
     //Fill the ith column of the res matrix with this ptr values
 
-    for(index_t k=0;k<num_rows;k++){
+    for(size_t k=0;k<num_rows;k++){
 
       res->set(k,i,ptr[k]);
     }
   }
 }
 
-static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <index_t> &perm_mat,
+static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <size_t> &perm_mat,
 							 Matrix *res){
-  index_t num_cols=mat.n_cols();
-  index_t size_perm_mat=perm_mat.size();
+  size_t num_cols=mat.n_cols();
+  size_t size_perm_mat=perm_mat.size();
 
   if(num_cols!=size_perm_mat){
 
@@ -577,7 +577,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
   //printf("The permutation matrix is...\n");
 
-  /*for(index_t i=0;i<perm_mat.size();i++){
+  /*for(size_t i=0;i<perm_mat.size();i++){
 
     printf("Permutation Matrix is %d..\n",perm_mat[i]);
     }*/
@@ -585,13 +585,13 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
   PostMultiplyMatrixWithPermutationMatrix(mat,perm_mat,res);
 }
  
- static void PreMultiplyMatrixWithPermutationMatrix(ArrayList <index_t> &perm_mat,
+ static void PreMultiplyMatrixWithPermutationMatrix(ArrayList <size_t> &perm_mat,
 						    Matrix &mat, Matrix *res){
 
 
    //Check for Compatibility 
-   index_t num_rows_perm_mat=perm_mat.size();
-   index_t num_rows_mat=mat.n_rows();
+   size_t num_rows_perm_mat=perm_mat.size();
+   size_t num_rows_mat=mat.n_rows();
 
    if(num_rows_perm_mat!=num_rows_mat){
 
@@ -601,7 +601,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    //Pre Multiplication with a matrix is equivaleent to permuting the
    //rows of the matrix. For computational issues we shall 
 
-   ArrayList <index_t> perm_mat_trans;
+   ArrayList <size_t> perm_mat_trans;
 
    PermutationMatrixTransposeInit(perm_mat,&perm_mat_trans);
 
@@ -621,14 +621,14 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
  }
 
 
- static void PreMultiplyMatrixWithPermutationMatrixInit(ArrayList <index_t> 
+ static void PreMultiplyMatrixWithPermutationMatrixInit(ArrayList <size_t> 
 							&perm_mat,
 							Matrix &mat,
 							Matrix *res){
 
    //Check for Compatibility 
-   index_t num_rows_perm_mat=perm_mat.size();
-   index_t num_rows_mat=mat.n_rows();
+   size_t num_rows_perm_mat=perm_mat.size();
+   size_t num_rows_mat=mat.n_rows();
 
    if(num_rows_perm_mat!=num_rows_mat){
 
@@ -639,11 +639,11 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    PreMultiplyMatrixWithPermutationMatrix(perm_mat,mat,res);
  }
 
- static void PreMultiplyVectorWithPermutationMatrix(ArrayList <index_t> 
+ static void PreMultiplyVectorWithPermutationMatrix(ArrayList <size_t> 
 						    &perm_mat, Vector beta, 
 						    Vector *res){
 
-   for(index_t i=0;i<res->length();i++){
+   for(size_t i=0;i<res->length();i++){
 
      (*res)[i]=beta[perm_mat[i]];
    }
@@ -656,11 +656,11 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
    //Make a compatibility check
 
-   index_t num_rows1=mat.n_rows();
-   index_t num_cols1=mat.n_cols();
+   size_t num_rows1=mat.n_rows();
+   size_t num_cols1=mat.n_cols();
 
-   index_t num_rows2=upper_triang.n_rows();
-   index_t num_cols2=upper_triang.n_cols();
+   size_t num_rows2=upper_triang.n_rows();
+   size_t num_cols2=upper_triang.n_cols();
 
 
    if(num_cols1!=num_rows2){
@@ -668,12 +668,12 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
    }
 
-   for(index_t i=0;i<num_rows1;i++){
+   for(size_t i=0;i<num_rows1;i++){
 
-     for(index_t j=0;j<num_cols2;j++){
+     for(size_t j=0;j<num_cols2;j++){
 
        double val=0;
-       for(index_t k=0;k<=min(j,num_cols1-1);k++){
+       for(size_t k=0;k<=min(j,num_cols1-1);k++){
 	 
 	 val+=mat.get(i,k)*upper_triang.get(k,j);
 	 printf("k is %d...\n",k);
@@ -687,11 +687,11 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 						Matrix &upper_triang,
 						Matrix *res){
 
-   index_t num_rows1=mat.n_rows();
-   index_t num_cols1=mat.n_cols();
+   size_t num_rows1=mat.n_rows();
+   size_t num_cols1=mat.n_cols();
    
-   index_t num_rows2=upper_triang.n_rows();
-   index_t num_cols2=upper_triang.n_cols();
+   size_t num_rows2=upper_triang.n_rows();
+   size_t num_cols2=upper_triang.n_cols();
    
    if(num_cols1!=num_rows2){
      printf("Post Multiply with Upper Triang Failed:Incompatible matrices");  
@@ -709,11 +709,11 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
  static void PostMultiplyLowerTriangMatrixInit(Matrix &mat,
 					   Matrix &lower_triang, 
 					   Matrix *res){
-   index_t num_rows1=mat.n_rows();
-   index_t num_cols1=mat.n_cols();
+   size_t num_rows1=mat.n_rows();
+   size_t num_cols1=mat.n_cols();
    
-   index_t num_rows2=lower_triang.n_rows();
-   index_t num_cols2=lower_triang.n_cols();
+   size_t num_rows2=lower_triang.n_rows();
+   size_t num_cols2=lower_triang.n_cols();
    
    if(num_cols1!=num_rows2){
      
@@ -728,14 +728,14 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
  }
 
  
- static void AddPermutationMatrix(ArrayList <index_t> &perm, Matrix &mat, 
+ static void AddPermutationMatrix(ArrayList <size_t> &perm, Matrix &mat, 
 				      Matrix *res){
 
    //First check if the sizes are compatible
 
-   index_t size=perm.size();
-   index_t rows=mat.n_rows();
-   index_t cols=mat.n_cols();
+   size_t size=perm.size();
+   size_t rows=mat.n_rows();
+   size_t cols=mat.n_cols();
 
    if(size!=rows||rows!=cols){
 
@@ -748,23 +748,23 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    
    res->CopyValues(mat);
 
-   for(index_t i=0;i<size;i++){
+   for(size_t i=0;i<size;i++){
 
-     index_t index=perm[i];
+     size_t index=perm[i];
      double original_val=res->get(i,index);
      res->set(i,index,original_val+1);
    }
  }
 
 
- static void AddPermutationMatrixInit(ArrayList <index_t> &perm, Matrix &mat, 
+ static void AddPermutationMatrixInit(ArrayList <size_t> &perm, Matrix &mat, 
 				      Matrix *res){
 
    //First check if the sizes are compatible
 
-   index_t size=perm.size();
-   index_t rows=mat.n_rows();
-   index_t cols=mat.n_cols();
+   size_t size=perm.size();
+   size_t rows=mat.n_rows();
+   size_t cols=mat.n_cols();
 
    if(size!=rows||rows!=cols){
 
@@ -779,8 +779,8 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
  static void AddIdentityMatrix(Matrix &mat){
 
-   index_t num_rows=mat.n_rows();
-   index_t num_cols=mat.n_cols();
+   size_t num_rows=mat.n_rows();
+   size_t num_cols=mat.n_cols();
 
    if(num_rows!=num_cols){
 
@@ -788,7 +788,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
      return;
    }
 
-   for(index_t i=0;i<num_rows;i++){
+   for(size_t i=0;i<num_rows;i++){
      
      double val=mat.get(i,i);
      mat.set(i,i,val+1);
@@ -814,7 +814,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    la::TransposeInit(V_trans,&V);
    la::TransposeInit(U,&U_trans);
 
-   for(index_t i=0;i<s.length();i++){
+   for(size_t i=0;i<s.length();i++){
      
      if(fabs(s[i])>EPSILON){
 
@@ -837,7 +837,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    la::MulOverwrite(temp1,U_trans,&mat);
  }
 
- static void PreMultiplyVectorWithPermutationMatrixInit(ArrayList <index_t>& 
+ static void PreMultiplyVectorWithPermutationMatrixInit(ArrayList <size_t>& 
 							perm_mat,
 							Vector vec,
 							Vector *res){
@@ -858,20 +858,20 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
      
  }
  
-   static void PermutationMatrixInverse(ArrayList <index_t> &permutation, 
-					ArrayList <index_t> *permutation_inverse){
+   static void PermutationMatrixInverse(ArrayList <size_t> &permutation, 
+					ArrayList <size_t> *permutation_inverse){
      
-   for(index_t i=0;i<permutation.size();i++){
+   for(size_t i=0;i<permutation.size();i++){
 
      
-     index_t j=permutation[i];
+     size_t j=permutation[i];
      
      (*permutation_inverse)[j]=i;
    }
  }
 
-  static void PermutationMatrixInverseInit(ArrayList <index_t> &permutation, 
-					  ArrayList <index_t> 
+  static void PermutationMatrixInverseInit(ArrayList <size_t> &permutation, 
+					  ArrayList <size_t> 
 					  *permutation_inverse){
    
    //This requires you to initialize the invese first
@@ -881,8 +881,8 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
     PermutationMatrixInverse(permutation, permutation_inverse);
    }
 
-  static void PermutationMatrixTranspose(ArrayList <index_t> &permutation, 
-					 ArrayList <index_t> 
+  static void PermutationMatrixTranspose(ArrayList <size_t> &permutation, 
+					 ArrayList <size_t> 
 					 *permutation_trans){
 
     //Since permutation matrices are orthogonal hence transpose is the
@@ -891,11 +891,11 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
     PermutationMatrixInverse(permutation,permutation_trans);
   }
 
-  static void PermutationMatrixTransposeInit(ArrayList <index_t> &perm_mat, 
-					     ArrayList <index_t> 
+  static void PermutationMatrixTransposeInit(ArrayList <size_t> &perm_mat, 
+					     ArrayList <size_t> 
 					     *perm_mat_trans){
 
-    index_t size=perm_mat.size();
+    size_t size=perm_mat.size();
     perm_mat_trans->Init(size);
     PermutationMatrixTranspose(perm_mat,perm_mat_trans);
   }
@@ -903,8 +903,8 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
   static void PreMultiplyMatrixWithDiagonalMatrix(Vector &diag,Matrix &mat,Matrix *res){
 
-    index_t len=diag.length();
-    index_t num_rows=mat.n_rows();
+    size_t len=diag.length();
+    size_t num_rows=mat.n_rows();
     
 
     //Compatibility Check
@@ -931,8 +931,8 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 
   static void PreMultiplyMatrixWithDiagonalMatrixInit(Vector &diag,Matrix &mat,Matrix *res){
 
-    index_t len=diag.length();
-    index_t num_rows=mat.n_rows();
+    size_t len=diag.length();
+    size_t num_rows=mat.n_rows();
     
 
     //Compatibility Check
@@ -985,10 +985,10 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
    //Now find the inverse of the matrix I+A^TDA. Since this matrix is
    //small we can afford a direct inversion
 
-   index_t flag=
+   size_t flag=
      la::Inverse(&permuted_chol_factor_trans_D_permuted_chol_factor);
 
-   if(flag==SUCCESS_PASS){
+   if(flag==true){
 
      //printf("Inversion done successfully...\n");
 
@@ -1054,12 +1054,12 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 /*    //E.set(0, 1, -E.get(0, 1)); */
 /*    //E.set(1, 1, -E.get(1, 1)); */
    
-/*    index_t d = D_vector.length(); */
+/*    size_t d = D_vector.length(); */
 /*    D.Init(d, d); */
 /*    D.SetZero(); */
 /*    D_inv.Init(d, d); */
 /*    D_inv.SetZero(); */
-/*    for(index_t i = 0; i < d; i++) { */
+/*    for(size_t i = 0; i < d; i++) { */
 /*      double sqrt_val = sqrt(D_vector[i]); */
 /*      D.set(i, i, sqrt_val); */
 /*      D_inv.set(i, i, 1 / sqrt_val); */
@@ -1086,7 +1086,7 @@ static void  PostMultiplyMatrixWithPermutationMatrixInit(Matrix &mat,ArrayList <
 /*    return C; */
 /*  } */
 
-/* static  inline void Scale(index_t length, double alpha, double *x) { */
+/* static  inline void Scale(size_t length, double alpha, double *x) { */
 /*      F77_FUNC(dscal)(length, alpha, x, 1); */
 /*    } */
  

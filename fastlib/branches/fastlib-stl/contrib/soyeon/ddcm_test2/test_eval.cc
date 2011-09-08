@@ -161,7 +161,7 @@ int main(int argc, char *argv[]) {
 
 	      
    
-	for(index_t i=0; i<initial_parameter.length(); i++){
+	for(size_t i=0; i<initial_parameter.length(); i++){
 		cout<<initial_parameter[i]<<" ";
 	}
 	cout<<endl;
@@ -183,7 +183,7 @@ int main(int argc, char *argv[]) {
 	ArrayList<Matrix> current_added_unknown_x_past;
 	current_added_unknown_x_past.Init();
 
-	ArrayList<index_t> current_added_first_stage_y;
+	ArrayList<size_t> current_added_first_stage_y;
 	current_added_first_stage_y.Init();
 
 	

@@ -59,7 +59,7 @@ class MultibodyPotentialProblem {
     if(hybrid_nodes[0] == hybrid_nodes[1] && 
        hybrid_nodes[1] == hybrid_nodes[2]) {
 
-      for(index_t i = 0; i < TKernel::order; i++) {
+      for(size_t i = 0; i < TKernel::order; i++) {
 	total_n_minus_one_tuples[i] -= 
 	  (hybrid_nodes[i]->stat().num_precomputed_tuples);
       }
@@ -81,7 +81,7 @@ class MultibodyPotentialProblem {
     }
     
     // Consider each node in turn whether it can be pruned or not.
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
 
       // Refine the summary statistics from the new info...
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
@@ -108,7 +108,7 @@ class MultibodyPotentialProblem {
     
     // In this case, add the delta contributions to the postponed
     // slots of each node.
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(delta, i);
       }
@@ -139,7 +139,7 @@ class MultibodyPotentialProblem {
     mc_delta.Init(total_n_minus_one_tuples);
 
     // Zero out the temporary scratch space.
-    for(index_t i = 0; i < hybrid_nodes.size(); i++) {
+    for(size_t i = 0; i < hybrid_nodes.size(); i++) {
       if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
 	continue;
       }
@@ -148,7 +148,7 @@ class MultibodyPotentialProblem {
       mc_delta.positive_potential_bound[i].lo = DBL_MAX;
       mc_delta.positive_potential_bound[i].hi = -DBL_MAX;    
       
-      for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+      for(size_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
 	  j++) {
 	globals.neg_tmp_space[j] = 0;
 	globals.tmp_space[j] = 0;
@@ -161,13 +161,13 @@ class MultibodyPotentialProblem {
     // Accumulate samples.
     const int sample_limit = 30;
     
-    for(index_t i = 0; i < hybrid_nodes.size(); i++) {
+    for(size_t i = 0; i < hybrid_nodes.size(); i++) {
       if(i > 0 && hybrid_nodes[i] == hybrid_nodes[i - 1]) {
 	continue;
       }
       
       // Loop through each point in the list.
-      for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+      for(size_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
 	  j++) {
        	
 	globals.hybrid_node_chosen_indices[i] = j;
@@ -176,8 +176,8 @@ class MultibodyPotentialProblem {
 	  
 	  // Generate a random tuple containing the j-th particle and
 	  // exploit sample correlation.
-	  for(index_t k = 0; k < 2; k++) {
-	    index_t current_node_index = (k + 1 + i) % 3;
+	  for(size_t k = 0; k < 2; k++) {
+	    size_t current_node_index = (k + 1 + i) % 3;
 	    globals.hybrid_node_chosen_indices[current_node_index] =
 	      math::RandInt(hybrid_nodes[current_node_index]->begin(),
 			    hybrid_nodes[current_node_index]->end());
@@ -192,7 +192,7 @@ class MultibodyPotentialProblem {
 	  globals.kernel_aux.EvaluateMain(globals, sets, &negative_potential,
 					  &positive_potential);
 	  
-	  for(index_t m = 0; m < hybrid_nodes.size(); m++) {
+	  for(size_t m = 0; m < hybrid_nodes.size(); m++) {
 	    globals.neg_tmp_space[globals.hybrid_node_chosen_indices[m]] += 
 	      negative_potential;
 	    globals.neg_tmp_space2[globals.hybrid_node_chosen_indices[m]] += 
@@ -272,11 +272,11 @@ class MultibodyPotentialProblem {
     }
 
     // If this point is reached, then everything is pruned.
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(mc_delta, i);
 
-	for(index_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
+	for(size_t j = hybrid_nodes[i]->begin(); j < hybrid_nodes[i]->end();
 	    j++) {
 
 	  // Used error for the particle.
@@ -326,7 +326,7 @@ class MultibodyPotentialProblem {
     double positive_standard_deviation = 0;
     double positive_squared_potential_sums = 0;
     
-    for(index_t i = 0; i < num_samples; i++) {
+    for(size_t i = 0; i < num_samples; i++) {
 
       // Choose a random tuple.
       MultiTreeUtility::RandomTuple(hybrid_nodes, 
@@ -361,7 +361,7 @@ class MultibodyPotentialProblem {
 			     positive_standard_deviation);
 
     // Consider each node in turn whether it can be pruned or not.
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
 
       // Refine the summary statistics from the new info...
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
@@ -388,7 +388,7 @@ class MultibodyPotentialProblem {
     
     // In this case, add the delta contributions to the postponed
     // slots of each node.
-    for(index_t i = 0; i < TKernel::order; i++) {
+    for(size_t i = 0; i < TKernel::order; i++) {
       if(i == 0 || hybrid_nodes[i] != hybrid_nodes[i - 1]) {
 	hybrid_nodes[i]->stat().postponed.ApplyDelta(exact_delta, i);
       }

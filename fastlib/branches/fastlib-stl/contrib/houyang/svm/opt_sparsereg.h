@@ -28,12 +28,12 @@ class SPARSEREG {
 
   Kernel kernel_;
   const Dataset *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
   Matrix datamatrix_; /* alias for the data matrix */
 
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
   
   ArrayList<int> y_; /* list that stores "labels" */
 
@@ -44,15 +44,15 @@ class SPARSEREG {
   // parameters
   double C_; // for SVM_C
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
   bool is_constant_step_size_; // whether use constant step size (default) or not
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
 
  public:
   SPARSEREG() {}
@@ -65,8 +65,8 @@ class SPARSEREG {
     // init parameters
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
-      n_epochs_ = (index_t)param_[2];
-      n_iter_ = (index_t)param_[3];
+      n_epochs_ = (size_t)param_[2];
+      n_iter_ = (size_t)param_[3];
       accuracy_ = param_[4];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -89,7 +89,7 @@ class SPARSEREG {
   }
   */
 
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  //void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -148,7 +148,7 @@ class SPARSEREG {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
@@ -162,7 +162,7 @@ class SPARSEREG {
  */
 template<typename TKernel>
 void SPARSEREG<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   learner_typeid_ = learner_typeid;
 
   w_.Init(n_features_bias_);
@@ -188,9 +188,9 @@ void SPARSEREG<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void SPARSEREG<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
 
-  index_t total_n_iter;
+  size_t total_n_iter;
   double DX, M, x_sq_sup;
   double cons_step, eta_sum;
 
@@ -236,7 +236,7 @@ void SPARSEREG<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   Vector eta_w_sum;
   eta_w_sum.Init(n_features_bias_);
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin training iterations */
   double yt, yt_hat, yy_hat;
@@ -332,7 +332,7 @@ void SPARSEREG<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     }
   }
   // round small w_i to 0
-  index_t w_ct = 0;
+  size_t w_ct = 0;
   double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
   double round_thd = wi_abs_max / round_factor;
   for (i=0; i<n_features_bias_; i++) {

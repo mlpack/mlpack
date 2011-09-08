@@ -104,12 +104,12 @@ class DatasetFeature {
    * For nominal, the entry 
    *
    * If an invalid parse occurs, such as a mal-formatted number or
-   * a nominal value not in the list, SUCCESS_FAIL will be returned.
+   * a nominal value not in the list, false will be returned.
    *
    * @param str the string to parse
    * @param d where to store the result
    */
-  success_t Parse(const std::string& str, double& d) const;
+  bool Parse(const std::string& str, double& d) const;
 
   /**
    * Gets what the feature is named.
@@ -149,7 +149,7 @@ class DatasetFeature {
    *
    * @return the number of nominal values
    */
-  index_t n_values() const {
+  size_t n_values() const {
     return value_names_.size();
   }
 

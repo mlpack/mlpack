@@ -50,7 +50,7 @@ template<int t_pow, bool t_take_root>
 double LMetric<t_pow, t_take_root>::Evaluate(const arma::vec& a,
                                              const arma::vec& b) {
   double sum = 0;
-  for (index_t i = 0; i < a.n_elem; i++)
+  for (size_t i = 0; i < a.n_elem; i++)
     sum += pow(fabs(a[i] - b[i]), t_pow);
 
   if (!t_take_root) // Suboptimal to have this here.

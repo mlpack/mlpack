@@ -1,7 +1,7 @@
 namespace la {
 
   inline int DistanceSqEuclidean(
-      index_t length, const int *va, const int *vb) {
+      size_t length, const int *va, const int *vb) {
     int s = 0;
     do {
       int d = *va++ - *vb++;
@@ -22,7 +22,7 @@ namespace la {
     exit(1);
   }
 
-  inline void Scale(index_t length, int alpha, int *x) {
+  inline void Scale(size_t length, int alpha, int *x) {
     const int *end = x + length;
     while (x != end) {
       *x++ *= alpha;

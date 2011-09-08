@@ -15,11 +15,11 @@ class MultiTreeGlobal {
 
   /** @brief The chosen indices.
    */
-  ArrayList<index_t> hybrid_node_chosen_indices;
+  ArrayList<size_t> hybrid_node_chosen_indices;
 
-  ArrayList<index_t> query_node_chosen_indices;
+  ArrayList<size_t> query_node_chosen_indices;
     
-  ArrayList<index_t> reference_node_chosen_indices;
+  ArrayList<size_t> reference_node_chosen_indices;
 
   /** @brief The total number of 3-tuples that contain a particular
    *         particle.
@@ -60,7 +60,7 @@ class MultiTreeGlobal {
 
  public:
 
-  void Init(index_t total_num_particles, index_t dimension_in,
+  void Init(size_t total_num_particles, size_t dimension_in,
 	    const ArrayList<Matrix *> &reference_targets,
 	    struct datanode *module_in) {
 

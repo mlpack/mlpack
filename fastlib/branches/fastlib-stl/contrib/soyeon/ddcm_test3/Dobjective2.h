@@ -8,7 +8,7 @@ class DObjective {
   /*void Init(ArrayList<Matrix> &added_first_stage_x,
 						ArrayList<Matrix> &added_second_stage_x, 
 						ArrayList<Matrix> &added_unknown_x_past, 
-						ArrayList<index_t> &added_first_stage_y,
+						ArrayList<size_t> &added_first_stage_y,
 						Vector &ind_unknown_x);
   */
 	void Init2(Vector &ind_unknown_x, int count_init2);
@@ -16,7 +16,7 @@ class DObjective {
 						ArrayList<Matrix> &added_first_stage_x,
 						ArrayList<Matrix> &added_second_stage_x, 
 						ArrayList<Matrix> &added_unknown_x_past, 
-						ArrayList<index_t> &added_first_stage_y);
+						ArrayList<size_t> &added_first_stage_y);
 						
 						
 
@@ -48,7 +48,7 @@ class DObjective {
 										Matrix *approx_hessian);
 	void ComputePredictionError(double current_sample, 
 									  Vector &current_parameter,
-										ArrayList<index_t> &true_decision,
+										ArrayList<size_t> &true_decision,
 										double *postponed_prediction_error,
 										double *choice_prediction_error);
 
@@ -68,12 +68,12 @@ class DObjective {
 	//nrow=num_unk_x_, ncol=max_number_alternatives
 	
   
-  ArrayList<index_t>  first_stage_y_;
+  ArrayList<size_t>  first_stage_y_;
 	// If the value is -1 then it corresponds
   // to all zeros in y
   // If it is greter than zero then it corresponds to 
   // the non zero element index
-	//ArrayList<index_t> second_stage_y_;
+	//ArrayList<size_t> second_stage_y_;
 	//1 then it corresponds to all one in y^post
 	
 	//it corresponds to the unknown attributes index in unk_x_past file
@@ -87,22 +87,22 @@ class DObjective {
   ArrayList<Matrix> first_derivative_second_stage_x_;
 	ArrayList<Matrix> Second_derivative_second_stage_x_;
 
-	//ArrayList<index_t> exp_betas_times_x2_tilde_;
+	//ArrayList<size_t> exp_betas_times_x2_tilde_;
 	ArrayList<double> postponed_probability_;
-	//ArrayList<index_t> conditional_postponed_probability_;
+	//ArrayList<size_t> conditional_postponed_probability_;
 
 	//max num of choices among all
 	//unk_x_past_.size==max_number_alternatives_
 	//int max_number_alternatives_;
 	//number of positive elements in ind_unk_x
 	//int num_unknown_x_;
-  index_t num_of_betas_;	
+  size_t num_of_betas_;	
 	
 	/*
 	double denumerator_beta_function_;
-	index_t num_of_t_beta_fn_;
+	size_t num_of_t_beta_fn_;
   double t_weight_;
-	index_t num_of_alphas_;
+	size_t num_of_alphas_;
 	double alpha_weight_;
   */
 
@@ -130,8 +130,8 @@ class DObjective {
 	ArrayList<Vector> second_stage_dot_logit_;
 	ArrayList<Matrix> second_stage_ddot_logit_;
 
-	//ArrayList<index_t> derivative_beta_conditional_postponed_prob_;
-	//ArrayList<index_t> conditional_postponed_prob_;
+	//ArrayList<size_t> derivative_beta_conditional_postponed_prob_;
+	//ArrayList<size_t> conditional_postponed_prob_;
 
 	//ArrayList<Vector> sum_first_derivative_conditional_postpond_prob_;
 	//ArrayList<Matrix> sum_second_derivative_conditional_postpond_prob_;
@@ -143,7 +143,7 @@ class DObjective {
 
 	ArrayList<Vector> derivative_postpond_prob_alpha_beta_;
 
-	//ArrayList<index_t> SumSecondDerivativeConditionalPostpondProb_
+	//ArrayList<size_t> SumSecondDerivativeConditionalPostpondProb_
 
 	//need exp_betas_times_x1 and exp_betas_times_x2
 	void ComputeDotLogit_(Vector &betas);

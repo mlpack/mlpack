@@ -65,25 +65,25 @@ class Link {
   BasisShell*** significant_nu_for_mu_;
 
   // num_significant_nu_for_mu_[i] = number of significant nu for mu
-  ArrayList<index_t> num_significant_nu_for_mu_;
+  ArrayList<size_t> num_significant_nu_for_mu_;
   
   // used to iterate over the sigmas belonging to a nu
   // needs to be sorted
   ShellPair*** significant_sigma_for_nu_;
   
   // used to index into above sorted list
-  ArrayList<index_t> num_significant_sigma_for_nu_;
+  ArrayList<size_t> num_significant_sigma_for_nu_;
   
   
   // The length of shell_list_
-  index_t num_shells_;
+  size_t num_shells_;
   
   // The number of shell pairs remaining after the initial Schwartz thresholding
-  index_t num_shell_pairs_;
+  size_t num_shell_pairs_;
   
   // the number of basis functions, also the dimensionality of the density and
   // exchange matrices
-  index_t num_functions_;
+  size_t num_functions_;
   
   // The threshold for a significant eri
   double threshold_;
@@ -94,14 +94,14 @@ class Link {
   double shell_pair_cutoff_;
   
   // Used in sorting functions 
-  index_t current_mu_;
+  size_t current_mu_;
   
-  index_t num_neglected_sigma_;
-  index_t num_neglected_nu_;
+  size_t num_neglected_sigma_;
+  size_t num_neglected_nu_;
   
-  index_t num_integrals_computed_;
+  size_t num_integrals_computed_;
   
-  index_t num_insignificant_densities_;
+  size_t num_insignificant_densities_;
   
   // used in the first call to UpdateDensity()
   bool first_computation;

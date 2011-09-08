@@ -269,7 +269,7 @@ class TrainingSet{
 
   // This function swaps columns of our data matrix, to represent the
   // partition into left and right nodes.
-  index_t MatrixPartition(index_t start, index_t stop, Vector& split, 
+  size_t MatrixPartition(size_t start, size_t stop, Vector& split, 
 	 Vector& firsts, Vector* firsts_l_out, Vector* firsts_r_out){
     Vector firsts_l;
     Vector firsts_r;
@@ -313,8 +313,8 @@ class TrainingSet{
       }
     }
    
-    index_t left = start;
-    index_t right = stop-1;
+    size_t left = start;
+    size_t right = stop-1;
     for(;;){
       while (split[left - start] > 0 && likely(left <= right)){
         left++;

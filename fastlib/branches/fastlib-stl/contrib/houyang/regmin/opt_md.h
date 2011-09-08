@@ -28,13 +28,13 @@ class MD {
 
   Kernel kernel_;
   const Dataset_sl *dataset_;
-  index_t n_data_; /* number of data samples */
-  index_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
-  //  index_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
+  size_t n_data_; /* number of data samples */
+  size_t n_features_; /* # of features == # of row - 1, exclude the last row (for labels) */
+  //  size_t n_features_bias_; /* # of features + 1 , [x, 1], for the bias term */
 
-  index_t n_sv_; /* number of support vectors */
+  size_t n_sv_; /* number of support vectors */
 
-  index_t w_nnz_;
+  size_t w_nnz_;
 
   double round_thd_;
   
@@ -49,15 +49,15 @@ class MD {
   // parameters
   double C_; // \|w\|_1^1 \leq C
   double lambda_; // regularization parameter. lambda = 1/(C*n_data)
-  index_t n_iter_; // number of iterations
-  index_t n_epochs_; // number of epochs
+  size_t n_iter_; // number of iterations
+  size_t n_epochs_; // number of epochs
   double accuracy_; // accuracy for stopping creterion
   double eta_; // step length. eta = 1/(lambda*t)
   double t_;
 
   //bool is_constant_step_size_; // whether use constant step size (default) or not
 
-  ArrayList<index_t> old_from_new_; // for generating a random sequence of training data
+  ArrayList<size_t> old_from_new_; // for generating a random sequence of training data
 
  public:
   MD() {}
@@ -70,8 +70,8 @@ class MD {
     // init parameters
     if (learner_typeid == 0) { // SVM_C
       C_ = param_[0];
-      n_epochs_ = (index_t)param_[2];
-      n_iter_ = (index_t)param_[3];
+      n_epochs_ = (size_t)param_[2];
+      n_iter_ = (size_t)param_[3];
       accuracy_ = param_[4];
     }
     else if (learner_typeid == 1) { // SVM_R
@@ -85,10 +85,10 @@ class MD {
   }
 
   void GetW(ArrayList<NZ_entry> &w_out) {
-    index_t wp_size = w_p_.size();
-    index_t ct_nz = 0;
+    size_t wp_size = w_p_.size();
+    size_t ct_nz = 0;
     w_out.Init(w_nnz_);
-    for (index_t i=0; i<wp_size; i++) {
+    for (size_t i=0; i<wp_size; i++) {
       if (fabs(w_p_[i].value) >= round_thd_ ) {
 	w_out[ct_nz].index = w_p_[i].index;
 	w_out[ct_nz].value = w_p_[i].value;
@@ -101,7 +101,7 @@ class MD {
     return scale_w_;
   }
 
-  //void GetSV(ArrayList<index_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
+  //void GetSV(ArrayList<size_t> &dataset_index, ArrayList<double> &coef, ArrayList<bool> &sv_indicator);
 
  private:
   /**
@@ -169,7 +169,7 @@ class MD {
 
   int TrainIteration_();
 
-  double GetC_(index_t i) {
+  double GetC_(size_t i) {
     return C_;
   }
 
@@ -183,7 +183,7 @@ class MD {
  */
 template<typename TKernel>
 void MD<TKernel>::LearnersInit_(int learner_typeid) {
-  index_t i;
+  size_t i;
   double C_iv_f = C_/(n_features_);
   double C_iv_2f = C_iv_f/2.0;
   
@@ -214,9 +214,9 @@ void MD<TKernel>::LearnersInit_(int learner_typeid) {
 */
 template<typename TKernel>
 void MD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
-  index_t i, j, epo, ct;
+  size_t i, j, epo, ct;
 
-  index_t total_n_iter;
+  size_t total_n_iter;
   //double DX, M, x_sq_sup;
   double cons_step, w_sum = 1.0;
 
@@ -256,7 +256,7 @@ void MD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
 
   cons_step = 1;
 
-  index_t work_idx_old = 0;
+  size_t work_idx_old = 0;
 
   /* Begin training iterations */
   double yt, yt_hat, yy_hat;
@@ -292,7 +292,7 @@ void MD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
       //printf("epo:%d, ct:%d, eta_grad:%f\n", epo, ct, eta_grad_tmp);
       if (eta_grad_tmp != 0) {
 	xt = (dataset_->x)[work_idx_old];
-	index_t ct_w = 0;
+	size_t ct_w = 0;
 
 	while (ct_w < w_p_.size() && xt->index != -1) {
 	  if (w_p_[ct_w].index < xt->index) {
@@ -359,7 +359,7 @@ void MD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
   SparseSubOverwrite(w_n_, w_p_); // w_p <= w_p - w_n
 
   // rounding w
-  index_t wp_size = w_p_.size();
+  size_t wp_size = w_p_.size();
   round_thd_ = fx_param_double(NULL, "thd", 1.0e-5);
   w_nnz_ = 0;
   for (ct=0; ct<wp_size; ct++) {
@@ -381,7 +381,7 @@ void MD<TKernel>::Train(int learner_typeid, Dataset_sl &dataset_in) {
     }
   }
   // round small w_i to 0
-  index_t w_ct = 0;
+  size_t w_ct = 0;
   double round_factor = fx_param_double(NULL, "round_factor", 1.0e32);
   double round_thd = wi_abs_max / round_factor;
   for (i=0; i<w_.size(); i++) {

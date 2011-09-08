@@ -45,7 +45,7 @@ struct SVMLinearKernel
     kname = "linear";
   }
   /* Get an type ID for kernel */
-  index_t GetTypeId()
+  size_t GetTypeId()
   {
     return ID_LINEAR;
   }
@@ -73,7 +73,7 @@ class SVMRBFKernel
     kname = "gaussian";
   }
   /* Get an type ID for kernel */
-  index_t GetTypeId()
+  size_t GetTypeId()
   {
     return ID_GAUSSIAN;
   }
@@ -97,7 +97,7 @@ struct nnsvm_model
   double thresh_; //negation of the intercept
   arma::vec sv_coef_; // the alpha vector
   arma::vec w_; // the weight vector
-  index_t num_sv_; // number of support vectors
+  size_t num_sv_; // number of support vectors
 };
 
 namespace mlpack {
@@ -119,29 +119,29 @@ class NNSVM
   {
     TKernel kernel_;
     std::string kernelname_;
-    index_t kerneltypeid_;
+    size_t kerneltypeid_;
     double c_;
-    index_t b_;
+    size_t b_;
     double eps_; //tolerance
-    index_t max_iter_; // maximum iterations
+    size_t max_iter_; // maximum iterations
   };
   NNSVM_PARAMETERS param_; // same for every binary model
 
   arma::mat support_vectors_;
-  index_t num_features_;
+  size_t num_features_;
 
   public:
-    void Init(const arma::mat& dataset, index_t n_classes);
-    void Init(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter);
-    void InitTrain(const arma::mat& dataset, index_t n_classes);
-    void InitTrain(const arma::mat& dataset, index_t n_classes, index_t c, index_t b, double eps, index_t max_iter);
+    void Init(const arma::mat& dataset, size_t n_classes);
+    void Init(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter);
+    void InitTrain(const arma::mat& dataset, size_t n_classes);
+    void InitTrain(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter);
     void SaveModel(std::string modelfilename);
     void LoadModel(arma::mat& testset, std::string modelfilename);
-    index_t Classify(const arma::vec& vector);
+    size_t Classify(const arma::vec& vector);
     void BatchClassify(arma::mat& testset, std::string testlabelfilename);
     void LoadModelBatchClassify(arma::mat& testset, std::string modelfilename, std::string testlabelfilename);
     double getThreshold() { return model_.thresh_; }
-    index_t getSupportVectorCount() { return model_.num_sv_; }
+    size_t getSupportVectorCount() { return model_.num_sv_; }
     const arma::vec getSupportVectorCoefficients() { return model_.sv_coef_; }
     const arma::vec getWeightVector() { return model_.w_; }
 };

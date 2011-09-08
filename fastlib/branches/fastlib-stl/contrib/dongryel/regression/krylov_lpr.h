@@ -64,9 +64,9 @@ class KrylovLpr {
   /** @brief The permutation mapping indices of references_ to
    *         original order.
    */
-  ArrayList<index_t> old_from_new_references_;
+  ArrayList<size_t> old_from_new_references_;
 
-  ArrayList<index_t> new_from_old_references_;
+  ArrayList<size_t> new_from_old_references_;
 
   /** @brief The reference tree. */
   ReferenceTree *rroot_;
@@ -179,7 +179,7 @@ class KrylovLpr {
   void TestDualtreeComputation_
   (const Matrix &qset, const ArrayList<bool> *query_in_cg_loop,
    const bool confidence_band_computation_phase,
-   const Vector &reference_weights, index_t column_index, 
+   const Vector &reference_weights, size_t column_index, 
    const Matrix &approximated);
 
   /** @brief Initialize the bound statistics relevant to the right
@@ -253,7 +253,7 @@ class KrylovLpr {
    Vector *query_magnitude_weight_diagrams, Vector *query_influence_values) {
 
     // Loop over each query point and take the dot-product.
-    for(index_t i = 0; i < qset.n_cols(); i++) {
+    for(size_t i = 0; i < qset.n_cols(); i++) {
 
       // Make aliases of the current query point associated solution
       // vector.
@@ -315,7 +315,7 @@ class KrylovLpr {
   void ComputeRootMeanSquareDeviation_() {
     
     root_mean_square_deviation_ = 0;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       
       double diff_regression = rset_targets_[new_from_old_references_[i]] - 
 	leave_one_out_rset_regression_estimates_[i];
@@ -335,7 +335,7 @@ class KrylovLpr {
     // magnitudes of the weight diagram vectors at each reference
     // point.
     rset_first_degree_of_freedom_ = rset_second_degree_of_freedom_ = 0;
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       rset_first_degree_of_freedom_ += rset_influence_values_[i];
       rset_second_degree_of_freedom_ += rset_magnitude_weight_diagrams_[i] * 
 	rset_magnitude_weight_diagrams_[i];
@@ -345,7 +345,7 @@ class KrylovLpr {
     rset_variance_ = 0;
     
     // Loop over each reference point and add up the residual.
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       double prediction_error = 
 	rset_targets_[new_from_old_references_[i]] - 
 	rset_regression_estimates_[i];
@@ -380,7 +380,7 @@ class KrylovLpr {
     // Initialize the storage for the confidene bands.
     query_confidence_bands->Init(queries.n_cols());
     
-    for(index_t q = 0; q < queries.n_cols(); q++) {
+    for(size_t q = 0; q < queries.n_cols(); q++) {
       DRange &q_confidence_band = (*query_confidence_bands)[q];
       double spread;
       
@@ -421,7 +421,7 @@ class KrylovLpr {
   void ComputeWeightedVectorSum_
     (QueryTree *qroot, const Matrix &qset, const Vector &weights,
      const ArrayList<bool> *query_in_cg_loop, 
-     const bool confidence_band_computation_phase, index_t column_index, 
+     const bool confidence_band_computation_phase, size_t column_index, 
      Matrix &right_hand_sides_l, Matrix &right_hand_sides_e, 
      Vector &right_hand_sides_used_error, Vector &right_hand_sides_n_pruned,
      Matrix *leave_one_out_right_hand_sides_e) {
@@ -483,7 +483,7 @@ class KrylovLpr {
     int leaflen = fx_param_int(module_, "leaflen", 40);
     
     // Construct the query tree.
-    ArrayList<index_t> old_from_new_queries;
+    ArrayList<size_t> old_from_new_queries;
     QueryTree *qroot = tree::MakeKdTreeMidpoint<QueryTree>
       (qset, leaflen, &old_from_new_queries, NULL);
 
@@ -583,28 +583,28 @@ class KrylovLpr {
     // resulted from tree constructions
     Vector tmp_q_results;
     tmp_q_results.Init(query_regression_estimates->length());    
-    for(index_t i = 0; i < tmp_q_results.length(); i++) {
+    for(size_t i = 0; i < tmp_q_results.length(); i++) {
       tmp_q_results[old_from_new_queries[i]] =	
 	(*query_regression_estimates)[i];
     }
     query_regression_estimates->CopyValues(tmp_q_results);
 
     if(leave_one_out_query_regression_estimates != NULL) {
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      for(size_t i = 0; i < tmp_q_results.length(); i++) {
 	tmp_q_results[old_from_new_queries[i]] =	
 	  (*leave_one_out_query_regression_estimates)[i];
       }
       leave_one_out_query_regression_estimates->CopyValues(tmp_q_results);
     }
     if(query_magnitude_weight_diagrams != NULL) {
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      for(size_t i = 0; i < tmp_q_results.length(); i++) {
 	tmp_q_results[old_from_new_queries[i]] =	
 	  (*query_magnitude_weight_diagrams)[i];
       }
       query_magnitude_weight_diagrams->CopyValues(tmp_q_results);
     }
     if(query_influence_values != NULL) {
-      for(index_t i = 0; i < tmp_q_results.length(); i++) {
+      for(size_t i = 0; i < tmp_q_results.length(); i++) {
 	tmp_q_results[old_from_new_queries[i]] =
 	  (*query_influence_values)[i];
       }
@@ -670,7 +670,7 @@ class KrylovLpr {
       printf("Using the fixed bandwidth method...\n");
 
       double bandwidth = fx_param_double_req(NULL, "bandwidth");
-      for(index_t i = 0; i < kernels_.size(); i++) {	
+      for(size_t i = 0; i < kernels_.size(); i++) {	
 	kernels_[i].Init(bandwidth);
       }
     }
@@ -684,12 +684,12 @@ class KrylovLpr {
 	     knns);
 
       all_knn.Init(rset_, 20, knns);
-      ArrayList<index_t> resulting_neighbors;
+      ArrayList<size_t> resulting_neighbors;
       ArrayList<double> distances;
       
       all_knn.ComputeNeighbors(&resulting_neighbors, &distances);
 
-      for(index_t i = 0; i < distances.size(); i += knns) {
+      for(size_t i = 0; i < distances.size(); i += knns) {
 	kernels_[i / knns].Init(sqrt(distances[i + knns - 1]));
       }
     }
@@ -700,7 +700,7 @@ class KrylovLpr {
     rset_inv_norm_consts_.Init(rset_.n_cols());
     rset_inv_squared_norm_consts_.Init(rset_.n_cols());
     
-    for(index_t i = 0; i < rset_.n_cols(); i++) {
+    for(size_t i = 0; i < rset_.n_cols(); i++) {
       rset_target_divided_by_norm_consts_[i] = 
 	rset_targets_[i] / kernels_[i].CalcNormConstant(dimension_);
       rset_inv_norm_consts_[i] = 
@@ -743,7 +743,7 @@ class KrylovLpr {
   void get_regression_estimates(Vector *results) { 
     results->Init(rset_regression_estimates_.length());
     
-    for(index_t i = 0; i < rset_regression_estimates_.length(); i++) {
+    for(size_t i = 0; i < rset_regression_estimates_.length(); i++) {
       (*results)[i] = rset_regression_estimates_[i];
     }
   }
@@ -821,7 +821,7 @@ class KrylovLpr {
     // according to the shuffled order of the reference dataset.
     Vector tmp_rset_targets;
     tmp_rset_targets.Init(rset_targets_.length());
-    for(index_t j = 0; j < rset_targets_.length(); j++) {
+    for(size_t j = 0; j < rset_targets_.length(); j++) {
       tmp_rset_targets[j] = rset_targets_[old_from_new_references_[j]];
     }
     rset_targets_.CopyValues(tmp_rset_targets);
@@ -854,7 +854,7 @@ class KrylovLpr {
 			     "fast_lpr_output.txt")) != NULL) {
       stream = fopen(fname, "w+");
     }
-    for(index_t q = 0; q < rset_.n_cols(); q++) {
+    for(size_t q = 0; q < rset_.n_cols(); q++) {
       fprintf(stream, "%g %g %g %g %g %g\n", rset_confidence_bands_[q].lo,
 	      rset_regression_estimates_[q], rset_confidence_bands_[q].hi,
 	      leave_one_out_rset_regression_estimates_[q],

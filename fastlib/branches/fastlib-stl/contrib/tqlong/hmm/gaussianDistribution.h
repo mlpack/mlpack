@@ -16,12 +16,12 @@ class GaussianDistribution {
   double accDenom;
  public:
   GaussianDistribution(const Vector& mean, const Matrix& cov);
-  GaussianDistribution(index_t dim = 1);
+  GaussianDistribution(size_t dim = 1);
   GaussianDistribution(const GaussianDistribution& gd);
 	
   double logP(const Vector& x);	
   static void createFromCols(const Matrix& src,
-			     index_t col, GaussianDistribution* tmp);
+			     size_t col, GaussianDistribution* tmp);
   void Generate(Vector* x);
   void StartAccumulate();
   void EndAccumulate();
@@ -30,9 +30,9 @@ class GaussianDistribution {
   void Save(FILE* f);	
   const Vector& getMean() { return mean; }
   const Matrix& getCov() { return covariance; }
-  void InitMeanCov(index_t dim);
+  void InitMeanCov(size_t dim);
   void setMeanCov(const Vector& mean, const Matrix& cov);
-  index_t n_dim() { return mean.length(); }
+  size_t n_dim() { return mean.length(); }
 };
 
 #endif

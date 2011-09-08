@@ -13,7 +13,7 @@ class NmfEngine {
      sdp_rank_=fx_param_int(module_,  "sdp_rank", 5);
 		 new_dim_=fx_param_int(module_, "new_dimension", 3);
 		 Matrix data_mat;
-		 if (data::Load(data_file.c_str(), &data_mat)==SUCCESS_FAIL) {
+		 if (data::Load(data_file.c_str(), &data_mat)==false) {
        FATAL("Terminating...");
      }
      NOTIFY("Factoring a %i x %i matrix in %i x %i and %i x %i\n",
@@ -54,9 +54,9 @@ class NmfEngine {
      la::MulTransAInit(h_mat_, w_mat_, &v_rec);
      double error=0;
      double v_sum=0;
-     for(index_t i=0; i<values_.size(); i++) {
-       index_t r=rows_[i];
-       index_t c=columns_[i];
+     for(size_t i=0; i<values_.size(); i++) {
+       size_t r=rows_[i];
+       size_t c=columns_[i];
        error+=fabs(v_rec.get(r, c)-values_[i]);
        v_sum+=values_[i];
      }
@@ -80,23 +80,23 @@ class NmfEngine {
 	fx_module *module_;
   LBfgs<NmfObjective> engine_;
 	NmfObjective opt_function_;
-	ArrayList<index_t> rows_;
-	ArrayList<index_t> columns_;
+	ArrayList<size_t> rows_;
+	ArrayList<size_t> columns_;
 	ArrayList<double> values_;
-	index_t new_dim_;
-	index_t sdp_rank_;
+	size_t new_dim_;
+	size_t sdp_rank_;
 	Matrix w_mat_;
 	Matrix h_mat_;
-	index_t num_of_rows_; // number of unique rows, otherwise the size of W
-	index_t num_of_columns_; // number of unique columns, otherwise the size of H
+	size_t num_of_rows_; // number of unique rows, otherwise the size of W
+	size_t num_of_columns_; // number of unique columns, otherwise the size of H
   double reconstruction_error_;
  
 	void PreprocessData(Matrix &data_mat) {
 	  values_.Init();
 		rows_.Init();
 		columns_.Init();
-		for(index_t i=0; i<data_mat.n_rows(); i++) {
-		  for(index_t j=0; j< data_mat.n_cols(); j++) {
+		for(size_t i=0; i<data_mat.n_rows(); i++) {
+		  for(size_t j=0; j< data_mat.n_cols(); j++) {
 			  values_.PushBackCopy(data_mat.get(i, j));
 				rows_.PushBackCopy(i);
 				columns_.PushBackCopy(j);

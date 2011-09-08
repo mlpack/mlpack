@@ -43,7 +43,7 @@
 // Prune basis function when its alpha is greater than this
 const double ALPHA_MAX = 1.0e12;
 // Iteration number during training where we switch to 'analytic pruning'
-const index_t PRUNE_POINT = 50;
+const size_t PRUNE_POINT = 50;
 // Terminate estimation when no log-alpha value changes by more than this
 const double MIN_DELTA_LOGALPHA = 1.0e-3;
 
@@ -51,7 +51,7 @@ const double STOP_CRITERION = 1.0e-6;
 
 const double LAMBDA_MIN	= pow(2.0, -8.0);
 
-const index_t PM_MAXITS = 25;
+const size_t PM_MAXITS = 25;
 
 template<typename TKernel>
 class SBL_EST {
@@ -63,17 +63,17 @@ class SBL_EST {
  private:
   Kernel kernel_; /* kernel */
   const Dataset *dataset_; /* input data */
-  index_t n_data_; /* number of data samples */
+  size_t n_data_; /* number of data samples */
   Matrix matrix_; /* alias for the data matrix */
   Matrix PHI_;  /* kernel matrix with bias term in the first column */
-  //index_t n_rv_; /* number of relevance vectors */
+  //size_t n_rv_; /* number of relevance vectors */
   //Vector error_;
 
  public:
   SBL_EST() {}
   ~SBL_EST() {}
 
-  void Train(int learner_typeid, const Dataset* dataset_in, Vector &alpha_v, double &beta, index_t max_iter, ArrayList<index_t> &rv_index, ArrayList<double> &weights);
+  void Train(int learner_typeid, const Dataset* dataset_in, Vector &alpha_v, double &beta, size_t max_iter, ArrayList<size_t> &rv_index, ArrayList<double> &weights);
 
   Kernel& kernel() {
     return kernel_;
@@ -81,15 +81,15 @@ class SBL_EST {
 
  private:
 
-  void GetVector_(index_t i, Vector *v) const {
+  void GetVector_(size_t i, Vector *v) const {
     matrix_.MakeColumnSubvector(i, 0, matrix_.n_rows()-1, v);
   }
   
   void CalcKernels_() {
     PHI_.Init(n_data_, n_data_+1); // the first column is for b (bias)
     fprintf(stderr, "Kernel Start\n");
-    for (index_t i = 0; i < n_data_; i++) {
-      for (index_t j = 0; j < n_data_; j++) {
+    for (size_t i = 0; i < n_data_; i++) {
+      for (size_t j = 0; j < n_data_; j++) {
         Vector v_i;
         GetVector_(i, &v_i);
         Vector v_j;
@@ -101,9 +101,9 @@ class SBL_EST {
     fprintf(stderr, "Kernel Stop\n");
   }
 
-  void CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
+  void CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, size_t ct_non_zero);
   
-  void CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero);
+  void CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, size_t ct_non_zero);
 
 };
 
@@ -113,11 +113,11 @@ class SBL_EST {
 * @param: inputs
 */
 template<typename TKernel>
-void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vector &alpha_v, double &beta, int max_iter, ArrayList<index_t> &rv_index, ArrayList<double> &weights) {
+void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vector &alpha_v, double &beta, int max_iter, ArrayList<size_t> &rv_index, ArrayList<double> &weights) {
   dataset_ = dataset_in;
   matrix_.Alias(dataset_->matrix());
   n_data_ = matrix_.n_cols();
-  index_t i,j;
+  size_t i,j;
 
   /* weights corresponding to non zero alpha_v, dim(w_nz) == ct_non_zero x 1*/
   Matrix w_nz;
@@ -131,7 +131,7 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 
   Matrix train_values; // the vector that stores the values for data points, dim: n_data_ x 1
   train_values.Init(n_data_, 1);
-  index_t value_row_idx = dataset_in->n_features() - 1;
+  size_t value_row_idx = dataset_in->n_features() - 1;
   for(i=0; i<n_data_; i++)
     train_values.set(i, 0, dataset_in->get(value_row_idx, i) );
 
@@ -140,9 +140,9 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
   
   bool LastIter = false;
 
-  index_t ct_non_zero = 0;
+  size_t ct_non_zero = 0;
   /* Training Iterations */
-  for (index_t c=0; c<max_iter; c++) {
+  for (size_t c=0; c<max_iter; c++) {
     /* 1. Prune large values of alpha, get the shrinked set */
     ct_non_zero = 0;
     for(i=0; i<n_data_+1; i++) { // dim(alpha_v) == n_data_+1 x 1
@@ -261,7 +261,7 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
       }
       //alpha_nz_idx.Destruct();     
 
-      index_t ct = 0;
+      size_t ct = 0;
       for (i=0; i<ct_non_zero; i++) {
 	if (alpha_nz[i] != 0)
 	  ct ++;
@@ -317,8 +317,8 @@ void SBL_EST<TKernel>::Train(int learner_typeid, const Dataset* dataset_in, Vect
 * @param: inputs
 */
 template<typename TKernel>
-void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
-  index_t i;
+void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, size_t ct_non_zero) {
+  size_t i;
   Matrix Hessian; // dim(Hessian) == ct_non_zero x ct_non_zero
   Hessian.InitDiagonal(alpha_nz); // Hessian = diag(alpha_nz)
   Matrix temp_mat_a; // dim(temp_mat) == ct_non_zero x ct_non_zero
@@ -355,8 +355,8 @@ void SBL_EST<TKernel>::CalcLldRegression(Matrix &train_values, Matrix &PHI_t_nz,
 * @param: inputs
 */
 template<typename TKernel>
-void SBL_EST<TKernel>::CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, index_t ct_non_zero) {
-  index_t i;
+void SBL_EST<TKernel>::CalcLldClassification(Matrix &train_values, Matrix &PHI_nz, Vector &alpha_nz, Matrix &w_nz, Matrix &U, double &ED, double &beta, double &betaED, double &logBeta, size_t ct_non_zero) {
+  size_t i;
 
   /* Initialization */
 

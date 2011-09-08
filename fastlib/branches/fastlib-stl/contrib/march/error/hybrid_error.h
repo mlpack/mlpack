@@ -59,20 +59,20 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
   struct datanode* module_;
   
   // The total number of points
-  index_t num_points_;
+  size_t num_points_;
   
   // The dimension
-  index_t dimension_;
+  size_t dimension_;
   
   ErrorTree* tree_;
   
-  ArrayList<index_t> old_from_new_;
+  ArrayList<size_t> old_from_new_;
   
   double max_error_;
   double min_error_;
   double steepness_;
   
-  index_t num_prunes_;
+  size_t num_prunes_;
   
   
   /**
@@ -81,7 +81,7 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
    *
    * I don't think I'll worry about normalization for now.  
    */
-  double ComputeGaussian_(index_t q, index_t r) {
+  double ComputeGaussian_(size_t q, size_t r) {
     
     Vector q_vec;
     centers_.MakeColumnVector(q, &q_vec);
@@ -107,12 +107,12 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     
     double min_query_val = DBL_MAX;
     
-    for (index_t query_index = query->begin(); query_index < query->end(); 
+    for (size_t query_index = query->begin(); query_index < query->end(); 
          query_index++) {
       
       double query_value = results_[query_index];
       
-      for (index_t ref_index = reference->begin(); ref_index < reference->end(); 
+      for (size_t ref_index = reference->begin(); ref_index < reference->end(); 
            ref_index++) {
         
         query_value = query_value + ComputeGaussian_(query_index, ref_index);
@@ -130,8 +130,8 @@ typedef BinarySpaceTree<DHrectBound<2>, Matrix, TErrorStat> ErrorTree;
     
   query->stat().set_query_lower_bound(min_query_val);
     
-    /*index_t remainder = query->stat().remaining_references();
-    index_t reference_count = reference->count();
+    /*size_t remainder = query->stat().remaining_references();
+    size_t reference_count = reference->count();
     DEBUG_ASSERT(remainder - reference_count >= 0);
     query->stat().set_remaining_references(remainder - reference_count);
     */
@@ -289,7 +289,7 @@ public:
     results_vec->Init(num_points_);
     
     // unpermute the results for analysis
-    for (index_t i = 0; i < num_points_; i++) {
+    for (size_t i = 0; i < num_points_; i++) {
     
       (*results_vec)[old_from_new_[i]] = results_[i];
     

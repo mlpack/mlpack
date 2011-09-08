@@ -73,7 +73,7 @@ void DoSvmNormalize(Dataset* dataset) {
   sums.Init(dataset->n_features() - 1);
   sums.SetZero();
 
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
     dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &s);
@@ -83,7 +83,7 @@ void DoSvmNormalize(Dataset* dataset) {
   }
   
   la::Scale(-1.0 / dataset->n_points(), &sums);
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     Vector d;
     m.MakeColumnVector(i, &d);
     la::AddTo(sums, &d);
@@ -97,10 +97,10 @@ void DoSvmNormalize(Dataset* dataset) {
   Matrix u; // eigenvectors
   Matrix ui; // the inverse of eigenvectors
 
-  PASSED(la::EigenvectorsInit(cov, &d, &u));
+  (la::EigenvectorsInit(cov, &d, &u));
   la::TransposeInit(u, &ui);
 
-  for (index_t i = 0; i < d.length(); i++) {
+  for (size_t i = 0; i < d.length(); i++) {
     d[i] = 1.0 / sqrt(d[i] / (dataset->n_points() - 1));
   }
 
@@ -112,7 +112,7 @@ void DoSvmNormalize(Dataset* dataset) {
   Matrix final;
   la::MulInit(cov_inv_half, m, &final);
 
-  for (index_t i = 0; i < dataset->n_points(); i++) {
+  for (size_t i = 0; i < dataset->n_points(); i++) {
     Vector s;
     Vector d;
     dataset->matrix().MakeColumnSubvector(i, 0, dataset->n_features()-1, &d);
@@ -133,7 +133,7 @@ void DoSvmNormalize(Dataset* dataset) {
 */
 void GenerateArtificialDataset(Dataset* dataset){
   Matrix m;
-  index_t n = fx_param_int(NULL, "n", 30);
+  size_t n = fx_param_int(NULL, "n", 30);
   double offset = fx_param_double(NULL, "offset", 0.0);
   double range = fx_param_double(NULL, "range", 1.0);
   double slope = fx_param_double(NULL, "slope", 1.0);
@@ -143,7 +143,7 @@ void GenerateArtificialDataset(Dataset* dataset){
     
   // 2 dimensional dataset, size n, 3 classes
   m.Init(3, n);
-  for (index_t i = 0; i < n; i += 3) {
+  for (size_t i = 0; i < n; i += 3) {
     double x;
     double y;
     
@@ -180,7 +180,7 @@ void GenerateArtificialDataset(Dataset* dataset){
 int LoadData(Dataset* dataset, String datafilename){
   if (fx_param_exists(NULL, datafilename)) {
     // when a data file is specified, use it.
-    if ( !PASSED(dataset->InitFromFile( fx_param_str_req(NULL, datafilename) )) ) {
+    if ( !(dataset->InitFromFile( fx_param_str_req(NULL, datafilename) )) ) {
     fprintf(stderr, "Couldn't open the data file.\n");
     return 0;
     }

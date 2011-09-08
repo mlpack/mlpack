@@ -26,13 +26,13 @@
  *  Class Factor:
  *    typedef RangeType;
  *    RangeType GetRange(i_arg);
- *    index_t n_agrs();      
+ *    size_t n_agrs();      
  *         --> to be compared to bgraph_.n_factornodes(i_factor)
  *    double GetFactorVal(); 
  *         --> compute the factor given its arguments
- *    void SetArg(index_t i_arg, RangeType val);
+ *    void SetArg(size_t i_arg, RangeType val);
  *         --> to set certain argument of the factor
- *    RangeType GetArg(index_t i_arg);
+ *    RangeType GetArg(size_t i_arg);
  *
  */
 template <class Node, class Factor, 
@@ -74,8 +74,8 @@ class FactorGraph {
    *  and factor-to-node connections 
    */
   void Init(const ArrayList<NodeType>& nodes, const ArrayList<FactorType>& factors,
-	    const ArrayList<ArrayList<index_t> >& factor2node) {
-    for (index_t i_factor = 0; i_factor < factors.size(); i_factor++)
+	    const ArrayList<ArrayList<size_t> >& factor2node) {
+    for (size_t i_factor = 0; i_factor < factors.size(); i_factor++)
       DEBUG_ASSERT(factors[i_factor].n_args() == factor2node[i_factor].size());
 
     nodes_.InitCopy(nodes);
@@ -86,12 +86,12 @@ class FactorGraph {
     bgraph_.Init(nodes_.size(), factor2node);
 
     DEBUG_ASSERT(factors_.size() == bgraph_.n_factors());
-    for (index_t i_factor = 0; i_factor < bgraph_.n_factors(); i_factor++) {
+    for (size_t i_factor = 0; i_factor < bgraph_.n_factors(); i_factor++) {
       DEBUG_ASSERT(factors_[i_factor].n_args() == 
 		   bgraph_.n_factornodes(i_factor));
-      for (index_t i_edge = 0; 
+      for (size_t i_edge = 0; 
 	   i_edge < bgraph_.n_factornodes(i_factor); i_edge++) {
-	index_t i_node = bgraph_.node(i_factor, i_edge);
+	size_t i_node = bgraph_.node(i_factor, i_edge);
 	DEBUG_ASSERT(factors_[i_factor].GetRange(i_edge) ==
 		     nodes_[i_node].GetRange());
       }
@@ -101,17 +101,17 @@ class FactorGraph {
   }
 
   /** Calculate factor value using arguments stored in its args_ */
-  double GetFactorVal(index_t i_factor) {
+  double GetFactorVal(size_t i_factor) {
     double val = factors_[i_factor].GetVal();
     //printf("    getval = %f\n", val);
     return val;
   }
 
-  inline FactorType& GetFactor(index_t i_factor) {
+  inline FactorType& GetFactor(size_t i_factor) {
     return factors_[i_factor];
   }
 
-  inline NodeType& GetNode(index_t i_node) {
+  inline NodeType& GetNode(size_t i_node) {
     return nodes_[i_node];
   }
 
@@ -120,30 +120,30 @@ class FactorGraph {
   }
 
   /** Set arguments */
-  //  void SetArgs(index_t i_factor, index_t i_edge, index_t val) {
+  //  void SetArgs(size_t i_factor, size_t i_edge, size_t val) {
   //    args_[i_factor][i_edge] = val;
   //  }
 
   /** Set arguments from observed values */
-  void SetArgsFromObserved(index_t i_factor) {
-    for (index_t i_edge = 0; 
+  void SetArgsFromObserved(size_t i_factor) {
+    for (size_t i_edge = 0; 
 	 i_edge < bgraph_.n_factornodes(i_factor); i_edge++) {
-      index_t i_node = bgraph_.node(i_factor, i_edge);
+      size_t i_node = bgraph_.node(i_factor, i_edge);
       factors_[i_factor].SetArg(i_edge, observeds_[i_node]);
     }
   }
 
   /** Set observed values */
-  void SetObserveds(const ArrayList<index_t>& observeds) {
+  void SetObserveds(const ArrayList<size_t>& observeds) {
     DEBUG_ASSERT(observeds_.size() == observeds.size());
-    for (index_t i_node = 0; i_node < observeds_.size(); i_node++)
+    for (size_t i_node = 0; i_node < observeds_.size(); i_node++)
       observeds_[i_node] = observeds[i_node];
   }
 
   /** Set observed values from string symbol */
   void SetObserveds(const ArrayList<String>& observed_syms) {
     DEBUG_ASSERT(observeds_.size() == observed_syms.size());
-    for (index_t i_node = 0; i_node < observeds_.size(); i_node++)
+    for (size_t i_node = 0; i_node < observeds_.size(); i_node++)
       observeds_[i_node] = nodes_[i_node].GetVal(observed_syms[i_node]);
   }
 
@@ -160,7 +160,7 @@ class FactorGraph {
    */
   double jointProduct() {
     double rval = 1;
-    for (index_t i_factor = 0; i_factor < factors_.size(); i_factor++) {
+    for (size_t i_factor = 0; i_factor < factors_.size(); i_factor++) {
       SetArgsFromObserved(i_factor);
       rval *= GetFactorVal(i_factor);
     }

@@ -6,23 +6,23 @@
 
 namespace GenHypercubeTreeUtil {
 
-  unsigned int FindParent(unsigned int index, index_t dimension) {
+  unsigned int FindParent(unsigned int index, size_t dimension) {
     return index >> dimension;
   }
 
-  unsigned int FindLowestDescendant(unsigned int index, index_t dimension) {
+  unsigned int FindLowestDescendant(unsigned int index, size_t dimension) {
     return index << dimension;
   }
 
   template<typename TreeType>
   TreeType *FindNode
   (const ArrayList< ArrayList<TreeType *> > 
-   &nodes_in_each_level, unsigned int node_index, index_t level) {
+   &nodes_in_each_level, unsigned int node_index, size_t level) {
 
     const ArrayList<TreeType *> &candidate_list = nodes_in_each_level[level];
     TreeType *candidate = NULL;
 
-    for(index_t i = 0; i < candidate_list.size(); i++) {
+    for(size_t i = 0; i < candidate_list.size(); i++) {
       if((candidate_list[i])->node_index() == node_index) {
 	candidate = candidate_list[i];
 	break;
@@ -33,7 +33,7 @@ namespace GenHypercubeTreeUtil {
 
   template<typename TreeType>
   void NodeListSetDifference
-  (index_t dimension,
+  (size_t dimension,
    const ArrayList<TreeType * > &first_list,
    const ArrayList<TreeType * > &second_list,
    const ArrayList<TreeType * > &third_list,
@@ -43,12 +43,12 @@ namespace GenHypercubeTreeUtil {
     // Initialize the set difference list.
     set_difference->Init();
     
-    for(index_t i = 0; i < filter_list.size(); i++) {
+    for(size_t i = 0; i < filter_list.size(); i++) {
       
       TreeType *node_from_filter_list = filter_list[i];
       bool flag = false;
 
-      for(index_t j = 0; j < first_list.size(); j++) {
+      for(size_t j = 0; j < first_list.size(); j++) {
 	TreeType *node_from_first_list = first_list[j];
 
 	int level_difference = node_from_first_list->level() -
@@ -70,7 +70,7 @@ namespace GenHypercubeTreeUtil {
 	continue;
       }
       
-      for(index_t j = 0; j < second_list.size(); j++) {
+      for(size_t j = 0; j < second_list.size(); j++) {
 	TreeType *node_from_second_list = second_list[j];
 	int level_difference = node_from_second_list->level() -
 	  node_from_filter_list->level();
@@ -88,7 +88,7 @@ namespace GenHypercubeTreeUtil {
 	continue;
       }
 
-      for(index_t j = 0; j < third_list.size(); j++) {
+      for(size_t j = 0; j < third_list.size(); j++) {
 	TreeType *node_from_third_list = third_list[j];
 	int level_difference = node_from_third_list->level() -
 	  node_from_filter_list->level();
@@ -114,7 +114,7 @@ namespace GenHypercubeTreeUtil {
 
   template<typename Statistics>
   void FindColleagues
-  (index_t dimension, 
+  (size_t dimension, 
    proximity::GenHypercubeTree<Statistics>
    *node, const ArrayList< 
    ArrayList<proximity::GenHypercubeTree<Statistics> * > > 
@@ -139,11 +139,11 @@ namespace GenHypercubeTreeUtil {
        dimension, &neighbors_of_parent);
       
     // Find the children of the neighbors of the parent node.
-    for(index_t i = 0; i < neighbors_of_parent.size(); i++) {
+    for(size_t i = 0; i < neighbors_of_parent.size(); i++) {
       
       proximity::GenHypercubeTree<Statistics> *given_neighbor_of_parent = 
 	neighbors_of_parent[i];
-      for(index_t j = 0; j < given_neighbor_of_parent->num_children(); j++) {
+      for(size_t j = 0; j < given_neighbor_of_parent->num_children(); j++) {
 	proximity::GenHypercubeTree<Statistics> *child_node = 
 	  given_neighbor_of_parent->get_child(j);
 	
@@ -188,7 +188,7 @@ namespace GenHypercubeTreeUtil {
 	  potentially_fake_leaf_neighbor_node;
       }
       else {
-	for(index_t i = 0; i < 
+	for(size_t i = 0; i < 
 	      potentially_fake_leaf_neighbor_node->num_children(); i++) {
 	  
 	  TreeType *potential_node =
@@ -203,7 +203,7 @@ namespace GenHypercubeTreeUtil {
 
   template<typename TreeType>
   void FindAdjacentLeafNode
-  (index_t dimension,
+  (size_t dimension,
    const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level,
    TreeType *leaf_node,
    ArrayList<TreeType *> *adjacent_children,
@@ -223,7 +223,7 @@ namespace GenHypercubeTreeUtil {
     
     // Traverse each fake neighbor and expand to find the real
     // neighboring nodes.
-    for(index_t potentially_fake_leaf_neighbor = 0;
+    for(size_t potentially_fake_leaf_neighbor = 0;
 	potentially_fake_leaf_neighbor < 
 	  neighbor_indices_to_be_filtered.size();
 	potentially_fake_leaf_neighbor++) {
@@ -241,7 +241,7 @@ namespace GenHypercubeTreeUtil {
       // Otherwise, we traverse up to find the parent.
       else {
 	
-	index_t current_level = leaf_node->level();
+	size_t current_level = leaf_node->level();
 	unsigned int potential_node_index = 
 	  neighbor_indices_to_be_filtered[potentially_fake_leaf_neighbor];
 	TreeType *potential_candidate = NULL;
@@ -263,7 +263,7 @@ namespace GenHypercubeTreeUtil {
 
 	  // Check to see whether there is no duplicate...
 	  bool duplicate_flag = false;
-	  for(index_t duplicate = 0; duplicate < adjacent_children->size();
+	  for(size_t duplicate = 0; duplicate < adjacent_children->size();
 	      duplicate++) {
 	    if(potential_candidate == (*adjacent_children)[duplicate]) {
 	      duplicate_flag = true;
@@ -289,14 +289,14 @@ namespace GenHypercubeTreeUtil {
 
     do {
       unsigned int sum = 0;
-      for(index_t d = 0; d < indices_copy.length(); d++) {
+      for(size_t d = 0; d < indices_copy.length(); d++) {
 	sum += indices_copy[d];
       }
       if(sum == 0) {
 	break;
       }
 
-      for(index_t d = 0; d < indices_copy.length(); d++) {
+      for(size_t d = 0; d < indices_copy.length(); d++) {
 	result += (indices_copy[d] % 2) << 
 	  (indices_copy.length() - d - 1 + offset);
 	indices_copy[d] = indices_copy[d] >> 1;
@@ -311,12 +311,12 @@ namespace GenHypercubeTreeUtil {
   void BitDeinterleaving(unsigned int index, unsigned int level,
 			 GenVector<unsigned int> &indices) {
     
-    for(index_t d = 0; d < indices.length(); d++) {
+    for(size_t d = 0; d < indices.length(); d++) {
       indices[d] = 0;
     }
     unsigned int loop = 0;
     while(index > 0 || level > 0) {
-      for(index_t d = indices.length() - 1; d >= 0; d--) {
+      for(size_t d = indices.length() - 1; d >= 0; d--) {
 	indices[d] = (1 << loop) * (index % 2) + indices[d];
 	index = index >> 1;
       }      
@@ -371,7 +371,7 @@ namespace GenHypercubeTreeUtil {
   }
 
   void FindNeighborsInNonAdaptiveGenHypercubeTree
-  (unsigned int index, unsigned int level, index_t dimension, 
+  (unsigned int index, unsigned int level, size_t dimension, 
    ArrayList<unsigned int> *neighbor_indices) {
 
     // Initialize the neighbor indices.
@@ -384,7 +384,7 @@ namespace GenHypercubeTreeUtil {
     upper_limit.Init(dimension);
     BitDeinterleaving(index, level, tmp_vector);
     
-    for(index_t d = 0; d < dimension; d++) {
+    for(size_t d = 0; d < dimension; d++) {
       if(tmp_vector[d] > 0) {
 	lower_limit[d] = tmp_vector[d] - 1;
       }
@@ -408,7 +408,7 @@ namespace GenHypercubeTreeUtil {
   template<typename TreeType>
   void FindNeighborsInAdaptiveGenHypercubeTree
   (const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level,
-   unsigned int index, index_t level, index_t dimension, 
+   unsigned int index, size_t level, size_t dimension, 
    ArrayList<TreeType * > *neighbor_nodes) {
     
     // Initialize the node list.
@@ -419,7 +419,7 @@ namespace GenHypercubeTreeUtil {
 					       &unfiltered_neighbor_indices);
 
     // Now filter the list based on its existence.
-    for(index_t i = 0; i < unfiltered_neighbor_indices.size(); i++) {
+    for(size_t i = 0; i < unfiltered_neighbor_indices.size(); i++) {
       TreeType *node =
 	FindNode(nodes_in_each_level, unfiltered_neighbor_indices[i], level);
       
@@ -432,7 +432,7 @@ namespace GenHypercubeTreeUtil {
   template<typename TreeType>
   void FindFourthList
   (const ArrayList< ArrayList<TreeType *> > &nodes_in_each_level, 
-   unsigned int index, index_t level, index_t dimension,
+   unsigned int index, size_t level, size_t dimension,
    const ArrayList<TreeType * > &first_list,
    const ArrayList<TreeType * > &second_list,
    const ArrayList<TreeType * > &third_list,

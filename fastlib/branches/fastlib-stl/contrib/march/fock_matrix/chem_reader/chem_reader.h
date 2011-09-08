@@ -21,8 +21,8 @@ namespace chem_reader {
    *
    * Assumes that the rest of the file has been stripped away.
    */
-  success_t ReadQChemDensity(const char* filename, Matrix* mat, 
-                             index_t mat_size);
+  bool ReadQChemDensity(const char* filename, Matrix* mat, 
+                             size_t mat_size);
   
   
   

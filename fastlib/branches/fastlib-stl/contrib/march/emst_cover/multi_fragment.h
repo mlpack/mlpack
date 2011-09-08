@@ -51,11 +51,11 @@ private:
     
   private:
     
-    index_t component_membership_;
+    size_t component_membership_;
     
   public:
     
-    void Init(const Matrix& dataset, index_t start, index_t count) {
+    void Init(const Matrix& dataset, size_t start, size_t count) {
       
       if (count == 1) {
         
@@ -70,18 +70,18 @@ private:
       
     } // leaf init
     
-    void Init(const Matrix& dataset, index_t start, index_t count,
+    void Init(const Matrix& dataset, size_t start, size_t count,
               const MFStat& left_stat, const MFStat& right_stat) {
       
       Init(dataset, start, count);
       
     } // non leaf Init() 
     
-    void set_component_membership(index_t membership) {
+    void set_component_membership(size_t membership) {
       component_membership_ = membership;
     }
     
-    index_t component_membership() {
+    size_t component_membership() {
       return component_membership_; 
     }
     
@@ -94,17 +94,17 @@ private:
     
   private:
     
-    index_t point_in_;
-    index_t point_out_;
+    size_t point_in_;
+    size_t point_out_;
     //double dist_;
     
   public:
 
-    index_t point_in() {
+    size_t point_in() {
       return point_in_;
     }
     
-    index_t point_out() {
+    size_t point_out() {
       return point_out_; 
     }
     
@@ -118,7 +118,7 @@ private:
       return (connect.Find(point_in_) != connect.Find(point_out_)); 
     }
     
-    void Init(index_t pt_in, index_t pt_out) {
+    void Init(size_t pt_in, size_t pt_out) {
       point_in_ = pt_in;
       point_out_ = pt_out;
       //dist_ = distance;
@@ -132,26 +132,26 @@ private:
   MFTree* tree_;
   ArrayList<EdgePair> edges_;
   fx_module* mod_;
-  index_t number_of_points_;
-  index_t number_of_edges_;
+  size_t number_of_points_;
+  size_t number_of_edges_;
   UnionFind connections_;
   Matrix data_points_;
   
-  ArrayList<index_t> old_from_new_permutation_;
+  ArrayList<size_t> old_from_new_permutation_;
   
   double total_dist_;
   
   // keeps the smallest fragment
-  MinHeap<index_t, index_t> fragment_size_heap_;
+  MinHeap<size_t, size_t> fragment_size_heap_;
   // fragment_sizes_[i] is the number of points in fragment i
   // is -1 if i is no longer a valid fragment
-  ArrayList<index_t> fragment_sizes_;
+  ArrayList<size_t> fragment_sizes_;
   
   ArrayList<MinHeap<double, CandidateEdge> > fragment_queues_;
   
-  //ArrayList<index_t> candidate_neighbors_;
+  //ArrayList<size_t> candidate_neighbors_;
   
-  void AddEdge_(index_t e1, index_t e2, double distance) {
+  void AddEdge_(size_t e1, size_t e2, double distance) {
     
     DEBUG_ASSERT(connections_.Find(e1) != connections_.Find(e2));
     
@@ -177,10 +177,10 @@ private:
   } // AddEdge_
   
   
-  void FindNeighbor_(MFTree* tree, const Vector& point, index_t point_index, 
-                     index_t* cand, double* dist);
+  void FindNeighbor_(MFTree* tree, const Vector& point, size_t point_index, 
+                     size_t* cand, double* dist);
   
-  void UpdateMemberships_(MFTree* tree, index_t point_index);
+  void UpdateMemberships_(MFTree* tree, size_t point_index);
   
   
   struct SortEdgesHelper_ {
@@ -202,7 +202,7 @@ private:
     DEBUG_ASSERT(number_of_edges_ == number_of_points_ - 1);
     results->Init(3, number_of_edges_);
     
-    for (index_t i = 0; i < (number_of_points_ - 1); i++) {
+    for (size_t i = 0; i < (number_of_points_ - 1); i++) {
       
       edges_[i].set_lesser_index(old_from_new_permutation_[edges_[i]
                                                            .lesser_index()]);
@@ -221,7 +221,7 @@ private:
     
   } // EmitResults_
   
-  void MergeQueues_(index_t comp1, index_t comp2);
+  void MergeQueues_(size_t comp1, size_t comp2);
 
   
 public:
@@ -234,7 +234,7 @@ public:
     
     fx_timer_start(mod_, "tree_building");
     
-    index_t leaf_size = fx_param_int(mod_, "leaf_size", 1);
+    size_t leaf_size = fx_param_int(mod_, "leaf_size", 1);
     
     tree_ = tree::MakeKdTreeMidpoint<MFTree>
     (data_points_, leaf_size, &old_from_new_permutation_, NULL);
@@ -255,7 +255,7 @@ public:
     fragment_sizes_.Init(number_of_points_);
     fragment_queues_.Init(number_of_points_);
     
-    for (index_t i = 0; i < number_of_points_; i++) {
+    for (size_t i = 0; i < number_of_points_; i++) {
       
       fragment_size_heap_.Put(1, i);
       fragment_sizes_[i] = 1;

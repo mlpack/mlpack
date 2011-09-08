@@ -40,7 +40,7 @@ class KFoldSplitter {
   }
   
   void Split() {
-    ArrayList<index_t> permutation;
+    ArrayList<size_t> permutation;
   
     if (randomized_) {
       math::MakeRandomPermutation(data_.n_points(), &permutation);

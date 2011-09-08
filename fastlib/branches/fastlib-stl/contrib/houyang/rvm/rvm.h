@@ -103,9 +103,9 @@ class RVM {
 
 
   /* total number of relevance vectors */
-  index_t total_num_rv_;
+  size_t total_num_rv_;
   /* relevance vector list to store the indices (in the training set) of relevance vectors */
-  ArrayList<index_t> rv_index_;
+  ArrayList<size_t> rv_index_;
 
   /* RVM parameters, same for every binary model */
   struct RVM_PARAMETERS {
@@ -114,7 +114,7 @@ class RVM {
     int kerneltypeid_;
     double initalpha_;
     double beta_;
-    index_t max_iter_;
+    size_t max_iter_;
   };
   RVM_PARAMETERS param_;
 
@@ -131,11 +131,11 @@ class RVM {
      e.g. [0.0,1.0,2.0] for a 3-class dataset */
   ArrayList<double> train_labels_list_;
   /* array of label indices, after grouping. e.g. [c1[0,5,6,7,10,13,17],c2[1,2,4,8,9],c3[...]]*/
-  ArrayList<index_t> train_labels_index_;
+  ArrayList<size_t> train_labels_index_;
   /* counted number of label for each class. e.g. [7,5,8]*/
-  ArrayList<index_t> train_labels_ct_;
+  ArrayList<size_t> train_labels_ct_;
   /* start positions of each classes in the training label list. e.g. [0,7,12] */
-  ArrayList<index_t> train_labels_startpos_;
+  ArrayList<size_t> train_labels_startpos_;
 
  public:
   typedef TKernel Kernel;
@@ -188,7 +188,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
   else if (learner_typeid_ == 1) { // RVM Regression
     Vector values; // the vector that stores the values for data points
     values.Init(num_data_);
-    for(index_t i=0; i<num_data_; i++)
+    for(size_t i=0; i<num_data_; i++)
       values[i] = dataset.get(dataset.n_features()-1, i);
     param_.beta_ = 1 / pow(math::Std(values)/10.0, 2);
   }
@@ -225,7 +225,7 @@ void RVM<TKernel>::Init(int learner_typeid, const Dataset& dataset, datanode *mo
 */
 template<typename TKernel>
 void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanode *module) {
-  index_t i;
+  size_t i;
   // Initialize parameters
   Init(learner_typeid, dataset, module);
 
@@ -233,7 +233,7 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanod
   /* Note: it has the same index as the training !!! */
   ArrayList<bool> trainset_rv_indicator;
   trainset_rv_indicator.Init(dataset.n_points());
-  for (index_t i=0; i<dataset.n_points(); i++)
+  for (size_t i=0; i<dataset.n_points(); i++)
     trainset_rv_indicator[i] = false;
 
   SBL_EST<Kernel> sbl_est;
@@ -278,7 +278,7 @@ void RVM<TKernel>::InitTrain(int learner_typeid, const Dataset& dataset, datanod
 */
 template<typename TKernel>
 double RVM<TKernel>::Predict(int learner_typeid, const Vector& datum) {
-  index_t i, j;
+  size_t i, j;
   double value_predict = 0.0;
 
   // for multiclass classification, output: predicted class label
@@ -287,7 +287,7 @@ double RVM<TKernel>::Predict(int learner_typeid, const Vector& datum) {
     Vector values_clsf;
     values_clsf.Init(num_classes_);
     Vector relevance_vector_i;
-    index_t i_rv = 0;
+    size_t i_rv = 0;
     for (i=0; i < num_classes_; i++) {
       for (j=0; j < train_labels_ct_[i]; j++ ) {
 	if ( alpha_v_[ train_labels_startpos_[i]+j ] != 0 ) {	  
@@ -343,9 +343,9 @@ void RVM<TKernel>::BatchPredict(int learner_typeid, Dataset& testset, String tes
     fprintf(stderr, "Cannot save test results to file!");
     return;
   }
-  //index_t err_ct = 0;
+  //size_t err_ct = 0;
   num_features_ = testset.n_features()-1;                
-  for (index_t i = 0; i < testset.n_points(); i++) {
+  for (size_t i = 0; i < testset.n_points(); i++) {
     Vector testvec;
     testset.matrix().MakeColumnSubvector(i, 0, num_features_, &testvec);
     double testresult = Predict(learner_typeid, testvec);
@@ -389,7 +389,7 @@ void RVM<TKernel>::SaveModel_(int learner_typeid, String modelfilename) {
     fprintf(stderr, "Cannot save trained model to file!");
     return;
   }
-  index_t i, j;
+  size_t i, j;
 
   if (learner_typeid_ == 0) {
     fprintf(fp, "rvm_type rvm_c\n"); // RVM classification
@@ -447,7 +447,7 @@ void RVM<TKernel>::LoadModel_(int learner_typeid, String modelfilename) {
     return;
   }
   char cmd[80]; 
-  index_t i, j;
+  size_t i, j;
   int temp_d; double temp_f;
 
   while (1) {
