@@ -111,52 +111,13 @@ typedef size_t index_t;
 # define LI "u"
 #endif
 
-/* Tools for FASTlib stderr messages, warnings, and errors. */
-
-/** Whether to segfault instead of calling C's abort(). */
-extern int segfault_on_abort;
-/** Whether to treat nonfatal warnings as fatal. */
-extern int abort_on_nonfatal;
-/** Whether to wait for user input after nonfatal warnings. */
-extern int pause_on_nonfatal;
-/** Whether to print call locations for notifications. */
-extern int print_notify_locs;
-
-/** Different types of messages FASTlib prints to stderr. */
-typedef enum {
-  /** Message for an unrecoverable error. */
-  FL_MSG_FATAL = 0,
-  /** Message for a potentially recoverable warning. */
-  FL_MSG_NONFATAL = 1,
-  /** Message for a significant but non-problematic event. */
-  FL_MSG_NOTIFY_STAR = 2,
-  /** Message for a standard, non-problematic event. */
-  FL_MSG_NOTIFY = 3
-} fl_msg_t;
-
-/** Default markers for FASTlib messages. */
-extern char fl_msg_marker[];
-/** Default colors for FASTlib message markers. */
-extern const char *fl_msg_color[];
-
-/** Implementation for FATAL. */
-__attribute__((noreturn, format(printf, 4, 5)))
-void fl_print_fatal_msg(const char *file, const char *func, const int line,
-                        const char* format, ...);
-
-/** Implementation for NONFATAL, NOTIFY_STAR, and NOTIFY. */
-__attribute__((format(printf, 5, 6)))
-void fl_print_msg(const char *file, const char *func, const int line,
-                  fl_msg_t msg_type, const char* format, ...);
-
-
 typedef enum {
   /** Upper-bound value indicating failed operation. */
-  SUCCESS_FAIL = 31,
+  SUCCESS_FAIL = 1,
   /** A generic warning value. */
-  SUCCESS_WARN = 48,
+  SUCCESS_WARN = 2,
   /** Lower-bound value indicating successful operation. */
-  SUCCESS_PASS = 96
+  SUCCESS_PASS = 0
 } success_t;
 
 /**
@@ -164,50 +125,14 @@ typedef enum {
  *
  * Distinct from !FAILED(x).  Optimized for the passing case.
  */
-#define PASSED(x) (((x) >= SUCCESS_PASS))
+#define PASSED(x) (((x) == SUCCESS_PASS))
 
 /**
  * True on SUCCESS_FAIL or less; false otherwise.
  *
  * Distinct from !PASSED(x).  Optimized for the non-failing case.
  */
-#define FAILED(x) (((x) <= SUCCESS_FAIL))
-
-/**
- * Asserts that an operation passes; otherwise, aborts with a given
- * message.
- *
- * This optimized check occurs regardless of debug mode.
- */
-#define MUST_PASS_MSG(x, msg_params...) \
-    ((x >= SUCCESS_PASS) ? NOP : FATAL(msg_params))
-
-/**
- * Asserts that an operation passes; otherwise, aborts with a standard
- * message.
- *
- * This optimized check occurs regardless of debug mode.
- */
-#define MUST_PASS(x) \
-    MUST_PASS_MSG(x, "MUST_PASS failed: %s", #x)
-
-/**
- * Asserts that an operation does not fail; otherwise, aborts with a
- * given message.
- *
- * This optimized check occurs regardless of debug mode.
- */
-#define MUST_NOT_FAIL_MSG(x, msg_params...) \
-    ((x > SUCCESS_FAIL) ? NOP : FATAL(msg_params))
-
-/**
- * Asserts that an operation does not fail; otherwise, aborts with a
- * standard message.
- *
- * This optimized check occurs regardless of debug mode.
- */
-#define MUST_NOT_FAIL(x) \
-    MUST_NOT_FAIL_MSG(x, "MUST_NOT_FAIL failed: %s", #x)
+#define FAILED(x) (((x) == SUCCESS_FAIL))
 
 /** Converts C library non-negative success into a success_t. */
 #define SUCCESS_FROM_C(x) (((x) < 0) ? SUCCESS_FAIL : SUCCESS_PASS)

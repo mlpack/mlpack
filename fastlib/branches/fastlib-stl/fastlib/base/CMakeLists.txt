@@ -18,7 +18,6 @@ set(SOURCES
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
    common.h
-   common.c
    compiler.h
    fortran.h
 )
