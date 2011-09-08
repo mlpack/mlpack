@@ -69,8 +69,8 @@ class MapMatrixInternal {
      */
     const T *col(int i) const {
       int col_start = i;
-      if(id_to_position_map_->size() > 0) {
-        col_start = (id_to_position_map_->find(col_start)->second);
+      if(id_to_position_map_.size() > 0) {
+        col_start = (id_to_position_map_.find(col_start)->second);
       }
       col_start *= n_rows_;
       return matrix_.get() + col_start;
@@ -81,8 +81,8 @@ class MapMatrixInternal {
      */
     T *col(int i) {
       int col_start = i;
-      if(id_to_position_map_->size() > 0) {
-        col_start = (id_to_position_map_->find(col_start)->second);
+      if(id_to_position_map_.size() > 0) {
+        col_start = (id_to_position_map_.find(col_start)->second);
       }
       col_start *= n_rows_;
       return matrix_.get() + col_start;
@@ -231,7 +231,7 @@ class MapMatrix {
       while(source_it.HasNext()) {
         T *destination_start = this->col(source_it.current_id());
         const T *source_start = source_it.ptr();
-        for(int j = 0; j < num_rows_; j++) {
+        for(int j = 0; j < this->n_rows(); j++) {
           destination_start[j] = source_start[j];
         }
         source_it++;
@@ -242,19 +242,20 @@ class MapMatrix {
      */
     iterator get_iterator() const {
       return iterator(
-               matrix_.get(), position_to_id_map_.get(), num_rows_, num_cols_);
+               internal_->matrix(), & internal_->position_to_id_map(),
+               internal_->n_rows(), internal_->n_cols());
     }
 
     /** @brief Returns the number of rows stored in the map matrix.
      */
     int n_rows() const {
-      return num_rows_;
+      return internal_->n_rows();
     }
 
     /** @brief Returns the number of columns stored in the map matrix.
      */
     int n_cols() const {
-      return num_cols_;
+      return internal_->n_cols();
     }
 
     /** @brief The default constructor.
@@ -289,7 +290,7 @@ class MapMatrix {
     void save(Archive &ar, const unsigned int version) const {
 
       // Save the number of rows/columns being saved.
-      int num_rows = internal_->num_rows();
+      int num_rows = internal_->n_rows();
       ar & num_rows;
       int num_columns_to_save = indices_to_save_.size();
       ar & num_columns_to_save;
@@ -298,7 +299,7 @@ class MapMatrix {
       for(int i = 0; i < num_columns_to_save; i++) {
         int translated_position = indices_to_save_[i];
         const T *column = this->col(translated_position) ;
-        for(int j = 0; j < num_rows_; j++) {
+        for(int j = 0; j < num_rows; j++) {
           ar & column[ j ];
         }
         ar & indices_to_save_[i];
@@ -311,19 +312,20 @@ class MapMatrix {
     void load(Archive &ar, const unsigned int version) {
 
       // Load the number of rows/columns.
-      ar & num_rows_;
-      ar & num_cols_;
-      this->Init(num_rows_, num_cols_);
+      int num_rows, num_cols;
+      ar & num_rows;
+      ar & num_cols;
+      this->Init(num_rows, num_cols);
       std::map<int, int> &id_to_position_map =
         internal_->id_to_position_map();
       std::map<int, int> &position_to_id_map =
         internal_->position_to_id_map();
 
       // Load each element and its mapping.
-      T * column = matrix_.get();
-      for(int i = 0; i < num_cols_; i++, column += num_rows_) {
+      T * column = internal_->matrix();
+      for(int i = 0; i < num_cols; i++, column += num_rows) {
         int original_index;
-        for(int j = 0; j < num_rows_; j++) {
+        for(int j = 0; j < num_rows; j++) {
           ar & column[j];
         }
         ar & original_index;
@@ -339,7 +341,7 @@ class MapMatrix {
     void Init(int num_rows_in, int num_cols_in) {
       boost::intrusive_ptr <
       boost::MapMatrixInternal<T> > tmp_internal(
-        new boost::mapMatrixInternal<T>());
+        new boost::MapMatrixInternal<T>());
       internal_.swap(tmp_internal);
       internal_->Init(num_rows_in, num_cols_in);
     }
