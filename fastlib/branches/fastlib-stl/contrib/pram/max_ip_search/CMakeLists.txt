@@ -28,7 +28,7 @@ add_executable(max_ip_main
 )
 target_link_libraries(max_ip_main
    fastlib
-   #mlpack
+   mlpack
    #mlpack_contrib
 )
 

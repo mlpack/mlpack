@@ -9,7 +9,7 @@
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <armadillo>
-#include <math>
+// #include <math.h>
 #include "general_spacetree.h"
 #include "gen_metric_tree.h"
 
@@ -46,12 +46,17 @@ class MaxIP {
   
 //   //////////////////////////// Nested Classes /////////////////////////
   class QueryStat {
+  private:
+    index_t test_;
+
+  public:
+    index_t test() { return test_; }
   } // QueryStat
 
   // TreeType are BinarySpaceTrees where the data are bounded by 
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
-  typedef GeneralBinarySpaceTree<DBallBound< LMetric<2>, arma::vec>, arma::mat, QueryStat> TreeType;
+  typedef GeneralBinarySpaceTree<DBallBound< mlpack::kernel::LMetric<2>, arma::vec>, arma::mat, QueryStat> TreeType;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -443,7 +448,7 @@ public:
 
     // The only difference is that we set leaf_size_ to be large enough 
     // that each tree has only one node
-    leaf_size_ = math::max(queries_.n_cols(), references_.n_cols());
+    leaf_size_ = std::max(queries_.n_cols(), references_.n_cols());
 
     // We'll time tree building
     IO::StartTimer("tree_building");
