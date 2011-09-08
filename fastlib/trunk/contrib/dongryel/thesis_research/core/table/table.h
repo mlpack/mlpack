@@ -16,6 +16,7 @@
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
 #include "core/math/math_lib.h"
+#include "core/parallel/map_matrix.h"
 #include "core/tree/general_spacetree.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
