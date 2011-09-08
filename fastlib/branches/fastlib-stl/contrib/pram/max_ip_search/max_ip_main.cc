@@ -2,9 +2,9 @@
 #include <string>
 #include "exact_max_ip.h"
 
-PROGRAM_INFO("Maximum Inner Product", "This program "
-	     "returns the maximum inner product for a "
-	     "given query over a set of points (references).");
+// PROGRAM_INFO("Maximum Inner Product", "This program "
+// 	     "returns the maximum inner product for a "
+// 	     "given query over a set of points (references).");
 
 PARAM_MODULE("maxip_main", "Parameters for the main "
 	     "file to compute the maximum inner product "
