@@ -58,4 +58,15 @@ void PrefixedOutStream::BaseLogic(T val) {
   }
 }
 
+// This is an inline function (that is why it is here and not in .cc).
+void PrefixedOutStream::PrefixIfNeeded() {
+  // If we need to, output a prefix.
+  if (carriageReturned) {
+    if (!ignoreInput) // But only if we are allowed to.
+      destination << prefix;
+
+    carriageReturned = false; // Denote that the prefix has been displayed.
+  }
+}
+
 #endif //MLPACK_IO_PREFIXED_OUT_STREAM_IMPL_H

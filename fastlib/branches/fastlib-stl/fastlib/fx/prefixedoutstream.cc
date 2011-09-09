@@ -101,13 +101,3 @@ PrefixedOutStream& PrefixedOutStream::operator<<(
   BaseLogic<std::ios_base& (*)(std::ios_base&)>(pf);
   return *this;
 }
-
-void PrefixedOutStream::PrefixIfNeeded() {
-  // If we need to, output a prefix.
-  if (carriageReturned) {
-    if (!ignoreInput) // But only if we are allowed to.
-      destination << prefix;
-
-    carriageReturned = false; // Denote that the prefix has been displayed.
-  }
-}
