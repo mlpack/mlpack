@@ -57,6 +57,8 @@ find_path (ARMADILLO_INCLUDES Mat_meat.hpp
   PATH_SUFFIXES armadillo armadillo_bits
   )
 
+
+
 ## -----------------------------------------------------------------------------
 ## Check for the library
 
@@ -174,6 +176,11 @@ if(Armadillo_FIND_VERSION)
     return()
   endif()
 endif()
+
+# The header files will be in armadillo_bits/ but we also want to include the
+# parent of that directory, which will include the armadillo header itself.
+string(REGEX REPLACE "/armadillo_bits" "" ARMADILLO_EXTRA_INCLUDE ${ARMADILLO_INCLUDES})
+set (ARMADILLO_INCLUDES ${ARMADILLO_INCLUDES} ${ARMADILLO_EXTRA_INCLUDE})
 
 ## -----------------------------------------------------------------------------
 ## Report status
