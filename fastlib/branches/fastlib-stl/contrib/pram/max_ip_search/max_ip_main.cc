@@ -2,6 +2,9 @@
 #include <string>
 #include "exact_max_ip.h"
 
+using namespace mlpack;
+using namespace std;
+
 PROGRAM_INFO("Maximum Inner Product", "This program "
  	     "returns the maximum inner product for a "
  	     "given query over a set of points (references).", 
@@ -22,15 +25,13 @@ PARAM_FLAG("dofastexact", "The flag to trigger the tree-based"
 PARAM_FLAG("dofastapprox", "The flag to trigger the "
 	   "tree-based rank-approximate search algorithm",
 	   "");
+PARAM_FLAG("print_maxip_results", "The flag to trigger the "
+	   "printing of the output", "");
 
 PARAM_STRING("maxip_file", "The file where the output "
 	     "will be written into", "", "results.txt");
-PARAM_FLAG("print_results", "The flag to trigger the "
-	   "printing of the output", "");
 
 
-using namespace mlpack;
-using namespace std;
 
 /**
  * This function checks if the neighbors computed 
@@ -53,10 +54,10 @@ int main (int argc, char *argv[]) {
   string qfile = IO::GetParam<string>("q");
 
   IO::Info << "Loading files..." << endl;
-  if (data::Load(rfile.c_str(), rdata) == SUCCESS_FAIL)
+  if (!data::Load(rfile.c_str(), rdata))
     IO::Fatal << "Reference file "<< rfile << " not found." << endl;
 
-  if (data::Load(qfile.c_str(), qdata) == SUCCESS_FAIL) 
+  if (!data::Load(qfile.c_str(), qdata)) 
     IO::Fatal << "Query file " << qfile << " not found." << endl;
 
   IO::Info << "File loaded..." << endl;
@@ -171,16 +172,16 @@ int main (int argc, char *argv[]) {
 //   }
 // }
 
-void count_mismatched_neighbors(arma::Col<size_t> *a, 
- 				arma::vec *da,
- 				arma::Col<size_t> *b, 
- 				arma::vec *db) {
+void count_mismatched_neighbors(arma::Col<size_t> a, 
+ 				arma::vec da,
+ 				arma::Col<size_t> b, 
+ 				arma::vec db) {
   IO::Info << "Comparing results for " << a.n_elem << " queries." << endl;
-  DEBUG_SAME_SIZE(a.n_elem, b.n_elem);
-  index_t count_mismatched = 0;
+  assert(a.n_elem == b.n_elem);
+  size_t count_mismatched = 0;
 
   for(size_t i = 0; i < a.n_elem;  i++) {
-    if (a(i) != b(i) || da(i) != db(i))
+    if (da(i) != db(i))
       ++count_mismatched;
   }
 
