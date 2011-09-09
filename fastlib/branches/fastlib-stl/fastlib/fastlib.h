@@ -8,6 +8,8 @@
 #define FASTLIB_FASTLIB_H
 
 #include <cmath>
+#include <stdint.h>
+
 #include "data/dataset.h"
 #include "math/math_lib.h"
 #include "file/textfile.h"
