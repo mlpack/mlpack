@@ -69,9 +69,9 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
  * @brief Tests that IO works as intended, namely that IO::Add
  *   propagates successfully.
  *
- * @return True indicating all is well with IO, false otherwise.
+ * @return True indicating all is well with IO::Add, false otherwise.
  */
-BOOST_AUTO_TEST_CASE(TestIO) {
+BOOST_AUTO_TEST_CASE(TestIOAdd) {
   // Check that the IO::HasParam returns false if no value has been specified
   // on the commandline or programmatically.
   IO::Add<bool>("bool", "True or False", "global");
@@ -85,23 +85,35 @@ BOOST_AUTO_TEST_CASE(TestIO) {
   // Check that SanitizeString is sanitary.
   std::string tmp = IO::SanitizeString("/foo/bar/fizz");
   BOOST_REQUIRE_EQUAL(tmp.compare(std::string("foo/bar/fizz/")),0);
- 
-  // Test the output of IO.  We will pass bogus input such that nothing will be
-  // printed to the screen, only currentLine will hold our 'output'.
-  IO::Info.ignoreInput = true;
-  IO::Info << "This shouldn't break anything" << std::endl;
-  BOOST_REQUIRE_EQUAL(
-      IO::Info.currentLine.compare("This shouldn't break anything"), 0);
+}
 
-  // Now let's test the output functions.  Will have to eyeball it manually.
-  IO::Info << "Test the new lines...";
-  IO::Info << "shouldn't get 'Info' here." << std::endl;
-  BOOST_REQUIRE_EQUAL(
-    IO::Info.currentLine.
-    compare("Test the new lines...shouldn't get 'Info' here."), 0);
-  IO::Info << "But now I should." << std::endl << std::endl;
-  IO::Info << ""; 
-  BOOST_REQUIRE_EQUAL(IO::Info.currentLine.compare(""), 0);
+/***
+ * Test the output of IO.  We will pass bogus input to a stringstream so that
+ * none of it gets to the screen.
+ */
+BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic) {
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR); 
+
+  pss << "This shouldn't break anything" << std::endl;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "This shouldn't break anything\n");
+
+  ss.str("");
+  pss << "Test the new lines...";
+  pss << "shouldn't get 'Info' here." << std::endl;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "Test the new lines...shouldn't get 'Info' here.\n");
+
+  pss << "But now I should." << std::endl << std::endl;
+  pss << "";
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "Test the new lines...shouldn't get 'Info' here.\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "But now I should.\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "\n"
+      BASH_GREEN "[INFO ] " BASH_CLEAR "");
 }
 
 /**
@@ -168,4 +180,42 @@ BOOST_AUTO_TEST_CASE(TestArmadilloPrefixedOutStream) {
       BASH_GREEN "[INFO ] " BASH_CLEAR "hello   1.0000   1.5000   2.0000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   2.5000   3.0000   3.5000\n"
       BASH_GREEN "[INFO ] " BASH_CLEAR "   4.0000   4.5000   5.0000\n");
+}
+
+/***
+ * Test that we can correctly output things in general.
+ */
+BOOST_AUTO_TEST_CASE(TestPrefixedOutStream) {
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
+
+  pss << "hello world I am ";
+  pss << 7;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7");
+
+  pss << std::endl;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "hello world I am 7\n");
+
+  ss.str("");
+  pss << std::endl;
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR "\n");
+}
+
+/***
+ * Test format modifiers.
+ */
+BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamModifiers) {
+  std::stringstream ss;
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
+
+  pss << "I have a precise number which is ";
+  pss << std::setw(6) << std::setfill('0') << 156;
+
+  BOOST_REQUIRE_EQUAL(ss.str(),
+      BASH_GREEN "[INFO ] " BASH_CLEAR
+      "I have a precise number which is 000156");
 }
