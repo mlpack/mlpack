@@ -419,17 +419,6 @@ class MeanVariancePairMatrix {
       }
     }
 
-    /** @brief Returns the sample means in a matrix form.
-     */
-    void sample_means(core::table::DenseMatrix *point_out) const {
-      point_out->Init(n_rows_, n_cols_);
-      for(int j = 0; j < n_cols_; j++) {
-        for(int i = 0; i < n_rows_; i++) {
-          point_out->set(i, j, this->get(i, j).sample_mean());
-        }
-      }
-    }
-
     /** @brief Copies mean variance pair objects from another mean
      *         variance pair matrix object.
      */

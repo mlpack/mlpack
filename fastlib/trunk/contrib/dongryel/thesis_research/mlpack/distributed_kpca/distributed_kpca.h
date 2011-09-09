@@ -78,14 +78,14 @@ class DistributedKpca {
 
     void GenerateRandomFourierFeatures_(
       int num_random_fourier_features,
-      core::table::DenseMatrix *random_variates,
+      arma::mat *random_variates,
       boost::scoped_array< arma::vec > &random_variate_aliases);
 
     void NaiveKernelEigenvectors_(
       int num_kpca_components_in_,
       bool do_centering,
       DistributedTableType *reference_table_in,
-      const core::table::DenseMatrix &kpca_components);
+      const arma::mat &kpca_components);
 
     void NaiveWeightedKernelAverage_(
       bool do_centering,
@@ -93,7 +93,7 @@ class DistributedKpca {
       double absolute_error_in,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
-      const core::table::DenseMatrix &weights,
+      const arma::mat &weights,
       const core::monte_carlo::MeanVariancePairMatrix &kernel_sums);
 
     void ComputeWeightedKernelAverage_(
@@ -105,7 +105,7 @@ class DistributedKpca {
       int num_random_fourier_features,
       DistributedTableType *reference_table_in,
       DistributedTableType *query_table_in,
-      const core::table::DenseMatrix &weights,
+      const arma::mat &weights,
       bool do_centering_in,
       core::monte_carlo::MeanVariancePairMatrix *kernel_sums);
 

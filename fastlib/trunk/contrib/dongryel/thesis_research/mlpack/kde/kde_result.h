@@ -145,7 +145,7 @@ class KdeResult {
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
-      const core::table::DensePoint &qpoint,
+      const arma::vec &qpoint,
       int q_index,
       double q_weight,
       const GlobalType &global,
@@ -257,7 +257,7 @@ class KdeResult {
     template<typename GlobalType, typename KdePostponedType>
     void FinalApplyPostponed(
       const GlobalType &global,
-      const core::table::DensePoint &qpoint,
+      const arma::vec &qpoint,
       int q_index,
       const KdePostponedType &postponed_in) {
 

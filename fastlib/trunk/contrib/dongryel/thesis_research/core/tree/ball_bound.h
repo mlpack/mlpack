@@ -29,7 +29,7 @@ class BallBound {
 
     /** @brief The center of the ball bound.
      */
-    core::table::DensePoint center_;
+    arma::vec center_;
 
     // For boost serialization.
     friend class boost::serialization::access;
@@ -39,14 +39,14 @@ class BallBound {
     /** @brief Returns whether the bound has been initialized or not.
      */
     bool is_initialized() const {
-      return center_.length() > 0;
+      return center_.n_elem > 0;
     }
 
     /** @brief The Assignment operator.
      */
     void operator=(const BallBound &ball_bound_in) {
       radius_ = ball_bound_in.radius();
-      center_.Copy(ball_bound_in.center());
+      center_ = ball_bound_in.center();
     }
 
     /** @brief The default constructor.
@@ -66,14 +66,14 @@ class BallBound {
      */
     void Reset() {
       radius_ = 0;
-      center_.SetZero();
+      center_.zeros();
     }
 
     /** @brief Prints out the ball bound.
      */
     void Print() const {
       printf("Hypersphere of radius %g centered at: \n", radius_);
-      for(int i = 0; i < center_.length(); i++) {
+      for(unsigned int i = 0; i < center_.n_elem; i++) {
         printf("%g ", center_[i]);
       }
       printf("\n");
@@ -90,14 +90,14 @@ class BallBound {
     /** @brief Returns the dimensionality.
      */
     int dim() const {
-      return center_.length();
+      return center_.n_elem;
     }
 
     /** @brief Copy the given ball bound.
      */
     void Copy(const BallBound &other_bound) {
       radius_ = other_bound.radius();
-      center_.Copy(other_bound.center());
+      center_ = other_bound.center();
     }
 
     /** @brief Computes the furthest point inside the ball bound from
@@ -108,22 +108,11 @@ class BallBound {
       const arma::vec &avoid_point, arma::vec *furthest_point_out) const {
 
       // The vector pointing from the avoid_point to the center.
-      arma::vec center_alias;
-      core::table::DensePointToArmaVec(center_, &center_alias);
-      arma::vec direction = center_alias - avoid_point;
+      arma::vec direction = center_ - avoid_point;
       double direction_norm = arma::norm(direction, 2);
       direction = direction / direction_norm;
       double factor = direction_norm + radius_;
       (*furthest_point_out) = avoid_point + factor * direction;
-    }
-
-    void FurthestPoint(
-      const core::table::DensePoint &avoid_point,
-      arma::vec *furthest_point_out) const {
-
-      arma::vec avoid_point_alias;
-      core::table::DensePointToArmaVec(avoid_point, &avoid_point_alias);
-      this->FurthestPoint(avoid_point_alias, furthest_point_out);
     }
 
     /** @brief Generate a random point within the ball bound with
@@ -132,44 +121,32 @@ class BallBound {
     void RandomPointInside(arma::vec *random_point_out) const {
 
       // First, generate $D$-dimensional Gaussian vector.
-      random_point_out->set_size(center_.length());
-      for(int i = 0; i < center_.length(); i++) {
+      random_point_out->set_size(center_.n_elem);
+      for(unsigned int i = 0; i < center_.n_elem; i++) {
         (*random_point_out)[i] = core::math::RandGaussian(1.0);
       }
 
       // Scale it by an appropriate factor
       double squared_length = arma::dot(*random_point_out, *random_point_out);
       double first_number = squared_length * 0.5;
-      double second_number = center_.length() * 0.5;
+      double second_number = center_.n_elem * 0.5;
       double factor =
         pow(
           gsl_sf_gamma_inc_P(first_number, second_number),
-          1.0 / static_cast<double>(center_.length())) / sqrt(squared_length);
+          1.0 / static_cast<double>(center_.n_elem)) / sqrt(squared_length);
       (*random_point_out) = (*random_point_out) * factor;
 
       // Scale the resulting vector by the radius and offset by the
       // center coordinate.
-      arma::vec center_alias;
-      core::table::DensePointToArmaVec(center_, &center_alias);
       (*random_point_out) = (*random_point_out) * radius_;
-      (*random_point_out) += center_alias;
-    }
-
-    /** @brief Generate a random point within the ball bound with
-     *         uniform probability.
-     */
-    void RandomPointInside(core::table::DensePoint *random_point_out) const {
-      random_point_out->Init(center_.length());
-      arma::vec random_point_out_alias(
-        random_point_out->ptr(), center_.length(), false);
-      this->RandomPointInside(&random_point_out_alias);
+      (*random_point_out) += center_;
     }
 
     /** @brief Initializes a ball bound with the given dimensionality.
      */
     void Init(int dimension) {
       radius_ = 0.0;
-      center_.Init(dimension);
+      center_.set_size(dimension);
       Reset();
     }
 
@@ -187,20 +164,20 @@ class BallBound {
 
     /** @brief Returns the centroid.
      */
-    const core::table::DensePoint& center() const {
+    const arma::vec &center() const {
       return center_;
     }
 
     /** @brief Returns the centroid.
      */
-    core::table::DensePoint& center() {
+    arma::vec &center() {
       return center_;
     }
 
     /** @brief Returns the centroid.
      */
-    void center(core::table::DensePoint *center_out) const {
-      center_out->Copy(center_);
+    void center(arma::vec *center_out) const {
+      *center_out = center_;
     }
 
     /** @brief Determines if a point is within this bound.
@@ -208,7 +185,7 @@ class BallBound {
     template<typename MetricType>
     bool Contains(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
       return MidDistance(metric, point) <= radius_;
     }
 
@@ -227,7 +204,7 @@ class BallBound {
     template<typename MetricType>
     double MinDistance(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
 
       return std::max(MidDistance(metric, point) - radius_, 0.0);
     }
@@ -235,7 +212,7 @@ class BallBound {
     template<typename MetricType>
     double MinDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
 
       return core::math::Pow<2, 1>(MinDistance(metric, point));
     }
@@ -263,14 +240,14 @@ class BallBound {
     template<typename MetricType>
     double MaxDistance(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
       return MidDistance(metric, point) + radius_;
     }
 
     template<typename MetricType>
     double MaxDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
       return core::math::Pow<2, 1>(MaxDistance(metric, point));
     }
 
@@ -383,14 +360,14 @@ class BallBound {
     template<typename MetricType>
     double MidDistance(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec& point) const {
       return metric.Distance(center_, point);
     }
 
     template<typename MetricType>
     double MidDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec& point) const {
       return metric.DistanceSq(center_, point);
     }
 
@@ -398,7 +375,7 @@ class BallBound {
      */
     template<typename MetricType>
     BallBound& Expand(
-      const MetricType &metric, const core::table::DensePoint &vector) {
+      const MetricType &metric, const arma::vec &vector) {
 
       // If the point is already inside the sphere, then no expansion
       // is necessary.
@@ -410,11 +387,7 @@ class BallBound {
 
         // The center is the mid way between the new point and the
         // furthest point.
-        arma::vec center_alias;
-        core::table::DensePointToArmaVec(center_, &center_alias);
-        arma::vec vector_alias;
-        core::table::DensePointToArmaVec(vector, &vector_alias);
-        center_alias = 0.5 * (vector_alias + furthest_point);
+        center_ = 0.5 * (vector + furthest_point);
         radius_ = metric.Distance(center_, vector);
       }
       return *this;
@@ -437,11 +410,9 @@ class BallBound {
         other.FurthestPoint(center_, &furthest_point_on_new_bound);
 
         // The center is the midway between two furthest points.
-        arma::vec center_alias;
-        core::table::DensePointToArmaVec(center_, &center_alias);
-        center_alias = 0.5 * (
-                         furthest_point_on_self + furthest_point_on_new_bound);
-        radius_ = metric.Distance(center_alias, furthest_point_on_self);
+        center_ = 0.5 * (
+                    furthest_point_on_self + furthest_point_on_new_bound);
+        radius_ = metric.Distance(center_, furthest_point_on_self);
       }
       return *this;
     }

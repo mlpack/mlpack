@@ -81,30 +81,28 @@ class InversePowDistKernelAux {
     }
 
     void AllocateDerivativeMap(
-      int dim, int order, core::table::DenseMatrix *derivative_map) const {
-      derivative_map->Init(global_.get_total_num_coeffs(order), 1);
+      int dim, int order, arma::mat *derivative_map) const {
+      derivative_map->set_size(global_.get_total_num_coeffs(order), 1);
     }
 
     void ComputeDirectionalDerivatives(
-      const core::table::DensePoint &x,
-      core::table::DenseMatrix *derivative_map, int order) const {
+      const arma::vec &x,
+      arma::mat *derivative_map, int order) const {
 
-      derivative_map->SetZero();
+      derivative_map->zeros();
 
       // Squared L2 norm of the vector.
-      arma::vec x_alias;
-      core::table::DensePointToArmaVec(x, &x_alias);
-      double squared_l2_norm = arma::dot(x_alias, x_alias);
+      double squared_l2_norm = arma::dot(x, x);
 
       // Temporary variable to look for arithmetic operations on
       // multiindex.
       std::vector<short int> tmp_multiindex(global_.get_dimension());
 
       // Get the inverse multiindex factorial factors.
-      const core::table::DensePoint &inv_multiindex_factorials =
+      const arma::vec &inv_multiindex_factorials =
         global_.get_inv_multiindex_factorials();
 
-      for(int i = 0; i < derivative_map->n_rows(); i++) {
+      for(unsigned int i = 0; i < derivative_map->n_rows; i++) {
 
         // Contribution to the current multiindex position.
         double contribution = 0;
@@ -114,13 +112,13 @@ class InversePowDistKernelAux {
 
         // $D_{x}^{0} \phi_{\nu, d}(x)$ should be computed normally.
         if(i == 0) {
-          derivative_map->set(0, 0, kernel_.EvalUnnorm(x));
+          derivative_map->at(0, 0) = kernel_.EvalUnnorm(x);
           continue;
         }
 
         // The sum of the indices.
         int sum_of_indices = 0;
-        for(int d = 0; d < x.length(); d++) {
+        for(unsigned int d = 0; d < x.n_elem; d++) {
           sum_of_indices += multiindex[d];
         }
 
@@ -132,7 +130,7 @@ class InversePowDistKernelAux {
 
         // Compute the contribution of $D_{x}^{n - e_d} \phi_{\nu,
         // d}(x)$ component for each $d$.
-        for(int d = 0; d < x.length(); d++) {
+        for(unsigned int d = 0; d < x.n_elem; d++) {
 
           // Subtract 1 from the given dimension.
           SubFrom_(d, 1, multiindex, tmp_multiindex);
@@ -140,7 +138,7 @@ class InversePowDistKernelAux {
             global_.ComputeMultiindexPosition(tmp_multiindex);
           if(n_minus_e_d_position >= 0) {
             contribution += first_factor * x[d] *
-                            derivative_map->get(n_minus_e_d_position, 0) *
+                            derivative_map->at(n_minus_e_d_position, 0) *
                             inv_multiindex_factorials[n_minus_e_d_position];
           }
 
@@ -150,7 +148,7 @@ class InversePowDistKernelAux {
             global_.ComputeMultiindexPosition(tmp_multiindex);
           if(n_minus_two_e_d_position >= 0) {
             contribution += second_factor *
-                            derivative_map->get(n_minus_two_e_d_position, 0) *
+                            derivative_map->at(n_minus_two_e_d_position, 0) *
                             inv_multiindex_factorials[n_minus_two_e_d_position];
           }
 
@@ -158,40 +156,40 @@ class InversePowDistKernelAux {
 
         // Set the final contribution for this multiindex.
         if(squared_l2_norm == 0) {
-          derivative_map->set(i, 0, 0);
+          derivative_map->at(i, 0) = 0;
         }
         else {
-          derivative_map->set(
-            i, 0, -contribution / squared_l2_norm /
-            sum_of_indices / inv_multiindex_factorials[i]);
+          derivative_map->at(i, 0) =
+            - contribution / squared_l2_norm /
+            sum_of_indices / inv_multiindex_factorials[i];
         }
 
       } // end of iterating over all required multiindex positions...
 
       // Iterate again, and invert the sum if the sum of the indices of
       // the current mapping is odd.
-      for(int i = 1; i < derivative_map->n_rows(); i++) {
+      for(unsigned int i = 1; i < derivative_map->n_rows; i++) {
 
         // Retrieve the multiindex mapping.
         const std::vector<short int> &multiindex = global_.get_multiindex(i);
 
         // The sum of the indices.
         int sum_of_indices = 0;
-        for(int d = 0; d < x.length(); d++) {
+        for(unsigned int d = 0; d < x.n_elem; d++) {
           sum_of_indices += multiindex[d];
         }
 
         if(sum_of_indices % 2 == 1) {
-          derivative_map->set(i, 0, -derivative_map->get(i, 0));
+          derivative_map->at(i, 0) = -derivative_map->at(i, 0);
         }
       }
     }
 
     double ComputePartialDerivative(
-      const core::table::DenseMatrix &derivative_map,
+      const arma::mat &derivative_map,
       const std::vector<short int> &mapping) const {
 
-      return derivative_map.get(global_.ComputeMultiindexPosition(mapping), 0);
+      return derivative_map.at(global_.ComputeMultiindexPosition(mapping), 0);
     }
 };
 }

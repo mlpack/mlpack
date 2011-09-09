@@ -28,48 +28,48 @@ class KpcaResult {
 
     /** @brief The lower bound on the projected KPCA projections.
      */
-    core::table::DenseMatrix kpca_projections_l_;
+    arma::mat kpca_projections_l_;
 
     /** @brief The projected KPCA projections.
      */
-    core::table::DenseMatrix kpca_projections_;
+    arma::mat kpca_projections_;
 
     /** @brief The upper bound on the projected KPCA projections.
      */
-    core::table::DenseMatrix kpca_projections_u_;
+    arma::mat kpca_projections_u_;
 
     /** @brief The kernel eigenvalues.
      */
-    core::table::DensePoint kernel_eigenvalues_;
+    arma::vec kernel_eigenvalues_;
 
     /** @brief The covariance eigenvectors.
      */
-    core::table::DenseMatrix covariance_eigenvectors_;
+    arma::mat covariance_eigenvectors_;
 
     /** @brief The data projection used for the covariance
      *         eigenvector.
      */
-    core::table::DenseMatrix reference_projections_;
+    arma::mat reference_projections_;
 
     /** @brief The kernel principal components.
      */
-    core::table::DenseMatrix kpca_components_;
+    arma::mat kpca_components_;
 
   public:
 
-    core::table::DenseMatrix &reference_projections() {
+    arma::mat &reference_projections() {
       return reference_projections_;
     }
 
-    core::table::DenseMatrix &kpca_components() {
+    arma::mat &kpca_components() {
       return kpca_components_;
     }
 
-    core::table::DensePoint &kernel_eigenvalues() {
+    arma::vec &kernel_eigenvalues() {
       return kernel_eigenvalues_;
     }
 
-    core::table::DenseMatrix &covariance_eigenvectors() {
+    arma::mat &covariance_eigenvectors() {
       return covariance_eigenvectors_;
     }
 
@@ -95,22 +95,19 @@ class KpcaResult {
       double mult_const,
       double correction_term_in,
       const core::monte_carlo::MeanVariancePairMatrix &kernel_sum) {
-      for(int i = 0; i < kpca_projections_.n_cols(); i++) {
-        for(int k = 0; k < kpca_projections_.n_rows(); k++) {
+      for(unsigned int i = 0; i < kpca_projections_.n_cols; i++) {
+        for(unsigned int k = 0; k < kpca_projections_.n_rows; k++) {
           double deviation = num_standard_deviations *
                              sqrt(kernel_sum.get(k, i).sample_mean_variance());
-          kpca_projections_l_.set(
-            k, i,
+          kpca_projections_l_.at(k, i) =
             (kernel_sum.get(k, i).sample_mean() -
-             correction_term_in - deviation) *
-            mult_const);
-          kpca_projections_.set(
-            k, i, (kernel_sum.get(k, i).sample_mean() - correction_term_in) *
-            mult_const);
-          kpca_projections_u_.set(
-            k, i,
+             correction_term_in - deviation) * mult_const;
+          kpca_projections_.at(k, i) =
+            (kernel_sum.get(k, i).sample_mean() - correction_term_in) *
+            mult_const;
+          kpca_projections_u_.at(k, i) =
             (kernel_sum.get(k, i).sample_mean() -
-             correction_term_in + deviation) * mult_const);
+             correction_term_in + deviation) * mult_const;
         }
       }
     }
@@ -121,18 +118,18 @@ class KpcaResult {
 
       FILE *file_output =
         fopen(kpca_projections_file_name.c_str(), "w+");
-      for(int i = 0; i < kpca_projections_.n_cols(); i++) {
-        for(int j = 0; j < kpca_projections_.n_rows(); j++) {
-          fprintf(file_output, "%g ", kpca_projections_.get(j, i));
+      for(unsigned int i = 0; i < kpca_projections_.n_cols; i++) {
+        for(unsigned int j = 0; j < kpca_projections_.n_rows; j++) {
+          fprintf(file_output, "%g ", kpca_projections_.at(j, i));
         }
         fprintf(file_output, "\n");
       }
       fclose(file_output);
       file_output = fopen(kpca_components_file_name.c_str(), "w+");
-      for(int j = 0; j < kpca_components_.n_cols(); j++) {
-        for(int i = 0; i < kpca_components_.n_rows(); i++) {
+      for(unsigned int j = 0; j < kpca_components_.n_cols; j++) {
+        for(unsigned int i = 0; i < kpca_components_.n_rows; i++) {
           fprintf(
-            file_output, "%g ", kpca_components_.get(i, j));
+            file_output, "%g ", kpca_components_.at(i, j));
         }
         fprintf(file_output, "\n");
       }
@@ -141,16 +138,16 @@ class KpcaResult {
 
     void Init(
       int num_components, int num_reference_points, int query_points) {
-      kpca_projections_l_.Init(num_components, query_points);
-      kpca_projections_.Init(num_components, query_points);
-      kpca_projections_u_.Init(num_components, query_points);
+      kpca_projections_l_.set_size(num_components, query_points);
+      kpca_projections_.set_size(num_components, query_points);
+      kpca_projections_u_.set_size(num_components, query_points);
       SetZero();
     }
 
     void SetZero() {
-      kpca_projections_l_.SetZero();
-      kpca_projections_.SetZero();
-      kpca_projections_u_.SetZero();
+      kpca_projections_l_.zeros();
+      kpca_projections_.zeros();
+      kpca_projections_u_.zeros();
     }
 
     void set_eigendecomposition_results(
@@ -172,17 +169,16 @@ class KpcaResult {
         boost::bind(&std::pair<int, double>::second, _1) >
         boost::bind(&std::pair<int, double>::second, _2));
 
-      kernel_eigenvalues_.Init(covariance_eigenvectors_in.n_cols);
-      covariance_eigenvectors_.Init(
+      kernel_eigenvalues_.set_size(covariance_eigenvectors_in.n_cols);
+      covariance_eigenvectors_.set_size(
         covariance_eigenvectors_in.n_rows,
         covariance_eigenvectors_in.n_cols);
       for(unsigned int i = 0; i < covariance_eigenvectors_in.n_cols; i++) {
         kernel_eigenvalues_[i] = sorted_eigenvalues[i].second;
         for(unsigned int j = 0; j < covariance_eigenvectors_in.n_rows; j++) {
-          covariance_eigenvectors_.set(
-            j, i,
+          covariance_eigenvectors_.at(j, i) =
             covariance_eigenvectors_in.at(
-              j, sorted_eigenvalues[i].first));
+              j, sorted_eigenvalues[i].first);
         }
       }
     }

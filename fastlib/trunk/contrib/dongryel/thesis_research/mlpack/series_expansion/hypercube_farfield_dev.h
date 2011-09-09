@@ -26,19 +26,17 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   int dim = kernel_aux_in.global().get_dimension();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
   int max_total_num_coeffs = kernel_aux_in.global().get_max_total_num_coeffs();
-  core::table::DensePoint x_r, tmp;
+  arma::vec x_r, tmp;
   double bandwidth_factor =
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // initialize temporary variables
-  x_r.Init(dim);
-  tmp.Init(max_total_num_coeffs);
-  core::table::DensePoint pos_coeffs;
-  core::table::DensePoint neg_coeffs;
-  pos_coeffs.Init(max_total_num_coeffs);
-  pos_coeffs.SetZero();
-  neg_coeffs.Init(max_total_num_coeffs);
-  neg_coeffs.SetZero();
+  x_r.set_size(dim);
+  tmp.set_size(max_total_num_coeffs);
+  arma::vec pos_coeffs;
+  arma::vec neg_coeffs;
+  pos_coeffs.zeros(max_total_num_coeffs);
+  neg_coeffs.zeros(max_total_num_coeffs);
 
   // set to new order if greater
   if(order_ < order) {
@@ -54,14 +52,14 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
 
     // Calculate the coordinate difference between the ref point and
     // the centroid.
-    core::table::DensePoint point;
+    arma::vec point;
     double weight;
     it.Next(&point, &weight);
     for(int i = 0; i < dim; i++) {
       x_r[i] = (point[i] - center_[i]) / bandwidth_factor;
     }
 
-    tmp.SetZero();
+    tmp.zeros();
     tmp[0] = 1.0;
 
     for(int i = 1; i < total_num_coeffs; i++) {
@@ -117,7 +115,7 @@ template<>
 template<typename KernelAuxType>
 double CartesianFarField<mlpack::series_expansion::HYPERCUBE>::EvaluateField(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &x_q, int order) const {
+  const arma::vec &x_q, int order) const {
 
   // dimension
   int dim = kernel_aux_in.global().get_dimension();
@@ -135,16 +133,16 @@ double CartesianFarField<mlpack::series_expansion::HYPERCUBE>::EvaluateField(
   double multipole_sum = 0;
 
   // computed derivative map
-  core::table::DenseMatrix derivative_map;
+  arma::mat derivative_map;
   kernel_aux_in.AllocateDerivativeMap(dim, order_, &derivative_map);
 
   // temporary variable
-  core::table::DensePoint arrtmp;
-  arrtmp.Init(total_num_coeffs);
+  arma::vec arrtmp;
+  arrtmp.set_size(total_num_coeffs);
 
   // (x_q - x_R) scaled by bandwidth
-  core::table::DensePoint x_q_minus_x_R;
-  x_q_minus_x_R.Init(dim);
+  arma::vec x_q_minus_x_R;
+  x_q_minus_x_R.set_size(dim);
 
   // compute (x_q - x_R) / (sqrt(2h^2))
   for(int d = 0; d < dim; d++) {
@@ -193,7 +191,7 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::Print(
   fprintf(stream, "Far field expansion\n");
   fprintf(stream, "Center: ");
 
-  for(int i = 0; i < center_.length(); i++) {
+  for(unsigned int i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
@@ -243,25 +241,26 @@ mlpack::series_expansion::HYPERCUBE >::TranslateFromFarField(
   int dim = kernel_aux_in.global().get_dimension();
   int order = se.get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
-  core::table::DensePoint prev_coeffs;
-  core::table::DensePoint prev_center;
+  arma::vec prev_coeffs;
+  arma::vec prev_center;
   const std::vector< std::vector<short int> > &multiindex_mapping =
     kernel_aux_in.global().get_multiindex_mapping();
   const std::vector< std::vector<short int> > &lower_mapping_index =
     kernel_aux_in.global().get_lower_mapping_index();
 
   std::vector<short int> tmp_storage;
-  core::table::DensePoint center_diff;
-  core::table::DensePoint inv_multiindex_factorials;
+  arma::vec center_diff;
+  arma::vec inv_multiindex_factorials;
 
-  center_diff.Init(dim);
+  center_diff.set_size(dim);
 
   // retrieve coefficients to be translated and helper mappings
-  prev_coeffs.Alias(se.get_coeffs());
-  prev_center.Alias(se.get_center());
+  core::table::Alias(se.get_coeffs(), &prev_coeffs);
+  core::table::Alias(se.get_center(), &prev_center);
   tmp_storage.resize(kernel_aux_in.global().get_dimension());
-  inv_multiindex_factorials.Alias(
-    kernel_aux_in.global().get_inv_multiindex_factorials());
+  core::table::Alias(
+    kernel_aux_in.global().get_inv_multiindex_factorials(),
+    &inv_multiindex_factorials);
 
   // no coefficients can be translated
   if(order == -1) {
@@ -341,11 +340,11 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
   const KernelAuxType &kernel_aux_in,
   int truncation_order, CartesianLocalType *se) const {
 
-  core::table::DensePoint pos_arrtmp, neg_arrtmp;
-  core::table::DenseMatrix derivative_map;
-  core::table::DensePoint local_center;
-  core::table::DensePoint cent_diff;
-  core::table::DensePoint local_coeffs;
+  arma::vec pos_arrtmp, neg_arrtmp;
+  arma::mat derivative_map;
+  arma::vec local_center;
+  arma::vec cent_diff;
+  arma::vec local_coeffs;
   int local_order = se->get_order();
   int dimension = kernel_aux_in.global().get_dimension();
   int total_num_coeffs =
@@ -358,9 +357,9 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
     dimension, 2 * truncation_order, &derivative_map);
 
   // get center and coefficients for local expansion
-  local_center.Alias(se->get_center());
-  local_coeffs.Alias(se->get_coeffs());
-  cent_diff.Init(dimension);
+  core::table::Alias(se->get_center(), &local_center);
+  core::table::Alias(se->get_coeffs(), &local_coeffs);
+  cent_diff.set_size(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -369,8 +368,8 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
   }
 
   // compute Gaussian derivative
-  pos_arrtmp.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  neg_arrtmp.Init(kernel_aux_in.global().get_max_total_num_coeffs());
+  pos_arrtmp.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
+  neg_arrtmp.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
 
   // compute center difference divided by bw_times_sqrt_two;
   for(int j = 0; j < dimension; j++) {
@@ -416,7 +415,7 @@ void CartesianFarField<mlpack::series_expansion::HYPERCUBE>::TranslateToLocal(
     } // end of k-loop
   } // end of j-loop
 
-  const core::table::DensePoint &C_k_neg =
+  const arma::vec &C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
   for(int j = 0; j < total_num_coeffs; j++) {
     int index = traversal_order[j];

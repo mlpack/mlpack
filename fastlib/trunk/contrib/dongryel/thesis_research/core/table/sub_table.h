@@ -139,11 +139,11 @@ class SubTable {
 
     /** @brief The pointer to the underlying data.
      */
-    core::table::DenseMatrix *data_;
+    arma::mat *data_;
 
     /** @brief The pointer to the underlying weights.
      */
-    core::table::DenseMatrix *weights_;
+    arma::mat *weights_;
 
     /** @brief The pointer to the old_from_new mapping.
      */
@@ -458,12 +458,12 @@ class SubTable {
           (*old_from_new_) =
             (core::table::global_m_file_) ?
             core::table::global_m_file_->ConstructArray <
-            OldFromNewIndexType > (data_->n_cols()) :
-            new OldFromNewIndexType[ data_->n_cols()];
+            OldFromNewIndexType > (data_->n_cols) :
+            new OldFromNewIndexType[ data_->n_cols];
           (*new_from_old_) =
             (core::table::global_m_file_) ?
             core::table::global_m_file_->ConstructArray <
-            int > (data_->n_cols()) : new int[ data_->n_cols()] ;
+            int > (data_->n_cols) : new int[ data_->n_cols] ;
         }
 
         // Always serialize onto a consecutive block of memory to save
@@ -548,13 +548,13 @@ class SubTable {
 
     /** @brief Returns the underlying weights.
      */
-    core::table::DenseMatrix *weights() const {
+    arma::mat *weights() const {
       return weights_;
     }
 
     /** @brief Returns the underlying multi-dimensional data.
      */
-    core::table::DenseMatrix *data() const {
+    arma::mat *data() const {
       return data_;
     }
 

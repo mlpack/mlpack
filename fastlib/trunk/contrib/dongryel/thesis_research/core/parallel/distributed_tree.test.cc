@@ -60,7 +60,7 @@ class TestDistributedTree {
       TableType random_table;
       core::parallel::RandomDatasetGenerator::Generate(
         num_dimensions, num_points, world.rank(),
-        std::string("none"), &random_table);
+        std::string("none"), false, &random_table);
       random_table.Save(references_in);
 
       DistributedTableType distributed_table;

@@ -308,12 +308,12 @@ static int XorMsb(T a, T b) {
 
 /** @brief Compares two vectors based on their Morton order.
  */
-template<typename PointType>
-inline bool MortonOrderPoints(const PointType &a, const PointType &b) {
+template<typename T>
+inline bool MortonOrderPoints(const arma::Col<T> &a, const arma::Col<T> &b) {
   int x = 0;
   int selected_dim = 0;
 
-  for(int d = 0; d < core::table::LengthTrait<PointType>::length(a); d++) {
+  for(int d = 0; d < a.n_elem; d++) {
     long int y = XorMsb(a[d], b[d]);
     if(x < y) {
       x = y;

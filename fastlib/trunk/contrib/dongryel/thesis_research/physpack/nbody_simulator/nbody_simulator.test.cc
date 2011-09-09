@@ -59,7 +59,7 @@ class TestNbodySimulator {
       random_dataset->Init(num_dimensions, num_points);
 
       for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
@@ -77,17 +77,17 @@ class TestNbodySimulator {
       // Loop over distinct 3-tuples.
       core::gnp::TripleDistanceSq triple_distance_sq;
       for(int i = 0; i < table.n_entries() - 2; i++) {
-        core::table::DensePoint i_th_point;
+        arma::vec i_th_point;
         table.get(i, &i_th_point);
         triple_distance_sq.ReplaceOnePoint(metric_in, i_th_point, i, 0);
 
         for(int j = i + 1; j < table.n_entries() - 1; j++) {
-          core::table::DensePoint j_th_point;
+          arma::vec j_th_point;
           table.get(j, &j_th_point);
           triple_distance_sq.ReplaceOnePoint(metric_in, j_th_point, j, 1);
 
           for(int k = j + 1; k < table.n_entries(); k++) {
-            core::table::DensePoint k_th_point;
+            arma::vec k_th_point;
             table.get(k, &k_th_point);
             triple_distance_sq.ReplaceOnePoint(metric_in, k_th_point, k, 2);
 

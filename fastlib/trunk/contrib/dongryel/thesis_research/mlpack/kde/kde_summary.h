@@ -202,13 +202,13 @@ class KdeSummary {
       // Get the iterator for the query node.
       typename GlobalType::TableType::TreeIterator qnode_it =
         global.query_table()->get_node_iterator(qnode);
-      core::table::DensePoint qpoint;
+      arma::vec qpoint;
       int qpoint_index;
 
       // Get the iterator for the reference node.
       typename GlobalType::TableType::TreeIterator rnode_it =
         global.reference_table()->get_node_iterator(rnode);
-      core::table::DensePoint rpoint;
+      arma::vec rpoint;
       int rpoint_index;
 
       // Interval for the pivot query point.

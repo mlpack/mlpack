@@ -22,7 +22,7 @@ class ReducedSetFarField {
 
   public:
     typedef std::vector <
-    std::pair<core::table::DensePoint *, int> > DictionaryType;
+    std::pair<arma::vec *, int> > DictionaryType;
 
   private:
 
@@ -31,16 +31,16 @@ class ReducedSetFarField {
 
     /** @brief The current kernel matrix.
      */
-    core::table::DenseMatrix *current_kernel_matrix_;
+    arma::mat *current_kernel_matrix_;
 
     /** @brief The inverse of the current kernel matrix.
      */
-    core::table::DenseMatrix *current_kernel_matrix_inverse_;
+    arma::mat *current_kernel_matrix_inverse_;
 
     /** @brief The projection matrix that projects each point to the
      *         span of the dictionary points.
      */
-    core::table::DenseMatrix projection_matrix_;
+    arma::mat projection_matrix_;
 
     /** @brief Tells whether each row of the projection matrix belongs
      *         to the dictionary or not.
@@ -72,12 +72,12 @@ class ReducedSetFarField {
     void FillKernelValues_(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &candidate,
+      const arma::vec &candidate,
       arma::vec *kernel_values_out,
       double *self_value) const;
 
     void UpdateDictionary_(
-      const core::table::DensePoint &new_point,
+      const arma::vec &new_point,
       int new_point_index,
       const TreeIteratorType &it,
       const arma::vec &new_column_vector,
@@ -86,7 +86,7 @@ class ReducedSetFarField {
       const arma::vec &inverse_times_column_vector);
 
     void AddBasis_(
-      const core::table::DensePoint &new_point,
+      const arma::vec &new_point,
       int new_point_index,
       const TreeIteratorType &it,
       const arma::vec &new_column_vector_in,
@@ -107,13 +107,13 @@ class ReducedSetFarField {
 
     void Init(const TreeIteratorType &it);
 
-    const core::table::DenseMatrix *current_kernel_matrix() const;
+    const arma::mat *current_kernel_matrix() const;
 
-    core::table::DenseMatrix *current_kernel_matrix();
+    arma::mat *current_kernel_matrix();
 
-    const core::table::DenseMatrix *current_kernel_matrix_inverse() const;
+    const arma::mat *current_kernel_matrix_inverse() const;
 
-    core::table::DenseMatrix *current_kernel_matrix_inverse();
+    arma::mat *current_kernel_matrix_inverse();
 
   public:
 
@@ -152,7 +152,7 @@ class ReducedSetFarField {
     double EvaluateField(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point) const;
+      const arma::vec &point) const;
 
     /** @brief Prints out the series expansion represented by this object.
      */

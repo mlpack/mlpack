@@ -21,13 +21,13 @@ namespace series_expansion {
 class DenseMatrixInverse {
   public:
 
-    static core::table::DenseMatrix *Update(
-      const core::table::DenseMatrix &previous_inverse,
+    static arma::mat *Update(
+      const arma::mat &previous_inverse,
       const arma::vec &inverse_times_new_column,
       double projection_error) {
 
-      core::table::DenseMatrix *new_matrix_inverse =
-        new core::table::DenseMatrix();
+      arma::mat *new_matrix_inverse =
+        new arma::mat();
       new_matrix_inverse->Init(
         previous_inverse.n_rows() + 1, previous_inverse.n_cols() + 1);
 

@@ -58,18 +58,15 @@ class WeightedLMetric {
 
     /** @brief Computes the distance metric between two points.
      */
-    template<typename PointType>
     double Distance(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
       return core::math::Pow<1, t_pow>(DistanceIneq(a, b));
     }
 
-    template<typename PointType>
     double DistanceIneq(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
       double distance_ineq = 0;
-      int length = core::table::LengthTrait<PointType>::length(a);
-      for(int i = 0; i < length; i++) {
+      for(unsigned int i = 0; i < a.n_elem; i++) {
         distance_ineq +=
           core::math::Pow<t_pow, 1>((a[i] - b[i]) * scales_[i]);
       }
@@ -82,9 +79,8 @@ class WeightedLMetric {
      * This might be faster so that you could get, for instance, squared
      * L2 distance.
      */
-    template<typename PointType>
     double DistanceSq(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
 
       return core::metric_kernels::LMetricDistanceSqTrait<t_pow>::Compute(
                *this, a, b);

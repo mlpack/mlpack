@@ -34,10 +34,10 @@ class CartesianFarField {
     ////////// Private Member Variables //////////
 
     /** @brief The center of the expansion. */
-    core::table::DensePoint center_;
+    arma::vec center_;
 
     /** @brief The coefficients. */
-    core::table::DensePoint coeffs_;
+    arma::vec coeffs_;
 
     /** @brief The order of the expansion. */
     short int order_;
@@ -62,8 +62,8 @@ class CartesianFarField {
     /** @brief Copies another farfield expansion.
      */
     void Copy(const CartesianFarField<ExpansionType> &other_farfield) {
-      center_.Copy(other_farfield.get_center());
-      coeffs_.Copy(other_farfield.get_coeffs());
+      center_ = other_farfield.get_center();
+      coeffs_ = other_farfield.get_coeffs();
       order_ = other_farfield.get_order();
     }
 
@@ -71,16 +71,16 @@ class CartesianFarField {
      *
      *  @return The center of expansion for the current far-field expansion.
      */
-    core::table::DensePoint &get_center();
+    arma::vec &get_center();
 
-    const core::table::DensePoint &get_center() const;
+    const arma::vec &get_center() const;
 
     /** @brief Gets the set of far-field coefficients.
      *
      *  @return The const reference to the vector containing the
      *          far-field coefficients.
      */
-    const core::table::DensePoint& get_coeffs() const;
+    const arma::vec& get_coeffs() const;
 
     /** @brief Gets the approximation order.
      *
@@ -105,7 +105,7 @@ class CartesianFarField {
      *                will be copied to the center of the given far-field
      *                expansion object.
      */
-    void set_center(const core::table::DensePoint &center);
+    void set_center(const arma::vec &center);
 
     ////////// User-level Functions //////////
 
@@ -144,13 +144,13 @@ class CartesianFarField {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point, int order) const;
+      const arma::vec &point, int order) const;
 
     /** @brief Initializes the current far field expansion object with
      *         the given center.
      */
     template<typename KernelAuxType>
-    void Init(const KernelAuxType &ka, const core::table::DensePoint& center);
+    void Init(const KernelAuxType &ka, const arma::vec& center);
 
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);
@@ -182,18 +182,18 @@ class CartesianFarField {
 };
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-core::table::DensePoint &CartesianFarField<ExpansionType>::get_center() {
+arma::vec &CartesianFarField<ExpansionType>::get_center() {
   return center_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint &CartesianFarField <
+const arma::vec &CartesianFarField <
 ExpansionType >::get_center() const {
   return center_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint &CartesianFarField <
+const arma::vec &CartesianFarField <
 ExpansionType >::get_coeffs() const {
   return coeffs_;
 }
@@ -215,8 +215,8 @@ void CartesianFarField<ExpansionType>::set_order(short int new_order) {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianFarField<ExpansionType>::set_center(
-  const core::table::DensePoint &center) {
-  for(int i = 0; i < center.length(); i++) {
+  const arma::vec &center) {
+  for(int i = 0; i < center.n_elem; i++) {
     center_[i] = center[i];
   }
 }
@@ -224,15 +224,15 @@ void CartesianFarField<ExpansionType>::set_center(
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
 void CartesianFarField<ExpansionType>::Init(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& center) {
+  const KernelAuxType &kernel_aux_in, const arma::vec& center) {
 
   // Copy the center.
-  center_.Copy(center);
+  center_ = center;
   order_ = -1;
 
   // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
+  coeffs_.zeros();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -241,12 +241,12 @@ void CartesianFarField<ExpansionType>::Init(const TKernelAux &kernel_aux_in) {
 
   // Set the center to be a zero vector.
   order_ = -1;
-  center_.Init(kernel_aux_in.global().get_dimension());
-  center_.SetZero();
+  center_.set_size(kernel_aux_in.global().get_dimension());
+  center_.zeros();
 
   // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
+  coeffs_.zeros();
 }
 }
 }

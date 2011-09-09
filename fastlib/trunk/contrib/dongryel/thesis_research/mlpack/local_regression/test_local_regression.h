@@ -64,7 +64,7 @@ class TestLocalRegression {
 
       int problem_dimension = (order == 0) ? 1 : query_table.n_attributes() + 1;
       for(int i = 0; i < query_table.n_entries(); i++) {
-        core::table::DensePoint query_point;
+        arma::vec query_point;
         query_table.get(i, &query_point);
 
         // Monte Carlo result.
@@ -74,7 +74,7 @@ class TestLocalRegression {
         denominator.Init(problem_dimension, problem_dimension);
 
         for(int j = 0; j < reference_table.n_entries(); j++) {
-          core::table::DensePoint reference_point;
+          arma::vec reference_point;
           double reference_weight;
           reference_table.get(j, &reference_point, &reference_weight);
 

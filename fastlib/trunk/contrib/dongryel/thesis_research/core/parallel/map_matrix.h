@@ -31,12 +31,30 @@ class MapMatrixInternal {
 
   public:
 
+    void set(int row, int col, T val) {
+      int index = n_rows_ * col + row;
+      (matrix_.get())[index] = val;
+    }
+
     std::map<int, int> &id_to_position_map() {
       return id_to_position_map_;
     }
 
     std::map<int, int> &position_to_id_map() {
       return position_to_id_map_;
+    }
+
+    void SetAll(T val) {
+      T * column = matrix_.get();
+      for(int j = 0; j < n_cols_; j++, column += n_rows_) {
+        for(int i = 0; i < n_rows_; i++) {
+          column[i] = val;
+        }
+      }
+    }
+
+    void SetZero() {
+      memset(matrix_.get(), 0, sizeof(T) * n_rows_ * n_cols_);
     }
 
     T *matrix() {
@@ -67,7 +85,7 @@ class MapMatrixInternal {
     /** @brief Returns a const pointer to the object with the given ID
      *         for the column.
      */
-    const T *col(int i) const {
+    const T *GetColumnPtr(int i) const {
       int col_start = i;
       if(id_to_position_map_.size() > 0) {
         col_start = (id_to_position_map_.find(col_start)->second);
@@ -79,7 +97,7 @@ class MapMatrixInternal {
     /** @brief Returns a modifiable reference to the object with the
      *         given ID.
      */
-    T *col(int i) {
+    T *GetColumnPtr(int i) {
       int col_start = i;
       if(id_to_position_map_.size() > 0) {
         col_start = (id_to_position_map_.find(col_start)->second);
@@ -213,6 +231,14 @@ class MapMatrix {
     };
 
   public:
+
+    T *matrix() {
+      return internal_->matrix();
+    }
+
+    void Alias(const core::parallel::MapMatrix<T> &source_in) {
+      internal_ = source_in.internal();
+    }
 
     template<typename TreeIteratorType>
     void Alias(
@@ -349,15 +375,27 @@ class MapMatrix {
     /** @brief Returns a const pointer to the object with the given ID
      *         for the column.
      */
-    const T *col(int i) const {
-      return internal_->col(i);
+    const T *GetColumnPtr(int i) const {
+      return internal_->GetColumnPtr(i);
     }
 
     /** @brief Returns a modifiable reference to the object with the
      *         given ID.
      */
-    T *col(int i) {
-      return internal_->col(i);
+    T *GetColumnPtr(int i) {
+      return internal_->GetColumnPtr(i);
+    }
+
+    void SetAll(T val) {
+      internal_->SetAll(val);
+    }
+
+    void SetZero() {
+      internal_->SetZero();
+    }
+
+    void set(int row, int col, T val) {
+      internal_->set(row, col, val);
     }
 };
 }

@@ -36,13 +36,13 @@ class SeriesExpansionTest {
     double NaiveKernelSum_(
       const MetricType &metric_in,
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &query_point,
+      const arma::vec &query_point,
       typename TableType::TreeIterator &rnode_it) {
 
       double kernel_sum = 0.0;
       rnode_it.Reset();
       while(rnode_it.HasNext()) {
-        core::table::DensePoint rpoint;
+        arma::vec rpoint;
         rnode_it.Next(&rpoint);
         double squared_distance = metric_in.DistanceSq(query_point, rpoint);
         kernel_sum += kernel_aux_in.kernel().EvalUnnormOnSq(squared_distance);
@@ -58,7 +58,7 @@ class SeriesExpansionTest {
       random_dataset->Init(num_dimensions, num_points);
 
       for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
@@ -178,7 +178,7 @@ class SeriesExpansionTest {
 
       if(test_reduced_set_expansion) {
 
-        core::table::DensePoint random_query_point;
+        arma::vec random_query_point;
         typename TableType::TreeIterator qnode_it =
           random_table.get_node_iterator(query_node);
         int random_query_point_index;

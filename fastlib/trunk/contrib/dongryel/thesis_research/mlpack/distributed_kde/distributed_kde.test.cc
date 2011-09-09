@@ -29,7 +29,7 @@ class TestDistributed_Kde {
         local_table->old_from_new();
 
       for(int i = 0; i < local_table->n_entries(); i++) {
-        core::table::DensePoint point;
+        arma::vec point;
         int old_process_index = old_from_new[i].first;
         int old_process_point_index = old_from_new[i].second.first;
         int new_process_old_from_new_index =
@@ -37,7 +37,7 @@ class TestDistributed_Kde {
         local_table->get(new_process_old_from_new_index, &point);
         double *destination = start_ptrs[old_process_index] +
                               n_attributes * old_process_point_index;
-        memcpy(destination, point.ptr(), sizeof(double) * n_attributes);
+        memcpy(destination, point.memptr(), sizeof(double) * n_attributes);
       }
     }
 
@@ -76,7 +76,7 @@ class TestDistributed_Kde {
           total_num_points += total_distribution[i];
         }
         output_table.Init(n_attributes, total_num_points);
-        start_ptrs[0] = output_table.data().ptr();
+        start_ptrs[0] = output_table.data().memptr();
         total_num_points = 0;
         for(int i = 0; i < world.size(); i++) {
           total_num_points += total_distribution[i];

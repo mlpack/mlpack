@@ -32,15 +32,15 @@ class TestTree {
       typename TableType::TreeIterator node_it =
         table.get_node_iterator(node);
       do {
-        core::table::DensePoint point;
+        arma::vec point;
         int point_id;
         double point_weight;
         node_it.Next(&point, &point_id, &point_weight);
-        core::table::DensePoint compare_point;
+        arma::vec compare_point;
         double compare_point_weight;
         table.get(point_id, &compare_point, &compare_point_weight);
 
-        for(int i = 0; i < point.length(); i++) {
+        for(unsigned int i = 0; i < point.n_elem; i++) {
           if(point[i] != compare_point[i]) {
             return false;
           }
@@ -62,6 +62,8 @@ class TestTree {
 
     int StressTestMain() {
       for(int i = 0; i < 10; i++) {
+        int num_threads = core::math::RandInt(1, 6);
+        omp_set_num_threads(num_threads);
         int num_dimensions = core::math::RandInt(3, 20);
         int num_points = core::math::RandInt(130000, 200001);
         if(StressTest(num_dimensions, num_points) == false) {
@@ -99,9 +101,9 @@ class TestTree {
       core::metric_kernels::LMetric<2> l2_metric;
       reordered_table.IndexData(l2_metric, leaf_size);
       for(int i = 0; i < reordered_table.n_entries(); i++) {
-        core::table::DensePoint reordered_point;
+        arma::vec reordered_point;
         double reordered_weight;
-        core::table::DensePoint original_point;
+        arma::vec original_point;
         double original_weight;
         reordered_table.get(i, &reordered_point, &reordered_weight);
         original_table.get(i, &original_point, &original_weight);
@@ -122,7 +124,7 @@ class TestTree {
       // generated points.
       const int num_random_points_within_bound = 1000;
       for(int k = 0; k < num_random_points_within_bound; k++) {
-        core::table::DensePoint random_point;
+        arma::vec random_point;
         reordered_table.get_tree()->bound().RandomPointInside(&random_point);
         if(! reordered_table.get_tree()->bound().Contains(
               l2_metric, random_point)) {

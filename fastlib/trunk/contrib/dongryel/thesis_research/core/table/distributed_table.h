@@ -132,12 +132,12 @@ class DistributedTable: public boost::noncopyable {
         global_table_->Init(
           owned_table_->n_attributes(), world.size());
       }
-      core::table::DensePoint root_bound_center;
+      arma::vec root_bound_center;
       owned_table_->get_tree()->bound().center(&root_bound_center);
       boost::mpi::gather(
         world,
-        root_bound_center.ptr(),
-        owned_table_->n_attributes(), global_table_->data().ptr(), 0);
+        root_bound_center.memptr(),
+        owned_table_->n_attributes(), global_table_->data().memptr(), 0);
 
       // The master builds the tree and broadcasts the nodes.
       if(world.rank() == 0) {

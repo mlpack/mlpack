@@ -9,8 +9,9 @@
 #ifndef CORE_TABLE_SAMPLE_DENSE_MATRIX_H
 #define CORE_TABLE_SAMPLE_DENSE_MATRIX_H
 
-#include "core/table/dense_matrix.h"
+#include <armadillo>
 #include <boost/serialization/serialization.hpp>
+#include "core/table/dense_matrix.h"
 
 namespace core {
 namespace table {
@@ -31,7 +32,7 @@ class SampleDenseMatrix {
     /** @brief The pointer to the dense matrix to be
      *         serialized/unserialized.
      */
-    core::table::DenseMatrix *matrix_;
+    arma::mat *matrix_;
 
     /** @brief The associated old from new mapping.
      */
@@ -51,9 +52,9 @@ class SampleDenseMatrix {
 
   public:
 
-    /** @brief
+    /** @brief Returns the underlying matrix.
      */
-    core::table::DenseMatrix *matrix() {
+    arma::mat *matrix() {
       return matrix_;
     }
 
@@ -80,7 +81,7 @@ class SampleDenseMatrix {
      *         function is called).
      */
     void Init(
-      core::table::DenseMatrix &matrix_in,
+      arma::mat &matrix_in,
       OldFromNewIndexType *old_from_new_in,
       const std::vector<int> &indices_to_be_serialized_in) {
 
@@ -93,7 +94,7 @@ class SampleDenseMatrix {
      *         function is called).
      */
     void Init(
-      core::table::DenseMatrix &matrix_in,
+      arma::mat &matrix_in,
       OldFromNewIndexType *old_from_new_in,
       int starting_column_index_in,
       int num_entries_to_load_in) {
@@ -108,7 +109,7 @@ class SampleDenseMatrix {
      *         its old_from_new mappings onto new destinations.
      */
     void Export(
-      core::table::DenseMatrix *matrix_out,
+      arma::mat *matrix_out,
       OldFromNewIndexType *old_from_new_out,
       int starting_column_index_in) const {
 
@@ -116,12 +117,13 @@ class SampleDenseMatrix {
       for(unsigned int i = 0; i < indices_to_be_serialized_->size();
           i++, destination_column_index++) {
         int source_point_index = (*indices_to_be_serialized_)[i];
-        core::table::DensePoint source_point;
-        matrix_->MakeColumnVector(source_point_index, &source_point);
-        core::table::DensePoint destination_point;
-        matrix_out->MakeColumnVector(
-          destination_column_index, &destination_point);
-        for(int j = 0; j < source_point.length(); j++) {
+        arma::vec source_point;
+        core::table::MakeColumnVector(
+          *matrix_, source_point_index, &source_point);
+        arma::vec destination_point;
+        core::table::MakeColumnVector(
+          *matrix_out, destination_column_index, &destination_point);
+        for(unsigned int j = 0; j < source_point.n_elem; j++) {
           destination_point[j] = source_point[j];
         }
         old_from_new_out[destination_column_index] =
@@ -136,9 +138,9 @@ class SampleDenseMatrix {
     void save(Archive &ar, const unsigned int version) const {
       for(unsigned int i = 0; i < indices_to_be_serialized_->size(); i++) {
         int point_index = (*indices_to_be_serialized_)[i];
-        core::table::DensePoint point;
-        matrix_->MakeColumnVector(point_index, &point);
-        for(int j = 0; j < point.length(); j++) {
+        arma::vec point;
+        core::table::MakeColumnVector(*matrix_, point_index, &point);
+        for(unsigned int j = 0; j < point.n_elem; j++) {
           ar & point[j];
         }
         ar & old_from_new_[point_index].first;
@@ -152,14 +154,15 @@ class SampleDenseMatrix {
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-      double *ptr = matrix_->GetColumnPtr(starting_column_index_);
+      double *ptr =
+        core::table::GetColumnPtr(*matrix_, starting_column_index_);
       OldFromNewIndexType *old_from_new_ptr =
         old_from_new_ + starting_column_index_;
       for(int i = 0; i < num_entries_to_load_; i++) {
-        for(int j = 0; j < matrix_->n_rows(); j++) {
+        for(unsigned int j = 0; j < matrix_->n_rows; j++) {
           ar & ptr[j];
         }
-        ptr += matrix_->n_rows();
+        ptr += matrix_->n_rows;
 
         ar & old_from_new_ptr->first;
         ar & old_from_new_ptr->second.first;

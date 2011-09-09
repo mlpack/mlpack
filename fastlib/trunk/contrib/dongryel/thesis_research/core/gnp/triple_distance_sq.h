@@ -16,7 +16,7 @@ class TripleDistanceSq {
   private:
     arma::mat distance_sq_;
 
-    std::vector< core::table::DensePoint > points_;
+    std::vector< arma::vec > points_;
 
     std::vector<int> point_indices_;
 
@@ -25,7 +25,7 @@ class TripleDistanceSq {
     void PrintPoints() const {
       printf("TripleDistanceSq object has the following points:\n");
       for(unsigned int i = 0; i < points_.size(); i++) {
-        points_[i].Print();
+        points_[i].print();
       }
     }
 
@@ -54,11 +54,11 @@ class TripleDistanceSq {
     template<typename MetricType>
     void ReplaceOnePoint(
       const MetricType &metric_in,
-      const core::table::DensePoint &new_point_in,
+      const arma::vec &new_point_in,
       int new_point_index_in,
       int point_pos_in) {
 
-      points_[point_pos_in].Alias(new_point_in);
+      core::table::Alias(new_point_in, &(points_[point_pos_in]));
 
       // Replace the index with the new point.
       point_indices_[point_pos_in] = new_point_index_in;

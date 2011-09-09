@@ -65,7 +65,7 @@ class BoundsAux {
 
     static void MaxDistanceSq(
       const core::tree::HrectBound &bound1,
-      const core::table::DensePoint &bound2_centroid,
+      const arma::vec &bound2_centroid,
       arma::vec *furthest_point_in_bound1,
       double *furthest_dsqd) {
 
@@ -95,7 +95,7 @@ class BoundsAux {
 
     static void MaxDistanceSq(
       const core::tree::BallBound &bound1,
-      const core::table::DensePoint &bound2_centroid,
+      const arma::vec &bound2_centroid,
       arma::vec *furthest_point_in_bound1,
       double *furthest_dsqd) {
 
@@ -109,19 +109,15 @@ class BoundsAux {
       // Compute the unit vector that has the same direction as the
       // vector pointing from the given point to the bounding ball
       // center.
-      arma::vec bound1_center_alias;
-      arma::vec bound2_centroid_alias;
-      core::table::DensePointToArmaVec(bound1.center(), &bound1_center_alias);
-      core::table::DensePointToArmaVec(bound2_centroid, &bound2_centroid_alias);
-      arma::vec unit_vector = bound1_center_alias - bound2_centroid_alias;
+      arma::vec unit_vector = bound1.center() - bound2_centroid;
       unit_vector *= 1.0 / distance;
-      (*furthest_point_in_bound1) = bound1_center_alias;
+      (*furthest_point_in_bound1) = bound1.center();
       (*furthest_point_in_bound1) += bound1.radius() * unit_vector;
 
       // Temporary LMetric object. Eliminate when there is an issue
       // later.
       (*furthest_dsqd) = l2_metric.DistanceSq(
-                           bound2_centroid_alias, *furthest_point_in_bound1);
+                           bound2_centroid, *furthest_point_in_bound1);
     }
 
     /** @brief Returns the maximum side length of the bounding box that
@@ -156,15 +152,15 @@ class BoundsAux {
       const core::tree::BallBound &ball_bound2,
       int *dimension) {
 
-      const core::table::DensePoint &center1 = ball_bound1.center();
-      const core::table::DensePoint &center2 = ball_bound2.center();
-      int dim = ball_bound1.center().length();
+      const arma::vec &center1 = ball_bound1.center();
+      const arma::vec &center2 = ball_bound2.center();
+      int dim = ball_bound1.center().n_elem;
       double l1_distance = 0;
       for(int d = 0; d < dim; d++) {
         l1_distance += fabs(center1[d] - center2[d]);
       }
       l1_distance += ball_bound1.radius() + ball_bound2.radius();
-      *dimension = center1.length();
+      *dimension = center1.n_elem;
       return l1_distance;
     }
 

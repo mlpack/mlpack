@@ -31,10 +31,10 @@ class CartesianLocal {
     friend class boost::serialization::access;
 
     /** @brief The center of the expansion. */
-    core::table::DensePoint center_;
+    arma::vec center_;
 
     /** @brief The coefficients. */
-    core::table::DensePoint coeffs_;
+    arma::vec coeffs_;
 
     /** @brief The truncation order. */
     int order_;
@@ -57,13 +57,13 @@ class CartesianLocal {
     }
 
     /** @brief Get the center of expansion. */
-    core::table::DensePoint &get_center();
+    arma::vec &get_center();
 
     /** @brief Get the center of expansion. */
-    const core::table::DensePoint &get_center() const;
+    const arma::vec &get_center() const;
 
     /** @brief Get the coefficients. */
-    const core::table::DensePoint& get_coeffs() const;
+    const arma::vec& get_coeffs() const;
 
     /** @brief Get the approximation order. */
     int get_order() const;
@@ -84,7 +84,7 @@ class CartesianLocal {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &x_q) const;
+      const arma::vec &x_q) const;
 
     /** @brief Initializes the current local expansion object with the
      *         given center.
@@ -92,7 +92,7 @@ class CartesianLocal {
     template<typename KernelAuxType>
     void Init(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint& center);
+      const arma::vec& center);
 
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);
@@ -130,22 +130,22 @@ class CartesianLocal {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianLocal<ExpansionType>::SetZero() {
   order_ = -1;
-  coeffs_.SetZero();
+  coeffs_.zeros();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-core::table::DensePoint &CartesianLocal<ExpansionType>::get_center() {
+arma::vec &CartesianLocal<ExpansionType>::get_center() {
   return center_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint &CartesianLocal <
+const arma::vec &CartesianLocal <
 ExpansionType >::get_center() const {
   return center_;
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint& CartesianLocal <
+const arma::vec& CartesianLocal <
 ExpansionType >::get_coeffs() const {
   return coeffs_;
 }
@@ -163,15 +163,15 @@ void CartesianLocal<ExpansionType>::set_order(int new_order) {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 template<typename KernelAuxType>
 void CartesianLocal<ExpansionType>::Init(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& center) {
+  const KernelAuxType &kernel_aux_in, const arma::vec& center) {
 
   // Copy the center.
-  center_.Copy(center);
+  center_ = center;
   order_ = -1;
 
   // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
+  coeffs_.zeros();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -180,12 +180,12 @@ void CartesianLocal<ExpansionType>::Init(const KernelAuxType &kernel_aux_in) {
 
   // Initialize the center to be zero.
   order_ = -1;
-  center_.Init(kernel_aux_in.global().get_dimension());
-  center_.SetZero();
+  center_.set_size(kernel_aux_in.global().get_dimension());
+  center_.zeros();
 
   // Initialize coefficient array.
-  coeffs_.Init(kernel_aux_in.global().get_max_total_num_coeffs());
-  coeffs_.SetZero();
+  coeffs_.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
+  coeffs_.zeros();
 }
 }
 }

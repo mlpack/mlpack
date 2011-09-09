@@ -111,7 +111,7 @@ class GenKdTree {
     template<typename MetricType>
     static void FindBoundFromMatrix(
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       int first, int count, BoundType *bounds) {
 
       int end = first + count;
@@ -125,8 +125,8 @@ class GenKdTree {
 
 #pragma omp for
         for(int i = first; i < end; i++) {
-          core::table::DensePoint col;
-          matrix.MakeColumnVector(i, &col);
+          arma::vec col;
+          core::table::MakeColumnVector(matrix, i, &col);
           local_bound |= col;
         }
 
@@ -145,14 +145,14 @@ class GenKdTree {
     static void FindBoundFromMatrix(
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       BoundType *combined_bound) {
 
       // Each MPI process finds a local bound.
       BoundType local_bound;
-      local_bound.Init(matrix.n_rows());
+      local_bound.Init(matrix.n_rows);
       FindBoundFromMatrix(
-        metric_in, matrix, 0, matrix.n_cols(), &local_bound);
+        metric_in, matrix, 0, matrix.n_cols, &local_bound);
 
       // Call reduction.
       boost::mpi::all_reduce(
@@ -165,7 +165,7 @@ class GenKdTree {
     template<typename MetricType>
     static void MakeLeafNode(
       const MetricType &metric_in,
-      const core::table::DenseMatrix& matrix,
+      const arma::mat& matrix,
       int begin, int count, BoundType *bounds) {
 
       FindBoundFromMatrix(metric_in, matrix, begin, count, bounds);
@@ -177,7 +177,7 @@ class GenKdTree {
     template<typename MetricType, typename TreeType>
     static void CombineBounds(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
+      arma::mat &matrix,
       TreeType *node, TreeType *left, TreeType *right) {
 
       // Do nothing.
@@ -190,7 +190,7 @@ class GenKdTree {
     template<typename MetricType>
     static void ComputeMemberships(
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       int first, int end,
       BoundType &left_bound, BoundType &right_bound,
       int *left_count, std::deque<bool> *left_membership) {
@@ -219,8 +219,8 @@ class GenKdTree {
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
-          core::table::DensePoint point;
-          matrix.MakeColumnVector(left, &point);
+          arma::vec point;
+          core::table::MakeColumnVector(matrix, left, &point);
 
           // We swap if the point is further away from the left pivot.
           if(point[split_dim] > split_val) {
@@ -249,7 +249,7 @@ class GenKdTree {
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
       const BoundType &bound,
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       int *left_count,
       std::deque<bool> *left_membership) {
 
@@ -281,7 +281,7 @@ class GenKdTree {
       // Assign the point on the local process using the splitting
       // value.
       ComputeMemberships(
-        metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
+        metric_in, matrix_in, 0, matrix_in.n_cols, left_bound, right_bound,
         left_count, left_membership);
 
       return true;
@@ -293,8 +293,8 @@ class GenKdTree {
     template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat &matrix,
+      arma::mat &weights,
       TreeType *node, TreeType **left,
       TreeType **right, int leaf_size,
       IndexType *old_from_new,
@@ -317,8 +317,8 @@ class GenKdTree {
               m_file_in->Construct<TreeType>() : new TreeType();
       *right = (m_file_in) ?
                m_file_in->Construct<TreeType>() : new TreeType();
-      (*left)->bound().Init(matrix.n_rows());
-      (*right)->bound().Init(matrix.n_rows());
+      (*left)->bound().Init(matrix.n_rows);
+      (*right)->bound().Init(matrix.n_rows);
 
       int left_count = 0;
       if(max_width < std::numeric_limits<double>::epsilon()) {

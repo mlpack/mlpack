@@ -67,9 +67,9 @@ class TestSubTable {
         // Loop through each iterator and compare.
         int reordered_id = node_from_sub_table->begin();
         while(result && sub_it.HasNext()) {
-          core::table::DensePoint original_point;
+          arma::vec original_point;
           int original_point_id;
-          core::table::DensePoint copy_point;
+          arma::vec copy_point;
           int copy_point_id;
           original_it.Next(&original_point, &original_point_id);
           sub_it.Next(&copy_point, &copy_point_id);
@@ -121,7 +121,7 @@ class TestSubTable {
       random_dataset->Init(num_dimensions, num_points);
 
       for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
