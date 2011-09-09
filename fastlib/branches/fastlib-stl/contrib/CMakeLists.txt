@@ -15,20 +15,20 @@ set(MLPACK_CONTRIB_SRCS)
 # now we need to recurse into each of the contrib methods
 set(DIRS
 #   archana  # <-- DCT.cc is not usable anywhere else, custom one-time code
-#   dongryel
-#   gmravi
-#   houyang
-#   huijing
-#   jim
-#   march
-#   niche
-#   nvasil
+   dongryel
+   gmravi
+   houyang
+   huijing
+   jim
+   march
+   niche
+   nvasil
 #   pagarwal
    pram
-#   rcurtin
-#   rriegel
-#   soyeon
-#   tqlong
+   rcurtin
+   rriegel
+   soyeon
+   tqlong
 )
 
 foreach(dir ${DIRS})
