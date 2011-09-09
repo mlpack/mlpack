@@ -10,51 +10,48 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
-  // Maintain the debug buffer.
-  if (carriageReturned && ignoreInput) { 
-    currentLine = "";
-    carriageReturned = false;
-  }
+  // If we need to, output the prefix.
+  PrefixIfNeeded();
 
+  // Now we try to output the T (whatever it is).
   try {
-    size_t currentPos = currentLine.length();
-    currentLine += boost::lexical_cast<std::string>(val);
+    std::string line = boost::lexical_cast<std::string>(val);
 
-    // Having added to our line, we need to check for any newlines.  If we find
-    // one, output the line, then output the newline and the prefix and continue
-    // looking.
-    size_t newlinePos;
-    while ((newlinePos = currentLine.find('\n', currentPos)) !=
-        std::string::npos) {
-      // Don't output if we are told to ignore input for debugging.
-      if (!ignoreInput) {
-        if (carriageReturned)
-          destination << prefix;
+    // If the length of the casted thing was 0, it may have been a stream
+    // manipulator, so send it directly to the stream and don't ask questions.
+    if (line.length() == 0) {
+      // The prefix cannot be necessary at this point.
+      if (!ignoreInput) // Only if the user wants it.
+        destination << val;
 
-        destination << currentLine.substr(currentPos, newlinePos - currentPos);
-
-        destination << std::endl;
-        carriageReturned = true;
-      }
-      currentPos = newlinePos + 1;
+      return;
     }
 
-    if (currentPos == currentLine.length()) {
-      carriageReturned = true;
-      currentLine = "";
-    } else {
-      // Display the rest of the output, if we want to.
-      if (!ignoreInput) {
-        if (carriageReturned)
-          destination << prefix;
-
-        destination << currentLine.substr(currentPos);
-        carriageReturned = false;
+    // Now, we need to check for newlines in this line.  If we find one, output
+    // up until the newline, then output the newline and the prefix and continue
+    // looking.
+    size_t nl;
+    size_t pos = 0;
+    while ((nl = line.find('\n', pos)) != std::string::npos) {
+      PrefixIfNeeded();
+      if (!ignoreInput) { // Only if the user wants it.
+        destination << line.substr(pos, nl - pos);
+        destination << std::endl;
       }
+      carriageReturned = true; // Regardless of whether or not we display it.
+
+      pos = nl + 1;
+    }
+
+    if (pos != line.length()) { // We need to display the rest.
+      PrefixIfNeeded();
+      if (!ignoreInput)
+        destination << line.substr(pos);
     }
 
   } catch (boost::bad_lexical_cast &e) {
-    // Warn the user, if we are allowed to give output.
+    // Warn the user that there was a failure.
+    PrefixIfNeeded();
     if (!ignoreInput)
       destination << "Failed lexical_cast<std::string>(T) for output; output"
           " not shown." << std::endl;

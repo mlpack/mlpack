@@ -70,9 +70,9 @@ class PrefixedOutStream {
   PrefixedOutStream& operator<<(const char* str);
   PrefixedOutStream& operator<<(std::string& str);
   PrefixedOutStream& operator<<(std::streambuf* sb);
-  PrefixedOutStream& operator<<(std::ostream& (*pf) (std::ostream&));
-  PrefixedOutStream& operator<<(std::ios& (*pf) (std::ios&));
-  PrefixedOutStream& operator<<(std::ios_base& (*pf) (std::ios_base&));
+  PrefixedOutStream& operator<<(std::ostream& (*pf)(std::ostream&));
+  PrefixedOutStream& operator<<(std::ios& (*pf)(std::ios&));
+  PrefixedOutStream& operator<<(std::ios_base& (*pf)(std::ios_base&));
 
   template<typename T>
   PrefixedOutStream& operator<<(T s);
@@ -85,13 +85,8 @@ class PrefixedOutStream {
   /**
    * @brief Discards input, prints nothing if true.
    */
-   bool ignoreInput;
+  bool ignoreInput;
 
-  /**
-   * @brief Stores the current line of output.
-   */
-   std::string currentLine;
- 
  private:
   /**
    * @brief Conducts the base logic required in all the operator << overloads.
@@ -102,6 +97,11 @@ class PrefixedOutStream {
    */
   template<typename T>
   void BaseLogic(T val);
+
+  /***
+   * Output the prefix, but only if we need to and if we are allowed to.
+   */
+  inline void PrefixIfNeeded();
 
   /**
    * @brief Contains a string which will be prefixed to the output after every 
