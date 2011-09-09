@@ -12,6 +12,7 @@
 #ifndef GENERAL_SPACETREE_H
 #define GENERAL_SPACETREE_H
 
+#include <assert.h>
 #include <fastlib/fastlib.h>
 
 /**
@@ -44,10 +45,12 @@ class GeneralBinarySpaceTree {
   public:
   
   GeneralBinarySpaceTree() {
+    /*
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
+    */
   }
   
   ~GeneralBinarySpaceTree() {
@@ -55,16 +58,20 @@ class GeneralBinarySpaceTree {
       delete left_;
       delete right_;
     }
+    /*
     DEBUG_ONLY(begin_ = BIG_BAD_NUMBER);
     DEBUG_ONLY(count_ = BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
+    */
   }
     
   void Init(size_t begin_in, size_t count_in) {
+    /*
     DEBUG_ASSERT(begin_ == BIG_BAD_NUMBER);
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
+    */
     begin_ = begin_in;
     count_ = count_in;
   }
@@ -82,8 +89,8 @@ class GeneralBinarySpaceTree {
    */
   const GeneralBinarySpaceTree* FindByBeginCount
   (size_t begin_q, size_t count_q) const {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
+    assert(begin_q >= begin_);
+    assert(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {
@@ -108,8 +115,8 @@ class GeneralBinarySpaceTree {
    */
   GeneralBinarySpaceTree* FindByBeginCount
   (size_t begin_q, size_t count_q) {
-    DEBUG_ASSERT(begin_q >= begin_);
-    DEBUG_ASSERT(count_q <= count_);
+    assert(begin_q >= begin_);
+    assert(count_q <= count_);
     if (begin_ == begin_q && count_ == count_q) {
       return this;
     } else if (unlikely(is_leaf())) {

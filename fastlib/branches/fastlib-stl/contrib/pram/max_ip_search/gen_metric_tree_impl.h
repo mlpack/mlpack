@@ -5,6 +5,7 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
+#include <assert.h>
 #include <fastlib/fastlib.h>
 #include <armadillo>
 
@@ -96,11 +97,11 @@ namespace tree_gen_metric_tree_private {
         old_from_new[right] = t;
       }
       
-      DEBUG_ASSERT(left <= right);
+      assert(left <= right);
       right--;
     }
     
-    DEBUG_ASSERT(left == right + 1);
+    assert(left == right + 1);
 
     return left_count;
   }

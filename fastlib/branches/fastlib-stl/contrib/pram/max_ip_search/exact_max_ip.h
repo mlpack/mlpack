@@ -6,12 +6,14 @@
 #ifndef EXACT_MAX_IP_H
 #define EXACT_MAX_IP_H
 
+#include <assert.h>
 #include <fastlib/fastlib.h>
 #include <vector>
 #include <armadillo>
 #include "general_spacetree.h"
 #include "gen_metric_tree.h"
 
+using namespace mlpack;
 
 PARAM_MODULE("maxip", "Parameters for the class that "
 	     "builds a tree on the reference set and "
@@ -39,7 +41,6 @@ PARAM_FLAG("angle_prune", "The flag to trigger the tighter"
 //   {"computing_sample_sizes", FX_TIMER, FX_CUSTOM, NULL,
 //    " The timer to compute the sample sizes.\n"},
 
-using namespace mlpack;
 
 /**
  * Performs all-nearest-neighbors.  This class will build the trees and 
@@ -64,7 +65,7 @@ class MaxIP {
   // Euclidean bounding boxes, the data are stored in a Matrix, 
   // and each node has a QueryStat for its bound.
   // typedef GeneralBinarySpaceTree<DBallBound< kernel::LMetric<2>, arma::vec>, arma::mat> TreeType;
-  typedef GeneralBinarySpaceTree<DBallBound, arma::mat> TreeType;
+  typedef GeneralBinarySpaceTree<DBallBound<>, arma::mat> TreeType;
    
   
   /////////////////////////////// Members ////////////////////////////
@@ -90,6 +91,10 @@ private:
   arma::Col<size_t> max_ip_indices_;
   // number of nearest neighbrs
   size_t knns_; 
+  // The total number of distance computations
+  size_t distance_computations_;
+  // The total number of split decisions
+  size_t split_decisions_;
 
 
   /////////////////////////////// Constructors ////////////////////////
@@ -130,7 +135,13 @@ private:
   double MaxNodeIP_(TreeType* reference_node) {
     // CHECK IF IT ACTUALLY WORKS
 
-    // fix this to compute distance between a point and a ball tree
+
+    // counting the split decisions 
+    split_decisions_++;
+
+    // compute maximum possible inner product 
+    // between a point and a ball in terms of 
+    // the ball's center and radius
     arma::vec q = queries_.col(query_);
     arma::vec centroid = reference_node->bound().center();
     double c_norm = arma::norm(centroid, 2);
@@ -149,17 +160,17 @@ private:
       if (rad <= c_norm) {
 	double cos_qp = arma::dot(q, centroid) 
 	  / (query_norm_ * c_norm);
-	double sin_qp = std::sqrt(1 - cos_qp^2);
+	double sin_qp = std::sqrt(1 - cos_qp * cos_qp);
 
 	double max_sin_pr = rad / c_norm;
-	double min_cos_pr = std::sqrt(1 - max_sin_pr^2);
+	double min_cos_pr = std::sqrt(1 - max_sin_pr * max_sin_pr);
 
 	if (min_cos_pr > cos_qp) { // <qp \geq \max_r <pr
 	  // cos( <qp - <pr ) = cos <qp * cos <pr + sin <qp * sin <pr
 	  double cos_qp_max_pr = (cos_qp * min_cos_pr) 
 	    + (sin_qp * max_sin_pr);
 
-	  max_cos_qr = std::max(cos_qp_max_pr, 0);
+	  max_cos_qr = std::max(cos_qp_max_pr, 0.0);
 	}
       }
 
@@ -180,11 +191,10 @@ private:
   void ComputeBaseCase_(TreeType* reference_node) {
    
     // Check that the pointers are not NULL
-    DEBUG_ASSERT(reference_node != NULL);
-    // DEBUG_ASSERT(reference_node->is_leaf());
-
-    DEBUG_ASSERT(query_ >= 0);
-    DEBUG_ASSERT(query_ < (index_t) queries_.n_cols);
+    assert(reference_node != NULL);
+    // assert(reference_node->is_leaf());
+    assert(query_ >= 0);
+    assert(query_ < queries_.n_cols);
 
 //     // Check that we really should be in the base case
 //     DEBUG_WARN_IF(!reference_node->is_leaf());
@@ -237,7 +247,8 @@ private:
 
     // Update the upper bound for the query_node
     // query_node->stat().set_max_distance_so_far(query_max_neighbor_distance);
-    // dc += reference_node->end() - reference_node->begin();
+    distance_computations_ 
+      += reference_node->end() - reference_node->begin();
          
   } // ComputeBaseCase_
   
@@ -248,13 +259,12 @@ private:
   void ComputeNeighborsRecursion_(TreeType* reference_node, 
 				  double upper_bound_ip) {
 
-    //    DEBUG_ASSERT(query_node != NULL);
-    DEBUG_ASSERT(reference_node != NULL);
-
-    DEBUG_ASSERT(upper_bound_ip == MaxNodeIP_(reference_node));
+    //    assert(query_node != NULL);
+    assert(reference_node != NULL);
+    assert(upper_bound_ip == MaxNodeIP_(reference_node));
 
     // just checking for the single tree version
-    // DEBUG_ASSERT(query_node->end()
+    // assert(query_node->end()
     //	 - query_node->begin() == 1);
     
     if (upper_bound_ip < max_ips_((query_*knns_) + knns_ -1)) { 
@@ -388,20 +398,22 @@ public:
 	    const arma::mat& references_in) {
     
     
-    // track the number of prunes
+    // track the number of prunes and computations
     number_of_prunes_ = 0;
+    distance_computations_ = 0;
+    split_decisions_ = 0;
     
     // Get the leaf size from the module
     leaf_size_ = IO::GetParam<int>("maxip/leaf_size");
     // Make sure the leaf size is valid
-    DEBUG_ASSERT(leaf_size_ > 0);
+    assert(leaf_size_ > 0);
     
     // Copy the matrices to the class members since they will be rearranged.  
     queries_ = queries_in;
     references_ = references_in;
     
     // The data sets need to have the same number of points
-    DEBUG_SAME_SIZE(queries_.n_rows, references_.n_rows);
+    assert(queries_.n_rows == references_.n_rows);
     
     // K-nearest neighbors initialization
     knns_ = IO::GetParam<int>("maxip/knns");
@@ -478,11 +490,13 @@ public:
     queries_ = queries_in;
     references_ = references_in;
     
-    // track the number of prunes
+    // track the number of prunes and computations
     number_of_prunes_ = 0;
+    distance_computations_ = 0;
+    split_decisions_ = 0;
     
     // The data sets need to have the same number of dimensions
-    DEBUG_ASSERT(queries_.n_rows == references_.n_rows);
+    assert(queries_.n_rows == references_.n_rows);
     
     // K-nearest neighbors initialization
     knns_ = IO::GetParam<int>("maxip/knns");
@@ -540,7 +554,7 @@ public:
     // Start on the root of each tree
     // the index of the query in the queries_ matrix
     // query_ = 0;
-    // DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
+    // assert((size_t)query_trees_.size() == queries_.n_cols());
 //     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 // 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
@@ -569,6 +583,13 @@ public:
 
     IO::Info << "Tree-based Search - Number of prunes: " 
 	     << number_of_prunes_ << std::endl;
+    IO::Info << "\t \t Avg. # of DC: " 
+	     << (double) distance_computations_ 
+      / (double) queries_.n_cols << std::endl;
+    IO::Info << "\t \t Avg. # of SD: " 
+	     << (double) split_decisions_ 
+      / (double) queries_.n_cols << std::endl;
+
 
 //     NOTIFY("Tdc = %zu"d, Tmc = %zu"d, adc = %lg, amc = %lg",
 // 	   dc, mc, (float)dc/(float)query_trees_.size(), 
@@ -601,10 +622,16 @@ public:
     
     IO::Info << "Brute-force Search - Number of prunes: " 
 	     << number_of_prunes_ << std::endl;
+    IO::Info << "\t \t Avg. # of DC: " 
+	     << (double) distance_computations_ 
+      / (double) queries_.n_cols << std::endl;
+    IO::Info << "\t \t Avg. # of SD: " 
+	     << (double) split_decisions_ 
+      / (double) queries_.n_cols << std::endl;
 //     // Start on the root of each tree
 //     // the index of the query in the queries_ matrix
 //     query_ = 0;
-//     DEBUG_ASSERT((size_t)query_trees_.size() == queries_.n_cols());
+//     assert((size_t)query_trees_.size() == queries_.n_cols());
 //     for (std::vector<TreeType*>::iterator query_tree = query_trees_.begin();
 // 	 query_tree < query_trees_.end(); ++query_tree, ++query_) {
 
