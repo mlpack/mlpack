@@ -309,9 +309,7 @@ class TableExchange {
           break;
         }
       }
-      printf("Before exporting: %d\n", extra_receive_slots_.size());
       incoming_extra_task_list.Export(world, metric_in, neighbor);
-      printf("After exporting: %d\n", extra_receive_slots_.size());
 
       // Wait until the task list send request is completed.
       extra_task_list_sent.wait();

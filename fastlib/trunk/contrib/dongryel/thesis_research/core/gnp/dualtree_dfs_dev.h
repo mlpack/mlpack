@@ -588,7 +588,7 @@ void DualtreeDfs<ProblemType>::PostProcess_(
     qnode_stat.summary_.StartReaccumulate();
 
     while(qnode_iterator.HasNext()) {
-      core::table::DensePoint q_col;
+      arma::vec q_col;
       int q_index;
       double q_weight;
       qnode_iterator.Next(&q_col, &q_index, &q_weight);

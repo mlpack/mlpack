@@ -33,7 +33,7 @@ class CartesianExpansionGlobal {
 
     /** @brief The list of precomputed factorial values.
      */
-    core::table::DensePoint factorials_;
+    arma::vec factorials_;
 
     /** @brief The list of precomputed total number of coefficients
      *         per each order.
@@ -43,18 +43,18 @@ class CartesianExpansionGlobal {
     /** @brief The list of precomputed inverse multiindex factorial
      *         values.
      */
-    core::table::DensePoint inv_multiindex_factorials_;
+    arma::vec inv_multiindex_factorials_;
 
     /** @brief The list of precomputed inverse multiindex factorial
      *         values with the parity equal to the multiindex
      *         sum. $(-1)^{\alpha} / \alpha !$.
      */
-    core::table::DensePoint neg_inv_multiindex_factorials_;
+    arma::vec neg_inv_multiindex_factorials_;
 
     /** @brief The list of precomputed multiindex combination $\alpha
      *         choose \beta$'s.
      */
-    core::table::DenseMatrix multiindex_combination_;
+    arma::mat multiindex_combination_;
 
     /** @brief The list of multiindices per each position in the
      *         coefficient layout.
@@ -76,7 +76,7 @@ class CartesianExpansionGlobal {
     /** @brief Stores the $N \choose K$'s. The row index is for n,
      *         column index is for k.
      */
-    core::table::DenseMatrix n_choose_k_;
+    arma::mat n_choose_k_;
 
     /** @brief For each i-th multiindex m_i, store the positions of
      *         the j-th multiindex mapping such that m_i - m_j <= 0
@@ -114,7 +114,7 @@ class CartesianExpansionGlobal {
 
     int get_max_total_num_coeffs() const;
 
-    const core::table::DensePoint& get_inv_multiindex_factorials() const;
+    const arma::vec& get_inv_multiindex_factorials() const;
 
     const std::vector <
     std::vector< short int > > &get_lower_mapping_index() const;
@@ -128,7 +128,7 @@ class CartesianExpansionGlobal {
     const std::vector <
     std::vector< short int > > &get_multiindex_mapping() const;
 
-    const core::table::DensePoint& get_neg_inv_multiindex_factorials() const;
+    const arma::vec& get_neg_inv_multiindex_factorials() const;
 
     double get_n_choose_k(int n, int k) const;
 

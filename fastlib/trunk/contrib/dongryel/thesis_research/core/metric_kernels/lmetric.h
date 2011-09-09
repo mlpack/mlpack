@@ -8,6 +8,7 @@
 #ifndef CORE_METRIC_KERNELS_LMETRIC_H
 #define CORE_METRIC_KERNELS_LMETRIC_H
 
+#include <armadillo>
 #include <boost/serialization/serialization.hpp>
 #include "core/table/dense_point.h"
 #include "core/math/math_lib.h"
@@ -20,10 +21,10 @@ namespace metric_kernels {
 template<int t_pow>
 class LMetricDistanceSqTrait {
   public:
-    template<typename LMetricType, typename PointType>
+    template<typename LMetricType>
     static double Compute(
       const LMetricType &metric_in,
-      const PointType &a, const PointType &b) {
+      const arma::vec &a, const arma::vec &b) {
       return core::math::Pow<2, t_pow>(metric_in.DistanceIneq(a, b));
     }
 };
@@ -34,10 +35,10 @@ class LMetricDistanceSqTrait {
 template<>
 class LMetricDistanceSqTrait<2> {
   public:
-    template<typename LMetricType, typename PointType>
+    template<typename LMetricType>
     static double Compute(
       const LMetricType &metric_in,
-      const PointType &a, const PointType &b) {
+      const arma::vec &a, const arma::vec &b) {
       return metric_in.DistanceIneq(a, b);
     }
 };
@@ -76,17 +77,15 @@ class LMetric {
 
     /** @brief Computes the distance metric between two points.
      */
-    template<typename PointType>
     double Distance(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
       return core::math::Pow<1, t_pow>(DistanceIneq(a, b));
     }
 
-    template<typename PointType>
     double DistanceIneq(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
       double distance_ineq = 0;
-      int length = core::table::LengthTrait<PointType>::length(a);
+      int length = a.n_elem;
       for(int i = 0; i < length; i++) {
         distance_ineq += core::math::Pow<t_pow, 1>(a[i] - b[i]);
       }
@@ -99,9 +98,8 @@ class LMetric {
      * This might be faster so that you could get, for instance, squared
      * L2 distance.
      */
-    template<typename PointType>
     double DistanceSq(
-      const PointType &a, const PointType &b) const {
+      const arma::vec &a, const arma::vec &b) const {
 
       return core::metric_kernels::LMetricDistanceSqTrait<t_pow>::Compute(
                *this, a, b);

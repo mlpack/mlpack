@@ -28,17 +28,18 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
 
   // get inverse factorials (precomputed)
-  core::table::DensePoint neg_inv_multiindex_factorials;
-  neg_inv_multiindex_factorials.Alias(
-    kernel_aux_in.global().get_neg_inv_multiindex_factorials());
+  arma::vec neg_inv_multiindex_factorials;
+  core::table::Alias(
+    kernel_aux_in.global().get_neg_inv_multiindex_factorials(),
+    &neg_inv_multiindex_factorials);
 
   // declare deritave mapping
-  core::table::DenseMatrix derivative_map;
+  arma::mat derivative_map;
   kernel_aux_in.AllocateDerivativeMap(dim, order, &derivative_map);
 
   // some temporary variables
-  core::table::DensePoint x_r_minus_x_Q;
-  x_r_minus_x_Q.Init(dim);
+  arma::vec x_r_minus_x_Q;
+  x_r_minus_x_Q.set_size(dim);
 
   // sqrt two times bandwidth
   double bandwidth_factor =
@@ -52,7 +53,7 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::AccumulateCoeffs(
   while(it.HasNext()) {
 
     double weight;
-    core::table::DensePoint point;
+    arma::vec point;
     it.Next(&point, &weight);
 
     // calculate x_r - x_Q
@@ -94,7 +95,7 @@ mlpack::series_expansion::HYPERCUBE >::Print(
   fprintf(stream, "Local expansion\n");
   fprintf(stream, "Center: ");
 
-  for(int i = 0; i < center_.length(); i++) {
+  for(unsigned int i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
@@ -128,7 +129,7 @@ template<typename KernelAuxType>
 double CartesianLocal <
 mlpack::series_expansion::HYPERCUBE >::EvaluateField(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint& x_q) const {
+  const arma::vec& x_q) const {
 
   // if there are no local coefficients, then return 0
   if(order_ < 0) {
@@ -149,10 +150,10 @@ mlpack::series_expansion::HYPERCUBE >::EvaluateField(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // temporary variable
-  core::table::DensePoint x_Q_to_x_q;
-  x_Q_to_x_q.Init(dim);
-  core::table::DensePoint tmp;
-  tmp.Init(kernel_aux_in.global().get_max_total_num_coeffs());
+  arma::vec x_Q_to_x_q;
+  x_Q_to_x_q.set_size(dim);
+  arma::vec tmp;
+  tmp.set_size(kernel_aux_in.global().get_max_total_num_coeffs());
   std::vector<short int> heads(dim + 1, 0);
 
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -204,11 +205,11 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::TranslateFromFarField(
   const KernelAuxType &kernel_aux_in,
   const CartesianFarFieldType &se) {
 
-  core::table::DensePoint pos_arrtmp, neg_arrtmp;
-  core::table::DenseMatrix derivative_map;
-  core::table::DensePoint far_center;
-  core::table::DensePoint cent_diff;
-  core::table::DensePoint far_coeffs;
+  arma::vec pos_arrtmp, neg_arrtmp;
+  arma::mat derivative_map;
+  arma::vec far_center;
+  arma::vec cent_diff;
+  arma::vec far_coeffs;
   int dimension = kernel_aux_in.global().get_dimension();
   int far_order = se.get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(far_order);
@@ -218,9 +219,9 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::TranslateFromFarField(
   kernel_aux_in.AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
 
   // get center and coefficients for far field expansion
-  far_center.Alias(*(se.get_center()));
-  far_coeffs.Alias(se.get_coeffs());
-  cent_diff.Init(dimension);
+  core::table::Alias(*(se.get_center()), &far_center);
+  core::table::Alias(se.get_coeffs(), &far_coeffs);
+  cent_diff.set_size(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -229,8 +230,8 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::TranslateFromFarField(
   }
 
   // compute Gaussian derivative
-  pos_arrtmp.Init(total_num_coeffs);
-  neg_arrtmp.Init(total_num_coeffs);
+  pos_arrtmp.set_size(total_num_coeffs);
+  neg_arrtmp.set_size(total_num_coeffs);
 
   // compute center difference divided by bw_times_sqrt_two;
   for(int j = 0; j < dimension; j++) {
@@ -275,7 +276,7 @@ void CartesianLocal<mlpack::series_expansion::HYPERCUBE>::TranslateFromFarField(
     } // end of k-loop
   } // end of j-loop
 
-  const core::table::DensePoint &C_k_neg =
+  const arma::vec &C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
   for(int j = 0; j < total_num_coeffs; j++) {
     int index_j = traversal_order[j];
@@ -299,14 +300,14 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
   // get the center and the order and the total number of coefficients of
   // the expansion we are translating from. Also get coefficients we
   // are translating
-  core::table::DensePoint new_center;
-  new_center.Alias(se->get_center());
+  arma::vec new_center;
+  core::table::Alias(se->get_center(), &new_center);
   int prev_order = se->get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
   const std::vector< std::vector<short int> > &upper_mapping_index =
     kernel_aux_in.global().get_upper_mapping_index();
-  core::table::DensePoint new_coeffs;
-  new_coeffs.Alias(se->get_coeffs());
+  arma::vec new_coeffs;
+  core::table::Alias(se->get_coeffs(), &new_coeffs);
 
   // dimension
   int dim = kernel_aux_in.global().get_dimension();
@@ -319,8 +320,8 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // center difference between the old center and the new one
-  core::table::DensePoint center_diff;
-  center_diff.Init(dim);
+  arma::vec center_diff;
+  center_diff.set_size(dim);
   for(int d = 0; d < dim; d++) {
     center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
   }
@@ -332,8 +333,9 @@ mlpack::series_expansion::HYPERCUBE >::TranslateToLocal(
   }
 
   // inverse multiindex factorials
-  core::table::DensePoint C_k;
-  C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
+  arma::vec C_k;
+  core::table::Alias(
+    kernel_aux_in.global().get_inv_multiindex_factorials(), &C_k);
 
   // get the order of traversal for the given order of approximation
   const std::vector<short int> &traversal_order =

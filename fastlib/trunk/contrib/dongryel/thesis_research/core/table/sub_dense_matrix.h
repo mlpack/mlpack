@@ -9,6 +9,7 @@
 #ifndef CORE_TABLE_SUB_DENSE_MATRIX_H
 #define CORE_TABLE_SUB_DENSE_MATRIX_H
 
+#include <armadillo>
 #include <boost/serialization/serialization.hpp>
 #include "core/table/dense_matrix.h"
 
@@ -27,7 +28,7 @@ class SubDenseMatrix {
     /** @brief The pointer to the dense matrix. The loading/unloading
      *         is done from here.
      */
-    core::table::DenseMatrix *matrix_;
+    arma::mat *matrix_;
 
     /** @brief The list of begin/count pairs to serialize from the
      *         dense matrix.
@@ -36,13 +37,6 @@ class SubDenseMatrix {
     *serialize_points_per_terminal_node_;
 
   public:
-
-    /** @brief Returns whether the sub dense matrix is an alias or
-     *         not.
-     */
-    bool is_alias() const {
-      return matrix_->is_alias();
-    }
 
     /** @brief The default constructor.
      */
@@ -55,7 +49,7 @@ class SubDenseMatrix {
      *         serialization/unserialization.
      */
     void Init(
-      core::table::DenseMatrix *matrix_in,
+      arma::mat *matrix_in,
       const std::vector< typename SubTableType::PointSerializeFlagType >
       &serialize_points_per_terminal_node_in) {
       matrix_ = matrix_in;
@@ -66,7 +60,7 @@ class SubDenseMatrix {
     /** @brief Initialize a sub dense matrix class for serializing it
      *         in entirety.
      */
-    void Init(core::table::DenseMatrix *matrix_in) {
+    void Init(arma::mat *matrix_in) {
       matrix_ = matrix_in;
     }
 
@@ -76,8 +70,8 @@ class SubDenseMatrix {
     void save(Archive &ar, const unsigned int version) const {
 
       // Save the dimensionality.
-      int n_rows = matrix_->n_rows();
-      int n_cols = matrix_->n_cols();
+      int n_rows = matrix_->n_rows;
+      int n_cols = matrix_->n_cols;
       if(serialize_points_per_terminal_node_) {
         n_cols = 0;
         for(unsigned int j = 0;
@@ -95,8 +89,8 @@ class SubDenseMatrix {
             j < serialize_points_per_terminal_node_->size(); j++) {
           for(int i = (*serialize_points_per_terminal_node_)[j].begin();
               i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
-            const double *column_ptr = matrix_->GetColumnPtr(i);
-            for(int k = 0; k < matrix_->n_rows(); k++) {
+            const double *column_ptr = core::table::GetColumnPtr(*matrix_, i);
+            for(unsigned int k = 0; k < matrix_->n_rows; k++) {
               ar & column_ptr[k];
             }
           }
@@ -106,7 +100,7 @@ class SubDenseMatrix {
 
         // Otherwise, save the entire thing.
         for(int j = 0; j < n_cols; j++) {
-          const double *column_ptr = matrix_->GetColumnPtr(j);
+          const double *column_ptr = core::table::GetColumnPtr(*matrix_, j);
           for(int i = 0; i < n_rows; i++) {
             ar & column_ptr[i];
           }
@@ -125,8 +119,8 @@ class SubDenseMatrix {
       ar & n_rows;
       ar & n_cols;
 
-      if(this->is_alias() == false) {
-        matrix_->Init(n_rows, n_cols);
+      if(matrix_->n_elem == 0) {
+        matrix_->set_size(n_rows, n_cols);
       }
 
       // Serialize onto a consecutive block of memory.
@@ -135,9 +129,8 @@ class SubDenseMatrix {
           j < serialize_points_per_terminal_node_->size(); j++) {
         for(int i = (*serialize_points_per_terminal_node_)[j].begin();
             i < (*serialize_points_per_terminal_node_)[j].end(); i++, index++) {
-          double *column_ptr =
-            const_cast<double *>(matrix_->GetColumnPtr(index));
-          for(int k = 0; k < matrix_->n_rows(); k++) {
+          double *column_ptr = core::table::GetColumnPtr(*matrix_, index);
+          for(unsigned int k = 0; k < matrix_->n_rows; k++) {
             ar & column_ptr[k];
           }
         }

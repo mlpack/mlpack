@@ -60,12 +60,12 @@ class TestKde {
 
       ultra_naive_query_results.resize(query_table.n_entries());
       for(int i = 0; i < query_table.n_entries(); i++) {
-        core::table::DensePoint query_point;
+        arma::vec query_point;
         query_table.get(i, &query_point);
         ultra_naive_query_results[i] = 0;
 
         for(int j = 0; j < reference_table.n_entries(); j++) {
-          core::table::DensePoint reference_point;
+          arma::vec reference_point;
           reference_table.get(j, &reference_point);
 
           // By default, monochromaticity is assumed in the test -
@@ -96,7 +96,7 @@ class TestKde {
         for(int k = 0; k < 3; k++) {
           // Randomly choose the number of dimensions and the points.
           mlpack::kde::test_kde::num_dimensions_ = core::math::RandInt(2, 5);
-          mlpack::kde::test_kde::num_points_ = core::math::RandInt(5000, 10001);
+          mlpack::kde::test_kde::num_points_ = core::math::RandInt(500, 1001);
 
           switch(k) {
             case 0:

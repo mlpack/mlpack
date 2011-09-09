@@ -182,7 +182,7 @@ void TripletreeDfs<ProblemType>::TripletreeBase_(
     table_->get_node_iterator(range_sq_in.node(0));
   do {
     // Get the point in the first node.
-    core::table::DensePoint first_point;
+    arma::vec first_point;
     int first_point_index;
     first_node_it.Next(&first_point, &first_point_index);
     distance_sq_set.ReplaceOnePoint(metric, first_point, first_point_index, 0);
@@ -193,7 +193,7 @@ void TripletreeDfs<ProblemType>::TripletreeBase_(
     while(second_node_it.HasNext()) {
 
       // Get the point in the second node.
-      core::table::DensePoint second_point;
+      arma::vec second_point;
       int second_point_index;
       second_node_it.Next(&second_point, &second_point_index);
       distance_sq_set.ReplaceOnePoint(
@@ -205,7 +205,7 @@ void TripletreeDfs<ProblemType>::TripletreeBase_(
       while(third_node_it.HasNext()) {
 
         // Get thet point in the third node.
-        core::table::DensePoint third_point;
+        arma::vec third_point;
         int third_point_index;
         third_node_it.Next(&third_point, &third_point_index);
         distance_sq_set.ReplaceOnePoint(
@@ -253,7 +253,7 @@ void TripletreeDfs<ProblemType>::TripletreeBase_(
       while(node_iterator.HasNext()) {
 
         // Get the query point and its real index.
-        core::table::DensePoint q_col;
+        arma::vec q_col;
         int q_index;
         node_iterator.Next(&q_col, &q_index);
 
@@ -308,7 +308,7 @@ bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
   typename ProblemType::SummaryType new_summary;
 
   bool flag = true;
-  core::table::DensePoint previous_query_point;
+  arma::vec previous_query_point;
   int previous_query_point_index = -1;
 
   for(int i = node_start_index; flag && i < 3; i++) {
@@ -323,7 +323,7 @@ bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
 
       // The query point index and the point.
       int query_point_index = -1;
-      core::table::DensePoint query_point;
+      arma::vec query_point;
 
       // The new summary.
       new_summary = node_stat.summary_;
@@ -347,10 +347,10 @@ bool TripletreeDfs<ProblemType>::CanProbabilisticSummarize_(
                    metric, problem_->global(), delta,
                    range_in, failure_probabilities, i, query_results,
                    query_point, qpoint_dfs_index, query_point_index,
-                   (const core::table::DensePoint *) NULL,
+                   (const arma::vec *) NULL,
                    (int *) NULL);
         }
-        previous_query_point.Alias(query_point);
+        core::table::Alias(query_point, &previous_query_point);
         previous_query_point_index = query_point_index;
       }
     }
@@ -731,7 +731,7 @@ void TripletreeDfs<ProblemType>::PostProcess_(
     qnode_stat.summary_.StartReaccumulate(problem_->global());
 
     while(qnode_iterator.HasNext()) {
-      core::table::DensePoint q_col;
+      arma::vec q_col;
       int q_index;
       qnode_iterator.Next(&q_col, &q_index);
       query_results->ApplyPostponed(q_index, qnode_stat.postponed_);

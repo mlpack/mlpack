@@ -34,7 +34,7 @@ ReducedSetFarField<TreeIteratorType>::~ReducedSetFarField() {
 
 template<typename TreeIteratorType>
 void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
-  const core::table::DensePoint &new_point,
+  const arma::vec &new_point,
   int new_point_index,
   const TreeIteratorType &it,
   const arma::vec &new_column_vector,
@@ -43,14 +43,14 @@ void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
   const arma::vec &inverse_times_column_vector) {
 
   // Add the point to the dictionary.
-  std::pair< core::table::DensePoint *, int > new_pair(
-    new core::table::DensePoint(), new_point_index);
+  std::pair< arma::vec *, int > new_pair(
+    new arma::vec(), new_point_index);
   new_pair.first->Copy(new_point);
   dictionary_.push_back(new_pair);
   in_dictionary_[ new_point_index - it.begin()] = true;
 
   // Update the kernel matrix.
-  core::table::DenseMatrix *new_kernel_matrix = new core::table::DenseMatrix();
+  arma::mat *new_kernel_matrix = new arma::mat();
   new_kernel_matrix->Init(
     current_kernel_matrix_->n_rows() + 1, current_kernel_matrix_->n_cols() + 1);
 
@@ -75,7 +75,7 @@ void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
   current_kernel_matrix_ = new_kernel_matrix;
 
   // Update the kernel matrix inverse.
-  core::table::DenseMatrix *new_kernel_matrix_inverse =
+  arma::mat *new_kernel_matrix_inverse =
     mlpack::series_expansion::DenseMatrixInverse::Update(
       *current_kernel_matrix_inverse_,
       inverse_times_column_vector,
@@ -85,32 +85,32 @@ void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
 }
 
 template<typename TreeIteratorType>
-const core::table::DenseMatrix *ReducedSetFarField <
+const arma::mat *ReducedSetFarField <
 TreeIteratorType >::current_kernel_matrix() const {
   return current_kernel_matrix_;
 }
 
 template<typename TreeIteratorType>
-const core::table::DenseMatrix *ReducedSetFarField <
+const arma::mat *ReducedSetFarField <
 TreeIteratorType >::current_kernel_matrix_inverse() const {
   return current_kernel_matrix_inverse_;
 }
 
 template<typename TreeIteratorType>
-core::table::DenseMatrix *ReducedSetFarField <
+arma::mat *ReducedSetFarField <
 TreeIteratorType >::current_kernel_matrix() {
   return current_kernel_matrix_;
 }
 
 template<typename TreeIteratorType>
-core::table::DenseMatrix *ReducedSetFarField <
+arma::mat *ReducedSetFarField <
 TreeIteratorType >::current_kernel_matrix_inverse() {
   return current_kernel_matrix_inverse_;
 }
 
 template<typename TreeIteratorType>
 void ReducedSetFarField<TreeIteratorType>::AddBasis_(
-  const core::table::DensePoint &new_point,
+  const arma::vec &new_point,
   int new_point_index,
   const TreeIteratorType &it,
   const arma::vec &new_column_vector_in,
@@ -122,7 +122,7 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis_(
 
     // Compute the matrix-vector product.
     arma::mat current_kernel_matrix_inverse_alias;
-    core::table::DenseMatrixToArmaMat(
+    arma::matToArmaMat(
       *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
     arma::vec inverse_times_column_vector =
       current_kernel_matrix_inverse_alias * new_column_vector_in;
@@ -142,17 +142,17 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis_(
   else {
 
     // Add the point to the dictionary.
-    std::pair< core::table::DensePoint *, int > new_pair(
-      new core::table::DensePoint(), new_point_index);
+    std::pair< arma::vec *, int > new_pair(
+      new arma::vec(), new_point_index);
     new_pair.first->Copy(new_point);
     dictionary_.push_back(new_pair);
     in_dictionary_[new_point_index - it.begin()] = true;
 
     // By default, we start with 1 by 1 kernel matrix and inverse.
-    current_kernel_matrix_ = new core::table::DenseMatrix();
+    current_kernel_matrix_ = new arma::mat();
     current_kernel_matrix_->Init(1, 1);
     current_kernel_matrix_->set(0, 0, self_value);
-    current_kernel_matrix_inverse_ = new core::table::DenseMatrix();
+    current_kernel_matrix_inverse_ = new arma::mat();
     current_kernel_matrix_inverse_->Init(1, 1);
     current_kernel_matrix_inverse_->set(0, 0, self_value);
   }
@@ -169,7 +169,7 @@ typename MetricType, typename KernelAuxType >
 void ReducedSetFarField<TreeIteratorType>::FillKernelValues_(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &candidate,
+  const arma::vec &candidate,
   arma::vec *kernel_values_out,
   double *self_value) const {
 
@@ -180,7 +180,7 @@ void ReducedSetFarField<TreeIteratorType>::FillKernelValues_(
   *self_value = kernel_aux_in.kernel().EvalUnnormOnSq(0.0);
 
   for(unsigned int i = 0; i < dictionary_.size(); i++) {
-    const core::table::DensePoint &dictionary_point = *(dictionary_[i].first);
+    const arma::vec &dictionary_point = *(dictionary_[i].first);
     double squared_distance =
       metric_in.DistanceSq(candidate, dictionary_point);
     (*kernel_values_out)[i] =
@@ -197,7 +197,7 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
 
   // The alias to the final kernel matrix inverse.
   arma::mat current_kernel_matrix_inverse_alias;
-  core::table::DenseMatrixToArmaMat(
+  arma::matToArmaMat(
     *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
 
   // Sum of the kernel matrix inverse entries.
@@ -214,7 +214,7 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
   projection_matrix_.SetZero();
   int num_dictionary_point_encountered = 0;
   while(it.HasNext()) {
-    core::table::DensePoint point;
+    arma::vec point;
     it.Next(&point);
 
     // The DFS index shifted so that the begin index is 0.
@@ -260,7 +260,7 @@ void ReducedSetFarField<TreeIteratorType>::AccumulateCoeffs(
   it.Reset();
   arma::vec new_column_vector_in;
   while(it.HasNext()) {
-    core::table::DensePoint point;
+    arma::vec point;
     it.Next(&point);
 
     // Fill out the kernel values, and do the self-computation.
@@ -283,7 +283,7 @@ template<typename MetricType, typename KernelAuxType>
 double ReducedSetFarField<TreeIteratorType>::EvaluateField(
   const MetricType &metric_in,
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &query_point) const {
+  const arma::vec &query_point) const {
 
   // Compute the kernel value between the query point and the
   // dictionary point.
@@ -357,7 +357,7 @@ void ReducedSetFarField<TreeIteratorType>::TranslateFromFarField(
       const DictionaryType &child_dictionary =
         child_expansions_[i]->dictionary();
       for(unsigned int i = 0; i < child_dictionary.size(); i++) {
-        const core::table::DensePoint &point = *(child_dictionary[i].first);
+        const arma::vec &point = *(child_dictionary[i].first);
         int point_dfs_index = child_dictionary[i].second;
 
         // Fill out the kernel values, and do the self-computation.

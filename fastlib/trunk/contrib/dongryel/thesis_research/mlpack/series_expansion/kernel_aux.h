@@ -84,15 +84,15 @@ class GaussianKernelHypercubeAux {
     }
 
     void AllocateDerivativeMap(
-      int dim, int order, core::table::DenseMatrix *derivative_map) const {
-      derivative_map->Init(dim, order + 1);
+      int dim, int order, arma::mat *derivative_map) const {
+      derivative_map->set_size(dim, order + 1);
     }
 
     void ComputeDirectionalDerivatives(
-      const core::table::DensePoint &x,
-      core::table::DenseMatrix *derivative_map, int order) const {
+      const arma::vec &x,
+      arma::mat *derivative_map, int order) const {
 
-      int dim = x.length();
+      int dim = x.n_elem;
 
       // Precompute necessary Hermite polynomials based on coordinate
       // difference.
@@ -102,17 +102,18 @@ class GaussianKernelHypercubeAux {
         double d2 = 2 * coord_div_band;
         double facj = exp(-coord_div_band * coord_div_band);
 
-        derivative_map->set(d, 0, facj);
+        derivative_map->at(d, 0) = facj;
 
         if(order > 0) {
 
-          derivative_map->set(d, 1, d2 * facj);
+          derivative_map->at(d, 1) = d2 * facj;
 
           if(order > 1) {
             for(int k = 1; k < order; k++) {
               int k2 = k * 2;
-              derivative_map->set(d, k + 1, d2 * derivative_map->get(d, k) -
-                                  k2 * derivative_map->get(d, k - 1));
+              derivative_map->at(d, k + 1) =
+                d2 * derivative_map->at(d, k) -
+                k2 * derivative_map->at(d, k - 1);
             }
           }
         }
@@ -120,12 +121,12 @@ class GaussianKernelHypercubeAux {
     }
 
     double ComputePartialDerivative(
-      const core::table::DenseMatrix &derivative_map,
+      const arma::mat &derivative_map,
       const std::vector<short int> &mapping) const {
 
       double partial_derivative = 1.0;
       for(unsigned int d = 0; d < mapping.size(); d++) {
-        partial_derivative *= derivative_map.get(d, mapping[d]);
+        partial_derivative *= derivative_map.at(d, mapping[d]);
       }
       return partial_derivative;
     }
@@ -371,15 +372,15 @@ class GaussianKernelMultivariateAux {
 
     void AllocateDerivativeMap(
       int dim, int order,
-      core::table::DenseMatrix *derivative_map) const {
-      derivative_map->Init(dim, order + 1);
+      arma::mat *derivative_map) const {
+      derivative_map->set_size(dim, order + 1);
     }
 
     void ComputeDirectionalDerivatives(
-      const core::table::DensePoint &x,
-      core::table::DenseMatrix *derivative_map, int order) const {
+      const arma::vec &x,
+      arma::mat *derivative_map, int order) const {
 
-      int dim = x.length();
+      int dim = x.n_elem;
 
       // Precompute necessary Hermite polynomials based on coordinate
       // difference.
@@ -389,18 +390,16 @@ class GaussianKernelMultivariateAux {
         double d2 = 2 * coord_div_band;
         double facj = exp(-coord_div_band * coord_div_band);
 
-        derivative_map->set(d, 0, facj);
+        derivative_map->at(d, 0) = facj;
 
         if(order > 0) {
-
-          derivative_map->set(d, 1, d2 * facj);
-
+          derivative_map->at(d, 1) = d2 * facj;
           if(order > 1) {
             for(int k = 1; k < order; k++) {
               int k2 = k * 2;
-              derivative_map->set(
-                d, k + 1, d2 * derivative_map->get(d, k) -
-                k2 * derivative_map->get(d, k - 1));
+              derivative_map->at(d, k + 1) =
+                d2 * derivative_map->at(d, k) -
+                k2 * derivative_map->at(d, k - 1);
             }
           }
         }
@@ -408,12 +407,12 @@ class GaussianKernelMultivariateAux {
     }
 
     double ComputePartialDerivative(
-      const core::table::DenseMatrix &derivative_map,
+      const arma::mat &derivative_map,
       const std::vector<short int> &mapping) const {
 
       double partial_derivative = 1.0;
       for(int d = 0; d < static_cast<int>(mapping.size()); d++) {
-        partial_derivative *= derivative_map.get(d, mapping[d]);
+        partial_derivative *= derivative_map.at(d, mapping[d]);
       }
       return partial_derivative;
     }
@@ -634,31 +633,32 @@ class EpanKernelMultivariateAux {
     }
 
     void AllocateDerivativeMap(
-      int dim, int order, core::table::DenseMatrix *derivative_map) const {
-      derivative_map->Init(global_.get_total_num_coeffs(order), 1);
+      int dim, int order, arma::mat *derivative_map) const {
+      derivative_map->set_size(global_.get_total_num_coeffs(order), 1);
     }
 
     void ComputeDirectionalDerivatives(
-      const core::table::DensePoint &x,
-      core::table::DenseMatrix *derivative_map, int order) const {
+      const arma::vec &x,
+      arma::mat *derivative_map, int order) const {
 
       // Compute the derivatives for $||x||^2$ and negate it. Then, add
       // $(1, 0, 0, ... 0)$ to it.
       squared_component_.ComputeDirectionalDerivatives(
         x, derivative_map, order);
 
-      double *derivative_map_zeroth_column = derivative_map->GetColumnPtr(0);
-      for(int i = 0; i < derivative_map->n_rows(); i++) {
+      double *derivative_map_zeroth_column =
+        core::table::GetColumnPtr(*derivative_map, 0);
+      for(unsigned int i = 0; i < derivative_map->n_rows; i++) {
         derivative_map_zeroth_column[i] = - derivative_map_zeroth_column[i];
       }
-      (derivative_map->GetColumnPtr(0))[0] += 1.0;
+      derivative_map->at(0, 0) += 1.0;
     }
 
     double ComputePartialDerivative(
-      const core::table::DenseMatrix &derivative_map,
+      const arma::mat &derivative_map,
       const std::vector<short int> &mapping) const {
 
-      return derivative_map.get(global_.ComputeMultiindexPosition(mapping), 0);
+      return derivative_map.at(global_.ComputeMultiindexPosition(mapping), 0);
     }
 
     template<typename BoundType>

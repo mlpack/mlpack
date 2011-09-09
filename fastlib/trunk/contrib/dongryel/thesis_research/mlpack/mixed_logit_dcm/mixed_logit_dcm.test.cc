@@ -42,7 +42,7 @@ class TestMixedLogitDCM {
         mlpack::mixed_logit_dcm::num_attributes_, total_num_attributes);
 
       for(int j = 0; j < total_num_attributes; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_attribute_dataset->get(j, &point);
         for(int i = 0; i < mlpack::mixed_logit_dcm::num_attributes_; i++) {
           point[i] = core::math::Random(0.1, 1.0);
@@ -52,7 +52,7 @@ class TestMixedLogitDCM {
       random_num_alternatives_dataset->Init(
         1, mlpack::mixed_logit_dcm::num_people_);
       for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_num_alternatives_dataset->get(j, &point);
 
         // This is the number of discrete choices for the given
@@ -62,7 +62,7 @@ class TestMixedLogitDCM {
       random_decisions_dataset->Init(
         1, mlpack::mixed_logit_dcm::num_people_);
       for(int j = 0; j < mlpack::mixed_logit_dcm::num_people_; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_decisions_dataset->get(j, &point);
 
         // This is the discrete choice index of the given person.

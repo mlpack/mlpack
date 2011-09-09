@@ -29,7 +29,7 @@ class RandomFeature {
       const boost::scoped_array< arma::vec > *random_variates_;
       core::monte_carlo::MeanVariancePairMatrix *covariance_transformation_;
       core::monte_carlo::MeanVariancePairMatrix *average_transformation_;
-      core::table::DenseMatrix *table_projections_;
+      arma::mat *table_projections_;
       int num_random_fourier_features_;
 
       RandomFeatureArgument() {
@@ -70,7 +70,7 @@ class RandomFeature {
         const boost::scoped_array< arma::vec > &random_variates,
         int num_random_fourier_features,
         core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
-        core::table::DenseMatrix *table_projections) {
+        arma::mat *table_projections) {
 
         begin_ = begin;
         end_ = end;
@@ -111,20 +111,19 @@ class RandomFeature {
             (args.do_centering_) ?
             args.global_mean_->get(
               0, j + args.num_random_fourier_features_).sample_mean() : 0.0;
-          args.table_projections_->set(
-            j, i, cos(dot_product) * normalization_factor -
-            first_correction_factor);
-          args.table_projections_->set(
-            j + args.num_random_fourier_features_, i,
-            sin(dot_product) * normalization_factor - second_correction_factor);
+          args.table_projections_->at(j, i) =
+            cos(dot_product) * normalization_factor - first_correction_factor;
+          args.table_projections_->at(
+            j + args.num_random_fourier_features_, i) =
+              sin(dot_product) * normalization_factor - second_correction_factor;
         }
 
         // Now Accumulate the covariance.
-        for(int k = 0; k < args.table_projections_->n_rows(); k++) {
-          for(int j = 0; j < args.table_projections_->n_rows(); j++) {
+        for(unsigned int k = 0; k < args.table_projections_->n_rows; k++) {
+          for(unsigned int j = 0; j < args.table_projections_->n_rows; j++) {
             args.covariance_transformation_->get(j, k).push_back(
-              args.table_projections_->get(j, i) *
-              args.table_projections_->get(k, i));
+              args.table_projections_->at(j, i) *
+              args.table_projections_->at(k, i));
           }
         }
       }
@@ -218,10 +217,10 @@ class RandomFeature {
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
       core::monte_carlo::MeanVariancePairMatrix *covariance_transformation,
-      core::table::DenseMatrix *table_projections) {
+      arma::mat *table_projections) {
 
       // Allocate the projection matrix.
-      table_projections->Init(
+      table_projections->set_size(
         2 * num_random_fourier_features, table_in.n_entries());
 
       // Basically, store sub-results and combine them later after all
@@ -317,7 +316,7 @@ class RandomFeature {
      */
     static void AccumulateRotationTransform(
       const TableType &table_in,
-      const core::table::DenseMatrix &covariance_eigenvectors,
+      const arma::mat &covariance_eigenvectors,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
       core::monte_carlo::MeanVariancePairMatrix *accumulants) {
@@ -335,14 +334,14 @@ class RandomFeature {
           double second_value = sin(dot_product) * normalization_factor;
 
           // For each column of eigenvectors,
-          for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
+          for(unsigned int k = 0; k < covariance_eigenvectors.n_cols; k++) {
             tmp_coordinate[k] +=
-              covariance_eigenvectors.get(j, k) * first_value +
-              covariance_eigenvectors.get(
+              covariance_eigenvectors.at(j, k) * first_value +
+              covariance_eigenvectors.at(
                 j + num_random_fourier_features, k) * second_value;
           }
         }
-        for(int k = 0; k < covariance_eigenvectors.n_cols(); k++) {
+        for(unsigned int k = 0; k < covariance_eigenvectors.n_cols; k++) {
           accumulants->get(k, i).push_back(tmp_coordinate[k]);
         }
       }
@@ -354,7 +353,7 @@ class RandomFeature {
      */
     static void WeightedAverageTransform(
       const TableType &table_in,
-      const core::table::DenseMatrix &weights_in,
+      const arma::mat &weights_in,
       int num_reference_samples,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
@@ -363,7 +362,7 @@ class RandomFeature {
       core::monte_carlo::MeanVariancePairMatrix *average_transformation) {
 
       average_transformation->Init(
-        weights_in.n_rows(), 2 * num_random_fourier_features);
+        weights_in.n_rows, 2 * num_random_fourier_features);
       average_transformation->set_total_num_terms(table_in.n_entries());
 
       // Generate a random combination.
@@ -375,8 +374,8 @@ class RandomFeature {
         table_in.get((*random_combination)[i] , &old_point);
         for(int j = 0; j < num_random_fourier_features; j++) {
           double dot_product = arma::dot(random_variates[j], old_point);
-          for(int k = 0; k < weights_in.n_rows(); k++) {
-            double weight = weights_in.get(k, (*random_combination)[i]);
+          for(unsigned int k = 0; k < weights_in.n_rows; k++) {
+            double weight = weights_in.at(k, (*random_combination)[i]);
             average_transformation->get(k, j).push_back(
               weight *(
                 cos(dot_product) - global_mean.get(0, j).sample_mean()));
@@ -395,10 +394,9 @@ class RandomFeature {
       const TableType &table_in,
       const boost::scoped_array< arma::vec > &random_variates,
       int num_random_fourier_features,
-      core::table::DensePoint *sum_transformations) {
+      arma::vec *sum_transformations) {
 
-      sum_transformations->Init(2 * num_random_fourier_features);
-      sum_transformations->SetZero();
+      sum_transformations->zeros(2 * num_random_fourier_features);
 
       for(int i = 0; i < table_in.n_entries(); i++) {
         arma::vec old_point;

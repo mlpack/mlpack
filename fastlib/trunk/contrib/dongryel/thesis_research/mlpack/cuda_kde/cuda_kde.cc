@@ -45,9 +45,9 @@ void StartComputation(boost::program_options::variables_map &vm) {
   NbodyKernelOnHost(
     kde_arguments.reference_table_->n_attributes(),
     static_cast<float>(kde_arguments.bandwidth_),
-    kde_arguments.query_table_->data().ptr(),
+    kde_arguments.query_table_->data().memptr(),
     kde_arguments.query_table_->n_entries(),
-    kde_arguments.reference_table_->data().ptr(),
+    kde_arguments.reference_table_->data().memptr(),
     kde_arguments.reference_table_->n_entries(),
     kernel_sums_host);
 

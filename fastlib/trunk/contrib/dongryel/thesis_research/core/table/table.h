@@ -65,11 +65,11 @@ class Table {
     /** @brief The underlying multidimensional data owned by the
      *         table.
      */
-    core::table::DenseMatrix data_;
+    arma::mat data_;
 
     /** @brief The weights associated with each point.
      */
-    core::table::DenseMatrix weights_;
+    arma::mat weights_;
 
     /** @brief The rank of the table.
      */
@@ -156,29 +156,25 @@ class Table {
           current_index_++;
         }
 
-        template<typename IncomingPointType>
         void Next(
-          IncomingPointType *entry, int *point_id, double *weight) {
+          arma::vec *entry, int *point_id, double *weight) {
           current_index_++;
           table_->iterator_get_(current_index_, entry, weight);
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        template<typename IncomingPointType>
-        void Next(IncomingPointType *entry, double *weight) {
+        void Next(arma::vec *entry, double *weight) {
           current_index_++;
           table_->iterator_get_(current_index_, entry, weight);
         }
 
-        template<typename IncomingPointType>
-        void Next(IncomingPointType *entry, int *point_id) {
+        void Next(arma::vec *entry, int *point_id) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        template<typename IncomingPointType>
-        void Next(IncomingPointType *entry) {
+        void Next(arma::vec *entry) {
           current_index_++;
           table_->iterator_get_(current_index_, entry);
         }
@@ -188,8 +184,7 @@ class Table {
           *point_id = table_->iterator_get_id_(current_index_);
         }
 
-        template<typename IncomingPointType>
-        void get(int i, IncomingPointType *entry) {
+        void get(int i, arma::vec *entry) {
           table_->iterator_get_(begin_ + i, entry);
         }
 
@@ -197,21 +192,18 @@ class Table {
           *point_id = table_->iterator_get_id_(begin_ + i);
         }
 
-        template<typename IncomingPointType>
-        void RandomPick(IncomingPointType *entry) {
+        void RandomPick(arma::vec *entry) {
           table_->iterator_get_(core::math::RandInt(begin_, end_), entry);
         }
 
-        template<typename IncomingPointType>
-        void RandomPick(IncomingPointType *entry, int *point_id) {
+        void RandomPick(arma::vec *entry, int *point_id) {
           int pre_translated_dfs_id = core::math::RandInt(begin_, end_);
           *point_id = table_->iterator_get_id_(pre_translated_dfs_id);
           table_->iterator_get_(pre_translated_dfs_id, entry);
         }
 
-        template<typename IncomingPointType>
         void RandomPick(
-          IncomingPointType *entry, int *point_id, double *weight) {
+          arma::vec *entry, int *point_id, double *weight) {
           int pre_translated_dfs_id = core::math::RandInt(begin_, end_);
           *point_id = table_->iterator_get_id_(pre_translated_dfs_id);
           table_->iterator_get_(pre_translated_dfs_id, entry, weight);
@@ -389,27 +381,27 @@ class Table {
 
     /** @brief Returns a reference to the underlying data.
      */
-    const core::table::DenseMatrix &data() const {
+    const arma::mat &data() const {
       return data_;
     }
 
     /** @brief Returns a reference to the underlying data.
      */
-    core::table::DenseMatrix &data() {
+    arma::mat &data() {
       return data_;
     }
 
     /** @brief Returns a reference to the weights associated with the
      *         underlying data.
      */
-    const core::table::DenseMatrix &weights() const {
+    const arma::mat &weights() const {
       return weights_;
     }
 
     /** @brief Returns a reference to the weights associated with the
      *         underlying data.
      */
-    core::table::DenseMatrix &weights() {
+    arma::mat &weights() {
       return weights_;
     }
 
@@ -518,13 +510,13 @@ class Table {
      *         the table.
      */
     int n_attributes() const {
-      return data_.n_rows();
+      return data_.n_rows;
     }
 
     /** @brief Returns the number of points owned by the table.
      */
     int n_entries() const {
-      return data_.n_cols();
+      return data_.n_cols;
     }
 
     /** @brief Initializes an empty table with the specified number of
@@ -535,21 +527,20 @@ class Table {
       int num_dimensions_in, int num_points_in, int rank_in = 0) {
       rank_ = rank_in;
       if(num_dimensions_in > 0 && num_points_in > 0) {
-        data_.Init(num_dimensions_in, num_points_in);
-        data_.SetZero();
-        weights_.Init(1, num_points_in);
-        weights_.SetAll(1.0);
+        data_.zeros(num_dimensions_in, num_points_in);
+        weights_.set_size(1, num_points_in);
+        weights_.fill(1.0);
         if(core::table::global_m_file_) {
           old_from_new_ = core::table::global_m_file_->ConstructArray <
                           OldFromNewIndexType > (
-                            data_.n_cols());
+                            data_.n_cols);
           new_from_old_ = core::table::global_m_file_->ConstructArray <
                           int > (
-                            data_.n_cols());
+                            data_.n_cols);
         }
         else {
-          old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
-          new_from_old_ = new int[data_.n_cols()];
+          old_from_new_ = new OldFromNewIndexType[data_.n_cols];
+          new_from_old_ = new int[data_.n_cols];
         }
         core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
           data_, rank_in, old_from_new_.get());
@@ -572,27 +563,27 @@ class Table {
         exit(0);
       }
       if(weight_file_name == NULL) {
-        if(weights_.n_rows() == 0) {
-          weights_.Init(1, data_.n_cols());
+        if(weights_.n_rows == 0) {
+          weights_.set_size(1, data_.n_cols);
         }
-        weights_.SetAll(1.0);
+        weights_.fill(1.0);
       }
       rank_ = rank_in;
 
       if(core::table::global_m_file_) {
         old_from_new_ = core::table::global_m_file_->ConstructArray <
                         OldFromNewIndexType > (
-                          data_.n_cols());
+                          data_.n_cols);
         new_from_old_ = core::table::global_m_file_->ConstructArray <
                         int > (
-                          data_.n_cols());
+                          data_.n_cols);
       }
       else {
         if(old_from_new_ == NULL) {
-          old_from_new_ = new OldFromNewIndexType[data_.n_cols()];
+          old_from_new_ = new OldFromNewIndexType[data_.n_cols];
         }
         if(new_from_old_ == NULL) {
-          new_from_old_ = new int[data_.n_cols()];
+          new_from_old_ = new int[data_.n_cols];
         }
       }
       core::tree::IndexInitializer<OldFromNewIndexType>::OldFromNew(
@@ -608,17 +599,17 @@ class Table {
       FILE *foutput = fopen(file_name.c_str(), "w+");
       FILE *woutput = (weight_file_name != NULL) ?
                       fopen(weight_file_name->c_str(), "w+") : NULL;
-      for(int j = 0; j < data_.n_cols(); j++) {
-        core::table::DensePoint point;
+      for(unsigned int j = 0; j < data_.n_cols; j++) {
+        arma::vec point;
         double point_weight;
 
         // Grab each point with its weight.
         this->direct_get_(j, &point, &point_weight);
 
         // Output the point.
-        for(int i = 0; i < data_.n_rows(); i++) {
+        for(int i = 0; i < static_cast<int>(data_.n_rows); i++) {
           fprintf(foutput, "%g", point[i]);
-          if(i < data_.n_rows() - 1) {
+          if(i < static_cast<int>(data_.n_rows) - 1) {
             fprintf(foutput, ",");
           }
         }
@@ -680,30 +671,26 @@ class Table {
 
     /** @brief Gets the point with the specific ID.
      */
-    template<typename PointType>
-    void get(int point_id, PointType *point_out) const {
+    void get(int point_id, arma::vec *point_out) const {
       direct_get_(point_id, point_out);
     }
 
     /** @brief Gets the point with the specific ID.
      */
-    template<typename PointType>
-    void get(int point_id, PointType *point_out) {
+    void get(int point_id, arma::vec *point_out) {
       direct_get_(point_id, point_out);
     }
 
     /** @brief Gets the point with the specific ID and its weight.
      */
-    template<typename PointType>
     void get(
-      int point_id, PointType *point_out, double *point_weight_out) const {
+      int point_id, arma::vec *point_out, double *point_weight_out) const {
       direct_get_(point_id, point_out, point_weight_out);
     }
 
     /** @brief Gets the point with the specific ID and its weight.
      */
-    template<typename PointType>
-    void get(int point_id, PointType *point_out, double *point_weight_out) {
+    void get(int point_id, arma::vec *point_out, double *point_weight_out) {
       direct_get_(point_id, point_out, point_weight_out);
     }
 
@@ -715,10 +702,11 @@ class Table {
 
     const double *GetColumnPtr(int point_id) const {
       if(this->IsIndexed() == false) {
-        return data_.GetColumnPtr(point_id);
+        return core::table::GetColumnPtr(data_, point_id);
       }
       else {
-        return data_.GetColumnPtr(
+        return core::table::GetColumnPtr(
+                 data_,
                  IndexUtil<int>::Extract(
                    new_from_old_.get(), point_id));
       }
@@ -726,74 +714,70 @@ class Table {
 
   private:
 
-    template<typename PointType>
     void direct_get_(
-      int point_id, PointType *entry) const {
+      int point_id, arma::vec *entry) const {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
+        core::table::MakeColumnVector(data_, point_id, entry);
       }
       else {
-        data_.MakeColumnVector(
+        core::table::MakeColumnVector(
+          data_,
           IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
 
-    template<typename PointType>
-    void direct_get_(int point_id, PointType *entry) {
+    void direct_get_(int point_id, arma::vec *entry) {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
+        core::table::MakeColumnVector(data_, point_id, entry);
       }
       else {
-        data_.MakeColumnVector(
+        core::table::MakeColumnVector(
+          data_,
           IndexUtil<int>::Extract(
             new_from_old_.get(), point_id), entry);
       }
     }
 
-    template<typename PointType>
     void direct_get_(
-      int point_id, PointType *entry, double *point_weight) const {
+      int point_id, arma::vec *entry, double *point_weight) const {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
-        *point_weight = weights_.get(0, point_id);
+        core::table::MakeColumnVector(data_, point_id, entry);
+        *point_weight = weights_.at(0, point_id);
       }
       else {
         int located_position = IndexUtil<int>::Extract(
                                  new_from_old_.get(), point_id);
-        data_.MakeColumnVector(located_position, entry);
-        *point_weight = weights_.get(0, located_position);
+        core::table::MakeColumnVector(data_, located_position, entry);
+        *point_weight = weights_.at(0, located_position);
       }
     }
 
-    template<typename PointType>
-    void direct_get_(int point_id, PointType *entry, double *point_weight) {
+    void direct_get_(int point_id, arma::vec *entry, double *point_weight) {
       if(this->IsIndexed() == false) {
-        data_.MakeColumnVector(point_id, entry);
-        *point_weight = weights_.get(0, point_id);
+        core::table::MakeColumnVector(data_, point_id, entry);
+        *point_weight = weights_.at(0, point_id);
       }
       else {
         int located_position = IndexUtil<int>::Extract(
                                  new_from_old_.get(), point_id);
-        data_.MakeColumnVector(located_position, entry);
-        *point_weight = weights_.get(0, located_position);
+        core::table::MakeColumnVector(data_, located_position, entry);
+        *point_weight = weights_.at(0, located_position);
       }
     }
 
-    template<typename PointType>
     void iterator_get_(
-      int reordered_position, PointType *entry) const {
-      data_.MakeColumnVector(
-        this->locate_reordered_position_(reordered_position), entry);
+      int reordered_position, arma::vec *entry) const {
+      core::table::MakeColumnVector(
+        data_, this->locate_reordered_position_(reordered_position), entry);
     }
 
-    template<typename PointType>
     void iterator_get_(
-      int reordered_position, PointType *entry, double *weight) const {
+      int reordered_position, arma::vec *entry, double *weight) const {
       int located_reordered_position =
         this->locate_reordered_position_(reordered_position);
-      data_.MakeColumnVector(located_reordered_position, entry);
-      *weight = weights_.get(0, located_reordered_position);
+      core::table::MakeColumnVector(data_, located_reordered_position, entry);
+      *weight = weights_.at(0, located_reordered_position);
     }
 
     int iterator_get_id_(int reordered_position) const {

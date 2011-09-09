@@ -31,10 +31,8 @@ class InversePowDistKernel {
       lambda_ = lambda_in;
     }
 
-    double EvalUnnorm(const core::table::DensePoint &point) const {
-      arma::vec point_alias;
-      core::table::DensePointToArmaVec(point, &point_alias);
-      double sqdist = arma::dot(point_alias, point_alias);
+    double EvalUnnorm(const arma::vec &point) const {
+      double sqdist = arma::dot(point, point);
       if(lambda_ > 0) {
         return 1.0 / pow(sqdist, lambda_ / 2.0);
       }

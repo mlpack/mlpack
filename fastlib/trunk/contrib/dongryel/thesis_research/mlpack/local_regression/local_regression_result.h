@@ -244,7 +244,7 @@ class LocalRegressionResult {
         query_table.get_node_iterator(query_table.get_tree());
       while(it.HasNext()) {
         int qpoint_id;
-        core::table::DensePoint qpoint;
+        arma::vec qpoint;
         it.Next(&qpoint, &qpoint_id);
         this->PostProcess(global, qpoint, qpoint_id);
       }
@@ -253,7 +253,7 @@ class LocalRegressionResult {
     template<typename GlobalType>
     void PostProcess(
       const GlobalType &global,
-      const core::table::DensePoint &qpoint,
+      const arma::vec &qpoint,
       int q_index) {
 
       // Set up the linear system.
@@ -295,7 +295,7 @@ class LocalRegressionResult {
     template<typename MetricType, typename GlobalType>
     void PostProcess(
       const MetricType &metric,
-      const core::table::DensePoint &qpoint,
+      const arma::vec &qpoint,
       int q_index,
       double q_weight,
       const GlobalType &global,
@@ -472,7 +472,7 @@ class LocalRegressionResult {
     template<typename GlobalType, typename LocalRegressionPostponedType>
     void FinalApplyPostponed(
       const GlobalType &global,
-      const core::table::DensePoint &qpoint,
+      const arma::vec &qpoint,
       int q_index,
       const LocalRegressionPostponedType &postponed_in) {
 

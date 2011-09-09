@@ -247,7 +247,7 @@ void DistributedKpcaArgumentParser::RandomGenerate(
   TableType random_dataset;
   random_dataset.Init(num_dimensions, num_points);
   for(int j = 0; j < num_points; j++) {
-    core::table::DensePoint point;
+    arma::vec point;
     random_dataset.get(j, &point);
     for(int i = 0; i < num_dimensions; i++) {
       point[i] = core::math::Random(0.1, 1.0);

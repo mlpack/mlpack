@@ -447,7 +447,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
               train_table_.num_parameters() << "\n";
     for(int i = 0; i < train_table_.num_parameters(); i++) {
       starting_point[i] =
-        arguments_in.initial_parameters_table_->data().get(0, i);
+        arguments_in.initial_parameters_table_->data().at(0, i);
     }
     starting_point.print();
   }
@@ -466,7 +466,7 @@ void MixedLogitDCM<TableType, DistributionType>::Train(
     true_parameters.zeros(train_table_.num_parameters());
     for(int i = 0; i < train_table_.num_parameters(); i++) {
       true_parameters[i] =
-        arguments_in.true_parameters_table_->data().get(0, i);
+        arguments_in.true_parameters_table_->data().at(0, i);
     }
     iterate_at_true_parameters->Init(
       &train_table_, true_parameters,

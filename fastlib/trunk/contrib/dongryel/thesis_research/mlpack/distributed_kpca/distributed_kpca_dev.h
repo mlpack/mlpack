@@ -24,22 +24,17 @@ namespace parallel {
  */
 class AddDensePoint:
   public std::binary_function <
-  core::table::DensePoint,
-  core::table::DensePoint,
-    core::table::DensePoint > {
+  arma::vec,
+  arma::vec,
+    arma::vec > {
 
   public:
-    const core::table::DensePoint operator()(
-      const core::table::DensePoint &a,
-      const core::table::DensePoint &b) const {
+    const arma::vec operator()(
+      const arma::vec &a,
+      const arma::vec &b) const {
 
-      core::table::DensePoint sum;
-      sum.Copy(a);
-      arma::vec sum_alias;
-      core::table::DensePointToArmaVec(sum, &sum_alias);
-      arma::vec b_alias;
-      core::table::DensePointToArmaVec(b, &b_alias);
-      sum_alias += b_alias;
+      arma::vec sum;
+      sum = a + b;
       return sum;
     }
 };
@@ -79,7 +74,7 @@ namespace mpi {
 template<>
 class is_commutative <
   core::parallel::AddDensePoint,
-  core::table::DensePoint  > :
+  arma::vec  > :
   public boost::mpl::true_ {
 
 };
@@ -123,16 +118,16 @@ template<typename DistributedTableType, typename KernelType>
 void DistributedKpca <
 DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   int num_random_fourier_features,
-  core::table::DenseMatrix *random_variates,
+  arma::mat *random_variates,
   boost::scoped_array<arma::vec> &random_variate_aliases) {
 
-  random_variates->Init(num_dimensions_, num_random_fourier_features);
+  random_variates->set_size(num_dimensions_, num_random_fourier_features);
   if(world_->rank() == 0) {
     for(int i = 0; i < num_random_fourier_features; i++) {
 
       // Draw a random Fourier feature.
-      core::table::DensePoint point_alias;
-      random_variates->MakeColumnVector(i, &point_alias);
+      arma::vec point_alias;
+      core::table::MakeColumnVector(*random_variates, i, &point_alias);
       kernel_.DrawRandomVariate(
         num_dimensions_, & point_alias);
     }
@@ -142,10 +137,8 @@ DistributedTableType, KernelType >::GenerateRandomFourierFeatures_(
   // processes form a set of armadillo vector aliases.
   boost::mpi::broadcast(*world_, *random_variates, 0);
   for(int i = 0; i < num_random_fourier_features; i++) {
-    core::table::DensePoint point_alias;
-    random_variates->MakeColumnVector(i, &point_alias);
-    core::table::DensePointToArmaVec(
-      point_alias, &(random_variate_aliases[i]));
+    core::table::MakeColumnVector(
+      *random_variates, i, &(random_variate_aliases[i]));
   }
 }
 
@@ -160,21 +153,18 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 
   // Temporary space for performing the covariance eigenvector times
   // the projected reference set.
-  arma::mat covariance_eigenvectors_alias;
-  core::table::DenseMatrixToArmaMat(
-    result_out->covariance_eigenvectors(), &covariance_eigenvectors_alias);
-  arma::mat reference_projections_alias;
-  core::table::DenseMatrixToArmaMat(
-    result_out->reference_projections(), &reference_projections_alias);
+  arma::mat &covariance_eigenvectors_alias =
+    result_out->covariance_eigenvectors();
+  arma::mat &reference_projections_alias =
+    result_out->reference_projections();
   arma::mat product = arma::trans(covariance_eigenvectors_alias) *
                       reference_projections_alias;
 
   // Normalize each KPCA components. Each process needs to compute its
   // squared length and participate in the global all-reduce step.
-  core::table::DensePoint local_squared_length_contributions;
-  local_squared_length_contributions.Init(product.n_rows);
-  local_squared_length_contributions.SetZero();
-  core::table::DensePoint global_lengths;
+  arma::vec local_squared_length_contributions;
+  local_squared_length_contributions.zeros(product.n_rows);
+  arma::vec global_lengths;
   for(unsigned int j = 0; j < product.n_cols; j++) {
     for(unsigned int i = 0; i < product.n_rows; i++) {
       local_squared_length_contributions[i] +=
@@ -187,8 +177,8 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
 
   // Take the square roots of each KPCA component to compute the
   // actual normalization factor.
-  std::vector< std::pair<int, double> > eigenvalues(global_lengths.length());
-  for(int i = 0; i < global_lengths.length(); i++) {
+  std::vector< std::pair<int, double> > eigenvalues(global_lengths.n_elem);
+  for(unsigned int i = 0; i < global_lengths.n_elem; i++) {
     eigenvalues[i].first = i;
     eigenvalues[i].second =
       global_lengths[i] / static_cast<double>(product.n_cols);
@@ -202,12 +192,12 @@ DistributedTableType, KernelType >::FinalizeKernelEigenvectors_(
     boost::bind(&std::pair<int, double>::second, _2));
 
   // Copy the eigenvectors out.
-  result_out->kpca_components().Init(
+  result_out->kpca_components().set_size(
     arguments_in.num_kpca_components_in_, product.n_cols);
   for(unsigned int j = 0; j < product.n_cols; j++) {
     for(int i = 0; i < arguments_in.num_kpca_components_in_; i++) {
-      result_out->kpca_components().set(
-        i, j, product.at(i, j) / global_lengths[i]);
+      result_out->kpca_components().at(i, j) =
+        product.at(i, j) / global_lengths[i];
     }
   }
 }
@@ -223,7 +213,7 @@ DistributedTableType, KernelType >::ComputeEigenDecomposition_(
 
   // The master generates a set of random Fourier features and do
   // a broadcast.
-  core::table::DenseMatrix random_variates;
+  arma::mat random_variates;
   boost::scoped_array<arma::vec> random_variate_aliases(
     new arma::vec[num_random_fourier_features_eigen_]);
   GenerateRandomFourierFeatures_(
@@ -282,7 +272,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   int num_kpca_components_in_,
   bool do_centering,
   DistributedTableType *reference_table_in,
-  const core::table::DenseMatrix &kpca_components) {
+  const arma::mat &kpca_components) {
 
   printf("Verifying naively\n");
 
@@ -340,7 +330,7 @@ DistributedTableType, KernelType >::NaiveKernelEigenvectors_(
   // The master generates a set of random Fourier features and do a
   // broadcast.
   const int num_random_fourier_features = 20;
-  core::table::DenseMatrix random_variates;
+  arma::mat random_variates;
   boost::scoped_array<arma::vec> random_variate_aliases(
     new arma::vec[num_random_fourier_features]);
   GenerateRandomFourierFeatures_(
@@ -431,7 +421,7 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
   double absolute_error_in,
   DistributedTableType *reference_table_in,
   DistributedTableType *query_table_in,
-  const core::table::DenseMatrix &weights,
+  const arma::mat &weights,
   const core::monte_carlo::MeanVariancePairMatrix
   &approx_weighted_kernel_averages) {
 
@@ -502,7 +492,7 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
   // Allocate the weighted kernel sum slots.
   core::monte_carlo::MeanVariancePairMatrix naive_weighted_kernel_averages;
   naive_weighted_kernel_averages.Init(
-    weights.n_rows(), query_table_in->n_entries());
+    weights.n_rows, query_table_in->n_entries());
 
   for(int i = 0; i < query_table_in->n_entries(); i++) {
 
@@ -527,9 +517,9 @@ DistributedTableType, KernelType >::NaiveWeightedKernelAverage_(
                        naive_reference_kernel_averages[j].sample_mean() +
                        global_reference_kernel_average.sample_mean();
       }
-      for(int k = 0; k < weights.n_rows(); k++) {
+      for(unsigned int k = 0; k < weights.n_rows; k++) {
         naive_weighted_kernel_averages.get(k, i).push_back(
-          weights.get(k, j) * kernel_value);
+          weights.at(k, j) * kernel_value);
       }
     }
   }
@@ -570,12 +560,12 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
   int num_random_fourier_features,
   DistributedTableType *reference_table_in,
   DistributedTableType *query_table_in,
-  const core::table::DenseMatrix &weights,
+  const arma::mat &weights,
   bool do_centering_in,
   core::monte_carlo::MeanVariancePairMatrix *kernel_sums) {
 
   // Allocate the weighted kernel sum slot.
-  kernel_sums->Init(weights.n_rows(), query_table_in->n_entries());
+  kernel_sums->Init(weights.n_rows, query_table_in->n_entries());
 
   // Indicates the convergence of each kernel sum.
   core::monte_carlo::MeanVariancePairVector l1_norm_history;
@@ -594,7 +584,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
 
     // The master generates a set of random Fourier features and do a
     // broadcast.
-    core::table::DenseMatrix random_variates;
+    arma::mat random_variates;
     GenerateRandomFourierFeatures_(
       num_random_fourier_features, &random_variates, random_variate_aliases);
 
@@ -623,7 +613,7 @@ DistributedTableType, KernelType >::ComputeWeightedKernelAverage_(
     else {
 
       // Zero global mean for non-centered KPCA.
-      global_mean.Init(1, random_variates.n_cols() * 2);
+      global_mean.Init(1, random_variates.n_cols * 2);
     }
 
     // Each process computes the sum of the projections of the local
@@ -782,9 +772,9 @@ void DistributedKpca<DistributedTableType, KernelType>::Compute(
   else {
 
     // Otherwise set everything to one.
-    result_out->kpca_components().Init(
+    result_out->kpca_components().set_size(
       1, arguments_in.reference_table_->n_entries());
-    result_out->kpca_components().SetAll(1.0);
+    result_out->kpca_components().fill(1.0);
   }
 
   // If the mode is KPCA, then we need to compute the projection of

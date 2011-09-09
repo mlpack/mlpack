@@ -8,6 +8,7 @@
 #ifndef CORE_TREE_GENERAL_SPACETREE_H
 #define CORE_TREE_GENERAL_SPACETREE_H
 
+#include <armadillo>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/mpi.hpp>
 #include <boost/serialization/split_free.hpp>
@@ -25,8 +26,7 @@
 #include "core/parallel/distributed_tree_util.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/memory_mapped_file.h"
-#include "statistic.h"
-#include "core/table/memory_mapped_file.h"
+#include "core/tree/statistic.h"
 
 namespace core {
 namespace table {
@@ -43,15 +43,15 @@ template<typename IndexType>
 class IndexInitializer {
   public:
     static void PostProcessOldFromNew(
-      const core::table::DenseMatrix &matrix_in, IndexType *old_from_new_out);
+      const arma::mat &matrix_in, IndexType *old_from_new_out);
 
     static void OldFromNew(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       int rank_in,
       IndexType *old_from_new_out);
 
     static void NewFromOld(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       IndexType *old_from_new_in,
       int *new_from_old_out);
 };
@@ -63,27 +63,27 @@ template<>
 class IndexInitializer< std::pair<int, std::pair<int, int> > > {
   public:
     static void PostProcessOldFromNew(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       std::pair<int, std::pair<int, int> > *old_from_new_out) {
-      for(int i = 0; i < matrix_in.n_cols(); i++) {
+      for(unsigned int i = 0; i < matrix_in.n_cols; i++) {
         old_from_new_out[i].second.second = i;
       }
     }
 
     static void OldFromNew(
-      const core::table::DenseMatrix &matrix_in, int rank_in,
+      const arma::mat &matrix_in, int rank_in,
       std::pair<int, std::pair<int, int> > *old_from_new_out) {
-      for(int i = 0; i < matrix_in.n_cols(); i++) {
+      for(unsigned int i = 0; i < matrix_in.n_cols; i++) {
         old_from_new_out[i] = std::pair<int, std::pair<int, int> >(
                                 rank_in, std::pair<int, int>(i, 0));
       }
     }
 
     static void NewFromOld(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       std::pair<int, std::pair<int, int> > *old_from_new_in,
       int *new_from_old_out) {
-      for(int i = 0; i < matrix_in.n_cols(); i++) {
+      for(unsigned int i = 0; i < matrix_in.n_cols; i++) {
         new_from_old_out[old_from_new_in[i].second.second] = i;
       }
     }
@@ -96,25 +96,25 @@ template<>
 class IndexInitializer< int > {
   public:
     static void PostProcessOldFromNew(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       int *old_from_new_out) {
 
       // Do nothing.
     }
 
     static void OldFromNew(
-      const core::table::DenseMatrix &matrix_in, int rank_in,
+      const arma::mat &matrix_in, int rank_in,
       int *old_from_new_out) {
-      for(int i = 0; i < matrix_in.n_cols(); i++) {
+      for(unsigned int i = 0; i < matrix_in.n_cols; i++) {
         old_from_new_out[i] = i;
       }
     }
 
     static void NewFromOld(
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       int *old_from_new_in,
       int *new_from_old_out) {
-      for(int i = 0; i < matrix_in.n_cols(); i++) {
+      for(unsigned int i = 0; i < matrix_in.n_cols; i++) {
         new_from_old_out[old_from_new_in[i]] = i;
       }
     }
@@ -202,7 +202,7 @@ class GeneralBinarySpaceTree {
     template<typename MetricType>
     static void SplitTreeBreadthFirstPostProcess_(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix,
+      arma::mat& matrix,
       TreeType *node,
       int serial_depth_first_limit) {
 
@@ -463,14 +463,14 @@ class GeneralBinarySpaceTree {
     /** @brief Sets the left child of the node with the given node.
      */
     void set_left_child(
-      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *left_in) {
+      const arma::mat& data, GeneralBinarySpaceTree *left_in) {
       left_ = left_in;
     }
 
     /** @brief Sets the right child of the node with the given node.
      */
     void set_right_child(
-      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *right_in) {
+      const arma::mat& data, GeneralBinarySpaceTree *right_in) {
       right_ = right_in;
     }
 
@@ -478,7 +478,7 @@ class GeneralBinarySpaceTree {
      *         children.
      */
     void set_children(
-      const core::table::DenseMatrix& data, GeneralBinarySpaceTree *left_in,
+      const arma::mat& data, GeneralBinarySpaceTree *left_in,
       GeneralBinarySpaceTree *right_in) {
 
       left_ = left_in;
@@ -582,8 +582,8 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat &matrix,
+      arma::mat &weights,
       TreeType *node, TreeType **left,
       TreeType **right, int leaf_size,
       IndexType *old_from_new,
@@ -626,7 +626,7 @@ class GeneralBinarySpaceTree {
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
       const BoundType &bound,
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       std::vector< std::vector<int> > *assigned_point_indices,
       std::vector<int> *membership_counts_per_process) {
 
@@ -664,7 +664,7 @@ class GeneralBinarySpaceTree {
       // Check whether the local assignment is ok.
       bool assignment_is_ok =
         (comm.rank() < comm.size() / 2) ?
-        (left_count > 0) : (left_count < matrix_in.n_cols());
+        (left_count > 0) : (left_count < static_cast<int>(matrix_in.n_cols));
 
       // Do an all-reduction to check whether the assignment is ok.
       bool global_assignment_is_ok = true;
@@ -684,8 +684,8 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static void SplitTreeBreadthFirst(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat& matrix,
+      arma::mat &weights,
       TreeType *node,
       int leaf_size,
       int max_num_leaf_nodes,
@@ -782,8 +782,8 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static void SplitTreeDepthFirst(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat& matrix,
+      arma::mat &weights,
       TreeType *node,
       int leaf_size,
       int max_num_leaf_nodes,
@@ -844,8 +844,8 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static TreeType *MakeTree(
       const MetricType &metric_in,
-      core::table::DenseMatrix& matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat& matrix,
+      arma::mat &weights,
       int leaf_size,
       IndexType *old_from_new,
       int *new_from_old,
@@ -866,10 +866,10 @@ class GeneralBinarySpaceTree {
                        new TreeType();
 
       int num_nodes_in = 1;
-      node->Init(0, matrix.n_cols());
-      node->bound().Init(matrix.n_rows());
+      node->Init(0, matrix.n_cols);
+      node->bound().Init(matrix.n_rows);
       TreeSpecType::FindBoundFromMatrix(
-        metric_in, matrix, 0, matrix.n_cols(), &node->bound());
+        metric_in, matrix, 0, matrix.n_cols, &node->bound());
 
       int current_num_leaf_nodes = 1;
 
@@ -901,8 +901,8 @@ class GeneralBinarySpaceTree {
     template<typename MetricType, typename IndexType>
     static int MatrixPartition(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat &matrix,
+      arma::mat &weights,
       int first, int count,
       BoundType &left_bound, BoundType &right_bound,
       IndexType *old_from_new) {

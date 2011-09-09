@@ -30,15 +30,14 @@ class TestRandApprox {
       random_dataset->Init(num_dimensions, num_points);
 
       for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
         }
 
         // Set the weight to the random one.
-        random_dataset->weights().set(
-          0, j, core::math::Random(1.0, 5.0));
+        random_dataset->weights().at(0, j) = core::math::Random(1.0, 5.0);
       }
     }
 
@@ -64,9 +63,7 @@ class TestRandApprox {
       TableType random_table;
       GenerateRandomDataset_(
         num_dimensions, num_points, &random_table);
-      arma::mat random_matrix;
-      core::table::DenseMatrixToArmaMat(
-        random_table.data(), &random_matrix);
+      arma::mat &random_matrix = random_table.data();
 
       // Compute.
       arma::mat basis;

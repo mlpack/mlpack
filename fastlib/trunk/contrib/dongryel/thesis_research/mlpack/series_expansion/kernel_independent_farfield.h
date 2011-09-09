@@ -29,12 +29,12 @@ class KernelIndependentFarField {
 
     /** @brief The lower bound on the upward equivalent surface.
      */
-    core::table::DensePoint lower_bound_upward_equivalent_;
+    arma::vec lower_bound_upward_equivalent_;
 
     /** @brief The list of pseudocharges that comprise the upward
      *         equivalent density.
      */
-    core::table::DensePoint pseudocharges_;
+    arma::vec pseudocharges_;
 
   public:
 
@@ -52,16 +52,16 @@ class KernelIndependentFarField {
      *
      *  @return The center of expansion for the current far-field expansion.
      */
-    core::table::DensePoint &get_center();
+    arma::vec &get_center();
 
-    const core::table::DensePoint &get_center() const;
+    const arma::vec &get_center() const;
 
     /** @brief Gets the set of far-field coefficients.
      *
      *  @return The const reference to the vector containing the
      *          far-field coefficients.
      */
-    const core::table::DensePoint& get_coeffs() const;
+    const arma::vec& get_coeffs() const;
 
     /** @brief Gets the approximation order.
      *
@@ -87,8 +87,8 @@ class KernelIndependentFarField {
     template<typename KernelAuxType>
     void AccumulateCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &data,
-      const core::table::DensePoint &weights,
+      const arma::mat &data,
+      const arma::vec &weights,
       int begin, int end, int order);
 
     /** @brief Refine the far field moment that has been computed before
@@ -97,8 +97,8 @@ class KernelIndependentFarField {
     template<typename KernelAuxType>
     void RefineCoeffs(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DenseMatrix &data,
-      const core::table::DensePoint &weights,
+      const arma::mat &data,
+      const arma::vec &weights,
       int begin, int end, int order);
 
     /** @brief Evaluates the far-field coefficients at the given point.
@@ -106,13 +106,13 @@ class KernelIndependentFarField {
     template<typename KernelAuxType>
     double EvaluateField(
       const KernelAuxType &kernel_aux_in,
-      const core::table::DensePoint &point) const;
+      const arma::vec &point) const;
 
     /** @brief Initializes the current far field expansion object with
      *         the given center.
      */
     template<typename KernelAuxType>
-    void Init(const KernelAuxType &ka, const core::table::DensePoint& center);
+    void Init(const KernelAuxType &ka, const arma::vec& center);
 
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);

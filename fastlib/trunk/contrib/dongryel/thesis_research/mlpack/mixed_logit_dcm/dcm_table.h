@@ -176,7 +176,7 @@ class DCMTable {
      */
     int num_discrete_choices(int person_index) const {
       return static_cast<int>(
-               num_alternatives_table_->data().get(0, person_index));
+               num_alternatives_table_->data().at(0, person_index));
     }
 
     /** @brief Returns the total number of discrete choices available.
@@ -189,7 +189,7 @@ class DCMTable {
      */
     int get_discrete_choice_index(int person_index) const {
       return static_cast<int>(
-               decisions_table_->data().get(0, person_index));
+               decisions_table_->data().at(0, person_index));
     }
 
     /** @brief Returns the number of parameters.

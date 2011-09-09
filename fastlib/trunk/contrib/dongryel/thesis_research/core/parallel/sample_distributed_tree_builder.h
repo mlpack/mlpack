@@ -132,30 +132,24 @@ class SampleDistributedTreeBuilder {
       const core::tree::HrectBound &global_root_bound,
       std::vector<TreeType *> &top_leaf_nodes) {
 
-      core::table::DensePoint tmp_point;
-      arma::vec tmp_point_alias;
-      tmp_point.Init(top_leaf_nodes[0]->bound().center().length());
-      core::table::DensePointToArmaVec(tmp_point, &tmp_point_alias);
+      arma::vec tmp_point;
+      tmp_point.set_size(top_leaf_nodes[0]->bound().center().n_elem);
       int num_additional = world.size() - top_leaf_nodes.size();
       int num_samples = std::max(1, core::math::RandInt(top_leaf_nodes.size()));
 
       // Randomly add new dummy nodes with randomly chosen centroids
       // averaged.
       for(int j = 0; j < num_additional; j++) {
-        global_root_bound.RandomPointInside(&tmp_point_alias);
+        global_root_bound.RandomPointInside(&tmp_point);
         for(int i = 0; i < num_samples; i++) {
-          arma::vec random_node_center;
-          core::table::DensePointToArmaVec(
-            top_leaf_nodes[
-              core::math::RandInt(top_leaf_nodes.size())]->bound().center(),
-            &random_node_center);
-          tmp_point_alias += random_node_center;
+          tmp_point += top_leaf_nodes[
+                         core::math::RandInt(top_leaf_nodes.size())]->bound().center();
         }
-        tmp_point_alias = (1.0 / static_cast<double>(num_samples)) *
-                          tmp_point_alias;
+        tmp_point = (1.0 / static_cast<double>(num_samples)) *
+                    tmp_point;
         top_leaf_nodes.push_back(new TreeType());
-        top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center().Copy(
-          tmp_point);
+        top_leaf_nodes[ top_leaf_nodes.size() - 1 ]->bound().center() =
+          tmp_point;
       }
     }
 
@@ -175,7 +169,7 @@ class SampleDistributedTreeBuilder {
 
       // Loop through each point and find the closest leaf node.
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
-        core::table::DensePoint point;
+        arma::vec point;
         distributed_table_->local_table()->get(i, &point);
 
         // Loop through each leaf node.
@@ -471,7 +465,7 @@ class SampleDistributedTreeBuilder {
       boost::scoped_array<core::math::Range> local_bound(
         new core::math::Range[n_attributes_]);
       for(int i = 0; i < distributed_table_->local_table()->n_entries(); i++) {
-        core::table::DensePoint point;
+        arma::vec point;
         distributed_table_->local_table()->get(i, &point);
         for(int d = 0; d < n_attributes_; d++) {
           local_bound[d] |= point[d];

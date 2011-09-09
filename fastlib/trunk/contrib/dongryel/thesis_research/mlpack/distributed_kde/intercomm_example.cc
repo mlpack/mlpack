@@ -5,6 +5,7 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
+#include <armadillo>
 #include "core/metric_kernels/lmetric.h"
 #include "core/tree/statistic.h"
 #include "core/table/distributed_table.h"
@@ -38,7 +39,7 @@ core::table::DistributedTable<TreeSpecType> *InitDistributedTable(
     int num_points = core::math::RandInt(10, 20);
     random_dataset.Init(5, num_points);
     for(int j = 0; j < num_points; j++) {
-      core::table::DensePoint point;
+      arma::vec point;
       random_dataset.get(j, &point);
       for(int i = 0; i < num_dimensions; i++) {
         point[i] = core::math::Random(0.1, 1.0);
@@ -98,7 +99,7 @@ void ComputationProcess(
   // from a randomly chosen process.
   int num_points = core::math::RandInt(10, 30);
   for(int n = 0; n < num_points; n++) {
-    core::table::DensePoint point;
+    arma::vec point;
     int random_request_rank = core::math::RandInt(
                                 0, computation_to_outbox_comm.remote_size());
     int random_request_point_id =

@@ -76,7 +76,7 @@ class KdeStatistic {
       SetZero();
 
       // Form the far-field moments.
-      core::table::DensePoint node_center;
+      arma::vec node_center;
       node->bound().center(&node_center);
       farfield_expansion_.Init(global.kernel_aux(), node_center);
       farfield_expansion_.AccumulateCoeffs(
@@ -102,7 +102,7 @@ class KdeStatistic {
       SetZero();
 
       // Form the far-field moments.
-      core::table::DensePoint node_center;
+      arma::vec node_center;
       node->bound().center(&node_center);
       farfield_expansion_.Init(global.kernel_aux(), node_center);
       farfield_expansion_.TranslateFromFarField(

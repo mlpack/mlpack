@@ -29,19 +29,20 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order);
 
   // Get inverse factorials (precomputed).
-  core::table::DensePoint neg_inv_multiindex_factorials;
-  neg_inv_multiindex_factorials.Alias
-  (kernel_aux_in.global().get_neg_inv_multiindex_factorials());
+  arma::vec neg_inv_multiindex_factorials;
+  core::table::Alias(
+    kernel_aux_in.global().get_neg_inv_multiindex_factorials(),
+    &neg_inv_multiindex_factorials);
 
   // Declare deritave mapping.
-  core::table::DenseMatrix derivative_map;
+  arma::mat derivative_map;
   kernel_aux_in.AllocateDerivativeMap(dim, order, &derivative_map);
 
   // Some temporary variables.
-  core::table::DensePoint arrtmp;
-  arrtmp.Init(total_num_coeffs);
-  core::table::DensePoint x_r_minus_x_Q;
-  x_r_minus_x_Q.Init(dim);
+  arma::vec arrtmp;
+  arrtmp.set_size(total_num_coeffs);
+  arma::vec x_r_minus_x_Q;
+  x_r_minus_x_Q.set_size(dim);
 
   // The bandwidth factor to be divided along each dimension.
   double bandwidth_factor =
@@ -52,7 +53,7 @@ mlpack::series_expansion::MULTIVARIATE >::AccumulateCoeffs(
 
     // Get the reference point.
     double weight;
-    core::table::DensePoint point;
+    arma::vec point;
     it.Next(&point, &weight);
 
     // calculate x_r - x_Q
@@ -92,7 +93,7 @@ void CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::Print(
   fprintf(stream, "Local expansion\n");
   fprintf(stream, "Center: ");
 
-  for(int i = 0; i < center_.length(); i++) {
+  for(unsigned int i = 0; i < center_.n_elem; i++) {
     fprintf(stream, "%g ", center_[i]);
   }
   fprintf(stream, "\n");
@@ -125,7 +126,7 @@ template<>
 template<typename KernelAuxType>
 double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &x_q) const {
+  const arma::vec &x_q) const {
 
   // if there are no local expansion here, then return 0
   if(order_ < 0) {
@@ -148,10 +149,10 @@ double CartesianLocal<mlpack::series_expansion::MULTIVARIATE>::EvaluateField(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // temporary variable
-  core::table::DensePoint x_Q_to_x_q;
-  x_Q_to_x_q.Init(dim);
-  core::table::DensePoint tmp;
-  tmp.Init(total_num_coeffs);
+  arma::vec x_Q_to_x_q;
+  x_Q_to_x_q.set_size(dim);
+  arma::vec tmp;
+  tmp.set_size(total_num_coeffs);
   std::vector<short int> heads(dim + 1, 0);
 
   // compute (x_q - x_Q) / (sqrt(2h^2))
@@ -187,11 +188,11 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   const KernelAuxType &kernel_aux_in,
   const CartesianFarFieldType &se) {
 
-  core::table::DensePoint pos_arrtmp, neg_arrtmp;
-  core::table::DenseMatrix derivative_map;
-  core::table::DensePoint far_center;
-  core::table::DensePoint cent_diff;
-  core::table::DensePoint far_coeffs;
+  arma::vec pos_arrtmp, neg_arrtmp;
+  arma::mat derivative_map;
+  arma::vec far_center;
+  arma::vec cent_diff;
+  arma::vec far_coeffs;
   int dimension = kernel_aux_in.global().get_dimension();
   kernel_aux_in.AllocateDerivativeMap(dimension, 2 * order_, &derivative_map);
 
@@ -201,9 +202,9 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   double bandwidth_factor = kernel_aux_in.BandwidthFactor(se.bandwidth_sq());
 
   // get center and coefficients for far field expansion
-  far_center.Alias(*(se.get_center()));
-  far_coeffs.Alias(se.get_coeffs());
-  cent_diff.Init(dimension);
+  core::table::Alias(*(se.get_center()), &far_center);
+  core::table::Alias(se.get_coeffs(), &far_coeffs);
+  cent_diff.set_size(dimension);
 
   // if the order of the far field expansion is greater than the
   // local one we are adding onto, then increase the order.
@@ -212,8 +213,8 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
   }
 
   // compute Gaussian derivative
-  pos_arrtmp.Init(total_num_coeffs);
-  neg_arrtmp.Init(total_num_coeffs);
+  pos_arrtmp.set_size(total_num_coeffs);
+  neg_arrtmp.set_size(total_num_coeffs);
 
   // compute center difference divided by bw_times_sqrt_two;
   for(int j = 0; j < dimension; j++) {
@@ -252,7 +253,7 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateFromFarField(
     } // end of k-loop
   } // end of j-loop
 
-  const core::table::DensePoint &C_k_neg =
+  const arma::vec &C_k_neg =
     kernel_aux_in.global().get_neg_inv_multiindex_factorials();
   for(int j = 0; j < total_num_coeffs; j++) {
     coeffs_[j] += (pos_arrtmp[j] + neg_arrtmp[j]) * C_k_neg[j];
@@ -274,14 +275,14 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
   // get the center and the order and the total number of coefficients of
   // the expansion we are translating from. Also get coefficients we
   // are translating
-  core::table::DensePoint new_center;
-  new_center.Alias(se->get_center());
+  arma::vec new_center;
+  core::table::Alias(se->get_center(), &new_center);
   int prev_order = se->get_order();
   int total_num_coeffs = kernel_aux_in.global().get_total_num_coeffs(order_);
   const std::vector< std::vector<short int> > &upper_mapping_index =
     kernel_aux_in.global().get_upper_mapping_index();
-  core::table::DensePoint new_coeffs;
-  new_coeffs.Alias(se->get_coeffs());
+  arma::vec new_coeffs;
+  core::table::Alias(se->get_coeffs(), &new_coeffs);
 
   // dimension
   int dim = kernel_aux_in.global().get_dimension();
@@ -294,8 +295,8 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
     kernel_aux_in.BandwidthFactor(kernel_aux_in.kernel().bandwidth_sq());
 
   // center difference between the old center and the new one
-  core::table::DensePoint center_diff;
-  center_diff.Init(dim);
+  arma::vec center_diff;
+  center_diff.set_size(dim);
   for(int d = 0; d < dim; d++) {
     center_diff[d] = (new_center[d] - center_[d]) / bandwidth_factor;
   }
@@ -307,8 +308,9 @@ mlpack::series_expansion::MULTIVARIATE >::TranslateToLocal(
   }
 
   // inverse multiindex factorials
-  core::table::DensePoint C_k;
-  C_k.Alias(kernel_aux_in.global().get_inv_multiindex_factorials());
+  arma::vec C_k;
+  core::table::Alias(
+    kernel_aux_in.global().get_inv_multiindex_factorials(), &C_k);
 
   // do the actual translation
   for(int j = 0; j < total_num_coeffs; j++) {

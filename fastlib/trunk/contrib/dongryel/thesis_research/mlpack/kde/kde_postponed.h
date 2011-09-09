@@ -125,7 +125,7 @@ class KdePostponed {
           typename GlobalType::TableType * >(
             global.query_table())->get_node_iterator(qnode);
         while(qnode_it.HasNext()) {
-          core::table::DensePoint qpoint;
+          arma::vec qpoint;
           int qpoint_id;
           qnode_it.Next(&qpoint, &qpoint_id);
           query_results->densities_[qpoint_id] +=

@@ -70,15 +70,9 @@ class BallBoundCombine:
       combined_ball.template get<1>().Init(a.template get<1>().dim());
 
       // Compute the weighted sum of the two pivots
-      arma::vec bound_ref;
-      core::table::DensePointToArmaVec(
-        combined_ball.template get<1>().center(), &bound_ref);
-      arma::vec left_bound_ref;
-      core::table::DensePointToArmaVec(
-        a.template get<1>().center(), &left_bound_ref);
-      arma::vec right_bound_ref;
-      core::table::DensePointToArmaVec(
-        b.template get<1>().center(), &right_bound_ref);
+      arma::vec &bound_ref = combined_ball.template get<1>().center();
+      const arma::vec &left_bound_ref = a.template get<1>().center();
+      const arma::vec &right_bound_ref = b.template get<1>().center();
       bound_ref = a.template get<2>() * left_bound_ref +
                   b.template get<2>() * right_bound_ref;
       combined_ball.template get<2>() =
@@ -192,11 +186,11 @@ class GenMetricTree {
     /** @brief Computes the furthest point from the given pivot and
      *         finds out the index.
      */
-    template<typename MetricType, typename PointType>
+    template<typename MetricType>
     static int FurthestColumnIndex_(
       const MetricType &metric_in,
-      const PointType &pivot,
-      const core::table::DenseMatrix &matrix,
+      const arma::vec &pivot,
+      const arma::mat &matrix,
       int begin, int count,
       double *furthest_distance) {
 
@@ -212,8 +206,8 @@ class GenMetricTree {
 
 #pragma omp for
         for(int i = begin; i < end; i++) {
-          PointType point;
-          matrix.MakeColumnVector(i, &point);
+          arma::vec point;
+          core::table::MakeColumnVector(matrix, i, &point);
           double distance_between_center_and_point =
             metric_in.Distance(pivot, point);
 
@@ -240,7 +234,7 @@ class GenMetricTree {
     template<typename MetricType>
     static void FindBoundFromMatrix(
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       int first, int count, BoundType *bounds) {
 
       MakeLeafNode(metric_in, matrix, first, count, bounds);
@@ -253,16 +247,16 @@ class GenMetricTree {
     static void FindBoundFromMatrix(
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       BoundType *combined_bound) {
 
       // Each MPI process finds a local bound.
       boost::tuple<MetricType, BoundType, int> local_bound;
       local_bound.template get<0>() = metric_in;
-      local_bound.template get<2>() = matrix.n_cols();
-      local_bound.template get<1>().Init(matrix.n_rows());
+      local_bound.template get<2>() = matrix.n_cols;
+      local_bound.template get<1>().Init(matrix.n_rows);
       FindBoundFromMatrix(
-        metric_in, matrix, 0, matrix.n_cols(),
+        metric_in, matrix, 0, matrix.n_cols,
         & (local_bound.template get<1>()));
 
       // The global bound.
@@ -282,15 +276,14 @@ class GenMetricTree {
     template<typename MetricType>
     static void MakeLeafNode(
       const MetricType &metric_in,
-      const core::table::DenseMatrix& matrix,
+      const arma::mat &matrix,
       int begin, int count, BoundType *bounds) {
 
       // Clear the bound to zero.
-      bounds->center().SetZero();
+      bounds->center().zeros();
 
       int end = begin + count;
-      arma::vec bound_ref;
-      core::table::DensePointToArmaVec(bounds->center(), &bound_ref);
+      arma::vec &bound_ref = bounds->center();
 
 #pragma omp parallel
       {
@@ -300,7 +293,7 @@ class GenMetricTree {
 #pragma omp for
         for(int i = begin; i < end; i++) {
           arma::vec col_point;
-          matrix.MakeColumnVector(i, &col_point);
+          core::table::MakeColumnVector(matrix, i, &col_point);
           local_sum += col_point;
         }
 
@@ -323,17 +316,13 @@ class GenMetricTree {
     template<typename MetricType, typename TreeType>
     static void CombineBounds(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
+      arma::mat &matrix,
       TreeType *node, TreeType *left, TreeType *right) {
 
       // Compute the weighted sum of the two pivots
-      arma::vec bound_ref;
-      core::table::DensePointToArmaVec(node->bound().center(), &bound_ref);
-      arma::vec left_bound_ref;
-      core::table::DensePointToArmaVec(left->bound().center(), &left_bound_ref);
-      arma::vec right_bound_ref;
-      core::table::DensePointToArmaVec(
-        right->bound().center(), &right_bound_ref);
+      arma::vec &bound_ref = node->bound().center();
+      arma::vec &left_bound_ref = left->bound().center();
+      arma::vec &right_bound_ref = right->bound().center();
       bound_ref = left->count() * left_bound_ref +
                   right->count() * right_bound_ref;
       bound_ref =
@@ -352,7 +341,7 @@ class GenMetricTree {
     template<typename MetricType>
     static void ComputeMemberships(
       const MetricType &metric_in,
-      const core::table::DenseMatrix &matrix,
+      const arma::mat &matrix,
       int first, int end,
       BoundType &left_bound, BoundType &right_bound,
       int *left_count, std::deque<bool> *left_membership) {
@@ -367,8 +356,8 @@ class GenMetricTree {
         for(int left = first; left < end; left++) {
 
           // Make alias of the current point.
-          core::table::DensePoint point;
-          matrix.MakeColumnVector(left, &point);
+          arma::vec point;
+          core::table::MakeColumnVector(matrix, left, &point);
 
           // Compute the distances from the two pivots.
           double distance_from_left_pivot =
@@ -399,17 +388,18 @@ class GenMetricTree {
       boost::mpi::communicator &comm,
       const MetricType &metric_in,
       const BoundType &bound,
-      const core::table::DenseMatrix &matrix_in,
+      const arma::mat &matrix_in,
       int *left_count,
       std::deque<bool> *left_membership) {
 
       // Pick a random point across all processes.
       int local_random_row =
-        core::math::RandInt(0, matrix_in.n_cols());
+        core::math::RandInt(0, static_cast<int>(matrix_in.n_cols));
       std::pair< arma::vec, int > local_random_row_vec;
       std::pair< arma::vec, int > global_random_row_vec;
-      matrix_in.MakeColumnVector(local_random_row, &local_random_row_vec.first);
-      local_random_row_vec.second = matrix_in.n_cols();
+      core::table::MakeColumnVector(
+        matrix_in, local_random_row, &local_random_row_vec.first);
+      local_random_row_vec.second = matrix_in.n_cols;
 
       // Call all reduction.
       boost::mpi::all_reduce(
@@ -421,10 +411,11 @@ class GenMetricTree {
       int local_furthest_from_random_row =
         FurthestColumnIndex_(
           metric_in, global_random_row_vec.first, matrix_in,
-          0, matrix_in.n_cols(), &local_furthest_distance);
+          0, matrix_in.n_cols, &local_furthest_distance);
       std::pair< arma::vec, double > local_furthest_from_random_row_vec;
       std::pair< arma::vec, double > global_furthest_from_random_row_vec;
-      matrix_in.MakeColumnVector(
+      core::table::MakeColumnVector(
+        matrix_in,
         local_furthest_from_random_row,
         &local_furthest_from_random_row_vec.first);
       local_furthest_from_random_row_vec.second = local_furthest_distance;
@@ -438,12 +429,13 @@ class GenMetricTree {
       int local_furthest_from_furthest_random_row =
         FurthestColumnIndex_(
           metric_in, global_furthest_from_random_row_vec.first, matrix_in,
-          0, matrix_in.n_cols(), &local_furthest_from_furthest_distance);
+          0, matrix_in.n_cols, &local_furthest_from_furthest_distance);
       std::pair< arma::vec, double >
       local_furthest_from_furthest_random_row_vec;
       std::pair< arma::vec, double >
       global_furthest_from_furthest_random_row_vec;
-      matrix_in.MakeColumnVector(
+      core::table::MakeColumnVector(
+        matrix_in,
         local_furthest_from_furthest_random_row,
         &local_furthest_from_furthest_random_row_vec.first);
       local_furthest_from_furthest_random_row_vec.second =
@@ -461,12 +453,10 @@ class GenMetricTree {
       // Assign the point on the local process using the splitting
       // value.
       BoundType left_bound, right_bound;
-      left_bound.center().Copy(
-        global_furthest_from_random_row_vec.first);
-      right_bound.center().Copy(
-        global_furthest_from_furthest_random_row_vec.first);
+      left_bound.center() = global_furthest_from_random_row_vec.first;
+      right_bound.center() = global_furthest_from_furthest_random_row_vec.first;
       ComputeMemberships(
-        metric_in, matrix_in, 0, matrix_in.n_cols(), left_bound, right_bound,
+        metric_in, matrix_in, 0, matrix_in.n_cols, left_bound, right_bound,
         left_count, left_membership);
 
       return true;
@@ -475,8 +465,8 @@ class GenMetricTree {
     template<typename MetricType, typename TreeType, typename IndexType>
     static bool AttemptSplitting(
       const MetricType &metric_in,
-      core::table::DenseMatrix &matrix,
-      core::table::DenseMatrix &weights,
+      arma::mat &matrix,
+      arma::mat &weights,
       TreeType *node, TreeType **left,
       TreeType **right, int leaf_size, IndexType *old_from_new,
       core::table::MemoryMappedFile *m_file_in) {
@@ -484,8 +474,8 @@ class GenMetricTree {
       // Pick a random row.
       int random_row = core::math::RandInt(
                          node->begin(), node->begin() + node->count());
-      core::table::DensePoint random_row_vec;
-      matrix.MakeColumnVector(random_row, & random_row_vec);
+      arma::vec random_row_vec;
+      core::table::MakeColumnVector(matrix, random_row, & random_row_vec);
 
       // Now figure out the furthest point from the random row picked
       // above.
@@ -494,9 +484,9 @@ class GenMetricTree {
         FurthestColumnIndex_(
           metric_in, random_row_vec, matrix, node->begin(), node->count(),
           &furthest_distance);
-      core::table::DensePoint furthest_from_random_row_vec;
-      matrix.MakeColumnVector(
-        furthest_from_random_row, &furthest_from_random_row_vec);
+      arma::vec furthest_from_random_row_vec;
+      core::table::MakeColumnVector(
+        matrix, furthest_from_random_row, &furthest_from_random_row_vec);
 
       // Then figure out the furthest point from the furthest point.
       double furthest_from_furthest_distance;
@@ -504,9 +494,9 @@ class GenMetricTree {
         FurthestColumnIndex_(
           metric_in, furthest_from_random_row_vec, matrix, node->begin(),
           node->count(), &furthest_from_furthest_distance);
-      core::table::DensePoint furthest_from_furthest_random_row_vec;
-      matrix.MakeColumnVector(
-        furthest_from_furthest_random_row,
+      arma::vec furthest_from_furthest_random_row_vec;
+      core::table::MakeColumnVector(
+        matrix, furthest_from_furthest_random_row,
         &furthest_from_furthest_random_row_vec);
 
       // Allocate the left and the right.
@@ -514,9 +504,8 @@ class GenMetricTree {
               m_file_in->Construct<TreeType>() : new TreeType();
       *right = (m_file_in) ?
                m_file_in->Construct<TreeType>() : new TreeType();
-      ((*left)->bound().center()).Copy(furthest_from_random_row_vec);
-      ((*right)->bound().center()).Copy(
-        furthest_from_furthest_random_row_vec);
+      (*left)->bound().center() = furthest_from_random_row_vec;
+      (*right)->bound().center() = furthest_from_furthest_random_row_vec;
       int left_count = 0;
       if(furthest_from_furthest_distance <
           std::numeric_limits<double>::epsilon()) {

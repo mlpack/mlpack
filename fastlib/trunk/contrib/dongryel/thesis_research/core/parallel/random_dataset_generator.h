@@ -6,6 +6,7 @@
 #ifndef CORE_PARALLEL_RANDOM_DATASET_GENERATOR_H
 #define CORE_PARALLEL_RANDOM_DATASET_GENERATOR_H
 
+#include <armadillo>
 #include <iostream>
 #include <omp.h>
 #include "core/math/math_lib.h"
@@ -25,7 +26,7 @@ class RandomDatasetGenerator {
 
 #pragma omp parallel for
       for(int j = 0; j < num_points; j++) {
-        core::table::DensePoint point;
+        arma::vec point;
         random_dataset->get(j, &point);
         for(int i = 0; i < num_dimensions; i++) {
           point[i] = core::math::Random(0.1, 1.0);
@@ -33,8 +34,7 @@ class RandomDatasetGenerator {
 
         // Set the weight to the random one.
         if(generate_weights) {
-          random_dataset->weights().set(
-            0, j, core::math::Random(1.0, 5.0));
+          random_dataset->weights().at(0, j) = core::math::Random(1.0, 5.0);
         }
       }
 

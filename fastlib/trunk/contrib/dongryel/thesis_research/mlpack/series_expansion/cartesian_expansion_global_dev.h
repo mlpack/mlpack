@@ -126,9 +126,9 @@ void CartesianExpansionGlobal <ExpansionType >::ComputeUpperMappingIndex_() {
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <ExpansionType>::ComputeFactorials_() {
-  factorials_.Init(2 * max_order_ + 1);
+  factorials_.set_size(2 * max_order_ + 1);
   factorials_[0] = 1;
-  for(int t = 1; t < factorials_.length(); t++) {
+  for(unsigned int t = 1; t < factorials_.n_elem; t++) {
     factorials_[t] = t * factorials_[t - 1];
   }
 }
@@ -168,7 +168,7 @@ template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination_() {
 
   int limit = 2 * max_order_;
-  multiindex_combination_.Init(
+  multiindex_combination_.set_size(
     list_total_num_coeffs_[limit], list_total_num_coeffs_[limit]);
 
   for(int j = 0; j < list_total_num_coeffs_[limit]; j++) {
@@ -182,14 +182,14 @@ void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination_() {
       const std::vector<short int> &alpha_mapping = multiindex_mapping_[k];
 
       // initialize the factor to 1
-      multiindex_combination_.set(j, k, 1);
+      multiindex_combination_.at(j, k) = 1;
 
       for(int i = 0; i < dim_; i++) {
-        multiindex_combination_.set
-        (j, k, multiindex_combination_.get(j, k) *
-         n_choose_k_.get(beta_mapping[i], alpha_mapping[i]));
+        multiindex_combination_.at(j, k) =
+          multiindex_combination_.at(j, k) *
+          n_choose_k_.at(beta_mapping[i], alpha_mapping[i]);
 
-        if(multiindex_combination_.get(j, k) == 0)
+        if(multiindex_combination_.at(j, k) == 0)
           break;
       }
     }
@@ -197,7 +197,7 @@ void CartesianExpansionGlobal <ExpansionType>::ComputeMultiindexCombination_() {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint& CartesianExpansionGlobal <ExpansionType>::
+const arma::vec& CartesianExpansionGlobal <ExpansionType>::
 get_inv_multiindex_factorials() const {
   return inv_multiindex_factorials_;
 }
@@ -241,7 +241,7 @@ ExpansionType >::get_multiindex_mapping() const {
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
-const core::table::DensePoint& CartesianExpansionGlobal <
+const arma::vec& CartesianExpansionGlobal <
 ExpansionType >::get_neg_inv_multiindex_factorials() const {
   return neg_inv_multiindex_factorials_;
 }
@@ -249,13 +249,13 @@ ExpansionType >::get_neg_inv_multiindex_factorials() const {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::get_n_choose_k(int n, int k) const {
-  return n_choose_k_.get(n, (int) core::math::ClampNonNegative(k));
+  return n_choose_k_.at(n, (int) core::math::ClampNonNegative(k));
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 double CartesianExpansionGlobal <
 ExpansionType >::get_n_multichoose_k_by_pos(int n, int k) const {
-  return multiindex_combination_.get(n, k);
+  return multiindex_combination_.at(n, k);
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
@@ -346,20 +346,20 @@ ExpansionType >::Init(int max_order, int dim) {
   // allocate space for inverse factorial and
   // negative inverse factorials and multiindex mapping and n_choose_k
   // and multiindex_combination precomputed factors
-  inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);
-  neg_inv_multiindex_factorials_.Init(list_total_num_coeffs_[limit - 1]);
+  inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);
+  neg_inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);
   multiindex_mapping_.resize(list_total_num_coeffs_[limit - 1]);
   (multiindex_mapping_[0]).resize(dim_);
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
   if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
-    n_choose_k_.Init((limit - 1) + dim + 1, (limit - 1) + dim + 1);
+    n_choose_k_.set_size((limit - 1) + dim + 1, (limit - 1) + dim + 1);
   }
   else {
-    n_choose_k_.Init(dim * limit, dim * limit);
+    n_choose_k_.set_size(dim * limit, dim * limit);
   }
-  n_choose_k_.SetZero();
+  n_choose_k_.zeros();
 
   if(ExpansionType == mlpack::series_expansion::MULTIVARIATE) {
 
@@ -431,9 +431,9 @@ ExpansionType >::Init(int max_order, int dim) {
   }
 
   // Compute n choose k's.
-  for(j = 0; j < n_choose_k_.n_rows(); j++) {
-    for(k = 0; k < n_choose_k_.n_cols(); k++) {
-      n_choose_k_.set(j, k, core::math::BinomialCoefficient<double>(j, k));
+  for(unsigned j = 0; j < n_choose_k_.n_rows; j++) {
+    for(unsigned k = 0; k < n_choose_k_.n_cols; k++) {
+      n_choose_k_.at(j, k) = core::math::BinomialCoefficient<double>(j, k);
     }
   }
 

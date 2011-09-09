@@ -130,8 +130,8 @@ class HrectBound {
 
     /** @brief Returns the centroid.
      */
-    void center(core::table::DensePoint *center_out) const {
-      center_out->Init(dim_);
+    void center(arma::vec *center_out) const {
+      center_out->set_size(dim_);
       for(int i = 0; i < dim_; i++) {
         (*center_out)[i] = bounds_[i].mid();
       }
@@ -146,15 +146,6 @@ class HrectBound {
         (*random_point_out)[i] = core::math::Random(
                                    bounds_[i].lo, bounds_[i].hi);
       }
-    }
-
-    /** @brief Generate a random point inside the hyperrectangle with
-     *         uniform probability.
-     */
-    void RandomPointInside(core::table::DensePoint *random_point_out) const {
-      random_point_out->Init(dim_);
-      arma::vec random_point_out_alias(random_point_out->ptr(), dim_, false);
-      this->RandomPointInside(&random_point_out_alias);
     }
 
     /** @brief Initializes to specified dimensionality with each
@@ -194,8 +185,8 @@ class HrectBound {
     template<typename MetricType>
     bool Contains(
       const MetricType &metric_in,
-      const core::table::DensePoint &point) const {
-      for(int i = 0; i < point.length(); i++) {
+      const arma::vec &point) const {
+      for(unsigned int i = 0; i < point.n_elem; i++) {
         if(! bounds_[i].Contains(point[i])) {
           return false;
         }
@@ -240,12 +231,12 @@ class HrectBound {
     template<typename MetricType>
     double MinDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
 
       double sum = 0;
       const core::math::Range *mbound = bounds_;
 
-      for(int i = 0; i < point.length(); i++) {
+      for(unsigned int i = 0; i < point.n_elem; i++) {
         double v = point[i];
         double v1 = mbound[i].lo - v;
         double v2 = v - mbound[i].hi;
@@ -291,7 +282,7 @@ class HrectBound {
     template<typename MetricType>
     double MaxDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
       double sum = 0;
 
       for(int d = 0; d < dim_; d++) {
@@ -356,7 +347,7 @@ class HrectBound {
     template<typename MetricType>
     core::math::Range RangeDistanceSq(
       const MetricType &metric,
-      const core::table::DensePoint& point) const {
+      const arma::vec &point) const {
 
       double sum_lo = 0;
       double sum_hi = 0;
@@ -453,7 +444,7 @@ class HrectBound {
 
     /** @brief Expands this region to include a new point.
      */
-    HrectBound& operator |= (const core::table::DensePoint& vector) {
+    HrectBound& operator |= (const arma::vec& vector) {
       for(int i = 0; i < dim_; i++) {
         bounds_[i] |= vector[i];
       }
@@ -473,7 +464,7 @@ class HrectBound {
      */
     template<typename MetricType>
     HrectBound& Expand(
-      const MetricType &metric, const core::table::DensePoint& vector) {
+      const MetricType &metric, const arma::vec& vector) {
       return this->operator |= (vector);
     }
 

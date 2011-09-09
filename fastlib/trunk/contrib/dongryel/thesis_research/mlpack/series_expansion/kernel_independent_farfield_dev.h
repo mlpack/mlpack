@@ -15,15 +15,15 @@
 namespace mlpack {
 namespace series_expansion {
 
-core::table::DensePoint &KernelIndependentFarField::get_center() {
+arma::vec &KernelIndependentFarField::get_center() {
   return center_;
 }
 
-const core::table::DensePoint &KernelIndependentFarField::get_center() const {
+const arma::vec &KernelIndependentFarField::get_center() const {
   return center_;
 }
 
-const core::table::DensePoint &KernelIndependentFarField::get_coeffs() const {
+const arma::vec &KernelIndependentFarField::get_coeffs() const {
   return coeffs_;
 }
 
@@ -40,7 +40,7 @@ void KernelIndependentFarField::set_order(short int new_order) {
 }
 
 void KernelIndependentFarField::set_center(
-  const core::table::DensePoint &center) {
+  const arma::vec &center) {
   for(int i = 0; i < center.length(); i++) {
     center_[i] = center[i];
   }
@@ -48,7 +48,7 @@ void KernelIndependentFarField::set_center(
 
 template<typename KernelAuxType>
 void KernelIndependentFarField::Init(
-  const KernelAuxType &kernel_aux_in, const core::table::DensePoint& center) {
+  const KernelAuxType &kernel_aux_in, const arma::vec& center) {
 
   // Copy the center.
   center_.Copy(center);
@@ -75,8 +75,8 @@ void KernelIndependentFarField::Init(const TKernelAux &kernel_aux_in) {
 template<typename KernelAuxType>
 void KernelIndependentFarField::AccumulateCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix& data,
-  const core::table::DensePoint& weights,
+  const arma::mat& data,
+  const arma::vec& weights,
   int begin, int end, int order) {
 
 }
@@ -84,8 +84,8 @@ void KernelIndependentFarField::AccumulateCoeffs(
 template<typename KernelAuxType>
 void KernelIndependentFarField::RefineCoeffs(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DenseMatrix &data,
-  const core::table::DensePoint &weights,
+  const arma::mat &data,
+  const arma::vec &weights,
   int begin, int end, int order) {
 
 }
@@ -93,18 +93,18 @@ void KernelIndependentFarField::RefineCoeffs(
 template<typename KernelAuxType>
 double KernelIndependentFarField::EvaluateField(
   const KernelAuxType &kernel_aux_in,
-  const core::table::DensePoint &x_q) const {
+  const arma::vec &x_q) const {
 
   // Get the already-generated grid points. We need to map this to the
   // upward equivalent surface.
-  const core::table::DenseMatrix &uniform_grid_points =
+  const arma::mat &uniform_grid_points =
     kernel_aux_in.uniform_grid_points();
 
   // Take the weighted sum.
   double multipole_sum = 0.0;
   arma::vec grid_point;
   arma::vec lower_bound_upward_equivalent_alias;
-  core::table::DensePointToArmaVec(
+  arma::vecToArmaVec(
     lower_bound_upward_equivalent_, &lower_bound_upward_evauilent_alias);
   for(int i = 0; i < pseudocharges_.size(); i++) {
     arma::vec grid_point_alias;

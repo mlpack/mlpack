@@ -36,7 +36,7 @@ class TestDistributedLocalRegression {
         local_table->old_from_new();
 
       for(int i = 0; i < local_table->n_entries(); i++) {
-        core::table::DensePoint point;
+        arma::vec point;
         double weight;
         int old_process_index = old_from_new[i].first;
         int old_process_point_index = old_from_new[i].second.first;
@@ -45,7 +45,7 @@ class TestDistributedLocalRegression {
         local_table->get(new_process_old_from_new_index, &point, &weight);
         double *destination = start_ptrs[old_process_index] +
                               n_attributes * old_process_point_index;
-        memcpy(destination, point.ptr(), sizeof(double) * n_attributes);
+        memcpy(destination, point.memptr(), sizeof(double) * n_attributes);
 
         // Currently assumes that there is only one weight per point.
         double *weight_destination =
@@ -91,8 +91,8 @@ class TestDistributedLocalRegression {
           total_num_points += total_distribution[i];
         }
         output_table.Init(n_attributes, total_num_points);
-        start_ptrs[0] = output_table.data().ptr();
-        weight_start_ptrs[0] = output_table.weights().ptr();
+        start_ptrs[0] = output_table.data().memptr();
+        weight_start_ptrs[0] = output_table.weights().memptr();
         total_num_points = 0;
         for(int i = 0; i < world.size(); i++) {
           total_num_points += total_distribution[i];
@@ -101,7 +101,7 @@ class TestDistributedLocalRegression {
               start_ptrs[0] + total_num_points * n_attributes;
             weight_start_ptrs[i + 1] =
               weight_start_ptrs[0] +
-              total_num_points * output_table.weights().n_rows();
+              total_num_points * output_table.weights().n_rows;
           }
         }
         CopyTable_(local_table, start_ptrs, weight_start_ptrs);
