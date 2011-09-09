@@ -41,8 +41,8 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
   BOOST_REQUIRE_CLOSE(p1.CalculateMaxDistanceSq(), 8.0, 1e-5);
 
   p2.CalculateMidpoint(vector);
-  BOOST_REQUIRE_CLOSE(vector[0], 4, 1e-5);
-  BOOST_REQUIRE_CLOSE(vector[1], 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(vector[0], 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(vector[1], 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(p1.MinDistanceSq(p2), 0.25, 1e-5);
 
   vector[0] = 2.0;
@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
   BOOST_REQUIRE_CLOSE(range.hi, 10.25, 1e-5);
 
   BOOST_REQUIRE_CLOSE(p1.MinToMidSq(p2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(p1.MinimaxDistanceSq(p2), 9, 1e-5);
+  BOOST_REQUIRE_CLOSE(p1.MinimaxDistanceSq(p2), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(p1.MidDistanceSq(p2), 9.0, 1e-5);
 
   vector[0] = 6.0;
@@ -112,8 +112,8 @@ BOOST_AUTO_TEST_CASE(TestDHrectBound) {
   BOOST_REQUIRE_CLOSE(r1.CalculateMaxDistanceSq(), 8.0, 1e-5);
 
   r2.CalculateMidpoint(vector);
-  BOOST_REQUIRE_CLOSE(vector[0], 4, 1e-5);
-  BOOST_REQUIRE_CLOSE(vector[1], 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(vector[0], 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(vector[1], 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(r2), 1.0, 1e-5);
 
   vector[0] = 4.0;
@@ -134,7 +134,7 @@ BOOST_AUTO_TEST_CASE(TestDHrectBound) {
   BOOST_REQUIRE_CLOSE(range.hi, 20.0, 1e-5);
 
   BOOST_REQUIRE_CLOSE(r1.MinToMidSq(r2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinimaxDistanceSq(r2), 9, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinimaxDistanceSq(r2), 9.0, 1e-5);
   BOOST_REQUIRE_CLOSE(r1.MidDistanceSq(r2), 9.0, 1e-5);
 
   vector[0] = 6.0;
@@ -191,7 +191,7 @@ BOOST_AUTO_TEST_CASE(TestBallBound) {
   BOOST_REQUIRE_CLOSE(b1.RangeDistance(b2).lo, 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinToMidSq(b2)), 1-0.3, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinimaxDistanceSq(b2)), 1-0.3+0.4, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MidDistanceSq(b2)), 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b1.MidDistanceSq(b2)), 1.0, 1e-5);
 
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1)), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1)), 1+0.3+0.4, 1e-5);
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(TestBallBound) {
   BOOST_REQUIRE_CLOSE(sqrt(b2.RangeDistanceSq(b1).lo), 1-0.3-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinToMidSq(b1)), 1-0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinimaxDistanceSq(b1)), 1-0.4+0.3, 1e-5);
-  BOOST_REQUIRE_CLOSE(sqrt(b2.MidDistanceSq(b1)), 1, 1e-5);
+  BOOST_REQUIRE_CLOSE(sqrt(b2.MidDistanceSq(b1)), 1.0, 1e-5);
 
   BOOST_REQUIRE(b1.Contains(b1.center()));
   BOOST_REQUIRE(!b1.Contains(b2.center()));
@@ -213,7 +213,7 @@ BOOST_AUTO_TEST_CASE(TestBallBound) {
 
   BOOST_REQUIRE(b2.Contains(b2point));
 
-  BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b1.center())), 0, 1e-5);
+  BOOST_REQUIRE_SMALL(sqrt(b1.MinDistanceSq(b1.center())), 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b1.MinDistanceSq(b2.center())), 1 - 0.3, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MinDistanceSq(b1.center())), 1 - 0.4, 1e-5);
   BOOST_REQUIRE_CLOSE(sqrt(b2.MaxDistanceSq(b1.center())), 1 + 0.4, 1e-5);
