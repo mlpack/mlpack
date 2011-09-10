@@ -256,6 +256,7 @@ class DistributedDualtreeTaskList {
      */
     DistributedDualtreeTaskList() {
       destination_rank_ = 0;
+      distributed_task_queue_ = NULL;
       remaining_extra_points_to_hold_ = 0;
       world_ = NULL;
     }
@@ -266,7 +267,11 @@ class DistributedDualtreeTaskList {
     template<typename MetricType>
     void Export(
       boost::mpi::communicator &world,
-      const MetricType &metric_in, int source_rank_in) {
+      const MetricType &metric_in, int source_rank_in,
+      DistributedDualtreeTaskQueueType *distributed_task_queue_in) {
+
+      // Set the queue pointer.
+      distributed_task_queue_ = distributed_task_queue_in;
 
       // The map that maps the local position to the position in the
       // queue for query subtables.
@@ -317,9 +322,7 @@ class DistributedDualtreeTaskList {
       boost::mpi::communicator &world,
       int destination_rank_in,
       unsigned long int remaining_extra_points_to_hold_in,
-      core::parallel::DistributedDualtreeTaskQueue <
-      DistributedTableType,
-      TaskPriorityQueueType, QueryResultType > &distributed_task_queue_in) {
+      DistributedDualtreeTaskQueueType &distributed_task_queue_in) {
       destination_rank_ = destination_rank_in;
       distributed_task_queue_ = &distributed_task_queue_in;
       remaining_extra_points_to_hold_ = remaining_extra_points_to_hold_in;
