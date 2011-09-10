@@ -285,6 +285,8 @@ class DistributedDualtreeTaskQueue {
       int originating_rank_in, SubTableType &query_subtable_in,
       QueryResultType *query_subresult_in) {
 
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
       // Get more slots.
       this->GrowSlots_();
       boost::shared_ptr< QueryResultType > tmp_query_result(
