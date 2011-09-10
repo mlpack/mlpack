@@ -498,7 +498,7 @@ void IO::StopTimer(const char* timerName) {
 }
 
 // Add help parameter.
-PARAM_MODULE("help", "Default help info.");
+PARAM_FLAG("help", "Default help info.");
 PARAM_STRING("info", "Get help on a specific module or option.", "", "");
 PARAM_FLAG("verbose", "Display informational messages and the full list of "
     "parameters and timers at the end of execution.", "");
