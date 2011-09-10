@@ -130,8 +130,23 @@ BOOST_AUTO_TEST_CASE(TestOption) {
    
   std::string desc = std::string("test desc");
  
-  BOOST_REQUIRE(desc.compare(IO::GetDescription("test_parent/test")) == 0);
-  BOOST_REQUIRE(IO::GetParam<int>("test_parent/test") == DEFAULT_INT);
+  BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/test"), "test desc");
+  BOOST_REQUIRE_EQUAL(IO::GetParam<int>("test_parent/test"), DEFAULT_INT);
+}
+
+/***
+ * Ensure that a Boolean option which we define is set correctly.
+ */
+BOOST_AUTO_TEST_CASE(TestBooleanOption) {
+  PARAM_FLAG("flag_test", "flag test description", "test_parent");
+
+  BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/flag_test"), true);
+
+  BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/flag_test"),
+      "flag test description");
+
+  // Now check that IO reflects that it is false by default.
+  BOOST_REQUIRE_EQUAL(IO::GetParam<bool>("test_parent/flag_test"), false);
 }
 
 
