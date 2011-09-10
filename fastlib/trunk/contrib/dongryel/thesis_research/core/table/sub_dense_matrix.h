@@ -25,15 +25,19 @@ class SubDenseMatrix {
     // For boost serialization.
     friend class boost::serialization::access;
 
+    std::map<int, int> *id_to_position_map_;
+
     /** @brief The pointer to the dense matrix. The loading/unloading
      *         is done from here.
      */
     arma::mat *matrix_;
 
+    std::map<int, int> *position_to_id_map_;
+
     /** @brief The list of begin/count pairs to serialize from the
      *         dense matrix.
      */
-    const std::vector< typename SubTableType::PointSerializeFlagType >
+    std::vector< typename SubTableType::PointSerializeFlagType >
     *serialize_points_per_terminal_node_;
 
   public:
@@ -41,7 +45,9 @@ class SubDenseMatrix {
     /** @brief The default constructor.
      */
     SubDenseMatrix() {
+      id_to_position_map_ = NULL;
       matrix_ = NULL;
+      position_to_id_map_ = NULL;
       serialize_points_per_terminal_node_ = NULL;
     }
 
@@ -50,18 +56,15 @@ class SubDenseMatrix {
      */
     void Init(
       arma::mat *matrix_in,
-      const std::vector< typename SubTableType::PointSerializeFlagType >
-      &serialize_points_per_terminal_node_in) {
+      std::vector< typename SubTableType::PointSerializeFlagType >
+      *serialize_points_per_terminal_node_in,
+      std::map<int, int> &id_to_position_map_in,
+      std::map<int, int> &position_to_id_map_in) {
+      id_to_position_map_ = &id_to_position_map_in;
+      position_to_id_map_ = &position_to_id_map_in;
       matrix_ = matrix_in;
       serialize_points_per_terminal_node_ =
-        &serialize_points_per_terminal_node_in;
-    }
-
-    /** @brief Initialize a sub dense matrix class for serializing it
-     *         in entirety.
-     */
-    void Init(arma::mat *matrix_in) {
-      matrix_ = matrix_in;
+        serialize_points_per_terminal_node_in;
     }
 
     /** @brief Serialize a subset of a dense matrix.
@@ -71,39 +74,32 @@ class SubDenseMatrix {
 
       // Save the dimensionality.
       int n_rows = matrix_->n_rows;
-      int n_cols = matrix_->n_cols;
-      if(serialize_points_per_terminal_node_) {
-        n_cols = 0;
-        for(unsigned int j = 0;
-            j < serialize_points_per_terminal_node_->size(); j++) {
-          n_cols += ((*serialize_points_per_terminal_node_)[j]).count();
-        }
+      int n_cols = 0;
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node_->size(); j++) {
+        n_cols += ((*serialize_points_per_terminal_node_)[j]).count();
       }
       ar & n_rows;
       ar & n_cols;
 
-      // Since we are extracting an already well-formed matrix, we use
-      // the direct mapping.
-      if(serialize_points_per_terminal_node_) {
-        for(unsigned int j = 0;
-            j < serialize_points_per_terminal_node_->size(); j++) {
-          for(int i = (*serialize_points_per_terminal_node_)[j].begin();
-              i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
-            const double *column_ptr = core::table::GetColumnPtr(*matrix_, i);
-            for(unsigned int k = 0; k < matrix_->n_rows; k++) {
-              ar & column_ptr[k];
-            }
+      for(unsigned int j = 0;
+          j < serialize_points_per_terminal_node_->size(); j++) {
+        for(int i = (*serialize_points_per_terminal_node_)[j].begin();
+            i < (*serialize_points_per_terminal_node_)[j].end(); i++) {
+          int translated_index = i;
+          typename std::map<int, int>::const_iterator it =
+            id_to_position_map_->find(translated_index);
+          if(it != id_to_position_map_->end()) {
+            translated_index = it->second;
           }
-        }
-      }
-      else {
+          const double *column_ptr =
+            core::table::GetColumnPtr(*matrix_, translated_index);
+          for(unsigned int k = 0; k < matrix_->n_rows; k++) {
+            ar & column_ptr[k];
+          }
 
-        // Otherwise, save the entire thing.
-        for(int j = 0; j < n_cols; j++) {
-          const double *column_ptr = core::table::GetColumnPtr(*matrix_, j);
-          for(int i = 0; i < n_rows; i++) {
-            ar & column_ptr[i];
-          }
+          // Save the ID.
+          ar & i;
         }
       }
     }
@@ -124,16 +120,39 @@ class SubDenseMatrix {
       }
 
       // Serialize onto a consecutive block of memory.
-      int index = 0;
-      for(unsigned int j = 0;
-          j < serialize_points_per_terminal_node_->size(); j++) {
-        for(int i = (*serialize_points_per_terminal_node_)[j].begin();
-            i < (*serialize_points_per_terminal_node_)[j].end(); i++, index++) {
-          double *column_ptr = core::table::GetColumnPtr(*matrix_, index);
-          for(unsigned int k = 0; k < matrix_->n_rows; k++) {
-            ar & column_ptr[k];
-          }
+      int current_begin = 0;
+      int previous_index = 0;
+      for(int index = 0; index < n_cols; index++) {
+        double *column_ptr = core::table::GetColumnPtr(*matrix_, index);
+        for(unsigned int k = 0; k < matrix_->n_rows; k++) {
+          ar & column_ptr[k];
         }
+
+        // Load the ID and complete the mapping.
+        int id;
+        ar & id;
+        (*id_to_position_map_)[id] = index;
+        (*position_to_id_map_)[index] = id;
+        if(index == 0) {
+          current_begin = id;
+        }
+        // Add to the list of begin/count pairs if there is a break in
+        // continuity.
+        else if(serialize_points_per_terminal_node_ != NULL &&
+                previous_index + 1 != id) {
+          serialize_points_per_terminal_node_->push_back(
+            typename SubTableType::PointSerializeFlagType(
+              current_begin, previous_index - current_begin + 1));
+          current_begin = id;
+        }
+        previous_index = id;
+      }
+
+      // Add the last one to the list.
+      if(serialize_points_per_terminal_node_ != NULL) {
+        serialize_points_per_terminal_node_->push_back(
+          typename SubTableType::PointSerializeFlagType(
+            current_begin, previous_index - current_begin + 1));
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()

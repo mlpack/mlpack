@@ -28,7 +28,7 @@ class IndexUtil {
     static void Serialize(
       Archive &ar, IndexType *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
-      bool serialize_using_direct_mapping, bool is_load_mode);
+      const std::map<int, int> &id_to_position_map, bool is_load_mode);
 };
 
 /** @brief A template specialization of the IndexUtil class for an int
@@ -45,14 +45,20 @@ class IndexUtil< int > {
     static void Serialize(
       Archive &ar, int *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
-      bool serialize_using_direct_mapping, bool is_load_mode) {
+      const std::map<int, int> &id_to_position_map, bool is_load_mode) {
 
       // Serialize onto a consecutive block.
       int index = 0;
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
-        if(serialize_using_direct_mapping && (! is_load_mode)) {
-          index = serialize_points_per_terminal_node[j].begin();
+        index = (is_load_mode) ?
+                index : serialize_points_per_terminal_node[j].begin();
+        if(! is_load_mode) {
+          typename std::map<int, int>::const_iterator it =
+            id_to_position_map.find(index);
+          if(it != id_to_position_map.end()) {
+            index = it->second;
+          }
         }
         for(int i = serialize_points_per_terminal_node[j].begin();
             i < serialize_points_per_terminal_node[j].end(); i++, index++) {
@@ -77,16 +83,19 @@ class IndexUtil< std::pair<int, std::pair<int, int> > > {
     static void Serialize(
       Archive &ar, std::pair<int, std::pair<int, int> > *array,
       const PointSerializeFlagArrayType &serialize_points_per_terminal_node,
-      bool serialize_using_direct_mapping, bool is_load_mode) {
+      const std::map<int, int> &id_to_position_map, bool is_load_mode) {
 
       int index = 0;
       for(unsigned int j = 0;
           j < serialize_points_per_terminal_node.size(); j++) {
-
-        // In the loading mode, we always should use consecutive
-        // memory block.
-        if(serialize_using_direct_mapping && (! is_load_mode)) {
-          index = serialize_points_per_terminal_node[j].begin();
+        index = (is_load_mode) ?
+                index : serialize_points_per_terminal_node[j].begin();
+        if(! is_load_mode) {
+          typename std::map<int, int>::const_iterator it =
+            id_to_position_map.find(index);
+          if(it != id_to_position_map.end()) {
+            index = it->second;
+          }
         }
         for(int i = serialize_points_per_terminal_node[j].begin();
             i < serialize_points_per_terminal_node[j].end(); i++, index++) {

@@ -16,7 +16,6 @@
 #include <boost/utility.hpp>
 #include "core/csv_parser/dataset_reader.h"
 #include "core/math/math_lib.h"
-#include "core/parallel/map_matrix.h"
 #include "core/tree/general_spacetree.h"
 #include "core/table/dense_matrix.h"
 #include "core/table/dense_point.h"
@@ -52,16 +51,6 @@ class Table {
     // For Boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief The flag that tells whether entire points are available
-     *         under the root node.
-     */
-    bool entire_points_available_;
-
-    /** @brief The list of begin/count pairs so that the underlying
-     *         points are accessed correctly using node iterators.
-     */
-    std::vector< boost::tuple<int, int, int> > begin_count_pairs_;
-
     /** @brief The underlying multidimensional data owned by the
      *         table.
      */
@@ -82,6 +71,8 @@ class Table {
     /** @brief The new from old mapping.
      */
     boost::interprocess::offset_ptr<int> new_from_old_;
+
+    std::map<int, int> new_to_position_map_;
 
     /** @brief The tree.
      */
@@ -232,60 +223,9 @@ class Table {
 
   public:
 
-    bool points_available_underneath(TreeType *node) const {
-      if(entire_points_available_) {
-        return true;
-      }
-      int index = -1;
-      for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
-        if(begin_count_pairs_[i].get<0>() <= node->begin() &&
-            node->end() <=
-            begin_count_pairs_[i].get<0>() +
-            begin_count_pairs_[i].get<1>()) {
-          index = i;
-          break;
-        }
-      }
-      return index >= 0;
-    }
-
-    void set_entire_points_available(bool flag_in) {
-      entire_points_available_ = flag_in;
-    }
-
-    void add_begin_count_pairs(int begin, int count) {
-
-      // By default, we assume that not all points are available, once
-      // you call this method.
-      entire_points_available_ = false;
-
-      if(begin_count_pairs_.size() == 0) {
-        begin_count_pairs_.push_back(
-          boost::tuple<int, int, int>(begin, count, 0));
-      }
-      else {
-        int cumulative_index =
-          begin_count_pairs_.back().get<2>() +
-          begin_count_pairs_.back().get<1>();
-        if(begin != begin_count_pairs_.back().get<0>() +
-            begin_count_pairs_.back().get<1>()) {
-          begin_count_pairs_.push_back(
-            boost::tuple<int, int, int>(begin, count, cumulative_index));
-        }
-        else {
-          int prev_begin = begin_count_pairs_.back().get<0>();
-          int prev_count = begin_count_pairs_.back().get<1>();
-          int prev_cumulative_index = begin_count_pairs_.back().get<2>();
-          begin_count_pairs_.back() =
-            boost::tuple<int, int, int>(
-              prev_begin, prev_count + count, prev_cumulative_index);
-        }
-      }
-    }
-
-    const std::vector <
-    boost::tuple<int, int, int> > &begin_counts_pairs() const {
-      return begin_count_pairs_;
+    void add_new_to_position_map(
+      const std::map<int, int> &new_to_position_map_in) {
+      new_to_position_map_ = new_to_position_map_in;
     }
 
     bool tree_is_aliased() const {
@@ -307,7 +247,6 @@ class Table {
      *         ownership of the pointers of the incoming table.
      */
     void operator=(const TableType &table_in) {
-      begin_count_pairs_ = table_in.begin_count_pairs();
       data_ = const_cast<TableType &>(table_in).data();
       rank_ = table_in.rank();
       old_from_new_ = const_cast<TableType &>(table_in).old_from_new();
@@ -414,7 +353,6 @@ class Table {
     /** @brief The default constructor.
      */
     Table() {
-      entire_points_available_ = true;
       rank_ = 0;
       tree_ = NULL;
       old_from_new_ = NULL;
@@ -792,23 +730,14 @@ class Table {
     }
 
     int locate_reordered_position_(int reordered_position) const {
-      if(begin_count_pairs_.size() == 0 ||
-          (begin_count_pairs_.size() == 1 &&
-           begin_count_pairs_[0].get<0>() == 0)) {
+      std::map<int, int>::const_iterator it =
+        new_to_position_map_.find(reordered_position);
+      if(it != new_to_position_map_.end()) {
+        return it->second;
+      }
+      else {
         return reordered_position;
       }
-      int index = -1;
-      for(unsigned int i = 0; i < begin_count_pairs_.size(); i++) {
-        if(begin_count_pairs_[i].get<0>() <= reordered_position &&
-            reordered_position <
-            begin_count_pairs_[i].get<0>() +
-            begin_count_pairs_[i].get<1>()) {
-          index = i;
-          break;
-        }
-      }
-      return begin_count_pairs_[index].get<2>() +
-             (reordered_position - begin_count_pairs_[index].get<0>());
     }
 };
 }
