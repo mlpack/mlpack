@@ -67,7 +67,7 @@ int main(int argc, char *argv[]) {
   }
 
   // Sanity check on leaf size.
-  if (IO::GetParam<int>("neighbor_search/leaf_size") <= 0) {
+  if (IO::GetParam<int>("tree/leaf_size") <= 0) {
     IO::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size") 
         << endl;
   }
