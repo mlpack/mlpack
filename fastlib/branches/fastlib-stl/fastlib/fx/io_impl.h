@@ -55,6 +55,7 @@ template<typename T>
 T& IO::GetParam(const char* identifier) {
   // Used to ensure we have a valid value
   T tmp;
+
   // Used to index into the globalValues map
   std::string key = std::string(identifier);
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;

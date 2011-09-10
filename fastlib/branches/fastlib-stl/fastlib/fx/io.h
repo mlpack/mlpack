@@ -171,11 +171,11 @@ class IO {
                   bool required=false); 
   
   /*
-   * Adds a flag parameter to the heirarchy.  
+   * Adds a flag parameter to the hierarchy.  
    * 
-   * @param identifier The name of the paramter.
+   * @param identifier The name of the paramater.
    * @param description Short string description of the parameter.
-   * @param parent Full pathname of the parent module, default is root node.
+   * @param parent Full pathname of the parent module; default is root node.
    */
   static void AddFlag(const char* identifier,
                       const char* description,
