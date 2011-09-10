@@ -134,6 +134,7 @@ class DistributedDualtreeTaskQueue {
   private:
 
     void GrowSlots_() {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
       query_results_.resize(query_results_.size() + 1);
       query_subtables_.resize(query_subtables_.size() + 1);
@@ -146,6 +147,7 @@ class DistributedDualtreeTaskQueue {
      *         origin.
      */
     void Flush_(int probe_index) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       table_exchange_.QueueFlushRequest(
         *(query_subtables_[probe_index]), *(query_results_[probe_index]));
     }
@@ -154,6 +156,8 @@ class DistributedDualtreeTaskQueue {
      *         from a given slot.
      */
     void Evict_(int probe_index) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
       assigned_work_[probe_index] = assigned_work_.back();
       query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
@@ -263,6 +267,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Finds the query subtable with the given index.
      */
     int FindQuerySubtreeIndex_(const SubTableIDType &query_node_id) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       int found_index = -1;
       for(unsigned int i = 0;
           found_index < 0 && i < query_subtables_.size(); i++) {
@@ -337,6 +342,7 @@ class DistributedDualtreeTaskQueue {
      *         the cache.
      */
     SubTableType *FindSubTable(int cache_id) {
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       return table_exchange_.FindSubTable(cache_id);
     }
 
