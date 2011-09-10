@@ -9,6 +9,7 @@
 #ifndef CORE_TABLE_SUB_TABLE_H
 #define CORE_TABLE_SUB_TABLE_H
 
+#include <map>
 #include <vector>
 #include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
@@ -115,43 +116,33 @@ class SubTable {
     // For boost serialization.
     friend class boost::serialization::access;
 
-    /** @brief Whether to serialize the new from old mapping.
-     */
-    bool serialize_new_from_old_mapping_;
-
     /** @brief The ID of the cache block the subtable is occupying.
      */
     int cache_block_id_;
+
+    /** @brief The pointer to the underlying data.
+     */
+    arma::mat *data_;
+
+    std::map<int, int> id_to_position_map_;
+
+    /** @brief Whether the subtable is an alias of another subtable or
+     *         not.
+     */
+    bool is_alias_;
 
     /** @brief The MPI rank of the process holding the write lock on
      *         this subtable.
      */
     int locked_mpi_rank_;
 
-    /** @brief The table to be loaded/saved.
+    /** @brief The pointer to the new_from_old mapping.
      */
-    TableType *table_;
-
-    /** @brief If not NULL, this points to the starting node whose
-     *         subtree must be serialized.
-     */
-    TreeType *start_node_;
-
-    /** @brief The pointer to the underlying data.
-     */
-    arma::mat *data_;
-
-    /** @brief The pointer to the underlying weights.
-     */
-    arma::mat *weights_;
+    boost::interprocess::offset_ptr<int> *new_from_old_;
 
     /** @brief The pointer to the old_from_new mapping.
      */
     boost::interprocess::offset_ptr<OldFromNewIndexType> *old_from_new_;
-
-    /** @brief The pointer to the new_from_old mapping.
-     */
-    boost::interprocess::offset_ptr<int> *new_from_old_;
 
     /** @brief The rank of the MPI process from which every query
      *         subtable/query result is derived. If not equal to the
@@ -160,14 +151,11 @@ class SubTable {
      */
     int originating_rank_;
 
-    /** @brief The pointer to the tree.
-     */
-    boost::interprocess::offset_ptr<TreeType> *tree_;
+    std::map<int, int> position_to_id_map_;
 
-    /** @brief Whether the subtable is an alias of another subtable or
-     *         not.
+    /** @brief Whether to serialize the new from old mapping.
      */
-    bool is_alias_;
+    bool serialize_new_from_old_mapping_;
 
     /** @brief The list each terminal node that is being
      *         serialized/unserialized, the beginning index and its
@@ -175,6 +163,23 @@ class SubTable {
      *         serialized or not.
      */
     std::vector< PointSerializeFlagType > serialize_points_per_terminal_node_;
+
+    /** @brief If not NULL, this points to the starting node whose
+     *         subtree must be serialized.
+     */
+    TreeType *start_node_;
+
+    /** @brief The table to be loaded/saved.
+     */
+    TableType *table_;
+
+    /** @brief The pointer to the tree.
+     */
+    boost::interprocess::offset_ptr<TreeType> *tree_;
+
+    /** @brief The pointer to the underlying weights.
+     */
+    arma::mat *weights_;
 
   private:
 
@@ -185,19 +190,9 @@ class SubTable {
     void FillTreeNodes_(
       TreeType *node, int parent_node_index,
       std::vector< std::pair< TreeType *, int > > &sorted_nodes,
-      std::vector <
-      PointSerializeFlagType > *serialize_points_per_terminal_node_in,
-      int level, bool add_serialize_points_per_terminal_node) const {
+      int level) const {
 
       if(node != NULL) {
-
-        // Currently assumes that everything is serialized under the
-        // start node.
-        if(parent_node_index < 0 && add_serialize_points_per_terminal_node) {
-          serialize_points_per_terminal_node_in->push_back(
-            PointSerializeFlagType(node->begin(), node->count()));
-        }
-
         sorted_nodes.push_back(
           std::pair<TreeType *, int>(node, parent_node_index));
 
@@ -205,18 +200,22 @@ class SubTable {
         if(node->is_leaf() == false) {
           int parent_node_index = sorted_nodes.size() - 1;
           FillTreeNodes_(
-            node->left(), parent_node_index, sorted_nodes,
-            serialize_points_per_terminal_node_in, level + 1,
-            add_serialize_points_per_terminal_node);
+            node->left(), parent_node_index, sorted_nodes, level + 1);
           FillTreeNodes_(
-            node->right(), parent_node_index, sorted_nodes,
-            serialize_points_per_terminal_node_in, level + 1,
-            add_serialize_points_per_terminal_node);
+            node->right(), parent_node_index, sorted_nodes, level + 1);
         }
       }
     }
 
   public:
+
+    const std::map<int, int> &id_to_position_map() const {
+      return id_to_position_map_;
+    }
+
+    const std::map<int, int> &position_to_id_map() const {
+      return position_to_id_map_;
+    }
 
     /** @brief Returns the identifier information of the
      *         subtable. Currently (rank, begin, count) is the ID.
@@ -229,8 +228,15 @@ class SubTable {
     void set_start_node(TreeType *start_node_in) {
       start_node_ = start_node_in;
       serialize_points_per_terminal_node_.resize(0);
-      serialize_points_per_terminal_node_.push_back(
-        PointSerializeFlagType(start_node_in->begin(), start_node_in->count()));
+      if(start_node_in == NULL) {
+        serialize_points_per_terminal_node_.push_back(
+          PointSerializeFlagType(0, data_->n_cols));
+      }
+      else {
+        serialize_points_per_terminal_node_.push_back(
+          PointSerializeFlagType(
+            start_node_in->begin(), start_node_in->count()));
+      }
     }
 
     bool serialize_new_from_old_mapping() const {
@@ -266,6 +272,8 @@ class SubTable {
       }
       is_alias_ = true;
       table_ = NULL;
+      id_to_position_map_.clear();
+      position_to_id_map_.clear();
     }
 
     /** @brief Returns whether the subtable is an alias of another
@@ -278,6 +286,8 @@ class SubTable {
     void Alias(const SubTable<TableType> &subtable_in) {
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
+      serialize_points_per_terminal_node_ =
+        subtable_in.serialize_points_per_terminal_node();
       cache_block_id_ = subtable_in.cache_block_id();
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       originating_rank_ = subtable_in.originating_rank();
@@ -289,8 +299,8 @@ class SubTable {
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       tree_ = const_cast<SubTableType &>(subtable_in).tree();
       is_alias_ = true;
-      serialize_points_per_terminal_node_ =
-        subtable_in.serialize_points_per_terminal_node();
+      id_to_position_map_ = subtable_in.id_to_position_map();
+      position_to_id_map_ = subtable_in.position_to_id_map();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
@@ -298,6 +308,8 @@ class SubTable {
     void operator=(const SubTable<TableType> &subtable_in) {
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
+      serialize_points_per_terminal_node_ =
+        subtable_in.serialize_points_per_terminal_node();
       cache_block_id_ = subtable_in.cache_block_id();
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       originating_rank_ = subtable_in.originating_rank();
@@ -310,8 +322,8 @@ class SubTable {
       tree_ = const_cast<SubTableType &>(subtable_in).tree();
       is_alias_ = subtable_in.is_alias();
       const_cast<SubTableType &>(subtable_in).is_alias_ = true;
-      serialize_points_per_terminal_node_ =
-        subtable_in.serialize_points_per_terminal_node();
+      id_to_position_map_ = subtable_in.id_to_position_map();
+      position_to_id_map_ = subtable_in.position_to_id_map();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
@@ -332,28 +344,12 @@ class SubTable {
       // Save the tree.
       int num_nodes = 0;
       std::vector< std::pair<TreeType *, int> > tree_nodes;
-      std::vector< PointSerializeFlagType >
-      &serialize_points_per_terminal_node_alias =
-        const_cast< std::vector<PointSerializeFlagType> & >(
-          serialize_points_per_terminal_node_);
-      FillTreeNodes_(
-        start_node_, -1, tree_nodes,
-        &serialize_points_per_terminal_node_alias, 0, is_alias_);
+      FillTreeNodes_(start_node_, -1, tree_nodes, 0);
       num_nodes = tree_nodes.size();
       ar & num_nodes;
       for(unsigned int i = 0; i < tree_nodes.size(); i++) {
         ar & (*(tree_nodes[i].first));
         ar & tree_nodes[i].second;
-      }
-
-      // Save the node ids for which there are points available
-      // underneath.
-      int serialize_points_per_terminal_node_size =
-        static_cast<int>(serialize_points_per_terminal_node_.size());
-      ar & serialize_points_per_terminal_node_size;
-      for(unsigned int i = 0;
-          i < serialize_points_per_terminal_node_.size(); i++) {
-        ar & serialize_points_per_terminal_node_[i];
       }
 
       // Save the matrix and the mappings if requested.
@@ -362,23 +358,25 @@ class SubTable {
         core::table::SubDenseMatrix<SubTableType> sub_weights;
 
         // If the subtable is an alias, specify which subset to save.
-        if(is_alias_) {
-          sub_data.Init(data_, serialize_points_per_terminal_node_);
-          sub_weights.Init(weights_, serialize_points_per_terminal_node_);
-        }
-
-        // Otherwise, we save the entire thing.
-        else {
-          sub_data.Init(data_);
-          sub_weights.Init(weights_);
-        }
+        sub_data.Init(
+          data_,
+          &(const_cast <
+            SubTableType * >(this)->serialize_points_per_terminal_node_),
+          const_cast< std::map<int, int> & >(id_to_position_map_),
+          const_cast< std::map<int, int> & >(position_to_id_map_));
+        sub_weights.Init(
+          weights_,
+          &(const_cast <
+            SubTableType * >(this)->serialize_points_per_terminal_node_),
+          const_cast< std::map<int, int> & >(id_to_position_map_),
+          const_cast< std::map<int, int> & >(position_to_id_map_));
         ar & sub_data;
         ar & sub_weights;
 
         // Direct mapping saving.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
-          serialize_points_per_terminal_node_, is_alias_, false);
+          serialize_points_per_terminal_node_, id_to_position_map_, false);
 
         // Save whether the new from old mapping is going to be
         // serialized or not.
@@ -386,7 +384,7 @@ class SubTable {
         if(serialize_new_from_old_mapping_) {
           core::table::IndexUtil<int>::Serialize(
             ar, new_from_old_->get(),
-            serialize_points_per_terminal_node_, is_alias_, false);
+            serialize_points_per_terminal_node_, id_to_position_map_, false);
         }
       }
     }
@@ -430,29 +428,18 @@ class SubTable {
       (*tree_) = tree_nodes[0].first;
       start_node_ = tree_nodes[0].first;
 
-      // Load the node ids for which there are points underneath.
-      table_->set_entire_points_available(false);
-      int serialize_points_per_terminal_node_size;
-      ar & serialize_points_per_terminal_node_size;
-      serialize_points_per_terminal_node_.resize(
-        serialize_points_per_terminal_node_size);
-      for(int i = 0; i < serialize_points_per_terminal_node_size; i++) {
-        ar & serialize_points_per_terminal_node_[i];
-
-        // Add the list of points that are serialized to the table so
-        // that the iterators work properly.
-        table_->add_begin_count_pairs(
-          serialize_points_per_terminal_node_[i].begin(),
-          serialize_points_per_terminal_node_[i].count());
-      }
-
       // Load the data and the mappings if available.
       {
         core::table::SubDenseMatrix<SubTableType> sub_data;
-        sub_data.Init(data_, serialize_points_per_terminal_node_);
+        sub_data.Init(
+          data_, &serialize_points_per_terminal_node_,
+          id_to_position_map_, position_to_id_map_);
         ar & sub_data;
         core::table::SubDenseMatrix<SubTableType> sub_weights;
-        sub_weights.Init(weights_, serialize_points_per_terminal_node_);
+        sub_weights.Init(
+          weights_,
+          (std::vector< PointSerializeFlagType > *) NULL,
+          id_to_position_map_, position_to_id_map_);
         ar & sub_weights;
         if(table_->mappings_are_aliased() == false) {
           (*old_from_new_) =
@@ -470,7 +457,7 @@ class SubTable {
         // space.
         core::table::IndexUtil<OldFromNewIndexType>::Serialize(
           ar, old_from_new_->get(),
-          serialize_points_per_terminal_node_, true, true);
+          serialize_points_per_terminal_node_, id_to_position_map_, true);
 
         // Find out whether the new from old mapping was serialized or
         // not, and load accordingly.
@@ -478,9 +465,12 @@ class SubTable {
         if(serialize_new_from_old_mapping_) {
           core::table::IndexUtil<int>::Serialize(
             ar, new_from_old_->get(),
-            serialize_points_per_terminal_node_, true, true);
+            serialize_points_per_terminal_node_, id_to_position_map_, true);
         }
       }
+
+      // Load the node ids for which there are points underneath.
+      table_->add_new_to_position_map(id_to_position_map_);
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
@@ -620,8 +610,8 @@ class SubTable {
       table_ = table_in;
       is_alias_ = true;
       originating_rank_ = table_->rank();
-      start_node_ = start_node_in;
       data_ = &(table_in->data());
+      this->set_start_node(start_node_in);
       weights_ = &(table_in->weights());
       old_from_new_ = table_in->old_from_new_offset_ptr();
       new_from_old_ = table_in->new_from_old_offset_ptr();
