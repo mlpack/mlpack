@@ -82,15 +82,10 @@ void load(Archive & ar, arma::Col<T> & t, unsigned int version) {
   ar & n_elem;
 
   // The new memory block.
-  T *new_ptr =
-    (core::table::global_m_file_) ?
-    core::table::global_m_file_->ConstructArray<T>(n_elem) : new T[n_elem];
+  t.set_size(n_elem);
   for(int i = 0; i < n_elem; i++) {
-    ar & new_ptr[i];
+    ar & t[i];
   }
-
-  // Finally, put the memory block into the armadillo matrix.
-  core::table::PtrToArmaVec(new_ptr, n_elem, &t);
 }
 }
 }
