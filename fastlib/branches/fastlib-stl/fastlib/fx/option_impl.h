@@ -21,7 +21,7 @@ Option<N>::Option(bool ignoreTemplate,
   else {
     IO::Add<N>(identifier, description, parent, required);
 
-    //Create the full pathname.
+    // Create the full pathname to set the default value.
     std::string pathname = IO::SanitizeString(parent) + std::string(identifier);
     IO::GetParam<N>(pathname.c_str()) = defaultValue;
   }
@@ -36,6 +36,10 @@ Option<N>::Option(const char* identifier,
                   const char* description,
                   const char* parent) {
   IO::AddFlag(identifier, description, parent);
+
+  // Set the default value (false).
+  std::string pathname = IO::SanitizeString(parent) + std::string(identifier);
+  IO::GetParam<bool>(pathname.c_str()) = false;
 }
 
 }; // namespace mlpack
