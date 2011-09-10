@@ -309,7 +309,7 @@ class TableExchange {
           break;
         }
       }
-      incoming_extra_task_list.Export(world, metric_in, neighbor);
+      incoming_extra_task_list.Export(world, metric_in, neighbor, task_queue_);
 
       // Wait until the task list send request is completed.
       extra_task_list_sent.wait();
