@@ -35,7 +35,7 @@ PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout,
 NullOutStream IO::Debug = NullOutStream();
 #endif
 PrefixedOutStream IO::Info = PrefixedOutStream(std::cout,
-    BASH_GREEN "[INFO ] " BASH_CLEAR, false, false);
+    BASH_GREEN "[INFO ] " BASH_CLEAR, true /* unless --verbose */, false);
 PrefixedOutStream IO::Warn = PrefixedOutStream(std::cout,
     BASH_YELLOW "[WARN ] " BASH_CLEAR, false, false);
 PrefixedOutStream IO::Fatal = PrefixedOutStream(std::cerr,
@@ -113,16 +113,16 @@ void IO::Add(const char* identifier,
 
   po::options_description& desc = IO::GetSingleton().desc;
 
-  //Generate the full pathname and insert the node into the hierarchy
+  // Generate the full pathname and insert the node into the hierarchy.
   std::string tmp = TYPENAME(bool);
   std::string path = 
     IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
 
-  //Add the option to boost program_options
+  // Add the option to boost::program_options.
   desc.add_options()
     (path.c_str(), description);
 
-  //If the option is required, add it to the required options list
+  // If the option is required, add it to the required options list.
   if (required)
     GetSingleton().requiredOptions.push_front(path);
   
@@ -146,7 +146,7 @@ void IO::AddFlag(const char* identifier,
 
   //Add the option to boost program_options
   desc.add_options()
-    (path.c_str(), po::value<bool>()->implicit_value(true) ,description);
+    (path.c_str(), po::value<bool>()->implicit_value(true), description);
 }
 
 void IO::Assert(bool condition) {
@@ -407,8 +407,8 @@ void IO::DefaultMessages() {
       exit(0);
     }
   }
-  if (!HasParam("verbose"))
-    Info.ignoreInput = true;
+  if (HasParam("verbose"))
+    Info.ignoreInput = false;
   
   // Notify the user if we are debugging.  This is not done in the constructor
   // because the output streams may not be set up yet.  We also don't want this
