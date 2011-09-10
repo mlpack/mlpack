@@ -54,7 +54,7 @@ void IO::Add(const char* identifier,
 template<typename T>
 T& IO::GetParam(const char* identifier) {
   // Used to ensure we have a valid value
-  T tmp;
+  T tmp = T();
 
   // Used to index into the globalValues map
   std::string key = std::string(identifier);
