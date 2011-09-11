@@ -269,7 +269,7 @@ class MapVector {
       for(unsigned int i = 0; i < indices_to_save_.size(); i++) {
         int translated_position = indices_to_save_[i];
         ar & (this->operator[](translated_position));
-        ar & indices_to_save_[i];
+        ar & translated_position;
       }
 
       // Clear the indices to be saved after done.
@@ -293,10 +293,12 @@ class MapVector {
       // Load each element and its mapping.
       for(int i = 0; i < num_elements; i++) {
         int original_index;
-        ar & (this->operator[](i));
+        T tmp_val;
+        ar & tmp_val;
         ar & original_index;
         id_to_position_map[ original_index ] = i;
         position_to_id_map[ i ] = original_index;
+        this->operator[](original_index) = tmp_val;
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
