@@ -94,6 +94,13 @@ class CartesianLocal {
       const KernelAuxType &kernel_aux_in,
       const arma::vec& center);
 
+    /** @brief Initializes the local expansion with the given kernel
+     *         and the given number of maximum coefficients.
+     */
+    void Init(const arma::vec& center, int max_num_coeffs_in);
+
+    /** @brief Initializes the local expansion with the given kernel.
+     */
     template<typename KernelAuxType>
     void Init(const KernelAuxType &ka);
 
@@ -158,6 +165,19 @@ int CartesianLocal<ExpansionType>::get_order() const {
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
 void CartesianLocal<ExpansionType>::set_order(int new_order) {
   order_ = new_order;
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+void CartesianLocal<ExpansionType>::Init(
+  const arma::vec& center, int max_num_coeffs_in) {
+
+  // Copy the center.
+  center_ = center;
+  order_ = -1;
+
+  // Initialize coefficient array.
+  coeffs_.set_size(max_num_coeffs_in);
+  coeffs_.zeros();
 }
 
 template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
