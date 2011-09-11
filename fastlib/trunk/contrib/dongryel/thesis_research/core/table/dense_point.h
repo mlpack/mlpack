@@ -13,6 +13,10 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/serialization/split_member.hpp>
 #include <boost/serialization/split_free.hpp>
+#include <boost/serialization/string.hpp>
+#include <boost/serialization/level.hpp>
+#include <boost/serialization/tracking.hpp>
+#include <boost/serialization/tracking_enum.hpp>
 #include <vector>
 #include "memory_mapped_file.h"
 
@@ -68,9 +72,9 @@ void save(Archive & ar, const arma::Col<T> & t, unsigned int version) {
 
   // First save the dimensions.
   ar & t.n_elem;
-  for(unsigned int i = 0; i < t.n_elem; i++) {
-    T val = t[i];
-    ar & val;
+  const T *ptr = t.memptr();
+  for(unsigned int i = 0; i < t.n_elem; i++, ptr++) {
+    ar & (*ptr);
   }
 }
 
@@ -87,6 +91,23 @@ void load(Archive & ar, arma::Col<T> & t, unsigned int version) {
     ar & t[i];
   }
 }
+
+template<>
+template<typename T>
+struct tracking_level < arma::Col<T> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_< boost::serialization::track_never > type;
+  BOOST_STATIC_CONSTANT(
+    int,
+    value = tracking_level::type::value
+  );
+  BOOST_STATIC_ASSERT((
+                        mpl::greater <
+                        implementation_level< arma::Col<T> >,
+                        mpl::int_<primitive_type>
+                        >::value
+                      ));
+};
 }
 }
 
