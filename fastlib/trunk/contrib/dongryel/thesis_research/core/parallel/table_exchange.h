@@ -341,12 +341,7 @@ class TableExchange {
     }
 
     void ClearSubTable_(int cache_id) {
-      boost::tuple<int, int, int> subtable_id =
-        message_cache_[ cache_id ].subtable_route().object().subtable_id();
       message_cache_[ cache_id ].subtable_route().object().Destruct();
-      printf("  Cleared %d-th subtable, %d %d %d\n", cache_id,
-             subtable_id.get<0>(), subtable_id.get<1>(),
-             subtable_id.get<2>());
     }
 
   public:
