@@ -370,7 +370,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
                found_task.first.reference_subtable().subtable_id().get<0>(),
                found_task.first.reference_subtable().subtable_id().get<1>(),
                found_task.first.reference_subtable().subtable_id().get<2>());
-        distributed_tasks.Print();
 
         // Set the starting reference node.
         sub_engine.set_reference_start_node(task_starting_rnode);
