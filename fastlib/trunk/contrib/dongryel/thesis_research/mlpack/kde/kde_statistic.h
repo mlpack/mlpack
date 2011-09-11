@@ -30,11 +30,24 @@ class KdeStatistic {
     mlpack::kde::KdeSummary summary_;
 
     template<class Archive>
-    void serialize(Archive &ar, const unsigned int version) {
+    void save(Archive &ar, const unsigned int version) const {
       ar & farfield_expansion_;
       ar & postponed_;
       ar & summary_;
     }
+
+    template<class Archive>
+    void load(Archive &ar, const unsigned int version) {
+      ar & farfield_expansion_;
+      ar & postponed_;
+      ar & summary_;
+
+      // Initialize the local expansion to be an empty one.
+      postponed_.local_expansion_.Init(
+        farfield_expansion_.get_center(),
+        farfield_expansion_.get_coeffs().n_elem);
+    }
+    BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     /** @brief Copies another KDE statistic.
      */
@@ -113,6 +126,31 @@ class KdeStatistic {
       // Initialize the local expansion.
       postponed_.local_expansion_.Init(global.kernel_aux(), node_center);
     }
+};
+}
+}
+
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType>
+class KdeStatistic;
+
+namespace boost {
+namespace serialization {
+template<>
+template<enum mlpack::series_expansion::CartesianExpansionType ExpansionType >
+struct tracking_level <
+    mlpack::kde::KdeStatistic<ExpansionType> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_< boost::serialization::track_never > type;
+  BOOST_STATIC_CONSTANT(
+    int,
+    value = tracking_level::type::value
+  );
+  BOOST_STATIC_ASSERT((
+                        mpl::greater <
+                        implementation_level< mlpack::kde::KdeStatistic<ExpansionType> >,
+                        mpl::int_<primitive_type>
+                        >::value
+                      ));
 };
 }
 }
