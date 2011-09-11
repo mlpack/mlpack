@@ -296,10 +296,12 @@ class DistributedDualtreeTaskList {
       // For each query subresult, push in a new queue.
       for(unsigned int i = 0; i < query_results_.size(); i++) {
         int query_subtable_position = query_results_[i].second;
+        SubTableType *query_subtable_in_cache =
+          distributed_task_queue_->FindSubTable(
+            assigned_cache_indices[query_subtable_position]);
         int new_position =
           distributed_task_queue_->PushNewQueue(
-            source_rank_in, sub_tables_[ query_subtable_position ].get<0>(),
-            query_results_[i].first);
+            source_rank_in, *query_subtable_in_cache, query_results_[i].first);
         new_query_subtable_map[ query_subtable_position ] = new_position;
       }
 
@@ -308,10 +310,13 @@ class DistributedDualtreeTaskList {
         int query_subtable_position = donated_task_list_[i].first;
         for(unsigned int j = 0; j < donated_task_list_[i].second.size(); j++) {
           int reference_subtable_position = donated_task_list_[i].second[j];
+          SubTableType *reference_subtable_in_cache =
+            distributed_task_queue_->FindSubTable(
+              assigned_cache_indices[ reference_subtable_position ]);
           distributed_task_queue_->PushTask(
             world, metric_in,
             new_query_subtable_map[query_subtable_position],
-            sub_tables_[ reference_subtable_position ].get<0>());
+            *reference_subtable_in_cache);
         }
       }
     }

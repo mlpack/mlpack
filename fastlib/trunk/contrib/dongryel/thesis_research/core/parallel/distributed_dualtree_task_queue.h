@@ -137,10 +137,13 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
       query_results_.resize(query_results_.size() + 1);
-      query_subtables_.resize(query_subtables_.size() + 1);
+      query_subtables_.push_back(
+        boost::shared_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
         remaining_work_for_query_subtables_.size() + 1);
-      tasks_.resize(tasks_.size() + 1);
+      tasks_.push_back(
+        boost::shared_ptr <
+        TaskPriorityQueueType > (new TaskPriorityQueueType()));
     }
 
     /** @brief Flushes a query subtable to be written back to its
