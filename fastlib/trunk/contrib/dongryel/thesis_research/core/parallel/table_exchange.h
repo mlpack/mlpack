@@ -313,6 +313,9 @@ class TableExchange {
 
       // Wait until the task list send request is completed.
       extra_task_list_sent.wait();
+
+      // Free the cache held by the subtables that were sent.
+      outgoing_extra_task_list.ReleaseCache();
     }
 
     /** @brief Prints the existing subtables in the cache.
@@ -338,7 +341,12 @@ class TableExchange {
     }
 
     void ClearSubTable_(int cache_id) {
+      boost::tuple<int, int, int> subtable_id =
+        message_cache_[ cache_id ].subtable_route().object().subtable_id();
       message_cache_[ cache_id ].subtable_route().object().Destruct();
+      printf("  Cleared %d-th subtable, %d %d %d\n", cache_id,
+             subtable_id.get<0>(), subtable_id.get<1>(),
+             subtable_id.get<2>());
     }
 
   public:
@@ -369,6 +377,7 @@ class TableExchange {
 
       // Decrement the number of extra points to receive.
       remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
+      printf("Now remaining: %lu\n", remaining_extra_points_to_hold_);
 
       return receive_slot;
     }

@@ -12,6 +12,9 @@
 #include <armadillo>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
+#include <boost/serialization/level.hpp>
+#include <boost/serialization/tracking.hpp>
+#include <boost/serialization/tracking_enum.hpp>
 #include "dense_point.h"
 #include "memory_mapped_file.h"
 
@@ -104,6 +107,23 @@ void load(Archive & ar, arma::Mat<T> & t, unsigned int version) {
   // Finally, put the memory block into the armadillo matrix.
   core::table::PtrToArmaMat(new_ptr, n_rows, n_cols, &t);
 }
+
+template<>
+template<typename T>
+struct tracking_level < arma::Mat<T> > {
+  typedef mpl::integral_c_tag tag;
+  typedef mpl::int_< boost::serialization::track_never > type;
+  BOOST_STATIC_CONSTANT(
+    int,
+    value = tracking_level::type::value
+  );
+  BOOST_STATIC_ASSERT((
+                        mpl::greater <
+                        implementation_level< arma::Mat<T> >,
+                        mpl::int_<primitive_type>
+                        >::value
+                      ));
+};
 }
 }
 

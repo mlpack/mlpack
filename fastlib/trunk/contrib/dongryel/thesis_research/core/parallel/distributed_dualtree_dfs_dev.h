@@ -363,6 +363,15 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         sub_engine.set_query_start_node(
           found_task.first.query_start_node());
 
+        printf("Running on (%d %d %d) and (%d %d %d)...\n",
+               found_task.first.query_subtable().subtable_id().get<0>(),
+               found_task.first.query_subtable().subtable_id().get<1>(),
+               found_task.first.query_subtable().subtable_id().get<2>(),
+               found_task.first.reference_subtable().subtable_id().get<0>(),
+               found_task.first.reference_subtable().subtable_id().get<1>(),
+               found_task.first.reference_subtable().subtable_id().get<2>());
+        distributed_tasks.Print();
+
         // Set the starting reference node.
         sub_engine.set_reference_start_node(task_starting_rnode);
 

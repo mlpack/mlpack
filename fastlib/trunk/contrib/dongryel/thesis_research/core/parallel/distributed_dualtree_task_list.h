@@ -281,16 +281,17 @@ class DistributedDualtreeTaskList {
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
         KeyType subtable_id = sub_tables_[i].get<0>().subtable_id();
-        printf("Received %d %d %d: %d %d\n", subtable_id.get<0>(),
+        printf("Received %d %d %d: %d %d, %d\n", subtable_id.get<0>(),
                subtable_id.get<1>(), subtable_id.get<2>(),
-               sub_tables_[i].get<1>(), sub_tables_[i].get<2>());
+               sub_tables_[i].get<1>(), sub_tables_[i].get<2>(),
+               sub_tables_[i].get<0>().is_alias());
 
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
             sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
-        sub_tables_[i].get<0>().set_cache_block_id(assigned_cache_indices[i]);
-        printf("Assigned the cache block id: %d\n",
-               assigned_cache_indices[i]);
+        printf("Assigned the cache block id: %d, checking %d\n",
+               assigned_cache_indices[i],
+               sub_tables_[i].get<0>().is_alias());
       }
 
       // For each query subresult, push in a new queue.
@@ -400,6 +401,19 @@ class DistributedDualtreeTaskList {
       }
     }
 
+    void ReleaseCache() {
+      for(unsigned int i = 0; i < sub_tables_.size(); i++) {
+        // If this is a reference subtable, then we need to release
+        // it from the cache owned by the donating process.
+        const_cast <
+        DistributedDualtreeTaskQueueType * >(
+          distributed_task_queue_)->ReleaseCache(
+            *world_,
+            sub_tables_[i].get<0>().cache_block_id(),
+            sub_tables_[i].get<2>());
+      }
+    }
+
     /** @brief Saves the donated task list.
      */
     template<class Archive>
@@ -416,15 +430,6 @@ class DistributedDualtreeTaskList {
           ar & sub_tables_[i].get<0>();
           ar & sub_tables_[i].get<1>();
           ar & sub_tables_[i].get<2>();
-
-          // If this is a reference subtable, then we need to release
-          // it from the cache owned by the donating process.
-          const_cast <
-          DistributedDualtreeTaskQueueType * >(
-            distributed_task_queue_)->ReleaseCache(
-              *world_,
-              sub_tables_[i].get<0>().cache_block_id(),
-              sub_tables_[i].get<2>());
         }
 
         // Save the donated task lists.

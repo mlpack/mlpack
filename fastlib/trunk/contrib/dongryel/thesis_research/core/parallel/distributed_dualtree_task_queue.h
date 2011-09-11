@@ -286,6 +286,17 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    void Print() const {
+      printf("Distributed queue status:\n");
+      for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+        SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
+        printf("  Query subtable ID: %d %d %d (locked: %d) with %d tasks\n",
+               query_subtable_id.get<0>(), query_subtable_id.get<1>(),
+               query_subtable_id.get<2>(), query_subtables_[i]->is_locked(),
+               static_cast<int>(tasks_[i]->size()));
+      }
+    }
+
     /** @brief Initializes a new query subtable queue with its query
      *         subresult.
      */
