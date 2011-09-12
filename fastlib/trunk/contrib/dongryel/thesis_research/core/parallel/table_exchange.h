@@ -21,8 +21,7 @@ namespace parallel {
 
 template <
 typename DistributedTableType,
-         typename TaskPriorityQueueType,
-         typename QueryResultType >
+         typename TaskPriorityQueueType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief A class for performing an all-to-some exchange of subtrees
@@ -30,8 +29,7 @@ class DistributedDualtreeTaskQueue;
  */
 template <
 typename DistributedTableType,
-         typename TaskPriorityQueueType,
-         typename QueryResultType >
+         typename TaskPriorityQueueType >
 class TableExchange {
   public:
 
@@ -51,11 +49,10 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
 
-    typedef core::parallel::RouteRequest <
-    std::pair<SubTableType, QueryResultType> > QuerySubTableFlushRequestType;
+    typedef core::parallel::RouteRequest < SubTableType > QuerySubTableFlushRequestType;
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
-    DistributedTableType, TaskPriorityQueueType, QueryResultType > TaskQueueType;
+    DistributedTableType, TaskPriorityQueueType > TaskQueueType;
 
     class MessageType {
       private:
@@ -282,8 +279,7 @@ class TableExchange {
 
       // Now prepare the task list that must be sent to the neighbor.
       core::parallel::DistributedDualtreeTaskList <
-      DistributedTableType, TaskPriorityQueueType,
-                          QueryResultType > outgoing_extra_task_list;
+      DistributedTableType, TaskPriorityQueueType > outgoing_extra_task_list;
       boost::mpi::request extra_task_list_sent;
       task_queue_->PrepareExtraTaskList(
         world, metric_in, neighbor, num_points_to_send,
@@ -296,8 +292,7 @@ class TableExchange {
       // Receive from the neighbor the extra task list, and push into
       // the current process.
       core::parallel::DistributedDualtreeTaskList <
-      DistributedTableType, TaskPriorityQueueType,
-                          QueryResultType > incoming_extra_task_list;
+      DistributedTableType, TaskPriorityQueueType > incoming_extra_task_list;
       while(true) {
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(
@@ -379,9 +374,7 @@ class TableExchange {
 
     /** @brief Queues the query subtable and its result flush request.
      */
-    void QueueFlushRequest(
-      SubTableType &query_subtable_in, QueryResultType &query_result_in) {
-
+    void QueueFlushRequest(SubTableType &query_subtable_in) {
 
     }
 

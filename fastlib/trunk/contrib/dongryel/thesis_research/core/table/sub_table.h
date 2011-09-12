@@ -35,6 +35,10 @@ class SubTable {
      */
     typedef IncomingTableType TableType;
 
+    /** @brief The iterator type.
+     */
+    typedef typename TableType::TreeIterator TreeIteratorType;
+
     /** @brief The associated query result.
      */
     typedef typename TableType::QueryResultType QueryResultType;
@@ -226,6 +230,16 @@ class SubTable {
 
   public:
 
+    void set_query_result(const QueryResultType &query_result_in) {
+      TreeIteratorType start_node_it =
+        table_->get_node_iterator(start_node_);
+      if(query_result_.get() == NULL) {
+        boost::scoped_ptr<QueryResultType> tmp_result(new QueryResultType());
+        query_result_.swap(tmp_result);
+      }
+      query_result_->Alias(query_result_in, start_node_it);
+    }
+
     const std::map<int, int> &id_to_position_map() const {
       return id_to_position_map_;
     }
@@ -242,6 +256,8 @@ class SubTable {
                table_->rank(), start_node_->begin(), start_node_->count());
     }
 
+    /** @brief Sets the root node of the subtable.
+     */
     void set_start_node(TreeType *start_node_in) {
       start_node_ = start_node_in;
       serialize_points_per_terminal_node_.resize(0);
@@ -250,9 +266,14 @@ class SubTable {
           PointSerializeFlagType(0, data_->n_cols));
       }
       else {
+        TreeIteratorType start_node_it =
+          table_->get_node_iterator(start_node_in);
         serialize_points_per_terminal_node_.push_back(
           PointSerializeFlagType(
             start_node_in->begin(), start_node_in->count()));
+        if(query_result_.get() != NULL) {
+          query_result_->Alias(start_node_it);
+        }
       }
     }
 
@@ -303,6 +324,12 @@ class SubTable {
     /** @brief Returns the associated query result.
      */
     const QueryResultType *query_result() const {
+      return query_result_.get();
+    }
+
+    /** @brief Returns the associated query result.
+     */
+    QueryResultType *query_result() {
       return query_result_.get();
     }
 

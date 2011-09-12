@@ -11,12 +11,14 @@
 namespace core {
 namespace parallel {
 
-template<typename IncomingTableType, typename QueryResultType>
+template<typename IncomingTableType>
 class DistributedDualtreeTask {
 
   public:
 
     typedef IncomingTableType TableType;
+
+    typedef typename TableType::QueryResultType QueryResultType;
 
     typedef core::table::SubTable<TableType> SubTableType;
 
@@ -25,8 +27,6 @@ class DistributedDualtreeTask {
   private:
 
     SubTableType query_subtable_;
-
-    QueryResultType *query_result_;
 
     SubTableType reference_subtable_;
 
@@ -55,15 +55,14 @@ class DistributedDualtreeTask {
 
     void Init(
       SubTableType &query_subtable_in,
-      QueryResultType *query_result_in,
       SubTableType &reference_subtable_in,
       double priority_in) {
 
       query_subtable_.Init(
         query_subtable_in.table(), query_subtable_in.start_node(), false);
+      query_subtable_.set_query_result(* query_subtable_in.query_result());
       query_subtable_.set_cache_block_id(
         query_subtable_in.cache_block_id());
-      query_result_ = query_result_in;
       reference_subtable_.Init(
         reference_subtable_in.table(),
         reference_subtable_in.start_node(), false);
@@ -77,7 +76,6 @@ class DistributedDualtreeTask {
         const_cast<DistributedDualtreeTask *>(&task_in);
       this->Init(
         task_modifiable->query_subtable(),
-        task_modifiable->query_result(),
         task_modifiable->reference_subtable(),
         task_in.priority());
     }
@@ -88,15 +86,13 @@ class DistributedDualtreeTask {
 
     DistributedDualtreeTask(
       SubTableType &query_subtable_in,
-      QueryResultType *query_result_in,
       SubTableType &reference_subtable_in,
       double priority_in) {
       this->Init(
-        query_subtable_in, query_result_in, reference_subtable_in, priority_in);
+        query_subtable_in, reference_subtable_in, priority_in);
     }
 
     DistributedDualtreeTask() {
-      query_result_ = NULL;
       priority_ = 0.0;
     }
 
@@ -105,7 +101,7 @@ class DistributedDualtreeTask {
     }
 
     QueryResultType *query_result() {
-      return query_result_;
+      return query_subtable_.query_result();
     }
 
     SubTableType &reference_subtable() {

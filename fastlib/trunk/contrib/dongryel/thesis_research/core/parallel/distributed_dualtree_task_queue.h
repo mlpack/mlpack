@@ -21,10 +21,13 @@ namespace core {
 namespace parallel {
 
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType,
-         typename QueryResultType >
+         typename TaskPriorityQueueType >
 class DistributedDualtreeTaskQueue {
   public:
+
+    /** @brief The associated query result type.
+     */
+    typedef typename DistributedTableType::QueryResultType QueryResultType;
 
     /** @brief The table type used in the exchange process.
      */
@@ -53,21 +56,19 @@ class DistributedDualtreeTaskQueue {
     /** @brief The table exchange type.
      */
     typedef core::parallel::TableExchange <
-    DistributedTableType, TaskPriorityQueueType, QueryResultType > TableExchangeType;
+    DistributedTableType, TaskPriorityQueueType > TableExchangeType;
 
     /** @brief The type of the distributed task queue.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType,
-    QueryResultType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
     typedef core::parallel::DistributedDualtreeTaskList <
     DistributedTableType,
-    TaskPriorityQueueType,
-    QueryResultType > TaskListType;
+    TaskPriorityQueueType > TaskListType;
 
   private:
 
@@ -93,11 +94,6 @@ class DistributedDualtreeTaskQueue {
      *         MPI process.
      */
     int num_threads_;
-
-    /** @brief The query result objects that correspond to each query
-     *         subtable.
-     */
-    std::vector< boost::shared_ptr<QueryResultType> > query_results_;
 
     /** @brief The query subtable corresponding to the disjoint set of
      *         work to do for the current MPI process.
@@ -138,7 +134,6 @@ class DistributedDualtreeTaskQueue {
     void GrowSlots_() {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
-      query_results_.resize(query_results_.size() + 1);
       query_subtables_.push_back(
         boost::shared_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
@@ -153,8 +148,7 @@ class DistributedDualtreeTaskQueue {
      */
     void Flush_(int probe_index) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      table_exchange_.QueueFlushRequest(
-        *(query_subtables_[probe_index]), *(query_results_[probe_index]));
+      table_exchange_.QueueFlushRequest(*(query_subtables_[probe_index]));
       high_priority_query_subtable_positions_[ probe_index ] =
         high_priority_query_subtable_positions_.back();
       high_priority_query_subtable_positions_.pop_back();
@@ -167,14 +161,12 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       assigned_work_[probe_index] = assigned_work_.back();
-      query_results_[probe_index] = query_results_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
       tasks_[probe_index] = tasks_.back();
 
       assigned_work_.pop_back();
-      query_results_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
       tasks_.pop_back();
@@ -222,21 +214,12 @@ class DistributedDualtreeTaskQueue {
       // of trees, plus duplicating the reference tasks along the way.
       TreeType *prev_qnode = query_subtables_[subtree_index]->start_node();
       TreeType *left = prev_qnode->left();
-      TreeIteratorType left_it =
-        query_subtables_[subtree_index]->table()->get_node_iterator(left);
       TreeType *right = prev_qnode->right();
-      TreeIteratorType right_it =
-        query_subtables_[subtree_index]->table()->get_node_iterator(right);
 
       // Overwrite with the left child.
       query_subtables_[subtree_index]->set_start_node(left);
-      query_results_[subtree_index]->Alias(left_it);
 
       // Grow the list of local query subtrees.
-      query_results_.push_back(
-        boost::shared_ptr<QueryResultType>(new QueryResultType()));
-      query_results_.back()->Alias(
-        *(query_results_[subtree_index]), right_it);
       query_subtables_.push_back(
         boost::shared_ptr<SubTableType>(new SubTableType()));
       query_subtables_.back()->Alias(*(query_subtables_[subtree_index]));
@@ -306,16 +289,12 @@ class DistributedDualtreeTaskQueue {
      *         subresult.
      */
     int PushNewQueue(
-      int originating_rank_in, SubTableType &query_subtable_in,
-      QueryResultType *query_subresult_in) {
+      int originating_rank_in, SubTableType &query_subtable_in) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Get more slots.
       this->GrowSlots_();
-      boost::shared_ptr< QueryResultType > tmp_query_result(
-        query_subresult_in);
-      query_results_.back().swap(tmp_query_result);
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->Unlock();
       query_subtables_.back()->set_originating_rank(originating_rank_in);
@@ -349,7 +328,6 @@ class DistributedDualtreeTaskQueue {
                           world, reference_subtable.table()->rank());
       TaskType new_task(
         *(query_subtables_[push_index]),
-        query_results_[ push_index ].get(),
         reference_subtable,
         priority);
       tasks_[ push_index]->push(new_task);
@@ -430,12 +408,6 @@ class DistributedDualtreeTaskQueue {
       load_balance_request->Init(
         remaining_local_computation_,
         table_exchange_.remaining_extra_points_to_hold());
-    }
-
-    /** @brief Returns the query result associated with the index.
-     */
-    QueryResultType *query_result(int probe_index) {
-      return query_results_[probe_index].get();
     }
 
     /** @brief Returns the query subtable associated with the index.
@@ -696,17 +668,11 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the other member variables.
       high_priority_query_subtable_positions_.resize(0);
-      query_results_.resize(query_subtables_.size());
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
 
         // Set up the query subtable.
-        query_results_[i] =
-          boost::shared_ptr< QueryResultType >(new QueryResultType());
-        TreeIteratorType qnode_it =
-          query_subtables_[i]->table()->get_node_iterator(
-            query_subtables_[i]->start_node());
-        query_results_[i]->Alias(* local_query_result_in, qnode_it);
+        query_subtables_[i]->set_query_result(*local_query_result_in);
         query_subtables_[i]->Unlock();
 
         // Initialize an empty task priority queue for each query subtable.

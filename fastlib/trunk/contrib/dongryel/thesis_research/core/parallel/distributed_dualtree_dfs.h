@@ -67,7 +67,7 @@ class DistributedDualtreeDfs {
      *         scale).
      */
     typedef core::parallel::DistributedDualtreeTask <
-    TableType, ResultType > FineFrontierObjectType;
+    TableType > FineFrontierObjectType;
 
     /** @brief The type of the subtable in use.
      */
@@ -187,8 +187,7 @@ class DistributedDualtreeDfs {
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
       core::parallel::DistributedDualtreeTaskQueue <
-      DistributedTableType, FinePriorityQueueType,
-      ResultType > *distributed_tasks);
+      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine
