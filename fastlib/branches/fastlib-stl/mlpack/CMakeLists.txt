@@ -31,9 +31,6 @@ include_directories( ../include/ )
 ## link directories
 link_directories( ${FASTLIB_LIB_DIR} )
 
-## standard libs
-set(MLPACK_STD_LIBS fastlib lapack blas )  ##! this ordering matters :(
-
 ## recurse
 set(DIRS
     core

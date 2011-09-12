@@ -18,14 +18,14 @@ set(Boost_ADDITIONAL_VERSIONS "1.41" "1.41.0" "1.42" "1.42.0" "1.43" "1.43.0"
   "1.44" "1.44.0" "1.45.0")
 find_package(Boost COMPONENTS math_c99 program_options unit_test_framework REQUIRED) # may require math_tr1?
 
-option(WITH_OPTIMIZERS "Include optimization code - requires OPT++." OFF)
-option(SCALE_NORMAL "Compile with supported indices up to native int type" OFF)
-option(SCALE_LARGE "Support indices up to the maximum the machine's architecture can support" OFF)
-option(SCALE_MASSIVE "Use 64-bit indexes regardless of architecture" OFF)
-# should be changed to default off for a release
+option(WITH_OPTIMIZERS "Include optimization code." OFF)
 
-option(DEBUG "Compile with debugging information" ON) # default to on for developers
-option(PROFILE "Compile with profiling information" ON) # default to on for developers
+# Default to debugging mode for developers.
+option(DEBUG "Compile with debugging information" ON)
+option(PROFILE "Compile with profiling information" ON)
+
+# This is as of yet unused.
+#option(PGO "Use profile-guided optimization if not a debug build" ON)
 
 if(DEBUG)
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -Wall -O0")
@@ -47,24 +47,6 @@ endif(PROFILE)
 # This specifies to Boost that we are dynamically linking to the Boost test
 # library.
 add_definitions(-DBOOST_TEST_DYN_LINK)
-
-# ensure we are only using one of the SCALE_x options
-if(SCALE_MASSIVE)
-   if(SCALE_LARGE OR SCALE_NORMAL)
-      message(FATAL_ERROR "Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL options allowed")
-   endif()
-
-   add_definitions(-DSCALE_MASSIVE)
-elseif(SCALE_LARGE)
-   if(SCALE_NORMAL)
-      message(FATAL_ERROR "Only one of SCALE_MASSIVE, SCALE_LARGE, or SCALE_NORMAL options allowed")
-   endif()
-
-   add_definitions(-DSCALE_LARGE)
-else()
-   # default to normal scale
-   add_definitions(-DSCALE_NORMAL)
-endif()
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)

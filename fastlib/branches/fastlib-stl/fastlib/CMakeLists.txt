@@ -27,6 +27,7 @@ set(DIRS
    tree
 )
 
+# This needs to be always included in the future.
 if(WITH_OPTIMIZERS)
    set(DIRS ${DIRS} optimization)
 endif(WITH_OPTIMIZERS)
@@ -43,12 +44,6 @@ target_link_libraries(fastlib
   pthread
   boost_program_options
 )
-
-if(OPTION_WITH_SPARSE)
-   target_link_libraries(fastlib
-      ${TRILINOS_LIBS}
-   )
-endif()
 
 # move include files to correct directory for mlpack compilation
 file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h *.hpp )
@@ -72,3 +67,45 @@ install(TARGETS fastlib
 )
 
 install(FILES fastlib.h DESTINATION include/fastlib)
+
+# Now we have to add the profile-guided optimization targets.
+# This is commented out for now, with the intention of adding it back in later.
+# So, this commented code serves as a guide.
+#if (NOT DEBUG)
+#  if (PGO)
+    # Use -fprofile-generate in compiling fastlib the first time (which we will
+    # call fastlib_unprofiled).
+#    add_library(fastlib_unprofiled ${FASTLIB_SRCS})
+#    target_link_libraries(fastlib_unprofiled
+#        armadillo
+#        lapack
+#        blas
+#        pthread
+#        boost_program_options
+#    )
+#    set_target_properties(fastlib_unprofiled
+#        PROPERTIES COMPILE_FLAGS "-fprofile-generate")
+
+    # Add the test target.  This target just runs all the tests, in the hopes
+    # that that will give us okay profiling information.  We also remove all the
+    # old profiling information.
+#    add_custom_target(fastlib_profiling_test_run
+#        find ${CMAKE_BINARY_DIR} -iname '*.gcda' -delete
+#        COMMAND ${CMAKE_BINARY_DIR}/bin/fastlib_profiling_test
+#    )
+#    add_dependencies(fastlib_profiling_test_run
+#        fastlib_unprofiled
+#        fastlib_profiling_test
+#    )
+
+    # Now add a profiled target.
+#    set_target_properties(fastlib
+#        PROPERTIES COMPILE_FLAGS "-fprofile-use")
+#    add_dependencies(fastlib
+#        fastlib_profiling_test_run
+#        fastlib_profiling_test
+#        fastlib_unprofiled
+#    )
+
+#  endif ()
+#endif ()
