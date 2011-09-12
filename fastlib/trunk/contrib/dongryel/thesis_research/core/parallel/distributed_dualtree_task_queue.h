@@ -479,6 +479,10 @@ class DistributedDualtreeTaskQueue {
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      if(high_priority_query_subtable_positions_.size() > 0) {
+        return;
+      }
       table_exchange_.SendReceive(
         metric_in, world, hashed_essential_reference_subtrees_to_send);
     }
