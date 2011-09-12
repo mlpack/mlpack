@@ -67,10 +67,9 @@ void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
   }
 
   // Store the self value.
-  new_kernel_matrix->set(
+  new_kernel_matrix->at(
     current_kernel_matrix_->n_rows,
-    current_kernel_matrix_->n_cols,
-    self_value);
+    current_kernel_matrix_->n_cols) = self_value;
   delete current_kernel_matrix_;
   current_kernel_matrix_ = new_kernel_matrix;
 
@@ -121,11 +120,8 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis_(
   if(new_column_vector_in.n_elem > 0) {
 
     // Compute the matrix-vector product.
-    arma::mat current_kernel_matrix_inverse_alias;
-    arma::matToArmaMat(
-      *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
     arma::vec inverse_times_column_vector =
-      current_kernel_matrix_inverse_alias * new_column_vector_in;
+      (*current_kernel_matrix_inverse_) * new_column_vector_in;
 
     // Compute the projection error.
     double projection_error =
@@ -195,18 +191,13 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
   const KernelAuxType &kernel_aux_in,
   TreeIteratorType &it) {
 
-  // The alias to the final kernel matrix inverse.
-  arma::mat current_kernel_matrix_inverse_alias;
-  arma::matToArmaMat(
-    *current_kernel_matrix_inverse_, &current_kernel_matrix_inverse_alias);
-
   // Sum of the kernel matrix inverse entries.
   double sum_kernel_matrix_inverse_entries =
-    arma::accu(current_kernel_matrix_inverse_alias);
+    arma::accu(*current_kernel_matrix_inverse_);
 
   // Column sum of the kernel matrix inverse entries.
   arma::vec column_sum_kernel_matrix_inverse =
-    arma::sum(current_kernel_matrix_inverse_alias, 1);
+    arma::sum(* current_kernel_matrix_inverse_, 1);
 
   // Compute the projection matrix based on the dictionary.
   it.Reset();
@@ -222,8 +213,8 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
     // If the point is in the dictionary, then set the corresponding
     // column to 1.
     if(in_dictionary_[adjusted_current_index]) {
-      projection_matrix_.set(
-        adjusted_current_index, num_dictionary_point_encountered, 1.0);
+      projection_matrix_.at(
+        adjusted_current_index, num_dictionary_point_encountered) = 1.0;
       num_dictionary_point_encountered++;
     }
     else {
@@ -231,13 +222,13 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
       double self_value;
       FillKernelValues_(
         metric_in, kernel_aux_in, point, &kernel_values, &self_value);
-      arma::vec temp = current_kernel_matrix_inverse_alias * kernel_values;
+      arma::vec temp = (* current_kernel_matrix_inverse_) * kernel_values;
       double scale_factor =
         (1.0 - arma::accu(temp)) / sum_kernel_matrix_inverse_entries;
       for(int i = 0; i < projection_matrix_.n_cols(); i++) {
-        projection_matrix_.set(
-          adjusted_current_index, i,
-          temp[i] + scale_factor * column_sum_kernel_matrix_inverse[i]);
+        projection_matrix_.at(
+          adjusted_current_index, i) =
+            temp[i] + scale_factor * column_sum_kernel_matrix_inverse[i];
       }
     }
   } // end of looping over each point.
@@ -304,7 +295,7 @@ double ReducedSetFarField<TreeIteratorType>::EvaluateField(
     }
     else {
       for(int j = 0; j < projection_matrix_.n_cols(); j++) {
-        contribution += projection_matrix_.get(i, j) * kernel_values[j];
+        contribution += projection_matrix_.at(i, j) * kernel_values[j];
       }
     }
   }

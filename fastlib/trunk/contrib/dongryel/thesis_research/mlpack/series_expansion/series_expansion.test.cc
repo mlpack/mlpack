@@ -188,7 +188,7 @@ class SeriesExpansionTest {
           random_table.get_node_iterator(random_table.get_tree());
         std::vector<core::monte_carlo::MeanVariancePair> kernel_sums(
           random_table.n_entries());
-        mlpack::series_expansion::RandomFeature::EvaluateAverageField(
+        mlpack::series_expansion::RandomFeature<TableType>::EvaluateAverageField(
           kernel_aux.kernel(), rnode_it, qnode_it, 20, &kernel_sums);
         double naive_kernel_sum =
           NaiveKernelSum_(
