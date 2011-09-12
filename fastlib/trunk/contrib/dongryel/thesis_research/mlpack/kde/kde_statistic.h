@@ -43,9 +43,11 @@ class KdeStatistic {
       ar & summary_;
 
       // Initialize the local expansion to be an empty one.
-      postponed_.local_expansion_.Init(
-        farfield_expansion_.get_center(),
-        farfield_expansion_.get_coeffs().n_elem);
+      if(farfield_expansion_.get_center().n_elem > 0) {
+        postponed_.local_expansion_.Init(
+          farfield_expansion_.get_center(),
+          farfield_expansion_.get_coeffs().n_elem);
+      }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
