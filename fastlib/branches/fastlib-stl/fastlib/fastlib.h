@@ -7,6 +7,8 @@
 #ifndef FASTLIB_FASTLIB_H
 #define FASTLIB_FASTLIB_H
 
+#include "base/common.h"
+
 #include <cmath>
 #include <stdint.h>
 

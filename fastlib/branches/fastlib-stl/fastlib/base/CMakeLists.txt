@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   ansi_colors.h
    arma_extend.h
    arma_extend/fn_ccov.hpp
    arma_extend/glue_ccov_meat.hpp
@@ -14,8 +13,7 @@ set(SOURCES
    arma_extend/promote_type.hpp
    arma_extend/traits.hpp
    arma_extend/typedef.hpp
-   compiler.h
-   fortran.h
+   common.h
 )
 
 # add directory name to sources
