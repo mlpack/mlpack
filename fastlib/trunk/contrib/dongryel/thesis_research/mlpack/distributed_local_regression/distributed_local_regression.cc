@@ -23,7 +23,8 @@ void StartComputation(
   // Tree type: hard-coded for a metric tree.
   typedef core::table::DistributedTable <
   core::tree::GenKdTree <
-  mlpack::local_regression::LocalRegressionStatistic > > DistributedTableType;
+  mlpack::local_regression::LocalRegressionStatistic > ,
+         mlpack::local_regression::LocalRegressionResult > DistributedTableType;
 
   // Parse arguments for local regression.
   mlpack::distributed_local_regression::DistributedLocalRegressionArguments <

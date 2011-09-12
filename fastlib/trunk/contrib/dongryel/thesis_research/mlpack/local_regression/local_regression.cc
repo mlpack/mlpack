@@ -23,7 +23,8 @@ void StartComputation(boost::program_options::variables_map &vm) {
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
   core::tree::GenMetricTree <
-  mlpack::local_regression::LocalRegressionStatistic > > TableType;
+  mlpack::local_regression::LocalRegressionStatistic > ,
+         mlpack::local_regression::LocalRegressionResult > TableType;
 
   // Parse arguments for local regression.
   mlpack::local_regression::LocalRegressionArguments <

@@ -24,7 +24,8 @@ void StartComputation(
   typedef core::table::DistributedTable <
   core::tree::GenKdTree <
   mlpack::kde::KdeStatistic <
-  KernelAuxType::ExpansionType > > > DistributedTableType;
+  KernelAuxType::ExpansionType > > ,
+                mlpack::kde::KdeResult > DistributedTableType;
 
   // Parse arguments for Kde.
   mlpack::distributed_kde::DistributedKdeArguments <

@@ -207,7 +207,8 @@ class TestDistributedLocalRegression {
       // Typedef the trees and tables.
       typedef core::tree::GenMetricTree <
       mlpack::local_regression::LocalRegressionStatistic > TreeSpecType;
-      typedef core::table::DistributedTable <TreeSpecType> DistributedTableType;
+      typedef core::table::DistributedTable <
+      TreeSpecType, mlpack::local_regression::LocalRegressionResult > DistributedTableType;
       typedef typename DistributedTableType::TableType TableType;
 
       // Only the master generates the number of dimensions.

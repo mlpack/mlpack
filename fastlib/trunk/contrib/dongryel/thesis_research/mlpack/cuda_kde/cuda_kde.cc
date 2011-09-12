@@ -28,7 +28,8 @@ void StartComputation(boost::program_options::variables_map &vm) {
   typedef core::table::Table <
   core::tree::GenMetricTree <
   mlpack::kde::KdeStatistic <
-  KernelAuxType::ExpansionType > > > TableType;
+  KernelAuxType::ExpansionType > > ,
+                mlpack::kde::KdeResult > TableType;
 
   // Parse arguments for Kde.
   mlpack::kde::KdeArguments<TableType> kde_arguments;
