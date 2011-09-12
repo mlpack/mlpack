@@ -21,7 +21,8 @@ void StartComputation(
   // Tree type: hard-coded for a kd-tree.
   typedef core::table::DistributedTable <
   core::tree::GenKdTree <
-  core::tree::AbstractStatistic > > DistributedTableType;
+  core::tree::AbstractStatistic > ,
+       mlpack::distributed_kpca::KpcaResult > DistributedTableType;
 
   // Parse arguments for kernel PCA.
   mlpack::distributed_kpca::DistributedKpcaArguments <

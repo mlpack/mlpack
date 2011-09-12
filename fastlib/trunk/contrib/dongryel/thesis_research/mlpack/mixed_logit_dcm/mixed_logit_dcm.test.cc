@@ -122,7 +122,8 @@ class TestMixedLogitDCM {
 
       typedef core::table::Table <
       core::tree::GenMetricTree <
-      core::tree::AbstractStatistic > > TableType;
+      core::tree::AbstractStatistic > ,
+           mlpack::mixed_logit_dcm::MixedLogitDCMResult > TableType;
 
       // The list of arguments.
       std::vector< std::string > args;

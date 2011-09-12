@@ -82,6 +82,19 @@ class KdeResult {
       num_local_prunes_ = 0;
     }
 
+    /** @brief Aliases another result.
+     */
+    void Alias(const KdeResult &result_in) {
+      densities_l_.Alias(result_in.densities_l_);
+      densities_.Alias(result_in.densities_);
+      densities_u_.Alias(result_in.densities_u_);
+      pruned_.Alias(result_in.pruned_);
+      used_error_.Alias(result_in.used_error_);
+      num_farfield_to_local_prunes_ = 0;
+      num_farfield_prunes_ = 0;
+      num_local_prunes_ = 0;
+    }
+
     /** @brief Copies the given result back onto the result.
      */
     void Copy(const KdeResult & result_in) {

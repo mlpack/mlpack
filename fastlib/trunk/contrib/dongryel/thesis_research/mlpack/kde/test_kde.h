@@ -124,7 +124,8 @@ class TestKde {
       ExpansionType = KernelAuxType::ExpansionType;
       typedef core::table::Table <
       core::tree::GenMetricTree <
-      mlpack::kde::KdeStatistic<ExpansionType> > > TableType;
+      mlpack::kde::KdeStatistic<ExpansionType> > ,
+             mlpack::kde::KdeResult > TableType;
 
       // The list of arguments.
       std::vector< std::string > args;

@@ -129,6 +129,23 @@ class LocalRegressionResult {
         result_in.right_hand_side_used_error_, it);
     }
 
+    /** @brief Aliases a subset of the given result.
+     */
+    void Alias(const LocalRegressionResult &result_in) {
+      regression_estimates_.Alias(result_in.regression_estimates_);
+      left_hand_side_l_.Alias(result_in.left_hand_side_l_);
+      left_hand_side_e_.Alias(result_in.left_hand_side_e_);
+      left_hand_side_u_.Alias(result_in.left_hand_side_u_);
+      right_hand_side_l_.Alias(result_in.right_hand_side_l_);
+      right_hand_side_e_.Alias(result_in.right_hand_side_e_);
+      right_hand_side_u_.Alias(result_in.right_hand_side_u_);
+      pruned_.Alias(result_in.pruned_);
+      left_hand_side_used_error_.Alias(
+        result_in.left_hand_side_used_error_);
+      right_hand_side_used_error_.Alias(
+        result_in.right_hand_side_used_error_);
+    }
+
     void Copy(const LocalRegressionResult &result_in) {
       regression_estimates_.Copy(result_in.regression_estimates_);
       left_hand_side_l_.Copy(result_in.left_hand_side_l_);

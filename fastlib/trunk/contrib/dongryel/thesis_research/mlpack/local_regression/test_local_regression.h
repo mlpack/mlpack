@@ -183,7 +183,8 @@ class TestLocalRegression {
 
       typedef core::table::Table <
       core::tree::GenMetricTree <
-      mlpack::local_regression::LocalRegressionStatistic > > TableType;
+      mlpack::local_regression::LocalRegressionStatistic > ,
+             mlpack::local_regression::LocalRegressionResult	> TableType;
 
       // The list of arguments.
       std::vector< std::string > args;

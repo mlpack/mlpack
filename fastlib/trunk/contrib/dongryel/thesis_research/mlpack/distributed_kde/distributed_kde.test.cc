@@ -198,7 +198,8 @@ class TestDistributed_Kde {
       // Typedef the trees and tables.
       typedef core::tree::GenMetricTree <
       mlpack::kde::KdeStatistic<KernelAuxType::ExpansionType> > TreeSpecType;
-      typedef core::table::DistributedTable <TreeSpecType> DistributedTableType;
+      typedef core::table::DistributedTable <
+      TreeSpecType, mlpack::kde::KdeResult > DistributedTableType;
       typedef typename DistributedTableType::TableType TableType;
 
       // Only the master generates the number of dimensions.

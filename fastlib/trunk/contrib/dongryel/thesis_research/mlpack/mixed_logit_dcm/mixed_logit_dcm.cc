@@ -13,7 +13,8 @@
 
 // Tree type: hard-coded for a metric tree.
 typedef core::table::Table <
-core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+core::tree::GenMetricTree<core::tree::AbstractStatistic>,
+     mlpack::mixed_logit_dcm::MixedLogitDCMResult > TableType;
 
 template<typename DistributionType>
 void BranchOnDistribution(

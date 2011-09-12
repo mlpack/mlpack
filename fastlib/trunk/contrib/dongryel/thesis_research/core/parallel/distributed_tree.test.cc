@@ -99,7 +99,7 @@ int main(int argc, char *argv[]) {
   typedef core::tree::GenKdTree<core::tree::AbstractStatistic>
   GenKdTreeSpecType;
   typedef core::table::DistributedTable <
-  GenKdTreeSpecType, core::tree::EmptyQueryResult >
+  GenKdTreeSpecType, core::table::EmptyQueryResult >
   GenKdTreeDistributedTableType;
   typedef typename GenKdTreeDistributedTableType::TableType GenKdTreeTableType;
 

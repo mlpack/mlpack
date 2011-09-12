@@ -12,6 +12,7 @@
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/monte_carlo/mean_variance_pair_matrix.h"
+#include "core/table/empty_query_result.h"
 #include "core/table/table.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
@@ -213,7 +214,8 @@ BOOST_AUTO_TEST_CASE(TestCaseSeriesExpansion) {
 
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> > TableType;
+  core::tree::GenMetricTree<core::tree::AbstractStatistic>,
+       core::table::EmptyQueryResult > TableType;
 
   // Call the Cartesian expansion tests.
   mlpack::series_expansion::SeriesExpansionTest <
