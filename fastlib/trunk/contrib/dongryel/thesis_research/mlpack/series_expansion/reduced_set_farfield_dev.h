@@ -45,31 +45,31 @@ void ReducedSetFarField<TreeIteratorType>::UpdateDictionary_(
   // Add the point to the dictionary.
   std::pair< arma::vec *, int > new_pair(
     new arma::vec(), new_point_index);
-  new_pair.first->Copy(new_point);
+  (*new_pair.first) = new_point;
   dictionary_.push_back(new_pair);
   in_dictionary_[ new_point_index - it.begin()] = true;
 
   // Update the kernel matrix.
   arma::mat *new_kernel_matrix = new arma::mat();
-  new_kernel_matrix->Init(
-    current_kernel_matrix_->n_rows() + 1, current_kernel_matrix_->n_cols() + 1);
+  new_kernel_matrix->set_size(
+    current_kernel_matrix_->n_rows + 1, current_kernel_matrix_->n_cols + 1);
 
-  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
-    for(int i = 0; i < current_kernel_matrix_->n_rows(); i++) {
-      new_kernel_matrix->set(i, j, current_kernel_matrix_->get(i, j));
+  for(unsigned int j = 0; j < current_kernel_matrix_->n_cols; j++) {
+    for(unsigned int i = 0; i < current_kernel_matrix_->n_rows; i++) {
+      new_kernel_matrix->at(i, j) = current_kernel_matrix_->at(i, j);
     }
   }
-  for(int j = 0; j < current_kernel_matrix_->n_cols(); j++) {
-    new_kernel_matrix->set(
-      j, current_kernel_matrix_->n_cols(), new_column_vector[j]);
-    new_kernel_matrix->set(
-      current_kernel_matrix_->n_rows(), j, new_column_vector[j]);
+  for(unsigned int j = 0; j < current_kernel_matrix_->n_cols; j++) {
+    new_kernel_matrix->at(j, current_kernel_matrix_->n_cols) =
+      new_column_vector[j];
+    new_kernel_matrix->at(current_kernel_matrix_->n_rows, j) =
+      new_column_vector[j];
   }
 
   // Store the self value.
   new_kernel_matrix->set(
-    current_kernel_matrix_->n_rows(),
-    current_kernel_matrix_->n_cols(),
+    current_kernel_matrix_->n_rows,
+    current_kernel_matrix_->n_cols,
     self_value);
   delete current_kernel_matrix_;
   current_kernel_matrix_ = new_kernel_matrix;
@@ -144,17 +144,17 @@ void ReducedSetFarField<TreeIteratorType>::AddBasis_(
     // Add the point to the dictionary.
     std::pair< arma::vec *, int > new_pair(
       new arma::vec(), new_point_index);
-    new_pair.first->Copy(new_point);
+    (*new_pair.first) = new_point;
     dictionary_.push_back(new_pair);
     in_dictionary_[new_point_index - it.begin()] = true;
 
     // By default, we start with 1 by 1 kernel matrix and inverse.
     current_kernel_matrix_ = new arma::mat();
-    current_kernel_matrix_->Init(1, 1);
-    current_kernel_matrix_->set(0, 0, self_value);
+    current_kernel_matrix_->set_size(1, 1);
+    current_kernel_matrix_->at(0, 0) = self_value;
     current_kernel_matrix_inverse_ = new arma::mat();
-    current_kernel_matrix_inverse_->Init(1, 1);
-    current_kernel_matrix_inverse_->set(0, 0, self_value);
+    current_kernel_matrix_inverse_->set_size(1, 1);
+    current_kernel_matrix_inverse_->at(0, 0) = self_value;
   }
 }
 
@@ -210,8 +210,7 @@ void ReducedSetFarField<TreeIteratorType>::FinalizeCompression_(
 
   // Compute the projection matrix based on the dictionary.
   it.Reset();
-  projection_matrix_.Init(it.count(), dictionary_.size());
-  projection_matrix_.SetZero();
+  projection_matrix_.zeros(it.count(), dictionary_.size());
   int num_dictionary_point_encountered = 0;
   while(it.HasNext()) {
     arma::vec point;
