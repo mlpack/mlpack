@@ -475,7 +475,8 @@ class TableExchange {
             // Clear the subtable.
             this->ClearSubTable_(cache_id);
           }
-          else {
+          else if(! message_cache_[
+                    cache_id ].subtable_route().object().is_query_subtable()) {
 
             // If it is among the extra subtables, then evict it.
             this->EvictSubTable_(cache_id);
