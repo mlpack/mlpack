@@ -205,7 +205,7 @@ DistributedProblemType >::InitialSetup_(
   std::vector< std::vector< core::math::Range > > *receive_priorities,
   core::parallel::DistributedDualtreeTaskQueue <
   DistributedTableType,
-  FinePriorityQueueType, ResultType > *distributed_tasks) {
+  FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
@@ -296,7 +296,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // The list of prioritized tasks this MPI process needs to take care
   // of.
   core::parallel::DistributedDualtreeTaskQueue <
-  DistributedTableType, FinePriorityQueueType, ResultType > distributed_tasks;
+  DistributedTableType, FinePriorityQueueType > distributed_tasks;
 
   // The number of reference subtrees to receive and to send in total.
   std::vector <
