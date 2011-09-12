@@ -36,8 +36,6 @@ target_link_libraries(io_test
    fastlib
    boost_program_options
    boost_unit_test_framework
-
-
 )
 
 # append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
