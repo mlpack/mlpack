@@ -20,9 +20,6 @@
 #define _REENTRANT
 #endif
 
-#include "compiler.h"
-#include "ansi_colors.h"
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
