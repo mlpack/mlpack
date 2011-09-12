@@ -28,31 +28,27 @@ class DenseMatrixInverse {
 
       arma::mat *new_matrix_inverse =
         new arma::mat();
-      new_matrix_inverse->Init(
+      new_matrix_inverse->set_size(
         previous_inverse.n_rows() + 1, previous_inverse.n_cols() + 1);
 
       for(int j = 0; j < previous_inverse.n_cols(); j++) {
         for(int i = 0; i < previous_inverse.n_rows(); i++) {
-          new_matrix_inverse->set(
-            i, j, previous_inverse.get(i, j) +
+          new_matrix_inverse->at(i, j) =
+            previous_inverse.at(i, j) +
             inverse_times_new_column[i] *
-            inverse_times_new_column[j] / projection_error);
+            inverse_times_new_column[j] / projection_error;
         }
       }
 
       for(int j = 0; j < previous_inverse.n_cols(); j++) {
-        new_matrix_inverse->set(
-          j,
-          previous_inverse.n_cols(), - inverse_times_new_column[j] /
-          projection_error);
-        new_matrix_inverse->set(
-          previous_inverse.n_rows(), j,
-          - inverse_times_new_column[j] / projection_error);
+        new_matrix_inverse->at(j, previous_inverse.n_cols()) =
+          - inverse_times_new_column[j] / projection_error;
+        new_matrix_inverse->at(previous_inverse.n_rows(), j) =
+          - inverse_times_new_column[j] / projection_error;
       }
-      new_matrix_inverse->set(
+      new_matrix_inverse->at(
         new_matrix_inverse->n_rows() - 1,
-        new_matrix_inverse->n_cols() - 1,
-        1.0 / projection_error);
+        new_matrix_inverse->n_cols() - 1) = 1.0 / projection_error;
 
       // Return the computed inverse.
       return new_matrix_inverse;
