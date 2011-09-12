@@ -131,6 +131,10 @@ class SubTable {
      */
     bool is_alias_;
 
+    /** @brief Whether the subtable is a query subtable.
+     */
+    bool is_query_subtable_;
+
     /** @brief The MPI rank of the process holding the write lock on
      *         this subtable.
      */
@@ -271,6 +275,7 @@ class SubTable {
         }
       }
       is_alias_ = true;
+      is_query_subtable_ = false;
       table_ = NULL;
       id_to_position_map_.clear();
       position_to_id_map_.clear();
@@ -283,47 +288,55 @@ class SubTable {
       return is_alias_;
     }
 
+    /** @brief Returns whether the subtable is a query subtable.
+     */
+    bool is_query_subtable() const {
+      return is_query_subtable_;
+    }
+
     void Alias(const SubTable<TableType> &subtable_in) {
+      cache_block_id_ = subtable_in.cache_block_id();
+      data_ = const_cast<SubTableType &>(subtable_in).data();
+      id_to_position_map_ = subtable_in.id_to_position_map();
+      is_alias_ = true;
+      is_query_subtable_ = subtable_in.is_query_subtable();
+      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
+      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
+      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
+      originating_rank_ = subtable_in.originating_rank();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
+      position_to_id_map_ = subtable_in.position_to_id_map();
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       serialize_points_per_terminal_node_ =
         subtable_in.serialize_points_per_terminal_node();
-      cache_block_id_ = subtable_in.cache_block_id();
-      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
-      originating_rank_ = subtable_in.originating_rank();
-      table_ = const_cast< SubTableType &>(subtable_in).table();
-      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
-      data_ = const_cast<SubTableType &>(subtable_in).data();
-      weights_ = const_cast<SubTableType &>(subtable_in).weights();
-      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
-      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
-      tree_ = const_cast<SubTableType &>(subtable_in).tree();
-      is_alias_ = true;
-      id_to_position_map_ = subtable_in.id_to_position_map();
-      position_to_id_map_ = subtable_in.position_to_id_map();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
      */
     void operator=(const SubTable<TableType> &subtable_in) {
+      cache_block_id_ = subtable_in.cache_block_id();
+      data_ = const_cast<SubTableType &>(subtable_in).data();
+      id_to_position_map_ = subtable_in.id_to_position_map();
+      is_alias_ = subtable_in.is_alias();
+      is_query_subtable_ = subtable_in.is_query_subtable();
+      const_cast<SubTableType &>(subtable_in).is_alias_ = true;
+      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
+      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
+      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
+      originating_rank_ = subtable_in.originating_rank();
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
+      position_to_id_map_ = subtable_in.position_to_id_map();
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       serialize_points_per_terminal_node_ =
         subtable_in.serialize_points_per_terminal_node();
-      cache_block_id_ = subtable_in.cache_block_id();
-      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
-      originating_rank_ = subtable_in.originating_rank();
-      table_ = const_cast< SubTableType &>(subtable_in).table();
-      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
-      data_ = const_cast<SubTableType &>(subtable_in).data();
-      weights_ = const_cast<SubTableType &>(subtable_in).weights();
-      old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
-      new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
-      tree_ = const_cast<SubTableType &>(subtable_in).tree();
-      is_alias_ = subtable_in.is_alias();
-      const_cast<SubTableType &>(subtable_in).is_alias_ = true;
-      id_to_position_map_ = subtable_in.id_to_position_map();
-      position_to_id_map_ = subtable_in.position_to_id_map();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
@@ -481,18 +494,19 @@ class SubTable {
     /** @brief The default constructor.
      */
     SubTable() {
-      serialize_new_from_old_mapping_ = true;
       cache_block_id_ = 0;
-      locked_mpi_rank_ = -1;
-      originating_rank_ = -1;
-      table_ = NULL;
-      start_node_ = NULL;
       data_ = NULL;
-      weights_ = NULL;
-      old_from_new_ = NULL;
-      new_from_old_ = NULL;
-      tree_ = NULL;
       is_alias_ = true;
+      is_query_subtable_ = false;
+      locked_mpi_rank_ = -1;
+      new_from_old_ = NULL;
+      old_from_new_ = NULL;
+      originating_rank_ = -1;
+      serialize_new_from_old_mapping_ = true;
+      start_node_ = NULL;
+      table_ = NULL;
+      tree_ = NULL;
+      weights_ = NULL;
     }
 
     /** @brief The destructor.
