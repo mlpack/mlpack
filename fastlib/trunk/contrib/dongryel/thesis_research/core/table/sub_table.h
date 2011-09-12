@@ -487,8 +487,18 @@ class SubTable {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    /** @brief Set the rank of the MPI process from which this
+     *         subtable was received.
+     */
     void set_originating_rank(int originating_rank_in) {
       originating_rank_ = originating_rank_in;
+    }
+
+    /** @brief Set the flag for whether the subtable is a query
+     *         subtable or not.
+     */
+    void set_is_query_subtable(bool flag_in) {
+      is_query_subtable_ = flag_in;
     }
 
     /** @brief The default constructor.
