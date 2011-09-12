@@ -5,6 +5,7 @@ set(SOURCES
   dense_matrix.h
   dense_point.h
   distributed_table.h
+  empty_query_result.h
   global.cc
   index_util.h
   memory_mapped_file.h

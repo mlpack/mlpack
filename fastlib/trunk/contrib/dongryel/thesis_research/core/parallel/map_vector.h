@@ -186,6 +186,10 @@ class MapVector {
       return internal_;
     }
 
+    void Alias(const core::parallel::MapVector<T> &source_in) {
+      internal_ = source_in.internal();
+    }
+
     template<typename TreeIteratorType>
     void Alias(
       const core::parallel::MapVector<T> &source_in,

@@ -27,7 +27,7 @@ namespace table {
 
 extern MemoryMappedFile *global_m_file_;
 
-template<typename IncomingTreeSpecType>
+template<typename IncomingTreeSpecType, typename IncomingQueryResultType>
 class DistributedTable: public boost::noncopyable {
 
   public:
@@ -35,6 +35,11 @@ class DistributedTable: public boost::noncopyable {
     /** @brief The type of the specification used to index the data.
      */
     typedef IncomingTreeSpecType TreeSpecType;
+
+    /** @brief The query result type associated with this distributed
+     *         table.
+     */
+    typedef IncomingQueryResultType QueryResultType;
 
     /** @brief The type of the tree used to index data.
      */
@@ -44,11 +49,13 @@ class DistributedTable: public boost::noncopyable {
      *         distributed table.
      */
     typedef core::table::Table <
-    TreeSpecType, std::pair<int, std::pair< int, int> > > TableType;
+    TreeSpecType, QueryResultType,
+                std::pair<int, std::pair< int, int> > > TableType;
 
     /** @brief Defines the type of the distributed table.
      */
-    typedef DistributedTable<TreeSpecType> DistributedTableType;
+    typedef DistributedTable <
+    TreeSpecType, QueryResultType > DistributedTableType;
 
     /** @brief The index type for each point is a pair of a machine ID
      *         and a point ID.

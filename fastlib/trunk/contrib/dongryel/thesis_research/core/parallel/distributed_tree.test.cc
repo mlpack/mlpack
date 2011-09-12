@@ -10,6 +10,7 @@
 #include <time.h>
 #include "core/metric_kernels/lmetric.h"
 #include "core/parallel/random_dataset_generator.h"
+#include "core/table/empty_query_result.h"
 #include "core/table/distributed_table.h"
 #include "core/tree/gen_kdtree.h"
 #include "core/tree/gen_metric_tree.h"
@@ -89,16 +90,18 @@ int main(int argc, char *argv[]) {
   // The general metric tree type.
   typedef core::tree::GenMetricTree<core::tree::AbstractStatistic>
   GenMetricTreeSpecType;
-  typedef core::table::Table<GenMetricTreeSpecType> GenMetricTreeTableType;
-  typedef core::table::DistributedTable<GenMetricTreeSpecType>
+  typedef core::table::DistributedTable <
+  GenMetricTreeSpecType, core::table::EmptyQueryResult >
   GenMetricTreeDistributedTableType;
+  typedef typename GenMetricTreeDistributedTableType::TableType GenMetricTreeTableType;
 
   // The general kd tree type.
   typedef core::tree::GenKdTree<core::tree::AbstractStatistic>
   GenKdTreeSpecType;
-  typedef core::table::Table<GenKdTreeSpecType> GenKdTreeTableType;
-  typedef core::table::DistributedTable<GenKdTreeSpecType>
+  typedef core::table::DistributedTable <
+  GenKdTreeSpecType, core::tree::EmptyQueryResult >
   GenKdTreeDistributedTableType;
+  typedef typename GenKdTreeDistributedTableType::TableType GenKdTreeTableType;
 
   // Call the tests.
   printf("Testing the general metric trees:\n");
