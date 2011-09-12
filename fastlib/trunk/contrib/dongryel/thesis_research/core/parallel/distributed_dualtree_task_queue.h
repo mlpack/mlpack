@@ -752,6 +752,9 @@ class DistributedDualtreeTaskQueue {
         this->RedistributeAmongCores_(world, metric_in);
       }
 
+      // Prefer to dequeue a task from the query subtree checked out
+      // from another process.
+
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
       // iteration.
