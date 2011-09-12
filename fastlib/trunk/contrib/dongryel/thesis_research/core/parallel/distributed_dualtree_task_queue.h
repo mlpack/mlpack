@@ -82,6 +82,8 @@ class DistributedDualtreeTaskQueue {
     std::vector <
     boost::shared_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
+    std::vector<int> high_priority_query_subtable_positions_;
+
     /** @brief The number of remaining tasks on the current MPI
      *         process.
      */
@@ -153,6 +155,9 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       table_exchange_.QueueFlushRequest(
         *(query_subtables_[probe_index]), *(query_results_[probe_index]));
+      high_priority_query_subtable_positions_[ probe_index ] =
+        high_priority_query_subtable_positions_.back();
+      high_priority_query_subtable_positions_.pop_back();
     }
 
     /** @brief Evicts a query subtable and its associated variables
@@ -315,6 +320,10 @@ class DistributedDualtreeTaskQueue {
       query_subtables_.back()->Unlock();
       query_subtables_.back()->set_originating_rank(originating_rank_in);
       remaining_work_for_query_subtables_.back() = 0;
+
+      // Push in the position for the position that needs to be looked
+      // at higher priority.
+      high_priority_query_subtable_positions_.push_back(tasks_.size() - 1);
       return tasks_.size() - 1;
     }
 
@@ -686,6 +695,7 @@ class DistributedDualtreeTaskQueue {
         4 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
+      high_priority_query_subtable_positions_.resize(0);
       query_results_.resize(query_subtables_.size());
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
@@ -754,19 +764,25 @@ class DistributedDualtreeTaskQueue {
 
       // Prefer to dequeue a task from the query subtree checked out
       // from another process.
+      for(int i = 0; task_out->second < 0 &&
+          i < static_cast<int>(
+            high_priority_query_subtable_positions_.size()); i++) {
+        int probe_index = high_priority_query_subtable_positions_[i];
+        if(this->DequeueTask(
+              world, probe_index, task_out, lock_query_subtree_in)) {
+          i--;
+        }
+      }
 
       // Try to dequeue a task from the given query subtree if it is
       // not locked yet. Otherwise, request it to be split in the next
       // iteration.
-      for(int probe_index = 0;
+      for(int probe_index = 0; task_out->second < 0 &&
           probe_index < static_cast<int>(tasks_.size()); probe_index++) {
 
         if(this->DequeueTask(
               world, probe_index, task_out, lock_query_subtree_in)) {
           probe_index--;
-        }
-        if(task_out->second >= 0) {
-          break;
         }
       }
     }
