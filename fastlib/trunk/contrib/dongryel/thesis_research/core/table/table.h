@@ -28,7 +28,9 @@ namespace table {
 extern MemoryMappedFile *global_m_file_;
 
 template <
-typename IncomingTreeSpecType, typename IncomingOldFromNewIndexType = int >
+typename IncomingTreeSpecType,
+         typename IncomingQueryResultType,
+         typename IncomingOldFromNewIndexType = int >
 class Table {
 
   public:
@@ -37,10 +39,12 @@ class Table {
 
     typedef IncomingOldFromNewIndexType OldFromNewIndexType;
 
+    typedef IncomingQueryResultType QueryResultType;
+
     typedef core::tree::GeneralBinarySpaceTree < TreeSpecType > TreeType;
 
     typedef core::table::Table <
-    TreeSpecType, OldFromNewIndexType > TableType;
+    TreeSpecType, IncomingQueryResultType, OldFromNewIndexType > TableType;
 
     typedef typename TreeSpecType::StatisticType StatisticType;
 

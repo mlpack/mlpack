@@ -11,6 +11,7 @@
 
 #include <map>
 #include <vector>
+#include <boost/scoped_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/utility.hpp>
@@ -33,6 +34,10 @@ class SubTable {
     /** @brief The type of the table.
      */
     typedef IncomingTableType TableType;
+
+    /** @brief The associated query result.
+     */
+    typedef typename TableType::QueryResultType QueryResultType;
 
     /** @brief The type of the tree.
      */
@@ -124,16 +129,15 @@ class SubTable {
      */
     arma::mat *data_;
 
+    /** @brief Maps each DFS index to the position in the underlying
+     *         dense matrix storing the data.
+     */
     std::map<int, int> id_to_position_map_;
 
     /** @brief Whether the subtable is an alias of another subtable or
      *         not.
      */
     bool is_alias_;
-
-    /** @brief Whether the subtable is a query subtable.
-     */
-    bool is_query_subtable_;
 
     /** @brief The MPI rank of the process holding the write lock on
      *         this subtable.
@@ -155,7 +159,16 @@ class SubTable {
      */
     int originating_rank_;
 
+    /** @brief Maps each position of the loaded underlying matrix to
+     *         its original DFS index of the process from which it was
+     *         received.
+     */
     std::map<int, int> position_to_id_map_;
+
+    /** @brief The associated query result. If not NULL, then this
+     *         subtable is assumed to be a query subtable.
+     */
+    boost::scoped_ptr< QueryResultType > query_result_;
 
     /** @brief Whether to serialize the new from old mapping.
      */
@@ -275,7 +288,6 @@ class SubTable {
         }
       }
       is_alias_ = true;
-      is_query_subtable_ = false;
       table_ = NULL;
       id_to_position_map_.clear();
       position_to_id_map_.clear();
@@ -288,60 +300,80 @@ class SubTable {
       return is_alias_;
     }
 
+    /** @brief Returns the associated query result.
+     */
+    const QueryResultType *query_result() const {
+      return query_result_.get();
+    }
+
     /** @brief Returns whether the subtable is a query subtable.
      */
     bool is_query_subtable() const {
-      return is_query_subtable_;
+      return query_result_.get() != NULL ;
     }
 
-    void Alias(const SubTable<TableType> &subtable_in) {
+    /** @brief Aliases another subtable.
+     */
+    void Alias(const SubTableType &subtable_in) {
       cache_block_id_ = subtable_in.cache_block_id();
       data_ = const_cast<SubTableType &>(subtable_in).data();
       id_to_position_map_ = subtable_in.id_to_position_map();
       is_alias_ = true;
-      is_query_subtable_ = subtable_in.is_query_subtable();
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       originating_rank_ = subtable_in.originating_rank();
-      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
-      table_ = const_cast< SubTableType &>(subtable_in).table();
-      weights_ = const_cast<SubTableType &>(subtable_in).weights();
-      tree_ = const_cast<SubTableType &>(subtable_in).tree();
       position_to_id_map_ = subtable_in.position_to_id_map();
+      if(subtable_in.query_result() != NULL) {
+        if(query_result_.get() == NULL) {
+          boost::scoped_ptr<QueryResultType> tmp_result(new QueryResultType());
+          query_result_.swap(tmp_result);
+        }
+        query_result_->Alias(*(subtable_in.query_result()));
+      }
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       serialize_points_per_terminal_node_ =
         subtable_in.serialize_points_per_terminal_node();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
      */
-    void operator=(const SubTable<TableType> &subtable_in) {
+    void operator=(const SubTableType &subtable_in) {
       cache_block_id_ = subtable_in.cache_block_id();
       data_ = const_cast<SubTableType &>(subtable_in).data();
       id_to_position_map_ = subtable_in.id_to_position_map();
       is_alias_ = subtable_in.is_alias();
-      is_query_subtable_ = subtable_in.is_query_subtable();
       const_cast<SubTableType &>(subtable_in).is_alias_ = true;
       locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       originating_rank_ = subtable_in.originating_rank();
-      table_ = const_cast< SubTableType &>(subtable_in).table();
-      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
-      weights_ = const_cast<SubTableType &>(subtable_in).weights();
-      tree_ = const_cast<SubTableType &>(subtable_in).tree();
       position_to_id_map_ = subtable_in.position_to_id_map();
+      if(subtable_in.query_result() != NULL) {
+        if(query_result_.get() == NULL) {
+          boost::scoped_ptr<QueryResultType> tmp_result(new QueryResultType());
+          query_result_.swap(tmp_result);
+        }
+        query_result_->Alias(*(subtable_in.query_result()));
+      }
       serialize_new_from_old_mapping_ =
         subtable_in.serialize_new_from_old_mapping();
       serialize_points_per_terminal_node_ =
         subtable_in.serialize_points_per_terminal_node();
+      table_ = const_cast< SubTableType &>(subtable_in).table();
+      start_node_ = const_cast< SubTableType &>(subtable_in).start_node();
+      weights_ = const_cast<SubTableType &>(subtable_in).weights();
+      tree_ = const_cast<SubTableType &>(subtable_in).tree();
     }
 
     /** @brief Steals the ownership of the incoming subtable.
      */
-    SubTable(const SubTable<TableType> &subtable_in) {
+    SubTable(const SubTableType &subtable_in) {
       this->operator=(subtable_in);
     }
 
@@ -349,6 +381,13 @@ class SubTable {
      */
     template<class Archive>
     void save(Archive &ar, const unsigned int version) const {
+
+      // Save the associated query result.
+      bool is_query_subtable = (query_result_.get() != NULL);
+      ar & is_query_subtable;
+      if(is_query_subtable) {
+        ar & (* query_result_);
+      }
 
       // Save the rank.
       int rank = table_->rank();
@@ -406,6 +445,17 @@ class SubTable {
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
+
+      // Load the associated query result if available.
+      bool is_query_subtable;
+      ar & is_query_subtable;
+      if(is_query_subtable) {
+        if(query_result_.get() == NULL) {
+          boost::scoped_ptr<QueryResultType> tmp_result(new QueryResultType());
+          query_result_.swap(tmp_result);
+        }
+        ar & (* query_result_);
+      }
 
       // Set the rank.
       int rank_in;
@@ -494,20 +544,12 @@ class SubTable {
       originating_rank_ = originating_rank_in;
     }
 
-    /** @brief Set the flag for whether the subtable is a query
-     *         subtable or not.
-     */
-    void set_is_query_subtable(bool flag_in) {
-      is_query_subtable_ = flag_in;
-    }
-
     /** @brief The default constructor.
      */
     SubTable() {
       cache_block_id_ = 0;
       data_ = NULL;
       is_alias_ = true;
-      is_query_subtable_ = false;
       locked_mpi_rank_ = -1;
       new_from_old_ = NULL;
       old_from_new_ = NULL;

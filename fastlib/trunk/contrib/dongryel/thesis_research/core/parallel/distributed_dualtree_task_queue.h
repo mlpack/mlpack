@@ -709,9 +709,6 @@ class DistributedDualtreeTaskQueue {
         query_results_[i]->Alias(* local_query_result_in, qnode_it);
         query_subtables_[i]->Unlock();
 
-        // Mark that this is a query subtable.
-        query_subtables_[i]->set_is_query_subtable(true);
-
         // Initialize an empty task priority queue for each query subtable.
         tasks_[i] = boost::shared_ptr <
                     TaskPriorityQueueType > (new TaskPriorityQueueType());

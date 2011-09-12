@@ -14,6 +14,7 @@
 #include <boost/serialization/serialization.hpp>
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
+#include "core/table/empty_query_result.h"
 #include "core/table/sub_table.h"
 #include "core/table/sub_table_list.h"
 #include "core/table/distributed_table.h"
@@ -426,8 +427,9 @@ int main(int argc, char *argv[]) {
   // Tree type: hard-coded for a metric tree.
   typedef core::table::Table <
   core::tree::GenMetricTree<core::tree::AbstractStatistic>,
+       core::table::EmptyQueryResult,
        std::pair<int, std::pair<int, int> > > TableType;
-  typedef core::table::SubTable<TableType> SubTableType;
+  typedef core::table::SubTable< TableType > SubTableType;
   typedef core::table::SubTableList<SubTableType> SubTableListType;
 
   // Call the tests.

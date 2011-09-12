@@ -11,6 +11,7 @@
 #include <boost/test/unit_test.hpp>
 #include "core/metric_kernels/lmetric.h"
 #include "core/parallel/random_dataset_generator.h"
+#include "core/table/empty_query_result.h"
 #include "core/table/table.h"
 #include "core/tree/gen_metric_tree.h"
 #include "core/tree/gen_kdtree.h"
@@ -150,12 +151,13 @@ BOOST_AUTO_TEST_CASE(TestCaseTree) {
 
   // Table type: hard-coded for a metric tree.
   typedef core::table::Table <
-  core::tree::GenMetricTree<core::tree::AbstractStatistic> >
-  GenMetricTreeTableType;
+  core::tree::GenMetricTree<core::tree::AbstractStatistic>,
+       core::table::EmptyQueryResult >  GenMetricTreeTableType;
 
   // Another table type coded for a kd-tree.
   typedef core::table::Table <
-  core::tree::GenKdTree<core::tree::AbstractStatistic> > GenKdTreeTableType;
+  core::tree::GenKdTree<core::tree::AbstractStatistic>,
+       core::table::EmptyQueryResult > GenKdTreeTableType;
 
   // Call the tests.
   printf("Starting the generic metric tree test...\n");
