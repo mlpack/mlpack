@@ -7,9 +7,14 @@
 #ifndef FASTLIB_FASTLIB_H
 #define FASTLIB_FASTLIB_H
 
-#include "base/common.h"
-
 #include <cmath>
+#include <stdlib.h>
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+#include <math.h>
+#include <limits.h>
+#include <float.h>
 #include <stdint.h>
 
 #include "data/dataset.h"
@@ -70,4 +75,3 @@
  *
  * The source for this main page is in @c fastlib/fastlib.h.
  */
-
