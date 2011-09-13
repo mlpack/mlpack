@@ -12,6 +12,7 @@
 #include <map>
 #include <vector>
 #include <boost/scoped_ptr.hpp>
+#include <boost/intrusive_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/interprocess/offset_ptr.hpp>
 #include <boost/utility.hpp>
@@ -22,6 +23,29 @@ namespace core {
 namespace table {
 
 extern MemoryMappedFile *global_m_file_;
+
+template<typename IncomingTableType>
+class SubTable;
+
+template<typename IncomingTableType>
+inline void intrusive_ptr_add_ref(
+  core::table::SubTable<IncomingTableType> *ptr) {
+  ptr->reference_count_++;
+}
+
+template<typename IncomingTableType>
+inline void intrusive_ptr_release(
+  core::table::SubTable<IncomingTableType> *ptr) {
+  ptr->reference_count_--;
+  if(ptr->reference_count_ == 0) {
+    if(core::table::global_m_file_) {
+      core::table::global_m_file_->DestroyPtr(ptr);
+    }
+    else {
+      delete ptr;
+    }
+  }
+}
 
 /** @brief A subtable class for serializing/unserializing a part of a
  *         table object.
@@ -201,6 +225,12 @@ class SubTable {
     /** @brief The pointer to the underlying weights.
      */
     arma::mat *weights_;
+
+  public:
+
+    /** @brief The number of reference count for this subtable.
+     */
+    long reference_count_;
 
   private:
 
@@ -581,6 +611,7 @@ class SubTable {
       new_from_old_ = NULL;
       old_from_new_ = NULL;
       originating_rank_ = -1;
+      reference_count_ = 0;
       serialize_new_from_old_mapping_ = true;
       start_node_ = NULL;
       table_ = NULL;

@@ -585,14 +585,14 @@ class Table {
     void get_frontier_nodes_bounded_by_number(
       int max_num_nodes,
       std::vector <
-      boost::shared_ptr<SubTableType> > *frontier_subtables_out) const {
+      boost::intrusive_ptr<SubTableType> > *frontier_subtables_out) const {
 
       std::vector<TreeType *> frontier_nodes_out;
       tree_->get_frontier_nodes_bounded_by_number(
         max_num_nodes, &frontier_nodes_out);
       for(unsigned int i = 0; i < frontier_nodes_out.size(); i++) {
         frontier_subtables_out->push_back(
-          boost::shared_ptr<SubTableType>(new SubTableType()));
+          boost::intrusive_ptr<SubTableType>(new SubTableType()));
         ((*frontier_subtables_out)[i])->Init(
           const_cast<TableType *>(this), frontier_nodes_out[i], false);
       }
