@@ -9,12 +9,12 @@
 
 int npt::EfficientResampling::FindRegion_(arma::colvec& col) {
   
-  int h_ind = floor(col(0) / height_step_);
-  int w_ind = floor(col(1) / width_step_);
-  int d_ind = floor(col(2) / depth_step_);
+  int x_ind = floor(col(0) / x_step_);
+  int y_ind = floor(col(1) / y_step_);
+  int z_ind = floor(col(2) / z_step_);
   
-  return (h_ind + num_height_partitions_ * w_ind 
-          + num_height_partitions_ * num_width_partitions_ * d_ind);
+  return (x_ind + num_x_partitions_ * y_ind 
+          + num_x_partitions_ * num_z_partitions_ * z_ind);
   
 } // FindRegion
 

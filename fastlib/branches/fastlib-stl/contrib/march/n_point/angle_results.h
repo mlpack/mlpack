@@ -35,6 +35,10 @@ namespace npt {
     boost::multi_array<int, 4> results_;
     boost::multi_array<double, 4> weighted_results_;
     
+    // indexed by [r1][theta]
+    boost::multi_array<int, 2> RRR_result_;
+    boost::multi_array<double, 2> RRR_weighted_result_;
+    
     int num_regions_;
     int num_r1_;
     int num_theta_;
@@ -51,6 +55,8 @@ namespace npt {
                     boost::multi_array<int, 2>& partial_result);
     
     
+    void AddRandomResult_(boost::multi_array<int, 2>& partial_result);
+    
   public:
     
     AngleResults(int num_regions, 
@@ -58,12 +64,22 @@ namespace npt {
                  std::vector<double>& theta_vec) :
     num_regions_(num_regions), num_r1_(r1_vec.size()), 
     num_theta_(theta_vec.size()),
-    results_(boost::extents[num_regions][tuple_size_ + 1]
+    results_(boost::extents[num_regions][tuple_size_]
                            [r1_vec.size()][theta_vec.size()]),
-    weighted_results_(boost::extents[num_regions][tuple_size_ + 1]
+    weighted_results_(boost::extents[num_regions][tuple_size_]
                                     [r1_vec.size()][theta_vec.size()]),
+    RRR_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
+    RRR_weighted_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
     r1_vec_(r1_vec), theta_vec_(theta_vec)
     {
+      
+      std::fill(results_.origin(), results_.origin() + results_.size(), 0);
+      std::fill(weighted_results_.origin(), 
+                weighted_results_.origin() + weighted_results_.size(), 0.0);
+      
+      std::fill(RRR_result_.origin(), RRR_result_.origin() + RRR_result_.size(), 0);
+      std::fill(RRR_weighted_result_.origin(), 
+                RRR_weighted_result_.origin() + RRR_weighted_result_.size(), 0.0);
       
     } // constructor
     
@@ -79,6 +95,10 @@ namespace npt {
     
     boost::multi_array<4, int>& results() {
       return results_;
+    }
+    
+    boost::multi_array<2, int>& RRR_result() {
+      return RRR_result_;
     }
     
         
