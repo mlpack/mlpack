@@ -388,7 +388,15 @@ class IO {
    */
   void AddToHierarchy(std::string& path, std::string& tname,  
                       const char* desc = "");
-    
+  /***
+   *  Converts a FILETIME structure to an equivalent timeval structure.
+   *  Only necessary on windows platforms.
+   *  @param tv Valid timeval structure.
+   */
+#ifdef _WIN32
+   void FileTimeToTimeVal(timeval* tv);
+#endif 
+
   /* Make the constructor private, to preclude unauthorized instances */
   IO();
    
