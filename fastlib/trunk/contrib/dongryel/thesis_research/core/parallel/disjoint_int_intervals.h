@@ -31,6 +31,10 @@ class DisjointIntIntervals {
 
     MapType *intervals_;
 
+  public:
+
+    long reference_count_;
+
   private:
 
     void Merge_(const ValueType &combine_with, ValueType *merged) {
@@ -54,6 +58,7 @@ class DisjointIntIntervals {
 
     DisjointIntIntervals() {
       intervals_ = NULL;
+      reference_count_ = 0;
     }
 
     void Init(boost::mpi::communicator &world) {
@@ -134,6 +139,22 @@ class DisjointIntIntervals {
       return does_not_exist;
     }
 };
+
+inline void intrusive_ptr_add_ref(DisjointIntIntervals *ptr) {
+  ptr->reference_count_++;
+}
+
+inline void intrusive_ptr_release(DisjointIntIntervals *ptr) {
+  ptr->reference_count_--;
+  if(ptr->reference_count_ == 0) {
+    if(core::table::global_m_file_) {
+      core::table::global_m_file_->DestroyPtr(ptr);
+    }
+    else {
+      delete ptr;
+    }
+  }
+}
 }
 }
 

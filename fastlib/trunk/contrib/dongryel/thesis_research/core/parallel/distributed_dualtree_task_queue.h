@@ -6,6 +6,7 @@
 #ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
 #define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
 
+#include <boost/intrusive_ptr.hpp>
 #include <boost/shared_ptr.hpp>
 #include <deque>
 #include <omp.h>
@@ -81,7 +82,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Assigned work for each query subtable.
      */
     std::vector <
-    boost::shared_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
+    boost::intrusive_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
     std::vector<int> high_priority_query_subtable_positions_;
 
@@ -98,7 +99,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief The query subtable corresponding to the disjoint set of
      *         work to do for the current MPI process.
      */
-    std::vector< boost::shared_ptr<SubTableType> > query_subtables_;
+    std::vector< boost::intrusive_ptr<SubTableType> > query_subtables_;
 
     /** @brief The remaining global work for each query subtable.
      */
@@ -135,7 +136,7 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
       query_subtables_.push_back(
-        boost::shared_ptr< SubTableType > (new SubTableType()));
+        boost::intrusive_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
         remaining_work_for_query_subtables_.size() + 1);
       tasks_.push_back(
@@ -221,7 +222,7 @@ class DistributedDualtreeTaskQueue {
 
       // Grow the list of local query subtrees.
       query_subtables_.push_back(
-        boost::shared_ptr<SubTableType>(new SubTableType()));
+        boost::intrusive_ptr<SubTableType>(new SubTableType()));
       query_subtables_.back()->Alias(*(query_subtables_[subtree_index]));
       query_subtables_.back()->set_start_node(right);
       query_subtables_.back()->Unlock();
@@ -236,7 +237,7 @@ class DistributedDualtreeTaskQueue {
       tasks_.push_back(
         boost::shared_ptr<TaskPriorityQueueType>(new TaskPriorityQueueType()));
       assigned_work_.push_back(
-        boost::shared_ptr< core::parallel::DisjointIntIntervals > (
+        boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
           new core::parallel::DisjointIntIntervals(
             world, *(assigned_work_[subtree_index]))));
       remaining_work_for_query_subtables_.push_back(
@@ -710,7 +711,7 @@ class DistributedDualtreeTaskQueue {
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         assigned_work_[i] =
-          boost::shared_ptr <
+          boost::intrusive_ptr <
           core::parallel::DisjointIntIntervals > (
             new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
