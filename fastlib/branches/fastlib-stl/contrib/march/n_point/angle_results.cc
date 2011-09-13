@@ -25,26 +25,49 @@ void npt::AngleResults::AddResult_(int region_id, int num_random,
   
 } // AddResult_
 
+void npt::AngleResults::AddRandomResult_(boost::multi_array<int, 2>& partial_result) {
+  
+  for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {
+    
+    for (int theta_ind = 0; theta_ind < num_theta_; theta_ind++) {
+      
+      RRR_result_[r1_ind][theta_ind] += partial_result[r1_ind][theta_ind];
+      
+    } // for theta
+    
+  } // for r1
+  
+} // AddRandomResult
+
 
 void npt::AngleResults::ProcessResults(std::vector<int> region_ids, 
                                        int num_random,
                                        AngleMatcher& matcher) {
   
-  for (int i = 0; i < num_regions_; i++) {
+  if (num_random == tuple_size_ + 1) {
+    
+    AddRandomResult_(matcher.results());
+    
+  }
+  else {
 
-    bool skip_me = false;
+    for (int i = 0; i < num_regions_; i++) {
+
+      bool skip_me = false;
+      
+      for (int j = 0; j < region_ids.size(); j++) {
+        if (i == region_ids[j]) {
+          skip_me = true;
+          break;
+        }
+      } // check the invalid region ids
+      
+      AddResult_(i, num_random, matcher.results());
+      
+    } // for i
     
-    for (int j = 0; j < region_ids.size(); j++) {
-      if (i == region_ids[j]) {
-        skip_me = true;
-        break;
-      }
-    } // check the invalid region ids
+  }
     
-    AddResult_(i, num_random, matcher.results());
-    
-  } // for i
-  
 } // Process Results
 
 
@@ -62,7 +85,7 @@ void npt::AngleResults::PrintResults() {
     
     mlpack::IO::Info << "Resampling region " << region_ind << "\n";
     
-    for (int num_random = 0; num_random <= tuple_size; num_random++) {
+    for (int num_random = 0; num_random < tuple_size; num_random++) {
       
       std::string this_string(label_string, i, tuple_size_);
       mlpack::IO::Info << this_string << ": \n";
@@ -86,6 +109,22 @@ void npt::AngleResults::PrintResults() {
     
   } // for region_ind
   
+  mlpack::IO::Info << "\nRRR results: \n";
+  
+  for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {
+    
+    for (int theta_ind = 0; theta_ind < num_theta_; theta_ind++) {
+      
+      mlpack::IO::Info << "r1: " << r1_vec_[r1_ind] << ", theta: ";
+      mlpack::IO::Info << theta_vec_[theta_ind] << ": ";
+      mlpack::IO::Info << RRR_result_[r1_ind][theta_ind];
+      mlpack::IO::Info << "\n";
+      
+    } // for theta
+    
+  } // for r1_ind
+  
+  mlpack::IO::Info << "\n";
   
   
 } // PrintResults

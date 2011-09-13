@@ -42,12 +42,14 @@ namespace npt {
                 arma::mat& random_mat, arma::colvec& random_weights,
                 std::vector<double>& short_sides, double long_side,
                 std::vector<double>& thetas, double bin_size,
-                int num_regions, double box_length, int leaf_size) :
+                int num_x_regions, int num_y_regions, int num_z_regions,
+                double box_x_length, double box_y_length, double box_z_length, 
+                int leaf_size) :
     r1_vec_(short_sides), r2_multiplier_(long_side), theta_vec_(thetas),
     bin_size_(bin_size),
     resampling_class_(data_mat, data_weights, 
                       random_mat, random_weights, num_regions, box_length,
-                      leaf_size)
+                      leaf_size),
     results_(num_regions, short_sides, thetas)
     { } // constructor
     
