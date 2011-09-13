@@ -84,7 +84,7 @@ class DistributedDualtreeTaskList {
      *         subtable is referenced as a reference set.
      */
     std::vector <
-    boost::tuple< SubTableType, bool, int> > sub_tables_;
+    boost::tuple< SubTableType * , bool, int> > sub_tables_;
 
     /** @brief The communicator for exchanging information.
      */
@@ -106,7 +106,7 @@ class DistributedDualtreeTaskList {
 
       // Print out the subtables.
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
-        KeyType subtable_id = sub_tables_[i].get<0>().subtable_id();
+        KeyType subtable_id = sub_tables_[i].get<0>()->subtable_id();
         printf("%d: (%d %d %d)\n", i, subtable_id.get<0>(),
                subtable_id.get<1>(), subtable_id.get<2>());
       }
@@ -162,13 +162,13 @@ class DistributedDualtreeTaskList {
             sub_tables_[remove_position].get<2>() == 0) {
 
           // Overwrite with the last subtable in the list and decrement.
-          KeyType last_subtable_id = sub_tables_.back().get<0>().subtable_id();
+          KeyType last_subtable_id = sub_tables_.back().get<0>()->subtable_id();
           remaining_extra_points_to_hold_ +=
-            sub_tables_[remove_position].get<0>().start_node()->count();
+            sub_tables_[remove_position].get<0>()->start_node()->count();
           id_to_position_map_.erase(
-            sub_tables_[remove_position].get<0>().subtable_id());
-          sub_tables_[ remove_position ].get<0>().Alias(
-            sub_tables_.back().get<0>());
+            sub_tables_[remove_position].get<0>()->subtable_id());
+          sub_tables_[ remove_position ].get<0>() =
+            sub_tables_.back().get<0>();
           sub_tables_[ remove_position ].get<1>() =
             sub_tables_.back().get<1>();
           sub_tables_[ remove_position ].get<2>() =
@@ -214,7 +214,7 @@ class DistributedDualtreeTaskList {
         unsigned long int >(test_subtable_in.start_node()->count()) <=
         remaining_extra_points_to_hold_) {
         sub_tables_.resize(sub_tables_.size() + 1);
-        sub_tables_.back().get<0>().Alias(test_subtable_in);
+        sub_tables_.back().get<0>() = &test_subtable_in;
         if(count_as_query) {
           sub_tables_.back().get<1>() = true;
           sub_tables_.back().get<2>() = 0;
@@ -267,18 +267,18 @@ class DistributedDualtreeTaskList {
       // Get a free slot for each subtable.
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
-        KeyType subtable_id = sub_tables_[i].get<0>().subtable_id();
+        KeyType subtable_id = sub_tables_[i].get<0>()->subtable_id();
         printf("Received %d %d %d: %d %d, %d\n", subtable_id.get<0>(),
                subtable_id.get<1>(), subtable_id.get<2>(),
                sub_tables_[i].get<1>(), sub_tables_[i].get<2>(),
-               sub_tables_[i].get<0>().is_alias());
+               sub_tables_[i].get<0>()->is_alias());
 
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
-            sub_tables_[i].get<0>(), sub_tables_[i].get<2>()));
+            *(sub_tables_[i].get<0>()), sub_tables_[i].get<2>()));
         printf("Assigned the cache block id: %d, checking %d\n",
                assigned_cache_indices[i],
-               sub_tables_[i].get<0>().is_alias());
+               sub_tables_[i].get<0>()->is_alias());
       }
 
       // Now push in the task list for each query subtable.
@@ -298,6 +298,11 @@ class DistributedDualtreeTaskList {
           distributed_task_queue_->PushTask(
             world, metric_in, new_position, *reference_subtable_in_cache);
         }
+      }
+
+      // Destroy all subtables.
+      for(unsigned int i = 0; i < sub_tables_.size(); i++) {
+        delete sub_tables_[i].get<0>();
       }
     }
 
@@ -382,7 +387,7 @@ class DistributedDualtreeTaskList {
         DistributedDualtreeTaskQueueType * >(
           distributed_task_queue_)->ReleaseCache(
             *world_,
-            sub_tables_[i].get<0>().cache_block_id(),
+            sub_tables_[i].get<0>()->cache_block_id(),
             sub_tables_[i].get<2>());
       }
     }
@@ -400,7 +405,7 @@ class DistributedDualtreeTaskList {
       printf("Saving %d subtables.\n", num_subtables);
       if(num_subtables > 0) {
         for(int i = 0; i < num_subtables; i++) {
-          ar & sub_tables_[i].get<0>();
+          ar & (*(sub_tables_[i].get<0>()));
           ar & sub_tables_[i].get<1>();
           ar & sub_tables_[i].get<2>();
         }
@@ -433,8 +438,9 @@ class DistributedDualtreeTaskList {
         for(int i = 0; i < num_subtables; i++) {
 
           // Need to the cache block correction later.
-          sub_tables_[i].get<0>().Init(i, false);
-          ar & sub_tables_[i].get<0>();
+          sub_tables_[i].get<0>() = new SubTableType();
+          sub_tables_[i].get<0>()->Init(i, false);
+          ar & (*(sub_tables_[i].get<0>()));
           ar & sub_tables_[i].get<1>();
           ar & sub_tables_[i].get<2>();
         }

@@ -267,7 +267,7 @@ class MapVector {
         const_cast< core::parallel::MapVector<T> * >(this);
 
       // Save the number of elements being saved.
-      unsigned int num_elements_to_save = indices_to_save_.size();
+      int num_elements_to_save = indices_to_save_.size();
       ar & num_elements_to_save;
 
       // Save each element and its mapping.
