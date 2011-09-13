@@ -12,7 +12,13 @@
   #include <sys/time.h> //linux
 #else
   #include <winsock.h> //timeval on windows
+  #include <windows.h> //GetSystemTimeAsFileTime on windows 
 //gettimeofday has no equivalent will need to write extra code for that.
+  #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
+    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
+  #else
+    #define DELTA_EPOCH_IN_MICROSECS 11644473600000000ULL
+  #endif
 #endif //_WIN32
 
 #include "option.h"
@@ -477,8 +483,14 @@ void IO::StartTimer(const char* timerName) {
   std::string name(timerName);
   std::string tname = TYPENAME(timeval);
   IO::GetSingleton().AddToHierarchy(name, tname);
-  
+
+#ifndef _WIN32
   gettimeofday(&tmp, NULL);
+#else
+  FileTimeToTimeVal(&tmp);
+#endif 
+  
+
   GetParam<timeval>(timerName) = tmp;
 }
       
@@ -490,12 +502,40 @@ void IO::StartTimer(const char* timerName) {
  */
 void IO::StopTimer(const char* timerName) {
   timeval delta, b, &a = GetParam<timeval>(timerName);  
+
+#ifndef _WIN32 
   gettimeofday(&b, NULL);
-  
+#else
+  FileTimeToTimeVal(&b);
+#endif
   //Calculate the delta time
   timersub(&b, &a, &delta);
   a = delta; 
 }
+
+#ifdef _WIN32
+void IO::FileTimeToTimeVal(timeval* tv) {
+  FILETIME ftime;
+  uint64_t ptime = 0;
+
+  //Acquire the filetime
+  GetSystemTimeAsFileTime(&ftime);
+  
+
+  //Now convert FILETIME to timeval
+  //FILETIME records time in 100 nsec intervals gettimeofday in microsecs
+  //FILETIME starts it's epoch January 1 1601; not January 1 1970
+  ptime |= ftime.dwHighDateTime;
+  ptime = ptime << 32;
+  ptime |= ftime.dwLowDateTime;
+  ptime /= 10;  //Convert from 100 nsec INTERVALS to microseconds
+  ptime -= DELTA_EPOC_IN_MICROSECONDS; //Subtract difference from 1970 & 1601
+
+  //Convert from microseconds to seconds
+  tv.tv_sec = (long)(ptime/1000000UL);
+  tv.tv_usec = (long)(ptime%1000000UL);
+}
+#endif //Win32
 
 // Add help parameter.
 PARAM_FLAG("help", "Default help info.", "");
