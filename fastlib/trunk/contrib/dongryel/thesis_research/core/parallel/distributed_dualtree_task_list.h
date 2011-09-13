@@ -406,7 +406,6 @@ class DistributedDualtreeTaskList {
       if(num_subtables > 0) {
         for(int i = 0; i < num_subtables; i++) {
           ar & (*(sub_tables_[i].get<0>()));
-          ar & sub_tables_[i].get<1>();
           ar & sub_tables_[i].get<2>();
         }
 
@@ -441,7 +440,6 @@ class DistributedDualtreeTaskList {
           sub_tables_[i].get<0>() = new SubTableType();
           sub_tables_[i].get<0>()->Init(i, false);
           ar & (*(sub_tables_[i].get<0>()));
-          ar & sub_tables_[i].get<1>();
           ar & sub_tables_[i].get<2>();
         }
 
