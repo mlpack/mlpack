@@ -72,17 +72,18 @@ IO::IO(std::string& optionsName) :
   return;
 }
 
-//Private copy constructor; don't want copies floating around.
+// Private copy constructor; don't want copies floating around.
 IO::IO(const IO& other) : desc(other.desc),
     did_parse(false), doc(&empty_program_doc) {
   return;
 }
 
 IO::~IO() {
+  // Terminate the program timer.
+  StopTimer("total_time");
+
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
-//  if (HasParam("verbose") && !GetParam<bool>("help") && !HasParam("info"))
-  StopTimer("total_time");
   if (GetParam<bool>("verbose")) {
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
@@ -320,15 +321,13 @@ void IO::ParseCommandLine(int argc, char** line) {
  * @param stream The stream to be parsed.
  */
 void IO::ParseStream(std::istream& stream) {
-  IO::Debug << "Compiled with debug checks." << std::endl;
-
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
   // Parse the stream, place options & values into vmap
   try {
-  po::store(po::parse_config_file(stream, desc), vmap);
-  } catch(std::exception& ex) {
+    po::store(po::parse_config_file(stream, desc), vmap);
+  } catch (std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
   // Flush the buffer, make sure changes are propagated to vmap
@@ -337,6 +336,8 @@ void IO::ParseStream(std::istream& stream) {
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
+
+  StartTimer("total_time");
 }
 
 /*
