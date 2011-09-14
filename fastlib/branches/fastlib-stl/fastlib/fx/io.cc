@@ -83,7 +83,7 @@ IO::~IO() {
   // But only if the user did not ask for help or info.
 //  if (HasParam("verbose") && !GetParam<bool>("help") && !HasParam("info"))
   StopTimer("total_time");
-  if (HasParam("verbose")) {
+  if (GetParam<bool>("verbose")) {
     Info << "Execution parameters:" << std::endl;
     hierarchy.PrintLeaves();
 
@@ -413,7 +413,7 @@ void IO::DefaultMessages() {
       exit(0);
     }
   }
-  if (HasParam("verbose"))
+  if (GetParam<bool>("verbose"))
     Info.ignoreInput = false;
 
   // Notify the user if we are debugging.  This is not done in the constructor
