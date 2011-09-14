@@ -63,7 +63,7 @@ BOOST_AUTO_TEST_CASE(TestFourierExpansion) {
   expansion.AccumulateCoeffs(random_dataset, weights, 0, 20, 3);
 
   // Retrieve the coefficients and print them out.
-  const arma::Col<std::complex<double> > &coeffs = expansion.get_coeffs();
+//  const arma::Col<std::complex<double> > &coeffs = expansion.get_coeffs();
 
   // Evaluate the expansion, and compare against the naive.
   arma::vec evaluation_point(3);
