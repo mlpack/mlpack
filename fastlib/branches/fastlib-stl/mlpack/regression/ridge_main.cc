@@ -56,17 +56,17 @@ int main(int argc, char** argv) {
   double lambda_max = IO::GetParam<double>("ridge/lambda_max");
   int num_lambdas_to_cv = IO::GetParam<int>("ridge/num_lambdas");
 
-  const char *mode = IO::GetParam<std::string>("ridge/mode").c_str();  
+  std::string mode = IO::GetParam<std::string>("ridge/mode");
   if(lambda_min == lambda_max) {
     num_lambdas_to_cv = 1;
-    if(!strcmp(mode, "crossvalidate")) {
+    if(mode == "crossvalidate") {
       IO::GetParam<std::string>("ridge/mode") = "regress";
-      mode = IO::GetParam<std::string>("ridge/mode").c_str();
+      mode = IO::GetParam<std::string>("ridge/mode");
     }
   }
   else {
     IO::GetParam<std::string>("ridge/mode") = "cvregress";
-    mode = IO::GetParam<std::string>("ridge/mode").c_str();
+    mode = IO::GetParam<std::string>("ridge/mode");
   }
 
   // Read the dataset and its labels.
@@ -75,37 +75,33 @@ int main(int argc, char** argv) {
 
   arma::mat predictors;
   if (data::Load(predictors_file.c_str(), predictors) == false) {
-    IO::Fatal << "Unable to open file " << predictors_file.c_str() << std::endl;
+    IO::Fatal << "Unable to open file " << predictors_file << std::endl;
   }
 
   arma::mat predictions;
   if (data::Load(predictions_file.c_str(), predictions) == false) {
-    IO::Fatal << "Unable to open file " << predictions_file.c_str() << std::endl;
+    IO::Fatal << "Unable to open file " << predictions_file << std::endl;
   }
 
   RidgeRegression engine;
   IO::Info << "Computing Regression..." << std::endl;
   
 
-  if(!strcmp(mode, "regress")) {
+  if(mode == "regress") {
 
-    engine.Init(predictors, predictions, 
-		!strcmp(IO::GetParam<std::string>("ridge/inversion_method").c_str(), "normalsvd"));
+    engine = RidgeRegression(predictors, predictions, 
+		IO::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
     engine.QRRegress(lambda_min);
   }
-  else if(!strcmp(mode, "cvregress")) {
-  //    IO::Info << "Crossvalidating for the optimal lamda in [ " 
-//	<< lambda_min << " " << lamda_max << " ] by trying "
-//	<< num_lamdas_to_cv << std::endl;
-
+  else if(mode == "cvregress") {
      IO::Info << "Crossvalidating for the optimal lambda in [" 
 	<<  lambda_min << " " << lambda_max << " ] " 
      	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
    
-    engine.Init(predictors, predictions);
+    engine = RidgeRegression(predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
-  else if(!strcmp(mode, "fsregress")) {
+  else if(mode == "fsregress") {
 
     IO::Info << "Feature selection based regression." << std::endl;
 
@@ -117,40 +113,23 @@ int main(int argc, char** argv) {
       IO::GetParam<std::string>("ridge/prune_predictor_indices");
     if(data::Load(predictor_indices_file.c_str(), 
 	  predictor_indices_intermediate) == false) {
-      IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
+      IO::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
     if(data::Load(prune_predictor_indices_file.c_str(),
 	  prune_predictor_indices_intermediate) == false) {
-      IO::Fatal << "Unable to open file " << prune_predictor_indices_file.c_str() << std::endl;
+      IO::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
 
     arma::Col<size_t> predictor_indices;
     arma::Col<size_t> prune_predictor_indices;
-    predictor_indices.zeros(predictor_indices_intermediate.n_cols);
-    prune_predictor_indices.zeros
-      (prune_predictor_indices_intermediate.n_cols);
     
-    // This is a pretty retarded way of copying from a double-matrix
-    // to an int vector. This can be simplified only if there were a
-    // way to read integer-based dataset directly without typecasting.
-    for(size_t i = 0; i < predictor_indices_intermediate.n_cols; i++) {
-      predictor_indices[i] =
-	(size_t) predictor_indices_intermediate(0, i);
+    { // Convert from double rowvec -> size_t colvec
+      typedef arma::Col<size_t> size_t_vec;
+      predictor_indices = arma::conv_to<size_t_vec>::
+                          from(predictor_indices_intermediate.row(0));
+      prune_predictor_indices = arma::conv_to<size_t_vec>::
+	                        from(prune_predictor_indices_intermediate.row(0));
     }
-    for(size_t i = 0; i < prune_predictor_indices_intermediate.n_cols;
-	i++) {
-      prune_predictor_indices[i] = (size_t)
-	prune_predictor_indices_intermediate(0, i);
-    }
-    
-    // Run the feature selection.
-    arma::Col<size_t> output_predictor_indices;
-    engine.Init(predictors, predictor_indices, predictions,
-		!strcmp(IO::GetParam<std::string>("ridge/inversion_method").c_str(), "normalsvd"));
-    engine.FeatureSelectedRegression(predictor_indices,
-				     prune_predictor_indices,
-				     predictions,
-				     &output_predictor_indices);
   }
 
   IO::Info << "Ridge Regression Model Training Complete!" << std::endl;
