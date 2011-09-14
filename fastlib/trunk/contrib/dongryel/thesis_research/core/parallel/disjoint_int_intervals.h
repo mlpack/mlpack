@@ -6,6 +6,7 @@
 #ifndef CORE_PARALLEL_DISJOINT_INT_INTERVALS_H
 #define CORE_PARALLEL_DISJOINT_INT_INTERVALS_H
 
+#include <boost/scoped_array.hpp>
 #include <map>
 
 namespace core {
@@ -29,7 +30,7 @@ class DisjointIntIntervals {
 
   private:
 
-    MapType *intervals_;
+    boost::scoped_array<MapType> intervals_;
 
   public:
 
@@ -52,17 +53,13 @@ class DisjointIntIntervals {
       return intervals_[index];
     }
 
-    ~DisjointIntIntervals() {
-      delete[] intervals_;
-    }
-
     DisjointIntIntervals() {
-      intervals_ = NULL;
       reference_count_ = 0;
     }
 
     void Init(boost::mpi::communicator &world) {
-      intervals_ = new MapType[ world.size()] ;
+      boost::scoped_array<MapType> tmp_array(new MapType[ world.size()]);
+      intervals_.swap(tmp_array);
     }
 
     template<typename DistributedTableType>
@@ -85,7 +82,7 @@ class DisjointIntIntervals {
     DisjointIntIntervals(
       boost::mpi::communicator &world,
       const DisjointIntIntervals &intervals_in) {
-      intervals_ = new MapType[ world.size()];
+      this->Init(world);
       for(int i = 0; i < world.size(); i++) {
         intervals_[i] = intervals_in.interval(i);
       }
