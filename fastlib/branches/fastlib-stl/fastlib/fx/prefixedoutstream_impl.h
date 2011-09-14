@@ -10,6 +10,10 @@ PrefixedOutStream& PrefixedOutStream::operator<<(T s) {
 
 template<typename T>
 void PrefixedOutStream::BaseLogic(T val) {
+  // We will use this to track whether or not we need to terminate at the end of
+  // this call (only for streams which terminate after a newline).
+  bool newlined = false;
+
   // If we need to, output the prefix.
   PrefixIfNeeded();
 
@@ -37,6 +41,7 @@ void PrefixedOutStream::BaseLogic(T val) {
       if (!ignoreInput) { // Only if the user wants it.
         destination << line.substr(pos, nl - pos);
         destination << std::endl;
+        newlined = true;
       }
       carriageReturned = true; // Regardless of whether or not we display it.
 
@@ -55,7 +60,12 @@ void PrefixedOutStream::BaseLogic(T val) {
     if (!ignoreInput)
       destination << "Failed lexical_cast<std::string>(T) for output; output"
           " not shown." << std::endl;
+      newlined = true;
   }
+
+  // If we displayed a newline and we need to terminate afterwards, do that.
+  if (fatal && newlined)
+    exit(1);
 }
 
 // This is an inline function (that is why it is here and not in .cc).
