@@ -2,15 +2,12 @@
 #include <fastlib/fx/io.h>
 #include "simple_nbc.h"
 
-
-
 #define BOOST_TEST_MODULE Test_Simple_NBC_Main
 #include <boost/test/unit_test.hpp>
 
-PROGRAM_INFO("NBC", "Tests the simple nbc class.", "nbc");
 using namespace mlpack;
 
-BOOST_AUTO_TEST_CASE(MainTest) { 
+BOOST_AUTO_TEST_CASE(SimpleNBCTest) {
   const char* filename_train_ = "trainSet.arff";
   const char* filename_test_ = "testSet.arff";
   const char* train_result_ = "trainRes.arff";
