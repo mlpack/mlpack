@@ -203,7 +203,9 @@ DistributedProblemType >::InitialSetup_(
   *hashed_essential_reference_subtress_to_send,
   std::vector< std::vector< std::pair<int, int> > > *reference_frontier_lists,
   std::vector< std::vector< core::math::Range > > *receive_priorities,
-  DistributedDualtreeTaskQueueType *distributed_tasks) {
+  core::parallel::DistributedDualtreeTaskQueue <
+  DistributedTableType,
+  FinePriorityQueueType > *distributed_tasks) {
 
   // The max number of points for the reference subtree for each task.
   int max_reference_subtree_size = max_subtree_size_;
@@ -293,7 +295,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   // The list of prioritized tasks this MPI process needs to take care
   // of.
-  DistributedDualtreeTaskQueueType distributed_tasks;
+  core::parallel::DistributedDualtreeTaskQueue <
+  DistributedTableType, FinePriorityQueueType > distributed_tasks;
 
   // The number of reference subtrees to receive and to send in total.
   std::vector <
@@ -331,10 +334,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       }
 
       // After enqueing, everyone else tries to dequeue the tasks.
-      typename DistributedDualtreeTaskQueueType::QuerySubTableLock
-      checked_out_query_subtable;
-      distributed_tasks.DequeueTask(
-        *world_, metric, &found_task, &checked_out_query_subtable);
+      distributed_tasks.DequeueTask(*world_, metric, &found_task, true);
 
       // If found something to run on, then call the serial dual-tree
       // method.
@@ -377,16 +377,18 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         }
 
         // Push in the completed amount of work.
+        SubTableIDType query_subtree_id =
+          found_task.first.query_subtable().subtable_id();
         unsigned long int completed_work =
           static_cast<unsigned long int>(
             found_task.first.query_start_node()->count()) *
           static_cast<unsigned long int>(task_starting_rnode->count());
         distributed_tasks.push_completed_computation(
-          * world_, task_starting_rnode->count(), completed_work,
-          & checked_out_query_subtable);
+          query_subtree_id,
+          * world_, task_starting_rnode->count(), completed_work);
 
         // After finishing, the lock on the query subtree is released.
-        distributed_tasks.ReturnQuerySubTable(checked_out_query_subtable);
+        distributed_tasks.UnlockQuerySubtree(query_subtree_id);
 
         // Release the reference subtable.
         distributed_tasks.ReleaseCache(* world_, task_reference_cache_id, 1);
