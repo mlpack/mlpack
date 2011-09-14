@@ -1,9 +1,9 @@
 /***
  * @file io.h
- * @author Matthew Amidon 
- * 
+ * @author Matthew Amidon
+ *
  * This file implements the IO subsystem which is intended to replace FX.
- * This can be used more or less regardless of context.  In the future, 
+ * This can be used more or less regardless of context.  In the future,
  * it might be expanded to include file I/O.
  */
 
@@ -86,7 +86,7 @@
  * that call it.  Note that we are using the CURRENT_PARAM_NUM macro for naming
  * these actual parameters, which is a bit of an ugly hack... but this is the
  * preprocessor, after all.  We don't have much choice other than ugliness.
- * 
+ *
  * @param T type of parameter
  * @param ID name of parameter (for --help, pass "help")
  * @param DESC description of parameter (string)
@@ -113,7 +113,7 @@
   #define PARAM(T, ID, DESC, PARENT, DEF, REQ) static mlpack::Option<T> \
       JOIN(JOIN(io_option_dummy_object_, __LINE__), opt) (false, DEF, ID, \
       DESC, PARENT, REQ);
-  
+
   #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
       JOIN(__io_option_flag_object_, __LINE__) (ID, DESC, PARENT);
 
@@ -138,41 +138,41 @@ class ProgramDoc;
 class IO {
  public:
   /*
-   * Adds a parameter to the hierarchy. Use char* and not 
-   * std::string since the vast majority of use cases will 
+   * Adds a parameter to the hierarchy. Use char* and not
+   * std::string since the vast majority of use cases will
    * be literal strings.
-   * 
-   * 
+   *
+   *
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
    * @param parent Full pathname of a parent module, default is root node.
    * @param required Indicates if parameter must be set on command line.
    */
-  static void Add(const char* identifier, 
-                  const char* description, 
-                  const char* parent=NULL, 
+  static void Add(const char* identifier,
+                  const char* description,
+                  const char* parent=NULL,
                   bool required = false);
-    
+
   /*
-   * Adds a parameter to the heirarchy. Use char* and not 
-   * std::string since the vast majority of use cases will 
+   * Adds a parameter to the heirarchy. Use char* and not
+   * std::string since the vast majority of use cases will
    * be literal strings.
    * If the argument requires a parameter, you must specify a type
-   * 
+   *
    * @param identifier The name of the parameter.
    * @param description Short string description of the parameter.
    * @param parent Full pathname of a parent module, default is root node.
    * @param required Indicates if parameter must be set on command line.
    */
   template<class T>
-  static void Add(const char* identifier, 
-                  const char* description, 
-                  const char* parent, 
-                  bool required=false); 
-  
+  static void Add(const char* identifier,
+                  const char* description,
+                  const char* parent,
+                  bool required=false);
+
   /*
-   * Adds a flag parameter to the hierarchy.  
-   * 
+   * Adds a flag parameter to the hierarchy.
+   *
    * @param identifier The name of the paramater.
    * @param description Short string description of the parameter.
    * @param parent Full pathname of the parent module; default is root node.
@@ -180,7 +180,7 @@ class IO {
   static void AddFlag(const char* identifier,
                       const char* description,
                       const char* parent);
-                 
+
   /*
    * Checks if the specified condition is true.
    * If not, halts program execution and prints a standard error message.
@@ -194,34 +194,34 @@ class IO {
    * Does nothing in non-debug mode.
    */
   static void AssertMessage(bool condition, const char* message);
-  
-  /* 
-   * See if the specified flag was found while parsing. 
-   * 
-   * @param identifier The name of the parameter in question. 
+
+  /*
+   * See if the specified flag was found while parsing.
+   *
+   * @param identifier The name of the parameter in question.
    */
   static bool HasParam(const char* identifier);
-      
-      
-  /* 
-   * Parses the parameters for 'help' and 'info' 
+
+
+  /*
+   * Parses the parameters for 'help' and 'info'
    * If found, will print out the appropriate information
    * and kill the program.
    */
   static void DefaultMessages();
-   
-  /*
-   *  Takes all nodes at or below the specifie dmodule and 
-   *  returns a list of their pathnames.  
-   *
-   * @param folder the module to start gathering nodes. 
-   *
-   * @return a list of pathnames to everything at or below folder.
-   */ 
-  static std::vector<std::string> GetFolder(const char* folder); 
 
   /*
-   * Grab the value of type T found while parsing.  
+   *  Takes all nodes at or below the specifie dmodule and
+   *  returns a list of their pathnames.
+   *
+   * @param folder the module to start gathering nodes.
+   *
+   * @return a list of pathnames to everything at or below folder.
+   */
+  static std::vector<std::string> GetFolder(const char* folder);
+
+  /*
+   * Grab the value of type T found while parsing.
    * Should use HasParam() first.  You can set the value using this reference
    * safely.
    *
@@ -232,9 +232,9 @@ class IO {
 
   /*
    * Grab the description of the specified node.
-   * 
+   *
    * @param identifier Name of the node in question.
-   * @return Description of the node in question. 
+   * @return Description of the node in question.
    */
   static std::string GetDescription(const char* identifier);
 
@@ -244,17 +244,17 @@ class IO {
    * Parses the commandline for arguments.
    *
    * @param argc The number of arguments on the commandline.
-   * @param argv The array of arguments as strings 
+   * @param argv The array of arguments as strings
    */
   static void ParseCommandLine(int argc, char** argv);
-    
+
   /*
    * Parses a stream for arguments
    *
    * @param stream The stream to be parsed.
    */
   static void ParseStream(std::istream& stream);
-      
+
   /* Prints out the current hierachy */
   static void Print();
 
@@ -270,10 +270,10 @@ class IO {
   static io::PrefixedOutStream Info;
   static io::PrefixedOutStream Warn;
   static io::PrefixedOutStream Fatal;
-  static std::ostream& cout; 
-   
+  static std::ostream& cout;
+
   /*
-   * Checks that all parameters specified as required 
+   * Checks that all parameters specified as required
    * have been specified on the command line.
    * If they havent, prints an error message and kills the
    * program.
@@ -283,29 +283,29 @@ class IO {
   /* Cleans up input pathnames, rendering strings such as /foo/bar
      and foo/bar/ equivalent inputs */
   static std::string SanitizeString(const char* str);
- 
+
   /*
-   * Initializes a timer, available like a normal value specified on 
+   * Initializes a timer, available like a normal value specified on
    * the command line.  Timers are of type timval
    *
    * @param timerName The name of the timer in question.
    */
   static void StartTimer(const char* timerName);
-     
-  /* 
-   * Halts the timer, and replaces it's value with 
-   * the delta time from it's start 
+
+  /*
+   * Halts the timer, and replaces it's value with
+   * the delta time from it's start
    *
    * @param timerName The name of the timer in question.
    */
   static void StopTimer(const char* timerName);
-   
+
   /*
    * Parses the values given on the command line,
    * overriding any default values.
    */
   static void UpdateGmap();
-  
+
   /**
    * Registers a ProgramDoc object, which contains documentation about the
    * program.  If this method has been called before (that is, if two
@@ -324,24 +324,24 @@ class IO {
 
   // Destructor
   ~IO();
-  
+
  private:
   // The documentation and names of options
   po::options_description desc;
-      
+
   // Store a relative index of path names
   io::OptionsHierarchy hierarchy;
-    
+
   // Values of the options given by user
   po::variables_map vmap;
 
   // Pathnames of required options
   std::list<std::string> requiredOptions;
-    
+
   // Map of global values, stored here instead of in OptionsHierarchy
   // For ease of implementation
   std::map<std::string, boost::any> globalValues;
-      
+
   // The singleton, obviously
   static IO* singleton;
 
@@ -351,31 +351,31 @@ class IO {
  public:
   // Pointer to the ProgramDoc object.
   ProgramDoc *doc;
-  
- private:  
-  /* 
+
+ private:
+  /*
    * Not exposed to the outside, so as to spare users some ungainly
    * x.GetSingleton().foo() syntax.
-   * In this case, the singleton is used to store data for the static methods, 
-   * as there is no point in defining static methods only to have users call 
-   * private instance methods 
+   * In this case, the singleton is used to store data for the static methods,
+   * as there is no point in defining static methods only to have users call
+   * private instance methods
    *
-   * Returns the singleton instance for use in the static methods 
+   * Returns the singleton instance for use in the static methods
    */
   static IO& GetSingleton();
-   
-  /* 
+
+  /*
    * Properly formats strings such that there aren't too few or too many '/'s.
-   * 
+   *
    * @param id The name of the parameter, eg bar in foo/bar.
-   * @param parent The full name of the parameter's parent, 
+   * @param parent The full name of the parameter's parent,
    *   eg foo/bar in foo/bar/buzz.
    * @param tname String identifier of the parameter's type.
    * @param description String description of the parameter.
    */
-  std::string ManageHierarchy(const char* id, 
-                              const char* parent, 
-                              std::string& tname, 
+  std::string ManageHierarchy(const char* id,
+                              const char* parent,
+                              std::string& tname,
                               const char* desc = "");
 
   /***
@@ -386,7 +386,7 @@ class IO {
    * @param tname String identifier of the parameter's type (TYPENAME(T)).
    * @param desc String description of the parameter (optional).
    */
-  void AddToHierarchy(std::string& path, std::string& tname,  
+  void AddToHierarchy(std::string& path, std::string& tname,
                       const char* desc = "");
   /***
    *  Converts a FILETIME structure to an equivalent timeval structure.
@@ -395,16 +395,16 @@ class IO {
    */
 #ifdef _WIN32
    void FileTimeToTimeVal(timeval* tv);
-#endif 
+#endif
 
   /* Make the constructor private, to preclude unauthorized instances */
   IO();
-   
-  /* 
+
+  /*
    * Initialize desc with a particular name.
-   * 
+   *
    * @param optionsName Name of the module, as far as boost is concerned.
-   */ 
+   */
   IO(std::string& optionsName);
 
   // Private copy constructor; don't want copies floating around.
@@ -413,7 +413,7 @@ class IO {
 
 }; // namespace mlpack
 
-// Include the actual definitions of templated methods 
+// Include the actual definitions of templated methods
 #include "io_impl.h"
 
 #endif
