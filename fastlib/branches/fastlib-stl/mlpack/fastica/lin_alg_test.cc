@@ -16,7 +16,6 @@
 using namespace arma;
 using namespace linalg__private;
 
-
 #define BOOST_TEST_MODULE linAlgTest
 #include <boost/test/unit_test.hpp>
 
@@ -24,15 +23,15 @@ using namespace linalg__private;
  * Test for linalg__private::Center().  There are no edge cases here, so we'll
  * just try it once for now.
  */
-bool test_Center() {
+BOOST_AUTO_TEST_CASE(TestCenterA) {
   mat tmp(5, 5);
   // [[0  0  0  0  0]
   //  [1  2  3  4  5]
   //  [2  4  6  8  10]
   //  [3  6  9  12 15]
   //  [4  8  12 16 20]]
-  for(int row = 0; row < 5; row++) {
-    for(int col = 0; col < 5; col++)
+  for (int row = 0; row < 5; row++) {
+    for (int col = 0; col < 5; col++)
       tmp(row, col) = row * (col + 1);
   }
 
@@ -52,13 +51,17 @@ bool test_Center() {
       BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2) * row, 1e-5);
     }
   }
-  
-  mat tmp2(5, 6);
-  for(int row = 0; row < 5; row++) {
-    for(int col = 0; col < 6; col++)
-      tmp2(row, col) = row * (col + 1);
+}
+
+BOOST_AUTO_TEST_CASE(TestCenterB) {
+  mat tmp(5, 6);
+  for (int row = 0; row < 5; row++) {
+    for (int col = 0; col < 6; col++)
+      tmp(row, col) = row * (col + 1);
   }
-  Center(tmp2, tmp_out);
+  
+  mat tmp_out;
+  Center(tmp, tmp_out);
 
   // average should be
   // [[0 3.5 7 10.5 14]]'
@@ -68,16 +71,14 @@ bool test_Center() {
   //  [-5   -3   -1   1   3   5  ]
   //  [-7.5 -4.5 -1.5 1.5 1.5 4.5]
   //  [-10  -6   -2   2   6   10 ]]
-  for(int row = 0; row < 5; row++) {
-    for(int col = 0; col < 6; col++) {
+  for (int row = 0; row < 5; row++) {
+    for (int col = 0; col < 6; col++) {
       BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2.5) * row, 1e-5);
     }
   }
-  
-  return true;
 }
 
-bool test_WhitenUsingEig() {
+BOOST_AUTO_TEST_CASE(TestWhitenUsingEig) {
   // After whitening using eigendecomposition, the covariance of
   // our matrix will be I (or something very close to that).
   // We are loading a matrix from an external file... bad choice.
@@ -88,24 +89,21 @@ bool test_WhitenUsingEig() {
   WhitenUsingEig(tmp_centered, whitened, whitening_matrix);
  
   mat newcov = ccov(whitened);
-  for(int row = 0; row < 5; row++) {
-    for(int col = 0; col < 5; col++) {
-      if(row == col) {
+  for (int row = 0; row < 5; row++) {
+    for (int col = 0; col < 5; col++) {
+      if (row == col) {
         // diagonal will be 0 in the case of any zero-valued eigenvalues
         // (rank-deficient covariance case)
-        if(std::abs(newcov(row, col) - 1) > 1e-12 && newcov(row, col) != 0)
-          return false;
+        if (std::abs(newcov(row, col)) > 1e-10)
+          BOOST_REQUIRE_CLOSE(newcov(row, col), 1.0, 1e-10);
       } else {
-        if(std::abs(newcov(row, col)) > 1e-12)
-          return false;
+        BOOST_REQUIRE_SMALL(newcov(row, col), 1e-10);
       }
     }
   }
-
-  return true;
 }
 
-bool test_Orthogonalize() {
+BOOST_AUTO_TEST_CASE(TestOrthogonalize) {
   // Generate a random matrix; then, orthogonalize it and test if it's
   // orthogonal.
   mat tmp, orth;
@@ -115,25 +113,14 @@ bool test_Orthogonalize() {
   // test orthogonality
   mat test = ccov(orth);
   double ival = test(0, 0);
-  for(size_t row = 0; row < test.n_rows; row++) {
-    for(size_t col = 0; col < test.n_cols; col++) {
-      if(row == col) {
-        if(std::abs(test(row, col) - ival) > 1e-12 && test(row, col) != 0)
-          return false;
+  for (size_t row = 0; row < test.n_rows; row++) {
+    for (size_t col = 0; col < test.n_cols; col++) {
+      if (row == col) {
+        if (std::abs(test(row, col)) > 1e-10)
+          BOOST_REQUIRE_CLOSE(test(row, col), ival, 1e-10);
       } else {
-        if(std::abs(test(row, col)) > 1e-12)
-          return false;
+        BOOST_REQUIRE_SMALL(test(row, col), 1e-10);
       }
     }
   }
-
-  return true;
-}
-
-BOOST_AUTO_TEST_CASE(AllTests) {
-   
-   BOOST_REQUIRE(test_Center());
-   BOOST_REQUIRE(test_WhitenUsingEig());
-   BOOST_REQUIRE(test_Orthogonalize()); 
-  
 }
