@@ -12,7 +12,7 @@
   #include <sys/time.h> //linux
 #else
   #include <winsock.h> //timeval on windows
-  #include <windows.h> //GetSystemTimeAsFileTime on windows 
+  #include <windows.h> //GetSystemTimeAsFileTime on windows
 //gettimeofday has no equivalent will need to write extra code for that.
   #if defined(_MSC_VER) || defined(_MSC_EXTENSIONS)
     #define DELTA_EPOCH_IN_MICROSECS 11644473600000000Ui64
@@ -35,7 +35,7 @@ using namespace mlpack::io;
 IO* IO::singleton = NULL;
 
 #ifdef DEBUG
-PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout, 
+PrefixedOutStream IO::Debug = PrefixedOutStream(std::cout,
     BASH_CYAN "[DEBUG] " BASH_CLEAR);
 #else
 NullOutStream IO::Debug = NullOutStream();
@@ -61,12 +61,12 @@ IO::IO() : desc("Allowed Options") , hierarchy("Allowed Options"),
   return;
 }
 
-/* 
+/*
  * Initialize desc with a particular name.
- * 
+ *
  * @param optionsName Name of the module, as far as boost is concerned.
- */ 
-IO::IO(std::string& optionsName) : 
+ */
+IO::IO(std::string& optionsName) :
     desc(optionsName.c_str()), hierarchy(optionsName.c_str()),
     did_parse(false), doc(&empty_program_doc) {
   return;
@@ -81,7 +81,7 @@ IO::IO(const IO& other) : desc(other.desc),
 IO::~IO() {
   // Did the user ask for verbose output?  If so we need to print everything.
   // But only if the user did not ask for help or info.
-//  if (HasParam("verbose") && !HasParam("help") && !HasParam("info"))
+//  if (HasParam("verbose") && !GetParam<bool>("help") && !HasParam("info"))
   StopTimer("total_time");
   if (HasParam("verbose")) {
     Info << "Execution parameters:" << std::endl;
@@ -103,25 +103,25 @@ IO::~IO() {
 /* Methods */
 
 /*
- * Adds a parameter to the hierarchy. Use char* and not 
- * std::string since the vast majority of use cases will 
+ * Adds a parameter to the hierarchy. Use char* and not
+ * std::string since the vast majority of use cases will
  * be literal strings.
- * 
+ *
  * @param identifier The name of the parameter.
  * @param description Short string description of the parameter.
  * @param parent Full pathname of a parent module, default is root node.
  * @param required Indicates if parameter must be set on command line.
  */
-void IO::Add(const char* identifier, 
-             const char* description, 
-             const char* parent, 
+void IO::Add(const char* identifier,
+             const char* description,
+             const char* parent,
              bool required) {
 
   po::options_description& desc = IO::GetSingleton().desc;
 
   // Generate the full pathname and insert the node into the hierarchy.
   std::string tmp = TYPENAME(bool);
-  std::string path = 
+  std::string path =
     IO::GetSingleton().ManageHierarchy(identifier, parent, tmp, description);
 
   // Add the option to boost::program_options.
@@ -131,12 +131,12 @@ void IO::Add(const char* identifier,
   // If the option is required, add it to the required options list.
   if (required)
     GetSingleton().requiredOptions.push_front(path);
-  
+
   return;
 }
 
 
-/* 
+/*
  * @brief Adds a flag paramater to IO.
  */
 
@@ -147,7 +147,7 @@ void IO::AddFlag(const char* identifier,
 
   //Generate the full pathname and insert node into the hierarchy
   std::string tname = TYPENAME(bool);
-  std::string path = 
+  std::string path =
     IO::GetSingleton().ManageHierarchy(identifier, parent, tname, description);
 
   //Add the option to boost program_options
@@ -166,10 +166,10 @@ void IO::AssertMessage(bool condition, const char* message) {
   }
 }
 
-/* 
- * See if the specified flag was found while parsing. 
- * 
- * @param identifier The name of the parameter in question. 
+/*
+ * See if the specified flag was found while parsing.
+ *
+ * @param identifier The name of the parameter in question.
  */
 bool IO::HasParam(const char* identifier) {
   std::string key = std::string(identifier);
@@ -178,14 +178,14 @@ bool IO::HasParam(const char* identifier) {
   int isInGmap = GetSingleton().globalValues.count(key);
 
   //Return true if we have a defined value for identifier
-  return (isInVmap || isInGmap); 
+  return (isInVmap || isInGmap);
 }
 
 
 /*
  * Searches for unqualified parameters, when one is found prepend the default
  * module path onto it.
- * 
+ *
  * @param argc The number of parameters
  * @param argv 2D array of the parameter strings themselves
  * @return some valid modified strings
@@ -201,10 +201,10 @@ std::vector<std::string> IO::InsertDefaultModule(int argc, char** argv) {
     //Are we lacking any qualifiers?
     if(str.find('/') == std::string::npos &&
        str.compare("--help") != 0 &&
-       str.compare("--info") != 0) 
+       str.compare("--info") != 0)
       str = "--"+path+str.substr(2,str.length());
 
-    ret.push_back(str);    
+    ret.push_back(str);
   }
 
   return ret;
@@ -212,14 +212,14 @@ std::vector<std::string> IO::InsertDefaultModule(int argc, char** argv) {
 
 /*
  * Grab the description of the specified node.
- * 
+ *
  * @param identifier Name of the node in question.
- * @return Description of the node in question. 
+ * @return Description of the node in question.
  */
 std::string IO::GetDescription(const char* identifier) {
   std::string tmp = std::string(identifier);
   OptionsHierarchy* h = GetSingleton().hierarchy.FindNode(tmp);
-  
+
   if (h == NULL)
     return std::string("");
 
@@ -238,27 +238,27 @@ IO& IO::GetSingleton() {
     singleton = new IO();
   }
   return *singleton;
-}	
+}
 
-/* 
+/*
  * Properly formats strings such that there aren't too few or too many '/'s.
- * 
+ *
  * @param id The name of the parameter, eg bar in foo/bar.
- * @param parent The full name of the parameter's parent, 
+ * @param parent The full name of the parameter's parent,
  *   eg foo/bar in foo/bar/buzz.
  * @param tname String identifier of the parameter's type.
  * @param desc String description of the parameter.
  */
-std::string IO::ManageHierarchy(const char* id, 
-                                const char* parent, 
-                                std::string& tname, 
+std::string IO::ManageHierarchy(const char* id,
+                                const char* parent,
+                                std::string& tname,
                                 const char* desc) {
 
   std::string path(id);
-  
+
   path = SanitizeString(parent) + id;
- 
-  AddToHierarchy(path, tname, desc); 
+
+  AddToHierarchy(path, tname, desc);
 
   return path;
 }
@@ -271,7 +271,7 @@ std::string IO::ManageHierarchy(const char* id,
  * @param tname String identifier of the parameter's type (TYPENAME(T)).
  * @param desc String description of the parameter (optional).
  */
-void IO::AddToHierarchy(std::string& path, std::string& tname, 
+void IO::AddToHierarchy(std::string& path, std::string& tname,
                         const char* desc) {
   // Make sure we don't overwrite any data.
   if (hierarchy.FindNode(path) != NULL)
@@ -289,28 +289,28 @@ void IO::AddToHierarchy(std::string& path, std::string& tname,
  * Parses the commandline for arguments.
  *
  * @param argc The number of arguments on the commandline.
- * @param argv The array of arguments as strings 
+ * @param argv The array of arguments as strings
  */
 void IO::ParseCommandLine(int argc, char** line) {
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
 
-  // Insert the default module where appropriate 
-  std::vector<std::string> in = InsertDefaultModule(argc, line); 
-  
+  // Insert the default module where appropriate
+  std::vector<std::string> in = InsertDefaultModule(argc, line);
+
   // Parse the command line, place the options & values into vmap
-  try { 
+  try {
     po::store(po::parse_command_line(argc, line, desc), vmap);
   } catch(std::exception& ex) {
     IO::Fatal << ex.what() << std::endl;
   }
   // Flush the buffer, make sure changes are propagated to vmap
-  po::notify(vmap);	
- 
+  po::notify(vmap);
+
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
-  
+
   StartTimer("total_time");
 }
 
@@ -324,7 +324,7 @@ void IO::ParseStream(std::istream& stream) {
 
   po::variables_map& vmap = GetSingleton().vmap;
   po::options_description& desc = GetSingleton().desc;
-  
+
   // Parse the stream, place options & values into vmap
   try {
   po::store(po::parse_config_file(stream, desc), vmap);
@@ -333,7 +333,7 @@ void IO::ParseStream(std::istream& stream) {
   }
   // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
-  
+
   UpdateGmap();
   DefaultMessages();
   RequiredOptions();
@@ -346,13 +346,13 @@ void IO::ParseStream(std::istream& stream) {
 void IO::UpdateGmap() {
   std::map<std::string, boost::any>& gmap = GetSingleton().globalValues;
   po::variables_map& vmap = GetSingleton().vmap;
-  
-  //Iterate through Gmap, and overwrite default values with anything found on 
-  //command line. 
+
+  //Iterate through Gmap, and overwrite default values with anything found on
+  //command line.
   std::map<std::string, boost::any>::iterator i;
   for (i = gmap.begin(); i != gmap.end(); i++) {
     po::variable_value tmp = vmap[i->first];
-    if (!tmp.empty()) //We need to overwrite gmap. 
+    if (!tmp.empty()) //We need to overwrite gmap.
       gmap[i->first] = tmp.value();
   }
 }
@@ -382,14 +382,14 @@ void IO::Destroy() {
   }
 }
 
-/* 
- * Parses the parameters for 'help' and 'info' 
+/*
+ * Parses the parameters for 'help' and 'info'
  * If found, will print out the appropriate information
  * and kill the program.
  */
 void IO::DefaultMessages() {
   //Default help message
-  if (HasParam("help")) {
+  if (GetParam<bool>("help")) {
     // A little snippet about the program itself, if we have it.
     if (GetSingleton().doc != &empty_program_doc) {
       cout << GetSingleton().doc->programName << std::endl << std::endl;
@@ -397,8 +397,8 @@ void IO::DefaultMessages() {
         GetSingleton().doc->documentation, 2) << std::endl << std::endl;
     }
 
-    GetSingleton().hierarchy.PrintAllHelp(); 
-    exit(0); // The user doesn't want to run the program, he wants help. 
+    GetSingleton().hierarchy.PrintAllHelp();
+    exit(0); // The user doesn't want to run the program, he wants help.
   }
   if (HasParam("info")) {
     std::string str = GetParam<std::string>("info");
@@ -407,23 +407,23 @@ void IO::DefaultMessages() {
     if (str != "") {
       OptionsHierarchy* node = GetSingleton().hierarchy.FindNode(str);
       if(node != NULL)
-	node->PrintNodeHelp();
+        node->PrintNodeHelp();
       else
-        IO::Fatal << "Invalid paramter: " << str << std::endl;
+        IO::Fatal << "Invalid parameter: " << str << std::endl;
       exit(0);
     }
   }
   if (HasParam("verbose"))
     Info.ignoreInput = false;
-  
+
   // Notify the user if we are debugging.  This is not done in the constructor
   // because the output streams may not be set up yet.  We also don't want this
   // message twice if the user just asked for help or information.
   Debug << "Compiled with debugging symbols." << std::endl;
 }
-  
+
 /*
- * Checks that all parameters specified as required 
+ * Checks that all parameters specified as required
  * have been specified on the command line.
  * If they havent, prints an error message and kills the
  * program.
@@ -431,7 +431,7 @@ void IO::DefaultMessages() {
 void IO::RequiredOptions() {
   po::variables_map& vmap = GetSingleton().vmap;
   std::list<std::string> rOpt = GetSingleton().requiredOptions;
-  
+
   //Now, warn the user if they missed any required options
   std::list<std::string>::iterator iter;
   for (iter = rOpt.begin(); iter != rOpt.end(); iter++) {
@@ -465,7 +465,7 @@ std::string IO::SanitizeString(const char* str) {
 }
 
 /*
- * Initializes a timer, available like a normal value specified on 
+ * Initializes a timer, available like a normal value specified on
  * the command line.  Timers are of type timval
  *
  * @param timerName The name of the timer in question.
@@ -473,7 +473,7 @@ std::string IO::SanitizeString(const char* str) {
 void IO::StartTimer(const char* timerName) {
   // Don't want to actually document the timer, the user can do that if he wants
   timeval tmp;
-  
+
   tmp.tv_sec = 0;
   tmp.tv_usec = 0;
 
@@ -488,29 +488,29 @@ void IO::StartTimer(const char* timerName) {
   gettimeofday(&tmp, NULL);
 #else
   FileTimeToTimeVal(&tmp);
-#endif 
-  
+#endif
+
 
   GetParam<timeval>(timerName) = tmp;
 }
-      
-/* 
- * Halts the timer, and replaces it's value with 
- * the delta time from it's start 
+
+/*
+ * Halts the timer, and replaces it's value with
+ * the delta time from it's start
  *
  * @param timerName The name of the timer in question.
  */
 void IO::StopTimer(const char* timerName) {
-  timeval delta, b, &a = GetParam<timeval>(timerName);  
+  timeval delta, b, &a = GetParam<timeval>(timerName);
 
-#ifndef _WIN32 
+#ifndef _WIN32
   gettimeofday(&b, NULL);
 #else
   FileTimeToTimeVal(&b);
 #endif
   //Calculate the delta time
   timersub(&b, &a, &delta);
-  a = delta; 
+  a = delta;
 }
 
 #ifdef _WIN32
@@ -520,7 +520,7 @@ void IO::FileTimeToTimeVal(timeval* tv) {
 
   //Acquire the filetime
   GetSystemTimeAsFileTime(&ftime);
-  
+
 
   //Now convert FILETIME to timeval
   //FILETIME records time in 100 nsec intervals gettimeofday in microsecs
