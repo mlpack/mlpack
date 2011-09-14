@@ -18,7 +18,7 @@ set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(infomax_ica_test
-   test_main.cc
+   infomax_ica_test.cc
 )
 # link dependencies of test executable
 target_link_libraries(infomax_ica_test
