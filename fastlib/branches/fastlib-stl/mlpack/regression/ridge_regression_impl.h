@@ -18,13 +18,13 @@
 //COMPILER_PRINTF("%s", "!!!!!You have accidently included ridge_regression_impl.h "
 //    "Fix it otherwise the program will behave unexpectedly");                
 #else
+#define RIDGE_REGRESSION_H_
 
 void RidgeRegression::BuildCovariance_
 (const arma::mat &input_data, const arma::Col<size_t> *predictor_indices,
  const arma::mat& predictions_in) {
   
   //mlpack::IO::Info << "RidgeRegression::BuildCovariance_:starting." << std::endl;
-  std::cout << input_data << '\n';
 
   // Initialize the covariance matrix to the zero matrix.
   covariance_.zeros(input_data.n_rows + 1, input_data.n_rows + 1);
@@ -161,14 +161,14 @@ void RidgeRegression::ExtractCovarianceSubset_
   }
 }
 
-void RidgeRegression::Init(const arma::mat &predictors, 
+RidgeRegression::RidgeRegression(const arma::mat &predictors, 
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
   if (predictors.n_cols < predictors.n_rows)
     mlpack::IO::Fatal << "The number of columns (" << predictors.n_cols <<
         ") must be less than or equal to the number of the rows (" <<
         predictors.n_rows << ")." << std::endl;
-  if (predictors.n_rows > 1)
+  if (predictions.n_rows > 1)
     mlpack::IO::Fatal << "The current implementation only supports "
         "one-dimensional predictions." << std::endl;
   if (predictors.n_cols != predictions.n_cols)
@@ -192,7 +192,7 @@ void RidgeRegression::Init(const arma::mat &predictors,
   factors_.reset();
 }
 
-void RidgeRegression::Init(const arma::mat &input_data, 
+RidgeRegression::RidgeRegression(const arma::mat &input_data, 
                            const arma::Col<size_t> &predictor_indices,
                            size_t &prediction_index,
 			   bool use_normal_equation_method) {
@@ -216,7 +216,7 @@ void RidgeRegression::Init(const arma::mat &input_data,
   factors_.reset();
 }
 
-void RidgeRegression::Init(const arma::mat &input_data, 
+RidgeRegression::RidgeRegression(const arma::mat &input_data, 
                            const arma::Col<size_t> &predictor_indices,
                            const arma::mat &predictions,
 			   bool use_normal_equation_method) {
@@ -238,19 +238,14 @@ void RidgeRegression::Init(const arma::mat &input_data,
   factors_.reset();
 }
 
-void RidgeRegression::ReInitTargetValues(const arma::mat &input_data,
-					 size_t target_value_index) {
+inline void RidgeRegression::ReInitTargetValues(const arma::mat &input_data,
+					 const size_t target_value_index) {
 
-  for(size_t i = 0; i < predictions_.n_rows; i++) {
-    predictions_(i, 0) = input_data(target_value_index, i);
-  }
+  predictions_.col(0) = trans(input_data.row(target_value_index));
 }
 
-void RidgeRegression::ReInitTargetValues(const arma::mat &target_values_in) {
-
-  for(size_t i = 0; i < predictions_.n_rows; i++) {
-    predictions_(i, 0) = target_values_in(0, i);
-  }
+inline void RidgeRegression::ReInitTargetValues(const arma::mat &input_data) {
+  ReInitTargetValues(input_data, 0);
 }
 
 void RidgeRegression::BuildDesignMatrixFromIndexSet_
@@ -272,14 +267,10 @@ void RidgeRegression::ComputeLinearModel_
 (double lambda_sq, const arma::vec &singular_values, 
  const arma::mat &u, const arma::mat &v_t, size_t num_features) {
 
-  std::cout << "lambda " << lambda_sq <<
-    "\nsingular_values\n" << singular_values <<
-    "u\n" << u <<
-    "v_t\n" << v_t << "\n";
-
   // Factors should have $D + 1$ parameters.
 //  factors_.reset();
-  factors_.zeros(num_features + 1, 1);
+  //factors_.zeros(num_features + 1, 1);
+  factors_.zeros(v_t.n_cols, 1);
 
   for(size_t i = 0; i < singular_values.n_elem; i++) {
     double s_sq = math::Sqr(singular_values[i]);
@@ -288,9 +279,7 @@ void RidgeRegression::ComputeLinearModel_
       arma::dot(u.col(i),predictions_.rows(0,u.n_rows-1));
 
     // Scale each row vector of V^T and add to the factor.
-    std::cout << num_features << std::endl;
-    for(size_t j = 0; j < v_t.n_cols; j++) {
-      std::cout <<i << "," << j <<":\n" << factors_ << "--\n" << v_t << "--." << std::endl;
+    for(size_t j = 0; j < v_t.n_cols && j < factors_.n_rows; j++) {
       factors_(j, 0) = factors_(j, 0) + alpha * v_t(i, j);
     }
   }
@@ -537,8 +526,8 @@ void RidgeRegression::FeatureSelectedRegression
       ReInitTargetValues
 	(*predictors_, (*current_prune_predictor_indices)[i]);
       
-      printf("Current leave one out index: %zu\n",
-	     (*current_prune_predictor_indices)[i]);
+      std::cout << "Current leave one out index: " <<
+	     (*current_prune_predictor_indices)[i] << '\n';
 
       // Do the regression.
       // SVDRegress(lambda, &loo_current_predictor_indices);
@@ -635,8 +624,8 @@ void RidgeRegression::Predict(const arma::mat &dataset,
   new_predictions->zeros(dataset.n_cols);
 
   if(predictor_indices.n_elem + 1 != factors_.n_rows) {
-    printf("The number of selected indices is not equal to the ");
-    printf("non-constant coefficients!\n");
+    std::cout << "The number of selected indices is not equal to the \
+    non-constant coefficients!";
     return;
   }
 

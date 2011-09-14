@@ -10,12 +10,12 @@ class RidgeRegression {
   RidgeRegression() {
   }
 
-  void Init(const arma::mat &predictors, 
+  RidgeRegression(const arma::mat &predictors, 
 	    const arma::mat &predictions, 
 	    bool use_normal_equation_method = true);
 
-  void Init(const arma::mat &input_data, size_t selector,
-	    bool use_normal_equation_method = true);
+  RidgeRegression(const arma::mat &input_data, size_t selector,
+            bool use_normal_equation_method = true);
 
   /** @brief From a column-oriented dataset, initialize the design
    *         matrix using the row features whose indices belong to the
@@ -31,25 +31,23 @@ class RidgeRegression {
    *  @param prediction_index The row index of the input data that
    *  should be used as the predictions (training target).
    */
-  void Init(const arma::mat &input_data, 
+  RidgeRegression(const arma::mat &input_data, 
             const arma::Col<size_t> &predictor_indices,
-            size_t &prediction_index, bool use_normal_equation_method = true);
+            size_t &prediction_index, const bool use_normal_equation_method = true);
 
-  void Init(const arma::mat &input_data, 
+  RidgeRegression(const arma::mat &input_data, 
             const arma::Col<size_t> &predictor_indices,
-            const arma::mat &prediction, bool use_normal_equation_method = true);
+            const arma::mat &prediction, const bool use_normal_equation_method = true);
 
-  void ReInitTargetValues(const arma::mat &input_data, 
-			  size_t target_value_index);
+  inline void ReInitTargetValues(const arma::mat &input_data, 
+                                 const size_t target_value_index);
 
-  void ReInitTargetValues(const arma::mat &target_values_in);
+  inline void ReInitTargetValues(const arma::mat &target_values_in);
 
-  void Destruct();
-
-  void SVDRegress(double lambda,
+  void SVDRegress(const double lambda,
 		  const arma::Col<size_t> *predictor_indices = NULL);
 
-  void QRRegress(double lambda,
+  void QRRegress(const double lambda,
 		 const arma::Col<size_t> *predictor_indices = NULL);
 
   void CrossValidatedRegression(double lambda_min, double lambda_max,
