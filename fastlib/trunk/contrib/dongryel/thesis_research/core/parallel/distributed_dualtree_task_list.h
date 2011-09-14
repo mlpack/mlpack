@@ -321,8 +321,10 @@ class DistributedDualtreeTaskList {
 
     /** @brief Tries to fit in as many tasks from the given query
      *         subtree.
+     *
+     *  @return true if the query subtable is successfully locked.
      */
-    void push_back(boost::mpi::communicator &world, int probe_index) {
+    bool push_back(boost::mpi::communicator &world, int probe_index) {
 
       // First, we need to serialize the query subtree.
       SubTableType &query_subtable =
@@ -331,7 +333,7 @@ class DistributedDualtreeTaskList {
       if((query_subtable_position =
             this->push_back_(query_subtable, true)) < 0) {
         printf("Could not push in the query subtable within the limit.\n");
-        return;
+        return false;
       }
       donated_task_list_.resize(donated_task_list_.size() + 1);
       donated_task_list_.back().first = query_subtable_position;
@@ -370,12 +372,14 @@ class DistributedDualtreeTaskList {
         printf("Popping back the query subtable... because the reference");
         printf(" could not fit in.\n");
         donated_task_list_.pop_back();
+        return false;
       }
       else {
 
         // Otherwise, lock the query subtable.
-        distributed_task_queue_->LockQuerySubtree(
+        distributed_task_queue_->RemoteLockQuerySubTable(
           probe_index, destination_rank_);
+        return true;
       }
     }
 
