@@ -1,7 +1,7 @@
 /***
  * @file option.h
  * @author Matthew Amidon
- * 
+ *
  * The Option class is used to facilitate compile-time instantiation
  * of parameters (or more specifically, at program start up).  This should
  * not be used outside of IO itself.  The ProgramDoc class is used to facilitate
@@ -39,7 +39,7 @@ class Option {
          const char* description,
          const char* parent = NULL,
          bool required = false);
-  
+
   /**
    * Constructs an Option object.  When constructed, it will register a flag
    * with IO.
@@ -47,11 +47,11 @@ class Option {
    * @param identifier The name of the option (no dashes in front); for
    * 	--help, we would pass "help"
    * @param descriptoin A short string describing the option.
-   * @param parent Full pathname of the parent module that "owns" this 
+   * @param parent Full pathname of the parent module that "owns" this
    *    option.  The default evaluates to the root node.
-   */    
+   */
   Option(const char* identifier,
-         const char* description, 
+         const char* description,
          const char* parent = NULL);
 };
 
@@ -66,7 +66,7 @@ class ProgramDoc {
    *    program and what it is.  No newline characters are necessary; this is
    *    taken care of by IO later.
    */
-  ProgramDoc(std::string programName, std::string documentation, 
+  ProgramDoc(std::string programName, std::string documentation,
     std::string defaultModule);
 
   std::string programName;
@@ -79,4 +79,4 @@ class ProgramDoc {
 // For implementations of templated functions
 #include "option_impl.h"
 
-#endif 
+#endif

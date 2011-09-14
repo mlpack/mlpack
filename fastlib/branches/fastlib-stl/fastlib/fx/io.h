@@ -394,7 +394,7 @@ class IO {
    *  @param tv Valid timeval structure.
    */
 #ifdef _WIN32
-   void FileTimeToTimeVal(timeval* tv);
+  void FileTimeToTimeVal(timeval* tv);
 #endif
 
   /* Make the constructor private, to preclude unauthorized instances */

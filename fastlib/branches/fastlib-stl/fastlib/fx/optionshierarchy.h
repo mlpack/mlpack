@@ -1,9 +1,9 @@
 /***
- * @file optionshierarchy.h 
- * @author Matthew Amidon 
- * 
- * This file holds the OptionsHierarchy class, which is a tree 
- * of parameters.  Each node can have an arbitrary number of children. 
+ * @file optionshierarchy.h
+ * @author Matthew Amidon
+ *
+ * This file holds the OptionsHierarchy class, which is a tree
+ * of parameters.  Each node can have an arbitrary number of children.
  */
 
 #ifndef OPTIONSHIERARCHY_H
@@ -16,7 +16,7 @@
 namespace mlpack {
 namespace io {
 
-/* Aids in the extensibility of OptionsHierarchy by 
+/* Aids in the extensibility of OptionsHierarchy by
    focusing the potential changes into one structure. */
 struct OptionsData {
   /* Name of this node */
@@ -38,17 +38,17 @@ class OptionsHierarchy {
   typedef std::map<std::string, OptionsHierarchy> ChildMap;
   ChildMap children;
 
-  /* Returns the name foo in the pathname foo/bar/fizz 
+  /* Returns the name foo in the pathname foo/bar/fizz
    *
    * @param pathname The full pathname of the parameter,
    *   eg foo/bar in foo/bar.
-   * 
+   *
    * @return The name of the next node in the path
    *   eg foo in foo/bar.
    */
   std::string GetName(std::string& pathname);
- 
-  /* Returns the path bar/fizz in the pathname foo/bar/fizz 
+
+  /* Returns the path bar/fizz in the pathname foo/bar/fizz
    *
    * @param pathname The full pathname of the parameter,
    *   eg foo/bar in foo/bar.
@@ -57,7 +57,8 @@ class OptionsHierarchy {
    *   eg fizz/bar in foo/fizz/bar.
    */
   std::string GetPath(std::string& pathname);
-public:  
+
+ public:
   /* Constructs an empty OptionsHierarchy node. */
   OptionsHierarchy();
 
@@ -71,28 +72,28 @@ public:
   /*
    * Constructs an equivalent node to the given one.
    *
-   * @param other The node to be copied 
+   * @param other The node to be copied
    */
   OptionsHierarchy(const OptionsHierarchy& other);
-   
-  /* 
+
+  /*
    * Destroys the node.
    */
   ~OptionsHierarchy();
-  
-  /* 
+
+  /*
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
-   * 
+   *
    * @param pathname The full pathname of the given node, eg /foo/bar.
    * @param tname A string unique to the type of the node.
    */
   void AppendNode(std::string& pathname, std::string& tname);
 
-  /* 
+  /*
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
-   * 
+   *
    * @param pathname The full pathname of the given node, eg /foo/bar.
    * @param tname A string unique to the type of the node.
    * @param description String description of the node.
@@ -100,45 +101,45 @@ public:
   void AppendNode(std::string& pathname, std::string& tname,
                   std::string& description);
 
-  /* 
+  /*
    * Will never fail, as given paths are relative to current node
    * and will be generated if not found.
-   * 
+   *
    * @param pathname The full pathname of the given node, eg /foo/bar.
    * @param tname A string unique to the type of the node.
    * @param description String description of the node.
    * @param data Specifies all fields of the new node.
    */
-  void AppendNode(std::string& pathname, std::string& tname, 
+  void AppendNode(std::string& pathname, std::string& tname,
                   std::string& description, OptionsData& data);
-  
+
   /*
    * Returns the various data associated with a node.  Passed by copy,
    * since this is only for unit testing.
    *
-   * @return The data associated with the node, 
+   * @return The data associated with the node,
    * eg it's name, description, and value.
    */
   OptionsData GetNodeData();
-  
+
   /*
    * Returns a vector containing the relative pathnames of nodes subordinant
    * to the one specified.
-   * 
+   *
    * @param pathname The node to start the traversal at.
-   * 
+   *
    * @return Vector containing relative pathnames of all subordinant nodes.
-   */ 
+   */
   std::vector<std::string> GetRelativePaths(std::string& pathname);
-  std::vector<std::string> GetRelativePathsHelper(OptionsHierarchy& node);  
+  std::vector<std::string> GetRelativePathsHelper(OptionsHierarchy& node);
 
-  /* 
-   * Will return the node associated with a pathname 
-   * 
-   * @param pathname The full pathname of the node, 
+  /*
+   * Will return the node associated with a pathname
+   *
+   * @param pathname The full pathname of the node,
    *   eg foo/bar in foo/bar.
    *
-   * @return Pointer to the node with that pathname, 
+   * @return Pointer to the node with that pathname,
    *   null if not found.
    */
   OptionsHierarchy* FindNode(std::string& pathname);
