@@ -9,7 +9,7 @@ size_t SeriesExpansionAux::get_max_total_num_coeffs() const {
   return list_total_num_coeffs_[max_order_];
 }
 
-const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_lower_mapping_index() 
+const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_lower_mapping_index()
   const {
   return lower_mapping_index_;
 }
@@ -18,12 +18,12 @@ size_t SeriesExpansionAux::get_max_order() const {
   return max_order_;
 }
 
-const std::vector < size_t > &SeriesExpansionAux::get_multiindex(size_t pos) 
+const std::vector < size_t > &SeriesExpansionAux::get_multiindex(size_t pos)
   const {
   return multiindex_mapping_[pos];
 }
 
-const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_multiindex_mapping() 
+const std::vector < std::vector<size_t> >& SeriesExpansionAux::get_multiindex_mapping()
   const {
   return multiindex_mapping_;
 }
@@ -45,7 +45,7 @@ size_t SeriesExpansionAux::get_total_num_coeffs(size_t order) const {
   return list_total_num_coeffs_[order];
 }
 
-const std::vector < std::vector< size_t > >& SeriesExpansionAux::get_upper_mapping_index() 
+const std::vector < std::vector< size_t > >& SeriesExpansionAux::get_upper_mapping_index()
   const {
 
   return upper_mapping_index_;
@@ -65,7 +65,7 @@ size_t SeriesExpansionAux::ComputeMultiindexPosition
       index = -1;
       break;
     }
-    
+
     mapping_sum += multiindex[j];
   }
   if(index >= 0) {
@@ -74,7 +74,7 @@ size_t SeriesExpansionAux::ComputeMultiindexPosition
       mapping_sum -= multiindex[j];
     }
   }
-  
+
   return index;
 }
 
@@ -99,39 +99,37 @@ void SeriesExpansionAux::Init(size_t max_order, size_t dim) {
   // initialize max order and dimension
   dim_ = dim;
   max_order_ = max_order;
-  
+
   // compute the list of total number of coefficients for p-th order expansion
   size_t limit = 2 * max_order + 1;
   list_total_num_coeffs_.reserve(limit);
-  for(p = 0; p < limit; p++) {
-    list_total_num_coeffs_[p] = (size_t) math::BinomialCoefficient(p + dim, dim);
-  }
+  for (p = 0; p < limit; p++)
+    list_total_num_coeffs_[p] = (size_t) math::BinomialCoefficient(p + dim,
+        dim);
 
   // compute factorials
   ComputeFactorials();
 
-  // allocate space for inverse factorial and 
-  // negative inverse factorials and multiindex mapping and n_choose_k 
+  // allocate space for inverse factorial and
+  // negative inverse factorials and multiindex mapping and n_choose_k
   // and multiindex_combination precomputed factors
-  inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);  
+  inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);
   neg_inv_multiindex_factorials_.set_size(list_total_num_coeffs_[limit - 1]);
-  multiindex_mapping_.reserve(list_total_num_coeffs_[limit - 1]);
-  (multiindex_mapping_[0]).reserve(dim_);
+
+  multiindex_mapping_.resize(list_total_num_coeffs_[limit - 1]);
+  (multiindex_mapping_[0]).resize(dim_);
   for(j = 0; j < dim; j++) {
     (multiindex_mapping_[0])[j] = 0;
   }
   n_choose_k_.zeros((limit - 1) + dim + 1, (limit - 1) + dim + 1);
 
   // initialization of temporary variables for computation...
-  heads.reserve(dim + 1);
-  cinds.reserve(list_total_num_coeffs_[limit - 1]);
-
-  for(i = 0; i < dim; i++) {
-    heads[i] = 0;
-  }
+  heads.resize(dim + 1, 0);
   heads[dim] = INT_MAX;
+
+  cinds.resize(list_total_num_coeffs_[limit - 1]);
   cinds[0] = 0;
-  
+
   // compute inverse factorial and negative inverse factorials and
   // multiindex mappings...
   inv_multiindex_factorials_[0] = 1.0;
@@ -142,11 +140,11 @@ void SeriesExpansionAux::Init(size_t max_order, size_t dim) {
       heads[i] = t;
       for(j = head; j < tail; j++, t++) {
 	cinds[t] = (j < heads[i + 1]) ? cinds[j] + 1 : 1;
-	inv_multiindex_factorials_[t] = 
+	inv_multiindex_factorials_[t] =
 	  inv_multiindex_factorials_[j] / cinds[t];
 	neg_inv_multiindex_factorials_[t] =
 	  -neg_inv_multiindex_factorials_[j] / cinds[t];
-	
+
 	(multiindex_mapping_[t]).assign(multiindex_mapping_[j].begin(), multiindex_mapping_[j].end());
 	(multiindex_mapping_[t])[i] = (multiindex_mapping_[t])[i] + 1;
       }
