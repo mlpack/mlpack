@@ -260,6 +260,14 @@ class SubTable {
 
   public:
 
+    bool includes(const SubTableType &test_subtable_in) const {
+      SubTableIDType test_id = test_subtable_in.subtable_id();
+      int test_end = test_id.get<1>() + test_id.get<2>();
+      int this_end = start_node_->begin() + start_node_->count();
+      return test_id.get<0>() == table_->rank() &&
+             start_node_->begin() <= test_id.get<1>() && test_end <= this_end;
+    }
+
     void set_query_result(const QueryResultType &query_result_in) {
       TreeIteratorType start_node_it =
         table_->get_node_iterator(start_node_);
