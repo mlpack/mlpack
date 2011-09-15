@@ -235,7 +235,7 @@ class TableExchange {
       // Send to the neighbor what the status is on the current MPI
       // process.
       core::parallel::DualtreeLoadBalanceRequest <
-      SubTableType > load_balance_request;
+      DistributedTableType, TaskPriorityQueueType > load_balance_request;
       task_queue_->PrepareLoadBalanceRequest(&load_balance_request);
       boost::mpi::request send_request =
         world.isend(
@@ -244,7 +244,8 @@ class TableExchange {
 
       // Wait until the message from the neighbor is received.
       core::parallel::DualtreeLoadBalanceRequest <
-      SubTableType > neighbor_load_balance_request;
+      DistributedTableType,
+      TaskPriorityQueueType > neighbor_load_balance_request;
       while(true) {
         if(boost::optional< boost::mpi::status > l_status =
               world.iprobe(

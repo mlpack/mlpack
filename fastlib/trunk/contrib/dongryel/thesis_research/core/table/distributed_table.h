@@ -52,6 +52,10 @@ class DistributedTable: public boost::noncopyable {
     TreeSpecType, QueryResultType,
                 std::pair<int, std::pair< int, int> > > TableType;
 
+    /** @brief The type of the subtable.
+     */
+    typedef core::table::SubTable<TableType> SubTableType;
+
     /** @brief Defines the type of the distributed table.
      */
     typedef DistributedTable <

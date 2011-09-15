@@ -331,7 +331,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       }
 
       // After enqueing, everyone else tries to dequeue the tasks.
-      typename DistributedDualtreeTaskQueueType::QuerySubTableLockList::iterator checked_out_query_subtable;
+      typename DistributedDualtreeTaskQueueType::
+      QuerySubTableLockListType::iterator checked_out_query_subtable;
       distributed_tasks.DequeueTask(
         *world_, metric, &found_task, &checked_out_query_subtable);
 
