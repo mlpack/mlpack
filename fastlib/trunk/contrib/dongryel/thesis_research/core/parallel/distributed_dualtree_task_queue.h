@@ -7,7 +7,6 @@
 #define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_QUEUE_H
 
 #include <boost/intrusive_ptr.hpp>
-#include <boost/shared_ptr.hpp>
 #include <deque>
 #include <list>
 #include <omp.h>
@@ -61,7 +60,7 @@ class QuerySubTableLock {
 
     unsigned long int remaining_work_for_query_subtable_;
 
-    boost::shared_ptr<TaskPriorityQueueType> task_;
+    boost::intrusive_ptr<TaskPriorityQueueType> task_;
 
     int *num_remaining_tasks_;
 
@@ -298,7 +297,7 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief The task queue for each query subtable.
      */
-    std::vector< boost::shared_ptr<TaskPriorityQueueType> > tasks_;
+    std::vector< boost::intrusive_ptr<TaskPriorityQueueType> > tasks_;
 
     /** @brief The lock that must be acquired among the threads on the
      *         same MPI process to access the queue.
@@ -326,7 +325,7 @@ class DistributedDualtreeTaskQueue {
       remaining_work_for_query_subtables_.resize(
         remaining_work_for_query_subtables_.size() + 1);
       tasks_.push_back(
-        boost::shared_ptr <
+        boost::intrusive_ptr <
         TaskPriorityQueueType > (new TaskPriorityQueueType()));
     }
 
@@ -421,7 +420,7 @@ class DistributedDualtreeTaskQueue {
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.push_back(
-        boost::shared_ptr<TaskPriorityQueueType>(new TaskPriorityQueueType()));
+        boost::intrusive_ptr<TaskPriorityQueueType>(new TaskPriorityQueueType()));
       assigned_work_.push_back(
         boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
           new core::parallel::DisjointIntIntervals(
@@ -835,7 +834,7 @@ class DistributedDualtreeTaskQueue {
         query_subtables_[i]->set_query_result(*local_query_result_in);
 
         // Initialize an empty task priority queue for each query subtable.
-        tasks_[i] = boost::shared_ptr <
+        tasks_[i] = boost::intrusive_ptr <
                     TaskPriorityQueueType > (new TaskPriorityQueueType());
       }
 

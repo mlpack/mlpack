@@ -24,6 +24,91 @@
 namespace core {
 namespace parallel {
 
+/** @brief The type of the priority queue that is used for
+ *         prioritizing the fine-grained computations.
+ */
+template<typename TableType>
+class FinePriorityQueue {
+  public:
+
+    /** @brief The type of the object used for prioritizing the
+     *         computation per stage on a shared memory (on a fine
+     *         scale).
+     */
+    typedef core::parallel::DistributedDualtreeTask <
+    TableType > FineFrontierObjectType;
+
+    long reference_count_;
+
+  private:
+
+    /** @brief The class used for prioritizing a computation object
+     *         (query, reference pair).
+     */
+    template<typename FrontierObjectType>
+    class PrioritizeTasks_:
+      public std::binary_function <
+        FrontierObjectType &, FrontierObjectType &, bool > {
+      public:
+        bool operator()(
+          const FrontierObjectType &a, const FrontierObjectType &b) const {
+          return a.priority() < b.priority();
+        }
+    };
+
+    std::priority_queue <
+    FineFrontierObjectType,
+    std::vector<FineFrontierObjectType>,
+    PrioritizeTasks_<FineFrontierObjectType> > queue_;
+
+  public:
+
+    typedef typename std::priority_queue <
+    FineFrontierObjectType,
+    std::vector<FineFrontierObjectType>,
+    PrioritizeTasks_<FineFrontierObjectType> >::value_type value_type;
+
+  public:
+
+    void pop() {
+      queue_.pop();
+    }
+
+    int size() const {
+      return queue_.size();
+    }
+
+    FinePriorityQueue() {
+      reference_count_ = 0;
+    }
+
+    const value_type &top() const {
+      return queue_.top();
+    }
+
+    void push(const value_type &value_in) {
+      queue_.push(value_in);
+    }
+};
+
+template<typename TableType>
+inline void intrusive_ptr_add_ref(FinePriorityQueue<TableType> *ptr) {
+  ptr->reference_count_++;
+}
+
+template<typename TableType>
+inline void intrusive_ptr_release(FinePriorityQueue<TableType> *ptr) {
+  ptr->reference_count_--;
+  if(ptr->reference_count_ == 0) {
+    if(core::table::global_m_file_) {
+      core::table::global_m_file_->DestroyPtr(ptr);
+    }
+    else {
+      delete ptr;
+    }
+  }
+}
+
 template<typename DistributedProblemType>
 class DistributedDualtreeDfs {
 
@@ -77,6 +162,11 @@ class DistributedDualtreeDfs {
      */
     typedef typename SubTableType::SubTableIDType SubTableIDType;
 
+    /** @brief The type of the priority queue used for prioritizing
+     *         fine-grained computations.
+     */
+    typedef class FinePriorityQueue<TableType> FinePriorityQueueType;
+
   private:
 
     /** @brief Whether to perform load balancing.
@@ -127,29 +217,6 @@ class DistributedDualtreeDfs {
     int num_probabilistic_prunes_;
 
   private:
-
-    /** @brief The class used for prioritizing a computation object
-     *         (query, reference pair).
-     */
-    template<typename FrontierObjectType>
-    class PrioritizeTasks_:
-      public std::binary_function <
-        FrontierObjectType &, FrontierObjectType &, bool > {
-      public:
-        bool operator()(
-          const FrontierObjectType &a, const FrontierObjectType &b) const {
-          return a.priority() < b.priority();
-        }
-    };
-
-    /** @brief The type of the priority queue that is used for
-     *         prioritizing the fine-grained computations.
-     */
-    typedef std::priority_queue <
-    FineFrontierObjectType,
-    std::vector<FineFrontierObjectType>,
-    PrioritizeTasks_<FineFrontierObjectType> >
-    FinePriorityQueueType;
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
