@@ -50,6 +50,10 @@ class QuerySubTableLock {
      */
     typedef core::table::SubTable<TableType> SubTableType;
 
+    /** @brief The ID of subtables.
+     */
+    typedef typename SubTableType::SubTableIDType SubTableIDType;
+
     typedef QuerySubTableLock <
     DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
 
@@ -148,6 +152,10 @@ class QuerySubTableLock {
     long reference_count_;
 
   public:
+
+    SubTableIDType subtable_id() const {
+      return query_subtable_->subtable_id();
+    }
 
     QuerySubTableLock() {
       num_remaining_tasks_ = NULL;
@@ -250,7 +258,11 @@ class DistributedDualtreeTaskQueue {
         DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
 
     typedef std::list< boost::intrusive_ptr< QuerySubTableLockType > >
-    QuerySubTableLockList;
+    QuerySubTableLockListType;
+
+    typedef core::parallel::DualtreeLoadBalanceRequest <
+    DistributedTableType,
+    TaskPriorityQueueType > DualtreeLoadBalanceRequestType;
 
   private:
 
@@ -267,7 +279,7 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief The list of checked out query subtables.
      */
-    QuerySubTableLockList checked_out_query_subtables_;
+    QuerySubTableLockListType checked_out_query_subtables_;
 
     std::vector<int> high_priority_query_subtable_positions_;
 
@@ -416,7 +428,7 @@ class DistributedDualtreeTaskQueue {
         std::pair<TaskType, int> task_pair;
         this->DequeueTask(
           world, subtree_index, &task_pair,
-          (typename QuerySubTableLockList::iterator *) NULL);
+          (typename QuerySubTableLockListType::iterator *) NULL);
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.push_back(
@@ -444,13 +456,13 @@ class DistributedDualtreeTaskQueue {
   public:
 
     void ReturnQuerySubTable(
-      typename QuerySubTableLockList::iterator &query_subtable_lock) {
+      typename QuerySubTableLockListType::iterator &query_subtable_lock) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       (*query_subtable_lock)->Return_(this);
       checked_out_query_subtables_.erase(query_subtable_lock);
     }
 
-    typename QuerySubTableLockList::iterator LockQuerySubTable(
+    typename QuerySubTableLockListType::iterator LockQuerySubTable(
       int probe_index, int remote_mpi_rank_in) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       checked_out_query_subtables_.push_front(
@@ -575,11 +587,11 @@ class DistributedDualtreeTaskQueue {
      *         process.
      */
     void PrepareLoadBalanceRequest(
-      core::parallel::DualtreeLoadBalanceRequest <
-      SubTableType > *load_balance_request) {
+      DualtreeLoadBalanceRequestType *load_balance_request) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       load_balance_request->Init(
+        query_subtables_, checked_out_query_subtables_,
         remaining_local_computation_,
         table_exchange_.remaining_extra_points_to_hold());
     }
@@ -705,7 +717,7 @@ class DistributedDualtreeTaskQueue {
         }
 
         // Also do it for the checked out query subtables.
-        for(typename QuerySubTableLockList::iterator it =
+        for(typename QuerySubTableLockListType::iterator it =
               checked_out_query_subtables_.begin();
             it != checked_out_query_subtables_.end(); it++) {
           if((*it)->Insert_(world, reference_grid)) {
@@ -734,7 +746,7 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
       unsigned long int quantity_in,
-      typename QuerySubTableLockList::iterator &query_subtable_lock) {
+      typename QuerySubTableLockListType::iterator &query_subtable_lock) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Subtract from the self and queue up a route message.
@@ -880,7 +892,7 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       std::pair<TaskType, int> *task_out,
-      typename QuerySubTableLockList::iterator
+      typename QuerySubTableLockListType::iterator
       *checked_out_query_subtable) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
@@ -938,7 +950,7 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       int probe_index,
       std::pair<TaskType, int> *task_out,
-      typename QuerySubTableLockList::iterator
+      typename QuerySubTableLockListType::iterator
       *checked_out_query_subtable) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
