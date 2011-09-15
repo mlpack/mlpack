@@ -151,6 +151,10 @@ class DistributedDualtreeDfs {
     PrioritizeTasks_<FineFrontierObjectType> >
     FinePriorityQueueType;
 
+    typedef core::parallel::DistributedDualtreeTaskQueue <
+    DistributedTableType,
+    FinePriorityQueueType > DistributedDualtreeTaskQueueType;
+
     void HashSendList_(
       const std::pair<int, int> &local_rnode_id,
       int query_process_id,
@@ -186,8 +190,7 @@ class DistributedDualtreeDfs {
       std::vector <
       std::vector< std::pair<int, int> > > *reference_frontier_lists,
       std::vector< std::vector< core::math::Range> > *receive_priorities,
-      core::parallel::DistributedDualtreeTaskQueue <
-      DistributedTableType, FinePriorityQueueType > *distributed_tasks);
+      DistributedDualtreeTaskQueueType *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine
