@@ -174,7 +174,7 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Queue and evict.
-      table_exchange_.QueueFlushRequest(*(query_subtables_[probe_index]));
+      table_exchange_.QueueFlushRequest(query_subtables_[probe_index]);
       this->Evict_(probe_index);
     }
 
@@ -258,7 +258,8 @@ class DistributedDualtreeTaskQueue {
         prev_tasks.push_back(task_pair.first);
       }
       tasks_.push_back(
-        boost::intrusive_ptr<TaskPriorityQueueType>(new TaskPriorityQueueType()));
+        boost::intrusive_ptr <
+        TaskPriorityQueueType > (new TaskPriorityQueueType()));
       assigned_work_.push_back(
         boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
           new core::parallel::DisjointIntIntervals(
