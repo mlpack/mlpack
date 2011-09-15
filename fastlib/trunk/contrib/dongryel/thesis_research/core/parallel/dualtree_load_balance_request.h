@@ -45,6 +45,29 @@ class DualtreeLoadBalanceRequest {
 
   public:
 
+    /** @brief Return true if the given subtable ID is already among
+     *         query subtable list.
+     */
+    bool query_subtable_is_owned(const SubTableIDType &subtable_id) const {
+
+      // Right now, just use linear scan but probably could be sped up
+      // later.
+      for(unsigned int i = 0; i < existing_query_subtables_.size(); i++) {
+        int existing_query_subtable_begin =
+          existing_query_subtables_[i].get<1>();
+        int existing_query_subtable_end =
+          existing_query_subtables_[i].get<1>() +
+          existing_query_subtables_[i].get<2>();
+        if(existing_query_subtables_[i].get<0>() == subtable_id.get<0>() &&
+            existing_query_subtable_begin <= subtable_id.get<1>() &&
+            subtable_id.get<1>() + subtable_id.get<2>() <=
+            existing_query_subtable_end) {
+          return true;
+        }
+      }
+      return false;
+    }
+
     unsigned long int remaining_local_computation() const {
       return remaining_local_computation_;
     }

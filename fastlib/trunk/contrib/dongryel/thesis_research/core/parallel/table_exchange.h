@@ -284,7 +284,7 @@ class TableExchange {
       boost::mpi::request extra_task_list_sent;
       task_queue_->PrepareExtraTaskList(
         world, metric_in, neighbor, num_points_to_send,
-        &outgoing_extra_task_list);
+        neighbor_load_balance_request, &outgoing_extra_task_list);
       extra_task_list_sent =
         world.isend(
           neighbor, core::parallel::MessageTag::TASK_LIST,
