@@ -287,6 +287,15 @@ class DistributedDualtreeTaskQueue {
      */
     void Synchronize(SubTableType &received_query_subtable_in) {
 
+      // Find the checked out subtable in the list and synchronize.
+      for(typename QuerySubTableLockListType::iterator it =
+            checked_out_query_subtables_.begin();
+          it != checked_out_query_subtables_.end(); it++) {
+        if((*it)->query_subtable_->includes(received_query_subtable_in)) {
+          break;
+        }
+      }
+
       // Destroy the received subtable after synchronizing.
       received_query_subtable_in.Destruct();
     }
