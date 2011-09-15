@@ -404,10 +404,6 @@ class DistributedDualtreeTaskQueue {
       checked_out_query_subtables_.push_front(
         boost::shared_ptr< QuerySubTableLock > (new QuerySubTableLock()));
       checked_out_query_subtables_.front()->CheckOut_(this, probe_index);
-
-      printf("After checking out:\n");
-      this->Print();
-
       return checked_out_query_subtables_.begin();
     }
 
