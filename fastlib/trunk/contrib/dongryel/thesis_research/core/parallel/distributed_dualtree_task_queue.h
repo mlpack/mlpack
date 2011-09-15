@@ -282,6 +282,15 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    /** @brief Synchronizes the local query subtable with the received
+     *         query subtable.
+     */
+    void Synchronize(SubTableType &received_query_subtable_in) {
+
+      // Destroy the received subtable after synchronizing.
+      received_query_subtable_in.Destruct();
+    }
+
     /** @brief Returns a locked query subtable to the active pool.
      */
     void ReturnQuerySubTable(
