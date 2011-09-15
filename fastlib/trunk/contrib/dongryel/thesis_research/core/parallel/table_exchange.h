@@ -8,6 +8,7 @@
 #ifndef CORE_PARALLEL_TABLE_EXCHANGE_H
 #define CORE_PARALLEL_TABLE_EXCHANGE_H
 
+#include <boost/intrusive_ptr.hpp>
 #include <boost/mpi.hpp>
 #include "core/parallel/distributed_dualtree_task_queue.h"
 #include "core/parallel/message_tag.h"
@@ -170,6 +171,11 @@ class TableExchange {
      *         MPI process.
      */
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
+
+    /** @brief The queued-up query subtables to be flushed.
+     */
+    std::vector <
+    boost::intrusive_ptr< SubTableType > > queued_up_query_subtables_;
 
     /** @brief The current stage in the exchange process.
      */
@@ -375,8 +381,9 @@ class TableExchange {
 
     /** @brief Queues the query subtable and its result flush request.
      */
-    void QueueFlushRequest(SubTableType &query_subtable_in) {
-
+    void QueueFlushRequest(
+      const boost::intrusive_ptr<SubTableType > &query_subtable_in) {
+      queued_up_query_subtables_.push_back(query_subtable_in);
     }
 
     /** @brief Returns the number of extra points that can be held.
@@ -413,7 +420,8 @@ class TableExchange {
     }
 
     bool can_terminate() const {
-      return queued_up_completed_computation_.size() == 0 && stage_ == 0;
+      return queued_up_completed_computation_.size() == 0 &&
+             queued_up_query_subtables_.size() == 0 && stage_ == 0;
     }
 
     void push_completed_computation(
@@ -531,6 +539,10 @@ class TableExchange {
       message_cache_.resize(world.size());
       message_send_request_.resize(world.size());
       extra_receive_slots_.resize(0);
+
+      // Initialize the queues.
+      queued_up_completed_computation_.resize(0);
+      queued_up_query_subtables_.resize(0);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());
