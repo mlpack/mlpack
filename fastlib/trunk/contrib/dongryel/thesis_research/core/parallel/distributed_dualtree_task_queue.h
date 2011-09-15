@@ -559,12 +559,16 @@ class DistributedDualtreeTaskQueue {
                subtable_in, num_referenced_as_reference_set);
     }
 
+    /** @brief Prepares a list of overflowing tasks that are to be
+     *         sent to another process.
+     */
     template<typename MetricType>
     void PrepareExtraTaskList(
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       int neighbor_rank_in,
       unsigned long int neighbor_remaining_extra_points_to_hold_in,
+      const DualtreeLoadBalanceRequestType &neighbor_load_balance_request_in,
       TaskListType *extra_task_list_out) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
@@ -577,7 +581,9 @@ class DistributedDualtreeTaskQueue {
       for(int i = 0;
           extra_task_list_out->remaining_extra_points_to_hold() > 0 &&
           i < static_cast<int>(query_subtables_.size()); i++) {
-        if(extra_task_list_out->push_back(world, i)) {
+        if((! neighbor_load_balance_request_in.query_subtable_is_owned(
+              query_subtables_[i]->subtable_id())) &&
+            extra_task_list_out->push_back(world, i)) {
           i--;
         }
       }
