@@ -703,6 +703,14 @@ class TableExchange {
               task_queue_->decrement_remaining_global_computation(
                 route_request.energy_route().object());
             }
+
+            // Flush the received query subtable.
+            if(route_request.flush_route().remove_from_destination_list(
+                  world.rank()) &&
+                route_request.flush_route().object_is_valid()) {
+
+              task_queue_->Synchronize(route_request.flush_route().object());
+            }
           }
         }
 
