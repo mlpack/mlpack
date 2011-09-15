@@ -14,6 +14,7 @@ set(SOURCES
   map_vector.h
   message_tag.h
   parallel_sample_sort.h
+  query_subtable_lock.h
   random_dataset_generator.h
   route_request.h
   sample_distributed_tree_builder.h
