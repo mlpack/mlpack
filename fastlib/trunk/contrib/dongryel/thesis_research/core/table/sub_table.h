@@ -260,6 +260,45 @@ class SubTable {
 
   public:
 
+    /** @brief Copies the query subtable to the current subtable.
+     */
+    void Copy(const SubTableType &source_subtable_in) {
+
+      // Copy the query result.
+      query_result_->Copy(* source_subtable_in.query_result());
+
+      // Copy the query tree.
+      TreeType *destination_start_node =
+        start_node_->FindByBeginCount(
+          source_subtable_in.start_node()->begin(),
+          source_subtable_in.start_node()->count());
+      std::vector< std::pair<TreeType * , TreeType * > > stack;
+      stack.push_back(
+        std::pair <
+        TreeType * , TreeType * > (
+          destination_start_node, source_subtable_in.start_node()));
+      while(stack.size() > 0) {
+        std::pair< TreeType *, TreeType *> destination_source_pair =
+          stack.back();
+        stack.pop_back();
+        destination_source_pair.first->stat().summary_.Copy(
+          destination_source_pair.second->stat().summary_);
+        if(! destination_source_pair.first->is_leaf()) {
+          std::pair< TreeType *, TreeType *> left_destination_source_pair(
+            destination_source_pair.first->left(),
+            destination_source_pair.second->left());
+          std::pair< TreeType *, TreeType *> right_destination_source_pair(
+            destination_source_pair.first->right(),
+            destination_source_pair.second->right());
+          stack.push_back(left_destination_source_pair);
+          stack.push_back(right_destination_source_pair);
+        }
+      }
+    }
+
+    /** @brief Return true if the given subtable is included by the
+     *         subtable.
+     */
     bool includes(const SubTableType &test_subtable_in) const {
       SubTableIDType test_id = test_subtable_in.subtable_id();
       int test_end = test_id.get<1>() + test_id.get<2>();
