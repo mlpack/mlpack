@@ -343,6 +343,9 @@ class TableExchange {
      *         balancing.
      */
     void EvictSubTable_(int cache_id) {
+      remaining_extra_points_to_hold_ +=
+        message_cache_[
+          cache_id ].subtable_route().object().start_node()->count();
       this->ClearSubTable_(cache_id);
       extra_receive_slots_.push_back(cache_id);
       printf("   Returned %d to extra receive slots.\n", cache_id);
