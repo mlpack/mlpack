@@ -14,11 +14,12 @@ void npt::AngleDriver::Compute() {
   
   for (int i = 0; i <= num_resampling_regions_; i++) {
     
-    std::vector<arma::mat&> this_comp_mats(3);
+    // TODO: make sure this doesn't copy memory
+    std::vector<arma::mat*> this_comp_mats(3);
     std::vector<NptNode*> this_comp_trees;
     std::vector<int> this_comp_multi;
-    std::vector<arma::colvec&> this_comp_weights(3);
-    arma::col this_region(3);
+    std::vector<arma::colvec*> this_comp_weights(3);
+    std::vector<int> this_region(3);
     
     int this_num_random = 0;
     
@@ -38,7 +39,7 @@ void npt::AngleDriver::Compute() {
       this_num_random++;
     }
     
-    this_region(0) = i;
+    this_region[0] = i;
     
     
     for (int j = i; j <= num_resampling_regions_; j++) {
@@ -72,7 +73,7 @@ void npt::AngleDriver::Compute() {
         
       } // not equal to i
       
-      this_region(1) = j;
+      this_region[1] = j;
       
       for (int k = j; k <= num_resampling_regions_; k++) {
         
@@ -107,11 +108,11 @@ void npt::AngleDriver::Compute() {
         } // not equal to j
         
         
-        this_region(2) = k;
+        this_region[2] = k;
         
         // create matcher class
         AngleMatcher matcher(this_comp_mats, this_comp_weights, r1_vec_, 
-                             r2_mult_, theta_vec_, bin_width_);
+                             r2_multiplier_, theta_vec_, bin_size_);
         
         // create alg class
         

@@ -47,8 +47,8 @@ namespace npt {
     
   private:
     
-    std::vector<arma::mat&>& data_mat_list_;
-    std::vector<arma::colvec&>& data_weights_list_;
+    std::vector<arma::mat*> data_mat_list_;
+    std::vector<arma::colvec*> data_weights_list_;
     
     // indexed by [r1][theta]
     boost::multi_array<int, 2> results_;
@@ -130,21 +130,22 @@ namespace npt {
     
   public:
     
-    AngleMatcher(std::vector<arma::mat&>& data_in, 
-                 std::vector<arma::colvec&>& weights_in,
+    AngleMatcher(std::vector<arma::mat*>& data_in, 
+                 std::vector<arma::colvec*>& weights_in,
                  std::vector<double>& short_sides, double long_side,
                  std::vector<double>& thetas, double bin_size) :
+    data_mat_list_(data_in), data_weights_list_(weights_in), 
+    results_(boost::extents[short_sides.size()][thetas.size()]), 
+    weighted_results_(boost::extents[short_sides.size()][thetas.size()]),
     short_sides_(short_sides), long_side_multiplier_(long_side), 
-    thetas_(thetas), bin_thickness_factor_(bin_size),
-    r3_sides_(boost::extents[short_sides.size()][thetas.size()]),
     long_sides_(short_sides.size()),
+    thetas_(thetas), 
+    r3_sides_(boost::extents[short_sides.size()][thetas.size()]),
     r1_lower_sqr_(short_sides.size()), r1_upper_sqr_(short_sides.size()), 
     r2_lower_sqr_(short_sides.size()), r2_upper_sqr_(short_sides.size()),
     r3_lower_sqr_(boost::extents[short_sides.size()][thetas.size()]),
     r3_upper_sqr_(boost::extents[short_sides.size()][thetas.size()]),
-    results_(boost::extents[short_sides.size()][thetas.size()]), 
-    weighted_results_(boost::extents[short_sides.size()][thetas.size()]),
-    data_mat_list_(data_in), data_weights_list_(weights_in) 
+    bin_thickness_factor_(bin_size)
     {
       
       //mlpack::IO::Info << "Starting construction of angle matcher.\n";
@@ -162,7 +163,7 @@ namespace npt {
       double half_thickness = bin_thickness_factor_ / 2.0;
 
       
-      for (int i = 0; i < short_sides_.size(); i++) {
+      for (unsigned int i = 0; i < short_sides_.size(); i++) {
           
         long_sides_[i] = long_side_multiplier_ * short_sides_[i];
         
@@ -176,7 +177,7 @@ namespace npt {
         r2_upper_sqr_[i] = ((1.0 + half_thickness) * long_sides_[i])
         * ((1.0 + half_thickness) * long_sides_[i]);
         
-        for (int j = 0; j < thetas_.size(); j++) {
+        for (unsigned int j = 0; j < thetas_.size(); j++) {
           
           r3_sides_[i][j] = ComputeR3_(short_sides_[i], 
                                      long_sides_[i], 
@@ -217,11 +218,11 @@ namespace npt {
       
       int r3_last_index = short_sides_.size() - 1;
       int r3_last_last_index = thetas_.size() - 1;
-      longest_possible_side_sqr_ = max(r2_upper_sqr_.back(), 
-                                       r3_upper_sqr_[r3_last_index][r3_last_last_index]);
+      longest_possible_side_sqr_ = std::max(r2_upper_sqr_.back(), 
+                                            r3_upper_sqr_[r3_last_index][r3_last_last_index]);
       // IMPORTANT: this assumes that r2 >= r1
-      shortest_possible_side_sqr_ = min(r1_lower_sqr_.front(), 
-                                        r3_lower_sqr_[0][0]);
+      shortest_possible_side_sqr_ = std::min(r1_lower_sqr_.front(), 
+                                             r3_lower_sqr_[0][0]);
       
       num_large_r1_prunes_ = 0;
       num_small_r1_prunes_ = 0;

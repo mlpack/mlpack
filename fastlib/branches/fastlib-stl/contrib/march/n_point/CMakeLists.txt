@@ -6,6 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   angle_driver.h
   angle_driver.cc
+  angle_matcher_generation.h
+  angle_matcher_generation.cc
   angle_matcher.h
   angle_matcher.cc
   angle_results.h
@@ -14,8 +16,14 @@ set(SOURCES
   efficient_resampling.cc
   generic_npt_alg.h
   generic_npt_alg_impl.h
+  naive_resampling.h
+  naive_resampling.cc
   node_tuple.h
   node_tuple.cc
+  permutations.h
+  permutations.cc
+  single_driver.h
+  single_driver.cc
   single_matcher.h
   single_matcher.cc
   single_results.h

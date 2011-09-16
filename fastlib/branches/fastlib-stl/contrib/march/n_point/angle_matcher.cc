@@ -29,10 +29,10 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
   
   // IMPORTANT: this assumes that the points are all leaves - i.e. that one
   // of the nodes does not have another as a descendent
-  for (int i = nodes.node_list(0)->begin(); 
+  for (unsigned int i = nodes.node_list(0)->begin(); 
        i < nodes.node_list(0)->end(); i++) {
     
-    arma::colvec vec_i = data_mat_list_[0].col(i);
+    arma::colvec vec_i = data_mat_list_[0]->col(i);
     
     int j_begin = (nodes.node_list(0) == nodes.node_list(1)) ? i+1 : 
                                             nodes.node_list(1)->begin();
@@ -40,7 +40,7 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
     
     for (int j = j_begin; j < j_end; j++) {
      
-      arma::colvec vec_j = data_mat_list_[1].col(j);
+      arma::colvec vec_j = data_mat_list_[1]->col(j);
     
       int k_begin;
       if (nodes.node_list(1) == nodes.node_list(2)) {
@@ -55,18 +55,19 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
         
         std::vector<int> valid_thetas;
         
-        arma::colvec vec_k = data_mat_list_[2].col(k);
+        arma::colvec vec_k = data_mat_list_[2]->col(k);
         
         int valid_r1 = TestPointTuple_(vec_i, vec_j, vec_k, valid_thetas);
         
         if (valid_r1 >= 0) {
           
-          double weight_i = data_weights_list_[0](i);
-          double weight_j = data_weights_list_[1](j);
-          double weight_k = data_weights_list_[2](k);
+          double weight_i = (*(data_weights_list_[0]))(i);
+          double weight_j = (*(data_weights_list_[1]))(j);
+          double weight_k = (*(data_weights_list_[2]))(k);
           double this_weight = weight_i * weight_j * weight_k;
           
-          for (int theta_ind = 0; theta_ind < valid_thetas.size() ; theta_ind++) {
+          for (unsigned int theta_ind = 0; theta_ind < valid_thetas.size() ; 
+               theta_ind++) {
             
             results_[valid_r1][valid_thetas[theta_ind]]++;
             weighted_results_[valid_r1][valid_thetas[theta_ind]]+= this_weight;
@@ -95,9 +96,9 @@ int npt::AngleMatcher::TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2,
   
   // TODO: profile this while optimized 
   
-  double d12_sqr = la::DistanceSqEuclidean(vec1, vec2);
-  double d13_sqr = la::DistanceSqEuclidean(vec1, vec3);
-  double d23_sqr = la::DistanceSqEuclidean(vec3, vec2);
+  double d12_sqr = mlpack::kernel::LMetric<2>::Evaluate(vec1, vec2);
+  double d13_sqr = mlpack::kernel::LMetric<2>::Evaluate(vec1, vec3);
+  double d23_sqr = mlpack::kernel::LMetric<2>::Evaluate(vec3, vec2);
   
   std::vector<double> sorted_dists_sq(3);
   sorted_dists_sq[0] = d12_sqr;
@@ -113,7 +114,7 @@ int npt::AngleMatcher::TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2,
   int r1_index = -1;
   // Find the correct value of r1
   // IMPORTANT: assuming that only one value of r1 is satisfied
-  for (int i = 0; i < r1_lower_sqr_.size(); i++) {
+  for (unsigned int i = 0; i < r1_lower_sqr_.size(); i++) {
     
     if ((sorted_dists_sq[0] > r1_lower_sqr_[i]) 
         && (sorted_dists_sq[0] < r1_upper_sqr_[i])) {
@@ -145,7 +146,8 @@ int npt::AngleMatcher::TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2,
     } // r3_index
 
     // now, r3 >= r2
-    for (int r3_index = theta_cutoff_index_; r3_index < thetas_.size(); r3_index++) {
+    for (unsigned int r3_index = theta_cutoff_index_; 
+         r3_index < thetas_.size(); r3_index++) {
       
       if ((sorted_dists_sq[1] > r2_lower_sqr_[r1_index])
           && (sorted_dists_sq[1] < r2_upper_sqr_[r1_index])

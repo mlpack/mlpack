@@ -24,7 +24,7 @@ void npt::SingleResults::AddRandomResult_(int r1_ind, int theta_ind,
 }
 
 
-void npt::SingleResults::ProcessResults(std::vector<int> region_ids, 
+void npt::SingleResults::ProcessResults(int region_id, 
                                         int num_random,
                                         SingleMatcher& matcher,
                                         int r1_ind, int theta_ind) {
@@ -38,19 +38,9 @@ void npt::SingleResults::ProcessResults(std::vector<int> region_ids,
   
     for (int i = 0; i < num_regions_; i++) {
       
-      bool skip_me = false;
-      
-      for (int j = 0; j < regions_ids.size(); j++) {
-        
-        if (i == region_ids[j]) {
-          skip_me = true;
-          break;
-        }
-        
-      } // for invalid regions
-      
-      AddResult_(i, num_random, r1_ind, theta_ind, matcher.results());
-      
+      if (region_id != i) {
+        AddResult_(i, num_random, r1_ind, theta_ind, matcher.results());
+      }
     } // for regions
 
   }
@@ -72,9 +62,9 @@ void npt::SingleResults::PrintResults() {
     
     mlpack::IO::Info << "Resampling region " << region_ind << "\n";
     
-    for (int num_random = 0; num_random < tuple_size; num_random++) {
+    for (int num_random = 0; num_random < tuple_size_; num_random++) {
       
-      std::string this_string(label_string, i, tuple_size_);
+      std::string this_string(label_string, num_random, tuple_size_);
       mlpack::IO::Info << this_string << ": \n";
       
       for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {

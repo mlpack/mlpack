@@ -38,8 +38,8 @@ namespace npt {
     
     
     // the data and weights
-    std::vector<arma::mat&>& data_mat_list_;
-    std::vector<arma::colvec&>& data_weights_list_;
+    std::vector<arma::mat*> data_mat_list_;
+    std::vector<arma::colvec*> data_weights_list_;
     
     
     // stores the permutations, make sure to always reuse it instead of making
@@ -55,19 +55,19 @@ namespace npt {
     double weighted_results_;
     
     // n
-    size_t tuple_size_;
+    int tuple_size_;
     
     int num_base_cases_;
     
     // n!
-    size_t num_permutations_;
+    int num_permutations_;
     
     /////////////////// functions ////////////////////////
     
     /**
      * Just accesses the Permutations class
      */
-    size_t GetPermIndex_(size_t perm_index, size_t pt_index) {
+    int GetPermIndex_(int perm_index, int pt_index) {
       return perms_.GetPermutation(perm_index, pt_index);
     } // GetPermIndex_
     
@@ -75,19 +75,19 @@ namespace npt {
     /**
      * Helper function for checking points or bounds.
      */
-    bool CheckDistances_(double dist_sq, size_t ind1, size_t ind2);
+    bool CheckDistances_(double dist_sq, int ind1, int ind2);
     
     
-    bool TestPointPair_(double dist_sq, size_t tuple_ind_1, size_t tuple_ind_2,
+    bool TestPointPair_(double dist_sq, int tuple_ind_1, int tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     
     bool TestHrectPair_(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
-                        size_t tuple_ind_1, size_t tuple_ind_2,
+                        int tuple_ind_1, int tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     
-    void BaseCaseHelper_(const NodeTuple& nodes,
+    void BaseCaseHelper_(NodeTuple& nodes,
                          std::vector<bool>& permutation_ok,
-                         std::vector<size_t>& points_in_tuple,
+                         std::vector<int>& points_in_tuple,
                          int k);
     
     
@@ -95,13 +95,13 @@ namespace npt {
     
     
     // constructor
-    SingleMatcher(std::vector<arma::mat&>& data_in, 
-                  std::vector<arma::colvec&>& weights_in,
+    SingleMatcher(std::vector<arma::mat*>& data_in, 
+                  std::vector<arma::colvec*>& weights_in,
                   arma::mat& matcher_dists, double bandwidth) :
     data_mat_list_(data_in), data_weights_list_(weights_in),
     perms_(matcher_dists.n_cols), 
     lower_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
-    upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
+    upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols)
     {
       
       results_ = 0;
@@ -111,12 +111,12 @@ namespace npt {
       
       double half_band = bandwidth / 2.0;
       
-      for (size_t i = 0; i < tuple_size_; i++) {
+      for (int i = 0; i < tuple_size_; i++) {
         
         lower_bounds_sqr_(i,i) = 0.0;
         upper_bounds_sqr_(i,i) = 0.0;
         
-        for (size_t j = i+1; j < tuple_size_; j++) {
+        for (int j = i+1; j < tuple_size_; j++) {
          
           lower_bounds_sqr_(i,j) = (matcher_dists(i,j) - half_band)
                                     * (matcher_dists(i,j) - half_band);
@@ -139,13 +139,13 @@ namespace npt {
     } // constructor
     
     // angle version of the constructor
-    SingleMatcher(std::vector<arma::mat&>& data_in, 
-                  std::vector<arma::colvec&>& weights_in,
+    SingleMatcher(std::vector<arma::mat*>& data_in, 
+                  std::vector<arma::colvec*>& weights_in,
                   arma::mat& lower_bounds, arma::mat& upper_bounds) :
     data_mat_list_(data_in), data_weights_list_(weights_in),
     perms_(lower_bounds.n_cols),
     lower_bounds_sqr_(lower_bounds.n_rows, lower_bounds.n_cols),
-    upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols),
+    upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols)
     {
       
       results_ = 0;
@@ -193,7 +193,7 @@ namespace npt {
       return tuple_size_;
     }
     
-    size_t num_permutations() {
+    int num_permutations() {
       return num_permutations_;
     }
     

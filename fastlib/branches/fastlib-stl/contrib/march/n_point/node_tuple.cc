@@ -33,8 +33,8 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
   // start_point is the first index i where same_nodes_[i] = same_nodes_[split_ind]
   // end_point is the last one where this is true
   
-  for (int i = 0; i <= split_ind; i++) {
-    if (this_id = same_nodes_[i]) {
+  for (unsigned int i = 0; i <= split_ind; i++) {
+    if (this_id == same_nodes_[i]) {
       start_point = i;
       break;
     }
@@ -50,7 +50,7 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
   
   // only check the new node for symmetry with respect to the others
   if (is_left) {
-    for (size_t i = start_point; i < split_ind; i++) {
+    for (unsigned int i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->left()->end() <= node_list_[i]->begin()) {
         return false;
@@ -58,7 +58,7 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
       
     } // for i
     
-    for (size_t i = split_ind; i < end_point; i++) {
+    for (int i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->left()->begin()) {
         return false;
@@ -69,7 +69,7 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
   }
   else { // is right
 
-    for (size_t i = start_point; i < split_ind; i++) {
+    for (unsigned int i = start_point; i < split_ind; i++) {
       
       if (node_list_[split_ind]->right()->end() <= node_list_[i]->begin()) {
         return false;
@@ -77,7 +77,7 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
       
     } // for i
     
-    for (size_t i = split_ind; i < end_point; i++) {
+    for (int i = split_ind; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->right()->begin()) {
         return false;
@@ -94,11 +94,11 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
 
 void npt::NodeTuple::UpdateSplitInd_() {
   
-  int split_size = 0;
+  unsigned int split_size = 0;
   
   all_leaves_ = true;
   
-  for (size_t i = 0; i < tuple_size_; i++) {
+  for (int i = 0; i < tuple_size_; i++) {
     
     if (!(node_list_[i]->is_leaf())) {
       

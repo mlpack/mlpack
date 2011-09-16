@@ -8,7 +8,8 @@
  */
 
 
-#include "jackknife_resampling.h"
+#include "angle_driver.h"
+#include "single_driver.h"
 #include "fastlib/fastlib.h"
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
@@ -21,11 +22,16 @@ PARAM_STRING_REQ("matchers", "A 3 column, 2 row csv, row 1 is r1_min, r1_max, nu
 PARAM_DOUBLE("bin_thickness_factor", "The multiplier to determine the thickness of each bin.  Delta_r in the literature.", NULL,
              0.1);
 PARAM_DOUBLE("r2_multiplier", "How much larger is r2 than r1.", NULL, 2.0)
-PARAM_INT("leaf_size", "Max number of points in a leaf node", NULL, 
-          1);
-PARAM_INT("num_resampling_regions", "Number of regions to divide the input into", 
-          NULL, 9);
+PARAM_INT("num_x_regions", "Number of regions to divide the input into along the x coordinate.", 
+          NULL, 3);
+PARAM_INT("num_y_regions", "Number of regions to divide the input into along the y coordinate.", 
+          NULL, 3);
+PARAM_INT("num_z_regions", "Number of regions to divide the input into along the z coordinate.", 
+          NULL, 3);
 PARAM_DOUBLE_REQ("box_length", "For now, we assume the data live in a cube with sides given by this parameter.", NULL);
+PARAM_FLAG("do_angle", "Do the angle based, smart-resampling algorithm.\n", NULL);
+PARAM_FLAG("do_single", "Do the single matcher, dumb-resampling algorithm.\n", NULL);
+
 
 using namespace mlpack;
 using namespace npt;
@@ -87,7 +93,9 @@ int main (int argc, char* argv[]) {
     random_weights.fill(1.0);
   }
   
-  int num_regions = IO::GetParam<int>("num_resampling_regions");
+  int num_x_regions = IO::GetParam<int>("num_x_regions");
+  int num_y_regions = IO::GetParam<int>("num_y_regions");
+  int num_z_regions = IO::GetParam<int>("num_z_regions");
   
   double box_length = IO::GetParam<double>("box_length");
   
@@ -95,9 +103,7 @@ int main (int argc, char* argv[]) {
   
   double bin_thickness_factor = IO::GetParam<double>("bin_thickness_factor");
   double r2_multiplier = IO::GetParam<double>("r2_multiplier");
-  
-  index_t leaf_size = (index_t)IO::GetParam<int>("leaf_size");
-  
+    
   std::string matcher_filename = IO::GetParam<std::string>("matchers");
   arma::mat matcher_mat;
   matcher_mat.load(matcher_filename, arma::raw_ascii);
@@ -142,14 +148,44 @@ int main (int argc, char* argv[]) {
   
   IO::Info << "Running Algorithm.\n";
   
-  JackknifeResampling alg(data_mat, weights, random_mat, random_weights,
-                          num_regions, box_length, r1_vec, 
-                          r2_multiplier, theta_vec,
-                          bin_thickness_factor);
+  if (IO::HasParam("do_angle")) {
+    
+    IO::Info << "Running Multi-bandwidth, Smart-resampling algorithm.\n";
+    
+    IO::StartTimer("angle_timer");
+
+    AngleDriver alg(data_mat, weights, random_mat, random_weights,
+                    r1_vec, r2_multiplier, theta_vec, bin_thickness_factor,
+                    num_x_regions, num_y_regions, num_z_regions, 
+                    box_length, box_length, box_length);
+    
+    alg.Compute();
+    
+    IO::StopTimer("angle_timer");
+
+    alg.PrintResults();
+
+  } // do angle
   
-  alg.Compute();
+  if (IO::HasParam("do_single")) {
+    
+    IO::Info << "Running Single-bandwidth, dumb-resampling algorithm.\n";
+    
+    IO::StartTimer("single_timer");
+    
+    SingleDriver alg(data_mat, weights, random_mat, random_weights,
+                     r1_vec, r2_multiplier, theta_vec, bin_thickness_factor,
+                     num_x_regions, num_y_regions, num_z_regions, 
+                     box_length, box_length, box_length);
+    
+    alg.Compute();
+    
+    IO::StopTimer("single_timer");
+    
+    alg.PrintResults();
+    
+  }
   
-  alg.PrintResults();
   
   
   

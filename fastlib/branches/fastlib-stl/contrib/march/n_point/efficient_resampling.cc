@@ -7,6 +7,8 @@
  *
  */
 
+#include "efficient_resampling.h"
+
 int npt::EfficientResampling::FindRegion_(arma::colvec& col) {
   
   int x_ind = floor(col(0) / x_step_);
@@ -24,12 +26,12 @@ void npt::EfficientResampling::SplitData_() {
   
   for (int i = 0; i < num_points_; i++) {
     
-    arma::colvec& col_i = data_all_mat_.col(i);
+    arma::colvec col_i = data_all_mat_.col(i);
     int region_id = FindRegion_(col_i);
     
     // TODO: is this the most efficient way to do this?
-    data_mats_[region_id].insert_cols(data_mats_[region_id].n_cols, col_i);
-    data_weights_[region_id].insert_rows(data_weights_[region_id].n_rows, 
+    data_mats_[region_id]->insert_cols(data_mats_[region_id]->n_cols, col_i);
+    data_weights_[region_id]->insert_rows(data_weights_[region_id]->n_rows, 
                                          data_all_weights_(i));
     
   } // for i over points
@@ -40,12 +42,12 @@ void npt::EfficientResampling::SplitData_() {
 
 void npt::EfficientResampling::BuildTrees_() {
   
-  random_tree_ = new NptNode(random_mat_, leaf_size_);
+  random_tree_ = new NptNode(random_mat_);
   
   // TODO: add old_from_new vectors for weight permutations
   for (int i = 0; i < num_resampling_regions_; i++) {
     
-    data_trees_[i] = new NptNode(data_mats_[i], leaf_size_);
+    data_trees_[i] = new NptNode(*data_mats_[i]);
     
   } // for i
   

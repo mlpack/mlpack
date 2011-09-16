@@ -87,7 +87,7 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
   std::vector<int> nodes_same;
   int next_same = 0;
   
-  for (int i = 0; i < multiplicities_.size(); i++) {
+  for (unsigned int i = 0; i < multiplicities_.size(); i++) {
   
     for (int j = 0; j < multiplicities_[i]; j++) {
       
