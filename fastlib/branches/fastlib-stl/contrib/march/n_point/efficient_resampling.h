@@ -11,7 +11,7 @@
 #define EFFICIENT_RESAMPLING_H
 
 #include "fastlib/fastlib.h"
-
+#include "node_tuple.h"
 
 
 namespace npt {
@@ -37,8 +37,6 @@ namespace npt {
     std::vector<arma::mat*> data_mats_;
     std::vector<arma::colvec*> data_weights_;
     
-    int leaf_size_;
-    
     int tuple_size_;
     
     int num_x_partitions_;
@@ -55,6 +53,8 @@ namespace npt {
     double box_y_length_;
     double box_z_length_;
     
+    int num_points_;
+    
     ///////////////// functions ////////////////////////
     int FindRegion_(arma::colvec& col);
 
@@ -70,17 +70,17 @@ namespace npt {
                         arma::mat& random, arma::colvec& rweights,
                         int num_x_regions, int num_y_regions, int num_z_regions,
                         double box_x_length, double box_y_length, 
-                        double box_z_length
-                        int leaf_size) :
+                        double box_z_length) :
     // trying to avoid copying data
-    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
     data_all_mat_(data.memptr(), data.n_rows, data.n_cols, false), 
     data_all_weights_(weights),
     random_mat_(random.memptr(), random.n_rows, random.n_cols, false), 
     random_weights_(rweights),
     data_trees_(num_resampling_regions_),
-    data_mats_(num_resampling_regions_), leaf_size_(leaf_size),
-    data_weights_(num_resampling_regions_)
+    data_mats_(num_resampling_regions_), 
+    data_weights_(num_resampling_regions_),
+    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
+    num_points_(data.n_cols)
     {
       
       num_x_partitions_ = num_x_regions;
@@ -111,15 +111,12 @@ namespace npt {
       SplitData_();
       
       for (int i = 0; i < num_resampling_regions_; i++) {
-        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i].n_cols;
+        mlpack::IO::Info << "Region " << i <<": " << data_mats_[i]->n_cols;
         mlpack::IO::Info << " points.\n";
       }
       
       
       BuildTrees_();
-      
-      
-      
       
     } // constructor
     
@@ -128,8 +125,7 @@ namespace npt {
       return data_mats_;
     }
     
-    // TODO: decide on pointers vs. references vs. whatever
-    arma::mat& data_mat(int i) {
+    arma::mat* data_mat(int i) {
       return data_mats_[i];
     }
 
@@ -137,16 +133,16 @@ namespace npt {
       return data_weights_;
     }
     
-    arma::covec& data_weight(int i) {
+    arma::colvec* data_weights(int i) {
       return data_weights_[i];
     }
     
-    arma::mat& random_mat() {
-      return random_mat_;
+    arma::mat* random_mat() {
+      return &random_mat_;
     }
     
-    arma::colvec& random_weights() {
-      return random_weights_;
+    arma::colvec* random_weights() {
+      return &random_weights_;
     }
     
     NptNode* random_tree() {

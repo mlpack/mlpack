@@ -36,9 +36,10 @@ namespace npt {
     
     std::vector<NptNode*> node_list_;
     
-    size_t tuple_size_;
-    
     std::vector<int> same_nodes_;
+    
+    int tuple_size_;
+    
     
     
     // this is the position of the node we should split next
@@ -75,9 +76,9 @@ namespace npt {
     
     // use this constructor to make children in the recursion
     NodeTuple(NodeTuple& parent, bool is_left) : 
-    tuple_size_(parent.tuple_size()),
     node_list_(parent.get_node_list()),
-    same_nodes_(parent.get_same_nodes())
+    same_nodes_(parent.get_same_nodes()),
+    tuple_size_(parent.tuple_size())
     {
       
       /*

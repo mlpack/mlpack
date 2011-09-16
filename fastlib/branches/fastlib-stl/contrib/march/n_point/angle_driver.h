@@ -14,6 +14,7 @@
 #include "angle_results.h"
 #include "efficient_resampling.h"
 #include "node_tuple.h"
+#include "generic_npt_alg.h"
 
 namespace npt {
 
@@ -21,7 +22,9 @@ namespace npt {
     
   private:
     
-    static int tuple_size_ = 3;
+    const static int tuple_size_ = 3;
+    
+    int num_resampling_regions_;
     
     AngleResults results_;
     
@@ -43,14 +46,15 @@ namespace npt {
                 std::vector<double>& short_sides, double long_side,
                 std::vector<double>& thetas, double bin_size,
                 int num_x_regions, int num_y_regions, int num_z_regions,
-                double box_x_length, double box_y_length, double box_z_length, 
-                int leaf_size) :
-    r1_vec_(short_sides), r2_multiplier_(long_side), theta_vec_(thetas),
-    bin_size_(bin_size),
+                double box_x_length, double box_y_length, double box_z_length) :
+    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
+    results_(num_resampling_regions_, short_sides, 
+             thetas),
     resampling_class_(data_mat, data_weights, 
-                      random_mat, random_weights, num_regions, box_length,
-                      leaf_size),
-    results_(num_regions, short_sides, thetas)
+                      random_mat, random_weights, num_x_regions, num_y_regions,
+                      num_z_regions, box_x_length, box_y_length, box_z_length),
+    r1_vec_(short_sides), r2_multiplier_(long_side), theta_vec_(thetas),
+    bin_size_(bin_size)
     { } // constructor
     
     

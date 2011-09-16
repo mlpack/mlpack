@@ -40,7 +40,7 @@ void npt::AngleResults::AddRandomResult_(boost::multi_array<int, 2>& partial_res
 } // AddRandomResult
 
 
-void npt::AngleResults::ProcessResults(std::vector<int> region_ids, 
+void npt::AngleResults::ProcessResults(std::vector<int>& region_ids, 
                                        int num_random,
                                        AngleMatcher& matcher) {
   
@@ -55,7 +55,7 @@ void npt::AngleResults::ProcessResults(std::vector<int> region_ids,
 
       bool skip_me = false;
       
-      for (int j = 0; j < region_ids.size(); j++) {
+      for (unsigned int j = 0; j < region_ids.size(); j++) {
         if (i == region_ids[j]) {
           skip_me = true;
           break;
@@ -85,9 +85,9 @@ void npt::AngleResults::PrintResults() {
     
     mlpack::IO::Info << "Resampling region " << region_ind << "\n";
     
-    for (int num_random = 0; num_random < tuple_size; num_random++) {
+    for (int num_random = 0; num_random < tuple_size_; num_random++) {
       
-      std::string this_string(label_string, i, tuple_size_);
+      std::string this_string(label_string, num_random, tuple_size_);
       mlpack::IO::Info << this_string << ": \n";
       
       for (int r1_ind = 0; r1_ind < num_r1_; r1_ind++) {

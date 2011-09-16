@@ -72,7 +72,7 @@ namespace npt {
       num_base_cases_ = 0;
       
       tuple_size_ = 0;
-      for (int i = 0; i < multiplicities_.size(); i++) {
+      for (unsigned int i = 0; i < multiplicities_.size(); i++) {
         
         tuple_size_ += multiplicities_[i];
         

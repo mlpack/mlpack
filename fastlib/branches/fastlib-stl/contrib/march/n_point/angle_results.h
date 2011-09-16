@@ -11,7 +11,7 @@
 #define ANGLE_RESULTS_H
 
 #include "angle_matcher.h"
-#include "boost/multi_array.h"
+#include <boost/multi_array.hpp>
 
 /*
  *  Knows the structure of the results and processes the intermediate 
@@ -46,7 +46,7 @@ namespace npt {
     std::vector<double> r1_vec_;
     std::vector<double> theta_vec_;
     
-    static int tuple_size_ = 3;
+    const static int tuple_size_ = 3;
     
     ///////////////////////////////
     
@@ -62,14 +62,14 @@ namespace npt {
     AngleResults(int num_regions, 
                  std::vector<double>& r1_vec,
                  std::vector<double>& theta_vec) :
-    num_regions_(num_regions), num_r1_(r1_vec.size()), 
-    num_theta_(theta_vec.size()),
     results_(boost::extents[num_regions][tuple_size_]
-                           [r1_vec.size()][theta_vec.size()]),
+             [r1_vec.size()][theta_vec.size()]),
     weighted_results_(boost::extents[num_regions][tuple_size_]
-                                    [r1_vec.size()][theta_vec.size()]),
+                      [r1_vec.size()][theta_vec.size()]),
     RRR_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
     RRR_weighted_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
+    num_regions_(num_regions), num_r1_(r1_vec.size()), 
+    num_theta_(theta_vec.size()),
     r1_vec_(r1_vec), theta_vec_(theta_vec)
     {
       
@@ -88,16 +88,16 @@ namespace npt {
     // gets the result out of the matcher, and adds it into results_
     // in the correct place
     // note that region_ids.size() + num_random = tuple_size
-    void ProcessResults(std::vector<int> region_ids, int num_random,
+    void ProcessResults(std::vector<int>& region_ids, int num_random,
                         AngleMatcher& matcher);
     
     void PrintResults();
     
-    boost::multi_array<4, int>& results() {
+    boost::multi_array<int, 4>& results() {
       return results_;
     }
     
-    boost::multi_array<2, int>& RRR_result() {
+    boost::multi_array<int, 2>& RRR_result() {
       return RRR_result_;
     }
     

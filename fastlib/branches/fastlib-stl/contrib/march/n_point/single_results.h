@@ -11,7 +11,7 @@
 #define SINGLE_RESULTS_H
 
 #include "single_matcher.h"
-#include "boost/multi_array.h"
+#include "boost/multi_array.hpp"
 
 /*
  *  Knows the structure of the results and processes the intermediate 
@@ -53,12 +53,12 @@ namespace npt {
     std::vector<double> r1_vec_;
     std::vector<double> theta_vec_;
     
-    static int tuple_size_ = 3;
+    const static int tuple_size_ = 3;
     
     void AddResult_(int region_ind, int num_random, 
                     int r1_ind, int theta_ind, int result);
     
-    void AddRandomResult_(boost::multi_array<int, 2>& partial_result);
+    void AddRandomResult_(int r1_ind, int theta_ind, int result);
 
     
     
@@ -67,14 +67,14 @@ namespace npt {
     SingleResults(int num_regions, 
                   std::vector<double>& r1_vec,
                   std::vector<double>& theta_vec) :
-    num_regions_(num_regions), num_r1_(r1_vec.size()), 
-    num_theta_(theta_vec.size()),
     results_(boost::extents[num_regions][tuple_size_]
              [r1_vec.size()][theta_vec.size()]),
     weighted_results_(boost::extents[num_regions][tuple_size_]
                       [r1_vec.size()][theta_vec.size()]),
     RRR_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
     RRR_weighted_result_(boost::extents[r1_vec.size()][theta_vec.size()]),
+    num_regions_(num_regions), num_r1_(r1_vec.size()), 
+    num_theta_(theta_vec.size()),
     r1_vec_(r1_vec), theta_vec_(theta_vec)
     {
     
@@ -90,7 +90,7 @@ namespace npt {
     } // constructor
     
     
-    void ProcessResults(std::vector<int> region_ids, int num_random,
+    void ProcessResults(int region_id, int num_random,
                         SingleMatcher& matcher,
                         int r1_ind, int theta_ind);
     
@@ -101,7 +101,7 @@ namespace npt {
       return results_;
     }
     
-    boost::multi_array<2, int>& RRR_result() {
+    boost::multi_array<int, 2>& RRR_result() {
       return RRR_result_;
     }
     

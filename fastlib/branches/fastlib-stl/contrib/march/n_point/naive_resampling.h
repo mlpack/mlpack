@@ -11,6 +11,7 @@
 #define NAIVE_RESAMPLING_H
 
 #include "fastlib/fastlib.h"
+#include "node_tuple.h"
 
 namespace npt {
   
@@ -23,9 +24,16 @@ namespace npt {
     
     arma::mat random_mat_;
     arma::colvec random_weights_;
+    NptNode* random_tree_;
+    
+    arma::mat current_data_mat_;
+    arma::colvec current_data_weights_;
+    NptNode* current_tree_;
+    
+    std::vector<arma::mat*> data_mats_;
+    std::vector<arma::colvec*> data_weights_;
     
     
-    int leaf_size_;
     
     int tuple_size_;
     
@@ -43,23 +51,30 @@ namespace npt {
     double box_y_length_;
     double box_z_length_;
     
+    int num_points_;
+    
+    
+    int FindRegion_(arma::colvec& col);
+    
+    void SplitData_();
     
     
   public:
     
-    EfficientResampling(arma::mat& data, arma::colvec& weights,
-                        arma::mat& random, arma::colvec& rweights,
-                        int num_x_regions, int num_y_regions, int num_z_regions,
-                        double box_x_length, double box_y_length, 
-                        double box_z_length
-                        int leaf_size) :
+    NaiveResampling(arma::mat& data, arma::colvec& weights,
+                    arma::mat& random, arma::colvec& rweights,
+                    int num_x_regions, int num_y_regions, int num_z_regions,
+                    double box_x_length, double box_y_length, 
+                    double box_z_length) :
     // trying to avoid copying data
-    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
     data_all_mat_(data.memptr(), data.n_rows, data.n_cols, false), 
     data_all_weights_(weights),
     random_mat_(random.memptr(), random.n_rows, random.n_cols, false), 
     random_weights_(rweights),
-    leaf_size_(leaf_size),
+    data_mats_(num_resampling_regions_),
+    data_weights_(num_resampling_regions_),
+    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
+    num_points_(data.n_cols)
     {
     
       num_x_partitions_ = num_x_regions;
@@ -78,28 +93,47 @@ namespace npt {
       y_step_ = box_y_length_ / (double)num_y_partitions_;
       z_step_ = box_z_length_ / (double)num_z_partitions_;
       
+      current_tree_ = NULL;
       
+      for (int i = 0; i < num_resampling_regions_; i++) {
+        
+        data_mats_[i] = new arma::mat();
+        data_weights_[i] = new arma::colvec();
+        
+      }
+      
+      SplitData_();
+      
+      random_tree_ = new NptNode(random_mat_);
       
     } // constructor
     
     // returns the data for resampling region i
-    arma::mat& data_mat(int i);
+    arma::mat* data_mat(int i);
     
-    arma::colvec& data_weights(int i);
-
-    NptNode* data_tree(int i);
-    
-    arma::mat& random_mat() {
-      return random_mat_;
+    // IMPORTANT: make sure data_mat() is called first
+    arma::colvec* data_weights(int i) {
+      return &current_data_weights_;
     }
     
-    arma::colvec& random_weights() {
-      return random_weights_;
+    NptNode* data_tree(int i) {
+      return current_tree_;
+    }
+    
+    
+    arma::mat* random_mat() {
+      return &random_mat_;
+    }
+    
+    arma::colvec* random_weights() {
+      return &random_weights_;
     }
     
     // TODO: do I rebuild this every time? 
-    NptNode* random_tree();
-    
+    NptNode* random_tree() {
+      return random_tree_;
+    }
+      
     
   }; // class
   
