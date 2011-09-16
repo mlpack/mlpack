@@ -1,11 +1,10 @@
 /**
- * @file lmetric.h
- * @author Ryan Curtin
+ * @file cosine.h
+ * @author Parikshit Ram
  *
- * Generalized L-metric, allowing both squared distances to be returned as well
- * as non-squared distances.  The squared distances are faster to compute.
+ * This file computes the cosine between two vectors 
+ * according to the formula: cos <AB = A.B / |A||B|
  *
- * This also gives several convenience typedefs for commonly used L-metrics.
  */
 #ifndef COSINE_H
 #define COSINE_H

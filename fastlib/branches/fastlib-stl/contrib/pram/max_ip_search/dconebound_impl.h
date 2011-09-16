@@ -11,7 +11,7 @@
 #define TREE_DCONEBOUND_IMPL_H
 
 // Awaiting transition
-#include "../../mlpack/core/kernels/lmetric.h"
+#include "cosine.h"
 
 #include <armadillo>
 
@@ -38,91 +38,161 @@ void DConeBound<TMetric, TPoint>::CalculateMidpoint(Point *centroid) const {
 /**
  * Calculates maximum bound-to-point cosine.
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
 double DConeBound<TMetric, TPoint>::MaxCosine(const Point& point) const {
 
-  // cos A = cos <point, center_;
-  // cos B = min cos<any_point, center_;
-  // MaxCosine = max(cos(A+B), cos(A-B))
+  // cos A = cos <point, center_, A >= 0; 
+  // cos B = min cos<any_point, center_, B >= 0; 
+  // MaxCosine = 1 if cos A >= cos B or A <= B; 
+  //           = cos (A - B) otherwise; 
 
-  return ;
+  double cos_point_center = MidCosine(point);
+  if (cos_point_center < radius_) {
+    // cos (A - B) = cos A cos B + sin A sin B;
+    double max_cosine = cos_point_center * radius_; 
+    max_cosine += (std::sqrt(1 - cos_point_center * cos_point_center) 
+		   * radius_conjugate_);
+
+    return max_cosine;
+  }
+
+  return 1.0;
 }
 
 /**
  * Calculates maximum bound-to-bound cosine.
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
 double DConeBound<TMetric, TPoint>::MaxCosine(const DConeBound& other) const {
-  // cos A = cos <center_, other.center_;
-  // cos B = cos <center_, any_point;
-  // cos C = cos <other.center_, any_point;
+  // cos A = cos <center_, other.center_, 0 < A < pi;
+  // cos B = cos <center_, any_point, 0 < B < pi;
+  // cos C = cos <other.center_, any_point, 0 < C < pi;
   // MaxCosine = cos (A-(B+C)) if A > B+C
   //           = 1 if A < B+C
 
-  return;
+  double cos_center_center = MidCosine(other.center_);
+
+  if ((cos_center_center < radius_)
+      && (cos_center_center < other.radius_)) {
+    // A > B and A > C
+    // Computing cos (A - B)
+    double cos_cone_other_center = cos_center_center * radius_;
+    cos_cone_other_center
+      += (std::sqrt(1 - cos_center_center * cos_center_center) 
+	  * radius_conjugate_);
+
+    if (cos_cone_other_center < other.radius_) {
+      // A - B > C
+      // computing cos (A - B - C)
+      double cos_cone_other_cone = cos_cone_other_center * other.radius_;
+      cos_cone_other_cone
+	+= (std::sqrt(1 - cos_cone_other_center * cos_cone_other_center) 
+	    * other.radius_conjugate_);
+
+      return cos_cone_other_cone;
+    }
+  } 
+  return 1.0;
 }
 
 /**
  * Computes minimum cosine.
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
 double DConeBound<TMetric, TPoint>::MinCosine(const Point& point) const {
 
-  // cos A = cos <point, center_;
-  // cos B = min cos<any_point, center_;
-  // MinCosine = min(cos(A+B), cos(A-B))
+  // cos A = cos <point, center_, 0 < A < pi;
+  // cos B = min cos<any_point, center_, 0 < B < pi;
+  // MinCosine = cos (A + B) if cos (pi - A) < cos B
+  //           = -1.0 otherwise
 
-  return ;
+  double cos_point_center = MidCosine(point);
+  if (-cos_point_center < radius_) {
+    // cos (A + B) = cos A cos B - sin A sin B;
+    double min_cosine = cos_point_center * radius_; 
+    min_cosine -= (std::sqrt(1 - cos_point_center * cos_point_center) 
+		   * radius_conjugate_);
+
+    return min_cosine;
+  }
+
+  return -1.0;
 }
 
 /**
- * Computes minimum bonud-to-bound cosine.
+ * Computes minimum bound-to-bound cosine.
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
 double DConeBound<TMetric, TPoint>::MinCosine(const DConeBound& other) const {
 
-  // cos A = cos <center_, other.center_;
-  // cos B = cos <center_, any_point;
-  // cos C = cos <other.center_, any_point;
-  // MinCosine = cos (A + (B + C)) if A + B + C <= pi
-  //           = 0 otherwise
+  // cos A = cos <center_, other.center_, 0 < A < pi;
+  // cos B = cos <center_, any_point, 0 < B < pi;
+  // cos C = cos <other.center_, any_point, 0 < C < pi;
+  // MinCosine = cos (A + B + C) if A + B + C < pi;
+  //           = -1.0 otherwise
 
-  return;
+  double cos_center_center = MidCosine(other.center_);
+
+  if ((-cos_center_center < radius_)
+      && (-cos_center_center < other.radius_)) {
+    // A + B < pi and A + C < pi
+    // Computing cos (A + B)
+    double cos_far_cone_other_center = cos_center_center * radius_;
+    cos_far_cone_other_center
+      -= (std::sqrt(1 - cos_center_center * cos_center_center) 
+	  * radius_conjugate_);
+
+    if (-cos_far_cone_other_center < other.radius_) {
+      // A + B + C < pi
+      // computing cos (A + B + C)
+      double cos_far_cone_other_far_cone
+	= cos_far_cone_other_center * other.radius_;
+      cos_far_cone_other_far_cone
+	-= (std::sqrt(1 - cos_far_cone_other_center 
+		      * cos_far_cone_other_center) 
+	    * other.radius_conjugate_);
+
+      return cos_far_cone_other_far_cone;
+    }
+  } 
+  return -1.0;
 }
 
 /**
  * Calculates minimum and maximum bound-to-bound cosine.
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
 DRange DConeBound<TMetric, TPoint>::RangeCosine(const DConeBound& other) const {
-  double delta = MidCosine(other.center_);
-  double sumradius = radius_ + other.radius_;
-  return DRange(
-      math::ClampNonNegative(delta - sumradius),
-      delta + sumradius);
+  return DRange(MinCosine(other), MaxCosine(other));
 }
 
 /**
- * Calculates closest-to-their-midpoint bounding box cosine,
- * i.e. calculates their midpoint and finds the minimum box-to-point
+ * Calculates closest-to-their-midpoint cosine,
+ * i.e. calculates their midpoint and finds the maximum cone-to-point
  * cosine.
  *
  * Equivalent to:
  * <code>
- * other.CalcMidpoint(&other_midpoint)
- * return MinCosineSqToPoint(other_midpoint)
+ * return MaxCosine(&other.center_)
  * </code>
  */
-// TO BE IMPLEMENTED
 template<typename TMetric, typename TPoint>
-double DConeBound<TMetric, TPoint>::MinToMid(const DConeBound& other) const {
-  double delta = MidCosine(other.center_) - radius_;
-  return math::ClampNonNegative(delta);
+double DConeBound<TMetric, TPoint>::MaxToMid(const DConeBound& other) const {
+
+  double cos_center_center = MidCosine(other.center_);
+
+  if (cos_center_center < radius_) {
+    // A > B
+    // MaxToMid = cos (A - B)
+    double max_cos_other_center = cos_center_center * radius_; 
+    max_cos_other_center 
+      += (std::sqrt(1 - cos_center_center * cos_center_center) 
+	  * radius_conjugate_);
+    
+    return max_cos_other_center;
+  }
+
+  return 1.0;
 }
 
 /**
@@ -130,8 +200,57 @@ double DConeBound<TMetric, TPoint>::MinToMid(const DConeBound& other) const {
  */
 template<typename TMetric, typename TPoint>
 double DConeBound<TMetric, TPoint>::MinimaxCosine(const DConeBound& other) const {
-  double delta = MidCosine(other.center_) + other.radius_ - radius_;
-  return math::ClampNonNegative(delta);
+  // cos A = cos <center_, other.center_, 0 < A < pi;
+  // cos B = cos <center_, any_point, 0 < B < pi;
+  // cos C = cos <other.center_, any_point, 0 < C < pi;
+  // MinimaxCosine = -1.0 if cos (pi - (A - B)) >= cos C;
+  //               = 1.0 if cos (A + C) > cos B
+  //               = cos (A - B + C) otherwise
+
+  double cos_center_center = MidCosine(other.center_);
+
+  if (cos_center_center < radius_) {
+    // A > B
+    // computing cos (A - B)
+    double max_cos_other_center = cos_center_center * radius_; 
+    max_cos_other_center 
+      += (std::sqrt(1 - cos_center_center * cos_center_center) 
+	  * radius_conjugate_);
+
+    if (-max_cos_other_center < other.radius_) {
+      // A - B + C < pi
+      // computing cos (A - B + C)
+      double minimax_cosine = max_cos_other_center * other.radius_;
+      minimax_cosine 
+	-= (std::sqrt(1 - max_cos_other_center * max_cos_other_center) 
+	    * other.radius_conjugate_);
+
+      return minimax_cosine;
+    } else {
+      // A - B + C >= pi
+      return -1.0;
+    }
+  } else {
+    // B > A, check if B > A + C
+    // computing cos (A + C)
+    double min_cos_center_other_cone = cos_center_center * other.radius_;
+    min_cos_center_other_cone 
+      -= (std::sqrt(1 - cos_center_center * cos_center_center) 
+	  * other.radius_conjugate_);
+
+    if (min_cos_center_other_cone < radius_) {
+      // A + C > B
+      // computing cos (A - B + C)
+      double minimax_cosine = min_cos_center_other_cone * radius_;
+      minimax_cosine
+	+= (std::sqrt(1 - min_cos_center_other_cone 
+		      * min_cos_center_other_cone) * radius_conjugate_);
+
+      return minimax_cosine;
+    }
+    
+    return 1.0;
+  }
 }
 
 /**
