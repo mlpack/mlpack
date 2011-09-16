@@ -2,8 +2,8 @@
  * @file dconebound.h
  *
  * Bounds that are useful for binary space partitioning trees.
- * Interface to a cone bound that works in arbitrary metric spaces.
- * Works with cosine similarity only (for now)
+ * Interface to a cone bound that works with cosine 
+ * similarity only (for now)
  *
  * @experimental
  */
@@ -34,6 +34,7 @@ class DConeBound {
 
   private:
     double radius_;
+    double radius_conjugate_;
     TPoint center_;
 
   public:
@@ -41,11 +42,15 @@ class DConeBound {
      * Return the radius of the cone bound.
      */
     double radius() const { return radius_; }
+  double radius_conjugate() const { return radius_conjugate_; }
 
     /***
      * Set the radius of the bound.
      */
-    void set_radius(double d) { radius_ = d; }
+    void set_radius(double d) { 
+      radius_ = d;
+      radius_conjugate_ = std::sqrt(1 - d*d);
+    }
 
     /***
      * Return the center point.

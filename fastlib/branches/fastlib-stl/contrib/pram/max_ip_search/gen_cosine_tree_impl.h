@@ -2,7 +2,7 @@
  *
  *  Implementation for the regular pointer-style cosine-tree builder.
  *
- *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
+ *  @author Parikshit Ram (pram@cc.gatech.edu)
  */
 
 #include <assert.h>
@@ -13,7 +13,8 @@
 namespace tree_gen_cosine_tree_private {
 
   // This function assumes that we have points embedded in Euclidean
-  // space.
+  // space. The representative point (center) is chosen as the mean 
+  // of the all unit directions of all the vectors in this set.
 
   // fixed!!
   template<typename TBound>
@@ -61,7 +62,7 @@ namespace tree_gen_cosine_tree_private {
       double cosine_from_right_pivot =
 	Cosine::Evaluate(point, right_bound.center());
 
-      // We swap if the point is further away from the left pivot.
+      // We swap if the point is more angled away from the left pivot.
       if(cosine_from_left_pivot < cosine_from_right_pivot) {	
 	left_membership[left - first] = false;
       } else {
@@ -134,6 +135,8 @@ namespace tree_gen_cosine_tree_private {
       }
     }
 
+    assert((*furthest_cosine) >= -1.0);
+
     return furthest_index;
   }
 
@@ -147,9 +150,13 @@ namespace tree_gen_cosine_tree_private {
 			size_t *old_from_new) {
 
     // Pick a random row.
-    size_t random_row = math::RandInt(node->begin(), node->begin() +
-				       node->count());
-    random_row = node->begin();
+    size_t random_row 
+      = math::RandInt(node->begin(),
+		      node->begin() + node->count());
+
+    // why is this here?
+    // random_row = node->begin();
+
     arma::vec random_row_vec = matrix.unsafe_col(random_row);
 
     // Now figure out the furthest point from the random row picked
@@ -182,9 +189,10 @@ namespace tree_gen_cosine_tree_private {
       ((*left)->bound().center()) = furthest_from_random_row_vec;
       ((*right)->bound().center()) = furthest_from_furthest_random_row_vec;
 
-      size_t left_count = MatrixPartition
-	(matrix, node->begin(), node->count(),
-	 (*left)->bound(), (*right)->bound(), old_from_new);
+      size_t left_count
+	= MatrixPartition(matrix, node->begin(), node->count(),
+			  (*left)->bound(), (*right)->bound(),
+			  old_from_new);
 
       (*left)->Init(node->begin(), left_count);
       (*right)->Init(node->begin() + left_count, node->count() - left_count);
@@ -206,12 +214,12 @@ namespace tree_gen_cosine_tree_private {
     node->bound().center() += right->count() * right->bound().center();
     node->bound().center() /= (double) node->count();
     
-    double left_max_cosine, right_max_cosine;
+    double left_min_cosine, right_min_cosine;
     FurthestColumnIndex(node->bound().center(), matrix, left->begin(), 
-			left->count(), &left_max_cosine);
+			left->count(), &left_min_cosine);
     FurthestColumnIndex(node->bound().center(), matrix, right->begin(), 
-			right->count(), &right_max_cosine);    
-    node->bound().set_radius(std::min(left_max_cosine, right_max_cosine));
+			right->count(), &right_min_cosine);    
+    node->bound().set_radius(std::min(left_min_cosine, right_min_cosine));
   }
 
   // fixed
@@ -230,8 +238,8 @@ namespace tree_gen_cosine_tree_private {
     
     // Otherwise, attempt to split.
     else {
-      bool can_cut = AttemptSplitting(matrix, node, &left, &right, leaf_size,
-				      old_from_new);
+      bool can_cut = AttemptSplitting(matrix, node, &left, &right, 
+				      leaf_size, old_from_new);
       
       if(can_cut) {
 	SplitGenCosineTree(matrix, left, leaf_size, old_from_new);
@@ -239,8 +247,8 @@ namespace tree_gen_cosine_tree_private {
 	CombineBounds(matrix, node, left, right);
       }
       else {
-	MakeLeafCosineTreeNode(matrix, node->begin(), node->count(),
-			       &(node->bound()));
+	MakeLeafCosineTreeNode(matrix, node->begin(),
+			       node->count(), &(node->bound()));
       }
     }
     
