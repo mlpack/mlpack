@@ -48,9 +48,11 @@ class TableExchange {
 
     typedef core::parallel::RouteRequest<SubTableType> SubTableRouteRequestType;
 
-    typedef core::parallel::RouteRequest< unsigned long int > EnergyRouteRequestType;
+    typedef core::parallel::RouteRequest <
+    unsigned long int > EnergyRouteRequestType;
 
-    typedef core::parallel::RouteRequest < SubTableType > QuerySubTableFlushRequestType;
+    typedef core::parallel::RouteRequest <
+    SubTableType > QuerySubTableFlushRequestType;
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType, TaskPriorityQueueType > TaskQueueType;
@@ -167,15 +169,19 @@ class TableExchange {
      */
     unsigned int max_stage_;
 
+    int num_queued_up_query_subtables_;
+
     /** @brief The queued-up termination messages held by the current
      *         MPI process.
      */
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
 
-    /** @brief The queued-up query subtables to be flushed.
+    /** @brief The queued-up query subtables to be flushed for each
+     *         stage.
      */
     std::vector <
-    boost::intrusive_ptr< SubTableType > > queued_up_query_subtables_;
+    std::vector <
+    boost::intrusive_ptr < SubTableType > > > queued_up_query_subtables_;
 
     /** @brief The current stage in the exchange process.
      */
@@ -344,6 +350,8 @@ class TableExchange {
 
     void ClearSubTable_(int cache_id) {
       message_cache_[ cache_id ].subtable_route().object().Destruct();
+      message_cache_[
+        cache_id ].subtable_route().set_object_is_valid_flag(false);
     }
 
   public:
@@ -383,7 +391,20 @@ class TableExchange {
      */
     void QueueFlushRequest(
       const boost::intrusive_ptr<SubTableType > &query_subtable_in) {
-      queued_up_query_subtables_.push_back(query_subtable_in);
+      int destination_rank = query_subtable_in->originating_rank();
+      unsigned int ready_stage = 0;
+      for(unsigned int i = 1; i <= max_stage_; i++) {
+        unsigned int flag = (1 << i);
+        if((flag ^ destination_rank) == 0) {
+          ready_stage = i;
+        }
+        else {
+          ready_stage = std::min(ready_stage + 1, max_stage_);
+          break;
+        }
+      }
+      num_queued_up_query_subtables_++;
+      queued_up_query_subtables_[ready_stage].push_back(query_subtable_in);
     }
 
     /** @brief Returns the number of extra points that can be held.
@@ -419,9 +440,13 @@ class TableExchange {
       return local_table_;
     }
 
+    /** @brief Returns whether the current MPI process can terminate.
+     */
     bool can_terminate() const {
+
+      // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
-             queued_up_query_subtables_.size() == 0 && stage_ == 0;
+             num_queued_up_query_subtables_ == 0 && stage_ == 0;
     }
 
     void push_completed_computation(
@@ -451,6 +476,7 @@ class TableExchange {
       last_fail_index_ = 0;
       local_table_ = NULL;
       max_stage_ = 0;
+      num_queued_up_query_subtables_ = 0;
       remaining_extra_points_to_hold_ = 0;
       stage_ = 0;
       task_queue_ = NULL;
@@ -542,7 +568,8 @@ class TableExchange {
 
       // Initialize the queues.
       queued_up_completed_computation_.resize(0);
-      queued_up_query_subtables_.resize(0);
+      num_queued_up_query_subtables_ = 0;
+      queued_up_query_subtables_.resize(max_stage_ + 1);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());
@@ -629,6 +656,19 @@ class TableExchange {
           // Set the originating rank of the message.
           new_self_send_request_object.set_originating_rank(world.rank());
           new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+        } // end of checking whether the stage is 0.
+
+        // If any of the queued up flush requests is ready to be sent
+        // out, then sent out.
+        if((! message_cache_[
+              world.rank()].flush_route().object_is_valid()) &&
+            queued_up_query_subtables_[ stage_ ].size() > 0) {
+
+          message_cache_[
+            world.rank()].flush_route().object() =
+              *(queued_up_query_subtables_[ stage_ ].back());
+          queued_up_query_subtables_[ stage_ ].pop_back();
+          num_queued_up_query_subtables_--;
         }
 
         // Exchange with the neighbors.
@@ -704,12 +744,16 @@ class TableExchange {
                 route_request.energy_route().object());
             }
 
-            // Flush the received query subtable.
+            // Synchronize with the received query subtable.
             if(route_request.flush_route().remove_from_destination_list(
                   world.rank()) &&
                 route_request.flush_route().object_is_valid()) {
 
               task_queue_->Synchronize(route_request.flush_route().object());
+
+              // Destroy the received query subtable after synchronizing.
+              route_request.flush_route().object().Destruct();
+              route_request.flush_route().set_object_is_valid_flag(false);
             }
           }
         }
