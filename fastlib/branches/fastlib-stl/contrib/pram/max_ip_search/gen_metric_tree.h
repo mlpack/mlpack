@@ -14,9 +14,7 @@
 #ifndef GEN_METRIC_TREE_H
 #define GEN_METRIC_TREE_H
 
-
-#include <fastlib/base/common.h>
-
+//#include <fastlib/base/common.h>
 #include "general_spacetree.h"
 #include "gen_metric_tree_impl.h"
 
