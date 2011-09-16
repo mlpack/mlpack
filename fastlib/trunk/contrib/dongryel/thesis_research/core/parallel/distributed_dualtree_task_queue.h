@@ -296,9 +296,6 @@ class DistributedDualtreeTaskQueue {
           break;
         }
       }
-
-      // Destroy the received subtable after synchronizing.
-      received_query_subtable_in.Destruct();
     }
 
     /** @brief Returns a locked query subtable to the active pool.
