@@ -292,6 +292,7 @@ class DistributedDualtreeTaskQueue {
             checked_out_query_subtables_.begin();
           it != checked_out_query_subtables_.end(); it++) {
         if((*it)->query_subtable_->includes(received_query_subtable_in)) {
+          (*it)->query_subtable_->Copy(received_query_subtable_in);
           break;
         }
       }
