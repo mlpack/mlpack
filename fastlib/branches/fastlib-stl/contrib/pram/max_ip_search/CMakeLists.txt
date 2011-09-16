@@ -6,8 +6,18 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
    # Tree files
    general_spacetree.h
+
+   # Metric tree
    gen_metric_tree_impl.h
    gen_metric_tree.h
+
+   # Cosine tree
+   cosine.h
+   dconebound_impl.h
+   dconebound.h
+   gen_cosine_tree_impl.h
+   gen_cosine_tree.h
+
    # Exact maximum inner-product
    exact_max_ip.h
 )
@@ -32,3 +42,12 @@ target_link_libraries(max_ip_main
    #mlpack_contrib
 )
 
+# The cosine tree preliminary test file
+add_executable(cosine_tree_test
+   EXCLUDE_FROM_ALL
+   cosine_tree_test.cc
+)
+target_link_libraries(cosine_tree_test
+   fastlib
+   mlpack
+)

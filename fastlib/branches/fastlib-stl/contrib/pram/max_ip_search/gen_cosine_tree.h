@@ -12,7 +12,7 @@
 #define GEN_COSINE_TREE_H
 
 
-#include <fastlib/base/common.h>
+//#include <fastlib/base/common.h>
 
 #include "general_spacetree.h"
 #include "gen_cosine_tree_impl.h"
