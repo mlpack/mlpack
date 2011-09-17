@@ -167,8 +167,16 @@ class DistributedDualtreeTaskList {
           KeyType last_subtable_id = sub_tables_.back().get<0>()->subtable_id();
           remaining_extra_points_to_hold_ +=
             sub_tables_[remove_position].get<0>()->start_node()->count();
+
+          printf("Removing %d %d %d\n",
+                 sub_tables_[remove_position].get<0>()->subtable_id().get<0>(),
+                 sub_tables_[remove_position].get<0>()->subtable_id().get<1>(),
+                 sub_tables_[remove_position].get<0>()->subtable_id().get<2>());
+
           id_to_position_map_.erase(
             sub_tables_[remove_position].get<0>()->subtable_id());
+
+
           sub_tables_[ remove_position ].get<0>() =
             sub_tables_.back().get<0>();
           sub_tables_[ remove_position ].get<1>() =
@@ -176,11 +184,9 @@ class DistributedDualtreeTaskList {
           sub_tables_[ remove_position ].get<2>() =
             sub_tables_.back().get<2>();
           sub_tables_.pop_back();
-          if(sub_tables_.size() > 0) {
+          id_to_position_map_.erase(last_subtable_id);
+          if(remove_position != static_cast<int>(sub_tables_.size()))  {
             id_to_position_map_[ last_subtable_id ] = remove_position;
-          }
-          else {
-            id_to_position_map_.erase(last_subtable_id);
           }
         }
       }
@@ -297,8 +303,12 @@ class DistributedDualtreeTaskList {
         int new_position =
           distributed_task_queue_->PushNewQueue(
             source_rank_in, *query_subtable_in_cache);
+        printf("Checking the query subtable at %d: %d %d\n",
+               query_subtable_position, new_position,
+               query_subtable_in_cache->is_alias());
         for(unsigned int j = 0; j < donated_task_list_[i].second.size(); j++) {
           int reference_subtable_position = donated_task_list_[i].second[j];
+          printf("  Reference position: %d\n", reference_subtable_position);
           SubTableType *reference_subtable_in_cache =
             distributed_task_queue_->FindSubTable(
               assigned_cache_indices[ reference_subtable_position ]);
