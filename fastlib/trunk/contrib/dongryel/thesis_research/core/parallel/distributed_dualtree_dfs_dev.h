@@ -366,9 +366,29 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         // Set the starting reference node.
         sub_engine.set_reference_start_node(task_starting_rnode);
 
+
+
+        // DEBUGGING
+#pragma omp critical
+        {
+          printf("Computing %d %d %d, %d %d %d on %d, %d\n",
+                 found_task.first.query_subtable().subtable_id().get<0>(),
+                 found_task.first.query_subtable().subtable_id().get<1>(),
+                 found_task.first.query_subtable().subtable_id().get<2>(),
+                 found_task.first.reference_subtable().subtable_id().get<0>(),
+                 found_task.first.reference_subtable().subtable_id().get<1>(),
+                 found_task.first.reference_subtable().subtable_id().get<2>(),
+                 world_->rank(), thread_id);
+        }
+
+
+
         // Fire away the computation.
         sub_engine.Compute(
           metric, found_task.first.query_result(), false);
+
+        printf("After computing:\n");
+        distributed_tasks.Print();
 
 #pragma omp critical
         {
@@ -507,8 +527,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   // Figure out each process's work using the global tree. Currently
   // only supports P = power of two. Fix this later.
   if(world_->size() &(world_->size() - 1)) {
-    std::cerr << "Re-run with the number of processes equal to a power of "
-              << "two!\n";
+    if(world_->rank() == 0) {
+      std::cerr << "Re-run with the number of processes equal to a power of "
+                << "two!\n";
+    }
     return;
   }
 

@@ -296,6 +296,10 @@ class DistributedDualtreeTaskQueue {
           break;
         }
       }
+
+      // Now put back the synchronized part into the active queue,
+      // splitting the existing checked out query subtable if
+      // necessary.
     }
 
     /** @brief Returns a locked query subtable to the active pool.
@@ -328,12 +332,23 @@ class DistributedDualtreeTaskQueue {
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
 
       printf("Distributed queue status:\n");
+      printf("  Active query subtables:\n");
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
-        printf("  Query subtable ID: %d %d %d with %d tasks\n",
+        printf("    Query subtable ID: %d %d %d with %d tasks\n",
                query_subtable_id.get<0>(), query_subtable_id.get<1>(),
                query_subtable_id.get<2>(),
                static_cast<int>(tasks_[i]->size()));
+      }
+      printf("  Checked-out query subtables:\n");
+      for(typename QuerySubTableLockListType::const_iterator it =
+            checked_out_query_subtables_.begin();
+          it != checked_out_query_subtables_.end(); it++) {
+        SubTableIDType query_subtable_id = (*it)->subtable_id();
+        printf("    Query subtable ID: %d %d %d with %d tasks\n",
+               query_subtable_id.get<0>(), query_subtable_id.get<1>(),
+               query_subtable_id.get<2>(),
+               static_cast<int>((*it)->task_->size()));
       }
     }
 
