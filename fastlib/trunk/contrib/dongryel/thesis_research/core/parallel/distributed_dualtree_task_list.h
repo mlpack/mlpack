@@ -6,6 +6,7 @@
 #ifndef CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_LIST_H
 #define CORE_PARALLEL_DISTRIBUTED_DUALTREE_TASK_LIST_H
 
+#include <boost/intrusive_ptr.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <map>
 #include <vector>
@@ -84,7 +85,8 @@ class DistributedDualtreeTaskList {
      *         subtable is referenced as a reference set.
      */
     std::vector <
-    boost::tuple< SubTableType * , bool, int> > sub_tables_;
+    boost::tuple <
+    boost::intrusive_ptr<SubTableType> , bool, int > > sub_tables_;
 
     /** @brief The communicator for exchanging information.
      */
@@ -214,7 +216,10 @@ class DistributedDualtreeTaskList {
         unsigned long int >(test_subtable_in.start_node()->count()) <=
         remaining_extra_points_to_hold_) {
         sub_tables_.resize(sub_tables_.size() + 1);
-        sub_tables_.back().get<0>() = &test_subtable_in;
+
+        boost::intrusive_ptr< SubTableType > tmp_subtable(new SubTableType());
+        sub_tables_.back().get<0>().swap(tmp_subtable);
+        sub_tables_.back().get<0>()->Alias(test_subtable_in);
         if(count_as_query) {
           sub_tables_.back().get<1>() = true;
           sub_tables_.back().get<2>() = 0;
@@ -268,10 +273,11 @@ class DistributedDualtreeTaskList {
       std::vector<int> assigned_cache_indices;
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
         KeyType subtable_id = sub_tables_[i].get<0>()->subtable_id();
-        printf("Received %d %d %d: %d %d, %d\n", subtable_id.get<0>(),
+        printf("Received %d %d %d: %d %d, %d %d\n", subtable_id.get<0>(),
                subtable_id.get<1>(), subtable_id.get<2>(),
                sub_tables_[i].get<1>(), sub_tables_[i].get<2>(),
-               sub_tables_[i].get<0>()->is_alias());
+               sub_tables_[i].get<0>()->is_alias(),
+               sub_tables_[i].get<0>()->is_query_subtable());
 
         assigned_cache_indices.push_back(
           distributed_task_queue_->push_subtable(
@@ -298,11 +304,6 @@ class DistributedDualtreeTaskList {
           distributed_task_queue_->PushTask(
             world, metric_in, new_position, *reference_subtable_in_cache);
         }
-      }
-
-      // Destroy all subtables.
-      for(unsigned int i = 0; i < sub_tables_.size(); i++) {
-        delete sub_tables_[i].get<0>();
       }
     }
 
@@ -332,7 +333,7 @@ class DistributedDualtreeTaskList {
       int query_subtable_position;
       if((query_subtable_position =
             this->push_back_(query_subtable, true)) < 0) {
-        printf("Could not push in the query subtable within the limit.\n");
+        printf("Could not push in the query subtable within the limit.\n\n");
         return false;
       }
       donated_task_list_.resize(donated_task_list_.size() + 1);
@@ -370,12 +371,15 @@ class DistributedDualtreeTaskList {
       if(donated_task_list_.back().second.size() == 0) {
         this->pop_(query_subtable.subtable_id(), true);
         printf("Popping back the query subtable... because the reference");
-        printf(" could not fit in.\n");
+        printf(" could not fit in.\n\n");
         donated_task_list_.pop_back();
         return false;
       }
       else {
 
+        printf("Fit in! %d %d %d\n\n", query_subtable.subtable_id().get<0>(),
+               query_subtable.subtable_id().get<1>(),
+               query_subtable.subtable_id().get<2>());
         // Otherwise, lock the query subtable.
         distributed_task_queue_->LockQuerySubTable(
           probe_index, destination_rank_);
@@ -411,6 +415,12 @@ class DistributedDualtreeTaskList {
         for(int i = 0; i < num_subtables; i++) {
           ar & (*(sub_tables_[i].get<0>()));
           ar & sub_tables_[i].get<2>();
+          printf("  %d %d %d %d %d\n",
+                 (sub_tables_[i].get<0>())->subtable_id().get<0>(),
+                 (sub_tables_[i].get<0>())->subtable_id().get<1>(),
+                 (sub_tables_[i].get<0>())->subtable_id().get<2>(),
+                 sub_tables_[i].get<0>()->is_query_subtable(),
+                 sub_tables_[i].get<2>());
         }
 
         // Save the donated task lists.
