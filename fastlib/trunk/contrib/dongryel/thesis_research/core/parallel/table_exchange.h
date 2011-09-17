@@ -396,18 +396,22 @@ class TableExchange {
       const boost::intrusive_ptr<SubTableType > &query_subtable_in) {
       int destination_rank = query_subtable_in->originating_rank();
       unsigned int ready_stage = 0;
-      for(unsigned int i = 1; i <= max_stage_; i++) {
+      for(unsigned int i = 1; i < max_stage_; i++) {
         unsigned int flag = (1 << i);
         if((flag ^ destination_rank) == 0) {
           ready_stage = i;
         }
         else {
-          ready_stage = std::min(ready_stage + 1, max_stage_);
+          ready_stage = std::min(ready_stage + 1, max_stage_ - 1);
           break;
         }
       }
       num_queued_up_query_subtables_++;
       queued_up_query_subtables_[ready_stage].push_back(query_subtable_in);
+      printf("Queueing up the flush request for %d %d %d at stage %d\n",
+             query_subtable_in->subtable_id().get<0>(),
+             query_subtable_in->subtable_id().get<1>(),
+             query_subtable_in->subtable_id().get<2>(), ready_stage);
     }
 
     /** @brief Returns the number of extra points that can be held.
@@ -572,7 +576,7 @@ class TableExchange {
       // Initialize the queues.
       queued_up_completed_computation_.resize(0);
       num_queued_up_query_subtables_ = 0;
-      queued_up_query_subtables_.resize(max_stage_ + 1);
+      queued_up_query_subtables_.resize(max_stage_);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());
@@ -669,7 +673,11 @@ class TableExchange {
 
           message_cache_[
             world.rank()].flush_route().object() =
-              *(queued_up_query_subtables_[ stage_ ].back());
+              * (queued_up_query_subtables_[ stage_ ].back());
+          this->EvictSubTable_(message_cache_[
+                                 world.rank()].flush_route().object().cache_block_id());
+          message_cache_ [
+            world.rank()].flush_route().set_object_is_valid_flag(true);
           queued_up_query_subtables_[ stage_ ].pop_back();
           num_queued_up_query_subtables_--;
         }
@@ -766,12 +774,20 @@ class TableExchange {
           message_send_request_.begin(),
           message_send_request_.begin() + num_subtables_to_exchange);
 
-        // For every valid send, unlock its cache.
+        // For every valid send, unlock its cache and destroy any
+        // flushed query subtables.
         for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
           unsigned int process_rank = i + lower_bound_send;
           if(process_rank != static_cast<unsigned int>(world.rank()) &&
               message_cache_[process_rank].subtable_route().object_is_valid()) {
             this->ReleaseCache(world, process_rank, 1);
+          }
+          if(message_cache_[
+                process_rank ].flush_route().object_is_valid()) {
+            message_cache_[
+              process_rank ].flush_route().object().Destruct();
+            message_cache_[
+              process_rank ].flush_route().set_object_is_valid_flag(false);
           }
         }
 
