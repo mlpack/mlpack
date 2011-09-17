@@ -366,29 +366,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         // Set the starting reference node.
         sub_engine.set_reference_start_node(task_starting_rnode);
 
-
-
-        // DEBUGGING
-#pragma omp critical
-        {
-          printf("Computing %d %d %d, %d %d %d on %d, %d\n",
-                 found_task.first.query_subtable().subtable_id().get<0>(),
-                 found_task.first.query_subtable().subtable_id().get<1>(),
-                 found_task.first.query_subtable().subtable_id().get<2>(),
-                 found_task.first.reference_subtable().subtable_id().get<0>(),
-                 found_task.first.reference_subtable().subtable_id().get<1>(),
-                 found_task.first.reference_subtable().subtable_id().get<2>(),
-                 world_->rank(), thread_id);
-        }
-
-
-
         // Fire away the computation.
         sub_engine.Compute(
           metric, found_task.first.query_result(), false);
-
-        printf("After computing:\n");
-        distributed_tasks.Print();
 
 #pragma omp critical
         {
