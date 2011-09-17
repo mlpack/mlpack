@@ -175,6 +175,7 @@ class DistributedDualtreeTaskQueue {
 
       // Queue and evict.
       table_exchange_.QueueFlushRequest(query_subtables_[probe_index]);
+      num_imported_query_subtables_--;
       this->Evict_(probe_index);
     }
 
@@ -287,19 +288,41 @@ class DistributedDualtreeTaskQueue {
      */
     void Synchronize(SubTableType &received_query_subtable_in) {
 
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      SubTableIDType received_query_subtable_id =
+        received_query_subtable_in.subtable_id();
+
       // Find the checked out subtable in the list and synchronize.
       for(typename QuerySubTableLockListType::iterator it =
             checked_out_query_subtables_.begin();
           it != checked_out_query_subtables_.end(); it++) {
         if((*it)->query_subtable_->includes(received_query_subtable_in)) {
           (*it)->query_subtable_->Copy(received_query_subtable_in);
+
+          // Now put back the synchronized part into the active queue,
+          // splitting the existing checked out query subtable if
+          // necessary.
+          SubTableIDType comp_query_subtable_id =
+            (*it)->query_subtable_->subtable_id();
+          if(received_query_subtable_id.get<0>() ==
+              comp_query_subtable_id.get<0>() &&
+              received_query_subtable_id.get<1>() ==
+              comp_query_subtable_id.get<1>() &&
+              received_query_subtable_id.get<2>() ==
+              comp_query_subtable_id.get<2>()) {
+            assigned_work_.push_back((*it)->assigned_work_);
+            query_subtables_.push_back((*it)->query_subtable_);
+            remaining_work_for_query_subtables_.push_back(
+              (*it)->remaining_work_for_query_subtable_);
+            tasks_.push_back((*it)->task_);
+            checked_out_query_subtables_.erase(it);
+          }
+          else {
+
+          }
           break;
         }
       }
-
-      // Now put back the synchronized part into the active queue,
-      // splitting the existing checked out query subtable if
-      // necessary.
     }
 
     /** @brief Returns a locked query subtable to the active pool.
