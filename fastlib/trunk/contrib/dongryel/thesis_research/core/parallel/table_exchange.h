@@ -674,6 +674,8 @@ class TableExchange {
           message_cache_[
             world.rank()].flush_route().object() =
               * (queued_up_query_subtables_[ stage_ ].back());
+
+          printf("Dequeueing from flush queue:\n");
           this->EvictSubTable_(message_cache_[
                                  world.rank()].flush_route().object().cache_block_id());
           message_cache_ [

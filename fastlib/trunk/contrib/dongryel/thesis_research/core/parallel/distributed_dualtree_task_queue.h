@@ -310,6 +310,12 @@ class DistributedDualtreeTaskQueue {
               comp_query_subtable_id.get<1>() &&
               received_query_subtable_id.get<2>() ==
               comp_query_subtable_id.get<2>()) {
+
+            printf("Putting %d %d %d back to the queue!!!!\n\n",
+                   comp_query_subtable_id.get<0>(),
+                   comp_query_subtable_id.get<1>(),
+                   comp_query_subtable_id.get<2>()
+                  );
             assigned_work_.push_back((*it)->assigned_work_);
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
