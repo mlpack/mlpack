@@ -205,6 +205,7 @@ class DistributedDualtreeTaskList {
           printf("Found %d %d %d as a query table at %d.\n",
                  subtable_id.get<0>(), subtable_id.get<1>(),
                  subtable_id.get<2>(), existing_position);
+          sub_tables_[existing_position].get<0>()->Alias(test_subtable_in);
           sub_tables_[ existing_position ].get<1>() = true;
         }
         return existing_position;
