@@ -466,6 +466,13 @@ class DistributedDualtreeTaskList {
           sub_tables_[i].get<0>()->Init(i, false);
           ar & (*(sub_tables_[i].get<0>()));
           ar & sub_tables_[i].get<2>();
+          sub_tables_[i].get<1>() =
+            (sub_tables_[i].get<0>()->query_result() != NULL);
+          printf("  Loaded %d %d %d as %d %d\n",
+                 sub_tables_[i].get<0>()->subtable_id().get<0>(),
+                 sub_tables_[i].get<0>()->subtable_id().get<1>(),
+                 sub_tables_[i].get<0>()->subtable_id().get<2>(),
+                 sub_tables_[i].get<1>(), sub_tables_[i].get<2>());
         }
 
         // Load the donated task lists.

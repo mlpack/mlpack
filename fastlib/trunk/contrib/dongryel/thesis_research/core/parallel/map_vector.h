@@ -188,6 +188,11 @@ class MapVector {
 
     void Alias(const core::parallel::MapVector<T> &source_in) {
       internal_ = source_in.internal();
+      indices_to_save_ = source_in.indices_to_save();
+    }
+
+    const std::vector<int> &indices_to_save() const {
+      return indices_to_save_;
     }
 
     template<typename TreeIteratorType>
@@ -296,6 +301,7 @@ class MapVector {
         internal_->position_to_id_map();
 
       // Load each element and its mapping.
+      indices_to_save_.resize(0);
       for(int i = 0; i < num_elements; i++) {
         int original_index;
         T tmp_val;
@@ -304,6 +310,7 @@ class MapVector {
         id_to_position_map[ original_index ] = i;
         position_to_id_map[ i ] = original_index;
         this->operator[](original_index) = tmp_val;
+        indices_to_save_.push_back(original_index);
       }
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
