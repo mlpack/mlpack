@@ -1,18 +1,18 @@
-function [] = SparseCensorship(X, publishers, K, rho, lambda, mu, gamma)
-%function [] = SparseCensorship(X, publishers, K, rho, lambda, mu, gamma)
+function [theta_bar, theta, beta, eta, phi] = SparseCensorship(X, publishers, K, rho, lambda, mu, nu)
+%function [] = SparseCensorship(X, publishers, K, rho, lambda, mu, nu)
 %
 % X - word counts, stored as sparse (# vocab words) x (# docs)
 %     since X is sparse, storing the transpose instead may not matter
 % publishers - vector of length # docs where publishers_i indicates
 %              publisher id for document i, for publisher ids in
 %              [P] (each publisher id must be used at least once)
-% rho, lambda, mu, and gamma are used as regularization parameters
+% rho, lambda, mu, and nu are used as regularization parameters
 % for l1-norm penalties. Their correspondence to regularized
 % variables is:
 %   rho     -  theta_bar
 %   lambda  -  theta   (all theta_d are regularized by the same lambda)
 %   mu      -  beta    (all beta_k are regularized by the same mu)
-%   gamma   -  eta     (all eta_{k,p} are regularized by the same gamma)
+%   nu   -  eta     (all eta_{k,p} are regularized by the same nu)
 %
 %
 % We use MAP to estimate theta_bar, theta, beta, and eta.
@@ -22,6 +22,17 @@ function [] = SparseCensorship(X, publishers, K, rho, lambda, mu, gamma)
 % then it isn't clear that we will obtain a sparse code, but rather
 % an average of sparse codes (which need not be sparse).]
 %
+
+verbose = true;
+
+
+% set options for L1GeneralProjection
+options.maxIter = 250; % Default iteration limit
+options.adjustStep = 0; % ?
+options.order = -1; % LBFGS
+options.corrections = 10; % ?
+options.verbose = false;
+
 
 % D is the number of documents
 % V is the number of vocabulary words
@@ -41,58 +52,97 @@ counts_by_doc = sum(X);
 
 % for now, just set up the sizes for the parameters. coding will happen later
 
-% Initialize theta_bar
+% Initialize theta_bar to uniform distribution
 theta_bar = zeros(K, 1);
+rho = rho * ones(K, 1);
 
-% Initialize theta for each document
+
+% Initialize theta for each document to uniform distribution
 theta = zeros(K, D);
+lambda = lambda * ones(K, 1);
 
-% Initialize beta for each topic
+
+% Initialize beta for each topic, randomly
 beta = zeros(V, K);
+for j = 1:K
+  beta(:,j) = rand(V, 1);
+  beta(:,j) = log(beta(:,j) / sum(beta(:,j)));
+end
+mu = mu * ones(V, 1);
 
-% Initialize eta for each topic and publisher
+
+% Initialize eta for each topic and publisher to uniform distribution
 %   - perhaps eta should be sparse?
 eta = zeros(V, K, P);
+nu = nu * ones(V, 1);
 
 
+for iteration_num = 1:10
+  % 2) Variational EM Loop
+  
+  % 2 a) E-Step
+  
+  % Given {theta_bar, theta, beta, eta}, Update phi (the variational parameters for z)
+  
+  phi = ComputePhi(theta_bar, theta, beta, eta, publishers, inds_by_doc);
+  
+  
+  % Compute expectations needed for model parameter updates
+  
+  % 2 b) M-step
 
-% 2) Variational EM Loop
+  % Update model parameters
 
-% 2 a) E-Step
-
-% Given {theta_bar, theta, beta, eta}, Update phi (the variational parameters for z)
-
-phi = ComputePhi(theta_bar, theta, beta, eta, publishers, inds_by_doc);
-
-
-% Compute expectations needed for model parameter updates
-
-% 2 b) M-step
-
-% Update model parameters
-
-% Update theta_bar
-new_theta_d = ...
-    L1GeneralProjection(@(theta_bar_var) ThetaBarObjective(theta_bar_var, theta, phi, X, ...
+  % Update theta_bar
+  if verbose
+    fprintf('Updating theta_bar\n');
+  end
+  new_theta_bar = ...
+      L1GeneralProjection(@(theta_bar_var) ThetaBarObjective(theta_bar_var, theta, phi, X, ...
 						  counts_by_doc), ...
-			theta_bar, lambda); % also, can add an optional parameter for options
+			  theta_bar, rho, options);
+  theta_bar = new_theta_bar;
 
-% Update theta
-for d = 1:D
-  fprintf('d = %d\n', d);
+  % Update theta
+  for d = 1:D
+    if verbose
+      fprintf('Updating theta_%d\n', d);
+    end
 
-  new_theta_d = ...
-      L1GeneralProjection(@(theta_d) ThetaObjective(theta_bar, theta_d, phi{d}, X(:,d), ...
-                                                    counts_by_doc(d)), ...
-                          theta(:,d), lambda); % also, can add an optional parameter for options
+    new_theta_d = ...
+	L1GeneralProjection(@(theta_d) ThetaObjective(theta_d, theta_bar, phi{d}, X(:,d), ...
+						      counts_by_doc(d)), ...
+			    theta(:,d), lambda, options);
+    theta(:,d) = new_theta_d;
+  end
+
+  % Update beta
+  for k = 1:K
+    if verbose
+      fprintf('Updating beta_%d\n', k);
+    end
+
+    new_beta_k = ...
+	L1GeneralProjection(@(beta_k) BetaObjective(beta_k, k, eta, phi, ...
+						    X, publishers), ...
+			    beta(:,k), mu, options);
+    beta(:,k) = new_beta_k;
+  end
+
+  % Update eta
+  for k = 1:K
+    for p = 1:P
+      if verbose
+	fprintf('Updating eta_{%d,%d}\n', k, p);
+      end
+      
+      new_eta_k_p = ...
+	  L1GeneralProjection(@(eta_k_p) EtaObjective(eta_k_p, beta(:,k), ...
+						      k, p, phi, X, ...
+						      publishers), ...
+			      eta(:,k,p), nu, options);
+      eta(:,k,p) = new_eta_k_p;
+    end
+  end
+
 end
-
-% Update beta
-
-
-
-% Update eta
-
-
-% 2 c) Go back to E-Step
-
