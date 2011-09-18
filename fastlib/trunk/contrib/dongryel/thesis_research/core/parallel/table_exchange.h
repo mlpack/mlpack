@@ -385,7 +385,7 @@ class TableExchange {
 
       // Decrement the number of extra points to receive.
       remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
-      printf("Now remaining: %lu\n", remaining_extra_points_to_hold_);
+      printf("Now remaining: %lu afte subtracting %d\n", remaining_extra_points_to_hold_, subtable_in.start_node()->count());
 
       return receive_slot;
     }
@@ -680,6 +680,11 @@ class TableExchange {
                                  world.rank()].flush_route().object().cache_block_id());
           message_cache_ [
             world.rank()].flush_route().set_object_is_valid_flag(true);
+          message_cache_[world.rank()].flush_route().add_destination(
+            message_cache_[
+              world.rank()].flush_route().object().originating_rank());
+          printf("Going to : %d\n", message_cache_[
+                   world.rank()].flush_route().object().originating_rank());
           queued_up_query_subtables_[ stage_ ].pop_back();
           num_queued_up_query_subtables_--;
         }
