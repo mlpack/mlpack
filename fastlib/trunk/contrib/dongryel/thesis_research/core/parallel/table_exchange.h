@@ -381,11 +381,11 @@ class TableExchange {
       message_cache_[receive_slot].subtable_route().object() = subtable_in;
       message_cache_[
         receive_slot].subtable_route().object().set_cache_block_id(receive_slot);
-      message_locks_[ receive_slot ] = num_referenced_as_reference_set;
+      this->LockCache(receive_slot, num_referenced_as_reference_set);
 
       // Decrement the number of extra points to receive.
       remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
-      printf("Now remaining: %lu afte subtracting %d\n", remaining_extra_points_to_hold_, subtable_in.start_node()->count());
+      printf("Now remaining: %lu after subtracting %d\n", remaining_extra_points_to_hold_, subtable_in.start_node()->count());
 
       return receive_slot;
     }
@@ -675,7 +675,10 @@ class TableExchange {
             world.rank()].flush_route().object() =
               * (queued_up_query_subtables_[ stage_ ].back());
 
-          printf("Dequeueing from flush queue:\n");
+          printf("Dequeueing from flush queue: %d %d %d\n",
+                 (queued_up_query_subtables_[ stage_ ].back())->subtable_id().get<0>(),
+                 (queued_up_query_subtables_[ stage_ ].back())->subtable_id().get<1>(),
+                 (queued_up_query_subtables_[ stage_ ].back())->subtable_id().get<2>());
           this->EvictSubTable_(message_cache_[
                                  world.rank()].flush_route().object().cache_block_id());
           message_cache_ [
@@ -683,8 +686,6 @@ class TableExchange {
           message_cache_[world.rank()].flush_route().add_destination(
             message_cache_[
               world.rank()].flush_route().object().originating_rank());
-          printf("Going to : %d\n", message_cache_[
-                   world.rank()].flush_route().object().originating_rank());
           queued_up_query_subtables_[ stage_ ].pop_back();
           num_queued_up_query_subtables_--;
         }
