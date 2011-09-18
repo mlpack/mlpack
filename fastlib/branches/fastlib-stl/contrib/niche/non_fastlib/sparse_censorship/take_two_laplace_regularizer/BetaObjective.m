@@ -11,7 +11,7 @@ logsumexp_k_by_publisher = zeros(P, 1);
 probs = zeros(V, P);
 for p = 1:P
   logsumexp_k_by_publisher(p) = logsumexp(beta_k + eta(:,k,p));
-  probs(:,p) = exp(beta_k + eta(:,k,p) - logsumexp_k_by_publisher(p);
+  probs(:,p) = exp(beta_k + eta(:,k,p) - logsumexp_k_by_publisher(p));
 end
 
 sum_weighted_counts = zeros(D, 1);
