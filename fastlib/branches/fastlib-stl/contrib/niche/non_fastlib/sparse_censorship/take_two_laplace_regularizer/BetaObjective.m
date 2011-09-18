@@ -19,7 +19,7 @@ g = zeros(V, 1);
 for d = 1:D
   weighted_count = X(:,d) .* phi{d}(:,k);
   sum_weighted_counts(d) = sum(weighted_count);
-  g = g - weighted_count + sum_weighted_counts(d) * probs(:,publishers(d))
+  g = g - weighted_count + sum_weighted_counts(d) * probs(:,publishers(d));
 end
 
 
@@ -40,7 +40,7 @@ end
 
 f = 0;
 for d = 1:D
-  f = f - sum(X(:,d) .* phi{d}(:,k) .* beta(:,k));
+  f = f - sum(X(:,d) .* phi{d}(:,k) .* beta_k);
 end
 
 for p = 1:P

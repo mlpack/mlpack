@@ -1,4 +1,4 @@
-function [theta_bar, theta, beta, eta, phi] = SparseCensorship(X, publishers, K, rho, lambda, mu, nu)
+function [theta_bar, theta, Beta, eta, phi] = SparseCensorship(X, publishers, K, rho, lambda, mu, nu)
 %function [] = SparseCensorship(X, publishers, K, rho, lambda, mu, nu)
 %
 % X - word counts, stored as sparse (# vocab words) x (# docs)
@@ -11,11 +11,11 @@ function [theta_bar, theta, beta, eta, phi] = SparseCensorship(X, publishers, K,
 % variables is:
 %   rho     -  theta_bar
 %   lambda  -  theta   (all theta_d are regularized by the same lambda)
-%   mu      -  beta    (all beta_k are regularized by the same mu)
+%   mu      -  Beta    (all beta_k are regularized by the same mu)
 %   nu   -  eta     (all eta_{k,p} are regularized by the same nu)
 %
 %
-% We use MAP to estimate theta_bar, theta, beta, and eta.
+% We use MAP to estimate theta_bar, theta, Beta, and eta.
 % [Note: Why MAP for theta? So that we get a sparse
 % representation for each document, which can then be used in a
 % discriminative estimator. Also, if we aren't MAP about theta,
@@ -24,6 +24,10 @@ function [theta_bar, theta, beta, eta, phi] = SparseCensorship(X, publishers, K,
 %
 
 verbose = true;
+
+if size(publishers, 1) > size(publishers, 2)
+  publishers = publishers';
+end
 
 
 % set options for L1GeneralProjection
@@ -62,11 +66,11 @@ theta = zeros(K, D);
 lambda = lambda * ones(K, 1);
 
 
-% Initialize beta for each topic, randomly
-beta = zeros(V, K);
+% Initialize Beta for each topic, randomly
+Beta = zeros(V, K);
 for j = 1:K
-  beta(:,j) = rand(V, 1);
-  beta(:,j) = log(beta(:,j) / sum(beta(:,j)));
+  Beta(:,j) = rand(V, 1);
+  Beta(:,j) = log(Beta(:,j) / sum(Beta(:,j)));
 end
 mu = mu * ones(V, 1);
 
@@ -82,9 +86,9 @@ for iteration_num = 1:10
   
   % 2 a) E-Step
   
-  % Given {theta_bar, theta, beta, eta}, Update phi (the variational parameters for z)
+  % Given {theta_bar, theta, Beta, eta}, Update phi (the variational parameters for z)
   
-  phi = ComputePhi(theta_bar, theta, beta, eta, publishers, inds_by_doc);
+  phi = ComputePhi(theta_bar, theta, Beta, eta, publishers, inds_by_doc);
   
   
   % Compute expectations needed for model parameter updates
@@ -94,6 +98,7 @@ for iteration_num = 1:10
   % Update model parameters
 
   % Update theta_bar
+  options.verbose = false;
   if verbose
     fprintf('Updating theta_bar\n');
   end
@@ -104,6 +109,7 @@ for iteration_num = 1:10
   theta_bar = new_theta_bar;
 
   % Update theta
+  options.verbose = false;
   for d = 1:D
     if verbose
       fprintf('Updating theta_%d\n', d);
@@ -116,7 +122,8 @@ for iteration_num = 1:10
     theta(:,d) = new_theta_d;
   end
 
-  % Update beta
+  % Update Beta
+  options.verbose = true;
   for k = 1:K
     if verbose
       fprintf('Updating beta_%d\n', k);
@@ -125,11 +132,12 @@ for iteration_num = 1:10
     new_beta_k = ...
 	L1GeneralProjection(@(beta_k) BetaObjective(beta_k, k, eta, phi, ...
 						    X, publishers), ...
-			    beta(:,k), mu, options);
-    beta(:,k) = new_beta_k;
+			    Beta(:,k), mu, options);
+    Beta(:,k) = new_beta_k;
   end
 
   % Update eta
+  options.verbose = true;
   for k = 1:K
     for p = 1:P
       if verbose
@@ -137,7 +145,7 @@ for iteration_num = 1:10
       end
       
       new_eta_k_p = ...
-	  L1GeneralProjection(@(eta_k_p) EtaObjective(eta_k_p, beta(:,k), ...
+	  L1GeneralProjection(@(eta_k_p) EtaObjective(eta_k_p, Beta(:,k), ...
 						      k, p, phi, X, ...
 						      publishers), ...
 			      eta(:,k,p), nu, options);
