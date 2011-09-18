@@ -22,7 +22,7 @@ end
 
 f = 0;
 for d = find(publishers == p)
-  f = f - sum(X(:,d) .* phi{d}(:,k) .* eta{p}(:,k));
+  f = f - sum(X(:,d) .* phi{d}(:,k) .* eta_k_p);
 end
 
 f = f + sum(sum_weighted_counts) * logsumexp_k_p;
