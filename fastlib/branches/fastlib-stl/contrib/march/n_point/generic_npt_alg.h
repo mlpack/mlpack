@@ -48,6 +48,8 @@ namespace npt {
     int num_prunes_;
     int num_base_cases_;
     
+    bool do_naive_;
+    
     
     
     bool CanPrune_(NodeTuple& nodes);
@@ -62,9 +64,11 @@ namespace npt {
     
     GenericNptAlg(std::vector<NptNode*>& trees_in, 
                   std::vector<int>& multiplicities_in,
-                  TMatcher& matcher_in) :
+                  TMatcher& matcher_in, bool do_naive = false) :
     matcher_(matcher_in), trees_(trees_in)
     {
+      
+      do_naive_ = do_naive;
       
       //mlpack::IO::Info << "generic alg constructor.\n";
       
