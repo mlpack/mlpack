@@ -52,16 +52,13 @@ int main(int argc, char *argv[])
 
   if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;
-  }
-  else if (learner_name == "svm_r") { // Support Vector Regression
+  } else if (learner_name == "svm_r") { // Support Vector Regression
     learner_typeid = 1;
-  }
-  else if (learner_name == "svm_de") { // One Class Support Vector Machine
+  } else if (learner_name == "svm_de") { // One Class Support Vector Machine
     learner_typeid = 2;
-  }
-  else {
-    fprintf(stderr, "Unknown support vector learner name! Program stops!\n");
-    return 0;
+  } else {
+    IO::Fatal << "--svm/learner_name: Unknown learner name (valid: 'svm_c',"
+        " 'svm_r', 'svm_de')." << std::endl;
   }
 
   // TODO: more kernels to be supported
@@ -94,11 +91,10 @@ int main(int argc, char *argv[])
 //  }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
 
-
-  if (mode=="train" || mode=="train_test") {
+  if (mode == "train" || mode == "train_test") {
     arma::mat dataSet;
     std::string trainFile = IO::GetParam<std::string>("svm/train_data");
-    fprintf(stderr, "SVM Training... \n");
+    IO::Info << "Training SVM..." << std::endl;
 
     /* Load training data */
     if (data::Load(trainFile.c_str(), dataSet) == false)
@@ -110,7 +106,7 @@ int main(int argc, char *argv[])
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode == "train_test") {
-        fprintf(stderr, "SVM Predicting... \n");
+        IO::Info << "Making predictions with SVM model..." << std::endl;
 
         /* Load testing data */
         arma::mat dataSet;
@@ -125,7 +121,7 @@ int main(int argc, char *argv[])
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode == "train_test") {
-        fprintf(stderr, "SVM Predicting... \n");
+        IO::Info << "Making predictions with SVM model..." << std::endl;
 
         /* Load testing data */
         arma::mat dataSet;
@@ -140,7 +136,7 @@ int main(int argc, char *argv[])
 
   /* Testing(offline) Mode, need loading model file and testing data */
   else if (mode == "test") {
-    fprintf(stderr, "SVM Predicting... \n");
+    IO::Info << "Making predictions with SVM model..." << std::endl;
 
     /* Load testing data */
     arma::mat dataSet;
