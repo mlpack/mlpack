@@ -62,3 +62,13 @@ target_link_libraries(n_point_angle_resampling_main
     mlpack_contrib
 )
 
+add_executable(n_point_single_main
+    EXCLUDE_FROM_ALL
+    n_point_single_main.cc
+)
+target_link_libraries(n_point_single_main
+    fastlib
+    mlpack
+    mlpack_contrib
+)
+

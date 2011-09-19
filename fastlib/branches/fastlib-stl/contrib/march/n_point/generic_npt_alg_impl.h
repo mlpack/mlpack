@@ -112,9 +112,13 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
   // matcher needs to know num_random_ too to store counts correctly
   NodeTuple nodes(node_list, nodes_same);
   
-  DepthFirstRecursion_(nodes);
-  
-  //mlpack::IO::Info << "generic num_base_cases: " << num_base_cases_ << "\n";
+  if (do_naive_) {
+    BaseCase_(nodes);
+  }
+  else {
+    DepthFirstRecursion_(nodes);
+  }
+    //mlpack::IO::Info << "generic num_base_cases: " << num_base_cases_ << "\n";
   //mlpack::IO::Info << "generic num_prunes: " << num_prunes_ << "\n";
   
 } // Compute
