@@ -14,6 +14,7 @@ PROGRAM_INFO("Cosine Tree Tester",
 
 PARAM_STRING_REQ("r", "The data set to be indexed", "");
 PARAM_FLAG("xx_print_tree", "The flag to print the tree", "");
+PARAM_FLAG("some_flag", "some test flag", "");
 
 int main (int argc, char *argv[]) {
 
@@ -36,15 +37,18 @@ int main (int argc, char *argv[]) {
   arma::Col<size_t> old_from_new_data;
 
   CTreeType *test_tree
-    = proximity::MakeGenCosineTree<CTreeType>(rdata, 5,
+    = proximity::MakeGenCosineTree<CTreeType>(rdata, 20,
 					      &old_from_new_data,
 					      NULL);
 
-  if (!IO::HasParam("xx_print_tree")) {
+  if (IO::HasParam("xx_print_tree")) {
     test_tree->Print();
   } else {
     IO::Info << "Tree built" << endl;
   }
+
+  if (IO::HasParam("some_flag"))
+    printf("The flag is working!\n");
 }
 
 

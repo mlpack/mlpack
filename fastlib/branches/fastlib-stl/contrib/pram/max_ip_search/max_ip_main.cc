@@ -1,5 +1,6 @@
 #include <armadillo>
 #include <string>
+#include <fastlib/fastlib.h>
 #include "exact_max_ip.h"
 
 using namespace mlpack;
@@ -99,9 +100,9 @@ int main (int argc, char *argv[]) {
 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < nac.n_elem / knns ; i++) {
-        fprintf(fp, "%zud", i);
+        fprintf(fp, "%zu", i);
         for(size_t j = 0; j < knns; j++)
-          fprintf(fp, ", %zud, %lg", 
+          fprintf(fp, ", %zu, %lg", 
                   nac(i*knns+j), din(i*knns+j));
         fprintf(fp, "\n");
       }
@@ -138,9 +139,9 @@ int main (int argc, char *argv[]) {
 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
-        fprintf(fp, "%zud", i);
+        fprintf(fp, "%zu", i);
         for(size_t j = 0; j < knns; j++)
-          fprintf(fp, ",%zud,%lg", 
+          fprintf(fp, ",%zu,%lg", 
                   exc(i*knns+j), die(i*knns+j));
         fprintf(fp, "\n");
       }

@@ -205,11 +205,11 @@ class GeneralBinarySpaceTree {
   
   void Print() const {
     if (!is_leaf()) {
-      printf("internal node: %zud to %zud: %zud points total - radius: %lg\n",
+      printf("internal node: %zu to %zu: %zu points total - radius: %lg\n",
 	     begin_, begin_ + count_ - 1, count_, bound_.radius());
     }
     else {
-      printf("leaf node: %zud to %zud: %zud points total - radius: %lg\n",
+      printf("leaf node: %zu to %zu: %zu points total - radius: %lg\n",
 	     begin_, begin_ + count_ - 1, count_, bound_.radius());
     }
 
