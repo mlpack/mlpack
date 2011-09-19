@@ -56,6 +56,8 @@ class QuerySubTableLock {
     boost::intrusive_ptr <
     core::parallel::DisjointIntIntervals > assigned_work_;
 
+    int locked_mpi_rank_;
+
     boost::intrusive_ptr< SubTableType > query_subtable_;
 
     unsigned long int remaining_work_for_query_subtable_;
@@ -69,7 +71,11 @@ class QuerySubTableLock {
   private:
 
     void CheckOut_(
-      DistributedDualtreeTaskQueueType *checkout_from, int probe_index) {
+      DistributedDualtreeTaskQueueType *checkout_from, int probe_index,
+      int locked_mpi_rank_in) {
+
+      // Set the locked MPI rank.
+      locked_mpi_rank_ = locked_mpi_rank_in;
 
       // Set the variables for keeping track of the remaining
       // computations.
@@ -154,6 +160,7 @@ class QuerySubTableLock {
     }
 
     QuerySubTableLock() {
+      locked_mpi_rank_ = -1;
       num_remaining_tasks_ = NULL;
       reference_count_ = 0;
       remaining_local_computation_ = NULL;

@@ -358,7 +358,8 @@ class DistributedDualtreeTaskQueue {
       checked_out_query_subtables_.push_front(
         boost::intrusive_ptr< QuerySubTableLockType > (
           new QuerySubTableLockType()));
-      checked_out_query_subtables_.front()->CheckOut_(this, probe_index);
+      checked_out_query_subtables_.front()->CheckOut_(
+        this, probe_index, remote_mpi_rank_in);
       return checked_out_query_subtables_.begin();
     }
 
@@ -424,10 +425,11 @@ class DistributedDualtreeTaskQueue {
             checked_out_query_subtables_.begin();
           it != checked_out_query_subtables_.end(); it++) {
         SubTableIDType query_subtable_id = (*it)->subtable_id();
-        printf("    Query subtable ID: %d %d %d with %d tasks\n",
-               query_subtable_id.get<0>(), query_subtable_id.get<1>(),
-               query_subtable_id.get<2>(),
-               static_cast<int>((*it)->task_->size()));
+        printf(
+          "    Query subtable ID: %d %d %d with %d tasks checked out to %d\n",
+          query_subtable_id.get<0>(), query_subtable_id.get<1>(),
+          query_subtable_id.get<2>(),
+          static_cast<int>((*it)->task_->size()), (*it)->locked_mpi_rank_);
         TaskType *priority_queue_it =
           const_cast<TaskType *>(&((*it)->task_->top()));
         printf("      Reference set: ");
@@ -886,6 +888,13 @@ class DistributedDualtreeTaskQueue {
               world, probe_index, task_out, checked_out_query_subtable)) {
           probe_index--;
         }
+      }
+
+      if(task_out->second < 0) {
+        printf("(%d %d) could not dequeue a task because:\n",
+               world.rank(), thread_id);
+        this->Print();
+        table_exchange_.PrintSubTables(world);
       }
     }
 

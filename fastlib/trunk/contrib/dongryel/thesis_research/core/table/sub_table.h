@@ -167,11 +167,6 @@ class SubTable {
      */
     bool is_alias_;
 
-    /** @brief The MPI rank of the process holding the write lock on
-     *         this subtable.
-     */
-    int locked_mpi_rank_;
-
     /** @brief The pointer to the new_from_old mapping.
      */
     boost::interprocess::offset_ptr<int> *new_from_old_;
@@ -423,7 +418,6 @@ class SubTable {
       data_ = const_cast<SubTableType &>(subtable_in).data();
       id_to_position_map_ = subtable_in.id_to_position_map();
       is_alias_ = true;
-      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       originating_rank_ = subtable_in.originating_rank();
@@ -453,7 +447,6 @@ class SubTable {
       id_to_position_map_ = subtable_in.id_to_position_map();
       is_alias_ = subtable_in.is_alias();
       const_cast<SubTableType &>(subtable_in).is_alias_ = true;
-      locked_mpi_rank_ = subtable_in.locked_mpi_rank();
       new_from_old_ = const_cast<SubTableType &>(subtable_in).new_from_old();
       old_from_new_ = const_cast<SubTableType &>(subtable_in).old_from_new();
       originating_rank_ = subtable_in.originating_rank();
@@ -654,7 +647,6 @@ class SubTable {
       cache_block_id_ = 0;
       data_ = NULL;
       is_alias_ = true;
-      locked_mpi_rank_ = -1;
       new_from_old_ = NULL;
       old_from_new_ = NULL;
       originating_rank_ = -1;
@@ -677,22 +669,6 @@ class SubTable {
           delete table_;
         }
       }
-    }
-
-    int locked_mpi_rank() const {
-      return locked_mpi_rank_;
-    }
-
-    bool is_locked() const {
-      return locked_mpi_rank_ >= 0;
-    }
-
-    void Unlock() {
-      locked_mpi_rank_ = -1;
-    }
-
-    void Lock(int mpi_rank_in) {
-      locked_mpi_rank_ = mpi_rank_in;
     }
 
     /** @brief Returns the underlying table object.
