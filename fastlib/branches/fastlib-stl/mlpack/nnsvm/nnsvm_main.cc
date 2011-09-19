@@ -7,9 +7,9 @@
  *
  * It currently support "train", "train-test", "test" mode with "linear" kernel
  * Example:
- *  nnsvm_main --mode=train --train_data=toy1.csv --kernel=linear --c=10.0 --eps=0.000001 --max_iter=1000
- *  nnsvm_main --mode=train_test --train_data=toy1.csv --test_data=toy2.csv --kernel=linear --c=10.0 --max_iter=1000
- *  nnsvm_main --mode=test --train_data=toy2.csv --kernel=linear
+ *  nnsvm --mode=train --train_data=toy1.csv --kernel=linear --c=10.0 --eps=0.000001 --max_iter=1000
+ *  nnsvm --mode=train_test --train_data=toy1.csv --test_data=toy2.csv --kernel=linear --c=10.0 --max_iter=1000
+ *  nnsvm --mode=test --train_data=toy2.csv --kernel=linear
  *
  * @see nnsvm.h
  * @see nnsmo.h
@@ -19,12 +19,9 @@
 #include "nnsvm.h"
 #include <fastlib/fx/io.h>
 
-PARAM_STRING_REQ("mode", "Undocumented", "nnsvm");
-PARAM_STRING_REQ("kernel", "Undocumented", "nnsvm");
-PARAM_STRING_REQ("train_data", "Undocumented", "nnsvm");
-
-
-
+PARAM_STRING_REQ("mode", "operating mode: train, train_test, or test", "nnsvm");
+PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)", "nnsvm");
+PARAM_STRING_REQ("train_data", "name of the file containing the training data", "nnsvm");
 
 using namespace mlpack;
 using namespace mlpack::nnsvm;
@@ -40,13 +37,11 @@ int main(int argc, char *argv[])
   IO::ParseCommandLine(argc, argv);
   std::string mode = IO::GetParam<std::string>("nnsvm/mode");
   std::string kernel = IO::GetParam<std::string>("nnsvm/kernel");
-  std::cerr << "made it to " << __LINE__ << "\n";
 
   /* Training Mode, need training data */
   if (mode == "train" || mode == "train_test")
   {
     IO::Debug << "Non-Negativity Constrained SVM Training... " << std::endl;
-  std::cerr << "made it to " << __LINE__ << "\n";
 
     std::string trainFile = IO::GetParam<std::string>("nnsvm/train_data");
     // Load training data
@@ -57,20 +52,17 @@ int main(int argc, char *argv[])
       IO::Debug << "Could not open " << trainFile << " for reading" << std::endl;
       return 1;
     }
-  std::cerr << "made it to " << __LINE__ << "\n";
 
     // Begin NNSVM Training
     if (kernel == "linear")
     {
       NNSVM<SVMLinearKernel> nnsvm;
-  std::cerr << "made it to " << __LINE__ << "\n";
 
       nnsvm.InitTrain(dataSet, 2,
           (int) IO::GetParam<double>("nnsvm/c"),
           (int) IO::GetParam<double>("nnsvm/b"),
           IO::GetParam<double>("nnsvm/eps"),
           IO::GetParam<int>("nnsvm/max_iter"));
-  std::cerr << "made it to " << __LINE__ << "\n";
 
       IO::StartTimer("nnsvm/nnsvm_train");
       IO::Debug << "nnsvm_train_time" << IO::GetParam<timeval>("nnsvm/nnsvm_train").tv_usec / 1e6 << std::endl;
@@ -108,6 +100,5 @@ int main(int argc, char *argv[])
       nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
     }
   }
-  std::cerr << "made it to " << __LINE__ << "\n";
   return 0;
 }

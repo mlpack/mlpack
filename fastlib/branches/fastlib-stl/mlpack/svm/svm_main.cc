@@ -3,7 +3,7 @@
  *
  * @file svm_main.cc
  *
- * This file contains main routines for performing  
+ * This file contains main routines for performing
  * 0. multiclass SVM classification (one-vs-one method is employed).
  * 1. SVM regression (epsilon-insensitive loss i.e. epsilon-SVR).
  * 2. one-class SVM (TODO)
@@ -11,7 +11,7 @@
  * It provides four modes:
  * "cv": cross validation;
  * "train": model training
- * "train_test": training and then online batch testing; 
+ * "train_test": training and then online batch testing;
  * "test": offline batch testing.
  *
  * Please refer to README for detail description of usage and examples.
@@ -49,12 +49,12 @@ void DoSvmNormalize(Dataset* dataset) {
     m.col(i) = dataset->matrix().col(i);
     dataset->matrix().col(i) += sums;
   }
-  
+
   sums = (-1.0/dataset->n_points())*sums;
   for (size_t i = 0; i < dataset->n_points(); i++) {
     m.col(i) += sums;
   }
-  
+
   arma::mat cov;
 
   cov = m*trans(m);
@@ -112,25 +112,25 @@ void GenerateArtificialDataset(Dataset* dataset){
   double margin = IO::GetParam<double>("svm/margin") = 1.0;
   double var = IO::GetParam<double>("svm/var") = 1.0;
   double intercept = IO::GetParam<double>("svm/intercept") = 0.0;
-    
+
   // 2 dimensional dataset, size n, 3 classes
   m.set_size(3, n);
   for (size_t i = 0; i < n; i += 3) {
     double x;
     double y;
-    
+
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
     m(0, i) = x;
     m(1, i) = x*slope + y + intercept;
     m(2, i) = 0; // labels
-    
+
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
     m(0, i + 1) = 10 * x;
     m(1, i + 1) = x*slope + y + intercept;
     m(2, i + 1) = 1; // labels
-    
+
     x = (rand() * range / RAND_MAX) + offset;
     y = margin / 2 + (rand() * var / RAND_MAX);
     m(0, i + 2) = 20 * x;
@@ -144,7 +144,7 @@ void GenerateArtificialDataset(Dataset* dataset){
 }
 
 /**
-* Load data set from data file. If data file not exists, generate an 
+* Load data set from data file. If data file not exists, generate an
 * artificial data set.
 *
 * @param: the dataset
@@ -157,13 +157,13 @@ size_t LoadData(Dataset* dataset, string datafilename){
     fprintf(stderr, "Couldn't open the data file.\n");
     return 0;
     }
-  } 
+  }
   else {
     fprintf(stderr, "No data file exist. Generating artificial dataset.\n");
     // otherwise, generate an artificial dataset and save it to "m.csv"
     GenerateArtificialDataset(dataset);
   }
-  
+
   if (IO::HasParam("svm/normalize")) {
     fprintf(stderr, "Normalizing...\n");
     DoSvmNormalize(dataset);
@@ -179,7 +179,8 @@ size_t LoadData(Dataset* dataset, string datafilename){
 * @param: argc
 * @param: argv
 */
-int main(int argc, char *argv[]) {
+int main(int argc, char *argv[])
+{
   IO::ParseCommandLine(argc, argv);
   srand(time(NULL));
 
@@ -187,7 +188,7 @@ int main(int argc, char *argv[]) {
   string kernel = IO::GetParam<std::string>("svm/kernel");
   string learner_name = IO::GetParam<std::string>("svm/learner_name");
   size_t learner_typeid;
-  
+
   if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;
   }
@@ -201,43 +202,75 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "Unknown support vector learner name! Program stops!\n");
     return 0;
   }
-  
+
   // TODO: more kernels to be supported
 
+//  /* Cross Validation Mode, need cross validation data */
+//  if(mode == "cv") {
+//    fprintf(stderr, "SVM Cross Validation... \n");
+//
+//    /* Load cross validation data */
+//    Dataset cvset;
+//    if (LoadData(&cvset, "cv_data") == 0)
+//    return 1;
+//
+//    if (kernel == "linear") {
+//      GeneralCrossValidator< SVM<SVMLinearKernel> > cross_validator;
+//      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds, need k_cv>1 */
+//      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
+//      /* k_cv folds cross validation; (true): do training set permutation */
+//      cross_validator.Run(true);
+//      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+//    }
+//    else if (kernel == "gaussian") {
+//      GeneralCrossValidator< SVM<SVMRBFKernel> > cross_validator;
+//      /* Initialize n_folds_, confusion_matrix_; k_cv: number of cross-validation folds */
+//      cross_validator.Init(learner_typeid, IO::GetParam<int>("svm/k_cv"), &cvset, NULL, "svm");
+//      /* k_cv folds cross validation; (true): do training set permutation */
+//      cross_validator.Run(true);
+//      //cross_validator.confusion_matrix().PrintDebug("confusion matrix");
+//    }
+//  }
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
-  if (mode=="train" || mode=="train_test"){
+
+
+  if (mode=="train" || mode=="train_test")
+  {
+    arma::mat dataSet;
+    std::string trainFile = IO::GetParam<std::string>("svm/train_data");
     fprintf(stderr, "SVM Training... \n");
 
     /* Load training data */
-    Dataset trainset;
-    if (LoadData(&trainset, "svm/train_data") == 0) // TODO:param_req
+    if (data::Load(trainFile.c_str(), dataSet) == false)
       return 1;
-    
+
     /* Begin SVM Training | Training and Testing */
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.InitTrain(learner_typeid, trainset);
+      svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Predicting... \n");
-	/* Load testing data */
-	Dataset testset;
-	if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
-	  return 1;
-	svm.BatchPredict(learner_typeid, testset, "predicted_values");
+  fprintf(stderr, "SVM Predicting... \n");
+  /* Load testing data */
+  arma::mat dataSet;
+  std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
+  if (data::Load(testFile.c_str(), dataSet) == false)
+    return 1;
+  svm.BatchPredict(learner_typeid, dataSet, "predicted_values");
       }
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.InitTrain(learner_typeid, trainset);
+      svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
       if (mode=="train_test"){
-	fprintf(stderr, "SVM Predicting... \n");
-	/* Load testing data */
-	Dataset testset;
-	if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
-	  return 1;
-	svm.BatchPredict(learner_typeid, testset, "predicted_values"); // TODO:param_req
+  fprintf(stderr, "SVM Predicting... \n");
+  /* Load testing data */
+  arma::mat dataSet;
+  std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
+  if (data::Load(testFile.c_str(), dataSet) == false)
+    return 1;
+  svm.BatchPredict(learner_typeid, dataSet, "predicted_values"); // TODO:param_req
       }
     }
   }
@@ -246,21 +279,22 @@ int main(int argc, char *argv[]) {
     fprintf(stderr, "SVM Predicting... \n");
 
     /* Load testing data */
-    Dataset testset;
-    if (LoadData(&testset, "svm/test_data") == 0) // TODO:param_req
+    arma::mat dataSet;
+    std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
+    if (data::Load(testFile.c_str(), dataSet) == false)
       return 1;
 
     /* Begin Prediction */
     if (kernel == "linear") {
       SVM<SVMLinearKernel> svm;
-      svm.Init(learner_typeid, testset); 
-      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
+      svm.Init(learner_typeid, dataSet);
+      svm.LoadModelBatchPredict(learner_typeid, dataSet, "svm_model", "predicted_values"); // TODO:param_req
     }
     else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
-      svm.Init(learner_typeid, testset); 
-      svm.LoadModelBatchPredict(learner_typeid, testset, "svm_model", "predicted_values"); // TODO:param_req
+      svm.Init(learner_typeid, dataSet);
+      svm.LoadModelBatchPredict(learner_typeid, dataSet, "svm_model", "predicted_values"); // TODO:param_req
     }
   }
+  return 0;
 }
-

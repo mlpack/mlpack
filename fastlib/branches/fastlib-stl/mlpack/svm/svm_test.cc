@@ -83,13 +83,13 @@ void setup() {
  *  @param: svm The SVM class instance that has been trained for this data, et al.
  */
 template<typename T>
-void verify(size_t learner_typeid, Dataset& data, SVM<T>& svm) {
-  for(size_t i = 0; i < data.n_points(); i++) {
-    arma::vec testvec = data.matrix().col(i);
+void verify(size_t learner_typeid, arma::mat& data, SVM<T>& svm) {
+  for(size_t i = 0; i < data.n_cols; i++) {
+    arma::vec testvec = data.col(i);
 
     double predictedvalue = svm.Predict(learner_typeid, testvec);
     BOOST_REQUIRE_CLOSE(predictedvalue, 
-	data.matrix()(data.n_features()-1,i),1e-6);
+	data(data.n_rows-1,i),1e-6);
   }
 }
 
@@ -100,8 +100,8 @@ void verify(size_t learner_typeid, Dataset& data, SVM<T>& svm) {
 BOOST_AUTO_TEST_CASE(svm_classification_linear_kernel_test) {
   setup();
 
-  Dataset trainingdata;
-  trainingdata.matrix() = matrix;
+  arma::mat trainingdata;
+  trainingdata = matrix;
   SVM<SVMLinearKernel> svm;
   svm.InitTrain(0,trainingdata); // 0 for classification
   verify(0,trainingdata,svm);
@@ -114,8 +114,8 @@ BOOST_AUTO_TEST_CASE(svm_classification_linear_kernel_test) {
 BOOST_AUTO_TEST_CASE(svm_classification_gaussian_kernel_test) {
   setup();
 
-  Dataset trainingdata;
-  trainingdata.matrix() = matrix;
+  arma::mat trainingdata;
+  trainingdata = matrix;
   SVM<SVMRBFKernel> svm;
   svm.InitTrain(0,trainingdata); // 0 for classification
   verify(0,trainingdata,svm);
@@ -128,8 +128,8 @@ BOOST_AUTO_TEST_CASE(svm_classification_gaussian_kernel_test) {
 BOOST_AUTO_TEST_CASE(svm_regression_linear_kernel_test) {
   setup();
 
-  Dataset trainingdata;
-  trainingdata.matrix() = matrix;
+  arma::mat trainingdata;
+  trainingdata = matrix;
   SVM<SVMLinearKernel> svm;
   svm.InitTrain(1,trainingdata); // 0 for classification
   //verify(1,trainingdata,svm);
@@ -142,8 +142,8 @@ BOOST_AUTO_TEST_CASE(svm_regression_linear_kernel_test) {
 BOOST_AUTO_TEST_CASE(svm_regression_gaussian_kernel_test) {
   setup();
 
-  Dataset trainingdata;
-  trainingdata.matrix() = matrix;
+  arma::mat trainingdata;
+  trainingdata = matrix;
   SVM<SVMRBFKernel> svm;
   svm.InitTrain(1,trainingdata); // 0 for classification
   //verify(1,trainingdata,svm);
