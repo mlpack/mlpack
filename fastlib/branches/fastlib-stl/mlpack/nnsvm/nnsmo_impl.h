@@ -55,7 +55,7 @@ void NNSMO<TKernel>::Train()
   while ((num_changed > 0 || examine_all))
   {
     //NNSMO training iterations
-	num_changed = TrainIteration_(examine_all);
+    num_changed = TrainIteration_(examine_all);
 
     if (examine_all)
     {
@@ -179,7 +179,7 @@ double NNSMO<TKernel>::CalculateDF_(size_t i, size_t j, double error_j)
   double kij = EvalKernel_(i, j);
   double kjj = EvalKernel_(j, j);
   double eta = +2*kij - kii - kjj;
-  
+
   // calculate alpha_j^{new}
   if (eta < 0)
   {

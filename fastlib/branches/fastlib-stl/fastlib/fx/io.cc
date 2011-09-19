@@ -307,9 +307,8 @@ void IO::ParseCommandLine(int argc, char** line) {
   }
   // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
-
   UpdateGmap();
-  DefaultMessages();
+  //DefaultMessages();
   RequiredOptions();
 
   StartTimer("total_time");

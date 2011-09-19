@@ -3,7 +3,7 @@
  *
  * @file opt_smo.h
  *
- * This head file contains functions for performing Sequential Minimal Optimization (SMO) 
+ * This head file contains functions for performing Sequential Minimal Optimization (SMO)
  *
  * The algorithms in the following papers are implemented:
  *
@@ -42,6 +42,7 @@
 #include <fastlib/fastlib.h>
 
 #include <armadillo>
+#define REACHED_HERE std::cerr << "we reached " << __LINE__ << " in " << __FILE__ << "\n";
 
 // maximum # of interations for SMO training
 const size_t MAX_NUM_ITER_SMO = 10000000;
@@ -82,7 +83,7 @@ class SMO {
   arma::vec alpha_; /* the alphas, to be optimized */
   arma::vec alpha_status_; /*  ID_LOWER_BOUND (-1), ID_UPPER_BOUND (1), ID_FREE (0) */
   size_t n_sv_; /* number of support vectors */
-  
+
   size_t n_alpha_; /* number of variables to be optimized */
   size_t n_active_; /* number of samples in the active set */
   std::vector<size_t> active_set_; /* list that stores the old indices of active alphas followed by inactive alphas. == old_from_new*/
@@ -141,7 +142,7 @@ class SMO {
     }
   }
 
-  void Train(int learner_typeid, const Dataset* dataset_in);
+  void Train(int learner_typeid, arma::mat* dataset_in);
 
   Kernel& kernel() {
     return kernel_;
@@ -159,7 +160,7 @@ class SMO {
   int SMOIterations_();
 
   void ReconstructGradient_();
-  
+
   bool TestShrink_(size_t i, double y_grad_max, double y_grad_min);
 
   void Shrinking_();
@@ -227,7 +228,7 @@ class SMO {
     //i_cache_ = i;
     //j_cache_ = j;
     cached_kernel_value_ = kernel_.Eval(datamatrix_->col(i), datamatrix_->col(j), n_features_);
-    
+
     if (hinge_sqhinge_ == 2) { // L2-SVM
       if (i == j) {
 	cached_kernel_value_ = cached_kernel_value_ + inv_two_C_;
@@ -240,7 +241,7 @@ class SMO {
 
 
 /**
-* Reconstruct inactive elements of G from G_bar and free variables 
+* Reconstruct inactive elements of G from G_bar and free variables
 *
 * @param: learner type id
 */
@@ -268,12 +269,11 @@ void SMO<TKernel>::ReconstructGradient_() {
       }
     }
   }
-
 }
 
 /**
  * Test whether need to do shrinking for provided index and y_grad_max, y_grad_min
- * 
+ *
  */
 template<typename TKernel>
 bool SMO<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
@@ -298,10 +298,10 @@ bool SMO<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
 }
 
 /**
- * Do Shrinking. Temporarily remove alphas (from the active set) that are 
- * unlikely to be selected in the working set, since they have reached their 
+ * Do Shrinking. Temporarily remove alphas (from the active set) that are
+ * unlikely to be selected in the working set, since they have reached their
  * lower/upper bound.
- * 
+ *
  */
 template<typename TKernel>
 void SMO<TKernel>::Shrinking_() {
@@ -358,7 +358,7 @@ void SMO<TKernel>::Shrinking_() {
       }
     }
   }
-  
+
   double gap = y_grad_max - y_grad_min;
   //printf("%d: gap:%f, n_active:%d\n", ct_iter_, gap, n_active_);
   // do unshrinking for the first time when y_grad_max - y_grad_min <= SMO_UNSHRINKING_FACTOR * accuracy_
@@ -393,13 +393,13 @@ void SMO<TKernel>::Shrinking_() {
 /**
  * Initialization according to different SVM learner types
  *
- * @param: learner type id 
+ * @param: learner type id
  */
 template<typename TKernel>
 void SMO<TKernel>::LearnersInit_(int learner_typeid) {
   size_t i;
   learner_typeid_ = learner_typeid;
-  
+
   if (learner_typeid_ == 0) { // SVM_C
     n_alpha_ = n_data_;
 
@@ -444,14 +444,13 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
 * @param: input 2-classes data matrix with labels (1,-1) in the last row
 */
 template<typename TKernel>
-void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
+void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
   size_t i,j;
   // Load data, no deep copy
-  datamatrix_ = const_cast<arma::mat*>(&dataset_in->matrix()); // FIXME: const_cast should go
-  //*datamatrix_ = arma::trans(*datamatrix_);
-  n_data_ = datamatrix_->n_cols;
-  n_features_ = datamatrix_->n_rows - 1; // excluding the last row for labels
-  //datamatrix_samples_only_.Alias(datamatrix_->ptr(), n_features_, n_data_);
+  datamatrix_ = dataset_in;
+  n_data_ = dataset_in->n_cols;
+  n_features_ = dataset_in->n_rows - 1; // excluding the last row for labels
+  //datamatrix_samples_only_.Alias(dataset_in->ptr(), n_features_, n_data_);
 
   // Learners initialization
   LearnersInit_(learner_typeid);
@@ -470,7 +469,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   for (i=0; i<n_alpha_; i++) {
     active_set_[i] = i;
   }
-  
+
   alpha_status_.set_size(n_alpha_);
   for (i=0; i<n_alpha_; i++)
     UpdateAlphaStatus_(i);
@@ -504,7 +503,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
   }
 
   std::cout << "SMO initialization done!\n";
-  
+
   // Begin SMO iterations
   ct_iter_ = 0;
 
@@ -513,7 +512,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
     //for(size_t i=0; i<n_alpha_; i++)
     //  printf("%f.\n", y_[i]*alpha_[i]);
     //printf("\n\n");
-      
+
     // for every min(n_data_, 1000) iterations, do shrinking
     if (do_shrinking_) {
       if ( --ct_shrinking_ == 0) {
@@ -542,7 +541,7 @@ void SMO<TKernel>::Train(int learner_typeid, const Dataset* dataset_in) {
 
 /**
 * SMO training iterations
-* 
+*
 * @return: stopping condition id
 */
 template<typename TKernel>
@@ -586,7 +585,7 @@ int SMO<TKernel>::SMOIterations_() {
 }
 
 /**
-* Try to find a working set (i,j). Both 1st(default) and 2nd order approximations of 
+* Try to find a working set (i,j). Both 1st(default) and 2nd order approximations of
 * the objective function Z(\alpha+\lambda u_ij)-Z(\alpha) are implemented.
 *
 * @param: reference to working set (i, j)
@@ -599,7 +598,7 @@ bool SMO<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
   double y_grad_min =  INFINITY;
   int idx_i = -1;
   int idx_j = -1;
-  
+
   // Find i using maximal violating pair scheme
   size_t t;
   for (t=0; t<n_active_; t++) { // find argmax(y*grad), t\in I_up
@@ -698,7 +697,7 @@ bool SMO<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
 
   //printf("y_i=%d, y_j=%d\n", y_[out_i], y_[out_j]);
   //printf("a_i=%f, a_j=%f\n", alpha_[out_i], alpha_[out_j]);
-  
+
   // Stopping Criterion check
   //printf("ct_iter:%d, accu:%f\n", ct_iter_, y_grad_max - y_grad_min);
   gap_ = y_grad_max - y_grad_min;
@@ -712,7 +711,7 @@ bool SMO<TKernel>::WorkingSetSelection_(size_t &out_i, size_t &out_j) {
 
 /**
 * Search direction; Update gradient, alphas and bias term
-* 
+*
 * @param: a working set (i,j) found by working set selection
 *
 */
@@ -762,7 +761,7 @@ void SMO<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
   // Update alphas
   alpha_[i] = a_i + y_i * lambda;
   alpha_[j] = a_j - y_j * lambda;
-  
+
   // Update alphas and handle bounds for updated alphas
   /*
   if (y_i != y_j) {
@@ -871,7 +870,7 @@ void SMO<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
 
   bool ub_i = IsUpperBounded(i);
   bool ub_j = IsUpperBounded(j);
-  
+
   // Update alpha active status
   UpdateAlphaStatus_(i);
   UpdateAlphaStatus_(j);
@@ -896,12 +895,12 @@ void SMO<TKernel>::UpdateGradientAlpha_(size_t i, size_t j) {
 	  grad_bar_[t] = grad_bar_[t] + C_j * y_[j] * y_[t] * CalcKernelValue_(j, t);
     }
   }
-  
+
 }
 
 /**
 * Calcualte bias term
-* 
+*
 * @return: the bias
 *
 */
@@ -910,10 +909,10 @@ void SMO<TKernel>::CalcBias_() {
   double b;
   size_t n_free_alpha = 0;
   double ub = INFINITY, lb = -INFINITY, sum_free_yg = 0.0;
-  
+
   for (size_t i=0; i<n_active_; i++){
     double yg = y_[i] * grad_[i];
-      
+
     if (IsUpperBounded(i)) { // bounded: alpha_i >= C
       if(y_[i] == 1)
 	lb = std::max(lb, yg);
@@ -931,12 +930,12 @@ void SMO<TKernel>::CalcBias_() {
       sum_free_yg += yg;
     }
   }
-  
+
   if(n_free_alpha>0)
     b = sum_free_yg / n_free_alpha;
   else
     b = (ub + lb) / 2;
-  
+
   bias_ = b;
 }
 
@@ -975,7 +974,7 @@ void SMO<TKernel>::GetSV(std::vector<size_t> &dataset_index, std::vector<double>
       size_t iplusn = new_from_old[ii+n_data_];
       double alpha_diff = -alpha_[i] + alpha_[iplusn]; // alpha_i^* - alpha_i
       if (fabs(alpha_diff) >= SMO_ALPHA_ZERO) { // support vectors found
-	coef.push_back(alpha_diff); 
+	coef.push_back(alpha_diff);
 	sv_indicator[dataset_index[ii]] = true;
 	n_sv_++;
       }
