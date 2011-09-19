@@ -19,7 +19,8 @@
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
 PARAM_INT_REQ("num_random", "The number of random sets that appear in the tuple.", NULL);
-PARAM_STRING("random", "Poisson set coordinates.", NULL);
+PARAM_FLAG("two_sets", "Are we using two different sets (i.e. data and random)", NULL);
+PARAM_STRING("random", "Poisson set coordinates.", NULL, "fake");
 PARAM_FLAG("weighted_computation", "Specify if computing with pointwise weights", NULL)
 PARAM_STRING("weights", "Optional data weights.", NULL, "default_weights.csv");
 PARAM_STRING("random_weights", "Optional weights on Poisson set.", NULL, "default_weights.csv");
@@ -28,7 +29,8 @@ PARAM_STRING("random_weights", "Optional weights on Poisson set.", NULL, "defaul
 //PARAM_DOUBLE("bandwidth", "Thickness of the matcher", NULL,
 //      1.0)
 PARAM_STRING_REQ("matcher_lower_bounds", "The lower bound distances for the matcher.", NULL)
-PARAM_STRING_REQ("matcher_upper_bounds", "The upper bound distances for the matcher.", NULL)PARAM_INT("leaf_size", "Max number of points in a leaf node", NULL, 1);
+PARAM_STRING_REQ("matcher_upper_bounds", "The upper bound distances for the matcher.", NULL)
+//PARAM_INT("leaf_size", "Max number of points in a leaf node", NULL, 1);
 PARAM_FLAG("do_naive", "Permform Naive computation", NULL);
 PARAM_FLAG("do_single_bandwidth", "Permform old (Moore & Gray) tree computation", NULL);
 //PARAM_FLAG("do_perm_free", "Tree computation with alternative pruning rule", NULL);
@@ -40,6 +42,8 @@ int main(int argc, char* argv[]) {
 
   //fx_init(argc, argv, NULL);
   IO::ParseCommandLine(argc, argv);
+  
+  IO::Info << "Parsed command line.\n";
   
   // read in data and parameters
   
@@ -63,7 +67,12 @@ int main(int argc, char* argv[]) {
   
   arma::colvec weights;  
   //if (fx_param_exists(NULL, "weights")) {
-  if (IO::HasParam("weighted_computation")) {
+  
+  //bool has_weights = IO::HasParam("weighted_computation");
+  //IO::Info << "has_weights: " << has_weights << "\n";
+  
+  //if (IO::HasParam("weighted_computation")) {
+  if (IO::GetParam<bool>("weighted_computation")) {
     weights.load(IO::GetParam<std::string>("weights"));
   }
   else {
@@ -74,7 +83,8 @@ int main(int argc, char* argv[]) {
   
   arma::mat random_mat;
   arma::colvec random_weights;
-  if (IO::HasParam("random")) {
+  if (IO::GetParam<bool>("two_sets")) {
+  //if (IO::HasParam("random")) {
     std::string random_filename = IO::GetParam<std::string>("random");
     
     arma::mat random_in;
@@ -94,7 +104,9 @@ int main(int argc, char* argv[]) {
     
     arma::colvec random_weights;  
     //if (fx_param_exists(NULL, "weights")) {
-    if (IO::HasParam("weighted_computation")) {
+    if (IO::GetParam<bool>("weighted_computation")) {
+      
+  //  if (IO::HasParam("weighted_computation")) {
       random_weights.load(IO::GetParam<std::string>("random_weights"));
     }
     else {
@@ -131,14 +143,15 @@ int main(int argc, char* argv[]) {
   }
   for (int i = num_random; i < tuple_size; i++) {
     comp_mats[i] = &data_mat;
-    comp_weights[i] = &data_weights;
+    comp_weights[i] = &weights;
     comp_multi[1]++;
   }
   
   // run algorithm
   
   //if (fx_param_exists(NULL, "do_single_bandwidth")) {
-  if (IO::HasParam("do_single_bandwidth")) {
+  if (IO::GetParam<bool>("do_single_bandwidth")) {
+  //if (IO::HasParam("do_single_bandwidth")) {
     
     //std::cout << "Doing single bandwidth.\n";
     IO::Info << "Doing single bandwidth.\n";
@@ -173,7 +186,8 @@ int main(int argc, char* argv[]) {
   } // single bandwidth
   
   //if (fx_param_exists(NULL, "do_naive")) {
-  if (IO::HasParam("do_naive")) {
+  //if (IO::HasParam("do_naive")) {
+  if (IO::GetParam<bool>("do_naive")) {
     //std::cout << "Doing naive.\n";
     
     IO::Info << "Doing naive." << std::endl;
@@ -181,8 +195,8 @@ int main(int argc, char* argv[]) {
     //fx_timer_start(NULL, "naive_time");
     IO::StartTimer("naive_time");
     
-    IO::SetParam<int>("tree/leaf_size", std::max(data_mat.n_cols, 
-                                                 random_mat.n_cols));
+    IO::GetParam<int>("tree/leaf_size") = std::max(data_mat.n_cols, 
+                                                   random_mat.n_cols);
     
     // build the trees
     NptNode* naive_data_tree = new NptNode(data_mat);
