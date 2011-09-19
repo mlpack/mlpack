@@ -40,6 +40,9 @@
 
 #include <fastlib/fastlib.h>
 
+namespace mlpack {
+namespace svm {
+
 // maximum # of interations for SMO training
 const size_t MAX_NUM_ITER_SMO = 10000000;
 // after # of iterations to do shrinking
@@ -184,6 +187,9 @@ class SMO {
    */
   double CalcKernelValue_(size_t ii, size_t jj);
 };
+
+}; // namespace svm
+}; // namespace mlpack
 
 // Include implementation.
 #include "opt_smo_impl.h"

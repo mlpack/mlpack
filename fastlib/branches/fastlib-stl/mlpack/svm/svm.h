@@ -72,6 +72,9 @@ PARAM(bool, "shrink", "Whether we shrink every so many iterations or not.\
 #define ID_LINEAR 0
 #define ID_GAUSSIAN 1
 
+namespace mlpack {
+namespace svm {
+
 /**
  * Class for Linear Kernel
  */
@@ -247,6 +250,9 @@ class SVM {
   void SaveModel_(size_t learner_typeid, std::string model_filename);
   void LoadModel_(size_t learner_typeid, std::string model_filename);
 };
+
+}; // namespace svm
+}; // namespace mlpack
 
 // Include implementation.
 #include "svm_impl.h"
