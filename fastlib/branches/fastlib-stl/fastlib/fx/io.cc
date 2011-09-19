@@ -308,7 +308,7 @@ void IO::ParseCommandLine(int argc, char** line) {
   // Flush the buffer, make sure changes are propagated to vmap
   po::notify(vmap);
   UpdateGmap();
-  //DefaultMessages();
+  DefaultMessages();
   RequiredOptions();
 
   StartTimer("total_time");
@@ -388,7 +388,7 @@ void IO::Destroy() {
  * and kill the program.
  */
 void IO::DefaultMessages() {
-  //Default help message
+  // Default help message
   if (GetParam<bool>("help")) {
     // A little snippet about the program itself, if we have it.
     if (GetSingleton().doc != &empty_program_doc) {
