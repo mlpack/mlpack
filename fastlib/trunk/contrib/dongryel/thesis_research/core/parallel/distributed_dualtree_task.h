@@ -30,8 +30,6 @@ class DistributedDualtreeTask {
 
     SubTableType reference_subtable_;
 
-    int cache_id_;
-
     double priority_;
 
   public:
