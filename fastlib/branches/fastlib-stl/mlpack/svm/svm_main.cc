@@ -34,146 +34,6 @@ PROGRAM_INFO("SVM", "These are the implementations for Support Vector\
 using namespace mlpack;
 
 /**
-* Data Normalization
-*
-* @param: the dataset to be normalized
-*/
-void DoSvmNormalize(Dataset* dataset) {
-  arma::mat m;
-  arma::vec sums;
-
-  m.zeros(dataset->n_features(), dataset->n_points());
-  sums.zeros(dataset->n_features());
-
-  for (size_t i = 0; i < dataset->n_points(); i++) {
-    m.col(i) = dataset->matrix().col(i);
-    dataset->matrix().col(i) += sums;
-  }
-
-  sums = (-1.0/dataset->n_points())*sums;
-  for (size_t i = 0; i < dataset->n_points(); i++) {
-    m.col(i) += sums;
-  }
-
-  arma::mat cov;
-
-  cov = m*trans(m);
-
-  arma::vec d;
-  arma::mat u; // eigenvectors
-  arma::mat ui; // the inverse of eigenvectors
-
-  //(la::EigenvectorsInit(cov, &d, &u));
-  arma::eig_sym(d, u, cov); // find eigenvector
-  //la::TransposeInit(u, &ui);
-  ui = arma::trans(u);
-
-  for (size_t i = 0; i < d.n_rows; i++) {
-    d[i] = 1.0 / sqrt(d[i] / (dataset->n_points() - 1));
-  }
-
-  //la::ScaleRows(d, &ui);
-  ui = diagmat(d)*ui;
-
-  arma::mat cov_inv_half;
-  //la::MulInit(u, ui, &cov_inv_half);
-  cov_inv_half = u*ui;
-
-  arma::mat final;
-  //la::MulInit(cov_inv_half, m, &final);
-  final = cov_inv_half*m;
-
-  for (size_t i = 0; i < dataset->n_points(); i++) {
-    arma::vec s;
-
-    //final.MakeColumnVector(i, &s);
-    //d.CopyValues(s);
-
-    dataset->matrix().col(i) = final.col(i);
-  }
-
-  if (IO::HasParam("svm/save")) {
-    IO::GetParam<std::string>("kfold/save") = "1";
-    dataset->WriteCsv("m_normalized.csv");
-  }
-}
-
-/**
-* Generate an artificial data set
-*
-* @param: the dataset to be generated
-*/
-void GenerateArtificialDataset(Dataset* dataset){
-  arma::mat m;
-  size_t n = IO::GetParam<int>("svm/n") = 30;
-  double offset = IO::GetParam<double>("svm/offset") = 0.0;
-  double range = IO::GetParam<double>("svm/range") = 1.0;
-  double slope = IO::GetParam<double>("svm/slope") = 1.0;
-  double margin = IO::GetParam<double>("svm/margin") = 1.0;
-  double var = IO::GetParam<double>("svm/var") = 1.0;
-  double intercept = IO::GetParam<double>("svm/intercept") = 0.0;
-
-  // 2 dimensional dataset, size n, 3 classes
-  m.set_size(3, n);
-  for (size_t i = 0; i < n; i += 3) {
-    double x;
-    double y;
-
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m(0, i) = x;
-    m(1, i) = x*slope + y + intercept;
-    m(2, i) = 0; // labels
-
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m(0, i + 1) = 10 * x;
-    m(1, i + 1) = x*slope + y + intercept;
-    m(2, i + 1) = 1; // labels
-
-    x = (rand() * range / RAND_MAX) + offset;
-    y = margin / 2 + (rand() * var / RAND_MAX);
-    m(0, i + 2) = 20 * x;
-    m(1, i + 2) = x*slope + y + intercept;
-    m(2, i + 2) = 2; // labels
-  }
-
-  data::Save("artificialdata.csv", m); // TODO, for training, for testing
-  // this is a bad way to do this
-  dataset->CopyMatrix(m);
-}
-
-/**
-* Load data set from data file. If data file not exists, generate an
-* artificial data set.
-*
-* @param: the dataset
-* @param: name of the data file to be loaded
-*/
-size_t LoadData(Dataset* dataset, string datafilename){
-  if (IO::HasParam(datafilename.c_str())) {
-    // when a data file is specified, use it.
-    if ( !(dataset->InitFromFile( IO::GetParam<std::string>(datafilename.c_str()).c_str() )) ) {
-    fprintf(stderr, "Couldn't open the data file.\n");
-    return 0;
-    }
-  }
-  else {
-    fprintf(stderr, "No data file exist. Generating artificial dataset.\n");
-    // otherwise, generate an artificial dataset and save it to "m.csv"
-    GenerateArtificialDataset(dataset);
-  }
-
-  if (IO::HasParam("svm/normalize")) {
-    fprintf(stderr, "Normalizing...\n");
-    DoSvmNormalize(dataset);
-  } else {
-    fprintf(stderr, "Skipping normalization...\n");
-  }
-  return 1;
-}
-
-/**
 * Multiclass SVM classification/ SVM regression - Main function
 *
 * @param: argc
@@ -234,8 +94,7 @@ int main(int argc, char *argv[])
   /* Training Mode, need training data | Training + Testing(online) Mode, need training data + testing data */
 
 
-  if (mode=="train" || mode=="train_test")
-  {
+  if (mode=="train" || mode=="train_test") {
     arma::mat dataSet;
     std::string trainFile = IO::GetParam<std::string>("svm/train_data");
     fprintf(stderr, "SVM Training... \n");
@@ -249,38 +108,42 @@ int main(int argc, char *argv[])
       SVM<SVMLinearKernel> svm;
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test"){
-  fprintf(stderr, "SVM Predicting... \n");
-  /* Load testing data */
-  arma::mat dataSet;
-  std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
-  if (data::Load(testFile.c_str(), dataSet) == false)
-    return 1;
-  svm.BatchPredict(learner_typeid, dataSet, "predicted_values");
+      if (mode == "train_test") {
+        fprintf(stderr, "SVM Predicting... \n");
+
+        /* Load testing data */
+        arma::mat dataSet;
+        std::string testFile = IO::GetParam<std::string>("svm/test_data");
+        if (data::Load(testFile.c_str(), dataSet) == false)
+          return 1;
+
+        svm.BatchPredict(learner_typeid, dataSet, "predicted_values");
       }
-    }
-    else if (kernel == "gaussian") {
+    } else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
       svm.InitTrain(learner_typeid, dataSet);
       /* training and testing, thus no need to load model from file */
-      if (mode=="train_test"){
-  fprintf(stderr, "SVM Predicting... \n");
-  /* Load testing data */
-  arma::mat dataSet;
-  std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
-  if (data::Load(testFile.c_str(), dataSet) == false)
-    return 1;
-  svm.BatchPredict(learner_typeid, dataSet, "predicted_values"); // TODO:param_req
+      if (mode == "train_test") {
+        fprintf(stderr, "SVM Predicting... \n");
+
+        /* Load testing data */
+        arma::mat dataSet;
+        std::string testFile = IO::GetParam<std::string>("svm/test_data");
+        if (data::Load(testFile.c_str(), dataSet) == false)
+          return 1;
+
+        svm.BatchPredict(learner_typeid, dataSet, "predicted_values"); // TODO:param_req
       }
     }
   }
+
   /* Testing(offline) Mode, need loading model file and testing data */
-  else if (mode=="test") {
+  else if (mode == "test") {
     fprintf(stderr, "SVM Predicting... \n");
 
     /* Load testing data */
     arma::mat dataSet;
-    std::string testFile = IO::GetParam<std::string>("nnsvm/test_data");
+    std::string testFile = IO::GetParam<std::string>("svm/test_data");
     if (data::Load(testFile.c_str(), dataSet) == false)
       return 1;
 
@@ -289,12 +152,12 @@ int main(int argc, char *argv[])
       SVM<SVMLinearKernel> svm;
       svm.Init(learner_typeid, dataSet);
       svm.LoadModelBatchPredict(learner_typeid, dataSet, "svm_model", "predicted_values"); // TODO:param_req
-    }
-    else if (kernel == "gaussian") {
+    } else if (kernel == "gaussian") {
       SVM<SVMRBFKernel> svm;
       svm.Init(learner_typeid, dataSet);
       svm.LoadModelBatchPredict(learner_typeid, dataSet, "svm_model", "predicted_values"); // TODO:param_req
     }
   }
+
   return 0;
 }
