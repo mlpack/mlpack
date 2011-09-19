@@ -5,7 +5,9 @@ cmake_minimum_required(VERSION 2.8)
 # Do not include test programs here
 set(SOURCES
    svm.h
-#   smo.h
+   svm_impl.h
+   opt_smo.h
+   opt_smo_impl.h
 )
 
 # add directory name to sources
