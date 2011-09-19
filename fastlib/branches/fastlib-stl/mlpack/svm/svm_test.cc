@@ -8,11 +8,9 @@
 #define BOOST_TEST_MODULE SVM test
 #include <boost/test/unit_test.hpp>
 
-PROGRAM_INFO("SVM Unit Test",
-  "This program tests various methods in the SVM implementation.", "svm");
-
 using std::string;
 using namespace mlpack;
+using namespace mlpack::svm;
 
 // Create test data
 arma::mat matrix(20,3);

@@ -41,6 +41,9 @@
 // In case it has not already been included.
 #include "opt_smo.h"
 
+namespace mlpack {
+namespace svm {
+
 template<typename TKernel>
 void SMO<TKernel>::InitPara(int learner_typeid,
                             double Cp,
@@ -858,5 +861,8 @@ void SMO<TKernel>::GetSV(std::vector<size_t> &dataset_index, std::vector<double>
     }
   }
 }
+
+}; // namespace svm
+}; // namespace mlpack
 
 #endif

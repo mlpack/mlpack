@@ -14,6 +14,9 @@
 // In case it has not already been included.
 #include "svm.h"
 
+namespace mlpack {
+namespace svm {
+
 /**
  * * SVM initialization
  * *
@@ -738,5 +741,8 @@ arma::mat& SVM<TKernel>::buildDataByLabels (size_t i, size_t j, arma::mat& data,
 
   return returnData;
 }
+
+}; // namespace svm
+}; // namespace mlpack
 
 #endif

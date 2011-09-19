@@ -32,6 +32,7 @@ PROGRAM_INFO("SVM", "These are the implementations for Support Vector\
  Machines, including Multiclass classification, Regression, and One Class SVM", "svm");
 
 using namespace mlpack;
+using namespace mlpack::svm;
 
 /**
 * Multiclass SVM classification/ SVM regression - Main function
