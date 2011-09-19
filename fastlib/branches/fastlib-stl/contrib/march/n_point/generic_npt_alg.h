@@ -65,7 +65,7 @@ namespace npt {
     GenericNptAlg(std::vector<NptNode*>& trees_in, 
                   std::vector<int>& multiplicities_in,
                   TMatcher& matcher_in, bool do_naive = false) :
-    matcher_(matcher_in), trees_(trees_in)
+    matcher_(matcher_in), trees_(trees_in), multiplicities_(multiplicities_in)
     {
       
       do_naive_ = do_naive;

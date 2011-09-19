@@ -20,6 +20,8 @@ set(SOURCES
   naive_resampling.cc
   node_tuple.h
   node_tuple.cc
+  #n_point_single_main.cc
+  #n_point_angle_resampling_main.cpp
   permutations.h
   permutations.cc
   single_driver.h
