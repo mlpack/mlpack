@@ -55,14 +55,14 @@ void SMO<TKernel>::InitPara(int learner_typeid,
   // init parameters
   wss_ = wss;
   hinge_sqhinge_ = hinge_sqhinge;
-  n_iter_ = n_iter < MAX_NUM_ITER_SMO ? n_iter: MAX_NUM_ITER_SMO;
+  n_iter_ = (n_iter < MAX_NUM_ITER_SMO) ? n_iter: MAX_NUM_ITER_SMO;
   accuracy_ = accuracy;
   if (learner_typeid == 0) { // SVM_C
     if (hinge_sqhinge_ == 2) { // L2-SVM
       Cp_ = INFINITY;
       Cn_ = INFINITY;
       C_ = CnEpsilon;
-      inv_two_C_ = 1/(2*C_);
+      inv_two_C_ = 1 / (2 * C_);
     }
     else { // L1-SVM
       Cp_ = Cp;
@@ -84,8 +84,8 @@ double SMO<TKernel>::CalcKernelValue_(size_t ii, size_t jj) {
 
   // for SVM_R where n_alpha_==2*n_data_
   if (learner_typeid_ == 1) {
-    i = i >= n_data_ ? (i-n_data_) : i;
-    j = j >= n_data_ ? (j-n_data_) : j;
+    i = (i >= n_data_) ? (i - n_data_) : i;
+    j = (j >= n_data_) ? (j - n_data_) : j;
   }
 
   // Check cache
@@ -128,14 +128,14 @@ void SMO<TKernel>::ReconstructGradient_() {
   else if (learner_typeid_ == 1) { // SVM_R
     for (i=n_active_; i<n_alpha_; i++) {
       j = i >= n_data_ ? (i-n_data_) : i;
-      grad_[j] = grad_bar_[j] + (*datamatrix_)(datamatrix_->n_rows-1, active_set_[j]) - epsilon_; // TODO
+      grad_[j] = grad_bar_[j] + (*datamatrix_)(datamatrix_->n_rows - 1, active_set_[j]) - epsilon_; // TODO
     }
   }
 
-  for (i=0; i<n_active_; i++) {
+  for (i = 0; i < n_active_; i++) {
     if (alpha_status_[i] == SMO_ID_FREE) {
-      for (j=n_active_; j<n_alpha_; j++) {
-        grad_[j] = grad_[j] - y_[j] * alpha_[i] * y_[i] * CalcKernelValue_(i,j);
+      for (j = n_active_; j < n_alpha_; j++) {
+        grad_[j] = grad_[j] - y_[j] * alpha_[i] * y_[i] * CalcKernelValue_(i, j);
       }
     }
   }
@@ -150,21 +150,18 @@ bool SMO<TKernel>::TestShrink_(size_t i, double y_grad_max, double y_grad_min) {
   if (IsUpperBounded(i)) { // alpha_[i] = C
     if (y_[i] == 1) {
       return (grad_[i] > y_grad_max);
-    }
-    else { // y_[i] == -1
+    } else { // y_[i] == -1
       return (grad_[i] + y_grad_min > 0); // -grad_[i]<y_grad_min
     }
-  }
-  else if (IsLowerBounded(i)) {
+  } else if (IsLowerBounded(i)) {
     if (y_[i] == 1) {
       return (grad_[i] < y_grad_min);
-    }
-    else { // y_[i] == -1
+    } else { // y_[i] == -1
       return (grad_[i] + y_grad_max < 0); // -grad_[i]>y_grad_max
     }
   }
-  else
-    return false;
+
+  return false;
 }
 
 /**
@@ -186,15 +183,14 @@ void SMO<TKernel>::Shrinking_() {
         if (grad_[t] > y_grad_max) { // y==1
           y_grad_max = grad_[t];
         }
-    }
-    else { // y[t] == -1
+    } else { // y[t] == -1
       if (!IsLowerBounded(t)) // t\in I_up, y==-1: y[t]alpha[t] < 0
         if (grad_[t] + y_grad_max < 0) { // y==-1... <=> -grad_[t] > y_grad_max
           y_grad_max = -grad_[t];
         }
     }
   }
-  for (t=0; t<n_active_; t++) { // find argmin(y*grad), t\in I_down
+  for (t = 0; t < n_active_; t++) { // find argmin(y*grad), t\in I_down
     if (y_[t] == 1) {
       if (!IsLowerBounded(t)) // t\in I_down, y==1: y[t]alpha[t] > 0
         if (grad_[t] < y_grad_min) { // y==1
@@ -224,6 +220,7 @@ void SMO<TKernel>::Shrinking_() {
           swap(grad_bar_[t], grad_bar_[n_active_]);
           break;
         }
+
         n_active_--;
       }
     }
@@ -249,6 +246,7 @@ void SMO<TKernel>::Shrinking_() {
             swap(grad_bar_[t], grad_bar_[n_active_]);
             break;
           }
+
           n_active_++;
         }
         n_active_++;
@@ -282,8 +280,7 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
     for (i = 0; i < n_alpha_; i++) {
       y_[i] = (*datamatrix_)(datamatrix_->n_rows-1, i) > 0 ? 1 : -1;
     }
-  }
-  else if (learner_typeid_ == 1) { // SVM_R
+  } else if (learner_typeid_ == 1) { // SVM_R
     n_alpha_ = 2 * n_data_;
 
     alpha_.set_size(2 * n_alpha_); // TODO
@@ -298,13 +295,10 @@ void SMO<TKernel>::LearnersInit_(int learner_typeid) {
       grad_[i] = epsilon_ - (*datamatrix_)(datamatrix_->n_rows-1, i);
       grad_[i + n_data_] = epsilon_ + (*datamatrix_)(datamatrix_->n_rows-1, i);
     }
-  }
-  else if (learner_typeid_ == 2) { // SVM_DE
+  } else if (learner_typeid_ == 2) { // SVM_DE
     // TODO
   }
-
 }
-
 
 /**
 * SMO training for 2-classes
@@ -357,7 +351,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
   grad_bar_.set_size(n_alpha_);
   grad_bar_.zeros();
 
-  do_shrinking_ = mlpack::IO::GetParam<bool>("svm/shrink");
+  do_shrinking_ = IO::GetParam<bool>("svm/shrink");
   ct_shrinking_ = std::min(n_data_, SMO_NUM_FOR_SHRINKING);
   if (do_shrinking_) {
     for (i = 0; i < n_alpha_; i++) {
@@ -370,7 +364,7 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
     }
   }
 
-  std::cout << "SMO initialization done!\n";
+  IO::Info << "SMO initialization done." << std::endl;
 
   // Begin SMO iterations
   ct_iter_ = 0;
@@ -395,13 +389,16 @@ void SMO<TKernel>::Train(int learner_typeid, arma::mat* dataset_in) {
     if (stop_condition == 1) {// optimality reached
       // Calculate the bias term
       CalcBias_();
-      std::cout << "SMO terminates since the accuracy " << accuracy_ << " achieved!!! Number of iterations: " << ct_iter_ << ".\n";
+      IO::Info << "SMO has achieved accuracy " << accuracy_
+          << " in " << ct_iter_ << " iterations and can now terminate."
+          << std::endl;
       break;
     }
     else if (stop_condition == 2) {// max num of iterations exceeded
       // Calculate the bias term
       CalcBias_();
-      std::cerr<< "SMO terminates since the number of iterations " << ct_iter_ << " exceeded!!! Gap: " << gap_ << "\n";
+      IO::Warn << "SMO has exceeded " << ct_iter_ << " iterations.  Gap: "
+          << gap_ << "." << std::endl;
       break;
     }
   }
@@ -419,8 +416,7 @@ int SMO<TKernel>::SMOIterations_() {
   if (WorkingSetSelection_(i,j) == true) {
     if (!do_shrinking_) { // no shrinking, optimality reached
       return 1;
-    }
-    else { // shrinking, need to check whether optimality really reached
+    } else { // shrinking, need to check whether optimality really reached
       ReconstructGradient_(); // restore the inactive alphas and reconstruct gradients
       n_active_ = n_alpha_;
       if (WorkingSetSelection_(i,j) == true) { // optimality reached
@@ -844,7 +840,9 @@ void SMO<TKernel>::GetSV(std::vector<size_t> &dataset_index, std::vector<double>
         coef.push_back(0);
       }
     }
-    printf("Number of SVs: %zu\n", n_sv_);
+
+    IO::Info << "Number of support vectors: " << n_sv_ << "." << std::endl;
+
   }
   else if (learner_typeid_ == 1) {// SVM_R
     for (size_t ii = 0; ii < n_data_; ii++) {
