@@ -6,20 +6,18 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
    # Tree files
    general_spacetree.h
-
    # Metric tree
    gen_metric_tree_impl.h
    gen_metric_tree.h
-
    # Cosine tree
    cosine.h
    dconebound_impl.h
    dconebound.h
    gen_cosine_tree_impl.h
    gen_cosine_tree.h
-
    # Exact maximum inner-product
    exact_max_ip.h
+   exact_max_ip.cc
 )
 
 # add directory name to sources
@@ -31,9 +29,10 @@ endforeach()
 set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 
-# the first single tree trial
+# the single/dual tree trial
 add_executable(max_ip_main
    EXCLUDE_FROM_ALL
+   #exact_max_ip.cc
    max_ip_main.cc
 )
 target_link_libraries(max_ip_main
