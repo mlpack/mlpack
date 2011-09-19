@@ -199,6 +199,10 @@ class RouteRequest {
     }
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
+    void set_stage(int stage_in) {
+      stage_ = stage_in;
+    }
+
     /** @brief The assignment operator.
      */
     void operator=(const RouteRequestType &route_request_in) {

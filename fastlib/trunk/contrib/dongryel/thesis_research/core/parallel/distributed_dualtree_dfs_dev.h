@@ -334,7 +334,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       typename DistributedDualtreeTaskQueueType::
       QuerySubTableLockListType::iterator checked_out_query_subtable;
       distributed_tasks.DequeueTask(
-        *world_, metric, &found_task, &checked_out_query_subtable);
+        *world_, thread_id, metric, &found_task, &checked_out_query_subtable);
 
       // If found something to run on, then call the serial dual-tree
       // method.
