@@ -9,7 +9,8 @@ for i = 1:n
 end
 
 for i = 1:n
-  f = f + exp(sum(D * S(:,i)));
+%  f = f + exp(sum(D * S(:,i)));
+  f = f + sum(exp(D * S(:,i)));
 end
 
 f = f / n;
