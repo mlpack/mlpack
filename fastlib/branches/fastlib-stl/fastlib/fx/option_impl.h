@@ -36,10 +36,6 @@ Option<N>::Option(const char* identifier,
                   const char* description,
                   const char* parent) {
   IO::AddFlag(identifier, description, parent);
-
-  // Set the default value (false).
-  std::string pathname = IO::SanitizeString(parent) + std::string(identifier);
-  IO::GetParam<bool>(pathname.c_str()) = false;
 }
 
 }; // namespace mlpack
