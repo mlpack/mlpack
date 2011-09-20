@@ -1,11 +1,15 @@
 function f = ComputeDictionaryObjective(D, S, T)
-%function f = ComputeDictionaryObjective(D, T)
+%function f = ComputeDictionaryObjective(D, S, T)
+
+n = size(S, 2);
 
 f = 0;
-for i = 1:m
-  f = f + S(:,i)' * D' * T(:,i);
+for i = 1:n
+  f = f - S(:,i)' * D' * T(:,i);
 end
 
-for i = 1:m
-  f = f + sum(exp(B * S(:,i)));
+for i = 1:n
+  f = f + exp(sum(D * S(:,i)));
 end
+
+f = f / n;
