@@ -1,7 +1,8 @@
-#include <armadillo>
-#include <string>
 #include <fastlib/fastlib.h>
 #include "exact_max_ip.h"
+
+#include <string>
+#include <armadillo>
 
 using namespace mlpack;
 using namespace std;

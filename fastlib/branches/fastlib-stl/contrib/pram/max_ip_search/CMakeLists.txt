@@ -32,13 +32,11 @@ set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 # the single/dual tree trial
 add_executable(max_ip_main
    EXCLUDE_FROM_ALL
-   #exact_max_ip.cc
    max_ip_main.cc
 )
 target_link_libraries(max_ip_main
    fastlib
    mlpack
-   #mlpack_contrib
 )
 
 # The cosine tree preliminary test file
