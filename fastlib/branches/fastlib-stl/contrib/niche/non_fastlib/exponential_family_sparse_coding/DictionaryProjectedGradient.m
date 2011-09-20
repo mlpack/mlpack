@@ -80,6 +80,7 @@ for main_iteration = 1:1000
 
     if f_t <= f_0 + alpha * trace(grad' * (D_t - D_0))
       done = true;
+      fprintf('\t\tCompleted %d line search iterations\n', iteration_num);
       fprintf('\t\tObjective value: %f\n', f_t);
       if f_t > prev_best_f
 	error('Objective increased! Aborting...');
@@ -91,7 +92,6 @@ for main_iteration = 1:1000
 	return;
       end
       prev_best_f = f_t;
-      %fprintf('done!\n');
     end
     %pause;
     t = beta * t;
