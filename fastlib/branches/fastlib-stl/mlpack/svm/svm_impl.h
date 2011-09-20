@@ -12,7 +12,13 @@
 #define __MLPACK_METHODS_SVM_SVM_IMPL_H
 
 // In case it has not already been included.
+#include <err.h>
+#include <errno.h>
 #include "svm.h"
+
+/* TODO TODO TODO: this is temporary to hide a bunch of warnings; we shouldn't directly use fscanf in this file (or really anywhere else in MLPack) */
+
+#define FSCANF_CHECK(...) if (fscanf (__VA_ARGS__) == EOF) errx (1, "You've reached a terrible end...");
 
 namespace mlpack {
 namespace svm {
@@ -117,8 +123,7 @@ void SVM<TKernel>::SVM_C_Train_(size_t learner_typeid, arma::mat& dataset) {
   size_t i, j;
 
   /* Reserve space for everything in one go. */
-  SVM_MODELS n;
-  models_.resize( num_classes_*(num_classes_-1)/2, n);
+  models_.resize( num_classes_*(num_classes_-1)/2);
 
   for (i = 0; i < num_classes_; i++) {
     for (j = i + 1; j < num_classes_; j++) {
@@ -586,9 +591,9 @@ void SVM<TKernel>::LoadModel_(size_t learner_typeid, std::string model_filename)
   }
 
   while (1) {
-    fscanf(fp,"%80s",cmd);
+    FSCANF_CHECK(fp,"%80s",cmd);
     if(strcmp(cmd,"svm_type") == 0) {
-      fscanf(fp,"%80s", cmd);
+      FSCANF_CHECK(fp,"%80s", cmd);
 
       if (strcmp(cmd,"SVM_C") == 0)
         learner_typeid_ = 0;
@@ -598,43 +603,43 @@ void SVM<TKernel>::LoadModel_(size_t learner_typeid, std::string model_filename)
         learner_typeid_ = 2;
 
     } else if (strcmp(cmd, "total_num_sv") == 0) {
-      fscanf(fp,"%zu",&total_num_sv_);
+      FSCANF_CHECK(fp,"%zu",&total_num_sv_);
     } else if (strcmp(cmd, "num_classes") == 0) { /* for SVM_C */
-      fscanf(fp,"%zu",&num_classes_);
+      FSCANF_CHECK(fp,"%zu",&num_classes_);
     } else if (strcmp(cmd, "labels") == 0) {
       for (i = 0; i<num_classes_; i++) {
-        fscanf(fp,"%lf",&temp_f);
+        FSCANF_CHECK(fp,"%lf",&temp_f);
         train_labels_list_[i] = temp_f;
       }
     } else if (strcmp(cmd, "sv_list_startpos") == 0) {
       for (i= 0; i < num_classes_; i++) {
-        fscanf(fp,"%zu",&temp_d);
+        FSCANF_CHECK(fp,"%zu",&temp_d);
         sv_list_startpos_[i]= temp_d;
       }
     } else if (strcmp(cmd, "sv_list_ct") == 0) {
       for (i = 0; i < num_classes_; i++) {
-        fscanf(fp,"%zu",&temp_d);
+        FSCANF_CHECK(fp,"%zu",&temp_d);
         sv_list_ct_[i]= temp_d;
       }
     } else if (strcmp(cmd, "sv_index") == 0) { /* for SVM_R */
       for (i = 0; i < total_num_sv_; i++) {
-        fscanf(fp,"%zu",&temp_d);
+        FSCANF_CHECK(fp,"%zu",&temp_d);
         sv_index_.push_back(temp_d);
       }
     } else if (strcmp(cmd, "kernel_name") == 0) { /* load kernel info */
       /* Switch to iostream file input instead? =/ */
       char in[81];
-      fscanf(fp,"%80s",in);
+      FSCANF_CHECK(fp,"%80s",in);
       param_.kernelname_ = in;
     } else if (strcmp(cmd, "kernel_typeid") == 0) {
-      fscanf(fp,"%zu",&param_.kerneltypeid_);
+      FSCANF_CHECK(fp,"%zu",&param_.kerneltypeid_);
     } else if (strcmp(cmd, "sigma") == 0) {
-      fscanf(fp,"%lf",&param_.kernel_.kpara_[0]); /* for gaussian kernels only */
+      FSCANF_CHECK(fp,"%lf",&param_.kernel_.kpara_[0]); /* for gaussian kernels only */
     } else if (strcmp(cmd, "gamma") == 0) {
-      fscanf(fp,"%lf",&param_.kernel_.kpara_[1]); /* for gaussian kernels only */
+      FSCANF_CHECK(fp,"%lf",&param_.kernel_.kpara_[1]); /* for gaussian kernels only */
     } else if (strcmp(cmd, "bias") == 0) { /* load bias */
       for (i = 0; i < num_models_; i++) {
-        fscanf(fp,"%lf",&temp_f);
+        FSCANF_CHECK(fp,"%lf",&temp_f);
         models_[i].bias_= temp_f;
       }
       break;
@@ -646,18 +651,18 @@ void SVM<TKernel>::LoadModel_(size_t learner_typeid, std::string model_filename)
   sv_coef_.zeros();
   sv_.set_size(num_features_, total_num_sv_);
   while (1) {
-    fscanf(fp,"%80s",cmd);
+    FSCANF_CHECK(fp,"%80s",cmd);
     if (strcmp(cmd, "SV_coefs") == 0) {
       for (i = 0; i < total_num_sv_; i++) {
         for (j = 0; j < num_classes_-1; j++) {
-          fscanf(fp,"%lf",&temp_f);
+          FSCANF_CHECK(fp,"%lf",&temp_f);
           sv_coef_(j, i) = temp_f;
         }
       }
     } else if (strcmp(cmd, "SVs") == 0) {
       for (i = 0; i < total_num_sv_; i++) {
         for (j = 0; j < num_features_; j++) {
-          fscanf(fp,"%lf",&temp_f);
+          FSCANF_CHECK(fp,"%lf",&temp_f);
           sv_(j, i) = temp_f;
         }
       }

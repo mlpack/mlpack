@@ -48,7 +48,7 @@ int main(int argc, char *argv[])
   string mode = IO::GetParam<std::string>("svm/mode");
   string kernel = IO::GetParam<std::string>("svm/kernel");
   string learner_name = IO::GetParam<std::string>("svm/learner_name");
-  size_t learner_typeid;
+  size_t learner_typeid = 0;
 
   if (learner_name == "svm_c") { // Support Vector Classfication
     learner_typeid = 0;

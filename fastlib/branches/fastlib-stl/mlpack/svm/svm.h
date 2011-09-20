@@ -165,7 +165,7 @@ class SVM {
   struct SVM_MODELS {
     /* bias term in each binary model */
     double bias_;
-    /* all coefficients (alpha*y) of the binary dataset, not necessarily thoes of SVs */
+    /* all coefficients (alpha*y) of the binary dataset, not necessarily those of SVs */
     std::vector<double> coef_;
   };
 

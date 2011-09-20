@@ -155,7 +155,9 @@ bool DatasetInfo::InitFromCsv(TextLineReader& reader, const std::string& filenam
   for (size_t i = 0; i < headers.size(); i++) {
     char *end;
 
-    (void) strtod(headers[i].c_str(), &end);
+    /* bad to call strtod but ignore its output...  think of the work that function had to do! */
+    double dummy = strtod(headers[i].c_str(), &end);
+    dummy++;
 
     if (end == headers[i].c_str()) {
       nonnumeric = true;
