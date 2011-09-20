@@ -172,11 +172,11 @@ class DistributedDualtreeTaskQueue {
     /** @brief Flushes a query subtable to be written back to its
      *         origin.
      */
-    void Flush_(int probe_index) {
+    void Flush_(boost::mpi::communicator &world, int probe_index) {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Queue and evict.
-      table_exchange_.QueueFlushRequest(query_subtables_[probe_index]);
+      table_exchange_.QueueFlushRequest(world, query_subtables_[probe_index]);
       num_imported_query_subtables_--;
       this->Evict_(probe_index);
     }
@@ -977,7 +977,7 @@ class DistributedDualtreeTaskQueue {
         // If the query subtable is not from the MPI process of its
         // origin and it ran out of stuffs to do, flush.
         else if(tasks_[probe_index]->size() == 0) {
-          this->Flush_(probe_index);
+          this->Flush_(world, probe_index);
           return true;
         }
       }

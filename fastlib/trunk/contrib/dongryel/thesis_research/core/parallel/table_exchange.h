@@ -449,12 +449,13 @@ class TableExchange {
     /** @brief Queues the query subtable and its result flush request.
      */
     void QueueFlushRequest(
+      boost::mpi::communicator &world,
       const boost::intrusive_ptr<SubTableType > &query_subtable_in) {
       int destination_rank = query_subtable_in->originating_rank();
       unsigned int ready_stage = 0;
-      for(unsigned int i = 1; i < max_stage_; i++) {
+      for(unsigned int i = 0; i < max_stage_; i++) {
         unsigned int flag = (1 << i);
-        if((flag ^ destination_rank) == 0) {
+        if((flag ^ destination_rank) == (flag ^ world.rank())) {
           ready_stage = i;
         }
         else {
