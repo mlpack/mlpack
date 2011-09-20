@@ -12,5 +12,5 @@ add_subdirectory(mixed_logit_dcm)
 add_subdirectory(series_expansion)
 
 #added by Bill, 9/12
-add_subdirectory(distributed_2pt)
+#add_subdirectory(distributed_2pt)
 add_subdirectory(two_point)
