@@ -128,6 +128,10 @@ class RouteRequest {
       return destinations_;
     }
 
+    void clear_destinations() {
+      destinations_.resize(0);
+    }
+
     void add_destination(int new_dest_in) {
       destinations_.push_back(new_dest_in);
     }
