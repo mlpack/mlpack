@@ -13,4 +13,4 @@ for i = 1:n
   f = f + sum(exp(D * S(:,i)));
 end
 
-f = f / n;
+f = f / n; % seems to work better with this normalization
