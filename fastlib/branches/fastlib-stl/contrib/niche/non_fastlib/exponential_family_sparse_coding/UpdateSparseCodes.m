@@ -1,9 +1,22 @@
-function S = UpdateSparseCodes(D, lambda, S_initial)
+function S = UpdateSparseCodes(T, D, lambda, S_initial)
 
-[d n] = size(D);
+[d k] = size(D);
 
-if nargin >= 3
-  for i = 1:n
-    % call feature sign to get S_i
-  end
+n = size(T, 2);
+
+% just one sparse code for now
+
+
+for i = 1:1%n
+  s = zeros(k, 1);
+  
+  Lambda = exp(exp(D * s));
+  z = (T ./ Lambda) - ones(d, 1) + D * s;
+  regressors = diag(sqrt(Lambda)) * D;
+  targets = diag(sqrt(Lambda)) * z;
+  
+  AtA = regressors' * regressors;
+  s_new = l1ls_featuresign(regressors, targets, lambda / 2, s, AtA, ...
+			   rank(AtA));
 end
+S = s_new;

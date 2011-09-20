@@ -4,7 +4,8 @@ function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta)
 % T are the sufficient statistics for the data, stored as
 % num_features by num_points
 %
-% Nocedal and Wright suggested default alpha = 1e-4
+% Nocedal and Wright suggested default alpha = 1e-4,
+% but Boyd and Vandenberghe suggest using 0.01 to 0.3
 %
 % We use Armijo line search, with projection operator P, gradient g, and
 % termination condition
@@ -13,9 +14,9 @@ function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta)
 
 if nargin == 3
   alpha = 1e-4;
-  beta = 0.99;
+  beta = 0.9;
 elseif nargin == 4 
-  beta = 0.99;
+  beta = 0.9;
 end
 
 obj_tol = 1e-6;
@@ -37,7 +38,8 @@ for main_iteration = 1:1000
   end
   
   for i = 1:n
-    grad = grad + repmat(S(:,i)', d, 1) * sum_DS(i);
+%    grad = grad + repmat(S(:,i)', d, 1) * sum_DS(i);
+    grad = grad + exp(D_0 * S(:,i)) * S(:,i)';
   end
 
   %grad = grad / n; % seems to be horrible
