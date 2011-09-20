@@ -318,7 +318,7 @@ class DistributedDualtreeTaskQueue {
               received_query_subtable_id.get<2>() ==
               comp_query_subtable_id.get<2>()) {
 
-            printf("Putting %d %d %d back to the queue!!!!\n\n",
+            printf("      Putting %d %d %d back to the queue!!!!\n\n",
                    comp_query_subtable_id.get<0>(),
                    comp_query_subtable_id.get<1>(),
                    comp_query_subtable_id.get<2>()
@@ -404,11 +404,13 @@ class DistributedDualtreeTaskQueue {
       printf("  Active query subtables:\n");
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
-        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu\n",
+        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu "
+               "originating from %d:",
                query_subtable_id.get<0>(), query_subtable_id.get<1>(),
                query_subtable_id.get<2>(),
                static_cast<int>(tasks_[i]->size()),
-               remaining_work_for_query_subtables_[i]);
+               remaining_work_for_query_subtables_[i],
+               query_subtable_id.get<0>()->originating_rank());
         TaskType *it = const_cast<TaskType *>(&(tasks_[i]->top()));
         printf("      Reference set: ");
         for(int j = 0; j < tasks_[i]->size(); j++, it++) {
@@ -457,6 +459,12 @@ class DistributedDualtreeTaskQueue {
       this->GrowSlots_();
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
+
+      printf("Received %d %d %d from %d\n",
+             query_subtable_in.subtable_id().get<0>(),
+             query_subtable_in.subtable_id().get<1>(),
+             query_subtable_in.subtable_id().get<2>(),
+             originating_rank_in);
       remaining_work_for_query_subtables_.back() = 0;
 
       // Increment the number of imported subtables.
@@ -888,13 +896,6 @@ class DistributedDualtreeTaskQueue {
               world, probe_index, task_out, checked_out_query_subtable)) {
           probe_index--;
         }
-      }
-
-      if(task_out->second < 0) {
-        printf("(%d %d) could not dequeue a task because:\n",
-               world.rank(), thread_id);
-        this->Print();
-        table_exchange_.PrintSubTables(world);
       }
     }
 

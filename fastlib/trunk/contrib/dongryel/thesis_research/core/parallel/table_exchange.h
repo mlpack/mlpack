@@ -389,19 +389,6 @@ class TableExchange {
     }
 
     void ClearSubTable_(boost::mpi::communicator &world, int cache_id) {
-      /*
-      printf("        ------- Destroyed %d %d %d at %d\n",
-             message_cache_[ cache_id ].subtable_route().object().subtable_id().get<0>(),
-             message_cache_[ cache_id ].subtable_route().object().subtable_id().get<1>(),
-             message_cache_[ cache_id ].subtable_route().object().subtable_id().get<2>(), cache_id);
-      if(task_queue_->CheckIntegrity(
-            message_cache_[ cache_id ].subtable_route().object().subtable_id())) {
-        printf("Destroying something that is in the task queue!\n");
-        task_queue_->Print();
-        this->PrintSubTables(world);
-        exit(0);
-      }
-      */
       message_cache_[ cache_id ].subtable_route().object().Destruct();
       message_cache_[
         cache_id ].subtable_route().set_object_is_valid_flag(false);
@@ -689,6 +676,8 @@ class TableExchange {
     void SendReceiveQuerySubTableFlushRequests(
       boost::mpi::communicator &world) {
 
+      printf("Getting at stage %d on %d\n", flush_stage_, world.rank());
+
       // If any of the queued up flush requests is ready to be sent
       // out, then sent out.
       if((! query_subtable_flush_message_cache_[
@@ -710,11 +699,11 @@ class TableExchange {
           world.rank()].flush_route().set_stage(flush_stage_);
 
         printf(
-          "Dequeueing from flush queue: %d %d %d for stage %d\n",
+          "  Dequeueing from flush queue: %d %d %d for stage %d\n",
           (queued_up_query_subtables_[ flush_stage_ ].back())->subtable_id().get<0>(),
           (queued_up_query_subtables_[ flush_stage_ ].back())->subtable_id().get<1>(),
           (queued_up_query_subtables_[ flush_stage_ ].back())->subtable_id().get<2>(), flush_stage_);
-        printf("  Destinations: %d\n",
+        printf("    Destinations: %d\n",
                query_subtable_flush_message_cache_[world.rank()].flush_route().num_destinations());
         for(int i = 0; i < query_subtable_flush_message_cache_[world.rank()].flush_route().num_destinations(); i++) {
           printf("%d ", query_subtable_flush_message_cache_[world.rank()].flush_route().destinations()[i]
@@ -726,8 +715,8 @@ class TableExchange {
         num_queued_up_query_subtables_--;
       }
       else {
-        query_subtable_flush_message_cache_ [
-          world.rank()].flush_route().set_object_is_valid_flag(false);
+        printf("   Nothing on this round!\n");
+        task_queue_->Print();
       }
 
       // Exchange with the neighbors.
@@ -756,7 +745,6 @@ class TableExchange {
                 neighbor,
                 core::parallel::MessageTag::FLUSH_SUBTABLE)) {
 
-          // Receive the subtable.
           QuerySubTableFlushMessageType tmp_route_request;
           tmp_route_request.flush_route().object().Init(neighbor, false);
           world.recv(
@@ -776,14 +764,9 @@ class TableExchange {
             query_subtable_flush_message_cache_[cache_id];
 
           // Synchronize with the received query subtable.
-          if(route_request.flush_route().object_is_valid()) {
-            printf("    I received a valid flush request.!\n\n\n");
-          }
-
           if(route_request.flush_route().remove_from_destination_list(
                 world.rank()) &&
               route_request.flush_route().object_is_valid()) {
-
             task_queue_->Synchronize(route_request.flush_route().object());
           }
         }
@@ -803,6 +786,8 @@ class TableExchange {
             process_rank ].flush_route().object().Destruct();
           query_subtable_flush_message_cache_[
             process_rank ].flush_route().set_object_is_valid_flag(false);
+          query_subtable_flush_message_cache_[
+            process_rank ].flush_route().clear_destinations();
         }
       }
       flush_stage_ = (flush_stage_ + 1) % max_stage_;
