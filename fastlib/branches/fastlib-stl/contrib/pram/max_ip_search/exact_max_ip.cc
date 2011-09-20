@@ -1,8 +1,11 @@
-// #include <armadillo>
-// #include <string>
-// #include "general_spacetree.h"
-// #include "dconebound.h"
-// #include "gen_cosine_tree.h"
+/**
+ * @file exact_max_ip.cc
+ * @author Parikshit Ram
+ *
+ * This file implements the functions declared 
+ * for the class MaxIP.
+ */
+
 #include "exact_max_ip.h"
 
 using namespace mlpack;
