@@ -140,7 +140,7 @@ BOOST_AUTO_TEST_CASE(TestOption) {
 BOOST_AUTO_TEST_CASE(TestBooleanOption) {
   PARAM_FLAG("flag_test", "flag test description", "test_parent");
 
-  BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/flag_test"), true);
+  BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/flag_test"), false);
 
   BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/flag_test"),
       "flag test description");
