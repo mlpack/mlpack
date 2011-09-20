@@ -54,23 +54,10 @@ void StartComputation(
 
 int main(int argc, char *argv[]) {
 
-  //int init;
-  //MPI_Initialized(&init);
-  //std::cout << "MPI Initialized: " << init << "\n";
-  
   // Initialize boost MPI.
   boost::mpi::environment env(argc, argv);
-  //MPI_Init(&argc, &argv);
-  
-  //std::cout << "Init called\n";
-  
-  //MPI_Initialized(&init);
-  //std::cout << "MPI Initialized: " << init << "\n";
-  
   boost::mpi::communicator world;
 
-  //std::cout << "my rank: " << world.rank() << " out of " << world.size() << "\n";
-  
   // Seed the random number.
   core::math::global_random_number_state_.set_seed(time(NULL) + world.rank());
 
