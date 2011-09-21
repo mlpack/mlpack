@@ -18,8 +18,14 @@ namespace mlpack {
     
     class TwoPointResult {
       
+      // For BOOST serialization.
+      friend class boost::serialization::access;
+
+      
     //private:
     public:
+      
+      
       
       int num_tuples_;
       
@@ -56,12 +62,21 @@ namespace mlpack {
       }
       
       void Init(int num_points) {
+        // put malloc here 
         SetZero();
       }
       
       template<typename GlobalType>
       void Init(const GlobalType& global_in, int num_points) {
         this->Init(num_points);
+      }
+      
+      void Accumulate(const TwoPointResult &result_in) {
+        
+        num_tuples_ += result_in.num_tuples_;
+        weighted_num_tuples_ += result_in.weighted_num_tuples_;
+        num_prunes_ += result_in.num_prunes_;
+        
       }
       
       template<typename MetricType, typename GlobalType>
@@ -71,9 +86,19 @@ namespace mlpack {
                        double q_weight,
                        const GlobalType &global,
                        const bool is_monochromatic) {
-        
       
+
+        
       } // PostProcess
+      
+      
+      template<typename DistributedTableType>
+      void PostProcess(boost::mpi::communicator &world,
+                       DistributedTableType *distributed_table_in) {
+
+        //boost::mpi::reduce();
+        
+      }
       
       
       template<typename GlobalType, typename TreeType, typename DeltaType>
@@ -88,19 +113,62 @@ namespace mlpack {
         
       }
       
-      template<typename KdePostponedType>
-      void ApplyPostponed(int q_index, const KdePostponedType &postponed_in) {
+      /** @brief Aliases a subset of the given result.
+       */
+      template<typename TreeIteratorType>
+      void Alias(TreeIteratorType &it) {
+        // TODO: should this be blank?
+      }
+      
+      /** @brief Aliases a subset of the given result.
+       */
+      template<typename TreeIteratorType>
+      void Alias(const TwoPointResult &result_in, TreeIteratorType &it) {
+        // TODO: is this right?
+        num_tuples_ = result_in.num_tuples_;
+        weighted_num_tuples_ = result_in.weighted_num_tuples_;
+        num_prunes_ = result_in.num_prunes_;
+      }
+      
+      /** @brief Aliases another result.
+       */
+      void Alias(const TwoPointResult &result_in) {
+        num_tuples_ = result_in.num_tuples_;
+        weighted_num_tuples_ = result_in.weighted_num_tuples_;
+        num_prunes_ = result_in.num_prunes_;
+      }
+      
+      void Copy(const TwoPointResult& result_in) {
+        num_tuples_ = result_in.num_tuples_;
+        weighted_num_tuples_ = result_in.weighted_num_tuples_;
+        num_prunes_ = result_in.num_prunes_;        
+      }
+      
+      /** @brief Serialize the KDE result object.
+       */
+      template<class Archive>
+      void serialize(Archive &ar, const unsigned int version) {
+        ar & num_tuples_;
+        ar & weighted_num_tuples_;
+        ar & num_prunes_;
+      }
+      
+      
+      template<typename TwoPointPostponedType>
+      void ApplyPostponed(int q_index, const TwoPointPostponedType &postponed_in) {
    
+        //printf("adding postponed to result.\n");
         num_tuples_ += postponed_in.num_tuples();
         weighted_num_tuples_ += postponed_in.weighted_num_tuples();
         
       }
       
-      template<typename GlobalType, typename KdePostponedType>
+      template<typename GlobalType, typename TwoPointPostponedType>
       void FinalApplyPostponed(const GlobalType &global,
                                const arma::vec &qpoint,
                                int q_index,
-                               const KdePostponedType &postponed_in) {
+                               const TwoPointPostponedType &postponed_in) {
+        
         
         //ApplyPostponed(q_index, postponed_in);
         

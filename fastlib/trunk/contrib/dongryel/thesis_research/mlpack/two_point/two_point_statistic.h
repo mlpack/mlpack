@@ -18,6 +18,10 @@ namespace mlpack {
     
     class TwoPointStatistic {
       
+      // For BOOST serialization.
+      friend class boost::serialization::access;
+
+      
     private:
       
       
@@ -40,6 +44,11 @@ namespace mlpack {
       void Copy(const TwoPointStatistic& other) {
         postponed_.Copy(other.postponed_);
         summary_.Copy(other.summary_);
+      }
+      
+      
+      template<class Archive>
+      void serialize(Archive &ar, const unsigned int version) {
       }
       
       template<typename GlobalType, typename TreeType>
