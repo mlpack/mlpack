@@ -45,8 +45,8 @@ namespace mlpack {
                 double matcher_dist, double matcher_thick,
                 bool is_mono) {
         
-        point_table_1_ = table_1;
-        point_table_2_ = table_2;
+        points_table_1_ = table_1;
+        points_table_2_ = table_2;
         
         matcher_distance_ = matcher_dist;
         matcher_thickness_ = matcher_thick;
@@ -71,12 +71,12 @@ namespace mlpack {
         return is_monochromatic_;
       }
       
-      TableType* point_table_1() {
-        return point_table_1_;
+      TableType* points_table_1() {
+        return points_table_1_;
       }
       
-      TableType* point_table_2() {
-        return point_table_2_;
+      TableType* points_table_2() {
+        return points_table_2_;
       }
       
       double lower_bound_sqr() {
@@ -109,8 +109,8 @@ namespace mlpack {
       
       bool is_monochromatic_;
       
-      TableType* point_table_1_;
-      TableType* point_table_2_;
+      TableType* points_table_1_;
+      TableType* points_table_2_;
       
     }; // class
     

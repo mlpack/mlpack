@@ -139,7 +139,7 @@ bool TwoPointArgumentParser::ParseArguments(
   std::cout << "Finished reading in the data set.\n";
   
   // Scale the dataset.
-  std::cout << "Building the reference tree.\n";
+  std::cout << "Building the data tree.\n";
   arguments_out->points_table_1_->IndexData(
        *(arguments_out->metric_), arguments_out->leaf_size_);
   std::cout << "Finished building the data tree.\n";

@@ -23,6 +23,8 @@ namespace mlpack {
       
       double weighted_num_tuples_;
       
+      bool is_monochromatic_;
+      
     public:
       
       int num_tuples() const {
@@ -74,6 +76,10 @@ namespace mlpack {
       template<typename GlobalType, typename TreeType>
       void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
     
+        // TODO: is this still correct in parallel?
+        SetZero();
+        is_monochromatic_ = (qnode == rnode);
+        
       }
       
       template < typename TreeType, typename GlobalType,
@@ -109,6 +115,12 @@ namespace mlpack {
           if (dist_sq <= global.upper_bound_sqr() &&
               dist_sq >= global.lower_bound_sqr()) {
             
+            /*
+            printf("===============\n");
+            query_point.print("query");
+            reference_point.print("reference");
+            printf("\n");
+            */
             num_tuples_++;
             weighted_num_tuples_ += (query_weight * reference_weight);
             
