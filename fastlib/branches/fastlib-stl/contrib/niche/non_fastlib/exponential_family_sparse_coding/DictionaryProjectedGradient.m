@@ -1,5 +1,5 @@
-function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta)
-%function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta)
+function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta, verbose)
+%function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta, verbose)
 %
 % T are the sufficient statistics for the data, stored as
 % num_features by num_points
@@ -12,11 +12,14 @@ function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta)
 %   f(P(x + t*g)) >= f(x) + alpha * g^T (P(x + t*g) - x)
 
 
-if nargin == 3
+if nargin < 4
   alpha = 1e-4;
+end
+if nargin < 5
   beta = 0.9;
-elseif nargin == 4 
-  beta = 0.9;
+end
+if nargin < 6
+  verbose = false;
 end
 
 obj_tol = 1e-6;
@@ -27,7 +30,9 @@ n = size(S, 2);
 
 for main_iteration = 1:1000
 
-  fprintf('Main Iteration %d\n', main_iteration);
+  if verbose
+    fprintf('Main Iteration %d\n', main_iteration);
+  end
 
   sum_DS = exp(sum(D_0 * S));
   
@@ -63,7 +68,7 @@ for main_iteration = 1:1000
   prev_best_f = f_0;
   while ~done
     iteration_num = iteration_num + 1;
-    %fprintf('Iteration %d\n', iteration_num);
+    %fprintf('Iteration %d, t = %f\n', iteration_num, t);
 
     D_t = D_0 - t * grad;
     norms = sqrt(sum(D_t .^ 2));
@@ -80,14 +85,18 @@ for main_iteration = 1:1000
 
     if f_t <= f_0 + alpha * trace(grad' * (D_t - D_0))
       done = true;
-      fprintf('\t\tCompleted %d line search iterations\n', iteration_num);
-      fprintf('\t\tObjective value: %f\n', f_t);
+      if verbose
+	fprintf('\t\tCompleted %d line search iterations\n', iteration_num);
+	fprintf('\t\tObjective value: %f\n', f_t);
+      end
       if f_t > prev_best_f
 	error('Objective increased! Aborting...');
 	return;
       end
       if prev_best_f - f_t < obj_tol
-	fprintf('Improvement to objective below tolerance. Finished.\n');
+	if verbose
+	  fprintf('Improvement to objective below tolerance. Finished.\n');
+	end
 	D_opt = D_0;
 	return;
       end
