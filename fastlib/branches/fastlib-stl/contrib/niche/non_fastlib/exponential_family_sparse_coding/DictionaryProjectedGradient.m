@@ -35,7 +35,7 @@ for main_iteration = 1:1000
     fprintf('Main Iteration %d\n', main_iteration);
   end
 
-  sum_DS = exp(sum(D_0 * S));
+  %sum_DS = exp(sum(D_0 * S));
   
   % compute gradient
   grad = zeros(size(D_0));
@@ -61,8 +61,10 @@ for main_iteration = 1:1000
   
   f_0 = ComputeDictionaryObjective(D_0, S, T);
   
-  %fprintf('\t\t\t\ttrace(grad^T * grad) = %f\n', trace(grad' * grad));
-  
+  if verbose == 2
+    fprintf('\t\t\t\ttrace(grad^T * grad) = %f\n', trace(grad' * grad));
+  end
+    
   
   
 
@@ -72,7 +74,9 @@ for main_iteration = 1:1000
   prev_best_f = f_0;
   while ~done
     iteration_num = iteration_num + 1;
-    %fprintf('Iteration %d, t = %f\n', iteration_num, t);
+    if verbose == 2
+      fprintf('Iteration %d, t = %f\n', iteration_num, t);
+    end
 
     D_t = D_0 - t * grad;
     norms = sqrt(sum(D_t .^ 2));
@@ -82,9 +86,11 @@ for main_iteration = 1:1000
     end
     
     f_t = ComputeDictionaryObjective(D_t, S, T);
-    %fprintf('f_0 = %f\tf_t = %f\n', f_0, f_t);
-    %fprintf('\t\t\t\ttrace(grad^T * (D_t - D_0)) = %f\n', trace(grad' * (D_t - D_0))); 
-    %fprintf('\t\t\t\tnorm(D_t - D_0) = %f\n', norm(D_t - D_0));
+    if verbose == 2
+      fprintf('f_0 = %f\tf_t = %f\n', f_0, f_t);
+      fprintf('\t\t\t\ttrace(grad^T * (D_t - D_0)) = %f\n', trace(grad' * (D_t - D_0))); 
+      fprintf('\t\t\t\tnorm(D_t - D_0) = %f\n', norm(D_t - D_0));
+    end
 
     if f_t <= f_0 + alpha * trace(grad' * (D_t - D_0))
       done = true;

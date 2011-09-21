@@ -43,7 +43,7 @@ while ~converged
   
   % Dictionary update
   fprintf('DICTIONARY LEARNING STEP\n');
-  D = DictionaryProjectedGradient(D, S, X, alpha, beta, true);
+  D = DictionaryProjectedGradient(D, S, X, alpha, beta, 2);
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
