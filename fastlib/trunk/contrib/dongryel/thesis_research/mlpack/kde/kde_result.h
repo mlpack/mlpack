@@ -57,6 +57,26 @@ class KdeResult {
      */
     int num_local_prunes_;
 
+    /** @brief Accumulates the given query result to this query
+     *         result.
+     */
+    void Accumulate(const KdeResult &result_in) {
+
+      // Do nothing.
+    }
+
+    /** @brief Accumulates the query result.
+     */
+    template<typename DistributedTableType>
+    void PostProcess(
+      boost::mpi::communicator &world,
+      DistributedTableType *distributed_table_in) {
+
+      // This should be function that takes the old_from_new mapping
+      // and does the reshuffling of the long query result vector.
+
+    }
+
     /** @brief Aliases a subset of the given result.
      */
     template<typename TreeIteratorType>
@@ -108,10 +128,15 @@ class KdeResult {
       num_local_prunes_ += result_in.num_local_prunes_;
     }
 
+    /** @brief The assignment operator that defaults back to copying
+     *         values.
+     */
     void operator=(const KdeResult &result_in) {
       this->Copy(result_in);
     }
 
+    /** @brief The copy constructor that copies.
+     */
     KdeResult(const KdeResult &result_in) {
       this->operator=(result_in);
     }
@@ -127,6 +152,9 @@ class KdeResult {
       ar & used_error_;
     }
 
+    /** @brief Seeds the given query reuslt with the initial number of
+     *         pruned reference points.
+     */
     void Seed(int qpoint_index, double initial_pruned_in) {
       pruned_[qpoint_index] = initial_pruned_in;
     }
@@ -170,6 +198,8 @@ class KdeResult {
       }
     }
 
+    /** @brief Prints the KDE results to a file.
+     */
     void Print(const std::string &file_name) const {
       FILE *file_output = fopen(file_name.c_str(), "w+");
       core::parallel::MapVector<double>::iterator densities_l_it =
