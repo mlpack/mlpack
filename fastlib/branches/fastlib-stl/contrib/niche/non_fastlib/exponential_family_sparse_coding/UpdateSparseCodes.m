@@ -20,7 +20,7 @@ if nargin < 7
 end
 
 
-obj_tol = 1e-9;
+obj_tol = 1e-6;
 
 [d k] = size(D);
 
@@ -39,6 +39,10 @@ S = zeros(k, n);
 rank_AtA = rank(D); % useful precomputation for later
 
 for i = 1:n
+
+  if mod(i, 100) == 0
+    fprintf('%d ', i);
+  end
 
   if ~isempty(S_initial)
     s_0 = S_initial(:,i);

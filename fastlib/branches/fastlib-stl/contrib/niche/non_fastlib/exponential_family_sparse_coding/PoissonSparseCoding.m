@@ -8,6 +8,10 @@ function [D, S] = PoissonSparseCoding(X, k, lambda, max_iterations, ...
 % Good news: warm start is faster
 % Bad news:  warm start yields poorer solutions than starting at 0
 
+if nargin < 5
+  warm_start = false;
+end
+
 [d n] = size(X);
 
 % hardcoded for now
@@ -39,7 +43,7 @@ while ~converged
   
   % Dictionary update
   fprintf('DICTIONARY LEARNING STEP\n');
-  D = DictionaryProjectedGradient(D, S, X, alpha, beta);
+  D = DictionaryProjectedGradient(D, S, X, alpha, beta, true);
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
