@@ -16,6 +16,11 @@
 namespace math {
 
   /**
+   * Computes the factorial of an integer.
+   */
+  __attribute__((const)) double Factorial(int d);
+  
+  /**
    * Computes the binomial coefficient, n choose k for nonnegative integers
    * n and k
    *
