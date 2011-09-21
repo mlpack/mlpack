@@ -4,7 +4,7 @@ function f = ComputeDictionaryObjective(D, S, T)
 n = size(S, 2);
 
 f = 0;
-f = f + trace(D' * T * S');
+f = f - trace(D' * T * S');
 % easy to understand version of the above line
 %for i = 1:n
 %  f = f - S(:,i)' * D' * T(:,i);

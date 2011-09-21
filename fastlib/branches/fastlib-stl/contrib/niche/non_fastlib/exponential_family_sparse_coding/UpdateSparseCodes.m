@@ -38,8 +38,9 @@ S = zeros(k, n);
 
 rank_AtA = rank(D); % useful precomputation for later
 
-for i = 1:n
+parfor i = 1:n
 
+  % commented out for parfor
   if mod(i, 100) == 0
     fprintf('%d ', i);
   end
@@ -117,7 +118,7 @@ for i = 1:n
 	
 	if f_t > prev_best_f
 	  error('Objective increased! Aborting...');
-	  return;
+	  %return;
 	end
 	if prev_best_f - f_t < obj_tol
 	  if verbose
