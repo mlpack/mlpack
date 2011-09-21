@@ -94,6 +94,27 @@ class LocalRegressionResult {
      */
     core::parallel::MapVector<double> right_hand_side_used_error_;
 
+
+    /** @brief Accumulates the given query result to this query
+     *         result.
+     */
+    void Accumulate(const LocalRegressionResult &result_in) {
+
+      // Do nothing.
+    }
+
+    /** @brief Accumulates the query result.
+     */
+    template<typename DistributedTableType>
+    void PostProcess(
+      boost::mpi::communicator &world,
+      DistributedTableType *distributed_table_in) {
+
+      // This should be function that takes the old_from_new mapping
+      // and does the reshuffling of the long query result vector.
+
+    }
+
     /** @brief Aliases a subset of the given result.
      */
     template<typename TreeIteratorType>

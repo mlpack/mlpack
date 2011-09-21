@@ -374,6 +374,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         {
           num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
           num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
+
+          // Collect back the result gathered by a task.
+          query_results->Accumulate(*(found_task.first.query_result()));
         }
 
         // Push in the completed amount of work.
@@ -399,6 +402,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     while(work_left_to_do);
 
   } // end of omp parallel
+
+  // Do a global post-processing if necessary over the set of global
+  // query results owned by each MPI process.
+  query_results->PostProcess(* world_, query_table_);
 }
 
 template<typename DistributedProblemType>
