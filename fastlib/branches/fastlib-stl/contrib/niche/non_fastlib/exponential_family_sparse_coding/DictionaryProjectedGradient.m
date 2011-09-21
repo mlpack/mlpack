@@ -22,7 +22,8 @@ if nargin < 6
   verbose = false;
 end
 
-obj_tol = 1e-6;
+%obj_tol = 1e-6;
+obj_tol = 1e-1;
 
 d = size(D_0, 1);
 n = size(S, 2);
@@ -38,14 +39,17 @@ for main_iteration = 1:1000
   
   % compute gradient
   grad = zeros(size(D_0));
-  for i = 1:n
-    grad = grad - T(:,i) * S(:,i)';
-  end
-  
-  for i = 1:n
-%    grad = grad + repmat(S(:,i)', d, 1) * sum_DS(i);
-    grad = grad + exp(D_0 * S(:,i)) * S(:,i)';
-  end
+  grad = grad - T * S';
+  % easy to understand version of the above line
+  %for i = 1:n
+  %  grad = grad - T(:,i) * S(:,i)';
+  %end
+
+  grad = grad + exp(D_0 * S) * S';
+  % easy to understand version of the above line
+  %for i = 1:n
+  %  grad = grad + exp(D_0 * S(:,i)) * S(:,i)';
+  %end
 
   %grad = grad / n; % seems to be horrible
   grad = grad / sqrt(trace(grad' * grad)); % seems to work well
@@ -76,7 +80,6 @@ for main_iteration = 1:1000
     for i = find((norms > 1))
       D_t(:,i) = D_t(:,i) / norms(i);
     end
-    %disp(sum(D_t.^2));
     
     f_t = ComputeDictionaryObjective(D_t, S, T);
     %fprintf('f_0 = %f\tf_t = %f\n', f_0, f_t);
