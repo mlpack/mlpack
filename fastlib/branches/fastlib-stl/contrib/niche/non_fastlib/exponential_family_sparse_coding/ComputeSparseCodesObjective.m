@@ -1,12 +1,12 @@
-function f = ComputeSparseCodesObjective(D, s, t, lambda)
+function f = ComputeSparseCodesObjective(D, s, Dt_t, lambda)
 %function f = ComputeSparseCodesObjective(D, s, t, lambda)
 %
 % Dictionary D
 % Candidate sparse code s
-% Sufficient statistics t for a single point
+% Dt_t is D transpose times t, where t is the sufficient statistic for a single point
 % l1-norm regularization parameter lambda 
 
-f = -s' * D' * t;
+f = -s' * Dt_t;
 
 f = f + sum(exp(D * s));
 
