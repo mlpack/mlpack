@@ -20,26 +20,17 @@ if nargin < 7
 end
 
 
-obj_tol = 1e-6;
+obj_tol = 1e-6; % hardcoded for now
 
 [d k] = size(D);
 
 n = size(T, 2);
 
-% just one sparse code for now
-
-% Notes for future efficiency improvements:
-%   It seems that the rank of AtA should not change when coding
-% different points.
-%   We should precompute DtD and then scale its rows and columns
-%   via Lambda
-
 S = zeros(k, n);
 
 rank_AtA = rank(D); % useful precomputation for later
 
-% something seems wrong with the parfor version; we don't get low
-% values in S
+% something may be wrong with the parfor version; need to double check that badness isn't happening
 %parfor i = 1:n
 for i = 1:n
 
@@ -58,7 +49,7 @@ for i = 1:n
 
   if verbose
     fprintf('Point %d\tStarting Objective value: %f\n', ...
-	    i, ComputeSparseCodesObjective(D, s_0, Dt_T_i, lambda));
+	    i, ComputePoissonSparseCodesObjective(D, s_0, Dt_T_i, lambda));
   end
   
   
@@ -89,14 +80,15 @@ for i = 1:n
     %s_1
     
     
-    f_0 = ComputeSparseCodesObjective(D, s_0, Dt_T_i, lambda);
+    f_0 = ComputePoissonSparseCodesObjective(D, s_0, Dt_T_i, lambda);
     
     
     
     % choose a subgradient at s_0
-    subgrad = -D' * T(:,i);
-    subgrad = subgrad + D' * exp(D * s_0);
-    subgrad = subgrad + lambda * ((s_0 > 0) - (s_0 < 0)); % handle possibly non-differentiable component by using subgradient
+    subgrad = ComputePoissonSparseCodesSubgradient(D, s_0, T(:,i));
+    %subgrad = -D' * T(:,i);
+    %subgrad = subgrad + D' * exp(D * s_0);
+    %subgrad = subgrad + lambda * ((s_0 > 0) - (s_0 < 0)); % handle possibly non-differentiable component by using subgradient
     
     
     % Armijo'ish line search to select next s
@@ -109,7 +101,7 @@ for i = 1:n
       
       s_t = t * s_1 + (1 - t) * s_0;
       
-      f_t = ComputeSparseCodesObjective(D, s_t, Dt_T_i, lambda);
+      f_t = ComputePoissonSparseCodesObjective(D, s_t, Dt_T_i, lambda);
       
       if f_t <= f_0 + alpha * subgrad' * (s_t - s_0)
 	done = true;
