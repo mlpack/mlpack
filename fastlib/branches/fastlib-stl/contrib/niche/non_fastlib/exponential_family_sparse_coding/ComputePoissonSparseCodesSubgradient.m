@@ -1,4 +1,4 @@
-function subgrad = ComputePoissonSparseCodesSubgradient(D, s, t)
+function subgrad = ComputePoissonSparseCodesSubgradient(D, s, t, lambda)
 %function subgrad = ComputePoissonSparseCodesSubgradient(D, s, t)
 
 % t = T(:,i)
