@@ -63,9 +63,11 @@ for i = 1:n
       fprintf('Main Iteration %d\n', main_iteration);
     end
     
-    Lambda = exp(D * s_0);
-    z = (T(:,i) ./ Lambda) - ones(d, 1) + D * s_0;
-    regressors = bsxfun(@times, Lambda, D);
+    Lambda = ComputePoissonLambda(D, s_0);
+    %Lambda = exp(D * s_0);
+    z = ComputePoissonZ(D, s_0, T(:,i), Lambda)
+    %z = (T(:,i) ./ Lambda) - ones(d, 1) + D * s_0;
+    regressors = bsxfun(@times, sqrt(Lambda), D);
     targets = sqrt(Lambda) .* z;
     
     AtA = regressors' * regressors;
