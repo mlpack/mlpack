@@ -22,7 +22,12 @@ elseif type == 'b'
   ComputeFullObjective = ...
       @(D, S, X, lambda) ...
       ComputeBernoulliFullObjective(D, S, X, lambda);
-  
+
+elseif type == 'g'
+  ComputeFullObjective = ...
+      @(D, S, X, lambda) ...
+      ComputeGaussianFullObjective(D, S, X, lambda);
+
 end
 
 
