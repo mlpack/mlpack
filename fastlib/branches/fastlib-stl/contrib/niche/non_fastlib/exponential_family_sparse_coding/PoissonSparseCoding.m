@@ -28,7 +28,7 @@ fprintf('norm(S) = %f\n', norm(S));
 %fprintf('DONE SPARSE CODING\n');
 %pause;
 
-fprintf('\t\t\tObjective value: %f\n', ComputeFullObjective(D, S, X, lambda));
+fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
 
 
 converged = false;
@@ -48,7 +48,7 @@ while ~converged
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
-  fprintf('\t\t\tObjective value: %f\n', ComputeFullObjective(D, S, X, lambda));
+  fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
 
   % Sparse codes update via feature-sign
   fprintf('SPARSE CODING STEP\n');
@@ -61,7 +61,7 @@ while ~converged
   %fprintf('DONE SPARSE CODING\n');
   %pause;
 
-  fprintf('\t\t\tObjective value: %f\n', ComputeFullObjective(D, S, X, lambda));
+  fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
   
   % check convergence criterion - temporarily just 10 iterations
   % for debugging
