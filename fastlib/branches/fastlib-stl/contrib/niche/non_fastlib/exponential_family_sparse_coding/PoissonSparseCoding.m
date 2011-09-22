@@ -24,6 +24,7 @@ D = normcols(normrnd(0,1,d,k));
 % Sparse codes update via feature-sign
 fprintf('INITIAL SPARSE CODING STEP\n');
 S = UpdateSparseCodes(X, D, lambda, [], alpha, beta);
+fprintf('norm(S) = %f\n', norm(S));
 %fprintf('DONE SPARSE CODING\n');
 %pause;
 
@@ -56,6 +57,7 @@ while ~converged
   else
     S = UpdateSparseCodes(X, D, lambda, [], alpha, beta);
   end
+  fprintf('norm(S) = %f\n', norm(S));
   %fprintf('DONE SPARSE CODING\n');
   %pause;
 
