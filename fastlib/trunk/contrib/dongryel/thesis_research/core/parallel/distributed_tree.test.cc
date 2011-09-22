@@ -25,6 +25,22 @@ class TestDistributedTree {
   public:
     typedef typename DistributedTableType::TableType TableType;
 
+    typedef typename TableType::TreeType TreeType;
+
+  private:
+
+    bool TestLocalTree_(TreeType *node) {
+      if((! node->is_leaf()) && node->count() == 0) {
+        printf("A non-leaf node has zero points!\n");
+        return false;
+      }
+
+      if(! node->is_leaf()) {
+        return TestLocalTree_(node->left()) && TestLocalTree_(node->right());
+      }
+      return true;
+    }
+
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
@@ -73,7 +89,8 @@ class TestDistributedTree {
       int leaf_size = core::math::RandInt(20, 40);
       builder.Build(world, l2_metric, leaf_size);
 
-      return true;
+      // Tes the local tree.
+      return TestLocalTree_(distributed_table.local_table()->get_tree());
     }
 };
 }
