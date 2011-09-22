@@ -14,11 +14,13 @@ if nargin < 6
 end
 
 if type == 'p'
-  @(D, S, X, lambda) ComputeFullObjective = ...
+  ComputeFullObjective = ...
+      @(D, S, X, lambda) ...
       ComputePoissonFullObjective(D, S, X, lambda);
   
 elseif type == 'b'
-  @(D, S, X, lambda) ComputeFullObjective = ...
+  ComputeFullObjective = ...
+      @(D, S, X, lambda) ...
       ComputeBernoulliFullObjective(D, S, X, lambda);
   
 end
@@ -35,7 +37,7 @@ D = normcols(normrnd(0,1,d,k));
 
 % Sparse codes update via feature-sign
 fprintf('INITIAL SPARSE CODING STEP\n');
-S = UpdateSparseCodes(X, D, lambda, [], alpha, beta);
+S = UpdateSparseCodes(type, X, D, lambda, [], alpha, beta);
 fprintf('norm(S) = %f\n', norm(S));
 %fprintf('DONE SPARSE CODING\n');
 %pause;
@@ -57,7 +59,7 @@ while ~converged
   
   % Dictionary update
   fprintf('DICTIONARY LEARNING STEP\n');
-  D = DictionaryProjectedGradient(D, S, X, alpha, beta, 2);
+  D = DictionaryProjectedGradient(type, D, S, X, alpha, beta, 2);
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
@@ -68,9 +70,9 @@ while ~converged
   % Sparse codes update via feature-sign
   fprintf('SPARSE CODING STEP\n');
   if warm_start
-    S = UpdateSparseCodes(X, D, lambda, S, alpha, beta);
+    S = UpdateSparseCodes(type, X, D, lambda, S, alpha, beta);
   else
-    S = UpdateSparseCodes(X, D, lambda, [], alpha, beta);
+    S = UpdateSparseCodes(type, X, D, lambda, [], alpha, beta);
   end
   fprintf('norm(S) = %f\n', norm(S));
   %fprintf('DONE SPARSE CODING\n');
