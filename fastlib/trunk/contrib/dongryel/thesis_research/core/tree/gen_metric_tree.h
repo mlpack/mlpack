@@ -347,6 +347,7 @@ class GenMetricTree {
       int *left_count, std::deque<bool> *left_membership) {
 
       left_membership->resize(end - first);
+      *left_count = 0;
 
 #pragma omp parallel
       {
