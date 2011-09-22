@@ -1,7 +1,7 @@
 function grad = ComputePoissonDictionaryGradient(D, S, T)
 %function grad = ComputePoissonDictionaryGradient(D, S, T)
 
-grad = -T * S' + exp(D * S) * S';
+grad = -T * S' + exp(D * S) * S'; % possibility of numerical overflow
 
 % Note that A = -T * S' is equivalent to:
 %   A = zeros(size(D));

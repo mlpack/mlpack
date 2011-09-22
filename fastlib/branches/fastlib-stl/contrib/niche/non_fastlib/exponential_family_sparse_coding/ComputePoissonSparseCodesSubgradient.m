@@ -4,5 +4,5 @@ function subgrad = ComputePoissonSparseCodesSubgradient(D, s, t, lambda)
 % t = T(:,i)
 
 % choose a subgradient at s
-subgrad = -D' * t + D' * exp(D * s);
+subgrad = -D' * t + D' * exp(D * s); % possibility of numerical overflow
 subgrad = subgrad + lambda * ((s > 0) - (s < 0)); % handle possibly non-differentiable component by using subgradient
