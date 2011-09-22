@@ -1,5 +1,5 @@
-function f = ComputePoissonSparseCodesObjective(D, s, Dt_t, lambda)
-%function f = ComputePoissonSparseCodesObjective(D, s, Dt_t, lambda)
+function f = ComputeBernoulliSparseCodesObjective(D, s, Dt_t, lambda)
+%function f = ComputeBernoulliSparseCodesObjective(D, s, Dt_t, lambda)
 %
 % Compute the relevant part of the objective sparse codes in Poisson sparse coding
 % Given:
@@ -10,6 +10,6 @@ function f = ComputePoissonSparseCodesObjective(D, s, Dt_t, lambda)
 
 f = -s' * Dt_t;
 
-f = f + sum(exp(D * s)); % possibility of numerical overflow
+f = f + sum(log(1 + exp(D * s))); % check this for numerical under/overflow
 
 f = f + lambda * sum(abs(s));
