@@ -25,6 +25,9 @@ end
 %obj_tol = 1e-6;
 obj_tol = 1e-1;
 
+% bound on norm of atoms
+c = 1;
+
 
 if type == 'p'
   ComputeDictionaryObjective = ...
@@ -96,12 +99,11 @@ for main_iteration = 1:1000
   end
     
   
-  
 
   fro_norm_grad = norm(grad, 'fro');
-  if fro_norm_grad > 2 * sqrt(k)
+  if fro_norm_grad > 2 * c * sqrt(k)
     % if t is any larger than this, then the resulting D_t would never be feasible
-    t = sqrt(k) / fro_norm_grad; 
+    t = sqrt(k) * c / fro_norm_grad; 
   else
     t = 1;
   end
@@ -118,8 +120,8 @@ for main_iteration = 1:1000
     D_t = D_0 - t * grad;
     norms = sqrt(sum(D_t .^ 2));
     % project if necessary
-    for i = find((norms > 1))
-      D_t(:,i) = D_t(:,i) / norms(i);
+    for i = find((norms > c))
+      D_t(:,i) = c * D_t(:,i) / norms(i);
     end
     
     f_t = ComputeDictionaryObjective(D_t, S, T);
