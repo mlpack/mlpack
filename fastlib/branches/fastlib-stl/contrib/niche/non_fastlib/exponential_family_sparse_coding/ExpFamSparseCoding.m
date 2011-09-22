@@ -1,6 +1,7 @@
-function [D, S] = PoissonSparseCoding(type, X, k, lambda, max_iterations, ...
-				      warm_start)
-%function [D, S] = PoissonSparseCoding(type, X, k, lambda, max_iterations)
+function [D, S] = ExpFamSparseCoding(type, X, k, lambda, max_iterations, ...
+				     warm_start)
+%function [D, S] = ExpFamSparseCoding(type, X, k, lambda, max_iterations, ...
+%				     warm_start)
 %
 % Given: X - a matrix where each column is a document, and each row
 % corresponds to vocabulary word. X_{i,j} is the number of times
