@@ -65,7 +65,7 @@ for i = 1:n
     
     Lambda = ComputePoissonLambda(D, s_0);
     %Lambda = exp(D * s_0);
-    z = ComputePoissonZ(D, s_0, T(:,i), Lambda)
+    z = ComputePoissonZ(D, s_0, T(:,i), Lambda);
     %z = (T(:,i) ./ Lambda) - ones(d, 1) + D * s_0;
     regressors = bsxfun(@times, sqrt(Lambda), D);
     targets = sqrt(Lambda) .* z;
@@ -87,7 +87,7 @@ for i = 1:n
     
     
     % choose a subgradient at s_0
-    subgrad = ComputePoissonSparseCodesSubgradient(D, s_0, T(:,i));
+    subgrad = ComputePoissonSparseCodesSubgradient(D, s_0, T(:,i), lambda);
     %subgrad = -D' * T(:,i);
     %subgrad = subgrad + D' * exp(D * s_0);
     %subgrad = subgrad + lambda * ((s_0 > 0) - (s_0 < 0)); % handle possibly non-differentiable component by using subgradient
