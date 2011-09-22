@@ -121,7 +121,8 @@ parfor i = 1:n
     
     %fprintf('starting goodness: %f\n', norm(regressors * s_0 - targets));
 
-    s_1 = l1ls_featuresign(regressors, targets, lambda / 2, s_0, AtA, ...
+    % lambda or lambda / 2 ? I think lambda
+    s_1 = l1ls_featuresign(regressors, targets, lambda, s_0, AtA, ...
 			   rank_AtA);
     %s_0
     %s_1
@@ -145,10 +146,19 @@ parfor i = 1:n
     prev_best_f = f_0;
     while ~done
       iteration_num = iteration_num + 1;
+
       
       s_t = t * s_1 + (1 - t) * s_0;
       
       f_t = ComputeSparseCodesObjective(D, s_t, Dt_T_i, lambda);
+
+      if iteration_num == 0 && f_t > f_0
+	fprintf('main_iteration = %d\n', main_iteration);
+	fprintf('sc inner iteration %d\n', iteration_num);
+	fprintf('f_0 = %e\tf_t = %e\n', f_0, f_t);
+      end
+
+
       
       if f_t <= f_0 + alpha * subgrad' * (s_t - s_0)
 	done = true;

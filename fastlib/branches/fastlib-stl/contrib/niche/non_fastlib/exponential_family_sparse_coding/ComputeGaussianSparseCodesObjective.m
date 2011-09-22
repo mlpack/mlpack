@@ -10,6 +10,6 @@ function f = ComputeGaussianSparseCodesObjective(D, s, Dt_t, lambda)
 
 f = -s' * Dt_t;
 
-f = f + norm(D * s)^2;
+f = f + 0.5 * norm(D * s)^2;
 
 f = f + lambda * sum(abs(s));

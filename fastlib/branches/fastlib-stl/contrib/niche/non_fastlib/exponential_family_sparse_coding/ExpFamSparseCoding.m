@@ -37,8 +37,10 @@ end
 alpha = 1e-4;
 beta = 0.9;
 
+c = 1;
+
 % Set Initial Dictionary
-D = normcols(normrnd(0,1,d,k));
+D = c * normcols(normrnd(0,1,d,k));
 
 % Sparse codes update via feature-sign
 fprintf('INITIAL SPARSE CODING STEP\n');
