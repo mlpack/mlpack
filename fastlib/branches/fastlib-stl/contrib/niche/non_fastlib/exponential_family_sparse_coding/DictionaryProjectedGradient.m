@@ -1,5 +1,5 @@
-function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta, verbose)
-%function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta, verbose)
+function D_opt = DictionaryProjectedGradient(type, D_0, S, T, alpha, beta, verbose)
+%function D_opt = DictionaryProjectedGradient(type, D_0, S, T, alpha, beta, verbose)
 %
 % T are the sufficient statistics for the data, stored as
 % num_features by num_points
@@ -12,18 +12,35 @@ function D_opt = DictionaryProjectedGradient(D_0, S, T, alpha, beta, verbose)
 %   f(P(x + t*g)) >= f(x) + alpha * g^T (P(x + t*g) - x)
 
 
-if nargin < 4
+if nargin < 5
   alpha = 1e-4;
 end
-if nargin < 5
+if nargin < 6
   beta = 0.9;
 end
-if nargin < 6
+if nargin < 7
   verbose = false;
 end
 
 %obj_tol = 1e-6;
 obj_tol = 1e-1;
+
+
+if type == 'p'
+  @(D, S, T) ComputeDictionaryObjective = ...
+      ComputePoissonDictionaryObjective(D, S, T);
+
+  @(D, S, T) ComputeDictionaryGradient = ...
+      ComputePoissonDictionaryGradient(D, S, T);
+
+elseif type == 'b'
+  @(D, S, T) ComputeDictionaryObjective = ...
+      ComputeBernoulliDictionaryObjective(D, S, T);
+
+  @(D, S, T) ComputeDictionaryGradient = ...
+      ComputeBernoulliDictionaryGradient(D, S, T);
+  
+end
 
 [d k] = size(D_0);
 n = size(S, 2);
@@ -49,7 +66,7 @@ for main_iteration = 1:1000
   %  grad = grad + exp(D_0 * S(:,i)) * S(:,i)';
   %end
 
-  grad = ComputePoissonDictionaryGradient(D_0, S, T);
+  grad = ComputeDictionaryGradient(D_0, S, T);
 
   grad = grad / n; % not sure how well this works, maybe we should switch to the below again
   %grad = grad / sqrt(trace(grad' * grad)); % seems to work well
@@ -59,7 +76,7 @@ for main_iteration = 1:1000
   %start with step size t = 1, decreasing by beta until Armijo condition is satisfied
   %   f(P(x + t*g)) >= f(x) + alpha * g^T (P(x + t*g) - x)
   
-  f_0 = ComputePoissonDictionaryObjective(D_0, S, T);
+  f_0 = ComputeDictionaryObjective(D_0, S, T);
   
   if verbose == 2
     fprintf('\t\t\t\ttrace(grad^T * grad) = %f\n', trace(grad' * grad));
@@ -92,7 +109,7 @@ for main_iteration = 1:1000
       D_t(:,i) = D_t(:,i) / norms(i);
     end
     
-    f_t = ComputePoissonDictionaryObjective(D_t, S, T);
+    f_t = ComputeDictionaryObjective(D_t, S, T);
     if verbose == 2
       fprintf('f_0 = %f\tf_t = %f\n', f_0, f_t);
       fprintf('\t\t\t\ttrace(grad^T * (D_t - D_0)) = %f\n', trace(grad' * (D_t - D_0))); 

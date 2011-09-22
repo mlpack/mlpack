@@ -10,6 +10,6 @@ function f = ComputeBernoulliSparseCodesObjective(D, s, Dt_t, lambda)
 
 f = -s' * Dt_t;
 
-f = f + sum(log(1 + exp(D * s))); % check this for numerical under/overflow
+f = f + sum(log(1 + exp(D * s))); % check this for numerical overflow
 
 f = f + lambda * sum(abs(s));
