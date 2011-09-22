@@ -59,7 +59,7 @@ for main_iteration = 1:1000
   %start with step size t = 1, decreasing by beta until Armijo condition is satisfied
   %   f(P(x + t*g)) >= f(x) + alpha * g^T (P(x + t*g) - x)
   
-  f_0 = ComputeDictionaryObjective(D_0, S, T);
+  f_0 = ComputePoissonDictionaryObjective(D_0, S, T);
   
   if verbose == 2
     fprintf('\t\t\t\ttrace(grad^T * grad) = %f\n', trace(grad' * grad));
@@ -92,7 +92,7 @@ for main_iteration = 1:1000
       D_t(:,i) = D_t(:,i) / norms(i);
     end
     
-    f_t = ComputeDictionaryObjective(D_t, S, T);
+    f_t = ComputePoissonDictionaryObjective(D_t, S, T);
     if verbose == 2
       fprintf('f_0 = %f\tf_t = %f\n', f_0, f_t);
       fprintf('\t\t\t\ttrace(grad^T * (D_t - D_0)) = %f\n', trace(grad' * (D_t - D_0))); 
