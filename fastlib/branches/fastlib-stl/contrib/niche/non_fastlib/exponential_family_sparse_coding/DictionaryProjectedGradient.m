@@ -25,7 +25,7 @@ end
 %obj_tol = 1e-6;
 obj_tol = 1e-1;
 
-d = size(D_0, 1);
+[d k] = size(D_0);
 n = size(S, 2);
 
 
@@ -35,24 +35,24 @@ for main_iteration = 1:1000
     fprintf('Main Iteration %d\n', main_iteration);
   end
 
-  %sum_DS = exp(sum(D_0 * S));
-  
   % compute gradient
-  grad = zeros(size(D_0));
-  grad = grad - T * S';
+  %grad = zeros(size(D_0));
+  %grad = grad - T * S';
   % easy to understand version of the above line
   %for i = 1:n
   %  grad = grad - T(:,i) * S(:,i)';
   %end
 
-  grad = grad + exp(D_0 * S) * S';
+  %grad = grad + exp(D_0 * S) * S';
   % easy to understand version of the above line
   %for i = 1:n
   %  grad = grad + exp(D_0 * S(:,i)) * S(:,i)';
   %end
 
-  %grad = grad / n; % seems to be horrible
-  grad = grad / sqrt(trace(grad' * grad)); % seems to work well
+  grad = ComputePoissonDictionaryGradient(D_0, S, T);
+
+  grad = grad / n; % not sure how well this works, maybe we should switch to the below again
+  %grad = grad / sqrt(trace(grad' * grad)); % seems to work well
   
   % do line search along direction of negative gradient, using projected evaluation to find D_opt
   
@@ -68,7 +68,14 @@ for main_iteration = 1:1000
   
   
 
-  t = 1;
+  fro_norm_grad = norm(grad, 'fro');
+  if fro_norm_grad > 2 * sqrt(k)
+    % if t is any larger than this, then the resulting D_t would never be feasible
+    t = sqrt(k) / fro_norm_grad; 
+  else
+    t = 1;
+  end
+  
   iteration_num = 0;
   done = false;
   prev_best_f = f_0;

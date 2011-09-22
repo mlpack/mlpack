@@ -38,9 +38,11 @@ S = zeros(k, n);
 
 rank_AtA = rank(D); % useful precomputation for later
 
-parfor i = 1:n
+% something seems wrong with the parfor version; we don't get low
+% values in S
+%parfor i = 1:n
+for i = 1:n
 
-  % commented out for parfor
   if mod(i, 100) == 0
     fprintf('%d ', i);
   end
