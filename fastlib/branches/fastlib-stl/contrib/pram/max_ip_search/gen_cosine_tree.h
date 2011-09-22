@@ -17,6 +17,7 @@
 #include "general_spacetree.h"
 #include "gen_cosine_tree_impl.h"
 
+
 /**
  * Regular pointer-style trees (as opposed to THOR trees).
  */
