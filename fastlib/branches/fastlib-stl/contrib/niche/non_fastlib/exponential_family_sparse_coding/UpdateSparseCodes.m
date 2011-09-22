@@ -1,5 +1,5 @@
-function S = UpdateSparseCodes(T, D, lambda, S_initial, alpha, beta, verbose)
-%function S = UpdateSparseCodes(T, D, lambda, S_initial, alpha, beta)
+function S = UpdateSparseCodes(type, T, D, lambda, S_initial, alpha, beta, verbose)
+%function S = UpdateSparseCodes(type, T, D, lambda, S_initial, alpha, beta)
 %
 % T - sufficient statistics for the data
 % D - dictionary of size n_dimensions by n_atoms
@@ -9,15 +9,39 @@ function S = UpdateSparseCodes(T, D, lambda, S_initial, alpha, beta, verbose)
 % beta - 0 < beta < 1 - specifies geometric rate of decrease of line search parameter
 
 
-if nargin < 5
+if nargin < 6
   alpha = 1e-4;
 end
-if nargin < 6
+if nargin < 7
   beta = 0.9;
 end
-if nargin < 7
+if nargin < 8
   verbose = false;
 end
+
+
+if type == 'p'
+  ComputeSparseCodesObjective = ...
+      @(D, s, Dt_t, lambda) ComputePoissonSparseCodesObjective(D, ...
+						  s, Dt_t, lambda));
+  ComputeSparseCodesSubgradient = ...
+      @(D, s, t, lambda) ComputePoissonSparseCodesSubgradient(D, s, ...
+						  t, lambda);
+  ComputeTargetsAndRegressors = ...
+      @(D, s, t) ComputePoissonTargetsAndRegressors(D, s, t);
+  
+elseif type == 'b'
+  ComputeSparseCodesObjective = ...
+      @(D, s, Dt_t, lambda) ComputeBernoulliSparseCodesObjective(D, ...
+						  s, Dt_t, lambda));
+  
+  ComputeSparseCodesSubgradient = ...
+      @(D, s, t, lambda) ComputeBernoulliSparseCodesSubgradient(D, ...
+						  s, t, lambda);
+  ComputeTargetsAndRegressors = ...
+      @(D, s, t) ComputeBernoulliTargetsAndRegressors(D, s, t);
+  
+end  
 
 
 obj_tol = 1e-6; % hardcoded for now
@@ -49,9 +73,8 @@ for i = 1:n
 
   if verbose
     fprintf('Point %d\tStarting Objective value: %f\n', ...
-	    i, ComputePoissonSparseCodesObjective(D, s_0, Dt_T_i, lambda));
+	    i, ComputeSparseCodesObjective(D, s_0, Dt_T_i, lambda));
   end
-  
   
   max_main_iterations = 10;
   main_iteration = 0;
@@ -71,7 +94,8 @@ for i = 1:n
     %targets = sqrt(Lambda) .* z;
 
     [targets, regressors] = ...
-	ComputePoissonTargetsAndRegressors(D, s_0, T(:,i));
+	ComputeTargetsAndRegressors(D, s_0, T(:,i));
+    
     
     AtA = regressors' * regressors;
     %regressors
@@ -85,12 +109,12 @@ for i = 1:n
     %s_1
     
     
-    f_0 = ComputePoissonSparseCodesObjective(D, s_0, Dt_T_i, lambda);
+    f_0 = ComputeSparseCodesObjective(D, s_0, Dt_T_i, lambda);
     
     
     
     % choose a subgradient at s_0
-    subgrad = ComputePoissonSparseCodesSubgradient(D, s_0, T(:,i), lambda);
+    subgrad = ComputeSparseCodesSubgradient(D, s_0, T(:,i), lambda);
     %subgrad = -D' * T(:,i);
     %subgrad = subgrad + D' * exp(D * s_0);
     %subgrad = subgrad + lambda * ((s_0 > 0) - (s_0 < 0)); % handle possibly non-differentiable component by using subgradient
@@ -106,7 +130,7 @@ for i = 1:n
       
       s_t = t * s_1 + (1 - t) * s_0;
       
-      f_t = ComputePoissonSparseCodesObjective(D, s_t, Dt_T_i, lambda);
+      f_t = ComputeSparseCodesObjective(D, s_t, Dt_T_i, lambda);
       
       if f_t <= f_0 + alpha * subgrad' * (s_t - s_0)
 	done = true;

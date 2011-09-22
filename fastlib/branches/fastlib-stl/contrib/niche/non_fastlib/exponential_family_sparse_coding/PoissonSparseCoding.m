@@ -1,6 +1,6 @@
-function [D, S] = PoissonSparseCoding(X, k, lambda, max_iterations, ...
+function [D, S] = PoissonSparseCoding(type, X, k, lambda, max_iterations, ...
 				      warm_start)
-%function [D, S] = PoissonSparseCoding(X, k, lambda, max_iterations)
+%function [D, S] = PoissonSparseCoding(type, X, k, lambda, max_iterations)
 %
 % Given: X - a matrix where each column is a document, and each row
 % corresponds to vocabulary word. X_{i,j} is the number of times
@@ -8,9 +8,20 @@ function [D, S] = PoissonSparseCoding(X, k, lambda, max_iterations, ...
 % Good news: warm start is faster
 % Bad news:  warm start yields poorer solutions than starting at 0
 
-if nargin < 5
+if nargin < 6
   warm_start = false;
 end
+
+if type == 'p'
+  @(D, S, X, lambda) ComputeFullObjective = ...
+      ComputePoissonFullObjective(D, S, X, lambda);
+  
+elseif type == 'b'
+  @(D, S, X, lambda) ComputeFullObjective = ...
+      ComputeBernoulliFullObjective(D, S, X, lambda);
+  
+end
+
 
 [d n] = size(X);
 
@@ -28,7 +39,8 @@ fprintf('norm(S) = %f\n', norm(S));
 %fprintf('DONE SPARSE CODING\n');
 %pause;
 
-fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
+fprintf('\t\t\tObjective value: %f\n', ...
+	ComputeFullObjective(D, S, X, lambda));
 
 
 converged = false;
@@ -48,7 +60,9 @@ while ~converged
   %fprintf('DONE LEARNING DICTIONARY\n');
   %pause;
 
-  fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
+  fprintf('\t\t\tObjective value: %f\n', ...
+	  ComputeFullObjective(D, S, X, lambda));
+    
 
   % Sparse codes update via feature-sign
   fprintf('SPARSE CODING STEP\n');
@@ -61,7 +75,9 @@ while ~converged
   %fprintf('DONE SPARSE CODING\n');
   %pause;
 
-  fprintf('\t\t\tObjective value: %f\n', ComputePoissonFullObjective(D, S, X, lambda));
+  fprintf('\t\t\tObjective value: %f\n', ...
+	  ComputeFullObjective(D, S, X, lambda));
+  
   
   % check convergence criterion - temporarily just 10 iterations
   % for debugging
