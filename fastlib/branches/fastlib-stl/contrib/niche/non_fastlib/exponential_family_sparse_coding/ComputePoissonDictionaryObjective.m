@@ -3,7 +3,7 @@ function f = ComputePoissonDictionaryObjective(D, S, T)
 
 n = size(S, 2);
 
-f = -trace(D' * T * S') + sum(sum(exp(D * S)));
+f = -trace(D' * T * S') + sum(sum(exp(D * S))); % possibility of numerical overflow
 
 f = f / n; % seems to work better with this normalization
 

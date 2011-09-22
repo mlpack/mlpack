@@ -10,6 +10,6 @@ function f = ComputePoissonSparseCodesObjective(D, s, Dt_t, lambda)
 
 f = -s' * Dt_t;
 
-f = f + sum(exp(D * s));
+f = f + sum(exp(D * s)); % possibility of nuemrica overflow
 
 f = f + lambda * sum(abs(s));
