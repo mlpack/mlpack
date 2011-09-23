@@ -195,10 +195,6 @@ class DualtreeDfs {
      */
     TableType *query_table_;
 
-    /** @brief The rank of the query set.
-     */
-    int query_rank_;
-
     /** @brief Starting reference node.
      */
     TreeType *reference_start_node_;
@@ -206,10 +202,6 @@ class DualtreeDfs {
     /** @brief The reference table.
      */
     TableType *reference_table_;
-
-    /** @brief The rank of the reference set.
-     */
-    int reference_rank_;
 
   private:
 
@@ -324,9 +316,6 @@ class DualtreeDfs {
      *         computation.
      */
     void set_reference_start_node(TreeType *reference_start_node_in);
-
-    void set_query_reference_process_ranks(
-      int query_process_id, int reference_process_id);
 
     /** @brief Returns the number of deterministic prunes so far.
      */

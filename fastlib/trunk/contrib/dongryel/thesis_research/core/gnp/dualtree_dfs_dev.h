@@ -17,14 +17,6 @@ namespace core {
 namespace gnp {
 
 template<typename ProblemType>
-void DualtreeDfs<ProblemType>::set_query_reference_process_ranks(
-  int query_process_id, int reference_process_id) {
-
-  query_rank_ = query_process_id;
-  reference_rank_ = reference_process_id;
-}
-
-template<typename ProblemType>
 void DualtreeDfs<ProblemType>::set_query_start_node(
   TreeType *query_start_node_in) {
   query_start_node_ = query_start_node_in;
@@ -40,8 +32,6 @@ template<typename ProblemType>
 DualtreeDfs<ProblemType>::DualtreeDfs() {
   query_start_node_ = NULL;
   reference_start_node_ = NULL;
-  query_rank_ = 0;
-  reference_rank_ = 0;
   num_deterministic_prunes_ = 0;
   num_probabilistic_prunes_ = 0;
 }
@@ -120,7 +110,8 @@ void DualtreeDfs<ProblemType>::Compute(
     PreProcess(query_table_, query_table_->get_tree(), query_results, 0.0);
   }
 
-  if(problem_->global().is_monochromatic() && query_rank_ == reference_rank_) {
+  if(problem_->global().is_monochromatic() &&
+      query_table_->rank() == reference_table_->rank()) {
 
     // Take care such that the monochromatic case is handled
     // correctly.
@@ -136,6 +127,17 @@ void DualtreeDfs<ProblemType>::Compute(
         core::math::Range sub_squared_distance_range =
           (query_start_node_sublist[i]->bound()).RangeDistanceSq(
             metric, reference_start_node_->bound());
+
+        printf("1: Calling %d %d %d, %d %d %d = %d\n",
+               query_table_->rank(),
+               query_start_node_sublist[i]->begin(),
+               query_start_node_sublist[i]->count(),
+               reference_table_->rank(),
+               reference_start_node_->begin(),
+               reference_start_node_->count(),
+               query_table_->rank() == reference_table_->rank() &&
+               query_start_node_sublist[i]->begin() == reference_start_node_->begin() &&
+               query_start_node_sublist[i]->count() == reference_start_node_->count());
         DualtreeCanonical_(
           metric, query_start_node_sublist[i], reference_start_node_,
           1.0 - problem_->global().probability(), sub_squared_distance_range,
@@ -154,6 +156,17 @@ void DualtreeDfs<ProblemType>::Compute(
         core::math::Range sub_squared_distance_range =
           (query_start_node_->bound()).RangeDistanceSq(
             metric, reference_start_node_sublist[i]->bound());
+
+        printf("2: Calling %d %d %d, %d %d %d = %d\n",
+               query_table_->rank(),
+               query_start_node_->begin(),
+               query_start_node_->count(),
+               reference_table_->rank(),
+               reference_start_node_sublist[i]->begin(),
+               reference_start_node_sublist[i]->count(),
+               query_table_->rank() == reference_table_->rank() &&
+               query_start_node_->begin() == reference_start_node_sublist[i]->begin() &&
+               query_start_node_->count() == reference_start_node_sublist[i]->count());
         DualtreeCanonical_(
           metric, query_start_node_, reference_start_node_sublist[i],
           1.0 - problem_->global().probability(), sub_squared_distance_range,
@@ -161,6 +174,16 @@ void DualtreeDfs<ProblemType>::Compute(
       }
     }
     else {
+      printf("3: Calling %d %d %d, %d %d %d = %d\n",
+             query_table_->rank(),
+             query_start_node_->begin(),
+             query_start_node_->count(),
+             reference_table_->rank(),
+             reference_start_node_->begin(),
+             reference_start_node_->count(),
+             query_table_->rank() == reference_table_->rank() &&
+             query_start_node_->begin() == reference_start_node_->begin() &&
+             query_start_node_->count() == reference_start_node_->count());
       DualtreeCanonical_(
         metric, query_start_node_, reference_start_node_,
         1.0 - problem_->global().probability(), squared_distance_range,
@@ -168,6 +191,16 @@ void DualtreeDfs<ProblemType>::Compute(
     }
   }
   else {
+    printf("4: Calling %d %d %d, %d %d %d = %d\n",
+           query_table_->rank(),
+           query_start_node_->begin(),
+           query_start_node_->count(),
+           reference_table_->rank(),
+           reference_start_node_->begin(),
+           reference_start_node_->count(),
+           query_table_->rank() == reference_table_->rank() &&
+           query_start_node_->begin() == reference_start_node_->begin() &&
+           query_start_node_->count() == reference_start_node_->count());
     DualtreeCanonical_(
       metric, query_start_node_, reference_start_node_,
       1.0 - problem_->global().probability(), squared_distance_range,
