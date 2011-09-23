@@ -82,6 +82,7 @@ class DisjointIntIntervals {
     DisjointIntIntervals(
       boost::mpi::communicator &world,
       const DisjointIntIntervals &intervals_in) {
+      reference_count_ = 0;
       this->Init(world);
       for(int i = 0; i < world.size(); i++) {
         intervals_[i] = intervals_in.interval(i);
