@@ -144,6 +144,10 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
     // Get the arguments.
     TreeType *qnode = args.qnode();
     TreeType *rnode = args.rnode();
+    bool qnode_and_rnode_are_equal =
+      (query_table_->rank() == reference_table_->rank() &&
+       qnode->begin() == rnode->begin() &&
+       qnode->count() == rnode->count()) ;
     const core::math::Range &squared_distance_range =
       args.squared_distance_range();
 
@@ -153,7 +157,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
       metric_, engine_->problem_->global(),
       qnode, rnode, squared_distance_range);
     bool prunable = engine_->CanSummarize_(
-                      qnode, rnode, delta,
+                      qnode, rnode, qnode_and_rnode_are_equal, delta,
                       squared_distance_range, query_results_);
 
     if(prunable) {
