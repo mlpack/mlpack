@@ -680,7 +680,7 @@ class TableExchange {
 
       // If load-balancing is turned on, then we need to proceed to
       // route query subtable flushes.
-      if(do_load_balancing_) {
+      if(do_load_balancing_ || enter_stage_.second) {
 
         // Clear the list of received subtables in this round.
         received_subtable_ids.resize(0);
