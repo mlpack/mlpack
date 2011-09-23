@@ -126,7 +126,9 @@ class LocalRegressionPostponed {
      *         object and a query reference pair.
      */
     template<typename GlobalType, typename TreeType>
-    void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
+    void Init(
+      const GlobalType &global_in, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal) {
       left_hand_side_l_.SetZero();
       left_hand_side_e_.SetZero();
       left_hand_side_u_.SetZero();
@@ -135,8 +137,9 @@ class LocalRegressionPostponed {
       right_hand_side_u_.SetZero();
 
       // Set the total number of terms.
-      int total_num_terms = (global_in.is_monochromatic() && qnode == rnode) ?
-                            rnode->count() - 1 : rnode->count() ;
+      int total_num_terms =
+        (global_in.is_monochromatic() && qnode_and_rnode_are_equal) ?
+        rnode->count() - 1 : rnode->count() ;
       left_hand_side_l_.set_total_num_terms(total_num_terms);
       left_hand_side_e_.set_total_num_terms(total_num_terms);
       left_hand_side_u_.set_total_num_terms(total_num_terms);
