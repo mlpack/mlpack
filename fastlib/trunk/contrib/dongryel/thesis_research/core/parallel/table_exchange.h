@@ -91,12 +91,14 @@ class TableExchange {
           subtable_route_ = message_in.subtable_route();
           energy_route_ = message_in.energy_route();
           flush_route_ = message_in.flush_route();
+          serialize_subtable_route_ = message_in.serialize_subtable_route_;
         }
 
         void CopyWithoutSubTableRoute(const MessageType &message_in) {
           originating_rank_ = message_in.originating_rank();
           energy_route_ = message_in.energy_route();
           flush_route_ = message_in.flush_route();
+          serialize_subtable_route_ = false;
         }
 
         MessageType(const MessageType &message_in) {
@@ -555,6 +557,7 @@ class TableExchange {
     /** @brief The default constructor.
      */
     TableExchange() {
+      do_load_balancing_ = false;
       enter_stage_ = std::pair< unsigned int, bool> (0, false);
       last_fail_index_ = 0;
       local_table_ = NULL;
@@ -705,7 +708,9 @@ class TableExchange {
             new_self_send_request_object.subtable_route().Init(
               world, route_request);
             new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
-            new_self_send_request_object.set_serialize_subtable_route_flag(true);
+            if(do_load_balancing_) {
+              new_self_send_request_object.set_serialize_subtable_route_flag(true);
+            }
 
             // Pop it from the route request list.
             hashed_essential_reference_subtrees_to_send.pop_back();
@@ -713,7 +718,12 @@ class TableExchange {
           else {
 
             // Prepare an empty message.
-            new_self_send_request_object.set_serialize_subtable_route_flag(false);
+            new_self_send_request_object.subtable_route().Init(world);
+            new_self_send_request_object.subtable_route().add_destinations(world);
+
+            if(do_load_balancing_) {
+              new_self_send_request_object.set_serialize_subtable_route_flag(false);
+            }
           }
           if(queued_up_completed_computation_.size() > 0) {
 
@@ -743,9 +753,10 @@ class TableExchange {
         } // end of checking whether the stage is 0.
 
         // If any of the queued up flush requests is ready to be sent
-        // out, then sent out.
-        if((! message_cache_[
-              world.rank()].flush_route().object_is_valid()) &&
+        // out, then send out.
+        if(do_load_balancing_ &&
+            (! message_cache_[
+               world.rank()].flush_route().object_is_valid()) &&
             queued_up_query_subtables_[ stage_ ].size() > 0) {
 
           message_cache_[
@@ -766,9 +777,9 @@ class TableExchange {
           // query subtables.
           queued_up_query_subtables_[ stage_ ].pop_back();
           num_queued_up_query_subtables_--;
-        }
+        } // end of dequeuing flush requests.
 
-        // Exchange with the neighbors.
+        // Exchange with the current neighbor.
         unsigned int num_subtables_to_exchange = (1 << stage_);
         unsigned int neighbor = world.rank() ^(1 << stage_);
         unsigned int lower_bound_send = (world.rank() >> stage_) << stage_;
@@ -891,24 +902,26 @@ class TableExchange {
           }
 
           // Free the flushed subtables sent.
-          if(message_cache_[
-                send_process_rank ].flush_route().object_is_valid() &&
+          if(do_load_balancing_) {
+            if(message_cache_[
+                  send_process_rank ].flush_route().object_is_valid() &&
+                message_cache_[
+                  send_process_rank ].flush_route().num_destinations() == 0) {
               message_cache_[
-                send_process_rank ].flush_route().num_destinations() == 0) {
-            message_cache_[
-              send_process_rank ].flush_route().set_object_is_valid_flag(false);
-            message_cache_[ send_process_rank ].flush_route().object().Destruct();
-          }
+                send_process_rank ].flush_route().set_object_is_valid_flag(false);
+              message_cache_[ send_process_rank ].flush_route().object().Destruct();
+            }
 
-          // Free the flushed subtable received.
-          if(message_cache_[
-                receive_process_rank ].flush_route().object_is_valid() &&
+            // Free the flushed subtable received.
+            if(message_cache_[
+                  receive_process_rank ].flush_route().object_is_valid() &&
+                message_cache_[
+                  receive_process_rank ].flush_route().num_destinations() == 0) {
               message_cache_[
-                receive_process_rank ].flush_route().num_destinations() == 0) {
-            message_cache_[
-              receive_process_rank ].flush_route().set_object_is_valid_flag(false);
-            message_cache_[
-              receive_process_rank ].flush_route().object().Destruct();
+                receive_process_rank ].flush_route().set_object_is_valid_flag(false);
+              message_cache_[
+                receive_process_rank ].flush_route().object().Destruct();
+            }
           }
         }
 
