@@ -11,7 +11,9 @@ namespace parallel {
 
 class MessageTag {
   public:
-    enum MessageTagType { FLUSH_SUBTABLE, ROUTE_SUBTABLE, LOAD_BALANCE_REQUEST, TASK_LIST, FINISHED_TUPLES, READY_TO_SEND_RECEIVE };
+    enum MessageTagType {
+      READY_TO_ROUTE_SUBTABLES, ROUTE_SUBTABLE, LOAD_BALANCE_REQUEST, TASK_LIST, FINISHED_TUPLES
+    };
 };
 }
 }

@@ -273,6 +273,8 @@ class DistributedDualtreeTaskList {
         int new_position =
           distributed_task_queue_->PushNewQueue(
             source_rank_in, *query_subtable_in_cache);
+
+        unsigned long int num_reference_points_for_new_query_subtable = 0 ;
         for(unsigned int j = 0; j < donated_task_list_[i].second.size(); j++) {
           int reference_subtable_position = donated_task_list_[i].second[j];
           SubTableType *reference_subtable_in_cache =
@@ -280,7 +282,14 @@ class DistributedDualtreeTaskList {
               assigned_cache_indices[ reference_subtable_position ]);
           distributed_task_queue_->PushTask(
             world, metric_in, new_position, *reference_subtable_in_cache);
+          num_reference_points_for_new_query_subtable +=
+            reference_subtable_in_cache->start_node()->count();
         }
+
+        // Set the remaining number of reference points for the new
+        // query subtable.
+        distributed_task_queue_->set_remaining_work_for_query_subtable(
+          new_position, num_reference_points_for_new_query_subtable);
       }
     }
 

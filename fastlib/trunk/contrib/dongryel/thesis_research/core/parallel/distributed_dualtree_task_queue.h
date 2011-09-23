@@ -178,15 +178,16 @@ class DistributedDualtreeTaskQueue {
       // Queue and evict.
       table_exchange_.QueueFlushRequest(world, query_subtables_[probe_index]);
       num_imported_query_subtables_--;
-      this->Evict_(probe_index);
+      this->Evict_(world, probe_index);
     }
 
     /** @brief Evicts a query subtable and its associated variables
      *         from a given slot.
      */
-    void Evict_(int probe_index) {
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+    void Evict_(boost::mpi::communicator &world, int probe_index) {
 
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_[probe_index] = assigned_work_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
@@ -285,19 +286,23 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    void set_remaining_work_for_query_subtable(
+      int probe_index, unsigned long int work_in) {
+
+      remaining_work_for_query_subtables_[ probe_index ] = work_in;
+    }
+
     /** @brief Synchronizes the local query subtable with the received
      *         query subtable.
      */
-    void Synchronize(SubTableType &received_query_subtable_in) {
+    void Synchronize(
+      boost::mpi::communicator &world,
+      SubTableType &received_query_subtable_in) {
 
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       SubTableIDType received_query_subtable_id =
         received_query_subtable_in.subtable_id();
-
-      printf("    I am in the synch mode with %d %d %d\n",
-             received_query_subtable_id.get<0>(),
-             received_query_subtable_id.get<1>(),
-             received_query_subtable_id.get<2>());
 
       // Find the checked out subtable in the list and synchronize.
       for(typename QuerySubTableLockListType::iterator it =
@@ -318,11 +323,6 @@ class DistributedDualtreeTaskQueue {
               received_query_subtable_id.get<2>() ==
               comp_query_subtable_id.get<2>()) {
 
-            printf("      Putting %d %d %d back to the queue!!!!\n\n",
-                   comp_query_subtable_id.get<0>(),
-                   comp_query_subtable_id.get<1>(),
-                   comp_query_subtable_id.get<2>()
-                  );
             assigned_work_.push_back((*it)->assigned_work_);
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
@@ -334,6 +334,8 @@ class DistributedDualtreeTaskQueue {
           }
           else {
 
+            printf("Need to implement this case!\n");
+            exit(0);
           }
           break;
         }
@@ -395,7 +397,7 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief Prints the current distributed task queue.
      */
-    void Print() const {
+    void Print(boost::mpi::communicator &world) const {
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
@@ -404,20 +406,22 @@ class DistributedDualtreeTaskQueue {
       printf("  Active query subtables:\n");
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
-        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu originating from %d:",
+        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu originating from %d, query result pointer address %p:",
                query_subtable_id.get<0>(), query_subtable_id.get<1>(),
                query_subtable_id.get<2>(),
                static_cast<int>(tasks_[i]->size()),
                remaining_work_for_query_subtables_[i],
-               query_subtables_[i]->originating_rank());
+               query_subtables_[i]->originating_rank(),
+               query_subtables_[i]->query_result());
         TaskType *it = const_cast<TaskType *>(&(tasks_[i]->top()));
         printf("      Reference set: ");
         for(int j = 0; j < tasks_[i]->size(); j++, it++) {
-          printf(" %d %d %d at %d, ",
+          printf(" %d %d %d at %d %p, ",
                  it->reference_subtable().subtable_id().get<0>(),
                  it->reference_subtable().subtable_id().get<1>(),
                  it->reference_subtable().subtable_id().get<2>(),
-                 it->reference_subtable().cache_block_id());
+                 it->reference_subtable().cache_block_id(),
+                 it->query_subtable().query_result()) ;
         }
         printf("\n");
       }
@@ -427,23 +431,27 @@ class DistributedDualtreeTaskQueue {
           it != checked_out_query_subtables_.end(); it++) {
         SubTableIDType query_subtable_id = (*it)->subtable_id();
         printf(
-          "    Query subtable ID: %d %d %d with %d tasks checked out to %d\n",
+          "    Query subtable ID: %d %d %d with %d tasks checked out to %d, query result pointer address %p:\n",
           query_subtable_id.get<0>(), query_subtable_id.get<1>(),
           query_subtable_id.get<2>(),
-          static_cast<int>((*it)->task_->size()), (*it)->locked_mpi_rank_);
+          static_cast<int>((*it)->task_->size()), (*it)->locked_mpi_rank_,
+          (*it)->query_subtable_->query_result());
         TaskType *priority_queue_it =
           const_cast<TaskType *>(&((*it)->task_->top()));
         printf("      Reference set: ");
         for(int j = 0; j < (*it)->task_->size(); j++, priority_queue_it++) {
           printf(
-            "  %d %d %d at %d, ",
+            "  %d %d %d at %d %p, ",
             priority_queue_it->reference_subtable().subtable_id().get<0>(),
             priority_queue_it->reference_subtable().subtable_id().get<1>(),
             priority_queue_it->reference_subtable().subtable_id().get<2>(),
-            priority_queue_it->reference_subtable().cache_block_id());
+            priority_queue_it->reference_subtable().cache_block_id(),
+            priority_queue_it->query_subtable().query_result()) ;
         }
         printf("\n");
       }
+      table_exchange_.PrintSubTables(world);
+      printf("\n");
     }
 
     /** @brief Initializes a new query subtable queue with its query
@@ -458,12 +466,6 @@ class DistributedDualtreeTaskQueue {
       this->GrowSlots_();
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
-
-      printf("Received %d %d %d from %d\n",
-             query_subtable_in.subtable_id().get<0>(),
-             query_subtable_in.subtable_id().get<1>(),
-             query_subtable_in.subtable_id().get<2>(),
-             originating_rank_in);
       remaining_work_for_query_subtables_.back() = 0;
 
       // Increment the number of imported subtables.
@@ -642,14 +644,10 @@ class DistributedDualtreeTaskQueue {
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
-      // Flush any outstanding query subtables to their origins.
-      if(table_exchange_.do_load_balancing()) {
-        table_exchange_.SendReceiveQuerySubTableFlushRequests(world);
-      }
-      if(table_exchange_.ReadyToSendReceive(world)) {
-        table_exchange_.SendReceive(
-          metric_in, world, hashed_essential_reference_subtrees_to_send);
-      }
+      // Move data around (query subtable flushes, reference subtable
+      // forwarding, etc.).
+      table_exchange_.SendReceive(
+        metric_in, world, hashed_essential_reference_subtrees_to_send);
     }
 
     /** @brief Generates extra tasks using the received reference
@@ -896,6 +894,18 @@ class DistributedDualtreeTaskQueue {
           probe_index--;
         }
       }
+
+      if(task_out->second >= 0) {
+        printf("(%d %d) grabbed %d %d %d, %d %d %d.\n",
+               world.rank(), thread_id,
+               task_out->first.query_subtable().subtable_id().get<0>(),
+               task_out->first.query_subtable().subtable_id().get<1>(),
+               task_out->first.query_subtable().subtable_id().get<2>(),
+               task_out->first.reference_subtable().subtable_id().get<0>(),
+               task_out->first.reference_subtable().subtable_id().get<1>(),
+               task_out->first.reference_subtable().subtable_id().get<2>());
+        this->Print(world);
+      }
     }
 
     /** @brief Examines the top task in the given task list.
@@ -969,7 +979,7 @@ class DistributedDualtreeTaskQueue {
         // If the query subtable is on the MPI process of its origin,
         if(query_subtables_[probe_index]->table()->rank() == world.rank()) {
           if(remaining_work_for_query_subtables_[probe_index] == 0) {
-            this->Evict_(probe_index);
+            this->Evict_(world, probe_index);
             return true;
           }
         }

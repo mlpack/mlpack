@@ -325,7 +325,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       found_task.second = -1;
 
       // Only the master thread makes MPI calls.
-      if(thread_id == 0) {
+      if(thread_id == 0 && world_->size() > 1) {
         distributed_tasks.SendReceive(
           metric, *world_, hashed_essential_reference_subtrees_to_send);
       }
