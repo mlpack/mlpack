@@ -74,12 +74,13 @@ class TwoPointPostponed {
     }
 
     template<typename GlobalType, typename TreeType>
-    void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
+    void Init(
+      const GlobalType &global_in, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal) {
 
       // TODO: is this still correct in parallel?
       SetZero();
-      is_monochromatic_ = (qnode == rnode);
-
+      is_monochromatic_ = (qnode_and_rnode_are_equal);
     }
 
     template < typename TreeType, typename GlobalType,

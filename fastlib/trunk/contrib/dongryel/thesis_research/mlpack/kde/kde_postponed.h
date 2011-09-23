@@ -87,9 +87,12 @@ class KdePostponed {
      *         object and a query reference pair.
      */
     template<typename GlobalType, typename TreeType>
-    void Init(const GlobalType &global_in, TreeType *qnode, TreeType *rnode) {
-      int rnode_count = (global_in.is_monochromatic() && qnode == rnode) ?
-                        rnode->count() - 1 : rnode->count();
+    void Init(
+      const GlobalType &global_in, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal) {
+      int rnode_count =
+        (global_in.is_monochromatic() && qnode_and_rnode_are_equal) ?
+        rnode->count() - 1 : rnode->count();
       densities_l_ = densities_u_ = 0.0;
       densities_e_ = 0.0;
       pruned_ = static_cast<double>(rnode_count);

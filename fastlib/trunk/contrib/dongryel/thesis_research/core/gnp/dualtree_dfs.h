@@ -220,6 +220,7 @@ class DualtreeDfs {
       const MetricType &metric,
       TreeType *qnode,
       TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       ResultType *result);
 
     /** @brief Determines whether a pair of query/reference pair can

@@ -240,6 +240,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
+  bool qnode_and_rnode_are_equal,
   typename ProblemType::ResultType *query_results) {
 
   // Clear the summary statistics of the current query node so that we
@@ -268,7 +269,8 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 
     // Reset the temporary variable for accumulating each
     // reference point contribution.
-    query_contribution.Init(problem_->global(), qnode, rnode);
+    query_contribution.Init(
+      problem_->global(), qnode, rnode, qnode_and_rnode_are_equal);
 
     // Incorporate the postponed information.
     query_results->ApplyPostponed(q_col_id, qnode_stat.postponed_);
@@ -460,7 +462,8 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
     if(rnode->is_leaf()) {
 
       // If the base case must be done, then do so.
-      DualtreeBase_(metric, qnode, rnode, query_results);
+      DualtreeBase_(
+        metric, qnode, rnode, qnode_and_rnode_are_equal, query_results);
 
     } // qnode is leaf, rnode is leaf.
     else {
