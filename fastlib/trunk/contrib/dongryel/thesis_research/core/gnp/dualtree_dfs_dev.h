@@ -262,16 +262,16 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 
     // Get the query point and its real index.
     arma::vec q_col;
-    int q_index;
+    int q_col_id;
     double q_weight;
-    qnode_iterator.Next(&q_col, &q_index, &q_weight);
+    qnode_iterator.Next(&q_col, &q_col_id, &q_weight);
 
     // Reset the temporary variable for accumulating each
     // reference point contribution.
     query_contribution.Init(problem_->global(), qnode, rnode);
 
     // Incorporate the postponed information.
-    query_results->ApplyPostponed(q_index, qnode_stat.postponed_);
+    query_results->ApplyPostponed(q_col_id, qnode_stat.postponed_);
 
     // Reset the reference node iterator.
     rnode_iterator.Reset();
@@ -282,17 +282,21 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
       int r_col_id;
       double r_weight;
       rnode_iterator.Next(&r_col, &r_col_id, &r_weight);
+      bool query_and_reference_points_are_equal =
+        (query_table_->rank() == reference_table_->rank() &&
+         q_col_id == r_col_id);
       query_contribution.ApplyContribution(
-        problem_->global(), metric, q_col, q_weight, r_col, r_weight);
+        problem_->global(), metric, q_col, q_weight, r_col, r_weight,
+        query_and_reference_points_are_equal);
 
     } // end of iterating over each reference point.
 
     // Each query point has taken care of all reference points.
-    query_results->ApplyPostponed(q_index, query_contribution);
+    query_results->ApplyPostponed(q_col_id, query_contribution);
 
     // Refine min and max summary statistics.
     qnode_stat.summary_.Accumulate(
-      problem_->global(), *query_results, q_index);
+      problem_->global(), *query_results, q_col_id);
 
   } // end of looping over each query point.
 

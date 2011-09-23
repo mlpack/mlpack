@@ -104,11 +104,12 @@ namespace mlpack {
                              const arma::vec &query_point,
                              double query_weight,
                              const arma::vec &reference_point,
-                             double reference_weight) {
+                             double reference_weight,
+			     bool query_and_reference_points_are_equal ) {
         
         // make sure we don't count a point with itself
-        if (!(global.is_monochromatic() 
-              && (query_point.memptr() == reference_point.memptr()))) {
+        if ( ! ( global.is_monochromatic() &&
+                 query_and_reference_points_are_equal ) ) {
           
           double dist_sq = metric.DistanceSq(query_point, reference_point);
           
