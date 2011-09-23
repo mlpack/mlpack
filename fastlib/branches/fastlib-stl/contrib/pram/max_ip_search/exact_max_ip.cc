@@ -8,7 +8,7 @@
 
 #include "exact_max_ip.h"
 
-using namespace mlpack;
+//using namespace mlpack;
 
 double MaxIP::MaxNodeIP_(TreeType* reference_node) {
 
@@ -26,7 +26,7 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
 
   double max_cos_qr = 1.0;
 
-  if (IO::HasParam("maxip/angle_prune")) { 
+  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
     // tighter bound of \max_{r \in B_p^R} <q,r> 
     //    = |q| \max_{r \in B_p^R} |r| cos <qr 
     //    \leq |q| \max_{r \in B_p^R} |r| \max_{r \in B_p^R} cos <qr 
@@ -83,7 +83,7 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 
   double max_cos_qp = 1.0;
 
-  if (IO::HasParam("maxip/angle_prune")) { 
+  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
 
     if (rad <= c_norm) {
       // cos <pq = cos_phi
@@ -392,7 +392,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   split_decisions_ = 0;
     
   // Get the leaf size from the module
-  leaf_size_ = IO::GetParam<int>("maxip/leaf_size");
+  leaf_size_ = mlpack::IO::GetParam<int>("maxip/leaf_size");
   // Make sure the leaf size is valid
   assert(leaf_size_ > 0);
     
@@ -404,7 +404,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   assert(queries_.n_rows == references_.n_rows);
     
   // K-nearest neighbors initialization
-  knns_ = IO::GetParam<int>("maxip/knns");
+  knns_ = mlpack::IO::GetParam<int>("maxip/knns");
   
   // Initialize the list of nearest neighbor candidates
   max_ip_indices_ 
@@ -415,7 +415,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   max_ips_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols * knns_, 1);
 
   // We'll time tree building
-  IO::StartTimer("tree_building");
+  mlpack::IO::StartTimer("tree_building");
 
   reference_tree_
     = proximity::MakeGenMetricTree<TreeType>(references_, 
@@ -423,7 +423,7 @@ void MaxIP::Init(const arma::mat& queries_in,
 					     &old_from_new_references_,
 					     NULL);
     
-  if (IO::HasParam("maxip/dual_tree")) {
+  if (mlpack::IO::HasParam("maxip/dual_tree")) {
     query_tree_
       = proximity::MakeGenCosineTree<CTreeType>(queries_,
 						leaf_size_,
@@ -432,7 +432,7 @@ void MaxIP::Init(const arma::mat& queries_in,
   }
     
   // Stop the timer we started above
-  IO::StopTimer("tree_building");
+  mlpack::IO::StopTimer("tree_building");
 
 } // Init
 
@@ -451,7 +451,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
   assert(queries_.n_rows == references_.n_rows);
     
   // K-nearest neighbors initialization
-  knns_ = IO::GetParam<int>("maxip/knns");
+  knns_ = mlpack::IO::GetParam<int>("maxip/knns");
   
   // Initialize the list of nearest neighbor candidates
   max_ip_indices_
@@ -466,7 +466,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
   leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
 
   // We'll time tree building
-  IO::StartTimer("tree_building");
+  mlpack::IO::StartTimer("tree_building");
     
   reference_tree_
     = proximity::MakeGenMetricTree<TreeType>(references_, 
@@ -475,7 +475,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
 					     NULL);
 
   // Stop the timer we started above
-  IO::StopTimer("tree_building");
+  mlpack::IO::StopTimer("tree_building");
     
 } // InitNaive
   
@@ -486,10 +486,10 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
   resulting_neighbors->set_size(max_ips_.n_elem);
   ips->set_size(max_ips_.n_elem);
 
-  if (IO::HasParam("maxip/dual_tree")) {
+  if (mlpack::IO::HasParam("maxip/dual_tree")) {
     // TEST THIS PART OF THE FUNCTION
     // do dual-tree search
-    IO::Info << "DUAL-TREE Search: " << std::endl;
+    mlpack::IO::Info << "DUAL-TREE Search: " << std::endl;
 
     ComputeNeighborsRecursion_(query_tree_, reference_tree_,
 			       MaxNodeIP_(query_tree_, reference_tree_));
@@ -504,7 +504,7 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 
   } else {
     // do single-tree search
-    IO::Info << "SINGLE-TREE Search: " << std::endl;
+    mlpack::IO::Info << "SINGLE-TREE Search: " << std::endl;
 
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
 
@@ -522,13 +522,13 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     }
   }
 
-  IO::Info << "Tree-based Search - Number of prunes: " 
-	   << number_of_prunes_ << std::endl;
-  IO::Info << "\t \t Avg. # of DC: " 
-	   << (double) distance_computations_ 
+  mlpack::IO::Info << "Tree-based Search - Number of prunes: " 
+		   << number_of_prunes_ << std::endl;
+  mlpack::IO::Info << "\t \t Avg. # of DC: " 
+		   << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
-  IO::Info << "\t \t Avg. # of SD: " 
-	   << (double) split_decisions_ 
+  mlpack::IO::Info << "\t \t Avg. # of SD: " 
+		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 
 
@@ -551,12 +551,12 @@ void MaxIP::ComputeNaive(arma::Col<size_t>* resulting_neighbors,
     (*ips)(query*knns_+ i%knns_) = max_ips_(i);
   }
     
-  IO::Info << "Brute-force Search - Number of prunes: " 
-	   << number_of_prunes_ << std::endl;
-  IO::Info << "\t \t Avg. # of DC: " 
-	   << (double) distance_computations_ 
+  mlpack::IO::Info << "Brute-force Search - Number of prunes: " 
+		   << number_of_prunes_ << std::endl;
+  mlpack::IO::Info << "\t \t Avg. # of DC: " 
+		   << (double) distance_computations_ 
     / (double) queries_.n_cols << std::endl;
-  IO::Info << "\t \t Avg. # of SD: " 
-	   << (double) split_decisions_ 
+  mlpack::IO::Info << "\t \t Avg. # of SD: " 
+		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 }
