@@ -4,6 +4,8 @@
  *
  *  @author Parikshit Ram (pram@cc.gatech.edu)
  */
+#ifndef GEN_COSINE_TREE_IMPL_H
+#define GEN_COSINE_TREE_IMPL_H
 
 #include <assert.h>
 #include <fastlib/fastlib.h>
@@ -256,3 +258,5 @@ namespace tree_gen_cosine_tree_private {
     node->set_children(matrix, left, right);
   }
 };
+
+#endif

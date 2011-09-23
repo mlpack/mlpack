@@ -5,6 +5,9 @@
  *  @author Dongryeol Lee (dongryel@cc.gatech.edu)
  */
 
+#ifndef GEN_METRIC_TREE_IMPL_H
+#define GEN_METRIC_TREE_IMPL_H
+
 #include <assert.h>
 #include <fastlib/fastlib.h>
 #include <armadillo>
@@ -231,3 +234,5 @@ namespace tree_gen_metric_tree_private {
     node->set_children(matrix, left, right);
   }
 };
+
+#endif
