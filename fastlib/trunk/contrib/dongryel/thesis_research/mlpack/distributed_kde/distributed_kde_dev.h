@@ -155,7 +155,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The size of the memory mapped file."
   )(
     "num_threads_in",
-    boost::program_options::value<int>()->default_value(3),
+    boost::program_options::value<int>()->default_value(1),
     "The number of threads to use for shared-memory parallelism."
   )(
     "probability",
