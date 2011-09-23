@@ -170,7 +170,8 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
 
         // If the reference node is leaf node,
         if(rnode->is_leaf()) {
-          engine_->DualtreeBase_(metric_, qnode, rnode, query_results_);
+          engine_->DualtreeBase_(
+            metric_, qnode, rnode, qnode_and_rnode_are_equal, query_results_);
         }
         else {
           TreeType *rnode_first;
