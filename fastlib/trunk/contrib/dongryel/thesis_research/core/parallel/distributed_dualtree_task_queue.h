@@ -894,18 +894,6 @@ class DistributedDualtreeTaskQueue {
           probe_index--;
         }
       }
-
-      if(task_out->second >= 0) {
-        printf("(%d %d) grabbed %d %d %d, %d %d %d.\n",
-               world.rank(), thread_id,
-               task_out->first.query_subtable().subtable_id().get<0>(),
-               task_out->first.query_subtable().subtable_id().get<1>(),
-               task_out->first.query_subtable().subtable_id().get<2>(),
-               task_out->first.reference_subtable().subtable_id().get<0>(),
-               task_out->first.reference_subtable().subtable_id().get<1>(),
-               task_out->first.reference_subtable().subtable_id().get<2>());
-        this->Print(world);
-      }
     }
 
     /** @brief Examines the top task in the given task list.
