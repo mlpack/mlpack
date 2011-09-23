@@ -48,9 +48,10 @@ class KdeDelta {
     void DeterministicCompute(
       const MetricType &metric,
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       const core::math::Range &squared_distance_range) {
 
-      int rnode_count = (global.is_monochromatic() && qnode == rnode) ?
+      int rnode_count = (global.is_monochromatic() && qnode_and_rnode_are_equal) ?
                         rnode->count() - 1 : rnode->count();
       densities_l_ = rnode_count *
                      global.kernel().EvalUnnormOnSq(squared_distance_range.hi);

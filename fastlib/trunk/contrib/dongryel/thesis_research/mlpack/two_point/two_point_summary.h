@@ -1,6 +1,6 @@
 /*
  *  two_point_summary.h
- *  
+ *
  *
  *  Created by William March on 9/13/11.
  *  Copyright 2011 __MyCompanyName__. All rights reserved.
@@ -13,118 +13,120 @@
 
 
 namespace mlpack {
-  namespace two_point {
-   
-    class TwoPointSummary {
-      
-    private:
-      
-      // TODO: do I need to worry about serialization?
-      
-      
-      
-    public:
-      
-      template < typename GlobalType, typename DeltaType, typename TreeType,
-      typename ResultType >
-      bool CanSummarize(const GlobalType &global, DeltaType &delta,
-                        const core::math::Range &squared_distance_range,
-                        TreeType *qnode, TreeType *rnode, 
-                        ResultType *query_results) {
-        
-        
-        // we're assuming the "query" node is the first one in the tuple
-        /*
-        if (global.is_monochromatic() && (qnode->end() <= rnode->begin())) {
-          return true;
-        }
-         */
-        // I think this is taken care of in the gnp code
-        
-        return((squared_distance_range.lo > global.upper_bound_sqr())
-              || (squared_distance_range.hi < global.lower_bound_sqr()));
-        
-      } // CanSummarize
-      
-      TwoPointSummary() {
-        
-      } // constructor
-      
-      TwoPointSummary(TwoPointSummary& other) {
-        
-      } // copy constructor
-      
-      template<typename TwoPointPostponedType>
-      void ApplyPostponed(const TwoPointPostponedType &postponed_in) {
-    
-      } // ApplyPostponed
-      
-      void ApplyDelta(const TwoPointDelta &delta_in) {
-      
-      } // ApplyDelta
-      
-      template < typename GlobalType, typename DeltaType, typename TreeType,
-                 typename ResultType >
-      bool CanSummarize(
-        const GlobalType &global, DeltaType &delta,
-        const core::math::Range &squared_distance_range,
-        TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
+namespace two_point {
 
-        // we're assuming the "query" node is the first one in the tuple
-        /*
-        if (global.is_monochromatic() && (qnode->end() <= rnode->begin())) {
-          return true;
-        }
-         */
-        
-        return((squared_distance_range.lo > global.matcher_upper_bound_sq())
-               || (squared_distance_range.hi < global.matcher_lower_bound_sq()));
-                
-        
-      } // CanSummarize
-                        
-      
-      void StartReaccumulate() {
-      
-      
-      } // StartReaccumulate
-      
-      template<typename GlobalType, typename ResultType>
-      void Accumulate(
-        const GlobalType &global, const ResultType &results, int q_index) {
-    
-        
-      } // Accumulate
-      
-      template<typename GlobalType, typename TwoPointPostponedType>
-      void Accumulate(
-        const GlobalType &global, const TwoPointSummary &summary_in,
-        const TwoPointPostponedType &postponed_in) {
+class TwoPointSummary {
 
-      } // Accumulate
-      
-      void Copy(const TwoPointSummary& summary_in) {
-        
+  private:
+
+    // TODO: do I need to worry about serialization?
+
+
+
+  public:
+
+    template < typename GlobalType, typename DeltaType, typename TreeType,
+             typename ResultType >
+    bool CanSummarize(const GlobalType &global, DeltaType &delta,
+                      const core::math::Range &squared_distance_range,
+                      TreeType *qnode, TreeType *rnode,
+                      bool qnode_and_rnode_are_equal,
+                      ResultType *query_results) {
+
+
+      // we're assuming the "query" node is the first one in the tuple
+      /*
+      if (global.is_monochromatic() && (qnode->end() <= rnode->begin())) {
+        return true;
       }
-      
-      template < typename MetricType, typename GlobalType,
-      typename PostponedType, typename DeltaType,
-      typename TreeType, typename ResultType >
-      bool CanProbabilisticSummarize(
-           const MetricType &metric,
-           GlobalType &global,
-           const PostponedType &postponed, DeltaType &delta,
-           const core::math::Range &squared_distance_range,
-           TreeType *qnode, TreeType *rnode,
-           double failure_probability, ResultType *query_results) const {
+       */
+      // I think this is taken care of in the gnp code
 
-        return false;
-        
+      return((squared_distance_range.lo > global.upper_bound_sqr())
+             || (squared_distance_range.hi < global.lower_bound_sqr()));
+
+    } // CanSummarize
+
+    TwoPointSummary() {
+
+    } // constructor
+
+    TwoPointSummary(TwoPointSummary& other) {
+
+    } // copy constructor
+
+    template<typename TwoPointPostponedType>
+    void ApplyPostponed(const TwoPointPostponedType &postponed_in) {
+
+    } // ApplyPostponed
+
+    void ApplyDelta(const TwoPointDelta &delta_in) {
+
+    } // ApplyDelta
+
+    template < typename GlobalType, typename DeltaType, typename TreeType,
+             typename ResultType >
+    bool CanSummarize(
+      const GlobalType &global, DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
+
+      // we're assuming the "query" node is the first one in the tuple
+      /*
+      if (global.is_monochromatic() && (qnode->end() <= rnode->begin())) {
+        return true;
       }
-      
-    }; // class
-    
-  } // namespace
+       */
+
+      return((squared_distance_range.lo > global.matcher_upper_bound_sq())
+             || (squared_distance_range.hi < global.matcher_lower_bound_sq()));
+
+
+    } // CanSummarize
+
+
+    void StartReaccumulate() {
+
+
+    } // StartReaccumulate
+
+    template<typename GlobalType, typename ResultType>
+    void Accumulate(
+      const GlobalType &global, const ResultType &results, int q_index) {
+
+
+    } // Accumulate
+
+    template<typename GlobalType, typename TwoPointPostponedType>
+    void Accumulate(
+      const GlobalType &global, const TwoPointSummary &summary_in,
+      const TwoPointPostponedType &postponed_in) {
+
+    } // Accumulate
+
+    void Copy(const TwoPointSummary& summary_in) {
+
+    }
+
+    template < typename MetricType, typename GlobalType,
+             typename PostponedType, typename DeltaType,
+             typename TreeType, typename ResultType >
+    bool CanProbabilisticSummarize(
+      const MetricType &metric,
+      GlobalType &global,
+      const PostponedType &postponed, DeltaType &delta,
+      const core::math::Range &squared_distance_range,
+      TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
+      double failure_probability, ResultType *query_results) const {
+
+      return false;
+
+    }
+
+}; // class
+
+} // namespace
 } // namespace
 
 #endif

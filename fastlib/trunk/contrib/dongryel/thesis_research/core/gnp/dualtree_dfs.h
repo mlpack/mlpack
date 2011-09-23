@@ -228,6 +228,7 @@ class DualtreeDfs {
     bool CanSummarize_(
       TreeType *qnode,
       TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       typename ProblemType::DeltaType &delta,
       const core::math::Range &squared_distance_range,
       typename ProblemType::ResultType *query_results);
@@ -245,6 +246,7 @@ class DualtreeDfs {
       const MetricType &metric,
       TreeType *qnode,
       TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       double failure_probability,
       typename ProblemType::DeltaType &delta,
       const core::math::Range &squared_distance_range,

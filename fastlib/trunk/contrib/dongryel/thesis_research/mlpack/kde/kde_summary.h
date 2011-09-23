@@ -189,6 +189,7 @@ class KdeSummary {
       const PostponedType &postponed, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       double failure_probability, ResultType *query_results) const {
 
       // The number of samples.
@@ -273,7 +274,9 @@ class KdeSummary {
     bool CanSummarize(
       const GlobalType &global, DeltaType &delta,
       const core::math::Range &squared_distance_range,
-      TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
+      TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
+      ResultType *query_results) const {
 
       double left_hand_side = delta.used_error_;
       double right_hand_side =
@@ -290,7 +293,7 @@ class KdeSummary {
       }
 
       // Otherwise, try series expansion.
-      else if(((! global.is_monochromatic()) || qnode != rnode) &&
+      else if(((! global.is_monochromatic()) || (! qnode_and_rnode_are_equal)) &&
               global.kernel_aux().global().get_max_order() > 0) {
         return CanSummarizeSeriesExpansion_(
                  global, delta, squared_distance_range,
