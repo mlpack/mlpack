@@ -155,7 +155,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
     typename ProblemType::DeltaType delta;
     delta.DeterministicCompute(
       metric_, engine_->problem_->global(),
-      qnode, rnode, squared_distance_range);
+      qnode, rnode, qnode_and_rnode_are_equal, squared_distance_range);
     bool prunable = engine_->CanSummarize_(
                       qnode, rnode, qnode_and_rnode_are_equal, delta,
                       squared_distance_range, query_results_);
