@@ -409,7 +409,9 @@ class TableExchange {
       message_cache_[ cache_id ].subtable_route().object().Destruct();
       message_cache_[
         cache_id ].subtable_route().set_object_is_valid_flag(false);
-      message_cache_[ cache_id ].set_serialize_subtable_route_flag(false);
+      if(do_load_balancing_) {
+        message_cache_[ cache_id ].set_serialize_subtable_route_flag(false);
+      }
     }
 
   public:
