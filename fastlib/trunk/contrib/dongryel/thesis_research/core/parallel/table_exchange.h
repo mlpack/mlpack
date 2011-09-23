@@ -705,6 +705,7 @@ class TableExchange {
             new_self_send_request_object.subtable_route().Init(
               world, route_request);
             new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
+            new_self_send_request_object.set_serialize_subtable_route_flag(true);
 
             // Pop it from the route request list.
             hashed_essential_reference_subtrees_to_send.pop_back();
