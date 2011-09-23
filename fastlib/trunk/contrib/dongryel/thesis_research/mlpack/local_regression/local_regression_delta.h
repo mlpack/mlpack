@@ -118,6 +118,7 @@ class LocalRegressionDelta {
     void DeterministicCompute(
       const MetricType &metric,
       const GlobalType &global, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       const core::math::Range &squared_distance_range) {
 
       // The maximum deviation between the lower and the upper
@@ -133,8 +134,9 @@ class LocalRegressionDelta {
         global.kernel().EvalUnnormOnSq(squared_distance_range.lo);
 
       // Initialize the left hand sides and the right hand sides.
-      int total_num_terms = (global.is_monochromatic() && qnode == rnode) ?
-                            rnode->count() - 1 : rnode->count();
+      int total_num_terms =
+        (global.is_monochromatic() && qnode_and_rnode_are_equal) ?
+        rnode->count() - 1 : rnode->count();
       left_hand_side_l_.Init(
         global.problem_dimension() ,
         global.problem_dimension());

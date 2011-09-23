@@ -310,6 +310,7 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
   const MetricType &metric,
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
+  bool qnode_and_rnode_are_equal,
   double failure_probability,
   typename ProblemType::DeltaType &delta,
   const core::math::Range &squared_distance_range,
@@ -322,7 +323,7 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
 
   return new_summary.CanProbabilisticSummarize(
            metric, problem_->global(), qnode_stat.postponed_, delta,
-           squared_distance_range, qnode, rnode,
+           squared_distance_range, qnode, rnode, qnode_and_rnode_are_equal,
            failure_probability, query_results);
 }
 
@@ -345,6 +346,7 @@ template<typename ProblemType>
 bool DualtreeDfs<ProblemType>::CanSummarize_(
   typename ProblemType::TableType::TreeType *qnode,
   typename ProblemType::TableType::TreeType *rnode,
+  bool qnode_and_rnode_are_equal,
   typename ProblemType::DeltaType &delta,
   const core::math::Range &squared_distance_range,
   typename ProblemType::ResultType *query_results) {
@@ -356,7 +358,8 @@ bool DualtreeDfs<ProblemType>::CanSummarize_(
 
   return new_summary.CanSummarize(
            problem_->global(), delta, squared_distance_range,
-           qnode, rnode, query_results);
+           qnode, rnode, qnode_and_rnode_are_equal,
+           query_results);
 }
 
 template<typename ProblemType>
@@ -415,14 +418,23 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
   const core::math::Range &squared_distance_range,
   typename ProblemType::ResultType *query_results) {
 
+  // Flag whether qnode and rnode are equal.
+  bool qnode_and_rnode_are_equal =
+    (query_table_->rank() == reference_table_->rank() &&
+     qnode->begin() == rnode->begin() &&
+     qnode->count() == rnode->count());
+
   // Compute the delta change.
   typename ProblemType::DeltaType delta;
   delta.DeterministicCompute(
-    metric, problem_->global(), qnode, rnode, squared_distance_range);
+    metric, problem_->global(), qnode, rnode,
+    qnode_and_rnode_are_equal,
+    squared_distance_range);
 
   // If it is prunable, then summarize and return.
   if(CanSummarize_(
-        qnode, rnode, delta, squared_distance_range, query_results)) {
+        qnode, rnode, qnode_and_rnode_are_equal,
+        delta, squared_distance_range, query_results)) {
     Summarize_(qnode, rnode, delta, query_results);
     num_deterministic_prunes_++;
     return true;
@@ -431,7 +443,7 @@ bool DualtreeDfs<ProblemType>::DualtreeCanonical_(
 
     // Try Monte Carlo.
     if(CanProbabilisticSummarize_(
-          metric, qnode, rnode, failure_probability,
+          metric, qnode, rnode, qnode_and_rnode_are_equal, failure_probability,
           delta, squared_distance_range, query_results)) {
       ProbabilisticSummarize_(
         metric, problem_->global(), qnode,

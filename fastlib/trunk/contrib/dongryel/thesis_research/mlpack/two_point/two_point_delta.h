@@ -1,6 +1,6 @@
 /*
  *  two_point_delta.h
- *  
+ *
  *
  *  Stores the (possible) result of a node-node computation at this stage
  *  This result is examined elsewhere to see if pruning is appropriate.
@@ -17,38 +17,39 @@
 // I think this can just be empty
 
 namespace mlpack {
-  namespace two_point {
-    
-    class TwoPointDelta {
+namespace two_point {
 
-    public:
-      
-      TwoPointDelta() {
-        
-      } // constructor
-      
-      void SetZero() {
-        
-      } 
-      
-      template<typename MetricType, typename GlobalType, typename TreeType>
-      void DeterministicCompute(
-        const MetricType &metric,
-        const GlobalType &global, TreeType *qnode, TreeType *rnode,
-        const core::math::Range &squared_distance_range) {
+class TwoPointDelta {
 
-        
-        
-      } // DeterministicCompute()
-                                
-      
-      // members are public
-      
-      
-      
-    }; // class
-    
-  } // namespace
+  public:
+
+    TwoPointDelta() {
+
+    } // constructor
+
+    void SetZero() {
+
+    }
+
+    template<typename MetricType, typename GlobalType, typename TreeType>
+    void DeterministicCompute(
+      const MetricType &metric,
+      const GlobalType &global, TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
+      const core::math::Range &squared_distance_range) {
+
+
+
+    } // DeterministicCompute()
+
+
+    // members are public
+
+
+
+}; // class
+
+} // namespace
 }// namespace
 
 

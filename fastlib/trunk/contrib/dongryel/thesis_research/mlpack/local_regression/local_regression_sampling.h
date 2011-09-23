@@ -131,6 +131,7 @@ class LocalRegressionSampling {
       const core::math::Range &squared_distance_range,
       TreeType *qnode,
       TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       ResultType *query_results,
       TreeIteratorType &qnode_it,
       double num_standard_deviations) {
@@ -161,9 +162,9 @@ class LocalRegressionSampling {
         (*converged_flags_)[qpoint_id] =
           query_summary.CanSummarize(
             global, (*query_deltas_)[qpoint_id],
-            squared_distance_range, qnode, rnode, query_results);
+            squared_distance_range, qnode, rnode,
+            qnode_and_rnode_are_equal, query_results);
         all_converged = all_converged && ((*converged_flags_)[qpoint_id]);
-
       }
       while(qnode_it.HasNext());
       return all_converged;

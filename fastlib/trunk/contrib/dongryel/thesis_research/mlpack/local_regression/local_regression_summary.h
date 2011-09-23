@@ -117,6 +117,7 @@ class LocalRegressionSummary {
       const PostponedType &postponed, DeltaType &delta,
       const core::math::Range &squared_distance_range,
       TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
       double failure_probability, ResultType *query_results) const {
 
       // If there is a sufficient overlap for the bandwidth and max
@@ -168,7 +169,7 @@ class LocalRegressionSummary {
         // If converged, break.
         if(sampling.Converged(
               global, postponed, delta, squared_distance_range,
-              qnode, rnode, query_results, qnode_it,
+              qnode, rnode, qnode_and_rnode_are_equal, query_results, qnode_it,
               num_standard_deviations)) {
           break;
         }
@@ -196,7 +197,9 @@ class LocalRegressionSummary {
     bool CanSummarize(
       const GlobalType &global, DeltaType &delta,
       const core::math::Range &squared_distance_range,
-      TreeType *qnode, TreeType *rnode, ResultType *query_results) const {
+      TreeType *qnode, TreeType *rnode,
+      bool qnode_and_rnode_are_equal,
+      ResultType *query_results) const {
 
       double left_hand_side_for_left = delta.left_hand_side_used_error_;
       double left_hand_side_for_right = delta.right_hand_side_used_error_;
