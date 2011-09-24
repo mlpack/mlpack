@@ -58,8 +58,8 @@ include_directories($ENV{HOME}/local/armadillo/include)
 link_directories($ENV{HOME}/local/armadillo/lib64)
 
 # for a local installation of gsl
-include_directories($ENV{HOME}/local/gsl-1.9/include)
-link_directories($ENV{HOME}/local/gsl-1.9/lib)
+include_directories($ENV{HOME}/local/gsl/include)
+link_directories($ENV{HOME}/local/gsl/lib)
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
