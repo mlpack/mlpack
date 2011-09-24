@@ -421,36 +421,6 @@ class DistributedDualtreeTaskQueue {
       return checked_out_query_subtables_.begin();
     }
 
-    bool CheckIntegrity(const SubTableIDType &destruct_id) const {
-      core::parallel::scoped_omp_nest_lock lock(
-        &(const_cast <
-          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
-      bool flag = false;
-      for(unsigned int i = 0; (! flag) && i < query_subtables_.size(); i++) {
-        TaskType *it = const_cast<TaskType *>(&(tasks_[i]->top()));
-        for(int j = 0; (! flag) && j < tasks_[i]->size(); j++, it++) {
-          flag =
-            (it->reference_subtable().subtable_id().get<0>() == destruct_id.get<0>() &&
-             it->reference_subtable().subtable_id().get<1>() == destruct_id.get<1>() &&
-             it->reference_subtable().subtable_id().get<2>() == destruct_id.get<2>());
-        }
-      }
-      for(typename QuerySubTableLockListType::const_iterator it =
-            checked_out_query_subtables_.begin();
-          (! flag) && it != checked_out_query_subtables_.end(); it++) {
-        TaskType *priority_queue_it =
-          const_cast<TaskType *>(&((*it)->task_->top()));
-        printf("      Reference set: ");
-        for(int j = 0; (! flag) && j < (*it)->task_->size(); j++, priority_queue_it++) {
-          flag =
-            (priority_queue_it->reference_subtable().subtable_id().get<0>() == destruct_id.get<0>() &&
-             priority_queue_it->reference_subtable().subtable_id().get<1>() == destruct_id.get<1>() &&
-             priority_queue_it->reference_subtable().subtable_id().get<2>() == destruct_id.get<2>());
-        }
-      }
-      return flag;
-    }
-
     /** @brief Prints the current distributed task queue.
      */
     void Print(boost::mpi::communicator &world) const {
