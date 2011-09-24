@@ -419,6 +419,9 @@ class TableExchange {
       return differing_index;
     }
 
+    /** @brief Returns the associated reference table involved in the
+     *         exchange.
+     */
     DistributedTableType *reference_table() {
       return reference_table_;
     }
