@@ -471,6 +471,7 @@ class SubTable {
     /** @brief Steals the ownership of the incoming subtable.
      */
     SubTable(const SubTableType &subtable_in) {
+      reference_count_ = 0;
       this->operator=(subtable_in);
     }
 
