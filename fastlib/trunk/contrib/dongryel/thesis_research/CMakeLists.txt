@@ -14,8 +14,11 @@ find_package(LAPACK REQUIRED)  # LAPACK finds BLAS as a dependency
 # find pthreads
 find_package(Pthreads REQUIRED)
 
+# Set the directory for looking for local installations.
+set(Local_ROOT "$ENV{HOME}/local")
+
 # include boost.
-set(Boost_ROOT "$ENV{HOME}/local/boost")
+set(Boost_ROOT "${Local_ROOT}/boost")
 set(Boost_LIB_DIR "${Boost_ROOT}/stage/lib")
 set(Boost_INCLUDE_DIRS "${Boost_ROOT}")
 set(Boost_LIBRARIES "${Boost_LIB_DIR}/libboost_program_options.a;${Boost_LIB_DIR}/libboost_mpi.a;${Boost_LIB_DIR}/libboost_serialization.a;${Boost_LIB_DIR}/libboost_system.a;${Boost_LIB_DIR}/libboost_thread.a;${Boost_LIB_DIR}/libboost_unit_test_framework.a")
@@ -41,9 +44,9 @@ if(MPI_FOUND)
 endif()
 
 # find CUDA
-set(CUDA_TOOLKIT_ROOT_DIR $ENV{HOME}/local/cuda)
+set(CUDA_TOOLKIT_ROOT_DIR ${Local_ROOT}/cuda)
 find_package(CUDA)
-link_directories($ENV{HOME}/local/cuda/lib64)
+link_directories(${Local_ROOT}/cuda/lib64)
 set(CUDA_NVCC_FLAGS "-ccbin=/usr/bin/g++-4.4")
 
 # Add additional complie flags.
@@ -54,12 +57,12 @@ include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
 
 # for a local installation of armadillo
-include_directories($ENV{HOME}/local/armadillo/include)
-link_directories($ENV{HOME}/local/armadillo/lib64)
+include_directories(${Local_ROOT}/armadillo/include)
+link_directories(${Local_ROOT}/armadillo/lib64)
 
 # for a local installation of gsl
-include_directories($ENV{HOME}/local/gsl/include)
-link_directories($ENV{HOME}/local/gsl/lib)
+include_directories(${Local_ROOT}/gsl/include)
+link_directories(${Local_ROOT}/gsl/lib)
 
 # distclean option because cmake doesn't support it
 include(CMake/TargetDistclean.cmake OPTIONAL)
