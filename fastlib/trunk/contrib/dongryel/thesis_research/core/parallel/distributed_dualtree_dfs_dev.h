@@ -401,6 +401,10 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   } // end of omp parallel
 
+  // Extract the prune counts.
+  num_deterministic_prunes_ = distributed_tasks.num_deterministic_prunes();
+  num_probabilistic_prunes_ = distributed_tasks.num_probabilistic_prunes();
+
   // Do a global post-processing if necessary over the set of global
   // query results owned by each MPI process.
   query_results->PostProcess(* world_, query_table_);
