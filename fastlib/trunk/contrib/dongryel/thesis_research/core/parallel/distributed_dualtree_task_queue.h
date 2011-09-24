@@ -102,6 +102,20 @@ class DistributedDualtreeTaskQueue {
      */
     QuerySubTableLockListType checked_out_query_subtables_;
 
+    int num_deterministic_prunes_;
+
+    int num_probabilistic_prunes_;
+
+    /** @brief The number of query subtables that have received
+     *         essential data from every process. These query
+     *         subtables can be safely exported to other MPI processes
+     *         for load balancing purposes.
+     */
+    int num_receive_completed_query_subtables_;
+
+    /** @brief The number of exported query subtables from this MPI
+     *         process to other MPI Processes.
+     */
     int num_exported_query_subtables_;
 
     /** @brief The number of imported query subtables from other MPI
@@ -550,8 +564,15 @@ class DistributedDualtreeTaskQueue {
       for(int i = 0;
           extra_task_list_out->remaining_extra_points_to_hold() > 0 &&
           i < static_cast<int>(query_subtables_.size()); i++) {
+
+        // The policy is: (1) never to import back again the subtable
+        // the current MPI process has exported. The exported query
+        // subtables come back to its origin through the flush
+        // operation; (2) never to export query subtables that are
+        // imported from other MPI processes.
         if((! neighbor_load_balance_request_in.query_subtable_is_owned(
               query_subtables_[i]->subtable_id())) &&
+            query_subtables_[i]->table()->rank() == world.rank() &&
             extra_task_list_out->push_back(world, i)) {
           num_exported_query_subtables_++;
           i--;
@@ -712,8 +733,11 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
-      return (remaining_global_computation_ == 0 &&
-              table_exchange_.can_terminate());
+      return (
+               remaining_global_computation_ == 0 &&
+               num_imported_query_subtables_ == 0 &&
+               num_exported_query_subtables_ == 0 &&
+               table_exchange_.can_terminate());
     }
 
     /** @brief Pushes the completed computation for the given query
@@ -765,23 +789,51 @@ class DistributedDualtreeTaskQueue {
       return num_remaining_tasks_;
     }
 
-    /** @brief Determines whether there is any remaining local
-     *         computation on the current process.
+    /** @brief Synchronize with the local MPI result using the given
+     *         sub-result.
      */
-    bool is_empty() const {
+    void PostComputeSynchronize(
+      int num_deterministic_prunes_in,
+      int num_probabilistic_prunes_in,
+      const QueryResultType &sub_query_results,
+      QueryResultType *local_mpi_query_results) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      return (num_remaining_tasks_ == 0);
+
+      // Collect back the result gathered by a task.
+      local_mpi_query_results->Accumulate(sub_query_results);
+
+      // Tally up the prune count.
+      num_deterministic_prunes_ += num_deterministic_prunes_in;
+      num_probabilistic_prunes_ += num_probabilistic_prunes_in;
     }
 
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
+      num_deterministic_prunes_ = 0;
       num_exported_query_subtables_ = 0;
       num_imported_query_subtables_ = 0;
+      num_probabilistic_prunes_ = 0;
       num_remaining_tasks_ = 0;
       num_threads_ = 1;
       remaining_global_computation_ = 0;
       remaining_local_computation_ = 0;
+    }
+
+    int num_deterministic_prunes() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
+      return num_deterministic_prunes_;
+    }
+
+    int num_probabilistic_prunes() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
+      return num_probabilistic_prunes_;
     }
 
     /** @brief Returns the number of tasks associated with the probing
