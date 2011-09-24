@@ -15,7 +15,8 @@
 namespace math {
 
   double SphereVolume(double r, int d) {
-    int n = d / 2;
+
+	int n = d / 2;
     double val;
 
     mlpack::IO::Assert(d >= 0);
