@@ -176,7 +176,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "If present, generate the datasets on the fly."
   )(
     "random_generate_n_attributes",
-    boost::program_options::value<int>()->default_value(2),
+    boost::program_options::value<int>()->default_value(5),
     "Generate the datasets on the fly of the specified dimension."
   )(
     "random_generate_n_entries",
