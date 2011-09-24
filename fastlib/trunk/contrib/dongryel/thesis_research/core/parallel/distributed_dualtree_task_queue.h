@@ -388,9 +388,23 @@ class DistributedDualtreeTaskQueue {
      */
     void ReturnQuerySubTable(
       typename QuerySubTableLockListType::iterator &query_subtable_lock) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // Return and remove it from the locked list.
       (*query_subtable_lock)->Return_(this);
       checked_out_query_subtables_.erase(query_subtable_lock);
+
+      // Check whether the returned query subtable can be exported to
+      // other processes subsequently. This can happen when the query
+      // subtable has no longer needs additional data to race to the
+      // finish line.
+      if(! can_be_exported_.back()) {
+        can_be_exported_.back() =
+          (remaining_work_in_priority_queue_.back() ==
+           remaining_work_for_query_subtables_.back()) ;
+      }
     }
 
     /** @brief Locks and checks out a query subtable for a given MPI
