@@ -517,6 +517,7 @@ class DistributedDualtreeTaskQueue {
       int push_index,
       SubTableType &reference_subtable) {
 
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Compute the priority and push in.
@@ -538,6 +539,11 @@ class DistributedDualtreeTaskQueue {
 
       // Increment the available local computation.
       remaining_local_computation_ += new_task.work();
+
+      // Tally the number or reference points associated with this
+      // queue.
+      remaining_work_in_priority_queue_[ push_index ] +=
+        reference_subtable.start_node()->count();
     }
 
     /** @brief Returns the subtable stored in the given position of
@@ -982,10 +988,18 @@ class DistributedDualtreeTaskQueue {
      */
     void pop(int probe_index) {
 
+      // Lock the task queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Decrement the amount of local computation.
       remaining_local_computation_ -= tasks_[probe_index]->top().work();
+
+      // Decrement the number of reference points associated with the
+      // queue.
+      remaining_work_in_priority_queue_[ probe_index ] -=
+        const_cast< TaskType &>( 
+          tasks_[
+            probe_index ]->top() ).reference_subtable().start_node()->count();
 
       // Pop.
       tasks_[probe_index]->pop();
@@ -1024,6 +1038,11 @@ class DistributedDualtreeTaskQueue {
 
         // Decrement the remaining local computation.
         remaining_local_computation_ -= task_out->first.work();
+
+        // Decrement the remaining number of reference points
+        // associated with the queue.
+        remaining_work_in_priority_queue_[ probe_index ] -=
+          task_out->first.reference_subtable().start_node()->count() ;
 
         // Check out the query subtable completely if requested.
         if(checked_out_query_subtable != NULL) {
