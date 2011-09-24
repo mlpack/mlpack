@@ -370,14 +370,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         sub_engine.Compute(
           metric, found_task.first.query_result(), false);
 
-#pragma omp critical
-        {
-          num_deterministic_prunes_ += sub_engine.num_deterministic_prunes();
-          num_probabilistic_prunes_ += sub_engine.num_probabilistic_prunes();
-
-          // Collect back the result gathered by a task.
-          query_results->Accumulate(*(found_task.first.query_result()));
-        }
+        // Synchronize the sub-result with the MPI result owned by the
+        // current process.
+        distributed_tasks.PostComputeSynchronize(
+          sub_engine.num_deterministic_prunes(),
+          sub_engine.num_probabilistic_prunes(),
+          *(found_task.first.query_result()), query_results);
 
         // Push in the completed amount of work.
         unsigned long int completed_work =
