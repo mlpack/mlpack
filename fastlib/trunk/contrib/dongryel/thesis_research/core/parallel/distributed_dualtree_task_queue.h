@@ -671,7 +671,7 @@ class DistributedDualtreeTaskQueue {
         SubTableType alias;
         if(frontier_reference_subtable == NULL) {
           alias.Init(
-            table_exchange_.local_table(),
+            table_exchange_.reference_table()->local_table(),
             table_exchange_.FindByBeginCount(
               reference_begin, reference_count), false);
           alias.set_cache_block_id(cache_id);
@@ -814,7 +814,7 @@ class DistributedDualtreeTaskQueue {
       // For each process, break up the local query tree into a list of
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
-        4 * num_threads_in, &query_subtables_);
+        10 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
@@ -880,9 +880,9 @@ class DistributedDualtreeTaskQueue {
 
       // If the number of available task is less than the number of
       // running threads, try to get one.
-      if(static_cast<int>(tasks_.size()) < num_threads_) {
-        this->RedistributeAmongCores_(world, metric_in);
-      }
+      //if(static_cast<int>(tasks_.size()) < num_threads_) {
+      //this->RedistributeAmongCores_(world, metric_in);
+      //}
 
       // Try to dequeue a task by scanning the list of available query
       // subtables.

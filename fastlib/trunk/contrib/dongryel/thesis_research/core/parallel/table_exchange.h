@@ -190,10 +190,10 @@ class TableExchange {
      */
     int last_fail_index_;
 
-    /** @brief The pointer to the local table that is partcipating in
-     *         the exchange.
+    /** @brief The pointer to the reference distributed table that is
+     *         partcipating in the exchange.
      */
-    TableType *local_table_;
+    DistributedTableType *reference_table_;
 
     /** @brief The maximum number of stages, typically log_2 of the
      *         number of MPI processes.
@@ -521,8 +521,8 @@ class TableExchange {
       return differing_index;
     }
 
-    TableType *local_table() {
-      return local_table_;
+    DistributedTableType *reference_table() {
+      return reference_table_;
     }
 
     /** @brief Returns whether the current MPI process can terminate.
@@ -560,9 +560,9 @@ class TableExchange {
       do_load_balancing_ = false;
       enter_stage_ = std::pair< unsigned int, bool> (0, false);
       last_fail_index_ = 0;
-      local_table_ = NULL;
       max_stage_ = 0;
       num_queued_up_query_subtables_ = 0;
+      reference_table_ = NULL;
       remaining_extra_points_to_hold_ = 0;
       stage_ = 0;
       task_queue_ = NULL;
@@ -570,7 +570,7 @@ class TableExchange {
     }
 
     TreeType *FindByBeginCount(int begin_in, int count_in) {
-      return local_table_->get_tree()->FindByBeginCount(begin_in, count_in);
+      return reference_table_->local_table()->get_tree()->FindByBeginCount(begin_in, count_in);
     }
 
     void LockCache(int cache_id, int num_times) {
@@ -589,7 +589,7 @@ class TableExchange {
         // If the subtable is not needed, free it.
         if(message_locks_[ cache_id ] == 0 &&
             message_cache_[ cache_id ].subtable_route().object_is_valid() &&
-            cache_id != local_table_->rank()) {
+            cache_id != reference_table_->local_table()->rank()) {
 
           if(cache_id < world.size()) {
 
@@ -644,8 +644,8 @@ class TableExchange {
       // The maximum number of neighbors.
       max_stage_ = static_cast<unsigned int>(log2(world.size()));
 
-      // Set the local table.
-      local_table_ = reference_table_in->local_table();
+      // Set the reference distributed table.
+      reference_table_ = reference_table_in;
 
       // Preallocate the cache.
       message_cache_.resize(world.size());
