@@ -148,26 +148,10 @@ class EpanKernel {
    * Divide by this constant when you're done.
    */
   double CalcNormConstant(size_t dims) const {
-    return 2.0 * SphereVolume(sqrt(bandwidth_sq_), dims)
+    return 2.0 * math::SphereVolume(sqrt(bandwidth_sq_), dims)
         / (dims + 2.0);
   }
   
-  double SphereVolume(double r, int d) {
-      int n = d / 2;
-      double val;
-
-      mlpack::IO::Assert(d >= 0);
-
-      if (d % 2 == 0) {
-        val = pow(r * sqrt(PI), d) / Factorial(n);
-      }
-      else {
-        val = pow(2 * r, d) * pow(PI, n) * Factorial(n) / Factorial(d);
-      }
-
-      return val;
-    }
-
   /**
    * Gets the squared bandwidth.
    */
