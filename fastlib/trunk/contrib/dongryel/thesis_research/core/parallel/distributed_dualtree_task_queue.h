@@ -98,20 +98,17 @@ class DistributedDualtreeTaskQueue {
     std::vector <
     boost::intrusive_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
+    /** @brief Whether each query subtable can be exported.
+     */
+    std::deque< bool > can_be_exported_;
+
     /** @brief The list of checked out query subtables.
      */
     QuerySubTableLockListType checked_out_query_subtables_;
 
-    int num_deterministic_prunes_;
-
-    int num_probabilistic_prunes_;
-
-    /** @brief The number of query subtables that have received
-     *         essential data from every process. These query
-     *         subtables can be safely exported to other MPI processes
-     *         for load balancing purposes.
+    /** @brief The number of deterministic prunes.
      */
-    int num_receive_completed_query_subtables_;
+    int num_deterministic_prunes_;
 
     /** @brief The number of exported query subtables from this MPI
      *         process to other MPI Processes.
@@ -122,6 +119,17 @@ class DistributedDualtreeTaskQueue {
      *         processes.
      */
     int num_imported_query_subtables_;
+
+    /** @brief The number of probabilistic prunes.
+     */
+    int num_probabilistic_prunes_;
+
+    /** @brief The number of query subtables that have received
+     *         essential data from every process. These query
+     *         subtables can be safely exported to other MPI processes
+     *         for load balancing purposes.
+     */
+    int num_receive_completed_query_subtables_;
 
     /** @brief The number of remaining tasks on the current MPI
      *         process.
@@ -137,6 +145,17 @@ class DistributedDualtreeTaskQueue {
      *         work to do for the current MPI process.
      */
     std::vector< boost::intrusive_ptr<SubTableType> > query_subtables_;
+
+    /** @brief The remaining global computation being kept track on
+     *         this MPI process. If this reaches zero, then this
+     *         process can exit the computation.
+     */
+    unsigned long int remaining_global_computation_;
+
+    /** @brief The remaining local computation on this MPI
+     *         process. Used for dynamic load balancing.
+     */
+    unsigned long int remaining_local_computation_;
 
     /** @brief The remaining global work for each query subtable.
      */
@@ -161,17 +180,6 @@ class DistributedDualtreeTaskQueue {
      */
     omp_nest_lock_t task_queue_lock_;
 
-    /** @brief The remaining global computation being kept track on
-     *         this MPI process. If this reaches zero, then this
-     *         process can exit the computation.
-     */
-    unsigned long int remaining_global_computation_;
-
-    /** @brief The remaining local computation on this MPI
-     *         process. Used for dynamic load balancing.
-     */
-    unsigned long int remaining_local_computation_;
-
   private:
 
     /** @brief Grow slots for additional query subtables.
@@ -179,6 +187,7 @@ class DistributedDualtreeTaskQueue {
     void GrowSlots_() {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
+      can_be_exported_.resize(can_be_exported_.size() + 1);
       query_subtables_.push_back(
         boost::intrusive_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
@@ -210,6 +219,7 @@ class DistributedDualtreeTaskQueue {
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_[probe_index] = assigned_work_.back();
+      can_be_exported_[probe_index] = can_be_exported_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
@@ -218,6 +228,7 @@ class DistributedDualtreeTaskQueue {
       tasks_[probe_index] = tasks_.back();
 
       assigned_work_.pop_back();
+      can_be_exported_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
       remaining_work_in_priority_queue_.pop_back();
@@ -292,6 +303,7 @@ class DistributedDualtreeTaskQueue {
         boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
           new core::parallel::DisjointIntIntervals(
             world, *(assigned_work_[subtree_index]))));
+      can_be_exported_.push_back(can_be_exported_[ subtree_index ]);
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       remaining_work_in_priority_queue_.push_back(
@@ -351,6 +363,7 @@ class DistributedDualtreeTaskQueue {
               comp_query_subtable_id.get<2>()) {
 
             assigned_work_.push_back((*it)->assigned_work_);
+            can_be_exported_.push_back((*it)->can_be_exported_);
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
               (*it)->remaining_work_for_query_subtable_);
@@ -496,6 +509,7 @@ class DistributedDualtreeTaskQueue {
       this->GrowSlots_();
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
+      can_be_exported_.back() = false;
       remaining_work_for_query_subtables_.back() = 0;
       remaining_work_in_priority_queue_.back() = 0;
 
@@ -626,6 +640,7 @@ class DistributedDualtreeTaskQueue {
      */
     ~DistributedDualtreeTaskQueue() {
       assigned_work_.resize(0);
+      can_be_exported_.resize(0);
       query_subtables_.resize(0);
       tasks_.resize(0);
 
@@ -927,6 +942,7 @@ class DistributedDualtreeTaskQueue {
       // Initialize the completed computation grid for each query tree
       // on this process.
       assigned_work_.resize(query_subtables_.size()) ;
+      can_be_exported_.resize(query_subtables_.size()) ;
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
       remaining_work_in_priority_queue_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
@@ -935,6 +951,7 @@ class DistributedDualtreeTaskQueue {
           core::parallel::DisjointIntIntervals > (
             new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
+        can_be_exported_[i] = false;
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
         remaining_work_in_priority_queue_[i] = 0;
       }
@@ -997,9 +1014,9 @@ class DistributedDualtreeTaskQueue {
       // Decrement the number of reference points associated with the
       // queue.
       remaining_work_in_priority_queue_[ probe_index ] -=
-        const_cast< TaskType &>( 
+        const_cast< TaskType &>(
           tasks_[
-            probe_index ]->top() ).reference_subtable().start_node()->count();
+            probe_index ]->top()).reference_subtable().start_node()->count();
 
       // Pop.
       tasks_[probe_index]->pop();
@@ -1021,6 +1038,7 @@ class DistributedDualtreeTaskQueue {
       typename QuerySubTableLockListType::iterator
       *checked_out_query_subtable) {
 
+      // Lock the task queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       if(tasks_[probe_index]->size() > 0) {
