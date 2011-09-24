@@ -93,13 +93,20 @@ void Kde<TableType, KernelAuxType>::Init(
   KdeArguments<TableType> &arguments_in, IncomingGlobalType *global_in) {
 
   reference_table_ = arguments_in.reference_table_;
-  if(arguments_in.query_table_ == arguments_in.reference_table_) {
-    is_monochromatic_ = true;
-    query_table_ = reference_table_;
+  if(global_in != NULL) {
+    is_monochromatic_ = global_in->is_monochromatic();
+    query_table_ = arguments_in.query_table_;
+    reference_table_ = arguments_in.reference_table_;
   }
   else {
-    is_monochromatic_ = false;
-    query_table_ = arguments_in.query_table_;
+    if(arguments_in.query_table_ == arguments_in.reference_table_) {
+      is_monochromatic_ = true;
+      query_table_ = reference_table_;
+    }
+    else {
+      is_monochromatic_ = false;
+      query_table_ = arguments_in.query_table_;
+    }
   }
 
   // Declare the global constants.
