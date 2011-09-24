@@ -20,6 +20,7 @@ set(SOURCES
   sample_distributed_tree_builder.h
   scoped_omp_lock.h
   table_exchange.h
+  table_exchange_message_type.h
   vanilla_distributed_tree_builder.h
 )
 
