@@ -163,7 +163,37 @@ class TableExchange {
 
   private:
 
-    void SendReceiveInitialStage_(
+    void BufferImmediateMessage_(boost::mpi::communicator &world) {
+
+      // If any of the queued up flush requests is ready to be sent
+      // out, then send out.
+      if(do_load_balancing_ &&
+          (! message_cache_[
+             world.rank()].flush_route().object_is_valid()) &&
+          queued_up_query_subtables_[ stage_ ].size() > 0) {
+
+        message_cache_[
+          world.rank()].flush_route().object().Alias(
+            message_cache_[
+              queued_up_query_subtables_[
+                stage_ ].back()->cache_block_id()].subtable_route().object());
+        message_cache_ [
+          world.rank()].flush_route().set_object_is_valid_flag(true);
+        message_cache_[
+          world.rank()].flush_route().add_destination(
+            message_cache_[
+              world.rank()].flush_route().object().originating_rank());
+        message_cache_[
+          world.rank()].flush_route().set_stage(stage_);
+
+        // Pop from the list and decrement the number of queued up
+        // query subtables.
+        queued_up_query_subtables_[ stage_ ].pop_back();
+        num_queued_up_query_subtables_--;
+      } // end of dequeuing flush requests.
+    }
+
+    void BufferInitialStageMessage_(
       boost::mpi::communicator &world,
       std::vector <
       SubTableRouteRequestType >
@@ -579,36 +609,13 @@ class TableExchange {
         // At the start of each phase (stage == 0), dequeue messages
         // to be sent out.
         if(stage_ == 0) {
-          this->SendReceiveInitialStage_(
+          this->BufferInitialStageMessage_(
             world, hashed_essential_reference_subtrees_to_send);
         } // end of checking whether the stage is 0.
 
-        // If any of the queued up flush requests is ready to be sent
-        // out, then send out.
-        if(do_load_balancing_ &&
-            (! message_cache_[
-               world.rank()].flush_route().object_is_valid()) &&
-            queued_up_query_subtables_[ stage_ ].size() > 0) {
-
-          message_cache_[
-            world.rank()].flush_route().object().Alias(
-              message_cache_[
-                queued_up_query_subtables_[
-                  stage_ ].back()->cache_block_id()].subtable_route().object());
-          message_cache_ [
-            world.rank()].flush_route().set_object_is_valid_flag(true);
-          message_cache_[
-            world.rank()].flush_route().add_destination(
-              message_cache_[
-                world.rank()].flush_route().object().originating_rank());
-          message_cache_[
-            world.rank()].flush_route().set_stage(stage_);
-
-          // Pop from the list and decrement the number of queued up
-          // query subtables.
-          queued_up_query_subtables_[ stage_ ].pop_back();
-          num_queued_up_query_subtables_--;
-        } // end of dequeuing flush requests.
+        // Send any of the queued up messages that can be sent
+        // immediately in this stage.
+        this->BufferImmediateMessage_(world);
 
         // Exchange with the current neighbor.
         unsigned int num_subtables_to_exchange = (1 << stage_);
