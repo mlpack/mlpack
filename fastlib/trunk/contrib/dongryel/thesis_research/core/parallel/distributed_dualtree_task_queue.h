@@ -336,13 +336,6 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
-    void PrepareFinalFlushes(boost::mpi::communicator &world) {
-
-      // Lock the queue.
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      table_exchange_.PrepareFinalFlushes(world);
-    }
-
     void set_remaining_work_for_query_subtable(
       int probe_index, unsigned long int work_in) {
 
@@ -878,18 +871,6 @@ class DistributedDualtreeTaskQueue {
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return tasks_[probe_index]->size();
-    }
-
-    /** @brief Whether we have finished flushing query subtables back
-     *         to their origins.
-     */
-    bool finished_query_subtable_flushes() const {
-      core::parallel::scoped_omp_nest_lock lock(
-        &(const_cast <
-          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
-      return num_imported_query_subtables_ == 0 &&
-             num_exported_query_subtables_ == 0 &&
-             table_exchange_.finished_query_subtable_flushes();
     }
 
     /** @brief Returns whether we are performing the load balancing or
