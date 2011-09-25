@@ -387,7 +387,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
           checked_out_query_subtable);
 
         // After finishing, the lock on the query subtree is released.
-        distributed_tasks.ReturnQuerySubTable(checked_out_query_subtable);
+        distributed_tasks.ReturnQuerySubTable(
+          * world_, checked_out_query_subtable);
 
         // Release the reference subtable.
         distributed_tasks.ReleaseCache(* world_, task_reference_cache_id, 1);
@@ -400,6 +401,16 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     while(work_left_to_do);
 
   } // end of omp parallel
+
+  // Do the final flushes.
+  if(distributed_tasks.do_load_balancing()) {
+    distributed_tasks.PrepareFinalFlushes(* world_);
+    do {
+      distributed_tasks.SendReceive(
+        metric, *world_, hashed_essential_reference_subtrees_to_send);
+    }
+    while(! distributed_tasks.finished_query_subtable_flushes());
+  }
 
   // Extract the prune counts.
   num_deterministic_prunes_ = distributed_tasks.num_deterministic_prunes();
