@@ -425,6 +425,14 @@ class DistributedDualtreeTaskQueue {
             static_cast<int>(query_subtables_.size()) <= load_balancing_threshold_) {
           table_exchange_.turn_on_load_balancing(world, remaining_local_computation_);
         }
+        else {
+          table_exchange_.set_remaining_local_computation(
+            world, remaining_local_computation_);
+        }
+      }
+      else {
+        table_exchange_.set_remaining_local_computation(
+          world, remaining_local_computation_);
       }
     }
 
@@ -751,6 +759,10 @@ class DistributedDualtreeTaskQueue {
           }
         } // end of looping over the checked out query subtables.
       } //end of looping over each reference subtree.
+
+      // Update the remaining local computation.
+      table_exchange_.set_remaining_local_computation(
+        world, remaining_local_computation_);
     }
 
     /** @brief Determines whether the MPI process can terminate.

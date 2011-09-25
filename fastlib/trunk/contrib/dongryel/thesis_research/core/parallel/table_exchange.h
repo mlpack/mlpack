@@ -404,6 +404,9 @@ class TableExchange {
              stage_ == 0;
     }
 
+    /** @brief Pushes the completed computation amount to be
+     *         broadcasted to very process.
+     */
     void push_completed_computation(
       boost::mpi::communicator &comm, unsigned long int quantity_in) {
 
@@ -484,6 +487,16 @@ class TableExchange {
           &(message_cache_[cache_id].subtable_route().object());
       }
       return returned_subtable;
+    }
+
+    /** @brief Updates the remaining local computation on the current
+     *         process.
+     */
+    void set_remaining_local_computation(
+      boost::mpi::communicator &world,
+      unsigned long int remaining_local_computation_in) {
+      needs_load_balancing_[ world.rank()].second =
+        remaining_local_computation_in;
     }
 
     /** @brief Signals that the load balancing is necessary on this
