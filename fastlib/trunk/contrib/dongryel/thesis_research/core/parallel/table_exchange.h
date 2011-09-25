@@ -163,10 +163,11 @@ class TableExchange {
 
   private:
 
-    void SendReceiveInitialStage_(boost::mpi::communicator &world,
-                                  std::vector <
-                                  SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
-
+    void SendReceiveInitialStage_(
+      boost::mpi::communicator &world,
+      std::vector <
+      SubTableRouteRequestType >
+      &hashed_essential_reference_subtrees_to_send) {
 
       // The status and the object to be copied onto.
       MessageType &new_self_send_request_object =
@@ -211,6 +212,16 @@ class TableExchange {
         new_self_send_request_object.energy_route().Init(world);
         new_self_send_request_object.energy_route().add_destinations(world);
         new_self_send_request_object.energy_route().object() = 0;
+      }
+
+      // If load-balancing is on, then need to constantly update other
+      // processes about the current progress on the self.
+      if(do_load_balancing_) {
+        new_self_send_request_object.load_balance_route().Init(world);
+        new_self_send_request_object.load_balance_route().add_destinations(world);
+        new_self_send_request_object.load_balance_route().object() =
+          needs_load_balancing_[ world.rank()];
+        new_self_send_request_object.load_balance_route().set_object_is_valid_flag(true);
       }
 
       // Set the originating rank of the message.
@@ -664,24 +675,35 @@ class TableExchange {
               this->ClearSubTable_(world, cache_id);
             }
 
-            // Synchronize with the received query subtable.
-            if(route_request.flush_route().object_is_valid()) {
-              if(route_request.flush_route().remove_from_destination_list(
-                    world.rank())) {
-                task_queue_->Synchronize(
-                  world, route_request.flush_route().object());
-              }
-            }
-            else {
-              route_request.flush_route().object().Destruct();
-              route_request.flush_route().set_object_is_valid_flag(false);
-            }
-
             // Update the energy count.
             if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
                 route_request.energy_route().object_is_valid()) {
               task_queue_->decrement_remaining_global_computation(
                 route_request.energy_route().object());
+            }
+
+            // Update the load balance status.
+            if(do_load_balancing_) {
+
+              // Synchronize with the received query subtable.
+              if(route_request.flush_route().object_is_valid()) {
+                if(route_request.flush_route().remove_from_destination_list(
+                      world.rank())) {
+                  task_queue_->Synchronize(
+                    world, route_request.flush_route().object());
+                }
+              }
+              else {
+                route_request.flush_route().object().Destruct();
+                route_request.flush_route().set_object_is_valid_flag(false);
+              }
+              if(
+                route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
+                route_request.load_balance_route().object_is_valid()) {
+
+                needs_load_balancing_[ route_request.originating_rank()] =
+                  route_request.load_balance_route().object();
+              }
             }
 
           } // end of the if-case.
