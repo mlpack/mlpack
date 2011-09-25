@@ -112,6 +112,11 @@ class DistributedDualtreeTaskQueue {
      */
     int num_deterministic_prunes_;
 
+    /** @brief The number of evicted query subtables from this MPI
+     *         process due to computation completion.
+     */
+    int num_evicted_query_subtables_;
+
     /** @brief The number of exported query subtables from this MPI
      *         process to other MPI Processes.
      */
@@ -227,6 +232,9 @@ class DistributedDualtreeTaskQueue {
       if(can_be_exported_[probe_index]) {
         num_receive_completed_query_subtables_--;
       }
+
+      // Increment the number of evicted query subtables.
+      num_evicted_query_subtables_++;
 
       // Replace.
       assigned_work_[probe_index] = assigned_work_.back();
@@ -421,18 +429,13 @@ class DistributedDualtreeTaskQueue {
 
         // Test whether we are running out of local tasks on this MPI
         // process.
-        if(num_receive_completed_query_subtables_ >= load_balancing_threshold_ ||
-            static_cast<int>(query_subtables_.size()) <= load_balancing_threshold_) {
-          table_exchange_.turn_on_load_balancing(world, remaining_local_computation_);
+        if(num_receive_completed_query_subtables_ +
+            num_evicted_query_subtables_ >= load_balancing_threshold_) {
+          table_exchange_.turn_on_load_balancing(
+            world,
+            num_evicted_query_subtables_ +
+            num_receive_completed_query_subtables_ / 2);
         }
-        else {
-          table_exchange_.set_remaining_local_computation(
-            world, remaining_local_computation_);
-        }
-      }
-      else {
-        table_exchange_.set_remaining_local_computation(
-          world, remaining_local_computation_);
       }
     }
 
@@ -759,15 +762,13 @@ class DistributedDualtreeTaskQueue {
           }
         } // end of looping over the checked out query subtables.
       } //end of looping over each reference subtree.
-
-      // Update the remaining local computation.
-      table_exchange_.set_remaining_local_computation(
-        world, remaining_local_computation_);
     }
 
     /** @brief Determines whether the MPI process can terminate.
      */
     bool can_terminate() const {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
@@ -786,6 +787,8 @@ class DistributedDualtreeTaskQueue {
       unsigned long int reference_count_in,
       unsigned long int quantity_in,
       typename QuerySubTableLockListType::iterator &query_subtable_lock) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Subtract from the self and queue up a route message.
@@ -804,6 +807,8 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &comm,
       unsigned long int reference_count_in,
       unsigned long int quantity_in) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Subtract from the self and queue up a route message.
@@ -821,6 +826,8 @@ class DistributedDualtreeTaskQueue {
      *         process.
      */
     int num_remaining_tasks() const {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
@@ -852,6 +859,7 @@ class DistributedDualtreeTaskQueue {
     DistributedDualtreeTaskQueue() {
       load_balancing_threshold_ = 0;
       num_deterministic_prunes_ = 0;
+      num_evicted_query_subtables_ = 0;
       num_exported_query_subtables_ = 0;
       num_imported_query_subtables_ = 0;
       num_probabilistic_prunes_ = 0;
@@ -955,6 +963,7 @@ class DistributedDualtreeTaskQueue {
 
       // The number of query subtables that can be exported.
       num_receive_completed_query_subtables_ = 0;
+      num_evicted_query_subtables_ = 0;
 
       // Initialize the completed computation grid for each query tree
       // on this process.

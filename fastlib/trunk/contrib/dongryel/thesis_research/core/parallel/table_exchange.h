@@ -66,7 +66,7 @@ class TableExchange {
     /** @brief The load balance request routing type.
      */
     typedef core::parallel::RouteRequest <
-    std::pair< bool, unsigned long int> > LoadBalanceRouteRequestType;
+    std::pair< bool, int> > LoadBalanceRouteRequestType;
 
     /** @brief The distributed task queue associated with this
      *         exchange mechanism.
@@ -489,26 +489,16 @@ class TableExchange {
       return returned_subtable;
     }
 
-    /** @brief Updates the remaining local computation on the current
-     *         process.
-     */
-    void set_remaining_local_computation(
-      boost::mpi::communicator &world,
-      unsigned long int remaining_local_computation_in) {
-      needs_load_balancing_[ world.rank()].second =
-        remaining_local_computation_in;
-    }
-
     /** @brief Signals that the load balancing is necessary on this
      *         process.
      */
     void turn_on_load_balancing(
       boost::mpi::communicator &world,
-      unsigned long int remaining_local_computation_in) {
+      int num_evicted_query_subtables_in) {
 
       needs_load_balancing_[ world.rank()] =
         std::pair <
-        bool, unsigned long int > (true, remaining_local_computation_in);
+        bool, int > (true, num_evicted_query_subtables_in);
     }
 
     /** @brief Initialize the all-to-some exchange object with a
