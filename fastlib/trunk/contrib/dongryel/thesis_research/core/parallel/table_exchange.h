@@ -163,6 +163,61 @@ class TableExchange {
 
   private:
 
+    void SendReceiveInitialStage_(boost::mpi::communicator &world,
+                                  std::vector <
+                                  SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
+
+
+      // The status and the object to be copied onto.
+      MessageType &new_self_send_request_object =
+        message_cache_[ world.rank()];
+      if(hashed_essential_reference_subtrees_to_send.size() > 0) {
+
+        // Examine the back of the route request list.
+        SubTableRouteRequestType &route_request =
+          hashed_essential_reference_subtrees_to_send.back();
+
+        // Prepare the initial subtable to send.
+        new_self_send_request_object.subtable_route().Init(
+          world, route_request);
+        new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
+
+        // Pop it from the route request list.
+        hashed_essential_reference_subtrees_to_send.pop_back();
+      }
+      else {
+
+        // Prepare an empty message.
+        new_self_send_request_object.subtable_route().Init(world);
+        new_self_send_request_object.subtable_route().add_destinations(world);
+      }
+      if(queued_up_completed_computation_.size() > 0) {
+
+        // Examine the back of the route request list.
+        EnergyRouteRequestType &route_request =
+          queued_up_completed_computation_.back();
+
+        // Prepare the initial subtable to send.
+        new_self_send_request_object.energy_route().Init(
+          world, route_request);
+        new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+
+        // Pop it from the route request list.
+        queued_up_completed_computation_.pop_back();
+      }
+      else {
+
+        // Prepare an empty message for the energy portion.
+        new_self_send_request_object.energy_route().Init(world);
+        new_self_send_request_object.energy_route().add_destinations(world);
+        new_self_send_request_object.energy_route().object() = 0;
+      }
+
+      // Set the originating rank of the message.
+      new_self_send_request_object.set_originating_rank(world.rank());
+      new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+    }
+
     /** @brief Tests whether the current MPI process can enter the
      *         given stage of the recursive-doubling exchange process.
      */
@@ -504,58 +559,11 @@ class TableExchange {
         // Clear the list of received subtables in this round.
         received_subtable_ids.resize(0);
 
-        // At the start of each phase (stage == 0), dequeue something
-        // from the hashed list.
+        // At the start of each phase (stage == 0), dequeue messages
+        // to be sent out.
         if(stage_ == 0) {
-
-          // The status and the object to be copied onto.
-          MessageType &new_self_send_request_object =
-            message_cache_[ world.rank()];
-          if(hashed_essential_reference_subtrees_to_send.size() > 0) {
-
-            // Examine the back of the route request list.
-            SubTableRouteRequestType &route_request =
-              hashed_essential_reference_subtrees_to_send.back();
-
-            // Prepare the initial subtable to send.
-            new_self_send_request_object.subtable_route().Init(
-              world, route_request);
-            new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
-
-            // Pop it from the route request list.
-            hashed_essential_reference_subtrees_to_send.pop_back();
-          }
-          else {
-
-            // Prepare an empty message.
-            new_self_send_request_object.subtable_route().Init(world);
-            new_self_send_request_object.subtable_route().add_destinations(world);
-          }
-          if(queued_up_completed_computation_.size() > 0) {
-
-            // Examine the back of the route request list.
-            EnergyRouteRequestType &route_request =
-              queued_up_completed_computation_.back();
-
-            // Prepare the initial subtable to send.
-            new_self_send_request_object.energy_route().Init(
-              world, route_request);
-            new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-
-            // Pop it from the route request list.
-            queued_up_completed_computation_.pop_back();
-          }
-          else {
-
-            // Prepare an empty message for the energy portion.
-            new_self_send_request_object.energy_route().Init(world);
-            new_self_send_request_object.energy_route().add_destinations(world);
-            new_self_send_request_object.energy_route().object() = 0;
-          }
-
-          // Set the originating rank of the message.
-          new_self_send_request_object.set_originating_rank(world.rank());
-          new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+          this->SendReceiveInitialStage_(
+            world, hashed_essential_reference_subtrees_to_send);
         } // end of checking whether the stage is 0.
 
         // If any of the queued up flush requests is ready to be sent
@@ -693,7 +701,7 @@ class TableExchange {
             this->ReleaseCache(world, send_process_rank, 1);
           }
 
-          // Free the flushed subtables sent.
+          // Free the flushed query subtables sent.
           if(message_cache_[
                 send_process_rank ].flush_route().object_is_valid() &&
               message_cache_[
@@ -703,7 +711,7 @@ class TableExchange {
             message_cache_[ send_process_rank ].flush_route().object().Destruct();
           }
 
-          // Free the flushed subtable received.
+          // Free the flushed query subtable received.
           if(message_cache_[
                 receive_process_rank ].flush_route().object_is_valid() &&
               message_cache_[
