@@ -14,7 +14,6 @@
 #include "core/math/range.h"
 #include "core/parallel/disjoint_int_intervals.h"
 #include "core/parallel/distributed_dualtree_task_list.h"
-#include "core/parallel/dualtree_load_balance_request.h"
 #include "core/parallel/query_subtable_lock.h"
 #include "core/parallel/scoped_omp_lock.h"
 #include "core/parallel/table_exchange.h"
@@ -81,10 +80,6 @@ class DistributedDualtreeTaskQueue {
     typedef std::list< boost::intrusive_ptr< QuerySubTableLockType > >
     QuerySubTableLockListType;
 
-    typedef core::parallel::DualtreeLoadBalanceRequest <
-    DistributedTableType,
-    TaskPriorityQueueType > DualtreeLoadBalanceRequestType;
-
   private:
 
     /** @brief Used for prioritizing tasks.
@@ -105,6 +100,13 @@ class DistributedDualtreeTaskQueue {
     /** @brief The list of checked out query subtables.
      */
     QuerySubTableLockListType checked_out_query_subtables_;
+
+    /** @brief If the number of available query subtables is below
+     *         this level, or if the number of query subtables that
+     *         has received complete data is above this level,
+     *         initiate the load balancing.
+     */
+    int load_balancing_threshold_;
 
     /** @brief The number of deterministic prunes.
      */
@@ -203,6 +205,8 @@ class DistributedDualtreeTaskQueue {
      *         origin.
      */
     void Flush_(boost::mpi::communicator &world, int probe_index) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Queue and evict.
@@ -218,6 +222,13 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // Keep track of the number of query subtables that can be exported.
+      if(can_be_exported_[probe_index]) {
+        num_receive_completed_query_subtables_--;
+      }
+
+      // Replace.
       assigned_work_[probe_index] = assigned_work_.back();
       can_be_exported_[probe_index] = can_be_exported_.back();
       query_subtables_[probe_index] = query_subtables_.back();
@@ -227,6 +238,7 @@ class DistributedDualtreeTaskQueue {
         remaining_work_in_priority_queue_.back();
       tasks_[probe_index] = tasks_.back();
 
+      // Pop.
       assigned_work_.pop_back();
       can_be_exported_.pop_back();
       query_subtables_.pop_back();
@@ -324,6 +336,13 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    void PrepareFinalFlushes(boost::mpi::communicator &world) {
+
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      table_exchange_.PrepareFinalFlushes(world);
+    }
+
     void set_remaining_work_for_query_subtable(
       int probe_index, unsigned long int work_in) {
 
@@ -387,6 +406,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief Returns a locked query subtable to the active pool.
      */
     void ReturnQuerySubTable(
+      boost::mpi::communicator &world,
       typename QuerySubTableLockListType::iterator &query_subtable_lock) {
 
       // Lock the queue.
@@ -404,6 +424,14 @@ class DistributedDualtreeTaskQueue {
         can_be_exported_.back() =
           (remaining_work_in_priority_queue_.back() ==
            remaining_work_for_query_subtables_.back()) ;
+        num_receive_completed_query_subtables_++;
+
+        // Test whether we are running out of local tasks on this MPI
+        // process.
+        if(num_receive_completed_query_subtables_ >= load_balancing_threshold_ ||
+            static_cast<int>(query_subtables_.size()) <= load_balancing_threshold_) {
+          table_exchange_.turn_on_load_balancing(world, remaining_local_computation_);
+        }
       }
     }
 
@@ -572,16 +600,14 @@ class DistributedDualtreeTaskQueue {
       const MetricType &metric_in,
       int neighbor_rank_in,
       unsigned long int neighbor_remaining_extra_points_to_hold_in,
-      const DualtreeLoadBalanceRequestType &neighbor_load_balance_request_in,
       TaskListType *extra_task_list_out) {
 
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Loop over every unlocked query subtable and try to pack as
       // many tasks as possible.
-      extra_task_list_out->Init(
-        world, neighbor_rank_in, neighbor_remaining_extra_points_to_hold_in,
-        *this);
+      extra_task_list_out->Init(world, neighbor_rank_in, *this);
       for(int i = 0;
           extra_task_list_out->remaining_extra_points_to_hold() > 0 &&
           i < static_cast<int>(query_subtables_.size()); i++) {
@@ -591,27 +617,12 @@ class DistributedDualtreeTaskQueue {
         // subtables come back to its origin through the flush
         // operation; (2) never to export query subtables that are
         // imported from other MPI processes.
-        if((! neighbor_load_balance_request_in.query_subtable_is_owned(
-              query_subtables_[i]->subtable_id())) &&
-            query_subtables_[i]->table()->rank() == world.rank() &&
+        if(query_subtables_[i]->table()->rank() == world.rank() &&
             extra_task_list_out->push_back(world, i)) {
           num_exported_query_subtables_++;
           i--;
         }
       }
-    }
-
-    /** @brief Sends a load balancing request to the given MPI
-     *         process.
-     */
-    void PrepareLoadBalanceRequest(
-      DualtreeLoadBalanceRequestType *load_balance_request) {
-
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      load_balance_request->Init(
-        query_subtables_, checked_out_query_subtables_,
-        remaining_local_computation_,
-        table_exchange_.remaining_extra_points_to_hold());
     }
 
     /** @brief Returns the query subtable associated with the index.
@@ -834,6 +845,7 @@ class DistributedDualtreeTaskQueue {
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
+      load_balancing_threshold_ = 0;
       num_deterministic_prunes_ = 0;
       num_exported_query_subtables_ = 0;
       num_imported_query_subtables_ = 0;
@@ -868,6 +880,28 @@ class DistributedDualtreeTaskQueue {
       return tasks_[probe_index]->size();
     }
 
+    /** @brief Whether we have finished flushing query subtables back
+     *         to their origins.
+     */
+    bool finished_query_subtable_flushes() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
+      return num_imported_query_subtables_ == 0 &&
+             num_exported_query_subtables_ == 0 &&
+             table_exchange_.finished_query_subtable_flushes();
+    }
+
+    /** @brief Returns whether we are performing the load balancing or
+     *         not.
+     */
+    bool do_load_balancing() const {
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
+      return table_exchange_.do_load_balancing();
+    }
+
     /** @brief Initializes the task queue.
      */
     void Init(
@@ -889,6 +923,9 @@ class DistributedDualtreeTaskQueue {
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
         10 * num_threads_in, &query_subtables_);
+
+      // Initialize the load balancing threshold.
+      load_balancing_threshold_ = static_cast<int>(query_subtables_.size() / 4) ;
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
@@ -922,6 +959,9 @@ class DistributedDualtreeTaskQueue {
         static_cast<unsigned long int>(total_num_reference_points);
       remaining_local_computation_ = 0;
       num_remaining_tasks_ = 0;
+
+      // The number of query subtables that can be exported.
+      num_receive_completed_query_subtables_ = 0;
 
       // Initialize the completed computation grid for each query tree
       // on this process.

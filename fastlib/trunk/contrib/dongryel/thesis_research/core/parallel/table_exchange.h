@@ -56,9 +56,17 @@ class TableExchange {
     typedef core::parallel::RouteRequest <
     unsigned long int > EnergyRouteRequestType;
 
+    /** @brief The extra task routing type (for load balancing).
+     */
+    typedef
+    core::parallel::RouteRequest <
+    core::parallel::DistributedDualtreeTaskList <
+    DistributedTableType, TaskPriorityQueueType > > ExtraTaskRouteRequestType;
+
     /** @brief The load balance request routing type.
      */
-    typedef core::parallel::RouteRequest< bool > LoadBalanceRouteRequestType;
+    typedef core::parallel::RouteRequest <
+    std::pair< bool, unsigned long int> > LoadBalanceRouteRequestType;
 
     /** @brief The distributed task queue associated with this
      *         exchange mechanism.
@@ -70,11 +78,16 @@ class TableExchange {
      */
     typedef core::parallel::MessageType <
     EnergyRouteRequestType,
+    ExtraTaskRouteRequestType,
     LoadBalanceRouteRequestType,
     SubTableRouteRequestType  > MessageType;
 
   private:
 
+    /** @brief Whether we are done with all the computation and
+     *         required to flush the query subtables back to their
+     *         origins.
+     */
     bool do_final_flush_;
 
     /** @brief Whether to do load balancing.
@@ -106,7 +119,7 @@ class TableExchange {
     /** @brief The boolean flag per each MPI prcess signifying it
      *         needs load balancing.
      */
-    std::vector< bool > needs_load_balancing_;
+    std::vector< std::pair<bool, unsigned long int> > needs_load_balancing_;
 
     /** @brief The number of query subtables queued up for flushing.
      */
@@ -156,6 +169,9 @@ class TableExchange {
 
   private:
 
+    /** @brief Tests whether the current MPI process can enter the
+     *         given stage of the recursive-doubling exchange process.
+     */
     bool ReadyForStage_(boost::mpi::communicator &world) {
 
       // Find out the neighbor of the next stage.
@@ -181,94 +197,6 @@ class TableExchange {
       return ready_flag ;
     }
 
-    /** @brief Load balance with a neighboring process.
-     */
-    template<typename MetricType>
-    void LoadBalance_(
-      boost::mpi::communicator & world,
-      const MetricType &metric_in, int neighbor) {
-
-      // Send to the neighbor what the status is on the current MPI
-      // process.
-      core::parallel::DualtreeLoadBalanceRequest <
-      DistributedTableType, TaskPriorityQueueType > load_balance_request;
-      task_queue_->PrepareLoadBalanceRequest(&load_balance_request);
-      boost::mpi::request send_request =
-        world.isend(
-          neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
-          load_balance_request);
-
-      // Wait until the message from the neighbor is received.
-      core::parallel::DualtreeLoadBalanceRequest <
-      DistributedTableType,
-      TaskPriorityQueueType > neighbor_load_balance_request;
-      while(true) {
-        if(boost::optional< boost::mpi::status > l_status =
-              world.iprobe(
-                neighbor,
-                core::parallel::MessageTag::LOAD_BALANCE_REQUEST)) {
-          world.recv(
-            neighbor, core::parallel::MessageTag::LOAD_BALANCE_REQUEST,
-            neighbor_load_balance_request);
-          break;
-        }
-      }
-
-      // Wait until the send request is completed.
-      send_request.wait();
-
-      // Find out how much this process needs to send.
-      unsigned long int mid_point =
-        (task_queue_->remaining_local_computation() +
-         neighbor_load_balance_request.remaining_local_computation()) / 2;
-      unsigned long int num_points_to_send = 0;
-      if(mid_point >=
-          neighbor_load_balance_request.remaining_local_computation()) {
-        num_points_to_send =
-          mid_point -
-          neighbor_load_balance_request.remaining_local_computation();
-      }
-      num_points_to_send =
-        std::min(
-          num_points_to_send,
-          neighbor_load_balance_request.remaining_extra_points_to_hold());
-
-      // Now prepare the task list that must be sent to the neighbor.
-      core::parallel::DistributedDualtreeTaskList <
-      DistributedTableType, TaskPriorityQueueType > outgoing_extra_task_list;
-      boost::mpi::request extra_task_list_sent;
-      task_queue_->PrepareExtraTaskList(
-        world, metric_in, neighbor, num_points_to_send,
-        neighbor_load_balance_request, &outgoing_extra_task_list);
-      extra_task_list_sent =
-        world.isend(
-          neighbor, core::parallel::MessageTag::TASK_LIST,
-          outgoing_extra_task_list);
-
-      // Receive from the neighbor the extra task list, and push into
-      // the current process.
-      core::parallel::DistributedDualtreeTaskList <
-      DistributedTableType, TaskPriorityQueueType > incoming_extra_task_list;
-      while(true) {
-        if(boost::optional< boost::mpi::status > l_status =
-              world.iprobe(
-                neighbor,
-                core::parallel::MessageTag::TASK_LIST)) {
-          world.recv(
-            neighbor, core::parallel::MessageTag::TASK_LIST,
-            incoming_extra_task_list);
-          break;
-        }
-      }
-      incoming_extra_task_list.Export(world, metric_in, neighbor, task_queue_);
-
-      // Wait until the task list send request is completed.
-      extra_task_list_sent.wait();
-
-      // Free the cache held by the subtables that were sent.
-      outgoing_extra_task_list.ReleaseCache();
-    }
-
     /** @brief Evicts an extra subtable received during load
      *         balancing.
      */
@@ -289,6 +217,14 @@ class TableExchange {
     }
 
   public:
+
+    void PrepareFinalFlushes(boost::mpi::communicator &world) {
+
+      // Make sure to invalidate all subtable routing object.
+      for(int i = 0; i < world.size(); i++) {
+        message_cache_[i].subtable_route().set_object_is_valid_flag(false);
+      }
+    }
 
     /** @brief Prints the existing subtables in the cache.
      */
@@ -400,13 +336,23 @@ class TableExchange {
       return reference_table_;
     }
 
+    /** @brief Returns the load balancing flag.
+     */
+    bool do_load_balancing() const {
+      return do_load_balancing_;
+    }
+
+    bool finished_query_subtable_flushes() const {
+      return num_queued_up_query_subtables_ == 0 ;
+    }
+
     /** @brief Returns whether the current MPI process can terminate.
      */
     bool can_terminate() const {
 
       // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
-             num_queued_up_query_subtables_ == 0 && stage_ == 0;
+             stage_ == 0;
     }
 
     void push_completed_computation(
@@ -492,6 +438,18 @@ class TableExchange {
       return returned_subtable;
     }
 
+    /** @brief Signals that the load balancing is necessary on this
+     *         process.
+     */
+    void turn_on_load_balancing(
+      boost::mpi::communicator &world,
+      unsigned long int remaining_local_computation_in) {
+
+      needs_load_balancing_[ world.rank()] =
+        std::pair <
+        bool, unsigned long int > (true, remaining_local_computation_in);
+    }
+
     /** @brief Initialize the all-to-some exchange object with a
      *         distributed table and the cache size.
      */
@@ -510,7 +468,7 @@ class TableExchange {
       // Load balancing option.
       needs_load_balancing_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
-        needs_load_balancing_[i] = false;
+        needs_load_balancing_[i] = std::pair<bool, unsigned long int>(false, 0);
       }
       do_load_balancing_ = do_load_balancing_in;
 

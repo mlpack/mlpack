@@ -16,6 +16,7 @@ namespace parallel {
  */
 template <
 typename EnergyRouteRequestType,
+         typename ExtraTaskRouteRequestType,
          typename LoadBalanceRouteRequestType,
          typename SubTableRouteRequestType
          >
@@ -28,6 +29,8 @@ class MessageType {
   private:
 
     EnergyRouteRequestType energy_route_;
+
+    ExtraTaskRouteRequestType extra_task_route_;
 
     SubTableRouteRequestType flush_route_;
 
@@ -45,6 +48,7 @@ class MessageType {
 
     void operator=(const MessageType &message_in) {
       energy_route_ = message_in.energy_route();
+      extra_task_route_ = message_in.extra_task_route();
       flush_route_ = message_in.flush_route();
       load_balance_route_ = message_in.load_balance_route();
       originating_rank_ = message_in.originating_rank();
@@ -64,6 +68,7 @@ class MessageType {
 
     int next_destination(boost::mpi::communicator &comm) {
       energy_route_.next_destination(comm);
+      extra_task_route_.next_destination(comm);
       flush_route_.next_destination(comm);
       load_balance_route_.next_destination(comm);
       return subtable_route_.next_destination(comm);
@@ -75,6 +80,14 @@ class MessageType {
 
     int originating_rank() const {
       return originating_rank_;
+    }
+
+    ExtraTaskRouteRequestType &extra_task_route() {
+      return extra_task_route_;
+    }
+
+    const ExtraTaskRouteRequestType &extra_task_route() const {
+      return extra_task_route_;
     }
 
     LoadBalanceRouteRequestType &load_balance_route() {
@@ -112,6 +125,7 @@ class MessageType {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & energy_route_;
+      ar & extra_task_route_;
       ar & flush_route_;
       ar & load_balance_route_;
       ar & originating_rank_;
