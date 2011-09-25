@@ -93,21 +93,29 @@ class DistributedDualtreeTaskList {
   private:
 
     void InitCommon_() {
-      boost::shared_ptr <
-      std::vector <
-      std::pair<int, std::vector<int> > > > tmp_donated_task_list(
-        new std::vector< std::pair<int, std::vector<int> > >());
-      donated_task_list_.swap(tmp_donated_task_list);
-      boost::shared_ptr< MapType > tmp_id_to_position_map(new MapType());
-      id_to_position_map_.swap(tmp_id_to_position_map);
-      boost::shared_ptr <
-      std::vector <
-      boost::tuple <
-      boost::intrusive_ptr<SubTableType> , bool, int > > > tmp_sub_tables(
-        new std::vector <
+
+      if(donated_task_list_.get() == NULL) {
+        boost::shared_ptr <
+        std::vector <
+        std::pair<int, std::vector<int> > > > tmp_donated_task_list(
+          new std::vector< std::pair<int, std::vector<int> > >());
+        donated_task_list_.swap(tmp_donated_task_list);
+        boost::shared_ptr< MapType > tmp_id_to_position_map(new MapType());
+        id_to_position_map_.swap(tmp_id_to_position_map);
+        boost::shared_ptr <
+        std::vector <
         boost::tuple <
-        boost::intrusive_ptr<SubTableType> , bool, int > > ());
-      sub_tables_.swap(tmp_sub_tables);
+        boost::intrusive_ptr<SubTableType> , bool, int > > > tmp_sub_tables(
+          new std::vector <
+          boost::tuple <
+          boost::intrusive_ptr<SubTableType> , bool, int > > ());
+        sub_tables_.swap(tmp_sub_tables);
+      }
+      else {
+        donated_task_list_->resize(0);
+        id_to_position_map_->clear();
+        sub_tables_->resize(0);
+      }
     }
 
     void Print_() const {

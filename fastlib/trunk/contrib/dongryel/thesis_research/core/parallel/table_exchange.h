@@ -84,12 +84,6 @@ class TableExchange {
 
   private:
 
-    /** @brief Whether we are done with all the computation and
-     *         required to flush the query subtables back to their
-     *         origins.
-     */
-    bool do_final_flush_;
-
     /** @brief Whether to do load balancing.
      */
     bool do_load_balancing_;
@@ -218,14 +212,6 @@ class TableExchange {
 
   public:
 
-    void PrepareFinalFlushes(boost::mpi::communicator &world) {
-
-      // Make sure to invalidate all subtable routing object.
-      for(int i = 0; i < world.size(); i++) {
-        message_cache_[i].subtable_route().set_object_is_valid_flag(false);
-      }
-    }
-
     /** @brief Prints the existing subtables in the cache.
      */
     void PrintSubTables(boost::mpi::communicator &world) const {
@@ -342,16 +328,13 @@ class TableExchange {
       return do_load_balancing_;
     }
 
-    bool finished_query_subtable_flushes() const {
-      return num_queued_up_query_subtables_ == 0 ;
-    }
-
     /** @brief Returns whether the current MPI process can terminate.
      */
     bool can_terminate() const {
 
       // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
+             num_queued_up_query_subtables_ == 0 &&
              stage_ == 0;
     }
 
@@ -378,7 +361,6 @@ class TableExchange {
     /** @brief The default constructor.
      */
     TableExchange() {
-      do_final_flush_ = false;
       do_load_balancing_ = false;
       last_fail_index_ = 0;
       max_stage_ = 0;
@@ -477,7 +459,6 @@ class TableExchange {
 
       // Initialize the stages.
       stage_ = 0;
-      do_final_flush_ = false;
 
       // The maximum number of neighbors.
       max_stage_ = static_cast<unsigned int>(log2(world.size()));
@@ -518,97 +499,91 @@ class TableExchange {
       std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
 
       // Proceed with the stage, if ready.
-      if(do_final_flush_ || this->ReadyForStage_(world)) {
+      if(this->ReadyForStage_(world)) {
 
         // Clear the list of received subtables in this round.
         received_subtable_ids.resize(0);
 
         // At the start of each phase (stage == 0), dequeue something
         // from the hashed list.
-        if(! do_final_flush_) {
-          if(stage_ == 0) {
+        if(stage_ == 0) {
 
-            // The status and the object to be copied onto.
-            MessageType &new_self_send_request_object =
-              message_cache_[ world.rank()];
-            if(hashed_essential_reference_subtrees_to_send.size() > 0) {
+          // The status and the object to be copied onto.
+          MessageType &new_self_send_request_object =
+            message_cache_[ world.rank()];
+          if(hashed_essential_reference_subtrees_to_send.size() > 0) {
 
-              // Examine the back of the route request list.
-              SubTableRouteRequestType &route_request =
-                hashed_essential_reference_subtrees_to_send.back();
+            // Examine the back of the route request list.
+            SubTableRouteRequestType &route_request =
+              hashed_essential_reference_subtrees_to_send.back();
 
-              // Prepare the initial subtable to send.
-              new_self_send_request_object.subtable_route().Init(
-                world, route_request);
-              new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
+            // Prepare the initial subtable to send.
+            new_self_send_request_object.subtable_route().Init(
+              world, route_request);
+            new_self_send_request_object.subtable_route().set_object_is_valid_flag(true);
 
-              // Pop it from the route request list.
-              hashed_essential_reference_subtrees_to_send.pop_back();
-            }
-            else {
+            // Pop it from the route request list.
+            hashed_essential_reference_subtrees_to_send.pop_back();
+          }
+          else {
 
-              // Prepare an empty message.
-              new_self_send_request_object.subtable_route().Init(world);
-              new_self_send_request_object.subtable_route().add_destinations(world);
-            }
-            if(queued_up_completed_computation_.size() > 0) {
+            // Prepare an empty message.
+            new_self_send_request_object.subtable_route().Init(world);
+            new_self_send_request_object.subtable_route().add_destinations(world);
+          }
+          if(queued_up_completed_computation_.size() > 0) {
 
-              // Examine the back of the route request list.
-              EnergyRouteRequestType &route_request =
-                queued_up_completed_computation_.back();
+            // Examine the back of the route request list.
+            EnergyRouteRequestType &route_request =
+              queued_up_completed_computation_.back();
 
-              // Prepare the initial subtable to send.
-              new_self_send_request_object.energy_route().Init(
-                world, route_request);
-              new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-
-              // Pop it from the route request list.
-              queued_up_completed_computation_.pop_back();
-            }
-            else {
-
-              // Prepare an empty message for the energy portion.
-              new_self_send_request_object.energy_route().Init(world);
-              new_self_send_request_object.energy_route().add_destinations(world);
-              new_self_send_request_object.energy_route().object() = 0;
-            }
-
-            // Set the originating rank of the message.
-            new_self_send_request_object.set_originating_rank(world.rank());
+            // Prepare the initial subtable to send.
+            new_self_send_request_object.energy_route().Init(
+              world, route_request);
             new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
-          } // end of checking whether the stage is 0.
 
-        } // end of performing non-final-flush stuffs.
+            // Pop it from the route request list.
+            queued_up_completed_computation_.pop_back();
+          }
+          else {
 
-        else {
+            // Prepare an empty message for the energy portion.
+            new_self_send_request_object.energy_route().Init(world);
+            new_self_send_request_object.energy_route().add_destinations(world);
+            new_self_send_request_object.energy_route().object() = 0;
+          }
 
-          // If any of the queued up flush requests is ready to be sent
-          // out, then send out.
-          if(do_load_balancing_ &&
-              (! message_cache_[
-                 world.rank()].flush_route().object_is_valid()) &&
-              queued_up_query_subtables_[ stage_ ].size() > 0) {
+          // Set the originating rank of the message.
+          new_self_send_request_object.set_originating_rank(world.rank());
+          new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+        } // end of checking whether the stage is 0.
 
-            message_cache_[
-              world.rank()].flush_route().object().Alias(
-                message_cache_[
-                  queued_up_query_subtables_[
-                    stage_ ].back()->cache_block_id()].subtable_route().object());
-            message_cache_ [
-              world.rank()].flush_route().set_object_is_valid_flag(true);
-            message_cache_[
-              world.rank()].flush_route().add_destination(
-                message_cache_[
-                  world.rank()].flush_route().object().originating_rank());
-            message_cache_[
-              world.rank()].flush_route().set_stage(stage_);
+        // If any of the queued up flush requests is ready to be sent
+        // out, then send out.
+        if(do_load_balancing_ &&
+            (! message_cache_[
+               world.rank()].flush_route().object_is_valid()) &&
+            queued_up_query_subtables_[ stage_ ].size() > 0) {
 
-            // Pop from the list and decrement the number of queued up
-            // query subtables.
-            queued_up_query_subtables_[ stage_ ].pop_back();
-            num_queued_up_query_subtables_--;
-          } // end of dequeuing flush requests.
-        } // end of performing flush dequeues.
+          message_cache_[
+            world.rank()].flush_route().object().Alias(
+              message_cache_[
+                queued_up_query_subtables_[
+                  stage_ ].back()->cache_block_id()].subtable_route().object());
+          message_cache_ [
+            world.rank()].flush_route().set_object_is_valid_flag(true);
+          message_cache_[
+            world.rank()].flush_route().add_destination(
+              message_cache_[
+                world.rank()].flush_route().object().originating_rank());
+          message_cache_[
+            world.rank()].flush_route().set_stage(stage_);
+
+          // Pop from the list and decrement the number of queued up
+          // query subtables.
+          queued_up_query_subtables_[ stage_ ].pop_back();
+          num_queued_up_query_subtables_--;
+        } // end of dequeuing flush requests.
 
         // Exchange with the current neighbor.
         unsigned int num_subtables_to_exchange = (1 << stage_);
@@ -639,83 +614,57 @@ class TableExchange {
 
             // Receive the subtable.
             MessageType tmp_route_request;
-
-            if(! do_final_flush_) {
-              tmp_route_request.subtable_route().object().Init(neighbor, false);
-            }
-            else {
-              tmp_route_request.flush_route().object().Init(neighbor, false);
-            }
+            tmp_route_request.subtable_route().object().Init(neighbor, false);
+            tmp_route_request.flush_route().object().Init(neighbor, false);
             world.recv(
               neighbor,
               core::parallel::MessageTag::ROUTE_SUBTABLE,
               tmp_route_request);
             int cache_id =
               tmp_route_request.originating_rank();
-
-            if(! do_final_flush_) {
-              tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
-            }
-            else {
-              tmp_route_request.flush_route().object().set_cache_block_id(cache_id);
-            }
+            tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
+            tmp_route_request.flush_route().object().set_cache_block_id(cache_id);
 
             // If this subtable is needed by the calling process, then
             // update the list of subtables received.
             num_subtables_received++;
-
-            // Copy the entire thing if the subtable routing is turned
-            // on.
-            if(! do_final_flush_) {
-              message_cache_[ cache_id ] = tmp_route_request;
-            }
-
-            // Otherwise, copy everything except for the subtable
-            // routing.
-            else {
-              message_cache_[
-                cache_id ].CopyWithoutSubTableRoute(tmp_route_request);
-            }
+            message_cache_[ cache_id ] = tmp_route_request;
             MessageType &route_request = message_cache_[cache_id];
 
             // If the received subtable is valid,
-            if(! do_final_flush_) {
-              if(route_request.subtable_route().object_is_valid()) {
+            if(route_request.subtable_route().object_is_valid()) {
 
-                // Lock the subtable equal to the number of remaining
-                // phases.
-                this->LockCache(cache_id, max_stage_ - stage_ - 1);
+              // Lock the subtable equal to the number of remaining
+              // phases.
+              this->LockCache(cache_id, max_stage_ - stage_ - 1);
 
-                // If the subtable is needed by the process, then add
-                // it to its task list.
-                if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
-                  received_subtable_ids.push_back(
-                    boost::make_tuple(
-                      route_request.subtable_route().object().table()->rank(),
-                      route_request.subtable_route().object().start_node()->begin(),
-                      route_request.subtable_route().object().start_node()->count(),
-                      cache_id));
-                }
+              // If the subtable is needed by the process, then add
+              // it to its task list.
+              if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
+                received_subtable_ids.push_back(
+                  boost::make_tuple(
+                    route_request.subtable_route().object().table()->rank(),
+                    route_request.subtable_route().object().start_node()->begin(),
+                    route_request.subtable_route().object().start_node()->count(),
+                    cache_id));
               }
-              else {
-                this->ClearSubTable_(world, cache_id);
-              }
-            } // end of non-final-flush case.
+            }
             else {
+              this->ClearSubTable_(world, cache_id);
+            }
 
-              // Synchronize with the received query subtable.
-              if(route_request.flush_route().object_is_valid()) {
-                if(route_request.flush_route().remove_from_destination_list(
-                      world.rank())) {
-                  task_queue_->Synchronize(
-                    world, route_request.flush_route().object());
-                }
+            // Synchronize with the received query subtable.
+            if(route_request.flush_route().object_is_valid()) {
+              if(route_request.flush_route().remove_from_destination_list(
+                    world.rank())) {
+                task_queue_->Synchronize(
+                  world, route_request.flush_route().object());
               }
-              else {
-                route_request.flush_route().object().Destruct();
-                route_request.flush_route().set_object_is_valid_flag(false);
-              }
-            } // end of flush-case.
+            }
+            else {
+              route_request.flush_route().object().Destruct();
+              route_request.flush_route().set_object_is_valid_flag(false);
+            }
 
             // Update the energy count.
             if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
@@ -738,36 +687,32 @@ class TableExchange {
           unsigned int send_process_rank = i + lower_bound_send;
           unsigned int receive_process_rank = i + lower_bound_receive;
 
-          if(! do_final_flush_) {
-            if(send_process_rank != static_cast<unsigned int>(world.rank()) &&
-                message_cache_[
-                  send_process_rank ].subtable_route().object_is_valid()) {
-              this->ReleaseCache(world, send_process_rank, 1);
-            }
-          } // end of non-flush case.
-          else {
+          if(send_process_rank != static_cast<unsigned int>(world.rank()) &&
+              message_cache_[
+                send_process_rank ].subtable_route().object_is_valid()) {
+            this->ReleaseCache(world, send_process_rank, 1);
+          }
 
-            // Free the flushed subtables sent.
-            if(message_cache_[
-                  send_process_rank ].flush_route().object_is_valid() &&
-                message_cache_[
-                  send_process_rank ].flush_route().num_destinations() == 0) {
+          // Free the flushed subtables sent.
+          if(message_cache_[
+                send_process_rank ].flush_route().object_is_valid() &&
               message_cache_[
-                send_process_rank ].flush_route().set_object_is_valid_flag(false);
-              message_cache_[ send_process_rank ].flush_route().object().Destruct();
-            }
+                send_process_rank ].flush_route().num_destinations() == 0) {
+            message_cache_[
+              send_process_rank ].flush_route().set_object_is_valid_flag(false);
+            message_cache_[ send_process_rank ].flush_route().object().Destruct();
+          }
 
-            // Free the flushed subtable received.
-            if(message_cache_[
-                  receive_process_rank ].flush_route().object_is_valid() &&
-                message_cache_[
-                  receive_process_rank ].flush_route().num_destinations() == 0) {
+          // Free the flushed subtable received.
+          if(message_cache_[
+                receive_process_rank ].flush_route().object_is_valid() &&
               message_cache_[
-                receive_process_rank ].flush_route().set_object_is_valid_flag(false);
-              message_cache_[
-                receive_process_rank ].flush_route().object().Destruct();
-            }
-          } // end of flush-case.
+                receive_process_rank ].flush_route().num_destinations() == 0) {
+            message_cache_[
+              receive_process_rank ].flush_route().set_object_is_valid_flag(false);
+            message_cache_[
+              receive_process_rank ].flush_route().object().Destruct();
+          }
         }
 
         // Generate more tasks.

@@ -402,16 +402,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
   } // end of omp parallel
 
-  // Do the final flushes.
-  if(distributed_tasks.do_load_balancing()) {
-    distributed_tasks.PrepareFinalFlushes(* world_);
-    do {
-      distributed_tasks.SendReceive(
-        metric, *world_, hashed_essential_reference_subtrees_to_send);
-    }
-    while(! distributed_tasks.finished_query_subtable_flushes());
-  }
-
   // Extract the prune counts.
   num_deterministic_prunes_ = distributed_tasks.num_deterministic_prunes();
   num_probabilistic_prunes_ = distributed_tasks.num_probabilistic_prunes();

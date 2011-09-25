@@ -55,13 +55,6 @@ class MessageType {
       subtable_route_ = message_in.subtable_route();
     }
 
-    void CopyWithoutSubTableRoute(const MessageType &message_in) {
-      energy_route_ = message_in.energy_route();
-      flush_route_ = message_in.flush_route();
-      load_balance_route_ = message_in.load_balance_route();
-      originating_rank_ = message_in.originating_rank();
-    }
-
     MessageType(const MessageType &message_in) {
       this->operator=(message_in);
     }
@@ -125,7 +118,7 @@ class MessageType {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & energy_route_;
-      // ar & extra_task_route_;
+      ar & extra_task_route_;
       ar & flush_route_;
       ar & load_balance_route_;
       ar & originating_rank_;
