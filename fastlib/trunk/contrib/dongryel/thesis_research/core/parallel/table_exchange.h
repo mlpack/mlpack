@@ -523,6 +523,9 @@ class TableExchange {
 
       // Preallocate the cache.
       message_cache_.resize(world.size());
+      for(int i = 0; i < world.size(); i++) {
+        message_cache_[i].set_do_load_balancing_flag(do_load_balancing_);
+      }
       message_send_request_.resize(world.size());
       extra_receive_slots_.resize(0);
 
@@ -621,7 +624,7 @@ class TableExchange {
                   core::parallel::MessageTag::ROUTE_SUBTABLE)) {
 
             // Receive the subtable.
-            MessageType tmp_route_request;
+            MessageType tmp_route_request(do_load_balancing_) ;
             tmp_route_request.subtable_route().object().Init(neighbor, false);
             tmp_route_request.flush_route().object().Init(neighbor, false);
             world.recv(
