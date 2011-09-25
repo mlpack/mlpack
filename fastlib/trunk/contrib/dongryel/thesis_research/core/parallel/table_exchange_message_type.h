@@ -125,7 +125,7 @@ class MessageType {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & energy_route_;
-      ar & extra_task_route_;
+      // ar & extra_task_route_;
       ar & flush_route_;
       ar & load_balance_route_;
       ar & originating_rank_;
