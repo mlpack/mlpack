@@ -28,6 +28,8 @@ class MessageType {
 
   private:
 
+    bool do_load_balancing_;
+
     EnergyRouteRequestType energy_route_;
 
     ExtraTaskRouteRequestType extra_task_route_;
@@ -42,11 +44,22 @@ class MessageType {
 
   public:
 
+    void set_do_load_balancing_flag(bool flag_in) {
+      do_load_balancing_ = flag_in;
+    }
+
     MessageType() {
+      do_load_balancing_ = false;
+      originating_rank_ = 0;
+    }
+
+    MessageType(bool do_load_balancing_in) {
+      do_load_balancing_ = do_load_balancing_in;
       originating_rank_ = 0;
     }
 
     void operator=(const MessageType &message_in) {
+      do_load_balancing_ = message_in.do_load_balancing_;
       energy_route_ = message_in.energy_route();
       extra_task_route_ = message_in.extra_task_route();
       flush_route_ = message_in.flush_route();
@@ -118,9 +131,11 @@ class MessageType {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & energy_route_;
-      ar & extra_task_route_;
-      ar & flush_route_;
-      ar & load_balance_route_;
+      if(do_load_balancing_) {
+        ar & extra_task_route_;
+        ar & flush_route_;
+        ar & load_balance_route_;
+      }
       ar & originating_rank_;
       ar & subtable_route_;
     }
