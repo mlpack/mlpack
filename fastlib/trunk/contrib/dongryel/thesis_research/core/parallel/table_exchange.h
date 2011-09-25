@@ -163,6 +163,138 @@ class TableExchange {
 
   private:
 
+    void PostCleanupStage_(
+      boost::mpi::communicator &world,
+      unsigned int num_subtables_to_exchange,
+      unsigned int lower_bound_send,
+      unsigned int lower_bound_receive) {
+
+      // For every valid send, unlock its cache.
+      for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
+        unsigned int send_process_rank = i + lower_bound_send;
+        unsigned int receive_process_rank = i + lower_bound_receive;
+
+        if(send_process_rank != static_cast<unsigned int>(world.rank()) &&
+            message_cache_[
+              send_process_rank ].subtable_route().object_is_valid()) {
+          this->ReleaseCache(world, send_process_rank, 1);
+        }
+
+        // Free the flushed query subtables sent.
+        if(message_cache_[
+              send_process_rank ].flush_route().object_is_valid() &&
+            message_cache_[
+              send_process_rank ].flush_route().num_destinations() == 0) {
+          message_cache_[
+            send_process_rank ].flush_route().set_object_is_valid_flag(false);
+          message_cache_[ send_process_rank ].flush_route().object().Destruct();
+        }
+
+        // Free the flushed query subtable received.
+        if(message_cache_[
+              receive_process_rank ].flush_route().object_is_valid() &&
+            message_cache_[
+              receive_process_rank ].flush_route().num_destinations() == 0) {
+          message_cache_[
+            receive_process_rank ].flush_route().set_object_is_valid_flag(false);
+          message_cache_[
+            receive_process_rank ].flush_route().object().Destruct();
+        }
+      }
+    }
+
+    void ProcessReceivedMessages_(
+      boost::mpi::communicator &world,
+      unsigned int num_subtables_to_exchange,
+      unsigned int neighbor,
+      std::vector < boost::tuple<int, int, int, int> > *received_subtable_ids) {
+
+      // Receive from the neighbor.
+      unsigned int num_subtables_received = 0;
+      while(num_subtables_received < num_subtables_to_exchange) {
+
+        if(boost::optional< boost::mpi::status > l_status =
+              world.iprobe(
+                neighbor,
+                core::parallel::MessageTag::ROUTE_SUBTABLE)) {
+
+          // Receive the subtable.
+          MessageType tmp_route_request(do_load_balancing_) ;
+          tmp_route_request.subtable_route().object().Init(neighbor, false);
+          tmp_route_request.flush_route().object().Init(neighbor, false);
+          world.recv(
+            neighbor,
+            core::parallel::MessageTag::ROUTE_SUBTABLE,
+            tmp_route_request);
+          int cache_id =
+            tmp_route_request.originating_rank();
+          tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
+          tmp_route_request.flush_route().object().set_cache_block_id(cache_id);
+
+          // If this subtable is needed by the calling process, then
+          // update the list of subtables received.
+          num_subtables_received++;
+          message_cache_[ cache_id ] = tmp_route_request;
+          MessageType &route_request = message_cache_[cache_id];
+
+          // If the received subtable is valid,
+          if(route_request.subtable_route().object_is_valid()) {
+
+            // Lock the subtable equal to the number of remaining
+            // phases.
+            this->LockCache(cache_id, max_stage_ - stage_ - 1);
+
+            // If the subtable is needed by the process, then add
+            // it to its task list.
+            if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
+              received_subtable_ids->push_back(
+                boost::make_tuple(
+                  route_request.subtable_route().object().table()->rank(),
+                  route_request.subtable_route().object().start_node()->begin(),
+                  route_request.subtable_route().object().start_node()->count(),
+                  cache_id));
+            }
+          }
+          else {
+            this->ClearSubTable_(world, cache_id);
+          }
+
+          // Update the energy count.
+          if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
+              route_request.energy_route().object_is_valid()) {
+            task_queue_->decrement_remaining_global_computation(
+              route_request.energy_route().object());
+          }
+
+          // Update the load balance status.
+          if(do_load_balancing_) {
+
+            // Synchronize with the received query subtable.
+            if(route_request.flush_route().object_is_valid()) {
+              if(route_request.flush_route().remove_from_destination_list(
+                    world.rank())) {
+                task_queue_->Synchronize(
+                  world, route_request.flush_route().object());
+              }
+            }
+            else {
+              route_request.flush_route().object().Destruct();
+              route_request.flush_route().set_object_is_valid_flag(false);
+            }
+            if(
+              route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
+              route_request.load_balance_route().object_is_valid()) {
+
+              needs_load_balancing_[ route_request.originating_rank()] =
+                route_request.load_balance_route().object();
+            }
+          }
+
+        } // end of the if-case.
+
+      } // end of getting all routing acknowledgements.
+    }
+
     void BufferImmediateMessage_(boost::mpi::communicator &world) {
 
       // If any of the queued up flush requests is ready to be sent
@@ -635,128 +767,17 @@ class TableExchange {
               send_request_object);
         }
 
-        // Receive from the neighbor.
-        unsigned int num_subtables_received = 0;
-        while(num_subtables_received < num_subtables_to_exchange) {
-
-          if(boost::optional< boost::mpi::status > l_status =
-                world.iprobe(
-                  neighbor,
-                  core::parallel::MessageTag::ROUTE_SUBTABLE)) {
-
-            // Receive the subtable.
-            MessageType tmp_route_request(do_load_balancing_) ;
-            tmp_route_request.subtable_route().object().Init(neighbor, false);
-            tmp_route_request.flush_route().object().Init(neighbor, false);
-            world.recv(
-              neighbor,
-              core::parallel::MessageTag::ROUTE_SUBTABLE,
-              tmp_route_request);
-            int cache_id =
-              tmp_route_request.originating_rank();
-            tmp_route_request.subtable_route().object().set_cache_block_id(cache_id);
-            tmp_route_request.flush_route().object().set_cache_block_id(cache_id);
-
-            // If this subtable is needed by the calling process, then
-            // update the list of subtables received.
-            num_subtables_received++;
-            message_cache_[ cache_id ] = tmp_route_request;
-            MessageType &route_request = message_cache_[cache_id];
-
-            // If the received subtable is valid,
-            if(route_request.subtable_route().object_is_valid()) {
-
-              // Lock the subtable equal to the number of remaining
-              // phases.
-              this->LockCache(cache_id, max_stage_ - stage_ - 1);
-
-              // If the subtable is needed by the process, then add
-              // it to its task list.
-              if(route_request.subtable_route().remove_from_destination_list(world.rank())) {
-                received_subtable_ids.push_back(
-                  boost::make_tuple(
-                    route_request.subtable_route().object().table()->rank(),
-                    route_request.subtable_route().object().start_node()->begin(),
-                    route_request.subtable_route().object().start_node()->count(),
-                    cache_id));
-              }
-            }
-            else {
-              this->ClearSubTable_(world, cache_id);
-            }
-
-            // Update the energy count.
-            if(route_request.energy_route().remove_from_destination_list(world.rank()) &&
-                route_request.energy_route().object_is_valid()) {
-              task_queue_->decrement_remaining_global_computation(
-                route_request.energy_route().object());
-            }
-
-            // Update the load balance status.
-            if(do_load_balancing_) {
-
-              // Synchronize with the received query subtable.
-              if(route_request.flush_route().object_is_valid()) {
-                if(route_request.flush_route().remove_from_destination_list(
-                      world.rank())) {
-                  task_queue_->Synchronize(
-                    world, route_request.flush_route().object());
-                }
-              }
-              else {
-                route_request.flush_route().object().Destruct();
-                route_request.flush_route().set_object_is_valid_flag(false);
-              }
-              if(
-                route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
-                route_request.load_balance_route().object_is_valid()) {
-
-                needs_load_balancing_[ route_request.originating_rank()] =
-                  route_request.load_balance_route().object();
-              }
-            }
-
-          } // end of the if-case.
-
-        } // end of getting all routing acknowledgements.
+        // Handle incoming messages from the neighbor.
+        this->ProcessReceivedMessages_(
+          world, num_subtables_to_exchange, neighbor, &received_subtable_ids);
 
         // Wait until all sends are done.
         boost::mpi::wait_all(
           message_send_request_.begin(),
           message_send_request_.begin() + num_subtables_to_exchange);
 
-        // For every valid send, unlock its cache.
-        for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
-          unsigned int send_process_rank = i + lower_bound_send;
-          unsigned int receive_process_rank = i + lower_bound_receive;
-
-          if(send_process_rank != static_cast<unsigned int>(world.rank()) &&
-              message_cache_[
-                send_process_rank ].subtable_route().object_is_valid()) {
-            this->ReleaseCache(world, send_process_rank, 1);
-          }
-
-          // Free the flushed query subtables sent.
-          if(message_cache_[
-                send_process_rank ].flush_route().object_is_valid() &&
-              message_cache_[
-                send_process_rank ].flush_route().num_destinations() == 0) {
-            message_cache_[
-              send_process_rank ].flush_route().set_object_is_valid_flag(false);
-            message_cache_[ send_process_rank ].flush_route().object().Destruct();
-          }
-
-          // Free the flushed query subtable received.
-          if(message_cache_[
-                receive_process_rank ].flush_route().object_is_valid() &&
-              message_cache_[
-                receive_process_rank ].flush_route().num_destinations() == 0) {
-            message_cache_[
-              receive_process_rank ].flush_route().set_object_is_valid_flag(false);
-            message_cache_[
-              receive_process_rank ].flush_route().object().Destruct();
-          }
-        }
+        // Post-cleanup.
+        this->PostCleanupStage_(world, num_subtables_to_exchange, lower_bound_send, lower_bound_receive);
 
         // Generate more tasks.
         task_queue_->GenerateTasks(world, metric_in, received_subtable_ids);
