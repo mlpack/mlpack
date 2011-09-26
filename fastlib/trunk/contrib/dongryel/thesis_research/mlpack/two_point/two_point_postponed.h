@@ -78,9 +78,9 @@ class TwoPointPostponed {
       const GlobalType &global_in, TreeType *qnode, TreeType *rnode,
       bool qnode_and_rnode_are_equal) {
 
-      // TODO: is this still correct in parallel?
       SetZero();
       is_monochromatic_ = (qnode_and_rnode_are_equal);
+      
     }
 
     template < typename TreeType, typename GlobalType,
@@ -108,6 +108,17 @@ class TwoPointPostponed {
                            double reference_weight,
                            bool query_and_reference_points_are_equal) {
 
+      /*
+      if (query_and_reference_points_are_equal) {
+      printf("query_point[0]: %g\n", query_point(0));
+      printf("ref_point[0]: %g\n", reference_point(0));
+      printf("are_equal: %d\n", query_and_reference_points_are_equal);
+      printf("\n");
+      
+      
+      }
+     */
+      
       // make sure we don't count a point with itself
       if(!(global.is_monochromatic() &&
            query_and_reference_points_are_equal)) {

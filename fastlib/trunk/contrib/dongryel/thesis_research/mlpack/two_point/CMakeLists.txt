@@ -35,13 +35,13 @@ target_link_libraries(two_point
                       ${Boost_LIBRARIES}
                      )
 
-# the test driver for kde-test
-#add_executable(kde-test
-#               EXCLUDE_FROM_ALL
-#               kde.test.cc
-#              )
-# link dependencies of kde-test
-#target_link_libraries(kde-test
-#                      core
-#                      ${Boost_LIBRARIES}
-#                     )
+# the test driver 
+add_executable(two_point_test
+               EXCLUDE_FROM_ALL
+               two_point.test.cc
+              )
+# link dependencies t
+target_link_libraries(two_point_test
+                      core
+                      ${Boost_LIBRARIES}
+                     )

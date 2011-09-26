@@ -17,7 +17,6 @@
 namespace mlpack {
   namespace two_point {
     
-    // TODO: does this need a kernel type too?
     template<typename IncomingTableType>
     class TwoPointGlobal {
       
@@ -28,8 +27,8 @@ namespace mlpack {
       bool ConsiderExtrinsicPrune(
         const core::math::Range &squared_distance_range) const {
         
-        // TODO: fill me in?
-        return false;
+        return ((squared_distance_range.lo > matcher_upper_bound_sqr_)
+                || (squared_distance_range.hi < matcher_lower_bound_sqr_));
         
       } // ConsiderExtrinsicPrune
       
