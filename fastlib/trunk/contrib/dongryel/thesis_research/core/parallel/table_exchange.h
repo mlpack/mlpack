@@ -765,7 +765,7 @@ class TableExchange {
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
 
       // Proceed with the stage, if ready.
-      if(this->ReadyForStage_(world)) {
+      if((! task_queue_->can_terminate(world)) && this->ReadyForStage_(world)) {
 
         // The ID of the received subtables.
         std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
