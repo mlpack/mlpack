@@ -188,7 +188,7 @@ class KdeSummary {
       GlobalType &global,
       const PostponedType &postponed, DeltaType &delta,
       const core::math::Range &squared_distance_range,
-      TreeType *qnode, TreeType *rnode,
+      TreeType *qnode, int qnode_rank, TreeType *rnode, int rnode_rank,
       bool qnode_and_rnode_are_equal,
       double failure_probability, ResultType *query_results) const {
 
