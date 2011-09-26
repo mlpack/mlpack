@@ -48,6 +48,8 @@ namespace mlpack {
                              double matcher_distance,
                              double matcher_thickness) {
         
+        //printf("naive dist: %g, thick: %g\n", matcher_distance, matcher_thickness);
+        
         int num_tuples = 0;
         
         double matcher_lower_bound_sqr = (matcher_distance - 0.5*matcher_thickness)
@@ -58,6 +60,9 @@ namespace mlpack {
         for(int i = 0; i < query_table.n_entries(); i++) {
           arma::vec query_point;
           query_table.get(i, &query_point);
+          
+          //query_point.print();
+          //printf("\n");
           
           for(int j = 0; j < reference_table.n_entries(); j++) {
             arma::vec reference_point;
@@ -79,6 +84,7 @@ namespace mlpack {
               num_tuples++;
               
             }
+            
             
           }
           
@@ -139,7 +145,7 @@ namespace mlpack {
         mlpack::two_point::test_two_point::num_points_ << "\n";
         
         // Push in the leaf size.
-        int leaf_size = 20;
+        int leaf_size = 1000;
         std::stringstream leaf_size_sstr;
         leaf_size_sstr << "--leaf_size=" << leaf_size;
         args.push_back(leaf_size_sstr.str());
@@ -176,8 +182,8 @@ namespace mlpack {
         mlpack::two_point::TwoPointArgumentParser::ParseArguments(vm, 
                                                                   &two_point_arguments);
         
-        std::cout << "Matcher distance value " << matcher_distance << "\n";
-        std::cout << "Matcher thickness value " << matcher_thickness << "\n";
+        //std::cout << "Matcher distance value " << matcher_distance << "\n";
+        //std::cout << "Matcher thickness value " << matcher_thickness << "\n";
         
         // Call the driver.
         mlpack::two_point::TwoPoint<TableType> two_point_instance;
@@ -192,10 +198,17 @@ namespace mlpack {
         // Call the ultra-naive.
         int ultra_naive_two_point_result;
         
+        double naive_match = two_point_instance.global().matcher_distance();
+        double naive_thick = two_point_instance.global().matcher_thickness();
+        //ultra_naive_two_point_result = UltraNaive(*(two_point_arguments.metric_), 
+        //                                          *(two_point_arguments.points_table_1_),
+        //                                          *(two_point_arguments.points_table_1_),
+        //                                          matcher_distance, matcher_thickness);
         ultra_naive_two_point_result = UltraNaive(*(two_point_arguments.metric_), 
                                                   *(two_point_arguments.points_table_1_),
                                                   *(two_point_arguments.points_table_1_),
-                                                  matcher_distance, matcher_thickness);
+                                                  naive_match, naive_thick);
+        
         
         if(CheckAccuracy_(two_point_result.num_tuples_,
                           ultra_naive_two_point_result) == false) {
