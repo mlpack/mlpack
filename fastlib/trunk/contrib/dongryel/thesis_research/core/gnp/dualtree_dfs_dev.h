@@ -250,6 +250,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
     reference_table_->get_node_iterator(rnode);
 
   // Compute unnormalized sum for each query point.
+  int q_dfs_index = qnode->begin();
   while(qnode_iterator.HasNext()) {
 
     // Get the query point and its real index.
@@ -268,6 +269,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
 
     // Reset the reference node iterator.
     rnode_iterator.Reset();
+    int r_dfs_index = rnode->begin();
     while(rnode_iterator.HasNext()) {
 
       // Get the reference point and accumulate contribution.
@@ -275,12 +277,11 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
       int r_col_id;
       double r_weight;
       rnode_iterator.Next(&r_col, &r_col_id, &r_weight);
-      bool query_and_reference_points_are_equal =
-        (query_table_->rank() == reference_table_->rank() &&
-         q_col_id == r_col_id);
       query_contribution.ApplyContribution(
-        problem_->global(), metric, q_col, q_weight, r_col, r_weight,
-        query_and_reference_points_are_equal);
+        problem_->global(), metric,
+        q_col, query_table_->rank(), q_dfs_index, q_weight,
+        r_col, reference_table_->rank(), r_dfs_index, r_weight);
+      r_dfs_index++;
 
     } // end of iterating over each reference point.
 
@@ -290,6 +291,7 @@ void DualtreeDfs<ProblemType>::DualtreeBase_(
     // Refine min and max summary statistics.
     qnode_stat.summary_.Accumulate(
       problem_->global(), *query_results, q_col_id);
+    q_dfs_index++;
 
   } // end of looping over each query point.
 
@@ -351,8 +353,8 @@ bool DualtreeDfs<ProblemType>::CanSummarize_(
 
   return new_summary.CanSummarize(
            problem_->global(), delta, squared_distance_range,
-           qnode, rnode, qnode_and_rnode_are_equal,
-           query_results);
+           qnode, query_table_->rank(), rnode, reference_table_->rank(),
+           qnode_and_rnode_are_equal, query_results);
 }
 
 template<typename ProblemType>
