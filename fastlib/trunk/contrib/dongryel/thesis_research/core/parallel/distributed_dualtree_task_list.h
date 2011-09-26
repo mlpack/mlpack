@@ -112,9 +112,7 @@ class DistributedDualtreeTaskList {
         sub_tables_.swap(tmp_sub_tables);
       }
       else {
-        donated_task_list_->resize(0);
-        id_to_position_map_->clear();
-        sub_tables_->resize(0);
+        this->clear();
       }
     }
 
@@ -316,6 +314,17 @@ class DistributedDualtreeTaskList {
         distributed_task_queue_->set_remaining_work_for_query_subtable(
           new_position, num_reference_points_for_new_query_subtable);
       }
+
+      // Clear the list after exporting.
+      this->clear();
+    }
+
+    /** @brief Clears the task list.
+     */
+    void clear() {
+      donated_task_list_->resize(0);
+      id_to_position_map_->clear();
+      sub_tables_->resize(0);
     }
 
     /** @brief Initializes the task list.
