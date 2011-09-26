@@ -152,7 +152,7 @@ class DistributedTable: public boost::noncopyable {
 
       // The master builds the tree and broadcasts the nodes.
       if(world.rank() == 0) {
-        global_table_->IndexData(metric_in, 1);
+        global_table_->IndexData(metric_in, 1, -1);
       }
 
       // After building the tree, all processes send the root bound
@@ -360,12 +360,13 @@ class DistributedTable: public boost::noncopyable {
     void IndexData(
       const MetricType & metric_in,
       boost::mpi::communicator &world,
-      int leaf_size, double sample_probability_in) {
+      int leaf_size, double sample_probability_in,
+      int chromaticity) {
 
       core::parallel::VanillaDistributedTreeBuilder <
       DistributedTableType > builder;
       builder.Init(*this);
-      builder.Build(world, metric_in, leaf_size);
+      builder.Build(world, metric_in, leaf_size, chromaticity);
     }
 
     typename TableType::TreeIterator get_node_iterator(TreeType *node) {

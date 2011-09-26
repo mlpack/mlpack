@@ -603,9 +603,10 @@ class Table {
      */
     template<typename MetricType>
     void IndexData(
-      const MetricType &metric_in, int leaf_size,
+      const MetricType &metric_in, int leaf_size, int rank_in,
       int max_num_leaf_nodes = std::numeric_limits<int>::max()) {
       int num_nodes;
+      rank_ = rank_in;
       tree_ = TreeType::MakeTree(
                 metric_in, data_, weights_, leaf_size, old_from_new_.get(),
                 new_from_old_.get(), max_num_leaf_nodes, &num_nodes, rank_);
