@@ -314,7 +314,7 @@ bool KdeArgumentParser::ParseArguments(
 
   std::cout << "Building the reference tree.\n";
   arguments_out->reference_table_->IndexData(
-    *(arguments_out->metric_), arguments_out->leaf_size_);
+    *(arguments_out->metric_), arguments_out->leaf_size_, 0);
   std::cout << "Finished building the reference tree.\n";
 
   // Parse the query set and index the tree.
@@ -333,7 +333,7 @@ bool KdeArgumentParser::ParseArguments(
 
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
-      *(arguments_out->metric_), arguments_out->leaf_size_);
+      *(arguments_out->metric_), arguments_out->leaf_size_, 1);
     std::cout << "Finished building the query tree.\n";
     arguments_out->effective_num_reference_points_ =
       arguments_out->reference_table_->n_entries();
