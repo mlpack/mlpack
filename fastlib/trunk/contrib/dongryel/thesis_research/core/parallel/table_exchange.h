@@ -332,6 +332,12 @@ class TableExchange {
         task_queue_->PrepareExtraTaskList(
           world, metric_in, neighbor,
           & message_cache_[ world.rank()].extra_task_route().object());
+        message_cache_ [
+          world.rank()].extra_task_route().set_object_is_valid_flag(true);
+        message_cache_[
+          world.rank()].extra_task_route().add_destination(neighbor);
+        message_cache_[
+          world.rank()].extra_task_route().set_stage(stage_);
       }
     }
 
