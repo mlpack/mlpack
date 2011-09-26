@@ -54,6 +54,10 @@ namespace mlpack {
       
       printf("process: %d, Number of tuples: %d\n", world_->rank(),
              result_out->num_tuples_);
+
+      int total_num_tuples;
+      boost::mpi::reduce(world_, result_out->num_tuples_, total_num_tuples, 
+                         std::plus<int>(), 0);
       
     } // Compute()
     
@@ -138,6 +142,17 @@ namespace mlpack {
      "matcher_thickness",
      boost::program_options::value<double>(),
      "REQUIRED The width of the matcher (Delta r)"
+  )(
+    "random_generate",
+    "If present, generate the datasets on the fly."
+  )(
+    "random_generate_n_attributes",
+    boost::program_options::value<int>()->default_value(5),
+    "Generate the datasets on the fly of the specified dimension."
+  )(
+    "random_generate_n_entries",
+    boost::program_options::value<int>()->default_value(100000),
+    "Generate the datasets on the fly of the specified number of points."
   )( 
     "random_seed_in",
     boost::program_options::value<unsigned long int>(),
@@ -208,7 +223,29 @@ namespace mlpack {
       std::cerr << "The --num_threads_in needs to be a positive integer.\n";
       exit(0);
     }
-  
+    if(vm->count("random_generate_n_attributes") > 0) {
+      if(vm->count("random_generate_n_entries") == 0) {
+        std::cerr << "Missing required --random_generate_n_entries.\n";
+        exit(0);
+      }
+      if((*vm)["random_generate_n_attributes"].as<int>() <= 0) {
+        std::cerr << "The --random_generate_n_attributes requires a positive "
+        "integer.\n";
+        exit(0);
+      }
+    }
+    if(vm->count("random_generate_n_entries") > 0) {
+      if(vm->count("random_generate_n_attributes") == 0) {
+        std::cerr << "Missing required --random_generate_n_attributes.\n";
+        exit(0);
+      }
+      if((*vm)["random_generate_n_entries"].as<int>() <= 0) {
+        std::cerr << "The --random_generate_n_entries requires a positive "
+        "integer.\n";
+        exit(0);
+      }
+    }
+    
     if(vm->count("use_memory_mapped_file") > 0) {
       
       if(vm->count("memory_mapped_file_size") == 0) {
@@ -267,6 +304,12 @@ namespace mlpack {
       
       // Parse the densities out file.
       arguments_out->counts_out_ = vm["counts_out"].as<std::string>();
+      if(vm.count("random_generate_n_entries") > 0) {
+        std::stringstream counts_out_sstr;
+        counts_out_sstr << vm["counts_out"].as<std::string>() <<
+        world.rank();
+        arguments_out->counts_out_ = counts_out_sstr.str();
+      }
       
       // Parse the leaf size.
       arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
@@ -294,15 +337,31 @@ namespace mlpack {
       core::table::global_m_file_->Construct<DistributedTableType>() :
       new DistributedTableType();
       
-      std::cout << "Reading in the data set: " <<
-      data_file_name << "\n";
-      arguments_out->points_table_1_->Init(data_file_name, world);
-      std::cout << "Finished reading in the data set.\n";
-      
+      if(vm.count("random_generate") > 0) {
+        std::stringstream data_file_name_sstr;
+        data_file_name_sstr << vm["data_in"].as<std::string>() <<
+        world.rank();
+        data_file_name = data_file_name_sstr.str();
+        TableType *data_reference_dataset =
+        (core::table::global_m_file_) ?
+        core::table::global_m_file_->Construct<TableType>() : new TableType();
+        core::parallel::RandomDatasetGenerator::Generate(
+                                                         vm["random_generate_n_attributes"].as<int>(),
+                                                         vm["random_generate_n_entries"].as<int>(), world.rank(),
+                                                         vm["prescale"].as<std::string>(), false, data_reference_dataset);
+        arguments_out->points_table_1_->Init(data_reference_dataset, world);
+      }
+      else {
+        std::cout << "Reading in the data set: " <<
+        data_file_name << "\n";
+        arguments_out->points_table_1_->Init(data_file_name, world);
+        std::cout << "Finished reading in the data set.\n";
+      }
+      // Chromaticity 0
       std::cout << "Building the data tree.\n";
       arguments_out->points_table_1_->IndexData(
           *(arguments_out->metric_), world, arguments_out->leaf_size_,
-           arguments_out->top_tree_sample_probability_);
+           arguments_out->top_tree_sample_probability_, 0);
       std::cout << "Finished building the data tree.\n";
       
       // Parse the random set and index the tree.
@@ -318,10 +377,11 @@ namespace mlpack {
         arguments_out->points_table_2_->Init(randoms_file_name, world);
         std::cout << "Finished reading in the random set.\n";
         
+        // Chromaticity 1
         std::cout << "Building the random tree.\n";
         arguments_out->points_table_2_->IndexData(
                *(arguments_out->metric_), world, arguments_out->leaf_size_,
-               arguments_out->top_tree_sample_probability_);
+               arguments_out->top_tree_sample_probability_, 1);
 
         std::cout << "Finished building the random tree.\n";
       }

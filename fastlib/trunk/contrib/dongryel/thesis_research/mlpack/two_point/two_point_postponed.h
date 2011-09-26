@@ -103,10 +103,13 @@ class TwoPointPostponed {
     void ApplyContribution(const GlobalType &global,
                            const MetricType &metric,
                            const arma::vec &query_point,
+                           int query_point_rank,
+                           int query_point_dfs_index,
                            double query_weight,
                            const arma::vec &reference_point,
-                           double reference_weight,
-                           bool query_and_reference_points_are_equal) {
+                           int reference_point_rank,
+                           int reference_point_dfs_index,
+                           double reference_weight) {
 
       /*
       if (query_and_reference_points_are_equal) {
@@ -120,8 +123,8 @@ class TwoPointPostponed {
      */
       
       // make sure we don't count a point with itself
-      if(!(global.is_monochromatic() &&
-           query_and_reference_points_are_equal)) {
+      if(!(query_point_rank == reference_point_rank 
+           && reference_point_dfs_index <= query_point_dfs_index)) {
 
         double dist_sq = metric.DistanceSq(query_point, reference_point);
 

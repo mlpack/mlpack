@@ -45,6 +45,7 @@ namespace mlpack {
       template<typename MetricType, typename TableType>
       static int UltraNaive(const MetricType &metric_in,
                              TableType &query_table, TableType &reference_table,
+                             bool is_monochromatic,
                              double matcher_distance,
                              double matcher_thickness) {
         
@@ -64,16 +65,18 @@ namespace mlpack {
           //query_point.print();
           //printf("\n");
           
-          for(int j = 0; j < reference_table.n_entries(); j++) {
+          int ref_start = is_monochromatic ? i+1 : 0;
+          
+          for(int j = ref_start; j < reference_table.n_entries(); j++) {
             arma::vec reference_point;
             reference_table.get(j, &reference_point);
             
             // By default, monochromaticity is assumed in the test -
             // this will be addressed later for general bichromatic
             // test.
-            if(i == j) {
-              continue;
-            }
+            //if(i == j) {
+            //  continue;
+            //}
             
             double squared_distance =
             metric_in.DistanceSq(query_point, reference_point);
@@ -145,7 +148,7 @@ namespace mlpack {
         mlpack::two_point::test_two_point::num_points_ << "\n";
         
         // Push in the leaf size.
-        int leaf_size = 1000;
+        int leaf_size = core::math::RandInt(15, 25);
         std::stringstream leaf_size_sstr;
         leaf_size_sstr << "--leaf_size=" << leaf_size;
         args.push_back(leaf_size_sstr.str());
@@ -207,6 +210,7 @@ namespace mlpack {
         ultra_naive_two_point_result = UltraNaive(*(two_point_arguments.metric_), 
                                                   *(two_point_arguments.points_table_1_),
                                                   *(two_point_arguments.points_table_1_),
+                                                  true,
                                                   naive_match, naive_thick);
         
         
