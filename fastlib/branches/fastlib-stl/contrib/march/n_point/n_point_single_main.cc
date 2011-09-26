@@ -16,7 +16,8 @@
 #include "generic_npt_alg.h"
 #include "single_matcher.h"
 
-
+PARAM_MODULE("n_point_single",
+             "Parameters for generic, single-matcher n-point computation.");
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
 PARAM_INT_REQ("num_random", "The number of random sets that appear in the tuple.", NULL);
 PARAM_FLAG("two_sets", "Are we using two different sets (i.e. data and random)", NULL);
@@ -160,6 +161,9 @@ int main(int argc, char* argv[]) {
     IO::StartTimer("single_bandwidth_time");
     
     // Build the trees
+    
+    //IO::GetParam<int>("tree/leaf_size") = 100;
+    
     
     NptNode* data_tree = new NptNode(data_mat);
     NptNode* random_tree = new NptNode(random_mat);
