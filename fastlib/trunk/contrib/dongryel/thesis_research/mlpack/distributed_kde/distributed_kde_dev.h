@@ -363,7 +363,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->metric_ = new core::metric_kernels::LMetric<2>();
 
   // Parse the load balancing option.
-  arguments_out->do_load_balancing_ = (true || vm.count("do_load_balancing") > 0);
+  arguments_out->do_load_balancing_ = ( vm.count("do_load_balancing") > 0);
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =
@@ -408,7 +408,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
     (core::table::global_m_file_) ?
     core::table::global_m_file_->Construct<DistributedTableType>() :
     new DistributedTableType();
-  if(true || vm.count("random_generate") > 0) {
+  if( vm.count("random_generate") > 0 ) {
     std::stringstream reference_file_name_sstr;
     reference_file_name_sstr << vm["references_in"].as<std::string>() <<
                              world.rank();
