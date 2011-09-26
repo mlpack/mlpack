@@ -28,24 +28,15 @@ class Cosine {
   /**
    * Computes the distance between two points.
    */
-  static double Evaluate(const arma::vec& a, const arma::vec& b);
+  static double Evaluate(const arma::vec& a, 
+			 const arma::vec& b) {
+    double dot_prod = arma::dot(a, b);
+    double cosine = dot_prod 
+      / (arma::norm(a, 2) * arma::norm(b, 2));
+
+    return cosine;
+
+  }
 };
-
-// The implementation is not split into a _impl.h file because it is so simple;
-// the unspecialized implementation of the one function is given below.
-// Unspecialized implementation.  This should almost never be used...
-//template<int t_pow, bool t_take_root>
-double Cosine::Evaluate(const arma::vec& a,
-			const arma::vec& b) {
-  double dot_prod = arma::dot(a, b);
-  double cosine = dot_prod 
-    / (arma::norm(a, 2) * arma::norm(b, 2));
-
-  return cosine;
-}
-
-
-//}; // namespace kernel
-//}; // namespace mlpack
 
 #endif

@@ -42,10 +42,6 @@ PARAM_STRING("maxip_file", "The file where the output "
 void count_mismatched_neighbors(arma::Col<size_t>, arma::vec, 
  				arma::Col<size_t>, arma::vec);
 
-// void compare_neighbors(arma::Col<size_t>*, arma::vec*, 
-//                        arma::Col<size_t>*, arma::vec*);
-
-
 
 int main (int argc, char *argv[]) {
 

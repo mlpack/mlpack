@@ -14,6 +14,11 @@
 
 namespace tree_gen_cosine_tree_private {
 
+  size_t FurthestColumnIndex(const arma::vec& pivot,
+			     const arma::mat& matrix, 
+			     size_t begin, size_t count,
+			     double *furthest_cosine);
+    
   // This function assumes that we have points embedded in Euclidean
   // space. The representative point (center) is chosen as the mean 
   // of the all unit directions of all the vectors in this set.
@@ -117,30 +122,6 @@ namespace tree_gen_cosine_tree_private {
     return left_count;
   }
 	
-  // fixed!!  
-  size_t FurthestColumnIndex(const arma::vec& pivot,
-			     const arma::mat& matrix, 
-			     size_t begin, size_t count,
-			     double *furthest_cosine) {
-    
-    size_t furthest_index = -1;
-    size_t end = begin + count;
-    *furthest_cosine = 1.0;
-
-    for(size_t i = begin; i < end; i++) {
-      double cosine_between_center_and_point = 
-	Cosine::Evaluate(pivot, matrix.unsafe_col(i));
-      
-      if((*furthest_cosine) > cosine_between_center_and_point) {
-	*furthest_cosine = cosine_between_center_and_point;
-	furthest_index = i;
-      }
-    }
-
-    assert((*furthest_cosine) >= -1.0);
-
-    return furthest_index;
-  }
 
   // fixed
   template<typename TCosineTree>
