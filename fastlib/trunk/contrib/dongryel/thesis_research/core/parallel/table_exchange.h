@@ -195,11 +195,29 @@ class TableExchange {
           message_cache_[
             receive_process_rank ].flush_route().object().Destruct();
         }
+
+        // Invalidate the sent task list.
+        if(message_cache_[
+              send_process_rank].extra_task_route().object_is_valid() &&
+            message_cache_[
+              send_process_rank ].extra_task_route().num_destinations() == 0) {
+          message_cache_[
+            send_process_rank].extra_task_route().set_object_is_valid_flag(false);
+        }
+        if(message_cache_[
+              receive_process_rank].extra_task_route().object_is_valid() &&
+            message_cache_[
+              receive_process_rank ].extra_task_route().num_destinations() == 0) {
+          message_cache_[
+            receive_process_rank].extra_task_route().set_object_is_valid_flag(false);
+        }
       }
     }
 
+    template<typename MetricType>
     void ProcessReceivedMessages_(
       boost::mpi::communicator &world,
+      const MetricType &metric_in,
       unsigned int num_subtables_to_exchange,
       unsigned int neighbor,
       std::vector < boost::tuple<int, int, int, int> > *received_subtable_ids) {
@@ -276,6 +294,8 @@ class TableExchange {
               route_request.flush_route().object().Destruct();
               route_request.flush_route().set_object_is_valid_flag(false);
             }
+
+            // Update the computation status of other processes.
             if(
               route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
               route_request.load_balance_route().object_is_valid()) {
@@ -283,7 +303,18 @@ class TableExchange {
               needs_load_balancing_[ route_request.originating_rank()] =
                 route_request.load_balance_route().object();
             }
-          }
+
+            // Get extra task from the neighboring process if
+            // available.
+            if(route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
+                route_request.extra_task_route().object_is_valid()) {
+
+              route_request.extra_task_route().object().Export(
+                world, metric_in,
+                route_request.originating_rank(), task_queue_);
+            }
+
+          } // end of load balancing case.
 
         } // end of the if-case.
 
@@ -771,7 +802,8 @@ class TableExchange {
 
         // Handle incoming messages from the neighbor.
         this->ProcessReceivedMessages_(
-          world, num_subtables_to_exchange, neighbor, &received_subtable_ids);
+          world, metric_in, num_subtables_to_exchange,
+          neighbor, &received_subtable_ids);
 
         // Wait until all sends are done.
         boost::mpi::wait_all(
