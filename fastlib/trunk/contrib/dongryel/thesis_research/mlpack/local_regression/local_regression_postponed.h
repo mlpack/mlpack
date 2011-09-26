@@ -218,13 +218,17 @@ class LocalRegressionPostponed {
       const GlobalType &global,
       const MetricType &metric,
       const arma::vec &query_point,
+      int query_point_rank,
+      int query_point_dfs_index,
       double query_weight,
       const arma::vec &reference_point,
-      double reference_weight,
-      bool query_and_reference_points_are_equal) {
+      int reference_point_rank,
+      int reference_point_dfs_index,
+      double reference_weight) {
 
       // If monochromatic, return.
-      if(global.is_monochromatic() && query_and_reference_points_are_equal) {
+      if(query_point_rank == reference_point_rank &&
+          query_point_dfs_index == reference_point_dfs_index) {
         return;
       }
 
