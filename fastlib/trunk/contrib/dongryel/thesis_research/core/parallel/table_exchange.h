@@ -202,12 +202,18 @@ class TableExchange {
             message_cache_[
               send_process_rank ].extra_task_route().num_destinations() == 0) {
           message_cache_[
+            send_process_rank].extra_task_route().object().clear();
+          message_cache_[
             send_process_rank].extra_task_route().set_object_is_valid_flag(false);
         }
+
+        // Invalidate the received task list.
         if(message_cache_[
               receive_process_rank].extra_task_route().object_is_valid() &&
             message_cache_[
               receive_process_rank ].extra_task_route().num_destinations() == 0) {
+          message_cache_[
+            receive_process_rank].extra_task_route().object().clear();
           message_cache_[
             receive_process_rank].extra_task_route().set_object_is_valid_flag(false);
         }
