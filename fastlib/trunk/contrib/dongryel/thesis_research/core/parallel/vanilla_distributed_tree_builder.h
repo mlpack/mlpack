@@ -160,7 +160,11 @@ class VanillaDistributedTreeBuilder {
     template<typename MetricType>
     void Build(
       boost::mpi::communicator &world,
-      const MetricType &metric_in, int leaf_size) {
+      const MetricType &metric_in, int leaf_size,
+      int chromaticity) {
+
+      // Offset.
+      int offset = chromaticity * world.size();
 
       // The timer for building the global tree.
       boost::mpi::timer distributed_table_index_timer;
@@ -174,13 +178,8 @@ class VanillaDistributedTreeBuilder {
       distributed_table_->RefreshCounts_(world);
 
       // Index the local tree on each process.
-      distributed_table_->local_table()->IndexData(metric_in, leaf_size);
-
-      // Correct the rank of the local tables due to splitting of the
-      // communicators. This may be taken out after changing the
-      // RecursiveShuffle method to use non-splitting communicator
-      // version.
-      distributed_table_->local_table()->set_rank(world.rank());
+      distributed_table_->local_table()->IndexData(
+        metric_in, leaf_size, world.rank() + offset);
 
       // Build the top tree from the collected root nodes from all
       // processes.
