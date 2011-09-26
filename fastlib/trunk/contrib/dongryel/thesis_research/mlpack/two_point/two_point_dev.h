@@ -137,10 +137,10 @@ bool TwoPointArgumentParser::ParseArguments(
   arguments_out->points_table_1_->Init(vm["data_in"].as<std::string>());
   std::cout << "Finished reading in the data set.\n";
 
-  // Scale the dataset.
+  // Chromaticity 0 for first set
   std::cout << "Building the data tree.\n";
   arguments_out->points_table_1_->IndexData(
-    *(arguments_out->metric_), arguments_out->leaf_size_);
+    *(arguments_out->metric_), arguments_out->leaf_size_, 0);
   std::cout << "Finished building the data tree.\n";
 
   // Parse the query set and index the tree.
@@ -151,9 +151,10 @@ bool TwoPointArgumentParser::ParseArguments(
     arguments_out->points_table_2_->Init(vm["randoms_in"].as<std::string>());
     std::cout << "Finished reading in the random set.\n";
 
+    // Chromaticity 1 for second
     std::cout << "Building the query tree.\n";
     arguments_out->points_table_2_->IndexData(
-      *(arguments_out->metric_), arguments_out->leaf_size_);
+      *(arguments_out->metric_), arguments_out->leaf_size_, 1);
     std::cout << "Finished building the query tree.\n";
   }
   else {

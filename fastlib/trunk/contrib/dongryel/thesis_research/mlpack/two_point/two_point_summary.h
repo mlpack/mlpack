@@ -29,17 +29,19 @@ class TwoPointSummary {
              typename ResultType >
     bool CanSummarize(const GlobalType &global, DeltaType &delta,
                       const core::math::Range &squared_distance_range,
-                      TreeType *qnode, TreeType *rnode,
+                      TreeType *qnode, int qnode_rank,
+                      TreeType *rnode, int rnode_rank,
                       bool qnode_and_rnode_are_equal,
                       ResultType *query_results) {
 
 
-      // we're assuming the "query" node is the first one in the tuple
-      /*
-      if (global.is_monochromatic() && (qnode->end() <= rnode->begin())) {
+      
+      if ((qnode_rank == rnode_rank) 
+          && (rnode->end() <= qnode->begin())) {
+        //printf("symmetry prune \n");
         return true;
       }
-       */
+      
       // I think this is taken care of in the gnp code
 
       return((squared_distance_range.lo > global.upper_bound_sqr())
@@ -118,7 +120,8 @@ class TwoPointSummary {
       GlobalType &global,
       const PostponedType &postponed, DeltaType &delta,
       const core::math::Range &squared_distance_range,
-      TreeType *qnode, TreeType *rnode,
+      TreeType *qnode, int qnode_rank,
+      TreeType *rnode, int rnode_rank,
       bool qnode_and_rnode_are_equal,
       double failure_probability, ResultType *query_results) const {
 
