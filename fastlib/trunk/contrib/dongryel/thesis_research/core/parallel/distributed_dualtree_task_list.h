@@ -157,11 +157,11 @@ class DistributedDualtreeTaskList {
      */
     void pop_(const KeyType &subtable_id, bool count_as_query) {
 
-      if(sub_tables_.size() > 0) {
+      if(sub_tables_->size() > 0) {
 
         // Find the position in the subtable list.
         typename MapType::iterator remove_position_it =
-          this->id_to_position_map_.find(subtable_id);
+          id_to_position_map_->find(subtable_id);
 
         // This position should be valid, if there is at least one
         // subtable.
@@ -169,34 +169,35 @@ class DistributedDualtreeTaskList {
 
         // Remove as a query table.
         if(count_as_query) {
-          sub_tables_[remove_position].get<1>() = false;
+          (* sub_tables_)[remove_position].get<1>() = false;
         }
 
         // Otherwise, remove as a reference table by decrementing the
         // reference count.
         else {
-          sub_tables_[remove_position].get<2>()--;
+          (* sub_tables_)[remove_position].get<2>()--;
         }
 
         // If the subtable is no longer is referenced, we have to
         // remove it.
-        if((! sub_tables_[remove_position].get<1>()) &&
-            sub_tables_[remove_position].get<2>() == 0) {
+        if((!(* sub_tables_)[remove_position].get<1>()) &&
+            (* sub_tables_)[remove_position].get<2>() == 0) {
 
           // Overwrite with the last subtable in the list and decrement.
-          KeyType last_subtable_id = sub_tables_.back().get<0>()->subtable_id();
-          id_to_position_map_.erase(
-            sub_tables_[remove_position].get<0>()->subtable_id());
-          sub_tables_[ remove_position ].get<0>() =
-            sub_tables_.back().get<0>();
-          sub_tables_[ remove_position ].get<1>() =
-            sub_tables_.back().get<1>();
-          sub_tables_[ remove_position ].get<2>() =
-            sub_tables_.back().get<2>();
-          sub_tables_.pop_back();
-          id_to_position_map_.erase(last_subtable_id);
-          if(remove_position != static_cast<int>(sub_tables_.size()))  {
-            id_to_position_map_[ last_subtable_id ] = remove_position;
+          KeyType last_subtable_id =
+            sub_tables_->back().get<0>()->subtable_id();
+          id_to_position_map_->erase(
+            (* sub_tables_)[remove_position].get<0>()->subtable_id());
+          (* sub_tables_)[ remove_position ].get<0>() =
+            sub_tables_->back().get<0>();
+          (* sub_tables_)[ remove_position ].get<1>() =
+            sub_tables_->back().get<1>();
+          (* sub_tables_)[ remove_position ].get<2>() =
+            sub_tables_->back().get<2>();
+          sub_tables_->pop_back();
+          id_to_position_map_->erase(last_subtable_id);
+          if(remove_position != static_cast<int>(sub_tables_->size()))  {
+            (* id_to_position_map_)[ last_subtable_id ] = remove_position;
           }
         }
       }
@@ -223,7 +224,7 @@ class DistributedDualtreeTaskList {
 
       // Otherwise, try to see whether it can be stored.
       else {
-        sub_tables_->resize(sub_tables_.size() + 1);
+        sub_tables_->resize(sub_tables_->size() + 1);
 
         boost::intrusive_ptr< SubTableType > tmp_subtable(new SubTableType());
         sub_tables_->back().get<0>().swap(tmp_subtable);
@@ -239,7 +240,6 @@ class DistributedDualtreeTaskList {
         (* id_to_position_map_)[subtable_id] = sub_tables_->size() - 1;
         return sub_tables_->size() - 1;
       }
-      return -1;
     }
 
   public:

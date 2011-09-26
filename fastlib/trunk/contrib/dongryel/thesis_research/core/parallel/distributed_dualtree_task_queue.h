@@ -603,7 +603,6 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       const MetricType &metric_in,
       int neighbor_rank_in,
-      unsigned long int neighbor_remaining_extra_points_to_hold_in,
       TaskListType *extra_task_list_out) {
 
       // Lock the queue.
@@ -613,7 +612,6 @@ class DistributedDualtreeTaskQueue {
       // many tasks as possible.
       extra_task_list_out->Init(world, neighbor_rank_in, *this);
       for(int i = 0;
-          extra_task_list_out->remaining_extra_points_to_hold() > 0 &&
           i < static_cast<int>(query_subtables_.size()); i++) {
 
         // The policy is: (1) never to import back again the subtable
@@ -622,9 +620,10 @@ class DistributedDualtreeTaskQueue {
         // operation; (2) never to export query subtables that are
         // imported from other MPI processes.
         if(query_subtables_[i]->table()->rank() == world.rank() &&
+            can_be_exported_[i] &&
             extra_task_list_out->push_back(world, i)) {
           num_exported_query_subtables_++;
-          i--;
+          break;
         }
       }
     }

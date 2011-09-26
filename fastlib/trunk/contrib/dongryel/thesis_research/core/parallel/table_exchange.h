@@ -147,11 +147,6 @@ class TableExchange {
      */
     std::vector< int > message_locks_;
 
-    /** @brief Used for limiting the number of points cached in the
-     *         current MPI process.
-     */
-    unsigned long int remaining_extra_points_to_hold_;
-
     /** @brief The task queue associated with the current MPI process.
      */
     TaskQueueType *task_queue_;
@@ -295,13 +290,16 @@ class TableExchange {
       } // end of getting all routing acknowledgements.
     }
 
-    void BufferImmediateMessage_(boost::mpi::communicator &world) {
+    template<typename MetricType>
+    void BufferImmediateMessage_(
+      boost::mpi::communicator &world,
+      const MetricType &metric_in,
+      unsigned int neighbor) {
 
       // If any of the queued up flush requests is ready to be sent
       // out, then send out.
-      if(do_load_balancing_ &&
-          (! message_cache_[
-             world.rank()].flush_route().object_is_valid()) &&
+      if((! message_cache_[
+            world.rank()].flush_route().object_is_valid()) &&
           queued_up_query_subtables_[ stage_ ].size() > 0) {
 
         message_cache_[
@@ -323,6 +321,18 @@ class TableExchange {
         queued_up_query_subtables_[ stage_ ].pop_back();
         num_queued_up_query_subtables_--;
       } // end of dequeuing flush requests.
+
+      // If the current neighbor has less task than the self and the
+      // neighbor is in need of more tasks, then donate one query
+      // subtable.
+      if(needs_load_balancing_[ neighbor ].first &&
+          needs_load_balancing_[ neighbor ].second >
+          needs_load_balancing_[ world.rank()].second) {
+
+        task_queue_->PrepareExtraTaskList(
+          world, metric_in, neighbor,
+          & message_cache_[ world.rank()].extra_task_route().object());
+      }
     }
 
     void BufferInitialStageMessage_(
@@ -424,9 +434,6 @@ class TableExchange {
      */
     void EvictSubTable_(boost::mpi::communicator &world, int cache_id) {
       if(message_locks_[cache_id] == 0) {
-        remaining_extra_points_to_hold_ +=
-          message_cache_[
-            cache_id ].subtable_route().object().start_node()->count();
         this->ClearSubTable_(world, cache_id);
       }
       extra_receive_slots_.push_back(cache_id);
@@ -488,9 +495,6 @@ class TableExchange {
       message_cache_[
         receive_slot].subtable_route().object().set_cache_block_id(receive_slot);
       this->LockCache(receive_slot, num_referenced_as_reference_set);
-
-      // Decrement the number of extra points to receive.
-      remaining_extra_points_to_hold_ -= subtable_in.start_node()->count();
       return receive_slot;
     }
 
@@ -512,12 +516,6 @@ class TableExchange {
       }
       num_queued_up_query_subtables_++;
       queued_up_query_subtables_[ready_stage].push_back(query_subtable_in);
-    }
-
-    /** @brief Returns the number of extra points that can be held.
-     */
-    unsigned long int remaining_extra_points_to_hold() const {
-      return remaining_extra_points_to_hold_;
     }
 
     /** @brief Used for prioritizing tasks, favoring subtables that
@@ -597,7 +595,6 @@ class TableExchange {
       max_stage_ = 0;
       num_queued_up_query_subtables_ = 0;
       reference_table_ = NULL;
-      remaining_extra_points_to_hold_ = 0;
       stage_ = 0;
       task_queue_ = NULL;
       total_num_locks_ = 0;
@@ -674,10 +671,6 @@ class TableExchange {
       DistributedTableType *reference_table_in,
       TaskQueueType *task_queue_in) {
 
-      // The maximum number of points to hold at a given moment.
-      remaining_extra_points_to_hold_ =
-        max_subtree_size_in * world.size();
-
       // Load balancing option.
       needs_load_balancing_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
@@ -729,11 +722,17 @@ class TableExchange {
       std::vector <
       SubTableRouteRequestType > &hashed_essential_reference_subtrees_to_send) {
 
-      // The ID of the received subtables.
-      std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
-
       // Proceed with the stage, if ready.
       if(this->ReadyForStage_(world)) {
+
+        // The ID of the received subtables.
+        std::vector< boost::tuple<int, int, int, int> > received_subtable_ids;
+
+        // Exchange with the current neighbor.
+        unsigned int num_subtables_to_exchange = (1 << stage_);
+        unsigned int neighbor = world.rank() ^(1 << stage_);
+        unsigned int lower_bound_send = (world.rank() >> stage_) << stage_;
+        unsigned int lower_bound_receive = (neighbor >> stage_) << stage_;
 
         // Clear the list of received subtables in this round.
         received_subtable_ids.resize(0);
@@ -747,13 +746,10 @@ class TableExchange {
 
         // Send any of the queued up messages that can be sent
         // immediately in this stage.
-        this->BufferImmediateMessage_(world);
+        if(do_load_balancing_) {
+          this->BufferImmediateMessage_(world, metric_in, neighbor);
+        }
 
-        // Exchange with the current neighbor.
-        unsigned int num_subtables_to_exchange = (1 << stage_);
-        unsigned int neighbor = world.rank() ^(1 << stage_);
-        unsigned int lower_bound_send = (world.rank() >> stage_) << stage_;
-        unsigned int lower_bound_receive = (neighbor >> stage_) << stage_;
         for(unsigned int i = 0; i < num_subtables_to_exchange; i++) {
           unsigned int subtable_send_index = i + lower_bound_send;
           MessageType &send_request_object =
