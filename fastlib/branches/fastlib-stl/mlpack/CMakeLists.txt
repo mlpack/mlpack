@@ -17,8 +17,8 @@ set(FASTLIB_INCLUDE_DIR ${FASTLIB_BASE_DIR}/include )
 #   "Directory where the fastlib library is installed." )
 # set(FASTLIB_INCLUDE_DIR ${FASTLIB_BASE_DIR}/include CACHE PATH
 #   "Directory where the fastlib headers are installed." )
-#     
-# mark_as_advanced(FASTLIB_LIB_DIR FASTLIB_INCLUDE_DIR) 
+#
+# mark_as_advanced(FASTLIB_LIB_DIR FASTLIB_INCLUDE_DIR)
 
 ##? add_library ?
 find_library(FASTLIB_LIB fastlib ${FASTLIB_LIB_DIR})
@@ -38,7 +38,7 @@ set(DIRS
     fastica
     hmm
     infomax_ica
-#    kernel_pca  # requires sparse 
+#    kernel_pca  # requires sparse
     #mog # requires optimization
     methods/nca
     #mvu # requires optimization
@@ -47,7 +47,6 @@ set(DIRS
     nnsvm
     # range_search  ##! uses contrib code
     regression
-    series_expansion
     svm
 )
 
