@@ -603,8 +603,7 @@ class TableExchange {
 
       // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
-             num_queued_up_query_subtables_ == 0 &&
-             stage_ == 0;
+             num_queued_up_query_subtables_ == 0;
     }
 
     /** @brief Pushes the completed computation amount to be
