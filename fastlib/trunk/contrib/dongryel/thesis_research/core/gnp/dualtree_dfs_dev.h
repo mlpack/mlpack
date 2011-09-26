@@ -318,7 +318,8 @@ bool DualtreeDfs<ProblemType>::CanProbabilisticSummarize_(
 
   return new_summary.CanProbabilisticSummarize(
            metric, problem_->global(), qnode_stat.postponed_, delta,
-           squared_distance_range, qnode, rnode, qnode_and_rnode_are_equal,
+           squared_distance_range, qnode, query_table_->rank(),
+           rnode, reference_table_->rank(), qnode_and_rnode_are_equal,
            failure_probability, query_results);
 }
 
