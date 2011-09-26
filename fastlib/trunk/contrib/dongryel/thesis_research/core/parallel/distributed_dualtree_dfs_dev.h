@@ -396,7 +396,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       } // end of finding a task.
 
       // Quit if all work is done.
-      work_left_to_do = !(distributed_tasks.can_terminate());
+      work_left_to_do = !(distributed_tasks.can_terminate(* world_));
     }
     while(work_left_to_do);
 

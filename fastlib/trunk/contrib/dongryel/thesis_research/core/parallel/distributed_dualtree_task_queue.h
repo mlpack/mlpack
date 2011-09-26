@@ -765,7 +765,7 @@ class DistributedDualtreeTaskQueue {
 
     /** @brief Determines whether the MPI process can terminate.
      */
-    bool can_terminate() const {
+    bool can_terminate(boost::mpi::communicator &world) const {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(
