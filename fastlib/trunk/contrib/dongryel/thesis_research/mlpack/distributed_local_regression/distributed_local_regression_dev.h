@@ -461,7 +461,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
   }
   arguments_out->reference_table_->IndexData(
     arguments_out->metric_, world, arguments_out->leaf_size_,
-    arguments_out->top_tree_sample_probability_);
+    arguments_out->top_tree_sample_probability_, 0);
 
   // Parse the query set and index the tree.
   if(vm.count("queries_in") > 0) {
@@ -492,7 +492,7 @@ bool DistributedLocalRegressionArgumentParser::ParseArguments(
     std::cout << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
       arguments_out->metric_, world, arguments_out->leaf_size_,
-      arguments_out->top_tree_sample_probability_);
+      arguments_out->top_tree_sample_probability_, 1);
     std::cout << "Finished building the query tree.\n";
   }
 
