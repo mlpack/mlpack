@@ -34,7 +34,7 @@ void StartComputation(boost::program_options::variables_map& vm) {
   init_timer.Start();
   mlpack::two_point::TwoPoint<TableType> alg;
   alg.Init(arguments,
-         (typename mlpack::two_point::TwoPoint<TableType>::GlobalType *) NULL);
+         (mlpack::two_point::TwoPoint<TableType>::GlobalType *) NULL);
   // alg.Init(arguments, (void *)NULL);
   init_timer.End();
   printf("%g seconds elapsed in initializing...\n",

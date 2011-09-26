@@ -44,7 +44,8 @@ class TwoPointSummary {
 
       return((squared_distance_range.lo > global.upper_bound_sqr())
              || (squared_distance_range.hi < global.lower_bound_sqr()));
-
+      //return false;
+      
     } // CanSummarize
 
     TwoPointSummary() {
@@ -81,6 +82,7 @@ class TwoPointSummary {
       return((squared_distance_range.lo > global.matcher_upper_bound_sq())
              || (squared_distance_range.hi < global.matcher_lower_bound_sq()));
 
+      //return false;
 
     } // CanSummarize
 
