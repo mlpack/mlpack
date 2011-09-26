@@ -4,16 +4,19 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
+   # Trees
    general_spacetree.h
    # Metric tree
    gen_metric_tree.h
    gen_metric_tree_impl.h
+   gen_metric_tree_impl.cc
    # Cosine tree
    cosine.h
    dconebound.h
    dconebound_impl.h
    gen_cosine_tree.h
    gen_cosine_tree_impl.h
+   gen_cosine_tree_impl.cc
    # Max-inner-product search class
    exact_max_ip.h
    exact_max_ip.cc
