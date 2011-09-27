@@ -7,7 +7,6 @@
 #ifndef MATH_KERNEL_H
 #define MATH_KERNEL_H
 
-#include "geometry.h"
 #include "math_lib.h"
 
 #include <math.h>

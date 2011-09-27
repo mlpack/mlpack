@@ -2,7 +2,6 @@
 
 #include "dataset.h"
 
-#include "../math/discrete.h"
 
 using arma::mat;
 
