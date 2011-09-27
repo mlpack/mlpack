@@ -61,7 +61,6 @@ class MessageType {
     void operator=(const MessageType &message_in) {
       do_load_balancing_ = message_in.do_load_balancing_;
       energy_route_ = message_in.energy_route();
-      extra_task_route_ = message_in.extra_task_route();
       flush_route_ = message_in.flush_route();
       load_balance_route_ = message_in.load_balance_route();
       originating_rank_ = message_in.originating_rank();
