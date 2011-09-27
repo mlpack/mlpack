@@ -29,7 +29,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() :
  *Specifies the box size, but not dimensionality.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) :
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(arma::vec box) :
       bounds_(new DRange[box.n_rows]),
       dim_(box.n_rows),
       box_size_(box) {
@@ -40,7 +40,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(vec box) :
  * set and a box with said dimensionality.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(size_t dimension, vec box) :
+DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(size_t dimension, arma::vec box) :
       box_size_(box),
       bounds_(new DRange[dimension]),
       dim_(dimension) {
@@ -61,7 +61,7 @@ DHrectPeriodicBound<t_pow>::~DHrectPeriodicBound() {
  * Modifies the box_size_ to the desired dimenstions.
  */
 template<int t_pow>
-void DHrectPeriodicBound<t_pow>::SetBoxSize(vec box) {
+void DHrectPeriodicBound<t_pow>::SetBoxSize(arma::vec box) {
   box_size_ = box;
 }
 
@@ -69,7 +69,7 @@ void DHrectPeriodicBound<t_pow>::SetBoxSize(vec box) {
  * Returns the box_size_ vector.
  */
 template<int t_pow>
-vec DHrectPeriodicBound<t_pow>::GetBoxSize() {
+arma::vec DHrectPeriodicBound<t_pow>::GetBoxSize() {
   return box_size_;
 }
 
@@ -128,7 +128,7 @@ void DHrectPeriodicBound<t_pow>::SetSize(size_t dim) {
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool DHrectPeriodicBound<t_pow>::Contains(const vec& point) const {
+bool DHrectPeriodicBound<t_pow>::Contains(const arma::vec& point) const {
   for (size_t i = 0; i < point.n_elem; i++) {
     if (!bounds_[i].Contains(point(i))) {
       return false;
@@ -168,7 +168,7 @@ double DHrectPeriodicBound<t_pow>::CalculateMaxDistanceSq() const {
 
 /** Calculates the midpoint of the range */
 template<int t_pow>
-void DHrectPeriodicBound<t_pow>::CalculateMidpoint(vec& centroid) const {
+void DHrectPeriodicBound<t_pow>::CalculateMidpoint(arma::vec& centroid) const {
   // set size correctly if necessary
   if(!(centroid.n_elem == dim_))
     centroid.set_size(dim_);
@@ -182,7 +182,7 @@ void DHrectPeriodicBound<t_pow>::CalculateMidpoint(vec& centroid) const {
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MinDistanceSq(const vec& point) const {
+double DHrectPeriodicBound<t_pow>::MinDistanceSq(const arma::vec& point) const {
   double sum = 0;
 
   for (size_t d = 0; d < dim_; d++){
@@ -229,7 +229,7 @@ double DHrectPeriodicBound<t_pow>::MinDistanceSq(const DHrectPeriodicBound& othe
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const vec& point) const {
+double DHrectPeriodicBound<t_pow>::MaxDistanceSq(const arma::vec& point) const {
   double sum = 0;
 
   for (size_t d = 0; d < dim_; d++) {
@@ -352,7 +352,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& ot
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const vec& point) const {
+DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -455,7 +455,7 @@ double DHrectPeriodicBound<t_pow>::MidDistanceSq(const DHrectPeriodicBound& othe
  * Expands this region to include a new point.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const vec& vector) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const arma::vec& vector) {
   mlpack::IO::Assert(vector.n_elem == dim_);
 
   for (size_t i = 0; i < dim_; i++) {
@@ -485,8 +485,8 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::operator|=(const DHrectP
  * minimize added volume in periodic coordinates.
  */
 template<int t_pow>
-DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other,
-                                                            const vec& size) {
+DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const arma::vec& other,
+                                                            const arma::vec& size) {
   mlpack::IO::Assert(other.n_elem == dim_);
   // Catch case of uninitialized bounds
   if (bounds_[0].hi < 0){
@@ -517,7 +517,7 @@ DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const vec& other,
  */
 template<int t_pow>
 DHrectPeriodicBound<t_pow>& DHrectPeriodicBound<t_pow>::Add(const DHrectPeriodicBound& other,
-                                                            const vec& size){
+                                                            const arma::vec& size){
   if (bounds_[0].hi < 0){
     for (size_t i = 0; i < dim_; i++){
       bounds_[i] |= other.bounds_[i];

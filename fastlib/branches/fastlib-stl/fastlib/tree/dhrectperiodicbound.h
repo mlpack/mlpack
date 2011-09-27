@@ -28,7 +28,7 @@ class DHrectPeriodicBound {
   private:
     DRange *bounds_;
     size_t dim_;
-    vec box_size_;
+    arma::vec box_size_;
 
   public:
     /**
@@ -39,13 +39,13 @@ class DHrectPeriodicBound {
     /**
      *Specifies the box size, but not dimensionality.
      */
-    DHrectPeriodicBound(vec box);
+    DHrectPeriodicBound(arma::vec box);
 
     /**
      * Initializes to specified dimensionality with each dimension the empty
      * set.
      */
-    DHrectPeriodicBound(size_t dimension, vec box);
+    DHrectPeriodicBound(size_t dimension, arma::vec box);
 
     /**
      * Destructor: clean up memory.
@@ -55,12 +55,12 @@ class DHrectPeriodicBound {
     /**
      * Modifies the box_size_ to the desired dimenstions.
      */
-    void SetBoxSize(vec box);
+    void SetBoxSize(arma::vec box);
 
     /**
      * Returns the box_size_ vector.
      */
-    vec GetBoxSize();
+    arma::vec GetBoxSize();
 
     /**
      * Makes this (uninitialized) box the average of the two arguments,
