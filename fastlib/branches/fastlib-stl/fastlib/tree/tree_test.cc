@@ -14,6 +14,7 @@
 using namespace mlpack;
 using namespace mlpack::tree;
 using namespace mlpack::kernel;
+using namespace mlpack::bound;
 
 BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
 
@@ -92,50 +93,46 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
 //  BOOST_REQUIRE(r3.Contains(vector));
 }
 
-BOOST_AUTO_TEST_CASE(TestDHrectBound) {
-  DHrectBound<> r1(2);
-  DHrectBound<> r2(2);
+BOOST_AUTO_TEST_CASE(TestHRectBound) {
+  HRectBound<> r1(2);
+  HRectBound<> r2(2);
 
-  //Two squares with length 2, with 1 distance apart along the x-axis.
+  // Two squares with length 2, with 1 distance apart along the x-axis.
   r1[0].Init(0.0, 2.0);
   r1[1].Init(0.0, 2.0);
   r2[0].Init(3.0, 5.0);
   r2[1].Init(0.0, 2.0);
 
-  //A point at (1,1)
+  // A point at (1,1)
   arma::vec vector(2);
   vector[0] = 1.0;
   vector[1] = 1.0;
 
   BOOST_REQUIRE(r1.Contains(vector));
   BOOST_REQUIRE(!r2.Contains(vector));
-  BOOST_REQUIRE_CLOSE(r1.CalculateMaxDistanceSq(), 8.0, 1e-5);
 
-  r2.CalculateMidpoint(vector);
+  r2.Centroid(vector);
   BOOST_REQUIRE_CLOSE(vector[0], 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(vector[1], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(r2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDistance(r2), 1.0, 1e-5);
 
   vector[0] = 4.0;
   vector[1] = 2.0;
-  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(r2, vector), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinDistanceSq(vector), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MaxDistanceSq(vector), 20.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MaxDistanceSq(r2), 29.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinDelta(r2, 3.0, 0), -1.5, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MaxDelta(r2, 3.0, 0), 1.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDistance(r2, vector), 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinDistance(vector), 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MaxDistance(vector), 20.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MaxDistance(r2), 29.0, 1e-5);
 
-  DRange range = r1.RangeDistanceSq(r2);
+  DRange range = r1.RangeDistance(r2);
   BOOST_REQUIRE_CLOSE(range.lo, 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(range.hi, 29.0, 1e-5);
 
-  range = r1.RangeDistanceSq(vector);
+  range = r1.RangeDistance(vector);
   BOOST_REQUIRE_CLOSE(range.lo, 4.0, 1e-5);
   BOOST_REQUIRE_CLOSE(range.hi, 20.0, 1e-5);
 
-  BOOST_REQUIRE_CLOSE(r1.MinToMidSq(r2), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinimaxDistanceSq(r2), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MidDistanceSq(r2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MinimaxDistance(r2), 9.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(r1.MidDistance(r2), 9.0, 1e-5);
 
   vector[0] = 6.0;
   vector[1] = 3.0;
@@ -154,14 +151,6 @@ BOOST_AUTO_TEST_CASE(TestDHrectBound) {
   size[1] = 2.0;
   vector[0] = 3.0;
   vector[1] = 1.0;
-
-  //Does not work yet.
-//  DHrectBound<> r3 = r1.Add(vector, size);
-//  BOOST_REQUIRE(r3.Contains(vector));
-
-//  DHrectBound<> r3 = r1.Add(r2, size);
-//  BOOST_REQUIRE(r3.Contains(vector));
-
 
 }
 
@@ -232,7 +221,7 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
 
   // Leaf size of 1.
   IO::GetParam<int>("tree/leaf_size") = 1;
-  BinarySpaceTree<DHrectBound<2> > root_node(dataset);
+  BinarySpaceTree<HRectBound<2> > root_node(dataset);
 
   BOOST_REQUIRE(root_node.count() == 6);
   BOOST_REQUIRE(root_node.left()->count() == 3);
