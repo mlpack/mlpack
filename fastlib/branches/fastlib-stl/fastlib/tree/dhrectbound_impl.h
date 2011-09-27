@@ -2,11 +2,10 @@
  * @file tree/dhrectbound_impl.h
  *
  * Implementation of hyper-rectangle bound policy class.
- * Template parameter t_pow is the metric to use; use 2 for Euclidian (L2).
+ * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  *
  * @experimental
  */
-
 #ifndef TREE_DHRECTBOUND_IMPL_H
 #define TREE_DHRECTBOUND_IMPL_H
 
@@ -14,13 +13,17 @@
 
 #include "../math/math_lib.h"
 
-using arma::vec;
+// In case it has not been included yet.
+#include "dhrectbound.h"
+
+namespace mlpack {
+namespace bound {
 
 /**
  * Empty constructor
  */
 template<int t_pow>
-DHrectBound<t_pow>::DHrectBound() {
+HRectBound<t_pow>::HRectBound() {
   bounds_ = NULL;
   dim_ = 0;
 }
@@ -30,53 +33,27 @@ DHrectBound<t_pow>::DHrectBound() {
  * set.
  */
 template<int t_pow>
-DHrectBound<t_pow>::DHrectBound(size_t dimension) {
+HRectBound<t_pow>::HRectBound(size_t dimension) {
   bounds_ = new DRange[dimension];
 
   dim_ = dimension;
-  Reset();
+  Clear();
 }
 
 /**
  * Destructor: clean up memory
  */
 template<int t_pow>
-DHrectBound<t_pow>::~DHrectBound() {
+HRectBound<t_pow>::~HRectBound() {
   if(bounds_)
     delete[] bounds_;
-}
-
-/**
- * Makes this (uninitialized) box the average of the two arguments,
- * i.e. the max and min of each range is the average of the maxes and mins
- * of the arguments.
- *
- * Added by: Bill March, 5/7
- */
-template<int t_pow>
-void DHrectBound<t_pow>::AverageBoxesInit(const DHrectBound& box1,
-                                          const DHrectBound& box2) {
-
-  dim_ = box1.dim();
-  mlpack::IO::Assert(dim_ == box2.dim());
-
-  if(bounds_)
-    delete[] bounds_;
-  bounds_ = new DRange[dim_];
-
-  for (size_t i = 0; i < dim_; i++) {
-    DRange range;
-    range = box1.get(i) +  box2.get(i);
-    range *= 0.5;
-    bounds_[i] = range;
-  }
 }
 
 /**
  * Resets all dimensions to the empty set.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::Reset() {
+void HRectBound<t_pow>::Clear() {
   for (size_t i = 0; i < dim_; i++) {
     bounds_[i].InitEmptySet();
   }
@@ -86,20 +63,20 @@ void DHrectBound<t_pow>::Reset() {
  * Sets the dimensionality.
  */
 template<int t_pow>
-void DHrectBound<t_pow>::SetSize(size_t dim) {
+void HRectBound<t_pow>::SetSize(size_t dim) {
   if(bounds_)
     delete[] bounds_;
 
   bounds_ = new DRange[dim];
   dim_ = dim;
-  Reset();
+  Clear();
 }
 
 /**
  * Determines if a point is within this bound.
  */
 template<int t_pow>
-bool DHrectBound<t_pow>::Contains(const vec& point) const {
+bool HRectBound<t_pow>::Contains(const arma::vec& point) const {
   for (size_t i = 0; i < point.n_elem; i++) {
     if (!bounds_[i].Contains(point(i))) {
       return false;
@@ -113,7 +90,7 @@ bool DHrectBound<t_pow>::Contains(const vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectBound<t_pow>::operator[](size_t i) const {
+const DRange HRectBound<t_pow>::operator[](size_t i) const {
   return bounds_[i];
 }
 
@@ -121,25 +98,17 @@ const DRange DHrectBound<t_pow>::operator[](size_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-DRange& DHrectBound<t_pow>::operator[](size_t i) {
+DRange& HRectBound<t_pow>::operator[](size_t i) {
   return bounds_[i];
 }
 
-/**
- * Calculates the maximum distance within the rectangle
+/***
+ * Calculates the centroid of the range, placing it into the given vector.
+ *
+ * @param centroid Vector which the centroid will be written to.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::CalculateMaxDistanceSq() const {
-  double max_distance = 0;
-  for (size_t i = 0; i < dim_; i++)
-    max_distance += pow(bounds_[i].width(), 2);
-
-  return max_distance;
-}
-
-/** Calculates the midpoint of the range */
-template<int t_pow>
-void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
+void HRectBound<t_pow>::Centroid(arma::vec& centroid) const {
   // set size correctly if necessary
   if(!(centroid.n_elem == dim_))
     centroid.set_size(dim_);
@@ -150,16 +119,16 @@ void DHrectBound<t_pow>::CalculateMidpoint(vec& centroid) const {
 }
 
 /**
- * Calcualtes minimum bound-to-bound squared distance, with
+ * Calculates minimum bound-to-bound squared distance, with
  * an offset between their respective coordinate systems.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
-                                         const vec& offset) const {
+double HRectBound<t_pow>::MinDistance(const HRectBound& other,
+                                      const arma::vec& offset) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
-  //Add Debug for offset vector
+  assert(dim_ == other.dim_);
+  assert(dim_ == offset.n_elem);
 
   for(size_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].lo - offset[d] - bounds_[d].hi;
@@ -177,8 +146,8 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other,
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
-  mlpack::IO::Assert(point.n_elem == dim_);
+double HRectBound<t_pow>::MinDistance(const arma::vec& point) const {
+  assert(point.n_elem == dim_);
 
   double sum = 0;
   const DRange* mbound = bounds_;
@@ -209,8 +178,8 @@ double DHrectBound<t_pow>::MinDistanceSq(const vec& point) const {
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
-  mlpack::IO::Assert(dim_ == other.dim_);
+double HRectBound<t_pow>::MinDistance(const HRectBound& other) const {
+  assert(dim_ == other.dim_);
 
   double sum = 0;
   const DRange* mbound = bounds_;
@@ -237,10 +206,10 @@ double DHrectBound<t_pow>::MinDistanceSq(const DHrectBound& other) const {
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
+double HRectBound<t_pow>::MaxDistance(const arma::vec& point) const {
   double sum = 0;
 
-  mlpack::IO::Assert(point.n_elem == dim_);
+  assert(point.n_elem == dim_);
 
   for (size_t d = 0; d < dim_; d++) {
     double v = fabs(std::max(
@@ -256,10 +225,10 @@ double DHrectBound<t_pow>::MaxDistanceSq(const vec& point) const {
  * Computes maximum distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
+double HRectBound<t_pow>::MaxDistance(const HRectBound& other) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  assert(dim_ == other.dim_);
 
   double v;
   for(size_t d = 0; d < dim_; d++) {
@@ -272,57 +241,15 @@ double DHrectBound<t_pow>::MaxDistanceSq(const DHrectBound& other) const {
   return pow(sum, 2.0 / (double) t_pow);
 }
 
-
-
-template<int t_pow>
-double DHrectBound<t_pow>::MaxDelta(const DHrectBound& other, double box_width,
-                                    int dim) const {
-  double result = 0.5 * box_width;
-  double temp = other.bounds_[dim].hi - bounds_[dim].lo;
-  temp = temp - floor(temp / box_width) * box_width;
-  if (temp > box_width / 2) {
-    temp = other.bounds_[dim].lo - bounds_[dim].hi;
-    temp = temp - floor(temp / box_width) * box_width;
-    if (temp > box_width / 2) {
-      result = other.bounds_[dim].hi - bounds_[dim].lo;
-      result = result - floor(temp / box_width + 1) * box_width;
-    }
-  } else {
-    result = temp;
-  }
-
-  return result;
-}
-
-template<int t_pow>
-double DHrectBound<t_pow>::MinDelta(const DHrectBound& other, double box_width,
-                                    int dim) const {
-  double result = -0.5 * box_width;
-  double temp = other.bounds_[dim].hi - bounds_[dim].lo;
-  temp = temp - floor(temp / box_width) * box_width;
-  if (temp > box_width / 2) {
-    temp = other.bounds_[dim].hi - bounds_[dim].hi;
-    temp -= floor(temp / box_width) * box_width;
-    if (temp > box_width / 2)
-      result = temp - box_width;
-
-  } else {
-    temp = other.bounds_[dim].hi - bounds_[dim].hi;
-    result = temp - floor(temp / box_width) * box_width;
-  }
-
-  return result;
-}
-
 /**
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
+DRange HRectBound<t_pow>::RangeDistance(const HRectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  assert(dim_ == other.dim_);
 
   double v1, v2, v_lo, v_hi;
   for (size_t d = 0; d < dim_; d++) {
@@ -349,11 +276,11 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const DHrectBound& other) const {
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
+DRange HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
-  mlpack::IO::Assert(point.n_elem == dim_);
+  assert(point.n_elem == dim_);
 
   double v1, v2, v_lo, v_hi;
   for(size_t d = 0; d < dim_; d++) {
@@ -377,43 +304,13 @@ DRange DHrectBound<t_pow>::RangeDistanceSq(const vec& point) const {
 }
 
 /**
- * Calculates closest-to-their-midpoint bounding box distance,
- * i.e. calculates their midpoint and finds the minimum box-to-point
- * distance.
- *
- * Equivalent to:
- * <code>
- * other.CalcMidpoint(&other_midpoint)
- * return MinDistanceSqToPoint(other_midpoint)
- * </code>
- */
-template<int t_pow>
-double DHrectBound<t_pow>::MinToMidSq(const DHrectBound& other) const {
-  double sum = 0;
-
-  mlpack::IO::Assert(dim_ == other.dim_);
-
-  for (size_t d = 0; d < dim_; d++) {
-    double v = other.bounds_[d].mid();
-    double v1 = bounds_[d].lo - v;
-    double v2 = v - bounds_[d].hi;
-
-    v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-    sum += pow(v, (double) t_pow); // v is non-negative
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
-}
-
-/**
  * Computes minimax distance, where the other node is trying to avoid me.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
+double HRectBound<t_pow>::MinimaxDistance(const HRectBound& other) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  assert(dim_ == other.dim_);
 
   for(size_t d = 0; d < dim_; d++) {
     double v1 = other.bounds_[d].hi - bounds_[d].hi;
@@ -430,10 +327,10 @@ double DHrectBound<t_pow>::MinimaxDistanceSq(const DHrectBound& other) const {
  * Calculates midpoint-to-midpoint bounding box distance.
  */
 template<int t_pow>
-double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
+double HRectBound<t_pow>::MidDistance(const HRectBound& other) const {
   double sum = 0;
 
-  mlpack::IO::Assert(dim_ == other.dim_);
+  assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++) {
     // take the midpoint of each dimension (left multiplied by two for
@@ -451,8 +348,8 @@ double DHrectBound<t_pow>::MidDistanceSq(const DHrectBound& other) const {
  * Expands this region to include a new point.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
-  mlpack::IO::Assert(vector.n_elem == dim_);
+HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const arma::vec& vector) {
+  assert(vector.n_elem == dim_);
 
   for (size_t i = 0; i < dim_; i++) {
     bounds_[i] |= vector[i];
@@ -465,8 +362,8 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const vec& vector) {
  * Expands this region to encompass another bound.
  */
 template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
-  mlpack::IO::Assert(other.dim_ == dim_);
+HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other) {
+  assert(other.dim_ == dim_);
 
   for (size_t i = 0; i < dim_; i++) {
     bounds_[i] |= other.bounds_[i];
@@ -475,79 +372,7 @@ DHrectBound<t_pow>& DHrectBound<t_pow>::operator|=(const DHrectBound& other) {
   return *this;
 }
 
-
-/**
- * Expand this bounding box to encompass another point. Done to
- * minimize added volume in periodic coordinates.
- */
-template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const vec& other, const vec& size) {
-  mlpack::IO::Assert(other.n_elem == dim_);
-  // Catch case of uninitialized bounds
-  if (bounds_[0].hi < 0){
-    for (size_t i = 0; i < dim_; i++){
-      bounds_[i] |= other[i];
-    }
-  }
-
-  for (size_t i= 0; i < dim_; i++){
-    double ah, al;
-    ah = bounds_[i].hi - other[i];
-    al = bounds_[i].lo - other[i];
-    ah = ah - floor(ah / size[i]) * size[i];
-    al = al - floor(al / size[i]) * size[i];
-    if (ah < al) {
-      if (size[i] - ah < al) {
-        bounds_[i].hi = other[i];
-      } else {
-        bounds_[i].lo = other[i];
-      }
-    }
-  }
-  return *this;
-}
-
-/**
- * Expand this bounding box in periodic coordinates, minimizing added volume.
- */
-template<int t_pow>
-DHrectBound<t_pow>& DHrectBound<t_pow>::Add(const DHrectBound& other,
-                                            const vec& size){
-  if (bounds_[0].hi < 0){
-    for (size_t i = 0; i < dim_; i++){
-      bounds_[i] |= other.bounds_[i];
-    }
-  }
-
-  for (size_t i = 0; i < dim_; i++) {
-    double ah, al, bh, bl;
-    ah = bounds_[i].hi;
-    al = bounds_[i].lo;
-    bh = other.bounds_[i].hi;
-    bl = other.bounds_[i].lo;
-    ah = ah - al;
-    bh = bh - al;
-    bl = bl - al;
-    ah = ah - floor(ah / size[i]) * size[i];
-    bh = bh - floor(bh / size[i]) * size[i];
-    bl = bl - floor(bl / size[i]) * size[i];
-
-    if (((bh > ah) & ((bh < bl) | (ah > bl))) ||
-        ((bh >= bl) & (bl > ah) & (bh < ah -bl + size[i]))){
-      bounds_[i].hi = other.bounds_[i].hi;
-    }
-
-    if (bl > ah && ((bl > bh) || (bh >= ah -bl + size[i]))){
-      bounds_[i].lo = other.bounds_[i].lo;
-    }
-
-    if ((ah > bl) & (bl > bh)){
-      bounds_[i].lo = 0;
-      bounds_[i].hi = size[i];
-    }
-  }
-
-  return *this;
-}
+}; // namespace bound
+}; // namespace mlpack
 
 #endif
