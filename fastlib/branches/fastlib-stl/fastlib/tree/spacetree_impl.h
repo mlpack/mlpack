@@ -73,7 +73,6 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
   for (size_t i = 0; i < data.n_cols; i++)
     new_from_old[old_from_new[i]] = i;
 
-  IO::Debug << "old from new is " << std::endl;
   for (size_t i = 0; i < data.n_cols; i++) {
     IO::Debug << old_from_new[i] << " ";
   }
