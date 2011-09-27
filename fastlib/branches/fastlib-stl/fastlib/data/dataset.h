@@ -17,7 +17,6 @@
 #include <vector>
 
 #include "fastlib/fx/io.h"
-#include "../math/discrete.h"
 #include "../file/textfile.h"
 #include "../col/tokenizer.h"
 

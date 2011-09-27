@@ -4,10 +4,7 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   discrete.h
-   discrete.cc
-   geometry.h
-   geometry.cc
+   
    kernel.h
    math_lib.h
    math_lib_impl.h

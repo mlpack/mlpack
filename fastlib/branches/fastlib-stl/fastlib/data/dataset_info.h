@@ -16,7 +16,6 @@
 #include <string>
 #include <vector>
 
-#include "../math/discrete.h"
 #include "../file/textfile.h"
 
 #include "dataset_feature.h"
