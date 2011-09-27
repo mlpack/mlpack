@@ -174,9 +174,19 @@ void IO::AssertMessage(bool condition, const char* message) {
  */
 bool IO::HasParam(const char* identifier) {
   std::string key = std::string(identifier);
-
+  
+  //Does the parameter exist at all?
   int isInVmap = GetSingleton().vmap.count(key);
   int isInGmap = GetSingleton().globalValues.count(key);
+
+  //Lets check if the parameter is boolean, if it is we just want to see 
+  //If it was passed at program initiation.
+  OptionsHierarchy* node = IO::GetSingleton().hierarchy.FindNode(key);
+  if(node) {//Sanity check
+    OptionsData data = node->GetNodeData();
+    if(data.tname == std::string(TYPENAME(bool))) //Actually check if its bool
+      return IO::GetParam<bool>(identifier);
+  }
 
   //Return true if we have a defined value for identifier
   return (isInVmap || isInGmap);

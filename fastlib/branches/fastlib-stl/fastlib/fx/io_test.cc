@@ -73,13 +73,14 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
  */
 BOOST_AUTO_TEST_CASE(TestIOAdd) {
   // Check that the IO::HasParam returns false if no value has been specified
-  // on the commandline or programmatically.
+  // on the commandline and ignores any programmatical assignments.
   IO::Add<bool>("bool", "True or False", "global");
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), false);
   IO::GetParam<bool>("global/bool") = true;
-  // IO::HasParam should return true now.
+  // IO::HasParam should return true.
   BOOST_REQUIRE_EQUAL(IO::HasParam("global/bool"), true);
- 
+
+  //Check the description of our variable.
   BOOST_REQUIRE_EQUAL(IO::GetDescription("global/bool").compare(
       std::string("True or False")) , 0);
   // Check that SanitizeString is sanitary.
