@@ -195,28 +195,6 @@ class TableExchange {
           message_cache_[
             receive_process_rank ].flush_route().object().Destruct();
         }
-
-        // Invalidate the sent task list.
-        if(message_cache_[
-              send_process_rank].extra_task_route().object_is_valid() &&
-            message_cache_[
-              send_process_rank ].extra_task_route().num_destinations() == 0) {
-          message_cache_[
-            send_process_rank].extra_task_route().object().clear();
-          message_cache_[
-            send_process_rank].extra_task_route().set_object_is_valid_flag(false);
-        }
-
-        // Invalidate the received task list.
-        if(message_cache_[
-              receive_process_rank].extra_task_route().object_is_valid() &&
-            message_cache_[
-              receive_process_rank ].extra_task_route().num_destinations() == 0) {
-          message_cache_[
-            receive_process_rank].extra_task_route().object().clear();
-          message_cache_[
-            receive_process_rank].extra_task_route().set_object_is_valid_flag(false);
-        }
       }
     }
 
@@ -312,12 +290,11 @@ class TableExchange {
 
             // Get extra task from the neighboring process if
             // available.
-            if(route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
-                route_request.extra_task_route().object_is_valid()) {
-
-              route_request.extra_task_route().object().Export(
+            if(tmp_route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
+                tmp_route_request.extra_task_route().object_is_valid()) {
+              tmp_route_request.extra_task_route().object().Export(
                 world, metric_in,
-                route_request.originating_rank(), task_queue_);
+                tmp_route_request.originating_rank(), task_queue_);
             }
 
           } // end of load balancing case.
@@ -537,6 +514,14 @@ class TableExchange {
       message_cache_[receive_slot].subtable_route().set_object_is_valid_flag(true);
       message_cache_[
         receive_slot].subtable_route().object().set_cache_block_id(receive_slot);
+      message_cache_[
+        receive_slot ].flush_route().set_object_is_valid_flag(false);
+      message_cache_[
+        receive_slot ].extra_task_route().set_object_is_valid_flag(false);
+      message_cache_[
+        receive_slot ].set_do_load_balancing_flag(do_load_balancing_);
+
+      // Lock the cache.
       this->LockCache(receive_slot, num_referenced_as_reference_set);
       return receive_slot;
     }
