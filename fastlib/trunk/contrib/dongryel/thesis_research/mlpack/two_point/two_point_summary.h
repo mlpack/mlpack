@@ -34,20 +34,17 @@ class TwoPointSummary {
                       bool qnode_and_rnode_are_equal,
                       ResultType *query_results) {
 
-
-      
-      if ((qnode_rank == rnode_rank) 
-          && (rnode->end() <= qnode->begin())) {
-        //printf("symmetry prune \n");
+      if((qnode_rank == rnode_rank  && rnode->end() <= qnode->begin()) ||
+          (global.is_monochromatic() &&  qnode_rank > rnode_rank)) {
         return true;
       }
-      
+
       // I think this is taken care of in the gnp code
 
       return((squared_distance_range.lo > global.upper_bound_sqr())
              || (squared_distance_range.hi < global.lower_bound_sqr()));
       //return false;
-      
+
     } // CanSummarize
 
     TwoPointSummary() {
