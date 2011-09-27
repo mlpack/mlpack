@@ -34,11 +34,11 @@ namespace mlpack {
        */
       int leaf_size_;
       
-      /** @brief The pointer to the distributed reference table.
+      /** @brief The pointer to the distributed data table.
        */
       DistributedTableType *points_table_1_;
       
-      /** @brief The pointer to the distributed query table.
+      /** @brief The pointer to the distributed random table.
        */
       DistributedTableType *points_table_2_;
       
@@ -46,14 +46,6 @@ namespace mlpack {
        *         building the top sample tree.
        */
       double top_tree_sample_probability_;
-      
-      /** @brief The name of the kernel.
-       */
-      std::string kernel_;
-      
-      /** @brief The type of series expansion used.
-       */
-      std::string series_expansion_type_;
       
       /** @brief The metric that is being used.
        */

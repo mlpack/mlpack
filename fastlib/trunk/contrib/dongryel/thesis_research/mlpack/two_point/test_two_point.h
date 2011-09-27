@@ -84,6 +84,8 @@ namespace mlpack {
             if (matcher_lower_bound_sqr <= squared_distance 
                 && squared_distance <= matcher_upper_bound_sqr) {
               
+              printf("tuple: (%d, %d)\n", i, j);
+              
               num_tuples++;
               
             }

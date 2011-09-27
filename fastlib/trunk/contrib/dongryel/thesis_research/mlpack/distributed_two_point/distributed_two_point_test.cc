@@ -120,15 +120,14 @@ namespace mlpack {
         return 0;
       }
       
-      int StressTest(
-                     boost::mpi::communicator &world) {
+      int StressTest(boost::mpi::communicator &world) {
         
         // Typedef the trees and tables.
         typedef core::tree::GenMetricTree <
         mlpack::two_point::TwoPointStatistic> TreeSpecType;
         typedef core::table::DistributedTable <
         TreeSpecType, mlpack::two_point::TwoPointResult > DistributedTableType;
-        typedef typename DistributedTableType::TableType TableType;
+        typedef DistributedTableType::TableType TableType;
         
         // Only the master generates the number of dimensions.
         int num_dimensions;
@@ -136,7 +135,8 @@ namespace mlpack {
           num_dimensions = core::math::RandInt(2, 4);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        int num_points = core::math::RandInt(300, 500);
+        //int num_points = core::math::RandInt(300, 500);
+        int num_points = core::math::RandInt(3, 10);
         std::vector< std::string > args;
         
         // Push in the random generate command.
@@ -150,9 +150,11 @@ namespace mlpack {
         args.push_back(random_generate_n_entries_sstr.str());
         args.push_back("--random_generate");
         
+        //args.push_back("--num_threads_in=2");
+        
         // Push in the reference dataset name.
-        std::string references_in("random_dataset.csv");
-        args.push_back(std::string("--references_in=") + references_in);
+        std::string data_in("random_dataset.csv");
+        args.push_back(std::string("--data_in=") + data_in);
         
         // Push in the densities output file name.
         args.push_back(std::string("--counts_out=counts.txt"));
@@ -172,7 +174,8 @@ namespace mlpack {
         // Push in the leaf size.
         int leaf_size = 0;
         if(world.rank() == 0) {
-          leaf_size = core::math::RandInt(15, 25);
+          //leaf_size = core::math::RandInt(15, 25);
+          leaf_size = 100;
         }
         boost::mpi::broadcast(world, leaf_size, 0);
         std::stringstream leaf_size_sstr;
@@ -182,8 +185,8 @@ namespace mlpack {
         double matcher_distance;
         if (world.rank() == 0) {
           matcher_distance =
-          core::math::Random(0.1 * sqrt(mlpack::two_point::test_two_point::num_dimensions_),
-                             0.5 * sqrt(mlpack::two_point::test_two_point::num_dimensions_));
+          core::math::Random(0.1 * sqrt(num_dimensions),
+                             0.5 * sqrt(num_dimensions));
         }
         boost::mpi::broadcast(world, matcher_distance, 0);
         std::stringstream matcher_distance_sstr;
@@ -195,12 +198,20 @@ namespace mlpack {
         
         if (world.rank() == 0) {
         matcher_thickness =
-          core::math::Random(0.01 * sqrt(mlpack::two_point::test_two_point::num_dimensions_),
-                             0.025 * sqrt(mlpack::two_point::test_two_point::num_dimensions_));
+          core::math::Random(0.01 * sqrt(num_dimensions),
+                             0.025 * sqrt(num_dimensions));
         }
+        boost::mpi::broadcast(world, matcher_thickness, 0);
         std::stringstream matcher_thickness_sstr;
         matcher_thickness_sstr << "--matcher_thickness=" << matcher_thickness;
         args.push_back(matcher_thickness_sstr.str());
+        
+        /*
+        int num_threads = core::math::RandInt(1, 5);
+        std::stringstream num_threads_sstr;
+        num_threads_sstr << "--num_threads_in=" << num_threads;
+        args.push_back(num_threads_sstr.str());
+        */
         
         // Push in the randomly generate work parameters.
         double max_subtree_size;
@@ -228,7 +239,7 @@ namespace mlpack {
         mlpack::distributed_two_point::DistributedTwoPointArgumentParser::
         ConstructBoostVariableMap(world, args, &vm);
         mlpack::distributed_two_point::DistributedTwoPointArgumentParser::ParseArguments(
-                                                                              world, vm, &distributed_two_point_arguments);
+                  world, vm, &distributed_two_point_arguments);
         
         if(world.rank() == 0) {
           std::cout << "Matcher distance " << matcher_distance << "\n";
@@ -250,7 +261,7 @@ namespace mlpack {
         // For each process, check whether all the othe reference points
         // have been encountered.
         DistributedTableType *distributed_reference_table =
-        distributed_two_point_arguments.reference_table_;
+        distributed_two_point_arguments.points_table_1_;
                 
         // Call the ultra-naive.
         int ultra_naive_distributed_two_point_result;
@@ -263,23 +274,35 @@ namespace mlpack {
         CombineTables_(world, distributed_reference_table, combined_reference_table,
                        &total_distribution);
         
+        
         // TODO: IMPORTANT: make sure this is reading from the file too
         if(world.rank() == 0) {
+          printf("naive num points: %d\n", combined_reference_table.n_entries());
+          
           double naive_match = distributed_two_point_instance.global().matcher_distance();
           double naive_thick = distributed_two_point_instance.global().matcher_thickness();
           ultra_naive_distributed_two_point_result = mlpack::two_point::TestTwoPoint::UltraNaive(
-                                           *(distributed_two_point_arguments.metric_),
-                                           combined_reference_table, combined_reference_table,
-                                           true, naive_match, naive_thick);
+                           *(distributed_two_point_arguments.metric_),
+                           combined_reference_table, combined_reference_table,
+                           true, naive_match, naive_thick);
         }
         
         // The master broadcasts the ultranaive result to all processes,
         // each of which checks against it.
-        boost::mpi::broadcast(world, ultra_naive_distributed_two_point_result, 0);
+        boost::mpi::broadcast(world, ultra_naive_distributed_two_point_result, 
+                              0);
         
+        
+        printf("naive tuples: %d, distributed tuples: %d\n",
+               ultra_naive_distributed_two_point_result,
+               distributed_two_point_result.num_tuples_);
         if(distributed_two_point_result.num_tuples_ !=
                           ultra_naive_distributed_two_point_result) {
           std::cerr << "There is a problem!\n";
+          if (world.rank() == 0) {
+            std::string filename("problem_case.csv");
+            combined_reference_table.Save(filename);
+          }
           exit(-1);
         }
         

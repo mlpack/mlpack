@@ -17,6 +17,7 @@
 #include "core/table/memory_mapped_file.h"
 #include "core/table/transform.h"
 #include "mlpack/distributed_two_point/distributed_two_point.h"
+#include "boost/mpi/collectives.hpp"
 
 namespace core {
   namespace table {
@@ -56,8 +57,12 @@ namespace mlpack {
              result_out->num_tuples_);
 
       int total_num_tuples;
-      boost::mpi::reduce(world_, result_out->num_tuples_, total_num_tuples, 
-                         std::plus<int>(), 0);
+      boost::mpi::all_reduce(*world_, result_out->num_tuples_, total_num_tuples, 
+                             std::plus<int>());
+      
+      printf("total_num_tuples: %d\n", total_num_tuples);
+      
+      result_out->num_tuples_ = total_num_tuples;
       
     } // Compute()
     
@@ -72,10 +77,12 @@ namespace mlpack {
       world_ = &world_in;
       points_table_1_ = arguments_in.points_table_1_;
       if(arguments_in.points_table_2_ == NULL) {
+        //printf("is mono\n");
         is_monochromatic_ = true;
         points_table_2_ = points_table_1_;
       }
       else {
+        //printf("not mono\n");
         is_monochromatic_ = false;
         points_table_2_ = arguments_in.points_table_2_;
       }
@@ -320,6 +327,7 @@ namespace mlpack {
       // Parse the number of threads.
       arguments_out->num_threads_ = vm["num_threads_in"].as<int>();
       omp_set_num_threads(arguments_out->num_threads_);
+      //printf("arguments_out->num_threads_ = %d\n", arguments_out->num_threads_);
       std::cerr << "  Process " << world.rank() << " is using " <<
       arguments_out->num_threads_ << " threads for " <<
         "shared memory parallelism.\n";
@@ -342,14 +350,20 @@ namespace mlpack {
         data_file_name_sstr << vm["data_in"].as<std::string>() <<
         world.rank();
         data_file_name = data_file_name_sstr.str();
-        TableType *data_reference_dataset =
+        TableType *random_data_dataset =
         (core::table::global_m_file_) ?
         core::table::global_m_file_->Construct<TableType>() : new TableType();
+        //core::parallel::RandomDatasetGenerator::Generate(
+        //     vm["random_generate_n_attributes"].as<int>(),
+        //     vm["random_generate_n_entries"].as<int>(), world.rank(),
+         //    vm["prescale"].as<std::string>(), false, random_data_dataset);
         core::parallel::RandomDatasetGenerator::Generate(
                                                          vm["random_generate_n_attributes"].as<int>(),
                                                          vm["random_generate_n_entries"].as<int>(), world.rank(),
-                                                         vm["prescale"].as<std::string>(), false, data_reference_dataset);
-        arguments_out->points_table_1_->Init(data_reference_dataset, world);
+        //                                                 vm["prescale"].as<std::string>(), 
+                                                         std::string("none"),
+                                                         false, random_data_dataset);
+        arguments_out->points_table_1_->Init(random_data_dataset, world);
       }
       else {
         std::cout << "Reading in the data set: " <<
