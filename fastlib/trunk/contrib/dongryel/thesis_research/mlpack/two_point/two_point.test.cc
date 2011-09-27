@@ -10,7 +10,7 @@
 
 // for BOOST testing
 #define BOOST_TEST_MODULE two_point_test
-#define BOOST_TEST_DYN_LINK
+// #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
 #include "mlpack/two_point/test_two_point.h"

@@ -80,7 +80,7 @@ class TwoPointPostponed {
 
       SetZero();
       is_monochromatic_ = (qnode_and_rnode_are_equal);
-      
+
     }
 
     template < typename TreeType, typename GlobalType,
@@ -117,33 +117,28 @@ class TwoPointPostponed {
       printf("ref_point[0]: %g\n", reference_point(0));
       printf("are_equal: %d\n", query_and_reference_points_are_equal);
       printf("\n");
-      
-      
-      }
-     */
-      
-      // make sure we don't count a point with itself
-      if(!(query_point_rank == reference_point_rank 
-           && reference_point_dfs_index <= query_point_dfs_index)) {
 
-        
+
+      }
+           */
+
+      // make sure we don't count a point with itself
+      if((!(global.is_monochromatic()  &&
+            query_point_rank == reference_point_rank &&
+            reference_point_dfs_index <= query_point_dfs_index)) &&
+          (!(global.is_monochromatic() &&
+             query_point_rank > reference_point_rank))) {
+
+
         double dist_sq = metric.DistanceSq(query_point, reference_point);
 
-        printf("ranks: (q %d, r %d), tuple: (%d, %d)\n", query_point_rank,
-               reference_point_rank,
-               query_point_dfs_index,
-               reference_point_dfs_index);
 
-        
+
+
         if(dist_sq <= global.upper_bound_sqr() &&
             dist_sq >= global.lower_bound_sqr()) {
-
-          
-                    
-          
           num_tuples_++;
           weighted_num_tuples_ += (query_weight * reference_weight);
-
         }
 
       }

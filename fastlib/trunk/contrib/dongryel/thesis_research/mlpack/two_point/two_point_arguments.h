@@ -37,7 +37,7 @@ namespace mlpack {
       std::string counts_out;
       
       template<typename GlobalType>
-      void Init(TableType* points_table_1_in, TableType* points_table_2_in,
+      void Init(TableType* points_table_2_in, TableType* points_table_1_in,
                 GlobalType& global_in)
       {
         

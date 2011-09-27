@@ -181,7 +181,7 @@ void TwoPoint<TableType>::Init(
   points_table_1_ = arguments_in.points_table_1_;
   if(global_in != NULL) {
     is_monochromatic_ = global_in->is_monochromatic();
-    points_table_2_ = points_table_1_;
+    points_table_2_ = arguments_in.points_table_2_;
   }
   else {
     if(arguments_in.points_table_1_ == arguments_in.points_table_2_) {
