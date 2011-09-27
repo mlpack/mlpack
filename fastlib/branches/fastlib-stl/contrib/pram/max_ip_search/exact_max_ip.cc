@@ -20,9 +20,11 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   // the ball's center and radius
   arma::vec q = queries_.col(query_);
   arma::vec centroid = reference_node->bound().center();
+
+  // +1: Can be cached in the reference tree
   double c_norm = arma::norm(centroid, 2);
 
-  assert(arma::norm(q, 2) == query_norm_);
+  assert(arma::norm(q, 2) == query_norms_(query_));
 
   double rad = std::sqrt(reference_node->bound().radius());
 
@@ -36,8 +38,9 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
     //    \leq |q| (|p|+R) cos( <qp - \max_r <pr ) otherwise
 
     if (rad <= c_norm) {
+      // +1
       double cos_qp = arma::dot(q, centroid) 
-	/ (query_norm_ * c_norm);
+	/ (query_norms_(query_) * c_norm);
       double sin_qp = std::sqrt(1 - cos_qp * cos_qp);
 
       double max_sin_pr = rad / c_norm;
@@ -60,8 +63,8 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   // simple bound of \max_{r \in B_p^R} <q,r> 
   //    = |q| \max_{r \in B_p^R} |r| cos <qr 
   //    \leq |q| \max_{r \in B_p^R} |r| \leq |q| (|p|+R)
-  assert(max_cos_qr == 1.0);
-  return (query_norm_ * (c_norm + rad) * max_cos_qr);
+
+  return (query_norms_(query_) * (c_norm + rad) * max_cos_qr);
 }
 
 double MaxIP::MaxNodeIP_(CTreeType* query_node,
@@ -77,44 +80,48 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
   double cos_w = query_node->bound().radius();
   double sin_w = query_node->bound().radius_conjugate();
 
-  // assume that the norm of the query center is one
-  // assert(arma::norm(q, 2) == 1.0);
+  // +1: Can cache it in the query tree
+  double q_norm = arma::norm(q, 2);
 
   arma::vec centroid = reference_node->bound().center();
+
+  // +1: can be cached in the reference tree
   double c_norm = arma::norm(centroid, 2);
   double rad = std::sqrt(reference_node->bound().radius());
 
   double max_cos_qp = 1.0;
 
-  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
+//   if (mlpack::IO::HasParam("maxip/angle_prune")) { 
 
-    if (rad <= c_norm) {
-      // cos <pq = cos_phi
-      double cos_phi = arma::dot(q, centroid) / c_norm;
-      double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
+//     if (rad <= c_norm) {
+//       // cos <pq = cos_phi
 
-      // max_r sin <pr = sin_theta
-      double sin_theta = rad / c_norm;
-      double cos_theta = std::sqrt(1 - sin_theta * sin_theta);
+//       // +1
+//       double cos_phi = arma::dot(q, centroid) / (c_norm * q_norm);
+//       double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
 
-      if ((cos_phi < cos_theta) && (cos_phi < cos_w)) { 
-	// phi > theta and phi > w
-	// computing cos(phi - theta)
-	double cos_phi_theta 
-	  = cos_phi * cos_theta + sin_phi * sin_theta;
+//       // max_r sin <pr = sin_theta
+//       double sin_theta = rad / c_norm;
+//       double cos_theta = std::sqrt(1 - sin_theta * sin_theta);
 
-	if (cos_phi_theta < cos_w) {
-	  // phi - theta > w
-	  // computing cos (phi - theta - w)
-	  double cos_phi_theta_w = cos_phi_theta * cos_w;
-	  cos_phi_theta_w
-	    += (std::sqrt(1 - cos_phi_theta * cos_phi_theta)
-		* sin_w);
-	  max_cos_qp = std::max(cos_phi_theta_w, 0.0);
-	}
-      }
-    }
-  }
+//       if ((cos_phi < cos_theta) && (cos_phi < cos_w)) { 
+// 	// phi > theta and phi > w
+// 	// computing cos(phi - theta)
+// 	double cos_phi_theta 
+// 	  = cos_phi * cos_theta + sin_phi * sin_theta;
+
+// 	if (cos_phi_theta < cos_w) {
+// 	  // phi - theta > w
+// 	  // computing cos (phi - theta - w)
+// 	  double cos_phi_theta_w = cos_phi_theta * cos_w;
+// 	  cos_phi_theta_w
+// 	    += (std::sqrt(1 - cos_phi_theta * cos_phi_theta)
+// 		* sin_w);
+// 	  max_cos_qp = std::max(cos_phi_theta_w, 0.0);
+// 	}
+//       }
+//     }
+//   }
 
   assert(max_cos_qp == 1.0);
   return ((c_norm + rad) * max_cos_qp);
@@ -146,6 +153,7 @@ void MaxIP::ComputeBaseCase_(TreeType* reference_node) {
     arma::vec rpoint = references_.col(reference_index);
 
     // We'll use arma to find the inner product of the two vectors
+    // +1
     double ip = arma::dot(q, rpoint);
     // If the reference point is greater than the current candidate, 
     // we'll update the candidate
@@ -174,7 +182,7 @@ void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node,
 				       double upper_bound_ip) {
 
   assert(reference_node != NULL);
-  assert(upper_bound_ip == MaxNodeIP_(reference_node));
+  //assert(upper_bound_ip == MaxNodeIP_(reference_node));
 
   if (upper_bound_ip < max_ips_((query_*knns_) + knns_ -1)) { 
     // Pruned by distance
@@ -216,8 +224,43 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
 
   // Used to find the query node's new lower bound
   double query_worst_p_cos_pq = DBL_MAX;
+  bool new_bound = false;
     
-  std::vector<std::pair<double, size_t> > candidates(knns_);
+  // Iterating over the queries individually
+  for (query_ = query_node->begin();
+       query_ < query_node->end(); query_++) {
+
+    // checking if this node has potential
+    double query_to_node_max_ip = MaxNodeIP_(reference_node);
+
+    // assert(query_to_node_max_ip > 0.0);
+
+    if (query_to_node_max_ip > max_ips_(query_*knns_ + knns_ -1)) {
+      // this node has potential
+
+      ComputeBaseCase_(reference_node);
+      double p_cos_pq = max_ips_(query_*knns_ + knns_ -1)
+	/ query_norms_(query_);
+
+      if (query_worst_p_cos_pq > p_cos_pq) {
+	query_worst_p_cos_pq = p_cos_pq;
+	new_bound = true;
+      }
+
+      //distance_computations_ 
+      //+= reference_node->end() - reference_node->begin();
+    } // potential node
+  } // for query_
+  
+  // Update the lower bound for the query_node
+  if (new_bound) 
+    query_node->stat().set_bound(query_worst_p_cos_pq);
+} // ComputeBaseCase_
+  
+
+void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
+
+  size_t missed_nns = 0;
 
   // Iterating over the queries individually
   for (query_ = query_node->begin();
@@ -225,61 +268,26 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
 
     // Get the query point from the matrix
     arma::vec q = queries_.col(query_);
-    query_norm_ = arma::norm(q, 2);
+    size_t ind = query_ * knns_;
 
-    size_t ind = query_*knns_;
+    // We'll do the same for the references
+    for (size_t reference_index = ref_node->begin(); 
+	 reference_index < ref_node->end(); reference_index++) {
 
-    // checking if this node has potential
-    double query_to_node_max_ip = MaxNodeIP_(reference_node);
+      arma::vec r = references_.col(reference_index);
 
-    assert(query_to_node_max_ip > 0.0);
+      double ip = arma::dot(q, r);
+      if (ip > max_ips_(ind+knns_-1))
+	missed_nns++;
 
-    if (query_to_node_max_ip > max_ips_(ind + knns_ -1)) {
-       // this node has potential
-
-      // making an array to store candidate values
-      for(size_t i = 0; i < knns_; i++)
-	candidates[i] = std::make_pair(max_ips_(ind+i),
-				       max_ip_indices_(ind+i));
-    
-      // We'll do the same for the references
-      for (size_t reference_index = reference_node->begin(); 
-	   reference_index < reference_node->end(); reference_index++) {
-
-	arma::vec rpoint = references_.col(reference_index);
-
-	// We'll use arma to find the inner product of the two vectors
-	double ip = arma::dot(q, rpoint);
-	// If the reference point is greater than the current candidate, 
-	// we'll update the candidate
-	if (ip > max_ips_(ind+knns_-1)) {
-	  candidates.push_back(std::make_pair(ip, reference_index));
-	}
-      } // for reference_index
-
-      std::sort(candidates.begin(), candidates.end());
-      std::reverse(candidates.begin(), candidates.end());
-      for(size_t i = 0; i < knns_; i++) {
-	max_ips_(ind+i) = candidates[i].first;
-	max_ip_indices_(ind+i) = candidates[i].second;
-      }
-      candidates.clear();
-
-      double p_cos_pq = max_ips_(ind + knns_ -1) / query_norm_;
-
-      if (query_worst_p_cos_pq > p_cos_pq)
-	query_worst_p_cos_pq = p_cos_pq;
-
-      distance_computations_ 
-	+= reference_node->end() - reference_node->begin();
-    } // potential node
+    } // for reference_index
   } // for query_
-  
-  // Update the lower bound for the query_node
-  query_node->stat().set_bound(query_worst_p_cos_pq);
 
-} // ComputeBaseCase_
-  
+  if (missed_nns > 0) 
+    printf("Prune %zu - Missed candidates: %zu, QBound: %lg\n",
+	   number_of_prunes_, missed_nns, query_node->stat().bound());
+
+}
 
 void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
 				       TreeType* reference_node, 
@@ -289,11 +297,14 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
 
   assert(query_node != NULL);
   assert(reference_node != NULL);
-  assert(upper_bound_p_cos_pq == MaxNodeIP_(query_node, reference_node));
+  //assert(upper_bound_p_cos_pq == MaxNodeIP_(query_node, reference_node));
 
   if (upper_bound_p_cos_pq < query_node->stat().bound()) { 
     // Pruned
     number_of_prunes_++;
+
+    if (IO::HasParam("maxip/check_prune"))
+      CheckPrune(query_node, reference_node);
   }
   // node->is_leaf() works as one would expect
   else if (query_node->is_leaf() && reference_node->is_leaf()) {
@@ -411,7 +422,7 @@ void MaxIP::Init(const arma::mat& queries_in,
     
   // K-nearest neighbors initialization
   knns_ = mlpack::IO::GetParam<int>("maxip/knns");
-  
+
   // Initialize the list of nearest neighbor candidates
   max_ip_indices_ 
     = -1 * arma::ones<arma::Col<size_t> >(queries_.n_cols * knns_, 1);
@@ -436,7 +447,14 @@ void MaxIP::Init(const arma::mat& queries_in,
 						&old_from_new_queries_,
 						NULL);
   }
-    
+
+  // saving the query norms beforehand to use 
+  // in the tree-based searches -- need to do it 
+  // after the shuffle to correspond to correct indices
+  query_norms_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols);
+  for (size_t i = 0; i < queries_.n_cols; i++)
+    query_norms_(i) = arma::norm(queries_.col(i), 2);
+      
   // Stop the timer we started above
   mlpack::IO::StopTimer("tree_building");
 
@@ -485,8 +503,8 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
     
 } // InitNaive
   
-void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
-			     arma::vec* ips) {
+double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
+			       arma::vec* ips) {
 
 
   resulting_neighbors->set_size(max_ips_.n_elem);
@@ -500,15 +518,15 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     ComputeNeighborsRecursion_(query_tree_, reference_tree_,
 			       MaxNodeIP_(query_tree_, reference_tree_));
 
-    printf("Search done: %zu!!\n", (size_t) max_ips_.n_elem); fflush(NULL);
+//     printf("Search done: %zu!!\n", (size_t) max_ips_.n_elem); fflush(NULL);
     for (size_t i = 0; i < max_ips_.n_elem; i++) {
       size_t query = old_from_new_queries_(i / knns_);
-      assert(max_ip_indices_(i) != -1);
+      assert(max_ip_indices_(i) != (size_t) -1);
       (*resulting_neighbors)(query*knns_+ i%knns_)
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
-    printf("Saving done!!\n"); fflush(NULL);
+//     printf("Saving done!!\n"); fflush(NULL);
 
 
   } else {
@@ -516,8 +534,6 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     mlpack::IO::Info << "SINGLE-TREE Search: " << std::endl;
 
     for (query_ = 0; query_ < queries_.n_cols; ++query_) {
-
-      query_norm_ = arma::norm(queries_.col(query_), 2);
       ComputeNeighborsRecursion_(reference_tree_, 
 				 MaxNodeIP_(reference_tree_));
     }
@@ -540,11 +556,12 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
 
-
+  return (double) (distance_computations_ + split_decisions_)
+    / (double) queries_.n_cols;
 } // ComputeNeighbors
   
-void MaxIP::ComputeNaive(arma::Col<size_t>* resulting_neighbors,
-			 arma::vec* ips) {
+double MaxIP::ComputeNaive(arma::Col<size_t>* resulting_neighbors,
+			   arma::vec* ips) {
 
   for (query_ = 0; query_ < queries_.n_cols; ++query_) {
     ComputeBaseCase_(reference_tree_);
@@ -568,4 +585,7 @@ void MaxIP::ComputeNaive(arma::Col<size_t>* resulting_neighbors,
   mlpack::IO::Info << "\t \t Avg. # of SD: " 
 		   << (double) split_decisions_ 
     / (double) queries_.n_cols << std::endl;
+
+  return (double) (distance_computations_ + split_decisions_)
+    / (double) queries_.n_cols;
 }
