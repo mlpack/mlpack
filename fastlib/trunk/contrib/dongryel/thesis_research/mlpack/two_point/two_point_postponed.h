@@ -126,17 +126,21 @@ class TwoPointPostponed {
       if(!(query_point_rank == reference_point_rank 
            && reference_point_dfs_index <= query_point_dfs_index)) {
 
+        
         double dist_sq = metric.DistanceSq(query_point, reference_point);
 
+        printf("ranks: (q %d, r %d), tuple: (%d, %d)\n", query_point_rank,
+               reference_point_rank,
+               query_point_dfs_index,
+               reference_point_dfs_index);
+
+        
         if(dist_sq <= global.upper_bound_sqr() &&
             dist_sq >= global.lower_bound_sqr()) {
 
-          /*
-          printf("===============\n");
-          query_point.print("query");
-          reference_point.print("reference");
-          printf("\n");
-          */
+          
+                    
+          
           num_tuples_++;
           weighted_num_tuples_ += (query_weight * reference_weight);
 

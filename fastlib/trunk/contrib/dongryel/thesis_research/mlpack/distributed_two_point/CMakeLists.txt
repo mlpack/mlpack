@@ -25,5 +25,14 @@ target_link_libraries(distributed_two_point
                       core
                       ${TRILINOS_LIBS}
                       ${Boost_LIBRARIES}
-                     )
+)
 
+add_executable(distributed_two_point_test
+	EXCLUDE_FROM_ALL
+	distributed_two_point_test.cc
+)
+target_link_libraries(distributed_two_point_test
+	core
+	${TRILINOS_LIBS}
+	${Boost_LIBRARIES}
+)
