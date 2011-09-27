@@ -16,6 +16,7 @@
 
 using namespace mlpack;
 using namespace mlpack::neighbor;
+using namespace mlpack::bound;
 
 // Tests for NearestNeighborSort
 
@@ -82,9 +83,9 @@ BOOST_AUTO_TEST_CASE(nns_sort_distance_2) {
  * use a one-dimensional bound for simplicity.
  */
 BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
-  // Well, there's no easy way to make DHrectBounds the way we want, so we have
+  // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
   arma::vec utility(1);
   utility[0] = 0;
 
@@ -93,7 +94,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
   utility[0] = 1;
   node_one.bound() |= utility;
 
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
   node_two.bound().SetSize(1);
 
   utility[0] = 5;
@@ -106,7 +107,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
       &node_two), 16.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.bound().Reset();
+  node_two.bound().Clear();
   utility[0] = -2;
   node_two.bound() |= utility;
   utility[0] = -1;
@@ -117,7 +118,7 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
       &node_two), 1.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.bound().Reset();
+  node_two.bound().Clear();
   utility[0] = -0.5;
   node_two.bound() |= utility;
   utility[0] = 0.5;
@@ -132,12 +133,12 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
  * dimension.
  */
 BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
-  // Well, there's no easy way to make DHrectBounds the way we want, so we have
+  // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
   node.bound().SetSize(1);
   node.bound() |= utility;
   utility[0] = 1;
@@ -228,18 +229,18 @@ BOOST_AUTO_TEST_CASE(fns_sort_distance_2) {
  * use a one-dimensional bound for simplicity.
  */
 BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
-  // Well, there's no easy way to make DHrectBounds the way we want, so we have
+  // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_one;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
   node_one.bound().SetSize(1);
   node_one.bound() |= utility;
   utility[0] = 1;
   node_one.bound() |= utility;
 
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node_two;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
   node_two.bound().SetSize(1);
   utility[0] = 5;
   node_two.bound() |= utility;
@@ -251,7 +252,7 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
       &node_two), 36.0, 1e-5);
 
   // And another just to be sure, from the other side.
-  node_two.bound().Reset();
+  node_two.bound().Clear();
   utility[0] = -2;
   node_two.bound() |= utility;
   utility[0] = -1;
@@ -262,7 +263,7 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
       &node_two), 9.0, 1e-5);
 
   // Now, when the bounds overlap.
-  node_two.bound().Reset();
+  node_two.bound().Clear();
   utility[0] = -0.5;
   node_two.bound() |= utility;
   utility[0] = 0.5;
@@ -277,12 +278,12 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
  * dimension.
  */
 BOOST_AUTO_TEST_CASE(fns_point_to_node_distance) {
-  // Well, there's no easy way to make DHrectBounds the way we want, so we have
+  // Well, there's no easy way to make HRectBounds the way we want, so we have
   // to make them and then expand the region to include new points.
   arma::vec utility(1);
   utility[0] = 0;
 
-  tree::BinarySpaceTree<DHrectBound<2>, arma::mat> node;
+  tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
   node.bound().SetSize(1);
   node.bound() |= utility;
   utility[0] = 1;

@@ -113,7 +113,7 @@ class NeighborSearch {
   // TreeType are BinarySpaceTrees where the data are bounded by
   // Euclidean bounding boxes, the data are stored in a Matrix,
   // and each node has a QueryStat for its bound.
-  typedef tree::BinarySpaceTree<DHrectBound<2>, QueryStat> TreeType;
+  typedef tree::BinarySpaceTree<bound::HRectBound<2>, QueryStat> TreeType;
 
  private:
   // These will store our data sets.
@@ -173,7 +173,7 @@ class NeighborSearch {
    * will take care of themselves.
    */
   ~NeighborSearch();
-  
+
   /**
    * Computes the nearest neighbors and stores the output in the given arrays.
    * For an AllkNN object with knns_ set to 5 (i.e. calculate the five nearest

@@ -18,7 +18,7 @@ double FurthestNeighborSort::BestNodeToNodeDistance(TreeType* query_node,
                                                     TreeType* reference_node) {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return query_node->bound().MaxDistanceSq(reference_node->bound());
+  return query_node->bound().MaxDistance(reference_node->bound());
 }
 
 template<typename TreeType>
@@ -26,7 +26,7 @@ double FurthestNeighborSort::BestPointToNodeDistance(const arma::vec& point,
                                                      TreeType* reference_node) {
   // This is not implemented yet for the general case because the trees do not
   // accept arbitrary distance metrics.
-  return reference_node->bound().MaxDistanceSq(point);
+  return reference_node->bound().MaxDistance(point);
 }
 
 }; // namespace neighbor

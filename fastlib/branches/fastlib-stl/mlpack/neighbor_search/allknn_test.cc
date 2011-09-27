@@ -89,7 +89,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 0), (2.05 * 2.05), 1e-5);
     BOOST_REQUIRE(neighbors(9, 0) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 0), (5.00 * 5.00), 1e-5);
-    
+
     // Neighbors of point 1.
     BOOST_REQUIRE(neighbors(0, 1) == 8);
     BOOST_REQUIRE_CLOSE(distances(0, 1), (0.10 * 0.10), 1e-5);
@@ -155,7 +155,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 3), (3.25 * 3.25), 1e-5);
     BOOST_REQUIRE(neighbors(9, 3) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 3), (3.80 * 3.80), 1e-5);
-    
+
     // Neighbors of point 4.
     BOOST_REQUIRE(neighbors(0, 4) == 3);
     BOOST_REQUIRE_CLOSE(distances(0, 4), (3.80 * 3.80), 1e-5);
@@ -177,7 +177,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 4), (6.35 * 6.35), 1e-5);
     BOOST_REQUIRE(neighbors(9, 4) == 6);
     BOOST_REQUIRE_CLOSE(distances(9, 4), (7.05 * 7.05), 1e-5);
-    
+
     // Neighbors of point 5.
     BOOST_REQUIRE(neighbors(0, 5) == 0);
     BOOST_REQUIRE_CLOSE(distances(0, 5), (0.27 * 0.27), 1e-5);
@@ -199,7 +199,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 5), (1.78 * 1.78), 1e-5);
     BOOST_REQUIRE(neighbors(9, 5) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 5), (5.27 * 5.27), 1e-5);
-    
+
     // Neighbors of point 6.
     BOOST_REQUIRE(neighbors(0, 6) == 7);
     BOOST_REQUIRE_CLOSE(distances(0, 6), (0.70 * 0.70), 1e-5);
@@ -221,7 +221,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 6), (3.25 * 3.25), 1e-5);
     BOOST_REQUIRE(neighbors(9, 6) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 6), (7.05 * 7.05), 1e-5);
-    
+
     // Neighbors of point 7.
     BOOST_REQUIRE(neighbors(0, 7) == 6);
     BOOST_REQUIRE_CLOSE(distances(0, 7), (0.70 * 0.70), 1e-5);
@@ -243,7 +243,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 7), (2.55 * 2.55), 1e-5);
     BOOST_REQUIRE(neighbors(9, 7) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 7), (6.35 * 6.35), 1e-5);
-    
+
     // Neighbors of point 8.
     BOOST_REQUIRE(neighbors(0, 8) == 1);
     BOOST_REQUIRE_CLOSE(distances(0, 8), (0.10 * 0.10), 1e-5);
@@ -265,7 +265,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     BOOST_REQUIRE_CLOSE(distances(8, 8), (2.45 * 2.45), 1e-5);
     BOOST_REQUIRE(neighbors(9, 8) == 4);
     BOOST_REQUIRE_CLOSE(distances(9, 8), (4.60 * 4.60), 1e-5);
-    
+
     // Neighbors of point 9.
     BOOST_REQUIRE(neighbors(0, 9) == 10);
     BOOST_REQUIRE_CLOSE(distances(0, 9), (0.10 * 0.10), 1e-5);
@@ -343,7 +343,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
   // Set parameters right for naive run.
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkNN naive_(naive_query, naive_references);
- 
+
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
   allknn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
@@ -421,7 +421,7 @@ BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
   IO::GetParam<bool>("neighbor_search/naive_mode") = false;
   IO::GetParam<bool>("neighbor_search/single_mode") = true;
   AllkNN allknn_(single_query);
-  
+
   // Set up computation for naive mode.
   IO::GetParam<bool>("neighbor_search/single_mode") = false;
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
