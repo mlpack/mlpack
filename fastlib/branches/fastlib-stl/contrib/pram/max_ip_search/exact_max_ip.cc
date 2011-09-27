@@ -22,6 +22,8 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   arma::vec centroid = reference_node->bound().center();
   double c_norm = arma::norm(centroid, 2);
 
+  assert(arma::norm(q, 2) == query_norm_);
+
   double rad = std::sqrt(reference_node->bound().radius());
 
   double max_cos_qr = 1.0;
@@ -58,7 +60,7 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
   // simple bound of \max_{r \in B_p^R} <q,r> 
   //    = |q| \max_{r \in B_p^R} |r| cos <qr 
   //    \leq |q| \max_{r \in B_p^R} |r| \leq |q| (|p|+R)
-
+  assert(max_cos_qr == 1.0);
   return (query_norm_ * (c_norm + rad) * max_cos_qr);
 }
 
@@ -75,7 +77,8 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
   double cos_w = query_node->bound().radius();
   double sin_w = query_node->bound().radius_conjugate();
 
-  assert(arma::norm(q, 2) == 1.0);
+  // assume that the norm of the query center is one
+  // assert(arma::norm(q, 2) == 1.0);
 
   arma::vec centroid = reference_node->bound().center();
   double c_norm = arma::norm(centroid, 2);
@@ -113,6 +116,7 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
     }
   }
 
+  assert(max_cos_qp == 1.0);
   return ((c_norm + rad) * max_cos_qp);
 }
 
@@ -166,6 +170,39 @@ void MaxIP::ComputeBaseCase_(TreeType* reference_node) {
 } // ComputeBaseCase_
 
 
+void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node, 
+				       double upper_bound_ip) {
+
+  assert(reference_node != NULL);
+  assert(upper_bound_ip == MaxNodeIP_(reference_node));
+
+  if (upper_bound_ip < max_ips_((query_*knns_) + knns_ -1)) { 
+    // Pruned by distance
+    number_of_prunes_++;
+  } else if (reference_node->is_leaf()) {
+    // base case for the single tree case
+    ComputeBaseCase_(reference_node);
+
+  } else {
+    // Recurse on both as above
+    double left_ip = MaxNodeIP_(reference_node->left());
+    double right_ip = MaxNodeIP_(reference_node->right());
+
+    if (left_ip > right_ip) {
+      ComputeNeighborsRecursion_(reference_node->left(), 
+				 left_ip);
+      ComputeNeighborsRecursion_(reference_node->right(),
+				 right_ip);
+    } else {
+      ComputeNeighborsRecursion_(reference_node->right(),
+				 right_ip);
+      ComputeNeighborsRecursion_(reference_node->left(), 
+				 left_ip);
+    }
+  }      
+} // ComputeNeighborsRecursion_
+
+
 void MaxIP::ComputeBaseCase_(CTreeType* query_node, 
 			     TreeType* reference_node) {
 
@@ -177,7 +214,7 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
   assert(query_node != NULL);
   assert(query_node->is_leaf());
 
-  // Used to find the query node's new upper bound
+  // Used to find the query node's new lower bound
   double query_worst_p_cos_pq = DBL_MAX;
     
   std::vector<std::pair<double, size_t> > candidates(knns_);
@@ -195,8 +232,10 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
     // checking if this node has potential
     double query_to_node_max_ip = MaxNodeIP_(reference_node);
 
+    assert(query_to_node_max_ip > 0.0);
+
     if (query_to_node_max_ip > max_ips_(ind + knns_ -1)) {
-      // this node has potential
+       // this node has potential
 
       // making an array to store candidate values
       for(size_t i = 0; i < knns_; i++)
@@ -242,39 +281,6 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
 } // ComputeBaseCase_
   
 
-void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node, 
-				       double upper_bound_ip) {
-
-  assert(reference_node != NULL);
-  assert(upper_bound_ip == MaxNodeIP_(reference_node));
-
-  if (upper_bound_ip < max_ips_((query_*knns_) + knns_ -1)) { 
-    // Pruned by distance
-    number_of_prunes_++;
-  } else if (reference_node->is_leaf()) {
-    // base case for the single tree case
-    ComputeBaseCase_(reference_node);
-
-  } else {
-    // Recurse on both as above
-    double left_ip = MaxNodeIP_(reference_node->left());
-    double right_ip = MaxNodeIP_(reference_node->right());
-
-    if (left_ip > right_ip) {
-      ComputeNeighborsRecursion_(reference_node->left(), 
-				 left_ip);
-      ComputeNeighborsRecursion_(reference_node->right(),
-				 right_ip);
-    } else {
-      ComputeNeighborsRecursion_(reference_node->right(),
-				 right_ip);
-      ComputeNeighborsRecursion_(reference_node->left(), 
-				 left_ip);
-    }
-  }      
-} // ComputeNeighborsRecursion_
-
-
 void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
 				       TreeType* reference_node, 
 				       double upper_bound_p_cos_pq) {
@@ -302,7 +308,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
     double right_p_cos_pq = MaxNodeIP_(query_node,
 				       reference_node->right());
       
-    if (left_p_cos_pq < right_p_cos_pq) {
+    if (left_p_cos_pq > right_p_cos_pq) {
       ComputeNeighborsRecursion_(query_node, reference_node->left(), 
 				 left_p_cos_pq);
       ComputeNeighborsRecursion_(query_node, reference_node->right(), 
@@ -327,7 +333,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
       
     // We need to update the upper bound based on the new upper bounds of 
     // the children
-    query_node->stat().set_bound(std::max(query_node->left()->stat().bound(),
+    query_node->stat().set_bound(std::min(query_node->left()->stat().bound(),
 					  query_node->right()->stat().bound()));
   } else {
     // Recurse on both as above
@@ -374,7 +380,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
     }
       
     // Update the upper bound as above
-    query_node->stat().set_bound(std::max(query_node->left()->stat().bound(),
+    query_node->stat().set_bound(std::min(query_node->left()->stat().bound(),
 					  query_node->right()->stat().bound()));
       
   }
@@ -463,7 +469,7 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
 
   // The only difference is that we set leaf_size_ to be large enough 
   // that each tree has only one node
-  leaf_size_ = std::max(queries_.n_cols, references_.n_cols);
+  leaf_size_ = std::max(queries_.n_cols, references_.n_cols) + 1;
 
   // We'll time tree building
   mlpack::IO::StartTimer("tree_building");
@@ -494,12 +500,15 @@ void MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
     ComputeNeighborsRecursion_(query_tree_, reference_tree_,
 			       MaxNodeIP_(query_tree_, reference_tree_));
 
+    printf("Search done: %zu!!\n", (size_t) max_ips_.n_elem); fflush(NULL);
     for (size_t i = 0; i < max_ips_.n_elem; i++) {
       size_t query = old_from_new_queries_(i / knns_);
+      assert(max_ip_indices_(i) != -1);
       (*resulting_neighbors)(query*knns_+ i%knns_)
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
+    printf("Saving done!!\n"); fflush(NULL);
 
 
   } else {

@@ -50,4 +50,5 @@ add_executable(cosine_tree_test
 target_link_libraries(cosine_tree_test
    fastlib
    mlpack
+   mlpack_contrib
 )

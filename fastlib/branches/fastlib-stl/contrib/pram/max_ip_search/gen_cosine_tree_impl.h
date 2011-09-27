@@ -38,6 +38,7 @@ namespace tree_gen_cosine_tree_private {
 	    / arma::norm(matrix.unsafe_col(i), 2));
     }
     bounds->center() /= (double) count;
+    bounds->center() /= arma::norm(bounds->center(), 2);
 
     double furthest_cosine;
     FurthestColumnIndex(bounds->center(), matrix, begin, count,
