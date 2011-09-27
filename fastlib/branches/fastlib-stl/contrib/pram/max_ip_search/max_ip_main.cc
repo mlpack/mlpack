@@ -70,6 +70,8 @@ int main (int argc, char *argv[]) {
 
   size_t knns = IO::GetParam<int>("maxip/knns");
 
+  double naive_comp, fast_comp;
+
 
   // exit(0);
   // Naive computation
@@ -85,7 +87,7 @@ int main (int argc, char *argv[]) {
 
     IO::Info << "Computing Max IP....." << endl;
     IO::StartTimer("naive_search");
-    naive.ComputeNaive(&nac, &din);
+    naive_comp = naive.ComputeNaive(&nac, &din);
     IO::StopTimer("naive_search");
     IO::Info << "Max IP Computed." << endl;
 
@@ -124,7 +126,7 @@ int main (int argc, char *argv[]) {
 
     IO::Info << "Computing tree-based Max IP....." << endl;
     IO::StartTimer("fast_search");
-    fast_exact.ComputeNeighbors(&exc, &die);
+    fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
     IO::StopTimer("fast_search");
     IO::Info << "Tree-based Max IP Computed." << endl;
 
@@ -148,8 +150,13 @@ int main (int argc, char *argv[]) {
 
   //   compare_neighbors(&neighbor_indices, &dist_sq, &exc, &die);
 
-  if (IO::HasParam("donaive") && IO::HasParam("dofastexact"))
+  if (IO::HasParam("donaive") && IO::HasParam("dofastexact")) {
     count_mismatched_neighbors(nac, din, exc, die);
+    IO::Warn << "Speed of fast-exact over naive: "
+	     << naive_comp << " / " << (float) fast_comp << " = "
+	     <<(float) (naive_comp / fast_comp) << endl;
+  }
+
 }
 
 // void compare_neighbors(arma::Col<size_t> *a, 
@@ -178,9 +185,12 @@ void count_mismatched_neighbors(arma::Col<size_t> a,
   assert(a.n_elem == b.n_elem);
   size_t count_mismatched = 0;
 
+//   IO::Warn << "Mismatches: " << endl;
   for(size_t i = 0; i < a.n_elem;  i++) {
-    if (da(i) != db(i))
+    if (da(i) != db(i)) {
       ++count_mismatched;
+      IO::Warn << da(i) - db(i) << endl;
+    }
   }
 
   IO::Warn << count_mismatched << " / " << a.n_elem

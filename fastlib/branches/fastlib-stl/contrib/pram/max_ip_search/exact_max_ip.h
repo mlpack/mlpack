@@ -36,6 +36,10 @@ PARAM_FLAG("dual_tree", "The flag to trigger dual-tree "
 	   "computation, using a cosine tree for the "
 	   "queries.", "maxip");
 
+PARAM_FLAG("check_prune", "The flag to trigger the "
+	   "checking of the prune.", "maxip");
+
+
 
 //   {"tree_building", FX_TIMER, FX_CUSTOM, NULL,
 //    " The timer to record the time taken to build" 
@@ -62,8 +66,8 @@ class MaxIP {
   public:
     double bound() { return bound_; }
     void set_bound(double bound) { 
-      if (bound_ < bound) 
-	bound_ = bound;
+      //if (bound_ < bound) 
+      bound_ = bound;
     }
 
     QueryStat() {
@@ -97,7 +101,7 @@ private:
 
   // This will store the query index for the single tree run
   size_t query_;
-  double query_norm_;
+  arma::vec query_norms_;
 
   // Pointers to the roots of the two trees.
   TreeType* reference_tree_;
@@ -223,15 +227,17 @@ public:
   /**
    * Computes the nearest neighbors and stores them in *results
    */
-  void ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
+  double ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
                         arma::vec* ips);
   
   /**
    * Does the entire computation naively
    */
-  void ComputeNaive(arma::Col<size_t>* resulting_neighbors,
+  double ComputeNaive(arma::Col<size_t>* resulting_neighbors,
 		    arma::vec* ips);
 
+
+  void CheckPrune(CTreeType* query_node, TreeType* ref_node);
 }; //class MaxIP
 
 #endif
