@@ -27,7 +27,7 @@ PARAM_FLAG("dofastexact", "The flag to trigger the tree-based"
 PARAM_FLAG("dofastapprox", "The flag to trigger the "
 	   "tree-based rank-approximate search algorithm",
 	   "");
-PARAM_FLAG("print_maxip_results", "The flag to trigger the "
+PARAM_FLAG("print_qresults", "The flag to trigger the "
 	   "printing of the output", "");
 
 PARAM_STRING("maxip_file", "The file where the output "
@@ -138,7 +138,7 @@ int main (int argc, char *argv[]) {
       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
         fprintf(fp, "%zu", i);
         for(size_t j = 0; j < knns; j++)
-          fprintf(fp, ",%zu,%lg", 
+          fprintf(fp, ", %zu, %lg", 
                   exc(i*knns+j), die(i*knns+j));
         fprintf(fp, "\n");
       }
@@ -174,7 +174,7 @@ void count_mismatched_neighbors(arma::Col<size_t> a,
  				arma::vec da,
  				arma::Col<size_t> b, 
  				arma::vec db) {
-  IO::Info << "Comparing results for " << a.n_elem << " queries." << endl;
+  IO::Warn << "Comparing results for " << a.n_elem << " queries." << endl;
   assert(a.n_elem == b.n_elem);
   size_t count_mismatched = 0;
 
@@ -183,7 +183,7 @@ void count_mismatched_neighbors(arma::Col<size_t> a,
       ++count_mismatched;
   }
 
-  IO::Info << count_mismatched << " / " << a.n_elem
-	   << " errors." << endl;
+  IO::Warn << count_mismatched << " / " << a.n_elem
+	    << " errors." << endl;
 
 }

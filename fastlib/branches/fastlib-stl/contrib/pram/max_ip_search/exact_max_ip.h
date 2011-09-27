@@ -61,7 +61,10 @@ class MaxIP {
 
   public:
     double bound() { return bound_; }
-    void set_bound(double bound) { bound_ = bound; }
+    void set_bound(double bound) { 
+      if (bound_ < bound) 
+	bound_ = bound;
+    }
 
     QueryStat() {
       bound_ = 0.0;
