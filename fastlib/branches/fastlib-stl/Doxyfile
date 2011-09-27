@@ -3,8 +3,8 @@
 #---------------------------------------------------------------------------
 # Project related configuration options
 #---------------------------------------------------------------------------
-PROJECT_NAME           = FASTlib
-PROJECT_NUMBER         = 0.0.1
+PROJECT_NAME           = MLPACK
+PROJECT_NUMBER         = unknown
 OUTPUT_DIRECTORY       = ./doc
 CREATE_SUBDIRS         = NO
 OUTPUT_LANGUAGE        = English
@@ -83,14 +83,15 @@ WARN_LOGFILE           =
 #---------------------------------------------------------------------------
 # configuration options related to the input files
 #---------------------------------------------------------------------------
-INPUT                  = ./
+INPUT                  = ./fastlib \
+                         ./mlpack
 FILE_PATTERNS          = *.c \
                          *.cc \
                          *.h
 RECURSIVE              = YES
 EXCLUDE                =
 EXCLUDE_SYMLINKS       = YES
-EXCLUDE_PATTERNS       = */u/* \
+EXCLUDE_PATTERNS       = */build/* \
                          */auton/* \
                          */test/* \
                          */bin/* \
