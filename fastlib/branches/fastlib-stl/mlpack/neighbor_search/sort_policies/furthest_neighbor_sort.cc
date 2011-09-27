@@ -10,7 +10,7 @@
 using namespace mlpack::neighbor;
 
 size_t FurthestNeighborSort::SortDistance(arma::vec& list,
-                                           double new_distance) {
+                                          double new_distance) {
   // The first element in the list is the nearest neighbor.  We only want to
   // insert if the new distance is greater than the last element in the list.
   if (new_distance < list[list.n_elem - 1])
