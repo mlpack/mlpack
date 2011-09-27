@@ -9,7 +9,7 @@
 
 #include <stdlib.h>
 
-double math::BinomialCoefficient(int n, int k) {
+/*double math::BinomialCoefficient(int n, int k) {
   int n_k = n - k;
   double nchsk = 1;
   int i;
@@ -30,7 +30,7 @@ double math::BinomialCoefficient(int n, int k) {
   return nchsk;
 }
 
-double math::Factorial(int d) {
+/*double math::Factorial(int d) {
   double v = 1;
   
   mlpack::IO::Assert(d >= 0);
@@ -40,4 +40,4 @@ double math::Factorial(int d) {
   }
   
   return v;
-}
+}*/

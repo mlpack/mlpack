@@ -18,7 +18,7 @@ namespace math {
   /**
    * Computes the factorial of an integer.
    */
-  __attribute__((const)) double Factorial(int d);
+  //__attribute__((const)) double Factorial(int d);
   
   /**
    * Computes the binomial coefficient, n choose k for nonnegative integers
@@ -28,7 +28,7 @@ namespace math {
    * @param k the second nonnegative integer argument
    * @return the binomial coefficient n choose k
    */
-  __attribute__((const)) double BinomialCoefficient(int n, int k);
+  //__attribute__((const)) double BinomialCoefficient(int n, int k);
 
   
 

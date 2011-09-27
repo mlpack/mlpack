@@ -17,7 +17,7 @@ namespace math {
    * @param r the radius of the hyper-sphere
    * @param d the number of dimensions
    */
-  __attribute__((const)) double SphereVolume(double r, int d);
+ // __attribute__((const)) double SphereVolume(double r, int d);
 };
 
 #endif
