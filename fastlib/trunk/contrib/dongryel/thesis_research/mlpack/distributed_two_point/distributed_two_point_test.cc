@@ -135,8 +135,8 @@ namespace mlpack {
           num_dimensions = core::math::RandInt(2, 4);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        //int num_points = core::math::RandInt(300, 500);
-        int num_points = core::math::RandInt(3, 10);
+        int num_points = core::math::RandInt(300, 500);
+        //int num_points = core::math::RandInt(3, 10);
         std::vector< std::string > args;
         
         // Push in the random generate command.
@@ -174,8 +174,8 @@ namespace mlpack {
         // Push in the leaf size.
         int leaf_size = 0;
         if(world.rank() == 0) {
-          //leaf_size = core::math::RandInt(15, 25);
-          leaf_size = 100;
+          leaf_size = core::math::RandInt(15, 25);
+          //leaf_size = 100;
         }
         boost::mpi::broadcast(world, leaf_size, 0);
         std::stringstream leaf_size_sstr;
@@ -206,12 +206,12 @@ namespace mlpack {
         matcher_thickness_sstr << "--matcher_thickness=" << matcher_thickness;
         args.push_back(matcher_thickness_sstr.str());
         
-        /*
+        
         int num_threads = core::math::RandInt(1, 5);
         std::stringstream num_threads_sstr;
         num_threads_sstr << "--num_threads_in=" << num_threads;
         args.push_back(num_threads_sstr.str());
-        */
+        
         
         // Push in the randomly generate work parameters.
         double max_subtree_size;
