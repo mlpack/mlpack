@@ -55,7 +55,7 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
   BOOST_REQUIRE_CLOSE(p1.MinDelta(p2, 3.0, 0), -1.5, 1e-5);
   BOOST_REQUIRE_CLOSE(p1.MaxDelta(p2, 3.0, 0), 1.5, 1e-5);
 
-  DRange range = p1.RangeDistanceSq(p2);
+  Range range = p1.RangeDistanceSq(p2);
   BOOST_REQUIRE_CLOSE(range.lo, 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(range.hi, 29.0, 1e-5);
 
@@ -123,7 +123,7 @@ BOOST_AUTO_TEST_CASE(TestHRectBound) {
   BOOST_REQUIRE_CLOSE(r1.MaxDistance(vector), 20.0, 1e-5);
   BOOST_REQUIRE_CLOSE(r1.MaxDistance(r2), 29.0, 1e-5);
 
-  DRange range = r1.RangeDistance(r2);
+  Range range = r1.RangeDistance(r2);
   BOOST_REQUIRE_CLOSE(range.lo, 1.0, 1e-5);
   BOOST_REQUIRE_CLOSE(range.hi, 29.0, 1e-5);
 

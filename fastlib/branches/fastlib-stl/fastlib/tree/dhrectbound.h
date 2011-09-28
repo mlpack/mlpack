@@ -63,8 +63,8 @@ class HRectBound {
   /**
    * Sets and gets the range for a particular dimension.
    */
-  DRange& operator[](size_t i);
-  const DRange operator[](size_t i) const;
+  Range& operator[](size_t i);
+  const Range operator[](size_t i) const;
 
   /**
    * Calculates the centroid of the range, placing it into the given vector.
@@ -109,12 +109,12 @@ class HRectBound {
   /**
    * Calculates minimum and maximum bound-to-bound squared distance.
    */
-  DRange RangeDistance(const HRectBound& other) const;
+  Range RangeDistance(const HRectBound& other) const;
 
   /**
    * Calculates minimum and maximum bound-to-point squared distance.
    */
-  DRange RangeDistance(const arma::vec& point) const;
+  Range RangeDistance(const arma::vec& point) const;
 
   /**
    * Computes minimax distance, where the other node is trying to avoid me.
@@ -137,7 +137,7 @@ class HRectBound {
   HRectBound& operator|=(const HRectBound& other);
 
  private:
-  DRange *bounds_;
+  Range *bounds_;
   size_t dim_;
 };
 

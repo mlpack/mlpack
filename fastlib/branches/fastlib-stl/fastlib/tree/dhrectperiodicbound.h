@@ -26,7 +26,7 @@ class DHrectPeriodicBound {
     static const int PREFERRED_POWER = t_pow;
 
   private:
-    DRange *bounds_;
+    Range *bounds_;
     size_t dim_;
     arma::vec box_size_;
 
@@ -92,8 +92,8 @@ class DHrectPeriodicBound {
      /**
      * Sets and gets the range for a particular dimension.
      */
-    DRange& operator[](size_t i);
-    const DRange operator[](size_t i) const;
+    Range& operator[](size_t i);
+    const Range operator[](size_t i) const;
 
     /**
      * Calculates the maximum distance within the rectangle
@@ -141,12 +141,12 @@ class DHrectPeriodicBound {
     /**
      * Calculates minimum and maximum bound-to-bound squared distance.
      */
-    DRange RangeDistanceSq(const DHrectPeriodicBound& other) const;
+    Range RangeDistanceSq(const DHrectPeriodicBound& other) const;
 
     /**
      * Calculates minimum and maximum bound-to-point squared distance.
      */
-    DRange RangeDistanceSq(const arma::vec& point) const;
+    Range RangeDistanceSq(const arma::vec& point) const;
 
     /**
      * Calculates closest-to-their-midpoint bounding box distance,

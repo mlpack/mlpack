@@ -94,19 +94,19 @@ double DBallBound<TMetric, TPoint>::MaxDistanceSq(const DBallBound& other) const
  * Example: bound1.MinDistanceSq(other) for minimum squared distance.
  */
 template<typename TMetric, typename TPoint>
-DRange DBallBound<TMetric, TPoint>::RangeDistance(const DBallBound& other) const {
+Range DBallBound<TMetric, TPoint>::RangeDistance(const DBallBound& other) const {
   double delta = MidDistance(other.center_);
   double sumradius = radius_ + other.radius_;
-  return DRange(
+  return Range(
       math::ClampNonNegative(delta - sumradius),
       delta + sumradius);
 }
 
 template<typename TMetric, typename TPoint>
-DRange DBallBound<TMetric, TPoint>::RangeDistanceSq(const DBallBound& other) const {
+Range DBallBound<TMetric, TPoint>::RangeDistanceSq(const DBallBound& other) const {
   double delta = MidDistance(other.center_);
   double sumradius = radius_ + other.radius_;
-  return DRange(
+  return Range(
       std::pow(math::ClampNonNegative(delta - sumradius), 2),
       std::pow(delta + sumradius, 2));
 }
