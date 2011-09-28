@@ -391,7 +391,6 @@ class DistributedDualtreeTaskQueue {
               (*it)->remaining_work_in_priority_queue_);
             tasks_.push_back((*it)->task_);
             checked_out_query_subtables_.erase(it);
-
             num_exported_query_subtables_--;
           }
           else {
@@ -460,7 +459,9 @@ class DistributedDualtreeTaskQueue {
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
 
-      printf("Distributed queue status:\n");
+      printf("Distributed queue status on %d: %d imported, %d exported\n",
+             world.rank(),
+             num_imported_query_subtables_, num_exported_query_subtables_);
       printf("  Active query subtables:\n");
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
@@ -517,6 +518,7 @@ class DistributedDualtreeTaskQueue {
      *         subresult.
      */
     int PushNewQueue(
+      boost::mpi::communicator &world,
       int originating_rank_in, SubTableType &query_subtable_in) {
 
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
