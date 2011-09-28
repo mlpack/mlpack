@@ -11,12 +11,12 @@
 /**
  * Simple real-valued range.
  */
-struct Range {
+class Range {
  public:
   double lo; /// The lower bound.
   double hi; /// The upper bound.
 
-  /** Initialize to 0. */
+  /** Initialize to an empty set (where lo > hi). */
   Range();
 
   /***
@@ -28,20 +28,6 @@ struct Range {
   /** Initializes to specified values. */
   Range(double lo_in, double hi_in);
 
-  /** Initialize to an empty set, where lo > hi. */
-  void InitEmptySet();
-
-  /** Initializes to -infinity to infinity. */
-  void InitUniversalSet();
-
-  /**
-   * Resets to a range of values.
-   *
-   * Since there is no dynamic memory this is the same as Init, but calling
-   * Reset instead of Init probably looks more similar to surrounding code.
-   */
-  void Reset(double lo_in, double hi_in);
-
   /**
    * Gets the span of the range, hi - lo.
    */
@@ -51,31 +37,6 @@ struct Range {
    * Gets the midpoint of this range.
    */
   double mid() const;
-
-  /**
-   * Interpolates (factor) * hi + (1 - factor) * lo.
-   */
-  double interpolate(double factor) const;
-
-  /**
-   * Takes the maximum of upper and lower bounds independently.
-   */
-  void MaxWith(const Range& range);
-
-  /**
-   * Takes the minimum of upper and lower bounds independently.
-   */
-  void MinWith(const Range& range);
-
-  /**
-   * Takes the maximum of upper and lower bounds independently.
-   */
-  void MaxWith(double v);
-
-  /**
-   * Takes the minimum of upper and lower bounds independently.
-   */
-  void MinWith(double v);
 
   /**
    * Expands this range to include another range.

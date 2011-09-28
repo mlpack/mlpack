@@ -10,7 +10,7 @@
  * Initialize the range to 0.
  */
 Range::Range() :
-    lo(0), hi(0) { /* nothing else to do */ }
+    lo(DBL_MAX), hi(-DBL_MAX) { /* nothing else to do */ }
 
 /**
  * Initialize a range to enclose only the given point.
@@ -24,29 +24,6 @@ Range::Range(double point) :
 Range::Range(double lo_in, double hi_in) :
     lo(lo_in), hi(hi_in) { /* nothing else to do */ }
 
-/** Initialize to an empty set, where lo > hi. */
-void Range::InitEmptySet() {
-  lo = DBL_MAX;
-  hi = -DBL_MAX;
-}
-
-/** Initializes to -infinity to infinity. */
-void Range::InitUniversalSet() {
-  lo = -DBL_MAX;
-  hi = DBL_MAX;
-}
-
-/**
- * Resets to a range of values.
- *
- * Since there is no dynamic memory this is the same as Init, but calling
- * Reset instead of Init probably looks more similar to surrounding code.
- */
-void Range::Reset(double lo_in, double hi_in) {
-  lo = lo_in;
-  hi = hi_in;
-}
-
 /**
  * Gets the span of the range, hi - lo.
  */
@@ -59,55 +36,6 @@ double Range::width() const {
  */
 double Range::mid() const {
   return (hi + lo) / 2;
-}
-
-/**
- * Interpolates (factor) * hi + (1 - factor) * lo.
- */
-double Range::interpolate(double factor) const {
-  return factor * width() + lo;
-}
-
-/**
- * Takes the maximum of upper and lower bounds independently.
- */
-void Range::MaxWith(const Range& range) {
-  if (range.lo > lo)
-    lo = range.lo;
-  if (range.hi > hi)
-    hi = range.hi;
-}
-
-/**
- * Takes the minimum of upper and lower bounds independently.
- */
-void Range::MinWith(const Range& range) {
-  if (range.lo < lo)
-    lo = range.lo;
-  if (range.hi < hi)
-    hi = range.hi;
-}
-
-/**
- * Takes the maximum of upper and lower bounds independently.
- */
-void Range::MaxWith(double v) {
-  if (v > lo) {
-    lo = v;
-    if (v > hi)
-      hi = v;
-  }
-}
-
-/**
- * Takes the minimum of upper and lower bounds independently.
- */
-void Range::MinWith(double v) {
-  if (v < hi) {
-    hi = v;
-    if (v < lo)
-      lo = v;
-  }
 }
 
 /**
