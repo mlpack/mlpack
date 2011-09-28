@@ -107,7 +107,7 @@ void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectPeriodicBound& box
 template<int t_pow>
 void DHrectPeriodicBound<t_pow>::Reset() {
   for (size_t i = 0; i < dim_; i++) {
-    bounds_[i].InitEmptySet();
+    bounds_[i] = Range();
   }
 }
 

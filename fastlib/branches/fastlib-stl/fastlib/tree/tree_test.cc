@@ -25,12 +25,10 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
   DHrectPeriodicBound<2> p1(box);
 
   //Two squares with length 2, with 1 distance apart along the x-axis.
-  p1[0].Init(0.0, 2.0);
-  p1[1].Init(0.0, 2.0);
-  p2[0].Init(3.0, 5.0);
-  p2[1].Init(0.0, 2.0);
-
-
+  p1[0] = Range(0.0, 2.0);
+  p1[1] = Range(0.0, 2.0);
+  p2[0] = Range(3.0, 5.0);
+  p2[1] = Range(0.0, 2.0);
 
   //A point at (1,1)
   arma::vec vector(2);
@@ -77,8 +75,8 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
   vector[1] = 2.0;
   BOOST_REQUIRE(p1.Contains(vector));
 
-  p1[0].Init(0.0, 2.0);
-  p1[1].Init(0.0, 2.0);
+  p1[0] = Range(0.0, 2.0);
+  p1[1] = Range(0.0, 2.0);
   arma::vec size(2);
   size[0] = 3.5;
   size[1] = 2.0;
@@ -98,10 +96,10 @@ BOOST_AUTO_TEST_CASE(TestHRectBound) {
   HRectBound<> r2(2);
 
   // Two squares with length 2, with 1 distance apart along the x-axis.
-  r1[0].Init(0.0, 2.0);
-  r1[1].Init(0.0, 2.0);
-  r2[0].Init(3.0, 5.0);
-  r2[1].Init(0.0, 2.0);
+  r1[0] = Range(0.0, 2.0);
+  r1[1] = Range(0.0, 2.0);
+  r2[0] = Range(3.0, 5.0);
+  r2[1] = Range(0.0, 2.0);
 
   // A point at (1,1)
   arma::vec vector(2);
@@ -144,8 +142,8 @@ BOOST_AUTO_TEST_CASE(TestHRectBound) {
   vector[1] = 2.0;
   BOOST_REQUIRE(r1.Contains(vector));
 
-  r1[0].Init(0.0, 2.0);
-  r1[1].Init(0.0, 2.0);
+  r1[0] = Range(0.0, 2.0);
+  r1[1] = Range(0.0, 2.0);
   arma::vec size(2);
   size[0] = 3.5;
   size[1] = 2.0;

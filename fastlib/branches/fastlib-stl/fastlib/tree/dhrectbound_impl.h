@@ -55,7 +55,7 @@ HRectBound<t_pow>::~HRectBound() {
 template<int t_pow>
 void HRectBound<t_pow>::Clear() {
   for (size_t i = 0; i < dim_; i++) {
-    bounds_[i].InitEmptySet();
+    bounds_[i] = Range();
   }
 }
 
