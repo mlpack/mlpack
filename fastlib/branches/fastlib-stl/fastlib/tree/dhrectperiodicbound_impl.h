@@ -30,7 +30,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound() :
  */
 template<int t_pow>
 DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(arma::vec box) :
-      bounds_(new DRange[box.n_rows]),
+      bounds_(new Range[box.n_rows]),
       dim_(box.n_rows),
       box_size_(box) {
 }
@@ -42,7 +42,7 @@ DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(arma::vec box) :
 template<int t_pow>
 DHrectPeriodicBound<t_pow>::DHrectPeriodicBound(size_t dimension, arma::vec box) :
       box_size_(box),
-      bounds_(new DRange[dimension]),
+      bounds_(new Range[dimension]),
       dim_(dimension) {
   mlpack::IO::AssertMessage(dim_ == ~((size_t)0), "Already initialized");
   Reset();
@@ -89,10 +89,10 @@ void DHrectPeriodicBound<t_pow>::AverageBoxesInit(const DHrectPeriodicBound& box
 
   if(bounds_)
     delete[] bounds_;
-  bounds_ = new DRange[dim_];
+  bounds_ = new Range[dim_];
 
   for (size_t i = 0; i < dim_; i++) {
-    DRange range;
+    Range range;
     range = box1.get(i) +  box2.get(i);
     range *= 0.5;
     bounds_[i] = range;
@@ -119,7 +119,7 @@ void DHrectPeriodicBound<t_pow>::SetSize(size_t dim) {
   if(bounds_)
     delete[] bounds_;
 
-  bounds_ = new DRange[dim];
+  bounds_ = new Range[dim];
   dim_ = dim;
   Reset();
 }
@@ -142,7 +142,7 @@ bool DHrectPeriodicBound<t_pow>::Contains(const arma::vec& point) const {
  * Gets the range for a particular dimension.
  */
 template<int t_pow>
-const DRange DHrectPeriodicBound<t_pow>::operator[](size_t i) const {
+const Range DHrectPeriodicBound<t_pow>::operator[](size_t i) const {
   return bounds_[i];
 }
 
@@ -150,7 +150,7 @@ const DRange DHrectPeriodicBound<t_pow>::operator[](size_t i) const {
  * Sets the range for the given dimension.
  */
 template<int t_pow>
-DRange& DHrectPeriodicBound<t_pow>::operator[](size_t i) {
+Range& DHrectPeriodicBound<t_pow>::operator[](size_t i) {
   return bounds_[i];
 }
 
@@ -321,7 +321,7 @@ double DHrectPeriodicBound<t_pow>::MinDelta(const DHrectPeriodicBound& other,
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& other) const {
+Range DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -344,7 +344,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& ot
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return DRange(pow(sum_lo, 2.0 / (double) t_pow),
+  return Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 
@@ -352,7 +352,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const DHrectPeriodicBound& ot
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const arma::vec& point) const {
+Range DHrectPeriodicBound<t_pow>::RangeDistanceSq(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -375,7 +375,7 @@ DRange DHrectPeriodicBound<t_pow>::RangeDistanceSq(const arma::vec& point) const
     sum_hi += pow(v_hi, (double) t_pow);
   }
 
-  return DRange(pow(sum_lo, 2.0 / (double) t_pow),
+  return Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
 }
 
