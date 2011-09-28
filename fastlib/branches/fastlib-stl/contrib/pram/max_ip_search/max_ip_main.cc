@@ -27,7 +27,7 @@ PARAM_FLAG("dofastexact", "The flag to trigger the tree-based"
 PARAM_FLAG("dofastapprox", "The flag to trigger the "
 	   "tree-based rank-approximate search algorithm",
 	   "");
-PARAM_FLAG("print_qresults", "The flag to trigger the "
+PARAM_FLAG("print_results", "The flag to trigger the "
 	   "printing of the output", "");
 
 PARAM_STRING("maxip_file", "The file where the output "

@@ -42,6 +42,17 @@ target_link_libraries(max_ip_main
    mlpack_contrib
 )
 
+# the single/dual tree tester
+add_executable(max_ip_tester
+   EXCLUDE_FROM_ALL
+   max_ip_tester.cc
+)
+target_link_libraries(max_ip_tester
+   fastlib
+   mlpack
+   mlpack_contrib
+)
+
 # The cosine tree preliminary test file
 add_executable(cosine_tree_test
    EXCLUDE_FROM_ALL

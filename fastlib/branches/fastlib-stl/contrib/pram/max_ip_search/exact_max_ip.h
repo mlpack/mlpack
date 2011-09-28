@@ -66,7 +66,6 @@ class MaxIP {
   public:
     double bound() { return bound_; }
     void set_bound(double bound) { 
-      //if (bound_ < bound) 
       bound_ = bound;
     }
 
@@ -223,7 +222,11 @@ public:
    */
   void InitNaive(const arma::mat& queries_in, 
 		 const arma::mat& references_in);
-  
+
+  /*
+   *
+   */
+  void WarmInit(size_t knns);
   /**
    * Computes the nearest neighbors and stores them in *results
    */
