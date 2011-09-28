@@ -6,11 +6,21 @@
 #include "range.h"
 #include <float.h>
 
-/** Initialize to 0. */
+/**
+ * Initialize the range to 0.
+ */
 Range::Range() :
     lo(0), hi(0) { /* nothing else to do */ }
 
-/** Initializes to specified values. */
+/**
+ * Initialize a range to enclose only the given point.
+ */
+Range::Range(double point) :
+    lo(point), hi(point) { /* nothing else to do */ }
+
+/**
+ * Initializes the range to the specified values.
+ */
 Range::Range(double lo_in, double hi_in) :
     lo(lo_in), hi(hi_in) { /* nothing else to do */ }
 
@@ -24,12 +34,6 @@ void Range::InitEmptySet() {
 void Range::InitUniversalSet() {
   lo = -DBL_MAX;
   hi = DBL_MAX;
-}
-
-/** Initializes to a range of values. */
-void Range::Init(double lo_in, double hi_in) {
-  lo = lo_in;
-  hi = hi_in;
 }
 
 /**
@@ -62,138 +66,6 @@ double Range::mid() const {
  */
 double Range::interpolate(double factor) const {
   return factor * width() + lo;
-}
-
-/**
- * Simulate a union by growing the range if necessary.
- */
-const Range& Range::operator|=(double d) {
-  if (d < lo)
-    lo = d;
-  if (d > hi)
-    hi = d;
-
-  return *this;
-}
-
-/**
- * Sets this range to include only the specified value, or
- * becomes an empty set if the range does not contain the number.
- */
-const Range& Range::operator&=(double d) {
-  if (d > lo)
-    lo = d;
-  if (d < hi)
-    hi = d;
-
-  return *this;
-}
-
-/**
- * Expands range to include the other range.
- */
-const Range& Range::operator|=(const Range& other) {
-  if (other.lo < lo)
-    lo = other.lo;
-  if (other.hi > hi)
-    hi = other.hi;
-
-  return *this;
-}
-
-/**
- * Shrinks range to be the overlap with another range, becoming an empty
- * set if there is no overlap.
- */
-const Range& Range::operator&=(const Range& other) {
-  if (other.lo > lo)
-    lo = other.lo;
-  if (other.hi < hi)
-    hi = other.hi;
-
-  return *this;
-}
-
-/** Scales upper and lower bounds. */
-Range operator-(const Range& r) {
-  return Range(-r.hi, -r.lo);
-}
-
-/** Scales upper and lower bounds. */
-const Range& Range::operator*=(double d) {
-//  mlpack::IO::AssertMessage(d >= 0, "don't multiply Ranges by negatives, explicitly negate");
-  lo *= d;
-  hi *= d;
-
-  return *this;
-}
-
-/** Scales upper and lower bounds. */
-Range operator*(const Range& r, double d) {
-//  mlpack::IO::AssertMessage(d >= 0, "don't multiply Ranges by negatives, explicitly negate");
-
-  return Range(r.lo * d, r.hi * d);
-}
-
-/** Scales upper and lower bounds. */
-Range operator*(double d, const Range& r) {
-  //mlpack::IO::AssertMessage(d >= 0, "don't multiply Ranges by negatives, explicitly negate");
-  return Range(r.lo * d, r.hi * d);
-}
-
-/** Sums the upper and lower independently. */
-const Range& Range::operator+=(const Range& other) {
-  lo += other.lo;
-  hi += other.hi;
-
-  return *this;
-}
-
-/** Subtracts from the upper and lower.
- * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
- * This is NOT an undo of the + operator.
- */
-const Range& Range::operator-=(const Range& other) {
-  lo -= other.hi;
-  hi -= other.lo;
-
-  return *this;
-}
-
-/** Adds to the upper and lower independently. */
-const Range& Range::operator+=(double d) {
-  lo += d;
-  hi += d;
-
-  return *this;
-}
-
-/** Subtracts from the upper and lower independently. */
-const Range& Range::operator-=(double d) {
-  lo -= d;
-  hi -= d;
-
-  return *this;
-}
-
-Range operator+(const Range& a, const Range& b) {
-  Range result(a.lo + b.lo, a.hi + b.hi);
-  return result;
-}
-
-Range operator-(const Range& a, const Range& b) {
-  Range result(a.lo - b.hi, a.hi - b.lo);
-  return result;
-}
-
-Range operator+(const Range& a, double b) {
-  Range result(a.lo + b, a.hi + b);
-  return result;
-}
-
-Range operator-(const Range& a, double b) {
-  Range result(a.lo - b, a.hi - b);
-  return result;
 }
 
 /**
@@ -239,71 +111,99 @@ void Range::MinWith(double v) {
 }
 
 /**
- * Compares if this is STRICTLY less than another range.
+ * Expands range to include the other range.
  */
-bool operator<(const Range& a, const Range& b) {
-  return a.hi < b.lo;
+Range& Range::operator|=(const Range& rhs) {
+  if (rhs.lo < lo)
+    lo = rhs.lo;
+  if (rhs.hi > hi)
+    hi = rhs.hi;
+
+  return *this;
 }
 
-bool operator>(const Range& b, const Range& a) {
-  return a < b;
-}
-
-bool operator<=(const Range& b, const Range& a) {
-  return !(a < b);
-}
-
-bool operator>=(const Range& a, const Range& b) {
-  return !(a < b);
+Range Range::operator|(const Range& rhs) const {
+  return Range((rhs.lo < lo) ? rhs.lo : lo,
+               (rhs.hi > hi) ? rhs.hi : hi);
 }
 
 /**
- * Compares if this is STRICTLY equal to another range.
+ * Shrinks range to be the overlap with another range, becoming an empty
+ * set if there is no overlap.
  */
-bool operator==(const Range& a, const Range& b) {
-  return a.lo == b.lo && a.hi == b.hi;
+Range& Range::operator&=(const Range& rhs) {
+  if (rhs.lo > lo)
+    lo = rhs.lo;
+  if (rhs.hi < hi)
+    hi = rhs.hi;
+
+  return *this;
 }
 
-bool operator!=(const Range& a, const Range& b) {
-  return !(a == b);
+Range Range::operator&(const Range& rhs) const {
+  return Range((rhs.lo > lo) ? rhs.lo : lo,
+               (rhs.hi < hi) ? rhs.hi : hi);
 }
 
 /**
- * Compares if this is STRICTLY less than a value.
+ * Scale the bounds by the given double.
  */
-bool operator<(const Range& a, double b) {
-  return a.hi < b;
+Range& Range::operator*=(const double d) {
+  lo *= d;
+  hi *= d;
+
+  // Now if we've negated, we need to flip things around so the bound is valid.
+  if (lo > hi) {
+    double tmp = hi;
+    hi = lo;
+    lo = tmp;
+  }
+
+  return *this;
 }
 
-bool operator>(const double& b, const Range& a) {
-  return a < b;
+Range Range::operator*(const double d) const {
+  double nlo = lo * d;
+  double nhi = hi * d;
+
+  if (nlo <= nhi)
+    return Range(nlo, nhi);
+  else
+    return Range(nhi, nlo);
 }
 
-bool operator<=(const double& b, const Range& a) {
-  return !(a < b);
-}
+// Symmetric case.
+Range operator*(const double d, const Range& r) {
+  double nlo = r.lo * d;
+  double nhi = r.hi * d;
 
-bool operator>=(const Range& a, const double& b) {
-  return !(a < b);
+  if (nlo <= nhi)
+    return Range(nlo, nhi);
+  else
+    return Range(nhi, nlo);
 }
 
 /**
- * Compares if a value is STRICTLY less than this range.
+ * Compare with another range for strict equality.
  */
-bool operator<(double a, const Range& b) {
-  return a < b.lo;
+bool Range::operator==(const Range& rhs) const {
+  return (lo == rhs.lo) && (hi == rhs.hi);
 }
 
-bool operator>(const Range& b, const double& a) {
-  return a < b;
+bool Range::operator!=(const Range& rhs) const {
+  return (lo != rhs.lo) || (hi != rhs.hi);
 }
 
-bool operator<=(const Range& b, const double& a) {
-  return !(a < b);
+/**
+ * Compare with another range.  For Range objects x and y, x < y means that x is
+ * strictly less than y and does not overlap at all.
+ */
+bool Range::operator<(const Range& rhs) const {
+  return hi < rhs.lo;
 }
 
-bool operator>=(const double& a, const Range& b) {
-  return !(a < b);
+bool Range::operator>(const Range& rhs) const {
+  return lo > rhs.hi;
 }
 
 /**

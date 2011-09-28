@@ -19,6 +19,12 @@ struct Range {
   /** Initialize to 0. */
   Range();
 
+  /***
+   * Initialize a range to enclose only the given point (lo = point, hi =
+   * point).
+   */
+  Range(double point);
+
   /** Initializes to specified values. */
   Range(double lo_in, double hi_in);
 
@@ -27,9 +33,6 @@ struct Range {
 
   /** Initializes to -infinity to infinity. */
   void InitUniversalSet();
-
-  /** Initializes to a range of values. */
-  void Init(double lo_in, double hi_in);
 
   /**
    * Resets to a range of values.
@@ -55,60 +58,6 @@ struct Range {
   double interpolate(double factor) const;
 
   /**
-   * Simulate a union by growing the range if necessary.
-   */
-  const Range& operator|=(double d);
-
-  /**
-   * Sets this range to include only the specified value, or
-   * becomes an empty set if the range does not contain the number.
-   */
-  const Range& operator&=(double d);
-
-  /**
-   * Expands range to include the other range.
-   */
-  const Range& operator|=(const Range& other);
-
-  /**
-   * Shrinks range to be the overlap with another range, becoming an empty
-   * set if there is no overlap.
-   */
-  const Range& operator&=(const Range& other);
-
-  /** Scales upper and lower bounds. */
-  friend Range operator-(const Range& r);
-
-  /** Scales upper and lower bounds. */
-  const Range& operator*=(double d);
-
-  /** Scales upper and lower bounds. */
-  friend Range operator*(const Range& r, double d);
-
-  /** Scales upper and lower bounds. */
-  friend Range operator*(double d, const Range& r);
-
-  /** Sums the upper and lower independently. */
-  const Range& operator+=(const Range& other);
-
-  /** Subtracts from the upper and lower.
-   * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
-   * This is NOT an undo of the + operator.
-   */
-  const Range& operator-=(const Range& other);
-
-  /** Adds to the upper and lower independently. */
-  const Range& operator+=(double d);
-
-  /** Subtracts from the upper and lower independently. */
-  const Range& operator-=(double d);
-
-  friend Range operator+(const Range& a, const Range& b);
-  friend Range operator-(const Range& a, const Range& b);
-  friend Range operator+(const Range& a, double b);
-  friend Range operator-(const Range& a, double b);
-
-  /**
    * Takes the maximum of upper and lower bounds independently.
    */
   void MaxWith(const Range& range);
@@ -129,37 +78,38 @@ struct Range {
   void MinWith(double v);
 
   /**
-   * Compares if this is STRICTLY less than another range.
+   * Expands this range to include another range.
    */
-  friend bool operator<(const Range& a, const Range& b);
-
-  friend bool operator>(const Range& b, const Range& a);
-  friend bool operator<=(const Range& b, const Range& a);
-  friend bool operator>=(const Range& a, const Range& b);
+  Range& operator|=(const Range& rhs);
+  Range operator|(const Range& rhs) const;
 
   /**
-   * Compares if this is STRICTLY equal to another range.
+   * Shrinks this range to be the overlap with another range; this makes an
+   * empty set if there is no overlap.
    */
-  friend bool operator==(const Range& a, const Range& b);
-
-  friend bool operator!=(const Range& a, const Range& b);
+  Range& operator&=(const Range& rhs);
+  Range operator&(const Range& rhs) const;
 
   /**
-   * Compares if this is STRICTLY less than a value.
+   * Scale the bounds by the given double.
    */
-  friend bool operator<(const Range& a, double b);
-  friend bool operator>(const double& b, const Range& a);
-  friend bool operator<=(const double& b, const Range& a);
-  friend bool operator>=(const Range& a, const double& b);
+  Range& operator*=(const double d);
+  Range operator*(const double d) const;
 
-  /**
-   * Compares if a value is STRICTLY less than this range.
+  friend Range operator*(const double d, const Range& r); // Symmetric case.
+
+  /***
+   * Compare with another range for strict equality.
    */
-  friend bool operator<(double a, const Range& b);
+  bool operator==(const Range& rhs) const;
+  bool operator!=(const Range& rhs) const;
 
-  friend bool operator>(const Range& b, const double& a);
-  friend bool operator<=(const Range& b, const double& a);
-  friend bool operator>=(const double& a, const Range& b);
+  /***
+   * Compare with another range.  For Range objects x and y, x < y means that x
+   * is strictly less than y and does not overlap at all.
+   */
+  bool operator<(const Range& rhs) const;
+  bool operator>(const Range& rhs) const;
 
   /**
    * Determines if a point is contained within the range.
