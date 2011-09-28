@@ -267,7 +267,7 @@ class DistributedDualtreeTaskList {
             assigned_cache_indices[query_subtable_position]);
         int new_position =
           distributed_task_queue_->PushNewQueue(
-            source_rank_in, *query_subtable_in_cache);
+            world, source_rank_in, *query_subtable_in_cache);
 
         unsigned long int num_reference_points_for_new_query_subtable = 0 ;
         for(unsigned int j = 0;

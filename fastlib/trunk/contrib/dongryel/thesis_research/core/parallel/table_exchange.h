@@ -196,6 +196,16 @@ class TableExchange {
             receive_process_rank ].flush_route().object().Destruct();
         }
       }
+
+      // Free the extra task sent.
+      if(message_cache_[
+            world.rank()].extra_task_route().object_is_valid() &&
+          message_cache_[
+            world.rank()].extra_task_route().num_destinations() == 0) {
+        message_cache_[
+          world.rank()].extra_task_route().object().ReleaseCache();
+        message_cache_[ world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
+      }
     }
 
     template<typename MetricType>
