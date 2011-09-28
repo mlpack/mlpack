@@ -70,8 +70,6 @@ double MaxIP::MaxNodeIP_(TreeType* reference_node) {
 double MaxIP::MaxNodeIP_(CTreeType* query_node,
 			 TreeType* reference_node) {
 
-  // TEST THIS FUNCTION
-
   // counting the split decisions 
   split_decisions_++;
 
@@ -91,39 +89,38 @@ double MaxIP::MaxNodeIP_(CTreeType* query_node,
 
   double max_cos_qp = 1.0;
 
-//   if (mlpack::IO::HasParam("maxip/angle_prune")) { 
+  if (mlpack::IO::HasParam("maxip/angle_prune")) { 
 
-//     if (rad <= c_norm) {
-//       // cos <pq = cos_phi
+    if (rad <= c_norm) {
+      // cos <pq = cos_phi
 
-//       // +1
-//       double cos_phi = arma::dot(q, centroid) / (c_norm * q_norm);
-//       double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
+      // +1
+      double cos_phi = arma::dot(q, centroid) / (c_norm * q_norm);
+      double sin_phi = std::sqrt(1 - cos_phi * cos_phi);
 
-//       // max_r sin <pr = sin_theta
-//       double sin_theta = rad / c_norm;
-//       double cos_theta = std::sqrt(1 - sin_theta * sin_theta);
+      // max_r sin <pr = sin_theta
+      double sin_theta = rad / c_norm;
+      double cos_theta = std::sqrt(1 - sin_theta * sin_theta);
 
-//       if ((cos_phi < cos_theta) && (cos_phi < cos_w)) { 
-// 	// phi > theta and phi > w
-// 	// computing cos(phi - theta)
-// 	double cos_phi_theta 
-// 	  = cos_phi * cos_theta + sin_phi * sin_theta;
+      if ((cos_phi < cos_theta) && (cos_phi < cos_w)) { 
+	// phi > theta and phi > w
+	// computing cos(phi - theta)
+	double cos_phi_theta 
+	  = cos_phi * cos_theta + sin_phi * sin_theta;
 
-// 	if (cos_phi_theta < cos_w) {
-// 	  // phi - theta > w
-// 	  // computing cos (phi - theta - w)
-// 	  double cos_phi_theta_w = cos_phi_theta * cos_w;
-// 	  cos_phi_theta_w
-// 	    += (std::sqrt(1 - cos_phi_theta * cos_phi_theta)
-// 		* sin_w);
-// 	  max_cos_qp = std::max(cos_phi_theta_w, 0.0);
-// 	}
-//       }
-//     }
-//   }
+	if (cos_phi_theta < cos_w) {
+	  // phi - theta > w
+	  // computing cos (phi - theta - w)
+	  double cos_phi_theta_w = cos_phi_theta * cos_w;
+	  cos_phi_theta_w
+	    += (std::sqrt(1 - cos_phi_theta * cos_phi_theta)
+		* sin_w);
+	  max_cos_qp = std::max(cos_phi_theta_w, 0.0);
+	}
+      }
+    }
+  }
 
-  assert(max_cos_qp == 1.0);
   return ((c_norm + rad) * max_cos_qp);
 }
 
@@ -172,6 +169,7 @@ void MaxIP::ComputeBaseCase_(TreeType* reference_node) {
 
   // for now the query lower bounds are accessed from 
   // the variable 'max_ips_(query_ * knns_ + knns_ - 1)'
+
   distance_computations_ 
     += reference_node->end() - reference_node->begin();
          
@@ -214,8 +212,6 @@ void MaxIP::ComputeNeighborsRecursion_(TreeType* reference_node,
 void MaxIP::ComputeBaseCase_(CTreeType* query_node, 
 			     TreeType* reference_node) {
 
-  // TEST THIS FUNCTION
-   
   // Check that the pointers are not NULL
   assert(reference_node != NULL);
   assert(reference_node->is_leaf());
@@ -230,37 +226,38 @@ void MaxIP::ComputeBaseCase_(CTreeType* query_node,
   for (query_ = query_node->begin();
        query_ < query_node->end(); query_++) {
 
+    size_t ind = query_ * knns_;
+
     // checking if this node has potential
     double query_to_node_max_ip = MaxNodeIP_(reference_node);
 
     // assert(query_to_node_max_ip > 0.0);
 
-    if (query_to_node_max_ip > max_ips_(query_*knns_ + knns_ -1)) {
+    if (query_to_node_max_ip > max_ips_(ind + knns_ -1))
       // this node has potential
-
       ComputeBaseCase_(reference_node);
-      double p_cos_pq = max_ips_(query_*knns_ + knns_ -1)
-	/ query_norms_(query_);
 
-      if (query_worst_p_cos_pq > p_cos_pq) {
-	query_worst_p_cos_pq = p_cos_pq;
-	new_bound = true;
-      }
+    double p_cos_pq = max_ips_(ind + knns_ -1)
+      / query_norms_(query_);
 
-      //distance_computations_ 
-      //+= reference_node->end() - reference_node->begin();
-    } // potential node
+    if (query_worst_p_cos_pq > p_cos_pq) {
+      query_worst_p_cos_pq = p_cos_pq;
+      new_bound = true;
+    }
   } // for query_
   
   // Update the lower bound for the query_node
   if (new_bound) 
     query_node->stat().set_bound(query_worst_p_cos_pq);
+
 } // ComputeBaseCase_
   
 
 void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
 
   size_t missed_nns = 0;
+  double max_p_cos_pq = 0.0;
+  double min_p_cos_pq = DBL_MAX;
 
   // Iterating over the queries individually
   for (query_ = query_node->begin();
@@ -269,6 +266,10 @@ void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
     // Get the query point from the matrix
     arma::vec q = queries_.col(query_);
     size_t ind = query_ * knns_;
+
+    double p_cos_qp = max_ips_(ind + knns_ -1) / query_norms_(query_);
+    if (min_p_cos_pq > p_cos_qp)
+      min_p_cos_pq = p_cos_qp;
 
     // We'll do the same for the references
     for (size_t reference_index = ref_node->begin(); 
@@ -280,20 +281,27 @@ void MaxIP::CheckPrune(CTreeType* query_node, TreeType* ref_node) {
       if (ip > max_ips_(ind+knns_-1))
 	missed_nns++;
 
+      double p_cos_pq = ip / query_norms_(query_);
+
+      if (p_cos_pq > max_p_cos_pq)
+	max_p_cos_pq = p_cos_pq;
+
     } // for reference_index
   } // for query_
 
-  if (missed_nns > 0) 
-    printf("Prune %zu - Missed candidates: %zu, QBound: %lg\n",
-	   number_of_prunes_, missed_nns, query_node->stat().bound());
+  if (missed_nns > 0 || query_node->stat().bound() != min_p_cos_pq) 
+    printf("Prune %zu - Missed candidates: %zu\n"
+	   "QLBound: %lg, ActualQLBound: %lg\n"
+	   "QRBound: %lg, ActualQRBound: %lg\n",
+	   number_of_prunes_, missed_nns,
+	   query_node->stat().bound(), min_p_cos_pq, 
+	   MaxNodeIP_(query_node, ref_node), max_p_cos_pq);
 
 }
 
 void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
 				       TreeType* reference_node, 
 				       double upper_bound_p_cos_pq) {
-
-  // TEST THE FUNCTION
 
   assert(query_node != NULL);
   assert(reference_node != NULL);
@@ -393,9 +401,7 @@ void MaxIP::ComputeNeighborsRecursion_(CTreeType* query_node,
     // Update the upper bound as above
     query_node->stat().set_bound(std::min(query_node->left()->stat().bound(),
 					  query_node->right()->stat().bound()));
-      
   }
-
 } // ComputeNeighborsRecursion_
   
 
@@ -460,6 +466,7 @@ void MaxIP::Init(const arma::mat& queries_in,
 
 } // Init
 
+
 void MaxIP::InitNaive(const arma::mat& queries_in, 
 		      const arma::mat& references_in) {
     
@@ -503,6 +510,27 @@ void MaxIP::InitNaive(const arma::mat& queries_in,
     
 } // InitNaive
   
+void MaxIP::WarmInit(size_t knns) {
+    
+    
+  // track the number of prunes and computations
+  number_of_prunes_ = 0;
+  distance_computations_ = 0;
+  split_decisions_ = 0;
+    
+  // K-nearest neighbors initialization
+  knns_ = knns;
+
+  // Initialize the list of nearest neighbor candidates
+  max_ip_indices_ 
+    = -1 * arma::ones<arma::Col<size_t> >(queries_.n_cols * knns_, 1);
+    
+  // Initialize the vector of upper bounds for each point.
+  // We do not consider negative values for inner products.
+  max_ips_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols * knns_, 1);
+
+} // WarmInit
+
 double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 			       arma::vec* ips) {
 
@@ -511,14 +539,12 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
   ips->set_size(max_ips_.n_elem);
 
   if (mlpack::IO::HasParam("maxip/dual_tree")) {
-    // TEST THIS PART OF THE FUNCTION
     // do dual-tree search
     mlpack::IO::Info << "DUAL-TREE Search: " << std::endl;
 
     ComputeNeighborsRecursion_(query_tree_, reference_tree_,
 			       MaxNodeIP_(query_tree_, reference_tree_));
 
-//     printf("Search done: %zu!!\n", (size_t) max_ips_.n_elem); fflush(NULL);
     for (size_t i = 0; i < max_ips_.n_elem; i++) {
       size_t query = old_from_new_queries_(i / knns_);
       assert(max_ip_indices_(i) != (size_t) -1);
@@ -526,7 +552,6 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
     }
-//     printf("Saving done!!\n"); fflush(NULL);
 
 
   } else {
