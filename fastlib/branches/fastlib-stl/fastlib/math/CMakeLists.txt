@@ -8,6 +8,8 @@ set(SOURCES
    kernel.h
    math_lib.h
    math_lib_impl.h
+   range.h
+   range.cc
 )
 
 # add directory name to sources

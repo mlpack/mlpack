@@ -62,8 +62,8 @@ class GaussianKernel {
   }
 
   /** Unnormalized range on a range of squared distances. */
-  DRange RangeUnnormOnSq(const DRange& range) const {
-    return DRange(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));  //!! TODO explain
+  Range RangeUnnormOnSq(const Range& range) const {
+    return Range(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));  //!! TODO explain
   }
 
   /**
