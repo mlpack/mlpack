@@ -308,7 +308,14 @@ class DistributedDualtreeTaskList {
      *
      *  @return true if the query subtable is successfully locked.
      */
-    bool push_back(boost::mpi::communicator &world, int probe_index) {
+    bool push_back(
+      boost::mpi::communicator &world,
+      int destination_rank_in, int probe_index) {
+
+      // Return if the task queue is empty.
+      if(distributed_task_queue_->size(probe_index) == 0) {
+        return false;
+      }
 
       // First, we need to serialize the query subtree.
       SubTableType &query_subtable =
