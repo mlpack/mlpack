@@ -77,7 +77,7 @@ bool npt::NodeTuple::CheckSymmetry(size_t split_ind, bool is_left) {
       
     } // for i
     
-    for (int i = split_ind; i < end_point; i++) {
+    for (int i = split_ind + 1; i < end_point; i++) {
       
       if (node_list_[i]->end() <= node_list_[split_ind]->right()->begin()) {
         return false;
