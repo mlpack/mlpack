@@ -207,8 +207,27 @@ void npt::SingleMatcher::BaseCaseHelper_(NodeTuple& nodes,
       // are we finished?
       if (k == tuple_size_ - 1) {
         
-        results_++;
         
+        //IMPORTANT: this is only for debugging two point
+        
+        //arma::colvec vec0 = data_mat_list_[0]->col(points_in_tuple[0]);
+        //arma::colvec vec1 = data_mat_list_[1]->col(points_in_tuple[1]);
+        
+        //double dist_sq = mlpack::kernel::LMetric<2>::Evaluate(vec0, vec1);
+        
+
+        /*
+        printf("tuple: (%u, %u), distance: %g\n", 
+               (*old_from_new_list_[0])[points_in_tuple[0]],
+               (*old_from_new_list_[1])[points_in_tuple[1]],
+               sqrt(dist_sq));
+        printf("%g <= %g <= %g\n\n", lower_bounds_sqr_(0,1), dist_sq, 
+               upper_bounds_sqr_(0,1));
+         */
+        //printf("original ids: %d, %d\n", points_in_tuple[0], points_in_tuple[1]);
+        
+        results_++;
+          
         double this_weight = 1.0;
         
         for (int tuple_ind = 0; tuple_ind < tuple_size_; tuple_ind++) {

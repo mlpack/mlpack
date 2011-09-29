@@ -41,6 +41,8 @@ namespace npt {
     std::vector<arma::mat*> data_mat_list_;
     std::vector<arma::colvec*> data_weights_list_;
     
+    std::vector<std::vector<size_t>*> old_from_new_list_;
+    
     
     // stores the permutations, make sure to always reuse it instead of making
     // more
@@ -97,8 +99,10 @@ namespace npt {
     // constructor
     SingleMatcher(std::vector<arma::mat*>& data_in, 
                   std::vector<arma::colvec*>& weights_in,
+                  std::vector<std::vector<size_t>*>& old_from_new_in,
                   arma::mat& matcher_dists, double bandwidth) :
     data_mat_list_(data_in), data_weights_list_(weights_in),
+    old_from_new_list_(old_from_new_in),
     perms_(matcher_dists.n_cols), 
     lower_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols),
     upper_bounds_sqr_(matcher_dists.n_rows, matcher_dists.n_cols)
@@ -141,8 +145,10 @@ namespace npt {
     // angle version of the constructor
     SingleMatcher(std::vector<arma::mat*>& data_in, 
                   std::vector<arma::colvec*>& weights_in,
+                  std::vector<std::vector<size_t>*>& old_from_new_in,
                   arma::mat& lower_bounds, arma::mat& upper_bounds) :
     data_mat_list_(data_in), data_weights_list_(weights_in),
+    old_from_new_list_(old_from_new_in),
     perms_(lower_bounds.n_cols),
     lower_bounds_sqr_(lower_bounds.n_rows, lower_bounds.n_cols),
     upper_bounds_sqr_(upper_bounds.n_rows, upper_bounds.n_cols)

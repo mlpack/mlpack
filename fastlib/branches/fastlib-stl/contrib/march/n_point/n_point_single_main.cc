@@ -164,15 +164,29 @@ int main(int argc, char* argv[]) {
     
     //IO::GetParam<int>("tree/leaf_size") = 100;
     
+    std::vector<size_t> old_from_new_data;
+    std::vector<size_t> old_from_new_random;
     
-    NptNode* data_tree = new NptNode(data_mat);
-    NptNode* random_tree = new NptNode(random_mat);
+    
+    NptNode* data_tree = new NptNode(data_mat, old_from_new_data);
+    NptNode* random_tree = new NptNode(random_mat, old_from_new_random);
+
+    std::vector<std::vector<size_t>*> old_from_new_list(tuple_size);
+    
+    for (int i = 0; i < num_random; i++) {
+      old_from_new_list[i] = &old_from_new_random;
+    }
+    for (int i = num_random; i < tuple_size; i++) {
+      old_from_new_list[i] = &old_from_new_data;
+    }
+
     
     comp_trees[0] = random_tree;
     comp_trees[1] = data_tree;
     
     
-    SingleMatcher matcher(comp_mats, comp_weights, matcher_lower_bounds,
+    SingleMatcher matcher(comp_mats, comp_weights, old_from_new_list,
+                          matcher_lower_bounds,
                           matcher_upper_bounds);
     
     GenericNptAlg<SingleMatcher> alg(comp_trees, comp_multi, matcher);
@@ -202,14 +216,32 @@ int main(int argc, char* argv[]) {
     IO::GetParam<int>("tree/leaf_size") = std::max(data_mat.n_cols, 
                                                    random_mat.n_cols);
     
+    std::vector<size_t> old_from_new_data;
+    std::vector<size_t> old_from_new_random;
+
     // build the trees
-    NptNode* naive_data_tree = new NptNode(data_mat);
-    NptNode* naive_random_tree = new NptNode(random_mat);
+    //NptNode* naive_data_tree = new NptNode(data_mat);
+    //NptNode* naive_random_tree = new NptNode(random_mat);
+    
+    NptNode* naive_data_tree = new NptNode(data_mat, old_from_new_data);
+    NptNode* naive_random_tree = new NptNode(random_mat, old_from_new_random);
+    
+    std::vector<std::vector<size_t>*> old_from_new_list(tuple_size);
+    
+    for (int i = 0; i < num_random; i++) {
+      old_from_new_list[i] = &old_from_new_random;
+    }
+    for (int i = num_random; i < tuple_size; i++) {
+      old_from_new_list[i] = &old_from_new_data;
+    }
+    
     
     comp_trees[0] = naive_random_tree;
     comp_trees[1] = naive_data_tree;
     
-    SingleMatcher matcher(comp_mats, comp_weights, matcher_lower_bounds,
+    SingleMatcher matcher(comp_mats, comp_weights, 
+                          old_from_new_list,
+                          matcher_lower_bounds,
                           matcher_upper_bounds);
     
     GenericNptAlg<SingleMatcher> alg(comp_trees, comp_multi, matcher, true);

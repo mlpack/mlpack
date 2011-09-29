@@ -79,9 +79,12 @@ void npt::SingleDriver::Compute() {
           arma::mat& lower_bounds = generator_.lower_matcher(r1_ind, theta_ind);
           arma::mat& upper_bounds = generator_.upper_matcher(r1_ind, theta_ind);
           
+          // IMPORTANT: needs to be filled in
+          std::vector<std::vector<size_t>*> old_from_new_list;
           
           // create matcher class
           SingleMatcher matcher(this_comp_mats, this_comp_weights, 
+                                old_from_new_list,
                                 lower_bounds, upper_bounds);
           
           // create alg class
