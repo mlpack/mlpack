@@ -101,7 +101,7 @@ class DConeBound {
      *
      * Example: bound1.MinDistanceSq(other) for minimum squared distance.
      */
-    DRange RangeCosine(const DConeBound& other) const;
+    Range RangeCosine(const DConeBound& other) const;
 
     /**
      * Calculates closest-to-their-midpoint bounding box distance,

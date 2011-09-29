@@ -8,8 +8,9 @@ using namespace mlpack;
 using namespace std;
 
 PROGRAM_INFO("Maximum IP Tester", "This program "
- 	     "returns the maximum inner product for a "
- 	     "given query over a set of points (references).", 
+ 	     "tests the maximum inner product search for a "
+ 	     "given query over a set of points (references) with"
+	     " varying values of k.", 
 	     "maxip");
 
 // PARAM_MODULE("maxip_main", "Parameters for the main "
@@ -20,13 +21,17 @@ PROGRAM_INFO("Maximum IP Tester", "This program "
 PARAM_STRING_REQ("r", "The reference set", "");
 PARAM_STRING_REQ("q", "The set of queries", "");
 PARAM_INT_REQ("max_k", "The max value of knns to be tried.", "");
+PARAM_STRING("speedup_file", "The file in which to save the speedups"
+	     " for the different values of k.", "", "speedups.txt");
+PARAM_FLAG("print_speedups", "The flag to trigger the printing of"
+	   " speedups.", "");
 
 /**
  * This function checks if the neighbors computed 
  * by two different methods is the same.
  */
-size_t count_mismatched_neighbors(arma::Col<size_t>, arma::vec, 
- 				arma::Col<size_t>, arma::vec);
+size_t count_mismatched_neighbors(arma::vec, size_t, 
+				  arma::vec, size_t);
 
 
 int main (int argc, char *argv[]) {
@@ -37,16 +42,16 @@ int main (int argc, char *argv[]) {
   string rfile = IO::GetParam<string>("r");
   string qfile = IO::GetParam<string>("q");
 
-  IO::Info << "Loading files..." << endl;
+  IO::Warn << "Loading files..." << endl;
   if (!data::Load(rfile.c_str(), rdata))
     IO::Fatal << "Reference file "<< rfile << " not found." << endl;
 
   if (!data::Load(qfile.c_str(), qdata)) 
     IO::Fatal << "Query file " << qfile << " not found." << endl;
 
-  IO::Info << "File loaded..." << endl;
+  IO::Warn << "File loaded..." << endl;
   
-  IO::Info << "R(" << rdata.n_rows << ", " << rdata.n_cols 
+  IO::Warn << "R(" << rdata.n_rows << ", " << rdata.n_cols 
 	   << "), Q(" << qdata.n_rows << ", " << qdata.n_cols 
 	   << ")" << endl;
 
@@ -54,71 +59,67 @@ int main (int argc, char *argv[]) {
 
   size_t knns = IO::GetParam<int>("maxip/knns");
   size_t max_k = IO::GetParam<int>("max_k");
+  arma::vec speedups(max_k);
 
   MaxIP naive, fast_exact;
 
+  IO::Warn << "Starting naive computation..." <<endl;
   naive.InitNaive(qdata, rdata);
+  naive.WarmInit(max_k);
+  arma::Col<size_t> nac;
+  arma::vec din;
+  double naive_comp = naive.ComputeNaive(&nac, &din);
+
+  IO::Warn << "Naive computation done..." << endl;
+  IO::Warn << "Starting loop for Fast Exact Search." << endl;
+
   fast_exact.Init(qdata, rdata);
 
+  printf("k = ");
   for (knns = 1; knns <= max_k; knns++) {
-    double naive_comp, fast_comp;
-    arma::Col<size_t> nac, exc;
-    arma::vec din, die;
 
-    naive_comp = naive.ComputeNaive(&nac, &din);
-    fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
+    printf("%zu", knns);
+    arma::Col<size_t> exc;
+    arma::vec die;
+    double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
 
-
-    size_t errors = count_mismatched_neighbors(nac, din, exc, die);
+    size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
 
     if (errors > 0) {
       IO::Warn << knns << "-NN error: " << errors << " / "
-	       << nac.n_elem << endl;
-      IO::Warn << "Speed of fast-exact over naive: "
-	       << naive_comp << " / " << (float) fast_comp << " = "
-	       <<(float) (naive_comp / fast_comp) << endl;
+	       << exc.n_elem << endl;
     }
+    speedups(knns -1) = naive_comp / fast_comp;
 
-    naive.WarmInit(knns+1);
     fast_exact.WarmInit(knns+1);
+    for (size_t i = 0; i < ceil(log10(knns + 0.001)); i++)
+      printf("\b");
   }
-}
 
-// void compare_neighbors(arma::Col<size_t> *a, 
-//                        arma::vec *da,
-//                        arma::Col<size_t> *b, 
-//                        arma::vec *db) {
-  
-//   IO::Info << "Comparing results for %zud queries", a->size());
-//   DEBUG_SAME_SIZE(a->size(), b->size());
-//   size_t *x = a->begin();
-//   size_t *y = a->end();
-//   size_t *z = b->begin();
+  IO::Warn << "Search completed for all values of k...printing results now"
+	   << endl;
 
-//   for(size_t i = 0; x != y; x++, z++, i++) {
-//     DEBUG_WARN_MSG_IF(*x != *z || (*da)[i] != (*db)[i], 
-//                       "point %zud brute: %zud:%lf fast: %zud:%lf",
-//                       i, *z, (*db)[i], *x, (*da)[i]);
-//   }
-// }
+  if (IO::HasParam("print_speedups")) {
+    string speedup_file = IO::GetParam<string>("speedup_file");
+    speedups.save(speedup_file, arma::raw_ascii);
+  }
+}  // end main
 
-size_t count_mismatched_neighbors(arma::Col<size_t> a, 
- 				arma::vec da,
- 				arma::Col<size_t> b, 
- 				arma::vec db) {
-  // IO::Warn << "Comparing results for " << a.n_elem << " queries." << endl;
-  assert(a.n_elem == b.n_elem);
+size_t count_mismatched_neighbors(arma::vec v1, size_t k1,
+				  arma::vec v2, size_t k2) {
+
+  assert(v1.n_elem / k1 == v2.n_elem / k2);
   size_t count_mismatched = 0;
 
-//   IO::Warn << "Mismatches: " << endl;
-  for(size_t i = 0; i < a.n_elem;  i++) {
-    if (da(i) != db(i)) {
-      ++count_mismatched;
-      // IO::Warn << da(i) - db(i) << endl;
-    }
+  size_t num_queries = v1.n_elem / k1;
+  for(size_t i = 0; i < num_queries;  i++) {
+    size_t ind1 = i * k1;
+    size_t ind2 = i * k2;
+
+    for (size_t j = 0; j < std::min(k1, k2); j++)
+      if (v1(ind1 + j) != v2(ind2 + j)) 
+	++count_mismatched;
   }
 
-//   IO::Warn << count_mismatched << " / " << a.n_elem
-// 	    << " errors." << endl;
   return count_mismatched;
 }

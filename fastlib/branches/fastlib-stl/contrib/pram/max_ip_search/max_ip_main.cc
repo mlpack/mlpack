@@ -95,8 +95,9 @@ int main (int argc, char *argv[]) {
       FILE *fp=fopen(IO::GetParam<string>("maxip_file").c_str(), "w");
       if (fp == NULL)
 	IO::Fatal << "Error while opening " 
-		  << IO::GetParam<string>("maxip_file") 
-		  << "..." << strerror(errno);
+		  << IO::GetParam<string>("maxip_file")
+		  << endl;
+// 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < nac.n_elem / knns ; i++) {
         fprintf(fp, "%zu", i);
@@ -135,7 +136,8 @@ int main (int argc, char *argv[]) {
       if (fp == NULL)
 	IO::Fatal << "Error while opening " 
 		  << IO::GetParam<string>("maxip_file") 
-		  << "..." << strerror(errno);
+		  << endl;
+// 		  << "..." << strerror(errno);
 
       for(size_t i = 0 ; i < exc.n_elem / knns ; i++) {
         fprintf(fp, "%zu", i);
