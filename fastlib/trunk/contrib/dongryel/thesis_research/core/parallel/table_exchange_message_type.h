@@ -34,6 +34,8 @@ class MessageType {
 
     ExtraTaskRouteRequestType extra_task_route_;
 
+    bool flush_only_mode_;
+
     SubTableRouteRequestType flush_route_;
 
     LoadBalanceRouteRequestType load_balance_route_;
@@ -44,23 +46,30 @@ class MessageType {
 
   public:
 
+    void set_flush_only_mode_flag(bool flag_in) {
+      flush_only_mode_ = flag_in;
+    }
+
     void set_do_load_balancing_flag(bool flag_in) {
       do_load_balancing_ = flag_in;
     }
 
     MessageType() {
       do_load_balancing_ = false;
+      flush_only_mode_ = false;
       originating_rank_ = 0;
     }
 
     MessageType(bool do_load_balancing_in) {
       do_load_balancing_ = do_load_balancing_in;
+      flush_only_mode_ = false;
       originating_rank_ = 0;
     }
 
     void operator=(const MessageType &message_in) {
       do_load_balancing_ = message_in.do_load_balancing_;
       energy_route_ = message_in.energy_route();
+      flush_only_mode_ = message_in.flush_only_mode_;
       flush_route_ = message_in.flush_route();
       load_balance_route_ = message_in.load_balance_route();
       originating_rank_ = message_in.originating_rank();
@@ -129,14 +138,24 @@ class MessageType {
 
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
-      ar & energy_route_;
+      ar & flush_only_mode_;
+
+      if(! flush_only_mode_) {
+        ar & energy_route_;
+      }
       if(do_load_balancing_) {
-        ar & extra_task_route_;
+        if(! flush_only_mode_) {
+          ar & extra_task_route_;
+        }
         ar & flush_route_;
-        ar & load_balance_route_;
+        if(! flush_only_mode_) {
+          ar & load_balance_route_;
+        }
       }
       ar & originating_rank_;
-      ar & subtable_route_;
+      if(! flush_only_mode_) {
+        ar & subtable_route_;
+      }
     }
 };
 }

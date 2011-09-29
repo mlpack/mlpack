@@ -101,13 +101,6 @@ class DistributedDualtreeTaskQueue {
      */
     QuerySubTableLockListType checked_out_query_subtables_;
 
-    /** @brief If the number of available query subtables is below
-     *         this level, or if the number of query subtables that
-     *         has received complete data is above this level,
-     *         initiate the load balancing.
-     */
-    int load_balancing_threshold_;
-
     /** @brief The number of deterministic prunes.
      */
     int num_deterministic_prunes_;
@@ -344,6 +337,14 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    int num_imported_query_subtables() const {
+      return num_imported_query_subtables_;
+    }
+
+    int num_exported_query_subtables() const {
+      return num_exported_query_subtables_;
+    }
+
     void set_remaining_work_for_query_subtable(
       int probe_index, unsigned long int work_in) {
 
@@ -416,26 +417,9 @@ class DistributedDualtreeTaskQueue {
       (*query_subtable_lock)->Return_(this);
       checked_out_query_subtables_.erase(query_subtable_lock);
 
-      // Check whether the returned query subtable can be exported to
-      // other processes subsequently. This can happen when the query
-      // subtable has no longer needs additional data to race to the
-      // finish line.
-      if(! can_be_exported_.back()) {
-        can_be_exported_.back() =
-          (remaining_work_in_priority_queue_.back() ==
-           remaining_work_for_query_subtables_.back()) ;
-        num_receive_completed_query_subtables_++;
-
-        // Test whether we are running out of local tasks on this MPI
-        // process.
-        if(num_receive_completed_query_subtables_ +
-            num_evicted_query_subtables_ >= load_balancing_threshold_) {
-          table_exchange_.turn_on_load_balancing(
-            world,
-            num_evicted_query_subtables_ +
-            num_receive_completed_query_subtables_ / 2);
-        }
-      }
+      // Update the load balancing status.
+      table_exchange_.turn_on_load_balancing(
+        world, remaining_local_computation_) ;
     }
 
     /** @brief Locks and checks out a query subtable for a given MPI
@@ -527,7 +511,8 @@ class DistributedDualtreeTaskQueue {
       this->GrowSlots_();
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
-      can_be_exported_.back() = false;
+      //can_be_exported_.back() = false;
+      can_be_exported_.back() = true;
       remaining_work_for_query_subtables_.back() = 0;
       remaining_work_in_priority_queue_.back() = 0;
 
@@ -623,7 +608,7 @@ class DistributedDualtreeTaskQueue {
         // imported from other MPI processes.
         if(query_subtables_[i]->table()->rank() == world.rank() &&
             can_be_exported_[i] &&
-            extra_task_list_out->push_back(world, i)) {
+            extra_task_list_out->push_back(world, neighbor_rank_in, i)) {
           num_exported_query_subtables_++;
           break;
         }
@@ -858,7 +843,6 @@ class DistributedDualtreeTaskQueue {
     /** @brief The constructor.
      */
     DistributedDualtreeTaskQueue() {
-      load_balancing_threshold_ = 0;
       num_deterministic_prunes_ = 0;
       num_evicted_query_subtables_ = 0;
       num_exported_query_subtables_ = 0;
@@ -926,9 +910,6 @@ class DistributedDualtreeTaskQueue {
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
         10 * num_threads_in, &query_subtables_);
 
-      // Initialize the load balancing threshold.
-      load_balancing_threshold_ = static_cast<int>(query_subtables_.size() / 4) ;
-
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
@@ -978,7 +959,8 @@ class DistributedDualtreeTaskQueue {
           core::parallel::DisjointIntIntervals > (
             new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
-        can_be_exported_[i] = false;
+        //can_be_exported_[i] = false;
+        can_be_exported_[i] = true;
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
         remaining_work_in_priority_queue_[i] = 0;
       }
