@@ -72,11 +72,6 @@ BinarySpaceTree<Bound, Statistic>::BinarySpaceTree(
   new_from_old.resize(data.n_cols);
   for (size_t i = 0; i < data.n_cols; i++)
     new_from_old[old_from_new[i]] = i;
-
-  for (size_t i = 0; i < data.n_cols; i++) {
-    IO::Debug << old_from_new[i] << " ";
-  }
-  IO::Debug << std::endl;
 }
 
 template<typename Bound, typename Statistic>

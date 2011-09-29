@@ -100,7 +100,7 @@
       (false, DEF, ID, DESC, PARENT, REQ);
 
   #define PARAM_FLAG_INTERNAL(ID, DESC, PARENT) static mlpack::Option<bool> \
-      JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
+  JOIN(__io_option_flag_object_, __COUNTER__) (ID, DESC, PARENT);
 
   #define PARAM_MODULE(ID, DESC) static mlpack::Option<int> \
       JOIN(io_option_module_dummy_object_, __COUNTER__) (true, 0, ID, DESC, \

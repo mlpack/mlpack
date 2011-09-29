@@ -233,3 +233,40 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
   BOOST_REQUIRE(root_node.right()->left()->right()->count() == 1);
   BOOST_REQUIRE(root_node.right()->right()->count() == 1);
 }
+
+
+BOOST_AUTO_TEST_CASE(kd_tree_test) {
+  size_t max_points = 10000;
+  size_t dimensions = 3;
+  //Generate the dataset.  Each n-dimensional point 
+  timeval seed;
+  gettimeofday(&seed, NULL);
+  srand(seed.tv_sec);
+  size_t size = rand()%max_points;
+  arma::mat dataset = arma::mat(dimensions, size);
+  arma::mat datacopy;
+
+  //Mappings for post-sort verification of data
+  std::vector<size_t> new_to_old;
+  std::vector<size_t> old_to_new;
+
+
+  //Generate data
+  for(size_t i = 0; i < size; i++)  //Up to 1000 random points
+    for(size_t j = 0; j < dimensions; j++)
+      dataset(j, i) = (double)rand(); //Don't care about the range
+  datacopy = arma::mat(dataset);  
+ 
+  //Check validity of tree data
+  BinarySpaceTree<HRectBound<2> > 
+    root(dataset, new_to_old, old_to_new);
+
+  BOOST_REQUIRE_EQUAL(root.count(), size);   
+
+ for(size_t i = 0; i < size; i++)
+   for(size_t j = 0; j < dimensions; j++) {
+     //Check mappings
+     BOOST_REQUIRE_EQUAL(dataset(j,i), datacopy(j,new_to_old[i]));  
+     BOOST_REQUIRE_EQUAL(dataset(j,old_to_new[i]), datacopy(j,i));
+   }
+}
