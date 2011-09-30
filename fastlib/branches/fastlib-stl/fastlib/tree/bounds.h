@@ -14,8 +14,8 @@
 
 #include <fastlib/math/math_lib.h>
 #include "../../mlpack/core/kernels/lmetric.h"
-#include "dhrectbound.h"
-#include "dballbound.h"
+#include "hrectbound.h"
 #include "dhrectperiodicbound.h"
+#include "dballbound.h"
 
 #endif // TREE_BOUNDS_H
