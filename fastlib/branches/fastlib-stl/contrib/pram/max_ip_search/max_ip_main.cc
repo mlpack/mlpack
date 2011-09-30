@@ -157,8 +157,11 @@ int main (int argc, char *argv[]) {
     IO::Warn << "Speed of fast-exact over naive: "
 	     << naive_comp << " / " << (float) fast_comp << " = "
 	     <<(float) (naive_comp / fast_comp) << endl;
+  } else if (IO::HasParam("dofastexact")) {
+    IO::Warn << "Speed of fast-exact over naive: "
+	     << rdata.n_cols  << " / " << (float) fast_comp << " = "
+	     <<(float) (rdata.n_cols / fast_comp) << endl;
   }
-
 }
 
 // void compare_neighbors(arma::Col<size_t> *a, 

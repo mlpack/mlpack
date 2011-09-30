@@ -25,6 +25,8 @@ PARAM_STRING("speedup_file", "The file in which to save the speedups"
 	     " for the different values of k.", "", "speedups.txt");
 PARAM_FLAG("print_speedups", "The flag to trigger the printing of"
 	   " speedups.", "");
+PARAM_FLAG("check_nn", "The flag to trigger the checking"
+	   " of the results by doing the naive computation.", "");
 
 /**
  * This function checks if the neighbors computed 
@@ -62,39 +64,47 @@ int main (int argc, char *argv[]) {
   arma::vec speedups(max_k);
 
   MaxIP naive, fast_exact;
-
-  IO::Warn << "Starting naive computation..." <<endl;
-  naive.InitNaive(qdata, rdata);
-  naive.WarmInit(max_k);
+  double naive_comp = (double) rdata.n_cols;
   arma::Col<size_t> nac;
   arma::vec din;
-  double naive_comp = naive.ComputeNaive(&nac, &din);
 
-  IO::Warn << "Naive computation done..." << endl;
+  if (IO::HasParam("check_nn")) { 
+    IO::Warn << "Starting naive computation..." <<endl;
+    naive.InitNaive(qdata, rdata);
+    naive.WarmInit(max_k);
+    naive_comp = naive.ComputeNaive(&nac, &din);
+    IO::Warn << "Naive computation done..." << endl;
+  }
+
   IO::Warn << "Starting loop for Fast Exact Search." << endl;
 
   fast_exact.Init(qdata, rdata);
 
-  printf("k = ");
+  printf("k = "); fflush(NULL);
   for (knns = 1; knns <= max_k; knns++) {
 
-    printf("%zu", knns);
+    printf("%zu", knns); fflush(NULL);
     arma::Col<size_t> exc;
     arma::vec die;
     double fast_comp = fast_exact.ComputeNeighbors(&exc, &die);
 
-    size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
+    if (IO::HasParam("check_nn")) {
+      size_t errors = count_mismatched_neighbors(din, max_k, die, knns);
 
-    if (errors > 0) {
-      IO::Warn << knns << "-NN error: " << errors << " / "
-	       << exc.n_elem << endl;
+      if (errors > 0) {
+	IO::Warn << knns << "-NN error: " << errors << " / "
+		 << exc.n_elem << endl;
+      }
     }
+
     speedups(knns -1) = naive_comp / fast_comp;
 
     fast_exact.WarmInit(knns+1);
     for (size_t i = 0; i < ceil(log10(knns + 0.001)); i++)
-      printf("\b");
+      printf("\b"); fflush(NULL);
   }
+
+  printf("\n");
 
   IO::Warn << "Search completed for all values of k...printing results now"
 	   << endl;
