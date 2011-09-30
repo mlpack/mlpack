@@ -26,7 +26,7 @@ end
 obj_tol = 1e-1;
 
 % bound on norm of atoms
-c = 1;
+c = 1; %100;
 
 
 if type == 'p'
@@ -83,8 +83,9 @@ for main_iteration = 1:1000
   %end
 
   grad = ComputeDictionaryGradient(D_0, S, T);
-
-  grad = grad / n; % not sure how well this works, maybe we should switch to the below again
+  
+  % currently, we are NOT doing ANY NORMALIZATION
+  %grad = grad / n; % not sure how well this works, maybe we should switch to the below again
   %grad = grad / sqrt(trace(grad' * grad)); % seems to work well
   
   % do line search along direction of negative gradient, using projected evaluation to find D_opt
@@ -145,7 +146,7 @@ for main_iteration = 1:1000
 	if verbose
 	  fprintf('Improvement to objective below tolerance. Finished.\n');
 	end
-	D_opt = D_0;
+	D_opt = D_t;
 	return;
       end
       prev_best_f = f_t;
