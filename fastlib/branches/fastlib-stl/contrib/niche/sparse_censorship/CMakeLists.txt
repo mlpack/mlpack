@@ -27,6 +27,6 @@ add_executable(censorship
 )
 
 target_link_libraries(censorship
-    mlpack
+#    mlpack
     fastlib
 )
