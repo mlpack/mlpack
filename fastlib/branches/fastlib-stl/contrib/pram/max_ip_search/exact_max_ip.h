@@ -199,6 +199,8 @@ private:
 				  TreeType* reference_node, 
 				  double upper_bound_ip);
 
+  void reset_tree_(CTreeType *tree);
+
   /////////////// Public Functions ////////////////////
 public:
   /**
@@ -227,6 +229,7 @@ public:
    *
    */
   void WarmInit(size_t knns);
+
   /**
    * Computes the nearest neighbors and stores them in *results
    */

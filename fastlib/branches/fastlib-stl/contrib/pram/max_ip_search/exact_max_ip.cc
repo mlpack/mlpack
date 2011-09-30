@@ -529,7 +529,22 @@ void MaxIP::WarmInit(size_t knns) {
   // We do not consider negative values for inner products.
   max_ips_ = 0.0 * arma::ones<arma::vec>(queries_.n_cols * knns_, 1);
 
+  // need to reset the querystats in the Query Tree
+  if (mlpack::IO::HasParam("maxip/dual_tree"))
+    if (query_tree_ != NULL)
+      reset_tree_(query_tree_);
+
 } // WarmInit
+
+void MaxIP::reset_tree_(CTreeType* tree) {
+  assert(tree != NULL);
+  tree->stat().set_bound(0.0);
+
+  if (!tree->is_leaf()) {
+    reset_tree_(tree->left());
+    reset_tree_(tree->right());
+  }
+}
 
 double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 			       arma::vec* ips) {
