@@ -48,6 +48,8 @@ int main(int argc, char* argv[]) {
 	  digit_1);
   mat X_neg;
   X_neg.load(data_filename);
+  // SHRINK DATASET SIZES FOR QUICK EXPERIMENTS ON NEWTON'S METHOD IN THE DUAL
+  X_neg = X_neg(span::all, span(0, 199));
   u32 n_neg_points = X_neg.n_cols;
   
   sprintf(data_filename,
@@ -56,8 +58,11 @@ int main(int argc, char* argv[]) {
 	  digit_2);
   mat X_pos;
   X_pos.load(data_filename);
+  // SHRINK DATASET SIZES FOR QUICK EXPERIMENTS ON NEWTON'S METHOD IN THE DUAL
+  X_pos = X_pos(span::all, span(0, 199));
   u32 n_pos_points = X_pos.n_cols;
   free(data_filename);
+  
   
   mat X = join_rows(X_neg, X_pos);
   u32 n_points = X.n_cols;
