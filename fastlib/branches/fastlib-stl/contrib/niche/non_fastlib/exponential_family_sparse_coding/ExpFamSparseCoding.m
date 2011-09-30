@@ -1,7 +1,7 @@
 function [D, S] = ExpFamSparseCoding(type, X, k, lambda, max_iterations, ...
-				     warm_start)
+				     warm_start, D_initial)
 %function [D, S] = ExpFamSparseCoding(type, X, k, lambda, max_iterations, ...
-%				     warm_start)
+%				     warm_start, D_initial)
 %
 % Given: X - a matrix where each column is a document, and each row
 % corresponds to vocabulary word. X_{i,j} is the number of times
@@ -11,6 +11,10 @@ function [D, S] = ExpFamSparseCoding(type, X, k, lambda, max_iterations, ...
 
 if nargin < 6
   warm_start = false;
+end
+
+if nargin < 7
+  D_initial = [];
 end
 
 if type == 'p'
@@ -37,15 +41,20 @@ end
 alpha = 1e-4;
 beta = 0.9;
 
-c = 1;
+c = 1; %100;
 
 % Set Initial Dictionary
-D = c * normcols(normrnd(0,1,d,k));
+if isempty(D_initial)
+  D = c * normcols(normrnd(0,1,d,k));
+else
+  D = D_initial;
+end
 
 % Sparse codes update via feature-sign
 fprintf('INITIAL SPARSE CODING STEP\n');
 S = UpdateSparseCodes(type, X, D, lambda, [], alpha, beta);
-fprintf('norm(S) = %f\n', norm(S));
+fprintf('norm(S) = %f\t||S||_1 = %f\t%f%% sparsity\n', ...
+	norm(S), sum(sum(abs(S))), (nnz(S) / prod(size(S))) * 100);
 %fprintf('DONE SPARSE CODING\n');
 %pause;
 
@@ -81,7 +90,8 @@ while ~converged
   else
     S = UpdateSparseCodes(type, X, D, lambda, [], alpha, beta);
   end
-  fprintf('norm(S) = %f\n', norm(S));
+  fprintf('norm(S) = %f\t||S||_1 = %f\t%f%% sparsity\n', ...
+	  norm(S), sum(sum(abs(S))), (nnz(S) / prod(size(S))) * 100);
   %fprintf('DONE SPARSE CODING\n');
   %pause;
 

@@ -166,6 +166,9 @@ parfor i = 1:n
 	  fprintf('\t\tCompleted %d line search iterations\n', iteration_num);
 	  fprintf('\t\tObjective value: %f\n', f_t);
 	end
+	if iteration_num > 1
+	  fprintf('Done: %d line search iterations\n', iteration_num);
+	end
 	
 	if f_t > prev_best_f
 	  error('Objective increased! Aborting...');
