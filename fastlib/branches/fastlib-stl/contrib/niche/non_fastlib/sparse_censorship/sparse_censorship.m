@@ -31,6 +31,9 @@ P = max(publishers);
 
 % for now, just set up the sizes for the parameters. coding will happen later
 
+% Initialize background theta
+theta_bar = zeros(K, 1);
+
 % Initialize theta for each document
 theta = zeros(K, D);
 
@@ -38,6 +41,7 @@ theta = zeros(K, D);
 beta = zeros(V, K);
 
 % Initialize eta for each topic and publisher
+%   perhaps eta shoul be sparse?
 eta = zeros(V, K, P);
 
 
@@ -46,7 +50,7 @@ eta = zeros(V, K, P);
 
 % 2 a) E-Step
 
-%given theta, update variational parameters for nu
+%given theta, theta_bar, update variational parameters for nu
   
 q_nu_a = zeros(K, D, 1);
 q_nu_b = zeros(K, D, 1);
