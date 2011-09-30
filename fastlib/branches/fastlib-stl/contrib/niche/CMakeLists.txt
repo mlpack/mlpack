@@ -24,6 +24,7 @@ set(DIRS
    local_coordinate_coding
    sparse_coding
    tools
+   sparse_censorship
 )
 
 foreach(dir ${DIRS})
