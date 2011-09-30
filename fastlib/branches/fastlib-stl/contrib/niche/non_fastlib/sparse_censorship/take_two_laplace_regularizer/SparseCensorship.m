@@ -24,6 +24,7 @@ function [theta_bar, theta, Beta, eta, phi] = SparseCensorship(X, publishers, K,
 %
 
 verbose = true;
+skip_eta_updates = true;
 
 if size(publishers, 1) > size(publishers, 2)
   publishers = publishers';
@@ -82,6 +83,7 @@ nu = nu * ones(V, 1);
 
 
 for iteration_num = 1:10
+  fprintf('Main Iteration %d\n', iteration_num);
   % 2) Variational EM Loop
   
   % 2 a) E-Step
@@ -98,7 +100,7 @@ for iteration_num = 1:10
   % Update model parameters
 
   % Update theta_bar
-  options.verbose = false;
+  options.verbose = true;
   if verbose
     fprintf('Updating theta_bar\n');
   end
@@ -110,6 +112,7 @@ for iteration_num = 1:10
 
   % Update theta
   options.verbose = false;
+%  parfor(d = 1:D, 4)
   for d = 1:D
     if verbose
       fprintf('Updating theta_%d\n', d);
@@ -124,6 +127,7 @@ for iteration_num = 1:10
 
   % Update Beta
   options.verbose = true;
+%  parfor(k = 1:K, 4)
   for k = 1:K
     if verbose
       fprintf('Updating beta_%d\n', k);
@@ -137,20 +141,22 @@ for iteration_num = 1:10
   end
 
   % Update eta
-  options.verbose = true;
-  for k = 1:K
-    for p = 1:P
-      if verbose
-	fprintf('Updating eta_{%d,%d}\n', k, p);
+  if ~skip_eta_updates
+    options.verbose = true;
+    for k = 1:K
+      for p = 1:P
+	if verbose
+	  fprintf('Updating eta_{%d,%d}\n', k, p);
+	end
+	
+	new_eta_k_p = ...
+	    L1GeneralProjection(@(eta_k_p) EtaObjective(eta_k_p, Beta(:,k), ...
+							k, p, phi, X, ...
+							publishers), ...
+				eta(:,k,p), nu, options);
+	eta(:,k,p) = new_eta_k_p;
       end
-      
-      new_eta_k_p = ...
-	  L1GeneralProjection(@(eta_k_p) EtaObjective(eta_k_p, Beta(:,k), ...
-						      k, p, phi, X, ...
-						      publishers), ...
-			      eta(:,k,p), nu, options);
-      eta(:,k,p) = new_eta_k_p;
     end
   end
-
+  
 end

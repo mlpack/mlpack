@@ -22,9 +22,12 @@ for d = 1:D
   log_sum_exp_theta_d = logsumexp(theta_bar + theta(:,d));
   theta_d_probs = exp(theta_bar + theta(:,d) - repmat(log_sum_exp_theta_d, K, 1));
 
-  g = g ...
+  a = g ...
       - phi{d}' * X(:,d) ...
       + counts_by_doc(d) * theta_d_probs;
+  
+  g(:,1) = a;
+  
 
   % just as in ThetaObjective.m, we again my run into the problem
   % that the Hessian is always rank k-1. We should check to see if
