@@ -58,7 +58,7 @@ $rfile = "rtest.R";
 open OUT, ">$rfile" or die "Cant open $rfile\n";
 print OUT "library(ggplot2);\n";
 print OUT "DF = read.csv('$outfile');\n";
-print OUT "R = stack(list('Single-tree'=DF[,4], 'Single-tree-AP'=DF[,1], 'Dual-tree'=DF[,3], 'Dual-tree-AP'=DF[,2]));\n";
+print OUT "R = stack(list('Single-tree'=DF[,4], 'Single-tree-AP'=DF[,3], 'Dual-tree'=DF[,2], 'Dual-tree-AP'=DF[,1]));\n";
 print OUT "R\$k = c(1:$num_lines);\n";
 print OUT "names(R) = c(\"speedup\", \"Algorithm\", \"k\");\n";
 print OUT "pdf('$prefix.pdf');\n";
