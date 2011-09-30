@@ -152,11 +152,6 @@ class DistributedDualtreeTaskQueue {
      */
     std::vector< unsigned long int > remaining_work_for_query_subtables_;
 
-    /** @brief The remaining work in the priority queue currently for
-     *         each query subtable.
-     */
-    std::vector< unsigned long int > remaining_work_in_priority_queue_;
-
     /** @brief The mechanism for exchanging data among all MPI
      *         processes.
      */
@@ -182,8 +177,6 @@ class DistributedDualtreeTaskQueue {
         boost::intrusive_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
         remaining_work_for_query_subtables_.size() + 1);
-      remaining_work_in_priority_queue_.resize(
-        remaining_work_in_priority_queue_.size() + 1);
       tasks_.push_back(
         boost::intrusive_ptr <
         TaskPriorityQueueType > (new TaskPriorityQueueType()));
@@ -216,15 +209,12 @@ class DistributedDualtreeTaskQueue {
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
-      remaining_work_in_priority_queue_[ probe_index ] =
-        remaining_work_in_priority_queue_.back();
       tasks_[probe_index] = tasks_.back();
 
       // Pop.
       assigned_work_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
-      remaining_work_in_priority_queue_.pop_back();
       tasks_.pop_back();
     }
 
@@ -298,8 +288,6 @@ class DistributedDualtreeTaskQueue {
             world, *(assigned_work_[subtree_index]))));
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
-      remaining_work_in_priority_queue_.push_back(
-        remaining_work_in_priority_queue_[ subtree_index ]);
       for(unsigned int i = 0; i < prev_tasks.size(); i++) {
         this->PushTask(
           world, metric_in, subtree_index,
@@ -328,7 +316,6 @@ class DistributedDualtreeTaskQueue {
       int probe_index, unsigned long int work_in) {
 
       remaining_work_for_query_subtables_[ probe_index ] = work_in;
-      remaining_work_in_priority_queue_[ probe_index ] = work_in;
     }
 
     /** @brief Synchronizes the local query subtable with the received
@@ -366,14 +353,9 @@ class DistributedDualtreeTaskQueue {
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
               (*it)->remaining_work_for_query_subtable_);
-            remaining_work_in_priority_queue_.push_back(
-              (*it)->remaining_work_in_priority_queue_);
             tasks_.push_back((*it)->task_);
             checked_out_query_subtables_.erase(it);
             num_exported_query_subtables_--;
-            printf("Synching %d %d %d\n", comp_query_subtable_id.get<0>(),
-                   comp_query_subtable_id.get<1>(),
-                   comp_query_subtable_id.get<2>());
           }
           else {
 
@@ -430,13 +412,12 @@ class DistributedDualtreeTaskQueue {
       printf("  Active query subtables:\n");
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         SubTableIDType query_subtable_id = query_subtables_[i]->subtable_id();
-        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu originating from %d, currrently holding %lu work in the queue, query result pointer address %p:",
+        printf("    Query subtable ID: %d %d %d with %d tasks with remaining work %lu originating from %d, query result pointer address %p:",
                query_subtable_id.get<0>(), query_subtable_id.get<1>(),
                query_subtable_id.get<2>(),
                static_cast<int>(tasks_[i]->size()),
                remaining_work_for_query_subtables_[i],
                query_subtables_[i]->originating_rank(),
-               remaining_work_in_priority_queue_[i],
                query_subtables_[i]->query_result());
         TaskType *it = const_cast<TaskType *>(&(tasks_[i]->top()));
         printf("      Reference set: ");
@@ -486,6 +467,7 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       int originating_rank_in, SubTableType &query_subtable_in) {
 
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Get more slots.
@@ -493,7 +475,6 @@ class DistributedDualtreeTaskQueue {
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
       remaining_work_for_query_subtables_.back() = 0;
-      remaining_work_in_priority_queue_.back() = 0;
 
       // Increment the number of imported subtables.
       num_imported_query_subtables_++;
@@ -535,11 +516,6 @@ class DistributedDualtreeTaskQueue {
 
       // Increment the available local computation.
       remaining_local_computation_ += new_task.work();
-
-      // Tally the number or reference points associated with this
-      // queue.
-      remaining_work_in_priority_queue_[ push_index ] +=
-        reference_subtable.start_node()->count();
     }
 
     /** @brief Returns the subtable stored in the given position of
@@ -923,7 +899,6 @@ class DistributedDualtreeTaskQueue {
       // on this process.
       assigned_work_.resize(query_subtables_.size()) ;
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
-      remaining_work_in_priority_queue_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
         assigned_work_[i] =
           boost::intrusive_ptr <
@@ -931,7 +906,6 @@ class DistributedDualtreeTaskQueue {
             new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
-        remaining_work_in_priority_queue_[i] = 0;
       }
     }
 
@@ -989,13 +963,6 @@ class DistributedDualtreeTaskQueue {
       // Decrement the amount of local computation.
       remaining_local_computation_ -= tasks_[probe_index]->top().work();
 
-      // Decrement the number of reference points associated with the
-      // queue.
-      remaining_work_in_priority_queue_[ probe_index ] -=
-        const_cast< TaskType &>(
-          tasks_[
-            probe_index ]->top()).reference_subtable().start_node()->count();
-
       // Pop.
       tasks_[probe_index]->pop();
 
@@ -1034,11 +1001,6 @@ class DistributedDualtreeTaskQueue {
 
         // Decrement the remaining local computation.
         remaining_local_computation_ -= task_out->first.work();
-
-        // Decrement the remaining number of reference points
-        // associated with the queue.
-        remaining_work_in_priority_queue_[ probe_index ] -=
-          task_out->first.reference_subtable().start_node()->count() ;
 
         // Check out the query subtable completely if requested.
         if(checked_out_query_subtable != NULL) {

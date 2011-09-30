@@ -117,10 +117,6 @@ class TableExchange {
      */
     std::vector< std::pair<bool, unsigned long int> > needs_load_balancing_;
 
-    /** @brief The number of query subtables queued up for flushing.
-     */
-    int num_queued_up_query_subtables_;
-
     /** @brief The queued-up termination messages held by the current
      *         MPI process.
      */
@@ -130,8 +126,7 @@ class TableExchange {
      *         stage.
      */
     std::vector <
-    std::vector <
-    boost::intrusive_ptr < SubTableType > > > queued_up_query_subtables_;
+    boost::intrusive_ptr < SubTableType > > queued_up_query_subtables_;
 
     /** @brief The current stage in the exchange process.
      */
@@ -163,16 +158,10 @@ class TableExchange {
     void DequeueFlushRequest_(
       boost::mpi::communicator &world, int dequeue_stage) {
 
-      if(queued_up_query_subtables_[ dequeue_stage ].size() == 0) {
-        printf("Dequeueing from an empty queue at %d\n", dequeue_stage);
-        exit(0);
-      }
-
       message_cache_[
         world.rank()].flush_route().object().Alias(
           message_cache_[
-            queued_up_query_subtables_[
-              dequeue_stage ].back()->cache_block_id()].subtable_route().object());
+            queued_up_query_subtables_.back()->cache_block_id()].subtable_route().object());
       message_cache_ [
         world.rank()].flush_route().set_object_is_valid_flag(true);
       message_cache_[
@@ -184,19 +173,7 @@ class TableExchange {
 
       // Pop from the list and decrement the number of queued up
       // query subtables.
-      printf("Preparing to flush %d %d %d on %d, %d %d\n",
-             message_cache_[
-               world.rank()].flush_route().object().subtable_id().get<0>(),
-             message_cache_[
-               world.rank()].flush_route().object().subtable_id().get<1>(),
-             message_cache_[
-               world.rank()].flush_route().object().subtable_id().get<2>(),
-             stage_,
-             queued_up_query_subtables_[dequeue_stage ].back()->is_alias(),
-             message_cache_[ world.rank()].flush_route().object().is_alias());
-
-      queued_up_query_subtables_[ dequeue_stage ].pop_back();
-      num_queued_up_query_subtables_--;
+      queued_up_query_subtables_.pop_back();
     }
 
     void PostCleanupStage_(
@@ -340,11 +317,6 @@ class TableExchange {
             if(route_request.flush_route().object_is_valid()) {
               if(route_request.flush_route().remove_from_destination_list(
                     world.rank())) {
-                printf("Received: %d %d %d on %d\n",
-                       route_request.flush_route().object().subtable_id().get<0>(),
-                       route_request.flush_route().object().subtable_id().get<1>(),
-                       route_request.flush_route().object().subtable_id().get<2>(), world.rank()
-                      );
                 task_queue_->Synchronize(
                   world, route_request.flush_route().object());
               }
@@ -365,11 +337,11 @@ class TableExchange {
 
             // Get extra task from the neighboring process if
             // available.
-            if(route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
-                route_request.extra_task_route().object_is_valid()) {
-              route_request.extra_task_route().object().Export(
+            if(tmp_route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
+                tmp_route_request.extra_task_route().object_is_valid()) {
+              tmp_route_request.extra_task_route().object().Export(
                 world, metric_in,
-                route_request.originating_rank(), task_queue_);
+                tmp_route_request.originating_rank(), task_queue_);
             }
 
           } // end of load balancing case.
@@ -389,7 +361,7 @@ class TableExchange {
       // out, then send out.
       if((! message_cache_[
             world.rank()].flush_route().object_is_valid()) &&
-          queued_up_query_subtables_[ stage_ ].size() > 0) {
+          queued_up_query_subtables_.size() > 0) {
 
         this->DequeueFlushRequest_(world, stage_);
 
@@ -498,15 +470,17 @@ class TableExchange {
       bool flush_only_mode =
         (task_queue_->num_imported_query_subtables() > 0 ||
          task_queue_->num_exported_query_subtables() > 0 ||
-         num_queued_up_query_subtables_ > 0);
+         queued_up_query_subtables_.size() > 0);
 
       // If there is a queued up query subtables, post an asynchronous
       // send.
       if(flush_only_mode) {
         bool query_subtable_flushed = false;
         boost::mpi::request flush_request;
-        if(num_queued_up_query_subtables_ > 0) {
+        if(queued_up_query_subtables_.size() > 0) {
           this->DequeueFlushRequest_(world, previous_stage);
+          message_cache_[
+            world.rank()].flush_route().next_destination(world);
           flush_request =
             world.isend(
               previous_neighbor, core::parallel::MessageTag::FLUSH_SUBTABLE,
@@ -517,30 +491,27 @@ class TableExchange {
         // If there is a flush route receive posted, then do a blocking
         // receive. Otherwise, wait until the posting comes on.
         if(task_queue_->num_exported_query_subtables() > 0) {
-          if(boost::optional< boost::mpi::status > l_status =
-                world.iprobe(
-                  previous_neighbor,
-                  core::parallel::MessageTag::FLUSH_SUBTABLE))  {
-            SubTableRouteRequestType received_flush_route;
-            received_flush_route.object().Init(previous_neighbor, false);
-            world.recv(
-              previous_neighbor, core::parallel::MessageTag::FLUSH_SUBTABLE,
-              received_flush_route);
-            printf("Received: %d %d %d from %d\n",
-                   received_flush_route.object().subtable_id().get<0>(),
-                   received_flush_route.object().subtable_id().get<1>(),
-                   received_flush_route.object().subtable_id().get<2>(),
-                   previous_neighbor);
+          while(true) {
+            if(boost::optional< boost::mpi::status > l_status =
+                  world.iprobe(
+                    previous_neighbor,
+                    core::parallel::MessageTag::FLUSH_SUBTABLE))  {
+              SubTableRouteRequestType received_flush_route;
+              received_flush_route.object().Init(previous_neighbor, false);
+              world.recv(
+                previous_neighbor, core::parallel::MessageTag::FLUSH_SUBTABLE,
+                received_flush_route);
 
-            // Synchronize with the received subtable.
-            task_queue_->Synchronize(world, received_flush_route.object());
+              // Synchronize with the received subtable.
+              task_queue_->Synchronize(world, received_flush_route.object());
+              break;
+            }
           }
         }
 
         // Wait until the flush is completely sent.
         if(query_subtable_flushed) {
           flush_request.wait();
-          printf("Flushed to %d\n", previous_neighbor);
           message_cache_[
             world.rank()].flush_route().set_object_is_valid_flag(false);
         }
@@ -587,8 +558,9 @@ class TableExchange {
     void PrintSubTables(boost::mpi::communicator &world) const {
       printf("Process %d owns the subtables: with %d total locks on stage %d\n",
              world.rank(), total_num_locks_, stage_);
-      printf("  Checking %d against %d\n", message_cache_.size(),
-             message_locks_.size());
+      printf("  Checking %d against %d\n",
+             static_cast<int>(message_cache_.size()),
+             static_cast<int>(message_locks_.size()));
       int total_check = 0;
       for(unsigned int i = 0; i < message_cache_.size(); i++) {
         if(message_cache_[i].subtable_route().object_is_valid()) {
@@ -605,6 +577,17 @@ class TableExchange {
         printf("Got %d total locks against %d...\n", total_check,
                total_num_locks_);
       }
+
+      printf("Queued up the following query subtables to be flushed:\n");
+      for(unsigned int j = 0;
+          j < queued_up_query_subtables_.size(); j++) {
+        printf(
+          " (%d, %d, %d) ",
+          queued_up_query_subtables_[j]->subtable_id().get<0>(),
+          queued_up_query_subtables_[j]->subtable_id().get<1>(),
+          queued_up_query_subtables_[j]->subtable_id().get<2>());
+      }
+      printf("\n");
     }
 
     /** @brief Pushes subtables received from load-balancing.
@@ -646,25 +629,7 @@ class TableExchange {
     void QueueFlushRequest(
       boost::mpi::communicator &world,
       const boost::intrusive_ptr<SubTableType > &query_subtable_in) {
-      int destination_rank = query_subtable_in->originating_rank();
-      unsigned int ready_stage = 0;
-      for(unsigned int i = 0; i < max_stage_; i++) {
-        unsigned int flag = (1 << i);
-        if((flag ^ destination_rank) == (flag ^ world.rank())) {
-          ready_stage = i;
-        }
-        else {
-          break;
-        }
-      }
-      num_queued_up_query_subtables_++;
-      printf(" ==== %d Queueing up %d %d %d to be flushed on %d...\n",
-             world.rank(),
-             query_subtable_in->subtable_id().get<0>(),
-             query_subtable_in->subtable_id().get<1>(),
-             query_subtable_in->subtable_id().get<2>(), ready_stage);
-
-      queued_up_query_subtables_[ready_stage].push_back(query_subtable_in);
+      queued_up_query_subtables_.push_back(query_subtable_in);
     }
 
     /** @brief Used for prioritizing tasks, favoring subtables that
@@ -709,7 +674,7 @@ class TableExchange {
 
       // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
-             num_queued_up_query_subtables_ == 0 && stage_ == 0;
+             queued_up_query_subtables_.size() == 0 && stage_ == 0;
     }
 
     /** @brief Pushes the completed computation amount to be
@@ -742,7 +707,6 @@ class TableExchange {
       enter_stage_ = true;
       last_fail_index_ = 0;
       max_stage_ = 0;
-      num_queued_up_query_subtables_ = 0;
       reference_table_ = NULL;
       stage_ = 0;
       task_queue_ = NULL;
@@ -850,8 +814,6 @@ class TableExchange {
 
       // Initialize the queues.
       queued_up_completed_computation_.resize(0);
-      num_queued_up_query_subtables_ = 0;
-      queued_up_query_subtables_.resize(max_stage_);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());
