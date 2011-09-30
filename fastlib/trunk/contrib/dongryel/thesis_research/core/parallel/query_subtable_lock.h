@@ -80,11 +80,6 @@ class QuerySubTableLock {
      */
     unsigned long int remaining_work_for_query_subtable_;
 
-    /** @brief The currently remaining work in the priority queue
-     *         associated with the query subtable.
-     */
-    unsigned long int remaining_work_in_priority_queue_;
-
     /** @brief The priority queue associated with the tasks that are
      *         alive for the query subtable.
      */
@@ -120,8 +115,6 @@ class QuerySubTableLock {
       query_subtable_ = checkout_from->query_subtables_[probe_index];
       remaining_work_for_query_subtable_ =
         checkout_from->remaining_work_for_query_subtables_[probe_index];
-      remaining_work_in_priority_queue_ =
-        checkout_from->remaining_work_in_priority_queue_[probe_index];
       task_ = checkout_from->tasks_[probe_index];
 
       // Overwrite the current position with the back item.
@@ -131,15 +124,12 @@ class QuerySubTableLock {
         checkout_from->query_subtables_.back();
       checkout_from->remaining_work_for_query_subtables_[probe_index] =
         checkout_from->remaining_work_for_query_subtables_.back();
-      checkout_from->remaining_work_in_priority_queue_[probe_index] =
-        checkout_from->remaining_work_in_priority_queue_.back();
       checkout_from->tasks_[probe_index] = checkout_from->tasks_.back();
 
       // Pop the back items.
       checkout_from->assigned_work_.pop_back();
       checkout_from->query_subtables_.pop_back();
       checkout_from->remaining_work_for_query_subtables_.pop_back();
-      checkout_from->remaining_work_in_priority_queue_.pop_back();
       checkout_from->tasks_.pop_back();
     }
 
@@ -148,8 +138,6 @@ class QuerySubTableLock {
       export_to->query_subtables_.push_back(query_subtable_);
       export_to->remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtable_);
-      export_to->remaining_work_in_priority_queue_.push_back(
-        remaining_work_in_priority_queue_);
       export_to->tasks_.push_back(task_);
     }
 
@@ -204,7 +192,6 @@ class QuerySubTableLock {
       reference_count_ = 0;
       remaining_local_computation_ = NULL;
       remaining_work_for_query_subtable_ = 0;
-      remaining_work_in_priority_queue_ = 0;
     }
 
     void operator=(const QuerySubTableLockType &lock_in) {
@@ -214,8 +201,6 @@ class QuerySubTableLock {
       remaining_local_computation_ = lock_in.remaining_local_computation_;
       remaining_work_for_query_subtable_ =
         lock_in.remaining_work_for_query_subtable_;
-      remaining_work_in_priority_queue_ =
-        lock_in.remaining_work_in_priority_queue_;
       task_ = lock_in.task_;
     }
 
