@@ -1,20 +1,20 @@
 /**
- * @file tree/dhrectbound_impl.h
+ * @file tree/hrectbound_impl.h
  *
  * Implementation of hyper-rectangle bound policy class.
  * Template parameter t_pow is the metric to use; use 2 for Euclidean (L2).
  *
  * @experimental
  */
-#ifndef TREE_DHRECTBOUND_IMPL_H
-#define TREE_DHRECTBOUND_IMPL_H
+#ifndef __TREE_HRECTBOUND_IMPL_H
+#define __TREE_HRECTBOUND_IMPL_H
 
 #include <math.h>
 
 #include "../math/math_lib.h"
 
 // In case it has not been included yet.
-#include "dhrectbound.h"
+#include "hrectbound.h"
 
 namespace mlpack {
 namespace bound {

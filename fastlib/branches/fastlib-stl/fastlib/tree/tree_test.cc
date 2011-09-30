@@ -239,9 +239,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
   size_t max_points = 10000;
   size_t dimensions = 3;
   // Generate the dataset.
-  timeval seed;
-  gettimeofday(&seed, NULL);
-  srand(seed.tv_sec);
+  srand(time(NULL));
   size_t size = rand() % max_points;
   arma::mat dataset = arma::mat(dimensions, size);
   arma::mat datacopy;

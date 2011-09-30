@@ -5,10 +5,12 @@ cmake_minimum_required(VERSION 2.8)
 # Do not include test programs here
 set(SOURCES
    bounds.h
-   dhrectbound.h
-   dhrectbound_impl.h
    dballbound.h
    dballbound_impl.h
+   dhrectperiodicbound.h
+   dhrectperiodicbound_impl.h
+   hrectbound.h
+   hrectbound_impl.h
    spacetree.h
    statistic.h
 )

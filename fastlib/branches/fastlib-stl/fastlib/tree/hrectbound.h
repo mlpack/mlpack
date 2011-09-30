@@ -1,5 +1,5 @@
 /**
- * @file tree/dhrectbound.h
+ * @file tree/hrectbound.h
  *
  * Bounds that are useful for binary space partitioning trees.
  *
@@ -9,8 +9,8 @@
  * @experimental
  */
 
-#ifndef TREE_DHRECTBOUND_H
-#define TREE_DHRECTBOUND_H
+#ifndef __TREE_HRECTBOUND_H
+#define __TREE_HRECTBOUND_H
 
 #include <armadillo>
 
@@ -144,6 +144,6 @@ class HRectBound {
 }; // namespace bound
 }; // namespace mlpack
 
-#include "dhrectbound_impl.h"
+#include "hrectbound_impl.h"
 
 #endif
