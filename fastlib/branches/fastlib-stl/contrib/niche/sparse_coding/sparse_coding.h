@@ -36,8 +36,13 @@ class SparseCoding {
 
   ~SparseCoding() { }
   
+  void Init(double* X_mem, u32 n_dims, u32 n_points,
+	    u32 n_atoms, double lambda);
+
   void Init(const mat& X, u32 n_atoms, double lambda);
   
+  void SetDictionary(double* D_mem);
+
   void SetDictionary(const mat& D);
   
   void InitDictionary();

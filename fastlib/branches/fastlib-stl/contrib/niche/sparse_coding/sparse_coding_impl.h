@@ -2,6 +2,21 @@
 #error "This is not a public header file!"
 #endif
 
+#define NORM_GRAD_TOL 1e-6
+
+void SparseCoding::Init(double* X_mem, u32 n_dims, u32 n_points,
+			u32 n_atoms, double lambda) {
+  X_ = mat(X_mem, n_dims, n_points, false, true);
+
+  n_dims_ = n_dims;
+  n_points_ = n_points;
+
+  n_atoms_ = n_atoms;
+  //D_ = mat(n_dims_, n_atoms_);
+  V_ = mat(n_atoms_, n_points_);
+  
+  lambda_ = lambda;
+}
 
 
 void SparseCoding::Init(const mat& X, u32 n_atoms, double lambda) {
@@ -11,10 +26,15 @@ void SparseCoding::Init(const mat& X, u32 n_atoms, double lambda) {
   n_points_ = X.n_cols;
 
   n_atoms_ = n_atoms;
-  D_ = mat(n_dims_, n_atoms_);
+  //D_ = mat(n_dims_, n_atoms_);
   V_ = mat(n_atoms_, n_points_);
   
   lambda_ = lambda;
+}
+
+
+void SparseCoding::SetDictionary(double* D_mem) {
+  D_ = mat(D_mem, n_dims_, n_atoms_, false, true);
 }
 
 
@@ -42,6 +62,7 @@ void SparseCoding::RandomInitDictionary() {
 
 
 void SparseCoding::DataDependentRandomInitDictionary() {
+  D_ = mat(n_dims_, n_atoms_);
   for(u32 i = 0; i < n_atoms_; i++) {
     vec D_i = D_.unsafe_col(i);
     RandomAtom(D_i);
@@ -165,6 +186,17 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies) {
   mat D_estimate;
   // solve using Newton's method in the dual - note that the final dot multiplication with inv(A) seems to be unavoidable. Although more expensive, the code written this way (we use solve()) should be more numerically stable than just using inv(A) for everything.
   vec dual_vars = zeros<vec>(n_active_atoms);
+  //vec dual_vars = 1e-14 * ones<vec>(n_active_atoms);
+  //vec dual_vars = 10.0 * randu(n_active_atoms, 1); // method used by feature sign code - fails miserably here. perhaps the MATLAB optimizer fmincon does something clever?
+  /*vec dual_vars = diagvec(solve(D_, X_ * trans(V_)) - V_ * trans(V_));
+  for(u32 i = 0; i < dual_vars.n_elem; i++) {
+    if(dual_vars(i) < 0) {
+      dual_vars(i) = 0;
+    }
+  }
+  */
+  //dual_vars.print("dual vars");
+
   bool converged = false;
   mat V_XT = active_V * trans(X_);
   mat V_VT = active_V * trans(active_V);
@@ -178,18 +210,72 @@ void SparseCoding::OptimizeDictionary(uvec adjacencies) {
     mat A_inv_V_XT = solve(A, V_XT);
     //printf("\n");
     
-    vec gradient = sum(square(A_inv_V_XT), 1) - ones<vec>(n_active_atoms);
+    vec gradient = -( sum(square(A_inv_V_XT), 1) - ones<vec>(n_active_atoms) );
     
     mat hessian = 
-      -2 * (A_inv_V_XT * trans(A_inv_V_XT)) % inv(A);
+      -( -2 * (A_inv_V_XT * trans(A_inv_V_XT)) % inv(A) );
     
     //printf("solving for dual variable update...");
-    dual_vars -= solve(hessian, gradient);
+    vec search_direction = -solve(hessian, gradient);
+    //vec search_direction = -gradient;
+
+ 
+    
+    // BEGIN ARMIJO LINE SEARCH
+    double c = 1e-4;
+    double alpha = 1.0;
+    double rho = 0.9;
+    double sufficient_decrease = c * dot(gradient, search_direction);
+
+    /*
+    {
+      double sum_dual_vars = sum(dual_vars);    
+      double f_old = 
+	-( -trace(trans(V_XT) * A_inv_V_XT) - sum_dual_vars );
+      printf("f_old = %f\t", f_old);
+      double f_new = 
+	-( -trace(trans(V_XT) * solve(V_VT + diagmat(dual_vars + alpha * search_direction), V_XT))
+	  - (sum_dual_vars + alpha * sum(search_direction)) );
+      printf("f_new = %f\n", f_new);
+    }
+    */
+    
+    double improvement;
+    while(true) {
+      // objective
+      double sum_dual_vars = sum(dual_vars);
+      double f_old = 
+	-( -trace(trans(V_XT) * A_inv_V_XT) - sum_dual_vars );
+      double f_new = 
+	-( -trace(trans(V_XT) * solve(V_VT + diagmat(dual_vars + alpha * search_direction), V_XT))
+	   - (sum_dual_vars + alpha * sum(search_direction)) );
+      /*
+      printf("alpha = %e\n", alpha);
+      printf("norm of gradient = %e\n", norm(gradient, 2));
+      printf("sufficient_decrease = %e\n", sufficient_decrease);
+      printf("f_new - f_old - sufficient_decrease = %e\n", 
+	     f_new - f_old - alpha * sufficient_decrease);
+      */
+      if(f_new <= f_old + alpha * sufficient_decrease) {
+	search_direction = alpha * search_direction;
+	improvement = f_old - f_new;
+	break;
+      }
+      alpha *= rho;
+    }
+    // END ARMIJO LINE SEARCH
+    
+    dual_vars += search_direction;
     //printf("\n");
     double norm_gradient = norm(gradient, 2);
-    //printf("Iteration %d: ", t);
-    //printf("norm of gradient = %e\n", norm_gradient);
-    if(norm_gradient < 1e-14) {
+    printf("Iteration %d: ", t);
+    printf("norm of gradient = %e\n", norm_gradient);
+    /*
+      if(norm_gradient < NORM_GRAD_TOL) {
+      converged = true;
+      }*/
+    printf("improvement = %e\n", improvement);
+    if(improvement < NORM_GRAD_TOL) {
       converged = true;
     }
   }
@@ -222,9 +308,12 @@ void SparseCoding::ProjectDictionary() {
   for(u32 j = 0; j < n_atoms_; j++) {
     double norm_D_j = norm(D_.col(j), 2);
     if(norm_D_j > 1) {
+      /*
       if(norm_D_j - 1.0 > 1e-10) {
-	printf("norm exceeded 1 by %e, shrinking...\n", norm_D_j - 1.0);
+	//printf("norm exceeded 1 by %e, shrinking...\n", norm_D_j - 1.0);
+	D_.col(j) /= norm(D_.col(j), 2);
       }
+      */
       D_.col(j) /= norm(D_.col(j), 2);
     }
   }
