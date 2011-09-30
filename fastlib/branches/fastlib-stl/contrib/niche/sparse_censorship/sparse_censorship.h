@@ -18,6 +18,22 @@ using namespace std;
 
 class SparseCensorship {
  private:
+
+  // the data
+  X - // word counts - stored as (# docs) x (# vocab words)
+      //   since X is sparse, storing the transpose instead may not matter
+
+  theta
+  beta
+  eta
+  
+  nu
+  xi
+  tau
+
+  sigma
+  iota
+  gamma
   
 
 };
