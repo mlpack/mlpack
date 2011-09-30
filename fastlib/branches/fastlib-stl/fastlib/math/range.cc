@@ -25,10 +25,13 @@ Range::Range(double lo_in, double hi_in) :
     lo(lo_in), hi(hi_in) { /* nothing else to do */ }
 
 /**
- * Gets the span of the range, hi - lo.
+ * Gets the span of the range, hi - lo.  Returns 0 if the range is negative.
  */
 double Range::width() const {
-  return hi - lo;
+  if (lo < hi)
+    return (hi - lo);
+  else
+    return 0.0;
 }
 
 /**

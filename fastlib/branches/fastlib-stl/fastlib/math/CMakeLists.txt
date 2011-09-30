@@ -4,7 +4,6 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   
    kernel.h
    math_lib.h
    math_lib_impl.h
@@ -20,9 +19,10 @@ endforeach()
 # append sources (with directory name) to list of all FASTLIB sources (used at the parent scope)
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
-#add_library(math ${SOURCES})
-# link dependencies of math
-#target_link_libraries(math
-#   base
-#   col
-#)
+add_executable(math_test
+  math_test.cc
+)
+target_link_libraries(math_test
+  fastlib
+  boost_unit_test_framework
+)
