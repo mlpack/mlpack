@@ -69,7 +69,7 @@ void DiscrSparseCoding::InitW(const char* w_filename) {
 
 
 // this only handles sparse coding, not local coordinate coding
-void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
+void DiscrSparseCoding::SGDOptimize(u32 n_iterations) {
   //InitDictionary();
   //InitW();
   
@@ -79,7 +79,7 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
     
     // modify step size in some way
     //step_size = 1.0 / ((double)t);
-    step_size = 2.0 / (((double)t) + 2.0);
+    double step_size = 2.0 / (((double)t) + 2.0);
     //step_size = 1.0 / (sqrt(lambda_w_) * ((double)t));
     //step_size = 1.0 / (lambda_w_ * ((double)t));
 
@@ -103,19 +103,29 @@ void DiscrSparseCoding::SGDOptimize(u32 n_iterations, double step_size) {
 void DiscrSparseCoding::SGDStep(double* x_mem, double y, double step_size) {
   vec x = vec(x_mem, n_dims_, false, true); 
 
+  
+  // THE LARS WAY
   //printf("sgdstep\n");
   Lars lars;
   lars.Init(D_.memptr(), x_mem, n_dims_, n_atoms_, true, 0.5 * lambda_1_, lambda_2_);
   lars.DoLARS();
   vec v;
   lars.Solution(v);
+  
+
   /*
-  printf("lars solution\n");
-  for(u32 i = 0; i < v.n_elem; i++) {
-    printf("%e\n", v(i));
-  }
-  printf("\n");
+  // THE SPARSE CODING WAY
+  SparseCoding sc;
+  sc.Init(x_mem, n_dims_, 1, n_atoms_, lambda_1_);
+  sc.SetDictionary(D_.memptr());
+  sc.OptimizeCode();
+  vec v;
+  sc.GetCoding(v);
+  
+  Problem: We aren't able to access the delightful cholesky factor, unless we change the sparse coding code to store this.
+           Hence, we compute the LARS way for now.
   */
+  
 
   if(y * dot(v, w_) > 1) {
     // no update necessary

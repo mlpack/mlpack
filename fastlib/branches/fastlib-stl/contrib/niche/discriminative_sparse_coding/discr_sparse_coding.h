@@ -13,6 +13,7 @@
 
 
 #include <contrib/niche/lars/lars.h>
+//#include <contrib/niche/sparse_coding/sparse_coding.h>
 
 using namespace arma;
 using namespace std;
@@ -62,7 +63,7 @@ class DiscrSparseCoding {
 
   void InitW(const char* w_filename);
   
-  void SGDOptimize(u32 n_iterations, double step_size);
+  void SGDOptimize(u32 n_iterations);
   
   //void SGDStep(const vec& x, double y, double step_size);
   void SGDStep(double* x_mem, double y, double step_size);
