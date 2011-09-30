@@ -160,6 +160,45 @@ class TableExchange {
 
   private:
 
+    void DequeueFlushRequest_(
+      boost::mpi::communicator &world, int dequeue_stage) {
+
+      if(queued_up_query_subtables_[ dequeue_stage ].size() == 0) {
+        printf("Dequeueing from an empty queue at %d\n", dequeue_stage);
+        exit(0);
+      }
+
+      message_cache_[
+        world.rank()].flush_route().object().Alias(
+          message_cache_[
+            queued_up_query_subtables_[
+              dequeue_stage ].back()->cache_block_id()].subtable_route().object());
+      message_cache_ [
+        world.rank()].flush_route().set_object_is_valid_flag(true);
+      message_cache_[
+        world.rank()].flush_route().add_destination(
+          message_cache_[
+            world.rank()].flush_route().object().originating_rank());
+      message_cache_[
+        world.rank()].flush_route().set_stage(dequeue_stage);
+
+      // Pop from the list and decrement the number of queued up
+      // query subtables.
+      printf("Preparing to flush %d %d %d on %d, %d %d\n",
+             message_cache_[
+               world.rank()].flush_route().object().subtable_id().get<0>(),
+             message_cache_[
+               world.rank()].flush_route().object().subtable_id().get<1>(),
+             message_cache_[
+               world.rank()].flush_route().object().subtable_id().get<2>(),
+             stage_,
+             queued_up_query_subtables_[dequeue_stage ].back()->is_alias(),
+             message_cache_[ world.rank()].flush_route().object().is_alias());
+
+      queued_up_query_subtables_[ dequeue_stage ].pop_back();
+      num_queued_up_query_subtables_--;
+    }
+
     void PostCleanupStage_(
       boost::mpi::communicator &world,
       unsigned int num_subtables_to_exchange,
@@ -177,38 +216,47 @@ class TableExchange {
           this->ReleaseCache(world, send_process_rank, 1);
         }
 
-        // Free the flushed query subtables sent.
-        if(message_cache_[
-              send_process_rank ].flush_route().object_is_valid() &&
+        if(do_load_balancing_) {
+          // Free the flushed query subtables sent.
+          if(message_cache_[
+                send_process_rank ].flush_route().object_is_valid() &&
+              message_cache_[
+                send_process_rank ].flush_route().num_destinations() == 0) {
             message_cache_[
-              send_process_rank ].flush_route().num_destinations() == 0) {
-          message_cache_[
-            send_process_rank ].flush_route().set_object_is_valid_flag(false);
-          message_cache_[ send_process_rank ].flush_route().object().Destruct();
-        }
+              send_process_rank ].flush_route().set_object_is_valid_flag(false);
+            message_cache_[ send_process_rank ].flush_route().object().Destruct();
+          }
 
-        // Free the flushed query subtable received.
-        if(message_cache_[
-              receive_process_rank ].flush_route().object_is_valid() &&
+          // Free the flushed query subtable received.
+          if(message_cache_[
+                receive_process_rank ].flush_route().object_is_valid() &&
+              message_cache_[
+                receive_process_rank ].flush_route().num_destinations() == 0) {
             message_cache_[
-              receive_process_rank ].flush_route().num_destinations() == 0) {
-          message_cache_[
-            receive_process_rank ].flush_route().set_object_is_valid_flag(false);
-          message_cache_[
-            receive_process_rank ].flush_route().object().Destruct();
-        }
-      }
+              receive_process_rank ].flush_route().set_object_is_valid_flag(false);
+            message_cache_[
+              receive_process_rank ].flush_route().object().Destruct();
+          }
 
-      // Free the extra task sent.
-      if(do_load_balancing_) {
-        if(message_cache_[
-              world.rank()].extra_task_route().object_is_valid() &&
+          if(message_cache_[
+                send_process_rank ].extra_task_route().object_is_valid() &&
+              message_cache_[
+                send_process_rank].extra_task_route().num_destinations() == 0) {
+            if(static_cast<int>(send_process_rank) == world.rank()) {
+              message_cache_[
+                send_process_rank].extra_task_route().object().ReleaseCache();
+            }
             message_cache_[
-              world.rank()].extra_task_route().num_destinations() == 0) {
-          message_cache_[
-            world.rank()].extra_task_route().object().ReleaseCache();
-          message_cache_[
-            world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
+              world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
+          }
+
+          if(message_cache_[
+                receive_process_rank ].extra_task_route().object_is_valid() &&
+              message_cache_[
+                receive_process_rank ].extra_task_route().num_destinations() == 0) {
+            message_cache_[
+              receive_process_rank].extra_task_route().set_object_is_valid_flag(false) ;
+          }
         }
       }
     }
@@ -285,43 +333,48 @@ class TableExchange {
               route_request.energy_route().object());
           }
 
-          // Update the load balance status.
+          // If load-balancing,
           if(do_load_balancing_) {
 
             // Synchronize with the received query subtable.
-            if(tmp_route_request.flush_route().object_is_valid()) {
-              if(tmp_route_request.flush_route().remove_from_destination_list(
+            if(route_request.flush_route().object_is_valid()) {
+              if(route_request.flush_route().remove_from_destination_list(
                     world.rank())) {
+                printf("Received: %d %d %d on %d\n",
+                       route_request.flush_route().object().subtable_id().get<0>(),
+                       route_request.flush_route().object().subtable_id().get<1>(),
+                       route_request.flush_route().object().subtable_id().get<2>(), world.rank()
+                      );
                 task_queue_->Synchronize(
-                  world, tmp_route_request.flush_route().object());
+                  world, route_request.flush_route().object());
               }
             }
             else {
-              tmp_route_request.flush_route().object().Destruct();
-              tmp_route_request.flush_route().set_object_is_valid_flag(false);
+              //route_request.flush_route().object().Destruct();
+              route_request.flush_route().set_object_is_valid_flag(false);
             }
 
             // Update the computation status of other processes.
             if(
-              tmp_route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
-              tmp_route_request.load_balance_route().object_is_valid()) {
+              route_request.load_balance_route().remove_from_destination_list(world.rank()) &&
+              route_request.load_balance_route().object_is_valid()) {
 
-              needs_load_balancing_[ tmp_route_request.originating_rank()] =
-                tmp_route_request.load_balance_route().object();
+              needs_load_balancing_[ route_request.originating_rank()] =
+                route_request.load_balance_route().object();
             }
 
             // Get extra task from the neighboring process if
             // available.
-            if(tmp_route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
-                tmp_route_request.extra_task_route().object_is_valid()) {
-              tmp_route_request.extra_task_route().object().Export(
+            if(route_request.extra_task_route().remove_from_destination_list(world.rank()) &&
+                route_request.extra_task_route().object_is_valid()) {
+              route_request.extra_task_route().object().Export(
                 world, metric_in,
-                tmp_route_request.originating_rank(), task_queue_);
+                route_request.originating_rank(), task_queue_);
             }
 
           } // end of load balancing case.
 
-        } // end of the if-case.
+        } // end of acknowledging a routing request.
 
       } // end of getting all routing acknowledgements.
     }
@@ -338,24 +391,7 @@ class TableExchange {
             world.rank()].flush_route().object_is_valid()) &&
           queued_up_query_subtables_[ stage_ ].size() > 0) {
 
-        message_cache_[
-          world.rank()].flush_route().object().Alias(
-            message_cache_[
-              queued_up_query_subtables_[
-                stage_ ].back()->cache_block_id()].subtable_route().object());
-        message_cache_ [
-          world.rank()].flush_route().set_object_is_valid_flag(true);
-        message_cache_[
-          world.rank()].flush_route().add_destination(
-            message_cache_[
-              world.rank()].flush_route().object().originating_rank());
-        message_cache_[
-          world.rank()].flush_route().set_stage(stage_);
-
-        // Pop from the list and decrement the number of queued up
-        // query subtables.
-        queued_up_query_subtables_[ stage_ ].pop_back();
-        num_queued_up_query_subtables_--;
+        this->DequeueFlushRequest_(world, stage_);
 
       } // end of dequeuing flush requests.
 
@@ -453,12 +489,12 @@ class TableExchange {
       unsigned int num_test = 1 << stage_;
       unsigned int previous_stage =
         (stage_ + (max_stage_ - 1)) % max_stage_;
-      unsigned int previous_neighbor = 1 << previous_stage ;
+      unsigned int previous_neighbor = world.rank() ^(1 << previous_stage);
       unsigned int neighbor = world.rank() ^ num_test;
       unsigned int test_lower_bound_for_receive =
         (neighbor >> stage_) << stage_;
 
-
+      // Whether to flush before entering the current stage.
       bool flush_only_mode =
         (task_queue_->num_imported_query_subtables() > 0 ||
          task_queue_->num_exported_query_subtables() > 0 ||
@@ -467,17 +503,46 @@ class TableExchange {
       // If there is a queued up query subtables, post an asynchronous
       // send.
       if(flush_only_mode) {
+        bool query_subtable_flushed = false;
+        boost::mpi::request flush_request;
         if(num_queued_up_query_subtables_ > 0) {
-
+          this->DequeueFlushRequest_(world, previous_stage);
+          flush_request =
+            world.isend(
+              previous_neighbor, core::parallel::MessageTag::FLUSH_SUBTABLE,
+              message_cache_[ world.rank()].flush_route());
+          query_subtable_flushed = true;
         }
 
         // If there is a flush route receive posted, then do a blocking
         // receive. Otherwise, wait until the posting comes on.
-        if(boost::optional< boost::mpi::status > l_status =
-              world.iprobe(
-                previous_neighbor,
-                core::parallel::MessageTag::FLUSH_SUBTABLE))  {
+        if(task_queue_->num_exported_query_subtables() > 0) {
+          if(boost::optional< boost::mpi::status > l_status =
+                world.iprobe(
+                  previous_neighbor,
+                  core::parallel::MessageTag::FLUSH_SUBTABLE))  {
+            SubTableRouteRequestType received_flush_route;
+            received_flush_route.object().Init(previous_neighbor, false);
+            world.recv(
+              previous_neighbor, core::parallel::MessageTag::FLUSH_SUBTABLE,
+              received_flush_route);
+            printf("Received: %d %d %d from %d\n",
+                   received_flush_route.object().subtable_id().get<0>(),
+                   received_flush_route.object().subtable_id().get<1>(),
+                   received_flush_route.object().subtable_id().get<2>(),
+                   previous_neighbor);
 
+            // Synchronize with the received subtable.
+            task_queue_->Synchronize(world, received_flush_route.object());
+          }
+        }
+
+        // Wait until the flush is completely sent.
+        if(query_subtable_flushed) {
+          flush_request.wait();
+          printf("Flushed to %d\n", previous_neighbor);
+          message_cache_[
+            world.rank()].flush_route().set_object_is_valid_flag(false);
         }
         return false;
       }
@@ -593,6 +658,12 @@ class TableExchange {
         }
       }
       num_queued_up_query_subtables_++;
+      printf(" ==== %d Queueing up %d %d %d to be flushed on %d...\n",
+             world.rank(),
+             query_subtable_in->subtable_id().get<0>(),
+             query_subtable_in->subtable_id().get<1>(),
+             query_subtable_in->subtable_id().get<2>(), ready_stage);
+
       queued_up_query_subtables_[ready_stage].push_back(query_subtable_in);
     }
 
@@ -867,7 +938,9 @@ class TableExchange {
       } // end of entering the stage.
 
       // Do post-flushes before entering.
-      enter_stage_ = this->ReadyForStage_(world);
+      if(! enter_stage_) {
+        enter_stage_ = this->ReadyForStage_(world);
+      }
     }
 };
 }
