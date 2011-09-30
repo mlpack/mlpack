@@ -11,6 +11,8 @@ set(SOURCES
    discr_sparse_coding_impl.h
    lars.h
    lars_impl.h
+   sparse_coding.h
+   sparse_coding_impl.h
    lcc.h
    lcc_impl.h
    pegasos.h
@@ -53,6 +55,26 @@ add_executable(mnist_dlcc_test_1000
 )
 
 target_link_libraries(mnist_dlcc_test_1000
+    mlpack
+    fastlib
+)
+
+add_executable(mnist_dsc
+    EXCLUDE_FROM_ALL
+    mnist_dsc.cc
+)
+
+target_link_libraries(mnist_dsc
+    mlpack
+    fastlib
+)
+
+add_executable(mnist_small_dsc
+    EXCLUDE_FROM_ALL
+    mnist_small_dsc.cc
+)
+
+target_link_libraries(mnist_small_dsc
     mlpack
     fastlib
 )
