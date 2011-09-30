@@ -93,10 +93,6 @@ class DistributedDualtreeTaskQueue {
     std::vector <
     boost::intrusive_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
-    /** @brief Whether each query subtable can be exported.
-     */
-    std::deque< bool > can_be_exported_;
-
     /** @brief The list of checked out query subtables.
      */
     QuerySubTableLockListType checked_out_query_subtables_;
@@ -104,11 +100,6 @@ class DistributedDualtreeTaskQueue {
     /** @brief The number of deterministic prunes.
      */
     int num_deterministic_prunes_;
-
-    /** @brief The number of evicted query subtables from this MPI
-     *         process due to computation completion.
-     */
-    int num_evicted_query_subtables_;
 
     /** @brief The number of exported query subtables from this MPI
      *         process to other MPI Processes.
@@ -187,7 +178,6 @@ class DistributedDualtreeTaskQueue {
     void GrowSlots_() {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       assigned_work_.resize(assigned_work_.size() + 1);
-      can_be_exported_.resize(can_be_exported_.size() + 1);
       query_subtables_.push_back(
         boost::intrusive_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
@@ -221,17 +211,8 @@ class DistributedDualtreeTaskQueue {
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
-      // Keep track of the number of query subtables that can be exported.
-      if(can_be_exported_[probe_index]) {
-        num_receive_completed_query_subtables_--;
-      }
-
-      // Increment the number of evicted query subtables.
-      num_evicted_query_subtables_++;
-
       // Replace.
       assigned_work_[probe_index] = assigned_work_.back();
-      can_be_exported_[probe_index] = can_be_exported_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
@@ -241,7 +222,6 @@ class DistributedDualtreeTaskQueue {
 
       // Pop.
       assigned_work_.pop_back();
-      can_be_exported_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
       remaining_work_in_priority_queue_.pop_back();
@@ -316,7 +296,6 @@ class DistributedDualtreeTaskQueue {
         boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
           new core::parallel::DisjointIntIntervals(
             world, *(assigned_work_[subtree_index]))));
-      can_be_exported_.push_back(can_be_exported_[ subtree_index ]);
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       remaining_work_in_priority_queue_.push_back(
@@ -384,7 +363,6 @@ class DistributedDualtreeTaskQueue {
               comp_query_subtable_id.get<2>()) {
 
             assigned_work_.push_back((*it)->assigned_work_);
-            can_be_exported_.push_back((*it)->can_be_exported_);
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
               (*it)->remaining_work_for_query_subtable_);
@@ -393,6 +371,9 @@ class DistributedDualtreeTaskQueue {
             tasks_.push_back((*it)->task_);
             checked_out_query_subtables_.erase(it);
             num_exported_query_subtables_--;
+            printf("Synching %d %d %d\n", comp_query_subtable_id.get<0>(),
+                   comp_query_subtable_id.get<1>(),
+                   comp_query_subtable_id.get<2>());
           }
           else {
 
@@ -465,7 +446,7 @@ class DistributedDualtreeTaskQueue {
                  it->reference_subtable().subtable_id().get<1>(),
                  it->reference_subtable().subtable_id().get<2>(),
                  it->reference_subtable().cache_block_id(),
-                 it->query_subtable().query_result()) ;
+                 it->reference_subtable().table()->data().memptr()) ;
         }
         printf("\n");
       }
@@ -490,7 +471,7 @@ class DistributedDualtreeTaskQueue {
             priority_queue_it->reference_subtable().subtable_id().get<1>(),
             priority_queue_it->reference_subtable().subtable_id().get<2>(),
             priority_queue_it->reference_subtable().cache_block_id(),
-            priority_queue_it->query_subtable().query_result()) ;
+            priority_queue_it->reference_subtable().table()->data().memptr()) ;
         }
         printf("\n");
       }
@@ -511,8 +492,6 @@ class DistributedDualtreeTaskQueue {
       this->GrowSlots_();
       query_subtables_.back()->Alias(query_subtable_in);
       query_subtables_.back()->set_originating_rank(originating_rank_in);
-      //can_be_exported_.back() = false;
-      can_be_exported_.back() = true;
       remaining_work_for_query_subtables_.back() = 0;
       remaining_work_in_priority_queue_.back() = 0;
 
@@ -607,7 +586,6 @@ class DistributedDualtreeTaskQueue {
         // operation; (2) never to export query subtables that are
         // imported from other MPI processes.
         if(query_subtables_[i]->table()->rank() == world.rank() &&
-            can_be_exported_[i] &&
             extra_task_list_out->push_back(world, neighbor_rank_in, i)) {
           num_exported_query_subtables_++;
           break;
@@ -625,7 +603,6 @@ class DistributedDualtreeTaskQueue {
      */
     ~DistributedDualtreeTaskQueue() {
       assigned_work_.resize(0);
-      can_be_exported_.resize(0);
       query_subtables_.resize(0);
       tasks_.resize(0);
 
@@ -844,7 +821,6 @@ class DistributedDualtreeTaskQueue {
      */
     DistributedDualtreeTaskQueue() {
       num_deterministic_prunes_ = 0;
-      num_evicted_query_subtables_ = 0;
       num_exported_query_subtables_ = 0;
       num_imported_query_subtables_ = 0;
       num_probabilistic_prunes_ = 0;
@@ -943,14 +919,9 @@ class DistributedDualtreeTaskQueue {
       remaining_local_computation_ = 0;
       num_remaining_tasks_ = 0;
 
-      // The number of query subtables that can be exported.
-      num_receive_completed_query_subtables_ = 0;
-      num_evicted_query_subtables_ = 0;
-
       // Initialize the completed computation grid for each query tree
       // on this process.
       assigned_work_.resize(query_subtables_.size()) ;
-      can_be_exported_.resize(query_subtables_.size()) ;
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
       remaining_work_in_priority_queue_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
@@ -959,8 +930,6 @@ class DistributedDualtreeTaskQueue {
           core::parallel::DisjointIntIntervals > (
             new core::parallel::DisjointIntIntervals());
         assigned_work_[i]->Init(world);
-        //can_be_exported_[i] = false;
-        can_be_exported_[i] = true;
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
         remaining_work_in_priority_queue_[i] = 0;
       }

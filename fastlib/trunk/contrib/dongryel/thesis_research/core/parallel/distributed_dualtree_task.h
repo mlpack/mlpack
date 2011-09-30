@@ -56,16 +56,27 @@ class DistributedDualtreeTask {
       SubTableType &reference_subtable_in,
       double priority_in) {
 
+      // Alias the incoming query subtable.
       query_subtable_.Init(
         query_subtable_in.table(), query_subtable_in.start_node(), false);
       query_subtable_.set_query_result(* query_subtable_in.query_result());
       query_subtable_.set_cache_block_id(
         query_subtable_in.cache_block_id());
+      query_subtable_.set_id_to_position_map(
+        query_subtable_in.id_to_position_map());
+      query_subtable_.set_position_to_id_map(
+        query_subtable_in.position_to_id_map());
+
+      // Alias the incoming reference subtable.
       reference_subtable_.Init(
         reference_subtable_in.table(),
         reference_subtable_in.start_node(), false);
       reference_subtable_.set_cache_block_id(
         reference_subtable_in.cache_block_id());
+      reference_subtable_.set_id_to_position_map(
+        reference_subtable_in.id_to_position_map());
+      reference_subtable_.set_position_to_id_map(
+        reference_subtable_in.position_to_id_map());
       priority_ = priority_in;
     }
 

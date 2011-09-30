@@ -255,6 +255,20 @@ class SubTable {
 
   public:
 
+    /** @brief Sets the incoming position to ID map.
+     */
+    void set_position_to_id_map(
+      const std::map<int, int> &position_to_id_map_in) {
+      position_to_id_map_ = position_to_id_map_in;
+    }
+
+    /** @brief Sets the incoming ID to position map.
+     */
+    void set_id_to_position_map(
+      const std::map<int, int> &id_to_position_map_in) {
+      id_to_position_map_ = id_to_position_map_in;
+    }
+
     /** @brief Copies the query subtable to the current subtable.
      */
     void Copy(const SubTableType &source_subtable_in) {
