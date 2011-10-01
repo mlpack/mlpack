@@ -562,7 +562,7 @@ double MaxIP::ComputeNeighbors(arma::Col<size_t>* resulting_neighbors,
 
     for (size_t i = 0; i < max_ips_.n_elem; i++) {
       size_t query = old_from_new_queries_(i / knns_);
-      assert(max_ip_indices_(i) != (size_t) -1);
+      assert(max_ip_indices_(i) != (size_t) -1 || max_ips_(i) == 0.0);
       (*resulting_neighbors)(query*knns_+ i%knns_)
 	= old_from_new_references_(max_ip_indices_(i));
       (*ips)(query*knns_+ i%knns_) = max_ips_(i);
