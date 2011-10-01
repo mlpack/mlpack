@@ -12,7 +12,7 @@ foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
 
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(lbfgs_test
@@ -21,6 +21,6 @@ add_executable(lbfgs_test
 )
 # link dependencies of test executable
 target_link_libraries(lbfgs_test
-  fastlib
+  mlpack
   boost_unit_test_framework
 )

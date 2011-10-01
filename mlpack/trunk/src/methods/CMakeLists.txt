@@ -1,0 +1,25 @@
+cmake_minimum_required(VERSION 2.8)
+
+## recurse
+set(DIRS
+  emst
+  fastica
+  hmm
+  infomax_ica
+  kernel_pca
+  mog
+  # mvu  # (currently known to not work)
+  naive_bayes
+  nca
+  neighbor_search
+  nnsvm
+  range_search
+  regression
+  svm
+)
+
+foreach(dir ${DIRS})
+    add_subdirectory(${dir})
+endforeach()
+
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
