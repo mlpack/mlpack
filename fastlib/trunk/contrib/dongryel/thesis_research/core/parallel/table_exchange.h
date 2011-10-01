@@ -367,7 +367,7 @@ class TableExchange {
       // neighbor is in need of more tasks, then donate one query
       // subtable.
       if(needs_load_balancing_[ neighbor ].first &&
-          needs_load_balancing_[ neighbor ].second >
+          needs_load_balancing_[ neighbor ].second <
           needs_load_balancing_[ world.rank()].second) {
 
         task_queue_->PrepareExtraTaskList(
@@ -789,7 +789,7 @@ class TableExchange {
       // Load balancing option.
       needs_load_balancing_.resize(world.size());
       for(int i = 0; i < world.size(); i++) {
-        needs_load_balancing_[i] = std::pair<bool, unsigned long int>(true, 0);
+        needs_load_balancing_[i] = std::pair<bool, unsigned long int>(false, 0);
       }
       do_load_balancing_ = do_load_balancing_in;
 

@@ -608,13 +608,6 @@ class DistributedDualtreeTaskQueue {
       return remaining_global_computation_;
     }
 
-    /** @brief Decrement the remaining amount of local computation.
-     */
-    void decrement_remaining_local_computation(unsigned long int decrement) {
-      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      remaining_local_computation_ -= decrement;
-    }
-
     /** @brief Decrement the remaining amount of global computation.
      */
     void decrement_remaining_global_computation(unsigned long int decrement) {
@@ -706,6 +699,10 @@ class DistributedDualtreeTaskQueue {
           }
         } // end of looping over the checked out query subtables.
       } //end of looping over each reference subtree.
+
+      // Update the remaining local computation to be broadcast.
+      table_exchange_.turn_on_load_balancing(
+        world, remaining_local_computation_);
     }
 
     /** @brief Determines whether the MPI process can terminate.
