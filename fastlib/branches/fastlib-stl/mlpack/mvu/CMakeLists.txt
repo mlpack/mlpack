@@ -4,8 +4,10 @@ cmake_minimum_required(VERSION 2.8)
 # Anything not in this list will not be compiled into the output library
 # Do not include test programs here
 set(SOURCES
-   mvu_objectives.h
-   mvu_objectives_impl.h
+   mvu.h
+   mvu_impl.h
+   mvu_objective_function.h
+   mvu_objective_function.cc
 )
 
 # add directory name to sources
