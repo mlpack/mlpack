@@ -336,7 +336,6 @@ class DistributedDualtreeTaskList {
       while(distributed_task_queue_->size(probe_index) > 0) {
         TaskType &test_task =
           const_cast<TaskType &>(distributed_task_queue_->top(probe_index));
-        unsigned long int stolen_local_computation = test_task.work();
         int reference_subtable_position;
 
         // If the reference subtable cannot be packed, break.
@@ -351,11 +350,6 @@ class DistributedDualtreeTaskList {
           distributed_task_queue_->pop(probe_index);
           donated_task_list_.back().second.push_back(
             reference_subtable_position);
-
-          // For each reference subtree stolen, the amount of local
-          // computation decreases.
-          distributed_task_queue_->decrement_remaining_local_computation(
-            stolen_local_computation);
         }
       } // end of trying to empty out a query subtable list.
 
