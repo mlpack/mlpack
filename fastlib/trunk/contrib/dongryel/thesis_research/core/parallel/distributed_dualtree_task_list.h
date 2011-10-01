@@ -291,6 +291,20 @@ class DistributedDualtreeTaskList {
         distributed_task_queue_->set_remaining_work_for_query_subtable(
           new_position, num_reference_points_for_new_query_subtable);
       }
+
+      // Swap the positions so that the imported query subtables are
+      // selected first.
+      for(unsigned int i = 0; i < donated_task_list_.size(); i++) {
+        distributed_task_queue_->assigned_work_.back().swap(
+          distributed_task_queue_->assigned_work_[i]);
+        distributed_task_queue_->query_subtables_.back().swap(
+          distributed_task_queue_->query_subtables_[i]);
+        std::swap(
+          distributed_task_queue_->remaining_work_for_query_subtables_.back(),
+          distributed_task_queue_->remaining_work_for_query_subtables_[i]);
+        distributed_task_queue_->tasks_.back().swap(
+          distributed_task_queue_->tasks_[i]);
+      }
     }
 
     /** @brief Initializes the task list.
