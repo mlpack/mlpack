@@ -1,8 +1,7 @@
 cmake_minimum_required(VERSION 2.8)
 
-# Define the files that we need to compile
-# Anything not in this list will not be compiled into the library
-# Do not include test programs here
+# Define the files that we need to compile.
+# Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
    textfile.h
    textfile.cc
@@ -13,26 +12,16 @@ set(DIR_SRCS)
 foreach(file ${SOURCES})
   set(DIR_SRCS ${DIR_SRCS} ${CMAKE_CURRENT_SOURCE_DIR}/${file})
 endforeach()
-# append sources (with directory name) to list of all FASTLIB sources (used at parent scope)
+# Append sources (with directory name) to list of all MLPACK sources (used at
+# parent scope).
 set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-#add_library(file ${SOURCES})
-# dependencies of file
-#target_link_libraries(file
-#   base
-#   col
-#)
 
 # test executable
 add_executable(textfile_test
-   textfile_test.cc
+  textfile_test.cc
 )
 # dependencies of test executable
 target_link_libraries(textfile_test
-#   base
-#   col
-#   file
-   fastlib
-   boost_unit_test_framework
-
+  mlpack
+  boost_unit_test_framework
 )
