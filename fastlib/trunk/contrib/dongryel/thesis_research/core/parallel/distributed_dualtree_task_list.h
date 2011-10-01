@@ -215,6 +215,10 @@ class DistributedDualtreeTaskList {
 
   public:
 
+    int num_subtables() const {
+      return sub_tables_.size();
+    }
+
     void operator=(const DistributedDualtreeTaskList &task_list_in) {
       destination_rank_ = task_list_in.destination_rank_;
       distributed_task_queue_ = task_list_in.distributed_task_queue_;
@@ -371,16 +375,15 @@ class DistributedDualtreeTaskList {
       }
     }
 
-    void ReleaseCache() {
+    void ExportPostFreeCacheList(
+      std::vector< std::pair<int, int> > *post_free_cache_list_out) {
+
+      post_free_cache_list_out->resize(0);
       for(unsigned int i = 0; i < sub_tables_.size(); i++) {
-        // If this is a reference subtable, then we need to release
-        // it from the cache owned by the donating process.
-        const_cast <
-        DistributedDualtreeTaskQueueType * >(
-          distributed_task_queue_)->ReleaseCache(
-            *world_,
+        post_free_cache_list_out->push_back(
+          std::pair<int, int> (
             sub_tables_[i].get<0>()->cache_block_id(),
-            sub_tables_[i].get<2>());
+            sub_tables_[i].get<2>()));
       }
     }
 
@@ -416,8 +419,6 @@ class DistributedDualtreeTaskList {
      */
     template<class Archive>
     void load(Archive &ar, const unsigned int version) {
-
-      // Allocate the necessary pointers.
 
       // Load the number of subtables transferred.
       int num_subtables;

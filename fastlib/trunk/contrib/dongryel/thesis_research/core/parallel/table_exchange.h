@@ -144,6 +144,8 @@ class TableExchange {
      */
     std::vector< int > message_locks_;
 
+    std::vector< std::pair<int, int> > post_free_cache_list_;
+
     /** @brief The task queue associated with the current MPI process.
      */
     TaskQueueType *task_queue_;
@@ -214,27 +216,22 @@ class TableExchange {
             message_cache_[
               receive_process_rank ].flush_route().object().Destruct();
           }
-
-          if(message_cache_[
-                send_process_rank ].extra_task_route().object_is_valid() &&
-              message_cache_[
-                send_process_rank].extra_task_route().num_destinations() == 0) {
-            if(static_cast<int>(send_process_rank) == world.rank()) {
-              message_cache_[
-                send_process_rank].extra_task_route().object().ReleaseCache();
-            }
-            message_cache_[
-              world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
-          }
-
-          if(message_cache_[
-                receive_process_rank ].extra_task_route().object_is_valid() &&
-              message_cache_[
-                receive_process_rank ].extra_task_route().num_destinations() == 0) {
-            message_cache_[
-              receive_process_rank].extra_task_route().set_object_is_valid_flag(false) ;
-          }
         }
+      }
+
+      // Free the list of reference subtables exported to other processes.
+      for(unsigned int i = 0; i < post_free_cache_list_.size(); i++) {
+        this->ReleaseCache(world, post_free_cache_list_[i].first,
+                           post_free_cache_list_[i].second);
+      }
+      post_free_cache_list_.resize(0);
+
+      if(message_cache_[
+            world.rank()].extra_task_route().object_is_valid() &&
+          message_cache_[
+            world.rank()].extra_task_route().num_destinations() == 0) {
+        message_cache_[
+          world.rank()].extra_task_route().set_object_is_valid_flag(false) ;
       }
     }
 
@@ -377,6 +374,8 @@ class TableExchange {
         task_queue_->PrepareExtraTaskList(
           world, metric_in, neighbor,
           & message_cache_[ world.rank()].extra_task_route().object());
+        message_cache_[
+          world.rank()].extra_task_route().object().ExportPostFreeCacheList(&post_free_cache_list_);
         message_cache_ [
           world.rank()].extra_task_route().set_object_is_valid_flag(true);
         message_cache_[
@@ -466,10 +465,15 @@ class TableExchange {
       unsigned int test_lower_bound_for_receive =
         (neighbor >> stage_) << stage_;
 
+      // If there are non-flushed imported query subtables, wait they
+      // are out of the active status.
+      if(task_queue_->num_imported_query_subtables() != 0) {
+        return false;
+      }
+
       // Whether to flush before entering the current stage.
       bool flush_only_mode =
-        (task_queue_->num_imported_query_subtables() > 0 ||
-         task_queue_->num_exported_query_subtables() > 0 ||
+        (task_queue_->num_exported_query_subtables() > 0 ||
          queued_up_query_subtables_.size() > 0);
 
       // If there is a queued up query subtables, post an asynchronous
@@ -594,7 +598,6 @@ class TableExchange {
      */
     int push_subtable(
       SubTableType &subtable_in, int num_referenced_as_reference_set) {
-
       int receive_slot;
       if(extra_receive_slots_.size() > 0) {
         receive_slot = extra_receive_slots_.back();
