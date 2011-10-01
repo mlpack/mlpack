@@ -311,15 +311,14 @@ class TableExchange {
           if(do_load_balancing_) {
 
             // Synchronize with the received query subtable.
-            if(route_request.flush_route().object_is_valid()) {
-              if(route_request.flush_route().remove_from_destination_list(
-                    world.rank())) {
-                task_queue_->Synchronize(
-                  world, route_request.flush_route().object());
-              }
+            if(route_request.flush_route().object_is_valid() &&
+                route_request.flush_route().remove_from_destination_list(
+                  world.rank())) {
+              task_queue_->Synchronize(
+                world, route_request.flush_route().object());
             }
             else {
-              //route_request.flush_route().object().Destruct();
+              route_request.flush_route().object().Destruct();
               route_request.flush_route().set_object_is_valid_flag(false);
             }
 
