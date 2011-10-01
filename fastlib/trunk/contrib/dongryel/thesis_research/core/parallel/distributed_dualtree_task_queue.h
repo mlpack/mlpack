@@ -234,7 +234,8 @@ class DistributedDualtreeTaskQueue {
         if((! query_subtables_[i]->start_node()->is_leaf()) &&
             tasks_[i]->size() > 0 &&
             split_index_query_size <
-            query_subtables_[i]->start_node()->count())  {
+            query_subtables_[i]->start_node()->count() &&
+            query_subtables_[i]->table()->rank() == world.rank())  {
           split_index_query_size = query_subtables_[i]->start_node()->count();
           split_index = i;
         }
@@ -864,7 +865,7 @@ class DistributedDualtreeTaskQueue {
       // For each process, break up the local query tree into a list of
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
-        4 * num_threads_in, &query_subtables_);
+        10 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
@@ -930,9 +931,9 @@ class DistributedDualtreeTaskQueue {
 
       // If the number of available task is less than the number of
       // running threads, try to get one.
-      //if(static_cast<int>(tasks_.size()) < num_threads_) {
-      //this->RedistributeAmongCores_(world, metric_in);
-      //}
+      if(static_cast<int>(tasks_.size()) < num_threads_ * 5) {
+        this->RedistributeAmongCores_(world, metric_in);
+      }
 
       // Try to dequeue a task by scanning the list of available query
       // subtables.
