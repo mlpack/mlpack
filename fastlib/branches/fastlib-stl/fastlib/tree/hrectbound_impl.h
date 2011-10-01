@@ -23,10 +23,9 @@ namespace bound {
  * Empty constructor
  */
 template<int t_pow>
-HRectBound<t_pow>::HRectBound() {
-  bounds_ = NULL;
-  dim_ = 0;
-}
+HRectBound<t_pow>::HRectBound() :
+    bounds_(NULL),
+    dim_(0) { /* nothing to do */ }
 
 /**
  * Initializes to specified dimensionality with each dimension the empty
@@ -35,9 +34,21 @@ HRectBound<t_pow>::HRectBound() {
 template<int t_pow>
 HRectBound<t_pow>::HRectBound(size_t dimension) {
   bounds_ = new Range[dimension];
-
   dim_ = dimension;
-  Clear();
+}
+
+/***
+ * Copy constructor necessary to prevent memory leaks.
+ */
+template<int t_pow>
+HRectBound<t_pow>::HRectBound(const HRectBound& other) {
+  if (bounds_)
+    delete[] bounds_;
+
+  dim_ = other.dim();
+  bounds_ = new Range[dim_];
+  for (size_t i = 0; i < dim_; i++)
+    bounds_[i] = other[i];
 }
 
 /**
@@ -45,7 +56,7 @@ HRectBound<t_pow>::HRectBound(size_t dimension) {
  */
 template<int t_pow>
 HRectBound<t_pow>::~HRectBound() {
-  if(bounds_)
+  if (bounds_)
     delete[] bounds_;
 }
 
@@ -57,33 +68,6 @@ void HRectBound<t_pow>::Clear() {
   for (size_t i = 0; i < dim_; i++) {
     bounds_[i] = Range();
   }
-}
-
-/**
- * Sets the dimensionality.
- */
-template<int t_pow>
-void HRectBound<t_pow>::SetSize(size_t dim) {
-  if(bounds_)
-    delete[] bounds_;
-
-  bounds_ = new Range[dim];
-  dim_ = dim;
-  Clear();
-}
-
-/**
- * Determines if a point is within this bound.
- */
-template<int t_pow>
-bool HRectBound<t_pow>::Contains(const arma::vec& point) const {
-  for (size_t i = 0; i < point.n_elem; i++) {
-    if (!bounds_[i].Contains(point(i))) {
-      return false;
-    }
-  }
-
-  return true;
 }
 
 /**
@@ -370,6 +354,20 @@ HRectBound<t_pow>& HRectBound<t_pow>::operator|=(const HRectBound& other) {
   }
 
   return *this;
+}
+
+/**
+ * Determines if a point is within this bound.
+ */
+template<int t_pow>
+bool HRectBound<t_pow>::Contains(const arma::vec& point) const {
+  for (size_t i = 0; i < point.n_elem; i++) {
+    if (!bounds_[i].Contains(point(i))) {
+      return false;
+    }
+  }
+
+  return true;
 }
 
 }; // namespace bound
