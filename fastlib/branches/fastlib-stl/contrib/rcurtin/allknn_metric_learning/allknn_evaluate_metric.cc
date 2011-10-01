@@ -6,30 +6,54 @@
  * evaluate it with this utility.
  */
 
-#include "allknn_evaluate_metric.h"
+#include <fastlib/fastlib.h>
+#include <mlpack/neighbor_search/neighbor_search.h>
 
 #include <armadillo>
 #include <stdlib.h>
 #include <ctime>
 
+#include "allknn_metric_utils.h"
+
+// Program documentation.
+PROGRAM_INFO("AllkNN Learned Metric Evaluation",
+    "Use this utility to evaluate a metric learned with the allknn_learn_metric"
+    " program.  Pass in a reference and query file, and the learned weights, "
+    "and the AllkNN classifier will be run and the outputs reported to the "
+    "given output file.", "allknn_evaluate_metric");
+
+// Define options.
+PARAM_MODULE("allknn_evaluate_metric", "");
+PARAM_STRING_REQ("reference_file", "Input CSV file.", "allknn_evaluate_metric");
+PARAM_STRING_REQ("query_file", "Query CSV file.", "allknn_evaluate_metric");
+PARAM_STRING_REQ("weights_file", "CSV file containing weights to evaluate.",
+    "allknn_evaluate_metric");
+PARAM_STRING_REQ("output_file", "Output correct counts file.", 
+    "allknn_evaluate_metric");
+
 using namespace mlpack;
-using namespace mlpack::allknn;
-using namespace mlpack::allknn::metric;
+using namespace mlpack::neighbor;
+using namespace mlpack::neighbor::metric;
+
+using namespace std;
 
 //
 // Main method.
 //
 int main(int argc, char* argv[]) {
-  fx_module* root = fx_init(argc, argv, &allnn_timit_doc);
+  IO::ParseCommandLine(argc, argv);
 
-  const char* reference_file = fx_param_str_req(NULL, "reference_file");
-  const char* query_file = fx_param_str_req(NULL, "query_file");
-  const char* weights_file = fx_param_str_req(NULL, "weights_file");
-  const char* output_file = fx_param_str_req(NULL, "output_file");
-  size_t knns = fx_param_int_req(root, "k");
+  string reference_file =
+      IO::GetParam<string>("allknn_evaluate_metric/reference_file");
+  string query_file =
+      IO::GetParam<string>("allknn_evaluate_metric/query_file");
+  string weights_file =
+      IO::GetParam<string>("allknn_evaluate_metric/weights_file");
+  string output_file =
+      IO::GetParam<string>("allknn_evaluate_metric/output_file");
 
   arma::mat references;
-  data::Load(reference_file, references);
+  data::Load(reference_file.c_str(), references);
 
   // But we will ignore the last column (numeric class labels) for now
   // (save in independent object).
@@ -39,7 +63,7 @@ int main(int argc, char* argv[]) {
   references.shed_row(references.n_rows - 1);
 
   arma::mat queries;
-  data::Load(query_file, queries);
+  data::Load(query_file.c_str(), queries);
 
   // Again, ignore the last column for now.
   arma::vec query_labels = trans(queries.row(queries.n_rows - 1));
@@ -49,57 +73,58 @@ int main(int argc, char* argv[]) {
 
   // Load the weights which we will weight both matrices with.
   arma::mat weights; // This will end up being a vector.
-  data::Load(weights_file, weights);
+  data::Load(weights_file.c_str(), weights);
   arma::mat diag_weights(weights.n_rows, weights.n_rows);
   diag_weights.zeros();
   diag_weights.diag() = weights.col(0);
 
-  NOTIFY("Applying weights...");
+  IO::Info << "Applying weights..." << endl;
 
   // Apply weights to query and reference sets.
   references = diag_weights * references;
   queries = diag_weights * queries;
 
-  NOTIFY("Building trees...");
+  IO::Info << "Building trees..." << endl;
 
   // Now we need to actually run the k-nearest neighbors computation.
-  AllkNN allknn(queries, references, 20, knns); // Don't alias the matrix.
+  AllkNN allknn(queries, references);
   
-  arma::Col<size_t> neighbors;
-  arma::vec distances;
+  arma::Mat<index_t> neighbors;
+  arma::mat distances;
 
-  NOTIFY("Computing neighbors...");
+  IO::Info << "Computing neighbors..." << endl;
 
   allknn.ComputeNeighbors(neighbors, distances);
 
   // Now we want the classification score breakdown for each phoneme class.  I
-  // happen to already know that we have 61 classes total.
+  // happen to already know that we have 61 classes total.  (this will need to
+  // be rewritten for generality)
   arma::Col<int> class_counts(61);
   arma::Col<int> class_scores(61);
 
-  NOTIFY("Evaluating nearest neighbor class guesses...");
+  IO::Info << "Evaluating nearest neighbor class guesses..." << endl;
+
+  index_t knns = IO::GetParam<int>("neighbor_search/k");
 
   int correct = EvaluateClassCorrect(neighbors, knns, ref_labels, query_labels,
       class_counts, class_scores);
 
-  NOTIFY("Query set total: %d correct out of %d; %f%% classified correctly",
-      correct, (neighbors.n_elem / knns), ((double) correct / (double)
-      (neighbors.n_elem / knns) * 100));
+  IO::Info << "Query set total: " << correct << " correct out of " << 
+      (neighbors.n_elem / knns) << "; " << ((double) correct / (double)
+      (neighbors.n_elem / knns) * 100) << "%% classified correctly." << endl;
 
   for (int i = 0; i < class_counts.n_elem; i++) {
-    NOTIFY("Class %d: %d correct out of %d: %f%% classified correctly",
-        i, class_scores[i], class_counts[i], ((double) class_scores[i] /
-        (double) class_counts[i]) * 100);
+    IO::Info << "Class " << i << ": " << class_scores[i] << " correct out of "
+        << class_counts[i] << ": " << (((double) class_scores[i] / (double)
+        class_counts[i]) * 100) << "%% classified correctly." << endl;
   }
 
   // Assemble our results into a matrix for exporting.
   arma::mat counts_scores(2, 62);
   for (int i = 0; i < 62; i++) {
-    counts_scores[0, i] = class_counts[i];
-    counts_scores[1, i] = class_scores[i];
+    counts_scores(0, i) = class_counts[i];
+    counts_scores(1, i) = class_scores[i];
   }
 
-  data::Save(output_file, trans(counts_scores));
-
-  fx_done(root);
+  data::Save(output_file.c_str(), trans(counts_scores));
 }
