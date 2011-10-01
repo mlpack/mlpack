@@ -9,8 +9,8 @@
 #include "allknn_metric_utils.h"
 
 using namespace mlpack;
-using namespace mlpack::allknn;
-using namespace mlpack::allknn::metric;
+using namespace mlpack::neighbor;
+using namespace mlpack::neighbor::metric;
 
 // Utility function for std::pair<int, double> sorting.
 bool sortPairedVector(std::pair<int, double> lhs, std::pair<int, double> rhs) {
@@ -26,7 +26,7 @@ bool sortPairedVector(std::pair<int, double> lhs, std::pair<int, double> rhs) {
  * @param neighbor_labels Label of neighbors; the first will be the closest.
  * @return Majority vote result (the class guess)
  */
-int mlpack::allknn::metric::ClassifyKNN(arma::vec& neighbors) {
+int mlpack::neighbor::metric::ClassifyKNN(arma::vec& neighbors) {
   std::map<int, int> freqs;
 
   for(int i = 0; i < neighbors.n_elem; i++) {
@@ -80,11 +80,11 @@ int mlpack::allknn::metric::ClassifyKNN(arma::vec& neighbors) {
  * @param score Number of neighbors to use for scoring ( <= knns )
  * @return Number of correctly classified points
  */
-int mlpack::allknn::metric::EstimateScores(arma::mat& input,
-                                           arma::Col<size_t>& neighbors,
-                                           arma::vec& labels,
-                                           int knns,
-                                           int score) {
+int mlpack::neighbor::metric::EstimateScores(arma::mat& input,
+                                             arma::Mat<index_t>& neighbors,
+                                             arma::vec& labels,
+                                             int knns,
+                                             int score) {
   // We will not do this a particularly smart way, but instead we will just run
   // the naive calculation on the nearest {knns} neighbors as calculated with a
   // different weighting matrix, then resorting them and reclassifying.
@@ -92,14 +92,13 @@ int mlpack::allknn::metric::EstimateScores(arma::mat& input,
   for (int i = 0; i < input.n_cols; i++) {
     std::vector<std::pair<int, double> > local_neighbors;
     for (int j = 0; j < knns; j++) {
-      int ind = (i * knns) + j;
-      double dist = norm(input.col(i) - input.col(neighbors[ind]), 2);
-      local_neighbors.push_back(std::make_pair(neighbors[ind], dist));
+      double dist = norm(input.col(i) - input.col(neighbors(j, i)), 2);
+      local_neighbors.push_back(std::make_pair(neighbors(j, i), dist));
     }
 
     // Now sort our new vector by distance (since the order has likely changed).
     std::sort(local_neighbors.begin(), local_neighbors.end(), sortPairedVector);
-    arma::Col<size_t> tmp(local_neighbors.size());
+    arma::Col<index_t> tmp(local_neighbors.size());
     for (int j = 0; j < local_neighbors.size(); j++)
       tmp(j) = local_neighbors.at(j).first;
 
@@ -120,16 +119,16 @@ int mlpack::allknn::metric::EstimateScores(arma::mat& input,
  * @param labels List of correct classes of points (length n_points)
  * @return Number of correctly classified points
  */
-int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
-                                            int knns,
-                                            int score,
-                                            arma::vec& labels) {
+int mlpack::neighbor::metric::EvaluateCorrect(arma::Mat<index_t>& neighbors,
+                                              int knns,
+                                              int score,
+                                              arma::vec& labels) {
   // check classifications
   int correct = 0;
-  for (int i = 0; i < (neighbors.n_elem / knns); i++) {
+  for (int i = 0; i < neighbors.n_cols; i++) {
     arma::vec classifieds(score);
     for (int j = 0; j < score; j++)
-      classifieds[j] = labels[neighbors[i * knns + j]];
+      classifieds[j] = labels[neighbors(j, i)];
 
     int classvote = ClassifyKNN(classifieds);
     int label = (int) labels[i];
@@ -152,11 +151,11 @@ int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
  * @param labels List of correct classes of points (length n_points)
  * @return 1 if correctly classified, 0 otherwise.
  */
-int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
-                                            int knns,
-                                            int score,
-                                            arma::vec& labels,
-                                            int index) {
+int mlpack::neighbor::metric::EvaluateCorrect(arma::Mat<index_t>& neighbors,
+                                              int knns,
+                                              int score,
+                                              arma::vec& labels,
+                                              int index) {
   arma::vec classifieds(score);
   for(int j = 0; j < score; j++)
     classifieds[j] = labels[neighbors[j]];
@@ -183,8 +182,8 @@ int mlpack::allknn::metric::EvaluateCorrect(arma::Col<size_t>& neighbors,
  *            classified points in each class
  * @return Number of correctly classified points
  */
-int mlpack::allknn::metric::EvaluateClassCorrect(
-      const arma::Col<size_t>& neighbors,
+int mlpack::neighbor::metric::EvaluateClassCorrect(
+      const arma::Mat<index_t>& neighbors,
       int knns,
       const arma::vec& ref_labels,
       const arma::vec& query_labels,
@@ -198,15 +197,16 @@ int mlpack::allknn::metric::EvaluateClassCorrect(
   // check classifications
   int correct = 0; // total counter
   
-  for (int i = 0; i < (neighbors.n_elem / knns); i++) {
+  for (int i = 0; i < neighbors.n_cols; i++) {
     arma::vec classifieds(knns);
     for (int j = 0; j < knns; j++)
-      classifieds[j] = ref_labels[neighbors[i * knns + j]];
+      classifieds[j] = ref_labels[neighbors(j, i)];
 
     int classvote = ClassifyKNN(classifieds);
     int index = query_labels[i];
-    if (index >= num_classes || index < 0)
-      FATAL("Bizarre index %d (i %d, label %lf)", index, i, query_labels[i]);
+    if (index > num_classes || index < 0)
+      IO::Fatal << "Bizarre index " << index << " (i " << i << ", label "
+          << query_labels[i] << ")." << std::endl;
 
     if(classvote == index) {
       correct++;
