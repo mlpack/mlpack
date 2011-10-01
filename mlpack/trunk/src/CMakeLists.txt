@@ -1,58 +1,12 @@
-cmake_minimum_required(VERSION 2.8)
-project(MLPACK C CXX)
-
-#find_package(BLAS REQUIRED)
-#find_package(LAPACK REQUIRED)
-
-## Global compiler flags (dep. on platform TODO)
-#set(CMAKE_CXX_FLAGS "-g -Wall")
-add_definitions( -DDISABLE_DISK_MATRIX )
-
-## Location of fastlib headers & lib
-set(FASTLIB_BASE_DIR /usr/local CACHE PATH
-  "Directory where fastlib is installed." )
-set(FASTLIB_LIB_DIR ${FASTLIB_BASE_DIR}/lib )
-set(FASTLIB_INCLUDE_DIR ${FASTLIB_BASE_DIR}/include )
-# set(FASTLIB_LIB_DIR ${FASTLIB_BASE_DIR}/lib CACHE PATH
-#   "Directory where the fastlib library is installed." )
-# set(FASTLIB_INCLUDE_DIR ${FASTLIB_BASE_DIR}/include CACHE PATH
-#   "Directory where the fastlib headers are installed." )
-#
-# mark_as_advanced(FASTLIB_LIB_DIR FASTLIB_INCLUDE_DIR)
-
-##? add_library ?
-find_library(FASTLIB_LIB fastlib ${FASTLIB_LIB_DIR})
-
 ## include dirs
-include_directories( ${FASTLIB_INCLUDE_DIR} )
-include_directories( .. )  # mlpack
-include_directories( ../include/ )
-
-## link directories
-link_directories( ${FASTLIB_LIB_DIR} )
+include_directories(..)  # mlpack
+include_directories(../include/)
 
 ## recurse
 set(DIRS
-    core
-    emst
-    fastica
-    hmm
-    infomax_ica
-#    kernel_pca  # requires sparse
-    #mog # requires optimization
-    methods/nca
-    #mvu # requires optimization
-    naive_bayes
-    neighbor_search
-    nnsvm
-    # range_search  ##! uses contrib code
-    regression
-    svm
+  core
+  methods
 )
-
-if(WITH_OPTIMIZERS)
-#  set(DIRS ${DIRS} mvu)
-endif()
 
 foreach(dir ${DIRS})
     add_subdirectory(${dir})
@@ -60,9 +14,7 @@ endforeach()
 
 # MLPACK_SRCS is set in the subdirectories
 add_library(mlpack ${MLPACK_SRCS})
-add_dependencies(mlpack fastlib)
 target_link_libraries(mlpack
-  fastlib
   armadillo
   lapack
   blas
@@ -90,5 +42,3 @@ install(TARGETS mlpack
    RUNTIME DESTINATION bin
    LIBRARY DESTINATION lib
    ARCHIVE DESTINATION lib)
-
-## installation
