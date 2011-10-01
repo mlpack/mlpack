@@ -74,6 +74,9 @@ class DistributedDualtreeTaskQueue {
     friend class QuerySubTableLock <
         DistributedTableType, TaskPriorityQueueType >;
 
+  friend class core::parallel::DistributedDualtreeTaskList <
+        DistributedTableType, TaskPriorityQueueType >;
+
   typedef class QuerySubTableLock <
         DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
 

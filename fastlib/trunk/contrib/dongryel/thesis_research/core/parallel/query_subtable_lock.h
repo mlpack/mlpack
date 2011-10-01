@@ -139,6 +139,18 @@ class QuerySubTableLock {
       export_to->remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtable_);
       export_to->tasks_.push_back(task_);
+
+      // Put it back in the front again.
+      if(export_to->assigned_work_.size() > 1) {
+        export_to->assigned_work_.back().swap(
+          export_to->assigned_work_.front());
+        export_to->query_subtables_.back().swap(
+          export_to->query_subtables_.front());
+        std::swap(
+          export_to->remaining_work_for_query_subtables_.back(),
+          export_to->remaining_work_for_query_subtables_.front());
+        export_to->tasks_.back().swap(export_to->tasks_.front());
+      }
     }
 
     template<typename MetricType>

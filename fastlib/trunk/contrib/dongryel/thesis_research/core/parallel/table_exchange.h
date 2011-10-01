@@ -367,9 +367,8 @@ class TableExchange {
       // neighbor is in need of more tasks, then donate one query
       // subtable.
       if(needs_load_balancing_[ neighbor ].first &&
-          needs_load_balancing_[ neighbor ].second <
+          needs_load_balancing_[ neighbor ].second * 4 <
           needs_load_balancing_[ world.rank()].second) {
-
         task_queue_->PrepareExtraTaskList(
           world, metric_in, neighbor,
           & message_cache_[ world.rank()].extra_task_route().object());
