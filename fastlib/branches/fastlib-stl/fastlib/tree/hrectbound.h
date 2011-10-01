@@ -36,6 +36,11 @@ class HRectBound {
    */
   HRectBound(size_t dimension);
 
+  /***
+   * Copy constructor; necessary to prevent memory leaks.
+   */
+  HRectBound(const HRectBound& other);
+
   /**
    * Destructor: clean up memory.
    */
@@ -46,16 +51,6 @@ class HRectBound {
    * nothing).
    */
   void Clear();
-
-  /**
-   * Sets the dimensionality of the bound.
-   */
-  void SetSize(size_t dim);
-
-  /**
-   * Determines if a point is within this bound.
-   */
-  bool Contains(const arma::vec& point) const;
 
   /** Gets the dimensionality */
   size_t dim() const { return dim_; }
@@ -74,12 +69,6 @@ class HRectBound {
   void Centroid(arma::vec& centroid) const;
 
   /**
-   * Calculates minimum bound-to-bound squared distance, with
-   * an offset between their respective coordinate systems.
-   */
-  double MinDistance(const HRectBound& other, const arma::vec& offset) const;
-
-  /**
    * Calculates minimum bound-to-point squared distance.
    */
   double MinDistance(const arma::vec& point) const;
@@ -90,6 +79,12 @@ class HRectBound {
    * Example: bound1.MinDistanceSq(other) for minimum squared distance.
    */
   double MinDistance(const HRectBound& other) const;
+
+  /**
+   * Calculates minimum bound-to-bound squared distance, with
+   * an offset between their respective coordinate systems.
+   */
+  double MinDistance(const HRectBound& other, const arma::vec& offset) const;
 
   /**
    * Calculates maximum bound-to-point squared distance.
@@ -135,6 +130,11 @@ class HRectBound {
    * Expands this region to encompass another bound.
    */
   HRectBound& operator|=(const HRectBound& other);
+
+  /**
+   * Determines if a point is within this bound.
+   */
+  bool Contains(const arma::vec& point) const;
 
  private:
   Range *bounds_;

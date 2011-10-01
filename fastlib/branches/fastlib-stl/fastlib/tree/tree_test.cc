@@ -91,6 +91,104 @@ BOOST_AUTO_TEST_CASE(TestDHrectPeriodicBound) {
 //  BOOST_REQUIRE(r3.Contains(vector));
 }
 
+/***
+ * Ensure that a bound, by default, is empty and has no dimensionality.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundEmptyConstructor) {
+  HRectBound<2> b;
+
+  BOOST_REQUIRE_EQUAL(b.dim(), 0);
+}
+
+/***
+ * Ensure that when we specify the dimensionality in the constructor, it is
+ * correct, and the bounds are all the empty set.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor) {
+  HRectBound<2> b(2); // We'll do this with 2 and 5 dimensions.
+
+  BOOST_REQUIRE_EQUAL(b.dim(), 2);
+  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+
+  b = HRectBound<2>(5);
+
+  BOOST_REQUIRE_EQUAL(b.dim(), 5);
+  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[2].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[3].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[4].width(), 1e-5);
+}
+
+/***
+ * Test that clearing the dimensions resets the bound to empty.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundClear) {
+  HRectBound<2> b(2); // We'll do this with two dimensions only.
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 4.0);
+
+  // Now we just need to make sure that we clear the range.
+  b.Clear();
+
+  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+}
+
+/***
+ * Ensure that we get the correct centroid for our bound.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundCentroid) {
+  // Create a simple 3-dimensional bound.
+  HRectBound<2> b(3);
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(-2.0, -1.0);
+  b[2] = Range(-10.0, 50.0);
+
+  arma::vec centroid;
+
+  b.Centroid(centroid);
+
+  BOOST_REQUIRE_EQUAL(centroid.n_elem, 3);
+  BOOST_REQUIRE_CLOSE(centroid[0], 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(centroid[1], -1.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(centroid[2], 20.0, 1e-5);
+}
+
+/***
+ * Ensure that we calculate the correct minimum distance between a point and a
+ * bound.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint) {
+  // We'll do the calculation in three dimensions, and we'll use three cases for
+  // the point: point is outside the bound; point is on the edge of the bound;
+  // point is inside the bound.  In the latter two cases, the distance should be
+  // zero.
+  HRectBound<2> b(5);
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(1.0, 5.0);
+  b[2] = Range(-2.0, 2.0);
+  b[3] = Range(-5.0, -2.0);
+  b[4] = Range(1.0, 2.0);
+
+  arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
+
+  // This will be the Euclidean squared distance.
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 95.0, 1e-5);
+
+  point = "2.0 5.0 2.0 -5.0 1.0";
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  point = "1.0 2.0 0.0 -2.0 1.5";
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+}
+
 BOOST_AUTO_TEST_CASE(TestHRectBound) {
   HRectBound<> r1(2);
   HRectBound<> r2(2);
