@@ -406,6 +406,7 @@ class DistributedDualtreeTaskQueue {
         &(const_cast <
           DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
 
+      int total_num_tasks = 0;
       printf("Distributed queue status on %d: %d imported, %d exported\n",
              world.rank(),
              num_imported_query_subtables_, num_exported_query_subtables_);
@@ -421,6 +422,7 @@ class DistributedDualtreeTaskQueue {
                query_subtables_[i]->query_result());
         TaskType *it = const_cast<TaskType *>(&(tasks_[i]->top()));
         printf("      Reference set: ");
+        total_num_tasks += tasks_[i]->size();
         for(int j = 0; j < tasks_[i]->size(); j++, it++) {
           printf(" %d %d %d at %d %p, ",
                  it->reference_subtable().subtable_id().get<0>(),
@@ -445,6 +447,7 @@ class DistributedDualtreeTaskQueue {
         TaskType *priority_queue_it =
           const_cast<TaskType *>(&((*it)->task_->top()));
         printf("      Reference set: ");
+        total_num_tasks += (*it)->task_->size();
         for(int j = 0; j < (*it)->task_->size(); j++, priority_queue_it++) {
           printf(
             "  %d %d %d at %d %p, ",
@@ -694,7 +697,8 @@ class DistributedDualtreeTaskQueue {
         for(typename QuerySubTableLockListType::iterator it =
               checked_out_query_subtables_.begin();
             it != checked_out_query_subtables_.end(); it++) {
-          if((*it)->Insert_(world, reference_grid)) {
+          if((*it)->query_subtable_->table()->rank() == world.rank() &&
+              (*it)->Insert_(world, reference_grid)) {
             (*it)->PushTask_(
               this, world, metric_in, * frontier_reference_subtable);
             table_exchange_.LockCache(cache_id, 1);
@@ -860,7 +864,7 @@ class DistributedDualtreeTaskQueue {
       // For each process, break up the local query tree into a list of
       // subtree query lists.
       query_table_in->local_table()->get_frontier_nodes_bounded_by_number(
-        10 * num_threads_in, &query_subtables_);
+        4 * num_threads_in, &query_subtables_);
 
       // Initialize the other member variables.
       tasks_.resize(query_subtables_.size());
