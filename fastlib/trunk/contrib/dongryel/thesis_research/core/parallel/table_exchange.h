@@ -146,6 +146,8 @@ class TableExchange {
 
     std::vector< std::pair<int, int> > post_free_cache_list_;
 
+    std::vector< int > post_free_flush_list_;
+
     /** @brief The task queue associated with the current MPI process.
      */
     TaskQueueType *task_queue_;
@@ -172,6 +174,10 @@ class TableExchange {
             world.rank()].flush_route().object().originating_rank());
       message_cache_[
         world.rank()].flush_route().set_stage(dequeue_stage);
+
+      // Add to the list of flush tables to be freed.
+      post_free_flush_list_.push_back(
+        queued_up_query_subtables_.back()->cache_block_id());
 
       // Pop from the list and decrement the number of queued up
       // query subtables.
@@ -221,10 +227,21 @@ class TableExchange {
 
       // Free the list of reference subtables exported to other processes.
       for(unsigned int i = 0; i < post_free_cache_list_.size(); i++) {
-        this->ReleaseCache(world, post_free_cache_list_[i].first,
-                           post_free_cache_list_[i].second);
+        this->ReleaseCache(
+          world, post_free_cache_list_[i].first,
+          post_free_cache_list_[i].second);
       }
       post_free_cache_list_.resize(0);
+
+      // Free the list of flush subtables.
+      for(unsigned int i = 0; i < post_free_flush_list_.size(); i++) {
+        message_cache_[
+          post_free_flush_list_[i] ].flush_route().object().Destruct();
+        message_cache_[
+          post_free_flush_list_[i] ].flush_route().set_object_is_valid_flag(false);
+        extra_receive_slots_.push_back(post_free_flush_list_[i]);
+      }
+      post_free_flush_list_.resize(0);
 
       if(message_cache_[
             world.rank()].extra_task_route().object_is_valid() &&
