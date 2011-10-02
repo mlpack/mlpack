@@ -236,9 +236,9 @@ class TableExchange {
       // Free the list of flush subtables.
       for(unsigned int i = 0; i < post_free_flush_list_.size(); i++) {
         message_cache_[
-          post_free_flush_list_[i] ].flush_route().object().Destruct();
+          post_free_flush_list_[i] ].subtable_route().object().Destruct();
         message_cache_[
-          post_free_flush_list_[i] ].flush_route().set_object_is_valid_flag(false);
+          post_free_flush_list_[i] ].subtable_route().set_object_is_valid_flag(false);
         extra_receive_slots_.push_back(post_free_flush_list_[i]);
       }
       post_free_flush_list_.resize(0);
