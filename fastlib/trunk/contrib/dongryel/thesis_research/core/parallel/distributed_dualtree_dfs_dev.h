@@ -143,6 +143,12 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
           (*squared_distance_ranges)[query_process_id].push_back(
             squared_distance_range);
         }
+
+        // Otherwise, consider it as pruned.
+        else {
+          (*extrinsic_prunes)[
+            query_process_id] += local_reference_node->count();
+        }
       }
     }
     else {
