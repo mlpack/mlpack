@@ -50,6 +50,10 @@ class DistributedKdeArguments {
      */
     double absolute_error_;
 
+    /** @brief Whether to measure weak-scalabilty or not.
+     */
+    bool measure_weak_scaling_;
+
     /** @brief The relative error.
      */
     double relative_error_;
@@ -100,6 +104,7 @@ class DistributedKdeArguments {
       absolute_error_ = 0.0;
       relative_error_ = 0.0;
       top_tree_sample_probability_ = 0.0;
+      measure_weak_scaling_ = false;
       probability_ = 0.0;
       kernel_ = "";
       metric_ = NULL;

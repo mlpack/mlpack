@@ -68,6 +68,11 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
     arguments_in.do_load_balancing_,
     arguments_in.max_num_work_to_dequeue_per_stage_);
 
+  // If weak-scaling measuring is requested, then turn it on.
+  if(arguments_in.measure_weak_scaling_) {
+    distributed_dualtree_dfs.enable_weak_scaling_measuring_mode();
+  }
+
   // Compute the result and do post-normalize.
   distributed_dualtree_dfs.Compute(* arguments_in.metric_, result_out);
   result_out->Normalize(global_);
@@ -149,6 +154,10 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "max_subtree_size_in",
     boost::program_options::value<int>()->default_value(20000),
     "The maximum size of the subtree to serialize at a given moment."
+  )(
+    "measure_weak_scaling",
+    "If present, approximation tolerance is ignored and will enable the "
+    "weak-scaling measurement mode."
   )(
     "memory_mapped_file_size",
     boost::program_options::value<unsigned int>(),
@@ -375,6 +384,10 @@ bool DistributedKdeArgumentParser::ParseArguments(
 
   // Parse the load balancing option.
   arguments_out->do_load_balancing_ = (vm.count("do_load_balancing") > 0);
+
+  // Parse the weak scaling measuring option.
+  arguments_out->measure_weak_scaling_ =
+    (vm.count("measure_weak_scaling") > 0);
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =

@@ -173,22 +173,6 @@ class DistributedDualtreeDfs {
      */
     bool do_load_balancing_;
 
-    /** @brief The pointer to the boost communicator.
-     */
-    boost::mpi::communicator *world_;
-
-    /** @brief The problem definition for the distributed computation.
-     */
-    DistributedProblemType *problem_;
-
-    /** @brief The distributed query table.
-     */
-    DistributedTableType *query_table_;
-
-    /** @brief The distributed reference table.
-     */
-    DistributedTableType *reference_table_;
-
     /** @brief The maximum number of points a leaf node of a local
      *         tree contains.
      */
@@ -210,6 +194,27 @@ class DistributedDualtreeDfs {
     /** @brief The number of probabilistic prunes.
      */
     int num_probabilistic_prunes_;
+
+    /** @brief The problem definition for the distributed computation.
+     */
+    DistributedProblemType *problem_;
+
+    /** @brief The distributed query table.
+     */
+    DistributedTableType *query_table_;
+
+    /** @brief The distributed reference table.
+     */
+    DistributedTableType *reference_table_;
+
+    /** @brief Whether the distributed computation is for measuring
+     *         weak-scalability.
+     */
+    bool weak_scaling_measuring_mode_;
+
+    /** @brief The pointer to the boost communicator.
+     */
+    boost::mpi::communicator *world_;
 
   private:
 
@@ -297,6 +302,8 @@ class DistributedDualtreeDfs {
       int max_subtree_size_in,
       bool do_load_balancing_in,
       int max_num_work_to_dequeue_per_stage_in);
+
+    void enable_weak_scaling_measuring_mode();
 
     /** @brief The default constructor.
      */

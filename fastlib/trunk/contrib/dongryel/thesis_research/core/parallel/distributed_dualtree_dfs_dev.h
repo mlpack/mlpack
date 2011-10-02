@@ -455,6 +455,14 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   max_num_work_to_dequeue_per_stage_ = 5;
   num_deterministic_prunes_ = 0;
   num_probabilistic_prunes_ = 0;
+  weak_scaling_measuring_mode_ = false;
+  world_ = NULL;
+}
+
+template<typename DistributedProblemType>
+void DistributedDualtreeDfs <
+DistributedProblemType >::enable_weak_scaling_measuring_mode() {
+  weak_scaling_measuring_mode_ = true;
 }
 
 template<typename DistributedProblemType>
