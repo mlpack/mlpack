@@ -55,14 +55,8 @@ namespace mlpack {
       
       printf("process: %d, Number of tuples: %d\n", world_->rank(),
              result_out->num_tuples_);
-
-      int total_num_tuples;
-      boost::mpi::all_reduce(*world_, result_out->num_tuples_, total_num_tuples, 
-                             std::plus<int>());
       
-      printf("total_num_tuples: %d\n", total_num_tuples);
-      
-      result_out->num_tuples_ = total_num_tuples;
+      printf("total_num_tuples: %d\n", result_out->num_tuples_);
       
     } // Compute()
     

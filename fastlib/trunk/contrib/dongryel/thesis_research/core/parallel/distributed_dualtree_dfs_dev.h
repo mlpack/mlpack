@@ -82,6 +82,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
   std::vector< std::pair<int, int> > > *essential_reference_subtrees,
   std::vector <
   core::parallel::RouteRequest<SubTableType> > *hashed_essential_reference_subtrees,
+  std::vector< unsigned long int > *num_reference_points_assigned_per_process,
   std::vector <
   std::vector< core::math::Range > > *squared_distance_ranges,
   std::vector< unsigned long int > *extrinsic_prunes) {
@@ -118,20 +119,28 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       while(qnode_it.HasNext()) {
         int query_process_id;
         qnode_it.Next(&query_process_id);
-        (*essential_reference_subtrees)[
-          query_process_id].push_back(local_rnode_id);
 
-        // Add the query process ID to the list of query processes
-        // that this reference subtree needs to be sent to.
-        if(query_process_id != world_->rank()) {
-          HashSendList_(
-            local_rnode_id, query_process_id,
-            hashed_essential_reference_subtrees);
+        // Only add if, weak scaling measuring is disabled or the
+        // number of points assigned per each query process does not
+        // exceed the limit.
+        if((! weak_scaling_measuring_mode_)  ||
+            (* num_reference_points_assigned_per_process)[query_process_id] <
+            max_num_reference_points_to_pack_per_process_) {
+          (*essential_reference_subtrees)[
+            query_process_id].push_back(local_rnode_id);
+
+          // Add the query process ID to the list of query processes
+          // that this reference subtree needs to be sent to.
+          if(query_process_id != world_->rank()) {
+            HashSendList_(
+              local_rnode_id, query_process_id,
+              hashed_essential_reference_subtrees);
+          }
+
+          // Push in the squared distance range.
+          (*squared_distance_ranges)[query_process_id].push_back(
+            squared_distance_range);
         }
-
-        // Push in the squared distance range.
-        (*squared_distance_ranges)[query_process_id].push_back(
-          squared_distance_range);
       }
     }
     else {
@@ -140,11 +149,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->left(),
         essential_reference_subtrees, hashed_essential_reference_subtrees,
+        num_reference_points_assigned_per_process,
         squared_distance_ranges, extrinsic_prunes);
       ComputeEssentialReferenceSubtrees_(
         metric_in, max_reference_subtree_size,
         global_query_node, local_reference_node->right(),
         essential_reference_subtrees, hashed_essential_reference_subtrees,
+        num_reference_points_assigned_per_process,
         squared_distance_ranges, extrinsic_prunes);
     }
     return;
@@ -158,11 +169,13 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node,
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node,
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
   }
   else {
@@ -170,21 +183,25 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->left(),
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->left(), local_reference_node->right(),
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->left(),
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
     ComputeEssentialReferenceSubtrees_(
       metric_in, max_reference_subtree_size,
       global_query_node->right(), local_reference_node->right(),
       essential_reference_subtrees, hashed_essential_reference_subtrees,
+      num_reference_points_assigned_per_process,
       squared_distance_ranges, extrinsic_prunes);
   }
 }
@@ -217,11 +234,14 @@ DistributedProblemType >::InitialSetup_(
   // Each process needs to customize its reference set for each
   // participating query process.
   std::vector<unsigned long int> extrinsic_prunes_broadcast(world_->size(), 0);
+  std::vector< unsigned long int> num_reference_points_assigned_per_process(
+    world_->size(), 0);
   ComputeEssentialReferenceSubtrees_(
     metric, max_reference_subtree_size, query_table_->get_tree(),
     reference_table_->local_table()->get_tree(),
     essential_reference_subtrees_to_send,
     hashed_essential_reference_subtress_to_send,
+    & num_reference_points_assigned_per_process,
     send_priorities, &extrinsic_prunes_broadcast);
 
   // Fill out the prioritized send list.
@@ -451,17 +471,21 @@ template<typename DistributedProblemType>
 DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   do_load_balancing_ = false;
   leaf_size_ = 0;
-  max_subtree_size_ = 20000;
   max_num_work_to_dequeue_per_stage_ = 5;
+  max_num_reference_points_to_pack_per_process_ =
+    std::numeric_limits<double>::max();
+  max_subtree_size_ = 20000;
   num_deterministic_prunes_ = 0;
   num_probabilistic_prunes_ = 0;
+  weak_scaling_factor_ = 0.0;
   weak_scaling_measuring_mode_ = false;
   world_ = NULL;
 }
 
 template<typename DistributedProblemType>
 void DistributedDualtreeDfs <
-DistributedProblemType >::enable_weak_scaling_measuring_mode() {
+DistributedProblemType >::enable_weak_scaling_measuring_mode(double factor_in) {
+  weak_scaling_factor_ = factor_in;
   weak_scaling_measuring_mode_ = true;
 }
 
@@ -498,6 +522,39 @@ template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   const MetricType &metric,
   typename DistributedProblemType::ResultType *query_results) {
+
+  // If weak-scaling measure mode is enabled, re-adjust the max_subtree_size_in.
+  if(weak_scaling_measuring_mode_) {
+
+    // Compute the average number of query points across all MPI processes.
+    unsigned long int avg_num_query_points_per_process = 0;
+    for(int i = 0; i < world_->size(); i++) {
+      avg_num_query_points_per_process +=
+        problem_->query_table()->local_n_entries(i) ;
+    }
+    avg_num_query_points_per_process /= (world_->size());
+
+    // Given the factor, compute the maximum number of reference
+    // points to pack per each reference MPI process.
+    max_num_reference_points_to_pack_per_process_ =
+      weak_scaling_factor_ *
+      (avg_num_query_points_per_process / world_->size());
+
+    // Re-adjust so that the subtree is transferred in around 10 rounds.
+    max_subtree_size_ =
+      std::max(
+        static_cast<int>(max_num_reference_points_to_pack_per_process_ / 10),
+        2000);
+
+    if(world_->rank() == 0) {
+      std::cerr << "Measuring weak-scalability...\n";
+      std::cerr << "Each query MPI process will need to consider " <<
+                weak_scaling_factor_ * 100 << " \% of the average query points " <<
+                "as the number of reference points per each query point...\n";
+      std::cerr << "Readjusting the --max_subtree_size_in to " <<
+                max_subtree_size_ << "...\n";
+    }
+  }
 
   if(world_->rank() == 0) {
     if(do_load_balancing_) {
