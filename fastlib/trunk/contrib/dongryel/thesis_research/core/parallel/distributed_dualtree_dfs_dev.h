@@ -128,6 +128,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
             max_num_reference_points_to_pack_per_process_) {
           (*essential_reference_subtrees)[
             query_process_id].push_back(local_rnode_id);
+          (* num_reference_points_assigned_per_process)[query_process_id ] +=
+            local_rnode_id.second;
 
           // Add the query process ID to the list of query processes
           // that this reference subtree needs to be sent to.
@@ -543,7 +545,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
 
     // Re-adjust so that the subtree is transferred in around 10 rounds.
     max_subtree_size_ =
-      std::max(
+      std::min(
         static_cast<int>(max_num_reference_points_to_pack_per_process_ / 10),
         2000);
 
@@ -552,6 +554,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
       std::cerr << "Each query MPI process will need to consider " <<
                 weak_scaling_factor_ * 100 << " \% of the average query points " <<
                 "as the number of reference points per each query point...\n";
+      std::cerr << "Each query MPI process will encounter " <<
+                max_num_reference_point_to_pack_per_process_ <<
+                " reference points per reference process.\n";
       std::cerr << "Readjusting the --max_subtree_size_in to " <<
                 max_subtree_size_ << "...\n";
     }
