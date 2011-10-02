@@ -203,11 +203,6 @@ class DistributedDualtreeDfs {
      */
     int max_num_work_to_dequeue_per_stage_;
 
-    /** @brief Some statistics about the priority queue size during
-     *         the computation.
-     */
-    int max_computation_frontier_size_;
-
     /** @brief The number of deterministic prunes.
      */
     int num_deterministic_prunes_;

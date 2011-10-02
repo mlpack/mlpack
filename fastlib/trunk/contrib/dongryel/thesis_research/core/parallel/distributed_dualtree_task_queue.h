@@ -275,14 +275,12 @@ class DistributedDualtreeTaskQueue {
       query_subtables_.back()->set_start_node(right);
 
       // Adjust the list of tasks.
-      std::vector<TaskType> prev_tasks;
-      while(tasks_[subtree_index]->size() > 0) {
-        std::pair<TaskType, int> task_pair;
-        this->DequeueTask(
-          world, subtree_index, &task_pair,
-          (typename QuerySubTableLockListType::iterator *) NULL);
-        prev_tasks.push_back(task_pair.first);
-      }
+      std::pair< std::vector<TaskType>, int> prev_tasks;
+      this->DequeueTask(
+        world, subtree_index,
+        static_cast<int>(tasks_[subtree_index]->size()), &prev_tasks,
+        (typename QuerySubTableLockListType::iterator *) NULL);
+
       tasks_.push_back(
         boost::intrusive_ptr <
         TaskPriorityQueueType > (new TaskPriorityQueueType()));
@@ -292,17 +290,17 @@ class DistributedDualtreeTaskQueue {
             world, *(assigned_work_[subtree_index]))));
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
-      for(unsigned int i = 0; i < prev_tasks.size(); i++) {
+      for(unsigned int i = 0; i < prev_tasks.first.size(); i++) {
         this->PushTask(
           world, metric_in, subtree_index,
-          prev_tasks[i].reference_subtable());
+          prev_tasks.first[i].reference_subtable());
         this->PushTask(
           world, metric_in, query_subtables_.size() - 1,
-          prev_tasks[i].reference_subtable());
+          prev_tasks.first[i].reference_subtable());
 
         // Lock only one time since only the query side is split.
         table_exchange_.LockCache(
-          prev_tasks[i].reference_subtable_cache_block_id(), 1);
+          prev_tasks.first[i].reference_subtable_cache_block_id(), 1);
       }
     }
 
@@ -922,7 +920,8 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       int thread_id,
       const MetricType &metric_in,
-      std::pair<TaskType, int> *task_out,
+      int max_num_tasks_to_check_out,
+      std::pair< std::vector<TaskType> , int> *task_out,
       typename QuerySubTableLockListType::iterator
       *checked_out_query_subtable) {
 
@@ -941,7 +940,8 @@ class DistributedDualtreeTaskQueue {
           probe_index < static_cast<int>(tasks_.size()); probe_index++) {
 
         if(this->DequeueTask(
-              world, probe_index, task_out, checked_out_query_subtable)) {
+              world, probe_index, max_num_tasks_to_check_out,
+              task_out, checked_out_query_subtable)) {
           probe_index--;
         }
       }
@@ -984,7 +984,8 @@ class DistributedDualtreeTaskQueue {
     bool DequeueTask(
       boost::mpi::communicator &world,
       int probe_index,
-      std::pair<TaskType, int> *task_out,
+      int max_num_tasks_to_check_out,
+      std::pair< std::vector<TaskType>, int> *task_out,
       typename QuerySubTableLockListType::iterator
       *checked_out_query_subtable) {
 
@@ -993,19 +994,29 @@ class DistributedDualtreeTaskQueue {
 
       if(tasks_[probe_index]->size() > 0) {
 
-        // Copy the task and the query subtree number.
-        task_out->first = tasks_[ probe_index ]->top();
+        // The number of tasks to actually dequeue.
+        int num_actual_dequeue =
+          std::min(
+            tasks_[probe_index]->size(), max_num_tasks_to_check_out);
+
+        // Set the probing index.
         task_out->second = probe_index;
 
-        // Pop the task from the priority queue after copying and
-        // put a lock on the query subtree.
-        tasks_[ probe_index ]->pop();
+        for(int i = 0; i < num_actual_dequeue; i++) {
 
-        // Decrement the number of tasks.
-        num_remaining_tasks_--;
+          // Copy the task and the query subtree number.
+          task_out->first.push_back(tasks_[ probe_index ]->top());
 
-        // Decrement the remaining local computation.
-        remaining_local_computation_ -= task_out->first.work();
+          // Pop the task from the priority queue after copying and
+          // put a lock on the query subtree.
+          tasks_[ probe_index ]->pop();
+
+          // Decrement the number of tasks.
+          num_remaining_tasks_--;
+
+          // Decrement the remaining local computation.
+          remaining_local_computation_ -= task_out->first.back().work();
+        }
 
         // Check out the query subtable completely if requested.
         if(checked_out_query_subtable != NULL) {
