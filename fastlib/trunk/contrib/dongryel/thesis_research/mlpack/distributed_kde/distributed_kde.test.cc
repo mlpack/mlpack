@@ -211,6 +211,16 @@ class TestDistributed_Kde {
       int num_points = core::math::RandInt(300, 500);
       std::vector< std::string > args;
 
+      // Only the master decides whether to load balance or not.
+      bool do_load_balancing;
+      if(world.rank() == 0) {
+        do_load_balancing = (core::math::RandInt(0, 2) % 2 == 0);
+      }
+      boost::mpi::broadcast(world, do_load_balancing, 0);
+      if(do_load_balancing) {
+        args.push_back(std::string("--do_load_balancing"));
+      }
+
       // Push in the random generate command.
       std::stringstream random_generate_n_attributes_sstr;
       random_generate_n_attributes_sstr << "--random_generate_n_attributes=" <<
