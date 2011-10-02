@@ -38,6 +38,8 @@ class FinePriorityQueue {
     typedef core::parallel::DistributedDualtreeTask <
     TableType > FineFrontierObjectType;
 
+    /** @brief The reference count used for the intrusive pointer.
+     */
     long reference_count_;
 
   private:
@@ -187,6 +189,11 @@ class DistributedDualtreeDfs {
      */
     int max_num_work_to_dequeue_per_stage_;
 
+    /** @brief This is used for weak-scaling, limiting the number of
+     *         reference points considered for each query point.
+     */
+    unsigned long int max_num_reference_points_to_pack_per_process_;
+
     /** @brief The number of deterministic prunes.
      */
     int num_deterministic_prunes_;
@@ -206,6 +213,12 @@ class DistributedDualtreeDfs {
     /** @brief The distributed reference table.
      */
     DistributedTableType *reference_table_;
+
+    /** @brief Used for determining the maximum number of reference
+     *         points to pack per process, if weak-scaling measuring
+     *         mode is enabled.
+     */
+    double weak_scaling_factor_;
 
     /** @brief Whether the distributed computation is for measuring
      *         weak-scalability.
@@ -240,6 +253,8 @@ class DistributedDualtreeDfs {
       std::vector <
       core::parallel::RouteRequest<SubTableType> > *
       hashed_essential_reference_subtrees,
+      std::vector< unsigned long int > *
+      num_reference_points_assigned_per_process,
       std::vector< std::vector< core::math::Range> > *
       remote_priorities,
       std::vector<unsigned long int> *extrinsic_prunes);
@@ -303,7 +318,9 @@ class DistributedDualtreeDfs {
       bool do_load_balancing_in,
       int max_num_work_to_dequeue_per_stage_in);
 
-    void enable_weak_scaling_measuring_mode();
+    /** @brief Enables weak scaling measuring mode.
+     */
+    void enable_weak_scaling_measuring_mode(double factor);
 
     /** @brief The default constructor.
      */

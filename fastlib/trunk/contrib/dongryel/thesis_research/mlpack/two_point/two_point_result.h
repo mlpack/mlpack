@@ -96,8 +96,10 @@ namespace mlpack {
       void PostProcess(boost::mpi::communicator &world,
                        DistributedTableType *distributed_table_in) {
 
-        //boost::mpi::reduce();
-        
+	int total_num_tuples;
+	boost::mpi::all_reduce( 
+          world, num_tuples_, total_num_tuples, std::plus<int>() );
+	num_tuples_ = total_num_tuples;
       }
       
       

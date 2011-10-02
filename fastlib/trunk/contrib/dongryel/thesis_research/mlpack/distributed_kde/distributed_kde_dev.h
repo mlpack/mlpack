@@ -70,7 +70,7 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
 
   // If weak-scaling measuring is requested, then turn it on.
   if(arguments_in.measure_weak_scaling_) {
-    distributed_dualtree_dfs.enable_weak_scaling_measuring_mode();
+    distributed_dualtree_dfs.enable_weak_scaling_measuring_mode(0.5);
   }
 
   // Compute the result and do post-normalize.
