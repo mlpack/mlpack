@@ -206,6 +206,11 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "The portion of points sampled on each MPI process for building the "
     "top tree."
   )(
+    "tree",
+    boost::program_options::value<std::string>()->default_value("kdtree"),
+    "The tree type used in the computation. One of:\n"
+    "  kdtree, metrictree"
+  )(
     "use_memory_mapped_file",
     "Use memory mapped file for out-of-core computations."
   );
@@ -315,6 +320,12 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
       (*vm)["series_expansion_type"].as<std::string>() != "multivariate") {
     std::cerr << "We support only hypercube or multivariate for the "
               "series expansion type.\n";
+    exit(0);
+  }
+  if((*vm)["tree"].as<std::string>() != "kdtree" &&
+      (*vm)["tree"].as<std::string>() != "metrictree") {
+    std::cerr <<
+              "We support only the kdtree or metrictree for the tree type.\n";
     exit(0);
   }
 
