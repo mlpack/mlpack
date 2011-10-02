@@ -555,7 +555,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
                 weak_scaling_factor_ * 100 << " \% of the average query points " <<
                 "as the number of reference points per each query point...\n";
       std::cerr << "Each query MPI process will encounter " <<
-                max_num_reference_point_to_pack_per_process_ <<
+                max_num_reference_points_to_pack_per_process_ <<
                 " reference points per reference process.\n";
       std::cerr << "Readjusting the --max_subtree_size_in to " <<
                 max_subtree_size_ << "...\n";
