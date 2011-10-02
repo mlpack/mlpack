@@ -537,8 +537,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     // Given the factor, compute the maximum number of reference
     // points to pack per each reference MPI process.
     max_num_reference_points_to_pack_per_process_ =
-      weak_scaling_factor_ *
-      (avg_num_query_points_per_process / world_->size());
+      static_cast<unsigned long int>(
+        weak_scaling_factor_ *
+        (avg_num_query_points_per_process / world_->size()));
 
     // Re-adjust so that the subtree is transferred in around 10 rounds.
     max_subtree_size_ =
