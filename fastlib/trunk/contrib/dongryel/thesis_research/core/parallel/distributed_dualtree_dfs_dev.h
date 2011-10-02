@@ -315,13 +315,21 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     // The thread ID.
     int thread_id = omp_get_thread_num();
 
+    // The number of tasks to dequeue for this thread. The policy is
+    // that the master thread dequeues somewhat a smaller number of
+    // tasks, while the slaves do a deeper lock, since the master
+    // thread makes all MPI calls.
+    int num_tasks_to_dequeue = (omp_get_num_threads() > 1 && thread_id == 0) ?
+                               1 : max_num_work_to_dequeue_per_stage_;
+
     // Used for determining the termination condition.
     bool work_left_to_do = true;
 
     do {
 
       // The task found in the current iteration.
-      std::pair<FineFrontierObjectType, int> found_task;
+      std::pair< std::vector<FineFrontierObjectType> , int> found_task;
+      found_task.first.resize(0);
       found_task.second = -1;
 
       // Only the master thread makes MPI calls.
@@ -334,64 +342,68 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       typename DistributedDualtreeTaskQueueType::
       QuerySubTableLockListType::iterator checked_out_query_subtable;
       distributed_tasks.DequeueTask(
-        *world_, thread_id, metric, &found_task, &checked_out_query_subtable);
+        *world_, thread_id, metric, num_tasks_to_dequeue,
+        &found_task, &checked_out_query_subtable);
 
       // If found something to run on, then call the serial dual-tree
       // method.
       if(found_task.second >= 0) {
 
-        // Run a sub-dualtree algorithm on the computation object.
-        core::gnp::DualtreeDfs<ProblemType> sub_engine;
-        ProblemType sub_problem;
-        ArgumentType sub_argument;
-        TableType *task_query_table =
-          found_task.first.query_subtable().table();
-        TableType *task_reference_table =
-          found_task.first.reference_subtable().table();
-        TreeType *task_starting_rnode =
-          found_task.first.reference_start_node();
-        int task_reference_cache_id =
-          found_task.first.reference_subtable_cache_block_id();
+        for(unsigned int i = 0; i < found_task.first.size(); i++) {
 
-        // Initialize the argument, the problem, and the engine.
-        sub_argument.Init(
-          task_reference_table, task_query_table, problem_->global());
-        sub_problem.Init(sub_argument, &(problem_->global()));
-        sub_engine.Init(sub_problem);
+          // Run a sub-dualtree algorithm on the computation object.
+          core::gnp::DualtreeDfs<ProblemType> sub_engine;
+          ProblemType sub_problem;
+          ArgumentType sub_argument;
+          TableType *task_query_table =
+            found_task.first[i].query_subtable().table();
+          TableType *task_reference_table =
+            found_task.first[i].reference_subtable().table();
+          TreeType *task_starting_rnode =
+            found_task.first[i].reference_start_node();
+          int task_reference_cache_id =
+            found_task.first[i].reference_subtable_cache_block_id();
 
-        // Set the starting query node.
-        sub_engine.set_query_start_node(
-          found_task.first.query_start_node());
+          // Initialize the argument, the problem, and the engine.
+          sub_argument.Init(
+            task_reference_table, task_query_table, problem_->global());
+          sub_problem.Init(sub_argument, &(problem_->global()));
+          sub_engine.Init(sub_problem);
 
-        // Set the starting reference node.
-        sub_engine.set_reference_start_node(task_starting_rnode);
+          // Set the starting query node.
+          sub_engine.set_query_start_node(
+            found_task.first[i].query_start_node());
 
-        // Fire away the computation.
-        sub_engine.Compute(
-          metric, found_task.first.query_result(), false);
+          // Set the starting reference node.
+          sub_engine.set_reference_start_node(task_starting_rnode);
 
-        // Synchronize the sub-result with the MPI result owned by the
-        // current process.
-        distributed_tasks.PostComputeSynchronize(
-          sub_engine.num_deterministic_prunes(),
-          sub_engine.num_probabilistic_prunes(),
-          *(found_task.first.query_result()), query_results);
+          // Fire away the computation.
+          sub_engine.Compute(
+            metric, found_task.first[i].query_result(), false);
 
-        // Push in the completed amount of work.
-        unsigned long int completed_work =
-          static_cast<unsigned long int>(
-            found_task.first.query_start_node()->count()) *
-          static_cast<unsigned long int>(task_starting_rnode->count());
-        distributed_tasks.push_completed_computation(
-          * world_, task_starting_rnode->count(), completed_work,
-          checked_out_query_subtable);
+          // Synchronize the sub-result with the MPI result owned by the
+          // current process.
+          distributed_tasks.PostComputeSynchronize(
+            sub_engine.num_deterministic_prunes(),
+            sub_engine.num_probabilistic_prunes(),
+            *(found_task.first[i].query_result()), query_results);
+
+          // Push in the completed amount of work.
+          unsigned long int completed_work =
+            static_cast<unsigned long int>(
+              found_task.first[i].query_start_node()->count()) *
+            static_cast<unsigned long int>(task_starting_rnode->count());
+          distributed_tasks.push_completed_computation(
+            * world_, task_starting_rnode->count(), completed_work,
+            checked_out_query_subtable);
+
+          // Release the reference subtable.
+          distributed_tasks.ReleaseCache(* world_, task_reference_cache_id, 1);
+        } // end of taking care of each task.
 
         // After finishing, the lock on the query subtree is released.
         distributed_tasks.ReturnQuerySubTable(
           * world_, checked_out_query_subtable);
-
-        // Release the reference subtable.
-        distributed_tasks.ReleaseCache(* world_, task_reference_cache_id, 1);
 
       } // end of finding a task.
 
@@ -441,7 +453,6 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   leaf_size_ = 0;
   max_subtree_size_ = 20000;
   max_num_work_to_dequeue_per_stage_ = 5;
-  max_computation_frontier_size_ = 0;
   num_deterministic_prunes_ = 0;
   num_probabilistic_prunes_ = 0;
 }
