@@ -553,7 +553,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     max_subtree_size_ =
       std::min(
         static_cast<int>(max_num_reference_points_to_pack_per_process_),
-        20000);
+        leaf_size_ * 2);
 
     if(world_->rank() == 0) {
       std::cerr << "Measuring weak-scalability...\n";
