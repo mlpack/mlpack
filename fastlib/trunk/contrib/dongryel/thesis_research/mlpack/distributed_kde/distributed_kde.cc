@@ -15,17 +15,10 @@
 #include "mlpack/distributed_kde/distributed_kde_dev.h"
 #include "mlpack/series_expansion/kernel_aux.h"
 
-template<typename KernelAuxType>
+template<typename DistributedTableType, typename KernelAuxType>
 void StartComputation(
   boost::mpi::communicator &world,
   boost::program_options::variables_map &vm) {
-
-  // Tree type: hard-coded for a metric tree.
-  typedef core::table::DistributedTable <
-  core::tree::GenKdTree <
-  mlpack::kde::KdeStatistic <
-  KernelAuxType::ExpansionType > > ,
-                mlpack::kde::KdeResult > DistributedTableType;
 
   // Parse arguments for Kde.
   mlpack::distributed_kde::DistributedKdeArguments <
@@ -52,6 +45,32 @@ void StartComputation(
   kde_result.Print(distributed_kde_arguments.densities_out_);
 }
 
+template<typename KernelAuxType>
+void BranchOnKernel(
+  boost::mpi::communicator &world,
+  boost::program_options::variables_map &vm) {
+
+  // kd-tree case.
+  if(vm["tree"].as<std::string>() == "kdtree") {
+    typedef core::tree::GenKdTree <
+    mlpack::kde::KdeStatistic <
+    KernelAuxType::ExpansionType > > TreeSpecType;
+    typedef core::table::DistributedTable <
+    TreeSpecType, mlpack::kde::KdeResult > DistributedTableType;
+    StartComputation< DistributedTableType, KernelAuxType > (world, vm);
+  }
+
+  // metric tree case.
+  else {
+    typedef core::tree::GenMetricTree <
+    mlpack::kde::KdeStatistic <
+    KernelAuxType::ExpansionType > > TreeSpecType;
+    typedef core::table::DistributedTable <
+    TreeSpecType, mlpack::kde::KdeResult > DistributedTableType;
+    StartComputation< DistributedTableType, KernelAuxType > (world, vm);
+  }
+}
+
 int main(int argc, char *argv[]) {
 
   // Initialize boost MPI.
@@ -72,18 +91,18 @@ int main(int argc, char *argv[]) {
     return 0;
   }
 
-  // Do a quick peek at the kernel and expansion type.
+  // Do a quick peek at the kernel, expansion type, and the tree type.
   std::string kernel_type = vm["kernel"].as<std::string>();
   std::string series_expansion_type =
     vm["series_expansion_type"].as<std::string>();
 
   if(kernel_type == "gaussian") {
     if(series_expansion_type == "hypercube") {
-      StartComputation <
+      BranchOnKernel <
       mlpack::series_expansion::GaussianKernelHypercubeAux > (world, vm);
     }
     else {
-      StartComputation <
+      BranchOnKernel <
       mlpack::series_expansion::GaussianKernelMultivariateAux > (world, vm);
     }
   }
@@ -91,7 +110,7 @@ int main(int argc, char *argv[]) {
 
     // Only the multivariate expansion is available for the
     // Epanechnikov.
-    StartComputation <
+    BranchOnKernel <
     mlpack::series_expansion::EpanKernelMultivariateAux > (world, vm);
   }
   return 0;
