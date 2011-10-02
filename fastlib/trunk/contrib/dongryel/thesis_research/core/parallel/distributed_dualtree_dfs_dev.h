@@ -473,7 +473,7 @@ DistributedDualtreeDfs<DistributedProblemType>::DistributedDualtreeDfs() {
   leaf_size_ = 0;
   max_num_work_to_dequeue_per_stage_ = 5;
   max_num_reference_points_to_pack_per_process_ =
-    std::numeric_limits<double>::max();
+    std::numeric_limits<unsigned long int>::max();
   max_subtree_size_ = 20000;
   num_deterministic_prunes_ = 0;
   num_probabilistic_prunes_ = 0;
