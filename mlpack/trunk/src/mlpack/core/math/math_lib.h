@@ -18,10 +18,6 @@
  * you can think of.  Currently, this is very sparse.
  */
 namespace math {
-
-  /** The ratio of the circumference of a circle to its diameter. */
-  const double PI = 3.141592653589793238462643383279;
-
   /**
    * Forces a number to be non-negative, turning negative numbers into zero.
    *
