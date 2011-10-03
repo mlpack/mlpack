@@ -24,31 +24,46 @@ namespace bound {
  */
 template<int t_pow>
 HRectBound<t_pow>::HRectBound() :
-    bounds_(NULL),
-    dim_(0) { /* nothing to do */ }
+    dim_(0),
+    bounds_(NULL) { /* nothing to do */ }
 
 /**
  * Initializes to specified dimensionality with each dimension the empty
  * set.
  */
 template<int t_pow>
-HRectBound<t_pow>::HRectBound(size_t dimension) {
-  bounds_ = new Range[dimension];
-  dim_ = dimension;
-}
+HRectBound<t_pow>::HRectBound(size_t dimension) :
+    dim_(dimension),
+    bounds_(new Range[dim_]) { /* nothing to do */ }
 
 /***
  * Copy constructor necessary to prevent memory leaks.
  */
 template<int t_pow>
-HRectBound<t_pow>::HRectBound(const HRectBound& other) {
+HRectBound<t_pow>::HRectBound(const HRectBound& other) :
+    dim_(other.dim()),
+    bounds_(new Range[dim_]) {
+  // Copy other bounds over.
+  for (size_t i = 0; i < dim_; i++)
+    bounds_[i] = other[i];
+}
+
+/***
+ * Same as the copy constructor.
+ */
+template<int t_pow>
+HRectBound<t_pow>& HRectBound<t_pow>::operator=(const HRectBound& other) {
   if (bounds_)
     delete[] bounds_;
 
+  // We can't just copy the bounds_ pointer like the default copy constructor
+  // will!
   dim_ = other.dim();
   bounds_ = new Range[dim_];
   for (size_t i = 0; i < dim_; i++)
     bounds_[i] = other[i];
+
+  return *this;
 }
 
 /**
@@ -100,30 +115,6 @@ void HRectBound<t_pow>::Centroid(arma::vec& centroid) const {
   for(size_t i = 0; i < dim_; i++) {
     centroid(i) = bounds_[i].mid();
   }
-}
-
-/**
- * Calculates minimum bound-to-bound squared distance, with
- * an offset between their respective coordinate systems.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MinDistance(const HRectBound& other,
-                                      const arma::vec& offset) const {
-  double sum = 0;
-
-  assert(dim_ == other.dim_);
-  assert(dim_ == offset.n_elem);
-
-  for(size_t d = 0; d < dim_; d++) {
-    double v1 = other.bounds_[d].lo - offset[d] - bounds_[d].hi;
-    double v2 = bounds_[d].lo + offset[d] - other.bounds_[d].lo;
-
-    double v = (v1 + fabs(v1)) + (v2 + fabs(v2));
-
-    sum += pow(v, (double) t_pow);
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
@@ -268,15 +259,20 @@ Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
 
   double v1, v2, v_lo, v_hi;
   for(size_t d = 0; d < dim_; d++) {
-    v1 = bounds_[d].lo - point[d];
-    v2 = point[d] - bounds_[d].hi;
-    // one of v1 or v2 is negative
-    if(v1 >= 0) {
-      v_hi = -v2;
+    v1 = bounds_[d].lo - point[d]; // Negative if point[d] > lo.
+    v2 = point[d] - bounds_[d].hi; // Negative if point[d] < hi.
+    // One of v1 or v2 (or both) is negative.
+    if(v1 >= 0) { // point[d] <= bounds_[d].lo.
+      v_hi = -v2; // v2 will be larger but must be negated.
       v_lo = v1;
-    } else {
-      v_hi = -v1;
-      v_lo = v2;
+    } else { // point[d] is between lo and hi, or greater than hi.
+      if (v2 >= 0) {
+        v_hi = -v1; // v1 will be larger, but must be negated.
+        v_lo = v2;
+      } else {
+        v_hi = -std::min(v1, v2); // Both are negative, but we need the larger.
+        v_lo = 0;
+      }
     }
 
     sum_lo += pow(v_lo, (double) t_pow);
@@ -285,47 +281,6 @@ Range HRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
 
   return Range(pow(sum_lo, 2.0 / (double) t_pow),
                 pow(sum_hi, 2.0 / (double) t_pow));
-}
-
-/**
- * Computes minimax distance, where the other node is trying to avoid me.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MinimaxDistance(const HRectBound& other) const {
-  double sum = 0;
-
-  assert(dim_ == other.dim_);
-
-  for(size_t d = 0; d < dim_; d++) {
-    double v1 = other.bounds_[d].hi - bounds_[d].hi;
-    double v2 = bounds_[d].lo - other.bounds_[d].lo;
-    double v = std::max(v1, v2);
-    v = (v + fabs(v)); /* truncate negatives to zero */
-    sum += pow(v, (double) t_pow); // v is non-negative
-  }
-
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
-}
-
-/**
- * Calculates midpoint-to-midpoint bounding box distance.
- */
-template<int t_pow>
-double HRectBound<t_pow>::MidDistance(const HRectBound& other) const {
-  double sum = 0;
-
-  assert(dim_ == other.dim_);
-
-  for (size_t d = 0; d < dim_; d++) {
-    // take the midpoint of each dimension (left multiplied by two for
-    // calculation speed) and subtract from each other, then raise to t_pow
-    sum += pow(fabs(bounds_[d].hi + bounds_[d].lo - other.bounds_[d].hi -
-          other.bounds_[d].lo), (double) t_pow);
-  }
-
-  // take t_pow/2'th root and divide by constant of 4 (leftover from previous
-  // step)
-  return pow(sum, 2.0 / (double) t_pow) / 4.0;
 }
 
 /**
