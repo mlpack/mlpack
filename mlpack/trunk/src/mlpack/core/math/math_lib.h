@@ -18,35 +18,9 @@
  * you can think of.  Currently, this is very sparse.
  */
 namespace math {
-  /** The square root of 2. */
-  const double SQRT2 = 1.41421356237309504880;
-  /** Base of the natural logarithm. */
-  const double E = 2.7182818284590452354;
-  /** Log base 2 of E. */
-  const double LOG2_E = 1.4426950408889634074;
-  /** Log base 10 of E. */
-  const double LOG10_E = 0.43429448190325182765;
-  /** Natural log of 2. */
-  const double LN_2 = 0.69314718055994530942;
-  /** Natural log of 10. */
-  const double LN_10 = 2.30258509299404568402;
+
   /** The ratio of the circumference of a circle to its diameter. */
   const double PI = 3.141592653589793238462643383279;
-  /** The ratio of the circumference of a circle to its radius. */
-  const double PI_2 = 1.57079632679489661923;
-
-  /** Squares a number. */
-  template<typename T>
-  inline T Sqr(T v) {
-    return v * v;
-  }
-
-  /**
-   * Rounds a double-precision to an integer, casting it too.
-   */
-  inline int64_t RoundInt(double d) {
-    return int64_t(nearbyint(d));
-  }
 
   /**
    * Forces a number to be non-negative, turning negative numbers into zero.
@@ -111,97 +85,5 @@ namespace math {
     return (rand() % (hi_exclusive - lo)) + lo;
   }
 };
-
-#include "math_lib_impl.h"
-//#include "math_lib_impl.h"
-
-namespace math {
-  /**
-   * Calculates a relatively small power using template metaprogramming.
-   *
-   * This allows a numerator and denominator.  In the case where the
-   * numerator and denominator are equal, this will not do anything, or in
-   * the case where the denominator is one.
-   */
-  template<int t_numerator, int t_denominator>
-  inline double Pow(double d) {
-    return math__private::ZPowImpl<t_numerator, t_denominator>::Calculate(d);
-  }
-
-  /**
-   * Calculates a small power of the absolute value of a number
-   * using template metaprogramming.
-   *
-   * This allows a numerator and denominator.  In the case where the
-   * numerator and denominator are equal, this will not do anything, or in
-   * the case where the denominator is one.  For even powers, this will
-   * avoid calling the absolute value function.
-   */
-  template<int t_numerator, int t_denominator>
-  inline double PowAbs(double d) {
-    // we specify whether it's an even function -- if so, we can sometimes
-    // avoid the absolute value sign
-    return math__private::ZPowAbsImpl<t_numerator, t_denominator,
-        (t_numerator%t_denominator == 0) && ((t_numerator/t_denominator)%2 == 0)>::Calculate(fabs(d));
-  }
-};
-
-/**
- * A value which is the min or max of multiple other values.
- *
- * Comes with a highly optimized version of x = max(x, y).
- *
- * The template argument should be something like double, with greater-than,
- * less-than, and equals operators.
- */
-template<typename TValue>
-class MinMaxVal {
- public:
-  typedef TValue Value;
-
- public:
-  /** The underlying value. */
-  Value val;
-
- public:
-  /**
-   * Converts implicitly to the value.
-   */
-  operator Value() const { return val; }
-
-  /**
-   * Sets the value.
-   */
-  const Value& operator = (Value val_in) {
-    return (val = val_in);
-  }
-
-  /**
-   * Efficiently performs this->val = min(this->val, incoming_val).
-   *
-   * The expectation is that it is higly unlikely for the incoming
-   * value to be the new minimum.
-   */
-  void MinWith(Value incoming_val) {
-    if (incoming_val < val) {
-      val = incoming_val;
-    }
-  }
-
-  /**
-   * Efficiently performs this->val = min(this->val, incoming_val).
-   *
-   * The expectation is that it is higly unlikely for the incoming
-   * value to be the new maximum.
-   */
-  void MaxWith(Value incoming_val) {
-    if (incoming_val > val) {
-      val = incoming_val;
-    }
-  }
-};
-
-#include "range.h"
-#include "kernel.h"
 
 #endif
