@@ -89,7 +89,7 @@ void GaussianHMM::CalculateInverse() {
   size_t N = list_mean_vec_[0].n_elem;
   for (size_t i = 0; i < M; i++) {
     list_inverse_cov_mat_[i] = inv(list_covariance_mat_[i]); // inverse
-    gauss_const_vec_[i] = pow(2.0 * math::PI, -N / 2.0) * pow(det(list_covariance_mat_[i]), -0.5);
+    gauss_const_vec_[i] = pow(2.0 * PI, -N / 2.0) * pow(det(list_covariance_mat_[i]), -0.5);
   }
 }
 
@@ -605,7 +605,7 @@ void GaussianHMM::TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& gu
       ME[i].zeros();
       CO[i].zeros();
       INV_CO[i] = inv(guessCO[i]);
-      DET[i] = pow(2.0 * math::PI, -N / 2.0) * pow(det(guessCO[i]), -0.5);
+      DET[i] = pow(2.0 * PI, -N / 2.0) * pow(det(guessCO[i]), -0.5);
     }
     sumState.zeros();
 
@@ -703,7 +703,7 @@ void GaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
       ME[i].zeros();
       CO[i].zeros();
       INV_CO[i] = inv(guessCO[i]);
-      DET[i] = pow(2.0 * math::PI, -N / 2.0) * pow(det(guessCO[i]), -0.5);
+      DET[i] = pow(2.0 * PI, -N / 2.0) * pow(det(guessCO[i]), -0.5);
     }
     sumState.zeros();
 

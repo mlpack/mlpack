@@ -31,7 +31,7 @@ long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov)
   tmp1 = 1;
   tmp2 = dim;
   tmp2 = tmp2/2;
-  tmp2 = pow((2*(math::PI)),tmp2);
+  tmp2 = pow((2 * PI)),tmp2);
   tmp1 = tmp1/tmp2;
   tmp3 = 1;
   tmp2 = sqrt(det);
@@ -48,7 +48,7 @@ long double phi(const double x, const double mean, const double var) {
 
   long double f;
 
-  f = exp( -1.0*( (x-mean)*(x-mean)/(2*var) ) )/sqrt(2*math::PI*var);
+  f = exp( -1.0*( (x-mean)*(x-mean)/(2*var) ) )/sqrt(2* PI*var);
   return f;
 }
 
@@ -78,7 +78,7 @@ long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov,
   tmp1 = 1;
   tmp2 = dim;
   tmp2 = tmp2/2;
-  tmp2 = pow((2*(math::PI)),tmp2);
+  tmp2 = pow(2 * PI),tmp2);
   tmp1 = tmp1/tmp2;
   tmp3 = 1;
   tmp2 = sqrt(det);
