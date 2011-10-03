@@ -19,11 +19,8 @@
  * @see svm.h
  * @see opt_smo.h
  */
-
+#include <mlpack/core.h>
 #include "svm.h"
-#include <fastlib/fx/io.h>
-
-#include <armadillo>
 
 using std::string;
 using std::vector;

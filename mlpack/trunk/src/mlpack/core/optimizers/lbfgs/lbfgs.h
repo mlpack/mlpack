@@ -8,8 +8,7 @@
 #ifndef OPTIMIZATION_LBFGS_H
 #define OPTIMIZATION_LBFGS_H
 
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 
 PARAM_MODULE("lbfgs", "Options for the L-BFGS optimizer, which uses a "
     "back-tracing line search to determine the step size to take.");

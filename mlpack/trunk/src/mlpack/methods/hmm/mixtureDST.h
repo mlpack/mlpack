@@ -12,7 +12,7 @@
 #ifndef __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_H
 #define __MLPACK_METHODS_HMM_MIXTURE_GAUSSIAN_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "support.h"
 

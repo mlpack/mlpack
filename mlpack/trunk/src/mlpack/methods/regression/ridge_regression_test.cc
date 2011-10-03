@@ -3,7 +3,7 @@
  *
  *       Filename:  ridge_regression_test.cc
  *
- *    Description: 
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  02/15/2009 01:34:25 PM EST
@@ -15,10 +15,9 @@
  *
  * =====================================================================================
  */
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
-#include <armadillo>
 
 #include <iostream>
 
@@ -29,7 +28,7 @@ using namespace mlpack;
 
 /*
 BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
-   
+
   arma::mat predictors_ = "1.2 4.2 2.1 0.3 4.2;"
                           "3.1 1.1 4.7 1.8 0.4;"
                           "2.5 3.3 9.1 7.4 0.1";
@@ -41,7 +40,7 @@ BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {
   RidgeRegression svd_engine(predictors_, predictions_, false);
   svd_engine.SVDRegress(0);
   arma::mat factors, svd_factors;
- 
+
   engine_.factors(&factors);
   svd_engine.factors(&svd_factors);
 

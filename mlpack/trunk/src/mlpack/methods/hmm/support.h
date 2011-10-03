@@ -1,7 +1,7 @@
-#ifndef FASTLIB_HMM_SUPPORT_H
-#define FASTLIB_HMM_SUPPORT_H
+#ifndef __MLPACK_METHODS_HMM_SUPPORT_H
+#define __MLPACK_METHODS_HMM_SUPPORT_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 namespace hmm_support {
   /** Generate uniform random value in [0, 1] */

@@ -5,22 +5,20 @@
  * This file computes the Gaussian probability
  * density function
  */
-#include <fastlib/fastlib.h>
-#include <cmath>
 #include "phi.h"
 
 long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov) {
-	
+
   long double det, f;
   double exponent;
   size_t dim;
   arma::mat inv;
   arma::vec diff, tmp;
-	
+
   dim = x.n_rows;
   inv = arma::inv(cov);
   det = arma::det(cov);
-  
+
   if( det < 0){
     det = -det;
   }
@@ -55,18 +53,18 @@ long double phi(const double x, const double mean, const double var) {
 }
 
 long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov, const std::vector<arma::mat>& d_cov, arma::vec& g_mean, arma::vec& g_cov){
-	
+
   long double det, f;
   double exponent;
   size_t dim;
   arma::mat inv;
   arma::vec diff, tmp;
-	
+
   // First calculate the multivariate Gaussian probability density function
   // We don't just call phi() to do this because we need some of the values later
   dim = x.n_rows;
   inv = arma::inv(cov);
-  det = arma::det(cov); 
+  det = arma::det(cov);
 
   if( det < 0){
     det = -det;
@@ -92,14 +90,14 @@ long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov,
 
   // Calculating the g_mean values  which would be a (1 X dim) vector
   g_mean = f*tmp;
-	
+
   // Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector
   arma::vec g_cov_tmp(d_cov.size());
   for(size_t i = 0; i < d_cov.size(); i++){
     arma::vec tmp_d;
     arma::mat inv_d;
     long double tmp_d_cov_d_r;
-		
+
     tmp_d = d_cov[i]*tmp;
     tmp_d_cov_d_r = arma::dot(tmp_d,tmp);
     inv_d = inv*d_cov[i];
@@ -109,7 +107,7 @@ long double phi(const arma::vec& x, const arma::vec& mean, const arma::mat& cov,
 
     g_cov_tmp[i] = f*tmp_d_cov_d_r/2;
   }
-  g_cov = g_cov_tmp; 
-	
+  g_cov = g_cov_tmp;
+
   return f;
 }

@@ -6,7 +6,7 @@
  * @author Ryan Curtin (gth671b@mail.gatech.edu)
  */
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include "lbfgs.h"
 #include "test_functions.h"
 
@@ -51,7 +51,7 @@ BOOST_AUTO_TEST_CASE(wood_function) {
   BOOST_REQUIRE_CLOSE(coords[0], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[1], 1, 1e-5);
   BOOST_REQUIRE_CLOSE(coords[2], 1, 1e-5);
-  BOOST_REQUIRE_CLOSE(coords[3], 1, 1e-5);  
+  BOOST_REQUIRE_CLOSE(coords[3], 1, 1e-5);
 }
 
 /***

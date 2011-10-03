@@ -10,7 +10,7 @@
 #ifndef __OPTIMIZATION_AUG_LAGRANGIAN_H
 #define __OPTIMIZATION_AUG_LAGRANGIAN_H
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace optimization {
@@ -26,7 +26,7 @@ namespace optimization {
  *   void Gradient(const arma::mat& coordinates, arma::mat& gradient);
  *   int NumConstraints();
  *   double EvaluateConstraint(int index, const arma::mat& coordinates);
- *   double GradientConstraint(int index, const arma::mat& coordinates, 
+ *   double GradientConstraint(int index, const arma::mat& coordinates,
  *       arma::mat& gradient);
  *
  * The number of constraints must be greater than or equal to 0, and

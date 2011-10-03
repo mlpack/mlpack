@@ -4,7 +4,7 @@
  *
  * main for using infomax ICA method.
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 #include "infomax_ica.h"
 
 PARAM_STRING_REQ("data", "The name of the file containing mixture data.",

@@ -24,10 +24,10 @@ class RidgeRegressionUtil {
 
   static double SquaredCorrelationCoefficient(const arma::vec &observations,
 					      const arma::vec &predictions) {
-    
+
     // Compute the average of the observed values.
     double avg_observed_value = 0;
-    
+
     for(size_t i = 0; i < observations.n_elem; i++) {
       avg_observed_value += observations[i];
     }
@@ -47,8 +47,8 @@ class RidgeRegressionUtil {
 
   static double VarianceInflationFactor(const arma::vec &observations,
 					const arma::vec &predictions) {
-    
-    return 1.0 / 
+
+    return 1.0 /
       (1.0 - SquaredCorrelationCoefficient(observations, predictions));
   }
 

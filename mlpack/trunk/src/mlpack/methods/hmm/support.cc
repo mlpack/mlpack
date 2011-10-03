@@ -1,5 +1,5 @@
-#include <mlpack_core.h>
-#include <core/kernels/lmetric.h>
+#include <mlpack/core.h>
+#include <mlpack/core/kernels/lmetric.h>
 
 #include "support.h"
 

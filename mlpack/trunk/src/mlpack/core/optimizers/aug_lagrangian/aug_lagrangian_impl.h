@@ -9,7 +9,7 @@
 #ifndef __OPTIMIZATION_AUG_LAGRANGIAN_IMPL_H
 #define __OPTIMIZATION_AUG_LAGRANGIAN_IMPL_H
 
-#include "../lbfgs/lbfgs.h"
+#include <mlpack/core/optimizers/lbfgs/lbfgs.h>
 
 namespace mlpack {
 namespace optimization {
@@ -64,7 +64,7 @@ bool AugLagrangian<LagrangianFunction>::Optimize(int num_iterations,
         sigma > 500000)
       return true;
     last_objective = function_.Evaluate(coordinates);
-    
+
     // Assuming that the optimization has converged to a new set of coordinates,
     // we now update either lambda or sigma.  We update sigma if the penalty
     // term is too high, and we update lambda otherwise.

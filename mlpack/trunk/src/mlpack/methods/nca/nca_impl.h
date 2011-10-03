@@ -10,7 +10,8 @@
 // In case it was not already included.
 #include "nca.h"
 
-#include <fastlib/optimization/lbfgs/lbfgs.h>
+#include <mlpack/core/optimizers/lbfgs/lbfgs.h>
+
 #include "nca_softmax_error_function.h"
 
 namespace mlpack {

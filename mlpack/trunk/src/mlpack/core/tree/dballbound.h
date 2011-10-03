@@ -10,11 +10,8 @@
 #ifndef TREE_DBALLBOUND_H
 #define TREE_DBALLBOUND_H
 
-#include "../math/math_lib.h"
-
-// Awaiting transition
-#include "../../mlpack/core/kernels/lmetric.h"
-
+#include <mlpack/core/math/math_lib.h>
+#include <mlpack/core/kernels/lmetric.h>
 #include <armadillo>
 
 /**

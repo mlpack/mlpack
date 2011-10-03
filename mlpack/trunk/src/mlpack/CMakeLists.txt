@@ -1,6 +1,5 @@
 ## include dirs
-include_directories(.)
-include_directories(../include/)
+include_directories(..) # <mlpack/[whatever]>
 
 ## recurse
 set(DIRS
@@ -18,6 +17,7 @@ target_link_libraries(mlpack
   armadillo
   lapack
   blas
+  boost_program_options
 )
 
 # move header files to the right directory

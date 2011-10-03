@@ -1,4 +1,4 @@
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 #include "discreteDST.h"
 #include "support.h"
 

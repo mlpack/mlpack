@@ -10,7 +10,7 @@
 
 #include "dtb.h"
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 PARAM_FLAG("using_thor", "For when an implementation of thor is around",
     "emst");

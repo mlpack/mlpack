@@ -12,8 +12,8 @@
 #ifndef TREE_BOUNDS_H
 #define TREE_BOUNDS_H
 
-#include <fastlib/math/math_lib.h>
-#include "../../mlpack/core/kernels/lmetric.h"
+#include <mlpack/core/math/math_lib.h>
+#include <mlpack/core/kernels/lmetric.h>
 #include "hrectbound.h"
 #include "dhrectperiodicbound.h"
 #include "dballbound.h"

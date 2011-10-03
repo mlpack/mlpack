@@ -27,7 +27,6 @@ add_executable(allknn_test
 )
 target_link_libraries(allknn_test
   mlpack
-   fastlib
   boost_unit_test_framework
 )
 

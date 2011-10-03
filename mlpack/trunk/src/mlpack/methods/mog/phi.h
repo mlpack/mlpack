@@ -5,12 +5,11 @@
  * This file computes the Gaussian probability
  * density function
  */
-#include <fastlib/fastlib.h>
-#include <cmath>
+#include <mlpack/core.h>
 
 /**
  * Calculates the multivariate Gaussian probability density function
- * 
+ *
  * Example use:
  * @code
  * Vector x, mean;
@@ -21,17 +20,17 @@
  */
 
 long double phi(Vector& x , Vector& mean , Matrix& cov) {
-	
+
   long double det, f;
   double exponent;
   size_t dim;
   Matrix inv;
   Vector diff, tmp;
-	
+
     dim = x.length();
   la::InverseInit(cov, &inv);
   det = la::Determinant(cov);
-  
+
   if( det < 0){
     det = -det;
   }
@@ -56,7 +55,7 @@ long double phi(Vector& x , Vector& mean , Matrix& cov) {
 
 /**
  * Calculates the univariate Gaussian probability density function
- * 
+ *
  * Example use:
  * @code
  * double x, mean, var;
@@ -68,13 +67,13 @@ long double phi(Vector& x , Vector& mean , Matrix& cov) {
 long double phi(double x, double mean, double var) {
 
   long double f;
-	
+
   f = exp(-1.0*((x-mean)*(x-mean)/(2*var)))/sqrt(2*math::PI*var);
   return f;
 }
 
 /**
- * Calculates the multivariate Gaussian probability density function 
+ * Calculates the multivariate Gaussian probability density function
  * and also the gradients with respect to the mean and the variance
  *
  * Example use:
@@ -87,13 +86,13 @@ long double phi(double x, double mean, double var) {
  */
 
 long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, Vector *g_mean, Vector *g_cov){
-	
+
   long double det, f;
   double exponent;
   size_t dim;
   Matrix inv;
   Vector diff, tmp;
-	
+
   dim = x.length();
   la::InverseInit(cov, &inv);
   det = la::Determinant(cov);
@@ -119,7 +118,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
 
   // Calculating the g_mean values  which would be a (1 X dim) vector
   la::ScaleInit(f,tmp,g_mean);
-	
+
   // Calculating the g_cov values which would be a (1 X (dim*(dim+1)/2)) vector
   double *g_cov_tmp;
   g_cov_tmp = (double*)malloc(d_cov.size()*sizeof(double));
@@ -127,7 +126,7 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
     Vector tmp_d;
     Matrix inv_d;
     long double tmp_d_cov_d_r;
-		
+
     la::MulInit(d_cov[i],tmp,&tmp_d);
     tmp_d_cov_d_r = la::Dot(tmp_d,tmp);
     la::MulInit(inv,d_cov[i],&inv_d);
@@ -136,6 +135,6 @@ long double phi(Vector& x, Vector& mean, Matrix& cov, ArrayList<Matrix>& d_cov, 
     g_cov_tmp[i] = f*tmp_d_cov_d_r/2;
   }
   g_cov->Copy(g_cov_tmp,d_cov.size());
-	
+
   return f;
 }

@@ -8,8 +8,7 @@
 #ifndef ORTHO_RANGE_SEARCH_H
 #define ORTHO_RANGE_SEARCH_H
 
-#include "fastlib/fastlib.h"
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 #include "contrib/dongryel/proximity_project/gen_kdtree.h"
 #include "contrib/dongryel/proximity_project/gen_kdtree_hyper.h"
 #include "contrib/dongryel/proximity_project/general_type_bounds.h"
@@ -37,7 +36,7 @@ class OrthoRangeSearch {
   FORBID_ACCIDENTAL_COPIES(OrthoRangeSearch);
 
  public:
-  
+
   ////////// Constructor/Destructor //////////
 
   /** @brief Constructor that initializes pointers to NULL.
@@ -71,7 +70,7 @@ class OrthoRangeSearch {
    *  @param set_of_high_coord_limits
    */
   void Compute(GenMatrix<T> &set_of_low_coord_limits,
-	       GenMatrix<T> &set_of_high_coord_limits, 
+	       GenMatrix<T> &set_of_high_coord_limits,
 	       GenMatrix<bool> *candidate_points) {
 
     // Allocate space for storing candidate points found during
@@ -89,16 +88,16 @@ class OrthoRangeSearch {
     ArrayList<size_t> old_from_new_windows;
     ArrayList<size_t> new_from_old_windows;
 
-    Tree *tree_of_windows = 
+    Tree *tree_of_windows =
       proximity::MakeGenKdTree<T, Tree, proximity::GenKdTreeMedianSplitter>
       (set_of_low_coord_limits, set_of_high_coord_limits, 2,
        &old_from_new_windows, &new_from_old_windows);
 
-    ortho_range_search(tree_of_windows, set_of_low_coord_limits, 
+    ortho_range_search(tree_of_windows, set_of_low_coord_limits,
 		       set_of_high_coord_limits, old_from_new_windows,
 		       new_from_old_windows,
 		       root_, 0, data_.n_rows() - 1, *candidate_points);
-    
+
     mlpack::IO::StopTimer("range/tree_range_search");
 
     // Delete the tree of search windows...
@@ -141,7 +140,7 @@ class OrthoRangeSearch {
     // first serialize the total amount of bytes needed for serializing the
     // tree and the tree itself
     int tree_size = ot::FrozenSize(*root_);
-    mlpack::IO::Info << "Tree occupies " << tree_size << " bytes..." 
+    mlpack::IO::Info << "Tree occupies " << tree_size << " bytes..."
       << std::endl;
 
     fwrite((const void *) &tree_size, sizeof(int), 1, output);
@@ -154,17 +153,17 @@ class OrthoRangeSearch {
     // along with its sizes
     int old_from_new_size = ot::FrozenSize(old_from_new_);
     int new_from_old_size = ot::FrozenSize(new_from_old_);
-    char *tmp_array = 
+    char *tmp_array =
       (char *) mem::AllocBytes<ArrayList<size_t> >(old_from_new_size);
 
-    fwrite((const void *) &old_from_new_size, sizeof(int), 1, output);    
+    fwrite((const void *) &old_from_new_size, sizeof(int), 1, output);
     ot::Freeze(tmp_array, old_from_new_);
     fwrite((const void *) tmp_array, old_from_new_size, 1, output);
-    
+
     fwrite((const void*) &new_from_old_size, sizeof(int), 1, output);
     ot::Freeze(tmp_array, new_from_old_);
     fwrite((const void *) tmp_array, new_from_old_size, 1, output);
-    
+
     mem::Free(tmp_array);
 
     mlpack::IO::Info << "Tree is serialized..." << std::endl;
@@ -180,7 +179,7 @@ class OrthoRangeSearch {
    *                             If not NULL, the tree is loaded from the
    *                             file whose name is given as the argument.
    */
-  void Init(GenMatrix<T> &dataset, bool make_copy, 
+  void Init(GenMatrix<T> &dataset, bool make_copy,
 	    const char *load_tree_file_name) {
 
     int leaflen = mlpack::IO::GetParam<int>("range/leaflen");
@@ -203,8 +202,8 @@ class OrthoRangeSearch {
     // Otherwise, construct one from scratch.
     else {
       root_ = proximity::MakeGenKdTree
-	<T, Tree, proximity::GenKdTreeMedianSplitter>(data_, leaflen, 
-						      &old_from_new_, 
+	<T, Tree, proximity::GenKdTreeMedianSplitter>(data_, leaflen,
+						      &old_from_new_,
 						      &new_from_old_);
     }
     mlpack::IO::StopTimer("range/tree_d");
@@ -233,7 +232,7 @@ class OrthoRangeSearch {
   Tree *tree_buffer_;
 
   ArrayList<size_t> old_from_new_;
-  
+
   ArrayList<size_t> new_from_old_;
 
   /** @brief The root of the tree */
@@ -247,10 +246,10 @@ class OrthoRangeSearch {
    *                             name is given as the argument.
    */
   void LoadTree(const char *load_tree_file_name) {
-    
+
     //const char *tfname = fx_param_str(NULL, "load_tree_file", "savedtree");
     FILE *input = fopen(load_tree_file_name, "r");
-    
+
     // read the tree size
     int tree_size, old_from_new_size, new_from_old_size;
     fread((void *) &tree_size, sizeof(int), 1, input);
@@ -260,10 +259,10 @@ class OrthoRangeSearch {
     tree_buffer_ = mem::AllocBytes<Tree>(tree_size);
     fread((void *) tree_buffer_, 1, tree_size, input);
     root_ = ot::SemiThaw<Tree>((char *) tree_buffer_);
-    
+
     // read old_from_new
     fread((void *) &old_from_new_size, sizeof(int), 1, input);
-    old_from_new_buffer_ = 
+    old_from_new_buffer_ =
     mem::AllocBytes<ArrayList<size_t> >(old_from_new_size);
     fread((void *) old_from_new_buffer_, old_from_new_size, 1, input);
     old_from_new_.InitCopy(*(ot::SemiThaw<ArrayList<size_t> >
@@ -271,7 +270,7 @@ class OrthoRangeSearch {
 
     // read new_from_old
     fread((void *) &new_from_old_size, sizeof(int), 1, input);
-    new_from_old_buffer_ = 
+    new_from_old_buffer_ =
     mem::AllocBytes<ArrayList<size_t> >(new_from_old_size);
     fread((void *) new_from_old_buffer_, new_from_old_size, 1, input);
     new_from_old_.InitCopy(*(ot::SemiThaw<ArrayList<size_t> >
@@ -299,10 +298,10 @@ class OrthoRangeSearch {
    *                          the current search window node.
    *  @param high_coord_limits The upper coordinate limits of the search for
    *                           the current search window node.
-   *  @param reference_node The reference tree node currently under 
+   *  @param reference_node The reference tree node currently under
    *                        consideration.
    *  @param start_dim The starting dimension currently under consideration.
-   *  @param end_dim The ending index of the dimension currently under 
+   *  @param end_dim The ending index of the dimension currently under
    *                 consideration.
    *  @param candiate_points Records the membership of each point for each
    *                         search window.
@@ -312,7 +311,7 @@ class OrthoRangeSearch {
 			       GenMatrix<T> &high_coord_limits,
 			       const ArrayList<size_t> &old_from_new_windows,
 			       const ArrayList<size_t> &new_from_old_windows,
-			       Tree *reference_node, 
+			       Tree *reference_node,
 			       size_t start_dim, size_t end_dim,
 			       GenMatrix<bool> &candidate_points) {
     PruneStatus prune_flag;
@@ -322,15 +321,15 @@ class OrthoRangeSearch {
 	window < search_window_node->end(); window++) {
 
       // Loop over each reference point...
-      for(size_t row = reference_node->begin(); row < reference_node->end(); 
+      for(size_t row = reference_node->begin(); row < reference_node->end();
 	  row++) {
 	prune_flag = SUBSUME;
-	
+
 	// loop over each dimension...
 	for(size_t d = start_dim; d <= end_dim; d++) {
 	  // determine which one of the two cases we have: EXCLUDE,
 	  // SUBSUME.
-	  
+
 	  // first the EXCLUDE case: when dist is above the upper
 	  // bound distance of this dimension, or dist is below the
 	  // lower bound distance of this dimension
@@ -365,8 +364,8 @@ class OrthoRangeSearch {
    *  @param candiate_points Records the membership of each point for each
    *                         search window.
    */
-  void ortho_range_search(Tree *search_window_node, 
-			  GenMatrix<T> &low_coord_limits, 
+  void ortho_range_search(Tree *search_window_node,
+			  GenMatrix<T> &low_coord_limits,
 			  GenMatrix<T> &high_coord_limits,
 			  const ArrayList<size_t> &old_from_new_windows,
 			  const ArrayList<size_t> &new_from_old_windows,
@@ -374,20 +373,20 @@ class OrthoRangeSearch {
 			  size_t end_dim, GenMatrix<bool> &candidate_points) {
 
     PruneStatus prune_flag = SUBSUME;
-    
+
     // loop over each dimension to determine inclusion/exclusion by
     // determining the lower and the upper bound distance per each
     // dimension for the given reference node, kn
     for(size_t d = start_dim; d <= end_dim; d++) {
 
-      const GenRange<T> &reference_node_dir_range = 
+      const GenRange<T> &reference_node_dir_range =
 	reference_node->bound().get(d);
       const GenRange<T> &search_window_node_dir_range =
 	search_window_node->bound().get(d);
-      
+
       // determine which one of the three cases we have: EXCLUDE,
       // SUBSUME, or INCONCLUSIVE.
-      
+
       // First the EXCLUDE case: when mindist is above the upper bound
       // distance of this dimension, or maxdist is below the lower
       // bound distance of this dimension
@@ -413,9 +412,9 @@ class OrthoRangeSearch {
     // candidates - note that subsume prunes cannot be performed
     // always in batch query.
     if(search_window_node->count() == 1 && prune_flag == SUBSUME) {
-      for(size_t j = search_window_node->begin(); 
+      for(size_t j = search_window_node->begin();
 	  j < search_window_node->end(); j++) {
-	for(size_t i = reference_node->begin(); 
+	for(size_t i = reference_node->begin();
 	    i < reference_node->end(); i++) {
 	  candidate_points.set(old_from_new_[i], old_from_new_windows[j],
 			       true);

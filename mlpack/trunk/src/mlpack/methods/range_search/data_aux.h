@@ -1,7 +1,7 @@
 #ifndef DATA_AUX_H
 #define DATA_AUX_H
 
-#include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 
 namespace data_aux {
 

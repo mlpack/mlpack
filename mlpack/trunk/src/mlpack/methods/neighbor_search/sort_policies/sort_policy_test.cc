@@ -4,8 +4,9 @@
  *
  * Tests for each of the implementations of the SortPolicy class.
  */
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
+#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/spacetree.h>
 
 // Classes to test.
 #include "nearest_neighbor_sort.h"
@@ -89,13 +90,13 @@ BOOST_AUTO_TEST_CASE(nns_node_to_node_distance) {
   arma::vec utility(1);
   utility[0] = 0;
 
-  node_one.bound().SetSize(1);
+  node_one.bound() = HRectBound<2>(1);
   node_one.bound() |= utility;
   utility[0] = 1;
   node_one.bound() |= utility;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.bound().SetSize(1);
+  node_two.bound() = HRectBound<2>(1);
 
   utility[0] = 5;
   node_two.bound() |= utility;
@@ -139,7 +140,7 @@ BOOST_AUTO_TEST_CASE(nns_point_to_node_distance) {
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
-  node.bound().SetSize(1);
+  node.bound() = HRectBound<2>(1);
   node.bound() |= utility;
   utility[0] = 1;
   node.bound() |= utility;
@@ -235,13 +236,13 @@ BOOST_AUTO_TEST_CASE(fns_node_to_node_distance) {
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_one;
-  node_one.bound().SetSize(1);
+  node_one.bound() = HRectBound<2>(1);
   node_one.bound() |= utility;
   utility[0] = 1;
   node_one.bound() |= utility;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node_two;
-  node_two.bound().SetSize(1);
+  node_two.bound() = HRectBound<2>(1);
   utility[0] = 5;
   node_two.bound() |= utility;
   utility[0] = 6;
@@ -284,7 +285,7 @@ BOOST_AUTO_TEST_CASE(fns_point_to_node_distance) {
   utility[0] = 0;
 
   tree::BinarySpaceTree<HRectBound<2>, arma::mat> node;
-  node.bound().SetSize(1);
+  node.bound() = HRectBound<2>(1);
   node.bound() |= utility;
   utility[0] = 1;
   node.bound() |= utility;

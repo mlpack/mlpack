@@ -5,12 +5,10 @@
  *
  *  @author Dongryeol Lee (dongryel)
  */
-
 #ifndef NAIVE_ORTHO_RANGE_SEARCH_H
 #define NAIVE_ORTHO_RANGE_SEARCH_H
 
-#include "fastlib/fastlib.h"
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 
 /** @brief Naive orthogonal range search class.
  *
@@ -27,18 +25,18 @@
  */
 template<typename T>
 class NaiveOrthoRangeSearch {
-  
+
   // This class object cannot be copied!
   FORBID_ACCIDENTAL_COPIES(NaiveOrthoRangeSearch);
 
  private:
 
-  /** @brief The dataset. 
+  /** @brief The dataset.
    */
   GenMatrix<T> data_;
-  
+
  public:
-  
+
   ////////// Constructor/Destructor //////////
 
   /** @brief Constructor which does not do anything.
@@ -68,7 +66,7 @@ class NaiveOrthoRangeSearch {
    *                           window.
    *  @param search_results Stores the search results for each search window.
    */
-  void Compute(const GenMatrix<T> &low_coord_limits, 
+  void Compute(const GenMatrix<T> &low_coord_limits,
 	       const GenMatrix<T> &high_coord_limits,
 	       GenMatrix<bool> *search_results) {
 
@@ -78,17 +76,17 @@ class NaiveOrthoRangeSearch {
     // Start the search.
     mlpack::IO::StartTimer("range/naive_search");
     for(size_t j = 0; j < low_coord_limits.n_cols(); j++) {
-      for(size_t i = 0; i < data_.n_cols(); i++) {	
+      for(size_t i = 0; i < data_.n_cols(); i++) {
 	GenVector<T> pt;
 	bool flag = true;
 	data_.MakeColumnVector(i, &pt);
-	
+
 	// Determine which one of the two cases we have: EXCLUDE, SUBSUME
 	// first the EXCLUDE case: when dist is above the upper bound distance
 	// of this dimension, or dist is below the lower bound distance of
 	// this dimension
 	for(size_t d = 0; d < data_.n_rows(); d++) {
-	  if(pt[d] < low_coord_limits.get(d, j) || 
+	  if(pt[d] < low_coord_limits.get(d, j) ||
 	     pt[d] > high_coord_limits.get(d, j)) {
 	    flag = false;
 	    break;
@@ -98,9 +96,9 @@ class NaiveOrthoRangeSearch {
       }
     }
     mlpack::IO::StopTimer("range/naive_search");
-    
+
     // Search is now finished.
-    
+
   }
 
 };

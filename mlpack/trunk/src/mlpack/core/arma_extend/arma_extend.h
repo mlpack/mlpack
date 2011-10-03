@@ -12,22 +12,22 @@
 #define __ARMA_EXTEND_H
 
 namespace arma {
-  #include "arma_extend/typedef.hpp" // This has to come first.
+  #include "typedef.hpp" // This has to come first.
 }
 
 #include <armadillo>
 
 namespace arma {
   // 64-bit support
-  #include "arma_extend/traits.hpp"
-  #include "arma_extend/promote_type.hpp"
+  #include "traits.hpp"
+  #include "promote_type.hpp"
 
   // ccov()
-  #include "arma_extend/op_ccov_proto.hpp"
-  #include "arma_extend/op_ccov_meat.hpp"
-  #include "arma_extend/glue_ccov_proto.hpp"
-  #include "arma_extend/glue_ccov_meat.hpp"
-  #include "arma_extend/fn_ccov.hpp"
+  #include "op_ccov_proto.hpp"
+  #include "op_ccov_meat.hpp"
+  #include "glue_ccov_proto.hpp"
+  #include "glue_ccov_meat.hpp"
+  #include "fn_ccov.hpp"
 };
 
 #endif

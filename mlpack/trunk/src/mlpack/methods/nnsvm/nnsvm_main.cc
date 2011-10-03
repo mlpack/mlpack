@@ -14,10 +14,9 @@
  * @see nnsvm.h
  * @see nnsmo.h
  */
-
 #include <iostream>
 #include "nnsvm.h"
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 
 PARAM_STRING_REQ("mode", "operating mode: train, train_test, or test", "nnsvm");
 PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)", "nnsvm");

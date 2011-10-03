@@ -6,7 +6,7 @@
 
 #include "bounds.h"
 #include "spacetree.h"
-#include "../../mlpack/core/kernels/lmetric.h"
+#include <mlpack/core/kernels/lmetric.h>
 
 #define BOOST_TEST_MODULE Tree_Test
 #include <boost/test/unit_test.hpp>

@@ -11,7 +11,7 @@
 
 // In case it wasn't included already for some reason.
 #include "spacetree.h"
-#include "../fx/io.h"
+#include <mlpack/core/io/io.h>
 
 namespace mlpack {
 namespace tree {
@@ -186,7 +186,7 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
   else
     return right_->FindByBeginCount(begin_q, count_q);
 }
- 
+
 /**
  * Find a node in this tree by its begin and count (const).
  *
@@ -214,7 +214,7 @@ BinarySpaceTree<Bound, Statistic>::FindByBeginCount(size_t begin_q,
   else
     return right_->FindByBeginCount(begin_q, count_q);
 }
-  
+
 template<typename Bound, typename Statistic>
 const Bound& BinarySpaceTree<Bound, Statistic>::bound() const {
   return bound_;
@@ -244,7 +244,7 @@ bool BinarySpaceTree<Bound, Statistic>::is_leaf() const {
  * Gets the left branch of the tree.
  */
 template<typename Bound, typename Statistic>
-BinarySpaceTree<Bound, Statistic>* 
+BinarySpaceTree<Bound, Statistic>*
 BinarySpaceTree<Bound, Statistic>::left() const {
   // TODO: Const correctness
   return left_;
@@ -275,7 +275,7 @@ template<typename Bound, typename Statistic>
 size_t BinarySpaceTree<Bound, Statistic>::end() const {
   return begin_ + count_;
 }
-  
+
 /**
  * Gets the number of points in this subset.
  */
@@ -283,7 +283,7 @@ template<typename Bound, typename Statistic>
 size_t BinarySpaceTree<Bound, Statistic>::count() const {
   return count_;
 }
-  
+
 template<typename Bound, typename Statistic>
 void BinarySpaceTree<Bound, Statistic>::Print() const {
   printf("node: %d to %d: %d points total\n",
@@ -442,7 +442,7 @@ size_t BinarySpaceTree<Bound, Statistic>::GetSplitIndex(
   size_t right = begin_ + count_ -1;
 
   // First half-iteration of the loop is out here because the termination
-  // condition is in the middle. 
+  // condition is in the middle.
   while ((data(split_dim, left) < split_val) && (left <= right))
     left++;
   while ((data(split_dim, right) >= split_val) && (left <= right))

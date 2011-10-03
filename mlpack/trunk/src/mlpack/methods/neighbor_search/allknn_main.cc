@@ -6,7 +6,7 @@
  *
  * @author Ryan Curtin
  */
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include "neighbor_search.h"
 
 #include <string>
@@ -54,9 +54,9 @@ int main(int argc, char *argv[]) {
 
   if (data::Load(reference_file.c_str(), reference_data) == false)
     IO::Fatal << "Reference file " << reference_file << " not found." << endl;
-  
+
   IO::Info << "Loaded reference data from " << reference_file << endl;
-  
+
   // Sanity check on k value: must be greater than 0, must be less than the
   // number of reference points.
   size_t k = IO::GetParam<int>("neighbor_search/k");
@@ -68,19 +68,19 @@ int main(int argc, char *argv[]) {
 
   // Sanity check on leaf size.
   if (IO::GetParam<int>("tree/leaf_size") <= 0) {
-    IO::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size") 
+    IO::Fatal << "Invalid leaf size: " << IO::GetParam<int>("allknn/leaf_size")
         << endl;
   }
 
   AllkNN* allknn = NULL;
- 
+
   if (IO::GetParam<string>("query_file") != "") {
     string query_file = IO::GetParam<string>("query_file");
     arma::mat query_data;
 
     if (data::Load(query_file.c_str(), query_data) == false)
       IO::Fatal << "Query file " << query_file << " not found" << endl;
-    
+
     IO::Info << "Query data loaded from " << query_file << endl;
 
     IO::Info << "Building query and reference trees..." << endl;

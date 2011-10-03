@@ -7,7 +7,7 @@
 #ifndef __AUG_LAGRANGIAN_TEST_FUNCTIONS_H
 #define __AUG_LAGRANGIAN_TEST_FUNCTIONS_H
 
-#include "../../io/io.h"
+#include <mlpack/core/io/io.h>
 #include <armadillo>
 
 namespace mlpack {
