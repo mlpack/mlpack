@@ -4,8 +4,11 @@
  * @author Bill March (march@gatech.edu)
  *
  * Contains an implementation of the DualTreeBoruvka algorithm for finding a
- * Euclidean Minimum Spanning Tree.  NOTE: this algorithm is awaiting
- * publication; it is not for public distribution.
+ * Euclidean Minimum Spanning Tree.  
+ *
+ * Citation: March, W. B.; Ram, P.; and Gray, A. G.  Fast Euclidean Minimum Spanning
+ * Tree: Algorithm, Analysis, Applications.  In KDD, 2010.  
+ *
  */
 
 #ifndef DTB_H
