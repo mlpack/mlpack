@@ -1,7 +1,6 @@
-## include dirs
 include_directories(..) # <mlpack/[whatever]>
 
-## recurse
+## Recurse into both core/ and methods/.
 set(DIRS
   core
   methods
@@ -11,7 +10,7 @@ foreach(dir ${DIRS})
     add_subdirectory(${dir})
 endforeach()
 
-# MLPACK_SRCS is set in the subdirectories
+# MLPACK_SRCS is set in the subdirectories.
 add_library(mlpack ${MLPACK_SRCS})
 target_link_libraries(mlpack
   armadillo
@@ -20,23 +19,27 @@ target_link_libraries(mlpack
   boost_program_options
 )
 
-# move header files to the right directory
-file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+# Collect all header files in the library.
+file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h*)
+
+# Move all of these header files to <builddir>/include/mlpack/ after the library
+# is built.  First we have to create that directory though.
 add_custom_command(TARGET mlpack POST_BUILD
-   COMMENT "Moving header files to include/mlpack/"
-   COMMAND ${CMAKE_COMMAND} ARGS -E make_directory ${CMAKE_BINARY_DIR}/include/mlpack/)
+  COMMENT "Moving header files to include/mlpack/"
+  COMMAND ${CMAKE_COMMAND} ARGS -E
+    make_directory ${CMAKE_BINARY_DIR}/include/mlpack/)
+
+# Then copy each of the header files over to that directory.
 foreach(incl_file ${INCLUDE_FILES})
-   add_custom_command(TARGET mlpack POST_BUILD
-      COMMAND ${CMAKE_COMMAND} ARGS -E copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file} ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file} )
+  add_custom_command(TARGET mlpack POST_BUILD
+    COMMAND ${CMAKE_COMMAND} ARGS -E
+      copy ${CMAKE_CURRENT_SOURCE_DIR}/${incl_file}
+           ${CMAKE_BINARY_DIR}/include/mlpack/${incl_file})
 endforeach()
 
-# set installation rules for include files
-#install(FILES ${CMAKE_BINARY_DIR}/include/mlpack/
-#   DESTINATION include/mlpack)
-
-# set installation rules for mlpack programs
-#install(PROGRAMS ${CMAKE_BINARY_DIR}/bin/
-#   DESTINATION bin)
+# At install time, we simply install that directory of header files we
+# collected to include/.
+install(DIRECTORY ${CMAKE_BINARY_DIR}/include/mlpack DESTINATION include)
 
 install(TARGETS mlpack
    RUNTIME DESTINATION bin
