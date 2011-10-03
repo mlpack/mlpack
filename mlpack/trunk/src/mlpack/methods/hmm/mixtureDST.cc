@@ -37,7 +37,7 @@ void MixtureGauss::Init(size_t K, size_t N) {
 
   for (size_t i = 0; i < K; i++) {
     inv_covs[i] = inv(covs[i]);
-    det_covs[i] = pow(2.0 * PI, -N/2.0) * pow(det(covs[i]), -0.5);
+    det_covs[i] = pow(2.0 * M_PI, -N/2.0) * pow(det(covs[i]), -0.5);
   }
 }
 
@@ -119,7 +119,7 @@ void MixtureGauss::InitFromFile(const char* mean_fn, const char* covs_fn, const 
 
   for (size_t i = 0; i < K; i++) {
     inv_covs[i] = inv(covs[i]);
-    det_covs[i] = pow(2.0 * PI, -N / 2.0) * pow(det(covs[i]), -0.5);
+    det_covs[i] = pow(2.0 * M_PI, -N / 2.0) * pow(det(covs[i]), -0.5);
   }
 }
 
@@ -148,7 +148,7 @@ void MixtureGauss::InitFromProfile(const std::vector<arma::mat>& matlst, size_t 
 
   for (size_t i = 0; i < K; i++) {
     inv_covs[i] = inv(covs[i]);
-    det_covs[i] = pow(2.0 * PI, -N / 2.0) * pow(det(covs[i]), -0.5);
+    det_covs[i] = pow(2.0 * M_PI, -N / 2.0) * pow(det(covs[i]), -0.5);
   }
 }
 
