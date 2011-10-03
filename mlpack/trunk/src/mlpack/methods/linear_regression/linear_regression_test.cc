@@ -28,7 +28,9 @@ BOOST_AUTO_TEST_CASE(LinearRegressionTest) {
   // Create y
   responses.zeros(10);
   // Create a second "class" for the first cluster of points
-  responses.rows(0,4).ones();
+  for(size_t i = 0; i < 5; ++i) {
+    responses(i) = 1;
+  }
   responses += 1; // "classes" are 2,1
 
   predictions.zeros(responses.n_rows);
