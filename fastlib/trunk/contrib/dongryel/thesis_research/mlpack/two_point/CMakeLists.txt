@@ -40,7 +40,7 @@ add_executable(two_point_test
                EXCLUDE_FROM_ALL
                two_point.test.cc
               )
-# link dependencies t
+# link dependencies 
 target_link_libraries(two_point_test
                       core
                       ${Boost_LIBRARIES}

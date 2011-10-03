@@ -9,31 +9,31 @@
 
 
 // for BOOST testing
-#define BOOST_TEST_MODULE two_point_test
+#define BOOST_TEST_MODULE cuda_two_point_test
 #define BOOST_TEST_DYN_LINK
 
 #include <boost/test/unit_test.hpp>
-#include "mlpack/two_point/test_two_point.h"
+#include "mlpack/cuda_two_point/test_cuda_two_point.h"
 #include <omp.h>
 #include <time.h>
 
 namespace mlpack {
-  namespace two_point {
-    namespace test_two_point {
+  namespace cuda_two_point {
+    namespace test_cuda_two_point {
       int num_dimensions_;
       int num_points_;
     }
   }
 }
 
-BOOST_AUTO_TEST_SUITE(TestSuiteTwoPoint)
+BOOST_AUTO_TEST_SUITE(TestSuiteCudaTwoPoint)
 
 BOOST_AUTO_TEST_CASE(TestCaseTwoPoint) {
   
   // Call the tests.
   omp_set_num_threads(1);
-  mlpack::two_point::TestTwoPoint two_point_test;
-  int main_val = two_point_test.StressTestMain();
+  mlpack::cuda_two_point::TestCudaTwoPoint cuda_two_point_test;
+  int main_val = cuda_two_point_test.StressTestMain();
   
   BOOST_CHECK_EQUAL(main_val, 0);
   
