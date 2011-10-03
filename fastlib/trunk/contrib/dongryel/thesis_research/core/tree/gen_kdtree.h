@@ -9,10 +9,7 @@
 #define CORE_TREE_GEN_KDTREE_H
 
 #include <boost/mpi.hpp>
-
-#ifdef _OPENMP_
 #include <omp.h>
-#endif
 
 #include "core/parallel/distributed_tree_util.h"
 #include "core/tree/general_spacetree.h"

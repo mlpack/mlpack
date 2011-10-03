@@ -17,11 +17,7 @@
 #include <boost/serialization/tracking.hpp>
 #include <boost/serialization/tracking_enum.hpp>
 #include <deque>
-
-#ifdef _OPENMP_
 #include <omp.h>
-#endif
-
 #include <queue>
 #include "core/parallel/distributed_tree_util.h"
 #include "core/table/dense_matrix.h"
@@ -675,8 +671,6 @@ class GeneralBinarySpaceTree {
       return global_assignment_is_ok;
     }
 
-#ifdef _OPENMP_
-
     /** @brief Recursively splits a given node creating its children
      *         in a breadth-first manner. This function is better for
      *         multi-threading.
@@ -698,7 +692,7 @@ class GeneralBinarySpaceTree {
 
       // If the number of points fall under this threshold, then we
       // call the serial depth-first.
-      int serial_depth_first_limit = matrix.n_cols() / num_threads;
+      int serial_depth_first_limit = matrix.n_cols / num_threads;
 
       // The list of active nodes on the current level.
       std::deque< TreeType * > active_nodes;
@@ -773,8 +767,6 @@ class GeneralBinarySpaceTree {
       SplitTreeBreadthFirstPostProcess_(
         metric_in, matrix, node, serial_depth_first_limit);
     }
-
-#endif
 
     /** @brief Recursively splits a given node creating its children
      *         in a depth-first manner.
@@ -854,9 +846,7 @@ class GeneralBinarySpaceTree {
       int rank_in = 0) {
 
       // Enable OpenMP nested parallelization.
-#ifdef _OPENMP_
       omp_set_nested(true);
-#endif
 
       // Postprocess old_from_new indices before building the tree.
       IndexInitializer<IndexType>::PostProcessOldFromNew(matrix, old_from_new);
@@ -873,15 +863,9 @@ class GeneralBinarySpaceTree {
 
       int current_num_leaf_nodes = 1;
 
-#ifdef _OPENMP_
       SplitTreeBreadthFirst(
         metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
         &current_num_leaf_nodes, old_from_new, &num_nodes_in);
-#else
-      SplitTreeDepthFirst(
-        metric_in, matrix, weights, node, leaf_size, max_num_leaf_nodes,
-        &current_num_leaf_nodes, old_from_new, &num_nodes_in);
-#endif
 
       if(num_nodes) {
         *num_nodes = num_nodes_in;

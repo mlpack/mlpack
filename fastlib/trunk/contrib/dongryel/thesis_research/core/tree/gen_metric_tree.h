@@ -14,10 +14,7 @@
 #include <boost/mpi/operations.hpp>
 #include <boost/serialization/serialization.hpp>
 #include <boost/tuple/tuple.hpp>
-
-#ifdef _OPENMP_
 #include <omp.h>
-#endif
 
 #include "core/math/math_lib.h"
 #include "core/parallel/distributed_tree_util.h"
