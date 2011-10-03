@@ -4,8 +4,8 @@
  *
  * Implementation of the Softmax error function.
  */
-#ifndef __MLPACK_CORE_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
-#define __MLPACK_CORE_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
+#ifndef __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
+#define __MLPACK_METHODS_NCA_NCA_SOFTMAX_ERROR_FUNCTION_IMPL_H
 
 #include "nca_softmax_error_function.h"
 
@@ -43,7 +43,7 @@ void SoftmaxErrorFunction<Kernel>::Gradient(const arma::mat& coordinates,
   // memory-friendly way to calculate this.  Looping over each i and k (again
   // O((n * (n + 1)) / 2) as with the last step, we can add the following to the
   // sum:
-  // 
+  //
   //   if class of i is the same as the class of k, add
   //     (((p_i - (1 / p_i)) p_ik) + ((p_k - (1 / p_k)) p_ki)) x_ik x_ik^T
   //   otherwise, add
@@ -106,7 +106,7 @@ void SoftmaxErrorFunction<Kernel>::Precalculate(const arma::mat& coordinates) {
       // Add this to the denominators of both i and j: p_ij = p_ji.
       denominators_[i] += eval;
       denominators_[j] += eval;
-      
+
       // If i and j are the same class, add to numerator of both.
       if (labels_[i] == labels_[j]) {
         p_[i] += eval;

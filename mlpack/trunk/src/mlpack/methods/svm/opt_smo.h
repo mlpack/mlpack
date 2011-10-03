@@ -38,7 +38,7 @@
 #ifndef __MLPACK_METHODS_SVM_OPT_SMO_H
 #define __MLPACK_METHODS_SVM_OPT_SMO_H
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace svm {

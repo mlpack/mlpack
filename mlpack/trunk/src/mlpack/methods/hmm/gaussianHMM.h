@@ -10,7 +10,7 @@
 #ifndef __MLPACK_METHODS_HMM_GAUSSIAN_HMM_H
 #define __MLPACK_METHODS_HMM_GAUSSIAN_HMM_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 /**
  * A wrapper class for HMM functionals in single Gaussian case

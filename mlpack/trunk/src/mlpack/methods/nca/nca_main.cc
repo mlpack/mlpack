@@ -4,13 +4,13 @@
  *
  * Executable for Neighborhood Components Analysis.
  */
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include <mlpack/core/kernels/lmetric.h>
 
 #include "nca.h"
 
 // Define parameters.
-PROGRAM_INFO("Neighborhood Components Analysis", 
+PROGRAM_INFO("Neighborhood Components Analysis",
     "documentation not done yet", "");
 
 PARAM_STRING_REQ("input_file", "Input dataset to run NCA on.", "");

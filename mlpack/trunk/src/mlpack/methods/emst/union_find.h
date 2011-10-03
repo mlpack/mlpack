@@ -12,7 +12,7 @@
 #ifndef UNION_FIND_H
 #define UNION_FIND_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace emst {

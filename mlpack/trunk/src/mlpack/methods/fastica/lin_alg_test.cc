@@ -7,7 +7,7 @@
  *
  * @author Ryan Curtin
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "lin_alg.h"
 

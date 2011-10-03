@@ -9,8 +9,6 @@
 #ifndef GEN_RANGE_H
 #define GEN_RANGE_H
 
-#include "fastlib/base/common.h"
-
 #include <math.h>
 
 /**
@@ -29,12 +27,12 @@ class GenRange {
    * The upper bound.
    */
   T hi;
-  
+
   OT_DEF_BASIC(GenRange) {
     OT_MY_OBJECT(lo);
     OT_MY_OBJECT(hi);
   }
-  
+
  public:
   /** Initializes to specified values. */
   GenRange(T lo_in, T hi_in)
@@ -46,7 +44,7 @@ class GenRange {
 
   /** Initializes to -infinity to infinity. */
   void InitUniversalSet();
-  
+
   /** Initializes to a range of values. */
   void Init(T lo_in, T hi_in) {
     lo = lo_in;
@@ -66,18 +64,18 @@ class GenRange {
 
   /**
    * Gets the span of the range, hi - lo.
-   */  
+   */
   T width() const {
     return hi - lo;
   }
 
   /**
    * Gets the midpoint of this range.
-   */  
+   */
   double mid() const {
     return (hi + lo) / 2.0;
   }
-  
+
   /**
    * Interpolates (factor) * hi + (1 - factor) * lo.
    */
@@ -124,7 +122,7 @@ class GenRange {
     }
     return *this;
   }
-  
+
   /**
    * Shrinks range to be the overlap with another range, becoming an empty
    * set if there is no overlap.
@@ -143,7 +141,7 @@ class GenRange {
   friend GenRange operator - (const GenRange& r) {
     return GenRange(-r.hi, -r.lo);
   }
-  
+
   /** Scales upper and lower bounds. */
   const GenRange& operator *= (T d) {
     DEBUG_ASSERT_MSG
@@ -166,14 +164,14 @@ class GenRange {
       (d >= 0, "don't multiply DRanges by negatives, explicitly negate");
     return GenRange(r.lo * d, r.hi * d);
   }
-  
+
   /** Sums the upper and lower independently. */
   const GenRange& operator += (const GenRange& other) {
     lo += other.lo;
     hi += other.hi;
     return *this;
   }
-  
+
   /** Subtracts from the upper and lower.
    * THIS SWAPS THE ORDER OF HI AND LO, assuming a worst case result.
    * This is NOT an undo of the + operator.
@@ -183,14 +181,14 @@ class GenRange {
     hi -= other.lo;
     return *this;
   }
-  
+
   /** Adds to the upper and lower independently. */
   const GenRange& operator += (T d) {
     lo += d;
     hi += d;
     return *this;
   }
-  
+
   /** Subtracts from the upper and lower independently. */
   const GenRange& operator -= (T d) {
     lo -= d;
@@ -211,7 +209,7 @@ class GenRange {
     result.hi = a.hi - b.lo;
     return result;
   }
-  
+
   friend GenRange operator + (const GenRange& a, T b) {
     GenRange result;
     result.lo = a.lo + b;
@@ -237,7 +235,7 @@ class GenRange {
       hi = range.hi;
     }
   }
-  
+
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
@@ -261,7 +259,7 @@ class GenRange {
       }
     }
   }
-  
+
   /**
    * Takes the minimum of upper and lower bounds independently.
    */
@@ -276,29 +274,29 @@ class GenRange {
 
   /**
    * Compares if this is STRICTLY less than another range.
-   */  
+   */
   friend bool operator < (const GenRange& a, const GenRange& b) {
     return a.hi < b.lo;
   }
   EXPAND_LESS_THAN(GenRange);
   /**
    * Compares if this is STRICTLY equal to another range.
-   */  
+   */
   friend bool operator == (const GenRange& a, const GenRange& b) {
     return a.lo == b.lo && a.hi == b.hi;
   }
   EXPAND_EQUALS(GenRange);
-  
+
   /**
    * Compares if this is STRICTLY less than a value.
-   */  
+   */
   friend bool operator < (const GenRange& a, T b) {
     return a.hi < b;
   }
   EXPAND_HETERO_LESS_THAN(GenRange, T);
   /**
    * Compares if a value is STRICTLY less than this range.
-   */  
+   */
   friend bool operator < (T a, const GenRange& b) {
     return a < b.lo;
   }
@@ -306,7 +304,7 @@ class GenRange {
 
   /**
    * Determines if a point is contained within the range.
-   */  
+   */
   bool Contains(T d) const {
     return d >= lo || d <= hi;
   }

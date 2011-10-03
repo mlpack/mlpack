@@ -1,14 +1,14 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file mog_l2e_main.cc
- * 
+ *
  * This program test drives the L2 estimation
  * of a Gaussian Mixture model.
- * 
+ *
  * PARAMETERS TO BE INPUT:
- * 
- * --data 
- * This is the file that contains the data on which 
+ *
+ * --data
+ * This is the file that contains the data on which
  * the model is to be fit
  *
  * --mog_l2e/K
@@ -22,7 +22,6 @@
  */
 
 #include "mog_l2e.h"
-#include "mlpack/optimization/optimizers.h"
 
 /*const fx_entry_doc mog_l2e_main_entries[] = {
   {"data", FX_REQUIRED, FX_STR, NULL,
@@ -69,7 +68,7 @@ int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
-  
+
   const char *data_filename = IO::GetParam<std::string>("mog/data").c_str();
 
   Matrix data_points;
@@ -80,7 +79,7 @@ int main(int argc, char* argv[]) {
   size_t number_of_gaussians = IO::GetParam<int>("mog_l2e/K");
   IO::GetParam<int>("mog_l2e/D") = data_points.n_rows());
   size_t dimension = IO::GetParam<int>("mog_l2e/D");
-  
+
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
 
   const char *opt_method = IO::GetParam<std::string>("opt/method");
@@ -95,7 +94,7 @@ int main(int argc, char* argv[]) {
     ////// OPTIMIZER USING NELDER MEAD METHOD //////
 
     NelderMead opt;
-    
+
     ////// Initializing the optimizer //////
     IO::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
@@ -109,16 +108,16 @@ int main(int argc, char* argv[]) {
     }
 
     IO::StartTimer("opt/get_init_pts");
-    MoGL2E::MultiplePointsGenerator(pts, param_dim+1, 
+    MoGL2E::MultiplePointsGenerator(pts, param_dim+1,
 				    data_points, number_of_gaussians);
     IO::StopTimer("opt/get_init_pts");
 
     ////// The optimization //////
-    
+
     IO::StartTimer("opt/optimizing");
     opt.Eval(pts);
     IO::StopTimer("opt/optimizing");
-    
+
     ////// Making model with the optimal parameters //////
     mog.MakeModel(mog_l2e_module, pts[0]);
 
@@ -128,7 +127,7 @@ int main(int argc, char* argv[]) {
     ////// OPTIMIZER USING QUASI NEWTON METHOD //////
 
     QuasiNewton opt;
-    
+
     ////// Initializing the optimizer //////
     IO::StartTimer("opt/init_opt");
     opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
@@ -143,30 +142,30 @@ int main(int argc, char* argv[]) {
     IO::StopTimer("opt/get_init_pt");
 
     ////// The optimization //////
-    
+
     IO::StartTimer("opt/optimizing");
     opt.Eval(pt);
     IO::StopTimer("opt/optimizing");
-    
+
     ////// Making model with optimal parameters //////
     mog.MakeModel(mog_l2e_module, pt);
 
   }
-   
+
   long double error = mog.L2Error(data_points);
   NOTIFY("Minimum L2 error achieved: %Lf", error);
   mog.Display();
-  
+
   ArrayList<double> results;
   mog.OutputResults(&results);
-  
-  
+
+
   ////// OUTPUT RESULTS //////
-  
+
   const char *output_filename = IO::GetParam<std::string>("mog_l2e/output");
-  
+
   FILE *output_file = fopen(output_filename, "w");
-  
+
   ot::Print(results, output_file);
   fclose(output_file);
 

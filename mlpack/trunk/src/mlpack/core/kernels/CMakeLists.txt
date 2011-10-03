@@ -25,7 +25,6 @@ add_executable(kernel_test
   kernel_test.cc
 )
 target_link_libraries(kernel_test
-  fastlib
   mlpack
   boost_unit_test_framework
 )

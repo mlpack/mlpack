@@ -9,7 +9,7 @@
  *   viterbi --type=TYPE --profile=PROFILE --seqfile=FILE [OPTIONS]
  * See the usage() function for complete option list
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "support.h"
 #include "discreteHMM.h"

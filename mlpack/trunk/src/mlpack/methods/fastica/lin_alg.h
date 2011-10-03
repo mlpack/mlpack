@@ -9,7 +9,7 @@
 #ifndef LIN_ALG_H
 #define LIN_ALG_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #define max_rand_i 100000
 

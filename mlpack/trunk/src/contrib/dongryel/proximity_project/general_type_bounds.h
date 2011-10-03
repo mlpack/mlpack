@@ -14,12 +14,9 @@
 #ifndef TREE_GEN_BOUNDS_H
 #define TREE_GEN_BOUNDS_H
 
-#include "fastlib/la/matrix.h"
-#include "fastlib/la/la.h"
+#include <mlpack/core.h>
 
-#include "fastlib/math/math_lib.h"
 #include "gen_range.h"
-#include "fastlib/mmanager/memory_manager.h"
 
 /**
  * Hyper-rectangle bound for an L-metric.
@@ -59,7 +56,7 @@ class GenHrectBound {
    */
   void StaticInit(size_t dimension) {
     //DEBUG_ASSERT_MSG(dim_ == BIG_BAD_NUMBER, "Already initialized");
-    bounds_ = 
+    bounds_ =
       mmapmm::MemoryManager<false>::allocator_->Alloc<GenRange<T> >(dimension);
 
     dim_ = dimension;

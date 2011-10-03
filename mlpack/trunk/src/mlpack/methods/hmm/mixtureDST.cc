@@ -3,7 +3,7 @@
  *
  * This file contains implementation of functions in mixtureDST.h
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "support.h"
 #include "mixtureDST.h"

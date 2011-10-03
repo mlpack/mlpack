@@ -11,7 +11,7 @@
 #ifndef TREE_GENERAL_SPACETREE_H
 #define TREE_GENERAL_SPACETREE_H
 
-#include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 
 /**
  * A binary space partitioning tree, such as KD or ball tree.
@@ -32,14 +32,14 @@ class GeneralBinarySpaceTree {
   typedef TBound Bound;
   typedef TDataset Dataset;
   typedef TStatistic Statistic;
-  
+
   Bound bound_;
   GeneralBinarySpaceTree *left_;
   GeneralBinarySpaceTree *right_;
   size_t begin_;
   size_t count_;
   Statistic stat_;
-  
+
   public:
   /*
   GeneralBinarySpaceTree() {
@@ -48,7 +48,7 @@ class GeneralBinarySpaceTree {
     DEBUG_POISON_PTR(left_);
     DEBUG_POISON_PTR(right_);
   }
-  
+
   ~GeneralBinarySpaceTree() {
     if (!is_leaf()) {
       delete left_;
@@ -60,7 +60,7 @@ class GeneralBinarySpaceTree {
     DEBUG_POISON_PTR(right_);
   }
   */
-  
+
   void Init(size_t begin_in, size_t count_in) {
     mlpack::IO::Assert(begin_ == ~((size_t)0));
     left_ = NULL;
@@ -94,7 +94,7 @@ class GeneralBinarySpaceTree {
       return right_->FindByBeginCount(begin_q, count_q);
     }
   }
-  
+
   /**
    * Find a node in this tree by its begin and count (const).
    *
@@ -120,14 +120,14 @@ class GeneralBinarySpaceTree {
       return right_->FindByBeginCount(begin_q, count_q);
     }
   }
-  
+
   // TODO: Not const correct
-  
+
   /**
    * Used only when constructing the tree.
    */
   void set_children
-  (const Dataset& data, GeneralBinarySpaceTree *left_in, 
+  (const Dataset& data, GeneralBinarySpaceTree *left_in,
    GeneralBinarySpaceTree *right_in) {
      left_ = left_in;
      right_ = right_in;
@@ -188,14 +188,14 @@ class GeneralBinarySpaceTree {
   size_t end() const {
     return begin_ + count_;
   }
-  
+
   /**
    * Gets the number of points in this subset.
    */
   size_t count() const {
     return count_;
   }
-  
+
   void Print() const {
     if (!is_leaf()) {
       printf("internal node: %d to %d: %d points total\n",

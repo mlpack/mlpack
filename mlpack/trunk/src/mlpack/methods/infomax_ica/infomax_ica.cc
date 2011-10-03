@@ -6,7 +6,7 @@
  *
  * @see infomax_ica.h
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "infomax_ica.h"
 

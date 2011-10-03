@@ -1,7 +1,7 @@
 #ifndef __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTION_H
 #define __MLPACK_METHODS_HMM_DISCRETE_DISTRIBUTION_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 class DiscreteDST {
  private:

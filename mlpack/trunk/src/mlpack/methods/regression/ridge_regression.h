@@ -1,7 +1,7 @@
 #ifndef RIDGE_REGRESSION_H_
 #define RIDGE_REGRESSION_H_
 
-#include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 #include "ridge_regression_util.h"
 
 class RidgeRegression {
@@ -10,8 +10,8 @@ class RidgeRegression {
   RidgeRegression() {
   }
 
-  RidgeRegression(const arma::mat &predictors, 
-	    const arma::mat &predictions, 
+  RidgeRegression(const arma::mat &predictors,
+	    const arma::mat &predictions,
 	    bool use_normal_equation_method = true);
 
   RidgeRegression(const arma::mat &input_data, size_t selector,
@@ -31,15 +31,15 @@ class RidgeRegression {
    *  @param prediction_index The row index of the input data that
    *  should be used as the predictions (training target).
    */
-  RidgeRegression(const arma::mat &input_data, 
+  RidgeRegression(const arma::mat &input_data,
             const arma::Col<size_t> &predictor_indices,
             size_t &prediction_index, const bool use_normal_equation_method = true);
 
-  RidgeRegression(const arma::mat &input_data, 
+  RidgeRegression(const arma::mat &input_data,
             const arma::Col<size_t> &predictor_indices,
             const arma::mat &prediction, const bool use_normal_equation_method = true);
 
-  inline void ReInitTargetValues(const arma::mat &input_data, 
+  inline void ReInitTargetValues(const arma::mat &input_data,
                                  const size_t target_value_index);
 
   inline void ReInitTargetValues(const arma::mat &target_values_in);
@@ -54,8 +54,8 @@ class RidgeRegression {
 				size_t num);
 
   void FeatureSelectedRegression
-  (const arma::Col<size_t> &predictor_indices, 
-   const arma::Col<size_t> &prune_predictor_indices, 
+  (const arma::Col<size_t> &predictor_indices,
+   const arma::Col<size_t> &prune_predictor_indices,
    const arma::mat &original_target_training_values,
    arma::Col<size_t> *output_predictor_indices);
 
@@ -66,7 +66,7 @@ class RidgeRegression {
    */
   void Predict(const arma::mat &dataset, arma::vec *new_predictions);
 
-  void Predict(const arma::mat &dataset, 
+  void Predict(const arma::mat &dataset,
 	       const arma::Col<size_t> &predictor_indices,
 	       arma::vec *new_predictions);
 
@@ -93,15 +93,15 @@ class RidgeRegression {
    */
   arma::mat factors_;
 
-  void ComputeLinearModel_(double lambda_sq, const arma::vec &singular_values, 
+  void ComputeLinearModel_(double lambda_sq, const arma::vec &singular_values,
 			   const arma::mat &u, const arma::mat &v_t,
 			   size_t num_features);
-  
+
   void BuildDesignMatrixFromIndexSet_
   (const arma::mat &input_data, const arma::mat& predictions,
    const arma::Col<size_t> *predictor_indices);
-  
-  void BuildCovariance_(const arma::mat &input_data, 
+
+  void BuildCovariance_(const arma::mat &input_data,
 			const arma::Col<size_t> *predictor_indices,
 			const arma::mat& predictions_in);
 

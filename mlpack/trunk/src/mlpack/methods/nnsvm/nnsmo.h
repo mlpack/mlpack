@@ -1,9 +1,7 @@
 #ifndef U_NNSVM_NNSMO_H
 #define U_NNSVM_NNSMO_H
 
-#include <fastlib/fastlib.h>
-
-#include <armadillo>
+#include <mlpack/core.h>
 
 /* TODO: I don't actually want these to be public */
 /* but sometimes we should provide freedoms for our advanced users */

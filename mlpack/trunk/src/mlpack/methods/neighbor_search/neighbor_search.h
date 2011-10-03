@@ -4,11 +4,12 @@
  * Defines the AllkNN class to perform all-k-nearest-neighbors on two specified
  * data sets.
  */
-
 #ifndef __MLPACK_NEIGHBOR_SEARCH_H
 #define __MLPACK_NEIGHBOR_SEARCH_H
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
+#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/spacetree.h>
 #include <vector>
 #include <string>
 

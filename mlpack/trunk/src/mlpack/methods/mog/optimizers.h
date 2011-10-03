@@ -9,9 +9,7 @@
 #ifndef OPTIMIZERS_H
 #define OPTIMIZERS_H
 
-#include <fastlib/fastlib.h>
-#include <fastlib/fx/io.h>
-
+#include <mlpack/core.h>
 
 PARAM_STRING("method", "The method used to optimize", "opt", "");
 
@@ -63,7 +61,7 @@ PARAM(double, "tolerance", "Undocumented parameter", 1.0e-5, false);
   {"tolerance", FX_PARAM, FX_DOUBLE, NULL,
    " The tolerance value for the parameters"
    " (defaults to 1.0e-5).\n"},
- 
+
   {"EPSILON", FX_PARAM, FX_DOUBLE, NULL,
    " Value of epsilon.\n"},
   {"TOLERANCE", FX_PARAM, FX_DOUBLE, NULL,
@@ -72,7 +70,7 @@ PARAM(double, "tolerance", "Undocumented parameter", 1.0e-5, false);
    " Tolerance value for the gradient of the function.\n"},
   {"MAX_STEP_SIZE", FX_PARAM, FX_DOUBLE, NULL,
    " The maximum step size in the direction of the gradient.\n"},
-  
+
   FX_ENTRY_DOC_DONE
 };
 
@@ -86,10 +84,10 @@ PARAM_MODULE("opt", "This file contains two optimizers.");
 /**
  * An optimizer using the Nelder Mead method,
  * also known as the polytope or the simplex
- * method. 
- * 
+ * method.
+ *
  * It does multivariate minimization of an
- * objective function. If it is optimizing in 
+ * objective function. If it is optimizing in
  * 'd' dimensions, it would require 'd+1'
  * starting points.
  *
@@ -145,14 +143,14 @@ class NelderMead {
 
   void Eval(double **pts);
   long double ModSimplex_(double **pts, long double *y,
-			  double *psum, size_t ihi, float fac); 
+			  double *psum, size_t ihi, float fac);
 };
 
 /**
  * An optimizer using the Quasi Newton method,
  * also known as the variable metrics
- * method. 
- * 
+ * method.
+ *
  * It does multivariate minimization of an
  * objective function using only the function
  * value and the gradients.
@@ -189,12 +187,12 @@ class QuasiNewton {
   QuasiNewton(){
   }
 
-  ~QuasiNewton(){ 
+  ~QuasiNewton(){
   }
 
   void Init(long double (*fun)(Vector&, const Matrix&, Vector*),
 	    Matrix& data, datanode *opt_module){
-	  
+
     data_.Copy(data);
     func_ptr_ = fun;
     opt_module_ = opt_module;

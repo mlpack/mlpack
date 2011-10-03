@@ -3,9 +3,7 @@
  *
  * Test file for NNSVM class
  */
-
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 #include <iostream>
 #include "nnsvm.h"
 

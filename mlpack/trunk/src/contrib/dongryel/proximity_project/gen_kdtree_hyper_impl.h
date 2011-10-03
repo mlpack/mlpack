@@ -1,6 +1,6 @@
 /* Implementation for the regular pointer-style kd-tree builder. */
 
-#include "fastlib/fastlib_int.h"
+#include <mlpack/core.h>
 
 namespace tree_gen_kdtree_private {
 
@@ -8,31 +8,31 @@ namespace tree_gen_kdtree_private {
   void FindBoundFromMatrix(const GenMatrix<T>& lower_limit_matrix,
 			   const GenMatrix<T>& upper_limit_matrix,
 			   size_t first, size_t count, TBound *bounds) {
-    
+
     size_t end = first + count;
     for (size_t i = first; i < end; i++) {
       GenVector<T> col;
-      
+
       lower_limit_matrix.MakeColumnVector(i, &col);
       *bounds |= col;
-      
+
       col.Destruct();
       upper_limit_matrix.MakeColumnVector(i, &col);
       *bounds |= col;
     }
   }
-  
+
   template<typename T, typename TBound>
-  size_t MatrixPartition(GenMatrix<T>& lower_limit_matrix, 
+  size_t MatrixPartition(GenMatrix<T>& lower_limit_matrix,
 			  GenMatrix<T>& upper_limit_matrix,
 			  size_t split_matrix,
 			  size_t dim, double splitvalue,
-			  size_t first, size_t count, TBound* left_bound, 
+			  size_t first, size_t count, TBound* left_bound,
 			  TBound* right_bound, size_t *old_from_new) {
 
     size_t left = first;
     size_t right = first + count - 1;
-    
+
     /* At any point:
      *
      *   everything < left is correct
@@ -86,10 +86,10 @@ namespace tree_gen_kdtree_private {
       lower_limit_matrix.MakeColumnVector(right, &right_vector);
 
       left_vector.SwapValues(&right_vector);
-      
+
       *left_bound |= left_vector;
       *right_bound |= right_vector;
-      
+
       // Then swap the upper limits.
       left_vector.Destruct();
       right_vector.Destruct();
@@ -97,28 +97,28 @@ namespace tree_gen_kdtree_private {
       upper_limit_matrix.MakeColumnVector(right, &right_vector);
 
       left_vector.SwapValues(&right_vector);
-      
+
       *left_bound |= left_vector;
       *right_bound |= right_vector;
-      
+
       // Swap indices...
       if (old_from_new) {
         size_t t = old_from_new[left];
         old_from_new[left] = old_from_new[right];
         old_from_new[right] = t;
       }
-      
+
       DEBUG_ASSERT(left <= right);
       right--;
     }
-    
+
     DEBUG_ASSERT(left == right + 1);
 
     return left;
   }
 
   template<typename T, typename TKdTree, typename TKdTreeSplitter>
-  void SplitGenKdTree(GenMatrix<T>& lower_limit_matrix, 
+  void SplitGenKdTree(GenMatrix<T>& lower_limit_matrix,
 		      GenMatrix<T>& upper_limit_matrix, TKdTree *node,
 		      size_t leaf_size, size_t *old_from_new) {
 
@@ -130,7 +130,7 @@ namespace tree_gen_kdtree_private {
       T max_width = 0;
       double split_val = -1;
       size_t split_matrix = -1;
-      
+
       // iterate over each dimension
       for (size_t d = 0; d < lower_limit_matrix.n_rows(); d++) {
 	T min_coord_lower = 1, min_coord_upper = 1;
@@ -142,9 +142,9 @@ namespace tree_gen_kdtree_private {
 	    min_coord_lower = max_coord_lower = lower_limit_matrix.get(d, p);
 	  }
 	  else {
-	    min_coord_lower = std::min(min_coord_lower, 
+	    min_coord_lower = std::min(min_coord_lower,
 				       lower_limit_matrix.get(d, p));
-	    max_coord_lower = std::max(max_coord_lower, 
+	    max_coord_lower = std::max(max_coord_lower,
 				       lower_limit_matrix.get(d, p));
 	  }
 	} // end of iterating over the lower limit matrix...
@@ -156,14 +156,14 @@ namespace tree_gen_kdtree_private {
 	    min_coord_upper = max_coord_upper = upper_limit_matrix.get(d, p);
 	  }
 	  else {
-	    min_coord_upper = std::min(min_coord_upper, 
+	    min_coord_upper = std::min(min_coord_upper,
 				       upper_limit_matrix.get(d, p));
-	    max_coord_upper = std::max(max_coord_upper, 
+	    max_coord_upper = std::max(max_coord_upper,
 				       upper_limit_matrix.get(d, p));
 	  }
         } // end of iterating over the upper limit matrix...
 	T w2 = max_coord_upper - min_coord_upper;
-	
+
 	T w_combined = std::max(w, w2);
 
         if(unlikely(w_combined > max_width)) {
@@ -178,21 +178,21 @@ namespace tree_gen_kdtree_private {
       if (max_width < DBL_EPSILON) {
         // Okay, we can't do any splitting, because all these points are the
         // same.  We have to give up.
-      } 
+      }
       else {
         left = new TKdTree();
         left->bound().Init(lower_limit_matrix.n_rows());
-	
+
         right = new TKdTree();
         right->bound().Init(lower_limit_matrix.n_rows());
 
-        size_t split_col = 
+        size_t split_col =
 	  MatrixPartition(lower_limit_matrix, upper_limit_matrix, split_matrix,
 			  split_dim, split_val,
 			  node->begin(), node->count(),
 			  &left->bound(), &right->bound(),
 			  old_from_new);
-	
+
 	VERBOSE_MSG(3.0,"split (%d,[%d],%d) dim %d on %f (between %f, %f)",
 		    node->begin(), split_col,
 		    node->begin() + node->count(), split_dim, split_val,
@@ -201,12 +201,12 @@ namespace tree_gen_kdtree_private {
 
 	left->Init(node->begin(), split_col - node->begin());
 	right->Init(split_col, node->begin() + node->count() - split_col);
-	
+
 	SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
-	  (lower_limit_matrix, upper_limit_matrix, left, leaf_size, 
+	  (lower_limit_matrix, upper_limit_matrix, left, leaf_size,
 	   old_from_new);
 	SplitGenKdTree<T, TKdTree, TKdTreeSplitter>
-	  (lower_limit_matrix, upper_limit_matrix, right, leaf_size, 
+	  (lower_limit_matrix, upper_limit_matrix, right, leaf_size,
 	   old_from_new);
       }
     }

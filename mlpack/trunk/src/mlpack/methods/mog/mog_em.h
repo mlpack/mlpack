@@ -8,7 +8,7 @@
 #ifndef MOG_EM_H
 #define MOG_EM_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 /*const fx_entry_doc mog_em_entries[] = {
   {"K", FX_PARAM, FX_INT, NULL,

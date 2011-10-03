@@ -1,16 +1,16 @@
 /**
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file nbc_main.cc
- * 
+ *
  * This program test drives the Simple Naive Bayes Classifier
- * 
+ *
  * This classifier does parametric naive bayes classification
  * assuming that the features are sampled from a Gaussian
  * distribution.
  *
  * PARAMETERS TO BE INPUT:
- * 
- * --train 
+ *
+ * --train
  * This is the file that contains the training data
  *
  * --nbc/classes
@@ -22,14 +22,12 @@
  *
  * --output
  * This file will contain the classes to which the corresponding
- * data points in the testing data 
- * 
+ * data points in the testing data
+ *
  */
 #include "simple_nbc.h"
-#include <fastlib/fx/io.h>
 
-#include <armadillo>
-#include <fastlib/data/dataset.h> 
+#include <mlpack/core.h>
 
 
 /*const fx_entry_doc parm_nbc_main_entries[] = {
@@ -86,7 +84,7 @@ int main(int argc, char* argv[]) {
   data::Load(testing_data_filename, testing_data);
 
   ////// SIMPLE NAIVE BAYES CLASSIFICATION ASSUMING THE DATA TO BE UNIFORMLY DISTRIBUTED //////
-  
+
   ////// Timing the training of the Naive Bayes Classifier //////
   IO::StartTimer("nbc/training");
 

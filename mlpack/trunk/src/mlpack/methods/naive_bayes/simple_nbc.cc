@@ -2,18 +2,16 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file simple_nbc.h
  *
- * A Naive Bayes Classifier which parametrically 
+ * A Naive Bayes Classifier which parametrically
  * estimates the distribution of the features.
- * It is assumed that the features have been 
+ * It is assumed that the features have been
  * sampled from a Gaussian PDF
  *
  */
+#include <mlpack/core.h>
 
-#include <fastlib/fastlib.h>
-#include <fastlib/fx/io.h>
 #include "simple_nbc.h"
 #include "phi.h"
-#include "fastlib/fx/io.h"
 
 using namespace mlpack;
 
@@ -34,13 +32,13 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
   means_.set_size(number_features,number_of_classes_);
   variances_.set_size(number_features,number_of_classes_);
 
-  IO::Info << number_examples << " examples with " << number_features 
+  IO::Info << number_examples << " examples with " << number_features
     << " features each" << std::endl;
 
   IO::GetParam<int>("nbc/features") = number_features;
   IO::GetParam<int>("nbc/examples") = number_examples;
 
-  // calculating the class probabilities as well as the 
+  // calculating the class probabilities as well as the
   // sample mean and variance for each of the features
   // with respect to each of the labels
   for(size_t i = 0; i < number_of_classes_; i++ ) {
@@ -56,14 +54,14 @@ SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
 	}
       }
     }
-    class_probabilities_[i] = (double)number_of_occurrences 
+    class_probabilities_[i] = (double)number_of_occurrences
       / (double)number_examples ;
     for(size_t k = 0; k < number_features; k++) {
       double sum = feature_sum(k),
 	     sum_squared = feature_sum_squared(k);
 
       means_(k, i) = (sum / number_of_occurrences);
-      variances_(k, i) = (sum_squared 
+      variances_(k, i) = (sum_squared
 			    - (sum * sum / number_of_occurrences))
 			   /(number_of_occurrences - 1);
     }
@@ -81,10 +79,10 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 
   arma::vec tmp_vals(number_of_classes_);
   size_t number_features = test_data.n_rows - 1;
-		      
+
   results.zeros(test_data.n_cols);
-  
-  IO::Info << test_data.n_cols << " test cases with " << number_features 
+
+  IO::Info << test_data.n_cols << " test cases with " << number_features
     << " features each" << std::endl;
 
   IO::GetParam<int>("nbc/tests") = test_data.n_cols;
@@ -92,8 +90,8 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
   // for each of the classes
 
   // looping over every test case
-  for (size_t n = 0; n < test_data.n_cols; n++) {			
-    
+  for (size_t n = 0; n < test_data.n_cols; n++) {
+
     //looping over every class
     for (size_t i = 0; i < number_of_classes_; i++) {
       // Using the log values to prevent floating point underflow
@@ -104,9 +102,9 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 	tmp_vals(i) += log(phi(test_data(j, n),
 			       means_(j, i),
 			       variances_(j, i))
-			   );	  
+			   );
       }
-    }			
+    }
 
     // Find the index of the maximum value in tmp_vals.
     size_t max = 0;
@@ -117,6 +115,6 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
     results(n) = max;
   }
 
-  
+
   return;
 }

@@ -13,9 +13,8 @@
 
 #include "opt_smo.h"
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 
-#include <string>
 #include <typeinfo>
 #include <vector>
 #include <err.h>

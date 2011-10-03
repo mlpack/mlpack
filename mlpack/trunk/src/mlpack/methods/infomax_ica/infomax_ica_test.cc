@@ -3,7 +3,7 @@
  *
  * Test driver for our infomax ICA method.
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "infomax_ica.h"
 

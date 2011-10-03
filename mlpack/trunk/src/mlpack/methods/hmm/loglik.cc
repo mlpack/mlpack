@@ -8,7 +8,7 @@
  *   loglik --type=TYPE --profile=PROFILE [OPTIONS]
  * See the usage() function for complete option list
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "support.h"
 #include "discreteHMM.h"

@@ -10,7 +10,7 @@
 #ifndef MOG_L2E_H
 #define MOG_L2E_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 /*const fx_entry_doc mog_l2e_entries[] = {
   {"K", FX_PARAM, FX_INT, NULL,

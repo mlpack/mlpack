@@ -3,7 +3,7 @@
  *
  * This file contains the implementation of functions in discreteHMM.h
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "support.h"
 #include "discreteHMM.h"

@@ -15,7 +15,7 @@
  *
  * =====================================================================================
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 using namespace mlpack;
 

@@ -7,7 +7,7 @@
  * in a row of a matrix and returns them
  *
  */
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 /**
  * Finds the index of the minimum element

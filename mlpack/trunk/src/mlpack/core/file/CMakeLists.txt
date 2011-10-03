@@ -14,7 +14,7 @@ foreach(file ${SOURCES})
 endforeach()
 # Append sources (with directory name) to list of all MLPACK sources (used at
 # parent scope).
-set(FASTLIB_SRCS ${FASTLIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
+set(MLPACK_SRCS ${MLPACK_SRCS} ${DIR_SRCS} PARENT_SCOPE)
 
 # test executable
 add_executable(textfile_test

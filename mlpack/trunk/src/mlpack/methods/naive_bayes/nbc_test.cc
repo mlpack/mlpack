@@ -1,5 +1,4 @@
-#include <fastlib/fastlib.h>
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 #include "simple_nbc.h"
 
 #define BOOST_TEST_MODULE Test_Simple_NBC_Main

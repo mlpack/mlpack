@@ -1,8 +1,5 @@
-#include <armadillo>
-#include <iostream>
-#include <string>
+#include <mlpack/core.h>
 
-#include <fastlib/fx/io.h>
 #include "svm.h"
 
 #define BOOST_TEST_MODULE SVM test
@@ -17,7 +14,7 @@ arma::mat matrix(20,3);
 bool first = true;
 
 /***
- * 
+ *
  */
 /*
 BOOST_AUTO_TEST_CASE(test_test) {
@@ -32,7 +29,7 @@ BOOST_AUTO_TEST_CASE(test_test) {
   //IO::GetParam<>() = ;
 
 /**
- *  Creates the data to train and test with and prints it to stdout. 
+ *  Creates the data to train and test with and prints it to stdout.
  *  Should only have any effect once.
  */
 void setup() {
@@ -86,7 +83,7 @@ void verify(size_t learner_typeid, arma::mat& data, SVM<T>& svm) {
     arma::vec testvec = data.col(i);
 
     double predictedvalue = svm.Predict(learner_typeid, testvec);
-    BOOST_REQUIRE_CLOSE(predictedvalue, 
+    BOOST_REQUIRE_CLOSE(predictedvalue,
 	data(data.n_rows-1,i),1e-6);
   }
 }

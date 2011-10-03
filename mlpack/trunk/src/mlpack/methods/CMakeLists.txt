@@ -6,14 +6,14 @@ set(DIRS
   fastica
   hmm
   infomax_ica
-  kernel_pca
-  mog
+  # kernel_pca # (required sparse and is known to not work or compile)
+  #mog
   # mvu  # (currently known to not work)
   naive_bayes
   nca
   neighbor_search
   nnsvm
-  range_search
+  #range_search
   regression
   svm
 )

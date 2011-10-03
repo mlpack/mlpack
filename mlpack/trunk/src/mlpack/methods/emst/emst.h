@@ -10,7 +10,7 @@
 #ifndef EMST_H
 #define EMST_H
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #include "union_find.h"
 

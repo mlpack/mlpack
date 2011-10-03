@@ -7,7 +7,7 @@
 #ifndef __MLPACK_NEIGHBOR_SEARCH_IMPL_H
 #define __MLPACK_NEIGHBOR_SEARCH_IMPL_H
 
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 
 using namespace mlpack::neighbor;
 
@@ -297,7 +297,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
 
   if (reference_node->is_leaf()) {
     // Base case: reference node is a leaf
-    
+
     for (size_t reference_index = reference_node->begin();
         reference_index < reference_node->end(); reference_index++) {
       // Confirm that points do not identify themselves as neighbors
@@ -318,7 +318,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
           InsertNeighbor(point_id, insert_position, reference_index, distance);
       }
     } // for reference_index
-    
+
     best_dist_so_far = neighbor_distances_(knns_ - 1, point_id);
   } else {
     // We'll order the computation by distance.
@@ -340,7 +340,7 @@ void NeighborSearch<Kernel, SortPolicy>::ComputeSingleNeighborsRecursion_(
       else
         ComputeSingleNeighborsRecursion_(point_id, point,
             reference_node->right(), best_dist_so_far);
-      
+
     } else {
       if (SortPolicy::IsBetter(best_dist_so_far, right_distance))
         number_of_prunes_++; // Prune; no possibility of finding a better point.

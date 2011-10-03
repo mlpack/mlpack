@@ -3,8 +3,7 @@
  *
  * Test file for AllkFN class
  */
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 #include "neighbor_search.h"
 
 #define BOOST_TEST_MODULE AllkFN Test
@@ -35,7 +34,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
   data[8] = 0.45;
   data[9] = 0.90;
   data[10] = 1.00;
-  
+
   // We will loop through three times, one for each method of performing the
   // calculation.  We'll always use 10 neighbors, so set that parameter.
   IO::GetParam<int>("neighbor_search/k") = 10;
@@ -56,7 +55,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
         allkfn = new AllkFN(data_mutable);
         break;
     }
-    
+
     // Now perform the actual calculation.
     arma::Mat<size_t> neighbors;
     arma::mat distances;
@@ -66,7 +65,7 @@ BOOST_AUTO_TEST_CASE(exhaustive_synthetic_test) {
     // also remember that the distances returned are squared distances.  As a
     // result, distance comparisons are written out as (distance * distance) for
     // readability.
-   
+
     // Neighbors of point 0.
     BOOST_REQUIRE(neighbors(9, 0) == 2);
     BOOST_REQUIRE_CLOSE(distances(9, 0), (0.10 * 0.10), 1e-5);
@@ -339,7 +338,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
 
   IO::GetParam<bool>("neighbor_search/naive_mode") = true;
   AllkFN naive_(naive_query, naive_references);
- 
+
   arma::Mat<size_t> resulting_neighbors_tree;
   arma::mat distances_tree;
   allkfn_.ComputeNeighbors(resulting_neighbors_tree, distances_tree);
@@ -352,7 +351,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_1) {
     BOOST_REQUIRE(resulting_neighbors_tree[i] == resulting_neighbors_naive[i]);
     BOOST_REQUIRE_CLOSE(distances_tree[i], distances_naive[i], 1e-5);
   }
-} 
+}
 
 /***
  * Test the dual-tree furthest-neighbors method with the naive method.  This
@@ -401,7 +400,7 @@ BOOST_AUTO_TEST_CASE(dual_tree_vs_naive_2) {
  */
 BOOST_AUTO_TEST_CASE(single_tree_vs_naive) {
   arma::mat data_for_tree_;
-  
+
   // Hard-coded filename: bad!
   // Code duplication: also bad!
   if (data::Load("test_data_3_1000.csv", data_for_tree_) != true)

@@ -8,7 +8,7 @@
 
 #include "union_find.h"
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 #define BOOST_TEST_MODULE UnionFindTest
 #include <boost/test/unit_test.hpp>

@@ -3,9 +3,7 @@
  *
  * Test file for AllkNN class
  */
-
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 #include "neighbor_search.h"
 
 #define BOOST_TEST_MODULE AllkNN Test

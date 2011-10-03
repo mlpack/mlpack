@@ -25,10 +25,8 @@
 #ifndef __MLPACK_METHODS_NCA_NCA_H
 #define __MLPACK_METHODS_NCA_NCA_H
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include <mlpack/core/kernels/lmetric.h>
-
-#include <armadillo>
 
 namespace mlpack {
 namespace nca {

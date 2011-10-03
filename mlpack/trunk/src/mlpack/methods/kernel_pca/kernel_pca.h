@@ -10,12 +10,8 @@
 #include <stdio.h>
 #include <errno.h>
 #include <unistd.h>
-#include <mlpack_core.h>
-#include "methods/neighbor_search/neighbor_search.h"
-
-// sparse_matrix.h undefines LI; see #13
-// so we must include allknn.h (which uses LI) first
-#include <fastlib/sparse/sparse_matrix.h>
+#include <mlpack/core.h>
+#include <mlpack/methods/neighbor_search/neighbor_search.h>
 
 /**
  * KernelPCA class is the main class that implements several spectral methods

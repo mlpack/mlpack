@@ -3,7 +3,7 @@
  *
  *       Filename:  ridge_main.cc
  *
- *    Description:  
+ *    Description:
  *
  *        Version:  1.0
  *        Created:  02/16/2009 10:55:21 AM EST
@@ -11,22 +11,16 @@
  *       Compiler:  gcc
  *
  *         Author:  Nikolaos Vasiloglou (NV), nvasil@ieee.org
- *        Company:  
+ *        Company:
  *
  * ============================================================================
  */
-#include <string>
-#include <fastlib/fastlib.h>
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 #include "ridge_regression.h"
 #include "ridge_regression_util.h"
 
-#include <armadillo>
-
 using namespace mlpack;
 
-
-  ////////// Documentation stuffs //////////
 PARAM_STRING("inversion_method", "The method chosen for inverting the design matrix: normalsvd\
  (SVD on normal equation: default), svd (SVD), quicsvd (QUIC-SVD).\n", "ridge", "");
 PARAM_STRING_REQ("predictions", "A file containing the observed predictions.", "ridge");
@@ -42,7 +36,7 @@ PARAM_STRING("inversion_method", "Undocumented parameter", "ridge", "normal_svd"
 PARAM_STRING("factors", "Undocumented parameter", "ridge", "factors.csv");
 
 PARAM(double, "lambda_min", "The minimum lambda value used for CV (set to zero\
- by default).", "ridge", 0.0, false); 
+ by default).", "ridge", 0.0, false);
 PARAM(double, "lambda_max", "The maximum lambda value used for CV (set to zero\
  by default).", "ridge", 0.0, false);
 
@@ -70,7 +64,7 @@ int main(int argc, char** argv) {
   }
 
   // Read the dataset and its labels.
-  std::string predictors_file = IO::GetParam<std::string>("ridge/predictors"); 
+  std::string predictors_file = IO::GetParam<std::string>("ridge/predictors");
   std::string predictions_file = IO::GetParam<std::string>("ridge/predictions");
 
   arma::mat predictors;
@@ -85,19 +79,19 @@ int main(int argc, char** argv) {
 
   RidgeRegression engine;
   IO::Info << "Computing Regression..." << std::endl;
-  
+
 
   if(mode == "regress") {
 
-    engine = RidgeRegression(predictors, predictions, 
+    engine = RidgeRegression(predictors, predictions,
 		IO::GetParam<std::string>("ridge/inversion_method") == "normalsvd");
     engine.QRRegress(lambda_min);
   }
   else if(mode == "cvregress") {
-     IO::Info << "Crossvalidating for the optimal lambda in [" 
-	<<  lambda_min << " " << lambda_max << " ] " 
+     IO::Info << "Crossvalidating for the optimal lambda in ["
+	<<  lambda_min << " " << lambda_max << " ] "
      	<< "by trying " << num_lambdas_to_cv << " values..." << std::endl;
-   
+
     engine = RidgeRegression(predictors, predictions);
     engine.CrossValidatedRegression(lambda_min, lambda_max, num_lambdas_to_cv);
   }
@@ -107,11 +101,11 @@ int main(int argc, char** argv) {
 
     arma::mat predictor_indices_intermediate;
     arma::mat prune_predictor_indices_intermediate;
-    std::string predictor_indices_file = 
+    std::string predictor_indices_file =
       IO::GetParam<std::string>("ridge/predictor_indices");
-    std::string prune_predictor_indices_file = 
+    std::string prune_predictor_indices_file =
       IO::GetParam<std::string>("ridge/prune_predictor_indices");
-    if(data::Load(predictor_indices_file.c_str(), 
+    if(data::Load(predictor_indices_file.c_str(),
 	  predictor_indices_intermediate) == false) {
       IO::Fatal << "Unable to open file " << prune_predictor_indices_file << std::endl;
     }
@@ -122,7 +116,7 @@ int main(int argc, char** argv) {
 
     arma::Col<size_t> predictor_indices;
     arma::Col<size_t> prune_predictor_indices;
-    
+
     { // Convert from double rowvec -> size_t colvec
       typedef arma::Col<size_t> size_t_vec;
       predictor_indices = arma::conv_to<size_t_vec>::

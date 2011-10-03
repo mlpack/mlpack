@@ -8,13 +8,11 @@
 #include "naive_ortho_range_search.h"
 #include "ortho_range_search.h"
 
-#include "fastlib/mmanager/memory_manager.h"
-
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 
 void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
 				       const char *file_name) {
-  
+
   FILE *file_pointer = fopen(file_name, "w+");
 
   for(size_t r = 0; r < search_results.n_rows(); r++) {
@@ -67,11 +65,11 @@ void OutputOrhogonalRangeSearchResults(const GenMatrix<bool> &search_results,
  *  3. do_naive (optional): if present, will run the naive algorithm to
  *                          compare the search result against the naive search.
  *  4. save_tree_file (optional): this feature is in a beta stage and WILL NOT
- *                                work with the current FastLib release. It 
- *                                saves the constructed tree in the fast 
+ *                                work with the current FastLib release. It
+ *                                saves the constructed tree in the fast
  *                                algorithm to a file, so that it can be loaded
- *                                later via --load_tree_file argument. If you 
- *                                want to use this, let me 
+ *                                later via --load_tree_file argument. If you
+ *                                want to use this, let me
  *                                (dongryel@cc.gatech.edu) know.
  *  5. load_tree_file (optional): this feature is in a beta stage and WILL NOT
  *                                work with the current FastLib release. It
@@ -122,7 +120,7 @@ int main(int argc, char *argv[]) {
 
   // Generate the 200 uniformly distributed search ranges.
   GenMatrix<double> low_coord_limits, high_coord_limits;
-  
+
   // The file containing the lower and the upper limits of each search
   // window.
   const char *lower_limit_file_name = IO::GetParam<std::string>("range/lower").c_str();
@@ -149,7 +147,7 @@ int main(int argc, char *argv[]) {
   fast_search.Init(dataset, IO::HasParam("range/do_naive"),
 		   load_tree_file_name);
   GenMatrix<bool> fast_search_results;
-  fast_search.Compute(low_coord_limits, high_coord_limits, 
+  fast_search.Compute(low_coord_limits, high_coord_limits,
 		      &fast_search_results);
 
   if(IO::HasParam("range/save_tree_file")) {
@@ -169,7 +167,7 @@ int main(int argc, char *argv[]) {
     bool flag = true;
 
     for(size_t i = 0; i < fast_search_results.n_cols(); i++) {
-      for(size_t j = 0; j < dataset.n_cols(); j++) {	
+      for(size_t j = 0; j < dataset.n_cols(); j++) {
 	if(fast_search_results.get(j, i) != naive_search_results.get(j, i)) {
 	  flag = false;
 	  IO::Info << "Differ on (" << i << ", " << j << ")" << std::endl;
@@ -184,9 +182,9 @@ int main(int argc, char *argv[]) {
       IO::Info << "Both methods have different results..." << std::endl;
     }
   }
-	 
+
   IO::GetParam<double>("range/speedup") =
-		   ((double)(IO::GetParam<timeval>("range/naive_search").tv_usec) / 
+		   ((double)(IO::GetParam<timeval>("range/naive_search").tv_usec) /
 		   (double)(IO::GetParam<timeval>("range/tree_range_search").tv_usec));
 
   // Destroy Nick's memory manager...

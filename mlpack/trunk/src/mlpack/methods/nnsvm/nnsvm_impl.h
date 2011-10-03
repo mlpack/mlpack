@@ -1,8 +1,6 @@
 #ifndef NNSVM_IMPL_H
 #define NNSVM_IMPL_H
 
-#include <fastlib/fx/io.h>
-
 using namespace mlpack::nnsvm;
 
 /**

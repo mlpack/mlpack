@@ -7,14 +7,10 @@
 #include "optionshierarchy.h"
 #include "io.h"
 
-#include <string>
+#include <mlpack/core.h>
 #include <iostream>
 #include <sstream>
-#include <limits>
 #include <sys/time.h>
-#include <typeinfo>
-#include <armadillo>
-#include <fastlib/base/arma_extend.h>
 
 #define DEFAULT_INT 42
 
@@ -45,12 +41,12 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
   // Check that the hierarchy is properly named.
   std::string str = std::string("UTest");
   OptionsData node = tmp.GetNodeData();
- 
+
   BOOST_REQUIRE_EQUAL(str.compare(node.node), 0);
   // Check that inserting a node actually inserts the node.
   // Note, that since all versions of append simply call the most qualified
   //    overload, we will only test that one.
-  tmp.AppendNode(testName, testTID, testDesc); 
+  tmp.AppendNode(testName, testTID, testDesc);
   BOOST_REQUIRE(tmp.FindNode(testName) != NULL);
 
   // Now check that the inserted node has the correct data.
@@ -58,7 +54,7 @@ BOOST_AUTO_TEST_CASE(TestHierarchy) {
   OptionsData testData;
   if (testHierarchy != NULL) {
     node = testHierarchy->GetNodeData();
- 
+
     BOOST_REQUIRE(testName.compare(node.node) == 0);
     BOOST_REQUIRE(testDesc.compare(node.desc) == 0);
     BOOST_REQUIRE(testTID.compare(node.tname) == 0);
@@ -94,7 +90,7 @@ BOOST_AUTO_TEST_CASE(TestIOAdd) {
  */
 BOOST_AUTO_TEST_CASE(TestPrefixedOutStreamBasic) {
   std::stringstream ss;
-  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR); 
+  PrefixedOutStream pss(ss, BASH_GREEN "[INFO ] " BASH_CLEAR);
 
   pss << "This shouldn't break anything" << std::endl;
   BOOST_REQUIRE_EQUAL(ss.str(),
@@ -125,12 +121,12 @@ BOOST_AUTO_TEST_CASE(TestOption) {
   // This test will involve creating an option, and making sure IO reflects
   // this.
   PARAM(int, "test", "test desc", "test_parent", DEFAULT_INT, false);
- 
+
   // Does IO reflect this?
   BOOST_REQUIRE_EQUAL(IO::HasParam("test_parent/test"), true);
-   
+
   std::string desc = std::string("test desc");
- 
+
   BOOST_REQUIRE_EQUAL(IO::GetDescription("test_parent/test"), "test desc");
   BOOST_REQUIRE_EQUAL(IO::GetParam<int>("test_parent/test"), DEFAULT_INT);
 }

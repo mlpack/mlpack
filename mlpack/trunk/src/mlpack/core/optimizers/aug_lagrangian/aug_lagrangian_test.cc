@@ -6,7 +6,7 @@
  * aug_lagrangian_test_functions.h.
  */
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include "aug_lagrangian.h"
 #include "aug_lagrangian_test_functions.h"
 
@@ -29,7 +29,7 @@ BOOST_AUTO_TEST_CASE(aug_lagrangian_test_function) {
 
   if(!aug.Optimize(0, coords))
     BOOST_FAIL("Optimization reported failure.");
-  
+
   double final_value = f.Evaluate(coords);
 
   BOOST_REQUIRE_CLOSE(final_value, 70, 1e-5);
@@ -75,7 +75,7 @@ BOOST_AUTO_TEST_CASE(extremely_simple_lovasz_theta_sdp) {
   double final_value = ltsdp.Evaluate(coords);
 
   arma::mat X = trans(coords) * coords;
-  
+
   BOOST_CHECK_CLOSE(final_value, -1.0, 1e-5);
 
   BOOST_CHECK_CLOSE(X(0, 0) + X(1, 1), 1.0, 1e-5);

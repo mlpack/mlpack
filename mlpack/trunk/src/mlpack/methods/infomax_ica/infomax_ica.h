@@ -15,7 +15,7 @@
 #ifndef U_INFOMAX_ICA
 #define U_INFOMAX_ICA
 
-#include <mlpack_core.h>
+#include <mlpack/core.h>
 
 class TestInfomaxICA; // forward reference
 

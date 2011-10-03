@@ -11,7 +11,7 @@
 #define TREE_DBALLBOUND_IMPL_H
 
 // Awaiting transition
-#include "../../mlpack/core/kernels/lmetric.h"
+#include <mlpack/core/kernels/lmetric.h>
 
 #include <armadillo>
 

@@ -9,15 +9,15 @@
 #ifndef U_NNSVM_NNSVM_H
 #define U_NNSVM_NNSVM_H
 
-#include <fastlib/fastlib.h>
+#include <mlpack/core.h>
 #include <typeinfo>
 
 #include "nnsmo.h"
 
-PARAM(double, "c", "Undocumented", "nnsvm", 10.0, false);
-PARAM(double, "eps", "Undocumented", "nnsvm", 1.0e-6, false);
+PARAM_DOUBLE("c", "Undocumented", "nnsvm", 10.0);
+PARAM_DOUBLE("eps", "Undocumented", "nnsvm", 1.0e-6);
 PARAM_INT("max_iter", "Undocumented", "nnsvm", 1000);
-PARAM(double, "sigma", "Undocumented", "nnsvm", 0.0, true);
+PARAM_DOUBLE("sigma", "Undocumented", "nnsvm", 0.0);
 
 enum kernelEnumType
 {

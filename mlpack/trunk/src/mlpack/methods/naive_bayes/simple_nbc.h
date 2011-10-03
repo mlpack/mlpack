@@ -2,17 +2,16 @@
  * @author Parikshit Ram (pram@cc.gatech.edu)
  * @file simple_nbc.h
  *
- * A Naive Bayes Classifier which parametrically 
+ * A Naive Bayes Classifier which parametrically
  * estimates the distribution of the features.
- * It is assumed that the features have been 
+ * It is assumed that the features have been
  * sampled from a Gaussian PDF
  *
  */
 #ifndef NBC_H
 #define NBC_H
 
-#include <fastlib/fastlib.h>
-#include <fastlib/fx/io.h>
+#include <mlpack/core.h>
 #include "phi.h"
 
 /*const fx_entry_doc parm_nbc_entries[] ={
@@ -45,7 +44,7 @@ PARAM_INT("tests", "The number of data points in the test set", "nbc", 0);
   " Trains the classifier using the training set and "
   "outputs the results for the test set\n"
 };*/
-  
+
 PARAM_MODULE("nbc", "Trains the classifier using the training set \
 and outputs the results for the test set");
 
@@ -53,8 +52,8 @@ and outputs the results for the test set");
  * A classification class. The class labels are assumed
  * to be positive integers - 0,1,2,....
  *
- * This class trains on the data by calculating the 
- * sample mean and variance of the features with 
+ * This class trains on the data by calculating the
+ * sample mean and variance of the features with
  * respect to each of the labels, and also the class
  * probabilities.
  *
@@ -68,13 +67,13 @@ and outputs the results for the test set");
  * arg max_y(P(Y = y)*P(X_1 = x_1 | Y = y) * ... * P(X_n = x_n | Y = y))
  *
  * Example use:
- * 
+ *
  * @code
  * SimpleNaiveBayesClassifier nbc;
  * arma::mat training_data, testing_data;
  * datanode *nbc_module = fx_submodule(NULL,"nbc","nbc");
  * arma::vec results;
- * 
+ *
  * nbc.InitTrain(training_data, nbc_module);
  * nbc.Classify(testing_data, &results);
  * @endcode
@@ -86,10 +85,10 @@ class SimpleNaiveBayesClassifier {
 
  private:
 
-		   
+
  public:
 
- 
+
   // The variables containing the sample mean and variance
   // for each of the features with respect to each class
 
@@ -103,7 +102,7 @@ class SimpleNaiveBayesClassifier {
   // The variable keeping the information about the
   // number of classes present
   size_t number_of_classes_;
- 
+
  /**
   * Initializes the classifier as per the input and then trains it
   * by calculating the sample mean and variances

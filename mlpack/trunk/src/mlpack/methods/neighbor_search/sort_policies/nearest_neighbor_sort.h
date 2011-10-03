@@ -1,15 +1,14 @@
 /***
  * @file nearest_neighbor_sort.h
  * @author Ryan Curtin
- * 
+ *
  * Implementation of the SortPolicy class for NeighborSearch; in this case, the
  * nearest neighbors are those that are most important.
  */
 #ifndef __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_H
 #define __MLPACK_NEIGHBOR_NEAREST_NEIGHBOR_SORT_H
 
-#include <fastlib/fastlib.h>
-#include <armadillo>
+#include <mlpack/core.h>
 
 namespace mlpack {
 namespace neighbor {
@@ -39,7 +38,7 @@ class NearestNeighborSort {
   /***
    * Return whether or not value is "better" than ref.  In this case, that means
    * that the value is less than the reference.
-   * 
+   *
    * @param value Value to compare
    * @param ref Value to compare with
    *
