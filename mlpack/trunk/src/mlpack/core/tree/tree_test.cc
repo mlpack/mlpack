@@ -122,6 +122,42 @@ BOOST_AUTO_TEST_CASE(HRectBoundDimConstructor) {
 }
 
 /***
+ * Test the copy constructor.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundCopyConstructor) {
+  HRectBound<2> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
+
+  HRectBound<2> c(b);
+
+  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+}
+
+/***
+ * Test the assignment operator.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundAssignmentOperator) {
+  HRectBound<2> b(2);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
+
+  HRectBound<2> c(4);
+
+  c = b;
+
+  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+}
+
+/***
  * Test that clearing the dimensions resets the bound to empty.
  */
 BOOST_AUTO_TEST_CASE(HRectBoundClear) {
@@ -163,7 +199,7 @@ BOOST_AUTO_TEST_CASE(HRectBoundCentroid) {
  * bound.
  */
 BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint) {
-  // We'll do the calculation in three dimensions, and we'll use three cases for
+  // We'll do the calculation in five dimensions, and we'll use three cases for
   // the point: point is outside the bound; point is on the edge of the bound;
   // point is inside the bound.  In the latter two cases, the distance should be
   // zero.
@@ -189,65 +225,408 @@ BOOST_AUTO_TEST_CASE(HRectBoundMinDistancePoint) {
   BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
 }
 
-BOOST_AUTO_TEST_CASE(TestHRectBound) {
-  HRectBound<> r1(2);
-  HRectBound<> r2(2);
+/***
+ * Ensure that we calculate the correct minimum distance between a bound and
+ * another bound.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundMinDistanceBound) {
+  // We'll do the calculation in five dimensions, and we can use six cases.
+  // The other bound is completely outside the bound; the other bound is on the
+  // edge of the bound; the other bound partially overlaps the bound; the other
+  // bound fully overlaps the bound; the other bound is entirely inside the
+  // bound; the other bound entirely envelops the bound.
+  HRectBound<2> b(5);
 
-  // Two squares with length 2, with 1 distance apart along the x-axis.
-  r1[0] = Range(0.0, 2.0);
-  r1[1] = Range(0.0, 2.0);
-  r2[0] = Range(3.0, 5.0);
-  r2[1] = Range(0.0, 2.0);
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(1.0, 5.0);
+  b[2] = Range(-2.0, 2.0);
+  b[3] = Range(-5.0, -2.0);
+  b[4] = Range(1.0, 2.0);
 
-  // A point at (1,1)
-  arma::vec vector(2);
-  vector[0] = 1.0;
-  vector[1] = 1.0;
+  HRectBound<2> c(5);
 
-  BOOST_REQUIRE(r1.Contains(vector));
-  BOOST_REQUIRE(!r2.Contains(vector));
+  // The other bound is completely outside the bound.
+  c[0] = Range(-5.0, -2.0);
+  c[1] = Range(6.0, 7.0);
+  c[2] = Range(-2.0, 2.0);
+  c[3] = Range(2.0, 5.0);
+  c[4] = Range(3.0, 4.0);
 
-  r2.Centroid(vector);
-  BOOST_REQUIRE_CLOSE(vector[0], 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(vector[1], 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinDistance(r2), 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.MinDistance(c), 22.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MinDistance(b), 22.0, 1e-5);
 
-  vector[0] = 4.0;
-  vector[1] = 2.0;
-  BOOST_REQUIRE_CLOSE(r1.MinDistance(r2, vector), 5.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MinDistance(vector), 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MaxDistance(vector), 20.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MaxDistance(r2), 29.0, 1e-5);
+  // The other bound is on the edge of the bound.
+  c[0] = Range(-2.0, 0.0);
+  c[1] = Range(0.0, 1.0);
+  c[2] = Range(-3.0, -2.0);
+  c[3] = Range(-10.0, -5.0);
+  c[4] = Range(2.0, 3.0);
 
-  Range range = r1.RangeDistance(r2);
-  BOOST_REQUIRE_CLOSE(range.lo, 1.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(range.hi, 29.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+  BOOST_REQUIRE_SMALL(c.MinDistance(b), 1e-5);
 
-  range = r1.RangeDistance(vector);
-  BOOST_REQUIRE_CLOSE(range.lo, 4.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(range.hi, 20.0, 1e-5);
+  // The other bound partially overlaps the bound.
+  c[0] = Range(-2.0, 1.0);
+  c[1] = Range(0.0, 2.0);
+  c[2] = Range(-2.0, 2.0);
+  c[3] = Range(-8.0, -4.0);
+  c[4] = Range(0.0, 4.0);
 
-  BOOST_REQUIRE_CLOSE(r1.MinimaxDistance(r2), 9.0, 1e-5);
-  BOOST_REQUIRE_CLOSE(r1.MidDistance(r2), 9.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+  BOOST_REQUIRE_SMALL(c.MinDistance(b), 1e-5);
 
-  vector[0] = 6.0;
-  vector[1] = 3.0;
-  r2 |= vector;
-  r1 |= r2;
-  BOOST_REQUIRE(r2.Contains(vector));
+  // The other bound fully overlaps the bound.
+  BOOST_REQUIRE_SMALL(b.MinDistance(b), 1e-5);
+  BOOST_REQUIRE_SMALL(c.MinDistance(c), 1e-5);
 
-  vector[0] = 5.0;
-  vector[1] = 2.0;
-  BOOST_REQUIRE(r1.Contains(vector));
+  // The other bound is entirely inside the bound / the other bound entirely
+  // envelops the bound.
+  c[0] = Range(-1.0, 3.0);
+  c[1] = Range(0.0, 6.0);
+  c[2] = Range(-3.0, 3.0);
+  c[3] = Range(-7.0, 0.0);
+  c[4] = Range(0.0, 5.0);
 
-  r1[0] = Range(0.0, 2.0);
-  r1[1] = Range(0.0, 2.0);
-  arma::vec size(2);
-  size[0] = 3.5;
-  size[1] = 2.0;
-  vector[0] = 3.0;
-  vector[1] = 1.0;
+  BOOST_REQUIRE_SMALL(b.MinDistance(c), 1e-5);
+  BOOST_REQUIRE_SMALL(c.MinDistance(b), 1e-5);
+}
 
+/***
+ * Ensure that we calculate the correct maximum distance between a bound and a
+ * point.  This uses the same test cases as the MinDistance test.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundMaxDistancePoint) {
+  // We'll do the calculation in five dimensions, and we'll use three cases for
+  // the point: point is outside the bound; point is on the edge of the bound;
+  // point is inside the bound.  In the latter two cases, the distance should be
+  // zero.
+  HRectBound<2> b(5);
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(1.0, 5.0);
+  b[2] = Range(-2.0, 2.0);
+  b[3] = Range(-5.0, -2.0);
+  b[4] = Range(1.0, 2.0);
+
+  arma::vec point = "-2.0 0.0 10.0 3.0 3.0";
+
+  // This will be the Euclidean squared distance.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 253.0, 1e-5);
+
+  point = "2.0 5.0 2.0 -5.0 1.0";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 46.0, 1e-5);
+
+  point = "1.0 2.0 0.0 -2.0 1.5";
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(point), 23.25, 1e-5);
+}
+
+/***
+ * Ensure that we calculate the correct maximum distance between a bound and
+ * another bound.  This uses the same test cases as the MinDistance test.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundMaxDistanceBound) {
+  // We'll do the calculation in five dimensions, and we can use six cases.
+  // The other bound is completely outside the bound; the other bound is on the
+  // edge of the bound; the other bound partially overlaps the bound; the other
+  // bound fully overlaps the bound; the other bound is entirely inside the
+  // bound; the other bound entirely envelops the bound.
+  HRectBound<2> b(5);
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(1.0, 5.0);
+  b[2] = Range(-2.0, 2.0);
+  b[3] = Range(-5.0, -2.0);
+  b[4] = Range(1.0, 2.0);
+
+  HRectBound<2> c(5);
+
+  // The other bound is completely outside the bound.
+  c[0] = Range(-5.0, -2.0);
+  c[1] = Range(6.0, 7.0);
+  c[2] = Range(-2.0, 2.0);
+  c[3] = Range(2.0, 5.0);
+  c[4] = Range(3.0, 4.0);
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 210.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 210.0, 1e-5);
+
+  // The other bound is on the edge of the bound.
+  c[0] = Range(-2.0, 0.0);
+  c[1] = Range(0.0, 1.0);
+  c[2] = Range(-3.0, -2.0);
+  c[3] = Range(-10.0, -5.0);
+  c[4] = Range(2.0, 3.0);
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 134.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 134.0, 1e-5);
+
+  // The other bound partially overlaps the bound.
+  c[0] = Range(-2.0, 1.0);
+  c[1] = Range(0.0, 2.0);
+  c[2] = Range(-2.0, 2.0);
+  c[3] = Range(-8.0, -4.0);
+  c[4] = Range(0.0, 4.0);
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 102.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 102.0, 1e-5);
+
+  // The other bound fully overlaps the bound.
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(b), 46.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(c), 61.0, 1e-5);
+
+  // The other bound is entirely inside the bound / the other bound entirely
+  // envelops the bound.
+  c[0] = Range(-1.0, 3.0);
+  c[1] = Range(0.0, 6.0);
+  c[2] = Range(-3.0, 3.0);
+  c[3] = Range(-7.0, 0.0);
+  c[4] = Range(0.0, 5.0);
+
+  BOOST_REQUIRE_CLOSE(b.MaxDistance(c), 100.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.MaxDistance(b), 100.0, 1e-5);
+
+  // One last additional case.  If the bound encloses only one point, the
+  // maximum distance between it and itself is 0.
+  HRectBound<2> d(2);
+
+  d[0] = Range(2.0, 2.0);
+  d[1] = Range(3.0, 3.0);
+
+  BOOST_REQUIRE_SMALL(d.MaxDistance(d), 1e-5);
+}
+
+/***
+ * Ensure that the ranges returned by RangeDistance() are equal to the minimum
+ * and maximum distance.  We will perform this test by creating random bounds
+ * and comparing the behavior to MinDistance() and MaxDistance() -- so this test
+ * is assuming that those passed and operate correctly.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundRangeDistanceBound) {
+  srand(time(NULL));
+
+  for (int i = 0; i < 50; i++) {
+    size_t dim = rand() % 20;
+
+    HRectBound<2> a(dim);
+    HRectBound<2> b(dim);
+
+    // We will set the low randomly and the width randomly for each dimension of
+    // each bound.
+    arma::vec lo_a(dim);
+    arma::vec width_a(dim);
+
+    lo_a.randu();
+    width_a.randu();
+
+    arma::vec lo_b(dim);
+    arma::vec width_b(dim);
+
+    lo_b.randu();
+    width_b.randu();
+
+    for (size_t j = 0; j < dim; j++) {
+      a[j] = Range(lo_a[j], lo_a[j] + width_a[j]);
+      b[j] = Range(lo_b[j], lo_b[j] + width_b[j]);
+    }
+
+    // Now ensure that MinDistance and MaxDistance report the same.
+    Range r = a.RangeDistance(b);
+    Range s = b.RangeDistance(a);
+
+    BOOST_REQUIRE_CLOSE(r.lo, s.lo, 1e-5);
+    BOOST_REQUIRE_CLOSE(r.hi, s.hi, 1e-5);
+
+    BOOST_REQUIRE_CLOSE(r.lo, a.MinDistance(b), 1e-5);
+    BOOST_REQUIRE_CLOSE(r.hi, a.MaxDistance(b), 1e-5);
+
+    BOOST_REQUIRE_CLOSE(s.lo, b.MinDistance(a), 1e-5);
+    BOOST_REQUIRE_CLOSE(s.hi, b.MaxDistance(a), 1e-5);
+  }
+}
+
+/***
+ * Ensure that the ranges returned by RangeDistance() are equal to the minimum
+ * and maximum distance.  We will perform this test by creating random bounds
+ * and comparing the bheavior to MinDistance() and MaxDistance() -- so this test
+ * is assuming that those passed and operate correctly.  This is for the
+ * bound-to-point case.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundRangeDistancePoint) {
+  srand(time(NULL));
+
+  for (int i = 0; i < 20; i++) {
+    size_t dim = rand() % 20;
+
+    HRectBound<2> a(dim);
+
+    // We will set the low randomly and the width randomly for each dimension of
+    // each bound.
+    arma::vec lo_a(dim);
+    arma::vec width_a(dim);
+
+    lo_a.randu();
+    width_a.randu();
+
+    for (size_t j = 0; j < dim; j++)
+      a[j] = Range(lo_a[j], lo_a[j] + width_a[j]);
+
+    // Now run the test on a few points.
+    for (int j = 0; j < 10; j++) {
+      arma::vec point(dim);
+
+      point.randu();
+
+      Range r = a.RangeDistance(point);
+
+      BOOST_REQUIRE_CLOSE(r.lo, a.MinDistance(point), 1e-5);
+      BOOST_REQUIRE_CLOSE(r.hi, a.MaxDistance(point), 1e-5);
+    }
+  }
+}
+
+/***
+ * Test that we can expand the bound to include a new point.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorPoint) {
+  // Because this should be independent in each dimension, we can essentially
+  // run five test cases at once.
+  HRectBound<2> b(5);
+
+  b[0] = Range(1.0, 3.0);
+  b[1] = Range(2.0, 4.0);
+  b[2] = Range(-2.0, -1.0);
+  b[3] = Range(0.0, 0.0);
+  b[4] = Range(); // Empty range.
+
+  arma::vec point = "2.0 4.0 2.0 -1.0 6.0";
+
+  b |= point;
+
+  BOOST_REQUIRE_CLOSE(b[0].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].lo, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].hi, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].lo, -2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[3].lo, -1.0, 1e-5);
+  BOOST_REQUIRE_SMALL(b[3].hi, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].lo, 6.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].hi, 6.0, 1e-5);
+}
+
+/***
+ * Test that we can expand the bound to include another bound.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundOrOperatorBound) {
+  // Because this should be independent in each dimension, we can run many tests
+  // at once.
+  HRectBound<2> b(8);
+
+  b[0] = Range(1.0, 3.0);
+  b[1] = Range(2.0, 4.0);
+  b[2] = Range(-2.0, -1.0);
+  b[3] = Range(4.0, 5.0);
+  b[4] = Range(2.0, 4.0);
+  b[5] = Range(0.0, 0.0);
+  b[6] = Range();
+  b[7] = Range(1.0, 3.0);
+
+  HRectBound<2> c(8);
+
+  c[0] = Range(-3.0, -1.0); // Entirely less than the other bound.
+  c[1] = Range(0.0, 2.0); // Touching edges.
+  c[2] = Range(-3.0, -1.5); // Partially overlapping.
+  c[3] = Range(4.0, 5.0); // Identical.
+  c[4] = Range(1.0, 5.0); // Entirely enclosing.
+  c[5] = Range(2.0, 2.0); // A single point.
+  c[6] = Range(1.0, 3.0);
+  c[7] = Range(); // Empty set.
+
+  HRectBound<2> d = c;
+
+  b |= c;
+  d |= b;
+
+  BOOST_REQUIRE_CLOSE(b[0].lo, -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[0].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[0].lo, -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[0].hi, 3.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[1].lo, 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[1].hi, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[1].lo, 0.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[1].hi, 4.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[2].lo, -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[2].hi, -1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[2].lo, -3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[2].hi, -1.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[3].lo, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[3].hi, 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[3].lo, 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[3].hi, 5.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[4].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[4].hi, 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[4].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[4].hi, 5.0, 1e-5);
+
+  BOOST_REQUIRE_SMALL(b[5].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[5].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_SMALL(d[5].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[5].hi, 2.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[6].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[6].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[6].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[6].hi, 3.0, 1e-5);
+
+  BOOST_REQUIRE_CLOSE(b[7].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b[7].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[7].lo, 1.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d[7].hi, 3.0, 1e-5);
+}
+
+/***
+ * Test that the Contains() function correctly figures out whether or not a
+ * point is in a bound.
+ */
+BOOST_AUTO_TEST_CASE(HRectBoundContains) {
+  // We can test a couple different points: completely outside the bound,
+  // adjacent in one dimension to the bound, adjacent in all dimensions to the
+  // bound, and inside the bound.
+  HRectBound<2> b(3);
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(0.0, 2.0);
+  b[2] = Range(0.0, 2.0);
+
+  // Completely outside the range.
+  arma::vec point = "-1.0 4.0 4.0";
+  BOOST_REQUIRE(!b.Contains(point));
+
+  // Completely outside, but one dimension is in the range.
+  point = "-1.0 4.0 1.0";
+  BOOST_REQUIRE(!b.Contains(point));
+
+  // Outside, but one dimension is on the edge.
+  point = "-1.0 0.0 3.0";
+  BOOST_REQUIRE(!b.Contains(point));
+
+  // Two dimensions are on the edge, but one is outside.
+  point = "0.0 0.0 3.0";
+  BOOST_REQUIRE(!b.Contains(point));
+
+  // Completely on the edge (should be contained).
+  point = "0.0 0.0 0.0";
+  BOOST_REQUIRE(b.Contains(point));
+
+  // Inside the range.
+  point = "0.3 1.0 0.4";
+  BOOST_REQUIRE(b.Contains(point));
 }
 
 BOOST_AUTO_TEST_CASE(TestBallBound) {

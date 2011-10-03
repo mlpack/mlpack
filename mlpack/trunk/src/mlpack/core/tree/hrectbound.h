@@ -40,6 +40,7 @@ class HRectBound {
    * Copy constructor; necessary to prevent memory leaks.
    */
   HRectBound(const HRectBound& other);
+  HRectBound& operator=(const HRectBound& other); // Same as copy constructor.
 
   /**
    * Destructor: clean up memory.
@@ -81,12 +82,6 @@ class HRectBound {
   double MinDistance(const HRectBound& other) const;
 
   /**
-   * Calculates minimum bound-to-bound squared distance, with
-   * an offset between their respective coordinate systems.
-   */
-  double MinDistance(const HRectBound& other, const arma::vec& offset) const;
-
-  /**
    * Calculates maximum bound-to-point squared distance.
    */
   double MaxDistance(const arma::vec& point) const;
@@ -97,11 +92,6 @@ class HRectBound {
   double MaxDistance(const HRectBound& other) const;
 
   /**
-   * Computes maximum distance with offset
-   */
-  double MaxDistance(const HRectBound& other, const arma::vec& offset) const;
-
-  /**
    * Calculates minimum and maximum bound-to-bound squared distance.
    */
   Range RangeDistance(const HRectBound& other) const;
@@ -110,16 +100,6 @@ class HRectBound {
    * Calculates minimum and maximum bound-to-point squared distance.
    */
   Range RangeDistance(const arma::vec& point) const;
-
-  /**
-   * Computes minimax distance, where the other node is trying to avoid me.
-   */
-  double MinimaxDistance(const HRectBound& other) const;
-
-  /**
-   * Calculates midpoint-to-midpoint bounding box distance.
-   */
-  double MidDistance(const HRectBound& other) const;
 
   /**
    * Expands this region to include a new point.
@@ -137,8 +117,8 @@ class HRectBound {
   bool Contains(const arma::vec& point) const;
 
  private:
-  Range *bounds_;
   size_t dim_;
+  Range *bounds_;
 };
 
 }; // namespace bound
