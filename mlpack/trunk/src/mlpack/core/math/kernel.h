@@ -77,9 +77,9 @@ class GaussianKernel {
    * Divide by this constant when you're done.
    */
   double CalcNormConstant(size_t dims) const {
-    // Changed because * faster than / and 2 * PI opt out.  RR
+    // Changed because * faster than / and 2 * M_PI opt out.  RR
     //return pow((-math::PI/neg_inv_bandwidth_2sq_), dims/2.0);
-    return pow(2 * PI * bandwidth_sq_, dims / 2.0);
+    return pow(2 * M_PI * bandwidth_sq_, dims / 2.0);
   }
 };
 
