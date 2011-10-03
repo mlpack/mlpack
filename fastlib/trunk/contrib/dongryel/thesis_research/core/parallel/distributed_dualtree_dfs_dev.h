@@ -550,7 +550,8 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     max_num_reference_points_to_pack_per_process_ =
       static_cast<unsigned long int>(
         weak_scaling_factor_ *
-        (avg_num_query_points_per_process / world_->size()));
+        (avg_num_query_points_per_process /
+         (world_->size() * omp_get_max_threads())));
 
     // Re-adjust so that the subtree is transferred in around 10 rounds.
     max_subtree_size_ =
