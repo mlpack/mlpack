@@ -3,14 +3,18 @@ cmake_minimum_required(VERSION 2.8)
 # Define the files we need to compile.
 # Anything not in this list will not be compiled into MLPACK.
 set(SOURCES
+  kmeans.h
+  kmeans.cc
   # for mog_em
   mog_em.h
   mog_em.cc
   phi.h
-  math_functions.h
   # for mog_l2e
   mog_l2e.h
   mog_l2e.cc
+  # optimizers
+  optimizers.h
+  optimizers.cc
 )
 
 # Add directory name to sources.

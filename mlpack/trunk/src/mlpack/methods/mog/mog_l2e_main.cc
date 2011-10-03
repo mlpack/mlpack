@@ -20,154 +20,101 @@
  * defaults to 'output.csv'
  *
  */
-
 #include "mog_l2e.h"
+#include "optimizers.h"
 
-/*const fx_entry_doc mog_l2e_main_entries[] = {
-  {"data", FX_REQUIRED, FX_STR, NULL,
-   " A file containing the data on which the model"
-   " has to be fit.\n"},
-  {"output", FX_PARAM, FX_STR, NULL,
-   " The file into which the output is to be written into.\n"},
-  FX_ENTRY_DOC_DONE
-};*/
+PROGRAM_INFO("Mixture of Gaussians",
+    "This program takes a parametric estimate of a Gaussian mixture model (GMM)"
+    " using the L2 loss function.", "mog_l2e");
 
-PARAM_STRING_REQ("data", "A file containing the data on\
- which the model has to fit", "mog_l2e");
-PARAM_STRING("output", "The file into which the output \
-is to be written into", "mog_l2e", "output.csv");
-
-/*const fx_submodule_doc mog_l2e_main_submodules[] = {
-  {"mog_l2e", &mog_l2e_doc,
-   " Responsible for intializing the model and"
-   " computing the parameters.\n"},
-   {"opt", &opt_doc,
-    " Responsible for minimizing the L2 loss function"
-    " and obtaining the parameter values.\n"},
-  FX_SUBMODULE_DOC_DONE
-};*/
-
-PARAM_MODULE("mog_l2e", "Responsible for initializing the\
- model and computing the parameters.");
-PARAM_MODULE("opt", "Responsible for minimizing the L2 loss\
- function and obtaining the parameter values");
-
-/*const fx_module_doc mog_l2e_main_doc = {
-  mog_l2e_main_entries, mog_l2e_main_submodules,
-  " This program test drives the parametric estimation "
-  "of a Gaussian mixture model using L2 loss function.\n"
-};*/
-
-PROGRAM_INFO("MOG", "This program test drives the parametric estimation\
- of a Gaussian mixture model using L2 loss function.");
+PARAM_STRING_REQ("data", "A file containing the data on which the model has to "
+    "be fit.", "mog_l2e");
+PARAM_STRING("output", "The file into which the output is to be written into",
+    "mog_l2e", "output.csv");
 
 using namespace mlpack;
 
 int main(int argc, char* argv[]) {
-
   IO::ParseCommandLine(argc, argv);
 
   ////// READING PARAMETERS AND LOADING DATA //////
-
-  const char *data_filename = IO::GetParam<std::string>("mog/data").c_str();
-
-  Matrix data_points;
-  data::Load(data_filename, &data_points);
+  arma::mat data_points;
+  data::Load(IO::GetParam<std::string>("mog_l2e/data").c_str(), data_points);
 
   ////// MIXTURE OF GAUSSIANS USING L2 ESTIMATION //////
-
-  size_t number_of_gaussians = IO::GetParam<int>("mog_l2e/K");
-  IO::GetParam<int>("mog_l2e/D") = data_points.n_rows());
-  size_t dimension = IO::GetParam<int>("mog_l2e/D");
+  size_t number_of_gaussians = IO::GetParam<int>("mog_l2e/k");
+  IO::GetParam<int>("mog_l2e/d") = data_points.n_rows;
+  size_t dimension = IO::GetParam<int>("mog_l2e/d");
 
   ////// RUNNING AN OPTIMIZER TO MINIMIZE THE L2 ERROR //////
-
-  const char *opt_method = IO::GetParam<std::string>("opt/method");
-  size_t param_dim = (number_of_gaussians*(dimension+1)*(dimension+2)/2 - 1);
+  const char *opt_method = IO::GetParam<std::string>("opt/method").c_str();
+  size_t param_dim = (number_of_gaussians * (dimension + 1) * (dimension + 2)
+      / 2 - 1);
   IO::GetParam<int>("opt/param_space_dim") = param_dim;
 
   size_t optim_flag = (strcmp(opt_method, "NelderMead") == 0 ? 1 : 0);
   MoGL2E mog;
 
   if (optim_flag == 1) {
-
     ////// OPTIMIZER USING NELDER MEAD METHOD //////
-
     NelderMead opt;
 
     ////// Initializing the optimizer //////
     IO::StartTimer("opt/init_opt");
-    opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
+    opt.Init(MoGL2E::L2ErrorForOpt, data_points);
     IO::StopTimer("opt/init_opt");
 
     ////// Getting starting points for the optimization //////
-    double **pts;
-    pts = (double**)malloc((param_dim+1)*sizeof(double*));
-    for(size_t i = 0; i < param_dim+1; i++) {
-      pts[i] = (double*)malloc(param_dim*sizeof(double));
-    }
+    arma::mat pts(param_dim, param_dim + 1);
 
     IO::StartTimer("opt/get_init_pts");
-    MoGL2E::MultiplePointsGenerator(pts, param_dim+1,
-				    data_points, number_of_gaussians);
+    MoGL2E::MultiplePointsGenerator(pts, data_points, number_of_gaussians);
     IO::StopTimer("opt/get_init_pts");
 
     ////// The optimization //////
-
     IO::StartTimer("opt/optimizing");
     opt.Eval(pts);
     IO::StopTimer("opt/optimizing");
 
     ////// Making model with the optimal parameters //////
-    mog.MakeModel(mog_l2e_module, pts[0]);
-
-  }
-  else {
-
+    // This is a stupid way to do it and putting the 0s there ensures it will
+    // fail.  Do it better!
+    mog.MakeModel(0, 0, pts.col(0));
+  } else {
     ////// OPTIMIZER USING QUASI NEWTON METHOD //////
-
     QuasiNewton opt;
 
     ////// Initializing the optimizer //////
     IO::StartTimer("opt/init_opt");
-    opt.Init(MoGL2E::L2ErrorForOpt, data_points, opt_module);
+    opt.Init(MoGL2E::L2ErrorForOpt, data_points);
     IO::StopTimer("opt/init_opt");
 
     ////// Getting starting point for the optimization //////
-    double *pt;
-    pt = (double*)malloc(param_dim*sizeof(double));
+    arma::vec pt(param_dim);
 
     IO::StartTimer("opt/get_init_pt");
     MoGL2E::InitialPointGenerator(pt, data_points, number_of_gaussians);
     IO::StopTimer("opt/get_init_pt");
 
     ////// The optimization //////
-
     IO::StartTimer("opt/optimizing");
     opt.Eval(pt);
     IO::StopTimer("opt/optimizing");
 
     ////// Making model with optimal parameters //////
-    mog.MakeModel(mog_l2e_module, pt);
+    // This is a stupid way to do it and putting the 0s there ensures it will
+    // fail.  Do it better!
+    mog.MakeModel(0, 0, pt);
 
   }
 
   long double error = mog.L2Error(data_points);
-  NOTIFY("Minimum L2 error achieved: %Lf", error);
+  IO::Info << "Minimum L2 error achieved: " << error << "." << std::endl;
   mog.Display();
 
-  ArrayList<double> results;
-  mog.OutputResults(&results);
-
+  std::vector<double> results;
+  mog.OutputResults(results);
 
   ////// OUTPUT RESULTS //////
-
-  const char *output_filename = IO::GetParam<std::string>("mog_l2e/output");
-
-  FILE *output_file = fopen(output_filename, "w");
-
-  ot::Print(results, output_file);
-  fclose(output_file);
-
-  return 1;
+  // We need a better way to do this (like XML).  For now we just do nothing.
 }
