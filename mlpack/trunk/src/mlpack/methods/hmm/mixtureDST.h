@@ -142,7 +142,7 @@ class MixtureGauss {
 	prior[i] = ACC_prior[i] / total;
 
         inv_covs[i] = inv(covs[i]);
-	det_covs[i] = pow(2.0 * PI, -means[i].n_elem / 2.0) * pow(det(covs[i]), -0.5);
+	det_covs[i] = pow(2.0 * M_PI, -means[i].n_elem / 2.0) * pow(det(covs[i]), -0.5);
       }
   }
 
@@ -156,7 +156,7 @@ class MixtureGauss {
 	prior[i] = ACC_prior[i] / total;
 
         inv_covs[i] = covs[i];
-	det_covs[i] = pow(2.0 * PI, -means[i].n_elem / 2.0) * pow(det(covs[i]), -0.5);
+	det_covs[i] = pow(2.0 * M_PI, -means[i].n_elem / 2.0) * pow(det(covs[i]), -0.5);
       }
     }
   }
