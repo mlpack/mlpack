@@ -44,15 +44,15 @@ class TestDistributedTree {
   public:
 
     int StressTestMain(boost::mpi::communicator &world) {
-      for(int i = 0; i < 10; i++) {
+      for(int i = 0; i < 1; i++) {
 
         // Only the master broadcasts the dimension;
         int num_dimensions;
         if(world.rank() == 0) {
-          num_dimensions = core::math::RandInt(2, 3);
+          num_dimensions = core::math::RandInt(10, 11);
         }
         boost::mpi::broadcast(world, num_dimensions, 0);
-        int num_points = core::math::RandInt(3000, 8000);
+        int num_points = core::math::RandInt(1000000, 1000001);
         if(StressTest(world, num_dimensions, num_points) == false) {
           printf("Failed!\n");
           exit(0);
@@ -79,15 +79,30 @@ class TestDistributedTree {
         num_dimensions, num_points, world.rank(),
         std::string("none"), false, &random_table);
       random_table.Save(references_in);
+      int leaf_size = core::math::RandInt(20, 40);
+      core::metric_kernels::LMetric<2> l2_metric;
 
+      {
+        // First, build with only one thread.
+        printf("First building with only one thread...\n");
+        omp_set_num_threads(1);
+        DistributedTableType distributed_table;
+        distributed_table.Init(references_in, world);
+        core::parallel::VanillaDistributedTreeBuilder <
+        DistributedTableType > builder;
+        builder.Init(distributed_table);
+        builder.Build(world, l2_metric, leaf_size, 0);
+      }
+
+      // Next, build with four threads.
+      printf("Now building with four threads...\n");
+      omp_set_num_threads(4);
       DistributedTableType distributed_table;
       distributed_table.Init(references_in, world);
       core::parallel::VanillaDistributedTreeBuilder <
       DistributedTableType > builder;
       builder.Init(distributed_table);
-      core::metric_kernels::LMetric<2> l2_metric;
-      int leaf_size = core::math::RandInt(20, 40);
-      builder.Build(world, l2_metric, leaf_size);
+      builder.Build(world, l2_metric, leaf_size, 0);
 
       // Tes the local tree.
       return TestLocalTree_(distributed_table.local_table()->get_tree());
@@ -97,8 +112,6 @@ class TestDistributedTree {
 }
 
 int main(int argc, char *argv[]) {
-
-  omp_set_num_threads(1);
 
   // Initialize boost MPI.
   boost::mpi::environment env(argc, argv);
