@@ -14,3 +14,4 @@ add_subdirectory(series_expansion)
 #added by Bill, 9/12
 add_subdirectory(distributed_two_point)
 add_subdirectory(two_point)
+add_subdirectory(cuda_two_point)
