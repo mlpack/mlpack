@@ -20,7 +20,9 @@ target_link_libraries(mlpack
 )
 
 # Collect all header files in the library.
-file(GLOB_RECURSE INCLUDE_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h*)
+file(GLOB_RECURSE INCLUDE_H_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.h)
+file(GLOB_RECURSE INCLUDE_HPP_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} *.hpp)
+set(INCLUDE_FILES ${INCLUDE_H_FILES} ${INCLUDE_HPP_FILES})
 
 # Move all of these header files to <builddir>/include/mlpack/ after the library
 # is built.  First we have to create that directory though.
