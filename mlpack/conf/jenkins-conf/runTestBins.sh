@@ -14,10 +14,10 @@ echo "Finding test Binaries"
 TEST_BINS=$(find $TEST_DIR -iname "*_test")
 
 echo "Copy test_data_3_1000.csv to current working directory"
-cp ./*/mlpack/neighbor_search/test_data_3_1000.csv .
+cp ./*/src/mlpack/methods/neighbor_search/test_data_3_1000.csv .
 
 echo "Copy ARFF files for NBC test to current working directory"
-cp ./*/mlpack/naive_bayes/*.arff .
+cp ./*/src/mlpack/methods/naive_bayes/*.arff .
 
 echo "Running All Tests:"
 for ML_TEST in ${TEST_BINS}
