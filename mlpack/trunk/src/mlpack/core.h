@@ -11,12 +11,19 @@
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
-#include <cmath>
-#include <math.h>
 #include <limits.h>
 #include <float.h>
 #include <stdint.h>
 #include <iostream>
+
+// Defining __USE_MATH_DEFINES should set M_PI.
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+// But if it's not defined, we'll do it.
+#ifndef M_PI
+  #define M_PI 3.141592653589793238462643383279
+#endif
 
 // And then the Armadillo library.
 #include <armadillo>
