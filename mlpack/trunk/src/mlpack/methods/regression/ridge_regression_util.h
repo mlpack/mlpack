@@ -39,8 +39,8 @@ class RidgeRegressionUtil {
     double variance = 0;
     double residual = 0;
     for(size_t i = 0; i < observations.n_elem; i++) {
-      variance += math::Sqr(observations[i] - avg_observed_value);
-      residual += math::Sqr(observations[i] - predictions[i]);
+      variance += pow(observations[i] - avg_observed_value, 2);
+      residual += pow(observations[i] - predictions[i], 2);
     }
     return (variance - residual) / variance;
   }

@@ -270,7 +270,7 @@ void RidgeRegression::ComputeLinearModel_
   factors_.zeros(v_t.n_cols, 1);
 
   for(size_t i = 0; i < singular_values.n_elem; i++) {
-    double s_sq = math::Sqr(singular_values[i]);
+    double s_sq = pow(singular_values[i], 2);
     double alpha = singular_values[i] / (lambda_sq + s_sq) *
       //la::Dot(u.n_rows, u.GetColumnPtr(i), predictions_.ptr());
       arma::dot(u.col(i),predictions_.rows(0,u.n_rows-1));
@@ -410,7 +410,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   arma::vec singular_values_sq;
   singular_values_sq = singular_values;
   for(size_t i = 0; i < singular_values.n_elem; i++) {
-    singular_values_sq[i] = math::Sqr(singular_values[i]);
+    singular_values_sq[i] = pow(singular_values[i], 2);
   }
 
   // u_x_b will be a vector of length s such that each entry is a dot
@@ -428,7 +428,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
   // minimizes the loss function.
   for(size_t i = 0; i < num; i++) {
     double lambda = lambda_min + i * step;
-    double lambda_sq = math::Sqr(lambda);
+    double lambda_sq = pow(lambda, 2);
 
     // compute residual error
     error.zeros();
@@ -455,10 +455,10 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
       for(size_t k = 0; k < singular_values_sq.n_elem; k++) {
 	accumulant -= u_x_b(k, 0) * u(j, k);
       }
-      rss += math::Sqr(accumulant);
+      rss += pow(accumulant, 2);
     }
 
-    double score = rss / math::Sqr(tau);
+    double score = rss / pow(tau, 2);
 
     if(score < min_score) {
       min_score = score;
@@ -471,7 +471,7 @@ void RidgeRegression::CrossValidatedRegression(double lambda_min,
 
 
   // Using the best lambda, compute the linear model.
-  double lambda_sq = math::Sqr(lambda_min + min_index * step);
+  double lambda_sq = pow(lambda_min + min_index * step, 2);
   ComputeLinearModel_(lambda_sq, singular_values, u, v_t,
 		      predictors_->n_rows);
 }
