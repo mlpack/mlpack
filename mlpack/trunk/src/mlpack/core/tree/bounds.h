@@ -13,6 +13,8 @@
 #define TREE_BOUNDS_H
 
 #include <mlpack/core/math/math_lib.h>
+#include <mlpack/core/math/range.h>
+#include <mlpack/core/math/kernel.h>
 #include <mlpack/core/kernels/lmetric.h>
 #include "hrectbound.h"
 #include "dhrectperiodicbound.h"
