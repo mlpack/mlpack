@@ -552,7 +552,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     // Re-adjust so that the subtree is transferred in around 10 rounds.
     max_subtree_size_ =
       std::max(
-        static_cast<int>(max_num_reference_points_to_pack_per_process_),
+        std::min(
+          static_cast<int>(max_num_reference_points_to_pack_per_process_),
+          20000),
         leaf_size_ * 2);
 
     if(world_->rank() == 0) {
