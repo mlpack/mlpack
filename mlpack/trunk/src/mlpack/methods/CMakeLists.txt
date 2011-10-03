@@ -13,7 +13,6 @@ set(DIRS
   nca
   neighbor_search
   nnsvm
-  #range_search
   regression
   svm
 )
