@@ -6,10 +6,10 @@ set(SOURCES
   bounds.h
   dballbound.h
   dballbound_impl.h
-  dhrectperiodicbound.h
-  dhrectperiodicbound_impl.h
   hrectbound.h
   hrectbound_impl.h
+  periodichrectbound.h
+  periodichrectbound_impl.h
   spacetree.h
   statistic.h
 )
