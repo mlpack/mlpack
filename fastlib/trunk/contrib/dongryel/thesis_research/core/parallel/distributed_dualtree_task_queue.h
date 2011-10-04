@@ -12,7 +12,6 @@
 #include <omp.h>
 #include <vector>
 #include "core/math/range.h"
-#include "core/parallel/disjoint_int_intervals.h"
 #include "core/parallel/distributed_dualtree_task_list.h"
 #include "core/parallel/query_subtable_lock.h"
 #include "core/parallel/scoped_omp_lock.h"
@@ -90,11 +89,6 @@ class DistributedDualtreeTaskQueue {
     static const int process_rank_favor_factor_ = 0;
 
   private:
-
-    /** @brief Assigned work for each query subtable.
-     */
-    std::vector <
-    boost::intrusive_ptr<core::parallel::DisjointIntIntervals> > assigned_work_;
 
     /** @brief The list of checked out query subtables.
      */
@@ -175,7 +169,6 @@ class DistributedDualtreeTaskQueue {
      */
     void GrowSlots_() {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      assigned_work_.resize(assigned_work_.size() + 1);
       query_subtables_.push_back(
         boost::intrusive_ptr< SubTableType > (new SubTableType()));
       remaining_work_for_query_subtables_.resize(
@@ -208,14 +201,12 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Replace.
-      assigned_work_[probe_index] = assigned_work_.back();
       query_subtables_[probe_index] = query_subtables_.back();
       remaining_work_for_query_subtables_[probe_index] =
         remaining_work_for_query_subtables_.back();
       tasks_[probe_index] = tasks_.back();
 
       // Pop.
-      assigned_work_.pop_back();
       query_subtables_.pop_back();
       remaining_work_for_query_subtables_.pop_back();
       tasks_.pop_back();
@@ -284,10 +275,6 @@ class DistributedDualtreeTaskQueue {
       tasks_.push_back(
         boost::intrusive_ptr <
         TaskPriorityQueueType > (new TaskPriorityQueueType()));
-      assigned_work_.push_back(
-        boost::intrusive_ptr< core::parallel::DisjointIntIntervals > (
-          new core::parallel::DisjointIntIntervals(
-            world, *(assigned_work_[subtree_index]))));
       remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtables_[ subtree_index]);
       for(unsigned int i = 0; i < prev_tasks.first.size(); i++) {
@@ -351,7 +338,6 @@ class DistributedDualtreeTaskQueue {
               received_query_subtable_id.get<2>() ==
               comp_query_subtable_id.get<2>()) {
 
-            assigned_work_.push_back((*it)->assigned_work_);
             query_subtables_.push_back((*it)->query_subtable_);
             remaining_work_for_query_subtables_.push_back(
               (*it)->remaining_work_for_query_subtable_);
@@ -583,7 +569,6 @@ class DistributedDualtreeTaskQueue {
     /** @brief The destructor.
      */
     ~DistributedDualtreeTaskQueue() {
-      assigned_work_.resize(0);
       query_subtables_.resize(0);
       tasks_.resize(0);
 
@@ -680,8 +665,7 @@ class DistributedDualtreeTaskQueue {
         // a new task if it has not already taken care of the incoming
         // reference table.
         for(int j = 0; j < static_cast<int>(query_subtables_.size()); j++) {
-          if(query_subtables_[j]->table()->rank() == world.rank() &&
-              assigned_work_[j]->Insert(reference_grid)) {
+          if(query_subtables_[j]->table()->rank() == world.rank()) {
             this->PushTask(
               world, metric_in, j, * frontier_reference_subtable);
             table_exchange_.LockCache(cache_id, 1);
@@ -692,8 +676,7 @@ class DistributedDualtreeTaskQueue {
         for(typename QuerySubTableLockListType::iterator it =
               checked_out_query_subtables_.begin();
             it != checked_out_query_subtables_.end(); it++) {
-          if((*it)->query_subtable_->table()->rank() == world.rank() &&
-              (*it)->Insert_(world, reference_grid)) {
+          if((*it)->query_subtable_->table()->rank() == world.rank()) {
             (*it)->PushTask_(
               this, world, metric_in, * frontier_reference_subtable);
             table_exchange_.LockCache(cache_id, 1);
@@ -900,14 +883,8 @@ class DistributedDualtreeTaskQueue {
 
       // Initialize the completed computation grid for each query tree
       // on this process.
-      assigned_work_.resize(query_subtables_.size()) ;
       remaining_work_for_query_subtables_.resize(query_subtables_.size());
       for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        assigned_work_[i] =
-          boost::intrusive_ptr <
-          core::parallel::DisjointIntIntervals > (
-            new core::parallel::DisjointIntIntervals());
-        assigned_work_[i]->Init(world);
         remaining_work_for_query_subtables_[i] = total_num_reference_points;
       }
     }
@@ -930,7 +907,8 @@ class DistributedDualtreeTaskQueue {
 
       // If the number of available task is less than the number of
       // running threads, try to get one.
-      if(static_cast<int>(tasks_.size()) < num_threads_ * 5) {
+      if(static_cast<int>(tasks_.size()) < num_threads_ * 5 &&
+          (world.size() > 1 || num_threads_ > 1)) {
         this->RedistributeAmongCores_(world, metric_in);
       }
 

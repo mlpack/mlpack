@@ -1,7 +1,6 @@
 cmake_minimum_required(VERSION 2.6)
 
 set(SOURCES
-  disjoint_int_intervals.h
   distributed_dualtree_dfs_dev.h
   distributed_dualtree_dfs.h
   distributed_dualtree_task.h

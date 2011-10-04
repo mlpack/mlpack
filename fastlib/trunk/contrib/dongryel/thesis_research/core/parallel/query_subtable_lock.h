@@ -62,12 +62,6 @@ class QuerySubTableLock {
     typedef QuerySubTableLock <
     DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
 
-    /** @brief The assigned work so far for the query subtable being
-     *         held here.
-     */
-    boost::intrusive_ptr <
-    core::parallel::DisjointIntIntervals > assigned_work_;
-
     /** @brief The MPI rank of the process holding the query subtable.
      */
     int locked_mpi_rank_;
@@ -111,15 +105,12 @@ class QuerySubTableLock {
         & (checkout_from->remaining_local_computation_);
 
       // Check out from the position.
-      assigned_work_ = checkout_from->assigned_work_[probe_index];
       query_subtable_ = checkout_from->query_subtables_[probe_index];
       remaining_work_for_query_subtable_ =
         checkout_from->remaining_work_for_query_subtables_[probe_index];
       task_ = checkout_from->tasks_[probe_index];
 
       // Overwrite the current position with the back item.
-      checkout_from->assigned_work_[probe_index] =
-        checkout_from->assigned_work_.back();
       checkout_from->query_subtables_[probe_index] =
         checkout_from->query_subtables_.back();
       checkout_from->remaining_work_for_query_subtables_[probe_index] =
@@ -127,23 +118,19 @@ class QuerySubTableLock {
       checkout_from->tasks_[probe_index] = checkout_from->tasks_.back();
 
       // Pop the back items.
-      checkout_from->assigned_work_.pop_back();
       checkout_from->query_subtables_.pop_back();
       checkout_from->remaining_work_for_query_subtables_.pop_back();
       checkout_from->tasks_.pop_back();
     }
 
     void Return_(DistributedDualtreeTaskQueueType *export_to) {
-      export_to->assigned_work_.push_back(assigned_work_);
       export_to->query_subtables_.push_back(query_subtable_);
       export_to->remaining_work_for_query_subtables_.push_back(
         remaining_work_for_query_subtable_);
       export_to->tasks_.push_back(task_);
 
       // Put it back in the front again.
-      if(export_to->assigned_work_.size() > 1) {
-        export_to->assigned_work_.back().swap(
-          export_to->assigned_work_.front());
+      if(export_to->tasks_.size() > 1) {
         export_to->query_subtables_.back().swap(
           export_to->query_subtables_.front());
         std::swap(
@@ -178,16 +165,6 @@ class QuerySubTableLock {
       (* remaining_local_computation_) += new_task.work();
     }
 
-    bool Insert_(
-      boost::mpi::communicator &world,
-      const boost::tuple<int, int, int> &reference_grid) {
-
-      if(world.rank() != query_subtable_->table()->rank()) {
-        return false;
-      }
-      return assigned_work_->Insert(reference_grid);
-    }
-
   public:
 
     long reference_count_;
@@ -207,7 +184,6 @@ class QuerySubTableLock {
     }
 
     void operator=(const QuerySubTableLockType &lock_in) {
-      assigned_work_ = lock_in.assigned_work_;
       num_remaining_tasks_ = lock_in.num_remaining_tasks_;
       query_subtable_  = lock_in.query_subtable_;
       remaining_local_computation_ = lock_in.remaining_local_computation_;

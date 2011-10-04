@@ -295,8 +295,6 @@ class DistributedDualtreeTaskList {
       // Swap the positions so that the imported query subtables are
       // selected first.
       for(unsigned int i = 0; i < donated_task_list_.size(); i++) {
-        distributed_task_queue_->assigned_work_.back().swap(
-          distributed_task_queue_->assigned_work_[i]);
         distributed_task_queue_->query_subtables_.back().swap(
           distributed_task_queue_->query_subtables_[i]);
         std::swap(
