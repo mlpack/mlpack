@@ -1,7 +1,7 @@
 #include "linear_regression.h"
 
 namespace mlpack {
-  namespace linear_regression {
+namespace linear_regression {
 
   LinearRegression::LinearRegression(arma::mat& predictors,
     const arma::colvec& responses) {
@@ -46,5 +46,5 @@ namespace mlpack {
   }
 
 
-  }
-}
+}; // linear_regression
+}; // mlpack
