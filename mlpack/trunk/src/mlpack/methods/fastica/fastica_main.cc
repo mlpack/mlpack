@@ -52,6 +52,8 @@ PARAM_STRING("unmixing_file", "File containing unmixing data.", "fastica", "unmi
 
 int main(int argc, char *argv[]) {
   arma::mat X;
+  using namespace mlpack;
+  using namespace fastica;
 
   IO::ParseCommandLine(argc, argv);
   const char* data = IO::GetParam<std::string>("fastica/input_file").c_str();
