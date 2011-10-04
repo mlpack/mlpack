@@ -13,7 +13,7 @@
 #ifndef PERMUTATIONS_H
 #define PERMUTATIONS_H
 
-# include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 
 namespace npt {
 

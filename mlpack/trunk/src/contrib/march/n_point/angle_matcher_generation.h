@@ -10,7 +10,7 @@
 #ifndef ANGLE_MATCHER_GENERATION_H 
 #define ANGLE_MATCHER_GENERATION_H
 
-#include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 
 namespace npt {
   

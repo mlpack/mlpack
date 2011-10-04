@@ -10,7 +10,8 @@
 
 #include "angle_driver.h"
 #include "single_driver.h"
-#include "fastlib/fastlib.h"
+//#include "fastlib/fastlib.h"
+#include <mlpack/core.h>
 
 PARAM_STRING_REQ("data", "Point coordinates.", NULL);
 PARAM_STRING_REQ("random", "Poisson set coordinates.", NULL);

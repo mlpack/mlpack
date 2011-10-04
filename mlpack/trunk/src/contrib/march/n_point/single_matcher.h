@@ -83,7 +83,8 @@ namespace npt {
     bool TestPointPair_(double dist_sq, int tuple_ind_1, int tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     
-    bool TestHrectPair_(const DHrectBound<2>& box1, const DHrectBound<2>& box2,
+    bool TestHrectPair_(const mlpack::bound::HRectBound<2>& box1, 
+                        const mlpack::bound::HRectBound<2>& box2,
                         int tuple_ind_1, int tuple_ind_2,
                         std::vector<bool>& permutation_ok);
     

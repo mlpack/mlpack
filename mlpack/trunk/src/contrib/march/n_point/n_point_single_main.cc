@@ -7,8 +7,10 @@
  *
  */
 
-#include "fastlib/fastlib.h"
-#include <fastlib/fx/io.h>
+//#include "fastlib/fastlib.h"
+//#include <fastlib/fx/io.h>
+
+#include <mlpack/core.h>
 
 //#include "single_bandwidth_alg.h"
 //#include "perm_free_alg.h"

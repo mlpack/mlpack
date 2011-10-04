@@ -15,20 +15,20 @@ set(MLPACK_CONTRIB_SRCS)
 # now we need to recurse into each of the contrib methods
 set(DIRS
 #   archana  # <-- DCT.cc is not usable anywhere else, custom one-time code
-   dongryel
-   gmravi
-   houyang
-   huijing
-   jim
+#   dongryel
+#   gmravi
+#   houyang
+#   huijing
+#   jim
    march
-   niche
-   nvasil
+#   niche
+#   nvasil
 #   pagarwal
-   pram
-   rcurtin
-   rriegel
-   soyeon
-   tqlong
+#   pram
+#   rcurtin
+#   rriegel
+#   soyeon
+#   tqlong
 )
 
 foreach(dir ${DIRS})
@@ -42,7 +42,6 @@ add_library(mlpack_contrib EXCLUDE_FROM_ALL ${MLPACK_CONTRIB_SRCS})
 add_dependencies(mlpack_contrib mlpack fastlib)
 target_link_libraries(mlpack_contrib
   mlpack
-  fastlib
   lapack
   blas
 )

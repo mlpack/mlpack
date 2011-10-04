@@ -176,9 +176,9 @@ int npt::AngleMatcher::TestPointTuple_(arma::colvec& vec1, arma::colvec& vec2,
 // satisfy one of the matchers
 // If false, then pruning is ok
 /*
-bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1, 
-                                      const DHrectBound<2>& box2,
-                                      const DHrectBound<2>& box3) {
+bool npt::AngleMatcher::TestNodeTuple(const HRectBound<2>& box1, 
+                                      const HRectBound<2>& box2,
+                                      const HRectBound<2>& box3) {
   
   // pruning options: all three distances are shorter than the shortest r1
   // or longer than the longest one
@@ -247,7 +247,7 @@ bool npt::AngleMatcher::TestNodeTuple(const DHrectBound<2>& box1,
   // we've chosen an r1
   
   return possibly_valid;
-  
+  HRectBound
 } // TestNodeTuple
 */
 
@@ -256,20 +256,20 @@ bool npt::AngleMatcher::TestNodeTuple(NodeTuple& nodes) {
   
   // pruning options: all three distances are shorter than the shortest r1
   // or longer than the longest one
-  DHrectBound<2>& box1 = nodes.node_list(0)->bound(); 
-  DHrectBound<2>& box2 = nodes.node_list(1)->bound();
-  DHrectBound<2>& box3 = nodes.node_list(2)->bound();
+  mlpack::bound::HRectBound<2>& box1 = nodes.node_list(0)->bound(); 
+  mlpack::bound::HRectBound<2>& box2 = nodes.node_list(1)->bound();
+  mlpack::bound::HRectBound<2>& box3 = nodes.node_list(2)->bound();
   
   bool possibly_valid = true;
   
-  double d12_lower = box1.MinDistanceSq(box2);
-  double d12_upper = box1.MaxDistanceSq(box2);
+  double d12_lower = box1.MinDistance(box2);
+  double d12_upper = box1.MaxDistance(box2);
   
-  double d13_lower = box1.MinDistanceSq(box3);
-  double d13_upper = box1.MaxDistanceSq(box3);
+  double d13_lower = box1.MinDistance(box3);
+  double d13_upper = box1.MaxDistance(box3);
   
-  double d23_lower = box2.MinDistanceSq(box3);
-  double d23_upper = box2.MaxDistanceSq(box3);
+  double d23_lower = box2.MinDistance(box3);
+  double d23_upper = box2.MaxDistance(box3);
   
   // find the valid r1's - the smallest upper bound needs to fit
   // check that there is a valid r2/r3 for each
