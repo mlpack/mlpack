@@ -6,7 +6,13 @@ W = normrnd(0, 1, n_dims, n_atoms);
 
 % generate sparse codes
 Z = normrnd(0, 1, n_atoms, n_tasks);
-Z(find(abs(Z) < 0.5)) = 0;
+for t = 1:n_tasks
+  inds = randperm(n_atoms);
+  selected_inds = inds(1:floor(0.8 * n_atoms));
+  Z(selected_inds, t) = 0;
+end
+
+%Z(find(abs(Z) < 2)) = 0;
 
 % generate data
 X = normrnd(0,1, n_dims, n_points, n_tasks);
