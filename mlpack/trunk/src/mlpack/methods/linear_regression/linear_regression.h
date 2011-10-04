@@ -3,6 +3,7 @@
 
 #include <mlpack/core.h>
 namespace mlpack {
+  namespace linear_regression {
 
 /** 
  *  A simple linear regresion algorithm using ordinary least squares.
@@ -38,6 +39,8 @@ class LinearRegression {
 
 };
 
+  }
 }
+
 
 #endif
