@@ -10,7 +10,6 @@
 #ifndef EFFICIENT_RESAMPLING_H
 #define EFFICIENT_RESAMPLING_H
 
-#include "fastlib/fastlib.h"
 #include "node_tuple.h"
 
 

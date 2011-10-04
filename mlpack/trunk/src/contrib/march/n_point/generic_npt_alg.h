@@ -22,7 +22,6 @@
 #define GENERIC_NPT_ALG_H
 
 
-#include "fastlib/fastlib.h"
 #include "node_tuple.h"
 
 

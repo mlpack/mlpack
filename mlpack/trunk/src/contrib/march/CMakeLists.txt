@@ -9,7 +9,7 @@ set(DIRS
 #   npt
 #   scf  ## awaiting resolution of #10 (requires libint)
 #   sandbox
-#   n_point
+   n_point
 )
 
 foreach(dir ${DIRS})

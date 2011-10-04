@@ -10,7 +10,6 @@
 #ifndef NAIVE_RESAMPLING_H
 #define NAIVE_RESAMPLING_H
 
-#include "fastlib/fastlib.h"
 #include "node_tuple.h"
 
 namespace npt {

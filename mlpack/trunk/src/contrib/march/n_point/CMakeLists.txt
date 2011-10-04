@@ -59,7 +59,6 @@ add_executable(n_point_angle_resampling_main
     n_point_angle_resampling_main.cpp
 )
 target_link_libraries(n_point_angle_resampling_main
-    fastlib
     mlpack
     mlpack_contrib
 )
@@ -69,7 +68,6 @@ add_executable(n_point_single_main
     n_point_single_main.cc
 )
 target_link_libraries(n_point_single_main
-    fastlib
     mlpack
     mlpack_contrib
 )

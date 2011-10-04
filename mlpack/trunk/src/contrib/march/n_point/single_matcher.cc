@@ -59,15 +59,15 @@ bool npt::SingleMatcher::TestPointPair_(double dist_sq, int tuple_ind_1,
 // note that for now, there is no subsuming
 // this function will need to change if I want to add it
 // This returns true if the pair might satisfy the matcher
-bool npt::SingleMatcher::TestHrectPair_(const DHrectBound<2>& box1, 
-                                        const DHrectBound<2>& box2,
+bool npt::SingleMatcher::TestHrectPair_(const mlpack::bound::HRectBound<2>& box1, 
+                                        const mlpack::bound::HRectBound<2>& box2,
                                         int tuple_ind_1, int tuple_ind_2,
                                         std::vector<bool>& permutation_ok) {
   
   bool any_matches = false;
   
-  double max_dist_sq = box1.MaxDistanceSq(box2);
-  double min_dist_sq = box1.MinDistanceSq(box2);
+  double max_dist_sq = box1.MaxDistance(box2);
+  double min_dist_sq = box1.MinDistance(box2);
   
   // iterate over all the permutations
   // Note that we have to go through all of them 

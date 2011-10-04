@@ -13,9 +13,10 @@
 #ifndef ANGLE_MATCHER_H
 #define ANGLE_MATCHER_H
 
-#include "fastlib/fastlib.h"
 #include "boost/multi_array.hpp"
 #include "node_tuple.h"
+#include <mlpack/core/tree/bounds.h>
+#include <mlpack/core/tree/spacetree.h>
 
 /*
  *  Takes in the parameters for an angle-based set of matchers (r1, r2_mult,
