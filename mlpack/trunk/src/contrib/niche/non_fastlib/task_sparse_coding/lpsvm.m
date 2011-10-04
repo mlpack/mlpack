@@ -190,7 +190,7 @@ end
 
 w=1/epsi(1)*(pp-np);
 gamma=-(1/epsi(1))*sum(du);
-iter
+iter; % semi-colon added by niche
 return
 
 

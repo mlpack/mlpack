@@ -1,5 +1,5 @@
 function [W, Z] = TaskCoding(X, Y, n_atoms, lambda_w, lambda_z, tol)
-%function [] = TaskCoding(X, Y, n_atoms, lambda_w, lambda_z, tol)
+%function [W, Z] = TaskCoding(X, Y, n_atoms, lambda_w, lambda_z, tol)
 %
 % X is tensor in R^{n_dims \times n_points \times n_tasks}
 % Y is a matrix in R^{n_points \times n_tasks}

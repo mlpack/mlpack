@@ -14,5 +14,5 @@ for t = 1:n_tasks
   U(:, ((t - 1) * n_points + 1):(t * n_points)) = U_t;
 end
 
-W_vec = pegasos(U, reshape(Y, n_points * n_tasks, []), lambda_w, 1,  1000);
+W_vec = pegasos(U, reshape(Y, n_points * n_tasks, []), lambda_w, 5,  2000);
 W = reshape(W_vec, n_dims, n_atoms);
