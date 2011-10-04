@@ -18,6 +18,7 @@ cp ./*/src/mlpack/methods/neighbor_search/test_data_3_1000.csv .
 
 echo "Copy ARFF files for NBC test to current working directory"
 cp ./*/src/mlpack/methods/naive_bayes/*.arff .
+cp ./*/src/mlpack/core/data/test/fake* .
 
 echo "Running All Tests:"
 for ML_TEST in ${TEST_BINS}
