@@ -3,6 +3,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace hmm {
+
 namespace hmm_support {
   /** Generate uniform random value in [0, 1] */
   double RAND_UNIFORM_01();
@@ -63,7 +66,10 @@ namespace hmm_support {
    * are seperated by a line start with %
    */
   bool load_vector_list(const char* filename, std::vector<arma::vec>& veclst);
-};
+}; // namespace hmm_support
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif
 

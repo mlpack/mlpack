@@ -17,6 +17,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace mlpack;
+using namespace hmm;
 using namespace hmm_support;
 
 bool viterbi_discrete();
@@ -51,8 +53,6 @@ PARAM_MODULE("hmm", "This is a program computing th emost probable state\n seque
   "This is a program computing the most probable state sequences \n"
   "of data sequences from HMM models.\n"
 }; */
-
-using namespace mlpack;
 
 int main(int argc, char* argv[]) {
   IO::ParseCommandLine(argc, argv);

@@ -2,6 +2,9 @@
 #include "discreteDST.h"
 #include "support.h"
 
+namespace mlpack {
+namespace hmm {
+
 void DiscreteDST::Init(int n) {
   p.set_size(n);
   acc_p.set_size(n);
@@ -47,3 +50,6 @@ void DiscreteDST::end_accumulate() {
   for (int i = 0; i < N; i++)
     p[i] = ACC_p[i] / s;
 }
+
+}; // namespace hmm
+}; // namespace mlpack

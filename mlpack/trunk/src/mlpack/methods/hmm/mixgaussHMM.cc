@@ -9,6 +9,8 @@
 #include "mixgaussHMM.h"
 #include "gaussianHMM.h"
 
+using namespace mlpack;
+using namespace hmm;
 using namespace hmm_support;
 
 void MixtureofGaussianHMM::setModel(const arma::mat& transmission,
