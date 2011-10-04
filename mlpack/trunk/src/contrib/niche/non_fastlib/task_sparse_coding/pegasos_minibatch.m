@@ -32,8 +32,8 @@ for t = 1:n_iterations
 
   % project onto the (1 / sqrt(lambda)) ball - is this step needed
   % for the best version of Pegasos?
-  %norm_w = norm(w);
-  %if norm_w > 1 / sqrt(lambda)
-  %  w = w * (1 / sqrt(lambda)) / norm_w;
-  %end
+  norm_w = norm(w);
+  if norm_w > 1 / sqrt(lambda)
+    w = w * (1 / sqrt(lambda)) / norm_w;
+  end
 end
