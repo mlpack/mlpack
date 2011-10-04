@@ -12,7 +12,6 @@
 #include <omp.h>
 #include <vector>
 #include "core/math/range.h"
-#include "core/parallel/disjoint_int_intervals.h"
 
 namespace core {
 namespace parallel {
