@@ -245,7 +245,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
 
   boost::program_options::notify(*vm);
   if(vm->count("help")) {
-    std::cout << desc << "\n";
+    std::cerr << desc << "\n";
     return true;
   }
 
@@ -393,7 +393,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->top_tree_sample_probability_ =
     vm["top_tree_sample_probability"].as<double>();
   if(world.rank() == 0) {
-    std::cout << "Sampling the number of points owned by each MPI process with "
+    std::cerr << "Sampling the number of points owned by each MPI process with "
               "the probability of " <<
               arguments_out->top_tree_sample_probability_ << "\n";
   }
@@ -410,7 +410,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
   // Parse the leaf size.
   arguments_out->leaf_size_ = vm["leaf_size"].as<int>();
   if(world.rank() == 0) {
-    std::cout << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
+    std::cerr << "Using the leaf size of " << arguments_out->leaf_size_ << "\n";
   }
 
   // Parse the number of threads.
@@ -447,7 +447,7 @@ bool DistributedKdeArgumentParser::ParseArguments(
     arguments_out->reference_table_->Init(random_reference_dataset, world);
   }
   else {
-    std::cout << "Reading in the reference set: " <<
+    std::cerr << "Reading in the reference set: " <<
               reference_file_name << "\n";
     arguments_out->reference_table_->Init(
       reference_file_name, world);
@@ -478,28 +478,28 @@ bool DistributedKdeArgumentParser::ParseArguments(
       arguments_out->query_table_->Init(random_query_dataset, world);
     }
     else {
-      std::cout << "Reading in the query set: " <<
+      std::cerr << "Reading in the query set: " <<
                 query_file_name << "\n";
       arguments_out->query_table_->Init(query_file_name, world);
     }
-    std::cout << "Building the query tree.\n";
+    std::cerr << "Building the query tree.\n";
     arguments_out->query_table_->IndexData(
       *(arguments_out->metric_), world, arguments_out->leaf_size_,
       arguments_out->top_tree_sample_probability_, 1);
-    std::cout << "Finished building the query tree.\n";
+    std::cerr << "Finished building the query tree.\n";
   }
 
   // Parse the bandwidth.
   arguments_out->bandwidth_ = vm["bandwidth"].as<double>();
   if(world.rank() == 0) {
-    std::cout << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
+    std::cerr << "Bandwidth of " << arguments_out->bandwidth_ << "\n";
   }
 
   // Parse the relative error and the absolute error.
   arguments_out->absolute_error_ = vm["absolute_error"].as<double>();
   arguments_out->relative_error_ = vm["relative_error"].as<double>();
   if(world.rank() == 0) {
-    std::cout << "For each query point $q \\in \\mathcal{Q}$, " <<
+    std::cerr << "For each query point $q \\in \\mathcal{Q}$, " <<
               "we will guarantee: " <<
               "$| \\widetilde{G}(q) - G(q) | \\leq "
               << arguments_out->relative_error_ <<
@@ -510,20 +510,20 @@ bool DistributedKdeArgumentParser::ParseArguments(
   // Parse the probability.
   arguments_out->probability_ = vm["probability"].as<double>();
   if(world.rank() == 0) {
-    std::cout << "Probability of " << arguments_out->probability_ << "\n";
+    std::cerr << "Probability of " << arguments_out->probability_ << "\n";
   }
 
   // Parse the kernel type.
   arguments_out->kernel_ = vm["kernel"].as< std::string >();
   if(world.rank() == 0) {
-    std::cout << "Using the kernel: " << arguments_out->kernel_ << "\n";
+    std::cerr << "Using the kernel: " << arguments_out->kernel_ << "\n";
   }
 
   // Parse the series expansion type.
   arguments_out->series_expansion_type_ =
     vm["series_expansion_type"].as<std::string>();
   if(world.rank() == 0) {
-    std::cout << "Using the series expansion type: " <<
+    std::cerr << "Using the series expansion type: " <<
               arguments_out->series_expansion_type_ << "\n";
   }
 
@@ -536,9 +536,9 @@ bool DistributedKdeArgumentParser::ParseArguments(
   arguments_out->max_num_work_to_dequeue_per_stage_ =
     vm["max_num_work_to_dequeue_per_stage_in"].as<int>();
   if(world.rank() == 0) {
-    std::cout << "Serializing " << arguments_out->max_subtree_size_
+    std::cerr << "Serializing " << arguments_out->max_subtree_size_
               << " points of the tree at a time.\n";
-    std::cout << "Dequeuing " <<
+    std::cerr << "Dequeuing " <<
               arguments_out->max_num_work_to_dequeue_per_stage_ <<
               " items at a time from each process.\n";
   }

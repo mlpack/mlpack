@@ -188,17 +188,15 @@ class VanillaDistributedTreeBuilder {
 
       // Report timing for the master process.
       if(world.rank() == 0) {
-        printf("Finished building the distributed tree.\n");
-        printf(
-          "Took %g seconds to read in the distributed tree.\n",
-          distributed_table_index_timer.elapsed());
-        printf(
-          "The following is the distribution of points among all MPI "
-          "processes.\n");
+        std::cerr << "Finished building the distributed tree.\n";
+        std::cerr << "Took " <<  distributed_table_index_timer.elapsed()
+                  << " seconds to read in the distributed tree.\n";
+        std::cerr <<
+                  "The following is the distribution of points among all MPI "
+                  "processes.\n";
         for(int i = 0; i < world.size(); i++) {
-          printf(
-            "Process %d has %d points.\n", i,
-            distributed_table_->local_n_entries(i));
+          std::cerr << "Process " << i << " has " <<
+                    distributed_table_->local_n_entries(i) << " points.\n";
         }
       }
     }
