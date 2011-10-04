@@ -28,15 +28,10 @@ class PeriodicHRectBound {
   PeriodicHRectBound();
 
   /**
-   * Specifies the box size, but not dimensionality.
+   * Specifies the box size.  The dimensionality is set to the same of the box
+   * size, and the bounds are initialized to be empty.
    */
   PeriodicHRectBound(arma::vec box);
-
-  /**
-   * Initializes to specified dimensionality with each dimension the empty
-   * set.
-   */
-  PeriodicHRectBound(size_t dimension, arma::vec box);
 
   /***
    * Copy constructor and copy operator.  These are necessary because we do our
@@ -58,7 +53,7 @@ class PeriodicHRectBound {
   /**
    * Returns the box_size_ vector.
    */
-  arma::vec GetBoxSize();
+  const arma::vec& box() const { return box_; }
 
   /**
    * Resets all dimensions to the empty set.
@@ -74,40 +69,51 @@ class PeriodicHRectBound {
   Range& operator[](size_t i);
   const Range operator[](size_t i) const;
 
-  /** Calculates the midpoint of the range */
+  /***
+   * Calculates the centroid of the range.  This does not factor in periodic
+   * coordinates, so the centroid may not necessarily be inside the given box.
+   *
+   * @param centroid Vector to write the centroid to.
+   */
   void Centroid(arma::vec& centroid) const;
 
   /**
-   * Calculates minimum bound-to-point squared distance.
+   * Calculates minimum bound-to-point squared distance in the periodic bound
+   * case.
    */
-  double MinDistanceSq(const arma::vec& point) const;
+  double MinDistance(const arma::vec& point) const;
 
   /**
-   * Calculates minimum bound-to-bound squared distance.
+   * Calculates minimum bound-to-bound squared distance in the periodic bound
+   * case.
    *
-   * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+   * Example: bound1.MinDistance(other) for minimum squared distance.
    */
-  double MinDistanceSq(const PeriodicHRectBound& other) const;
+  double MinDistance(const PeriodicHRectBound& other) const;
 
   /**
-   * Calculates maximum bound-to-point squared distance.
+   * Calculates maximum bound-to-point squared distance in the periodic bound
+   * case.
    */
-  double MaxDistanceSq(const arma::vec& point) const;
+  double MaxDistance(const arma::vec& point) const;
 
   /**
-   * Computes maximum distance.
+   * Computes maximum bound-to-bound squared distance in the periodic bound
+   * case.
    */
-  double MaxDistanceSq(const PeriodicHRectBound& other) const;
+  double MaxDistance(const PeriodicHRectBound& other) const;
 
   /**
-   * Calculates minimum and maximum bound-to-point squared distance.
+   * Calculates minimum and maximum bound-to-point squared distance in the
+   * periodic bound case.
    */
-  Range RangeDistanceSq(const arma::vec& point) const;
+  Range RangeDistance(const arma::vec& point) const;
 
   /**
-   * Calculates minimum and maximum bound-to-bound squared distance.
+   * Calculates minimum and maximum bound-to-bound squared distance in the
+   * periodic bound case.
    */
-  Range RangeDistanceSq(const PeriodicHRectBound& other) const;
+  Range RangeDistance(const PeriodicHRectBound& other) const;
 
   /**
    * Expands this region to include a new point.
@@ -127,7 +133,7 @@ class PeriodicHRectBound {
  private:
   Range *bounds_;
   size_t dim_;
-  arma::vec box_size_;
+  arma::vec box_;
 };
 
 }; // namespace bound

@@ -610,6 +610,248 @@ BOOST_AUTO_TEST_CASE(TestBallBound) {
 }
 
 /***
+ * Ensure that a bound, by default, is empty and has no dimensionality, and the
+ * box size vector is empty.
+ */
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundEmptyConstructor) {
+  PeriodicHRectBound<2> b;
+
+  BOOST_REQUIRE_EQUAL(b.dim(), 0);
+  BOOST_REQUIRE_EQUAL(b.box().n_elem, 0);
+}
+
+/***
+ * Ensure that when we specify the dimensionality in the constructor, it is
+ * correct, and the bounds are all the empty set.
+ */
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundBoxConstructor) {
+  PeriodicHRectBound<2> b(arma::vec("5 6"));
+
+  BOOST_REQUIRE_EQUAL(b.dim(), 2);
+  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(b.box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(b.box()[0], 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.box()[1], 6.0, 1e-5);
+
+  PeriodicHRectBound<2> d(arma::vec("2 3 4 5 6"));
+
+  BOOST_REQUIRE_EQUAL(d.dim(), 5);
+  BOOST_REQUIRE_SMALL(d[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[1].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[2].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[3].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(d[4].width(), 1e-5);
+  BOOST_REQUIRE_EQUAL(d.box().n_elem, 5);
+  BOOST_REQUIRE_CLOSE(d.box()[0], 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.box()[1], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.box()[2], 4.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.box()[3], 5.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(d.box()[4], 6.0, 1e-5);
+}
+
+/***
+ * Test the copy constructor.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCopyConstructor) {
+  PeriodicHRectBound<2> b(arma::vec("3 4"));
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
+
+  PeriodicHRectBound<2> c(b);
+
+  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
+}*/
+
+/***
+ * Test the assignment operator.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundAssignmentOperator) {
+  PeriodicHRectBound<2> b(arma::vec("3 4"));
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 3.0);
+
+  PeriodicHRectBound<2> c(arma::vec("3 4 5 6"));
+
+  c = b;
+
+  BOOST_REQUIRE_EQUAL(c.dim(), 2);
+  BOOST_REQUIRE_SMALL(c[0].lo, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[0].hi, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].lo, 2.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c[1].hi, 3.0, 1e-5);
+  BOOST_REQUIRE_EQUAL(c.box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(c.box()[0], 3.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(c.box()[1], 4.0, 1e-5);
+}*/
+
+/***
+ * Ensure that we can set the box size correctly.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundSetBoxSize) {
+  PeriodicHRectBound<2> b(arma::vec("1 2"));
+
+  b.SetBoxSize(arma::vec("10 12"));
+
+  BOOST_REQUIRE_EQUAL(b.box().n_elem, 2);
+  BOOST_REQUIRE_CLOSE(b.box()[0], 10.0, 1e-5);
+  BOOST_REQUIRE_CLOSE(b.box()[1], 12.0, 1e-5);
+}*/
+
+/***
+ * Ensure that we can clear the dimensions correctly.  This does not involve the
+ * box size at all, so the test can be identical to the HRectBound test.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundClear) {
+  // We'll do this with two dimensions only.
+  PeriodicHRectBound<2> b(arma::vec("5 5"));
+
+  b[0] = Range(0.0, 2.0);
+  b[1] = Range(2.0, 4.0);
+
+  // Now we just need to make sure that we clear the range.
+  b.Clear();
+
+  BOOST_REQUIRE_SMALL(b[0].width(), 1e-5);
+  BOOST_REQUIRE_SMALL(b[1].width(), 1e-5);
+}*/
+
+/***
+ * Ensure that we get the correct centroid for our bound.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundCentroid) {
+  // Create a simple 3-dimensional bound.  The centroid is not affected by the
+  // periodic coordinates.
+  PeriodicHRectBound<2> b(arma::vec("100 100 100"));
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(-2.0, -1.0);
+  b[2] = Range(-10.0, 50.0);
+
+  arma::vec centroid;
+
+  b.Centroid(centroid);
+
+  BOOST_REQUIRE_EQUAL(centroid.n_elem, 3);
+  BOOST_REQUIRE_CLOSE(centroid[0], 2.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(centroid[1], -1.5, 1e-5);
+  BOOST_REQUIRE_CLOSE(centroid[2], 20.0, 1e-5);
+}*/
+
+/***
+ * Correctly calculate the minimum distance between the bound and a point in
+ * periodic coordinates.  We have to account for the shifts necessary in
+ * periodic coordinates too, so that makes testing this a little more difficult.
+ *
+BOOST_AUTO_TEST_CASE(PeriodicHRectBoundMinDistancePoint) {
+  // First, we'll start with a simple 2-dimensional case where the point is
+  // inside the bound, then on the edge of the bound, then barely outside the
+  // bound.  The box size will be large enough that this is basically the
+  // HRectBound case.
+  PeriodicHRectBound<2> b(arma::vec("100 100"));
+
+  b[0] = Range(0.0, 5.0);
+  b[1] = Range(2.0, 4.0);
+
+  // Inside the bound.
+  arma::vec point = "2.5 3.0";
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  // On the edge.
+  point = "5.0 4.0";
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  // And just a little outside the bound.
+  point = "6.0 5.0";
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 2.0, 1e-5);
+
+  // Now we start to invoke the periodicity.  This point will "alias" to (-1,
+  // -1).
+  point = "99.0 99.0";
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 10.0, 1e-5);
+
+  // We will perform several tests on a one-dimensional bound.
+  b = PeriodicHRectBound<2>(arma::vec("5.0"));
+  point.set_size(1);
+
+  b[0] = Range("2.0 4.0"); // Entirely inside box.
+  point[0] = 7.5; // Inside first right image of the box.
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  b[0] = Range("0.0 5.0"); // Fills box fully.
+  point[1] = 19.3; // Inside the box, which covers everything.
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  b[0] = Range("-10.0 10.0"); // Larger than the box.
+  point[0] = -500.0; // Inside the box, which covers everything.
+
+  BOOST_REQUIRE_SMALL(b.MinDistance(point), 1e-5);
+
+  b[0] = Range("-2.0 1.0"); // Crosses over an edge.
+  point[0] = 2.9; // The first right image of the bound starts at 3.0.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.01, 1e-5);
+
+  b[0] = Range("2.0 4.0"); // Inside box.
+  point[0] = 0.0; // Closest to the first left image of the bound.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 1.0, 1e-5);
+
+  b[0] = Range("0.0 2.0"); // On edge of box.
+  point[0] = 7.1; // 0.1 away from the first right image of the bound.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.01, 1e-5);
+
+  b[0] = Range("-10.0 10.0"); // Box is of infinite size.
+  point[0] = 810.0; // 800 away from the only image of the box.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 640000, 1e-5);
+
+  b[0] = Range("2.0 4.0"); // Box size of -5 should function the same as 5.
+  point[0] = -10.8; // Should alias to 4.2.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 0.04, 1e-5);
+
+  // Switch our bound to a higher dimensionality.  This should ensure that the
+  // dimensions are independent like they should be.
+  b = PeriodicHRectBound<2>(arma::vec("5.0 5.0 5.0 5.0 5.0 5.0 0.0 -5.0"));
+
+  b[0] = Range("2.0 4.0"); // Entirely inside box.
+  b[1] = Range("0.0 5.0"); // Fills box fully.
+  b[2] = Range("-10.0 10.0"); // Larger than the box.
+  b[3] = Range("-2.0 1.0"); // Crosses over an edge.
+  b[4] = Range("2.0 4.0"); // Inside box.
+  b[5] = Range("0.0 2.0"); // On edge of box.
+  b[6] = Range("-10.0 10.0"); // Box is of infinite size.
+  b[7] = Range("2.0 4.0"); // Box size of -5 should function the same as 5.
+
+  point.set_size(8);
+  point[0] = 7.5; // Inside first right image of the box.
+  point[1] = 19.3; // Inside the box, which covers everything.
+  point[2] = -500.0; // Inside the box, which covers everything.
+  point[3] = 2.9; // The first right image of the bound starts at 3.0.
+  point[4] = 0.0; // Closest to the first left image of the bound.
+  point[5] = 7.1; // 0.1 away from the first right image of the bound.
+  point[6] = 810.0; // 800 away from the only image of the box.
+  point[7] = -10.8; // Should alias to 4.2.
+
+  BOOST_REQUIRE_CLOSE(b.MinDistance(point), 640001.06, 1e-10);
+}*/
+
+/***
  * It seems as though Bill has stumbled across a bug where
  * BinarySpaceTree<>::count() returns something different than
  * BinarySpaceTree<>::count_.  So, let's build a simple tree and make sure they
