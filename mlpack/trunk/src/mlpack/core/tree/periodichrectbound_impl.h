@@ -23,9 +23,9 @@ namespace bound {
  */
 template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound() :
-      box_size_(0),
       bounds_(NULL),
-      dim_(0) { /* nothing to do */ }
+      dim_(0),
+      box_(/* empty */) { /* nothing to do */ }
 
 /**
  * Specifies the box size, but not dimensionality.
@@ -34,17 +34,7 @@ template<int t_pow>
 PeriodicHRectBound<t_pow>::PeriodicHRectBound(arma::vec box) :
       bounds_(new Range[box.n_rows]),
       dim_(box.n_rows),
-      box_size_(box) { /* nothing to do */ }
-
-/**
- * Initializes to specified dimensionality with each dimension the empty
- * set and a box with said dimensionality.
- */
-template<int t_pow>
-PeriodicHRectBound<t_pow>::PeriodicHRectBound(size_t dimension, arma::vec box) :
-      box_size_(box),
-      bounds_(new Range[dimension]),
-      dim_(dimension) { /* nothing to do */ }
+      box_(box) { /* nothing to do */ }
 
 /***
  * Copy constructor.
@@ -75,19 +65,11 @@ PeriodicHRectBound<t_pow>::~PeriodicHRectBound() {
 }
 
 /**
- * Modifies the box_size_ to the desired dimenstions.
+ * Modifies the box_ to the desired dimenstions.
  */
 template<int t_pow>
 void PeriodicHRectBound<t_pow>::SetBoxSize(arma::vec box) {
-  box_size_ = box;
-}
-
-/**
- * Returns the box_size_ vector.
- */
-template<int t_pow>
-arma::vec PeriodicHRectBound<t_pow>::GetBoxSize() {
-  return box_size_;
+  box_ = box;
 }
 
 /**
@@ -130,18 +112,18 @@ void PeriodicHRectBound<t_pow>::Centroid(arma::vec& centroid) const {
  * Calculates minimum bound-to-point squared distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MinDistanceSq(const arma::vec& point) const {
+double PeriodicHRectBound<t_pow>::MinDistance(const arma::vec& point) const {
   double sum = 0;
 
   for (size_t d = 0; d < dim_; d++){
     double a = point[d];
     double v = 0, bh;
     bh = bounds_[d].hi - bounds_[d].lo;
-    bh = bh - floor(bh / box_size_[d]) * box_size_[d];
+    bh = bh - floor(bh / box_[d]) * box_[d];
     a = a - bounds_[d].lo;
-    a = a - floor(a / box_size_[d]) * box_size_[d];
+    a = a - floor(a / box_[d]) * box_[d];
     if (bh > a)
-      v = std::min( a - bh, box_size_[d]-a);
+      v = std::min( a - bh, box_[d]-a);
     sum += pow(v, (double) t_pow);
   }
 
@@ -151,10 +133,10 @@ double PeriodicHRectBound<t_pow>::MinDistanceSq(const arma::vec& point) const {
 /**
  * Calculates minimum bound-to-bound squared distance.
  *
- * Example: bound1.MinDistanceSq(other) for minimum squared distance.
+ * Example: bound1.MinDistance(other) for minimum squared distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MinDistanceSq(
+double PeriodicHRectBound<t_pow>::MinDistance(
     const PeriodicHRectBound& other) const {
   double sum = 0;
 
@@ -165,9 +147,9 @@ double PeriodicHRectBound<t_pow>::MinDistanceSq(
     d1 = ((bounds_[d].hi > bounds_[d].lo) | (other.bounds_[d].hi > other.bounds_[d].lo)) *
       std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi);
     d2 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_size_[d]);
+      std::min(other.bounds_[d].lo - bounds_[d].hi, bounds_[d].lo - other.bounds_[d].hi + box_[d]);
     d3 = ((bounds_[d].hi > bounds_[d].lo) & (other.bounds_[d].hi > other.bounds_[d].lo)) *
-      std::min(other.bounds_[d].lo - bounds_[d].hi + box_size_[d], bounds_[d].lo - other.bounds_[d].hi);
+      std::min(other.bounds_[d].lo - bounds_[d].hi + box_[d], bounds_[d].lo - other.bounds_[d].hi);
     v = (d1 + fabs(d1)) + (d2 + fabs(d2)) + (d3 + fabs(d3));
     sum += pow(v, (double) t_pow);
   }
@@ -178,20 +160,20 @@ double PeriodicHRectBound<t_pow>::MinDistanceSq(
  * Calculates maximum bound-to-point squared distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MaxDistanceSq(const arma::vec& point) const {
+double PeriodicHRectBound<t_pow>::MaxDistance(const arma::vec& point) const {
   double sum = 0;
 
   for (size_t d = 0; d < dim_; d++) {
     double b = point[d];
-    double v = box_size_[d] / 2.0;
+    double v = box_[d] / 2.0;
     double ah, al;
     ah = bounds_[d].hi - b;
-    ah = ah - floor(ah / box_size_[d]) * box_size_[d];
+    ah = ah - floor(ah / box_[d]) * box_[d];
     if (ah < v) {
       v = ah;
     } else {
       al = bounds_[d].lo - b;
-      al = al - floor(al / box_size_[d]) * box_size_[d];
+      al = al - floor(al / box_[d]) * box_[d];
       if (al > v) {
         v = (2 * v) - al;
       }
@@ -205,19 +187,19 @@ double PeriodicHRectBound<t_pow>::MaxDistanceSq(const arma::vec& point) const {
  * Computes maximum distance.
  */
 template<int t_pow>
-double PeriodicHRectBound<t_pow>::MaxDistanceSq(
+double PeriodicHRectBound<t_pow>::MaxDistance(
     const PeriodicHRectBound& other) const {
   double sum = 0;
 
   mlpack::IO::Assert(dim_ == other.dim_);
 
   for (size_t d = 0; d < dim_; d++){
-    double v = box_size_[d] / 2.0;
+    double v = box_[d] / 2.0;
     double dh, dl;
     dh = bounds_[d].hi - other.bounds_[d].lo;
-    dh = dh - floor(dh / box_size_[d]) * box_size_[d];
+    dh = dh - floor(dh / box_[d]) * box_[d];
     dl = other.bounds_[d].hi - bounds_[d].lo;
-    dl = dl - floor(dl / box_size_[d]) * box_size_[d];
+    dl = dl - floor(dl / box_[d]) * box_[d];
     v = fabs(std::max(std::min(dh, v), std::min(dl, v)));
 
     sum += pow(v, (double) t_pow);
@@ -229,7 +211,7 @@ double PeriodicHRectBound<t_pow>::MaxDistanceSq(
  * Calculates minimum and maximum bound-to-point squared distance.
  */
 template<int t_pow>
-Range PeriodicHRectBound<t_pow>::RangeDistanceSq(const arma::vec& point) const {
+Range PeriodicHRectBound<t_pow>::RangeDistance(const arma::vec& point) const {
   double sum_lo = 0;
   double sum_hi = 0;
 
@@ -260,7 +242,7 @@ Range PeriodicHRectBound<t_pow>::RangeDistanceSq(const arma::vec& point) const {
  * Calculates minimum and maximum bound-to-bound squared distance.
  */
 template<int t_pow>
-Range PeriodicHRectBound<t_pow>::RangeDistanceSq(
+Range PeriodicHRectBound<t_pow>::RangeDistance(
     const PeriodicHRectBound& other) const {
   double sum_lo = 0;
   double sum_hi = 0;
