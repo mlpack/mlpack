@@ -12,6 +12,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace hmm {
+
 /**
  * A wrapper class for HMM functionals in single Gaussian case
  *
@@ -193,5 +196,8 @@ class GaussianHMM {
 			   std::vector<arma::vec>& guessME, std::vector<arma::mat>& guessCO,
 			   size_t max_iter, double tol);
 };
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif

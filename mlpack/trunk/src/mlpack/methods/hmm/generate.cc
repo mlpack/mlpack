@@ -16,6 +16,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace mlpack;
+using namespace hmm;
 using namespace hmm_support;
 
 bool generate_discrete();
@@ -61,8 +63,6 @@ PARAM_MODULE("hmm", "This is a program generating sequences from HMM models.");
   hmm_generate_main_entries, hmm_generate_main_submodules,
   "This is a program generating sequences from HMM models.\n"
 }; */
-
-using namespace mlpack;
 
 int main(int argc, char* argv[]) {
 

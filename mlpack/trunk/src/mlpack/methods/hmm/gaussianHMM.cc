@@ -8,6 +8,9 @@
 #include "support.h"
 #include "gaussianHMM.h"
 
+namespace mlpack {
+namespace hmm {
+
 using namespace hmm_support;
 
 void GaussianHMM::setModel(const arma::mat& transmission,  const std::vector<arma::vec>& list_mean_vec, const std::vector<arma::mat>& list_covariance_mat) {
@@ -776,3 +779,6 @@ void GaussianHMM::Train(const std::vector<arma::mat>& seqs, arma::mat& guessTR, 
     oldlog = loglik;
   }
 }
+
+}; // namespace hmm
+}; // namespace mlpack

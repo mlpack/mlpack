@@ -18,6 +18,8 @@
 #include "mixgaussHMM.h"
 #include "mixtureDST.h"
 
+using namespace mlpack;
+using namespace hmm;
 using namespace hmm_support;
 
 bool train_baumwelch();
@@ -70,8 +72,6 @@ const fx_module_doc hmm_train_main_doc = {
   hmm_train_main_entries, hmm_train_main_submodules,
   "This is a program training HMM models from data sequences. \n"
 };*/
-
-using namespace mlpack;
 
 void usage() {
   IO::Warn << "Usage:" << std::endl;

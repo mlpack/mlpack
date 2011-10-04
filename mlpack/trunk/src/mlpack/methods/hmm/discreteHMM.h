@@ -12,6 +12,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace hmm {
+
 /**
  * A wrapper class for HMM functionals in discrete case
  *
@@ -143,5 +146,8 @@ class DiscreteHMM {
   static void TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& guessTR, arma::mat& guessEM, size_t max_iter, double tol);
 
 };
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif

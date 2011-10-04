@@ -3,6 +3,8 @@
 
 #include "support.h"
 
+namespace mlpack {
+namespace hmm {
 namespace hmm_support {
 
   double RAND_UNIFORM_01() {
@@ -441,4 +443,6 @@ namespace hmm_support {
 
     return true;
   }
-} // end namespace
+}; // namespace hmm_support
+}; // namespace hmm
+}; // namespace mlpack

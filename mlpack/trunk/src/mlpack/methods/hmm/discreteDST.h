@@ -3,6 +3,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace hmm {
+
 class DiscreteDST {
  private:
   arma::vec p;
@@ -23,5 +26,8 @@ class DiscreteDST {
 
   void end_accumulate();
 };
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif

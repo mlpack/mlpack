@@ -16,6 +16,9 @@
 
 #include "support.h"
 
+namespace mlpack {
+namespace hmm {
+
 class MixtureGauss {
   ////////////// Member variables //////////////////////////////////////
  private:
@@ -161,5 +164,8 @@ class MixtureGauss {
     }
   }
 };
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif

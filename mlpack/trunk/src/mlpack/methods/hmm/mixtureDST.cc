@@ -8,6 +8,8 @@
 #include "support.h"
 #include "mixtureDST.h"
 
+namespace mlpack {
+namespace hmm {
 using namespace hmm_support;
 
 void MixtureGauss::Init(size_t K, size_t N) {
@@ -190,3 +192,6 @@ double MixtureGauss::getPDF(const arma::vec& v) const {
 double MixtureGauss::getPDF(size_t cluster, const arma::vec& v) const {
   return prior[cluster] * NORMAL_DENSITY(v, means[cluster], inv_covs[cluster], det_covs[cluster]);
 }
+
+}; // namespace hmm
+}; // namespace mlpack

@@ -8,6 +8,9 @@
 #include "support.h"
 #include "discreteHMM.h"
 
+namespace mlpack {
+namespace hmm {
+
 using namespace hmm_support;
 
 void DiscreteHMM::setModel(const arma::mat& transmission, const arma::mat& emission) {
@@ -570,3 +573,6 @@ void DiscreteHMM::TrainViterbi(const std::vector<arma::vec>& seqs, arma::mat& gu
     oldlog = loglik;
   }
 }
+
+}; // namespace hmm
+}; // namespace mlpack

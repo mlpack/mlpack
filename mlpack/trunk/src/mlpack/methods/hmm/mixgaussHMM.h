@@ -12,6 +12,9 @@
 #include <mlpack/core.h>
 #include "mixtureDST.h"
 
+namespace mlpack {
+namespace hmm {
+
 /**
  * A wrapper class for HMM functionals in Mixture of Gaussion case
  *
@@ -163,5 +166,8 @@ class MixtureofGaussianHMM {
   static void TrainViterbi(const std::vector<arma::mat>& seqs, arma::mat& guessTR,
 			   std::vector<MixtureGauss>& guessMG, size_t max_iter, double tol);
 };
+
+}; // namespace hmm
+}; // namespace mlpack
 
 #endif
