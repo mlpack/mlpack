@@ -18,6 +18,9 @@
 
 #include "lin_alg.h"
 
+namespace mlpack {
+namespace fastica {
+
 #define LOGCOSH 0
 #define GAUSS 10
 #define KURTOSIS 20
@@ -1169,5 +1172,8 @@ class FastICA {
     return ret_val;
   }
 }; /* class FastICA */
+
+}; // namespace fastica
+}; // namespace mlpack
 
 #endif /* FASTICA_H */

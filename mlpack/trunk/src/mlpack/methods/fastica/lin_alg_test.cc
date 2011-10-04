@@ -12,6 +12,8 @@
 #include "lin_alg.h"
 
 using namespace arma;
+using namespace mlpack;
+using namespace fastica;
 using namespace linalg__private;
 
 #define BOOST_TEST_MODULE linAlgTest

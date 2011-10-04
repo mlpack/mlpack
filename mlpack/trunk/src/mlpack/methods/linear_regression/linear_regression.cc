@@ -46,5 +46,5 @@ namespace linear_regression {
   }
 
 
-}; // linear_regression
-}; // mlpack
+}; // namespace linear_regression
+}; // namespace mlpack

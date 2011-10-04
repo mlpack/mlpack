@@ -25,6 +25,8 @@
  * Note that the __private is temporary until this code is merged into a larger
  * namespace of linear algebra utilities
  */
+namespace mlpack {
+namespace fastica {
 namespace linalg__private {
 
 
@@ -185,7 +187,8 @@ namespace linalg__private {
    */
   void Orthogonalize(arma::mat& X) { Orthogonalize(X, X); }
 
-
-}; /* namespace linalg__private */
+}; // namespace linalg__private 
+}; // fastica
+}; // mlpack
 
 #endif /* LIN_ALG_H */
