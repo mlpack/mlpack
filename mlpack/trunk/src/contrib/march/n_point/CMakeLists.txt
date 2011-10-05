@@ -30,6 +30,8 @@ set(SOURCES
   single_matcher.cc
   single_results.h
   single_results.cc
+  test_single_bandwidth.h
+  test_single_bandwidth.cc
 )
 # IMPORTANT: do I need the mains here?
 
@@ -40,19 +42,6 @@ foreach(file ${SOURCES})
 endforeach()
 # append sources (with directory name) to list of all MLPACK sources (used at the parent scope)
 set(MLPACK_CONTRIB_SRCS ${MLPACK_CONTRIB_SRCS} ${DIR_SRCS} PARENT_SCOPE)
-
-# executable
-#add_executable(n_point_test
-#   EXCLUDE_FROM_ALL
-#   n_point_testing.h
-#   n_point_testing.cc
-#)
-# link dependencies of executable
-#target_link_libraries(n_point_testing
-#   fastlib
-#   mlpack
-#   mlpack_contrib
-#)
 
 add_executable(n_point_angle_resampling_main
     EXCLUDE_FROM_ALL
@@ -72,3 +61,13 @@ target_link_libraries(n_point_single_main
     mlpack_contrib
 )
 
+add_executable(single_bandwidth_test
+	EXCLUDE_FROM_ALL
+	single_bandwidth.test.cc
+)
+target_link_libraries(single_bandwidth_test
+#	mlpack
+	mlpack_contrib
+	boost_unit_test_framework
+	boost_random
+)
