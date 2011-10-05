@@ -10,6 +10,9 @@
 
 #include "infomax_ica.h"
 
+namespace mlpack {
+namespace infomax_ica {
+
 PARAM(double, "lambda", "The learning rate.", "info", .001,
   false);
 PARAM_INT_REQ("B", "Infomax data window size.", "info");
@@ -17,8 +20,6 @@ PARAM(double, "epsilon", "Infomax algorithm stop threshold.", "info", .001,
   false);
 PARAM_MODULE("info",
   "This performs ICO decomposition on a given dataset using the Infomax method");
-
-using namespace mlpack;
 
 /**
  * Dummy constructor
@@ -75,7 +76,7 @@ void InfomaxICA::evaluateICA() {
       icv = -2.0 * arma::pow(arma::exp(
           -1 * (w_ * data_.cols(i, i + b_))) + 1, -1) + 1;
 
-      icv2 = icv * trans(data_.cols(i, i + b_));
+      icv2 = icv * arma::trans(data_.cols(i, i + b_));
 
       icv4 = lambda_ * (icv2 + BI);
 
@@ -212,3 +213,6 @@ void InfomaxICA::setB(const size_t b) {
 void InfomaxICA::setEpsilon(const double epsilon) {
   epsilon_ = epsilon;
 }
+
+}; // namespace fastica
+}; // namespace mlpack

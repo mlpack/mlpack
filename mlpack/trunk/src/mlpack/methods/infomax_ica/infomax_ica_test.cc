@@ -8,6 +8,7 @@
 #include "infomax_ica.h"
 
 using namespace mlpack;
+using namespace infomax_ica;
 
 #define BOOST_TEST_MODULE TestInfomaxICA
 #include <boost/test/unit_test.hpp>

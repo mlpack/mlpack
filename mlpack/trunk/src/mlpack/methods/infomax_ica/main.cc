@@ -11,6 +11,7 @@ PARAM_STRING_REQ("data", "The name of the file containing mixture data.",
     "info");
 
 using namespace mlpack;
+using namespace infomax_ica;
 
 int main(int argc, char *argv[]) {
   IO::ParseCommandLine(argc, argv);
