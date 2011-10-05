@@ -668,14 +668,17 @@ class Table {
         TreeIterator it =
           const_cast<TableType *>(this)->get_node_iterator(node);
         int dfs_id = node->begin();
+        printf("Looking at the node (%d %d):\n", node->begin(),
+               node->count());
         while(it.HasNext()) {
           arma::vec point;
           int point_id;
           it.Next(&point, &point_id);
-          printf("Got %d -> %d: ", dfs_id, point_id);
+          printf("Got %d -> %d:\n", dfs_id, point_id);
           point.print();
           dfs_id++;
         }
+        printf("\n");
       }
       else {
         PrintTableDepthFirstHelper_(node->left());
