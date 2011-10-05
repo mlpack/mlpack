@@ -6,8 +6,8 @@ cmake_minimum_required(VERSION 2.8)
 set(SOURCES
   linear_regression.h
   linear_regression.cc
-  linear_regression_main.cc
-  linear_regression_test.cc
+#  linear_regression_main.cc
+#  linear_regression_test.cc
 )
 
 # add directory name to sources
