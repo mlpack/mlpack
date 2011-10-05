@@ -20,6 +20,7 @@
 #include "ridge_regression_util.h"
 
 using namespace mlpack;
+using namespace regression;
 
 PARAM_STRING("inversion_method", "The method chosen for inverting the design matrix: normalsvd\
  (SVD on normal equation: default), svd (SVD), quicsvd (QUIC-SVD).\n", "ridge", "");

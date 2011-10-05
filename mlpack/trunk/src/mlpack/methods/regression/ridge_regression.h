@@ -4,6 +4,9 @@
 #include <mlpack/core.h>
 #include "ridge_regression_util.h"
 
+namespace mlpack {
+namespace regression {
+
 class RidgeRegression {
  public:
 
@@ -117,6 +120,9 @@ class RidgeRegression {
   void ExtractSubspace_(arma::mat &u, arma::vec &singular_values, arma::mat &v_t,
 			const arma::Col<size_t> *predictor_indices);
 };
+
+}; // namespace regression
+}; // namespace mlpack
 
 #include "ridge_regression_impl.h"
 #endif

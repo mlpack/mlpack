@@ -17,6 +17,9 @@
 #ifndef __RIDGE_REGRESSION_IMPL_H
 #define __RIDGE_REGRESSION_IMPL_H
 
+namespace mlpack {
+namespace regression {
+
 void RidgeRegression::BuildCovariance_
 (const arma::mat &input_data, const arma::Col<size_t> *predictor_indices,
  const arma::mat& predictions_in) {
@@ -655,5 +658,8 @@ void RidgeRegression::Predict(const arma::mat &dataset, arma::vec *new_predictio
 void RidgeRegression::factors(arma::mat *factors) {
   (*factors) = factors_;
 }
+
+}; // namespace regression
+}; // namespace mlpack
 
 #endif
