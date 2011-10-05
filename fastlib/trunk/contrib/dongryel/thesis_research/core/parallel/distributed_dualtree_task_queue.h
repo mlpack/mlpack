@@ -907,10 +907,10 @@ class DistributedDualtreeTaskQueue {
 
       // If the number of available task is less than the number of
       // running threads, try to get one.
-      if(static_cast<int>(tasks_.size()) < num_threads_ * 5 &&
-          (world.size() > 1 || num_threads_ > 1)) {
-        this->RedistributeAmongCores_(world, metric_in);
-      }
+      //if(static_cast<int>(tasks_.size()) < num_threads_ * 5 &&
+      //  (world.size() > 1 || num_threads_ > 1)) {
+      //this->RedistributeAmongCores_(world, metric_in);
+      //}
 
       // Try to dequeue a task by scanning the list of available query
       // subtables.
