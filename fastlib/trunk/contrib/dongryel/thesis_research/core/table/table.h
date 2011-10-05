@@ -643,6 +643,12 @@ class Table {
       tree_->Print();
     }
 
+    /** @brief Prints the table.
+     */
+    void PrintTableDepthFirst() const {
+      PrintTableDepthFirstHelper_(tree_.get());
+    }
+
     const double *GetColumnPtr(int point_id) const {
       if(this->IsIndexed() == false) {
         return core::table::GetColumnPtr(data_, point_id);
@@ -656,6 +662,26 @@ class Table {
     }
 
   private:
+
+    void PrintTableDepthFirstHelper_(TreeType *node) const {
+      if(node->is_leaf()) {
+        TreeIterator it =
+          const_cast<TableType *>(this)->get_node_iterator(node);
+        int dfs_id = node->begin();
+        while(it.HasNext()) {
+          arma::vec point;
+          int point_id;
+          it.Next(&point, &point_id);
+          printf("Got %d -> %d: ", dfs_id, point_id);
+          point.print();
+          dfs_id++;
+        }
+      }
+      else {
+        PrintTableDepthFirstHelper_(node->left());
+        PrintTableDepthFirstHelper_(node->right());
+      }
+    }
 
     void direct_get_(
       int point_id, arma::vec *entry) const {

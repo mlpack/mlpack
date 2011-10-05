@@ -369,6 +369,10 @@ class DistributedTable: public boost::noncopyable {
       builder.Build(world, metric_in, leaf_size, chromaticity);
     }
 
+    void PrintGlobalTable() const {
+      global_table_->PrintTableDepthFirst();
+    }
+
     typename TableType::TreeIterator get_node_iterator(TreeType *node) {
       return global_table_->get_node_iterator(node);
     }
