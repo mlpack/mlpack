@@ -25,6 +25,7 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
+using namespace regression;
 
 /*
 BOOST_AUTO_TEST_CASE(TestSVDNormalEquationRegressVersusSVDRegress) {

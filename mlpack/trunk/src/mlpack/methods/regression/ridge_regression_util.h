@@ -3,6 +3,9 @@
 
 #include "ridge_regression.h"
 
+namespace mlpack {
+namespace regression {
+
 class RidgeRegressionUtil {
 
  public:
@@ -53,5 +56,8 @@ class RidgeRegressionUtil {
   }
 
 };
+
+}; // namespace regression
+}; // namespace mlpack
 
 #endif
