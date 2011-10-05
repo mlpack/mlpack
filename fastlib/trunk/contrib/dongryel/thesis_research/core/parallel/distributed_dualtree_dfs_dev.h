@@ -94,7 +94,8 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       metric_in, local_reference_node->bound());
 
   // If the pair is prunable, then return.
-  if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
+  if((! weak_scaling_measuring_mode_) &&
+      problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
     typename TableType::TreeIterator qnode_it =
       query_table_->get_node_iterator(global_query_node);
     while(qnode_it.HasNext()) {
@@ -121,11 +122,10 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         qnode_it.Next(&query_process_id);
 
         // Only add if, weak scaling measuring is disabled or the
-        // number of points assigned per each query process does not
-        // exceed the limit.
+        // query process rank differs from the reference process rank
+        // by at most 2 bits.
         if((! weak_scaling_measuring_mode_)  ||
-            (* num_reference_points_assigned_per_process)[query_process_id] <
-            max_num_reference_points_to_pack_per_process_) {
+            core::math::BitCount(query_process_id, world_->rank()) <= 2) {
           (*essential_reference_subtrees)[
             query_process_id].push_back(local_rnode_id);
           (* num_reference_points_assigned_per_process)[query_process_id ] +=
@@ -548,16 +548,20 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     // Given the factor, compute the maximum number of reference
     // points to pack per each reference MPI process.
     max_num_reference_points_to_pack_per_process_ =
+      (world_->size() == 1) ?
+      static_cast<unsigned long int>(
+        weak_scaling_factor_ *
+        (avg_num_query_points_per_process /  omp_get_max_threads())) :
       static_cast<unsigned long int>(
         weak_scaling_factor_ *
         (avg_num_query_points_per_process /
-         (world_->size() * omp_get_max_threads())));
+         (2 * log(world_->size()) * omp_get_max_threads())));
 
     // Re-adjust so that the subtree is transferred in around 10 rounds.
     max_subtree_size_ =
       std::max(
         std::min(
-          static_cast<int>(max_num_reference_points_to_pack_per_process_),
+          static_cast<int>(max_num_reference_points_to_pack_per_process_) / 10,
           20000),
         leaf_size_ * 2);
 

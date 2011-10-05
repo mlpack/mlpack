@@ -306,6 +306,19 @@ static int XorMsb(T a, T b) {
   }
 }
 
+/** @brief Counts the number of bits different between two unsigned
+ *         integers.
+ */
+template<typename T>
+inline int BitCount(unsigned int a, T b) {
+  unsigned int a_xor_b = a ^(static_cast<unsigned int>(b));
+  int count = 0;
+  for(; a_xor_b; a_xor_b >>= 1) {
+    count += (a_xor_b & 1);
+  }
+  return count;
+}
+
 /** @brief Compares two vectors based on their Morton order.
  */
 template<typename T>
