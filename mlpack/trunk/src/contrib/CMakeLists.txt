@@ -9,7 +9,6 @@ project(MLPACK_CONTRIB C CXX)
 include_directories(..)
 include_directories(../include)
 
-set(MLPACK_STD_LIBS lapack blas)
 set(MLPACK_CONTRIB_SRCS)
 
 # now we need to recurse into each of the contrib methods
@@ -21,10 +20,10 @@ set(DIRS
 #   huijing
 #   jim
    march
-#   niche
+   niche
 #   nvasil
 #   pagarwal
-#   pram
+   pram
 #   rcurtin
 #   rriegel
 #   soyeon
