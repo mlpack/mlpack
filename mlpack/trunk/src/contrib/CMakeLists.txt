@@ -9,7 +9,7 @@ project(MLPACK_CONTRIB C CXX)
 include_directories(..)
 include_directories(../include)
 
-set(MLPACK_STD_LIBS fastlib lapack blas)
+set(MLPACK_STD_LIBS lapack blas)
 set(MLPACK_CONTRIB_SRCS)
 
 # now we need to recurse into each of the contrib methods
@@ -39,7 +39,7 @@ endforeach()
 #message("output: ${MLPACK_CONTRIB_SRCS}")
 # don't build mlpack_contrib.a by default, user must specify they want it
 add_library(mlpack_contrib EXCLUDE_FROM_ALL ${MLPACK_CONTRIB_SRCS})
-add_dependencies(mlpack_contrib mlpack fastlib)
+add_dependencies(mlpack_contrib mlpack)
 target_link_libraries(mlpack_contrib
   mlpack
   lapack
