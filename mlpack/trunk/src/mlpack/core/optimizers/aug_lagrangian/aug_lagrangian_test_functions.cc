@@ -64,7 +64,7 @@ void AugLagrangianTestFunction::GradientConstraint(int index,
   }
 }
 
-// 
+//
 // GockenbachFunction
 //
 GockenbachFunction::GockenbachFunction() {
@@ -100,7 +100,7 @@ void GockenbachFunction::Gradient(const arma::mat& coordinates,
 double GockenbachFunction::EvaluateConstraint(int index,
                                               const arma::mat& coordinates) {
   double constraint = 0;
-  
+
   switch(index) {
     case 0: // g(x) = (x_3 - x_2 - x_1 - 1) = 0
       constraint = (coordinates[2] - coordinates[1] - coordinates[0] - 1);
@@ -163,7 +163,7 @@ double LovaszThetaSDP::Evaluate(const arma::mat& coordinates) {
 //  std::cout << coordinates << std::endl;
 //  IO::Debug << "trans(coord) * coord:" << std::endl;
 //  std::cout << (trans(coordinates) * coordinates) << std::endl;
- 
+
   double obj = 0;
   for (size_t i = 0; i < coordinates.n_cols; i++)
     obj -= dot(coordinates.col(i), coordinates.col(i));
@@ -195,12 +195,12 @@ double LovaszThetaSDP::EvaluateConstraint(int index,
                                           const arma::mat& coordinates) {
   if (index == 0) { // This is the constraint Tr(X) = 1.
     double sum = -1; // Tr(X) - 1 = 0, so we prefix the subtraction.
-    for (int i = 0; i < coordinates.n_cols; i++)
+    for (size_t i = 0; i < coordinates.n_cols; i++)
       sum += dot(coordinates.col(i), coordinates.col(i));
 
 //    IO::Debug << "Constraint " << index << " evaluates to " << sum << std::endl;
     return sum;
-  } 
+  }
 
   size_t i = edges_(0, index - 1);
   size_t j = edges_(1, index - 1);
@@ -276,7 +276,7 @@ const arma::mat& LovaszThetaSDP::GetInitialPoint() {
   // Now we set the entries of the initial matrix according to the formula given
   // in Section 4 of Monteiro and Burer.
   for (size_t i = 0; i < r; i++) {
-    for (size_t j = 0; j < vertices_; j++) {
+    for (size_t j = 0; j < (size_t) vertices_; j++) {
       if (i == j)
         initial_point_(i, j) = sqrt(1.0 / r) + sqrt(1.0 / (vertices_ * m));
       else
