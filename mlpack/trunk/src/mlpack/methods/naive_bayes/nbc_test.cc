@@ -5,6 +5,7 @@
 #include <boost/test/unit_test.hpp>
 
 using namespace mlpack;
+using namespace naive_bayes;
 
 BOOST_AUTO_TEST_CASE(SimpleNBCTest) {
   const char* filename_train_ = "trainSet.arff";
