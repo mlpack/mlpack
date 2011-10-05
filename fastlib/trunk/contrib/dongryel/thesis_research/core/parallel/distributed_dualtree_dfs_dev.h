@@ -94,8 +94,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       metric_in, local_reference_node->bound());
 
   // If the pair is prunable, then return.
-  if((! weak_scaling_measuring_mode_) &&
-      problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
+  if( problem_->global().ConsiderExtrinsicPrune(squared_distance_range) ) {
     typename TableType::TreeIterator qnode_it =
       query_table_->get_node_iterator(global_query_node);
     while(qnode_it.HasNext()) {
