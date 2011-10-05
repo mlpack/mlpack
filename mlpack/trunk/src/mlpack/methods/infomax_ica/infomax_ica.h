@@ -17,6 +17,9 @@
 
 #include <mlpack/core.h>
 
+namespace mlpack {
+namespace infomax_ica {
+
 class TestInfomaxICA; // forward reference
 
 /**
@@ -67,5 +70,8 @@ class InfomaxICA {
   arma::vec rowMean(const arma::mat& m);
   double w_delta(const arma::mat& w_prev, const arma::mat& w_pres);
 };
+
+}; // namespace infomax_ica
+}; // namespace mlpack
 
 #endif
