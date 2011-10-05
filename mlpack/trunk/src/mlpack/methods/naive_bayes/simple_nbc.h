@@ -14,6 +14,9 @@
 #include <mlpack/core.h>
 #include "phi.h"
 
+namespace mlpack {
+namespace naive_bayes {
+
 /*const fx_entry_doc parm_nbc_entries[] ={
   {"training", FX_TIMER, FX_CUSTOM, NULL,
    " The timer to record the training time\n"},
@@ -136,4 +139,8 @@ class SimpleNaiveBayesClassifier {
    */
   void Classify(const arma::mat& test_data, arma::vec& results);
 };
+
+}; // namespace naive_bayes
+}; // namespace mlpack
+
 #endif

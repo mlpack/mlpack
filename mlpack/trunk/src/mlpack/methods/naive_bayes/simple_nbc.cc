@@ -13,7 +13,8 @@
 #include "simple_nbc.h"
 #include "phi.h"
 
-using namespace mlpack;
+namespace mlpack {
+namespace naive_bayes {
 
 SimpleNaiveBayesClassifier::SimpleNaiveBayesClassifier(const arma::mat& data)
 {
@@ -118,3 +119,6 @@ void SimpleNaiveBayesClassifier::Classify(const arma::mat& test_data, arma::vec&
 
   return;
 }
+
+}; // namespace naive_bayes
+}; // namespace mlpack

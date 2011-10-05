@@ -68,6 +68,7 @@ PROGRAM_INFO("Parametric Naive Bayes", "This program test drives the\
  sampled from a Gaussian distribution.", "nbc");
 
 using namespace mlpack;
+using namespace naive_bayes;
 
 int main(int argc, char* argv[]) {
 
