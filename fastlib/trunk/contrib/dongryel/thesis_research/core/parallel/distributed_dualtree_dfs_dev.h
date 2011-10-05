@@ -124,8 +124,10 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         // Only add if, weak scaling measuring is disabled or the
         // query process rank differs from the reference process rank
         // by at most 2 bits.
-        if((! weak_scaling_measuring_mode_)  ||
-            core::math::BitCount(query_process_id, world_->rank()) <= 2) {
+        if( (! weak_scaling_measuring_mode_)  ||
+	   ( core::math::BitCount(query_process_id, world_->rank()) <= 2 &&
+	     (* num_reference_points_assigned_per_process)[query_process_id ] <
+	     max_num_reference_points_to_pack_per_process_ ) ) {
           (*essential_reference_subtrees)[
             query_process_id].push_back(local_rnode_id);
           (* num_reference_points_assigned_per_process)[query_process_id ] +=
