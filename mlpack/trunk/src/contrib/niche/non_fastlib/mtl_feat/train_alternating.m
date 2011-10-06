@@ -75,8 +75,6 @@ if (method == feat)
         tempi = find(temp > eps);
         temp(tempi) = 1./temp(tempi);
         fD_isqrt = U * diag(temp) * U';
-	save argyriou fD_isqrt
-	donea-return?
     end
 end
 
