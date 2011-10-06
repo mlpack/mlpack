@@ -22,11 +22,11 @@ int main(int argc, char* argv[]) {
   // Handle parameters
   IO::ParseCommandLine(argc, argv);
 
-  const std::string train_name = 
+  const std::string train_name =
     IO::GetParam<std::string>("linear_regression/train");
-  const std::string test_name = 
+  const std::string test_name =
     IO::GetParam<std::string>("linear_regression/test");
-  const std::string response_name = 
+  const std::string response_name =
     IO::GetParam<std::string>("linear_regression/responses");
 
   data::Load(train_name.c_str(), file);
@@ -42,7 +42,7 @@ int main(int argc, char* argv[]) {
   else {
     predictors = file;
     // The initial predictors for y, Nx1
-    data::Load(responses.c_str(), responses);
+    data::Load(response_name.c_str(), responses);
     if(responses.n_rows > 1) {
       std::cerr << "Error: The responses must have one column.\n";
       return 0;
