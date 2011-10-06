@@ -6,7 +6,12 @@ function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations)
 % lambda is the regularization parameter for the squared 2,1 norm
 % penalty on A (A being from the original problem formulation)
 % epsilon - initial perturbation magnitude
-
+%
+% Notes: Currently, the code just chooses the W corresponding to
+% the smallest epsilon such that epsilon > eps (where we
+% geometrically decrease the initial value of epsilon by a factor
+% of 10 in outer iteration). Hence, for now, you might as well just call
+% this program with epsilon = eps * 2.
 
 [n_dims, n_points, n_tasks] = size(X);
 
@@ -14,27 +19,18 @@ function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations)
 %minibatch_size = 10;
 %n_iterations = 10 * n_points / minibatch_size;
 
-%tol = 1e-9;
-
-D = eye(n_dims) / n_dims;
-
-%epsilon_I = epsilon * eye(n_dims);
-
 W = zeros(n_dims, n_tasks);
-W_prev = W + 1;
 
 %sqrt_D = D^0.5;
 
-run_once = false;
+while epsilon > eps
 
-while epsilon > eps || ~run_once
-  
-  run_once = true;
+  D = eye(n_dims) / n_dims;
 
   %epsilon_I = epsilon * eye(n_dims);
 
   % after epsilon reaches min_epsilon, solve the unperturbed problem
-  %if epsilon < min_epsilon
+  %if epsilon < eps
   %  epsilon = 0;
   %end
   
@@ -63,7 +59,7 @@ while epsilon > eps || ~run_once
       % next two lines equivalent via Woodbury identity
       %W(:,t) = (X_t * X_t' + lambda * eye(n_dims)) \ (X_t * Y(:,t));
       %W(:,t) = (X_t / (X_t' * X_t + lambda * eye(n_dims))) * Y(:,t);
-      W(:,t) = (X_t * inv(X_t' * X_t + lambda * eye(n_dims))) * Y(:,t);
+      W(:,t) = (X_t * inv(X_t' * X_t + lambda * eye(n_points))) * Y(:,t);
     end
     W = sqrt_D * W;
     
@@ -81,7 +77,6 @@ while epsilon > eps || ~run_once
     sqrt_S(nz_inds) = 1 ./ sqrt_S(nz_inds);
 
     sqrt_D = U * diag(sqrt_S) * U'; % compute sqrt_D for use in next round
-    %save mehta sqrt_D;
   end
   
   epsilon = epsilon / 10;
