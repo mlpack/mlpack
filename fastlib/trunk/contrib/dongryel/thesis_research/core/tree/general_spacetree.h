@@ -883,7 +883,6 @@ class GeneralBinarySpaceTree {
       IndexInitializer<IndexType>::NewFromOld(
         matrix, old_from_new, new_from_old);
 
-      omp_set_nested(false);
       return node;
     }
 
