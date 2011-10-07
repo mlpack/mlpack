@@ -31,14 +31,14 @@ BOOST_AUTO_TEST_CASE(linear_kernel_test_1)
        <<  4.0 << -4.0 << 0.0 << arma::endr;
 
   // test the linear kernel
-  NNSVM<SVMLinearKernel>* nnsvm = new NNSVM<SVMLinearKernel>();
+  NNSVM<kernel::LinearKernel> nnsvm;
 
-  nnsvm->InitTrain(data, 2);
-  double calculatedThreshold = nnsvm->getThreshold();
-  size_t calculatedSupportVectorCount = nnsvm->getSupportVectorCount();
+  nnsvm.InitTrain(data, 2);
+  double calculatedThreshold = nnsvm.getThreshold();
+  size_t calculatedSupportVectorCount = nnsvm.getSupportVectorCount();
   const arma::vec calculatedSupportVectorCoefficients =
-                    nnsvm->getSupportVectorCoefficients();
-  const arma::vec calculatedWeightVector = nnsvm->getWeightVector();
+                    nnsvm.getSupportVectorCoefficients();
+  const arma::vec calculatedWeightVector = nnsvm.getWeightVector();
 
   // check for correctness on the linear kernel
   BOOST_REQUIRE(calculatedSupportVectorCount == 3);
@@ -56,8 +56,6 @@ BOOST_AUTO_TEST_CASE(linear_kernel_test_1)
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[5], 0.00000000, 1e-5);
   BOOST_REQUIRE_CLOSE(calculatedWeightVector[6], 0.00000000, 1e-5);
 
-  // Clean the memory.
-  delete nnsvm;
 }
 //BOOST_AUTO_TEST_CASE(linear_kernel_test_2)
 //{
@@ -139,12 +137,12 @@ BOOST_AUTO_TEST_CASE(linear_kernel_test_1)
 //  // test the linear kernel
 //  NNSVM<SVMLinearKernel>* nnsvm = new NNSVM<SVMLinearKernel>();
 //
-//  nnsvm->InitTrain(data, 2);
-//  double calculatedThreshold = nnsvm->getThreshold();
-//  size_t calculatedSupportVectorCount = nnsvm->getSupportVectorCount();
+//  nnsvm.InitTrain(data, 2);
+//  double calculatedThreshold = nnsvm.getThreshold();
+//  size_t calculatedSupportVectorCount = nnsvm.getSupportVectorCount();
 //  const arma::vec calculatedSupportVectorCoefficients =
-//                    nnsvm->getSupportVectorCoefficients();
-//  const arma::vec calculatedWeightVector = nnsvm->getWeightVector();
+//                    nnsvm.getSupportVectorCoefficients();
+//  const arma::vec calculatedWeightVector = nnsvm.getWeightVector();
 //
 //  // check for correctness on the linear kernel
 //  BOOST_REQUIRE(calculatedSupportVectorCount == 6);
@@ -169,8 +167,6 @@ BOOST_AUTO_TEST_CASE(linear_kernel_test_1)
 //  BOOST_REQUIRE_CLOSE(calculatedWeightVector[5], 0.00000000, 1e-5);
 //  BOOST_REQUIRE_CLOSE(calculatedWeightVector[6], 0.00000000, 1e-5);
 //
-//  // Clean the memory.
-//  delete nnsvm;
 //}
 ///***
 // * Test the dual-tree nearest-neighbors method with the naive method.  This

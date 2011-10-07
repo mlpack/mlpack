@@ -19,78 +19,8 @@ PARAM_DOUBLE("eps", "Undocumented", "nnsvm", 1.0e-6);
 PARAM_INT("max_iter", "Undocumented", "nnsvm", 1000);
 PARAM_DOUBLE("sigma", "Undocumented", "nnsvm", 0.0);
 
-enum kernelEnumType
-{
-  ID_LINEAR,
-  ID_GAUSSIAN,
-  ID_END_OF_LIST
-};
-
-/**
-* Class for Linear Kernel
-*/
-struct SVMLinearKernel
-{
-  void Init() {}
-
-  void Copy(const SVMLinearKernel& other) {}
-
-  /* Kernel value evaluation */
-  double Eval(const arma::vec& a, const arma::vec& b) const
-  {
-    return dot(a, b);
-  }
-  /* Kernel name */
-  void GetName(std::string& kname) {
-    kname = "linear";
-  }
-  /* Get an type ID for kernel */
-  size_t GetTypeId()
-  {
-    return ID_LINEAR;
-  }
-  /* Save kernel parameters to file */
-  void SaveParam(FILE* fp)
-  {
-  }
-};
-
-/**
-* Class for Gaussian RBF Kernel
-*/
-class SVMRBFKernel
-{
-  /* Init of kernel parameters */
-  std::vector<double> kpara_; // kernel parameters
-  void Init() { //TODO: NULL->node
-    kpara_.reserve(2);
-    kpara_[0] = mlpack::IO::GetParam<double>("nnsvm/sigma"); //sigma
-    kpara_[1] = -1.0 / (2 * pow(kpara_[0], 2.0)); //gamma
-  }
-  /* Kernel name */
-  void GetName(std::string& kname)
-  {
-    kname = "gaussian";
-  }
-  /* Get an type ID for kernel */
-  size_t GetTypeId()
-  {
-    return ID_GAUSSIAN;
-  }
-  /* Kernel value evaluation */
-  double Eval(const arma::vec& a, const arma::vec& b) const
-  {
-    arma::vec diff = b - a;
-    double distance_squared = arma::dot(diff, diff);
-    return exp(kpara_[1] * distance_squared);
-  }
-  /* Save kernel parameters to file */
-  void SaveParam(FILE* fp)
-  {
-    fprintf(fp, "sigma %g\n", kpara_[0]);
-    fprintf(fp, "gamma %g\n", kpara_[1]);
-  }
-};
+namespace mlpack {
+namespace nnsvm {
 
 struct nnsvm_model
 {
@@ -99,9 +29,6 @@ struct nnsvm_model
   arma::vec w_; // the weight vector
   size_t num_sv_; // number of support vectors
 };
-
-namespace mlpack {
-namespace nnsvm {
 
 /**
 * Class for NNSVM
@@ -146,8 +73,8 @@ class NNSVM
     const arma::vec getWeightVector() { return model_.w_; }
 };
 
-} // namespace nnsvm
-} // namespace mlpack
+}; // namespace nnsvm
+}; // namespace mlpack
 
 #include "nnsvm_impl.h"
 

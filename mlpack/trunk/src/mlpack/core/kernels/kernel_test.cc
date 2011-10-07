@@ -9,6 +9,8 @@
 #include "mahalanobis_distance.h"
 #include "cosine_distance.h"
 
+#include "kernel.h"
+
 #define BOOST_TEST_MODULE Kernel Test
 #include <boost/test/unit_test.hpp>
 
@@ -182,4 +184,42 @@ BOOST_AUTO_TEST_CASE(cosine_distance_random_test) {
 
   BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(a, b), 1 - 0.1385349024, 1e-5);
   BOOST_REQUIRE_CLOSE(CosineDistance::Evaluate(b, a), 1 - 0.1385349024, 1e-5);
+}
+
+/***
+ * Linear Kernel test.
+ */
+BOOST_AUTO_TEST_CASE(linear_kernel) {
+  arma::vec a = ".2 .3 .4 .1";
+  arma::vec b = ".56 .21 .623 .82";
+
+  LinearKernel lk;
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(a,b), .5062, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(b,a), .5062, 1e-5);
+}
+
+/***
+ * Linear Kernel test, orthogonal vectors.
+ */
+BOOST_AUTO_TEST_CASE(linear_kernel_orthogonal) {
+  arma::vec a = "1 0 0";
+  arma::vec b = "0 0 1";
+
+  LinearKernel lk;
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(a,b), 0, 1e-5);
+  BOOST_REQUIRE_CLOSE(lk.Evaluate(b,a), 0, 1e-5);
+}
+
+BOOST_AUTO_TEST_CASE(gaussian_rbf_kernel) {
+  arma::vec a = "1 0 0";
+  arma::vec b = "0 1 0";
+  arma::vec c = "0 0 1";
+
+  GaussianRBFKernel gk(.5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(a,b), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(b,a), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(a,c), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(c,a), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(b,c), .018315638888734, 1e-5);
+  BOOST_REQUIRE_CLOSE(gk.Evaluate(c,b), .018315638888734, 1e-5);
 }

@@ -23,6 +23,7 @@ PARAM_STRING_REQ("kernel", "kernel type: linear (currently supported)", "nnsvm")
 PARAM_STRING_REQ("train_data", "name of the file containing the training data", "nnsvm");
 
 using namespace mlpack;
+using namespace mlpack::kernel;
 using namespace mlpack::nnsvm;
 
 /**
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
     // Begin NNSVM Training
     if (kernel == "linear")
     {
-      NNSVM<SVMLinearKernel> nnsvm;
+      NNSVM<LinearKernel> nnsvm;
 
       nnsvm.InitTrain(dataSet, 2,
           (int) IO::GetParam<double>("nnsvm/c"),
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
     /* Begin Classification */
     if (kernel == "linear")
     {
-      NNSVM<SVMLinearKernel> nnsvm;
+      NNSVM<LinearKernel> nnsvm;
       nnsvm.Init(testset, 2);
       nnsvm.LoadModelBatchClassify(testset, "nnsvm_model", "testlabels"); // TODO:param_req
     }

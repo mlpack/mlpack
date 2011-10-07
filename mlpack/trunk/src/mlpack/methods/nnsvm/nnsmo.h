@@ -71,16 +71,6 @@ class NNSMO
 
     void Train();
 
-    const Kernel& kernel() const
-    {
-      return kernel_;
-    }
-
-    Kernel& kernel()
-    {
-      return kernel_;
-    }
-
     double threshold() const
     {
       return thresh_;
@@ -150,7 +140,7 @@ class NNSMO
           GetVector_(i, v_i);
           arma::vec v_j;
           GetVector_(j, v_j);
-          double k = kernel_.Eval(v_i, v_j);
+          double k = kernel_.Evaluate(v_i, v_j);
           kernel_cache_sign_(j, i) = k * GetLabelSign_(i) * GetLabelSign_(j);
         }
       }
