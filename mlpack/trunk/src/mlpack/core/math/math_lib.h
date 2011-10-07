@@ -46,9 +46,9 @@ namespace math {
    */
   inline double ClampRange(double value, double range_min, double range_max)
   {
-    value = value - range_max;
+    value -= range_max;
     value = ClampNonNegative (value) + range_max;
-    value = value - range_min;
+    value -= range_min;
     value = ClampNonPositive (value) + range_min;
     return value;
   }
