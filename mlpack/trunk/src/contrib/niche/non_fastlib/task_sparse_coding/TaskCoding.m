@@ -33,10 +33,11 @@ end
 
 last_obj = 1e99;
 converged = false;
-n_max_iterations = 50;
+n_max_iterations = 10;
 iteration_num = 0;
 while ~converged && iteration_num < n_max_iterations
   iteration_num = iteration_num + 1;
+  fprintf('Iteration %d\n', iteration_num);
   save LPSVM X Y W lambda_z;
   fprintf('Running LPSVM\n');
   Z = TaskCodingZStep(X, Y, W, lambda_z);
