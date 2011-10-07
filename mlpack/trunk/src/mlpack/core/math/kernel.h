@@ -11,7 +11,7 @@
 
 #include <math.h>
 
-/* More to come soon - Gaussian, Epanechnakov, etc. */
+/* More to come soon - Gaussian, Epanechnikov, etc. */
 
 /**
  * Standard multivariate Gaussian kernel.
@@ -45,7 +45,7 @@ class GaussianKernel {
   }
 
   /**
-   * Evaluates an unnormalized density, given the distance between
+   * Evaluates an nonnormalized density, given the distance between
    * the kernel's mean and a query point.
    */
   double EvalUnnorm(double dist) const {
@@ -53,7 +53,7 @@ class GaussianKernel {
   }
 
   /**
-   * Evaluates an unnormalized density, given the square of the
+   * Evaluates an nonnormalized density, given the square of the
    * distance.
    */
   double EvalUnnormOnSq(double sqdist) const {
@@ -61,7 +61,7 @@ class GaussianKernel {
     return d;
   }
 
-  /** Unnormalized range on a range of squared distances. */
+  /** Nonnormalized range on a range of squared distances. */
   Range RangeUnnormOnSq(const Range& range) const {
     return Range(EvalUnnormOnSq(range.hi), EvalUnnormOnSq(range.lo));  //!! TODO explain
   }
