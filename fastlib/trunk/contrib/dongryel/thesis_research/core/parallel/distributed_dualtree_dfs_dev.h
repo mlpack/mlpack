@@ -351,8 +351,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     // that the master thread dequeues somewhat a smaller number of
     // tasks, while the slaves do a deeper lock, since the master
     // thread makes all MPI calls.
-    int num_tasks_to_dequeue = (omp_get_num_threads() > 1 && thread_id == 0) ?
-                               1 : max_num_work_to_dequeue_per_stage_;
+    int num_tasks_to_dequeue =
+      (omp_get_num_threads() > 1 && thread_id == 0 && world_->size() > 1) ?
+      1 : max_num_work_to_dequeue_per_stage_;
 
     // Used for determining the termination condition.
     bool work_left_to_do = true;
