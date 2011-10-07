@@ -17,6 +17,7 @@ target_link_libraries(mlpack
   lapack
   blas
   boost_program_options
+  xml2
 )
 
 # Collect all header files in the library.
