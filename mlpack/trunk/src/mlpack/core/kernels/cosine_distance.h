@@ -1,7 +1,7 @@
 /***
  * @file cosine_distance.h
  * @author Ryan Curtin
- * 
+ *
  * This implements the cosine distance (or cosine similarity) between two
  * vectors, which is a measure of the angle between the two vectors.
  */
