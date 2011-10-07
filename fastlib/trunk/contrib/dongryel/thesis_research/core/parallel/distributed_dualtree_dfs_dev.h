@@ -94,7 +94,7 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
       metric_in, local_reference_node->bound());
 
   // If the pair is prunable, then return.
-  if( problem_->global().ConsiderExtrinsicPrune(squared_distance_range) ) {
+  if(problem_->global().ConsiderExtrinsicPrune(squared_distance_range)) {
     typename TableType::TreeIterator qnode_it =
       query_table_->get_node_iterator(global_query_node);
     while(qnode_it.HasNext()) {
@@ -123,10 +123,10 @@ DistributedProblemType >::ComputeEssentialReferenceSubtrees_(
         // Only add if, weak scaling measuring is disabled or the
         // query process rank differs from the reference process rank
         // by at most 2 bits.
-        if( (! weak_scaling_measuring_mode_)  ||
-	   ( core::math::BitCount(query_process_id, world_->rank()) <= 2 &&
-	     (* num_reference_points_assigned_per_process)[query_process_id ] <
-	     max_num_reference_points_to_pack_per_process_ ) ) {
+        if((! weak_scaling_measuring_mode_)  ||
+            (core::math::BitCount(query_process_id, world_->rank()) <= 2 &&
+             (* num_reference_points_assigned_per_process)[query_process_id ] <
+             max_num_reference_points_to_pack_per_process_)) {
           (*essential_reference_subtrees)[
             query_process_id].push_back(local_rnode_id);
           (* num_reference_points_assigned_per_process)[query_process_id ] +=

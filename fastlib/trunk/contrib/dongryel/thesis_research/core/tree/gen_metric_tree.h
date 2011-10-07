@@ -195,13 +195,15 @@ class GenMetricTree {
       int end = begin + count;
       *furthest_distance = -1.0;
 
-#pragma omp parallel
+      int num_threads =
+        std::max(1, omp_get_max_threads() / omp_get_num_threads());
+#pragma omp parallel num_threads( num_threads )
       {
         // Local variables used for reduction.
         int local_furthest_index = -1;
         double local_furthest_distance = -1.0;
 
-#pragma omp for
+#pragma omp for nowait
         for(int i = begin; i < end; i++) {
           arma::vec point;
           core::table::MakeColumnVector(matrix, i, &point);
@@ -282,12 +284,15 @@ class GenMetricTree {
       int end = begin + count;
       arma::vec &bound_ref = bounds->center();
 
-#pragma omp parallel
+      // The number of threads.
+      int num_threads =
+        std::max(1, omp_get_max_threads() / omp_get_num_threads());
+#pragma omp parallel num_threads( num_threads )
       {
         arma::vec local_sum;
         local_sum.zeros(bound_ref.n_elem);
 
-#pragma omp for
+#pragma omp for nowait
         for(int i = begin; i < end; i++) {
           arma::vec col_point;
           core::table::MakeColumnVector(matrix, i, &col_point);

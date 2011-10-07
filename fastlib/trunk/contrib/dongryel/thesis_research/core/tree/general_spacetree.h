@@ -195,6 +195,9 @@ class GeneralBinarySpaceTree {
       }
     }
 
+    /** @brief The final correction to the bounds for breadth-first
+     *         building.
+     */
     template<typename MetricType>
     static void SplitTreeBreadthFirstPostProcess_(
       const MetricType &metric_in,
@@ -209,7 +212,6 @@ class GeneralBinarySpaceTree {
           SplitTreeBreadthFirstPostProcess_(
             metric_in, matrix, node->right(), serial_depth_first_limit);
         }
-
         TreeSpecType::CombineBounds(
           metric_in, matrix, node, node->left(), node->right());
       }
@@ -687,81 +689,88 @@ class GeneralBinarySpaceTree {
       IndexType *old_from_new,
       int *num_nodes) {
 
-      // Get the number of available OpenMP threads.
-      int num_threads = omp_get_max_threads();
-
       // If the number of points fall under this threshold, then we
       // call the serial depth-first.
-      int serial_depth_first_limit = matrix.n_cols / num_threads;
+      int serial_depth_first_limit = matrix.n_cols / omp_get_max_threads();
 
       // The list of active nodes on the current level.
       std::deque< TreeType * > active_nodes;
       active_nodes.push_back(node);
+      std::deque< std::pair< TreeType *, bool > > parallel_tasks;
 
       do {
 
-        // The number of active nodes on the current round.
-        int num_items_on_level = static_cast<int>(active_nodes.size());
-
-#pragma omp parallel for
-        for(int i = 0; i < num_items_on_level; i++) {
-
-          // Set the number of threads in the inner level.
-          omp_set_num_threads(std::max(1, num_threads / num_items_on_level));
-
-          // If the i-th node contains more than the depth first limit
-          // threshold, then split the node and put the children nodes
-          // at the end.
-          if(active_nodes[i]->count() > serial_depth_first_limit) {
-            if(active_nodes[i]->count() > leaf_size) {
-
-              TreeType *left = NULL;
-              TreeType *right = NULL;
-              bool can_cut = AttemptSplitting(
-                               metric_in, matrix, weights,
-                               active_nodes[i], &left, &right,
-                               leaf_size, old_from_new,
-                               core::table::global_m_file_);
-
-              // Set children information appropriately.
-              active_nodes[i]->set_children(matrix, left, right);
-
-              if(can_cut) {
-#pragma omp critical
-                {
-                  // Start of critical section.
-                  active_nodes.push_back(active_nodes[i]->left());
-                  active_nodes.push_back(active_nodes[i]->right());
-                  (*current_num_leaf_nodes)++;
-                  (*num_nodes) += 2;
-                }  // End of critical section.
-              }
-              else {
-                TreeSpecType::MakeLeafNode(
-                  metric_in, matrix, active_nodes[i]->begin(),
-                  active_nodes[i]->count(), &(active_nodes[i]->bound()));
-              }
-            } // end of splitting a non-leaf node.
-            else {
-              TreeSpecType::MakeLeafNode(
-                metric_in, matrix, active_nodes[i]->begin(),
-                active_nodes[i]->count(), &(active_nodes[i]->bound()));
-            }
-          }
-          else {
-            SplitTreeDepthFirst(
-              metric_in, matrix, weights, active_nodes[i],
-              leaf_size, max_num_leaf_nodes, current_num_leaf_nodes,
-              old_from_new, num_nodes);
-          }
-        } // end of omp parallel for.
-
-        // Clean up the previous level.
-        for(int i = 0; i < num_items_on_level; i++) {
+        // Dequeue a node to split.
+        TreeType *active_node = NULL;
+        if(active_nodes.size() > 0) {
+          active_node = active_nodes.front();
           active_nodes.pop_front();
         }
+        else {
+          break;
+        }
+
+        // If the i-th node contains more than the depth first limit
+        // threshold, then split the node and put the children nodes
+        // at the end.
+        if(active_node->count() > serial_depth_first_limit) {
+          if(active_node->count() > leaf_size) {
+
+            TreeType *left = NULL;
+            TreeType *right = NULL;
+            bool can_cut = AttemptSplitting(
+                             metric_in, matrix, weights,
+                             active_node, &left, &right,
+                             leaf_size, old_from_new,
+                             core::table::global_m_file_);
+
+            // Set children information appropriately.
+            active_node->set_children(matrix, left, right);
+
+            if(can_cut) {
+              active_nodes.push_back(active_node->left());
+              active_nodes.push_back(active_node->right());
+              (*current_num_leaf_nodes)++;
+              (*num_nodes) += 2;
+            } // if splitting was possible on the top level.
+            else {
+
+              // Mark for leaf node construction.
+              parallel_tasks.push_back(
+                std::pair<TreeType *, bool>(active_node, true));
+            } // splitting not successful on the top level.
+          } // end of splitting a non-leaf node.
+          else {
+
+            // Mark for leaf-node construction.
+            parallel_tasks.push_back(
+              std::pair<TreeType *, bool>(active_node, true));
+          } // the leaf-node case.
+        } // end of considering something that is on the global level.
+        else {
+
+          // Mark for internal-node construction.
+          parallel_tasks.push_back(
+            std::pair<TreeType *, bool>(active_node, false));
+        } // getting the task grain for parallel building.
       }
-      while(active_nodes.size() > 0);
+      while(true);
+
+#pragma omp parallel for
+      for(unsigned int i = 0; i < parallel_tasks.size(); i++) {
+        TreeType *active_node = parallel_tasks[i].first;
+        if(parallel_tasks[i].second) {
+          TreeSpecType::MakeLeafNode(
+            metric_in, matrix, active_node->begin(),
+            active_node->count(), &(active_node->bound()));
+        }
+        else {
+          SplitTreeDepthFirst(
+            metric_in, matrix, weights, active_node,
+            leaf_size, max_num_leaf_nodes, current_num_leaf_nodes,
+            old_from_new, num_nodes);
+        }
+      }
 
       // Correct the bounds later. Start from the root again.
       SplitTreeBreadthFirstPostProcess_(
@@ -845,7 +854,6 @@ class GeneralBinarySpaceTree {
       int *num_nodes = NULL,
       int rank_in = 0) {
 
-      // Enable OpenMP nested parallelization.
       omp_set_nested(true);
 
       // Postprocess old_from_new indices before building the tree.
@@ -874,6 +882,8 @@ class GeneralBinarySpaceTree {
       // Finalize the new_from_old mapping from old_from_new mapping.
       IndexInitializer<IndexType>::NewFromOld(
         matrix, old_from_new, new_from_old);
+
+      omp_set_nested(false);
       return node;
     }
 
