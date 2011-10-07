@@ -7,8 +7,8 @@
      (ARMA_VERSION_PATCH >= 91))
 // The new syntax changed the name of 'promote_type' to 'is_promotable'.  We
 // have to update accordingly...
-template<typename T> struct is_promotable<std::complex<T>, s64> : public is_promotable_ok { typedef std::complex<T> result };
-template<typename T> struct is_promotable<std::complex<T>, u64> : public is_promotable_ok { typedef std::complex<T> result };
+template<typename T> struct is_promotable<std::complex<T>, s64> : public is_promotable_ok { typedef std::complex<T> result; };
+template<typename T> struct is_promotable<std::complex<T>, u64> : public is_promotable_ok { typedef std::complex<T> result; };
 
 template<> struct is_promotable<double, s64  > : public is_promotable_ok { typedef double result; };
 template<> struct is_promotable<double, u64  > : public is_promotable_ok { typedef double result; };
