@@ -1,7 +1,8 @@
 #ifndef NNSVM_IMPL_H
 #define NNSVM_IMPL_H
 
-using namespace mlpack::nnsvm;
+namespace mlpack {
+namespace nnsvm {
 
 /**
 * NNSVM initialization
@@ -18,7 +19,6 @@ void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes)
 template<typename TKernel>
 void NNSVM<TKernel>::Init(const arma::mat& dataset, size_t n_classes, size_t c, size_t b, double eps, size_t max_iter)
 {
-  param_.kernel_.Init();
   param_.kernel_.GetName(param_.kernelname_);
   param_.kerneltypeid_ = param_.kernel_.GetTypeId();
   // c; default:10
@@ -62,7 +62,6 @@ void NNSVM<TKernel>::InitTrain(
   /* Initialize parameters c_, budget_, eps_, max_iter_, VTA_, alpha_, error_, thresh_ */
   NNSMO<Kernel> nnsmo;
   nnsmo.Init(dataset, param_.c_, param_.b_, param_.eps_, param_.max_iter_);
-  nnsmo.kernel().Copy(param_.kernel_);
 
   /* 2-classes NNSVM training using NNSMO */
   mlpack::IO::StartTimer("nnsvm/nnsvm_train");
@@ -89,6 +88,7 @@ void NNSVM<TKernel>::InitTrain(
 template<typename TKernel>
 void NNSVM<TKernel>::SaveModel(std::string modelfilename)
 {
+  // TODO: Why do we do this? 
   FILE *fp = fopen(modelfilename.c_str(), "w");
   if (fp == NULL)
   {
@@ -100,7 +100,7 @@ void NNSVM<TKernel>::SaveModel(std::string modelfilename)
   fprintf(fp, "kernel_name %s\n", param_.kernelname_.c_str());
   fprintf(fp, "kernel_typeid %zu\n", param_.kerneltypeid_);
   // save kernel parameters
-  param_.kernel_.SaveParam(fp);
+ // param_.kernel_.SaveParam(fp);
   fprintf(fp, "total_num_sv %zu\n", model_.num_sv_);
   fprintf(fp, "threshold %g\n", model_.thresh_);
   fprintf(fp, "weights");
@@ -271,4 +271,8 @@ void NNSVM<TKernel>::LoadModelBatchClassify(arma::mat& testset, std::string mode
   LoadModel(testset, modelfilename);
   BatchClassify(testset, testlabelfilename);
 }
+
+}; // namespace nnsvm
+}; // namespace mlpack
+
 #endif
