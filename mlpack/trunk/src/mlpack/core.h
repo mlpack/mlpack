@@ -33,6 +33,8 @@
 #include <mlpack/core/math/math_lib.h>
 #include <mlpack/core/math/range.h>
 #include <mlpack/core/math/kernel.h>
+#include <mlpack/core/model/model.hpp>
+#include <mlpack/core/model/save_restore_model.hpp>
 #include <mlpack/core/file/textfile.h>
 #include <mlpack/core/io/io.h>
 #include <mlpack/core/arma_extend/arma_extend.h>
