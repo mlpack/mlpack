@@ -48,7 +48,7 @@ BOOST_AUTO_TEST_CASE(TestCenterA) {
   //  [-8 -4  0  4  8]]
   for (int row = 0; row < 5; row++) {
     for (int col = 0; col < 5; col++) {
-      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2) * row, 1e-5);
+      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (double) (col - 2) * row, 1e-5);
     }
   }
 }
@@ -73,7 +73,7 @@ BOOST_AUTO_TEST_CASE(TestCenterB) {
   //  [-10  -6   -2   2   6   10 ]]
   for (int row = 0; row < 5; row++) {
     for (int col = 0; col < 6; col++) {
-      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (col - 2.5) * row, 1e-5);
+      BOOST_REQUIRE_CLOSE(tmp_out(row, col), (double) (col - 2.5) * row, 1e-5);
     }
   }
 }
