@@ -16,4 +16,4 @@ end
 
 n_errors = sum(Y .* (X' * w) <= 0);
 
-fprintf('%f%% error\n', 100 * n_errors / size(X, 2));
+%fprintf('%f%% error\n', 100 * n_errors / size(X, 2));
