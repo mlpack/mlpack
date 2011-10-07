@@ -757,7 +757,7 @@ class GeneralBinarySpaceTree {
       while(true);
 
 #pragma omp parallel for
-      for(unsigned int i = 0; i < parallel_tasks.size(); i++) {
+      for(int i = 0; i < static_cast<int>(parallel_tasks.size()); i++) {
         TreeType *active_node = parallel_tasks[i].first;
         if(parallel_tasks[i].second) {
           TreeSpecType::MakeLeafNode(
