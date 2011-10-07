@@ -50,8 +50,8 @@ link_directories(${Local_ROOT}/cuda/lib64)
 set(CUDA_NVCC_FLAGS "-ccbin=/usr/bin/g++-4.4")
 
 # Add additional complie flags.
-set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp --param ggc-min-expand=20 --param ggc-min-heapsize=8192 -Wall")
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -fopenmp -Wall")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fopenmp -Wall")
 
 include_directories(${TRILINOS_INCLUDE_DIR})
 include_directories(${MPI_INCLUDE_DIR})
