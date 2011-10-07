@@ -44,14 +44,13 @@ namespace math {
    * @param range_max the last of the range
    * @return max(range_min, min(range_max, d))
    */
-  inline double ClampRange(double value, double range_min, double range_max) {
-    if (value <= range_min) {
-      return range_min;
-    } else if (value >= range_max) {
-      return range_max;
-    } else {
-      return value;
-    }
+  inline double ClampRange(double value, double range_min, double range_max)
+  {
+    value = value - range_max;
+    value = ClampNonNegative (value) + range_max;
+    value = value - range_min;
+    value = ClampNonPositive (value) + range_min;
+    return value;
   }
 
   /**
