@@ -1,11 +1,12 @@
-function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations)
-%function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations)
+function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations, loss_type)
+%function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations, loss_type)
 %
 % X is tensor in R^{n_dims \times n_points \times n_tasks}
 % Y is a matrix in R^{n_points \times n_tasks}
 % lambda is the regularization parameter for the squared 2,1 norm
 % penalty on A (A being from the original problem formulation)
 % epsilon - initial perturbation magnitude
+% loss_type - either 'squared' for squared loss or 'hinge' for hinge loss (svm)
 %
 % Notes: Currently, the code just chooses the W corresponding to
 % the smallest epsilon such that epsilon > eps (where we
@@ -15,13 +16,23 @@ function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations)
 
 [n_dims, n_points, n_tasks] = size(X);
 
-% for pegasos
-%minibatch_size = 10;
-%n_iterations = 10 * n_points / minibatch_size;
+HINGE = 0;
+SQUARED = 1;
+loss_code = -1;
+if isequal(loss_type, 'hinge')
+  loss_code = HINGE;
+
+  % for pegasos
+  minibatch_size = 10;
+  n_iterations = 10 * n_points / minibatch_size;
+elseif isequal(loss_type, 'squared')
+  loss_code = SQUARED;
+else
+  error('Error: ''%s'' is not a valid setting for loss_type\n', ...
+	loss_type);
+end
 
 W = zeros(n_dims, n_tasks);
-
-%sqrt_D = D^0.5;
 
 while epsilon > eps
 
@@ -51,15 +62,18 @@ while epsilon > eps
   
   for iteration_num = 1:n_iterations
     for t = 1:n_tasks
-      % solve SVM problem
-      %W(:,t) = pegasos(sqrt_D * X(:,:,t), Y(:,t), lambda, minibatch_size, n_iterations);
-      
-      % solve least squares problem
-      X_t = sqrt_D * X(:,:,t);
-      % next two lines equivalent via Woodbury identity
-      %W(:,t) = (X_t * X_t' + lambda * eye(n_dims)) \ (X_t * Y(:,t));
-      %W(:,t) = (X_t / (X_t' * X_t + lambda * eye(n_dims))) * Y(:,t);
-      W(:,t) = (X_t * inv(X_t' * X_t + lambda * eye(n_points))) * Y(:,t);
+      if loss_code == HINGE
+	% solve SVM problem
+	W(:,t) = pegasos(sqrt_D * X(:,:,t), Y(:,t), lambda, ...
+			 minibatch_size, n_iterations);
+      elseif loss_code == SQUARED
+	% solve least squares problem
+	X_t = sqrt_D * X(:,:,t);
+	% next two lines equivalent via Woodbury identity
+	%W(:,t) = (X_t * X_t' + lambda * eye(n_dims)) \ (X_t * Y(:,t));
+	W(:,t) = (X_t / (X_t' * X_t + lambda * eye(n_points))) * Y(:,t);
+	%W(:,t) = (X_t * inv(X_t' * X_t + lambda * eye(n_points))) * Y(:,t);
+      end
     end
     W = sqrt_D * W;
     
