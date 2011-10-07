@@ -152,7 +152,7 @@ LovaszThetaSDP::LovaszThetaSDP() : edges_(0), vertices_(0), initial_point_(0, 0)
 LovaszThetaSDP::LovaszThetaSDP(const arma::mat& edges) : edges_(edges),
     initial_point_(0, 0) {
   // Calculate V by finding the maximum index in the edges matrix.
-  vertices_ = edges_.max() + 1;
+  vertices_ = max(max(edges_)) + 1;
 //  IO::Debug << vertices_ << " vertices in graph." << std::endl;
 }
 
