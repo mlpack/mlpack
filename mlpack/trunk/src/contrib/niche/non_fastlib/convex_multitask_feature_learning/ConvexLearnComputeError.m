@@ -1,5 +1,5 @@
-function test_error = ConvexComputeTestError(X, Y, W)
-%function test_error = ConvexComputeTestError(X, Y, W)
+function test_error = ConvexLearnComputeError(X, Y, W)
+%function test_error = ConvexLearnComputeError(X, Y, W)
 
 [n_dims n_points n_tasks] = size(X);
 

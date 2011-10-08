@@ -1,7 +1,7 @@
-function [] = Tester(X_train, Y_train, X_test, Y_test, lambda_set, ...
-		     epsilon, n_iterations, results_filename) 
-%function [] = Tester(X_train, Y_train, X_test, Y_test, lambda_set, ...
-%		      epsilon, n_iterations, results_filename) 
+function [] = ConvexLearnTester(X_train, Y_train, X_test, Y_test, ...
+				lambda_set, epsilon, n_iterations, results_filename) 
+%function [] = ConvexLearnTester(X_train, Y_train, X_test, Y_test, ...
+%				 lambda_set, epsilon, n_iterations, results_filename) 
 %
 % lambda_set - set containing values of regularization parameter on trace norm
 % epsilon - perturbation for regularizer
@@ -19,7 +19,7 @@ test_error = zeros(n_experiments, 1);
 
 for i = 1:length(lambda_set)
   lambda = lambda_set;
-  [D W] = Learn(X_train, Y_train, lambda, epsilon, n_iterations, 'hinge');
+  [D W] = ConvexLearn(X_train, Y_train, lambda, epsilon, n_iterations, 'hinge');
   
   training_error(i) = ConvexComputeError(X_train, Y_train, W);
   test_error(i) = ConvexComputeError(X_test, Y_test, W);
