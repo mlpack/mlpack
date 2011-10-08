@@ -222,7 +222,7 @@ class LocalRegressionResult {
     BOOST_SERIALIZATION_SPLIT_MEMBER()
 
     void Seed(int qpoint_index, double initial_pruned_in) {
-      pruned_[qpoint_index] = initial_pruned_in;
+      pruned_[qpoint_index] += initial_pruned_in;
     }
 
     void SetZero() {
