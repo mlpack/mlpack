@@ -1,5 +1,5 @@
-function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations, loss_type)
-%function [D, W] = Learn(X, Y, lambda, epsilon, n_iterations, loss_type)
+function [D, W] = ConvexLearn(X, Y, lambda, epsilon, n_iterations, loss_type)
+%function [D, W] = ConvexLearn(X, Y, lambda, epsilon, n_iterations, loss_type)
 %
 % X is tensor in R^{n_dims \times n_points \times n_tasks}
 % Y is a matrix in R^{n_points \times n_tasks}
