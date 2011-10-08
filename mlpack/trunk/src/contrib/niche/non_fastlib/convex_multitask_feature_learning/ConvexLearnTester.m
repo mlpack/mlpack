@@ -18,11 +18,11 @@ training_error = zeros(n_experiments, 1);
 test_error = zeros(n_experiments, 1);
 
 for i = 1:length(lambda_set)
-  lambda = lambda_set;
+  lambda = lambda_set(i);
   [D W] = ConvexLearn(X_train, Y_train, lambda, epsilon, n_iterations, 'hinge');
   
-  training_error(i) = ConvexComputeError(X_train, Y_train, W);
-  test_error(i) = ConvexComputeError(X_test, Y_test, W);
+  training_error(i) = ConvexLearnComputeError(X_train, Y_train, W);
+  test_error(i) = ConvexLearnComputeError(X_test, Y_test, W);
 end
 
 
