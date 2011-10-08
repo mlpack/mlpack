@@ -99,6 +99,11 @@ class DualtreeDfs {
               TreeType *rnode_in,
               const core::math::Range &squared_distance_range_in);
 
+            /** @brief Returns whether the argument is an empty one or
+             *         not.
+             */
+            bool is_empty_argument() const;
+
             /** @brief Returns the query node.
              */
             TreeType *qnode();

@@ -26,6 +26,10 @@ class DualtreeTrace {
 
   public:
 
+    const ArgType &operator[](int i) {
+      return trace_[i];
+    }
+
     /** @brief Pushes a computation object in the front.
      */
     void push_front(const ArgType &arg_in) {
@@ -78,6 +82,10 @@ class DualtreeTrace {
      */
     bool empty() const {
       return trace_.empty();
+    }
+
+    int size() const {
+      return trace_.size();
     }
 
     /** @brief Initialize the dual-tree trace.
