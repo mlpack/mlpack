@@ -91,6 +91,8 @@ class DistributedKdeArguments {
      */
     int num_threads_;
 
+    double weak_scaling_factor_;
+
   public:
 
     /** @brief The default constructor.
@@ -111,6 +113,7 @@ class DistributedKdeArguments {
       max_subtree_size_ = 0;
       max_num_work_to_dequeue_per_stage_ = 0;
       num_threads_ = 1;
+      weak_scaling_factor_ = 0.75;
     }
 
     /** @brief The destructor.
