@@ -38,11 +38,11 @@ iteration_num = 0;
 while ~converged && iteration_num < n_max_iterations
   iteration_num = iteration_num + 1;
   fprintf('Iteration %d\n', iteration_num);
-  save LPSVM X Y W lambda_z;
+  %save LPSVM X Y W lambda_z;
   fprintf('Running LPSVM\n');
   Z = TaskCodingZStep(X, Y, W, lambda_z);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
-  save Pegasos X Y Z lambda_w;
+  %save Pegasos X Y Z lambda_w;
   fprintf('Running Pegasos\n');
   W = TaskCodingWStep(X, Y, Z, lambda_w);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
