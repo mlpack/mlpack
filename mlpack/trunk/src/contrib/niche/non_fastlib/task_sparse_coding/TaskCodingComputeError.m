@@ -1,5 +1,5 @@
-function test_error = ComputeTestError(X, Y, W, Z)
-%function test_error = ComputeTestError(X, Y, W, Z)
+function test_error = TaskCodingComputeError(X, Y, W, Z)
+%function test_error = TaskCodingComputeError(X, Y, W, Z)
 
 [n_dims n_points n_tasks] = size(X);
 
