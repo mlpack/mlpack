@@ -24,7 +24,7 @@ if isequal(loss_type, 'hinge')
 
   % for pegasos
   minibatch_size = 10;
-  n_iterations = 10 * n_points / minibatch_size;
+  n_pegasos_iterations = 10 * n_points / minibatch_size;
 elseif isequal(loss_type, 'squared')
   loss_code = SQUARED;
 else
@@ -61,11 +61,12 @@ while epsilon > eps
   
   
   for iteration_num = 1:n_iterations
+    fprintf('\n\n\nITERATION %d\n\n\n', iteration_num);
     for t = 1:n_tasks
       if loss_code == HINGE
 	% solve SVM problem
 	W(:,t) = pegasos(sqrt_D * X(:,:,t), Y(:,t), lambda, ...
-			 minibatch_size, n_iterations);
+			 minibatch_size, n_pegasos_iterations);
       elseif loss_code == SQUARED
 	% solve least squares problem
 	X_t = sqrt_D * X(:,:,t);
