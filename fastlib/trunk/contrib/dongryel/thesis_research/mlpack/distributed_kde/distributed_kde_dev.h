@@ -70,7 +70,8 @@ void DistributedKde<DistributedTableType, KernelAuxType>::Compute(
 
   // If weak-scaling measuring is requested, then turn it on.
   if(arguments_in.measure_weak_scaling_) {
-    distributed_dualtree_dfs.enable_weak_scaling_measuring_mode(0.75);
+    distributed_dualtree_dfs.enable_weak_scaling_measuring_mode(
+      arguments_in.weak_scaling_factor_);
   }
 
   // Compute the result and do post-normalize.
@@ -222,6 +223,10 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
   )(
     "use_memory_mapped_file",
     "Use memory mapped file for out-of-core computations."
+  )(
+    "weak_scaling_factor",
+    boost::program_options::value<double>()->default_value(0.2),
+    "The percentage of reference points to consider in weak scaling measuring."
   );
 
   boost::program_options::command_line_parser clp(args);
@@ -388,6 +393,9 @@ bool DistributedKdeArgumentParser::ParseArguments(
   // Parse the weak scaling measuring option.
   arguments_out->measure_weak_scaling_ =
     (vm.count("measure_weak_scaling") > 0);
+  if(arguments_out->measure_weak_scaling_) {
+    arguments_out->weak_scaling_factor_ = vm[ "weak_scaling_factor" ].as<double>();
+  }
 
   // Parse the top tree sample probability.
   arguments_out->top_tree_sample_probability_ =
