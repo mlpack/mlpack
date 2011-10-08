@@ -8,7 +8,16 @@ function [] = ConvexLearnTester(X_train, Y_train, X_test, Y_test, ...
 % n_iterations - n_iterations to run alternating algorithm for
 % convex multi-task feature learning
 % 
-  
+
+if nargin < 8
+  error('Wrong number of arguments');
+end
+
+if size(lambda_set, 1) < size(lambda_set, 2)
+  lambda_set = lambda_set';
+end
+
+
 [n_dims n_training_points n_tasks] = size(X_train);
 n_test_points = size(X_test, 2);
 
