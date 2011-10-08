@@ -751,6 +751,7 @@ class TableExchange {
 
       // Terminate when there are no queued up messages.
       return queued_up_completed_computation_.size() == 0 &&
+             queued_up_extrinsic_prunes_.size() == 0 &&
              queued_up_query_subtables_.size() == 0 && stage_ == 0;
     }
 
