@@ -143,8 +143,7 @@ class KdeSummary {
     double used_error_u_;
 
     void Seed(double initial_pruned_in) {
-      this->SetZero();
-      pruned_l_ = initial_pruned_in;
+      pruned_l_ += initial_pruned_in;
     }
 
     void Print() const {

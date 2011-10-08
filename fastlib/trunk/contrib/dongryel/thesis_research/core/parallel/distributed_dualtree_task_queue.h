@@ -11,9 +11,11 @@
 #include <list>
 #include <omp.h>
 #include <vector>
+#include "core/gnp/dualtree_dfs.h"
 #include "core/math/range.h"
 #include "core/parallel/distributed_dualtree_task_list.h"
 #include "core/parallel/query_subtable_lock.h"
+#include "core/parallel/reference_tree_walker.h"
 #include "core/parallel/scoped_omp_lock.h"
 #include "core/parallel/table_exchange.h"
 
@@ -21,7 +23,8 @@ namespace core {
 namespace parallel {
 
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 class DistributedDualtreeTaskQueue {
   public:
 
@@ -56,28 +59,29 @@ class DistributedDualtreeTaskQueue {
     /** @brief The table exchange type.
      */
     typedef core::parallel::TableExchange <
-    DistributedTableType, TaskPriorityQueueType > TableExchangeType;
+    DistributedTableType, TaskPriorityQueueType, ProblemType > TableExchangeType;
 
     /** @brief The type of the distributed task queue.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
 
     typedef typename TaskPriorityQueueType::value_type TaskType;
 
     typedef core::parallel::DistributedDualtreeTaskList <
     DistributedTableType,
-    TaskPriorityQueueType > TaskListType;
+    TaskPriorityQueueType, ProblemType > TaskListType;
 
     friend class QuerySubTableLock <
-        DistributedTableType, TaskPriorityQueueType >;
+        DistributedTableType, TaskPriorityQueueType, ProblemType >;
 
   friend class core::parallel::DistributedDualtreeTaskList <
-        DistributedTableType, TaskPriorityQueueType >;
+        DistributedTableType, TaskPriorityQueueType, ProblemType >;
 
   typedef class QuerySubTableLock <
-        DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
+      DistributedTableType, TaskPriorityQueueType,
+        ProblemType > QuerySubTableLockType;
 
     typedef std::list< boost::intrusive_ptr< QuerySubTableLockType > >
     QuerySubTableLockListType;
@@ -134,6 +138,16 @@ class DistributedDualtreeTaskQueue {
      */
     std::vector< boost::intrusive_ptr<SubTableType> > query_subtables_;
 
+    /** @brief The time taken for walking the reference tree.
+     */
+    double reference_tree_walk_time_;
+
+    /** @brief The module to walk the reference tree to generate
+     *         reference subtable messages.
+     */
+    core::parallel::ReferenceTreeWalker <
+    DistributedTableType > reference_tree_walker_;
+
     /** @brief The remaining global computation being kept track on
      *         this MPI process. If this reaches zero, then this
      *         process can exit the computation.
@@ -162,6 +176,10 @@ class DistributedDualtreeTaskQueue {
      *         same MPI process to access the queue.
      */
     omp_nest_lock_t task_queue_lock_;
+
+    /** @brief The timer used for measuring the reference tree walk.
+     */
+    boost::mpi::timer tmp_timer_;
 
   private:
 
@@ -293,17 +311,90 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    /** @brief Seeds the query subtables owned by the current MPI
+     *         process with the given prune count.
+     */
+    void SeedExtrinsicPrune(
+      boost::mpi::communicator &world, unsigned long int prune_count) {
+
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // For every active query subtable owned by the query subtable,
+      // just seed.
+      for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+        if(query_subtables_[i]->table()->rank() == world.rank()) {
+          remaining_work_for_query_subtables_[i] -= prune_count;
+          core::gnp::DualtreeDfs<ProblemType>::PreProcess(
+            query_subtables_[i]->table(), query_subtables_[i]->start_node(),
+            query_subtables_[i]->query_result(), prune_count);
+        }
+      }
+
+      // For every checked-out query subtable owned by the current
+      // process, queue up a seed request when it comes back.
+      for(typename QuerySubTableLockListType::const_iterator it =
+            checked_out_query_subtables_.begin();
+          it != checked_out_query_subtables_.end(); it++) {
+        if((*it)->query_subtable_->table()->rank() == world.rank()) {
+          (*it)->remaining_work_for_query_subtable_ -= prune_count;
+          (*it)->postponed_seed_ += prune_count;
+        }
+      }
+    }
+
+    /** @brief Continues walking the local reference tree to generate
+     *         more messages to send.
+     */
+    template<typename MetricType, typename GlobalType>
+    void WalkReferenceTree(
+      const MetricType &metric_in,
+      const GlobalType &global_in,
+      boost::mpi::communicator &world,
+      int max_hashed_subtrees_to_queue,
+      TreeType *global_qnode,
+      std::vector <
+      SubTableRouteRequestType >
+      * hashed_essential_reference_subtrees_to_send) {
+
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      tmp_timer_.restart();
+      reference_tree_walker_.Walk(
+        metric_in, global_in, world, max_hashed_subtrees_to_queue,
+        global_qnode, hashed_essential_reference_subtrees_to_send, this);
+      reference_tree_walk_time_ += tmp_timer_.elapsed();
+    }
+
+    /** @brief Returns the number of imported query subtables.
+     */
     int num_imported_query_subtables() const {
+
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return num_imported_query_subtables_;
     }
 
+    /** @brief Returns the number of exported query subtables.
+     */
     int num_exported_query_subtables() const {
+
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(
+        &(const_cast <
+          DistributedDualtreeTaskQueueType * >(this)->task_queue_lock_));
       return num_exported_query_subtables_;
     }
 
+    /** @brief Sets the remaining work for a given query subtable.
+     */
     void set_remaining_work_for_query_subtable(
       int probe_index, unsigned long int work_in) {
 
+      // Lock the queue.
+      core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
       remaining_work_for_query_subtables_[ probe_index ] = work_in;
     }
 
@@ -364,6 +455,14 @@ class DistributedDualtreeTaskQueue {
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
+      if((* query_subtable_lock)->query_subtable_->table()->rank() == world.rank()) {
+        core::gnp::DualtreeDfs<ProblemType>::PreProcess(
+          (* query_subtable_lock)->query_subtable_->table(),
+          (* query_subtable_lock)->query_subtable_->start_node(),
+          (* query_subtable_lock)->query_subtable_->query_result(),
+          (*query_subtable_lock)->postponed_seed_);
+      }
+
       // Return and remove it from the locked list.
       (*query_subtable_lock)->Return_(this);
       checked_out_query_subtables_.erase(query_subtable_lock);
@@ -378,7 +477,11 @@ class DistributedDualtreeTaskQueue {
      */
     typename QuerySubTableLockListType::iterator LockQuerySubTable(
       int probe_index, int remote_mpi_rank_in) {
+
+      // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+
+      // Checks out the given query subtable.
       checked_out_query_subtables_.push_front(
         boost::intrusive_ptr< QuerySubTableLockType > (
           new QuerySubTableLockType()));
@@ -576,6 +679,12 @@ class DistributedDualtreeTaskQueue {
       omp_destroy_nest_lock(&task_queue_lock_);
     }
 
+    /** @brief Returns the time took for walking the reference tree.
+     */
+    double reference_tree_walk_time() const {
+      return reference_tree_walk_time_;
+    }
+
     /** @brief Returns the remaining amount of local computation.
      */
     unsigned long int remaining_local_computation() const {
@@ -719,8 +828,6 @@ class DistributedDualtreeTaskQueue {
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
       table_exchange_.push_completed_computation(comm, quantity_in);
-
-      // Update the remaining work for the query tree.
       (*query_subtable_lock)->remaining_work_for_query_subtable_ -=
         reference_count_in;
     }
@@ -729,7 +836,8 @@ class DistributedDualtreeTaskQueue {
      *         subtables owned by the current MPI process.
      */
     void push_completed_computation(
-      boost::mpi::communicator &comm,
+      boost::mpi::communicator &world,
+      int query_destination_rank_in,
       unsigned long int reference_count_in,
       unsigned long int quantity_in) {
 
@@ -738,12 +846,36 @@ class DistributedDualtreeTaskQueue {
 
       // Subtract from the self and queue up a route message.
       remaining_global_computation_ -= quantity_in;
-      table_exchange_.push_completed_computation(comm, quantity_in);
+      table_exchange_.push_completed_computation(world, quantity_in);
 
-      // Update the remaining work for all of the existing query
-      // trees.
-      for(unsigned int i = 0; i < query_subtables_.size(); i++) {
-        remaining_work_for_query_subtables_[i] -= reference_count_in;
+      // If the query destination rank is the same, then update the
+      // remaining work for all of the existing query trees.
+      if(reference_count_in) {
+        if(world.rank() == query_destination_rank_in) {
+
+          // First for the active query subtable,
+          for(unsigned int i = 0; i < query_subtables_.size(); i++) {
+            if(query_subtables_[i]->table()->rank() == world.rank()) {
+              remaining_work_for_query_subtables_[i] -= reference_count_in;
+            }
+          }
+
+          // Now for the checked-out tables.
+          for(typename QuerySubTableLockListType::const_iterator it =
+                checked_out_query_subtables_.begin();
+              it != checked_out_query_subtables_.end(); it++) {
+            if((*it)->query_subtable_->table()->rank() == world.rank()) {
+              (*it)->remaining_work_for_query_subtable_ -= reference_count_in;
+            }
+          }
+        }
+
+        // Otherwise, queue up a message to be sent to the query
+        // destination.
+        else {
+          table_exchange_.push_extrinsic_prunes(
+            world, query_destination_rank_in, reference_count_in);
+        }
       }
     }
 
@@ -835,7 +967,18 @@ class DistributedDualtreeTaskQueue {
       DistributedTableType *query_table_in,
       DistributedTableType *reference_table_in,
       QueryResultType *local_query_result_in,
-      int num_threads_in) {
+      int num_threads_in,
+      bool weak_scaling_mode_in,
+      unsigned long int max_num_reference_points_to_pack_per_process_in) {
+
+      // Initialize the reference tree walker.
+      reference_tree_walk_time_ = 0.0;
+      reference_tree_walker_.Init(
+        world,
+        query_table_in,
+        reference_table_in->local_table(),
+        max_subtree_size_in, weak_scaling_mode_in,
+        max_num_reference_points_to_pack_per_process_in);
 
       // Initialize the number of available threads.
       num_threads_ = num_threads_in;
