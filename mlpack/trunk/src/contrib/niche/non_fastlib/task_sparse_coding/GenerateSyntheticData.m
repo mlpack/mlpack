@@ -5,6 +5,7 @@ function [X_train,Y_train,X_test,Y_test,W,Z] = ...
 
 % generate the dictionary
 W = normrnd(0, 1, n_dims, n_atoms);
+W = W ./ repmat(sqrt(sum(W.^2)), n_dims, 1);
 
 % generate sparse codes where non-zero entries lie 
 % uniformly in [-2, -0.5] and [0.5, 2] with equal probability
