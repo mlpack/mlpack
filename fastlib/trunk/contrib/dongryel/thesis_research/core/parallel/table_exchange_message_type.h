@@ -34,6 +34,8 @@ class MessageType {
 
     ExtraTaskRouteRequestType extra_task_route_;
 
+    EnergyRouteRequestType extrinsic_prune_route_;
+
     SubTableRouteRequestType flush_route_;
 
     LoadBalanceRouteRequestType load_balance_route_;
@@ -61,6 +63,7 @@ class MessageType {
     void operator=(const MessageType &message_in) {
       do_load_balancing_ = message_in.do_load_balancing_;
       energy_route_ = message_in.energy_route();
+      extrinsic_prune_route_ = message_in.extrinsic_prune_route();
       flush_route_ = message_in.flush_route();
       load_balance_route_ = message_in.load_balance_route();
       originating_rank_ = message_in.originating_rank();
@@ -74,6 +77,7 @@ class MessageType {
     int next_destination(boost::mpi::communicator &comm) {
       energy_route_.next_destination(comm);
       extra_task_route_.next_destination(comm);
+      extrinsic_prune_route_.next_destination(comm);
       flush_route_.next_destination(comm);
       load_balance_route_.next_destination(comm);
       return subtable_route_.next_destination(comm);
@@ -119,6 +123,14 @@ class MessageType {
       return energy_route_;
     }
 
+    EnergyRouteRequestType &extrinsic_prune_route() {
+      return extrinsic_prune_route_;
+    }
+
+    const EnergyRouteRequestType &extrinsic_prune_route() const {
+      return extrinsic_prune_route_;
+    }
+
     SubTableRouteRequestType &flush_route() {
       return flush_route_;
     }
@@ -130,6 +142,7 @@ class MessageType {
     template<class Archive>
     void serialize(Archive &ar, const unsigned int version) {
       ar & energy_route_;
+      ar & extrinsic_prune_route_;
       if(do_load_balancing_) {
         ar & extra_task_route_;
         ar & flush_route_;

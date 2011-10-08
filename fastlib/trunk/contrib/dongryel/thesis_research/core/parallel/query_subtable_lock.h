@@ -17,13 +17,15 @@ namespace core {
 namespace parallel {
 
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief The lock on a query subtable.
  */
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 class QuerySubTableLock {
   private:
 
@@ -36,13 +38,13 @@ class QuerySubTableLock {
      */
     typedef DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
 
     /** @brief The friend declaration with the distributed task queue.
      */
     friend class core::parallel::DistributedDualtreeTaskQueue <
       DistributedTableType,
-        TaskPriorityQueueType >;
+        TaskPriorityQueueType, ProblemType >;
 
     /** @brief The table type used in the exchange process.
      */
@@ -59,11 +61,16 @@ class QuerySubTableLock {
     /** @brief The type of the lock on query subtable.
      */
     typedef QuerySubTableLock <
-    DistributedTableType, TaskPriorityQueueType > QuerySubTableLockType;
+    DistributedTableType, TaskPriorityQueueType,
+                        ProblemType > QuerySubTableLockType;
 
     /** @brief The MPI rank of the process holding the query subtable.
      */
     int locked_mpi_rank_;
+
+    /** @brief The postponed prune count that must be incorporated.
+     */
+    unsigned long int postponed_seed_;
 
     /** @brief The query subtable.
      */
@@ -177,6 +184,7 @@ class QuerySubTableLock {
     QuerySubTableLock() {
       locked_mpi_rank_ = -1;
       num_remaining_tasks_ = NULL;
+      postponed_seed_ = 0;
       reference_count_ = 0;
       remaining_local_computation_ = NULL;
       remaining_work_for_query_subtable_ = 0;
@@ -184,6 +192,7 @@ class QuerySubTableLock {
 
     void operator=(const QuerySubTableLockType &lock_in) {
       num_remaining_tasks_ = lock_in.num_remaining_tasks_;
+      postponed_seed_ = lock_in.postponed_seed_;
       query_subtable_  = lock_in.query_subtable_;
       remaining_local_computation_ = lock_in.remaining_local_computation_;
       remaining_work_for_query_subtable_ =
@@ -192,22 +201,34 @@ class QuerySubTableLock {
     }
 
     QuerySubTableLock(const QuerySubTableLockType &lock_in) {
+      locked_mpi_rank_ = -1;
+      num_remaining_tasks_ = NULL;
+      postponed_seed_ = 0;
       reference_count_ = 0;
+      remaining_local_computation_ = NULL;
       this->operator=(lock_in);
     }
 };
 
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 inline void intrusive_ptr_add_ref(
-  QuerySubTableLock<DistributedTableType, TaskPriorityQueueType> *ptr) {
+  QuerySubTableLock <
+  DistributedTableType,
+  TaskPriorityQueueType,
+  ProblemType > *ptr) {
   ptr->reference_count_++;
 }
 
 template < typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 inline void intrusive_ptr_release(
-  QuerySubTableLock<DistributedTableType, TaskPriorityQueueType> *ptr) {
+  QuerySubTableLock <
+  DistributedTableType,
+  TaskPriorityQueueType,
+  ProblemType > *ptr) {
   ptr->reference_count_--;
   if(ptr->reference_count_ == 0) {
     if(core::table::global_m_file_) {

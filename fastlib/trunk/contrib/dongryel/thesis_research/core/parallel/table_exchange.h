@@ -23,7 +23,8 @@ namespace parallel {
 
 template <
 typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief A class for performing an all-to-some exchange of subtrees
@@ -31,7 +32,8 @@ class DistributedDualtreeTaskQueue;
  */
 template <
 typename DistributedTableType,
-         typename TaskPriorityQueueType >
+         typename TaskPriorityQueueType,
+         typename ProblemType >
 class TableExchange {
   public:
 
@@ -61,7 +63,9 @@ class TableExchange {
     typedef
     core::parallel::RouteRequest <
     core::parallel::DistributedDualtreeTaskList <
-    DistributedTableType, TaskPriorityQueueType > > ExtraTaskRouteRequestType;
+    DistributedTableType,
+    TaskPriorityQueueType,
+    ProblemType > > ExtraTaskRouteRequestType;
 
     /** @brief The load balance request routing type.
      */
@@ -72,7 +76,9 @@ class TableExchange {
      *         exchange mechanism.
      */
     typedef core::parallel::DistributedDualtreeTaskQueue <
-    DistributedTableType, TaskPriorityQueueType > TaskQueueType;
+    DistributedTableType,
+    TaskPriorityQueueType,
+    ProblemType > TaskQueueType;
 
     /** @brief The message type used in the recursive doubling scheme.
      */
@@ -121,6 +127,11 @@ class TableExchange {
      *         MPI process.
      */
     std::vector<EnergyRouteRequestType> queued_up_completed_computation_;
+
+    /** @brief The queued-up extrinsic prune information that should
+     *         be sent out from this MPI process.
+     */
+    std::vector<EnergyRouteRequestType> queued_up_extrinsic_prunes_;
 
     /** @brief The queued-up query subtables to be flushed for each
      *         stage.
@@ -324,6 +335,13 @@ class TableExchange {
               route_request.energy_route().object());
           }
 
+          // Update the extrinsic prune count.
+          if(route_request.extrinsic_prune_route().remove_from_destination_list(world.rank()) &&
+              route_request.extrinsic_prune_route().object_is_valid()) {
+            task_queue_->SeedExtrinsicPrune(
+              world, route_request.extrinsic_prune_route().object());
+          }
+
           // If load-balancing,
           if(do_load_balancing_) {
 
@@ -429,6 +447,8 @@ class TableExchange {
         new_self_send_request_object.subtable_route().Init(world);
         new_self_send_request_object.subtable_route().add_destinations(world);
       }
+
+      // Handle the overall computation messages.
       if(queued_up_completed_computation_.size() > 0) {
 
         // Examine the back of the route request list.
@@ -438,7 +458,6 @@ class TableExchange {
         // Prepare the initial subtable to send.
         new_self_send_request_object.energy_route().Init(
           world, route_request);
-        new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
 
         // Pop it from the route request list.
         queued_up_completed_computation_.pop_back();
@@ -449,6 +468,28 @@ class TableExchange {
         new_self_send_request_object.energy_route().Init(world);
         new_self_send_request_object.energy_route().add_destinations(world);
         new_self_send_request_object.energy_route().object() = 0;
+      }
+
+      // Handle the extrinsic prune messages.
+      if(queued_up_extrinsic_prunes_.size() > 0) {
+
+        // Examine the back of the route request list.
+        EnergyRouteRequestType &route_request =
+          queued_up_extrinsic_prunes_.back();
+
+        // Prepare the initial subtable to send.
+        new_self_send_request_object.extrinsic_prune_route().Init(
+          world, route_request);
+
+        // Pop it from the route request list.
+        queued_up_extrinsic_prunes_.pop_back();
+      }
+      else {
+
+        // Prepare an empty message for the extrinsic prune portion.
+        new_self_send_request_object.extrinsic_prune_route().Init(world);
+        new_self_send_request_object.extrinsic_prune_route().add_destinations(world);
+        new_self_send_request_object.extrinsic_prune_route().object() = 0;
       }
 
       // If load-balancing is on, then need to constantly update other
@@ -464,6 +505,7 @@ class TableExchange {
       // Set the originating rank of the message.
       new_self_send_request_object.set_originating_rank(world.rank());
       new_self_send_request_object.energy_route().set_object_is_valid_flag(true);
+      new_self_send_request_object.extrinsic_prune_route().set_object_is_valid_flag(true);
     }
 
     /** @brief Tests whether the current MPI process can enter the
@@ -571,6 +613,23 @@ class TableExchange {
     }
 
   public:
+
+    /** @brief Pushes extrinsic prune information as a message to be
+     *         routed.
+     */
+    void push_extrinsic_prunes(
+      boost::mpi::communicator &world, int destination_rank_in,
+      unsigned long int quantity_in) {
+
+      if(quantity_in > 0) {
+        EnergyRouteRequestType new_route_request;
+        new_route_request.Init(world);
+        new_route_request.set_object_is_valid_flag(true);
+        new_route_request.object() = quantity_in;
+        new_route_request.add_destination(destination_rank_in);
+        queued_up_extrinsic_prunes_.push_back(new_route_request);
+      }
+    }
 
     /** @brief Prints the existing subtables in the cache.
      */
@@ -832,6 +891,7 @@ class TableExchange {
 
       // Initialize the queues.
       queued_up_completed_computation_.resize(0);
+      queued_up_extrinsic_prunes_.resize(0);
 
       // Initialize the locks.
       message_locks_.resize(message_cache_.size());

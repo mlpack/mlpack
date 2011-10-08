@@ -233,14 +233,7 @@ class DistributedDualtreeDfs {
 
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
-    FinePriorityQueueType > DistributedDualtreeTaskQueueType;
-
-    void HashSendList_(
-      const std::pair<int, int> &local_rnode_id,
-      int query_process_id,
-      std::vector <
-      core::parallel::RouteRequest<SubTableType> > *
-      hashed_essential_reference_subtrees);
+    FinePriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
 
     template<typename MetricType>
     void ComputeEssentialReferenceSubtrees_(
@@ -263,15 +256,9 @@ class DistributedDualtreeDfs {
     void InitialSetup_(
       const MetricType &metric,
       typename DistributedProblemType::ResultType *query_results,
-      std::vector< std::vector< std::pair<int, int> > > *
-      essential_reference_subtrees_to_send,
-      std::vector< std::vector< core::math::Range> > *send_priorities,
       std::vector <
       core::parallel::RouteRequest<SubTableType> >
       *hashed_essential_reference_subtress_to_send,
-      std::vector <
-      std::vector< std::pair<int, int> > > *reference_frontier_lists,
-      std::vector< std::vector< core::math::Range> > *receive_priorities,
       DistributedDualtreeTaskQueueType *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
