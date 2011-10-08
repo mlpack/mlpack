@@ -850,7 +850,7 @@ class DistributedDualtreeTaskQueue {
 
       // If the query destination rank is the same, then update the
       // remaining work for all of the existing query trees.
-      if(reference_count_in) {
+      if(reference_count_in > 0) {
         if(world.rank() == query_destination_rank_in) {
 
           // First for the active query subtable,
