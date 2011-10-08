@@ -21,7 +21,7 @@ end
 
 if nargin == 7
   Z = Z_initial;
-  fprintf('Running Pegasos\n');
+  fprintf('Learning Atomic SVM over all tasks\n');
   W = TaskCodingWStep(X, Y, Z, lambda_w);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
 end
@@ -39,11 +39,11 @@ while ~converged && iteration_num < n_max_iterations
   iteration_num = iteration_num + 1;
   fprintf('Iteration %d\n', iteration_num);
   %save LPSVM X Y W lambda_z;
-  fprintf('Running LPSVM\n');
+  fprintf('Learning One-Norm SVM\n');
   Z = TaskCodingZStep(X, Y, W, lambda_z);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
   %save Pegasos X Y Z lambda_w;
-  fprintf('Running Pegasos\n');
+  fprintf('Learning Atomic SVM over all tasks\n');
   W = TaskCodingWStep(X, Y, Z, lambda_w);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
   
