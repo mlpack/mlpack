@@ -34,15 +34,6 @@ for i = 1:length(lambda_set)
   test_error(i) = ConvexLearnComputeError(X_test, Y_test, W);
 end
 
-
-test_error = 0;
-for t = 1:n_tasks
-  test_error = test_error + ...
-      sum((X_test(:,:,t)' * W(:,t)) .* Y_test(:,t) <= 0);
-end
-
-test_error = test_error / (n_tasks * n_test_points);
-
 % save it all
 save(results_filename, 'lambda_set', 'training_error', 'test_error', ...
      'X_train', 'X_test', 'Y_train', 'Y_test', 'epsilon', ...
