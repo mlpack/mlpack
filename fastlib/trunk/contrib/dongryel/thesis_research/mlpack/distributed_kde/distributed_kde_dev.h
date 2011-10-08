@@ -144,7 +144,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "  epan, gaussian"
   )(
     "leaf_size",
-    boost::program_options::value<int>()->default_value(40),
+    boost::program_options::value<int>()->default_value(400),
     "Maximum number of points at a leaf of the tree."
   )(
     "max_num_work_to_dequeue_per_stage_in",
