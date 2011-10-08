@@ -26,13 +26,13 @@ for i = 1:length(lambda_z_set)
 
   % using optimal dictionary
   Z = TaskCodingZStep(X_train, Y_train, W_true, lambda_z);
-  opt_training_error(i) = ComputeError(X_train, Y_train, W_true, Z);
-  opt_test_error(i) = ComputeError(X_test, Y_test, W_true, Z);
+  opt_training_error(i) = TaskCodingComputeError(X_train, Y_train, W_true, Z);
+  opt_test_error(i) = TaskCodingComputeError(X_test, Y_test, W_true, Z);
   
   % using learned dictionary
   [W Z] = TaskCoding(X_train, Y_train, n_atoms, lambda_w, lambda_z);
-  learned_training_error(i) = ComputeError(X_train, Y_train, W, Z);
-  learned_test_error(i) = ComputeError(X_test, Y_test, W, Z);
+  learned_training_error(i) = TaskCodingComputeError(X_train, Y_train, W, Z);
+  learned_test_error(i) = TaskCodingComputeError(X_test, Y_test, W, Z);
 end
 
 % save it all
