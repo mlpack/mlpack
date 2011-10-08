@@ -1,26 +1,29 @@
-function test_error = Tester(X_train, Y_train, X_test, Y_test, lambda, epsilon, n_iterations)
-%function test_error = Tester(X_train, Y_train, X_test, Y_test, lambda, epsilon, n_iterations)
+function [] = Tester(X_train, Y_train, X_test, Y_test, lambda_set, ...
+		     epsilon, n_iterations, results_filename) 
+%function [] = Tester(X_train, Y_train, X_test, Y_test, lambda_set, ...
+%		      epsilon, n_iterations, results_filename) 
 %
-% lambda - regularization parameter on trace norm
+% lambda_set - set containing values of regularization parameter on trace norm
 % epsilon - perturbation for regularizer
 % n_iterations - n_iterations to run alternating algorithm for
 % convex multi-task feature learning
 % 
-
-
-% sanity checks
-train_size = size(X_train);
-test_size = size(X_test);
-if ~isequal(train_size([1 3]), test_size([1 3]))
-  error(['Either number of dimensions or number of tasks are not' ...
-	 ' consistent within X_train and X_task']);
-end
   
 [n_dims n_training_points n_tasks] = size(X_train);
 n_test_points = size(X_test, 2);
 
+n_experiments = length(lambda_set);
 
-[D W] = Learn(X_train, Y_train, lambda, epsilon, n_iterations, 'hinge');
+training_error = zeros(n_experiments, 1);
+test_error = zeros(n_experiments, 1);
+
+for i = 1:length(lambda_set)
+  lambda = lambda_set;
+  [D W] = Learn(X_train, Y_train, lambda, epsilon, n_iterations, 'hinge');
+  
+  training_error(i) = ConvexComputeError(X_train, Y_train, W);
+  test_error(i) = ConvexComputeError(X_test, Y_test, W);
+end
 
 
 test_error = 0;
@@ -30,3 +33,8 @@ for t = 1:n_tasks
 end
 
 test_error = test_error / (n_tasks * n_test_points);
+
+% save it all
+save(results_filename, 'lambda_set', 'training_error', 'test_error', ...
+     'X_train', 'X_test', 'Y_train', 'Y_test', 'epsilon', ...
+     'n_iterations');
