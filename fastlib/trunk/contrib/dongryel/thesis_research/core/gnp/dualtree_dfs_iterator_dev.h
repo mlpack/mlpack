@@ -25,6 +25,13 @@ IteratorMetricType >::IteratorArgType::IteratorArgType() {
 
 template<typename ProblemType>
 template<typename IteratorMetricType>
+bool DualtreeDfs<ProblemType>::iterator <
+IteratorMetricType >::IteratorArgType::is_empty_argument() const {
+  return qnode_ == NULL && rnode_ == NULL;
+}
+
+template<typename ProblemType>
+template<typename IteratorMetricType>
 DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::
 IteratorArgType::IteratorArgType(const IteratorArgType &arg_in) {
 
@@ -133,7 +140,9 @@ template<typename IteratorMetricType>
 void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
 
   // Push a blank argument to the trace for making the exit phase.
-  trace_.push_front(IteratorArgType());
+  if(trace_.empty() || (! trace_.front().is_empty_argument())) {
+    trace_.push_front(IteratorArgType());
+  }
 
   // Pop the next item to visit in the list.
   IteratorArgType args = trace_.back();
