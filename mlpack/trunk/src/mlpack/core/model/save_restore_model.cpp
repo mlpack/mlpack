@@ -60,7 +60,6 @@ arma::mat& SaveRestoreModel::loadParameter (arma::mat& matrix, std::string name)
   std::map<std::string, std::string>::iterator it = parameters.find (name);
   if (it != parameters.end ())
   {
-    matrix.clear ();
     std::string value = (*it).second;
     boost::char_separator<char> sep ("\n");
     boost::tokenizer<boost::char_separator<char> > tok (value, sep);
