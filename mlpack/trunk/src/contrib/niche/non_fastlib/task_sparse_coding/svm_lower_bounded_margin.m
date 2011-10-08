@@ -8,7 +8,7 @@ fprintf('n_points = %f\n', n_points);
 cvx_begin
   variable W(n_dims * n_atoms)
   variable xi(n_points)
-  minimize sum(xi)
+  minimize sum(xi) / n_points
   subject to
     (X * diag(y))' * W >= 1 - xi
     xi >= 0
@@ -16,3 +16,7 @@ cvx_begin
       norm(W( ((j - 1) * n_dims + 1):(j * n_dims))) <= 1;
     end
 cvx_end
+
+if ~isequal(cvx_status, 'Solved')
+  error('cvx_status = ''%s''\n', cvx_status);
+end
