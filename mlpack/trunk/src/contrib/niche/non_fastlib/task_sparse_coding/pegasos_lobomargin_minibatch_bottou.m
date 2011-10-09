@@ -12,10 +12,11 @@ function W = pegasos_lobomargin_minibatch_bottou(X, Y, minibatch_size, n_iterati
 [n_dims_full n_points] = size(X);
 n_dims = n_dims_full / n_atoms;
 
+A = bsxfun(@times, X, Y');
+
 inds = randperm(n_points);
-X = X(:,inds); % perhaps its faster to reorder the data now rather
+A = A(:,inds); % perhaps its faster to reorder the data now rather
                % than picking random columns later
-Y = Y(inds);
 
 W = W_initial;
 
@@ -27,8 +28,7 @@ for t = 1:n_iterations
   if cur_ind == (n_points + 1)
     cur_ind = 1;
     inds = randperm(n_points);
-    X = X(:,inds);
-    Y = Y(inds);
+    A = A(:,inds);
   end
   
   draws = cur_ind:min((cur_ind + minibatch_size - 1), n_points);
@@ -37,7 +37,9 @@ for t = 1:n_iterations
   subgrad = zeros(n_dims_full, 1);
   
   % slow subgradient computation, shown for code readability
-  %for i = 1:length(draws)
+  % This is MUCH SLOWER, even when using parfor. This statement was
+  % true at least for 100 dimensions, 40 atoms, 50 points, 400 tasks
+ %for i = 1:length(draws)
   %  X_t = X(:,draws(i));
   %  Y_t = Y(draws(i));
   %  
@@ -47,9 +49,9 @@ for t = 1:n_iterations
   %end
   
   % fast subgradient computation
-  margin_error_inds = draws(find(Y(draws)' .* (W' * X(:,draws)) < 1));
+  margin_error_inds = draws(find((W' * A(:,draws)) < 1));
   subgrad = subgrad + ...
-	    sum(bsxfun(@times, X(:,margin_error_inds), Y(margin_error_inds)'), 2);
+	    sum(A(:,margin_error_inds), 2);
   
   W = W + (step_size / minibatch_size) * subgrad;  
 
