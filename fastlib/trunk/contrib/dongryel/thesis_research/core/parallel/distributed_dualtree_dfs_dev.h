@@ -116,9 +116,12 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
 
         // Determine if we need to walk the reference tree to make
         // more messages.
-        if(hashed_essential_reference_subtrees_to_send.size() < 10) {
+        if((world_->size() == 1 &&
+            distributed_tasks.num_remaining_tasks() < 5) ||
+            (world_->size() > 1 &&
+             hashed_essential_reference_subtrees_to_send.size() < 5)) {
           distributed_tasks.WalkReferenceTree(
-            metric, problem_->global(), *world_, 20, query_table_->get_tree(),
+            metric, problem_->global(), *world_, 10, query_table_->get_tree(),
             & hashed_essential_reference_subtrees_to_send);
         }
 
