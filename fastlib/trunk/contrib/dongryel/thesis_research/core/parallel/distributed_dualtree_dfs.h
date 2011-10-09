@@ -270,7 +270,6 @@ class DistributedDualtreeDfs {
     void AllToAllIReduce_(
       const MetricType &metric,
       boost::mpi::timer *timer,
-      double *initial_setup_time,
       typename DistributedProblemType::ResultType *query_results);
 
     void ResetStatisticRecursion_(

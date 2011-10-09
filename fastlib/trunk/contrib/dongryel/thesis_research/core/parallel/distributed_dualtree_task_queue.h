@@ -138,10 +138,6 @@ class DistributedDualtreeTaskQueue {
      */
     std::vector< boost::intrusive_ptr<SubTableType> > query_subtables_;
 
-    /** @brief The time taken for walking the reference tree.
-     */
-    double reference_tree_walk_time_;
-
     /** @brief The module to walk the reference tree to generate
      *         reference subtable messages.
      */
@@ -176,10 +172,6 @@ class DistributedDualtreeTaskQueue {
      *         same MPI process to access the queue.
      */
     omp_nest_lock_t task_queue_lock_;
-
-    /** @brief The timer used for measuring the reference tree walk.
-     */
-    boost::mpi::timer tmp_timer_;
 
   private:
 
@@ -359,11 +351,9 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      tmp_timer_.restart();
       reference_tree_walker_.Walk(
         metric_in, global_in, world, max_hashed_subtrees_to_queue,
         global_qnode, hashed_essential_reference_subtrees_to_send, this);
-      reference_tree_walk_time_ += tmp_timer_.elapsed();
     }
 
     /** @brief Returns the number of imported query subtables.
@@ -679,12 +669,6 @@ class DistributedDualtreeTaskQueue {
       omp_destroy_nest_lock(&task_queue_lock_);
     }
 
-    /** @brief Returns the time took for walking the reference tree.
-     */
-    double reference_tree_walk_time() const {
-      return reference_tree_walk_time_;
-    }
-
     /** @brief Returns the remaining amount of local computation.
      */
     unsigned long int remaining_local_computation() const {
@@ -972,7 +956,6 @@ class DistributedDualtreeTaskQueue {
       unsigned long int max_num_reference_points_to_pack_per_process_in) {
 
       // Initialize the reference tree walker.
-      reference_tree_walk_time_ = 0.0;
       reference_tree_walker_.Init(
         world,
         query_table_in,
