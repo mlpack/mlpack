@@ -269,7 +269,7 @@ class DistributedDualtreeDfs {
     template<typename MetricType>
     void AllToAllIReduce_(
       const MetricType &metric,
-      boost::mpi::timer *timer,
+      double *tree_walk_time,
       typename DistributedProblemType::ResultType *query_results);
 
     void ResetStatisticRecursion_(
