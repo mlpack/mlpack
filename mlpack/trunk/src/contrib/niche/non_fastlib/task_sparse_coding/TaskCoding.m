@@ -13,7 +13,7 @@ function [W, Z] = TaskCoding(X, Y, n_atoms, lambda_w, lambda_z, ...
 
 if nargin < 6
   % a crude initialization of W
-  W = normrnd(0, 1 , n_dims, n_atoms);
+  W = normcols(normrnd(0, 1 , n_dims, n_atoms));
 else
   fprintf('Using W_initial\n');
   W = W_initial;
@@ -41,7 +41,7 @@ while ~converged && iteration_num < n_max_iterations
   %save LPSVM X Y W lambda_z;
   fprintf('\tLearning One-Norm SVM\n');
   Z = TaskCodingZStep(X, Y, W, lambda_z);
-  fprintf('\tsparsity(Z) = %f%%\n', ...
+  fprintf('\t\tsparsity(Z) = %f%%\n', ...
 	  100 * length(find(abs(Z) > 100 * eps)) / prod(size(Z)));
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
   %save Pegasos X Y Z lambda_w;
@@ -54,4 +54,8 @@ while ~converged && iteration_num < n_max_iterations
 end
 
 % final coding step
+fprintf('\tLearning One-Norm SVM\n');
 Z = TaskCodingZStep(X, Y, W, lambda_z);
+fprintf('\t\tsparsity(Z) = %f%%\n', ...
+	100 * length(find(abs(Z) > 100 * eps)) / prod(size(Z)));
+obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
