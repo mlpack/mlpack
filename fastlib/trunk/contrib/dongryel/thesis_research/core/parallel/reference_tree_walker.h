@@ -233,8 +233,6 @@ class ReferenceTreeWalker {
 
             else {
 
-              // Here, we know that the global query node is a non-leaf, so we
-              // need to split both ways.
               if(local_reference_node->count() <= max_reference_subtree_size_ ||
                   local_reference_node->is_leaf()) {
                 trace_.push_back(
@@ -250,19 +248,11 @@ class ReferenceTreeWalker {
                 trace_.push_back(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node->left(), local_reference_node->left()));
+                    global_query_node, local_reference_node->left()));
                 trace_.push_front(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node->left(), local_reference_node->right()));
-                trace_.push_back(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->right(), local_reference_node->left()));
-                trace_.push_front(
-                  std::pair <
-                  TreeType *, TreeType * > (
-                    global_query_node->right(), local_reference_node->right()));
+                    global_query_node, local_reference_node->right()));
               } // qnode, rnode non-leaves.
             } // end of non-leaf qnode case.
           } // end of non-prunable case.
@@ -271,7 +261,9 @@ class ReferenceTreeWalker {
           should_terminate =
             ((world.size() == 1 &&
               static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= max_hashed_subtrees_to_queue) ||
-             (world.size() > 1 && static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue)  || trace_.empty());
+             (world.size() > 1 &&
+              static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
+             trace_.empty());
 
           if(! should_terminate) {
             args = trace_.back();
@@ -287,7 +279,8 @@ class ReferenceTreeWalker {
         should_terminate =
           ((world.size() == 1 &&
             static_cast<int>(essential_reference_subtrees_[world.rank()].size()) >= max_hashed_subtrees_to_queue) ||
-           (world.size() > 1 && static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
+           (world.size() > 1 &&
+            static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
            trace_.empty());
         if(should_terminate) {
           break;
