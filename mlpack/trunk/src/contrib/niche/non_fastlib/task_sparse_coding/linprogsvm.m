@@ -28,7 +28,7 @@ lower_bound = [-Inf * ones(n_dims, 1); ...
 	       zeros(n_dims, 1); ...
 	       zeros(n_points, 1)];
 
-options = optimset('LargeScale', 'off', 'Simplex', 'on');
+options = optimset('Display', 'notify', 'LargeScale', 'off', 'Simplex', 'on');
 %options = optimset('LargeScale', 'off');
 solution = linprog(c,A,b,[],[],lower_bound, [],[],options);
 

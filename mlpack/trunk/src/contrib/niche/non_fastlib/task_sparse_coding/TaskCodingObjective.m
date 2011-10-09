@@ -13,6 +13,6 @@ for t = 1:n_tasks
   n_errors = n_errors + sum(predictions <= 0);
 end
 
-fprintf('Training Error: %f%%\n', 100 * n_errors / (n_tasks * n_points));
+fprintf('\tTraining Error: %f%%\n', 100 * n_errors / (n_tasks * n_points));
 f = hinge_loss + lambda_z * sum(sum(abs(Z))) + 0.5 * lambda_w * norm(W, 'fro')^2;
-fprintf('Objective Value: %f\n', f);
+fprintf('\tObjective Value: %f\n', f);

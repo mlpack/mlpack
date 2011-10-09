@@ -22,7 +22,7 @@ end
 if nargin == 7
   Z = Z_initial;
   fprintf('Learning Atomic SVM over all tasks\n');
-  W = TaskCodingWStep(X, Y, Z, lambda_w);
+  W = TaskCodingWStep(X, Y, Z, lambda_w, W);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
 end
 
@@ -39,12 +39,14 @@ while ~converged && iteration_num < n_max_iterations
   iteration_num = iteration_num + 1;
   fprintf('Iteration %d\n', iteration_num);
   %save LPSVM X Y W lambda_z;
-  fprintf('Learning One-Norm SVM\n');
+  fprintf('\tLearning One-Norm SVM\n');
   Z = TaskCodingZStep(X, Y, W, lambda_z);
+  fprintf('\tsparsity(Z) = %f%%\n', ...
+	  100 * length(find(abs(Z) > 100 * eps)) / prod(size(Z)));
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
   %save Pegasos X Y Z lambda_w;
-  fprintf('Learning Atomic SVM over all tasks\n');
-  W = TaskCodingWStep(X, Y, Z, lambda_w);
+  fprintf('\tLearning Atomic SVM over all tasks\n');
+  W = TaskCodingWStep(X, Y, Z, lambda_w, W);
   obj = TaskCodingObjective(X, Y, W, Z, lambda_w, lambda_z);
   
   %converged = (last_obj - obj) < tol;
