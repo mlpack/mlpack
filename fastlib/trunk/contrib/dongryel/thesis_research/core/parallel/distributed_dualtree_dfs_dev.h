@@ -115,19 +115,20 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
         // Determine if we need to walk the reference tree to make
         // more messages.
         if((world_->size() == 1 &&
-            distributed_tasks.num_remaining_tasks() < 2 * omp_get_num_threads()) ||
+            distributed_tasks.num_remaining_tasks() <
+            static_cast<int>(ceil(1.5 * omp_get_num_threads())) ||
             (world_->size() > 1 &&
              static_cast<int>(hashed_essential_reference_subtrees_to_send.size()) <
-             2 * omp_get_num_threads())) {
-          distributed_tasks.WalkReferenceTree(
-            metric, problem_->global(), *world_, 3 * omp_get_num_threads(),
-            query_table_->get_tree(),
-            & hashed_essential_reference_subtrees_to_send);
+        static_cast<int>(ceil(1.5 * omp_get_num_threads())))) {
+        distributed_tasks.WalkReferenceTree(
+          metric, problem_->global(), *world_, 2 * omp_get_num_threads(),
+          query_table_->get_tree(),
+          & hashed_essential_reference_subtrees_to_send);
         }
 
         if(world_->size() > 1) {
-          distributed_tasks.SendReceive(
-            metric, *world_, hashed_essential_reference_subtrees_to_send);
+        distributed_tasks.SendReceive(
+          metric, *world_, hashed_essential_reference_subtrees_to_send);
         }
       }
 
