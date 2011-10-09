@@ -173,6 +173,14 @@ class DistributedDualtreeTaskQueue {
      */
     omp_nest_lock_t task_queue_lock_;
 
+    /** @brief The total time used for walking the tree.
+     */
+    double tree_walk_time_;
+
+    /** @brief The timer used for walking the tree.
+     */
+    boost::mpi::timer tree_walk_timer_;
+
   private:
 
     /** @brief Grow slots for additional query subtables.
@@ -303,6 +311,12 @@ class DistributedDualtreeTaskQueue {
 
   public:
 
+    /** @brief Returns the elapsed time for walking the tree.
+     */
+    double tree_walk_time() const {
+      return tree_walk_time_;
+    }
+
     /** @brief Seeds the query subtables owned by the current MPI
      *         process with the given prune count.
      */
@@ -351,9 +365,11 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
+      tree_walk_timer_.restart();
       reference_tree_walker_.Walk(
         metric_in, global_in, world, max_hashed_subtrees_to_queue,
         global_qnode, hashed_essential_reference_subtrees_to_send, this);
+      tree_walk_time_ += tree_walk_timer_.elapsed();
     }
 
     /** @brief Returns the number of imported query subtables.
@@ -906,6 +922,7 @@ class DistributedDualtreeTaskQueue {
       num_threads_ = 1;
       remaining_global_computation_ = 0;
       remaining_local_computation_ = 0;
+      tree_walk_time_ = 0.0;
     }
 
     int num_deterministic_prunes() const {
@@ -962,6 +979,7 @@ class DistributedDualtreeTaskQueue {
         reference_table_in->local_table(),
         max_subtree_size_in, weak_scaling_mode_in,
         max_num_reference_points_to_pack_per_process_in);
+      tree_walk_time_ = 0.0;
 
       // Initialize the number of available threads.
       num_threads_ = num_threads_in;

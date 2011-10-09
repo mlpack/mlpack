@@ -57,7 +57,7 @@ template<typename DistributedProblemType>
 template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   const MetricType &metric,
-  boost::mpi::timer *timer,
+  double *tree_walk_time,
   typename DistributedProblemType::ResultType *query_results) {
 
   // Figure out the list of reference subtrees to send and to receive.
@@ -212,6 +212,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   // Extract the prune counts.
   num_deterministic_prunes_ = distributed_tasks.num_deterministic_prunes();
   num_probabilistic_prunes_ = distributed_tasks.num_probabilistic_prunes();
+
+  // Extract the tree walk time.
+  * tree_walk_time = distributed_tasks.tree_walk_time();
 
   // Do a global post-processing if necessary over the set of global
   // query results owned by each MPI process.
@@ -387,10 +390,13 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   }
 
   // Call the tree-based reduction.
-  AllToAllIReduce_(metric, &timer, query_results);
+  double tree_walk_time;
+  AllToAllIReduce_(metric, &tree_walk_time, query_results);
   double elapsed_time = timer.elapsed();
   std::vector<double> collected_elapsed_times;
   boost::mpi::gather(*world_, elapsed_time, collected_elapsed_times, 0);
+  std::vector<double> collected_tree_walk_times;
+  boost::mpi::gather(*world_, tree_walk_time, collected_tree_walk_times, 0);
   std::pair<int, int> num_prunes(
     this->num_deterministic_prunes(), this->num_probabilistic_prunes());
   std::vector< std::pair<int, int> > collected_num_prunes;
@@ -398,6 +404,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   if(world_->rank() == 0) {
     for(int i = 0; i < world_->size(); i++) {
       std::cerr << "Process " << i << " took " <<
+                collected_tree_walk_times[i] << " seconds to walk the tree and " <<
                 collected_elapsed_times[i] << " seconds to compute.\n";
       std::cerr << "  Deterministic prunes: " <<
                 collected_num_prunes[i].first << " , probabilistic prunes: " <<
