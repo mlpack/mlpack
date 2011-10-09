@@ -10,7 +10,7 @@ output = 0;
 nu = 1 / lambda_z;
 Z = zeros(n_atoms, n_tasks);
 parfor t = 1:n_tasks
-  fprintf('task %d\n', t);
+  %fprintf('task %d\n', t);
   V = W' * X(:,:,t);
   %[Z(:,t), gamma, trainCorr, testCorr, cpu_time, anu] = lpsvm(V', Y(:,t), 1, nu, output, delta);
   Z(:,t) = linprogsvm2(V, Y(:,t), lambda_z);
