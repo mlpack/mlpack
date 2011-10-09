@@ -120,7 +120,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
              static_cast<int>(hashed_essential_reference_subtrees_to_send.size()) <
              2 * omp_get_num_threads())) {
           distributed_tasks.WalkReferenceTree(
-            metric, problem_->global(), *world_, 2 * omp_get_num_threads(),
+            metric, problem_->global(), *world_, 4 * omp_get_num_threads(),
             query_table_->get_tree(),
             & hashed_essential_reference_subtrees_to_send);
         }
