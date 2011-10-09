@@ -58,7 +58,6 @@ template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   const MetricType &metric,
   boost::mpi::timer *timer,
-  double *initial_setup_time,
   typename DistributedProblemType::ResultType *query_results) {
 
   // Figure out the list of reference subtrees to send and to receive.
@@ -82,7 +81,6 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
     metric, query_results,
     &hashed_essential_reference_subtrees_to_send,
     &distributed_tasks);
-  *initial_setup_time = distributed_tasks.reference_tree_walk_time();
 
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
@@ -321,11 +319,11 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
         (avg_num_query_points_per_process /
          (2 * log(world_->size()) * omp_get_max_threads())));
 
-    // Re-adjust so that the subtree is transfered in around 5 rounds.
+    // Re-adjust so that the subtree is transfered in around 3 rounds.
     max_subtree_size_ =
       std::max(
         std::min(
-          static_cast<int>(max_num_reference_points_to_pack_per_process_) / 5,
+          static_cast<int>(max_num_reference_points_to_pack_per_process_) / 3,
           20000),
         leaf_size_ * 2);
 
@@ -387,8 +385,7 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
   }
 
   // Call the tree-based reduction.
-  double initial_setup_time;
-  AllToAllIReduce_(metric, &timer, &initial_setup_time, query_results);
+  AllToAllIReduce_(metric, &timer, query_results);
   double elapsed_time = timer.elapsed();
   std::vector<double> collected_elapsed_times;
   boost::mpi::gather(*world_, elapsed_time, collected_elapsed_times, 0);
@@ -396,12 +393,9 @@ void DistributedDualtreeDfs<DistributedProblemType>::Compute(
     this->num_deterministic_prunes(), this->num_probabilistic_prunes());
   std::vector< std::pair<int, int> > collected_num_prunes;
   boost::mpi::gather(*world_, num_prunes, collected_num_prunes, 0);
-  std::vector< double > initial_setup_times;
-  boost::mpi::gather(* world_, initial_setup_time, initial_setup_times, 0);
   if(world_->rank() == 0) {
     for(int i = 0; i < world_->size(); i++) {
       std::cerr << "Process " << i << " took " <<
-                initial_setup_times[i] << " in the initial tree walk, and " <<
                 collected_elapsed_times[i] << " seconds to compute.\n";
       std::cerr << "  Deterministic prunes: " <<
                 collected_num_prunes[i].first << " , probabilistic prunes: " <<
