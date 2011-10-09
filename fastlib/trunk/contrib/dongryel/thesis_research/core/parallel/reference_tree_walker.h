@@ -269,7 +269,7 @@ class ReferenceTreeWalker {
 
           // Pop the next item in the list, if we should continue.
           should_terminate =
-            ((world.size() == 1 && essential_reference_subtrees_[world.rank()].size() >= 1) ||
+            ((world.size() == 1 && essential_reference_subtrees_[world.rank()].size() >= max_hashed_subtrees_to_queue) ||
              (world.size() > 1 && static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue)  || trace_.empty());
 
           if(! should_terminate) {
@@ -284,7 +284,7 @@ class ReferenceTreeWalker {
 
         // The termination condition.
         should_terminate =
-          ((world.size() == 1 && essential_reference_subtrees_[world.rank()].size() >= 1) ||
+          ((world.size() == 1 && essential_reference_subtrees_[world.rank()].size() >= max_hashed_subtrees_to_queue) ||
            (world.size() > 1 && static_cast<int>(hashed_essential_reference_subtrees_to_send->size()) >= max_hashed_subtrees_to_queue) ||
            trace_.empty());
         if(should_terminate) {
