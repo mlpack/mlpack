@@ -203,7 +203,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "REQUIRED file containing reference data."
   )(
     "relative_error",
-    boost::program_options::value<double>()->default_value(0.05),
+    boost::program_options::value<double>()->default_value(0.1),
     "Relative error for the approximation of KDE."
   )(
     "series_expansion_type",
