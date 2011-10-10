@@ -225,7 +225,7 @@ bool DistributedKdeArgumentParser::ConstructBoostVariableMap(
     "Use memory mapped file for out-of-core computations."
   )(
     "weak_scaling_factor",
-    boost::program_options::value<double>()->default_value(0.2),
+    boost::program_options::value<double>()->default_value(0.1),
     "The percentage of reference points to consider in weak scaling measuring."
   );
 
