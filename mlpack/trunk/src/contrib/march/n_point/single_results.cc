@@ -29,7 +29,7 @@ void npt::SingleResults::ProcessResults(int region_id,
                                         SingleMatcher& matcher,
                                         int r1_ind, int theta_ind) {
   
-  if (num_random == tuple_size_ + 1) {
+  if (num_random == tuple_size_) {
     
     AddRandomResult_(r1_ind, theta_ind, matcher.results());
     

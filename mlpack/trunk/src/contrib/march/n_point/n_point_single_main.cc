@@ -137,7 +137,7 @@ int main(int argc, char* argv[]) {
   comp_multi[0] = 0;
   comp_multi[1] = 0;
   std::vector<arma::colvec*> comp_weights(tuple_size);
-  std::vector<NptNode*> comp_trees(2);
+  std::vector<NptNode*> comp_trees(tuple_size);
   
   for (int i = 0; i < num_random; i++) {
     comp_mats[i] = &random_mat;
@@ -177,21 +177,21 @@ int main(int argc, char* argv[]) {
     
     for (int i = 0; i < num_random; i++) {
       old_from_new_list[i] = &old_from_new_random;
+      comp_trees[i] = random_tree;
     }
     for (int i = num_random; i < tuple_size; i++) {
       old_from_new_list[i] = &old_from_new_data;
+      comp_trees[i] = data_tree;
     }
 
-    
-    comp_trees[0] = random_tree;
-    comp_trees[1] = data_tree;
-    
     
     SingleMatcher matcher(comp_mats, comp_weights, old_from_new_list,
                           matcher_lower_bounds,
                           matcher_upper_bounds);
     
-    GenericNptAlg<SingleMatcher> alg(comp_trees, comp_multi, matcher);
+    GenericNptAlg<SingleMatcher> alg(comp_trees, 
+                                     //comp_multi, 
+                                     matcher);
     
     alg.Compute();
     
@@ -232,21 +232,22 @@ int main(int argc, char* argv[]) {
     
     for (int i = 0; i < num_random; i++) {
       old_from_new_list[i] = &old_from_new_random;
+      comp_trees[i] = naive_random_tree;
     }
     for (int i = num_random; i < tuple_size; i++) {
       old_from_new_list[i] = &old_from_new_data;
+      comp_trees[i] = naive_data_tree;
     }
     
-    
-    comp_trees[0] = naive_random_tree;
-    comp_trees[1] = naive_data_tree;
     
     SingleMatcher matcher(comp_mats, comp_weights, 
                           old_from_new_list,
                           matcher_lower_bounds,
                           matcher_upper_bounds);
     
-    GenericNptAlg<SingleMatcher> alg(comp_trees, comp_multi, matcher, true);
+    GenericNptAlg<SingleMatcher> alg(comp_trees, 
+                                     //comp_multi, 
+                                     matcher, true);
     
     alg.Compute();
     

@@ -40,7 +40,7 @@ namespace npt {
     std::vector<NptNode*> trees_;
     
     // how many times should each tree appear in the tuple?
-    std::vector<int> multiplicities_;
+    //std::vector<int> multiplicities_;
     
     int tuple_size_;
     
@@ -62,9 +62,10 @@ namespace npt {
   public:
     
     GenericNptAlg(std::vector<NptNode*>& trees_in, 
-                  std::vector<int>& multiplicities_in,
+                  //std::vector<int>& multiplicities_in,
                   TMatcher& matcher_in, bool do_naive = false) :
-    matcher_(matcher_in), trees_(trees_in), multiplicities_(multiplicities_in)
+    matcher_(matcher_in), trees_(trees_in)
+    //, multiplicities_(multiplicities_in)
     {
       
       do_naive_ = do_naive;
@@ -74,12 +75,14 @@ namespace npt {
       num_prunes_ = 0;
       num_base_cases_ = 0;
       
-      tuple_size_ = 0;
+      tuple_size_ = trees_in.size();
+      /*
       for (unsigned int i = 0; i < multiplicities_.size(); i++) {
         
         tuple_size_ += multiplicities_[i];
         
       }
+       */
       
     } // constructor
     

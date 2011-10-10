@@ -61,9 +61,12 @@ void npt::AngleMatcher::ComputeBaseCase(NodeTuple& nodes) {
         
         if (valid_r1 >= 0) {
           
-          double weight_i = (*(data_weights_list_[0]))(i);
-          double weight_j = (*(data_weights_list_[1]))(j);
-          double weight_k = (*(data_weights_list_[2]))(k);
+          double weight_i = 1.0;
+          //double weight_i = (*(data_weights_list_[0]))(i);
+          double weight_j = 1.0;
+          //double weight_j = (*(data_weights_list_[1]))(j);
+          double weight_k = 1.0;
+          //double weight_k = (*(data_weights_list_[2]))(k);
           double this_weight = weight_i * weight_j * weight_k;
           
           for (unsigned int theta_ind = 0; theta_ind < valid_thetas.size() ; 

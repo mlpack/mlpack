@@ -27,6 +27,9 @@ namespace npt {
     arma::mat random_mat_;
     arma::colvec random_weights_;
     
+    int num_resampling_regions_;
+    
+    
     NptNode* random_tree_;
     
     std::vector<NptNode*> data_trees_;
@@ -42,7 +45,6 @@ namespace npt {
     int num_y_partitions_;
     int num_z_partitions_;
     
-    int num_resampling_regions_;
     
     double x_step_;
     double y_step_;
@@ -75,10 +77,10 @@ namespace npt {
     data_all_weights_(weights),
     random_mat_(random.memptr(), random.n_rows, random.n_cols, false), 
     random_weights_(rweights),
+    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
     data_trees_(num_resampling_regions_),
     data_mats_(num_resampling_regions_), 
     data_weights_(num_resampling_regions_),
-    num_resampling_regions_(num_x_regions * num_y_regions * num_z_regions),
     num_points_(data.n_cols)
     {
       

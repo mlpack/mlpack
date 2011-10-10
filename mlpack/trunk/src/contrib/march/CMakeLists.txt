@@ -8,7 +8,7 @@ set(DIRS
 #   hf
 #   npt
 #   scf  ## awaiting resolution of #10 (requires libint)
-#   sandbox
+   sandbox
    n_point
 )
 

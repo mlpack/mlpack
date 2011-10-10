@@ -16,7 +16,7 @@ int npt::EfficientResampling::FindRegion_(arma::colvec& col) {
   int z_ind = floor(col(2) / z_step_);
   
   return (x_ind + num_x_partitions_ * y_ind 
-          + num_x_partitions_ * num_z_partitions_ * z_ind);
+          + num_x_partitions_ * num_y_partitions_ * z_ind);
   
 } // FindRegion
 
@@ -35,6 +35,8 @@ void npt::EfficientResampling::SplitData_() {
                                          data_all_weights_(i));
     
   } // for i over points
+  
+  printf("check data_weights\n");
   
   
 } // SplitData
