@@ -83,23 +83,22 @@ void npt::GenericNptAlg<TMatcher>::DepthFirstRecursion_(NodeTuple& nodes) {
 template<class TMatcher>
 void npt::GenericNptAlg<TMatcher>::Compute() {
   
-  std::vector<NptNode*> node_list;
-  std::vector<int> nodes_same;
-  int next_same = 0;
+  //std::vector<NptNode*> node_list;
+  //int next_same = 0;
   
+  /*
   for (unsigned int i = 0; i < multiplicities_.size(); i++) {
   
     for (int j = 0; j < multiplicities_[i]; j++) {
       
       node_list.push_back(trees_[i]);
-      nodes_same.push_back(next_same);
       
     } // for j
     
     next_same++;
     
   } // for i
-
+*/
   //mlpack::IO::Info << "filled in node_list\n";
   
   /*
@@ -110,7 +109,8 @@ void npt::GenericNptAlg<TMatcher>::Compute() {
    */
   
   // matcher needs to know num_random_ too to store counts correctly
-  NodeTuple nodes(node_list, nodes_same);
+  //NodeTuple nodes(node_list, nodes_same);
+  NodeTuple nodes(trees_);
   
   if (do_naive_) {
     BaseCase_(nodes);

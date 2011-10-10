@@ -121,8 +121,11 @@ int main (int argc, char* argv[]) {
   int num_theta = (int)matcher_mat.at(1,2);
   
   // dividing by zero if only one r1
-  double r1_step = (r1_max - r1_min) / ((double)num_r1 - 1.0);
-  
+  double r1_step = 1.0;
+  if (num_r1 > 1) {
+    r1_step = (r1_max - r1_min) / ((double)num_r1 - 1.0);
+  }
+    
   std::vector<double> r1_vec(num_r1);
   
   if (num_r1 > 1) {

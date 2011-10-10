@@ -44,7 +44,7 @@ void npt::AngleResults::ProcessResults(std::vector<int>& region_ids,
                                        int num_random,
                                        AngleMatcher& matcher) {
   
-  if (num_random == tuple_size_ + 1) {
+  if (num_random == tuple_size_) {
     
     AddRandomResult_(matcher.results());
     

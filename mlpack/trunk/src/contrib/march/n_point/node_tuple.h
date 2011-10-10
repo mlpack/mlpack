@@ -61,12 +61,27 @@ namespace npt {
     // constructor - only use this one to make the original node tuple
     // at the start of the algorithm
     // The copy constructor will be used for the others
-    NodeTuple(std::vector<NptNode*>& list_in, 
-              std::vector<int>& same_in) :
+    NodeTuple(std::vector<NptNode*>& list_in) :
     node_list_(list_in),
-    same_nodes_(same_in), tuple_size_(list_in.size())
+    same_nodes_(list_in.size()), tuple_size_(list_in.size())
     {
      
+      same_nodes_[0] = 0;
+      for (unsigned int i = 1; i < node_list_.size(); i++) {
+        
+        if (node_list_[i] == node_list_[i-1]) {
+          
+          same_nodes_[i] = same_nodes_[i-1];
+          
+        }
+        else {
+          
+          same_nodes_[i] = 1 + same_nodes_[i-1];
+          
+        }
+        
+      }
+      
      /*
       for (size_t i = 0; i < tuple_size_; i++) {
         node_list_.push_back(list_in[i]);

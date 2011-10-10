@@ -55,10 +55,14 @@ namespace npt {
                       num_z_regions, box_x_length, box_y_length, box_z_length),
     r1_vec_(short_sides), r2_multiplier_(long_side), theta_vec_(thetas),
     bin_size_(bin_size)
-    { } // constructor
+    { 
+      printf("angle driver constructed\n");
+    } // constructor
     
     
     void Compute();
+    
+    
       
     
     void PrintResults();

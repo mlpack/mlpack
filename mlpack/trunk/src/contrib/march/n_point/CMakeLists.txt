@@ -30,6 +30,8 @@ set(SOURCES
   single_matcher.cc
   single_results.h
   single_results.cc
+  test_angle_resampling.h
+  test_angle_resampling.cc
   test_single_bandwidth.h
   test_single_bandwidth.cc
 )
@@ -71,3 +73,16 @@ target_link_libraries(single_bandwidth_test
 	boost_unit_test_framework
 	boost_random
 )
+
+add_executable(angle_resampling_test
+	EXCLUDE_FROM_ALL
+	angle_resampling.test.cc
+)
+target_link_libraries(angle_resampling_test
+#	mlpack
+	mlpack_contrib
+	boost_unit_test_framework
+	boost_random
+)
+
+

@@ -15,7 +15,7 @@ void npt::TestSingleBandwidth::GenerateRandomSet_(arma::mat& data) {
     
     for (unsigned int col_ind = 0; col_ind < data.n_cols; col_ind++) {
       
-      data(row_ind,col_ind) = data_dist(generator_);
+      data(row_ind,col_ind) = data_gen();
       
     }
     
@@ -31,14 +31,14 @@ double npt::TestSingleBandwidth::GenerateRandomMatcher_(arma::mat& matcher) {
     
     for (unsigned int j = i+1; j < matcher.n_cols; j++) {
       
-      matcher(i,j) = matcher_dist(generator_);
+      matcher(i,j) = matcher_dist_gen();
       matcher(j,i) = matcher(i,j);
       
     }
     
   }
   
-  return matcher_thick_dist(generator_);
+  return matcher_thick_gen();
   
 }
 
@@ -46,10 +46,15 @@ double npt::TestSingleBandwidth::GenerateRandomMatcher_(arma::mat& matcher) {
 bool npt::TestSingleBandwidth::StressTest() {
   
   // pick a number of points and number of dimensions (small)
-  int num_data_points = num_data_dist(generator_);
-  int num_random_points = num_data_dist(generator_);
+  
+  printf("generating data\n");
+  int num_data_points = num_data_gen();
+  printf("num_data: %d, generating random\n", num_data_points);
+  int num_random_points = num_data_gen();
+  printf("num_random: %d, generating tuple_size\n", num_random_points);
   int num_dimensions = 3;
-  int tuple_size = tuple_size_dist(generator_);
+  printf("generating tuple size\n");
+  int tuple_size = tuple_size_gen();
   
   mlpack::IO::Info << "====Running Test===\n";
   mlpack::IO::Info << "Tuple size: " << tuple_size << "\n";
@@ -59,18 +64,21 @@ bool npt::TestSingleBandwidth::StressTest() {
   
   // Generate a random data set
   
+  printf("generating_data\n");
   arma::mat data_mat(num_dimensions, num_data_points);
   GenerateRandomSet_(data_mat);
   arma::colvec data_weights(num_data_points);
   
   // Generate a random random set
-
+  printf("generating_random\n");
   arma::mat random_mat(num_dimensions, num_random_points);
   GenerateRandomSet_(random_mat);
   arma::colvec random_weights(num_random_points);
+  printf("random generated\n");
   
   // Generate a random matcher and matcher thickness multiplier
   
+  printf("generating matchers \n");
   arma::mat matcher_dists(tuple_size, tuple_size);
   double matcher_thick = GenerateRandomMatcher_(matcher_dists);
   
@@ -86,13 +94,13 @@ bool npt::TestSingleBandwidth::StressTest() {
   std::vector<int> tree_results(tuple_size+1);
   std::vector<int> naive_results(tuple_size+1);
   
-  int leaf_size = num_leaves_dist(generator_);
+  int leaf_size = num_leaves_gen();
   
   mlpack::IO::GetParam<int>("tree/leaf_size") = leaf_size;
   
   mlpack::IO::Info << "Leaf size: " << leaf_size << "\n";
   
-  
+  printf("building trees\n");
   NptNode* data_tree = new NptNode(data_mat, old_from_new_data);
   NptNode* random_tree = new NptNode(random_mat, old_from_new_random);
   
@@ -106,44 +114,52 @@ bool npt::TestSingleBandwidth::StressTest() {
   
   bool results_match = true;
   
+  printf("starting main loop\n");
   // iterate over num_random
   for (int num_random = 0; num_random <= tuple_size && results_match; 
        num_random++) {
     
     std::vector<arma::mat*> comp_mats(tuple_size);
     // only 2 entries, since we're not worried about cross correlations yet
-    std::vector<int> comp_multi(2, 0);
+    //std::vector<int> comp_multi(2, 0);
     std::vector<arma::colvec*> comp_weights(tuple_size);
-    std::vector<NptNode*> comp_trees(2);
-    std::vector<NptNode*> naive_comp_trees(2);
+    std::vector<NptNode*> comp_trees(tuple_size);
+    std::vector<NptNode*> naive_comp_trees(tuple_size);
     std::vector<std::vector<size_t>*> old_from_new_list(tuple_size);
     std::vector<std::vector<size_t>*> naive_old_from_new_list(tuple_size);
     
     for (int i = 0; i < num_random; i++) {
       comp_mats[i] = &random_mat;
       comp_weights[i] = &random_weights;
-      comp_multi[0]++;
+      //comp_multi[0]++;
+      comp_trees[i] = random_tree;
+      naive_comp_trees[i] = naive_random_tree;
       old_from_new_list[i] = &old_from_new_random;
       naive_old_from_new_list[i] = &naive_old_from_new_random;
     }
     for (int i = num_random; i < tuple_size; i++) {
       comp_mats[i] = &data_mat;
       comp_weights[i] = &data_weights;
-      comp_multi[1]++;
+      //comp_multi[1]++;
+      comp_trees[i] = data_tree;
+      naive_comp_trees[i] = naive_data_tree;
       old_from_new_list[i] = &old_from_new_data;
       naive_old_from_new_list[i] = &naive_old_from_new_data;
     }
     
-    comp_trees[0] = random_tree;
-    comp_trees[1] = data_tree;
+    //comp_trees[0] = random_tree;
+    //comp_trees[1] = data_tree;
     
-    naive_comp_trees[0] = naive_random_tree;
-    naive_comp_trees[1] = naive_data_tree;
+    //naive_comp_trees[0] = naive_random_tree;
+    //naive_comp_trees[1] = naive_data_tree;
     
+    printf("Running tree algorithm, iteration %d\n", num_random);
     SingleMatcher tree_matcher(comp_mats, comp_weights, old_from_new_list,
                                matcher_dists, matcher_thick);
   
-    GenericNptAlg<SingleMatcher> tree_alg(comp_trees, comp_multi, tree_matcher);
+    GenericNptAlg<SingleMatcher> tree_alg(comp_trees, 
+                                          //comp_multi, 
+                                          tree_matcher);
     
     tree_alg.Compute();
     
@@ -154,11 +170,13 @@ bool npt::TestSingleBandwidth::StressTest() {
     mlpack::IO::Info << tree_results[num_random] << "\n";
     
     
+    printf("Running naive algorithm, iteration %d\n", num_random);
     SingleMatcher naive_matcher(comp_mats, comp_weights, 
                                 naive_old_from_new_list,
                                 matcher_dists, matcher_thick);
     
-    GenericNptAlg<SingleMatcher> naive_alg(naive_comp_trees, comp_multi,
+    GenericNptAlg<SingleMatcher> naive_alg(naive_comp_trees, 
+                                           //comp_multi,
                                            naive_matcher);
   
     naive_alg.Compute();
@@ -174,13 +192,17 @@ bool npt::TestSingleBandwidth::StressTest() {
     
     if (!results_match) {
       
-      mlpack::IO::Info << "Results fail to match for num_random: ";
-      mlpack::IO::Info << num_random << "\n";
+      //mlpack::IO::Info << "Results fail to match for num_random: ";
+      //mlpack::IO::Info << num_random << "\n";
+      printf("Results fail to match\n");
+      
       
     }
     
+    mlpack::IO::Info << "\n\n";
+    
   } // for num_random
-  
+    
   return results_match;
   
   
@@ -190,10 +212,13 @@ bool npt::TestSingleBandwidth::StressTest() {
 // the driver
 bool npt::TestSingleBandwidth::StressTestMain() {
  
+  printf("running stress test main\n");
+  
   bool results_match = true;
   
-  for (int i = 0; i < 20 && !results_match; i++) {
+  for (int i = 0; i < 5 && results_match; i++) {
    
+    printf("Running test: %d\n", i);
     results_match = StressTest();
     
   }
