@@ -237,31 +237,6 @@ class DistributedDualtreeDfs {
     DistributedProblemType > DistributedDualtreeTaskQueueType;
 
   private:
-    template<typename MetricType>
-    void ComputeEssentialReferenceSubtrees_(
-      const MetricType &metric_in,
-      int max_reference_subtree_size,
-      DistributedTreeType *global_query_node,
-      TreeType *local_reference_node,
-      std::vector< std::vector< std::pair<int, int> > > *
-      essential_reference_subtrees,
-      std::vector <
-      core::parallel::RouteRequest<SubTableType> > *
-      hashed_essential_reference_subtrees,
-      std::vector< unsigned long int > *
-      num_reference_points_assigned_per_process,
-      std::vector< std::vector< core::math::Range> > *
-      remote_priorities,
-      std::vector<unsigned long int> *extrinsic_prunes);
-
-    template<typename MetricType>
-    void InitialSetup_(
-      const MetricType &metric,
-      typename DistributedProblemType::ResultType *query_results,
-      std::vector <
-      core::parallel::RouteRequest<SubTableType> >
-      *hashed_essential_reference_subtress_to_send,
-      DistributedDualtreeTaskQueueType *distributed_tasks);
 
     /** @brief The collaborative way of exchanging items among all MPI
      *         processes for a distributed computation. This routine

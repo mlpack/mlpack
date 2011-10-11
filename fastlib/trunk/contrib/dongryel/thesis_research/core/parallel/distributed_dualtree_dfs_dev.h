@@ -36,25 +36,6 @@ int DistributedDualtreeDfs<ProblemType>::num_probabilistic_prunes() const {
 
 template<typename DistributedProblemType>
 template<typename MetricType>
-void DistributedDualtreeDfs <
-DistributedProblemType >::InitialSetup_(
-  const MetricType &metric,
-  typename DistributedProblemType::ResultType *query_results,
-  std::vector <
-  core::parallel::RouteRequest<SubTableType> >
-  *hashed_essential_reference_subtress_to_send,
-  DistributedDualtreeTaskQueueType *distributed_tasks) {
-
-  // For each process, initialize the distributed task object.
-  distributed_tasks->Init(
-    *world_, max_subtree_size_, do_load_balancing_,
-    query_table_, reference_table_, query_results,
-    omp_get_max_threads(), weak_scaling_measuring_mode_,
-    max_num_reference_points_to_pack_per_process_);
-}
-
-template<typename DistributedProblemType>
-template<typename MetricType>
 void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   const MetricType &metric,
   double *tree_walk_time,
@@ -77,10 +58,18 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
   std::vector <
   core::parallel::RouteRequest<SubTableType> >
   hashed_essential_reference_subtrees_to_send;
-  InitialSetup_(
-    metric, query_results,
-    &hashed_essential_reference_subtrees_to_send,
-    &distributed_tasks);
+
+  // For each process, initialize the distributed task object.
+  distributed_tasks.Init(
+    *world_, max_subtree_size_, do_load_balancing_,
+    query_table_, reference_table_, query_results,
+    omp_get_max_threads(), weak_scaling_measuring_mode_,
+    max_num_reference_points_to_pack_per_process_);
+
+  // Walk the tree before entering parallel.
+  distributed_tasks.WalkReferenceTree(
+    metric, problem_->global(), *world_, 4 * omp_get_num_threads(),
+    &hashed_essential_reference_subtrees_to_send);
 
   // OpenMP parallel region. The master thread is the only one that is
   // allowed to make MPI calls (sending and receiving reference
