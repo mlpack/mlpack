@@ -911,7 +911,7 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
   typedef BinarySpaceTree<HRectBound<2> > TreeType;
 
   size_t max_runs = 10; // Ten total tests.
-  size_t point_increments = 5000; // Range is from 5000 points to 55000.
+  size_t point_increments = 1000; // Range is from 2000 points to 11000.
 
   // Generate the dataset.
   srand(time(NULL));
@@ -956,17 +956,18 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
     // Now check that no peers overlap.
     std::vector<TreeType*> v;
     GenerateVectorOfTree(&root, 1, v);
-    // Starting with the first pair
+
+    // Start with the first pair.
     size_t depth = 2;
-    // Compare each peer against every other peer
+    // Compare each peer against every other peer.
     while (depth < v.size()) {
-      for (size_t i = depth; i < 2*depth && i < v.size(); i++)
-        for (size_t j = depth; j < 2*depth && j < v.size(); j++)
-          if (v[i] != NULL && v[j] != NULL && i != j)
+      for (size_t i = depth; i < 2 * depth && i < v.size(); i++)
+        for (size_t j = i + 1; j < 2 * depth && j < v.size(); j++)
+          if (v[i] != NULL && v[j] != NULL)
             BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(),
                 i, j));
 
-      depth = 2 * depth;
+      depth *= 2;
     }
   }
 
@@ -1019,18 +1020,17 @@ template<typename TreeType>
 void GenerateVectorOfTree(TreeType* node,
                           size_t depth,
                           std::vector<TreeType*>& v) {
-  if (v.size() < depth)
-    v.resize(2 * depth, NULL);
-
-  if(node == NULL)
+  if (node == NULL)
     return;
+
+  if (depth >= v.size())
+    v.resize(2 * depth + 1, NULL); // Resize to right size; fill with NULL.
 
   v[depth] = node;
 
-  if(node->left() != NULL)
-    GenerateVectorOfTree(node->left(), depth * 2, v);
-  if(node->right() != NULL)
-    GenerateVectorOfTree(node->right(), depth * 2 + 1, v);
+  // Recurse to the left and right children.
+  GenerateVectorOfTree(node->left(), depth * 2, v);
+  GenerateVectorOfTree(node->right(), depth * 2 + 1, v);
 
   return;
 }
