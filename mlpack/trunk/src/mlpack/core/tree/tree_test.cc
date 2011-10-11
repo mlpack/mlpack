@@ -886,7 +886,7 @@ void GenerateVectorOfTree(TreeType* node, size_t depth, std::vector<TreeType*>* 
 bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib);
 
 BOOST_AUTO_TEST_CASE(kd_tree_test) {
-  size_t max_runs = 20;
+  size_t max_runs = 10;
   size_t point_increments = 5000;
 
   // Generate the dataset.
