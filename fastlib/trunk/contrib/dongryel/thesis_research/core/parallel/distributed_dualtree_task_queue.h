@@ -375,16 +375,11 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      if((world.size() == 1 &&
-          this->num_remaining_tasks() <
-          static_cast<int>(ceil(2 * omp_get_num_threads()))) ||
-          (world.size() > 1 &&
-           static_cast<int>(
-             hashed_essential_reference_subtrees_to_send->size()) <
-           static_cast<int>(ceil(2 * omp_get_num_threads())))) {
+      if(this->num_remaining_tasks() <
+          static_cast<int>(5 * omp_get_num_threads())) {
         tree_walk_timer_.restart();
         reference_tree_walker_.Walk(
-          metric_in, global_in, world, 4 * omp_get_num_threads(),
+          metric_in, global_in, world, 10 * omp_get_num_threads(),
           hashed_essential_reference_subtrees_to_send,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
         tree_walk_time_ += tree_walk_timer_.elapsed();
