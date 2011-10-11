@@ -43,6 +43,9 @@ void StartComputation(
   std::cerr << "Writing the densities to the file: " <<
             distributed_kde_arguments.densities_out_ << "\n";
   kde_result.Print(distributed_kde_arguments.densities_out_);
+
+  // Wait until every process finishes writing.
+  world.barrier();
 }
 
 template<typename KernelAuxType>

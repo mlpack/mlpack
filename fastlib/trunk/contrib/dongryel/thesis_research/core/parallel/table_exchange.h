@@ -24,7 +24,7 @@ namespace parallel {
 template <
 typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief A class for performing an all-to-some exchange of subtrees
@@ -33,7 +33,7 @@ class DistributedDualtreeTaskQueue;
 template <
 typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class TableExchange {
   public:
 
@@ -65,7 +65,7 @@ class TableExchange {
     core::parallel::DistributedDualtreeTaskList <
     DistributedTableType,
     TaskPriorityQueueType,
-    ProblemType > > ExtraTaskRouteRequestType;
+    DistributedProblemType > > ExtraTaskRouteRequestType;
 
     /** @brief The load balance request routing type.
      */
@@ -78,7 +78,7 @@ class TableExchange {
     typedef core::parallel::DistributedDualtreeTaskQueue <
     DistributedTableType,
     TaskPriorityQueueType,
-    ProblemType > TaskQueueType;
+    DistributedProblemType > TaskQueueType;
 
     /** @brief The message type used in the recursive doubling scheme.
      */

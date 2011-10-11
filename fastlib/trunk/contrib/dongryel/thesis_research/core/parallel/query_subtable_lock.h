@@ -18,14 +18,14 @@ namespace parallel {
 
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class DistributedDualtreeTaskQueue;
 
 /** @brief The lock on a query subtable.
  */
 template < typename DistributedTableType,
          typename TaskPriorityQueueType,
-         typename ProblemType >
+         typename DistributedProblemType >
 class QuerySubTableLock {
   private:
 
@@ -38,13 +38,15 @@ class QuerySubTableLock {
      */
     typedef DistributedDualtreeTaskQueue <
     DistributedTableType,
-    TaskPriorityQueueType, ProblemType > DistributedDualtreeTaskQueueType;
+    TaskPriorityQueueType,
+    DistributedProblemType > DistributedDualtreeTaskQueueType;
 
     /** @brief The friend declaration with the distributed task queue.
      */
     friend class core::parallel::DistributedDualtreeTaskQueue <
       DistributedTableType,
-        TaskPriorityQueueType, ProblemType >;
+      TaskPriorityQueueType,
+        DistributedProblemType >;
 
     /** @brief The table type used in the exchange process.
      */
@@ -62,7 +64,7 @@ class QuerySubTableLock {
      */
     typedef QuerySubTableLock <
     DistributedTableType, TaskPriorityQueueType,
-                        ProblemType > QuerySubTableLockType;
+                        DistributedProblemType > QuerySubTableLockType;
 
     /** @brief The MPI rank of the process holding the query subtable.
      */

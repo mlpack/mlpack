@@ -187,7 +187,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
           core::math::Range squared_distance_range_first,
                squared_distance_range_second;
           TreeType *rnode_second;
-          engine_->Heuristic_(
+          engine_->Heuristic(
             metric_, qnode, rnode->left(), rnode->right(),
             &rnode_first, squared_distance_range_first,
             &rnode_second, squared_distance_range_second);
@@ -236,7 +236,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
           TreeType *rnode_first = NULL, *rnode_second = NULL;
           core::math::Range squared_distance_range_first;
           core::math::Range squared_distance_range_second;
-          engine_->Heuristic_(
+          engine_->Heuristic(
             metric_, qnode_left, rnode_left, rnode_right,
             &rnode_first, squared_distance_range_first,
             &rnode_second, squared_distance_range_second);
@@ -250,7 +250,7 @@ void DualtreeDfs<ProblemType>::iterator<IteratorMetricType>::operator++() {
                               squared_distance_range_second));
 
           // Prioritize on the right child of the query node.
-          engine_->Heuristic_(
+          engine_->Heuristic(
             metric_, qnode_right, rnode_left, rnode_right,
             &rnode_first, squared_distance_range_first,
             &rnode_second, squared_distance_range_second);

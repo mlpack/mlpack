@@ -49,7 +49,7 @@ class DualtreeDfs {
       private:
 
         /** @brief The type of iterator argument type for pushing onto
-        	 *         the computation stack.
+         *         the computation stack.
         	 */
         class IteratorArgType {
 
@@ -262,19 +262,6 @@ class DualtreeDfs {
       const typename ProblemType::DeltaType &delta,
       typename ProblemType::ResultType *query_results);
 
-    /** @brief The heuristic for choosing one node over the other.
-     */
-    template<typename MetricType>
-    void Heuristic_(
-      const MetricType &metric,
-      TreeType *node,
-      TreeType *first_candidate,
-      TreeType *second_candidate,
-      TreeType **first_partner,
-      core::math::Range &first_squared_distance_range,
-      TreeType **second_partner,
-      core::math::Range &second_squared_distance_range);
-
     /** @brief The canonical recursive case for dualtree depth-first
      *         algorithm.
      */
@@ -296,6 +283,19 @@ class DualtreeDfs {
       bool do_query_results_postprocess);
 
   public:
+
+    /** @brief The heuristic for choosing one node over the other.
+     */
+    template<typename MetricType>
+    static void Heuristic(
+      const MetricType &metric,
+      TreeType *node,
+      TreeType *first_candidate,
+      TreeType *second_candidate,
+      TreeType **first_partner,
+      core::math::Range &first_squared_distance_range,
+      TreeType **second_partner,
+      core::math::Range &second_squared_distance_range);
 
     static void PreProcess(
       TableType *query_table_in,
