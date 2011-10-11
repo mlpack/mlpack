@@ -365,11 +365,19 @@ class DistributedDualtreeTaskQueue {
 
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
-      tree_walk_timer_.restart();
-      reference_tree_walker_.Walk(
-        metric_in, global_in, world, max_hashed_subtrees_to_queue,
-        global_qnode, hashed_essential_reference_subtrees_to_send, this);
-      tree_walk_time_ += tree_walk_timer_.elapsed();
+      if((world.size() == 1 &&
+          this->num_remaining_tasks() <
+          static_cast<int>(ceil(2 * omp_get_num_threads()))) ||
+          (world.size() > 1 &&
+           static_cast<int>(
+             hashed_essential_reference_subtrees_to_send->size()) <
+           static_cast<int>(ceil(2 * omp_get_num_threads())))) {
+        tree_walk_timer_.restart();
+        reference_tree_walker_.Walk(
+          metric_in, global_in, world, max_hashed_subtrees_to_queue,
+          global_qnode, hashed_essential_reference_subtrees_to_send, this);
+        tree_walk_time_ += tree_walk_timer_.elapsed();
+      }
     }
 
     /** @brief Returns the number of imported query subtables.
