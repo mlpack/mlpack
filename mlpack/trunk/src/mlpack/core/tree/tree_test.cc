@@ -940,7 +940,6 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
           if(v[i] != NULL && v[j] != NULL && i != j)  
             BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(), i, j));
          
-      std::cout << "Run: " << run << " @ depth "<< depth << ":" << v.size() << std::endl;
       depth = 2*depth;
     }
   }
@@ -983,9 +982,6 @@ bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib) {
     if(r_a < r_b || r_a > r_b) //If a does not overlap b at all
       return false;
   }
-  std::cout << "A[" << ia << "] B[" << ib << "]" << std::endl;
-  std::cout << "A: [" << r_a.lo << "," << r_a.hi << "]" << std::endl;
-  std::cout << "B: [" << r_b.lo << "," << r_b.hi << "]" << std::endl;
   return true; 
 }
 
