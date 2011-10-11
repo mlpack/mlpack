@@ -388,9 +388,6 @@ class DistributedDualtreeTaskQueue {
           metric_in, global_in, world, max_hashed_subtrees_to_queue,
           hashed_essential_reference_subtrees_to_send,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
-        printf("After %d walks, %d, %d, %lu remaining.\n",
-               world.rank(), query_subtables_.size(),
-               num_remaining_tasks_, remaining_local_computation_);
         tree_walk_time_ += tree_walk_timer_.elapsed();
       }
     }
