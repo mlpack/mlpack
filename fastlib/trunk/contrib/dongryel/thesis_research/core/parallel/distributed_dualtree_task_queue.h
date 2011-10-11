@@ -369,7 +369,6 @@ class DistributedDualtreeTaskQueue {
       const MetricType &metric_in,
       const GlobalType &global_in,
       boost::mpi::communicator &world,
-      int max_hashed_subtrees_to_queue,
       std::vector <
       SubTableRouteRequestType >
       * hashed_essential_reference_subtrees_to_send) {
@@ -385,7 +384,7 @@ class DistributedDualtreeTaskQueue {
            static_cast<int>(ceil(2 * omp_get_num_threads())))) {
         tree_walk_timer_.restart();
         reference_tree_walker_.Walk(
-          metric_in, global_in, world, max_hashed_subtrees_to_queue,
+          metric_in, global_in, world, 4 * omp_get_num_threads(),
           hashed_essential_reference_subtrees_to_send,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
         tree_walk_time_ += tree_walk_timer_.elapsed();
@@ -1062,7 +1061,6 @@ class DistributedDualtreeTaskQueue {
       boost::mpi::communicator &world,
       int thread_id,
       const MetricType &metric_in,
-      int max_hashed_subtrees_to_queue,
       std::vector <
       SubTableRouteRequestType > *
       hashed_essential_reference_subtrees_to_send,
@@ -1081,7 +1079,6 @@ class DistributedDualtreeTaskQueue {
           metric_in,
           global_in,
           world,
-          max_hashed_subtrees_to_queue,
           hashed_essential_reference_subtrees_to_send);
       }
 
