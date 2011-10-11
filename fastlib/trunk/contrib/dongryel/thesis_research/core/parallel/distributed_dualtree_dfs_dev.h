@@ -110,28 +110,17 @@ void DistributedDualtreeDfs<DistributedProblemType>::AllToAllIReduce_(
       found_task.second = -1;
 
       // Only the master thread makes MPI calls.
-      if(thread_id == 0) {
-
-        // Determine if we need to walk the reference tree to make
-        // more messages.
-        if((world_->size() == 1 &&
-            distributed_tasks.num_remaining_tasks() <
-            static_cast<int>(ceil(1.5 * omp_get_num_threads()))) ||
-            (world_->size() > 1 &&
-             static_cast<int>(
-               hashed_essential_reference_subtrees_to_send.size()) <
-             static_cast<int>(ceil(1.5 * omp_get_num_threads())))) {
-          distributed_tasks.WalkReferenceTree(
-            metric, problem_->global(), *world_, 3 * omp_get_num_threads(),
-            query_table_->get_tree(),
-            & hashed_essential_reference_subtrees_to_send);
-        }
-
-        if(world_->size() > 1) {
-          distributed_tasks.SendReceive(
-            metric, *world_, hashed_essential_reference_subtrees_to_send);
-        }
+      if(thread_id == 0 && world_->size() > 1) {
+        distributed_tasks.SendReceive(
+          metric, *world_, hashed_essential_reference_subtrees_to_send);
       }
+
+      // Any thread can walk the reference tree to queue up more
+      // messages.
+      distributed_tasks.WalkReferenceTree(
+        metric, problem_->global(), *world_, 4 * omp_get_num_threads(),
+        query_table_->get_tree(),
+        & hashed_essential_reference_subtrees_to_send);
 
       // After enqueing, everyone else tries to dequeue the tasks.
       typename DistributedDualtreeTaskQueueType::
