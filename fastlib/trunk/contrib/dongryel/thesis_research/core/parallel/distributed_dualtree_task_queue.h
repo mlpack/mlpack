@@ -388,6 +388,9 @@ class DistributedDualtreeTaskQueue {
           metric_in, global_in, world, max_hashed_subtrees_to_queue,
           hashed_essential_reference_subtrees_to_send,
           const_cast<DistributedDualtreeTaskQueueType *>(this));
+        printf("After %d walks, %d, %d, %lu remaining.\n",
+               world.rank(), query_subtables_.size(),
+               num_remaining_tasks_, remaining_local_computation_);
         tree_walk_time_ += tree_walk_timer_.elapsed();
       }
     }
@@ -481,7 +484,8 @@ class DistributedDualtreeTaskQueue {
       // Lock the queue.
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
-      if((* query_subtable_lock)->query_subtable_->table()->rank() == world.rank()) {
+      if((* query_subtable_lock)->query_subtable_->table()->rank() ==
+          world.rank()) {
         core::gnp::DualtreeDfs<ProblemType>::PreProcess(
           (* query_subtable_lock)->query_subtable_->table(),
           (* query_subtable_lock)->query_subtable_->start_node(),
@@ -494,6 +498,8 @@ class DistributedDualtreeTaskQueue {
       checked_out_query_subtables_.erase(query_subtable_lock);
 
       // Update the load balancing status.
+      printf("Process %d has %lu remaining.\n", world.rank(),
+             remaining_local_computation_);
       table_exchange_.turn_on_load_balancing(
         world, remaining_local_computation_) ;
     }
@@ -1075,12 +1081,14 @@ class DistributedDualtreeTaskQueue {
       core::parallel::scoped_omp_nest_lock lock(&task_queue_lock_);
 
       // Walk the reference tree.
-      this->WalkReferenceTree(
-        metric_in,
-        global_in,
-        world,
-        max_hashed_subtrees_to_queue,
-        hashed_essential_reference_subtrees_to_send);
+      if(thread_id == omp_get_num_threads() - 1) {
+        this->WalkReferenceTree(
+          metric_in,
+          global_in,
+          world,
+          max_hashed_subtrees_to_queue,
+          hashed_essential_reference_subtrees_to_send);
+      }
 
       // If the number of available task is less than the number of
       // running threads, try to get one.

@@ -277,7 +277,7 @@ class ReferenceTreeWalker {
               else {
                 core::gnp::DualtreeDfs<ProblemType>::Heuristic(
                   metric_in,
-                  global_query_node,
+                  global_query_node->left(),
                   local_reference_node->left(),
                   local_reference_node->right(),
                   &first_partner,
@@ -287,11 +287,29 @@ class ReferenceTreeWalker {
                 trace_.push_back(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, first_partner));
+                    global_query_node->left(), first_partner));
                 trace_.push_front(
                   std::pair <
                   TreeType *, TreeType * > (
-                    global_query_node, second_partner));
+                    global_query_node->left(), second_partner));
+
+                core::gnp::DualtreeDfs<ProblemType>::Heuristic(
+                  metric_in,
+                  global_query_node->right(),
+                  local_reference_node->left(),
+                  local_reference_node->right(),
+                  &first_partner,
+                  first_squared_distance_range,
+                  &second_partner,
+                  second_squared_distance_range);
+                trace_.push_back(
+                  std::pair <
+                  TreeType *, TreeType * > (
+                    global_query_node->right(), first_partner));
+                trace_.push_front(
+                  std::pair <
+                  TreeType *, TreeType * > (
+                    global_query_node->right(), second_partner));
               } // qnode, rnode non-leaves.
             } // end of non-leaf qnode case.
           } // end of non-prunable case.
