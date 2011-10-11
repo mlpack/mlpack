@@ -17,13 +17,21 @@ class scoped_omp_lock {
 
   public:
 
+    scoped_omp_lock() {
+      lock_ = NULL;
+    }
+
     scoped_omp_lock(omp_lock_t *lock_in) {
-      lock_ = lock_in;
-      omp_set_lock(lock_);
+      if(omp_get_num_threads() > 1) {
+        lock_ = lock_in;
+        omp_set_lock(lock_);
+      }
     }
 
     ~scoped_omp_lock() {
-      omp_unset_lock(lock_);
+      if(omp_get_num_threads() > 1) {
+        omp_unset_lock(lock_);
+      }
     }
 };
 
@@ -33,13 +41,21 @@ class scoped_omp_nest_lock {
 
   public:
 
+    scoped_omp_nest_lock() {
+      lock_ = NULL;
+    }
+
     scoped_omp_nest_lock(omp_nest_lock_t *lock_in) {
-      lock_ = lock_in;
-      omp_set_nest_lock(lock_);
+      if(omp_get_num_threads() > 1) {
+        lock_ = lock_in;
+        omp_set_nest_lock(lock_);
+      }
     }
 
     ~scoped_omp_nest_lock() {
-      omp_unset_nest_lock(lock_);
+      if(omp_get_num_threads() > 1) {
+        omp_unset_nest_lock(lock_);
+      }
     }
 };
 }
