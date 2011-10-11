@@ -879,31 +879,54 @@ BOOST_AUTO_TEST_CASE(tree_count_mismatch) {
   BOOST_REQUIRE(root_node.right()->right()->count() == 1);
 }
 
-typedef BinarySpaceTree<HRectBound<3> > TreeType;
-
+// Forward declaration of methods we need for the next test.
+template<typename TreeType>
 bool CheckPointBounds(TreeType* node, const arma::mat& data);
-void GenerateVectorOfTree(TreeType* node, size_t depth, std::vector<TreeType*>* v);
-bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib);
 
+template<typename TreeType>
+void GenerateVectorOfTree(TreeType* node,
+                          size_t depth,
+                          std::vector<TreeType*>& v);
+
+template<int t_pow>
+bool DoBoundsIntersect(HRectBound<t_pow>& a,
+                       HRectBound<t_pow>& b,
+                       size_t ia,
+                       size_t ib);
+
+/***
+ * Exhaustive kd-tree test based on #125.
+ *
+ * - Generate a random dataset of a random size.
+ * - Build a tree on that dataset.
+ * - Ensure all the permutation indices map back to the correct points.
+ * - Verify that each point is contained inside all of the bounds of its parent
+ *     nodes.
+ * - Verify that each bound at a particular level of the tree does not overlap
+ *     with any other bounds at that level.
+ *
+ * Then, we do that whole process a handful of times.
+ */
 BOOST_AUTO_TEST_CASE(kd_tree_test) {
-  size_t max_runs = 10;
-  size_t point_increments = 5000;
+  typedef BinarySpaceTree<HRectBound<2> > TreeType;
+
+  size_t max_runs = 10; // Ten total tests.
+  size_t point_increments = 5000; // Range is from 5000 points to 55000.
 
   // Generate the dataset.
   srand(time(NULL));
-  
-  //Reset the leaf size as other tests have been naughty
-  //Also a leaf size of 20 makes the test take too long
-  IO::GetParam<int>("tree/leaf_size") = 200;
+
+  // Reset the leaf size as other tests have been naughty.
+  // Also, a leaf size of 20 makes the test take too long.
+  IO::GetParam<int>("tree/leaf_size") = 20;
 
   for(size_t run = 0; run < max_runs; run++) {
-
-    size_t dimensions = run+2;
-    size_t max_points = (run+1) * point_increments;
+    size_t dimensions = run + 2;
+    size_t max_points = (run + 1) * point_increments;
 
     size_t size = max_points;
     arma::mat dataset = arma::mat(dimensions, size);
-    arma::mat datacopy;
+    arma::mat datacopy; // Used to test mappings.
 
     // Mappings for post-sort verification of data.
     std::vector<size_t> new_to_old;
@@ -911,108 +934,103 @@ BOOST_AUTO_TEST_CASE(kd_tree_test) {
 
     // Generate data.
     dataset.randu();
-    datacopy = dataset;
+    datacopy = dataset; // Save a copy.
 
-    // Check validity of tree data
+    // Build the tree itself.
     TreeType root(dataset, new_to_old, old_to_new);
-    
+
+    // Ensure the size of the tree is correct.
     BOOST_REQUIRE_EQUAL(root.count(), size);
+
+    // Check the forward and backward mappings for correctness.
     for(size_t i = 0; i < size; i++) {
       for(size_t j = 0; j < dimensions; j++) {
-        // Check mappings.
         BOOST_REQUIRE_EQUAL(dataset(j, i), datacopy(j, new_to_old[i]));
         BOOST_REQUIRE_EQUAL(dataset(j, old_to_new[i]), datacopy(j, i));
       }
     }
 
-    //Now check that each point is contained inside of all bounds above it.
-    CheckPointBounds(&root, dataset); 
+    // Now check that each point is contained inside of all bounds above it.
+    CheckPointBounds(&root, dataset);
 
-    //Now check that no peers overlap.
+    // Now check that no peers overlap.
     std::vector<TreeType*> v;
-    GenerateVectorOfTree(&root, 1, &v);
-    //Starting with the first pair
+    GenerateVectorOfTree(&root, 1, v);
+    // Starting with the first pair
     size_t depth = 2;
-    //Compare each peer against every other peer
-    while(depth < v.size()) {  
-      for(size_t i = depth; i < 2*depth && i < v.size(); i++)
-        for(size_t j = depth; j < 2*depth && j < v.size(); j++) 
-          if(v[i] != NULL && v[j] != NULL && i != j)  
-            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(), i, j));
-         
-      depth = 2*depth;
+    // Compare each peer against every other peer
+    while (depth < v.size()) {
+      for (size_t i = depth; i < 2*depth && i < v.size(); i++)
+        for (size_t j = depth; j < 2*depth && j < v.size(); j++)
+          if (v[i] != NULL && v[j] != NULL && i != j)
+            BOOST_REQUIRE(!DoBoundsIntersect(v[i]->bound(), v[j]->bound(),
+                i, j));
+
+      depth = 2 * depth;
     }
   }
 
+  // Reset it to the default value at the end of the test.
   IO::GetParam<int>("tree/leaf_size") = 20;
 }
 
-//Recursively checks that each node contains all points that it claims to have.
-bool CheckPointBounds(TreeType* node, const arma::mat& data)
-{
-  if(node == NULL) //We have passed a leaf node
+// Recursively checks that each node contains all points that it claims to have.
+template<typename TreeType>
+bool CheckPointBounds(TreeType* node, const arma::mat& data) {
+  if (node == NULL) // We have passed a leaf node.
     return true;
 
-  BinarySpaceTree<HRectBound<3> >* left = node->left();
-  BinarySpaceTree<HRectBound<3> >* right = node->right();
-
-  HRectBound<3> bound = node->bound();
+  TreeType* left = node->left();
+  TreeType* right = node->right();
 
   size_t begin = node->begin();
   size_t count = node->count();
- 
-  //Check that each point which this tree claims is actually inside the tree.
-  for(size_t index = begin; index < begin+count; index++) {
-    if(!bound.Contains(data.col(index)))
+
+  // Check that each point which this tree claims is actually inside the tree.
+  for (size_t index = begin; index < begin+count; index++) {
+    if (!node->bound().Contains(data.col(index)))
       return false;
   }
-  
+
   return CheckPointBounds(left, data) && CheckPointBounds(right, data);
 }
 
-bool DoBoundsIntersect(HRectBound<3>&a, HRectBound<3>&b, size_t ia, size_t ib) {
-  size_t dimensionality = a.dim();  //Should equal 3
+template<int t_pow>
+bool DoBoundsIntersect(HRectBound<t_pow>& a,
+                       HRectBound<t_pow>& b,
+                       size_t ia,
+                       size_t ib) {
+  size_t dimensionality = a.dim();
 
   Range r_a;
   Range r_b;
 
-  for(size_t i = 0; i < dimensionality; i++) {
+  for (size_t i = 0; i < dimensionality; i++) {
     r_a = a[i];
     r_b = b[i];
-    if(r_a < r_b || r_a > r_b) //If a does not overlap b at all
+    if (r_a < r_b || r_a > r_b) // If a does not overlap b at all.
       return false;
   }
-  return true; 
+
+  return true;
 }
 
-void GenerateVectorOfTree(TreeType* node, 
-    size_t depth, std::vector<TreeType*>* v)
-{
-  if(v->size() < depth) 
-    v->resize(2*depth, NULL);
-  
+template<typename TreeType>
+void GenerateVectorOfTree(TreeType* node,
+                          size_t depth,
+                          std::vector<TreeType*>& v) {
+  if (v.size() < depth)
+    v.resize(2 * depth, NULL);
+
   if(node == NULL)
     return;
-  
-  (*v)[depth] = node;
+
+  v[depth] = node;
 
   if(node->left() != NULL)
-    GenerateVectorOfTree(node->left(), depth*2, v);
+    GenerateVectorOfTree(node->left(), depth * 2, v);
   if(node->right() != NULL)
-    GenerateVectorOfTree(node->right(), depth*2 + 1, v);
+    GenerateVectorOfTree(node->right(), depth * 2 + 1, v);
 
   return;
 }
-
-
-
-
-
-
-
-
-
-
-
-
-
